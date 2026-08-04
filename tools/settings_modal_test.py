@@ -37,15 +37,103 @@ try:
     assert page.locator('.screen.active').get_attribute('id')==operational
     assert page.get_by_role('heading',name='Configurações').count()==1
     assert page.evaluate('sessionHasChanges()') is False
-    for category in ['about','appearance','interface','editor','educational','statute','parameters','backup']:
-      page.locator(f'#settingsMenu [data-settings-category="{category}"]').click()
-      assert page.locator(f'[data-settings-panel="{category}"]').is_visible()
+
+    # Abertura padrão em Geral, com as seis categorias principais na sidebar e apenas uma página ativa.
+    assert page.locator('#settingsPageTitle').inner_text()=='Geral'
+    assert page.locator('[data-settings-panel="general"]').is_visible()
+    assert page.locator('[data-settings-panel]:not([hidden])').count()==1
+    top_categories=['general','appearance-interface','method-governance','knowledge','data-security','about']
+    assert page.locator('#settingsMenu [data-settings-category]').count()==len(top_categories)
+    for cat in top_categories:
+      assert page.locator(f'#settingsMenu [data-settings-category="{cat}"]').count()==1
+
+    # Aparência e Interface -> Aparência, Interface, Editor (subpáginas, não mais itens diretos da sidebar).
+    page.locator('#settingsMenu [data-settings-category="appearance-interface"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Aparência e Interface'
+    page.locator('[data-settings-panel="appearance-interface"] [data-nav-to="appearance"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Aparência'
+    assert page.locator('#themeSeg').is_visible()
+    assert page.locator('[data-settings-panel]:not([hidden])').count()==1
+    page.locator('#settingsBackBtn').click()
+    page.locator('[data-settings-panel="appearance-interface"] [data-nav-to="interface"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Interface'
+    assert page.locator('#fsSeg').is_visible()
+    page.locator('#settingsBackBtn').click()
+    page.locator('[data-settings-panel="appearance-interface"] [data-nav-to="editor"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Editor'
+    assert page.locator('[data-settings-panel="editor"]').is_visible()
+
+    # Método e Governança -> Estatuto Operacional, Parâmetros e Calibração.
+    page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
+    page.locator('#settingsMenu [data-settings-category="method-governance"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Método e Governança'
+    page.locator('[data-settings-panel="method-governance"] [data-nav-to="statute"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Estatuto Operacional'
+    assert page.locator('[data-settings-panel="statute"] .mc-disclosure').is_visible()
+    page.locator('#settingsBackBtn').click()
+    page.locator('[data-settings-panel="method-governance"] [data-nav-to="parameters"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Parâmetros e Calibração'
+    assert page.locator('#pMDD').is_visible()
+    assert page.locator('#settingsReviewPeriodBtn').is_visible()
+
+    # Conhecimento -> Centro Educacional (rótulo novo; ID interno 'educational' preservado).
+    page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
+    page.locator('#settingsMenu [data-settings-category="knowledge"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Conhecimento'
+    page.locator('[data-settings-panel="knowledge"] [data-nav-to="educational"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Centro Educacional'
+    assert page.locator('[data-settings-panel="educational"] .education-glossary').is_visible()
+
+    # Dados e Segurança -> Backup e Recuperação, Armazenamento Local.
+    page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
+    page.locator('#settingsMenu [data-settings-category="data-security"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Dados e Segurança'
+    page.locator('[data-settings-panel="data-security"] [data-nav-to="backup"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Backup e Recuperação'
+    assert page.locator('#exportFullBackupBtn').is_visible()
+    assert page.locator('#importFullBackupBtn').is_visible()
+    page.locator('#settingsBackBtn').click()
+    page.locator('[data-settings-panel="data-security"] [data-nav-to="storage"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Armazenamento Local'
+    assert page.locator('[data-settings-panel="storage"] .settings-facts').is_visible()
+
+    # Sobre, categoria independente, com a versão visual vigente.
+    page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
+    page.locator('#settingsMenu [data-settings-category="about"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Sobre'
+    assert '1 beta' in page.locator('[data-settings-panel="about"]').inner_text()
+
+    # Voltar e avançar dentro da pilha de navegação interna (não mexe na URL nem no histórico do navegador).
+    page.locator('#settingsMenu [data-settings-category="appearance-interface"]').click()
+    page.locator('[data-settings-panel="appearance-interface"] [data-nav-to="appearance"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Aparência'
+    page.locator('#settingsBackBtn').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Aparência e Interface'
+    page.locator('#settingsForwardBtn').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Aparência'
+
     assert page.evaluate('sessionStateFingerprint()')==before
     assert page.evaluate("sessionStorage.getItem('jpwealth_session_checkpoint_v1')")==checkpoint
+
+    # Pesquisa: caminho hierárquico e abertura direta do resultado; MDD abre Parâmetros e Calibração.
     page.locator('#settingsSearch').fill('pip'); assert 'pip' in page.locator('#settingsSearchResults').inner_text().lower()
-    page.locator('#settingsSearch').fill('MDD'); assert 'MDD' in page.locator('#settingsSearchResults').inner_text()
+    page.locator('#settingsSearch').fill('MDD')
+    assert 'MDD' in page.locator('#settingsSearchResults').inner_text()
+    assert 'Método e Governança' in page.locator('#settingsSearchResults').inner_text()
+    page.locator('#settingsSearchResults [data-settings-result]').first.click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Parâmetros e Calibração'
     page.locator('#settingsSearch').fill('backup'); assert 'backup' in page.locator('#settingsSearchResults').inner_text().lower()
     page.locator('#settingsSearch').fill('Nome Privado'); assert 'Nenhuma' in page.locator('#settingsSearchResults').inner_text()
+
+    # Esc dentro da busca limpa o campo sem fechar a Central; Esc fora da busca fecha (fechamento global preservado).
+    page.locator('#settingsSearch').press('Escape')
+    assert page.locator('#settingsOverlay').is_visible()
+    assert page.locator('#settingsSearch').input_value()==''
+    page.locator('#settingsContent').focus()
+    page.keyboard.press('Escape')
+    assert not page.locator('#settingsOverlay').is_visible()
+    page.locator('#headerConfigBtn').click()
+
     page.evaluate("activateSettingsCategory('parameters')")
     page.locator('#settingsReviewPeriodBtn').click(); page.locator('#modalOverlay').wait_for(state='visible')
     assert page.locator('#settingsModal').evaluate('el=>el.inert') is True
@@ -65,8 +153,27 @@ try:
     page.evaluate("""()=>{ for(let i=0;i<20;i++){ closeSettingsModal(); openSettingsModal(); } }""")
     debug=page.evaluate('window.__settingsModalDebug')
     assert debug['observerInstances']==1 and debug['opens']>=21, debug
-    for width,height in [(1024,768),(768,900),(390,844),(320,700)]:
+    for width,height in [(1280,800),(1024,768),(760,900),(600,900),(400,844)]:
       page.set_viewport_size({'width':width,'height':height}); assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
+
+    # Mobile (<=760px): abre na lista de categorias em tela cheia; ao entrar numa categoria,
+    # o conteúdo ocupa a tela inteira e o botão Voltar devolve à lista (não à página 'general').
+    page.locator('#settingsCloseBtn').click()
+    page.set_viewport_size({'width':390,'height':844})
+    page.locator('#headerConfigBtn').click()
+    modal=page.locator('#settingsModal')
+    assert page.locator('.settings-sidebar').is_visible()
+    assert not page.locator('#settingsContent').is_visible()
+    page.locator('#settingsMenu [data-settings-category="data-security"]').click()
+    assert modal.evaluate('el=>el.classList.contains("settings-mobile-detail")') is True
+    assert page.locator('#settingsContent').is_visible()
+    assert not page.locator('.settings-sidebar').is_visible()
+    page.locator('#settingsBackBtn').click()
+    assert modal.evaluate('el=>el.classList.contains("settings-mobile-detail")') is False
+    assert page.locator('.settings-sidebar').is_visible()
+    assert not page.locator('#settingsContent').is_visible()
+    page.set_viewport_size({'width':1440,'height':900})
+
     page.locator('#settingsCloseBtn').click(); assert page.evaluate('sessionHasChanges()') is False
     assert page.evaluate('sessionStateFingerprint()')==before
     assert_no_errors(observed); browser.close()
