@@ -103,6 +103,76 @@
   /* Painel chapado: sem sombra, sem gradiente. A borda é que define o bloco. */
   :root[data-theme="dark"] .card{box-shadow:none; background:var(--panel)}
   :root[data-theme="dark"] .dtable tbody tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+
+  /* ==========================================================
+     JP WEALTH — FUNDAÇÃO VISUAL SEMÂNTICA
+
+     Estes tokens formam a camada de apresentação futura.
+     Não substituem os tokens legados nesta fase.
+     Nenhum componente deve mudar visualmente apenas pela
+     existência deste bloco: nada aqui é aplicado a seletores.
+
+     Os aliases apontam para tokens legados e herdam o tema
+     vigente automaticamente — `var(--bar)` resolve para o valor
+     que venceu a cascata em :root ou :root[data-theme="dark"],
+     então uma única declaração serve aos dois temas.
+     ========================================================== */
+  :root{
+    /* Superfícies e texto */
+    --jp-bg:var(--bg);
+    --jp-surface:var(--panel);
+    --jp-surface-raised:var(--panel-2);
+    --jp-ink:var(--ink);
+    --jp-ink-muted:var(--ink-dim);
+    --jp-border:var(--line);
+
+    /* Marca, ação e estados semânticos.
+       O vermelho de MARCA (--jp-brand) e o vermelho de PERIGO (--jp-danger)
+       são distintos e não devem ser usados um no lugar do outro.
+       O laranja (--jp-action) representa ação e seleção, nunca estado de risco.
+       --jp-focus e --jp-overlay ficam pendentes: não existe token legado
+       equivalente (ver relatório da Fase 1). */
+    --jp-brand:var(--bar);
+    --jp-action:var(--violet);
+    --jp-success:var(--f1);
+    --jp-warning:var(--f2);
+    --jp-danger:var(--f4);
+    --jp-info:var(--data-id);
+
+    /* Tipografia — famílias já existentes no projeto, sem fonte importada. */
+    --jp-font-ui:var(--sans);
+    --jp-font-data:var(--mono);
+    --jp-text-xs:0.75rem;
+    --jp-text-sm:0.875rem;
+    --jp-text-md:1rem;
+    --jp-text-lg:clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
+    --jp-text-xl:clamp(2rem, 1.3rem + 2.6vw, 4rem);
+
+    /* Espaçamento — degraus superiores à escala --sp-*, que permanece intacta. */
+    --jp-space-6:32px;
+    --jp-space-7:48px;
+    --jp-space-8:64px;
+    --jp-space-9:96px;
+
+    /* Densidade — espaçamento de referência por natureza de tela.
+       São referências para uso deliberado, não uma regra global automática. */
+    --jp-density-operational:var(--sp-4);
+    --jp-density-analytical:var(--jp-space-6);
+    --jp-density-narrative:var(--jp-space-8);
+
+    /* Forma */
+    --jp-radius-sm:0.5rem;
+    --jp-radius-md:0.875rem;
+    --jp-radius-lg:1.25rem;
+    --jp-radius-pill:999px;
+
+    /* Movimento — ao serem aplicados, devem respeitar prefers-reduced-motion. */
+    --jp-duration-fast:120ms;
+    --jp-duration-normal:220ms;
+    --jp-duration-slow:300ms;
+    --jp-ease:cubic-bezier(0.2, 0, 0, 1);
+  }
+
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
   body{
