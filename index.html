@@ -36,10 +36,23 @@
     <span class="saved-tag" id="savedTag">salvo</span>
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
+  <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
+    <button type="button" class="header-action" id="headerConfigBtn" data-screen="config" title="Configurações" aria-label="Abrir configurações">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+        <path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 0 1 0-3h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3h-.2a1.8 1.8 0 0 0-.9 3Z"></path>
+      </svg>
+    </button>
+    <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"></path>
+        <path d="m14 8 4 4-4 4"></path><path d="M18 12H9"></path>
+      </svg>
+    </button>
+  </div>
 </header>
 
 <nav id="nav">
-  <button class="session-finish" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão"><span class="session-finish-ico" aria-hidden="true">⎋</span><span class="lbl">Finalizar sessão</span></button>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
   <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
   <button class="tab" data-screen="params" title="Parâmetros"><span class="n">03</span><span class="lbl">Parâmetros</span></button>
@@ -47,7 +60,6 @@
   <button class="tab" data-screen="contas" title="Contas"><span class="n">05</span><span class="lbl">Contas</span></button>
   <button class="tab" data-screen="check" title="Checklist"><span class="n">06</span><span class="lbl">Checklist</span></button>
   <button class="tab" data-screen="contab" title="Contabilidade"><span class="n">07</span><span class="lbl">Contabilidade</span></button>
-  <button class="tab" data-screen="config" title="Configurações"><span class="n">⚙</span><span class="lbl">Configurações</span></button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
 

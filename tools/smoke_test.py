@@ -45,6 +45,7 @@ try:
           compute: typeof compute,
           render: typeof render,
           tabs: document.querySelectorAll('#nav .tab[data-screen]').length,
+          headerActions: document.querySelectorAll('#headerActions .header-action').length,
           state: typeof S === 'object' && !!S.params,
           storageKey: typeof LSKEY !== 'undefined' ? LSKEY : null,
           title: document.title,
@@ -54,7 +55,8 @@ try:
         })''')
         assert facts['compute']=='function', facts
         assert facts['render']=='function', facts
-        assert facts['tabs']==8, facts
+        assert facts['tabs']==7, facts
+        assert facts['headerActions']==2, facts
         assert facts['state'] is True, facts
         assert facts['storageKey']=='jpwealth_v9_state', facts
         assert facts['iconPicker'] is True, facts
@@ -153,10 +155,13 @@ try:
               return document.getElementById(screen)?.classList.contains('active') || false;
             }''', screen)
             assert ok, f'tela não ativou: {screen}'
+        page.locator('#headerConfigBtn').focus()
+        page.locator('#headerConfigBtn').press('Enter')
+        assert page.locator('#config').evaluate("el => el.classList.contains('active')")
         browser.close()
 finally:
     server.shutdown(); server.server_close()
 
 if errors:
     raise SystemExit('SMOKE FALHOU\n'+'\n'.join(errors))
-print('SMOKE OK — estado vazio, resets, ledger real, onboarding e 8 telas verificados.')
+print('SMOKE OK — estado vazio, resets, ledger real, onboarding e 7 áreas operacionais verificados.')

@@ -45,7 +45,7 @@ Nenhuma IA deve alterar constantes financeiras, fórmulas normativas, migraçõe
 
 O estado operacional é mantido no `localStorage` sob a chave `jpwealth_v9_state`. O código está no repositório; os dados reais do operador precisam ser exportados do navegador e guardados separadamente em `data/backups/`.
 
-Em computador de terceiros, use `Finalizar sessão` no alto da barra lateral. O fluxo verifica o checkpoint da sessão, exige backup confirmado quando necessário e remove apenas as chaves locais pertencentes ao JP Wealth; não usa `localStorage.clear()` e não fecha a aba do navegador.
+Em computador de terceiros, use o ícone `Finalizar sessão` no canto superior direito do cabeçalho. O fluxo verifica o checkpoint da sessão, exige backup confirmado quando necessário e remove apenas as chaves locais pertencentes ao JP Wealth; não usa `localStorage.clear()` e não fecha a aba do navegador.
 
 O fingerprint inclui também `instruments[].preco` e `instruments[].updated`. Uma atualização automática de câmbio pode, portanto, produzir um falso positivo deliberado de alteração; esta versão prioriza evitar perda silenciosa de dados e não tenta distinguir origem manual de automática.
 

@@ -186,6 +186,14 @@
   .pill.f1{color:var(--f1); border-color:var(--f1)} .pill.f2{color:var(--f2); border-color:var(--f2)}
   .pill.f3{color:var(--f3); border-color:var(--f3)} .pill.f4{color:var(--f4); border-color:var(--f4)}
 
+  .header-actions{display:flex; align-items:center; gap:var(--sp-2); flex:none; padding-left:var(--sp-2); border-left:1px solid var(--line)}
+  .header-action{width:32px; height:32px; min-width:32px; padding:0; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--panel); color:var(--ink-dim); cursor:pointer; transition:color .12s, background .12s, border-color .12s, transform .12s}
+  .header-action svg{width:16px; height:16px; display:block; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+  .header-action:hover{color:var(--ink); background:var(--panel-2); border-color:var(--ink-faint); transform:translateY(-1px)}
+  .header-action:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  .header-action-finalize{color:var(--f4); border-color:var(--f4)}
+  .header-action-finalize:hover{color:var(--f4); background:var(--f4-bg); border-color:var(--f4)}
+
   /* ============ SIDEBAR ============ */
   #nav{
     grid-area:nav; position:sticky; top:var(--header-h); z-index:30;
@@ -215,18 +223,6 @@
   /* Colapsada: só a numeração/ícone permanece, o rótulo vira tooltip nativo. */
   :root[data-rail="collapsed"] .tab{justify-content:center; padding-left:0; padding-right:0; gap:0}
   :root[data-rail="collapsed"] .tab .lbl{display:none}
-  .session-finish{
-    margin:0 var(--sp-2) var(--sp-2); min-height:34px; padding:var(--sp-2) var(--sp-3);
-    display:flex; align-items:center; gap:var(--sp-2); border:1px solid var(--f4);
-    border-radius:var(--radius-sm); background:var(--f4-bg); color:var(--f4);
-    font-family:var(--mono); font-size:var(--fs-sm); font-weight:700; letter-spacing:.07em;
-    text-transform:uppercase; cursor:pointer; text-align:left; white-space:nowrap;
-    transition:color .12s, background .12s, border-color .12s, transform .12s;
-  }
-  .session-finish:hover{color:var(--ink); background:var(--f4); border-color:var(--f4); transform:translateY(-1px)}
-  .session-finish-ico{font-size:17px; line-height:1; flex:none}
-  :root[data-rail="collapsed"] .session-finish{justify-content:center; margin-left:var(--sp-2); margin-right:var(--sp-2); padding-left:0; padding-right:0}
-  :root[data-rail="collapsed"] .session-finish .lbl{display:none}
   .rail-toggle{
     margin-top:auto; font-family:var(--mono); font-size:var(--fs-xs); letter-spacing:.1em;
     text-transform:uppercase; color:var(--ink-faint); background:none; cursor:pointer;
@@ -244,13 +240,13 @@
     body{grid-template-columns:var(--rail-collapsed) 1fr}
     .tab{justify-content:center; padding-left:0; padding-right:0; gap:0}
     .tab .lbl{display:none}
-    .session-finish{justify-content:center; padding-left:0; padding-right:0}
-    .session-finish .lbl{display:none}
     .rail-toggle{display:none}
   }
   @media(max-width:900px){
     body{grid-template-columns:1fr; grid-template-rows:auto auto 1fr; grid-template-areas:"hdr" "nav" "main"}
     header{position:static; height:auto; padding:var(--sp-2) var(--sp-3); flex-wrap:wrap}
+    .header-actions{gap:var(--sp-2); padding-left:var(--sp-2)}
+    .header-action{width:40px; height:40px; min-width:40px}
     #nav{
       position:static; height:auto; display:grid;
       grid-template-columns:repeat(auto-fit, minmax(132px,1fr)); gap:var(--sp-1);
@@ -263,8 +259,11 @@
     }
     #nav .tab .lbl{display:inline}
     #nav .tab.active{border-color:var(--violet); background:var(--accent-tint)}
-    #nav .session-finish{grid-column:1/-1; margin:0; justify-content:center; min-height:40px; padding:var(--sp-3) var(--sp-2)}
-    #nav .session-finish .lbl{display:inline}
+  }
+  @media(max-width:520px){
+    .header-status{gap:var(--sp-2)}
+    .header-status .saved-tag{display:none}
+    .header-status .pill{padding-left:5px; padding-right:5px}
   }
   /* ============ LAYOUT ============ */
   main{grid-area:main; min-width:0; padding:var(--sp-2); padding-bottom:40px}

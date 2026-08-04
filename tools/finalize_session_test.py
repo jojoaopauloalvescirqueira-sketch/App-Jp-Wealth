@@ -147,9 +147,39 @@ def assert_empty_after_finalize(page):
     assert facts['phasesWithData'] is False and facts['performance'] == 0, facts
     assert 'Operador Teste' not in facts['body'] and 'Conta Privada Teste' not in facts['body'], facts
 
+def assert_header_actions(page):
+    assert page.locator('#nav #finalizeSessionBtn').count() == 0
+    assert page.locator('#nav button[data-screen="config"]').count() == 0
+    assert page.locator('#headerActions').count() == 1
+    assert page.locator('#headerActions .header-action').count() == 2
+    assert page.locator('#headerConfigBtn').get_attribute('title') == 'Configurações'
+    assert page.locator('#headerConfigBtn').get_attribute('aria-label') == 'Abrir configurações'
+    assert page.locator('#finalizeSessionBtn').get_attribute('title') == 'Finalizar sessão'
+    assert page.locator('#finalizeSessionBtn').get_attribute('aria-label') == 'Finalizar sessão neste computador'
+    assert page.locator('#headerActions svg[aria-hidden="true"]').count() == 2
+    page.locator('#headerConfigBtn').focus()
+    assert page.evaluate('document.activeElement.id') == 'headerConfigBtn'
+    page.locator('#headerConfigBtn').press('Enter')
+    assert page.locator('#config').evaluate("el => el.classList.contains('active')")
+    page.locator('#finalizeSessionBtn').focus()
+    page.locator('#finalizeSessionBtn').press('Space')
+    page.locator('#modalOverlay').wait_for(state='visible')
+    flow_text=modal_text(page)
+    assert ('finalizar sessão neste computador' in flow_text or 'existem alterações posteriores ao último backup' in flow_text), flow_text
+    click_id(page, 'sessionCancel')
+    for width, height in ((1440,900),(1024,768),(768,900),(390,844),(320,700)):
+        page.set_viewport_size({'width':width,'height':height})
+        for element_id in ('headerConfigBtn','finalizeSessionBtn'):
+            button=page.locator('#'+element_id)
+            assert button.is_visible(), (width,height,element_id)
+            box=button.bounding_box()
+            assert box and box['width'] >= (40 if width <= 900 else 28), (width,height,element_id,box)
+        assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth + 1'), (width,height)
+    page.set_viewport_size({'width':1280,'height':720})
+
 def run_source_surface(browser, base_url):
     page = prepare_page(browser, base_url + 'index.html')
-    assert page.locator('#finalizeSessionBtn').count() == 1
+    assert_header_actions(page)
     page.wait_for_timeout(1000)
     page.evaluate('''async () => {
       S=emptyJPWealthState();
@@ -172,6 +202,7 @@ def run_source_surface(browser, base_url):
 
 def run_dist_suite(browser, url):
     page = prepare_page(browser, url)
+    assert_header_actions(page)
     page.evaluate('''() => {
       S.onboarding={...S.onboarding, done:true, operador:'Operador Teste', supervisor:'Supervisor Teste'};
       S.accounts=[{nome:'Conta Privada Teste',tipo:'MESTRE',broker:'Teste',platform:'',platformLogin:'',investorPassword:'',perfil:'Base',sini:10000,satu:10000,perfilLocked:true}];

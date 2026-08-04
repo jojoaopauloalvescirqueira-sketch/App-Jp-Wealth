@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1-header-actions.1] — 2026-08-04
+
+### Navegação do cabeçalho
+- Movidos os acessos de Configurações e Finalizar sessão para ações icônicas compactas no canto superior direito do cabeçalho.
+- Mantida a numeração das áreas operacionais restantes e reutilizados os fluxos existentes de navegação e Finalizar Sessão.
+- Nenhuma regra financeira, persistência, backup, limpeza ou comportamento interno de Finalizar Sessão foi alterado.
+
 ## [9.1-finalize-session.1] — 2026-08-03
 
 ### Privacidade e encerramento local
