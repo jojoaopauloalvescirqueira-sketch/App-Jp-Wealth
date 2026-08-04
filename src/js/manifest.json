@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "25da90f70c61e26beed4010e9a2978e13133393152f1ac47b8859d5b188fd12d"
+      "sha256": "33a57a5858356246b68f7f993224438152a6d9710bac2a7f001264622274e5fe"
     },
     {
       "order": 24,
@@ -207,6 +207,18 @@
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
       "sha256": "7412f16eeef6ac590de9e384db534347751eb5d9bdcf8a36ca02f8359d364374"
+    },
+    {
+      "order": 35,
+      "path": "src/js/40-app/08-educational-content.js",
+      "section": "CENTRAL DE CONFIGURAÇÕES · BASE EDUCACIONAL LOCAL",
+      "sha256": "877a1fd18350c797f21a9c356d3b439deef397871550154eda454b43dc4f2f23"
+    },
+    {
+      "order": 36,
+      "path": "src/js/40-app/09-settings-modal.js",
+      "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
+      "sha256": "c3c530415abe1925ba6eb3647b37589eb3f1959e3e2df1a39329d446d1529efa"
     }
   ]
 }

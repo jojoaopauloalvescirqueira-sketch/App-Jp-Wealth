@@ -58,3 +58,9 @@ Em `Configurações → Ícone do app`, escolha uma das três identidades: `Knig
 - `manifests/jp-wealth-marble-knight.webmanifest`
 
 No iPhone e iPad, o Safari não troca retroativamente o ícone de um atalho já instalado. Depois de escolher, remova o atalho atual e use `Compartilhar → Adicionar à Tela de Início` novamente. Em desktop e Android, o comportamento depende do navegador. O PWA precisa ser servido por HTTP/HTTPS; o HTML portátil em `dist/` continua destinado a distribuição de arquivo único e não substitui a publicação da raiz do projeto.
+
+## Central de Configurações
+
+A engrenagem no cabeçalho abre uma central modal e preserva a tela operacional ativa ao fundo. Os controles já existentes continuam usando suas rotinas e persistência originais. A pesquisa é declarativa: procura categorias, controles, ajuda e conteúdo educacional local, mas não indexa contas, nomes, saldos ou outros dados operacionais do usuário.
+
+Em `Parâmetros e Calibração → Período Operacional`, o botão `Revisar dados do período` abre o onboarding existente em modo de edição. A central apresenta apenas um resumo seguro e não duplica campos, credenciais ou validações.

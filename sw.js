@@ -20,6 +20,7 @@ const PRECACHE_URLS = [
   './src/js/10-domain/06-quarantine.js', './src/js/20-ui/11-phase-posture.js',
   './src/js/40-app/04-onboarding.js', './src/js/40-app/05-wipe-all.js',
   './src/js/40-app/06-app-icons.js', './src/js/40-app/07-finalize-session.js', './src/js/40-app/06-boot.js',
+  './src/js/40-app/08-educational-content.js', './src/js/40-app/09-settings-modal.js',
   './manifests/jp-wealth-flat-knight.webmanifest',
   './manifests/jp-wealth-relief-knight.webmanifest',
   './manifests/jp-wealth-marble-knight.webmanifest',

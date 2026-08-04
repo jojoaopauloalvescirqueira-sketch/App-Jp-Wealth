@@ -157,7 +157,9 @@ try:
             assert ok, f'tela não ativou: {screen}'
         page.locator('#headerConfigBtn').focus()
         page.locator('#headerConfigBtn').press('Enter')
-        assert page.locator('#config').evaluate("el => el.classList.contains('active')")
+        assert page.locator('#settingsOverlay').evaluate("el => el.classList.contains('show')")
+        assert not page.locator('#config').evaluate("el => el.classList.contains('active')")
+        page.locator('#settingsCloseBtn').click()
         browser.close()
 finally:
     server.shutdown(); server.server_close()

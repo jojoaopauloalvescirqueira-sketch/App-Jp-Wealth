@@ -1092,10 +1092,30 @@
     .onb-global-banner,.onb-gov-note{align-items:flex-start; flex-direction:column}
     .onb-global-banner button,.onb-gov-note button{width:100%}
   }
+
+  /* Central de Configurações — camada dedicada, sem reutilizar o modal operacional. */
+  .settings-legacy-host{display:none!important}
+  .settings-overlay{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
+  .settings-overlay.show{display:flex}
+  .settings-modal{width:min(1160px,95vw); height:min(88vh,920px); min-height:520px; display:grid; grid-template-rows:auto minmax(0,1fr); overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 70px rgba(0,0,0,.48)}
+  .settings-modal-head{display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding:18px 22px; background:var(--bar); color:var(--bar-ink); border-bottom:1px solid var(--line)}
+  .settings-modal-head h2{margin:0; color:var(--bar-ink); font-size:var(--fs-xl)} .settings-modal-head p{margin:5px 0 0; font-size:var(--fs-sm); opacity:.82}
+  .settings-close{width:38px; height:38px; flex:0 0 38px; border:1px solid color-mix(in srgb,var(--bar-ink) 40%,transparent); border-radius:7px; background:transparent; color:var(--bar-ink); font-size:26px; line-height:1; cursor:pointer}
+  .settings-modal-body{min-height:0; display:grid; grid-template-columns:270px minmax(0,1fr)}
+  .settings-sidebar{min-width:0; overflow-y:auto; padding:18px 14px; border-right:1px solid var(--line); background:var(--panel-2)}
+  .settings-search-label{display:block; margin-bottom:7px; color:var(--ink-dim); font-family:var(--mono); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.08em}
+  .settings-sidebar input,.settings-mobile-category{width:100%; border:1px solid var(--line); border-radius:7px; padding:10px 11px; background:var(--panel); color:var(--ink); font:inherit}
+  .settings-mobile-category{display:none; margin-top:10px}.settings-menu{display:grid; gap:3px; margin-top:18px}.settings-menu-group{margin:12px 8px 4px; color:var(--ink-faint); font-family:var(--mono); font-size:var(--fs-xs); font-weight:800; letter-spacing:.11em}.settings-menu-item{border:0; border-radius:6px; padding:9px 10px; background:transparent; color:var(--ink-dim); font:inherit; text-align:left; cursor:pointer}.settings-menu-item:hover,.settings-menu-item.active{background:var(--indigo-deep); color:var(--violet)}
+  .settings-search-results{display:grid; gap:5px; margin-top:10px}.settings-search-results button{display:grid; gap:2px; padding:8px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); text-align:left; cursor:pointer}.settings-search-results span{font-size:var(--fs-xs); color:var(--ink-dim)}.settings-no-results{margin:0; font-size:var(--fs-sm); color:var(--ink-faint)}
+  .settings-content{min-width:0; overflow-y:auto; padding:24px}.settings-panel{max-width:820px}.settings-panel h3{margin:0 0 9px; font-size:var(--fs-xl); color:var(--ink)}.settings-panel h4{margin:20px 0 7px; color:var(--ink); font-size:var(--fs-md)}.settings-lead{margin:0 0 18px; color:var(--ink-dim); line-height:1.65}.settings-empty{padding:16px; border:1px dashed var(--line); border-radius:8px; color:var(--ink-dim)}.settings-facts{display:grid; grid-template-columns:170px 1fr; gap:8px 14px; margin:20px 0}.settings-facts dt{font-family:var(--mono); color:var(--ink-faint); font-size:var(--fs-sm)}.settings-facts dd{margin:0;color:var(--ink)}.settings-links{display:flex; flex-wrap:wrap; gap:12px}.settings-links a{color:var(--violet)}
+  .settings-panel .card,.settings-panel .mc-disclosure{margin-top:16px}.settings-rail-row{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px; border:1px solid var(--line); border-radius:8px}.settings-rail-row h4{margin:0}.settings-rail-row p{margin:5px 0 0}.settings-safe-period{margin:18px 0; padding:16px; border-left:3px solid var(--violet); border-radius:7px; background:var(--panel-2)}.settings-safe-period h4{margin:0 0 7px}.settings-safe-period p{margin:0 0 12px; color:var(--ink-dim); line-height:1.55}
+  .education-section{margin-top:28px}.education-section h4{padding-bottom:8px; border-bottom:1px solid var(--line)}.education-article{padding:14px 0; border-bottom:1px solid var(--line)}.education-article h5{margin:0 0 8px; font-size:var(--fs-md); color:var(--ink)}.education-article p{margin:6px 0; color:var(--ink-dim); line-height:1.55}.education-article b{color:var(--ink)}.education-glossary{display:flex; flex-wrap:wrap; gap:7px}.education-glossary button{border:1px solid var(--line); border-radius:999px; padding:6px 10px; background:var(--panel-2); color:var(--ink); cursor:pointer}.education-section details{padding:10px 0; border-bottom:1px solid var(--line)}.education-section summary{cursor:pointer; color:var(--ink); font-weight:700}.education-section details p{color:var(--ink-dim); line-height:1.55}.settings-search-hit{outline:2px solid var(--violet); outline-offset:4px; border-radius:5px}
+  .settings-modal :focus-visible{outline:2px solid var(--violet); outline-offset:2px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media(max-width:760px){.settings-overlay{padding:0;align-items:stretch}.settings-modal{width:100%;height:100%;min-height:0;border-radius:0;border:0}.settings-modal-head{padding:15px}.settings-modal-body{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.settings-sidebar{overflow:visible;padding:12px 15px;border-right:0;border-bottom:1px solid var(--line)}.settings-menu{display:none}.settings-mobile-category{display:block}.settings-search-results{max-height:160px;overflow:auto}.settings-content{padding:18px 15px}.settings-facts{grid-template-columns:1fr;gap:3px}.settings-rail-row{align-items:flex-start;flex-direction:column}.settings-rail-row .rail-toggle{width:100%}}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
+const JP_WEALTH_BUILD_ID = 'a75fa22a90b90a2f';
 </script>
 <link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
 <link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
@@ -1125,7 +1145,7 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
-    <button type="button" class="header-action" id="headerConfigBtn" data-screen="config" title="Configurações" aria-label="Abrir configurações">
+    <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
         <path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 0 1 0-3h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3h-.2a1.8 1.8 0 0 0-.9 3Z"></path>
@@ -1545,8 +1565,8 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
   </section>
 
   <!-- ================= 08 CONFIGURAÇÕES ================= -->
-  <section class="screen" id="config">
-    <div class="card">
+  <section class="screen settings-legacy-host" id="config" aria-hidden="true">
+    <div class="card" data-settings-category="appearance" data-settings-search="tema aparência ícone paleta contraste acabamento">
       <h2>Aparência <span class="art">tema do painel</span></h2>
       <div class="field" style="max-width:320px">
         <label>Tema</label>
@@ -1556,7 +1576,10 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
         </div>
         <span class="note">A escolha fica salva neste navegador.</span>
       </div>
-      <div class="field" style="max-width:420px; margin-top:14px">
+      <div id="appIconConfig" class="app-icon-config" style="margin-top:18px"></div>
+    </div>
+    <div class="card" data-settings-category="interface" data-settings-search="interface fonte tamanho texto tipografia instruções ajuda contextual">
+      <div class="field" style="max-width:420px">
         <label>Tamanho do Texto</label>
         <div class="seg" id="fsSeg" style="width:fit-content">
           <button type="button" data-fs-val="0">Padrão</button>
@@ -1573,9 +1596,8 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
         </div>
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
-      <div id="appIconConfig" class="app-icon-config" style="margin-top:18px"></div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
       <div class="params-grid">
         <div class="field"><label>Saldo Inicial de Referência <span class="art">Art. 3.4</span></label><input type="number" id="pSaldoIni" value="10000"><span class="note">Base de cálculo de todo o risco do ciclo.</span></div>
@@ -1592,15 +1614,15 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
         <div class="field"><label>Referência Anual (%)</label><input type="number" step="0.01" id="pRefA" value="38"><span class="note">Referência, não promessa.</span></div>
       </div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="period" data-settings-search="período operador supervisora instituição conta perfil revisão">
       <h2>Dados do Período <span class="art">preenchidos no questionário de início</span></h2>
       <div id="configOnboarding"></div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="parameters" data-settings-search="MEI calibração histórico modelo estatístico">
       <h2>Modelo Estatístico Institucional — MEI-JP <span class="art">calibração da curva patrimonial</span></h2>
       <div id="meiConfig"></div>
     </div>
-    <details class="mc-disclosure">
+    <details class="mc-disclosure" data-settings-category="statute" data-settings-search="estatuto diretrizes regras artigos PDF governança">
       <summary><span class="t">Estatuto · Diretrizes &amp; Regras</span><span class="art">o modelo que este painel executa · resumo normativo</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.7">
         <p style="margin-bottom:10px"><b style="color:var(--ink)">Modelo:</b> Arquitetura Quadrifásica de Risco Vertical (Estatuto JP Wealth). Toda a exposição vive em uma <b style="color:var(--ink)">Operação Única Exclusiva</b> (mesmo ativo, mesma direção — Art. 3.5/3.6), iniciada pela Ordem Gênese (risco ≤ 1% do saldo inicial — Art. 8.6) e gerida por redução progressiva de exposição.</p>
@@ -1610,7 +1632,7 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
         <p><b style="color:var(--ink)">Hierarquia permanente (Art. 11.1):</b> Preservação do capital → Sobrevivência da conta → Protocolos de risco → Qualidade de execução → Consistência → Rentabilidade. <i>Lucro é consequência do processo; sobrevivência é requisito.</i></p>
       </div>
     </details>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="backup" data-settings-search="backup exportar importar recuperar compatibilidade base">
       <h2>Backup Completo <span class="art">estado local do painel</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Exporta ou restaura o estado completo salvo neste navegador. A importação valida o JSON, pede confirmação e aplica a migração de compatibilidade antes de sobrescrever os dados atuais.</p>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
@@ -1619,11 +1641,11 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
         <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
       </div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="parameters" data-settings-search="quarentena encerramento compulsório MDD drawdown governança">
       <h2>Quarentena Operacional <span class="art">Art. 3.10 · reversível</span></h2>
       <div id="configQuarantine"></div>
     </div>
-    <div class="card" style="margin-top:16px; border-color:var(--f4)">
+    <div class="card" data-settings-category="backup" data-settings-search="limpar apagar reset zona risco recuperação" style="margin-top:16px; border-color:var(--f4)">
       <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar todos os dados</span></h2>
       <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove tudo: ordens, fases, fechamentos, log de auditoria e configurações. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)">🗑 Limpar todos os dados</button>
@@ -1634,11 +1656,19 @@ const JP_WEALTH_BUILD_ID = '77a8ac3afc5e5d5d';
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox"></div>
 </div>
+<div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
+  <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <header class="settings-modal-head"><div><h2 id="settingsTitle">Configurações</h2><p>Preferências, governança, dados e material de referência.</p></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações">×</button></header>
+    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"></main></div>
+  </section>
+</div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
 
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
+
 
 
 
@@ -5285,20 +5315,25 @@ function bindContab(){
 }
 // ============ NAV ============
 function navigateToScreen(t){
+  const screenId=typeof t==='string'?t:t.dataset.screen;
+  if(screenId==='config'){
+    if(typeof openSettingsModal==='function') openSettingsModal('about',typeof t==='string'?$('headerConfigBtn'):t);
+    return;
+  }
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  if(t.classList.contains('tab')) t.classList.add('active');
-  const screen=$(t.dataset.screen);
+  if(typeof t!=='string'&&t.classList.contains('tab')) t.classList.add('active');
+  const screen=$(screenId);
   if(!screen) return;
   screen.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  maybeShowOnboardingNavReminder(t.dataset.screen);
-  if(t.dataset.screen==='motor' && !fxAutoFetchedThisSession){
+  maybeShowOnboardingNavReminder(screenId);
+  if(screenId==='motor' && !fxAutoFetchedThisSession){
     fxAutoFetchedThisSession=true;
     updateFxRates(); // tentativa automática, silenciosa se offline (status visível, nunca falha em silêncio)
   }
 }
-document.querySelectorAll('.tab, .header-action[data-screen]').forEach(t=>t.addEventListener('click',()=>navigateToScreen(t)));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>navigateToScreen(t)));
 $('fxUpdateBtn').addEventListener('click',()=>updateFxRates());
 // ============ RESET (dupla confirmação APAGAR — SET 6) ============
 $('resetBtn').addEventListener('click',()=>wipeAllData());
@@ -8385,6 +8420,200 @@ function boot(){
 $('modalOverlay').addEventListener('click',e=>{ if(e.target.id==='modalOverlay') closeModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 load(); if(typeof initSessionCheckpoint==='function') initSessionCheckpoint(); bindParams(); bindContab(); bindConfig(); bindAcct(); bindFieldNotes(); boot();
+// ============ CENTRAL DE CONFIGURAÇÕES · BASE EDUCACIONAL LOCAL (N1) ============
+// Conteúdo curado, declarativo e offline. Não contém sinais, recomendações ou valores normativos.
+const EDUCATIONAL_CONTENT=[
+  {id:'forex-intro',category:'comece',title:'O que é Forex?',keywords:['forex','câmbio','moeda','otc','par cambial'],definition:'Forex é o mercado em que moedas são trocadas em pares. Ele funciona de forma descentralizada, com participantes conectados por redes de negociação.',example:'Em EUR/USD, o euro é comparado ao dólar dos Estados Unidos.',risk:'Oscilações de preço não representam uma garantia de resultado.',jpWealth:'Para controles específicos, consulte Estatuto Operacional e Parâmetros e Calibração.'},
+  {id:'forex-pair',category:'comece',title:'Par cambial, moeda-base e moeda de cotação',keywords:['par','moeda base','moeda de cotação','compra','venda'],definition:'Um par mostra o valor de uma moeda em relação a outra. A primeira é a moeda-base; a segunda é a moeda de cotação.',example:'EUR/USD = 1,1000 indica que um euro equivale a 1,10 dólar.',risk:'Comprar ou vender um par cria exposição às duas moedas.',jpWealth:'Use as telas operacionais para registrar a exposição, sem substituir suas regras de risco.'},
+  {id:'forex-participants',category:'comece',title:'Participantes e formação de preço',keywords:['participantes','bancos','liquidez','preço','otc'],definition:'Bancos, empresas, fundos, bancos centrais, provedores de liquidez, brokers e participantes de varejo interagem em diferentes camadas do mercado.',example:'Um provedor de liquidez pode cotar preços para uma corretora.',risk:'As condições de execução podem variar entre instituições e horários.',jpWealth:'A base educacional explica conceitos; não avalia instituições nem fornece sinais.'},
+  {id:'forex-pip',category:'fundamentos',title:'O que é pip?',keywords:['pip','pips','cotação','variação'],definition:'Pip é uma unidade convencional usada para descrever pequenas variações de cotação em muitos pares.',example:'Uma mudança de 1,1000 para 1,1001 em EUR/USD é usualmente chamada de um pip.',risk:'O valor financeiro de um pip depende do instrumento, lote e moeda de cotação.',jpWealth:'Consulte os instrumentos e cálculos do sistema para os dados efetivamente configurados.'},
+  {id:'forex-costs',category:'fundamentos',title:'Spread, bid e ask',keywords:['spread','bid','ask','custos'],definition:'Bid é o preço de venda disponível; ask é o preço de compra. Spread é a diferença entre eles.',example:'Bid 1,1000 e ask 1,1002 representam spread de dois pontos na cotação exibida.',risk:'Spreads podem se ampliar em baixa liquidez ou alta volatilidade.',jpWealth:'Custos e execução devem ser observados no contexto operacional, não estimados por esta referência.'},
+  {id:'forex-margin',category:'fundamentos',title:'Margem, lote e alavancagem',keywords:['margem','lote','alavancagem','exposição'],definition:'Margem é uma garantia exigida para manter uma posição. Lote descreve a unidade negociada; alavancagem relaciona exposição e capital exigido.',example:'Uma posição maior pode exigir mais margem e ampliar a exposição nocional.',risk:'Margem disponível não mede, por si só, o risco da operação.',jpWealth:'Consulte Estatuto Operacional e Parâmetros e Calibração para regras aplicáveis.'},
+  {id:'forex-orders',category:'fundamentos',title:'Stop loss, take profit, swap e rollover',keywords:['stop','stop loss','take profit','swap','rollover'],definition:'Stop e take profit são instruções condicionais de saída. Swap ou rollover é o ajuste associado à manutenção de posições em certos períodos.',example:'Uma ordem stop pode ser acionada quando o preço alcança uma condição definida.',risk:'Uma ordem stop não garante necessariamente o preço exato em movimentos rápidos.',jpWealth:'A definição de proteção operacional pertence às regras internas do sistema.'},
+  {id:'market-structure',category:'estrutura',title:'Mercado interbancário, ECN/STP e market makers',keywords:['interbancário','ecn','stp','market maker','broker'],definition:'O mercado cambial é descentralizado. Modelos de execução e intermediários podem conectar clientes a diferentes fontes de liquidez.',example:'Uma plataforma pode encaminhar uma ordem para provedores disponíveis.',risk:'Termos comerciais não eliminam risco de execução, contraparte ou liquidez.',jpWealth:'Esta explicação não recomenda instituições nem modelos de execução.'},
+  {id:'market-sessions',category:'estrutura',title:'Sessões, liquidez e descentralização',keywords:['sessões','liquidez','descentralizado','horários'],definition:'A atividade do câmbio varia ao longo do dia conforme centros financeiros e participantes estão ativos.',example:'Sobreposições de sessões tendem a concentrar mais participantes em determinados pares.',risk:'Maior atividade não assegura menor custo ou menor volatilidade.',jpWealth:'Use informações do mercado apenas dentro do processo operacional aprovado.'},
+  {id:'pairs-quotation',category:'pares',title:'Majors, minors, cruzados e exóticos',keywords:['majors','minors','exóticos','cruzados','pares'],definition:'Pares são frequentemente agrupados por liquidez e moedas envolvidas. Cruzados não incluem o dólar dos Estados Unidos.',example:'EUR/USD é normalmente classificado como major; EUR/GBP é um cruzado.',risk:'Classificações não substituem a análise de liquidez e risco de cada instrumento.',jpWealth:'A disponibilidade de instrumentos é determinada pela configuração e governança do sistema.'},
+  {id:'pairs-exposure',category:'pares',title:'Correlação, exposição e valor do pip',keywords:['correlação','exposição','valor do pip','conversão'],definition:'Pares podem se mover de forma relacionada e criar exposição concentrada. O valor do pip depende da moeda, tamanho e conversão.',example:'Duas posições que compartilham uma moeda podem amplificar uma mesma direção econômica.',risk:'Somar apenas a margem pode ocultar concentração de exposição.',jpWealth:'Consulte os controles de risco do terminal para a avaliação operacional.'},
+  {id:'execution-costs',category:'execucao',title:'Comissão, slippage, requote e execução a mercado',keywords:['comissão','slippage','derrapagem','requote','execução a mercado'],definition:'Comissões e spread são custos possíveis. Slippage é a diferença entre o preço esperado e o executado; requote é uma nova cotação oferecida.',example:'Em alta volatilidade, uma ordem a mercado pode executar em preço diferente do visto antes do envio.',risk:'Custos e execução podem piorar justamente quando a liquidez muda rapidamente.',jpWealth:'Não trate exemplos educacionais como expectativa de execução.'},
+  {id:'execution-orders',category:'execucao',title:'Ordens limite, stop e horários de liquidez',keywords:['ordem limite','ordem stop','volatilidade','liquidez'],definition:'Ordens limite definem preço ou melhor; ordens stop dependem de condição de disparo. A execução final depende das condições disponíveis.',example:'Uma ordem limite de compra só busca executar no preço indicado ou melhor.',risk:'Regras do intermediário e saltos de preço influenciam o resultado real.',jpWealth:'As decisões operacionais seguem o Estatuto Operacional.'},
+  {id:'risk-margin',category:'risco',title:'Risco versus margem',keywords:['risco','margem','risco por operação','alavancagem'],definition:'Margem é requisito de garantia; risco é a perda potencial sob uma hipótese de movimento e saída. São medidas diferentes.',example:'Duas posições com a mesma margem podem ter riscos distintos se seus stops e tamanhos diferirem.',risk:'Confundir margem livre com risco aceitável pode esconder perdas potenciais.',jpWealth:'Os limites específicos devem ser consultados em Parâmetros e Calibração.'},
+  {id:'risk-dd',category:'risco',title:'Drawdown, MDD e perdas consecutivas',keywords:['drawdown','mdd','perdas consecutivas','ruína'],definition:'Drawdown mede a queda em relação a uma referência; MDD é a maior queda observada em uma janela definida.',example:'Uma sequência de perdas pode aumentar o drawdown mesmo sem posições abertas ao mesmo tempo.',risk:'A recuperação necessária cresce quando a queda se aprofunda.',jpWealth:'A interpretação normativa do MDD pertence ao Estatuto Operacional.'},
+  {id:'risk-correlation',category:'risco',title:'Correlação, ausência de stop e risco de ruína',keywords:['correlação','ausência de stop','risco de ruína','exposição nocional'],definition:'Exposição correlacionada, tamanho excessivo ou falta de critérios de saída podem aumentar a vulnerabilidade do conjunto de posições.',example:'Pares com moedas em comum podem reagir à mesma notícia.',risk:'Risco de ruína é um conceito de perda de capital, não uma previsão individual.',jpWealth:'A ferramenta não fornece recomendações de entrada ou saída.'},
+  {id:'history-forex',category:'historia',title:'Breve história do mercado cambial',keywords:['padrão ouro','bretton woods','fmi','câmbio flutuante','história'],definition:'O sistema cambial moderno foi moldado pelo padrão-ouro, Bretton Woods e sua posterior ruptura, com maior adoção de taxas flutuantes.',example:'O fim da conversibilidade do dólar em ouro marcou uma mudança importante no arranjo monetário internacional.',risk:'História econômica ajuda a contextualizar, mas não prevê o comportamento futuro dos preços.',jpWealth:'O conteúdo é somente educativo e não substitui documentos de governança.'},
+  {id:'history-electronic',category:'historia',title:'Do interbancário às plataformas eletrônicas',keywords:['interbancário','plataformas eletrônicas','varejo','forex de varejo'],definition:'A negociação eletrônica ampliou a conexão entre participantes e possibilitou o acesso de varejo por intermediários.',example:'Cotações podem ser distribuídas por plataformas com regras e fontes diferentes.',risk:'Acessibilidade tecnológica não reduz automaticamente complexidade ou risco.',jpWealth:'A central não recomenda plataformas ou intermediários.'}
+];
+
+const EDUCATIONAL_GLOSSARY=['Alavancagem','Ask','Bid','Correlação','Drawdown','ECN','Exposição','Liquidez','Lote','Margem','MDD','Pip','Slippage','Spread','Stop','Swap','Volatilidade'];
+const EDUCATIONAL_FAQ=[
+  ['O Forex fecha?','A atividade varia conforme dias úteis, feriados, participantes e horários. A disponibilidade concreta depende do instrumento e do intermediário.'],
+  ['Por que o spread aumenta?','Liquidez menor, volatilidade e eventos podem alterar as cotações disponíveis e ampliar custos.'],
+  ['O stop garante o preço exato?','Não necessariamente. Saltos de preço e liquidez podem levar a execução diferente da condição esperada.'],
+  ['Por que uma ordem executa em preço diferente?','A diferença pode decorrer de slippage, latência, liquidez e das regras de execução da instituição.'],
+  ['Alavancagem maior significa assumir mais risco?','Ela permite controlar maior exposição com menor margem; o risco depende também de tamanho, preço, saída e concentração.'],
+  ['O que acontece durante notícias?','A volatilidade e a diferença entre cotações podem aumentar; o comportamento futuro não é previsível por esta referência.'],
+  ['Por que pares correlacionados ampliam exposição?','Movimentos relacionados podem concentrar o impacto de um mesmo fator econômico em mais de uma posição.'],
+  ['O que é mercado descentralizado?','Não há uma única bolsa central para todas as cotações; diversos participantes formam preços em redes.'],
+  ['Qual a diferença entre margem e risco?','Margem é garantia exigida; risco é a perda potencial e requer avaliação própria.'],
+  ['O que é moeda-refúgio?','É um termo usado para moedas percebidas como mais procuradas em certos cenários, sem assegurar comportamento futuro.']
+];
+// ============ CENTRAL DE CONFIGURAÇÕES (N1) ============
+// Mantém os controles legados no mesmo DOM: apenas os transporta enquanto a central está aberta.
+const SETTINGS_CATEGORIES=[
+  {id:'about',group:'GERAL',label:'Sobre',terms:['sobre','versão','build','offline','armazenamento','documentação','changelog']},
+  {id:'appearance',group:'PERSONALIZAÇÃO',label:'Aparência',terms:['tema','aparência','ícone','paleta','contraste']},
+  {id:'interface',group:'PERSONALIZAÇÃO',label:'Interface',terms:['interface','fonte','tipografia','sidebar','barra lateral','ajuda','instruções']},
+  {id:'editor',group:'PERSONALIZAÇÃO',label:'Editor',terms:['editor']},
+  {id:'educational',group:'CONHECIMENTO',label:'Educacional',terms:['educacional','forex','pip','spread','glossário','perguntas frequentes']},
+  {id:'statute',group:'GOVERNANÇA',label:'Estatuto Operacional',terms:['estatuto','diretrizes','artigos','pdf','governança']},
+  {id:'parameters',group:'GOVERNANÇA',label:'Parâmetros e Calibração',terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
+  {id:'backup',group:'DADOS',label:'Backup e Recuperação',terms:['backup','exportar','importar','recuperação','reset','limpar']}
+];
+
+const settingsState={open:false,active:'about',query:'',opener:null,legacyNodes:[],railParent:null,railNext:null,suspended:false,subdialogLauncher:null,observer:null,highlightTimer:null};
+window.__settingsModalDebug={opens:0,observerInstances:0,focusTrapActive:false};
+
+function settingsEl(id){ return document.getElementById(id); }
+function settingsIsOpen(){ return settingsState.open; }
+function settingsEsc(v){ return esc(String(v||'')); }
+function settingsCategory(id){ return SETTINGS_CATEGORIES.find(x=>x.id===id)||SETTINGS_CATEGORIES[0]; }
+function settingsFocusables(root){ return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&!el.closest('[inert]')); }
+
+function buildSettingsMenu(){
+  const menu=settingsEl('settingsMenu'), select=settingsEl('settingsMobileCategory');
+  if(!menu||menu.dataset.ready) return;
+  let lastGroup='';
+  SETTINGS_CATEGORIES.forEach(item=>{
+    if(item.group!==lastGroup){ const title=document.createElement('div'); title.className='settings-menu-group'; title.textContent=item.group; menu.append(title); lastGroup=item.group; }
+    const button=document.createElement('button'); button.type='button'; button.className='settings-menu-item'; button.dataset.settingsCategory=item.id; button.setAttribute('aria-current','false'); button.textContent=item.label;
+    button.addEventListener('click',()=>activateSettingsCategory(item.id,{focus:true})); menu.append(button);
+    const option=document.createElement('option'); option.value=item.id; option.textContent=item.label; select.append(option);
+  });
+  select.addEventListener('change',()=>activateSettingsCategory(select.value,{focus:true}));
+  menu.dataset.ready='true';
+}
+
+function createSettingsPanel(id,html){
+  const panel=document.createElement('section'); panel.className='settings-panel'; panel.dataset.settingsPanel=id; panel.hidden=true; panel.innerHTML=html; settingsEl('settingsContent').append(panel); return panel;
+}
+
+function aboutPanel(){
+  const build=typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:'não informado';
+  return `<h3>Sobre</h3><p class="settings-lead">O JP Wealth é uma ferramenta de gestão, registro e controle de risco. O sistema não fornece sinais, não prevê resultados e não transforma expectativas estatísticas em garantias.</p><dl class="settings-facts"><dt>Aplicativo</dt><dd>JP Wealth Risk Terminal</dd><dt>Versão</dt><dd>9.1</dd><dt>Build</dt><dd><code>${settingsEsc(build)}</code></dd><dt>Armazenamento</dt><dd>Local neste navegador.</dd><dt>Funcionamento</dt><dd>Disponível offline após a instalação completa da aplicação.</dd></dl><div class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto Operacional (PDF)</a><a href="CHANGELOG.md" target="_blank" rel="noopener">Changelog</a><a href="README.md" target="_blank" rel="noopener">Documentação do projeto</a></div><p class="note">Dados técnicos não disponíveis no código vigente não são inferidos nesta tela.</p>`;
+}
+
+function educationPanel(){
+  const groups=[['comece','Começar por aqui'],['fundamentos','Fundamentos do Forex'],['estrutura','Estrutura do mercado'],['pares','Pares e cotações'],['execucao','Execução e custos'],['risco','Risco e alavancagem'],['historia','História do mercado cambial']];
+  return `<h3>Educacional</h3><p class="settings-lead">Referência local, curta e curada. Não substitui o Estatuto Operacional nem os Parâmetros e Calibração.</p>${groups.map(([key,label])=>`<section class="education-section"><h4>${label}</h4>${EDUCATIONAL_CONTENT.filter(x=>x.category===key).map(educationArticle).join('')}</section>`).join('')}<section class="education-section"><h4>Glossário</h4><div class="education-glossary">${EDUCATIONAL_GLOSSARY.map(term=>`<button type="button" data-education-term="${settingsEsc(term)}">${settingsEsc(term)}</button>`).join('')}</div></section><section class="education-section"><h4>Perguntas frequentes</h4>${EDUCATIONAL_FAQ.map(([q,a],i)=>`<details id="education-faq-${i}"><summary>${settingsEsc(q)}</summary><p>${settingsEsc(a)}</p></details>`).join('')}</section>`;
+}
+function educationArticle(item){ return `<article class="education-article" id="education-${item.id}" data-education-id="${item.id}"><h5>${settingsEsc(item.title)}</h5><p><b>Definição.</b> ${settingsEsc(item.definition)}</p><p><b>Exemplo simples.</b> ${settingsEsc(item.example)}</p><p><b>Risco ou limitação.</b> ${settingsEsc(item.risk)}</p><p><b>Relação com o JP Wealth.</b> ${settingsEsc(item.jpWealth)}</p></article>`; }
+
+function buildSettingsContent(){
+  const content=settingsEl('settingsContent'); if(!content||content.dataset.ready) return;
+  createSettingsPanel('about',aboutPanel());
+  createSettingsPanel('appearance','<h3>Aparência</h3><p class="settings-lead">Estética e identidade visual. O tema atual continua usando a persistência já existente em <code>S.theme</code>.</p><div data-settings-slot="appearance"></div>');
+  createSettingsPanel('interface','<h3>Interface</h3><p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
+  createSettingsPanel('editor','<h3>Editor</h3><p class="settings-empty">Nenhuma configuração de editor disponível nesta versão.</p>');
+  createSettingsPanel('educational',educationPanel());
+  createSettingsPanel('statute','<h3>Estatuto Operacional</h3><p class="settings-lead">Conteúdo predominantemente de leitura. O documento normativo não é editável nesta central.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Abrir documento integral (PDF)</a></p><div data-settings-slot="statute"></div>');
+  createSettingsPanel('parameters','<h3>Parâmetros e Calibração</h3><p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
+  createSettingsPanel('backup','<h3>Backup e Recuperação</h3><p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
+  content.addEventListener('click',settingsContentClick,true);
+  content.dataset.ready='true';
+}
+
+function settingsContentClick(event){
+  const review=event.target.closest('#settingsReviewPeriodBtn');
+  if(review){ settingsMarkSubdialogLauncher(review); openOnboardingModal('edit'); return; }
+  const launch=event.target.closest('#chooseAppIconBtn, #importFullBackupBtn, #wipeAllBtn');
+  if(launch) settingsMarkSubdialogLauncher(launch);
+  const term=event.target.closest('[data-education-term]');
+  if(term){ const item=EDUCATIONAL_CONTENT.find(x=>x.title.toLowerCase()===term.dataset.educationTerm.toLowerCase()||x.keywords.some(k=>k.toLowerCase()===term.dataset.educationTerm.toLowerCase())); if(item) settingsRevealElement(`education-${item.id}`); }
+}
+
+function moveLegacySettingsNodes(){
+  const host=settingsEl('config'); if(!host) return;
+  if(!settingsState.legacyNodes.length) settingsState.legacyNodes=[...host.children].filter(node=>node.matches('[data-settings-category]'));
+  settingsState.legacyNodes.forEach(node=>{
+    const category=node.dataset.settingsCategory, slot=settingsEl('settingsContent').querySelector(`[data-settings-slot="${category}"]`);
+    if(slot) slot.append(node);
+  });
+  const rail=settingsEl('railToggle');
+  if(rail&&rail.parentElement!==settingsEl('settingsRailSlot')){ settingsState.railParent=rail.parentElement; settingsState.railNext=rail.nextSibling; settingsEl('settingsRailSlot').append(rail); }
+}
+function restoreLegacySettingsNodes(){
+  const host=settingsEl('config'); if(!host) return;
+  settingsState.legacyNodes.forEach(node=>host.append(node));
+  const rail=settingsEl('railToggle');
+  if(rail&&settingsState.railParent){ settingsState.railParent.insertBefore(rail,settingsState.railNext); }
+}
+
+function activateSettingsCategory(id,options={}){
+  const category=settingsCategory(id); settingsState.active=category.id;
+  document.querySelectorAll('[data-settings-panel]').forEach(panel=>panel.hidden=panel.dataset.settingsPanel!==category.id);
+  document.querySelectorAll('[data-settings-category]').forEach(button=>{ const on=button.dataset.settingsCategory===category.id; button.classList.toggle('active',on); button.setAttribute('aria-current',String(on)); });
+  const select=settingsEl('settingsMobileCategory'); if(select) select.value=category.id;
+  if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
+}
+
+function settingsSearchEntries(){
+  const core=SETTINGS_CATEGORIES.flatMap(category=>[...category.terms,category.label].map(term=>({title:term,path:category.label,category:category.id})));
+  const controls=[['Tema visual','Aparência','appearance','#themeSeg'],['Ícone do app','Aparência','appearance','#appIconConfig'],['Escala da fonte','Interface → Tipografia','interface','#fsSeg'],['Sidebar','Interface → Organização','interface','#settingsRailSlot'],['Ajuda contextual','Interface → Instruções','interface','#explSeg'],['MDD máximo','Parâmetros e Calibração → Perfis de risco','parameters','#pMDD'],['Ordem Gênese','Parâmetros e Calibração','parameters','#pGenLev'],['Período operacional','Parâmetros e Calibração → Período Operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','Backup e Recuperação','backup','#exportFullBackupBtn'],['Importar backup','Backup e Recuperação','backup','#importFullBackupBtn']].map(([title,path,category,selector])=>({title,path,category,selector}));
+  const education=EDUCATIONAL_CONTENT.flatMap(item=>[item.title,...item.keywords].map(term=>({title:term,path:`Educacional → ${item.title}`,category:'educational',selector:`#education-${item.id}`})));
+  const statute=[{title:'Estatuto Operacional',path:'Estatuto Operacional',category:'statute'}];
+  return [...core,...controls,...education,...statute];
+}
+function renderSettingsSearch(){
+  const root=settingsEl('settingsSearchResults'), query=settingsState.query.trim().toLocaleLowerCase('pt-BR'); if(!root) return;
+  if(!query){ root.replaceChildren(); return; }
+  const seen=new Set(), results=settingsSearchEntries().filter(item=>`${item.title} ${item.path}`.toLocaleLowerCase('pt-BR').includes(query)).filter(item=>{ const key=`${item.title}|${item.path}`; if(seen.has(key)) return false; seen.add(key); return true; }).sort((a,b)=>(b.selector?1:0)-(a.selector?1:0)).slice(0,18);
+  root.innerHTML=results.length?results.map((item,i)=>`<button type="button" data-settings-result="${i}"><b>${settingsEsc(item.title)}</b><span>${settingsEsc(item.path)}</span></button>`).join(''):'<p class="settings-no-results">Nenhuma configuração ou ajuda encontrada.</p>';
+  root.querySelectorAll('[data-settings-result]').forEach((button,i)=>button.addEventListener('click',()=>{ const item=results[i]; activateSettingsCategory(item.category,{focus:false}); settingsRevealElement(item.selector); }));
+}
+function settingsRevealElement(selector){
+  if(!selector) return;
+  requestAnimationFrame(()=>{ const target=document.querySelector(selector); if(!target) return; target.scrollIntoView({block:'center',behavior:'smooth'}); target.classList.add('settings-search-hit'); clearTimeout(settingsState.highlightTimer); settingsState.highlightTimer=setTimeout(()=>target.classList.remove('settings-search-hit'),2200); if(target.matches('details')) target.open=true; });
+}
+
+function settingsSetAppInert(on){
+  const targets=[document.querySelector('.topbar'),document.querySelector('#nav'),document.querySelector('#main'),document.querySelector('.foot-note')].filter(Boolean);
+  targets.forEach(el=>{ if(on){ el.inert=true; el.setAttribute('aria-hidden','true'); }else{ el.inert=false; el.removeAttribute('aria-hidden'); } });
+}
+function openSettingsModal(category='about', opener){
+  buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;
+  moveLegacySettingsNodes(); settingsEl('settingsOverlay').classList.add('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','false'); settingsSetAppInert(true); activateSettingsCategory(category,{focus:false});
+  window.__settingsModalDebug.opens++;
+  requestAnimationFrame(()=>settingsEl('settingsSearch').focus());
+}
+function closeSettingsModal(){
+  if(!settingsState.open||settingsState.suspended) return;
+  settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
+  const opener=settingsState.opener; settingsState.opener=null; if(opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
+}
+function settingsMarkSubdialogLauncher(element){ settingsState.subdialogLauncher=element; }
+function suspendSettingsForSubdialog(){
+  if(!settingsState.open||settingsState.suspended) return; settingsState.suspended=true; settingsEl('settingsModal').inert=true; settingsEl('settingsModal').setAttribute('aria-hidden','true'); window.__settingsModalDebug.focusTrapActive=false;
+}
+function restoreSettingsAfterSubdialog(){
+  if(!settingsState.open||!settingsState.suspended) return; settingsState.suspended=false; settingsEl('settingsModal').inert=false; settingsEl('settingsModal').removeAttribute('aria-hidden'); const target=settingsState.subdialogLauncher; settingsState.subdialogLauncher=null; if(target&&document.contains(target)) requestAnimationFrame(()=>target.focus());
+}
+function settingsTrapFocus(event){
+  if(!settingsState.open||settingsState.suspended||settingsEl('modalOverlay').classList.contains('show')||event.key!=='Tab') return; const list=settingsFocusables(settingsEl('settingsModal')); if(!list.length) return; window.__settingsModalDebug.focusTrapActive=true; const first=list[0],last=list[list.length-1]; if(event.shiftKey&&document.activeElement===first){ event.preventDefault(); last.focus(); } else if(!event.shiftKey&&document.activeElement===last){ event.preventDefault(); first.focus(); }
+}
+function initSettingsSubdialogObserver(){
+  const overlay=settingsEl('modalOverlay'); if(!overlay||settingsState.observer) return;
+  settingsState.observer=new MutationObserver(()=>{ if(!settingsState.open) return; if(overlay.classList.contains('show')) suspendSettingsForSubdialog(); else restoreSettingsAfterSubdialog(); });
+  settingsState.observer.observe(overlay,{attributes:true,attributeFilter:['class']}); window.__settingsModalDebug.observerInstances++;
+}
+
+function initSettingsModal(){
+  const gear=settingsEl('headerConfigBtn'); if(!gear) return;
+  gear.addEventListener('click',()=>openSettingsModal('about',gear));
+  settingsEl('settingsCloseBtn').addEventListener('click',closeSettingsModal);
+  settingsEl('settingsSearch').addEventListener('input',event=>{ settingsState.query=event.target.value; renderSettingsSearch(); });
+  document.addEventListener('keydown',event=>{ if(event.key==='Escape'&&settingsState.open&&!settingsState.suspended&&!settingsEl('modalOverlay').classList.contains('show')){ event.preventDefault(); closeSettingsModal(); return; } settingsTrapFocus(event); },true);
+  initSettingsSubdialogObserver();
+}
+initSettingsModal();
 </script>
 </body>
 </html>

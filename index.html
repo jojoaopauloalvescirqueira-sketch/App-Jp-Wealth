@@ -37,7 +37,7 @@
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
-    <button type="button" class="header-action" id="headerConfigBtn" data-screen="config" title="Configurações" aria-label="Abrir configurações">
+    <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
         <path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 0 1 0-3h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3h-.2a1.8 1.8 0 0 0-.9 3Z"></path>
@@ -457,8 +457,8 @@
   </section>
 
   <!-- ================= 08 CONFIGURAÇÕES ================= -->
-  <section class="screen" id="config">
-    <div class="card">
+  <section class="screen settings-legacy-host" id="config" aria-hidden="true">
+    <div class="card" data-settings-category="appearance" data-settings-search="tema aparência ícone paleta contraste acabamento">
       <h2>Aparência <span class="art">tema do painel</span></h2>
       <div class="field" style="max-width:320px">
         <label>Tema</label>
@@ -468,7 +468,10 @@
         </div>
         <span class="note">A escolha fica salva neste navegador.</span>
       </div>
-      <div class="field" style="max-width:420px; margin-top:14px">
+      <div id="appIconConfig" class="app-icon-config" style="margin-top:18px"></div>
+    </div>
+    <div class="card" data-settings-category="interface" data-settings-search="interface fonte tamanho texto tipografia instruções ajuda contextual">
+      <div class="field" style="max-width:420px">
         <label>Tamanho do Texto</label>
         <div class="seg" id="fsSeg" style="width:fit-content">
           <button type="button" data-fs-val="0">Padrão</button>
@@ -485,9 +488,8 @@
         </div>
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
-      <div id="appIconConfig" class="app-icon-config" style="margin-top:18px"></div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
       <div class="params-grid">
         <div class="field"><label>Saldo Inicial de Referência <span class="art">Art. 3.4</span></label><input type="number" id="pSaldoIni" value="10000"><span class="note">Base de cálculo de todo o risco do ciclo.</span></div>
@@ -504,15 +506,15 @@
         <div class="field"><label>Referência Anual (%)</label><input type="number" step="0.01" id="pRefA" value="38"><span class="note">Referência, não promessa.</span></div>
       </div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="period" data-settings-search="período operador supervisora instituição conta perfil revisão">
       <h2>Dados do Período <span class="art">preenchidos no questionário de início</span></h2>
       <div id="configOnboarding"></div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="parameters" data-settings-search="MEI calibração histórico modelo estatístico">
       <h2>Modelo Estatístico Institucional — MEI-JP <span class="art">calibração da curva patrimonial</span></h2>
       <div id="meiConfig"></div>
     </div>
-    <details class="mc-disclosure">
+    <details class="mc-disclosure" data-settings-category="statute" data-settings-search="estatuto diretrizes regras artigos PDF governança">
       <summary><span class="t">Estatuto · Diretrizes &amp; Regras</span><span class="art">o modelo que este painel executa · resumo normativo</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.7">
         <p style="margin-bottom:10px"><b style="color:var(--ink)">Modelo:</b> Arquitetura Quadrifásica de Risco Vertical (Estatuto JP Wealth). Toda a exposição vive em uma <b style="color:var(--ink)">Operação Única Exclusiva</b> (mesmo ativo, mesma direção — Art. 3.5/3.6), iniciada pela Ordem Gênese (risco ≤ 1% do saldo inicial — Art. 8.6) e gerida por redução progressiva de exposição.</p>
@@ -522,7 +524,7 @@
         <p><b style="color:var(--ink)">Hierarquia permanente (Art. 11.1):</b> Preservação do capital → Sobrevivência da conta → Protocolos de risco → Qualidade de execução → Consistência → Rentabilidade. <i>Lucro é consequência do processo; sobrevivência é requisito.</i></p>
       </div>
     </details>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="backup" data-settings-search="backup exportar importar recuperar compatibilidade base">
       <h2>Backup Completo <span class="art">estado local do painel</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Exporta ou restaura o estado completo salvo neste navegador. A importação valida o JSON, pede confirmação e aplica a migração de compatibilidade antes de sobrescrever os dados atuais.</p>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
@@ -531,11 +533,11 @@
         <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
       </div>
     </div>
-    <div class="card" style="margin-top:16px">
+    <div class="card" data-settings-category="parameters" data-settings-search="quarentena encerramento compulsório MDD drawdown governança">
       <h2>Quarentena Operacional <span class="art">Art. 3.10 · reversível</span></h2>
       <div id="configQuarantine"></div>
     </div>
-    <div class="card" style="margin-top:16px; border-color:var(--f4)">
+    <div class="card" data-settings-category="backup" data-settings-search="limpar apagar reset zona risco recuperação" style="margin-top:16px; border-color:var(--f4)">
       <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar todos os dados</span></h2>
       <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove tudo: ordens, fases, fechamentos, log de auditoria e configurações. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)">🗑 Limpar todos os dados</button>
@@ -545,6 +547,12 @@
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox"></div>
+</div>
+<div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
+  <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <header class="settings-modal-head"><div><h2 id="settingsTitle">Configurações</h2><p>Preferências, governança, dados e material de referência.</p></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações">×</button></header>
+    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"></main></div>
+  </section>
 </div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
 
@@ -586,5 +594,7 @@
 <script src="src/js/40-app/06-app-icons.js"></script>
 <script src="src/js/40-app/07-finalize-session.js"></script>
 <script src="src/js/40-app/06-boot.js"></script>
+<script src="src/js/40-app/08-educational-content.js"></script>
+<script src="src/js/40-app/09-settings-modal.js"></script>
 </body>
 </html>

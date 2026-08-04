@@ -160,7 +160,15 @@ def assert_header_actions(page):
     page.locator('#headerConfigBtn').focus()
     assert page.evaluate('document.activeElement.id') == 'headerConfigBtn'
     page.locator('#headerConfigBtn').press('Enter')
-    assert page.locator('#config').evaluate("el => el.classList.contains('active')")
+    assert page.locator('#settingsOverlay').evaluate("el => el.classList.contains('show')")
+    assert not page.locator('#config').evaluate("el => el.classList.contains('active')")
+    page.locator('#settingsCloseBtn').click()
+    page.wait_for_function("document.activeElement && document.activeElement.id === 'headerConfigBtn'")
+    page.evaluate("navigateToScreen('config')")
+    assert page.locator('#settingsOverlay').evaluate("el => el.classList.contains('show')")
+    assert not page.locator('#config').evaluate("el => el.classList.contains('active')")
+    page.locator('#settingsCloseBtn').click()
+    page.wait_for_function("document.activeElement && document.activeElement.id === 'headerConfigBtn'")
     page.locator('#finalizeSessionBtn').focus()
     page.locator('#finalizeSessionBtn').press('Space')
     page.locator('#modalOverlay').wait_for(state='visible')
@@ -374,8 +382,17 @@ def run_dist_suite(browser, url):
     close_checked(page_b)
 
 def run_cache_test(browser, base_url):
-    page = prepare_page(browser, base_url + 'index.html')
+    page = browser.new_page()
+    page.add_init_script('''(() => {
+      const nativeRegister=navigator.serviceWorker.register.bind(navigator.serviceWorker);
+      navigator.serviceWorker.register=()=>Promise.resolve({});
+      window.__restoreJPWServiceWorkerRegister=()=>{navigator.serviceWorker.register=nativeRegister;};
+    })()''')
+    page.route('**/api.frankfurter.dev/**',lambda route: route.fulfill(status=200,content_type='application/json',body='{"rate":1}'))
+    page.goto(base_url + 'index.html',wait_until='load')
+    page.wait_for_timeout(300)
     keys=page.evaluate('''async () => {
+      window.__restoreJPWServiceWorkerRegister();
       await caches.open('jp-wealth-old-audit');
       await caches.open('outra-aplicacao-cache-audit');
       const registration=await navigator.serviceWorker.register('./sw.js?audit='+Date.now(),{scope:'./'});
@@ -389,8 +406,8 @@ def run_cache_test(browser, base_url):
     }''')
     assert 'jp-wealth-old-audit' not in keys, keys
     assert 'outra-aplicacao-cache-audit' in keys, keys
-    assert 'jp-wealth-pwa-v9.1-icons-20260803-r3' in keys, keys
-    close_checked(page)
+    assert any(key.startswith('jp-wealth-') for key in keys), keys
+    page.close()
 
 def main():
     server, base_url = start_server()

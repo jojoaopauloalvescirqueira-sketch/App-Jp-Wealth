@@ -1,5 +1,15 @@
 # Changelog
 
+## [9.1-settings-modal.1] — 2026-08-04
+
+### Central de Configurações
+- Transformada a antiga tela de Configurações em uma central modal dedicada, aberta pela engrenagem do cabeçalho sem trocar a tela operacional ao fundo.
+- Reorganizados os controles existentes em Sobre, Aparência, Interface, Editor, Educacional, Estatuto Operacional, Parâmetros e Calibração e Backup e Recuperação, preservando os mesmos nós, listeners e persistência.
+- Adicionada uma base educacional local, curta e pesquisável sobre Forex, glossário e perguntas frequentes; ela não contém sinais, previsões ou recomendações operacionais.
+- Dados do Período agora são acessados por resumo seguro em Parâmetros e Calibração, com retorno ao onboarding existente em modo de edição.
+- A central não grava em `S`, não altera o checkpoint de Finalizar Sessão e mantém a coordenação de foco ao abrir subdiálogos legados.
+- Incluídos os módulos da central no precache existente do PWA, sem alterar sua estratégia de atualização.
+
 ## [9.1-header-actions.1] — 2026-08-04
 
 ### Navegação do cabeçalho
