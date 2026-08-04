@@ -1088,6 +1088,8 @@
   .settings-overlay{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
   .settings-overlay.show{display:flex}
   .settings-modal{width:min(1160px,95vw); height:min(88vh,920px); min-height:520px; display:grid; grid-template-rows:auto minmax(0,1fr); overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 70px rgba(0,0,0,.48)}
+  .settings-modal > .settings-modal-head{grid-area:auto; position:static; top:auto; height:auto}
+  .settings-modal-body > .settings-content{grid-area:auto}
   .settings-modal-head{display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding:18px 22px; background:var(--bar); color:var(--bar-ink); border-bottom:1px solid var(--line)}
   .settings-modal-head h2{margin:0; color:var(--bar-ink); font-size:var(--fs-xl)} .settings-modal-head p{margin:5px 0 0; font-size:var(--fs-sm); opacity:.82}
   .settings-close{width:38px; height:38px; flex:0 0 38px; border:1px solid color-mix(in srgb,var(--bar-ink) 40%,transparent); border-radius:7px; background:transparent; color:var(--bar-ink); font-size:26px; line-height:1; cursor:pointer}

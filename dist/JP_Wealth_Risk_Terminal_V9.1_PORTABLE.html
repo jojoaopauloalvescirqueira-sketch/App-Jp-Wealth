@@ -1098,6 +1098,8 @@
   .settings-overlay{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
   .settings-overlay.show{display:flex}
   .settings-modal{width:min(1160px,95vw); height:min(88vh,920px); min-height:520px; display:grid; grid-template-rows:auto minmax(0,1fr); overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 70px rgba(0,0,0,.48)}
+  .settings-modal > .settings-modal-head{grid-area:auto; position:static; top:auto; height:auto}
+  .settings-modal-body > .settings-content{grid-area:auto}
   .settings-modal-head{display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding:18px 22px; background:var(--bar); color:var(--bar-ink); border-bottom:1px solid var(--line)}
   .settings-modal-head h2{margin:0; color:var(--bar-ink); font-size:var(--fs-xl)} .settings-modal-head p{margin:5px 0 0; font-size:var(--fs-sm); opacity:.82}
   .settings-close{width:38px; height:38px; flex:0 0 38px; border:1px solid color-mix(in srgb,var(--bar-ink) 40%,transparent); border-radius:7px; background:transparent; color:var(--bar-ink); font-size:26px; line-height:1; cursor:pointer}
@@ -1115,7 +1117,7 @@
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'a75fa22a90b90a2f';
+const JP_WEALTH_BUILD_ID = '9459e9e8af025fd7';
 </script>
 <link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
 <link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
@@ -8498,7 +8500,7 @@ function createSettingsPanel(id,html){
 
 function aboutPanel(){
   const build=typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:'não informado';
-  return `<h3>Sobre</h3><p class="settings-lead">O JP Wealth é uma ferramenta de gestão, registro e controle de risco. O sistema não fornece sinais, não prevê resultados e não transforma expectativas estatísticas em garantias.</p><dl class="settings-facts"><dt>Aplicativo</dt><dd>JP Wealth Risk Terminal</dd><dt>Versão</dt><dd>9.1</dd><dt>Build</dt><dd><code>${settingsEsc(build)}</code></dd><dt>Armazenamento</dt><dd>Local neste navegador.</dd><dt>Funcionamento</dt><dd>Disponível offline após a instalação completa da aplicação.</dd></dl><div class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto Operacional (PDF)</a><a href="CHANGELOG.md" target="_blank" rel="noopener">Changelog</a><a href="README.md" target="_blank" rel="noopener">Documentação do projeto</a></div><p class="note">Dados técnicos não disponíveis no código vigente não são inferidos nesta tela.</p>`;
+  return `<h3>Sobre</h3><p class="settings-lead">O JP Wealth é uma ferramenta de gestão, registro e controle de risco. O sistema não fornece sinais, não prevê resultados e não transforma expectativas estatísticas em garantias.</p><dl class="settings-facts"><dt>Aplicativo</dt><dd>JP Wealth Risk Terminal</dd><dt>Versão</dt><dd>1 beta</dd><dt>Build</dt><dd><code>${settingsEsc(build)}</code></dd><dt>Armazenamento</dt><dd>Local neste navegador.</dd><dt>Funcionamento</dt><dd>Disponível offline após a instalação completa da aplicação.</dd></dl><div class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto Operacional (PDF)</a><a href="CHANGELOG.md" target="_blank" rel="noopener">Changelog</a><a href="README.md" target="_blank" rel="noopener">Documentação do projeto</a></div><p class="note">Dados técnicos não disponíveis no código vigente não são inferidos nesta tela.</p>`;
 }
 
 function educationPanel(){
