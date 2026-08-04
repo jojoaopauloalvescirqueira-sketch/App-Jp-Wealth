@@ -1,0 +1,13 @@
+{
+  "name": "jp-wealth-risk-terminal",
+  "version": "9.1.0-structured.1",
+  "private": true,
+  "description": "JP Wealth Risk Terminal — structured repository preserving the V9.1 financial logic.",
+  "scripts": {
+    "serve": "python3 tools/serve.py",
+    "validate": "python3 tools/validate_project.py",
+    "smoke": "python3 tools/smoke_test.py",
+    "build": "python3 tools/rebuild_monolith.py",
+    "test": "python3 tools/validate_project.py && python3 tools/smoke_test.py"
+  }
+}

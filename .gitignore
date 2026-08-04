@@ -1,0 +1,57 @@
+# Git metadata and local machine files
+.git/
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Operational backups, exports and private browser data
+data/backups/*
+!data/backups/.gitkeep
+data/exports/
+data/private/
+**/*backup*.json
+**/*export*.json
+**/jpwealth_v9_state*.json
+**/*credential*
+**/*password*
+**/*secret*
+**/*token*
+.env
+.env.*
+!.env.example
+
+# Temporary files, logs and local reports
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+tmp/
+temp/
+scratch/
+reports/tmp/
+tools/.artifacts/
+test-results/
+playwright-report/
+blob-report/
+
+# Python caches and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Dependency and coverage output
+node_modules/
+coverage/
+npm-debug.log*
+
+# Archive bundles are external handoff artifacts, not project history
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z

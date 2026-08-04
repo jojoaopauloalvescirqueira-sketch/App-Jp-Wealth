@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" id="appThemeColor" content="#a60812">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="JP Wealth">
+<title>JP Wealth · Risk Terminal V9.1</title>
+<link rel="stylesheet" href="src/styles/app.css">
+<link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
+<link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
+<link rel="apple-touch-icon" id="appAppleTouchIcon" sizes="180x180" href="icons/flat-knight/apple-touch-icon.png">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="wordmark" aria-label="JP Wealth">
+      <span class="wm-jp">JP</span><span class="wm-orbit"><i></i></span><span class="wm-wealth">WEALTH</span>
+      <span class="ver">V9.1</span>
+    </span>
+    <span class="tag">Risk Terminal</span>
+  </div>
+  <!-- Leitura de estado: todos os valores vêm do estado já calculado (S.params,
+       getActiveRiskProfile, compute()). Preenchidos por renderHeaderReadout(). -->
+  <div class="hdr-readout opt2"><span class="k">Perfil</span><span class="v" id="hdrProfile">—</span></div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-readout opt"><span class="k">Período</span><span class="v" id="hdrPeriod">—</span></div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-readout opt"><span class="k">Equity</span><span class="v" id="hdrEquity">—</span></div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-readout opt2"><span class="k">DD</span><span class="v" id="hdrDD">—</span></div>
+  <div class="header-status">
+    <span class="hdr-readout"><span class="v" id="hdrClock">--:--:--</span></span>
+    <span class="saved-tag" id="savedTag">salvo</span>
+    <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
+  </div>
+</header>
+
+<nav id="nav">
+  <button class="session-finish" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão"><span class="session-finish-ico" aria-hidden="true">⎋</span><span class="lbl">Finalizar sessão</span></button>
+  <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
+  <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
+  <button class="tab" data-screen="params" title="Parâmetros"><span class="n">03</span><span class="lbl">Parâmetros</span></button>
+  <button class="tab" data-screen="motor" title="Motor de Lote"><span class="n">04</span><span class="lbl">Motor de Lote</span></button>
+  <button class="tab" data-screen="contas" title="Contas"><span class="n">05</span><span class="lbl">Contas</span></button>
+  <button class="tab" data-screen="check" title="Checklist"><span class="n">06</span><span class="lbl">Checklist</span></button>
+  <button class="tab" data-screen="contab" title="Contabilidade"><span class="n">07</span><span class="lbl">Contabilidade</span></button>
+  <button class="tab" data-screen="config" title="Configurações"><span class="n">⚙</span><span class="lbl">Configurações</span></button>
+  <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
+</nav>
+
+<main>
+  <div class="onb-global-banner" id="onboardingIncompleteBanner" role="status" aria-live="polite">
+    <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
+    <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
+  </div>
+  <!-- ================= 01 EXECUTION BOARD ================= -->
+  <section class="screen" id="exec">
+    <div class="onb-gov-note" id="execOnboardingGovNote">
+      <div><div class="t">Governança incompleta</div><div class="s" id="execOnboardingGovText">—</div></div>
+      <button class="reset-btn" id="execOnboardingGovBtn" style="color:var(--f2); border-color:var(--f2)">Revisar formulário</button>
+    </div>
+    <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
+    <div class="card mc-exec-clearance" id="execClearanceCard" style="margin-bottom:16px">
+      <div class="mc-ec-title" id="ecTitle">—</div>
+      <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+      <div class="mc-ec-facts">
+        <span>Fase da Conta<b id="ecFase">—</b></span>
+        <span>Grade Ativa<b id="ecGrade">—</b></span>
+        <span>Risco Aberto / Teto<b id="ecRisco">—</b></span>
+        <span>Alav. Carregada / Teto<b id="ecAlav">—</b></span>
+      </div>
+    </div>
+    <div class="card" id="objectiveCard" style="margin-bottom:16px"></div>
+    <div class="eb-top">
+      <!-- THERMOMETER -->
+      <div class="card thermo-card">
+        <h2 style="align-self:flex-start">Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
+        <div style="display:flex; gap:14px; align-items:flex-start">
+          <div style="display:flex; flex-direction:column; align-items:center">
+            <div style="display:flex; gap:6px; align-items:flex-start">
+              <div class="thermo" style="width:46px">
+                <div class="thermo-fill" id="thermoFill" style="height:0%"></div>
+                <div class="thermo-marker" id="thermoMarker" style="bottom:0%"></div>
+              </div>
+              <div class="thermo-ticks" id="thermoDDticks">
+                <span>15%</span><span>12%</span><span>9%</span><span>6%</span><span>3%</span><span>0%</span>
+              </div>
+            </div>
+            <div style="font-family:var(--mono); font-size:calc(10px * var(--fs-scale)); color:var(--ink-dim); margin-top:6px">DD <b id="thermoDDval" style="color:var(--ink)">—</b></div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center">
+            <div style="display:flex; gap:6px; align-items:flex-start">
+              <div class="thermo" style="width:46px; background:linear-gradient(to top, var(--f1-bg) 0%, var(--f1-bg) 25%, var(--f2-bg) 25%, var(--f2-bg) 50%, var(--f3-bg) 50%, var(--f3-bg) 75%, var(--f4-bg) 75%, var(--f4-bg) 100%)">
+                <div class="thermo-fill" id="thermoLevFill" style="height:0%"></div>
+                <div class="thermo-marker" id="thermoLevMarker" style="bottom:0%"></div>
+              </div>
+              <div class="thermo-ticks">
+                <span>4x</span><span>3x</span><span>2x</span><span>1x</span><span>0x</span>
+              </div>
+            </div>
+            <div style="font-family:var(--mono); font-size:calc(10px * var(--fs-scale)); color:var(--ink-dim); margin-top:6px">ALAV <b id="thermoLevVal" style="color:var(--ink)">—</b></div>
+          </div>
+        </div>
+        <p class="expl" style="font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint); margin-top:6px; align-self:flex-start; line-height:1.4">Alavancagem real utilizada agora (nocional aberto ÷ saldo inicial). A marca é o teto da fase vigente.</p>
+        <div class="thermo-zone-labels" id="thermoZoneLabels">
+          <div class="tz f4">F4 · ABISMO 12–15</div>
+          <div class="tz f3">F3 · SOBREVIV. 8–12</div>
+          <div class="tz f2">F2 · DESACEL. 4–8</div>
+          <div class="tz f1">F1 · ATAQUE 0–4</div>
+        </div>
+      </div>
+
+      <!-- METRICS + STATUS -->
+      <div>
+        <div class="metrics">
+          <div class="metric"><div class="k">Saldo Mestre <span class="art" style="text-transform:none">(book)</span></div><div class="v sm" id="mSaldo">—</div><div class="sub" id="mSaldoSub">contábil — atualizado pelo fechamento diário</div></div>
+          <div class="metric accent"><div class="k">Drawdown Operacional</div><div class="v" id="mDD">—</div><div class="sub" id="mDDsub">risco aberto − resultado fechado da operação</div></div>
+          <div class="metric"><div class="k">Teto Alav. Fase</div><div class="v" id="mTetoAlav">—</div><div class="sub" id="mAlavSub">carregada <span id="mAlavCar">—</span></div></div>
+          <div class="metric"><div class="k">Risco Aberto</div><div class="v sm" id="mRisco">—</div><div class="sub" id="mRiscoSub">teto fase —</div></div>
+        </div>
+        <div class="dual-phase" id="dualPhase">
+          <div class="dp-item"><span class="dp-k">FASE DA CONTA</span><span class="dp-v" id="dpConta">FASE 1</span><span class="dp-sub">pelo drawdown — sempre matemática, nunca esconde risco</span></div>
+          <div class="dp-item"><span class="dp-k">GRADE ATIVA</span><span class="dp-v" id="dpGrade">FASE 1</span><span class="dp-sub">onde você pode adicionar/editar ordens agora</span></div>
+        </div>
+        <div class="status-banner" id="mismatchBanner" style="display:none; margin-top:8px; background:var(--f2-bg); border-color:var(--f2); color:var(--f2)">
+          <span class="ico">ℹ️</span><span id="mismatchTxt"></span>
+        </div>
+        <div class="status-banner sb-good" id="statusBanner" style="margin-top:16px">
+          <span class="ico" id="statusIco">🟢</span><span id="statusTxt">FASE 1 — OPERACIONAL NORMAL</span>
+        </div>
+        <div class="status-banner sb-danger" id="quarantineBanner" style="display:none; margin-top:8px">
+          <span class="ico">⛔</span><span id="quarantineTxt"></span>
+          <button class="modal-btn confirm" id="quarantineConfirmBtn" style="margin-left:auto; padding:6px 14px; font-size:calc(11px * var(--fs-scale)); display:none">Formalizar quarentena</button>
+        </div>
+        <div class="breach-note" id="breachNote" style="display:none"></div>
+        <div class="status-banner" id="downgradeBanner" style="display:none; margin-top:8px; background:var(--indigo-deep); border-color:var(--violet); color:var(--ink)">
+          <span class="ico">📉</span><span id="downgradeTxt"></span>
+          <button class="modal-btn confirm" id="downgradeBtn" style="margin-left:auto; padding:6px 14px; font-size:calc(11px * var(--fs-scale))">Responder questionário de downgrade</button>
+        </div>
+
+        <div class="coherence">
+          <div class="card" style="padding:16px">
+            <h2>Coerência de Alavancagem</h2>
+            <div class="gauge">
+              <div class="lbl"><span class="name">Carregada vs. Teto da Fase</span><span class="val" id="gAlavVal">—</span></div>
+              <div class="track"><div class="bar" id="gAlavBar" style="width:0%; background:var(--f1)"></div></div>
+            </div>
+            <div class="gauge">
+              <div class="lbl"><span class="name">Risco Aberto vs. Teto da Fase</span><span class="val" id="gRiscoVal">—</span></div>
+              <div class="track"><div class="bar" id="gRiscoBar" style="width:0%; background:var(--f1)"></div></div>
+            </div>
+          </div>
+          <div class="card" style="padding:16px">
+            <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
+            <div class="metrics" style="grid-template-columns:1fr 1fr">
+              <div class="metric"><div class="k">VRM</div><div class="v sm" id="mVRM">0,79</div></div>
+              <div class="metric"><div class="k">Regime</div><div class="v sm" id="mRegime">NORMAL</div></div>
+            </div>
+            <div class="field" style="margin-top:12px; margin-bottom:8px">
+              <label>ATR(55) H4 / ATR(660) H4</label>
+              <div style="display:flex; gap:8px">
+                <input type="number" step="0.00001" id="iAtr55" value="0.00335">
+                <input type="number" step="0.00001" id="iAtr660" value="0.00426">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE GRIDS -->
+    <div class="card" style="margin-top:16px">
+      <h2>Grades da Operação Única <span class="art">por fase · LIFO de baixo p/ cima</span></h2>
+      <div id="phaseContainer"></div>
+    </div>
+
+    <!-- LIFO MONITOR -->
+    <div class="lifo">
+      <div class="lifo-head">Consolidado da Operação Única + Monitor LIFO</div>
+      <div class="lifo-body">
+        <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
+        <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
+        <div class="metric" style="border-color:var(--f1)"><div class="k">Lucro Técnico</div><div class="v sm" id="lLucroTec" style="color:var(--f1)">—</div><div class="sub">informativo; não amplia teto absoluto</div></div>
+        <div class="metric"><div class="k">Resultado Fechado <span class="art" style="text-transform:none">(op. atual)</span></div><div class="v sm" id="lNetOp">—</div></div>
+        <div class="metric"><div class="k">Lucro Arquivado</div><div class="v sm" id="lLucroArq">—</div></div>
+        <div class="metric"><div class="k">Perda Arquivada</div><div class="v sm" id="lPerdaArq">—</div></div>
+        <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
+        <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
+        <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
+        <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
+      </div>
+      <div style="padding:0 16px 14px">
+        <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
+          <span style="color:var(--ink-dim)">Uso do teto estatutário da fase</span><span id="lMargemPct" style="color:var(--ink)">—</span>
+        </div>
+        <div class="track" style="height:12px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; overflow:hidden">
+          <div class="bar" id="lMargemBar" style="height:100%; width:0%; background:var(--f1); transition:width .5s ease, background .3s"></div>
+        </div>
+        <div class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</div>
+      </div>
+      <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
+      <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
+      <div style="padding:0 16px 16px">
+        <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)">📦 Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 PARÂMETROS ================= -->
+  <section class="screen" id="params">
+    <div class="card">
+      <h2>Saldo e Ciclo <span class="art">leitura analítica</span></h2>
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+        <div class="metric"><div class="k">Saldo Inicial de Referência</div><div class="v sm" id="rpSaldoIni">—</div><div class="sub">base de cálculo do risco do ciclo</div></div>
+        <div class="metric"><div class="k">Saldo Atual da Conta Mestre</div><div class="v sm" id="rpSaldoAtu">—</div><div class="sub">sincronizado pela contabilidade/Configurações</div></div>
+        <div class="metric"><div class="k">Início do Ciclo</div><div class="v sm" id="rpInicio">—</div><div class="sub">ciclo anual · Art. 3.4</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Constantes & Decisões <span class="art">valores atuais · edite em Configurações</span></h2>
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+        <div class="metric"><div class="k">MDD Máximo Absoluto</div><div class="v sm" id="rpMDD">—</div><div class="sub">Art. 3.7 · guilhotina matemática</div></div>
+        <div class="metric"><div class="k">Alarme Operacional</div><div class="v sm" id="rpAlarm">—</div><div class="sub">alerta antes da guilhotina</div></div>
+        <div class="metric"><div class="k">Alav. Ordem Gênese</div><div class="v sm" id="rpGenLev">—</div><div class="sub">gênese nasce controlada</div></div>
+        <div class="metric"><div class="k">Risco Máx. Gênese</div><div class="v sm" id="rpGenRisk">—</div><div class="sub">Art. 8.6</div></div>
+        <div class="metric"><div class="k">Normalização V10</div><div class="v sm" id="rpFW">—</div><div class="sub">saldo × fator de perfil</div></div>
+        <div class="metric"><div class="k">VRM Normal</div><div class="v sm" id="rpVrmN">—</div><div class="sub">abaixo deste limite</div></div>
+        <div class="metric"><div class="k">VRM Alta Vol</div><div class="v sm" id="rpVrmHV">—</div><div class="sub">acima deste limite</div></div>
+        <div class="metric"><div class="k">Referência Mensal</div><div class="v sm" id="rpRefM">—</div><div class="sub">referência, não promessa</div></div>
+        <div class="metric"><div class="k">Referência Anual</div><div class="v sm" id="rpRefA">—</div><div class="sub">referência, não promessa</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Matriz Quadrifásica Ativa <span class="art">perfil vigente aplicado sobre a matriz Base estatutária</span></h2>
+      <table class="dtable">
+        <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 03 MOTOR DE LOTE ================= -->
+  <section class="screen" id="motor">
+    <div class="card">
+      <h2>Motor de Lote · Position Sizing <span class="art">lote = exp-alvo × saldo ÷ valor nominal</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:10px">
+        O valor nocional do contrato muda com o preço do ativo — isso é mais crítico em instrumentos de valor nominal variável; <b style="color:var(--ink)">US500</b> está suspenso e aparece apenas para referência/histórico até deliberação formal.
+        Para <b style="color:var(--ink)">USDJPY / USDCHF / USDCAD</b> o nocional de 1 lote é fixo em $100.000 (par de base USD) — o preço exibido serve para a conversão da moeda de cotação, não para o nocional.
+        Cada edição de preço grava a data. <span class="stale-fresh">● 0–3 dias</span> ·
+        <span class="stale-warn">● 4–20 dias</span> · <span class="stale-danger">● 21+ dias, não confiável</span>.
+        O <b style="color:var(--ink)">Teto/Op</b> é aplicado nas grades: nenhuma ordem aberta pode exceder o lote máximo do instrumento.
+      </p>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap">
+        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)">🔄 Atualizar câmbio agora</button>
+        <span class="fx-status" id="fxFetchStatus">Câmbio: 8 pares via Frankfurter (ECB, diário, sem chave) · US500 suspenso; XAUUSD bloqueado.</span>
+      </div>
+      <div class="field" style="max-width:280px">
+        <label>Exposição-alvo (regime normal)</label>
+        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
+      </div>
+      <table class="dtable" style="margin-top:8px">
+        <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
+        <tbody id="motorBody"></tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
+      <table class="dtable">
+        <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
+        <tbody id="profileBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 04 CONTAS ================= -->
+  <section class="screen" id="contas">
+    <div class="card">
+      <h2>Nota de Governança</h2>
+      <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+        <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
+        <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
+        <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
+        <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
+        O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
+      </p>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
+        🔒 O perfil de risco só pode ser escolhido <b style="color:var(--ink-dim)">uma vez</b>. Mudar depois exige senha — fricção deliberada contra decisão impulsiva, não criptografia: qualquer acesso ao DevTools do navegador contorna isso. O objetivo é te dar um segundo de pausa, não uma trava inquebrável.
+      </p>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
+        📌 <b style="color:var(--ink-dim)">Escopo (decisão do gestor, jul/2026):</b> este painel gerencia as <b style="color:var(--ink-dim)">operações da conta master</b>. O fator de correção por conta slave depende de cada conta e é gerido externamente (planilha da supervisão). A fórmula de replicação — Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil (Art. 10.1) — e os fatores de perfil do período (66/50/33%) aplicam-se às cópias/gestão patrimonial quando esse módulo for usado fora da operação master.
+      </p>
+      <div class="credential-warning">
+        Não armazene senha master neste sistema. Use apenas senha do investidor/somente leitura.
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2 style="display:flex; align-items:center; justify-content:space-between">
+        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
+        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
+      </h2>
+      <table class="dtable">
+        <thead><tr><th>Conta / Plataforma</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Correção</th><th>Norm. V10</th><th>Fator Perfil</th><th>Lote vs Mestre</th><th></th></tr></thead>
+        <tbody id="contasBody"></tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
+      <div class="field" style="max-width:240px">
+        <label>Lote enviado pela mestre</label>
+        <input type="number" step="0.01" id="cLoteMaster" value="0.04">
+      </div>
+      <table class="dtable" style="margin-top:8px">
+        <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
+        <tbody id="aplicBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 05 DASHBOARD ================= -->
+  <section class="screen active" id="dash">
+    <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
+    <div class="card mc-hero mc-status-clear" id="mcClearanceCard">
+      <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
+      <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
+      <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
+      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+      <div class="mc-action" id="mcClearanceAction">—</div>
+    </div>
+    <!-- N2 · Mission Metrics — status executivos compactos -->
+    <div class="mc-metric-strip" id="mcMetricStrip">
+      <div class="mc-mini-card"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
+      <div class="mc-mini-card"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
+      <div class="mc-mini-card"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
+      <div class="mc-mini-card"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
+      <div class="mc-mini-card"><div class="k">Reservas FCR·FEO</div><div class="v sm-txt" id="mcMiniReservas">—</div><span class="mc-status mc-st-muted" id="mcMiniReservasChip">Pendente</span></div>
+      <div class="mc-mini-card"><div class="k">Caixa Central</div><div class="v sm-txt" id="mcMiniCaixa">—</div><span class="mc-status mc-st-muted" id="mcMiniCaixaChip">Pendente</span></div>
+      <div class="mc-mini-card"><div class="k">Equity Protector</div><div class="v sm-txt" id="mcMiniEP">—</div><span class="mc-status mc-st-muted" id="mcMiniEPChip">Pendente</span></div>
+      <div class="mc-mini-card"><div class="k">Status · Pendências</div><div class="v sm-txt" id="dStatus">NORMAL</div><span class="mc-status mc-st-muted" id="mcMiniPendChip">—</span></div>
+    </div>
+    <!-- N4 · Painéis lado a lado, abertos por padrão (tiling). Continuam
+         recolhíveis: o operador fecha o que não quer ver, mas o estado inicial
+         é "tudo vivo ao mesmo tempo", como mesa de operação. -->
+    <details class="mc-disclosure" id="dashChartPanel" open>
+      <summary><span class="t">Acompanhamento Gráfico</span><span class="art">evolução · drawdown · expectativa vs real</span><span class="chev">▾</span></summary>
+      <div class="mc-disclosure-body"><div id="dashCharts"></div></div>
+    </details>
+    <details class="mc-disclosure" id="dashCyclePanel" open>
+      <summary><span class="t">Métricas do Ciclo</span><span class="art">retorno · DD máx · Mar Ratio · meta</span><span class="chev">▾</span></summary>
+      <div class="mc-disclosure-body">
+        <div class="metrics">
+          <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
+          <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
+          <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
+          <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
+        </div>
+      </div>
+    </details>
+    <details class="mc-disclosure" id="dashMonthlyPanel" open>
+      <summary><span class="t">Acompanhamento Mensal</span><span class="art">estilo MQL5 Signals · derivado do fechamento diário (aba 07)</span><span class="chev">▾</span></summary>
+      <div class="mc-disclosure-body"><div id="mqlMonthly" style="overflow-x:auto"></div></div>
+    </details>
+  </section>
+
+  <!-- ================= 06 CHECKLIST ================= -->
+  <section class="screen" id="check">
+    <div class="card">
+      <h2>Checklist Pré-Trade · Filtro Nocuda <span class="art">0 ausente · 1 parcial · 2 forte</span></h2>
+      <div id="checkContainer"></div>
+    </div>
+    <div class="card check-result" id="checkResultCard">
+      <div class="metrics" style="grid-template-columns:1fr 2fr">
+        <div class="metric"><div class="k">Pontuação</div><div class="v" id="chScore">0</div><div class="sub" id="chMax">de 30</div></div>
+        <div class="metric"><div class="k">Classificação</div><div class="v sm" id="chClass" style="font-size:calc(15px * var(--fs-scale))">—</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 07 CONTABILIDADE ================= -->
+  <section class="screen" id="contab">
+    <div class="card">
+      <h2>Período &amp; Metas <span class="art">perfil de risco · programação · meta diária</span></h2>
+      <div id="acctPeriodSummary"></div>
+      <button class="reset-btn" id="acctPeriodToggle" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">▸ Ver / editar Período &amp; Metas</button>
+      <div id="acctPeriodDetail" style="display:none; margin-top:16px">
+        <div id="acctProfileBtns" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px"></div>
+        <div id="acctProfileLockNote" style="margin-bottom:12px"></div>
+        <div class="params-grid">
+          <div class="field"><label>Data inicial do período <span class="art">Art. 3.4</span></label><input type="date" id="acStart"></div>
+          <div class="field"><label>Data atual <span class="art">hoje</span></label><input type="text" id="acToday" disabled></div>
+          <div class="field"><label>Data final projetada <span class="art">meta atingida</span></label><input type="text" id="acEnd" disabled></div>
+          <div class="field"><label>Saldo inicial ($)</label><input type="number" step="0.01" id="acSaldoIni"></div>
+          <div class="field"><label>Target anual <span class="art">pelo perfil</span></label><input type="text" id="acTarget" disabled></div>
+          <div class="field"><label>Saldo final desejado ($)</label><input type="text" id="acSaldoFim" disabled></div>
+          <div class="field"><label>Dias na semana <span class="art">programação</span></label><input type="number" step="0.5" id="acDiasSem"></div>
+          <div class="field"><label>Meses no ano <span class="art">programação</span></label><input type="number" step="0.5" id="acMesesAno"></div>
+          <div class="field"><label>Dias líquidos / ano</label><input type="text" id="acDiasAno" disabled></div>
+        </div>
+        <div id="acctMetas"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Simulação Patrimonial <span class="art">projeção estatística educativa pelo perfil ativo · não é promessa de retorno</span></h2>
+      <div id="acctSimWrap"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Ritmo do Ciclo <span class="art">dias à frente ou atrás do ideal (K8)</span></h2>
+      <div id="acctPace"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
+      <div class="params-grid">
+        <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
+        <div class="field"><label>Resultado do dia ($)</label><input type="number" step="0.01" id="ldResult" placeholder="0.00"><span class="note">Negativo se prejuízo. Zero é válido (dia neutro).</span></div>
+        <div class="field"><label>Saldo de fechamento ($)</label><input type="number" step="0.01" id="ldSaldo" placeholder="auto: anterior + resultado"><span class="note">Se vazio, calcula automaticamente. Atualiza o Saldo Mestre (book).</span></div>
+      </div>
+      <div class="field"><label>Nota (opcional)</label><input type="text" id="ldNota" placeholder="contexto do dia, eventos, decisões"></div>
+      <div style="display:flex; align-items:center; gap:12px">
+        <button class="unlock-phase-btn" id="ldAddBtn">Registrar fechamento do dia</button>
+        <span class="fx-status" id="ldStatus"></span>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
+      <div id="rvpChart" style="width:100%"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Projeção Diária · Ideal vs Real <span class="art">juros compostos na meta diária · Σ semanal</span></h2>
+      <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Lançamentos <span class="art">mais recentes primeiro</span></h2>
+      <table class="dtable">
+        <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>DD vs Inicial</th><th>Nota</th><th></th></tr></thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Log de Auditoria <span class="art">transições · downgrades · arquivamentos · quarentena · divergências</span></h2>
+      <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
+      <button class="reset-btn" id="exportAuditBtn" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">⬇ Exportar auditoria completa (JSON)</button>
+    </div>
+  </section>
+
+  <!-- ================= 08 CONFIGURAÇÕES ================= -->
+  <section class="screen" id="config">
+    <div class="card">
+      <h2>Aparência <span class="art">tema do painel</span></h2>
+      <div class="field" style="max-width:320px">
+        <label>Tema</label>
+        <div class="seg" id="themeSeg" style="width:fit-content">
+          <button type="button" data-theme-val="light">Claro</button>
+          <button type="button" data-theme-val="dark">Escuro</button>
+        </div>
+        <span class="note">A escolha fica salva neste navegador.</span>
+      </div>
+      <div class="field" style="max-width:420px; margin-top:14px">
+        <label>Tamanho do Texto</label>
+        <div class="seg" id="fsSeg" style="width:fit-content">
+          <button type="button" data-fs-val="0">Padrão</button>
+          <button type="button" data-fs-val="1">Grande</button>
+          <button type="button" data-fs-val="2">Maior</button>
+        </div>
+        <span class="note">Dois degraus acima do padrão (+12% e +25%). O limite é proposital: acima disso a densidade de terminal se perde e as grades passam a quebrar linha.</span>
+      </div>
+      <div class="field" style="max-width:520px; margin-top:14px">
+        <label>Instruções do Sistema</label>
+        <div class="seg" id="explSeg" style="width:fit-content">
+          <button type="button" data-expl-val="off">Sob demanda</button>
+          <button type="button" data-expl-val="on">Sempre visíveis</button>
+        </div>
+        <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
+      </div>
+      <div id="appIconConfig" class="app-icon-config" style="margin-top:18px"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
+      <div class="params-grid">
+        <div class="field"><label>Saldo Inicial de Referência <span class="art">Art. 3.4</span></label><input type="number" id="pSaldoIni" value="10000"><span class="note">Base de cálculo de todo o risco do ciclo.</span></div>
+        <div class="field"><label>Saldo Atual da Conta Mestre</label><input type="number" id="pSaldoAtu" value="10240"><span class="note">Também pode ser sincronizado pela contabilidade.</span></div>
+        <div class="field"><label>Início do Ciclo</label><input type="date" id="pInicio" value="2026-05-25"><span class="note">Ciclo anual (Art. 3.4).</span></div>
+        <div class="field decision"><label>MDD Máximo Absoluto (%) <span class="art">Art. 3.7</span></label><input type="number" step="0.01" id="pMDD" value="15"><span class="note">Ex.: 15 grava 0,15 internamente.</span></div>
+        <div class="field decision"><label>Alarme Operacional (%) <span class="art">prudência</span></label><input type="number" step="0.01" id="pAlarm" value="13"><span class="note">Ex.: 13 grava 0,13 internamente.</span></div>
+        <div class="field decision"><label>Alav. Ordem Gênese</label><input type="number" step="0.1" id="pGenLev" value="0.4"><span class="note">Gênese nasce em 0,4x.</span></div>
+        <div class="field decision"><label>Risco Máx. Gênese (%) <span class="art">Art. 8.6</span></label><input type="number" step="0.01" id="pGenRisk" value="1"><span class="note">Ex.: 1 grava 0,01 internamente.</span></div>
+        <div class="field decision"><label>Normalização V10 (%) <span class="art">Art. 10.1</span></label><input type="number" step="0.01" id="pFW" value="100" disabled><span class="note">100% = sem multiplicador fixo; saldo × fator de perfil.</span></div>
+        <div class="field"><label>VRM — limite Normal</label><input type="number" step="0.01" id="pVrmN" value="1.20"><span class="note">VRM &lt; 1,20 = normal.</span></div>
+        <div class="field"><label>VRM — limite Alta Vol</label><input type="number" step="0.01" id="pVrmHV" value="1.50"><span class="note">VRM &gt; 1,50 = alta vol.</span></div>
+        <div class="field"><label>Referência Mensal (%)</label><input type="number" step="0.01" id="pRefM" value="3.5"><span class="note">Referência, não promessa.</span></div>
+        <div class="field"><label>Referência Anual (%)</label><input type="number" step="0.01" id="pRefA" value="38"><span class="note">Referência, não promessa.</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Dados do Período <span class="art">preenchidos no questionário de início</span></h2>
+      <div id="configOnboarding"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Modelo Estatístico Institucional — MEI-JP <span class="art">calibração da curva patrimonial</span></h2>
+      <div id="meiConfig"></div>
+    </div>
+    <details class="mc-disclosure">
+      <summary><span class="t">Estatuto · Diretrizes &amp; Regras</span><span class="art">o modelo que este painel executa · resumo normativo</span><span class="chev">▾</span></summary>
+      <div class="mc-disclosure-body" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.7">
+        <p style="margin-bottom:10px"><b style="color:var(--ink)">Modelo:</b> Arquitetura Quadrifásica de Risco Vertical (Estatuto JP Wealth). Toda a exposição vive em uma <b style="color:var(--ink)">Operação Única Exclusiva</b> (mesmo ativo, mesma direção — Art. 3.5/3.6), iniciada pela Ordem Gênese (risco ≤ 1% do saldo inicial — Art. 8.6) e gerida por redução progressiva de exposição.</p>
+        <p style="margin-bottom:10px"><b style="color:var(--ink)">Matriz Quadrifásica Base (Art. 3.7):</b> FASE 1 · 0–4% DD · teto 4,0x (postura ofensiva) → FASE 2 · 4–8% · 2,0x (cautela/breakeven) → FASE 3 · 8–12% · 1,0x (defesa, só reduzir) → FASE 4 · 12–15% · 0,4x (salvaguarda). O perfil escolhido no período escala esses limites proporcionalmente. Transições exigem questionário formal e espelhamento da estrutura (Art. 3.8, método LIFO). <b style="color:var(--ink)">O MDD ativo do perfil = encerramento compulsório + quarentena de 90 dias</b> (Art. 3.10).</p>
+        <p style="margin-bottom:10px"><b style="color:var(--ink)">Stop Loss (§9):</b> o Stop Técnico Quantitativo (price action + validação objetiva) é validado por dois indicadores — <b style="color:var(--ink)">Múltiplo de ATR</b> (stop% ÷ ATR%, estratificado de Frágil &lt;1x a Zona Segura &gt;7x) e <b style="color:var(--ink)">Stop Estatístico Raiz-N</b> (ATR% × √N × F; √30 ≈ 1 semana, √55 ≈ 2 semanas; F 1,5–2,0). Stop abaixo do Raiz-N = zona de ruído estatístico — permitido, mas com plena consciência.</p>
+        <p style="margin-bottom:10px"><b style="color:var(--ink)">Proteções:</b> replicação por saldo × fator de perfil (Art. 10.1) · lucro realizado nunca amplia limites (Art. 12.2, DDC) · prejuízo realizado permanece no drawdown do ciclo (Art. 3.4§2) · perfis do período (Base 100%, Longevity 66%, High Longevity 50%, High Longevity Plus 33%) definem exposição, DDR-alvo e projeções.</p>
+        <p><b style="color:var(--ink)">Hierarquia permanente (Art. 11.1):</b> Preservação do capital → Sobrevivência da conta → Protocolos de risco → Qualidade de execução → Consistência → Rentabilidade. <i>Lucro é consequência do processo; sobrevivência é requisito.</i></p>
+      </div>
+    </details>
+    <div class="card" style="margin-top:16px">
+      <h2>Backup Completo <span class="art">estado local do painel</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Exporta ou restaura o estado completo salvo neste navegador. A importação valida o JSON, pede confirmação e aplica a migração de compatibilidade antes de sobrescrever os dados atuais.</p>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+        <button class="reset-btn" id="exportFullBackupBtn" style="color:var(--violet); border-color:var(--violet)">⬇ Exportar backup completo</button>
+        <button class="reset-btn" id="importFullBackupBtn" style="color:var(--ink); border-color:var(--line)">⬆ Importar backup completo</button>
+        <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>Quarentena Operacional <span class="art">Art. 3.10 · reversível</span></h2>
+      <div id="configQuarantine"></div>
+    </div>
+    <div class="card" style="margin-top:16px; border-color:var(--f4)">
+      <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar todos os dados</span></h2>
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove tudo: ordens, fases, fechamentos, log de auditoria e configurações. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes.</p>
+      <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)">🗑 Limpar todos os dados</button>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+<div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
+
+<div class="foot-note">
+  <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
+</div>
+
+<script src="src/js/00-core/01-risk-profiles.js"></script>
+<script src="src/js/00-core/02-platforms.js"></script>
+<script src="src/js/00-core/03-default-state.js"></script>
+<script src="src/js/00-core/04-persistence.js"></script>
+<script src="src/js/00-core/05-helpers.js"></script>
+<script src="src/js/10-domain/01-risk-instruments.js"></script>
+<script src="src/js/10-domain/02-risk-calculations.js"></script>
+<script src="src/js/20-ui/01-header-readout.js"></script>
+<script src="src/js/20-ui/02-sidebar.js"></script>
+<script src="src/js/20-ui/03-main-render.js"></script>
+<script src="src/js/20-ui/04-operational-clearance.js"></script>
+<script src="src/js/20-ui/05-execution-clearance.js"></script>
+<script src="src/js/10-domain/03-phase-transitions.js"></script>
+<script src="src/js/10-domain/04-stop-statistics.js"></script>
+<script src="src/js/20-ui/06-chart-terminal-chrome.js"></script>
+<script src="src/js/20-ui/07-chart-crosshair-tooltip.js"></script>
+<script src="src/js/20-ui/08-input-bindings.js"></script>
+<script src="src/js/30-accounting/01-daily-ledger.js"></script>
+<script src="src/js/10-domain/05-brokers-prop-firms.js"></script>
+<script src="src/js/30-accounting/02-accounting-engine.js"></script>
+<script src="src/js/30-accounting/03-mei-jp.js"></script>
+<script src="src/js/30-accounting/04-patrimonial-simulation.js"></script>
+<script src="src/js/40-app/01-navigation.js"></script>
+<script src="src/js/40-app/02-reset.js"></script>
+<script src="src/js/40-app/03-theme.js"></script>
+<script src="src/js/20-ui/09-contextual-help.js"></script>
+<script src="src/js/20-ui/10-font-scale.js"></script>
+<script src="src/js/10-domain/06-quarantine.js"></script>
+<script src="src/js/20-ui/11-phase-posture.js"></script>
+<script src="src/js/40-app/04-onboarding.js"></script>
+<script src="src/js/40-app/05-wipe-all.js"></script>
+<script src="src/js/40-app/06-app-icons.js"></script>
+<script src="src/js/40-app/07-finalize-session.js"></script>
+<script src="src/js/40-app/06-boot.js"></script>
+</body>
+</html>

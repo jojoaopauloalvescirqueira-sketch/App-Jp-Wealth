@@ -1,0 +1,212 @@
+{
+  "project": "JP Wealth Risk Terminal",
+  "version": "9.1",
+  "execution_model": "classic-script-ordered-global-scope",
+  "warning": "Do not reorder files without a full validation and browser smoke test.",
+  "files": [
+    {
+      "order": 1,
+      "path": "src/js/00-core/01-risk-profiles.js",
+      "section": "PERFIS DE RISCO V10.0 (fonte única)",
+      "sha256": "612667eb24b2fa5af68f5ff65373983f97ab88436e60d3ea1770dc9326346935"
+    },
+    {
+      "order": 2,
+      "path": "src/js/00-core/02-platforms.js",
+      "section": "PLATAFORMAS (fonte central para contas)",
+      "sha256": "4d05633be18f223ee8440dbae841141c29848db53aee9ae5f5fea47d1a50c817"
+    },
+    {
+      "order": 3,
+      "path": "src/js/00-core/03-default-state.js",
+      "section": "ESTADO INICIAL (espelha a planilha)",
+      "sha256": "a46bb40f1ca75dca45fde3a7d6369eb51bbd49650d4f812cec56a47e61ba3797"
+    },
+    {
+      "order": 4,
+      "path": "src/js/00-core/04-persistence.js",
+      "section": "PERSISTÊNCIA (localStorage)",
+      "sha256": "7a658a189564bee81f56a1d0ec107ed74ca00c1295a49f03557e74265e79adc2"
+    },
+    {
+      "order": 5,
+      "path": "src/js/00-core/05-helpers.js",
+      "section": "HELPERS",
+      "sha256": "8d63bad6eb1706091b65f3dc0979d6bff660035d05e3c905da3dedd5e2a0abc9"
+    },
+    {
+      "order": 6,
+      "path": "src/js/10-domain/01-risk-instruments.js",
+      "section": "MOTOR DE RISCO POR INSTRUMENTO",
+      "sha256": "de5bec663dd7ec685ba92e2c3ffcdeb56b429457d554845911c0c20d97d6f088"
+    },
+    {
+      "order": 7,
+      "path": "src/js/10-domain/02-risk-calculations.js",
+      "section": "CÁLCULOS",
+      "sha256": "4bc6693bf44e4a621a1bc884e1ad0de640ebe7d336da1b1f73fccfe2d7837c38"
+    },
+    {
+      "order": 8,
+      "path": "src/js/20-ui/01-header-readout.js",
+      "section": "TOP BAR · LEITURA DE ESTADO",
+      "sha256": "568b32b3869a9b4d4518e51e956fa424a9015f3796183ff0b57b4045a45b3cc7"
+    },
+    {
+      "order": 9,
+      "path": "src/js/20-ui/02-sidebar.js",
+      "section": "SIDEBAR · COLAPSO",
+      "sha256": "be786717eb144b93680d1911e6066903558fe9e6d63ee8124dea28cc62209994"
+    },
+    {
+      "order": 10,
+      "path": "src/js/20-ui/03-main-render.js",
+      "section": "RENDER",
+      "sha256": "997daa673dcca603b4d44d2d2087889cf20dabff886e3d868991e869441f2a79"
+    },
+    {
+      "order": 11,
+      "path": "src/js/20-ui/04-operational-clearance.js",
+      "section": "OPERATIONAL CLEARANCE — veredito executivo (N1)",
+      "sha256": "a40928a4cd370c20cb7dba5a063e36f15e04d05aab09a8c9601ed2c460057494"
+    },
+    {
+      "order": 12,
+      "path": "src/js/20-ui/05-execution-clearance.js",
+      "section": "EXECUTION CLEARANCE — veredito antes dos termômetros",
+      "sha256": "ffc9016aa4a3bb0f63305bac271e1c7d3f25ece683e2a2c767d192e78aff8c30"
+    },
+    {
+      "order": 13,
+      "path": "src/js/10-domain/03-phase-transitions.js",
+      "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
+      "sha256": "3663c4215fb72da9c65ca07c053b5f8c6afececd378065f931cdeaafdfb6fefc"
+    },
+    {
+      "order": 14,
+      "path": "src/js/10-domain/04-stop-statistics.js",
+      "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
+      "sha256": "3f5540d39bded11a0d49ad09881522c6a597de0b89ff56f954c5ba15a329204f"
+    },
+    {
+      "order": 15,
+      "path": "src/js/20-ui/06-chart-terminal-chrome.js",
+      "section": "GRÁFICOS · CROMO PADRÃO DE TERMINAL",
+      "sha256": "0223f08d7abfcce1f8f9c841f81b445c2c9ba4fac296565ea7e1140f4e38f842"
+    },
+    {
+      "order": 16,
+      "path": "src/js/20-ui/07-chart-crosshair-tooltip.js",
+      "section": "GRÁFICOS · CROSSHAIR + TOOLTIP",
+      "sha256": "098ce530718d1b51d56e9a9ad1abe162b9cc52c885116a9dd621989e3c08ae19"
+    },
+    {
+      "order": 17,
+      "path": "src/js/20-ui/08-input-bindings.js",
+      "section": "INPUT BINDINGS",
+      "sha256": "cf4e27be1e1cd6d19c13938a57e9cbf1da8d436261dfabcae2e40ef503f799d4"
+    },
+    {
+      "order": 18,
+      "path": "src/js/30-accounting/01-daily-ledger.js",
+      "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
+      "sha256": "c535269613aa5b98486653117d2995a065cccc356a54bbed870e62c3601baa58"
+    },
+    {
+      "order": 19,
+      "path": "src/js/10-domain/05-brokers-prop-firms.js",
+      "section": "CORRETORAS/PROP FIRMS PARCEIRAS (fonte central)",
+      "sha256": "d87c0db5b9abe3d6a31c661462dcda7e68212afa077440ef4e3a8b1c636b21c3"
+    },
+    {
+      "order": 20,
+      "path": "src/js/30-accounting/02-accounting-engine.js",
+      "section": "MOTOR DA CONTABILIDADE (perfis V10 centralizados)",
+      "sha256": "cf480b30ab9006d831e89326c4a6942a0ea0ad141dd1e9bb8136ede861416e2b"
+    },
+    {
+      "order": 21,
+      "path": "src/js/30-accounting/03-mei-jp.js",
+      "section": "MEI-JP · MODELO ESTATÍSTICO INSTITUCIONAL",
+      "sha256": "ce8b231b6c25f719a5afe319d0504d0f094128ffa00a370d35ca49197589af27"
+    },
+    {
+      "order": 22,
+      "path": "src/js/30-accounting/04-patrimonial-simulation.js",
+      "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
+      "sha256": "3aeae939fc184f7094e94ef716b03a0d54ad5ebd87ab1fa7b9441eee7f5df55c"
+    },
+    {
+      "order": 23,
+      "path": "src/js/40-app/01-navigation.js",
+      "section": "NAV",
+      "sha256": "9cb25919f740bb683d4c25e1f47b03557bae3e20f668770a96e605c1f829bedc"
+    },
+    {
+      "order": 24,
+      "path": "src/js/40-app/02-reset.js",
+      "section": "RESET (dupla confirmação APAGAR — SET 6)",
+      "sha256": "43fe62ef9cd1efd3b5f05034b31a593e7dcd04565c8078cb69bc69e72420137b"
+    },
+    {
+      "order": 25,
+      "path": "src/js/40-app/03-theme.js",
+      "section": "TEMA claro/escuro (SET 4)",
+      "sha256": "301c8e98846a37a1a7e517efb267b1be2450361e437e689cf7a3abcd3582b33d"
+    },
+    {
+      "order": 26,
+      "path": "src/js/20-ui/09-contextual-help.js",
+      "section": "EXPLICAÇÃO DE CAMPO SOB DEMANDA ([i])",
+      "sha256": "b221ce7943a59a5febca8044b62944f81a7e08d059f848ac417a558042fe84b2"
+    },
+    {
+      "order": 27,
+      "path": "src/js/20-ui/10-font-scale.js",
+      "section": "ESCALA TIPOGRÁFICA · 3 degraus fechados",
+      "sha256": "0a3e55b083d82d936062ffde8f98a86ad2e8b957c308bd957ae5dfca37005dda"
+    },
+    {
+      "order": 28,
+      "path": "src/js/10-domain/06-quarantine.js",
+      "section": "Configurações · quarentena reversível (SET 5a)",
+      "sha256": "dc703aba4fbd4e2c03ad3d2bd5e5daea3580999e59e830b9e5070e87170d30af"
+    },
+    {
+      "order": 29,
+      "path": "src/js/20-ui/11-phase-posture.js",
+      "section": "Postura ofensiva/defensiva por fase (SET 2)",
+      "sha256": "3cfeb8c62ed36909c1a83e616c01acf822ccff4997a049dac725205407b3c8d0"
+    },
+    {
+      "order": 30,
+      "path": "src/js/40-app/04-onboarding.js",
+      "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
+      "sha256": "cf956e0648597df579629cc76eeb14bf75c37dbce85c1a035b35b258d240db9b"
+    },
+    {
+      "order": 31,
+      "path": "src/js/40-app/05-wipe-all.js",
+      "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
+      "sha256": "ca2667f20bf35723fd0defe406c0c29815a0b5ba9104211688f903e46bad4eab"
+    },
+    {
+      "order": 32,
+      "path": "src/js/40-app/06-app-icons.js",
+      "section": "PWA · BIBLIOTECA E ESCOLHA DE ÍCONES",
+      "sha256": "252e8475343c6fc43965e6df82f6d2b6d4e6ffdec4d8e3e1cf96841b1b6836c2"
+    },
+    {
+      "order": 33,
+      "path": "src/js/40-app/07-finalize-session.js",
+      "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
+      "sha256": "d6491cdffaeb13b7779e6df833acbed8fe637475fdaef90f57d6c2de87cd1afd"
+    },
+    {
+      "order": 34,
+      "path": "src/js/40-app/06-boot.js",
+      "section": "BOOT",
+      "sha256": "7412f16eeef6ac590de9e384db534347751eb5d9bdcf8a36ca02f8359d364374"
+    }
+  ]
+}

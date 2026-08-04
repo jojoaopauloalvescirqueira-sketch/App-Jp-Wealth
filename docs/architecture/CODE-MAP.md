@@ -1,0 +1,34 @@
+# Mapa do código
+
+- `src/js/00-core/01-risk-profiles.js` — PERFIS DE RISCO V10.0 (fonte única)
+- `src/js/00-core/02-platforms.js` — PLATAFORMAS (fonte central para contas)
+- `src/js/00-core/03-default-state.js` — ESTADO INICIAL (espelha a planilha)
+- `src/js/00-core/04-persistence.js` — PERSISTÊNCIA (localStorage)
+- `src/js/00-core/05-helpers.js` — HELPERS
+- `src/js/10-domain/01-risk-instruments.js` — MOTOR DE RISCO POR INSTRUMENTO
+- `src/js/10-domain/02-risk-calculations.js` — CÁLCULOS
+- `src/js/20-ui/01-header-readout.js` — TOP BAR · LEITURA DE ESTADO
+- `src/js/20-ui/02-sidebar.js` — SIDEBAR · COLAPSO
+- `src/js/20-ui/03-main-render.js` — RENDER
+- `src/js/20-ui/04-operational-clearance.js` — OPERATIONAL CLEARANCE — veredito executivo (N1)
+- `src/js/20-ui/05-execution-clearance.js` — EXECUTION CLEARANCE — veredito antes dos termômetros
+- `src/js/10-domain/03-phase-transitions.js` — QUESTIONÁRIOS DE TRANSIÇÃO DE FASE
+- `src/js/10-domain/04-stop-statistics.js` — STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte
+- `src/js/20-ui/06-chart-terminal-chrome.js` — GRÁFICOS · CROMO PADRÃO DE TERMINAL
+- `src/js/20-ui/07-chart-crosshair-tooltip.js` — GRÁFICOS · CROSSHAIR + TOOLTIP
+- `src/js/20-ui/08-input-bindings.js` — INPUT BINDINGS
+- `src/js/30-accounting/01-daily-ledger.js` — 07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria
+- `src/js/10-domain/05-brokers-prop-firms.js` — CORRETORAS/PROP FIRMS PARCEIRAS (fonte central)
+- `src/js/30-accounting/02-accounting-engine.js` — MOTOR DA CONTABILIDADE (perfis V10 centralizados)
+- `src/js/30-accounting/03-mei-jp.js` — MEI-JP · MODELO ESTATÍSTICO INSTITUCIONAL
+- `src/js/30-accounting/04-patrimonial-simulation.js` — SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)
+- `src/js/40-app/01-navigation.js` — NAV
+- `src/js/40-app/02-reset.js` — RESET (dupla confirmação APAGAR — SET 6)
+- `src/js/40-app/03-theme.js` — TEMA claro/escuro (SET 4)
+- `src/js/20-ui/09-contextual-help.js` — EXPLICAÇÃO DE CAMPO SOB DEMANDA ([i])
+- `src/js/20-ui/10-font-scale.js` — ESCALA TIPOGRÁFICA · 3 degraus fechados
+- `src/js/10-domain/06-quarantine.js` — Configurações · quarentena reversível (SET 5a)
+- `src/js/20-ui/11-phase-posture.js` — Postura ofensiva/defensiva por fase (SET 2)
+- `src/js/40-app/04-onboarding.js` — QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)
+- `src/js/40-app/05-wipe-all.js` — LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)
+- `src/js/40-app/06-boot.js` — BOOT
