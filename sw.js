@@ -1,7 +1,9 @@
-const CACHE_NAME = 'jp-wealth-pwa-v9.1-icons-20260803-r3';
+importScripts('./build-id.js');
 const CACHE_PREFIX = 'jp-wealth-';
+const CACHE_NAME = `${CACHE_PREFIX}${JP_WEALTH_BUILD_ID}`;
+const ICON_CACHE_VERSION = '20260803';
 const PRECACHE_URLS = [
-  './', './index.html', './src/styles/app.css', './src/js/manifest.json',
+  './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
   './src/js/00-core/03-default-state.js', './src/js/00-core/04-persistence.js',
   './src/js/00-core/05-helpers.js', './src/js/10-domain/01-risk-instruments.js',
@@ -27,10 +29,14 @@ const PRECACHE_URLS = [
   './icons/relief-knight/apple-touch-icon.png', './icons/relief-knight/icon-180.png', './icons/relief-knight/icon-192.png', './icons/relief-knight/icon-512.png',
   './icons/marble-knight/favicon-16.png', './icons/marble-knight/favicon-32.png', './icons/marble-knight/favicon-48.png',
   './icons/marble-knight/apple-touch-icon.png', './icons/marble-knight/icon-180.png', './icons/marble-knight/icon-192.png', './icons/marble-knight/icon-512.png'
-];
+].flatMap(url=>url.startsWith('./icons/')?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS)).then(() => self.skipWaiting()));
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE_NAME);
+    try { await cache.addAll(PRECACHE_URLS); }
+    catch(error){ await caches.delete(CACHE_NAME); throw error; }
+  })());
 });
 
 self.addEventListener('activate', event => {
@@ -39,13 +45,14 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
-  event.respondWith(caches.match(event.request, {ignoreSearch:true}).then(cached => {
-    if(cached) return cached;
-    return fetch(event.request).then(response => {
-      if(!response || response.status !== 200 || response.type === 'opaque') return response;
-      const copy=response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+  const url=new URL(event.request.url);
+  if(event.request.mode === 'navigate'){
+    event.respondWith(fetch(event.request).then(async response=>{
+      if(response && response.ok) (await caches.open(CACHE_NAME)).put('./index.html',response.clone());
       return response;
-    }).catch(() => event.request.mode === 'navigate' ? caches.match('./index.html') : Response.error());
-  }));
+    }).catch(()=>caches.open(CACHE_NAME).then(cache=>cache.match('./index.html'))));
+    return;
+  }
+  if(url.origin !== self.location.origin){ event.respondWith(fetch(event.request)); return; }
+  event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(event.request).then(cached=>cached||fetch(event.request))));
 });

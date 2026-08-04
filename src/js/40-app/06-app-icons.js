@@ -85,7 +85,7 @@ function selectAppIcon(themeKey){
 }
 function registerAppServiceWorker(){
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}),{once:true});
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).catch(()=>{}),{once:true});
 }
 
 applyAppIconTheme(currentAppIconTheme(),{persist:false});

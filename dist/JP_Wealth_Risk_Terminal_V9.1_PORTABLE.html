@@ -1094,6 +1094,10 @@
     .onb-global-banner button,.onb-gov-note button{width:100%}
   }
 </style>
+<script>
+// Gerado por tools/rebuild_monolith.py. Não editar manualmente.
+const JP_WEALTH_BUILD_ID = '7a1d9ab00655e7c5';
+</script>
 <link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
 <link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
 <link rel="apple-touch-icon" id="appAppleTouchIcon" sizes="180x180" href="icons/flat-knight/apple-touch-icon.png">
@@ -8048,7 +8052,7 @@ function selectAppIcon(themeKey){
 }
 function registerAppServiceWorker(){
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}),{once:true});
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).catch(()=>{}),{once:true});
 }
 
 applyAppIconTheme(currentAppIconTheme(),{persist:false});
