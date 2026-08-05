@@ -2261,6 +2261,45 @@
   html[data-ui-version="tesla-inspired"] :is(.onb-global-banner .s, .onb-gov-note .s){
     font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted); margin-top:var(--jp-space-1);
   }
+
+  /* ==========================================================
+     CORREÇÃO B0.1 — PROPORÇÃO DO AVISO GLOBAL DE ONBOARDING
+
+     Defeito: o banner era um flex `justify-content:space-between` sem
+     nenhum limite de largura, herdando 100% de <main>. O conteúdo abaixo
+     (main > .screen.active) é centralizado em --jp-container-wide, então
+     em telas largas o aviso ficava mais largo que a própria composição
+     que precede — ícone isolado à esquerda, texto solto no centro, botão
+     isolado na extremidade direita.
+
+     Correção: espelha EXATAMENTE a técnica de `main > .screen.active`
+     (mesmo max-width, mesma centralização) — garante alinhamento pixel
+     a pixel com o conteúdo. Layout interno vira grid de 3 colunas
+     (ícone | texto flexível | botão), o que aproxima o botão do texto em
+     vez de empurrá-lo para a borda da viewport. Borda, fundo e acento
+     lateral (regra logo acima) permanecem intocados — só posição, largura
+     e ritmo interno mudam.
+
+     Escopado fora do Dashboard: o modo imersivo tem tratamento próprio
+     (ver regra de .onb-global-banner sob [data-active-screen="dash"],
+     Fase 4) e não é tocado por esta correção. */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .onb-global-banner.show{
+    display:grid; grid-template-columns:auto minmax(0,1fr) auto;
+    align-items:center; max-width:var(--jp-container-wide); margin-inline:auto;
+    gap:var(--jp-space-4); padding:16px 20px; border-radius:var(--jp-radius-lg);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .onb-global-banner.show > div{
+    min-width:0;
+  }
+  @media(max-width:600px){
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .onb-global-banner.show{
+      grid-template-columns:auto minmax(0,1fr); row-gap:var(--jp-space-3);
+    }
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .onb-global-banner.show .reset-btn{
+      grid-column:1 / -1; width:100%; min-height:44px;
+    }
+  }
+
   /* O glifo emoji legado sai de cena; o ícone do sistema entra no lugar,
      colorido pela severidade da própria faixa. */
   html[data-ui-version="tesla-inspired"] :is(.status-banner, .session-warning, .session-error, .stop-warning, .credential-warning, .onb-gov-note) .ico{display:none}
