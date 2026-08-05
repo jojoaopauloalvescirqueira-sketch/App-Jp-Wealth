@@ -1638,3 +1638,116 @@
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-metric-strip-gov{grid-template-columns:repeat(2,1fr)}
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{padding:var(--jp-space-7) var(--sp-5)}
   }
+
+  /* ==========================================================
+     FASE A — SHELL OPERACIONAL HORIZONTAL
+
+     Ativo sob a flag em todas as telas EXCETO o Dashboard, que
+     mantém o modo imersivo já aprovado. O rail lateral deixa de
+     ser a navegação principal e vira uma barra horizontal.
+
+     A ordem do DOM não muda e não há `order`: a ordem de foco
+     continua idêntica à ordem visual. #railToggle permanece em
+     #nav porque a Central de Configurações o transporta.
+     ========================================================== */
+  .shell-menu-btn{display:none}
+
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]){
+    --shell-gutter:clamp(var(--sp-5), 4vw, var(--jp-space-7));
+  }
+  /* Grid raiz vira coluna única: cabeçalho, barra de destinos, conteúdo. */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) body{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto 1fr;
+    grid-template-areas:"hdr" "nav" "main";
+  }
+
+  /* ---------- Cabeçalho ---------- */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) header{
+    height:auto; min-height:60px; padding:0 var(--shell-gutter);
+    background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+    gap:var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .brand{gap:var(--sp-4)}
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .wm-jp,
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .wm-wealth{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale)); letter-spacing:.22em;
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .wm-jp{font-weight:700; letter-spacing:.14em}
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .wm-wealth{font-weight:400}
+
+  /* ---------- Barra horizontal de destinos ---------- */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #nav{
+    grid-area:nav; position:sticky; top:0; z-index:29; height:auto;
+    flex-direction:row; align-items:center; gap:var(--sp-2);
+    overflow-x:auto; overflow-y:visible; scrollbar-width:thin;
+    padding:var(--sp-2) var(--shell-gutter);
+    background:var(--jp-bg); border-right:0; border-bottom:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:500; text-transform:none; letter-spacing:.01em;
+    color:var(--jp-ink-muted); background:transparent;
+    border:0; border-left:0; border-radius:var(--jp-radius-pill);
+    padding:9px var(--sp-4); min-height:38px; white-space:nowrap; justify-content:center;
+    transition:background var(--jp-duration-fast) var(--jp-ease), color var(--jp-duration-fast) var(--jp-ease);
+  }
+  /* O índice 01–07 é cromo de terminal: sai do shell moderno, volta sem a flag. */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab .n{display:none}
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab .lbl{display:inline}
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab:hover{background:var(--jp-surface-raised); color:var(--jp-ink)}
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab.active{
+    background:var(--indigo-deep); color:var(--jp-action); font-weight:600;
+  }
+  /* Sem rail lateral não há o que recolher. */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .rail-toggle{display:none}
+
+  /* ---------- Conteúdo ---------- */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
+    grid-area:main; padding:var(--jp-space-6) var(--shell-gutter) var(--jp-space-8);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .foot-note{
+    padding:0 var(--shell-gutter); max-width:none;
+  }
+
+  /* ---------- Mobile: destinos viram painel real ---------- */
+  @media(max-width:900px){
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .shell-menu-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+      font-weight:600; text-transform:none; letter-spacing:.01em;
+      color:var(--jp-ink); background:transparent;
+      border:1px solid var(--jp-border); border-radius:var(--jp-radius-pill);
+      min-height:40px; padding:0 var(--sp-5); cursor:pointer;
+    }
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #nav{
+      display:none; position:fixed; inset:auto 0 auto 0; top:var(--shell-mobile-top,60px);
+      flex-direction:column; align-items:stretch; gap:2px; z-index:45;
+      max-height:calc(100dvh - 60px); overflow-y:auto;
+      padding:var(--sp-3) var(--sp-4) var(--sp-5);
+      background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+      box-shadow:0 18px 40px rgba(0,0,0,.28);
+    }
+    html[data-shell-menu="open"][data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #nav{display:flex}
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab{
+      justify-content:flex-start; border-radius:var(--jp-radius-sm); min-height:44px; padding:10px var(--sp-4);
+    }
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) body{
+      grid-template-rows:auto 1fr; grid-template-areas:"hdr" "main";
+    }
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
+      padding:var(--sp-5) var(--sp-5) var(--jp-space-7);
+    }
+    /* O botão Menu acrescenta uma linha ao cabeçalho que já quebra em telas
+       estreitas; sem compactar, o header consome altura demais antes do conteúdo. */
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) header{
+      min-height:0; gap:var(--sp-2) var(--sp-3); padding:var(--sp-2) var(--sp-5);
+      row-gap:var(--sp-1);
+    }
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .header-status{gap:var(--sp-3)}
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .header-actions{
+      gap:var(--sp-2); padding-left:var(--sp-3);
+    }
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .shell-menu-btn{min-height:36px; padding:0 var(--sp-4)}
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .header-action{width:36px; height:36px; min-width:36px}
+  }

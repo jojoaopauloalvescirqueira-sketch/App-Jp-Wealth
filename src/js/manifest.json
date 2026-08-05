@@ -225,6 +225,12 @@
       "path": "src/js/40-app/10-dashboard-immersive.js",
       "section": "DASHBOARD IMERSIVO · modo, carrossel e navegação interna (N1)",
       "sha256": "246929c9dc55359c93d4ecc350a200569c125012e8782e5049bb0edcc4784850"
+    },
+    {
+      "order": 38,
+      "path": "src/js/40-app/11-operational-shell.js",
+      "section": "SHELL OPERACIONAL · menu mobile de destinos (N1)",
+      "sha256": "df8101e87bc0cf6c860c40cda8aae7d4059f023ee663f166ee8123e967e44b26"
     }
   ]
 }

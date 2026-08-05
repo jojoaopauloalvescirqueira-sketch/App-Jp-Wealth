@@ -37,6 +37,9 @@
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
+    <!-- Menu de destinos em telas estreitas. Fora do shell horizontal fica oculto;
+         a navegação continua sendo os mesmos botões .tab[data-screen] em #nav. -->
+    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="nav" aria-label="Abrir menu de telas">Menu</button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
@@ -695,5 +698,6 @@
 <script src="src/js/40-app/08-educational-content.js"></script>
 <script src="src/js/40-app/09-settings-modal.js"></script>
 <script src="src/js/40-app/10-dashboard-immersive.js"></script>
+<script src="src/js/40-app/11-operational-shell.js"></script>
 </body>
 </html>
