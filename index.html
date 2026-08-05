@@ -14,6 +14,40 @@
 <link rel="apple-touch-icon" id="appAppleTouchIcon" sizes="180x180" href="icons/flat-knight/apple-touch-icon.png">
 </head>
 <body>
+<!-- ============ SPRITE DE ÍCONES · SISTEMA JP WEALTH ============
+     Desenho próprio, traço 1.6px, viewBox 24, currentColor. Sem biblioteca
+     externa e sem dependência de rede. O sprite é inerte: não é focável,
+     não é lido por leitor de tela e não ocupa caixa (.jp-icon-sprite).
+     Sem data-ui-version no <html> nenhum <use> é exibido — svg.jp-icon
+     permanece display:none e os glifos legados voltam a aparecer. -->
+<svg class="jp-icon-sprite" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-session" viewBox="0 0 24 24"><path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"/><path d="m14 8 4 4-4 4"/><path d="M18 12H9"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.3 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/><path d="M12 9.5v4"/><path d="M12 17.2h.01"/></symbol>
+  <symbol id="i-success" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="m8.4 12.2 2.5 2.5 4.7-5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+  <symbol id="i-danger" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="m6.4 6.4 11.2 11.2"/></symbol>
+  <symbol id="i-drawdown" viewBox="0 0 24 24"><path d="m3.5 7.5 6 6.5 4-3.5 7 7"/><path d="M20.5 13v4.5H16"/></symbol>
+  <symbol id="i-risk" viewBox="0 0 24 24"><path d="M12 3.2 4.8 6v6c0 4.3 3 7.6 7.2 8.8 4.2-1.2 7.2-4.5 7.2-8.8V6Z"/><path d="M12 9v3.5"/><path d="M12 15.8h.01"/></symbol>
+  <symbol id="i-leverage" viewBox="0 0 24 24"><path d="M3.8 17.5a8.8 8.8 0 0 1 16.4 0"/><path d="m12 15 4-4.5"/><circle cx="12" cy="17.5" r="1.3"/></symbol>
+  <symbol id="i-profile" viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.6"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/></symbol>
+  <symbol id="i-period" viewBox="0 0 24 24"><rect x="3.6" y="5" width="16.8" height="15" rx="2.2"/><path d="M3.6 9.6h16.8M8.4 3.4v3.2M15.6 3.4v3.2"/></symbol>
+  <symbol id="i-account" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12.5" rx="2.2"/><path d="M3 10.4h18"/><path d="M16.5 14.6h1.8"/></symbol>
+  <symbol id="i-checklist" viewBox="0 0 24 24"><path d="M9.5 7h10M9.5 12h10M9.5 17h10"/><path d="m4 6.6 1.3 1.3L7.4 5.6"/><path d="m4 11.6 1.3 1.3 2.1-2.3"/><path d="m4 16.6 1.3 1.3 2.1-2.3"/></symbol>
+  <symbol id="i-accounting" viewBox="0 0 24 24"><path d="M6 3.4h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4Z"/><path d="M9.2 8h5.6M9.2 12h5.6"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="m6.5 9.5 5.5 5.5 5.5-5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M16.4 4.6a2 2 0 0 1 2.9 2.9L8.6 18.2l-3.8 1 1-3.8Z"/></symbol>
+  <symbol id="i-delete" viewBox="0 0 24 24"><path d="M4.6 6.6h14.8"/><path d="M9.4 6.6V4.8h5.2v1.8"/><path d="M6.6 6.6 7.5 19a1.4 1.4 0 0 0 1.4 1.3h6.2A1.4 1.4 0 0 0 16.5 19l.9-12.4"/><path d="M10.4 10.4v6M13.6 10.4v6"/></symbol>
+  <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 3.6v11.2"/><path d="m7.6 10.6 4.4 4.4 4.4-4.4"/><path d="M4.6 17.4v1.6a1.6 1.6 0 0 0 1.6 1.6h11.6a1.6 1.6 0 0 0 1.6-1.6v-1.6"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 15.4V4.2"/><path d="m7.6 8.6 4.4-4.4 4.4 4.4"/><path d="M4.6 17.4v1.6a1.6 1.6 0 0 0 1.6 1.6h11.6a1.6 1.6 0 0 0 1.6-1.6v-1.6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4.4V9h-4.6"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.4" y="4.6" width="17.2" height="4.2" rx="1.2"/><path d="M5.2 8.8v9.4a1.6 1.6 0 0 0 1.6 1.6h10.4a1.6 1.6 0 0 0 1.6-1.6V8.8"/><path d="M10 12.6h4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
+</defs></svg>
 <header>
   <div class="brand">
     <span class="wordmark" aria-label="JP Wealth">
@@ -68,12 +102,14 @@
 
 <main>
   <div class="onb-global-banner" id="onboardingIncompleteBanner" role="status" aria-live="polite">
+    <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
     <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
   </div>
   <!-- ================= 01 EXECUTION BOARD ================= -->
   <section class="screen" id="exec">
     <div class="onb-gov-note" id="execOnboardingGovNote">
+      <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-alert"/></svg>
       <div><div class="t">Governança incompleta</div><div class="s" id="execOnboardingGovText">—</div></div>
       <button class="reset-btn" id="execOnboardingGovBtn" style="color:var(--f2); border-color:var(--f2)">Revisar formulário</button>
     </div>
@@ -96,7 +132,7 @@
         <div style="display:flex; gap:14px; align-items:flex-start">
           <div style="display:flex; flex-direction:column; align-items:center">
             <div style="display:flex; gap:6px; align-items:flex-start">
-              <div class="thermo" style="width:46px">
+              <div class="thermo jp-thermo-track">
                 <div class="thermo-fill" id="thermoFill" style="height:0%"></div>
                 <div class="thermo-marker" id="thermoMarker" style="bottom:0%"></div>
               </div>
@@ -104,11 +140,11 @@
                 <span>15%</span><span>12%</span><span>9%</span><span>6%</span><span>3%</span><span>0%</span>
               </div>
             </div>
-            <div style="font-family:var(--mono); font-size:calc(10px * var(--fs-scale)); color:var(--ink-dim); margin-top:6px">DD <b id="thermoDDval" style="color:var(--ink)">—</b></div>
+            <div class="jp-thermo-value">DD <b id="thermoDDval">—</b></div>
           </div>
           <div style="display:flex; flex-direction:column; align-items:center">
             <div style="display:flex; gap:6px; align-items:flex-start">
-              <div class="thermo" style="width:46px; background:linear-gradient(to top, var(--f1-bg) 0%, var(--f1-bg) 25%, var(--f2-bg) 25%, var(--f2-bg) 50%, var(--f3-bg) 50%, var(--f3-bg) 75%, var(--f4-bg) 75%, var(--f4-bg) 100%)">
+              <div class="thermo jp-thermo-track" style="background:linear-gradient(to top, var(--f1-bg) 0%, var(--f1-bg) 25%, var(--f2-bg) 25%, var(--f2-bg) 50%, var(--f3-bg) 50%, var(--f3-bg) 75%, var(--f4-bg) 75%, var(--f4-bg) 100%)">
                 <div class="thermo-fill" id="thermoLevFill" style="height:0%"></div>
                 <div class="thermo-marker" id="thermoLevMarker" style="bottom:0%"></div>
               </div>
@@ -116,11 +152,11 @@
                 <span>4x</span><span>3x</span><span>2x</span><span>1x</span><span>0x</span>
               </div>
             </div>
-            <div style="font-family:var(--mono); font-size:calc(10px * var(--fs-scale)); color:var(--ink-dim); margin-top:6px">ALAV <b id="thermoLevVal" style="color:var(--ink)">—</b></div>
+            <div class="jp-thermo-value">ALAV <b id="thermoLevVal">—</b></div>
           </div>
         </div>
         <p class="expl" style="font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint); margin-top:6px; align-self:flex-start; line-height:1.4">Alavancagem real utilizada agora (nocional aberto ÷ saldo inicial). A marca é o teto da fase vigente.</p>
-        <div class="thermo-zone-labels" id="thermoZoneLabels">
+        <div class="thermo-zone-labels thermo-legend" id="thermoZoneLabels">
           <div class="tz f4">F4 · ABISMO 12–15</div>
           <div class="tz f3">F3 · SOBREVIV. 8–12</div>
           <div class="tz f2">F2 · DESACEL. 4–8</div>
@@ -141,18 +177,18 @@
           <div class="dp-item"><span class="dp-k">GRADE ATIVA</span><span class="dp-v" id="dpGrade">FASE 1</span><span class="dp-sub">onde você pode adicionar/editar ordens agora</span></div>
         </div>
         <div class="status-banner" id="mismatchBanner" style="display:none; margin-top:8px; background:var(--f2-bg); border-color:var(--f2); color:var(--f2)">
-          <span class="ico">ℹ️</span><span id="mismatchTxt"></span>
+          <span class="ico">ℹ️</span><svg class="jp-icon jp-i-info" aria-hidden="true"><use href="#i-info"/></svg><span id="mismatchTxt"></span>
         </div>
         <div class="status-banner sb-good" id="statusBanner" style="margin-top:16px">
-          <span class="ico" id="statusIco">🟢</span><span id="statusTxt">FASE 1 — OPERACIONAL NORMAL</span>
+          <span class="ico" id="statusIco">🟢</span><svg class="jp-icon jp-i-good" aria-hidden="true"><use href="#i-success"/></svg><svg class="jp-icon jp-i-warn" aria-hidden="true"><use href="#i-alert"/></svg><svg class="jp-icon jp-i-danger" aria-hidden="true"><use href="#i-danger"/></svg><span id="statusTxt">FASE 1 — OPERACIONAL NORMAL</span>
         </div>
         <div class="status-banner sb-danger" id="quarantineBanner" style="display:none; margin-top:8px">
-          <span class="ico">⛔</span><span id="quarantineTxt"></span>
+          <span class="ico">⛔</span><svg class="jp-icon jp-i-danger" aria-hidden="true"><use href="#i-danger"/></svg><span id="quarantineTxt"></span>
           <button class="modal-btn confirm" id="quarantineConfirmBtn" style="margin-left:auto; padding:6px 14px; font-size:calc(11px * var(--fs-scale)); display:none">Formalizar quarentena</button>
         </div>
         <div class="breach-note" id="breachNote" style="display:none"></div>
         <div class="status-banner" id="downgradeBanner" style="display:none; margin-top:8px; background:var(--indigo-deep); border-color:var(--violet); color:var(--ink)">
-          <span class="ico">📉</span><span id="downgradeTxt"></span>
+          <span class="ico">📉</span><svg class="jp-icon jp-i-info" aria-hidden="true"><use href="#i-drawdown"/></svg><span id="downgradeTxt"></span>
           <button class="modal-btn confirm" id="downgradeBtn" style="margin-left:auto; padding:6px 14px; font-size:calc(11px * var(--fs-scale))">Responder questionário de downgrade</button>
         </div>
 
@@ -219,7 +255,7 @@
       <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
       <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       <div style="padding:0 16px 16px">
-        <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)">📦 Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
+        <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
       </div>
     </div>
   </section>
@@ -250,10 +286,10 @@
     </div>
     <div class="card" style="margin-top:16px">
       <h2>Matriz Quadrifásica Ativa <span class="art">perfil vigente aplicado sobre a matriz Base estatutária</span></h2>
-      <table class="dtable">
+      <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
         <tbody id="matrixBody"></tbody>
-      </table>
+      </table></div>
     </div>
   </section>
 
@@ -269,24 +305,24 @@
         O <b style="color:var(--ink)">Teto/Op</b> é aplicado nas grades: nenhuma ordem aberta pode exceder o lote máximo do instrumento.
       </p>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap">
-        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)">🔄 Atualizar câmbio agora</button>
+        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">🔄</span><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Atualizar câmbio agora</button>
         <span class="fx-status" id="fxFetchStatus">Câmbio: 8 pares via Frankfurter (ECB, diário, sem chave) · US500 suspenso; XAUUSD bloqueado.</span>
       </div>
       <div class="field" style="max-width:280px">
         <label>Exposição-alvo (regime normal)</label>
         <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
       </div>
-      <table class="dtable" style="margin-top:8px">
+      <div class="jp-table-scroll"><table class="dtable" style="margin-top:8px">
         <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
         <tbody id="motorBody"></tbody>
-      </table>
+      </table></div>
     </div>
     <div class="card" style="margin-top:16px">
       <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
-      <table class="dtable">
+      <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
         <tbody id="profileBody"></tbody>
-      </table>
+      </table></div>
     </div>
   </section>
 
@@ -302,10 +338,10 @@
         O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
       </p>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
-        🔒 O perfil de risco só pode ser escolhido <b style="color:var(--ink-dim)">uma vez</b>. Mudar depois exige senha — fricção deliberada contra decisão impulsiva, não criptografia: qualquer acesso ao DevTools do navegador contorna isso. O objetivo é te dar um segundo de pausa, não uma trava inquebrável.
+        <span class="jp-legacy-glyph" aria-hidden="true">🔒</span><svg class="jp-icon" aria-hidden="true"><use href="#i-lock"/></svg> O perfil de risco só pode ser escolhido <b style="color:var(--ink-dim)">uma vez</b>. Mudar depois exige senha — fricção deliberada contra decisão impulsiva, não criptografia: qualquer acesso ao DevTools do navegador contorna isso. O objetivo é te dar um segundo de pausa, não uma trava inquebrável.
       </p>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
-        📌 <b style="color:var(--ink-dim)">Escopo (decisão do gestor, jul/2026):</b> este painel gerencia as <b style="color:var(--ink-dim)">operações da conta master</b>. O fator de correção por conta slave depende de cada conta e é gerido externamente (planilha da supervisão). A fórmula de replicação — Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil (Art. 10.1) — e os fatores de perfil do período (66/50/33%) aplicam-se às cópias/gestão patrimonial quando esse módulo for usado fora da operação master.
+        <span class="jp-legacy-glyph" aria-hidden="true">📌</span><svg class="jp-icon" aria-hidden="true"><use href="#i-pin"/></svg> <b style="color:var(--ink-dim)">Escopo (decisão do gestor, jul/2026):</b> este painel gerencia as <b style="color:var(--ink-dim)">operações da conta master</b>. O fator de correção por conta slave depende de cada conta e é gerido externamente (planilha da supervisão). A fórmula de replicação — Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil (Art. 10.1) — e os fatores de perfil do período (66/50/33%) aplicam-se às cópias/gestão patrimonial quando esse módulo for usado fora da operação master.
       </p>
       <div class="credential-warning">
         Não armazene senha master neste sistema. Use apenas senha do investidor/somente leitura.
@@ -316,10 +352,10 @@
         <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
         <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
       </h2>
-      <table class="dtable">
+      <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Conta / Plataforma</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Correção</th><th>Norm. V10</th><th>Fator Perfil</th><th>Lote vs Mestre</th><th></th></tr></thead>
         <tbody id="contasBody"></tbody>
-      </table>
+      </table></div>
     </div>
     <div class="card" style="margin-top:16px">
       <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
@@ -553,7 +589,7 @@
     <div class="card" style="margin-top:16px">
       <h2>Log de Auditoria <span class="art">transições · downgrades · arquivamentos · quarentena · divergências</span></h2>
       <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
-      <button class="reset-btn" id="exportAuditBtn" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">⬇ Exportar auditoria completa (JSON)</button>
+      <button class="reset-btn" id="exportAuditBtn" style="margin-top:12px; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
     </div>
   </section>
 
@@ -629,8 +665,8 @@
       <h2>Backup Completo <span class="art">estado local do painel</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Exporta ou restaura o estado completo salvo neste navegador. A importação valida o JSON, pede confirmação e aplica a migração de compatibilidade antes de sobrescrever os dados atuais.</p>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
-        <button class="reset-btn" id="exportFullBackupBtn" style="color:var(--violet); border-color:var(--violet)">⬇ Exportar backup completo</button>
-        <button class="reset-btn" id="importFullBackupBtn" style="color:var(--ink); border-color:var(--line)">⬆ Importar backup completo</button>
+        <button class="reset-btn" id="exportFullBackupBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar backup completo</button>
+        <button class="reset-btn" id="importFullBackupBtn" style="color:var(--ink); border-color:var(--line)"><span class="jp-legacy-glyph" aria-hidden="true">⬆</span><svg class="jp-icon" aria-hidden="true"><use href="#i-import"/></svg>Importar backup completo</button>
         <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
       </div>
     </div>
@@ -641,7 +677,7 @@
     <div class="card" data-settings-category="backup" data-settings-search="limpar apagar reset zona risco recuperação" style="margin-top:16px; border-color:var(--f4)">
       <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar todos os dados</span></h2>
       <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove tudo: ordens, fases, fechamentos, log de auditoria e configurações. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes.</p>
-      <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)">🗑 Limpar todos os dados</button>
+      <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
     </div>
   </section>
 </main>
@@ -651,7 +687,7 @@
 </div>
 <div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
   <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <header class="settings-modal-head"><div><h2 id="settingsTitle">Configurações</h2><p>Preferências, governança, dados e material de referência.</p></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações">×</button></header>
+    <header class="settings-modal-head"><div><h2 id="settingsTitle">Configurações</h2><p>Preferências, governança, dados e material de referência.</p></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
     <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
   </section>
 </div>

@@ -148,29 +148,111 @@
     --jp-text-lg:clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
     --jp-text-xl:clamp(2rem, 1.3rem + 2.6vw, 4rem);
 
-    /* Espaçamento — degraus superiores à escala --sp-*, que permanece intacta. */
-    --jp-space-6:32px;
-    --jp-space-7:48px;
-    --jp-space-8:64px;
-    --jp-space-9:96px;
+    /* ---- Escala tipográfica nomeada (B0) ----
+       Estes degraus JÁ INCLUEM --fs-scale: use `var(--jp-fs-body)` direto,
+       nunca dentro de outro calc() com --fs-scale, sob pena de multiplicar
+       a preferência de tamanho de fonte duas vezes.
+       Os degraus --jp-text-* acima continuam existindo e continuam exigindo
+       o calc() explícito — são consumidos pelas Fases 2 a A. */
+    --jp-fs-display:calc(clamp(40px, 5vw, 72px) * var(--fs-scale));
+    --jp-fs-page:calc(clamp(30px, 3vw, 48px) * var(--fs-scale));
+    --jp-fs-section:calc(clamp(24px, 2vw, 36px) * var(--fs-scale));
+    --jp-fs-panel:calc(clamp(17px, 1.1vw, 21px) * var(--fs-scale));
+    --jp-fs-body:calc(15px * var(--fs-scale));
+    --jp-fs-supporting:calc(13.5px * var(--fs-scale));
+    --jp-fs-label:calc(12px * var(--fs-scale));
+    --jp-fs-eyebrow:calc(11.5px * var(--fs-scale));
+    --jp-fs-caption:calc(12px * var(--fs-scale));
+    --jp-fs-data-lg:calc(clamp(28px, 2.2vw, 40px) * var(--fs-scale));
+    --jp-fs-data-md:calc(clamp(20px, 1.4vw, 26px) * var(--fs-scale));
+    --jp-fs-data-sm:calc(16px * var(--fs-scale));
+
+    /* Pesos — poucos degraus, aplicados com intenção. */
+    --jp-weight-regular:400;
+    --jp-weight-medium:500;
+    --jp-weight-semibold:600;
+    --jp-weight-bold:700;
+
+    /* Espaçamento — escala única do produto (B0). Os degraus --sp-* legados
+       permanecem intactos e continuam válidos na densidade de terminal.
+       Os quatro degraus antigos (--jp-space-6/7/8/9 = 32/48/64/96) foram
+       renomeados para os degraus desta escala com o MESMO valor em pixel:
+       6→8, 7→12, 8→16, 9→24. Nenhum componente muda de medida por causa disso. */
+    --jp-space-1:4px;
+    --jp-space-2:8px;
+    --jp-space-3:12px;
+    --jp-space-4:16px;
+    --jp-space-5:20px;
+    --jp-space-6:24px;
+    --jp-space-8:32px;
+    --jp-space-10:40px;
+    --jp-space-12:48px;
+    --jp-space-16:64px;
+    --jp-space-24:96px;
 
     /* Densidade — espaçamento de referência por natureza de tela.
        São referências para uso deliberado, não uma regra global automática. */
     --jp-density-operational:var(--sp-4);
-    --jp-density-analytical:var(--jp-space-6);
-    --jp-density-narrative:var(--jp-space-8);
+    --jp-density-analytical:var(--jp-space-8);
+    --jp-density-narrative:var(--jp-space-16);
 
-    /* Forma */
-    --jp-radius-sm:0.5rem;
-    --jp-radius-md:0.875rem;
-    --jp-radius-lg:1.25rem;
+    /* ---- Containers (B0) ----
+       Nem todo conteúdo merece a largura inteira do monitor. `wide` é a mesa
+       operacional; `standard` é leitura analítica; `compact` é formulário. */
+    --jp-container-wide:1600px;
+    --jp-container-standard:1280px;
+    --jp-container-compact:880px;
+
+    /* ---- Superfícies (B0) ----
+       Cinco níveis com papel definido. O contraste entre eles vem de
+       luminosidade, não de borda — a borda passa a ser exceção, não regra. */
+    --jp-canvas:var(--bg);
+    --jp-surface-elevated:var(--panel-2);
+    --jp-surface-inset:var(--panel-2);
+    --jp-surface-interactive:var(--panel-2);
+
+    /* Forma — escala em pixel (B0). Substitui os valores em rem da Fase 1:
+       em rem o raio crescia junto com a fonte do usuário e um card com
+       --fs-scale 1.25 ganhava canto de 25px. Raio é geometria, não texto. */
+    --jp-radius-sm:6px;
+    --jp-radius-md:10px;
+    --jp-radius-lg:14px;
+    --jp-radius-xl:18px;
     --jp-radius-pill:999px;
+
+    /* ---- Foco e overlay (B0) ----
+       Pendências abertas na Fase 1, resolvidas aqui.
+       O anel de foco usa o acento de ação por decisão de sistema: é a única
+       cor do produto que já significa "elemento acionável", e um foco em cor
+       de estado (verde/vermelho) seria lido como severidade.
+       O overlay unifica os dois literais divergentes que existiam
+       (.modal-overlay rgba(5,5,10,.78) e .settings-overlay rgba(4,7,12,.72)). */
+    --jp-focus:var(--violet);
+    --jp-focus-width:2px;
+    --jp-focus-offset:2px;
+    --jp-overlay:rgba(6,8,12,.74);
+
+    /* ---- Elevação (B0) — três níveis, nada decorativo. ---- */
+    --jp-shadow-subtle:0 1px 2px rgba(0,0,0,.06), 0 1px 1px rgba(0,0,0,.04);
+    --jp-shadow-floating:0 8px 24px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.06);
+    --jp-shadow-modal:0 24px 64px rgba(0,0,0,.28), 0 6px 16px rgba(0,0,0,.12);
+
+    /* Alvos de toque — piso único do sistema. */
+    --jp-control-h:42px;
+    --jp-control-h-compact:34px;
 
     /* Movimento — ao serem aplicados, devem respeitar prefers-reduced-motion. */
     --jp-duration-fast:120ms;
     --jp-duration-normal:220ms;
     --jp-duration-slow:300ms;
     --jp-ease:cubic-bezier(0.2, 0, 0, 1);
+  }
+  /* No escuro a sombra precisa de mais opacidade para existir sobre grafite. */
+  :root[data-theme="dark"]{
+    --jp-shadow-subtle:0 1px 2px rgba(0,0,0,.5);
+    --jp-shadow-floating:0 10px 28px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+    --jp-shadow-modal:0 28px 72px rgba(0,0,0,.7), 0 6px 18px rgba(0,0,0,.5);
+    --jp-surface-inset:#050505;
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -1096,7 +1178,7 @@
      preferência de tamanho de fonte definida em Configurações.
      ========================================================== */
   html[data-ui-version="tesla-inspired"] #mcClearanceCard{
-    padding:var(--jp-space-7) var(--jp-space-6) var(--jp-space-6);
+    padding:var(--jp-space-12) var(--jp-space-8) var(--jp-space-8);
   }
   /* Aliases semânticos onde a correspondência é inequívoca; pending e reduce
      preservam o tratamento legado (--violet e --f3 não têm alias equivalente).
@@ -1117,7 +1199,7 @@
     color:var(--jp-ink-muted); max-width:62ch; line-height:1.6;
   }
   html[data-ui-version="tesla-inspired"] #mcClearanceReasons{
-    margin-top:var(--jp-space-6); gap:var(--sp-3);
+    margin-top:var(--jp-space-8); gap:var(--sp-3);
   }
   html[data-ui-version="tesla-inspired"] #mcClearanceReasons li{
     font-family:var(--jp-font-data);
@@ -1126,7 +1208,7 @@
   }
   html[data-ui-version="tesla-inspired"] #mcClearanceReasons li::before{top:8px}
   html[data-ui-version="tesla-inspired"] #mcClearanceAction{
-    margin-top:var(--jp-space-6); padding:var(--sp-4) var(--sp-5);
+    margin-top:var(--jp-space-8); padding:var(--sp-4) var(--sp-5);
     font-size:calc(var(--jp-text-md) * var(--fs-scale)); line-height:1.55;
   }
   @media(max-width:640px){
@@ -1284,7 +1366,7 @@
 
   /* ---------- HEADER ---------- */
   html[data-ui-version="tesla-inspired"] header{
-    gap:var(--jp-space-6); padding:0 var(--jp-space-6);
+    gap:var(--jp-space-8); padding:0 var(--jp-space-8);
     background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
   }
   html[data-ui-version="tesla-inspired"] .hdr-sep{display:none}
@@ -1321,7 +1403,7 @@
   /* ---------- RAIL ---------- */
   html[data-ui-version="tesla-inspired"] #nav{
     background:var(--jp-bg); border-right:1px solid var(--jp-border);
-    gap:2px; padding:var(--jp-space-6) var(--sp-3) var(--sp-4);
+    gap:2px; padding:var(--jp-space-8) var(--sp-3) var(--sp-4);
   }
   html[data-ui-version="tesla-inspired"] .tab{
     font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
@@ -1344,8 +1426,21 @@
   }
 
   /* ---------- SUPERFÍCIE GLOBAL ---------- */
-  html[data-ui-version="tesla-inspired"] main{padding:var(--jp-space-6) var(--jp-space-6) var(--jp-space-8)}
-  html[data-ui-version="tesla-inspired"] #dash{display:grid; gap:var(--jp-space-6)}
+  html[data-ui-version="tesla-inspired"] main{padding:var(--jp-space-8) var(--jp-space-8) var(--jp-space-16)}
+  /* CORREÇÃO B0 — a regra original era `html[flag] #dash`, especificidade
+     (1,1,0), que vencia `.screen{display:none}` (0,1,0). Resultado: o
+     Dashboard inteiro (1.5 mil pixels de altura) ficava renderizado abaixo
+     do conteúdo em TODAS as telas operacionais, não só na sua própria.
+     Manter `.screen.active` devolve o contrato de tela única. A regra do modo
+     imersivo (Fase 4) vale (1,2,0) — um id e dois atributos. Acrescentar
+     `.screen.active` aqui levaria esta regra a (1,3,0) e ela passaria a
+     VENCER a Fase 4, devolvendo a grade de 3 colunas do terminal legado
+     dentro do modo imersivo. Por isso o guard é `:not([data-active-screen=
+     "dash"])`: as duas regras ficam mutuamente exclusivas e a especificidade
+     deixa de importar. */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #dash.screen.active{
+    display:grid; grid-template-columns:1fr; gap:var(--jp-space-8);
+  }
   html[data-ui-version="tesla-inspired"] #dash > *{margin-top:0}
 
   /* ---------- MÉTRICAS ---------- */
@@ -1400,7 +1495,7 @@
 
   /* ---------- BANNERS E AÇÕES ---------- */
   html[data-ui-version="tesla-inspired"] .onb-global-banner{
-    border-radius:var(--jp-radius-sm); padding:var(--sp-5) var(--jp-space-6);
+    border-radius:var(--jp-radius-sm); padding:var(--sp-5) var(--jp-space-8);
   }
   html[data-ui-version="tesla-inspired"] .onb-global-banner .t{
     font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-md) * var(--fs-scale)); font-weight:600;
@@ -1415,7 +1510,7 @@
 
   /* ---------- MOBILE ---------- */
   @media(max-width:900px){
-    html[data-ui-version="tesla-inspired"] main{padding:var(--sp-5) var(--sp-5) var(--jp-space-7)}
+    html[data-ui-version="tesla-inspired"] main{padding:var(--sp-5) var(--sp-5) var(--jp-space-12)}
     html[data-ui-version="tesla-inspired"] #dash{gap:var(--sp-5)}
     html[data-ui-version="tesla-inspired"] header{gap:var(--sp-4); padding:0 var(--sp-5)}
     html[data-ui-version="tesla-inspired"] #nav{padding:var(--sp-4) var(--sp-5)}
@@ -1460,14 +1555,14 @@
     display:block; padding-top:var(--jp-dash-header-h);
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .onb-global-banner{
-    margin:var(--jp-dash-header-h) var(--jp-space-6) 0; border-radius:var(--jp-radius-sm);
+    margin:var(--jp-dash-header-h) var(--jp-space-8) 0; border-radius:var(--jp-radius-sm);
   }
 
   /* ---------- Header próprio do Dashboard ---------- */
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-header{
-    display:flex; align-items:center; gap:var(--jp-space-6);
+    display:flex; align-items:center; gap:var(--jp-space-8);
     position:fixed; inset:0 0 auto 0; z-index:50; height:var(--jp-dash-header-h);
-    padding:0 var(--jp-space-6); background:var(--jp-surface);
+    padding:0 var(--jp-space-8); background:var(--jp-surface);
     border-bottom:1px solid var(--jp-border); font-family:var(--jp-font-ui);
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-brand{
@@ -1502,7 +1597,7 @@
     display:grid; position:relative; isolation:isolate; overflow:hidden;
     min-height:calc(100dvh - var(--jp-dash-header-h));
     align-content:start; justify-items:center;
-    padding:var(--jp-space-8) var(--jp-space-6) var(--jp-space-9);
+    padding:var(--jp-space-16) var(--jp-space-8) var(--jp-space-24);
     background:var(--jp-bg);
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-viz{
@@ -1527,7 +1622,7 @@
     max-width:52ch; margin:0 auto;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceAction{
-    max-width:62ch; margin:var(--jp-space-6) auto 0; text-align:left;
+    max-width:62ch; margin:var(--jp-space-8) auto 0; text-align:left;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide-eyebrow{
     display:block; font-family:var(--jp-font-data); text-transform:uppercase; letter-spacing:.18em;
@@ -1536,17 +1631,17 @@
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide-title{
     display:block; font-family:var(--jp-font-ui); font-weight:700; letter-spacing:-.03em;
     font-size:calc(var(--jp-text-lg) * var(--fs-scale)); color:var(--jp-ink);
-    margin:0 0 var(--jp-space-6); line-height:1.12;
+    margin:0 0 var(--jp-space-8); line-height:1.12;
   }
 
   /* ---------- Ações do hero ---------- */
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-actions{
-    display:flex; gap:var(--sp-4); justify-content:center; margin-top:var(--jp-space-7); flex-wrap:wrap;
+    display:flex; gap:var(--sp-4); justify-content:center; margin-top:var(--jp-space-12); flex-wrap:wrap;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn{
     font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
     font-weight:600; text-transform:none; letter-spacing:.01em;
-    min-height:42px; min-width:236px; padding:0 var(--jp-space-6);
+    min-height:42px; min-width:236px; padding:0 var(--jp-space-8);
     border-radius:var(--jp-radius-sm); border:1px solid transparent; cursor:pointer;
     display:inline-flex; align-items:center; justify-content:center;
     transition:background var(--jp-duration-fast) var(--jp-ease), border-color var(--jp-duration-fast) var(--jp-ease), color var(--jp-duration-fast) var(--jp-ease);
@@ -1575,7 +1670,7 @@
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-next{right:clamp(10px,3vw,40px)}
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots{
     display:flex; gap:10px; justify-content:center;
-    position:absolute; left:0; right:0; bottom:var(--jp-space-7); z-index:2;
+    position:absolute; left:0; right:0; bottom:var(--jp-space-12); z-index:2;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button{
     width:34px; height:4px; padding:0; border:0; border-radius:var(--jp-radius-pill);
@@ -1583,10 +1678,17 @@
     transition:background var(--jp-duration-fast) var(--jp-ease);
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button.active{background:var(--jp-action)}
+  /* CORREÇÃO B0 (acessibilidade) — o ponto do carrossel mede 34x4px, muito
+     abaixo do mínimo de 24x24 (WCAG 2.5.8). A área clicável cresce por
+     pseudoelemento, sem alterar o desenho nem o espaçamento entre pontos. */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button{position:relative}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button::after{
+    content:''; position:absolute; left:0; right:0; top:-11px; bottom:-11px;
+  }
 
   /* ---------- Seções abaixo do hero ---------- */
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{
-    display:block; padding:var(--jp-space-8) clamp(var(--sp-5),6vw,var(--jp-space-9));
+    display:block; padding:var(--jp-space-16) clamp(var(--sp-5),6vw,var(--jp-space-24));
     border-top:1px solid var(--jp-border);
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section:nth-of-type(even){background:var(--jp-surface)}
@@ -1601,7 +1703,7 @@
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-lead{
     display:block; font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-md) * var(--fs-scale));
-    color:var(--jp-ink-muted); max-width:62ch; margin:0 0 var(--jp-space-6); line-height:1.6;
+    color:var(--jp-ink-muted); max-width:62ch; margin:0 0 var(--jp-space-8); line-height:1.6;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section .mc-disclosure{margin-top:var(--sp-4)}
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section .mc-reasons{
@@ -1629,14 +1731,14 @@
     }
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu[hidden]{display:none}
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero{
-      padding:var(--jp-space-7) var(--sp-5) var(--jp-space-8);
+      padding:var(--jp-space-12) var(--sp-5) var(--jp-space-16);
     }
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn{min-width:0; width:100%}
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-actions{flex-direction:column; align-items:stretch}
-    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow{width:40px; height:40px; top:auto; bottom:var(--jp-space-6)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow{width:40px; height:40px; top:auto; bottom:var(--jp-space-8)}
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots{bottom:var(--sp-5)}
     html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-metric-strip-gov{grid-template-columns:repeat(2,1fr)}
-    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{padding:var(--jp-space-7) var(--sp-5)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{padding:var(--jp-space-12) var(--sp-5)}
   }
 
   /* ==========================================================
@@ -1653,7 +1755,7 @@
   .shell-menu-btn{display:none}
 
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]){
-    --shell-gutter:clamp(var(--sp-5), 4vw, var(--jp-space-7));
+    --shell-gutter:clamp(var(--sp-5), 4vw, var(--jp-space-12));
   }
   /* Grid raiz vira coluna única: cabeçalho, barra de destinos, conteúdo. */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) body{
@@ -1666,7 +1768,7 @@
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) header{
     height:auto; min-height:60px; padding:0 var(--shell-gutter);
     background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
-    gap:var(--jp-space-6);
+    gap:var(--jp-space-8);
   }
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .brand{gap:var(--sp-4)}
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .wm-jp,
@@ -1704,7 +1806,7 @@
 
   /* ---------- Conteúdo ---------- */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
-    grid-area:main; padding:var(--jp-space-6) var(--shell-gutter) var(--jp-space-8);
+    grid-area:main; padding:var(--jp-space-8) var(--shell-gutter) var(--jp-space-16);
   }
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .foot-note{
     padding:0 var(--shell-gutter); max-width:none;
@@ -1736,7 +1838,7 @@
       grid-template-rows:auto 1fr; grid-template-areas:"hdr" "main";
     }
     html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
-      padding:var(--sp-5) var(--sp-5) var(--jp-space-7);
+      padding:var(--sp-5) var(--sp-5) var(--jp-space-12);
     }
     /* O botão Menu acrescenta uma linha ao cabeçalho que já quebra em telas
        estreitas; sem compactar, o header consome altura demais antes do conteúdo. */
@@ -1750,4 +1852,854 @@
     }
     html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .shell-menu-btn{min-height:36px; padding:0 var(--sp-4)}
     html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .header-action{width:36px; height:36px; min-width:36px}
+  }
+
+  /* ==========================================================
+     FASE B0 — SISTEMA VISUAL GLOBAL E COMPONENTES FUNDAMENTAIS
+
+     Tudo abaixo está condicionado a html[data-ui-version="tesla-inspired"].
+     Remover o atributo do <html> devolve integralmente o terminal legado:
+     nenhuma regra deste bloco sobrevive sem a flag.
+
+     ESPECIFICIDADE — por que o seletor da flag aparece duplicado em algumas
+     regras: o CSS legado é sem @layer e várias regras de componente valem
+     (0,2,0) — `.metric .k`, `.card h2 .art`, `.mc-disclosure>summary .t`.
+     Uma regra `html[flag] :is(.metric .k, …)` também vale (0,2,0) e venceria
+     apenas por ordem de origem, o que é frágil: qualquer regra futura escrita
+     depois no arquivo passaria a ganhar em silêncio. Repetir o atributo
+     (`html[flag][data-ui-version]`) leva a regra a (0,3,0) e torna a vitória
+     estrutural, não posicional. É deliberado e está restrito às regras de
+     fundação (família tipográfica e caixa alta), não espalhado pelo bloco.
+
+     NÃO ALTERA: nenhum ID, data-screen, listener, contrato de renderização,
+     cálculo, texto normativo ou comportamento financeiro.
+     ========================================================== */
+
+  /* ==========================================================
+     B0.1 — FUNDAÇÃO TIPOGRÁFICA
+     A fonte monoespaçada deixa de ser a fonte do produto e volta a ser o
+     que sempre deveria ter sido: a fonte do DADO.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] body{
+    font-family:var(--jp-font-ui);
+    font-size:var(--jp-fs-body);
+    line-height:1.45;
+    letter-spacing:0;
+  }
+  /* Cromo, rótulos e prosa passam à fonte de interface. */
+  html[data-ui-version="tesla-inspired"][data-ui-version] :is(
+    .wordmark .ver, .brand .tag, .hdr-readout .k, .pill, .tab, .rail-toggle,
+    .card h2, .card h2 .art, .tz, .chart-cap, .metric .k, .metric .sub,
+    .dh-kicker, .status-banner, .gauge .lbl, .phase-head, .phase-meta,
+    .otable .stop-col .stop-note, .stop-warning, .lifo-head, .lifo-sem,
+    .modal-box h3, .modal-box .modal-sub, .onb-tab .idx, .onb-progress-cap,
+    .modal-q textarea, .modal-q input[type=text], .modal-btn,
+    .session-delete-phrase, .session-notice,
+    .app-icon-summary b, .app-icon-choice-copy b, .unlock-phase-btn,
+    .review-badge, .breach-note, .dp-k, .field label,
+    .field input, .field select, .field textarea,
+    .note-i, .leverage-trigger, .leverage-explain-btn,
+    .ban-label, .unlock-btn, .fx-status, .badge-type,
+    .broker-fallback, .broker-meta, .broker-regulator, .broker-section-heading,
+    .account-meta, .pass-label, .pass-toggle, .check-group .gh, .seg button,
+    .reset-btn, .saved-tag, .mc-clearance-title, .mc-reasons li, .mc-action .ak,
+    .mc-status, .mc-disclosure>summary .t, .mc-disclosure>summary .art,
+    .mc-ec-title, .mc-ec-action .ak, .mc-ec-facts, .mc-step-dot,
+    .settings-search-label, .settings-menu-group, .settings-facts dt,
+    .settings-about-mark, .thermo-legend, .jp-panel-title
+  ){
+    font-family:var(--jp-font-ui);
+  }
+  /* O DADO permanece monoespaçado e tabular — é a única razão de a família
+     existir no produto: número que precisa alinhar em coluna. */
+  html[data-ui-version="tesla-inspired"][data-ui-version] :is(
+    .hdr-readout .v, .metric .v, .mc-mini-card .v, .dp-v,
+    .otable, .otable input, .otable select, .otable .calc,
+    .dtable, .dtable td.editable input, .dtable td.editable select,
+    .thermo-ticks, .chart-tip, .stale-pill, .gauge .lbl .val,
+    .mc-ec-facts b, .phase-meta b, .lifo-sug b,
+    .session-export-facts code, .foot-note code, code, .jp-num
+  ){
+    font-family:var(--jp-font-data);
+    font-variant-numeric:tabular-nums;
+    font-feature-settings:'tnum' 1;
+  }
+
+  /* ---------- Caixa alta: de padrão a exceção ----------
+     A regra legada aplica uppercase a todo <button> e a vários rótulos.
+     Aqui ela é revertida em bloco; o pouco que continua em caixa alta
+     (eyebrow, badge de fase) é declarado explicitamente adiante. */
+  html[data-ui-version="tesla-inspired"][data-ui-version] :is(
+    button, .metric .v, .metric .k, .pill, .mc-clearance-title, .mc-ec-title,
+    .modal-box h3, legend, .card h2, .card h2 .art, .field label,
+    .hdr-readout .k, .dp-k, .dtable th, .otable th, .metric .sub,
+    .mc-disclosure>summary .t, .mc-disclosure>summary .art, .mc-status,
+    .chart-cap, .dh-kicker, .broker-section-heading, .session-export-facts span,
+    .app-icon-choice-copy em, .settings-search-label, .settings-menu-group,
+    .mc-action .ak, .mc-ec-action .ak, .session-phrase-field input
+  ){
+    text-transform:none;
+    letter-spacing:0;
+  }
+  /* Eyebrow é o único lugar onde a caixa alta permanece: rótulo curto,
+     hierarquicamente acima de um título, nunca um bloco de leitura. */
+  html[data-ui-version="tesla-inspired"] .jp-eyebrow{
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-eyebrow);
+    font-weight:var(--jp-weight-semibold); text-transform:uppercase;
+    letter-spacing:.14em; color:var(--jp-ink-muted);
+  }
+
+  /* ---------- Escala aplicada aos títulos existentes ---------- */
+  html[data-ui-version="tesla-inspired"] .card h2{
+    font-size:var(--jp-fs-panel); font-weight:var(--jp-weight-semibold);
+    line-height:1.3;
+  }
+  html[data-ui-version="tesla-inspired"] .card h2 .art{
+    font-size:var(--jp-fs-supporting); font-weight:var(--jp-weight-regular);
+    color:var(--jp-ink-muted); opacity:1;
+  }
+  html[data-ui-version="tesla-inspired"] :is(p, li, .expl, .risk-note, .settings-lead){
+    font-size:var(--jp-fs-body); line-height:1.6;
+  }
+  html[data-ui-version="tesla-inspired"] .field label,
+  html[data-ui-version="tesla-inspired"] .metric .k,
+  html[data-ui-version="tesla-inspired"] .dp-k{
+    font-size:var(--jp-fs-label); font-weight:var(--jp-weight-medium);
+    color:var(--jp-ink-muted); line-height:1.35;
+  }
+  /* O rótulo legado era nowrap + ellipsis porque cabia em 9,5px. A 12px ele
+     passa a quebrar em duas linhas em vez de virar "Margem Estatutária Liv…".
+     Rótulo cortado não é densidade, é informação perdida. O VALOR continua
+     nowrap: número quebrado em duas linhas deixa de ser legível como número. */
+  html[data-ui-version="tesla-inspired"] .metric .k{
+    white-space:normal; overflow:visible; text-overflow:clip;
+  }
+  html[data-ui-version="tesla-inspired"] :is(.metric .sub, .field .note, .broker-meta, .account-meta){
+    font-size:var(--jp-fs-supporting); line-height:1.5;
+  }
+
+  /* ==========================================================
+     B0.2 — SUPERFÍCIES, BORDAS E RAIOS
+     A borda deixa de delimitar tudo. Painel se separa do canvas por
+     luminosidade; a linha fica para controle, tabela e estado.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] .card{
+    background:var(--jp-surface); border:1px solid var(--jp-border);
+    border-radius:var(--jp-radius-lg); box-shadow:var(--jp-shadow-subtle);
+    padding:0 var(--jp-space-6) var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"] .card.bare,
+  html[data-ui-version="tesla-inspired"] .card:not(:has(> h2)){padding-top:var(--jp-space-6)}
+  :root[data-theme="dark"] html[data-ui-version="tesla-inspired"] .card{background:var(--jp-surface)}
+
+  /* ---------- A faixa vinho decorativa sai do sistema ----------
+     O cabeçalho de painel deixa de ser cromo em vídeo invertido e passa a
+     ser um título com régua inferior. Vale em TODAS as telas, não só no
+     Dashboard: era a fonte principal da leitura de "terminal legado". */
+  html[data-ui-version="tesla-inspired"] .card h2{
+    margin:0 calc(var(--jp-space-6) * -1) var(--jp-space-5);
+    padding:var(--jp-space-5) var(--jp-space-6) var(--jp-space-3);
+    background:transparent; border-bottom:1px solid var(--jp-border);
+    color:var(--jp-ink); min-height:0; gap:var(--jp-space-3); flex-wrap:wrap;
+  }
+  html[data-ui-version="tesla-inspired"] .card h2 .note-i{
+    border-color:var(--jp-ink-muted); color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] .card h2 .note-i.on{
+    background:var(--jp-action); border-color:var(--jp-action); color:var(--jp-canvas);
+  }
+
+  /* ==========================================================
+     B0.3 — ÍCONES
+     Sistema único, SVG próprio, traço 1.6px, currentColor, viewBox 24.
+     O sprite vive no index.html; aqui ficam apenas tamanho e cor.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] .jp-icon{
+    width:20px; height:20px; flex:none; display:inline-block; vertical-align:-.28em;
+    fill:none; stroke:currentColor; stroke-width:1.6;
+    stroke-linecap:round; stroke-linejoin:round;
+  }
+  html[data-ui-version="tesla-inspired"] .jp-icon-sm{width:16px; height:16px; stroke-width:1.75}
+  html[data-ui-version="tesla-inspired"] .jp-icon-lg{width:24px; height:24px; stroke-width:1.5}
+  /* Sem a flag o ícone não existe e o glifo legado permanece; com a flag
+     acontece o inverso. Os dois nunca aparecem juntos, e nenhum dos dois é
+     anunciado por leitor de tela — ambos são decorativos.
+     `svg.jp-icon` (0,1,1) precisa EMPATAR com a regra legada
+     `svg[viewBox]{display:block}` (0,1,1); só a classe (0,1,0) perderia. */
+  svg.jp-icon{display:none}
+  .jp-icon-sprite{display:none}
+  html[data-ui-version="tesla-inspired"] .jp-legacy-glyph{display:none}
+  /* Severidade nas faixas de estado: um único glifo visível por vez,
+     escolhido pela classe sb-* que o próprio renderizador já aplica.
+     Nenhum JavaScript é consultado e nenhum ID é lido. */
+  html[data-ui-version="tesla-inspired"] .status-banner svg.jp-icon{display:none}
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-good svg.jp-i-good,
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-warn svg.jp-i-warn,
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-alert svg.jp-i-warn,
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-danger svg.jp-i-danger{display:inline-block}
+
+  /* ==========================================================
+     B0.4 — BOTÕES
+     Uma API visual: primário, secundário, terciário, destrutivo, compacto.
+     As classes legadas são remapeadas para não exigir troca de markup.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] :is(.jp-btn, .reset-btn, .modal-btn, .unlock-phase-btn, .seg button, .unlock-btn, .pass-toggle, .leverage-trigger){
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-supporting);
+    font-weight:var(--jp-weight-semibold); text-transform:none; letter-spacing:0;
+    display:inline-flex; align-items:center; justify-content:center; gap:var(--jp-space-2);
+    border-radius:var(--jp-radius-sm); cursor:pointer;
+    /* Rótulos longos (“Responder questionário de downgrade”, “Arquivar
+       operação — consolidar resultado no ciclo”) precisam quebrar: com
+       nowrap o botão empurrava a largura do documento a 360px e a página
+       inteira passava a rolar na horizontal. O min-height já garante o
+       alvo de toque, então altura automática é segura. */
+    white-space:normal; text-align:center; max-width:100%;
+    line-height:1.35; padding-block:8px;
+    transition:background var(--jp-duration-fast) var(--jp-ease),
+               border-color var(--jp-duration-fast) var(--jp-ease),
+               color var(--jp-duration-fast) var(--jp-ease);
+  }
+  /* Secundário é o padrão das classes legadas .reset-btn e .modal-btn.cancel:
+     superfície neutra, borda discreta, mesma altura do primário. */
+  html[data-ui-version="tesla-inspired"] :is(.reset-btn, .modal-btn.cancel, .unlock-btn, .pass-toggle, .leverage-trigger){
+    min-height:var(--jp-control-h); padding:0 var(--jp-space-5);
+    background:var(--jp-surface-interactive); color:var(--jp-ink);
+    border:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.reset-btn, .modal-btn.cancel, .unlock-btn, .pass-toggle, .leverage-trigger):hover{
+    background:var(--jp-surface); border-color:var(--jp-ink-muted); color:var(--jp-ink);
+  }
+  /* Primário — sem gradiente, sem caixa alta, sem deslocamento no hover. */
+  html[data-ui-version="tesla-inspired"] :is(.jp-btn-primary, .modal-btn.confirm, .unlock-phase-btn){
+    min-height:var(--jp-control-h); padding:0 var(--jp-space-6);
+    background:var(--jp-action); color:#fff; border:1px solid var(--jp-action);
+    font-weight:var(--jp-weight-semibold); text-transform:none; letter-spacing:0;
+  }
+  html[data-ui-version="tesla-inspired"] :is(.jp-btn-primary, .modal-btn.confirm, .unlock-phase-btn):hover{
+    background:var(--indigo); border-color:var(--indigo);
+    filter:none; transform:none; box-shadow:none;
+  }
+  html[data-ui-version="tesla-inspired"] .modal-btn.confirm:disabled{
+    opacity:.42; cursor:not-allowed; background:var(--jp-action); border-color:var(--jp-action);
+  }
+  /* Terciário — texto e ícone, sem moldura. */
+  html[data-ui-version="tesla-inspired"] .jp-btn-tertiary,
+  html[data-ui-version="tesla-inspired"] .leverage-explain-btn{
+    min-height:var(--jp-control-h-compact); padding:0 var(--jp-space-2);
+    background:transparent; border:0; color:var(--jp-action);
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-supporting);
+    font-weight:var(--jp-weight-semibold); cursor:pointer;
+  }
+  html[data-ui-version="tesla-inspired"] .jp-btn-tertiary:hover,
+  html[data-ui-version="tesla-inspired"] .leverage-explain-btn:hover{
+    background:var(--indigo-deep); border-radius:var(--jp-radius-sm); text-decoration:none;
+  }
+  /* Destrutivo — vermelho reservado a ação destrutiva real. */
+  html[data-ui-version="tesla-inspired"] .jp-btn-danger{
+    min-height:var(--jp-control-h); padding:0 var(--jp-space-6);
+    background:transparent; color:var(--jp-danger); border:1px solid var(--jp-danger);
+  }
+  html[data-ui-version="tesla-inspired"] .jp-btn-danger:hover{background:var(--f4-bg)}
+  /* Compacto — tabelas e ferramentas. */
+  html[data-ui-version="tesla-inspired"] :is(.jp-btn-compact, .unlock-btn, .pass-toggle, .seg button){
+    min-height:var(--jp-control-h-compact); padding:0 var(--jp-space-3);
+    font-size:var(--jp-fs-caption);
+  }
+  html[data-ui-version="tesla-inspired"] .seg{
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-sm); overflow:hidden;
+  }
+  html[data-ui-version="tesla-inspired"] .seg button{
+    border-radius:0; background:var(--jp-surface); color:var(--jp-ink-muted);
+    border:0; border-right:1px solid var(--jp-border); min-width:56px;
+  }
+  html[data-ui-version="tesla-inspired"] .seg button:last-child{border-right:0}
+  html[data-ui-version="tesla-inspired"] .seg button:hover{background:var(--jp-surface-elevated); color:var(--jp-ink)}
+  html[data-ui-version="tesla-inspired"] .seg button.on{background:var(--jp-action); color:#fff}
+  /* Excluir linha — alvo de toque real, ícone em vez de glifo. */
+  html[data-ui-version="tesla-inspired"] .row-del{
+    width:34px; height:34px; border-radius:var(--jp-radius-sm);
+    border:1px solid transparent; background:transparent; color:var(--jp-ink-muted);
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  html[data-ui-version="tesla-inspired"] .row-del:hover{
+    color:var(--jp-danger); border-color:var(--jp-danger); background:var(--f4-bg);
+  }
+  /* Foco visível e único em todo o produto. */
+  html[data-ui-version="tesla-inspired"] :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible{
+    outline:var(--jp-focus-width) solid var(--jp-focus);
+    outline-offset:var(--jp-focus-offset);
+    border-radius:var(--jp-radius-sm);
+  }
+
+  /* ==========================================================
+     B0.5 — INPUTS E FORMULÁRIOS
+     O campo âmbar sólido sai. Era a convenção mais datada do sistema:
+     um input não precisa gritar para ser reconhecido como input.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] .field{
+    gap:var(--jp-space-2); margin-bottom:var(--jp-space-5);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.field input, .field select, .field textarea, .modal-q input[type=text], .modal-q textarea, .settings-sidebar input){
+    min-height:var(--jp-control-h); padding:0 var(--jp-space-4);
+    background:var(--jp-surface-inset); color:var(--jp-ink);
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-sm);
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-body);
+    font-weight:var(--jp-weight-regular);
+    transition:border-color var(--jp-duration-fast) var(--jp-ease),
+               background var(--jp-duration-fast) var(--jp-ease);
+  }
+  /* Valor numérico é dado: continua em monoespaçada e alinhado à direita. */
+  html[data-ui-version="tesla-inspired"] .field input[type=number]{
+    font-family:var(--jp-font-data); text-align:right; font-variant-numeric:tabular-nums;
+  }
+  html[data-ui-version="tesla-inspired"] :is(.field textarea, .modal-q textarea){
+    padding:var(--jp-space-3) var(--jp-space-4); line-height:1.55; min-height:96px; resize:vertical;
+  }
+  /* A regra legada que pintava o campo habilitado de âmbar sólido é revertida. */
+  html[data-ui-version="tesla-inspired"] .field input:not(:disabled):not([readonly]),
+  html[data-ui-version="tesla-inspired"] .field select:not(:disabled){
+    background:var(--jp-surface-inset); color:var(--jp-ink);
+    border-color:var(--jp-border); font-weight:var(--jp-weight-regular);
+  }
+  html[data-ui-version="tesla-inspired"] .field input::placeholder{color:var(--jp-ink-muted); opacity:.75}
+  html[data-ui-version="tesla-inspired"] :is(.field input, .field select, .field textarea):hover:not(:disabled):not([readonly]){
+    border-color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.field input, .field select, .field textarea, .modal-q input[type=text], .modal-q textarea):focus{
+    outline:none; border-color:var(--jp-action);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--jp-action) 22%, transparent);
+    background:var(--jp-surface);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.field input:disabled, .field input[readonly], .field select:disabled){
+    background:var(--jp-surface-elevated); color:var(--jp-ink-muted);
+    border-color:var(--jp-border); cursor:not-allowed;
+  }
+  /* Campo de decisão: destaque por acento na borda, não por preenchimento. */
+  html[data-ui-version="tesla-inspired"] .field.decision input{
+    border-color:var(--jp-action); background:var(--jp-surface-inset);
+    box-shadow:inset 3px 0 0 var(--jp-action);
+  }
+  html[data-ui-version="tesla-inspired"] .field .note{
+    color:var(--jp-ink-muted); font-size:var(--jp-fs-supporting);
+  }
+  html[data-ui-version="tesla-inspired"] .field .note[data-info],
+  html[data-ui-version="tesla-inspired"] .expl[data-info]{
+    border-left:2px solid var(--jp-info); padding-left:var(--jp-space-3);
+  }
+  /* O [i] contextual mede 18px por desenho — ampliar a caixa empurraria a
+     linha do rótulo. O alvo de toque cresce por pseudoelemento: 30px de área
+     clicável sobre 18px de desenho, sem deslocar nada (WCAG 2.5.8). */
+  html[data-ui-version="tesla-inspired"] .note-i{
+    width:18px; height:18px; border-radius:var(--jp-radius-sm);
+    font-size:var(--jp-fs-caption); opacity:.8; position:relative;
+  }
+  html[data-ui-version="tesla-inspired"] .note-i::after{
+    content:''; position:absolute; inset:-6px; border-radius:inherit;
+  }
+  html[data-ui-version="tesla-inspired"] .check-row,
+  html[data-ui-version="tesla-inspired"] .session-check-row{
+    font-size:var(--jp-fs-body); line-height:1.55; gap:var(--jp-space-3);
+  }
+  html[data-ui-version="tesla-inspired"] :is(input[type=checkbox], input[type=radio]){
+    width:18px; height:18px; accent-color:var(--jp-action); cursor:pointer;
+  }
+  html[data-ui-version="tesla-inspired"] .params-grid{gap:0 var(--jp-space-8)}
+
+  /* ==========================================================
+     B0.6 — ALERTAS E BANNERS
+     Superfície tonal + acento lateral + ícone. Sem faixa saturada,
+     sem caixa alta, sem emoji. O estado nunca depende só da cor:
+     ícone e texto continuam dizendo o que a cor diz.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] :is(.status-banner, .session-warning, .session-error, .stop-warning, .credential-warning, .app-icon-ios-note, .onb-gov-note, .modal-q .qinfo, .risk-note){
+    display:flex; align-items:flex-start; gap:var(--jp-space-3);
+    padding:var(--jp-space-4) var(--jp-space-5);
+    border:1px solid var(--jp-border); border-left:3px solid var(--jp-border);
+    border-radius:var(--jp-radius-md);
+    background:var(--jp-surface-elevated); color:var(--jp-ink);
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-supporting);
+    font-weight:var(--jp-weight-regular); line-height:1.55;
+  }
+  html[data-ui-version="tesla-inspired"] .status-banner{margin-top:var(--jp-space-4)}
+  /* Severidade: acento à esquerda + fundo tonal discreto + texto legível.
+     O texto NÃO assume a cor do estado — em faixa tonal, texto colorido
+     derruba o contraste e transforma o alerta em decoração. */
+  html[data-ui-version="tesla-inspired"] :is(.status-banner.sb-good){
+    border-color:color-mix(in srgb, var(--jp-success) 35%, transparent);
+    border-left-color:var(--jp-success); background:var(--f1-bg); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.status-banner.sb-warn, .session-warning, .modal-q .qinfo, .onb-gov-note, .app-icon-ios-note){
+    border-color:color-mix(in srgb, var(--jp-warning) 35%, transparent);
+    border-left-color:var(--jp-warning); background:var(--f2-bg); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.status-banner.sb-alert, .stop-warning, .credential-warning){
+    border-color:color-mix(in srgb, var(--f3) 35%, transparent);
+    border-left-color:var(--f3); background:var(--f3-bg); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.status-banner.sb-danger, .session-error){
+    border-color:color-mix(in srgb, var(--jp-danger) 35%, transparent);
+    border-left-color:var(--jp-danger); background:var(--f4-bg); color:var(--jp-ink);
+  }
+  /* Governança — o único alerta que usa o acento de marca, e ainda assim
+     apenas na linha lateral, nunca como preenchimento. */
+  html[data-ui-version="tesla-inspired"] .onb-global-banner{
+    border:1px solid var(--jp-border); border-left:3px solid var(--jp-action);
+    border-radius:var(--jp-radius-md); background:var(--jp-surface);
+    padding:var(--jp-space-5) var(--jp-space-6); gap:var(--jp-space-5);
+  }
+  html[data-ui-version="tesla-inspired"] .onb-global-banner.warning{border-left-color:var(--jp-warning)}
+  html[data-ui-version="tesla-inspired"] .onb-global-banner.critical{border-left-color:var(--jp-danger)}
+  html[data-ui-version="tesla-inspired"] .onb-global-banner > svg.jp-icon{display:inline-block; color:var(--jp-action); flex:none; margin-top:2px}
+  html[data-ui-version="tesla-inspired"] .onb-global-banner.warning > svg.jp-icon{color:var(--jp-warning)}
+  html[data-ui-version="tesla-inspired"] .onb-global-banner.critical > svg.jp-icon{color:var(--jp-danger)}
+  html[data-ui-version="tesla-inspired"] .onb-gov-note > svg.jp-icon{display:inline-block; color:var(--jp-warning); flex:none; margin-top:2px}
+  html[data-ui-version="tesla-inspired"] .onb-gov-note{align-items:flex-start}
+  html[data-ui-version="tesla-inspired"] :is(.onb-global-banner .t, .onb-gov-note .t){
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-body);
+    font-weight:var(--jp-weight-semibold); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.onb-global-banner .s, .onb-gov-note .s){
+    font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted); margin-top:var(--jp-space-1);
+  }
+  /* O glifo emoji legado sai de cena; o ícone do sistema entra no lugar,
+     colorido pela severidade da própria faixa. */
+  html[data-ui-version="tesla-inspired"] :is(.status-banner, .session-warning, .session-error, .stop-warning, .credential-warning, .onb-gov-note) .ico{display:none}
+  html[data-ui-version="tesla-inspired"] .status-banner .jp-icon{margin-top:1px}
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-good .jp-icon{color:var(--jp-success)}
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-warn .jp-icon{color:var(--jp-warning)}
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-alert .jp-icon{color:var(--f3)}
+  html[data-ui-version="tesla-inspired"] .status-banner.sb-danger .jp-icon{color:var(--jp-danger)}
+  /* Faixas informativas (divergência de fase, downgrade) não recebem classe
+     sb-* do renderizador: caem no ícone neutro de informação. */
+  html[data-ui-version="tesla-inspired"] .status-banner:not(.sb-good):not(.sb-warn):not(.sb-alert):not(.sb-danger) svg.jp-i-info{
+    display:inline-block; color:var(--jp-action);
+  }
+  html[data-ui-version="tesla-inspired"] .breach-note{
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-supporting); color:var(--jp-danger);
+  }
+  html[data-ui-version="tesla-inspired"] .session-notice{
+    border:1px solid var(--jp-border); border-left:3px solid var(--jp-success);
+    border-radius:var(--jp-radius-md); box-shadow:var(--jp-shadow-floating);
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-supporting);
+  }
+
+  /* ==========================================================
+     B0.7 — CARDS, PAINÉIS E MÉTRICAS
+     Quatro naturezas distintas deixam de receber o mesmo tratamento.
+     ========================================================== */
+  /* Metric card — rótulo, valor, contexto. Respira. */
+  html[data-ui-version="tesla-inspired"] .metrics{gap:var(--jp-space-3)}
+  html[data-ui-version="tesla-inspired"] .metric{
+    background:var(--jp-surface-elevated); border:1px solid var(--jp-border);
+    border-radius:var(--jp-radius-md); padding:var(--jp-space-4) var(--jp-space-5);
+    display:flex; flex-direction:column; gap:var(--jp-space-1);
+  }
+  html[data-ui-version="tesla-inspired"] .metric .v{
+    font-size:var(--jp-fs-data-md); font-weight:var(--jp-weight-semibold);
+    color:var(--jp-ink); line-height:1.2; letter-spacing:-.01em;
+  }
+  html[data-ui-version="tesla-inspired"] .metric.accent .v{color:var(--data-num)}
+  html[data-ui-version="tesla-inspired"] .metric .v.sm{font-size:var(--jp-fs-data-sm)}
+  html[data-ui-version="tesla-inspired"] .metric .sub{color:var(--jp-ink-muted); margin-top:var(--jp-space-1)}
+  /* A faixa semântica lateral vira acento fino, não bloco de cor. */
+  html[data-ui-version="tesla-inspired"] :is(.metric.f1, .metric.f2, .metric.f3, .metric.f4){
+    padding-left:calc(var(--jp-space-5) + 3px);
+  }
+  /* Métricas dentro do hero executivo mantêm o peso maior já aprovado. */
+  html[data-ui-version="tesla-inspired"] .dash-hero .metric{
+    background:transparent; border:0; border-left:1px solid var(--jp-border);
+    border-radius:0; padding:0 0 0 var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"] .dash-hero .metric:first-child{border-left:0; padding-left:0}
+  html[data-ui-version="tesla-inspired"] .dash-hero .metric .v{font-size:var(--jp-fs-data-lg)}
+  /* Painel operacional denso — LIFO, coerência, grades. */
+  html[data-ui-version="tesla-inspired"] .lifo{
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-lg);
+    background:var(--jp-surface); box-shadow:var(--jp-shadow-subtle); margin-top:var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"] .lifo-head{
+    background:transparent; border-bottom:1px solid var(--jp-border);
+    padding:var(--jp-space-5) var(--jp-space-6);
+    font-size:var(--jp-fs-panel); font-weight:var(--jp-weight-semibold); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .lifo-body{padding:var(--jp-space-6); gap:var(--jp-space-3)}
+  html[data-ui-version="tesla-inspired"] .lifo-sem{
+    padding:var(--jp-space-4) var(--jp-space-6); font-size:var(--jp-fs-body);
+    font-weight:var(--jp-weight-semibold); border-top:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"] .lifo-sug{
+    padding:0 var(--jp-space-6) var(--jp-space-6); color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] .dp-item{
+    background:var(--jp-surface-elevated); border:1px solid var(--jp-border);
+    border-radius:var(--jp-radius-md); padding:var(--jp-space-4) var(--jp-space-5); gap:var(--jp-space-1);
+  }
+  html[data-ui-version="tesla-inspired"] .dp-v{
+    font-size:var(--jp-fs-data-sm); font-weight:var(--jp-weight-semibold); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .dp-sub{font-size:var(--jp-fs-caption); color:var(--jp-ink-muted); line-height:1.45}
+  /* Gauges */
+  html[data-ui-version="tesla-inspired"] .gauge{margin-bottom:var(--jp-space-5)}
+  html[data-ui-version="tesla-inspired"] .gauge .lbl{
+    font-size:var(--jp-fs-supporting); margin-bottom:var(--jp-space-2);
+  }
+  html[data-ui-version="tesla-inspired"] .gauge .lbl .name{color:var(--jp-ink-muted)}
+  html[data-ui-version="tesla-inspired"] .gauge .lbl .val{color:var(--jp-ink); font-weight:var(--jp-weight-semibold)}
+  html[data-ui-version="tesla-inspired"] .gauge .track{
+    height:8px; border:0; background:var(--jp-surface-inset);
+    border-radius:var(--jp-radius-pill); overflow:hidden;
+  }
+  html[data-ui-version="tesla-inspired"] .gauge .bar{border-radius:var(--jp-radius-pill)}
+  /* Grades de fase */
+  html[data-ui-version="tesla-inspired"] .phase{
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-md);
+    margin-bottom:var(--jp-space-5); overflow:hidden;
+  }
+  html[data-ui-version="tesla-inspired"] .phase-head{
+    padding:var(--jp-space-4) var(--jp-space-5); gap:var(--jp-space-3);
+    font-size:var(--jp-fs-body); font-weight:var(--jp-weight-semibold); min-height:var(--jp-control-h);
+  }
+  html[data-ui-version="tesla-inspired"] .phase-head .badge,
+  html[data-ui-version="tesla-inspired"] .phase-head .here{
+    font-size:var(--jp-fs-caption); font-weight:var(--jp-weight-semibold);
+    letter-spacing:.04em; padding:2px var(--jp-space-2); border-radius:var(--jp-radius-sm);
+  }
+  html[data-ui-version="tesla-inspired"] .phase-body{padding:var(--jp-space-4) var(--jp-space-5) var(--jp-space-5)}
+  html[data-ui-version="tesla-inspired"] .phase-meta{
+    font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted);
+    gap:var(--jp-space-6); padding:var(--jp-space-3) 0 var(--jp-space-4);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.badge-type, .review-badge, .stale-pill, .account-chip){
+    font-size:var(--jp-fs-caption); border-radius:var(--jp-radius-pill);
+    padding:2px var(--jp-space-3); letter-spacing:0; text-transform:none;
+  }
+
+  /* ==========================================================
+     B0.8 — TABELAS
+     Densidade preservada, ruído removido: sem borda em toda célula,
+     header sem caixa alta, linha com altura de leitura real.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] :is(.dtable, .otable){
+    font-size:var(--jp-fs-supporting);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.dtable th, .otable th){
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-label);
+    font-weight:var(--jp-weight-semibold); color:var(--jp-ink-muted);
+    background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+    padding:var(--jp-space-3) var(--jp-space-3);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.dtable td, .otable td){
+    padding:var(--jp-space-2) var(--jp-space-3);
+    border-bottom:1px solid color-mix(in srgb, var(--jp-border) 55%, transparent);
+    line-height:1.5;
+  }
+  html[data-ui-version="tesla-inspired"] .dtable tbody tr:hover td{background:var(--jp-surface-elevated)}
+  :root[data-theme="dark"] html[data-ui-version="tesla-inspired"] .dtable tbody tr:nth-child(even) td{background:transparent}
+  html[data-ui-version="tesla-inspired"] :is(.dtable td.editable input, .dtable td.editable select, .otable input, .otable select){
+    min-height:var(--jp-control-h-compact); padding:0 var(--jp-space-3);
+    background:var(--jp-surface-inset); border:1px solid transparent;
+    border-radius:var(--jp-radius-sm); font-size:var(--jp-fs-supporting);
+  }
+  html[data-ui-version="tesla-inspired"] :is(.dtable td.editable input, .otable input):hover{border-color:var(--jp-border)}
+  html[data-ui-version="tesla-inspired"] :is(.dtable td.editable input, .dtable td.editable select, .otable input, .otable select):focus{
+    outline:none; border-color:var(--jp-action); background:var(--jp-surface);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--jp-action) 20%, transparent);
+  }
+  /* A coluna de stop continua sendo a mais importante da grade, mas por
+     acento e peso — não por preenchimento sólido. */
+  html[data-ui-version="tesla-inspired"] .otable .stop-col input{
+    border:1px solid var(--jp-action); background:var(--jp-surface-inset);
+    font-weight:var(--jp-weight-semibold); box-shadow:inset 3px 0 0 var(--jp-action);
+  }
+  html[data-ui-version="tesla-inspired"] .otable .stop-col .stop-note{
+    font-size:var(--jp-fs-caption); color:var(--jp-ink-muted); margin-top:var(--jp-space-1);
+  }
+  /* Rolagem local: a tabela rola dentro do painel, a página nunca rola no eixo X. */
+  html[data-ui-version="tesla-inspired"] .jp-table-scroll{
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin; max-width:100%;
+  }
+
+  /* ==========================================================
+     B0.9 — DISCLOSURES (<details>)
+     Semântica nativa preservada; a faixa vinho sai também daqui.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] .mc-disclosure{
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-lg);
+    background:var(--jp-surface); margin-top:var(--jp-space-5); overflow:hidden;
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary{
+    background:transparent; border-bottom:1px solid var(--jp-border);
+    padding:var(--jp-space-4) var(--jp-space-6); min-height:var(--jp-control-h);
+    gap:var(--jp-space-3);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary:hover{
+    filter:none; background:var(--jp-surface-elevated);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary .t{
+    font-size:var(--jp-fs-panel); font-weight:var(--jp-weight-semibold); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary .art{
+    font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted); opacity:1;
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary .chev{
+    color:var(--jp-ink-muted); transition:transform var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary .note-i{
+    border-color:var(--jp-ink-muted); color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure > summary .note-i.on{
+    background:var(--jp-action); border-color:var(--jp-action); color:var(--jp-canvas);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-disclosure-body{padding:var(--jp-space-5) var(--jp-space-6) var(--jp-space-6)}
+
+  /* ==========================================================
+     B0.10 — MODAIS E DRAWERS
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] :is(.modal-overlay, .settings-overlay){
+    background:var(--jp-overlay); backdrop-filter:blur(6px);
+  }
+  html[data-ui-version="tesla-inspired"] .modal-box{
+    border-radius:var(--jp-radius-xl); border:1px solid var(--jp-border);
+    box-shadow:var(--jp-shadow-modal); padding:var(--jp-space-8);
+  }
+  html[data-ui-version="tesla-inspired"] .modal-box h3{
+    font-size:var(--jp-fs-section); font-weight:var(--jp-weight-bold);
+    letter-spacing:-.02em; line-height:1.2; margin-bottom:var(--jp-space-2); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .modal-box .modal-sub{
+    font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted);
+    margin-bottom:var(--jp-space-6); line-height:1.55;
+  }
+  html[data-ui-version="tesla-inspired"] .modal-q .ql{font-size:var(--jp-fs-body); line-height:1.6}
+  html[data-ui-version="tesla-inspired"] .modal-actions{
+    gap:var(--jp-space-3); margin-top:var(--jp-space-6);
+    padding-top:var(--jp-space-5); border-top:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"] .settings-modal{
+    border-radius:var(--jp-radius-xl); box-shadow:var(--jp-shadow-modal);
+  }
+  /* A Central de Configurações perde a faixa vinho do cabeçalho e ganha a
+     mesma superfície do resto do produto. Arquitetura, navegação, busca,
+     histórico e IDs permanecem exatamente como aprovados. */
+  html[data-ui-version="tesla-inspired"] .settings-modal-head{
+    background:var(--jp-surface); color:var(--jp-ink);
+    border-bottom:1px solid var(--jp-border); padding:var(--jp-space-5) var(--jp-space-6);
+  }
+  /* CORREÇÃO B0 — .settings-modal-head é um elemento <header>, então a regra
+     legada `@media(max-width:900px){header{flex-wrap:wrap}}` (seletor de tag,
+     escrita para a top bar do terminal) vazava para dentro do modal e jogava
+     o botão Fechar para uma segunda linha em telas estreitas. Mesma classe de
+     vazamento já corrigida antes em `header{grid-area:hdr}`. */
+  html[data-ui-version="tesla-inspired"] .settings-modal-head{flex-wrap:nowrap}
+  html[data-ui-version="tesla-inspired"] .settings-modal-head > div{min-width:0}
+  html[data-ui-version="tesla-inspired"] .settings-modal-head h2{
+    color:var(--jp-ink); font-size:var(--jp-fs-section);
+    font-weight:var(--jp-weight-bold); letter-spacing:-.02em;
+  }
+  html[data-ui-version="tesla-inspired"] .settings-modal-head p{color:var(--jp-ink-muted); opacity:1; font-size:var(--jp-fs-supporting)}
+  html[data-ui-version="tesla-inspired"] .settings-close{
+    width:var(--jp-control-h); height:var(--jp-control-h); flex:0 0 var(--jp-control-h);
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-sm);
+    color:var(--jp-ink-muted); background:transparent; font-size:0;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  html[data-ui-version="tesla-inspired"] .settings-close:hover{background:var(--jp-surface-elevated); color:var(--jp-ink)}
+  html[data-ui-version="tesla-inspired"] :is(.settings-page-title, .settings-panel h3){
+    font-size:var(--jp-fs-section); font-weight:var(--jp-weight-bold); letter-spacing:-.02em; color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .settings-panel h4{font-size:var(--jp-fs-panel); font-weight:var(--jp-weight-semibold)}
+  html[data-ui-version="tesla-inspired"] .settings-menu-item{font-size:var(--jp-fs-body); min-height:var(--jp-control-h); border-radius:var(--jp-radius-sm)}
+  html[data-ui-version="tesla-inspired"] .settings-nav-card{min-height:56px}
+  html[data-ui-version="tesla-inspired"] .settings-nav-card-title{font-size:var(--jp-fs-body); font-weight:var(--jp-weight-medium)}
+  html[data-ui-version="tesla-inspired"] .settings-nav-card-desc{font-size:var(--jp-fs-supporting)}
+  html[data-ui-version="tesla-inspired"] :is(.settings-nav-list, .settings-nav-card:first-child){border-radius:var(--jp-radius-md)}
+  html[data-ui-version="tesla-inspired"] .settings-modal :focus-visible{outline-color:var(--jp-focus)}
+  /* A faixa vinho do .card h2 dentro de Configurações já era neutralizada
+     pela regra legada; aqui ela apenas herda a nova geometria. */
+  html[data-ui-version="tesla-inspired"] .settings-panel .card h2{
+    background:transparent; color:var(--jp-ink); border-bottom:1px solid var(--jp-border);
+  }
+
+  /* ==========================================================
+     B0.11 — SHELL: UMA SUPERFÍCIE, NÃO DUAS BARRAS
+     Header e barra de destinos permanecem dois elementos no DOM — é o que
+     preserva o rollback — mas passam a ler como uma única composição:
+     mesmo fundo, mesma régua lateral, e a linha divisória entre eles some.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) header{
+    border-bottom:0; padding-bottom:var(--jp-space-1);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #nav{
+    background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+    padding-top:0; padding-bottom:var(--jp-space-3);
+    box-shadow:var(--jp-shadow-subtle);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .tab{
+    font-size:var(--jp-fs-supporting); min-height:var(--jp-control-h);
+    padding:0 var(--jp-space-5);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .hdr-readout .k{
+    font-size:var(--jp-fs-eyebrow); color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .hdr-readout .v{
+    font-size:var(--jp-fs-supporting); font-weight:var(--jp-weight-semibold);
+  }
+  html[data-ui-version="tesla-inspired"] .pill{
+    font-size:var(--jp-fs-caption); font-weight:var(--jp-weight-semibold);
+    min-height:26px; padding:0 var(--jp-space-3);
+  }
+  html[data-ui-version="tesla-inspired"] .header-action{border-radius:var(--jp-radius-sm)}
+  html[data-ui-version="tesla-inspired"] .header-action svg{stroke-width:1.6}
+  html[data-ui-version="tesla-inspired"] .saved-tag{font-size:var(--jp-fs-caption)}
+  /* Conteúdo com container: nem tudo merece a largura inteira do monitor. */
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main > .screen.active{
+    max-width:var(--jp-container-wide); margin-inline:auto;
+  }
+  html[data-ui-version="tesla-inspired"] .foot-note{
+    font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted); line-height:1.65;
+  }
+
+  /* ==========================================================
+     B0.12 — TERMÔMETROS
+     Mesmos IDs, mesmos preenchimentos, mesmos marcadores, mesmos cálculos.
+     Muda só a forma: trilho mais largo, canto suave, escala legível,
+     legenda integrada e sem aparência de medidor industrial.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] .thermo-card{
+    padding:0 var(--jp-space-6) var(--jp-space-6); align-items:stretch;
+  }
+  /* A largura do trilho vinha de um style inline (46px) que vencia qualquer
+     seletor. Migrada para .jp-thermo-track: sem a flag o valor legado de 46px
+     é reproduzido exatamente; com a flag o trilho pode finalmente alargar. */
+  .jp-thermo-track{width:46px}
+  html[data-ui-version="tesla-inspired"] .jp-thermo-track{width:56px}
+  html[data-ui-version="tesla-inspired"] .thermo{
+    border-radius:var(--jp-radius-pill);
+    border:1px solid var(--jp-border); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--jp-canvas) 40%, transparent);
+  }
+  html[data-ui-version="tesla-inspired"] .thermo-fill{opacity:1; border-radius:var(--jp-radius-pill)}
+  /* O marcador some do glow e vira uma régua fina com pino — leitura de
+     instrumento de precisão, não de termômetro de parede. */
+  html[data-ui-version="tesla-inspired"] .thermo-marker{
+    left:-4px; right:-4px; height:2px; background:var(--jp-ink); box-shadow:none;
+  }
+  html[data-ui-version="tesla-inspired"] .thermo-marker::after{
+    right:-7px; top:-3px;
+    border-left:6px solid var(--jp-ink); border-top:4px solid transparent; border-bottom:4px solid transparent;
+  }
+  html[data-ui-version="tesla-inspired"] .thermo-ticks{
+    font-size:var(--jp-fs-caption); color:var(--jp-ink-muted); padding:0;
+  }
+  /* Legenda de zonas: quatro linhas em vez de quatro blocos saturados. */
+  html[data-ui-version="tesla-inspired"] .thermo-zone-labels{
+    margin-top:var(--jp-space-5); gap:var(--jp-space-1);
+  }
+  html[data-ui-version="tesla-inspired"] .tz{
+    display:flex; align-items:center; gap:var(--jp-space-2);
+    text-align:left; background:transparent; margin-bottom:0;
+    padding:var(--jp-space-1) 0; font-size:var(--jp-fs-caption);
+    color:var(--jp-ink-muted); border-radius:0;
+  }
+  html[data-ui-version="tesla-inspired"] .tz::before{
+    content:''; width:10px; height:10px; flex:none; border-radius:3px; background:currentColor;
+  }
+  html[data-ui-version="tesla-inspired"] .tz.f1::before{background:var(--f1)}
+  html[data-ui-version="tesla-inspired"] .tz.f2::before{background:var(--f2)}
+  html[data-ui-version="tesla-inspired"] .tz.f3::before{background:var(--f3)}
+  html[data-ui-version="tesla-inspired"] .tz.f4::before{background:var(--f4)}
+  /* Sem a flag, .jp-thermo-value precisa reproduzir exatamente o style inline
+     que substituiu no HTML — é o que mantém o rollback fiel ao legado. */
+  .jp-thermo-value{
+    font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+    color:var(--ink-dim); margin-top:6px;
+  }
+  .jp-thermo-value b{color:var(--ink)}
+  html[data-ui-version="tesla-inspired"] .jp-thermo-value{
+    font-family:var(--jp-font-ui); font-size:var(--jp-fs-label);
+    color:var(--jp-ink-muted); margin-top:var(--jp-space-3); text-align:center;
+  }
+  html[data-ui-version="tesla-inspired"] .jp-thermo-value b{
+    display:block; font-family:var(--jp-font-data); font-size:var(--jp-fs-data-sm);
+    font-weight:var(--jp-weight-semibold); color:var(--jp-ink); margin-top:2px;
+  }
+
+  /* ==========================================================
+     B0.13 — EXECUTION BOARD: aplicação visual dos componentes
+     Sem reorganização estrutural — isso é a Fase B.
+     ========================================================== */
+  /* `.screen.active` é obrigatório aqui pelo mesmo motivo do #dash: um
+     `html[flag] #exec` (1,1,0) venceria `.screen{display:none}` (0,1,0) e
+     deixaria o Execution Board renderizado em todas as telas. */
+  /* `minmax(0,1fr)` em vez de `1fr`: item de grade tem min-width:auto por
+     padrão, então uma faixa `1fr` cresce até o min-content do conteúdo.
+     Com valores em nowrap dentro (métricas, LIFO), isso empurrava a coluna
+     para 1045px dentro de um contêiner de 927px e a página passava a rolar
+     na horizontal a partir de 1024px. */
+  html[data-ui-version="tesla-inspired"] #exec.screen.active{
+    display:grid; grid-template-columns:minmax(0,1fr); gap:var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"] #exec > *{margin-top:0!important; margin-bottom:0!important; min-width:0}
+  html[data-ui-version="tesla-inspired"] .eb-top{gap:var(--jp-space-6); grid-template-columns:236px minmax(0,1fr)}
+  html[data-ui-version="tesla-inspired"] .eb-top > *{min-width:0}
+  html[data-ui-version="tesla-inspired"] .coherence > *{min-width:0}
+  html[data-ui-version="tesla-inspired"] .coherence{gap:var(--jp-space-6); margin-top:var(--jp-space-6)}
+  html[data-ui-version="tesla-inspired"] .mc-exec-clearance{
+    border-left:3px solid var(--mc); gap:var(--jp-space-3);
+    padding-top:var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-ec-title{
+    font-size:var(--jp-fs-section); font-weight:var(--jp-weight-bold);
+    letter-spacing:-.02em; line-height:1.15;
+  }
+  html[data-ui-version="tesla-inspired"] .mc-ec-action{
+    font-size:var(--jp-fs-body); font-weight:var(--jp-weight-regular); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-ec-action .ak,
+  html[data-ui-version="tesla-inspired"] .mc-action .ak{
+    display:inline-block; font-size:var(--jp-fs-caption);
+    font-weight:var(--jp-weight-semibold); color:var(--mc);
+    margin-right:var(--jp-space-2); text-transform:none; letter-spacing:0;
+  }
+  html[data-ui-version="tesla-inspired"] .mc-ec-facts{
+    gap:var(--jp-space-6); font-size:var(--jp-fs-supporting); color:var(--jp-ink-muted);
+    padding-top:var(--jp-space-2); font-family:var(--jp-font-ui);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-ec-facts b{
+    color:var(--jp-ink); font-weight:var(--jp-weight-semibold); margin-left:var(--jp-space-2);
+  }
+  html[data-ui-version="tesla-inspired"] .dual-phase{gap:var(--jp-space-3); margin-top:var(--jp-space-4)}
+  html[data-ui-version="tesla-inspired"] .mc-mini-card{
+    border-radius:var(--jp-radius-md); padding:var(--jp-space-4) var(--jp-space-5);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-mini-card .v{font-size:var(--jp-fs-data-md); color:var(--jp-ink)}
+
+  /* ==========================================================
+     B0.14 — RESPONSIVO E ACESSIBILIDADE
+     ========================================================== */
+  @media(max-width:900px){
+    html[data-ui-version="tesla-inspired"] .card{padding:0 var(--jp-space-5) var(--jp-space-5)}
+    html[data-ui-version="tesla-inspired"] .card h2{
+      margin:0 calc(var(--jp-space-5) * -1) var(--jp-space-4);
+      padding:var(--jp-space-4) var(--jp-space-5) var(--jp-space-3);
+    }
+    html[data-ui-version="tesla-inspired"] .modal-box{padding:var(--jp-space-5); border-radius:var(--jp-radius-lg)}
+    html[data-ui-version="tesla-inspired"] .eb-top{grid-template-columns:1fr}
+    html[data-ui-version="tesla-inspired"] .thermo-card{padding:0 var(--jp-space-5) var(--jp-space-5)}
+    html[data-ui-version="tesla-inspired"] :is(.lifo-body, .mc-disclosure-body){padding:var(--jp-space-5)}
+    html[data-ui-version="tesla-inspired"] .lifo-head{padding:var(--jp-space-4) var(--jp-space-5)}
+    html[data-ui-version="tesla-inspired"] :is(.dtable, .otable){font-size:var(--jp-fs-caption)}
+    html[data-ui-version="tesla-inspired"] :is(.dtable th, .otable th, .dtable td, .otable td){padding:var(--jp-space-2)}
+    /* Alvo de toque: nenhum controle abaixo de 44px na largura de dedo. */
+    html[data-ui-version="tesla-inspired"] :is(.reset-btn, .modal-btn, .seg button, .row-del, .unlock-btn, .pass-toggle){min-height:44px}
+    html[data-ui-version="tesla-inspired"] .row-del{width:44px}
+  }
+  @media(max-width:560px){
+    html[data-ui-version="tesla-inspired"] .modal-actions{flex-direction:column-reverse}
+    html[data-ui-version="tesla-inspired"] .modal-actions .modal-btn{width:100%}
+  }
+  /* Alto contraste / preferência do sistema: o anel de foco engrossa. */
+  @media (prefers-contrast:more){
+    html[data-ui-version="tesla-inspired"]{--jp-focus-width:3px}
+    html[data-ui-version="tesla-inspired"] .card{border-color:var(--jp-ink-muted)}
   }
