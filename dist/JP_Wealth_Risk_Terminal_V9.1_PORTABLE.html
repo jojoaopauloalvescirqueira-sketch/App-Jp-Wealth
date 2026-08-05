@@ -1432,10 +1432,226 @@
     html[data-ui-version="tesla-inspired"] #mcMetricStrip{grid-template-columns:repeat(2,1fr)}
     html[data-ui-version="tesla-inspired"] .jp-metric-secondary{padding-left:0; padding-right:0}
   }
+
+  /* ==========================================================
+     FASE 4 — DASHBOARD IMERSIVO
+
+     Ativo somente quando a flag está presente E a tela ativa é o
+     Dashboard: html[data-ui-version][data-active-screen="dash"].
+     Sair do Dashboard devolve o shell operacional mesmo com a flag.
+
+     Fora do modo imersivo os wrappers jp-* usam display:contents e
+     desaparecem da árvore de caixas — o conteúdo volta ao fluxo
+     legado, preservando o rollback.
+     ========================================================== */
+  .jp-dash-header,.jp-hero,.jp-carousel,.jp-slide,.jp-section{display:contents}
+  .jp-carousel-arrow,.jp-carousel-dots,.jp-hero-actions,
+  .jp-dash-menu,.jp-slide-eyebrow,.jp-slide-title,
+  .jp-section-eyebrow,.jp-section-title,.jp-section-lead{display:none}
+  /* svg.jp-hero-viz precisa empatar em especificidade com a regra legada
+     svg[viewbox]{display:block} — só a classe (0,1,0) perderia para ela (0,1,1). */
+  svg.jp-hero-viz{display:none}
+  .jp-slide[hidden]{display:none}
+
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"]{
+    /* Shell operacional sai de cena: o Dashboard ocupa a viewport inteira. */
+    --jp-dash-header-h:60px;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] body{
+    grid-template-columns:1fr; grid-template-rows:auto; grid-template-areas:"main";
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] > body > header,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #nav,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .foot-note{display:none}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] main{
+    grid-area:main; padding:0; min-width:0;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #dash{
+    display:block; padding-top:var(--jp-dash-header-h);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .onb-global-banner{
+    margin:var(--jp-dash-header-h) var(--jp-space-6) 0; border-radius:var(--jp-radius-sm);
+  }
+
+  /* ---------- Header próprio do Dashboard ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-header{
+    display:flex; align-items:center; gap:var(--jp-space-6);
+    position:fixed; inset:0 0 auto 0; z-index:50; height:var(--jp-dash-header-h);
+    padding:0 var(--jp-space-6); background:var(--jp-surface);
+    border-bottom:1px solid var(--jp-border); font-family:var(--jp-font-ui);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-brand{
+    font-family:var(--jp-font-ui); font-weight:700; letter-spacing:.26em;
+    font-size:calc(var(--jp-text-sm) * var(--fs-scale)); color:var(--jp-ink); white-space:nowrap;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav{
+    display:flex; gap:var(--sp-2); margin:0 auto;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav button,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu button{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:500; text-transform:none; letter-spacing:.01em;
+    color:var(--jp-ink); background:transparent; border:0; cursor:pointer;
+    padding:8px 14px; border-radius:var(--jp-radius-pill);
+    transition:background var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav button:hover,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu button:hover{background:var(--jp-surface-raised)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav button[aria-current="true"]{
+    background:var(--indigo-deep); color:var(--jp-action);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-actions{display:flex; gap:var(--sp-3); margin-left:auto}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu-btn{
+    display:none; font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    text-transform:none; letter-spacing:.01em; color:var(--jp-ink); background:transparent;
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-pill); padding:8px 16px; cursor:pointer;
+  }
+
+  /* ---------- Hero ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero{
+    display:grid; position:relative; isolation:isolate; overflow:hidden;
+    min-height:calc(100dvh - var(--jp-dash-header-h));
+    align-content:start; justify-items:center;
+    padding:var(--jp-space-8) var(--jp-space-6) var(--jp-space-9);
+    background:var(--jp-bg);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-viz{
+    display:block; position:absolute; inset:0; width:100%; height:100%; z-index:-1;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel{
+    display:block; width:min(100%,860px); text-align:center;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide{display:block}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide[hidden]{display:none}
+  /* O card do clearance vira texto centrado sobre o visual: sem moldura. */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceCard{
+    background:transparent; border:0; box-shadow:none; padding:0; overflow:visible;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceCard::before{display:none}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .dh-kicker{justify-content:center}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .dh-kicker .art{display:none}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceTitle{
+    max-width:none; margin:var(--sp-4) auto var(--sp-4);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceSub{
+    max-width:52ch; margin:0 auto;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceAction{
+    max-width:62ch; margin:var(--jp-space-6) auto 0; text-align:left;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide-eyebrow{
+    display:block; font-family:var(--jp-font-data); text-transform:uppercase; letter-spacing:.18em;
+    font-size:calc(var(--jp-text-xs) * var(--fs-scale)); color:var(--jp-ink-muted); margin:0 0 var(--sp-3);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide-title{
+    display:block; font-family:var(--jp-font-ui); font-weight:700; letter-spacing:-.03em;
+    font-size:calc(var(--jp-text-lg) * var(--fs-scale)); color:var(--jp-ink);
+    margin:0 0 var(--jp-space-6); line-height:1.12;
+  }
+
+  /* ---------- Ações do hero ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-actions{
+    display:flex; gap:var(--sp-4); justify-content:center; margin-top:var(--jp-space-7); flex-wrap:wrap;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:600; text-transform:none; letter-spacing:.01em;
+    min-height:42px; min-width:236px; padding:0 var(--jp-space-6);
+    border-radius:var(--jp-radius-sm); border:1px solid transparent; cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition:background var(--jp-duration-fast) var(--jp-ease), border-color var(--jp-duration-fast) var(--jp-ease), color var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-primary{
+    background:var(--jp-action); color:#fff;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-primary:hover{background:var(--indigo)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-secondary{
+    background:color-mix(in srgb, var(--jp-surface) 82%, transparent);
+    border-color:var(--jp-border); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-secondary:hover{background:var(--jp-surface-raised)}
+
+  /* ---------- Controles do carrossel ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow{
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+    width:44px; height:44px; border-radius:var(--jp-radius-pill);
+    border:1px solid var(--jp-border); background:color-mix(in srgb, var(--jp-surface) 76%, transparent);
+    color:var(--jp-ink); font-size:24px; line-height:1; cursor:pointer;
+    transition:background var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow:hover{background:var(--jp-surface-raised)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-prev{left:clamp(10px,3vw,40px)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-next{right:clamp(10px,3vw,40px)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots{
+    display:flex; gap:10px; justify-content:center;
+    position:absolute; left:0; right:0; bottom:var(--jp-space-7); z-index:2;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button{
+    width:34px; height:4px; padding:0; border:0; border-radius:var(--jp-radius-pill);
+    background:var(--jp-border); cursor:pointer;
+    transition:background var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button.active{background:var(--jp-action)}
+
+  /* ---------- Seções abaixo do hero ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{
+    display:block; padding:var(--jp-space-8) clamp(var(--sp-5),6vw,var(--jp-space-9));
+    border-top:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section:nth-of-type(even){background:var(--jp-surface)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-eyebrow{
+    display:block; font-family:var(--jp-font-data); text-transform:uppercase; letter-spacing:.18em;
+    font-size:calc(var(--jp-text-xs) * var(--fs-scale)); color:var(--jp-ink-muted); margin:0 0 var(--sp-3);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-title{
+    display:block; font-family:var(--jp-font-ui); font-weight:700; letter-spacing:-.03em;
+    font-size:calc(var(--jp-text-lg) * var(--fs-scale)); color:var(--jp-ink);
+    margin:0 0 var(--sp-4); line-height:1.1; max-width:22ch;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-lead{
+    display:block; font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-md) * var(--fs-scale));
+    color:var(--jp-ink-muted); max-width:62ch; margin:0 0 var(--jp-space-6); line-height:1.6;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section .mc-disclosure{margin-top:var(--sp-4)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section .mc-reasons{
+    max-width:76ch; gap:var(--sp-4);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-metric-strip-gov{
+    grid-template-columns:repeat(4,1fr); gap:var(--sp-3); margin-top:0; text-align:left;
+  }
+
+  /* Sem snap obrigatório: o usuário para onde quiser. */
+  @media not (prefers-reduced-motion: reduce){
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] body{scroll-snap-type:y proximity}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero,
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{scroll-snap-align:start}
+  }
+
+  /* ---------- Responsivo do modo imersivo ---------- */
+  @media(max-width:900px){
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav{display:none}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu-btn{display:inline-flex}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu{
+      display:grid; position:absolute; top:var(--jp-dash-header-h); right:0; left:0;
+      background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+      padding:var(--sp-3); gap:2px; text-align:left;
+    }
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu[hidden]{display:none}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero{
+      padding:var(--jp-space-7) var(--sp-5) var(--jp-space-8);
+    }
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn{min-width:0; width:100%}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-actions{flex-direction:column; align-items:stretch}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow{width:40px; height:40px; top:auto; bottom:var(--jp-space-6)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots{bottom:var(--sp-5)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-metric-strip-gov{grid-template-columns:repeat(2,1fr)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{padding:var(--jp-space-7) var(--sp-5)}
+  }
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'eaa349d749cc9f53';
+const JP_WEALTH_BUILD_ID = 'c0005f0b1a4be4e6';
 </script>
 <link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
 <link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
@@ -1761,25 +1977,107 @@ const JP_WEALTH_BUILD_ID = 'eaa349d749cc9f53';
 
   <!-- ================= 05 DASHBOARD ================= -->
   <section class="screen active" id="dash">
-    <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
-    <div class="card mc-hero mc-status-clear" id="mcClearanceCard">
-      <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
-      <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
-      <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
-      <div class="mc-action" id="mcClearanceAction">—</div>
+    <!-- Header próprio do Dashboard imersivo. Fora do modo imersivo os wrappers
+         jp-* usam display:contents e o conteúdo volta ao fluxo legado. -->
+    <div class="jp-dash-header">
+      <span class="jp-dash-brand">JP WEALTH</span>
+      <nav class="jp-dash-nav" aria-label="Seções do Dashboard">
+        <button type="button" data-dash-link="visao" aria-current="true">Visão Geral</button>
+        <button type="button" data-dash-link="risco" aria-current="false">Risco</button>
+        <button type="button" data-dash-link="evolucao" aria-current="false">Evolução</button>
+        <button type="button" data-dash-link="governanca" aria-current="false">Governança</button>
+      </nav>
+      <div class="jp-dash-actions">
+        <button type="button" class="jp-dash-menu-btn" data-dash-menu-toggle aria-expanded="false" aria-label="Abrir menu de seções">Menu</button>
+      </div>
+      <div class="jp-dash-menu" data-dash-menu hidden>
+        <button type="button" data-dash-link="visao">Visão Geral</button>
+        <button type="button" data-dash-link="risco">Risco</button>
+        <button type="button" data-dash-link="evolucao">Evolução</button>
+        <button type="button" data-dash-link="governanca">Governança</button>
+      </div>
     </div>
-    <!-- N2 · Mission Metrics — status executivos compactos -->
-    <div class="mc-metric-strip" id="mcMetricStrip">
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Reservas FCR·FEO</div><div class="v sm-txt" id="mcMiniReservas">—</div><span class="mc-status mc-st-muted" id="mcMiniReservasChip">Pendente</span></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Caixa Central</div><div class="v sm-txt" id="mcMiniCaixa">—</div><span class="mc-status mc-st-muted" id="mcMiniCaixaChip">Pendente</span></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Equity Protector</div><div class="v sm-txt" id="mcMiniEP">—</div><span class="mc-status mc-st-muted" id="mcMiniEPChip">Pendente</span></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Status · Pendências</div><div class="v sm-txt" id="dStatus">NORMAL</div><span class="mc-status mc-st-muted" id="mcMiniPendChip">—</span></div>
+
+    <!-- SEÇÃO 1 · Hero com carrossel real de três slides -->
+    <div class="jp-hero" data-dash-hero data-dash-section="visao">
+      <svg class="jp-hero-viz" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <defs>
+          <radialGradient id="jpHeroGlow" cx="50%" cy="42%" r="62%">
+            <stop offset="0%" stop-color="var(--mc)" stop-opacity=".20"/>
+            <stop offset="55%" stop-color="var(--mc)" stop-opacity=".05"/>
+            <stop offset="100%" stop-color="var(--mc)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="1200" height="700" fill="url(#jpHeroGlow)"/>
+        <g fill="none" stroke="var(--mc)" stroke-opacity=".30">
+          <circle cx="600" cy="330" r="140"/><circle cx="600" cy="330" r="210"/>
+          <circle cx="600" cy="330" r="285" stroke-opacity=".18"/>
+          <circle cx="600" cy="330" r="365" stroke-opacity=".10"/>
+        </g>
+        <g fill="none" stroke="var(--jp-border)" stroke-opacity=".55">
+          <path d="M0 470 C 210 430, 320 500, 520 452 S 880 372, 1200 415"/>
+          <path d="M0 520 C 230 486, 340 552, 545 505 S 900 430, 1200 470" stroke-opacity=".35"/>
+          <path d="M0 572 C 250 542, 360 602, 570 558 S 915 490, 1200 525" stroke-opacity=".20"/>
+        </g>
+        <g stroke="var(--jp-border)" stroke-opacity=".28">
+          <path d="M150 0 V700"/><path d="M450 0 V700"/><path d="M750 0 V700"/><path d="M1050 0 V700"/>
+        </g>
+      </svg>
+
+      <div class="jp-carousel">
+        <div class="jp-slide" data-slide="0">
+          <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
+          <div class="card mc-hero mc-status-clear" id="mcClearanceCard">
+            <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
+            <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
+            <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
+            <div class="mc-action" id="mcClearanceAction">—</div>
+          </div>
+          <div class="jp-hero-actions">
+            <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec">Abrir Execution Board</button>
+            <button type="button" class="jp-btn jp-btn-secondary" data-dash-scroll="governanca">Ver detalhes</button>
+          </div>
+        </div>
+
+        <div class="jp-slide" data-slide="1" hidden>
+          <p class="jp-slide-eyebrow">Risco e capacidade</p>
+          <h2 class="jp-slide-title">Quanto espaço operacional resta agora</h2>
+          <!-- N2 · Mission Metrics — status executivos compactos -->
+          <div class="mc-metric-strip" id="mcMetricStrip">
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
+          </div>
+        </div>
+
+        <div class="jp-slide" data-slide="2" hidden>
+          <p class="jp-slide-eyebrow">Governança e prontidão</p>
+          <h2 class="jp-slide-title">O que sustenta a permissão de operar</h2>
+          <div class="mc-metric-strip jp-metric-strip-gov">
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Reservas FCR·FEO</div><div class="v sm-txt" id="mcMiniReservas">—</div><span class="mc-status mc-st-muted" id="mcMiniReservasChip">Pendente</span></div>
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Caixa Central</div><div class="v sm-txt" id="mcMiniCaixa">—</div><span class="mc-status mc-st-muted" id="mcMiniCaixaChip">Pendente</span></div>
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Equity Protector</div><div class="v sm-txt" id="mcMiniEP">—</div><span class="mc-status mc-st-muted" id="mcMiniEPChip">Pendente</span></div>
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Status · Pendências</div><div class="v sm-txt" id="dStatus">NORMAL</div><span class="mc-status mc-st-muted" id="mcMiniPendChip">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="jp-carousel-arrow jp-carousel-prev" data-carousel-prev aria-label="Slide anterior">‹</button>
+      <button type="button" class="jp-carousel-arrow jp-carousel-next" data-carousel-next aria-label="Próximo slide">›</button>
+      <div class="jp-carousel-dots" role="group" aria-label="Selecionar slide">
+        <button type="button" data-dash-dot="0" class="active" aria-current="true" aria-label="Slide 1: estado operacional"></button>
+        <button type="button" data-dash-dot="1" aria-current="false" aria-label="Slide 2: risco e capacidade"></button>
+        <button type="button" data-dash-dot="2" aria-current="false" aria-label="Slide 3: governança e prontidão"></button>
+      </div>
+      <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
+
+    <!-- SEÇÃO 3 · Evolução do período -->
+    <div class="jp-section" data-dash-section="evolucao">
+      <p class="jp-section-eyebrow">Evolução do período</p>
+      <h2 class="jp-section-title">Como o capital se moveu até aqui</h2>
+      <p class="jp-section-lead">Curvas já calculadas pelo motor de contabilidade — evolução, drawdown e expectativa versus real.</p>
     <!-- N4 · Painéis lado a lado, abertos por padrão (tiling). Continuam
          recolhíveis: o operador fecha o que não quer ver, mas o estado inicial
          é "tudo vivo ao mesmo tempo", como mesa de operação. -->
@@ -1787,6 +2085,21 @@ const JP_WEALTH_BUILD_ID = 'eaa349d749cc9f53';
       <summary><span class="t">Acompanhamento Gráfico</span><span class="art">evolução · drawdown · expectativa vs real</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body"><div id="dashCharts"></div></div>
     </details>
+    </div>
+
+    <!-- SEÇÃO 4 · Governança e prontidão — inclui as razões do clearance,
+         preenchidas pelo renderizador existente no mesmo ID. -->
+    <div class="jp-section" data-dash-section="governanca">
+      <p class="jp-section-eyebrow">Governança e prontidão</p>
+      <h2 class="jp-section-title">Por que este é o estado?</h2>
+      <p class="jp-section-lead">Fatos apurados pelo Operational Clearance a partir do estado vigente. As demais métricas de governança ficam no terceiro slide do hero.</p>
+      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+    </div>
+
+    <!-- SEÇÃO 5 · Análises complementares -->
+    <div class="jp-section" data-dash-section="analises">
+      <p class="jp-section-eyebrow">Análises complementares</p>
+      <h2 class="jp-section-title">Ciclo e acompanhamento mensal</h2>
     <details class="mc-disclosure" id="dashCyclePanel" open>
       <summary><span class="t">Métricas do Ciclo</span><span class="art">retorno · DD máx · Mar Ratio · meta</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body">
@@ -1802,6 +2115,7 @@ const JP_WEALTH_BUILD_ID = 'eaa349d749cc9f53';
       <summary><span class="t">Acompanhamento Mensal</span><span class="art">estilo MQL5 Signals · derivado do fechamento diário (aba 07)</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body"><div id="mqlMonthly" style="overflow-x:auto"></div></div>
     </details>
+    </div>
   </section>
 
   <!-- ================= 06 CHECKLIST ================= -->
@@ -1987,6 +2301,7 @@ const JP_WEALTH_BUILD_ID = 'eaa349d749cc9f53';
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -9106,6 +9421,153 @@ function initSettingsModal(){
   initSettingsSubdialogObserver();
 }
 initSettingsModal();
+// ============ DASHBOARD IMERSIVO (N1 — apresentação) ============
+// Camada estritamente de interface: modo imersivo, carrossel do hero, navegação
+// interna por seções e menu mobile. Nenhum cálculo, fórmula, persistência ou
+// estado financeiro é derivado aqui — os valores continuam vindo dos
+// renderizadores existentes, que escrevem nos mesmos IDs.
+//
+// O estado do modo imersivo vive apenas no atributo data-active-screen do <html>.
+// Não é persistido, não entra em backup e não toca o schema.
+
+const DASH_SLIDES = 3;
+const dashUI = { slide: 0, menuOpen: false, menuOpener: null };
+
+function dashEl(sel, root) { return (root || document).querySelector(sel); }
+function dashAll(sel, root) { return [...(root || document).querySelectorAll(sel)]; }
+
+/* ---------- Modo imersivo ---------- */
+// Reflete no <html> qual tela está ativa. Lê o DOM já atualizado pela navegação
+// existente; não decide navegação nem mantém um segundo mecanismo de troca.
+function syncActiveScreen() {
+  const active = dashEl('.screen.active');
+  document.documentElement.dataset.activeScreen = active ? active.id : '';
+  if (active && active.id !== 'dash') closeDashMenu({ restoreFocus: false });
+}
+
+/* ---------- Carrossel do hero ---------- */
+function renderDashSlides(focusSlide) {
+  const slides = dashAll('[data-slide]');
+  if (!slides.length) return;
+  slides.forEach((slide, i) => {
+    const on = i === dashUI.slide;
+    slide.hidden = !on;
+    slide.inert = !on;
+    slide.setAttribute('aria-hidden', String(!on));
+  });
+  dashAll('[data-dash-dot]').forEach((dot, i) => {
+    const on = i === dashUI.slide;
+    dot.classList.toggle('active', on);
+    dot.setAttribute('aria-current', on ? 'true' : 'false');
+  });
+  const live = dashEl('[data-dash-carousel-status]');
+  if (live) live.textContent = `Slide ${dashUI.slide + 1} de ${DASH_SLIDES}`;
+  if (focusSlide) {
+    const target = slides[dashUI.slide];
+    const first = target && target.querySelector('button, [href], input, select, textarea');
+    if (first) first.focus();
+  }
+}
+function goToDashSlide(index, options) {
+  const total = dashAll('[data-slide]').length || DASH_SLIDES;
+  dashUI.slide = (index + total) % total;
+  renderDashSlides(options && options.focus);
+}
+
+/* ---------- Navegação interna por seções ---------- */
+// Alguns destinos do menu vivem em slides do hero, não em seções próprias:
+// "Risco" é o slide 2 do carrossel. Nesses casos o link leva ao hero e troca o
+// slide, para que nenhum item do menu aponte para um destino inexistente.
+const DASH_SLIDE_TARGETS = { visao: 0, risco: 1 };
+
+function scrollToDashSection(name) {
+  const slide = DASH_SLIDE_TARGETS[name];
+  const target = dashEl(`[data-dash-section="${name}"]`) || (slide !== undefined ? dashEl('[data-dash-hero]') : null);
+  if (!target) return;
+  if (slide !== undefined) goToDashSlide(slide);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  dashAll('[data-dash-link]').forEach(link => {
+    link.setAttribute('aria-current', link.dataset.dashLink === name ? 'true' : 'false');
+  });
+}
+
+/* ---------- Menu mobile do header imersivo ---------- */
+function openDashMenu(opener) {
+  const menu = dashEl('[data-dash-menu]');
+  if (!menu) return;
+  dashUI.menuOpen = true;
+  dashUI.menuOpener = opener || dashEl('[data-dash-menu-toggle]');
+  menu.hidden = false;
+  const toggle = dashEl('[data-dash-menu-toggle]');
+  if (toggle) toggle.setAttribute('aria-expanded', 'true');
+  const first = menu.querySelector('button, [href]');
+  if (first) first.focus();
+}
+function closeDashMenu(options) {
+  const menu = dashEl('[data-dash-menu]');
+  if (!menu || !dashUI.menuOpen) return;
+  dashUI.menuOpen = false;
+  menu.hidden = true;
+  const toggle = dashEl('[data-dash-menu-toggle]');
+  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+  const opener = dashUI.menuOpener;
+  dashUI.menuOpener = null;
+  if (!options || options.restoreFocus !== false) {
+    if (opener && document.contains(opener)) opener.focus();
+  }
+}
+
+/* ---------- Ligação com a navegação existente ---------- */
+// Envolve a função real de troca de telas em vez de recriá-la: a navegação
+// continua sendo a do aplicativo, e o modo imersivo apenas reage a ela.
+function initDashboardImmersive() {
+  if (typeof navigateToScreen === 'function' && !navigateToScreen.__dashWrapped) {
+    const original = navigateToScreen;
+    navigateToScreen = function (target) {
+      original(target);
+      syncActiveScreen();
+    };
+    navigateToScreen.__dashWrapped = true;
+  }
+  syncActiveScreen();
+
+  const hero = dashEl('[data-dash-hero]');
+  if (hero) {
+    hero.addEventListener('click', event => {
+      const prev = event.target.closest('[data-carousel-prev]');
+      if (prev) { goToDashSlide(dashUI.slide - 1); return; }
+      const next = event.target.closest('[data-carousel-next]');
+      if (next) { goToDashSlide(dashUI.slide + 1); return; }
+      const dot = event.target.closest('[data-dash-dot]');
+      if (dot) { goToDashSlide(Number(dot.dataset.dashDot), { focus: true }); }
+    });
+    hero.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); goToDashSlide(dashUI.slide - 1); }
+      else if (event.key === 'ArrowRight') { event.preventDefault(); goToDashSlide(dashUI.slide + 1); }
+    });
+  }
+
+  // Ações reais: a primária reutiliza a navegação existente; a secundária
+  // rola para a seção de detalhes dentro do próprio Dashboard.
+  document.addEventListener('click', event => {
+    const go = event.target.closest('[data-dash-go]');
+    if (go) { navigateToScreen(go.dataset.dashGo); return; }
+    const scroll = event.target.closest('[data-dash-scroll]');
+    if (scroll) { scrollToDashSection(scroll.dataset.dashScroll); return; }
+    const link = event.target.closest('[data-dash-link]');
+    if (link) { scrollToDashSection(link.dataset.dashLink); closeDashMenu({ restoreFocus: false }); return; }
+    const toggle = event.target.closest('[data-dash-menu-toggle]');
+    if (toggle) { dashUI.menuOpen ? closeDashMenu() : openDashMenu(toggle); }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && dashUI.menuOpen) { event.preventDefault(); closeDashMenu(); }
+  });
+
+  renderDashSlides(false);
+}
+initDashboardImmersive();
 </script>
 </body>
 </html>

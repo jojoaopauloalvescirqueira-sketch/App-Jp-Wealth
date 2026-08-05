@@ -333,25 +333,107 @@
 
   <!-- ================= 05 DASHBOARD ================= -->
   <section class="screen active" id="dash">
-    <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
-    <div class="card mc-hero mc-status-clear" id="mcClearanceCard">
-      <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
-      <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
-      <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
-      <div class="mc-action" id="mcClearanceAction">—</div>
+    <!-- Header próprio do Dashboard imersivo. Fora do modo imersivo os wrappers
+         jp-* usam display:contents e o conteúdo volta ao fluxo legado. -->
+    <div class="jp-dash-header">
+      <span class="jp-dash-brand">JP WEALTH</span>
+      <nav class="jp-dash-nav" aria-label="Seções do Dashboard">
+        <button type="button" data-dash-link="visao" aria-current="true">Visão Geral</button>
+        <button type="button" data-dash-link="risco" aria-current="false">Risco</button>
+        <button type="button" data-dash-link="evolucao" aria-current="false">Evolução</button>
+        <button type="button" data-dash-link="governanca" aria-current="false">Governança</button>
+      </nav>
+      <div class="jp-dash-actions">
+        <button type="button" class="jp-dash-menu-btn" data-dash-menu-toggle aria-expanded="false" aria-label="Abrir menu de seções">Menu</button>
+      </div>
+      <div class="jp-dash-menu" data-dash-menu hidden>
+        <button type="button" data-dash-link="visao">Visão Geral</button>
+        <button type="button" data-dash-link="risco">Risco</button>
+        <button type="button" data-dash-link="evolucao">Evolução</button>
+        <button type="button" data-dash-link="governanca">Governança</button>
+      </div>
     </div>
-    <!-- N2 · Mission Metrics — status executivos compactos -->
-    <div class="mc-metric-strip" id="mcMetricStrip">
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
-      <div class="mc-mini-card jp-metric-primary"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Reservas FCR·FEO</div><div class="v sm-txt" id="mcMiniReservas">—</div><span class="mc-status mc-st-muted" id="mcMiniReservasChip">Pendente</span></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Caixa Central</div><div class="v sm-txt" id="mcMiniCaixa">—</div><span class="mc-status mc-st-muted" id="mcMiniCaixaChip">Pendente</span></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Equity Protector</div><div class="v sm-txt" id="mcMiniEP">—</div><span class="mc-status mc-st-muted" id="mcMiniEPChip">Pendente</span></div>
-      <div class="mc-mini-card jp-metric-secondary"><div class="k">Status · Pendências</div><div class="v sm-txt" id="dStatus">NORMAL</div><span class="mc-status mc-st-muted" id="mcMiniPendChip">—</span></div>
+
+    <!-- SEÇÃO 1 · Hero com carrossel real de três slides -->
+    <div class="jp-hero" data-dash-hero data-dash-section="visao">
+      <svg class="jp-hero-viz" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <defs>
+          <radialGradient id="jpHeroGlow" cx="50%" cy="42%" r="62%">
+            <stop offset="0%" stop-color="var(--mc)" stop-opacity=".20"/>
+            <stop offset="55%" stop-color="var(--mc)" stop-opacity=".05"/>
+            <stop offset="100%" stop-color="var(--mc)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="1200" height="700" fill="url(#jpHeroGlow)"/>
+        <g fill="none" stroke="var(--mc)" stroke-opacity=".30">
+          <circle cx="600" cy="330" r="140"/><circle cx="600" cy="330" r="210"/>
+          <circle cx="600" cy="330" r="285" stroke-opacity=".18"/>
+          <circle cx="600" cy="330" r="365" stroke-opacity=".10"/>
+        </g>
+        <g fill="none" stroke="var(--jp-border)" stroke-opacity=".55">
+          <path d="M0 470 C 210 430, 320 500, 520 452 S 880 372, 1200 415"/>
+          <path d="M0 520 C 230 486, 340 552, 545 505 S 900 430, 1200 470" stroke-opacity=".35"/>
+          <path d="M0 572 C 250 542, 360 602, 570 558 S 915 490, 1200 525" stroke-opacity=".20"/>
+        </g>
+        <g stroke="var(--jp-border)" stroke-opacity=".28">
+          <path d="M150 0 V700"/><path d="M450 0 V700"/><path d="M750 0 V700"/><path d="M1050 0 V700"/>
+        </g>
+      </svg>
+
+      <div class="jp-carousel">
+        <div class="jp-slide" data-slide="0">
+          <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
+          <div class="card mc-hero mc-status-clear" id="mcClearanceCard">
+            <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
+            <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
+            <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
+            <div class="mc-action" id="mcClearanceAction">—</div>
+          </div>
+          <div class="jp-hero-actions">
+            <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec">Abrir Execution Board</button>
+            <button type="button" class="jp-btn jp-btn-secondary" data-dash-scroll="governanca">Ver detalhes</button>
+          </div>
+        </div>
+
+        <div class="jp-slide" data-slide="1" hidden>
+          <p class="jp-slide-eyebrow">Risco e capacidade</p>
+          <h2 class="jp-slide-title">Quanto espaço operacional resta agora</h2>
+          <!-- N2 · Mission Metrics — status executivos compactos -->
+          <div class="mc-metric-strip" id="mcMetricStrip">
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
+            <div class="mc-mini-card jp-metric-primary"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
+          </div>
+        </div>
+
+        <div class="jp-slide" data-slide="2" hidden>
+          <p class="jp-slide-eyebrow">Governança e prontidão</p>
+          <h2 class="jp-slide-title">O que sustenta a permissão de operar</h2>
+          <div class="mc-metric-strip jp-metric-strip-gov">
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Reservas FCR·FEO</div><div class="v sm-txt" id="mcMiniReservas">—</div><span class="mc-status mc-st-muted" id="mcMiniReservasChip">Pendente</span></div>
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Caixa Central</div><div class="v sm-txt" id="mcMiniCaixa">—</div><span class="mc-status mc-st-muted" id="mcMiniCaixaChip">Pendente</span></div>
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Equity Protector</div><div class="v sm-txt" id="mcMiniEP">—</div><span class="mc-status mc-st-muted" id="mcMiniEPChip">Pendente</span></div>
+            <div class="mc-mini-card jp-metric-secondary"><div class="k">Status · Pendências</div><div class="v sm-txt" id="dStatus">NORMAL</div><span class="mc-status mc-st-muted" id="mcMiniPendChip">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="jp-carousel-arrow jp-carousel-prev" data-carousel-prev aria-label="Slide anterior">‹</button>
+      <button type="button" class="jp-carousel-arrow jp-carousel-next" data-carousel-next aria-label="Próximo slide">›</button>
+      <div class="jp-carousel-dots" role="group" aria-label="Selecionar slide">
+        <button type="button" data-dash-dot="0" class="active" aria-current="true" aria-label="Slide 1: estado operacional"></button>
+        <button type="button" data-dash-dot="1" aria-current="false" aria-label="Slide 2: risco e capacidade"></button>
+        <button type="button" data-dash-dot="2" aria-current="false" aria-label="Slide 3: governança e prontidão"></button>
+      </div>
+      <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
+
+    <!-- SEÇÃO 3 · Evolução do período -->
+    <div class="jp-section" data-dash-section="evolucao">
+      <p class="jp-section-eyebrow">Evolução do período</p>
+      <h2 class="jp-section-title">Como o capital se moveu até aqui</h2>
+      <p class="jp-section-lead">Curvas já calculadas pelo motor de contabilidade — evolução, drawdown e expectativa versus real.</p>
     <!-- N4 · Painéis lado a lado, abertos por padrão (tiling). Continuam
          recolhíveis: o operador fecha o que não quer ver, mas o estado inicial
          é "tudo vivo ao mesmo tempo", como mesa de operação. -->
@@ -359,6 +441,21 @@
       <summary><span class="t">Acompanhamento Gráfico</span><span class="art">evolução · drawdown · expectativa vs real</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body"><div id="dashCharts"></div></div>
     </details>
+    </div>
+
+    <!-- SEÇÃO 4 · Governança e prontidão — inclui as razões do clearance,
+         preenchidas pelo renderizador existente no mesmo ID. -->
+    <div class="jp-section" data-dash-section="governanca">
+      <p class="jp-section-eyebrow">Governança e prontidão</p>
+      <h2 class="jp-section-title">Por que este é o estado?</h2>
+      <p class="jp-section-lead">Fatos apurados pelo Operational Clearance a partir do estado vigente. As demais métricas de governança ficam no terceiro slide do hero.</p>
+      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+    </div>
+
+    <!-- SEÇÃO 5 · Análises complementares -->
+    <div class="jp-section" data-dash-section="analises">
+      <p class="jp-section-eyebrow">Análises complementares</p>
+      <h2 class="jp-section-title">Ciclo e acompanhamento mensal</h2>
     <details class="mc-disclosure" id="dashCyclePanel" open>
       <summary><span class="t">Métricas do Ciclo</span><span class="art">retorno · DD máx · Mar Ratio · meta</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body">
@@ -374,6 +471,7 @@
       <summary><span class="t">Acompanhamento Mensal</span><span class="art">estilo MQL5 Signals · derivado do fechamento diário (aba 07)</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body"><div id="mqlMonthly" style="overflow-x:auto"></div></div>
     </details>
+    </div>
   </section>
 
   <!-- ================= 06 CHECKLIST ================= -->
@@ -596,5 +694,6 @@
 <script src="src/js/40-app/06-boot.js"></script>
 <script src="src/js/40-app/08-educational-content.js"></script>
 <script src="src/js/40-app/09-settings-modal.js"></script>
+<script src="src/js/40-app/10-dashboard-immersive.js"></script>
 </body>
 </html>

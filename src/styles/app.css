@@ -1422,3 +1422,219 @@
     html[data-ui-version="tesla-inspired"] #mcMetricStrip{grid-template-columns:repeat(2,1fr)}
     html[data-ui-version="tesla-inspired"] .jp-metric-secondary{padding-left:0; padding-right:0}
   }
+
+  /* ==========================================================
+     FASE 4 — DASHBOARD IMERSIVO
+
+     Ativo somente quando a flag está presente E a tela ativa é o
+     Dashboard: html[data-ui-version][data-active-screen="dash"].
+     Sair do Dashboard devolve o shell operacional mesmo com a flag.
+
+     Fora do modo imersivo os wrappers jp-* usam display:contents e
+     desaparecem da árvore de caixas — o conteúdo volta ao fluxo
+     legado, preservando o rollback.
+     ========================================================== */
+  .jp-dash-header,.jp-hero,.jp-carousel,.jp-slide,.jp-section{display:contents}
+  .jp-carousel-arrow,.jp-carousel-dots,.jp-hero-actions,
+  .jp-dash-menu,.jp-slide-eyebrow,.jp-slide-title,
+  .jp-section-eyebrow,.jp-section-title,.jp-section-lead{display:none}
+  /* svg.jp-hero-viz precisa empatar em especificidade com a regra legada
+     svg[viewbox]{display:block} — só a classe (0,1,0) perderia para ela (0,1,1). */
+  svg.jp-hero-viz{display:none}
+  .jp-slide[hidden]{display:none}
+
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"]{
+    /* Shell operacional sai de cena: o Dashboard ocupa a viewport inteira. */
+    --jp-dash-header-h:60px;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] body{
+    grid-template-columns:1fr; grid-template-rows:auto; grid-template-areas:"main";
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] > body > header,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #nav,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .foot-note{display:none}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] main{
+    grid-area:main; padding:0; min-width:0;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #dash{
+    display:block; padding-top:var(--jp-dash-header-h);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .onb-global-banner{
+    margin:var(--jp-dash-header-h) var(--jp-space-6) 0; border-radius:var(--jp-radius-sm);
+  }
+
+  /* ---------- Header próprio do Dashboard ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-header{
+    display:flex; align-items:center; gap:var(--jp-space-6);
+    position:fixed; inset:0 0 auto 0; z-index:50; height:var(--jp-dash-header-h);
+    padding:0 var(--jp-space-6); background:var(--jp-surface);
+    border-bottom:1px solid var(--jp-border); font-family:var(--jp-font-ui);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-brand{
+    font-family:var(--jp-font-ui); font-weight:700; letter-spacing:.26em;
+    font-size:calc(var(--jp-text-sm) * var(--fs-scale)); color:var(--jp-ink); white-space:nowrap;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav{
+    display:flex; gap:var(--sp-2); margin:0 auto;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav button,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu button{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:500; text-transform:none; letter-spacing:.01em;
+    color:var(--jp-ink); background:transparent; border:0; cursor:pointer;
+    padding:8px 14px; border-radius:var(--jp-radius-pill);
+    transition:background var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav button:hover,
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu button:hover{background:var(--jp-surface-raised)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav button[aria-current="true"]{
+    background:var(--indigo-deep); color:var(--jp-action);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-actions{display:flex; gap:var(--sp-3); margin-left:auto}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu-btn{
+    display:none; font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    text-transform:none; letter-spacing:.01em; color:var(--jp-ink); background:transparent;
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-pill); padding:8px 16px; cursor:pointer;
+  }
+
+  /* ---------- Hero ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero{
+    display:grid; position:relative; isolation:isolate; overflow:hidden;
+    min-height:calc(100dvh - var(--jp-dash-header-h));
+    align-content:start; justify-items:center;
+    padding:var(--jp-space-8) var(--jp-space-6) var(--jp-space-9);
+    background:var(--jp-bg);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-viz{
+    display:block; position:absolute; inset:0; width:100%; height:100%; z-index:-1;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel{
+    display:block; width:min(100%,860px); text-align:center;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide{display:block}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide[hidden]{display:none}
+  /* O card do clearance vira texto centrado sobre o visual: sem moldura. */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceCard{
+    background:transparent; border:0; box-shadow:none; padding:0; overflow:visible;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceCard::before{display:none}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .dh-kicker{justify-content:center}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .dh-kicker .art{display:none}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceTitle{
+    max-width:none; margin:var(--sp-4) auto var(--sp-4);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceSub{
+    max-width:52ch; margin:0 auto;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #mcClearanceAction{
+    max-width:62ch; margin:var(--jp-space-6) auto 0; text-align:left;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide-eyebrow{
+    display:block; font-family:var(--jp-font-data); text-transform:uppercase; letter-spacing:.18em;
+    font-size:calc(var(--jp-text-xs) * var(--fs-scale)); color:var(--jp-ink-muted); margin:0 0 var(--sp-3);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-slide-title{
+    display:block; font-family:var(--jp-font-ui); font-weight:700; letter-spacing:-.03em;
+    font-size:calc(var(--jp-text-lg) * var(--fs-scale)); color:var(--jp-ink);
+    margin:0 0 var(--jp-space-6); line-height:1.12;
+  }
+
+  /* ---------- Ações do hero ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-actions{
+    display:flex; gap:var(--sp-4); justify-content:center; margin-top:var(--jp-space-7); flex-wrap:wrap;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:600; text-transform:none; letter-spacing:.01em;
+    min-height:42px; min-width:236px; padding:0 var(--jp-space-6);
+    border-radius:var(--jp-radius-sm); border:1px solid transparent; cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition:background var(--jp-duration-fast) var(--jp-ease), border-color var(--jp-duration-fast) var(--jp-ease), color var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-primary{
+    background:var(--jp-action); color:#fff;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-primary:hover{background:var(--indigo)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-secondary{
+    background:color-mix(in srgb, var(--jp-surface) 82%, transparent);
+    border-color:var(--jp-border); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn-secondary:hover{background:var(--jp-surface-raised)}
+
+  /* ---------- Controles do carrossel ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow{
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+    width:44px; height:44px; border-radius:var(--jp-radius-pill);
+    border:1px solid var(--jp-border); background:color-mix(in srgb, var(--jp-surface) 76%, transparent);
+    color:var(--jp-ink); font-size:24px; line-height:1; cursor:pointer;
+    transition:background var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow:hover{background:var(--jp-surface-raised)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-prev{left:clamp(10px,3vw,40px)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-next{right:clamp(10px,3vw,40px)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots{
+    display:flex; gap:10px; justify-content:center;
+    position:absolute; left:0; right:0; bottom:var(--jp-space-7); z-index:2;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button{
+    width:34px; height:4px; padding:0; border:0; border-radius:var(--jp-radius-pill);
+    background:var(--jp-border); cursor:pointer;
+    transition:background var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots button.active{background:var(--jp-action)}
+
+  /* ---------- Seções abaixo do hero ---------- */
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{
+    display:block; padding:var(--jp-space-8) clamp(var(--sp-5),6vw,var(--jp-space-9));
+    border-top:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section:nth-of-type(even){background:var(--jp-surface)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-eyebrow{
+    display:block; font-family:var(--jp-font-data); text-transform:uppercase; letter-spacing:.18em;
+    font-size:calc(var(--jp-text-xs) * var(--fs-scale)); color:var(--jp-ink-muted); margin:0 0 var(--sp-3);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-title{
+    display:block; font-family:var(--jp-font-ui); font-weight:700; letter-spacing:-.03em;
+    font-size:calc(var(--jp-text-lg) * var(--fs-scale)); color:var(--jp-ink);
+    margin:0 0 var(--sp-4); line-height:1.1; max-width:22ch;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section-lead{
+    display:block; font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-md) * var(--fs-scale));
+    color:var(--jp-ink-muted); max-width:62ch; margin:0 0 var(--jp-space-6); line-height:1.6;
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section .mc-disclosure{margin-top:var(--sp-4)}
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section .mc-reasons{
+    max-width:76ch; gap:var(--sp-4);
+  }
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-metric-strip-gov{
+    grid-template-columns:repeat(4,1fr); gap:var(--sp-3); margin-top:0; text-align:left;
+  }
+
+  /* Sem snap obrigatório: o usuário para onde quiser. */
+  @media not (prefers-reduced-motion: reduce){
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] body{scroll-snap-type:y proximity}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero,
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{scroll-snap-align:start}
+  }
+
+  /* ---------- Responsivo do modo imersivo ---------- */
+  @media(max-width:900px){
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-nav{display:none}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu-btn{display:inline-flex}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu{
+      display:grid; position:absolute; top:var(--jp-dash-header-h); right:0; left:0;
+      background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+      padding:var(--sp-3); gap:2px; text-align:left;
+    }
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-dash-menu[hidden]{display:none}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero{
+      padding:var(--jp-space-7) var(--sp-5) var(--jp-space-8);
+    }
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-btn{min-width:0; width:100%}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-hero-actions{flex-direction:column; align-items:stretch}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-arrow{width:40px; height:40px; top:auto; bottom:var(--jp-space-6)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-carousel-dots{bottom:var(--sp-5)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-metric-strip-gov{grid-template-columns:repeat(2,1fr)}
+    html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .jp-section{padding:var(--jp-space-7) var(--sp-5)}
+  }

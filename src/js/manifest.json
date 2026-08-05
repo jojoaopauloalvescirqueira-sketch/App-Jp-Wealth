@@ -219,6 +219,12 @@
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
       "sha256": "c3c530415abe1925ba6eb3647b37589eb3f1959e3e2df1a39329d446d1529efa"
+    },
+    {
+      "order": 37,
+      "path": "src/js/40-app/10-dashboard-immersive.js",
+      "section": "DASHBOARD IMERSIVO · modo, carrossel e navegação interna (N1)",
+      "sha256": "246929c9dc55359c93d4ecc350a200569c125012e8782e5049bb0edcc4784850"
     }
   ]
 }
