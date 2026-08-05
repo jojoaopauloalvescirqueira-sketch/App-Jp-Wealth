@@ -1090,6 +1090,64 @@
     color:var(--mc); margin-right:8px; font-weight:800}
   @media(max-width:640px){.mc-clearance-title{font-size:var(--fs-xl)}}
 
+  /* ==========================================================
+     PILOTO FASE 2 — Operational Clearance como hero executivo.
+
+     Escopado à feature flag: remover data-ui-version do <html>
+     restaura integralmente o tratamento legado acima, sem tocar
+     em JavaScript. O renderizador reescreve className a cada
+     render (card.className='card mc-hero mc-status-'+status),
+     então o alvo é o ID e as classes de severidade que o próprio
+     JS aplica — nenhuma classe nova sobreviveria ao re-render.
+
+     Severidade continua legível sem cor: título, explicação,
+     razões e ação são textuais. A cor é acento, nunca fundo.
+     Os tamanhos multiplicam por --fs-scale para preservar a
+     preferência de tamanho de fonte definida em Configurações.
+     ========================================================== */
+  html[data-ui-version="tesla-inspired"] #mcClearanceCard{
+    padding:var(--jp-space-7) var(--jp-space-6) var(--jp-space-6);
+  }
+  /* Aliases semânticos onde a correspondência é inequívoca; pending e reduce
+     preservam o tratamento legado (--violet e --f3 não têm alias equivalente).
+     Os valores resolvidos são idênticos aos legados: sem mudança de cor. */
+  html[data-ui-version="tesla-inspired"] #mcClearanceCard.mc-status-clear{--mc:var(--jp-success)}
+  html[data-ui-version="tesla-inspired"] #mcClearanceCard.mc-status-caution{--mc:var(--jp-warning)}
+  html[data-ui-version="tesla-inspired"] #mcClearanceCard.mc-status-blocked{--mc:var(--jp-danger)}
+
+  html[data-ui-version="tesla-inspired"] #mcClearanceTitle{
+    font-family:var(--jp-font-ui);
+    font-size:calc(var(--jp-text-xl) * var(--fs-scale));
+    font-weight:700; text-transform:none; letter-spacing:-.025em;
+    line-height:1.06; max-width:24ch; margin:var(--sp-3) 0 var(--sp-4);
+  }
+  html[data-ui-version="tesla-inspired"] #mcClearanceSub{
+    font-family:var(--jp-font-ui);
+    font-size:calc(var(--jp-text-md) * var(--fs-scale));
+    color:var(--jp-ink-muted); max-width:62ch; line-height:1.6;
+  }
+  html[data-ui-version="tesla-inspired"] #mcClearanceReasons{
+    margin-top:var(--jp-space-6); gap:var(--sp-3);
+  }
+  html[data-ui-version="tesla-inspired"] #mcClearanceReasons li{
+    font-family:var(--jp-font-data);
+    font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    color:var(--jp-ink-muted); padding-left:20px; line-height:1.55;
+  }
+  html[data-ui-version="tesla-inspired"] #mcClearanceReasons li::before{top:8px}
+  html[data-ui-version="tesla-inspired"] #mcClearanceAction{
+    margin-top:var(--jp-space-6); padding:var(--sp-4) var(--sp-5);
+    font-size:calc(var(--jp-text-md) * var(--fs-scale)); line-height:1.55;
+  }
+  @media(max-width:640px){
+    html[data-ui-version="tesla-inspired"] #mcClearanceCard{
+      padding:var(--sp-5) var(--sp-5) var(--sp-5);
+    }
+    html[data-ui-version="tesla-inspired"] #mcClearanceTitle{max-width:none; margin-top:var(--sp-2)}
+    html[data-ui-version="tesla-inspired"] #mcClearanceReasons,
+    html[data-ui-version="tesla-inspired"] #mcClearanceAction{margin-top:var(--sp-5)}
+  }
+
   /* N2 — Mission Metrics: cards compactos orientados por status */
   .mc-metric-strip{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:16px}
   @media(max-width:880px){.mc-metric-strip{grid-template-columns:repeat(2,1fr)}}
@@ -1221,7 +1279,7 @@
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '15c740fc0e4ce4f0';
+const JP_WEALTH_BUILD_ID = 'e6c51e200313a09a';
 </script>
 <link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
 <link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
