@@ -1266,3 +1266,159 @@
     .settings-modal.settings-mobile-detail .settings-sidebar{display:none}
     .settings-modal.settings-mobile-detail .settings-content{display:block}
   }
+
+  /* ==========================================================
+     FASE 3 — SHELL E DASHBOARD EXECUTIVO
+
+     Tudo escopado a html[data-ui-version="tesla-inspired"]:
+     remover o atributo restaura integralmente o terminal legado.
+     Nenhum JavaScript é tocado; nenhum ID, data-screen ou texto
+     do domínio muda. Os cabeçalhos de grupo do rail existem no
+     HTML mas ficam ocultos sem a flag, e a ordem do DOM continua
+     a legada — o reagrupamento é feito por `order`.
+     ========================================================== */
+
+  /* Header mais alto: os dependentes (grid do body, sticky do rail,
+     altura da coluna de navegação) derivam todos de --header-h. */
+  html[data-ui-version="tesla-inspired"]{--header-h:calc(56px * var(--fs-scale))}
+
+  /* ---------- HEADER ---------- */
+  html[data-ui-version="tesla-inspired"] header{
+    gap:var(--jp-space-6); padding:0 var(--jp-space-6);
+    background:var(--jp-surface); border-bottom:1px solid var(--jp-border);
+  }
+  html[data-ui-version="tesla-inspired"] .hdr-sep{display:none}
+  html[data-ui-version="tesla-inspired"] .brand{gap:var(--sp-4)}
+  html[data-ui-version="tesla-inspired"] .wm-jp,
+  html[data-ui-version="tesla-inspired"] .wm-wealth{font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-md) * var(--fs-scale))}
+  html[data-ui-version="tesla-inspired"] .wm-wealth{letter-spacing:.16em; font-weight:400}
+  html[data-ui-version="tesla-inspired"] .wm-jp{font-weight:700}
+  html[data-ui-version="tesla-inspired"] .ver,
+  html[data-ui-version="tesla-inspired"] .tag{text-transform:none; letter-spacing:.02em; color:var(--jp-ink-muted)}
+  /* Contexto secundário recua; drawdown e fase permanecem legíveis. */
+  html[data-ui-version="tesla-inspired"] .hdr-readout{gap:var(--sp-1)}
+  html[data-ui-version="tesla-inspired"] .hdr-readout .k{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-xs) * var(--fs-scale));
+    letter-spacing:.02em; text-transform:none; color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] .hdr-readout .v{
+    font-size:calc(var(--jp-text-sm) * var(--fs-scale)); letter-spacing:0;
+  }
+  html[data-ui-version="tesla-inspired"] .hdr-readout.opt2 .v{color:var(--jp-ink)}
+  html[data-ui-version="tesla-inspired"] .header-status{gap:var(--sp-4)}
+  html[data-ui-version="tesla-inspired"] .pill{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-xs) * var(--fs-scale));
+    letter-spacing:.02em; text-transform:none; border-radius:var(--jp-radius-pill); padding:3px 11px;
+  }
+  html[data-ui-version="tesla-inspired"] .saved-tag{font-family:var(--jp-font-ui); text-transform:none; letter-spacing:.02em}
+  html[data-ui-version="tesla-inspired"] .header-action{
+    width:34px; height:34px; min-width:34px; border-radius:var(--jp-radius-sm);
+    background:transparent; border-color:transparent; color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] .header-action:hover{background:var(--jp-surface-raised); border-color:var(--jp-border); color:var(--jp-ink); transform:none}
+  html[data-ui-version="tesla-inspired"] .header-actions{border-left:1px solid var(--jp-border); padding-left:var(--sp-4)}
+
+  /* ---------- RAIL ---------- */
+  html[data-ui-version="tesla-inspired"] #nav{
+    background:var(--jp-bg); border-right:1px solid var(--jp-border);
+    gap:2px; padding:var(--jp-space-6) var(--sp-3) var(--sp-4);
+  }
+  html[data-ui-version="tesla-inspired"] .tab{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:500; text-transform:none; letter-spacing:.01em;
+    color:var(--jp-ink-muted); border-left:0; border-radius:var(--jp-radius-sm);
+    padding:9px var(--sp-3); min-height:36px;
+  }
+  html[data-ui-version="tesla-inspired"] .tab .n{color:var(--jp-ink-muted); font-family:var(--jp-font-data)}
+  html[data-ui-version="tesla-inspired"] .tab:hover{background:var(--jp-surface-raised); color:var(--jp-ink)}
+  html[data-ui-version="tesla-inspired"] .tab.active{
+    background:var(--indigo-deep); color:var(--jp-action); font-weight:600;
+  }
+  /* A ordem dos destinos é exclusivamente a do DOM: nada de `order`, para que
+     leitura visual e ordem de foco por teclado nunca divirjam (WCAG 2.4.3).
+     O agrupamento conceitual aprovado será tratado em fase própria, com DOM,
+     foco, drawer mobile e testes em conjunto. */
+  html[data-ui-version="tesla-inspired"] #nav .rail-toggle{font-family:var(--jp-font-ui); text-transform:none; letter-spacing:.02em}
+  @media(max-width:1180px){
+    html[data-ui-version="tesla-inspired"] #nav{padding-left:var(--sp-2); padding-right:var(--sp-2)}
+  }
+
+  /* ---------- SUPERFÍCIE GLOBAL ---------- */
+  html[data-ui-version="tesla-inspired"] main{padding:var(--jp-space-6) var(--jp-space-6) var(--jp-space-8)}
+  html[data-ui-version="tesla-inspired"] #dash{display:grid; gap:var(--jp-space-6)}
+  html[data-ui-version="tesla-inspired"] #dash > *{margin-top:0}
+
+  /* ---------- MÉTRICAS ---------- */
+  /* Quatro prioritárias (derivadas de compute()) em destaque; as quatro de
+     governança seguem visíveis logo abaixo, em faixa compacta. Nenhum ID muda
+     e nenhum cálculo é replicado — apenas peso visual. */
+  html[data-ui-version="tesla-inspired"] #mcMetricStrip{
+    grid-template-columns:repeat(4,1fr); gap:var(--sp-3); margin-top:0;
+  }
+  html[data-ui-version="tesla-inspired"] .mc-mini-card{
+    background:var(--jp-surface); border:1px solid var(--jp-border);
+    border-radius:var(--jp-radius-sm); padding:var(--sp-4) var(--sp-5); gap:var(--sp-2);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-mini-card .k{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-xs) * var(--fs-scale));
+    text-transform:none; letter-spacing:.01em; color:var(--jp-ink-muted);
+  }
+  /* A distinção primária/secundária vem de classes explícitas no HTML, nunca de
+     posição: nth-child amarraria significado à ordem do DOM e quebraria em
+     silêncio se um card fosse inserido ou movido. */
+  html[data-ui-version="tesla-inspired"] .jp-metric-primary .v{
+    font-size:calc(var(--jp-text-lg) * var(--fs-scale)); font-weight:600;
+  }
+  html[data-ui-version="tesla-inspired"] .jp-metric-secondary{
+    background:transparent; border-color:transparent; border-top:1px solid var(--jp-border);
+    border-radius:0; padding:var(--sp-4) var(--sp-2) 0;
+  }
+  html[data-ui-version="tesla-inspired"] .jp-metric-secondary .v{
+    font-size:calc(var(--jp-text-sm) * var(--fs-scale)); color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] .mc-status{
+    font-family:var(--jp-font-ui); text-transform:none; letter-spacing:.02em;
+    border-radius:var(--jp-radius-pill); padding:2px 9px;
+  }
+
+  /* ---------- PAINÉIS ---------- */
+  /* Sem faixa vinho decorativa: a marca deixa de disputar leitura com estado. */
+  html[data-ui-version="tesla-inspired"] #dash .mc-disclosure{
+    border:1px solid var(--jp-border); border-radius:var(--jp-radius-sm); overflow:hidden;
+  }
+  html[data-ui-version="tesla-inspired"] #dash .mc-disclosure > summary{
+    background:var(--jp-surface-raised); border-bottom:1px solid var(--jp-border); padding:var(--sp-4) var(--sp-5);
+  }
+  html[data-ui-version="tesla-inspired"] #dash .mc-disclosure > summary .t{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:600; text-transform:none; letter-spacing:.01em; color:var(--jp-ink);
+  }
+  html[data-ui-version="tesla-inspired"] #dash .mc-disclosure > summary .art{
+    font-family:var(--jp-font-ui); text-transform:none; letter-spacing:.01em; color:var(--jp-ink-muted);
+  }
+  html[data-ui-version="tesla-inspired"] #dash .mc-disclosure > summary .chev{color:var(--jp-ink-muted)}
+
+  /* ---------- BANNERS E AÇÕES ---------- */
+  html[data-ui-version="tesla-inspired"] .onb-global-banner{
+    border-radius:var(--jp-radius-sm); padding:var(--sp-5) var(--jp-space-6);
+  }
+  html[data-ui-version="tesla-inspired"] .onb-global-banner .t{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-md) * var(--fs-scale)); font-weight:600;
+  }
+  html[data-ui-version="tesla-inspired"] .onb-global-banner .s{font-family:var(--jp-font-ui); color:var(--jp-ink-muted)}
+  html[data-ui-version="tesla-inspired"] .reset-btn{
+    font-family:var(--jp-font-ui); font-size:calc(var(--jp-text-sm) * var(--fs-scale));
+    font-weight:600; text-transform:none; letter-spacing:.01em;
+    border-radius:var(--jp-radius-sm); padding:10px var(--sp-5);
+    transition:border-color var(--jp-duration-fast) var(--jp-ease), color var(--jp-duration-fast) var(--jp-ease), background var(--jp-duration-fast) var(--jp-ease);
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media(max-width:900px){
+    html[data-ui-version="tesla-inspired"] main{padding:var(--sp-5) var(--sp-5) var(--jp-space-7)}
+    html[data-ui-version="tesla-inspired"] #dash{gap:var(--sp-5)}
+    html[data-ui-version="tesla-inspired"] header{gap:var(--sp-4); padding:0 var(--sp-5)}
+    html[data-ui-version="tesla-inspired"] #nav{padding:var(--sp-4) var(--sp-5)}
+    html[data-ui-version="tesla-inspired"] #mcMetricStrip{grid-template-columns:repeat(2,1fr)}
+    html[data-ui-version="tesla-inspired"] .jp-metric-secondary{padding-left:0; padding-right:0}
+  }
