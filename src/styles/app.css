@@ -418,7 +418,13 @@
     .header-status .pill{padding-left:5px; padding-right:5px}
   }
   /* ============ LAYOUT ============ */
-  main{grid-area:main; min-width:0; padding:var(--sp-2); padding-bottom:40px}
+  /* Escopado por ID (#appMain), não pela tag <main> — a Central de
+     Configurações também usa um <main id="settingsContent"> interno (dentro
+     de .settings-modal-body, um grid sem grid-template-areas); um seletor de
+     tag puro vazava grid-area:main para ele, criando uma linha de grid
+     nomeada inexistente e faixas implícitas fantasmas na largura da coluna
+     de conteúdo. Ver auditoria registrada com o usuário. */
+  #appMain{grid-area:main; min-width:0; padding:var(--sp-2); padding-bottom:40px}
   .screen{display:none}
   .screen.active{display:block}
   .grid{display:grid; gap:var(--sp-2)}
@@ -1315,6 +1321,11 @@
   .settings-menu-item.active svg{color:var(--violet)}
   .settings-search-results{display:grid; gap:5px; margin-top:10px}.settings-search-results button{display:grid; gap:2px; padding:8px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); text-align:left; cursor:pointer; text-transform:none; letter-spacing:normal}.settings-search-results span{font-size:var(--fs-xs); color:var(--ink-dim)}.settings-no-results{margin:0; font-size:var(--fs-sm); color:var(--ink-faint)}
   .settings-content{min-width:0; overflow-y:auto; padding:8px 28px 28px}
+  /* Defesa escopada, além da correção na origem (#appMain acima): mesmo que
+     uma regra futura volte a usar a tag <main> pura, #settingsContent nunca
+     mais herda uma linha de grid nomeada inexistente dentro de
+     .settings-modal-body (que não declara grid-template-areas). */
+  .settings-modal #settingsContent{grid-area:auto; grid-column:auto; min-width:0}
   .settings-page-nav{display:flex; align-items:center; gap:8px; padding:14px 0 10px; position:sticky; top:0; background:var(--panel); z-index:1}
   .settings-page-nav-btn{width:30px; height:30px; flex:0 0 30px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:7px; background:var(--panel); color:var(--ink-dim); cursor:pointer}
   .settings-page-nav-btn svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
@@ -1348,6 +1359,148 @@
     .settings-modal.settings-mobile-detail .settings-sidebar{display:none}
     .settings-modal.settings-mobile-detail .settings-content{display:block}
   }
+
+  /* ==========================================================
+     CENTRAL DE CONFIGURAÇÕES — SISTEMA ESCOPADO
+     Geometria, tipografia e controles com fonte de verdade própria,
+     fiel à referência (Auditoria visual JP Wealth/JP Wealth - Central
+     de Configurações Claro). Escopado inteiramente por #settingsOverlay/
+     #settingsModal (IDs reais) — nunca toca tokens globais (--fs-*,
+     --jp-fs-*), seletores de tag (main/button/h2/h3) ou .card/.card h2
+     fora da Central. A arquitetura de navegação (grupos, folhas,
+     histórico, voltar/avançar, busca, relocação de nós legados) não
+     muda nesta rodada — só proporção, espaçamento, tipografia e
+     alinhamento. Comparar com a referência: overlay 32px, modal
+     980×640, header 64px, sidebar 220px, conteúdo 26px 28px.
+     ========================================================== */
+  #settingsOverlay{
+    /* Escala tipográfica própria da Central — não deriva de --fs-*
+       (legado) nem de --jp-fs-* (tesla-inspired), para não herdar nem
+       afetar nenhum dos dois sistemas globais. */
+    --set-fs-modal-title:15px;
+    --set-fs-search:12px;
+    --set-fs-group:10px;
+    --set-fs-sidebar-item:12px;
+    --set-fs-leaf-title:15px;
+    --set-fs-section-title:13.5px;
+    --set-fs-label:11px;
+    --set-fs-body:12px;
+    --set-fs-aux:11px;
+    --set-fs-button:12px;
+    padding:32px;
+  }
+
+  /* ---------- Geometria do modal (Fase 2) ----------
+     Escopada a min-width:761px — o breakpoint mobile existente
+     (@media max-width:760px, logo acima) continua intocado e vence sem
+     concorrência: um seletor por ID sempre venceria uma classe por
+     especificidade, então sem este guard de largura o modal mobile
+     herdaria altura/padding de desktop independente da media query. */
+  @media(min-width:761px){
+    #settingsModal{
+      width:min(980px, calc(100vw - 64px)); height:min(640px, calc(100vh - 64px));
+      max-width:980px; max-height:640px; min-height:0;
+      display:flex; flex-direction:column;
+      border-radius:16px; overflow:hidden;
+    }
+    #settingsModal .settings-modal-head{
+      height:64px; min-height:64px; flex:0 0 64px;
+      padding:0 24px; gap:16px; align-items:center;
+    }
+    #settingsModal .settings-modal-body{
+      flex:1; min-height:0; grid-template-columns:220px minmax(0,1fr);
+    }
+    #settingsModal .settings-sidebar{padding:16px 12px}
+    #settingsModal .settings-content{padding:26px 28px; min-height:0}
+  }
+  /* Subtítulo preservado no DOM (valor semântico/acessível), fora do
+     fluxo visual em qualquer largura — não conta para a altura do
+     cabeçalho nem em mobile. */
+  #settingsModal .settings-modal-head p.sr-only{margin:0}
+  #settingsCloseBtn{width:30px; height:30px; flex:0 0 30px; font-size:0}
+  #settingsCloseBtn svg{width:15px; height:15px}
+
+  /* ---------- Tipografia escopada (Fase 3) ---------- */
+  #settingsTitle{font-size:var(--set-fs-modal-title); font-weight:700; letter-spacing:-.01em}
+  #settingsModal .settings-menu-group{font-size:var(--set-fs-group)}
+  #settingsModal .settings-menu-item{font-size:var(--set-fs-sidebar-item); padding:10px 12px; min-height:auto; gap:10px}
+  #settingsModal #settingsPageTitle,
+  #settingsModal .settings-panel h3,
+  #settingsModal .settings-about-head h3{
+    font-size:var(--set-fs-leaf-title); font-weight:700; letter-spacing:-.01em;
+  }
+  #settingsModal .settings-panel h4,
+  #settingsModal .settings-rail-row h4,
+  #settingsModal .settings-safe-period h4,
+  #settingsModal .education-section h4{
+    font-size:var(--set-fs-section-title); font-weight:600;
+  }
+  #settingsModal .settings-lead,
+  #settingsModal .settings-about-head .settings-lead{font-size:var(--set-fs-aux)}
+  #settingsModal .settings-facts dt{font-size:var(--set-fs-aux)}
+  #settingsModal .settings-facts dd,
+  #settingsModal .education-article p{font-size:var(--set-fs-body)}
+  #settingsModal .note,
+  #settingsModal .settings-nav-card-desc,
+  #settingsModal .settings-empty{font-size:var(--set-fs-aux)}
+  #settingsModal .settings-nav-card-title{font-size:var(--set-fs-body); font-weight:500}
+  /* Neutraliza a faixa de cabeçalho .card h2 legada só dentro da
+     Central (o mesmo componente .card fora daqui não é tocado) — some
+     a cor de fundo/chip, preserva a hierarquia por peso e borda. A
+     Zona de Perigo mantém sua própria cor vermelha (regra mais
+     específica, definida no HTML/CSS legado, não é afetada aqui). */
+  #settingsModal .settings-panel .card h2{
+    background:transparent; font-size:var(--set-fs-section-title); font-weight:600;
+    padding:0 0 8px; margin:0 0 12px;
+  }
+  #settingsModal .settings-panel .card,
+  #settingsModal .settings-panel .mc-disclosure{margin-top:22px}
+
+  /* ---------- Controles (Fase 6) — só dentro da Central; .field e
+     .reset-btn globais (usados nas telas operacionais) não são
+     tocados, só suas instâncias dentro de #settingsModal. ---------- */
+  #settingsModal .field{gap:7px}
+  #settingsModal .field label{font-size:var(--set-fs-label); font-weight:600}
+  #settingsModal .field input,
+  #settingsModal .field select,
+  #settingsModal .field textarea{font-size:var(--set-fs-body); min-height:35px; padding:8px 11px}
+  #settingsModal .field .note{font-size:var(--set-fs-aux)}
+  #settingsModal .reset-btn{font-size:var(--set-fs-button); min-height:36px; padding:0 16px}
+
+  /* ---------- Barra interna da folha (Fase 5) — voltar/avançar/título
+     continuam funcionais (histórico interno intacto), só compactados:
+     não deve mais parecer um segundo cabeçalho grande. Sticky só
+     dentro do scroll do próprio conteúdo (comportamento preservado). */
+  #settingsModal .settings-page-nav{padding:0 0 14px; gap:8px}
+  #settingsModal .settings-page-nav-btn{width:28px; height:28px; flex:0 0 28px}
+  #settingsModal .settings-page-nav-btn svg{width:13px; height:13px}
+  #settingsModal #settingsPageTitle{margin:0 0 0 4px}
+
+  /* ---------- Busca no cabeçalho (Fase 4) ---------- */
+  #settingsModal .settings-modal-head{justify-content:center}
+  #settingsModal .settings-header-search{
+    flex:1 1 380px; display:flex; align-items:center; gap:8px; min-width:0;
+    max-width:380px; position:relative;
+    background:var(--gd-surface-subtle, var(--panel-2)); border-radius:20px; padding:8px 14px;
+  }
+  #settingsModal .settings-modal-head > div:first-child{flex:0 0 auto; margin-right:auto}
+  #settingsModal .settings-close{margin-left:auto}
+  #settingsModal .settings-header-search-icon{flex:none; width:14px; height:14px; color:var(--ink-dim)}
+  #settingsModal .settings-header-search #settingsSearch{
+    flex:1; min-width:0; border:0; background:transparent; padding:0;
+    font-size:var(--set-fs-search); color:var(--ink); font-family:inherit;
+  }
+  #settingsModal .settings-header-search #settingsSearch:focus{outline:none; box-shadow:none}
+  #settingsModal .settings-header-search #settingsSearchResults:not(:empty){
+    position:absolute; left:0; right:0; top:calc(100% + 8px);
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 12px 28px rgba(0,0,0,.22); padding:8px;
+    max-height:320px; overflow-y:auto; z-index:1; margin-top:0;
+  }
+  /* Sidebar sem a busca acima dela — o menu passa a ser o primeiro
+     conteúdo real, não precisa mais do respiro extra que compensava
+     a busca. */
+  #settingsModal .settings-menu{margin-top:0}
 
   /* ==========================================================
      FASE 3 — SHELL E DASHBOARD EXECUTIVO
@@ -1426,7 +1579,7 @@
   }
 
   /* ---------- SUPERFÍCIE GLOBAL ---------- */
-  html[data-ui-version="tesla-inspired"] main{padding:var(--jp-space-8) var(--jp-space-8) var(--jp-space-16)}
+  html[data-ui-version="tesla-inspired"] #appMain{padding:var(--jp-space-8) var(--jp-space-8) var(--jp-space-16)}
   /* CORREÇÃO B0 — a regra original era `html[flag] #dash`, especificidade
      (1,1,0), que vencia `.screen{display:none}` (0,1,0). Resultado: o
      Dashboard inteiro (1.5 mil pixels de altura) ficava renderizado abaixo
@@ -1510,7 +1663,7 @@
 
   /* ---------- MOBILE ---------- */
   @media(max-width:900px){
-    html[data-ui-version="tesla-inspired"] main{padding:var(--sp-5) var(--sp-5) var(--jp-space-12)}
+    html[data-ui-version="tesla-inspired"] #appMain{padding:var(--sp-5) var(--sp-5) var(--jp-space-12)}
     html[data-ui-version="tesla-inspired"] #dash{gap:var(--sp-5)}
     html[data-ui-version="tesla-inspired"] header{gap:var(--sp-4); padding:0 var(--sp-5)}
     html[data-ui-version="tesla-inspired"] #nav{padding:var(--sp-4) var(--sp-5)}
@@ -1559,7 +1712,7 @@
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] > body > header,
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #nav,
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .foot-note{display:none}
-  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] main{
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #appMain{
     grid-area:main; padding:0; min-width:0;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #dash{
@@ -1816,7 +1969,7 @@
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .rail-toggle{display:none}
 
   /* ---------- Conteúdo ---------- */
-  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
     grid-area:main; padding:var(--jp-space-8) var(--shell-gutter) var(--jp-space-16);
   }
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .foot-note{
@@ -1848,7 +2001,7 @@
     html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) body{
       grid-template-rows:auto 1fr; grid-template-areas:"hdr" "main";
     }
-    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
       padding:var(--sp-5) var(--sp-5) var(--jp-space-12);
     }
     /* O botão Menu acrescenta uma linha ao cabeçalho que já quebra em telas
@@ -2890,7 +3043,7 @@
   }
 
   /* ---------- Corpo: largura de 1400px, sem rail ---------- */
-  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"]:not([data-active-screen="dash"]) main{
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"]:not([data-active-screen="dash"]) #appMain{
     padding:24px var(--gd-gutter) 32px;
   }
   html[data-shell="global-dashboard"] main > .screen.active{

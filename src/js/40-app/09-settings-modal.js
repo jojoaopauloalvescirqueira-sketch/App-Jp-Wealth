@@ -151,6 +151,24 @@ function settingsContentClick(event){
   if(term){ const item=EDUCATIONAL_CONTENT.find(x=>x.title.toLowerCase()===term.dataset.educationTerm.toLowerCase()||x.keywords.some(k=>k.toLowerCase()===term.dataset.educationTerm.toLowerCase())); if(item) settingsRevealElement(`education-${item.id}`); }
 }
 
+// Reposiciona a busca real para o cabeçalho (Fase 4 — fiel à referência:
+// título | busca central | fechar). Move o input, o label e o container de
+// resultados de verdade — nenhum clone, nenhum ID novo, nenhum listener
+// perdido (addEventListener em initSettingsModal aponta para o mesmo nó,
+// relocação de DOM não desliga listeners). Roda uma única vez no boot: ao
+// contrário dos nós legados (moveLegacySettingsNodes), a busca não precisa
+// voltar para lugar nenhum quando o modal fecha — o cabeçalho onde ela vive
+// agora é permanente, não é recriado por abertura.
+function moveSettingsSearchToHeader(){
+  const slot=settingsEl('settingsHeaderSearchSlot'), input=settingsEl('settingsSearch');
+  if(!slot||!input||input.parentElement===slot) return;
+  const label=document.querySelector('label.settings-search-label[for="settingsSearch"]');
+  if(label){ label.classList.add('sr-only'); slot.append(label); }
+  slot.append(input);
+  const results=settingsEl('settingsSearchResults');
+  if(results) slot.append(results);
+}
+
 function moveLegacySettingsNodes(){
   const host=settingsEl('config'); if(!host) return;
   if(!settingsState.legacyNodes.length) settingsState.legacyNodes=[...host.children].filter(node=>node.matches('[data-settings-category]'));
@@ -312,6 +330,7 @@ function initSettingsSubdialogObserver(){
 
 function initSettingsModal(){
   const gear=settingsEl('headerConfigBtn'); if(!gear) return;
+  moveSettingsSearchToHeader();
   gear.addEventListener('click',()=>openSettingsModal('general',gear));
   settingsEl('settingsCloseBtn').addEventListener('click',closeSettingsModal);
   settingsEl('settingsBackBtn').addEventListener('click',settingsGoBack);

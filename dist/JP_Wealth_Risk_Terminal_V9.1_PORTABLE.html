@@ -428,7 +428,13 @@
     .header-status .pill{padding-left:5px; padding-right:5px}
   }
   /* ============ LAYOUT ============ */
-  main{grid-area:main; min-width:0; padding:var(--sp-2); padding-bottom:40px}
+  /* Escopado por ID (#appMain), não pela tag <main> — a Central de
+     Configurações também usa um <main id="settingsContent"> interno (dentro
+     de .settings-modal-body, um grid sem grid-template-areas); um seletor de
+     tag puro vazava grid-area:main para ele, criando uma linha de grid
+     nomeada inexistente e faixas implícitas fantasmas na largura da coluna
+     de conteúdo. Ver auditoria registrada com o usuário. */
+  #appMain{grid-area:main; min-width:0; padding:var(--sp-2); padding-bottom:40px}
   .screen{display:none}
   .screen.active{display:block}
   .grid{display:grid; gap:var(--sp-2)}
@@ -1325,6 +1331,11 @@
   .settings-menu-item.active svg{color:var(--violet)}
   .settings-search-results{display:grid; gap:5px; margin-top:10px}.settings-search-results button{display:grid; gap:2px; padding:8px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); text-align:left; cursor:pointer; text-transform:none; letter-spacing:normal}.settings-search-results span{font-size:var(--fs-xs); color:var(--ink-dim)}.settings-no-results{margin:0; font-size:var(--fs-sm); color:var(--ink-faint)}
   .settings-content{min-width:0; overflow-y:auto; padding:8px 28px 28px}
+  /* Defesa escopada, além da correção na origem (#appMain acima): mesmo que
+     uma regra futura volte a usar a tag <main> pura, #settingsContent nunca
+     mais herda uma linha de grid nomeada inexistente dentro de
+     .settings-modal-body (que não declara grid-template-areas). */
+  .settings-modal #settingsContent{grid-area:auto; grid-column:auto; min-width:0}
   .settings-page-nav{display:flex; align-items:center; gap:8px; padding:14px 0 10px; position:sticky; top:0; background:var(--panel); z-index:1}
   .settings-page-nav-btn{width:30px; height:30px; flex:0 0 30px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:7px; background:var(--panel); color:var(--ink-dim); cursor:pointer}
   .settings-page-nav-btn svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
@@ -1358,6 +1369,148 @@
     .settings-modal.settings-mobile-detail .settings-sidebar{display:none}
     .settings-modal.settings-mobile-detail .settings-content{display:block}
   }
+
+  /* ==========================================================
+     CENTRAL DE CONFIGURAÇÕES — SISTEMA ESCOPADO
+     Geometria, tipografia e controles com fonte de verdade própria,
+     fiel à referência (Auditoria visual JP Wealth/JP Wealth - Central
+     de Configurações Claro). Escopado inteiramente por #settingsOverlay/
+     #settingsModal (IDs reais) — nunca toca tokens globais (--fs-*,
+     --jp-fs-*), seletores de tag (main/button/h2/h3) ou .card/.card h2
+     fora da Central. A arquitetura de navegação (grupos, folhas,
+     histórico, voltar/avançar, busca, relocação de nós legados) não
+     muda nesta rodada — só proporção, espaçamento, tipografia e
+     alinhamento. Comparar com a referência: overlay 32px, modal
+     980×640, header 64px, sidebar 220px, conteúdo 26px 28px.
+     ========================================================== */
+  #settingsOverlay{
+    /* Escala tipográfica própria da Central — não deriva de --fs-*
+       (legado) nem de --jp-fs-* (tesla-inspired), para não herdar nem
+       afetar nenhum dos dois sistemas globais. */
+    --set-fs-modal-title:15px;
+    --set-fs-search:12px;
+    --set-fs-group:10px;
+    --set-fs-sidebar-item:12px;
+    --set-fs-leaf-title:15px;
+    --set-fs-section-title:13.5px;
+    --set-fs-label:11px;
+    --set-fs-body:12px;
+    --set-fs-aux:11px;
+    --set-fs-button:12px;
+    padding:32px;
+  }
+
+  /* ---------- Geometria do modal (Fase 2) ----------
+     Escopada a min-width:761px — o breakpoint mobile existente
+     (@media max-width:760px, logo acima) continua intocado e vence sem
+     concorrência: um seletor por ID sempre venceria uma classe por
+     especificidade, então sem este guard de largura o modal mobile
+     herdaria altura/padding de desktop independente da media query. */
+  @media(min-width:761px){
+    #settingsModal{
+      width:min(980px, calc(100vw - 64px)); height:min(640px, calc(100vh - 64px));
+      max-width:980px; max-height:640px; min-height:0;
+      display:flex; flex-direction:column;
+      border-radius:16px; overflow:hidden;
+    }
+    #settingsModal .settings-modal-head{
+      height:64px; min-height:64px; flex:0 0 64px;
+      padding:0 24px; gap:16px; align-items:center;
+    }
+    #settingsModal .settings-modal-body{
+      flex:1; min-height:0; grid-template-columns:220px minmax(0,1fr);
+    }
+    #settingsModal .settings-sidebar{padding:16px 12px}
+    #settingsModal .settings-content{padding:26px 28px; min-height:0}
+  }
+  /* Subtítulo preservado no DOM (valor semântico/acessível), fora do
+     fluxo visual em qualquer largura — não conta para a altura do
+     cabeçalho nem em mobile. */
+  #settingsModal .settings-modal-head p.sr-only{margin:0}
+  #settingsCloseBtn{width:30px; height:30px; flex:0 0 30px; font-size:0}
+  #settingsCloseBtn svg{width:15px; height:15px}
+
+  /* ---------- Tipografia escopada (Fase 3) ---------- */
+  #settingsTitle{font-size:var(--set-fs-modal-title); font-weight:700; letter-spacing:-.01em}
+  #settingsModal .settings-menu-group{font-size:var(--set-fs-group)}
+  #settingsModal .settings-menu-item{font-size:var(--set-fs-sidebar-item); padding:10px 12px; min-height:auto; gap:10px}
+  #settingsModal #settingsPageTitle,
+  #settingsModal .settings-panel h3,
+  #settingsModal .settings-about-head h3{
+    font-size:var(--set-fs-leaf-title); font-weight:700; letter-spacing:-.01em;
+  }
+  #settingsModal .settings-panel h4,
+  #settingsModal .settings-rail-row h4,
+  #settingsModal .settings-safe-period h4,
+  #settingsModal .education-section h4{
+    font-size:var(--set-fs-section-title); font-weight:600;
+  }
+  #settingsModal .settings-lead,
+  #settingsModal .settings-about-head .settings-lead{font-size:var(--set-fs-aux)}
+  #settingsModal .settings-facts dt{font-size:var(--set-fs-aux)}
+  #settingsModal .settings-facts dd,
+  #settingsModal .education-article p{font-size:var(--set-fs-body)}
+  #settingsModal .note,
+  #settingsModal .settings-nav-card-desc,
+  #settingsModal .settings-empty{font-size:var(--set-fs-aux)}
+  #settingsModal .settings-nav-card-title{font-size:var(--set-fs-body); font-weight:500}
+  /* Neutraliza a faixa de cabeçalho .card h2 legada só dentro da
+     Central (o mesmo componente .card fora daqui não é tocado) — some
+     a cor de fundo/chip, preserva a hierarquia por peso e borda. A
+     Zona de Perigo mantém sua própria cor vermelha (regra mais
+     específica, definida no HTML/CSS legado, não é afetada aqui). */
+  #settingsModal .settings-panel .card h2{
+    background:transparent; font-size:var(--set-fs-section-title); font-weight:600;
+    padding:0 0 8px; margin:0 0 12px;
+  }
+  #settingsModal .settings-panel .card,
+  #settingsModal .settings-panel .mc-disclosure{margin-top:22px}
+
+  /* ---------- Controles (Fase 6) — só dentro da Central; .field e
+     .reset-btn globais (usados nas telas operacionais) não são
+     tocados, só suas instâncias dentro de #settingsModal. ---------- */
+  #settingsModal .field{gap:7px}
+  #settingsModal .field label{font-size:var(--set-fs-label); font-weight:600}
+  #settingsModal .field input,
+  #settingsModal .field select,
+  #settingsModal .field textarea{font-size:var(--set-fs-body); min-height:35px; padding:8px 11px}
+  #settingsModal .field .note{font-size:var(--set-fs-aux)}
+  #settingsModal .reset-btn{font-size:var(--set-fs-button); min-height:36px; padding:0 16px}
+
+  /* ---------- Barra interna da folha (Fase 5) — voltar/avançar/título
+     continuam funcionais (histórico interno intacto), só compactados:
+     não deve mais parecer um segundo cabeçalho grande. Sticky só
+     dentro do scroll do próprio conteúdo (comportamento preservado). */
+  #settingsModal .settings-page-nav{padding:0 0 14px; gap:8px}
+  #settingsModal .settings-page-nav-btn{width:28px; height:28px; flex:0 0 28px}
+  #settingsModal .settings-page-nav-btn svg{width:13px; height:13px}
+  #settingsModal #settingsPageTitle{margin:0 0 0 4px}
+
+  /* ---------- Busca no cabeçalho (Fase 4) ---------- */
+  #settingsModal .settings-modal-head{justify-content:center}
+  #settingsModal .settings-header-search{
+    flex:1 1 380px; display:flex; align-items:center; gap:8px; min-width:0;
+    max-width:380px; position:relative;
+    background:var(--gd-surface-subtle, var(--panel-2)); border-radius:20px; padding:8px 14px;
+  }
+  #settingsModal .settings-modal-head > div:first-child{flex:0 0 auto; margin-right:auto}
+  #settingsModal .settings-close{margin-left:auto}
+  #settingsModal .settings-header-search-icon{flex:none; width:14px; height:14px; color:var(--ink-dim)}
+  #settingsModal .settings-header-search #settingsSearch{
+    flex:1; min-width:0; border:0; background:transparent; padding:0;
+    font-size:var(--set-fs-search); color:var(--ink); font-family:inherit;
+  }
+  #settingsModal .settings-header-search #settingsSearch:focus{outline:none; box-shadow:none}
+  #settingsModal .settings-header-search #settingsSearchResults:not(:empty){
+    position:absolute; left:0; right:0; top:calc(100% + 8px);
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 12px 28px rgba(0,0,0,.22); padding:8px;
+    max-height:320px; overflow-y:auto; z-index:1; margin-top:0;
+  }
+  /* Sidebar sem a busca acima dela — o menu passa a ser o primeiro
+     conteúdo real, não precisa mais do respiro extra que compensava
+     a busca. */
+  #settingsModal .settings-menu{margin-top:0}
 
   /* ==========================================================
      FASE 3 — SHELL E DASHBOARD EXECUTIVO
@@ -1436,7 +1589,7 @@
   }
 
   /* ---------- SUPERFÍCIE GLOBAL ---------- */
-  html[data-ui-version="tesla-inspired"] main{padding:var(--jp-space-8) var(--jp-space-8) var(--jp-space-16)}
+  html[data-ui-version="tesla-inspired"] #appMain{padding:var(--jp-space-8) var(--jp-space-8) var(--jp-space-16)}
   /* CORREÇÃO B0 — a regra original era `html[flag] #dash`, especificidade
      (1,1,0), que vencia `.screen{display:none}` (0,1,0). Resultado: o
      Dashboard inteiro (1.5 mil pixels de altura) ficava renderizado abaixo
@@ -1520,7 +1673,7 @@
 
   /* ---------- MOBILE ---------- */
   @media(max-width:900px){
-    html[data-ui-version="tesla-inspired"] main{padding:var(--sp-5) var(--sp-5) var(--jp-space-12)}
+    html[data-ui-version="tesla-inspired"] #appMain{padding:var(--sp-5) var(--sp-5) var(--jp-space-12)}
     html[data-ui-version="tesla-inspired"] #dash{gap:var(--sp-5)}
     html[data-ui-version="tesla-inspired"] header{gap:var(--sp-4); padding:0 var(--sp-5)}
     html[data-ui-version="tesla-inspired"] #nav{padding:var(--sp-4) var(--sp-5)}
@@ -1569,7 +1722,7 @@
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] > body > header,
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #nav,
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] .foot-note{display:none}
-  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] main{
+  html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #appMain{
     grid-area:main; padding:0; min-width:0;
   }
   html[data-ui-version="tesla-inspired"][data-active-screen="dash"] #dash{
@@ -1826,7 +1979,7 @@
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .rail-toggle{display:none}
 
   /* ---------- Conteúdo ---------- */
-  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
+  html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
     grid-area:main; padding:var(--jp-space-8) var(--shell-gutter) var(--jp-space-16);
   }
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .foot-note{
@@ -1858,7 +2011,7 @@
     html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) body{
       grid-template-rows:auto 1fr; grid-template-areas:"hdr" "main";
     }
-    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) main{
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
       padding:var(--sp-5) var(--sp-5) var(--jp-space-12);
     }
     /* O botão Menu acrescenta uma linha ao cabeçalho que já quebra em telas
@@ -2900,7 +3053,7 @@
   }
 
   /* ---------- Corpo: largura de 1400px, sem rail ---------- */
-  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"]:not([data-active-screen="dash"]) main{
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"]:not([data-active-screen="dash"]) #appMain{
     padding:24px var(--gd-gutter) 32px;
   }
   html[data-shell="global-dashboard"] main > .screen.active{
@@ -3386,7 +3539,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '58eabe84be25463b';
+const JP_WEALTH_BUILD_ID = '203e37c6d2bd52be';
 </script>
 <link rel="manifest" id="appManifest" href="manifests/jp-wealth-flat-knight.webmanifest">
 <link rel="icon" id="appFavicon" type="image/png" sizes="32x32" href="icons/flat-knight/favicon-32.png">
@@ -3494,7 +3647,7 @@ const JP_WEALTH_BUILD_ID = '58eabe84be25463b';
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
 
-<main>
+<main id="appMain">
   <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-allowed-zones="sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
@@ -4286,7 +4439,14 @@ const JP_WEALTH_BUILD_ID = '58eabe84be25463b';
 </div>
 <div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
   <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <header class="settings-modal-head"><div><h2 id="settingsTitle">Configurações</h2><p>Preferências, governança, dados e material de referência.</p></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
+    <!-- Cabeçalho em 3 regiões (título | busca central | fechar), fiel à
+         referência. O subtítulo é preservado no DOM (valor semântico) mas
+         sai do fluxo visual via .sr-only — deixa de contar para a altura
+         fixa de 64px do cabeçalho (ver app.css). A busca real (#settingsSearch)
+         é só REPOSICIONADA aqui por JS (moveSettingsSearchToHeader, em
+         09-settings-modal.js) — o nó, o listener e os resultados são os
+         mesmos; nada é clonado. -->
+    <header class="settings-modal-head"><div><h2 id="settingsTitle">Central de Configurações</h2><p class="sr-only">Preferências, governança, dados e material de referência.</p></div><div class="settings-header-search" id="settingsHeaderSearchSlot"><svg class="settings-header-search-icon" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.6-3.6"/></svg></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
     <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
   </section>
 </div>
@@ -11307,6 +11467,24 @@ function settingsContentClick(event){
   if(term){ const item=EDUCATIONAL_CONTENT.find(x=>x.title.toLowerCase()===term.dataset.educationTerm.toLowerCase()||x.keywords.some(k=>k.toLowerCase()===term.dataset.educationTerm.toLowerCase())); if(item) settingsRevealElement(`education-${item.id}`); }
 }
 
+// Reposiciona a busca real para o cabeçalho (Fase 4 — fiel à referência:
+// título | busca central | fechar). Move o input, o label e o container de
+// resultados de verdade — nenhum clone, nenhum ID novo, nenhum listener
+// perdido (addEventListener em initSettingsModal aponta para o mesmo nó,
+// relocação de DOM não desliga listeners). Roda uma única vez no boot: ao
+// contrário dos nós legados (moveLegacySettingsNodes), a busca não precisa
+// voltar para lugar nenhum quando o modal fecha — o cabeçalho onde ela vive
+// agora é permanente, não é recriado por abertura.
+function moveSettingsSearchToHeader(){
+  const slot=settingsEl('settingsHeaderSearchSlot'), input=settingsEl('settingsSearch');
+  if(!slot||!input||input.parentElement===slot) return;
+  const label=document.querySelector('label.settings-search-label[for="settingsSearch"]');
+  if(label){ label.classList.add('sr-only'); slot.append(label); }
+  slot.append(input);
+  const results=settingsEl('settingsSearchResults');
+  if(results) slot.append(results);
+}
+
 function moveLegacySettingsNodes(){
   const host=settingsEl('config'); if(!host) return;
   if(!settingsState.legacyNodes.length) settingsState.legacyNodes=[...host.children].filter(node=>node.matches('[data-settings-category]'));
@@ -11468,6 +11646,7 @@ function initSettingsSubdialogObserver(){
 
 function initSettingsModal(){
   const gear=settingsEl('headerConfigBtn'); if(!gear) return;
+  moveSettingsSearchToHeader();
   gear.addEventListener('click',()=>openSettingsModal('general',gear));
   settingsEl('settingsCloseBtn').addEventListener('click',closeSettingsModal);
   settingsEl('settingsBackBtn').addEventListener('click',settingsGoBack);

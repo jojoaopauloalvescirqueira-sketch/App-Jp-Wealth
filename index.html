@@ -115,7 +115,7 @@
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
 
-<main>
+<main id="appMain">
   <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-allowed-zones="sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
@@ -907,7 +907,14 @@
 </div>
 <div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
   <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <header class="settings-modal-head"><div><h2 id="settingsTitle">Configurações</h2><p>Preferências, governança, dados e material de referência.</p></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
+    <!-- Cabeçalho em 3 regiões (título | busca central | fechar), fiel à
+         referência. O subtítulo é preservado no DOM (valor semântico) mas
+         sai do fluxo visual via .sr-only — deixa de contar para a altura
+         fixa de 64px do cabeçalho (ver app.css). A busca real (#settingsSearch)
+         é só REPOSICIONADA aqui por JS (moveSettingsSearchToHeader, em
+         09-settings-modal.js) — o nó, o listener e os resultados são os
+         mesmos; nada é clonado. -->
+    <header class="settings-modal-head"><div><h2 id="settingsTitle">Central de Configurações</h2><p class="sr-only">Preferências, governança, dados e material de referência.</p></div><div class="settings-header-search" id="settingsHeaderSearchSlot"><svg class="settings-header-search-icon" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.6-3.6"/></svg></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
     <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
   </section>
 </div>
