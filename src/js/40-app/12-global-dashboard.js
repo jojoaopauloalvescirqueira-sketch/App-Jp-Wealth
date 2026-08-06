@@ -35,18 +35,22 @@ function relocateGlobalDashboardShell() {
   if (footer) footer.hidden = false;
 
   // Grid executivo do Dashboard: o card de Clearance nasce dentro do slide 0
-  // do carrossel (mantém o contrato de renderOperationalClearance) e entra no
-  // topo de gdHeroRow, ao lado do painel institucional estático. A faixa de
-  // 4 métricas nasce no slide 1, hoje inatingível sob esta flag (o carrossel
-  // do modo imersivo foi aposentado, sem controles para trocar de slide) — e
-  // passa a ficar logo abaixo de gdHeroRow. Ambos são só reposicionados —
-  // nenhum ID, listener ou valor muda.
-  const heroRow = gdEl('gdHeroRow');
-  if (heroRow) {
+  // do carrossel (mantém o contrato de renderOperationalClearance) e entra
+  // em #gdDashMain imediatamente antes do painel institucional estático. A
+  // faixa de 4 métricas nasce no slide 1, hoje inatingível sob esta flag (o
+  // carrossel do modo imersivo foi aposentado, sem controles para trocar de
+  // slide) — e passa a ficar logo depois do painel institucional. Ambos são
+  // só reposicionados — nenhum ID, listener ou valor muda. A posição final
+  // de TODOS os cards (inclusive estes dois) pode ainda ser reordenada pelo
+  // layout personalizável (13-dashboard-layout.js), que roda depois deste
+  // relocate e só reordena — nunca cria ou clona nós.
+  const dashMain = gdEl('gdDashMain');
+  const instPanel = dashMain && dashMain.querySelector(':scope > [data-layout-card="institutional-panel"]');
+  if (instPanel) {
     const clearanceCard = gdEl('mcClearanceCard');
-    if (clearanceCard && clearanceCard.parentElement !== heroRow) heroRow.prepend(clearanceCard);
+    if (clearanceCard && clearanceCard.nextElementSibling !== instPanel) instPanel.before(clearanceCard);
     const metricStrip = gdEl('mcMetricStrip');
-    if (metricStrip && metricStrip.previousElementSibling !== heroRow) heroRow.after(metricStrip);
+    if (metricStrip && metricStrip.previousElementSibling !== instPanel) instPanel.after(metricStrip);
   }
 
   // Alerta real de onboarding: reposicionado (não clonado) para a coluna

@@ -236,7 +236,13 @@
       "order": 39,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "73f2014d408b0960d68f99a213ea7e098d6d78e1215dc666ff9366f7ac7e16b5"
+      "sha256": "77c6dda02211fc36b3ed63bff95880102b90ad221ae9a3fc2b87dc4c66e9a2f8"
+    },
+    {
+      "order": 40,
+      "path": "src/js/40-app/13-dashboard-layout.js",
+      "section": "LAYOUT PERSONALIZÁVEL DO DASHBOARD · arraste, zonas e tamanhos de widget (N1)",
+      "sha256": "311d8fb90bad07666f25631890e59fab608599b98f0d72fd66ecf3cacb3c5057"
     }
   ]
 }

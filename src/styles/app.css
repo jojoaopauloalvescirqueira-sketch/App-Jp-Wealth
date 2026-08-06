@@ -2906,14 +2906,55 @@
   html[data-shell="global-dashboard"] .gd-dash-grid{
     display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start; margin-top:16px;
   }
+  /* #gdDashMain é grade modular de 4 colunas — cada widget declara seu
+     próprio tamanho discreto via data-widget-size (compact/medium/large/
+     full), mapeado abaixo em grid-column/grid-row. Isso é o que permite
+     mover qualquer card entre coluna principal e lateral (a largura vem do
+     próprio widget, não de um wrapper de linha fixo) e também redimensionar
+     sem depender de posição.
+
+     grid-auto-flow: propositalmente SEM "dense". Auditoria registrada com o
+     usuário: "dense" deixa o navegador preencher buracos antecipados com
+     itens que vêm depois no DOM, então a ordem VISUAL pode divergir da
+     ordem do DOM — exatamente o tipo de dessincronia que quebra teclado/
+     leitor de tela (WCAG 1.3.2, Meaningful Sequence). Como a reordenação
+     deste editor já move o nó real no DOM (não usa `order` nem truques de
+     posição), "sparse" (padrão) garante que ordem visual e ordem do DOM
+     sejam SEMPRE a mesma — não é uma esperança, é uma garantia estrutural. */
   html[data-shell="global-dashboard"] .gd-dash-main{
-    display:flex; flex-direction:column; gap:16px; min-width:0;
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-auto-rows:minmax(120px,auto); grid-auto-flow:row;
+    gap:16px; min-width:0;
   }
   html[data-shell="global-dashboard"] .gd-dash-side{
     display:flex; flex-direction:column; gap:16px;
   }
   @media(max-width:900px){
     html[data-shell="global-dashboard"] .gd-dash-grid{grid-template-columns:1fr}
+  }
+
+  /* Mapeamento de tamanho — fonte única: o atributo data-widget-size no
+     próprio card (mesmo padrão de data-layout-allowed-zones). Só dentro da
+     coluna principal; na lateral todo card personalizável vira largura
+     cheia (empilhado), como já era antes — ver nota de decisão registrada
+     com o usuário (grade de 4 colunas não cabe numa lateral ~1fr). */
+  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="compact"]{grid-column:span 1; grid-row:span 1}
+  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="medium"]{grid-column:span 2; grid-row:span 1}
+  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="large"]{grid-column:span 2; grid-row:span 2}
+  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="full"]{grid-column:1 / -1; grid-row:auto}
+  html[data-shell="global-dashboard"] #gdDashMain [data-layout-card]{margin:0; min-width:0; min-height:0}
+  html[data-shell="global-dashboard"] #gdDashSide [data-layout-card]{width:100%}
+
+  /* Ajustes internos para caber sem corte em tamanhos mais estreitos —
+     achados na auditoria de legibilidade (ver relatório entregue ao
+     usuário). Só estes dois widgets precisaram de ajuste; os demais já são
+     flexíveis o bastante nos tamanhos propostos. */
+  html[data-shell="global-dashboard"] [data-widget-size="medium"].mc-metric-strip{grid-template-columns:repeat(2,1fr)}
+  html[data-shell="global-dashboard"] [data-widget-size="compact"] .gd-vrm-atr{flex-direction:column}
+
+  @media(max-width:900px){
+    html[data-shell="global-dashboard"] #gdDashMain{display:flex; flex-direction:column}
+    html[data-shell="global-dashboard"] #gdDashMain [data-layout-card]{grid-column:auto !important; grid-row:auto !important}
   }
 
   /* Linha de fatos dentro do card de Clearance (Fase da Conta/Risco/Alavancagem) */
@@ -2990,32 +3031,23 @@
   }
   html[data-shell="global-dashboard"] #gdDashSide #onboardingIncompleteBanner .reset-btn{width:100%}
 
-  /* ---------- Linha do herói: Clearance + painel institucional ----------
-     Proporção 1.3fr/1fr da referência. O painel institucional é gráfico
-     neutro (sem foto, sem citação, sem dado, sem CTA) — não existe imagem
-     institucional aprovada no repositório; ver decisão registrada com o
-     usuário. aria-hidden já vem no HTML. */
-  html[data-shell="global-dashboard"] .gd-hero-row{display:flex; gap:16px; align-items:stretch}
-  html[data-shell="global-dashboard"] .gd-hero-row #mcClearanceCard{flex:1.3; margin:0; min-width:0}
+  /* ---------- Painel institucional ----------
+     O painel institucional é gráfico neutro (sem foto, sem citação, sem
+     dado, sem CTA) — não existe imagem institucional aprovada no
+     repositório; ver decisão registrada com o usuário. aria-hidden já vem
+     no HTML. Largura própria definida acima, junto dos outros cards. */
   html[data-shell="global-dashboard"] .gd-institutional-panel{
-    flex:1; min-height:180px; border-radius:10px;
+    min-height:180px; border-radius:10px;
     background:repeating-linear-gradient(135deg,
       color-mix(in srgb, var(--jp-ink) 92%, transparent) 0 10px,
       color-mix(in srgb, var(--jp-ink) 82%, transparent) 10px 20px);
   }
-  @media(max-width:900px){
-    html[data-shell="global-dashboard"] .gd-hero-row{flex-direction:column}
-  }
 
   /* ---------- Termômetros / Coerência / VRM — espelhos de leitura ----------
      Mesma fonte canônica do Execution Board (compute()), IDs novos e
-     exclusivos do Dashboard, sem input, sem estado paralelo. */
-  html[data-shell="global-dashboard"] .gd-analytics-row{
-    display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
-  }
-  @media(max-width:900px){
-    html[data-shell="global-dashboard"] .gd-analytics-row{grid-template-columns:1fr}
-  }
+     exclusivos do Dashboard, sem input, sem estado paralelo. Largura própria
+     definida acima, junto dos outros cards (eram um grid de 3 fixo; agora
+     cada um é um card independente, movível por si só). */
   html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; gap:22px; justify-content:center; margin-top:6px}
   html[data-shell="global-dashboard"] .gd-thermo-item{display:flex; flex-direction:column; align-items:center; gap:6px}
   html[data-shell="global-dashboard"] .gd-thermo-track{
@@ -3130,3 +3162,161 @@
     html[data-shell="global-dashboard"] .header-actions,
     html[data-shell="global-dashboard"] .brand{width:auto}
   }
+
+/* ==========================================================
+   LAYOUT PERSONALIZÁVEL DO DASHBOARD (N1)
+   Feature flag própria e independente: html[data-custom-layout="enabled"].
+   Sem ela, nada abaixo se aplica visualmente — o card de Configurações
+   (#dashLayoutSettingsCard) fica display:none, a barra nunca perde [hidden]
+   e nenhuma classe de edição chega a existir (13-dashboard-layout.js só
+   escreve data-layout-editing sob a flag). Nenhum estilo aqui altera cor,
+   tipografia ou proporção do Dashboard aprovado — só o que é exclusivo do
+   modo de edição em si.
+   ========================================================== */
+#dashLayoutSettingsCard{display:none}
+html[data-custom-layout="enabled"] #dashLayoutSettingsCard{display:block}
+
+/* ---------- Escala institucional de camadas ----------
+   Tokens de z-index compartilhados — substituem valores dispersos em toda
+   a interface de personalização. Pensada para uso futuro fora do editor de
+   layout também (por isso vive em :root, não escopada pela flag). */
+:root{
+  --jp-layer-base:0;
+  --jp-layer-sticky:20;
+  --jp-layer-edit-card:40;
+  --jp-layer-dragging:60;
+  --jp-layer-popover:100;
+  --jp-layer-modal:200;
+  --jp-layer-toast:300;
+}
+
+/* ---------- NORMA DE POPOVERS ----------
+   Popovers e menus contextuais do JP Wealth não devem permanecer dentro de
+   cards animados, transformados ou sujeitos a clipping. Todo popover nasce
+   em #jpPopoverLayer (filho direto de <body>, sem transform/overflow
+   próprios) e usa position:fixed, posicionado por getBoundingClientRect()
+   do botão-âncora. Causa raiz documentada: um ancestral com transform (ex.:
+   a animação de balanço do modo de edição) cria um novo contexto de
+   empilhamento e vira o containing block de descendentes position:fixed —
+   um menu preso dentro desse contexto nunca consegue pintar acima de um
+   card irmão, não importa o z-index. Regra vale para qualquer tela futura
+   que precise de popover, não só o Dashboard. */
+#jpPopoverLayer{position:static}
+.jp-popover{
+  position:fixed; z-index:var(--jp-layer-popover);
+  display:flex; flex-direction:column; min-width:220px; max-width:280px;
+  background:var(--jp-surface); border:1px solid var(--jp-border); border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.2); padding:6px;
+}
+
+/* ---------- Barra de ação (Cancelar | Restaurar padrão | Concluir) ---------- */
+.dash-layout-bar{
+  position:sticky; bottom:16px; z-index:var(--jp-layer-sticky);
+  display:flex; justify-content:center; gap:10px;
+  margin:20px auto 0; padding:10px; max-width:fit-content;
+  background:var(--jp-surface); border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+.dash-layout-bar[hidden]{display:none}
+.dash-layout-bar button{
+  font-family:var(--jp-font-ui); font-size:12.5px; font-weight:600;
+  padding:9px 16px; border-radius:8px; border:1px solid var(--jp-border);
+  background:var(--jp-surface); color:var(--jp-ink); cursor:pointer;
+}
+.dash-layout-bar button:hover{background:var(--gd-surface-subtle, var(--panel-2))}
+.dash-layout-bar .dash-layout-primary{
+  background:var(--jp-action); border-color:var(--jp-action); color:#fff;
+}
+.dash-layout-bar .dash-layout-primary:hover{filter:brightness(1.06)}
+
+/* ---------- Modo de edição: card focável, alça e menu ---------- */
+html[data-layout-editing="true"] #dash [data-layout-card]{
+  position:relative; user-select:none; -webkit-user-select:none;
+}
+/* Bloqueia clique nas ações internas do card (links, botões, CTAs) mas
+   mantém a alça e o menu clicáveis — remover data-layout-editing basta
+   para restaurar tudo, sem precisar rastrear/desfazer disabled por nó. */
+html[data-layout-editing="true"] #dash [data-layout-card] > *{pointer-events:none}
+html[data-layout-editing="true"] #dash [data-layout-card] > .dash-layout-handle,
+html[data-layout-editing="true"] #dash [data-layout-card] > .dash-layout-menu-btn{pointer-events:auto}
+
+.dash-layout-handle{
+  position:absolute; top:8px; right:8px; z-index:var(--jp-layer-edit-card);
+  width:28px; height:28px; border-radius:50%; border:1px solid var(--jp-border);
+  background:var(--jp-surface); color:var(--jp-ink-muted);
+  display:flex; align-items:center; justify-content:center;
+  cursor:grab; touch-action:none;
+}
+.dash-layout-handle:active{cursor:grabbing}
+.dash-layout-handle svg{width:14px; height:14px}
+.dash-layout-menu-btn{
+  position:absolute; top:8px; right:42px; z-index:var(--jp-layer-edit-card);
+  width:28px; height:28px; border-radius:50%; border:1px solid var(--jp-border);
+  background:var(--jp-surface); color:var(--jp-ink-muted);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; line-height:1;
+}
+.dash-layout-handle:hover, .dash-layout-menu-btn:hover{background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink)}
+.dash-layout-handle:focus-visible, .dash-layout-menu-btn:focus-visible,
+html[data-layout-editing="true"] #dash [data-layout-card]:focus-visible{
+  outline:2px solid var(--jp-action); outline-offset:2px;
+}
+
+/* Balanço discreto — só com preferência do sistema permitindo movimento,
+   e nunca durante o arraste real do card (ele já se move pelo ponteiro). */
+@media (prefers-reduced-motion: no-preference){
+  html[data-layout-editing="true"] #dash [data-layout-card]:not(.dash-layout-dragging){
+    animation:dash-layout-wobble .26s ease-in-out infinite;
+  }
+  /* Leve defasagem entre cards vizinhos, mesmo truque do iOS, só cosmético */
+  html[data-layout-editing="true"] #dash [data-layout-card]:nth-child(even):not(.dash-layout-dragging){
+    animation-delay:-.13s;
+  }
+  @keyframes dash-layout-wobble{
+    0%,100%{transform:rotate(-.4deg)}
+    50%{transform:rotate(.4deg)}
+  }
+}
+
+/* ---------- Arraste ---------- */
+.dash-layout-placeholder{
+  border:2px dashed var(--jp-action); border-radius:10px;
+  background:color-mix(in srgb, var(--jp-action) 8%, transparent);
+  box-sizing:border-box;
+}
+[data-layout-card].dash-layout-dragging{
+  position:fixed; z-index:var(--jp-layer-dragging); pointer-events:none;
+  box-shadow:0 16px 32px rgba(0,0,0,.24); border-radius:10px;
+  box-sizing:border-box; animation:none !important; transform:none !important;
+}
+.dash-layout-dropzone-active{
+  outline:2px dashed var(--jp-action); outline-offset:6px; border-radius:12px;
+}
+/* Zona não aceita o card sendo arrastado (política de zonas — ver
+   data-layout-allowed-zones). Cor de perigo, distinta do aceite acima. */
+.dash-layout-dropzone-denied{
+  outline:2px dashed var(--jp-danger); outline-offset:6px; border-radius:12px;
+  background:color-mix(in srgb, var(--jp-danger) 5%, transparent);
+}
+[data-layout-card].dash-layout-dragging.dash-layout-denied{
+  box-shadow:0 0 0 2px var(--jp-danger), 0 16px 32px rgba(0,0,0,.24);
+  cursor:not-allowed;
+}
+
+/* ---------- Menu contextual por card (alternativa ao arraste) ----------
+   Vive em #jpPopoverLayer, não no card — ver "NORMA DE POPOVERS" acima.
+   .dash-layout-card-menu soma-se a .jp-popover só para o seletor de botões
+   abaixo; a posição/camada vêm inteiramente de .jp-popover. */
+.dash-layout-card-menu button{
+  text-align:left; padding:8px 10px; border-radius:6px; border:0; background:transparent;
+  font-family:var(--jp-font-ui); font-size:12px; color:var(--jp-ink); cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+.dash-layout-card-menu button:hover, .dash-layout-card-menu button:focus-visible{background:var(--gd-surface-subtle, var(--panel-2))}
+.dash-layout-menu-heading{
+  font-family:var(--jp-font-ui); font-size:9.5px; font-weight:700; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--jp-ink-muted); padding:8px 10px 4px;
+}
+.dash-layout-menu-sep{height:1px; background:var(--jp-border); margin:4px 2px}
+.dash-layout-card-menu button[aria-checked="true"]{color:var(--jp-action); font-weight:600}
+.dash-layout-card-menu button[aria-checked="true"] .dash-layout-check{display:inline}
+.dash-layout-check{display:none; font-size:13px}

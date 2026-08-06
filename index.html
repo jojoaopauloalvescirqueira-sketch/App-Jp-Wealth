@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard">
+<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,7 +116,7 @@
 </nav>
 
 <main>
-  <div class="onb-global-banner" id="onboardingIncompleteBanner" role="status" aria-live="polite">
+  <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-allowed-zones="sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
     <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
@@ -412,60 +412,65 @@
          gdDashMain recebe #mcClearanceCard e #mcMetricStrip via relocação JS
          (12-global-dashboard.js) — mesmo padrão de moveLegacySettingsNodes.
          O painel lateral é conteúdo novo, mas só espelha dado já real
-         (compute()/getActiveRiskProfile()) em IDs próprios do Dashboard. -->
+         (compute()/getActiveRiskProfile()) em IDs próprios do Dashboard.
+
+         Cada card carrega data-layout-card="<id>" — identificador estável
+         para o layout personalizável (13-dashboard-layout.js, feature flag
+         data-custom-layout="enabled"). #gdDashMain e #gdDashSide não são mais
+         grids fixos de posição: cada card é filho direto, com largura própria
+         via CSS (ver [data-layout-card] em app.css) — é o que permite mover
+         qualquer card entre coluna principal e lateral sem quebrar layout. -->
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main" id="gdDashMain">
-        <!-- #mcClearanceCard entra aqui (prepend) via relocação JS. -->
-        <div class="gd-hero-row" id="gdHeroRow">
-          <div class="gd-institutional-panel" aria-hidden="true"></div>
-        </div>
-        <!-- #mcMetricStrip entra logo após gdHeroRow via relocação JS. -->
+        <!-- #mcClearanceCard (data-layout-card="operational-clearance") entra
+             aqui via relocação JS, antes do painel institucional. -->
+        <div class="gd-institutional-panel" data-layout-card="institutional-panel" data-layout-allowed-zones="main" data-widget-size="large" data-widget-allowed-sizes="medium large" aria-hidden="true"></div>
+        <!-- #mcMetricStrip (data-layout-card="metric-strip") entra logo após
+             o painel institucional via relocação JS. -->
 
         <!-- Termômetros / Coerência / VRM — espelhos de leitura do mesmo compute()
              já usado no Execution Board. Novos IDs, sem input, sem cálculo novo. -->
-        <div class="gd-analytics-row" id="gdAnalyticsRow">
-          <div class="card gd-thermo-card">
-            <h2>Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
-            <div class="gd-thermo-group">
-              <div class="gd-thermo-item">
-                <div class="gd-thermo-track"><div class="gd-thermo-fill" id="gdThermoDDFill"></div></div>
-                <span class="gd-thermo-val" id="gdThermoDDVal">—</span>
-                <span class="gd-thermo-lbl">DD</span>
-              </div>
-              <div class="gd-thermo-item">
-                <div class="gd-thermo-track"><div class="gd-thermo-fill" id="gdThermoAlavFill"></div></div>
-                <span class="gd-thermo-val" id="gdThermoAlavVal">—</span>
-                <span class="gd-thermo-lbl">ALAV</span>
-              </div>
+        <div class="card gd-thermo-card" data-layout-card="thermometers" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
+          <h2>Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
+          <div class="gd-thermo-group">
+            <div class="gd-thermo-item">
+              <div class="gd-thermo-track"><div class="gd-thermo-fill" id="gdThermoDDFill"></div></div>
+              <span class="gd-thermo-val" id="gdThermoDDVal">—</span>
+              <span class="gd-thermo-lbl">DD</span>
+            </div>
+            <div class="gd-thermo-item">
+              <div class="gd-thermo-track"><div class="gd-thermo-fill" id="gdThermoAlavFill"></div></div>
+              <span class="gd-thermo-val" id="gdThermoAlavVal">—</span>
+              <span class="gd-thermo-lbl">ALAV</span>
             </div>
           </div>
-          <div class="card gd-coherence-card">
-            <h2>Coerência de Alavancagem</h2>
-            <div class="gd-gauge">
-              <div class="gd-gauge-lbl"><span>Carregada vs. Teto</span><span id="gdCoherenceAlavVal">—</span></div>
-              <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceAlavBar"></div></div>
-            </div>
-            <div class="gd-gauge">
-              <div class="gd-gauge-lbl"><span>Risco Aberto vs. Teto</span><span id="gdCoherenceRiscoVal">—</span></div>
-              <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceRiscoBar"></div></div>
-            </div>
+        </div>
+        <div class="card gd-coherence-card" data-layout-card="leverage-coherence" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large">
+          <h2>Coerência de Alavancagem</h2>
+          <div class="gd-gauge">
+            <div class="gd-gauge-lbl"><span>Carregada vs. Teto</span><span id="gdCoherenceAlavVal">—</span></div>
+            <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceAlavBar"></div></div>
           </div>
-          <div class="card gd-vrm-card">
-            <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
-            <div class="gd-vrm-main">
-              <div class="gd-vrm-dial" id="gdVrmDial" aria-hidden="true"></div>
-              <div><div class="gd-vrm-value" id="gdVrmValue">—</div><div class="gd-vrm-regime" id="gdVrmRegime">—</div></div>
-            </div>
-            <div class="gd-vrm-atr">
-              <div><span class="k">ATR(55) H4</span><span class="v" id="gdVrmAtr55">—</span></div>
-              <div><span class="k">ATR(660) H4</span><span class="v" id="gdVrmAtr660">—</span></div>
-            </div>
+          <div class="gd-gauge">
+            <div class="gd-gauge-lbl"><span>Risco Aberto vs. Teto</span><span id="gdCoherenceRiscoVal">—</span></div>
+            <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceRiscoBar"></div></div>
+          </div>
+        </div>
+        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
+          <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
+          <div class="gd-vrm-main">
+            <div class="gd-vrm-dial" id="gdVrmDial" aria-hidden="true"></div>
+            <div><div class="gd-vrm-value" id="gdVrmValue">—</div><div class="gd-vrm-regime" id="gdVrmRegime">—</div></div>
+          </div>
+          <div class="gd-vrm-atr">
+            <div><span class="k">ATR(55) H4</span><span class="v" id="gdVrmAtr55">—</span></div>
+            <div><span class="k">ATR(660) H4</span><span class="v" id="gdVrmAtr660">—</span></div>
           </div>
         </div>
 
         <!-- Faixa de postura/conformidade — só estados reais (getOperationalClearance,
              PHASE_OBJECTIVE, getOnboardingCompletionState). Nenhuma checagem inventada. -->
-        <div class="card gd-posture-row" id="gdPostureRow">
+        <div class="card gd-posture-row" id="gdPostureRow" data-layout-card="posture" data-layout-allowed-zones="main sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full">
           <div class="gd-posture-item">
             <div class="gd-posture-label" id="gdPostureFaseLbl">—</div>
             <div class="gd-posture-sub" id="gdPostureFaseSub">—</div>
@@ -485,7 +490,7 @@
         </div>
       </div>
       <aside class="gd-dash-side" id="gdDashSide">
-        <div class="card gd-context-card">
+        <div class="card gd-context-card" data-layout-card="profile-context" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
           <div class="gd-card-label">Perfil e Contexto</div>
           <dl class="gd-context-list">
             <div><dt>Perfil</dt><dd id="gdCtxProfile">—</dd></div>
@@ -497,10 +502,11 @@
           </dl>
           <button type="button" class="gd-context-cta" data-dash-go="params">Ver parâmetros do perfil <span aria-hidden="true">›</span></button>
         </div>
-        <!-- #onboardingIncompleteBanner entra aqui (reposicionado, não clonado) via
-             relocação JS, só sob data-shell="global-dashboard". Sem a flag continua
-             no topo de <main>, comportamento legado intocado. -->
-        <div class="card gd-quick-card" id="gdQuickCard">
+        <!-- #onboardingIncompleteBanner (data-layout-card="onboarding-alert")
+             entra aqui (reposicionado, não clonado) via relocação JS, só sob
+             data-shell="global-dashboard". Sem a flag continua no topo de
+             <main>, comportamento legado intocado. -->
+        <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
           <div class="gd-card-label">Ações Rápidas</div>
           <nav class="gd-quick-nav">
             <button type="button" data-dash-go="exec">Execution Board <span aria-hidden="true">›</span></button>
@@ -513,6 +519,16 @@
         </div>
       </aside>
     </div>
+
+    <!-- Barra de personalização do layout (13-dashboard-layout.js). Nasce
+         hidden; só aparece ao entrar em modo de edição, e só existe
+         funcionalmente sob data-custom-layout="enabled". -->
+    <div class="dash-layout-bar" id="dashLayoutBar" role="toolbar" aria-label="Personalização do layout do Dashboard" hidden>
+      <button type="button" id="dashLayoutCancelBtn">Cancelar</button>
+      <button type="button" id="dashLayoutRestoreBtn">Restaurar padrão</button>
+      <button type="button" id="dashLayoutDoneBtn" class="dash-layout-primary">Concluir</button>
+    </div>
+    <p class="sr-only" id="dashLayoutAnnounce" aria-live="polite"></p>
 
     <!-- SEÇÃO 1 · Hero com carrossel real de três slides -->
     <div class="jp-hero" data-dash-hero data-dash-section="visao">
@@ -543,7 +559,7 @@
       <div class="jp-carousel">
         <div class="jp-slide" data-slide="0">
           <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
-          <div class="card mc-hero mc-status-clear" id="mcClearanceCard">
+          <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="large" data-widget-allowed-sizes="large full">
             <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
             <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
             <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
@@ -565,7 +581,7 @@
           <p class="jp-slide-eyebrow">Risco e capacidade</p>
           <h2 class="jp-slide-title">Quanto espaço operacional resta agora</h2>
           <!-- N2 · Mission Metrics — status executivos compactos -->
-          <div class="mc-metric-strip" id="mcMetricStrip">
+          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
             <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
             <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
             <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
@@ -753,6 +769,17 @@
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
+    <!-- Layout do Dashboard — personalização de posição dos cards (N1, feature
+         própria data-custom-layout="enabled"). Card inteiro fica display:none
+         sem a flag (ver app.css) — sem ela, nenhum botão existe. -->
+    <div class="card" id="dashLayoutSettingsCard" data-settings-category="interface" data-settings-search="layout dashboard personalizar cards organizar arrastar grade reorganizar">
+      <h2>Layout do Dashboard <span class="art">arraste os cards para reorganizar</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Só a posição visual dos cards no Dashboard. Nenhum dado, cálculo ou card é apagado — nenhum card pode ser ocultado nesta versão.</p>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+        <button class="reset-btn" id="dashLayoutCustomizeBtn">Personalizar Dashboard</button>
+        <button class="reset-btn" id="dashLayoutResetBtn" style="color:var(--ink-dim); border-color:var(--line)">Restaurar layout padrão</button>
+      </div>
+    </div>
     <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
       <div class="params-grid">
@@ -836,6 +863,12 @@
   </div>
 </footer>
 
+<!-- Camada global de popovers/menus flutuantes (sistema compartilhado,
+     13-dashboard-layout.js). Fica direto sob <body>, sem transform/overflow
+     próprios — position:fixed dentro dela ancora na viewport, não em nenhum
+     card animado. Ver norma em app.css (seção "NORMA DE POPOVERS"). Vazio e
+     inerte fora do modo de edição. -->
+<div id="jpPopoverLayer"></div>
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox"></div>
 </div>
@@ -890,5 +923,6 @@
 <script src="src/js/40-app/10-dashboard-immersive.js"></script>
 <script src="src/js/40-app/11-operational-shell.js"></script>
 <script src="src/js/40-app/12-global-dashboard.js"></script>
+<script src="src/js/40-app/13-dashboard-layout.js"></script>
 </body>
 </html>
