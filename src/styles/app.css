@@ -818,7 +818,7 @@
   .app-icon-summary p{margin:4px 0; color:var(--ink-dim); font-size:var(--fs-sm); line-height:1.45}
   .app-icon-open-btn{margin-top:14px; color:var(--violet); border-color:var(--violet)}
   .app-icon-platform-note{display:block; max-width:680px; margin-top:10px}
-  .app-icon-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:4px 0 18px}
+  .app-icon-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:4px 0 18px; max-width:520px}
   .app-icon-option{min-width:0; border:1px solid var(--line); border-radius:var(--radius); padding:10px; background:var(--panel-2)}
   .app-icon-option.selected{border-color:var(--violet); box-shadow:inset 0 0 0 1px var(--violet); background:var(--accent-tint)}
   .app-icon-choice{width:100%; min-height:44px; display:flex; flex-direction:column; align-items:stretch; gap:8px; border:0; padding:0; background:none; color:var(--ink); cursor:pointer; text-align:left}
@@ -833,19 +833,20 @@
   .app-icon-ios-note p{margin:4px 0 6px}
   .app-icon-ios-note ol{margin:0; padding-left:20px}
   .app-icon-ios-note li{padding:2px 0}
-  @media(max-width:640px){
+  @media(max-width:520px){
     .app-icon-grid{grid-template-columns:1fr; gap:8px}
     .app-icon-option{display:grid; grid-template-columns:78px minmax(0,1fr); gap:10px; align-items:center}
     .app-icon-choice{display:grid; grid-template-columns:78px minmax(0,1fr); align-items:center; gap:10px; grid-column:1/-1}
     .app-icon-choice img{width:78px; height:78px; grid-row:1}
     .app-icon-choice-copy{grid-column:2; grid-row:1}
     .app-icon-apply{grid-column:1/-1; margin-top:0}
+    .app-icon-summary{grid-template-columns:64px minmax(0,1fr); gap:10px}
+    .app-icon-summary img{width:64px; height:64px; border-radius:13px}
   }
+
   @media(max-width:520px){
     .modal-overlay{padding:calc(12px + env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left))}
     .modal-box{padding:16px}
-    .app-icon-summary{grid-template-columns:64px minmax(0,1fr); gap:10px}
-    .app-icon-summary img{width:64px; height:64px; border-radius:13px}
   }
 
   /* fase travada por questionário */

@@ -1,7 +1,7 @@
 importScripts('./build-id.js');
 const CACHE_PREFIX = 'jp-wealth-';
 const CACHE_NAME = `${CACHE_PREFIX}${JP_WEALTH_BUILD_ID}`;
-const ICON_CACHE_VERSION = '20260803';
+const ICON_CACHE_VERSION = '20260806';
 const PRECACHE_URLS = [
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
@@ -21,16 +21,9 @@ const PRECACHE_URLS = [
   './src/js/40-app/04-onboarding.js', './src/js/40-app/05-wipe-all.js',
   './src/js/40-app/06-app-icons.js', './src/js/40-app/07-finalize-session.js', './src/js/40-app/06-boot.js',
   './src/js/40-app/08-educational-content.js', './src/js/40-app/09-settings-modal.js',
-  './manifests/jp-wealth-flat-knight.webmanifest',
-  './manifests/jp-wealth-relief-knight.webmanifest',
-  './manifests/jp-wealth-marble-knight.webmanifest',
-  './icons/flat-knight/favicon-16.png', './icons/flat-knight/favicon-32.png', './icons/flat-knight/favicon-48.png',
-  './icons/flat-knight/apple-touch-icon.png', './icons/flat-knight/icon-180.png', './icons/flat-knight/icon-192.png', './icons/flat-knight/icon-512.png',
-  './icons/relief-knight/favicon-16.png', './icons/relief-knight/favicon-32.png', './icons/relief-knight/favicon-48.png',
-  './icons/relief-knight/apple-touch-icon.png', './icons/relief-knight/icon-180.png', './icons/relief-knight/icon-192.png', './icons/relief-knight/icon-512.png',
-  './icons/marble-knight/favicon-16.png', './icons/marble-knight/favicon-32.png', './icons/marble-knight/favicon-48.png',
-  './icons/marble-knight/apple-touch-icon.png', './icons/marble-knight/icon-180.png', './icons/marble-knight/icon-192.png', './icons/marble-knight/icon-512.png'
-].flatMap(url=>url.startsWith('./icons/')?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
+  './manifests/jp-wealth.webmanifest',
+  './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
+].flatMap(url=>url.startsWith('./assets/pwa-icon-')?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
 
 self.addEventListener('install', event => {
   event.waitUntil((async()=>{

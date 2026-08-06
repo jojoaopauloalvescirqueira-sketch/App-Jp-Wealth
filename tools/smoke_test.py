@@ -51,7 +51,7 @@ try:
           title: document.title,
           iconPicker: typeof openAppIconPicker === 'function',
           iconConfig: !!document.querySelector('#appIconConfig'),
-          manifestHref: document.querySelector('#appManifest')?.getAttribute('href') || null
+          manifestHref: document.querySelector('link[rel="manifest"]')?.getAttribute('href') || null
         })''')
         assert facts['compute']=='function', facts
         assert facts['render']=='function', facts
@@ -61,7 +61,7 @@ try:
         assert facts['storageKey']=='jpwealth_v9_state', facts
         assert facts['iconPicker'] is True, facts
         assert facts['iconConfig'] is True, facts
-        assert 'jp-wealth-flat-knight.webmanifest' in facts['manifestHref'], facts
+        assert 'jp-wealth.webmanifest' in facts['manifestHref'], facts
         empty=page.evaluate('''() => ({
           monthly: document.querySelector('#mqlMonthly')?.textContent || '',
           ret: document.querySelector('#dRetAcum')?.textContent || '',
@@ -144,7 +144,7 @@ try:
         assert edit['operatorPlaceholder']=='Preencher nome' and edit['supervisorPlaceholder']=='Preencher nome', edit
         page.evaluate('''() => { closeModal(); renderDash(); }''')
         page.evaluate('openAppIconPicker()')
-        assert page.locator('[data-app-icon-option]').count()==3, 'biblioteca de ícones incompleta'
+        assert page.locator('[data-app-icon-option]').count()==2, 'biblioteca de ícones incompleta'
         page.evaluate('closeModal()')
         screens=page.eval_on_selector_all('#nav .tab[data-screen]', 'els => els.map(e => e.dataset.screen)')
         for screen in screens:

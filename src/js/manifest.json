@@ -193,14 +193,14 @@
     {
       "order": 32,
       "path": "src/js/40-app/06-app-icons.js",
-      "section": "PWA · BIBLIOTECA E ESCOLHA DE ÍCONES",
-      "sha256": "d3dd76147034fde87f30488793d10116bbdca1042730eb442a4619cffb0235ed"
+      "section": "PWA · ESCOLHA DO ÍCONE (2 variantes fixas, sem biblioteca de temas)",
+      "sha256": "658b62c1530cd9dcdb2649d369a12d62a94df14c68911f2ea5e7330fac837a98"
     },
     {
       "order": 33,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "d6491cdffaeb13b7779e6df833acbed8fe637475fdaef90f57d6c2de87cd1afd"
+      "sha256": "d8221c0d9a75fff41d9fab3ace9d827beb06ad46d7548525268cd73d98f88d8e"
     },
     {
       "order": 34,

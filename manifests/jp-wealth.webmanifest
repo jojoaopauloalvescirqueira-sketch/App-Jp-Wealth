@@ -1,0 +1,16 @@
+{
+  "id": "../",
+  "name": "JP Wealth · Risk Terminal",
+  "short_name": "JP Wealth",
+  "description": "Terminal local de gestão de risco e contabilidade da JP Wealth.",
+  "start_url": "../index.html",
+  "scope": "../",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#090a10",
+  "theme_color": "#a60812",
+  "icons": [
+    { "src": "../assets/pwa-icon-primary.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any" },
+    { "src": "../assets/pwa-icon-secondary.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any" }
+  ]
+}

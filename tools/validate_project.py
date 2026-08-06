@@ -35,30 +35,32 @@ if 'jpwealth_v9_state' not in ''.join((ROOT/x['path']).read_text(encoding='utf-8
 if re.search(r'(?:src|href)="https?://', index, re.I):
     errors.append('dependência externa de CSS/JS encontrada no index')
 
-pwa_themes = ['flat-knight','relief-knight','marble-knight']
-for theme in pwa_themes:
-    manifest_path=ROOT/f'manifests/jp-wealth-{theme}.webmanifest'
-    if not manifest_path.exists():
-        errors.append(f'manifest PWA ausente: {manifest_path.relative_to(ROOT)}')
-        continue
+# Identidade única de ícone PWA (sem biblioteca de temas): um manifesto,
+# dois arquivos em assets/, ambos purpose "any" (nenhum tem margem segura
+# para "maskable" — ver auditoria registrada com o usuário).
+manifest_path=ROOT/'manifests/jp-wealth.webmanifest'
+if not manifest_path.exists():
+    errors.append(f'manifest PWA ausente: {manifest_path.relative_to(ROOT)}')
+else:
     try:
         pwa=json.loads(manifest_path.read_text(encoding='utf-8'))
+        icon_srcs=[icon['src'] for icon in pwa.get('icons',[])]
         for icon in pwa.get('icons',[]):
             icon_path=(manifest_path.parent/icon['src']).resolve()
             if not icon_path.exists(): errors.append(f'ícone PWA ausente: {icon_path.relative_to(ROOT)}')
-        if f'icon={theme}' not in pwa.get('start_url',''): errors.append(f'start_url sem tema: {manifest_path.relative_to(ROOT)}')
+            if icon.get('purpose')!='any': errors.append(f'purpose inesperado (sem margem segura para maskable): {icon.get("src")}')
+        if len(icon_srcs)!=2: errors.append(f'manifesto PWA deveria declarar exatamente 2 ícones, achou {len(icon_srcs)}')
     except Exception as exc:
         errors.append(f'manifest PWA inválido: {manifest_path.relative_to(ROOT)} ({exc})')
-    for rel in [f'icons/{theme}/favicon-32.png',f'icons/{theme}/apple-touch-icon.png',f'icons/{theme}/icon-180.png',f'icons/{theme}/icon-192.png',f'icons/{theme}/icon-512.png']:
-        if not (ROOT/rel).exists(): errors.append(f'ativo PWA ausente: {rel}')
+for rel in ['assets/pwa-icon-primary.png','assets/pwa-icon-secondary.png']:
+    if not (ROOT/rel).exists(): errors.append(f'ativo PWA ausente: {rel}')
 
 if '<link rel="manifest"' not in index or 'src/js/40-app/06-app-icons.js' not in index:
     errors.append('integração PWA/ícones ausente no index')
 sw=(ROOT/'sw.js').read_text(encoding='utf-8') if (ROOT/'sw.js').exists() else ''
-for rel in ['manifests/jp-wealth-flat-knight.webmanifest','manifests/jp-wealth-relief-knight.webmanifest','manifests/jp-wealth-marble-knight.webmanifest']:
+if './manifests/jp-wealth.webmanifest' not in sw: errors.append('service worker não precacheia: manifests/jp-wealth.webmanifest')
+for rel in ['assets/pwa-icon-primary.png','assets/pwa-icon-secondary.png']:
     if f'./{rel}' not in sw: errors.append(f'service worker não precacheia: {rel}')
-for theme in pwa_themes:
-    if f'./icons/{theme}/icon-512.png' not in sw: errors.append(f'service worker sem ícone 512: {theme}')
 
 class IdParser(HTMLParser):
     def __init__(self): super().__init__(); self.ids=[]

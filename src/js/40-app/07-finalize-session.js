@@ -2,7 +2,7 @@
 const SESSION_CHECKPOINT_KEY='jpwealth_session_checkpoint_v1';
 const SESSION_WIPE_CHANNEL='jpwealth_session_events_v1';
 const SESSION_WIPE_STORAGE_KEY='jpwealth_session_wipe_signal_v1';
-const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme',SESSION_WIPE_STORAGE_KEY];
+const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice',SESSION_WIPE_STORAGE_KEY];
 let sessionCheckpointValue=null;
 let sessionFinalizeEntry='safe';
 let sessionFinalizeBackStep='safe';

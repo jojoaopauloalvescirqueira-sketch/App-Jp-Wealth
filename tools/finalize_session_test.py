@@ -52,8 +52,8 @@ def prepare_page(browser, url):
         content_type='application/javascript',
         body="self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));",
     ))
-    page.route('**/dist/icons/**',lambda route: route.continue_(
-        url=route.request.url.replace('/dist/icons/','/icons/'),
+    page.route('**/dist/assets/**',lambda route: route.continue_(
+        url=route.request.url.replace('/dist/assets/','/assets/'),
     ))
     def fulfill_fx(route):
         parts=route.request.url.rstrip('/').split('/')
@@ -222,6 +222,7 @@ def run_dist_suite(browser, url):
       localStorage.setItem('jpw_expl','on');
       localStorage.setItem('jpw_fs','2');
       localStorage.setItem('jpwealth_v9_icon_theme','marble-knight');
+      localStorage.setItem('jpwealth_v9_icon_choice','secondary');
       markSessionCheckpoint();
       S.instruments[0].preco += 1;
       save();
@@ -260,7 +261,7 @@ def run_dist_suite(browser, url):
     assert page.evaluate("localStorage.getItem('outra_aplicacao')") == 'preservar'
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state')") is None
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") is None
-    for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme'):
+    for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice'):
         assert page.evaluate(f"localStorage.getItem('{key}')") is None, key
     checkpoint_ops=page.evaluate('window.__checkpointOps')
     assert ['remove','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
@@ -353,7 +354,7 @@ def run_dist_suite(browser, url):
 
     page_a = prepare_page(browser, url)
     page_a.evaluate('''() => {
-      ['jpwealth_v9_state','jpwealth_v9_state_corrompido_teste','jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme'].forEach(k=>localStorage.removeItem(k));
+      ['jpwealth_v9_state','jpwealth_v9_state_corrompido_teste','jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice'].forEach(k=>localStorage.removeItem(k));
       sessionStorage.clear();
     }''')
     page_a.reload(wait_until='load')
