@@ -50,7 +50,7 @@
       "order": 8,
       "path": "src/js/20-ui/01-header-readout.js",
       "section": "TOP BAR · LEITURA DE ESTADO",
-      "sha256": "568b32b3869a9b4d4518e51e956fa424a9015f3796183ff0b57b4045a45b3cc7"
+      "sha256": "6c5e9645c2b3f0696adc1f081a9f16acb78f15e9ed3dbab223471546bf41c38e"
     },
     {
       "order": 9,
@@ -62,13 +62,13 @@
       "order": 10,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "997daa673dcca603b4d44d2d2087889cf20dabff886e3d868991e869441f2a79"
+      "sha256": "f6a7230222c2b2fe86b04e3c547394b107d1b033c18f373bfec6350fea035c37"
     },
     {
       "order": 11,
       "path": "src/js/20-ui/04-operational-clearance.js",
       "section": "OPERATIONAL CLEARANCE — veredito executivo (N1)",
-      "sha256": "a40928a4cd370c20cb7dba5a063e36f15e04d05aab09a8c9601ed2c460057494"
+      "sha256": "2eb279ca830c7c3c8acc2f1e6f227735a50653dbf7c2597551f11bf264645f37"
     },
     {
       "order": 12,
@@ -224,13 +224,19 @@
       "order": 37,
       "path": "src/js/40-app/10-dashboard-immersive.js",
       "section": "DASHBOARD IMERSIVO · modo, carrossel e navegação interna (N1)",
-      "sha256": "246929c9dc55359c93d4ecc350a200569c125012e8782e5049bb0edcc4784850"
+      "sha256": "35ed92c20ca3cdba4e83efbf10356d763c4a9380a09902a13588ba5311c72ac2"
     },
     {
       "order": 38,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · menu mobile de destinos (N1)",
       "sha256": "df8101e87bc0cf6c860c40cda8aae7d4059f023ee663f166ee8123e967e44b26"
+    },
+    {
+      "order": 39,
+      "path": "src/js/40-app/12-global-dashboard.js",
+      "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
+      "sha256": "73f2014d408b0960d68f99a213ea7e098d6d78e1215dc666ff9366f7ac7e16b5"
     }
   ]
 }

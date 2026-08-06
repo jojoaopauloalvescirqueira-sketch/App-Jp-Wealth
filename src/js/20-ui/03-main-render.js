@@ -13,6 +13,9 @@ function render(){
   const ddPct=Math.min(100,(c.dd/ddCeil)*100);
   $('thermoFill').style.height=ddPct+'%';
   $('thermoMarker').style.bottom=ddPct+'%';
+  // Espelho de leitura no Dashboard (fidelidade ao Claude Design) — mesma
+  // fonte canônica (c.dd/ddCeil) já usada acima; sem cálculo novo, sem input.
+  const gdTDf=$('gdThermoDDFill'); if(gdTDf) gdTDf.style.height=ddPct+'%';
   const ticksEl=$('thermoDDticks');
   if(ticksEl){
     ticksEl.innerHTML=[1,0.8,0.6,0.4,0.2,0].map(f=>`<span>${fmtPct(ddCeil*f)}</span>`).join('');
@@ -23,6 +26,7 @@ function render(){
     zoneEl.innerHTML=[3,2,1,0].map(i=>`<div class="tz f${i+1}">${zn[i]} ${fmtPct(c.mScaled[i].ddmin)}–${fmtPct(c.mScaled[i].ddmax)}</div>`).join('');
   }
   const tdv=$('thermoDDval'); if(tdv) tdv.textContent=fmtPct(c.dd);
+  const gdTDv=$('gdThermoDDVal'); if(gdTDv) gdTDv.textContent=fmtPct(c.dd);
   // thermometer ALAVANCAGEM real utilizada (SET 6) — escala 0–4x; marca = teto da fase
   const lf=$('thermoLevFill');
   if(lf){
@@ -31,6 +35,12 @@ function render(){
     $('thermoLevVal').textContent=fmtX(c.alavCar);
     lf.style.opacity=c.alavCar>c.tetoAlav?'1':'.92';
   }
+  const gdTAf=$('gdThermoAlavFill');
+  if(gdTAf){
+    gdTAf.style.height=Math.min(100,(c.alavCar/4)*100)+'%';
+    gdTAf.style.opacity=c.alavCar>c.tetoAlav?'1':'.92';
+  }
+  const gdTAv=$('gdThermoAlavVal'); if(gdTAv) gdTAv.textContent=fmtX(c.alavCar);
   // metrics
   $('mSaldo').textContent=fmtMoney(p.saldoAtu);
   $('mSaldoSub').textContent='inicial '+fmtMoney(p.saldoIni)+' — contábil, não move o termômetro'
@@ -117,9 +127,26 @@ function render(){
   $('gRiscoVal').textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
   const gRiscoBar=$('gRiscoBar'); gRiscoBar.style.width=riscoPctW+'%';
   gRiscoBar.style.background = c.riscoTotal>c.tetoRisco?'var(--f3)':FCOLORS[c.fi];
+  const gdCAv=$('gdCoherenceAlavVal'); if(gdCAv) gdCAv.textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
+  const gdCAb=$('gdCoherenceAlavBar');
+  if(gdCAb){ gdCAb.style.width=alavPctW+'%'; gdCAb.style.background=c.alavCar>c.tetoAlav?'var(--f2)':FCOLORS[c.fi]; }
+  const gdCRv=$('gdCoherenceRiscoVal'); if(gdCRv) gdCRv.textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
+  const gdCRb=$('gdCoherenceRiscoBar');
+  if(gdCRb){ gdCRb.style.width=riscoPctW+'%'; gdCRb.style.background=c.riscoTotal>c.tetoRisco?'var(--f3)':FCOLORS[c.fi]; }
   // VRM
   $('mVRM').textContent=c.vrm.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   $('mRegime').textContent=c.regime;
+  const gdVv=$('gdVrmValue'); if(gdVv) gdVv.textContent=c.vrm.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const gdVr=$('gdVrmRegime');
+  const regimeColor=c.regime==='NORMAL'?'var(--jp-success)':(c.regime==='TRANSIÇÃO'?'var(--jp-warning)':'var(--jp-danger)');
+  if(gdVr){ gdVr.textContent=c.regime; gdVr.style.color=regimeColor; }
+  const gdA55=$('gdVrmAtr55'); if(gdA55) gdA55.textContent=(S.atr55||0).toLocaleString('pt-BR',{minimumFractionDigits:5,maximumFractionDigits:5});
+  const gdA660=$('gdVrmAtr660'); if(gdA660) gdA660.textContent=(S.atr660||0).toLocaleString('pt-BR',{minimumFractionDigits:5,maximumFractionDigits:5});
+  const gdVDial=$('gdVrmDial');
+  if(gdVDial){
+    const frac=Math.max(0,Math.min(1, p.vrmHV>0 ? c.vrm/(p.vrmHV*1.15) : 0));
+    gdVDial.style.background='conic-gradient(from 270deg at 50% 100%, '+regimeColor+' 0turn, '+regimeColor+' '+(frac*0.5).toFixed(4)+'turn, var(--jp-border) '+(frac*0.5).toFixed(4)+'turn, var(--jp-border) .5turn)';
+  }
   // LIFO
   $('lLote').textContent=c.loteTotal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   $('lRisco').textContent=fmtMoney(c.riscoTotal);

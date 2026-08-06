@@ -1530,7 +1530,18 @@
      legado, preservando o rollback.
      ========================================================== */
   .jp-dash-header,.jp-hero,.jp-carousel,.jp-slide,.jp-section{display:contents}
+  /* CORREÇÃO — .jp-dash-brand/.jp-dash-nav/.jp-dash-actions nunca tiveram um
+     display:none padrão como .jp-dash-menu já tinha; ficavam ocultos só
+     porque, até aqui, data-active-screen era sempre "dash" quando a tela
+     estava visível. A Etapa 1 do Global Dashboard (Fase B0.1 em diante)
+     aposenta esse modo — data-active-screen nunca mais vira "dash" sob
+     data-shell="global-dashboard" — e esse estado "contents, mas sem o
+     display:none dos filhos" passou a ser alcançável pela primeira vez,
+     vazando "JP WEALTH" / "Visão Geral·Risco·Evolução·Governança" / "Menu"
+     como texto solto. Corrigido na raiz: agora seguem o mesmo padrão que
+     .jp-dash-menu já usava. */
   .jp-carousel-arrow,.jp-carousel-dots,.jp-hero-actions,
+  .jp-dash-brand,.jp-dash-nav,.jp-dash-actions,
   .jp-dash-menu,.jp-slide-eyebrow,.jp-slide-title,
   .jp-section-eyebrow,.jp-section-title,.jp-section-lead{display:none}
   /* svg.jp-hero-viz precisa empatar em especificidade com a regra legada
@@ -2741,4 +2752,381 @@
   @media (prefers-contrast:more){
     html[data-ui-version="tesla-inspired"]{--jp-focus-width:3px}
     html[data-ui-version="tesla-inspired"] .card{border-color:var(--jp-ink-muted)}
+  }
+
+  /* ==========================================================
+     GLOBAL DASHBOARD — FIDELIDADE AO CLAUDE DESIGN (Etapa 1)
+     Fonte: "Auditoria visual JP Wealth" (claude.ai/design), arquivos
+     "JP Wealth - [Tela] Claro (preview cheia).dc.html".
+
+     Flag NOVA e independente: html[data-shell="global-dashboard"], sempre
+     em conjunto com data-ui-version="tesla-inspired" (reaproveita a
+     fundação de tokens da Fase B0, não a substitui). As duas flags são
+     removíveis de forma independente:
+       · sem data-shell            → volta ao shell Fase A/B0 (Tesla-inspired)
+       · sem data-ui-version também → volta ao terminal legado original
+
+     Esta etapa é SÓ reprodução estática (estrutura, tipografia, cor,
+     espaçamento, proporção — sem GSAP/ScrollTrigger/Lenis/canvas/vídeo,
+     por acordo explícito). Cobre o shell compartilhado das 7 telas
+     (header de 2 linhas, navegação horizontal, rodapé, largura de
+     conteúdo) e o tratamento genérico de cards. O conteúdo específico do
+     Dashboard (grid executivo com Termômetros/Coerência/VRM) ainda não
+     foi portado — depende de uma decisão de mapeamento de dados
+     registrada à parte, para não duplicar controles que hoje só existem
+     no Execution Board sob outro ID.
+     ========================================================== */
+
+  /* ---------- Tokens ----------
+     Quase todo hex do design já é um token existente (ver auditoria);
+     só os dois pares abaixo não tinham alias. */
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"]{
+    --gd-surface-subtle:var(--panel-2);
+    --gd-info:var(--data-id);
+    --gd-info-bg:color-mix(in srgb, var(--data-id) 14%, var(--jp-surface));
+    --gd-max-w:1400px;
+    --gd-gutter:32px;
+  }
+
+  /* ---------- Logo real substitui o wordmark em CSS ----------
+     .gd-logo nasce display:none incondicional (harmless sem a flag); o
+     wordmark correspondente some só sob a flag, preservando o rollback. */
+  .gd-logo{display:none}
+  html[data-shell="global-dashboard"] .gd-logo{display:block; height:11px; width:auto}
+  /* O PNG exportado só existe em tinta escura, desenhado para o fundo branco
+     do header claro do design. Sem tratamento, fica quase invisível sobre o
+     header escuro do tema dark deste app (que o design nunca previu). Um
+     filtro inverte a tinta para claro só no tema escuro — não altera o
+     arquivo de origem nem a aparência no tema claro, onde bate exato com
+     o export. */
+  html[data-theme="dark"][data-shell="global-dashboard"] .gd-logo{filter:invert(1) brightness(1.6)}
+  html[data-shell="global-dashboard"] .wordmark,
+  html[data-shell="global-dashboard"] .brand .tag{display:none}
+
+  /* ---------- Header em 2 linhas ----------
+     Linha 1 (66px): marca + navegação centralizada + ações.
+     Linha 2 (46px): faixa de contexto, fundo sutil.
+     header/nav continuam 2 elementos distintos no DOM (rollback), mas a
+     navegação é transportada para dentro da linha 1 via JS
+     (12-global-dashboard.js) só quando esta flag está ativa. */
+  html[data-shell="global-dashboard"] header{
+    height:66px; min-height:66px; padding:0 var(--gd-gutter);
+    background:var(--jp-surface); border-bottom:0;
+    gap:var(--jp-space-6);
+  }
+  html[data-shell="global-dashboard"] .brand{
+    width:220px; flex:none; gap:var(--jp-space-3);
+  }
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot{
+    flex:1; display:flex; justify-content:center; min-width:0;
+  }
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+    position:static; height:auto; flex-direction:row; align-items:center;
+    gap:28px; padding:0; background:transparent; border:0; overflow:visible;
+  }
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+    font-family:var(--jp-font-ui); font-size:12.5px; font-weight:500;
+    text-transform:none; letter-spacing:0; color:var(--jp-ink-muted);
+    background:transparent; border:0; border-radius:0; padding:0 0 4px;
+    min-height:0; white-space:nowrap;
+    border-bottom:1.5px solid transparent;
+    transition:color var(--jp-duration-fast) var(--jp-ease), border-color var(--jp-duration-fast) var(--jp-ease);
+  }
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .n{display:none}
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:hover{color:var(--jp-ink); background:transparent}
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab.active{
+    color:var(--jp-action); font-weight:600; background:transparent;
+    border-bottom-color:var(--jp-action);
+  }
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .rail-toggle{display:none}
+  html[data-shell="global-dashboard"] .header-actions{
+    width:220px; flex:none; display:flex; align-items:center; justify-content:flex-end;
+    gap:18px; border-left:0; padding-left:0;
+  }
+  html[data-shell="global-dashboard"] .header-action{
+    width:30px; height:30px; min-width:30px; border-radius:50%; border-color:transparent;
+  }
+  html[data-shell="global-dashboard"] .header-action svg{width:15px; height:15px; stroke-width:2}
+  html[data-shell="global-dashboard"] .header-action:hover{background:var(--gd-surface-subtle)}
+  /* "Finalizar sessão" reaproveita o glifo de perfil da referência (Claude
+     Design só define 3 ícones: engrenagem/sino/perfil; a app tem só 2
+     controles reais — Configurações e Finalizar sessão — sem sistema de
+     notificações nem conceito de perfil de usuário separado. Perfil é o
+     mais próximo semanticamente de "sessão" entre os 2 restantes; o sino
+     seria só sobre notificações, que não existem aqui). Cor/fundo cinza
+     claro batem com o slot de perfil da referência; texto/aria-label/função
+     do botão continuam "Finalizar sessão", inalterados. */
+  html[data-shell="global-dashboard"] .header-action-finalize{
+    color:var(--jp-ink-muted); background:var(--gd-surface-subtle); border-color:transparent;
+  }
+  html[data-shell="global-dashboard"] .header-action-finalize:hover{background:var(--jp-border)}
+
+  /* ---------- Faixa de contexto (linha 2) ---------- */
+  html[data-shell="global-dashboard"] .gd-context-row{
+    display:flex; align-items:center; gap:22px; height:46px; min-height:46px;
+    padding:0 var(--gd-gutter); background:var(--gd-surface-subtle);
+    border-bottom:1px solid var(--jp-border);
+  }
+  html[data-shell="global-dashboard"] .gd-context-row .hdr-readout{display:flex !important}
+  html[data-shell="global-dashboard"] .gd-context-row .hdr-sep{display:none}
+  html[data-shell="global-dashboard"] .gd-context-row .hdr-readout .k{
+    font-family:var(--jp-font-ui); font-size:11px; text-transform:none; letter-spacing:0; color:var(--jp-ink-muted);
+  }
+  html[data-shell="global-dashboard"] .gd-context-row .hdr-readout .v{
+    font-family:var(--jp-font-ui); font-size:11px; font-weight:700; color:var(--jp-ink); margin-left:4px;
+  }
+  html[data-shell="global-dashboard"] .gd-context-row .header-status{
+    margin-left:auto; gap:16px;
+  }
+  html[data-shell="global-dashboard"] .gd-context-row .saved-tag{
+    font-family:var(--jp-font-ui); font-size:11px; font-weight:600; text-transform:none; letter-spacing:0;
+  }
+  html[data-shell="global-dashboard"] .gd-context-row .hdr-readout .v#hdrClock{
+    font-family:var(--jp-font-data); font-size:12px; color:var(--jp-action); font-weight:400; margin-left:0;
+  }
+  html[data-shell="global-dashboard"] .gd-context-row .pill{
+    font-family:var(--jp-font-data); font-size:10.5px; font-weight:700; letter-spacing:.06em;
+    border-radius:20px; padding:3px 11px;
+  }
+
+  /* ---------- Corpo: largura de 1400px, sem rail ---------- */
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"]:not([data-active-screen="dash"]) main{
+    padding:24px var(--gd-gutter) 32px;
+  }
+  html[data-shell="global-dashboard"] main > .screen.active{
+    max-width:var(--gd-max-w) !important; margin-inline:auto;
+  }
+
+  /* ---------- Conteúdo do Dashboard: grid 2fr/1fr (Etapa 1 — conteúdo) ----------
+     #gdDashMain recebe #mcClearanceCard e #mcMetricStrip via relocação JS
+     (12-global-dashboard.js) — mesmo padrão do shell. Termômetros/Coerência/
+     VRM/postura ficam de fora nesta etapa: pertencem ao Execution Board sob
+     outro ID, e duplicá-los exigiria ID repetido (proibido) ou um segundo
+     cálculo paralelo. Ver tabela de mapeamento entregue ao usuário. */
+  html[data-shell="global-dashboard"] .gd-dash-grid{
+    display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start; margin-top:16px;
+  }
+  html[data-shell="global-dashboard"] .gd-dash-main{
+    display:flex; flex-direction:column; gap:16px; min-width:0;
+  }
+  html[data-shell="global-dashboard"] .gd-dash-side{
+    display:flex; flex-direction:column; gap:16px;
+  }
+  @media(max-width:900px){
+    html[data-shell="global-dashboard"] .gd-dash-grid{grid-template-columns:1fr}
+  }
+
+  /* Linha de fatos dentro do card de Clearance (Fase da Conta/Risco/Alavancagem) */
+  html[data-shell="global-dashboard"] .mc-clearance-facts{
+    display:flex; gap:28px; flex-wrap:wrap; align-items:center;
+    margin-top:18px; padding-top:14px; border-top:1px solid var(--jp-border); cursor:pointer;
+  }
+  html[data-shell="global-dashboard"] .mc-clearance-facts .k{
+    display:block; font-family:var(--jp-font-ui); font-size:9.5px; color:var(--jp-ink-muted); margin-bottom:3px; white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .mc-clearance-facts b{
+    font-family:var(--jp-font-ui); font-size:12px; font-weight:700; color:var(--jp-ink); white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .mc-clearance-facts-chev{
+    margin-left:auto; color:var(--jp-ink-muted); font-size:16px;
+  }
+
+  /* Faixa de 4 métricas — mesmos dFase/dDD/mcMiniRisco/dAlav, só moldura nova */
+  html[data-shell="global-dashboard"] #gdDashMain #mcMetricStrip{
+    margin-top:0; gap:16px;
+  }
+  html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card{
+    background:var(--jp-surface); border:0; border-radius:10px;
+    box-shadow:0 1px 3px rgba(0,0,0,.05); padding:16px; gap:6px;
+  }
+  :root[data-theme="dark"] html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card{
+    box-shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+  html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card .k{
+    font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--jp-ink-muted);
+  }
+  html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card .v{
+    font-family:var(--jp-font-data); font-size:19px; font-weight:700; color:var(--jp-ink);
+  }
+
+  /* Painel lateral: Perfil e Contexto + Ações Rápidas */
+  html[data-shell="global-dashboard"] .gd-card-label{
+    font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--jp-ink-muted); margin-bottom:12px;
+  }
+  html[data-shell="global-dashboard"] .gd-context-list{
+    display:flex; flex-direction:column; gap:9px; margin:0 0 14px;
+  }
+  html[data-shell="global-dashboard"] .gd-context-list > div{display:flex; justify-content:space-between; gap:12px}
+  html[data-shell="global-dashboard"] .gd-context-list dt{
+    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:400; color:var(--jp-ink-muted); margin:0;
+  }
+  html[data-shell="global-dashboard"] .gd-context-list dd{
+    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:700; color:var(--jp-ink); margin:0;
+  }
+  html[data-shell="global-dashboard"] .gd-context-cta{
+    display:flex; justify-content:space-between; align-items:center; width:100%;
+    background:transparent; border:0; border-top:1px solid var(--jp-border); padding-top:12px;
+    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:600; color:var(--jp-action); cursor:pointer;
+  }
+  html[data-shell="global-dashboard"] .gd-quick-nav{display:flex; flex-direction:column}
+  html[data-shell="global-dashboard"] .gd-quick-nav button{
+    display:flex; justify-content:space-between; align-items:center; width:100%;
+    background:transparent; border:0; border-bottom:1px solid var(--jp-border);
+    padding:9px 0; font-family:var(--jp-font-ui); font-size:11.5px; color:var(--jp-ink); cursor:pointer; text-align:left;
+  }
+  html[data-shell="global-dashboard"] .gd-quick-nav button:last-child{border-bottom:0}
+  html[data-shell="global-dashboard"] .gd-quick-nav button span{color:var(--jp-ink-muted)}
+  html[data-shell="global-dashboard"] .gd-quick-nav button:hover{color:var(--jp-action)}
+  html[data-shell="global-dashboard"] .gd-quick-nav button:hover span{color:var(--jp-action)}
+
+  /* Alerta real de onboarding reposicionado na lateral (mesmo elemento,
+     reposicionado via JS — ver 12-global-dashboard.js). Restilo só de layout:
+     de faixa horizontal de largura total para card vertical de coluna. */
+  html[data-shell="global-dashboard"] #gdDashSide #onboardingIncompleteBanner.show{
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+    max-width:none; margin:0; padding:16px 18px; border-radius:10px;
+  }
+  html[data-shell="global-dashboard"] #gdDashSide #onboardingIncompleteBanner .reset-btn{width:100%}
+
+  /* ---------- Linha do herói: Clearance + painel institucional ----------
+     Proporção 1.3fr/1fr da referência. O painel institucional é gráfico
+     neutro (sem foto, sem citação, sem dado, sem CTA) — não existe imagem
+     institucional aprovada no repositório; ver decisão registrada com o
+     usuário. aria-hidden já vem no HTML. */
+  html[data-shell="global-dashboard"] .gd-hero-row{display:flex; gap:16px; align-items:stretch}
+  html[data-shell="global-dashboard"] .gd-hero-row #mcClearanceCard{flex:1.3; margin:0; min-width:0}
+  html[data-shell="global-dashboard"] .gd-institutional-panel{
+    flex:1; min-height:180px; border-radius:10px;
+    background:repeating-linear-gradient(135deg,
+      color-mix(in srgb, var(--jp-ink) 92%, transparent) 0 10px,
+      color-mix(in srgb, var(--jp-ink) 82%, transparent) 10px 20px);
+  }
+  @media(max-width:900px){
+    html[data-shell="global-dashboard"] .gd-hero-row{flex-direction:column}
+  }
+
+  /* ---------- Termômetros / Coerência / VRM — espelhos de leitura ----------
+     Mesma fonte canônica do Execution Board (compute()), IDs novos e
+     exclusivos do Dashboard, sem input, sem estado paralelo. */
+  html[data-shell="global-dashboard"] .gd-analytics-row{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+  }
+  @media(max-width:900px){
+    html[data-shell="global-dashboard"] .gd-analytics-row{grid-template-columns:1fr}
+  }
+  html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; gap:22px; justify-content:center; margin-top:6px}
+  html[data-shell="global-dashboard"] .gd-thermo-item{display:flex; flex-direction:column; align-items:center; gap:6px}
+  html[data-shell="global-dashboard"] .gd-thermo-track{
+    width:22px; height:70px; border:1px solid var(--jp-border); border-radius:4px;
+    display:flex; align-items:flex-end; overflow:hidden;
+  }
+  html[data-shell="global-dashboard"] .gd-thermo-fill{width:100%; height:0; background:var(--jp-success); transition:height .3s ease}
+  html[data-shell="global-dashboard"] .gd-thermo-val{font-family:var(--jp-font-data); font-size:10px; font-weight:600; color:var(--jp-ink)}
+  html[data-shell="global-dashboard"] .gd-thermo-lbl{font-family:var(--jp-font-ui); font-size:8.5px; color:var(--jp-ink-muted)}
+
+  html[data-shell="global-dashboard"] .gd-gauge{margin-bottom:16px}
+  html[data-shell="global-dashboard"] .gd-gauge:last-child{margin-bottom:0}
+  html[data-shell="global-dashboard"] .gd-gauge-lbl{
+    display:flex; justify-content:space-between; font-family:var(--jp-font-ui);
+    font-size:10.5px; color:var(--jp-ink-muted); margin-bottom:6px;
+  }
+  html[data-shell="global-dashboard"] .gd-gauge-lbl span:last-child{color:var(--jp-action); font-weight:700}
+  html[data-shell="global-dashboard"] .gd-gauge-track{height:8px; border-radius:4px; background:var(--jp-surface-2, var(--gd-surface-subtle))}
+  html[data-shell="global-dashboard"] .gd-gauge-bar{height:100%; width:0; border-radius:4px; background:var(--jp-success); transition:width .3s ease}
+
+  html[data-shell="global-dashboard"] .gd-vrm-main{display:flex; align-items:center; gap:14px; margin-bottom:12px}
+  html[data-shell="global-dashboard"] .gd-vrm-dial{
+    width:64px; height:32px; border-radius:64px 64px 0 0; flex:none;
+    background:conic-gradient(from 270deg at 50% 100%, var(--jp-border) 0turn, var(--jp-border) .5turn);
+  }
+  html[data-shell="global-dashboard"] .gd-vrm-value{font-family:var(--jp-font-data); font-size:16px; font-weight:700; color:var(--jp-ink)}
+  html[data-shell="global-dashboard"] .gd-vrm-regime{font-family:var(--jp-font-ui); font-size:10px; font-weight:600}
+  html[data-shell="global-dashboard"] .gd-vrm-atr{display:flex; gap:10px}
+  html[data-shell="global-dashboard"] .gd-vrm-atr > div{flex:1; border-radius:6px; background:var(--gd-surface-subtle); padding:8px 10px}
+  html[data-shell="global-dashboard"] .gd-vrm-atr .k{display:block; font-family:var(--jp-font-ui); font-size:8.5px; color:var(--jp-ink-muted); margin-bottom:2px}
+  html[data-shell="global-dashboard"] .gd-vrm-atr .v{font-family:var(--jp-font-data); font-size:11px; font-weight:600; color:var(--jp-ink)}
+
+  /* ---------- Faixa de postura/conformidade — só estados reais ---------- */
+  html[data-shell="global-dashboard"] .gd-posture-row{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; padding:18px 22px;
+  }
+  html[data-shell="global-dashboard"] .gd-posture-label{font-family:var(--jp-font-ui); font-size:12px; font-weight:600; margin-bottom:3px}
+  html[data-shell="global-dashboard"] .gd-posture-sub{font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); line-height:1.4}
+
+  /* ---------- Cards: sombra sutil, sem borda, raio 10px ----------
+     Aplica-se a TODOS os cards já existentes (Execution Board, Parâmetros
+     etc.) mesmo antes do conteúdo interno de cada tela ser adaptado —
+     é o recipiente compartilhado, consistente com o design em todas as
+     7 telas desde já. */
+  html[data-shell="global-dashboard"] .card{
+    border:0; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.05);
+    background:var(--jp-surface); padding:22px;
+  }
+  :root[data-theme="dark"] html[data-shell="global-dashboard"] .card{
+    box-shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+  html[data-shell="global-dashboard"] .card h2{
+    background:transparent; border-bottom:0; margin:0 0 16px; padding:0;
+    display:flex; align-items:baseline; gap:10px; min-height:0;
+    font-family:var(--jp-font-ui); font-size:15px; font-weight:700;
+    text-transform:none; letter-spacing:0; color:var(--jp-ink);
+  }
+  html[data-shell="global-dashboard"] .card h2 .art{
+    font-family:var(--jp-font-ui); font-size:10.5px; font-weight:400;
+    text-transform:none; letter-spacing:0; color:var(--jp-ink-muted); opacity:1;
+  }
+
+  /* ---------- Rodapé ----------
+     Valores literais da referência (Checklist Claro / Dashboard Claro):
+     padding 26px/32px/20px, fundo #FAFAFA, sem borda superior. --gd-footer-bg
+     fica só no claro; o escuro mantém o token adaptativo anterior (não é
+     alvo de aprovação nesta rodada, só não pode regredir). */
+  html[data-shell="global-dashboard"]{--gd-footer-bg:#FAFAFA}
+  html[data-theme="dark"][data-shell="global-dashboard"]{--gd-footer-bg:var(--gd-surface-subtle)}
+  html[data-shell="global-dashboard"] #gdFooter{
+    display:block; padding:26px var(--gd-gutter) 20px; background:var(--gd-footer-bg);
+    font-family:var(--jp-font-ui);
+  }
+  html[data-shell="global-dashboard"] .gd-footer-notes{
+    max-width:900px; margin:0 auto 18px; text-align:center;
+    font-size:10.5px; line-height:1.6; color:var(--ink-faint);
+  }
+  html[data-shell="global-dashboard"] .gd-footer-notes p{margin:0 0 8px}
+  html[data-shell="global-dashboard"] .gd-footer-notes p:last-child{margin-bottom:0}
+  html[data-shell="global-dashboard"] .gd-footer-links{
+    display:flex; justify-content:center; flex-wrap:wrap; gap:26px;
+    padding-top:14px; font-size:11.5px; color:var(--jp-ink-muted);
+  }
+  html[data-shell="global-dashboard"] .gd-footer-brand{color:var(--jp-ink); font-weight:600}
+  /* Links reais (button) vs "Governança" (span inerte, sem destino hoje) —
+     mesma tipografia da linha, só o comportamento muda. */
+  html[data-shell="global-dashboard"] .gd-footer-links button{
+    font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer;
+  }
+  html[data-shell="global-dashboard"] .gd-footer-links button:hover,
+  html[data-shell="global-dashboard"] .gd-footer-links button:focus-visible{color:var(--jp-ink)}
+  html[data-shell="global-dashboard"] .gd-footer-link-inert{color:var(--ink-faint); cursor:default}
+
+  /* ---------- Rodapé legado ----------
+     Neutralizado só sob a flag: sem render visual, sem altura, sem borda.
+     Sem a flag, comportamento e conteúdo permanecem 100% intocados — inclui
+     o botão #resetBtn, que chama a MESMA função (wipeAllData()) já exposta
+     em Central de Configurações → Dados e Segurança → Backup e Recuperação
+     → "Zona de Perigo" (#wipeAllBtn) — por isso não foi recriado no rodapé
+     novo (evitaria um segundo controle com lógica idêntica). */
+  html[data-shell="global-dashboard"] .foot-note{
+    display:none; margin:0; padding:0; border:0; height:0; min-height:0;
+  }
+
+  /* ---------- Responsivo (desktop apenas nesta etapa; ver auditoria §09 —
+     o design não cobre mobile, então o comportamento herdado da Fase A
+     permanece como piso de segurança abaixo de 900px). ---------- */
+  @media(max-width:900px){
+    html[data-shell="global-dashboard"] .gd-context-row{
+      flex-wrap:wrap; height:auto; padding:8px var(--sp-5); gap:8px 16px;
+    }
+    html[data-shell="global-dashboard"] .header-actions,
+    html[data-shell="global-dashboard"] .brand{width:auto}
   }

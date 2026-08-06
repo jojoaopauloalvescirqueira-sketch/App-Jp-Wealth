@@ -54,6 +54,12 @@ function renderOperationalClearance(c){
   // N2 — Mission Metrics (status executivos)
   const set=(id,txt)=>{ const e=$(id); if(e) e.textContent=txt; };
   const chip=(id,cls,txt)=>{ const e=$(id); if(e){ e.className='mc-status '+cls; e.textContent=txt; } };
+  // Linha de fatos do card de Clearance (fidelidade ao Dashboard Claro) —
+  // mesmos valores de c.fase/c.riscoTotal/c.tetoRisco/c.alavCar/c.tetoAlav
+  // já usados em mcMiniRisco/dAlav/dFase; só um novo local de leitura.
+  set('mcClearanceFactFase', c.fase.nome);
+  set('mcClearanceFactRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
+  set('mcClearanceFactAlav', fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav));
   set('mcMiniRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
   // Reservas FCR/FEO — lidos do estado salvo no onboarding (fonte única)
   if(!ob.done || !ob.reserveFcrStatus){
@@ -99,4 +105,28 @@ function renderOperationalClearance(c){
     set('dStatus', label);
     chip('mcMiniPendChip',onb.critical?'mc-st-bad':(onb.warning?'mc-st-warn':'mc-st-muted'),`${onb.completed}/${onb.total}`);
   }
+  // Faixa de postura/conformidade (fidelidade ao Claude Design) — só estados
+  // reais já calculados em outro lugar do próprio código: PHASE_OBJECTIVE[c.fi]
+  // (mesmo dado do objectiveCard do Execution Board), c.excesso, c.alavCar/
+  // c.tetoAlav (mesma condição de gAlavBar) e onb (mesma fonte do dStatus
+  // acima). Nenhuma checagem nova, nenhum texto fixo — muda com o estado real.
+  const posture=(prefix,label,sub,color)=>{
+    const l=$(prefix+'Lbl'), s=$(prefix+'Sub');
+    if(l){ l.textContent=label; l.style.color=color; }
+    if(s) s.textContent=sub;
+  };
+  const po=PHASE_OBJECTIVE[c.fi];
+  posture('gdPostureFase', po.t, 'Fase '+(c.fi+1)+' vigente — postura determinada pela fase atual.', 'var('+OBJ_COL[c.fi]+')');
+  posture('gdPostureRisco',
+    c.excesso>0?'Risco Acima do Teto':'Risco Controlado',
+    c.excesso>0?('Exceder o teto em '+fmtMoney(c.excesso)+' — poda necessária.'):'Dentro dos limites operacionais da fase.',
+    c.excesso>0?'var(--jp-danger)':'var(--jp-success)');
+  posture('gdPostureAlav',
+    c.alavCar>c.tetoAlav?'Alavancagem Acima do Teto':'Alavancagem Segura',
+    fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav)+(c.alavCar>c.tetoAlav?' — acima do teto da fase.':' — abaixo do teto permitido.'),
+    c.alavCar>c.tetoAlav?'var(--jp-danger)':'var(--jp-success)');
+  posture('gdPostureGov',
+    onb.complete?'Governança Completa':(onb.critical?`${onb.critical} pendência(s) crítica(s)`:(onb.warning?`${onb.warning} atenção`:`${onb.pending} pendente(s)`)),
+    onb.complete?'Formulário de Início sem pendências.':'Formulário de Início incompleto — revise em Configurações.',
+    onb.complete?'var(--jp-success)':(onb.critical?'var(--jp-danger)':'var(--jp-warning)'));
 }
