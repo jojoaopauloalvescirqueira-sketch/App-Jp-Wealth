@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "7a658a189564bee81f56a1d0ec107ed74ca00c1295a49f03557e74265e79adc2"
+      "sha256": "1e8f285e0f3be6b65b83ced6c50c49252d12a6df2f47de866d5237bffa0ab072"
     },
     {
       "order": 5,
@@ -182,7 +182,7 @@
       "order": 30,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "cf956e0648597df579629cc76eeb14bf75c37dbce85c1a035b35b258d240db9b"
+      "sha256": "62f8b3c02270b6af101360276cb02eb02b28128913274a1dccc92c6bf448c38f"
     },
     {
       "order": 31,

@@ -214,7 +214,6 @@ function openOnboardingModal(mode, initialStep){
   let propMinTradingDays=String(ob.propMinTradingDays||'');
   let propAbsenceRules=String(ob.propAbsenceRules||'');
   let restrictiveRuleAccepted=Boolean(ob.restrictiveRuleAccepted);
-  let reserveMasterCapital=String(ob.reserveMasterCapital||'');
   let reserveFcrCurrent=String(ob.reserveFcrCurrent||'');
   let reserveMonthlyExpenses=String(ob.reserveMonthlyExpenses||'');
   let reserveFeoCurrent=String(ob.reserveFeoCurrent||'');
@@ -277,15 +276,13 @@ function openOnboardingModal(mode, initialStep){
   const epTestOptions=['Sim, testei em conta demo.','Sim, testei com lote mínimo.','Ainda não testei.','Não se aplica.'];
   const epPropDailyEnabledOptions=['Sim.','Não.','Não informado pela mesa.'];
   const epPropDailyBaseOptions=['Saldo inicial.','Equity inicial do dia.','Balance do dia anterior.','Regra específica da mesa.'];
-  const fld=(id,label,val,ph,type)=>`<div class="field" style="margin-bottom:10px">
-    <label>${label}</label><input type="${type||'text'}" id="${id}" value="${esc(val)}" placeholder="${ph||''}"></div>`;
+  const fld=(id,label,val,ph,type,note)=>`<div class="field" style="margin-bottom:10px">
+    <label>${label}</label><input type="${type||'text'}" id="${id}" value="${esc(val)}" placeholder="${ph||''}">${note?`<span class="note">${note}</span>`:''}</div>`;
   const optList=(items,selected)=>items.map(o=>`<option value="${esc(o)}" ${selected===o?'selected':''}>${esc(o)}</option>`).join('');
   const numVal=v=>parseFloat(String(v||'').replace(',','.'))||0;
   const reserveCapitalValue=()=>{
-    const manual=numVal(reserveMasterCapital);
     const saldoEl=$('obSaldo');
-    const saldo=saldoEl ? (parseFloat(saldoEl.value)||0) : (isEditMode?(S.params.saldoIni||0):0);
-    return manual>0 ? manual : saldo;
+    return saldoEl ? (parseFloat(saldoEl.value)||0) : (isEditMode?(S.params.saldoIni||0):0);
   };
   const reserveCalc=()=>{
     const capital=reserveCapitalValue();
@@ -504,7 +501,7 @@ function openOnboardingModal(mode, initialStep){
       </div>
       <div id="obReservePanel">${reservePanelHTML()}</div>
       <div class="params-grid" style="grid-template-columns:1fr 1fr; gap:0 14px">
-        <div class="field" style="margin-bottom:10px"><label for="obReserveMasterCapital">Capital nominal da Conta Mestre</label><input type="number" step="0.01" id="obReserveMasterCapital" value="${esc(reserveMasterCapital)}" placeholder="${r.capital?fmtMoney2(r.capital):'auto: saldo inicial'}"><span class="note">Usa o saldo inicial automaticamente. Preencha apenas se o sistema não identificou a Conta Mestre.</span></div>
+        <div class="field" style="margin-bottom:10px"><label for="obReserveMasterCapital">Capital nominal da Conta Mestre</label><input type="text" id="obReserveMasterCapital" value="${fmtMoney2(r.capital)}" readonly><span class="note">Preenchido automaticamente a partir de "Saldo de Início do Período", na etapa 01 Identificação.</span></div>
         <div class="field" style="margin-bottom:10px"><label>FCR mínimo exigido</label><input type="text" id="obReserveFcrRequired" value="${fmtMoney2(r.fcrReq)}" readonly><span class="note">15% × capital nominal da Conta Mestre.</span></div>
         <div class="field" style="margin-bottom:10px"><label for="obReserveFcrCurrent">FCR atualmente constituído</label><input type="number" step="0.01" id="obReserveFcrCurrent" value="${esc(reserveFcrCurrent)}" placeholder="0.00"><span class="note">Valor separado para Fundo de Contingência e Reconstituição.</span></div>
         <div class="field" style="margin-bottom:10px"><label>Status do FCR</label><input type="text" id="obReserveFcrStatus" value="${r.fcrStatus}" readonly style="color:${fcrBad?'var(--f4)':'var(--f1)'}; font-weight:800"></div>
@@ -680,7 +677,7 @@ function openOnboardingModal(mode, initialStep){
             ${fld('obOperador','Operador (gestor)', ob.operador||'', 'Preencher nome')}
             ${fld('obSupervisor','Supervisor(a)', ob.supervisor||'', 'Preencher nome')}
             ${periodDateField(isEditMode?(S.params.inicio||todayISO()):'')}
-            ${fld('obSaldo','Saldo de início do período ($)', isEditMode?(S.params.saldoIni||''):'', '10000','number')}
+            ${fld('obSaldo','Saldo de início do período ($)', isEditMode?(S.params.saldoIni||''):'', '10000','number', 'Saldo da Conta Mestre no momento de início deste período operacional. Esse valor funciona como a base nominal de referência para os cálculos de risco, drawdown, metas e reservas do período. Ele não representa o saldo atual após lucros ou prejuízos. O Capital Nominal da Conta Mestre exibido na etapa 04 Reservas é preenchido automaticamente a partir deste valor.')}
             <div class="field" style="margin-bottom:10px">
               <label for="obMoedaBase">Moeda-base da conta</label>
               <select id="obMoedaBase">${accountCurrencyOptions(ob.moedaBase||'USD')}</select>
@@ -1023,6 +1020,7 @@ function openOnboardingModal(mode, initialStep){
   function updateReservesUI(){
     const r=reserveCalc();
     const setVal=(id,val)=>{ const el=$(id); if(el) el.value=val; };
+    setVal('obReserveMasterCapital',fmtMoney2(r.capital));
     setVal('obReserveFcrRequired',fmtMoney2(r.fcrReq));
     setVal('obReserveFeoRequired',fmtMoney2(r.feoReq));
     setVal('obReserveFcrStatus',r.fcrStatus);
@@ -1041,7 +1039,6 @@ function openOnboardingModal(mode, initialStep){
   }
   function bindReservesFields(){
     const bindInput=(id,fn)=>{ const el=$(id); if(el) el.addEventListener('input',()=>{ fn(el.value); updateReservesUI(); const err=$('obReserveErr'); if(err) err.classList.remove('show'); invalidateSummary(); }); };
-    bindInput('obReserveMasterCapital',v=>{ reserveMasterCapital=v; });
     bindInput('obReserveFcrCurrent',v=>{ reserveFcrCurrent=v; });
     bindInput('obReserveMonthlyExpenses',v=>{ reserveMonthlyExpenses=v; });
     bindInput('obReserveFeoCurrent',v=>{ reserveFeoCurrent=v; });
@@ -1108,7 +1105,6 @@ function openOnboardingModal(mode, initialStep){
     const err=$('obReserveErr');
     const fail=(msg)=>{ if(err){ err.textContent=msg; err.classList.add('show'); } alert(msg); return false; };
     const r=reserveCalc();
-    if(!(r.capital>0)) return fail('Informe o capital nominal da Conta Mestre ou o saldo inicial do período.');
     if(!String(reserveFcrCurrent||'').trim()) return fail('Informe o FCR atualmente constituído.');
     if(!String(reserveMonthlyExpenses||'').trim()) return fail('Informe as despesas mensais da estrutura.');
     if(!String(reserveFeoCurrent||'').trim()) return fail('Informe o FEO atualmente constituído.');
@@ -2398,7 +2394,7 @@ function renderConfigOnboarding(){
     ${row('Moeda-base da conta', esc(normalizeAccountCurrency(ob.moedaBase)))}
     ${propRulesRows}
     ${row('Sistema de risco', pr.name+' · '+Math.round(pr.pct*100)+'%')}
-    ${row('Capital nominal Conta Mestre', ob.reserveMasterCapital?fmtMoney2(+ob.reserveMasterCapital):'—')}
+    ${row('Capital nominal Conta Mestre', fmtMoney2(S.params.saldoIni||0))}
     ${row('FCR mínimo exigido', ob.reserveFcrRequired?fmtMoney2(+ob.reserveFcrRequired):'—')}
     ${row('FCR atual', ob.reserveFcrCurrent?fmtMoney2(+ob.reserveFcrCurrent):'—')}
     ${row('Cobertura FCR', ob.reserveFcrCoveragePct?pctText(+ob.reserveFcrCoveragePct):'—')}

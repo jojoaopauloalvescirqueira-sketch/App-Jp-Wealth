@@ -160,7 +160,11 @@ function migrate(){ // garante chaves novas se schema evoluir
     S.onboarding.propMinTradingDays=String(S.onboarding.propMinTradingDays||'');
     S.onboarding.propAbsenceRules=String(S.onboarding.propAbsenceRules||'');
     S.onboarding.restrictiveRuleAccepted=Boolean(S.onboarding.restrictiveRuleAccepted);
-    S.onboarding.reserveMasterCapital=String(S.onboarding.reserveMasterCapital||'');
+    // Capital nominal da Conta Mestre não tem mais entrada própria: o Saldo de Início do
+    // Período (S.params.saldoIni) é a fonte única. Reconcilia aqui para que backups/estados
+    // legados com valor divergente nunca sobrevivam a um load — o campo persiste só por
+    // compatibilidade de formato do backup, nunca é lido como fonte de verdade em runtime.
+    S.onboarding.reserveMasterCapital=String(S.params.saldoIni||0);
     S.onboarding.reserveFcrRequired=String(S.onboarding.reserveFcrRequired||'');
     S.onboarding.reserveFcrCurrent=String(S.onboarding.reserveFcrCurrent||'');
     S.onboarding.reserveFcrStatus=String(S.onboarding.reserveFcrStatus||'');
