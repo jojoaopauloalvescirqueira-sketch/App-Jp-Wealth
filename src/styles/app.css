@@ -2897,21 +2897,14 @@
     max-width:var(--gd-max-w) !important; margin-inline:auto;
   }
 
-  /* ---------- Conteúdo do Dashboard: grid 2fr/1fr (Etapa 1 — conteúdo) ----------
-     #gdDashMain recebe #mcClearanceCard e #mcMetricStrip via relocação JS
-     (12-global-dashboard.js) — mesmo padrão do shell. Termômetros/Coerência/
-     VRM/postura ficam de fora nesta etapa: pertencem ao Execution Board sob
-     outro ID, e duplicá-los exigiria ID repetido (proibido) ou um segundo
-     cálculo paralelo. Ver tabela de mapeamento entregue ao usuário. */
-  html[data-shell="global-dashboard"] .gd-dash-grid{
-    display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start; margin-top:16px;
-  }
-  /* #gdDashMain é grade modular de 4 colunas — cada widget declara seu
-     próprio tamanho discreto via data-widget-size (compact/medium/large/
-     full), mapeado abaixo em grid-column/grid-row. Isso é o que permite
-     mover qualquer card entre coluna principal e lateral (a largura vem do
-     próprio widget, não de um wrapper de linha fixo) e também redimensionar
-     sem depender de posição.
+  /* ---------- Grade modular de widgets — MOTOR COMPARTILHADO ----------
+     Generalizado do Dashboard (Etapa 1) para as 7 telas operacionais
+     (Execution Board, Parâmetros, Motor de Lote, Contas, Checklist,
+     Contabilidade). .jp-widget-grid é a classe genérica — o Dashboard a
+     soma à sua #gdDashMain já existente; as outras 6 telas usam só a
+     classe, num contêiner próprio (#execWidgetGrid etc.), sem coluna
+     lateral (zones:['main']). Central de Configurações fica de fora —
+     arquitetura própria de modal, não é candidata a este sistema.
 
      grid-auto-flow: propositalmente SEM "dense". Auditoria registrada com o
      usuário: "dense" deixa o navegador preencher buracos antecipados com
@@ -2921,40 +2914,47 @@
      deste editor já move o nó real no DOM (não usa `order` nem truques de
      posição), "sparse" (padrão) garante que ordem visual e ordem do DOM
      sejam SEMPRE a mesma — não é uma esperança, é uma garantia estrutural. */
-  html[data-shell="global-dashboard"] .gd-dash-main{
-    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-    grid-auto-rows:minmax(120px,auto); grid-auto-flow:row;
-    gap:16px; min-width:0;
-  }
-  html[data-shell="global-dashboard"] .gd-dash-side{
-    display:flex; flex-direction:column; gap:16px;
+  html[data-shell="global-dashboard"] .gd-dash-grid{
+    display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start; margin-top:16px;
   }
   @media(max-width:900px){
     html[data-shell="global-dashboard"] .gd-dash-grid{grid-template-columns:1fr}
   }
+  html[data-shell="global-dashboard"] .jp-widget-grid{
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-auto-rows:minmax(120px,auto); grid-auto-flow:row;
+    gap:16px; min-width:0;
+  }
+  /* Telas sem coluna lateral (tudo, exceto Dashboard) ganham a mesma
+     largura máxima e centralização do conteúdo — já herdada de
+     `main > .screen.active`, aqui só o respiro vertical do topo. */
+  html[data-shell="global-dashboard"] .screen > .jp-widget-grid{margin-top:16px}
+  html[data-shell="global-dashboard"] .jp-widget-sidebar{
+    display:flex; flex-direction:column; gap:16px;
+  }
 
   /* Mapeamento de tamanho — fonte única: o atributo data-widget-size no
      próprio card (mesmo padrão de data-layout-allowed-zones). Só dentro da
-     coluna principal; na lateral todo card personalizável vira largura
-     cheia (empilhado), como já era antes — ver nota de decisão registrada
-     com o usuário (grade de 4 colunas não cabe numa lateral ~1fr). */
-  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="compact"]{grid-column:span 1; grid-row:span 1}
-  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="medium"]{grid-column:span 2; grid-row:span 1}
-  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="large"]{grid-column:span 2; grid-row:span 2}
-  html[data-shell="global-dashboard"] #gdDashMain [data-widget-size="full"]{grid-column:1 / -1; grid-row:auto}
-  html[data-shell="global-dashboard"] #gdDashMain [data-layout-card]{margin:0; min-width:0; min-height:0}
-  html[data-shell="global-dashboard"] #gdDashSide [data-layout-card]{width:100%}
+     grade principal; numa coluna lateral (só o Dashboard tem) todo card
+     personalizável vira largura cheia (empilhado) — grade de 4 colunas não
+     cabe numa lateral ~1fr. */
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="compact"]{grid-column:span 1; grid-row:span 1}
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="medium"]{grid-column:span 2; grid-row:span 1}
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="large"]{grid-column:span 2; grid-row:span 2}
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="full"]{grid-column:1 / -1; grid-row:auto}
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card]{margin:0; min-width:0; min-height:0}
+  html[data-shell="global-dashboard"] .jp-widget-sidebar [data-layout-card]{width:100%}
 
   /* Ajustes internos para caber sem corte em tamanhos mais estreitos —
      achados na auditoria de legibilidade (ver relatório entregue ao
-     usuário). Só estes dois widgets precisaram de ajuste; os demais já são
+     usuário). Só estes três widgets precisaram de ajuste; os demais já são
      flexíveis o bastante nos tamanhos propostos. */
   html[data-shell="global-dashboard"] [data-widget-size="medium"].mc-metric-strip{grid-template-columns:repeat(2,1fr)}
   html[data-shell="global-dashboard"] [data-widget-size="compact"] .gd-vrm-atr{flex-direction:column}
 
   @media(max-width:900px){
-    html[data-shell="global-dashboard"] #gdDashMain{display:flex; flex-direction:column}
-    html[data-shell="global-dashboard"] #gdDashMain [data-layout-card]{grid-column:auto !important; grid-row:auto !important}
+    html[data-shell="global-dashboard"] .jp-widget-grid{display:flex; flex-direction:column}
+    html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card]{grid-column:auto !important; grid-row:auto !important}
   }
 
   /* Linha de fatos dentro do card de Clearance (Fase da Conta/Risco/Alavancagem) */
@@ -3209,19 +3209,47 @@ html[data-custom-layout="enabled"] #dashLayoutSettingsCard{display:block}
   box-shadow:0 8px 24px rgba(0,0,0,.2); padding:6px;
 }
 
-/* ---------- Barra de ação (Cancelar | Restaurar padrão | Concluir) ---------- */
+/* ---------- Barra de ação (sessão GLOBAL: Cancelar tudo | Restaurar tela
+   atual | Restaurar todos | Concluir) ----------
+   position:fixed (não sticky) — a barra é global (vive fora de qualquer
+   <section>, ver index.html), precisa ancorar no viewport não importa qual
+   tela/scroll estiver ativo. Permanece visível ao trocar de tela durante a
+   sessão — "Tela atual" e a contagem de telas alteradas atualizam a cada
+   troca (dashLayoutUpdateBarInfo). */
 .dash-layout-bar{
-  position:sticky; bottom:16px; z-index:var(--jp-layer-sticky);
-  display:flex; justify-content:center; gap:10px;
-  margin:20px auto 0; padding:10px; max-width:fit-content;
+  position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+  z-index:var(--jp-layer-sticky);
+  display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;
+  padding:10px 14px; max-width:calc(100vw - 32px);
   background:var(--jp-surface); border-radius:12px;
   box-shadow:0 8px 24px rgba(0,0,0,.18);
 }
 .dash-layout-bar[hidden]{display:none}
+.dash-layout-bar-info{
+  display:flex; flex-direction:column; gap:1px; padding:0 4px 0 8px; min-width:0;
+}
+.dash-layout-bar-title{
+  font-family:var(--jp-font-ui); font-size:12.5px; font-weight:700; color:var(--jp-ink);
+  white-space:nowrap;
+}
+.dash-layout-bar-label{
+  font-family:var(--jp-font-ui); font-size:11px; font-weight:600; color:var(--jp-ink-muted);
+  white-space:nowrap;
+}
+/* Estado de erro de validação (Concluir com uma tela alterada inválida) —
+   reusa o rótulo de "tela atual" em vez de alert()/modal; volta ao normal
+   assim que dashLayoutUpdateBarInfo roda de novo (qualquer troca de tela ou
+   nova alteração). */
+.dash-layout-bar-label.dash-layout-bar-error{color:var(--jp-danger); font-weight:700}
+.dash-layout-bar-count{
+  font-family:var(--jp-font-ui); font-size:11px; font-weight:600; color:var(--jp-ink-muted);
+  white-space:nowrap;
+}
+.dash-layout-bar-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
 .dash-layout-bar button{
   font-family:var(--jp-font-ui); font-size:12.5px; font-weight:600;
   padding:9px 16px; border-radius:8px; border:1px solid var(--jp-border);
-  background:var(--jp-surface); color:var(--jp-ink); cursor:pointer;
+  background:var(--jp-surface); color:var(--jp-ink); cursor:pointer; white-space:nowrap;
 }
 .dash-layout-bar button:hover{background:var(--gd-surface-subtle, var(--panel-2))}
 .dash-layout-bar .dash-layout-primary{
@@ -3229,16 +3257,37 @@ html[data-custom-layout="enabled"] #dashLayoutSettingsCard{display:block}
 }
 .dash-layout-bar .dash-layout-primary:hover{filter:brightness(1.06)}
 
+/* ---------- Nota discreta de tela sem blocos personalizáveis ----------
+   Ex.: Motor de Lote (100% bloqueado) durante uma sessão global — nunca
+   bloqueia a sessão de continuar noutras telas, só informa em texto simples
+   (nunca alert()/modal). Primeiro filho da zona "main" da tela ativa. */
+.dash-layout-fixed-note{
+  font-family:var(--jp-font-ui); font-size:12px; color:var(--jp-ink-muted);
+  background:var(--gd-surface-subtle, var(--panel-2)); border:1px solid var(--jp-border);
+  border-radius:8px; padding:10px 14px; margin:0 0 16px;
+}
+
+/* ---------- Indicador de bloqueio (widgets sem nenhuma ação possível) ----------
+   Substitui alça + menu quando data-layout-movable="false" — sem clique,
+   sem foco, só sinaliza. Ver Etapa 6 registrada com o usuário. */
+.dash-layout-lock{
+  position:absolute; top:8px; right:8px; z-index:var(--jp-layer-edit-card);
+  width:24px; height:24px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink-muted);
+  font-size:12px; pointer-events:none;
+}
+
 /* ---------- Modo de edição: card focável, alça e menu ---------- */
-html[data-layout-editing="true"] #dash [data-layout-card]{
+html[data-layout-editing="true"] .screen.active [data-layout-card]{
   position:relative; user-select:none; -webkit-user-select:none;
 }
 /* Bloqueia clique nas ações internas do card (links, botões, CTAs) mas
    mantém a alça e o menu clicáveis — remover data-layout-editing basta
    para restaurar tudo, sem precisar rastrear/desfazer disabled por nó. */
-html[data-layout-editing="true"] #dash [data-layout-card] > *{pointer-events:none}
-html[data-layout-editing="true"] #dash [data-layout-card] > .dash-layout-handle,
-html[data-layout-editing="true"] #dash [data-layout-card] > .dash-layout-menu-btn{pointer-events:auto}
+html[data-layout-editing="true"] .screen.active [data-layout-card] > *{pointer-events:none}
+html[data-layout-editing="true"] .screen.active [data-layout-card] > .dash-layout-handle,
+html[data-layout-editing="true"] .screen.active [data-layout-card] > .dash-layout-menu-btn{pointer-events:auto}
 
 .dash-layout-handle{
   position:absolute; top:8px; right:8px; z-index:var(--jp-layer-edit-card);
@@ -3257,18 +3306,22 @@ html[data-layout-editing="true"] #dash [data-layout-card] > .dash-layout-menu-bt
 }
 .dash-layout-handle:hover, .dash-layout-menu-btn:hover{background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink)}
 .dash-layout-handle:focus-visible, .dash-layout-menu-btn:focus-visible,
-html[data-layout-editing="true"] #dash [data-layout-card]:focus-visible{
+html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible{
   outline:2px solid var(--jp-action); outline-offset:2px;
 }
 
-/* Balanço discreto — só com preferência do sistema permitindo movimento,
-   e nunca durante o arraste real do card (ele já se move pelo ponteiro). */
+/* Balanço discreto — só com preferência do sistema permitindo movimento, só
+   em widgets com pelo menos uma ação real (mover OU redimensionar), e nunca
+   durante o arraste real do card (ele já se move pelo ponteiro). Widgets
+   data-layout-movable="false" (categorias 3 e 4) NUNCA dançam — "apenas
+   redimensionável" não deve aparentar que pode ser movido, e "totalmente
+   bloqueado" precisa permanecer visualmente estável. */
 @media (prefers-reduced-motion: no-preference){
-  html[data-layout-editing="true"] #dash [data-layout-card]:not(.dash-layout-dragging){
+  html[data-layout-editing="true"] .screen.active [data-layout-card]:not(.dash-layout-dragging):not([data-layout-movable="false"]){
     animation:dash-layout-wobble .26s ease-in-out infinite;
   }
   /* Leve defasagem entre cards vizinhos, mesmo truque do iOS, só cosmético */
-  html[data-layout-editing="true"] #dash [data-layout-card]:nth-child(even):not(.dash-layout-dragging){
+  html[data-layout-editing="true"] .screen.active [data-layout-card]:nth-child(even):not(.dash-layout-dragging):not([data-layout-movable="false"]){
     animation-delay:-.13s;
   }
   @keyframes dash-layout-wobble{

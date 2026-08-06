@@ -241,8 +241,8 @@
     {
       "order": 40,
       "path": "src/js/40-app/13-dashboard-layout.js",
-      "section": "LAYOUT PERSONALIZÁVEL DO DASHBOARD · arraste, zonas e tamanhos de widget (N1)",
-      "sha256": "311d8fb90bad07666f25631890e59fab608599b98f0d72fd66ecf3cacb3c5057"
+      "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
+      "sha256": "a96c67543ecbac47d570e046779eace0dc649ede8b272ab5d1418f555a18938d"
     }
   ]
 }
