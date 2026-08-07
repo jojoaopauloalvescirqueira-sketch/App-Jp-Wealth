@@ -149,10 +149,13 @@ function importFullBackupFile(file){
     if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
     if(jpWealthPersistenceIsBlocked() || requestEpoch!==jpWealthPersistenceEpoch()) return;
     S=imported;
-    save();
+    // Integração A-005: uma importação VALIDADA é decisão legítima de sair do modo de
+    // recuperação — mas o desbloqueio só se consolida após gravação comprovada; se a
+    // escrita falhar, o modo de recuperação continua e a chave principal fica intacta.
+    const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
     if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
     boot();
-    alert('Backup importado com sucesso.');
+    alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
   };
   reader.onerror=()=>alert('Não foi possível ler o arquivo de backup.');
   reader.readAsText(file);

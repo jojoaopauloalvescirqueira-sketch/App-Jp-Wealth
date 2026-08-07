@@ -109,6 +109,13 @@ function localStorageKeys(){
   return keys;
 }
 function clearJPWealthLocalData(options={}){
+  // Cinto central (A-005): em modo de recuperação, NADA remove a chave principal nem as
+  // cópias _corrompido_ — nem Finalizar Sessão local, nem a finalização vinda de outra
+  // aba (sessionHandleRemoteFinalization), nem a Zona de Perigo. Os chamadores já tratam
+  // report.ok===false como interrupção antes de qualquer mutação de S ou regravação.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    return {ok:false, failures:['banco em modo de recuperação — o conteúdo original e as cópias estão protegidos até uma decisão de recuperação'], removedKeys:[]};
+  }
   const removeAuxiliary=options.removeAuxiliary===true;
   const removeCorrupted=options.removeCorrupted===true;
   const keys=[LSKEY];
@@ -162,6 +169,10 @@ function emptyJPWealthState(){
 // de save(); os demais campos gravados aqui já estão zerados, então persisti-los agora
 // ou só depois produz o mesmo resultado observável.
 function persistNotesAfterSessionWipe(){
+  // Guarda A-005: escrita direta na chave principal jamais pode rodar em modo de
+  // recuperação — regravaria o banco problemático com o estado provisório. Protege os
+  // dois chamadores (fluxo local e finalização vinda de outra aba) num ponto só.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()) return;
   try{ localStorage.setItem(LSKEY,JSON.stringify(S)); }catch(e){}
 }
 function showSessionNotice(message){
@@ -270,6 +281,17 @@ function renderSessionSafeChoice(){
   $('sessionExportNow').addEventListener('click',beginSessionExport);
 }
 function openFinalizeSessionFlow(){
+  // Guarda de entrada A-005: em modo de recuperação, Finalizar Sessão é interrompido
+  // ANTES de qualquer modificação persistente. As confirmações normais deste fluxo não
+  // valem como autorização para substituir ou apagar o banco problemático.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    sessionModal('<h3>Banco em modo de recuperação</h3>'+
+      '<p class="modal-sub">O banco de dados deste navegador não pôde ser carregado com segurança e as gravações estão bloqueadas. Finalizar Sessão não pode ser executado agora — apagaria o conteúdo original preservado.</p>'+
+      '<p class="session-warning">Use o aviso no topo da tela: baixe a cópia de recuperação, restaure um backup válido ou aceite começar com base vazia. Depois de uma dessas decisões, Finalizar Sessão volta a funcionar normalmente.</p>'+
+      '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Entendi</button></div>');
+    sessionCancelBinding();
+    return;
+  }
   window.__onbShown=true;
   sessionFinalizeEntry=sessionHasChanges()?'changed':'safe';
   sessionFinalizeExportMeta=null;

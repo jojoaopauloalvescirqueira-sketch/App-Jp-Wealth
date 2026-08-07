@@ -1005,6 +1005,11 @@
      no DOM e vazio: .persistence-alert:empty o esconde por CSS. Manter o nó vivo (em vez de
      criá-lo sob demanda ou alternar [hidden]) é o que faz role="alert" anunciar de forma
      confiável quando o conteúdo aparece. Não é um toast: só sai quando a gravação volta. -->
+<!-- Modo de recuperação de carregamento (A-005, 00-core/04-persistence.js): banco salvo
+     ilegível/inmigrável → cópia preservada + gravações vetadas até decisão. Nó separado
+     do #persistenceAlert (A-001) de propósito: timers e ciclos de vida independentes —
+     o "Gravação restabelecida" do A-001 nunca pode apagar este aviso. -->
+<div class="persistence-alert persistence-recovery" id="persistenceRecovery" role="alert" aria-live="assertive"></div>
 <div class="persistence-alert" id="persistenceAlert" role="alert" aria-live="assertive"></div>
 
 <div class="foot-note">

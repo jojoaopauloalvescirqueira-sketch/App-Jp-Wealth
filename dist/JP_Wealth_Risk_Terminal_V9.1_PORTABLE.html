@@ -851,6 +851,9 @@
   .persistence-alert-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:2px}
   .persistence-alert-btn{color:var(--f4); border-color:var(--f4)}
   .persistence-alert-btn:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  /* Nome da chave de recuperação (A-005) dentro do aviso — pode ser longo; quebra
+     controlada para não estourar o banner em janela estreita. */
+  .persistence-alert code{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink); word-break:break-all}
 
   /* ============ PWA · ESCOLHA DE ÍCONE ============ */
   .app-icon-config{border-top:1px solid var(--line); padding-top:16px}
@@ -3737,7 +3740,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'fc51e6bb9211428e';
+const JP_WEALTH_BUILD_ID = '96f93b867cc0c5a7';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -4735,6 +4738,11 @@ const JP_WEALTH_BUILD_ID = 'fc51e6bb9211428e';
      no DOM e vazio: .persistence-alert:empty o esconde por CSS. Manter o nó vivo (em vez de
      criá-lo sob demanda ou alternar [hidden]) é o que faz role="alert" anunciar de forma
      confiável quando o conteúdo aparece. Não é um toast: só sai quando a gravação volta. -->
+<!-- Modo de recuperação de carregamento (A-005, 00-core/04-persistence.js): banco salvo
+     ilegível/inmigrável → cópia preservada + gravações vetadas até decisão. Nó separado
+     do #persistenceAlert (A-001) de propósito: timers e ciclos de vida independentes —
+     o "Gravação restabelecida" do A-001 nunca pode apagar este aviso. -->
+<div class="persistence-alert persistence-recovery" id="persistenceRecovery" role="alert" aria-live="assertive"></div>
 <div class="persistence-alert" id="persistenceAlert" role="alert" aria-live="assertive"></div>
 
 <div class="foot-note">
@@ -5052,21 +5060,66 @@ function resumeJPWealthPersistence(){
   jpWealthPersistenceBlocked=false;
   jpWealthSessionEpoch++;
 }
-function load(){
-  let raw=null;
-  try{ raw=localStorage.getItem(LSKEY); }catch(e){}
-  if(raw){
-    let parsed=null;
-    try{ parsed=JSON.parse(raw); }catch(e){ parsed=null; }
-    if(parsed){
-      try{ S=parsed; migrate(); return; }
-      catch(e){
-        try{ localStorage.setItem(LSKEY+'_corrompido_'+Date.now(), raw); }catch(_){}
-        setTimeout(()=>alert('Não foi possível migrar o estado salvo ('+(e&&e.message?e.message:'erro')+'). Uma cópia bruta foi guardada e o painel abriu no estado inicial. Seus dados continuam no navegador — use exportar/importar backup para recuperar.'),400);
-      }
+// ---- MODO DE RECUPERAÇÃO DE CARREGAMENTO (A-005) --------------------------------
+// Quando o banco salvo não pode ser carregado com segurança (leitura falhou, JSON
+// inválido ou migração lançou), o app abre com DEFAULTS APENAS COMO ESTADO PROVISÓRIO
+// de diagnóstico: a chave principal fica intocada, uma cópia bruta é preservada e TODA
+// gravação fica vetada até decisão explícita do operador. A flag é própria (não o
+// bloqueio genérico) de propósito: resumeJPWealthPersistence() é chamado por
+// importFullBackupFile() ANTES da validação e por openOnboardingModal() — qualquer um
+// dos dois reabriria o portão genérico e o primeiro save() destruiria o banco original.
+const jpWealthLoadRecovery={active:false, kind:null, raw:null, recoveryKey:null, lastError:null};
+function jpWealthLoadRecoveryActive(){ return jpWealthLoadRecovery.active; }
+function jpWealthFindExistingRecoveryKey(raw){
+  // Dedupe seguro (igualdade exata de string): evita uma cópia idêntica nova a cada
+  // recarregamento com o mesmo banco problemático. Conteúdo diferente = chave nova.
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith(LSKEY+'_corrompido_') && localStorage.getItem(k)===raw) return k;
+    }
+  }catch(e){}
+  return null;
+}
+function enterLoadRecoveryMode(kind, raw, error){
+  // O bloqueio vem ANTES de qualquer outra coisa: nenhum caminho síncrono ou
+  // assíncrono posterior (updateFxRates→save no boot, timers, binds) pode escrever.
+  blockJPWealthPersistence();
+  jpWealthLoadRecovery.active=true;
+  jpWealthLoadRecovery.kind=kind;
+  jpWealthLoadRecovery.raw=(raw!=null)?String(raw):null;
+  jpWealthLoadRecovery.lastError=error||null;
+  jpWealthLoadRecovery.recoveryKey=null;
+  if(jpWealthLoadRecovery.raw!=null){
+    const existing=jpWealthFindExistingRecoveryKey(jpWealthLoadRecovery.raw);
+    if(existing){ jpWealthLoadRecovery.recoveryKey=existing; }
+    else{
+      const key=LSKEY+'_corrompido_'+Date.now();
+      try{ localStorage.setItem(key, jpWealthLoadRecovery.raw); jpWealthLoadRecovery.recoveryKey=key; }
+      catch(e){ console.error('JP Wealth: não foi possível gravar a cópia de recuperação — o conteúdo original permanece na chave principal (intocada) e em memória para download.', e); }
     }
   }
-  S=structuredClone(DEFAULTS);
+  console.error('JP Wealth: o banco salvo não pôde ser carregado com segurança (motivo: '+kind+'). Gravações bloqueadas até decisão do operador.'+(jpWealthLoadRecovery.recoveryKey?' Cópia de recuperação: '+jpWealthLoadRecovery.recoveryKey:''), error);
+  renderLoadRecoveryWarning();
+}
+function load(){
+  let raw=null, readError=null;
+  try{ raw=localStorage.getItem(LSKEY); }catch(e){ readError=e; }
+  if(readError){
+    enterLoadRecoveryMode('leitura', null, readError);
+  } else if(raw){
+    let parsed=null, parseError=null;
+    try{ parsed=JSON.parse(raw); }catch(e){ parseError=e; }
+    if(parseError || !parsed || typeof parsed!=='object'){
+      // Antes, JSON inválido caía silenciosamente em DEFAULTS SEM cópia e SEM bloqueio —
+      // o caminho mais destrutivo de todos: o primeiro save() apagava o original.
+      enterLoadRecoveryMode('json-invalido', raw, parseError||new Error('conteúdo não é um objeto JSON'));
+    } else {
+      try{ S=parsed; migrate(); return; }
+      catch(e){ enterLoadRecoveryMode('migracao', raw, e); }
+    }
+  }
+  S=structuredClone(DEFAULTS); // provisório: em recuperação, serve só para diagnóstico
 }
 // ---- Notas do MVP: enums fixos e normalização (14-mvp-notes.js consome os mesmos
 // arrays). Definidos aqui — script cedo — porque migrate() roda em load() (06-boot.js)
@@ -5357,6 +5410,99 @@ let saveTimer;
 // falhar junto; o aviso não pode prometer o que não pode cumprir).
 const jpWealthPersistenceFailure={active:false, kind:null, count:0, lastError:null, recoveryTimer:null};
 function persistenceAlertEl(){ return document.getElementById('persistenceAlert'); }
+function persistenceRecoveryEl(){ return document.getElementById('persistenceRecovery'); }
+// Os dois avisos (recuperação A-005 e falha de gravação A-001) são nós fixos distintos e
+// ambos ancoram em top:72px — quando o de recuperação está visível, o do A-001 desce para
+// logo abaixo dele. Nós e timers separados de propósito: o "Gravação restabelecida" do
+// A-001 limpa APENAS #persistenceAlert; nenhum timer jamais toca o aviso de recuperação,
+// que só sai por decisão do operador (precedência do estado de recuperação).
+function layoutPersistenceBanners(){
+  const alertEl=persistenceAlertEl(); if(!alertEl) return;
+  const rec=persistenceRecoveryEl();
+  if(rec && rec.innerHTML.trim()!==''){ alertEl.style.top=(72+rec.offsetHeight+10)+'px'; }
+  else{ alertEl.style.top=''; }
+}
+// ---- ações do modo de recuperação (A-005) ----
+function persistenceRecoveryDownload(){
+  // Texto BRUTO original, sem normalizar e sem reserializar o S provisório; não passa
+  // por save(). Mesmo padrão Blob+<a download> das exportações existentes (não há helper
+  // genérico no projeto para reutilizar).
+  const raw=jpWealthLoadRecovery.raw;
+  if(raw==null){ alert('O conteúdo original não pôde ser lido do armazenamento — não há cópia para baixar.'); return; }
+  const t=new Date(), pad=n=>String(n).padStart(2,'0');
+  const nome='jpwealth_recuperacao_'+t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())+'_'+pad(t.getHours())+'-'+pad(t.getMinutes())+'-'+pad(t.getSeconds())+'.json';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+  a.download=nome; a.click(); URL.revokeObjectURL(a.href);
+}
+function persistenceRecoveryImport(){
+  // Reutiliza o fluxo real de importação (validação + confirmação + gravação); o input
+  // vive no host legado de Configurações e aceita click programático vindo deste gesto.
+  const input=document.getElementById('importFullBackupInput');
+  if(input){ input.click(); return; }
+  if(typeof openSettingsModal==='function'){ openSettingsModal('backup', document.getElementById('persistenceRecoveryImportBtn')); return; }
+  alert('Abra Configurações → Dados e Segurança → Backup e Recuperação para importar um backup.');
+}
+// Encerramento comum às duas decisões legítimas (importação validada / base vazia aceita):
+// libera a flag SÓ para a tentativa de gravação e a rearma se a gravação falhar — a chave
+// principal problemática nunca é substituída sem uma escrita comprovadamente bem-sucedida.
+function jpWealthResolveRecoveryAndSave(){
+  if(!jpWealthLoadRecovery.active) return save();
+  jpWealthLoadRecovery.active=false;
+  const ok=save();
+  if(ok) clearLoadRecoveryWarning();
+  else jpWealthLoadRecovery.active=true;
+  return ok;
+}
+function persistenceRecoveryAcceptEmpty(){
+  const msg='Substituir o banco problemático por uma base vazia?\n\n'+
+    '• A chave principal atual será sobrescrita pela base vazia;\n'+
+    '• A cópia de recuperação'+(jpWealthLoadRecovery.recoveryKey?' ('+jpWealthLoadRecovery.recoveryKey+')':'')+' continuará preservada neste navegador;\n'+
+    '• Esta ação NÃO recupera os dados antigos.';
+  if(!confirm(msg)) return;
+  resumeJPWealthPersistence();
+  const ok=jpWealthResolveRecoveryAndSave();
+  if(!ok){
+    // A escrita falhou (o A-001 já pintou a falha de armazenamento): rearma o bloqueio
+    // genérico também; o banco problemático segue intacto e o aviso de recuperação segue.
+    blockJPWealthPersistence();
+    alert('A base vazia não pôde ser gravada — nada foi apagado. O modo de recuperação continua ativo; verifique o armazenamento do navegador.');
+    return;
+  }
+  boot(); // reabre a interface como início normal (inclusive questionário de início)
+}
+function renderLoadRecoveryWarning(){
+  const el=persistenceRecoveryEl(); if(!el) return;
+  const key=jpWealthLoadRecovery.recoveryKey;
+  const temRaw=jpWealthLoadRecovery.raw!=null;
+  el.className='persistence-alert persistence-recovery is-failure';
+  // innerHTML substitui os botões inteiros a cada render — sem listeners acumulados.
+  el.innerHTML='<p class="persistence-alert-title">O banco de dados não pôde ser carregado com segurança</p>'+
+    '<p class="persistence-alert-text">O conteúdo original foi preservado e as gravações foram bloqueadas para impedir que ele seja substituído. '+
+    'O aplicativo está exibindo uma base provisória vazia. Não registre novos dados antes de escolher uma opção de recuperação.'+
+    (key?' Cópia de recuperação: <code>'+key+'</code>.':(temRaw?' A cópia de recuperação não pôde ser gravada — use o download abaixo.':' O armazenamento não pôde ser lido; não há conteúdo para baixar.'))+'</p>'+
+    '<div class="persistence-alert-actions">'+
+      (temRaw?'<button type="button" class="reset-btn persistence-alert-btn" id="persistenceRecoveryDownloadBtn">Baixar cópia de recuperação</button>':'')+
+      '<button type="button" class="reset-btn persistence-alert-btn" id="persistenceRecoveryImportBtn">Restaurar um backup válido</button>'+
+      '<button type="button" class="reset-btn persistence-alert-btn" id="persistenceRecoveryResetBtn">Começar com base vazia</button>'+
+    '</div>';
+  const dl=document.getElementById('persistenceRecoveryDownloadBtn');
+  if(dl) dl.addEventListener('click',persistenceRecoveryDownload);
+  const imp=document.getElementById('persistenceRecoveryImportBtn');
+  if(imp) imp.addEventListener('click',persistenceRecoveryImport);
+  const rst=document.getElementById('persistenceRecoveryResetBtn');
+  if(rst) rst.addEventListener('click',persistenceRecoveryAcceptEmpty);
+  layoutPersistenceBanners();
+}
+function clearLoadRecoveryWarning(){
+  // raw e recoveryKey ficam em memória de propósito (transparência/último recurso);
+  // a cópia no localStorage NUNCA é removida por este código.
+  jpWealthLoadRecovery.kind=null;
+  jpWealthLoadRecovery.lastError=null;
+  const el=persistenceRecoveryEl();
+  if(el){ el.className='persistence-alert persistence-recovery'; el.innerHTML=''; }
+  layoutPersistenceBanners();
+}
 // exportFullBackup() vive em 30-accounting/01-daily-ledger.js (script 18) e a Central
 // em 09-settings-modal.js (script 36) — ambos carregam DEPOIS deste arquivo (script 4).
 // Por isso a checagem de existência acontece no clique, não na criação do aviso.
@@ -5393,6 +5539,7 @@ function renderPersistenceFailureWarning(){
       '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertBackupBtn">Exportar backup agora</button></div>';
   const btn=document.getElementById('persistenceAlertBackupBtn');
   if(btn) btn.addEventListener('click',persistenceAlertExportBackup);
+  layoutPersistenceBanners();
 }
 function setPersistenceFailureState(error,kind){
   kind=kind==='serialize'?'serialize':'storage';
@@ -5416,11 +5563,13 @@ function clearPersistenceFailureState(){
   el.className='persistence-alert is-recovered';
   el.innerHTML='<p class="persistence-alert-title">Gravação restabelecida</p>'+
     '<p class="persistence-alert-text">As alterações voltaram a ser salvas neste navegador.</p>';
+  layoutPersistenceBanners();
   clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
   jpWealthPersistenceFailure.recoveryTimer=setTimeout(()=>{
     if(jpWealthPersistenceFailure.active) return; // falhou de novo enquanto esperava
     const cur=persistenceAlertEl(); if(!cur) return;
     cur.className='persistence-alert'; cur.innerHTML=''; // :empty volta a esconder
+    layoutPersistenceBanners();
   },6000);
 }
 // Apaga um "salvo" ainda no ar de uma gravação anterior bem-sucedida: sua janela é de
@@ -5431,6 +5580,10 @@ function hideStaleSavedTag(){
   if(stale){ clearTimeout(saveTimer); stale.classList.remove('show'); }
 }
 function save(){
+  // Recuperação de carregamento (A-005) tem precedência sobre tudo: mesmo que algum
+  // fluxo reabra o portão genérico (importFullBackupFile e openOnboardingModal chamam
+  // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.
+  if(jpWealthLoadRecovery.active) return false;
   if(jpWealthPersistenceBlocked) return false;
   // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
   // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
@@ -7997,10 +8150,13 @@ function importFullBackupFile(file){
     if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
     if(jpWealthPersistenceIsBlocked() || requestEpoch!==jpWealthPersistenceEpoch()) return;
     S=imported;
-    save();
+    // Integração A-005: uma importação VALIDADA é decisão legítima de sair do modo de
+    // recuperação — mas o desbloqueio só se consolida após gravação comprovada; se a
+    // escrita falhar, o modo de recuperação continua e a chave principal fica intacta.
+    const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
     if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
     boot();
-    alert('Backup importado com sucesso.');
+    alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
   };
   reader.onerror=()=>alert('Não foi possível ler o arquivo de backup.');
   reader.readAsText(file);
@@ -11308,6 +11464,13 @@ function renderConfigOnboarding(){
 }
 // ============ LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6) ============
 function wipeAllData(){
+  // Guarda de entrada A-005: em modo de recuperação, a limpeza total é interrompida antes
+  // do primeiro prompt — "Começar com base vazia" (no aviso do topo) é o equivalente
+  // legítimo desta ação enquanto o banco original estiver protegido.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    alert('O banco de dados está em modo de recuperação e as gravações estão bloqueadas.\n\nUse o aviso no topo da tela: baixe a cópia de recuperação, restaure um backup válido ou escolha "Começar com base vazia" — esta última equivale à limpeza total.');
+    return;
+  }
   const p1=prompt('⚠️ Isto apaga TODOS os dados (ordens, fases, fechamentos, auditoria, configurações).\n\nDigite APAGAR para continuar:');
   if(p1===null) return;
   if(p1.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }
@@ -11531,6 +11694,13 @@ function localStorageKeys(){
   return keys;
 }
 function clearJPWealthLocalData(options={}){
+  // Cinto central (A-005): em modo de recuperação, NADA remove a chave principal nem as
+  // cópias _corrompido_ — nem Finalizar Sessão local, nem a finalização vinda de outra
+  // aba (sessionHandleRemoteFinalization), nem a Zona de Perigo. Os chamadores já tratam
+  // report.ok===false como interrupção antes de qualquer mutação de S ou regravação.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    return {ok:false, failures:['banco em modo de recuperação — o conteúdo original e as cópias estão protegidos até uma decisão de recuperação'], removedKeys:[]};
+  }
   const removeAuxiliary=options.removeAuxiliary===true;
   const removeCorrupted=options.removeCorrupted===true;
   const keys=[LSKEY];
@@ -11584,6 +11754,10 @@ function emptyJPWealthState(){
 // de save(); os demais campos gravados aqui já estão zerados, então persisti-los agora
 // ou só depois produz o mesmo resultado observável.
 function persistNotesAfterSessionWipe(){
+  // Guarda A-005: escrita direta na chave principal jamais pode rodar em modo de
+  // recuperação — regravaria o banco problemático com o estado provisório. Protege os
+  // dois chamadores (fluxo local e finalização vinda de outra aba) num ponto só.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()) return;
   try{ localStorage.setItem(LSKEY,JSON.stringify(S)); }catch(e){}
 }
 function showSessionNotice(message){
@@ -11692,6 +11866,17 @@ function renderSessionSafeChoice(){
   $('sessionExportNow').addEventListener('click',beginSessionExport);
 }
 function openFinalizeSessionFlow(){
+  // Guarda de entrada A-005: em modo de recuperação, Finalizar Sessão é interrompido
+  // ANTES de qualquer modificação persistente. As confirmações normais deste fluxo não
+  // valem como autorização para substituir ou apagar o banco problemático.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    sessionModal('<h3>Banco em modo de recuperação</h3>'+
+      '<p class="modal-sub">O banco de dados deste navegador não pôde ser carregado com segurança e as gravações estão bloqueadas. Finalizar Sessão não pode ser executado agora — apagaria o conteúdo original preservado.</p>'+
+      '<p class="session-warning">Use o aviso no topo da tela: baixe a cópia de recuperação, restaure um backup válido ou aceite começar com base vazia. Depois de uma dessas decisões, Finalizar Sessão volta a funcionar normalmente.</p>'+
+      '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Entendi</button></div>');
+    sessionCancelBinding();
+    return;
+  }
   window.__onbShown=true;
   sessionFinalizeEntry=sessionHasChanges()?'changed':'safe';
   sessionFinalizeExportMeta=null;

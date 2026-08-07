@@ -1,5 +1,12 @@
 // ============ LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6) ============
 function wipeAllData(){
+  // Guarda de entrada A-005: em modo de recuperação, a limpeza total é interrompida antes
+  // do primeiro prompt — "Começar com base vazia" (no aviso do topo) é o equivalente
+  // legítimo desta ação enquanto o banco original estiver protegido.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    alert('O banco de dados está em modo de recuperação e as gravações estão bloqueadas.\n\nUse o aviso no topo da tela: baixe a cópia de recuperação, restaure um backup válido ou escolha "Começar com base vazia" — esta última equivale à limpeza total.');
+    return;
+  }
   const p1=prompt('⚠️ Isto apaga TODOS os dados (ordens, fases, fechamentos, auditoria, configurações).\n\nDigite APAGAR para continuar:');
   if(p1===null) return;
   if(p1.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }

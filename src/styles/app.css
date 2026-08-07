@@ -841,6 +841,9 @@
   .persistence-alert-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:2px}
   .persistence-alert-btn{color:var(--f4); border-color:var(--f4)}
   .persistence-alert-btn:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  /* Nome da chave de recuperação (A-005) dentro do aviso — pode ser longo; quebra
+     controlada para não estourar o banner em janela estreita. */
+  .persistence-alert code{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink); word-break:break-all}
 
   /* ============ PWA · ESCOLHA DE ÍCONE ============ */
   .app-icon-config{border-top:1px solid var(--line); padding-top:16px}
