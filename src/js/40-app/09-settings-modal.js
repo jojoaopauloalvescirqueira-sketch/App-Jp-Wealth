@@ -271,7 +271,16 @@ function settingsNavigateToLeaf(leafId,options={}){
 
 function settingsSearchEntries(){
   const core=Object.entries(SETTINGS_LEAVES).flatMap(([id,leaf])=>[...leaf.terms,leaf.label].map(term=>({title:term,category:id})));
-  const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn']].map(([title,category,selector])=>({title,category,selector}));
+  const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
+    // Notas do MVP (14-mvp-notes.js) — vários termos apontando para o mesmo card,
+    // mesmo padrão de 'core' (multi-termo por entrada), já que aqui cada entrada só
+    // casa com o próprio título.
+    ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
+    ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
+    ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
+    ['MVP','interface','#mvpNotesSettingsCard'],['ícone menu superior','interface','#mvpNotesSettingsCard'],
+    ['backlog','interface','#mvpNotesSettingsCard']
+  ].map(([title,category,selector])=>({title,category,selector}));
   const education=EDUCATIONAL_CONTENT.flatMap(item=>[item.title,...item.keywords].map(term=>({title:term,category:'educational',selector:`#education-${item.id}`})));
   return [...core,...controls,...education];
 }

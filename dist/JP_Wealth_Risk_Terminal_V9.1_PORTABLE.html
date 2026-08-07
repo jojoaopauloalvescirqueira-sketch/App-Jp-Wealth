@@ -1514,6 +1514,171 @@
   #settingsModal .settings-menu{margin-top:0}
 
   /* ==========================================================
+     NOTAS DO MVP — backlog interno (drawer lateral), 14-mvp-notes.js
+     Camada dedicada, própria (overlay/drawer com IDs reais), não reutiliza
+     o modal operacional nem a Central de Configurações como contêiner.
+     Usa exclusivamente tokens globais (--panel/--ink/--line/--violet/--f1-4)
+     — funciona nos dois temas sem overrides específicos, mesmo padrão do
+     resto do painel. ========================================================== */
+  .header-notes-badge{
+    position:absolute; top:-4px; right:-4px; min-width:15px; height:15px; padding:0 3px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:9px; font-weight:700; line-height:1;
+    border-radius:999px; background:var(--violet); color:#fff; border:1.5px solid var(--panel);
+  }
+  /* [hidden] (0,1,0) empata com .header-notes-badge{display:flex} (0,1,0); sem este
+     reforço (0,2,0) a contagem zerada continuaria visível apesar do atributo. */
+  .header-notes-badge[hidden]{display:none}
+  #headerNotesBtn{position:relative}
+  .mvp-notes-overlay{position:fixed; inset:0; z-index:var(--jp-layer-modal); display:none; background:rgba(4,7,12,.5)}
+  .mvp-notes-overlay.show{display:block}
+  .mvp-notes-drawer{
+    position:fixed; top:0; right:0; height:100vh; width:min(460px,calc(100vw - 32px));
+    display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
+    box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
+    animation:mvpNotesSlideIn .18s ease-out;
+  }
+  @keyframes mvpNotesSlideIn{from{transform:translateX(12px); opacity:.6} to{transform:translateX(0); opacity:1}}
+  @media (prefers-reduced-motion:reduce){ .mvp-notes-drawer{animation:none} }
+  .mvp-notes-head{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px 18px; border-bottom:1px solid var(--line); flex:none}
+  .mvp-notes-head-text h2{margin:0; font-size:var(--fs-lg); color:var(--ink)}
+  .mvp-notes-head-count{display:block; margin-top:3px; font-size:var(--fs-xs); font-family:var(--mono); color:var(--ink-faint)}
+  .mvp-notes-close{width:32px; height:32px; flex:0 0 32px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--panel-2); color:var(--ink-dim); cursor:pointer}
+  .mvp-notes-close:hover{color:var(--ink); border-color:var(--ink-faint)}
+  .mvp-notes-close:focus-visible,.mvpn-card:focus-visible,.mvp-notes-drawer button:focus-visible,.mvp-notes-drawer input:focus-visible,.mvp-notes-drawer select:focus-visible,.mvp-notes-drawer textarea:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  .mvp-notes-close svg{width:16px; height:16px}
+  .mvp-notes-toolbar{display:flex; flex-direction:column; gap:8px; padding:14px 18px; border-bottom:1px solid var(--line); flex:none}
+  .mvpn-view-title{margin:0; font-size:var(--fs-md); color:var(--ink); font-weight:700}
+  .mvp-notes-toolbar input[type="search"]{width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 11px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-sm)}
+  .mvp-notes-filters{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
+  .mvp-notes-filters select{width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 8px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-xs)}
+  .mvp-notes-toolbar #mvpNotesNewBtn{width:100%; justify-content:center}
+  /* Corpo do drawer: sidebar de pastas (esquerda, fixa em desktop) + coluna de conteúdo
+     (busca/filtros/lista/editor, inalterada). Em mobile (media query abaixo) a sidebar vira
+     uma barra superior e o corpo empilha em coluna. */
+  .mvp-notes-body{flex:1; min-height:0; display:flex; flex-direction:row}
+  .mvpn-folder-sidebar{
+    flex:0 0 178px; width:178px; min-height:0; overflow-y:auto;
+    border-right:1px solid var(--line); background:var(--panel-2); padding:10px 0;
+    display:flex; flex-direction:column;
+  }
+  .mvpn-folder-mobile-bar{display:none}
+  .mvpn-folder-nav-list{display:flex; flex-direction:column; gap:2px; padding:0 10px}
+  .mvpn-folder-group-label{margin:12px 10px 4px; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em}
+  .mvpn-folder-row{display:flex; align-items:center; gap:2px}
+  .mvpn-folder-btn{
+    flex:1; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    border:0; border-radius:6px; background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm);
+    padding:7px 8px; cursor:pointer; text-align:left;
+  }
+  .mvpn-folder-btn:hover{background:var(--panel)}
+  .mvpn-folder-btn[aria-current="page"]{background:var(--panel); color:var(--ink); font-weight:700; box-shadow:inset 2px 0 0 var(--violet)}
+  .mvpn-folder-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+  .mvpn-folder-count{flex:none; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .mvpn-folder-btn[aria-current="page"] .mvpn-folder-count{color:var(--ink-dim)}
+  .mvpn-folder-kebab{position:relative; flex:none}
+  .mvpn-folder-kebab summary{
+    list-style:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    border-radius:6px; color:var(--ink-faint); cursor:pointer; font-size:14px;
+  }
+  .mvpn-folder-kebab summary::-webkit-details-marker{display:none}
+  .mvpn-folder-kebab summary:hover{background:var(--panel); color:var(--ink)}
+  .mvpn-folder-kebab summary:focus-visible{background:var(--panel); color:var(--ink); outline:2px solid var(--violet); outline-offset:2px}
+  .mvpn-folder-kebab-menu{
+    position:absolute; right:0; top:calc(100% + 2px); z-index:1; min-width:132px;
+    display:flex; flex-direction:column; padding:4px; border:1px solid var(--line); border-radius:8px;
+    background:var(--panel); box-shadow:0 10px 24px rgba(0,0,0,.28);
+  }
+  /* Não depender só do comportamento nativo de <details> fechado (content-visibility em
+     navegadores Chromium, display:none em outros) para esconder o menu — reforço explícito
+     equivalente ao [hidden] do resto do drawer. */
+  .mvpn-folder-kebab:not([open]) .mvpn-folder-kebab-menu{display:none}
+  .mvpn-folder-kebab-menu button{
+    border:0; background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm);
+    text-align:left; padding:6px 8px; border-radius:5px; cursor:pointer;
+  }
+  .mvpn-folder-kebab-menu button:hover{background:var(--panel-2); color:var(--ink)}
+  .mvpn-folder-new-btn{
+    margin:10px 10px 0; padding:7px 8px; border:1px dashed var(--line); border-radius:6px;
+    background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm); cursor:pointer; text-align:left;
+  }
+  .mvpn-folder-new-btn:hover{border-color:var(--ink-faint); color:var(--ink)}
+  .mvpn-content{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column}
+  .mvp-notes-list{flex:1; min-height:0; overflow-y:auto; padding:12px 18px 24px; display:flex; flex-direction:column; gap:8px}
+  .mvp-notes-list[hidden],.mvp-notes-editor[hidden]{display:none}
+  .mvpn-empty{margin:24px 4px; font-size:var(--fs-sm); color:var(--ink-faint); line-height:1.6; text-align:center}
+  .mvpn-card{
+    display:flex; flex-direction:column; gap:6px; width:100%; text-align:left;
+    border:1px solid var(--line); border-radius:9px; padding:10px 12px; background:var(--panel-2);
+    color:var(--ink); font:inherit; cursor:pointer; transition:border-color .12s, background .12s;
+  }
+  .mvpn-card:hover{border-color:var(--ink-faint)}
+  .mvpn-card[data-priority="critical"]{border-left:3px solid var(--f2)}
+  .mvpn-card[data-status="done"],.mvpn-card[data-status="discarded"]{opacity:.62}
+  .mvpn-card-top{display:flex; flex-wrap:wrap; gap:5px}
+  .mvpn-badge{
+    font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    padding:2px 6px; border-radius:var(--radius-sm); border:1px solid var(--line); color:var(--ink-dim); background:var(--panel);
+  }
+  .mvpn-card[data-type="bug"] .mvpn-badge-type{color:var(--f3); border-color:var(--f3)}
+  .mvpn-card[data-priority="critical"] .mvpn-badge-priority{color:var(--f2); border-color:var(--f2)}
+  .mvpn-card[data-status="open"] .mvpn-badge-status{color:var(--f1); border-color:var(--f1)}
+  .mvpn-card-title{font-size:var(--fs-md); font-weight:700; color:var(--ink); line-height:1.35}
+  .mvpn-card-folder{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .mvpn-card-preview{
+    font-size:var(--fs-sm); color:var(--ink-dim); line-height:1.5;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .mvpn-card-meta{display:flex; flex-wrap:wrap; gap:5px; font-size:var(--fs-xs); font-family:var(--mono); color:var(--ink-faint)}
+  .mvp-notes-editor{flex:1; min-height:0; overflow-y:auto; padding:14px 18px 24px; display:flex; flex-direction:column; gap:12px}
+  .mvpn-editor-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .mvpn-editor-head h3{margin:0; font-size:var(--fs-md); color:var(--ink)}
+  .mvpn-editor-row{display:grid; grid-template-columns:1fr 1fr; gap:0 14px}
+  .mvpn-meta-facts{display:grid; grid-template-columns:auto 1fr; gap:5px 12px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel-2)}
+  .mvpn-meta-facts dt{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em}
+  .mvpn-meta-facts dd{margin:0; font-size:var(--fs-sm); color:var(--ink-dim)}
+  .mvp-notes-editor textarea{resize:vertical; min-height:110px; white-space:pre-wrap}
+  /* Mesma aparência de .field .note, mas classe própria (não ".note") — o alcance de
+     caracteres é um limite estático, sempre relevante; não deve virar ícone [i] colapsável
+     do sistema global de ajuda contextual (enhanceFieldNotes, 09-contextual-help.js), que
+     é para explicação sob demanda, não para o próprio limite do campo. */
+  .mvpn-hint{display:block; margin-top:4px; font-size:var(--fs-sm); color:var(--ink-faint); line-height:1.4}
+  .mvpn-editor-err{margin:0; padding:8px 10px; border:1px solid var(--f4); border-radius:6px; background:var(--f4-bg); color:var(--f4); font-size:var(--fs-sm)}
+  .mvpn-editor-err[hidden]{display:none}
+  .mvpn-editor-actions{display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:4px}
+  .mvpn-danger{color:var(--f4); border-color:var(--f4); margin-right:auto}
+  .mvpn-primary{color:var(--violet); border-color:var(--violet)}
+  /* Desktop: painel de pastas sempre visível (nenhuma regra extra — .mvpn-folder-manage é
+     visível por padrão e a classe .open só governa o estado recolhido dentro do breakpoint
+     mobile abaixo, onde sidebar e conteúdo não podem ficar comprimidos lado a lado). */
+  @media(max-width:760px){
+    .mvp-notes-drawer{width:100vw}
+    .mvp-notes-filters{grid-template-columns:1fr 1fr}
+    .mvp-notes-body{flex-direction:column}
+    .mvpn-folder-sidebar{
+      flex:none; width:100%; border-right:0; border-bottom:1px solid var(--line); padding:10px 14px;
+    }
+    .mvpn-folder-manage:not(.open){display:none}
+    .mvpn-folder-mobile-bar{display:flex; align-items:center; gap:8px}
+    .mvpn-folder-mobile-bar select{
+      flex:1; min-width:0; border:1px solid var(--line); border-radius:7px; padding:8px 9px;
+      background:var(--panel); color:var(--ink); font:inherit; font-size:var(--fs-sm);
+    }
+    .mvpn-folder-manage-toggle{
+      flex:none; border:1px solid var(--line); border-radius:7px; padding:8px 10px; background:var(--panel);
+      color:var(--ink-dim); font:inherit; font-size:var(--fs-xs); cursor:pointer; white-space:nowrap;
+    }
+    .mvpn-folder-manage-toggle:hover{color:var(--ink); border-color:var(--ink-faint)}
+    .mvpn-folder-manage{margin-top:8px}
+    .mvpn-folder-nav-list{padding:0}
+    .mvpn-folder-new-btn{margin-left:0; margin-right:0}
+  }
+  @media(max-width:460px){
+    .mvp-notes-filters{grid-template-columns:1fr}
+    .mvpn-editor-row{grid-template-columns:1fr}
+  }
+
+  /* ==========================================================
      FASE 3 — SHELL E DASHBOARD EXECUTIVO
 
      Tudo escopado a html[data-ui-version="tesla-inspired"]:
@@ -3540,7 +3705,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'cf447ac978f97c06';
+const JP_WEALTH_BUILD_ID = '1fe1b000e5a61a17';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -3580,6 +3745,7 @@ const JP_WEALTH_BUILD_ID = 'cf447ac978f97c06';
   <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.4" y="4.6" width="17.2" height="4.2" rx="1.2"/><path d="M5.2 8.8v9.4a1.6 1.6 0 0 0 1.6 1.6h10.4a1.6 1.6 0 0 0 1.6-1.6V8.8"/><path d="M10 12.6h4"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
+  <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
 </defs></svg>
 <header>
   <div class="brand">
@@ -3618,6 +3784,10 @@ const JP_WEALTH_BUILD_ID = 'cf447ac978f97c06';
         <circle cx="12" cy="12" r="3.2"></circle>
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
+    </button>
+    <button type="button" class="header-action" id="headerNotesBtn" title="Notas do MVP" aria-label="Abrir notas do MVP">
+      <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
+      <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
     </button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
       <!-- Desenho idêntico ao slot "Perfil" da mesma referência, linha 38 —
@@ -4322,6 +4492,27 @@ const JP_WEALTH_BUILD_ID = 'cf447ac978f97c06';
         <button class="reset-btn" id="dashLayoutResetAllBtn" style="color:var(--ink-dim); border-color:var(--line)">Restaurar todos os layouts</button>
       </div>
     </div>
+    <!-- Painel de Notas do MVP — backlog interno de tarefas/bugs/funcionalidades/melhorias
+         (14-mvp-notes.js). Card legado transportado pelo mesmo mecanismo genérico de
+         moveLegacySettingsNodes/restoreLegacySettingsNodes (data-settings-category), sem
+         nenhuma alteração em 09-settings-modal.js além dos termos de busca. -->
+    <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
+      <h2>Notas do MVP <span class="art">backlog interno de testes</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
+      <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
+      <div class="field" style="max-width:360px">
+        <label>Mostrar ícone Notas no menu superior</label>
+        <div class="seg" id="mvpNotesVisibilitySeg" style="width:fit-content">
+          <button type="button" data-mvp-notes-visibility="show">Mostrar</button>
+          <button type="button" data-mvp-notes-visibility="hide">Ocultar</button>
+        </div>
+        <span class="note">Ocultar remove apenas o botão do menu superior. Os registros continuam salvos e podem ser reabertos por aqui.</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px">
+        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Notas</button>
+        <span class="note" id="mvpNotesSettingsCount" style="margin:0"></span>
+      </div>
+    </div>
     <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
       <div class="params-grid">
@@ -4451,11 +4642,68 @@ const JP_WEALTH_BUILD_ID = 'cf447ac978f97c06';
     <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
   </section>
 </div>
+<!-- Painel de Notas do MVP — drawer lateral direito (14-mvp-notes.js). Backlog interno
+     de tarefas/bugs/funcionalidades/melhorias do período de testes; não é notificação,
+     não é log de auditoria financeira, não guarda dado de trading. Construído de forma
+     preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
+<div class="mvp-notes-overlay" id="mvpNotesOverlay" aria-hidden="true">
+  <section class="mvp-notes-drawer" id="mvpNotesDrawer" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle">
+    <header class="mvp-notes-head">
+      <div class="mvp-notes-head-text">
+        <h2 id="mvpNotesTitle">Notas do MVP</h2>
+        <span class="mvp-notes-head-count" id="mvpNotesHeadCount"></span>
+      </div>
+      <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas do MVP" title="Fechar notas do MVP">
+        <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </header>
+    <div class="mvp-notes-body" id="mvpNotesBody">
+      <!-- Navegação de pastas: entidade real (Pasta), não agrupamento por título. "Todas as
+           Notas"/"Sem pasta" são visões virtuais (nunca persistidas). Em desktop (>760px) a
+           lista abaixo funciona como sidebar sempre visível; em mobile o seletor nativo faz
+           a troca rápida e "Gerenciar pastas" revela a mesma lista (criar/renomear/excluir),
+           sem duplicar lógica — um único #mvpNotesFolderNavList para os dois breakpoints. -->
+      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas de notas">
+        <div class="mvpn-folder-mobile-bar">
+          <label class="sr-only" for="mvpNotesFolderMobileSelect">Pasta</label>
+          <select id="mvpNotesFolderMobileSelect"></select>
+          <button type="button" class="mvpn-folder-manage-toggle" id="mvpNotesManageFoldersBtn" aria-expanded="false" aria-controls="mvpNotesFolderManage">Gerenciar pastas</button>
+        </div>
+        <!-- Estado recolhido controlado por classe .open (não pelo atributo hidden): em
+             desktop o painel é sempre visível; hidden com override de CSS !important deixaria
+             o atributo no DOM e o filtro [hidden] do focus trap excluiria a sidebar inteira. -->
+        <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
+          <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
+          <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
+        </div>
+      </nav>
+      <div class="mvpn-content" id="mvpNotesContent">
+        <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
+          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
+          <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
+          <input type="search" id="mvpNotesSearch" placeholder="Buscar por título, descrição, tipo, status, tela, build ou pasta" autocomplete="off">
+          <div class="mvp-notes-filters">
+            <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
+            <select id="mvpNotesFilterType"></select>
+            <label class="sr-only" for="mvpNotesFilterStatus">Filtrar por status</label>
+            <select id="mvpNotesFilterStatus"></select>
+            <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
+            <select id="mvpNotesFilterPriority"></select>
+          </div>
+          <button type="button" class="reset-btn" id="mvpNotesNewBtn">Nova nota</button>
+        </div>
+        <div class="mvp-notes-list" id="mvpNotesList" tabindex="-1"></div>
+        <div class="mvp-notes-editor" id="mvpNotesEditor" hidden></div>
+      </div>
+    </div>
+  </section>
+</div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
 
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -4744,6 +4992,12 @@ const DEFAULTS = {
     {group:'Bússola Estratégica (Art. 1.3)',items:[
       {label:'Padrão',v:1},{label:'Tendência',v:2},{label:'Amplitude',v:1},{label:'Confluência',v:2}]},
   ],
+  // Backlog interno do período de MVP (14-mvp-notes.js) — tarefas/bugs/funcionalidades/
+  // melhorias registradas pelo operador durante testes. Não é log de auditoria financeira,
+  // não é notificação, não guarda dado de trading. items: ver mvpNotesNormalizeItem().
+  // schemaVersion 2: pastas de organização (folders[]) + item.folderId — ver
+  // mvpNotesNormalizeFolders()/mvpNotesNormalizeItem() em 04-persistence.js.
+  mvpNotes:{schemaVersion:2, showHeaderIcon:true, folders:[], items:[]},
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
 // ============ PERSISTÊNCIA (localStorage) ============
@@ -4777,8 +5031,84 @@ function load(){
   }
   S=structuredClone(DEFAULTS);
 }
+// ---- Notas do MVP: enums fixos e normalização (14-mvp-notes.js consome os mesmos
+// arrays). Definidos aqui — script cedo — porque migrate() roda em load() (06-boot.js)
+// antes de 14-mvp-notes.js sequer carregar; a UI só lê estes valores depois. ----
+const MVP_NOTES_TYPES=['task','bug','feature','improvement'];
+const MVP_NOTES_STATUSES=['open','in_progress','done','discarded'];
+const MVP_NOTES_PRIORITIES=['low','medium','high','critical'];
+function mvpNotesId(){ return 'mvpn_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+function mvpNotesFolderId(){ return 'mvpnf_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// ---- pastas (schemaVersion 2) — normalizadas ANTES dos itens: mvpNotesNormalizeItem()
+// precisa do conjunto de IDs válidos/ambíguos resultante para reconciliar item.folderId. ----
+function mvpNotesNormalizeFolders(rawList){
+  const seenIds=new Set();
+  const ambiguousIds=new Set(); // ID original que apareceu mais de uma vez no backup — uma
+  // nota que referenciava esse ID não tem como saber qual das duas pastas era a pretendida.
+  const folders=[];
+  (Array.isArray(rawList)?rawList:[]).forEach(raw=>{
+    if(!raw || typeof raw!=='object') return;
+    const name=String(raw.name||'').trim();
+    if(!name) return; // pasta sem nome não é preservada — não existe "pasta vazia de nome"
+    let id=String(raw.id||'').trim();
+    if(!id){ id=mvpNotesFolderId(); }
+    else if(seenIds.has(id)){
+      ambiguousIds.add(id); // preserva o primeiro ID válido; a duplicata recebe ID novo
+      id=mvpNotesFolderId();
+    }
+    seenIds.add(id);
+    const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+    const updatedAt=(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt;
+    folders.push({id, name:name.slice(0,80), createdAt, updatedAt});
+  });
+  return {folders, validIds:seenIds, ambiguousIds};
+}
+function mvpNotesResolveFolderId(rawFolderId,validIds,ambiguousIds){
+  const id=String(rawFolderId||'').trim();
+  if(!id) return null; // ausente = Sem pasta
+  if(ambiguousIds.has(id)) return null; // referência ambígua = Sem pasta, nunca inventa vínculo
+  if(!validIds.has(id)) return null; // pasta inexistente = Sem pasta
+  return id;
+}
+function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds){
+  if(!raw || typeof raw!=='object') return null;
+  const title=String(raw.title||'').trim();
+  if(!title) return null; // título obrigatório — sem ele o item é descartado, não o backup inteiro
+  let id=String(raw.id||'').trim();
+  if(!id || seenIds.has(id)) id=mvpNotesId(); // impede ID ausente/duplicado
+  seenIds.add(id);
+  const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+  return {
+    id,
+    type:MVP_NOTES_TYPES.includes(raw.type)?raw.type:'task',
+    title:title.slice(0,120),
+    description:String(raw.description||'').slice(0,5000),
+    priority:MVP_NOTES_PRIORITIES.includes(raw.priority)?raw.priority:'medium',
+    status:MVP_NOTES_STATUSES.includes(raw.status)?raw.status:'open',
+    folderId:mvpNotesResolveFolderId(raw.folderId,validFolderIds,ambiguousFolderIds),
+    screenId:String(raw.screenId||''),
+    buildId:String(raw.buildId||''),
+    createdAt,
+    updatedAt:(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt
+  };
+}
+function mvpNotesNormalizeState(){
+  if(!S.mvpNotes || typeof S.mvpNotes!=='object') S.mvpNotes=structuredClone(DEFAULTS.mvpNotes);
+  S.mvpNotes.schemaVersion=2;
+  S.mvpNotes.showHeaderIcon=S.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
+  // Estado v1 (sem folders) chega aqui com S.mvpNotes.folders===undefined — normaliza para []
+  // e cada nota, sem folderId prévio, resolve para null (Sem pasta) abaixo. Sem tela de
+  // migração: o operador só vê o resultado (tudo em "Sem pasta") ao abrir o painel.
+  const {folders,validIds,ambiguousIds}=mvpNotesNormalizeFolders(S.mvpNotes.folders);
+  S.mvpNotes.folders=folders;
+  const seenIds=new Set();
+  S.mvpNotes.items=(Array.isArray(S.mvpNotes.items)?S.mvpNotes.items:[])
+    .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds))
+    .filter(Boolean);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -11030,13 +11360,14 @@ function sessionHandleRemoteFinalization(message){
     return;
   }
   S=emptyJPWealthState();
+  persistNotesAfterSessionWipe();
   window.__onbShown=true;
   clearSessionCheckpoint();
   closeModal();
   boot();
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador.');
+  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP e suas pastas não foram apagadas e continuam salvas.');
 }
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
@@ -11094,7 +11425,22 @@ function emptyJPWealthState(){
   empty.phases=empty.phases.map((phase,i)=>({...phase,orders:emptyOrders([5,4,3,2][i]||3)}));
   if(Array.isArray(empty.checklist)) empty.checklist=empty.checklist.map(group=>({...group,items:group.items.map(item=>({...item,v:0}))}));
   if(empty.mei){ empty.mei.history=[]; empty.mei.lastCalibrationAt=''; }
+  // Notas do MVP são um backlog acumulado ao longo de todo o período de testes,
+  // não um dado operacional da sessão — sobrevivem a Finalizar Sessão (ao contrário
+  // de ordens, ledger, onboarding etc., zerados acima). 'S' aqui ainda é o estado
+  // anterior à troca (a reatribuição só ocorre no retorno desta função).
+  empty.mvpNotes=(S&&S.mvpNotes)?structuredClone(S.mvpNotes):structuredClone(DEFAULTS.mvpNotes);
   return empty;
+}
+// clearJPWealthLocalData() acima de cada chamador já apagou a chave inteira, e save()
+// normal fica bloqueado (jpWealthPersistenceBlocked) até o operador reengajar o
+// onboarding ou importar backup — de propósito, para não ressuscitar dado limpo à toa.
+// Sem isto, as notas ficariam só em memória e sumiriam se a aba fosse fechada antes
+// desse reengajamento. Escrita direta, única e deliberada — não reabre o portão geral
+// de save(); os demais campos gravados aqui já estão zerados, então persisti-los agora
+// ou só depois produz o mesmo resultado observável.
+function persistNotesAfterSessionWipe(){
+  try{ localStorage.setItem(LSKEY,JSON.stringify(S)); }catch(e){}
 }
 function showSessionNotice(message){
   const el=$('sessionNotice'); if(!el) return;
@@ -11165,6 +11511,7 @@ function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
     '<p class="modal-sub">A próxima ação removerá deste navegador a base local do JP Wealth, os registros operacionais, a contabilidade, as configurações e os dados de acesso armazenados.</p>'+
+    '<p class="session-warning">Exceção: as Notas do MVP (tarefas, bugs, funcionalidades e melhorias registradas no painel de Notas) e as pastas em que estão organizadas não são apagadas por esta ação — elas continuam salvas neste navegador.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -11223,6 +11570,7 @@ function finalizeJPWealthSession(){
   const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true});
   if(!report.ok){ renderSessionCleanupError(report); return; }
   S=emptyJPWealthState();
+  persistNotesAfterSessionWipe();
   window.__onbShown=true;
   clearSessionCheckpoint();
   resetSessionFinalizeEphemeralState();
@@ -11230,7 +11578,7 @@ function finalizeJPWealthSession(){
   boot();
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador.');
+  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP e suas pastas não foram apagadas e continuam salvas.');
 }
 function bindFinalizeSession(){
   const b=$('finalizeSessionBtn');
@@ -11569,7 +11917,16 @@ function settingsNavigateToLeaf(leafId,options={}){
 
 function settingsSearchEntries(){
   const core=Object.entries(SETTINGS_LEAVES).flatMap(([id,leaf])=>[...leaf.terms,leaf.label].map(term=>({title:term,category:id})));
-  const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn']].map(([title,category,selector])=>({title,category,selector}));
+  const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
+    // Notas do MVP (14-mvp-notes.js) — vários termos apontando para o mesmo card,
+    // mesmo padrão de 'core' (multi-termo por entrada), já que aqui cada entrada só
+    // casa com o próprio título.
+    ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
+    ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
+    ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
+    ['MVP','interface','#mvpNotesSettingsCard'],['ícone menu superior','interface','#mvpNotesSettingsCard'],
+    ['backlog','interface','#mvpNotesSettingsCard']
+  ].map(([title,category,selector])=>({title,category,selector}));
   const education=EDUCATIONAL_CONTENT.flatMap(item=>[item.title,...item.keywords].map(term=>({title:term,category:'educational',selector:`#education-${item.id}`})));
   return [...core,...controls,...education];
 }
@@ -12948,6 +13305,613 @@ function initDashboardLayout() {
   });
 }
 initDashboardLayout();
+// ============ NOTAS DO MVP — backlog interno de testes (N1) ============
+// Registro interno de tarefas/bugs/funcionalidades/melhorias durante o período de
+// amadurecimento do MVP. Não é log de auditoria financeira, não é notificação, não
+// guarda dado de trading. Enums (MVP_NOTES_TYPES/STATUSES/PRIORITIES) e normalização
+// de item vivem em 00-core/04-persistence.js (script cedo — migrate() precisa deles
+// antes deste arquivo carregar).
+const MVP_NOTES_TYPE_LABELS={task:'Tarefa', bug:'Bug', feature:'Funcionalidade', improvement:'Melhoria'};
+const MVP_NOTES_STATUS_LABELS={open:'Aberta', in_progress:'Em andamento', done:'Concluída', discarded:'Descartada'};
+const MVP_NOTES_PRIORITY_LABELS={low:'Baixa', medium:'Média', high:'Alta', critical:'Crítica'};
+const MVP_NOTES_SCREEN_LABELS={dash:'Dashboard', exec:'Execution Board', params:'Parâmetros', motor:'Motor de Lote',
+  contas:'Contas', check:'Checklist', contab:'Contabilidade', config:'Configurações'};
+
+const mvpNotesUI={
+  open:false, mode:'list', editingId:null,
+  draft:null, draftOriginal:null, draftMeta:null, draftDirty:false,
+  query:'', filterType:'all', filterStatus:'all', filterPriority:'all',
+  activeFolder:'all', // 'all' | 'unfiled' | id de pasta — visões virtuais nunca persistidas
+  opener:null, optionsReady:false, inertSnapshot:null
+};
+
+function mvpn(id){ return document.getElementById(id); }
+
+// ---- leitura de contexto (tela/build) ----
+function mvpNotesCurrentScreenId(){
+  if(typeof settingsIsOpen==='function' && settingsIsOpen()) return 'config';
+  const active=document.querySelector('.screen.active');
+  return active ? active.id : '';
+}
+function mvpNotesScreenLabel(id){ return MVP_NOTES_SCREEN_LABELS[id] || 'Geral'; }
+function mvpNotesCurrentBuildId(){ return typeof JP_WEALTH_BUILD_ID==='string' ? JP_WEALTH_BUILD_ID : ''; }
+function mvpNotesFormatDate(iso){
+  try{ return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso)); }
+  catch(e){ return String(iso||'—'); }
+}
+
+// ---- leitura/derivação de dados ----
+function mvpNotesItems(){ return (S.mvpNotes && Array.isArray(S.mvpNotes.items)) ? S.mvpNotes.items : []; }
+function mvpNotesActiveCount(){ return mvpNotesItems().filter(it=>it.status==='open'||it.status==='in_progress').length; }
+function mvpNotesSorted(){ return [...mvpNotesItems()].sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))); }
+function mvpNotesHaystack(item){
+  return [item.title, item.description, MVP_NOTES_TYPE_LABELS[item.type], MVP_NOTES_STATUS_LABELS[item.status],
+    mvpNotesScreenLabel(item.screenId), item.buildId, mvpNotesFolderLabel(item.folderId)].join(' ').toLocaleLowerCase('pt-BR');
+}
+function mvpNotesFiltered(){
+  const q=mvpNotesUI.query.trim().toLocaleLowerCase('pt-BR');
+  return mvpNotesSorted().filter(item=>{
+    if(mvpNotesUI.activeFolder==='unfiled' && item.folderId!==null) return false;
+    else if(mvpNotesUI.activeFolder!=='all' && mvpNotesUI.activeFolder!=='unfiled' && item.folderId!==mvpNotesUI.activeFolder) return false;
+    if(mvpNotesUI.filterType!=='all' && item.type!==mvpNotesUI.filterType) return false;
+    if(mvpNotesUI.filterStatus!=='all' && item.status!==mvpNotesUI.filterStatus) return false;
+    if(mvpNotesUI.filterPriority!=='all' && item.priority!==mvpNotesUI.filterPriority) return false;
+    if(q && !mvpNotesHaystack(item).includes(q)) return false;
+    return true;
+  });
+}
+
+// ---- pastas (schemaVersion 2) — entidade real e explícita; "Todas as Notas"/"Sem pasta"
+// são visões virtuais (mvpNotesUI.activeFolder='all'/'unfiled'), nunca persistidas como pasta. ----
+function mvpNotesFolders(){ return (S.mvpNotes && Array.isArray(S.mvpNotes.folders)) ? S.mvpNotes.folders : []; }
+function mvpNotesFolderById(id){ return mvpNotesFolders().find(f=>f.id===id) || null; }
+function mvpNotesFolderLabel(folderId){
+  if(!folderId) return 'Sem pasta';
+  const f=mvpNotesFolderById(folderId);
+  return f ? f.name : 'Sem pasta'; // referência órfã (não deveria ocorrer após normalização) — trata como Sem pasta
+}
+function mvpNotesFolderItemCount(folderId){ return mvpNotesItems().filter(it=>it.folderId===folderId).length; }
+function mvpNotesUnfiledCount(){ return mvpNotesItems().filter(it=>it.folderId===null).length; }
+function mvpNotesAllCount(){ return mvpNotesItems().length; }
+function mvpNotesFolderNameExists(name,excludeId){
+  const n=name.trim().toLocaleLowerCase('pt-BR');
+  return mvpNotesFolders().some(f=>f.id!==excludeId && f.name.toLocaleLowerCase('pt-BR')===n);
+}
+function mvpNotesCreateFolder(name){
+  const now=new Date().toISOString();
+  const folder={id:mvpNotesFolderId(), name, createdAt:now, updatedAt:now};
+  S.mvpNotes.folders.push(folder);
+  save(); renderMvpNotesHeader();
+  return folder;
+}
+function mvpNotesRenameFolder(id,name){
+  const folder=mvpNotesFolderById(id); if(!folder) return null;
+  if(folder.name===name) return folder; // nada mudou -> updatedAt não se move
+  folder.name=name; folder.updatedAt=new Date().toISOString();
+  save(); renderMvpNotesHeader();
+  return folder;
+}
+// Exclui só a pasta; as notas associadas são preservadas integralmente e realocadas para
+// "Sem pasta" (folderId=null) — nunca há opção de excluir pasta+notas juntas nesta versão.
+function mvpNotesDeleteFolder(id){
+  S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
+  mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+  if(mvpNotesUI.activeFolder===id) mvpNotesUI.activeFolder='unfiled';
+  save(); renderMvpNotesHeader();
+}
+function mvpNotesEnsureActiveFolderValid(){
+  const af=mvpNotesUI.activeFolder;
+  if(af==='all' || af==='unfiled') return;
+  if(!mvpNotesFolderById(af)) mvpNotesUI.activeFolder='unfiled';
+}
+function mvpNotesViewLabel(){
+  if(mvpNotesUI.activeFolder==='all') return 'Todas as Notas';
+  if(mvpNotesUI.activeFolder==='unfiled') return 'Sem pasta';
+  const f=mvpNotesFolderById(mvpNotesUI.activeFolder);
+  return f ? f.name : 'Todas as Notas';
+}
+
+// ---- persistência (CRUD) ----
+function mvpNotesPersist(){ save(); renderMvpNotesHeader(); }
+function mvpNotesCreate(draft){
+  const now=new Date().toISOString();
+  const item={
+    id:mvpNotesId(), type:draft.type, title:draft.title.trim().slice(0,120),
+    description:String(draft.description||'').slice(0,5000),
+    priority:draft.priority, status:draft.status, folderId:draft.folderId||null,
+    screenId:mvpNotesUI.draftMeta.screenId, buildId:mvpNotesUI.draftMeta.buildId,
+    createdAt:now, updatedAt:now
+  };
+  S.mvpNotes.items.push(item);
+  mvpNotesPersist();
+  return item;
+}
+function mvpNotesUpdate(id,draft){
+  const item=mvpNotesItems().find(it=>it.id===id);
+  if(!item) return null;
+  const folderId=draft.folderId||null;
+  const changed=item.type!==draft.type || item.title!==draft.title.trim().slice(0,120) ||
+    item.description!==String(draft.description||'').slice(0,5000) ||
+    item.priority!==draft.priority || item.status!==draft.status || (item.folderId||null)!==folderId;
+  item.type=draft.type; item.title=draft.title.trim().slice(0,120);
+  item.description=String(draft.description||'').slice(0,5000);
+  item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
+  if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
+  mvpNotesPersist();
+  return item;
+}
+function mvpNotesDelete(id){
+  S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
+  mvpNotesPersist();
+}
+
+// ---- botão do header + card de Configurações ----
+function renderMvpNotesHeader(){
+  const btn=mvpn('headerNotesBtn');
+  if(btn) btn.hidden=!(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
+  const count=mvpNotesActiveCount();
+  const badge=mvpn('headerNotesBadge');
+  if(badge){
+    badge.hidden=count<=0;
+    badge.textContent=count>99?'99+':String(count);
+  }
+  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas do MVP — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas do MVP');
+  renderMvpNotesSettingsCard();
+}
+function renderMvpNotesSettingsCard(){
+  const seg=mvpn('mvpNotesVisibilitySeg'); if(!seg) return;
+  const showing=!(S.mvpNotes && S.mvpNotes.showHeaderIcon===false);
+  seg.querySelectorAll('button').forEach(b=>b.classList.toggle('on', (b.dataset.mvpNotesVisibility==='show')===showing));
+  const countEl=mvpn('mvpNotesSettingsCount');
+  if(countEl){
+    const total=mvpNotesItems().length, active=mvpNotesActiveCount();
+    countEl.textContent=total===0 ? 'Nenhuma nota registrada ainda.' : `${total} nota${total===1?'':'s'} registrada${total===1?'':'s'} · ${active} ativa${active===1?'':'s'}.`;
+  }
+}
+function bindMvpNotesSettingsCard(){
+  const seg=mvpn('mvpNotesVisibilitySeg');
+  if(seg) seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    S.mvpNotes.showHeaderIcon=b.dataset.mvpNotesVisibility==='show';
+    save(); renderMvpNotesHeader();
+  }));
+  const openBtn=mvpn('mvpNotesOpenFromSettingsBtn');
+  if(openBtn) openBtn.addEventListener('click',()=>{
+    settingsMarkSubdialogLauncher(openBtn);
+    openMvpNotesDrawer(openBtn);
+  });
+}
+
+// ---- opções fixas dos selects (filtros + editor) ----
+function mvpNotesBuildOptions(){
+  if(mvpNotesUI.optionsReady) return;
+  const fillFilter=(id,map,allLabel)=>{
+    const el=mvpn(id); if(!el) return;
+    el.innerHTML=`<option value="all">${allLabel}</option>`+Object.keys(map).map(k=>`<option value="${k}">${esc(map[k])}</option>`).join('');
+  };
+  fillFilter('mvpNotesFilterType',MVP_NOTES_TYPE_LABELS,'Todos os tipos');
+  fillFilter('mvpNotesFilterStatus',MVP_NOTES_STATUS_LABELS,'Todos os status');
+  fillFilter('mvpNotesFilterPriority',MVP_NOTES_PRIORITY_LABELS,'Todas as prioridades');
+  mvpNotesUI.optionsReady=true;
+}
+
+// ---- lista ----
+function mvpNotesCardHTML(item){
+  const preview=esc(item.description||'').replace(/\n+/g,' ').trim();
+  // A pasta só aparece no card na visão "Todas as Notas" (item 11): dentro de uma pasta
+  // específica repetir o próprio nome em cada card é redundante; em "Sem pasta" o contexto
+  // já basta.
+  const folderLine=mvpNotesUI.activeFolder==='all'
+    ? `<div class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</div>` : '';
+  return `<button type="button" class="mvpn-card" data-mvp-note-id="${esc(item.id)}" data-status="${esc(item.status)}" data-priority="${esc(item.priority)}" data-type="${esc(item.type)}">
+    <div class="mvpn-card-top">
+      <span class="mvpn-badge mvpn-badge-type">${esc(MVP_NOTES_TYPE_LABELS[item.type]||item.type)}</span>
+      <span class="mvpn-badge mvpn-badge-priority">${esc(MVP_NOTES_PRIORITY_LABELS[item.priority]||item.priority)}</span>
+      <span class="mvpn-badge mvpn-badge-status">${esc(MVP_NOTES_STATUS_LABELS[item.status]||item.status)}</span>
+    </div>
+    <div class="mvpn-card-title">${esc(item.title)}</div>
+    ${folderLine}
+    ${preview?`<div class="mvpn-card-preview">${preview}</div>`:''}
+    <div class="mvpn-card-meta">
+      <span>${esc(mvpNotesScreenLabel(item.screenId))}</span><span aria-hidden="true">·</span>
+      <span>${item.buildId?('build '+esc(item.buildId)):'build não informado'}</span><span aria-hidden="true">·</span>
+      <span>atualizado em ${esc(mvpNotesFormatDate(item.updatedAt))}</span>
+    </div>
+  </button>`;
+}
+function renderMvpNotesList(){
+  mvpNotesEnsureActiveFolderValid();
+  renderMvpNotesFolderNav();
+  const titleEl=mvpn('mvpNotesViewTitle'); if(titleEl) titleEl.textContent=mvpNotesViewLabel();
+  const host=mvpn('mvpNotesList'); if(!host) return;
+  const total=mvpNotesItems().length, items=mvpNotesFiltered();
+  if(total===0){
+    host.innerHTML=`<p class="mvpn-empty">Nenhuma nota registrada. Use "Nova nota" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
+  }else if(items.length===0){
+    host.innerHTML=`<p class="mvpn-empty">Nenhuma nota encontrada para estes filtros.</p>`;
+  }else{
+    host.innerHTML=items.map(mvpNotesCardHTML).join('');
+  }
+  host.querySelectorAll('[data-mvp-note-id]').forEach(card=>card.addEventListener('click',()=>{
+    const id=card.dataset.mvpNoteId;
+    mvpNotesConfirmDiscardIfDirty(()=>openMvpNotesEditor(id));
+  }));
+  const headCount=mvpn('mvpNotesHeadCount');
+  if(headCount){
+    const active=mvpNotesActiveCount();
+    headCount.textContent=active===0?'Nenhum item ativo':`${active} ${active===1?'item ativo':'itens ativos'}`;
+  }
+}
+
+// ---- navegação de pastas (sidebar desktop / seletor+gerenciar em mobile) ----
+function mvpNotesFolderRowHTML(id,name,count,manageable){
+  const active=mvpNotesUI.activeFolder===id;
+  return `<div class="mvpn-folder-row">
+    <button type="button" class="mvpn-folder-btn" data-mvp-folder="${esc(id)}" ${active?'aria-current="page"':''}>
+      <span class="mvpn-folder-name" title="${esc(name)}">${esc(name)}</span>
+      <span class="mvpn-folder-count">${count}</span>
+    </button>
+    ${manageable?`<details class="mvpn-folder-kebab">
+      <summary aria-label="Mais ações para a pasta ${esc(name)}">⋯</summary>
+      <div class="mvpn-folder-kebab-menu">
+        <button type="button" data-mvp-folder-rename="${esc(id)}">Renomear</button>
+        <button type="button" data-mvp-folder-delete="${esc(id)}">Excluir</button>
+      </div>
+    </details>`:''}
+  </div>`;
+}
+function renderMvpNotesFolderNav(){
+  const folders=mvpNotesFolders();
+  const rows=[
+    {id:'all', name:'Todas as Notas', count:mvpNotesAllCount()},
+    {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()}
+  ];
+  const navHost=mvpn('mvpNotesFolderNavList');
+  if(navHost){
+    const staticHTML=rows.map(r=>mvpNotesFolderRowHTML(r.id,r.name,r.count,false)).join('');
+    const folderHTML=folders.length
+      ? `<div class="mvpn-folder-group-label">Pastas</div>`+folders.map(f=>mvpNotesFolderRowHTML(f.id,f.name,mvpNotesFolderItemCount(f.id),true)).join('')
+      : '';
+    navHost.innerHTML=staticHTML+folderHTML;
+    bindMvpNotesFolderNavEvents(navHost);
+  }
+  const sel=mvpn('mvpNotesFolderMobileSelect');
+  if(sel){
+    const optionHTML=r=>`<option value="${esc(r.id)}">${esc(r.name)} (${r.count})</option>`;
+    sel.innerHTML=rows.map(optionHTML).join('')
+      +folders.map(f=>optionHTML({id:f.id,name:f.name,count:mvpNotesFolderItemCount(f.id)})).join('');
+    sel.value=mvpNotesUI.activeFolder;
+  }
+}
+function bindMvpNotesFolderNavEvents(host){
+  host.querySelectorAll('[data-mvp-folder]').forEach(btn=>btn.addEventListener('click',()=>{
+    mvpNotesSwitchFolder(btn.dataset.mvpFolder);
+  }));
+  host.querySelectorAll('[data-mvp-folder-rename]').forEach(btn=>btn.addEventListener('click',()=>{
+    const details=btn.closest('details'); if(details) details.open=false;
+    mvpNotesHandleRenameFolder(btn.dataset.mvpFolderRename);
+  }));
+  host.querySelectorAll('[data-mvp-folder-delete]').forEach(btn=>btn.addEventListener('click',()=>{
+    const details=btn.closest('details'); if(details) details.open=false;
+    mvpNotesHandleDeleteFolder(btn.dataset.mvpFolderDelete);
+  }));
+}
+// Trocar de pasta preserva busca e os 3 filtros (item 12) — só re-renderiza a lista; a
+// mesma proteção de rascunho não salvo das demais ações de pasta (item 14) se aplica aqui.
+function mvpNotesSwitchFolder(target){
+  const previous=mvpNotesUI.activeFolder;
+  mvpNotesConfirmDiscardIfDirty(()=>{
+    mvpNotesUI.activeFolder=target;
+    renderMvpNotesMode('list');
+  });
+  // Descarte cancelado (confirm()===false): activeFolder não mudou, mas o <select> mobile
+  // nativo já exibia visualmente a nova opção escolhida antes deste handler rodar —
+  // resincroniza o valor exibido com o estado real, senão select e app divergem.
+  if(mvpNotesUI.activeFolder===previous) renderMvpNotesFolderNav();
+}
+function mvpNotesPromptFolderName(defaultValue){
+  const raw=prompt('Nome da pasta', defaultValue||'');
+  if(raw===null) return null; // cancelado
+  return raw.trim().slice(0,80);
+}
+function mvpNotesHandleNewFolder(){
+  mvpNotesConfirmDiscardIfDirty(()=>{
+    const name=mvpNotesPromptFolderName('');
+    if(name===null) return;
+    if(!name){ alert('Informe um nome para a pasta.'); return; }
+    if(mvpNotesFolderNameExists(name,null) && !confirm(`Já existe uma pasta chamada "${name}". Deseja criar outra pasta com o mesmo nome?`)) return;
+    const folder=mvpNotesCreateFolder(name);
+    mvpNotesUI.activeFolder=folder.id;
+    renderMvpNotesMode('list');
+  });
+}
+function mvpNotesHandleRenameFolder(id){
+  mvpNotesConfirmDiscardIfDirty(()=>{
+    const folder=mvpNotesFolderById(id); if(!folder) return;
+    const name=mvpNotesPromptFolderName(folder.name);
+    if(name===null) return;
+    if(!name){ alert('Informe um nome para a pasta.'); return; }
+    if(name!==folder.name && mvpNotesFolderNameExists(name,id) && !confirm(`Já existe uma pasta chamada "${name}". Deseja renomear mesmo assim?`)) return;
+    mvpNotesRenameFolder(id,name);
+    renderMvpNotesMode('list');
+  });
+}
+function mvpNotesHandleDeleteFolder(id){
+  mvpNotesConfirmDiscardIfDirty(()=>{
+    const folder=mvpNotesFolderById(id); if(!folder) return;
+    const count=mvpNotesFolderItemCount(id);
+    const msg=count>0
+      ? `A pasta "${folder.name}" contém ${count} nota${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'essa nota será movida':'essas notas serão movidas'} para "Sem pasta". Deseja continuar?`
+      : `Deseja excluir a pasta "${folder.name}"?`;
+    if(!confirm(msg)) return;
+    mvpNotesDeleteFolder(id);
+    renderMvpNotesMode('list');
+  });
+}
+// Classe .open, não atributo hidden: em desktop o painel fica sempre visível por CSS, e
+// hidden vencido por !important manteria o atributo no DOM — o filtro [hidden] do focus
+// trap passaria a excluir a sidebar inteira mesmo visível e tabulável.
+function mvpNotesSetFolderManageOpen(open){
+  const el=mvpn('mvpNotesFolderManage'), btn=mvpn('mvpNotesManageFoldersBtn');
+  if(el) el.classList.toggle('open', open);
+  if(btn) btn.setAttribute('aria-expanded', String(open));
+}
+function mvpNotesToggleFolderManage(){
+  const el=mvpn('mvpNotesFolderManage'); if(!el) return;
+  mvpNotesSetFolderManageOpen(!el.classList.contains('open'));
+}
+
+// ---- editor ----
+function mvpNotesDraftFromItem(item){
+  return {type:item.type, title:item.title, description:item.description, priority:item.priority, status:item.status, folderId:item.folderId||null};
+}
+function mvpNotesDraftFromForm(){
+  return {
+    type:mvpn('mvpNoteType').value, title:mvpn('mvpNoteTitle').value,
+    description:mvpn('mvpNoteDescription').value,
+    priority:mvpn('mvpNotePriority').value, status:mvpn('mvpNoteStatus').value,
+    folderId:mvpn('mvpNoteFolder').value||null
+  };
+}
+function mvpNotesDraftEqual(a,b){
+  return a.type===b.type && a.title.trim()===b.title.trim() && a.description===b.description &&
+    a.priority===b.priority && a.status===b.status && (a.folderId||null)===(b.folderId||null);
+}
+function mvpNotesEditorHTML(isNew,meta){
+  const optList=(map,selected)=>Object.keys(map).map(k=>`<option value="${k}" ${k===selected?'selected':''}>${esc(map[k])}</option>`).join('');
+  return `
+    <div class="mvpn-editor-head">
+      <h3>${isNew?'Nova nota':'Editar nota'}</h3>
+      <button type="button" class="mvpn-editor-back reset-btn" id="mvpNoteCancelBtn">${isNew?'Cancelar':'Voltar à lista'}</button>
+    </div>
+    <div class="field"><label for="mvpNoteType">Tipo</label>
+      <select id="mvpNoteType">${optList(MVP_NOTES_TYPE_LABELS,mvpNotesUI.draft.type)}</select>
+    </div>
+    <div class="field"><label for="mvpNoteTitle">Título</label>
+      <input type="text" id="mvpNoteTitle" maxlength="120" value="${esc(mvpNotesUI.draft.title)}" placeholder="Ex.: corrigir alinhamento do card X">
+      <span class="mvpn-hint">Obrigatório, até 120 caracteres.</span>
+    </div>
+    <div class="field"><label for="mvpNoteDescription">Descrição</label>
+      <textarea id="mvpNoteDescription" rows="6" maxlength="5000" placeholder="Detalhes, passos para reproduzir, contexto...">${esc(mvpNotesUI.draft.description)}</textarea>
+      <span class="mvpn-hint">Opcional, até 5.000 caracteres. Texto simples — nenhum HTML é interpretado.</span>
+    </div>
+    <div class="mvpn-editor-row">
+      <div class="field"><label for="mvpNotePriority">Prioridade</label>
+        <select id="mvpNotePriority">${optList(MVP_NOTES_PRIORITY_LABELS,mvpNotesUI.draft.priority)}</select>
+      </div>
+      <div class="field"><label for="mvpNoteStatus">Status</label>
+        <select id="mvpNoteStatus">${optList(MVP_NOTES_STATUS_LABELS,mvpNotesUI.draft.status)}</select>
+      </div>
+    </div>
+    <div class="field"><label for="mvpNoteFolder">Pasta</label>
+      <select id="mvpNoteFolder">
+        <option value="" ${!mvpNotesUI.draft.folderId?'selected':''}>Sem pasta</option>
+        ${mvpNotesFolders().map(f=>`<option value="${esc(f.id)}" ${f.id===mvpNotesUI.draft.folderId?'selected':''}>${esc(f.name)}</option>`).join('')}
+      </select>
+    </div>
+    <dl class="mvpn-meta-facts">
+      <dt>Tela</dt><dd>${esc(mvpNotesScreenLabel(meta.screenId))}</dd>
+      <dt>Build</dt><dd>${meta.buildId?esc(meta.buildId):'não informado'}</dd>
+      <dt>Criada em</dt><dd>${meta.createdAt?esc(mvpNotesFormatDate(meta.createdAt)):'ao salvar'}</dd>
+      <dt>Atualizada em</dt><dd>${meta.updatedAt?esc(mvpNotesFormatDate(meta.updatedAt)):'ao salvar'}</dd>
+    </dl>
+    <p class="mvpn-editor-err" id="mvpNoteErr" hidden></p>
+    <div class="mvpn-editor-actions">
+      ${isNew?'':'<button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>'}
+      <button type="button" class="reset-btn mvpn-primary" id="mvpNoteSaveBtn">${isNew?'Criar nota':'Salvar alterações'}</button>
+    </div>`;
+}
+function bindMvpNotesEditor(isNew,id){
+  ['mvpNoteType','mvpNoteTitle','mvpNoteDescription','mvpNotePriority','mvpNoteStatus','mvpNoteFolder'].forEach(fid=>{
+    const el=mvpn(fid); if(!el) return;
+    el.addEventListener('input',()=>{ mvpNotesUI.draftDirty=!mvpNotesDraftEqual(mvpNotesDraftFromForm(),mvpNotesUI.draftOriginal); });
+    el.addEventListener('change',()=>{ mvpNotesUI.draftDirty=!mvpNotesDraftEqual(mvpNotesDraftFromForm(),mvpNotesUI.draftOriginal); });
+  });
+  const cancelBtn=mvpn('mvpNoteCancelBtn');
+  if(cancelBtn) cancelBtn.addEventListener('click',()=>mvpNotesConfirmDiscardIfDirty(()=>renderMvpNotesMode('list')));
+  const saveBtn=mvpn('mvpNoteSaveBtn');
+  if(saveBtn) saveBtn.addEventListener('click',()=>{
+    const draft=mvpNotesDraftFromForm();
+    const title=draft.title.trim();
+    const err=mvpn('mvpNoteErr');
+    if(!title){
+      if(err){ err.textContent='Informe um título para a nota.'; err.hidden=false; }
+      mvpn('mvpNoteTitle').focus();
+      return;
+    }
+    if(err) err.hidden=true;
+    if(isNew) mvpNotesCreate(draft); else mvpNotesUpdate(id,draft);
+    mvpNotesUI.draftDirty=false;
+    renderMvpNotesMode('list');
+  });
+  const deleteBtn=mvpn('mvpNoteDeleteBtn');
+  if(deleteBtn) deleteBtn.addEventListener('click',()=>{
+    const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
+    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return;
+    mvpNotesDelete(id);
+    mvpNotesUI.draftDirty=false;
+    renderMvpNotesMode('list');
+  });
+}
+function openMvpNotesEditor(id){
+  const isNew=!id;
+  const item=isNew?null:mvpNotesItems().find(it=>it.id===id);
+  if(!isNew && !item) return;
+  mvpNotesUI.editingId=isNew?null:id;
+  // Nova nota dentro de uma pasta específica herda essa pasta (itens 7/10); em "Todas as
+  // Notas" ou "Sem pasta" (visões virtuais) o padrão é null — o operador escolhe no editor.
+  const defaultFolderId=(mvpNotesUI.activeFolder!=='all' && mvpNotesUI.activeFolder!=='unfiled') ? mvpNotesUI.activeFolder : null;
+  mvpNotesUI.draft=isNew ? {type:'task', title:'', description:'', priority:'medium', status:'open', folderId:defaultFolderId} : mvpNotesDraftFromItem(item);
+  mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
+  mvpNotesUI.draftDirty=false;
+  mvpNotesUI.draftMeta=isNew
+    ? {screenId:mvpNotesCurrentScreenId(), buildId:mvpNotesCurrentBuildId(), createdAt:'', updatedAt:''}
+    : {screenId:item.screenId, buildId:item.buildId, createdAt:item.createdAt, updatedAt:item.updatedAt};
+  renderMvpNotesMode('editor');
+}
+function renderMvpNotesMode(mode){
+  mvpNotesUI.mode=mode;
+  const toolbar=mvpn('mvpNotesToolbar'), list=mvpn('mvpNotesList'), editor=mvpn('mvpNotesEditor');
+  if(mode==='editor'){
+    if(toolbar) toolbar.hidden=true;
+    if(list) list.hidden=true;
+    if(editor){
+      editor.hidden=false;
+      const isNew=!mvpNotesUI.editingId;
+      editor.innerHTML=mvpNotesEditorHTML(isNew,mvpNotesUI.draftMeta);
+      bindMvpNotesEditor(isNew,mvpNotesUI.editingId);
+      // Foco síncrono, não via requestAnimationFrame: o campo é estático (só o hidden do
+      // contêiner muda), já está pronto para foco no mesmo tick — depender de rAF é frágil
+      // em abas sem repaint ativo (verificado: rAF pode nunca disparar nesse cenário).
+      const t=mvpn('mvpNoteTitle'); if(t) t.focus();
+    }
+  }else{
+    if(toolbar) toolbar.hidden=false;
+    if(list){ list.hidden=false; renderMvpNotesList(); }
+    if(editor){ editor.hidden=true; editor.innerHTML=''; }
+    mvpNotesUI.editingId=null; mvpNotesUI.draft=null; mvpNotesUI.draftOriginal=null; mvpNotesUI.draftDirty=false;
+  }
+}
+function mvpNotesConfirmDiscardIfDirty(proceed){
+  if(mvpNotesUI.mode==='editor' && mvpNotesUI.draftDirty){
+    if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
+  }
+  proceed();
+}
+
+// ---- abertura/fechamento do drawer (foco, trap, inert — mesmo padrão da Central) ----
+function mvpNotesFocusables(root){
+  // offsetParent!==null exclui o conteúdo de <details> fechados (menu "⋯" de cada pasta,
+  // painel "Gerenciar pastas" em mobile) — sem isto o wrap do Tab poderia pular para um
+  // botão invisível em vez do primeiro/último elemento realmente visível do drawer.
+  // <summary> entra explicitamente: tem tabIndex 0 nativo mas nenhum atributo tabindex,
+  // então o seletor [tabindex] não o alcança — sem ele o trap calcularia primeiro/último
+  // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
+  return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
+    .filter(el=>!el.closest('[hidden]'))
+    .filter(el=>el.offsetParent!==null || el===document.activeElement);
+}
+function mvpNotesTrapFocus(event){
+  if(!mvpNotesUI.open || event.key!=='Tab') return;
+  const list=mvpNotesFocusables(mvpn('mvpNotesDrawer')); if(!list.length) return;
+  const first=list[0], last=list[list.length-1];
+  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
+}
+// Isolamento acessível: os quatro irmãos de nível superior que ficam FORA do drawer/overlay
+// — <header> (todas as ações do topo, inclusive o próprio botão que abre o drawer), #nav
+// (abas de tela), #appMain (todo o conteúdo operacional da tela ativa) e .foot-note. Nunca
+// um clear cego: captura o valor real de .inert/aria-hidden de cada um ANTES de tocar
+// (outro mecanismo — a própria Central, quando já aberta por baixo — pode já os ter assim
+// por razão própria) e restaura exatamente esse valor ao fechar, nunca um "false"/remoção
+// incondicional. Roda sempre, esteja a Central aberta por baixo ou não: cobre inclusive o
+// que a suspensão da Central (suspendSettingsForSubdialog, abaixo) não cobre sozinha —
+// aquela função só torna #settingsModal inert, nunca tocou <header>/#appMain.
+function mvpNotesInertTargets(){
+  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
+}
+function mvpNotesApplyInert(){
+  mvpNotesUI.inertSnapshot=mvpNotesInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
+  mvpNotesUI.inertSnapshot.forEach(({el})=>{ el.inert=true; el.setAttribute('aria-hidden','true'); });
+}
+function mvpNotesRestoreInert(){
+  const snapshot=mvpNotesUI.inertSnapshot; if(!snapshot) return;
+  snapshot.forEach(({el,inert,ariaHidden})=>{
+    el.inert=inert;
+    if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+  });
+  mvpNotesUI.inertSnapshot=null;
+}
+// Consultado ao vivo em cada chamada (nunca guardado em flag) — se guardássemos "a Central
+// estava aberta quando abri" num booleano capturado na abertura, um fechamento da Central
+// por qualquer outro caminho enquanto o drawer segue aberto deixaria esse booleano obsoleto.
+function mvpNotesSettingsOpen(){ return typeof settingsIsOpen==='function' && settingsIsOpen(); }
+function openMvpNotesDrawer(opener){
+  mvpNotesBuildOptions();
+  mvpNotesUI.open=true;
+  mvpNotesUI.opener=opener||document.activeElement||mvpn('headerNotesBtn');
+  mvpNotesUI.query=''; mvpNotesUI.filterType='all'; mvpNotesUI.filterStatus='all'; mvpNotesUI.filterPriority='all';
+  mvpNotesUI.activeFolder='all'; // cada abertura começa em "Todas as Notas", mesmo padrão dos filtros
+  const search=mvpn('mvpNotesSearch'); if(search) search.value='';
+  ['mvpNotesFilterType','mvpNotesFilterStatus','mvpNotesFilterPriority'].forEach(id=>{ const el=mvpn(id); if(el) el.value='all'; });
+  mvpNotesSetFolderManageOpen(false); // painel "Gerenciar pastas" começa recolhido em mobile
+  // A Central usa #modalOverlay como sinal para suspender seu próprio focus trap
+  // (initSettingsSubdialogObserver, 09-settings-modal.js); nosso drawer tem overlay
+  // próprio, então o MutationObserver dela nunca vê esta abertura — sem isto, os dois
+  // focus traps disputariam Tab ao mesmo tempo quando aberto via "Abrir Notas".
+  if(mvpNotesSettingsOpen() && typeof suspendSettingsForSubdialog==='function') suspendSettingsForSubdialog();
+  mvpn('mvpNotesOverlay').classList.add('show');
+  mvpn('mvpNotesOverlay').setAttribute('aria-hidden','false');
+  mvpNotesApplyInert();
+  renderMvpNotesMode('list');
+  // Foco síncrono, não via requestAnimationFrame: dependência de rAF é frágil em abas sem
+  // repaint ativo (verificado nesta sessão: rAF pode nunca disparar nesse cenário, deixando
+  // o foco preso fora do diálogo modal — inaceitável para a isolação acessível pedida).
+  const closeBtn=mvpn('mvpNotesCloseBtn'); if(closeBtn) closeBtn.focus();
+}
+function closeMvpNotesDrawerNow(){
+  mvpNotesUI.open=false;
+  mvpn('mvpNotesOverlay').classList.remove('show');
+  mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
+  mvpNotesRestoreInert();
+  const opener=mvpNotesUI.opener; mvpNotesUI.opener=null;
+  if(typeof restoreSettingsAfterSubdialog==='function') restoreSettingsAfterSubdialog();
+  if(opener && document.contains(opener) && !mvpNotesSettingsOpen()) opener.focus();
+}
+function closeMvpNotesDrawer(){
+  mvpNotesConfirmDiscardIfDirty(closeMvpNotesDrawerNow);
+}
+
+// ---- inicialização ----
+function bindMvpNotesDrawer(){
+  mvpn('headerNotesBtn').addEventListener('click',()=>openMvpNotesDrawer(mvpn('headerNotesBtn')));
+  mvpn('mvpNotesCloseBtn').addEventListener('click',closeMvpNotesDrawer);
+  mvpn('mvpNotesOverlay').addEventListener('click',e=>{ if(e.target.id==='mvpNotesOverlay') closeMvpNotesDrawer(); });
+  mvpn('mvpNotesNewBtn').addEventListener('click',()=>mvpNotesConfirmDiscardIfDirty(()=>openMvpNotesEditor(null)));
+  mvpn('mvpNotesSearch').addEventListener('input',e=>{ mvpNotesUI.query=e.target.value; renderMvpNotesList(); });
+  mvpn('mvpNotesFilterType').addEventListener('change',e=>{ mvpNotesUI.filterType=e.target.value; renderMvpNotesList(); });
+  mvpn('mvpNotesFilterStatus').addEventListener('change',e=>{ mvpNotesUI.filterStatus=e.target.value; renderMvpNotesList(); });
+  mvpn('mvpNotesFilterPriority').addEventListener('change',e=>{ mvpNotesUI.filterPriority=e.target.value; renderMvpNotesList(); });
+  mvpn('mvpNotesNewFolderBtn').addEventListener('click',mvpNotesHandleNewFolder);
+  mvpn('mvpNotesFolderMobileSelect').addEventListener('change',e=>mvpNotesSwitchFolder(e.target.value));
+  mvpn('mvpNotesManageFoldersBtn').addEventListener('click',mvpNotesToggleFolderManage);
+  document.addEventListener('keydown',event=>{
+    if(!mvpNotesUI.open) return;
+    if(event.key==='Escape'){
+      event.preventDefault();
+      if(mvpNotesUI.mode==='editor') mvpNotesConfirmDiscardIfDirty(()=>renderMvpNotesMode('list'));
+      else closeMvpNotesDrawer();
+      return;
+    }
+    mvpNotesTrapFocus(event);
+  },true);
+}
+function initMvpNotes(){
+  mvpNotesBuildOptions();
+  bindMvpNotesDrawer();
+  bindMvpNotesSettingsCard();
+  renderMvpNotesHeader();
+}
+initMvpNotes();
 </script>
 </body>
 </html>

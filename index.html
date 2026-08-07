@@ -47,6 +47,7 @@
   <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.4" y="4.6" width="17.2" height="4.2" rx="1.2"/><path d="M5.2 8.8v9.4a1.6 1.6 0 0 0 1.6 1.6h10.4a1.6 1.6 0 0 0 1.6-1.6V8.8"/><path d="M10 12.6h4"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
+  <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
 </defs></svg>
 <header>
   <div class="brand">
@@ -85,6 +86,10 @@
         <circle cx="12" cy="12" r="3.2"></circle>
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
+    </button>
+    <button type="button" class="header-action" id="headerNotesBtn" title="Notas do MVP" aria-label="Abrir notas do MVP">
+      <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
+      <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
     </button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
       <!-- Desenho idêntico ao slot "Perfil" da mesma referência, linha 38 —
@@ -789,6 +794,27 @@
         <button class="reset-btn" id="dashLayoutResetAllBtn" style="color:var(--ink-dim); border-color:var(--line)">Restaurar todos os layouts</button>
       </div>
     </div>
+    <!-- Painel de Notas do MVP — backlog interno de tarefas/bugs/funcionalidades/melhorias
+         (14-mvp-notes.js). Card legado transportado pelo mesmo mecanismo genérico de
+         moveLegacySettingsNodes/restoreLegacySettingsNodes (data-settings-category), sem
+         nenhuma alteração em 09-settings-modal.js além dos termos de busca. -->
+    <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
+      <h2>Notas do MVP <span class="art">backlog interno de testes</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
+      <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
+      <div class="field" style="max-width:360px">
+        <label>Mostrar ícone Notas no menu superior</label>
+        <div class="seg" id="mvpNotesVisibilitySeg" style="width:fit-content">
+          <button type="button" data-mvp-notes-visibility="show">Mostrar</button>
+          <button type="button" data-mvp-notes-visibility="hide">Ocultar</button>
+        </div>
+        <span class="note">Ocultar remove apenas o botão do menu superior. Os registros continuam salvos e podem ser reabertos por aqui.</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px">
+        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Notas</button>
+        <span class="note" id="mvpNotesSettingsCount" style="margin:0"></span>
+      </div>
+    </div>
     <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
       <div class="params-grid">
@@ -918,6 +944,62 @@
     <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
   </section>
 </div>
+<!-- Painel de Notas do MVP — drawer lateral direito (14-mvp-notes.js). Backlog interno
+     de tarefas/bugs/funcionalidades/melhorias do período de testes; não é notificação,
+     não é log de auditoria financeira, não guarda dado de trading. Construído de forma
+     preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
+<div class="mvp-notes-overlay" id="mvpNotesOverlay" aria-hidden="true">
+  <section class="mvp-notes-drawer" id="mvpNotesDrawer" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle">
+    <header class="mvp-notes-head">
+      <div class="mvp-notes-head-text">
+        <h2 id="mvpNotesTitle">Notas do MVP</h2>
+        <span class="mvp-notes-head-count" id="mvpNotesHeadCount"></span>
+      </div>
+      <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas do MVP" title="Fechar notas do MVP">
+        <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </header>
+    <div class="mvp-notes-body" id="mvpNotesBody">
+      <!-- Navegação de pastas: entidade real (Pasta), não agrupamento por título. "Todas as
+           Notas"/"Sem pasta" são visões virtuais (nunca persistidas). Em desktop (>760px) a
+           lista abaixo funciona como sidebar sempre visível; em mobile o seletor nativo faz
+           a troca rápida e "Gerenciar pastas" revela a mesma lista (criar/renomear/excluir),
+           sem duplicar lógica — um único #mvpNotesFolderNavList para os dois breakpoints. -->
+      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas de notas">
+        <div class="mvpn-folder-mobile-bar">
+          <label class="sr-only" for="mvpNotesFolderMobileSelect">Pasta</label>
+          <select id="mvpNotesFolderMobileSelect"></select>
+          <button type="button" class="mvpn-folder-manage-toggle" id="mvpNotesManageFoldersBtn" aria-expanded="false" aria-controls="mvpNotesFolderManage">Gerenciar pastas</button>
+        </div>
+        <!-- Estado recolhido controlado por classe .open (não pelo atributo hidden): em
+             desktop o painel é sempre visível; hidden com override de CSS !important deixaria
+             o atributo no DOM e o filtro [hidden] do focus trap excluiria a sidebar inteira. -->
+        <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
+          <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
+          <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
+        </div>
+      </nav>
+      <div class="mvpn-content" id="mvpNotesContent">
+        <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
+          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
+          <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
+          <input type="search" id="mvpNotesSearch" placeholder="Buscar por título, descrição, tipo, status, tela, build ou pasta" autocomplete="off">
+          <div class="mvp-notes-filters">
+            <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
+            <select id="mvpNotesFilterType"></select>
+            <label class="sr-only" for="mvpNotesFilterStatus">Filtrar por status</label>
+            <select id="mvpNotesFilterStatus"></select>
+            <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
+            <select id="mvpNotesFilterPriority"></select>
+          </div>
+          <button type="button" class="reset-btn" id="mvpNotesNewBtn">Nova nota</button>
+        </div>
+        <div class="mvp-notes-list" id="mvpNotesList" tabindex="-1"></div>
+        <div class="mvp-notes-editor" id="mvpNotesEditor" hidden></div>
+      </div>
+    </div>
+  </section>
+</div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
 
 <div class="foot-note">
@@ -964,5 +1046,6 @@
 <script src="src/js/40-app/11-operational-shell.js"></script>
 <script src="src/js/40-app/12-global-dashboard.js"></script>
 <script src="src/js/40-app/13-dashboard-layout.js"></script>
+<script src="src/js/40-app/14-mvp-notes.js"></script>
 </body>
 </html>

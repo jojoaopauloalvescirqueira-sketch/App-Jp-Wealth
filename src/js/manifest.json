@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "a46bb40f1ca75dca45fde3a7d6369eb51bbd49650d4f812cec56a47e61ba3797"
+      "sha256": "69c4f691c81d5a0ab5155b8ce22a884e57025aed6f1f5f11c51fae1b899e0c94"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "1e8f285e0f3be6b65b83ced6c50c49252d12a6df2f47de866d5237bffa0ab072"
+      "sha256": "6581c8d171731b4d95096b5dfb5311968bdb3ba904e242de62464547a0e43d6f"
     },
     {
       "order": 5,
@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "d8221c0d9a75fff41d9fab3ace9d827beb06ad46d7548525268cd73d98f88d8e"
+      "sha256": "a00d64bf4877cead06326184e8517d78d8049f9a3b5e68a71aa6d3aaaa4479ed"
     },
     {
       "order": 34,
@@ -218,7 +218,7 @@
       "order": 36,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "cfcca509f151e2bc7d21e2b2c159b3848944842c29996285ad3d6bf98f5a77d6"
+      "sha256": "36017d2557d504d0bcfad96c7a44ac1eec806de363d236274a21a9dddf36ff41"
     },
     {
       "order": 37,
@@ -243,6 +243,12 @@
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
       "sha256": "a96c67543ecbac47d570e046779eace0dc649ede8b272ab5d1418f555a18938d"
+    },
+    {
+      "order": 41,
+      "path": "src/js/40-app/14-mvp-notes.js",
+      "section": "NOTAS DO MVP — backlog interno de testes (N1)",
+      "sha256": "803e815e38cd740cbac1c6e028eeae033b8ed8d93a7976c5e391929563e2cce4"
     }
   ]
 }

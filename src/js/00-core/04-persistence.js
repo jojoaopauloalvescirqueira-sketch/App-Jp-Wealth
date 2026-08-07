@@ -29,8 +29,84 @@ function load(){
   }
   S=structuredClone(DEFAULTS);
 }
+// ---- Notas do MVP: enums fixos e normalização (14-mvp-notes.js consome os mesmos
+// arrays). Definidos aqui — script cedo — porque migrate() roda em load() (06-boot.js)
+// antes de 14-mvp-notes.js sequer carregar; a UI só lê estes valores depois. ----
+const MVP_NOTES_TYPES=['task','bug','feature','improvement'];
+const MVP_NOTES_STATUSES=['open','in_progress','done','discarded'];
+const MVP_NOTES_PRIORITIES=['low','medium','high','critical'];
+function mvpNotesId(){ return 'mvpn_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+function mvpNotesFolderId(){ return 'mvpnf_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// ---- pastas (schemaVersion 2) — normalizadas ANTES dos itens: mvpNotesNormalizeItem()
+// precisa do conjunto de IDs válidos/ambíguos resultante para reconciliar item.folderId. ----
+function mvpNotesNormalizeFolders(rawList){
+  const seenIds=new Set();
+  const ambiguousIds=new Set(); // ID original que apareceu mais de uma vez no backup — uma
+  // nota que referenciava esse ID não tem como saber qual das duas pastas era a pretendida.
+  const folders=[];
+  (Array.isArray(rawList)?rawList:[]).forEach(raw=>{
+    if(!raw || typeof raw!=='object') return;
+    const name=String(raw.name||'').trim();
+    if(!name) return; // pasta sem nome não é preservada — não existe "pasta vazia de nome"
+    let id=String(raw.id||'').trim();
+    if(!id){ id=mvpNotesFolderId(); }
+    else if(seenIds.has(id)){
+      ambiguousIds.add(id); // preserva o primeiro ID válido; a duplicata recebe ID novo
+      id=mvpNotesFolderId();
+    }
+    seenIds.add(id);
+    const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+    const updatedAt=(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt;
+    folders.push({id, name:name.slice(0,80), createdAt, updatedAt});
+  });
+  return {folders, validIds:seenIds, ambiguousIds};
+}
+function mvpNotesResolveFolderId(rawFolderId,validIds,ambiguousIds){
+  const id=String(rawFolderId||'').trim();
+  if(!id) return null; // ausente = Sem pasta
+  if(ambiguousIds.has(id)) return null; // referência ambígua = Sem pasta, nunca inventa vínculo
+  if(!validIds.has(id)) return null; // pasta inexistente = Sem pasta
+  return id;
+}
+function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds){
+  if(!raw || typeof raw!=='object') return null;
+  const title=String(raw.title||'').trim();
+  if(!title) return null; // título obrigatório — sem ele o item é descartado, não o backup inteiro
+  let id=String(raw.id||'').trim();
+  if(!id || seenIds.has(id)) id=mvpNotesId(); // impede ID ausente/duplicado
+  seenIds.add(id);
+  const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+  return {
+    id,
+    type:MVP_NOTES_TYPES.includes(raw.type)?raw.type:'task',
+    title:title.slice(0,120),
+    description:String(raw.description||'').slice(0,5000),
+    priority:MVP_NOTES_PRIORITIES.includes(raw.priority)?raw.priority:'medium',
+    status:MVP_NOTES_STATUSES.includes(raw.status)?raw.status:'open',
+    folderId:mvpNotesResolveFolderId(raw.folderId,validFolderIds,ambiguousFolderIds),
+    screenId:String(raw.screenId||''),
+    buildId:String(raw.buildId||''),
+    createdAt,
+    updatedAt:(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt
+  };
+}
+function mvpNotesNormalizeState(){
+  if(!S.mvpNotes || typeof S.mvpNotes!=='object') S.mvpNotes=structuredClone(DEFAULTS.mvpNotes);
+  S.mvpNotes.schemaVersion=2;
+  S.mvpNotes.showHeaderIcon=S.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
+  // Estado v1 (sem folders) chega aqui com S.mvpNotes.folders===undefined — normaliza para []
+  // e cada nota, sem folderId prévio, resolve para null (Sem pasta) abaixo. Sem tela de
+  // migração: o operador só vê o resultado (tudo em "Sem pasta") ao abrir o painel.
+  const {folders,validIds,ambiguousIds}=mvpNotesNormalizeFolders(S.mvpNotes.folders);
+  S.mvpNotes.folders=folders;
+  const seenIds=new Set();
+  S.mvpNotes.items=(Array.isArray(S.mvpNotes.items)?S.mvpNotes.items:[])
+    .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds))
+    .filter(Boolean);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){

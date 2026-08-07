@@ -1504,6 +1504,171 @@
   #settingsModal .settings-menu{margin-top:0}
 
   /* ==========================================================
+     NOTAS DO MVP — backlog interno (drawer lateral), 14-mvp-notes.js
+     Camada dedicada, própria (overlay/drawer com IDs reais), não reutiliza
+     o modal operacional nem a Central de Configurações como contêiner.
+     Usa exclusivamente tokens globais (--panel/--ink/--line/--violet/--f1-4)
+     — funciona nos dois temas sem overrides específicos, mesmo padrão do
+     resto do painel. ========================================================== */
+  .header-notes-badge{
+    position:absolute; top:-4px; right:-4px; min-width:15px; height:15px; padding:0 3px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:9px; font-weight:700; line-height:1;
+    border-radius:999px; background:var(--violet); color:#fff; border:1.5px solid var(--panel);
+  }
+  /* [hidden] (0,1,0) empata com .header-notes-badge{display:flex} (0,1,0); sem este
+     reforço (0,2,0) a contagem zerada continuaria visível apesar do atributo. */
+  .header-notes-badge[hidden]{display:none}
+  #headerNotesBtn{position:relative}
+  .mvp-notes-overlay{position:fixed; inset:0; z-index:var(--jp-layer-modal); display:none; background:rgba(4,7,12,.5)}
+  .mvp-notes-overlay.show{display:block}
+  .mvp-notes-drawer{
+    position:fixed; top:0; right:0; height:100vh; width:min(460px,calc(100vw - 32px));
+    display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
+    box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
+    animation:mvpNotesSlideIn .18s ease-out;
+  }
+  @keyframes mvpNotesSlideIn{from{transform:translateX(12px); opacity:.6} to{transform:translateX(0); opacity:1}}
+  @media (prefers-reduced-motion:reduce){ .mvp-notes-drawer{animation:none} }
+  .mvp-notes-head{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px 18px; border-bottom:1px solid var(--line); flex:none}
+  .mvp-notes-head-text h2{margin:0; font-size:var(--fs-lg); color:var(--ink)}
+  .mvp-notes-head-count{display:block; margin-top:3px; font-size:var(--fs-xs); font-family:var(--mono); color:var(--ink-faint)}
+  .mvp-notes-close{width:32px; height:32px; flex:0 0 32px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--panel-2); color:var(--ink-dim); cursor:pointer}
+  .mvp-notes-close:hover{color:var(--ink); border-color:var(--ink-faint)}
+  .mvp-notes-close:focus-visible,.mvpn-card:focus-visible,.mvp-notes-drawer button:focus-visible,.mvp-notes-drawer input:focus-visible,.mvp-notes-drawer select:focus-visible,.mvp-notes-drawer textarea:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  .mvp-notes-close svg{width:16px; height:16px}
+  .mvp-notes-toolbar{display:flex; flex-direction:column; gap:8px; padding:14px 18px; border-bottom:1px solid var(--line); flex:none}
+  .mvpn-view-title{margin:0; font-size:var(--fs-md); color:var(--ink); font-weight:700}
+  .mvp-notes-toolbar input[type="search"]{width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 11px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-sm)}
+  .mvp-notes-filters{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
+  .mvp-notes-filters select{width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 8px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-xs)}
+  .mvp-notes-toolbar #mvpNotesNewBtn{width:100%; justify-content:center}
+  /* Corpo do drawer: sidebar de pastas (esquerda, fixa em desktop) + coluna de conteúdo
+     (busca/filtros/lista/editor, inalterada). Em mobile (media query abaixo) a sidebar vira
+     uma barra superior e o corpo empilha em coluna. */
+  .mvp-notes-body{flex:1; min-height:0; display:flex; flex-direction:row}
+  .mvpn-folder-sidebar{
+    flex:0 0 178px; width:178px; min-height:0; overflow-y:auto;
+    border-right:1px solid var(--line); background:var(--panel-2); padding:10px 0;
+    display:flex; flex-direction:column;
+  }
+  .mvpn-folder-mobile-bar{display:none}
+  .mvpn-folder-nav-list{display:flex; flex-direction:column; gap:2px; padding:0 10px}
+  .mvpn-folder-group-label{margin:12px 10px 4px; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em}
+  .mvpn-folder-row{display:flex; align-items:center; gap:2px}
+  .mvpn-folder-btn{
+    flex:1; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    border:0; border-radius:6px; background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm);
+    padding:7px 8px; cursor:pointer; text-align:left;
+  }
+  .mvpn-folder-btn:hover{background:var(--panel)}
+  .mvpn-folder-btn[aria-current="page"]{background:var(--panel); color:var(--ink); font-weight:700; box-shadow:inset 2px 0 0 var(--violet)}
+  .mvpn-folder-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+  .mvpn-folder-count{flex:none; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .mvpn-folder-btn[aria-current="page"] .mvpn-folder-count{color:var(--ink-dim)}
+  .mvpn-folder-kebab{position:relative; flex:none}
+  .mvpn-folder-kebab summary{
+    list-style:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    border-radius:6px; color:var(--ink-faint); cursor:pointer; font-size:14px;
+  }
+  .mvpn-folder-kebab summary::-webkit-details-marker{display:none}
+  .mvpn-folder-kebab summary:hover{background:var(--panel); color:var(--ink)}
+  .mvpn-folder-kebab summary:focus-visible{background:var(--panel); color:var(--ink); outline:2px solid var(--violet); outline-offset:2px}
+  .mvpn-folder-kebab-menu{
+    position:absolute; right:0; top:calc(100% + 2px); z-index:1; min-width:132px;
+    display:flex; flex-direction:column; padding:4px; border:1px solid var(--line); border-radius:8px;
+    background:var(--panel); box-shadow:0 10px 24px rgba(0,0,0,.28);
+  }
+  /* Não depender só do comportamento nativo de <details> fechado (content-visibility em
+     navegadores Chromium, display:none em outros) para esconder o menu — reforço explícito
+     equivalente ao [hidden] do resto do drawer. */
+  .mvpn-folder-kebab:not([open]) .mvpn-folder-kebab-menu{display:none}
+  .mvpn-folder-kebab-menu button{
+    border:0; background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm);
+    text-align:left; padding:6px 8px; border-radius:5px; cursor:pointer;
+  }
+  .mvpn-folder-kebab-menu button:hover{background:var(--panel-2); color:var(--ink)}
+  .mvpn-folder-new-btn{
+    margin:10px 10px 0; padding:7px 8px; border:1px dashed var(--line); border-radius:6px;
+    background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm); cursor:pointer; text-align:left;
+  }
+  .mvpn-folder-new-btn:hover{border-color:var(--ink-faint); color:var(--ink)}
+  .mvpn-content{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column}
+  .mvp-notes-list{flex:1; min-height:0; overflow-y:auto; padding:12px 18px 24px; display:flex; flex-direction:column; gap:8px}
+  .mvp-notes-list[hidden],.mvp-notes-editor[hidden]{display:none}
+  .mvpn-empty{margin:24px 4px; font-size:var(--fs-sm); color:var(--ink-faint); line-height:1.6; text-align:center}
+  .mvpn-card{
+    display:flex; flex-direction:column; gap:6px; width:100%; text-align:left;
+    border:1px solid var(--line); border-radius:9px; padding:10px 12px; background:var(--panel-2);
+    color:var(--ink); font:inherit; cursor:pointer; transition:border-color .12s, background .12s;
+  }
+  .mvpn-card:hover{border-color:var(--ink-faint)}
+  .mvpn-card[data-priority="critical"]{border-left:3px solid var(--f2)}
+  .mvpn-card[data-status="done"],.mvpn-card[data-status="discarded"]{opacity:.62}
+  .mvpn-card-top{display:flex; flex-wrap:wrap; gap:5px}
+  .mvpn-badge{
+    font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    padding:2px 6px; border-radius:var(--radius-sm); border:1px solid var(--line); color:var(--ink-dim); background:var(--panel);
+  }
+  .mvpn-card[data-type="bug"] .mvpn-badge-type{color:var(--f3); border-color:var(--f3)}
+  .mvpn-card[data-priority="critical"] .mvpn-badge-priority{color:var(--f2); border-color:var(--f2)}
+  .mvpn-card[data-status="open"] .mvpn-badge-status{color:var(--f1); border-color:var(--f1)}
+  .mvpn-card-title{font-size:var(--fs-md); font-weight:700; color:var(--ink); line-height:1.35}
+  .mvpn-card-folder{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .mvpn-card-preview{
+    font-size:var(--fs-sm); color:var(--ink-dim); line-height:1.5;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .mvpn-card-meta{display:flex; flex-wrap:wrap; gap:5px; font-size:var(--fs-xs); font-family:var(--mono); color:var(--ink-faint)}
+  .mvp-notes-editor{flex:1; min-height:0; overflow-y:auto; padding:14px 18px 24px; display:flex; flex-direction:column; gap:12px}
+  .mvpn-editor-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .mvpn-editor-head h3{margin:0; font-size:var(--fs-md); color:var(--ink)}
+  .mvpn-editor-row{display:grid; grid-template-columns:1fr 1fr; gap:0 14px}
+  .mvpn-meta-facts{display:grid; grid-template-columns:auto 1fr; gap:5px 12px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel-2)}
+  .mvpn-meta-facts dt{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em}
+  .mvpn-meta-facts dd{margin:0; font-size:var(--fs-sm); color:var(--ink-dim)}
+  .mvp-notes-editor textarea{resize:vertical; min-height:110px; white-space:pre-wrap}
+  /* Mesma aparência de .field .note, mas classe própria (não ".note") — o alcance de
+     caracteres é um limite estático, sempre relevante; não deve virar ícone [i] colapsável
+     do sistema global de ajuda contextual (enhanceFieldNotes, 09-contextual-help.js), que
+     é para explicação sob demanda, não para o próprio limite do campo. */
+  .mvpn-hint{display:block; margin-top:4px; font-size:var(--fs-sm); color:var(--ink-faint); line-height:1.4}
+  .mvpn-editor-err{margin:0; padding:8px 10px; border:1px solid var(--f4); border-radius:6px; background:var(--f4-bg); color:var(--f4); font-size:var(--fs-sm)}
+  .mvpn-editor-err[hidden]{display:none}
+  .mvpn-editor-actions{display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:4px}
+  .mvpn-danger{color:var(--f4); border-color:var(--f4); margin-right:auto}
+  .mvpn-primary{color:var(--violet); border-color:var(--violet)}
+  /* Desktop: painel de pastas sempre visível (nenhuma regra extra — .mvpn-folder-manage é
+     visível por padrão e a classe .open só governa o estado recolhido dentro do breakpoint
+     mobile abaixo, onde sidebar e conteúdo não podem ficar comprimidos lado a lado). */
+  @media(max-width:760px){
+    .mvp-notes-drawer{width:100vw}
+    .mvp-notes-filters{grid-template-columns:1fr 1fr}
+    .mvp-notes-body{flex-direction:column}
+    .mvpn-folder-sidebar{
+      flex:none; width:100%; border-right:0; border-bottom:1px solid var(--line); padding:10px 14px;
+    }
+    .mvpn-folder-manage:not(.open){display:none}
+    .mvpn-folder-mobile-bar{display:flex; align-items:center; gap:8px}
+    .mvpn-folder-mobile-bar select{
+      flex:1; min-width:0; border:1px solid var(--line); border-radius:7px; padding:8px 9px;
+      background:var(--panel); color:var(--ink); font:inherit; font-size:var(--fs-sm);
+    }
+    .mvpn-folder-manage-toggle{
+      flex:none; border:1px solid var(--line); border-radius:7px; padding:8px 10px; background:var(--panel);
+      color:var(--ink-dim); font:inherit; font-size:var(--fs-xs); cursor:pointer; white-space:nowrap;
+    }
+    .mvpn-folder-manage-toggle:hover{color:var(--ink); border-color:var(--ink-faint)}
+    .mvpn-folder-manage{margin-top:8px}
+    .mvpn-folder-nav-list{padding:0}
+    .mvpn-folder-new-btn{margin-left:0; margin-right:0}
+  }
+  @media(max-width:460px){
+    .mvp-notes-filters{grid-template-columns:1fr}
+    .mvpn-editor-row{grid-template-columns:1fr}
+  }
+
+  /* ==========================================================
      FASE 3 — SHELL E DASHBOARD EXECUTIVO
 
      Tudo escopado a html[data-ui-version="tesla-inspired"]:

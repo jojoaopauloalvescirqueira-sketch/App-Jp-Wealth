@@ -82,13 +82,14 @@ function sessionHandleRemoteFinalization(message){
     return;
   }
   S=emptyJPWealthState();
+  persistNotesAfterSessionWipe();
   window.__onbShown=true;
   clearSessionCheckpoint();
   closeModal();
   boot();
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador.');
+  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP e suas pastas não foram apagadas e continuam salvas.');
 }
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
@@ -146,7 +147,22 @@ function emptyJPWealthState(){
   empty.phases=empty.phases.map((phase,i)=>({...phase,orders:emptyOrders([5,4,3,2][i]||3)}));
   if(Array.isArray(empty.checklist)) empty.checklist=empty.checklist.map(group=>({...group,items:group.items.map(item=>({...item,v:0}))}));
   if(empty.mei){ empty.mei.history=[]; empty.mei.lastCalibrationAt=''; }
+  // Notas do MVP são um backlog acumulado ao longo de todo o período de testes,
+  // não um dado operacional da sessão — sobrevivem a Finalizar Sessão (ao contrário
+  // de ordens, ledger, onboarding etc., zerados acima). 'S' aqui ainda é o estado
+  // anterior à troca (a reatribuição só ocorre no retorno desta função).
+  empty.mvpNotes=(S&&S.mvpNotes)?structuredClone(S.mvpNotes):structuredClone(DEFAULTS.mvpNotes);
   return empty;
+}
+// clearJPWealthLocalData() acima de cada chamador já apagou a chave inteira, e save()
+// normal fica bloqueado (jpWealthPersistenceBlocked) até o operador reengajar o
+// onboarding ou importar backup — de propósito, para não ressuscitar dado limpo à toa.
+// Sem isto, as notas ficariam só em memória e sumiriam se a aba fosse fechada antes
+// desse reengajamento. Escrita direta, única e deliberada — não reabre o portão geral
+// de save(); os demais campos gravados aqui já estão zerados, então persisti-los agora
+// ou só depois produz o mesmo resultado observável.
+function persistNotesAfterSessionWipe(){
+  try{ localStorage.setItem(LSKEY,JSON.stringify(S)); }catch(e){}
 }
 function showSessionNotice(message){
   const el=$('sessionNotice'); if(!el) return;
@@ -217,6 +233,7 @@ function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
     '<p class="modal-sub">A próxima ação removerá deste navegador a base local do JP Wealth, os registros operacionais, a contabilidade, as configurações e os dados de acesso armazenados.</p>'+
+    '<p class="session-warning">Exceção: as Notas do MVP (tarefas, bugs, funcionalidades e melhorias registradas no painel de Notas) e as pastas em que estão organizadas não são apagadas por esta ação — elas continuam salvas neste navegador.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -275,6 +292,7 @@ function finalizeJPWealthSession(){
   const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true});
   if(!report.ok){ renderSessionCleanupError(report); return; }
   S=emptyJPWealthState();
+  persistNotesAfterSessionWipe();
   window.__onbShown=true;
   clearSessionCheckpoint();
   resetSessionFinalizeEphemeralState();
@@ -282,7 +300,7 @@ function finalizeJPWealthSession(){
   boot();
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador.');
+  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP e suas pastas não foram apagadas e continuam salvas.');
 }
 function bindFinalizeSession(){
   const b=$('finalizeSessionBtn');

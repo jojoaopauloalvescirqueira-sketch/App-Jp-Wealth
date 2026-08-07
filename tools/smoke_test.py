@@ -160,10 +160,40 @@ try:
         assert page.locator('#settingsOverlay').evaluate("el => el.classList.contains('show')")
         assert not page.locator('#config').evaluate("el => el.classList.contains('active')")
         page.locator('#settingsCloseBtn').click()
+
+        # Notas do MVP — botão, drawer, criação simples, badge, ocultar sem apagar, acesso pela
+        # Central; schema v2: pastas (folders/folderId) presentes e preservadas nas mesmas ações.
+        assert page.locator('#headerNotesBtn').is_visible(), 'botão Notas do MVP deveria estar visível por padrão'
+        assert page.evaluate('S.mvpNotes.schemaVersion')==2, 'estado de notas deveria estar no schema v2'
+        assert page.evaluate('Array.isArray(S.mvpNotes.folders)'), 'schema v2 exige o array de pastas'
+        page.locator('#headerNotesBtn').click()
+        assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')"), 'drawer de Notas deveria abrir'
+        page.evaluate("window.prompt=()=> 'Pasta de fumaça'")
+        page.locator('#mvpNotesNewFolderBtn').click()
+        assert page.evaluate('S.mvpNotes.folders.length')==1, 'pasta deveria ter sido criada'
+        page.locator('#mvpNotesNewBtn').click()
+        page.locator('#mvpNoteTitle').fill('Nota de fumaça')
+        assert page.locator('#mvpNoteFolder').input_value()==page.evaluate('S.mvpNotes.folders[0].id'), 'nota nova em pasta ativa deveria herdar a pasta'
+        page.locator('#mvpNoteSaveBtn').click()
+        assert page.evaluate('S.mvpNotes.items.length')==1, 'nota deveria ter sido criada'
+        assert page.evaluate('S.mvpNotes.items[0].folderId')==page.evaluate('S.mvpNotes.folders[0].id'), 'nota deveria estar vinculada à pasta'
+        assert page.locator('#headerNotesBadge').inner_text()=='1', 'badge deveria contar a nota ativa'
+        page.locator('#mvpNotesCloseBtn').click()
+        page.locator('#headerConfigBtn').click()
+        page.evaluate("settingsNavigateToLeaf('interface')")
+        page.locator('[data-mvp-notes-visibility="hide"]').click()
+        assert page.locator('#headerNotesBtn').is_hidden(), 'ocultar deveria esconder o botão do header'
+        assert page.evaluate('S.mvpNotes.items.length')==1, 'ocultar o ícone não pode apagar a nota'
+        assert page.evaluate('S.mvpNotes.folders.length')==1, 'ocultar o ícone não pode apagar a pasta'
+        page.locator('#mvpNotesOpenFromSettingsBtn').click()
+        assert page.locator('.mvpn-card').count()==1, 'painel deveria continuar acessível pelas Configurações com o ícone oculto'
+        page.locator('#mvpNotesCloseBtn').click()
+        page.locator('[data-mvp-notes-visibility="show"]').click()
+        page.locator('#settingsCloseBtn').click()
         browser.close()
 finally:
     server.shutdown(); server.server_close()
 
 if errors:
     raise SystemExit('SMOKE FALHOU\n'+'\n'.join(errors))
-print('SMOKE OK — estado vazio, resets, ledger real, onboarding e 7 áreas operacionais verificados.')
+print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 7 áreas operacionais e Notas do MVP verificados.')

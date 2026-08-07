@@ -382,6 +382,50 @@ def run_dist_suite(browser, url):
     close_checked(page_a)
     close_checked(page_b)
 
+def run_mvp_notes_survival(browser, url):
+    """Notas do MVP (schema v2, com pastas): notas E pastas sobrevivem a Finalizar Sessão
+    (com aviso na confirmação) e a um reload real; a Zona de Perigo (mesmo mecanismo de
+    wipeAllData()) remove ambas."""
+    page = prepare_page(browser, url)
+    page.locator('#headerNotesBtn').click()
+    page.evaluate('''() => { window.prompt = () => 'Pasta que sobrevive'; }''')
+    page.locator('#mvpNotesNewFolderBtn').click()
+    assert page.evaluate('S.mvpNotes.folders.length') == 1, 'pasta deveria ter sido criada'
+    page.locator('#mvpNotesNewBtn').click()
+    page.locator('#mvpNoteTitle').fill('Nota que sobrevive a Finalizar Sessão')
+    page.locator('#mvpNoteSaveBtn').click()
+    assert page.evaluate('S.mvpNotes.items.length') == 1, 'nota deveria ter sido criada'
+    assert page.evaluate('S.mvpNotes.items[0].folderId') == page.evaluate('S.mvpNotes.folders[0].id'), \
+        'nota criada com a pasta ativa deveria ficar vinculada a ela'
+    page.locator('#mvpNotesCloseBtn').click()
+
+    assert_safe_copy_checkpoint(page)
+    click_id(page, 'finalizeSessionBtn')
+    assert 'finalizar sessão neste computador' in modal_text(page)
+    click_id(page, 'sessionHasCopy')
+    assert 'notas do mvp' in modal_text(page), 'aviso de persistência de notas ausente na confirmação'
+    assert 'pastas' in modal_text(page), 'aviso deveria mencionar as pastas das notas'
+    finish_with_phrase(page)
+    page.wait_for_timeout(500)
+    assert page.evaluate('S.mvpNotes.items.length') == 1, 'Finalizar Sessão não deveria apagar as notas'
+    assert page.evaluate('S.mvpNotes.folders.length') == 1, 'Finalizar Sessão não deveria apagar as pastas'
+    notice = page.locator('#sessionNotice').inner_text()
+    assert 'Notas do MVP' in notice and 'pastas' in notice, notice
+
+    page.reload(wait_until='load')
+    page.wait_for_timeout(700)
+    page.evaluate('''() => { window.__onbShown = true; closeModal(); }''')
+    assert page.evaluate('S.mvpNotes.items.length') == 1, 'a nota deveria sobreviver a um reload real'
+    assert page.evaluate('S.mvpNotes.folders.length') == 1, 'a pasta deveria sobreviver a um reload real'
+    assert page.evaluate('S.mvpNotes.items[0].folderId') == page.evaluate('S.mvpNotes.folders[0].id'), \
+        'o vínculo nota↔pasta deveria sobreviver ao reload'
+
+    page.evaluate('''() => { window.prompt = () => 'APAGAR'; window.alert = () => {}; wipeAllData(); }''')
+    assert page.evaluate('S.mvpNotes.items.length') == 0, 'Zona de Perigo deveria remover as notas'
+    assert page.evaluate('S.mvpNotes.folders.length') == 0, 'Zona de Perigo deveria remover as pastas'
+
+    close_checked(page)
+
 def run_cache_test(browser, base_url):
     page = browser.new_page()
     page.add_init_script('''(() => {
@@ -427,13 +471,14 @@ def main():
             app_context = browser.new_context(service_workers='block')
             run_source_surface(app_context, base_url)
             run_dist_suite(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+            run_mvp_notes_survival(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             app_context.close()
             run_cache_test(browser, base_url)
             browser.close()
     finally:
         server.shutdown()
         server.server_close()
-    print('FINALIZE SESSION OK — fingerprint, gate assíncrono, reload, duas abas, caches externos, fonte/monólito e console/pageerror verificados.')
+    print('FINALIZE SESSION OK — fingerprint, gate assíncrono, reload, duas abas, caches externos, fonte/monólito, Notas do MVP e console/pageerror verificados.')
 
 if __name__ == '__main__':
     main()

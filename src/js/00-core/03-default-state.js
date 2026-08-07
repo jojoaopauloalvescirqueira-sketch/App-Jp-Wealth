@@ -114,5 +114,11 @@ const DEFAULTS = {
     {group:'Bússola Estratégica (Art. 1.3)',items:[
       {label:'Padrão',v:1},{label:'Tendência',v:2},{label:'Amplitude',v:1},{label:'Confluência',v:2}]},
   ],
+  // Backlog interno do período de MVP (14-mvp-notes.js) — tarefas/bugs/funcionalidades/
+  // melhorias registradas pelo operador durante testes. Não é log de auditoria financeira,
+  // não é notificação, não guarda dado de trading. items: ver mvpNotesNormalizeItem().
+  // schemaVersion 2: pastas de organização (folders[]) + item.folderId — ver
+  // mvpNotesNormalizeFolders()/mvpNotesNormalizeItem() em 04-persistence.js.
+  mvpNotes:{schemaVersion:2, showHeaderIcon:true, folders:[], items:[]},
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
