@@ -503,6 +503,32 @@
             <div class="gd-posture-sub" id="gdPostureGovSub">—</div>
           </div>
         </div>
+
+        <!-- Notícias de alto impacto do dia (15-ff-news.js) — dado público do
+             Forex Factory via repositório alimentador jp-wealth-news-feed
+             (ver infra/ff-news-feed/README.md). Só leitura; nada entra em
+             cálculo ou estado S. -->
+        <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
+          <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
+          <div class="gd-news-status">
+            <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
+            <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+          </div>
+          <table class="gd-news-table">
+            <thead>
+              <tr>
+                <th scope="col" title="Horário local">Hora</th>
+                <th scope="col">Moeda</th>
+                <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
+                <th scope="col">Notícia</th>
+                <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
+                <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
+              </tr>
+            </thead>
+            <tbody id="gdNewsList"></tbody>
+          </table>
+          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
+        </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
         <div class="card gd-context-card" data-layout-card="profile-context" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
@@ -1062,5 +1088,6 @@
 <script src="src/js/40-app/12-global-dashboard.js"></script>
 <script src="src/js/40-app/13-dashboard-layout.js"></script>
 <script src="src/js/40-app/14-mvp-notes.js"></script>
+<script src="src/js/40-app/15-ff-news.js"></script>
 </body>
 </html>

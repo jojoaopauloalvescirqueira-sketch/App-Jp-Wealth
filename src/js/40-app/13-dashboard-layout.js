@@ -83,9 +83,10 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 4 },
     { id: 'vrm', zone: 'main', size: 'compact', order: 5 },
     { id: 'posture', zone: 'main', size: 'full', order: 6 },
-    { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 7 },
-    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 8 },
-    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 9 }
+    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 7 },
+    { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 8 },
+    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 9 },
+    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 10 }
   ],
   exec: [
     { id: 'exec-onboarding-alert', zone: 'main', size: 'full', order: 0 },

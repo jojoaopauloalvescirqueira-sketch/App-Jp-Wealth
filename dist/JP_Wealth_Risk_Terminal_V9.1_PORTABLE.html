@@ -3451,6 +3451,61 @@
   html[data-shell="global-dashboard"] .gd-posture-label{font-family:var(--jp-font-ui); font-size:12px; font-weight:600; margin-bottom:3px}
   html[data-shell="global-dashboard"] .gd-posture-sub{font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); line-height:1.4}
 
+  /* ---------- Notícias de alto impacto (Forex Factory, 15-ff-news.js) ----------
+     Só tokens existentes — nenhuma cor nova; claro/escuro herdados. */
+  html[data-shell="global-dashboard"] .gd-news-status{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); margin-bottom:10px;
+  }
+  html[data-shell="global-dashboard"] .gd-news-refresh{
+    width:24px; height:24px; border-radius:50%; border:1px solid var(--jp-border);
+    background:var(--jp-surface); color:var(--jp-ink-muted); cursor:pointer;
+    font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  html[data-shell="global-dashboard"] .gd-news-refresh:hover{background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink)}
+  html[data-shell="global-dashboard"] .gd-news-refresh:disabled{opacity:.5; cursor:default}
+  html[data-shell="global-dashboard"] .gd-news-table{width:100%; border-collapse:collapse}
+  html[data-shell="global-dashboard"] .gd-news-table th{
+    font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--jp-ink-muted); text-align:left;
+    padding:0 8px 6px 0; border-bottom:1px solid var(--jp-border); white-space:nowrap;
+  }
+  /* Coluna de impacto centrada: o cabeçalho abreviado e o termômetro têm
+     larguras próximas — centrar elimina a folga assimétrica que fazia a
+     coluna parecer desproporcional e roubava largura do título. */
+  html[data-shell="global-dashboard"] .gd-news-table .gd-news-imp{text-align:center}
+  html[data-shell="global-dashboard"] .gd-news-table td{
+    padding:8px 8px 8px 0; border-bottom:1px solid var(--jp-border); vertical-align:top;
+  }
+  html[data-shell="global-dashboard"] .gd-news-table th:last-child,
+  html[data-shell="global-dashboard"] .gd-news-table td:last-child{padding-right:0}
+  html[data-shell="global-dashboard"] .gd-news-table tr:last-child td{border-bottom:0}
+  /* Evento já divulgado hoje: permanece visível (contexto), mas recua. */
+  html[data-shell="global-dashboard"] .gd-news-item-past{opacity:.55}
+  html[data-shell="global-dashboard"] .gd-news-time{font-family:var(--jp-font-data); font-size:11.5px; font-weight:700; color:var(--jp-ink); white-space:nowrap}
+  html[data-shell="global-dashboard"] .gd-news-cur{
+    font-family:var(--jp-font-ui); font-size:9px; font-weight:700; letter-spacing:.04em;
+    border:1px solid var(--jp-border); border-radius:4px; padding:1px 5px; color:var(--jp-ink-muted);
+  }
+  html[data-shell="global-dashboard"] .gd-news-title{font-family:var(--jp-font-ui); font-size:11.5px; line-height:1.35; color:var(--jp-ink); width:100%}
+  html[data-shell="global-dashboard"] .gd-news-num{
+    font-family:var(--jp-font-data); font-size:10.5px; color:var(--jp-ink-muted);
+    text-align:right; white-space:nowrap;
+  }
+  /* Termômetro de impacto por notícia — miniatura da linguagem .gd-gauge
+     (trilho + preenchimento). High enche 100% em cor de perigo; medium/low
+     ficam previstos para eventual ampliação do filtro. */
+  html[data-shell="global-dashboard"] .gd-news-impact{
+    display:inline-flex; width:30px; height:6px; border-radius:3px;
+    background:var(--gd-surface-subtle, var(--panel-2)); border:1px solid var(--jp-border);
+    overflow:hidden; vertical-align:middle; margin-top:4px;
+  }
+  html[data-shell="global-dashboard"] .gd-news-impact-fill{display:block; height:100%; border-radius:2px}
+  html[data-shell="global-dashboard"] .gd-news-impact-high .gd-news-impact-fill{width:100%; background:var(--jp-danger)}
+  html[data-shell="global-dashboard"] .gd-news-impact-medium .gd-news-impact-fill{width:60%; background:var(--jp-action)}
+  html[data-shell="global-dashboard"] .gd-news-impact-low .gd-news-impact-fill{width:30%; background:var(--jp-ink-muted)}
+  html[data-shell="global-dashboard"] .gd-news-empty{font-family:var(--jp-font-ui); font-size:11.5px; color:var(--jp-ink-muted); padding:6px 0}
+
   /* ---------- Cards: sombra sutil, sem borda, raio 10px ----------
      Aplica-se a TODOS os cards já existentes (Execution Board, Parâmetros
      etc.) mesmo antes do conteúdo interno de cada tela ser adaptado —
@@ -3740,7 +3795,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'a3cf79fd6a133d4a';
+const JP_WEALTH_BUILD_ID = '4a8393f931197be6';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -4235,6 +4290,32 @@ const JP_WEALTH_BUILD_ID = 'a3cf79fd6a133d4a';
             <div class="gd-posture-label" id="gdPostureGovLbl">—</div>
             <div class="gd-posture-sub" id="gdPostureGovSub">—</div>
           </div>
+        </div>
+
+        <!-- Notícias de alto impacto do dia (15-ff-news.js) — dado público do
+             Forex Factory via repositório alimentador jp-wealth-news-feed
+             (ver infra/ff-news-feed/README.md). Só leitura; nada entra em
+             cálculo ou estado S. -->
+        <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
+          <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
+          <div class="gd-news-status">
+            <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
+            <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+          </div>
+          <table class="gd-news-table">
+            <thead>
+              <tr>
+                <th scope="col" title="Horário local">Hora</th>
+                <th scope="col">Moeda</th>
+                <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
+                <th scope="col">Notícia</th>
+                <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
+                <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
+              </tr>
+            </thead>
+            <tbody id="gdNewsList"></tbody>
+          </table>
+          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
         </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
@@ -4753,6 +4834,7 @@ const JP_WEALTH_BUILD_ID = 'a3cf79fd6a133d4a';
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -12796,9 +12878,10 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 4 },
     { id: 'vrm', zone: 'main', size: 'compact', order: 5 },
     { id: 'posture', zone: 'main', size: 'full', order: 6 },
-    { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 7 },
-    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 8 },
-    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 9 }
+    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 7 },
+    { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 8 },
+    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 9 },
+    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 10 }
   ],
   exec: [
     { id: 'exec-onboarding-alert', zone: 'main', size: 'full', order: 0 },
@@ -14304,6 +14387,179 @@ function initMvpNotes(){
   renderMvpNotesHeader();
 }
 initMvpNotes();
+// ============ NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY) — N1 ============
+// Widget informativo do Dashboard: eventos de impacto Alto do dia, nas moedas
+// que cobrem os mercados operados (EURUSD, USDJPY, GBPUSD, S&P 500, Gold →
+// USD/EUR/JPY/GBP). Fonte: JSON publicado pelo repositório público
+// jp-wealth-news-feed (GitHub Action busca o Forex Factory do lado do
+// servidor — o feed original não envia CORS e limita requisições por IP).
+// Nada aqui toca S, save() ou qualquer regra financeira: é leitura de dado
+// público com cache próprio em localStorage, fora do formato de backup.
+const FF_NEWS_DEFAULT_URL='https://raw.githubusercontent.com/jojoaopauloalvescirqueira-sketch/jp-wealth-news-feed/main/ff-high-impact.json';
+const FF_NEWS_CACHE_KEY='jpwealth.ui.ffNews.v1';
+// Override de fonte sem rebuild (ex.: migração futura para Netlify Functions):
+// localStorage.setItem('jpwealth.ui.ffNews.sourceUrl', 'https://…')
+const FF_NEWS_URL_OVERRIDE_KEY='jpwealth.ui.ffNews.sourceUrl';
+const FF_NEWS_MAX_AGE_MS=30*60*1000;
+const FF_NEWS_POLL_MS=5*60*1000;
+const FF_NEWS_CURRENCIES=['USD','EUR','JPY','GBP'];
+let ffNewsInFlight=false;
+let ffNewsLastError=false;
+
+function ffNewsSourceUrl(){
+  try{ return localStorage.getItem(FF_NEWS_URL_OVERRIDE_KEY) || FF_NEWS_DEFAULT_URL; }
+  catch(_){ return FF_NEWS_DEFAULT_URL; }
+}
+
+// Revalida a carga mesmo vinda do alimentador já filtrado — se o repositório
+// público for editado à mão ou servido truncado, lixo não chega à tela.
+function ffNewsSanitizeEvents(payload){
+  if(!payload || typeof payload!=='object' || payload.version!==1 || !Array.isArray(payload.events)) return null;
+  const events=[];
+  for(const e of payload.events){
+    if(!e || typeof e!=='object') continue;
+    if(typeof e.title!=='string' || typeof e.country!=='string' || typeof e.date!=='string') continue;
+    if(e.impact!=='High' || !FF_NEWS_CURRENCIES.includes(e.country)) continue;
+    const when=new Date(e.date);
+    if(isNaN(when.getTime())) continue;
+    events.push({title:e.title, country:e.country, date:e.date,
+      forecast:typeof e.forecast==='string'?e.forecast:'',
+      previous:typeof e.previous==='string'?e.previous:''});
+  }
+  return {generatedAt:typeof payload.generated_at==='string'?payload.generated_at:'', events};
+}
+
+function ffNewsReadCache(){
+  try{
+    const raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    if(!raw) return null;
+    const parsed=JSON.parse(raw);
+    if(!parsed || typeof parsed!=='object' || typeof parsed.fetchedAt!=='number') return null;
+    const clean=ffNewsSanitizeEvents(parsed.payload);
+    if(!clean) return null;
+    return {fetchedAt:parsed.fetchedAt, ...clean};
+  }catch(_){ return null; }
+}
+function ffNewsWriteCache(payload){
+  try{ localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload})); }
+  catch(_){ /* cota cheia: segue só em memória até o próximo render */ }
+}
+
+function ffNewsIsToday(date){
+  const now=new Date();
+  return date.getFullYear()===now.getFullYear() && date.getMonth()===now.getMonth() && date.getDate()===now.getDate();
+}
+
+function ffNewsStatusText(cache){
+  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando notícias…';
+  const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
+  const stamp=(gen && !isNaN(gen.getTime()))
+    ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  return (ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
+}
+
+function ffNewsRender(){
+  const list=document.getElementById('gdNewsList');
+  const empty=document.getElementById('gdNewsEmpty');
+  const status=document.getElementById('gdNewsStatus');
+  if(!list || !empty || !status) return;
+  const cache=ffNewsReadCache();
+  status.textContent=ffNewsStatusText(cache);
+  list.textContent='';
+  const today=(cache?cache.events:[])
+    .map(e=>({...e, when:new Date(e.date)}))
+    .filter(e=>ffNewsIsToday(e.when))
+    .sort((a,b)=>a.when-b.when);
+  empty.hidden=!(cache && today.length===0);
+  const now=Date.now();
+  for(const e of today){
+    const tr=document.createElement('tr');
+    tr.className='gd-news-item'+(e.when.getTime()<now?' gd-news-item-past':'');
+    const tdTime=document.createElement('td');
+    const time=document.createElement('time');
+    time.className='gd-news-time';
+    time.dateTime=e.date;
+    time.textContent=e.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    tdTime.append(time);
+    const tdCur=document.createElement('td');
+    const cur=document.createElement('span');
+    cur.className='gd-news-cur';
+    cur.textContent=e.country;
+    tdCur.append(cur);
+    // Termômetro de impacto — mesma linguagem dos medidores horizontais do
+    // app (.gd-gauge). Hoje só chegam eventos High (filtro na origem e na
+    // sanitização); os níveis medium/low já têm classe prevista caso o
+    // filtro seja ampliado no futuro.
+    const tdImpact=document.createElement('td');
+    tdImpact.className='gd-news-imp';
+    const meter=document.createElement('span');
+    meter.className='gd-news-impact gd-news-impact-high';
+    meter.setAttribute('role','img');
+    meter.setAttribute('aria-label','Impacto alto');
+    meter.title='Impacto alto';
+    const fill=document.createElement('span');
+    fill.className='gd-news-impact-fill';
+    meter.append(fill);
+    tdImpact.append(meter);
+    const tdTitle=document.createElement('td');
+    tdTitle.className='gd-news-title';
+    tdTitle.textContent=e.title;
+    const tdPrev=document.createElement('td');
+    tdPrev.className='gd-news-num';
+    tdPrev.textContent=e.forecast||'—';
+    const tdAnt=document.createElement('td');
+    tdAnt.className='gd-news-num';
+    tdAnt.textContent=e.previous||'—';
+    tr.append(tdTime,tdCur,tdImpact,tdTitle,tdPrev,tdAnt);
+    list.append(tr);
+  }
+}
+
+function ffNewsCacheStale(){
+  const cache=ffNewsReadCache();
+  return !cache || (Date.now()-cache.fetchedAt)>FF_NEWS_MAX_AGE_MS;
+}
+
+function ffNewsFetch(force){
+  if(ffNewsInFlight) return;
+  if(!force && !ffNewsCacheStale()) return;
+  const btn=document.getElementById('gdNewsRefreshBtn');
+  const status=document.getElementById('gdNewsStatus');
+  ffNewsInFlight=true;
+  if(btn) btn.disabled=true;
+  if(status) status.textContent='Atualizando…';
+  fetch(ffNewsSourceUrl(),{cache:'no-store'})
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(payload=>{
+      if(!ffNewsSanitizeEvents(payload)) throw new Error('carga inválida');
+      ffNewsWriteCache(payload);
+      ffNewsLastError=false;
+    })
+    .catch(()=>{ ffNewsLastError=true; })
+    .finally(()=>{
+      ffNewsInFlight=false;
+      if(btn) btn.disabled=false;
+      ffNewsRender();
+    });
+}
+
+function initFfNews(){
+  const card=document.querySelector('[data-layout-card="news-high-impact"]');
+  if(!card) return;
+  const btn=document.getElementById('gdNewsRefreshBtn');
+  if(btn) btn.addEventListener('click',()=>ffNewsFetch(true));
+  window.addEventListener('online',()=>ffNewsFetch(false));
+  // Poll leve: re-render cobre a virada do dia; fetch só quando o cache
+  // envelheceu e a aba está visível — respeita o rate-limit da fonte.
+  setInterval(()=>{
+    ffNewsRender();
+    if(document.visibilityState==='visible') ffNewsFetch(false);
+  },FF_NEWS_POLL_MS);
+  ffNewsRender();
+  ffNewsFetch(false);
+}
+initFfNews();
 </script>
 </body>
 </html>
