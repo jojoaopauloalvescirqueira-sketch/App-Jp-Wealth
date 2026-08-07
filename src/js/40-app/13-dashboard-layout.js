@@ -10,7 +10,7 @@
 // widgets já existentes, identificados por data-layout-card (nenhum ID
 // interno de renderizador muda, nenhum nó é clonado, só movido).
 //
-// Um único motor para as 7 telas operacionais — não há implementação
+// Um único motor para todas as telas registradas — não há implementação
 // duplicada por tela. O registro abaixo (JP_WIDGET_SCREENS) é só estrutural
 // (tela → contêineres → zonas); a política de cada widget (zonas
 // permitidas, tamanhos permitidos, se pode mover) continua vindo
@@ -25,13 +25,15 @@
 
 /* ======================= REGISTRO ESTRUTURAL ======================= */
 
+// Parâmetros, Motor de Lote e Checklist saíram deste registro quando
+// migraram da navegação superior para dentro da Central de Configurações
+// (grupo "Operação") — dentro de um modal não existe sessão de edição de
+// layout. Preferências v3 salvas para telas fora do registro são
+// simplesmente ignoradas pela normalização (itera JP_WIDGET_SCREEN_IDS).
 const JP_WIDGET_SCREENS = {
   dash: { label: 'Dashboard', zones: ['main', 'sidebar'], main: 'gdDashMain', sidebar: 'gdDashSide' },
   exec: { label: 'Execution Board', zones: ['main'], main: 'execWidgetGrid', sidebar: null },
-  params: { label: 'Parâmetros', zones: ['main'], main: 'paramsWidgetGrid', sidebar: null },
-  motor: { label: 'Motor de Lote', zones: ['main'], main: 'motorWidgetGrid', sidebar: null },
   contas: { label: 'Contas', zones: ['main'], main: 'contasWidgetGrid', sidebar: null },
-  check: { label: 'Checklist', zones: ['main'], main: 'checkWidgetGrid', sidebar: null },
   contab: { label: 'Contabilidade', zones: ['main'], main: 'contabWidgetGrid', sidebar: null }
 };
 const JP_WIDGET_SCREEN_IDS = Object.keys(JP_WIDGET_SCREENS);
@@ -47,12 +49,8 @@ const DASH_LAYOUT_LABELS = {
   'exec-metrics-banners': 'Métricas e avisos', 'exec-coherence': 'Coerência de Alavancagem',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
   'exec-lifo-monitor': 'Consolidado LIFO',
-  'params-balance-cycle': 'Saldo e Ciclo', 'params-constants': 'Constantes & Decisões',
-  'params-matrix': 'Matriz Quadrifásica Ativa',
-  'motor-position-sizing': 'Motor de Lote · Position Sizing', 'motor-risk-profiles': 'Perfis de Risco',
   'contas-governance-note': 'Nota de Governança', 'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
-  'check-pretrade': 'Checklist Pré-Trade', 'check-result': 'Resultado do checklist',
   'contab-period-goals': 'Período & Metas', 'contab-simulation': 'Simulação Patrimonial',
   'contab-cycle-pace': 'Ritmo do Ciclo', 'contab-daily-close': 'Fechamento Diário',
   'contab-real-vs-projected': 'Real vs Projetado', 'contab-daily-projection': 'Projeção Diária',
@@ -100,23 +98,10 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 7 },
     { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 8 }
   ],
-  params: [
-    { id: 'params-balance-cycle', zone: 'main', size: 'full', order: 0 },
-    { id: 'params-constants', zone: 'main', size: 'full', order: 1 },
-    { id: 'params-matrix', zone: 'main', size: 'full', order: 2 }
-  ],
-  motor: [
-    { id: 'motor-position-sizing', zone: 'main', size: 'full', order: 0 },
-    { id: 'motor-risk-profiles', zone: 'main', size: 'full', order: 1 }
-  ],
   contas: [
     { id: 'contas-governance-note', zone: 'main', size: 'full', order: 0 },
     { id: 'contas-accounts-table', zone: 'main', size: 'full', order: 1 },
     { id: 'contas-order-application', zone: 'main', size: 'full', order: 2 }
-  ],
-  check: [
-    { id: 'check-pretrade', zone: 'main', size: 'full', order: 0 },
-    { id: 'check-result', zone: 'main', size: 'full', order: 1 }
   ],
   contab: [
     { id: 'contab-period-goals', zone: 'main', size: 'full', order: 0 },
@@ -332,10 +317,10 @@ function dashLayoutBoot() {
 // Norma registrada em app.css ("NORMA DE POPOVERS"): nenhum popover vive
 // dentro de um card animado/transformado. Todo popover nasce em
 // #jpPopoverLayer, position:fixed, posicionado por getBoundingClientRect().
-// Reutilizado sem alteração pelas 7 telas — nenhum layer por tela.
+// Reutilizado sem alteração por todas as telas — nenhum layer por tela.
 
 // Sessão de edição GLOBAL (não por tela): uma vez iniciada, permanece ativa
-// ao navegar pelas 7 telas. `snapshots` guarda uma cópia congelada de ordem+
+// ao navegar pelas telas. `snapshots` guarda uma cópia congelada de ordem+
 // zona+tamanho de TODAS as telas, capturada uma única vez na entrada — nunca
 // por referência mutável (dashLayoutCurrentScreenState já retorna arrays/
 // objetos novos a cada chamada; aqui, além disso, cada um é Object.freeze()).
@@ -679,7 +664,7 @@ function dashLayoutEnterEdit() {
   dashLayoutState.editing = true;
   dashLayoutState.activeScreenId = screenId;
   dashLayoutState.dirtyScreens = new Set();
-  // Snapshot de TODAS as 7 telas, capturado uma única vez na entrada —
+  // Snapshot de TODAS as telas registradas, capturado uma única vez na entrada —
   // congelado (nunca mutável por referência); usado por Cancelar tudo e
   // pela detecção estrutural de dirty em cada tela.
   dashLayoutState.snapshots = {};
@@ -696,7 +681,7 @@ function dashLayoutEnterEdit() {
 
 // "Cancelar tudo": só pergunta se há algo de fato para descartar
 // (dirtyScreens.size>0) — sem alteração nenhuma, sai direto. Ao confirmar,
-// restaura os snapshots das 7 telas (mesmo as não-dirty, por simetria —
+// restaura os snapshots de todas as telas (mesmo as não-dirty, por simetria —
 // idempotente para quem já está igual ao snapshot) e encerra a sessão sem
 // gravar nada.
 function dashLayoutCancelAll() {
@@ -768,7 +753,7 @@ function dashLayoutRestoreDefaultConfirm() {
 }
 
 // Restaurar todos: mesma lógica dual — dentro da sessão é provisório em
-// TODAS as 7 telas (só entram em dirtyScreens as que realmente mudaram em
+// TODAS as telas registradas (só entram em dirtyScreens as que realmente mudaram em
 // relação ao snapshot — Etapa 4 do pedido); fora da sessão, imediato como
 // sempre foi.
 function dashLayoutRestoreAllConfirm() {

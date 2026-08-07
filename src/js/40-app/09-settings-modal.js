@@ -9,6 +9,7 @@ const SETTINGS_GROUPS=[
   {id:'general', label:'Geral', icon:'general'},
   {id:'appearance-interface', label:'Aparência e Interface', desc:'Tema, ícone, organização visual e editor.', icon:'appearance', children:['appearance','interface','editor']},
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
+  {id:'operations', label:'Operação', desc:'Parâmetros do ciclo, Motor de Lote e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-motor','tool-check']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
@@ -21,6 +22,9 @@ const SETTINGS_LEAVES={
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Diretrizes e regras normativas vigentes.', terms:['estatuto','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
+  'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
+  'tool-motor':{label:'Motor de Lote', group:'operations', desc:'Position sizing com câmbio atualizado e teto por operação.', terms:['motor de lote','position sizing','lote','câmbio','nocional','teto','instrumento','perfis de risco']},
+  'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
   backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
 };
@@ -30,6 +34,7 @@ const SETTINGS_ICONS={
   general:'<path d="M4 7h11M19 7h1M4 12h6M14 12h6M4 17h13M21 17h-1"/><circle cx="17" cy="7" r="2"/><circle cx="11" cy="12" r="2"/><circle cx="18" cy="17" r="2"/>',
   appearance:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
   governance:'<path d="M4 19h16"/><path d="M6 19V9l6-4 6 4v10"/><path d="M10 19v-6h4v6"/>',
+  operations:'<circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/><circle cx="12" cy="12" r="2"/>',
   knowledge:'<path d="M12 6c-1.8-1.2-4.2-1.6-6.5-1v12.5c2.3-.6 4.7-.2 6.5 1 1.8-1.2 4.2-1.6 6.5-1V5c-2.3-.6-4.7-.2-6.5 1Z"/><path d="M12 6v12.5"/>',
   data:'<path d="M12 3c4 0 7 1.1 7 2.5S16 8 12 8s-7-1.1-7-2.5S8 3 12 3Z"/><path d="M5 5.5V12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12v6.5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V12"/>',
   about:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".2" fill="currentColor" stroke-width="2.4"/>',
@@ -134,6 +139,9 @@ function buildSettingsContent(){
   createSettingsPanel('educational',educationPanel());
   createSettingsPanel('statute','<p class="settings-lead">Conteúdo predominantemente de leitura. O documento normativo não é editável nesta central.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Abrir documento integral (PDF)</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
+  createSettingsPanel('tool-params','<p class="settings-lead">A tela de Parâmetros completa — leituras analíticas com os valores, unidades e persistência originais.</p><div data-settings-slot="tool-params"></div>');
+  createSettingsPanel('tool-motor','<p class="settings-lead">O Motor de Lote completo — cálculo de position sizing com o câmbio, tetos e validações originais.</p><div data-settings-slot="tool-motor"></div>');
+  createSettingsPanel('tool-check','<p class="settings-lead">O Checklist Pré-Trade completo — mesma pontuação, mesmos critérios, mesma persistência.</p><div data-settings-slot="tool-check"></div>');
   createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
   content.addEventListener('click',settingsContentClick,true);
@@ -169,6 +177,16 @@ function moveSettingsSearchToHeader(){
   if(results) slot.append(results);
 }
 
+// Telas operacionais que migraram da navegação superior para o grupo
+// "Operação": o grid inteiro de cada tela é transportado (nunca clonado —
+// IDs, listeners e estado interno preservados) para o slot do painel
+// enquanto a central está aberta, e devolvido à <section> hospedeira ao
+// fechar — exatamente o contrato dos nós legados do #config.
+const SETTINGS_SCREEN_GRIDS={
+  'tool-params':{grid:'paramsWidgetGrid',host:'params'},
+  'tool-motor':{grid:'motorWidgetGrid',host:'motor'},
+  'tool-check':{grid:'checkWidgetGrid',host:'check'}
+};
 function moveLegacySettingsNodes(){
   const host=settingsEl('config'); if(!host) return;
   if(!settingsState.legacyNodes.length) settingsState.legacyNodes=[...host.children].filter(node=>node.matches('[data-settings-category]'));
@@ -176,12 +194,20 @@ function moveLegacySettingsNodes(){
     const category=node.dataset.settingsCategory, slot=settingsEl('settingsContent').querySelector(`[data-settings-slot="${category}"]`);
     if(slot) slot.append(node);
   });
+  Object.entries(SETTINGS_SCREEN_GRIDS).forEach(([leafId,cfg])=>{
+    const grid=settingsEl(cfg.grid), slot=settingsEl('settingsContent').querySelector(`[data-settings-slot="${leafId}"]`);
+    if(grid&&slot&&grid.parentElement!==slot) slot.append(grid);
+  });
   const rail=settingsEl('railToggle');
   if(rail&&rail.parentElement!==settingsEl('settingsRailSlot')){ settingsState.railParent=rail.parentElement; settingsState.railNext=rail.nextSibling; settingsEl('settingsRailSlot').append(rail); }
 }
 function restoreLegacySettingsNodes(){
   const host=settingsEl('config'); if(!host) return;
   settingsState.legacyNodes.forEach(node=>host.append(node));
+  Object.values(SETTINGS_SCREEN_GRIDS).forEach(cfg=>{
+    const grid=settingsEl(cfg.grid), screenHost=settingsEl(cfg.host);
+    if(grid&&screenHost&&grid.parentElement!==screenHost) screenHost.append(grid);
+  });
   const rail=settingsEl('railToggle');
   if(rail&&settingsState.railParent){ settingsState.railParent.insertBefore(rail,settingsState.railNext); }
 }
@@ -196,6 +222,13 @@ function activateSettingsCategory(id,options={}){
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
   settingsUpdateSidebarActive(targetId);
   settingsUpdatePageHeader(targetId);
+  // Mesmo gatilho que vivia em navigateToScreen('motor'): 1ª visita ao
+  // Motor de Lote na sessão tenta atualizar o câmbio — silencioso se
+  // offline (o status na própria tela informa, nunca falha em silêncio).
+  if(targetId==='tool-motor' && typeof fxAutoFetchedThisSession!=='undefined' && !fxAutoFetchedThisSession && typeof updateFxRates==='function'){
+    fxAutoFetchedThisSession=true;
+    updateFxRates();
+  }
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
 

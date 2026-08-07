@@ -1,8 +1,19 @@
 // ============ NAV ============
+// Telas que migraram para a Central de Configurações (grupo "Operação"):
+// qualquer navegação para elas — Ações Rápidas, CTAs, chamadas por string —
+// abre a Central direto na subpágina equivalente. O gatilho de câmbio do
+// Motor (1× por sessão) vive agora na abertura da subpágina, em
+// 09-settings-modal.js (activateSettingsCategory).
+const SCREEN_TO_SETTINGS_LEAF={params:'tool-params',motor:'tool-motor',check:'tool-check'};
 function navigateToScreen(t){
   const screenId=typeof t==='string'?t:t.dataset.screen;
   if(screenId==='config'){
     if(typeof openSettingsModal==='function') openSettingsModal('about',typeof t==='string'?$('headerConfigBtn'):t);
+    return;
+  }
+  if(SCREEN_TO_SETTINGS_LEAF[screenId]){
+    const opener=typeof t==='string'?(document.activeElement instanceof HTMLElement?document.activeElement:undefined):t;
+    if(typeof openSettingsModal==='function') openSettingsModal(SCREEN_TO_SETTINGS_LEAF[screenId],opener);
     return;
   }
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -13,10 +24,6 @@ function navigateToScreen(t){
   screen.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   maybeShowOnboardingNavReminder(screenId);
-  if(screenId==='motor' && !fxAutoFetchedThisSession){
-    fxAutoFetchedThisSession=true;
-    updateFxRates(); // tentativa automática, silenciosa se offline (status visível, nunca falha em silêncio)
-  }
 }
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>navigateToScreen(t)));
 $('fxUpdateBtn').addEventListener('click',()=>updateFxRates());
