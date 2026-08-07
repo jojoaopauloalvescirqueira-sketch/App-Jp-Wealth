@@ -820,6 +820,38 @@
   .session-notice.show{opacity:1; transform:translateY(0)}
   @media(max-width:520px){.session-notice{right:10px; bottom:10px; max-width:calc(100vw - 20px)}}
 
+  /* ==========================================================
+     AVISO DE FALHA DE GRAVAÇÃO (A-001) — 00-core/04-persistence.js
+     Não é toast: permanece até a gravação voltar a funcionar. Ancorado no
+     topo para não disputar espaço com .session-notice (canto inferior) e em
+     --jp-layer-toast para continuar visível por cima de modais e drawers —
+     uma falha de persistência precisa ser vista mesmo com a Central aberta.
+     Só o próprio aviso recebe eventos; o app segue utilizável atrás dele.
+     Cores vêm dos tokens (--f4 erro, --f1 sucesso), logo acompanham os dois
+     temas sem override. ========================================================== */
+  /* top:72px ancora logo abaixo do <header> sticky (60px de altura), para o aviso não
+     tapar os controles do topo — inclusive o botão de Configurações, que é uma das rotas
+     para o backup. */
+  .persistence-alert{
+    position:fixed; top:72px; left:12px; right:12px; margin:0 auto;
+    max-width:min(680px, calc(100vw - 24px)); z-index:var(--jp-layer-toast);
+    padding:12px 16px; border:1px solid var(--f4); border-left:3px solid var(--f4);
+    border-radius:var(--radius); background:var(--panel); color:var(--ink);
+    box-shadow:0 12px 36px rgba(0,0,0,.42);
+    display:flex; flex-direction:column; gap:6px;
+  }
+  /* Vazio = saudável. Esconder pelo :empty (em vez de [hidden]) mantém o nó
+     role="alert" vivo no DOM, que é o que torna o anúncio confiável quando o
+     conteúdo aparece. */
+  .persistence-alert:empty{display:none}
+  .persistence-alert.is-recovered{border-color:var(--f1); border-left-color:var(--f1)}
+  .persistence-alert-title{margin:0; font-family:var(--mono); font-size:var(--fs-md); font-weight:700; color:var(--f4)}
+  .persistence-alert.is-recovered .persistence-alert-title{color:var(--f1)}
+  .persistence-alert-text{margin:0; font-size:var(--fs-sm); line-height:1.5; color:var(--ink-dim)}
+  .persistence-alert-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:2px}
+  .persistence-alert-btn{color:var(--f4); border-color:var(--f4)}
+  .persistence-alert-btn:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+
   /* ============ PWA · ESCOLHA DE ÍCONE ============ */
   .app-icon-config{border-top:1px solid var(--line); padding-top:16px}
   .app-icon-summary{display:grid; grid-template-columns:76px minmax(0,1fr); gap:14px; align-items:center; max-width:640px}
@@ -3705,7 +3737,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '1fe1b000e5a61a17';
+const JP_WEALTH_BUILD_ID = 'fc51e6bb9211428e';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -4699,6 +4731,11 @@ const JP_WEALTH_BUILD_ID = '1fe1b000e5a61a17';
   </section>
 </div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
+<!-- Aviso persistente de falha de gravação (A-001, 00-core/04-persistence.js). Fica sempre
+     no DOM e vazio: .persistence-alert:empty o esconde por CSS. Manter o nó vivo (em vez de
+     criá-lo sob demanda ou alternar [hidden]) é o que faz role="alert" anunciar de forma
+     confiável quando o conteúdo aparece. Não é um toast: só sai quando a gravação volta. -->
+<div class="persistence-alert" id="persistenceAlert" role="alert" aria-live="assertive"></div>
 
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
@@ -5311,13 +5348,120 @@ function migrate(){ // garante chaves novas se schema evoluir
   }
 }
 let saveTimer;
+// ---- FALHA DE GRAVAÇÃO (A-001) ----------------------------------------------
+// Estado de EXECUÇÃO apenas: vive fora de S, nunca é serializado, nunca entra no
+// backup e não altera schemaVersion. Um estado de falha persistido seria mentira —
+// descreve o navegador de agora, não a base do operador.
+// kind: 'storage' (setItem lançou — o estado É serializável, o backup funciona) ou
+// 'serialize' (JSON.stringify lançou — o backup usa a MESMA serialização e tende a
+// falhar junto; o aviso não pode prometer o que não pode cumprir).
+const jpWealthPersistenceFailure={active:false, kind:null, count:0, lastError:null, recoveryTimer:null};
+function persistenceAlertEl(){ return document.getElementById('persistenceAlert'); }
+// exportFullBackup() vive em 30-accounting/01-daily-ledger.js (script 18) e a Central
+// em 09-settings-modal.js (script 36) — ambos carregam DEPOIS deste arquivo (script 4).
+// Por isso a checagem de existência acontece no clique, não na criação do aviso.
+function persistenceAlertExportBackup(){
+  // Serializa o S em memória: não depende de nenhuma gravação anterior ter dado certo,
+  // que é exatamente a razão de existir este botão. Na falha de SERIALIZAÇÃO, porém,
+  // exportFullBackup() tende a lançar pelo mesmo motivo — o try/catch impede que o
+  // clique vire exceção não tratada e diz a verdade ao operador.
+  try{
+    if(typeof exportFullBackup==='function'){ exportFullBackup(); return; }
+    if(typeof openSettingsModal==='function'){ openSettingsModal('backup', persistenceAlertEl()); return; }
+    alert('Abra Configurações → Dados e Segurança → Backup e Recuperação para exportar a base antes de fechar esta página.');
+  }catch(e){
+    console.error('JP Wealth: a exportação do backup também falhou.', e);
+    alert('A exportação também falhou — os dados em memória não puderam ser serializados. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos, notas).');
+  }
+}
+function renderPersistenceFailureWarning(){
+  const el=persistenceAlertEl(); if(!el) return;
+  clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+  el.className='persistence-alert is-failure';
+  const serialize=jpWealthPersistenceFailure.kind==='serialize';
+  // innerHTML substitui o nó do botão inteiro a cada render, então o listener antigo
+  // morre junto — não há como acumular listeners duplicados.
+  el.innerHTML=serialize
+    ? '<p class="persistence-alert-title">Falha ao preparar os dados para gravação</p>'+
+      '<p class="persistence-alert-text">As alterações não puderam ser convertidas para gravação — o problema está nos dados em memória, não no armazenamento. '+
+      'Não recarregue nem feche esta página: alterações recentes podem ser perdidas e a exportação de backup pode falhar pelo mesmo motivo. '+
+      'Tente exportar mesmo assim e, se a exportação falhar, anote manualmente os registros mais recentes.</p>'+
+      '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertBackupBtn">Tentar exportar backup</button></div>'
+    : '<p class="persistence-alert-title">Falha ao salvar os dados</p>'+
+      '<p class="persistence-alert-text">O navegador não conseguiu gravar as alterações no armazenamento local. '+
+      'Não recarregue nem feche esta página antes de exportar um backup, pois alterações recentes podem ser perdidas.</p>'+
+      '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertBackupBtn">Exportar backup agora</button></div>';
+  const btn=document.getElementById('persistenceAlertBackupBtn');
+  if(btn) btn.addEventListener('click',persistenceAlertExportBackup);
+}
+function setPersistenceFailureState(error,kind){
+  kind=kind==='serialize'?'serialize':'storage';
+  jpWealthPersistenceFailure.count++;
+  jpWealthPersistenceFailure.lastError=error||null;
+  // Repinta na transição saudável→falha E quando o TIPO muda (storage⇄serialize) — o
+  // aviso precisa refletir a causa atual. Falha repetida do mesmo tipo não repinta:
+  // o role="alert" reanunciaria o mesmo texto no leitor de tela a cada tecla.
+  if(jpWealthPersistenceFailure.active && jpWealthPersistenceFailure.kind===kind) return;
+  jpWealthPersistenceFailure.active=true;
+  jpWealthPersistenceFailure.kind=kind;
+  renderPersistenceFailureWarning();
+}
+function clearPersistenceFailureState(){
+  if(!jpWealthPersistenceFailure.active) return; // caminho saudável: custo zero
+  jpWealthPersistenceFailure.active=false;
+  jpWealthPersistenceFailure.kind=null;
+  jpWealthPersistenceFailure.count=0;
+  jpWealthPersistenceFailure.lastError=null;
+  const el=persistenceAlertEl(); if(!el) return;
+  el.className='persistence-alert is-recovered';
+  el.innerHTML='<p class="persistence-alert-title">Gravação restabelecida</p>'+
+    '<p class="persistence-alert-text">As alterações voltaram a ser salvas neste navegador.</p>';
+  clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+  jpWealthPersistenceFailure.recoveryTimer=setTimeout(()=>{
+    if(jpWealthPersistenceFailure.active) return; // falhou de novo enquanto esperava
+    const cur=persistenceAlertEl(); if(!cur) return;
+    cur.className='persistence-alert'; cur.innerHTML=''; // :empty volta a esconder
+  },6000);
+}
+// Apaga um "salvo" ainda no ar de uma gravação anterior bem-sucedida: sua janela é de
+// 1200ms, então uma falha logo em seguida deixaria selo verde e aviso de erro na tela
+// ao mesmo tempo, dizendo coisas opostas.
+function hideStaleSavedTag(){
+  const stale=document.getElementById('savedTag');
+  if(stale){ clearTimeout(saveTimer); stale.classList.remove('show'); }
+}
 function save(){
   if(jpWealthPersistenceBlocked) return false;
-  try{localStorage.setItem(LSKEY,JSON.stringify(S));
-    const t=document.getElementById('savedTag'); t.classList.add('show');
+  // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
+  // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
+  // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez
+  // de prometer uma exportação que não vai funcionar.
+  let payload;
+  try{
+    payload=JSON.stringify(S);
+  }catch(e){
+    console.error('JP Wealth: falha ao preparar (serializar) o estado para gravação.', e);
+    hideStaleSavedTag();
+    setPersistenceFailureState(e,'serialize');
+    return false;
+  }
+  // try estreito, cobrindo só a gravação: qualquer exceção posterior (ex.: #savedTag
+  // ausente) não deve ser relatada como falha de armazenamento.
+  try{
+    localStorage.setItem(LSKEY,payload);
+  }catch(e){
+    console.error('JP Wealth: falha ao gravar o estado no armazenamento local.', e);
+    hideStaleSavedTag();
+    setPersistenceFailureState(e,'storage');
+    return false;
+  }
+  clearPersistenceFailureState();
+  const t=document.getElementById('savedTag');
+  if(t){
+    t.classList.add('show');
     clearTimeout(saveTimer); saveTimer=setTimeout(()=>t.classList.remove('show'),1200);
-    return true;
-  }catch(e){ return false; }
+  }
+  return true;
 }
 // ============ HELPERS ============
 const $=id=>document.getElementById(id);

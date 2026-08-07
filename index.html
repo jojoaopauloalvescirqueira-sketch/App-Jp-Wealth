@@ -1001,6 +1001,11 @@
   </section>
 </div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>
+<!-- Aviso persistente de falha de gravação (A-001, 00-core/04-persistence.js). Fica sempre
+     no DOM e vazio: .persistence-alert:empty o esconde por CSS. Manter o nó vivo (em vez de
+     criá-lo sob demanda ou alternar [hidden]) é o que faz role="alert" anunciar de forma
+     confiável quando o conteúdo aparece. Não é um toast: só sai quando a gravação volta. -->
+<div class="persistence-alert" id="persistenceAlert" role="alert" aria-live="assertive"></div>
 
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>

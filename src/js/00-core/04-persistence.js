@@ -309,11 +309,118 @@ function migrate(){ // garante chaves novas se schema evoluir
   }
 }
 let saveTimer;
+// ---- FALHA DE GRAVAÇÃO (A-001) ----------------------------------------------
+// Estado de EXECUÇÃO apenas: vive fora de S, nunca é serializado, nunca entra no
+// backup e não altera schemaVersion. Um estado de falha persistido seria mentira —
+// descreve o navegador de agora, não a base do operador.
+// kind: 'storage' (setItem lançou — o estado É serializável, o backup funciona) ou
+// 'serialize' (JSON.stringify lançou — o backup usa a MESMA serialização e tende a
+// falhar junto; o aviso não pode prometer o que não pode cumprir).
+const jpWealthPersistenceFailure={active:false, kind:null, count:0, lastError:null, recoveryTimer:null};
+function persistenceAlertEl(){ return document.getElementById('persistenceAlert'); }
+// exportFullBackup() vive em 30-accounting/01-daily-ledger.js (script 18) e a Central
+// em 09-settings-modal.js (script 36) — ambos carregam DEPOIS deste arquivo (script 4).
+// Por isso a checagem de existência acontece no clique, não na criação do aviso.
+function persistenceAlertExportBackup(){
+  // Serializa o S em memória: não depende de nenhuma gravação anterior ter dado certo,
+  // que é exatamente a razão de existir este botão. Na falha de SERIALIZAÇÃO, porém,
+  // exportFullBackup() tende a lançar pelo mesmo motivo — o try/catch impede que o
+  // clique vire exceção não tratada e diz a verdade ao operador.
+  try{
+    if(typeof exportFullBackup==='function'){ exportFullBackup(); return; }
+    if(typeof openSettingsModal==='function'){ openSettingsModal('backup', persistenceAlertEl()); return; }
+    alert('Abra Configurações → Dados e Segurança → Backup e Recuperação para exportar a base antes de fechar esta página.');
+  }catch(e){
+    console.error('JP Wealth: a exportação do backup também falhou.', e);
+    alert('A exportação também falhou — os dados em memória não puderam ser serializados. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos, notas).');
+  }
+}
+function renderPersistenceFailureWarning(){
+  const el=persistenceAlertEl(); if(!el) return;
+  clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+  el.className='persistence-alert is-failure';
+  const serialize=jpWealthPersistenceFailure.kind==='serialize';
+  // innerHTML substitui o nó do botão inteiro a cada render, então o listener antigo
+  // morre junto — não há como acumular listeners duplicados.
+  el.innerHTML=serialize
+    ? '<p class="persistence-alert-title">Falha ao preparar os dados para gravação</p>'+
+      '<p class="persistence-alert-text">As alterações não puderam ser convertidas para gravação — o problema está nos dados em memória, não no armazenamento. '+
+      'Não recarregue nem feche esta página: alterações recentes podem ser perdidas e a exportação de backup pode falhar pelo mesmo motivo. '+
+      'Tente exportar mesmo assim e, se a exportação falhar, anote manualmente os registros mais recentes.</p>'+
+      '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertBackupBtn">Tentar exportar backup</button></div>'
+    : '<p class="persistence-alert-title">Falha ao salvar os dados</p>'+
+      '<p class="persistence-alert-text">O navegador não conseguiu gravar as alterações no armazenamento local. '+
+      'Não recarregue nem feche esta página antes de exportar um backup, pois alterações recentes podem ser perdidas.</p>'+
+      '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertBackupBtn">Exportar backup agora</button></div>';
+  const btn=document.getElementById('persistenceAlertBackupBtn');
+  if(btn) btn.addEventListener('click',persistenceAlertExportBackup);
+}
+function setPersistenceFailureState(error,kind){
+  kind=kind==='serialize'?'serialize':'storage';
+  jpWealthPersistenceFailure.count++;
+  jpWealthPersistenceFailure.lastError=error||null;
+  // Repinta na transição saudável→falha E quando o TIPO muda (storage⇄serialize) — o
+  // aviso precisa refletir a causa atual. Falha repetida do mesmo tipo não repinta:
+  // o role="alert" reanunciaria o mesmo texto no leitor de tela a cada tecla.
+  if(jpWealthPersistenceFailure.active && jpWealthPersistenceFailure.kind===kind) return;
+  jpWealthPersistenceFailure.active=true;
+  jpWealthPersistenceFailure.kind=kind;
+  renderPersistenceFailureWarning();
+}
+function clearPersistenceFailureState(){
+  if(!jpWealthPersistenceFailure.active) return; // caminho saudável: custo zero
+  jpWealthPersistenceFailure.active=false;
+  jpWealthPersistenceFailure.kind=null;
+  jpWealthPersistenceFailure.count=0;
+  jpWealthPersistenceFailure.lastError=null;
+  const el=persistenceAlertEl(); if(!el) return;
+  el.className='persistence-alert is-recovered';
+  el.innerHTML='<p class="persistence-alert-title">Gravação restabelecida</p>'+
+    '<p class="persistence-alert-text">As alterações voltaram a ser salvas neste navegador.</p>';
+  clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+  jpWealthPersistenceFailure.recoveryTimer=setTimeout(()=>{
+    if(jpWealthPersistenceFailure.active) return; // falhou de novo enquanto esperava
+    const cur=persistenceAlertEl(); if(!cur) return;
+    cur.className='persistence-alert'; cur.innerHTML=''; // :empty volta a esconder
+  },6000);
+}
+// Apaga um "salvo" ainda no ar de uma gravação anterior bem-sucedida: sua janela é de
+// 1200ms, então uma falha logo em seguida deixaria selo verde e aviso de erro na tela
+// ao mesmo tempo, dizendo coisas opostas.
+function hideStaleSavedTag(){
+  const stale=document.getElementById('savedTag');
+  if(stale){ clearTimeout(saveTimer); stale.classList.remove('show'); }
+}
 function save(){
   if(jpWealthPersistenceBlocked) return false;
-  try{localStorage.setItem(LSKEY,JSON.stringify(S));
-    const t=document.getElementById('savedTag'); t.classList.add('show');
+  // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
+  // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
+  // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez
+  // de prometer uma exportação que não vai funcionar.
+  let payload;
+  try{
+    payload=JSON.stringify(S);
+  }catch(e){
+    console.error('JP Wealth: falha ao preparar (serializar) o estado para gravação.', e);
+    hideStaleSavedTag();
+    setPersistenceFailureState(e,'serialize');
+    return false;
+  }
+  // try estreito, cobrindo só a gravação: qualquer exceção posterior (ex.: #savedTag
+  // ausente) não deve ser relatada como falha de armazenamento.
+  try{
+    localStorage.setItem(LSKEY,payload);
+  }catch(e){
+    console.error('JP Wealth: falha ao gravar o estado no armazenamento local.', e);
+    hideStaleSavedTag();
+    setPersistenceFailureState(e,'storage');
+    return false;
+  }
+  clearPersistenceFailureState();
+  const t=document.getElementById('savedTag');
+  if(t){
+    t.classList.add('show');
     clearTimeout(saveTimer); saveTimer=setTimeout(()=>t.classList.remove('show'),1200);
-    return true;
-  }catch(e){ return false; }
+  }
+  return true;
 }
