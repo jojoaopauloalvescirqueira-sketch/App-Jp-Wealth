@@ -122,7 +122,9 @@ const DEFAULTS = {
   //   v2 = folders[] + item.folderId;
   //   v3 = item.completedAt (carimbo de conclusão, só enquanto status==='done') +
   //        ui{} (preferências persistidas do painel: drawerWidth) + visão virtual
-  //        "Concluído", derivada de status e nunca gravada como pasta.
-  mvpNotes:{schemaVersion:3, showHeaderIcon:true, folders:[], items:[], ui:{drawerWidth:460}},
+  //        "Concluído", derivada de status e nunca gravada como pasta;
+  //   v4 = item.ticket — código curto de rastreio (JPW-XXXXXX) derivado do id por hash
+  //        determinístico, para citar a nota fora do app (agentes de IA, commits).
+  mvpNotes:{schemaVersion:4, showHeaderIcon:true, folders:[], items:[], ui:{drawerWidth:460}},
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}

@@ -408,6 +408,8 @@ def run_mvp_notes_survival(browser, url):
       mvpNotesPersistDrawerWidth(620);
     }''')
     assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'concluir deveria carimbar completedAt'
+    ticket_antes = page.evaluate('S.mvpNotes.items[0].ticket')
+    assert ticket_antes and ticket_antes.startswith('JPW-'), 'nota deveria ter Trace ID'
     assert page.evaluate('S.mvpNotes.items[0].folderId'), 'concluir não pode alterar folderId'
     assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620
 
@@ -434,6 +436,8 @@ def run_mvp_notes_survival(browser, url):
     assert page.evaluate('S.mvpNotes.items[0].status') == 'done', 'o status concluído deveria sobreviver'
     assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'completedAt deveria sobreviver ao reload'
     assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620, 'a largura do painel deveria sobreviver'
+    assert page.evaluate('S.mvpNotes.items[0].ticket') == ticket_antes, \
+        'o Trace ID deveria sobreviver a Finalizar Sessão e ao reload'
 
     page.evaluate('''() => { window.prompt = () => 'APAGAR'; window.alert = () => {}; wipeAllData(); }''')
     assert page.evaluate('S.mvpNotes.items.length') == 0, 'Zona de Perigo deveria remover as notas'

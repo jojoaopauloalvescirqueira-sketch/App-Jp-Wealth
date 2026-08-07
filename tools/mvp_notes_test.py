@@ -3,7 +3,7 @@
 Sessão, Zona de Perigo, backup/importação real e migração de estado legado."""
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-import json, os, socket, tempfile, threading
+import json, os, re, socket, tempfile, threading
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -645,6 +645,90 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 15. Trace ID (v4): geração, imutabilidade, cópia, busca e backup ----
+        page = prepare_page(browser, base_url + 'index.html')
+        assert page.evaluate('S.mvpNotes.schemaVersion') == 4
+        TICKET_RE = r'^JPW-[23456789ABCDEFGHJKMNPQRSTVWXYZ]{6}$'
+        create_note(page, 'bug', 'Nota com Trace ID', 'descricao', 'high', 'open')
+        item = notes_state(page)[0]
+        assert re.match(TICKET_RE, item['ticket']), item['ticket']
+        assert item['id'] != item['ticket'], 'ticket nunca substitui o id interno'
+        assert item['sourceRevision'] is None, 'sourceRevision jamais inventado'
+        # determinismo: o ticket é derivado do id por hash estável
+        assert page.evaluate(f"mvpNotesTicketFromSeed({item['id']!r})") == item['ticket']
+        # imutável em todo o ciclo de vida
+        page.evaluate("""() => {
+          const it = S.mvpNotes.items[0];
+          const u = p => mvpNotesUpdate(it.id, Object.assign({type:it.type,title:it.title,
+            description:it.description,priority:it.priority,status:it.status,folderId:it.folderId}, p));
+          u({title:'outro titulo'}); u({description:'outra'}); u({status:'done'}); u({status:'open'});
+        }""")
+        assert notes_state(page)[0]['ticket'] == item['ticket'], 'ticket mudou durante o ciclo de vida'
+        # migração de nota antiga sem ticket + idempotência
+        migrado = page.evaluate("""() => {
+          S.mvpNotes = {schemaVersion:2, showHeaderIcon:true, folders:[], items:[{id:'mvpn_legada_t',
+            type:'bug', title:'Legada', description:'', priority:'low', status:'open', folderId:null,
+            screenId:'dash', buildId:'x', createdAt:'2026-01-01T00:00:00.000Z', updatedAt:'2026-01-02T00:00:00.000Z'}]};
+          mvpNotesNormalizeState(); const t1 = S.mvpNotes.items[0].ticket;
+          mvpNotesNormalizeState(); mvpNotesNormalizeState();
+          return {t1, estavel: S.mvpNotes.items[0].ticket === t1};
+        }""")
+        assert re.match(TICKET_RE, migrado['t1']) and migrado['estavel'], migrado
+        # colisão: ticket persistido válido nunca é roubado por um derivado
+        colisao = page.evaluate("""() => {
+          const idB = 'mvpn_col_b', derivado = mvpNotesTicketFromSeed(idB);
+          S.mvpNotes = {schemaVersion:4, showHeaderIcon:true, folders:[], items:[
+            {id:idB, type:'task', title:'B', description:'', priority:'low', status:'open', folderId:null,
+             screenId:'', buildId:'', createdAt:'2026-01-01T00:00:00.000Z', updatedAt:'2026-01-01T00:00:00.000Z'},
+            {id:'mvpn_col_a', ticket:derivado, type:'task', title:'A', description:'', priority:'low',
+             status:'open', folderId:null, screenId:'', buildId:'',
+             createdAt:'2026-01-01T00:00:00.000Z', updatedAt:'2026-01-01T00:00:00.000Z'}]};
+          mvpNotesNormalizeState();
+          const A = S.mvpNotes.items.find(i=>i.id==='mvpn_col_a'), B = S.mvpNotes.items.find(i=>i.id===idB);
+          return {aPreservado: A.ticket === derivado, distintos: A.ticket !== B.ticket};
+        }""")
+        assert colisao['aPreservado'] and colisao['distintos'], colisao
+        page.close()
+
+        # ---- 16. Trace Reference: conteúdo, cópia pelo card/editor e busca ----
+        page = prepare_page(browser, base_url + 'index.html')
+        create_note(page, 'bug', 'Falha rastreavel', 'passos', 'critical', 'open')
+        ticket = notes_state(page)[0]['ticket']
+        page.evaluate("""() => { window.__copiado=null;
+          Object.defineProperty(navigator,'clipboard',{configurable:true,
+            value:{writeText:t=>{window.__copiado=t; return Promise.resolve();}}}); }""")
+        click_id(page, 'headerNotesBtn')
+        assert page.locator('.mvpn-card-wrap').count() == 1
+        assert page.evaluate("!document.querySelector('.mvpn-card-copy').closest('.mvpn-card')"), \
+            'o botao de copiar nao pode estar aninhado dentro do card'
+        antes = notes_state(page)[0]['updatedAt']
+        page.locator('.mvpn-card-copy').first.click()
+        page.wait_for_timeout(150)
+        copiado = page.evaluate('window.__copiado')
+        assert copiado.startswith('JP WEALTH — TRACE REFERENCE'), copiado[:60]
+        for trecho in [f'Ticket: {ticket}', 'Tipo: Bug', 'Prioridade: Crítica', 'Status: Aberta',
+                       'Falha rastreavel', 'Build ID: ', 'Source Revision: não disponível',
+                       'INSTRUÇÃO AO AGENTE', f'ticket {ticket}']:
+            assert trecho in copiado, trecho
+        assert not re.search(r'[0-9a-f]{40}', copiado), 'nenhum SHA pode ser inventado'
+        assert notes_state(page)[0]['updatedAt'] == antes, 'copiar nao pode alterar a nota'
+        assert page.locator('#mvpNotesEditor').is_hidden(), 'copiar nao pode abrir o editor'
+        # cópia pelo editor + Trace ID somente leitura
+        page.locator('.mvpn-card').first.click()
+        assert page.locator('#mvpNoteTicket').inner_text() == ticket
+        assert page.locator('#mvpNotesEditor input[value^="JPW-"]').count() == 0, 'ticket nao pode ser editavel'
+        page.evaluate('window.__copiado=null')
+        page.locator('.mvpn-trace-copy').click()
+        page.wait_for_timeout(150)
+        assert ticket in page.evaluate('window.__copiado')
+        page.evaluate("() => renderMvpNotesMode('list')")
+        # busca pelo ticket localiza exatamente a nota
+        page.locator('#mvpNotesSearch').fill(ticket)
+        page.wait_for_timeout(120)
+        assert page.locator('.mvpn-card').count() == 1
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 13. monólito portátil (dist) ----
         page = prepare_page(browser, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')
@@ -656,4 +740,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, Concluído/completedAt, resize com persistência, navegação mobile (schema v3) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, Concluído/completedAt, resize, navegação mobile, Trace ID e cópia da referência (schema v4) e monólito verificados.')
