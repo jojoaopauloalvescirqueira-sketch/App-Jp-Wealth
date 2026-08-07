@@ -37,6 +37,16 @@ try:
         page.on('console', lambda msg: errors.append('console error: '+msg.text) if msg.type=='error' else None)
         portable=ROOT/'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
         html=portable.read_text(encoding='utf-8')
+        # A-004: os textos da Zona de Perigo (card + prompt + alerta final, todos presentes
+        # no monólito) declaram o comportamento real — preferências locais de interface
+        # preservadas e cópias de recuperação intactas — sem enfraquecer a seriedade.
+        assert 'Preferências locais de interface' in html, 'texto deve declarar a preservação das preferências'
+        assert 'cópias de recuperação existentes não são apagadas' in html.lower() or \
+               'Cópias de recuperação existentes não são apagadas' in html or \
+               'cópias de recuperação existentes foram preservadas' in html, html.count('recuperação')
+        assert 'TODA a base do JP Wealth' in html, 'o aviso destrutivo deve continuar sério e específico'
+        assert 'Irreversível' in html or 'irreversível' in html
+        assert 'apaga TODOS os dados (ordens' not in html, 'a promessa absoluta antiga deveria ter sido removida'
         storage_polyfill='<script>(()=>{const store={};Object.defineProperty(window,"localStorage",{configurable:true,value:{getItem:k=>Object.prototype.hasOwnProperty.call(store,k)?store[k]:null,setItem:(k,v)=>store[k]=String(v),removeItem:k=>delete store[k],clear:()=>Object.keys(store).forEach(k=>delete store[k]),key:i=>Object.keys(store)[i]??null,get length(){return Object.keys(store).length}}});})();</script>' 
         html=html.replace('<head>','<head>'+storage_polyfill,1)
         page.set_content(html, wait_until='load')

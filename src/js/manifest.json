@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "162a2ca71792b748d296f8cd1eed45ceb552dcbf7c1847e4e6b8d916fef3f33c"
+      "sha256": "2abf3b08f9b45d10e3164c2e371377e3d5d4b89997be8d415da02be54cced21a"
     },
     {
       "order": 32,
@@ -206,7 +206,7 @@
       "order": 34,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "7412f16eeef6ac590de9e384db534347751eb5d9bdcf8a36ca02f8359d364374"
+      "sha256": "a61e4d9dd458cd4442fa4b54a2694fdc31166225b2d5f346a5749ac90265712b"
     },
     {
       "order": 35,
@@ -218,7 +218,7 @@
       "order": 36,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "36017d2557d504d0bcfad96c7a44ac1eec806de363d236274a21a9dddf36ff41"
+      "sha256": "f2e0c72a394cb040ee3253ea2ca0494bbeff724cf79cecf49673eb8f5d7857a5"
     },
     {
       "order": 37,

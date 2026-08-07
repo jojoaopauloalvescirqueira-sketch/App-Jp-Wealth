@@ -513,6 +513,64 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 12c. A-002: badge/visibilidade sincronizados após importação e Zona de Perigo ----
+        page = prepare_page(browser, url)
+        create_note(page, 'task', 'Nota local A', '', 'medium', 'open')
+        create_note(page, 'task', 'Nota local B', '', 'medium', 'open')
+        assert page.locator('#headerNotesBadge').inner_text() == '2'
+        # importa backup com 5 notas ativas e ícone OCULTO — boot() deve sincronizar tudo
+        backup5 = page.evaluate("""() => { const s = structuredClone(DEFAULTS);
+          s.mvpNotes = {schemaVersion: 2, showHeaderIcon: false, folders: [], items: []};
+          for (let i = 1; i <= 5; i++) s.mvpNotes.items.push({id: 'imp_' + i, type: 'bug',
+            title: 'Importada ' + i, description: '', priority: 'high', status: 'open',
+            folderId: null, screenId: 'dash', buildId: 'B', createdAt: 'c', updatedAt: 'u' + i});
+          return JSON.stringify({tipo: 'jpwealth_full_backup', state: s}); }""")
+        with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as fx:
+            fx.write(backup5); cinco = fx.name
+        try:
+            page.evaluate("window.confirm = () => true")
+            page.locator('#importFullBackupInput').set_input_files(cinco)
+            page.wait_for_timeout(700)
+            page.evaluate("() => { window.__onbShown = true; closeModal(); }")
+        finally:
+            Path(cinco).unlink(missing_ok=True)
+        assert page.locator('#headerNotesBtn').is_hidden(), 'showHeaderIcon:false importado deve ocultar o botão'
+        assert page.evaluate("document.getElementById('headerNotesBadge').textContent") == '5', \
+            'badge deveria refletir as 5 notas ativas importadas sem precisar de CRUD'
+        # o drawer (via Configurações, ícone oculto) conta o mesmo que o header
+        click_id(page, 'headerConfigBtn')
+        page.evaluate("settingsNavigateToLeaf('interface')")
+        click_id(page, 'mvpNotesOpenFromSettingsBtn')
+        assert page.locator('#mvpNotesHeadCount').inner_text() == '5 itens ativos'
+        click_id(page, 'mvpNotesCloseBtn')
+        click_id(page, 'settingsCloseBtn')
+        # importa backup com 1 nota ativa e ícone VISÍVEL
+        backup1 = page.evaluate("""() => { const s = structuredClone(DEFAULTS);
+          s.mvpNotes = {schemaVersion: 2, showHeaderIcon: true, folders: [], items: [
+            {id: 'solo', type: 'task', title: 'Só uma', description: '', priority: 'medium',
+             status: 'open', folderId: null, screenId: 'dash', buildId: 'B', createdAt: 'c', updatedAt: 'u'}]};
+          return JSON.stringify({tipo: 'jpwealth_full_backup', state: s}); }""")
+        with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as fx:
+            fx.write(backup1); um = fx.name
+        try:
+            page.locator('#importFullBackupInput').set_input_files(um)
+            page.wait_for_timeout(700)
+            page.evaluate("() => { window.__onbShown = true; closeModal(); }")
+        finally:
+            Path(um).unlink(missing_ok=True)
+        assert page.locator('#headerNotesBtn').is_visible(), 'showHeaderIcon:true importado deve exibir o botão'
+        assert page.locator('#headerNotesBadge').inner_text() == '1'
+        # Zona de Perigo zera o badge no mesmo boot()
+        page.evaluate("window.prompt = () => 'APAGAR'; window.alert = () => {};")
+        click_id(page, 'resetBtn')
+        page.wait_for_timeout(500)
+        page.evaluate("() => { window.__onbShown = true; closeModal(); }")
+        assert page.evaluate("document.getElementById('headerNotesBadge').hidden") is True, \
+            'após a Zona de Perigo o badge deve sumir sem interação manual'
+        assert page.locator('#headerNotesBtn').is_visible(), 'visibilidade volta ao padrão (mostrar)'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 13. monólito portátil (dist) ----
         page = prepare_page(browser, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')

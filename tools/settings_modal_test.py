@@ -38,6 +38,20 @@ try:
     assert page.get_by_role('heading',name='Configurações').count()==1
     assert page.evaluate('sessionHasChanges()') is False
 
+    # A-003: isolamento acessível usa os alvos REAIS (header, #appMain, #nav, .foot-note)
+    # — os seletores antigos .topbar/#main não existiam e deixavam cabeçalho e conteúdo
+    # operacional expostos. O modal em si nunca é inertizado; o foco não alcança o fundo.
+    inert_on=page.evaluate("""()=>({
+      header:document.querySelector('header').inert,
+      appMain:document.querySelector('#appMain').inert,
+      nav:document.querySelector('#nav').inert,
+      foot:document.querySelector('.foot-note').inert,
+      modal:document.getElementById('settingsModal').inert,
+      ariaHeader:document.querySelector('header').getAttribute('aria-hidden')})""")
+    assert inert_on=={'header':True,'appMain':True,'nav':True,'foot':True,'modal':False,'ariaHeader':'true'}, inert_on
+    page.evaluate("document.getElementById('headerConfigBtn').focus()")
+    assert page.evaluate("document.activeElement.id")!='headerConfigBtn', 'foco não pode alcançar o fundo inertizado'
+
     # Abertura padrão em Geral, com as seis categorias principais na sidebar e apenas uma página ativa.
     assert page.locator('#settingsPageTitle').inner_text()=='Geral'
     assert page.locator('[data-settings-panel="general"]').is_visible()
@@ -176,6 +190,25 @@ try:
 
     page.locator('#settingsCloseBtn').click(); assert page.evaluate('sessionHasChanges()') is False
     assert page.evaluate('sessionStateFingerprint()')==before
+
+    # A-003: após fechar (inclusive depois dos 20 ciclos abre/fecha acima), o estado
+    # anterior de inert/aria-hidden é restaurado exatamente — sem resíduo acumulado.
+    inert_off=page.evaluate("""()=>({
+      header:document.querySelector('header').inert,
+      appMain:document.querySelector('#appMain').inert,
+      nav:document.querySelector('#nav').inert,
+      foot:document.querySelector('.foot-note').inert,
+      ariaHeader:document.querySelector('header').getAttribute('aria-hidden'),
+      snapshotLimpo:settingsInertSnapshot===null})""")
+    assert inert_off=={'header':False,'appMain':False,'nav':False,'foot':False,'ariaHeader':None,'snapshotLimpo':True}, inert_off
+    # o drawer de Notas continua isolando corretamente depois de tudo
+    page.locator('#headerNotesBtn').click()
+    assert page.evaluate("document.querySelector('header').inert") is True
+    assert page.evaluate("document.querySelector('#appMain').inert") is True
+    page.locator('#mvpNotesCloseBtn').click()
+    assert page.evaluate("document.querySelector('header').inert") is False
+    assert page.evaluate("document.querySelector('#appMain').inert") is False
+
     assert_no_errors(observed); browser.close()
 finally:
   server.shutdown();server.server_close()

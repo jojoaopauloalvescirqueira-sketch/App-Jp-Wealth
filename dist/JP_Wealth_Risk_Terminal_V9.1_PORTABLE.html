@@ -3740,7 +3740,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '96f93b867cc0c5a7';
+const JP_WEALTH_BUILD_ID = 'dfd9a80bafa236d1';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -4597,8 +4597,12 @@ const JP_WEALTH_BUILD_ID = '96f93b867cc0c5a7';
       <div id="configQuarantine"></div>
     </div>
     <div class="card" data-settings-category="backup" data-settings-search="limpar apagar reset zona risco recuperação" style="margin-top:16px; border-color:var(--f4)">
-      <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar todos os dados</span></h2>
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove tudo: ordens, fases, fechamentos, log de auditoria e configurações. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes.</p>
+      <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar os dados do JP Wealth</span></h2>
+      <!-- A-004: o texto declara exatamente o que wipeAllData() faz (removeAuxiliary:false,
+           removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
+           locais de interface (escala da fonte, estado da navegação, ícone do app) e não
+           toca em cópias de recuperação existentes. -->
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas do MVP. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
     </div>
   </section>
@@ -11471,7 +11475,11 @@ function wipeAllData(){
     alert('O banco de dados está em modo de recuperação e as gravações estão bloqueadas.\n\nUse o aviso no topo da tela: baixe a cópia de recuperação, restaure um backup válido ou escolha "Começar com base vazia" — esta última equivale à limpeza total.');
     return;
   }
-  const p1=prompt('⚠️ Isto apaga TODOS os dados (ordens, fases, fechamentos, auditoria, configurações).\n\nDigite APAGAR para continuar:');
+  // A-004: os textos declaram exatamente o que esta função faz — apaga a base inteira do
+  // JP Wealth (removeAuxiliary:false preserva as preferências locais de interface;
+  // removeCorrupted:false preserva cópias de recuperação existentes). Texto e
+  // comportamento precisam coincidir numa ação irreversível.
+  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth deste navegador: ordens, fases, fechamentos, auditoria, configurações e notas do MVP. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas.\n\nDigite APAGAR para continuar:');
   if(p1===null) return;
   if(p1.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }
   const p2=prompt('Última confirmação. Digite APAGAR novamente:');
@@ -11482,7 +11490,7 @@ function wipeAllData(){
   S=structuredClone(DEFAULTS);
   window.__onbShown=false; // painel voltou ao início → questionário de início deve reaparecer
   boot();
-  alert('Dados apagados. O painel voltou ao estado inicial.');
+  alert('A base do JP Wealth foi apagada e o painel voltou ao estado inicial. Preferências locais de interface e cópias de recuperação existentes foram preservadas.');
 }
 function bindConfig(){
   document.querySelectorAll('#themeSeg button').forEach(b=>b.addEventListener('click',()=>{
@@ -11921,6 +11929,13 @@ function boot(){
   renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
   renderParams(); renderMotor(); renderContas(); renderDash(); renderCheck();
   renderLedger(); renderPhases(); render();
+  // A-002: badge/visibilidade das Notas entram no ciclo global — sem isto, importar um
+  // backup ou executar a Zona de Perigo (que substituem S e chamam boot()) deixava o
+  // header com a contagem e a preferência showHeaderIcon anteriores. Guarda de
+  // existência: boot() é o script 34 e 14-mvp-notes.js só carrega como 41 — na PRIMEIRA
+  // execução (linha final deste arquivo) a função ainda não existe, e o próprio módulo
+  // de Notas se renderiza ao carregar (initMvpNotes); aqui cobre todos os boots seguintes.
+  if(typeof renderMvpNotesHeader==='function') renderMvpNotesHeader();
   enhanceFieldNotes();
   // cotações ao vivo sempre que o programa abre (SET 4 do lote) — alimenta grade, ATR% e stop vivo
   if(!fxAutoFetchedThisSession){ fxAutoFetchedThisSession=true; updateFxRates(); }
@@ -12277,9 +12292,31 @@ function settingsRevealElement(selector){
   requestAnimationFrame(()=>{ const target=document.querySelector(selector); if(!target) return; target.scrollIntoView({block:'center',behavior:'smooth'}); target.classList.add('settings-search-hit'); clearTimeout(settingsState.highlightTimer); settingsState.highlightTimer=setTimeout(()=>target.classList.remove('settings-search-hit'),2200); if(target.matches('details')) target.open=true; });
 }
 
+// A-003: os seletores antigos .topbar e #main não existem no DOM (os elementos reais são
+// <header> e #appMain) — com a Central aberta, todo o cabeçalho e o conteúdo operacional
+// da tela ativa permaneciam expostos à árvore de acessibilidade apesar do aria-modal.
+// Corrigido com o mesmo padrão captura-e-restaura do drawer de Notas (mvpNotesApplyInert):
+// nunca um clear cego — outro mecanismo pode ter posto inert/aria-hidden próprios nesses
+// nós, e o fechamento restaura exatamente os valores capturados na abertura.
+// document.querySelector('header') resolve para o <header> de topo do app (primeiro na
+// ordem do documento); os <header> internos de modais/drawers vêm todos depois.
+let settingsInertSnapshot=null;
+function settingsInertTargets(){
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
+}
 function settingsSetAppInert(on){
-  const targets=[document.querySelector('.topbar'),document.querySelector('#nav'),document.querySelector('#main'),document.querySelector('.foot-note')].filter(Boolean);
-  targets.forEach(el=>{ if(on){ el.inert=true; el.setAttribute('aria-hidden','true'); }else{ el.inert=false; el.removeAttribute('aria-hidden'); } });
+  if(on){
+    if(settingsInertSnapshot) return; // já aplicado — reaplicar sobrescreveria a captura original
+    settingsInertSnapshot=settingsInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
+    settingsInertSnapshot.forEach(({el})=>{ el.inert=true; el.setAttribute('aria-hidden','true'); });
+  }else{
+    const snapshot=settingsInertSnapshot; if(!snapshot) return;
+    snapshot.forEach(({el,inert,ariaHidden})=>{
+      el.inert=inert;
+      if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+    });
+    settingsInertSnapshot=null;
+  }
 }
 function openSettingsModal(category='general', opener){
   buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;

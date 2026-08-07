@@ -864,8 +864,12 @@
       <div id="configQuarantine"></div>
     </div>
     <div class="card" data-settings-category="backup" data-settings-search="limpar apagar reset zona risco recuperação" style="margin-top:16px; border-color:var(--f4)">
-      <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar todos os dados</span></h2>
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove tudo: ordens, fases, fechamentos, log de auditoria e configurações. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes.</p>
+      <h2 style="color:var(--f4)">Zona de Perigo <span class="art">apagar os dados do JP Wealth</span></h2>
+      <!-- A-004: o texto declara exatamente o que wipeAllData() faz (removeAuxiliary:false,
+           removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
+           locais de interface (escala da fonte, estado da navegação, ícone do app) e não
+           toca em cópias de recuperação existentes. -->
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas do MVP. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
     </div>
   </section>

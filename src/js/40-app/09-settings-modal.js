@@ -302,9 +302,31 @@ function settingsRevealElement(selector){
   requestAnimationFrame(()=>{ const target=document.querySelector(selector); if(!target) return; target.scrollIntoView({block:'center',behavior:'smooth'}); target.classList.add('settings-search-hit'); clearTimeout(settingsState.highlightTimer); settingsState.highlightTimer=setTimeout(()=>target.classList.remove('settings-search-hit'),2200); if(target.matches('details')) target.open=true; });
 }
 
+// A-003: os seletores antigos .topbar e #main não existem no DOM (os elementos reais são
+// <header> e #appMain) — com a Central aberta, todo o cabeçalho e o conteúdo operacional
+// da tela ativa permaneciam expostos à árvore de acessibilidade apesar do aria-modal.
+// Corrigido com o mesmo padrão captura-e-restaura do drawer de Notas (mvpNotesApplyInert):
+// nunca um clear cego — outro mecanismo pode ter posto inert/aria-hidden próprios nesses
+// nós, e o fechamento restaura exatamente os valores capturados na abertura.
+// document.querySelector('header') resolve para o <header> de topo do app (primeiro na
+// ordem do documento); os <header> internos de modais/drawers vêm todos depois.
+let settingsInertSnapshot=null;
+function settingsInertTargets(){
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
+}
 function settingsSetAppInert(on){
-  const targets=[document.querySelector('.topbar'),document.querySelector('#nav'),document.querySelector('#main'),document.querySelector('.foot-note')].filter(Boolean);
-  targets.forEach(el=>{ if(on){ el.inert=true; el.setAttribute('aria-hidden','true'); }else{ el.inert=false; el.removeAttribute('aria-hidden'); } });
+  if(on){
+    if(settingsInertSnapshot) return; // já aplicado — reaplicar sobrescreveria a captura original
+    settingsInertSnapshot=settingsInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
+    settingsInertSnapshot.forEach(({el})=>{ el.inert=true; el.setAttribute('aria-hidden','true'); });
+  }else{
+    const snapshot=settingsInertSnapshot; if(!snapshot) return;
+    snapshot.forEach(({el,inert,ariaHidden})=>{
+      el.inert=inert;
+      if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+    });
+    settingsInertSnapshot=null;
+  }
 }
 function openSettingsModal(category='general', opener){
   buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;
