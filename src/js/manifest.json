@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "215d854eacba017827ef2ea67e64b10e6625180a177c81e650f5e42be02a5a3c"
+      "sha256": "32cd71387aa61b2be18da7344cb97c364e1ee424dfc590ab548b1263f25f6b14"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "28bbc3f7569da668d008e85e9647017273341e0ff1cdb2459a3d09d8dfe55b73"
+      "sha256": "cb076563452c77152718f7a87dd4539c5f132c99b9742f91b0b1c2841c4d2d70"
     },
     {
       "order": 5,
@@ -248,7 +248,7 @@
       "order": 41,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "cc11b860518969cbd3bb4b482cc2f5303e3d5ac44651836473f10aa436205187"
+      "sha256": "5ceaf2e817e5bdb90349c78adc5e1ba1205a9e8e29b241bb06ccd92fffbd5401"
     },
     {
       "order": 42,

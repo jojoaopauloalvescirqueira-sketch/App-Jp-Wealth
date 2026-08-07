@@ -50,8 +50,96 @@ function mvpNotesSortedByCompletion(){
     String(b.completedAt||b.updatedAt||'').localeCompare(String(a.completedAt||a.updatedAt||'')));
 }
 function mvpNotesHaystack(item){
-  return [item.title, item.description, MVP_NOTES_TYPE_LABELS[item.type], MVP_NOTES_STATUS_LABELS[item.status],
+  // O ticket entra na busca: colar de volta o código copiado (JPW-XXXXXX) localiza a nota
+  // — é o caminho de volta do agente de IA para o app.
+  return [item.ticket, item.title, item.description, MVP_NOTES_TYPE_LABELS[item.type], MVP_NOTES_STATUS_LABELS[item.status],
     mvpNotesScreenLabel(item.screenId), item.buildId, mvpNotesFolderLabel(item.folderId)].join(' ').toLocaleLowerCase('pt-BR');
+}
+
+// ---- Trace Reference (v4) ----
+// Bloco autossuficiente para colar num agente de IA. O ticket sozinho NÃO dá acesso à
+// nota: este app é client-side e as notas vivem apenas no localStorage deste navegador —
+// não há API, servidor nem banco remoto para o agente consultar. Por isso o bloco carrega
+// todo o contexto necessário, e termina com uma instrução explícita de investigação.
+function mvpNotesSourceRevision(item){
+  // Nunca inventa nem deriva do buildId (que é impressão digital de conteúdo, não commit).
+  if(item && typeof item.sourceRevision==='string' && item.sourceRevision) return item.sourceRevision;
+  if(typeof JP_WEALTH_SOURCE_REVISION==='string' && JP_WEALTH_SOURCE_REVISION) return JP_WEALTH_SOURCE_REVISION;
+  return null;
+}
+function mvpNotesReferenceBlock(item){
+  const rev=mvpNotesSourceRevision(item);
+  const L=[
+    'JP WEALTH — TRACE REFERENCE','',
+    `Ticket: ${item.ticket}`,
+    `Tipo: ${MVP_NOTES_TYPE_LABELS[item.type]||item.type}`,
+    `Prioridade: ${MVP_NOTES_PRIORITY_LABELS[item.priority]||item.priority}`,
+    `Status: ${MVP_NOTES_STATUS_LABELS[item.status]||item.status}`,'',
+    'Título:', item.title,'',
+    'Pasta:', mvpNotesFolderLabel(item.folderId),'',
+    'Origem:',
+    `Tela: ${mvpNotesScreenLabel(item.screenId)}`,
+    `Build ID: ${item.buildId||'não disponível'}`,
+    `Source Revision: ${rev||'não disponível'}`,'',
+    'Criada:', mvpNotesFormatDate(item.createdAt),'',
+    'Atualizada:', mvpNotesFormatDate(item.updatedAt)
+  ];
+  if(item.status==='done' && item.completedAt) L.push('','Concluída:', mvpNotesFormatDate(item.completedAt));
+  L.push('','Descrição:', String(item.description||'').trim()||'(sem descrição)');
+  L.push('','INSTRUÇÃO AO AGENTE','',
+    `Investigue exclusivamente o problema associado ao ticket ${item.ticket}.`,'',
+    'Antes de alterar código:',
+    '1. confirme o contexto e a versão disponível;',
+    '2. localize o componente relacionado;',
+    '3. reproduza o problema;',
+    '4. determine a causa raiz;',
+    '5. informe os arquivos potencialmente afetados;',
+    '6. não altere áreas não relacionadas;',
+    '7. não faça commit, push ou merge sem autorização.');
+  return L.join('\n');
+}
+// Cópia com dois caminhos: a API moderna (assíncrona, exige contexto seguro) e o
+// fallback por textarea+execCommand, necessário quando o monólito portátil é aberto
+// direto do disco (file://), onde navigator.clipboard costuma não existir.
+function mvpNotesCopyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).catch(()=>mvpNotesCopyFallback(text));
+  }
+  return Promise.resolve(mvpNotesCopyFallback(text));
+}
+function mvpNotesCopyFallback(text){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed; top:0; left:-9999px; opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok=document.execCommand('copy');
+    ta.remove();
+    if(!ok) throw new Error('execCommand recusou a cópia');
+    return true;
+  }catch(e){ return Promise.reject(e); }
+}
+// Retorno visível E anunciável: o botão troca de rótulo por 1,6s e o texto muda dentro de
+// um contêiner aria-live, para leitor de tela confirmar sem depender da cor do ícone.
+function mvpNotesFlashCopyFeedback(btn,message,failed){
+  const live=mvpn('mvpNotesCopyLive');
+  if(live) live.textContent=message;
+  if(!btn) return;
+  btn.classList.toggle('mvpn-copy-failed',!!failed);
+  btn.classList.add('mvpn-copy-done');
+  clearTimeout(btn.__copyTimer);
+  btn.__copyTimer=setTimeout(()=>{
+    btn.classList.remove('mvpn-copy-done','mvpn-copy-failed');
+    if(live) live.textContent='';
+  },1600);
+}
+function mvpNotesHandleCopy(id,btn){
+  const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
+  mvpNotesCopyText(mvpNotesReferenceBlock(item))
+    .then(()=>mvpNotesFlashCopyFeedback(btn,`Referência ${item.ticket} copiada.`,false))
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra a nota e copie o texto manualmente.',true));
 }
 function mvpNotesCompletedWithinPeriod(item,period){
   if(period==='all') return true;
@@ -160,11 +248,19 @@ function mvpNotesViewLabel(){
 function mvpNotesPersist(){ save(); renderMvpNotesHeader(); }
 function mvpNotesCreate(draft){
   const now=new Date().toISOString();
+  const id=mvpNotesId();
+  // Ticket derivado do id na criação, com o MESMO resolvedor da normalização (inclusive a
+  // checagem de colisão contra os códigos já em uso) — criar uma nota e reimportá-la de um
+  // backup produzem exatamente o mesmo código.
+  const seenTickets=new Set(mvpNotesItems().map(it=>it.ticket).filter(Boolean));
   const item={
-    id:mvpNotesId(), type:draft.type, title:draft.title.trim().slice(0,120),
+    id, ticket:mvpNotesResolveTicket(null,id,seenTickets),
+    type:draft.type, title:draft.title.trim().slice(0,120),
     description:String(draft.description||'').slice(0,5000),
     priority:draft.priority, status:draft.status, folderId:draft.folderId||null,
     screenId:mvpNotesUI.draftMeta.screenId, buildId:mvpNotesUI.draftMeta.buildId,
+    // Capturada só se o build realmente a expuser; hoje sempre null (ver 04-persistence.js).
+    sourceRevision:(typeof JP_WEALTH_SOURCE_REVISION==='string' && JP_WEALTH_SOURCE_REVISION) ? JP_WEALTH_SOURCE_REVISION : null,
     createdAt:now, updatedAt:now,
     completedAt:draft.status==='done'?now:null // nota já criada concluída (raro, mas possível no editor)
   };
@@ -256,23 +352,35 @@ function mvpNotesCardHTML(item){
   // repetir o próprio nome em cada card é redundante; em "Sem pasta" o contexto já basta.
   const folderLine=(mvpNotesUI.activeFolder==='all'||mvpNotesIsDoneView())
     ? `<div class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</div>` : '';
-  return `<button type="button" class="mvpn-card" data-mvp-note-id="${esc(item.id)}" data-status="${esc(item.status)}" data-priority="${esc(item.priority)}" data-type="${esc(item.type)}">
-    <div class="mvpn-card-top">
-      <span class="mvpn-badge mvpn-badge-type">${esc(MVP_NOTES_TYPE_LABELS[item.type]||item.type)}</span>
-      <span class="mvpn-badge mvpn-badge-priority">${esc(MVP_NOTES_PRIORITY_LABELS[item.priority]||item.priority)}</span>
-      <span class="mvpn-badge mvpn-badge-status">${esc(MVP_NOTES_STATUS_LABELS[item.status]||item.status)}</span>
-    </div>
-    <div class="mvpn-card-title">${esc(item.title)}</div>
-    ${folderLine}
-    ${preview?`<div class="mvpn-card-preview">${preview}</div>`:''}
-    <div class="mvpn-card-meta">
-      <span>${esc(mvpNotesScreenLabel(item.screenId))}</span><span aria-hidden="true">·</span>
-      <span>${item.buildId?('build '+esc(item.buildId)):'build não informado'}</span><span aria-hidden="true">·</span>
-      <span>${item.status==='done'&&item.completedAt
-        ?('concluída em '+esc(mvpNotesFormatDate(item.completedAt)))
-        :('atualizado em '+esc(mvpNotesFormatDate(item.updatedAt)))}</span>
-    </div>
-  </button>`;
+  // O card é um <button>; o botão de copiar NÃO pode ser aninhado nele (HTML inválido,
+  // com comportamento imprevisível de clique). Por isso os dois são IRMÃOS dentro de um
+  // invólucro posicionado — o clique no card continua abrindo o editor como sempre.
+  return `<div class="mvpn-card-wrap">
+    <button type="button" class="mvpn-card" data-mvp-note-id="${esc(item.id)}" data-status="${esc(item.status)}" data-priority="${esc(item.priority)}" data-type="${esc(item.type)}">
+      <div class="mvpn-card-top">
+        <span class="mvpn-badge mvpn-badge-type">${esc(MVP_NOTES_TYPE_LABELS[item.type]||item.type)}</span>
+        <span class="mvpn-badge mvpn-badge-priority">${esc(MVP_NOTES_PRIORITY_LABELS[item.priority]||item.priority)}</span>
+        <span class="mvpn-badge mvpn-badge-status">${esc(MVP_NOTES_STATUS_LABELS[item.status]||item.status)}</span>
+      </div>
+      <div class="mvpn-card-title">${esc(item.title)}</div>
+      ${folderLine}
+      ${preview?`<div class="mvpn-card-preview">${preview}</div>`:''}
+      <div class="mvpn-card-meta">
+        <span class="mvpn-card-ticket">${esc(item.ticket||'')}</span><span aria-hidden="true">·</span>
+        <span>${esc(mvpNotesScreenLabel(item.screenId))}</span><span aria-hidden="true">·</span>
+        <span>${item.buildId?('build '+esc(item.buildId)):'build não informado'}</span><span aria-hidden="true">·</span>
+        <span>${item.status==='done'&&item.completedAt
+          ?('concluída em '+esc(mvpNotesFormatDate(item.completedAt)))
+          :('atualizado em '+esc(mvpNotesFormatDate(item.updatedAt)))}</span>
+      </div>
+    </button>
+    <button type="button" class="mvpn-card-copy" data-mvp-copy-id="${esc(item.id)}"
+      title="Copiar referência ${esc(item.ticket||'')} para colar num agente de IA"
+      aria-label="Copiar referência da nota ${esc(item.ticket||'')}: ${esc(item.title)}">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+      <span class="mvpn-copy-check" aria-hidden="true">✓</span>
+    </button>
+  </div>`;
 }
 // Sincroniza os controles de filtro com a visão ativa: em "Concluído" o filtro de status
 // some (o status é implícito) e entram "Pasta original" + "Período de conclusão"; nas
@@ -317,6 +425,9 @@ function renderMvpNotesList(){
   host.querySelectorAll('[data-mvp-note-id]').forEach(card=>card.addEventListener('click',()=>{
     const id=card.dataset.mvpNoteId;
     mvpNotesConfirmDiscardIfDirty(()=>openMvpNotesEditor(id));
+  }));
+  host.querySelectorAll('[data-mvp-copy-id]').forEach(btn=>btn.addEventListener('click',()=>{
+    mvpNotesHandleCopy(btn.dataset.mvpCopyId,btn);
   }));
   const headCount=mvpn('mvpNotesHeadCount');
   if(headCount){
@@ -487,11 +598,26 @@ function mvpNotesDraftEqual(a,b){
 }
 function mvpNotesEditorHTML(isNew,meta){
   const optList=(map,selected)=>Object.keys(map).map(k=>`<option value="${k}" ${k===selected?'selected':''}>${esc(map[k])}</option>`).join('');
+  // Trace ID somente leitura: exibido como texto, nunca como campo editável — o código é
+  // atribuído pelo sistema e imutável. Em nota nova ainda não existe (nasce ao salvar).
+  const traceRow=isNew
+    ? `<div class="mvpn-trace-row"><span class="mvpn-trace-label">Trace ID</span><span class="mvpn-trace-pending">atribuído ao salvar</span></div>`
+    : `<div class="mvpn-trace-row">
+        <span class="mvpn-trace-label">Trace ID</span>
+        <code class="mvpn-trace-code" id="mvpNoteTicket">${esc(meta.ticket||'')}</code>
+        <button type="button" class="mvpn-card-copy mvpn-trace-copy" data-mvp-copy-id="${esc(mvpNotesUI.editingId||'')}"
+          title="Copiar referência ${esc(meta.ticket||'')} para colar num agente de IA"
+          aria-label="Copiar referência da nota ${esc(meta.ticket||'')}">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+          <span class="mvpn-copy-check" aria-hidden="true">✓</span>
+        </button>
+      </div>`;
   return `
     <div class="mvpn-editor-head">
       <h3>${isNew?'Nova nota':'Editar nota'}</h3>
       <button type="button" class="mvpn-editor-back reset-btn" id="mvpNoteCancelBtn">${isNew?'Cancelar':'Voltar à lista'}</button>
     </div>
+    ${traceRow}
     <div class="field"><label for="mvpNoteType">Tipo</label>
       <select id="mvpNoteType">${optList(MVP_NOTES_TYPE_LABELS,mvpNotesUI.draft.type)}</select>
     </div>
@@ -536,6 +662,10 @@ function bindMvpNotesEditor(isNew,id){
     el.addEventListener('input',()=>{ mvpNotesUI.draftDirty=!mvpNotesDraftEqual(mvpNotesDraftFromForm(),mvpNotesUI.draftOriginal); });
     el.addEventListener('change',()=>{ mvpNotesUI.draftDirty=!mvpNotesDraftEqual(mvpNotesDraftFromForm(),mvpNotesUI.draftOriginal); });
   });
+  // Copiar no editor: age só sobre a área de transferência — não salva, não altera a nota
+  // e, portanto, não move updatedAt.
+  const editorCopy=document.querySelector('.mvpn-trace-copy[data-mvp-copy-id]');
+  if(editorCopy) editorCopy.addEventListener('click',()=>mvpNotesHandleCopy(editorCopy.dataset.mvpCopyId,editorCopy));
   const cancelBtn=mvpn('mvpNoteCancelBtn');
   if(cancelBtn) cancelBtn.addEventListener('click',()=>mvpNotesConfirmDiscardIfDirty(()=>renderMvpNotesMode('list')));
   const saveBtn=mvpn('mvpNoteSaveBtn');
@@ -576,8 +706,8 @@ function openMvpNotesEditor(id){
   mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
   mvpNotesUI.draftDirty=false;
   mvpNotesUI.draftMeta=isNew
-    ? {screenId:mvpNotesCurrentScreenId(), buildId:mvpNotesCurrentBuildId(), createdAt:'', updatedAt:'', completedAt:''}
-    : {screenId:item.screenId, buildId:item.buildId, createdAt:item.createdAt, updatedAt:item.updatedAt, completedAt:item.completedAt||''};
+    ? {screenId:mvpNotesCurrentScreenId(), buildId:mvpNotesCurrentBuildId(), createdAt:'', updatedAt:'', completedAt:'', ticket:''}
+    : {screenId:item.screenId, buildId:item.buildId, createdAt:item.createdAt, updatedAt:item.updatedAt, completedAt:item.completedAt||'', ticket:item.ticket||''};
   renderMvpNotesMode('editor');
 }
 function renderMvpNotesMode(mode){

@@ -87,6 +87,47 @@ const MVP_NOTES_PRIORITIES=['low','medium','high','critical'];
 const MVP_NOTES_DRAWER_MIN=420, MVP_NOTES_DRAWER_MAX=900, MVP_NOTES_DRAWER_DEFAULT=460;
 function mvpNotesId(){ return 'mvpn_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 function mvpNotesFolderId(){ return 'mvpnf_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// ---- código de rastreio (v4) ----------------------------------------------------
+// Identificador curto e legível de cada nota (JPW-XXXXXX), feito para SAIR do app: ser
+// colado num agente de IA, citado em mensagem de commit ou em nome de branch. Alfabeto
+// sem caracteres ambíguos (nada de 0/O, 1/I/L, U) — sobrevive a ser lido em voz alta e
+// digitado à mão. É DERIVADO do id interno por hash determinístico: o mesmo id sempre
+// produz o mesmo código, em qualquer navegador e a qualquer momento, então uma nota
+// antiga recebe na migração exatamente o código que teria se o campo já existisse.
+const MVP_NOTES_TICKET_ALPHABET='23456789ABCDEFGHJKMNPQRSTVWXYZ';
+const MVP_NOTES_TICKET_RE=/^JPW-[23456789ABCDEFGHJKMNPQRSTVWXYZ]{6}$/;
+function mvpNotesTicketFromSeed(seed){
+  // FNV-1a de 32 bits, uma passada por posição (semente + índice): determinístico, sem
+  // Date/Math.random, e bem distribuído entre as 6 posições.
+  let out='';
+  for(let i=0;i<6;i++){
+    let h=0x811c9dc5;
+    const s=String(seed)+'#'+i;
+    for(let j=0;j<s.length;j++){ h^=s.charCodeAt(j); h=Math.imul(h,0x01000193)>>>0; }
+    out+=MVP_NOTES_TICKET_ALPHABET[h%MVP_NOTES_TICKET_ALPHABET.length];
+  }
+  return 'JPW-'+out;
+}
+function mvpNotesTicketIsValid(t){ return typeof t==='string' && MVP_NOTES_TICKET_RE.test(t); }
+// Um ticket JÁ PERSISTIDO e válido é imutável: nunca é recalculado, nem quando o id muda
+// por deduplicação. Só quem chega sem ticket (nota antiga, backup v1/v2/v3) recebe um
+// derivado do id. Colisão é improvável mas não impossível: re-deriva com sufixo até achar
+// livre — dois códigos iguais tornariam falsa a rastreabilidade prometida.
+// IMPORTANTE: `seenTickets` precisa chegar aqui JÁ PRÉ-CARREGADO com todos os tickets
+// válidos do lote (ver mvpNotesNormalizeState). Sem essa reserva prévia, um ticket
+// derivado para a nota A poderia ocupar o código que a nota B já tinha persistido, e B
+// — válida e imutável — seria forçada a mudar.
+function mvpNotesResolveTicket(rawTicket,id,seenTickets,reserved){
+  if(mvpNotesTicketIsValid(rawTicket)){
+    // Conflito entre dois tickets persistidos iguais: o primeiro a aparecer mantém o
+    // código; o segundo é rebaixado a derivado (não há como saber qual era "o certo").
+    if(!seenTickets.has(rawTicket)){ seenTickets.add(rawTicket); return rawTicket; }
+  }
+  let ticket=mvpNotesTicketFromSeed(id), attempt=0;
+  while(seenTickets.has(ticket) || (reserved && reserved.has(ticket))){ attempt++; ticket=mvpNotesTicketFromSeed(id+'~'+attempt); }
+  seenTickets.add(ticket);
+  return ticket;
+}
 // ---- pastas (schemaVersion 2) — normalizadas ANTES dos itens: mvpNotesNormalizeItem()
 // precisa do conjunto de IDs válidos/ambíguos resultante para reconciliar item.folderId. ----
 function mvpNotesNormalizeFolders(rawList){
@@ -118,7 +159,7 @@ function mvpNotesResolveFolderId(rawFolderId,validIds,ambiguousIds){
   if(!validIds.has(id)) return null; // pasta inexistente = Sem pasta
   return id;
 }
-function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds){
+function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds,seenTickets,reservedTickets){
   if(!raw || typeof raw!=='object') return null;
   const title=String(raw.title||'').trim();
   if(!title) return null; // título obrigatório — sem ele o item é descartado, não o backup inteiro
@@ -138,6 +179,7 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds){
   if(status!=='done') completedAt=null;
   return {
     id,
+    ticket:mvpNotesResolveTicket(raw.ticket,id,seenTickets,reservedTickets),
     type:MVP_NOTES_TYPES.includes(raw.type)?raw.type:'task',
     title:title.slice(0,120),
     description:String(raw.description||'').slice(0,5000),
@@ -145,7 +187,18 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds){
     status,
     folderId:mvpNotesResolveFolderId(raw.folderId,validFolderIds,ambiguousFolderIds),
     screenId:String(raw.screenId||''),
+    // buildId e sourceRevision são conceitos DISTINTOS e nenhum deriva do outro:
+    //   buildId        = impressão digital de CONTEÚDO (sha256 de index/css/js/sw/ícones,
+    //                    ver tools/rebuild_monolith.py). Dois commits que não alterem
+    //                    esses arquivos geram o MESMO buildId; árvore suja gera um
+    //                    buildId que não corresponde a commit algum.
+    //   sourceRevision = revisão Git que originou o build. Hoje o app NÃO tem como
+    //                    conhecê-la (nenhum passo de build injeta SHA), então fica null
+    //                    e a interface diz "não disponível". Jamais inventado nem
+    //                    derivado do buildId. Se um dia o build passar a definir
+    //                    JP_WEALTH_SOURCE_REVISION, notas novas o capturam sozinhas.
     buildId:String(raw.buildId||''),
+    sourceRevision:(typeof raw.sourceRevision==='string' && raw.sourceRevision) ? raw.sourceRevision : null,
     createdAt,
     updatedAt,
     completedAt
@@ -158,11 +211,15 @@ function mvpNotesNormalizeState(){
   //   v2 = pastas reais (folders[]) + item.folderId;
   //   v3 = item.completedAt (carimbo de conclusão) + ui{} (preferências persistidas do
   //        painel, hoje drawerWidth) + a visão virtual "Concluído", derivada de
-  //        status==='done' e NUNCA gravada em folders[].
-  // A migração é idempotente e sem perda: backups v1/v2 sobem para v3 aqui (v1 ganha
-  // folders:[] e todas as notas caem em "Sem pasta"; v2 ganha completedAt derivado e
-  // ui com o padrão). Rodar de novo sobre um estado já v3 não altera mais nada.
-  S.mvpNotes.schemaVersion=3;
+  //        status==='done' e NUNCA gravada em folders[];
+  //   v4 = item.ticket (código curto de rastreio JPW-XXXXXX, derivado do id por hash
+  //        determinístico e IMUTÁVEL depois de persistido) + item.sourceRevision
+  //        (revisão Git de origem, hoje sempre null — ver comentário no item).
+  // A migração é idempotente e sem perda: backups v1/v2/v3 sobem para v4 aqui (v1 ganha
+  // folders:[] e todas as notas caem em "Sem pasta"; v2 ganha completedAt derivado e ui
+  // com o padrão; v1/v2/v3 ganham ticket derivado do id, que é sempre o mesmo). Rodar de
+  // novo sobre um estado já v4 não altera mais nada.
+  S.mvpNotes.schemaVersion=4;
   S.mvpNotes.showHeaderIcon=S.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
   // Preferências de interface do módulo (v3) — viajam no estado principal, logo entram no
   // backup/importação e sobrevivem a Finalizar Sessão como o resto de S.mvpNotes.
@@ -184,9 +241,14 @@ function mvpNotesNormalizeState(){
   // migração: o operador só vê o resultado (tudo em "Sem pasta") ao abrir o painel.
   const {folders,validIds,ambiguousIds}=mvpNotesNormalizeFolders(S.mvpNotes.folders);
   S.mvpNotes.folders=folders;
-  const seenIds=new Set();
-  S.mvpNotes.items=(Array.isArray(S.mvpNotes.items)?S.mvpNotes.items:[])
-    .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds))
+  const seenIds=new Set(), seenTickets=new Set();
+  const rawItems=Array.isArray(S.mvpNotes.items)?S.mvpNotes.items:[];
+  // Duas passadas: primeiro RESERVA todo ticket válido já persistido, depois normaliza.
+  // Assim um código derivado nunca rouba o código imutável de outra nota do mesmo lote.
+  const reserved=new Set();
+  rawItems.forEach(it=>{ if(it && typeof it==='object' && mvpNotesTicketIsValid(it.ticket)) reserved.add(it.ticket); });
+  S.mvpNotes.items=rawItems
+    .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds,seenTickets,reserved))
     .filter(Boolean);
 }
 function migrate(){ // garante chaves novas se schema evoluir
