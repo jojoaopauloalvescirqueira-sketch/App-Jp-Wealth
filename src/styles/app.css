@@ -3441,6 +3441,61 @@
   html[data-shell="global-dashboard"] .gd-posture-label{font-family:var(--jp-font-ui); font-size:12px; font-weight:600; margin-bottom:3px}
   html[data-shell="global-dashboard"] .gd-posture-sub{font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); line-height:1.4}
 
+  /* ---------- Notícias de alto impacto (Forex Factory, 15-ff-news.js) ----------
+     Só tokens existentes — nenhuma cor nova; claro/escuro herdados. */
+  html[data-shell="global-dashboard"] .gd-news-status{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); margin-bottom:10px;
+  }
+  html[data-shell="global-dashboard"] .gd-news-refresh{
+    width:24px; height:24px; border-radius:50%; border:1px solid var(--jp-border);
+    background:var(--jp-surface); color:var(--jp-ink-muted); cursor:pointer;
+    font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  html[data-shell="global-dashboard"] .gd-news-refresh:hover{background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink)}
+  html[data-shell="global-dashboard"] .gd-news-refresh:disabled{opacity:.5; cursor:default}
+  html[data-shell="global-dashboard"] .gd-news-table{width:100%; border-collapse:collapse}
+  html[data-shell="global-dashboard"] .gd-news-table th{
+    font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--jp-ink-muted); text-align:left;
+    padding:0 8px 6px 0; border-bottom:1px solid var(--jp-border); white-space:nowrap;
+  }
+  /* Coluna de impacto centrada: o cabeçalho abreviado e o termômetro têm
+     larguras próximas — centrar elimina a folga assimétrica que fazia a
+     coluna parecer desproporcional e roubava largura do título. */
+  html[data-shell="global-dashboard"] .gd-news-table .gd-news-imp{text-align:center}
+  html[data-shell="global-dashboard"] .gd-news-table td{
+    padding:8px 8px 8px 0; border-bottom:1px solid var(--jp-border); vertical-align:top;
+  }
+  html[data-shell="global-dashboard"] .gd-news-table th:last-child,
+  html[data-shell="global-dashboard"] .gd-news-table td:last-child{padding-right:0}
+  html[data-shell="global-dashboard"] .gd-news-table tr:last-child td{border-bottom:0}
+  /* Evento já divulgado hoje: permanece visível (contexto), mas recua. */
+  html[data-shell="global-dashboard"] .gd-news-item-past{opacity:.55}
+  html[data-shell="global-dashboard"] .gd-news-time{font-family:var(--jp-font-data); font-size:11.5px; font-weight:700; color:var(--jp-ink); white-space:nowrap}
+  html[data-shell="global-dashboard"] .gd-news-cur{
+    font-family:var(--jp-font-ui); font-size:9px; font-weight:700; letter-spacing:.04em;
+    border:1px solid var(--jp-border); border-radius:4px; padding:1px 5px; color:var(--jp-ink-muted);
+  }
+  html[data-shell="global-dashboard"] .gd-news-title{font-family:var(--jp-font-ui); font-size:11.5px; line-height:1.35; color:var(--jp-ink); width:100%}
+  html[data-shell="global-dashboard"] .gd-news-num{
+    font-family:var(--jp-font-data); font-size:10.5px; color:var(--jp-ink-muted);
+    text-align:right; white-space:nowrap;
+  }
+  /* Termômetro de impacto por notícia — miniatura da linguagem .gd-gauge
+     (trilho + preenchimento). High enche 100% em cor de perigo; medium/low
+     ficam previstos para eventual ampliação do filtro. */
+  html[data-shell="global-dashboard"] .gd-news-impact{
+    display:inline-flex; width:30px; height:6px; border-radius:3px;
+    background:var(--gd-surface-subtle, var(--panel-2)); border:1px solid var(--jp-border);
+    overflow:hidden; vertical-align:middle; margin-top:4px;
+  }
+  html[data-shell="global-dashboard"] .gd-news-impact-fill{display:block; height:100%; border-radius:2px}
+  html[data-shell="global-dashboard"] .gd-news-impact-high .gd-news-impact-fill{width:100%; background:var(--jp-danger)}
+  html[data-shell="global-dashboard"] .gd-news-impact-medium .gd-news-impact-fill{width:60%; background:var(--jp-action)}
+  html[data-shell="global-dashboard"] .gd-news-impact-low .gd-news-impact-fill{width:30%; background:var(--jp-ink-muted)}
+  html[data-shell="global-dashboard"] .gd-news-empty{font-family:var(--jp-font-ui); font-size:11.5px; color:var(--jp-ink-muted); padding:6px 0}
+
   /* ---------- Cards: sombra sutil, sem borda, raio 10px ----------
      Aplica-se a TODOS os cards já existentes (Execution Board, Parâmetros
      etc.) mesmo antes do conteúdo interno de cada tela ser adaptado —

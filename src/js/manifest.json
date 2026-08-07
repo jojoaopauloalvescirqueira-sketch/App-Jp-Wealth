@@ -249,6 +249,12 @@
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
       "sha256": "803e815e38cd740cbac1c6e028eeae033b8ed8d93a7976c5e391929563e2cce4"
+    },
+    {
+      "order": 42,
+      "path": "src/js/40-app/15-ff-news.js",
+      "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
+      "sha256": "b914840c00a7d09ad4369559bd7a0b392a3ae1dd5c7fbd9264c85740de56e369"
     }
   ]
 }
