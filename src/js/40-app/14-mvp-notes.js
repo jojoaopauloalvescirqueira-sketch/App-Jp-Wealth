@@ -14,8 +14,12 @@ const mvpNotesUI={
   open:false, mode:'list', editingId:null,
   draft:null, draftOriginal:null, draftMeta:null, draftDirty:false,
   query:'', filterType:'all', filterStatus:'all', filterPriority:'all',
-  activeFolder:'all', // 'all' | 'unfiled' | id de pasta — visões virtuais nunca persistidas
-  opener:null, optionsReady:false, inertSnapshot:null
+  filterFolder:'all', filterPeriod:'all', // exclusivos da visão Concluído (pasta original / período de conclusão)
+  activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
+  stage:'folders', // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
+  filtersSheetOpen:false, // bottom sheet de filtros (mobile)
+  opener:null, optionsReady:false, inertSnapshot:null,
+  resize:null // gesto de resize em andamento {startX,startW} — nunca persiste durante pointermove
 };
 
 function mvpn(id){ return document.getElementById(id); }
@@ -36,22 +40,65 @@ function mvpNotesFormatDate(iso){
 // ---- leitura/derivação de dados ----
 function mvpNotesItems(){ return (S.mvpNotes && Array.isArray(S.mvpNotes.items)) ? S.mvpNotes.items : []; }
 function mvpNotesActiveCount(){ return mvpNotesItems().filter(it=>it.status==='open'||it.status==='in_progress').length; }
+function mvpNotesDoneCount(){ return mvpNotesItems().filter(it=>it.status==='done').length; }
+function mvpNotesIsDoneView(){ return mvpNotesUI.activeFolder==='done'; }
 function mvpNotesSorted(){ return [...mvpNotesItems()].sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))); }
+// Concluído ordena pelo carimbo de conclusão (mais recente primeiro); fallback updatedAt
+// cobre só o caso teórico de completedAt ausente — a normalização já o garante em 'done'.
+function mvpNotesSortedByCompletion(){
+  return [...mvpNotesItems()].sort((a,b)=>
+    String(b.completedAt||b.updatedAt||'').localeCompare(String(a.completedAt||a.updatedAt||'')));
+}
 function mvpNotesHaystack(item){
   return [item.title, item.description, MVP_NOTES_TYPE_LABELS[item.type], MVP_NOTES_STATUS_LABELS[item.status],
     mvpNotesScreenLabel(item.screenId), item.buildId, mvpNotesFolderLabel(item.folderId)].join(' ').toLocaleLowerCase('pt-BR');
 }
+function mvpNotesCompletedWithinPeriod(item,period){
+  if(period==='all') return true;
+  const days={ '7d':7, '30d':30 }[period]; if(!days) return true;
+  const ts=Date.parse(item.completedAt||item.updatedAt||'');
+  if(!Number.isFinite(ts)) return false;
+  return (Date.now()-ts)<=days*24*60*60*1000;
+}
 function mvpNotesFiltered(){
   const q=mvpNotesUI.query.trim().toLocaleLowerCase('pt-BR');
-  return mvpNotesSorted().filter(item=>{
-    if(mvpNotesUI.activeFolder==='unfiled' && item.folderId!==null) return false;
-    else if(mvpNotesUI.activeFolder!=='all' && mvpNotesUI.activeFolder!=='unfiled' && item.folderId!==mvpNotesUI.activeFolder) return false;
+  const doneView=mvpNotesIsDoneView();
+  const base=doneView?mvpNotesSortedByCompletion():mvpNotesSorted();
+  return base.filter(item=>{
+    if(doneView){
+      // Visão virtual do sistema: derivada exclusivamente do status — folderId intocado.
+      if(item.status!=='done') return false;
+      if(mvpNotesUI.filterFolder!=='all'){
+        if(mvpNotesUI.filterFolder==='unfiled'){ if(item.folderId!==null) return false; }
+        else if(item.folderId!==mvpNotesUI.filterFolder) return false;
+      }
+      if(!mvpNotesCompletedWithinPeriod(item,mvpNotesUI.filterPeriod)) return false;
+    }else{
+      if(mvpNotesUI.activeFolder==='unfiled' && item.folderId!==null) return false;
+      else if(mvpNotesUI.activeFolder!=='all' && mvpNotesUI.activeFolder!=='unfiled' && item.folderId!==mvpNotesUI.activeFolder) return false;
+      // Pastas comuns e "Sem pasta" são backlog ativo: concluídas ficam fora POR PADRÃO
+      // (elas vivem na visão Concluído). O filtro explícito de status "Concluída" é a
+      // exceção deliberada — "por padrão" não significa "inacessível". "Todas as Notas"
+      // permanece literalmente global (item 1.4).
+      if(mvpNotesUI.activeFolder!=='all' && item.status==='done' && mvpNotesUI.filterStatus!=='done') return false;
+      if(mvpNotesUI.filterStatus!=='all' && item.status!==mvpNotesUI.filterStatus) return false;
+    }
     if(mvpNotesUI.filterType!=='all' && item.type!==mvpNotesUI.filterType) return false;
-    if(mvpNotesUI.filterStatus!=='all' && item.status!==mvpNotesUI.filterStatus) return false;
     if(mvpNotesUI.filterPriority!=='all' && item.priority!==mvpNotesUI.filterPriority) return false;
     if(q && !mvpNotesHaystack(item).includes(q)) return false;
     return true;
   });
+}
+// Contagem de filtros ativos (indicador "Filtros · N" no mobile) — busca não conta.
+function mvpNotesActiveFilterCount(){
+  let n=0;
+  if(mvpNotesUI.filterType!=='all') n++;
+  if(mvpNotesUI.filterPriority!=='all') n++;
+  if(mvpNotesIsDoneView()){
+    if(mvpNotesUI.filterFolder!=='all') n++;
+    if(mvpNotesUI.filterPeriod!=='all') n++;
+  }else if(mvpNotesUI.filterStatus!=='all') n++;
+  return n;
 }
 
 // ---- pastas (schemaVersion 2) — entidade real e explícita; "Todas as Notas"/"Sem pasta"
@@ -63,8 +110,12 @@ function mvpNotesFolderLabel(folderId){
   const f=mvpNotesFolderById(folderId);
   return f ? f.name : 'Sem pasta'; // referência órfã (não deveria ocorrer após normalização) — trata como Sem pasta
 }
-function mvpNotesFolderItemCount(folderId){ return mvpNotesItems().filter(it=>it.folderId===folderId).length; }
-function mvpNotesUnfiledCount(){ return mvpNotesItems().filter(it=>it.folderId===null).length; }
+// Contadores semânticos (item 1.5): pastas comuns e "Sem pasta" contam só o backlog
+// ativo exibido nelas (status!=='done' — concluídas vivem na visão Concluído);
+// "Todas as Notas" conta literalmente tudo; "Concluído" conta status==='done'.
+function mvpNotesFolderItemCount(folderId){ return mvpNotesItems().filter(it=>it.folderId===folderId && it.status!=='done').length; }
+function mvpNotesFolderTotalCount(folderId){ return mvpNotesItems().filter(it=>it.folderId===folderId).length; }
+function mvpNotesUnfiledCount(){ return mvpNotesItems().filter(it=>it.folderId===null && it.status!=='done').length; }
 function mvpNotesAllCount(){ return mvpNotesItems().length; }
 function mvpNotesFolderNameExists(name,excludeId){
   const n=name.trim().toLocaleLowerCase('pt-BR');
@@ -94,12 +145,13 @@ function mvpNotesDeleteFolder(id){
 }
 function mvpNotesEnsureActiveFolderValid(){
   const af=mvpNotesUI.activeFolder;
-  if(af==='all' || af==='unfiled') return;
+  if(af==='all' || af==='unfiled' || af==='done') return;
   if(!mvpNotesFolderById(af)) mvpNotesUI.activeFolder='unfiled';
 }
 function mvpNotesViewLabel(){
   if(mvpNotesUI.activeFolder==='all') return 'Todas as Notas';
   if(mvpNotesUI.activeFolder==='unfiled') return 'Sem pasta';
+  if(mvpNotesUI.activeFolder==='done') return 'Concluído';
   const f=mvpNotesFolderById(mvpNotesUI.activeFolder);
   return f ? f.name : 'Todas as Notas';
 }
@@ -113,7 +165,8 @@ function mvpNotesCreate(draft){
     description:String(draft.description||'').slice(0,5000),
     priority:draft.priority, status:draft.status, folderId:draft.folderId||null,
     screenId:mvpNotesUI.draftMeta.screenId, buildId:mvpNotesUI.draftMeta.buildId,
-    createdAt:now, updatedAt:now
+    createdAt:now, updatedAt:now,
+    completedAt:draft.status==='done'?now:null // nota já criada concluída (raro, mas possível no editor)
   };
   S.mvpNotes.items.push(item);
   mvpNotesPersist();
@@ -126,6 +179,12 @@ function mvpNotesUpdate(id,draft){
   const changed=item.type!==draft.type || item.title!==draft.title.trim().slice(0,120) ||
     item.description!==String(draft.description||'').slice(0,5000) ||
     item.priority!==draft.priority || item.status!==draft.status || (item.folderId||null)!==folderId;
+  // Carimbo de conclusão: entra em 'done' → agora; sai de 'done' → null (reabrir zera o
+  // histórico; concluir de novo gera carimbo novo); permanece em 'done' → intocado.
+  // folderId NUNCA é alterado por transição de status — a visão Concluído é derivada,
+  // e reabrir devolve a nota à pasta original automaticamente porque ela nunca saiu de lá.
+  if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
+  else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
   item.type=draft.type; item.title=draft.title.trim().slice(0,120);
   item.description=String(draft.description||'').slice(0,5000);
   item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
@@ -184,16 +243,18 @@ function mvpNotesBuildOptions(){
   fillFilter('mvpNotesFilterType',MVP_NOTES_TYPE_LABELS,'Todos os tipos');
   fillFilter('mvpNotesFilterStatus',MVP_NOTES_STATUS_LABELS,'Todos os status');
   fillFilter('mvpNotesFilterPriority',MVP_NOTES_PRIORITY_LABELS,'Todas as prioridades');
+  const period=mvpn('mvpNotesFilterPeriod');
+  if(period) period.innerHTML=`<option value="all">Qualquer período</option><option value="7d">Concluídas nos últimos 7 dias</option><option value="30d">Concluídas nos últimos 30 dias</option>`;
   mvpNotesUI.optionsReady=true;
 }
 
 // ---- lista ----
 function mvpNotesCardHTML(item){
   const preview=esc(item.description||'').replace(/\n+/g,' ').trim();
-  // A pasta só aparece no card na visão "Todas as Notas" (item 11): dentro de uma pasta
-  // específica repetir o próprio nome em cada card é redundante; em "Sem pasta" o contexto
-  // já basta.
-  const folderLine=mvpNotesUI.activeFolder==='all'
+  // A pasta aparece no card nas visões globais "Todas as Notas" e "Concluído" (a pasta
+  // ORIGINAL preservada — folderId nunca muda ao concluir): dentro de uma pasta específica
+  // repetir o próprio nome em cada card é redundante; em "Sem pasta" o contexto já basta.
+  const folderLine=(mvpNotesUI.activeFolder==='all'||mvpNotesIsDoneView())
     ? `<div class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</div>` : '';
   return `<button type="button" class="mvpn-card" data-mvp-note-id="${esc(item.id)}" data-status="${esc(item.status)}" data-priority="${esc(item.priority)}" data-type="${esc(item.type)}">
     <div class="mvpn-card-top">
@@ -207,13 +268,42 @@ function mvpNotesCardHTML(item){
     <div class="mvpn-card-meta">
       <span>${esc(mvpNotesScreenLabel(item.screenId))}</span><span aria-hidden="true">·</span>
       <span>${item.buildId?('build '+esc(item.buildId)):'build não informado'}</span><span aria-hidden="true">·</span>
-      <span>atualizado em ${esc(mvpNotesFormatDate(item.updatedAt))}</span>
+      <span>${item.status==='done'&&item.completedAt
+        ?('concluída em '+esc(mvpNotesFormatDate(item.completedAt)))
+        :('atualizado em '+esc(mvpNotesFormatDate(item.updatedAt)))}</span>
     </div>
   </button>`;
+}
+// Sincroniza os controles de filtro com a visão ativa: em "Concluído" o filtro de status
+// some (o status é implícito) e entram "Pasta original" + "Período de conclusão"; nas
+// demais visões vale o trio original. "Tela de origem" e "Build" seguem cobertos pela
+// busca textual (mvpNotesHaystack) — infraestrutura atual, sem selects novos para eles.
+function mvpNotesSyncFilterControls(){
+  const done=mvpNotesIsDoneView();
+  const show=(id,visible)=>{ const el=mvpn(id); if(el) el.hidden=!visible; };
+  show('mvpNotesFilterStatus',!done);
+  show('mvpNotesFilterFolder',done);
+  show('mvpNotesFilterPeriod',done);
+  const folderSel=mvpn('mvpNotesFilterFolder');
+  if(folderSel && done){
+    folderSel.innerHTML=`<option value="all">Todas as pastas de origem</option><option value="unfiled">Sem pasta</option>`
+      +mvpNotesFolders().map(f=>`<option value="${esc(f.id)}">${esc(f.name)}</option>`).join('');
+    folderSel.value=mvpNotesUI.filterFolder;
+    if(folderSel.value!==mvpNotesUI.filterFolder){ mvpNotesUI.filterFolder='all'; folderSel.value='all'; } // pasta excluída após escolher o filtro
+  }
+  const periodSel=mvpn('mvpNotesFilterPeriod');
+  if(periodSel) periodSel.value=mvpNotesUI.filterPeriod;
+  const fbtn=mvpn('mvpNotesFiltersBtn');
+  if(fbtn){
+    const n=mvpNotesActiveFilterCount();
+    fbtn.textContent=n>0?`Filtros · ${n}`:'Filtros';
+    fbtn.setAttribute('aria-label',n>0?`Abrir filtros — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Abrir filtros');
+  }
 }
 function renderMvpNotesList(){
   mvpNotesEnsureActiveFolderValid();
   renderMvpNotesFolderNav();
+  mvpNotesSyncFilterControls();
   const titleEl=mvpn('mvpNotesViewTitle'); if(titleEl) titleEl.textContent=mvpNotesViewLabel();
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, items=mvpNotesFiltered();
@@ -238,8 +328,10 @@ function renderMvpNotesList(){
 // ---- navegação de pastas (sidebar desktop / seletor+gerenciar em mobile) ----
 function mvpNotesFolderRowHTML(id,name,count,manageable){
   const active=mvpNotesUI.activeFolder===id;
-  return `<div class="mvpn-folder-row">
-    <button type="button" class="mvpn-folder-btn" data-mvp-folder="${esc(id)}" ${active?'aria-current="page"':''}>
+  const system=id==='all'||id==='unfiled'||id==='done';
+  const systemAttr=system?` data-mvp-system-view="true" aria-description="Visão do sistema"`:'';
+  return `<div class="mvpn-folder-row${id==='done'?' mvpn-folder-row-done':''}">
+    <button type="button" class="mvpn-folder-btn" data-mvp-folder="${esc(id)}"${systemAttr} ${active?'aria-current="page"':''}>
       <span class="mvpn-folder-name" title="${esc(name)}">${esc(name)}</span>
       <span class="mvpn-folder-count">${count}</span>
     </button>
@@ -254,9 +346,12 @@ function mvpNotesFolderRowHTML(id,name,count,manageable){
 }
 function renderMvpNotesFolderNav(){
   const folders=mvpNotesFolders();
+  // "Concluído" é visão do sistema (derivada de status==='done'): não renomeável, não
+  // excluível, nunca persistida em folders[] — mesma família de "Todas as Notas"/"Sem pasta".
   const rows=[
     {id:'all', name:'Todas as Notas', count:mvpNotesAllCount()},
-    {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()}
+    {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()},
+    {id:'done', name:'Concluído', count:mvpNotesDoneCount()}
   ];
   const navHost=mvpn('mvpNotesFolderNavList');
   if(navHost){
@@ -266,13 +361,6 @@ function renderMvpNotesFolderNav(){
       : '';
     navHost.innerHTML=staticHTML+folderHTML;
     bindMvpNotesFolderNavEvents(navHost);
-  }
-  const sel=mvpn('mvpNotesFolderMobileSelect');
-  if(sel){
-    const optionHTML=r=>`<option value="${esc(r.id)}">${esc(r.name)} (${r.count})</option>`;
-    sel.innerHTML=rows.map(optionHTML).join('')
-      +folders.map(f=>optionHTML({id:f.id,name:f.name,count:mvpNotesFolderItemCount(f.id)})).join('');
-    sel.value=mvpNotesUI.activeFolder;
   }
 }
 function bindMvpNotesFolderNavEvents(host){
@@ -288,18 +376,15 @@ function bindMvpNotesFolderNavEvents(host){
     mvpNotesHandleDeleteFolder(btn.dataset.mvpFolderDelete);
   }));
 }
-// Trocar de pasta preserva busca e os 3 filtros (item 12) — só re-renderiza a lista; a
-// mesma proteção de rascunho não salvo das demais ações de pasta (item 14) se aplica aqui.
+// Trocar de pasta/visão preserva busca e filtros — só re-renderiza a lista; a mesma
+// proteção de rascunho não salvo das demais ações de pasta se aplica aqui. Em mobile,
+// escolher uma pasta avança a navegação em camadas para a Lista (estágio B).
 function mvpNotesSwitchFolder(target){
-  const previous=mvpNotesUI.activeFolder;
   mvpNotesConfirmDiscardIfDirty(()=>{
     mvpNotesUI.activeFolder=target;
+    mvpNotesUI.stage='list';
     renderMvpNotesMode('list');
   });
-  // Descarte cancelado (confirm()===false): activeFolder não mudou, mas o <select> mobile
-  // nativo já exibia visualmente a nova opção escolhida antes deste handler rodar —
-  // resincroniza o valor exibido com o estado real, senão select e app divergem.
-  if(mvpNotesUI.activeFolder===previous) renderMvpNotesFolderNav();
 }
 function mvpNotesPromptFolderName(defaultValue){
   const raw=prompt('Nome da pasta', defaultValue||'');
@@ -340,17 +425,48 @@ function mvpNotesHandleDeleteFolder(id){
     renderMvpNotesMode('list');
   });
 }
-// Classe .open, não atributo hidden: em desktop o painel fica sempre visível por CSS, e
-// hidden vencido por !important manteria o atributo no DOM — o filtro [hidden] do focus
-// trap passaria a excluir a sidebar inteira mesmo visível e tabulável.
-function mvpNotesSetFolderManageOpen(open){
-  const el=mvpn('mvpNotesFolderManage'), btn=mvpn('mvpNotesManageFoldersBtn');
-  if(el) el.classList.toggle('open', open);
-  if(btn) btn.setAttribute('aria-expanded', String(open));
+// ---- navegação mobile em camadas (Pastas → Lista → Editor) ----
+// Um único DOM para os dois mundos: em desktop a sidebar e o conteúdo convivem lado a
+// lado e o atributo data-mobile-stage é ignorado pelo CSS; abaixo do breakpoint (760px,
+// o mesmo já usado pelo módulo) o atributo decide qual camada ocupa a tela inteira.
+function mvpNotesIsMobile(){ return window.matchMedia('(max-width:760px)').matches; }
+function mvpNotesApplyStage(){
+  const drawer=mvpn('mvpNotesDrawer'); if(!drawer) return;
+  drawer.dataset.mobileStage=mvpNotesUI.stage;
+  const backBtn=mvpn('mvpNotesBackBtn'), title=mvpn('mvpNotesTitle');
+  if(mvpNotesIsMobile()){
+    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Notas do MVP'
+      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.editingId?'Editar nota':'Nova nota'));
+    if(backBtn){
+      backBtn.hidden=mvpNotesUI.stage==='folders';
+      backBtn.setAttribute('aria-label',mvpNotesUI.stage==='editor'?`Voltar para ${mvpNotesViewLabel()}`:'Voltar para pastas');
+    }
+  }else{
+    if(title) title.textContent='Notas do MVP';
+    if(backBtn) backBtn.hidden=true;
+  }
 }
-function mvpNotesToggleFolderManage(){
-  const el=mvpn('mvpNotesFolderManage'); if(!el) return;
-  mvpNotesSetFolderManageOpen(!el.classList.contains('open'));
+// Voltar contextual: Editor → Lista (com proteção de rascunho sujo), Lista → Pastas.
+// No estágio Pastas o botão não existe (fechar é o X, como em desktop).
+function mvpNotesGoBack(){
+  if(mvpNotesUI.mode==='editor'){ mvpNotesConfirmDiscardIfDirty(()=>renderMvpNotesMode('list')); return; }
+  if(mvpNotesUI.stage==='list'){
+    mvpNotesUI.stage='folders';
+    mvpNotesSetFiltersSheetOpen(false);
+    mvpNotesApplyStage();
+    const nav=mvpn('mvpNotesFolderNavList');
+    const current=nav?nav.querySelector('[aria-current="page"]')||nav.querySelector('button'):null;
+    if(current) current.focus();
+  }
+}
+// ---- bottom sheet de filtros (mobile) ----
+function mvpNotesSetFiltersSheetOpen(open){
+  mvpNotesUI.filtersSheetOpen=open;
+  const wrap=mvpn('mvpNotesFiltersWrap'), btn=mvpn('mvpNotesFiltersBtn');
+  if(wrap) wrap.classList.toggle('open',open);
+  if(btn) btn.setAttribute('aria-expanded',String(open));
+  if(open){ const first=wrap?wrap.querySelector('select:not([hidden])'):null; if(first) first.focus(); }
+  else if(btn && mvpNotesIsMobile() && document.activeElement && wrap && wrap.contains(document.activeElement)) btn.focus();
 }
 
 // ---- editor ----
@@ -406,6 +522,7 @@ function mvpNotesEditorHTML(isNew,meta){
       <dt>Build</dt><dd>${meta.buildId?esc(meta.buildId):'não informado'}</dd>
       <dt>Criada em</dt><dd>${meta.createdAt?esc(mvpNotesFormatDate(meta.createdAt)):'ao salvar'}</dd>
       <dt>Atualizada em</dt><dd>${meta.updatedAt?esc(mvpNotesFormatDate(meta.updatedAt)):'ao salvar'}</dd>
+      ${meta.completedAt?`<dt>Concluída em</dt><dd>${esc(mvpNotesFormatDate(meta.completedAt))}</dd>`:''}
     </dl>
     <p class="mvpn-editor-err" id="mvpNoteErr" hidden></p>
     <div class="mvpn-editor-actions">
@@ -450,21 +567,25 @@ function openMvpNotesEditor(id){
   const item=isNew?null:mvpNotesItems().find(it=>it.id===id);
   if(!isNew && !item) return;
   mvpNotesUI.editingId=isNew?null:id;
-  // Nova nota dentro de uma pasta específica herda essa pasta (itens 7/10); em "Todas as
-  // Notas" ou "Sem pasta" (visões virtuais) o padrão é null — o operador escolhe no editor.
-  const defaultFolderId=(mvpNotesUI.activeFolder!=='all' && mvpNotesUI.activeFolder!=='unfiled') ? mvpNotesUI.activeFolder : null;
+  // Nova nota dentro de uma pasta específica herda essa pasta; nas visões virtuais
+  // ("Todas as Notas", "Sem pasta", "Concluído") o padrão é null — o operador escolhe no
+  // editor. Criar a partir de "Concluído" NUNCA nasce concluída: status inicial é sempre
+  // 'open' (Concluído não é destino de criação, é visão derivada).
+  const defaultFolderId=(mvpNotesUI.activeFolder!=='all' && mvpNotesUI.activeFolder!=='unfiled' && mvpNotesUI.activeFolder!=='done') ? mvpNotesUI.activeFolder : null;
   mvpNotesUI.draft=isNew ? {type:'task', title:'', description:'', priority:'medium', status:'open', folderId:defaultFolderId} : mvpNotesDraftFromItem(item);
   mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
   mvpNotesUI.draftDirty=false;
   mvpNotesUI.draftMeta=isNew
-    ? {screenId:mvpNotesCurrentScreenId(), buildId:mvpNotesCurrentBuildId(), createdAt:'', updatedAt:''}
-    : {screenId:item.screenId, buildId:item.buildId, createdAt:item.createdAt, updatedAt:item.updatedAt};
+    ? {screenId:mvpNotesCurrentScreenId(), buildId:mvpNotesCurrentBuildId(), createdAt:'', updatedAt:'', completedAt:''}
+    : {screenId:item.screenId, buildId:item.buildId, createdAt:item.createdAt, updatedAt:item.updatedAt, completedAt:item.completedAt||''};
   renderMvpNotesMode('editor');
 }
 function renderMvpNotesMode(mode){
   mvpNotesUI.mode=mode;
   const toolbar=mvpn('mvpNotesToolbar'), list=mvpn('mvpNotesList'), editor=mvpn('mvpNotesEditor');
   if(mode==='editor'){
+    mvpNotesUI.stage='editor';
+    mvpNotesSetFiltersSheetOpen(false);
     if(toolbar) toolbar.hidden=true;
     if(list) list.hidden=true;
     if(editor){
@@ -478,17 +599,109 @@ function renderMvpNotesMode(mode){
       const t=mvpn('mvpNoteTitle'); if(t) t.focus();
     }
   }else{
+    // Saída do editor volta ao estágio Lista; o estágio Pastas só é alcançado pelo botão
+    // voltar (mvpNotesGoBack) ou na abertura do drawer em mobile.
+    if(mvpNotesUI.stage==='editor') mvpNotesUI.stage='list';
     if(toolbar) toolbar.hidden=false;
     if(list){ list.hidden=false; renderMvpNotesList(); }
     if(editor){ editor.hidden=true; editor.innerHTML=''; }
     mvpNotesUI.editingId=null; mvpNotesUI.draft=null; mvpNotesUI.draftOriginal=null; mvpNotesUI.draftDirty=false;
   }
+  mvpNotesApplyStage();
 }
 function mvpNotesConfirmDiscardIfDirty(proceed){
   if(mvpNotesUI.mode==='editor' && mvpNotesUI.draftDirty){
     if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
   }
   proceed();
+}
+
+// ---- resize horizontal do drawer (desktop) ----
+// O drawer permanece ancorado à direita (right:0); arrastar a borda esquerda muda só a
+// largura, via variável CSS --mvpn-drawer-w no próprio elemento. Durante o gesto
+// (pointermove) apenas o visual muda; save() acontece UMA vez, no fim (pointerup) —
+// nunca a cada pixel. Abaixo do breakpoint mobile o handle não existe visualmente (CSS)
+// e todos os handlers saem cedo: drawerWidth não governa a geometria mobile.
+// Faixa canônica vem de 00-core/04-persistence.js (MVP_NOTES_DRAWER_MIN/MAX/DEFAULT) —
+// não há segunda definição destes números. MVPN_DRAWER_WIDE é só o alvo do duplo clique.
+const MVPN_DRAWER_WIDE=760;
+// Máximo EFETIVO desta janela: nunca acima do máximo canônico, e ainda limitado a 80vw
+// para o drawer jamais tomar a tela inteira em monitores estreitos. É um teto de
+// renderização/gesto — não reescreve a preferência guardada (ver mvpNotesApplyDrawerWidth).
+function mvpNotesDrawerMax(){ return Math.max(MVP_NOTES_DRAWER_MIN, Math.min(Math.round(window.innerWidth*0.8), MVP_NOTES_DRAWER_MAX)); }
+function mvpNotesDrawerWidth(){
+  const w=(S.mvpNotes && S.mvpNotes.ui) ? Number(S.mvpNotes.ui.drawerWidth) : NaN;
+  return Number.isFinite(w)?w:MVP_NOTES_DRAWER_DEFAULT;
+}
+function mvpNotesClampWidth(w){ return Math.min(Math.max(Math.round(w),MVP_NOTES_DRAWER_MIN),mvpNotesDrawerMax()); }
+// Guarda de persistência: o que vai ao estado respeita SÓ a faixa canônica (420–900),
+// independente do tamanho da janela atual — abrir o painel num notebook estreito não pode
+// encolher para sempre a largura escolhida num monitor grande.
+function mvpNotesClampPersistable(w){ return Math.min(Math.max(Math.round(w),MVP_NOTES_DRAWER_MIN),MVP_NOTES_DRAWER_MAX); }
+function mvpNotesApplyDrawerWidth(w){
+  const d=mvpn('mvpNotesDrawer'); if(d) d.style.setProperty('--mvpn-drawer-w',w+'px');
+  const h=mvpn('mvpNotesResizeHandle');
+  if(h){
+    h.setAttribute('aria-valuemin',String(MVP_NOTES_DRAWER_MIN));
+    h.setAttribute('aria-valuemax',String(mvpNotesDrawerMax())); // teto efetivo desta janela
+    h.setAttribute('aria-valuenow',String(w));
+    h.setAttribute('aria-valuetext',`${w} pixels de largura`);
+  }
+}
+function mvpNotesPersistDrawerWidth(w){
+  if(!S.mvpNotes.ui || typeof S.mvpNotes.ui!=='object') S.mvpNotes.ui={};
+  const v=mvpNotesClampPersistable(w); // estado nunca recebe valor fora da faixa canônica
+  if(S.mvpNotes.ui.drawerWidth===v) return;
+  S.mvpNotes.ui.drawerWidth=v;
+  save();
+}
+function bindMvpNotesResize(){
+  const h=mvpn('mvpNotesResizeHandle'); if(!h) return;
+  h.addEventListener('pointerdown',e=>{
+    if(mvpNotesIsMobile()) return;
+    e.preventDefault();
+    try{ h.setPointerCapture(e.pointerId); }catch(_){}
+    mvpNotesUI.resize={startX:e.clientX, startW:mvpNotesClampWidth(mvpNotesDrawerWidth())};
+  });
+  h.addEventListener('pointermove',e=>{
+    if(!mvpNotesUI.resize) return;
+    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesUI.resize.startW+(mvpNotesUI.resize.startX-e.clientX)));
+  });
+  h.addEventListener('pointerup',e=>{
+    if(!mvpNotesUI.resize) return;
+    const w=mvpNotesClampWidth(mvpNotesUI.resize.startW+(mvpNotesUI.resize.startX-e.clientX));
+    mvpNotesUI.resize=null;
+    mvpNotesApplyDrawerWidth(w);
+    mvpNotesPersistDrawerWidth(w);
+  });
+  h.addEventListener('pointercancel',()=>{
+    if(!mvpNotesUI.resize) return;
+    mvpNotesUI.resize=null;
+    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())); // volta à última largura persistida
+  });
+  // Duplo clique alterna padrão ↔ ampliada (460 ↔ 760, sempre dentro dos limites vivos).
+  h.addEventListener('dblclick',()=>{
+    if(mvpNotesIsMobile()) return;
+    const cur=mvpNotesClampWidth(mvpNotesDrawerWidth());
+    const target=mvpNotesClampWidth(cur<MVPN_DRAWER_WIDE?MVPN_DRAWER_WIDE:MVP_NOTES_DRAWER_DEFAULT);
+    mvpNotesApplyDrawerWidth(target);
+    mvpNotesPersistDrawerWidth(target);
+  });
+  // Teclado: ← alarga (a borda esquerda anda para a esquerda), → estreita; Shift triplica
+  // o passo. Cada tecla é um ajuste discreto — persistir por tecla é barato e correto.
+  h.addEventListener('keydown',e=>{
+    if(mvpNotesIsMobile()) return;
+    const step=e.shiftKey?60:20;
+    let w=null;
+    if(e.key==='ArrowLeft') w=mvpNotesClampWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())+step);
+    else if(e.key==='ArrowRight') w=mvpNotesClampWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())-step);
+    else if(e.key==='Home') w=MVP_NOTES_DRAWER_MIN;
+    else if(e.key==='End') w=mvpNotesDrawerMax();
+    if(w===null) return;
+    e.preventDefault();
+    mvpNotesApplyDrawerWidth(w);
+    mvpNotesPersistDrawerWidth(w);
+  });
 }
 
 // ---- abertura/fechamento do drawer (foco, trap, inert — mesmo padrão da Central) ----
@@ -543,10 +756,15 @@ function openMvpNotesDrawer(opener){
   mvpNotesUI.open=true;
   mvpNotesUI.opener=opener||document.activeElement||mvpn('headerNotesBtn');
   mvpNotesUI.query=''; mvpNotesUI.filterType='all'; mvpNotesUI.filterStatus='all'; mvpNotesUI.filterPriority='all';
+  mvpNotesUI.filterFolder='all'; mvpNotesUI.filterPeriod='all';
   mvpNotesUI.activeFolder='all'; // cada abertura começa em "Todas as Notas", mesmo padrão dos filtros
+  // Mobile abre no estágio Pastas (navegação em camadas, Estado A); desktop mostra tudo
+  // lado a lado — o estágio fica em 'list' e o CSS o ignora acima do breakpoint.
+  mvpNotesUI.stage=mvpNotesIsMobile()?'folders':'list';
+  mvpNotesSetFiltersSheetOpen(false);
+  mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())); // largura lembrada (desktop)
   const search=mvpn('mvpNotesSearch'); if(search) search.value='';
-  ['mvpNotesFilterType','mvpNotesFilterStatus','mvpNotesFilterPriority'].forEach(id=>{ const el=mvpn(id); if(el) el.value='all'; });
-  mvpNotesSetFolderManageOpen(false); // painel "Gerenciar pastas" começa recolhido em mobile
+  ['mvpNotesFilterType','mvpNotesFilterStatus','mvpNotesFilterPriority','mvpNotesFilterFolder','mvpNotesFilterPeriod'].forEach(id=>{ const el=mvpn(id); if(el) el.value='all'; });
   // A Central usa #modalOverlay como sinal para suspender seu próprio focus trap
   // (initSettingsSubdialogObserver, 09-settings-modal.js); nosso drawer tem overlay
   // próprio, então o MutationObserver dela nunca vê esta abertura — sem isto, os dois
@@ -584,15 +802,33 @@ function bindMvpNotesDrawer(){
   mvpn('mvpNotesFilterType').addEventListener('change',e=>{ mvpNotesUI.filterType=e.target.value; renderMvpNotesList(); });
   mvpn('mvpNotesFilterStatus').addEventListener('change',e=>{ mvpNotesUI.filterStatus=e.target.value; renderMvpNotesList(); });
   mvpn('mvpNotesFilterPriority').addEventListener('change',e=>{ mvpNotesUI.filterPriority=e.target.value; renderMvpNotesList(); });
+  const folderFilter=mvpn('mvpNotesFilterFolder');
+  if(folderFilter) folderFilter.addEventListener('change',e=>{ mvpNotesUI.filterFolder=e.target.value; renderMvpNotesList(); });
+  const periodFilter=mvpn('mvpNotesFilterPeriod');
+  if(periodFilter) periodFilter.addEventListener('change',e=>{ mvpNotesUI.filterPeriod=e.target.value; renderMvpNotesList(); });
   mvpn('mvpNotesNewFolderBtn').addEventListener('click',mvpNotesHandleNewFolder);
-  mvpn('mvpNotesFolderMobileSelect').addEventListener('change',e=>mvpNotesSwitchFolder(e.target.value));
-  mvpn('mvpNotesManageFoldersBtn').addEventListener('click',mvpNotesToggleFolderManage);
+  const backBtn=mvpn('mvpNotesBackBtn');
+  if(backBtn) backBtn.addEventListener('click',mvpNotesGoBack);
+  const filtersBtn=mvpn('mvpNotesFiltersBtn');
+  if(filtersBtn) filtersBtn.addEventListener('click',()=>mvpNotesSetFiltersSheetOpen(!mvpNotesUI.filtersSheetOpen));
+  const applyBtn=mvpn('mvpNotesFiltersApplyBtn');
+  if(applyBtn) applyBtn.addEventListener('click',()=>mvpNotesSetFiltersSheetOpen(false)); // filtros aplicam ao vivo; Aplicar = fechar a folha
+  const clearBtn=mvpn('mvpNotesFiltersClearBtn');
+  if(clearBtn) clearBtn.addEventListener('click',()=>{
+    mvpNotesUI.filterType='all'; mvpNotesUI.filterStatus='all'; mvpNotesUI.filterPriority='all';
+    mvpNotesUI.filterFolder='all'; mvpNotesUI.filterPeriod='all';
+    ['mvpNotesFilterType','mvpNotesFilterStatus','mvpNotesFilterPriority','mvpNotesFilterFolder','mvpNotesFilterPeriod'].forEach(id=>{ const el=mvpn(id); if(el) el.value='all'; });
+    renderMvpNotesList();
+  });
+  bindMvpNotesResize();
   document.addEventListener('keydown',event=>{
     if(!mvpNotesUI.open) return;
     if(event.key==='Escape'){
       event.preventDefault();
-      if(mvpNotesUI.mode==='editor') mvpNotesConfirmDiscardIfDirty(()=>renderMvpNotesMode('list'));
-      else closeMvpNotesDrawer();
+      if(mvpNotesUI.filtersSheetOpen){ mvpNotesSetFiltersSheetOpen(false); return; }
+      if(mvpNotesUI.mode==='editor'){ mvpNotesConfirmDiscardIfDirty(()=>renderMvpNotesMode('list')); return; }
+      if(mvpNotesIsMobile() && mvpNotesUI.stage==='list'){ mvpNotesGoBack(); return; } // espelha o botão voltar
+      closeMvpNotesDrawer();
       return;
     }
     mvpNotesTrapFocus(event);

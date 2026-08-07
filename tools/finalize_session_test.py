@@ -399,6 +399,18 @@ def run_mvp_notes_survival(browser, url):
         'nota criada com a pasta ativa deveria ficar vinculada a ela'
     page.locator('#mvpNotesCloseBtn').click()
 
+    # v3: concluir a nota (completedAt) e ajustar a largura do painel — ambos devem
+    # sobreviver a Finalizar Sessão e ao reload, como o resto de S.mvpNotes.
+    page.evaluate('''() => {
+      const it = S.mvpNotes.items[0];
+      mvpNotesUpdate(it.id, {type: it.type, title: it.title, description: it.description,
+        priority: it.priority, status: 'done', folderId: it.folderId});
+      mvpNotesPersistDrawerWidth(620);
+    }''')
+    assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'concluir deveria carimbar completedAt'
+    assert page.evaluate('S.mvpNotes.items[0].folderId'), 'concluir não pode alterar folderId'
+    assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620
+
     assert_safe_copy_checkpoint(page)
     click_id(page, 'finalizeSessionBtn')
     assert 'finalizar sessão neste computador' in modal_text(page)
@@ -419,6 +431,9 @@ def run_mvp_notes_survival(browser, url):
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'a pasta deveria sobreviver a um reload real'
     assert page.evaluate('S.mvpNotes.items[0].folderId') == page.evaluate('S.mvpNotes.folders[0].id'), \
         'o vínculo nota↔pasta deveria sobreviver ao reload'
+    assert page.evaluate('S.mvpNotes.items[0].status') == 'done', 'o status concluído deveria sobreviver'
+    assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'completedAt deveria sobreviver ao reload'
+    assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620, 'a largura do painel deveria sobreviver'
 
     page.evaluate('''() => { window.prompt = () => 'APAGAR'; window.alert = () => {}; wipeAllData(); }''')
     assert page.evaluate('S.mvpNotes.items.length') == 0, 'Zona de Perigo deveria remover as notas'
