@@ -953,8 +953,16 @@
      não é log de auditoria financeira, não guarda dado de trading. Construído de forma
      preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
 <div class="mvp-notes-overlay" id="mvpNotesOverlay" aria-hidden="true">
-  <section class="mvp-notes-drawer" id="mvpNotesDrawer" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle">
+  <section class="mvp-notes-drawer" id="mvpNotesDrawer" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" data-mobile-stage="folders">
+    <!-- Alça de redimensionamento (desktop): borda esquerda arrastável; a área clicável
+         (12px) é maior que a linha visual. role=separator + setas ←/→ (±20px; Shift ±60)
+         + aria-value* — ver bindMvpNotesResize(). Invisível/inerte em mobile (CSS). -->
+    <div class="mvpn-resize-handle" id="mvpNotesResizeHandle" role="separator" aria-orientation="vertical"
+         aria-label="Redimensionar painel de notas (setas esquerda e direita ajustam a largura)" tabindex="0"></div>
     <header class="mvp-notes-head">
+      <button type="button" class="mvpn-back-btn" id="mvpNotesBackBtn" hidden aria-label="Voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <div class="mvp-notes-head-text">
         <h2 id="mvpNotesTitle">Notas do MVP</h2>
         <span class="mvp-notes-head-count" id="mvpNotesHeadCount"></span>
@@ -969,15 +977,12 @@
            lista abaixo funciona como sidebar sempre visível; em mobile o seletor nativo faz
            a troca rápida e "Gerenciar pastas" revela a mesma lista (criar/renomear/excluir),
            sem duplicar lógica — um único #mvpNotesFolderNavList para os dois breakpoints. -->
-      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas de notas">
-        <div class="mvpn-folder-mobile-bar">
-          <label class="sr-only" for="mvpNotesFolderMobileSelect">Pasta</label>
-          <select id="mvpNotesFolderMobileSelect"></select>
-          <button type="button" class="mvpn-folder-manage-toggle" id="mvpNotesManageFoldersBtn" aria-expanded="false" aria-controls="mvpNotesFolderManage">Gerenciar pastas</button>
-        </div>
-        <!-- Estado recolhido controlado por classe .open (não pelo atributo hidden): em
-             desktop o painel é sempre visível; hidden com override de CSS !important deixaria
-             o atributo no DOM e o filtro [hidden] do focus trap excluiria a sidebar inteira. -->
+      <!-- Em desktop: sidebar sempre visível ao lado do conteúdo. Em mobile: esta mesma
+           lista É o Estado A ("Pastas") da navegação em camadas — tela inteira, com as
+           visões do sistema (Todas as Notas / Sem pasta / Concluído), as pastas reais e
+           "+ Nova pasta". A antiga barra com <select> nativo foi substituída por esta
+           navegação (um único #mvpNotesFolderNavList para os dois mundos). -->
+      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de notas">
         <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
@@ -988,13 +993,28 @@
           <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
           <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
           <input type="search" id="mvpNotesSearch" placeholder="Buscar por título, descrição, tipo, status, tela, build ou pasta" autocomplete="off">
-          <div class="mvp-notes-filters">
-            <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
-            <select id="mvpNotesFilterType"></select>
-            <label class="sr-only" for="mvpNotesFilterStatus">Filtrar por status</label>
-            <select id="mvpNotesFilterStatus"></select>
-            <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
-            <select id="mvpNotesFilterPriority"></select>
+          <!-- Botão "Filtros" só existe visualmente em mobile (CSS): abre a folha inferior
+               com os MESMOS selects de sempre (nós únicos, transportados por CSS — nunca
+               duplicados). O texto vira "Filtros · N" quando há filtro ativo. -->
+          <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-controls="mvpNotesFiltersWrap">Filtros</button>
+          <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap">
+            <div class="mvpn-filters-sheet-head">Filtros</div>
+            <div class="mvp-notes-filters">
+              <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
+              <select id="mvpNotesFilterType"></select>
+              <label class="sr-only" for="mvpNotesFilterStatus">Filtrar por status</label>
+              <select id="mvpNotesFilterStatus"></select>
+              <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
+              <select id="mvpNotesFilterPriority"></select>
+              <label class="sr-only" for="mvpNotesFilterFolder">Filtrar por pasta original</label>
+              <select id="mvpNotesFilterFolder" hidden></select>
+              <label class="sr-only" for="mvpNotesFilterPeriod">Filtrar por período de conclusão</label>
+              <select id="mvpNotesFilterPeriod" hidden></select>
+            </div>
+            <div class="mvpn-filters-sheet-actions">
+              <button type="button" class="reset-btn" id="mvpNotesFiltersClearBtn">Limpar</button>
+              <button type="button" class="reset-btn mvpn-primary" id="mvpNotesFiltersApplyBtn">Aplicar</button>
+            </div>
           </div>
           <button type="button" class="reset-btn" id="mvpNotesNewBtn">Nova nota</button>
         </div>

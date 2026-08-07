@@ -1558,11 +1558,25 @@
   .mvp-notes-overlay{position:fixed; inset:0; z-index:var(--jp-layer-modal); display:none; background:rgba(4,7,12,.5)}
   .mvp-notes-overlay.show{display:block}
   .mvp-notes-drawer{
-    position:fixed; top:0; right:0; height:100vh; width:min(460px,calc(100vw - 32px));
+    /* Largura = min(valor persistido, 80vw, 900px máximo funcional, viewport - 32px).
+       O valor persistido já chega aparado à faixa canônica 420–900 pela normalização
+       (04-persistence.js); este min() é o cinto de segurança de renderização — o drawer
+       nunca toma a tela inteira, nunca escapa da viewport e nunca impede o fechamento,
+       inclusive antes de o JS aplicar a variável. */
+    position:fixed; top:0; right:0; height:100vh;
+    width:min(var(--mvpn-drawer-w,460px), 80vw, 900px, calc(100vw - 32px));
     display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
     box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
     animation:mvpNotesSlideIn .18s ease-out;
   }
+  /* Alça de redimensionamento: 12px clicáveis sobre a borda esquerda (bem mais que a
+     linha visual de 2px), cursor ew-resize, linha visível em hover/foco. */
+  .mvpn-resize-handle{position:absolute; left:-6px; top:0; bottom:0; width:12px; cursor:ew-resize; touch-action:none; z-index:1}
+  .mvpn-resize-handle::before{content:''; position:absolute; left:5px; top:0; bottom:0; width:2px; background:transparent; transition:background .12s}
+  .mvpn-resize-handle:hover::before,.mvpn-resize-handle:focus-visible::before{background:var(--violet)}
+  .mvpn-resize-handle:focus-visible{outline:2px solid var(--violet); outline-offset:-2px}
+  /* Botão voltar da navegação mobile em camadas — inexistente em desktop. */
+  .mvpn-back-btn{display:none}
   @keyframes mvpNotesSlideIn{from{transform:translateX(12px); opacity:.6} to{transform:translateX(0); opacity:1}}
   @media (prefers-reduced-motion:reduce){ .mvp-notes-drawer{animation:none} }
   .mvp-notes-head{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px 18px; border-bottom:1px solid var(--line); flex:none}
@@ -1575,8 +1589,13 @@
   .mvp-notes-toolbar{display:flex; flex-direction:column; gap:8px; padding:14px 18px; border-bottom:1px solid var(--line); flex:none}
   .mvpn-view-title{margin:0; font-size:var(--fs-md); color:var(--ink); font-weight:700}
   .mvp-notes-toolbar input[type="search"]{width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 11px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-sm)}
+  /* Desktop: os filtros ficam inline na toolbar (o invólucro é transparente — cabeçalho e
+     ações da folha inferior só existem em mobile); o botão "Filtros" não existe aqui. */
+  .mvpn-filters-btn{display:none}
+  .mvpn-filters-sheet-head,.mvpn-filters-sheet-actions{display:none}
   .mvp-notes-filters{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
   .mvp-notes-filters select{width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 8px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-xs)}
+  .mvp-notes-filters select[hidden]{display:none}
   .mvp-notes-toolbar #mvpNotesNewBtn{width:100%; justify-content:center}
   /* Corpo do drawer: sidebar de pastas (esquerda, fixa em desktop) + coluna de conteúdo
      (busca/filtros/lista/editor, inalterada). Em mobile (media query abaixo) a sidebar vira
@@ -1673,34 +1692,79 @@
   .mvpn-editor-actions{display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:4px}
   .mvpn-danger{color:var(--f4); border-color:var(--f4); margin-right:auto}
   .mvpn-primary{color:var(--violet); border-color:var(--violet)}
-  /* Desktop: painel de pastas sempre visível (nenhuma regra extra — .mvpn-folder-manage é
-     visível por padrão e a classe .open só governa o estado recolhido dentro do breakpoint
-     mobile abaixo, onde sidebar e conteúdo não podem ficar comprimidos lado a lado). */
+  /* ===== MOBILE (≤760px): experiência própria em camadas, estilo Apple Notes =====
+     Tela inteira (100dvh + safe-area, sem bordas laterais inúteis) e três estágios
+     exclusivos governados por data-mobile-stage no drawer (14-mvp-notes.js):
+       folders → só a navegação de pastas/visões;
+       list    → só a lista (busca + botão Filtros + cards);
+       editor  → só o editor.
+     Desktop ignora o atributo por completo — nada aqui vaza para cima do breakpoint. */
   @media(max-width:760px){
-    .mvp-notes-drawer{width:100vw}
-    .mvp-notes-filters{grid-template-columns:1fr 1fr}
+    .mvp-notes-drawer{
+      width:100vw; left:0;
+      height:100vh; height:100dvh; /* dvh: teclado virtual não deixa área morta */
+    }
+    .mvpn-resize-handle{display:none} /* drawerWidth não governa a geometria mobile */
+    .mvp-notes-head{
+      position:sticky; top:0; z-index:2; background:var(--panel); align-items:center;
+      padding:12px 14px; padding-top:calc(12px + env(safe-area-inset-top));
+    }
+    .mvp-notes-head-text{min-width:0}
+    .mvp-notes-head-text h2{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+    .mvpn-back-btn:not([hidden]){
+      display:inline-flex; align-items:center; justify-content:center; flex:0 0 40px;
+      width:40px; height:40px; border:1px solid var(--line); border-radius:var(--radius-sm);
+      background:var(--panel-2); color:var(--ink-dim); cursor:pointer;
+    }
+    .mvpn-back-btn svg{width:18px; height:18px}
+    .mvp-notes-close{width:40px; height:40px; flex-basis:40px}
+    /* Estágios: cada camada usa a tela inteira; as outras somem. */
+    .mvp-notes-drawer[data-mobile-stage="folders"] .mvpn-content{display:none}
+    .mvp-notes-drawer[data-mobile-stage="list"] .mvpn-folder-sidebar,
+    .mvp-notes-drawer[data-mobile-stage="editor"] .mvpn-folder-sidebar{display:none}
     .mvp-notes-body{flex-direction:column}
-    .mvpn-folder-sidebar{
-      flex:none; width:100%; border-right:0; border-bottom:1px solid var(--line); padding:10px 14px;
+    .mvpn-folder-sidebar{flex:1; width:100%; border-right:0; padding:12px 14px calc(16px + env(safe-area-inset-bottom))}
+    .mvpn-folder-nav-list{padding:0; gap:4px}
+    .mvpn-folder-btn{min-height:44px; font-size:var(--fs-md); padding:10px 12px}
+    .mvpn-folder-kebab summary{width:44px; height:44px}
+    .mvpn-folder-new-btn{margin:12px 0 0; min-height:44px; font-size:var(--fs-md)}
+    /* Lista: busca acessível logo abaixo do cabeçalho; selects saem da toolbar e vivem na
+       folha inferior; o botão "Filtros" (com contador) é o acesso. */
+    .mvpn-filters-btn{
+      display:inline-flex; align-items:center; justify-content:center; min-height:44px;
+      border:1px solid var(--line); border-radius:7px; padding:8px 12px; background:var(--panel-2);
+      color:var(--ink-dim); font:inherit; font-size:var(--fs-sm); cursor:pointer;
     }
-    .mvpn-folder-manage:not(.open){display:none}
-    .mvpn-folder-mobile-bar{display:flex; align-items:center; gap:8px}
-    .mvpn-folder-mobile-bar select{
-      flex:1; min-width:0; border:1px solid var(--line); border-radius:7px; padding:8px 9px;
-      background:var(--panel); color:var(--ink); font:inherit; font-size:var(--fs-sm);
+    .mvpn-filters-btn[aria-expanded="true"]{color:var(--ink); border-color:var(--violet)}
+    .mvpn-filters-wrap{
+      position:fixed; left:0; right:0; bottom:0; z-index:3;
+      background:var(--panel); border-top:1px solid var(--line); border-radius:14px 14px 0 0;
+      box-shadow:0 -14px 34px rgba(0,0,0,.35);
+      padding:14px 16px calc(16px + env(safe-area-inset-bottom));
+      transform:translateY(105%); transition:transform .18s ease-out; visibility:hidden;
     }
-    .mvpn-folder-manage-toggle{
-      flex:none; border:1px solid var(--line); border-radius:7px; padding:8px 10px; background:var(--panel);
-      color:var(--ink-dim); font:inherit; font-size:var(--fs-xs); cursor:pointer; white-space:nowrap;
-    }
-    .mvpn-folder-manage-toggle:hover{color:var(--ink); border-color:var(--ink-faint)}
-    .mvpn-folder-manage{margin-top:8px}
-    .mvpn-folder-nav-list{padding:0}
-    .mvpn-folder-new-btn{margin-left:0; margin-right:0}
-  }
-  @media(max-width:460px){
-    .mvp-notes-filters{grid-template-columns:1fr}
+    .mvpn-filters-wrap.open{transform:none; visibility:visible}
+    @media (prefers-reduced-motion:reduce){ .mvpn-filters-wrap{transition:none} }
+    .mvpn-filters-sheet-head{display:block; font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:10px}
+    .mvp-notes-filters{grid-template-columns:1fr; gap:8px}
+    .mvp-notes-filters select{min-height:44px; font-size:var(--fs-sm)}
+    .mvpn-filters-sheet-actions{display:flex; justify-content:space-between; gap:10px; margin-top:12px}
+    .mvpn-filters-sheet-actions .reset-btn{min-height:44px; flex:1; justify-content:center}
+    .mvp-notes-toolbar #mvpNotesNewBtn{min-height:44px}
+    /* Cards: área de toque confortável (≥44px já garantida pelo conteúdo + padding). */
+    .mvpn-card{padding:12px 14px}
+    .mvp-notes-list{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+    /* Editor: Salvar sempre alcançável (barra pegajosa com safe-area); Excluir em linha
+       própria, afastado do botão principal — nunca lado a lado com Salvar no toque. */
+    .mvp-notes-editor{padding-bottom:0}
     .mvpn-editor-row{grid-template-columns:1fr}
+    .mvpn-editor-actions{
+      position:sticky; bottom:0; background:var(--panel); flex-wrap:wrap;
+      margin:auto -18px 0; padding:10px 18px calc(12px + env(safe-area-inset-bottom));
+      border-top:1px solid var(--line);
+    }
+    .mvpn-editor-actions .mvpn-primary{min-height:44px; flex:1; justify-content:center}
+    .mvpn-danger{flex-basis:100%; order:-1; margin:0 0 10px; min-height:44px; justify-content:center}
   }
 
   /* ==========================================================

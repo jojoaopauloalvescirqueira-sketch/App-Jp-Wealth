@@ -571,6 +571,80 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 14. evolução v3: Concluído (visão virtual), completedAt, resize e mobile ----
+        page = prepare_page(browser, base_url + 'index.html')
+        assert page.evaluate('S.mvpNotes.schemaVersion') == 3
+        assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 460
+        create_note(page, 'task', 'Fica ativa', '', 'medium', 'open')
+        create_note(page, 'task', 'Vai concluir', '', 'medium', 'open')
+        page.evaluate("""() => {
+          const folder = mvpNotesCreateFolder('Pasta Origem');
+          const it = S.mvpNotes.items.find(i => i.title === 'Vai concluir');
+          it.folderId = folder.id; save();
+        }""")
+        page.evaluate("""() => {
+          const it = S.mvpNotes.items.find(i => i.title === 'Vai concluir');
+          mvpNotesUpdate(it.id, {type: it.type, title: it.title, description: it.description,
+            priority: it.priority, status: 'done', folderId: it.folderId});
+        }""")
+        done_item = page.evaluate("S.mvpNotes.items.find(i => i.title === 'Vai concluir')")
+        assert done_item['status'] == 'done' and done_item['completedAt'], 'concluir deve carimbar completedAt'
+        assert done_item['folderId'], 'folderId não pode mudar ao concluir'
+        assert page.evaluate('mvpNotesDoneCount()') == 1
+        assert page.evaluate("mvpNotesFolderItemCount(S.mvpNotes.folders[0].id)") == 0, 'backlog da pasta não conta concluídas'
+        assert page.evaluate('mvpNotesActiveCount()') == 1, 'badge do header não conta concluídas'
+        click_id(page, 'headerNotesBtn')
+        page.locator("[data-mvp-folder='done']").click()
+        page.wait_for_timeout(150)
+        assert page.locator('#mvpNotesViewTitle').inner_text() == 'Concluído'
+        assert page.locator('#mvpNotesFilterStatus').is_hidden(), 'status é implícito em Concluído'
+        assert page.locator('#mvpNotesFilterFolder').is_visible(), 'Concluído filtra por pasta original'
+        assert page.locator('.mvpn-card').count() == 1
+        page.locator('.mvpn-card').first.click()
+        page.locator('#mvpNoteStatus').select_option('open')
+        click_id(page, 'mvpNoteSaveBtn')
+        reopened = page.evaluate("S.mvpNotes.items.find(i => i.title === 'Vai concluir')")
+        assert reopened['status'] == 'open' and reopened['completedAt'] is None, 'reabrir zera completedAt'
+        assert reopened['folderId'] == done_item['folderId'], 'reabrir preserva a pasta original'
+        assert page.evaluate('mvpNotesDoneCount()') == 0
+        click_id(page, 'mvpNotesCloseBtn')
+        # resize: aplicar/persistir largura, limites e sobrevivência à recarga
+        click_id(page, 'headerNotesBtn')
+        page.evaluate('mvpNotesApplyDrawerWidth(620); mvpNotesPersistDrawerWidth(620)')
+        click_id(page, 'mvpNotesCloseBtn')
+        click_id(page, 'headerNotesBtn')
+        assert page.evaluate("getComputedStyle(document.getElementById('mvpNotesDrawer')).width") == '620px'
+        assert page.evaluate('mvpNotesClampWidth(100)') == 420
+        assert page.evaluate('mvpNotesClampWidth(99999)') <= 900
+        click_id(page, 'mvpNotesCloseBtn')
+        page.reload(wait_until='load')
+        page.wait_for_timeout(700)
+        page.evaluate("() => { window.__onbShown = true; closeModal(); window.confirm = () => false; window.prompt = () => null; }")
+        assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620, 'largura sobrevive à recarga'
+        page.close()
+        # mobile: navegação em camadas Pastas → Lista → Editor → voltar + folha de filtros
+        page = prepare_page(browser, base_url + 'index.html')
+        page.set_viewport_size({'width': 390, 'height': 800})
+        click_id(page, 'headerNotesBtn')
+        drawer = page.locator('#mvpNotesDrawer')
+        assert drawer.get_attribute('data-mobile-stage') == 'folders'
+        assert page.locator('#mvpNotesResizeHandle').is_hidden(), 'resize handle não existe em mobile'
+        page.locator("[data-mvp-folder='all']").click()
+        assert drawer.get_attribute('data-mobile-stage') == 'list'
+        click_id(page, 'mvpNotesNewBtn')
+        assert drawer.get_attribute('data-mobile-stage') == 'editor'
+        click_id(page, 'mvpNotesBackBtn')
+        assert drawer.get_attribute('data-mobile-stage') == 'list'
+        click_id(page, 'mvpNotesBackBtn')
+        assert drawer.get_attribute('data-mobile-stage') == 'folders'
+        page.locator("[data-mvp-folder='all']").click()
+        click_id(page, 'mvpNotesFiltersBtn')
+        assert page.locator('#mvpNotesFiltersWrap').evaluate("el => el.classList.contains('open')") is True
+        click_id(page, 'mvpNotesFiltersApplyBtn')
+        assert page.locator('#mvpNotesFiltersWrap').evaluate("el => el.classList.contains('open')") is False
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 13. monólito portátil (dist) ----
         page = prepare_page(browser, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')
@@ -582,4 +656,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas (schema v2) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, Concluído/completedAt, resize com persistência, navegação mobile (schema v3) e monólito verificados.')

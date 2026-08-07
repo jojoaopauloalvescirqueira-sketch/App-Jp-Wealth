@@ -174,7 +174,8 @@ try:
         # Notas do MVP — botão, drawer, criação simples, badge, ocultar sem apagar, acesso pela
         # Central; schema v2: pastas (folders/folderId) presentes e preservadas nas mesmas ações.
         assert page.locator('#headerNotesBtn').is_visible(), 'botão Notas do MVP deveria estar visível por padrão'
-        assert page.evaluate('S.mvpNotes.schemaVersion')==2, 'estado de notas deveria estar no schema v2'
+        assert page.evaluate('S.mvpNotes.schemaVersion')==3, 'estado de notas deveria estar no schema v3'
+        assert page.evaluate('S.mvpNotes.ui.drawerWidth')==460, 'preferência de largura do painel deveria existir com o padrão'
         assert page.evaluate('Array.isArray(S.mvpNotes.folders)'), 'schema v2 exige o array de pastas'
         page.locator('#headerNotesBtn').click()
         assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')"), 'drawer de Notas deveria abrir'

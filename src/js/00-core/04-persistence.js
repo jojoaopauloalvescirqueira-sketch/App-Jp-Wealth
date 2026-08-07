@@ -80,6 +80,11 @@ function load(){
 const MVP_NOTES_TYPES=['task','bug','feature','improvement'];
 const MVP_NOTES_STATUSES=['open','in_progress','done','discarded'];
 const MVP_NOTES_PRIORITIES=['low','medium','high','critical'];
+// Geometria canônica do painel de Notas (v3) — fonte ÚNICA, consumida tanto pela
+// normalização do estado (abaixo) quanto pelo motor de resize (14-mvp-notes.js). Faixa
+// persistível e máximo funcional são o mesmo número: o estado nunca guarda largura que a
+// interface não saiba renderizar.
+const MVP_NOTES_DRAWER_MIN=420, MVP_NOTES_DRAWER_MAX=900, MVP_NOTES_DRAWER_DEFAULT=460;
 function mvpNotesId(){ return 'mvpn_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 function mvpNotesFolderId(){ return 'mvpnf_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 // ---- pastas (schemaVersion 2) — normalizadas ANTES dos itens: mvpNotesNormalizeItem()
@@ -121,24 +126,59 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds){
   if(!id || seenIds.has(id)) id=mvpNotesId(); // impede ID ausente/duplicado
   seenIds.add(id);
   const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
+  const updatedAt=(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt;
+  const status=MVP_NOTES_STATUSES.includes(raw.status)?raw.status:'open';
+  // completedAt: só existe enquanto status==='done'. Migração determinística de notas
+  // antigas concluídas sem o campo: usa updatedAt (último toque conhecido ≈ momento em
+  // que foi marcada concluída) — nunca inventa data nova. Fora de 'done' é sempre null,
+  // mesmo que o backup traga um valor: a visão Concluído é derivada do status, e um
+  // completedAt órfão viraria estado fantasma.
+  let completedAt=(typeof raw.completedAt==='string'&&raw.completedAt)?raw.completedAt:null;
+  if(status==='done' && !completedAt) completedAt=updatedAt;
+  if(status!=='done') completedAt=null;
   return {
     id,
     type:MVP_NOTES_TYPES.includes(raw.type)?raw.type:'task',
     title:title.slice(0,120),
     description:String(raw.description||'').slice(0,5000),
     priority:MVP_NOTES_PRIORITIES.includes(raw.priority)?raw.priority:'medium',
-    status:MVP_NOTES_STATUSES.includes(raw.status)?raw.status:'open',
+    status,
     folderId:mvpNotesResolveFolderId(raw.folderId,validFolderIds,ambiguousFolderIds),
     screenId:String(raw.screenId||''),
     buildId:String(raw.buildId||''),
     createdAt,
-    updatedAt:(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt
+    updatedAt,
+    completedAt
   };
 }
 function mvpNotesNormalizeState(){
   if(!S.mvpNotes || typeof S.mvpNotes!=='object') S.mvpNotes=structuredClone(DEFAULTS.mvpNotes);
-  S.mvpNotes.schemaVersion=2;
+  // Histórico do schema deste módulo:
+  //   v1 = notas soltas, sem pastas (items[] apenas);
+  //   v2 = pastas reais (folders[]) + item.folderId;
+  //   v3 = item.completedAt (carimbo de conclusão) + ui{} (preferências persistidas do
+  //        painel, hoje drawerWidth) + a visão virtual "Concluído", derivada de
+  //        status==='done' e NUNCA gravada em folders[].
+  // A migração é idempotente e sem perda: backups v1/v2 sobem para v3 aqui (v1 ganha
+  // folders:[] e todas as notas caem em "Sem pasta"; v2 ganha completedAt derivado e
+  // ui com o padrão). Rodar de novo sobre um estado já v3 não altera mais nada.
+  S.mvpNotes.schemaVersion=3;
   S.mvpNotes.showHeaderIcon=S.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
+  // Preferências de interface do módulo (v3) — viajam no estado principal, logo entram no
+  // backup/importação e sobrevivem a Finalizar Sessão como o resto de S.mvpNotes.
+  // drawerWidth: faixa canônica única (MVP_NOTES_DRAWER_MIN..MAX) — o estado nunca guarda
+  // valor impossível. Valor fora da faixa é APARADO (preserva a intenção do operador),
+  // não descartado; só valor ausente/não-numérico cai no padrão. A viewport ainda limita
+  // a renderização ao vivo (min(persistido, 80vw, MAX) no CSS/motor de resize) sem
+  // reescrever o valor guardado — telas menores não destroem a preferência.
+  if(!S.mvpNotes.ui || typeof S.mvpNotes.ui!=='object') S.mvpNotes.ui={};
+  // null/''/booleano são AUSÊNCIA, não "zero": sem esta guarda Number(null)===0 seria
+  // finito e cairia no mínimo (420) em vez do padrão — divergindo de undefined (460).
+  const rawUi=S.mvpNotes.ui.drawerWidth;
+  const rawW=(rawUi===null || rawUi==='' || typeof rawUi==='boolean') ? NaN : Number(rawUi);
+  S.mvpNotes.ui.drawerWidth=Number.isFinite(rawW)
+    ? Math.min(Math.max(Math.round(rawW),MVP_NOTES_DRAWER_MIN),MVP_NOTES_DRAWER_MAX)
+    : MVP_NOTES_DRAWER_DEFAULT;
   // Estado v1 (sem folders) chega aqui com S.mvpNotes.folders===undefined — normaliza para []
   // e cada nota, sem folderId prévio, resolve para null (Sem pasta) abaixo. Sem tela de
   // migração: o operador só vê o resultado (tudo em "Sem pasta") ao abrir o painel.

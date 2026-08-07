@@ -117,8 +117,12 @@ const DEFAULTS = {
   // Backlog interno do período de MVP (14-mvp-notes.js) — tarefas/bugs/funcionalidades/
   // melhorias registradas pelo operador durante testes. Não é log de auditoria financeira,
   // não é notificação, não guarda dado de trading. items: ver mvpNotesNormalizeItem().
-  // schemaVersion 2: pastas de organização (folders[]) + item.folderId — ver
-  // mvpNotesNormalizeFolders()/mvpNotesNormalizeItem() em 04-persistence.js.
-  mvpNotes:{schemaVersion:2, showHeaderIcon:true, folders:[], items:[]},
+  // Evolução do schema (migração idempotente em mvpNotesNormalizeState, 04-persistence.js):
+  //   v1 = notas sem pastas (items[] apenas);
+  //   v2 = folders[] + item.folderId;
+  //   v3 = item.completedAt (carimbo de conclusão, só enquanto status==='done') +
+  //        ui{} (preferências persistidas do painel: drawerWidth) + visão virtual
+  //        "Concluído", derivada de status e nunca gravada como pasta.
+  mvpNotes:{schemaVersion:3, showHeaderIcon:true, folders:[], items:[], ui:{drawerWidth:460}},
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
