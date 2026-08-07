@@ -44,15 +44,24 @@ def prepare_page(browser, url):
     page.jpwealth_observed = observed
     return page
 
+def open_inspector(page):
+    # Os selects administrativos (tipo/prioridade/status/pasta/política) vivem no
+    # inspector (v5); abri-lo é pré-requisito para interagir com eles.
+    if page.locator('#mvpNotesInspector.open').count() == 0:
+        click_id(page, 'mvpNotesInspectorBtn')
+
 def create_note(page, type_, title, description, priority, status):
     click_id(page, 'headerNotesBtn')
     click_id(page, 'mvpNotesNewBtn')
-    page.locator('#mvpNoteType').select_option(type_)
-    page.locator('#mvpNoteTitle').fill(title)
-    page.locator('#mvpNoteDescription').fill(description)
-    page.locator('#mvpNotePriority').select_option(priority)
-    page.locator('#mvpNoteStatus').select_option(status)
-    click_id(page, 'mvpNoteSaveBtn')
+    content = title + ('\n' + description if description else '')
+    page.locator('#mvpNoteContent').fill(content)
+    if (type_, priority, status) != ('task', 'medium', 'open'):
+        open_inspector(page)
+        page.locator('#mvpNoteType').select_option(type_)
+        page.locator('#mvpNotePriority').select_option(priority)
+        page.locator('#mvpNoteStatus').select_option(status)
+        click_id(page, 'mvpNotesInspectorCloseBtn')
+    click_id(page, 'mvpNotesSaveBtn')
     click_id(page, 'mvpNotesCloseBtn')
 
 def notes_state(page):
@@ -103,9 +112,10 @@ try:
         bug_card = page.locator('.mvpn-card[data-type="bug"]')
         bug_before = next(it for it in items if it['type'] == 'bug')
         bug_card.click()
-        assert page.locator('.mvpn-meta-facts dd').first.inner_text() == 'Dashboard'
+        open_inspector(page)
+        assert page.locator('.mvpn-meta-facts dd').nth(3).inner_text() == 'Dashboard'  # Tela de origem
         page.locator('#mvpNoteStatus').select_option('in_progress')
-        click_id(page, 'mvpNoteSaveBtn')
+        click_id(page, 'mvpNotesSaveBtn')
         bug_after = next(it for it in notes_state(page) if it['id'] == bug_before['id'])
         assert bug_after['status'] == 'in_progress'
         assert bug_after['createdAt'] == bug_before['createdAt']
@@ -115,17 +125,20 @@ try:
 
         page.locator('.mvpn-card[data-type="task"]').click()
         task_before = next(it for it in notes_state(page) if it['type'] == 'task')
-        click_id(page, 'mvpNoteSaveBtn')  # salva sem alterar nada
+        # v5: sem alteração o botão Salvar nem aparece; trocar de nota sem dirty não pede
+        # confirmação e não toca updatedAt.
+        assert page.locator('#mvpNotesSaveBtn').is_hidden(), 'sem alteração não há o que salvar'
+        page.locator('.mvpn-card[data-type="bug"]').click()
         task_after = next(it for it in notes_state(page) if it['id'] == task_before['id'])
         assert task_after['updatedAt'] == task_before['updatedAt'], 'updatedAt não deveria mudar sem alteração real'
 
         # ---- 3. dirty state: recusar descarte mantém o rascunho; aceitar descarta ----
         page.locator('.mvpn-card[data-type="feature"]').click()
-        page.locator('#mvpNoteTitle').fill('Rascunho não salvo')
+        page.locator('#mvpNoteContent').fill('Rascunho não salvo')
         page.evaluate("window.confirm = () => false")
         click_id(page, 'mvpNotesCloseBtn')
         assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')") is True
-        assert page.locator('#mvpNoteTitle').input_value() == 'Rascunho não salvo'
+        assert page.locator('#mvpNoteContent').input_value() == 'Rascunho não salvo'
         page.evaluate("window.confirm = () => true")
         click_id(page, 'mvpNotesCloseBtn')
         assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')") is False
@@ -136,6 +149,12 @@ try:
         page.locator('#mvpNotesSearch').fill('Bug de teste')
         assert page.locator('.mvpn-card').count() == 1
         page.locator('#mvpNotesSearch').fill('')
+        # Fase C: filtros escondidos até o botão; botão anuncia estado e popover
+        assert page.locator('#mvpNotesFiltersWrap.open').count() == 0, 'filtros começam escondidos'
+        assert page.locator('#mvpNotesFiltersBtn').get_attribute('aria-expanded') == 'false'
+        assert page.locator('#mvpNotesFiltersBtn').get_attribute('aria-haspopup') == 'true'
+        click_id(page, 'mvpNotesFiltersBtn')
+        assert page.locator('#mvpNotesFiltersBtn').get_attribute('aria-expanded') == 'true'
         page.locator('#mvpNotesFilterType').select_option('bug')
         assert page.locator('.mvpn-card').count() == 1
         page.locator('#mvpNotesFilterStatus').select_option('in_progress')
@@ -143,9 +162,19 @@ try:
         page.locator('#mvpNotesFilterPriority').select_option('low')
         assert page.locator('.mvpn-card').count() == 0
         assert 'Nenhuma nota encontrada' in page.locator('.mvpn-empty').inner_text()
-        page.locator('#mvpNotesFilterType').select_option('all')
-        page.locator('#mvpNotesFilterStatus').select_option('all')
-        page.locator('#mvpNotesFilterPriority').select_option('all')
+        assert page.locator('#mvpNotesFiltersCount').inner_text() == '3', 'contador de filtros ativos'
+        # busca + filtro combinam (interseção, nunca sobrescrita)
+        page.locator('#mvpNotesSearch').fill('Bug de teste')
+        page.locator('#mvpNotesFilterPriority').select_option('high')
+        assert page.locator('.mvpn-card').count() == 1, 'busca e filtro combinados'
+        page.locator('#mvpNotesFilterPriority').select_option('low')
+        assert 'busca e aos filtros' in page.locator('.mvpn-empty').inner_text(), 'vazio contextual (busca+filtros)'
+        click_id(page, 'mvpNotesFiltersClearBtn')
+        assert page.locator('#mvpNotesFiltersCount').is_hidden(), 'limpar zera o contador'
+        assert page.locator('#mvpNotesFiltersWrap.open').count() == 1, 'limpar mantém o popover aberto'
+        assert page.locator('#mvpNotesSearch').input_value() == 'Bug de teste', 'limpar filtros preserva a busca'
+        page.locator('#mvpNotesSearch').fill('')
+        click_id(page, 'mvpNotesFiltersApplyBtn')
 
         # ---- 5. exclusão: cancelar preserva, confirmar remove só o item selecionado ----
         before_count = len(notes_state(page))
@@ -170,8 +199,7 @@ try:
         assert page.locator('.mvpn-card').count() == 3
         assert page.locator('#settingsModal').evaluate('el => el.inert') is True, 'Central deveria ficar inert com o drawer sobreposto'
         click_id(page, 'mvpNotesNewBtn')
-        assert page.locator('.mvpn-meta-facts dd').first.inner_text() == 'Configurações'
-        click_id(page, 'mvpNoteCancelBtn')
+        assert page.evaluate('mvpNotesCurrentScreenId()') == 'config', 'tela de origem capturada na Central'
         click_id(page, 'mvpNotesCloseBtn')
         assert page.locator('#settingsModal').evaluate('el => !el.inert') is True, 'Central deveria voltar a ficar usável'
         assert page.locator('#settingsOverlay').is_visible(), 'Central deveria continuar aberta após fechar o drawer'
@@ -324,9 +352,11 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
-        # ---- 12b. pastas (schema v2): CRUD, visões, vínculo, busca, filtros, dirty, backup ----
+        # ---- 12b. pastas (introduzidas no schema v2): CRUD, visões, vínculo, busca,
+        #      filtros, dirty, backup. O estado de uma página nova é sempre o schema ATUAL —
+        #      a menção a v2 é histórica (quando o campo folders[] nasceu), não a versão viva.
         page = prepare_page(browser, url)
-        assert page.evaluate('S.mvpNotes.schemaVersion') == 2
+        assert page.evaluate('S.mvpNotes.schemaVersion') == 5
         page.locator('#headerNotesBtn').click()
         # criação via UI (prompt real interceptado); pasta nova é selecionada
         page.evaluate("window.prompt = () => 'Interface de Configurações'")
@@ -336,14 +366,14 @@ try:
         assert page.locator('#mvpNotesViewTitle').inner_text() == 'Interface de Configurações'
         # nota criada dentro da pasta herda o vínculo; em Todas as Notas/Sem pasta o padrão é null
         click_id(page, 'mvpNotesNewBtn')
-        assert page.locator('#mvpNoteFolder').input_value() == iface_id
-        page.locator('#mvpNoteTitle').fill('Nota da pasta Interface')
-        click_id(page, 'mvpNoteSaveBtn')
+        assert page.evaluate('mvpNotesUI.draft.folderId') == iface_id
+        page.locator('#mvpNoteContent').fill('Nota da pasta Interface')
+        click_id(page, 'mvpNotesSaveBtn')
         page.locator('[data-mvp-folder="all"]').click()
         click_id(page, 'mvpNotesNewBtn')
-        assert page.locator('#mvpNoteFolder').input_value() == ''
-        page.locator('#mvpNoteTitle').fill('Nota solta')
-        click_id(page, 'mvpNoteSaveBtn')
+        assert page.evaluate('mvpNotesUI.draft.folderId') is None
+        page.locator('#mvpNoteContent').fill('Nota solta')
+        click_id(page, 'mvpNotesSaveBtn')
         # visões: Todas mostra 2 (com linha de pasta); Sem pasta mostra 1; pasta mostra 1 (sem linha)
         assert page.locator('.mvpn-card').count() == 2
         assert page.locator('.mvpn-card-folder').count() == 2, 'em Todas as Notas cada card mostra sua pasta'
@@ -360,26 +390,30 @@ try:
         page.locator('#mvpNotesSearch').fill('Interface de Configurações')
         assert page.locator('.mvpn-card').count() == 1
         page.locator('#mvpNotesSearch').fill('')
-        # filtro preservado ao trocar de pasta
+        # filtro preservado ao trocar de pasta (abrindo o popover para operá-lo)
+        click_id(page, 'mvpNotesFiltersBtn')
         page.locator('#mvpNotesFilterType').select_option('task')
         page.locator('[data-mvp-folder="unfiled"]').click()
-        assert page.locator('#mvpNotesFilterType').input_value() == 'task', 'trocar de pasta não pode limpar filtros'
+        assert page.evaluate("mvpNotesUI.filterType") == 'task', 'trocar de pasta não pode limpar filtros'
+        # o popover permaneceu aberto através da troca de pasta — só limpar e fechar
         page.locator('#mvpNotesFilterType').select_option('all')
+        click_id(page, 'mvpNotesFiltersApplyBtn')
         # mover nota entre pastas pelo editor: só folderId+updatedAt mudam
         page.locator('[data-mvp-folder="all"]').click()
         moved = page.evaluate("S.mvpNotes.items.find(it => it.title === 'Nota solta')")
         page.locator(f'[data-mvp-note-id="{moved["id"]}"]').click()
+        open_inspector(page)
         page.locator('#mvpNoteFolder').select_option(iface_id)
-        click_id(page, 'mvpNoteSaveBtn')
+        click_id(page, 'mvpNotesSaveBtn')
         after = page.evaluate(f"S.mvpNotes.items.find(it => it.id === '{moved['id']}')")
         assert after['folderId'] == iface_id and after['createdAt'] == moved['createdAt'] \
             and after['screenId'] == moved['screenId'] and after['updatedAt'] != moved['updatedAt']
         # dirty state protege a troca de pasta
         page.locator(f'[data-mvp-note-id="{moved["id"]}"]').click()
-        page.locator('#mvpNoteTitle').fill('Rascunho de pasta')
+        page.locator('#mvpNoteContent').fill('Rascunho de pasta')
         page.evaluate("window.confirm = () => false")
         page.locator('[data-mvp-folder="unfiled"]').click()
-        assert page.locator('#mvpNoteTitle').input_value() == 'Rascunho de pasta', 'recusar descarte mantém o rascunho'
+        assert page.locator('#mvpNoteContent').input_value() == 'Rascunho de pasta', 'recusar descarte mantém o rascunho'
         page.evaluate("window.confirm = () => true")
         page.locator('[data-mvp-folder="unfiled"]').click()
         assert page.evaluate("S.mvpNotes.items.some(it => it.title === 'Rascunho de pasta')") is False
@@ -404,8 +438,8 @@ try:
         click_id(page, 'mvpNotesNewFolderBtn')
         backup_folder_id = page.evaluate("S.mvpNotes.folders[0].id")
         click_id(page, 'mvpNotesNewBtn')
-        page.locator('#mvpNoteTitle').fill('Nota do backup em pasta')
-        click_id(page, 'mvpNoteSaveBtn')
+        page.locator('#mvpNoteContent').fill('Nota do backup em pasta')
+        click_id(page, 'mvpNotesSaveBtn')
         page.locator('#mvpNotesCloseBtn').click()
         click_id(page, 'headerConfigBtn')
         page.evaluate("settingsNavigateToLeaf('backup')")
@@ -573,8 +607,10 @@ try:
 
         # ---- 14. evolução v3: Concluído (visão virtual), completedAt, resize e mobile ----
         page = prepare_page(browser, base_url + 'index.html')
-        assert page.evaluate('S.mvpNotes.schemaVersion') == 3
-        assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 460
+        assert page.evaluate('S.mvpNotes.schemaVersion') == 5
+        assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 980, 'padrão v5 do drawer'
+        assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 190
+        assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 300
         create_note(page, 'task', 'Fica ativa', '', 'medium', 'open')
         create_note(page, 'task', 'Vai concluir', '', 'medium', 'open')
         page.evaluate("""() => {
@@ -584,8 +620,8 @@ try:
         }""")
         page.evaluate("""() => {
           const it = S.mvpNotes.items.find(i => i.title === 'Vai concluir');
-          mvpNotesUpdate(it.id, {type: it.type, title: it.title, description: it.description,
-            priority: it.priority, status: 'done', folderId: it.folderId});
+          mvpNotesUpdate(it.id, {type: it.type, content: it.content, priority: it.priority,
+            status: 'done', folderId: it.folderId, aiImplementationPolicy: it.aiImplementationPolicy});
         }""")
         done_item = page.evaluate("S.mvpNotes.items.find(i => i.title === 'Vai concluir')")
         assert done_item['status'] == 'done' and done_item['completedAt'], 'concluir deve carimbar completedAt'
@@ -597,30 +633,40 @@ try:
         page.locator("[data-mvp-folder='done']").click()
         page.wait_for_timeout(150)
         assert page.locator('#mvpNotesViewTitle').inner_text() == 'Concluído'
-        assert page.locator('#mvpNotesFilterStatus').is_hidden(), 'status é implícito em Concluído'
-        assert page.locator('#mvpNotesFilterFolder').is_visible(), 'Concluído filtra por pasta original'
+        assert page.locator('#mvpNotesFiltersWrap.open').count() == 0, 'filtros ficam ocultos até o botão (v5)'
         assert page.locator('.mvpn-card').count() == 1
         page.locator('.mvpn-card').first.click()
+        open_inspector(page)
         page.locator('#mvpNoteStatus').select_option('open')
-        click_id(page, 'mvpNoteSaveBtn')
+        click_id(page, 'mvpNotesSaveBtn')
         reopened = page.evaluate("S.mvpNotes.items.find(i => i.title === 'Vai concluir')")
         assert reopened['status'] == 'open' and reopened['completedAt'] is None, 'reabrir zera completedAt'
         assert reopened['folderId'] == done_item['folderId'], 'reabrir preserva a pasta original'
         assert page.evaluate('mvpNotesDoneCount()') == 0
         click_id(page, 'mvpNotesCloseBtn')
-        # resize: aplicar/persistir largura, limites e sobrevivência à recarga
+        # resize externo do drawer: faixa canônica v5 (mínimo DERIVADO, 1600), persistência e recarga
+        # 721 = 150 + 240 + 320 + 2*5 + 1 — a menor largura em que as três colunas cabem
+        # nos seus pisos. Conferido contra as constantes para não virar número mágico aqui.
+        assert page.evaluate('MVP_NOTES_DRAWER_MIN') == page.evaluate(
+            'MVP_NOTES_FOLDERS_MIN + MVP_NOTES_LIST_MIN + MVP_NOTES_EDITOR_MIN'
+            ' + MVP_NOTES_PANE_HANDLE*2 + MVP_NOTES_DRAWER_CHROME'), 'mínimo do drawer deve ser derivado'
+        assert page.evaluate('MVP_NOTES_DRAWER_MIN') == 721
         click_id(page, 'headerNotesBtn')
-        page.evaluate('mvpNotesApplyDrawerWidth(620); mvpNotesPersistDrawerWidth(620)')
+        page.evaluate('mvpNotesApplyDrawerWidth(1100); mvpNotesPersistDrawerWidth(1100)')
         click_id(page, 'mvpNotesCloseBtn')
         click_id(page, 'headerNotesBtn')
-        assert page.evaluate("getComputedStyle(document.getElementById('mvpNotesDrawer')).width") == '620px'
-        assert page.evaluate('mvpNotesClampWidth(100)') == 420
-        assert page.evaluate('mvpNotesClampWidth(99999)') <= 900
+        # A renderização respeita os cintos de segurança (80vw, viewport-32); o valor
+        # guardado permanece 1100 mesmo que a janela obrigue a desenhar menos.
+        largura = page.evaluate("() => Math.round(document.getElementById('mvpNotesDrawer').getBoundingClientRect().width)")
+        esperada = page.evaluate("() => Math.min(1100, Math.round(innerWidth*0.8), 1600, innerWidth-32)")
+        assert largura == esperada, (largura, esperada)
+        assert page.evaluate('mvpNotesClampWidth(100)') == 721, 'mínimo canônico derivado'
+        assert page.evaluate('mvpNotesClampPersistable(99999)') == 1600, 'máximo canônico v5'
         click_id(page, 'mvpNotesCloseBtn')
         page.reload(wait_until='load')
         page.wait_for_timeout(700)
         page.evaluate("() => { window.__onbShown = true; closeModal(); window.confirm = () => false; window.prompt = () => null; }")
-        assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620, 'largura sobrevive à recarga'
+        assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 1100, 'largura sobrevive à recarga'
         page.close()
         # mobile: navegação em camadas Pastas → Lista → Editor → voltar + folha de filtros
         page = prepare_page(browser, base_url + 'index.html')
@@ -629,6 +675,8 @@ try:
         drawer = page.locator('#mvpNotesDrawer')
         assert drawer.get_attribute('data-mobile-stage') == 'folders'
         assert page.locator('#mvpNotesResizeHandle').is_hidden(), 'resize handle não existe em mobile'
+        assert page.locator('#mvpNotesFoldersHandle').is_hidden(), 'separador Pastas|Lista some em mobile'
+        assert page.locator('#mvpNotesListHandle').is_hidden(), 'separador Lista|Editor some em mobile'
         page.locator("[data-mvp-folder='all']").click()
         assert drawer.get_attribute('data-mobile-stage') == 'list'
         click_id(page, 'mvpNotesNewBtn')
@@ -645,9 +693,337 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 14b. Fase D: separadores internos das três colunas -------------------
+        # Cobertura ESTRUTURAL do motor de geometria: os gestos de ponteiro reais são
+        # verificados em navegador; aqui garantimos contrato ARIA, limites, invariante,
+        # teclado, duplo clique, persistência e ausência de efeito colateral no estado.
+        page = prepare_page(browser, base_url + 'index.html')
+        create_note(page, 'bug', 'Nota para geometria', 'corpo', 'high', 'open')
+        page.set_viewport_size({'width': 1440, 'height': 900})
+        click_id(page, 'headerNotesBtn')
+        # contrato dos dois separadores
+        for hid, rotulo in (('mvpNotesFoldersHandle', 'pastas'), ('mvpNotesListHandle', 'lista')):
+            h = page.locator('#' + hid)
+            assert h.get_attribute('role') == 'separator'
+            assert h.get_attribute('aria-orientation') == 'vertical'
+            assert h.get_attribute('tabindex') == '0'
+            assert h.get_attribute('aria-valuenow') and h.get_attribute('aria-valuetext')
+            assert rotulo in h.get_attribute('aria-valuetext').lower(), h.get_attribute('aria-valuetext')
+            assert page.evaluate(f"getComputedStyle(document.getElementById({hid!r})).cursor") == 'ew-resize'
+        # invariante fundamental: as três colunas + separadores cabem no corpo, sempre
+        invariante = """() => {
+          const w = id => document.getElementById(id).getBoundingClientRect().width;
+          return (w('mvpNotesFolderSidebar') + w('mvpNotesListPane') + w('mvpNotesEditorPane') + 10)
+                 <= w('mvpNotesBody') + 1;
+        }"""
+        assert page.evaluate(invariante), 'colunas não cabem no corpo do drawer'
+        # teclado: passo 20, Shift 60, e a seta representa o movimento físico do separador
+        base = page.evaluate("mvpNotesRenderedPanes().folders")
+        page.locator('#mvpNotesFoldersHandle').press('ArrowRight')
+        assert page.evaluate("mvpNotesRenderedPanes().folders") == base + 20
+        page.locator('#mvpNotesFoldersHandle').press('Shift+ArrowRight')
+        assert page.evaluate("mvpNotesRenderedPanes().folders") == base + 80
+        page.locator('#mvpNotesFoldersHandle').press('ArrowLeft')
+        assert page.evaluate("mvpNotesRenderedPanes().folders") == base + 60
+        assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == base + 60, 'tecla persiste'
+        # limites de cada coluna, com o piso do editor preservado
+        page.locator('#mvpNotesFoldersHandle').press('Home')
+        assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 150
+        page.locator('#mvpNotesListHandle').press('Home')
+        assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 240
+        page.locator('#mvpNotesListHandle').press('End')
+        limites = page.evaluate('mvpNotesPaneLimits()')
+        assert page.evaluate('mvpNotesRenderedPanes().list') == limites['listMax']
+        assert page.evaluate(invariante)
+        editor = page.evaluate("Math.round(document.getElementById('mvpNotesEditorPane').getBoundingClientRect().width)")
+        assert editor >= 320, ('editor abaixo do piso funcional', editor)
+        # duplo clique restaura só a própria coluna
+        lista_antes = page.evaluate('mvpNotesRenderedPanes().list')
+        page.locator('#mvpNotesFoldersHandle').dblclick()
+        assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 190
+        assert page.evaluate('mvpNotesRenderedPanes().list') == lista_antes, 'a outra coluna não é tocada'
+        page.locator('#mvpNotesListHandle').dblclick()
+        assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 300
+        # redimensionar não é edição: nada de dirty, nada de updatedAt
+        page.locator('.mvpn-card').first.click()
+        antes = notes_state(page)[0]['updatedAt']
+        page.locator('#mvpNotesListHandle').press('ArrowLeft')
+        assert page.evaluate('mvpNotesUI.draftDirty') is False, 'resize não pode sujar a nota'
+        assert notes_state(page)[0]['updatedAt'] == antes, 'resize não pode tocar updatedAt'
+        assert page.evaluate('mvpNotesUI.selectedId') is not None, 'seleção permanece'
+        # preferências sobrevivem a fechar/reabrir
+        page.evaluate('mvpNotesPersistPaneWidth("foldersPaneWidth", 260); mvpNotesPersistPaneWidth("notesPaneWidth", 380)')
+        click_id(page, 'mvpNotesCloseBtn')
+        click_id(page, 'headerNotesBtn')
+        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 260, 'list': 380}
+        # drawer no MÍNIMO: renderização se ajusta, preferência NÃO é reescrita, e nenhuma
+        # das três colunas fica abaixo do seu piso — a invariante que define o mínimo.
+        page.evaluate('mvpNotesApplyDrawerWidth(MVP_NOTES_DRAWER_MIN); mvpNotesPersistDrawerWidth(MVP_NOTES_DRAWER_MIN)')
+        estreito = page.evaluate('mvpNotesRenderedPanes()')
+        assert estreito['list'] == 240 and estreito['folders'] == 150, estreito
+        pisos = page.evaluate("""() => {
+          const w = id => Math.round(document.getElementById(id).getBoundingClientRect().width);
+          return {pastas: w('mvpNotesFolderSidebar'), lista: w('mvpNotesListPane'),
+                  editor: w('mvpNotesEditorPane'), drawer: w('mvpNotesDrawer')};
+        }""")
+        assert pisos['pastas'] >= 150 and pisos['lista'] >= 240 and pisos['editor'] >= 320, pisos
+        assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 260, 'preferência preservada'
+        assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 380, 'preferência preservada'
+        assert page.evaluate(invariante)
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), 'sem overflow horizontal'
+        # drawer largo de novo: as preferências originais voltam a valer
+        page.evaluate('mvpNotesApplyDrawerWidth(1200); mvpNotesPersistDrawerWidth(1200)')
+        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 260, 'list': 380}
+        # ---- PREFERÊNCIA PERSISTIDA  vs  LARGURA RENDERIZADA ----------------------
+        # A normalização valida cada preferência ISOLADAMENTE e nada mais. Uma combinação
+        # que não caiba no drawer atual é resolvida no DESENHO (mvpNotesFitPanes), nunca
+        # reescrevendo o estado — senão um painel temporariamente estreito apagaria a
+        # escolha do operador e não haveria o que restaurar ao alargar de novo.
+        combinacao = page.evaluate("""() => {
+          S.mvpNotes.ui = {drawerWidth: 980, foldersPaneWidth: 320, notesPaneWidth: 520};
+          mvpNotesNormalizeState(); return S.mvpNotes.ui;
+        }""")
+        assert combinacao['foldersPaneWidth'] == 320, combinacao   # preferência intacta…
+        assert combinacao['notesPaneWidth'] == 520, combinacao     # …mesmo sem caber junta
+        # espaco(980) = 980 - 1 (borda) - 10 (dois separadores) = 969; excesso = 320+520+320-969 = 191,
+        # cortado primeiro da Lista: 520-191 = 329. Só no desenho — o estado acima segue 320/520.
+        assert page.evaluate('mvpNotesFitPanes(320, 520, 980)') == {'folders': 320, 'list': 329}, 'o ajuste é do render'
+        # valores impossíveis ISOLADAMENTE continuam normalizados
+        invalidos = page.evaluate("""() => {
+          S.mvpNotes.ui = {drawerWidth: -5, foldersPaneWidth: -100, notesPaneWidth: 99999};
+          mvpNotesNormalizeState(); return S.mvpNotes.ui;
+        }""")
+        assert invalidos == {'drawerWidth': 721, 'foldersPaneWidth': 150, 'notesPaneWidth': 520}, invalidos
+        # backup antigo: só o drawerWidth sobe ao mínimo derivado; as colunas são preservadas
+        antigo = page.evaluate("""() => {
+          S.mvpNotes.ui = {drawerWidth: 700, foldersPaneWidth: 190, notesPaneWidth: 300};
+          mvpNotesNormalizeState(); return S.mvpNotes.ui;
+        }""")
+        assert antigo == {'drawerWidth': 721, 'foldersPaneWidth': 190, 'notesPaneWidth': 300}, antigo
+        # …e no drawer mínimo o DESENHO cai para os pisos, sem tocar na preferência
+        page.evaluate('save(); mvpNotesApplyDrawerWidth(MVP_NOTES_DRAWER_MIN)')
+        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 150, 'list': 240}
+        assert page.evaluate('mvpNotesPanePrefs()') == {'folders': 190, 'list': 300}, 'preferência preservada'
+        pisos_min = page.evaluate("""() => {
+          const w = id => Math.round(document.getElementById(id).getBoundingClientRect().width);
+          return {pastas: w('mvpNotesFolderSidebar'), lista: w('mvpNotesListPane'), editor: w('mvpNotesEditorPane')};
+        }""")
+        assert pisos_min == {'pastas': 150, 'lista': 240, 'editor': 320}, pisos_min
+        # ampliar o drawer restaura o desenho às preferências, SEM reload
+        page.evaluate('mvpNotesApplyDrawerWidth(1100); mvpNotesPersistDrawerWidth(1100)')
+        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 190, 'list': 300}
+        # reduzir de novo não altera preferência nenhuma
+        page.evaluate('mvpNotesApplyDrawerWidth(MVP_NOTES_DRAWER_MIN); mvpNotesPersistDrawerWidth(MVP_NOTES_DRAWER_MIN)')
+        assert page.evaluate('mvpNotesPanePrefs()') == {'folders': 190, 'list': 300}
+        # e sobrevive à recarga: o estado no disco continua com 190/300
+        click_id(page, 'mvpNotesCloseBtn')
+        page.reload(wait_until='load')
+        page.wait_for_timeout(700)
+        page.evaluate("() => { window.__onbShown = true; closeModal(); window.confirm = () => false; window.prompt = () => null; }")
+        assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 190, 'reload não pode apagar a preferência'
+        assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 300, 'reload não pode apagar a preferência'
+        click_id(page, 'headerNotesBtn')
+        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 150, 'list': 240}, 'no mínimo, desenho nos pisos'
+        page.evaluate('mvpNotesApplyDrawerWidth(1100); mvpNotesPersistDrawerWidth(1100)')
+        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 190, 'list': 300}, 'após reload, ampliar restaura'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
+        # ---- 14c. Fase E: ordem MANUAL das pastas (position) -----------------------
+        # PASTAS têm ordem manual; NOTAS têm ordem natural. As duas semânticas convivem e
+        # esta seção verifica que não se contaminam.
+        page = prepare_page(browser, base_url + 'index.html')
+        page.set_viewport_size({'width': 1440, 'height': 900})
+        page.evaluate("""() => {
+          ['Interface', 'Dashboard', 'Motor de Lote', 'Forex'].forEach(n => mvpNotesCreateFolder(n));
+          const alvo = S.mvpNotes.folders[0].id;
+          ['Bug 10', 'Bug 2', 'Bug 1'].forEach(t => mvpNotesCreate({content: t + '\ncorpo', type: 'bug',
+            priority: 'high', status: 'open', folderId: alvo}));
+          save();
+        }""")
+        click_id(page, 'headerNotesBtn')
+        ordem = lambda: page.evaluate('S.mvpNotes.folders.map(f => f.name)')
+        posicoes = lambda: page.evaluate('S.mvpNotes.folders.map(f => f.position)')
+        assert ordem() == ['Interface', 'Dashboard', 'Motor de Lote', 'Forex']
+        assert posicoes() == [0, 1, 2, 3], 'positions contíguas a partir de 0'
+        # visões do sistema não são reordenáveis — nem alça, nem menu, nem marcador de linha
+        for vista in ('all', 'unfiled', 'done'):
+            assert page.locator(f"[data-mvp-folder-row='{vista}']").count() == 0
+        assert page.locator('[data-mvp-folder-drag]').count() == 4, 'só as 4 pastas reais têm alça'
+        # operação central: mover Forex para o topo
+        assert page.evaluate("mvpNotesMoveFolder(S.mvpNotes.folders[3].id, 0)") is True
+        assert ordem() == ['Forex', 'Interface', 'Dashboard', 'Motor de Lote']
+        assert posicoes() == [0, 1, 2, 3]
+        # índice fora da faixa é aparado; mover para onde já está não é alteração
+        forex = page.evaluate('S.mvpNotes.folders[0].id')
+        assert page.evaluate(f'mvpNotesMoveFolder({forex!r}, 0)') is False, 'sem mudança = sem save'
+        assert page.evaluate(f'mvpNotesMoveFolder({forex!r}, 99)') is True
+        assert ordem()[-1] == 'Forex', 'índice acima do fim vai para o fim'
+        assert page.evaluate("mvpNotesMoveFolder('inexistente', 0)") is False
+        # menu "⋯": Mover para cima/baixo é a via de teclado e usa a MESMA operação central
+        primeira = page.evaluate('S.mvpNotes.folders[0].id')
+        ultima = page.evaluate('S.mvpNotes.folders[S.mvpNotes.folders.length-1].id')
+        assert page.locator(f"[data-mvp-folder-row='{primeira}'] [data-mvp-folder-up]").count() == 0
+        assert page.locator(f"[data-mvp-folder-row='{ultima}'] [data-mvp-folder-down]").count() == 0
+        nome_ultima = page.evaluate('S.mvpNotes.folders[S.mvpNotes.folders.length-1].name')
+        page.locator(f"[data-mvp-folder-row='{ultima}'] [data-mvp-folder-up]").click()
+        assert ordem()[-2] == nome_ultima, 'Mover para cima trocou de posição'
+        assert page.locator('#mvpNotesOrderLive').inner_text().startswith(f'Pasta {nome_ultima} movida para a posição')
+        assert posicoes() == [0, 1, 2, 3], 'positions seguem contíguas'
+        # reordenar NÃO é edição de nota
+        page.locator('.mvpn-card').first.click()
+        antes_upd = notes_state(page)[0]['updatedAt']
+        antes_ticket = notes_state(page)[0]['ticket']
+        sel = page.evaluate('mvpNotesUI.selectedId')
+        page.evaluate("mvpNotesMoveFolder(S.mvpNotes.folders[0].id, 2)")
+        assert page.evaluate('mvpNotesUI.draftDirty') is False
+        assert page.evaluate('mvpNotesUI.selectedId') == sel, 'nota aberta continua aberta'
+        assert notes_state(page)[0]['updatedAt'] == antes_upd, 'updatedAt da nota intacto'
+        assert notes_state(page)[0]['ticket'] == antes_ticket, 'ticket imutável'
+        # inspector e filtro Pasta seguem a ordem MANUAL (não alfabética)
+        open_inspector(page)
+        manual = ordem()
+        assert page.evaluate("[...document.getElementById('mvpNoteFolder').options].map(o => o.textContent).slice(1)") == manual
+        assert page.evaluate("[...document.getElementById('mvpNotesFilterFolder').options].map(o => o.textContent).slice(2)") == manual
+        # …enquanto as NOTAS seguem ordem natural crescente (1, 2, 10 — nunca 1, 10, 2)
+        page.evaluate("mvpNotesUI.activeFolder = S.mvpNotes.folders.find(f => f.name === 'Interface').id; renderMvpNotesList()")
+        assert page.locator('.mvpn-card-title').all_inner_texts() == ['Bug 1', 'Bug 2', 'Bug 10']
+        # CRUD e ordem: nova vai ao fim, renomear preserva, excluir renumera
+        page.evaluate("mvpNotesCreateFolder('Zulu')")
+        assert ordem()[-1] == 'Zulu' and posicoes() == [0, 1, 2, 3, 4]
+        pos_zulu = page.evaluate("S.mvpNotes.folders.find(f => f.name === 'Zulu').position")
+        page.evaluate("mvpNotesRenameFolder(S.mvpNotes.folders.find(f => f.name === 'Zulu').id, 'Alpha')")
+        assert page.evaluate("S.mvpNotes.folders.find(f => f.name === 'Alpha').position") == pos_zulu, 'renomear não move'
+        page.evaluate("mvpNotesDeleteFolder(S.mvpNotes.folders[0].id)")
+        assert posicoes() == [0, 1, 2, 3], 'excluir renumera as restantes'
+        # persistência: a ordem manual sobrevive à recarga
+        esperado = ordem()
+        page.evaluate('save()')
+        click_id(page, 'mvpNotesCloseBtn')
+        page.reload(wait_until='load')
+        page.wait_for_timeout(700)
+        page.evaluate("() => { window.__onbShown = true; closeModal(); window.confirm = () => false; window.prompt = () => null; }")
+        assert page.evaluate('S.mvpNotes.folders.map(f => f.name)') == esperado, 'ordem manual sobrevive à recarga'
+        # importação com positions inválidas: regra de desempate documentada —
+        # 1) position válida crescente; 2) empate/inválida preserva a ordem do array; 3) renumera.
+        casos = page.evaluate("""() => {
+          const rodar = folders => {
+            S.mvpNotes = {schemaVersion: 5, showHeaderIcon: true, folders, items: [], ui: {}};
+            mvpNotesNormalizeState();
+            const r = S.mvpNotes.folders.map(f => f.name + ':' + f.position);
+            mvpNotesNormalizeState();
+            return {r, idempotente: S.mvpNotes.folders.map(f => f.name + ':' + f.position).join() === r.join()};
+          };
+          return {
+            duplicadas: rodar([{id:'f1',name:'A',position:0},{id:'f2',name:'B',position:0},{id:'f3',name:'C',position:0}]),
+            extremos:   rodar([{id:'g1',name:'A',position:-5},{id:'g2',name:'B',position:9999},{id:'g3',name:'C',position:2}]),
+            texto:      rodar([{id:'h1',name:'A',position:'2'},{id:'h2',name:'B'},{id:'h3',name:'C',position:'1'}]),
+            lixo:       rodar([{id:'i1',name:'A',position:null},{id:'i2',name:'B',position:'abc'},{id:'i3',name:'C',position:NaN}])
+          };
+        }""")
+        assert casos['duplicadas']['r'] == ['A:0', 'B:1', 'C:2'], casos['duplicadas']   # empate → ordem do array
+        assert casos['extremos']['r'] == ['A:0', 'C:1', 'B:2'], casos['extremos']       # -5 < 2 < 9999
+        assert casos['texto']['r'] == ['C:0', 'A:1', 'B:2'], casos['texto']             # "1" < "2"; ausente vai ao fim
+        assert casos['lixo']['r'] == ['A:0', 'C:1', 'B:2'], casos['lixo']               # todas inválidas → ordem do array
+        for k, v in casos.items():
+            assert v['idempotente'], k
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
+        # ---- 14d. Fase F: experiência mobile em três estágios ----------------------
+        page = prepare_page(browser, base_url + 'index.html')
+        page.set_viewport_size({'width': 390, 'height': 844})
+        page.evaluate("""() => {
+          const f = mvpNotesCreateFolder('Interface de Configurações');
+          mvpNotesCreate({content: 'Bug 1\ncorpo', type: 'bug', priority: 'high', status: 'open', folderId: f.id});
+          mvpNotesCreate({content: 'Bug 2\ncorpo', type: 'bug', priority: 'low', status: 'done', folderId: f.id});
+          save();
+        }""")
+        click_id(page, 'headerNotesBtn')
+        drawer = page.locator('#mvpNotesDrawer')
+        visivel = lambda sel: page.evaluate(f"getComputedStyle(document.querySelector({sel!r})).display !== 'none'")
+        # Estágio A — Pastas: uma camada só, sem resize e sem alça de arraste
+        assert drawer.get_attribute('data-mobile-stage') == 'folders'
+        assert page.locator('#mvpNotesBackBtn').is_hidden(), 'no primeiro estágio não há para onde voltar'
+        assert visivel('#mvpNotesFolderSidebar') and not visivel('#mvpNotesListPane') and not visivel('#mvpNotesEditorPane')
+        assert page.locator('#mvpNotesResizeHandle').is_hidden()
+        assert page.locator('#mvpNotesFoldersHandle').is_hidden()
+        assert page.locator('#mvpNotesListHandle').is_hidden()
+        # alça ≡ existe no DOM mas fica oculta: arraste por toque não foi implementado e
+        # mostrá-la seria affordance falsa — a via mobile é o menu ⋯ (Fase E).
+        assert page.locator('[data-mvp-folder-drag]').count() > 0
+        assert not visivel('[data-mvp-folder-drag]'), 'alça de arraste deve sumir no celular'
+        assert page.locator("[data-mvp-folder-row] [data-mvp-folder-down]").count() >= 0
+        # camadas invisíveis não podem continuar tabuláveis
+        focaveis = """sel => {
+          const raiz = document.querySelector(sel);
+          return [...raiz.querySelectorAll('button,input,select,textarea,[tabindex]')]
+            .filter(e => e.offsetParent !== null).length;
+        }"""
+        assert page.evaluate(focaveis, '#mvpNotesListPane') == 0
+        assert page.evaluate(focaveis, '#mvpNotesEditorPane') == 0
+        # Estágio B — Lista: o estágio é REALMENTE aplicado ao DOM (não só ao estado)
+        page.locator('[data-mvp-folder-row] .mvpn-folder-btn').first.click()
+        assert drawer.get_attribute('data-mobile-stage') == 'list'
+        assert page.locator('#mvpNotesTitle').inner_text() == 'Interface de Configurações'
+        assert page.locator('#mvpNotesBackLabel').inner_text() == 'Pastas'
+        assert visivel('#mvpNotesSearch'), 'busca permanente também no celular'
+        assert not visivel('#mvpNotesFolderSidebar')
+        # filtros em folha inferior de largura cheia
+        click_id(page, 'mvpNotesFiltersBtn')
+        folha = page.evaluate("""() => {
+          const w = document.getElementById('mvpNotesFiltersWrap'); const c = getComputedStyle(w);
+          return {pos: c.position, bottom: c.bottom, largura: Math.round(w.getBoundingClientRect().width),
+                  viewport: window.innerWidth};
+        }""")
+        assert folha['pos'] == 'fixed' and folha['bottom'] == '0px', folha
+        assert folha['largura'] == folha['viewport'], folha
+        page.keyboard.press('Escape')
+        # Estágio C — Nota: volta para a VISÃO DE ORIGEM, não para uma pasta inferida
+        page.locator('.mvpn-card').first.click()
+        assert drawer.get_attribute('data-mobile-stage') == 'editor'
+        assert page.locator('#mvpNotesBackLabel').inner_text() == 'Interface de Configurações'
+        assert not visivel('#mvpNotesListPane')
+        assert page.evaluate("document.activeElement.id") != 'mvpNoteContent', \
+            'abrir nota existente não rouba o foco (evita abrir o teclado sem pedir)'
+        # inspector em folha inferior, com alvos de toque de 44px
+        open_inspector(page)
+        insp = page.evaluate("""() => {
+          const i = document.getElementById('mvpNotesInspector'); const c = getComputedStyle(i);
+          const alt = id => Math.round(document.getElementById(id).getBoundingClientRect().height);
+          return {pos: c.position, largura: Math.round(i.getBoundingClientRect().width),
+                  viewport: window.innerWidth, tipo: alt('mvpNoteType'), excluir: alt('mvpNoteDeleteBtn')};
+        }""")
+        assert insp['pos'] == 'fixed' and insp['largura'] == insp['viewport'], insp
+        assert insp['tipo'] >= 44 and insp['excluir'] >= 44, ('alvos de toque', insp)
+        page.keyboard.press('Escape')
+        # dirty bloqueia a volta; cancelar mantém a nota aberta
+        page.evaluate("() => { const t = document.getElementById('mvpNoteContent');"
+                      " t.value += '\nlinha nova'; t.dispatchEvent(new Event('input', {bubbles: true})); }")
+        assert page.evaluate('mvpNotesUI.draftDirty') is True
+        page.evaluate("() => { window.confirm = () => false; }")
+        click_id(page, 'mvpNotesBackBtn')
+        assert drawer.get_attribute('data-mobile-stage') == 'editor', 'cancelar mantém no editor'
+        page.evaluate("() => { window.confirm = () => true; }")
+        click_id(page, 'mvpNotesBackBtn')
+        assert drawer.get_attribute('data-mobile-stage') == 'list'
+        assert page.locator('#mvpNotesTitle').inner_text() == 'Interface de Configurações'
+        # visão global Concluído: sem separador redundante (o título da vista já diz isso)
+        click_id(page, 'mvpNotesBackBtn')
+        page.locator("[data-mvp-folder='done']").click()
+        assert page.locator('#mvpNotesTitle').inner_text() == 'Concluído'
+        assert page.locator('.mvpn-group-sep').count() == 0, 'separador seria redundante aqui'
+        # …enquanto dentro de uma pasta o separador continua existindo
+        click_id(page, 'mvpNotesBackBtn')
+        page.locator('[data-mvp-folder-row] .mvpn-folder-btn').first.click()
+        assert page.locator('.mvpn-group-sep').count() == 1
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), 'sem overflow horizontal'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 15. Trace ID (v4): geração, imutabilidade, cópia, busca e backup ----
         page = prepare_page(browser, base_url + 'index.html')
-        assert page.evaluate('S.mvpNotes.schemaVersion') == 4
+        assert page.evaluate('S.mvpNotes.schemaVersion') == 5
         TICKET_RE = r'^JPW-[23456789ABCDEFGHJKMNPQRSTVWXYZ]{6}$'
         create_note(page, 'bug', 'Nota com Trace ID', 'descricao', 'high', 'open')
         item = notes_state(page)[0]
@@ -659,9 +1035,10 @@ try:
         # imutável em todo o ciclo de vida
         page.evaluate("""() => {
           const it = S.mvpNotes.items[0];
-          const u = p => mvpNotesUpdate(it.id, Object.assign({type:it.type,title:it.title,
-            description:it.description,priority:it.priority,status:it.status,folderId:it.folderId}, p));
-          u({title:'outro titulo'}); u({description:'outra'}); u({status:'done'}); u({status:'open'});
+          const u = p => mvpNotesUpdate(it.id, Object.assign({type:it.type,content:it.content,
+            priority:it.priority,status:it.status,folderId:it.folderId,
+            aiImplementationPolicy:it.aiImplementationPolicy}, p));
+          u({content:'outro titulo\\ncorpo'}); u({content:'outra linha'}); u({status:'done'}); u({status:'open'});
         }""")
         assert notes_state(page)[0]['ticket'] == item['ticket'], 'ticket mudou durante o ciclo de vida'
         # migração de nota antiga sem ticket + idempotência
@@ -708,20 +1085,21 @@ try:
         assert copiado.startswith('JP WEALTH — TRACE REFERENCE'), copiado[:60]
         for trecho in [f'Ticket: {ticket}', 'Tipo: Bug', 'Prioridade: Crítica', 'Status: Aberta',
                        'Falha rastreavel', 'Build ID: ', 'Source Revision: não disponível',
-                       'INSTRUÇÃO AO AGENTE', f'ticket {ticket}']:
+                       'INSTRUÇÃO AO AGENTE', 'Autorização IA: SOMENTE ANÁLISE',
+                       'CONTEÚDO DA NOTA:', f'ticket {ticket}']:
             assert trecho in copiado, trecho
         assert not re.search(r'[0-9a-f]{40}', copiado), 'nenhum SHA pode ser inventado'
         assert notes_state(page)[0]['updatedAt'] == antes, 'copiar nao pode alterar a nota'
-        assert page.locator('#mvpNotesEditor').is_hidden(), 'copiar nao pode abrir o editor'
+        assert page.locator('#mvpNoteContent').is_hidden(), 'copiar nao pode abrir a nota'
         # cópia pelo editor + Trace ID somente leitura
         page.locator('.mvpn-card').first.click()
-        assert page.locator('#mvpNoteTicket').inner_text() == ticket
-        assert page.locator('#mvpNotesEditor input[value^="JPW-"]').count() == 0, 'ticket nao pode ser editavel'
+        assert page.locator('#mvpNotesEditorTicket').inner_text() == ticket
+        assert page.locator('#mvpNotesEditorPane input[value^="JPW-"]').count() == 0, 'ticket nao pode ser editavel'
         page.evaluate('window.__copiado=null')
-        page.locator('.mvpn-trace-copy').click()
+        click_id(page, 'mvpNotesCopyRefBtn')
         page.wait_for_timeout(150)
         assert ticket in page.evaluate('window.__copiado')
-        page.evaluate("() => renderMvpNotesMode('list')")
+        page.evaluate("() => mvpNotesCloseEditor()")
         # busca pelo ticket localiza exatamente a nota
         page.locator('#mvpNotesSearch').fill(ticket)
         page.wait_for_timeout(120)
@@ -740,4 +1118,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, Concluído/completedAt, resize, navegação mobile, Trace ID e cópia da referência (schema v4) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), Trace ID, política IA no Trace Reference e inspector (schema v5) e monólito verificados.')

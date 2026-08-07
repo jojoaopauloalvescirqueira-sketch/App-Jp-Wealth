@@ -987,8 +987,12 @@
     <div class="mvpn-resize-handle" id="mvpNotesResizeHandle" role="separator" aria-orientation="vertical"
          aria-label="Redimensionar painel de notas (setas esquerda e direita ajustam a largura)" tabindex="0"></div>
     <header class="mvp-notes-head">
+      <!-- Voltar do módulo (mobile): navegação INTERNA das Notas, nunca a navegação global
+           do aplicativo. O rótulo mostra o destino real — "Pastas" no estágio Lista, o nome
+           da visão de origem no estágio Nota. Preenchido por mvpNotesApplyStage(). -->
       <button type="button" class="mvpn-back-btn" id="mvpNotesBackBtn" hidden aria-label="Voltar">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="mvpn-back-label" id="mvpNotesBackLabel" aria-hidden="true"></span>
       </button>
       <div class="mvp-notes-head-text">
         <h2 id="mvpNotesTitle">Notas do MVP</h2>
@@ -1009,22 +1013,43 @@
            visões do sistema (Todas as Notas / Sem pasta / Concluído), as pastas reais e
            "+ Nova pasta". A antiga barra com <select> nativo foi substituída por esta
            navegação (um único #mvpNotesFolderNavList para os dois mundos). -->
+      <!-- PAINEL 1 — Pastas e visões do sistema. Em desktop convive com os outros dois;
+           em mobile é o Estado A da navegação em etapas (data-mobile-stage no drawer). -->
       <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de notas">
         <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
         </div>
       </nav>
-      <div class="mvpn-content" id="mvpNotesContent">
+      <!-- Separador 1 (Pastas | Lista). A seta representa o movimento físico do separador:
+           → alarga Pastas, ← estreita. Shift triplica o passo; duplo clique (ou Home/End)
+           volta ao padrão/limites. aria-value* é reescrito a cada ajuste por
+           mvpNotesSyncPaneHandleAria() — os valores abaixo são só o estado inicial. -->
+      <div class="mvpn-pane-handle" id="mvpNotesFoldersHandle" role="separator" aria-orientation="vertical"
+           tabindex="0" aria-label="Redimensionar a coluna de pastas (setas esquerda e direita ajustam a largura)"
+           aria-valuemin="150" aria-valuemax="320" aria-valuenow="190"
+           aria-valuetext="Largura da coluna de pastas: 190 pixels"></div>
+
+      <!-- PAINEL 2 — Lista de notas. A busca é permanente; os filtros vivem atrás do
+           botão de filtro (popover no desktop, folha inferior no mobile). -->
+      <div class="mvpn-list-pane" id="mvpNotesListPane">
         <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
           <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
-          <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
-          <input type="search" id="mvpNotesSearch" placeholder="Buscar por título, descrição, tipo, status, tela, build ou pasta" autocomplete="off">
-          <!-- Botão "Filtros" só existe visualmente em mobile (CSS): abre a folha inferior
-               com os MESMOS selects de sempre (nós únicos, transportados por CSS — nunca
-               duplicados). O texto vira "Filtros · N" quando há filtro ativo. -->
-          <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-controls="mvpNotesFiltersWrap">Filtros</button>
-          <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap">
+          <div class="mvpn-search-row">
+            <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
+            <input type="search" id="mvpNotesSearch" placeholder="Buscar notas..." autocomplete="off">
+            <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-haspopup="true"
+                    aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar notas" title="Filtrar notas">
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+              <span class="mvpn-filters-count" id="mvpNotesFiltersCount" hidden></span>
+            </button>
+            <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" aria-label="Nova nota" title="Nova nota">
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <!-- Mesmos selects de sempre (nós únicos, nunca duplicados): popover no
+               desktop, folha inferior no mobile — só o posicionamento muda no CSS. -->
+          <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de notas">
             <div class="mvpn-filters-sheet-head">Filtros</div>
             <div class="mvp-notes-filters">
               <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
@@ -1033,24 +1058,60 @@
               <select id="mvpNotesFilterStatus"></select>
               <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
               <select id="mvpNotesFilterPriority"></select>
-              <label class="sr-only" for="mvpNotesFilterFolder">Filtrar por pasta original</label>
-              <select id="mvpNotesFilterFolder" hidden></select>
+              <label class="sr-only" for="mvpNotesFilterPolicy">Filtrar por autorização de IA</label>
+              <select id="mvpNotesFilterPolicy"></select>
+              <label class="sr-only" for="mvpNotesFilterFolder">Filtrar por pasta</label>
+              <select id="mvpNotesFilterFolder"></select>
               <label class="sr-only" for="mvpNotesFilterPeriod">Filtrar por período de conclusão</label>
-              <select id="mvpNotesFilterPeriod" hidden></select>
+              <select id="mvpNotesFilterPeriod"></select>
             </div>
             <div class="mvpn-filters-sheet-actions">
-              <button type="button" class="reset-btn" id="mvpNotesFiltersClearBtn">Limpar</button>
+              <button type="button" class="reset-btn" id="mvpNotesFiltersClearBtn">Limpar filtros</button>
               <button type="button" class="reset-btn mvpn-primary" id="mvpNotesFiltersApplyBtn">Aplicar</button>
             </div>
           </div>
-          <button type="button" class="reset-btn" id="mvpNotesNewBtn">Nova nota</button>
         </div>
         <div class="mvp-notes-list" id="mvpNotesList" tabindex="-1"></div>
-        <div class="mvp-notes-editor" id="mvpNotesEditor" hidden></div>
-        <!-- Confirmação da cópia do Trace Reference: anunciada por leitor de tela, sem
-             depender da mudança visual do ícone (ver mvpNotesFlashCopyFeedback). -->
-        <p class="sr-only" id="mvpNotesCopyLive" role="status" aria-live="polite"></p>
       </div>
+      <!-- Separador 2 (Lista | Editor): → alarga a Lista e o editor cede; ← o inverso.
+           O editor não tem largura própria — recebe sempre o espaço restante. -->
+      <div class="mvpn-pane-handle" id="mvpNotesListHandle" role="separator" aria-orientation="vertical"
+           tabindex="0" aria-label="Redimensionar a lista de notas (setas esquerda e direita ajustam a largura)"
+           aria-valuemin="240" aria-valuemax="520" aria-valuenow="300"
+           aria-valuetext="Largura da lista de notas: 300 pixels"></div>
+
+      <!-- PAINEL 3 — Editor. Permanece aberto ao lado da lista no desktop; nunca a
+           substitui. Corpo único de texto: a primeira linha vira o título. -->
+      <div class="mvpn-editor-pane" id="mvpNotesEditorPane">
+        <div class="mvpn-editor-bar" id="mvpNotesEditorBar" hidden>
+          <!-- Título ao vivo: derivado da primeira linha do conteúdo enquanto se digita.
+               É exibição, não campo — "Nova nota" é só placeholder visual e nunca entra
+               no conteúdo persistido. -->
+          <span class="mvpn-editor-title" id="mvpNotesEditorTitle"></span>
+          <span class="mvpn-editor-ticket" id="mvpNotesEditorTicket"></span>
+          <button type="button" class="reset-btn mvpn-primary mvpn-save-btn" id="mvpNotesSaveBtn" hidden>Salvar</button>
+          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência da nota" title="Copiar referência para um agente de IA">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+            <span class="mvpn-copy-check" aria-hidden="true">✓</span>
+          </button>
+          <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorBtn" aria-expanded="false"
+                  aria-controls="mvpNotesInspector" aria-label="Detalhes da nota" title="Detalhes da nota">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+          </button>
+        </div>
+        <label class="sr-only" for="mvpNoteContent">Conteúdo da nota — a primeira linha vira o título</label>
+        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva a nota. A primeira linha vira o título." hidden></textarea>
+        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione uma nota à esquerda ou crie uma nova.</p>
+        <!-- Inspector: todo o metadado técnico vive aqui, fora do editor. Popover no
+             desktop, folha inferior no mobile. -->
+        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes da nota"></div>
+      </div>
+      <!-- Confirmação da cópia do Trace Reference: anunciada por leitor de tela, sem
+           depender da mudança visual do ícone (ver mvpNotesFlashCopyFeedback). -->
+      <p class="sr-only" id="mvpNotesCopyLive" role="status" aria-live="polite"></p>
+      <!-- Região viva própria para a ordem das pastas: mover pasta não pode ser um evento
+           só visual. Separada da de cópia para que um anúncio não sobrescreva o outro. -->
+      <p class="sr-only" id="mvpNotesOrderLive" role="status" aria-live="polite"></p>
     </div>
   </section>
 </div>

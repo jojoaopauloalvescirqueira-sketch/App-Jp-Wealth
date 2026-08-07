@@ -84,7 +84,74 @@ const MVP_NOTES_PRIORITIES=['low','medium','high','critical'];
 // normalização do estado (abaixo) quanto pelo motor de resize (14-mvp-notes.js). Faixa
 // persistível e máximo funcional são o mesmo número: o estado nunca guarda largura que a
 // interface não saiba renderizar.
-const MVP_NOTES_DRAWER_MIN=420, MVP_NOTES_DRAWER_MAX=900, MVP_NOTES_DRAWER_DEFAULT=460;
+// v5: o painel passa a acomodar TRÊS colunas (pastas | notas | editor). A ordem de
+// declaração importa: o mínimo do drawer é DERIVADO dos mínimos das colunas (mais abaixo),
+// nunca um número escolhido à mão.
+// Painéis internos: faixa e padrão de cada coluna redimensionável. O editor não tem
+// largura própria — recebe o espaço restante.
+const MVP_NOTES_FOLDERS_MIN=150, MVP_NOTES_FOLDERS_MAX=320, MVP_NOTES_FOLDERS_DEFAULT=190;
+// LIST_MIN medido na interface real (v5): abaixo de 240px o campo de busca cai para menos
+// de 110px e o placeholder "Buscar notas..." trunca — a busca permanente da Fase C deixa de
+// ser utilizável antes de qualquer overflow acontecer. 240 é o menor valor que a mantém legível.
+const MVP_NOTES_LIST_MIN=240, MVP_NOTES_LIST_MAX=520, MVP_NOTES_LIST_DEFAULT=300;
+// O editor NÃO tem largura persistida — recebe o resto. Mas tem um piso funcional: com a
+// barra medida (Trace ID 57 + Salvar 83 + copiar 30 + inspector 30 + folgas 40 + padding 36)
+// o conteúdo fixo ocupa ~316px; abaixo disso o título ao vivo desaparece por completo.
+const MVP_NOTES_EDITOR_MIN=320;
+// Largura que cada separador interno OCUPA no layout. O elemento tem 9px de área de toque
+// com margens de -2px de cada lado (.mvpn-pane-handle no CSS), então consome 5px de fluxo.
+// Medido no navegador: 9 + (-2) + (-2) = 5.
+const MVP_NOTES_PANE_HANDLE=5;
+// Chrome estrutural do drawer: tudo que fica entre a largura externa e o espaço útil das
+// colunas. Medido na interface real — border-left de 1px, box-sizing:border-box, sem
+// padding no drawer nem no corpo (drawer 980 → corpo 979). É UM pixel, não dois: usar 2
+// aqui furava a invariante em exatamente 1px na largura mínima, roubando-o da Lista.
+const MVP_NOTES_DRAWER_CHROME=1;
+// Espaço horizontal que o corpo do drawer oferece às TRÊS colunas, dado um drawer de
+// largura `drawerW`: descontados o chrome estrutural e os dois separadores.
+function mvpNotesPaneSpace(drawerW){
+  return Math.max(0, Math.round(drawerW) - MVP_NOTES_DRAWER_CHROME - (MVP_NOTES_PANE_HANDLE*2));
+}
+// Mínimo do drawer em modo desktop — DERIVADO, nunca arbitrado: é a menor largura em que
+// as três colunas cabem simultaneamente nos seus pisos funcionais.
+//
+//   drawerMin = pastasMin + listaMin + editorMin + 2*separador + chrome
+//             =   150     +   240    +    320    +     10      +   1     = 721
+//
+// Confirmado por medição: em 721px o editor mede exatamente 320px; em 720px cai para 319.
+// O valor anterior (700) era herdado de uma estimativa e permitia editor de 299px — o
+// próprio piso que este módulo declara. Alterar qualquer mínimo de coluna recalcula este
+// número sozinho, e a invariante continua valendo sem ninguém precisar lembrar.
+const MVP_NOTES_DRAWER_MIN=MVP_NOTES_FOLDERS_MIN+MVP_NOTES_LIST_MIN+MVP_NOTES_EDITOR_MIN
+                          +(MVP_NOTES_PANE_HANDLE*2)+MVP_NOTES_DRAWER_CHROME;
+// Máximo generoso; a renderização o limita à viewport (min(…, 80vw, …) no CSS) sem
+// reescrever o valor salvo. Padrão confortável para as três colunas.
+const MVP_NOTES_DRAWER_MAX=1600, MVP_NOTES_DRAWER_DEFAULT=980;
+// Ajuste de RENDERIZAÇÃO — nunca de persistência.
+//
+// Duas larguras podem ser válidas isoladamente e não caberem JUNTAS (320 + 520 num drawer
+// de 980 não deixa espaço para o editor). Quem resolve isso é esta função, no momento de
+// desenhar, e o resultado NÃO volta para o estado: a preferência do operador é dele, e um
+// drawer temporariamente estreito não é motivo para apagá-la. Assim que houver espaço de
+// novo, o desenho volta sozinho ao que ele havia escolhido.
+//
+// Estratégia determinística: preserva os mínimos, reduz primeiro a Lista, depois as Pastas,
+// e só então o editor cederia. Chamada com a largura RENDERIZADA do drawer neste instante
+// (não a persistida), porque é o que de fato existe na tela.
+function mvpNotesFitPanes(folders,list,drawerW){
+  const espaco=mvpNotesPaneSpace(drawerW);
+  let f=Math.min(Math.max(Math.round(folders),MVP_NOTES_FOLDERS_MIN),MVP_NOTES_FOLDERS_MAX);
+  let l=Math.min(Math.max(Math.round(list),MVP_NOTES_LIST_MIN),MVP_NOTES_LIST_MAX);
+  let excesso=(f+l+MVP_NOTES_EDITOR_MIN)-espaco;
+  if(excesso<=0) return {folders:f,list:l};
+  const cortaLista=Math.min(excesso,l-MVP_NOTES_LIST_MIN); l-=cortaLista; excesso-=cortaLista;
+  if(excesso>0){ const cortaPastas=Math.min(excesso,f-MVP_NOTES_FOLDERS_MIN); f-=cortaPastas; excesso-=cortaPastas; }
+  // Sobrou excesso: as duas colunas já estão no mínimo e o editor absorveria a diferença.
+  // Com MVP_NOTES_DRAWER_MIN derivado dos três pisos, este ramo é INALCANÇÁVEL em desktop
+  // (espaço mínimo = 710 = 150+240+320). Fica como rede de segurança para geometrias
+  // degeneradas — o corpo tem overflow:hidden, nada vaza e nada fica negativo.
+  return {folders:f,list:l};
+}
 function mvpNotesId(){ return 'mvpn_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 function mvpNotesFolderId(){ return 'mvpnf_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 // ---- código de rastreio (v4) ----------------------------------------------------
@@ -128,8 +195,35 @@ function mvpNotesResolveTicket(rawTicket,id,seenTickets,reserved){
   seenTickets.add(ticket);
   return ticket;
 }
-// ---- pastas (schemaVersion 2) — normalizadas ANTES dos itens: mvpNotesNormalizeItem()
-// precisa do conjunto de IDs válidos/ambíguos resultante para reconciliar item.folderId. ----
+// ---- política de implementação por IA (v5) --------------------------------------
+// Diz o que um agente pode fazer com a nota. NUNCA autoriza commit, push, merge ou
+// deploy — essas permissões seguem governadas pelo processo do projeto, fora da nota.
+// O padrão é o cauteloso: analisar sim, alterar código não.
+const MVP_NOTES_AI_POLICIES=['blocked','analysis_only','autonomous_allowed'];
+const MVP_NOTES_AI_POLICY_DEFAULT='analysis_only';
+
+// ---- conteúdo e título derivado (v5) ---------------------------------------------
+// A nota passa a ter UM corpo de texto (content). O título deixa de ser campo editável
+// e vira a primeira linha não vazia do conteúdo — persistido ainda assim, para busca,
+// backup e para não recalcular a cada render de lista.
+function mvpNotesDeriveTitle(content){
+  const linhas=String(content||'').split('\n');
+  for(const l of linhas){ const t=l.trim(); if(t) return t.slice(0,120); }
+  return '';
+}
+// Migração v≤4 → v5: title e description viram um único content, nesta ordem e sem
+// perder um caractere. Um backup antigo com título "X" e descrição "Y" produz "X\nY".
+function mvpNotesMigrateContent(raw){
+  if(typeof raw.content==='string' && raw.content) return raw.content.slice(0,20000);
+  const titulo=String(raw.title||'').trim();
+  const desc=String(raw.description||'');
+  if(titulo && desc.trim()) return (titulo+'\n'+desc).slice(0,20000);
+  return (titulo || desc).slice(0,20000);
+}
+
+// ---- pastas (schemaVersion 2; ordem manual em v5) — normalizadas ANTES dos itens:
+// mvpNotesNormalizeItem() precisa do conjunto de IDs válidos/ambíguos resultante para
+// reconciliar item.folderId. ----
 function mvpNotesNormalizeFolders(rawList){
   const seenIds=new Set();
   const ambiguousIds=new Set(); // ID original que apareceu mais de uma vez no backup — uma
@@ -148,8 +242,17 @@ function mvpNotesNormalizeFolders(rawList){
     seenIds.add(id);
     const createdAt=(typeof raw.createdAt==='string'&&raw.createdAt)?raw.createdAt:new Date().toISOString();
     const updatedAt=(typeof raw.updatedAt==='string'&&raw.updatedAt)?raw.updatedAt:createdAt;
-    folders.push({id, name:name.slice(0,80), createdAt, updatedAt});
+    // position (v5): ordem manual escolhida pelo operador. Número finito qualquer é
+    // aceito na entrada; a reindexação abaixo o converte em inteiros contíguos 0..n-1.
+    const rawPos=Number(raw.position);
+    folders.push({id, name:name.slice(0,80), position:Number.isFinite(rawPos)?rawPos:Number.MAX_SAFE_INTEGER, createdAt, updatedAt});
   });
+  // Ordena pela posição declarada (pastas sem posição — backups v≤4 — vão para o fim,
+  // preservando entre si a ordem original do array) e reindexa contíguo. Assim a ordem
+  // é sempre densa e determinística, e mover uma pasta nunca deixa buracos.
+  folders.forEach((f,i)=>{ f.__seq=i; });
+  folders.sort((a,b)=> a.position-b.position || a.__seq-b.__seq);
+  folders.forEach((f,i)=>{ f.position=i; delete f.__seq; });
   return {folders, validIds:seenIds, ambiguousIds};
 }
 function mvpNotesResolveFolderId(rawFolderId,validIds,ambiguousIds){
@@ -161,8 +264,11 @@ function mvpNotesResolveFolderId(rawFolderId,validIds,ambiguousIds){
 }
 function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds,seenTickets,reservedTickets){
   if(!raw || typeof raw!=='object') return null;
-  const title=String(raw.title||'').trim();
-  if(!title) return null; // título obrigatório — sem ele o item é descartado, não o backup inteiro
+  // v5: o conteúdo é a fonte da verdade e o título é derivado dele. Backups v≤4 têm
+  // title+description e são fundidos aqui (mvpNotesMigrateContent) sem perda.
+  const content=mvpNotesMigrateContent(raw);
+  const title=mvpNotesDeriveTitle(content);
+  if(!title) return null; // nota sem nenhum texto não é preservada — nada a rastrear
   let id=String(raw.id||'').trim();
   if(!id || seenIds.has(id)) id=mvpNotesId(); // impede ID ausente/duplicado
   seenIds.add(id);
@@ -181,8 +287,12 @@ function mvpNotesNormalizeItem(raw,seenIds,validFolderIds,ambiguousFolderIds,see
     id,
     ticket:mvpNotesResolveTicket(raw.ticket,id,seenTickets,reservedTickets),
     type:MVP_NOTES_TYPES.includes(raw.type)?raw.type:'task',
-    title:title.slice(0,120),
-    description:String(raw.description||'').slice(0,5000),
+    content,
+    title, // derivado de content — nunca editado por si só
+    // Política de IA: só os três estados conhecidos entram. Qualquer valor estranho
+    // (backup adulterado, versão futura) cai no padrão cauteloso, JAMAIS em
+    // autonomous_allowed — um erro de leitura não pode virar autorização.
+    aiImplementationPolicy:MVP_NOTES_AI_POLICIES.includes(raw.aiImplementationPolicy)?raw.aiImplementationPolicy:MVP_NOTES_AI_POLICY_DEFAULT,
     priority:MVP_NOTES_PRIORITIES.includes(raw.priority)?raw.priority:'medium',
     status,
     folderId:mvpNotesResolveFolderId(raw.folderId,validFolderIds,ambiguousFolderIds),
@@ -214,15 +324,23 @@ function mvpNotesNormalizeState(){
   //        status==='done' e NUNCA gravada em folders[];
   //   v4 = item.ticket (código curto de rastreio JPW-XXXXXX, derivado do id por hash
   //        determinístico e IMUTÁVEL depois de persistido) + item.sourceRevision
-  //        (revisão Git de origem, hoje sempre null — ver comentário no item).
-  // A migração é idempotente e sem perda: backups v1/v2/v3 sobem para v4 aqui (v1 ganha
+  //        (revisão Git de origem, hoje sempre null — ver comentário no item);
+  //   v5 = item.content (corpo único; title vira DERIVADO da primeira linha e
+  //        description é absorvida sem perda) + item.aiImplementationPolicy +
+  //        folder.position (ordem manual) + ui.foldersPaneWidth/notesPaneWidth.
+  // A migração é idempotente e sem perda: backups v1..v4 sobem para v5 aqui (v1 ganha
   // folders:[] e todas as notas caem em "Sem pasta"; v2 ganha completedAt derivado e ui
-  // com o padrão; v1/v2/v3 ganham ticket derivado do id, que é sempre o mesmo). Rodar de
-  // novo sobre um estado já v4 não altera mais nada.
-  S.mvpNotes.schemaVersion=4;
+  // com o padrão; v1..v3 ganham ticket derivado do id, sempre o mesmo; v≤4 tem
+  // title+description fundidos em content e recebe política de IA no padrão cauteloso e
+  // posição de pasta pela ordem vigente). Rodar de novo sobre um estado já v5 não altera
+  // mais nada — todas as derivações são funções puras do dado já normalizado.
+  S.mvpNotes.schemaVersion=5;
   S.mvpNotes.showHeaderIcon=S.mvpNotes.showHeaderIcon!==false; // padrão true; só desliga com false explícito
   // Preferências de interface do módulo (v3) — viajam no estado principal, logo entram no
   // backup/importação e sobrevivem a Finalizar Sessão como o resto de S.mvpNotes.
+  // REGRA (v5/Fase D): estas três larguras são PREFERÊNCIAS. A normalização valida cada uma
+  // na sua própria faixa e nada além disso; a geometria que cabe na tela é decidida no
+  // desenho por mvpNotesFitPanes(), sem nunca reescrever o que está guardado aqui.
   // drawerWidth: faixa canônica única (MVP_NOTES_DRAWER_MIN..MAX) — o estado nunca guarda
   // valor impossível. Valor fora da faixa é APARADO (preserva a intenção do operador),
   // não descartado; só valor ausente/não-numérico cai no padrão. A viewport ainda limita
@@ -231,11 +349,20 @@ function mvpNotesNormalizeState(){
   if(!S.mvpNotes.ui || typeof S.mvpNotes.ui!=='object') S.mvpNotes.ui={};
   // null/''/booleano são AUSÊNCIA, não "zero": sem esta guarda Number(null)===0 seria
   // finito e cairia no mínimo (420) em vez do padrão — divergindo de undefined (460).
-  const rawUi=S.mvpNotes.ui.drawerWidth;
-  const rawW=(rawUi===null || rawUi==='' || typeof rawUi==='boolean') ? NaN : Number(rawUi);
-  S.mvpNotes.ui.drawerWidth=Number.isFinite(rawW)
-    ? Math.min(Math.max(Math.round(rawW),MVP_NOTES_DRAWER_MIN),MVP_NOTES_DRAWER_MAX)
-    : MVP_NOTES_DRAWER_DEFAULT;
+  // Mesma regra para as três larguras: ausência (null/''/booleano/undefined) cai no
+  // padrão; valor fora da faixa é APARADO, nunca descartado.
+  const larguraValida=(bruto,min,max,padrao)=>{
+    const n=(bruto===null || bruto==='' || typeof bruto==='boolean') ? NaN : Number(bruto);
+    return Number.isFinite(n) ? Math.min(Math.max(Math.round(n),min),max) : padrao;
+  };
+  S.mvpNotes.ui.drawerWidth=larguraValida(S.mvpNotes.ui.drawerWidth,MVP_NOTES_DRAWER_MIN,MVP_NOTES_DRAWER_MAX,MVP_NOTES_DRAWER_DEFAULT);
+  S.mvpNotes.ui.foldersPaneWidth=larguraValida(S.mvpNotes.ui.foldersPaneWidth,MVP_NOTES_FOLDERS_MIN,MVP_NOTES_FOLDERS_MAX,MVP_NOTES_FOLDERS_DEFAULT);
+  S.mvpNotes.ui.notesPaneWidth=larguraValida(S.mvpNotes.ui.notesPaneWidth,MVP_NOTES_LIST_MIN,MVP_NOTES_LIST_MAX,MVP_NOTES_LIST_DEFAULT);
+  // E PARA por aqui, deliberadamente: cada preferência é validada isoladamente, nunca a
+  // combinação. Um estado 721/190/300 é legítimo — significa "gosto de 190 e 300, hoje meu
+  // painel está no mínimo". Reduzir 190/300 para 150/240 aqui apagaria a escolha do operador
+  // por causa de uma condição passageira, e ao alargar o painel de novo não haveria o que
+  // restaurar. Quem faz as três colunas caberem é mvpNotesFitPanes(), no desenho.
   // Estado v1 (sem folders) chega aqui com S.mvpNotes.folders===undefined — normaliza para []
   // e cada nota, sem folderId prévio, resolve para null (Sem pasta) abaixo. Sem tela de
   // migração: o operador só vê o resultado (tudo em "Sem pasta") ao abrir o painel.

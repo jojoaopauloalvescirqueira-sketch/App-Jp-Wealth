@@ -392,8 +392,8 @@ def run_mvp_notes_survival(browser, url):
     page.locator('#mvpNotesNewFolderBtn').click()
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'pasta deveria ter sido criada'
     page.locator('#mvpNotesNewBtn').click()
-    page.locator('#mvpNoteTitle').fill('Nota que sobrevive a Finalizar Sessão')
-    page.locator('#mvpNoteSaveBtn').click()
+    page.locator('#mvpNoteContent').fill('Nota que sobrevive a Finalizar Sessão')
+    page.locator('#mvpNotesSaveBtn').click()
     assert page.evaluate('S.mvpNotes.items.length') == 1, 'nota deveria ter sido criada'
     assert page.evaluate('S.mvpNotes.items[0].folderId') == page.evaluate('S.mvpNotes.folders[0].id'), \
         'nota criada com a pasta ativa deveria ficar vinculada a ela'
@@ -403,15 +403,15 @@ def run_mvp_notes_survival(browser, url):
     # sobreviver a Finalizar Sessão e ao reload, como o resto de S.mvpNotes.
     page.evaluate('''() => {
       const it = S.mvpNotes.items[0];
-      mvpNotesUpdate(it.id, {type: it.type, title: it.title, description: it.description,
-        priority: it.priority, status: 'done', folderId: it.folderId});
-      mvpNotesPersistDrawerWidth(620);
+      mvpNotesUpdate(it.id, {type: it.type, content: it.content, priority: it.priority,
+        status: 'done', folderId: it.folderId, aiImplementationPolicy: it.aiImplementationPolicy});
+      mvpNotesPersistDrawerWidth(620); // v5 apara para o mínimo derivado (721)
     }''')
     assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'concluir deveria carimbar completedAt'
     ticket_antes = page.evaluate('S.mvpNotes.items[0].ticket')
     assert ticket_antes and ticket_antes.startswith('JPW-'), 'nota deveria ter Trace ID'
     assert page.evaluate('S.mvpNotes.items[0].folderId'), 'concluir não pode alterar folderId'
-    assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620
+    assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 721  # v5: 620 é aparado ao mínimo derivado
 
     assert_safe_copy_checkpoint(page)
     click_id(page, 'finalizeSessionBtn')
@@ -435,7 +435,7 @@ def run_mvp_notes_survival(browser, url):
         'o vínculo nota↔pasta deveria sobreviver ao reload'
     assert page.evaluate('S.mvpNotes.items[0].status') == 'done', 'o status concluído deveria sobreviver'
     assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'completedAt deveria sobreviver ao reload'
-    assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 620, 'a largura do painel deveria sobreviver'
+    assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 721, 'a largura do painel deveria sobreviver (aparada à faixa v5)'
     assert page.evaluate('S.mvpNotes.items[0].ticket') == ticket_antes, \
         'o Trace ID deveria sobreviver a Finalizar Sessão e ao reload'
 

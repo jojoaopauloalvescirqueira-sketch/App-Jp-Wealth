@@ -124,7 +124,12 @@ const DEFAULTS = {
   //        ui{} (preferências persistidas do painel: drawerWidth) + visão virtual
   //        "Concluído", derivada de status e nunca gravada como pasta;
   //   v4 = item.ticket — código curto de rastreio (JPW-XXXXXX) derivado do id por hash
-  //        determinístico, para citar a nota fora do app (agentes de IA, commits).
-  mvpNotes:{schemaVersion:4, showHeaderIcon:true, folders:[], items:[], ui:{drawerWidth:460}},
+  //        determinístico, para citar a nota fora do app (agentes de IA, commits);
+  //   v5 = item.content (corpo único; title passa a ser DERIVADO da primeira linha e a
+  //        antiga description é absorvida) + item.aiImplementationPolicy (o que um
+  //        agente pode fazer com a nota; padrão cauteloso) + folder.position (ordem
+  //        manual) + larguras dos painéis internos.
+  mvpNotes:{schemaVersion:5, showHeaderIcon:true, folders:[], items:[],
+    ui:{drawerWidth:980, foldersPaneWidth:190, notesPaneWidth:300}},
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
