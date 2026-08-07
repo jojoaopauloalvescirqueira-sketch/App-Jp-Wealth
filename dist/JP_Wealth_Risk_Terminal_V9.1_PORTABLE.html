@@ -1608,7 +1608,30 @@
   /* Desktop: os filtros ficam inline na toolbar (o invólucro é transparente — cabeçalho e
      ações da folha inferior só existem em mobile); o botão "Filtros" não existe aqui. */
   .mvpn-filters-btn{display:none}
-  .mvpn-filters-sheet-head,.mvpn-filters-sheet-actions{display:none}
+  /* Cabeçalho da folha é exclusivo do mobile; as AÇÕES existem nos dois mundos —
+     JPW-RQPNMK: no desktop o bloco ficava display:none e o operador não tinha nenhuma
+     forma visível de desfazer um filtro aplicado. Agora o popover mostra a ação única,
+     separada dos campos por um divisor, e "Aplicar" (que só significa "fechar a folha")
+     permanece restrito ao mobile. */
+  .mvpn-filters-sheet-head{display:none}
+  .mvpn-filters-sheet-actions{
+    display:flex; justify-content:stretch; margin-top:10px; padding-top:10px;
+    border-top:1px solid var(--line);
+  }
+  /* "Aplicar" só existe no mobile (lá significa "fechar a folha"); no popover do desktop
+     seria ruído — o filtro já é aplicado ao vivo. O prefixo do tema é necessário: a regra
+     html[data-ui-version="tesla-inspired"] :is(.jp-btn, .reset-btn, …) declara
+     display:inline-flex com especificidade maior e venceria. */
+  html[data-ui-version="tesla-inspired"] .mvpn-filters-sheet-actions .mvpn-filters-apply,
+  .mvpn-filters-apply{display:none}
+  .mvpn-filters-clear{
+    flex:1; justify-content:center; min-height:34px;
+    color:var(--ink-dim); border-color:var(--line);
+  }
+  .mvpn-filters-clear:hover:not(:disabled){color:var(--ink); border-color:var(--ink-faint)}
+  /* Sem filtro ativo não há o que limpar: desabilitado de verdade (disabled), com aparência
+     coerente. Nunca vermelho — remover filtro não destrói dado nenhum. */
+  .mvpn-filters-clear:disabled{opacity:.45; cursor:default}
   .mvp-notes-filters{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
   .mvp-notes-filters select{width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 8px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-xs)}
   .mvp-notes-filters select[hidden]{display:none}
@@ -1722,8 +1745,13 @@
   }
   .mvpn-inspector-head{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .mvpn-inspector-head h4{margin:0; font-size:var(--fs-md); color:var(--ink)}
+  /* Ações não destrutivas da nota (exportar) — acima do divisor de perigo, nunca ao lado
+     do Excluir: JPW-9A78DE é leitura pura e não pode dividir vizinhança com exclusão. */
+  .mvpn-inspector-actions{margin-top:auto; padding-top:12px}
+  .mvpn-inspector-actions .reset-btn{width:100%; justify-content:center}
   /* Exclusão visualmente APARTADA das configurações — no fim, atrás de divisor. */
-  .mvpn-inspector-danger{margin-top:auto; padding-top:14px; border-top:1px solid var(--line)}
+  .mvpn-inspector-danger{padding-top:12px; border-top:1px solid var(--line)}
+  .mvpn-inspector-actions ~ .mvpn-inspector-danger{margin-top:12px}
   .mvpn-inspector-danger .mvpn-danger{width:100%; justify-content:center; margin:0}
   .mvpn-folder-sidebar{
     flex:0 0 var(--mvpn-folders-w,190px); width:var(--mvpn-folders-w,190px); min-height:0; overflow-y:auto;
@@ -1935,10 +1963,17 @@
     .mvpn-filters-wrap.open{transform:none; visibility:visible}
     @media (prefers-reduced-motion:reduce){ .mvpn-filters-wrap{transition:none} }
     .mvpn-filters-sheet-head{display:block; font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:10px}
+    /* No celular a folha recupera o par [Limpar todos os filtros] [Aplicar], lado a lado e
+       com a mesma proporção — Aplicar fecha a folha, Limpar zera os critérios. */
+    html[data-ui-version="tesla-inspired"] .mvpn-filters-sheet-actions .mvpn-filters-apply,
+    .mvpn-filters-apply{display:inline-flex}
     .mvp-notes-filters{grid-template-columns:1fr; gap:8px}
     .mvp-notes-filters select{min-height:44px; font-size:var(--fs-sm)}
-    .mvpn-filters-sheet-actions{display:flex; justify-content:space-between; gap:10px; margin-top:12px}
+    .mvpn-filters-sheet-actions{display:flex; justify-content:space-between; gap:10px; margin-top:12px; padding-top:12px}
     .mvpn-filters-sheet-actions .reset-btn{min-height:44px; flex:1; justify-content:center}
+    /* Um ancestral a mais que o seletor do tema (que empata em (0,3,1) e vence por ordem
+       de origem, devolvendo os 42px de var(--jp-control-h)). */
+    html[data-ui-version="tesla-inspired"] .mvpn-filters-wrap .mvpn-filters-sheet-actions .reset-btn{min-height:44px}
     .mvp-notes-toolbar #mvpNotesNewBtn{min-height:44px}
     /* Cards: área de toque confortável (≥44px já garantida pelo conteúdo + padding). */
     .mvpn-card{padding:12px 14px}
@@ -1987,6 +2022,8 @@
        e devolveria os 42px de var(--jp-control-h). */
     html[data-ui-version="tesla-inspired"] .mvpn-inspector .mvpn-inspector-danger .mvpn-danger,
     .mvpn-inspector-danger .mvpn-danger{min-height:44px}
+    html[data-ui-version="tesla-inspired"] .mvpn-inspector .mvpn-inspector-actions .reset-btn,
+    .mvpn-inspector-actions .reset-btn{min-height:44px}
     .mvpn-inspector .mvpn-icon-btn{width:44px; height:44px}
     /* Mesma razão para os selects da folha de filtros. */
     html[data-ui-version="tesla-inspired"] .mvp-notes-filters select{min-height:44px}
@@ -4074,7 +4111,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'db1ba46ddd369277';
+const JP_WEALTH_BUILD_ID = 'b42a2ffb852a97ad';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -5132,9 +5169,12 @@ const JP_WEALTH_BUILD_ID = 'db1ba46ddd369277';
               <label class="sr-only" for="mvpNotesFilterPeriod">Filtrar por período de conclusão</label>
               <select id="mvpNotesFilterPeriod"></select>
             </div>
+            <!-- Ação ÚNICA de limpeza (JPW-RQPNMK): o mesmo botão serve desktop e mobile.
+                 Antes ele existia só no HTML e ficava display:none no desktop — havia estado
+                 de filtro sem nenhuma forma visível de desfazê-lo. -->
             <div class="mvpn-filters-sheet-actions">
-              <button type="button" class="reset-btn" id="mvpNotesFiltersClearBtn">Limpar filtros</button>
-              <button type="button" class="reset-btn mvpn-primary" id="mvpNotesFiltersApplyBtn">Aplicar</button>
+              <button type="button" class="reset-btn mvpn-filters-clear" id="mvpNotesFiltersClearBtn">Limpar todos os filtros</button>
+              <button type="button" class="reset-btn mvpn-primary mvpn-filters-apply" id="mvpNotesFiltersApplyBtn">Aplicar</button>
             </div>
           </div>
         </div>
@@ -5179,6 +5219,11 @@ const JP_WEALTH_BUILD_ID = 'db1ba46ddd369277';
       <!-- Região viva própria para a ordem das pastas: mover pasta não pode ser um evento
            só visual. Separada da de cópia para que um anúncio não sobrescreva o outro. -->
       <p class="sr-only" id="mvpNotesOrderLive" role="status" aria-live="polite"></p>
+      <!-- Região viva dos filtros: separada das de cópia e de ordem para que um anúncio
+           não sobrescreva o outro quando as ações acontecem em sequência. -->
+      <p class="sr-only" id="mvpNotesFiltersLive" role="status" aria-live="polite"></p>
+      <!-- Resultado da exportação individual em Markdown (JPW-9A78DE). -->
+      <p class="sr-only" id="mvpNotesExportLive" role="status" aria-live="polite"></p>
     </div>
   </section>
 </div>
@@ -14469,6 +14514,118 @@ function mvpNotesSourceRevision(item){
   if(typeof JP_WEALTH_SOURCE_REVISION==='string' && JP_WEALTH_SOURCE_REVISION) return JP_WEALTH_SOURCE_REVISION;
   return null;
 }
+// ---- exportação individual em Markdown (JPW-9A78DE) --------------------------------
+// Complementa — não substitui — o backup completo, a exportação da base e o Trace
+// Reference. É uma cópia PORTÁTIL de uma nota, gerada no próprio navegador (Blob +
+// <a download>, o mesmo mecanismo de exportFullBackup), sem backend, API ou servidor.
+//
+// Nada aqui escreve no estado: exportar é operação de leitura pura.
+// Front matter só com metadados que EXISTEM no item — nenhum campo inventado.
+function mvpNotesMarkdownSlug(texto){
+  return String(texto||'')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')   // acentos fora do nome do arquivo
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')                         // qualquer caractere inválido vira hífen
+    .replace(/^-+|-+$/g,'')
+    .slice(0,60).replace(/-+$/,'');
+}
+function mvpNotesMarkdownFilename(item){
+  const slug=mvpNotesMarkdownSlug(item.title);
+  return `${item.ticket||'JPW-NOTA'}-${slug||'nota'}.md`;
+}
+// Serialização de UM escalar de front matter. Função central: todo valor do YAML passa
+// por aqui, nenhum é concatenado à mão.
+//
+// O estilo de aspas SIMPLES é escolha deliberada: seu único mecanismo de escape é dobrar
+// a própria aspa (''), então dois-pontos, aspas duplas, barra invertida, &, #, [ ] { }
+// e afins entram literalmente. Com aspas duplas seria preciso escapar barra invertida —
+// uma pasta chamada "C:\temp" viraria "C:<TAB>emp", porque \t é tabulação no estilo duplo.
+// O estilo simples elimina essa classe de corrupção sem biblioteca externa.
+const MVPN_YAML_RESERVADO=/^(?:true|false|null|yes|no|on|off|y|n|~)$/i;
+function mvpNotesYamlValor(v){
+  if(v===null || v===undefined || v==='') return 'null';
+  // Controles (quebra, tabulação, etc.) viram espaço: um escalar de front matter é uma linha.
+  const t=String(v).replace(/[\u0000-\u001f\u007f]/g,' ').trim();
+  if(t==='') return 'null';
+  // Estilo simples (sem aspas) só para tokens inequívocos: começam por letra, não contêm
+  // indicador YAML algum e não colidem com booleano/nulo. Qualquer outra coisa é citada —
+  // inclusive números e datas, que sem aspas mudariam de tipo na leitura.
+  if(/^[A-Za-z][A-Za-z0-9._-]*$/.test(t) && !MVPN_YAML_RESERVADO.test(t)) return t;
+  return "'"+t.replace(/'/g,"''")+"'";
+}
+// A primeira linha da nota é o TÍTULO DO DOCUMENTO, então o arquivo exportado sempre
+// abre com um único H1 — nunca com H2..H6. Se o operador escreveu o título já em sintaxe
+// de heading, o marcador é removido e o texto vira o H1; qualquer outro texto recebe o
+// prefixo "# ".
+//
+// Só conta como heading ATX válido: de 1 a 6 "#" SEGUIDOS DE ESPAÇO. Por isso
+// "#SemEspaco" e "####### Sete" (sete marcadores não é heading) entram como texto do H1,
+// exatamente como aparecem no título da nota.
+//
+// Isto é normalização de EXPORTAÇÃO: o title persistido não é tocado — uma nota cujo
+// título é "## Exportar notas" continua com esse title na aplicação.
+function mvpNotesMarkdownHeading(titulo){
+  const t=String(titulo||'').trim();
+  if(!t) return '';
+  const m=t.match(/^#{1,6}\s+(\S.*)$/);
+  return `# ${m?m[1].trim():t}`;
+}
+function mvpNotesMarkdown(item){
+  const linhas=String(item.content||'').split('\n');
+  const iTitulo=linhas.findIndex(l=>l.trim());
+  // O título vira o cabeçalho H1; o corpo é o restante, sem repetir a primeira linha.
+  const corpo=iTitulo<0?'':linhas.slice(iTitulo+1).join('\n').replace(/^\n+/,'');
+  const fm=[
+    'ticket: '+mvpNotesYamlValor(item.ticket),
+    'type: '+mvpNotesYamlValor(MVP_NOTES_TYPE_LABELS[item.type]||item.type),
+    'priority: '+mvpNotesYamlValor(MVP_NOTES_PRIORITY_LABELS[item.priority]||item.priority),
+    'status: '+mvpNotesYamlValor(MVP_NOTES_STATUS_LABELS[item.status]||item.status),
+    'folder: '+mvpNotesYamlValor(mvpNotesFolderLabel(item.folderId)),
+    'ai_implementation_policy: '+mvpNotesYamlValor(item.aiImplementationPolicy),
+    'screen: '+mvpNotesYamlValor(mvpNotesScreenLabel(item.screenId)),
+    'build_id: '+mvpNotesYamlValor(item.buildId),
+    // Source Revision segue a regra do módulo: não existe mecanismo confiável hoje, então
+    // é null — jamais um SHA inventado a partir do build id.
+    'source_revision: '+mvpNotesYamlValor(mvpNotesSourceRevision(item)),
+    'created_at: '+mvpNotesYamlValor(item.createdAt),
+    'updated_at: '+mvpNotesYamlValor(item.updatedAt),
+    'completed_at: '+mvpNotesYamlValor(item.completedAt)
+  ];
+  // O título já pode vir escrito em Markdown pelo operador ("# Meu título"). Prefixar
+  // outro "#" produziria "# # Meu título". A normalização vive AQUI, no gerador — a regra
+  // do título interno da aplicação (primeira linha não vazia, literal) fica intocada.
+  const titulo=item.title?mvpNotesMarkdownHeading(item.title):'';
+  return ['---',...fm,'---','',titulo,'',corpo].join('\n').replace(/\n{3,}$/,'\n')+'\n';
+}
+// Rascunho sujo NÃO é exportado: um arquivo com metadados do estado salvo e corpo do
+// rascunho seria uma combinação ambígua, e rastreabilidade não admite ambiguidade.
+// Também não salvamos por conta própria — a decisão de gravar é sempre do operador.
+function mvpNotesExportMarkdown(){
+  const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
+  const live=mvpn('mvpNotesExportLive');
+  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
+  if(mvpNotesUI.draftDirty){
+    alert('Existem alterações não salvas. Salve a nota antes de exportar.');
+    if(live) live.textContent='Existem alterações não salvas. Salve a nota antes de exportar.';
+    return null;
+  }
+  const nome=mvpNotesMarkdownFilename(item);
+  const blob=new Blob([mvpNotesMarkdown(item)],{type:'text/markdown;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=nome;
+  a.rel='noopener';
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  // Revogar na volta ao laço de eventos, não na linha seguinte ao clique: alguns
+  // navegadores ainda não leram o Blob nesse instante e o download sairia vazio.
+  // A âncora temporária sai do DOM junto — não fica lixo pendurado no documento.
+  setTimeout(()=>{ URL.revokeObjectURL(url); if(a.parentNode) a.remove(); },0);
+  if(live) live.textContent='Nota exportada como Markdown.';
+  return nome;
+}
 function mvpNotesReferenceBlock(item){
   const rev=mvpNotesSourceRevision(item);
   const L=[
@@ -14880,8 +15037,31 @@ function mvpNotesSyncFilterControls(){
   const n=mvpNotesActiveFilterCount();
   const badge=mvpn('mvpNotesFiltersCount');
   if(badge){ badge.hidden=n===0; badge.textContent=String(n); }
+  // "Limpar todos os filtros" só faz sentido havendo algo a limpar. Desabilitado de forma
+  // acessível (disabled real, não só opacidade) — leitores de tela anunciam indisponível.
+  const clearBtn=mvpn('mvpNotesFiltersClearBtn');
+  if(clearBtn){
+    clearBtn.disabled=n===0;
+    clearBtn.setAttribute('aria-label', n===0
+      ? 'Limpar todos os filtros — nenhum filtro ativo'
+      : `Limpar todos os filtros — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`);
+  }
   const fbtn=mvpn('mvpNotesFiltersBtn');
   if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar notas — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar notas');
+}
+// Limpeza dos filtros — ação ÚNICA do módulo (JPW-RQPNMK). Zera todos os critérios
+// estruturais e NADA mais: busca, visão/pasta ativa, nota aberta, rascunho e dados
+// persistidos ficam exatamente como estavam. Não grava nada no estado da aplicação.
+function mvpNotesClearAllFilters(){
+  const havia=mvpNotesActiveFilterCount();
+  mvpNotesUI.filterType='all'; mvpNotesUI.filterStatus='all'; mvpNotesUI.filterPriority='all';
+  mvpNotesUI.filterFolder='all'; mvpNotesUI.filterPeriod='all'; mvpNotesUI.filterPolicy='all';
+  ['mvpNotesFilterType','mvpNotesFilterStatus','mvpNotesFilterPriority','mvpNotesFilterFolder',
+   'mvpNotesFilterPeriod','mvpNotesFilterPolicy'].forEach(id=>{ const el=mvpn(id); if(el) el.value='all'; });
+  renderMvpNotesList();
+  const live=mvpn('mvpNotesFiltersLive');
+  if(live) live.textContent=havia>0?'Todos os filtros foram removidos.':'';
+  return havia;
 }
 function renderMvpNotesList(){
   mvpNotesEnsureActiveFolderValid();
@@ -15276,6 +15456,9 @@ function mvpNotesInspectorHTML(){
       ${fato('Atualizada em',esc(mvpNotesFormatDate(item.updatedAt)))}
       ${item.completedAt?fato('Concluída em',esc(mvpNotesFormatDate(item.completedAt))):''}
     </dl>
+    <div class="mvpn-inspector-actions">
+      <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
+    </div>
     <div class="mvpn-inspector-danger">
       <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
     </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar a nota.</p>`}`;
@@ -15313,6 +15496,8 @@ function bindMvpNotesInspector(){
   liga('mvpNoteFolder','folderId'); liga('mvpNotePolicy','aiImplementationPolicy');
   const fechar=mvpn('mvpNotesInspectorCloseBtn');
   if(fechar) fechar.addEventListener('click',()=>mvpNotesSetInspectorOpen(false)); // rascunho permanece em memória
+  const exp=mvpn('mvpNoteExportMdBtn');
+  if(exp) exp.addEventListener('click',mvpNotesExportMarkdown); // leitura pura: não toca no estado
   const del=mvpn('mvpNoteDeleteBtn');
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
@@ -15812,12 +15997,7 @@ function bindMvpNotesDrawer(){
   const applyBtn=mvpn('mvpNotesFiltersApplyBtn');
   if(applyBtn) applyBtn.addEventListener('click',()=>mvpNotesSetFiltersOpen(false)); // aplicam ao vivo; Aplicar = fechar
   const clearBtn=mvpn('mvpNotesFiltersClearBtn');
-  if(clearBtn) clearBtn.addEventListener('click',()=>{
-    mvpNotesUI.filterType='all'; mvpNotesUI.filterStatus='all'; mvpNotesUI.filterPriority='all';
-    mvpNotesUI.filterFolder='all'; mvpNotesUI.filterPeriod='all'; mvpNotesUI.filterPolicy='all';
-    ['mvpNotesFilterType','mvpNotesFilterStatus','mvpNotesFilterPriority','mvpNotesFilterFolder','mvpNotesFilterPeriod','mvpNotesFilterPolicy'].forEach(id=>{ const el=mvpn(id); if(el) el.value='all'; });
-    renderMvpNotesList();
-  });
+  if(clearBtn) clearBtn.addEventListener('click',mvpNotesClearAllFilters);
   bindMvpNotesResize();
   bindMvpNotesPaneResize();
   // Janela redimensionada: recalcular o que cabe, sem tocar nas preferências. Estreitar e

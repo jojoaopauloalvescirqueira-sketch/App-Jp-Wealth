@@ -1598,7 +1598,30 @@
   /* Desktop: os filtros ficam inline na toolbar (o invólucro é transparente — cabeçalho e
      ações da folha inferior só existem em mobile); o botão "Filtros" não existe aqui. */
   .mvpn-filters-btn{display:none}
-  .mvpn-filters-sheet-head,.mvpn-filters-sheet-actions{display:none}
+  /* Cabeçalho da folha é exclusivo do mobile; as AÇÕES existem nos dois mundos —
+     JPW-RQPNMK: no desktop o bloco ficava display:none e o operador não tinha nenhuma
+     forma visível de desfazer um filtro aplicado. Agora o popover mostra a ação única,
+     separada dos campos por um divisor, e "Aplicar" (que só significa "fechar a folha")
+     permanece restrito ao mobile. */
+  .mvpn-filters-sheet-head{display:none}
+  .mvpn-filters-sheet-actions{
+    display:flex; justify-content:stretch; margin-top:10px; padding-top:10px;
+    border-top:1px solid var(--line);
+  }
+  /* "Aplicar" só existe no mobile (lá significa "fechar a folha"); no popover do desktop
+     seria ruído — o filtro já é aplicado ao vivo. O prefixo do tema é necessário: a regra
+     html[data-ui-version="tesla-inspired"] :is(.jp-btn, .reset-btn, …) declara
+     display:inline-flex com especificidade maior e venceria. */
+  html[data-ui-version="tesla-inspired"] .mvpn-filters-sheet-actions .mvpn-filters-apply,
+  .mvpn-filters-apply{display:none}
+  .mvpn-filters-clear{
+    flex:1; justify-content:center; min-height:34px;
+    color:var(--ink-dim); border-color:var(--line);
+  }
+  .mvpn-filters-clear:hover:not(:disabled){color:var(--ink); border-color:var(--ink-faint)}
+  /* Sem filtro ativo não há o que limpar: desabilitado de verdade (disabled), com aparência
+     coerente. Nunca vermelho — remover filtro não destrói dado nenhum. */
+  .mvpn-filters-clear:disabled{opacity:.45; cursor:default}
   .mvp-notes-filters{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
   .mvp-notes-filters select{width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 8px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-xs)}
   .mvp-notes-filters select[hidden]{display:none}
@@ -1712,8 +1735,13 @@
   }
   .mvpn-inspector-head{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .mvpn-inspector-head h4{margin:0; font-size:var(--fs-md); color:var(--ink)}
+  /* Ações não destrutivas da nota (exportar) — acima do divisor de perigo, nunca ao lado
+     do Excluir: JPW-9A78DE é leitura pura e não pode dividir vizinhança com exclusão. */
+  .mvpn-inspector-actions{margin-top:auto; padding-top:12px}
+  .mvpn-inspector-actions .reset-btn{width:100%; justify-content:center}
   /* Exclusão visualmente APARTADA das configurações — no fim, atrás de divisor. */
-  .mvpn-inspector-danger{margin-top:auto; padding-top:14px; border-top:1px solid var(--line)}
+  .mvpn-inspector-danger{padding-top:12px; border-top:1px solid var(--line)}
+  .mvpn-inspector-actions ~ .mvpn-inspector-danger{margin-top:12px}
   .mvpn-inspector-danger .mvpn-danger{width:100%; justify-content:center; margin:0}
   .mvpn-folder-sidebar{
     flex:0 0 var(--mvpn-folders-w,190px); width:var(--mvpn-folders-w,190px); min-height:0; overflow-y:auto;
@@ -1925,10 +1953,17 @@
     .mvpn-filters-wrap.open{transform:none; visibility:visible}
     @media (prefers-reduced-motion:reduce){ .mvpn-filters-wrap{transition:none} }
     .mvpn-filters-sheet-head{display:block; font-size:var(--fs-md); font-weight:700; color:var(--ink); margin-bottom:10px}
+    /* No celular a folha recupera o par [Limpar todos os filtros] [Aplicar], lado a lado e
+       com a mesma proporção — Aplicar fecha a folha, Limpar zera os critérios. */
+    html[data-ui-version="tesla-inspired"] .mvpn-filters-sheet-actions .mvpn-filters-apply,
+    .mvpn-filters-apply{display:inline-flex}
     .mvp-notes-filters{grid-template-columns:1fr; gap:8px}
     .mvp-notes-filters select{min-height:44px; font-size:var(--fs-sm)}
-    .mvpn-filters-sheet-actions{display:flex; justify-content:space-between; gap:10px; margin-top:12px}
+    .mvpn-filters-sheet-actions{display:flex; justify-content:space-between; gap:10px; margin-top:12px; padding-top:12px}
     .mvpn-filters-sheet-actions .reset-btn{min-height:44px; flex:1; justify-content:center}
+    /* Um ancestral a mais que o seletor do tema (que empata em (0,3,1) e vence por ordem
+       de origem, devolvendo os 42px de var(--jp-control-h)). */
+    html[data-ui-version="tesla-inspired"] .mvpn-filters-wrap .mvpn-filters-sheet-actions .reset-btn{min-height:44px}
     .mvp-notes-toolbar #mvpNotesNewBtn{min-height:44px}
     /* Cards: área de toque confortável (≥44px já garantida pelo conteúdo + padding). */
     .mvpn-card{padding:12px 14px}
@@ -1977,6 +2012,8 @@
        e devolveria os 42px de var(--jp-control-h). */
     html[data-ui-version="tesla-inspired"] .mvpn-inspector .mvpn-inspector-danger .mvpn-danger,
     .mvpn-inspector-danger .mvpn-danger{min-height:44px}
+    html[data-ui-version="tesla-inspired"] .mvpn-inspector .mvpn-inspector-actions .reset-btn,
+    .mvpn-inspector-actions .reset-btn{min-height:44px}
     .mvpn-inspector .mvpn-icon-btn{width:44px; height:44px}
     /* Mesma razão para os selects da folha de filtros. */
     html[data-ui-version="tesla-inspired"] .mvp-notes-filters select{min-height:44px}

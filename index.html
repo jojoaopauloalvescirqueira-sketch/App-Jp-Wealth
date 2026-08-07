@@ -1065,9 +1065,12 @@
               <label class="sr-only" for="mvpNotesFilterPeriod">Filtrar por período de conclusão</label>
               <select id="mvpNotesFilterPeriod"></select>
             </div>
+            <!-- Ação ÚNICA de limpeza (JPW-RQPNMK): o mesmo botão serve desktop e mobile.
+                 Antes ele existia só no HTML e ficava display:none no desktop — havia estado
+                 de filtro sem nenhuma forma visível de desfazê-lo. -->
             <div class="mvpn-filters-sheet-actions">
-              <button type="button" class="reset-btn" id="mvpNotesFiltersClearBtn">Limpar filtros</button>
-              <button type="button" class="reset-btn mvpn-primary" id="mvpNotesFiltersApplyBtn">Aplicar</button>
+              <button type="button" class="reset-btn mvpn-filters-clear" id="mvpNotesFiltersClearBtn">Limpar todos os filtros</button>
+              <button type="button" class="reset-btn mvpn-primary mvpn-filters-apply" id="mvpNotesFiltersApplyBtn">Aplicar</button>
             </div>
           </div>
         </div>
@@ -1112,6 +1115,11 @@
       <!-- Região viva própria para a ordem das pastas: mover pasta não pode ser um evento
            só visual. Separada da de cópia para que um anúncio não sobrescreva o outro. -->
       <p class="sr-only" id="mvpNotesOrderLive" role="status" aria-live="polite"></p>
+      <!-- Região viva dos filtros: separada das de cópia e de ordem para que um anúncio
+           não sobrescreva o outro quando as ações acontecem em sequência. -->
+      <p class="sr-only" id="mvpNotesFiltersLive" role="status" aria-live="polite"></p>
+      <!-- Resultado da exportação individual em Markdown (JPW-9A78DE). -->
+      <p class="sr-only" id="mvpNotesExportLive" role="status" aria-live="polite"></p>
     </div>
   </section>
 </div>

@@ -1021,6 +1021,200 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 14e. JPW-RQPNMK: ação única "Limpar todos os filtros" -----------------
+        page = prepare_page(browser, base_url + 'index.html')
+        page.set_viewport_size({'width': 1440, 'height': 900})
+        page.evaluate("""() => {
+          const f = mvpNotesCreateFolder('Interface');
+          mvpNotesCreate({content: 'Corrigir botão mobile\ncorpo', type: 'bug', priority: 'high',
+            status: 'open', folderId: f.id, aiImplementationPolicy: 'analysis_only'});
+          mvpNotesCreate({content: 'Outra\ncorpo', type: 'task', priority: 'low',
+            status: 'open', folderId: f.id, aiImplementationPolicy: 'blocked'});
+          save();
+        }""")
+        click_id(page, 'headerNotesBtn')
+        click_id(page, 'mvpNotesFiltersBtn')
+        limpar = page.locator('#mvpNotesFiltersClearBtn')
+        # mecanismo ÚNICO: um só botão de limpeza, visível também no desktop (antes o bloco
+        # de ações era display:none fora do mobile e não havia como desfazer um filtro).
+        assert page.locator('[id*="ClearBtn"]').count() == 1, 'não pode haver dois mecanismos'
+        assert limpar.is_visible(), 'a ação de limpar precisa existir no popover do desktop'
+        assert limpar.inner_text() == 'Limpar todos os filtros'
+        assert page.locator('#mvpNotesFiltersApplyBtn').is_hidden(), '"Aplicar" é exclusivo do mobile'
+        # sem filtro ativo o botão fica desabilitado de forma acessível
+        assert limpar.is_disabled()
+        assert 'nenhum filtro ativo' in limpar.get_attribute('aria-label')
+        page.locator('#mvpNotesFilterType').select_option('bug')
+        assert page.locator('#mvpNotesFiltersCount').inner_text() == '1'
+        assert limpar.is_enabled()
+        # busca + mais filtros; a busca NÃO entra no contador
+        page.locator('#mvpNotesSearch').fill('Corrigir')
+        page.locator('#mvpNotesFilterPriority').select_option('high')
+        page.locator('#mvpNotesFilterPolicy').select_option('analysis_only')
+        assert page.locator('#mvpNotesFiltersCount').inner_text() == '3'
+        page.locator('.mvpn-card').first.click()
+        antes_upd = notes_state(page)[0]['updatedAt']
+        sel = page.evaluate('mvpNotesUI.selectedId')
+        limpar.click()
+        # zera os seis critérios e anuncia; não toca em busca, visão, nota nem estado salvo
+        assert page.evaluate("""() => [mvpNotesUI.filterType, mvpNotesUI.filterStatus,
+          mvpNotesUI.filterPriority, mvpNotesUI.filterFolder, mvpNotesUI.filterPeriod,
+          mvpNotesUI.filterPolicy].every(v => v === 'all')""")
+        assert page.locator('#mvpNotesFiltersCount').is_hidden()
+        assert page.locator('#mvpNotesSearch').input_value() == 'Corrigir', 'busca preservada'
+        assert page.evaluate("mvpNotesUI.activeFolder") == 'all', 'visão preservada'
+        assert page.evaluate('mvpNotesUI.selectedId') == sel, 'nota aberta preservada'
+        assert page.evaluate('mvpNotesUI.draftDirty') is False, 'limpar filtros não suja a nota'
+        assert notes_state(page)[0]['updatedAt'] == antes_upd, 'updatedAt intacto'
+        assert page.locator('#mvpNotesFiltersLive').inner_text() == 'Todos os filtros foram removidos.'
+        assert limpar.is_disabled(), 'volta a desabilitado quando não há mais o que limpar'
+        # no celular a folha traz o par [Limpar todos os filtros] [Aplicar]
+        page.set_viewport_size({'width': 390, 'height': 844})
+        page.evaluate("() => { closeMvpNotesDrawerNow(); openMvpNotesDrawer(document.getElementById('headerNotesBtn')); }")
+        page.locator("[data-mvp-folder='all']").click()
+        click_id(page, 'mvpNotesFiltersBtn')
+        assert page.locator('#mvpNotesFiltersApplyBtn').is_visible(), '"Aplicar" reaparece no mobile'
+        alturas = page.evaluate("""() => ['mvpNotesFiltersClearBtn', 'mvpNotesFiltersApplyBtn']
+          .map(id => Math.round(document.getElementById(id).getBoundingClientRect().height))""")
+        assert all(h >= 44 for h in alturas), ('alvo de toque', alturas)
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
+        # ---- 14f. JPW-9A78DE: exportar a nota em Markdown --------------------------
+        page = prepare_page(browser, base_url + 'index.html')
+        page.set_viewport_size({'width': 1440, 'height': 900})
+        page.evaluate("""() => {
+          const f = mvpNotesCreateFolder('FUNÇÃO - NOTAS MVP');
+          mvpNotesCreate({content: 'Exportar notas individualmente em Markdown\n\nCorpo com ção, ü, 日本語 🚀.'
+            + '\n\n<script>alert(1)<' + '/script>', type: 'feature', priority: 'medium',
+            status: 'in_progress', folderId: f.id, aiImplementationPolicy: 'autonomous_allowed'});
+          save();
+        }""")
+        click_id(page, 'headerNotesBtn')
+        page.locator('.mvpn-card').first.click()
+        open_inspector(page)
+        exportar = page.locator('#mvpNoteExportMdBtn')
+        assert exportar.is_visible() and exportar.inner_text() == 'Exportar como Markdown'
+        # ação não destrutiva: fica FORA do bloco de exclusão
+        assert page.locator('.mvpn-inspector-danger #mvpNoteExportMdBtn').count() == 0
+        item = notes_state(page)[0]
+        md = page.evaluate("mvpNotesMarkdown(S.mvpNotes.items[0])")
+        nome = page.evaluate("mvpNotesMarkdownFilename(S.mvpNotes.items[0])")
+        assert nome == item['ticket'] + '-exportar-notas-individualmente-em-markdown.md', nome
+        assert md.startswith('---\n') and '\n---\n' in md, 'front matter delimitado'
+        assert 'ticket: ' + item['ticket'] in md
+        assert 'ai_implementation_policy: autonomous_allowed' in md
+        assert 'source_revision: null' in md, 'sem SHA inventado'
+        assert 'completed_at: null' in md
+        assert '# Exportar notas individualmente em Markdown' in md
+        assert md.count('Exportar notas individualmente em Markdown') == 1, 'título não duplicado no corpo'
+        assert 'ção, ü, 日本語 🚀' in md, 'unicode preservado'
+        assert '<script>alert(1)</script>' in md, 'HTML do usuário vira texto, nunca execução'
+        # A primeira linha da nota é o TÍTULO DO DOCUMENTO: o arquivo abre sempre com um
+        # único H1, nunca com H2..H6. Marcador ATX válido (1 a 6 "#" + espaço) é removido;
+        # o que não é heading válido entra como texto do H1. O title persistido não muda.
+        headings = page.evaluate("""() => {
+          const gerar = t => {
+            const n = mvpNotesCreate({content: t + '\nCorpo.', type: 'feature', priority: 'medium',
+              status: 'open', folderId: null, aiImplementationPolicy: 'analysis_only'});
+            const it = S.mvpNotes.items.find(i => i.id === n.id);
+            const md = mvpNotesMarkdown(it);
+            const corpo = md.split(/^---$/m)[2];
+            return {h1: (md.match(/^#.*$/m) || [])[0], titulo: it.title,
+                    h1s: (corpo.match(/^# /gm) || []).length};
+          };
+          return ['Titulo', '# Titulo', '## Titulo', '###### Titulo', '#SemEspaco', '####### Sete']
+            .map(t => Object.assign({entrada: t}, gerar(t)));
+        }""")
+        esperado = {
+            'Titulo': '# Titulo', '# Titulo': '# Titulo', '## Titulo': '# Titulo',
+            '###### Titulo': '# Titulo', '#SemEspaco': '# #SemEspaco',
+            '####### Sete': '# ####### Sete',
+        }
+        for h in headings:
+            assert h['h1'] == esperado[h['entrada']], h
+            assert h['titulo'] == h['entrada'], ('title persistido não é normalizado', h)
+            assert h['h1s'] == 1, ('um único H1 por arquivo', h)
+        # normalizar o título não mexe nos headings do CORPO
+        corpo = page.evaluate("""() => {
+          const n = mvpNotesCreate({content: '## Exportar notas\n\nTexto.\n\n## Seção interna\n\nMais.',
+            type: 'feature', priority: 'medium', status: 'open', folderId: null});
+          const it = S.mvpNotes.items.find(i => i.id === n.id);
+          return {md: mvpNotesMarkdown(it), titulo: it.title};
+        }""")
+        assert corpo['md'].count('# Exportar notas') == 1, 'título uma vez só, como H1'
+        assert '## Seção interna' in corpo['md'], 'headings do corpo permanecem intactos'
+        assert corpo['titulo'] == '## Exportar notas', 'title persistido intocado'
+        # front matter: escalares citados em estilo SIMPLES, cujo único escape é '' — assim
+        # dois-pontos, aspas duplas e barra invertida entram literais e voltam idênticos.
+        yaml = page.evaluate("""() => ({
+          doisPontos: mvpNotesYamlValor('Interface: Dashboard'),
+          aspasDuplas: mvpNotesYamlValor('Projeto "Forex"'),
+          aspaSimples: mvpNotesYamlValor("O'Brien & Cia"),
+          barra: mvpNotesYamlValor('C:\\temp\\pasta'),
+          booleano: mvpNotesYamlValor('true'),
+          numero: mvpNotesYamlValor('0123'),
+          indicador: mvpNotesYamlValor('- item'),
+          simples: mvpNotesYamlValor('autonomous_allowed'),
+          vazio: mvpNotesYamlValor('')
+        })""")
+        assert yaml['doisPontos'] == "'Interface: Dashboard'", yaml
+        assert yaml['aspasDuplas'] == '\'Projeto "Forex"\'', yaml
+        assert yaml['aspaSimples'] == "'O''Brien & Cia'", 'aspa simples é dobrada'
+        assert yaml['barra'] == "'C:\\temp\\pasta'", 'barra invertida NÃO vira escape'
+        assert yaml['booleano'] == "'true'" and yaml['numero'] == "'0123'", 'sem troca de tipo'
+        assert yaml['indicador'] == "'- item'"
+        assert yaml['simples'] == 'autonomous_allowed', 'token seguro fica sem aspas'
+        assert yaml['vazio'] == 'null'
+        # e o valor citado volta idêntico quando relido
+        volta = page.evaluate("""() => {
+          const original = 'Interface: "Dashboard" & FIIs\\backup';
+          const f = mvpNotesCreateFolder(original);
+          const n = mvpNotesCreate({content: 'Nota\ncorpo', type: 'task', priority: 'low',
+            status: 'open', folderId: f.id});
+          const md = mvpNotesMarkdown(S.mvpNotes.items.find(i => i.id === n.id));
+          const linha = (md.match(/^folder: (.*)$/m) || [])[1];
+          const lido = linha.startsWith("'") ? linha.slice(1, -1).replace(/''/g, "'") : linha;
+          return {original, lido, todasLinhas: md.split(/^---$/m)[1].trim().split('\n')
+            .every(l => /^[a-z_]+: /.test(l))};
+        }""")
+        assert volta['lido'] == volta['original'], volta
+        assert volta['todasLinhas'], 'front matter continua chave: valor em toda linha'
+        # metadados HISTÓRICOS da nota, nunca os do build em execução
+        hist = page.evaluate("""() => {
+          const n = mvpNotesCreate({content: 'Antiga\ncorpo', type: 'bug', priority: 'high',
+            status: 'open', folderId: null});
+          const it = S.mvpNotes.items.find(i => i.id === n.id);
+          it.buildId = 'BUILD-ANTIGO-TESTE'; it.sourceRevision = 'REV-ANTIGA-TESTE';
+          const md = mvpNotesMarkdown(it);
+          return {build: (md.match(/^build_id: (.+)$/m) || [])[1],
+                  rev: (md.match(/^source_revision: (.+)$/m) || [])[1],
+                  contemBuildAtual: md.includes(JP_WEALTH_BUILD_ID)};
+        }""")
+        assert 'BUILD-ANTIGO-TESTE' in hist['build'], hist
+        assert 'REV-ANTIGA-TESTE' in hist['rev'], hist
+        assert hist['contemBuildAtual'] is False, 'o build em execução não substitui o da nota'
+        # título vazio cai no padrão TICKET-nota.md
+        vazio = page.evaluate("""() => {
+          const n = mvpNotesCreate({content: '\n\n', type: 'task', priority: 'low', status: 'open', folderId: null});
+          const it = S.mvpNotes.items.find(i => i.id === n.id);
+          return {nome: mvpNotesMarkdownFilename(it), md: mvpNotesMarkdown(it)};
+        }""")
+        assert vazio['nome'].endswith('-nota.md'), vazio['nome']
+        assert '\n# ' not in vazio['md'], 'sem H1 quando não há título'
+        # exportar é leitura pura: rascunho sujo bloqueia e nada é salvo automaticamente
+        antes_upd = notes_state(page)[0]['updatedAt']
+        antes_ticket = notes_state(page)[0]['ticket']
+        page.evaluate("() => { window.alert = () => {}; const t = document.getElementById('mvpNoteContent');"
+                      " t.value += '\nrascunho'; t.dispatchEvent(new Event('input', {bubbles: true})); }")
+        assert page.evaluate('mvpNotesUI.draftDirty') is True
+        assert page.evaluate('mvpNotesExportMarkdown()') is None, 'dirty bloqueia a exportação'
+        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Existem alterações não salvas')
+        assert notes_state(page)[0]['updatedAt'] == antes_upd, 'exportar não move updatedAt'
+        assert notes_state(page)[0]['ticket'] == antes_ticket, 'exportar não toca o ticket'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 15. Trace ID (v4): geração, imutabilidade, cópia, busca e backup ----
         page = prepare_page(browser, base_url + 'index.html')
         assert page.evaluate('S.mvpNotes.schemaVersion') == 5
@@ -1118,4 +1312,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), Trace ID, política IA no Trace Reference e inspector (schema v5) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5) e monólito verificados.')
