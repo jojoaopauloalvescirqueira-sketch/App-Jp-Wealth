@@ -127,8 +127,10 @@ function bindContab(){
     if(exist){
       if(!confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
       exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
+      if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
     } else {
       S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
+      if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
     }
     syncSaldoAtuFromLedger();
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';
@@ -148,6 +150,8 @@ function bindContab(){
     S.cycleRealizado=(S.cycleRealizado||0)+net;
     S.transitionLog.push({fase:'operação arquivada', ts:new Date().toISOString(),
       resumo:{resultado:net, cicloAcumulado:S.cycleRealizado}});
+    // auditoria resumida (JPW-HJFGDE §11); o transitionLog acima segue sendo o registro normativo
+    if(typeof dgLogChange==='function') dgLogChange('operation','archived','','Operação arquivada e resultado consolidado no ciclo');
     const sizes=[5,4,3,2];
     S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(sizes[pi]||3); });
     S.phaseUnlocked=[true,false,false,false];

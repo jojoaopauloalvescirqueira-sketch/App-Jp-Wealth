@@ -1,4 +1,9 @@
 // ============ ESTADO INICIAL (espelha a planilha) ============
+// Tela inicial canônica do aplicativo (JPW-HJFGDE §12) — fonte ÚNICA de verdade.
+// Consumida por: boot sem base válida, Zona de Perigo (wipe), reset total e falha de
+// importação sem base restante. Se a tela inicial do produto mudar um dia, muda AQUI
+// e em nenhum outro lugar; nenhum módulo deve navegar para 'dash' hardcoded nesses fluxos.
+const DEFAULT_START_ROUTE='dash';
 const DEFAULTS = {
   params:{ saldoIni:10000, saldoAtu:10240, inicio:'2026-05-25',
     mdd:0.15, alarm:0.13, genLev:0.4, genRisk:0.01, fw:1,
@@ -131,5 +136,23 @@ const DEFAULTS = {
   //        manual) + larguras dos painéis internos.
   mvpNotes:{schemaVersion:5, showHeaderIcon:true, folders:[], items:[],
     ui:{drawerWidth:980, foldersPaneWidth:190, notesPaneWidth:300}},
+  // Governança da base de dados (JPW-HJFGDE): termo de responsabilidade, metadados da
+  // pasta padrão de exportação, sequência progressiva de exportações e backups CONFIRMADOS
+  // pelo operador (exportar ≠ confirmar backup — §9 do ticket).
+  // A PERMISSÃO real do diretório NUNCA vive aqui: o FileSystemDirectoryHandle é persistido
+  // em IndexedDB (06-storage-fs.js) e revalidado a cada sessão. A base guarda apenas
+  // metadados LÓGICOS — um caminho gravado como texto não concede acesso a nada.
+  // changeLog é auditoria RESUMIDA de alterações ({id,ts,entity,action,recordId,label}),
+  // sem snapshots; alimenta "alterações desde o último backup" e é podado por tamanho
+  // (dgNormalizeState, 04-persistence.js). Migração: dgNormalizeState() aceita bases
+  // antigas sem o agregado e aplica estes defaults sem perda.
+  dataGovernance:{
+    schemaVersion:1,
+    responsibility:{accepted:false, acceptedAt:'', version:1},
+    storage:{configured:false, folderName:'', folderDisplayPath:'', configuredAt:''},
+    export:{lastSequence:0, lastExportAt:'', lastExportFile:''},
+    backup:{lastConfirmedAt:'', lastConfirmedExportSequence:0},
+    changeLog:[],
+  },
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}

@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.1-db-storage-governance.1] — 2026-08-08
+
+### Governança de armazenamento da base (JPW-HJFGDE)
+- Adicionado o agregado `S.dataGovernance` (termo de responsabilidade, metadados da pasta padrão, sequência de exportação, backup confirmado e auditoria resumida), com migração sem perda para bases antigas e envelope do backup inalterado.
+- Exportação da base reescrita como orquestração assíncrona: nomenclatura progressiva `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.json`, sequência incrementada somente após sucesso confirmado, proteção física contra sobrescrita e diálogo explícito quando a pasta configurada está inacessível — nunca fallback silencioso para Downloads.
+- Pasta padrão de exportação via File System Access API (Chrome/Edge desktop): handle persistido em IndexedDB, reautorização ao expirar, reassociação explícita após importação em outro dispositivo; navegadores sem suporte usam o download tradicional com a mesma nomenclatura e a interface declara a limitação.
+- Nova etapa 07 "Base de Dados" no questionário de início: termo de responsabilidade obrigatório (sem ele a configuração não conclui) e configuração opcional da pasta.
+- Central de Configurações ganhou o cartão "Armazenamento da Base": status da pasta, verificação de acesso, última exportação, próxima sequência, último backup confirmado e alterações desde então; aviso discreto após 30 dias sem backup confirmado.
+- Estado sem base (limpeza total, Finalizar Sessão) passa a abrir sempre a tela inicial canônica `DEFAULT_START_ROUTE` e remove a autorização local da pasta junto com a base.
+- Testes permanentes em `tools/storage_governance_test.py`; arquitetura documentada em `docs/architecture/DB-STORAGE-GOVERNANCE.md`.
+
 ## [9.1-settings-modal.1] — 2026-08-04
 
 ### Central de Configurações

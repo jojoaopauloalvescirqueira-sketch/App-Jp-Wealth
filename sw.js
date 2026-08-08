@@ -6,7 +6,8 @@ const PRECACHE_URLS = [
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
   './src/js/00-core/03-default-state.js', './src/js/00-core/04-persistence.js',
-  './src/js/00-core/05-helpers.js', './src/js/10-domain/01-risk-instruments.js',
+  './src/js/00-core/05-helpers.js', './src/js/00-core/06-storage-fs.js',
+  './src/js/10-domain/01-risk-instruments.js',
   './src/js/10-domain/02-risk-calculations.js', './src/js/20-ui/01-header-readout.js',
   './src/js/20-ui/02-sidebar.js', './src/js/20-ui/03-main-render.js',
   './src/js/20-ui/04-operational-clearance.js', './src/js/20-ui/05-execution-clearance.js',
@@ -21,6 +22,7 @@ const PRECACHE_URLS = [
   './src/js/40-app/04-onboarding.js', './src/js/40-app/05-wipe-all.js',
   './src/js/40-app/06-app-icons.js', './src/js/40-app/07-finalize-session.js', './src/js/40-app/06-boot.js',
   './src/js/40-app/08-educational-content.js', './src/js/40-app/09-settings-modal.js',
+  './src/js/40-app/16-storage-governance.js',
   './manifests/jp-wealth.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
 ].flatMap(url=>url.startsWith('./assets/pwa-icon-')?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
