@@ -103,7 +103,9 @@ try:
         assert len(set(ids)) == len(ids), 'IDs duplicados entre notas criadas'
 
         click_id(page, 'headerNotesBtn')
-        assert page.locator('#mvpNotesHeadCount').inner_text() == '3 itens ativos'
+        # A contagem no cabeçalho do drawer foi removida do design (barra unificada);
+        # quem informa o backlog ativo é o badge do botão no header do app.
+        assert page.locator('#mvpNotesHeadCount').count() == 0
         assert page.locator('#headerNotesBadge').inner_text() == '3'  # done não conta como ativo
         click_id(page, 'mvpNotesCloseBtn')
 
@@ -575,7 +577,7 @@ try:
         click_id(page, 'headerConfigBtn')
         page.evaluate("settingsNavigateToLeaf('interface')")
         click_id(page, 'mvpNotesOpenFromSettingsBtn')
-        assert page.locator('#mvpNotesHeadCount').inner_text() == '5 itens ativos'
+        assert page.locator('#mvpNotesHeadCount').count() == 0
         click_id(page, 'mvpNotesCloseBtn')
         click_id(page, 'settingsCloseBtn')
         # importa backup com 1 nota ativa e ícone VISÍVEL

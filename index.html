@@ -995,12 +995,56 @@
         <span class="mvpn-back-label" id="mvpNotesBackLabel" aria-hidden="true"></span>
       </button>
       <div class="mvp-notes-head-text">
+        <svg class="mvpn-head-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/>
+          <path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/>
+        </svg>
         <h2 id="mvpNotesTitle">Notas do MVP</h2>
-        <span class="mvp-notes-head-count" id="mvpNotesHeadCount"></span>
       </div>
-      <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas do MVP" title="Fechar notas do MVP">
-        <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
-      </button>
+      <!-- Busca ao centro da barra (1c). Vive no cabeçalho, não mais na coluna da lista:
+           é busca de TODAS as notas, não da coluna. Mesmos IDs de sempre. -->
+      <div class="mvpn-search-row">
+        <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
+        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todas as notas" autocomplete="off">
+        <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-haspopup="true"
+                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar notas" title="Filtrar notas">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>
+          <span class="mvpn-filters-count" id="mvpNotesFiltersCount" hidden></span>
+        </button>
+      </div>
+      <div class="mvpn-head-actions">
+        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Nova nota">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span class="mvpn-new-note-label">Nova nota</span>
+        </button>
+        <span class="mvpn-head-divider" aria-hidden="true"></span>
+        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas do MVP" title="Fechar notas do MVP">
+          <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <!-- Popover de filtros ancorado na barra (desktop) / folha inferior (mobile). -->
+      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de notas">
+        <div class="mvpn-filters-sheet-head">Filtros</div>
+        <div class="mvp-notes-filters">
+          <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
+          <select id="mvpNotesFilterType"></select>
+          <label class="sr-only" for="mvpNotesFilterStatus">Filtrar por status</label>
+          <select id="mvpNotesFilterStatus"></select>
+          <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
+          <select id="mvpNotesFilterPriority"></select>
+          <label class="sr-only" for="mvpNotesFilterPolicy">Filtrar por autorização de IA</label>
+          <select id="mvpNotesFilterPolicy"></select>
+          <label class="sr-only" for="mvpNotesFilterFolder">Filtrar por pasta</label>
+          <select id="mvpNotesFilterFolder"></select>
+          <label class="sr-only" for="mvpNotesFilterPeriod">Filtrar por período de conclusão</label>
+          <select id="mvpNotesFilterPeriod"></select>
+        </div>
+        <div class="mvpn-filters-sheet-actions">
+          <button type="button" class="reset-btn mvpn-filters-clear" id="mvpNotesFiltersClearBtn">Limpar todos os filtros</button>
+          <button type="button" class="reset-btn mvpn-primary mvpn-filters-apply" id="mvpNotesFiltersApplyBtn">Aplicar</button>
+        </div>
+      </div>
     </header>
     <div class="mvp-notes-body" id="mvpNotesBody">
       <!-- Navegação de pastas: entidade real (Pasta), não agrupamento por título. "Todas as
@@ -1034,45 +1078,9 @@
            botão de filtro (popover no desktop, folha inferior no mobile). -->
       <div class="mvpn-list-pane" id="mvpNotesListPane">
         <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
+          <!-- Só o rótulo da visão (1c): busca e ações vivem na barra unificada do topo.
+               Vira "eyebrow" — mono, caixa alta — anunciando o recorte que a lista mostra. -->
           <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
-          <div class="mvpn-search-row">
-            <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
-            <input type="search" id="mvpNotesSearch" placeholder="Buscar notas..." autocomplete="off">
-            <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-haspopup="true"
-                    aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar notas" title="Filtrar notas">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-              <span class="mvpn-filters-count" id="mvpNotesFiltersCount" hidden></span>
-            </button>
-            <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" aria-label="Nova nota" title="Nova nota">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            </button>
-          </div>
-          <!-- Mesmos selects de sempre (nós únicos, nunca duplicados): popover no
-               desktop, folha inferior no mobile — só o posicionamento muda no CSS. -->
-          <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de notas">
-            <div class="mvpn-filters-sheet-head">Filtros</div>
-            <div class="mvp-notes-filters">
-              <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
-              <select id="mvpNotesFilterType"></select>
-              <label class="sr-only" for="mvpNotesFilterStatus">Filtrar por status</label>
-              <select id="mvpNotesFilterStatus"></select>
-              <label class="sr-only" for="mvpNotesFilterPriority">Filtrar por prioridade</label>
-              <select id="mvpNotesFilterPriority"></select>
-              <label class="sr-only" for="mvpNotesFilterPolicy">Filtrar por autorização de IA</label>
-              <select id="mvpNotesFilterPolicy"></select>
-              <label class="sr-only" for="mvpNotesFilterFolder">Filtrar por pasta</label>
-              <select id="mvpNotesFilterFolder"></select>
-              <label class="sr-only" for="mvpNotesFilterPeriod">Filtrar por período de conclusão</label>
-              <select id="mvpNotesFilterPeriod"></select>
-            </div>
-            <!-- Ação ÚNICA de limpeza (JPW-RQPNMK): o mesmo botão serve desktop e mobile.
-                 Antes ele existia só no HTML e ficava display:none no desktop — havia estado
-                 de filtro sem nenhuma forma visível de desfazê-lo. -->
-            <div class="mvpn-filters-sheet-actions">
-              <button type="button" class="reset-btn mvpn-filters-clear" id="mvpNotesFiltersClearBtn">Limpar todos os filtros</button>
-              <button type="button" class="reset-btn mvpn-primary mvpn-filters-apply" id="mvpNotesFiltersApplyBtn">Aplicar</button>
-            </div>
-          </div>
         </div>
         <div class="mvp-notes-list" id="mvpNotesList" tabindex="-1"></div>
       </div>

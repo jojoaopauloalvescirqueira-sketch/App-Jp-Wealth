@@ -673,11 +673,6 @@ function renderMvpNotesList(){
   host.querySelectorAll('[data-mvp-copy-id]').forEach(btn=>btn.addEventListener('click',()=>{
     mvpNotesHandleCopy(btn.dataset.mvpCopyId,btn);
   }));
-  const headCount=mvpn('mvpNotesHeadCount');
-  if(headCount){
-    const active=mvpNotesActiveCount();
-    headCount.textContent=active===0?'Nenhum item ativo':`${active} ${active===1?'item ativo':'itens ativos'}`;
-  }
 }
 
 // ---- navegação de pastas (sidebar desktop / seletor+gerenciar em mobile) ----
