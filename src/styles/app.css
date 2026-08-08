@@ -1337,6 +1337,21 @@
 
   /* Central de Configurações — camada dedicada, sem reutilizar o modal operacional. */
   .settings-legacy-host{display:none!important}
+  /* Enquanto a Central está aberta, o documento não rola. Sem isto, a roda do
+     mouse sobre qualquer região que não rola — cabeçalho, barra de setas,
+     lateral quando as categorias cabem, folha curta — encadeava para o
+     ancestral rolável, que é o documento, e a tela que ficou atrás rolava por
+     baixo do modal.
+     `overscroll-behavior:contain` sozinho NÃO resolve este caso: ele só atua em
+     contêiner que de fato rola, e essas regiões não rolam (medido: com contain
+     no overlay e nos dois scrollports, a roda ainda levava o documento a
+     scrollTop 500). Ele continua declarado abaixo, nos scrollports, para o caso
+     legítimo dele — folha rolável que chegou ao fim.
+     `scrollbar-gutter:stable` reserva a goteira que a barra ocupava, para o
+     conteúdo de trás não saltar lateralmente na abertura; em barras de
+     sobreposição (padrão do macOS) a propriedade não tem efeito, e também não
+     há salto, então serve nos dois casos. */
+  html:has(#settingsOverlay.show){overflow:hidden; scrollbar-gutter:stable}
   .settings-overlay{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
   .settings-overlay.show{display:flex}
   .settings-modal{width:min(1160px,95vw); height:min(88vh,920px); min-height:520px; display:grid; grid-template-rows:auto minmax(0,1fr); overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 70px rgba(0,0,0,.48); font-family:var(--sans)}
@@ -1346,7 +1361,7 @@
   .settings-modal-head h2{margin:0; color:var(--bar-ink); font-size:var(--fs-xl)} .settings-modal-head p{margin:5px 0 0; font-size:var(--fs-sm); opacity:.82}
   .settings-close{width:38px; height:38px; flex:0 0 38px; border:1px solid color-mix(in srgb,var(--bar-ink) 40%,transparent); border-radius:7px; background:transparent; color:var(--bar-ink); font-size:26px; line-height:1; cursor:pointer}
   .settings-modal-body{min-height:0; display:grid; grid-template-columns:288px minmax(0,1fr)}
-  .settings-sidebar{min-width:0; overflow-y:auto; padding:18px 14px; border-right:1px solid var(--line); background:var(--panel-2)}
+  .settings-sidebar{min-width:0; overflow-y:auto; overscroll-behavior:contain; padding:18px 14px; border-right:1px solid var(--line); background:var(--panel-2)}
   .settings-search-label{display:block; margin-bottom:7px; color:var(--ink-dim); font-family:var(--mono); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.08em}
   .settings-sidebar input,.settings-mobile-category{width:100%; border:1px solid var(--line); border-radius:7px; padding:10px 11px; background:var(--panel); color:var(--ink); font:inherit}
   .settings-mobile-category{display:none; margin-top:10px}.settings-menu{display:grid; gap:2px; margin-top:18px}.settings-menu-group{margin:12px 8px 4px; color:var(--ink-faint); font-family:var(--mono); font-size:var(--fs-xs); font-weight:800; letter-spacing:.11em}
@@ -1356,7 +1371,13 @@
   .settings-menu-item.active{background:var(--indigo-deep); color:var(--violet)}
   .settings-menu-item.active svg{color:var(--violet)}
   .settings-search-results{display:grid; gap:5px; margin-top:10px}.settings-search-results button{display:grid; gap:2px; padding:8px; border:1px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink); text-align:left; cursor:pointer; text-transform:none; letter-spacing:normal}.settings-search-results span{font-size:var(--fs-xs); color:var(--ink-dim)}.settings-no-results{margin:0; font-size:var(--fs-sm); color:var(--ink-faint)}
-  .settings-content{min-width:0; overflow-y:auto; padding:8px 28px 28px}
+  /* SEM padding-top aqui. Este elemento é o scrollport, e `position:sticky; top:0` do
+     .settings-page-nav gruda na borda do PADDING BOX — ou seja, o padding-top vira uma
+     faixa entre o topo visível e a barra grudada. Como .settings-content é transparente,
+     o conteúdo rolando por baixo aparecia nessa fresta (medido: 26px no desktop, 8px no
+     resto). O espaçamento superior foi transferido para o próprio nav, que é o primeiro
+     filho: ele encosta em top:0 e o seu padding cobre tudo o que passa por baixo. */
+  .settings-content{min-width:0; overflow-y:auto; overscroll-behavior:contain; padding:0 28px 28px}
   /* Defesa escopada, além da correção na origem (#appMain acima): mesmo que
      uma regra futura volte a usar a tag <main> pura, #settingsContent nunca
      mais herda uma linha de grid nomeada inexistente dentro de
@@ -1390,7 +1411,7 @@
   .settings-modal :focus-visible{outline:2px solid var(--violet); outline-offset:2px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   @media not (prefers-reduced-motion: reduce){.settings-panel{animation:settingsPanelIn .14s ease-out}}
   @keyframes settingsPanelIn{from{opacity:0}to{opacity:1}}
-  @media(max-width:760px){.settings-overlay{padding:0;align-items:stretch}.settings-modal{width:100%;height:100%;min-height:0;border-radius:0;border:0}.settings-modal-head{padding:15px}.settings-modal-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}.settings-sidebar{overflow-y:auto;padding:12px 15px;border-right:0;border-bottom:0}.settings-mobile-category{display:none}.settings-search-results{max-height:160px;overflow:auto}.settings-content{padding:8px 15px 20px}.settings-facts{grid-template-columns:1fr;gap:3px}.settings-rail-row{align-items:flex-start;flex-direction:column}.settings-rail-row .rail-toggle{width:100%}
+  @media(max-width:760px){.settings-overlay{padding:0;align-items:stretch}.settings-modal{width:100%;height:100%;min-height:0;border-radius:0;border:0}.settings-modal-head{padding:15px}.settings-modal-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}.settings-sidebar{overflow-y:auto;padding:12px 15px;border-right:0;border-bottom:0}.settings-mobile-category{display:none}.settings-search-results{max-height:160px;overflow:auto}.settings-content{padding:0 15px 20px}.settings-facts{grid-template-columns:1fr;gap:3px}.settings-rail-row{align-items:flex-start;flex-direction:column}.settings-rail-row .rail-toggle{width:100%}
     .settings-modal .settings-content{display:none}
     .settings-modal.settings-mobile-detail .settings-sidebar{display:none}
     .settings-modal.settings-mobile-detail .settings-content{display:block}
@@ -1447,7 +1468,9 @@
       flex:1; min-height:0; grid-template-columns:220px minmax(0,1fr);
     }
     #settingsModal .settings-sidebar{padding:16px 12px}
-    #settingsModal .settings-content{padding:26px 28px; min-height:0}
+    /* O respiro superior saiu daqui e foi para o nav — ver o bloco da Fase 5
+       adiante, que é a regra vigente da barra. */
+    #settingsModal .settings-content{padding:0 28px 26px; min-height:0}
   }
   /* Subtítulo preservado no DOM (valor semântico/acessível), fora do
      fluxo visual em qualquer largura — não conta para a altura do
@@ -1507,7 +1530,14 @@
      continuam funcionais (histórico interno intacto), só compactados:
      não deve mais parecer um segundo cabeçalho grande. Sticky só
      dentro do scroll do próprio conteúdo (comportamento preservado). */
-  #settingsModal .settings-page-nav{padding:0 0 14px; gap:8px}
+  /* O padding-top é o respiro que antes vinha do .settings-content e teve de sair
+     de lá: como o nav é `position:sticky; top:0` dentro daquele scrollport, um
+     padding-top no container virava uma faixa descoberta entre o topo visível e
+     a barra grudada, e o conteúdo rolava aparecendo nessa fresta. Aqui o respiro
+     pertence à própria barra, que o carrega consigo ao grudar. O valor repõe o
+     que o container dava: 8px abaixo de 761px, 26px daqui para cima. */
+  #settingsModal .settings-page-nav{padding:8px 0 14px; gap:8px}
+  @media(min-width:761px){ #settingsModal .settings-page-nav{padding-top:26px} }
   #settingsModal .settings-page-nav-btn{width:28px; height:28px; flex:0 0 28px}
   #settingsModal .settings-page-nav-btn svg{width:13px; height:13px}
   #settingsModal #settingsPageTitle{margin:0 0 0 4px}
