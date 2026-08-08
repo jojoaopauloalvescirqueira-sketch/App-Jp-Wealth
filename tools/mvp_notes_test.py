@@ -1039,6 +1039,18 @@ try:
         # de ações era display:none fora do mobile e não havia como desfazer um filtro).
         assert page.locator('[id*="ClearBtn"]').count() == 1, 'não pode haver dois mecanismos'
         assert limpar.is_visible(), 'a ação de limpar precisa existir no popover do desktop'
+        # e precisa ser CLICÁVEL onde o operador clica, não só existir no DOM
+        alcanceLimpar = page.evaluate("""() => {
+          const w = document.getElementById('mvpNotesFiltersWrap');
+          const b = document.getElementById('mvpNotesFiltersClearBtn');
+          const rw = w.getBoundingClientRect(), rb = b.getBoundingClientRect();
+          const alvo = document.elementFromPoint(Math.round(rb.left + rb.width / 2),
+                                                 Math.round(rb.top + rb.height / 2));
+          return {dentro: rb.bottom <= rw.bottom + 1, naViewport: rb.top >= 0 && rb.bottom <= window.innerHeight,
+                  noPonto: alvo ? alvo.id : 'nada'};
+        }""")
+        assert alcanceLimpar['dentro'] and alcanceLimpar['naViewport'], alcanceLimpar
+        assert alcanceLimpar['noPonto'] == 'mvpNotesFiltersClearBtn', alcanceLimpar
         assert limpar.inner_text() == 'Limpar todos os filtros'
         assert page.locator('#mvpNotesFiltersApplyBtn').is_hidden(), '"Aplicar" é exclusivo do mobile'
         # sem filtro ativo o botão fica desabilitado de forma acessível
@@ -1095,6 +1107,21 @@ try:
         open_inspector(page)
         exportar = page.locator('#mvpNoteExportMdBtn')
         assert exportar.is_visible() and exportar.inner_text() == 'Exportar como Markdown'
+        # VISÍVEL DE FATO: o rodapé do inspector é pegajoso, então a ação não pode cair
+        # abaixo da dobra quando os campos + fatos técnicos passam da altura do painel.
+        alcance = page.evaluate("""() => {
+          const i = document.getElementById('mvpNotesInspector');
+          const b = document.getElementById('mvpNoteExportMdBtn');
+          const ri = i.getBoundingClientRect(), rb = b.getBoundingClientRect();
+          const alvo = document.elementFromPoint(Math.round(rb.left + rb.width / 2),
+                                                 Math.round(rb.top + rb.height / 2));
+          return {dentro: rb.bottom <= ri.bottom + 1 && rb.top >= ri.top - 1,
+                  naViewport: rb.top >= 0 && rb.bottom <= window.innerHeight,
+                  noPonto: alvo ? alvo.id : 'nada',
+                  precisaRolar: i.scrollHeight > i.clientHeight + 1};
+        }""")
+        assert alcance['dentro'] and alcance['naViewport'], alcance
+        assert alcance['noPonto'] == 'mvpNoteExportMdBtn', ('botão coberto ou fora da tela', alcance)
         # ação não destrutiva: fica FORA do bloco de exclusão
         assert page.locator('.mvpn-inspector-danger #mvpNoteExportMdBtn').count() == 0
         item = notes_state(page)[0]
@@ -1212,6 +1239,104 @@ try:
         assert page.locator('#mvpNotesExportLive').inner_text().startswith('Existem alterações não salvas')
         assert notes_state(page)[0]['updatedAt'] == antes_upd, 'exportar não move updatedAt'
         assert notes_state(page)[0]['ticket'] == antes_ticket, 'exportar não toca o ticket'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
+        # ---- 14g. JPW-YX2Z43: menu "⋯" da pasta com semântica de menu contextual ----
+        # <details> nativo não fecha ao clicar fora; sem isto o operador precisava clicar
+        # de novo no marcador. Testado com cliques REAIS (Playwright emite pointerdown).
+        page = prepare_page(browser, base_url + 'index.html')
+        page.set_viewport_size({'width': 1440, 'height': 900})
+        page.evaluate("""() => {
+          ['Interface', 'Dashboard'].forEach(n => mvpNotesCreateFolder(n));
+          mvpNotesCreate({content: 'Nota\ncorpo', type: 'bug', priority: 'high',
+            status: 'open', folderId: S.mvpNotes.folders[0].id});
+          save();
+        }""")
+        click_id(page, 'headerNotesBtn')
+        menus = page.locator('#mvpNotesFolderNavList details.mvpn-folder-kebab')
+        aberto = lambda i: page.evaluate(
+            "i => document.querySelectorAll('#mvpNotesFolderNavList details.mvpn-folder-kebab')[i].open", i)
+        menus.nth(0).locator('summary').click()
+        assert aberto(0), 'menu abre no primeiro clique'
+        # clicar numa área vazia da própria sidebar dispensa o menu
+        page.locator('#mvpNotesFolderSidebar').click(position={'x': 30, 'y': 8})
+        assert not aberto(0), 'menu deve fechar ao clicar fora'
+        # abrir o menu de outra pasta fecha o anterior
+        menus.nth(0).locator('summary').click()
+        menus.nth(1).locator('summary').click()
+        assert not aberto(0) and aberto(1), 'apenas um menu de pasta aberto por vez'
+        # Escape dispensa o menu sem fechar a gaveta
+        page.keyboard.press('Escape')
+        assert not aberto(1)
+        assert page.evaluate('mvpNotesUI.open') is True, 'Escape do menu não fecha a gaveta'
+        # escolher uma ação também fecha o menu
+        menus.nth(0).locator('summary').click()
+        page.locator('#mvpNotesFolderNavList [data-mvp-folder-down]').first.click()
+        assert not aberto(0), 'executar a ação fecha o menu'
+        # o listener é escopado: <details> de outros módulos não são afetados
+        externo = page.evaluate("""() => {
+          const d = [...document.querySelectorAll('details')].filter(x => !x.closest('#mvpNotesFolderNavList'))[0];
+          if (!d) return null;
+          d.open = true;
+          const k = document.querySelector('#mvpNotesFolderNavList details.mvpn-folder-kebab');
+          k.open = true;
+          const sb = document.getElementById('mvpNotesFolderSidebar');
+          const r = sb.getBoundingClientRect();
+          sb.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true,
+            clientX: Math.round(r.left + 30), clientY: Math.round(r.bottom - 10), pointerId: 99}));
+          const res = {externo: d.open, pasta: k.open};
+          d.open = false;
+          return res;
+        }""")
+        if externo:
+            assert externo['externo'] is True, 'details fora das Notas não pode ser fechado'
+            assert externo['pasta'] is False, 'menu de pasta fecha'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
+        # ---- 14h. "Todas as Notas" mostra só o backlog ATIVO ----------------------
+        # Concluída sai desta visão e continua existindo em "Concluído" e ao pé da própria
+        # pasta. Nenhum dado muda: status, folderId e completedAt seguem intocados.
+        page = prepare_page(browser, base_url + 'index.html')
+        page.evaluate("""() => {
+          const f = mvpNotesCreateFolder('Interface');
+          const concluir = n => {
+            const it = S.mvpNotes.items.find(i => i.id === n.id);
+            mvpNotesUpdate(it.id, {type: it.type, content: it.content, priority: it.priority,
+              status: 'done', folderId: it.folderId, aiImplementationPolicy: it.aiImplementationPolicy});
+          };
+          mvpNotesCreate({content: 'Ativa na pasta\nx', type: 'bug', priority: 'high', status: 'open', folderId: f.id});
+          concluir(mvpNotesCreate({content: 'Feita na pasta\nx', type: 'bug', priority: 'low', status: 'open', folderId: f.id}));
+          mvpNotesCreate({content: 'Ativa sem pasta\nx', type: 'task', priority: 'low', status: 'open', folderId: null});
+          concluir(mvpNotesCreate({content: 'Feita sem pasta\nx', type: 'task', priority: 'low', status: 'open', folderId: null}));
+          save();
+        }""")
+        click_id(page, 'headerNotesBtn')
+        titulos = lambda: page.locator('.mvpn-card-title').all_inner_texts()
+        page.locator("[data-mvp-folder='all']").click()
+        assert titulos() == ['Ativa na pasta', 'Ativa sem pasta'], titulos()
+        assert page.locator('.mvpn-group-sep').count() == 0, 'sem concluídas, sem separador'
+        # o contador da visão acompanha o que ela exibe
+        assert page.locator("[data-mvp-folder='all'] .mvpn-folder-count").inner_text() == '2'
+        assert page.evaluate('S.mvpNotes.items.length') == 4, 'nenhuma nota foi removida do estado'
+        # "Concluído" continua com todas as concluídas
+        page.locator("[data-mvp-folder='done']").click()
+        assert sorted(titulos()) == ['Feita na pasta', 'Feita sem pasta'], titulos()
+        # dentro da pasta a concluída continua ao pé da lista, atrás do separador
+        page.locator('[data-mvp-folder-row] .mvpn-folder-btn').first.click()
+        assert titulos() == ['Ativa na pasta', 'Feita na pasta'], titulos()
+        assert page.locator('.mvpn-group-sep').count() == 1
+        # concluir estando em "Todas as Notas" tira a nota da lista na hora
+        page.locator("[data-mvp-folder='all']").click()
+        page.evaluate("""() => {
+          const it = S.mvpNotes.items.find(i => i.title === 'Ativa sem pasta');
+          mvpNotesUpdate(it.id, {type: it.type, content: it.content, priority: it.priority,
+            status: 'done', folderId: it.folderId, aiImplementationPolicy: it.aiImplementationPolicy});
+          renderMvpNotesList();
+        }""")
+        assert titulos() == ['Ativa na pasta'], titulos()
+        assert page.locator("[data-mvp-folder='all'] .mvpn-folder-count").inner_text() == '1'
         assert_no_errors(page.jpwealth_observed)
         page.close()
 

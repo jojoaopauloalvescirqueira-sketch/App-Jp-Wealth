@@ -285,7 +285,12 @@ function mvpNotesFiltered(){
       if(!mvpNotesCompletedWithinPeriod(item,mvpNotesUI.filterPeriod)) return false;
     }else if(mvpNotesUI.activeFolder==='unfiled'){
       if(item.folderId!==null) return false;
-    }else if(mvpNotesUI.activeFolder!=='all'){
+    }else if(mvpNotesUI.activeFolder==='all'){
+      // "Todas as Notas" é o backlog ATIVO de todas as pastas — concluída sai daqui e
+      // vive na visão "Concluído" (e continua dentro da própria pasta, ao pé da lista).
+      // O dado não muda: status, folderId e completedAt seguem intocados.
+      if(item.status==='done') return false;
+    }else{
       if(item.folderId!==mvpNotesUI.activeFolder) return false;
     }
     // Filtro de pasta agora vale em qualquer visão (não só em Concluídas).
@@ -334,10 +339,12 @@ function mvpNotesFolderLabel(folderId){
 }
 // Contadores semânticos (item 1.5): pastas comuns e "Sem pasta" contam só o backlog
 // ativo exibido nelas (status!=='done' — concluídas vivem na visão Concluído);
-// "Todas as Notas" conta literalmente tudo; "Concluído" conta status==='done'.
+// "Todas as Notas" também conta só o backlog ativo; "Concluído" conta status==='done'.
 function mvpNotesFolderItemCount(folderId){ return mvpNotesItems().filter(it=>it.folderId===folderId && it.status!=='done').length; }
 function mvpNotesUnfiledCount(){ return mvpNotesItems().filter(it=>it.folderId===null && it.status!=='done').length; }
-function mvpNotesAllCount(){ return mvpNotesItems().length; }
+// Conta o mesmo que a visão exibe: só o backlog ativo. Antes contava literalmente tudo,
+// o que agora divergiria da lista — mesma convenção já usada por "Sem pasta" e pelas pastas.
+function mvpNotesAllCount(){ return mvpNotesItems().filter(it=>it.status!=='done').length; }
 function mvpNotesFolderNameExists(name,excludeId){
   const n=name.trim().toLocaleLowerCase('pt-BR');
   return mvpNotesFolders().some(f=>f.id!==excludeId && f.name.toLocaleLowerCase('pt-BR')===n);
@@ -830,6 +837,40 @@ function bindMvpNotesFolderDrag(host){
     });
   });
 }
+// ---- menu "⋯" das pastas: semântica de menu contextual (JPW-YX2Z43) ---------------
+// <details> nativo NÃO fecha ao clicar fora — abre e só fecha ao clicar de novo no
+// próprio marcador. Para um menu de ações isso é errado: o operador clica em qualquer
+// lugar esperando dispensá-lo. Aqui damos o comportamento esperado sem trocar o <details>
+// por um dropdown próprio: um único listener, registrado uma vez na inicialização,
+// escopado à lista de pastas das Notas.
+function mvpNotesFecharMenusDePasta(exceto){
+  const host=mvpn('mvpNotesFolderNavList'); if(!host) return false;
+  let fechou=false;
+  host.querySelectorAll('details.mvpn-folder-kebab[open]').forEach(d=>{
+    if(d!==exceto){ d.open=false; fechou=true; }
+  });
+  return fechou;
+}
+function mvpNotesMenuDePastaAberto(){
+  const host=mvpn('mvpNotesFolderNavList');
+  return !!(host && host.querySelector('details.mvpn-folder-kebab[open]'));
+}
+// Registrado UMA vez (initMvpNotes → bindMvpNotesDrawer), nunca por abertura do drawer:
+// a lista de pastas é re-renderizada com frequência, e ligar por linha acumularia
+// handlers. Fase de captura para agir antes de qualquer stopPropagation dos cards.
+function bindMvpNotesFolderMenuDismiss(){
+  document.addEventListener('pointerdown',event=>{
+    if(!mvpNotesMenuDePastaAberto()) return;
+    const host=mvpn('mvpNotesFolderNavList'); if(!host) return;
+    // Só nos importa o menu das PASTAS: inspector, filtros, editor e qualquer <details>
+    // fora deste host seguem seu próprio comportamento.
+    const dentroDeUmKebab=event.target instanceof Node
+      ? event.target.closest && event.target.closest('.mvpn-folder-kebab')
+      : null;
+    // Clique no marcador de outra pasta: fecha os demais e deixa o nativo abrir aquele.
+    mvpNotesFecharMenusDePasta(dentroDeUmKebab&&host.contains(dentroDeUmKebab)?dentroDeUmKebab:null);
+  },true);
+}
 function mvpNotesFocusFolderKebab(id){
   const linha=mvpn('mvpNotesFolderNavList').querySelector(`[data-mvp-folder-row="${CSS.escape(id)}"]`);
   const alvo=linha?linha.querySelector('.mvpn-folder-kebab summary'):null;
@@ -1026,11 +1067,13 @@ function mvpNotesInspectorHTML(){
       ${fato('Atualizada em',esc(mvpNotesFormatDate(item.updatedAt)))}
       ${item.completedAt?fato('Concluída em',esc(mvpNotesFormatDate(item.completedAt))):''}
     </dl>
-    <div class="mvpn-inspector-actions">
-      <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
-    </div>
-    <div class="mvpn-inspector-danger">
-      <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
+    <div class="mvpn-inspector-footer">
+      <div class="mvpn-inspector-actions">
+        <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
+      </div>
+      <div class="mvpn-inspector-danger">
+        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
+      </div>
     </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar a nota.</p>`}`;
 }
 function mvpNotesSetInspectorOpen(open){
@@ -1570,6 +1613,7 @@ function bindMvpNotesDrawer(){
   if(clearBtn) clearBtn.addEventListener('click',mvpNotesClearAllFilters);
   bindMvpNotesResize();
   bindMvpNotesPaneResize();
+  bindMvpNotesFolderMenuDismiss();
   // Janela redimensionada: recalcular o que cabe, sem tocar nas preferências. Estreitar e
   // voltar a alargar devolve exatamente a geometria escolhida pelo operador.
   window.addEventListener('resize',()=>{
@@ -1593,6 +1637,8 @@ function bindMvpNotesDrawer(){
       event.preventDefault();
       // Arraste em curso é a camada mais interna: Escape cancela só ele, sem persistir nada.
       if(mvpNotesUI.folderDrag){ mvpNotesFolderDragCleanup(); return; }
+      // Menu "⋯" aberto: Escape dispensa o menu, não a gaveta inteira (JPW-YX2Z43).
+      if(mvpNotesFecharMenusDePasta(null)) return;
       if(mvpNotesUI.inspectorOpen){ mvpNotesSetInspectorOpen(false); return; }
       if(mvpNotesUI.filtersOpen){ mvpNotesSetFiltersOpen(false); return; }
       if(mvpNotesUI.stage==='editor'){ mvpNotesConfirmDiscardIfDirty(mvpNotesCloseEditor); return; }

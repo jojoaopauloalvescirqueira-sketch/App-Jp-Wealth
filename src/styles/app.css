@@ -1735,13 +1735,23 @@
   }
   .mvpn-inspector-head{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .mvpn-inspector-head h4{margin:0; font-size:var(--fs-md); color:var(--ink)}
-  /* Ações não destrutivas da nota (exportar) — acima do divisor de perigo, nunca ao lado
-     do Excluir: JPW-9A78DE é leitura pura e não pode dividir vizinhança com exclusão. */
-  .mvpn-inspector-actions{margin-top:auto; padding-top:12px}
+  /* Rodapé de ações do inspector — PEGAJOSO (JPW-9A78DE).
+     Com margin-top:auto as ações iam para o fim do conteúdo; quando os campos + fatos
+     técnicos passavam da altura do painel, "Exportar como Markdown" caía abaixo da dobra
+     e o operador simplesmente não o encontrava (medido: botão em 841–883px num inspector
+     que terminava em 860px, com elementFromPoint devolvendo nada). Grudado no fim da área
+     visível, as duas ações ficam sempre alcançáveis e o resto rola por baixo. */
+  .mvpn-inspector-footer{
+    position:sticky; bottom:0; margin-top:auto; z-index:1;
+    background:var(--panel); padding-top:12px;
+    box-shadow:0 -10px 14px -12px rgba(0,0,0,.5);
+  }
+  /* Exportar é leitura pura: fica acima, separado do Excluir por divisor próprio — nunca
+     lado a lado nem no mesmo bloco visual da exclusão. */
+  .mvpn-inspector-actions{padding-bottom:12px; border-bottom:1px solid var(--line)}
   .mvpn-inspector-actions .reset-btn{width:100%; justify-content:center}
   /* Exclusão visualmente APARTADA das configurações — no fim, atrás de divisor. */
-  .mvpn-inspector-danger{padding-top:12px; border-top:1px solid var(--line)}
-  .mvpn-inspector-actions ~ .mvpn-inspector-danger{margin-top:12px}
+  .mvpn-inspector-danger{padding-top:12px}
   .mvpn-inspector-danger .mvpn-danger{width:100%; justify-content:center; margin:0}
   .mvpn-folder-sidebar{
     flex:0 0 var(--mvpn-folders-w,190px); width:var(--mvpn-folders-w,190px); min-height:0; overflow-y:auto;
