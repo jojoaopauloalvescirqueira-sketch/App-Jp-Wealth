@@ -17,7 +17,7 @@
     /* ---- Tema claro: papel institucional, cinza neutro, acento âmbar queimado. ---- */
     --bg:#EDEDED; --panel:#FFFFFF; --panel-2:#F4F4F4; --line:#D4D4D4;
     --ink:#141414; --ink-dim:#585858; --ink-faint:#8A8A8A;
-    --indigo:#C77700; --violet:#A66000; --indigo-deep:#FBF1DF;
+    --indigo:#007AFF; --violet:#0068D6; --indigo-deep:#E5F1FF;
     --f1:#16743F; --f1-bg:#E8F3EB;
     --f2:#7A6410; --f2-bg:#F7F2DA;
     --f3:#BE4517; --f3-bg:#FBEBE3;
@@ -70,12 +70,12 @@
     --fs-xs:9.5px; --fs-sm:11px; --fs-md:12.5px; --fs-lg:15px; --fs-xl:22px;
   }
   /* Tema escuro (padrão) — Terminal: fundo PRETO, painéis quase-pretos, texto
-     branco, laranja saturado nos números, verde/vermelho brilhantes no sinal.
+     branco, acento saturado nos números, verde/vermelho brilhantes no sinal.
      Paleta amostrada das referências de terminal institucional enviadas. */
   :root[data-theme="dark"]{
     --bg:#000000; --panel:#0A0A0A; --panel-2:#141414; --line:#333333;
     --ink:#FFFFFF; --ink-dim:#B4B4B4; --ink-faint:#7C7C7C;
-    --indigo:#FFB733; --violet:#FF9E1B; --indigo-deep:#2E1E00;
+    --indigo:#0A84FF; --violet:#409CFF; --indigo-deep:#132F4F;
     --f1:#00C853; --f1-bg:#062012;
     --f2:#FFD400; --f2-bg:#231D00;
     --f3:#FF7A18; --f3-bg:#2A1400;
@@ -83,11 +83,11 @@
     --good:#00C853; --warn:#FFD400; --alert:#FF7A18; --danger:#FF3B30;
     --accent-tint:rgba(255,158,27,.12);
     /* Barra de seção em vinho com texto branco — o cabeçalho de painel não
-       compete com o laranja dos dados. */
+       compete com o acento de ação. */
     --bar:#8A1620; --bar-ink:#FFFFFF;
     /* Classificação de dado por cor (convenção de terminal): a cor diz QUE TIPO
        de informação é aquilo, não só se é boa ou ruim.
-         data-num  laranja → valor numérico primário (preço, saldo, risco)
+         data-num  acento → valor numérico primário (preço, saldo, risco)
          data-id   ciano   → identificador/dimensão (par, conta, chave, data)
          data-lbl  branco  → rótulo estrutural
          data-drv  amarelo → valor derivado/calculado a partir de outro */
@@ -129,7 +129,7 @@
     /* Marca, ação e estados semânticos.
        O vermelho de MARCA (--jp-brand) e o vermelho de PERIGO (--jp-danger)
        são distintos e não devem ser usados um no lugar do outro.
-       O laranja (--jp-action) representa ação e seleção, nunca estado de risco.
+       O azul de sistema (--jp-action) representa ação e seleção, nunca estado de risco.
        --jp-focus e --jp-overlay ficam pendentes: não existe token legado
        equivalente (ver relatório da Fase 1). */
     --jp-brand:var(--bar);
@@ -1585,16 +1585,36 @@
   .mvpn-back-btn{display:none}
   @keyframes mvpNotesSlideIn{from{transform:translateX(12px); opacity:.6} to{transform:translateX(0); opacity:1}}
   @media (prefers-reduced-motion:reduce){ .mvp-notes-drawer{animation:none} }
-  .mvp-notes-head{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:16px 18px; border-bottom:1px solid var(--line); flex:none}
-  .mvp-notes-head-text h2{margin:0; font-size:var(--fs-lg); color:var(--ink)}
-  .mvp-notes-head-count{display:block; margin-top:3px; font-size:var(--fs-xs); font-family:var(--mono); color:var(--ink-faint)}
-  .mvp-notes-close{width:32px; height:32px; flex:0 0 32px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--panel-2); color:var(--ink-dim); cursor:pointer}
-  .mvp-notes-close:hover{color:var(--ink); border-color:var(--ink-faint)}
+  /* ===== Barra unificada (design 1c) =====================================
+     Cabeçalho e toolbar viraram UMA barra: identidade à esquerda, busca ao centro,
+     ações à direita. A linguagem é a do shell tesla-inspired — ícones sem caixa,
+     pílulas, seleção azul-sistema — em vez das caixas de borda dos tokens legados.
+     position:relative ancora o popover de filtros, que antes pendia da toolbar. */
+  .mvp-notes-head{
+    display:flex; align-items:center; gap:14px; padding:11px 20px;
+    border-bottom:1px solid var(--line); flex:none; position:relative;
+  }
+  .mvp-notes-head-text{display:flex; align-items:center; gap:9px; min-width:0; flex:1 1 0}
+  /* Especificidade necessária: a regra global svg[viewbox]{width:100%} (0,1,1) vence
+     uma classe isolada e esticava o ícone para 492px, empurrando a barra inteira. */
+  .mvp-notes-head .mvpn-head-icon{width:17px; height:17px; flex:none; color:var(--ink)}
+  .mvp-notes-head-text h2{margin:0; font-size:var(--fs-sm); font-weight:600; letter-spacing:-.01em; color:var(--ink); white-space:nowrap}
+  .mvpn-head-actions{display:flex; align-items:center; gap:6px; flex:1 1 0; justify-content:flex-end}
+  .mvpn-head-divider{width:1px; height:22px; background:var(--line); margin:0 4px}
+  /* Ícones sem caixa: o alvo continua 34px, mas sem borda desenhada em repouso. */
+  .mvp-notes-close{
+    width:34px; height:34px; flex:0 0 34px; display:inline-flex; align-items:center; justify-content:center;
+    border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer;
+  }
+  .mvp-notes-close:hover{color:var(--ink); background:var(--panel-2)}
   .mvp-notes-close:focus-visible,.mvpn-card:focus-visible,.mvp-notes-drawer button:focus-visible,.mvp-notes-drawer input:focus-visible,.mvp-notes-drawer select:focus-visible,.mvp-notes-drawer textarea:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
   .mvp-notes-close svg{width:16px; height:16px}
-  .mvp-notes-toolbar{display:flex; flex-direction:column; gap:8px; padding:14px 18px; border-bottom:1px solid var(--line); flex:none; position:relative}
-  .mvpn-view-title{margin:0; font-size:var(--fs-md); color:var(--ink); font-weight:700}
-  .mvp-notes-toolbar input[type="search"]{width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 11px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-sm)}
+  /* A toolbar guarda só o rótulo da visão, agora como eyebrow tipográfico. */
+  .mvp-notes-toolbar{display:flex; align-items:baseline; justify-content:space-between; padding:14px 16px 10px; flex:none}
+  .mvpn-view-title{
+    margin:0; font-family:var(--mono); font-size:var(--fs-xs); font-weight:400; color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:.14em;
+  }
   /* Desktop: os filtros ficam inline na toolbar (o invólucro é transparente — cabeçalho e
      ações da folha inferior só existem em mobile); o botão "Filtros" não existe aqui. */
   .mvpn-filters-btn{display:none}
@@ -1663,7 +1683,12 @@
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .mvpn-title-placeholder{color:var(--ink-faint); font-weight:400; font-style:italic}
-  .mvpn-editor-ticket{font-family:var(--mono); font-size:var(--fs-xs); color:var(--violet); flex:none}
+  /* Trace ID em pílula de tinta (1c): identifica sem competir com o título. */
+  .mvpn-editor-ticket{
+    font-family:var(--mono); font-size:var(--fs-xs); color:var(--violet); flex:none;
+    background:var(--indigo-deep); border-radius:5px; padding:3px 7px;
+  }
+  .mvpn-editor-ticket:empty{display:none}
   .mvpn-save-btn{flex:none}
   .mvpn-icon-btn{
     width:30px; height:30px; flex:none; display:inline-flex; align-items:center; justify-content:center;
@@ -1692,30 +1717,54 @@
   }
   .mvpn-group-count{font-weight:700}
   /* Nota selecionada: destaque persistente (a lista segue visível ao lado da nota). */
-  .mvpn-card[aria-current="true"]{background:var(--panel); border-color:var(--violet); box-shadow:inset 2px 0 0 var(--violet)}
+  .mvpn-card[aria-current="true"]{background:var(--indigo-deep); border-color:var(--violet); box-shadow:none}
   /* Busca sempre visível + ações compactas ao lado. */
-  .mvpn-search-row{display:flex; align-items:center; gap:6px}
-  .mvpn-search-row input[type="search"]{flex:1; min-width:0}
-  .mvpn-filters-btn,.mvpn-new-note-btn{
-    position:relative; width:32px; height:32px; flex:none; padding:0;
-    display:inline-flex; align-items:center; justify-content:center;
-    border:1px solid var(--line); border-radius:7px; background:var(--panel-2);
-    color:var(--ink-dim); cursor:pointer;
+  /* Busca em pílula, centrada na barra e limitada em largura — não é um campo de
+     formulário, é o campo de busca do módulo. */
+  .mvpn-search-row{
+    display:flex; align-items:center; gap:6px;
+    flex:0 1 320px; min-width:0;
   }
-  .mvpn-filters-btn svg,.mvpn-new-note-btn svg{width:16px; height:16px}
-  .mvpn-filters-btn:hover,.mvpn-new-note-btn:hover{color:var(--ink); border-color:var(--ink-faint)}
-  .mvpn-filters-btn[aria-expanded="true"]{color:var(--ink); border-color:var(--violet)}
+  .mvpn-search-row input[type="search"]{
+    flex:1; min-width:0; border:1px solid transparent; border-radius:999px;
+    padding:8px 14px; background:var(--panel-2); color:var(--ink); font:inherit; font-size:var(--fs-sm);
+  }
+  .mvpn-search-row input[type="search"]:focus{border-color:var(--violet); background:var(--panel)}
+  /* Filtros: ícone sem caixa (1c). O contador vira um ponto azul no canto — a barra
+     não comporta um número legível, e a pergunta que ele responde é "há filtro ativo?". */
+  .mvpn-filters-btn{
+    position:relative; width:34px; height:34px; flex:none; padding:0;
+    display:inline-flex; align-items:center; justify-content:center;
+    border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer;
+  }
+  .mvpn-filters-btn svg{width:17px; height:17px}
+  .mvpn-filters-btn:hover{color:var(--ink); background:var(--panel-2)}
+  .mvpn-filters-btn[aria-expanded="true"]{color:var(--violet); background:var(--indigo-deep)}
+  /* Ação primária em pílula escura — o padrão do shell para "a ação desta tela". */
+  .mvpn-new-note-btn{
+    display:inline-flex; align-items:center; gap:6px; flex:none;
+    border:0; border-radius:999px; padding:8px 15px; cursor:pointer;
+    background:var(--ink); color:var(--panel);
+    font:inherit; font-size:var(--fs-sm); font-weight:600; white-space:nowrap;
+  }
+  .mvpn-new-note-btn svg{width:13px; height:13px}
+  .mvpn-new-note-btn:hover{opacity:.88}
+  /* Indicador de filtro ativo: ponto, não número (1c). O texto continua no nó para
+     leitores de tela — some visualmente, não da árvore de acessibilidade — e o
+     aria-label do botão já diz quantos filtros estão ativos. */
   .mvpn-filters-count{
-    position:absolute; top:-5px; right:-5px; min-width:15px; height:15px; padding:0 3px;
-    border-radius:8px; background:var(--violet); color:#fff;
-    font-family:var(--mono); font-size:9px; font-weight:700; line-height:15px; text-align:center;
+    position:absolute; top:3px; right:3px; width:7px; height:7px; padding:0;
+    border-radius:999px; background:var(--violet); border:1.5px solid var(--panel);
+    font-size:0; color:transparent; overflow:hidden;
   }
   .mvpn-filters-count[hidden]{display:none}
   /* Filtros sob demanda: ausentes por padrão; popover ancorado à barra de busca. */
   .mvpn-filters-wrap{display:none}
   .mvpn-filters-wrap.open{
-    display:block; position:absolute; z-index:2; left:12px; right:12px; top:100%;
-    margin-top:6px; padding:12px; border:1px solid var(--line); border-radius:10px;
+    /* Ancorado à barra unificada e alinhado ao botão de filtros, à direita — antes
+       ocupava a largura da coluna da lista, que já não é onde o botão vive. */
+    display:block; position:absolute; z-index:3; right:20px; left:auto; top:100%; width:min(320px,calc(100vw - 40px));
+    margin-top:6px; padding:12px; border:1px solid var(--line); border-radius:12px;
     background:var(--panel); box-shadow:0 12px 28px rgba(0,0,0,.3);
     max-height:min(420px,60vh); overflow-y:auto; /* janelas baixas: o popover rola, não estoura */
   }
@@ -1735,13 +1784,23 @@
   }
   .mvpn-inspector-head{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .mvpn-inspector-head h4{margin:0; font-size:var(--fs-md); color:var(--ink)}
-  /* Ações não destrutivas da nota (exportar) — acima do divisor de perigo, nunca ao lado
-     do Excluir: JPW-9A78DE é leitura pura e não pode dividir vizinhança com exclusão. */
-  .mvpn-inspector-actions{margin-top:auto; padding-top:12px}
+  /* Rodapé de ações do inspector — PEGAJOSO (JPW-9A78DE).
+     Com margin-top:auto as ações iam para o fim do conteúdo; quando os campos + fatos
+     técnicos passavam da altura do painel, "Exportar como Markdown" caía abaixo da dobra
+     e o operador simplesmente não o encontrava (medido: botão em 841–883px num inspector
+     que terminava em 860px, com elementFromPoint devolvendo nada). Grudado no fim da área
+     visível, as duas ações ficam sempre alcançáveis e o resto rola por baixo. */
+  .mvpn-inspector-footer{
+    position:sticky; bottom:0; margin-top:auto; z-index:1;
+    background:var(--panel); padding-top:12px;
+    box-shadow:0 -10px 14px -12px rgba(0,0,0,.5);
+  }
+  /* Exportar é leitura pura: fica acima, separado do Excluir por divisor próprio — nunca
+     lado a lado nem no mesmo bloco visual da exclusão. */
+  .mvpn-inspector-actions{padding-bottom:12px; border-bottom:1px solid var(--line)}
   .mvpn-inspector-actions .reset-btn{width:100%; justify-content:center}
   /* Exclusão visualmente APARTADA das configurações — no fim, atrás de divisor. */
-  .mvpn-inspector-danger{padding-top:12px; border-top:1px solid var(--line)}
-  .mvpn-inspector-actions ~ .mvpn-inspector-danger{margin-top:12px}
+  .mvpn-inspector-danger{padding-top:12px}
   .mvpn-inspector-danger .mvpn-danger{width:100%; justify-content:center; margin:0}
   .mvpn-folder-sidebar{
     flex:0 0 var(--mvpn-folders-w,190px); width:var(--mvpn-folders-w,190px); min-height:0; overflow-y:auto;
@@ -1776,11 +1835,12 @@
   body.mvpn-folder-dragging{cursor:grabbing; user-select:none}
   .mvpn-folder-btn{
     flex:1; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:8px;
-    border:0; border-radius:6px; background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm);
-    padding:7px 8px; cursor:pointer; text-align:left;
+    border:0; border-radius:8px; background:transparent; color:var(--ink-dim); font:inherit; font-size:var(--fs-sm);
+    padding:8px 10px; cursor:pointer; text-align:left;
   }
   .mvpn-folder-btn:hover{background:var(--panel)}
-  .mvpn-folder-btn[aria-current="page"]{background:var(--panel); color:var(--ink); font-weight:700; box-shadow:inset 2px 0 0 var(--violet)}
+  /* Seleção por tinta azul, não por filete — a mesma pílula do shell. */
+  .mvpn-folder-btn[aria-current="page"]{background:var(--indigo-deep); color:var(--violet); font-weight:600; box-shadow:none}
   .mvpn-folder-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
   .mvpn-folder-count{flex:none; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
   .mvpn-folder-btn[aria-current="page"] .mvpn-folder-count{color:var(--ink-dim)}
@@ -1816,11 +1876,11 @@
   .mvpn-empty{margin:24px 4px; font-size:var(--fs-sm); color:var(--ink-faint); line-height:1.6; text-align:center}
   .mvpn-card{
     display:flex; flex-direction:column; gap:6px; width:100%; text-align:left;
-    border:1px solid var(--line); border-radius:9px; padding:10px 12px; background:var(--panel-2);
+    border:1px solid var(--line); border-radius:10px; padding:11px 13px; background:var(--panel);
     color:var(--ink); font:inherit; cursor:pointer; transition:border-color .12s, background .12s;
   }
   .mvpn-card:hover{border-color:var(--ink-faint)}
-  .mvpn-card[data-priority="critical"]{border-left:3px solid var(--f2)}
+  .mvpn-card[data-priority="critical"]{border-left:3px solid var(--f4)}
 .mvpn-card[data-status="done"],.mvpn-card[data-status="discarded"]{opacity:.62}
   /* Concluída recua, mas NUNCA parece desabilitada: volta ao normal sob o ponteiro
      ou com foco, e segue clicável, editável e pesquisável. */
@@ -1862,6 +1922,14 @@
   .mvpn-hint{display:block; margin-top:4px; font-size:var(--fs-sm); color:var(--ink-faint); line-height:1.4}
   .mvpn-danger{color:var(--f4); border-color:var(--f4); margin-right:auto}
   .mvpn-primary{color:var(--violet); border-color:var(--violet)}
+  /* Salvar acompanha "Nova nota": pílula escura como ação primária da superfície (1c).
+     Escopado à barra do editor para não afetar o Aplicar da folha de filtros. */
+  html[data-ui-version="tesla-inspired"] .mvpn-editor-bar #mvpNotesSaveBtn,
+  .mvpn-editor-bar #mvpNotesSaveBtn{
+    border:0; border-radius:999px; padding:7px 16px; background:var(--ink); color:var(--panel);
+    font-weight:600; font-size:var(--fs-sm);
+  }
+  .mvpn-editor-bar #mvpNotesSaveBtn:hover{opacity:.88}
   /* ===== MOBILE (≤920px): experiência própria em camadas, estilo Apple Notes =====
      Breakpoint elevado de 760 para 920 na Fase D, por aritmética e não por gosto: as três
      colunas só cabem com seus mínimos MEDIDOS, e essa soma é exatamente MVP_NOTES_DRAWER_MIN
@@ -1887,10 +1955,27 @@
       border-left:0;
     }
     .mvpn-resize-handle{display:none} /* drawerWidth não governa a geometria mobile */
+    /* 1c mobile: a barra quebra em duas linhas — [voltar · título · Nova] na primeira,
+       [busca · filtros] na segunda, ocupando a largura toda. */
     .mvp-notes-head{
       position:sticky; top:0; z-index:2; background:var(--panel); align-items:center;
-      padding:12px 14px; padding-top:calc(12px + env(safe-area-inset-top));
+      flex-wrap:wrap; gap:8px;
+      padding:10px 14px; padding-top:calc(10px + env(safe-area-inset-top));
     }
+    .mvp-notes-head-text{flex:1 1 0; min-width:0; justify-content:center; order:1}
+    .mvp-notes-head-text h2{font-size:var(--fs-md); overflow:hidden; text-overflow:ellipsis}
+    .mvpn-head-icon{display:none}
+    .mvpn-head-actions{order:2; margin-left:0}
+    .mvpn-head-divider{display:none}
+    .mvpn-search-row{order:3; flex:1 0 100%; margin:0}
+    .mvpn-head-actions{flex:0 0 auto; order:2}
+    .mvpn-back-btn:not([hidden]){order:0}
+    .mvpn-search-row input[type="search"]{padding:11px 14px; font-size:var(--fs-md)}
+    .mvpn-filters-btn{width:44px; height:44px; border-radius:10px}
+    .mvpn-filters-btn svg{width:18px; height:18px}
+    .mvpn-filters-count{top:5px; right:5px}
+    .mvpn-new-note-btn{padding:7px 12px}
+    .mvp-notes-toolbar{padding:0 14px 8px}
     .mvp-notes-head-text{min-width:0}
     .mvp-notes-head-text h2{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
     /* Voltar com destino por extenso ("‹ Pastas", "‹ Interface"): alvo de toque pleno,
@@ -1923,7 +2008,7 @@
     .mvp-notes-drawer[data-mobile-stage="editor"] .mvpn-list-pane{display:none}
     .mvp-notes-drawer[data-mobile-stage="folders"] .mvpn-editor-pane,
     .mvp-notes-drawer[data-mobile-stage="list"] .mvpn-editor-pane{display:none}
-    .mvpn-filters-wrap.open{position:fixed; left:0; right:0; top:auto; bottom:0; margin:0;
+    .mvpn-filters-wrap.open{position:fixed; left:0; right:0; top:auto; bottom:0; margin:0; width:auto;
       border-radius:14px 14px 0 0; padding-bottom:calc(16px + env(safe-area-inset-bottom))}
     .mvpn-inspector.open{position:fixed; left:0; right:0; top:auto; bottom:0; width:100%;
       max-height:75dvh; border-left:0; border-top:1px solid var(--line);
