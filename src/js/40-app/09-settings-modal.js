@@ -25,7 +25,7 @@ const SETTINGS_LEAVES={
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
   'tool-motor':{label:'Motor de Lote', group:'operations', desc:'Position sizing com câmbio atualizado e teto por operação.', terms:['motor de lote','position sizing','lote','câmbio','nocional','teto','instrumento','perfis de risco']},
   'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
-  backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar']},
+  backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar','pasta padrão','pasta de armazenamento','sequência de exportação','backup confirmado','reautorizar pasta','alterações desde o backup']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
 };
 const SETTINGS_GROUP_BY_ID=Object.fromEntries(SETTINGS_GROUPS.map(g=>[g.id,g]));
@@ -305,6 +305,9 @@ function settingsNavigateToLeaf(leafId,options={}){
 function settingsSearchEntries(){
   const core=Object.entries(SETTINGS_LEAVES).flatMap(([id,leaf])=>[...leaf.terms,leaf.label].map(term=>({title:term,category:id})));
   const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
+    // Governança de armazenamento (JPW-HJFGDE) — cartão único, vários termos de entrada.
+    ['Armazenamento da Base','backup','#dgStorageCard'],['Pasta padrão de exportação','backup','#dgStorageCard'],
+    ['Confirmar backup','backup','#dgStorageCard'],['Reautorizar pasta','backup','#dgStorageCard'],
     // Notas do MVP (14-mvp-notes.js) — vários termos apontando para o mesmo card,
     // mesmo padrão de 'core' (multi-termo por entrada), já que aqui cada entrada só
     // casa com o próprio título.

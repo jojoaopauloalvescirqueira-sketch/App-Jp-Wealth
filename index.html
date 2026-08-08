@@ -886,6 +886,13 @@
         <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
       </div>
     </div>
+    <!-- Governança de armazenamento (JPW-HJFGDE): pasta padrão de exportação, sequência
+         progressiva, backup confirmado e alterações desde o último backup. O conteúdo é
+         renderizado por 16-storage-governance.js conforme o suporte real do navegador. -->
+    <div class="card" data-settings-category="backup" data-settings-search="pasta padrão armazenamento exportação sequência backup confirmado alterações reautorizar diretório downloads">
+      <h2>Armazenamento da Base <span class="art">pasta padrão · sequência · backup confirmado</span></h2>
+      <div id="dgStorageCard"></div>
+    </div>
     <div class="card" data-settings-category="parameters" data-settings-search="quarentena encerramento compulsório MDD drawdown governança">
       <h2>Quarentena Operacional <span class="art">Art. 3.10 · reversível</span></h2>
       <div id="configQuarantine"></div>
@@ -1144,6 +1151,7 @@
 <script src="src/js/00-core/03-default-state.js"></script>
 <script src="src/js/00-core/04-persistence.js"></script>
 <script src="src/js/00-core/05-helpers.js"></script>
+<script src="src/js/00-core/06-storage-fs.js"></script>
 <script src="src/js/10-domain/01-risk-instruments.js"></script>
 <script src="src/js/10-domain/02-risk-calculations.js"></script>
 <script src="src/js/20-ui/01-header-readout.js"></script>
@@ -1181,5 +1189,6 @@
 <script src="src/js/40-app/13-dashboard-layout.js"></script>
 <script src="src/js/40-app/14-mvp-notes.js"></script>
 <script src="src/js/40-app/15-ff-news.js"></script>
+<script src="src/js/40-app/16-storage-governance.js"></script>
 </body>
 </html>

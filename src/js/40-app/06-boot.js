@@ -11,6 +11,12 @@ function boot(){
   // execução (linha final deste arquivo) a função ainda não existe, e o próprio módulo
   // de Notas se renderiza ao carregar (initMvpNotes); aqui cobre todos os boots seguintes.
   if(typeof renderMvpNotesHeader==='function') renderMvpNotesHeader();
+  // Governança de armazenamento (JPW-HJFGDE) — mesmo padrão de guarda: na PRIMEIRA
+  // execução o módulo (16-storage-governance.js, script tardio) ainda não carregou e se
+  // auto-renderiza ao carregar; aqui cobre os boots seguintes (import, wipe, finalize),
+  // quando o status da pasta e o aviso de 30 dias precisam refletir a base recém-trocada.
+  if(typeof renderDgStorageCard==='function') renderDgStorageCard();
+  if(typeof renderDgBackupBanner==='function') renderDgBackupBanner();
   enhanceFieldNotes();
   // cotações ao vivo sempre que o programa abre (SET 4 do lote) — alimenta grade, ATR% e stop vivo
   if(!fxAutoFetchedThisSession){ fxAutoFetchedThisSession=true; updateFxRates(); }

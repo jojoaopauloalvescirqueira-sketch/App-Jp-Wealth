@@ -4108,10 +4108,78 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 .dash-layout-card-menu button[aria-checked="true"]{color:var(--jp-action); font-weight:600}
 .dash-layout-card-menu button[aria-checked="true"] .dash-layout-check{display:inline}
 .dash-layout-check{display:none; font-size:13px}
+
+/* ==========================================================
+   GOVERNANÇA DE ARMAZENAMENTO (JPW-HJFGDE)
+   Diálogo de recuperação da exportação, cartão da Central e
+   aviso de backup de 30 dias. Overlay próprio (não reutiliza
+   #modalOverlay): precisa aparecer POR CIMA do fluxo de
+   Finalizar Sessão, que já ocupa o overlay genérico — por isso
+   a camada é --jp-layer-toast, acima de --jp-layer-modal.
+   ========================================================== */
+.dg-overlay{
+  position:fixed; inset:0; background:rgba(5,5,10,.78); backdrop-filter:blur(4px);
+  z-index:var(--jp-layer-toast); display:flex; align-items:flex-start; justify-content:center;
+  padding:40px 16px; overflow-y:auto;
+}
+.dg-dialog{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  max-width:560px; width:100%; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.dg-dialog h3{font-size:calc(16px * var(--fs-scale)); margin-bottom:10px; color:var(--ink)}
+.dg-dialog-sub{font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:12px}
+.dg-dialog-warn{font-size:calc(12px * var(--fs-scale)); color:var(--f4); font-weight:600; margin:10px 0 14px}
+.dg-dialog-actions{display:flex; flex-direction:column; gap:8px; align-items:stretch}
+.dg-dialog-actions .modal-btn{width:100%}
+.dg-dialog-note{font-size:calc(11.5px * var(--fs-scale)); color:var(--ink-dim); margin-top:10px; min-height:1em}
+.dg-folder-fact{
+  display:flex; flex-direction:column; gap:2px; background:var(--panel-2);
+  border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; margin:10px 0;
+}
+.dg-folder-fact span{font-size:calc(10px * var(--fs-scale)); text-transform:uppercase; letter-spacing:.04em; color:var(--ink-dim); font-weight:700}
+.dg-folder-fact b{font-size:calc(13px * var(--fs-scale)); color:var(--ink); word-break:break-word}
+.dg-status-line{font-size:calc(12px * var(--fs-scale)); font-weight:600; margin:6px 0 10px; line-height:1.5}
+.dg-status-ok{color:var(--f1)}
+.dg-status-warn{color:var(--f3)}
+.dg-status-note{font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin:6px 0 10px}
+.dg-actions{display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 4px}
+#dgStorageCard h4{
+  font-size:calc(11px * var(--fs-scale)); text-transform:uppercase; letter-spacing:.05em;
+  color:var(--ink-dim); font-weight:700; margin:14px 0 6px;
+}
+#dgStorageCard h4:first-child{margin-top:0}
+.dg-facts{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:calc(12px * var(--fs-scale)); margin:6px 0 10px}
+.dg-facts dt{color:var(--ink-dim); white-space:nowrap}
+.dg-facts dd{color:var(--ink); margin:0; word-break:break-word}
+.dg-facts code{font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); background:var(--panel-2); border:1px solid var(--line); border-radius:4px; padding:1px 5px}
+.dg-breakdown{margin:6px 0 0 16px; color:var(--ink-dim)}
+.dg-breakdown li{margin:2px 0}
+.dg-detail{margin-top:8px}
+.dg-detail summary{cursor:pointer; color:var(--ink-dim); font-size:calc(11.5px * var(--fs-scale))}
+.dg-chrono{margin:8px 0 0 16px; color:var(--ink-dim); max-height:220px; overflow-y:auto}
+.dg-chrono li{margin:3px 0; line-height:1.5}
+.dg-chrono li span{color:var(--ink); font-family:var(--mono); font-size:calc(10.5px * var(--fs-scale))}
+.dg-backup-banner{
+  position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+  /* Sanduíche deliberado: acima do header sticky (40), ABAIXO da Central (60) e de
+     qualquer modal (200) — o aviso é um lembrete ambiente e nunca cobre um diálogo. */
+  z-index:50; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  max-width:min(720px, calc(100vw - 32px));
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:10px 14px; box-shadow:0 12px 40px rgba(0,0,0,.45);
+  font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim);
+}
+.dg-backup-banner b{color:var(--ink)}
+.dg-backup-banner .reset-btn{margin:0}
+.dg-banner-close{
+  background:none; border:none; color:var(--ink-dim); cursor:pointer;
+  font-size:calc(13px * var(--fs-scale)); padding:4px 6px; border-radius:6px;
+}
+.dg-banner-close:hover{color:var(--ink); background:var(--panel-2)}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'b42a2ffb852a97ad';
+const JP_WEALTH_BUILD_ID = '79346811623fa92e';
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -4990,6 +5058,13 @@ const JP_WEALTH_BUILD_ID = 'b42a2ffb852a97ad';
         <input type="file" id="importFullBackupInput" accept="application/json,.json" style="display:none">
       </div>
     </div>
+    <!-- Governança de armazenamento (JPW-HJFGDE): pasta padrão de exportação, sequência
+         progressiva, backup confirmado e alterações desde o último backup. O conteúdo é
+         renderizado por 16-storage-governance.js conforme o suporte real do navegador. -->
+    <div class="card" data-settings-category="backup" data-settings-search="pasta padrão armazenamento exportação sequência backup confirmado alterações reautorizar diretório downloads">
+      <h2>Armazenamento da Base <span class="art">pasta padrão · sequência · backup confirmado</span></h2>
+      <div id="dgStorageCard"></div>
+    </div>
     <div class="card" data-settings-category="parameters" data-settings-search="quarentena encerramento compulsório MDD drawdown governança">
       <h2>Quarentena Operacional <span class="art">Art. 3.10 · reversível</span></h2>
       <div id="configQuarantine"></div>
@@ -5284,6 +5359,8 @@ const JP_WEALTH_BUILD_ID = 'b42a2ffb852a97ad';
 
 
 
+
+
 <script>
 // ============ PERFIS DE RISCO V10.0 (fonte única) ============
 const BASE_TARGET_MONTHLY=0.0275;
@@ -5417,6 +5494,11 @@ function platformOptions(current){
     TRADING_PLATFORMS.map(p=>`<option value="${esc(p.name)}" ${known&&known.key===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
 }
 // ============ ESTADO INICIAL (espelha a planilha) ============
+// Tela inicial canônica do aplicativo (JPW-HJFGDE §12) — fonte ÚNICA de verdade.
+// Consumida por: boot sem base válida, Zona de Perigo (wipe), reset total e falha de
+// importação sem base restante. Se a tela inicial do produto mudar um dia, muda AQUI
+// e em nenhum outro lugar; nenhum módulo deve navegar para 'dash' hardcoded nesses fluxos.
+const DEFAULT_START_ROUTE='dash';
 const DEFAULTS = {
   params:{ saldoIni:10000, saldoAtu:10240, inicio:'2026-05-25',
     mdd:0.15, alarm:0.13, genLev:0.4, genRisk:0.01, fw:1,
@@ -5549,6 +5631,24 @@ const DEFAULTS = {
   //        manual) + larguras dos painéis internos.
   mvpNotes:{schemaVersion:5, showHeaderIcon:true, folders:[], items:[],
     ui:{drawerWidth:980, foldersPaneWidth:190, notesPaneWidth:300}},
+  // Governança da base de dados (JPW-HJFGDE): termo de responsabilidade, metadados da
+  // pasta padrão de exportação, sequência progressiva de exportações e backups CONFIRMADOS
+  // pelo operador (exportar ≠ confirmar backup — §9 do ticket).
+  // A PERMISSÃO real do diretório NUNCA vive aqui: o FileSystemDirectoryHandle é persistido
+  // em IndexedDB (06-storage-fs.js) e revalidado a cada sessão. A base guarda apenas
+  // metadados LÓGICOS — um caminho gravado como texto não concede acesso a nada.
+  // changeLog é auditoria RESUMIDA de alterações ({id,ts,entity,action,recordId,label}),
+  // sem snapshots; alimenta "alterações desde o último backup" e é podado por tamanho
+  // (dgNormalizeState, 04-persistence.js). Migração: dgNormalizeState() aceita bases
+  // antigas sem o agregado e aplica estes defaults sem perda.
+  dataGovernance:{
+    schemaVersion:1,
+    responsibility:{accepted:false, acceptedAt:'', version:1},
+    storage:{configured:false, folderName:'', folderDisplayPath:'', configuredAt:''},
+    export:{lastSequence:0, lastExportAt:'', lastExportFile:''},
+    backup:{lastConfirmedAt:'', lastConfirmedExportSequence:0},
+    changeLog:[],
+  },
 };
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
 // ============ PERSISTÊNCIA (localStorage) ============
@@ -5931,9 +6031,123 @@ function mvpNotesNormalizeState(){
     .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds,seenTickets,reserved))
     .filter(Boolean);
 }
+// ---- Governança da base de dados (JPW-HJFGDE) ------------------------------------
+// Constantes e normalização do agregado S.dataGovernance. A lógica de filesystem vive
+// em 06-storage-fs.js (IndexedDB + File System Access); aqui ficam só as regras de
+// ESTADO: schema, sequência de exportação, backups confirmados e auditoria resumida.
+const DG_SCHEMA_VERSION=1;
+const DG_RESPONSIBILITY_VERSION=1; // versão do texto do termo de responsabilidade
+const DG_BACKUP_DUE_DAYS=30;       // aviso de backup após N dias sem confirmação (§10)
+// Teto do changeLog: auditoria RESUMIDA, não histórico infinito. 400 entradas cobrem
+// meses de operação real e mantêm o custo no localStorage desprezível; poda pela frente
+// (mais antigas saem primeiro). O resumo "N alterações desde o backup" continua correto
+// enquanto o log não podar entradas posteriores a lastConfirmedAt — com 400 de folga,
+// isso exigiria 400 alterações sem nenhum backup, exatamente o cenário que o aviso de
+// 30 dias existe para impedir.
+const DG_CHANGELOG_MAX=400;
+function dgId(){ return 'dg_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// Nome progressivo de exportação (§8): legível, determinístico, ordenável.
+//   JP_WEALTH_DB_000042_2026-08-08_0026.json
+// .json é a extensão real já usada pelo backup completo. Sequência com 6 dígitos
+// preserva ordenação lexicográfica até 999999; data/hora local do operador (o backup é
+// um artefato humano — a hora que ele vê no relógio é a que procura depois no Finder).
+function dgExportFileName(seq,when){
+  const t=when instanceof Date?when:new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return 'JP_WEALTH_DB_'+String(Math.max(1,Math.round(seq))).padStart(6,'0')
+    +'_'+t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())
+    +'_'+pad(t.getHours())+pad(t.getMinutes())+'.json';
+}
+// Registra um evento no log resumido. NÃO chama save(): quem muta o estado é quem
+// persiste — todos os pontos instrumentados já chamam save() logo depois, e o log entra
+// na mesma gravação. label é o texto humano do detalhamento cronológico (§11).
+function dgLogChange(entity,action,recordId,label){
+  if(!S.dataGovernance || !Array.isArray(S.dataGovernance.changeLog)) return;
+  S.dataGovernance.changeLog.push({
+    id:dgId(), ts:new Date().toISOString(),
+    entity:String(entity||''), action:String(action||''),
+    recordId:recordId==null?'':String(recordId), label:String(label||''),
+  });
+  if(S.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
+    S.dataGovernance.changeLog=S.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
+  }
+}
+// Alterações desde o último backup CONFIRMADO (§11). Sem confirmação nunca feita,
+// tudo que está no log conta. Retorna as entradas em ordem cronológica.
+function dgChangesSinceLastBackup(){
+  const dg=S.dataGovernance||{};
+  const since=dg.backup&&dg.backup.lastConfirmedAt?dg.backup.lastConfirmedAt:'';
+  const log=Array.isArray(dg.changeLog)?dg.changeLog:[];
+  return since?log.filter(e=>e.ts>since):log.slice();
+}
+// Dias inteiros desde o último backup confirmado; null = nunca confirmado.
+function dgBackupAgeDays(){
+  const dg=S.dataGovernance||{};
+  const iso=dg.backup&&dg.backup.lastConfirmedAt;
+  if(!iso) return null;
+  const t=Date.parse(iso);
+  if(!Number.isFinite(t)) return null;
+  return Math.floor((Date.now()-t)/86400000);
+}
+// Aviso devido (§10): 30 dias desde a última confirmação. "Nunca confirmado" só cobra
+// depois que existe o que proteger — base com atividade (onboarding concluído) e alguma
+// alteração registrada; senão o aviso nasceria junto com a base vazia, e intrusão é
+// exatamente o que o §18 pede para evitar.
+function dgBackupDue(){
+  const age=dgBackupAgeDays();
+  if(age!==null) return age>=DG_BACKUP_DUE_DAYS;
+  return !!(S.onboarding&&S.onboarding.done) && dgChangesSinceLastBackup().length>0;
+}
+// Confirmação explícita de backup em dia (§9/§10): SÓ por gesto do operador, nunca como
+// efeito colateral de exportar. Registra o momento e a sequência coberta.
+function dgConfirmBackup(){
+  if(!S.dataGovernance) return;
+  S.dataGovernance.backup.lastConfirmedAt=new Date().toISOString();
+  S.dataGovernance.backup.lastConfirmedExportSequence=S.dataGovernance.export.lastSequence||0;
+  dgLogChange('backup','confirmed','','Backup confirmado pelo operador');
+  save();
+}
+// Normalização do agregado — mesma disciplina do resto do migrate(): base antiga sem o
+// agregado já recebeu DEFAULTS acima; aqui valida forma campo a campo, sem perda e sem
+// inventar dado. Um termo nunca aceito continua não aceito; uma sequência absurda vira 0
+// (nunca "some" um arquivo já exportado — o número só cresce a partir do que há).
+function dgNormalizeState(){
+  if(!S.dataGovernance || typeof S.dataGovernance!=='object' || Array.isArray(S.dataGovernance)){
+    S.dataGovernance=structuredClone(DEFAULTS.dataGovernance);
+  }
+  const dg=S.dataGovernance;
+  for(const k in DEFAULTS.dataGovernance){ if(!(k in dg)) dg[k]=structuredClone(DEFAULTS.dataGovernance[k]); }
+  dg.schemaVersion=DG_SCHEMA_VERSION;
+  if(!dg.responsibility || typeof dg.responsibility!=='object') dg.responsibility=structuredClone(DEFAULTS.dataGovernance.responsibility);
+  dg.responsibility.accepted=dg.responsibility.accepted===true;
+  dg.responsibility.acceptedAt=dg.responsibility.accepted?String(dg.responsibility.acceptedAt||''):'';
+  dg.responsibility.version=Number.isFinite(+dg.responsibility.version)&&+dg.responsibility.version>0?Math.round(+dg.responsibility.version):DG_RESPONSIBILITY_VERSION;
+  if(!dg.storage || typeof dg.storage!=='object') dg.storage=structuredClone(DEFAULTS.dataGovernance.storage);
+  dg.storage.configured=dg.storage.configured===true;
+  dg.storage.folderName=String(dg.storage.folderName||'');
+  dg.storage.folderDisplayPath=String(dg.storage.folderDisplayPath||'');
+  dg.storage.configuredAt=String(dg.storage.configuredAt||'');
+  // metadado sem nome de pasta é metadado vazio — não existe "configurado" sem pasta
+  if(dg.storage.configured && !dg.storage.folderName) dg.storage.configured=false;
+  if(!dg.export || typeof dg.export!=='object') dg.export=structuredClone(DEFAULTS.dataGovernance.export);
+  const seq=+dg.export.lastSequence;
+  dg.export.lastSequence=Number.isFinite(seq)&&seq>0?Math.round(seq):0;
+  dg.export.lastExportAt=String(dg.export.lastExportAt||'');
+  dg.export.lastExportFile=String(dg.export.lastExportFile||'');
+  if(!dg.backup || typeof dg.backup!=='object') dg.backup=structuredClone(DEFAULTS.dataGovernance.backup);
+  dg.backup.lastConfirmedAt=String(dg.backup.lastConfirmedAt||'');
+  const cseq=+dg.backup.lastConfirmedExportSequence;
+  dg.backup.lastConfirmedExportSequence=Number.isFinite(cseq)&&cseq>0?Math.round(cseq):0;
+  dg.changeLog=(Array.isArray(dg.changeLog)?dg.changeLog:[])
+    .filter(e=>e&&typeof e==='object'&&typeof e.ts==='string'&&e.ts)
+    .map(e=>({id:String(e.id||dgId()), ts:e.ts, entity:String(e.entity||''),
+      action:String(e.action||''), recordId:String(e.recordId||''), label:String(e.label||'')}))
+    .slice(-DG_CHANGELOG_MAX);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
+  dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -6243,9 +6457,10 @@ function clearLoadRecoveryWarning(){
 // Por isso a checagem de existência acontece no clique, não na criação do aviso.
 function persistenceAlertExportBackup(){
   // Serializa o S em memória: não depende de nenhuma gravação anterior ter dado certo,
-  // que é exatamente a razão de existir este botão. Na falha de SERIALIZAÇÃO, porém,
-  // exportFullBackup() tende a lançar pelo mesmo motivo — o try/catch impede que o
-  // clique vire exceção não tratada e diz a verdade ao operador.
+  // que é exatamente a razão de existir este botão. exportFullBackup() é async
+  // (JPW-HJFGDE) e reporta as próprias falhas — inclusive a de serialização — com
+  // alert interno, sem nunca rejeitar; o try/catch abaixo cobre apenas os ramos
+  // síncronos restantes deste função.
   try{
     if(typeof exportFullBackup==='function'){ exportFullBackup(); return; }
     if(typeof openSettingsModal==='function'){ openSettingsModal('backup', persistenceAlertEl()); return; }
@@ -6368,6 +6583,163 @@ function percentInputToDecimal(v){
 }
 function pctView(v){ return decimalToPercentInput(v)+'%'; }
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// ============ ARMAZENAMENTO EM PASTA (File System Access + IndexedDB) ============
+// JPW-HJFGDE §4/§6: separação obrigatória entre METADADO LÓGICO (S.dataGovernance.storage,
+// vive na base, viaja no backup) e DIRETÓRIO REAL + PERMISSÃO (FileSystemDirectoryHandle,
+// vive SÓ neste navegador, em IndexedDB). Um caminho gravado como texto nunca concede
+// acesso a nada; um backup importado em outra máquina informa qual pasta ERA usada, mas a
+// reassociação exige novo gesto do operador.
+//
+// Suporte real (2026): showDirectoryPicker + handles persistíveis existem em Chrome/Edge
+// desktop. Safari e Firefox NÃO os expõem — neles dgFsSupported() é false e toda a
+// exportação usa o fallback tradicional de Downloads (§15), mantendo nomenclatura
+// progressiva e controle de backup, com a interface dizendo isso honestamente.
+//
+// Nenhuma função aqui lança para o chamador: tudo resolve em objetos de resultado/estado.
+// A ÚNICA base IndexedDB do projeto é esta; localStorage segue sendo o lar do estado S.
+const DG_FS_DB='jpwealth_fs';
+const DG_FS_STORE='handles';
+const DG_FS_KEY='exportDir';
+let dgFsHandleCache; // undefined = nunca carregado; null = carregado e ausente
+function dgFsSupported(){
+  return typeof window!=='undefined' && typeof window.showDirectoryPicker==='function'
+    && typeof indexedDB!=='undefined';
+}
+function dgFsOpenDb(){
+  return new Promise((resolve,reject)=>{
+    let rq;
+    try{ rq=indexedDB.open(DG_FS_DB,1); }
+    catch(e){ reject(e); return; }
+    rq.onupgradeneeded=()=>{ rq.result.createObjectStore(DG_FS_STORE); };
+    rq.onsuccess=()=>resolve(rq.result);
+    rq.onerror=()=>reject(rq.error||new Error('IndexedDB indisponível.'));
+    rq.onblocked=()=>reject(new Error('IndexedDB bloqueado por outra aba.'));
+  });
+}
+function dgFsDbOp(mode,op){
+  // Uma transação curta por operação; o db fecha em seguida para nunca segurar bloqueio.
+  return dgFsOpenDb().then(db=>new Promise((resolve,reject)=>{
+    let rq;
+    try{ rq=op(db.transaction(DG_FS_STORE,mode).objectStore(DG_FS_STORE)); }
+    catch(e){ db.close(); reject(e); return; }
+    rq.onsuccess=()=>{ db.close(); resolve(rq.result); };
+    rq.onerror=()=>{ db.close(); reject(rq.error||new Error('Operação IndexedDB falhou.')); };
+  }));
+}
+async function dgFsLoadHandle(){
+  if(dgFsHandleCache!==undefined) return dgFsHandleCache;
+  try{ dgFsHandleCache=(await dgFsDbOp('readonly',store=>store.get(DG_FS_KEY)))||null; }
+  catch(e){ dgFsHandleCache=null; }
+  return dgFsHandleCache;
+}
+async function dgFsStoreHandle(handle){
+  await dgFsDbOp('readwrite',store=>store.put(handle,DG_FS_KEY));
+  dgFsHandleCache=handle;
+}
+async function dgFsClearHandle(){
+  try{ await dgFsDbOp('readwrite',store=>store.delete(DG_FS_KEY)); }catch(e){}
+  dgFsHandleCache=null;
+}
+// 'granted' | 'prompt' | 'denied' — implementações sem queryPermission caem em 'prompt'
+// (não presumir concessão que não se pode verificar).
+async function dgFsQueryPermission(handle){
+  try{
+    if(typeof handle.queryPermission==='function') return await handle.queryPermission({mode:'readwrite'});
+  }catch(e){}
+  return 'prompt';
+}
+// Exige gesto do usuário (chamar de um handler de clique).
+async function dgFsRequestPermission(handle){
+  try{
+    if(typeof handle.requestPermission==='function') return await handle.requestPermission({mode:'readwrite'});
+  }catch(e){}
+  return 'denied';
+}
+// Estado consolidado da pasta padrão (§6/§18). Combina metadado da base + handle local:
+//   unsupported   — navegador sem File System Access API
+//   unconfigured  — nenhuma pasta configurada nos metadados
+//   authorized    — handle presente e permissão concedida
+//   prompt        — handle presente; permissão expirou e precisa de reautorização (gesto)
+//   denied        — permissão negada; reautorizar ou escolher outra pasta
+//   missing       — metadado diz configurado, mas NÃO há handle neste navegador
+//                   (base importada em outra máquina, ou armazenamento local limpo):
+//                   oferecer "Localizar esta pasta" (§6.5)
+// Divergência de nome (handle.name ≠ folderName) é tratada como 'missing': o handle local
+// aponta para uma pasta que não é a que a base declara — reassociar é decisão do operador.
+async function dgFsStatus(){
+  if(!dgFsSupported()) return {state:'unsupported',handle:null};
+  const configured=!!(S.dataGovernance&&S.dataGovernance.storage&&S.dataGovernance.storage.configured);
+  const handle=await dgFsLoadHandle();
+  if(!configured) return {state:'unconfigured',handle:null};
+  if(!handle) return {state:'missing',handle:null};
+  if(S.dataGovernance.storage.folderName && handle.name!==S.dataGovernance.storage.folderName){
+    return {state:'missing',handle:null};
+  }
+  const perm=await dgFsQueryPermission(handle);
+  if(perm==='granted') return {state:'authorized',handle};
+  if(perm==='denied') return {state:'denied',handle};
+  return {state:'prompt',handle};
+}
+// Seletor de pasta (§6): grava o handle em IndexedDB e os METADADOS na base, numa ordem
+// que nunca deixa estado mentiroso — primeiro a credencial local, depois o metadado.
+// Cancelamento do seletor NÃO corrompe nada (§17): retorna cancelled e o estado anterior
+// permanece intacto. Chamar somente de gesto do usuário.
+async function dgFsPickFolder(){
+  if(!dgFsSupported()) return {ok:false,reason:'unsupported'};
+  let handle;
+  try{
+    handle=await window.showDirectoryPicker({mode:'readwrite'});
+  }catch(e){
+    if(e && (e.name==='AbortError'||e.name==='NotAllowedError')) return {ok:false,reason:'cancelled'};
+    return {ok:false,reason:'error',message:e&&e.message?e.message:'Falha ao abrir o seletor de pasta.'};
+  }
+  try{
+    await dgFsStoreHandle(handle);
+  }catch(e){
+    return {ok:false,reason:'error',message:'A pasta foi escolhida, mas o navegador não conseguiu guardar a autorização (IndexedDB): '+(e&&e.message?e.message:'erro desconhecido.')};
+  }
+  const st=S.dataGovernance.storage;
+  st.configured=true;
+  st.folderName=handle.name;
+  // A API não expõe o caminho completo por segurança; o nome da pasta é o que existe
+  // para mostrar. Metadado de exibição, nunca credencial (§6.1).
+  st.folderDisplayPath=handle.name;
+  st.configuredAt=new Date().toISOString();
+  if(typeof dgLogChange==='function') dgLogChange('storage','configured',handle.name,'Pasta padrão de exportação configurada: '+handle.name);
+  save();
+  return {ok:true,name:handle.name};
+}
+// Verificação NÃO destrutiva de acesso (§6/§17): permissão + sondagem real de leitura.
+// Uma pasta apagada do disco mantém handle e permissão válidos — só a sondagem revela
+// (NotFoundError ao iterar). Nada é escrito.
+async function dgFsVerifyAccess(){
+  const {state,handle}=await dgFsStatus();
+  if(state!=='authorized') return {ok:false,state};
+  try{
+    // basta tocar o iterador; pasta vazia resolve com done:true e também prova acesso
+    await handle.entries().next();
+    return {ok:true,state:'authorized'};
+  }catch(e){
+    return {ok:false,state:'invalid',message:e&&e.message?e.message:'A pasta não pôde ser lida.'};
+  }
+}
+// Existe arquivo com este nome? (proteção física da exportação, §8.3)
+async function dgFsFileExists(handle,name){
+  try{ await handle.getFileHandle(name,{create:false}); return true; }
+  catch(e){
+    if(e && e.name==='NotFoundError') return false;
+    throw e; // TypeMismatch/NotReadable/etc: o chamador decide — não fingir que não existe
+  }
+}
+// Gravação efetiva. Só resolve depois de close() — antes disso NADA foi confirmado no
+// disco, e o chamador não deve registrar sucesso (§8.2).
+async function dgFsWriteFile(handle,name,blob){
+  const fh=await handle.getFileHandle(name,{create:true});
+  const w=await fh.createWritable();
+  try{ await w.write(blob); }
+  catch(e){ try{ await w.abort(); }catch(_){} throw e; }
+  await w.close();
+}
 // ============ MOTOR DE RISCO POR INSTRUMENTO ============
 // P&L de uma ordem é denominado na MOEDA DE COTAÇÃO do par; o risco em $ precisa converter.
 const QUOTE_CCY={EURUSD:'USD',GBPUSD:'USD',AUDUSD:'USD',NZDUSD:'USD',US500:'USD',XAUUSD:'USD',
@@ -6391,6 +6763,7 @@ const ONBOARDING_STEPS=[
   {key:'reserves',label:'Reservas'},
   {key:'cash',label:'Caixa Central'},
   {key:'protect',label:'Proteção'},
+  {key:'database',label:'Base de Dados'}, // JPW-HJFGDE §5: termo de responsabilidade + pasta padrão
   {key:'consent',label:'Consentimento'}
 ];
 function savedOnboardingBroker(){
@@ -6429,6 +6802,10 @@ function getSavedOnboardingStepStatus(step){
       if(ob.epStatus==='Não vou utilizar.') return ob.epNoConfigAccepted?'warning':'critical';
       if(ob.epStatus==='Sim, vou utilizar.' && (!ob.epPlatform || ob.epPlatform==='Nenhuma.' || (ob.epPlatform==='Outra.'&&!String(ob.epPlatformOther||'').trim()))) return 'warning';
       return 'complete';
+    case 'database':
+      // JPW-HJFGDE §5: aceito uma vez, vale para a base; a pasta padrão é opcional e
+      // não muda o status (o cartão da Central acompanha o estado real do acesso).
+      return (S.dataGovernance&&S.dataGovernance.responsibility&&S.dataGovernance.responsibility.accepted)?'complete':'pending';
     case 'consent':
       return (ob.consentAccepted && ob.summaryAccepted && String(ob.consentOperator||ob.operador||'').trim())?'complete':'pending';
   }
@@ -8787,7 +9164,10 @@ function renderLedger(){
   tb.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',()=>{
     const i=+b.dataset.ldel;
     if(confirm('Remover o lançamento de '+S.ledger[i].data+'?')){
-      S.ledger.splice(i,1); syncSaldoAtuFromLedger(); save(); renderLedger(); renderDash(); renderParams(); render();
+      const dataRemovida=S.ledger[i].data;
+      S.ledger.splice(i,1); syncSaldoAtuFromLedger();
+      if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
+      save(); renderLedger(); renderDash(); renderParams(); render();
     }
   }));
   renderAcct();
@@ -8822,14 +9202,35 @@ function exportAudit(){
   a.click();
   URL.revokeObjectURL(a.href);
 }
-function exportFullBackup(){
-  const incluirSegredos=confirm('Incluir as SENHAS DE INVESTIDOR das contas neste backup?\n\nOK = inclui (arquivo com segredos em texto puro — guarde offline).\nCancelar = exporta sem senhas (mais seguro).');
-  const exportadoEm=new Date().toISOString();
-  let stateExport=S;
+// ---- Exportação da base (JPW-HJFGDE) ---------------------------------------------
+// Política de senhas de investidor: perguntada UMA vez por exportação, antes de resolver
+// o destino. Separada da montagem do arquivo porque o nome definitivo só é conhecido
+// depois da sondagem de colisão — e o operador não deve ser perguntado duas vezes.
+function dgAskIncludeSecrets(){
+  return confirm('Incluir as SENHAS DE INVESTIDOR das contas neste backup?\n\nOK = inclui (arquivo com segredos em texto puro — guarde offline).\nCancelar = exporta sem senhas (mais seguro).');
+}
+// Monta o arquivo do backup completo. O ENVELOPE é formato normativo e não muda aqui:
+// {tipo, versao, localStorageKey, exportadoEm, dataLocal, segredosIncluidos, state}.
+//
+// AUTOIDENTIFICAÇÃO (FAIL-04): o snapshot gravado declara a PRÓPRIA exportação. Antes,
+// o payload era uma fotografia do estado ANTERIOR ao incremento — o arquivo 000010
+// carregava por dentro lastSequence=9, e restaurá-lo fazia a base reemitir o 000010.
+// A colisão física só mascarava isso quando o arquivo original estivesse na mesma pasta;
+// em máquina nova, pasta vazia ou no fallback Downloads não há sondagem, e o número
+// saía duplicado. A sondagem é defesa adicional, nunca o mecanismo de continuidade.
+//
+// A identidade é escrita numa CÓPIA (structuredClone), nunca no objeto vivo: se a
+// gravação falhar, não há o que reverter — o estado em memória jamais foi tocado.
+function dgBuildBackupBlob(incluirSegredos, seq, filename, exportadoEm){
+  const stateExport=structuredClone(S);
   if(!incluirSegredos){
-    stateExport=structuredClone(S);
     if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
     if(stateExport.onboarding) stateExport.onboarding.investorPassword=''; // senha de investidor do onboarding também é segredo
+  }
+  if(stateExport.dataGovernance && stateExport.dataGovernance.export){
+    stateExport.dataGovernance.export.lastSequence=seq;
+    stateExport.dataGovernance.export.lastExportFile=filename;
+    stateExport.dataGovernance.export.lastExportAt=exportadoEm;
   }
   const payload={
     tipo:'jpwealth_full_backup',
@@ -8840,13 +9241,128 @@ function exportFullBackup(){
     segredosIncluidos:incluirSegredos,
     state:stateExport,
   };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  return new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+}
+// Download tradicional (fallback §15 e escolha excepcional §7). Padrão endurecido:
+// âncora no DOM e revogação adiada — revogar de forma síncrona após click() corta o
+// download em alguns navegadores.
+function dgDownloadViaAnchor(filename,blob){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='jpwealth_backup_completo_'+todayISO()+'.json';
+  a.download=filename;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(a.href);
-  return {filename:a.download,exportedAt:exportadoEm,segredosIncluidos:incluirSegredos};
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); if(a.parentNode) a.remove(); },0);
+}
+// Sucesso confirmado → e SÓ então o estado avança (§8.2): sequência, carimbo, arquivo,
+// changeLog e gravação. Uma exportação que falhou não deixa rastro de sucesso.
+function dgRegisterExportSuccess(seq,filename,exportadoEm,destino){
+  S.dataGovernance.export.lastSequence=seq;
+  S.dataGovernance.export.lastExportAt=exportadoEm;
+  S.dataGovernance.export.lastExportFile=filename;
+  if(typeof dgLogChange==='function') dgLogChange('database','exported',filename,
+    destino==='folder'?'Base exportada para a pasta padrão':'Base exportada via download do navegador');
+  save();
+  // mantém o cartão da Central em dia (guardas: a UI carrega depois deste script)
+  if(typeof renderDgStorageCard==='function') renderDgStorageCard();
+}
+// Exportação completa da base — agora async e orquestrada (JPW-HJFGDE §14).
+// Retorna meta {filename, exportedAt, segredosIncluidos, destination} em sucesso;
+// null quando nada foi exportado (cancelamento ou falha já explicada ao operador).
+// NUNCA lança e NUNCA faz fallback silencioso para Downloads (§7): se a pasta
+// configurada está inacessível, o operador decide — reautorizar, trocar de pasta ou
+// exportar excepcionalmente para Downloads, por escolha explícita.
+// opts.quiet: suprime o alert de sucesso (o fluxo chamador mostra a própria confirmação).
+// GUARDA DE REENTRÂNCIA (caça a bugs 2026-08-08): duas execuções simultâneas (duplo
+// clique) liam a MESMA lastSequence antes de qualquer registro e, no caminho pasta —
+// onde há awaits reais entre a sondagem de colisão e a gravação —, produziam o mesmo
+// nome de arquivo: a segunda gravação sobrescrevia a primeira, violando o §8.3.
+// Serializar por recusa é a correção honesta: a segunda tentativa não exporta nada,
+// diz o porquê, e nenhum estado é tocado.
+let dgExportEmAndamento=false;
+async function exportFullBackup(opts){
+  const quiet=!!(opts&&opts.quiet);
+  if(dgExportEmAndamento){
+    alert('Já existe uma exportação da base em andamento — aguarde ela terminar antes de iniciar outra.');
+    return null;
+  }
+  dgExportEmAndamento=true;
+  try{
+    return await dgExportFullBackupInner(quiet);
+  }finally{
+    dgExportEmAndamento=false;
+  }
+}
+async function dgExportFullBackupInner(quiet){
+  try{
+    // A pergunta sobre segredos vem primeiro e vale para toda a operação; o ARQUIVO só
+    // é montado quando sequência e nome forem definitivos (autoidentificação, FAIL-04).
+    const segredosIncluidos=dgAskIncludeSecrets();
+    const exportadoEm=new Date().toISOString();
+    const baseSeq=(S.dataGovernance&&S.dataGovernance.export&&S.dataGovernance.export.lastSequence)||0;
+    const supported=typeof dgFsSupported==='function' && dgFsSupported();
+    const configured=!!(S.dataGovernance&&S.dataGovernance.storage&&S.dataGovernance.storage.configured);
+    // Caminho tradicional: navegador sem suporte, ou pasta nunca configurada. Não é o
+    // fallback do §7 (não há pasta prometida sendo ignorada) — é o único caminho que
+    // existe, com a nomenclatura progressiva preservada. O navegador ainda pode sufixar
+    // " (1)" em colisão dentro de Downloads; nunca sobrescreve (comportamento nativo).
+    if(!supported || !configured){
+      const seq=baseSeq+1;
+      const filename=dgExportFileName(seq,new Date());
+      dgDownloadViaAnchor(filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+      dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
+      if(!quiet) alert('Base exportada via download do navegador:\n\n'+filename+(supported?'':'\n\nEste navegador não suporta pasta persistente (File System Access API) — as exportações usam o mecanismo padrão de download.'));
+      return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'};
+    }
+    // Pasta configurada: resolver acesso. Enquanto o operador não resolver (ou optar por
+    // Downloads explicitamente), NENHUM arquivo é gerado.
+    let {state,handle}=await dgFsStatus();
+    for(;;){
+      if(state==='authorized'){
+        // nome progressivo com proteção física de colisão (§8.3): nunca sobrescrever;
+        // em colisão a sequência avança até nome livre (teto de 1000 é rede de segurança)
+        let seq=baseSeq+1, filename=dgExportFileName(seq,new Date());
+        try{
+          let guard=0;
+          while(await dgFsFileExists(handle,filename)){
+            seq++; filename=dgExportFileName(seq,new Date());
+            if(++guard>1000) throw new Error('Não foi possível encontrar um nome de arquivo livre na pasta.');
+          }
+          // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
+          // autoidentificando com esta sequência e este nome
+          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+          dgRegisterExportSuccess(seq,filename,exportadoEm,'folder');
+          if(!quiet) alert('Base exportada para a pasta padrão "'+(S.dataGovernance.storage.folderDisplayPath||handle.name)+'":\n\n'+filename);
+          return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'};
+        }catch(e){
+          state='invalid'; // pasta removida/ilegível no meio do caminho — cai no diálogo abaixo
+        }
+        continue;
+      }
+      // prompt | denied | missing | invalid → decisão explícita do operador (§7).
+      // O diálogo vive em 40-app/16-storage-governance.js; sem ele (geometria degenerada
+      // de carregamento) não há como decidir — e decidir por Downloads em silêncio é
+      // exatamente o que o ticket proíbe.
+      if(typeof dgExportRecoveryDialog!=='function'){
+        alert('Não foi possível acessar a pasta padrão da base de dados.\n\nNenhum arquivo foi exportado. Abra Configurações → Dados e Segurança → Backup e Recuperação para reautorizar ou trocar a pasta.');
+        return null;
+      }
+      const decision=await dgExportRecoveryDialog(state);
+      if(decision==='downloads'){
+        const seq=baseSeq+1;
+        const filename=dgExportFileName(seq,new Date());
+        dgDownloadViaAnchor(filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+        dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
+        if(!quiet) alert('Base exportada excepcionalmente via download do navegador:\n\n'+filename+'\n\nA pasta padrão continua configurada e precisando de atenção.');
+        return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'};
+      }
+      if(decision==='retry'){ ({state,handle}=await dgFsStatus()); continue; }
+      return null; // cancelado — nada foi exportado e nada mudou
+    }
+  }catch(e){
+    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nNenhum estado de exportação foi alterado.');
+    return null;
+  }
 }
 function normalizeImportedState(raw){
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) throw new Error('JSON inválido: raiz precisa ser um objeto.');
@@ -8885,6 +9401,9 @@ function importFullBackupFile(file){
     if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
     if(jpWealthPersistenceIsBlocked() || requestEpoch!==jpWealthPersistenceEpoch()) return;
     S=imported;
+    // Auditoria resumida (JPW-HJFGDE §11): a importação entra no changeLog DA BASE
+    // IMPORTADA — é nela que o evento aconteceu e é ela que o próximo backup protege.
+    if(typeof dgLogChange==='function') dgLogChange('database','imported',file.name||'','Importação de backup realizada');
     // Integração A-005: uma importação VALIDADA é decisão legítima de sair do modo de
     // recuperação — mas o desbloqueio só se consolida após gravação comprovada; se a
     // escrita falhar, o modo de recuperação continua e a chave principal fica intacta.
@@ -9514,8 +10033,10 @@ function bindContab(){
     if(exist){
       if(!confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
       exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
+      if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
     } else {
       S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
+      if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
     }
     syncSaldoAtuFromLedger();
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';
@@ -9535,6 +10056,8 @@ function bindContab(){
     S.cycleRealizado=(S.cycleRealizado||0)+net;
     S.transitionLog.push({fase:'operação arquivada', ts:new Date().toISOString(),
       resumo:{resultado:net, cicloAcumulado:S.cycleRealizado}});
+    // auditoria resumida (JPW-HJFGDE §11); o transitionLog acima segue sendo o registro normativo
+    if(typeof dgLogChange==='function') dgLogChange('operation','archived','','Operação arquivada e resultado consolidado no ciclo');
     const sizes=[5,4,3,2];
     S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(sizes[pi]||3); });
     S.phaseUnlocked=[true,false,false,false];
@@ -10471,6 +10994,25 @@ function openOnboardingModal(mode, initialStep){
         <section class="onb-step" data-onbstep="protect">
           <div id="obEquityProtectorWrap"></div>
         </section>
+        <section class="onb-step" data-onbstep="database">
+          <div class="card" style="margin:0 0 14px; padding:14px 16px; box-shadow:none">
+            <h2 style="margin-bottom:10px">🗄 Responsabilidade sobre a base de dados <span class="art">obrigatório</span></h2>
+            <div style="font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+              <p style="margin-bottom:8px">A base de dados do JP Wealth contém informações essenciais para o funcionamento e histórico do sistema.</p>
+              <p style="margin-bottom:8px">O armazenamento, preservação e realização de cópias de segurança desta base são de responsabilidade do usuário. <b style="color:var(--ink)">O JP Wealth não deve ser considerado o único mecanismo de armazenamento ou backup dos dados.</b></p>
+              <p style="margin-bottom:10px">Recomenda-se manter cópias periódicas da base em localização segura e independente.</p>
+              <label style="display:flex; gap:10px; align-items:flex-start; color:var(--ink); font-size:calc(12.5px * var(--fs-scale)); cursor:pointer">
+                <input type="checkbox" id="obDbResp" style="margin-top:3px; width:auto" ${isEditMode&&S.dataGovernance&&S.dataGovernance.responsibility&&S.dataGovernance.responsibility.accepted?'checked':''}>
+                <span>Li e compreendo minha responsabilidade pelo armazenamento e backup da base de dados.</span>
+              </label>
+              <div class="modal-err" id="obDbRespErr">O aceite do termo de responsabilidade é obrigatório para concluir a configuração inicial.</div>
+            </div>
+          </div>
+          <div class="card" style="margin:0; padding:14px 16px; box-shadow:none">
+            <h2 style="margin-bottom:10px">Local de armazenamento da base <span class="art">opcional nesta etapa</span></h2>
+            <div id="obDgFolderSlot" style="font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6"></div>
+          </div>
+        </section>
         <section class="onb-step" data-onbstep="consent">
           <div class="card" style="margin:0; padding:14px 16px; border-color:var(--f4); background:var(--f4-bg); box-shadow:none">
             <h2 style="margin-bottom:10px; color:var(--f4)">🔒 Termo de Consentimento <span class="art" style="color:var(--f4)">obrigatório</span></h2>
@@ -10504,9 +11046,10 @@ function openOnboardingModal(mode, initialStep){
         <button type="button" class="onb-tab" data-onbtab="reserves"><span class="idx">04</span>Reservas</button>
         <button type="button" class="onb-tab" data-onbtab="cash"><span class="idx">05</span>Caixa Central</button>
         <button type="button" class="onb-tab" data-onbtab="protect"><span class="idx">06</span>Proteção</button>
-        <button type="button" class="onb-tab" data-onbtab="consent"><span class="idx">07</span>Consentimento</button>
+        <button type="button" class="onb-tab" data-onbtab="database"><span class="idx">07</span>Base de Dados</button>
+        <button type="button" class="onb-tab" data-onbtab="consent"><span class="idx">08</span>Consentimento</button>
         <div class="onb-progress"><i id="onbProgressBar"></i></div>
-        <div class="onb-progress-cap"><span>Completude</span><b id="onbProgressCap">0/7</b></div>
+        <div class="onb-progress-cap"><span>Completude</span><b id="onbProgressCap">0/8</b></div>
       </aside>
     </div>
     `;
@@ -10550,6 +11093,8 @@ function openOnboardingModal(mode, initialStep){
         if(epStatus==='Não vou utilizar.') return epNoConfigAccepted?'warning':'critical';
         return 'complete';
       }
+      case 'database':
+        return ($('obDbResp')&&$('obDbResp').checked)?'complete':'pending';
       case 'consent':
         return ($('obConsent')&&$('obConsent').checked)?'complete':'pending';
     }
@@ -11013,6 +11558,18 @@ function openOnboardingModal(mode, initialStep){
     const cashMetrics=centralCashCalc();
     const consentOperator=$('obOperador').value.trim();
     const consentAcceptedAt=isEditMode ? (ob.consentAcceptedAt||localDateTimeISO()) : localDateTimeISO();
+    // JPW-HJFGDE §5: registro do termo de responsabilidade da base. O gate no confirmar
+    // garante que o checkbox está marcado — aqui NUNCA se registra aceite não dado. Um
+    // aceite anterior é preservado com o carimbo original: re-salvar o formulário não
+    // "renova" o termo. Aplicado dentro de cada ramo, junto do commit do restante.
+    const aplicarTermoBase=()=>{
+      if(!S.dataGovernance || !S.dataGovernance.responsibility) return;
+      if(S.dataGovernance.responsibility.accepted) return;
+      if(!($('obDbResp')&&$('obDbResp').checked)) return;
+      S.dataGovernance.responsibility={accepted:true, acceptedAt:localDateTimeISO(),
+        version:(typeof DG_RESPONSIBILITY_VERSION!=='undefined')?DG_RESPONSIBILITY_VERSION:1};
+      if(typeof dgLogChange==='function') dgLogChange('database','responsibility_accepted','','Termo de responsabilidade da base aceito');
+    };
     const nextOnboarding={done:true, operador:$('obOperador').value.trim(), supervisor:$('obSupervisor').value.trim(),
       corretora:broker.name, plataforma:plataformaVal, alavCorretora:alavVal, moedaBase:normalizeAccountCurrency($('obMoedaBase').value),
       brokerLogin:loginVal, investorPassword:passVal, brokerServer:serverVal,
@@ -11042,6 +11599,8 @@ function openOnboardingModal(mode, initialStep){
       consentAcceptedAt, consentOperator};
     if(isEditMode){
       S.onboarding=nextOnboarding;
+      aplicarTermoBase();
+      if(typeof dgLogChange==='function') dgLogChange('onboarding','updated','','Formulário de início editado');
       S.params.saldoIni=saldo;
       S.params.inicio=dataInicio;
       S.period=S.period||{}; S.period.profile=pr.key;
@@ -11079,6 +11638,8 @@ function openOnboardingModal(mode, initialStep){
           quarentenaPreservada:!!S.quarantine}});
     }
     S.onboarding=nextOnboarding;
+    aplicarTermoBase();
+    if(typeof dgLogChange==='function') dgLogChange('onboarding','completed','','Período iniciado — configuração inicial concluída');
     S.params.saldoIni=saldo; S.params.saldoAtu=saldo;
     S.params.inicio=nextPeriodMeta.inicio;
     S.period=S.period||{}; S.period.profile=pr.key;
@@ -11766,6 +12327,11 @@ function openOnboardingModal(mode, initialStep){
   $('obSaldo').addEventListener('input', ()=>{ paintEP(); paintSim(); updateReservesUI(); paintEquityProtectorStep(); invalidateSummary(); });
   $('obMoedaBase').addEventListener('change', ()=>{ paintEquityProtectorStep(); invalidateSummary(); });
   $('obConsent').addEventListener('change',()=>{ if($('obConsent').checked) $('obConsentErr').classList.remove('show'); invalidateSummary(); });
+  // Etapa Base de Dados (JPW-HJFGDE §5/§6): termo obrigatório + pasta padrão opcional.
+  const obDbRespEl=$('obDbResp');
+  if(obDbRespEl) obDbRespEl.addEventListener('change',()=>{ if(obDbRespEl.checked){ const e1=$('obDbRespErr'); if(e1) e1.classList.remove('show'); } invalidateSummary(); });
+  const obDgSlot=$('obDgFolderSlot');
+  if(obDgSlot && typeof renderDgFolderPanel==='function') renderDgFolderPanel(obDgSlot);
   if($('modalCancel')) $('modalCancel').addEventListener('click', closeModal);
   $('modalConfirm').addEventListener('click',()=>{
     const saldo=parseFloat($('obSaldo').value)||0;
@@ -11783,6 +12349,10 @@ function openOnboardingModal(mode, initialStep){
     const propMinDaysVal = isPropFlow ? String(($('obPropMinDays')&&$('obPropMinDays').value)||propMinTradingDays||'').trim() : '';
     const propAbsenceVal = isPropFlow ? String(($('obPropAbsence')&&$('obPropAbsence').value)||propAbsenceRules||'').trim() : '';
     const restrictiveVal = isPropFlow ? ($('obPropRestrictive') ? $('obPropRestrictive').checked : restrictiveRuleAccepted) : false;
+    // JPW-HJFGDE §5: sem o termo de responsabilidade da base, a configuração inicial não
+    // conclui. O gate vem antes do consentimento porque a etapa 07 precede a 08 — o
+    // operador é levado à primeira pendência na ordem do formulário.
+    if(!($('obDbResp')&&$('obDbResp').checked)){ showOnboardingStep('database'); const e1=$('obDbRespErr'); if(e1) e1.classList.add('show'); return; }
     if(!$('obConsent').checked){ showOnboardingStep('consent'); $('obConsentErr').classList.add('show'); return; }
     if(!String(($('obOperador')&&$('obOperador').value)||'').trim()){ showOnboardingStep('ident'); alert('Informe o nome do operador.'); return; }
     if(!String(($('obSupervisor')&&$('obSupervisor').value)||'').trim()){ showOnboardingStep('ident'); alert('Informe o nome do supervisor(a).'); return; }
@@ -12226,8 +12796,14 @@ function wipeAllData(){
   const cleared=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
   if(!cleared.ok){ alert('Não foi possível limpar a chave principal: '+cleared.failures.join(', ')); return; }
   S=structuredClone(DEFAULTS);
+  // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
+  // junto. Fire-and-forget: sem metadados o handle já seria inerte; limpar evita órfão.
+  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
   window.__onbShown=false; // painel voltou ao início → questionário de início deve reaparecer
   boot();
+  // §12: base excluída → tela inicial canônica (DEFAULT_START_ROUTE), nunca a tela em
+  // que o operador por acaso estava quando confirmou a limpeza.
+  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   alert('A base do JP Wealth foi apagada e o painel voltou ao estado inicial. Preferências locais de interface e cópias de recuperação existentes foram preservadas.');
 }
 function bindConfig(){
@@ -12253,6 +12829,9 @@ function bindConfig(){
     const hoje=todayISO(), fim=addDaysISO(90);
     S.quarantine={inicio:hoje,fim};
     S.transitionLog.push({fase:'quarentena', ts:new Date().toISOString(), resumo:{motivo:'Encerramento compulsório formalizado', inicio:hoje, fim}});
+    // auditoria resumida da base (JPW-HJFGDE §11) — o transitionLog acima segue sendo o
+    // registro normativo; esta linha só alimenta "alterações desde o último backup".
+    if(typeof dgLogChange==='function') dgLogChange('quarantine','created','','Quarentena operacional formalizada ('+hoje+' → '+fim+')');
     save(); render(); renderPhases(); renderConfigQuarantine();
   });
 }
@@ -12561,10 +13140,14 @@ function renderSessionExportConfirmation(){
     renderSessionDeleteConfirmation('export');
   });
 }
-function beginSessionExport(){
+async function beginSessionExport(){
   try{
-    const meta=exportFullBackup();
-    if(!meta || !meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
+    // exportFullBackup é async (JPW-HJFGDE): resolve o destino (pasta padrão autorizada
+    // ou Downloads), aplica a nomenclatura progressiva e nunca lança nem faz fallback
+    // silencioso. quiet: a confirmação visual deste fluxo é o próprio modal de sessão.
+    const meta=await exportFullBackup({quiet:true});
+    if(!meta) throw new Error('A exportação não foi concluída — nenhum arquivo foi gerado. Resolva o acesso à pasta padrão da base (ou exporte excepcionalmente para Downloads) e tente novamente.');
+    if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
     sessionFinalizeExportMeta=meta;
     sessionFinalizeExportFingerprint=sessionStateFingerprint();
     sessionFinalizeExportAcknowledged=false;
@@ -12646,11 +13229,17 @@ function finalizeJPWealthSession(){
   if(!report.ok){ renderSessionCleanupError(report); return; }
   S=emptyJPWealthState();
   persistNotesAfterSessionWipe();
+  // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
+  // junto (um handle órfão nunca deve reassociar sozinho uma base futura). Fire-and-
+  // forget: falha aqui não pode travar a finalização, e sem metadados o handle é inerte.
+  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
   window.__onbShown=true;
   clearSessionCheckpoint();
   resetSessionFinalizeEphemeralState();
   closeModal();
   boot();
+  // §12: aplicação sem base válida volta para a tela inicial canônica.
+  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   window.__onbShown=false;
   initSessionCheckpoint();
   showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagadas e continuam salvas.');
@@ -12674,6 +13263,12 @@ function boot(){
   // execução (linha final deste arquivo) a função ainda não existe, e o próprio módulo
   // de Notas se renderiza ao carregar (initMvpNotes); aqui cobre todos os boots seguintes.
   if(typeof renderMvpNotesHeader==='function') renderMvpNotesHeader();
+  // Governança de armazenamento (JPW-HJFGDE) — mesmo padrão de guarda: na PRIMEIRA
+  // execução o módulo (16-storage-governance.js, script tardio) ainda não carregou e se
+  // auto-renderiza ao carregar; aqui cobre os boots seguintes (import, wipe, finalize),
+  // quando o status da pasta e o aviso de 30 dias precisam refletir a base recém-trocada.
+  if(typeof renderDgStorageCard==='function') renderDgStorageCard();
+  if(typeof renderDgBackupBanner==='function') renderDgBackupBanner();
   enhanceFieldNotes();
   // cotações ao vivo sempre que o programa abre (SET 4 do lote) — alimenta grade, ATR% e stop vivo
   if(!fxAutoFetchedThisSession){ fxAutoFetchedThisSession=true; updateFxRates(); }
@@ -12753,7 +13348,7 @@ const SETTINGS_LEAVES={
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
   'tool-motor':{label:'Motor de Lote', group:'operations', desc:'Position sizing com câmbio atualizado e teto por operação.', terms:['motor de lote','position sizing','lote','câmbio','nocional','teto','instrumento','perfis de risco']},
   'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
-  backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar']},
+  backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar','pasta padrão','pasta de armazenamento','sequência de exportação','backup confirmado','reautorizar pasta','alterações desde o backup']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
 };
 const SETTINGS_GROUP_BY_ID=Object.fromEntries(SETTINGS_GROUPS.map(g=>[g.id,g]));
@@ -13033,6 +13628,9 @@ function settingsNavigateToLeaf(leafId,options={}){
 function settingsSearchEntries(){
   const core=Object.entries(SETTINGS_LEAVES).flatMap(([id,leaf])=>[...leaf.terms,leaf.label].map(term=>({title:term,category:id})));
   const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
+    // Governança de armazenamento (JPW-HJFGDE) — cartão único, vários termos de entrada.
+    ['Armazenamento da Base','backup','#dgStorageCard'],['Pasta padrão de exportação','backup','#dgStorageCard'],
+    ['Confirmar backup','backup','#dgStorageCard'],['Reautorizar pasta','backup','#dgStorageCard'],
     // Notas do MVP (14-mvp-notes.js) — vários termos apontando para o mesmo card,
     // mesmo padrão de 'core' (multi-termo por entrada), já que aqui cada entrada só
     // casa com o próprio título.
@@ -16213,6 +16811,285 @@ function initFfNews(){
   ffNewsFetch(false);
 }
 initFfNews();
+// ============ GOVERNANÇA DE ARMAZENAMENTO — UI (JPW-HJFGDE) ============
+// Camada de apresentação sobre 00-core/06-storage-fs.js e os helpers dg* de
+// 04-persistence.js: cartão de status da pasta padrão (Central → Backup e Recuperação),
+// diálogo de recuperação da exportação (§7 — nunca fallback silencioso) e aviso de
+// backup a cada 30 dias (§10). Nenhuma regra de estado vive aqui — só leitura e gesto.
+function dgFmtDateTime(iso){
+  if(!iso) return '';
+  try{ return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso)); }
+  catch(e){ return String(iso); }
+}
+// ---- diálogo de recuperação da exportação (§6.4/§6.5/§7) -------------------------
+// Chamado por exportFullBackup() quando a pasta configurada não está acessível.
+// Resolve com: 'retry' (acesso possivelmente recuperado — tentar de novo),
+// 'downloads' (escolha EXPLÍCITA de exportar excepcionalmente para Downloads) ou
+// 'cancelled'. Overlay próprio (não usa #modalOverlay: precisa poder aparecer por cima
+// do fluxo de Finalizar Sessão, que já ocupa o overlay genérico).
+function dgExportRecoveryDialog(state){
+  return new Promise(resolve=>{
+    const prev=document.getElementById('dgRecoveryOverlay');
+    if(prev) prev.remove();
+    const st=(S.dataGovernance&&S.dataGovernance.storage)||{};
+    const nome=st.folderDisplayPath||st.folderName||'(pasta não identificada)';
+    const missing=state==='missing';
+    const titulo=missing?'Pasta da base não localizada neste navegador':'Não foi possível acessar a pasta padrão da base de dados';
+    const corpo=missing
+      ? 'A base informa a pasta anteriormente configurada, mas este navegador não possui a autorização local para acessá-la — isso é esperado após importar a base em outro dispositivo ou limpar o armazenamento do navegador.'
+      : (state==='prompt'
+        ? 'A pasta padrão da base está configurada, mas o JP Wealth precisa recuperar autorização para acessá-la.'
+        : (state==='denied'
+          ? 'O navegador negou o acesso à pasta padrão configurada.'
+          : 'A pasta padrão configurada não pôde ser lida ou gravada — ela pode ter sido movida ou removida do disco.'));
+    const overlay=document.createElement('div');
+    overlay.id='dgRecoveryOverlay';
+    overlay.className='dg-overlay';
+    overlay.innerHTML=
+      '<div class="dg-dialog" role="dialog" aria-modal="true" aria-labelledby="dgRecoveryTitle">'+
+      '<h3 id="dgRecoveryTitle">'+esc(titulo)+'</h3>'+
+      '<p class="dg-dialog-sub">'+esc(corpo)+'</p>'+
+      '<div class="dg-folder-fact"><span>'+(missing?'Pasta anteriormente configurada':'Pasta padrão')+'</span><b>'+esc(nome)+'</b></div>'+
+      '<p class="dg-dialog-warn">Nenhum arquivo foi exportado para a pasta configurada.</p>'+
+      '<div class="dg-dialog-actions">'+
+      (missing
+        ? '<button type="button" class="modal-btn confirm" id="dgActLocate">Localizar esta pasta</button>'
+        : '<button type="button" class="modal-btn confirm" id="dgActReauth">Reautorizar pasta</button>'+
+          '<button type="button" class="modal-btn cancel" id="dgActRepick">Escolher outra pasta</button>')+
+      '<button type="button" class="modal-btn cancel" id="dgActDownloads">Exportar excepcionalmente para Downloads</button>'+
+      '<button type="button" class="modal-btn cancel" id="dgActCancel">Cancelar</button>'+
+      '</div><p class="dg-dialog-note" id="dgActNote" role="status" aria-live="polite"></p></div>';
+    document.body.appendChild(overlay);
+    const note=overlay.querySelector('#dgActNote');
+    function done(result){
+      document.removeEventListener('keydown',onKey,true);
+      overlay.remove();
+      resolve(result);
+    }
+    function onKey(e){
+      if(e.key==='Escape'){ e.stopPropagation(); e.preventDefault(); done('cancelled'); return; }
+      if(e.key==='Tab'){
+        // ciclo de foco mínimo dentro do diálogo — nada atrás dele é operável
+        const focusables=[...overlay.querySelectorAll('button')];
+        if(!focusables.length) return;
+        const first=focusables[0], last=focusables[focusables.length-1];
+        if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+      }
+    }
+    document.addEventListener('keydown',onKey,true);
+    const reauth=overlay.querySelector('#dgActReauth');
+    if(reauth) reauth.addEventListener('click',async()=>{
+      const handle=await dgFsLoadHandle();
+      if(!handle){ note.textContent='A autorização local não existe mais neste navegador — escolha a pasta novamente.'; return; }
+      const perm=await dgFsRequestPermission(handle);
+      if(perm==='granted'){ done('retry'); return; }
+      note.textContent='A autorização não foi concedida. Tente novamente, escolha outra pasta ou exporte para Downloads.';
+    });
+    const pick=async()=>{
+      const r=await dgFsPickFolder();
+      if(r.ok){ done('retry'); return; }
+      if(r.reason==='cancelled'){ note.textContent='Seleção de pasta cancelada — nada foi alterado.'; return; }
+      note.textContent=r.message||'Não foi possível configurar a pasta.';
+    };
+    const repick=overlay.querySelector('#dgActRepick');
+    if(repick) repick.addEventListener('click',pick);
+    const locate=overlay.querySelector('#dgActLocate');
+    if(locate) locate.addEventListener('click',pick);
+    overlay.querySelector('#dgActDownloads').addEventListener('click',()=>done('downloads'));
+    overlay.querySelector('#dgActCancel').addEventListener('click',()=>done('cancelled'));
+    overlay.addEventListener('mousedown',e=>{ if(e.target===overlay) done('cancelled'); });
+    const firstBtn=overlay.querySelector('.dg-dialog-actions button');
+    if(firstBtn) firstBtn.focus();
+  });
+}
+// ---- cartão de status na Central (§6/§18) ----------------------------------------
+function dgChangesBreakdown(changes){
+  const ENT={ledger:'fechamento(s) diário(s)',operation:'operação(ões)',quarantine:'quarentena',
+    database:'base de dados',storage:'pasta de armazenamento',backup:'backup',
+    onboarding:'configuração do período',config:'configuração(ões)'};
+  // Toda ação emitida por dgLogChange() precisa de entrada aqui: o fallback `ACT[act]||act`
+  // existe para não quebrar, mas exibir o slug cru ('responsibility_accepted') vaza
+  // vocabulário interno para o operador. Ao criar uma ação nova, mapeie-a junto.
+  const ACT={created:'registrado(s)',updated:'atualizado(s)',deleted:'removido(s)',
+    imported:'importada',exported:'exportada',confirmed:'confirmado',archived:'arquivada(s)',
+    configured:'configurada',completed:'concluída',
+    responsibility_accepted:'— termo de responsabilidade aceito'};
+  const counts=new Map();
+  changes.forEach(e=>{
+    const k=e.entity+'|'+e.action;
+    counts.set(k,(counts.get(k)||0)+1);
+  });
+  return [...counts.entries()].map(([k,n])=>{
+    const [ent,act]=k.split('|');
+    return n+' × '+(ENT[ent]||ent)+' '+(ACT[act]||act);
+  });
+}
+async function renderDgStorageCard(){
+  const box=document.getElementById('dgStorageCard'); if(!box) return;
+  const dg=S.dataGovernance||{};
+  const supported=typeof dgFsSupported==='function' && dgFsSupported();
+  const {state}=supported?await dgFsStatus():{state:'unsupported'};
+  const st=dg.storage||{};
+  let statusHtml='';
+  if(state==='unsupported'){
+    statusHtml='<p class="dg-status-note">Armazenamento em pasta personalizada não é suportado neste navegador.</p>'+
+      '<p class="dg-status-note">As exportações utilizarão o mecanismo padrão de download, mantendo a nomenclatura progressiva e o controle de backup.</p>'+
+      (st.configured?'<div class="dg-folder-fact"><span>Pasta configurada em outro navegador</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>':'');
+  }else if(state==='unconfigured'){
+    statusHtml='<p class="dg-status-note">Escolha a pasta padrão onde as exportações da base de dados JP Wealth serão armazenadas.</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" id="dgCardPick">Selecionar pasta</button></div>';
+  }else if(state==='authorized'){
+    statusHtml='<div class="dg-folder-fact"><span>Pasta padrão</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>'+
+      '<p class="dg-status-line dg-status-ok">Status: Acesso autorizado</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" id="dgCardPick">Alterar pasta</button>'+
+      '<button type="button" class="reset-btn" id="dgCardVerify">Verificar acesso</button></div>';
+  }else if(state==='missing'){
+    statusHtml='<div class="dg-folder-fact"><span>Pasta anteriormente configurada</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>'+
+      '<p class="dg-status-line dg-status-warn">Status: Autorização necessária — este navegador não possui a autorização local desta pasta (base importada de outro dispositivo, ou armazenamento local limpo).</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" id="dgCardPick">Localizar esta pasta</button></div>';
+  }else{ // prompt | denied
+    statusHtml='<div class="dg-folder-fact"><span>Pasta padrão</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>'+
+      '<p class="dg-status-line dg-status-warn">Status: Autorização necessária — o JP Wealth precisa recuperar autorização para acessar a pasta.</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" id="dgCardReauth">Reautorizar pasta</button>'+
+      '<button type="button" class="reset-btn" id="dgCardPick">Escolher outra pasta</button></div>';
+  }
+  const exp=dg.export||{};
+  const bk=dg.backup||{};
+  const changes=typeof dgChangesSinceLastBackup==='function'?dgChangesSinceLastBackup():[];
+  const age=typeof dgBackupAgeDays==='function'?dgBackupAgeDays():null;
+  const breakdown=dgChangesBreakdown(changes);
+  const detalhe=changes.slice(-30).reverse().map(e=>'<li><span>'+esc(dgFmtDateTime(e.ts))+'</span> — '+esc(e.label||e.entity+' '+e.action)+'</li>').join('');
+  box.innerHTML=
+    '<h4>Local de armazenamento da base</h4>'+statusHtml+
+    '<h4>Exportação e backup</h4>'+
+    '<dl class="dg-facts">'+
+    '<dt>Última exportação</dt><dd>'+(exp.lastExportFile?'<code>'+esc(exp.lastExportFile)+'</code> — '+esc(dgFmtDateTime(exp.lastExportAt)):'nenhuma exportação registrada')+'</dd>'+
+    '<dt>Próxima sequência</dt><dd>'+String((exp.lastSequence||0)+1).padStart(6,'0')+'</dd>'+
+    '<dt>Último backup confirmado</dt><dd>'+(bk.lastConfirmedAt?esc(dgFmtDateTime(bk.lastConfirmedAt))+' ('+age+' dia'+(age===1?'':'s')+' atrás)':'nunca confirmado')+'</dd>'+
+    '<dt>Alterações desde o último backup</dt><dd>'+(changes.length
+      ? changes.length+' alteração(ões) registrada(s)'+(breakdown.length?'<ul class="dg-breakdown"><li>'+breakdown.map(esc).join('</li><li>')+'</li></ul>':'')+
+        '<details class="dg-detail"><summary>Detalhamento cronológico (últimas '+Math.min(changes.length,30)+')</summary><ul class="dg-chrono">'+detalhe+'</ul></details>'
+      : 'nenhuma alteração registrada')+'</dd>'+
+    '</dl>'+
+    '<p class="dg-status-note">Exportar gera uma cópia da base; <b>backup confirmado</b> é a sua declaração de que uma cópia adequada está guardada — são eventos distintos.</p>'+
+    '<div class="dg-actions"><button type="button" class="reset-btn" id="dgCardConfirmBackup">Confirmar que possuo backup atualizado</button></div>';
+  const pickBtn=box.querySelector('#dgCardPick');
+  if(pickBtn) pickBtn.addEventListener('click',async()=>{
+    const r=await dgFsPickFolder();
+    if(!r.ok && r.reason==='error') alert(r.message||'Não foi possível configurar a pasta.');
+    renderDgStorageCard();
+  });
+  const reauthBtn=box.querySelector('#dgCardReauth');
+  if(reauthBtn) reauthBtn.addEventListener('click',async()=>{
+    const handle=await dgFsLoadHandle();
+    if(handle){ await dgFsRequestPermission(handle); }
+    renderDgStorageCard();
+  });
+  const verifyBtn=box.querySelector('#dgCardVerify');
+  if(verifyBtn) verifyBtn.addEventListener('click',async()=>{
+    const r=await dgFsVerifyAccess();
+    alert(r.ok?'Acesso à pasta padrão verificado com sucesso — leitura confirmada.':'A verificação falhou ('+esc(r.state)+'): '+(r.message||'a pasta não está acessível. Reautorize ou escolha outra pasta.'));
+    renderDgStorageCard();
+  });
+  const confirmBtn=box.querySelector('#dgCardConfirmBackup');
+  if(confirmBtn) confirmBtn.addEventListener('click',()=>{
+    // §10: a confirmação de backup exige gesto explícito e consciente — nunca automática.
+    if(!confirm('Confirmar que você possui um backup ATUALIZADO e acessível da base JP Wealth?\n\nIsto registra a data de hoje como último backup confirmado e zera a contagem de 30 dias. Confirme apenas se a cópia realmente existe fora deste navegador.')) return;
+    dgConfirmBackup();
+    renderDgStorageCard();
+    renderDgBackupBanner();
+  });
+}
+// ---- painel de pasta reutilizável (etapa Base de Dados do onboarding, §6) --------
+// Versão compacta do bloco de status do cartão: mesmo vocabulário de estados, ações
+// auto-religadas no próprio container. A pasta é OPCIONAL no onboarding — configurar
+// aqui só antecipa o que o cartão da Central faz.
+async function renderDgFolderPanel(box){
+  if(!box) return;
+  const supported=typeof dgFsSupported==='function' && dgFsSupported();
+  const {state}=supported?await dgFsStatus():{state:'unsupported'};
+  const st=(S.dataGovernance&&S.dataGovernance.storage)||{};
+  let html='';
+  if(state==='unsupported'){
+    html='<p>Armazenamento em pasta personalizada não é suportado neste navegador.</p>'+
+      '<p>As exportações utilizarão o mecanismo padrão de download, mantendo a nomenclatura progressiva e o controle de backup. Você pode configurar uma pasta padrão mais tarde, num navegador compatível (Chrome/Edge desktop), em Configurações → Dados e Segurança.</p>';
+  }else if(state==='unconfigured'){
+    html='<p>Escolha a pasta padrão onde as exportações da base de dados JP Wealth serão armazenadas. Você também pode fazer isso depois, em Configurações → Dados e Segurança.</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" data-dg-act="pick">Selecionar pasta</button></div>';
+  }else if(state==='authorized'){
+    html='<div class="dg-folder-fact"><span>Pasta configurada</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>'+
+      '<p class="dg-status-line dg-status-ok">Status: Acesso autorizado</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" data-dg-act="pick">Alterar pasta</button>'+
+      '<button type="button" class="reset-btn" data-dg-act="verify">Verificar acesso</button></div>';
+  }else if(state==='missing'){
+    html='<div class="dg-folder-fact"><span>Pasta anteriormente configurada</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>'+
+      '<p class="dg-status-line dg-status-warn">Este navegador não possui a autorização local desta pasta.</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" data-dg-act="pick">Localizar esta pasta</button></div>';
+  }else{
+    html='<div class="dg-folder-fact"><span>Pasta configurada</span><b>'+esc(st.folderDisplayPath||st.folderName)+'</b></div>'+
+      '<p class="dg-status-line dg-status-warn">Status: Autorização necessária.</p>'+
+      '<div class="dg-actions"><button type="button" class="reset-btn" data-dg-act="reauth">Reautorizar pasta</button>'+
+      '<button type="button" class="reset-btn" data-dg-act="pick">Escolher outra pasta</button></div>';
+  }
+  box.innerHTML=html;
+  box.querySelectorAll('[data-dg-act]').forEach(btn=>btn.addEventListener('click',async()=>{
+    const act=btn.dataset.dgAct;
+    if(act==='pick'){
+      const r=await dgFsPickFolder();
+      if(!r.ok && r.reason==='error') alert(r.message||'Não foi possível configurar a pasta.');
+    }else if(act==='reauth'){
+      const handle=await dgFsLoadHandle();
+      if(handle) await dgFsRequestPermission(handle);
+    }else if(act==='verify'){
+      const r=await dgFsVerifyAccess();
+      alert(r.ok?'Acesso à pasta verificado com sucesso.':'A verificação falhou: '+(r.message||'a pasta não está acessível.'));
+    }
+    renderDgFolderPanel(box);
+    if(typeof renderDgStorageCard==='function') renderDgStorageCard();
+  }));
+}
+// ---- aviso de backup 30 dias (§10) -----------------------------------------------
+// Barra discreta fixa no rodapé; some na sessão ao dispensar e reaparece na próxima
+// abertura se continuar devida. Não bloqueia nada — governança sem intrusão (§18).
+function renderDgBackupBanner(){
+  let el=document.getElementById('dgBackupBanner');
+  const due=typeof dgBackupDue==='function' && dgBackupDue();
+  if(!due || window.__dgBannerDismissed){ if(el) el.remove(); return; }
+  const age=dgBackupAgeDays();
+  const changes=dgChangesSinceLastBackup().length;
+  if(!el){
+    el=document.createElement('div');
+    el.id='dgBackupBanner';
+    el.className='dg-backup-banner';
+    document.body.appendChild(el);
+  }
+  el.innerHTML='<b>Backup recomendado</b><span>'+
+    (age===null?'Nenhum backup confirmado até agora':age+' dia'+(age===1?'':'s')+' desde o último backup confirmado')+
+    (changes?' — '+changes+' alteração(ões) acumulada(s) desde então':'')+'.</span>'+
+    '<button type="button" class="reset-btn" id="dgBannerExport">Exportar backup agora</button>'+
+    '<button type="button" class="reset-btn" id="dgBannerHave">Já possuo um backup atualizado</button>'+
+    '<button type="button" class="dg-banner-close" id="dgBannerClose" aria-label="Dispensar aviso de backup">✕</button>';
+  el.querySelector('#dgBannerExport').addEventListener('click',async()=>{
+    await exportFullBackup();
+    renderDgStorageCard();
+    renderDgBackupBanner();
+  });
+  el.querySelector('#dgBannerHave').addEventListener('click',()=>{
+    if(!confirm('Confirmar que você possui um backup ATUALIZADO e acessível da base JP Wealth?\n\nConfirme apenas se a cópia realmente existe fora deste navegador.')) return;
+    dgConfirmBackup();
+    renderDgStorageCard();
+    renderDgBackupBanner();
+  });
+  el.querySelector('#dgBannerClose').addEventListener('click',()=>{
+    window.__dgBannerDismissed=true;
+    renderDgBackupBanner();
+  });
+}
+// primeira renderização — boots seguintes (import, wipe, finalize) re-renderizam via
+// os guards em 06-boot.js, no mesmo padrão de renderMvpNotesHeader()
+renderDgStorageCard();
+renderDgBackupBanner();
 </script>
 </body>
 </html>

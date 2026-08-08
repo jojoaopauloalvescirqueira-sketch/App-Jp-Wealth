@@ -21,6 +21,7 @@ const ONBOARDING_STEPS=[
   {key:'reserves',label:'Reservas'},
   {key:'cash',label:'Caixa Central'},
   {key:'protect',label:'Proteção'},
+  {key:'database',label:'Base de Dados'}, // JPW-HJFGDE §5: termo de responsabilidade + pasta padrão
   {key:'consent',label:'Consentimento'}
 ];
 function savedOnboardingBroker(){
@@ -59,6 +60,10 @@ function getSavedOnboardingStepStatus(step){
       if(ob.epStatus==='Não vou utilizar.') return ob.epNoConfigAccepted?'warning':'critical';
       if(ob.epStatus==='Sim, vou utilizar.' && (!ob.epPlatform || ob.epPlatform==='Nenhuma.' || (ob.epPlatform==='Outra.'&&!String(ob.epPlatformOther||'').trim()))) return 'warning';
       return 'complete';
+    case 'database':
+      // JPW-HJFGDE §5: aceito uma vez, vale para a base; a pasta padrão é opcional e
+      // não muda o status (o cartão da Central acompanha o estado real do acesso).
+      return (S.dataGovernance&&S.dataGovernance.responsibility&&S.dataGovernance.responsibility.accepted)?'complete':'pending';
     case 'consent':
       return (ob.consentAccepted && ob.summaryAccepted && String(ob.consentOperator||ob.operador||'').trim())?'complete':'pending';
   }

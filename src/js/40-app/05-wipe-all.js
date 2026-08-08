@@ -20,8 +20,14 @@ function wipeAllData(){
   const cleared=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
   if(!cleared.ok){ alert('Não foi possível limpar a chave principal: '+cleared.failures.join(', ')); return; }
   S=structuredClone(DEFAULTS);
+  // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
+  // junto. Fire-and-forget: sem metadados o handle já seria inerte; limpar evita órfão.
+  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
   window.__onbShown=false; // painel voltou ao início → questionário de início deve reaparecer
   boot();
+  // §12: base excluída → tela inicial canônica (DEFAULT_START_ROUTE), nunca a tela em
+  // que o operador por acaso estava quando confirmou a limpeza.
+  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   alert('A base do JP Wealth foi apagada e o painel voltou ao estado inicial. Preferências locais de interface e cópias de recuperação existentes foram preservadas.');
 }
 function bindConfig(){
@@ -47,6 +53,9 @@ function bindConfig(){
     const hoje=todayISO(), fim=addDaysISO(90);
     S.quarantine={inicio:hoje,fim};
     S.transitionLog.push({fase:'quarentena', ts:new Date().toISOString(), resumo:{motivo:'Encerramento compulsório formalizado', inicio:hoje, fim}});
+    // auditoria resumida da base (JPW-HJFGDE §11) — o transitionLog acima segue sendo o
+    // registro normativo; esta linha só alimenta "alterações desde o último backup".
+    if(typeof dgLogChange==='function') dgLogChange('quarantine','created','','Quarentena operacional formalizada ('+hoje+' → '+fim+')');
     save(); render(); renderPhases(); renderConfigQuarantine();
   });
 }

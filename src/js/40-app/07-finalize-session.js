@@ -230,10 +230,14 @@ function renderSessionExportConfirmation(){
     renderSessionDeleteConfirmation('export');
   });
 }
-function beginSessionExport(){
+async function beginSessionExport(){
   try{
-    const meta=exportFullBackup();
-    if(!meta || !meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
+    // exportFullBackup é async (JPW-HJFGDE): resolve o destino (pasta padrão autorizada
+    // ou Downloads), aplica a nomenclatura progressiva e nunca lança nem faz fallback
+    // silencioso. quiet: a confirmação visual deste fluxo é o próprio modal de sessão.
+    const meta=await exportFullBackup({quiet:true});
+    if(!meta) throw new Error('A exportação não foi concluída — nenhum arquivo foi gerado. Resolva o acesso à pasta padrão da base (ou exporte excepcionalmente para Downloads) e tente novamente.');
+    if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
     sessionFinalizeExportMeta=meta;
     sessionFinalizeExportFingerprint=sessionStateFingerprint();
     sessionFinalizeExportAcknowledged=false;
@@ -315,11 +319,17 @@ function finalizeJPWealthSession(){
   if(!report.ok){ renderSessionCleanupError(report); return; }
   S=emptyJPWealthState();
   persistNotesAfterSessionWipe();
+  // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
+  // junto (um handle órfão nunca deve reassociar sozinho uma base futura). Fire-and-
+  // forget: falha aqui não pode travar a finalização, e sem metadados o handle é inerte.
+  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
   window.__onbShown=true;
   clearSessionCheckpoint();
   resetSessionFinalizeEphemeralState();
   closeModal();
   boot();
+  // §12: aplicação sem base válida volta para a tela inicial canônica.
+  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   window.__onbShown=false;
   initSessionCheckpoint();
   showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagadas e continuam salvas.');

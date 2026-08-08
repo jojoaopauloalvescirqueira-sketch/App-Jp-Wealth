@@ -378,9 +378,123 @@ function mvpNotesNormalizeState(){
     .map(item=>mvpNotesNormalizeItem(item,seenIds,validIds,ambiguousIds,seenTickets,reserved))
     .filter(Boolean);
 }
+// ---- Governança da base de dados (JPW-HJFGDE) ------------------------------------
+// Constantes e normalização do agregado S.dataGovernance. A lógica de filesystem vive
+// em 06-storage-fs.js (IndexedDB + File System Access); aqui ficam só as regras de
+// ESTADO: schema, sequência de exportação, backups confirmados e auditoria resumida.
+const DG_SCHEMA_VERSION=1;
+const DG_RESPONSIBILITY_VERSION=1; // versão do texto do termo de responsabilidade
+const DG_BACKUP_DUE_DAYS=30;       // aviso de backup após N dias sem confirmação (§10)
+// Teto do changeLog: auditoria RESUMIDA, não histórico infinito. 400 entradas cobrem
+// meses de operação real e mantêm o custo no localStorage desprezível; poda pela frente
+// (mais antigas saem primeiro). O resumo "N alterações desde o backup" continua correto
+// enquanto o log não podar entradas posteriores a lastConfirmedAt — com 400 de folga,
+// isso exigiria 400 alterações sem nenhum backup, exatamente o cenário que o aviso de
+// 30 dias existe para impedir.
+const DG_CHANGELOG_MAX=400;
+function dgId(){ return 'dg_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// Nome progressivo de exportação (§8): legível, determinístico, ordenável.
+//   JP_WEALTH_DB_000042_2026-08-08_0026.json
+// .json é a extensão real já usada pelo backup completo. Sequência com 6 dígitos
+// preserva ordenação lexicográfica até 999999; data/hora local do operador (o backup é
+// um artefato humano — a hora que ele vê no relógio é a que procura depois no Finder).
+function dgExportFileName(seq,when){
+  const t=when instanceof Date?when:new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return 'JP_WEALTH_DB_'+String(Math.max(1,Math.round(seq))).padStart(6,'0')
+    +'_'+t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())
+    +'_'+pad(t.getHours())+pad(t.getMinutes())+'.json';
+}
+// Registra um evento no log resumido. NÃO chama save(): quem muta o estado é quem
+// persiste — todos os pontos instrumentados já chamam save() logo depois, e o log entra
+// na mesma gravação. label é o texto humano do detalhamento cronológico (§11).
+function dgLogChange(entity,action,recordId,label){
+  if(!S.dataGovernance || !Array.isArray(S.dataGovernance.changeLog)) return;
+  S.dataGovernance.changeLog.push({
+    id:dgId(), ts:new Date().toISOString(),
+    entity:String(entity||''), action:String(action||''),
+    recordId:recordId==null?'':String(recordId), label:String(label||''),
+  });
+  if(S.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
+    S.dataGovernance.changeLog=S.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
+  }
+}
+// Alterações desde o último backup CONFIRMADO (§11). Sem confirmação nunca feita,
+// tudo que está no log conta. Retorna as entradas em ordem cronológica.
+function dgChangesSinceLastBackup(){
+  const dg=S.dataGovernance||{};
+  const since=dg.backup&&dg.backup.lastConfirmedAt?dg.backup.lastConfirmedAt:'';
+  const log=Array.isArray(dg.changeLog)?dg.changeLog:[];
+  return since?log.filter(e=>e.ts>since):log.slice();
+}
+// Dias inteiros desde o último backup confirmado; null = nunca confirmado.
+function dgBackupAgeDays(){
+  const dg=S.dataGovernance||{};
+  const iso=dg.backup&&dg.backup.lastConfirmedAt;
+  if(!iso) return null;
+  const t=Date.parse(iso);
+  if(!Number.isFinite(t)) return null;
+  return Math.floor((Date.now()-t)/86400000);
+}
+// Aviso devido (§10): 30 dias desde a última confirmação. "Nunca confirmado" só cobra
+// depois que existe o que proteger — base com atividade (onboarding concluído) e alguma
+// alteração registrada; senão o aviso nasceria junto com a base vazia, e intrusão é
+// exatamente o que o §18 pede para evitar.
+function dgBackupDue(){
+  const age=dgBackupAgeDays();
+  if(age!==null) return age>=DG_BACKUP_DUE_DAYS;
+  return !!(S.onboarding&&S.onboarding.done) && dgChangesSinceLastBackup().length>0;
+}
+// Confirmação explícita de backup em dia (§9/§10): SÓ por gesto do operador, nunca como
+// efeito colateral de exportar. Registra o momento e a sequência coberta.
+function dgConfirmBackup(){
+  if(!S.dataGovernance) return;
+  S.dataGovernance.backup.lastConfirmedAt=new Date().toISOString();
+  S.dataGovernance.backup.lastConfirmedExportSequence=S.dataGovernance.export.lastSequence||0;
+  dgLogChange('backup','confirmed','','Backup confirmado pelo operador');
+  save();
+}
+// Normalização do agregado — mesma disciplina do resto do migrate(): base antiga sem o
+// agregado já recebeu DEFAULTS acima; aqui valida forma campo a campo, sem perda e sem
+// inventar dado. Um termo nunca aceito continua não aceito; uma sequência absurda vira 0
+// (nunca "some" um arquivo já exportado — o número só cresce a partir do que há).
+function dgNormalizeState(){
+  if(!S.dataGovernance || typeof S.dataGovernance!=='object' || Array.isArray(S.dataGovernance)){
+    S.dataGovernance=structuredClone(DEFAULTS.dataGovernance);
+  }
+  const dg=S.dataGovernance;
+  for(const k in DEFAULTS.dataGovernance){ if(!(k in dg)) dg[k]=structuredClone(DEFAULTS.dataGovernance[k]); }
+  dg.schemaVersion=DG_SCHEMA_VERSION;
+  if(!dg.responsibility || typeof dg.responsibility!=='object') dg.responsibility=structuredClone(DEFAULTS.dataGovernance.responsibility);
+  dg.responsibility.accepted=dg.responsibility.accepted===true;
+  dg.responsibility.acceptedAt=dg.responsibility.accepted?String(dg.responsibility.acceptedAt||''):'';
+  dg.responsibility.version=Number.isFinite(+dg.responsibility.version)&&+dg.responsibility.version>0?Math.round(+dg.responsibility.version):DG_RESPONSIBILITY_VERSION;
+  if(!dg.storage || typeof dg.storage!=='object') dg.storage=structuredClone(DEFAULTS.dataGovernance.storage);
+  dg.storage.configured=dg.storage.configured===true;
+  dg.storage.folderName=String(dg.storage.folderName||'');
+  dg.storage.folderDisplayPath=String(dg.storage.folderDisplayPath||'');
+  dg.storage.configuredAt=String(dg.storage.configuredAt||'');
+  // metadado sem nome de pasta é metadado vazio — não existe "configurado" sem pasta
+  if(dg.storage.configured && !dg.storage.folderName) dg.storage.configured=false;
+  if(!dg.export || typeof dg.export!=='object') dg.export=structuredClone(DEFAULTS.dataGovernance.export);
+  const seq=+dg.export.lastSequence;
+  dg.export.lastSequence=Number.isFinite(seq)&&seq>0?Math.round(seq):0;
+  dg.export.lastExportAt=String(dg.export.lastExportAt||'');
+  dg.export.lastExportFile=String(dg.export.lastExportFile||'');
+  if(!dg.backup || typeof dg.backup!=='object') dg.backup=structuredClone(DEFAULTS.dataGovernance.backup);
+  dg.backup.lastConfirmedAt=String(dg.backup.lastConfirmedAt||'');
+  const cseq=+dg.backup.lastConfirmedExportSequence;
+  dg.backup.lastConfirmedExportSequence=Number.isFinite(cseq)&&cseq>0?Math.round(cseq):0;
+  dg.changeLog=(Array.isArray(dg.changeLog)?dg.changeLog:[])
+    .filter(e=>e&&typeof e==='object'&&typeof e.ts==='string'&&e.ts)
+    .map(e=>({id:String(e.id||dgId()), ts:e.ts, entity:String(e.entity||''),
+      action:String(e.action||''), recordId:String(e.recordId||''), label:String(e.label||'')}))
+    .slice(-DG_CHANGELOG_MAX);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
+  dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -690,9 +804,10 @@ function clearLoadRecoveryWarning(){
 // Por isso a checagem de existência acontece no clique, não na criação do aviso.
 function persistenceAlertExportBackup(){
   // Serializa o S em memória: não depende de nenhuma gravação anterior ter dado certo,
-  // que é exatamente a razão de existir este botão. Na falha de SERIALIZAÇÃO, porém,
-  // exportFullBackup() tende a lançar pelo mesmo motivo — o try/catch impede que o
-  // clique vire exceção não tratada e diz a verdade ao operador.
+  // que é exatamente a razão de existir este botão. exportFullBackup() é async
+  // (JPW-HJFGDE) e reporta as próprias falhas — inclusive a de serialização — com
+  // alert interno, sem nunca rejeitar; o try/catch abaixo cobre apenas os ramos
+  // síncronos restantes deste função.
   try{
     if(typeof exportFullBackup==='function'){ exportFullBackup(); return; }
     if(typeof openSettingsModal==='function'){ openSettingsModal('backup', persistenceAlertEl()); return; }

@@ -4098,3 +4098,71 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 .dash-layout-card-menu button[aria-checked="true"]{color:var(--jp-action); font-weight:600}
 .dash-layout-card-menu button[aria-checked="true"] .dash-layout-check{display:inline}
 .dash-layout-check{display:none; font-size:13px}
+
+/* ==========================================================
+   GOVERNANÇA DE ARMAZENAMENTO (JPW-HJFGDE)
+   Diálogo de recuperação da exportação, cartão da Central e
+   aviso de backup de 30 dias. Overlay próprio (não reutiliza
+   #modalOverlay): precisa aparecer POR CIMA do fluxo de
+   Finalizar Sessão, que já ocupa o overlay genérico — por isso
+   a camada é --jp-layer-toast, acima de --jp-layer-modal.
+   ========================================================== */
+.dg-overlay{
+  position:fixed; inset:0; background:rgba(5,5,10,.78); backdrop-filter:blur(4px);
+  z-index:var(--jp-layer-toast); display:flex; align-items:flex-start; justify-content:center;
+  padding:40px 16px; overflow-y:auto;
+}
+.dg-dialog{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  max-width:560px; width:100%; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.dg-dialog h3{font-size:calc(16px * var(--fs-scale)); margin-bottom:10px; color:var(--ink)}
+.dg-dialog-sub{font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:12px}
+.dg-dialog-warn{font-size:calc(12px * var(--fs-scale)); color:var(--f4); font-weight:600; margin:10px 0 14px}
+.dg-dialog-actions{display:flex; flex-direction:column; gap:8px; align-items:stretch}
+.dg-dialog-actions .modal-btn{width:100%}
+.dg-dialog-note{font-size:calc(11.5px * var(--fs-scale)); color:var(--ink-dim); margin-top:10px; min-height:1em}
+.dg-folder-fact{
+  display:flex; flex-direction:column; gap:2px; background:var(--panel-2);
+  border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; margin:10px 0;
+}
+.dg-folder-fact span{font-size:calc(10px * var(--fs-scale)); text-transform:uppercase; letter-spacing:.04em; color:var(--ink-dim); font-weight:700}
+.dg-folder-fact b{font-size:calc(13px * var(--fs-scale)); color:var(--ink); word-break:break-word}
+.dg-status-line{font-size:calc(12px * var(--fs-scale)); font-weight:600; margin:6px 0 10px; line-height:1.5}
+.dg-status-ok{color:var(--f1)}
+.dg-status-warn{color:var(--f3)}
+.dg-status-note{font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin:6px 0 10px}
+.dg-actions{display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 4px}
+#dgStorageCard h4{
+  font-size:calc(11px * var(--fs-scale)); text-transform:uppercase; letter-spacing:.05em;
+  color:var(--ink-dim); font-weight:700; margin:14px 0 6px;
+}
+#dgStorageCard h4:first-child{margin-top:0}
+.dg-facts{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:calc(12px * var(--fs-scale)); margin:6px 0 10px}
+.dg-facts dt{color:var(--ink-dim); white-space:nowrap}
+.dg-facts dd{color:var(--ink); margin:0; word-break:break-word}
+.dg-facts code{font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); background:var(--panel-2); border:1px solid var(--line); border-radius:4px; padding:1px 5px}
+.dg-breakdown{margin:6px 0 0 16px; color:var(--ink-dim)}
+.dg-breakdown li{margin:2px 0}
+.dg-detail{margin-top:8px}
+.dg-detail summary{cursor:pointer; color:var(--ink-dim); font-size:calc(11.5px * var(--fs-scale))}
+.dg-chrono{margin:8px 0 0 16px; color:var(--ink-dim); max-height:220px; overflow-y:auto}
+.dg-chrono li{margin:3px 0; line-height:1.5}
+.dg-chrono li span{color:var(--ink); font-family:var(--mono); font-size:calc(10.5px * var(--fs-scale))}
+.dg-backup-banner{
+  position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+  /* Sanduíche deliberado: acima do header sticky (40), ABAIXO da Central (60) e de
+     qualquer modal (200) — o aviso é um lembrete ambiente e nunca cobre um diálogo. */
+  z-index:50; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  max-width:min(720px, calc(100vw - 32px));
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:10px 14px; box-shadow:0 12px 40px rgba(0,0,0,.45);
+  font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim);
+}
+.dg-backup-banner b{color:var(--ink)}
+.dg-backup-banner .reset-btn{margin:0}
+.dg-banner-close{
+  background:none; border:none; color:var(--ink-dim); cursor:pointer;
+  font-size:calc(13px * var(--fs-scale)); padding:4px 6px; border-radius:6px;
+}
+.dg-banner-close:hover{color:var(--ink); background:var(--panel-2)}

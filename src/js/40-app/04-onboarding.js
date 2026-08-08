@@ -704,6 +704,25 @@ function openOnboardingModal(mode, initialStep){
         <section class="onb-step" data-onbstep="protect">
           <div id="obEquityProtectorWrap"></div>
         </section>
+        <section class="onb-step" data-onbstep="database">
+          <div class="card" style="margin:0 0 14px; padding:14px 16px; box-shadow:none">
+            <h2 style="margin-bottom:10px">🗄 Responsabilidade sobre a base de dados <span class="art">obrigatório</span></h2>
+            <div style="font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+              <p style="margin-bottom:8px">A base de dados do JP Wealth contém informações essenciais para o funcionamento e histórico do sistema.</p>
+              <p style="margin-bottom:8px">O armazenamento, preservação e realização de cópias de segurança desta base são de responsabilidade do usuário. <b style="color:var(--ink)">O JP Wealth não deve ser considerado o único mecanismo de armazenamento ou backup dos dados.</b></p>
+              <p style="margin-bottom:10px">Recomenda-se manter cópias periódicas da base em localização segura e independente.</p>
+              <label style="display:flex; gap:10px; align-items:flex-start; color:var(--ink); font-size:calc(12.5px * var(--fs-scale)); cursor:pointer">
+                <input type="checkbox" id="obDbResp" style="margin-top:3px; width:auto" ${isEditMode&&S.dataGovernance&&S.dataGovernance.responsibility&&S.dataGovernance.responsibility.accepted?'checked':''}>
+                <span>Li e compreendo minha responsabilidade pelo armazenamento e backup da base de dados.</span>
+              </label>
+              <div class="modal-err" id="obDbRespErr">O aceite do termo de responsabilidade é obrigatório para concluir a configuração inicial.</div>
+            </div>
+          </div>
+          <div class="card" style="margin:0; padding:14px 16px; box-shadow:none">
+            <h2 style="margin-bottom:10px">Local de armazenamento da base <span class="art">opcional nesta etapa</span></h2>
+            <div id="obDgFolderSlot" style="font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6"></div>
+          </div>
+        </section>
         <section class="onb-step" data-onbstep="consent">
           <div class="card" style="margin:0; padding:14px 16px; border-color:var(--f4); background:var(--f4-bg); box-shadow:none">
             <h2 style="margin-bottom:10px; color:var(--f4)">🔒 Termo de Consentimento <span class="art" style="color:var(--f4)">obrigatório</span></h2>
@@ -737,9 +756,10 @@ function openOnboardingModal(mode, initialStep){
         <button type="button" class="onb-tab" data-onbtab="reserves"><span class="idx">04</span>Reservas</button>
         <button type="button" class="onb-tab" data-onbtab="cash"><span class="idx">05</span>Caixa Central</button>
         <button type="button" class="onb-tab" data-onbtab="protect"><span class="idx">06</span>Proteção</button>
-        <button type="button" class="onb-tab" data-onbtab="consent"><span class="idx">07</span>Consentimento</button>
+        <button type="button" class="onb-tab" data-onbtab="database"><span class="idx">07</span>Base de Dados</button>
+        <button type="button" class="onb-tab" data-onbtab="consent"><span class="idx">08</span>Consentimento</button>
         <div class="onb-progress"><i id="onbProgressBar"></i></div>
-        <div class="onb-progress-cap"><span>Completude</span><b id="onbProgressCap">0/7</b></div>
+        <div class="onb-progress-cap"><span>Completude</span><b id="onbProgressCap">0/8</b></div>
       </aside>
     </div>
     `;
@@ -783,6 +803,8 @@ function openOnboardingModal(mode, initialStep){
         if(epStatus==='Não vou utilizar.') return epNoConfigAccepted?'warning':'critical';
         return 'complete';
       }
+      case 'database':
+        return ($('obDbResp')&&$('obDbResp').checked)?'complete':'pending';
       case 'consent':
         return ($('obConsent')&&$('obConsent').checked)?'complete':'pending';
     }
@@ -1246,6 +1268,18 @@ function openOnboardingModal(mode, initialStep){
     const cashMetrics=centralCashCalc();
     const consentOperator=$('obOperador').value.trim();
     const consentAcceptedAt=isEditMode ? (ob.consentAcceptedAt||localDateTimeISO()) : localDateTimeISO();
+    // JPW-HJFGDE §5: registro do termo de responsabilidade da base. O gate no confirmar
+    // garante que o checkbox está marcado — aqui NUNCA se registra aceite não dado. Um
+    // aceite anterior é preservado com o carimbo original: re-salvar o formulário não
+    // "renova" o termo. Aplicado dentro de cada ramo, junto do commit do restante.
+    const aplicarTermoBase=()=>{
+      if(!S.dataGovernance || !S.dataGovernance.responsibility) return;
+      if(S.dataGovernance.responsibility.accepted) return;
+      if(!($('obDbResp')&&$('obDbResp').checked)) return;
+      S.dataGovernance.responsibility={accepted:true, acceptedAt:localDateTimeISO(),
+        version:(typeof DG_RESPONSIBILITY_VERSION!=='undefined')?DG_RESPONSIBILITY_VERSION:1};
+      if(typeof dgLogChange==='function') dgLogChange('database','responsibility_accepted','','Termo de responsabilidade da base aceito');
+    };
     const nextOnboarding={done:true, operador:$('obOperador').value.trim(), supervisor:$('obSupervisor').value.trim(),
       corretora:broker.name, plataforma:plataformaVal, alavCorretora:alavVal, moedaBase:normalizeAccountCurrency($('obMoedaBase').value),
       brokerLogin:loginVal, investorPassword:passVal, brokerServer:serverVal,
@@ -1275,6 +1309,8 @@ function openOnboardingModal(mode, initialStep){
       consentAcceptedAt, consentOperator};
     if(isEditMode){
       S.onboarding=nextOnboarding;
+      aplicarTermoBase();
+      if(typeof dgLogChange==='function') dgLogChange('onboarding','updated','','Formulário de início editado');
       S.params.saldoIni=saldo;
       S.params.inicio=dataInicio;
       S.period=S.period||{}; S.period.profile=pr.key;
@@ -1312,6 +1348,8 @@ function openOnboardingModal(mode, initialStep){
           quarentenaPreservada:!!S.quarantine}});
     }
     S.onboarding=nextOnboarding;
+    aplicarTermoBase();
+    if(typeof dgLogChange==='function') dgLogChange('onboarding','completed','','Período iniciado — configuração inicial concluída');
     S.params.saldoIni=saldo; S.params.saldoAtu=saldo;
     S.params.inicio=nextPeriodMeta.inicio;
     S.period=S.period||{}; S.period.profile=pr.key;
@@ -1999,6 +2037,11 @@ function openOnboardingModal(mode, initialStep){
   $('obSaldo').addEventListener('input', ()=>{ paintEP(); paintSim(); updateReservesUI(); paintEquityProtectorStep(); invalidateSummary(); });
   $('obMoedaBase').addEventListener('change', ()=>{ paintEquityProtectorStep(); invalidateSummary(); });
   $('obConsent').addEventListener('change',()=>{ if($('obConsent').checked) $('obConsentErr').classList.remove('show'); invalidateSummary(); });
+  // Etapa Base de Dados (JPW-HJFGDE §5/§6): termo obrigatório + pasta padrão opcional.
+  const obDbRespEl=$('obDbResp');
+  if(obDbRespEl) obDbRespEl.addEventListener('change',()=>{ if(obDbRespEl.checked){ const e1=$('obDbRespErr'); if(e1) e1.classList.remove('show'); } invalidateSummary(); });
+  const obDgSlot=$('obDgFolderSlot');
+  if(obDgSlot && typeof renderDgFolderPanel==='function') renderDgFolderPanel(obDgSlot);
   if($('modalCancel')) $('modalCancel').addEventListener('click', closeModal);
   $('modalConfirm').addEventListener('click',()=>{
     const saldo=parseFloat($('obSaldo').value)||0;
@@ -2016,6 +2059,10 @@ function openOnboardingModal(mode, initialStep){
     const propMinDaysVal = isPropFlow ? String(($('obPropMinDays')&&$('obPropMinDays').value)||propMinTradingDays||'').trim() : '';
     const propAbsenceVal = isPropFlow ? String(($('obPropAbsence')&&$('obPropAbsence').value)||propAbsenceRules||'').trim() : '';
     const restrictiveVal = isPropFlow ? ($('obPropRestrictive') ? $('obPropRestrictive').checked : restrictiveRuleAccepted) : false;
+    // JPW-HJFGDE §5: sem o termo de responsabilidade da base, a configuração inicial não
+    // conclui. O gate vem antes do consentimento porque a etapa 07 precede a 08 — o
+    // operador é levado à primeira pendência na ordem do formulário.
+    if(!($('obDbResp')&&$('obDbResp').checked)){ showOnboardingStep('database'); const e1=$('obDbRespErr'); if(e1) e1.classList.add('show'); return; }
     if(!$('obConsent').checked){ showOnboardingStep('consent'); $('obConsentErr').classList.add('show'); return; }
     if(!String(($('obOperador')&&$('obOperador').value)||'').trim()){ showOnboardingStep('ident'); alert('Informe o nome do operador.'); return; }
     if(!String(($('obSupervisor')&&$('obSupervisor').value)||'').trim()){ showOnboardingStep('ident'); alert('Informe o nome do supervisor(a).'); return; }
