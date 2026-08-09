@@ -247,7 +247,7 @@ async function dgExportFullBackupInner(quiet){
       return null; // cancelado — nada foi exportado e nada mudou
     }
   }catch(e){
-    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nNenhum estado de exportação foi alterado.');
+    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nNenhum estado de exportação foi alterado. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos e notas).');
     return null;
   }
 }

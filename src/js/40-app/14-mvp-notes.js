@@ -1080,10 +1080,14 @@ function mvpNotesSetInspectorOpen(open){
   insp.classList.toggle('open',open);
   if(btn) btn.setAttribute('aria-expanded',String(open));
   if(open){
+    const editorBar=mvpn('mvpNotesEditorBar');
+    const editorBarHeight=editorBar&&!editorBar.hidden?editorBar.getBoundingClientRect().height:0;
+    insp.style.setProperty('--mvpn-inspector-top',Math.ceil(editorBarHeight)+'px');
     insp.innerHTML=mvpNotesInspectorHTML();
     bindMvpNotesInspector();
     const first=insp.querySelector('select'); if(first) first.focus();
   }else{
+    insp.style.removeProperty('--mvpn-inspector-top');
     const tinhaFoco=insp.contains(document.activeElement);
     insp.innerHTML='';
     if(btn && tinhaFoco) btn.focus(); // Escape/fechar devolve o foco ao [•••]

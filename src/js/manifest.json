@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "ed34deb089d1f7a599914ee793e8515aac4218af895eaf569a79c3bf924f4bdb"
+      "sha256": "96f4542201e1b7f0a43d020574aa87d121d1b3aaaa28cf952bd8799210237a8d"
     },
     {
       "order": 20,
@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/06-app-icons.js",
       "section": "PWA · ESCOLHA DO ÍCONE (2 variantes fixas, sem biblioteca de temas)",
-      "sha256": "658b62c1530cd9dcdb2649d369a12d62a94df14c68911f2ea5e7330fac837a98"
+      "sha256": "e4fd57607165d08c1f62bab25eaba386d9f3106b9f236097a2474d45f2bf1ae5"
     },
     {
       "order": 34,
@@ -254,7 +254,7 @@
       "order": 42,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "981b3a26260f05bf52b22675e15ffe9fd9672e635ba693f978f5be891e2a364b"
+      "sha256": "90c1fdcf4f8a467ce84f542dba656af8dfd18bbcbbfe77d332066ba00494cb41"
     },
     {
       "order": 43,

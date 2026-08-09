@@ -65,6 +65,7 @@ function selectAppIcon(choiceKey){
   window.location.reload();
 }
 function registerAppServiceWorker(){
+  if(window.JP_WEALTH_PORTABLE_BUILD===true) return;
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).catch(()=>{}),{once:true});
 }

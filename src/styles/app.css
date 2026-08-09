@@ -1585,6 +1585,7 @@
      reforço (0,2,0) a contagem zerada continuaria visível apesar do atributo. */
   .header-notes-badge[hidden]{display:none}
   #headerNotesBtn{position:relative}
+  #headerNotesBtn[hidden]{display:none!important}
   .mvp-notes-overlay{position:fixed; inset:0; z-index:var(--jp-layer-modal); display:none; background:rgba(4,7,12,.5)}
   .mvp-notes-overlay.show{display:block}
   .mvp-notes-drawer{
@@ -1804,7 +1805,7 @@
   .mvpn-inspector{display:none}
   .mvpn-inspector.open{
     display:flex; flex-direction:column; gap:10px;
-    position:absolute; top:0; right:0; bottom:0; z-index:2;
+    position:absolute; top:var(--mvpn-inspector-top,0px); right:0; bottom:0; z-index:2;
     /* Largura fixa confortável, mas nunca maior que a própria coluna do editor: com o
        editor no piso (320px) o inspector encolhe em vez de vazar. Rola por conta própria. */
     width:min(272px, calc(100% - 12px));
@@ -1876,7 +1877,7 @@
   .mvpn-folder-btn[aria-current="page"] .mvpn-folder-count{color:var(--ink-dim)}
   .mvpn-folder-kebab{position:relative; flex:none}
   .mvpn-folder-kebab summary{
-    list-style:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+    position:relative; z-index:2; list-style:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center;
     border-radius:6px; color:var(--ink-faint); cursor:pointer; font-size:14px;
   }
   .mvpn-folder-kebab summary::-webkit-details-marker{display:none}
@@ -1959,6 +1960,8 @@
     border:0; border-radius:999px; padding:7px 16px; background:var(--ink); color:var(--panel);
     font-weight:600; font-size:var(--fs-sm);
   }
+  html[data-ui-version="tesla-inspired"] .mvpn-editor-bar #mvpNotesSaveBtn[hidden],
+  .mvpn-editor-bar #mvpNotesSaveBtn[hidden]{display:none!important}
   .mvpn-editor-bar #mvpNotesSaveBtn:hover{opacity:.88}
   /* ===== MOBILE (≤920px): experiência própria em camadas, estilo Apple Notes =====
      Breakpoint elevado de 760 para 920 na Fase D, por aritmética e não por gosto: as três
@@ -2647,7 +2650,7 @@
       gap:var(--sp-2); padding-left:var(--sp-3);
     }
     html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .shell-menu-btn{min-height:36px; padding:0 var(--sp-4)}
-    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .header-action{width:36px; height:36px; min-width:36px}
+    html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .header-action{width:40px; height:40px; min-width:40px}
   }
 
   /* ==========================================================

@@ -4,6 +4,7 @@ const CACHE_NAME = `${CACHE_PREFIX}${JP_WEALTH_BUILD_ID}`;
 const ICON_CACHE_VERSION = '20260806';
 const PRECACHE_URLS = [
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
+  './assets/jp-wealth-logo.png',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
   './src/js/00-core/03-default-state.js', './src/js/00-core/04-persistence.js',
   './src/js/00-core/05-helpers.js', './src/js/00-core/06-storage-fs.js',
@@ -22,6 +23,9 @@ const PRECACHE_URLS = [
   './src/js/40-app/04-onboarding.js', './src/js/40-app/05-wipe-all.js',
   './src/js/40-app/06-app-icons.js', './src/js/40-app/07-finalize-session.js', './src/js/40-app/06-boot.js',
   './src/js/40-app/08-educational-content.js', './src/js/40-app/09-settings-modal.js',
+  './src/js/40-app/10-dashboard-immersive.js', './src/js/40-app/11-operational-shell.js',
+  './src/js/40-app/12-global-dashboard.js', './src/js/40-app/13-dashboard-layout.js',
+  './src/js/40-app/14-mvp-notes.js', './src/js/40-app/15-ff-news.js',
   './src/js/40-app/16-storage-governance.js',
   './manifests/jp-wealth.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
