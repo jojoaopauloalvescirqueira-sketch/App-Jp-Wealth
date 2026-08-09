@@ -273,27 +273,38 @@ function normalizeImportedState(raw){
 }
 function importFullBackupFile(file){
   if(!file) return;
-  if(jpWealthPersistenceIsBlocked()) resumeJPWealthPersistence();
+  // TRANSACIONAL: nenhum portão muda antes de o candidato estar lido, validado,
+  // normalizado E confirmado. A versão anterior chamava resumeJPWealthPersistence()
+  // já na entrada — antes do FileReader — e um arquivo inválido deixava o portão
+  // genérico reaberto mesmo com o modo de recuperação ainda ativo. O epoch capturado
+  // aqui congela a legitimidade do pedido: se o operador resolver a recuperação (ou
+  // outro fluxo mexer nos portões) entre escolher o arquivo e a leitura terminar,
+  // este import deixa de representar uma decisão sobre o estado vigente e é abortado.
   const requestEpoch=jpWealthPersistenceEpoch();
   const reader=new FileReader();
   reader.onload=()=>{
-    if(jpWealthPersistenceIsBlocked() || requestEpoch!==jpWealthPersistenceEpoch()) return;
+    if(requestEpoch!==jpWealthPersistenceEpoch()) return;
     let imported;
     try{
       imported=normalizeImportedState(JSON.parse(String(reader.result||'')));
     }catch(e){
-      alert('Backup inválido: '+(e&&e.message?e.message:'não foi possível ler o JSON.'));
+      // Falha ANTES da aplicação: estado, portões e modo de recuperação intactos.
+      alert('Backup inválido: '+(e&&e.message?e.message:'não foi possível ler o JSON.')+'\n\nNada foi alterado: o estado atual e as proteções de gravação permanecem exatamente como estavam.');
       return;
     }
     if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
-    if(jpWealthPersistenceIsBlocked() || requestEpoch!==jpWealthPersistenceEpoch()) return;
+    if(requestEpoch!==jpWealthPersistenceEpoch()) return;
+    // Só a partir daqui a operação se aplica — candidato validado e confirmado.
     S=imported;
     // Auditoria resumida (JPW-HJFGDE §11): a importação entra no changeLog DA BASE
     // IMPORTADA — é nela que o evento aconteceu e é ela que o próximo backup protege.
     if(typeof dgLogChange==='function') dgLogChange('database','imported',file.name||'','Importação de backup realizada');
     // Integração A-005: uma importação VALIDADA é decisão legítima de sair do modo de
-    // recuperação — mas o desbloqueio só se consolida após gravação comprovada; se a
-    // escrita falhar, o modo de recuperação continua e a chave principal fica intacta.
+    // recuperação — o portão genérico só reabre AGORA, com candidato aplicado, e o
+    // desbloqueio do recovery só se consolida após gravação comprovada; se a escrita
+    // falhar, jpWealthResolveRecoveryAndSave() restaura a flag de recuperação e a
+    // chave principal fica intacta.
+    if(jpWealthPersistenceIsBlocked()) resumeJPWealthPersistence();
     const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
     if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
     boot();

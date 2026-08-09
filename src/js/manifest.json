@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "501707dcee61ba4f560f6778f414f5b71b8b57c6aa8707a497aeb1b2e84c3d16"
+      "sha256": "6473ea52535945b5fa824ff3da9069a2ebec470e14d3c74300fd289534d2b9ea"
     },
     {
       "order": 5,
@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "96f4542201e1b7f0a43d020574aa87d121d1b3aaaa28cf952bd8799210237a8d"
+      "sha256": "53df71126abad9286c129f14622abbcc9c245abdd677e6e391791f3963cd6f3a"
     },
     {
       "order": 20,

@@ -18,9 +18,11 @@ function resumeJPWealthPersistence(){
 // inválido ou migração lançou), o app abre com DEFAULTS APENAS COMO ESTADO PROVISÓRIO
 // de diagnóstico: a chave principal fica intocada, uma cópia bruta é preservada e TODA
 // gravação fica vetada até decisão explícita do operador. A flag é própria (não o
-// bloqueio genérico) de propósito: resumeJPWealthPersistence() é chamado por
-// importFullBackupFile() ANTES da validação e por openOnboardingModal() — qualquer um
-// dos dois reabriria o portão genérico e o primeiro save() destruiria o banco original.
+// bloqueio genérico) de propósito, como defesa em profundidade: openOnboardingModal()
+// chama resumeJPWealthPersistence() e reabriria o portão genérico — sem esta flag, o
+// primeiro save() destruiria o banco original. (importFullBackupFile() também reabria
+// o portão ANTES da validação; hoje é transacional e só o reabre com candidato
+// validado e confirmado, mas a flag continua cobrindo qualquer fluxo futuro.)
 const jpWealthLoadRecovery={active:false, kind:null, raw:null, recoveryKey:null, lastError:null};
 function jpWealthLoadRecoveryActive(){ return jpWealthLoadRecovery.active; }
 function jpWealthFindExistingRecoveryKey(raw){
