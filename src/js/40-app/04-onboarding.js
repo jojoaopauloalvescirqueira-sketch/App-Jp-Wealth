@@ -1286,7 +1286,9 @@ function openOnboardingModal(mode, initialStep){
       propDailyDrawdown:propDailyVal, propMaxDrawdown:propMaxVal, propTrailingRule:propTrailingRuleVal,
       propTrailingDescription:propTrailingDescVal, propProfitTarget:propProfitVal, propMinTradingDays:propMinDaysVal,
       propAbsenceRules:propAbsenceVal, restrictiveRuleAccepted:restrictiveVal,
-      reserveMasterCapital:String(reserveMasterCapitalVal||''), reserveFcrRequired:String(reserveFcrRequiredVal||0), reserveFcrCurrent:String(reserveFcrCurrentVal||''),
+      /* ||0, não ||'': mesma grafia canônica da derivação em DEFAULTS e na migrate —
+         com capital zerado o campo deve dizer '0', nunca voltar ao '' pré-canônico. */
+      reserveMasterCapital:String(reserveMasterCapitalVal||0), reserveFcrRequired:String(reserveFcrRequiredVal||0), reserveFcrCurrent:String(reserveFcrCurrentVal||''),
       reserveFcrStatus:reserveFcrStatusVal, reserveMonthlyExpenses:String(reserveMonthlyExpensesVal||''), reserveFeoRequired:String(reserveFeoRequiredVal||0),
       reserveFeoCurrent:String(reserveFeoCurrentVal||''), reserveFeoStatus:reserveFeoStatusVal,
       reserveFcrCoveragePct:String(reserveMetrics.fcrCoverage||0), reserveFeoCoveragePct:String(reserveMetrics.feoCoverage||0),

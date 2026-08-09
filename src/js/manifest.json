@@ -20,7 +20,7 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "63defb4cace0eb56d30e150e55bcec404aa6396e1462e5f3bc47b6fd674e7c30"
+      "sha256": "bc7cb8c30ca73000044818424fa47f0e7ca765187c0eb171abb566ba7a5b1653"
     },
     {
       "order": 4,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "ecdc115881921fd06d89fd7ab927c2b08f5c45e5fce31a07984f5ffcaf5d3973"
+      "sha256": "68e79bfa5bf42be057b6def0cce7d5c0197b1b47b29e307bab5ff0992776c995"
     },
     {
       "order": 32,
@@ -206,7 +206,7 @@
       "order": 34,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "ec0f30496b4fd76e607c7a6a3758305517da9dcd9efd6f72f7aacd6c8e278e61"
+      "sha256": "619b013fc3f5cf9ddc50f0991f22ab47d4f98d138abdd164c6a2ba0656a2e459"
     },
     {
       "order": 35,

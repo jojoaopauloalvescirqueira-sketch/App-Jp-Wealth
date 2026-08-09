@@ -150,6 +150,11 @@ function emptyJPWealthState(){
   empty.period={nome:'',profile:'base'};
   empty.onboarding=structuredClone(DEFAULTS.onboarding);
   empty.onboarding.done=false;
+  // Terceiro caminho de nascimento do estado (além de DEFAULTS fresco e migrate):
+  // o clone herda o reserveMasterCapital derivado de DEFAULTS.params.saldoIni, mas
+  // este estado vazio acabou de zerar saldoIni — reconciliar com a MESMA fórmula
+  // canônica, senão o reload (migrate) reescreve e o checkpoint acusa falso dirty.
+  empty.onboarding.reserveMasterCapital=String(empty.params.saldoIni||0);
   empty.perf=[];
   empty.phases=empty.phases.map((phase,i)=>({...phase,orders:emptyOrders([5,4,3,2][i]||3)}));
   if(Array.isArray(empty.checklist)) empty.checklist=empty.checklist.map(group=>({...group,items:group.items.map(item=>({...item,v:0}))}));

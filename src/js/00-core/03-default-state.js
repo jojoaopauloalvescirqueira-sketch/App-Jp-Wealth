@@ -155,4 +155,13 @@ const DEFAULTS = {
     changeLog:[],
   },
 };
+// REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
+// params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
+// reconcilia como String(saldoIni||0) em todo load de estado salvo. Um boot fresco
+// com DEFAULTS, porém, pulava a migrate e carregava o literal '' — a MESMA base
+// tinha duas grafias conforme o caminho de boot, e o checkpoint de Finalizar Sessão
+// (que sobrevive a reload no sessionStorage) acusava alteração inexistente.
+// A reconciliação aqui, no nascimento do objeto, fecha o caminho fresco com a mesma
+// fórmula da migrate — uma fonte, uma grafia, idempotente por construção.
+DEFAULTS.onboarding.reserveMasterCapital=String(DEFAULTS.params.saldoIni||0);
 function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
