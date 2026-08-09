@@ -5,9 +5,11 @@
   "description": "JP Wealth Risk Terminal — structured repository preserving the V9.1 financial logic.",
   "scripts": {
     "serve": "python3 tools/serve.py",
+    "preflight": "python3 tools/agent_preflight.py --mode audit",
     "validate": "python3 tools/validate_project.py",
     "smoke": "python3 tools/smoke_test.py",
     "build": "python3 tools/rebuild_monolith.py",
-    "test": "python3 tools/validate_project.py && python3 tools/smoke_test.py"
+    "test": "python3 tools/quality_gate.py --tier standard",
+    "test:full": "python3 tools/quality_gate.py --tier full"
   }
 }

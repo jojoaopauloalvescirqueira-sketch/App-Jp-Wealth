@@ -1,83 +1,203 @@
 #!/usr/bin/env python3
-from pathlib import Path
-from html.parser import HTMLParser
+"""Validate repository structure, classic-script syntax and portable build."""
+
+from __future__ import annotations
+
+from collections import Counter
 import hashlib
+from html.parser import HTMLParser
 import json
+from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 
+
 ROOT = Path(__file__).resolve().parents[1]
-errors = []
-required = ['index.html','src/styles/app.css','src/js/manifest.json','AGENTS.md','docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf','sw.js']
-for rel in required:
-    if not (ROOT/rel).exists(): errors.append(f'ausente: {rel}')
+ERRORS: list[str] = []
+ENVIRONMENT_ERRORS: list[str] = []
 
-manifest = json.loads((ROOT/'src/js/manifest.json').read_text(encoding='utf-8'))
-index = (ROOT/'index.html').read_text(encoding='utf-8')
-expected_tags = [f'<script src="{x["path"]}"></script>' for x in manifest['files']]
-positions = []
-for item, tag in zip(manifest['files'], expected_tags):
-    p=index.find(tag)
-    if p<0: errors.append(f'script não referenciado: {item["path"]}')
-    positions.append(p)
-    path=ROOT/item['path']
-    if not path.exists():
-        errors.append(f'arquivo JS ausente: {item["path"]}')
-        continue
-    actual=hashlib.sha256(path.read_bytes()).hexdigest()
-    if actual!=item['sha256']: errors.append(f'hash divergente: {item["path"]}')
-    cp=subprocess.run(['node','--check',str(path)],capture_output=True,text=True)
-    if cp.returncode: errors.append(f'sintaxe JS: {item["path"]}: {cp.stderr.strip()}')
-if positions != sorted(positions): errors.append('ordem dos scripts diverge do manifest')
-if 'jpwealth_v9_state' not in ''.join((ROOT/x['path']).read_text(encoding='utf-8') for x in manifest['files']):
-    errors.append('chave de persistência principal não localizada')
-if re.search(r'(?:src|href)="https?://', index, re.I):
-    errors.append('dependência externa de CSS/JS encontrada no index')
-
-# Identidade única de ícone PWA (sem biblioteca de temas): um manifesto,
-# dois arquivos em assets/, ambos purpose "any" (nenhum tem margem segura
-# para "maskable" — ver auditoria registrada com o usuário).
-manifest_path=ROOT/'manifests/jp-wealth.webmanifest'
-if not manifest_path.exists():
-    errors.append(f'manifest PWA ausente: {manifest_path.relative_to(ROOT)}')
-else:
-    try:
-        pwa=json.loads(manifest_path.read_text(encoding='utf-8'))
-        icon_srcs=[icon['src'] for icon in pwa.get('icons',[])]
-        for icon in pwa.get('icons',[]):
-            icon_path=(manifest_path.parent/icon['src']).resolve()
-            if not icon_path.exists(): errors.append(f'ícone PWA ausente: {icon_path.relative_to(ROOT)}')
-            if icon.get('purpose')!='any': errors.append(f'purpose inesperado (sem margem segura para maskable): {icon.get("src")}')
-        if len(icon_srcs)!=2: errors.append(f'manifesto PWA deveria declarar exatamente 2 ícones, achou {len(icon_srcs)}')
-    except Exception as exc:
-        errors.append(f'manifest PWA inválido: {manifest_path.relative_to(ROOT)} ({exc})')
-for rel in ['assets/pwa-icon-primary.png','assets/pwa-icon-secondary.png']:
-    if not (ROOT/rel).exists(): errors.append(f'ativo PWA ausente: {rel}')
-
-if '<link rel="manifest"' not in index or 'src/js/40-app/06-app-icons.js' not in index:
-    errors.append('integração PWA/ícones ausente no index')
-sw=(ROOT/'sw.js').read_text(encoding='utf-8') if (ROOT/'sw.js').exists() else ''
-if './manifests/jp-wealth.webmanifest' not in sw: errors.append('service worker não precacheia: manifests/jp-wealth.webmanifest')
-for rel in ['assets/pwa-icon-primary.png','assets/pwa-icon-secondary.png']:
-    if f'./{rel}' not in sw: errors.append(f'service worker não precacheia: {rel}')
 
 class IdParser(HTMLParser):
-    def __init__(self): super().__init__(); self.ids=[]
-    def handle_starttag(self, tag, attrs):
-        for k,v in attrs:
-            if k=='id': self.ids.append(v)
-p=IdParser(); p.feed(index)
-dups=sorted({x for x in p.ids if p.ids.count(x)>1})
-if dups: errors.append('IDs estáticos duplicados: '+', '.join(dups))
+    def __init__(self) -> None:
+        super().__init__()
+        self.ids: list[str] = []
 
-subprocess.run([sys.executable, str(ROOT/'tools/rebuild_monolith.py')], check=True, capture_output=True, text=True)
-out=ROOT/'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
-cp=subprocess.run(['node','--check',str(ROOT/'src/js/40-app/06-boot.js')],capture_output=True,text=True)
-if not out.exists() or out.stat().st_size<500_000: errors.append('rebuild portátil inválido')
+    def handle_starttag(self, _tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.ids.extend(value for key, value in attrs if key == "id" and value)
 
-if errors:
-    print('VALIDAÇÃO FALHOU')
-    for e in errors: print('-',e)
+
+def display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def validate_javascript(paths: list[Path]) -> None:
+    node = shutil.which("node")
+    if node:
+        for path in paths:
+            completed = subprocess.run(
+                [node, "--check", str(path)], capture_output=True, text=True, check=False
+            )
+            if completed.returncode:
+                detail = completed.stderr.strip() or completed.stdout.strip()
+                ERRORS.append(f"sintaxe JS: {display_path(path)}: {detail}")
+        return
+
+    try:
+        from playwright.sync_api import Error as PlaywrightError, sync_playwright
+    except ModuleNotFoundError:
+        ENVIRONMENT_ERRORS.append(
+            "nem Node.js nem Playwright estao disponiveis para validar sintaxe JavaScript"
+        )
+        return
+
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            page = browser.new_page()
+            for path in paths:
+                source = path.read_text(encoding="utf-8")
+                result = page.evaluate(
+                    """source => {
+                      try { new Function(source); return null; }
+                      catch (error) { return `${error.name}: ${error.message}`; }
+                    }""",
+                    source,
+                )
+                if result:
+                    ERRORS.append(f"sintaxe JS: {display_path(path)}: {result}")
+            browser.close()
+    except PlaywrightError as exc:
+        ENVIRONMENT_ERRORS.append(f"Chromium/Playwright indisponivel para sintaxe JS: {exc}")
+
+
+required = (
+    "index.html",
+    "src/styles/app.css",
+    "src/js/manifest.json",
+    "AGENTS.md",
+    "docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf",
+    "sw.js",
+)
+for relative in required:
+    if not (ROOT / relative).exists():
+        ERRORS.append(f"ausente: {relative}")
+
+manifest_path = ROOT / "src/js/manifest.json"
+index_path = ROOT / "index.html"
+manifest = {"files": []}
+index = ""
+if manifest_path.is_file():
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if not isinstance(manifest.get("files"), list):
+            raise ValueError("a chave files deve ser uma lista")
+    except (json.JSONDecodeError, OSError, ValueError) as exc:
+        ERRORS.append(f"manifest JS invalido: {exc}")
+        manifest = {"files": []}
+if index_path.is_file():
+    index = index_path.read_text(encoding="utf-8")
+
+positions: list[int] = []
+javascript_paths: list[Path] = []
+for item in manifest["files"]:
+    relative = item.get("path", "") if isinstance(item, dict) else ""
+    if not relative:
+        ERRORS.append("entrada do manifest sem path")
+        continue
+    tag = f'<script src="{relative}"></script>'
+    position = index.find(tag)
+    if position < 0:
+        ERRORS.append(f"script nao referenciado: {relative}")
+    else:
+        positions.append(position)
+    path = ROOT / relative
+    if not path.is_file():
+        ERRORS.append(f"arquivo JS ausente: {relative}")
+        continue
+    javascript_paths.append(path)
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual != item.get("sha256"):
+        ERRORS.append(f"hash divergente: {relative}")
+
+if positions != sorted(positions):
+    ERRORS.append("ordem dos scripts diverge do manifest")
+validate_javascript(javascript_paths)
+
+joined_javascript = "".join(path.read_text(encoding="utf-8") for path in javascript_paths)
+if "jpwealth_v9_state" not in joined_javascript:
+    ERRORS.append("chave de persistencia principal nao localizada")
+if re.search(r'(?:src|href)="https?://', index, re.I):
+    ERRORS.append("dependencia externa de CSS/JS encontrada no index")
+
+webmanifest_path = ROOT / "manifests/jp-wealth.webmanifest"
+if not webmanifest_path.is_file():
+    ERRORS.append("manifest PWA ausente: manifests/jp-wealth.webmanifest")
+else:
+    try:
+        pwa = json.loads(webmanifest_path.read_text(encoding="utf-8"))
+        icons = pwa.get("icons", [])
+        if len(icons) != 2:
+            ERRORS.append(f"manifesto PWA deveria declarar exatamente 2 icones, achou {len(icons)}")
+        for icon in icons:
+            icon_path = (webmanifest_path.parent / icon.get("src", "")).resolve()
+            if not icon_path.is_file():
+                ERRORS.append(f"icone PWA ausente: {display_path(icon_path)}")
+            if icon.get("purpose") != "any":
+                ERRORS.append(f"purpose inesperado: {icon.get('src')}")
+    except (json.JSONDecodeError, OSError, AttributeError) as exc:
+        ERRORS.append(f"manifest PWA invalido: {exc}")
+
+for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-secondary.png"):
+    if not (ROOT / relative).is_file():
+        ERRORS.append(f"ativo PWA ausente: {relative}")
+
+if '<link rel="manifest"' not in index or "src/js/40-app/06-app-icons.js" not in index:
+    ERRORS.append("integracao PWA/icones ausente no index")
+service_worker = (ROOT / "sw.js").read_text(encoding="utf-8") if (ROOT / "sw.js").is_file() else ""
+if "./manifests/jp-wealth.webmanifest" not in service_worker:
+    ERRORS.append("service worker nao precacheia: manifests/jp-wealth.webmanifest")
+for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-secondary.png"):
+    if f"./{relative}" not in service_worker:
+        ERRORS.append(f"service worker nao precacheia: {relative}")
+
+id_parser = IdParser()
+id_parser.feed(index)
+duplicates = sorted(value for value, count in Counter(id_parser.ids).items() if count > 1)
+if duplicates:
+    ERRORS.append("IDs estaticos duplicados: " + ", ".join(duplicates))
+
+rebuild = subprocess.run(
+    [sys.executable, str(ROOT / "tools/rebuild_monolith.py")],
+    cwd=ROOT,
+    capture_output=True,
+    text=True,
+    check=False,
+)
+if rebuild.returncode:
+    ERRORS.append("rebuild portatil falhou: " + (rebuild.stderr.strip() or rebuild.stdout.strip()))
+portable = ROOT / "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
+if not portable.is_file() or portable.stat().st_size < 500_000:
+    ERRORS.append("rebuild portatil invalido")
+
+if ERRORS:
+    print("VALIDACAO FALHOU")
+    for error in ERRORS:
+        print("-", error)
+    for error in ENVIRONMENT_ERRORS:
+        print("- verificacao de ambiente adicional:", error)
     raise SystemExit(1)
-print(f'VALIDAÇÃO OK — {len(manifest["files"])} arquivos JS, {len(p.ids)} IDs estáticos, portátil reconstruído.')
+if ENVIRONMENT_ERRORS:
+    print("ENVIRONMENT_ERROR")
+    for error in ENVIRONMENT_ERRORS:
+        print("-", error)
+    raise SystemExit(2)
+
+print(
+    f"VALIDACAO OK - {len(manifest['files'])} arquivos JS, "
+    f"{len(id_parser.ids)} IDs estaticos, portatil reconstruido."
+)

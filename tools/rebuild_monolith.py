@@ -31,7 +31,8 @@ css = (ROOT / 'src/styles/app.css').read_text(encoding='utf-8').rstrip()
 js = '\n'.join((ROOT / item['path']).read_text(encoding='utf-8').rstrip() for item in manifest['files'])
 
 html = re.sub(r'<link rel="stylesheet" href="src/styles/app\.css">', '<style>\n' + css + '\n</style>', index, count=1)
-html = html.replace('<script src="build-id.js"></script>', '<script>\n' + build_id_source + '</script>', 1)
+portable_bootstrap = build_id_source + "window.JP_WEALTH_PORTABLE_BUILD = true;\n"
+html = html.replace('<script src="build-id.js"></script>', '<script>\n' + portable_bootstrap + '</script>', 1)
 for item in manifest['files']:
     tag = f'<script src="{item["path"]}"></script>'
     html = html.replace(tag, '', 1)
