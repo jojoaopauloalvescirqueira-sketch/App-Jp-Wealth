@@ -1,37 +1,74 @@
-# Processo de mudança controlada
+# Processo de mudanca controlada
 
-## Antes de editar
+## 1. Congelar a fronteira
 
-- Classificar a mudança em N0, N1, N2 ou N3 conforme `AGENTS.md`.
-- Identificar artigos, decisões e funções afetadas.
-- Criar branch ou cópia de segurança.
-- Registrar comportamento atual com teste quando a área não estiver coberta.
+Registrar branch, `BASE_SHA`, arvore de trabalho, objetivo e arquivos permitidos. Para auditoria, nao editar. Para implementacao, usar branch de tarefa e preflight aprovado.
 
-## Durante a edição
+## 2. Classificar e autorizar
 
-- Um objetivo por commit.
-- Menor diff possível.
-- Não misturar formatação maciça com lógica.
-- Não renomear identificadores globais sem mapa de dependências.
-- Não alterar `DEFAULTS` e `migrate()` sem testar backups anteriores.
+| Nivel | Superficie | Minimo exigido |
+|---|---|---|
+| N0-D | documentos, governanca, harness | A2, diff e gate fast |
+| N0-V | CSS, texto, layout | A2, desktop/mobile e temas aplicaveis |
+| N1 | comportamento nao normativo | A2, teste focado e standard |
+| N2 | estado, backup, credencial, seguranca | A3, backup/fixture, ida e volta, full |
+| N3 | regra financeira/normativa | A4, decisao citavel, exemplos, full e aceite humano |
 
-## Revisão
+Mudanca documental que altera obrigacoes dos agentes e N0-D; mudanca em um teste pode ser N1 se reduzir ou ampliar contrato funcional. Alterar expectativa apenas para acompanhar o produto exige evidencia de que o novo comportamento foi deliberadamente aprovado.
 
-A revisão deve responder:
+## 3. Definir o contrato
 
-1. Qual problema foi resolvido?
-2. Qual regra normativa foi tocada?
-3. O que mudou no estado persistido?
-4. Quais cenários foram testados?
-5. Como reverter?
-6. Há risco de perda de dados ou alteração silenciosa de cálculo?
+Antes do codigo, registrar:
 
-## Commit recomendado
+- estado atual observado;
+- comportamento desejado;
+- invariantes que nao podem mudar;
+- dados antigos que devem continuar validos;
+- criterio objetivo de sucesso;
+- rollback ou recuperacao.
+
+## 4. Implementar
+
+- Menor diff coerente.
+- Uma causa raiz por mudanca.
+- Sem formatacao ou renomeacao ampla adjacente.
+- Teste de regressao antes ou junto da correcao quando praticavel.
+- `DEFAULTS`, `migrate()`, importacao e exclusao nunca mudam sem N2.
+- Constantes e formulas nunca mudam sem N3.
+
+## 5. Verificar o candidato
+
+Use `docs/governance/QUALITY-GATES.md`. Evidencia e valida apenas para o conteudo testado; qualquer mudanca material posterior invalida o gate afetado.
+
+## 6. Revisar o diff
+
+```bash
+git status --short
+git diff --check
+git diff --stat
+git diff
+```
+
+Responder:
+
+1. Qual causa foi resolvida?
+2. Qual regra ou decisao foi aplicada?
+3. O estado persistido mudou?
+4. Quais cenarios foram realmente executados?
+5. Qual risco residual permanece?
+6. Como reverter sem perder dados?
+
+## 7. Promover
+
+Editar, testar, revisar, commitar, enviar, integrar e publicar sao gates independentes. Nenhuma autorizacao e transitiva. Nao criar commit com gate aplicavel falhando, salvo commit explicitamente solicitado para preservar um baseline vermelho e identificado como tal.
+
+Modelo de commit, quando autorizado:
 
 ```text
-<tipo>(<área>): descrição objetiva
+<tipo>(<area>): descricao objetiva
 
-Regra afetada: nenhuma | Art. X | decisão YYYY-MM-DD
-Dados: sem mudança | schema vX -> vY
-Testes: validate + smoke + casos específicos
+Nivel: N0-D | N0-V | N1 | N2 | N3
+Regra: nenhuma | Art. X | ADR-NNN
+Dados: sem mudanca | schema vX -> vY
+Testes: comandos e resultado
 ```

@@ -31,7 +31,7 @@ O JP Wealth Risk Terminal é uma aplicação web cliente, sem backend obrigatór
 - `icons/` contém os masters derivados das referências visuais e as variantes `favicon`, `apple-touch-icon`, `180x180`, `192x192` e `512x512`.
 - `manifests/` mantém um manifesto por identidade, com o mesmo app e `start_url` diferenciado por `?icon=`.
 - `src/js/40-app/06-app-icons.js` controla somente a preferência visual local, atualiza os links de manifesto/ícone e explica a limitação de instalação no iOS.
-- `sw.js` faz precache dos scripts, estilos, manifestos e ícones. A constante `CACHE_NAME` deve mudar quando os ativos offline forem alterados; nesta implementação ela está em `jp-wealth-pwa-v9.1-icons-20260803-r2`.
+- `sw.js` faz precache dos scripts, estilos, manifesto e ícones. `CACHE_NAME` e derivado de `JP_WEALTH_BUILD_ID`, portanto muda com o conteudo reconstruido.
 
 ## Modelo de execução
 
@@ -41,7 +41,7 @@ A versão estruturada preserva scripts clássicos, não ES Modules. A ordem regi
 
 - Chave principal: `jpwealth_v9_state`.
 - Preferências auxiliares usam outras chaves locais.
-- A preferência do ícone usa `jpwealth_v9_icon_theme` e não é misturada ao estado financeiro.
+- A preferencia do icone usa `jpwealth_v9_icon_choice` e nao e misturada ao estado financeiro; `jpwealth_v9_icon_theme` e apenas uma chave legada removida pelos fluxos de limpeza.
 - A função `migrate()` mantém compatibilidade entre schemas.
 - O arquivo HTML ou o repositório não contém automaticamente o histórico real do navegador.
 

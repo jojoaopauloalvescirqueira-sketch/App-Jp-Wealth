@@ -7,10 +7,11 @@ Este arquivo orienta o Claude Code neste repositório. Ele trata especificamente
 1. Ler este `CLAUDE.md`.
 2. Ler `AGENTS.md`.
 3. Ler `README.md`.
-4. Consultar a documentação relacionada à tarefa específica (`docs/architecture/`, `docs/normative/`, `docs/governance/`, conforme o caso).
+4. Ler `docs/governance/CONTEXT-MAP.md` e consultar somente as fontes relacionadas à tarefa.
 5. Executar:
 
 ```bash
+python3 tools/agent_preflight.py --mode audit
 git branch --show-current
 git status --short
 git log -1 --oneline
@@ -64,7 +65,8 @@ Antes de editar:
 
 A classificação de risco N0–N3 é definida em `AGENTS.md` (seção "Classificação de mudanças") e detalhada em `docs/governance/CHANGE-PROCESS.md`. Resumo:
 
-- `N0`: mudança exclusivamente visual.
+- `N0-D`: documentacao, governanca e harness sem mudanca de runtime.
+- `N0-V`: mudanca exclusivamente visual.
 - `N1`: comportamento não normativo.
 - `N2`: persistência, backup, recuperação ou integridade operacional.
 - `N3`: regras financeiras, cálculos, risco, Estatuto ou parâmetros normativos.
@@ -113,15 +115,12 @@ git diff --name-only
 Quando aplicável:
 
 ```bash
-python3 tools/rebuild_monolith.py
-python3 tools/validate_project.py
-python3 tools/smoke_test.py
-python3 tools/finalize_session_test.py
-python3 tools/service_worker_upgrade_test.py
-python3 tools/settings_modal_test.py
+python3 tools/quality_gate.py --tier fast
+python3 tools/quality_gate.py --tier standard
+python3 tools/quality_gate.py --tier full
 ```
 
-Uma falha ou impossibilidade de executar testes deve ser informada claramente. Não declarar sucesso sem evidência.
+Uma falha ou impossibilidade deve receber a classificação definida em `docs/governance/QUALITY-GATES.md`. Não declarar sucesso sem evidência do candidato atual.
 
 ## Critério de conclusão
 
@@ -139,4 +138,7 @@ Uma tarefa somente estará pronta quando:
 - `AGENTS.md` — protocolo de IA, hierarquia de autoridade, proibições financeiras/normativas, classificação de risco.
 - `docs/governance/AI-WORKFLOW.md` — contexto mínimo e tarefas adequadas para IA.
 - `docs/governance/CHANGE-PROCESS.md` — processo de mudança controlada e modelo de commit.
+- `docs/governance/PROJECT-CONTEXT.md` — contexto estável e contratos centrais.
+- `docs/governance/CURRENT-STATE.md` — fotografia mutável, falhas e bloqueios atuais.
+- `docs/governance/SKILL-ROUTING.md` — skills obrigatórias por tipo de tarefa.
 - `docs/GIT-WORKFLOW.md` — fluxo Git explicado em linguagem simples.

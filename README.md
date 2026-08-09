@@ -13,8 +13,8 @@ Repositório estruturado a partir do HTML portátil preservado do JP Wealth. A r
 ## Início rápido
 
 ```bash
-python3 tools/validate_project.py
-python3 tools/smoke_test.py
+python3 tools/agent_preflight.py --mode audit
+python3 tools/quality_gate.py --tier standard
 python3 tools/serve.py
 ```
 
@@ -25,12 +25,13 @@ Acesse `http://127.0.0.1:8000`.
 - `index.html`: composição da interface.
 - `src/styles/app.css`: estilos extraídos do HTML original.
 - `src/js/`: lógica separada por domínios, mantendo a ordem original em `manifest.json`.
-- `icons/`: biblioteca local de ícones PWA, com três temas e variantes técnicas.
-- `manifests/`: um manifesto independente por tema de ícone.
+- `assets/`: logos e as duas variantes locais do ícone PWA.
+- `manifests/`: manifesto PWA único, com as variantes clara e escura.
 - `sw.js`: service worker local com precache versionado dos arquivos do app e dos ativos PWA.
 - `docs/normative/`: Estatuto e organograma — fontes de autoridade do projeto.
 - `docs/architecture/`: arquitetura, estado e mapa do código.
 - `docs/governance/`: regras para trabalho humano e por IA.
+- `skills/`: procedimentos locais obrigatórios para agentes do projeto.
 - `tests/`: validação e smoke test.
 - `tools/`: servidor, validação e reconstrução do HTML portátil.
 - `archive/original/`: original imutável para comparação e recuperação.
@@ -40,6 +41,10 @@ Acesse `http://127.0.0.1:8000`.
 ## Regra de segurança
 
 Nenhuma IA deve alterar constantes financeiras, fórmulas normativas, migrações de estado, regras de exclusão ou dados reais sem uma tarefa explicitamente delimitada e revisão humana.
+
+## Trabalho com agentes
+
+Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/governance/CONTEXT-MAP.md`. O estado confirmado e as pendências vigentes ficam em `docs/governance/CURRENT-STATE.md`; conversas e handoffs nunca substituem esses arquivos. Os gates e a taxonomia de resultados estão em `docs/governance/QUALITY-GATES.md`.
 
 ## Persistência
 
@@ -51,11 +56,7 @@ O fingerprint inclui também `instruments[].preco` e `instruments[].updated`. Um
 
 ## Ícone e instalação PWA
 
-Em `Configurações → Ícone do app`, escolha uma das três identidades: `Knight Flat` (atual), `Knight Relief` ou `Knight Marble`. A escolha usa a chave local `jpwealth_v9_icon_theme`, separada do estado operacional, e atualiza o manifesto correspondente:
-
-- `manifests/jp-wealth-flat-knight.webmanifest`
-- `manifests/jp-wealth-relief-knight.webmanifest`
-- `manifests/jp-wealth-marble-knight.webmanifest`
+Em `Configurações → Ícone do app`, escolha entre as variantes `Claro` e `Escuro` do mesmo símbolo. A escolha usa a chave local `jpwealth_v9_icon_choice`, separada do estado operacional, e altera somente os links de ícone; o manifesto permanece único em `manifests/jp-wealth.webmanifest`.
 
 No iPhone e iPad, o Safari não troca retroativamente o ícone de um atalho já instalado. Depois de escolher, remova o atalho atual e use `Compartilhar → Adicionar à Tela de Início` novamente. Em desktop e Android, o comportamento depende do navegador. O PWA precisa ser servido por HTTP/HTTPS; o HTML portátil em `dist/` continua destinado a distribuição de arquivo único e não substitui a publicação da raiz do projeto.
 

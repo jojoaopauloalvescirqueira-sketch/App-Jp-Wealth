@@ -28,4 +28,4 @@ Para encerrar o uso em computador de terceiros, utilize `Finalizar sessão`. A f
 
 Após a exclusão, a persistência fica bloqueada para a geração anterior da sessão. Atualizações assíncronas, importações iniciadas antes do encerramento e outras abas não podem recriar o estado antigo; uma nova sessão pode ser iniciada por novo carregamento, onboarding ou importação explícita. O service worker remove somente caches com prefixo `jp-wealth-`.
 
-As chaves auxiliares auditadas são `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth_v9_icon_theme` e o sinal temporário `jpwealth_session_wipe_signal_v1`; o checkpoint fica em `sessionStorage` como `jpwealth_session_checkpoint_v1`. A limpeza não usa `localStorage.clear()`.
+As chaves auxiliares auditadas sao `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth_v9_icon_choice`, a chave legada `jpwealth_v9_icon_theme` e o sinal temporario `jpwealth_session_wipe_signal_v1`; o checkpoint fica em `sessionStorage` como `jpwealth_session_checkpoint_v1`. A limpeza nao usa `localStorage.clear()`.

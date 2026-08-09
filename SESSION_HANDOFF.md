@@ -1,38 +1,55 @@
-# Session Handoff — PWA e ícones
+# Session Handoff - Governanca multiagente
 
-## Correção adicional — Finalizar sessão
+- Data: 2026-08-09
+- Baseline: `f722eb3`
+- Branch: `audit/governanca-multiagente`
+- Estado Git esperado: alteracoes nao commitadas para revisao humana
 
-- O botão `Finalizar sessão` fica antes da navegação e usa o modal próprio para verificar alterações, backup e confirmação de exclusão.
-- O checkpoint `jpwealth_session_checkpoint_v1` é uma serialização determinística de `S` em `sessionStorage`; não entra no backup nem no schema. `instruments[].preco` e `instruments[].updated` entram na comparação; falso positivo de FX é aceito deliberadamente para priorizar a segurança contra perda de dados.
-- A exclusão remove `jpwealth_v9_state`, cópias `_corrompido_`, `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth_v9_icon_theme` e o checkpoint, sem usar `localStorage.clear()`.
-- A persistência possui gate e geração de sessão; callbacks assíncronos iniciados antes da exclusão não podem salvar ou reaplicar o estado antigo. O encerramento é propagado por `BroadcastChannel`, com fallback pelo evento `storage`.
-- O reset administrativo existente continua exigindo `APAGAR` duas vezes e continua restaurando `DEFAULTS`; Finalizar sessão usa estado vazio específico para privacidade.
-- O cache do service worker foi versionado para `jp-wealth-pwa-v9.1-icons-20260803-r3`, passou a precachear o novo script e só remove caches com prefixo `jp-wealth-`.
-- Backup pré-alteração: `data/backups/finalize-session-before-20260803/`.
+## Objetivo concluido
 
-## Correção adicional — estado inicial e onboarding
+Implementar governanca local, skills de projeto, automacao de preflight/qualidade e auditoria institucional sem alterar regra financeira, schema ou dados.
 
-- O dashboard mensal agora exibe somente `Sem dados ainda — registre fechamentos diários na aba 07 Contabilidade.` quando `S.ledger` está vazio; a série `S.perf` continua preservada no estado por compatibilidade, mas deixou de ser consumida pelo fallback do dashboard.
-- `Retorno Acumulado` e `DD Máx Ciclo` ficam como `—` sem fechamento real.
-- O onboarding novo inicia os campos de operador e supervisor vazios, usa `Preencher nome` como placeholder e exige ambos antes de continuar; no modo de edição, os nomes salvos são preservados.
-- O backup desta alteração está em `data/backups/initial-state-before-20260803/`.
+## Implementado
 
-## Estado implementado
+- `AGENTS.md` convertido em router canonico com M0-M5, A0-A4, N0-D/N0-V/N1/N2/N3, stop conditions e taxonomia de evidencia.
+- Contexto estavel/atual, mapa, qualidade, seguranca, roteamento e roadmap adicionados em `docs/governance/`.
+- Oito skills `jpw-*` criadas e aprovadas pelo `quick_validate.py` oficial.
+- `tools/agent_preflight.py` e `tools/quality_gate.py` adicionados; o preflight cobre arquivos rastreados e novos nao ignorados.
+- `validate_project.py` usa Node quando disponivel e Chromium/Playwright como fallback, sem falso PASS.
+- Workflow de quality gate preparado localmente com permissoes minimas e actions fixadas por SHA; existe `origin` preexistente, mas nenhum remote foi criado/alterado e nenhuma execucao online foi iniciada.
+- Harness reconciliado com quatro telas, tres acoes do cabecalho, sete categorias, schema atual de Notas e semantica atual de backlog/menu.
+- Correcoes N0/N1 aplicadas em Notas, alvos de toque, precache, portatil e mensagem de contingencia de exportacao.
+- Auditoria completa registrada em `docs/audit/CODE-QUALITY-AUDIT-2026-08-09.md`.
 
-- A tarefa N1 de identidade visual/PWA foi implementada em 2026-08-03.
-- Os temas disponíveis são `flat-knight` (padrão atual), `relief-knight` e `marble-knight`.
-- A preferência visual fica em `localStorage` sob `jpwealth_v9_icon_theme`; a chave financeira `jpwealth_v9_state` não foi alterada.
-- `manifests/` contém os três manifestos independentes; `sw.js` usa o cache `jp-wealth-pwa-v9.1-icons-20260803-r3`.
-- O backup pré-alteração está em `data/backups/icons-pwa-before-20260803/`.
-- O listener de reset foi mantido na mesma ordem do manifest, mas passou a resolver `wipeAllData` somente no clique; isso removeu um erro de boot preexistente.
+## Evidencia final
 
-## Verificações pendentes/realizadas
+- Oito skills: PASS no validador oficial.
+- `python3 -m py_compile tools/*.py`: PASS.
+- Workflow YAML: PASS.
+- Varredura forte de padroes de segredo e nomes sensiveis: sem achados.
+- `python3 tools/agent_preflight.py --mode audit --allow-dirty`: PASS com aviso de arvore conhecida.
+- `python3 tools/validate_project.py`: PASS, 44 scripts, 366 IDs e portatil reconstruido.
+- `python3 tools/quality_gate.py --tier standard`: PASS 5/5.
+- `python3 tools/quality_gate.py --tier full`: PASS 9/11.
+- `tools/mvp_notes_test.py`: PASS integral, inclusive desktop, mobile e portatil.
+- Navegador em origem isolada: build canonica carregou 45 scripts, exibiu o onboarding progressivo e registrou zero avisos/erros no console. A origem antiga na porta 8000 estava servindo uma copia obsoleta pelo service worker e nao deve ser usada como evidencia desta revisao.
 
-- Executar `python3 tools/validate_project.py` e `python3 tools/smoke_test.py` após a última alteração.
-- Fazer inspeção visual no navegador em 320 px, abrir Configurações, abrir o modal e verificar os três cartões.
-- Não criar commit automaticamente: esta pasta não possui `.git`; a revisão/publicação continua humana.
+## Defeitos remanescentes confirmados
 
-## Limites conhecidos
+1. N2: `reserveMasterCapital` muda de `''` para `'0'` apos reload, gerando falso dirty em Finalizar Sessao.
+2. N2: importacao invalida pode chamar `resumeJPWealthPersistence()` antes da validacao e liberar o modo de recuperacao.
+3. N2: senha de investidor permanece persistida em texto claro; exige decisao de produto/seguranca.
+4. N3: dez conflitos normativos permanecem bloqueados e listados em `CURRENT-STATE.md` e na auditoria.
 
-- O seletor altera o manifesto da próxima abertura/instalação. Safari/iOS não troca o ícone de um atalho já instalado.
-- O service worker só é registrado em HTTP/HTTPS. A versão `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html` continua sendo um artefato portátil de arquivo único.
+## Limites
+
+- Nenhuma correcao N2/N3 foi aplicada.
+- Nenhum commit, push, merge, publicacao ou deploy foi executado; o remote `origin` ja existia e nao foi alterado.
+- Nao usar esta nota como prova atual sem conferir Git e rodar preflight.
+
+## Proxima acao segura
+
+1. Revisao humana do diff desta branch.
+2. Autorizacao separada para commit local, se aprovado.
+3. Abrir tarefas/branches N2 independentes para canonizacao do estado e recuperacao atomica.
+4. Tratar cada conflito N3 por ADR, exemplos de fronteira e autorizacao explicita antes do codigo.

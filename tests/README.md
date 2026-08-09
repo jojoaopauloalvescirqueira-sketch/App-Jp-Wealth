@@ -1,9 +1,27 @@
 # Testes
 
-A base inicial contém dois níveis:
+## Gate recomendado
 
-1. `tools/validate_project.py`: integridade estrutural, hashes, sintaxe, ordem e reconstrução portátil.
-2. `tools/smoke_test.py`: inicialização real em Chromium, carregamento do estado e navegação pelas oito telas.
-3. `tools/finalize_session_test.py`: checkpoint após reload, preço manual, exportação confirmada, gate contra corrida assíncrona, exclusão isolada de chaves, frase final, importação, coordenação entre abas, caches externos, captura de console/pageerror e responsividade, sobre fonte e monólito quando possível.
+```bash
+python3 tools/quality_gate.py --tier fast
+python3 tools/quality_gate.py --tier standard
+python3 tools/quality_gate.py --tier full
+```
 
-Próxima etapa recomendada: testes de caracterização para `compute()`, migrações, backup/importação, perfis, matriz quadrifásica, LIFO e contabilidade.
+O relatorio JSON fica em `tools/.artifacts/` e nao e versionado. Consulte `docs/governance/QUALITY-GATES.md` para a taxonomia de resultados.
+
+## Suites
+
+- `validate_project.py`: arquivos obrigatorios, manifest/hashes/ordem, sintaxe JS, PWA, IDs e rebuild portatil.
+- `smoke_test.py`: boot real, quatro telas operacionais, onboarding, reset, dashboard, configuracoes e Notas.
+- `finalize_session_test.py`: checkpoint, backup, exclusao seletiva, corrida assincrona, multiplas abas e responsividade.
+- `settings_modal_test.py`: sete categorias, subpaginas, busca, foco, modal e mobile.
+- `storage_governance_test.py`: pasta, sequencia, backup e estado de governanca.
+- `persistence_failure_test.py`: falhas de leitura/escrita e aviso persistente.
+- `persistence_recovery_test.py`: modo de recuperacao e importacao valida/invalida.
+- `service_worker_upgrade_test.py`: precache, troca de build e cache antigo.
+- `mvp_notes_test.py`: CRUD, pastas, filtros, inspector, exportacao e layout.
+
+## Regra
+
+Atualizar uma expectativa exige prova de que o contrato do produto mudou deliberadamente. Nao reduzir assertions para esconder `PRODUCT_FAIL`. Falta de Node, Playwright ou Chromium e `ENVIRONMENT_ERROR`, nunca PASS.

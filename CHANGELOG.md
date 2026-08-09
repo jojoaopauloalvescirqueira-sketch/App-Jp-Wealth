@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased] - governanca multiagente e qualidade
+
+### Em revisao
+- Adicionados contexto em camadas, niveis de autoridade/risco, stop conditions, roteamento de skills e gates de evidencia para agentes.
+- Criadas oito skills locais JP Wealth, templates de tarefa/auditoria/ADR e uma fotografia auditavel do estado atual.
+- Adicionados preflight somente leitura, orquestrador de qualidade e fallback Chromium para validacao JavaScript quando Node nao estiver disponivel.
+- Atualizadas expectativas comprovadamente obsoletas do harness para a navegacao, cabecalho, Central de Configuracoes e termo de Base de Dados atuais.
+- Corrigidos `hidden`, alvos de toque, sobreposicao do inspetor e menu contextual das Notas; suite completa de Notas voltou a passar em desktop, mobile e portatil.
+- Completado o precache do PWA e impedido que o HTML portatil tente registrar um service worker externo inexistente.
+- Mensagem de falha de exportacao agora orienta contingencia manual para preservar os registros recentes.
+- Tier `standard` passa 5/5; tier `full` passa 9/11 e preserva como `PRODUCT_FAIL` dois defeitos N2 documentados.
+- Nenhuma formula financeira, schema, chave de persistencia ou dado operacional foi alterado.
+
 ## [9.1-db-storage-governance.1] — 2026-08-08
 
 ### Governança de armazenamento da base (JPW-HJFGDE)

@@ -1,0 +1,24 @@
+# Roteamento de skills do projeto
+
+As skills locais sao procedimentos versionados, nao agentes autonomos. O agente abre somente as skills acionadas pela tarefa e continua subordinado a `AGENTS.md`.
+
+| Gatilho | Skill obrigatoria | Saida minima |
+|---|---|---|
+| Toda nova tarefa | `jpw-preflight` | base, branch, risco, contexto e bloqueios |
+| Qualquer edicao | `jpw-change-control` | escopo, invariantes, diff e rollback |
+| Regra financeira/Estatuto | `jpw-normative-audit` | matriz norma-codigo-teste e conflitos |
+| Estado, backup, senha, importacao | `jpw-data-safety` | contrato, compatibilidade e recuperacao |
+| Falha ou alteracao de teste | `jpw-test-triage` | classificacao PASS/FAIL/ERROR/NOT_RUN |
+| UI, modal, responsividade | `jpw-browser-verification` | fluxos reais e viewports testados |
+| Credenciais, dependencias, PWA, CI | `jpw-security-audit` | ameacas, evidencias e severidade |
+| Final de toda mudanca | `jpw-post-change-audit` | revisao do candidato, gates e riscos |
+
+## Adaptacao das skills externas
+
+- `security-audit`, `pr-audit`, `iss-audit` e `pr-post-audit` inspiram a fronteira de confianca, a verificacao de afirmacoes e a auditoria do candidato final.
+- `pr-bump` nao e adotada como skill local: o repositorio nao possui fluxo de dependencias compativel com seu foco em Bundler/Dependabot.
+- `ai-memory-main` nao e incorporado como runtime. Adotamos apenas os principios de autoridade, contexto em camadas, frescor, handoff e exclusao de dados sensiveis. Qualquer runtime de memoria exigira piloto separado e avaliacao de privacidade.
+
+## Regra anti-desalinhamento
+
+Se uma skill sugerir acao contraria ao Estatuto, a uma decisao aprovada, a `AGENTS.md` ou ao escopo humano, a skill perde. Registrar a divergencia e parar a acao afetada.

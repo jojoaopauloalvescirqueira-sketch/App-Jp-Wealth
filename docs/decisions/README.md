@@ -12,3 +12,5 @@ Registre aqui apenas decisões aprovadas pelo gestor, uma por arquivo, com:
 - status: provisória, em backtest ou definitiva.
 
 Sugestão de nome: `YYYY-MM-DD-titulo-curto.md`.
+
+Use `ADR-TEMPLATE.md`. Uma proposta sem status `aprovada` e sem responsável/evidência de aprovação não autoriza alteração N2/N3.
