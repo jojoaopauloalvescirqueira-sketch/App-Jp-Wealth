@@ -531,7 +531,10 @@ function migrate(){ // garante chaves novas se schema evoluir
       if(!('investorPassword' in a)) a.investorPassword='';
       a.platform=normalizePlatformName(a.platform);
       a.platformLogin=String(a.platformLogin||'');
-      a.investorPassword=String(a.investorPassword||'');
+      // POLÍTICA DE SEGREDO: estados/backups antigos podem trazer a senha em texto
+      // claro — a estrutura é aceita, mas o segredo é DESCARTADO no carregamento e
+      // nunca reescrito no armazenamento. Sem eco, sem changeLog, sem console.
+      a.investorPassword='';
       const br=brokerFor(a.broker);
       if(br) a.broker=br.name;
     });
@@ -615,7 +618,8 @@ function migrate(){ // garante chaves novas se schema evoluir
     if(br) S.onboarding.corretora=br.name;
     for(const k in DEFAULTS.onboarding){ if(!(k in S.onboarding)) S.onboarding[k]=DEFAULTS.onboarding[k]; }
     S.onboarding.brokerLogin=String(S.onboarding.brokerLogin||'');
-    S.onboarding.investorPassword=String(S.onboarding.investorPassword||'');
+    // Mesma política do bloco de contas: segredo de leitura nunca sobrevive ao load.
+    S.onboarding.investorPassword='';
     S.onboarding.brokerServer=String(S.onboarding.brokerServer||'');
     S.onboarding.moedaBase=normalizeAccountCurrency(S.onboarding.moedaBase);
     S.onboarding.propDailyDrawdown=String(S.onboarding.propDailyDrawdown||'');
@@ -890,7 +894,11 @@ function save(){
   // de prometer uma exportação que não vai funcionar.
   let payload;
   try{
-    payload=JSON.stringify(S);
+    // POLÍTICA DE SEGREDO: a senha de investidor NUNCA vai para armazenamento
+    // persistente. O replacer cobre accounts[].investorPassword, onboarding e qualquer
+    // site futuro que use o mesmo nome de campo — em memória o valor continua íntegro
+    // durante a sessão; no disco a chave grava sempre vazia.
+    payload=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
   }catch(e){
     console.error('JP Wealth: falha ao preparar (serializar) o estado para gravação.', e);
     hideStaleSavedTag();

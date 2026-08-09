@@ -15,6 +15,9 @@ data/private/
 **/jpwealth_v9_state*.json
 **/*credential*
 **/*password*
+# Exceção deliberada: teste PERMANENTE da política de segredo (fixture sintética,
+# nunca credencial real) — o padrão acima protege arquivos de senha de verdade.
+!tools/investor_password_test.py
 **/*secret*
 **/*token*
 .env

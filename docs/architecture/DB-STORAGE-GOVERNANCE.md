@@ -101,3 +101,35 @@ nome (comportamento nativo; nunca sobrescreve).
 8. Cancelar o seletor de pasta → nada muda de estado.
 9. Safari: cartão declara a incompatibilidade; exportação cai em Downloads com nome
    progressivo.
+
+## Política de segredos (2026-08-09)
+
+A senha de investidor (`investorPassword`) **não é persistida em nenhum armazenamento
+do JP Wealth**. Ela pode existir em memória durante a sessão para as validações de
+conexão; some no recarregamento.
+
+Proibido, por implementação (não por convenção):
+
+- `localStorage` — `save()` grava o campo sempre vazio (replacer no stringify);
+- `sessionStorage` — o fingerprint/checkpoint de Finalizar Sessão exclui o campo;
+- backup — `dgBuildBackupBlob()` remove incondicionalmente; `segredosIncluidos:false`
+  é permanente e a antiga pergunta "incluir senhas?" foi removida;
+- estados/backups antigos — `migrate()` aceita a estrutura e descarta o segredo no
+  carregamento, sem eco, sem changeLog, sem console;
+- IndexedDB, URL e Git — nenhum caminho de escrita existe.
+
+Não há criptografia caseira: ausência de persistência foi escolhida no lugar de
+cifra sem gerenciamento de chave. Qualquer retorno de persistência exige desenho
+N2 aprovado com secret store real.
+
+### Regra para futuras integrações MT5/cloud
+
+| superfície | segredo MT5 |
+|---|---|
+| navegador (qualquer armazenamento) | ✕ nunca |
+| backup JP Wealth | ✕ nunca |
+| contexto de IA (Claude/agentes) | ✕ nunca |
+| banco analítico futuro | ✕ nunca |
+
+Integração futura com MetaTrader/corretora deverá manter credenciais exclusivamente
+em secret store/backend/VPS dedicados, fora do app e fora deste repositório.

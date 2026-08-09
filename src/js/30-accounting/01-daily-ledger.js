@@ -90,12 +90,9 @@ function exportAudit(){
   URL.revokeObjectURL(a.href);
 }
 // ---- Exportação da base (JPW-HJFGDE) ---------------------------------------------
-// Política de senhas de investidor: perguntada UMA vez por exportação, antes de resolver
-// o destino. Separada da montagem do arquivo porque o nome definitivo só é conhecido
-// depois da sondagem de colisão — e o operador não deve ser perguntado duas vezes.
-function dgAskIncludeSecrets(){
-  return confirm('Incluir as SENHAS DE INVESTIDOR das contas neste backup?\n\nOK = inclui (arquivo com segredos em texto puro — guarde offline).\nCancelar = exporta sem senhas (mais seguro).');
-}
+// POLÍTICA DE SEGREDO: o backup NUNCA carrega senha de investidor — a antiga pergunta
+// "incluir senhas?" foi removida junto com a opção que ela oferecia. O envelope mantém
+// o campo segredosIncluidos (formato normativo) sempre em false.
 // Monta o arquivo do backup completo. O ENVELOPE é formato normativo e não muda aqui:
 // {tipo, versao, localStorageKey, exportadoEm, dataLocal, segredosIncluidos, state}.
 //
@@ -108,12 +105,11 @@ function dgAskIncludeSecrets(){
 //
 // A identidade é escrita numa CÓPIA (structuredClone), nunca no objeto vivo: se a
 // gravação falhar, não há o que reverter — o estado em memória jamais foi tocado.
-function dgBuildBackupBlob(incluirSegredos, seq, filename, exportadoEm){
+function dgBuildBackupBlob(seq, filename, exportadoEm){
   const stateExport=structuredClone(S);
-  if(!incluirSegredos){
-    if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
-    if(stateExport.onboarding) stateExport.onboarding.investorPassword=''; // senha de investidor do onboarding também é segredo
-  }
+  // Incondicional (política de segredo): não existe mais variante de backup com senha.
+  if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
+  if(stateExport.onboarding) stateExport.onboarding.investorPassword='';
   if(stateExport.dataGovernance && stateExport.dataGovernance.export){
     stateExport.dataGovernance.export.lastSequence=seq;
     stateExport.dataGovernance.export.lastExportFile=filename;
@@ -125,7 +121,7 @@ function dgBuildBackupBlob(incluirSegredos, seq, filename, exportadoEm){
     localStorageKey:LSKEY,
     exportadoEm,
     dataLocal:todayISO(),
-    segredosIncluidos:incluirSegredos,
+    segredosIncluidos:false, // política de segredo: sempre sem senha
     state:stateExport,
   };
   return new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -184,7 +180,7 @@ async function dgExportFullBackupInner(quiet){
   try{
     // A pergunta sobre segredos vem primeiro e vale para toda a operação; o ARQUIVO só
     // é montado quando sequência e nome forem definitivos (autoidentificação, FAIL-04).
-    const segredosIncluidos=dgAskIncludeSecrets();
+    const segredosIncluidos=false; // política de segredo: sem pergunta, sem variante com senha
     const exportadoEm=new Date().toISOString();
     const baseSeq=(S.dataGovernance&&S.dataGovernance.export&&S.dataGovernance.export.lastSequence)||0;
     const supported=typeof dgFsSupported==='function' && dgFsSupported();
@@ -196,7 +192,7 @@ async function dgExportFullBackupInner(quiet){
     if(!supported || !configured){
       const seq=baseSeq+1;
       const filename=dgExportFileName(seq,new Date());
-      dgDownloadViaAnchor(filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+      dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm));
       dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
       if(!quiet) alert('Base exportada via download do navegador:\n\n'+filename+(supported?'':'\n\nEste navegador não suporta pasta persistente (File System Access API) — as exportações usam o mecanismo padrão de download.'));
       return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'};
@@ -217,7 +213,7 @@ async function dgExportFullBackupInner(quiet){
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
-          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(seq,filename,exportadoEm));
           dgRegisterExportSuccess(seq,filename,exportadoEm,'folder');
           if(!quiet) alert('Base exportada para a pasta padrão "'+(S.dataGovernance.storage.folderDisplayPath||handle.name)+'":\n\n'+filename);
           return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'};
@@ -238,7 +234,7 @@ async function dgExportFullBackupInner(quiet){
       if(decision==='downloads'){
         const seq=baseSeq+1;
         const filename=dgExportFileName(seq,new Date());
-        dgDownloadViaAnchor(filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+        dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm));
         dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
         if(!quiet) alert('Base exportada excepcionalmente via download do navegador:\n\n'+filename+'\n\nA pasta padrão continua configurada e precisando de atenção.');
         return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'};

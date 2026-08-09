@@ -617,7 +617,7 @@ function renderContas(){
         </div>
         <span class="pass-label">Senha do Investidor / somente leitura</span>
         <div class="investor-pass-row">
-          <input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Senha do Investidor / somente leitura" autocomplete="off" title="Senha do Investidor / somente leitura">
+          <input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off" title="Senha do Investidor / somente leitura">
           <button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button>
         </div>
       </div>`;

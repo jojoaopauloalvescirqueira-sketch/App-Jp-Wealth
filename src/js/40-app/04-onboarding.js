@@ -375,7 +375,7 @@ function openOnboardingModal(mode, initialStep){
         <div class="field" style="margin-bottom:10px">
           <label for="obInvestorPassword">Senha de Investidor</label>
           <div class="leverage-input-row">
-            <input type="password" id="obInvestorPassword" value="${esc(investorPassword)}" placeholder="Senha somente leitura" autocomplete="off">
+            <input type="password" id="obInvestorPassword" value="${esc(investorPassword)}" placeholder="Somente leitura — válida só nesta sessão, não é armazenada" autocomplete="off">
             <button type="button" class="leverage-trigger" id="obInvestorToggle" aria-expanded="false">Mostrar</button>
           </div>
         </div>

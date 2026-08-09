@@ -25,6 +25,11 @@ function sessionStableValue(value){
 function sessionStateFingerprint(){
   const snapshot=structuredClone(S);
   // Preço e data entram deliberadamente: falso positivo de FX é preferível à perda silenciosa.
+  // A senha de investidor sai do fingerprint pela mesma política que a tira do save():
+  // ela é de sessão, nunca persiste — digitá-la não pode acusar "alterações não salvas"
+  // de algo que, por desenho, jamais será salvo.
+  if(Array.isArray(snapshot.accounts)) snapshot.accounts.forEach(a=>{ if(a) a.investorPassword=''; });
+  if(snapshot.onboarding) snapshot.onboarding.investorPassword='';
   return JSON.stringify(sessionStableValue(snapshot));
 }
 function sessionCheckpointStorageGet(){

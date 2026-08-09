@@ -4311,7 +4311,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '2ba99204b7269dd1';
+const JP_WEALTH_BUILD_ID = 'a8df0679442894c8';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -6334,7 +6334,10 @@ function migrate(){ // garante chaves novas se schema evoluir
       if(!('investorPassword' in a)) a.investorPassword='';
       a.platform=normalizePlatformName(a.platform);
       a.platformLogin=String(a.platformLogin||'');
-      a.investorPassword=String(a.investorPassword||'');
+      // POLÍTICA DE SEGREDO: estados/backups antigos podem trazer a senha em texto
+      // claro — a estrutura é aceita, mas o segredo é DESCARTADO no carregamento e
+      // nunca reescrito no armazenamento. Sem eco, sem changeLog, sem console.
+      a.investorPassword='';
       const br=brokerFor(a.broker);
       if(br) a.broker=br.name;
     });
@@ -6418,7 +6421,8 @@ function migrate(){ // garante chaves novas se schema evoluir
     if(br) S.onboarding.corretora=br.name;
     for(const k in DEFAULTS.onboarding){ if(!(k in S.onboarding)) S.onboarding[k]=DEFAULTS.onboarding[k]; }
     S.onboarding.brokerLogin=String(S.onboarding.brokerLogin||'');
-    S.onboarding.investorPassword=String(S.onboarding.investorPassword||'');
+    // Mesma política do bloco de contas: segredo de leitura nunca sobrevive ao load.
+    S.onboarding.investorPassword='';
     S.onboarding.brokerServer=String(S.onboarding.brokerServer||'');
     S.onboarding.moedaBase=normalizeAccountCurrency(S.onboarding.moedaBase);
     S.onboarding.propDailyDrawdown=String(S.onboarding.propDailyDrawdown||'');
@@ -6693,7 +6697,11 @@ function save(){
   // de prometer uma exportação que não vai funcionar.
   let payload;
   try{
-    payload=JSON.stringify(S);
+    // POLÍTICA DE SEGREDO: a senha de investidor NUNCA vai para armazenamento
+    // persistente. O replacer cobre accounts[].investorPassword, onboarding e qualquer
+    // site futuro que use o mesmo nome de campo — em memória o valor continua íntegro
+    // durante a sessão; no disco a chave grava sempre vazia.
+    payload=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
   }catch(e){
     console.error('JP Wealth: falha ao preparar (serializar) o estado para gravação.', e);
     hideStaleSavedTag();
@@ -8769,7 +8777,7 @@ function renderContas(){
         </div>
         <span class="pass-label">Senha do Investidor / somente leitura</span>
         <div class="investor-pass-row">
-          <input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Senha do Investidor / somente leitura" autocomplete="off" title="Senha do Investidor / somente leitura">
+          <input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off" title="Senha do Investidor / somente leitura">
           <button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button>
         </div>
       </div>`;
@@ -9355,12 +9363,9 @@ function exportAudit(){
   URL.revokeObjectURL(a.href);
 }
 // ---- Exportação da base (JPW-HJFGDE) ---------------------------------------------
-// Política de senhas de investidor: perguntada UMA vez por exportação, antes de resolver
-// o destino. Separada da montagem do arquivo porque o nome definitivo só é conhecido
-// depois da sondagem de colisão — e o operador não deve ser perguntado duas vezes.
-function dgAskIncludeSecrets(){
-  return confirm('Incluir as SENHAS DE INVESTIDOR das contas neste backup?\n\nOK = inclui (arquivo com segredos em texto puro — guarde offline).\nCancelar = exporta sem senhas (mais seguro).');
-}
+// POLÍTICA DE SEGREDO: o backup NUNCA carrega senha de investidor — a antiga pergunta
+// "incluir senhas?" foi removida junto com a opção que ela oferecia. O envelope mantém
+// o campo segredosIncluidos (formato normativo) sempre em false.
 // Monta o arquivo do backup completo. O ENVELOPE é formato normativo e não muda aqui:
 // {tipo, versao, localStorageKey, exportadoEm, dataLocal, segredosIncluidos, state}.
 //
@@ -9373,12 +9378,11 @@ function dgAskIncludeSecrets(){
 //
 // A identidade é escrita numa CÓPIA (structuredClone), nunca no objeto vivo: se a
 // gravação falhar, não há o que reverter — o estado em memória jamais foi tocado.
-function dgBuildBackupBlob(incluirSegredos, seq, filename, exportadoEm){
+function dgBuildBackupBlob(seq, filename, exportadoEm){
   const stateExport=structuredClone(S);
-  if(!incluirSegredos){
-    if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
-    if(stateExport.onboarding) stateExport.onboarding.investorPassword=''; // senha de investidor do onboarding também é segredo
-  }
+  // Incondicional (política de segredo): não existe mais variante de backup com senha.
+  if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
+  if(stateExport.onboarding) stateExport.onboarding.investorPassword='';
   if(stateExport.dataGovernance && stateExport.dataGovernance.export){
     stateExport.dataGovernance.export.lastSequence=seq;
     stateExport.dataGovernance.export.lastExportFile=filename;
@@ -9390,7 +9394,7 @@ function dgBuildBackupBlob(incluirSegredos, seq, filename, exportadoEm){
     localStorageKey:LSKEY,
     exportadoEm,
     dataLocal:todayISO(),
-    segredosIncluidos:incluirSegredos,
+    segredosIncluidos:false, // política de segredo: sempre sem senha
     state:stateExport,
   };
   return new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -9449,7 +9453,7 @@ async function dgExportFullBackupInner(quiet){
   try{
     // A pergunta sobre segredos vem primeiro e vale para toda a operação; o ARQUIVO só
     // é montado quando sequência e nome forem definitivos (autoidentificação, FAIL-04).
-    const segredosIncluidos=dgAskIncludeSecrets();
+    const segredosIncluidos=false; // política de segredo: sem pergunta, sem variante com senha
     const exportadoEm=new Date().toISOString();
     const baseSeq=(S.dataGovernance&&S.dataGovernance.export&&S.dataGovernance.export.lastSequence)||0;
     const supported=typeof dgFsSupported==='function' && dgFsSupported();
@@ -9461,7 +9465,7 @@ async function dgExportFullBackupInner(quiet){
     if(!supported || !configured){
       const seq=baseSeq+1;
       const filename=dgExportFileName(seq,new Date());
-      dgDownloadViaAnchor(filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+      dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm));
       dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
       if(!quiet) alert('Base exportada via download do navegador:\n\n'+filename+(supported?'':'\n\nEste navegador não suporta pasta persistente (File System Access API) — as exportações usam o mecanismo padrão de download.'));
       return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'};
@@ -9482,7 +9486,7 @@ async function dgExportFullBackupInner(quiet){
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
-          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(seq,filename,exportadoEm));
           dgRegisterExportSuccess(seq,filename,exportadoEm,'folder');
           if(!quiet) alert('Base exportada para a pasta padrão "'+(S.dataGovernance.storage.folderDisplayPath||handle.name)+'":\n\n'+filename);
           return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'};
@@ -9503,7 +9507,7 @@ async function dgExportFullBackupInner(quiet){
       if(decision==='downloads'){
         const seq=baseSeq+1;
         const filename=dgExportFileName(seq,new Date());
-        dgDownloadViaAnchor(filename,dgBuildBackupBlob(segredosIncluidos,seq,filename,exportadoEm));
+        dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm));
         dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
         if(!quiet) alert('Base exportada excepcionalmente via download do navegador:\n\n'+filename+'\n\nA pasta padrão continua configurada e precisando de atenção.');
         return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'};
@@ -10828,7 +10832,7 @@ function openOnboardingModal(mode, initialStep){
         <div class="field" style="margin-bottom:10px">
           <label for="obInvestorPassword">Senha de Investidor</label>
           <div class="leverage-input-row">
-            <input type="password" id="obInvestorPassword" value="${esc(investorPassword)}" placeholder="Senha somente leitura" autocomplete="off">
+            <input type="password" id="obInvestorPassword" value="${esc(investorPassword)}" placeholder="Somente leitura — válida só nesta sessão, não é armazenada" autocomplete="off">
             <button type="button" class="leverage-trigger" id="obInvestorToggle" aria-expanded="false">Mostrar</button>
           </div>
         </div>
@@ -13101,6 +13105,11 @@ function sessionStableValue(value){
 function sessionStateFingerprint(){
   const snapshot=structuredClone(S);
   // Preço e data entram deliberadamente: falso positivo de FX é preferível à perda silenciosa.
+  // A senha de investidor sai do fingerprint pela mesma política que a tira do save():
+  // ela é de sessão, nunca persiste — digitá-la não pode acusar "alterações não salvas"
+  // de algo que, por desenho, jamais será salvo.
+  if(Array.isArray(snapshot.accounts)) snapshot.accounts.forEach(a=>{ if(a) a.investorPassword=''; });
+  if(snapshot.onboarding) snapshot.onboarding.investorPassword='';
   return JSON.stringify(sessionStableValue(snapshot));
 }
 function sessionCheckpointStorageGet(){

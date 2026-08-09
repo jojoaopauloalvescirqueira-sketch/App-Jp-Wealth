@@ -30,6 +30,7 @@ FULL = STANDARD + (
     ("storage-governance", [sys.executable, "tools/storage_governance_test.py"]),
     ("persistence-failure", [sys.executable, "tools/persistence_failure_test.py"]),
     ("persistence-recovery", [sys.executable, "tools/persistence_recovery_test.py"]),
+    ("investor-password", [sys.executable, "tools/investor_password_test.py"]),
     ("service-worker-upgrade", [sys.executable, "tools/service_worker_upgrade_test.py"]),
     ("mvp-notes", [sys.executable, "tools/mvp_notes_test.py"]),
 )

@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "6473ea52535945b5fa824ff3da9069a2ebec470e14d3c74300fd289534d2b9ea"
+      "sha256": "36297aaee78ef82de35e723c52c50b7ebb597e6b60b699a3b43fd2e811b619f1"
     },
     {
       "order": 5,
@@ -92,7 +92,7 @@
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "3f5540d39bded11a0d49ad09881522c6a597de0b89ff56f954c5ba15a329204f"
+      "sha256": "0fae6c20057e0486299400d232b3d2838d789dc209b232f040448261f6de4ef5"
     },
     {
       "order": 16,
@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "53df71126abad9286c129f14622abbcc9c245abdd677e6e391791f3963cd6f3a"
+      "sha256": "b266a75cc60b881a91e31ce4d5d57575b9a44a87c56e9b13934cf8cc35a59daa"
     },
     {
       "order": 20,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "68e79bfa5bf42be057b6def0cce7d5c0197b1b47b29e307bab5ff0992776c995"
+      "sha256": "b83021a45d304b453f4c714bed09ac622af08d778e7fe83154fc0ad73c4275e5"
     },
     {
       "order": 32,
@@ -206,7 +206,7 @@
       "order": 34,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "619b013fc3f5cf9ddc50f0991f22ab47d4f98d138abdd164c6a2ba0656a2e459"
+      "sha256": "ede89eca410e628fb1f2f322286b02a2e1ab09dcde759aad50f968831200db99"
     },
     {
       "order": 35,
