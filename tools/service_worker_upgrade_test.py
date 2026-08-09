@@ -127,6 +127,7 @@ def main():
                 if executable: options["executable_path"] = executable
                 browser = playwright.chromium.launch(**options); context = browser.new_context()
                 context.route("**/api.frankfurter.dev/**", lambda route: route.fulfill(status=200, content_type="application/json", body='{"rate":1}'))
+                context.route("**/ff-high-impact.json", lambda route: route.fulfill(status=200, content_type="application/json", body='{"events":[]}'))
                 a = page(context, observed); a.goto(base + "index.html", wait_until="load"); wait_until(a, "navigator.serviceWorker.controller"); a.reload(wait_until="load"); wait_until(a, "navigator.serviceWorker.controller")
                 b = page(context, observed); b.goto(base + "index.html?tab=b", wait_until="load"); wait_until(b, "navigator.serviceWorker.controller")
                 a.evaluate("()=>caches.open('external-app-cache').then(c=>c.put('/external',new Response('keep')))" )

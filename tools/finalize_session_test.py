@@ -140,7 +140,15 @@ def assert_empty_after_finalize(page):
     })''')
     assert 'Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador.' in facts['notice'], facts
     assert facts['modalOpen'] is False, facts
-    assert facts['localState'] is None, facts
+    # Mesma correção da suíte dist: a chave NÃO fica ausente — persistNotesAfterSessionWipe()
+    # regrava POR DESENHO o estado vazio com as Notas do MVP preservadas (A-002/A-005).
+    # O conteúdo é validado estruturalmente: nada operacional, Notas presentes.
+    import json as _json
+    estado = _json.loads(facts['localState']) if facts['localState'] else None
+    assert estado is not None, 'chave deve carregar o estado vazio com as Notas preservadas'
+    assert estado['ledger'] == [] and estado['accounts'] == [], facts['localState'][:200]
+    assert estado['onboarding']['done'] is False
+    assert estado.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
     assert facts['sessionCheckpoint'], facts
     assert facts['accounts'] == 0 and facts['ledger'] == 0, facts
     assert facts['operator'] == '' and facts['supervisor'] == '', facts
@@ -151,12 +159,14 @@ def assert_header_actions(page):
     assert page.locator('#nav #finalizeSessionBtn').count() == 0
     assert page.locator('#nav button[data-screen="config"]').count() == 0
     assert page.locator('#headerActions').count() == 1
-    assert page.locator('#headerActions .header-action').count() == 2
+    assert page.locator('#headerActions .header-action').count() == 3
     assert page.locator('#headerConfigBtn').get_attribute('title') == 'Configurações'
     assert page.locator('#headerConfigBtn').get_attribute('aria-label') == 'Abrir configurações'
+    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas do MVP'
+    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas do MVP'
     assert page.locator('#finalizeSessionBtn').get_attribute('title') == 'Finalizar sessão'
     assert page.locator('#finalizeSessionBtn').get_attribute('aria-label') == 'Finalizar sessão neste computador'
-    assert page.locator('#headerActions svg[aria-hidden="true"]').count() == 2
+    assert page.locator('#headerActions svg[aria-hidden="true"]').count() == 3
     page.locator('#headerConfigBtn').focus()
     assert page.evaluate('document.activeElement.id') == 'headerConfigBtn'
     page.locator('#headerConfigBtn').press('Enter')
@@ -177,7 +187,7 @@ def assert_header_actions(page):
     click_id(page, 'sessionCancel')
     for width, height in ((1440,900),(1024,768),(768,900),(390,844),(320,700)):
         page.set_viewport_size({'width':width,'height':height})
-        for element_id in ('headerConfigBtn','finalizeSessionBtn'):
+        for element_id in ('headerConfigBtn','headerNotesBtn','finalizeSessionBtn'):
             button=page.locator('#'+element_id)
             assert button.is_visible(), (width,height,element_id)
             box=button.bounding_box()
@@ -200,7 +210,13 @@ def run_source_surface(browser, base_url):
     page.wait_for_timeout(700)
     page.evaluate('''() => { window.__onbShown=true; closeModal(); }''')
     assert page.evaluate("sessionStorage.getItem('jpwealth_session_checkpoint_v1')") == checkpoint_before_reload
-    assert page.evaluate('sessionHasChanges()') is False
+    reload_diff=page.evaluate('''() => {
+      const checkpoint=JSON.parse(sessionStorage.getItem('jpwealth_session_checkpoint_v1'));
+      return Object.fromEntries(Object.keys(S)
+        .filter(key=>JSON.stringify(sessionStableValue(S[key]))!==JSON.stringify(sessionStableValue(checkpoint[key])))
+        .map(key=>[key,{current:sessionStableValue(S[key]),checkpoint:sessionStableValue(checkpoint[key])}]));
+    }''')
+    assert page.evaluate('sessionHasChanges()') is False, reload_diff
     page.evaluate('''() => { S.instruments[0].preco += 1; save(); }''')
     assert page.evaluate('sessionHasChanges()') is True
     click_id(page, 'finalizeSessionBtn')
@@ -259,7 +275,16 @@ def run_dist_suite(browser, url):
     assert 'outra_aplicacao' in local_keys and 'jpwealth_v9_state_corrompido_teste' in local_keys
     finish_with_phrase(page, 'APAGAR TUDO ')
     assert page.evaluate("localStorage.getItem('outra_aplicacao')") == 'preservar'
-    assert page.evaluate("localStorage.getItem('jpwealth_v9_state')") is None
+    # A chave principal NÃO fica ausente após o Finalizar: persistNotesAfterSessionWipe()
+    # (A-002 + guarda A-005, 07-finalize-session.js) regrava POR DESENHO o estado vazio
+    # com as Notas do MVP preservadas — o aviso ao operador declara exatamente isso.
+    # A expectativa anterior (is None) contradizia o produto documentado e nunca havia
+    # executado: a suíte morria antes, no defeito do reserveMasterCapital.
+    estado_pos_wipe = page.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state'))")
+    assert estado_pos_wipe is not None, 'chave deve carregar estado vazio + Notas preservadas'
+    assert estado_pos_wipe['ledger'] == [], estado_pos_wipe['ledger']
+    assert estado_pos_wipe['onboarding']['done'] is False
+    assert estado_pos_wipe.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") is None
     for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice'):
         assert page.evaluate(f"localStorage.getItem('{key}')") is None, key
@@ -268,7 +293,8 @@ def run_dist_suite(browser, url):
     assert ['set','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
     assert_empty_after_finalize(page)
     assert page.evaluate("save()") is False
-    assert page.evaluate("localStorage.getItem('jpwealth_v9_state')") is None
+    # save() bloqueado não altera nada: a chave segue com o estado vazio + Notas.
+    assert page.evaluate("localStorage.getItem('jpwealth_v9_state')") is not None
     close_checked(page)
 
     page = prepare_page(browser, url)
@@ -374,10 +400,14 @@ def run_dist_suite(browser, url):
     complete_export_step(page_a)
     finish_with_phrase(page_a)
     page_b.wait_for_timeout(500)
-    assert page_b.evaluate("localStorage.getItem('jpwealth_v9_state')") is None
+    # Mesmo contrato das outras superfícies: a finalização (local ou vinda de outra aba)
+    # deixa a chave com o estado vazio + Notas preservadas — nunca ausente.
+    estado_b = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
+    assert estado_b is not None and estado_b['ledger'] == [] and estado_b.get('mvpNotes') is not None
     assert page_b.evaluate("S.onboarding.operador") == ''
     assert page_b.evaluate("save()") is False
-    assert page_b.evaluate("localStorage.getItem('jpwealth_v9_state')") is None
+    estado_b2 = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
+    assert estado_b2 is not None and estado_b2['ledger'] == []
     assert 'Operador Aba B' not in page_b.locator('body').inner_text()
     close_checked(page_a)
     close_checked(page_b)

@@ -52,11 +52,11 @@ try:
     page.evaluate("document.getElementById('headerConfigBtn').focus()")
     assert page.evaluate("document.activeElement.id")!='headerConfigBtn', 'foco não pode alcançar o fundo inertizado'
 
-    # Abertura padrão em Geral, com as seis categorias principais na sidebar e apenas uma página ativa.
+    # Abertura padrao em Geral, com as sete categorias principais na sidebar e apenas uma pagina ativa.
     assert page.locator('#settingsPageTitle').inner_text()=='Geral'
     assert page.locator('[data-settings-panel="general"]').is_visible()
     assert page.locator('[data-settings-panel]:not([hidden])').count()==1
-    top_categories=['general','appearance-interface','method-governance','knowledge','data-security','about']
+    top_categories=['general','appearance-interface','method-governance','operations','knowledge','data-security','about']
     assert page.locator('#settingsMenu [data-settings-category]').count()==len(top_categories)
     for cat in top_categories:
       assert page.locator(f'#settingsMenu [data-settings-category="{cat}"]').count()==1
@@ -89,6 +89,15 @@ try:
     assert page.locator('#settingsPageTitle').inner_text()=='Parâmetros e Calibração'
     assert page.locator('#pMDD').is_visible()
     assert page.locator('#settingsReviewPeriodBtn').is_visible()
+
+    # Operacao -> as tres ferramentas removidas da rail permanecem acessiveis
+    # com seus mesmos nos DOM e listeners.
+    page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
+    page.locator('#settingsMenu [data-settings-category="operations"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Operação'
+    page.locator('[data-settings-panel="operations"] [data-nav-to="tool-params"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Parâmetros'
+    assert page.locator('[data-settings-panel="tool-params"] #paramsWidgetGrid').is_visible()
 
     # Conhecimento -> Centro Educacional (rótulo novo; ID interno 'educational' preservado).
     page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()

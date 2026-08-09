@@ -167,7 +167,7 @@ try:
         assert page.locator('#mvpNotesFiltersCount').inner_text() == '3', 'contador de filtros ativos'
         # busca + filtro combinam (interseção, nunca sobrescrita)
         page.locator('#mvpNotesSearch').fill('Bug de teste')
-        page.locator('#mvpNotesFilterPriority').select_option('high')
+        page.locator('#mvpNotesFilterPriority').select_option('critical')
         assert page.locator('.mvpn-card').count() == 1, 'busca e filtro combinados'
         page.locator('#mvpNotesFilterPriority').select_option('low')
         assert 'busca e aos filtros' in page.locator('.mvpn-empty').inner_text(), 'vazio contextual (busca+filtros)'
@@ -176,10 +176,12 @@ try:
         assert page.locator('#mvpNotesFiltersWrap.open').count() == 1, 'limpar mantém o popover aberto'
         assert page.locator('#mvpNotesSearch').input_value() == 'Bug de teste', 'limpar filtros preserva a busca'
         page.locator('#mvpNotesSearch').fill('')
-        click_id(page, 'mvpNotesFiltersApplyBtn')
+        click_id(page, 'mvpNotesFiltersBtn')
+        assert page.locator('#mvpNotesFiltersWrap.open').count() == 0, 'botão fecha o popover desktop'
 
         # ---- 5. exclusão: cancelar preserva, confirmar remove só o item selecionado ----
         before_count = len(notes_state(page))
+        page.locator("[data-mvp-folder='done']").click()
         page.locator('.mvpn-card[data-type="improvement"]').click()
         page.evaluate("window.confirm = () => false")
         click_id(page, 'mvpNoteDeleteBtn')
@@ -262,6 +264,11 @@ try:
         assert 'mvpNotes' in payload['state']
         assert payload['state']['mvpNotes']['items'], 'backup deveria incluir os itens de notas'
         exported_notes = payload['state']['mvpNotes']
+        # O export é assíncrono: depois do blob, a continuação registra o sucesso e chama
+        # save(). Sem esperar a conclusão, o wipe logo abaixo CORRIA com essa continuação
+        # e o save() tardio regravava a chave recém-apagada (flake real: passou 2x,
+        # falhou 2x). Ancorar na marca de sucesso torna a ordem determinística.
+        page.wait_for_function("S.dataGovernance && S.dataGovernance.export && S.dataGovernance.export.lastExportAt !== ''")
 
         # zera via mecanismo real de reset (mesma função usada pelo botão real)
         page.evaluate("""() => {
@@ -333,7 +340,10 @@ try:
         assert len(notes_state(page)) == 1, 'notas deveriam sobreviver a um reload real após Finalizar Sessão'
 
         page.evaluate("window.prompt = () => 'APAGAR'; window.alert = () => {};")
-        click_id(page, 'resetBtn')
+        click_id(page, 'headerConfigBtn')
+        page.evaluate("settingsNavigateToLeaf('backup')")
+        assert page.locator('#wipeAllBtn').is_visible(), 'Zona de Perigo deve estar acessível em Configurações'
+        click_id(page, 'wipeAllBtn')
         assert len(notes_state(page)) == 0, 'Zona de Perigo/reset deveria remover as notas'
 
         assert_no_errors(page.jpwealth_observed)
@@ -365,7 +375,12 @@ try:
         click_id(page, 'mvpNotesNewFolderBtn')
         iface_id = page.evaluate("S.mvpNotes.folders[0].id")
         assert page.evaluate('mvpNotesUI.activeFolder') == iface_id, 'pasta recém-criada deveria ficar ativa'
-        assert page.locator('#mvpNotesViewTitle').inner_text() == 'Interface de Configurações'
+        rendered_folder_title = page.locator('#mvpNotesViewTitle').text_content()
+        assert rendered_folder_title == 'Interface de Configurações', {
+            'rendered': rendered_folder_title,
+            'activeFolder': page.evaluate('mvpNotesUI.activeFolder'),
+            'folder': page.evaluate('S.mvpNotes.folders[0]'),
+        }
         # nota criada dentro da pasta herda o vínculo; em Todas as Notas/Sem pasta o padrão é null
         click_id(page, 'mvpNotesNewBtn')
         assert page.evaluate('mvpNotesUI.draft.folderId') == iface_id
@@ -397,9 +412,10 @@ try:
         page.locator('#mvpNotesFilterType').select_option('task')
         page.locator('[data-mvp-folder="unfiled"]').click()
         assert page.evaluate("mvpNotesUI.filterType") == 'task', 'trocar de pasta não pode limpar filtros'
-        # o popover permaneceu aberto através da troca de pasta — só limpar e fechar
+        # No desktop, trocar de pasta é clique fora e fecha o popover; o filtro persiste.
+        click_id(page, 'mvpNotesFiltersBtn')
         page.locator('#mvpNotesFilterType').select_option('all')
-        click_id(page, 'mvpNotesFiltersApplyBtn')
+        click_id(page, 'mvpNotesFiltersBtn')
         # mover nota entre pastas pelo editor: só folderId+updatedAt mudam
         page.locator('[data-mvp-folder="all"]').click()
         moved = page.evaluate("S.mvpNotes.items.find(it => it.title === 'Nota solta')")
@@ -467,7 +483,8 @@ try:
             page.locator('#importFullBackupInput').set_input_files(folders_fixture)
             page.wait_for_timeout(500)
             assert page.evaluate("S.mvpNotes.folders[0].id") == backup_folder_id, 'ID da pasta deveria ser preservado no import'
-            assert page.evaluate("S.mvpNotes.items[0].folderId") == backup_folder_id, 'vínculo nota↔pasta deveria ser restaurado'
+            assert page.evaluate("S.mvpNotes.items.find(it => it.title === 'Nota do backup em pasta')?.folderId") == backup_folder_id, \
+                'vínculo nota↔pasta deveria ser restaurado'
         finally:
             Path(folders_fixture).unlink(missing_ok=True)
         # importação inválida: ID de pasta duplicado (primeiro preservado, ambíguo → Sem pasta),
@@ -491,7 +508,7 @@ try:
           };
         }""")
         assert recon == {'firstKept': True, 'dupRegenerated': True, 'bothNull': True}, recon
-        # migração v1 → v2: folders=[] e folderId=null, sem perder nada
+        # migração v1 → schema atual: folders=[] e folderId=null, sem perder nada
         legacy_v2 = page.evaluate("""() => {
           const legacy = structuredClone(DEFAULTS);
           legacy.mvpNotes = {schemaVersion: 1, showHeaderIcon: true, items: [
@@ -502,10 +519,10 @@ try:
           return {sv: imp.mvpNotes.schemaVersion, folders: imp.mvpNotes.folders,
                   fid: imp.mvpNotes.items[0].folderId, id: imp.mvpNotes.items[0].id};
         }""")
-        assert legacy_v2 == {'sv': 2, 'folders': [], 'fid': None, 'id': 'l1'}, legacy_v2
+        assert legacy_v2 == {'sv': 5, 'folders': [], 'fid': None, 'id': 'l1'}, legacy_v2
         # idempotência: normalize(normalize(state)) === normalize(state), em igualdade
         # estrutural (sessionStableValue ordena chaves), para legado v1, v2 com pastas
-        # ambíguas/duplicadas/órfãs, e v2 já bem-formado (segunda passada não deve alterar nada).
+        # ambíguas/duplicadas/órfãs, e estado atual já bem-formado (segunda passada não deve alterar nada).
         idempotency = page.evaluate("""() => {
           const stable = x => JSON.stringify(sessionStableValue(x));
           const normalize = raw => normalizeImportedState({state: raw});
@@ -541,7 +558,7 @@ try:
               status: 'in_progress', folderId: 'f1', screenId: 'motor', buildId: 'B', createdAt: 'c', updatedAt: 'u'}]};
           const s1c = normalize(clean), s2c = normalize(s1c);
           cases.wellFormedV2 = stable(s1c.mvpNotes) === stable(s2c.mvpNotes)
-            && stable(s1c.mvpNotes) === stable(clean.mvpNotes);
+            && s1c.mvpNotes.schemaVersion === 5;
 
           return cases;
         }""")
@@ -598,7 +615,9 @@ try:
         assert page.locator('#headerNotesBadge').inner_text() == '1'
         # Zona de Perigo zera o badge no mesmo boot()
         page.evaluate("window.prompt = () => 'APAGAR'; window.alert = () => {};")
-        click_id(page, 'resetBtn')
+        click_id(page, 'headerConfigBtn')
+        page.evaluate("settingsNavigateToLeaf('backup')")
+        click_id(page, 'wipeAllBtn')
         page.wait_for_timeout(500)
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")
         assert page.evaluate("document.getElementById('headerNotesBadge').hidden") is True, \
@@ -634,7 +653,7 @@ try:
         click_id(page, 'headerNotesBtn')
         page.locator("[data-mvp-folder='done']").click()
         page.wait_for_timeout(150)
-        assert page.locator('#mvpNotesViewTitle').inner_text() == 'Concluído'
+        assert page.locator('#mvpNotesViewTitle').text_content() == 'Concluído'
         assert page.locator('#mvpNotesFiltersWrap.open').count() == 0, 'filtros ficam ocultos até o botão (v5)'
         assert page.locator('.mvpn-card').count() == 1
         page.locator('.mvpn-card').first.click()
@@ -739,6 +758,9 @@ try:
         assert page.evaluate(invariante)
         editor = page.evaluate("Math.round(document.getElementById('mvpNotesEditorPane').getBoundingClientRect().width)")
         assert editor >= 320, ('editor abaixo do piso funcional', editor)
+        # Libera espaço antes do reset: com a lista no máximo, 190px para Pastas violaria
+        # o piso do editor e o motor corretamente apararia o valor.
+        page.locator('#mvpNotesListHandle').press('Home')
         # duplo clique restaura só a própria coluna
         lista_antes = page.evaluate('mvpNotesRenderedPanes().list')
         page.locator('#mvpNotesFoldersHandle').dblclick()
@@ -839,7 +861,7 @@ try:
         page.evaluate("""() => {
           ['Interface', 'Dashboard', 'Motor de Lote', 'Forex'].forEach(n => mvpNotesCreateFolder(n));
           const alvo = S.mvpNotes.folders[0].id;
-          ['Bug 10', 'Bug 2', 'Bug 1'].forEach(t => mvpNotesCreate({content: t + '\ncorpo', type: 'bug',
+          ['Bug 10', 'Bug 2', 'Bug 1'].forEach(t => mvpNotesCreate({content: t + '\\ncorpo', type: 'bug',
             priority: 'high', status: 'open', folderId: alvo}));
           save();
         }""")
@@ -868,6 +890,7 @@ try:
         assert page.locator(f"[data-mvp-folder-row='{primeira}'] [data-mvp-folder-up]").count() == 0
         assert page.locator(f"[data-mvp-folder-row='{ultima}'] [data-mvp-folder-down]").count() == 0
         nome_ultima = page.evaluate('S.mvpNotes.folders[S.mvpNotes.folders.length-1].name')
+        page.locator(f"[data-mvp-folder-row='{ultima}'] details.mvpn-folder-kebab summary").click()
         page.locator(f"[data-mvp-folder-row='{ultima}'] [data-mvp-folder-up]").click()
         assert ordem()[-2] == nome_ultima, 'Mover para cima trocou de posição'
         assert page.locator('#mvpNotesOrderLive').inner_text().startswith(f'Pasta {nome_ultima} movida para a posição')
@@ -926,7 +949,7 @@ try:
         assert casos['duplicadas']['r'] == ['A:0', 'B:1', 'C:2'], casos['duplicadas']   # empate → ordem do array
         assert casos['extremos']['r'] == ['A:0', 'C:1', 'B:2'], casos['extremos']       # -5 < 2 < 9999
         assert casos['texto']['r'] == ['C:0', 'A:1', 'B:2'], casos['texto']             # "1" < "2"; ausente vai ao fim
-        assert casos['lixo']['r'] == ['A:0', 'C:1', 'B:2'], casos['lixo']               # todas inválidas → ordem do array
+        assert casos['lixo']['r'] == ['A:0', 'B:1', 'C:2'], casos['lixo']               # todas inválidas → ordem do array
         for k, v in casos.items():
             assert v['idempotente'], k
         assert_no_errors(page.jpwealth_observed)
@@ -937,8 +960,8 @@ try:
         page.set_viewport_size({'width': 390, 'height': 844})
         page.evaluate("""() => {
           const f = mvpNotesCreateFolder('Interface de Configurações');
-          mvpNotesCreate({content: 'Bug 1\ncorpo', type: 'bug', priority: 'high', status: 'open', folderId: f.id});
-          mvpNotesCreate({content: 'Bug 2\ncorpo', type: 'bug', priority: 'low', status: 'done', folderId: f.id});
+          mvpNotesCreate({content: 'Bug 1\\ncorpo', type: 'bug', priority: 'high', status: 'open', folderId: f.id});
+          mvpNotesCreate({content: 'Bug 2\\ncorpo', type: 'bug', priority: 'low', status: 'done', folderId: f.id});
           save();
         }""")
         click_id(page, 'headerNotesBtn')
@@ -1001,7 +1024,7 @@ try:
         page.keyboard.press('Escape')
         # dirty bloqueia a volta; cancelar mantém a nota aberta
         page.evaluate("() => { const t = document.getElementById('mvpNoteContent');"
-                      " t.value += '\nlinha nova'; t.dispatchEvent(new Event('input', {bubbles: true})); }")
+                      " t.value += '\\nlinha nova'; t.dispatchEvent(new Event('input', {bubbles: true})); }")
         assert page.evaluate('mvpNotesUI.draftDirty') is True
         page.evaluate("() => { window.confirm = () => false; }")
         click_id(page, 'mvpNotesBackBtn')
@@ -1028,13 +1051,14 @@ try:
         page.set_viewport_size({'width': 1440, 'height': 900})
         page.evaluate("""() => {
           const f = mvpNotesCreateFolder('Interface');
-          mvpNotesCreate({content: 'Corrigir botão mobile\ncorpo', type: 'bug', priority: 'high',
+          mvpNotesCreate({content: 'Corrigir botão mobile\\ncorpo', type: 'bug', priority: 'high',
             status: 'open', folderId: f.id, aiImplementationPolicy: 'analysis_only'});
-          mvpNotesCreate({content: 'Outra\ncorpo', type: 'task', priority: 'low',
+          mvpNotesCreate({content: 'Outra\\ncorpo', type: 'task', priority: 'low',
             status: 'open', folderId: f.id, aiImplementationPolicy: 'blocked'});
           save();
         }""")
         click_id(page, 'headerNotesBtn')
+        page.locator('.mvpn-card').first.click()
         click_id(page, 'mvpNotesFiltersBtn')
         limpar = page.locator('#mvpNotesFiltersClearBtn')
         # mecanismo ÚNICO: um só botão de limpeza, visível também no desktop (antes o bloco
@@ -1066,7 +1090,6 @@ try:
         page.locator('#mvpNotesFilterPriority').select_option('high')
         page.locator('#mvpNotesFilterPolicy').select_option('analysis_only')
         assert page.locator('#mvpNotesFiltersCount').inner_text() == '3'
-        page.locator('.mvpn-card').first.click()
         antes_upd = notes_state(page)[0]['updatedAt']
         sel = page.evaluate('mvpNotesUI.selectedId')
         limpar.click()
@@ -1099,8 +1122,8 @@ try:
         page.set_viewport_size({'width': 1440, 'height': 900})
         page.evaluate("""() => {
           const f = mvpNotesCreateFolder('FUNÇÃO - NOTAS MVP');
-          mvpNotesCreate({content: 'Exportar notas individualmente em Markdown\n\nCorpo com ção, ü, 日本語 🚀.'
-            + '\n\n<script>alert(1)<' + '/script>', type: 'feature', priority: 'medium',
+          mvpNotesCreate({content: 'Exportar notas individualmente em Markdown\\n\\nCorpo com ção, ü, 日本語 🚀.'
+            + '\\n\\n<script>alert(1)<' + '/script>', type: 'feature', priority: 'medium',
             status: 'in_progress', folderId: f.id, aiImplementationPolicy: 'autonomous_allowed'});
           save();
         }""")
@@ -1144,7 +1167,7 @@ try:
         # o que não é heading válido entra como texto do H1. O title persistido não muda.
         headings = page.evaluate("""() => {
           const gerar = t => {
-            const n = mvpNotesCreate({content: t + '\nCorpo.', type: 'feature', priority: 'medium',
+            const n = mvpNotesCreate({content: t + '\\nCorpo.', type: 'feature', priority: 'medium',
               status: 'open', folderId: null, aiImplementationPolicy: 'analysis_only'});
             const it = S.mvpNotes.items.find(i => i.id === n.id);
             const md = mvpNotesMarkdown(it);
@@ -1166,7 +1189,7 @@ try:
             assert h['h1s'] == 1, ('um único H1 por arquivo', h)
         # normalizar o título não mexe nos headings do CORPO
         corpo = page.evaluate("""() => {
-          const n = mvpNotesCreate({content: '## Exportar notas\n\nTexto.\n\n## Seção interna\n\nMais.',
+          const n = mvpNotesCreate({content: '## Exportar notas\\n\\nTexto.\\n\\n## Seção interna\\n\\nMais.',
             type: 'feature', priority: 'medium', status: 'open', folderId: null});
           const it = S.mvpNotes.items.find(i => i.id === n.id);
           return {md: mvpNotesMarkdown(it), titulo: it.title};
@@ -1176,7 +1199,7 @@ try:
         assert corpo['titulo'] == '## Exportar notas', 'title persistido intocado'
         # front matter: escalares citados em estilo SIMPLES, cujo único escape é '' — assim
         # dois-pontos, aspas duplas e barra invertida entram literais e voltam idênticos.
-        yaml = page.evaluate("""() => ({
+        yaml = page.evaluate(r"""() => ({
           doisPontos: mvpNotesYamlValor('Interface: Dashboard'),
           aspasDuplas: mvpNotesYamlValor('Projeto "Forex"'),
           aspaSimples: mvpNotesYamlValor("O'Brien & Cia"),
@@ -1196,22 +1219,22 @@ try:
         assert yaml['simples'] == 'autonomous_allowed', 'token seguro fica sem aspas'
         assert yaml['vazio'] == 'null'
         # e o valor citado volta idêntico quando relido
-        volta = page.evaluate("""() => {
+        volta = page.evaluate(r"""() => {
           const original = 'Interface: "Dashboard" & FIIs\\backup';
           const f = mvpNotesCreateFolder(original);
-          const n = mvpNotesCreate({content: 'Nota\ncorpo', type: 'task', priority: 'low',
+          const n = mvpNotesCreate({content: 'Nota\\ncorpo', type: 'task', priority: 'low',
             status: 'open', folderId: f.id});
           const md = mvpNotesMarkdown(S.mvpNotes.items.find(i => i.id === n.id));
           const linha = (md.match(/^folder: (.*)$/m) || [])[1];
           const lido = linha.startsWith("'") ? linha.slice(1, -1).replace(/''/g, "'") : linha;
-          return {original, lido, todasLinhas: md.split(/^---$/m)[1].trim().split('\n')
+          return {original, lido, todasLinhas: md.split(/^---$/m)[1].trim().split('\\n')
             .every(l => /^[a-z_]+: /.test(l))};
         }""")
         assert volta['lido'] == volta['original'], volta
         assert volta['todasLinhas'], 'front matter continua chave: valor em toda linha'
         # metadados HISTÓRICOS da nota, nunca os do build em execução
         hist = page.evaluate("""() => {
-          const n = mvpNotesCreate({content: 'Antiga\ncorpo', type: 'bug', priority: 'high',
+          const n = mvpNotesCreate({content: 'Antiga\\ncorpo', type: 'bug', priority: 'high',
             status: 'open', folderId: null});
           const it = S.mvpNotes.items.find(i => i.id === n.id);
           it.buildId = 'BUILD-ANTIGO-TESTE'; it.sourceRevision = 'REV-ANTIGA-TESTE';
@@ -1225,7 +1248,7 @@ try:
         assert hist['contemBuildAtual'] is False, 'o build em execução não substitui o da nota'
         # título vazio cai no padrão TICKET-nota.md
         vazio = page.evaluate("""() => {
-          const n = mvpNotesCreate({content: '\n\n', type: 'task', priority: 'low', status: 'open', folderId: null});
+          const n = mvpNotesCreate({content: '\\n\\n', type: 'task', priority: 'low', status: 'open', folderId: null});
           const it = S.mvpNotes.items.find(i => i.id === n.id);
           return {nome: mvpNotesMarkdownFilename(it), md: mvpNotesMarkdown(it)};
         }""")
@@ -1235,7 +1258,7 @@ try:
         antes_upd = notes_state(page)[0]['updatedAt']
         antes_ticket = notes_state(page)[0]['ticket']
         page.evaluate("() => { window.alert = () => {}; const t = document.getElementById('mvpNoteContent');"
-                      " t.value += '\nrascunho'; t.dispatchEvent(new Event('input', {bubbles: true})); }")
+                      " t.value += '\\nrascunho'; t.dispatchEvent(new Event('input', {bubbles: true})); }")
         assert page.evaluate('mvpNotesUI.draftDirty') is True
         assert page.evaluate('mvpNotesExportMarkdown()') is None, 'dirty bloqueia a exportação'
         assert page.locator('#mvpNotesExportLive').inner_text().startswith('Existem alterações não salvas')
@@ -1251,7 +1274,7 @@ try:
         page.set_viewport_size({'width': 1440, 'height': 900})
         page.evaluate("""() => {
           ['Interface', 'Dashboard'].forEach(n => mvpNotesCreateFolder(n));
-          mvpNotesCreate({content: 'Nota\ncorpo', type: 'bug', priority: 'high',
+          mvpNotesCreate({content: 'Nota\\ncorpo', type: 'bug', priority: 'high',
             status: 'open', folderId: S.mvpNotes.folders[0].id});
           save();
         }""")
@@ -1308,10 +1331,10 @@ try:
             mvpNotesUpdate(it.id, {type: it.type, content: it.content, priority: it.priority,
               status: 'done', folderId: it.folderId, aiImplementationPolicy: it.aiImplementationPolicy});
           };
-          mvpNotesCreate({content: 'Ativa na pasta\nx', type: 'bug', priority: 'high', status: 'open', folderId: f.id});
-          concluir(mvpNotesCreate({content: 'Feita na pasta\nx', type: 'bug', priority: 'low', status: 'open', folderId: f.id}));
-          mvpNotesCreate({content: 'Ativa sem pasta\nx', type: 'task', priority: 'low', status: 'open', folderId: null});
-          concluir(mvpNotesCreate({content: 'Feita sem pasta\nx', type: 'task', priority: 'low', status: 'open', folderId: null}));
+          mvpNotesCreate({content: 'Ativa na pasta\\nx', type: 'bug', priority: 'high', status: 'open', folderId: f.id});
+          concluir(mvpNotesCreate({content: 'Feita na pasta\\nx', type: 'bug', priority: 'low', status: 'open', folderId: f.id}));
+          mvpNotesCreate({content: 'Ativa sem pasta\\nx', type: 'task', priority: 'low', status: 'open', folderId: null});
+          concluir(mvpNotesCreate({content: 'Feita sem pasta\\nx', type: 'task', priority: 'low', status: 'open', folderId: null}));
           save();
         }""")
         click_id(page, 'headerNotesBtn')

@@ -65,8 +65,11 @@ try:
         })''')
         assert facts['compute']=='function', facts
         assert facts['render']=='function', facts
-        assert facts['tabs']==7, facts
-        assert facts['headerActions']==2, facts
+        # Contrato atual: quatro telas operacionais na rail; as ferramentas
+        # auxiliares vivem na Central. O header possui Configuracoes, Notas e
+        # Finalizar sessao.
+        assert facts['tabs']==4, facts
+        assert facts['headerActions']==3, facts
         assert facts['state'] is True, facts
         assert facts['storageKey']=='jpwealth_v9_state', facts
         assert facts['iconPicker'] is True, facts
@@ -89,8 +92,11 @@ try:
         assert empty['supervisorPlaceholder']=='Preencher nome', empty
         page.evaluate('''() => {
           window.alert=()=>{};
+          const databaseTerm=document.querySelector('#obDbResp');
+          if(databaseTerm) databaseTerm.checked=true;
           const consent=document.querySelector('#obConsent');
           if(consent) consent.checked=true;
+          document.querySelector('[data-onbtab="consent"]')?.click();
           document.querySelector('#modalConfirm')?.click();
         }''')
         page.wait_for_timeout(50)
@@ -207,4 +213,4 @@ finally:
 
 if errors:
     raise SystemExit('SMOKE FALHOU\n'+'\n'.join(errors))
-print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 7 áreas operacionais e Notas do MVP verificados.')
+print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 4 telas operacionais e Notas do MVP verificados.')

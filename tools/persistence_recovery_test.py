@@ -166,7 +166,7 @@ def run_suite(browser, url, rotulo):
         fx.write(json.dumps({'tipo': 'jpwealth_full_backup', 'versao': 'V9.1', 'state': estado_valido}))
         valido = fx.name
     try:
-        page.evaluate("window.confirm = () => true")
+        page.evaluate("() => { window.confirm = () => true; }")
         page.locator('#importFullBackupInput').set_input_files(valido)
         page.wait_for_timeout(700)
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")
@@ -188,11 +188,11 @@ def run_suite(browser, url, rotulo):
     page = open_page(browser, url, seed=BAD_JSON)
     assert_recovery_entered(page, BAD_JSON, {'json-invalido'})
     chave_copia = page.evaluate('jpWealthLoadRecovery.recoveryKey')
-    page.evaluate("window.confirm = () => false")          # cancela
+    page.evaluate("() => { window.confirm = () => false; }")          # cancela
     page.locator('#persistenceRecoveryResetBtn').click()
     f = recovery_facts(page)
     assert f['ativo'] and f['bloqueado'] and f['chavePrincipal'] == BAD_JSON, 'cancelar não pode mudar nada'
-    page.evaluate("window.__confirmMsg = null; window.confirm = m => { window.__confirmMsg = String(m); return true; }")
+    page.evaluate("() => { window.__confirmMsg = null; window.confirm = m => { window.__confirmMsg = String(m); return true; }; }")
     page.locator('#persistenceRecoveryResetBtn').click()
     page.wait_for_timeout(500)
     page.evaluate("() => { window.__onbShown = true; closeModal(); }")
@@ -228,7 +228,10 @@ def run_suite(browser, url, rotulo):
     assert f['avisoVisivel'], 'o aviso de recuperação deve continuar'
     assert f['a001Visivel'], 'o A-001 deveria informar a falha de armazenamento da tentativa'
     assert any('não pôde ser gravada' in a for a in page.evaluate('window.__alerts || []'))
-    page.evaluate("Storage.prototype.setItem = window.__origSet")
+    # Bloco com corpo (retorno undefined): a expressão nua devolveria a função nativa
+    # e o Playwright falharia ao serializá-la ("Illegal invocation"). Latente até aqui
+    # porque o teste morria antes, na regressão do import.
+    page.evaluate("() => { Storage.prototype.setItem = window.__origSet; }")
     close_page(page)
 
     # ---- 6.11 Finalizar Sessão durante recuperação: interrompido antes de qualquer escrita ----
@@ -250,10 +253,18 @@ def run_suite(browser, url, rotulo):
     assert page.evaluate(f"localStorage.getItem({json.dumps(copia)})") == BAD_JSON, 'a cópia deve sobreviver'
     assert f['ativo'] and f['avisoVisivel'] and f['saveRetorna'] is False, f
 
+    # Overrides SEMPRE em bloco `() => { ... }`: se a string do evaluate termina numa
+    # expressão-função (a própria atribuição), o Playwright A INVOCA — o contador de
+    # prompt nascia em 1 sem clique algum. Latente até o import transacional destravar
+    # os cenários além da linha 154.
     # ---- 6.12 Zona de Perigo durante recuperação: bloqueada antes do primeiro prompt ----
-    page.evaluate("window.__prompts = 0; window.prompt = () => { window.__prompts++; return 'APAGAR'; }")
+    page.evaluate("() => { window.__prompts = 0; window.prompt = () => { window.__prompts++; return 'APAGAR'; }; }")
     page.evaluate("window.__alerts = []")
-    page.locator('#resetBtn').click()
+    # O botão "Limpar dados salvos" vive num rodapé fora da rota padrão 'dash'
+    # (DEFAULT_START_ROUTE do JPW-HJFGDE); o contrato sob teste é a GUARDA dentro de
+    # wipeAllData(), então acionamos o listener real por dispatch em vez de exigir
+    # visibilidade Playwright de um elemento de outra tela.
+    page.evaluate("document.getElementById('resetBtn').click()")
     page.wait_for_timeout(200)
     assert page.evaluate('window.__prompts') == 0, 'a limpeza deve ser interrompida ANTES do prompt'
     assert any('modo de recuperação' in a for a in page.evaluate('window.__alerts')), \
@@ -275,8 +286,10 @@ def run_suite(browser, url, rotulo):
         'em estado saudável o fluxo normal deve abrir'
     assert 'modo de recuperação' not in texto
     page.evaluate("document.getElementById('sessionCancel').click()")
-    page.evaluate("window.prompt = () => 'APAGAR'; window.alert = () => {};")
-    page.locator('#resetBtn').click()
+    page.evaluate("() => { window.prompt = () => 'APAGAR'; window.alert = () => {}; }")
+    # Mesmo motivo do 6.12: o botão vive fora da rota padrão 'dash'; o contrato é o
+    # comportamento de wipeAllData(), acionado pelo listener real.
+    page.evaluate("document.getElementById('resetBtn').click()")
     page.wait_for_timeout(600)
     page.evaluate("() => { window.__onbShown = true; closeModal(); }")
     assert page.evaluate('S.params.saldoIni') == page.evaluate('DEFAULTS.params.saldoIni'), \
