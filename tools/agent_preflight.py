@@ -155,9 +155,14 @@ def main() -> int:
             if age > 30:
                 warnings.append(f"CURRENT-STATE.md tem {age} dias; revalidar antes de confiar")
 
+    # Exceção deliberada, espelho da exceção no .gitignore: o teste PERMANENTE da
+    # política de segredo carrega "password" no nome por definição — usa fixture
+    # sintética e é justamente quem garante que credencial real nunca persiste.
+    SENSITIVE_ALLOWLIST = {"tools/investor_password_test.py"}
     sensitive = [
         path for path in candidates
         if path != ".gitignore"
+        and path not in SENSITIVE_ALLOWLIST
         and not path.endswith("/.gitkeep")
         and any(pattern.search(path) for pattern in PRIVATE_PATH_PATTERNS)
     ]
