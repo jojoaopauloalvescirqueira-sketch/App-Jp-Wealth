@@ -31,6 +31,8 @@ FULL = STANDARD + (
     ("persistence-failure", [sys.executable, "tools/persistence_failure_test.py"]),
     ("persistence-recovery", [sys.executable, "tools/persistence_recovery_test.py"]),
     ("investor-password", [sys.executable, "tools/investor_password_test.py"]),
+    ("async-generation", [sys.executable, "tools/async_generation_test.py"]),
+    ("build-reproducibility", [sys.executable, "tools/build_reproducibility_test.py"]),
     ("service-worker-upgrade", [sys.executable, "tools/service_worker_upgrade_test.py"]),
     ("mvp-notes", [sys.executable, "tools/mvp_notes_test.py"]),
 )
