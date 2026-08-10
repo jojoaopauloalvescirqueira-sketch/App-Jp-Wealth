@@ -1,10 +1,10 @@
 # Tarefa ativa - Reconciliacao agentica do JP Wealth
 
 - Data: 2026-08-10
-- Source revision: `c89f578`
+- Source revision: `83f688f`
 - Nivel: N0-D (documental)
-- Autoridade: Ondas 1, 2 e 3-A autorizadas e executadas; Git autorizado item a item
-- Estado: Ondas 1, 2 e 3-A concluidas e reconciliadas; proximo estagio e a Onda 3-B, nao iniciada
+- Autoridade: Ondas 1, 2, 3-A e 3-B autorizadas e executadas; Git autorizado item a item
+- Estado: construcao encerrada e contexto reconciliado; auditoria global do sistema pendente
 
 O estado Git corrente (branch, HEAD, arvore) e runtime e deve ser conferido pelo preflight, nao lido daqui.
 
@@ -17,9 +17,10 @@ Fazer as representacoes agenticas do projeto voltarem a descrever o sistema atua
 - Onda 1 — contexto operacional obrigatorio: concluida e publicada.
 - Onda 2 — UNKNOWN investigados; `jpw-data-safety` e `SECURITY-MODEL.md` corrigidos, publicados e reconciliados.
 - Onda 3 — revisao arquitetural concluida: duas lacunas MISSING, ambas IMPLEMENT.
-- Onda 3-A — backstop de frescor material implementado, testado (7/7 sinteticos; full 16/16) e publicado em `c89f578`.
-- Reconciliacao contextual pos-3-A: concluida e validada — os tres artefatos operacionais representam `c89f578` e o frescor material voltou a `false`.
-- Onda 3-B — `AGENTIC IMPACT CHECK` no ciclo pos-mudanca: nao iniciada.
+- Onda 3-A — backstop de frescor material implementado, testado e publicado; contexto reconciliado.
+- Onda 3-B — `AGENTIC IMPACT CHECK` obrigatorio no `jpw-post-change-audit`, implementado e publicado em `83f688f`; `COMPLETE / PUBLISHED / CONTEXT RECONCILED`.
+- Reconciliacao contextual final: concluida e validada — os tres artefatos operacionais representam `83f688f` e o frescor material voltou a `false`.
+- Auditoria global do sistema: nao iniciada — e dela que depende o veredito `SYSTEM RECONCILED`.
 
 ## Dentro do escopo agora
 
@@ -29,10 +30,10 @@ Fazer as representacoes agenticas do projeto voltarem a descrever o sistema atua
 
 ## Fora do escopo agora
 
-- Onda 3-B e qualquer alteracao em `skills/jpw-post-change-audit/SKILL.md`;
-- preflight, teste do preflight, quality gate e `QUALITY-GATES.md` (materia da 3-A, ja publicada);
-- `tests/README.md`, `CHANGELOG.md` e `PROJECT-FILES.txt` (fora do escopo agentico ou de outra onda);
-- produto, agentes especializados, routing, `AGENTS.md`, skills, Guard e bootstrap.
+- `jpw-post-change-audit`, AEG, preflight, quality gate e `QUALITY-GATES.md` (materia das Ondas 3-A e 3-B, ja publicadas);
+- revisao da skill canonica no acervo externo (tarefa separada, posterior ao fechamento);
+- `tests/README.md`, `CHANGELOG.md` e `PROJECT-FILES.txt`;
+- produto, agentes especializados, routing, `AGENTS.md`, Guard e bootstrap.
 
 ## Invariantes
 
@@ -42,14 +43,14 @@ Fazer as representacoes agenticas do projeto voltarem a descrever o sistema atua
 
 ## Proximos passos
 
-1. Onda 3-B — reformular o passo de fechamento do `jpw-post-change-audit` como `AGENTIC IMPACT CHECK`.
-2. Reconciliacao contextual pos-3-B.
+1. Auditoria global read-only de todas as representacoes agenticas.
+2. Decidir `SYSTEM RECONCILED` a luz dessa auditoria.
 3. Conflitos N3 — tratar por ADR, exemplos de fronteira e autorizacao explicita.
 
 ## Resultado atual
 
-- Onda 3-A: `COMPLETE / PUBLISHED / CONTEXT RECONCILED`.
-- Backstop de frescor material publicado e ativo, validado em quatro condicoes reais: cenarios sinteticos (TRUE/FALSE/UNKNOWN), contexto-apenas apos a source revision (`false`), mudanca material publicada (`true`, detectando a propria 3-A) e reconciliacao desta (`true` -> `false`, comprovado).
-- Validacao desta reconciliacao: `agent_preflight.py --mode audit` PASS sem aviso material, `quality_gate.py --tier fast` PASS 4/4, `git diff --check` limpo, fatos conferidos contra o repositorio.
-- Estado global: `SYSTEM NOT RECONCILED` enquanto a Onda 3-B estiver aberta.
+- Construcao estrutural encerrada: backstop de frescor material e `AGENTIC IMPACT CHECK` publicados e operando; nenhuma nova implementacao prevista neste ciclo.
+- Material source revision e contexto operacional convergem em `83f688f`; frescor material `false`, sem aviso.
+- Validacao desta reconciliacao: `agent_preflight.py --mode audit` PASS sem aviso material, `quality_gate.py --tier fast` PASS 4/4, `git diff --check` limpo.
+- `FINAL SYSTEM AUDIT PENDING`. `SYSTEM RECONCILED` nao declarado: o veredito pertence a auditoria global.
 - Alteracoes pendentes de commit; nenhuma operacao Git executada nesta reconciliacao.

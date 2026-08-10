@@ -1,7 +1,7 @@
 # Estado atual do projeto
 
 Data da fotografia: 2026-08-10
-Source revision representada: `c89f578`
+Source revision representada: `83f688f`
 Branch: `main` (integrada e publicada em `origin/main`)
 Validade: revisar apos mudanca material ou integracao material em `main`. Commit exclusivamente de reconciliacao documental nao altera, por si so, a source revision representada.
 Nota: a source revision e a revisao MATERIAL cujo estado esta descrito aqui; o HEAD corrente pode estar a frente dela por commits documentais sem que esta fotografia fique desatualizada.
@@ -15,6 +15,7 @@ Nota: a source revision e a revisao MATERIAL cujo estado esta descrito aqui; o H
 - Preflight, quality gate em tres tiers e workflow de CI estao preparados; nenhum workflow de CI ou deploy online foi acionado.
 - Tier `standard` esta verde: 5 de 5 verificacoes em Chromium real.
 - Tier `full` executa treze suites `*_test.py`: 16 de 16 verificacoes passam; nenhum `PRODUCT_FAIL` remanescente. Composicao cumulativa: fast 4, standard 6, full 16.
+- O fechamento de toda mudanca material exige um veredito explicito de impacto agentico — `NO AGENTIC IMPACT` ou `AGENTIC IMPACT DETECTED`, sempre com BASIS — e, quando DETECTED, exige `skills/agentic-evolution-governance/SKILL.md` em modo IMPACT antes de encerrar a dimensao agentica. A regra canonica vive em `skills/jpw-post-change-audit/SKILL.md`, nao nesta fotografia.
 - O preflight verifica dois sinais independentes de frescor do contexto: temporal (idade da fotografia) e material (existencia de alteracoes posteriores a source revision fora dos caminhos de reconciliacao contextual). O resultado material e tri-state — `true`, `false` ou `unknown` —, com `unknown` jamais codificado como `false`, e o aviso e nao bloqueante. O comportamento e protegido pelo teste permanente `preflight-context` no tier fast; a composicao dos gates esta em `docs/governance/QUALITY-GATES.md` e o mecanismo em `tools/agent_preflight.py`.
 - Regras financeiras e contratos normativos nao foram alterados entre `f722eb3` e `cba50c6`: nenhuma formula, perfil, MDD, DD, fase, LIFO, stop ou MEI mudou.
 - A representacao de `reserveMasterCapital` foi canonizada (N2 aprovada, `7d18bca`): o campo deriva de `params.saldoIni` tambem no boot fresco, com a mesma formula ja usada pela `migrate()`.
