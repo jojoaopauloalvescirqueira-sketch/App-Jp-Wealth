@@ -4311,7 +4311,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'a8df0679442894c8';
+const JP_WEALTH_BUILD_ID = 'eda98dfb3f0e6a6e';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -12962,9 +12962,25 @@ function wipeAllData(){
   const p2=prompt('Última confirmação. Digite APAGAR novamente:');
   if(p2===null) return;
   if(p2.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }
+  // JPW-FX-WIPE-RACE: invalida a GERAÇÃO da persistência antes de destruir a base.
+  // Operações assíncronas iniciadas antes daqui já capturam jpWealthPersistenceEpoch()
+  // e o conferem depois do await (updateFxRates é o caso real) — mas a Zona de Perigo
+  // era o único fluxo destrutivo que não incrementava o epoch, então o guard comparava
+  // a MESMA geração, passava, e a continuação regravava a chave recém-apagada.
+  // Finalizar Sessão (local e vinda de outra aba) já fazia isto; aqui só se equipara.
+  blockJPWealthPersistence();
   const cleared=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
-  if(!cleared.ok){ alert('Não foi possível limpar a chave principal: '+cleared.failures.join(', ')); return; }
+  if(!cleared.ok){
+    // Nada foi apagado: devolve a persistência ao operador exatamente como estava.
+    resumeJPWealthPersistence();
+    alert('Não foi possível limpar a chave principal: '+cleared.failures.join(', '));
+    return;
+  }
   S=structuredClone(DEFAULTS);
+  // Geração nova: o que for iniciado a partir daqui pode gravar normalmente. O par
+  // block+resume deixa o epoch duas casas à frente, então nenhuma continuação da
+  // geração anterior volta a casar.
+  resumeJPWealthPersistence();
   // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
   // junto. Fire-and-forget: sem metadados o handle já seria inerte; limpar evita órfão.
   if(typeof dgFsClearHandle==='function') dgFsClearHandle();
