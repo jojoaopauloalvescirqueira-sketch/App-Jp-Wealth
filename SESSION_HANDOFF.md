@@ -1,41 +1,51 @@
-# Session Handoff - checkpoint apos as Ondas 1 e 2
+# Session Handoff - checkpoint apos a Onda 3-A e sua reconciliacao
 
 - Data: 2026-08-10
-- Source revision publicada: `main@b4e0fe7`
-- Estado das ondas: `WAVE 1 RECONCILED`, `WAVE 2 RECONCILED`
-- Estado global: `SYSTEM NOT RECONCILED` (Onda 3 aberta)
+- Source revision publicada: `main@c89f578`
+- Contexto operacional: representa `c89f578`
+- Estado das ondas: 1 RECONCILED, 2 RECONCILED, 3-A COMPLETE / PUBLISHED / CONTEXT RECONCILED
+- Estado global: `SYSTEM NOT RECONCILED` (Onda 3-B aberta)
 
 O estado Git corrente (branch, HEAD, arvore) e runtime: confira com `git status` e `agent_preflight.py`, nao por esta nota.
 
 ## Concluido
 
-- `agentic-evolution-governance` PRODUCTION-READY, instalada project-scoped e publicada (`cba50c6`); registrada em `AGENTS.md` e `docs/governance/SKILL-ROUTING.md`.
-- `repository-architecture` v1.1 instalada e publicada (`c5f7148`).
-- Onda 1 — contexto operacional obrigatorio reconciliado e publicado (`4f668de`).
-- Onda 2 — investigacao dos UNKNOWN concluida: `PROJECT-CONTEXT.md` confirmado CURRENT; `jpw-data-safety` estava STALE em um invariante e `SECURITY-MODEL.md` declarava como risco aberto um risco ja resolvido.
-- Onda 2-P — ambos corrigidos, integrados e publicados na revisao material `b4e0fe7`.
-- Reconciliacao contextual pos-Onda 2 — `CURRENT-STATE.md`, `ACTIVE-TASK.md` e este handoff passaram a representar `b4e0fe7`; drift contextual da Onda 2 fechado.
+- Ondas 1 e 2 reconciliadas e publicadas.
+- Onda 3 — revisao arquitetural: duas lacunas MISSING identificadas com evidencia empirica; ambas decididas como IMPLEMENT.
+- Onda 3-A — backstop de frescor material em `tools/agent_preflight.py`, com teste permanente `tools/preflight_context_test.py` registrado no tier fast; composicao dos gates passou a fast 4, standard 6, full 16.
+- Commit material `c89f578` integrado e publicado em `origin/main`.
+- Reconciliacao contextual pos-3-A concluida: os tres artefatos operacionais representam `c89f578`.
+
+## Backstop — validado em quatro condicoes reais
+
+1. Cenarios sinteticos: TRUE, FALSE e UNKNOWN distintos, com UNKNOWN != FALSE (7/7 PASS).
+2. `HEAD` adiante da source revision tocando apenas caminhos de reconciliacao contextual: `false`, sem falso positivo.
+3. Mudanca material publicada: `true`, detectando a propria Onda 3-A com os quatro caminhos corretos.
+4. Reconciliacao dessa mudanca: `true` -> `false`, com o aviso desaparecendo.
+
+O aviso e nao bloqueante por desenho: o preflight retorna PASS mesmo ao acusar possivel drift, para nao travar justamente o trabalho que o resolve.
 
 ## Pendente
 
-1. Onda 3: decidir frescor de contexto no preflight e enforcement do impacto agentico no ciclo pos-mudanca. Sao lacunas estruturais MISSING; podem ser fechadas por implementacao ou por decisao formal de nao agir, nunca por omissao.
-2. N3: dez conflitos normativos permanecem bloqueados, listados em `CURRENT-STATE.md`, na auditoria e nos ADRs `ADR-0001` a `ADR-0010`.
-3. Alteracoes desta reconciliacao contextual pendentes de revisao humana e de autorizacao de commit.
+1. Onda 3-B: reformular o passo de fechamento do `jpw-post-change-audit` como `AGENTIC IMPACT CHECK`, com veredito binario, BASIS e referencia a `skills/agentic-evolution-governance/SKILL.md`. Espera-se que a propria 3-B faca o backstop disparar novamente, sem lembrete manual.
+2. Reconciliacao contextual pos-3-B.
+3. N3: dez conflitos normativos permanecem bloqueados, listados em `CURRENT-STATE.md`, na auditoria e nos ADRs `ADR-0001` a `ADR-0010`.
+4. Alteracoes desta reconciliacao contextual pendentes de revisao humana e de autorizacao de commit.
 
 ## Evidencia
 
-Da source revision `b4e0fe7`:
+Da source revision `c89f578`:
 
-- `investor_password_test.py`: PASS — segredo nunca em localStorage, checkpoint, backup ou migracao.
-- `quality_gate.py --tier full`: PASS 15/15 (2026-08-10, revisao `cba50c6`; nenhuma mudanca de produto desde entao — `b4e0fe7` e `4f668de` sao documentais).
-- `main` publicada em `origin/main` em `b4e0fe7`.
+- `quality_gate.py --tier full`: PASS 16/16 (2026-08-10).
+- `preflight_context_test.py`: 7/7 cenarios PASS.
+- `main` publicada em `origin/main` em `c89f578`.
 
 Desta reconciliacao contextual:
 
-- `agent_preflight.py --mode audit`: PASS.
-- `quality_gate.py --tier fast`: PASS 3/3.
+- `agent_preflight.py --mode audit`: PASS, sem aviso de possivel mudanca material.
+- `quality_gate.py --tier fast`: PASS 4/4.
 - `git diff --check`: limpo.
-- Fatos conferidos: source revision existe em `main` e `origin/main`, `b4e0fe7` e mudanca material, nenhum N2 reaberto, nenhum UNKNOWN da Onda 2 remanescente.
+- Fatos conferidos contra o repositorio: 13 suites `*_test.py`, composicao dos gates e resultado do ultimo full.
 
 ## Limites
 
