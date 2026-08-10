@@ -1,26 +1,29 @@
 # Estado atual do projeto
 
-Data da fotografia: 2026-08-09
-Baseline auditado: `f722eb3`
-Branch de trabalho: `audit/governanca-multiagente`
-Validade: revisar apos qualquer mudanca material ou integracao em `main`.
+Data da fotografia: 2026-08-10
+Source revision representada: `cba50c6`
+Branch: `main` (integrada e publicada em `origin/main`)
+Validade: revisar apos mudanca material ou integracao material em `main`. Commit exclusivamente de reconciliacao documental nao altera, por si so, a source revision representada.
+Nota: a source revision e a revisao MATERIAL cujo estado esta descrito aqui; o HEAD corrente pode estar a frente dela por commits documentais sem que esta fotografia fique desatualizada.
 
 ## Estado confirmado
 
-- Repositorio Git local existente; ha um remote `origin` preexistente para GitHub. Nenhum remote foi criado/alterado e nenhuma operacao de rede foi executada nesta sessao.
+- Repositorio Git local existente; ha um remote `origin` preexistente para GitHub. Nenhum remote foi criado ou alterado; `main` foi publicada em `origin/main` sob autorizacao especifica.
 - Aplicacao estruturada a partir do HTML portatil, com 44 scripts no manifest.
 - Persistencia principal continua em `jpwealth_v9_state`.
-- Governanca M0-M5, autoridade A0-A4, risco N0-D a N3 e oito skills `jpw-*` estao implementados localmente.
-- Preflight, quality gate em tres tiers e workflow de CI estao preparados; nenhum workflow, push ou deploy online foi acionado nesta sessao.
+- Governanca M0-M5, autoridade A0-A4, risco N0-D a N3, oito skills `jpw-*` e duas skills genericas instaladas project-scoped (`repository-architecture`, `agentic-evolution-governance`) estao implementados localmente.
+- Preflight, quality gate em tres tiers e workflow de CI estao preparados; nenhum workflow de CI ou deploy online foi acionado.
 - Tier `standard` esta verde: 5 de 5 verificacoes em Chromium real.
-- Tier `full` executa todos os oito testes `*_test.py`: 9 verificacoes passam e 2 falham por defeitos N2 conhecidos.
-- Nenhuma formula financeira, perfil, MDD, DD, fase, LIFO, stop, MEI, schema ou chave de persistencia foi alterada nesta branch.
+- Tier `full` executa doze suites `*_test.py`: 15 de 15 verificacoes passam; nenhum `PRODUCT_FAIL` remanescente.
+- Regras financeiras e contratos normativos nao foram alterados entre `f722eb3` e `cba50c6`: nenhuma formula, perfil, MDD, DD, fase, LIFO, stop ou MEI mudou.
+- A representacao de `reserveMasterCapital` foi canonizada (N2 aprovada, `7d18bca`): o campo deriva de `params.saldoIni` tambem no boot fresco, com a mesma formula ja usada pela `migrate()`.
+- Nenhuma chave de persistencia foi criada, removida ou renomeada; `jpwealth_v9_state` permanece a chave principal.
 
 ## Evidencia pos-implementacao
 
 | Verificacao | Resultado | Observacao |
 |---|---|---|
-| `agent_preflight.py --mode audit --allow-dirty` | PASS | Branch, contexto, manifest, hashes e caminhos sensiveis verificados; dirty conhecido. |
+| `agent_preflight.py --mode audit` | PASS | Branch, contexto, manifest, hashes e caminhos sensiveis verificados. |
 | `validate_project.py` | PASS | 44 JS, 366 IDs estaticos e portatil reconstruido; fallback Chromium funciona sem Node. |
 | `quality_gate.py --tier standard` | PASS 5/5 | Preflight, estrutura, diff-check, smoke e Configuracoes. |
 | `smoke_test.py` | PASS | Quatro telas, tres acoes do cabecalho e onboarding atual. |
@@ -29,13 +32,17 @@ Validade: revisar apos qualquer mudanca material ou integracao em `main`.
 | `persistence_failure_test.py` | PASS | Falha de exportacao orienta contingencia manual. |
 | `service_worker_upgrade_test.py` | PASS | Precache e ciclo de upgrade cobrem os recursos atuais. |
 | `mvp_notes_test.py` | PASS | CRUD, filtros, mobile, menus, backup, Markdown, Trace ID e portatil. |
-| `finalize_session_test.py` | PRODUCT_FAIL | `reserveMasterCapital` muda de `''` para `'0'` apos reload e gera falso dirty. |
-| `persistence_recovery_test.py` | PRODUCT_FAIL | Importacao invalida pode liberar o gate de recuperacao antes da validacao. |
-| `quality_gate.py --tier full` | PRODUCT_FAIL 9/11 | Somente os dois defeitos N2 acima permanecem. |
+| `finalize_session_test.py` | PASS | Canonizacao de `reserveMasterCapital` em `7d18bca` eliminou o falso dirty. |
+| `persistence_recovery_test.py` | PASS | Importacao e recuperacao transacionais em `8296f1a`. |
+| `investor_password_test.py` | PASS | Segredo removido da persistencia em `e0b59d3`; permanece apenas em memoria de sessao. |
+| `import_xss_security_test.py` | PASS | Backup adulterado nao executa, nao injeta DOM e nao persiste marcacao (`c7d9661`). |
+| `async_generation_test.py` | PASS | Corrida entre wipe e geracao assincrona coberta. |
+| `build_reproducibility_test.py` | PASS | Build ID e portatil reproduziveis a partir dos inputs oficiais. |
+| `quality_gate.py --tier full` | PASS 15/15 | Nenhum `PRODUCT_FAIL` remanescente (execucao de 2026-08-10). |
 
 Relatorios locais: `tools/.artifacts/quality-*-full.json` (ignorados pelo Git; usar o mais recente).
 
-## Correcoes N0/N1 verificadas nesta branch
+## Correcoes N0/N1 verificadas e integradas em `main`
 
 - `hidden` volta a prevalecer no botao de Notas e no botao Salvar.
 - Inspetor de Notas respeita a altura real da barra do editor e nao cobre Salvar.
@@ -48,9 +55,11 @@ Relatorios locais: `tools/.artifacts/quality-*-full.json` (ignorados pelo Git; u
 
 ## Pendencias N2
 
-1. Tornar canonica a representacao de `reserveMasterCapital` entre estado vazio, migracao, checkpoint e reload.
-2. Manter recuperacao bloqueada ate o arquivo importado ser lido, validado, normalizado e confirmado atomicamente.
-3. Decidir politica para a senha de investidor hoje persistida em texto claro.
+Nenhuma pendencia N2 aberta. Os tres itens da fotografia anterior foram resolvidos e verificados:
+
+1. Representacao canonica de `reserveMasterCapital` entre estado vazio, migracao, checkpoint e reload — resolvida em `7d18bca`; `finalize_session_test.py` PASS.
+2. Recuperacao bloqueada ate o arquivo importado ser lido, validado, normalizado e confirmado atomicamente — resolvida em `8296f1a`; `persistence_recovery_test.py` PASS.
+3. Politica para a senha de investidor persistida em texto claro — resolvida em `e0b59d3` (persistencia removida; segredo apenas em memoria de sessao, nunca em localStorage, checkpoint ou backup); `investor_password_test.py` PASS.
 
 ## Pendencias normativas bloqueantes
 

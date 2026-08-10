@@ -1,53 +1,47 @@
-# Tarefa ativa - Governanca multiagente e qualidade
+# Tarefa ativa - Reconciliacao agentica do JP Wealth
 
-- Data: 2026-08-09
-- Baseline: `f722eb3`
-- Branch: `audit/governanca-multiagente`
-- Nivel: N0-D e correcoes N0-V/N1 estritamente cobertas pelos gates
-- Autoridade: implementacao solicitada pelo gestor; commit/push/merge nao autorizados
-- Estado: implementacao concluida, em validacao final e revisao humana
+- Data: 2026-08-10
+- Source revision: `cba50c6`
+- Nivel: N0-D (documental)
+- Autoridade: Onda 1 autorizada e executada; Git nao autorizado
+- Estado: Onda 1 executada e validada; Onda 2 pendente
+
+O estado Git corrente (branch, HEAD, arvore) e runtime e deve ser conferido pelo preflight, nao lido daqui.
 
 ## Objetivo
 
-Transformar as filosofias fornecidas em regras locais, skills acionaveis, contexto duravel e gates de qualidade reproduziveis para prevenir desalinhamento entre agentes.
+Fazer as representacoes agenticas do projeto voltarem a descrever o sistema atual, sem alterar produto, regra normativa ou processo de mudanca.
 
-## Dentro do escopo
+## Escopo executado (Onda 1)
 
-- governanca e mapa de contexto;
-- skills locais;
-- preflight e orquestrador de testes;
-- documentacao de seguranca e auditoria;
-- correcao de expectativas comprovadamente obsoletas no harness;
-- correcao dos bloqueios N0-V/N1 descobertos pelo novo gate (cabecalho, Notas, precache e orientacao de contingencia);
-- automacao de CI sem publicacao.
+- `docs/governance/CURRENT-STATE.md` — fotografia realinhada com a source revision `cba50c6`.
+- `docs/work/ACTIVE-TASK.md` — este arquivo.
+- `SESSION_HANDOFF.md` — checkpoint da onda.
 
-## Fora do escopo
+Nenhum outro arquivo foi tocado.
 
-- alteracao de regra financeira, perfil, MDD, DD, fase, LIFO, stop ou MEI;
-- mudanca de schema/persistencia;
-- correcao do fluxo de importacao/recuperacao N2;
-- commit, push, merge ou deploy.
+## Fora do escopo agora
+
+- Onda 2: `skills/jpw-data-safety` e `docs/governance/PROJECT-CONTEXT.md` (UNKNOWN, ler antes de editar);
+- Onda 3: frescor de contexto no preflight e enforcement do impacto agentico no ciclo pos-mudanca;
+- `PROJECT-FILES.txt` e `CHANGELOG.md` (fora do escopo agentico);
+- produto, agentes especializados, routing, `AGENTS.md`, skills, Guard e bootstrap.
 
 ## Invariantes
 
-- `jpwealth_v9_state`, `DEFAULTS`, `migrate()` e formulas permanecem intactos.
-- Nenhuma credencial ou backup real entra no Git.
-- Testes nao sao enfraquecidos para esconder defeito de produto.
-- Falhas remanescentes sao registradas com categoria e evidencia.
+- Nenhuma alteracao de produto, formula, schema ou chave de persistencia.
+- Historico (ADRs, auditorias, Git) nao e reescrito.
+- Cada onda exige plano delimitado aprovado; commit, push e merge exigem autorizacao separada.
 
-## Criterios
+## Proximos passos
 
-- novo agente encontra contexto e stop conditions sem conversa anterior;
-- preflight detecta branch/dirty/contexto/manifest/sensiveis;
-- quality gate registra resultados sem falso PASS;
-- skills sao concisas e roteadas;
-- documentacao e handoff refletem o repositorio real;
-- diff final e testes sao apresentados ao gestor.
+1. Onda 2 — investigar os dois UNKNOWN, lendo antes de editar.
+2. Onda 3 — decidir frescor do bootstrap e enforcement do impacto agentico no ciclo pos-mudanca.
+3. Conflitos N3 — tratar por ADR, exemplos de fronteira e autorizacao explicita, conforme a governanca vigente.
 
 ## Resultado atual
 
-- `quality_gate.py --tier standard`: PASS 5/5.
-- `quality_gate.py --tier full`: PASS 9/11; dois `PRODUCT_FAIL` N2 documentados.
-- `mvp_notes_test.py`: PASS integral apos reconciliacao do harness e correcoes N0/N1.
-- oito skills aprovadas pelo validador oficial; Python e YAML validos.
-- nenhuma regra N3 ou schema foi alterado.
+- Primeira reconciliacao agentica oficial concluida (read-only): `SYSTEM NOT RECONCILED`.
+- Onda 1 executada e validada: `agent_preflight.py --mode audit` PASS, `quality_gate.py --tier fast` PASS 3/3, `git diff --check` limpo, fatos declarados conferidos contra o repositorio.
+- Estado da onda: `WAVE 1 RECONCILED`. Estado global permanece `SYSTEM NOT RECONCILED` enquanto Onda 2 e Onda 3 estiverem abertas.
+- Alteracoes pendentes de commit; nenhuma operacao Git executada.
