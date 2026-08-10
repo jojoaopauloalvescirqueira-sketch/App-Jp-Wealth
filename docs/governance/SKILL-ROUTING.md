@@ -11,10 +11,12 @@ As skills locais sao procedimentos versionados, nao agentes autonomos. O agente 
 | Falha ou alteracao de teste | `jpw-test-triage` | classificacao PASS/FAIL/ERROR/NOT_RUN |
 | UI, modal, responsividade | `jpw-browser-verification` | fluxos reais e viewports testados |
 | Credenciais, dependencias, PWA, CI | `jpw-security-audit` | ameacas, evidencias e severidade |
+| Estrutura do repositorio: organizacao de pastas, localizacao de novos arquivos, reorganizacao | `repository-architecture` | inventario, auditoria (interna + cold-start), mapa de migracao; escrita somente com plano aprovado |
 | Final de toda mudanca | `jpw-post-change-audit` | revisao do candidato, gates e riscos |
 
 ## Adaptacao das skills externas
 
+- `repository-architecture` v1.1 PRODUCTION-READY (producao propria; fonte canonica no acervo 7A2 SKILLS) e a primeira skill externa **instalada integralmente** como skill local: governa a arquitetura fisica do repositorio em cinco modos (DISCOVERY/AUDIT/DESIGN/MIGRATION/GUARD); somente MIGRATION escreve, com plano aprovado, e operacoes Git exigem autorizacao separada. Conteudo congelado: atualizacoes somente por nova versao vinda do acervo, nunca por edicao local.
 - `security-audit`, `pr-audit`, `iss-audit` e `pr-post-audit` inspiram a fronteira de confianca, a verificacao de afirmacoes e a auditoria do candidato final.
 - `pr-bump` nao e adotada como skill local: o repositorio nao possui fluxo de dependencias compativel com seu foco em Bundler/Dependabot.
 - `ai-memory-main` nao e incorporado como runtime. Adotamos apenas os principios de autoridade, contexto em camadas, frescor, handoff e exclusao de dados sensiveis. Qualquer runtime de memoria exigira piloto separado e avaliacao de privacidade.

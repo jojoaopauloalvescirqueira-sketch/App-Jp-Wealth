@@ -87,6 +87,7 @@ Use o roteamento completo em `docs/governance/SKILL-ROUTING.md`:
 - Testes ou falha: `skills/jpw-test-triage/SKILL.md`.
 - Interface e fluxo: `skills/jpw-browser-verification/SKILL.md`.
 - Superficie de ataque: `skills/jpw-security-audit/SKILL.md`.
+- Estrutura de pastas ou localizacao de arquivos: `skills/repository-architecture/SKILL.md`.
 - Antes de concluir: `skills/jpw-post-change-audit/SKILL.md`.
 
 ## Fluxo de alteracao
