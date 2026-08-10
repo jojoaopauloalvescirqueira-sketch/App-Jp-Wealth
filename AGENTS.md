@@ -88,6 +88,7 @@ Use o roteamento completo em `docs/governance/SKILL-ROUTING.md`:
 - Interface e fluxo: `skills/jpw-browser-verification/SKILL.md`.
 - Superficie de ataque: `skills/jpw-security-audit/SKILL.md`.
 - Estrutura de pastas ou localizacao de arquivos: `skills/repository-architecture/SKILL.md`.
+- Mudanca material com potencial impacto sobre agentes, skills, normas, routing, contexto, contratos ou arquitetura: `skills/agentic-evolution-governance/SKILL.md`.
 - Antes de concluir: `skills/jpw-post-change-audit/SKILL.md`.
 
 ## Fluxo de alteracao
