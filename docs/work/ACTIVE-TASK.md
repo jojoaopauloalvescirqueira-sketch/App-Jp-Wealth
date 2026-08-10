@@ -1,10 +1,10 @@
 # Tarefa ativa - Reconciliacao agentica do JP Wealth
 
 - Data: 2026-08-10
-- Source revision: `cba50c6`
+- Source revision: `b4e0fe7`
 - Nivel: N0-D (documental)
-- Autoridade: Onda 1 autorizada e executada; Git nao autorizado
-- Estado: Onda 1 executada e validada; Onda 2 pendente
+- Autoridade: Ondas 1 e 2 autorizadas e executadas; Git autorizado item a item
+- Estado: Ondas 1 e 2 concluidas e reconciliadas; proximo estagio e a Onda 3, ainda nao iniciada
 
 O estado Git corrente (branch, HEAD, arvore) e runtime e deve ser conferido pelo preflight, nao lido daqui.
 
@@ -12,17 +12,15 @@ O estado Git corrente (branch, HEAD, arvore) e runtime e deve ser conferido pelo
 
 Fazer as representacoes agenticas do projeto voltarem a descrever o sistema atual, sem alterar produto, regra normativa ou processo de mudanca.
 
-## Escopo executado (Onda 1)
+## Progresso das ondas
 
-- `docs/governance/CURRENT-STATE.md` — fotografia realinhada com a source revision `cba50c6`.
-- `docs/work/ACTIVE-TASK.md` — este arquivo.
-- `SESSION_HANDOFF.md` — checkpoint da onda.
-
-Nenhum outro arquivo foi tocado.
+- Onda 1 — contexto operacional obrigatorio: concluida e publicada.
+- Onda 2 — investigacao dos UNKNOWN: concluida. `PROJECT-CONTEXT.md` confirmado CURRENT; `jpw-data-safety` e `SECURITY-MODEL.md` corrigidos e publicados na revisao material `b4e0fe7`.
+- Reconciliacao contextual pos-Onda 2: concluida e validada — os tres artefatos operacionais representam `b4e0fe7`.
+- Onda 3 — lacunas estruturais: nao iniciada.
 
 ## Fora do escopo agora
 
-- Onda 2: `skills/jpw-data-safety` e `docs/governance/PROJECT-CONTEXT.md` (UNKNOWN, ler antes de editar);
 - Onda 3: frescor de contexto no preflight e enforcement do impacto agentico no ciclo pos-mudanca;
 - `PROJECT-FILES.txt` e `CHANGELOG.md` (fora do escopo agentico);
 - produto, agentes especializados, routing, `AGENTS.md`, skills, Guard e bootstrap.
@@ -35,13 +33,13 @@ Nenhum outro arquivo foi tocado.
 
 ## Proximos passos
 
-1. Onda 2 — investigar os dois UNKNOWN, lendo antes de editar.
-2. Onda 3 — decidir frescor do bootstrap e enforcement do impacto agentico no ciclo pos-mudanca.
-3. Conflitos N3 — tratar por ADR, exemplos de fronteira e autorizacao explicita, conforme a governanca vigente.
+1. Onda 3 — decidir frescor do bootstrap e enforcement do impacto agentico no ciclo pos-mudanca.
+2. Conflitos N3 — tratar por ADR, exemplos de fronteira e autorizacao explicita, conforme a governanca vigente.
 
 ## Resultado atual
 
-- Primeira reconciliacao agentica oficial concluida (read-only): `SYSTEM NOT RECONCILED`.
-- Onda 1 executada e validada: `agent_preflight.py --mode audit` PASS, `quality_gate.py --tier fast` PASS 3/3, `git diff --check` limpo, fatos declarados conferidos contra o repositorio.
-- Estado da onda: `WAVE 1 RECONCILED`. Estado global permanece `SYSTEM NOT RECONCILED` enquanto Onda 2 e Onda 3 estiverem abertas.
-- Alteracoes pendentes de commit; nenhuma operacao Git executada.
+- Onda 1: `WAVE 1 RECONCILED`, publicada.
+- Onda 2: `WAVE 2 RECONCILED` — conteudo material publicado em `b4e0fe7` e contexto operacional alinhado a essa revisao.
+- Reconciliacao contextual validada: `agent_preflight.py --mode audit` PASS, `quality_gate.py --tier fast` PASS 3/3, `git diff --check` limpo, fatos conferidos contra o repositorio.
+- Estado global: `SYSTEM NOT RECONCILED` enquanto a Onda 3 estiver aberta.
+- Alteracoes pendentes de commit; nenhuma operacao Git executada nesta reconciliacao.

@@ -1,7 +1,7 @@
 # Estado atual do projeto
 
 Data da fotografia: 2026-08-10
-Source revision representada: `cba50c6`
+Source revision representada: `b4e0fe7`
 Branch: `main` (integrada e publicada em `origin/main`)
 Validade: revisar apos mudanca material ou integracao material em `main`. Commit exclusivamente de reconciliacao documental nao altera, por si so, a source revision representada.
 Nota: a source revision e a revisao MATERIAL cujo estado esta descrito aqui; o HEAD corrente pode estar a frente dela por commits documentais sem que esta fotografia fique desatualizada.
@@ -18,6 +18,7 @@ Nota: a source revision e a revisao MATERIAL cujo estado esta descrito aqui; o H
 - Regras financeiras e contratos normativos nao foram alterados entre `f722eb3` e `cba50c6`: nenhuma formula, perfil, MDD, DD, fase, LIFO, stop ou MEI mudou.
 - A representacao de `reserveMasterCapital` foi canonizada (N2 aprovada, `7d18bca`): o campo deriva de `params.saldoIni` tambem no boot fresco, com a mesma formula ja usada pela `migrate()`.
 - Nenhuma chave de persistencia foi criada, removida ou renomeada; `jpwealth_v9_state` permanece a chave principal.
+- O contrato de `investorPassword` esta alinhado entre codigo, `skills/jpw-data-safety/SKILL.md` e `docs/governance/SECURITY-MODEL.md` desde `b4e0fe7`; a regra canonica vive nesses dois documentos, nao nesta fotografia.
 
 ## Evidencia pos-implementacao
 
