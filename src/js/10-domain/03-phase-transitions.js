@@ -552,7 +552,7 @@ function phaseBodyHTML(pi, qAct){
       <td><input data-p="${pi}" data-o="${oi}" data-f="id" value="${esc(o.id)}" placeholder="—" ${dis}></td>
       <td><select data-p="${pi}" data-o="${oi}" data-f="par" ${dis} style="text-align:center">
         <option value="" ${!o.par?'selected':''}>—</option>
-        ${S.instruments.filter(ins=>!(ins.banned&&!ins.unlocked)||ins.name===String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')).map(ins=>`<option ${String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===ins.name?'selected':''}>${ins.name}</option>`).join('')}
+        ${S.instruments.filter(ins=>!(ins.banned&&!ins.unlocked)||ins.name===String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')).map(ins=>`<option ${String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===ins.name?'selected':''}>${esc(ins.name)}</option>`).join('')}
       </select></td>
       <td><select data-p="${pi}" data-o="${oi}" data-f="tipo" ${dis}><option ${o.tipo==='BUY'?'selected':''}>BUY</option><option ${o.tipo==='SELL'?'selected':''}>SELL</option></select></td>
       <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="lote" value="${esc(o.lote||'')}" placeholder="0" ${dis}></td>
@@ -576,7 +576,7 @@ function phaseBodyHTML(pi, qAct){
   return `
     <div class="phase-meta">
       <span>Faixa DD: <b>${faixaDDLabel}</b></span>
-      <span>Teto alav.: <b>${ph.alavtxt}</b></span>
+      <span>Teto alav.: <b>${esc(ph.alavtxt)}</b></span>
       <span>Teto risco: <b>${fmtMoney(phaseTetoRisco(pi))}</b></span>
       ${ltsum>0?`<span style="color:var(--f1)">Lucro técnico realizado: <b>${fmtMoney(ltsum)}</b></span>`:''}
       ${rsum>phaseTetoRisco(pi)?`<span style="color:var(--danger)">⚠ risco desta grade acima do teto — podar via LIFO</span>`:''}
@@ -586,8 +586,8 @@ function phaseBodyHTML(pi, qAct){
     <table class="otable">
       <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Lucro Técnico $</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
-      <tfoot><tr><td>Σ ${ph.faseNome}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
+      <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
     </table>
     </div>
-    ${(frozen||qAct)?'':`<button class="reset-btn" data-addorder="${pi}" style="margin-top:10px; color:var(--violet); border-color:var(--violet)">+ Adicionar ordem à ${ph.faseNome}</button>`}`;
+    ${(frozen||qAct)?'':`<button class="reset-btn" data-addorder="${pi}" style="margin-top:10px; color:var(--violet); border-color:var(--violet)">+ Adicionar ordem à ${esc(ph.faseNome)}</button>`}`;
 }

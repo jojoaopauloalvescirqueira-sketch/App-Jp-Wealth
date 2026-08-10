@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "36297aaee78ef82de35e723c52c50b7ebb597e6b60b699a3b43fd2e811b619f1"
+      "sha256": "858e55b6eef244c6eae8aee6a57f3539e643f2a391ce4dc0271b1f530cc4b5b8"
     },
     {
       "order": 5,
@@ -86,13 +86,13 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "3663c4215fb72da9c65ca07c053b5f8c6afececd378065f931cdeaafdfb6fefc"
+      "sha256": "8238d399584a164c4aa57e902a89af80c270c9241c76bebd06d55976ebc00365"
     },
     {
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "0fae6c20057e0486299400d232b3d2838d789dc209b232f040448261f6de4ef5"
+      "sha256": "3f988526cbc98e827f25c8311a7671e8f0d587ca4c30e57757b2af6d038b3795"
     },
     {
       "order": 16,
@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "b266a75cc60b881a91e31ce4d5d57575b9a44a87c56e9b13934cf8cc35a59daa"
+      "sha256": "ee81ab8b3b4bd9c66e07a6e6cb8fd88c974037636a4eefef9672ffaf3b188120"
     },
     {
       "order": 20,
@@ -176,7 +176,7 @@
       "order": 29,
       "path": "src/js/10-domain/06-quarantine.js",
       "section": "Configurações · quarentena reversível (SET 5a)",
-      "sha256": "dc703aba4fbd4e2c03ad3d2bd5e5daea3580999e59e830b9e5070e87170d30af"
+      "sha256": "7040b88587687830f109f273fcd86c4189477297b59275769dad758b9aacc252"
     },
     {
       "order": 30,

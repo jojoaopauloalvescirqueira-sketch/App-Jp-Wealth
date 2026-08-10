@@ -31,6 +31,7 @@ FULL = STANDARD + (
     ("persistence-failure", [sys.executable, "tools/persistence_failure_test.py"]),
     ("persistence-recovery", [sys.executable, "tools/persistence_recovery_test.py"]),
     ("investor-password", [sys.executable, "tools/investor_password_test.py"]),
+    ("import-xss", [sys.executable, "tools/import_xss_security_test.py"]),
     ("async-generation", [sys.executable, "tools/async_generation_test.py"]),
     ("build-reproducibility", [sys.executable, "tools/build_reproducibility_test.py"]),
     ("service-worker-upgrade", [sys.executable, "tools/service_worker_upgrade_test.py"]),

@@ -65,9 +65,9 @@ function renderAuditLog(){
   const items=[];
   S.transitionLog.forEach(t=>{
     const quando=String(t.ts||'').replace('T',' ').slice(0,16);
-    items.push(`<b style="color:var(--ink)">[${quando}]</b> ${esc(String(t.fase))} — ${esc(JSON.stringify(t.resumo))}`);
+    items.push(`<b style="color:var(--ink)">[${esc(quando)}]</b> ${esc(String(t.fase))} — ${esc(JSON.stringify(t.resumo))}`);
   });
-  if(S.quarantine) items.push(`<b style="color:var(--danger)">QUARENTENA</b> de ${S.quarantine.inicio} até ${S.quarantine.fim}${quarantineActive()?' (ATIVA)':' (encerrada)'}`);
+  if(S.quarantine) items.push(`<b style="color:var(--danger)">QUARENTENA</b> de ${esc(S.quarantine.inicio)} até ${esc(S.quarantine.fim)}${quarantineActive()?' (ATIVA)':' (encerrada)'}`);
   if(S.protocolBreaches>0) items.push(`<b style="color:var(--danger)">${S.protocolBreaches} rompimento(s) de protocolo</b> registrados no ciclo`);
   S.phases.forEach(ph=>ph.orders.forEach(o=>{
     if(o.divergenceReason) items.push(`Divergência <b>${esc(o.id||'?')}</b>: ${esc(o.divergenceReason)}`);

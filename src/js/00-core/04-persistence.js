@@ -493,8 +493,43 @@ function dgNormalizeState(){
       action:String(e.action||''), recordId:String(e.recordId||''), label:String(e.label||'')}))
     .slice(-DG_CHANGELOG_MAX);
 }
+// ---- FRONTEIRA DE CONFIANÇA: metadata estrutural não é dado do operador ------------
+// Nenhuma tela do app escreve o rótulo/classe de uma fase nem o nome de um instrumento:
+// são catálogo fechado, nascem em DEFAULTS e só de lá. Um backup, porém, é arquivo
+// externo — e migrate() é o ponto único por onde passam tanto o load() do localStorage
+// quanto a importação (normalizeImportedState). Reconstruir o catálogo aqui, a partir da
+// fonte oficial, é o que impede um arquivo adulterado de plantar marcação nesses campos
+// e vê-la interpretada pelos templates de renderização e regravada no localStorage.
+// Dados do operador — ordens, preços, tetos, banimentos, saldos — não são tocados.
+const PHASE_STRUCTURAL_KEYS=['title','cls','faseNome','ddtxt','alavtxt'];
+function canonicalizeStructuralMetadata(){
+  if(Array.isArray(S.phases)){
+    S.phases.forEach((ph,i)=>{
+      // Base legítima nunca tem uma quinta grade (o app não cria fase); se vier uma,
+      // ela herda a metadata da última fase conhecida em vez de manter string arbitrária.
+      const ref=DEFAULTS.phases[Math.min(i,DEFAULTS.phases.length-1)];
+      if(!ph || typeof ph!=='object'){
+        // Ordens vazias de propósito: a metadata é restaurada, mas nenhuma operação
+        // fictícia dos DEFAULTS entra numa base real.
+        S.phases[i]={...structuredClone(ref), orders:[]};
+        return;
+      }
+      PHASE_STRUCTURAL_KEYS.forEach(k=>{ ph[k]=ref[k]; });
+      if(!Array.isArray(ph.orders)) ph.orders=[];
+    });
+  }
+  // Ticker é sempre alfanumérico maiúsculo — a mesma normalização que o app já aplica a
+  // `o.par` antes de comparar instrumentos. Todo nome legítimo (EURUSD, US500) atravessa
+  // intacto; o que não é ticker deixa de ser marcação.
+  if(Array.isArray(S.instruments)){
+    S.instruments.forEach(ins=>{
+      if(ins && typeof ins==='object') ins.name=String(ins.name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    });
+  }
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.

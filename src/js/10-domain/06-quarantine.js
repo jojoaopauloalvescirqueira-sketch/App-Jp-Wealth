@@ -4,7 +4,7 @@ function renderConfigQuarantine(){
   if(S.quarantine){
     const ativa=quarantineActive();
     el.innerHTML=`<p style="font-size:calc(13px * var(--fs-scale));color:var(--ink-dim);line-height:1.6;margin-bottom:12px">
-      Quarentena ${ativa?'<b style="color:var(--danger)">ativa</b>':'expirada'} — início ${S.quarantine.inicio}, fim ${S.quarantine.fim}.</p>
+      Quarentena ${ativa?'<b style="color:var(--danger)">ativa</b>':'expirada'} — início ${esc(S.quarantine.inicio)}, fim ${esc(S.quarantine.fim)}.</p>
       <button class="reset-btn" id="clearQuarantineBtn">Limpar quarentena / aviso</button>`;
     $('clearQuarantineBtn').addEventListener('click',()=>{
       if(confirm('Limpar o registro de quarentena? Use isto se o aviso surgiu de erro de preenchimento, não de um encerramento real.')){

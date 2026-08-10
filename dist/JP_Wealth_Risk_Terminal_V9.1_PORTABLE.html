@@ -4311,7 +4311,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'eda98dfb3f0e6a6e';
+const JP_WEALTH_BUILD_ID = '0904ef38c15d63dd';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -6296,8 +6296,43 @@ function dgNormalizeState(){
       action:String(e.action||''), recordId:String(e.recordId||''), label:String(e.label||'')}))
     .slice(-DG_CHANGELOG_MAX);
 }
+// ---- FRONTEIRA DE CONFIANÇA: metadata estrutural não é dado do operador ------------
+// Nenhuma tela do app escreve o rótulo/classe de uma fase nem o nome de um instrumento:
+// são catálogo fechado, nascem em DEFAULTS e só de lá. Um backup, porém, é arquivo
+// externo — e migrate() é o ponto único por onde passam tanto o load() do localStorage
+// quanto a importação (normalizeImportedState). Reconstruir o catálogo aqui, a partir da
+// fonte oficial, é o que impede um arquivo adulterado de plantar marcação nesses campos
+// e vê-la interpretada pelos templates de renderização e regravada no localStorage.
+// Dados do operador — ordens, preços, tetos, banimentos, saldos — não são tocados.
+const PHASE_STRUCTURAL_KEYS=['title','cls','faseNome','ddtxt','alavtxt'];
+function canonicalizeStructuralMetadata(){
+  if(Array.isArray(S.phases)){
+    S.phases.forEach((ph,i)=>{
+      // Base legítima nunca tem uma quinta grade (o app não cria fase); se vier uma,
+      // ela herda a metadata da última fase conhecida em vez de manter string arbitrária.
+      const ref=DEFAULTS.phases[Math.min(i,DEFAULTS.phases.length-1)];
+      if(!ph || typeof ph!=='object'){
+        // Ordens vazias de propósito: a metadata é restaurada, mas nenhuma operação
+        // fictícia dos DEFAULTS entra numa base real.
+        S.phases[i]={...structuredClone(ref), orders:[]};
+        return;
+      }
+      PHASE_STRUCTURAL_KEYS.forEach(k=>{ ph[k]=ref[k]; });
+      if(!Array.isArray(ph.orders)) ph.orders=[];
+    });
+  }
+  // Ticker é sempre alfanumérico maiúsculo — a mesma normalização que o app já aplica a
+  // `o.par` antes de comparar instrumentos. Todo nome legítimo (EURUSD, US500) atravessa
+  // intacto; o que não é ticker deixa de ser marcação.
+  if(Array.isArray(S.instruments)){
+    S.instruments.forEach(ins=>{
+      if(ins && typeof ins==='object') ins.name=String(ins.name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    });
+  }
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
@@ -8119,7 +8154,7 @@ function phaseBodyHTML(pi, qAct){
       <td><input data-p="${pi}" data-o="${oi}" data-f="id" value="${esc(o.id)}" placeholder="—" ${dis}></td>
       <td><select data-p="${pi}" data-o="${oi}" data-f="par" ${dis} style="text-align:center">
         <option value="" ${!o.par?'selected':''}>—</option>
-        ${S.instruments.filter(ins=>!(ins.banned&&!ins.unlocked)||ins.name===String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')).map(ins=>`<option ${String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===ins.name?'selected':''}>${ins.name}</option>`).join('')}
+        ${S.instruments.filter(ins=>!(ins.banned&&!ins.unlocked)||ins.name===String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')).map(ins=>`<option ${String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===ins.name?'selected':''}>${esc(ins.name)}</option>`).join('')}
       </select></td>
       <td><select data-p="${pi}" data-o="${oi}" data-f="tipo" ${dis}><option ${o.tipo==='BUY'?'selected':''}>BUY</option><option ${o.tipo==='SELL'?'selected':''}>SELL</option></select></td>
       <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="lote" value="${esc(o.lote||'')}" placeholder="0" ${dis}></td>
@@ -8143,7 +8178,7 @@ function phaseBodyHTML(pi, qAct){
   return `
     <div class="phase-meta">
       <span>Faixa DD: <b>${faixaDDLabel}</b></span>
-      <span>Teto alav.: <b>${ph.alavtxt}</b></span>
+      <span>Teto alav.: <b>${esc(ph.alavtxt)}</b></span>
       <span>Teto risco: <b>${fmtMoney(phaseTetoRisco(pi))}</b></span>
       ${ltsum>0?`<span style="color:var(--f1)">Lucro técnico realizado: <b>${fmtMoney(ltsum)}</b></span>`:''}
       ${rsum>phaseTetoRisco(pi)?`<span style="color:var(--danger)">⚠ risco desta grade acima do teto — podar via LIFO</span>`:''}
@@ -8153,10 +8188,10 @@ function phaseBodyHTML(pi, qAct){
     <table class="otable">
       <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Lucro Técnico $</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
-      <tfoot><tr><td>Σ ${ph.faseNome}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
+      <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
     </table>
     </div>
-    ${(frozen||qAct)?'':`<button class="reset-btn" data-addorder="${pi}" style="margin-top:10px; color:var(--violet); border-color:var(--violet)">+ Adicionar ordem à ${ph.faseNome}</button>`}`;
+    ${(frozen||qAct)?'':`<button class="reset-btn" data-addorder="${pi}" style="margin-top:10px; color:var(--violet); border-color:var(--violet)">+ Adicionar ordem à ${esc(ph.faseNome)}</button>`}`;
 }
 // ============ STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte ============
 // Tudo em PERCENTUAL (§9.2): ATR% = ATR55/preço × 100. Comparação AO VIVO: usa o preço
@@ -8234,6 +8269,12 @@ function riskIndicatorsHTML(active){
     </div>
   </div>`;
 }
+// Classe CSS da fase: whitelist semântica, não escaping. Atributo `class` não deve
+// aceitar valor arbitrário nem escapado — só os identificadores do catálogo oficial.
+function phaseCssClass(ph){
+  const permitido=DEFAULTS.phases.map(p=>p.cls);
+  return (ph && permitido.includes(ph.cls)) ? ph.cls : '';
+}
 function renderPhases(){
   healSupersededPhases(); // corrige órfãos antes de desenhar qualquer coisa
   const qAct=quarantineActive(); // Art. 3.10: quarentena trava edição, permite apenas fechar
@@ -8245,10 +8286,10 @@ function renderPhases(){
     html+=`<div class="risk-note" style="margin:0 0 14px; color:var(--f4); border-color:var(--f4)">${noExternalProtectionWarning()}</div>`;
   }
   // grade ATIVA — a única editável e sempre visível
-  html+=`<div class="phase ${ph.cls}" data-phase="${active}">
+  html+=`<div class="phase ${phaseCssClass(ph)}" data-phase="${active}">
     <div class="phase-head" style="cursor:default">
-      <span class="badge">${ph.faseNome.replace('FASE ','F')}</span>
-      <span>${ph.title}</span>
+      <span class="badge">${esc(String(ph.faseNome||'').replace('FASE ','F'))}</span>
+      <span>${esc(ph.title)}</span>
       <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
     </div>
     <div class="phase-body">${phaseBodyHTML(active, qAct)}</div>
@@ -8258,7 +8299,7 @@ function renderPhases(){
     if(qAct){
       html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
     } else {
-      html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${S.phases[active+1].faseNome} — responder questionário de transição</button>`;
+      html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
     }
   } else {
     html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
@@ -8267,10 +8308,10 @@ function renderPhases(){
   if(active>0){
     let hist='';
     for(let pi=0; pi<active; pi++){
-      hist+=`<div class="phase ${S.phases[pi].cls} collapsed" data-phase="${pi}" style="margin-top:10px">
+      hist+=`<div class="phase ${phaseCssClass(S.phases[pi])} collapsed" data-phase="${pi}" style="margin-top:10px">
         <div class="phase-head" data-toggle="${pi}">
-          <span class="badge">${S.phases[pi].faseNome.replace('FASE ','F')}</span>
-          <span>${S.phases[pi].title}</span>
+          <span class="badge">${esc(String(S.phases[pi].faseNome||'').replace('FASE ','F'))}</span>
+          <span>${esc(S.phases[pi].title)}</span>
           <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 histórico</span>
           <span class="chev">▾</span>
         </div>
@@ -8615,8 +8656,8 @@ function renderMotor(){
       const unlockLabel=ins.name==='US500'?'Registrar deliberação':'Desbloquear (exceção)';
       tr.className='row-banned';
       tr.innerHTML=`
-        <td class="hl">${ins.name}</td>
-        <td>${ins.preco}</td>
+        <td class="hl">${esc(ins.name)}</td>
+        <td>${esc(ins.preco)}</td>
         <td colspan="2"><span class="ban-label">🔒 ${blockLabel}</span></td>
         <td>${fmtMoney(valorLote)}</td>
         <td>—</td><td>—</td><td>${(+ins.teto||0).toFixed(2)}</td>
@@ -8627,7 +8668,7 @@ function renderMotor(){
     }
 
     tr.innerHTML=`
-      <td class="hl">${ins.name}${ins.banned?' <span title="'+esc(ins.banReason)+'" style="cursor:help">⚠️</span>':''}</td>
+      <td class="hl">${esc(ins.name)}${ins.banned?' <span title="'+esc(ins.banReason)+'" style="cursor:help">⚠️</span>':''}</td>
       <td class="editable"><input type="number" step="0.00001" data-f="preco" value="${esc(ins.preco)}"></td>
       <td><span class="stale-pill ${st.cls}">${st.label}</span></td>
       <td class="editable"><input type="number" step="1" data-f="cpl" value="${esc(ins.cpl)}"></td>
@@ -9338,9 +9379,9 @@ function renderAuditLog(){
   const items=[];
   S.transitionLog.forEach(t=>{
     const quando=String(t.ts||'').replace('T',' ').slice(0,16);
-    items.push(`<b style="color:var(--ink)">[${quando}]</b> ${esc(String(t.fase))} — ${esc(JSON.stringify(t.resumo))}`);
+    items.push(`<b style="color:var(--ink)">[${esc(quando)}]</b> ${esc(String(t.fase))} — ${esc(JSON.stringify(t.resumo))}`);
   });
-  if(S.quarantine) items.push(`<b style="color:var(--danger)">QUARENTENA</b> de ${S.quarantine.inicio} até ${S.quarantine.fim}${quarantineActive()?' (ATIVA)':' (encerrada)'}`);
+  if(S.quarantine) items.push(`<b style="color:var(--danger)">QUARENTENA</b> de ${esc(S.quarantine.inicio)} até ${esc(S.quarantine.fim)}${quarantineActive()?' (ATIVA)':' (encerrada)'}`);
   if(S.protocolBreaches>0) items.push(`<b style="color:var(--danger)">${S.protocolBreaches} rompimento(s) de protocolo</b> registrados no ciclo`);
   S.phases.forEach(ph=>ph.orders.forEach(o=>{
     if(o.divergenceReason) items.push(`Divergência <b>${esc(o.id||'?')}</b>: ${esc(o.divergenceReason)}`);
@@ -10419,7 +10460,7 @@ function renderConfigQuarantine(){
   if(S.quarantine){
     const ativa=quarantineActive();
     el.innerHTML=`<p style="font-size:calc(13px * var(--fs-scale));color:var(--ink-dim);line-height:1.6;margin-bottom:12px">
-      Quarentena ${ativa?'<b style="color:var(--danger)">ativa</b>':'expirada'} — início ${S.quarantine.inicio}, fim ${S.quarantine.fim}.</p>
+      Quarentena ${ativa?'<b style="color:var(--danger)">ativa</b>':'expirada'} — início ${esc(S.quarantine.inicio)}, fim ${esc(S.quarantine.fim)}.</p>
       <button class="reset-btn" id="clearQuarantineBtn">Limpar quarentena / aviso</button>`;
     $('clearQuarantineBtn').addEventListener('click',()=>{
       if(confirm('Limpar o registro de quarentena? Use isto se o aviso surgiu de erro de preenchimento, não de um encerramento real.')){

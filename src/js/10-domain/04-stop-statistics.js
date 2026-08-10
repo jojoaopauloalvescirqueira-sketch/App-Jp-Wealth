@@ -74,6 +74,12 @@ function riskIndicatorsHTML(active){
     </div>
   </div>`;
 }
+// Classe CSS da fase: whitelist semântica, não escaping. Atributo `class` não deve
+// aceitar valor arbitrário nem escapado — só os identificadores do catálogo oficial.
+function phaseCssClass(ph){
+  const permitido=DEFAULTS.phases.map(p=>p.cls);
+  return (ph && permitido.includes(ph.cls)) ? ph.cls : '';
+}
 function renderPhases(){
   healSupersededPhases(); // corrige órfãos antes de desenhar qualquer coisa
   const qAct=quarantineActive(); // Art. 3.10: quarentena trava edição, permite apenas fechar
@@ -85,10 +91,10 @@ function renderPhases(){
     html+=`<div class="risk-note" style="margin:0 0 14px; color:var(--f4); border-color:var(--f4)">${noExternalProtectionWarning()}</div>`;
   }
   // grade ATIVA — a única editável e sempre visível
-  html+=`<div class="phase ${ph.cls}" data-phase="${active}">
+  html+=`<div class="phase ${phaseCssClass(ph)}" data-phase="${active}">
     <div class="phase-head" style="cursor:default">
-      <span class="badge">${ph.faseNome.replace('FASE ','F')}</span>
-      <span>${ph.title}</span>
+      <span class="badge">${esc(String(ph.faseNome||'').replace('FASE ','F'))}</span>
+      <span>${esc(ph.title)}</span>
       <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
     </div>
     <div class="phase-body">${phaseBodyHTML(active, qAct)}</div>
@@ -98,7 +104,7 @@ function renderPhases(){
     if(qAct){
       html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
     } else {
-      html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${S.phases[active+1].faseNome} — responder questionário de transição</button>`;
+      html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
     }
   } else {
     html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
@@ -107,10 +113,10 @@ function renderPhases(){
   if(active>0){
     let hist='';
     for(let pi=0; pi<active; pi++){
-      hist+=`<div class="phase ${S.phases[pi].cls} collapsed" data-phase="${pi}" style="margin-top:10px">
+      hist+=`<div class="phase ${phaseCssClass(S.phases[pi])} collapsed" data-phase="${pi}" style="margin-top:10px">
         <div class="phase-head" data-toggle="${pi}">
-          <span class="badge">${S.phases[pi].faseNome.replace('FASE ','F')}</span>
-          <span>${S.phases[pi].title}</span>
+          <span class="badge">${esc(String(S.phases[pi].faseNome||'').replace('FASE ','F'))}</span>
+          <span>${esc(S.phases[pi].title)}</span>
           <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 histórico</span>
           <span class="chev">▾</span>
         </div>
@@ -455,8 +461,8 @@ function renderMotor(){
       const unlockLabel=ins.name==='US500'?'Registrar deliberação':'Desbloquear (exceção)';
       tr.className='row-banned';
       tr.innerHTML=`
-        <td class="hl">${ins.name}</td>
-        <td>${ins.preco}</td>
+        <td class="hl">${esc(ins.name)}</td>
+        <td>${esc(ins.preco)}</td>
         <td colspan="2"><span class="ban-label">🔒 ${blockLabel}</span></td>
         <td>${fmtMoney(valorLote)}</td>
         <td>—</td><td>—</td><td>${(+ins.teto||0).toFixed(2)}</td>
@@ -467,7 +473,7 @@ function renderMotor(){
     }
 
     tr.innerHTML=`
-      <td class="hl">${ins.name}${ins.banned?' <span title="'+esc(ins.banReason)+'" style="cursor:help">⚠️</span>':''}</td>
+      <td class="hl">${esc(ins.name)}${ins.banned?' <span title="'+esc(ins.banReason)+'" style="cursor:help">⚠️</span>':''}</td>
       <td class="editable"><input type="number" step="0.00001" data-f="preco" value="${esc(ins.preco)}"></td>
       <td><span class="stale-pill ${st.cls}">${st.label}</span></td>
       <td class="editable"><input type="number" step="1" data-f="cpl" value="${esc(ins.cpl)}"></td>
