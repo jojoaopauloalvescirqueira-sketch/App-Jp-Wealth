@@ -17,6 +17,7 @@ Read `STATE-SCHEMA.md`, `DB-STORAGE-GOVERNANCE.md`, `DATA-RECOVERY.md` and `SECU
 - Never fall back to `DEFAULTS` after parse/storage failure.
 - Never use `localStorage.clear()`.
 - Never store or request a master password.
+- Treat `investorPassword` as a session secret: never persist, export or restore it as stored state. When it is indispensable during the current session, keep it in memory only. Any new credential or secret must clear the current security model and storage governance before being granted persistence.
 - Use synthetic fixtures; never inspect or version real credentials.
 
 ## Verification matrix

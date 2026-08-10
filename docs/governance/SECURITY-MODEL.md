@@ -30,10 +30,13 @@
 
 ## Riscos atuais conhecidos
 
-1. `investorPassword` integra o estado persistido em texto claro. Ate existir desenho N2 aprovado, informar o risco e restringir a senha a leitura.
-2. Cabecalhos HTTP atuais sao minimos; CSP e endurecimento de origem exigem plano compativel com scripts globais e PWA.
+1. Cabecalhos HTTP atuais sao minimos; CSP e endurecimento de origem exigem plano compativel com scripts globais e PWA.
 
-## Controles verificados nesta branch
+## Riscos resolvidos
+
+1. `investorPassword` integrava o estado persistido em texto claro. Resolvido em `e0b59d3`: a senha foi removida da persistencia — o replacer de gravacao a esvazia em toda escrita, e ela permanece disponivel apenas em memoria durante a sessao corrente. Evidencia permanente: `tools/investor_password_test.py`, que verifica que localStorage, checkpoint, backup e migracao de estados antigos nunca carregam o segredo.
+
+## Controles verificados
 
 - O precache cobre os recursos locais carregados pelo app e passa pelo teste de upgrade.
 - O HTML portatil nao registra service worker externo inexistente.
