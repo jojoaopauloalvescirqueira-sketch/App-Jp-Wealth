@@ -17,7 +17,8 @@ Para documentacao, governanca e iteracao curta:
 
 - preflight auditavel;
 - `validate_project.py`;
-- `git diff --check`.
+- `git diff --check`;
+- `preflight_context_test.py` (frescor material do contexto: TRUE/FALSE/UNKNOWN, com UNKNOWN != FALSE).
 
 ### Standard
 

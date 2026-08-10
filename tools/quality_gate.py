@@ -20,6 +20,7 @@ FAST = (
     ("preflight", [sys.executable, "tools/agent_preflight.py", "--mode", "audit", "--allow-dirty"]),
     ("structure", [sys.executable, "tools/validate_project.py"]),
     ("diff-check", ["git", "diff", "--check"]),
+    ("preflight-context", [sys.executable, "tools/preflight_context_test.py"]),
 )
 STANDARD = FAST + (
     ("smoke", [sys.executable, "tools/smoke_test.py"]),

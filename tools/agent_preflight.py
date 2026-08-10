@@ -31,6 +31,13 @@ PRIVATE_PATH_PATTERNS = (
     re.compile(r"(?:credential|password|secret|token)", re.I),
     re.compile(r"jpwealth_v9_state.*\.json$", re.I),
 )
+# Caminhos cuja alteracao apos a source revision constitui reconciliacao contextual,
+# nao mudanca material. Um commit que toque SOMENTE estes nao dispara alerta de frescor.
+CONTEXT_RECONCILIATION_PATHS = frozenset({
+    "docs/governance/CURRENT-STATE.md",
+    "docs/work/ACTIVE-TASK.md",
+    "SESSION_HANDOFF.md",
+})
 
 
 def git(*args: str, check: bool = True) -> str:
@@ -51,6 +58,86 @@ def parse_snapshot_date(path: Path) -> date | None:
         return date.fromisoformat(match.group(1))
     except ValueError:
         return None
+
+
+def parse_source_revision(path: Path) -> tuple[str | None, str]:
+    """Localiza e valida a source revision em dois estagios.
+
+    Retorna (sha_ou_None, status). Ausencia e malformacao sao estados distintos:
+    nunca fundir os dois em None sem diferenciar a causa.
+    """
+    line = re.search(r"^Source revision representada:\s*(.+)$",
+                     path.read_text(encoding="utf-8"), re.M)
+    if not line:
+        return None, "missing"
+    value = re.fullmatch(r"`?([0-9a-f]{7,40})`?", line.group(1).strip())
+    if not value:
+        return None, "malformed"
+    return value.group(1), "declared"
+
+
+def git_returncode(*args: str) -> int:
+    return subprocess.run(
+        ["git", *args], cwd=ROOT, text=True, capture_output=True, check=False
+    ).returncode
+
+
+def inspect_material_freshness(current_state: Path, facts: dict[str, object], warnings: list[str]) -> None:
+    """Frescor MATERIAL: ha alteracoes apos a source revision fora dos caminhos de
+    reconciliacao contextual? Independente do frescor temporal (idade da fotografia).
+
+    Tri-state em `potential_material_changes_since_source_revision`:
+      True  -> analise valida, ha caminho fora da allowlist;
+      False -> analise valida, nada ou apenas caminhos de reconciliacao contextual;
+      None  -> UNKNOWN: nao foi possivel estabelecer. UNKNOWN != False.
+    """
+    source_revision, status = parse_source_revision(current_state)
+    changed: list[str] = []
+    outside: list[str] = []
+    potential: bool | None = None
+
+    if status == "declared":
+        if git_returncode("cat-file", "-e", f"{source_revision}^{{commit}}") != 0:
+            status = "unknown-sha"
+        else:
+            ancestor = git_returncode("merge-base", "--is-ancestor", source_revision, "HEAD")
+            if ancestor == 1:
+                status = "not-ancestor"
+            elif ancestor != 0:
+                status = "diff-error"
+
+    if status == "declared":
+        try:
+            changed = [p for p in git("diff", "--name-only", f"{source_revision}..HEAD").splitlines() if p]
+        except RuntimeError:
+            status = "diff-error"
+        else:
+            status = "valid"
+            outside = sorted(set(changed) - CONTEXT_RECONCILIATION_PATHS)
+            potential = bool(outside)
+
+    facts["source_revision"] = source_revision
+    facts["source_revision_status"] = status
+    facts["paths_since_source_revision_count"] = len(changed) if status == "valid" else None
+    facts["potential_material_changes_since_source_revision"] = potential
+
+    if potential:
+        facts["paths_outside_context_reconciliation"] = outside[:10]
+        warnings.append(
+            "POTENTIAL MATERIAL CHANGE AFTER SOURCE REVISION: "
+            f"{len(outside)} caminho(s) alterado(s) apos {source_revision} fora dos caminhos "
+            "reconhecidos como reconciliacao contextual; executar avaliacao de impacto agentico "
+            "e reconciliar o contexto se aplicavel"
+        )
+    elif potential is None:
+        reason = {
+            "missing": "CURRENT-STATE.md nao declara source revision representada",
+            "malformed": "source revision declarada nao e um SHA valido",
+            "unknown-sha": f"source revision {source_revision} nao existe neste repositorio",
+            "not-ancestor": f"source revision {source_revision} nao e ancestral de HEAD",
+            "diff-error": "falha ao calcular alteracoes desde a source revision",
+        }[status]
+        warnings.append(f"SOURCE REVISION UNKNOWN — {reason}; frescor material nao estabelecido")
 
 
 def inspect_manifest(errors: list[str], facts: dict[str, object]) -> None:
@@ -154,6 +241,7 @@ def main() -> int:
             facts["current_state_age_days"] = age
             if age > 30:
                 warnings.append(f"CURRENT-STATE.md tem {age} dias; revalidar antes de confiar")
+        inspect_material_freshness(current_state, facts, warnings)
 
     # Exceção deliberada, espelho da exceção no .gitignore: o teste PERMANENTE da
     # política de segredo carrega "password" no nome por definição — usa fixture
