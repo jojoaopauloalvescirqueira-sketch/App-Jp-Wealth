@@ -8,15 +8,30 @@ ROOT = Path(__file__).resolve().parents[1]
 manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
 build_id_path = ROOT / 'build-id.js'
 
+# JPW-BUILD-DSSTORE — inputs OFICIAIS do fingerprint, declarados um a um.
+#
+# A versão anterior varria diretórios por glob (`manifests/*.webmanifest` e
+# `icons/**`). O glob de `icons/` era código morto desde a migração dos ícones para
+# `assets/` — nenhum arquivo ali é rastreado —, mas continuava lendo o que houvesse
+# no disco. Bastava um `icons/.DS_Store` do Finder, invisível ao `git status` por
+# casar com o .gitignore, para o mesmo commit produzir dois Build IDs diferentes.
+#
+# A regra agora é: o fingerprint depende SÓ desta lista mais os scripts declarados em
+# src/js/manifest.json. Nada de varredura de diretório — é o glob que deixa lixo
+# entrar. Input declarado e ausente é ERRO, nunca omissão silenciosa: sem isso, um
+# arquivo removido mudaria o identificador sem ninguém perceber.
+FINGERPRINT_FIXED_INPUTS = ('index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js')
+FINGERPRINT_TAIL_INPUTS = ('manifests/jp-wealth.webmanifest',)
+
 def build_id():
-    files = [ROOT / 'index.html', ROOT / 'src/styles/app.css', ROOT / 'src/js/manifest.json', ROOT / 'sw.js']
+    files = [ROOT / rel for rel in FINGERPRINT_FIXED_INPUTS]
     files.extend(ROOT / item['path'] for item in manifest['files'])
-    files.extend(sorted((ROOT / 'manifests').glob('*.webmanifest')))
-    files.extend(sorted((ROOT / 'icons').rglob('*')))
+    files.extend(ROOT / rel for rel in FINGERPRINT_TAIL_INPUTS)
     digest = hashlib.sha256()
     for path in files:
-        if not path.is_file(): continue
         relative = path.relative_to(ROOT).as_posix()
+        if not path.is_file():
+            raise SystemExit(f'ERRO: input oficial do build ausente: {relative}')
         content = path.read_bytes()
         if relative == 'index.html': content = content.replace(b'<script src="build-id.js"></script>', b'')
         digest.update(relative.encode('utf-8') + b'\0' + content + b'\0')
