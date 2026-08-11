@@ -32,6 +32,7 @@ const PRECACHE_URLS = [
   './src/js/40-app/18-galton-board/03-statistics.js', './src/js/40-app/18-galton-board/04-physics.js',
   './src/js/40-app/18-galton-board/05-renderer.js', './src/js/40-app/18-galton-board/06-controller.js',
   './src/js/10-domain/07-reserve-requirements.js',
+  './src/js/10-domain/08-usd-brl-quote.js',
   './src/js/30-accounting/05-fx-planning/01-fx-model.js', './src/js/30-accounting/05-fx-planning/02-fx-engine.js',
   './src/js/30-accounting/05-fx-planning/03-fx-state.js',
   './src/js/30-accounting/05-fx-planning/04-fx-charts.js', './src/js/30-accounting/05-fx-planning/05-fx-ui.js',

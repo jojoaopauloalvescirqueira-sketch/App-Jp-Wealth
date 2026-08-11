@@ -12,13 +12,28 @@
 const FX_DASH_BASELINE='9 4';
 const FX_DASH_FORECAST='2 3';
 
-// Conversão de exibição USD→BRL. Realizado usa a valuationFxRate do próprio mês
-// quando registrada; na falta, cai na premissa vigente (aproximação sinalizada
-// pelo chamador). Projeções usam a premissa de CADA série (baseline × current) —
-// nunca o custo médio de aquisição, que é conceito contábil, não cotação.
-function fxChartConvert(row,mode,fallbackRate){
+// Conversão de exibição USD→BRL, classificada por TEMPO (JPW-FGDEKM).
+//
+//   PASSADO   mês fechado com valuationFxRate própria → usa a dele. História
+//             não se reprecifica com a referência de hoje.
+//   PRESENTE  último mês fechado SEM taxa registrada → referência USD/BRL
+//             corrente (10-domain/08-usd-brl-quote.js).
+//   FUTURO    linhas de projeção → premissa projectedFxRate da série.
+//
+// Mês passado sem taxa registrada devolve null e some da curva: não existe taxa
+// histórica para ele, e preencher com a premissa futura ou com a cotação de
+// hoje seria inventar dado. Premissa futura NUNCA vale como valor presente —
+// era exatamente esse vazamento que este ticket corrige.
+// O custo médio de aquisição não entra aqui: é conceito contábil, não cotação.
+function fxChartConvert(row,mode,ctx){
   if(mode!=='brl') return row.close;
-  const rate=(row.phase==='actual'&&row.valuationFxRate)?row.valuationFxRate:fallbackRate;
+  const c=(ctx&&typeof ctx==='object')?ctx:{projectedRate:ctx};
+  let rate;
+  if(row.phase==='actual'){
+    if(row.valuationFxRate>0) rate=row.valuationFxRate;                 // passado
+    else if(c.presentMonth && row.month===c.presentMonth) rate=c.currentRate; // presente
+    else rate=null;                                                      // sem taxa histórica
+  } else rate=c.projectedRate;                                           // futuro
   return rate>0?row.close*rate:null;
 }
 
@@ -33,8 +48,15 @@ function fxDrawMainChart(box,plan,ov,mode){
   }
   const months=ov.forecast.map(r=>r.month);
   const n=months.length; if(!n){ box.innerHTML=''; return; }
-  const basePts=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,baseRate||currRate)})).filter(p=>p.y!=null);
-  const series=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,currRate),phase:r.phase})).filter(p=>p.y!=null);
+  // Contexto temporal compartilhado pelas duas séries: a referência corrente
+  // vale só para o último mês fechado (a fotografia de agora); cada série
+  // projeta com a SUA premissa (baseline original × vigente).
+  const presentRate=(typeof currentUsdBrlRate==='function')?currentUsdBrlRate():null;
+  const presentMonth=ov.lastClosedMonth||null;
+  const ctxBase={projectedRate:baseRate||currRate, currentRate:presentRate, presentMonth};
+  const ctxCurr={projectedRate:currRate, currentRate:presentRate, presentMonth};
+  const basePts=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxBase)})).filter(p=>p.y!=null);
+  const series=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxCurr),phase:r.phase})).filter(p=>p.y!=null);
   const actualPts=series.filter(p=>p.phase==='actual');
   // a projeção parte do último ponto real para a linha não abrir buraco visual
   const forecastPts=actualPts.length?series.slice(actualPts.length-1):series;
@@ -82,20 +104,41 @@ function fxDrawMainChart(box,plan,ov,mode){
   </svg>`;
 }
 
+// Taxa que converte a FOTOGRAFIA PRESENTE: a do próprio mês fechado quando o
+// operador a registrou, senão a referência externa corrente. Nunca a premissa
+// futura. null significa "não há taxa para o presente" — e aí o presente sai em
+// USD, não numa conversão inventada.
+function fxPresentRate(ov){
+  const rec=ov.lastClosedMonth
+    ? (ov.forecast||[]).find(r=>r.month===ov.lastClosedMonth&&r.phase==='actual')
+    : null;
+  if(rec && rec.valuationFxRate>0) return rec.valuationFxRate;
+  const live=(typeof currentUsdBrlRate==='function')?currentUsdBrlRate():null;
+  return live>0?live:null;
+}
 // Resumo textual do gráfico principal — alternativa acessível obrigatória.
 function fxMainChartSummaryText(plan,ov,mode){
   const brl=mode==='brl';
-  const cur=v=>brl?'R$ '+Math.round(v).toLocaleString('pt-BR'):fmtMoney2(v);
-  const rate=brl?(plan.current.projectedFxRate||0):1;
+  // Duas taxas, dois tempos (JPW-FGDEKM). Antes havia UMA — a premissa futura —
+  // aplicada inclusive ao patrimônio presente, que era o defeito central.
+  const pRate=brl?fxPresentRate(ov):1;
+  const fRate=brl?(plan.current.projectedFxRate||0):1;
+  const brlFmt=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+  const presente=v=>(brl&&pRate>0)?brlFmt(v*pRate):fmtMoney2(v);
+  const futuro=v=>(brl&&fRate>0)?brlFmt(v*fRate):fmtMoney2(v);
   const endF=ov.forecast[ov.forecast.length-1], endB=ov.baseline[ov.baseline.length-1];
   const parts=[];
   if(ov.lastClosedMonth){
-    parts.push(`Realizado até ${ov.lastClosedMonth}: ${cur(ov.currentBalanceUsd*(brl?rate:1))}.`);
+    parts.push(`Realizado até ${ov.lastClosedMonth}: ${presente(ov.currentBalanceUsd)}.`);
     if(ov.baselineBalanceAtLastClose!=null)
-      parts.push(`O baseline original previa ${cur(ov.baselineBalanceAtLastClose*(brl?rate:1))} para o mesmo mês (desvio ${cur((ov.deviationUsd||0)*(brl?rate:1))}).`);
+      parts.push(`O baseline original previa ${presente(ov.baselineBalanceAtLastClose)} para o mesmo mês (desvio ${presente(ov.deviationUsd||0)}).`);
     parts.push('A projeção futura parte do saldo efetivamente realizado, com as premissas vigentes.');
+    if(brl&&!(pRate>0))
+      parts.push('Valores presentes exibidos em USD: não há referência USD/BRL corrente disponível, e a premissa de câmbio futuro não serve para marcar o presente.');
   } else parts.push('Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
-  if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${cur(endF.close*(brl?rate:1))} × baseline ${cur(endB.close*(brl?rate:1))}.`);
+  if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${futuro(endF.close)} × baseline ${futuro(endB.close)}.`);
+  if(brl&&pRate>0&&fRate>0&&Math.abs(pRate-fRate)>1e-9)
+    parts.push(`Presente convertido a R$ ${pRate.toFixed(4).replace('.',',')} e futuro a R$ ${fRate.toFixed(4).replace('.',',')} — taxas de tempos diferentes, não divergência.`);
   if(brl) parts.push('Conversão BRL pela premissa/valuation informadas — nunca pelo custo médio de aquisição.');
   // Chave de leitura do traço (P6): descreve em palavras o padrão de cada série,
   // para que a distinção não dependa de enxergar a diferença entre as cores.
@@ -141,4 +184,4 @@ function fxDrawReturnsChart(box,ov){
   </details>`;
 }
 
-window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert};
+window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert,fxPresentRate};

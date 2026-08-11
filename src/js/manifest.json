@@ -330,33 +330,39 @@
     },
     {
       "order": 55,
+      "path": "src/js/10-domain/08-usd-brl-quote.js",
+      "section": "REFERÊNCIA USD/BRL CORRENTE (JPW-FGDEKM)",
+      "sha256": "ad7a775c149e0363c8f7a8c498447896f6ac53dfd6c931393d808544a65b6e96"
+    },
+    {
+      "order": 56,
       "path": "src/js/30-accounting/05-fx-planning/01-fx-model.js",
       "section": "PLANEJAMENTO FX · MODELO DE DOMÍNIO",
       "sha256": "c4f55a0ea8d0d2c28c431b3e6a1cf990cab4b67c476fb501515ac6ed5753c684"
     },
     {
-      "order": 56,
+      "order": 57,
       "path": "src/js/30-accounting/05-fx-planning/02-fx-engine.js",
       "section": "PLANEJAMENTO FX · MOTOR MATEMÁTICO PURO",
       "sha256": "9df2beebc4f085fb8eb2e5ed10999aee83b5cc3efa6e3eb9041aedc50376a1e5"
     },
     {
-      "order": 57,
+      "order": 58,
       "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
       "section": "PLANEJAMENTO FX · ESTADO E MUTAÇÕES",
       "sha256": "35be4542b0b188fb799268ee9f2e02e15b71c20c49c786d77a1e48e1ab53b986"
     },
     {
-      "order": 58,
+      "order": 59,
       "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
       "section": "PLANEJAMENTO FX · GRÁFICOS SVG",
-      "sha256": "5cdbd901312810aeafc56797e01362ab826ca2832373b84e2e28ea26500006cd"
+      "sha256": "5a73be45240c047a0e6182c31e73cc55c8fc924b652342360b56b56daa62ee79"
     },
     {
-      "order": 59,
+      "order": 60,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "2ba504d567f5219260b95188411bae0551bf28d1cf8942a05bb5d459211f6c74"
+      "sha256": "9bab26edb9038bc70defa7def7751f9fbf729df7ebeafae567e55c7d6bede7d0"
     }
   ]
 }

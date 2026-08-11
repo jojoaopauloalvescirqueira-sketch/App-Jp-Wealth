@@ -19,6 +19,57 @@ const fxpBadge=(kind)=>kind==='REAL'
 
 function fxpCurrentMonthKey(){ return new Date().toISOString().slice(0,7); }
 
+// ---- Referência USD/BRL corrente (JPW-FGDEKM) -------------------------------
+// Indicador único da tela: explica com QUE taxa o presente é convertido. Não se
+// repete card a card. Nunca chama o dado de "ao vivo": a fonte publica uma
+// referência por dia útil, então mostramos a data econômica (referenceDate) e,
+// separadamente, quando consultamos (fetchedAt).
+const fxpQuote=()=>(window.JPWMarket&&window.JPWMarket.usdBrl)?window.JPWMarket.usdBrl:null;
+function fxpFmtRef(d){
+  if(!d) return '—';
+  const p=String(d).split('-');
+  return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:String(d);
+}
+function fxpFmtHora(ts){
+  return ts?new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'—';
+}
+function fxpQuoteHTML(){
+  const m=fxpQuote(); if(!m) return '';
+  const q=m.get(), carregando=m.isLoading();
+  // O botão só sinaliza disponibilidade; quem narra o estado é a mensagem. Ter
+  // os dois dizendo "Consultando…" imprimia o texto duas vezes seguidas.
+  const btn=`<button type="button" class="reset-btn fxp-quote-btn" id="fxpQuoteRefresh"${carregando?' disabled':''}>Atualizar cotação</button>`;
+  if(carregando && q.status==='unavailable')
+    return `<div class="fxp-quote" id="fxpQuoteBox" role="status"><span class="fxp-quote-lbl">USD/BRL de referência</span><span class="fxp-quote-msg">Consultando referência…</span>${btn}</div>`;
+  if(q.status==='unavailable')
+    return `<div class="fxp-quote fxp-quote-off" id="fxpQuoteBox" role="status">
+      <span class="fxp-quote-lbl">USD/BRL de referência</span>
+      <span class="fxp-quote-msg">Indisponível — valores presentes exibidos em USD. A premissa de câmbio futuro não é usada para marcar o presente.</span>${btn}</div>`;
+  const velha=q.status==='stale';
+  return `<div class="fxp-quote${velha?' fxp-quote-stale':''}" id="fxpQuoteBox" role="status">
+    <span class="fxp-quote-lbl">USD/BRL de referência</span>
+    <span class="fxp-quote-val">R$ ${q.rate.toFixed(4).replace('.',',')}</span>
+    <span class="fxp-quote-meta">Referência ${fxpFmtRef(q.referenceDate)} · consultado às ${fxpFmtHora(q.fetchedAt)}</span>
+    ${velha?'<span class="fxp-quote-tag">consulta desatualizada — revalidando</span>':''}
+    ${btn}</div>`;
+}
+function fxpBindQuote(root){
+  const m=fxpQuote(); if(!m) return;
+  const b=root.querySelector('#fxpQuoteRefresh');
+  if(b) b.addEventListener('click',()=>m.refresh(true));
+}
+// Registrado UMA vez: se ficasse dentro do render, cada repintura empilharia
+// mais um ouvinte e a tela entraria em laço.
+var fxpQuoteWired=false;
+function fxpWireQuoteOnce(){
+  const m=fxpQuote(); if(!m || fxpQuoteWired) return;
+  fxpQuoteWired=true;
+  m.onChange(()=>{ if(fxpView==='overview') renderFxPlanning(); });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && fxpView==='overview') m.refresh(false);
+  });
+}
+
 // ---- Formulário de criação (estado vazio) -----------------------------------
 function fxpCreateFormHTML(){
   return `
@@ -112,6 +163,7 @@ function fxpOverviewHTML(live){
     <div class="metric"><div class="k">Baseline para ${ov.lastClosedMonth||(baseToday?baseToday.month:'—')} ${fxpBadge('PROJ')}</div><div class="v">${ov.baselineBalanceAtLastClose!=null?fmtMoney2(ov.baselineBalanceAtLastClose):(baseToday?fmtMoney2(baseToday.close):'—')}</div></div>
     <div class="metric"><div class="k">Desvio vs baseline</div><div class="v" style="color:${dev==null?'var(--ink-dim)':(dev>=0?'var(--f1)':'var(--f4)')}">${dev!=null?`${fmtMoney2(dev)} · ${ov.deviationPct!=null?fxpPct(ov.deviationPct):'—'}`:'— sem mês fechado'}</div>${dev!=null?`<div class="sub">${devWord}</div>`:''}</div>
   </div>
+  ${fxpQuoteHTML()}
   <div class="fxp-chart-head">
     <h3>Trajetória patrimonial — baseline × projeção vigente × realizado</h3>
     <span class="fxp-spacer"></span>
@@ -417,6 +469,11 @@ function renderFxPlanning(){
     <div class="fxp-section" role="tabpanel" id="fxpPanel-${fxpView}" aria-labelledby="fxpTab-${fxpView}" tabindex="0">${body}</div>`;
   fxpBindTabs(root);
   if(fxpView==='overview'){
+    // Cadência: entrada na tela + volta à visibilidade + TTL + botão manual.
+    // Sem polling — refresh(false) respeita o TTL e o cooldown de falha.
+    fxpWireQuoteOnce();
+    fxpBindQuote(root);
+    const m=fxpQuote(); if(m) m.refresh(false);
     root.querySelectorAll('[data-fxp-cur]').forEach(b=>b.addEventListener('click',()=>{ fxpChartMode=b.dataset.fxpCur; renderFxPlanning(); }));
     window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,live,fxpChartMode);
     const summary=root.querySelector('#fxpMainChartSummary');

@@ -4671,6 +4671,27 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 .fxp-kpis .metric .v{overflow-wrap:anywhere}
 .fxp-kpis .metric .sub{display:block; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); margin-top:2px; line-height:1.45}
 
+/* Referência USD/BRL corrente (JPW-FGDEKM) — indicador único da tela, entre a
+   camada A e o grafico: explica com que taxa o PRESENTE foi convertido. */
+.fxp-quote{
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+  margin-top:10px; padding:8px 10px; border:1px solid var(--line);
+  border-radius:var(--radius-sm); background:var(--panel-2);
+}
+.fxp-quote-lbl{font-family:var(--mono); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.12em; color:var(--data-lbl)}
+.fxp-quote-val{font-family:var(--mono); font-size:var(--fs-md); font-weight:700; color:var(--data-num)}
+.fxp-quote-meta,.fxp-quote-msg{font-family:var(--sans); font-size:var(--fs-xs); color:var(--ink-dim); line-height:1.5}
+.fxp-quote-msg{flex:1 1 220px}
+/* Consulta velha nao invalida a taxa: a ultima referencia publicada continua
+   correta num sabado. A marca diz que estamos revalidando, nao que o numero
+   deixou de valer. */
+.fxp-quote-tag{font-family:var(--mono); font-size:var(--fs-xs); color:var(--f3); border:1px solid var(--f3); border-radius:4px; padding:1px 5px}
+.fxp-quote-stale{border-color:var(--f3)}
+.fxp-quote-off{border-color:var(--f4)}
+.fxp-quote-off .fxp-quote-msg{color:var(--ink)}
+.fxp-quote-btn{margin-left:auto; padding:3px 10px; font-size:var(--fs-xs); color:var(--ink-dim); border-color:var(--line)}
+@media(max-width:700px){.fxp-quote-btn{margin-left:0}}
+
 /* Camada B — o gráfico é o elemento analítico dominante da tela. */
 .fxp-chart-head{display:flex; align-items:center; gap:8px; margin:16px 0 6px; flex-wrap:wrap}
 .fxp-chart-head h3{margin:0; font-size:calc(13px * var(--fs-scale))}
@@ -4717,7 +4738,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '5712dce771b514bf';
+const JP_WEALTH_BUILD_ID = 'fed9e51423037695';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6026,6 +6047,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -20730,6 +20752,181 @@ function reserveRequirementsCalc({capital,fcrCurrent,monthlyExpenses,feoCurrent}
     hasDeficit:(fcrCur<fcrReq)||(feoCur<feoReq)
   };
 }
+// ============ REFERÊNCIA USD/BRL CORRENTE (JPW-FGDEKM) ============
+// Fornece a taxa externa usada para converter PATRIMÔNIO PRESENTE em BRL.
+// Existem três conceitos cambiais distintos no sistema e eles nunca se
+// sobrescrevem:
+//
+//   PASSADO   valuationFxRate    taxa de avaliação registrada num mês fechado
+//   PRESENTE  currentUsdBrlQuote referência externa corrente (este módulo)
+//   FUTURO    projectedFxRate    premissa do usuário para projeções
+//
+// Fonte: Frankfurter (taxas de referência do BCE), o MESMO provedor já adotado
+// em 10-domain/04-stop-statistics.js para os 8 pares operados. Sem chave, sem
+// segredo, sem função serverless — por isso nada aqui precisa de Netlify.
+//
+// NATUREZA DO DADO: é taxa de REFERÊNCIA DIÁRIA, publicada uma vez por dia útil
+// pelo BCE. Não é cotação spot intradiária e a interface não pode chamá-la de
+// "ao vivo" ou "tempo real". Por isso `referenceDate` (a data econômica que o
+// provedor devolve) e `fetchedAt` (quando nós consultamos) são grandezas
+// separadas e ambas preservadas.
+//
+// O cache é técnico, de dado de mercado — mesmo padrão de 40-app/15-ff-news.js.
+// Nunca entra em S.fxPlanning, nunca vira premissa do plano, nunca entra no
+// baseline e não faz parte do formato de backup.
+
+var USDBRL_CACHE_KEY='jpwealth.market.usdbrl.v1';
+var USDBRL_ENDPOINT='https://api.frankfurter.dev/v2/rate/USD/BRL';
+var USDBRL_SOURCE='Frankfurter · taxas de referência do BCE';
+// TTL = "está na hora de tentar buscar referência mais nova", NÃO "o último
+// valor virou inválido". Numa segunda-feira a referência de sexta continua
+// sendo a última publicada e continua válida; o que expira é a nossa consulta.
+var USDBRL_TTL_MS=6*60*60*1000;
+var USDBRL_TIMEOUT_MS=6000;
+// Após uma falha, espera antes de tentar de novo. Evita loop de retry contra
+// 429/5xx e evita rajada quando a aba troca de visibilidade repetidamente.
+var USDBRL_RETRY_COOLDOWN_MS=5*60*1000;
+
+// Consulta em curso, compartilhada por todos os chamadores. Enquanto existir,
+// refresh() devolve ESTA promessa em vez de disparar outra requisição: três
+// chamadas concorrentes viram um fetch e três esperas pelo mesmo resultado.
+var usdBrlPending=null;
+var usdBrlLastAttemptAt=0;
+var usdBrlLastError=null;
+var usdBrlListeners=[];
+
+// ---- Validação estrutural ---------------------------------------------------
+// Protege integridade da resposta, não tenta prever mercado: nenhuma faixa
+// econômica é imposta, apenas número finito e positivo do par esperado.
+function usdBrlSanitize(payload){
+  if(!payload || typeof payload!=='object') return null;
+  var rate=payload.rate;
+  if(typeof rate!=='number' || !isFinite(rate) || rate<=0) return null;
+  if(payload.base && String(payload.base).toUpperCase()!=='USD') return null;
+  if(payload.quote && String(payload.quote).toUpperCase()!=='BRL') return null;
+  var ref=typeof payload.date==='string' && /^\d{4}-\d{2}-\d{2}$/.test(payload.date)
+    ? payload.date : null;
+  if(payload.date && !ref) return null;      // data presente porém inválida: recusa
+  return {rate:rate, referenceDate:ref};
+}
+
+// ---- Cache técnico ----------------------------------------------------------
+function usdBrlReadCache(){
+  try{
+    var raw=localStorage.getItem(USDBRL_CACHE_KEY);
+    if(!raw) return null;
+    var parsed=JSON.parse(raw);
+    if(!parsed || typeof parsed!=='object' || typeof parsed.fetchedAt!=='number') return null;
+    var clean=usdBrlSanitize(parsed.payload);
+    if(!clean) return null;
+    return {rate:clean.rate, referenceDate:clean.referenceDate,
+            fetchedAt:parsed.fetchedAt, source:parsed.source||USDBRL_SOURCE};
+  }catch(_){ return null; }
+}
+function usdBrlWriteCache(payload){
+  try{
+    localStorage.setItem(USDBRL_CACHE_KEY, JSON.stringify(
+      {fetchedAt:Date.now(), source:USDBRL_SOURCE, payload:payload}));
+  }catch(_){ /* cota cheia: segue em memória até a próxima consulta */ }
+}
+
+// ---- Leitura pública --------------------------------------------------------
+// Contrato único que o resto do app enxerga. Nenhum consumidor conhece a URL,
+// o formato do provedor ou a chave de cache.
+//
+//   status 'fresh'       consultamos dentro do TTL
+//   status 'stale'       temos referência válida, mas a consulta envelheceu
+//   status 'unavailable' nunca obtivemos referência alguma
+//
+// Em 'stale' o `rate` CONTINUA presente e utilizável — é a última referência
+// publicada, e exibi-la com a data é o comportamento correto em fim de semana,
+// feriado ou queda de rede. Quem consome decide como sinalizar.
+function getCurrentUsdBrlQuote(){
+  var c=usdBrlReadCache();
+  if(!c) return {rate:null, referenceDate:null, fetchedAt:null,
+                 source:USDBRL_SOURCE, status:'unavailable', pair:'USD/BRL'};
+  var age=Date.now()-c.fetchedAt;
+  return {rate:c.rate, referenceDate:c.referenceDate, fetchedAt:c.fetchedAt,
+          source:c.source, status:age>USDBRL_TTL_MS?'stale':'fresh', pair:'USD/BRL'};
+}
+// Taxa para converter valor PRESENTE. Devolve null quando não há referência —
+// jamais projectedFxRate, jamais 0. Quem chama exibe o estado, não um número
+// inventado.
+function currentUsdBrlRate(){
+  var q=getCurrentUsdBrlQuote();
+  return q.status==='unavailable'?null:q.rate;
+}
+function usdBrlIsLoading(){ return usdBrlPending!==null; }
+function usdBrlLastFailure(){ return usdBrlLastError; }
+function usdBrlOnChange(fn){ if(typeof fn==='function') usdBrlListeners.push(fn); }
+function usdBrlNotify(){ usdBrlListeners.forEach(function(fn){ try{ fn(); }catch(_){}}); }
+
+// ---- Consulta ---------------------------------------------------------------
+function usdBrlShouldRefresh(){
+  var q=getCurrentUsdBrlQuote();
+  return q.status!=='fresh';
+}
+// force=true ignora TTL (botão manual), mas nunca ignora o cooldown de falha
+// nem uma consulta já em curso: dois cliques não viram duas requisições.
+//
+// Idempotência: com consulta em andamento devolvemos a MESMA promessa, de modo
+// que todo chamador aguarda a conclusão real em vez de receber de volta um
+// estado intermediário. Sempre resolve (nunca rejeita) com o estado corrente —
+// falha de rede é estado da cotação, não exceção para quem só quer exibir.
+function usdBrlRefresh(force){
+  if(usdBrlPending) return usdBrlPending;
+  if(!force && !usdBrlShouldRefresh()) return Promise.resolve(getCurrentUsdBrlQuote());
+  if(usdBrlLastError && (Date.now()-usdBrlLastAttemptAt)<USDBRL_RETRY_COOLDOWN_MS)
+    return Promise.resolve(getCurrentUsdBrlQuote());
+  usdBrlLastAttemptAt=Date.now();
+  var ctrl=new AbortController();
+  var timer=setTimeout(function(){ ctrl.abort(); }, USDBRL_TIMEOUT_MS);
+  usdBrlPending=fetch(USDBRL_ENDPOINT,{signal:ctrl.signal,cache:'no-store'})
+    .then(function(res){
+      clearTimeout(timer);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
+    })
+    .then(function(payload){
+      var clean=usdBrlSanitize(payload);
+      if(!clean) throw new Error('resposta inválida');
+      usdBrlWriteCache(payload);
+      usdBrlLastError=null;
+      return getCurrentUsdBrlQuote();
+    })
+    .catch(function(e){
+      clearTimeout(timer);
+      // Falha NÃO apaga o cache: a última referência válida continua servindo,
+      // marcada pelo seu próprio estado. Erro nunca vira 0 nem premissa futura.
+      usdBrlLastError=String((e&&e.message)||e||'falha desconhecida');
+      return getCurrentUsdBrlQuote();
+    })
+    .finally(function(){
+      // Libera a referência ANTES de notificar: o ouvinte repinta a tela, que
+      // por sua vez chama refresh(false) — se a promessa ainda estivesse presa
+      // aqui, ele receberia uma consulta já encerrada. Solto, quem decide é o
+      // TTL (sucesso) ou o cooldown (falha), e nenhum dos dois abre requisição
+      // nova neste instante. Roda também no caminho de erro.
+      usdBrlPending=null;
+      usdBrlNotify();
+    });
+  // Anúncio de "consultando" só agora: antes desta linha usdBrlPending ainda
+  // era null e isLoading() responderia falso ao ouvinte que acabou de repintar.
+  usdBrlNotify();
+  return usdBrlPending;
+}
+
+window.JPWMarket=window.JPWMarket||{};
+window.JPWMarket.usdBrl={
+  get:getCurrentUsdBrlQuote, rate:currentUsdBrlRate, refresh:usdBrlRefresh,
+  shouldRefresh:usdBrlShouldRefresh, isLoading:usdBrlIsLoading,
+  lastFailure:usdBrlLastFailure, onChange:usdBrlOnChange,
+  TTL_MS:USDBRL_TTL_MS, CACHE_KEY:USDBRL_CACHE_KEY
+};
+
+// Rede voltou: revalida se a consulta envelheceu. Sem polling — a cadência vem
+// da entrada na tela, da volta à visibilidade, do TTL e do botão manual.
+window.addEventListener('online',function(){ usdBrlRefresh(false); });
 // ============ PLANEJAMENTO FX · MODELO DE DOMÍNIO ============
 // Motor de planejamento patrimonial temporal para Forex (Contabilidade/Patrimônio).
 // Deriva conceitualmente da planilha histórica "Planejamento FX.xlsx" SEM reproduzir
@@ -21345,13 +21542,28 @@ window.JPWFx.state={fxState,fxActivePlanRaw,fxActivePlan,fxPlanCreate,fxPlanDele
 const FX_DASH_BASELINE='9 4';
 const FX_DASH_FORECAST='2 3';
 
-// Conversão de exibição USD→BRL. Realizado usa a valuationFxRate do próprio mês
-// quando registrada; na falta, cai na premissa vigente (aproximação sinalizada
-// pelo chamador). Projeções usam a premissa de CADA série (baseline × current) —
-// nunca o custo médio de aquisição, que é conceito contábil, não cotação.
-function fxChartConvert(row,mode,fallbackRate){
+// Conversão de exibição USD→BRL, classificada por TEMPO (JPW-FGDEKM).
+//
+//   PASSADO   mês fechado com valuationFxRate própria → usa a dele. História
+//             não se reprecifica com a referência de hoje.
+//   PRESENTE  último mês fechado SEM taxa registrada → referência USD/BRL
+//             corrente (10-domain/08-usd-brl-quote.js).
+//   FUTURO    linhas de projeção → premissa projectedFxRate da série.
+//
+// Mês passado sem taxa registrada devolve null e some da curva: não existe taxa
+// histórica para ele, e preencher com a premissa futura ou com a cotação de
+// hoje seria inventar dado. Premissa futura NUNCA vale como valor presente —
+// era exatamente esse vazamento que este ticket corrige.
+// O custo médio de aquisição não entra aqui: é conceito contábil, não cotação.
+function fxChartConvert(row,mode,ctx){
   if(mode!=='brl') return row.close;
-  const rate=(row.phase==='actual'&&row.valuationFxRate)?row.valuationFxRate:fallbackRate;
+  const c=(ctx&&typeof ctx==='object')?ctx:{projectedRate:ctx};
+  let rate;
+  if(row.phase==='actual'){
+    if(row.valuationFxRate>0) rate=row.valuationFxRate;                 // passado
+    else if(c.presentMonth && row.month===c.presentMonth) rate=c.currentRate; // presente
+    else rate=null;                                                      // sem taxa histórica
+  } else rate=c.projectedRate;                                           // futuro
   return rate>0?row.close*rate:null;
 }
 
@@ -21366,8 +21578,15 @@ function fxDrawMainChart(box,plan,ov,mode){
   }
   const months=ov.forecast.map(r=>r.month);
   const n=months.length; if(!n){ box.innerHTML=''; return; }
-  const basePts=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,baseRate||currRate)})).filter(p=>p.y!=null);
-  const series=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,currRate),phase:r.phase})).filter(p=>p.y!=null);
+  // Contexto temporal compartilhado pelas duas séries: a referência corrente
+  // vale só para o último mês fechado (a fotografia de agora); cada série
+  // projeta com a SUA premissa (baseline original × vigente).
+  const presentRate=(typeof currentUsdBrlRate==='function')?currentUsdBrlRate():null;
+  const presentMonth=ov.lastClosedMonth||null;
+  const ctxBase={projectedRate:baseRate||currRate, currentRate:presentRate, presentMonth};
+  const ctxCurr={projectedRate:currRate, currentRate:presentRate, presentMonth};
+  const basePts=ov.baseline.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxBase)})).filter(p=>p.y!=null);
+  const series=ov.forecast.map((r,i)=>({i,y:fxChartConvert(r,mode,ctxCurr),phase:r.phase})).filter(p=>p.y!=null);
   const actualPts=series.filter(p=>p.phase==='actual');
   // a projeção parte do último ponto real para a linha não abrir buraco visual
   const forecastPts=actualPts.length?series.slice(actualPts.length-1):series;
@@ -21415,20 +21634,41 @@ function fxDrawMainChart(box,plan,ov,mode){
   </svg>`;
 }
 
+// Taxa que converte a FOTOGRAFIA PRESENTE: a do próprio mês fechado quando o
+// operador a registrou, senão a referência externa corrente. Nunca a premissa
+// futura. null significa "não há taxa para o presente" — e aí o presente sai em
+// USD, não numa conversão inventada.
+function fxPresentRate(ov){
+  const rec=ov.lastClosedMonth
+    ? (ov.forecast||[]).find(r=>r.month===ov.lastClosedMonth&&r.phase==='actual')
+    : null;
+  if(rec && rec.valuationFxRate>0) return rec.valuationFxRate;
+  const live=(typeof currentUsdBrlRate==='function')?currentUsdBrlRate():null;
+  return live>0?live:null;
+}
 // Resumo textual do gráfico principal — alternativa acessível obrigatória.
 function fxMainChartSummaryText(plan,ov,mode){
   const brl=mode==='brl';
-  const cur=v=>brl?'R$ '+Math.round(v).toLocaleString('pt-BR'):fmtMoney2(v);
-  const rate=brl?(plan.current.projectedFxRate||0):1;
+  // Duas taxas, dois tempos (JPW-FGDEKM). Antes havia UMA — a premissa futura —
+  // aplicada inclusive ao patrimônio presente, que era o defeito central.
+  const pRate=brl?fxPresentRate(ov):1;
+  const fRate=brl?(plan.current.projectedFxRate||0):1;
+  const brlFmt=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
+  const presente=v=>(brl&&pRate>0)?brlFmt(v*pRate):fmtMoney2(v);
+  const futuro=v=>(brl&&fRate>0)?brlFmt(v*fRate):fmtMoney2(v);
   const endF=ov.forecast[ov.forecast.length-1], endB=ov.baseline[ov.baseline.length-1];
   const parts=[];
   if(ov.lastClosedMonth){
-    parts.push(`Realizado até ${ov.lastClosedMonth}: ${cur(ov.currentBalanceUsd*(brl?rate:1))}.`);
+    parts.push(`Realizado até ${ov.lastClosedMonth}: ${presente(ov.currentBalanceUsd)}.`);
     if(ov.baselineBalanceAtLastClose!=null)
-      parts.push(`O baseline original previa ${cur(ov.baselineBalanceAtLastClose*(brl?rate:1))} para o mesmo mês (desvio ${cur((ov.deviationUsd||0)*(brl?rate:1))}).`);
+      parts.push(`O baseline original previa ${presente(ov.baselineBalanceAtLastClose)} para o mesmo mês (desvio ${presente(ov.deviationUsd||0)}).`);
     parts.push('A projeção futura parte do saldo efetivamente realizado, com as premissas vigentes.');
+    if(brl&&!(pRate>0))
+      parts.push('Valores presentes exibidos em USD: não há referência USD/BRL corrente disponível, e a premissa de câmbio futuro não serve para marcar o presente.');
   } else parts.push('Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
-  if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${cur(endF.close*(brl?rate:1))} × baseline ${cur(endB.close*(brl?rate:1))}.`);
+  if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${futuro(endF.close)} × baseline ${futuro(endB.close)}.`);
+  if(brl&&pRate>0&&fRate>0&&Math.abs(pRate-fRate)>1e-9)
+    parts.push(`Presente convertido a R$ ${pRate.toFixed(4).replace('.',',')} e futuro a R$ ${fRate.toFixed(4).replace('.',',')} — taxas de tempos diferentes, não divergência.`);
   if(brl) parts.push('Conversão BRL pela premissa/valuation informadas — nunca pelo custo médio de aquisição.');
   // Chave de leitura do traço (P6): descreve em palavras o padrão de cada série,
   // para que a distinção não dependa de enxergar a diferença entre as cores.
@@ -21474,7 +21714,7 @@ function fxDrawReturnsChart(box,ov){
   </details>`;
 }
 
-window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert};
+window.JPWFx.charts={fxDrawMainChart,fxDrawReturnsChart,fxMainChartSummaryText,fxChartConvert,fxPresentRate};
 // ============ PLANEJAMENTO FX · INTERFACE (tela principal própria) ============
 // Renderiza dentro de #fxPlanningRoot (index.html, tela #fxplan — quinta tela
 // principal da rail, mesma mecânica .tab/data-screen das demais). Quatro modos
@@ -21495,6 +21735,57 @@ const fxpBadge=(kind)=>kind==='REAL'
   :(kind==='PROJ'?'<span class="fxp-badge fxp-badge-proj">PREMISSA</span>':'<span class="fxp-badge">'+esc(kind)+'</span>');
 
 function fxpCurrentMonthKey(){ return new Date().toISOString().slice(0,7); }
+
+// ---- Referência USD/BRL corrente (JPW-FGDEKM) -------------------------------
+// Indicador único da tela: explica com QUE taxa o presente é convertido. Não se
+// repete card a card. Nunca chama o dado de "ao vivo": a fonte publica uma
+// referência por dia útil, então mostramos a data econômica (referenceDate) e,
+// separadamente, quando consultamos (fetchedAt).
+const fxpQuote=()=>(window.JPWMarket&&window.JPWMarket.usdBrl)?window.JPWMarket.usdBrl:null;
+function fxpFmtRef(d){
+  if(!d) return '—';
+  const p=String(d).split('-');
+  return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:String(d);
+}
+function fxpFmtHora(ts){
+  return ts?new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'—';
+}
+function fxpQuoteHTML(){
+  const m=fxpQuote(); if(!m) return '';
+  const q=m.get(), carregando=m.isLoading();
+  // O botão só sinaliza disponibilidade; quem narra o estado é a mensagem. Ter
+  // os dois dizendo "Consultando…" imprimia o texto duas vezes seguidas.
+  const btn=`<button type="button" class="reset-btn fxp-quote-btn" id="fxpQuoteRefresh"${carregando?' disabled':''}>Atualizar cotação</button>`;
+  if(carregando && q.status==='unavailable')
+    return `<div class="fxp-quote" id="fxpQuoteBox" role="status"><span class="fxp-quote-lbl">USD/BRL de referência</span><span class="fxp-quote-msg">Consultando referência…</span>${btn}</div>`;
+  if(q.status==='unavailable')
+    return `<div class="fxp-quote fxp-quote-off" id="fxpQuoteBox" role="status">
+      <span class="fxp-quote-lbl">USD/BRL de referência</span>
+      <span class="fxp-quote-msg">Indisponível — valores presentes exibidos em USD. A premissa de câmbio futuro não é usada para marcar o presente.</span>${btn}</div>`;
+  const velha=q.status==='stale';
+  return `<div class="fxp-quote${velha?' fxp-quote-stale':''}" id="fxpQuoteBox" role="status">
+    <span class="fxp-quote-lbl">USD/BRL de referência</span>
+    <span class="fxp-quote-val">R$ ${q.rate.toFixed(4).replace('.',',')}</span>
+    <span class="fxp-quote-meta">Referência ${fxpFmtRef(q.referenceDate)} · consultado às ${fxpFmtHora(q.fetchedAt)}</span>
+    ${velha?'<span class="fxp-quote-tag">consulta desatualizada — revalidando</span>':''}
+    ${btn}</div>`;
+}
+function fxpBindQuote(root){
+  const m=fxpQuote(); if(!m) return;
+  const b=root.querySelector('#fxpQuoteRefresh');
+  if(b) b.addEventListener('click',()=>m.refresh(true));
+}
+// Registrado UMA vez: se ficasse dentro do render, cada repintura empilharia
+// mais um ouvinte e a tela entraria em laço.
+var fxpQuoteWired=false;
+function fxpWireQuoteOnce(){
+  const m=fxpQuote(); if(!m || fxpQuoteWired) return;
+  fxpQuoteWired=true;
+  m.onChange(()=>{ if(fxpView==='overview') renderFxPlanning(); });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && fxpView==='overview') m.refresh(false);
+  });
+}
 
 // ---- Formulário de criação (estado vazio) -----------------------------------
 function fxpCreateFormHTML(){
@@ -21589,6 +21880,7 @@ function fxpOverviewHTML(live){
     <div class="metric"><div class="k">Baseline para ${ov.lastClosedMonth||(baseToday?baseToday.month:'—')} ${fxpBadge('PROJ')}</div><div class="v">${ov.baselineBalanceAtLastClose!=null?fmtMoney2(ov.baselineBalanceAtLastClose):(baseToday?fmtMoney2(baseToday.close):'—')}</div></div>
     <div class="metric"><div class="k">Desvio vs baseline</div><div class="v" style="color:${dev==null?'var(--ink-dim)':(dev>=0?'var(--f1)':'var(--f4)')}">${dev!=null?`${fmtMoney2(dev)} · ${ov.deviationPct!=null?fxpPct(ov.deviationPct):'—'}`:'— sem mês fechado'}</div>${dev!=null?`<div class="sub">${devWord}</div>`:''}</div>
   </div>
+  ${fxpQuoteHTML()}
   <div class="fxp-chart-head">
     <h3>Trajetória patrimonial — baseline × projeção vigente × realizado</h3>
     <span class="fxp-spacer"></span>
@@ -21894,6 +22186,11 @@ function renderFxPlanning(){
     <div class="fxp-section" role="tabpanel" id="fxpPanel-${fxpView}" aria-labelledby="fxpTab-${fxpView}" tabindex="0">${body}</div>`;
   fxpBindTabs(root);
   if(fxpView==='overview'){
+    // Cadência: entrada na tela + volta à visibilidade + TTL + botão manual.
+    // Sem polling — refresh(false) respeita o TTL e o cooldown de falha.
+    fxpWireQuoteOnce();
+    fxpBindQuote(root);
+    const m=fxpQuote(); if(m) m.refresh(false);
     root.querySelectorAll('[data-fxp-cur]').forEach(b=>b.addEventListener('click',()=>{ fxpChartMode=b.dataset.fxpCur; renderFxPlanning(); }));
     window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,live,fxpChartMode);
     const summary=root.querySelector('#fxpMainChartSummary');

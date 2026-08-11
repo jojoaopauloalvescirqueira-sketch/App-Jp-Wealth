@@ -4661,6 +4661,27 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 .fxp-kpis .metric .v{overflow-wrap:anywhere}
 .fxp-kpis .metric .sub{display:block; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); margin-top:2px; line-height:1.45}
 
+/* Referência USD/BRL corrente (JPW-FGDEKM) — indicador único da tela, entre a
+   camada A e o grafico: explica com que taxa o PRESENTE foi convertido. */
+.fxp-quote{
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+  margin-top:10px; padding:8px 10px; border:1px solid var(--line);
+  border-radius:var(--radius-sm); background:var(--panel-2);
+}
+.fxp-quote-lbl{font-family:var(--mono); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.12em; color:var(--data-lbl)}
+.fxp-quote-val{font-family:var(--mono); font-size:var(--fs-md); font-weight:700; color:var(--data-num)}
+.fxp-quote-meta,.fxp-quote-msg{font-family:var(--sans); font-size:var(--fs-xs); color:var(--ink-dim); line-height:1.5}
+.fxp-quote-msg{flex:1 1 220px}
+/* Consulta velha nao invalida a taxa: a ultima referencia publicada continua
+   correta num sabado. A marca diz que estamos revalidando, nao que o numero
+   deixou de valer. */
+.fxp-quote-tag{font-family:var(--mono); font-size:var(--fs-xs); color:var(--f3); border:1px solid var(--f3); border-radius:4px; padding:1px 5px}
+.fxp-quote-stale{border-color:var(--f3)}
+.fxp-quote-off{border-color:var(--f4)}
+.fxp-quote-off .fxp-quote-msg{color:var(--ink)}
+.fxp-quote-btn{margin-left:auto; padding:3px 10px; font-size:var(--fs-xs); color:var(--ink-dim); border-color:var(--line)}
+@media(max-width:700px){.fxp-quote-btn{margin-left:0}}
+
 /* Camada B — o gráfico é o elemento analítico dominante da tela. */
 .fxp-chart-head{display:flex; align-items:center; gap:8px; margin:16px 0 6px; flex-wrap:wrap}
 .fxp-chart-head h3{margin:0; font-size:calc(13px * var(--fs-scale))}
