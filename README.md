@@ -1,6 +1,12 @@
 # JP Wealth Risk Terminal V9.1
 
-Repositório estruturado a partir do HTML portátil preservado do JP Wealth. A reorganização desta versão é **estrutural**: HTML, CSS e JavaScript foram separados sem reescrever as regras financeiras nem alterar a ordem de execução do código.
+Aplicação web **local-first** (PWA, sem backend obrigatório) para governança de risco e gestão operacional de capital. O terminal aplica o **Estatuto JP Wealth** — fases operacionais, perfis de risco, limites de drawdown, stops, poda e quarentena — como regra executável no navegador, mantendo os dados do operador exclusivamente na máquina dele.
+
+O repositório foi estruturado a partir do HTML portátil preservado do JP Wealth: HTML, CSS e JavaScript foram separados **sem reescrever as regras financeiras nem alterar a ordem de execução** do código original.
+
+## Propósito
+
+O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, três riscos são tratados como de primeira ordem: **perda silenciosa de dados**, **cálculo divergente da norma** e **falsa evidência de teste**. Tudo no projeto — arquitetura, testes, governança de agentes — existe para conter esses três riscos. O código não se torna normativo por estar em produção: a autoridade vive no Estatuto (`docs/normative/`) e nas decisões formais (`docs/decisions/`).
 
 ## Prioridade do projeto
 
@@ -10,6 +16,45 @@ Repositório estruturado a partir do HTML portátil preservado do JP Wealth. A r
 4. Rastreabilidade de cada alteração.
 5. Evolução da interface e da arquitetura somente depois dos itens anteriores.
 
+## Funcionalidades
+
+### Núcleo operacional — quatro áreas
+
+- **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
+- **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
+- **Execução** — registro de ordens sob as regras do Estatuto: fases, risco programado, classificação de stops (2 ATR, Raiz-N), alavancagem.
+- **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
+
+### Onboarding e período operacional
+
+Questionário de início em etapas — parâmetros, calibração e a etapa **Base de Dados**, com termo de responsabilidade obrigatório. Simulação estatística de suporte à calibração. Revisão posterior pelo resumo seguro em `Configurações → Parâmetros e Calibração`, que reabre o onboarding em modo de edição sem duplicar campos ou credenciais.
+
+### Notas operacionais
+
+Painel de notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, funcionando em desktop, mobile e no HTML portátil; incluídas no backup.
+
+### Central de Configurações
+
+Modal aberta pela engrenagem do cabeçalho, preservando a tela operacional ao fundo: Aparência, Interface, Editor, base **educacional local pesquisável** (Forex, glossário, FAQ — sem sinais nem recomendações), Estatuto Operacional, Parâmetros e Backup. A pesquisa é declarativa e **não indexa dados operacionais** do usuário.
+
+### Base de Dados e backups
+
+Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.json`, sequência incrementada só após sucesso confirmado e proteção contra sobrescrita. Pasta padrão via File System Access API (Chrome/Edge desktop) com reautorização explícita; demais navegadores usam download tradicional com a mesma nomenclatura. Importação **transacional**: o arquivo é lido, validado, normalizado e confirmado atomicamente — backup adulterado não executa script, não injeta DOM e não persiste marcação.
+
+### Privacidade e encerramento
+
+`Finalizar sessão` (ícone no cabeçalho) executa checkpoint determinístico, exige backup confirmado quando necessário e remove **apenas** as chaves locais do JP Wealth — sem `localStorage.clear()`, preservando outras aplicações. Confirmação textual `APAGAR TUDO` para a limpeza completa.
+
+### PWA e distribuição
+
+Instalável como PWA com service worker e precache versionado (`sw.js`); ícone nas variantes `Claro` e `Escuro` em `Configurações → Ícone do app` (no iOS é preciso reinstalar o atalho após trocar). O HTML portátil em `dist/` é **derivado** — destinado a distribuição de arquivo único, reconstruído por `tools/rebuild_monolith.py`, nunca editado diretamente.
+
+## Em desenvolvimento e decisões pendentes
+
+- **Dez pendências normativas N3** aguardam decisão formal humana — cada uma tem um ADR aberto em `docs/decisions/` (fatores dos perfis conservadores, fonte canônica de equity do drawdown, gate combinado da Ordem Gênese, bloqueio de stop < 2 ATR, histerese de fase, poda LIFO compulsória, rito da Fase 4, gatilho de quarentena, fator Raiz-N, projeções MEI). **Nenhuma é corrigida silenciosamente**: exigem decisão N3 e branch própria.
+- **Dívida estrutural conhecida**: `openOnboardingModal()` concentra ~2 mil linhas; escopo global legado compartilhado; CSP não documentada; cobertura automatizada mais forte nos fluxos recentes que no núcleo financeiro. Detalhes e estado vigente em `docs/governance/CURRENT-STATE.md`.
+- Explorações de interface (redesign de telas, consolidações de UI) ocorrem em branches dedicadas e só entram na `main` por integração autorizada.
+
 ## Início rápido
 
 ```bash
@@ -18,25 +63,13 @@ python3 tools/quality_gate.py --tier standard
 python3 tools/serve.py
 ```
 
-Acesse `http://127.0.0.1:8000`.
+Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir o `index.html` por `file://` não registra o service worker.
 
-## Estrutura principal
+## Qualidade e verificação
 
-- `index.html`: composição da interface.
-- `src/styles/app.css`: estilos extraídos do HTML original.
-- `src/js/`: lógica separada por domínios, mantendo a ordem original em `manifest.json`.
-- `assets/`: logos e as duas variantes locais do ícone PWA.
-- `manifests/`: manifesto PWA único, com as variantes clara e escura.
-- `sw.js`: service worker local com precache versionado dos arquivos do app e dos ativos PWA.
-- `docs/normative/`: Estatuto e organograma — fontes de autoridade do projeto.
-- `docs/architecture/`: arquitetura, estado e mapa do código.
-- `docs/governance/`: regras para trabalho humano e por IA.
-- `skills/`: procedimentos locais obrigatórios para agentes do projeto.
-- `tests/`: validação e smoke test.
-- `tools/`: servidor, validação e reconstrução do HTML portátil.
-- `archive/original/`: original imutável para comparação e recuperação.
-- `data/backups/`: backups JSON locais; não versionar dados reais ou credenciais.
-- `dist/`: HTML portátil reconstruído.
+Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações — preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (6 — inclui smoke e Central de Configurações em Chromium real) e **full** (16 suítes, incluindo segurança de importação/XSS, senha de investidor, recuperação transacional, reprodutibilidade de build e ciclo do service worker). Taxonomia de resultados e composição em `docs/governance/QUALITY-GATES.md`.
+
+O preflight (`tools/agent_preflight.py`) verifica dois sinais independentes de frescor do contexto: **temporal** (idade da fotografia) e **material** (alterações posteriores à source revision fora dos caminhos de reconciliação contextual), com resultado tri-state em que `UNKNOWN` nunca é tratado como `FALSE`.
 
 ## Regra de segurança
 
@@ -44,24 +77,27 @@ Nenhuma IA deve alterar constantes financeiras, fórmulas normativas, migraçõe
 
 ## Trabalho com agentes
 
-Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/governance/CONTEXT-MAP.md`. O estado confirmado e as pendências vigentes ficam em `docs/governance/CURRENT-STATE.md`; conversas e handoffs nunca substituem esses arquivos. Os gates e a taxonomia de resultados estão em `docs/governance/QUALITY-GATES.md`.
+Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/governance/CONTEXT-MAP.md`. O estado confirmado e as pendências vigentes ficam em `docs/governance/CURRENT-STATE.md`; conversas e handoffs nunca substituem esses arquivos. O roteamento de skills está em `docs/governance/SKILL-ROUTING.md` — oito skills `jpw-*` de procedimento local e duas skills genéricas instaladas project-scoped (`repository-architecture`, `agentic-evolution-governance`). O fechamento de toda mudança material exige veredito explícito de impacto agêntico, conforme `skills/jpw-post-change-audit/SKILL.md`.
 
 ## Persistência
 
-O estado operacional é mantido no `localStorage` sob a chave `jpwealth_v9_state`. O código está no repositório; os dados reais do operador precisam ser exportados do navegador e guardados separadamente em `data/backups/`.
+O estado operacional é mantido no `localStorage` sob a chave `jpwealth_v9_state`; estados antigos passam por `migrate()` e nunca são substituídos silenciosamente por `DEFAULTS`. O código está no repositório; os dados reais do operador precisam ser exportados do navegador e guardados separadamente em `data/backups/` — nunca versionar dados reais ou credenciais.
 
-Em computador de terceiros, use o ícone `Finalizar sessão` no canto superior direito do cabeçalho. O fluxo verifica o checkpoint da sessão, exige backup confirmado quando necessário e remove apenas as chaves locais pertencentes ao JP Wealth; não usa `localStorage.clear()` e não fecha a aba do navegador.
+O fingerprint de alterações inclui `instruments[].preco` e `instruments[].updated`. Uma atualização automática de câmbio pode, portanto, produzir um falso positivo deliberado de alteração; esta versão prioriza evitar perda silenciosa de dados e não tenta distinguir origem manual de automática.
 
-O fingerprint inclui também `instruments[].preco` e `instruments[].updated`. Uma atualização automática de câmbio pode, portanto, produzir um falso positivo deliberado de alteração; esta versão prioriza evitar perda silenciosa de dados e não tenta distinguir origem manual de automática.
+## Estrutura principal
 
-## Ícone e instalação PWA
-
-Em `Configurações → Ícone do app`, escolha entre as variantes `Claro` e `Escuro` do mesmo símbolo. A escolha usa a chave local `jpwealth_v9_icon_choice`, separada do estado operacional, e altera somente os links de ícone; o manifesto permanece único em `manifests/jp-wealth.webmanifest`.
-
-No iPhone e iPad, o Safari não troca retroativamente o ícone de um atalho já instalado. Depois de escolher, remova o atalho atual e use `Compartilhar → Adicionar à Tela de Início` novamente. Em desktop e Android, o comportamento depende do navegador. O PWA precisa ser servido por HTTP/HTTPS; o HTML portátil em `dist/` continua destinado a distribuição de arquivo único e não substitui a publicação da raiz do projeto.
-
-## Central de Configurações
-
-A engrenagem no cabeçalho abre uma central modal e preserva a tela operacional ativa ao fundo. Os controles já existentes continuam usando suas rotinas e persistência originais. A pesquisa é declarativa: procura categorias, controles, ajuda e conteúdo educacional local, mas não indexa contas, nomes, saldos ou outros dados operacionais do usuário.
-
-Em `Parâmetros e Calibração → Período Operacional`, o botão `Revisar dados do período` abre o onboarding existente em modo de edição. A central apresenta apenas um resumo seguro e não duplica campos, credenciais ou validações.
+- `index.html` — composição da interface e contratos DOM estáticos.
+- `src/styles/app.css` — estilos extraídos do HTML original.
+- `src/js/` — lógica em domínios (`00-core` → `10-domain` → `20-ui` → `30-accounting` → `40-app`); a ordem em `manifest.json` é parte do runtime.
+- `assets/`, `manifests/`, `sw.js` — superfície PWA (ícones, manifesto único, service worker com precache).
+- `infra/ff-news-feed/` — documentação do alimentador do widget de notícias (repositório auxiliar, só dados públicos).
+- `docs/normative/` — Estatuto e organograma, fontes de autoridade.
+- `docs/decisions/` — ADRs: decisões formais e pendências N3.
+- `docs/architecture/` — arquitetura, schema de estado e mapa do código.
+- `docs/governance/` — regras para trabalho humano e por IA, estado atual, gates.
+- `skills/` — procedimentos locais obrigatórios para agentes do projeto.
+- `tests/`, `tools/` — validação, gates, servidor e reconstrução do portátil.
+- `archive/original/` — original imutável para comparação e recuperação.
+- `data/backups/` — backups JSON locais; não versionar dados reais.
+- `dist/` — HTML portátil reconstruído (derivado).
