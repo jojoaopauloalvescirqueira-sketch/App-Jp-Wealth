@@ -1,14 +1,24 @@
-# Tarefa ativa - Laboratorio de Probabilidade: Galton Board
+# Tarefa concluida - Laboratorio de Probabilidade: Galton Board
 
-- Data: 2026-08-11
+- Data de encerramento: 2026-08-11
 - `BASE_SHA`: `d9510dbb55f0`
-- Branch: `codex/galton-board`
+- Commit material: `7fc4eb6` ("feat: add Galton probability laboratory")
+- Integracao: Pull Request #2, merge `fb33ceb`, publicado em `origin/main`
+- Branch de origem: `codex/galton-board` (mesclada, preservada)
 - Nivel: N1 (simulador, navegacao, acessibilidade e PWA) + N2 delimitado (preferencias locais isoladas)
-- Autoridade: A2 para a implementacao N1 e A3 apenas para a chave de preferencias explicitamente solicitada no brief; commit, push, merge e deploy nao autorizados
-- Estado: tecnicamente pronta e validada no candidato local; sem autorizacao para
-  commit ou publicacao
+- Autoridade: A2 para a implementacao N1 e A3 para a chave de preferencias, ambos
+  dentro do brief original; commit, merge e publicacao ja ocorreram
+- Estado: concluida, integrada e publicada. Nenhuma tarefa ativa esta declarada
+  neste momento — este arquivo aguarda a proxima definicao de escopo pelo gestor.
 
 O estado Git corrente (branch, HEAD e arvore) deve ser confirmado pelo preflight. Este contrato nao substitui fatos mutaveis do disco.
+
+## Nota de reconciliacao
+
+Este arquivo descrevia a tarefa como candidato local nao commitado. A integracao
+(commit, merge via PR #2 e push) ocorreu por um processo externo a esta sessao de
+reconciliacao. O conteudo abaixo preserva o registro original da tarefa como
+executada; a secao "Resultado atual" foi atualizada para refletir a publicacao.
 
 ## Objetivo
 
@@ -85,14 +95,20 @@ Reverter apenas os arquivos listados neste contrato para `BASE_SHA`, remover a c
 
 ## Resultado atual
 
-- Implementacao concluida no build local `dbca7e887edd287b`, sem alteracao N3.
+- Implementacao concluida no build oficial `dbca7e887edd287b`, sem alteracao N3.
 - Suite focal Galton, Settings, Finalizar sessao, reproducibilidade de build e upgrade
-  PWA: `PASS` no candidato consolidado.
+  PWA: `PASS` no candidato consolidado (arvore byte-identica ao publicado).
 - Benchmark: `PASS`, 10.000/10.000 assentadas, zero expiracoes/rejeicoes,
   `bodyCount=1` e pico de 240 corpos; tempo e comparacao binomial sao diagnosticos,
   nunca criterio de fitting.
 - Browser: `PASS` para rota/Canvas/execucao no desktop e, pela suite Chromium,
   viewport `390 x 844`, temas e reduced motion.
 - Gate `full`: `PASS 17/17`, zero falhas, erros ou omissoes; artefato
-  `tools/.artifacts/quality-20260811T165927-full.json`.
-- Commit, push, merge e deploy permanecem pendentes de autorizacao humana separada.
+  `tools/.artifacts/quality-20260811T165927-full.json`. Gate `fast` reexecutado
+  sobre o HEAD publicado `fb33ceb`: `PASS 4/4`.
+- Commit (`7fc4eb6`), merge (PR #2, `fb33ceb`) e publicacao em `origin/main` ja
+  ocorreram. Deploy nao acionado; nenhum pipeline online existe no projeto.
+- Nenhuma tarefa ativa sucessora foi definida nesta reconciliacao. As dez
+  pendencias normativas N3 registradas em `CURRENT-STATE.md` continuam sendo o
+  backlog conhecido, mas nao sao declaradas aqui como tarefa em andamento sem
+  confirmacao do gestor.

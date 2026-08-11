@@ -1,14 +1,18 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-11
-Source revision representada: `d9510dbb55f0`
-- Nota da revisao: este e o candidato material validado; o diff Galton ainda nao
-  possui revisao commitada.
-- Branch do candidato: `codex/galton-board`
-- HEAD atual: `d9510dbb55f0` com diff material nao commitado
-- Estado de integracao: candidato local; nao commitado, nao enviado, nao integrado e
-  nao publicado
-- Validade: esta fotografia descreve o disco no build local
+Source revision representada: `fb33ceb`
+- Nota da revisao: revisao material publicada. O candidato foi commitado em
+  `7fc4eb6` ("feat: add Galton probability laboratory") a partir do baseline
+  `d9510dbb55f0`, mesclado em `main` pelo Pull Request #2 (merge `fb33ceb`) e
+  publicado em `origin/main`. A arvore do merge e byte-identica a do commit do
+  candidato (`git diff 7fc4eb6 fb33ceb --stat` vazio) — nenhuma alteracao
+  ocorreu durante a integracao.
+- Branch de origem: `codex/galton-board` (mesclada em `main`, preservada, nao
+  excluida).
+- HEAD atual: `fb33ceb`, publicado em `origin/main`.
+- Estado de integracao: commitado, mesclado via PR #2 e publicado.
+- Validade: esta fotografia descreve o disco no build oficial
   `dbca7e887edd287b`. Qualquer mudanca posterior em fonte, manifest, fixture, gerados
   ou testes invalida as evidencias afetadas.
 
@@ -51,10 +55,11 @@ Source revision representada: `d9510dbb55f0`
   `jpwealth_galton_preferences_v1` e sua remocao por `Finalizar sessao`.
 - N3/A4: fora do escopo. Nenhuma formula financeira, perfil, fase, limite, MDD, DD,
   LIFO, stop, quarentena, contabilidade, MEI ou artigo do Estatuto foi alterado.
-- Criacao da branch local foi autorizada. Commit, push, merge e deploy continuam
-  sem autorizacao.
+- Commit (`7fc4eb6`), merge via PR #2 (`fb33ceb`) e publicacao em `origin/main`
+  ja ocorreram. Deploy/release continuam fora deste registro — nao ha pipeline
+  de deploy online acionado pelo projeto.
 
-## Evidencia deste candidato
+## Evidencia (produzida sobre a arvore do candidato, byte-identica ao publicado)
 
 | Verificacao | Resultado | Escopo/observacao |
 |---|---|---|
@@ -67,9 +72,14 @@ Source revision representada: `d9510dbb55f0`
 | `python3 tools/build_reproducibility_test.py` | PASS | Build ID canonico `dbca7e887edd287b`; inputs oficiais ausentes bloqueiam o build e arquivos locais ignorados nao o alteram. |
 | Navegador real | PASS | In-app Browser confirmou rota, painel, Canvas, execucao e disclaimer; uma instalacao ja cacheada ativou `dbca7e887edd287b` depois de fechar todos os clientes e abriu Galton online e com o servidor desligado. A suite focal cobriu `390 x 844`, temas e reduced motion em Chromium. |
 | `python3 tools/quality_gate.py --tier full` | PASS 17/17 | Zero `PRODUCT_FAIL`, `TEST_HARNESS_FAIL`, `ENVIRONMENT_ERROR`, `BASELINE_FAIL` ou `NOT_RUN`; artefato `tools/.artifacts/quality-20260811T165927-full.json`. |
+| `python3 tools/quality_gate.py --tier fast` | PASS 4/4 | Reexecutado sobre o HEAD publicado `fb33ceb` nesta reconciliacao (2026-08-11); confirma que a integracao nao alterou o resultado. |
 
 Relatorios locais de qualidade ficam em `tools/.artifacts/` e sao ignorados pelo Git.
-Usar apenas o artefato cuja arvore/candidato corresponda ao estado examinado.
+Usar apenas o artefato cuja arvore/candidato corresponda ao estado examinado. As
+linhas acima com `dbca7e887edd287b`/`20260811T165927` foram produzidas antes do
+commit, sobre a arvore de trabalho; sua validade para o HEAD publicado `fb33ceb`
+esta provada por identidade de arvore (`git diff 7fc4eb6 fb33ceb --stat` vazio),
+nao por reexecucao.
 
 ## Impacto agentico e reconciliacao
 
@@ -82,7 +92,8 @@ Foram examinadas as categorias existentes de agentes, skills, routing/registry,
 bootstrap/preflight, contexto operacional, contratos, arquitetura, fontes canonicas
 e indice/memoria.
 
-Blast radius do changeset `d9510dbb55f0 + diff Galton`:
+Blast radius do changeset `d9510dbb55f0..fb33ceb` (commit `7fc4eb6`, merge `fb33ceb`,
+Pull Request #2, publicado em `origin/main`):
 
 | Categoria | Impacto | Acao local | Estado no checkpoint |
 |---|---|---|---|
@@ -95,9 +106,10 @@ Blast radius do changeset `d9510dbb55f0 + diff Galton`:
 | Norma e ADRs N3 | NOT_AFFECTED | NOT_REQUIRED | O laboratorio nao altera o dominio normativo. |
 | Indice/vetor/memoria de projeto | NOT_AFFECTED | NOT_REQUIRED | Nao existe mecanismo oficial de indexacao ou vetorizacao no repositorio. `INDEX NOT REQUIRED`. |
 
-Natureza: a feature e `MATERIAL`; a atualizacao destes documentos e
-`RECONCILIACAO`. Nao ha nova source revision commitada. Runtime, contratos,
-manifest, build, contexto e evidencias estao reconciliados: `SYSTEM RECONCILED`.
+Natureza: a feature e `MATERIAL` (commit `7fc4eb6`); esta atualizacao dos tres
+documentos operacionais e `RECONCILIACAO`. A nova source revision material e
+`fb33ceb`, publicada em `origin/main`. Runtime, contratos, manifest, build,
+contexto e evidencias estao reconciliados: `SYSTEM RECONCILED`.
 
 ## Contratos N2 vigentes
 

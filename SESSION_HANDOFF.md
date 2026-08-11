@@ -1,18 +1,21 @@
-# Session Handoff - Galton Board, candidato validado localmente
+# Session Handoff - Galton Board, publicado em origin/main
 
 - Data: 2026-08-11
-- Branch: `codex/galton-board`
-- `BASE_SHA` e HEAD: `d9510dbb55f0`
-- Arvore: candidato material nao commitado
+- Source revision publicada: `main@fb33ceb`
+- Commit material: `7fc4eb6` ("feat: add Galton probability laboratory"),
+  baseline `d9510dbb55f0`
+- Integracao: Pull Request #2, merge `fb33ceb` (2 parents: `d9510dbb55f0` e
+  `7fc4eb6`); arvore identica ao commit do candidato
+- Branch de origem: `codex/galton-board` (mesclada, preservada, nao excluida)
 - Manifest: 53 scripts, hashes reconciliados
 - Build ID: `dbca7e887edd287b`
-- Publicacao: nenhuma; commit, push, merge e deploy nao autorizados
+- Publicacao: `main` e `origin/main` sincronizadas em `fb33ceb`.
 
 O estado Git e o runtime devem ser confirmados por `git status` e preflight. Esta
-nota representa o candidato local gerado e testado; expira se fonte, manifest,
-fixture, testes ou gerados mudarem.
+nota representa a revisao publicada; expira se fonte, manifest, fixture, testes
+ou gerados mudarem apos `fb33ceb`.
 
-## Implementado no candidato
+## Implementado (publicado)
 
 - Caminho `Configuracoes > Laboratorio de Probabilidade > Galton Board`.
 - Planck.js `1.5.0` vendorizado sob MIT, SHA-256
@@ -56,7 +59,8 @@ fixture, testes ou gerados mudarem.
 | `python3 tools/service_worker_upgrade_test.py` | PASS | Descoberta real do update, worker novo em `waiting`, duas abas antigas preservadas e build novo online/offline depois do fechamento. |
 | `python3 tools/build_reproducibility_test.py` | PASS | Build ID canonico `dbca7e887edd287b`. |
 | In-app Browser + Chromium da suite focal | PASS | Rota, Canvas, execucao e disclaimer; instalacao cacheada atualizou para `dbca7e887edd287b` e abriu Galton online/offline; `390 x 844`, temas e reduced motion automatizados. |
-| `python3 tools/quality_gate.py --tier full` | PASS 17/17 | Zero falhas/erros/omissoes; artefato `tools/.artifacts/quality-20260811T165927-full.json`. |
+| `python3 tools/quality_gate.py --tier full` | PASS 17/17 | Zero falhas/erros/omissoes; artefato `tools/.artifacts/quality-20260811T165927-full.json` (produzido sobre a arvore do candidato, byte-identica a `fb33ceb`). |
+| `python3 tools/quality_gate.py --tier fast` | PASS 4/4 | Reexecutado sobre o HEAD publicado `fb33ceb` nesta reconciliacao. |
 
 O benchmark informou distancia de variacao total `0.3581`; isso e diagnostico
 qualitativo, nao gate, calibracao ou fitting da curva teorica.
@@ -85,10 +89,11 @@ Nao editar esses derivados manualmente.
 
 ## Proximas acoes
 
-1. Fazer o sweep final de seguranca/supply chain, `git diff --check`,
-   `git diff --stat` e revisao integral do diff.
-2. Apresentar a evidencia ao gestor. Aguardar autorizacoes separadas para commit,
-   push, merge ou publicacao.
+1. Nenhuma acao de integracao pendente: commit, merge e publicacao ja ocorreram
+   (`7fc4eb6` -> `fb33ceb` -> `origin/main`).
+2. Nenhuma tarefa ativa sucessora foi definida. `docs/work/ACTIVE-TASK.md` aguarda
+   proxima definicao de escopo pelo gestor; as dez pendencias N3 de
+   `CURRENT-STATE.md` permanecem como backlog conhecido, nao como tarefa em curso.
 
 ## Limites e rollback
 
