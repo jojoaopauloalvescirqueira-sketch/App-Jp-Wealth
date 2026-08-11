@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "preset": "realistic",
+  "showTheory": true,
+  "speed": 1,
+  "releasePoint": 0,
+  "tiltDegrees": 0,
+  "seed": 18473,
+  "config": {
+    "rows": 10,
+    "pegSpacing": 1,
+    "rowSpacing": 0.82,
+    "pegRadius": 0.09,
+    "ballRadius": 0.14,
+    "ballDensity": 1,
+    "ballRestitution": 0.28,
+    "ballFriction": 0.22,
+    "gravity": 9.81,
+    "releaseJitter": 0.07,
+    "pegTolerance": 0,
+    "ballCollisions": false
+  }
+}

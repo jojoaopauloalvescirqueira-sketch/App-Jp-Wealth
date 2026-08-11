@@ -1,6 +1,6 @@
 // ============ CENTRAL DE CONFIGURAÇÕES (N1) ============
 // Mantém os controles legados no mesmo DOM: apenas os transporta enquanto a central está aberta.
-// Arquitetura de navegação: seis categorias na sidebar (algumas são grupos com subpáginas,
+// Arquitetura de navegação: categorias declarativas na sidebar (algumas são grupos com subpáginas,
 // 'general' e 'about' são páginas diretas). Todas as páginas — grupo ou folha — são registradas
 // como [data-settings-panel] e alternadas por 'hidden', preservando o contrato já usado pelos
 // testes (activateSettingsCategory(id) continua tornando o painel 'id' visível).
@@ -11,6 +11,7 @@ const SETTINGS_GROUPS=[
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
   {id:'operations', label:'Operação', desc:'Parâmetros do ciclo, Motor de Lote e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-motor','tool-check']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational']},
+  {id:'probability-lab', label:'Laboratório de Probabilidade', desc:'Experimentos locais de física e estatística, isolados do motor financeiro.', icon:'probability', children:['galton-board']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
 ];
@@ -20,6 +21,7 @@ const SETTINGS_LEAVES={
   interface:{label:'Interface', group:'appearance-interface', desc:'Tamanho do texto e instruções do sistema.', terms:['interface','fonte','tamanho','tipografia','sidebar','barra lateral','ajuda','instruções']},
   editor:{label:'Editor', group:'appearance-interface', desc:'Preferências de edição.', terms:['editor']},
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
+  'galton-board':{label:'Galton Board', group:'probability-lab', desc:'Simulador físico de probabilidade e convergência estatística.', terms:['galton','probabilidade','binomial','normal','histograma','estatística','física','seed','convergência','simulação']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Diretrizes e regras normativas vigentes.', terms:['estatuto','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
@@ -36,6 +38,7 @@ const SETTINGS_ICONS={
   governance:'<path d="M4 19h16"/><path d="M6 19V9l6-4 6 4v10"/><path d="M10 19v-6h4v6"/>',
   operations:'<circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/><circle cx="12" cy="12" r="2"/>',
   knowledge:'<path d="M12 6c-1.8-1.2-4.2-1.6-6.5-1v12.5c2.3-.6 4.7-.2 6.5 1 1.8-1.2 4.2-1.6 6.5-1V5c-2.3-.6-4.7-.2-6.5 1Z"/><path d="M12 6v12.5"/>',
+  probability:'<path d="M5 20h14M8 20v-4l4-2 4 2v4M12 14V8"/><circle cx="12" cy="5" r="2"/><circle cx="8" cy="11" r="1.5"/><circle cx="16" cy="11" r="1.5"/>',
   data:'<path d="M12 3c4 0 7 1.1 7 2.5S16 8 12 8s-7-1.1-7-2.5S8 3 12 3Z"/><path d="M5 5.5V12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12v6.5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V12"/>',
   about:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".2" fill="currentColor" stroke-width="2.4"/>',
   calendar:'<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><path d="M8 14h2M14 14h2M8 17.2h2"/>',
@@ -152,6 +155,7 @@ function buildSettingsContent(){
   createSettingsPanel('interface','<p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
   createSettingsPanel('editor','<p class="settings-lead">Preferências de edição e de apresentação da interface neste navegador.</p><div data-settings-slot="editor"></div>');
   createSettingsPanel('educational',educationPanel());
+  createSettingsPanel('galton-board',typeof galtonBoardPanelHTML==='function'?galtonBoardPanelHTML():'<p class="settings-empty" role="alert">O laboratório de probabilidade não pôde ser carregado.</p>');
   createSettingsPanel('statute','<p class="settings-lead">Conteúdo predominantemente de leitura. O documento normativo não é editável nesta central.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Abrir documento integral (PDF)</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
   createSettingsPanel('tool-params','<p class="settings-lead">A tela de Parâmetros completa — leituras analíticas com os valores, unidades e persistência originais.</p><div data-settings-slot="tool-params"></div>');
@@ -232,6 +236,7 @@ function restoreLegacySettingsNodes(){
 function activateSettingsCategory(id,options={}){
   const exists=document.querySelector(`[data-settings-panel="${id}"]`);
   const targetId=exists?id:'general';
+  if(settingsState.active==='galton-board'&&targetId!=='galton-board'&&typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({destroy:false});
   settingsState.active=targetId;
   document.querySelectorAll('[data-settings-panel]').forEach(panel=>panel.hidden=panel.dataset.settingsPanel!==targetId);
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
@@ -244,6 +249,7 @@ function activateSettingsCategory(id,options={}){
     fxAutoFetchedThisSession=true;
     updateFxRates();
   }
+  if(targetId==='galton-board'&&typeof activateGaltonBoard==='function') activateGaltonBoard();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
 
@@ -390,6 +396,7 @@ function openSettingsModal(category='general', opener){
 }
 function closeSettingsModal(){
   if(!settingsState.open||settingsState.suspended) return;
+  if(typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({destroy:true});
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
   const opener=settingsState.opener; settingsState.opener=null; if(opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
 }

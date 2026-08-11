@@ -206,13 +206,13 @@
       "order": 34,
       "path": "src/js/40-app/06-app-icons.js",
       "section": "PWA · ESCOLHA DO ÍCONE (2 variantes fixas, sem biblioteca de temas)",
-      "sha256": "e4fd57607165d08c1f62bab25eaba386d9f3106b9f236097a2474d45f2bf1ae5"
+      "sha256": "166dff22eed1b0d3976fb79ac6a3df5446a1b9d378ec9748d34608cbf9b01266"
     },
     {
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "ede89eca410e628fb1f2f322286b02a2e1ab09dcde759aad50f968831200db99"
+      "sha256": "630d275b16fd174c915e85f8ae2540fce8996b447321f1acafdd15bcaa5e1a93"
     },
     {
       "order": 36,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "cea8cb61c6f6b70e0354b25c6ce8ae14b852f1be505f4bb29053cf88e3ad8c43"
+      "sha256": "1f0a5858e0aa2957a549535a7f85c7238acac3db00e402cd55a04b74bdbeb965"
     },
     {
       "order": 39,
@@ -279,6 +279,48 @@
       "path": "src/js/40-app/17-economic-calendar.js",
       "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
       "sha256": "5149a3cd43f194fbdd0ca22e5bbe73518b27bc7531290de3116e7c6b8ff43df2"
+    },
+    {
+      "order": 47,
+      "path": "src/vendor/planck/planck-1.5.0.min.js",
+      "section": "GALTON BOARD · PLANCK.JS 1.5.0 VENDORIZADO (MIT)",
+      "sha256": "69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974"
+    },
+    {
+      "order": 48,
+      "path": "src/js/40-app/18-galton-board/01-config.js",
+      "section": "GALTON BOARD · CONFIGURACAO, PRESETS E GEOMETRIA",
+      "sha256": "91412690159c995cadbbfad517bcefa6c495aca91c502e8bf0345a003ccae180"
+    },
+    {
+      "order": 49,
+      "path": "src/js/40-app/18-galton-board/02-rng.js",
+      "section": "GALTON BOARD · PRNG DETERMINISTICO",
+      "sha256": "88e21a92006eaa4650be783909237aee35304878b2d9805e239d87fc68e09c53"
+    },
+    {
+      "order": 50,
+      "path": "src/js/40-app/18-galton-board/03-statistics.js",
+      "section": "GALTON BOARD · ESTATISTICA E REFERENCIA BINOMIAL",
+      "sha256": "38157b5f6b21f17af4b63731ab4efa1375b4dc8cc34979305813fe3b97df7e63"
+    },
+    {
+      "order": 51,
+      "path": "src/js/40-app/18-galton-board/04-physics.js",
+      "section": "GALTON BOARD · MOTOR FISICO PLANCK.JS",
+      "sha256": "f121106f11dff0dbdf11307afb2ea6eb5bcb9c6ad80a9d85eafd9f3258a46f3a"
+    },
+    {
+      "order": 52,
+      "path": "src/js/40-app/18-galton-board/05-renderer.js",
+      "section": "GALTON BOARD · RENDERER CANVAS HIDPI",
+      "sha256": "2e1f1a47c89cc0cdae7c04d51de708bb1a56a72f657ca0fe6d6a4c882b742762"
+    },
+    {
+      "order": 53,
+      "path": "src/js/40-app/18-galton-board/06-controller.js",
+      "section": "GALTON BOARD · UI, LIFECYCLE E PREFERENCIAS ISOLADAS",
+      "sha256": "de59083e2ca61474a6b76fa19af71fb2d9173f9524cbb210ed8cccd801c1869a"
     }
   ]
 }

@@ -52,11 +52,11 @@ try:
     page.evaluate("document.getElementById('headerConfigBtn').focus()")
     assert page.evaluate("document.activeElement.id")!='headerConfigBtn', 'foco não pode alcançar o fundo inertizado'
 
-    # Abertura padrao em Geral, com as sete categorias principais na sidebar e apenas uma pagina ativa.
+    # Abertura padrao em Geral, com as categorias principais na sidebar e apenas uma pagina ativa.
     assert page.locator('#settingsPageTitle').inner_text()=='Geral'
     assert page.locator('[data-settings-panel="general"]').is_visible()
     assert page.locator('[data-settings-panel]:not([hidden])').count()==1
-    top_categories=['general','appearance-interface','method-governance','operations','knowledge','data-security','about']
+    top_categories=['general','appearance-interface','method-governance','operations','knowledge','probability-lab','data-security','about']
     assert page.locator('#settingsMenu [data-settings-category]').count()==len(top_categories)
     for cat in top_categories:
       assert page.locator(f'#settingsMenu [data-settings-category="{cat}"]').count()==1
@@ -185,6 +185,15 @@ try:
     page.set_viewport_size({'width':390,'height':844})
     page.locator('#headerConfigBtn').click()
     modal=page.locator('#settingsModal')
+    geometry=page.evaluate("""()=>{
+      const rect=id=>{const r=document.querySelector(id).getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}};
+      return {viewport:{width:innerWidth,height:innerHeight},overlay:rect('#settingsOverlay'),modal:rect('#settingsModal'),head:rect('#settingsModal .settings-modal-head'),body:rect('#settingsModal .settings-modal-body'),close:rect('#settingsCloseBtn')};
+    }""")
+    assert geometry['modal']['left']>=-1 and geometry['modal']['right']<=geometry['viewport']['width']+1, geometry
+    assert geometry['modal']['top']>=-1 and geometry['modal']['bottom']<=geometry['viewport']['height']+1, geometry
+    assert geometry['head']['left']>=geometry['modal']['left']-1 and geometry['head']['right']<=geometry['modal']['right']+1, geometry
+    assert geometry['body']['left']>=geometry['modal']['left']-1 and geometry['body']['right']<=geometry['modal']['right']+1, geometry
+    assert geometry['close']['left']>=geometry['modal']['left'] and geometry['close']['right']<=geometry['modal']['right'], geometry
     assert page.locator('.settings-sidebar').is_visible()
     assert not page.locator('#settingsContent').is_visible()
     page.locator('#settingsMenu [data-settings-category="data-security"]').click()

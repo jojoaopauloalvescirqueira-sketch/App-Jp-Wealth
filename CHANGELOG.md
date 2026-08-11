@@ -1,6 +1,48 @@
 # Changelog
 
-## [Unreleased] - governanca multiagente e qualidade
+## [Unreleased]
+
+### Galton Board — candidato local de 2026-08-11
+
+- Adicionado `Configurações > Laboratório de Probabilidade > Galton Board`, com
+  física rígida 2D real, placa triangular, Canvas HiDPI, controles acessíveis,
+  histograma empírico, estatísticas e referência binomial condicional.
+- Física separada do render por passo fixo de `1/120 s`; seed determinística atua
+  somente no jitter de soltura e na tolerância fixa dos pinos. Corpos assentados são
+  contabilizados uma vez, removidos e conservados apenas como agregados.
+- Planck.js `1.5.0` foi vendorizado sob licença MIT, sem CDN ou dependência transitiva
+  de runtime. Proveniência, integridade publicada e SHA-256 local ficam em
+  `src/vendor/planck/README.md`; o validador fixa o hash do artefato.
+- Criada a chave auxiliar `jpwealth_galton_preferences_v1` para preferências úteis.
+  Ela não altera o schema financeiro, não persiste resultados e integra a limpeza de
+  `Finalizar sessão` sem usar `localStorage.clear()`.
+- O manifest passou de 46 para 53 scripts; o validador agora exige equivalência entre
+  todos os scripts do manifest e o precache do service worker.
+- Corrigidas duas falhas de baseline diretamente relacionadas à integração: o PWA
+  não precacheava `12-nav-style.js` nem `17-economic-calendar.js`, e o modal de
+  Configurações era recortado em `390 x 844` por uma regra tardia de padding.
+- Adicionados `tools/galton_board_test.py` ao tier `standard` e o benchmark explícito
+  de 10.000 bolas em `tools/galton_board_benchmark.py`. O core registrou 10.000
+  assentamentos, zero expirações, um corpo estático final e pico de 240 corpos ativos;
+  tempo e comparação binomial permanecem diagnósticos, sem gate ou fitting.
+- Preferências ilegíveis, incompatíveis, de schema futuro ou com `localStorage`
+  indisponível permanecem preservadas/bloqueadas em memória; a interface só volta a
+  gravar após restauração explícita. O wipe entre abas invalida controladores montados
+  para que a chave removida não seja recriada.
+- A emissão com colisão bola-bola aguarda espaço físico no funil, evitando corpos
+  sobrepostos. Configurações relacionam jitter/tolerância ao raio e ao clearance;
+  vencimentos físicos remanescentes são comunicados e excluídos do histograma.
+- A descoberta de nova versão PWA ocorre pelo bootstrap do próprio aplicativo, sem
+  takeover: o worker espera todas as abas antigas fecharem e então o build novo abre
+  online/offline. Manifest e precache incluem os 53 scripts.
+- `build-id.js` e o HTML portátil foram atualizados pelo gerador oficial para o Build
+  ID `dbca7e887edd287b`; o portátil tem SHA-256
+  `038f9bf948aca9cec41bed34af4f130865f57c327b5f975216ea411f929bb416`.
+- Suites focadas Galton, Settings, Finalizar sessão, upgrade PWA e reproducibilidade
+  do build passaram no candidato consolidado. O gate `full` fechou `PASS 17/17`, sem
+  falha de produto, harness, ambiente, baseline ou verificação omitida.
+- Nenhuma regra N3, fórmula financeira, perfil, fase, limite, LIFO, DD ou
+  contabilidade foi alterada. Commit, push, merge e publicação não foram executados.
 
 ### Em revisao
 - Adicionados contexto em camadas, niveis de autoridade/risco, stop conditions, roteamento de skills e gates de evidencia para agentes.
@@ -10,8 +52,11 @@
 - Corrigidos `hidden`, alvos de toque, sobreposicao do inspetor e menu contextual das Notas; suite completa de Notas voltou a passar em desktop, mobile e portatil.
 - Completado o precache do PWA e impedido que o HTML portatil tente registrar um service worker externo inexistente.
 - Mensagem de falha de exportacao agora orienta contingencia manual para preservar os registros recentes.
-- Tier `standard` passa 5/5; tier `full` passa 9/11 e preserva como `PRODUCT_FAIL` dois defeitos N2 documentados.
-- Nenhuma formula financeira, schema, chave de persistencia ou dado operacional foi alterado.
+- As correções N2 posteriores levaram o baseline `d9510dbb55f0` a `standard` 6/6 e o
+  ciclo anterior a `full` 16/16; resultados antigos não provam o candidato Galton.
+- Nenhuma fórmula financeira ou schema principal foi alterado nesse ciclo de
+  governança; a feature atual adiciona somente a chave auxiliar isolada descrita
+  acima.
 
 ## [9.1-db-storage-governance.1] — 2026-08-08
 

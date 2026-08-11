@@ -161,9 +161,27 @@ if '<link rel="manifest"' not in index or "src/js/40-app/06-app-icons.js" not in
 service_worker = (ROOT / "sw.js").read_text(encoding="utf-8") if (ROOT / "sw.js").is_file() else ""
 if "./manifests/jp-wealth.webmanifest" not in service_worker:
     ERRORS.append("service worker nao precacheia: manifests/jp-wealth.webmanifest")
+for item in manifest["files"]:
+    relative = item.get("path", "") if isinstance(item, dict) else ""
+    if relative and f"./{relative}" not in service_worker:
+        ERRORS.append(f"service worker nao precacheia script do manifest: {relative}")
 for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-secondary.png"):
     if f"./{relative}" not in service_worker:
         ERRORS.append(f"service worker nao precacheia: {relative}")
+
+planck_path = ROOT / "src/vendor/planck/planck-1.5.0.min.js"
+planck_sha256 = "69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974"
+if not planck_path.is_file():
+    ERRORS.append("dependencia vendorizada ausente: src/vendor/planck/planck-1.5.0.min.js")
+elif hashlib.sha256(planck_path.read_bytes()).hexdigest() != planck_sha256:
+    ERRORS.append("integridade divergente: Planck.js 1.5.0")
+for relative in ("src/vendor/planck/LICENSE.txt", "src/vendor/planck/README.md"):
+    if not (ROOT / relative).is_file():
+        ERRORS.append(f"proveniencia/licenca ausente: {relative}")
+galton_sources = [path for path in javascript_paths if "18-galton-board" in path.as_posix()]
+math_random_call = re.compile(r"\bMath\s*\.\s*random\s*\(")
+if any(math_random_call.search(path.read_text(encoding="utf-8")) for path in galton_sources):
+    ERRORS.append("Galton Board usa Math.random; aleatoriedade deve passar pelo PRNG deterministico")
 
 id_parser = IdParser()
 id_parser.feed(index)

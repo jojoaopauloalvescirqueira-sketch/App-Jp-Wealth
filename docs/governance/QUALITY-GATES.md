@@ -26,7 +26,8 @@ Para N0-V e N1:
 
 - tudo do fast;
 - smoke test;
-- testes focados da area;
+- Central de Configuracoes;
+- `galton_board_test.py`, incluindo matematica, fisica, persistencia, UI e lifecycle;
 - browser real nos fluxos e viewports afetados.
 
 ### Full
@@ -49,6 +50,65 @@ python3 tools/quality_gate.py --tier full
 
 O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O relatorio deve conter SHA, dirty state, comando, duracao, retorno e cauda da saida.
 
+## Composicao atual
+
+| Tier | Quantidade | Verificacoes adicionais |
+|---|---:|---|
+| `fast` | 4 | preflight, estrutura, diff-check e frescor material |
+| `standard` | 7 | smoke, Configuracoes e Galton Board |
+| `full` | 17 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, corrida assincrona, build, service worker e Notas |
+
+O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
+`codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa
+composicao nao e, por si so, evidencia de PASS do candidato.
+
+## Evidencia especifica do Galton Board
+
+Suite focal obrigatoria:
+
+```bash
+python3 tools/galton_board_test.py
+```
+
+Ela cobre PRNG e seed, limites/configuracao, geometria `rows + 1`, estatisticas,
+binomial/elegibilidade, colisao Planck, acumulador de `1/120 s`, assentamento unico,
+descarte de corpos, isolamento de persistencia, reload vazio, comandos, ativacao real
+por `Enter`/`Space` em controles nativos, consolidacao de campo avancado por `Tab`,
+tabela de bins focalizavel, alternativa ao Canvas e lifecycle. Essa cobertura nao
+equivale a uma varredura completa de navegacao do modal somente por teclado.
+
+Benchmark longo, deliberadamente fora dos tiers cumulativos para nao transformar
+tempo de maquina em gate implicito:
+
+```bash
+python3 tools/galton_board_benchmark.py
+```
+
+O criterio e funcional: 10.000 bolas aceitas e contabilizadas, fila drenada, nenhum
+corpo dinamico remanescente, nenhum vencimento/rejeicao, teto de 240 corpos ativos e
+11 compartimentos no default. Tempo e taxa sao diagnosticos informativos.
+
+Verificacao manual/real obrigatoria para o candidato final:
+
+- `Configurações > Laboratório de Probabilidade > Galton Board` em desktop;
+- viewport `390 x 844`, incluindo contenção completa do modal;
+- temas claro e escuro;
+- `prefers-reduced-motion: reduce`;
+- pausa ao navegar/fechar/ocultar e instancia unica ao reabrir;
+- fluxo PWA online, upgrade e abertura offline com todos os scripts do manifest.
+
+`tools/validate_project.py` verifica ainda o hash fixo de Planck.js, a presença de
+licença/proveniência, proíbe `Math.random` nos módulos do laboratório e exige todo
+script do manifest no precache.
+
+`tools/service_worker_upgrade_test.py` exercita a descoberta do worker pelo runtime:
+o harness publica uma raiz nova e abre uma navegação network-first, mas não chama
+`registration.update()` por fora do produto. Polling em Python confirma o worker
+novo em `waiting/installed`; as duas abas já abertas permanecem no build/controller
+antigo, o cliente de descoberta pode ter HTML novo com controller antigo e, depois
+do fechamento de todos os clientes, a próxima abertura recebe o build novo online e
+offline. O teste também confirma que caches externos não são removidos.
+
 ## Validade da evidencia
 
 - Mudanca em runtime, teste, manifest, fixture ou configuracao invalida os gates afetados.
@@ -56,3 +116,4 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 - Resultado antigo pode ser citado como baseline, nunca como PASS atual.
 - Teste que deixa de falhar apos afrouxar uma expectativa precisa de justificativa independente.
 - CI verde nao substitui fluxo manual quando o criterio exige percepcao visual ou dados do navegador.
+- Benchmark verde nao substitui suite focal, tier `full` nem verificacao visual.

@@ -35,7 +35,25 @@ Painel de notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, 
 
 ### Central de Configurações
 
-Modal aberta pela engrenagem do cabeçalho, preservando a tela operacional ao fundo: Aparência, Interface, Editor, base **educacional local pesquisável** (Forex, glossário, FAQ — sem sinais nem recomendações), Estatuto Operacional, Parâmetros e Backup. A pesquisa é declarativa e **não indexa dados operacionais** do usuário.
+Modal aberta pela engrenagem do cabeçalho, preservando a tela operacional ao fundo:
+Aparência, Interface, Editor, base **educacional local pesquisável** (Forex,
+glossário, FAQ — sem sinais nem recomendações), Estatuto Operacional, Parâmetros,
+Laboratório de Probabilidade e Backup. A pesquisa é declarativa e **não indexa dados
+operacionais** do usuário.
+
+### Laboratório de Probabilidade — Galton Board
+
+Em `Configurações → Laboratório de Probabilidade → Galton Board`, uma placa física
+2D permite observar como um histograma empírico emerge de colisões reais. O motor
+Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,
+seed determinística, pinos triangulares, `linhas + 1` compartimentos, controles de
+fila/velocidade/inclinação e comparação binomial somente quando as premissas de
+simetria estão satisfeitas.
+
+Canvas não é a única representação: estatísticas e detalhes por compartimento ficam
+em DOM acessível. Corpos assentados são removidos e conservados apenas como contagens
+agregadas. O laboratório é educacional, isolado do motor financeiro e **não é um
+modelo de retorno de Forex, previsão de mercado ou promessa de desempenho**.
 
 ### Base de Dados e backups
 
@@ -43,17 +61,24 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 
 ### Privacidade e encerramento
 
-`Finalizar sessão` (ícone no cabeçalho) executa checkpoint determinístico, exige backup confirmado quando necessário e remove **apenas** as chaves locais do JP Wealth — sem `localStorage.clear()`, preservando outras aplicações. Confirmação textual `APAGAR TUDO` para a limpeza completa.
+`Finalizar sessão` (ícone no cabeçalho) executa checkpoint determinístico, exige backup confirmado quando necessário e remove **apenas** as chaves locais do JP Wealth — incluindo a preferência auxiliar do Galton Board — sem `localStorage.clear()`, preservando outras aplicações. Confirmação textual `APAGAR TUDO` para a limpeza completa.
 
 ### PWA e distribuição
 
-Instalável como PWA com service worker e precache versionado (`sw.js`); ícone nas variantes `Claro` e `Escuro` em `Configurações → Ícone do app` (no iOS é preciso reinstalar o atalho após trocar). O HTML portátil em `dist/` é **derivado** — destinado a distribuição de arquivo único, reconstruído por `tools/rebuild_monolith.py`, nunca editado diretamente.
+Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
+exige que os 53 scripts do manifest também estejam no precache. O ícone tem variantes
+`Claro` e `Escuro` em `Configurações → Ícone do app` (no iOS é preciso reinstalar o
+atalho após trocar). O HTML portátil em `dist/` é **derivado** — destinado a
+distribuição de arquivo único, reconstruído por `tools/rebuild_monolith.py`, nunca
+editado diretamente.
 
 ## Em desenvolvimento e decisões pendentes
 
 - **Dez pendências normativas N3** aguardam decisão formal humana — cada uma tem um ADR aberto em `docs/decisions/` (fatores dos perfis conservadores, fonte canônica de equity do drawdown, gate combinado da Ordem Gênese, bloqueio de stop < 2 ATR, histerese de fase, poda LIFO compulsória, rito da Fase 4, gatilho de quarentena, fator Raiz-N, projeções MEI). **Nenhuma é corrigida silenciosamente**: exigem decisão N3 e branch própria.
 - **Dívida estrutural conhecida**: `openOnboardingModal()` concentra ~2 mil linhas; escopo global legado compartilhado; CSP não documentada; cobertura automatizada mais forte nos fluxos recentes que no núcleo financeiro. Detalhes e estado vigente em `docs/governance/CURRENT-STATE.md`.
 - Explorações de interface (redesign de telas, consolidações de UI) ocorrem em branches dedicadas e só entram na `main` por integração autorizada.
+- Hipóteses guiadas de experimento e áudio do Galton Board ficam deliberadamente para
+  uma Fase 2; não fazem parte do candidato atual.
 
 ## Início rápido
 
@@ -67,7 +92,13 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 
 ## Qualidade e verificação
 
-Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações — preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (6 — inclui smoke e Central de Configurações em Chromium real) e **full** (16 suítes, incluindo segurança de importação/XSS, senha de investidor, recuperação transacional, reprodutibilidade de build e ciclo do service worker). Taxonomia de resultados e composição em `docs/governance/QUALITY-GATES.md`.
+Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (7 —
+inclui smoke, Central de Configurações e Galton Board em Chromium real) e **full** (17
+verificações, incluindo segurança de importação/XSS, senha de investidor, recuperação
+transacional, reprodutibilidade de build e ciclo do service worker). O cenário longo
+de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.
+Taxonomia e composição em `docs/governance/QUALITY-GATES.md`.
 
 O preflight (`tools/agent_preflight.py`) verifica dois sinais independentes de frescor do contexto: **temporal** (idade da fotografia) e **material** (alterações posteriores à source revision fora dos caminhos de reconciliação contextual), com resultado tri-state em que `UNKNOWN` nunca é tratado como `FALSE`.
 
@@ -81,7 +112,13 @@ Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/g
 
 ## Persistência
 
-O estado operacional é mantido no `localStorage` sob a chave `jpwealth_v9_state`; estados antigos passam por `migrate()` e nunca são substituídos silenciosamente por `DEFAULTS`. O código está no repositório; os dados reais do operador precisam ser exportados do navegador e guardados separadamente em `data/backups/` — nunca versionar dados reais ou credenciais.
+O estado operacional é mantido no `localStorage` sob a chave
+`jpwealth_v9_state`; estados antigos passam por `migrate()` e nunca são substituídos
+silenciosamente por `DEFAULTS`. Preferências úteis do Galton Board usam a chave
+isolada `jpwealth_galton_preferences_v1`; bolas, fila, histograma e resultados nunca
+são persistidos nem entram no backup financeiro. O código está no repositório; os
+dados reais do operador precisam ser exportados do navegador e guardados
+separadamente em `data/backups/` — nunca versionar dados reais ou credenciais.
 
 O fingerprint de alterações inclui `instruments[].preco` e `instruments[].updated`. Uma atualização automática de câmbio pode, portanto, produzir um falso positivo deliberado de alteração; esta versão prioriza evitar perda silenciosa de dados e não tenta distinguir origem manual de automática.
 
@@ -90,6 +127,8 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 - `index.html` — composição da interface e contratos DOM estáticos.
 - `src/styles/app.css` — estilos extraídos do HTML original.
 - `src/js/` — lógica em domínios (`00-core` → `10-domain` → `20-ui` → `30-accounting` → `40-app`); a ordem em `manifest.json` é parte do runtime.
+- `src/js/40-app/18-galton-board/` — seis módulos clássicos isolados da feature.
+- `src/vendor/planck/` — Planck.js 1.5.0 pinado, licença e proveniência.
 - `assets/`, `manifests/`, `sw.js` — superfície PWA (ícones, manifesto único, service worker com precache).
 - `infra/ff-news-feed/` — documentação do alimentador do widget de notícias (repositório auxiliar, só dados públicos).
 - `docs/normative/` — Estatuto e organograma, fontes de autoridade.
@@ -97,7 +136,7 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 - `docs/architecture/` — arquitetura, schema de estado e mapa do código.
 - `docs/governance/` — regras para trabalho humano e por IA, estado atual, gates.
 - `skills/` — procedimentos locais obrigatórios para agentes do projeto.
-- `tests/`, `tools/` — validação, gates, servidor e reconstrução do portátil.
+- `tests/`, `tools/` — validação, gates, servidor, benchmark e reconstrução do portátil.
 - `archive/original/` — original imutável para comparação e recuperação.
 - `data/backups/` — backups JSON locais; não versionar dados reais.
 - `dist/` — HTML portátil reconstruído (derivado).

@@ -9,6 +9,18 @@
 <title>JP Wealth · Risk Terminal V9.1</title>
 <link rel="stylesheet" href="src/styles/app.css">
 <script src="build-id.js"></script>
+<script>
+// Bootstrap inline deliberado: navegacoes sao network-first, portanto uma instalacao
+// ainda controlada pelo cache antigo consegue pedir a nova versao do worker mesmo
+// quando seus scripts externos continuam cache-first. A ativacao permanece waiting.
+(function(){
+  if(window.JP_WEALTH_PORTABLE_BUILD===true) return;
+  if(!('serviceWorker' in navigator)||!/^https?:$/.test(window.location.protocol)) return;
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.ready.then(function(registration){ return registration.update(); }).catch(function(){});
+  },{once:true});
+})();
+</script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
 <link rel="icon" type="image/png" sizes="1254x1254" href="assets/pwa-icon-primary.png">
 <link rel="apple-touch-icon" sizes="1254x1254" href="assets/pwa-icon-primary.png">
@@ -1338,5 +1350,12 @@
 <script src="src/js/40-app/15-ff-news.js"></script>
 <script src="src/js/40-app/16-storage-governance.js"></script>
 <script src="src/js/40-app/17-economic-calendar.js"></script>
+<script src="src/vendor/planck/planck-1.5.0.min.js"></script>
+<script src="src/js/40-app/18-galton-board/01-config.js"></script>
+<script src="src/js/40-app/18-galton-board/02-rng.js"></script>
+<script src="src/js/40-app/18-galton-board/03-statistics.js"></script>
+<script src="src/js/40-app/18-galton-board/04-physics.js"></script>
+<script src="src/js/40-app/18-galton-board/05-renderer.js"></script>
+<script src="src/js/40-app/18-galton-board/06-controller.js"></script>
 </body>
 </html>
