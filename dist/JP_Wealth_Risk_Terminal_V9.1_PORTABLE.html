@@ -1174,6 +1174,17 @@
   }
   .seg button:last-child{border-right:none}
   .seg button.on{background:var(--violet); color:#fff}
+  /* Marca de "padrão do sistema" num segmentado: ponto discreto no canto. É
+     DECORATIVA — a informação em palavras fica na legenda ao lado do controle,
+     porque um ponto não é lido por leitor de tela nem sobrevive a quem não
+     distingue a marca. Usa currentColor para funcionar tanto no botão inerte
+     quanto no selecionado, que inverte fundo e texto. */
+  .seg button.is-default{position:relative}
+  .seg button.is-default::after{
+    content:''; position:absolute; top:4px; right:4px;
+    width:4px; height:4px; border-radius:999px;
+    background:currentColor; opacity:.55;
+  }
   .check-result{position:sticky; bottom:16px; margin-top:20px}
 
   /* MONEY/NUM coloring */
@@ -2612,6 +2623,135 @@
   }
   /* Sem rail lateral não há o que recolher. */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .rail-toggle{display:none}
+
+  /* ---------- Estilo "pílula flutuante" da navegação (jpw_nav = pill) ----------
+     Opcional e reversível: a preferência vive em localStorage e só acrescenta o
+     atributo data-nav-style em <html>. O estilo clássico é a AUSÊNCIA destas
+     regras — nenhuma linha acima foi alterada, então voltar para "Clássica"
+     devolve exatamente o CSS anterior, sem caminho de recuperação.
+
+     O destaque é um elemento único que desliza, em vez de pintar o fundo da aba
+     ativa: é isso que dá a continuidade do movimento entre destinos. A aba ativa
+     mantém a cor de texto de destaque; o que ela perde é só o próprio fundo, que
+     passa a ser trabalho do elemento deslizante.
+
+     Confinado a >900px de propósito: em 900px ou menos este mesmo #nav vira a
+     gaveta fixa (flex-direction:column, position:fixed), onde uma pílula
+     horizontal não faz sentido. Como estas regras têm especificidade maior que
+     as da gaveta, sem a media query elas venceriam lá dentro e quebrariam o
+     menu do celular. */
+  @media(min-width:901px){
+    /* Alvo: a navegação da topbar do shell `global-dashboard`, que é a barra que
+       o aplicativo realmente apresenta hoje. No estilo clássico ela é uma fileira
+       de abas SUBLINHADAS (border-bottom de 1,5px na ativa); no estilo pílula o
+       sublinhado sai e o destaque passa a ser um corpo que desliza atrás do
+       rótulo. `position:relative` é obrigatório: a regra do shell deixa este #nav
+       em `position:static`, e sem bloco contentor o offsetLeft medido em
+       12-nav-style.js seria relativo ao documento, jogando o destaque para fora. */
+    /* Geometria comum às duas aparências de destaque. O que as separa vem
+       depois: superfície do invólucro e curva do movimento. */
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+      position:relative; gap:2px; padding:4px;
+      border-radius:999px; background:var(--panel-2);
+    }
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+      position:relative; z-index:1;
+      padding:7px 16px; min-height:32px; border-radius:999px;
+      border-bottom:0; background:transparent;
+    }
+    /* A ativa não pinta fundo nem sublinha — quem marca é o deslizante. O texto
+       inverte para contrastar com o corpo do destaque. */
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab.active{
+      color:var(--panel); background:transparent; border-bottom-color:transparent;
+    }
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:hover{background:transparent; color:var(--jp-ink)}
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab.active:hover{color:var(--panel)}
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator{
+      display:block; position:absolute; left:0; top:0; z-index:0;
+      border-radius:999px; background:var(--ink); pointer-events:none;
+      /* Sem transição até a primeira medição (.is-ready): senão o destaque entra
+         deslizando do canto a cada carregamento da página. */
+      transition:none;
+    }
+    html[data-nav-style="pill"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{
+      transition:transform var(--jp-duration-fast) var(--jp-ease), width var(--jp-duration-fast) var(--jp-ease);
+    }
+
+    /* ---- KineticNav: superfície fosca + assentamento de mola ----
+       Diferenças em relação ao Floating Pill Nav, que são as do padrão de
+       origem: invólucro translúcido com desfoque atrás, o destaque assenta com
+       curva de mola em vez de ease, e a aba responde à pressão.
+
+       A curva vem dos parâmetros publicados do componente de referência —
+       rigidez 450 e amortecimento 35 sobre massa 1. Isso dá ζ ≈ 0,83: sistema
+       subamortecido, mas com ultrapassagem de cerca de 1% e acomodação perto de
+       230 ms. Ou seja, quase crítico — um assentamento firme, não um quique. A
+       cúbica abaixo reproduz esse comportamento; um `linear()` com dezenas de
+       paradas seria mais fiel e não se justifica para 1% de excesso. */
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+      background:color-mix(in srgb, var(--panel-2) 72%, transparent);
+      backdrop-filter:blur(14px) saturate(1.25);
+      -webkit-backdrop-filter:blur(14px) saturate(1.25);
+      border:1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+      /* Aresta interna iluminada: uma linha de luz no topo e uma sombra fina em
+         baixo. É o que dá espessura à peça — sem isso o involucro lê como um
+         retângulo translúcido, não como um corpo de vidro. */
+      box-shadow:inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+                 inset 0 -1px 0 color-mix(in srgb, var(--panel) 45%, transparent);
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator{
+      box-shadow:inset 0 1px 0 color-mix(in srgb, var(--panel) 32%, transparent);
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{
+      transition:transform 230ms cubic-bezier(.22,1.06,.36,1), width 230ms cubic-bezier(.22,1.06,.36,1);
+    }
+    /* ---- Brilho especular atrasado ----
+       O elemento acompanha a MESMA geometria do destaque, mas com percurso mais
+       longo e um atraso de partida. Em repouso ele coincide com o destaque e é
+       apenas um reflexo parado sobre a pílula; em movimento fica para trás e
+       atravessa a peça, que é o que a faz ler como vidro.
+
+       Reparo importante para quem for calibrar: o efeito depende do que existe
+       ATRÁS da barra. Aqui ela assenta sobre cor chapada (--panel), então o que
+       se vê é o reflexo e a aresta, não refração — não há o que refratar em
+       superfície lisa. Sobre gradiente ou imagem o mesmo código renderia bem
+       mais. Isso é limite do fundo, não da implementação. */
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-specular{
+      display:block; position:absolute; left:0; top:0; z-index:0;
+      border-radius:999px; pointer-events:none;
+      background:linear-gradient(105deg,
+        transparent 14%,
+        color-mix(in srgb, var(--panel) 26%, transparent) 38%,
+        color-mix(in srgb, var(--panel) 6%, transparent) 55%,
+        transparent 72%);
+      transition:none;
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-specular.is-ready{
+      /* 380ms contra os 230ms do destaque, mais 40ms de atraso: a defasagem é o
+         efeito inteiro. Igualar as durações apagaria o truque. */
+      transition:transform 380ms 40ms cubic-bezier(.22,1.06,.36,1), width 380ms 40ms cubic-bezier(.22,1.06,.36,1);
+    }
+    /* Resposta à pressão (o "haptics" do componente, que na web só pode ser
+       visual): a aba cede um pouco enquanto o botão está apertado. */
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+      transition:color var(--jp-duration-fast) var(--jp-ease), transform 120ms var(--jp-ease);
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:active{transform:scale(.96)}
+
+    /* Movimento reduzido desliga o deslize e a resposta à pressão nas duas
+       aparências — o destaque continua marcando a aba certa, só sem percurso. */
+    @media (prefers-reduced-motion:reduce){
+      html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{transition:none}
+      html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-specular.is-ready{transition:none}
+      html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:active{transform:none}
+    }
+  }
+  /* Fora do contexto acima o destaque não existe. Regra sem prefixo de estilo:
+     vale para o modo clássico, para o rail vertical do Dashboard e para a
+     gaveta mobile, e é a que 12-nav-style.js consulta para saber que não deve
+     medir nada. O especular é ainda mais restrito: só o KineticNav o mostra,
+     então some também no Floating Pill Nav. */
+  .nav-pill-indicator,.nav-pill-specular{display:none}
 
   /* ---------- Conteúdo ---------- */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
@@ -4346,7 +4486,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '29ed23b39a6a3175';
+const JP_WEALTH_BUILD_ID = '53df545581092343';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -4454,6 +4594,17 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
        vivem na Central de Configurações (grupo "Operação"). As <section>
        deles permanecem abaixo como hospedeiras do conteúdo transportado —
        mesmo padrão do #config (ver 09-settings-modal.js). -->
+  <!-- Destaque deslizante do estilo "pílula flutuante" (12-nav-style.js). Fica
+       display:none em qualquer outro contexto — modo clássico, rail vertical do
+       Dashboard e gaveta mobile. É decorativo: aria-hidden, sem foco, e a aba
+       ativa continua sendo comunicada pela classe .active nos próprios botões. -->
+  <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
+  <!-- Brilho especular do KineticNav. É irmão do destaque, e não filho: como
+       elemento separado ele pode ter a própria duração de transição e chegar
+       DEPOIS: é essa defasagem que faz a superfície ler como vidro em vez de
+       painel chapado. Como filho ou pseudo-elemento viajaria junto e não
+       haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
+  <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
   <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
   <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>
@@ -5147,6 +5298,22 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
+    <div class="card" data-settings-category="editor" data-settings-search="navegação barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+      <div class="field" style="max-width:560px">
+        <label>Estilo da Navegação</label>
+        <div class="seg" id="navStyleSeg" style="width:fit-content">
+          <button type="button" data-nav-val="kinetic">KineticNav</button>
+          <button type="button" data-nav-val="pill">Floating Pill Nav</button>
+          <button type="button" data-nav-val="classic">Clássica</button>
+        </div>
+        <!-- note-live, e não note: enhanceFieldNotes() converte .note em ícone [i]
+             recolhível, e qual é o padrão do sistema é justamente o que não pode
+             ficar escondido atrás de um ícone. A classe existe para isso — ver o
+             comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
+        <span class="note note-live" id="navStyleDefaultNote"></span>
+        <span class="note"><b>KineticNav</b>: invólucro fosco e destaque com assentamento de mola, que acompanha a aba sob o cursor e volta para a ativa ao sair; o brilho especular chega com atraso, e é essa defasagem que faz a superfície ler como vidro. <b>Floating Pill Nav</b>: invólucro sólido e destaque que desliza direto, sem magnetismo. <b>Clássica</b>: a barra original, com a aba ativa sublinhada. Os dois primeiros nomes são os que seus autores deram aos componentes de referência; as aparências foram reescritas aqui, sem código de terceiros. Vale para a barra horizontal do topo — a lateral do Dashboard e o menu do celular não mudam em nenhuma das três. Preferência deste navegador: não entra no backup.</span>
+      </div>
+    </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets
          (N1, feature própria data-custom-layout="enabled"). Card inteiro fica
          display:none sem a flag (ver app.css) — sem ela, nenhum botão existe.
@@ -5496,6 +5663,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -10334,6 +10502,11 @@ function navigateToScreen(t){
   const screen=$(screenId);
   if(!screen) return;
   screen.classList.add('active');
+  // Ponto único de troca de aba: o destaque deslizante da navegação em pílula é
+  // reposicionado aqui, e não no clique, para cobrir também as chamadas por
+  // string (CTAs e Ações Rápidas). Guarda de existência porque 12-nav-style.js
+  // é módulo de apresentação e pode não estar carregado num monólito reduzido.
+  if(typeof scheduleNavPill==='function') scheduleNavPill();
   window.scrollTo({top:0,behavior:'smooth'});
   maybeShowOnboardingNavReminder(screenId);
 }
@@ -10490,6 +10663,9 @@ function bindFsSeg(){
     if(!FS_STEPS.includes(v)) return;
     try{ localStorage.setItem('jpw_fs', v); }catch(e){}
     applyFontScale(); renderFsSeg();
+    // A escala muda o texto e o padding das abas, logo muda a largura delas: o
+    // destaque deslizante da navegação em pílula precisa remedir.
+    if(typeof scheduleNavPill==='function') scheduleNavPill();
   }));
 }
 // ============ Configurações · quarentena reversível (SET 5a) ============
@@ -10534,6 +10710,172 @@ function renderObjective(fi){
     <div style="font-size:calc(13px * var(--fs-scale));color:var(--ink-dim);flex:1;min-width:240px;line-height:1.55">${desc}</div>
   </div>`;
 }
+// ============ ESTILO DA NAVEGAÇÃO (KineticNav | Floating Pill Nav | Clássica) ============
+// Preferência de APRESENTAÇÃO, no mesmo contrato de jpw_rail, jpw_fs e jpw_expl:
+// vive em localStorage (é por navegador, não por base), aplica-se como atributo
+// em <html> e é exposta como segmentado na Central. Deliberadamente FORA de S —
+// nada aqui entra no backup, no schema ou na migração, e por isso trocar de
+// estilo não tem como afetar dado operacional.
+//
+// Os dois primeiros nomes são os que os autores deram aos componentes de
+// referência; a terceira é a barra própria do aplicativo, sem autor externo.
+// Ambas as aparências foram reescritas aqui do zero a partir do PADRÃO visual —
+// nenhum código de terceiro foi copiado para dentro do projeto.
+//
+// Quem nunca escolheu começa por NAV_STYLE_DEFAULT. Valor desconhecido também
+// cai nele, para que uma chave corrompida à mão não deixe a navegação sem
+// estilo. O padrão é declarado UMA vez aqui: a Central lê esta constante para
+// dizer qual é, em vez de repetir o nome em outro lugar e arriscar divergir.
+const NAV_STYLE_KEY='jpw_nav';
+const NAV_STYLES=['kinetic','pill','classic'];
+const NAV_STYLE_DEFAULT='pill';
+function navStyleValue(){
+  let v=null;
+  try{ v=localStorage.getItem(NAV_STYLE_KEY); }catch(e){}
+  return NAV_STYLES.includes(v)?v:NAV_STYLE_DEFAULT;
+}
+function applyNavStyle(){
+  document.documentElement.setAttribute('data-nav-style', navStyleValue());
+  positionNavPill();
+}
+// O destaque é um elemento único que se desloca até a aba ativa. Medimos por
+// offsetLeft/offsetWidth, e não por getBoundingClientRect, justamente porque o
+// #nav horizontal é um contêiner com overflow-x:auto: offsetLeft é posição de
+// layout dentro do padding box e não muda quando a barra é rolada, que é o que
+// mantém o destaque colado na aba certa em qualquer posição de rolagem.
+// Aplica a MESMA geometria ao destaque e ao brilho especular. Quem produz o
+// atraso entre os dois é a folha de estilo (durações e delay diferentes), não
+// este código: aqui os dois recebem o mesmo alvo no mesmo instante.
+function navPillApplyGeometry(alvo){
+  const nav=document.getElementById('nav'); if(!nav) return;
+  [document.getElementById('navPillIndicator'), document.getElementById('navPillSpecular')].forEach(el=>{
+    if(!el || getComputedStyle(el).display==='none') return;
+    el.style.opacity='';
+    el.style.width=alvo.offsetWidth+'px';
+    el.style.height=alvo.offsetHeight+'px';
+    el.style.transform=`translate(${alvo.offsetLeft}px, ${alvo.offsetTop}px)`;
+    // A primeira medição não pode ser animada: sem isto os elementos entram
+    // deslizando do canto a cada carga da página.
+    if(!el.classList.contains('is-ready')) requestAnimationFrame(()=>el.classList.add('is-ready'));
+  });
+}
+function positionNavPill(){
+  const nav=document.getElementById('nav'), pill=document.getElementById('navPillIndicator');
+  if(!nav||!pill) return;
+  const spec=document.getElementById('navPillSpecular');
+  const active=nav.querySelector('.tab.active');
+  // Em modo clássico, no rail vertical do Dashboard e na gaveta mobile o CSS
+  // deixa o destaque em display:none — medir ali devolveria zero e faria o
+  // elemento piscar ao voltar para a barra horizontal.
+  //
+  // A ausência de aba ativa não é hipótese teórica: navigateToScreen() chamado
+  // com STRING (CTAs, Ações Rápidas) remove .active de todas as abas e não
+  // repõe em nenhuma. Nesse estado o destaque é escondido, em vez de ficar
+  // marcando a aba anterior, que seria informação falsa.
+  if(getComputedStyle(pill).display==='none'){
+    pill.classList.remove('is-ready');
+    if(spec) spec.classList.remove('is-ready');
+    return;
+  }
+  if(!active){
+    pill.style.opacity='0';
+    if(spec) spec.style.opacity='0';
+    return;
+  }
+  navPillApplyGeometry(active);
+}
+// Remedição nos três eventos que mudam a largura das abas sem trocar a tela:
+// redimensionamento, escala de fonte (--fs-scale altera o padding e o texto) e
+// recolher/expandir o rail. A troca de tela é tratada em navigateToScreen().
+// Mede JÁ e agenda uma segunda passada. A síncrona é a que garante o resultado
+// quando requestAnimationFrame não dispara — aba em segundo plano, janela
+// oculta, renderização estrangulada. A agendada corrige o caso oposto: quando a
+// medição síncrona pega o layout antes de a troca de classe repercutir.
+function scheduleNavPill(){
+  positionNavPill();
+  requestAnimationFrame(positionNavPill);
+}
+function renderNavStyleSeg(){
+  const v=navStyleValue();
+  document.querySelectorAll('#navStyleSeg button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.navVal===v);
+    // Marca de "padrão do sistema". É decorativa: quem carrega a informação em
+    // texto é a legenda abaixo, para leitor de tela e para quem não distingue
+    // a marca visual.
+    b.classList.toggle('is-default', b.dataset.navVal===NAV_STYLE_DEFAULT);
+  });
+  // O nome do padrão vem do rótulo do próprio botão — a string existe uma vez
+  // só, no HTML. Trocar NAV_STYLE_DEFAULT reescreve esta legenda sozinho.
+  const nota=document.getElementById('navStyleDefaultNote');
+  if(nota){
+    const btn=document.querySelector(`#navStyleSeg button[data-nav-val="${NAV_STYLE_DEFAULT}"]`);
+    const nome=btn?btn.textContent.trim():NAV_STYLE_DEFAULT;
+    const usandoPadrao = v===NAV_STYLE_DEFAULT;
+    nota.textContent = usandoPadrao
+      ? `Padrão do sistema: ${nome} — é o que você está usando, e o que aparece para quem abre o aplicativo pela primeira vez.`
+      : `Padrão do sistema: ${nome} — é o que aparece para quem abre o aplicativo pela primeira vez. A sua escolha atual é outra e vale só neste navegador.`;
+  }
+}
+function bindNavStyleSeg(){
+  document.querySelectorAll('#navStyleSeg button').forEach(b=>b.addEventListener('click',()=>{
+    const v=NAV_STYLES.includes(b.dataset.navVal)?b.dataset.navVal:'kinetic';
+    try{ localStorage.setItem(NAV_STYLE_KEY, v); }catch(e){}
+    applyNavStyle(); renderNavStyleSeg(); scheduleNavPill();
+  }));
+}
+// ---- Magnetismo do KineticNav ----
+// No componente de referência o destaque acompanha o item sob o cursor e volta
+// para o ativo quando o ponteiro sai. Aqui isso é feito movendo o MESMO
+// elemento de destaque — não há segundo objeto —, então a volta usa a mesma
+// medição de sempre. Só vale no estilo kinetic; nos outros o hover não desloca
+// nada. Ponteiros grossos (toque) não têm hover: a mídia coarse fica de fora
+// para o destaque não perseguir o dedo.
+function bindNavMagnetics(){
+  const nav=document.getElementById('nav');
+  if(!nav) return;
+  const fino=window.matchMedia('(hover:hover) and (pointer:fine)');
+  const alvoValido=el=>el && el.classList && el.classList.contains('tab');
+  nav.addEventListener('mouseover', e=>{
+    if(navStyleValue()!=='kinetic' || !fino.matches) return;
+    const alvo=e.target.closest && e.target.closest('.tab');
+    if(!alvoValido(alvo)) return;
+    const pill=document.getElementById('navPillIndicator');
+    if(!pill || getComputedStyle(pill).display==='none') return;
+    navPillApplyGeometry(alvo);
+  });
+  // Volta ao ativo ao sair da barra inteira (e não de cada aba), senão o
+  // destaque piscaria a cada passagem de uma aba para a vizinha.
+  nav.addEventListener('mouseleave', ()=>{ if(navStyleValue()==='kinetic') positionNavPill(); });
+}
+bindNavMagnetics();
+window.addEventListener('resize', scheduleNavPill);
+// O shell é decidido DEPOIS do boot: quando applyNavStyle() roda pela primeira
+// vez, data-shell ainda não existe, o seletor da pílula não casa, o destaque
+// está display:none e a medição sai vazia — o destaque só apareceria na
+// primeira troca de aba. Observar os atributos de <html> cobre isso e mais três
+// casos pelo mesmo mecanismo: troca de shell em tempo de execução, mudança de
+// tela ativa e recolher/expandir o rail, que alteram a largura das abas.
+new MutationObserver(scheduleNavPill).observe(document.documentElement, {
+  attributes:true,
+  attributeFilter:['data-shell','data-active-screen','data-nav-style','data-rail','data-ui-version'],
+});
+// Sinal decisivo para a primeira medição: a GEOMETRIA da barra. No boot as abas
+// ainda medem zero — o shell só realoca o #nav para dentro da topbar depois —, e
+// essa realocação não mexe em nenhum atributo de <html>, então o observador
+// acima não a enxerga. O ResizeObserver enxerga, e de quebra cobre pelo mesmo
+// mecanismo tudo que altera a largura das abas: escala de fonte, rail e
+// redimensionamento da janela.
+if(typeof ResizeObserver==='function'){
+  const nav=document.getElementById('nav');
+  if(nav) new ResizeObserver(()=>positionNavPill()).observe(nav);
+}
+// Rede de segurança da PRIMEIRA medição. ResizeObserver e requestAnimationFrame
+// são entregues no ciclo de quadro: numa aba em segundo plano, ou com a
+// renderização estrangulada, eles não chegam, e o destaque ficaria sem medida
+// até a primeira troca de aba. `load` e `setTimeout` não dependem de quadro.
+window.addEventListener('load', ()=>positionNavPill());
+setTimeout(positionNavPill, 0);
+setTimeout(positionNavPill, 300);
 // ============ QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b) ============
 function onboardingEP(saldo, prKey){
   const pr=getActiveRiskProfile(prKey);
@@ -13074,7 +13416,7 @@ function bindConfig(){
   document.querySelectorAll('#themeSeg button').forEach(b=>b.addEventListener('click',()=>{
     S.theme=b.dataset.themeVal; applyTheme(); renderThemeSeg(); save();
   }));
-  bindFsSeg(); bindExplSeg();
+  bindFsSeg(); bindExplSeg(); bindNavStyleSeg();
   const eb=$('exportFullBackupBtn');
   if(eb) eb.addEventListener('click', exportFullBackup);
   const ib=$('importFullBackupBtn'), ii=$('importFullBackupInput');
@@ -13527,8 +13869,8 @@ initSessionCrossTab();
 bindFinalizeSession();
 // ============ BOOT ============
 function boot(){
-  applyTheme(); applyRailState(); bindRailToggle(); applyFontScale(); startHeaderClock();
-  renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
+  applyTheme(); applyRailState(); bindRailToggle(); applyFontScale(); applyNavStyle(); startHeaderClock();
+  renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderNavStyleSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
   renderParams(); renderMotor(); renderContas(); renderDash(); renderCheck();
   renderLedger(); renderPhases(); render();
   // A-002: badge/visibilidade das Notas entram no ciclo global — sem isto, importar um
@@ -13733,7 +14075,7 @@ function buildSettingsContent(){
   createSettingsPanel('about',aboutPanel());
   createSettingsPanel('appearance','<p class="settings-lead">Estética e identidade visual. O tema atual continua usando a persistência já existente em <code>S.theme</code>.</p><div data-settings-slot="appearance"></div>');
   createSettingsPanel('interface','<p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
-  createSettingsPanel('editor','<p class="settings-empty">Nenhuma configuração de editor disponível nesta versão.</p>');
+  createSettingsPanel('editor','<p class="settings-lead">Preferências de edição e de apresentação da interface neste navegador.</p><div data-settings-slot="editor"></div>');
   createSettingsPanel('educational',educationPanel());
   createSettingsPanel('statute','<p class="settings-lead">Conteúdo predominantemente de leitura. O documento normativo não é editável nesta central.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Abrir documento integral (PDF)</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
@@ -13902,7 +14244,7 @@ function settingsNavigateToLeaf(leafId,options={}){
 
 function settingsSearchEntries(){
   const core=Object.entries(SETTINGS_LEAVES).flatMap(([id,leaf])=>[...leaf.terms,leaf.label].map(term=>({title:term,category:id})));
-  const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
+  const controls=[['Tema visual','appearance','#themeSeg'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['Estilo da navegação','editor','#navStyleSeg'],['Barra em pílula','editor','#navStyleSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
     // Governança de armazenamento (JPW-HJFGDE) — cartão único, vários termos de entrada.
     ['Armazenamento da Base','backup','#dgStorageCard'],['Pasta padrão de exportação','backup','#dgStorageCard'],
     ['Confirmar backup','backup','#dgStorageCard'],['Reautorizar pasta','backup','#dgStorageCard'],

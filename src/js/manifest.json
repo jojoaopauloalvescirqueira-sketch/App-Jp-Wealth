@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "7c9cb579095ac97638467d9a3a7f5955468453ef06d4e702c2d95f1fc8e45360"
+      "sha256": "bb6502e8dc5eae649a99a3006760553869198e02c8ac1972ed503eea6b60715d"
     },
     {
       "order": 25,
@@ -170,7 +170,7 @@
       "order": 28,
       "path": "src/js/20-ui/10-font-scale.js",
       "section": "ESCALA TIPOGRÁFICA · 3 degraus fechados",
-      "sha256": "0a3e55b083d82d936062ffde8f98a86ad2e8b957c308bd957ae5dfca37005dda"
+      "sha256": "b1dd06b7b322a9814863cd0109650ecf2baeff5619c4af9ee1cee30a42baaa78"
     },
     {
       "order": 29,
@@ -186,84 +186,90 @@
     },
     {
       "order": 31,
+      "path": "src/js/20-ui/12-nav-style.js",
+      "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
+      "sha256": "842cb1b61b0bfcbdf8d3182dda009e1b98cff1134241c5768cd3fda23c2dd6d6"
+    },
+    {
+      "order": 32,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
       "sha256": "b83021a45d304b453f4c714bed09ac622af08d778e7fe83154fc0ad73c4275e5"
     },
     {
-      "order": 32,
+      "order": 33,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "647f328204551240dfcf9a3ae6fbe99d7b3362ff520158fed8f988e5c446fe38"
+      "sha256": "156bf36d229ca939c5e73257b3f260c8951add4687ef90f7937b0632d2948f1f"
     },
     {
-      "order": 33,
+      "order": 34,
       "path": "src/js/40-app/06-app-icons.js",
       "section": "PWA · ESCOLHA DO ÍCONE (2 variantes fixas, sem biblioteca de temas)",
       "sha256": "e4fd57607165d08c1f62bab25eaba386d9f3106b9f236097a2474d45f2bf1ae5"
     },
     {
-      "order": 34,
+      "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
       "sha256": "ede89eca410e628fb1f2f322286b02a2e1ab09dcde759aad50f968831200db99"
     },
     {
-      "order": 35,
+      "order": 36,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "b5d263e9c1289f52b249a761d175d15d53cafd3e934647b703e2011ec88b3b6c"
+      "sha256": "bd97c097026af13b6ec6d02ad67ae2497338e57601adbd1ceec4248e8cca64f8"
     },
     {
-      "order": 36,
+      "order": 37,
       "path": "src/js/40-app/08-educational-content.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · BASE EDUCACIONAL LOCAL",
       "sha256": "877a1fd18350c797f21a9c356d3b439deef397871550154eda454b43dc4f2f23"
     },
     {
-      "order": 37,
+      "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "204aae127f803edb591301a75cbaa14d981db802660ef70c02c4eb525427be6c"
+      "sha256": "3b6a3da92f04ad4c3c1817382876fcd0c050bc7b9ec6143cc2dcaf60fc39cbcc"
     },
     {
-      "order": 38,
+      "order": 39,
       "path": "src/js/40-app/10-dashboard-immersive.js",
       "section": "DASHBOARD IMERSIVO · modo, carrossel e navegação interna (N1)",
       "sha256": "35ed92c20ca3cdba4e83efbf10356d763c4a9380a09902a13588ba5311c72ac2"
     },
     {
-      "order": 39,
+      "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · menu mobile de destinos (N1)",
       "sha256": "df8101e87bc0cf6c860c40cda8aae7d4059f023ee663f166ee8123e967e44b26"
     },
     {
-      "order": 40,
+      "order": 41,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
       "sha256": "77c6dda02211fc36b3ed63bff95880102b90ad221ae9a3fc2b87dc4c66e9a2f8"
     },
     {
-      "order": 41,
+      "order": 42,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
       "sha256": "68c07de777beb86905df83242d2d6ecbc3d8716e2db63ff1f51f0d78e1b76f1d"
     },
     {
-      "order": 42,
+      "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
       "sha256": "90c1fdcf4f8a467ce84f542dba656af8dfd18bbcbbfe77d332066ba00494cb41"
     },
     {
-      "order": 43,
+      "order": 44,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
       "sha256": "f55723b3a86b8fb782e4788fa9d8bc9ff9102dca36139aad9ecc536862928422"
     },
     {
-      "order": 44,
+      "order": 45,
       "path": "src/js/40-app/16-storage-governance.js",
       "section": "GOVERNANÇA DE ARMAZENAMENTO — UI (JPW-HJFGDE)",
       "sha256": "19e867a60204c2ac04a80b2a5f367e58500b975277fc88d86635c3f0f37fd54f"

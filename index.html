@@ -114,6 +114,17 @@
        vivem na Central de Configurações (grupo "Operação"). As <section>
        deles permanecem abaixo como hospedeiras do conteúdo transportado —
        mesmo padrão do #config (ver 09-settings-modal.js). -->
+  <!-- Destaque deslizante do estilo "pílula flutuante" (12-nav-style.js). Fica
+       display:none em qualquer outro contexto — modo clássico, rail vertical do
+       Dashboard e gaveta mobile. É decorativo: aria-hidden, sem foco, e a aba
+       ativa continua sendo comunicada pela classe .active nos próprios botões. -->
+  <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
+  <!-- Brilho especular do KineticNav. É irmão do destaque, e não filho: como
+       elemento separado ele pode ter a própria duração de transição e chegar
+       DEPOIS: é essa defasagem que faz a superfície ler como vidro em vez de
+       painel chapado. Como filho ou pseudo-elemento viajaria junto e não
+       haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
+  <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
   <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
   <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>
@@ -807,6 +818,22 @@
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
+    <div class="card" data-settings-category="editor" data-settings-search="navegação barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+      <div class="field" style="max-width:560px">
+        <label>Estilo da Navegação</label>
+        <div class="seg" id="navStyleSeg" style="width:fit-content">
+          <button type="button" data-nav-val="kinetic">KineticNav</button>
+          <button type="button" data-nav-val="pill">Floating Pill Nav</button>
+          <button type="button" data-nav-val="classic">Clássica</button>
+        </div>
+        <!-- note-live, e não note: enhanceFieldNotes() converte .note em ícone [i]
+             recolhível, e qual é o padrão do sistema é justamente o que não pode
+             ficar escondido atrás de um ícone. A classe existe para isso — ver o
+             comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
+        <span class="note note-live" id="navStyleDefaultNote"></span>
+        <span class="note"><b>KineticNav</b>: invólucro fosco e destaque com assentamento de mola, que acompanha a aba sob o cursor e volta para a ativa ao sair; o brilho especular chega com atraso, e é essa defasagem que faz a superfície ler como vidro. <b>Floating Pill Nav</b>: invólucro sólido e destaque que desliza direto, sem magnetismo. <b>Clássica</b>: a barra original, com a aba ativa sublinhada. Os dois primeiros nomes são os que seus autores deram aos componentes de referência; as aparências foram reescritas aqui, sem código de terceiros. Vale para a barra horizontal do topo — a lateral do Dashboard e o menu do celular não mudam em nenhuma das três. Preferência deste navegador: não entra no backup.</span>
+      </div>
+    </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets
          (N1, feature própria data-custom-layout="enabled"). Card inteiro fica
          display:none sem a flag (ver app.css) — sem ela, nenhum botão existe.
@@ -1187,6 +1214,7 @@
 <script src="src/js/20-ui/10-font-scale.js"></script>
 <script src="src/js/10-domain/06-quarantine.js"></script>
 <script src="src/js/20-ui/11-phase-posture.js"></script>
+<script src="src/js/20-ui/12-nav-style.js"></script>
 <script src="src/js/40-app/04-onboarding.js"></script>
 <script src="src/js/40-app/05-wipe-all.js"></script>
 <script src="src/js/40-app/06-app-icons.js"></script>

@@ -50,7 +50,7 @@ function bindConfig(){
   document.querySelectorAll('#themeSeg button').forEach(b=>b.addEventListener('click',()=>{
     S.theme=b.dataset.themeVal; applyTheme(); renderThemeSeg(); save();
   }));
-  bindFsSeg(); bindExplSeg();
+  bindFsSeg(); bindExplSeg(); bindNavStyleSeg();
   const eb=$('exportFullBackupBtn');
   if(eb) eb.addEventListener('click', exportFullBackup);
   const ib=$('importFullBackupBtn'), ii=$('importFullBackupInput');
