@@ -4225,6 +4225,14 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 }
 
 /* ---------- Arraste ---------- */
+/* Toque longo (arrasto direto): durante a espera de ~500 ms o card não pode
+   virar seleção de texto nem abrir o callout do iOS; o leve recuo dá o
+   feedback tátil de "segurando". O transform cede ao !important do
+   .dash-layout-dragging quando o motor assume. */
+[data-layout-card].dash-layout-pressing{
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  transform:scale(.99); transition:transform .15s ease;
+}
 .dash-layout-placeholder{
   border:2px dashed var(--jp-action); border-radius:10px;
   background:color-mix(in srgb, var(--jp-action) 8%, transparent);
@@ -4338,7 +4346,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '235616198367bc29';
+const JP_WEALTH_BUILD_ID = 'c8cff0a228e55303';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -15217,6 +15225,102 @@ function dashLayoutOnDragKeydown(event) {
   }
 }
 
+/* ======================= TOQUE LONGO — ARRASTO DIRETO ======================= */
+// Segurar um card móvel (~500 ms parado) inicia o arrasto imediatamente,
+// entrando na sessão de personalização se necessário. É um atalho de ENTRADA
+// no fluxo existente, nunca um bypass: o drop vira rascunho (dirtyScreens) e
+// a gravação continua exclusiva do Concluir transacional. Fora da janela nada
+// muda — soltar antes é clique normal, mover antes é scroll. Cards locked não
+// entram (dashLayoutIsMovable), e alça/menu/controles internos preservam o
+// comportamento que já têm.
+const DASH_LAYOUT_LONGPRESS_MS = 500;
+const DASH_LAYOUT_LONGPRESS_SLOP_PX = 8;
+let dashLayoutPress = null;
+
+function dashLayoutPressClear() {
+  const p = dashLayoutPress; if (!p) return;
+  clearTimeout(p.timer);
+  p.card.classList.remove('dash-layout-pressing');
+  document.removeEventListener('pointermove', dashLayoutPressOnMove);
+  document.removeEventListener('pointerup', dashLayoutPressOnUp);
+  document.removeEventListener('pointercancel', dashLayoutPressOnUp);
+  document.removeEventListener('pointerdown', dashLayoutPressOnSecondPointer, true);
+  document.removeEventListener('touchmove', dashLayoutPressTouchGuard);
+  document.removeEventListener('contextmenu', dashLayoutPressOnContextMenu, true);
+  window.removeEventListener('scroll', dashLayoutPressOnScroll, true);
+  dashLayoutPress = null;
+}
+
+// Disparo dos 500 ms: entra na sessão (se preciso) e delega ao motor de
+// arraste existente — o mesmo caminho da alça, sem duplicar nada. O press
+// permanece vivo (active) até o pointerup para sustentar o guard de touchmove.
+function dashLayoutPressFire() {
+  const p = dashLayoutPress; if (!p || dashLayoutState.drag) { dashLayoutPressClear(); return; }
+  if (!dashLayoutState.editing) dashLayoutEnterEdit();
+  if (!dashLayoutState.editing || dashLayoutState.activeScreenId !== p.screenId) { dashLayoutPressClear(); return; }
+  const handle = p.card.querySelector(':scope > .dash-layout-handle') || p.card;
+  dashLayoutStartDrag(p.lastEvent, p.screenId, p.card, handle);
+  if (!dashLayoutState.drag) { dashLayoutPressClear(); return; }
+  p.active = true;
+  document.removeEventListener('pointerdown', dashLayoutPressOnSecondPointer, true);
+}
+
+function dashLayoutOnCardPointerDown(event) {
+  if (dashLayoutPress || dashLayoutState.drag) return;
+  if (!dashLayoutEnabled()) return;
+  if (event.button !== 0 || event.isPrimary === false) return;
+  const card = event.target.closest('[data-layout-card]');
+  if (!card) return;
+  // Controles interativos preservam o próprio gesto (ex.: ↻ das notícias);
+  // alça e menu já têm caminhos próprios de arraste/opções.
+  if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"], .dash-layout-handle, .dash-layout-menu-btn, .jp-popover')) return;
+  const screenEl = card.closest('.screen');
+  const screenId = screenEl ? screenEl.id : null;
+  if (!screenId || !JP_WIDGET_SCREENS[screenId] || screenId !== dashLayoutActiveScreenId()) return;
+  if (!dashLayoutIsMovable(card)) return;
+  dashLayoutPress = {
+    card, screenId, active: false,
+    pointerId: event.pointerId, startX: event.clientX, startY: event.clientY,
+    lastEvent: event,
+    timer: setTimeout(dashLayoutPressFire, DASH_LAYOUT_LONGPRESS_MS)
+  };
+  card.classList.add('dash-layout-pressing');
+  document.addEventListener('pointermove', dashLayoutPressOnMove);
+  document.addEventListener('pointerup', dashLayoutPressOnUp);
+  document.addEventListener('pointercancel', dashLayoutPressOnUp);
+  document.addEventListener('pointerdown', dashLayoutPressOnSecondPointer, true);
+  // Guard nativo {passive:false}: antes do disparo NÃO chama preventDefault —
+  // o scroll segue livre (e o pointercancel resultante limpa o press). Depois
+  // do disparo, preventDefault impede o navegador de roubar o gesto.
+  document.addEventListener('touchmove', dashLayoutPressTouchGuard, { passive: false });
+  document.addEventListener('contextmenu', dashLayoutPressOnContextMenu, true);
+  window.addEventListener('scroll', dashLayoutPressOnScroll, true);
+}
+
+function dashLayoutPressOnMove(event) {
+  const p = dashLayoutPress; if (!p || event.pointerId !== p.pointerId) return;
+  p.lastEvent = event;
+  if (p.active) return; // arraste já entregue ao motor
+  if (Math.hypot(event.clientX - p.startX, event.clientY - p.startY) > DASH_LAYOUT_LONGPRESS_SLOP_PX) dashLayoutPressClear();
+}
+function dashLayoutPressOnUp(event) {
+  const p = dashLayoutPress; if (!p || event.pointerId !== p.pointerId) return;
+  dashLayoutPressClear(); // o drop em si é do motor (listener próprio no mesmo evento)
+}
+function dashLayoutPressOnSecondPointer(event) {
+  const p = dashLayoutPress; if (!p || p.active || event.pointerId === p.pointerId) return;
+  dashLayoutPressClear(); // segundo dedo antes do disparo = pinça/zoom, não intenção de arrastar
+}
+function dashLayoutPressTouchGuard(event) {
+  const p = dashLayoutPress; if (p && p.active && event.cancelable) event.preventDefault();
+}
+function dashLayoutPressOnContextMenu(event) {
+  if (dashLayoutPress) { event.preventDefault(); event.stopPropagation(); }
+}
+function dashLayoutPressOnScroll() {
+  const p = dashLayoutPress; if (p && !p.active) dashLayoutPressClear();
+}
+
 /* ======================= LIGAÇÕES ======================= */
 
 function initDashboardLayout() {
@@ -15237,6 +15341,9 @@ function initDashboardLayout() {
   if (settingsResetBtn) settingsResetBtn.addEventListener('click', () => { if (dashLayoutEnabled()) dashLayoutRestoreDefaultConfirm(); });
   const settingsResetAllBtn = document.getElementById('dashLayoutResetAllBtn');
   if (settingsResetAllBtn) settingsResetAllBtn.addEventListener('click', () => { if (dashLayoutEnabled()) dashLayoutRestoreAllConfirm(); });
+
+  // Toque longo em card móvel → arrasto direto (delegado; um único listener).
+  document.addEventListener('pointerdown', dashLayoutOnCardPointerDown);
 
   const cancelAllBtn = document.getElementById('dashLayoutCancelBtn');
   if (cancelAllBtn) cancelAllBtn.addEventListener('click', dashLayoutCancelAll);

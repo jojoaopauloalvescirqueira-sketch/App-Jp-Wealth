@@ -4215,6 +4215,14 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 }
 
 /* ---------- Arraste ---------- */
+/* Toque longo (arrasto direto): durante a espera de ~500 ms o card não pode
+   virar seleção de texto nem abrir o callout do iOS; o leve recuo dá o
+   feedback tátil de "segurando". O transform cede ao !important do
+   .dash-layout-dragging quando o motor assume. */
+[data-layout-card].dash-layout-pressing{
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  transform:scale(.99); transition:transform .15s ease;
+}
 .dash-layout-placeholder{
   border:2px dashed var(--jp-action); border-radius:10px;
   background:color-mix(in srgb, var(--jp-action) 8%, transparent);
