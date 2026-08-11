@@ -28,9 +28,26 @@ function applyNavStyle(){
 // #nav horizontal é um contêiner com overflow-x:auto: offsetLeft é posição de
 // layout dentro do padding box e não muda quando a barra é rolada, que é o que
 // mantém o destaque colado na aba certa em qualquer posição de rolagem.
+// Aplica a MESMA geometria ao destaque e ao brilho especular. Quem produz o
+// atraso entre os dois é a folha de estilo (durações e delay diferentes), não
+// este código: aqui os dois recebem o mesmo alvo no mesmo instante.
+function navPillApplyGeometry(alvo){
+  const nav=document.getElementById('nav'); if(!nav) return;
+  [document.getElementById('navPillIndicator'), document.getElementById('navPillSpecular')].forEach(el=>{
+    if(!el || getComputedStyle(el).display==='none') return;
+    el.style.opacity='';
+    el.style.width=alvo.offsetWidth+'px';
+    el.style.height=alvo.offsetHeight+'px';
+    el.style.transform=`translate(${alvo.offsetLeft}px, ${alvo.offsetTop}px)`;
+    // A primeira medição não pode ser animada: sem isto os elementos entram
+    // deslizando do canto a cada carga da página.
+    if(!el.classList.contains('is-ready')) requestAnimationFrame(()=>el.classList.add('is-ready'));
+  });
+}
 function positionNavPill(){
   const nav=document.getElementById('nav'), pill=document.getElementById('navPillIndicator');
   if(!nav||!pill) return;
+  const spec=document.getElementById('navPillSpecular');
   const active=nav.querySelector('.tab.active');
   // Em modo clássico, no rail vertical do Dashboard e na gaveta mobile o CSS
   // deixa o destaque em display:none — medir ali devolveria zero e faria o
@@ -40,17 +57,17 @@ function positionNavPill(){
   // com STRING (CTAs, Ações Rápidas) remove .active de todas as abas e não
   // repõe em nenhuma. Nesse estado o destaque é escondido, em vez de ficar
   // marcando a aba anterior, que seria informação falsa.
-  if(getComputedStyle(pill).display==='none'){ pill.classList.remove('is-ready'); return; }
-  if(!active){ pill.style.opacity='0'; return; }
-  pill.style.opacity='';
-  pill.style.width=active.offsetWidth+'px';
-  pill.style.height=active.offsetHeight+'px';
-  pill.style.transform=`translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
-  // A primeira medição não pode ser animada: sem isto o destaque entra
-  // deslizando do canto a cada carga da página.
-  if(!pill.classList.contains('is-ready')){
-    requestAnimationFrame(()=>pill.classList.add('is-ready'));
+  if(getComputedStyle(pill).display==='none'){
+    pill.classList.remove('is-ready');
+    if(spec) spec.classList.remove('is-ready');
+    return;
   }
+  if(!active){
+    pill.style.opacity='0';
+    if(spec) spec.style.opacity='0';
+    return;
+  }
+  navPillApplyGeometry(active);
 }
 // Remedição nos três eventos que mudam a largura das abas sem trocar a tela:
 // redimensionamento, escala de fonte (--fs-scale altera o padding e o texto) e
@@ -92,9 +109,7 @@ function bindNavMagnetics(){
     if(!alvoValido(alvo)) return;
     const pill=document.getElementById('navPillIndicator');
     if(!pill || getComputedStyle(pill).display==='none') return;
-    pill.style.width=alvo.offsetWidth+'px';
-    pill.style.height=alvo.offsetHeight+'px';
-    pill.style.transform=`translate(${alvo.offsetLeft}px, ${alvo.offsetTop}px)`;
+    navPillApplyGeometry(alvo);
   });
   // Volta ao ativo ao sair da barra inteira (e não de cada aba), senão o
   // destaque piscaria a cada passagem de uma aba para a vizinha.

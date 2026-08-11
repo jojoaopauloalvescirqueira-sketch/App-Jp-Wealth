@@ -119,6 +119,12 @@
        Dashboard e gaveta mobile. É decorativo: aria-hidden, sem foco, e a aba
        ativa continua sendo comunicada pela classe .active nos próprios botões. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
+  <!-- Brilho especular do KineticNav. É irmão do destaque, e não filho: como
+       elemento separado ele pode ter a própria duração de transição e chegar
+       DEPOIS: é essa defasagem que faz a superfície ler como vidro em vez de
+       painel chapado. Como filho ou pseudo-elemento viajaria junto e não
+       haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
+  <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
   <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
   <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>

@@ -2682,9 +2682,43 @@
       backdrop-filter:blur(14px) saturate(1.25);
       -webkit-backdrop-filter:blur(14px) saturate(1.25);
       border:1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+      /* Aresta interna iluminada: uma linha de luz no topo e uma sombra fina em
+         baixo. É o que dá espessura à peça — sem isso o involucro lê como um
+         retângulo translúcido, não como um corpo de vidro. */
+      box-shadow:inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+                 inset 0 -1px 0 color-mix(in srgb, var(--panel) 45%, transparent);
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator{
+      box-shadow:inset 0 1px 0 color-mix(in srgb, var(--panel) 32%, transparent);
     }
     html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{
       transition:transform 230ms cubic-bezier(.22,1.06,.36,1), width 230ms cubic-bezier(.22,1.06,.36,1);
+    }
+    /* ---- Brilho especular atrasado ----
+       O elemento acompanha a MESMA geometria do destaque, mas com percurso mais
+       longo e um atraso de partida. Em repouso ele coincide com o destaque e é
+       apenas um reflexo parado sobre a pílula; em movimento fica para trás e
+       atravessa a peça, que é o que a faz ler como vidro.
+
+       Reparo importante para quem for calibrar: o efeito depende do que existe
+       ATRÁS da barra. Aqui ela assenta sobre cor chapada (--panel), então o que
+       se vê é o reflexo e a aresta, não refração — não há o que refratar em
+       superfície lisa. Sobre gradiente ou imagem o mesmo código renderia bem
+       mais. Isso é limite do fundo, não da implementação. */
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-specular{
+      display:block; position:absolute; left:0; top:0; z-index:0;
+      border-radius:999px; pointer-events:none;
+      background:linear-gradient(105deg,
+        transparent 14%,
+        color-mix(in srgb, var(--panel) 26%, transparent) 38%,
+        color-mix(in srgb, var(--panel) 6%, transparent) 55%,
+        transparent 72%);
+      transition:none;
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-specular.is-ready{
+      /* 380ms contra os 230ms do destaque, mais 40ms de atraso: a defasagem é o
+         efeito inteiro. Igualar as durações apagaria o truque. */
+      transition:transform 380ms 40ms cubic-bezier(.22,1.06,.36,1), width 380ms 40ms cubic-bezier(.22,1.06,.36,1);
     }
     /* Resposta à pressão (o "haptics" do componente, que na web só pode ser
        visual): a aba cede um pouco enquanto o botão está apertado. */
@@ -2697,14 +2731,16 @@
        aparências — o destaque continua marcando a aba certa, só sem percurso. */
     @media (prefers-reduced-motion:reduce){
       html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{transition:none}
+      html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-specular.is-ready{transition:none}
       html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:active{transform:none}
     }
   }
   /* Fora do contexto acima o destaque não existe. Regra sem prefixo de estilo:
      vale para o modo clássico, para o rail vertical do Dashboard e para a
      gaveta mobile, e é a que 12-nav-style.js consulta para saber que não deve
-     medir nada. */
-  .nav-pill-indicator{display:none}
+     medir nada. O especular é ainda mais restrito: só o KineticNav o mostra,
+     então some também no Floating Pill Nav. */
+  .nav-pill-indicator,.nav-pill-specular{display:none}
 
   /* ---------- Conteúdo ---------- */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
@@ -4439,7 +4475,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'ffe53d0a08246e4f';
+const JP_WEALTH_BUILD_ID = 'd8fb8babcad0f259';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -4552,6 +4588,12 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
        Dashboard e gaveta mobile. É decorativo: aria-hidden, sem foco, e a aba
        ativa continua sendo comunicada pela classe .active nos próprios botões. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
+  <!-- Brilho especular do KineticNav. É irmão do destaque, e não filho: como
+       elemento separado ele pode ter a própria duração de transição e chegar
+       DEPOIS: é essa defasagem que faz a superfície ler como vidro em vez de
+       painel chapado. Como filho ou pseudo-elemento viajaria junto e não
+       haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
+  <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
   <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
   <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>
@@ -10682,9 +10724,26 @@ function applyNavStyle(){
 // #nav horizontal é um contêiner com overflow-x:auto: offsetLeft é posição de
 // layout dentro do padding box e não muda quando a barra é rolada, que é o que
 // mantém o destaque colado na aba certa em qualquer posição de rolagem.
+// Aplica a MESMA geometria ao destaque e ao brilho especular. Quem produz o
+// atraso entre os dois é a folha de estilo (durações e delay diferentes), não
+// este código: aqui os dois recebem o mesmo alvo no mesmo instante.
+function navPillApplyGeometry(alvo){
+  const nav=document.getElementById('nav'); if(!nav) return;
+  [document.getElementById('navPillIndicator'), document.getElementById('navPillSpecular')].forEach(el=>{
+    if(!el || getComputedStyle(el).display==='none') return;
+    el.style.opacity='';
+    el.style.width=alvo.offsetWidth+'px';
+    el.style.height=alvo.offsetHeight+'px';
+    el.style.transform=`translate(${alvo.offsetLeft}px, ${alvo.offsetTop}px)`;
+    // A primeira medição não pode ser animada: sem isto os elementos entram
+    // deslizando do canto a cada carga da página.
+    if(!el.classList.contains('is-ready')) requestAnimationFrame(()=>el.classList.add('is-ready'));
+  });
+}
 function positionNavPill(){
   const nav=document.getElementById('nav'), pill=document.getElementById('navPillIndicator');
   if(!nav||!pill) return;
+  const spec=document.getElementById('navPillSpecular');
   const active=nav.querySelector('.tab.active');
   // Em modo clássico, no rail vertical do Dashboard e na gaveta mobile o CSS
   // deixa o destaque em display:none — medir ali devolveria zero e faria o
@@ -10694,17 +10753,17 @@ function positionNavPill(){
   // com STRING (CTAs, Ações Rápidas) remove .active de todas as abas e não
   // repõe em nenhuma. Nesse estado o destaque é escondido, em vez de ficar
   // marcando a aba anterior, que seria informação falsa.
-  if(getComputedStyle(pill).display==='none'){ pill.classList.remove('is-ready'); return; }
-  if(!active){ pill.style.opacity='0'; return; }
-  pill.style.opacity='';
-  pill.style.width=active.offsetWidth+'px';
-  pill.style.height=active.offsetHeight+'px';
-  pill.style.transform=`translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
-  // A primeira medição não pode ser animada: sem isto o destaque entra
-  // deslizando do canto a cada carga da página.
-  if(!pill.classList.contains('is-ready')){
-    requestAnimationFrame(()=>pill.classList.add('is-ready'));
+  if(getComputedStyle(pill).display==='none'){
+    pill.classList.remove('is-ready');
+    if(spec) spec.classList.remove('is-ready');
+    return;
   }
+  if(!active){
+    pill.style.opacity='0';
+    if(spec) spec.style.opacity='0';
+    return;
+  }
+  navPillApplyGeometry(active);
 }
 // Remedição nos três eventos que mudam a largura das abas sem trocar a tela:
 // redimensionamento, escala de fonte (--fs-scale altera o padding e o texto) e
@@ -10746,9 +10805,7 @@ function bindNavMagnetics(){
     if(!alvoValido(alvo)) return;
     const pill=document.getElementById('navPillIndicator');
     if(!pill || getComputedStyle(pill).display==='none') return;
-    pill.style.width=alvo.offsetWidth+'px';
-    pill.style.height=alvo.offsetHeight+'px';
-    pill.style.transform=`translate(${alvo.offsetLeft}px, ${alvo.offsetTop}px)`;
+    navPillApplyGeometry(alvo);
   });
   // Volta ao ativo ao sair da barra inteira (e não de cada aba), senão o
   // destaque piscaria a cada passagem de uma aba para a vizinha.
