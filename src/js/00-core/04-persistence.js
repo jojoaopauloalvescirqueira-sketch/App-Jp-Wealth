@@ -527,11 +527,37 @@ function canonicalizeStructuralMetadata(){
     });
   }
 }
+// ---- Planejamento FX: guarda ESTRUTURAL do agregado no boot ----
+// migrate() roda em load() (06-boot.js) antes dos módulos 05-fx-planning/**
+// carregarem — mesmo motivo pelo qual mvpNotes/dg normalizam aqui. Este guard
+// garante só a FORMA do envelope (schemaVersion, plan objeto|null, auditLog
+// array, poda em 400 como o dg changeLog); nada além disso é apagado ou
+// inventado — campos desconhecidos atravessam intactos (STATE-SCHEMA.md §3).
+// A normalização PROFUNDA (meses, premissas, aportes) acontece em cópia na
+// camada de acesso (05-fx-planning/03-fx-state.js), que só roda após a carga
+// completa e nunca grava a versão limpa de volta sem mutação explícita.
+function fxPlanningNormalizeState(){
+  if(!S.fxPlanning || typeof S.fxPlanning!=='object' || Array.isArray(S.fxPlanning))
+    S.fxPlanning=structuredClone(DEFAULTS.fxPlanning);
+  const fx=S.fxPlanning;
+  if(!Number.isFinite(+fx.schemaVersion) || +fx.schemaVersion<1) fx.schemaVersion=1;
+  if(fx.plan!==null && (typeof fx.plan!=='object' || Array.isArray(fx.plan))) fx.plan=null;
+  if(fx.plan && (!fx.plan.baseline || typeof fx.plan.baseline!=='object' || Array.isArray(fx.plan.baseline))) fx.plan=null; // sem baseline não há plano válido
+  if(fx.plan){
+    if(!fx.plan.current || typeof fx.plan.current!=='object' || Array.isArray(fx.plan.current)) fx.plan.current=structuredClone(fx.plan.baseline);
+    if(!fx.plan.actuals || typeof fx.plan.actuals!=='object' || Array.isArray(fx.plan.actuals)) fx.plan.actuals={};
+    if(!Array.isArray(fx.plan.contributions)) fx.plan.contributions=[];
+    if(!Array.isArray(fx.plan.revisions)) fx.plan.revisions=[];
+  }
+  if(!Array.isArray(fx.auditLog)) fx.auditLog=[];
+  if(fx.auditLog.length>400) fx.auditLog=fx.auditLog.slice(-400);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
+  fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){

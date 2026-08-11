@@ -1,0 +1,145 @@
+# Planejamento FX — contrato da feature
+
+Motor de planejamento patrimonial temporal para Forex, do domínio
+Contabilidade/Patrimônio, apresentado como **tela principal própria**
+(`#fxplan`, quinta entrada da rail `.tab`/`data-screen`, decisão do gestor de
+2026-08-11 — os quatro modos são internos à tela, nunca abas principais).
+Deriva conceitualmente da planilha histórica `Planejamento FX.xlsx` **sem
+reproduzir suas inconsistências** (coluna de reserva "FUNDO (FIIS)" com 10%,
+proxy de despesas como % do patrimônio, taxa única de dólar, coluna de aporte
+instável, datas hardcoded). A planilha original contém anotações pessoais e
+**nunca entra no repositório**; toda fixture é sintética.
+
+## Três classes de informação — nunca se misturam
+
+| Classe | O que é | Onde vive |
+|---|---|---|
+| PLANEJADO | premissas do operador (taxa, aportes, câmbio projetado) | `plan.baseline` / `plan.current` |
+| REALIZADO | fechamentos mensais efetivos e ledger cambial | `plan.actuals` / `plan.contributions` |
+| NORMATIVO | FCR/FEO exigidos pelo Estatuto (Arts. 13.1, 13.2, 26.2) | `reserveRequirementsCalc()` — nunca duplicado |
+
+A interface marca cada valor com badge `REAL` ou `PREMISSA`; rentabilidade
+planejada **nunca** deriva de perfis de risco (a V10 removeu projeções por
+perfil; ADR-0010 pendente) e nenhum texto promete retorno.
+
+## Três séries temporais (decisão do gestor, 2026-08-11)
+
+- **Baseline** — premissas congeladas na aprovação do plano (`baseline.frozenAt`).
+  Nunca é sobrescrito; revisões não o tocam.
+- **Forecast vigente** — realizado até o último fechamento + projeção a partir
+  do saldo efetivamente realizado com as premissas de `plan.current`.
+- **Realizado** — histórico imutável a mudanças de premissas.
+
+Revisar premissas move o `current` anterior para `revisions[]` (snapshot leve,
+`supersededAt`); `fxForecastAtRevision()` reconstrói o forecast como era,
+usando os meses com `closedAt ≤ supersededAt` (meses editados depois são
+reconstrução aproximada, sinalizada na interface). Comparações suportadas:
+Realizado × Baseline, Realizado × Forecast anterior, Forecast atual × Baseline.
+
+## Convenções matemáticas (documentadas e testadas)
+
+- **Projeção**: a rentabilidade incide sobre o saldo de ABERTURA; aportes entram
+  depois do resultado — `close = open + open·rate + aportes`.
+- **Realizado**: mesma álgebra do MEI-JP (`03-mei-jp.js`, Correções 4/5):
+  `R_aj = (V_t − V_{t−1} − F_t)/V_{t−1}` ⇔ `profit = close − open − aportes`.
+  Entrada por taxa deriva o USD; entrada por USD deriva a taxa (`derivedField`).
+  Nenhuma metodologia nova de retorno com fluxo intra-mês foi criada.
+- **Precedência de taxa**: override de mês > override de ano > padrão.
+- **Câmbio médio de aquisição**: `Σ BRL investido ÷ Σ USD adquirido` — média
+  ponderada, nunca média das cotações. Só transações `affectsFxCostBasis:true`
+  (BRL→USD); créditos USD-nativos (Prop Firm) ficam fora por construção.
+- **Três câmbios distintos**: `acquisitionFxRate` (pago na aquisição, histórico),
+  `valuationFxRate` (conversão do mês realizado), `projectedFxRate` (premissa).
+  Alterar projeção nunca reescreve custo histórico.
+- Derivados (séries, saldos, variâncias, custo médio, resumo anual) **nunca
+  persistem** — recalculados pelas funções puras a cada uso.
+
+## Persistência — agregado `S.fxPlanning` (v1)
+
+```json
+{"schemaVersion":1, "plan":null, "auditLog":[]}
+```
+
+`plan`: `{id, name, createdAt, updatedAt, baseline, current, revisions[],
+actuals{AAAA-MM}, contributions[]}`. Estruturais (`startMonth`,
+`horizonMonths`, `initialBalanceUsd`) congelam com o baseline;
+`initialBalanceUsd` é **parâmetro do planejamento** — não é fonte canônica da
+Conta Mestre nem do patrimônio institucional. Fechamentos são contíguos desde o
+início (`fxNextOpenMonth`); editar mês fechado é auditado e preserva `closedAt`.
+
+- Guarda estrutural de boot: `fxPlanningNormalizeState()` em
+  `04-persistence.js` (migrate roda antes dos módulos tardios carregarem —
+  mesmo motivo de mvpNotes/dg). Só a FORMA do envelope; poda do `auditLog` em
+  400 como o `dg.changeLog`.
+- Normalização profunda: em CÓPIA na camada de acesso (`fxActivePlan()`);
+  campos desconhecidos do estado persistido atravessam intactos
+  (STATE-SCHEMA.md §3) e a versão limpa nunca é gravada de volta sem mutação.
+- Toda mutação audita em `fxPlanning.auditLog`
+  (`FX_PLAN_CREATED/ASSUMPTION_CHANGED/FX_MONTH_ACTUAL_RECORDED/EDITED/`
+  `FX_CONTRIBUTION_RECORDED/REMOVED/FX_PLAN_DELETED`) e registra em
+  `dgLogChange` — o aviso de backup pendente cobre o Planejamento FX.
+- O agregado viaja no backup normal (`jpwealth_v9_state`); o envelope não muda.
+  Builds antigos preservam o agregado dormente — rollback por construção.
+
+## Reservas — fonte única
+
+`reserveRequirementsCalc()` (`src/js/10-domain/07-reserve-requirements.js`) é a
+extração pura da matemática do antigo `reserveCalc()` do onboarding (decisão 1
+de 2026-08-11): FCR = 15% × capital nominal da Conta Mestre; FEO = 6 × despesas
+elegíveis; campo a campo idêntica (caracterização em `fx_planning_test.py`).
+Consumidores: onboarding (delegação) e `fxReservePanelData()` com fontes
+canônicas — capital de `S.params.saldoIni`, despesas/constituídos declarados no
+onboarding. O painel calcula e informa; nunca movimenta capital.
+
+## Distinção deliberada de sistemas vizinhos
+
+- **`mei.history`** registra equity mensal da conta para o modelo estatístico
+  (retornos log ajustados, GBM). O Planejamento FX registra patrimônio
+  consolidado do plano + aportes por origem + câmbio. **Separados no MVP por
+  decisão do gestor**; nenhuma conciliação nesta fase — lançar o realizado em
+  um não alimenta o outro.
+- **`acctPace`/projeção diária** cobrem o período anual de gestão pelo perfil;
+  o Planejamento FX é mensal e multianual por premissas do operador. Coexistem.
+
+## Módulos (clássicos, anexados ao fim do manifest)
+
+| Arquivo | Papel |
+|---|---|
+| `10-domain/07-reserve-requirements.js` | FCR/FEO — função pura compartilhada |
+| `30-accounting/05-fx-planning/01-fx-model.js` | modelo, validação, premissas, revisões |
+| `30-accounting/05-fx-planning/02-fx-engine.js` | séries, variâncias, custo cambial, resumo anual |
+| `30-accounting/05-fx-planning/03-fx-state.js` | ponte com `S`, mutações auditadas, painel de reservas |
+| `30-accounting/05-fx-planning/04-fx-charts.js` | SVGs sobre o cromo `CH` + resumos textuais |
+| `30-accounting/05-fx-planning/05-fx-ui.js` | quatro modos, formulários, tabela mensal |
+
+Superfície pública: `window.JPWFx.{model,engine,state,charts,ui}` +
+`reserveRequirementsCalc` global. Motor independente de DOM.
+
+## Interface
+
+Tela principal `#fxplan` com o card `#fxPlanningCard` (fora da personalização
+de layout nesta fase). Quatro modos internos: Visão Geral (KPIs, gráfico principal com transição
+histórico⇥projeção e alternância USD/BRL, rentabilidade em barras, painel de
+reservas), Planejamento (premissas vigentes + exclusão com confirmação
+`EXCLUIR`), Realizado (fechamento mensal + ledger de aportes) e Tabela
+(BASELINE × VIGENTE × desvio + resumo anual derivado + trilha de auditoria).
+Acessibilidade: estado nunca só por cor (badges/texto), resumo textual dos
+gráficos, labels reais, controles nativos; tabelas largas rolam em
+`.fxp-tablewrap`. Textos estruturais usam `.fxp-note` (a classe `.expl` é
+colapsada pela ajuda contextual e fica reservada à prosa doutrinária).
+
+## Testes
+
+`tools/fx_planning_test.py` (tier `standard`): casos 1–20 da especificação,
+Baseline × Forecast × Realizado, custo cambial ponderado, caracterização
+campo a campo das reservas, round-trip de persistência com reload, base legada
+sem o agregado, agregado corrompido, preservação de campos desconhecidos,
+contiguidade de fechamentos, fluxo real de UI e contenção em viewport móvel.
+
+## Fora de escopo desta fase (deliberado)
+
+Importação do Excel; exportação CSV/relatório; múltiplos cenários; gráfico
+mensal dedicado de aportes (dados presentes na tabela e no resumo anual);
+registro do card no sistema de personalização de layout; retiradas no
+realizado; conciliação com `mei.history`/`ledger`/`accounts[]`; qualquer
+pendência N3.

@@ -18,12 +18,13 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 
 ## Funcionalidades
 
-### Núcleo operacional — quatro áreas
+### Núcleo operacional — cinco áreas
 
 - **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
 - **Execução** — registro de ordens sob as regras do Estatuto: fases, risco programado, classificação de stops (2 ATR, Raiz-N), alavancagem.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
+- **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
 
 ### Onboarding e período operacional
 
@@ -54,6 +55,20 @@ Canvas não é a única representação: estatísticas e detalhes por compartime
 em DOM acessível. Corpos assentados são removidos e conservados apenas como contagens
 agregadas. O laboratório é educacional, isolado do motor financeiro e **não é um
 modelo de retorno de Forex, previsão de mercado ou promessa de desempenho**.
+
+### Planejamento FX
+
+**Tela principal própria** (quinta área da navegação), o Planejamento FX é o
+motor de planejamento patrimonial temporal para Forex: separa **planejado**
+(premissas do operador),
+**realizado** (fechamentos mensais e ledger cambial de aportes) e **normativo**
+(FCR/FEO do Estatuto, pela mesma função usada no onboarding). O baseline
+aprovado é congelado; o forecast vigente recalcula o futuro a partir do último
+fechamento real (rolling forecast) e as três séries são comparáveis. O custo
+médio do dólar usa média ponderada (`Σ BRL ÷ Σ USD`) e créditos USD-nativos não
+o contaminam. Rentabilidade planejada é premissa do usuário — nunca deriva de
+perfis de risco nem constitui promessa de retorno. Contrato em
+`docs/architecture/FX-PLANNING.md`.
 
 ### Base de Dados e backups
 
@@ -93,10 +108,11 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (7 —
-inclui smoke, Central de Configurações e Galton Board em Chromium real) e **full** (17
-verificações, incluindo segurança de importação/XSS, senha de investidor, recuperação
-transacional, reprodutibilidade de build e ciclo do service worker). O cenário longo
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (8 —
+inclui smoke, Central de Configurações, Galton Board e Planejamento FX em Chromium
+real) e **full** (18 verificações, incluindo segurança de importação/XSS, senha de
+investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
+worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.
 Taxonomia e composição em `docs/governance/QUALITY-GATES.md`.
 
@@ -128,6 +144,8 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 - `src/styles/app.css` — estilos extraídos do HTML original.
 - `src/js/` — lógica em domínios (`00-core` → `10-domain` → `20-ui` → `30-accounting` → `40-app`); a ordem em `manifest.json` é parte do runtime.
 - `src/js/40-app/18-galton-board/` — seis módulos clássicos isolados da feature.
+- `src/js/30-accounting/05-fx-planning/` — cinco módulos do Planejamento FX;
+  `src/js/10-domain/07-reserve-requirements.js` — FCR/FEO compartilhado.
 - `src/vendor/planck/` — Planck.js 1.5.0 pinado, licença e proveniência.
 - `assets/`, `manifests/`, `sw.js` — superfície PWA (ícones, manifesto único, service worker com precache).
 - `infra/ff-news-feed/` — documentação do alimentador do widget de notícias (repositório auxiliar, só dados públicos).

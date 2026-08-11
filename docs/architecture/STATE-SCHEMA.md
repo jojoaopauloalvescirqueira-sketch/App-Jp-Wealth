@@ -21,6 +21,9 @@ jpwealth_v9_state
 - `onboarding`: formulário de início e governança.
 - `mei`: configuração e histórico do modelo estatístico.
 - `quarantine`: intervalo de quarentena operacional.
+- `fxPlanning`: Planejamento FX — plano (baseline congelado, premissas vigentes,
+  revisões, fechamentos mensais, ledger cambial) e trilha de auditoria própria.
+  Derivados nunca persistem; contrato em `FX-PLANNING.md`.
 
 ## Regras de evolução
 

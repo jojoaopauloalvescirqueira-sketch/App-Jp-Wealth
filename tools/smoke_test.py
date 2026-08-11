@@ -65,10 +65,11 @@ try:
         })''')
         assert facts['compute']=='function', facts
         assert facts['render']=='function', facts
-        # Contrato atual: quatro telas operacionais na rail; as ferramentas
+        # Contrato atual: cinco telas operacionais na rail (Dashboard, Execution
+        # Board, Contas, Contabilidade e Planejamento FX); as ferramentas
         # auxiliares vivem na Central. O header possui Configuracoes, Notas e
         # Finalizar sessao.
-        assert facts['tabs']==4, facts
+        assert facts['tabs']==5, facts
         assert facts['headerActions']==3, facts
         assert facts['state'] is True, facts
         assert facts['storageKey']=='jpwealth_v9_state', facts

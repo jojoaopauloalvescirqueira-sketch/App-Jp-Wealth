@@ -2,6 +2,50 @@
 
 ## [Unreleased]
 
+### Planejamento FX — candidato de 2026-08-11 (branch `feature/fx-planning`)
+
+- Nova área **Planejamento FX** na tela Contabilidade: motor de planejamento
+  patrimonial temporal para Forex com três camadas separadas — planejado
+  (premissas), realizado (histórico contábil) e normativo (reservas do
+  Estatuto) — e três séries: baseline congelado, forecast vigente (rolling
+  forecast a partir do último fechamento real) e realizado imutável.
+- Convenções documentadas e testadas: rentabilidade sobre o saldo de abertura
+  com aportes após o resultado; realizado com a mesma álgebra do MEI-JP
+  (`R_aj = (V_t − V_{t−1} − F_t)/V_{t−1}`); precedência de overrides
+  mês > ano > padrão; horizonte livre (1–600 meses) com meses gerados
+  programaticamente.
+- Ledger cambial de aportes com custo médio ponderado
+  (`Σ BRL ÷ Σ USD`); entradas USD-nativas (`affectsFxCostBasis:false`) nunca
+  contaminam o custo; aquisição, valuation e projeção cambial são conceitos
+  separados.
+- A matemática FCR/FEO foi extraída de `reserveCalc()` (onboarding) para a
+  função pura compartilhada `reserveRequirementsCalc()`
+  (`src/js/10-domain/07-reserve-requirements.js`), com caracterização campo a
+  campo; onboarding e Planejamento FX consomem a mesma fonte — nenhuma
+  constante normativa duplicada, nenhum artigo alterado.
+- Novo agregado aditivo `S.fxPlanning` (schemaVersion 1) em
+  `jpwealth_v9_state`: guarda estrutural em `migrate()`, normalização profunda
+  em cópia na camada de acesso, campos desconhecidos preservados, trilha
+  própria de auditoria (podada em 400) e integração com o changeLog da
+  governança de backup. Backup antigo carrega sem perda; builds antigos
+  preservam o agregado dormente.
+- **Tela principal própria**: o Planejamento FX é a quinta área da navegação
+  (`#fxplan`, mesma mecânica `.tab`/`data-screen` da rail, pílula, menu móvel e
+  teclado das demais telas), por decisão do gestor pós-revisão — a
+  Contabilidade voltou ao estado estrutural anterior, sem restos da feature. O
+  contrato do smoke test passou de quatro para cinco telas operacionais.
+- Interface em quatro modos internos (Visão Geral, Planejamento, Realizado, Tabela) com
+  badges REAL/PREMISSA, gráfico baseline × projeção × realizado com transição
+  histórico⇥projeção e alternância USD/BRL, barras de rentabilidade, painel de
+  reservas com déficits, tabela mensal BASELINE × VIGENTE e resumo anual
+  derivado das datas. Resumos textuais acompanham os SVGs.
+- O manifest passou de 53 para 59 scripts (mesmo padrão de anexação do Galton);
+  `fx_planning_test.py` entrou no tier `standard` (agora 8; `full` 18).
+- A feature deriva conceitualmente da planilha `Planejamento FX.xlsx`, mas as
+  inconsistências históricas do Excel (FUNDO FIIS ≠ FCR, reserva como % do
+  patrimônio, coluna de aporte instável, taxa única de dólar, blocos anuais
+  manuais) foram deliberadamente NÃO reproduzidas; fixtures são sintéticas.
+
 ### Galton Board — candidato local de 2026-08-11
 
 - Adicionado `Configurações > Laboratório de Probabilidade > Galton Board`, com

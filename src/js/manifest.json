@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "bc7cb8c30ca73000044818424fa47f0e7ca765187c0eb171abb566ba7a5b1653"
+      "sha256": "6457a3e5c3886b6420e45967067c3db2060bddbf95cec97d8d6461cdf6f42e04"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "858e55b6eef244c6eae8aee6a57f3539e643f2a391ce4dc0271b1f530cc4b5b8"
+      "sha256": "9e2620fec119ff2009ee5a7fa59accf2bb91132f0218eeb03c5ad8bcd091d238"
     },
     {
       "order": 5,
@@ -194,7 +194,7 @@
       "order": 32,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "b83021a45d304b453f4c714bed09ac622af08d778e7fe83154fc0ad73c4275e5"
+      "sha256": "50b73531a4ac4c9c305a682e9f25c0582c88a519c120774c8b4210af30549921"
     },
     {
       "order": 33,
@@ -321,6 +321,42 @@
       "path": "src/js/40-app/18-galton-board/06-controller.js",
       "section": "GALTON BOARD · UI, LIFECYCLE E PREFERENCIAS ISOLADAS",
       "sha256": "de59083e2ca61474a6b76fa19af71fb2d9173f9524cbb210ed8cccd801c1869a"
+    },
+    {
+      "order": 54,
+      "path": "src/js/10-domain/07-reserve-requirements.js",
+      "section": "RESERVAS ESTATUTÁRIAS · FCR/FEO (FUNÇÃO PURA COMPARTILHADA)",
+      "sha256": "ac319f06db654cf6849be307c1959e65b9ce29aae392b4e60cc522ef46c4513b"
+    },
+    {
+      "order": 55,
+      "path": "src/js/30-accounting/05-fx-planning/01-fx-model.js",
+      "section": "PLANEJAMENTO FX · MODELO DE DOMÍNIO",
+      "sha256": "c4f55a0ea8d0d2c28c431b3e6a1cf990cab4b67c476fb501515ac6ed5753c684"
+    },
+    {
+      "order": 56,
+      "path": "src/js/30-accounting/05-fx-planning/02-fx-engine.js",
+      "section": "PLANEJAMENTO FX · MOTOR MATEMÁTICO PURO",
+      "sha256": "9df2beebc4f085fb8eb2e5ed10999aee83b5cc3efa6e3eb9041aedc50376a1e5"
+    },
+    {
+      "order": 57,
+      "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
+      "section": "PLANEJAMENTO FX · ESTADO E MUTAÇÕES",
+      "sha256": "35be4542b0b188fb799268ee9f2e02e15b71c20c49c786d77a1e48e1ab53b986"
+    },
+    {
+      "order": 58,
+      "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
+      "section": "PLANEJAMENTO FX · GRÁFICOS SVG",
+      "sha256": "49e3671fc5ce770aa1dfcefdad3f7935acd7ab4c5921cac8f63cce487b8c18c4"
+    },
+    {
+      "order": 59,
+      "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
+      "section": "PLANEJAMENTO FX · INTERFACE",
+      "sha256": "98dc9a40d6321e2f7eb522d238bd7a58e5eacc73f7ce7c06f205b12c39c653b1"
     }
   ]
 }

@@ -28,6 +28,8 @@ Para N0-V e N1:
 - smoke test;
 - Central de Configuracoes;
 - `galton_board_test.py`, incluindo matematica, fisica, persistencia, UI e lifecycle;
+- `fx_planning_test.py`: motor do Planejamento FX (casos 1-20), reservas FCR/FEO,
+  baseline x forecast x realizado, persistencia do agregado e fluxo real de UI;
 - browser real nos fluxos e viewports afetados.
 
 ### Full
@@ -55,8 +57,8 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 | Tier | Quantidade | Verificacoes adicionais |
 |---|---:|---|
 | `fast` | 4 | preflight, estrutura, diff-check e frescor material |
-| `standard` | 7 | smoke, Configuracoes e Galton Board |
-| `full` | 17 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, corrida assincrona, build, service worker e Notas |
+| `standard` | 8 | smoke, Configuracoes, Galton Board e Planejamento FX |
+| `full` | 18 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, corrida assincrona, build, service worker e Notas |
 
 O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
 `codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa

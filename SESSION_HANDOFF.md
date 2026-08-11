@@ -1,108 +1,65 @@
-# Session Handoff - Galton Board, publicado em origin/main
+# Session Handoff - Planejamento FX, candidato validado localmente
 
 - Data: 2026-08-11
-- Source revision publicada: `main@fb33ceb`
-- Commit material: `7fc4eb6` ("feat: add Galton probability laboratory"),
-  baseline `d9510dbb55f0`
-- Integracao: Pull Request #2, merge `fb33ceb` (2 parents: `d9510dbb55f0` e
-  `7fc4eb6`); arvore identica ao commit do candidato
-- Branch de origem: `codex/galton-board` (mesclada, preservada, nao excluida)
-- Manifest: 53 scripts, hashes reconciliados
-- Build ID: `dbca7e887edd287b`
-- Publicacao: `main` e `origin/main` sincronizadas em `fb33ceb`.
+- Branch: `feature/fx-planning` (criada de `main@8bb5f371` com autorização)
+- `BASE_SHA` e HEAD: `8bb5f3714673`
+- Árvore: candidato material não commitado (20 modificados + 4 caminhos novos)
+- Manifest: 59 scripts, hashes reconciliados
+- Build ID: `aa658d200db90b27`
+- Publicação: nenhuma; commit, push, merge e deploy não autorizados
 
-O estado Git e o runtime devem ser confirmados por `git status` e preflight. Esta
-nota representa a revisao publicada; expira se fonte, manifest, fixture, testes
-ou gerados mudarem apos `fb33ceb`.
+O estado Git e o runtime devem ser confirmados por `git status` e preflight.
+Esta nota representa o candidato local gerado e testado; expira se fonte,
+manifest, fixture, testes ou gerados mudarem.
 
-## Implementado (publicado)
+## Implementado no candidato
 
-- Caminho `Configuracoes > Laboratorio de Probabilidade > Galton Board`.
-- Planck.js `1.5.0` vendorizado sob MIT, SHA-256
-  `69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974`,
-  sem CDN ou download em runtime.
-- Seis scripts classicos em `src/js/40-app/18-galton-board/`, namespace
-  `window.JPWGalton`: config/geometry, PRNG, estatistica, fisica, renderer e
-  controller.
-- Passo fisico fixo de `1/120 s`, acumulador separado do render, limite de substeps,
-  fila, teto de corpos ativos e remocao idempotente apos assentamento.
-- Defaults finais: 10 linhas; espacamentos horizontal `1` e vertical `0.82`; raio de
-  pino `0.09`; raio de bola `0.14`; densidade `1`; restituicao `0.28`; atrito `0.22`;
-  gravidade `9.81`; jitter `0.07`; tolerancia `0`; bola-bola desligada.
-- Geometria com chute superior, guias simetricas no envelope triangular, soltura
-  normalizada limitada a abertura segura e `N + 1` bins para `N` linhas.
-- Histograma empirico, N/media/desvio/moda/assimetria/curtose, detalhes acessiveis por
-  bin e binomial `p=0.5` apenas em configuracao simetrica/centralizada, sem fitting.
-- Controles +1/+10/+100/+500, executar, pausar/continuar/reset, velocidades
-  0.5x/1x/2x/4x, release, inclinacao -3 a +3, presets e parametros avancados.
-- Lifecycle pausa ao sair/fechar/ocultar; descarte remove RAF, listeners, observers e
-  mundo. Canvas HiDPI tem equivalente DOM e reduced motion.
-- Preferencia isolada `jpwealth_galton_preferences_v1`; nenhum corpo/resultado e
-  persistido. `Finalizar sessao` remove a chave por allowlist e preserva chaves de
-  outras aplicacoes.
-- `sw.js` inclui todo o manifest, inclusive as duas omissoes do baseline
-  (`12-nav-style.js`, `17-economic-calendar.js`); o validador passa a impor o
-  invariante manifest-precache.
-- Correcao visual do recorte do modal em `390 x 844` e regressao geometrica no teste
-  de Configuracoes.
-- Teste focal integrado ao tier `standard`; benchmark longo de 10.000 bolas separado.
+- **Planejamento FX** (tela principal própria `#fxplan`, quinta entrada da
+  rail; a Contabilidade voltou ao estado anterior): planejado ×
+  realizado × normativo; baseline congelado, forecast vigente (rolling forecast
+  do último fechamento real) e realizado imutável; revisões de premissas
+  preservadas com reconstrução do forecast anterior.
+- Motor puro `window.JPWFx.engine` (retorno sobre abertura, aportes após o
+  resultado; realizado com a álgebra do MEI; overrides mês > ano > padrão;
+  horizonte 1–600; custo cambial ponderado com `affectsFxCostBasis`).
+- Agregado aditivo `S.fxPlanning` com guarda estrutural em `migrate()`,
+  normalização profunda em cópia, preservação de campos desconhecidos,
+  auditoria própria + `dgLogChange`.
+- `reserveRequirementsCalc()` extraído do onboarding (decisão 1 do gestor) em
+  `10-domain/07-reserve-requirements.js`; onboarding delega; caracterização
+  campo a campo em teste.
+- UI em quatro modos com badges REAL/PREMISSA, gráfico com transição
+  histórico⇥projeção e USD/BRL, barras de rentabilidade, painel de reservas,
+  tabela BASELINE × VIGENTE e resumo anual derivado; `.fxp-note` para textos
+  estruturais (a `.expl` é colapsada pela ajuda contextual).
+- Decisões vinculantes do gestor (2026-08-11) registradas em
+  `docs/work/ACTIVE-TASK.md`; contrato da feature em
+  `docs/architecture/FX-PLANNING.md`.
 
-## Evidencia disponivel
+## Evidência
 
-| Comando/fluxo | Resultado | Observacao |
-|---|---|---|
-| `python3 tools/agent_preflight.py --mode edit --allow-dirty` | PASS | Branch, HEAD, manifest/hashes e dirty conhecido; aviso de impacto agentico esperado. |
-| `python3 -u tools/galton_board_test.py` | PASS | Fisica/matematica, storage inacessivel ou incompatível, wipe, UI, teclado, responsividade e lifecycle em Chromium. |
-| `python3 -u tools/galton_board_benchmark.py` | PASS | 10.000/10.000 assentadas, 0 expiradas/rejeitadas, `bodyCount=1`, pico de 240 corpos ativos; 602,84 bolas/s apenas informativos. |
-| `python3 tools/settings_modal_test.py` | PASS | Navegacao, busca, foco, subdialogos e geometria movel. |
-| `python3 tools/finalize_session_test.py` | PASS | Wipe seletivo local/remoto e nenhuma ressurreicao da preferencia por controlador ja montado. |
-| `python3 tools/service_worker_upgrade_test.py` | PASS | Descoberta real do update, worker novo em `waiting`, duas abas antigas preservadas e build novo online/offline depois do fechamento. |
-| `python3 tools/build_reproducibility_test.py` | PASS | Build ID canonico `dbca7e887edd287b`. |
-| In-app Browser + Chromium da suite focal | PASS | Rota, Canvas, execucao e disclaimer; instalacao cacheada atualizou para `dbca7e887edd287b` e abriu Galton online/offline; `390 x 844`, temas e reduced motion automatizados. |
-| `python3 tools/quality_gate.py --tier full` | PASS 17/17 | Zero falhas/erros/omissoes; artefato `tools/.artifacts/quality-20260811T165927-full.json` (produzido sobre a arvore do candidato, byte-identica a `fb33ceb`). |
-| `python3 tools/quality_gate.py --tier fast` | PASS 4/4 | Reexecutado sobre o HEAD publicado `fb33ceb` nesta reconciliacao. |
+| Verificação | Resultado |
+|---|---|
+| `python3 tools/validate_project.py` | PASS — 59 scripts, precache equivalente, portátil reconstruído |
+| `python3 -u tools/fx_planning_test.py` | PASS — motor, reservas, persistência, UI, navegação 5 telas/teclado/refresh/resíduos, mobile |
+| `python3 tools/quality_gate.py --tier full` | PASS 18/18 — artefato `quality-20260811T183717-full.json` (pós-promoção a tela principal) |
+| `git diff --check` | PASS |
+| Chromium real | PASS — screenshots dos 4 modos entregues ao gestor |
 
-O benchmark informou distancia de variacao total `0.3581`; isso e diagnostico
-qualitativo, nao gate, calibracao ou fitting da curva teorica.
+## Próximas ações
 
-## Gerados oficiais
-
-`build-id.js` e `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html` foram reconstruidos
-pelo gerador oficial. O Build ID e `dbca7e887edd287b`; o SHA-256 do portatil e
-`038f9bf948aca9cec41bed34af4f130865f57c327b5f975216ea411f929bb416`.
-Nao editar esses derivados manualmente.
-
-## Reconciliacao agentica
-
-- Veredito: `AGENTIC IMPACT DETECTED`.
-- Motivo: nova arquitetura/feature, dependencia, script manifest, contrato de
-  preferencia auxiliar, rota de Configuracoes, PWA e composicao de testes atingem
-  representacoes consumidas por agentes.
-- Acao local executada: `CODE-MAP`, `ARCHITECTURE`, `CURRENT-STATE`, modelo de
-  seguranca, gates, README, changelog, inventario, testes e este handoff.
-- `AGENTS.md`, autoridade, skills e routing: afetados semanticamente, mas continuam
-  atuais por referencia; nenhuma alteracao local necessaria.
-- Norma/ADRs N3: nao afetados.
-- Indice/vetor: mecanismo oficial inexistente; `INDEX NOT REQUIRED`.
-- Estado: runtime, manifest, build, contratos, contexto e evidencias reconciliados;
-  `SYSTEM RECONCILED`.
-
-## Proximas acoes
-
-1. Nenhuma acao de integracao pendente: commit, merge e publicacao ja ocorreram
-   (`7fc4eb6` -> `fb33ceb` -> `origin/main`).
-2. Nenhuma tarefa ativa sucessora foi definida. `docs/work/ACTIVE-TASK.md` aguarda
-   proxima definicao de escopo pelo gestor; as dez pendencias N3 de
-   `CURRENT-STATE.md` permanecem como backlog conhecido, nao como tarefa em curso.
+1. Teste manual do gestor no navegador (`python3 tools/serve.py` → quinta tela
+   **Planejamento FX** na navegação principal).
+2. Autorizações separadas para commit e, depois, push/merge.
+3. Push da reconciliação Galton (`main@8bb5f371` está 1 commit à frente de
+   `origin/main`) também aguarda autorização.
+4. Fase 2 registrada em `FX-PLANNING.md` (fora de escopo): layout
+  personalizável do card, gráfico de aportes, cenários, importação do Excel,
+  conciliação MEI.
 
 ## Limites e rollback
 
-- Nenhuma regra N3 foi alterada; as dez pendencias normativas de
-  `CURRENT-STATE.md` permanecem bloqueadas.
-- Hipoteses guiadas de experimento e audio ficam para Fase 2.
-- Uma configuracao avancada extrema pode manter corpos em equilibrio sobre pinos ate
-  o limite de idade. Esses vencimentos sao comunicados e excluidos da amostra; os
-  defaults, presets e o benchmark de 10.000 terminaram com zero vencimentos.
-- Rollback de runtime: reverter apenas os arquivos autorizados ao `BASE_SHA`, gerar
-  novamente os derivados e repetir gates. A exclusao da chave local no navegador
-  exige autorizacao humana; nao usar reset destrutivo nem reescrever historico.
+Nenhuma pendência N3 tocada; nenhum dado real em fixture. Rollback: reverter os
+arquivos do contrato para `8bb5f3714673`; o agregado `fxPlanning` eventualmente
+gravado em bases locais fica dormente e preservado pela `migrate()` de builds
+anteriores. Não usar reset destrutivo.

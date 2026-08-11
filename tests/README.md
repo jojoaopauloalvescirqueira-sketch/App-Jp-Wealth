@@ -20,6 +20,11 @@ O relatorio JSON fica em `tools/.artifacts/` e nao e versionado. Consulte `docs/
   passo fixo, reproducibilidade, persistencia isolada, UI, `Enter`/`Space` em
   controles nativos, consolidacao por `Tab`, tabela de bins focalizavel e lifecycle;
   nao representa uma navegacao integral do modal somente por teclado.
+- `fx_planning_test.py`: motor do Planejamento FX (projecao composta, overrides,
+  cambio medio ponderado, baseline x forecast x realizado, metodologia MEI do
+  realizado), caracterizacao das reservas FCR/FEO extraidas do onboarding,
+  persistencia do agregado `fxPlanning` (round-trip, base legada, corrompida,
+  campos desconhecidos, contiguidade) e fluxo real de UI com viewport movel.
 - `storage_governance_test.py`: pasta, sequencia, backup e estado de governanca.
 - `persistence_failure_test.py`: falhas de leitura/escrita e aviso persistente.
 - `persistence_recovery_test.py`: modo de recuperacao e importacao valida/invalida.

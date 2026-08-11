@@ -154,6 +154,16 @@ const DEFAULTS = {
     backup:{lastConfirmedAt:'', lastConfirmedExportSequence:0},
     changeLog:[],
   },
+  // Planejamento FX: planejamento patrimonial temporal (Contabilidade/Patrimônio).
+  // plan:null até o operador criar um planejamento. Dentro de plan: baseline
+  // congelado na aprovação, premissas vigentes (current), revisões preservadas,
+  // fechamentos mensais (actuals) e ledger cambial (contributions). Derivados
+  // (séries, saldos, custo médio) NUNCA persistem — sempre recalculados pelo
+  // motor puro (05-fx-planning/02-fx-engine.js). initialBalanceUsd do plano é
+  // PARÂMETRO do planejamento, não fonte canônica da Conta Mestre.
+  // Guarda estrutural de boot: fxPlanningNormalizeState() (04-persistence.js);
+  // normalização profunda: camada de acesso (05-fx-planning/03-fx-state.js).
+  fxPlanning:{schemaVersion:1, plan:null, auditLog:[]},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o

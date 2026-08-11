@@ -4620,3 +4620,33 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
   font-size:calc(13px * var(--fs-scale)); padding:4px 6px; border-radius:6px;
 }
 .dg-banner-close:hover{color:var(--ink); background:var(--panel-2)}
+
+/* ============ PLANEJAMENTO FX (tela Contabilidade) ============ */
+/* Semântica PREMISSA × REAL nunca é só cor: badges com texto acompanham valores. */
+.fxp-modes{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px}
+.fxp-mode{color:var(--ink-dim); border-color:var(--line)}
+.fxp-mode-on{color:var(--violet); border-color:var(--violet); background:var(--indigo-deep)}
+.fxp-section{min-width:0}
+.fxp-tablewrap{overflow-x:auto; max-width:100%}
+.fxp-tablewrap table{min-width:640px}
+.fxp-err{color:var(--f4); font-size:calc(12px * var(--fs-scale)); margin-top:8px; line-height:1.5}
+.fxp-badge{display:inline-block; font-family:var(--mono); font-size:calc(8.5px * var(--fs-scale));
+  font-weight:700; letter-spacing:.4px; padding:1px 5px; border-radius:4px; margin-left:6px;
+  border:1px solid var(--line); color:var(--ink-dim); vertical-align:middle}
+.fxp-badge-real{color:var(--f1); border-color:var(--f1)}
+.fxp-badge-proj{color:var(--violet); border-color:var(--violet)}
+.fxp-derived{display:inline-block; font-family:var(--mono); font-size:calc(8.5px * var(--fs-scale));
+  color:var(--ink-faint); margin-left:4px}
+.fxp-del{padding:3px 8px; font-size:calc(10px * var(--fs-scale))}
+.fxp-note{font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin:0 0 8px}
+
+/* Topbar (shell global-dashboard) com CINCO telas principais: na faixa entre a
+   grade de toque (≤900px) e o desktop largo, os cinco rótulos não cabem sem
+   estourar o cabeçalho (largura mínima ~1152px). Mesmo padrão da rail
+   colapsada: pílulas numeradas 01–05, rótulo preservado no atributo title.
+   Declarado no fim do arquivo para vencer as regras de .n/.lbl dos shells. */
+@media(max-width:1160px) and (min-width:901px){
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{padding:7px 12px}
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .lbl{display:none}
+  html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .n{display:inline}
+}

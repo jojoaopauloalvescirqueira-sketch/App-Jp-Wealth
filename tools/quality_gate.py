@@ -26,6 +26,7 @@ STANDARD = FAST + (
     ("smoke", [sys.executable, "tools/smoke_test.py"]),
     ("settings", [sys.executable, "tools/settings_modal_test.py"]),
     ("galton-board", [sys.executable, "tools/galton_board_test.py"]),
+    ("fx-planning", [sys.executable, "tools/fx_planning_test.py"]),
 )
 FULL = STANDARD + (
     ("session-finalization", [sys.executable, "tools/finalize_session_test.py"]),

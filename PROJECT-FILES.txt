@@ -23,6 +23,7 @@ docs/GIT-WORKFLOW.md
 docs/architecture/ARCHITECTURE.md
 docs/architecture/CODE-MAP.md
 docs/architecture/DB-STORAGE-GOVERNANCE.md
+docs/architecture/FX-PLANNING.md
 docs/architecture/GALTON-BOARD.md
 docs/architecture/PWA-UPDATE-LIFECYCLE.md
 docs/architecture/STATE-SCHEMA.md
@@ -88,6 +89,7 @@ src/js/10-domain/03-phase-transitions.js
 src/js/10-domain/04-stop-statistics.js
 src/js/10-domain/05-brokers-prop-firms.js
 src/js/10-domain/06-quarantine.js
+src/js/10-domain/07-reserve-requirements.js
 src/js/20-ui/01-header-readout.js
 src/js/20-ui/02-sidebar.js
 src/js/20-ui/03-main-render.js
@@ -104,6 +106,11 @@ src/js/30-accounting/01-daily-ledger.js
 src/js/30-accounting/02-accounting-engine.js
 src/js/30-accounting/03-mei-jp.js
 src/js/30-accounting/04-patrimonial-simulation.js
+src/js/30-accounting/05-fx-planning/01-fx-model.js
+src/js/30-accounting/05-fx-planning/02-fx-engine.js
+src/js/30-accounting/05-fx-planning/03-fx-state.js
+src/js/30-accounting/05-fx-planning/04-fx-charts.js
+src/js/30-accounting/05-fx-planning/05-fx-ui.js
 src/js/40-app/01-navigation.js
 src/js/40-app/02-reset.js
 src/js/40-app/03-theme.js
@@ -140,6 +147,7 @@ tools/agent_preflight.py
 tools/async_generation_test.py
 tools/build_reproducibility_test.py
 tools/finalize_session_test.py
+tools/fx_planning_test.py
 tools/galton_board_benchmark.py
 tools/galton_board_test.py
 tools/import_xss_security_test.py

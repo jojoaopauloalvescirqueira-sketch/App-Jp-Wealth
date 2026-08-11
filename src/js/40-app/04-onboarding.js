@@ -284,38 +284,14 @@ function openOnboardingModal(mode, initialStep){
     const saldoEl=$('obSaldo');
     return saldoEl ? (parseFloat(saldoEl.value)||0) : (isEditMode?(S.params.saldoIni||0):0);
   };
-  const reserveCalc=()=>{
-    const capital=reserveCapitalValue();
-    const fcrReq=capital*0.15;
-    const fcrCur=numVal(reserveFcrCurrent);
-    const monthly=numVal(reserveMonthlyExpenses);
-    const feoReq=monthly*6;
-    const feoCur=numVal(reserveFeoCurrent);
-    const fcrCoverage=fcrReq>0?(fcrCur/fcrReq)*100:0;
-    const feoCoverage=feoReq>0?(feoCur/feoReq)*100:0;
-    const feoMonths=monthly>0?feoCur/monthly:0;
-    const fcrStatus=fcrCur>=fcrReq?'Regular':'Insuficiente';
-    const feoStatus=feoCur>=feoReq?'Regular':'Insuficiente';
-    const regularCount=(fcrStatus==='Regular'?1:0)+(feoStatus==='Regular'?1:0);
-    return {
-      capital,
-      fcrReq,
-      fcrCur,
-      fcrStatus,
-      monthly,
-      feoReq,
-      feoCur,
-      feoStatus,
-      fcrCoverage,
-      feoCoverage,
-      feoMonths,
-      fcrDiff:fcrCur-fcrReq,
-      feoDiff:feoCur-feoReq,
-      generalStatus:regularCount===2?'Reservas regulares':(regularCount===1?'Reservas parcialmente insuficientes':'Reservas críticas'),
-      generalTone:regularCount===2?'var(--f1)':(regularCount===1?'var(--f2)':'var(--f4)'),
-      hasDeficit:(fcrCur<fcrReq)||(feoCur<feoReq)
-    };
-  };
+  // A matemática FCR/FEO vive em reserveRequirementsCalc() (10-domain/07) — fonte
+  // única compartilhada com o Planejamento FX; não reimplementar aqui.
+  const reserveCalc=()=>reserveRequirementsCalc({
+    capital:reserveCapitalValue(),
+    fcrCurrent:numVal(reserveFcrCurrent),
+    monthlyExpenses:numVal(reserveMonthlyExpenses),
+    feoCurrent:numVal(reserveFeoCurrent)
+  });
   const cashSegTotal=()=>['centralCashMainPct','centralCashAgilePct','centralCashLiquidityPct','centralCashExternalPct','centralCashOtherPct']
     .reduce((sum,k)=>sum+numVal({centralCashMainPct,centralCashAgilePct,centralCashLiquidityPct,centralCashExternalPct,centralCashOtherPct}[k]),0);
   const liquidityTooSlow=(kind,val)=> kind==='fcr' ? (val==='D+2'||val==='Acima de D+2'||val==='Não definido') : (val==='Acima de D+2'||val==='Não definido');

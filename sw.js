@@ -31,6 +31,10 @@ const PRECACHE_URLS = [
   './src/js/40-app/18-galton-board/01-config.js', './src/js/40-app/18-galton-board/02-rng.js',
   './src/js/40-app/18-galton-board/03-statistics.js', './src/js/40-app/18-galton-board/04-physics.js',
   './src/js/40-app/18-galton-board/05-renderer.js', './src/js/40-app/18-galton-board/06-controller.js',
+  './src/js/10-domain/07-reserve-requirements.js',
+  './src/js/30-accounting/05-fx-planning/01-fx-model.js', './src/js/30-accounting/05-fx-planning/02-fx-engine.js',
+  './src/js/30-accounting/05-fx-planning/03-fx-state.js',
+  './src/js/30-accounting/05-fx-planning/04-fx-charts.js', './src/js/30-accounting/05-fx-planning/05-fx-ui.js',
   './manifests/jp-wealth.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
 ].flatMap(url=>url.startsWith('./assets/pwa-icon-')?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
