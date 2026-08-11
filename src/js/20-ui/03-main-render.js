@@ -30,26 +30,48 @@ function render(){
   // requestAnimationFrame: rAF não dispara em aba/painel oculto (lição já
   // paga duas vezes nesta base). Renders seguintes aplicam direto e o CSS
   // anima só o delta.
-  const feedRing=(id,{pct,zones,zi,value,zoneKey,ariaText,ceilingPct,scaleText})=>{
+  // `semi` seleciona a geometria da variante C (semicírculo 180°, do design):
+  // arco fino r=80 → 2.5133/pct e ponteiro de -90° a +90° → 1.8°/pct. Sem a
+  // flag vale o anel 1b de 270° (3.2044/pct, 225°+2.7°/pct).
+  const feedRing=(id,{pct,zones,zi,value,zoneKey,ariaText,ceilingPct,scaleText,semi})=>{
     const g=$(id); if(!g) return;
     g.querySelectorAll('.jpwg-ring-zone').forEach((el,i)=>{ if(zones[i]) el.setAttribute('stroke-dasharray',zoneDash(zones[i][0],zones[i][1])); });
     const fill=g.querySelector('[data-jpwg-arc]');
     const orbit=g.querySelector('[data-jpwg-needle]');
     const tip=g.querySelector('[data-jpwg-needle-tip]');
+    const dashFor=p=>((semi?2.5133:3.2044)*p).toFixed(1)+' 900';
+    // Ângulo em NÚMERO: o ponteiro consome com sufixo "deg" (CSS transform), o
+    // tick do teto consome cru (atributo SVG rotate). Uma fórmula só para os
+    // dois — foi tê-las separadas que deixou o teto na geometria do anel
+    // enquanto o resto já era semicírculo.
+    const degNum=p=>(semi? -90+1.8*p : 225+2.7*p);
+    const degFor=p=>degNum(p).toFixed(2)+'deg';
     const aplicar=()=>{
-      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray',(3.2044*pct).toFixed(1)+' 900'); }
-      if(orbit) orbit.style.transform='rotate('+(225+2.7*pct).toFixed(2)+'deg)';
+      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray',dashFor(pct)); }
+      if(orbit) orbit.style.transform='rotate('+degFor(pct)+')';
       if(tip) tip.setAttribute('fill',FCOLORS[zi]);
     };
-    if(!g.dataset.jpwgSeeded){
+    // Varredura de entrada. Só faz sentido com o instrumento RENDERIZADO: num
+    // card de tela inativa (display:none) não há estilo computado nem
+    // transição, então a semente não é marcada e a varredura acontece no
+    // primeiro render em que ele estiver visível.
+    if(!g.dataset.jpwgSeeded && g.offsetHeight>0){
       g.dataset.jpwgSeeded='1';
-      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray','0 900'); }
-      if(orbit) orbit.style.transform='rotate(225deg)';
+      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray',dashFor(0)); }
+      if(orbit) orbit.style.transform='rotate('+degFor(0)+')';
       if(tip) tip.setAttribute('fill',FCOLORS[zi]);
-      setTimeout(aplicar,60);
+      // LEITURA OBRIGATÓRIA antes de aplicar o alvo: força o recálculo de
+      // estilo para que o navegador ENXERGUE o estado semeado. Sem ela as duas
+      // escritas colapsam numa só e nenhuma transição é gerada — medido neste
+      // projeto: 0 transições com setTimeout(60), 1 com esta leitura. Também
+      // elimina a dependência de temporizador e de quadro (aba em segundo
+      // plano não avança rAF nem repinta).
+      if(fill) void getComputedStyle(fill).strokeDasharray;
+      if(orbit) void getComputedStyle(orbit).transform;
+      aplicar();
     } else aplicar();
     const ceil=g.querySelector('[data-jpwg-ceiling]');
-    if(ceil && ceilingPct!=null) ceil.setAttribute('transform','rotate('+(225+2.7*Math.min(100,ceilingPct)).toFixed(2)+' 100 100)');
+    if(ceil && ceilingPct!=null) ceil.setAttribute('transform','rotate('+degNum(Math.min(100,ceilingPct)).toFixed(2)+' 100 100)');
     const val=g.querySelector('[data-jpwg-value]'); if(val) val.textContent=value;
     const zk=g.querySelector('[data-jpwg-zonekey]'); if(zk && zoneKey){ zk.textContent=zoneKey; zk.style.color=FCOLORS[zi]; }
     // Rótulo de escala no miolo do anel (só onde existe: o DD do Dashboard, cuja
@@ -93,12 +115,13 @@ function render(){
   if(zoneEl && c.mScaled){
     zoneEl.innerHTML=[3,2,1,0].map(i=>`<div class="tz f${i+1}">${zn[i]} ${fmtPct(c.mScaled[i].ddmin)}–${fmtPct(c.mScaled[i].ddmax)}</div>`).join('');
   }
-  // Faixa de integração do Dashboard: o MESMO anel 1b, na mesma função — cada
-  // indicador no seu sub-card, com a classificação abaixo do gauge.
-  feedRing('gdGaugeDD',{pct:ddPct, zones:ddZones, zi:c.fi, value:fmtPct(c.dd),
+  // Faixa de integração do Dashboard: variante C (semicírculo), como o design
+  // usa nesta faixa — mais rasa que o anel, para linha densa de KPI. Mesma
+  // função, mesmos valores; só a geometria muda (semi:true).
+  feedRing('gdGaugeDD',{semi:true, pct:ddPct, zones:ddZones, zi:c.fi, value:fmtPct(c.dd),
     zoneKey:zn[c.fi], scaleText:'DE '+fmtPct(ddCeil),
     ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
-  feedRing('gdGaugeAlav',{pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi), value:fmtX(c.alavCar),
+  feedRing('gdGaugeAlav',{semi:true, pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi), value:fmtX(c.alavCar),
     zoneKey:(alavAcima?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav)), ceilingPct:(c.tetoAlav/4)*100,
     ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
   // metrics

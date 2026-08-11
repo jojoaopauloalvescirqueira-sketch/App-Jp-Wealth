@@ -528,12 +528,16 @@
   .jpwg-pill{display:inline-flex; align-items:center; gap:8px; padding:5px 12px; border-radius:999px; background:var(--panel-2); border:1px solid var(--line); font-family:var(--mono); font-size:var(--fs-sm); font-weight:700}
   .jpwg-pill-dot{width:7px; height:7px; border-radius:999px; flex:none}
   .jpwg-range{font-family:var(--mono); font-size:var(--fs-xs); letter-spacing:.06em; color:var(--ink-faint); text-align:center}
-  /* Espelho compacto do Dashboard — o MESMO anel 1b, menor. `flex:none` é
-     obrigatório: sem ele o flex do sub-card esmagava o item (medido: 73px, com
-     o SVG rendendo 39px de altura) — defeito, não escolha. */
-  .jpwg-mini{position:relative; width:112px; flex:none}
-  .jpwg-mini .jpwg-value{font-size:calc(15px * var(--fs-scale))}
-  .jpwg-mini .jpwg-ring-lbl{font-size:calc(7.5px * var(--fs-scale))}
+  /* Variante C (semicírculo) — a que o design usa na faixa do Dashboard: mais
+     rasa que o anel, para linha densa de KPI. `flex:none` é obrigatório: sem
+     ele o flex do sub-card esmagava o item (medido: 73px, com o SVG rendendo
+     39px de altura) — defeito, não escolha. */
+  .jpwg-semi{position:relative; width:132px; flex:none}
+  .jpwg-semi-track{fill:none; stroke:var(--panel-2); stroke-width:3; stroke-linecap:round}
+  .jpwg-semi-fill{fill:none; stroke-width:3; stroke-linecap:round; transition:stroke-dasharray .76s cubic-bezier(.22,.9,.25,1)}
+  .jpwg-semi-center{position:absolute; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; gap:1px; pointer-events:none}
+  .jpwg-semi .jpwg-value{font-size:calc(17px * var(--fs-scale))}
+  .jpwg-semi-scale{font-family:var(--mono); font-size:calc(7.5px * var(--fs-scale)); letter-spacing:.12em; color:var(--ink-faint)}
   /* Faixa de integração (padrão do design): cada indicador no próprio sub-card,
      com rótulo em cima e classificação embaixo. `min-width:0` nos sub-cards
      evita que o conteúdo de largura fixa impeça a quebra em telas estreitas. */
@@ -4058,7 +4062,7 @@
      definida acima, junto dos outros cards (eram um grid de 3 fixo; agora
      cada um é um card independente, movível por si só). */
   /* As barras compactas (.gd-thermo-track/-fill/-val/-lbl) foram substituídas
-     pelos gauges .jpwg-mini; o grupo permanece como contêiner. */
+     pelos gauges .jpwg-semi dentro de sub-cards; o grupo virou a faixa. */
   /* Faixa horizontal de indicadores: quebra em coluna quando não couberem os
      dois sub-cards com sua largura mínima. */
   html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; flex-wrap:wrap; gap:14px; align-items:stretch; margin-top:6px}
