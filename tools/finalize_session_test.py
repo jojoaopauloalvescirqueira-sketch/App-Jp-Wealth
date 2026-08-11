@@ -239,6 +239,7 @@ def run_dist_suite(browser, url):
       localStorage.setItem('jpw_fs','2');
       localStorage.setItem('jpwealth_v9_icon_theme','marble-knight');
       localStorage.setItem('jpwealth_v9_icon_choice','secondary');
+      localStorage.setItem('jpwealth_galton_preferences_v1',JSON.stringify({schemaVersion:1,preset:'realistic'}));
       markSessionCheckpoint();
       S.instruments[0].preco += 1;
       save();
@@ -286,7 +287,7 @@ def run_dist_suite(browser, url):
     assert estado_pos_wipe['onboarding']['done'] is False
     assert estado_pos_wipe.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") is None
-    for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice'):
+    for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice', 'jpwealth_galton_preferences_v1'):
         assert page.evaluate(f"localStorage.getItem('{key}')") is None, key
     checkpoint_ops=page.evaluate('window.__checkpointOps')
     assert ['remove','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
@@ -380,7 +381,7 @@ def run_dist_suite(browser, url):
 
     page_a = prepare_page(browser, url)
     page_a.evaluate('''() => {
-      ['jpwealth_v9_state','jpwealth_v9_state_corrompido_teste','jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice'].forEach(k=>localStorage.removeItem(k));
+      ['jpwealth_v9_state','jpwealth_v9_state_corrompido_teste','jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1'].forEach(k=>localStorage.removeItem(k));
       sessionStorage.clear();
     }''')
     page_a.reload(wait_until='load')
@@ -393,6 +394,16 @@ def run_dist_suite(browser, url):
       save();
       markSessionCheckpoint();
     }''')
+    page_b.locator('#headerConfigBtn').click()
+    page_b.evaluate("activateSettingsCategory('galton-board')")
+    page_b.wait_for_function("document.querySelector('[data-galton-root]')?.__galtonController?.active")
+    galton_before = page_b.evaluate('''() => {
+      const controller=document.querySelector('[data-galton-root]').__galtonController;
+      window.__staleGaltonController=controller;
+      controller.preferences.speed=4;
+      return {saved:controller.persist(),keyPresent:localStorage.getItem('jpwealth_galton_preferences_v1')!==null};
+    }''')
+    assert galton_before == {'saved': True, 'keyPresent': True}, galton_before
     page_a.reload(wait_until='load')
     page_a.wait_for_timeout(700)
     page_a.evaluate('''() => { window.__onbShown=true; closeModal(); }''')
@@ -408,6 +419,28 @@ def run_dist_suite(browser, url):
     assert page_b.evaluate("save()") is False
     estado_b2 = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
     assert estado_b2 is not None and estado_b2['ledger'] == []
+    galton_after = page_b.evaluate('''() => {
+      const stale=window.__staleGaltonController;
+      const current=document.querySelector('[data-galton-root]').__galtonController;
+      stale.preferences.speed=2;
+      const staleWrite=stale.persist();
+      return {
+        keyAbsent:localStorage.getItem('jpwealth_galton_preferences_v1')===null,
+        staleDestroyed:stale.destroyed,
+        staleWrite,
+        replaced:current!==stale,
+        currentActive:current.active,
+        currentSpeed:current.preferences.speed,
+      };
+    }''')
+    assert galton_after == {
+        'keyAbsent': True,
+        'staleDestroyed': True,
+        'staleWrite': False,
+        'replaced': True,
+        'currentActive': True,
+        'currentSpeed': 1,
+    }, galton_after
     assert 'Operador Aba B' not in page_b.locator('body').inner_text()
     close_checked(page_a)
     close_checked(page_b)

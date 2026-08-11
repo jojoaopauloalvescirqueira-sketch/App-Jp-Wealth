@@ -67,7 +67,10 @@ function selectAppIcon(choiceKey){
 function registerAppServiceWorker(){
   if(window.JP_WEALTH_PORTABLE_BUILD===true) return;
   if(!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).catch(()=>{}),{once:true});
+  window.addEventListener('load',()=>navigator.serviceWorker
+    .register('./sw.js',{scope:'./',updateViaCache:'none'})
+    .then(registration=>registration.update())
+    .catch(()=>{}),{once:true});
 }
 
 applyAppIconChoice(currentAppIconChoice(),{persist:false});

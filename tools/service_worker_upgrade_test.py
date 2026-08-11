@@ -113,6 +113,17 @@ def arm(page):
 def wait_until(page, predicate: str, timeout=8000): page.wait_for_function(predicate, timeout=timeout)
 
 
+def wait_for_waiting_worker(page, timeout=8.0):
+    deadline = time.monotonic() + timeout
+    last = None
+    while time.monotonic() < deadline:
+        last = page.evaluate("""async()=>{const r=await navigator.serviceWorker.getRegistration();return {installing:r?.installing?.state||null,waiting:r?.waiting?.state||null,active:r?.active?.state||null}}""")
+        if last["waiting"] == "installed":
+            return last
+        time.sleep(0.05)
+    raise AssertionError(f"worker novo nao chegou a waiting/installed: {last}")
+
+
 def main():
     with tempfile.TemporaryDirectory(prefix="jpwealth-pwa-upgrade-") as temp_dir:
         temp = Path(temp_dir); old_root, new_root = temp / "old", temp / "new"
@@ -134,11 +145,16 @@ def main():
                 report["before"] = {"a": {"page": page_build(a), "worker": worker_build(a), "state": state(a)}, "b": {"page": page_build(b), "worker": worker_build(b), "state": state(b)}}
                 offline_old = page(context, observed); context.set_offline(True); offline_old.goto(base + "index.html?offline=old", wait_until="load"); wait_until(offline_old, "navigator.serviceWorker.controller"); report["offline_old"] = {"page": page_build(offline_old), "worker": worker_build(offline_old)}; offline_old.close(); context.set_offline(False)
                 handler.mode = "new"; report["direct_new_before_update"] = direct_fetch(base + "sw.js"); assert report["direct_new_before_update"]["sha256"] == new_sha
-                arm(a); arm(b); request_count = len(handler.requests); a.evaluate("async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update()}")
-                wait_until(a, "navigator.serviceWorker.getRegistration().then(r=>r.waiting?.state==='installed')")
+                arm(a); arm(b); request_count = len(handler.requests)
+                # Descoberta real: uma nova navegacao recebe o index network-first e
+                # seu bootstrap inline chama registration.update(). O harness nao
+                # pode forcar update() por fora do runtime.
+                discovery = page(context, observed); discovery.goto(base + "index.html?discover=new", wait_until="load"); wait_until(discovery, "navigator.serviceWorker.controller")
+                wait_for_waiting_worker(discovery)
+                report["runtime_discovery"] = {"page": page_build(discovery), "worker": worker_build(discovery), "state": state(discovery)}
                 report["waiting_detected"] = {"a": state(a), "b": state(b), "events_a": a.evaluate("window.__jpwUpgradeEvents"), "events_b": b.evaluate("window.__jpwUpgradeEvents")}
                 report["waiting"] = {"a": {"page": page_build(a), "controller": worker_build(a), "events": a.evaluate("window.__jpwUpgradeEvents"), "state": state(a)}, "b": {"page": page_build(b), "controller": worker_build(b), "events": b.evaluate("window.__jpwUpgradeEvents"), "state": state(b)}, "caches": a.evaluate("caches.keys()")}
-                a.close(); time.sleep(.3); report["after_close_a"] = {"state_b": state(b), "caches": b.evaluate("caches.keys()")}
+                discovery.close(); a.close(); time.sleep(.3); report["after_close_a"] = {"state_b": state(b), "caches": b.evaluate("caches.keys()")}
                 b.close(); time.sleep(.7)
                 online_new = page(context, observed); online_new.goto(base + "index.html?build=new", wait_until="load"); wait_until(online_new, "navigator.serviceWorker.controller"); online_new.reload(wait_until="load"); wait_until(online_new, "navigator.serviceWorker.controller")
                 report["new_online"] = {"page": page_build(online_new), "worker": worker_build(online_new), "state": state(online_new), "caches": online_new.evaluate("caches.keys()")}
@@ -151,6 +167,7 @@ def main():
     print(json.dumps(report, ensure_ascii=False, indent=2))
     assert not observed["pageerror"] and not observed["requestfailed"], report
     for item in (report["before"]["a"], report["before"]["b"]): assert item["page"] == {"html":"old","css":"old","js":"old","id":"test-old"} and item["worker"]["build"] == "test-old" and item["state"]["updateViaCache"] == "none", report
+    assert report["runtime_discovery"]["page"]["html"] == "new" and report["runtime_discovery"]["worker"]["build"] == "test-old", report
     assert "jp-wealth-test-new" in report["waiting"]["caches"], report
     for key in ("a", "b"):
         item = report["waiting"][key]; assert item["page"] == {"html":"old","css":"old","js":"old","id":"test-old"} and item["controller"]["build"] == "test-old" and "controllerchange" not in item["events"], report

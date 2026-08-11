@@ -2,7 +2,7 @@
 const SESSION_CHECKPOINT_KEY='jpwealth_session_checkpoint_v1';
 const SESSION_WIPE_CHANNEL='jpwealth_session_events_v1';
 const SESSION_WIPE_STORAGE_KEY='jpwealth_session_wipe_signal_v1';
-const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice',SESSION_WIPE_STORAGE_KEY];
+const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1',SESSION_WIPE_STORAGE_KEY];
 let sessionCheckpointValue=null;
 let sessionFinalizeEntry='safe';
 let sessionFinalizeBackStep='safe';
@@ -12,6 +12,16 @@ let sessionFinalizeExportAcknowledged=false;
 let sessionNoticeTimer=null;
 let sessionCrossTabChannel=null;
 let sessionLastWipeToken=null;
+if(!Number.isFinite(window.JP_WEALTH_SESSION_WIPE_EPOCH)) window.JP_WEALTH_SESSION_WIPE_EPOCH=0;
+
+function sessionResetAuxiliarySurfaces(){
+  // Invalida controladores que ainda retêm preferências auxiliares em memória.
+  // O epoch impede regravação mesmo se um hook visual falhar durante o wipe.
+  window.JP_WEALTH_SESSION_WIPE_EPOCH+=1;
+  if(typeof handleGaltonSessionWipe==='function'){
+    try{ handleGaltonSessionWipe(); }catch(error){}
+  }
+}
 
 function sessionStableValue(value){
   if(Array.isArray(value)) return value.map(sessionStableValue);
@@ -86,6 +96,7 @@ function sessionHandleRemoteFinalization(message){
     showSessionNotice('Outra aba finalizou a sessão, mas algumas chaves não puderam ser removidas: '+report.failures.join(', '));
     return;
   }
+  sessionResetAuxiliarySurfaces();
   S=emptyJPWealthState();
   persistNotesAfterSessionWipe();
   window.__onbShown=true;
@@ -327,6 +338,7 @@ function finalizeJPWealthSession(){
   sessionNotifyFinalized();
   const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true});
   if(!report.ok){ renderSessionCleanupError(report); return; }
+  sessionResetAuxiliarySurfaces();
   S=emptyJPWealthState();
   persistNotesAfterSessionWipe();
   // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre

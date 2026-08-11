@@ -4,15 +4,16 @@
 Contrato duplo:
   1. lixo local não rastreado (.DS_Store, temporário de editor, subdiretório ignorado)
      NÃO pode alterar o Build ID, o monólito nem os hashes do manifest;
-  2. mudança real num input oficial rastreado DEVE alterar o Build ID.
+  2. mudança real num input oficial do candidato DEVE alterar o Build ID.
 
 Como funciona: monta duas cópias do projeto num diretório temporário a partir dos
-arquivos rastreados pelo Git (com o conteúdo atual do disco, para cobrir correções
-ainda não commitadas), roda `tools/rebuild_monolith.py` real em cada uma e compara.
-A árvore de trabalho nunca é tocada.
+arquivos rastreados pelo Git e de qualquer input oficial já declarado no manifest
+(com o conteúdo atual do disco, inclusive fontes novas ainda não commitadas), roda
+`tools/rebuild_monolith.py` real em cada uma e compara. A árvore de trabalho nunca
+é tocada.
 """
 from pathlib import Path
-import os, shutil, subprocess, sys, tempfile
+import json, os, shutil, subprocess, sys, tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -27,15 +28,18 @@ LIXO = {
     'tools/.artifacts/relatorio.json': b'{"local":true}',
 }
 
-def arquivos_rastreados():
+def arquivos_do_candidato():
     saida = subprocess.run(['git', 'ls-files', '-z'], capture_output=True, check=True).stdout
-    return [p for p in saida.decode('utf-8').split('\0') if p]
+    arquivos = {p for p in saida.decode('utf-8').split('\0') if p}
+    manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
+    arquivos.update(item['path'] for item in manifest['files'])
+    return sorted(arquivos)
 
-def montar(destino: Path, rastreados):
-    for rel in rastreados:
+def montar(destino: Path, arquivos):
+    for rel in arquivos:
         origem = ROOT / rel
         if not origem.is_file():
-            continue                       # arquivo rastreado e removido no disco: ignorar
+            continue                       # arquivo removido no disco: o rebuild deve decidir
         alvo = destino / rel
         alvo.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(origem, alvo)
@@ -60,18 +64,18 @@ def fatos(destino: Path):
     }
 
 def main():
-    rastreados = arquivos_rastreados()
+    arquivos = arquivos_do_candidato()
     with tempfile.TemporaryDirectory(prefix='jpw-repro-') as raiz:
         raiz = Path(raiz)
         limpo, sujo, alterado = raiz / 'limpo', raiz / 'sujo', raiz / 'alterado'
 
         # ---- 1. checkout limpo: referência canônica ----
-        montar(limpo, rastreados)
+        montar(limpo, arquivos)
         rebuild(limpo)
         a = fatos(limpo)
 
         # ---- 2. mesmo checkout + lixo local ignorado ----
-        montar(sujo, rastreados)
+        montar(sujo, arquivos)
         semear_lixo(sujo)
         assert (sujo / 'icons/.DS_Store').is_file(), 'o lixo sintético deveria existir'
         rebuild(sujo)
@@ -83,7 +87,7 @@ def main():
         assert a['manifest'] == b['manifest'], 'lixo alterou os hashes do manifest'
 
         # ---- 3. contraprova: mudar um INPUT OFICIAL deve mudar o Build ID ----
-        montar(alterado, rastreados)
+        montar(alterado, arquivos)
         alvo = alterado / 'src/js/00-core/05-helpers.js'
         assert alvo.is_file(), 'input oficial de referência não encontrado'
         alvo.write_bytes(alvo.read_bytes() + b'\n// alteracao real de fonte para o teste\n')

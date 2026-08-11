@@ -4286,6 +4286,81 @@ html[data-custom-layout="enabled"] #dashLayoutSettingsCard{display:block}
   --jp-layer-toast:300;
 }
 
+/* ==========================================================
+   LABORATÓRIO DE PROBABILIDADE · GALTON BOARD
+   Superfície educacional isolada; não reutiliza cores semânticas de risco.
+   ========================================================== */
+#settingsModal [data-settings-panel="galton-board"]{max-width:none}
+.galton-board{display:grid;gap:16px;padding-bottom:12px;color:var(--jp-ink,var(--ink))}
+.galton-kicker{margin:0;color:var(--jp-info,var(--violet));font:700 10px var(--jp-font-data,var(--mono));letter-spacing:.12em;text-transform:uppercase}
+.galton-board .settings-lead{margin-bottom:0}
+.galton-disclaimer{
+  margin:0;padding:11px 13px;border:1px solid var(--jp-border,var(--line));border-left:3px solid var(--jp-info,var(--violet));
+  border-radius:8px;background:var(--jp-surface-raised,var(--panel-2));color:var(--jp-ink-muted,var(--ink-dim));line-height:1.55;font-size:var(--set-fs-aux,var(--fs-sm));
+}
+.galton-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.galton-metrics>div{min-width:0;padding:9px 10px;border:1px solid var(--jp-border,var(--line));border-radius:8px;background:var(--jp-surface-raised,var(--panel-2))}
+.galton-metrics span{display:flex;align-items:center;gap:4px;color:var(--jp-ink-muted,var(--ink-dim));font-size:10px;white-space:nowrap}
+.galton-metrics strong{display:block;margin-top:4px;font:700 14px var(--jp-font-data,var(--mono));color:var(--jp-ink,var(--ink));overflow:hidden;text-overflow:ellipsis}
+.galton-info{width:16px;height:16px;min-height:0!important;padding:0!important;border:1px solid var(--jp-border,var(--line));border-radius:50%;background:transparent;color:var(--jp-ink-muted,var(--ink-dim));font:700 10px/1 var(--jp-font-data,var(--mono));cursor:help}
+.galton-stage{position:relative;width:100%;height:clamp(360px,58vh,540px);min-height:320px;overflow:hidden;border:1px solid var(--jp-border,var(--line));border-radius:10px;background:var(--jp-surface,var(--panel))}
+.galton-stage canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+.galton-bin-tooltip{position:absolute;z-index:2;max-width:calc(100% - 16px);pointer-events:none;padding:6px 8px;border:1px solid var(--jp-border,var(--line));border-radius:6px;background:var(--jp-surface-raised,var(--panel-2));box-shadow:0 5px 16px rgba(0,0,0,.24);color:var(--jp-ink,var(--ink));font:11px/1.4 var(--jp-font-data,var(--mono));white-space:normal;overflow-wrap:anywhere}
+.galton-status-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:22px}
+.galton-status-row p{margin:0;color:var(--jp-ink-muted,var(--ink-dim));font-size:var(--set-fs-aux,var(--fs-sm));line-height:1.45}
+.galton-controls{display:grid;gap:12px;padding:14px;border:1px solid var(--jp-border,var(--line));border-radius:10px;background:var(--jp-surface-raised,var(--panel-2))}
+.galton-control-group{display:grid;gap:7px}
+.galton-control-label,.galton-controls legend,.galton-control-grid label,.galton-parameter-grid label{color:var(--jp-ink-muted,var(--ink-dim));font-size:var(--set-fs-label,11px);font-weight:600}
+.galton-button-row{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.galton-button-row button,.galton-segmented button{
+  min-height:34px;padding:0 12px;border:1px solid var(--jp-border,var(--line));border-radius:7px;background:var(--jp-surface,var(--panel));color:var(--jp-ink,var(--ink));font:600 var(--set-fs-button,12px) var(--jp-font-ui,var(--sans));cursor:pointer;text-transform:none;letter-spacing:normal;
+}
+.galton-button-row button:hover,.galton-segmented button:hover,.galton-segmented button[aria-pressed="true"]{border-color:var(--jp-action,var(--violet));background:color-mix(in srgb,var(--jp-action,var(--violet)) 13%,var(--jp-surface,var(--panel)));color:var(--jp-action,var(--violet))}
+.galton-button-row .galton-primary{border-color:var(--jp-action,var(--violet));background:var(--jp-action,var(--violet));color:#fff}
+.galton-seed{margin-left:auto;color:var(--jp-ink-muted,var(--ink-dim));font:11px var(--jp-font-data,var(--mono))}
+.galton-seed output{color:var(--jp-ink,var(--ink));font-weight:700}
+.galton-control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+.galton-control-grid>label{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+.galton-control-grid input[type="range"]{grid-column:1/-1;width:100%;accent-color:var(--jp-action,var(--violet))}
+.galton-control-grid select,.galton-parameter-grid input[type="number"]{width:100%;min-height:34px;padding:6px 8px;border:1px solid var(--jp-border,var(--line));border-radius:7px;background:var(--jp-surface,var(--panel));color:var(--jp-ink,var(--ink));font:12px var(--jp-font-data,var(--mono))}
+.galton-speed{min-width:0;margin:0;padding:0;border:0}
+.galton-speed legend{margin-bottom:6px}
+.galton-segmented{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.galton-segmented button{padding:0 8px}
+.galton-control-grid .galton-check,.galton-parameter-grid .galton-check{display:flex;align-items:center;gap:8px;grid-template-columns:none}
+.galton-check input{accent-color:var(--jp-action,var(--violet))}
+.galton-theory-status{margin:0;color:var(--jp-ink-muted,var(--ink-dim));font-size:10px;line-height:1.45}
+.galton-details{border:1px solid var(--jp-border,var(--line));border-radius:9px;background:var(--jp-surface-raised,var(--panel-2))}
+.galton-details>summary{padding:12px 14px;cursor:pointer;color:var(--jp-ink,var(--ink));font-size:var(--set-fs-section-title,13px);font-weight:650}
+.galton-details>p,.galton-details>ol,.galton-details>.galton-parameter-grid,.galton-details>.galton-table-wrap{margin:0 14px 14px}
+.galton-details>p,.galton-details>ol{color:var(--jp-ink-muted,var(--ink-dim));font-size:var(--set-fs-aux,var(--fs-sm));line-height:1.55}
+.galton-parameter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.galton-parameter-grid label{display:grid;gap:5px;align-content:start}
+.galton-table-wrap{overflow:auto;max-height:320px}
+.galton-table-wrap table{width:100%;border-collapse:collapse;color:var(--jp-ink,var(--ink));font:12px var(--jp-font-data,var(--mono))}
+.galton-table-wrap caption{text-align:left;padding:0 0 8px;color:var(--jp-ink-muted,var(--ink-dim));font-family:var(--jp-font-ui,var(--sans))}
+.galton-table-wrap th,.galton-table-wrap td{padding:7px 9px;border-bottom:1px solid var(--jp-border,var(--line));text-align:right}
+.galton-table-wrap th:first-child,.galton-table-wrap td:first-child{text-align:left}
+.galton-table-wrap tbody tr:focus-visible{outline:2px solid var(--jp-action,var(--violet));outline-offset:-2px;background:color-mix(in srgb,var(--jp-action,var(--violet)) 10%,transparent)}
+.galton-storage-status{min-height:16px;margin:0;color:var(--jp-ink-muted,var(--ink-dim));font-size:10px}
+.galton-storage-status.is-error{color:#d97706}
+.galton-board button:focus-visible,.galton-board input:focus-visible,.galton-board select:focus-visible,.galton-board summary:focus-visible{outline:2px solid var(--jp-action,var(--violet));outline-offset:2px}
+
+/* O bloco de geometria por ID da Central é posterior à regra mobile legada;
+   esta defesa final preserva o modal em tela cheia abaixo de 761 px. */
+@media(max-width:760px){
+  #settingsOverlay{padding:0}
+  #settingsModal{display:flex;flex-direction:column;width:100%;height:100%;max-width:none;max-height:none;min-width:0;overflow:hidden}
+  #settingsModal .settings-modal-head{width:100%;max-width:100%;min-width:0;flex:0 0 auto}
+  #settingsModal .settings-modal-body{width:100%;max-width:100%;min-width:0;flex:1 1 auto}
+  .galton-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .galton-stage{height:clamp(300px,55vh,430px);min-height:280px}
+  .galton-control-grid,.galton-parameter-grid{grid-template-columns:1fr}
+  .galton-seed{width:100%;margin-left:0}
+}
+@media(min-width:761px) and (max-width:1050px){.galton-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.galton-board *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 /* ---------- NORMA DE POPOVERS ----------
    Popovers e menus contextuais do JP Wealth não devem permanecer dentro de
    cards animados, transformados ou sujeitos a clipping. Todo popover nasce
