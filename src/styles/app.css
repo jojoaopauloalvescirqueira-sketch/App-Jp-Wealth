@@ -1164,6 +1164,17 @@
   }
   .seg button:last-child{border-right:none}
   .seg button.on{background:var(--violet); color:#fff}
+  /* Marca de "padrão do sistema" num segmentado: ponto discreto no canto. É
+     DECORATIVA — a informação em palavras fica na legenda ao lado do controle,
+     porque um ponto não é lido por leitor de tela nem sobrevive a quem não
+     distingue a marca. Usa currentColor para funcionar tanto no botão inerte
+     quanto no selecionado, que inverte fundo e texto. */
+  .seg button.is-default{position:relative}
+  .seg button.is-default::after{
+    content:''; position:absolute; top:4px; right:4px;
+    width:4px; height:4px; border-radius:999px;
+    background:currentColor; opacity:.55;
+  }
   .check-result{position:sticky; bottom:16px; margin-top:20px}
 
   /* MONEY/NUM coloring */

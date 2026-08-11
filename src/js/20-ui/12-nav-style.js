@@ -10,14 +10,17 @@
 // Ambas as aparências foram reescritas aqui do zero a partir do PADRÃO visual —
 // nenhum código de terceiro foi copiado para dentro do projeto.
 //
-// Sem a chave, o padrão é 'kinetic'. Valor desconhecido também cai no padrão,
-// para que uma chave corrompida à mão não deixe a navegação sem estilo.
+// Quem nunca escolheu começa por NAV_STYLE_DEFAULT. Valor desconhecido também
+// cai nele, para que uma chave corrompida à mão não deixe a navegação sem
+// estilo. O padrão é declarado UMA vez aqui: a Central lê esta constante para
+// dizer qual é, em vez de repetir o nome em outro lugar e arriscar divergir.
 const NAV_STYLE_KEY='jpw_nav';
 const NAV_STYLES=['kinetic','pill','classic'];
+const NAV_STYLE_DEFAULT='pill';
 function navStyleValue(){
   let v=null;
   try{ v=localStorage.getItem(NAV_STYLE_KEY); }catch(e){}
-  return NAV_STYLES.includes(v)?v:'kinetic';
+  return NAV_STYLES.includes(v)?v:NAV_STYLE_DEFAULT;
 }
 function applyNavStyle(){
   document.documentElement.setAttribute('data-nav-style', navStyleValue());
@@ -82,7 +85,24 @@ function scheduleNavPill(){
 }
 function renderNavStyleSeg(){
   const v=navStyleValue();
-  document.querySelectorAll('#navStyleSeg button').forEach(b=>b.classList.toggle('on', b.dataset.navVal===v));
+  document.querySelectorAll('#navStyleSeg button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.navVal===v);
+    // Marca de "padrão do sistema". É decorativa: quem carrega a informação em
+    // texto é a legenda abaixo, para leitor de tela e para quem não distingue
+    // a marca visual.
+    b.classList.toggle('is-default', b.dataset.navVal===NAV_STYLE_DEFAULT);
+  });
+  // O nome do padrão vem do rótulo do próprio botão — a string existe uma vez
+  // só, no HTML. Trocar NAV_STYLE_DEFAULT reescreve esta legenda sozinho.
+  const nota=document.getElementById('navStyleDefaultNote');
+  if(nota){
+    const btn=document.querySelector(`#navStyleSeg button[data-nav-val="${NAV_STYLE_DEFAULT}"]`);
+    const nome=btn?btn.textContent.trim():NAV_STYLE_DEFAULT;
+    const usandoPadrao = v===NAV_STYLE_DEFAULT;
+    nota.textContent = usandoPadrao
+      ? `Padrão do sistema: ${nome} — é o que você está usando, e o que aparece para quem abre o aplicativo pela primeira vez.`
+      : `Padrão do sistema: ${nome} — é o que aparece para quem abre o aplicativo pela primeira vez. A sua escolha atual é outra e vale só neste navegador.`;
+  }
 }
 function bindNavStyleSeg(){
   document.querySelectorAll('#navStyleSeg button').forEach(b=>b.addEventListener('click',()=>{
