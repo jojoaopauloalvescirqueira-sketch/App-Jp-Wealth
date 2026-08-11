@@ -13,6 +13,12 @@ const FF_NEWS_CACHE_KEY='jpwealth.ui.ffNews.v1';
 const FF_NEWS_URL_OVERRIDE_KEY='jpwealth.ui.ffNews.sourceUrl';
 const FF_NEWS_MAX_AGE_MS=30*60*1000;
 const FF_NEWS_POLL_MS=5*60*1000;
+// Tique de re-render (contagem regressiva do próximo evento e reclassificação
+// passado/próximo). Não faz fetch — o consumo da fonte segue no ciclo de 5 min.
+const FF_NEWS_TICK_MS=60*1000;
+// Janela de iminência: a menos de 15 min o realce muda para a cor de perigo,
+// a mesma já usada pelo termômetro High.
+const FF_NEWS_IMMINENT_MS=15*60*1000;
 const FF_NEWS_CURRENCIES=['USD','EUR','JPY','GBP'];
 let ffNewsInFlight=false;
 let ffNewsLastError=false;
@@ -70,6 +76,43 @@ function ffNewsStatusText(cache){
   return (ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
 }
 
+// Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,
+// depois horas compactas ("em 1h05"). Nunca negativo — evento passado deixa
+// de ser "próximo" na seleção, não aqui.
+function ffNewsCountdownLabel(ms){
+  const min=Math.floor(ms/60000);
+  if(min<1) return 'agora';
+  if(min<60) return 'em '+min+' min';
+  const h=Math.floor(min/60), m=min%60;
+  return 'em '+h+'h'+(m?String(m).padStart(2,'0'):'');
+}
+
+// Linha-resumo "Próximo · <evento> · contagem" acima da tabela. Construída só
+// com textContent — mesma disciplina anti-injeção do restante do widget.
+function ffNewsRenderNext(next,now){
+  const el=document.getElementById('gdNewsNext');
+  if(!el) return;
+  el.textContent='';
+  el.classList.remove('gd-news-next-imminent');
+  if(!next){ el.hidden=true; return; }
+  const ms=next.when.getTime()-now;
+  const label=document.createElement('span');
+  label.className='gd-news-next-label';
+  label.textContent='Próximo';
+  const title=document.createElement('strong');
+  title.className='gd-news-next-title';
+  title.textContent=next.title;
+  const cur=document.createElement('span');
+  cur.className='gd-news-cur';
+  cur.textContent=next.country;
+  const count=document.createElement('span');
+  count.className='gd-news-next-count';
+  count.textContent=ffNewsCountdownLabel(ms);
+  if(ms<=FF_NEWS_IMMINENT_MS) el.classList.add('gd-news-next-imminent');
+  el.append(label,title,cur,count);
+  el.hidden=false;
+}
+
 function ffNewsRender(){
   const list=document.getElementById('gdNewsList');
   const empty=document.getElementById('gdNewsEmpty');
@@ -84,9 +127,15 @@ function ffNewsRender(){
     .sort((a,b)=>a.when-b.when);
   empty.hidden=!(cache && today.length===0);
   const now=Date.now();
+  // O próximo evento é o primeiro ainda não ocorrido (>= now: complementar ao
+  // critério de passado abaixo, que usa < now — nenhum evento fica sem classe).
+  const next=today.find(e=>e.when.getTime()>=now)||null;
+  ffNewsRenderNext(next,now);
   for(const e of today){
     const tr=document.createElement('tr');
-    tr.className='gd-news-item'+(e.when.getTime()<now?' gd-news-item-past':'');
+    tr.className='gd-news-item'
+      +(e.when.getTime()<now?' gd-news-item-past':'')
+      +(next && e===next?' gd-news-item-next':'');
     const tdTime=document.createElement('td');
     const time=document.createElement('time');
     time.className='gd-news-time';
@@ -167,6 +216,9 @@ function initFfNews(){
     ffNewsRender();
     if(document.visibilityState==='visible') ffNewsFetch(false);
   },FF_NEWS_POLL_MS);
+  // Tique de 1 min só de render: mantém a contagem regressiva e a transição
+  // próximo→passado precisas sem nenhum consumo adicional da fonte.
+  setInterval(ffNewsRender,FF_NEWS_TICK_MS);
   ffNewsRender();
   ffNewsFetch(false);
 }

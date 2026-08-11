@@ -514,6 +514,9 @@
             <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
             <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
           </div>
+          <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
+               oculto quando não resta evento futuro hoje. -->
+          <p id="gdNewsNext" class="gd-news-next" hidden></p>
           <table class="gd-news-table">
             <thead>
               <tr>
