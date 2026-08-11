@@ -1373,6 +1373,73 @@
      sobreposição (padrão do macOS) a propriedade não tem efeito, e também não
      há salto, então serve nos dois casos. */
   html:has(#settingsOverlay.show){overflow:hidden; scrollbar-gutter:stable}
+
+  /* ---------- Calendário Econômico (17-economic-calendar.js) ----------
+     Diálogo compartilhado pelos dois pontos de entrada (menu ⋯ do widget de
+     Notícias e folha Operação da Central). Mesmas convenções da Central:
+     overlay fixo com .show, trava de rolagem do documento (mesma lição da
+     rolagem encadeada corrigida lá) e tokens do painel. */
+  html:has(#ecalOverlay.show){overflow:hidden; scrollbar-gutter:stable}
+  /* Linha de AÇÃO no menu de Configurações ("Configurações → Calendário
+     Econômico", um passo). Divisor sutil a separa das categorias; o chevron
+     final sinaliza que abre algo, não que navega para uma página. */
+  .settings-menu-launch{margin-top:12px; position:relative}
+  .settings-menu-launch::before{content:''; position:absolute; top:-7px; left:8px; right:8px; height:1px; background:var(--line)}
+  .settings-menu-launch svg:last-child{margin-left:auto; width:14px; height:14px; flex:0 0 14px; color:var(--ink-faint)}
+  .ecal-overlay{position:fixed; inset:0; z-index:70; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
+  .ecal-overlay.show{display:flex}
+  .ecal-modal{
+    width:min(680px,95vw); max-height:min(86vh,860px); min-height:320px;
+    display:flex; flex-direction:column; overflow:hidden;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:0 24px 70px rgba(0,0,0,.48); font-family:var(--sans);
+  }
+  /* Prefixo de id + escudo: .ecal-head é uma tag <header>, e o shell tem regras
+     por SELETOR DE TAG (header{…flex-wrap:wrap} em ≤900px, height/padding no
+     tesla) que vazam para dentro do diálogo — a mesma armadilha já corrigida em
+     .mvp-notes-head nesta base. Sem o nowrap explícito, o × caía para uma
+     segunda linha no celular. */
+  #ecalModal .ecal-head{
+    display:flex; flex-wrap:nowrap; align-items:flex-start; justify-content:space-between;
+    gap:14px; padding:16px 20px 12px; border-bottom:1px solid var(--line);
+    flex:none; position:static; height:auto; min-height:0; background:transparent;
+  }
+  #ecalModal .ecal-head-text{min-width:0; flex:1}
+  .ecal-head-text h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
+  .ecal-sub{margin:4px 0 0; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .ecal-close{width:34px; height:34px; flex:0 0 34px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer}
+  .ecal-close:hover{color:var(--ink); background:var(--panel-2)}
+  .ecal-close svg{width:16px; height:16px}
+  .ecal-filters{margin:12px 20px 0; width:fit-content; flex:none}
+  .ecal-body{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:12px 20px 16px}
+  .ecal-day{margin-bottom:14px}
+  .ecal-day-title{margin:0 0 6px; font-family:var(--mono); font-size:var(--fs-xs); font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.11em}
+  .ecal-day-today .ecal-day-title{color:var(--violet)}
+  .ecal-day-list{display:flex; flex-direction:column}
+  .ecal-item{display:flex; align-items:baseline; gap:10px; padding:7px 0; border-bottom:1px solid var(--line)}
+  .ecal-item:last-child{border-bottom:0}
+  .ecal-item-past{opacity:.55}
+  .ecal-time{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink-dim); flex:0 0 44px}
+  .ecal-title{flex:1; min-width:0; font-size:var(--fs-md); color:var(--ink)}
+  .ecal-nums{display:flex; gap:14px; flex:none}
+  .ecal-num{display:flex; flex-direction:column; align-items:flex-end; min-width:58px}
+  .ecal-num-label{font-family:var(--mono); font-size:9px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em}
+  .ecal-num-value{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink)}
+  .ecal-empty{margin:0; padding:18px 20px; color:var(--ink-dim)}
+  .ecal-foot{display:flex; flex-direction:column; gap:3px; padding:10px 20px 14px; border-top:1px solid var(--line); flex:none; font-size:var(--fs-xs); color:var(--ink-faint)}
+  .ecal-foot #ecalFreshness{font-family:var(--mono)}
+  .ecal-news-menu button[role="menuitem"]{
+    display:block; width:100%; text-align:left; border:0; border-radius:7px;
+    padding:9px 10px; background:transparent; color:var(--ink); font:inherit;
+    font-size:var(--fs-sm); cursor:pointer;
+  }
+  .ecal-news-menu button[role="menuitem"]:hover,.ecal-news-menu button[role="menuitem"]:focus-visible{background:var(--indigo-deep); color:var(--violet)}
+  @media(max-width:760px){
+    .ecal-overlay{padding:0; align-items:stretch}
+    .ecal-modal{width:100%; max-height:none; height:100%; border-radius:0; border:0}
+    .ecal-nums{gap:10px}
+    .ecal-num{min-width:50px}
+  }
   .settings-overlay{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
   .settings-overlay.show{display:flex}
   .settings-modal{width:min(1160px,95vw); height:min(88vh,920px); min-height:520px; display:grid; grid-template-rows:auto minmax(0,1fr); overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 70px rgba(0,0,0,.48); font-family:var(--sans)}
@@ -4045,11 +4112,16 @@
     display:flex; align-items:center; justify-content:space-between; gap:10px;
     font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); margin-bottom:10px;
   }
+  html[data-shell="global-dashboard"] .gd-news-actions{display:flex; align-items:center; gap:6px; flex:none}
   html[data-shell="global-dashboard"] .gd-news-refresh{
     width:24px; height:24px; border-radius:50%; border:1px solid var(--jp-border);
     background:var(--jp-surface); color:var(--jp-ink-muted); cursor:pointer;
     font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center; flex:none;
   }
+  /* ⋯ compartilha a anatomia do ↻ (classe base) e se distingue pelo glifo;
+     letter-spacing aperta os três pontos para caberem no mesmo círculo. */
+  html[data-shell="global-dashboard"] .gd-news-more{font-size:14px; letter-spacing:-1px; padding-bottom:6px}
+  html[data-shell="global-dashboard"] .gd-news-more[aria-expanded="true"]{color:var(--jp-ink); border-color:var(--jp-ink-muted)}
   html[data-shell="global-dashboard"] .gd-news-refresh:hover{background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink)}
   html[data-shell="global-dashboard"] .gd-news-refresh:disabled{opacity:.5; cursor:default}
   html[data-shell="global-dashboard"] .gd-news-table{width:100%; border-collapse:collapse}
@@ -4486,7 +4558,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '53df545581092343';
+const JP_WEALTH_BUILD_ID = 'ff5bb4f75ce0cdc2';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -5003,7 +5075,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
-            <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+            <span class="gd-news-actions">
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+              <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
+                   semântica, é o que o guardrail do arrasto já ignora — segurar
+                   aqui nunca inicia reorganização do card. -->
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções de Notícias de Alto Impacto" aria-haspopup="menu" aria-expanded="false">⋯</button>
+            </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
                oculto quando não resta evento futuro hoje. -->
@@ -5453,6 +5531,40 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
      inerte fora do modo de edição. -->
 <div id="jpPopoverLayer"></div>
 
+<!-- Calendário Econômico (17-economic-calendar.js) — UMA implementação, DOIS
+     pontos de entrada: o menu ⋯ do widget de Notícias e a linha "Calendário
+     Econômico" no menu de Configurações (ação de nível superior, um passo).
+     Lê o MESMO cache sanitizado de 15-ff-news.js (ffNewsReadCache) — nenhum
+     fetch, cache ou sanitização próprios. Escopo SEMANAL de propósito: a fonte
+     só publica a semana corrente e não divulga valores realizados; o título
+     não promete mês. -->
+<div class="ecal-overlay" id="ecalOverlay" aria-hidden="true">
+  <section class="ecal-modal" id="ecalModal" role="dialog" aria-modal="true" aria-labelledby="ecalTitle">
+    <header class="ecal-head">
+      <div class="ecal-head-text">
+        <h2 id="ecalTitle">Calendário Econômico</h2>
+        <p class="ecal-sub" id="ecalRange" aria-live="polite"></p>
+      </div>
+      <button type="button" class="ecal-close" id="ecalCloseBtn" aria-label="Fechar calendário econômico" title="Fechar">
+        <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </header>
+    <div class="seg ecal-filters" id="ecalFilters" role="group" aria-label="Filtrar por moeda">
+      <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+      <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+      <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+      <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+      <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+    </div>
+    <div class="ecal-body" id="ecalBody" tabindex="-1"></div>
+    <p class="ecal-empty" id="ecalEmpty" hidden></p>
+    <footer class="ecal-foot">
+      <span id="ecalFreshness"></span>
+      <span class="ecal-foot-note">Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+    </footer>
+  </section>
+</div>
+
 <!-- Barra de personalização — GLOBAL, uma única sessão compartilhada pelas 7
      telas (13-dashboard-layout.js): permanece visível e ativa ao navegar
      entre abas, nunca cancela/salva/restaura sozinha numa troca de tela.
@@ -5663,6 +5775,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -13978,6 +14091,7 @@ const SETTINGS_ICONS={
   knowledge:'<path d="M12 6c-1.8-1.2-4.2-1.6-6.5-1v12.5c2.3-.6 4.7-.2 6.5 1 1.8-1.2 4.2-1.6 6.5-1V5c-2.3-.6-4.7-.2-6.5 1Z"/><path d="M12 6v12.5"/>',
   data:'<path d="M12 3c4 0 7 1.1 7 2.5S16 8 12 8s-7-1.1-7-2.5S8 3 12 3Z"/><path d="M5 5.5V12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12v6.5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V12"/>',
   about:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".2" fill="currentColor" stroke-width="2.4"/>',
+  calendar:'<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><path d="M8 14h2M14 14h2M8 17.2h2"/>',
   back:'<path d="M14.5 5 7 12l7.5 7"/>',
   forward:'<path d="M9.5 5 17 12l-7.5 7"/>',
   chevron:'<path d="m9 6 6 6-6 6"/>'
@@ -14019,6 +14133,20 @@ function buildSettingsMenu(){
     const option=document.createElement('option'); option.value=item.id; option.textContent=item.label; select.append(option);
   });
   select.addEventListener('change',()=>settingsNavigateTopLevel(select.value));
+  // Calendário Econômico — AÇÃO de nível superior, não categoria: abre o
+  // diálogo compartilhado (17-economic-calendar.js) em um passo, como o
+  // requisito pede ("Configurações → Calendário Econômico"). Sem
+  // data-settings-category de propósito: não é página navegável, não entra na
+  // pilha de navegação nem no <select> mobile (cujo change navega categorias),
+  // e a contagem de categorias do contrato de testes permanece intacta. O
+  // clique é tratado por delegação em 17-economic-calendar.js (mesmo id que
+  // marca o lançador do subdiálogo); aqui só se constrói a linha.
+  const launch=document.createElement('button');
+  launch.type='button'; launch.id='ecalOpenFromSettingsBtn';
+  launch.className='settings-menu-item settings-menu-launch';
+  launch.setAttribute('aria-haspopup','dialog');
+  launch.innerHTML=`${settingsIconSvg('calendar')}<span>Calendário Econômico</span>${settingsIconSvg('chevron')}`;
+  menu.append(launch);
   menu.dataset.ready='true';
 }
 
@@ -17599,6 +17727,10 @@ function ffNewsRender(){
     tr.append(tdTime,tdCur,tdImpact,tdTitle,tdPrev,tdAnt);
     list.append(tr);
   }
+  // Calendário Econômico (17-economic-calendar.js) lê o mesmo cache: se estiver
+  // aberto quando este ciclo rodar, re-renderiza junto. Guarda de existência —
+  // este arquivo carrega antes do 17, e no monólito reduzido o 17 pode faltar.
+  if(typeof ecalRenderIfOpen==='function') ecalRenderIfOpen();
 }
 
 function ffNewsCacheStale(){
@@ -17927,6 +18059,274 @@ function renderDgBackupBanner(){
 // os guards em 06-boot.js, no mesmo padrão de renderMvpNotesHeader()
 renderDgStorageCard();
 renderDgBackupBanner();
+// ============ CALENDÁRIO ECONÔMICO — SEMANA CORRENTE (N1) ============
+// UMA implementação, DOIS pontos de entrada (menu ⋯ do widget de Notícias e a
+// folha do grupo Operação na Central). Consome exclusivamente o cache já
+// sanitizado de 15-ff-news.js via ffNewsReadCache() — zero fetch, zero cache e
+// zero sanitização próprios: o pipeline anti-XSS do widget continua sendo o
+// único caminho de entrada de dado externo, e toda escrita de texto aqui é por
+// textContent.
+//
+// ESCOPO SEMANAL É DECISÃO, NÃO LIMITAÇÃO DE CÓDIGO: a fonte
+// (ff_calendar_thisweek) só publica a semana corrente e não tem o campo
+// `actual`. Auditoria de 2026-08-11 — upstream sem semanas arbitrárias
+// (HTTP 404 em lastweek/nextweek) e sem endpoint mensal. Por isso o título
+// não diz "mês" e não existe coluna Realizado (uma coluna permanentemente
+// "—" leria como defeito de carga, não como lacuna da fonte).
+const ECAL_CURRENCIES=['USD','EUR','GBP','JPY'];
+// var, não const — de propósito. No monólito os módulos são concatenados num
+// único script clássico: a DECLARAÇÃO de ecalRenderIfOpen iça para o topo do
+// arquivo inteiro, e o ffNewsRender() do módulo 15 (que roda no boot, antes
+// desta linha) passa no typeof e a chama. Com const, ecalState estaria na zona
+// morta temporal e o boot inteiro morreria em ReferenceError; com var, o nome
+// existe como undefined e a guarda de ecalRenderIfOpen devolve em silêncio.
+var ecalState={open:false, opener:null, filter:'all', menu:null, menuAnchor:null};
+
+function ecalEl(id){ return document.getElementById(id); }
+
+// ---- dados: leitura única do cache do widget ----
+function ecalEvents(){
+  const cache=(typeof ffNewsReadCache==='function')?ffNewsReadCache():null;
+  if(!cache) return null;
+  return {
+    fetchedAt:cache.fetchedAt, generatedAt:cache.generatedAt,
+    events:cache.events.map(e=>({...e, when:new Date(e.date)})).sort((a,b)=>a.when-b.when)
+  };
+}
+
+function ecalDayKey(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function ecalDayLabel(d){
+  // "ter · 12 ago" — mesma língua do restante do painel.
+  return d.toLocaleDateString('pt-BR',{weekday:'short', day:'2-digit', month:'short'}).replace(/\./g,'');
+}
+
+function ecalRangeLabel(events){
+  if(!events.length) return '';
+  const a=events[0].when, b=events[events.length-1].when;
+  const fmt=d=>d.toLocaleDateString('pt-BR',{day:'2-digit', month:'short'}).replace(/\./g,'');
+  return 'Semana corrente da fonte · '+(ecalDayKey(a)===ecalDayKey(b)?fmt(a):fmt(a)+' – '+fmt(b));
+}
+
+// ---- render (textContent em todo dado externo — disciplina do widget) ----
+function ecalRender(){
+  const body=ecalEl('ecalBody'), empty=ecalEl('ecalEmpty'), fresh=ecalEl('ecalFreshness'), range=ecalEl('ecalRange');
+  if(!body||!empty||!fresh||!range) return;
+  body.textContent='';
+  const data=ecalEvents();
+  if(!data){
+    range.textContent='';
+    fresh.textContent='';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no widget de Notícias.';
+    empty.hidden=false;
+    return;
+  }
+  const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
+  fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  range.textContent=ecalRangeLabel(data.events);
+  const filtered=data.events.filter(e=>ecalState.filter==='all'||e.country===ecalState.filter);
+  if(!filtered.length){
+    empty.textContent=ecalState.filter==='all'
+      ? 'A fonte não lista eventos de alto impacto para a semana corrente.'
+      : 'Sem eventos de alto impacto em '+ecalState.filter+' nesta semana.';
+    empty.hidden=false;
+    return;
+  }
+  empty.hidden=true;
+  const now=Date.now();
+  const todayKey=ecalDayKey(new Date());
+  let currentKey=null, dayWrap=null, list=null;
+  for(const e of filtered){
+    const key=ecalDayKey(e.when);
+    if(key!==currentKey){
+      currentKey=key;
+      dayWrap=document.createElement('section');
+      dayWrap.className='ecal-day'+(key===todayKey?' ecal-day-today':'');
+      const h=document.createElement('h3');
+      h.className='ecal-day-title';
+      h.textContent=ecalDayLabel(e.when)+(key===todayKey?' · hoje':'');
+      list=document.createElement('div');
+      list.className='ecal-day-list';
+      dayWrap.append(h,list);
+      body.append(dayWrap);
+    }
+    const row=document.createElement('div');
+    row.className='ecal-item'+(e.when.getTime()<now?' ecal-item-past':'');
+    const time=document.createElement('time');
+    time.className='ecal-time';
+    time.dateTime=e.date;
+    time.textContent=e.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const cur=document.createElement('span');
+    cur.className='gd-news-cur';
+    cur.textContent=e.country;
+    const title=document.createElement('span');
+    title.className='ecal-title';
+    title.textContent=e.title;
+    const nums=document.createElement('span');
+    nums.className='ecal-nums';
+    const mk=(label,val)=>{
+      const w=document.createElement('span'); w.className='ecal-num';
+      const l=document.createElement('span'); l.className='ecal-num-label'; l.textContent=label;
+      const v=document.createElement('span'); v.className='ecal-num-value'; v.textContent=val||'—';
+      w.append(l,v); return w;
+    };
+    nums.append(mk('Consenso',e.forecast), mk('Anterior',e.previous));
+    row.append(time,cur,title,nums);
+    list.append(row);
+  }
+}
+
+// Chamado por ffNewsRender() ao fim de cada ciclo do widget: se o calendário
+// estiver aberto quando um fetch/tick atualizar o cache, a tela acompanha —
+// sem isso, dado novo só apareceria fechando e reabrindo.
+function ecalRenderIfOpen(){ if(!ecalState || !ecalState.open) return; ecalRender(); }
+
+function ecalSetFilter(cur){
+  // §16 do ticket: abre sempre em Todas; a troca vale só enquanto aberto.
+  ecalState.filter=ECAL_CURRENCIES.includes(cur)?cur:'all';
+  document.querySelectorAll('#ecalFilters button').forEach(b=>{
+    const on=b.dataset.ecalCur===ecalState.filter;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',String(on));
+  });
+  ecalRender();
+}
+
+// ---- foco: armadilha simples, mesmo contrato dos outros diálogos ----
+function ecalFocusables(){
+  return [...ecalEl('ecalModal').querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')]
+    .filter(el=>!el.closest('[hidden]'));
+}
+function ecalKeydown(event){
+  if(!ecalState.open) return;
+  // stopImmediatePropagation, não stopPropagation: o Escape global de
+  // 06-boot.js (→ closeModal) está registrado no MESMO nó document, e
+  // stopPropagation não bloqueia listeners do próprio nó.
+  if(event.key==='Escape'){ event.stopImmediatePropagation(); closeEconomicCalendar(); return; }
+  if(event.key!=='Tab') return;
+  const list=ecalFocusables(); if(!list.length) return;
+  const first=list[0], last=list[list.length-1];
+  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
+}
+
+// ---- entry point único (§10 do ticket) ----
+function openEconomicCalendar(opener){
+  if(ecalState.open) return;
+  ecalState.open=true;
+  ecalState.opener=(opener instanceof HTMLElement)?opener:null;
+  // Central aberta? vira subdiálogo — mesmo contrato das Notas: a Central fica
+  // inerte por baixo e devolve o foco ao lançador quando este diálogo fechar.
+  if(typeof settingsIsOpen==='function' && settingsIsOpen() && typeof suspendSettingsForSubdialog==='function'){
+    suspendSettingsForSubdialog();
+  }
+  ecalSetFilter('all');
+  // Revalida em silêncio pelo pipeline do widget se o cache envelheceu — o
+  // calendário nunca fala com a rede diretamente.
+  if(typeof ffNewsFetch==='function') ffNewsFetch(false);
+  const overlay=ecalEl('ecalOverlay');
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+  document.addEventListener('keydown',ecalKeydown,true);
+  const close=ecalEl('ecalCloseBtn'); if(close) close.focus();
+}
+
+function closeEconomicCalendar(){
+  if(!ecalState.open) return;
+  ecalState.open=false;
+  const overlay=ecalEl('ecalOverlay');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+  document.removeEventListener('keydown',ecalKeydown,true);
+  const opener=ecalState.opener; ecalState.opener=null;
+  // Se a Central estava suspensa por baixo, é ela quem devolve o foco ao
+  // lançador (restaure primeiro; foca via subdialogLauncher). Fora dela, o
+  // foco volta ao elemento que abriu — o botão ⋯ do widget.
+  if(typeof restoreSettingsAfterSubdialog==='function' && typeof settingsIsOpen==='function' && settingsIsOpen()){
+    restoreSettingsAfterSubdialog();
+  } else if(opener && document.contains(opener)){
+    opener.focus();
+  }
+}
+
+// ---- menu ⋯ do widget ----
+// Reutiliza a linguagem visual do sistema de popovers (.jp-popover na camada
+// #jpPopoverLayer), com estado próprio: acoplar ao dashLayoutState amarraria o
+// calendário ao modo de edição do dashboard, que tem outro ciclo de vida.
+function ecalCloseMenu(returnFocus){
+  const m=ecalState.menu; if(!m) return;
+  m.remove();
+  ecalState.menu=null;
+  document.removeEventListener('pointerdown',ecalMenuOutside,true);
+  window.removeEventListener('resize',ecalCloseMenuNoFocus);
+  window.removeEventListener('scroll',ecalCloseMenuNoFocus,true);
+  const a=ecalState.menuAnchor; ecalState.menuAnchor=null;
+  if(a){ a.setAttribute('aria-expanded','false'); a.removeAttribute('aria-controls'); if(returnFocus && document.contains(a)) a.focus(); }
+}
+function ecalCloseMenuNoFocus(){ ecalCloseMenu(false); }
+function ecalMenuOutside(event){
+  if(ecalState.menu && !ecalState.menu.contains(event.target) && event.target!==ecalState.menuAnchor) ecalCloseMenu(false);
+}
+function ecalOpenMenu(anchor){
+  if(ecalState.menu){ ecalCloseMenu(true); return; }
+  const layer=document.getElementById('jpPopoverLayer'); if(!layer) return;
+  const el=document.createElement('div');
+  el.className='jp-popover ecal-news-menu';
+  el.id='ecalNewsMenu';
+  el.setAttribute('role','menu');
+  el.setAttribute('aria-label','Opções de Notícias de Alto Impacto');
+  const item=document.createElement('button');
+  item.type='button';
+  item.setAttribute('role','menuitem');
+  item.textContent='Calendário Econômico';
+  item.addEventListener('click',()=>{ ecalCloseMenu(false); openEconomicCalendar(anchor); });
+  el.append(item);
+  el.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){ event.stopPropagation(); ecalCloseMenu(true); }
+  });
+  layer.append(el);
+  // Posicionamento: mesma regra do menu de card (abaixo da âncora, alinhado à
+  // direita, sempre dentro da viewport).
+  const margin=8, r=anchor.getBoundingClientRect();
+  let left=r.right-el.offsetWidth, top=r.bottom+margin;
+  if(left<margin) left=margin;
+  if(left+el.offsetWidth>window.innerWidth-margin) left=Math.max(margin,window.innerWidth-margin-el.offsetWidth);
+  if(top+el.offsetHeight>window.innerHeight-margin){
+    const above=r.top-margin-el.offsetHeight;
+    top=above>=margin?above:Math.max(margin,window.innerHeight-margin-el.offsetHeight);
+  }
+  el.style.left=left+'px'; el.style.top=top+'px';
+  ecalState.menu=el; ecalState.menuAnchor=anchor;
+  anchor.setAttribute('aria-expanded','true');
+  anchor.setAttribute('aria-controls','ecalNewsMenu');
+  document.addEventListener('pointerdown',ecalMenuOutside,true);
+  window.addEventListener('resize',ecalCloseMenuNoFocus);
+  window.addEventListener('scroll',ecalCloseMenuNoFocus,true);
+  item.focus();
+}
+
+function initEconomicCalendar(){
+  const more=document.getElementById('gdNewsMoreBtn');
+  if(more) more.addEventListener('click',()=>ecalOpenMenu(more));
+  const close=ecalEl('ecalCloseBtn');
+  if(close) close.addEventListener('click',closeEconomicCalendar);
+  const overlay=ecalEl('ecalOverlay');
+  if(overlay) overlay.addEventListener('click',e=>{ if(e.target===overlay) closeEconomicCalendar(); });
+  const filters=ecalEl('ecalFilters');
+  if(filters) filters.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalSetFilter(b.dataset.ecalCur);
+  });
+  // Lançador da Central por DELEGAÇÃO: o painel da folha é criado pela própria
+  // Central depois deste módulo carregar, então um bind direto não o acharia.
+  document.addEventListener('click',e=>{
+    const b=e.target.closest && e.target.closest('#ecalOpenFromSettingsBtn');
+    if(!b) return;
+    if(typeof settingsMarkSubdialogLauncher==='function') settingsMarkSubdialogLauncher(b);
+    openEconomicCalendar(b);
+  });
+}
+initEconomicCalendar();
 </script>
 </body>
 </html>

@@ -1363,6 +1363,73 @@
      sobreposição (padrão do macOS) a propriedade não tem efeito, e também não
      há salto, então serve nos dois casos. */
   html:has(#settingsOverlay.show){overflow:hidden; scrollbar-gutter:stable}
+
+  /* ---------- Calendário Econômico (17-economic-calendar.js) ----------
+     Diálogo compartilhado pelos dois pontos de entrada (menu ⋯ do widget de
+     Notícias e folha Operação da Central). Mesmas convenções da Central:
+     overlay fixo com .show, trava de rolagem do documento (mesma lição da
+     rolagem encadeada corrigida lá) e tokens do painel. */
+  html:has(#ecalOverlay.show){overflow:hidden; scrollbar-gutter:stable}
+  /* Linha de AÇÃO no menu de Configurações ("Configurações → Calendário
+     Econômico", um passo). Divisor sutil a separa das categorias; o chevron
+     final sinaliza que abre algo, não que navega para uma página. */
+  .settings-menu-launch{margin-top:12px; position:relative}
+  .settings-menu-launch::before{content:''; position:absolute; top:-7px; left:8px; right:8px; height:1px; background:var(--line)}
+  .settings-menu-launch svg:last-child{margin-left:auto; width:14px; height:14px; flex:0 0 14px; color:var(--ink-faint)}
+  .ecal-overlay{position:fixed; inset:0; z-index:70; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
+  .ecal-overlay.show{display:flex}
+  .ecal-modal{
+    width:min(680px,95vw); max-height:min(86vh,860px); min-height:320px;
+    display:flex; flex-direction:column; overflow:hidden;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:0 24px 70px rgba(0,0,0,.48); font-family:var(--sans);
+  }
+  /* Prefixo de id + escudo: .ecal-head é uma tag <header>, e o shell tem regras
+     por SELETOR DE TAG (header{…flex-wrap:wrap} em ≤900px, height/padding no
+     tesla) que vazam para dentro do diálogo — a mesma armadilha já corrigida em
+     .mvp-notes-head nesta base. Sem o nowrap explícito, o × caía para uma
+     segunda linha no celular. */
+  #ecalModal .ecal-head{
+    display:flex; flex-wrap:nowrap; align-items:flex-start; justify-content:space-between;
+    gap:14px; padding:16px 20px 12px; border-bottom:1px solid var(--line);
+    flex:none; position:static; height:auto; min-height:0; background:transparent;
+  }
+  #ecalModal .ecal-head-text{min-width:0; flex:1}
+  .ecal-head-text h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
+  .ecal-sub{margin:4px 0 0; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .ecal-close{width:34px; height:34px; flex:0 0 34px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer}
+  .ecal-close:hover{color:var(--ink); background:var(--panel-2)}
+  .ecal-close svg{width:16px; height:16px}
+  .ecal-filters{margin:12px 20px 0; width:fit-content; flex:none}
+  .ecal-body{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:12px 20px 16px}
+  .ecal-day{margin-bottom:14px}
+  .ecal-day-title{margin:0 0 6px; font-family:var(--mono); font-size:var(--fs-xs); font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.11em}
+  .ecal-day-today .ecal-day-title{color:var(--violet)}
+  .ecal-day-list{display:flex; flex-direction:column}
+  .ecal-item{display:flex; align-items:baseline; gap:10px; padding:7px 0; border-bottom:1px solid var(--line)}
+  .ecal-item:last-child{border-bottom:0}
+  .ecal-item-past{opacity:.55}
+  .ecal-time{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink-dim); flex:0 0 44px}
+  .ecal-title{flex:1; min-width:0; font-size:var(--fs-md); color:var(--ink)}
+  .ecal-nums{display:flex; gap:14px; flex:none}
+  .ecal-num{display:flex; flex-direction:column; align-items:flex-end; min-width:58px}
+  .ecal-num-label{font-family:var(--mono); font-size:9px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em}
+  .ecal-num-value{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink)}
+  .ecal-empty{margin:0; padding:18px 20px; color:var(--ink-dim)}
+  .ecal-foot{display:flex; flex-direction:column; gap:3px; padding:10px 20px 14px; border-top:1px solid var(--line); flex:none; font-size:var(--fs-xs); color:var(--ink-faint)}
+  .ecal-foot #ecalFreshness{font-family:var(--mono)}
+  .ecal-news-menu button[role="menuitem"]{
+    display:block; width:100%; text-align:left; border:0; border-radius:7px;
+    padding:9px 10px; background:transparent; color:var(--ink); font:inherit;
+    font-size:var(--fs-sm); cursor:pointer;
+  }
+  .ecal-news-menu button[role="menuitem"]:hover,.ecal-news-menu button[role="menuitem"]:focus-visible{background:var(--indigo-deep); color:var(--violet)}
+  @media(max-width:760px){
+    .ecal-overlay{padding:0; align-items:stretch}
+    .ecal-modal{width:100%; max-height:none; height:100%; border-radius:0; border:0}
+    .ecal-nums{gap:10px}
+    .ecal-num{min-width:50px}
+  }
   .settings-overlay{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:clamp(10px,2vw,28px); background:rgba(4,7,12,.72); backdrop-filter:blur(3px)}
   .settings-overlay.show{display:flex}
   .settings-modal{width:min(1160px,95vw); height:min(88vh,920px); min-height:520px; display:grid; grid-template-rows:auto minmax(0,1fr); overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 24px 70px rgba(0,0,0,.48); font-family:var(--sans)}
@@ -4035,11 +4102,16 @@
     display:flex; align-items:center; justify-content:space-between; gap:10px;
     font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); margin-bottom:10px;
   }
+  html[data-shell="global-dashboard"] .gd-news-actions{display:flex; align-items:center; gap:6px; flex:none}
   html[data-shell="global-dashboard"] .gd-news-refresh{
     width:24px; height:24px; border-radius:50%; border:1px solid var(--jp-border);
     background:var(--jp-surface); color:var(--jp-ink-muted); cursor:pointer;
     font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center; flex:none;
   }
+  /* ⋯ compartilha a anatomia do ↻ (classe base) e se distingue pelo glifo;
+     letter-spacing aperta os três pontos para caberem no mesmo círculo. */
+  html[data-shell="global-dashboard"] .gd-news-more{font-size:14px; letter-spacing:-1px; padding-bottom:6px}
+  html[data-shell="global-dashboard"] .gd-news-more[aria-expanded="true"]{color:var(--jp-ink); border-color:var(--jp-ink-muted)}
   html[data-shell="global-dashboard"] .gd-news-refresh:hover{background:var(--gd-surface-subtle, var(--panel-2)); color:var(--jp-ink)}
   html[data-shell="global-dashboard"] .gd-news-refresh:disabled{opacity:.5; cursor:default}
   html[data-shell="global-dashboard"] .gd-news-table{width:100%; border-collapse:collapse}

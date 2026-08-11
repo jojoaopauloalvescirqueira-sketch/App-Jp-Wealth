@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "3b6a3da92f04ad4c3c1817382876fcd0c050bc7b9ec6143cc2dcaf60fc39cbcc"
+      "sha256": "cea8cb61c6f6b70e0354b25c6ce8ae14b852f1be505f4bb29053cf88e3ad8c43"
     },
     {
       "order": 39,
@@ -266,13 +266,19 @@
       "order": 44,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
-      "sha256": "f55723b3a86b8fb782e4788fa9d8bc9ff9102dca36139aad9ecc536862928422"
+      "sha256": "638811029ee45995ceca8a15dc1239e1eb786d34e1b38b93e58d1bfd52fba999"
     },
     {
       "order": 45,
       "path": "src/js/40-app/16-storage-governance.js",
       "section": "GOVERNANÇA DE ARMAZENAMENTO — UI (JPW-HJFGDE)",
       "sha256": "19e867a60204c2ac04a80b2a5f367e58500b975277fc88d86635c3f0f37fd54f"
+    },
+    {
+      "order": 46,
+      "path": "src/js/40-app/17-economic-calendar.js",
+      "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
+      "sha256": "5149a3cd43f194fbdd0ca22e5bbe73518b27bc7531290de3116e7c6b8ff43df2"
     }
   ]
 }

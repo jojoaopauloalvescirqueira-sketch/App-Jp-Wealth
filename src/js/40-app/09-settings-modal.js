@@ -38,6 +38,7 @@ const SETTINGS_ICONS={
   knowledge:'<path d="M12 6c-1.8-1.2-4.2-1.6-6.5-1v12.5c2.3-.6 4.7-.2 6.5 1 1.8-1.2 4.2-1.6 6.5-1V5c-2.3-.6-4.7-.2-6.5 1Z"/><path d="M12 6v12.5"/>',
   data:'<path d="M12 3c4 0 7 1.1 7 2.5S16 8 12 8s-7-1.1-7-2.5S8 3 12 3Z"/><path d="M5 5.5V12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12v6.5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V12"/>',
   about:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".2" fill="currentColor" stroke-width="2.4"/>',
+  calendar:'<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><path d="M8 14h2M14 14h2M8 17.2h2"/>',
   back:'<path d="M14.5 5 7 12l7.5 7"/>',
   forward:'<path d="M9.5 5 17 12l-7.5 7"/>',
   chevron:'<path d="m9 6 6 6-6 6"/>'
@@ -79,6 +80,20 @@ function buildSettingsMenu(){
     const option=document.createElement('option'); option.value=item.id; option.textContent=item.label; select.append(option);
   });
   select.addEventListener('change',()=>settingsNavigateTopLevel(select.value));
+  // Calendário Econômico — AÇÃO de nível superior, não categoria: abre o
+  // diálogo compartilhado (17-economic-calendar.js) em um passo, como o
+  // requisito pede ("Configurações → Calendário Econômico"). Sem
+  // data-settings-category de propósito: não é página navegável, não entra na
+  // pilha de navegação nem no <select> mobile (cujo change navega categorias),
+  // e a contagem de categorias do contrato de testes permanece intacta. O
+  // clique é tratado por delegação em 17-economic-calendar.js (mesmo id que
+  // marca o lançador do subdiálogo); aqui só se constrói a linha.
+  const launch=document.createElement('button');
+  launch.type='button'; launch.id='ecalOpenFromSettingsBtn';
+  launch.className='settings-menu-item settings-menu-launch';
+  launch.setAttribute('aria-haspopup','dialog');
+  launch.innerHTML=`${settingsIconSvg('calendar')}<span>Calendário Econômico</span>${settingsIconSvg('chevron')}`;
+  menu.append(launch);
   menu.dataset.ready='true';
 }
 

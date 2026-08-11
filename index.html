@@ -523,7 +523,13 @@
           <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
-            <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+            <span class="gd-news-actions">
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+              <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
+                   semântica, é o que o guardrail do arrasto já ignora — segurar
+                   aqui nunca inicia reorganização do card. -->
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções de Notícias de Alto Impacto" aria-haspopup="menu" aria-expanded="false">⋯</button>
+            </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
                oculto quando não resta evento futuro hoje. -->
@@ -973,6 +979,40 @@
      inerte fora do modo de edição. -->
 <div id="jpPopoverLayer"></div>
 
+<!-- Calendário Econômico (17-economic-calendar.js) — UMA implementação, DOIS
+     pontos de entrada: o menu ⋯ do widget de Notícias e a linha "Calendário
+     Econômico" no menu de Configurações (ação de nível superior, um passo).
+     Lê o MESMO cache sanitizado de 15-ff-news.js (ffNewsReadCache) — nenhum
+     fetch, cache ou sanitização próprios. Escopo SEMANAL de propósito: a fonte
+     só publica a semana corrente e não divulga valores realizados; o título
+     não promete mês. -->
+<div class="ecal-overlay" id="ecalOverlay" aria-hidden="true">
+  <section class="ecal-modal" id="ecalModal" role="dialog" aria-modal="true" aria-labelledby="ecalTitle">
+    <header class="ecal-head">
+      <div class="ecal-head-text">
+        <h2 id="ecalTitle">Calendário Econômico</h2>
+        <p class="ecal-sub" id="ecalRange" aria-live="polite"></p>
+      </div>
+      <button type="button" class="ecal-close" id="ecalCloseBtn" aria-label="Fechar calendário econômico" title="Fechar">
+        <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </header>
+    <div class="seg ecal-filters" id="ecalFilters" role="group" aria-label="Filtrar por moeda">
+      <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+      <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+      <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+      <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+      <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+    </div>
+    <div class="ecal-body" id="ecalBody" tabindex="-1"></div>
+    <p class="ecal-empty" id="ecalEmpty" hidden></p>
+    <footer class="ecal-foot">
+      <span id="ecalFreshness"></span>
+      <span class="ecal-foot-note">Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+    </footer>
+  </section>
+</div>
+
 <!-- Barra de personalização — GLOBAL, uma única sessão compartilhada pelas 7
      telas (13-dashboard-layout.js): permanece visível e ativa ao navegar
      entre abas, nunca cancela/salva/restaura sozinha numa troca de tela.
@@ -1229,5 +1269,6 @@
 <script src="src/js/40-app/14-mvp-notes.js"></script>
 <script src="src/js/40-app/15-ff-news.js"></script>
 <script src="src/js/40-app/16-storage-governance.js"></script>
+<script src="src/js/40-app/17-economic-calendar.js"></script>
 </body>
 </html>

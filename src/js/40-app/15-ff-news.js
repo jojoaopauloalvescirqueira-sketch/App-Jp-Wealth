@@ -174,6 +174,10 @@ function ffNewsRender(){
     tr.append(tdTime,tdCur,tdImpact,tdTitle,tdPrev,tdAnt);
     list.append(tr);
   }
+  // Calendário Econômico (17-economic-calendar.js) lê o mesmo cache: se estiver
+  // aberto quando este ciclo rodar, re-renderiza junto. Guarda de existência —
+  // este arquivo carrega antes do 17, e no monólito reduzido o 17 pode faltar.
+  if(typeof ecalRenderIfOpen==='function') ecalRenderIfOpen();
 }
 
 function ffNewsCacheStale(){
