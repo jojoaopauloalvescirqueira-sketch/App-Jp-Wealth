@@ -51,6 +51,7 @@ Formatos de entrega por modo. Adapte ao projeto: omita seções sem conteúdo re
 
 ## CLASSIFICATION
 <baixo | médio | alto | crítico> — <justificativa pelo efeito real, não pelo nome>
+Natureza: <MATERIAL | RECONCILIAÇÃO | UNKNOWN> — material altera a realidade e pode avançar a revisão representada; reconciliação alinha representações a uma realidade já existente. Changeset com naturezas distintas se decompõe por mudança ou por blocos homogêneos, cada um com a sua Natureza; não force uma única sobre o conjunto, e não use UNKNOWN só porque há mais de uma natureza conhecida.
 
 ## CANONICAL SOURCE
 <onde a nova verdade vive>
@@ -61,6 +62,13 @@ Formatos de entrega por modo. Adapte ao projeto: omita seções sem conteúdo re
 | <artefato> | AFFECTED / NOT_AFFECTED / UNKNOWN | REQUIRED / NOT_REQUIRED / UNKNOWN | <por quê — herança por referência sustenta NOT_REQUIRED, nunca rebaixa Impacto a NOT_AFFECTED> |
 
 Impacto: a mudança alcança semanticamente o elemento? · Local Action: o elemento precisa de alteração local? Dimensões independentes — registre as duas.
+
+## COBERTURA POR CATEGORIA
+| Categoria presente no projeto | Impacto | Ação local | Evidência |
+|---|---|---|---|
+| <ex.: contexto operacional> | AFFECTED / NOT_AFFECTED / UNKNOWN | REQUIRED / NOT_REQUIRED / UNKNOWN | <o que foi examinado> |
+
+Liste as categorias que existem neste projeto e dê veredito para todas. Categoria não examinada é UNKNOWN, nunca NOT_AFFECTED.
 
 ## Consumidores multi-projeto (se houver)
 | Instalação/Projeto | Versão instalada | Atualização é decisão de |

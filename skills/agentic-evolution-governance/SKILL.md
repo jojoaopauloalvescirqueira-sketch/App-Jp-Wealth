@@ -65,6 +65,13 @@ Ao mapear qualquer artefato, classifique seu papel — a mesma informação em p
 
 Pergunta decisiva para não corromper história: **"este artefato pretende representar o estado atual ou registrar um estado passado?"** Histórico correto sobre o passado NÃO é drift — não o reescreva nem o classifique como STALE porque o sistema evoluiu.
 
+### Mudança material × mudança de reconciliação
+
+- **Mudança material** — altera a realidade do sistema: comportamento, contrato, arquitetura, fonte canônica, norma ou relação consumida pela camada agêntica. É ela que pode avançar a revisão material representada.
+- **Mudança de reconciliação** — atualiza representações para refletirem uma realidade material que já existe. Pode alterar artefatos consumidos por agentes, produzir impacto agêntico e avançar o histórico **sem** criar nova revisão material.
+
+Daí decorre um estado legítimo e frequente: `IMPACTO AGÊNTICO: sim` com `NOVA REVISÃO MATERIAL: não`. Impacto sobre representações e criação de nova realidade são coisas distintas — registre as duas separadamente.
+
 ### Estados de coerência
 
 - **CURRENT** — coerente com o estado canônico atual, com evidência.
@@ -113,7 +120,8 @@ Registre primeiro o **change-set sob análise** (commit/SHA, revisão, documento
    - **Impacto** — a mudança alcança semanticamente este elemento? `AFFECTED` / `NOT_AFFECTED` / `UNKNOWN`;
    - **Local Action** — este elemento precisa de alteração local? `REQUIRED` / `NOT_REQUIRED` / `UNKNOWN`.
    Herança por referência pode dispensar alteração local — o consumidor que lê a fonte canônica já atualizada é `AFFECTED` + `LOCAL ACTION: NOT_REQUIRED` — mas **não transforma um consumidor semanticamente afetado em NOT_AFFECTED**. As duas perguntas são diferentes e as duas respostas ficam registradas. Evite a atualização cega de tudo: o valor do IMPACT está no que ele exclui de **ação local**, sem apagar o registro de quem foi alcançado.
-3. Se o elemento alterado é consumido por múltiplas instalações/projetos (ex.: skill de um acervo instalada em vários repositórios), enumere consumidores e versões instaladas — cada instalação decide sua atualização; nunca sobrescreva automaticamente.
+3. **Percorra o universo por categoria, não por memória.** Identifique quais categorias existem neste projeto — agentes, skills, routing, registries, contexto operacional, contratos, arquitetura, fontes canônicas e demais representações consumidas — e emita veredito para **cada uma**. Enumerar o universo não basta: a omissão silenciosa de uma categoria conhecida é o modo de falha típico deste modo, e categoria não examinada é `UNKNOWN`, nunca `NOT_AFFECTED`. Isto é universo de categorias, não checklist de arquivos; nem toda categoria existe em todo projeto.
+4. Se o elemento alterado é consumido por múltiplas instalações/projetos (ex.: skill de um acervo instalada em vários repositórios), enumere consumidores e versões instaladas — cada instalação decide sua atualização; nunca sobrescreva automaticamente.
 
 Impacto nulo → declare `NO AGENTIC RECONCILIATION REQUIRED` e encerre. Caso contrário, produza o impact assessment do template.
 
@@ -131,6 +139,8 @@ Consolidar não é perder rastro. Para cada artefato consolidado, registre as **
 
 Nenhum estado novo é criado para isso: o veredito continua sendo STALE (ou o estado que a evidência sustentar), com as divergências enumeradas por eixo.
 
+Drift previsto continua sendo drift. Entre uma mudança material e sua reconciliação existe uma janela em que as representações estão legitimamente atrás: registre-a como **conhecida, delimitada e com reconciliação pendente**, o que muda a severidade e o tratamento — não o estado. Uma representação factualmente atrasada permanece STALE até ser reconciliada; janela prevista não vira CURRENT por ser prevista, e não cria estado novo.
+
 Disciplinas obrigatórias: histórico não é STALE (use a pergunta decisiva do vocabulário); UNKNOWN vira investigação ou pergunta ao usuário, nunca conclusão; CONFLICT entre fontes canônicas é escalado, não resolvido; a ação recomendada prefere **atualizar a fonte e deixar referências herdarem** a editar consumidor por consumidor. Saída: tabela de reconciliação do template, revisável por humano.
 
 ## MODO PROPAGATE (escrita controlada)
@@ -138,6 +148,8 @@ Disciplinas obrigatórias: histórico não é STALE (use a pergunta decisiva do 
 Pré-condições — não inicie sem todas: relatório de IMPACT/RECONCILE apresentado e **aprovação explícita de um plano delimitado**; escopo da onda claro; precondições da tarefa verificadas.
 
 A autorização pode abranger itens individualmente enumerados **ou um lote homogêneo** cujo escopo, tipo de alteração e limites estejam definidos sem ambiguidade — ex.: *"Autorizo a onda 1: atualizar os oito agentes enumerados na tabela exclusivamente no campo de routing, sem alterar autoridade, conteúdo funcional ou outras seções."* Continuam **não** sendo autorização suficiente: "arruma tudo", "atualize os agentes", "sincronize o sistema".
+
+**Nunca grave intenção como fato.** Um artefato que representa estado presente não registra como concluído aquilo que ainda está em execução, nem resultado esperado como resultado observado. Durante a execução, escreva o estado corrente; depois de validar, escreva o que foi efetivamente observado.
 
 Regras de execução: altere somente os itens aprovados — escopo novo volta ao RECONCILE; prefira atualizar a fonte canônica e converter cópias em referências (com autorização) a sincronizar N cópias; jamais reescreva artefatos históricos; registre a mudança de forma proporcional **usando os mecanismos que o projeto já tem** (changelog, ADR, trilha de auditoria, current-state) — só proponha um registro novo, mínimo (id, data, tipo, fonte, afetados, decisão, validação, status), se não existir nenhum; mudanças pequenas e auditáveis por vez. Operações Git e publicação seguem a política do projeto e **exigem autorização separada da aprovação do plano**. Ao final, valide: os consumidores atualizados agora leem a nova realidade? Reporte fielmente o que passou e o que não passou.
 
@@ -166,7 +178,7 @@ Comportamento: **ALERTAR → EXPLICAR a incoerência e sua evidência → PROPOR
 ## Princípios transversais
 
 - **Fonte canônica antes de cópias**: nunca proponha sincronizar múltiplas cópias quando os consumidores podem referenciar uma única fonte. Detecte duplicação desnecessária de norma/contexto e proponha consolidação — sem reformar a arquitetura de fontes por conta própria.
-- **Âncoras de revisão**: prefira as âncoras que o projeto já usa (SHA de commit, data de fotografia, hash de manifest, cláusula de validade). Se nada existir, **recomende** — como proposta, não imposição — uma âncora leve por artefato de contexto: "válido para <revisão/SHA> em <data>". Um consumidor com âncora anterior à revisão atual é candidato natural a STALE.
+- **Âncoras de revisão**: prefira as âncoras que o projeto já usa (SHA de commit, data de fotografia, hash de manifest, cláusula de validade). Se nada existir, **recomende** — como proposta, não imposição — uma âncora leve por artefato de contexto: "válido para <revisão/SHA> em <data>". Uma âncora declara a última revisão **material** cuja realidade o artefato afirma representar; a ponta atual do histórico pode estar à frente dela por mudanças exclusivamente reconciliatórias, e isso sozinho **não** prova STALE. Candidato a STALE é o consumidor cuja âncora precede uma **mudança material** ainda não reconciliada — avalie a natureza das mudanças posteriores, não apenas a distância até a ponta.
 - **Bootstrap consulta, não duplica**: a camada de inicialização deve ler o estado atual de normas, skills, routing e contexto nas fontes — impacto sobre bootstrap se avalia verificando se ele consultaria a nova realidade, não injetando cópias nele.
 - **Prescrição ≠ verificação**: muitos projetos já mandam atualizar contexto a cada mudança; o papel desta skill é verificar se aconteceu e reconciliar o acumulado, não substituir o processo de mudança existente.
 
