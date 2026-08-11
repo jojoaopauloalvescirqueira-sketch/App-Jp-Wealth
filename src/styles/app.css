@@ -552,7 +552,7 @@
     font-family:var(--sans); font-size:var(--fs-xs); line-height:1.5; color:var(--ink-faint); text-wrap:pretty;
   }
   @media (prefers-reduced-motion:reduce){
-    .jpwg-orbit,.jpwg-ring-fill{transition:none}
+    .jpwg-orbit,.jpwg-ring-fill,.jpwg-semi-fill{transition:none}
   }
   .thermo-zone-labels{display:flex; flex-direction:column; gap:0; width:100%; margin-top:4px}
   .tz{font-family:var(--mono); font-size:var(--fs-xs); padding:3px 6px; border-radius:var(--radius-sm); text-align:center; margin-bottom:3px}
