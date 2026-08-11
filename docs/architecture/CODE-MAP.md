@@ -11,7 +11,7 @@
 - `src/js/20-ui/02-sidebar.js` — SIDEBAR · COLAPSO
 - `src/js/20-ui/03-main-render.js` — RENDER
 - `src/js/20-ui/04-operational-clearance.js` — OPERATIONAL CLEARANCE — veredito executivo (N1)
-- `src/js/20-ui/05-execution-clearance.js` — EXECUTION CLEARANCE — veredito antes dos termômetros
+- `src/js/20-ui/05-execution-clearance.js` — EXECUTION CLEARANCE — veredito antes dos JP Wealth Gauge
 - `src/js/10-domain/03-phase-transitions.js` — QUESTIONÁRIOS DE TRANSIÇÃO DE FASE
 - `src/js/10-domain/04-stop-statistics.js` — STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte
 - `src/js/20-ui/06-chart-terminal-chrome.js` — GRÁFICOS · CROMO PADRÃO DE TERMINAL
