@@ -327,7 +327,7 @@ function dashLayoutBoot() {
 // objetos novos a cada chamada; aqui, além disso, cada um é Object.freeze()).
 // `dirtyScreens` é o único critério de "tela alterada": comparação
 // estrutural (dashLayoutSnapshotsEqual) contra o snapshot, nunca visita.
-const dashLayoutState = { editing: false, activeScreenId: null, snapshots: null, dirtyScreens: null, drag: null, openPopover: null };
+const dashLayoutState = { editing: false, activeScreenId: null, snapshots: null, dirtyScreens: null, drag: null, openPopover: null, lastDragEndAt: 0 };
 
 function dashLayoutPopoverLayer() { return document.getElementById('jpPopoverLayer'); }
 
@@ -883,6 +883,7 @@ function dashLayoutOnDragEnd() {
   const screenId = d.screenId;
   dashLayoutEndDragCleanupListeners();
   dashLayoutState.drag = null;
+  dashLayoutState.lastDragEndAt = Date.now(); // absorve o clique residual do drop (ver saída pelo vazio)
   dashLayoutRefreshAllLabels(screenId);
   dashLayoutRecomputeDirty(screenId);
   dashLayoutAnnounce((DASH_LAYOUT_LABELS[d.card.dataset.layoutCard] || d.card.dataset.layoutCard) + ' reposicionado. ' + d.card.getAttribute('aria-label'));
@@ -897,6 +898,7 @@ function dashLayoutCancelDrag() {
   d.card.style.position = ''; d.card.style.left = ''; d.card.style.top = ''; d.card.style.width = ''; d.card.style.height = '';
   dashLayoutEndDragCleanupListeners();
   dashLayoutState.drag = null;
+  dashLayoutState.lastDragEndAt = Date.now(); // idem dashLayoutOnDragEnd
 }
 
 function dashLayoutOnDragCancelEvt() { dashLayoutCancelDrag(); dashLayoutAnnounce('Arraste cancelado.'); }
@@ -1005,6 +1007,26 @@ function dashLayoutPressOnScroll() {
   const p = dashLayoutPress; if (p && !p.active) dashLayoutPressClear();
 }
 
+// Sair tocando o vazio: clique em área vazia da tela ativa (fora de qualquer
+// card, controle, barra ou popover) encerra a sessão pelo MESMO Concluir
+// transacional do botão — valida e salva os rascunhos; descartar continua
+// sendo ação explícita do Cancelar tudo. Convenção de plataforma (reordenar
+// ícones no iOS: tocar fora mantém o arranjo); sair descartando em toque
+// acidental perderia trabalho silenciosamente.
+// Registrado em CAPTURE para enxergar um popover ainda aberto — o listener
+// que fecha popovers roda no bubbling e o anularia antes; com popover aberto,
+// o primeiro toque no vazio só fecha o popover (dismissão em duas etapas).
+function dashLayoutOnBackdropClick(event) {
+  if (!dashLayoutState.editing || dashLayoutState.drag) return;
+  if (dashLayoutState.openPopover) return;
+  if (dashLayoutPress) return;
+  if (Date.now() - dashLayoutState.lastDragEndAt < 400) return; // clique residual do drop
+  const screenEl = event.target.closest('.screen');
+  if (!screenEl || !screenEl.classList.contains('active')) return; // nav/cabeçalho/barra ficam de fora
+  if (event.target.closest('[data-layout-card], button, a, input, select, textarea, .jp-popover, #dashLayoutBar')) return;
+  dashLayoutFinish();
+}
+
 /* ======================= LIGAÇÕES ======================= */
 
 function initDashboardLayout() {
@@ -1028,6 +1050,8 @@ function initDashboardLayout() {
 
   // Toque longo em card móvel → arrasto direto (delegado; um único listener).
   document.addEventListener('pointerdown', dashLayoutOnCardPointerDown);
+  // Toque no vazio da tela ativa → Concluir (capture: ver comentário da função).
+  document.addEventListener('click', dashLayoutOnBackdropClick, true);
 
   const cancelAllBtn = document.getElementById('dashLayoutCancelBtn');
   if (cancelAllBtn) cancelAllBtn.addEventListener('click', dashLayoutCancelAll);
