@@ -350,13 +350,13 @@
       "order": 58,
       "path": "src/js/30-accounting/05-fx-planning/04-fx-charts.js",
       "section": "PLANEJAMENTO FX · GRÁFICOS SVG",
-      "sha256": "49e3671fc5ce770aa1dfcefdad3f7935acd7ab4c5921cac8f63cce487b8c18c4"
+      "sha256": "5cdbd901312810aeafc56797e01362ab826ca2832373b84e2e28ea26500006cd"
     },
     {
       "order": 59,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "98dc9a40d6321e2f7eb522d238bd7a58e5eacc73f7ce7c06f205b12c39c653b1"
+      "sha256": "2ba504d567f5219260b95188411bae0551bf28d1cf8942a05bb5d459211f6c74"
     }
   ]
 }

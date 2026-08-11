@@ -66,10 +66,33 @@ function fxpBindCreate(root){
 }
 
 // ---- Barra de modos ---------------------------------------------------------
+// Padrão de abas completo (JPW-PNMKTS · P10): antes existiam role="tablist" e
+// role="tab" sem tabpanel, sem aria-controls e sem teclado — anunciava-se como
+// abas sem se comportar como abas. Agora tab↔panel estão associados, o foco é
+// roving (só a aba ativa fica tabulável) e setas/Home/End navegam.
+const FXP_MODES=[['overview','Visão Geral'],['planning','Planejamento'],['actuals','Realizado'],['table','Tabela']];
 function fxpModesHTML(){
-  const modes=[['overview','Visão Geral'],['planning','Planejamento'],['actuals','Realizado'],['table','Tabela']];
-  return `<div class="fxp-modes" role="tablist" aria-label="Modos do Planejamento FX">`+modes.map(([k,label])=>
-    `<button type="button" class="reset-btn fxp-mode${fxpView===k?' fxp-mode-on':''}" role="tab" aria-selected="${fxpView===k}" data-fxp-view="${k}">${label}</button>`).join('')+`</div>`;
+  return `<div class="fxp-modes" role="tablist" aria-label="Modos do Planejamento FX">`+FXP_MODES.map(([k,label])=>
+    `<button type="button" class="reset-btn fxp-mode${fxpView===k?' fxp-mode-on':''}" role="tab"
+      id="fxpTab-${k}" aria-controls="fxpPanel-${k}" aria-selected="${fxpView===k}"
+      tabindex="${fxpView===k?'0':'-1'}" data-fxp-view="${k}">${label}</button>`).join('')+`</div>`;
+}
+function fxpBindTabs(root){
+  const tabs=[...root.querySelectorAll('[data-fxp-view]')];
+  const go=k=>{ fxpView=k; renderFxPlanning();
+    const t=document.getElementById('fxpTab-'+k); if(t) t.focus(); };
+  tabs.forEach(b=>b.addEventListener('click',()=>{ fxpView=b.dataset.fxpView; renderFxPlanning(); }));
+  const bar=root.querySelector('.fxp-modes'); if(!bar) return;
+  bar.addEventListener('keydown',ev=>{
+    const i=FXP_MODES.findIndex(([k])=>k===fxpView); if(i<0) return;
+    let n=null;
+    if(ev.key==='ArrowRight'||ev.key==='ArrowDown') n=(i+1)%FXP_MODES.length;
+    else if(ev.key==='ArrowLeft'||ev.key==='ArrowUp') n=(i-1+FXP_MODES.length)%FXP_MODES.length;
+    else if(ev.key==='Home') n=0;
+    else if(ev.key==='End') n=FXP_MODES.length-1;
+    if(n==null) return;
+    ev.preventDefault(); go(FXP_MODES[n][0]);
+  });
 }
 
 // ---- Visão Geral ------------------------------------------------------------
@@ -80,34 +103,43 @@ function fxpOverviewHTML(live){
   const todayKey=fxpCurrentMonthKey();
   const baseToday=ov.baseline.filter(r=>r.month<=todayKey).slice(-1)[0]||null;
   const dev=ov.deviationUsd;
+  // Desvio nunca comunicado só por cor (P6/§15): o sinal do número e a palavra
+  // acima/abaixo carregam a informação sem depender de matiz.
+  const devWord=dev==null?'':(dev>=0?'acima do baseline':'abaixo do baseline');
   return `
-  <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
-    <div class="metric"><div class="k">Patrimônio do plano ${ov.lastClosedMonth?fxpBadge('REAL'):fxpBadge('PROJ')}</div><div class="v sm">${fmtMoney2(ov.currentBalanceUsd)}</div></div>
-    <div class="metric"><div class="k">Baseline para ${ov.lastClosedMonth||(baseToday?baseToday.month:'—')} ${fxpBadge('PROJ')}</div><div class="v sm">${ov.baselineBalanceAtLastClose!=null?fmtMoney2(ov.baselineBalanceAtLastClose):(baseToday?fmtMoney2(baseToday.close):'—')}</div></div>
-    <div class="metric"><div class="k">Desvio vs baseline</div><div class="v sm" style="color:${dev==null?'var(--ink-dim)':(dev>=0?'var(--f1)':'var(--f4)')}">${dev!=null?`${fmtMoney2(dev)} · ${ov.deviationPct!=null?fxpPct(ov.deviationPct):'—'}`:'— sem mês fechado'}</div></div>
-    <div class="metric"><div class="k">Aportes realizados ${fxpBadge('REAL')}</div><div class="v sm">${fmtMoney2(ov.contributedTotalUsd)}<span style="font-size:var(--fs-sm);color:var(--ink-dim)"> · pessoal ${fmtMoney2(ov.contributedPersonalUsd)} · prop ${fmtMoney2(ov.contributedPropUsd)}</span></div></div>
+  <div class="fxp-kpis fxp-kpis-a">
+    <div class="metric"><div class="k">Patrimônio do plano ${ov.lastClosedMonth?fxpBadge('REAL'):fxpBadge('PROJ')}</div><div class="v">${fmtMoney2(ov.currentBalanceUsd)}</div></div>
+    <div class="metric"><div class="k">Baseline para ${ov.lastClosedMonth||(baseToday?baseToday.month:'—')} ${fxpBadge('PROJ')}</div><div class="v">${ov.baselineBalanceAtLastClose!=null?fmtMoney2(ov.baselineBalanceAtLastClose):(baseToday?fmtMoney2(baseToday.close):'—')}</div></div>
+    <div class="metric"><div class="k">Desvio vs baseline</div><div class="v" style="color:${dev==null?'var(--ink-dim)':(dev>=0?'var(--f1)':'var(--f4)')}">${dev!=null?`${fmtMoney2(dev)} · ${ov.deviationPct!=null?fxpPct(ov.deviationPct):'—'}`:'— sem mês fechado'}</div>${dev!=null?`<div class="sub">${devWord}</div>`:''}</div>
   </div>
-  <div class="metrics" style="grid-template-columns:repeat(3,1fr);margin-top:8px">
-    <div class="metric"><div class="k">Câmbio médio de aquisição</div><div class="v sm">${cb.weightedAverageFx!=null?'R$ '+cb.weightedAverageFx.toFixed(4).replace('.',','):'—'}<span style="font-size:var(--fs-sm);color:var(--ink-dim)">${cb.weightedAverageFx!=null?` · ${'R$ '+Math.round(cb.totalBrlInvested).toLocaleString('pt-BR')} → ${fmtMoney2(cb.totalUsdAcquired)}`:''}</span></div></div>
-    <div class="metric"><div class="k">FCR (Art. 13.1) — cobertura</div><div class="v sm" style="color:${res.fcrStatus==='Regular'?'var(--f1)':'var(--f4)'}">${fxpPct(res.fcrCoverage/100)} · ${esc(res.fcrStatus)}</div></div>
-    <div class="metric"><div class="k">FEO (Art. 13.2) — cobertura temporal</div><div class="v sm" style="color:${res.feoStatus==='Regular'?'var(--f1)':'var(--f4)'}">${res.feoMonths.toFixed(1).replace('.',',')} meses · ${esc(res.feoStatus)}</div></div>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px;margin:16px 0 6px;flex-wrap:wrap">
-    <h3 style="margin:0;font-size:calc(13px * var(--fs-scale))">Trajetória patrimonial — baseline × projeção vigente × realizado</h3>
-    <span style="flex:1"></span>
+  <div class="fxp-chart-head">
+    <h3>Trajetória patrimonial — baseline × projeção vigente × realizado</h3>
+    <span class="fxp-spacer"></span>
     <button type="button" class="reset-btn fxp-mode${fxpChartMode==='usd'?' fxp-mode-on':''}" data-fxp-cur="usd" aria-pressed="${fxpChartMode==='usd'}">USD</button>
     <button type="button" class="reset-btn fxp-mode${fxpChartMode==='brl'?' fxp-mode-on':''}" data-fxp-cur="brl" aria-pressed="${fxpChartMode==='brl'}">BRL</button>
   </div>
   <div id="fxpMainChart"></div>
-  <p class="fxp-note" id="fxpMainChartSummary" style="font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.6"></p>
-  <h3 style="margin:14px 0 6px;font-size:calc(13px * var(--fs-scale))">Rentabilidade mensal — planejado × realizado</h3>
+  <p class="fxp-note" id="fxpMainChartSummary"></p>
+  <div class="fxp-kpis fxp-kpis-c">
+    <div class="metric"><div class="k">Aportes realizados ${fxpBadge('REAL')}</div><div class="v">${fmtMoney2(ov.contributedTotalUsd)}</div><div class="sub">pessoal ${fmtMoney2(ov.contributedPersonalUsd)} · prop ${fmtMoney2(ov.contributedPropUsd)}</div></div>
+    <div class="metric"><div class="k">Câmbio médio de aquisição</div><div class="v">${cb.weightedAverageFx!=null?'R$ '+cb.weightedAverageFx.toFixed(4).replace('.',','):'—'}</div>${cb.weightedAverageFx!=null?`<div class="sub">${'R$ '+Math.round(cb.totalBrlInvested).toLocaleString('pt-BR')} → ${fmtMoney2(cb.totalUsdAcquired)}</div>`:''}</div>
+    <div class="metric"><div class="k">FCR (Art. 13.1) — cobertura</div><div class="v" style="color:${res.fcrStatus==='Regular'?'var(--f1)':'var(--f4)'}">${fxpPct(res.fcrCoverage/100)}</div><div class="sub">${esc(res.fcrStatus)}</div></div>
+    <div class="metric"><div class="k">FEO (Art. 13.2) — cobertura temporal</div><div class="v" style="color:${res.feoStatus==='Regular'?'var(--f1)':'var(--f4)'}">${res.feoMonths.toFixed(1).replace('.',',')} meses</div><div class="sub">${esc(res.feoStatus)}</div></div>
+  </div>
+  <h3 class="fxp-h3-spaced">Rentabilidade mensal — planejado × realizado</h3>
   <div id="fxpReturnsChart"></div>
-  <div style="margin-top:14px" id="fxpReservesPanel">${fxpReservesHTML(res)}</div>`;
+  <div id="fxpReservesPanel">${fxpReservesHTML(res)}</div>`;
 }
+// Camada D (P4/P5): os cards FCR/FEO acima já são o resumo; a tabela estatutária
+// completa desce para disclosure, eliminando a duplicação perceptiva. Abaixo de
+// 700px o CSS converte cada linha em rótulo→valor: antes, no mobile, a coluna de
+// valores nascia fora da tela e a tabela mostrava apenas os rótulos.
 function fxpReservesHTML(res){
-  const row=(k,v)=>`<tr><td style="color:var(--ink-dim)">${k}</td><td style="text-align:right;font-family:var(--mono)">${v}</td></tr>`;
+  const row=(k,v)=>`<tr class="fxp-reserve-row"><td style="color:var(--ink-dim)">${k}</td><td>${v}</td></tr>`;
   return `
-  <h3 style="margin:0 0 6px;font-size:calc(13px * var(--fs-scale))">Reservas estatutárias — situação declarada</h3>
+  <details class="mc-disclosure fxp-disc fxp-reserves">
+  <summary><span class="t">Detalhes das reservas estatutárias</span><span class="chev">▾</span></summary>
+  <div class="mc-disclosure-body">
   <div class="fxp-tablewrap"><table class="dtable" style="font-size:calc(11px * var(--fs-scale))"><tbody>
     ${row('Capital nominal da Conta Mestre (fonte: parâmetros do período)',fmtMoney2(res.capital))}
     ${row('FCR mínimo exigido — 15% (Art. 13.1)',fmtMoney2(res.fcrReq))}
@@ -119,7 +151,8 @@ function fxpReservesHTML(res){
     ${row('Cobertura FEO',`<span style="color:${res.feoStatus==='Regular'?'var(--f1)':'var(--f4)'}">${fxpPct(res.feoCoverage/100)} · ${res.feoMonths.toFixed(1).replace('.',',')} meses · ${esc(res.feoStatus)}${res.feoDiff<0?' · déficit '+fmtMoney2(-res.feoDiff):''}</span>`)}
     ${row('Situação geral',`<span style="color:${res.generalTone}">${esc(res.generalStatus)}</span>`)}
   </tbody></table></div>
-  <p class="expl" style="font-size:var(--fs-sm);color:var(--ink-faint);margin-top:6px">Hierarquia de capitalização (Art. 13.3): I — recompor FCR; II — constituir FEO; III — reservas estratégicas; IV — dividendos/realocação. Este painel calcula e informa; nenhuma movimentação é executada. Valores constituídos são revisados em ⚙ Configurações → Formulário de Início.</p>`;
+  <p class="expl" style="font-size:var(--fs-sm);color:var(--ink-faint);margin-top:6px">Hierarquia de capitalização (Art. 13.3): I — recompor FCR; II — constituir FEO; III — reservas estratégicas; IV — dividendos/realocação. Este painel calcula e informa; nenhuma movimentação é executada. Valores constituídos são revisados em ⚙ Configurações → Formulário de Início.</p>
+  </div></details>`;
 }
 
 // ---- Planejamento (premissas vigentes) --------------------------------------
@@ -129,22 +162,31 @@ function fxpPlanningHTML(live){
   return `
   <p class="fxp-note">Baseline congelado em <b>${esc((base.frozenAt||'').slice(0,10)||'—')}</b> · ${plan.revisions.length} revisão(ões) de premissas registradas.
   Revisar premissas altera apenas a <b>projeção futura</b> — o baseline original e os meses realizados permanecem intactos para comparação.</p>
+  <h3 class="fxp-h3">Premissas principais</h3>
   <div class="params-grid">
     <div class="field"><label>Mês inicial · horizonte · saldo inicial ${fxpBadge('PROJ')}</label><input type="text" value="${esc(base.startMonth)} · ${base.horizonMonths} meses · ${fmtMoney2(base.initialBalanceUsd)}" disabled><span class="note">Estruturais — congelados com o baseline.</span></div>
     <div class="field"><label for="fxpEditRate">Rentabilidade padrão vigente (% a.m.)</label><input type="text" id="fxpEditRate" value="${(cur.defaultMonthlyReturn*100).toFixed(2).replace('.',',')}"></div>
-    <div class="field"><label for="fxpEditYearOvr">Overrides por ano</label><input type="text" id="fxpEditYearOvr" value="${esc(ovr(cur.yearOverrides))}" placeholder="2028=1,20%; 2029=1,00%"><span class="note">Formato AAAA=%; separados por ponto e vírgula.</span></div>
-    <div class="field"><label for="fxpEditMonthOvr">Overrides por mês</label><input type="text" id="fxpEditMonthOvr" value="${esc(ovr(cur.monthOverrides))}" placeholder="2028-03=0,80%"><span class="note">Precedência: mês &gt; ano &gt; padrão.</span></div>
     <div class="field"><label for="fxpEditProjFx">Câmbio projetado (R$/USD)</label><input type="text" id="fxpEditProjFx" value="${cur.projectedFxRate!=null?String(cur.projectedFxRate).replace('.',','):''}" placeholder="ex.: 5,40"><span class="note">Premissa de projeção — nunca reescreve o custo histórico de aquisição.</span></div>
     <div class="field"><label for="fxpEditRecPersonal">Aporte pessoal mensal planejado (USD)</label><input type="number" step="0.01" id="fxpEditRecPersonal" placeholder="mantém plano atual"><span class="note">Se preenchido, substitui o planejado de TODOS os meses ainda abertos.</span></div>
     <div class="field"><label for="fxpEditRecProp">Aporte Prop Firm mensal planejado (USD)</label><input type="number" step="0.01" id="fxpEditRecProp" placeholder="mantém plano atual"></div>
     <div class="field"><label for="fxpEditNote">Nota da revisão</label><input type="text" id="fxpEditNote" placeholder="motivo da mudança de premissa"></div>
   </div>
+  <details class="mc-disclosure fxp-disc">
+    <summary><span class="t">Configurações avançadas — exceções por ano e por mês</span><span class="chev">▾</span></summary>
+    <div class="mc-disclosure-body">
+      <div class="params-grid">
+        <div class="field"><label for="fxpEditYearOvr">Overrides por ano</label><input type="text" id="fxpEditYearOvr" value="${esc(ovr(cur.yearOverrides))}" placeholder="2028=1,20%; 2029=1,00%" aria-describedby="fxpYearOvrEcho"><span class="note">Formato AAAA=%; separados por ponto e vírgula.</span><span class="note" id="fxpYearOvrEcho"></span></div>
+        <div class="field"><label for="fxpEditMonthOvr">Overrides por mês</label><input type="text" id="fxpEditMonthOvr" value="${esc(ovr(cur.monthOverrides))}" placeholder="2028-03=0,80%" aria-describedby="fxpMonthOvrEcho"><span class="note">Precedência: mês &gt; ano &gt; padrão.</span><span class="note" id="fxpMonthOvrEcho"></span></div>
+      </div>
+    </div>
+  </details>
   <div id="fxpPlanningErr"></div>
-  <button class="unlock-phase-btn" id="fxpReviseBtn" style="margin-top:10px">Salvar premissas vigentes (preserva baseline)</button>
-  <div style="margin-top:22px;border-top:1px solid var(--line);padding-top:14px">
-    <p class="fxp-note" style="color:var(--ink-dim)">Excluir o planejamento remove plano, fechamentos e ledger de aportes do Planejamento FX (o restante do terminal não é afetado). Digite <b>EXCLUIR</b> para habilitar.</p>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <input type="text" id="fxpDeleteConfirm" placeholder="EXCLUIR" style="max-width:140px">
+  <button class="unlock-phase-btn fxp-actions" id="fxpReviseBtn">Salvar premissas vigentes (preserva baseline)</button>
+  <div class="fxp-danger">
+    <h4>Zona de perigo</h4>
+    <p class="fxp-note">Excluir o planejamento remove plano, fechamentos e ledger de aportes do Planejamento FX (o restante do terminal não é afetado). Digite <b>EXCLUIR</b> para habilitar.</p>
+    <div class="fxp-danger-row">
+      <input type="text" id="fxpDeleteConfirm" placeholder="EXCLUIR" aria-label="Digite EXCLUIR para confirmar">
       <button class="reset-btn" id="fxpDeleteBtn" style="color:var(--f4);border-color:var(--f4)">Excluir planejamento</button>
     </div>
     <div id="fxpDeleteErr"></div>
@@ -162,6 +204,26 @@ function fxpParseOverrides(str,monthly){
 }
 function fxpBindPlanning(root,live){
   const q=id=>root.querySelector('#'+id);
+  // Afordância dos overrides (P7): o campo é texto livre com sintaxe própria, e
+  // nada dizia ao operador se ele acertou. O eco devolve o que o MESMO parser do
+  // salvamento entendeu — sem tocar em schema, domínio ou formato persistido.
+  const echo=(inputId,echoId,monthly)=>{
+    const inp=q(inputId), out=q(echoId); if(!inp||!out) return;
+    const render=()=>{
+      const bruto=String(inp.value||'').split(';').map(s=>s.trim()).filter(Boolean);
+      const lido=fxpParseOverrides(inp.value,monthly);
+      const chaves=Object.keys(lido).sort();
+      if(!bruto.length){ out.textContent='Nenhuma exceção — todos os meses usam a rentabilidade padrão.'; out.style.color=''; return; }
+      const desc=chaves.map(k=>`${k} = ${(lido[k]*100).toFixed(2).replace('.',',')}%`).join(' · ');
+      const perdidos=bruto.length-chaves.length;
+      out.textContent=(chaves.length?`Entendido: ${desc}.`:'Nada reconhecido.')
+        +(perdidos>0?` ${perdidos} trecho(s) não reconhecido(s) e ignorado(s) ao salvar.`:'');
+      out.style.color=perdidos>0?'var(--f4)':'';
+    };
+    inp.addEventListener('input',render); render();
+  };
+  echo('fxpEditYearOvr','fxpYearOvrEcho',false);
+  echo('fxpEditMonthOvr','fxpMonthOvrEcho',true);
   q('fxpReviseBtn').addEventListener('click',()=>{
     const plan=live.plan, cur=plan.current;
     const rate=fxpParsePct(q('fxpEditRate').value);
@@ -202,7 +264,8 @@ function fxpActualsHTML(live){
   const closed=Object.keys(plan.actuals).sort();
   const contribs=plan.contributions.slice().sort((a,b)=>a.month.localeCompare(b.month)||String(a.createdAt).localeCompare(String(b.createdAt)));
   return `
-  <h3 style="margin:0 0 8px;font-size:calc(13px * var(--fs-scale))">Fechamento mensal ${fxpBadge('REAL')}</h3>
+  <div class="fxp-task">
+  <h3 class="fxp-h3">Fechamento mensal ${fxpBadge('REAL')}</h3>
   <div class="params-grid">
     <div class="field"><label for="fxpActMonth">Mês</label>
       <select id="fxpActMonth">
@@ -214,12 +277,20 @@ function fxpActualsHTML(live){
       <span class="note">O outro campo é derivado — mesma álgebra do MEI (resultado ÷ saldo de abertura).</span></div>
     <div class="field"><label for="fxpActValue">Valor</label><input type="text" id="fxpActValue" placeholder="ex.: -0,70 ou 1234,56"></div>
     <div class="field"><label for="fxpActFx">Câmbio de valuation (R$/USD · opcional)</label><input type="text" id="fxpActFx" placeholder="cotação do mês"><span class="note">Só para exibir o mês em BRL — não é custo de aquisição.</span></div>
-    <div class="field" style="grid-column:1/-1"><label for="fxpActNotes">Observação do período</label><input type="text" id="fxpActNotes" placeholder="contexto do mês"></div>
+    <div class="field fxp-field-wide"><label for="fxpActNotes">Observação do período</label><input type="text" id="fxpActNotes" placeholder="contexto do mês"></div>
   </div>
   <div id="fxpActErr"></div>
-  <button class="unlock-phase-btn" id="fxpActBtn" style="margin-top:10px">${next?`Fechar ${next}`:'Editar mês selecionado'}</button>
+  <button class="unlock-phase-btn fxp-actions" id="fxpActBtn">${next?`Fechar ${next}`:'Editar mês selecionado'}</button>
   ${next?'':'<p class="fxp-note" style="color:var(--ink-dim)">Horizonte completamente fechado — apenas edição auditada disponível.</p>'}
-  <h3 style="margin:20px 0 8px;font-size:calc(13px * var(--fs-scale))">Aportes realizados — ledger cambial ${fxpBadge('REAL')}</h3>
+  </div>
+  <!-- P9: o ledger é tarefa distinta do fechamento. Seção PRÓPRIA e recolhível
+       (o ticket admite "seção própria ou disclosure"), aberta por padrão: o
+       fechamento vem primeiro e não exige atravessar o ledger, mas o registro
+       continua visível — esconder por padrão o histórico de aportes trocaria um
+       problema de hierarquia por um de descoberta. A contagem fica no rótulo. -->
+  <details class="mc-disclosure fxp-disc" open>
+  <summary><span class="t">Aportes realizados — ledger cambial (${contribs.length} lançamento${contribs.length===1?'':'s'})</span><span class="chev">▾</span></summary>
+  <div class="mc-disclosure-body">
   <div class="params-grid">
     <div class="field"><label for="fxpCMonth">Mês</label><input type="month" id="fxpCMonth" value="${next||closed.slice(-1)[0]||plan.baseline.startMonth}"></div>
     <div class="field"><label for="fxpCSource">Origem</label><select id="fxpCSource"><option value="personal">Aporte pessoal</option><option value="prop">Prop Firm / origem operacional</option></select></div>
@@ -229,7 +300,7 @@ function fxpActualsHTML(live){
     <div class="field" id="fxpCRateField"><label for="fxpCRate">Câmbio efetivamente pago (R$/USD)</label><input type="text" id="fxpCRate" placeholder="ex.: 5,00"><span class="note">USD adquirido = BRL ÷ taxa.</span></div>
   </div>
   <div id="fxpCErr"></div>
-  <button class="unlock-phase-btn" id="fxpCBtn" style="margin-top:10px">Registrar aporte</button>
+  <button class="unlock-phase-btn fxp-actions" id="fxpCBtn">Registrar aporte</button>
   <div class="fxp-tablewrap" style="margin-top:12px"><table class="dtable" style="font-size:calc(11px * var(--fs-scale))">
     <thead><tr><th>Mês</th><th>Origem</th><th>Moeda</th><th>Valor origem</th><th>Taxa aquisição</th><th>USD</th><th>Custo médio?</th><th></th></tr></thead>
     <tbody>${contribs.length?contribs.map(c=>`<tr>
@@ -240,7 +311,8 @@ function fxpActualsHTML(live){
       <td>${c.affectsFxCostBasis?'entra':'não entra'}</td>
       <td><button type="button" class="reset-btn fxp-del" data-fxp-del="${esc(c.id)}" aria-label="Remover aporte de ${esc(c.month)}">remover</button></td>
     </tr>`).join(''):'<tr><td colspan="8" style="color:var(--ink-faint)">Nenhum aporte registrado — indicadores permanecem “—” até existir lançamento real.</td></tr>'}</tbody>
-  </table></div>`;
+  </table></div>
+  </div></details>`;
 }
 function fxpBindActuals(root,live){
   const q=id=>root.querySelector('#'+id);
@@ -342,8 +414,8 @@ function renderFxPlanning(){
     <p class="fxp-note" style="margin-bottom:10px"><b>${esc(live.plan.name)}</b> · ${esc(live.plan.baseline.startMonth)} + ${live.plan.baseline.horizonMonths} meses ·
     ${live.lastClosedMonth?`fechado até <b>${live.lastClosedMonth}</b> · próximo aberto <b>${live.nextOpenMonth||'—'}</b>`:'nenhum mês fechado ainda'}</p>
     ${fxpModesHTML()}
-    <div class="fxp-section">${body}</div>`;
-  root.querySelectorAll('[data-fxp-view]').forEach(b=>b.addEventListener('click',()=>{ fxpView=b.dataset.fxpView; renderFxPlanning(); }));
+    <div class="fxp-section" role="tabpanel" id="fxpPanel-${fxpView}" aria-labelledby="fxpTab-${fxpView}" tabindex="0">${body}</div>`;
+  fxpBindTabs(root);
   if(fxpView==='overview'){
     root.querySelectorAll('[data-fxp-cur]').forEach(b=>b.addEventListener('click',()=>{ fxpChartMode=b.dataset.fxpCur; renderFxPlanning(); }));
     window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,live,fxpChartMode);

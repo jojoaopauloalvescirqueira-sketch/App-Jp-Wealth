@@ -4640,6 +4640,60 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 .fxp-del{padding:3px 8px; font-size:calc(10px * var(--fs-scale))}
 .fxp-note{font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin:0 0 8px}
 
+/* ---- JPW-PNMKTS · camadas de hierarquia -----------------------------------
+   A hierarquia da Visão Geral vive AQUI, não em style="" no template. O motivo
+   é concreto: estilo inline vence media query, e enquanto o número de colunas
+   era escrito inline os sete cards ficavam em 4 colunas de 57,75px no mobile,
+   com o valor de todos eles truncado. Camada A domina, camada C recua. */
+.fxp-kpis{display:grid; gap:1px; min-width:0}
+.fxp-kpis-a{grid-template-columns:repeat(3,1fr)}
+.fxp-kpis-c{grid-template-columns:repeat(4,1fr); margin-top:10px}
+@media(max-width:1000px){.fxp-kpis-c{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.fxp-kpis-a{grid-template-columns:1fr}}
+@media(max-width:480px){.fxp-kpis-c{grid-template-columns:1fr}}
+.fxp-kpis-a .metric{padding:8px var(--sp-2)}
+.fxp-kpis-a .metric .v{font-size:var(--fs-lg)}
+.fxp-kpis-c .metric .v{font-size:var(--fs-md)}
+/* Valor principal nunca some: o card cresce, o número fica inteiro. Anula o
+   nowrap+ellipsis global de .metric apenas dentro do Planejamento FX. */
+.fxp-kpis .metric{overflow:visible}
+.fxp-kpis .metric .k,.fxp-kpis .metric .v{white-space:normal; overflow:visible; text-overflow:clip}
+.fxp-kpis .metric .v{overflow-wrap:anywhere}
+.fxp-kpis .metric .sub{display:block; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); margin-top:2px; line-height:1.45}
+
+/* Camada B — o gráfico é o elemento analítico dominante da tela. */
+.fxp-chart-head{display:flex; align-items:center; gap:8px; margin:16px 0 6px; flex-wrap:wrap}
+.fxp-chart-head h3{margin:0; font-size:calc(13px * var(--fs-scale))}
+.fxp-chart-head .fxp-spacer{flex:1}
+.fxp-h3{margin:0 0 8px; font-size:calc(13px * var(--fs-scale))}
+.fxp-h3-spaced{margin:20px 0 8px; font-size:calc(13px * var(--fs-scale))}
+
+/* Camada D — detalhe estatutário e explicações longas, sob disclosure. */
+.fxp-disc{margin-top:14px}
+.fxp-disc>summary .t{white-space:normal}
+/* No mobile a tabela de reservas exibia só os rótulos: a coluna de valores
+   nascia fora da tela. Abaixo de 700px ela vira lista rótulo→valor. */
+.fxp-reserve-row td:last-child{text-align:right; font-family:var(--mono)}
+@media(max-width:700px){
+  .fxp-reserves table,.fxp-reserves tbody,.fxp-reserves tr,.fxp-reserves td{display:block; width:auto}
+  .fxp-reserves .fxp-tablewrap{overflow-x:visible}
+  .fxp-reserves .fxp-tablewrap table{min-width:0}
+  .fxp-reserve-row{padding:7px 0; border-bottom:1px solid var(--line)}
+  .fxp-reserve-row td{padding:0}
+  .fxp-reserve-row td:last-child{text-align:left; margin-top:2px}
+}
+
+/* Zona de perigo: a exclusão continua disponível, longe das ações ordinárias. */
+.fxp-danger{margin-top:24px; padding:14px; border:1px solid var(--f4); border-radius:var(--radius); background:var(--panel-2)}
+.fxp-danger h4{margin:0 0 6px; color:var(--f4); font-size:calc(12px * var(--fs-scale))}
+.fxp-danger-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.fxp-danger-row input{max-width:150px}
+
+/* Tarefa principal do modo Realizado, separada do ledger. */
+.fxp-task{padding:0 0 4px}
+.fxp-actions{margin-top:10px}
+.fxp-field-wide{grid-column:1/-1}
+
 /* Topbar (shell global-dashboard) com CINCO telas principais: na faixa entre a
    grade de toque (≤900px) e o desktop largo, os cinco rótulos não cabem sem
    estourar o cabeçalho (largura mínima ~1152px). Mesmo padrão da rail

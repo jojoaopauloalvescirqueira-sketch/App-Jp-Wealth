@@ -2,9 +2,15 @@
 // Só desenho: recebe séries prontas do motor (02-fx-engine.js) e nunca calcula
 // valor financeiro. Convenção visual herdada de drawRvpChart2: PROJETADO =
 // linha tracejada, REALIZADO = linha sólida var(--f1) com área e pontos.
-// Baseline = violeta tracejado; forecast vigente = var(--f2) tracejado.
 // Estado nunca é comunicado só por cor: legenda com marcadores, rótulo na
 // transição histórico→projeção e resumo textual acompanham cada SVG.
+// JPW-PNMKTS · P6 — as três séries também se separam pelo PADRÃO do traço, não
+// apenas pela cor. Baseline e forecast usavam o mesmo dasharray "4 3" e só se
+// distinguiam pelo matiz, o que quebrava para quem não separa violeta de âmbar:
+//   realizado = sólido · baseline = tracejado longo (9 4) · forecast = pontilhado (2 3)
+// Nenhuma série, escala ou valor muda — só o atributo de traço.
+const FX_DASH_BASELINE='9 4';
+const FX_DASH_FORECAST='2 3';
 
 // Conversão de exibição USD→BRL. Realizado usa a valuationFxRate do próprio mês
 // quando registrada; na falta, cai na premissa vigente (aproximação sinalizada
@@ -56,16 +62,21 @@ function fxDrawMainChart(box,plan,ov,mode){
   const endF=series[series.length-1], endB=basePts[basePts.length-1];
   const stats=CH.stats(L,T,[
     {mark:'─',label:'Realizado',value:actualPts.length?money(actualPts[actualPts.length-1].y):'—',color:'var(--f1)'},
-    {mark:'┄',label:'Projeção vigente',value:endF?money(endF.y):'—',color:'var(--f2)'},
-    {mark:'┄',label:'Baseline original',value:endB?money(endB.y):'—',color:'var(--violet)'},
+    // Marcadores espelham o padrão real do traço (P6): pontilhado ≠ tracejado
+    // longo. Antes ambos usavam '┄' e a legenda só se resolvia pela cor. O
+    // rótulo fica curto de propósito — a coluna de valores começa em x=168 e
+    // texto mais longo passa por baixo dela; a descrição em palavras vai no
+    // resumo textual abaixo do gráfico, onde há espaço.
+    {mark:'┈',label:'Projeção vigente',value:endF?money(endF.y):'—',color:'var(--f2)'},
+    {mark:'╌',label:'Baseline original',value:endB?money(endB.y):'—',color:'var(--violet)'},
   ],168);
   const callouts=(endF?CH.callout(W,R,Y(endF.y),money(endF.y),'var(--f2)'):'')
     +(actualPts.length?CH.callout(W,R,Y(actualPts[actualPts.length-1].y),money(actualPts[actualPts.length-1].y),'var(--f1)'):'');
   box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Trajetória patrimonial: baseline, projeção vigente e realizado" style="width:100%;height:auto;font-family:var(--mono)">
     <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="var(--bg)"/>
     ${grid}${xLabels}${transition}${realArea}
-    <path d="${path(basePts)}" fill="none" stroke="var(--violet)" stroke-width="1" stroke-dasharray="4 3"/>
-    <path d="${path(forecastPts)}" fill="none" stroke="var(--f2)" stroke-width="1" stroke-dasharray="4 3"/>
+    <path d="${path(basePts)}" fill="none" stroke="var(--violet)" stroke-width="1" stroke-dasharray="${FX_DASH_BASELINE}"/>
+    <path d="${path(forecastPts)}" fill="none" stroke="var(--f2)" stroke-width="1" stroke-dasharray="${FX_DASH_FORECAST}"/>
     ${actualPts.length>1?`<path d="${path(actualPts)}" fill="none" stroke="var(--f1)" stroke-width="1.2"/>`:''}${dots}
     ${callouts}${stats}
   </svg>`;
@@ -86,6 +97,9 @@ function fxMainChartSummaryText(plan,ov,mode){
   } else parts.push('Nenhum mês fechado ainda — a série exibida é integralmente projeção condicional.');
   if(endF&&endB) parts.push(`Fim do horizonte (${endF.month}): projeção vigente ${cur(endF.close*(brl?rate:1))} × baseline ${cur(endB.close*(brl?rate:1))}.`);
   if(brl) parts.push('Conversão BRL pela premissa/valuation informadas — nunca pelo custo médio de aquisição.');
+  // Chave de leitura do traço (P6): descreve em palavras o padrão de cada série,
+  // para que a distinção não dependa de enxergar a diferença entre as cores.
+  parts.push('Leitura das linhas: realizado em traço contínuo, baseline original em tracejado longo, projeção vigente em pontilhado.');
   return parts.join(' ');
 }
 
