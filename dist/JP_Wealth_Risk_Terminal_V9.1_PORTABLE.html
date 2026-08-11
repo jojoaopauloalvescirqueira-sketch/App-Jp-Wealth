@@ -501,31 +501,65 @@
 
   /* THERMOMETER (signature element) */
   .thermo-card{display:flex; flex-direction:column; align-items:center; padding:18px 14px}
-  .thermo{
-    position:relative; width:64px; height:380px; margin:8px 0 14px;
-    border-radius:32px; overflow:hidden; border:1px solid var(--line);
-    background:linear-gradient(to top,
-      var(--f1-bg) 0%, var(--f1-bg) 26.6%,
-      var(--f2-bg) 26.6%, var(--f2-bg) 53.3%,
-      var(--f3-bg) 53.3%, var(--f3-bg) 80%,
-      var(--f4-bg) 80%, var(--f4-bg) 100%);
+  /* ============ JP WEALTH GAUGE (design "JP Wealth Gauge System") ============
+     Instrumento analógico que substituiu as barras verticais dos termômetros.
+     Variante Base 1a no Execution Board (arco em zonas + ponteiro + valor +
+     pílula) e variante C minimalista no espelho do Dashboard. As classes das
+     barras antigas (.thermo/.thermo-fill/…) foram removidas junto com o markup;
+     .thermo-card e a legenda .tz permanecem porque continuam em uso. */
+  /* PROPORÇÕES — nota de calibragem: o design centra um inteiro de 2 dígitos
+     ("72"); o app mostra strings de 5–6 caracteres ("3,20%", "1,62x"). Manter a
+     fonte proporcional do mockup estourava o mostrador (valor medido em 34,6%
+     da largura contra 17,2% da referência). Por isso o valor usa fonte menor
+     que a do design e o bloco central senta mais baixo, colado na linha do
+     cubo — alvo: valor ≤ ~24% da largura do gauge. */
+  .jpwg-row{display:flex; flex-wrap:wrap; gap:16px 24px; justify-content:center; width:100%; margin-top:6px}
+  .jpwg-unit{display:flex; flex-direction:column; align-items:center; gap:8px; flex:1 1 200px; max-width:250px}
+  .jpwg-gauge{position:relative; width:100%; max-width:206px}
+  /* Anel de 270° (variante 1b): zonas finas por FORA, trilho e preenchimento
+     grossos por dentro, ponto orbitando na ponta do preenchimento. A varredura
+     de entrada usa as mesmas transições: o JS semeia dasharray 0 / rotação 225°
+     e aplica o valor real um tique depois — o CSS faz o percurso. */
+  .jpwg-ring-zone{fill:none; stroke-width:3.5; opacity:.4}
+  .jpwg-ring-track{fill:none; stroke:var(--panel-2); stroke-width:10; stroke-linecap:round}
+  .jpwg-ring-fill{fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dasharray .76s cubic-bezier(.22,.9,.25,1)}
+  .jpwg-orbit{transform-box:view-box; transform-origin:100px 100px; transition:transform .76s cubic-bezier(.22,.9,.25,1)}
+  /* Tick externo do teto da fase (só no gauge de alavancagem): herdeiro da
+     informação normativa do marcador do termômetro antigo. */
+  .jpwg-ceiling{stroke:var(--ink); stroke-width:2}
+  /* Centro do anel: valor, classificação e rótulo do instrumento, empilhados
+     no miolo do círculo — como no design (inset:0 + centragem). O diâmetro
+     interno (~126/200 da largura) comporta "3,20%" a 21px com folga. */
+  .jpwg-ring-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; pointer-events:none}
+  .jpwg-value{font-family:var(--mono); font-size:calc(21px * var(--fs-scale)); font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.03em; color:var(--ink); line-height:1}
+  .jpwg-ring-zonekey{font-family:var(--mono); font-size:calc(10.5px * var(--fs-scale)); font-weight:700}
+  .jpwg-ring-lbl{font-family:var(--mono); font-size:calc(8px * var(--fs-scale)); letter-spacing:.14em; color:var(--ink-faint)}
+  .jpwg-pill-wrap{display:flex; flex-direction:column; align-items:center; gap:5px}
+  .jpwg-pill{display:inline-flex; align-items:center; gap:8px; padding:5px 12px; border-radius:999px; background:var(--panel-2); border:1px solid var(--line); font-family:var(--mono); font-size:var(--fs-sm); font-weight:700}
+  .jpwg-pill-dot{width:7px; height:7px; border-radius:999px; flex:none}
+  .jpwg-range{font-family:var(--mono); font-size:var(--fs-xs); letter-spacing:.06em; color:var(--ink-faint); text-align:center}
+  /* Espelho compacto do Dashboard — o MESMO anel 1b, menor. `flex:none` é
+     obrigatório: sem ele o flex do sub-card esmagava o item (medido: 73px, com
+     o SVG rendendo 39px de altura) — defeito, não escolha. */
+  .jpwg-mini{position:relative; width:112px; flex:none}
+  .jpwg-mini .jpwg-value{font-size:calc(15px * var(--fs-scale))}
+  .jpwg-mini .jpwg-ring-lbl{font-size:calc(7.5px * var(--fs-scale))}
+  /* Faixa de integração (padrão do design): cada indicador no próprio sub-card,
+     com rótulo em cima e classificação embaixo. `min-width:0` nos sub-cards
+     evita que o conteúdo de largura fixa impeça a quebra em telas estreitas. */
+  .jpwg-subcard{
+    flex:1 1 150px; min-width:0; display:flex; flex-direction:column; align-items:center; gap:8px;
+    padding:14px 14px 12px; border:1px solid var(--line); border-radius:12px; background:var(--bg);
   }
-  .thermo-fill{
-    position:absolute; left:0; right:0; bottom:0;
-    background:linear-gradient(to top, var(--f1) 0%, var(--f2) 40%, var(--f3) 70%, var(--f4) 100%);
-    transition:height .6s cubic-bezier(.4,0,.2,1); opacity:.92;
+  .jpwg-subcard-lbl{align-self:flex-start; font-family:var(--sans); font-size:var(--fs-sm); font-weight:600; color:var(--ink-dim)}
+  .jpwg-subcard-zone{font-family:var(--mono); font-size:calc(10px * var(--fs-scale)); font-weight:700; text-align:center; line-height:1.35}
+  .jpwg-strip-note{
+    margin:12px 0 0; padding-top:12px; border-top:1px solid var(--line);
+    font-family:var(--sans); font-size:var(--fs-xs); line-height:1.5; color:var(--ink-faint); text-wrap:pretty;
   }
-  .thermo-marker{
-    position:absolute; left:-6px; right:-6px; height:3px; background:var(--ink);
-    box-shadow:0 0 12px rgba(231,229,240,.8); transition:bottom .6s cubic-bezier(.4,0,.2,1);
-    z-index:3;
+  @media (prefers-reduced-motion:reduce){
+    .jpwg-orbit,.jpwg-ring-fill{transition:none}
   }
-  .thermo-marker::after{
-    content:''; position:absolute; right:-10px; top:-4px;
-    border-left:8px solid var(--ink); border-top:5px solid transparent; border-bottom:5px solid transparent;
-  }
-  .thermo-ticks{display:flex; flex-direction:column; justify-content:space-between;
-    height:380px; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); padding:2px 0}
   .thermo-zone-labels{display:flex; flex-direction:column; gap:0; width:100%; margin-top:4px}
   .tz{font-family:var(--mono); font-size:var(--fs-xs); padding:3px 6px; border-radius:var(--radius-sm); text-align:center; margin-bottom:3px}
   .tz.f4{color:var(--f4); background:var(--f4-bg)}
@@ -2932,7 +2966,7 @@
     .hdr-readout .v, .metric .v, .mc-mini-card .v, .dp-v,
     .otable, .otable input, .otable select, .otable .calc,
     .dtable, .dtable td.editable input, .dtable td.editable select,
-    .thermo-ticks, .chart-tip, .stale-pill, .gauge .lbl .val,
+    .chart-tip, .stale-pill, .gauge .lbl .val,
     .mc-ec-facts b, .phase-meta b, .lifo-sug b,
     .session-export-facts code, .foot-note code, code, .jp-num
   ){
@@ -3624,28 +3658,9 @@
   html[data-ui-version="tesla-inspired"] .thermo-card{
     padding:0 var(--jp-space-6) var(--jp-space-6); align-items:stretch;
   }
-  /* A largura do trilho vinha de um style inline (46px) que vencia qualquer
-     seletor. Migrada para .jp-thermo-track: sem a flag o valor legado de 46px
-     é reproduzido exatamente; com a flag o trilho pode finalmente alargar. */
-  .jp-thermo-track{width:46px}
-  html[data-ui-version="tesla-inspired"] .jp-thermo-track{width:56px}
-  html[data-ui-version="tesla-inspired"] .thermo{
-    border-radius:var(--jp-radius-pill);
-    border:1px solid var(--jp-border); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--jp-canvas) 40%, transparent);
-  }
-  html[data-ui-version="tesla-inspired"] .thermo-fill{opacity:1; border-radius:var(--jp-radius-pill)}
-  /* O marcador some do glow e vira uma régua fina com pino — leitura de
-     instrumento de precisão, não de termômetro de parede. */
-  html[data-ui-version="tesla-inspired"] .thermo-marker{
-    left:-4px; right:-4px; height:2px; background:var(--jp-ink); box-shadow:none;
-  }
-  html[data-ui-version="tesla-inspired"] .thermo-marker::after{
-    right:-7px; top:-3px;
-    border-left:6px solid var(--jp-ink); border-top:4px solid transparent; border-bottom:4px solid transparent;
-  }
-  html[data-ui-version="tesla-inspired"] .thermo-ticks{
-    font-size:var(--jp-fs-caption); color:var(--jp-ink-muted); padding:0;
-  }
+  /* As barras verticais (.thermo/.thermo-fill/.thermo-marker/.thermo-ticks/
+     .jp-thermo-track) saíram com a chegada do JP Wealth Gauge — restam a
+     legenda .tz e o contêiner .thermo-card, ainda em uso pelos gauges. */
   /* Legenda de zonas: quatro linhas em vez de quatro blocos saturados. */
   html[data-ui-version="tesla-inspired"] .thermo-zone-labels{
     margin-top:var(--jp-space-5); gap:var(--jp-space-1);
@@ -3663,21 +3678,6 @@
   html[data-ui-version="tesla-inspired"] .tz.f2::before{background:var(--f2)}
   html[data-ui-version="tesla-inspired"] .tz.f3::before{background:var(--f3)}
   html[data-ui-version="tesla-inspired"] .tz.f4::before{background:var(--f4)}
-  /* Sem a flag, .jp-thermo-value precisa reproduzir exatamente o style inline
-     que substituiu no HTML — é o que mantém o rollback fiel ao legado. */
-  .jp-thermo-value{
-    font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
-    color:var(--ink-dim); margin-top:6px;
-  }
-  .jp-thermo-value b{color:var(--ink)}
-  html[data-ui-version="tesla-inspired"] .jp-thermo-value{
-    font-family:var(--jp-font-ui); font-size:var(--jp-fs-label);
-    color:var(--jp-ink-muted); margin-top:var(--jp-space-3); text-align:center;
-  }
-  html[data-ui-version="tesla-inspired"] .jp-thermo-value b{
-    display:block; font-family:var(--jp-font-data); font-size:var(--jp-fs-data-sm);
-    font-weight:var(--jp-weight-semibold); color:var(--jp-ink); margin-top:2px;
-  }
 
   /* ==========================================================
      B0.13 — EXECUTION BOARD: aplicação visual dos componentes
@@ -4067,15 +4067,11 @@
      exclusivos do Dashboard, sem input, sem estado paralelo. Largura própria
      definida acima, junto dos outros cards (eram um grid de 3 fixo; agora
      cada um é um card independente, movível por si só). */
-  html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; gap:22px; justify-content:center; margin-top:6px}
-  html[data-shell="global-dashboard"] .gd-thermo-item{display:flex; flex-direction:column; align-items:center; gap:6px}
-  html[data-shell="global-dashboard"] .gd-thermo-track{
-    width:22px; height:70px; border:1px solid var(--jp-border); border-radius:4px;
-    display:flex; align-items:flex-end; overflow:hidden;
-  }
-  html[data-shell="global-dashboard"] .gd-thermo-fill{width:100%; height:0; background:var(--jp-success); transition:height .3s ease}
-  html[data-shell="global-dashboard"] .gd-thermo-val{font-family:var(--jp-font-data); font-size:10px; font-weight:600; color:var(--jp-ink)}
-  html[data-shell="global-dashboard"] .gd-thermo-lbl{font-family:var(--jp-font-ui); font-size:8.5px; color:var(--jp-ink-muted)}
+  /* As barras compactas (.gd-thermo-track/-fill/-val/-lbl) foram substituídas
+     pelos gauges .jpwg-mini; o grupo permanece como contêiner. */
+  /* Faixa horizontal de indicadores: quebra em coluna quando não couberem os
+     dois sub-cards com sua largura mínima. */
+  html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; flex-wrap:wrap; gap:14px; align-items:stretch; margin-top:6px}
 
   html[data-shell="global-dashboard"] .gd-gauge{margin-bottom:16px}
   html[data-shell="global-dashboard"] .gd-gauge:last-child{margin-bottom:0}
@@ -4558,7 +4554,7 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'ff5bb4f75ce0cdc2';
+const JP_WEALTH_BUILD_ID = '7410778d85979465';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <link rel="manifest" href="manifests/jp-wealth.webmanifest">
@@ -4715,36 +4711,72 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       </div>
       <div class="card" id="objectiveCard" data-layout-card="exec-posture" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full"></div>
 
-      <!-- THERMOMETER -->
+      <!-- JP WEALTH GAUGE — Base semicircular 180° (variante 1a do design).
+           Substitui a coluna de termômetros; a lógica de cálculo permanece
+           intacta: os mesmos c.dd/ddCeil, c.mScaled, c.alavCar e c.tetoAlav do
+           compute() alimentam ponteiro, arco, valor e classificação
+           (03-main-render.js). As zonas do gauge de DD são as QUATRO FASES
+           REAIS da matriz quadrifásica, com faixas dinâmicas — não as zonas
+           fixas de exemplo do mockup. O tick externo no gauge de alavancagem é
+           o teto da fase vigente: informação normativa que o marcador do
+           termômetro carregava e que não pode se perder na troca visual. -->
       <div class="card thermo-card" data-layout-card="exec-thermometers" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large">
         <h2 style="align-self:flex-start">Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
-        <div style="display:flex; gap:14px; align-items:flex-start">
-          <div style="display:flex; flex-direction:column; align-items:center">
-            <div style="display:flex; gap:6px; align-items:flex-start">
-              <div class="thermo jp-thermo-track">
-                <div class="thermo-fill" id="thermoFill" style="height:0%"></div>
-                <div class="thermo-marker" id="thermoMarker" style="bottom:0%"></div>
-              </div>
-              <div class="thermo-ticks" id="thermoDDticks">
-                <span>15%</span><span>12%</span><span>9%</span><span>6%</span><span>3%</span><span>0%</span>
+        <!-- Variante 1b do design ("A — circular compacto"): anel de 270° com
+             preenchimento na cor da zona vigente, ponto orbitando na ponta do
+             preenchimento e zonas finas por fora do anel. Entrada animada: o
+             preenchimento e o ponto nascem em 0 e varrem até o valor
+             (semente em 03-main-render.js; prefers-reduced-motion desliga). -->
+        <div class="jpwg-row">
+          <div class="jpwg-unit">
+            <div class="jpwg-gauge jpwg-ring" id="gaugeDD" role="meter" aria-label="Drawdown operacional" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
+              <svg viewBox="0 0 200 200">
+                <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
+                <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
+                <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
+                <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
+                <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
+              </svg>
+              <div class="jpwg-ring-center">
+                <span class="jpwg-value" data-jpwg-value>—</span>
+                <span class="jpwg-ring-zonekey" data-jpwg-zonekey>—</span>
+                <span class="jpwg-ring-lbl">DD</span>
               </div>
             </div>
-            <div class="jp-thermo-value">DD <b id="thermoDDval">—</b></div>
+            <div class="jpwg-pill-wrap">
+              <span class="jpwg-pill"><span class="jpwg-pill-dot" data-jpwg-pill-dot></span><span data-jpwg-pill-text>—</span></span>
+              <span class="jpwg-range" data-jpwg-range>DD</span>
+            </div>
           </div>
-          <div style="display:flex; flex-direction:column; align-items:center">
-            <div style="display:flex; gap:6px; align-items:flex-start">
-              <div class="thermo jp-thermo-track" style="background:linear-gradient(to top, var(--f1-bg) 0%, var(--f1-bg) 25%, var(--f2-bg) 25%, var(--f2-bg) 50%, var(--f3-bg) 50%, var(--f3-bg) 75%, var(--f4-bg) 75%, var(--f4-bg) 100%)">
-                <div class="thermo-fill" id="thermoLevFill" style="height:0%"></div>
-                <div class="thermo-marker" id="thermoLevMarker" style="bottom:0%"></div>
-              </div>
-              <div class="thermo-ticks">
-                <span>4x</span><span>3x</span><span>2x</span><span>1x</span><span>0x</span>
+          <div class="jpwg-unit">
+            <div class="jpwg-gauge jpwg-ring" id="gaugeAlav" role="meter" aria-label="Alavancagem carregada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
+              <svg viewBox="0 0 200 200">
+                <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
+                <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
+                <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
+                <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
+                <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                <!-- Tick externo do teto da fase: informação normativa herdada
+                     do marcador do termômetro antigo. -->
+                <line class="jpwg-ceiling" data-jpwg-ceiling x1="100" y1="6" x2="100" y2="14" transform="rotate(225 100 100)"/>
+                <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
+              </svg>
+              <div class="jpwg-ring-center">
+                <span class="jpwg-value" data-jpwg-value>—</span>
+                <span class="jpwg-ring-zonekey" data-jpwg-zonekey>—</span>
+                <span class="jpwg-ring-lbl">ALAV · 0–4X</span>
               </div>
             </div>
-            <div class="jp-thermo-value">ALAV <b id="thermoLevVal">—</b></div>
+            <div class="jpwg-pill-wrap">
+              <span class="jpwg-pill"><span class="jpwg-pill-dot" data-jpwg-pill-dot></span><span data-jpwg-pill-text>—</span></span>
+              <span class="jpwg-range" data-jpwg-range>ALAV · teto no tick externo</span>
+            </div>
           </div>
         </div>
-        <p class="expl" style="font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint); margin-top:6px; align-self:flex-start; line-height:1.4">Alavancagem real utilizada agora (nocional aberto ÷ saldo inicial). A marca é o teto da fase vigente.</p>
+        <p class="expl" style="font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint); margin-top:6px; align-self:flex-start; line-height:1.4">Alavancagem real utilizada agora (nocional aberto ÷ saldo inicial). O tick externo é o teto da fase vigente.</p>
         <div class="thermo-zone-labels thermo-legend" id="thermoZoneLabels">
           <div class="tz f4">F4 · ABISMO 12–15</div>
           <div class="tz f3">F3 · SOBREVIV. 8–12</div>
@@ -5008,20 +5040,58 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
         <!-- Termômetros / Coerência / VRM — espelhos de leitura do mesmo compute()
              já usado no Execution Board. Novos IDs, sem input, sem cálculo novo. -->
+        <!-- Espelho compacto do gauge — mesma variante 1b do Execution Board
+             ("A — circular compacto"), em anel menor. Mesmos valores canônicos
+             do compute(), preenchidos em 03-main-render.js. -->
         <div class="card gd-thermo-card" data-layout-card="thermometers" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
           <h2>Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
+          <!-- Padrão de integração do design: faixa horizontal em que cada
+               indicador vive no PRÓPRIO sub-card — rótulo em cima, gauge no
+               meio, classificação embaixo — e uma nota de rodapé separada por
+               filete. Em telas estreitas a faixa quebra em coluna e cada
+               sub-card mantém a largura mínima; o gauge escala por viewBox. -->
           <div class="gd-thermo-group">
-            <div class="gd-thermo-item">
-              <div class="gd-thermo-track"><div class="gd-thermo-fill" id="gdThermoDDFill"></div></div>
-              <span class="gd-thermo-val" id="gdThermoDDVal">—</span>
-              <span class="gd-thermo-lbl">DD</span>
+            <div class="jpwg-subcard">
+              <span class="jpwg-subcard-lbl">Drawdown</span>
+              <div class="jpwg-mini jpwg-ring" id="gdGaugeDD" role="meter" aria-label="Drawdown operacional" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
+                <svg viewBox="0 0 200 200">
+                  <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
+                  <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
+                  <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
+                  <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
+                  <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                  <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                  <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
+                </svg>
+                <div class="jpwg-ring-center">
+                  <span class="jpwg-value" data-jpwg-value>—</span>
+                  <span class="jpwg-ring-lbl" data-jpwg-scale>—</span>
+                </div>
+              </div>
+              <span class="jpwg-subcard-zone" data-jpwg-subzone>—</span>
             </div>
-            <div class="gd-thermo-item">
-              <div class="gd-thermo-track"><div class="gd-thermo-fill" id="gdThermoAlavFill"></div></div>
-              <span class="gd-thermo-val" id="gdThermoAlavVal">—</span>
-              <span class="gd-thermo-lbl">ALAV</span>
+            <div class="jpwg-subcard">
+              <span class="jpwg-subcard-lbl">Alavancagem</span>
+              <div class="jpwg-mini jpwg-ring" id="gdGaugeAlav" role="meter" aria-label="Alavancagem carregada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
+                <svg viewBox="0 0 200 200">
+                  <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
+                  <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
+                  <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
+                  <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
+                  <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                  <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
+                  <line class="jpwg-ceiling" data-jpwg-ceiling x1="100" y1="6" x2="100" y2="14" transform="rotate(225 100 100)"/>
+                  <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
+                </svg>
+                <div class="jpwg-ring-center">
+                  <span class="jpwg-value" data-jpwg-value>—</span>
+                  <span class="jpwg-ring-lbl">DE 4X</span>
+                </div>
+              </div>
+              <span class="jpwg-subcard-zone" data-jpwg-subzone>—</span>
             </div>
           </div>
+          <p class="jpwg-strip-note">Mesma fonte do Execution Board. As zonas do drawdown são as faixas da matriz quadrifásica vigente; o tick externo da alavancagem é o teto da fase.</p>
         </div>
         <div class="card gd-coherence-card" data-layout-card="leverage-coherence" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large">
           <h2>Coerência de Alavancagem</h2>
@@ -7577,39 +7647,99 @@ function render(){
   const hp=$('hPhase'); hp.className='pill f'+(c.fi+1);
   hp.querySelector('.dot').style.background=FCOLORS[c.fi];
   hp.querySelector('.dot').style.color=FCOLORS[c.fi];
-  // thermometer DD — escala pelo teto real do perfil ativo (SET 11), não mais fixo em 15%
+  // ---- JP WEALTH GAUGE — variante 1b "A, circular compacto" ----
+  // Troca EXCLUSIVAMENTE a camada visual dos termômetros: os valores canônicos
+  // continuam sendo c.dd/ddCeil (SET 11 — escala pelo teto real do perfil),
+  // c.mScaled (fases dinâmicas), c.alavCar e c.tetoAlav (SET 6). Nenhum
+  // cálculo novo. Geometria do anel de 270° (do design): zonas finas externas
+  // r=84 (comprimento ≈392), preenchimento interno r=68 (3.2044/pct), ponto
+  // orbital e teto girando 225°→495° (2.7°/pct a partir de 225°).
   const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
   const ddPct=Math.min(100,(c.dd/ddCeil)*100);
-  $('thermoFill').style.height=ddPct+'%';
-  $('thermoMarker').style.bottom=ddPct+'%';
-  // Espelho de leitura no Dashboard (fidelidade ao Claude Design) — mesma
-  // fonte canônica (c.dd/ddCeil) já usada acima; sem cálculo novo, sem input.
-  const gdTDf=$('gdThermoDDFill'); if(gdTDf) gdTDf.style.height=ddPct+'%';
-  const ticksEl=$('thermoDDticks');
-  if(ticksEl){
-    ticksEl.innerHTML=[1,0.8,0.6,0.4,0.2,0].map(f=>`<span>${fmtPct(ddCeil*f)}</span>`).join('');
+  const alavPct=Math.min(100,(c.alavCar/4)*100);
+  const RING=392.0, RING_GAP=3;
+  const zoneDash=(fromPct,toPct)=>{
+    const start=RING*fromPct/100+(fromPct>0?RING_GAP/2:0);
+    const len=Math.max(0,RING*(toPct-fromPct)/100-(fromPct>0?RING_GAP/2:0)-(toPct<100?RING_GAP/2:0));
+    return '0 '+start.toFixed(1)+' '+len.toFixed(1)+' 900';
+  };
+  // Varredura de entrada: na PRIMEIRA alimentação o anel é semeado em zero
+  // (dasharray 0, ponto a 225°) e o valor real entra um tique depois — a
+  // transição do CSS faz o percurso, como no canvas do design. setTimeout, não
+  // requestAnimationFrame: rAF não dispara em aba/painel oculto (lição já
+  // paga duas vezes nesta base). Renders seguintes aplicam direto e o CSS
+  // anima só o delta.
+  const feedRing=(id,{pct,zones,zi,value,zoneKey,ariaText,ceilingPct,scaleText})=>{
+    const g=$(id); if(!g) return;
+    g.querySelectorAll('.jpwg-ring-zone').forEach((el,i)=>{ if(zones[i]) el.setAttribute('stroke-dasharray',zoneDash(zones[i][0],zones[i][1])); });
+    const fill=g.querySelector('[data-jpwg-arc]');
+    const orbit=g.querySelector('[data-jpwg-needle]');
+    const tip=g.querySelector('[data-jpwg-needle-tip]');
+    const aplicar=()=>{
+      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray',(3.2044*pct).toFixed(1)+' 900'); }
+      if(orbit) orbit.style.transform='rotate('+(225+2.7*pct).toFixed(2)+'deg)';
+      if(tip) tip.setAttribute('fill',FCOLORS[zi]);
+    };
+    if(!g.dataset.jpwgSeeded){
+      g.dataset.jpwgSeeded='1';
+      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray','0 900'); }
+      if(orbit) orbit.style.transform='rotate(225deg)';
+      if(tip) tip.setAttribute('fill',FCOLORS[zi]);
+      setTimeout(aplicar,60);
+    } else aplicar();
+    const ceil=g.querySelector('[data-jpwg-ceiling]');
+    if(ceil && ceilingPct!=null) ceil.setAttribute('transform','rotate('+(225+2.7*Math.min(100,ceilingPct)).toFixed(2)+' 100 100)');
+    const val=g.querySelector('[data-jpwg-value]'); if(val) val.textContent=value;
+    const zk=g.querySelector('[data-jpwg-zonekey]'); if(zk && zoneKey){ zk.textContent=zoneKey; zk.style.color=FCOLORS[zi]; }
+    // Rótulo de escala no miolo do anel (só onde existe: o DD do Dashboard, cuja
+    // escala é o teto do perfil e portanto varia).
+    const sc=g.querySelector('[data-jpwg-scale]'); if(sc && scaleText) sc.textContent=scaleText;
+    // Classificação abaixo do gauge, no sub-card da faixa do Dashboard. Fica
+    // FORA do elemento do gauge, então é procurada no sub-card que o contém.
+    const card=g.closest('.jpwg-subcard');
+    const sub=card && card.querySelector('[data-jpwg-subzone]');
+    if(sub && zoneKey){ sub.textContent=zoneKey; sub.style.color=FCOLORS[zi]; }
+    g.setAttribute('aria-valuenow',Math.round(pct));
+    g.setAttribute('aria-valuetext',ariaText);
+  };
+  const zn=['F1 · ATAQUE','F2 · DESACEL.','F3 · SOBREVIV.','F4 · ABISMO'];
+  const alavBands=['0–1X','1–2X','2–3X','3–4X'];
+  // Zonas do DD em % da escala: as quatro fases REAIS (faixas dinâmicas).
+  const ddZones=c.mScaled?c.mScaled.map(m=>[Math.min(100,m.ddmin/ddCeil*100),Math.min(100,m.ddmax/ddCeil*100)]):[[0,25],[25,50],[50,75],[75,100]];
+  const alavZi=Math.max(0,Math.min(3,Math.floor(c.alavCar)));
+  const alavAcima=c.alavCar>c.tetoAlav;
+  feedRing('gaugeDD',{pct:ddPct, zones:ddZones, zi:c.fi,
+    value:fmtPct(c.dd), zoneKey:zn[c.fi],
+    ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
+  // Zonas da alavancagem: as quatro bandas fixas de 1x (espelho do gradiente
+  // do termômetro antigo); a zona ativa é a banda onde a carga está.
+  feedRing('gaugeAlav',{pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi),
+    value:fmtX(c.alavCar), zoneKey:(alavAcima?'ACIMA DO TETO':alavBands[alavZi]), ceilingPct:(c.tetoAlav/4)*100,
+    ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
+  // Pílulas de classificação sob os gauges (fase vigente / relação com o teto)
+  const pills=document.querySelectorAll('.thermo-card [data-jpwg-pill-text]');
+  const dots=document.querySelectorAll('.thermo-card [data-jpwg-pill-dot]');
+  if(pills.length>=2){
+    pills[0].textContent=zn[c.fi]; pills[0].style.color=FCOLORS[c.fi];
+    pills[1].textContent=c.alavCar>c.tetoAlav?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav);
+    pills[1].style.color=c.alavCar>c.tetoAlav?FCOLORS[3]:FCOLORS[alavZi];
+    if(dots.length>=2){ dots[0].style.background=FCOLORS[c.fi]; dots[1].style.background=c.alavCar>c.tetoAlav?FCOLORS[3]:FCOLORS[alavZi]; }
   }
+  const rangeEls=document.querySelectorAll('.thermo-card [data-jpwg-range]');
+  if(rangeEls.length>=1 && c.mScaled) rangeEls[0].textContent='DD · faixa da fase '+fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax);
+  // Legenda de fases (mesma tabela dinâmica de antes, agora sob os gauges)
   const zoneEl=$('thermoZoneLabels');
   if(zoneEl && c.mScaled){
-    const zn=['F1 · ATAQUE','F2 · DESACEL.','F3 · SOBREVIV.','F4 · ABISMO'];
     zoneEl.innerHTML=[3,2,1,0].map(i=>`<div class="tz f${i+1}">${zn[i]} ${fmtPct(c.mScaled[i].ddmin)}–${fmtPct(c.mScaled[i].ddmax)}</div>`).join('');
   }
-  const tdv=$('thermoDDval'); if(tdv) tdv.textContent=fmtPct(c.dd);
-  const gdTDv=$('gdThermoDDVal'); if(gdTDv) gdTDv.textContent=fmtPct(c.dd);
-  // thermometer ALAVANCAGEM real utilizada (SET 6) — escala 0–4x; marca = teto da fase
-  const lf=$('thermoLevFill');
-  if(lf){
-    lf.style.height=Math.min(100,(c.alavCar/4)*100)+'%';
-    $('thermoLevMarker').style.bottom=Math.min(100,(c.tetoAlav/4)*100)+'%';
-    $('thermoLevVal').textContent=fmtX(c.alavCar);
-    lf.style.opacity=c.alavCar>c.tetoAlav?'1':'.92';
-  }
-  const gdTAf=$('gdThermoAlavFill');
-  if(gdTAf){
-    gdTAf.style.height=Math.min(100,(c.alavCar/4)*100)+'%';
-    gdTAf.style.opacity=c.alavCar>c.tetoAlav?'1':'.92';
-  }
-  const gdTAv=$('gdThermoAlavVal'); if(gdTAv) gdTAv.textContent=fmtX(c.alavCar);
+  // Faixa de integração do Dashboard: o MESMO anel 1b, na mesma função — cada
+  // indicador no seu sub-card, com a classificação abaixo do gauge.
+  feedRing('gdGaugeDD',{pct:ddPct, zones:ddZones, zi:c.fi, value:fmtPct(c.dd),
+    zoneKey:zn[c.fi], scaleText:'DE '+fmtPct(ddCeil),
+    ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
+  feedRing('gdGaugeAlav',{pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi), value:fmtX(c.alavCar),
+    zoneKey:(alavAcima?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav)), ceilingPct:(c.tetoAlav/4)*100,
+    ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
   // metrics
   $('mSaldo').textContent=fmtMoney(p.saldoAtu);
   $('mSaldoSub').textContent='inicial '+fmtMoney(p.saldoIni)+' — contábil, não move o termômetro'

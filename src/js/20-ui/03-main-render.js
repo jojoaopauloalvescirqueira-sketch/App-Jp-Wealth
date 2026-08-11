@@ -8,39 +8,99 @@ function render(){
   const hp=$('hPhase'); hp.className='pill f'+(c.fi+1);
   hp.querySelector('.dot').style.background=FCOLORS[c.fi];
   hp.querySelector('.dot').style.color=FCOLORS[c.fi];
-  // thermometer DD — escala pelo teto real do perfil ativo (SET 11), não mais fixo em 15%
+  // ---- JP WEALTH GAUGE — variante 1b "A, circular compacto" ----
+  // Troca EXCLUSIVAMENTE a camada visual dos termômetros: os valores canônicos
+  // continuam sendo c.dd/ddCeil (SET 11 — escala pelo teto real do perfil),
+  // c.mScaled (fases dinâmicas), c.alavCar e c.tetoAlav (SET 6). Nenhum
+  // cálculo novo. Geometria do anel de 270° (do design): zonas finas externas
+  // r=84 (comprimento ≈392), preenchimento interno r=68 (3.2044/pct), ponto
+  // orbital e teto girando 225°→495° (2.7°/pct a partir de 225°).
   const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
   const ddPct=Math.min(100,(c.dd/ddCeil)*100);
-  $('thermoFill').style.height=ddPct+'%';
-  $('thermoMarker').style.bottom=ddPct+'%';
-  // Espelho de leitura no Dashboard (fidelidade ao Claude Design) — mesma
-  // fonte canônica (c.dd/ddCeil) já usada acima; sem cálculo novo, sem input.
-  const gdTDf=$('gdThermoDDFill'); if(gdTDf) gdTDf.style.height=ddPct+'%';
-  const ticksEl=$('thermoDDticks');
-  if(ticksEl){
-    ticksEl.innerHTML=[1,0.8,0.6,0.4,0.2,0].map(f=>`<span>${fmtPct(ddCeil*f)}</span>`).join('');
+  const alavPct=Math.min(100,(c.alavCar/4)*100);
+  const RING=392.0, RING_GAP=3;
+  const zoneDash=(fromPct,toPct)=>{
+    const start=RING*fromPct/100+(fromPct>0?RING_GAP/2:0);
+    const len=Math.max(0,RING*(toPct-fromPct)/100-(fromPct>0?RING_GAP/2:0)-(toPct<100?RING_GAP/2:0));
+    return '0 '+start.toFixed(1)+' '+len.toFixed(1)+' 900';
+  };
+  // Varredura de entrada: na PRIMEIRA alimentação o anel é semeado em zero
+  // (dasharray 0, ponto a 225°) e o valor real entra um tique depois — a
+  // transição do CSS faz o percurso, como no canvas do design. setTimeout, não
+  // requestAnimationFrame: rAF não dispara em aba/painel oculto (lição já
+  // paga duas vezes nesta base). Renders seguintes aplicam direto e o CSS
+  // anima só o delta.
+  const feedRing=(id,{pct,zones,zi,value,zoneKey,ariaText,ceilingPct,scaleText})=>{
+    const g=$(id); if(!g) return;
+    g.querySelectorAll('.jpwg-ring-zone').forEach((el,i)=>{ if(zones[i]) el.setAttribute('stroke-dasharray',zoneDash(zones[i][0],zones[i][1])); });
+    const fill=g.querySelector('[data-jpwg-arc]');
+    const orbit=g.querySelector('[data-jpwg-needle]');
+    const tip=g.querySelector('[data-jpwg-needle-tip]');
+    const aplicar=()=>{
+      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray',(3.2044*pct).toFixed(1)+' 900'); }
+      if(orbit) orbit.style.transform='rotate('+(225+2.7*pct).toFixed(2)+'deg)';
+      if(tip) tip.setAttribute('fill',FCOLORS[zi]);
+    };
+    if(!g.dataset.jpwgSeeded){
+      g.dataset.jpwgSeeded='1';
+      if(fill){ fill.setAttribute('stroke',FCOLORS[zi]); fill.setAttribute('stroke-dasharray','0 900'); }
+      if(orbit) orbit.style.transform='rotate(225deg)';
+      if(tip) tip.setAttribute('fill',FCOLORS[zi]);
+      setTimeout(aplicar,60);
+    } else aplicar();
+    const ceil=g.querySelector('[data-jpwg-ceiling]');
+    if(ceil && ceilingPct!=null) ceil.setAttribute('transform','rotate('+(225+2.7*Math.min(100,ceilingPct)).toFixed(2)+' 100 100)');
+    const val=g.querySelector('[data-jpwg-value]'); if(val) val.textContent=value;
+    const zk=g.querySelector('[data-jpwg-zonekey]'); if(zk && zoneKey){ zk.textContent=zoneKey; zk.style.color=FCOLORS[zi]; }
+    // Rótulo de escala no miolo do anel (só onde existe: o DD do Dashboard, cuja
+    // escala é o teto do perfil e portanto varia).
+    const sc=g.querySelector('[data-jpwg-scale]'); if(sc && scaleText) sc.textContent=scaleText;
+    // Classificação abaixo do gauge, no sub-card da faixa do Dashboard. Fica
+    // FORA do elemento do gauge, então é procurada no sub-card que o contém.
+    const card=g.closest('.jpwg-subcard');
+    const sub=card && card.querySelector('[data-jpwg-subzone]');
+    if(sub && zoneKey){ sub.textContent=zoneKey; sub.style.color=FCOLORS[zi]; }
+    g.setAttribute('aria-valuenow',Math.round(pct));
+    g.setAttribute('aria-valuetext',ariaText);
+  };
+  const zn=['F1 · ATAQUE','F2 · DESACEL.','F3 · SOBREVIV.','F4 · ABISMO'];
+  const alavBands=['0–1X','1–2X','2–3X','3–4X'];
+  // Zonas do DD em % da escala: as quatro fases REAIS (faixas dinâmicas).
+  const ddZones=c.mScaled?c.mScaled.map(m=>[Math.min(100,m.ddmin/ddCeil*100),Math.min(100,m.ddmax/ddCeil*100)]):[[0,25],[25,50],[50,75],[75,100]];
+  const alavZi=Math.max(0,Math.min(3,Math.floor(c.alavCar)));
+  const alavAcima=c.alavCar>c.tetoAlav;
+  feedRing('gaugeDD',{pct:ddPct, zones:ddZones, zi:c.fi,
+    value:fmtPct(c.dd), zoneKey:zn[c.fi],
+    ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
+  // Zonas da alavancagem: as quatro bandas fixas de 1x (espelho do gradiente
+  // do termômetro antigo); a zona ativa é a banda onde a carga está.
+  feedRing('gaugeAlav',{pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi),
+    value:fmtX(c.alavCar), zoneKey:(alavAcima?'ACIMA DO TETO':alavBands[alavZi]), ceilingPct:(c.tetoAlav/4)*100,
+    ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
+  // Pílulas de classificação sob os gauges (fase vigente / relação com o teto)
+  const pills=document.querySelectorAll('.thermo-card [data-jpwg-pill-text]');
+  const dots=document.querySelectorAll('.thermo-card [data-jpwg-pill-dot]');
+  if(pills.length>=2){
+    pills[0].textContent=zn[c.fi]; pills[0].style.color=FCOLORS[c.fi];
+    pills[1].textContent=c.alavCar>c.tetoAlav?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav);
+    pills[1].style.color=c.alavCar>c.tetoAlav?FCOLORS[3]:FCOLORS[alavZi];
+    if(dots.length>=2){ dots[0].style.background=FCOLORS[c.fi]; dots[1].style.background=c.alavCar>c.tetoAlav?FCOLORS[3]:FCOLORS[alavZi]; }
   }
+  const rangeEls=document.querySelectorAll('.thermo-card [data-jpwg-range]');
+  if(rangeEls.length>=1 && c.mScaled) rangeEls[0].textContent='DD · faixa da fase '+fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax);
+  // Legenda de fases (mesma tabela dinâmica de antes, agora sob os gauges)
   const zoneEl=$('thermoZoneLabels');
   if(zoneEl && c.mScaled){
-    const zn=['F1 · ATAQUE','F2 · DESACEL.','F3 · SOBREVIV.','F4 · ABISMO'];
     zoneEl.innerHTML=[3,2,1,0].map(i=>`<div class="tz f${i+1}">${zn[i]} ${fmtPct(c.mScaled[i].ddmin)}–${fmtPct(c.mScaled[i].ddmax)}</div>`).join('');
   }
-  const tdv=$('thermoDDval'); if(tdv) tdv.textContent=fmtPct(c.dd);
-  const gdTDv=$('gdThermoDDVal'); if(gdTDv) gdTDv.textContent=fmtPct(c.dd);
-  // thermometer ALAVANCAGEM real utilizada (SET 6) — escala 0–4x; marca = teto da fase
-  const lf=$('thermoLevFill');
-  if(lf){
-    lf.style.height=Math.min(100,(c.alavCar/4)*100)+'%';
-    $('thermoLevMarker').style.bottom=Math.min(100,(c.tetoAlav/4)*100)+'%';
-    $('thermoLevVal').textContent=fmtX(c.alavCar);
-    lf.style.opacity=c.alavCar>c.tetoAlav?'1':'.92';
-  }
-  const gdTAf=$('gdThermoAlavFill');
-  if(gdTAf){
-    gdTAf.style.height=Math.min(100,(c.alavCar/4)*100)+'%';
-    gdTAf.style.opacity=c.alavCar>c.tetoAlav?'1':'.92';
-  }
-  const gdTAv=$('gdThermoAlavVal'); if(gdTAv) gdTAv.textContent=fmtX(c.alavCar);
+  // Faixa de integração do Dashboard: o MESMO anel 1b, na mesma função — cada
+  // indicador no seu sub-card, com a classificação abaixo do gauge.
+  feedRing('gdGaugeDD',{pct:ddPct, zones:ddZones, zi:c.fi, value:fmtPct(c.dd),
+    zoneKey:zn[c.fi], scaleText:'DE '+fmtPct(ddCeil),
+    ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
+  feedRing('gdGaugeAlav',{pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi), value:fmtX(c.alavCar),
+    zoneKey:(alavAcima?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav)), ceilingPct:(c.tetoAlav/4)*100,
+    ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
   // metrics
   $('mSaldo').textContent=fmtMoney(p.saldoAtu);
   $('mSaldoSub').textContent='inicial '+fmtMoney(p.saldoIni)+' — contábil, não move o termômetro'
