@@ -21,5 +21,8 @@ function bindFsSeg(){
     if(!FS_STEPS.includes(v)) return;
     try{ localStorage.setItem('jpw_fs', v); }catch(e){}
     applyFontScale(); renderFsSeg();
+    // A escala muda o texto e o padding das abas, logo muda a largura delas: o
+    // destaque deslizante da navegação em pílula precisa remedir.
+    if(typeof scheduleNavPill==='function') scheduleNavPill();
   }));
 }

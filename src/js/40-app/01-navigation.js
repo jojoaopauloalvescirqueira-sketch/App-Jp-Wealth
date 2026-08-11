@@ -22,6 +22,11 @@ function navigateToScreen(t){
   const screen=$(screenId);
   if(!screen) return;
   screen.classList.add('active');
+  // Ponto único de troca de aba: o destaque deslizante da navegação em pílula é
+  // reposicionado aqui, e não no clique, para cobrir também as chamadas por
+  // string (CTAs e Ações Rápidas). Guarda de existência porque 12-nav-style.js
+  // é módulo de apresentação e pode não estar carregado num monólito reduzido.
+  if(typeof scheduleNavPill==='function') scheduleNavPill();
   window.scrollTo({top:0,behavior:'smooth'});
   maybeShowOnboardingNavReminder(screenId);
 }

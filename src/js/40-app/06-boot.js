@@ -1,7 +1,7 @@
 // ============ BOOT ============
 function boot(){
-  applyTheme(); applyRailState(); bindRailToggle(); applyFontScale(); startHeaderClock();
-  renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
+  applyTheme(); applyRailState(); bindRailToggle(); applyFontScale(); applyNavStyle(); startHeaderClock();
+  renderThemeSeg(); renderFsSeg(); renderExplSeg(); renderNavStyleSeg(); renderAppIconConfig(); renderConfigQuarantine(); renderConfigOnboarding(); renderMEIConfig();
   renderParams(); renderMotor(); renderContas(); renderDash(); renderCheck();
   renderLedger(); renderPhases(); render();
   // A-002: badge/visibilidade das Notas entram no ciclo global — sem isto, importar um

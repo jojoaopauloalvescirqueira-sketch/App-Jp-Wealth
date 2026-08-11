@@ -2603,6 +2603,99 @@
   /* Sem rail lateral não há o que recolher. */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) .rail-toggle{display:none}
 
+  /* ---------- Estilo "pílula flutuante" da navegação (jpw_nav = pill) ----------
+     Opcional e reversível: a preferência vive em localStorage e só acrescenta o
+     atributo data-nav-style em <html>. O estilo clássico é a AUSÊNCIA destas
+     regras — nenhuma linha acima foi alterada, então voltar para "Clássica"
+     devolve exatamente o CSS anterior, sem caminho de recuperação.
+
+     O destaque é um elemento único que desliza, em vez de pintar o fundo da aba
+     ativa: é isso que dá a continuidade do movimento entre destinos. A aba ativa
+     mantém a cor de texto de destaque; o que ela perde é só o próprio fundo, que
+     passa a ser trabalho do elemento deslizante.
+
+     Confinado a >900px de propósito: em 900px ou menos este mesmo #nav vira a
+     gaveta fixa (flex-direction:column, position:fixed), onde uma pílula
+     horizontal não faz sentido. Como estas regras têm especificidade maior que
+     as da gaveta, sem a media query elas venceriam lá dentro e quebrariam o
+     menu do celular. */
+  @media(min-width:901px){
+    /* Alvo: a navegação da topbar do shell `global-dashboard`, que é a barra que
+       o aplicativo realmente apresenta hoje. No estilo clássico ela é uma fileira
+       de abas SUBLINHADAS (border-bottom de 1,5px na ativa); no estilo pílula o
+       sublinhado sai e o destaque passa a ser um corpo que desliza atrás do
+       rótulo. `position:relative` é obrigatório: a regra do shell deixa este #nav
+       em `position:static`, e sem bloco contentor o offsetLeft medido em
+       12-nav-style.js seria relativo ao documento, jogando o destaque para fora. */
+    /* Geometria comum às duas aparências de destaque. O que as separa vem
+       depois: superfície do invólucro e curva do movimento. */
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+      position:relative; gap:2px; padding:4px;
+      border-radius:999px; background:var(--panel-2);
+    }
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+      position:relative; z-index:1;
+      padding:7px 16px; min-height:32px; border-radius:999px;
+      border-bottom:0; background:transparent;
+    }
+    /* A ativa não pinta fundo nem sublinha — quem marca é o deslizante. O texto
+       inverte para contrastar com o corpo do destaque. */
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab.active{
+      color:var(--panel); background:transparent; border-bottom-color:transparent;
+    }
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:hover{background:transparent; color:var(--jp-ink)}
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab.active:hover{color:var(--panel)}
+    html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator{
+      display:block; position:absolute; left:0; top:0; z-index:0;
+      border-radius:999px; background:var(--ink); pointer-events:none;
+      /* Sem transição até a primeira medição (.is-ready): senão o destaque entra
+         deslizando do canto a cada carregamento da página. */
+      transition:none;
+    }
+    html[data-nav-style="pill"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{
+      transition:transform var(--jp-duration-fast) var(--jp-ease), width var(--jp-duration-fast) var(--jp-ease);
+    }
+
+    /* ---- KineticNav: superfície fosca + assentamento de mola ----
+       Diferenças em relação ao Floating Pill Nav, que são as do padrão de
+       origem: invólucro translúcido com desfoque atrás, o destaque assenta com
+       curva de mola em vez de ease, e a aba responde à pressão.
+
+       A curva vem dos parâmetros publicados do componente de referência —
+       rigidez 450 e amortecimento 35 sobre massa 1. Isso dá ζ ≈ 0,83: sistema
+       subamortecido, mas com ultrapassagem de cerca de 1% e acomodação perto de
+       230 ms. Ou seja, quase crítico — um assentamento firme, não um quique. A
+       cúbica abaixo reproduz esse comportamento; um `linear()` com dezenas de
+       paradas seria mais fiel e não se justifica para 1% de excesso. */
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+      background:color-mix(in srgb, var(--panel-2) 72%, transparent);
+      backdrop-filter:blur(14px) saturate(1.25);
+      -webkit-backdrop-filter:blur(14px) saturate(1.25);
+      border:1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{
+      transition:transform 230ms cubic-bezier(.22,1.06,.36,1), width 230ms cubic-bezier(.22,1.06,.36,1);
+    }
+    /* Resposta à pressão (o "haptics" do componente, que na web só pode ser
+       visual): a aba cede um pouco enquanto o botão está apertado. */
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+      transition:color var(--jp-duration-fast) var(--jp-ease), transform 120ms var(--jp-ease);
+    }
+    html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:active{transform:scale(.96)}
+
+    /* Movimento reduzido desliga o deslize e a resposta à pressão nas duas
+       aparências — o destaque continua marcando a aba certa, só sem percurso. */
+    @media (prefers-reduced-motion:reduce){
+      html:is([data-nav-style="pill"],[data-nav-style="kinetic"])[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-pill-indicator.is-ready{transition:none}
+      html[data-nav-style="kinetic"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab:active{transform:none}
+    }
+  }
+  /* Fora do contexto acima o destaque não existe. Regra sem prefixo de estilo:
+     vale para o modo clássico, para o rail vertical do Dashboard e para a
+     gaveta mobile, e é a que 12-nav-style.js consulta para saber que não deve
+     medir nada. */
+  .nav-pill-indicator{display:none}
+
   /* ---------- Conteúdo ---------- */
   html[data-ui-version="tesla-inspired"]:not([data-active-screen="dash"]) #appMain{
     grid-area:main; padding:var(--jp-space-8) var(--shell-gutter) var(--jp-space-16);
