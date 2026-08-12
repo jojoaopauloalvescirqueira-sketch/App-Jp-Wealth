@@ -99,7 +99,7 @@
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
     </button>
-    <button type="button" class="header-action" id="headerNotesBtn" title="Notas do MVP" aria-label="Abrir notas do MVP">
+    <button type="button" class="header-action" id="headerNotesBtn" title="Tickets" aria-label="Abrir tickets">
       <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
       <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
     </button>
@@ -954,7 +954,7 @@
          moveLegacySettingsNodes/restoreLegacySettingsNodes (data-settings-category), sem
          nenhuma alteração em 09-settings-modal.js além dos termos de busca. -->
     <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
-      <h2>Notas do MVP <span class="art">backlog interno de testes</span></h2>
+      <h2>Tickets <span class="art">backlog interno de testes</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
       <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
       <div class="field" style="max-width:360px">
@@ -966,7 +966,7 @@
         <span class="note">Ocultar remove apenas o botão do menu superior. Os registros continuam salvos e podem ser reabertos por aqui.</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px">
-        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Notas</button>
+        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Tickets</button>
         <span class="note" id="mvpNotesSettingsCount" style="margin:0"></span>
       </div>
     </div>
@@ -1031,7 +1031,7 @@
            removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
            locais de interface (escala da fonte, estado da navegação, ícone do app) e não
            toca em cópias de recuperação existentes. -->
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas do MVP. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e tickets. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
     </div>
   </section>
@@ -1169,31 +1169,31 @@
           <path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/>
           <path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/>
         </svg>
-        <h2 id="mvpNotesTitle">Notas do MVP</h2>
+        <h2 id="mvpNotesTitle">Tickets</h2>
       </div>
       <!-- Busca ao centro da barra (1c). Vive no cabeçalho, não mais na coluna da lista:
            é busca de TODAS as notas, não da coluna. Mesmos IDs de sempre. -->
       <div class="mvpn-search-row">
-        <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
-        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todas as notas" autocomplete="off">
+        <label class="sr-only" for="mvpNotesSearch">Buscar tickets</label>
+        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todos os tickets" autocomplete="off">
         <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-haspopup="true"
-                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar notas" title="Filtrar notas">
+                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar tickets" title="Filtrar tickets">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>
           <span class="mvpn-filters-count" id="mvpNotesFiltersCount" hidden></span>
         </button>
       </div>
       <div class="mvpn-head-actions">
-        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Nova nota">
+        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Novo ticket">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          <span class="mvpn-new-note-label">Nova nota</span>
+          <span class="mvpn-new-note-label">Novo ticket</span>
         </button>
         <span class="mvpn-head-divider" aria-hidden="true"></span>
-        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas do MVP" title="Fechar notas do MVP">
+        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar tickets" title="Fechar tickets">
           <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
         </button>
       </div>
       <!-- Popover de filtros ancorado na barra (desktop) / folha inferior (mobile). -->
-      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de notas">
+      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de tickets">
         <div class="mvpn-filters-sheet-head">Filtros</div>
         <div class="mvp-notes-filters">
           <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
@@ -1228,7 +1228,7 @@
            navegação (um único #mvpNotesFolderNavList para os dois mundos). -->
       <!-- PAINEL 1 — Pastas e visões do sistema. Em desktop convive com os outros dois;
            em mobile é o Estado A da navegação em etapas (data-mobile-stage no drawer). -->
-      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de notas">
+      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de tickets">
         <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
@@ -1249,7 +1249,7 @@
         <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
           <!-- Só o rótulo da visão (1c): busca e ações vivem na barra unificada do topo.
                Vira "eyebrow" — mono, caixa alta — anunciando o recorte que a lista mostra. -->
-          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
+          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todos os Tickets</h3>
           <!-- Ações em massa (JPW-436587). Ficam AQUI, e não no menu "⋯" da pasta, porque
                operam sobre o RECORTE VISÍVEL (pasta ativa + filtros + busca), que é
                exatamente o que esta barra anuncia. No menu da pasta cobririam só pastas
@@ -1279,21 +1279,21 @@
           <span class="mvpn-editor-title" id="mvpNotesEditorTitle"></span>
           <span class="mvpn-editor-ticket" id="mvpNotesEditorTicket"></span>
           <button type="button" class="reset-btn mvpn-primary mvpn-save-btn" id="mvpNotesSaveBtn" hidden>Salvar</button>
-          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência da nota" title="Copiar referência para um agente de IA">
+          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência do ticket" title="Copiar referência para um agente de IA">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
             <span class="mvpn-copy-check" aria-hidden="true">✓</span>
           </button>
           <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorBtn" aria-expanded="false"
-                  aria-controls="mvpNotesInspector" aria-label="Detalhes da nota" title="Detalhes da nota">
+                  aria-controls="mvpNotesInspector" aria-label="Detalhes do ticket" title="Detalhes do ticket">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
         </div>
-        <label class="sr-only" for="mvpNoteContent">Conteúdo da nota — a primeira linha vira o título</label>
-        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva a nota. A primeira linha vira o título." hidden></textarea>
-        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione uma nota à esquerda ou crie uma nova.</p>
+        <label class="sr-only" for="mvpNoteContent">Conteúdo do ticket — a primeira linha vira o título</label>
+        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva o ticket. A primeira linha vira o título." hidden></textarea>
+        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione um ticket à esquerda ou crie um novo.</p>
         <!-- Inspector: todo o metadado técnico vive aqui, fora do editor. Popover no
              desktop, folha inferior no mobile. -->
-        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes da nota"></div>
+        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes do ticket"></div>
       </div>
       <!-- Confirmação da cópia do Trace Reference: anunciada por leitor de tela, sem
            depender da mudança visual do ícone (ver mvpNotesFlashCopyFeedback). -->
@@ -1315,10 +1315,22 @@
          e o trap passa a usá-lo como raiz enquanto estiver visível.
          Os cinco selects são preenchidos por mvpNotesOpenNewNoteModal() a partir dos MESMOS
          enums canônicos do inspector — nenhuma categoria nova é criada aqui. -->
-    <div class="mvpn-new-overlay" id="mvpNotesNewOverlay" hidden>
-      <div class="mvpn-new-box" id="mvpNotesNewBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesNewTitle" aria-describedby="mvpNotesNewSub">
-        <h3 id="mvpNotesNewTitle">Nova Nota</h3>
-        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como esta nota nasce. Tudo continua editável depois em “Detalhes da nota”.</p>
+    <!-- Menu de ações do ticket (JPW-NPQRST). Mesma infraestrutura do modal de criação —
+         overlay local à gaveta, focus trap, Escape e clique fora —, conteúdo diferente:
+         é o menu de ações daquele ticket, não um formulário. Não é uma terceira
+         arquitetura de popup: .mvpn-sheet-overlay/.mvpn-sheet-box são as regras
+         compartilhadas pelas duas superfícies. Os itens são pintados por
+         mvpNotesRenderCardMenu() a partir das ações válidas para o ticket. -->
+    <div class="mvpn-sheet-overlay" id="mvpNotesCardMenuOverlay" hidden>
+      <div class="mvpn-sheet-box mvpn-card-menu-box" id="mvpNotesCardMenuBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesCardMenuTitle">
+        <p class="mvpn-card-menu-title" id="mvpNotesCardMenuTitle"></p>
+        <div class="mvpn-card-menu-items" id="mvpNotesCardMenuItems" role="group" aria-labelledby="mvpNotesCardMenuTitle"></div>
+      </div>
+    </div>
+    <div class="mvpn-new-overlay mvpn-sheet-overlay" id="mvpNotesNewOverlay" hidden>
+      <div class="mvpn-new-box mvpn-sheet-box" id="mvpNotesNewBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesNewTitle" aria-describedby="mvpNotesNewSub">
+        <h3 id="mvpNotesNewTitle">Novo Ticket</h3>
+        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como este ticket nasce. Tudo continua editável depois em “Detalhes do ticket”.</p>
         <div class="mvpn-new-grid">
           <div class="field"><label for="mvpNotesNewType">Tipo</label><select id="mvpNotesNewType"></select></div>
           <div class="field"><label for="mvpNotesNewPriority">Prioridade</label><select id="mvpNotesNewPriority"></select></div>
@@ -1333,7 +1345,7 @@
         <p class="mvpn-new-error" id="mvpNotesNewError" role="alert" hidden></p>
         <div class="mvpn-new-actions">
           <button type="button" class="reset-btn" id="mvpNotesNewCancelBtn">Cancelar</button>
-          <button type="button" class="reset-btn mvpn-primary" id="mvpNotesNewConfirmBtn">Criar Nota</button>
+          <button type="button" class="reset-btn mvpn-primary" id="mvpNotesNewConfirmBtn">Criar Ticket</button>
         </div>
       </div>
     </div>

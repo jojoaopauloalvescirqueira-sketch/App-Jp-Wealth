@@ -2004,12 +2004,15 @@
      O valor não escapa da gaveta: .mvp-notes-drawer é position:fixed e portanto abre seu
      próprio contexto de empilhamento — 50 só compete com os irmãos internos do drawer
      (inspector 2, popovers 3, cabeçalho 40). */
+  .mvpn-sheet-overlay,
   .mvpn-new-overlay{
     position:absolute; inset:0; z-index:50; display:flex;
     align-items:center; justify-content:center; padding:clamp(12px,3vw,28px);
     background:rgba(4,7,12,.66); backdrop-filter:blur(3px); overflow-y:auto;
   }
+  .mvpn-sheet-overlay[hidden],
   .mvpn-new-overlay[hidden]{display:none}
+  .mvpn-sheet-box,
   .mvpn-new-box{
     width:min(460px,100%); margin:auto;
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
@@ -2130,21 +2133,59 @@
      posicionado — nunca aninhado (seria HTML inválido). */
   .mvpn-card-wrap{position:relative; display:flex}
   .mvpn-card-wrap .mvpn-card{flex:1; min-width:0}
-  .mvpn-card-copy{
+  .mvpn-card-copy,
+  .mvpn-card-menu{
     position:absolute; top:8px; right:8px; width:28px; height:28px; flex:none;
     display:inline-flex; align-items:center; justify-content:center; padding:0;
     border:1px solid var(--line); border-radius:var(--radius-sm);
     background:var(--panel); color:var(--ink-faint); cursor:pointer;
   }
   .mvpn-card-copy svg{width:14px; height:14px}
-  .mvpn-card-copy:hover{color:var(--ink); border-color:var(--ink-faint)}
-  .mvpn-card-copy:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  .mvpn-card-copy:hover,
+  .mvpn-card-menu:hover{color:var(--ink); border-color:var(--ink-faint)}
+  .mvpn-card-copy:focus-visible,
+  .mvpn-card-menu:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
   /* Confirmação visual: o ✓ substitui o ícone por ~1,6s (o texto vai ao aria-live). */
   .mvpn-copy-check{display:none; font-size:14px; font-weight:700; line-height:1}
-  .mvpn-card-copy.mvpn-copy-done{color:var(--f1); border-color:var(--f1)}
-  .mvpn-card-copy.mvpn-copy-done svg{display:none}
-  .mvpn-card-copy.mvpn-copy-done .mvpn-copy-check{display:inline}
-  .mvpn-card-copy.mvpn-copy-failed{color:var(--f4); border-color:var(--f4)}
+  .mvpn-card-copy.mvpn-copy-done,
+  .mvpn-card-menu.mvpn-copy-done{color:var(--f1); border-color:var(--f1)}
+  .mvpn-card-copy.mvpn-copy-done svg,
+  .mvpn-card-menu.mvpn-copy-done [aria-hidden="true"]:not(.mvpn-copy-check){display:none}
+  .mvpn-card-copy.mvpn-copy-done .mvpn-copy-check,
+  .mvpn-card-menu.mvpn-copy-done .mvpn-copy-check{display:inline}
+  .mvpn-card-copy.mvpn-copy-failed,
+  .mvpn-card-menu.mvpn-copy-failed{color:var(--f4); border-color:var(--f4)}
+  /* Menu de ações do ticket (JPW-NPQRST): o ⋯ ocupa a mesma caixa do antigo ícone de
+     copiar — mesma posição, mesmo alvo de toque, mesmo retorno visual de cópia. */
+  .mvpn-card-menu{font-family:var(--mono); font-size:15px; line-height:1; padding-bottom:3px}
+  .mvpn-card-menu-box{width:min(340px,100%)}
+  .mvpn-card-menu-title{
+    margin:0 0 12px; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:.12em;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .mvpn-card-menu-items{display:flex; flex-direction:column; gap:2px}
+  /* Itens de menu, não botões de formulário: linha inteira, alinhados à esquerda, sem
+     caixa própria em repouso. O ID vence a regra de botões do tema tesla-inspired, que
+     imporia caixa centralizada de 42px (mesma armadilha registrada em #mvpNotesBulkActions). */
+  #mvpNotesCardMenuItems .mvpn-card-menu-item{
+    display:flex; align-items:center; justify-content:flex-start; gap:10px; width:100%;
+    min-height:40px; padding:0 12px; text-align:left; white-space:nowrap;
+    font-family:var(--sans); font-size:var(--fs-sm); font-weight:500; letter-spacing:0;
+    color:var(--ink); background:transparent; border:1px solid transparent;
+    border-radius:var(--radius-sm); cursor:pointer;
+  }
+  #mvpNotesCardMenuItems .mvpn-card-menu-item:hover{background:var(--panel-2); border-color:var(--line)}
+  #mvpNotesCardMenuItems .mvpn-card-menu-item:focus-visible{outline:2px solid var(--violet); outline-offset:-2px}
+  /* Excluir apartado das demais por divisor — mesmo tratamento que o inspector já dá. */
+  #mvpNotesCardMenuItems .mvpn-card-menu-item.mvpn-card-menu-danger{
+    color:var(--f4); margin-top:6px; padding-top:10px; border-top:1px solid var(--line);
+    border-radius:0 0 var(--radius-sm) var(--radius-sm); min-height:46px;
+  }
+  #mvpNotesCardMenuItems .mvpn-card-menu-item.mvpn-card-menu-danger:hover{background:transparent; border-color:transparent; border-top-color:var(--f4)}
+  @media (max-width:920px){
+    #mvpNotesCardMenuItems .mvpn-card-menu-item{min-height:48px; font-size:var(--fs-md)}
+  }
   .mvpn-meta-facts{display:grid; grid-template-columns:auto 1fr; gap:5px 12px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel-2)}
   .mvpn-meta-facts dt{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em}
   .mvpn-meta-facts dd{margin:0; font-size:var(--fs-sm); color:var(--ink-dim)}
@@ -2288,7 +2329,8 @@
     /* Cards: área de toque confortável (≥44px já garantida pelo conteúdo + padding). */
     .mvpn-card{padding:12px 14px}
     /* Cópia do Trace Reference com alvo de toque pleno em mobile. */
-    .mvpn-card-copy{width:44px; height:44px; top:6px; right:6px}
+    .mvpn-card-copy,
+    .mvpn-card-menu{width:44px; height:44px; top:6px; right:6px}
     .mvp-notes-list{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
     /* Transição curta ao trocar de camada. SOMENTE opacidade, nunca transform: as folhas
        inferiores (filtros, inspector) são position:fixed dentro destes painéis, e um

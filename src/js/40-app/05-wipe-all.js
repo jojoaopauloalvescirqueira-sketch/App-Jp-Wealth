@@ -11,7 +11,7 @@ function wipeAllData(){
   // JP Wealth (removeAuxiliary:false preserva as preferências locais de interface;
   // removeCorrupted:false preserva cópias de recuperação existentes). Texto e
   // comportamento precisam coincidir numa ação irreversível.
-  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth deste navegador: ordens, fases, fechamentos, auditoria, configurações e notas do MVP. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas.\n\nDigite APAGAR para continuar:');
+  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth deste navegador: ordens, fases, fechamentos, auditoria, configurações e tickets. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas.\n\nDigite APAGAR para continuar:');
   if(p1===null) return;
   if(p1.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }
   const p2=prompt('Última confirmação. Digite APAGAR novamente:');

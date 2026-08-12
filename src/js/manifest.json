@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "156bf36d229ca939c5e73257b3f260c8951add4687ef90f7937b0632d2948f1f"
+      "sha256": "f8bf8cc9df209b03ee48c21079a6df0a3675baf9cd3c2306d99dcfd078007fd9"
     },
     {
       "order": 34,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "630d275b16fd174c915e85f8ae2540fce8996b447321f1acafdd15bcaa5e1a93"
+      "sha256": "492b980c5a025cb3f0366038e2f077db13d47fe1fb6b87a77630b16b4e378a69"
     },
     {
       "order": 36,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "1f0a5858e0aa2957a549535a7f85c7238acac3db00e402cd55a04b74bdbeb965"
+      "sha256": "f6b96908813dfa09c62b3951ca88f4d6162f88f2bf3df056ff80b1f9ffff1c29"
     },
     {
       "order": 39,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "9ad1d5d6eab0a836455a0d0fa0bc54390d7a71995103930f5f24cfc8cbc2298d"
+      "sha256": "ea98f0b5b17bd203daaa1569d44e4b5623a65bdcf6c0ff7ac8f854d53f18805b"
     },
     {
       "order": 44,

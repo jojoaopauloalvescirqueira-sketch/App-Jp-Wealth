@@ -1,2 +1,2 @@
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '498810ed29d955b3';
+const JP_WEALTH_BUILD_ID = '5f026cb8d0b94e87';
