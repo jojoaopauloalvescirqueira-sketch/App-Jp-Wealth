@@ -63,14 +63,24 @@ function fxDrawMainChart(box,plan,ov,mode){
   const ys=[...basePts.map(p=>p.y),...series.map(p=>p.y)];
   let ymin=Math.min(...ys), ymax=Math.max(...ys);
   const pad=(ymax-ymin)*0.08||Math.max(1,ymax*0.02); ymin-=pad; ymax+=pad;
-  const W=720,H=250,L=CH.L,R=CH.R,T=CH.T,B=CH.B;
+  // Razão declarada, nunca deformação (handoff spec §01/§03): 9:4 é invariante
+  // até o container ficar abaixo de 480, quando troca para 3:2 — mais ALTO,
+  // nunca mais achatado. A largura do viewBox cai junto no estado estreito: o
+  // SVG escala uniformemente, e mantendo 720 a fonte de 8 unidades renderizaria
+  // a ~4px num container de 375. Piso de plotagem da spec (180) respeitado nos
+  // dois estados: 320−36=284 e 240−36=204.
+  const estreito=box.clientWidth>0 && box.clientWidth<480;
+  const W=estreito?360:720, H=estreito?240:320;
+  const L=CH.L,R=CH.R,T=CH.T,B=CH.B;
   const X=i=>L+(n>1?i/(n-1):0)*(W-L-R);
   const Y=v=>T+(1-(v-ymin)/((ymax-ymin)||1))*(H-T-B);
   const path=pts=>pts.map((p,k)=>(k?'L':'M')+X(p.i).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
   const money=v=>brl?'R$'+Math.round(v).toLocaleString('pt-BR'):fmtMoney(v);
-  const grid=CH.gridY(W,L,R,Y,CH.ticks(ymin,ymax,4),money);
+  // Ordem de sacrifício §09: no estado estreito as linhas de grade caem de 5
+  // para 3 e os rótulos intermediários do eixo X somem.
+  const grid=CH.gridY(W,L,R,Y,CH.ticks(ymin,ymax,estreito?2:4),money);
   // eixo X: até 6 rótulos de mês igualmente espaçados
-  const stepX=Math.max(1,Math.round(n/6));
+  const stepX=Math.max(1,Math.round(n/(estreito?3:6)));
   // rótulos presos ao quadro para não recortarem nas bordas do SVG
   const clampX=x=>Math.max(L+22,Math.min(W-R-22,x));
   const xLabels=months.map((m,i)=>i%stepX===0?`<text x="${clampX(X(i)).toFixed(1)}" y="${H-B+12}" font-size="8" fill="var(--ink-faint)" text-anchor="middle">${m}</text>`:'').join('');
@@ -91,7 +101,9 @@ function fxDrawMainChart(box,plan,ov,mode){
     // resumo textual abaixo do gráfico, onde há espaço.
     {mark:'┈',label:'Projeção vigente',value:endF?money(endF.y):'—',color:'var(--f2)'},
     {mark:'╌',label:'Baseline original',value:endB?money(endB.y):'—',color:'var(--violet)'},
-  ],168);
+    // A coluna de valores acompanha a largura do viewBox: 168 num quadro de 360
+    // cairia quase no meio, e o rótulo passaria por baixo do número.
+  ],estreito?120:168);
   const callouts=(endF?CH.callout(W,R,Y(endF.y),money(endF.y),'var(--f2)'):'')
     +(actualPts.length?CH.callout(W,R,Y(actualPts[actualPts.length-1].y),money(actualPts[actualPts.length-1].y),'var(--f1)'):'');
   box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Trajetória patrimonial: baseline, projeção vigente e realizado" style="width:100%;height:auto;font-family:var(--mono)">
@@ -153,7 +165,9 @@ function fxDrawReturnsChart(box,ov){
   const baseByMonth={}; ov.baseline.forEach(r=>{baseByMonth[r.month]=r.rate;});
   const rows=ov.actual.filter(r=>Number.isFinite(r.rate)).slice(-24);
   if(!rows.length){ box.innerHTML='<p style="font-size:var(--fs-sm);color:var(--ink-faint)">Sem fechamentos ainda — as barras Planejado × Realizado aparecem a partir do primeiro mês fechado.</p>'; return; }
-  const W=720,H=190,L=CH.L,R=CH.R,T=CH.T,B=28;
+  // Razão 24:5 invariante (handoff spec §01): se não couber, o gráfico some
+  // para dentro do disclosure — nunca é espremido.
+  const W=720,H=150,L=CH.L,R=CH.R,T=CH.T,B=28;
   const vals=rows.flatMap(r=>[r.rate,baseByMonth[r.month]||0,0]);
   let ymin=Math.min(...vals), ymax=Math.max(...vals);
   const pad=(ymax-ymin)*0.15||0.005; ymin-=pad; ymax+=pad;

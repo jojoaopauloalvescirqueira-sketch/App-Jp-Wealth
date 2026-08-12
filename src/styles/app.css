@@ -4645,15 +4645,77 @@ html[data-layout-editing="true"] .screen.active [data-layout-card]:focus-visible
    é concreto: estilo inline vence media query, e enquanto o número de colunas
    era escrito inline os sete cards ficavam em 4 colunas de 57,75px no mobile,
    com o valor de todos eles truncado. Camada A domina, camada C recua. */
-.fxp-kpis{display:grid; gap:1px; min-width:0}
+.fxp-kpis{display:grid; gap:var(--fxp-gap-kpi,12px); min-width:0}
 .fxp-kpis-a{grid-template-columns:repeat(3,1fr)}
-.fxp-kpis-c{grid-template-columns:repeat(4,1fr); margin-top:10px}
-@media(max-width:1000px){.fxp-kpis-c{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.fxp-kpis-a{grid-template-columns:1fr}}
-@media(max-width:480px){.fxp-kpis-c{grid-template-columns:1fr}}
-.fxp-kpis-a .metric{padding:8px var(--sp-2)}
-.fxp-kpis-a .metric .v{font-size:var(--fs-lg)}
-.fxp-kpis-c .metric .v{font-size:var(--fs-md)}
+.fxp-kpis-c{grid-template-columns:repeat(4,1fr); margin-top:var(--fxp-gap-block,16px)}
+.fxp-kpis-a .metric{padding:var(--fxp-pad-card,14px) var(--sp-2)}
+
+/* ---- Contrato proporcional do handoff spec --------------------------------
+   Consultas de CONTAINER, não de viewport: o painel não conhece a janela, só o
+   proprio container. O container e a tela (#fxplan) e nao o card, para que o
+   padding do card possa ser degrau da rampa sem dependencia ciclica.
+   Tres estados discretos, sem interpolacao: o layout salta, o tipo salta. */
+#fxplan{container-type:inline-size; container-name:fxp}
+#fxPlanningCard{
+  --fxp-hero:27px;        /* 2,25x sobre a base de 12px */
+  --fxp-value:18px;       /* 1,50x — herói/secundário = 1,50 */
+  --fxp-pad:16px; --fxp-pad-card:14px; --fxp-gap-kpi:12px; --fxp-gap-block:16px;
+  --fxp-chart-ratio:9 / 4;
+}
+@container fxp (max-width:479px){
+  #fxPlanningCard{
+    --fxp-hero:22px;      /* 1,83x */
+    --fxp-value:13.5px;   /* vira dado tabular na lista de definicao */
+    --fxp-pad:12px; --fxp-pad-card:12px; --fxp-gap-kpi:10px; --fxp-gap-block:14px;
+    --fxp-chart-ratio:3 / 2;   /* mais alto, nunca mais achatado */
+  }
+  .fxp-kpis-a{grid-template-columns:1fr}
+  /* KPIs deixam de ser cards e viram lista de definicao: rotulo a esquerda,
+     valor a direita, uma linha cada, sem moldura. */
+  .fxp-kpis-c{grid-template-columns:1fr; gap:0}
+  /* Prefixo html: o tema declara .metric{display:flex;flex-direction:column}
+     com especificidade (0,2,1) e venceria (0,2,0). Com html empatamos em
+     (0,2,1) e a ordem de origem — este bloco vem depois — decide. Mesma classe
+     de conflito que impunha 20px às sete métricas. */
+  html .fxp-kpis-c .metric{
+    display:flex; flex-direction:row; flex-wrap:wrap;
+    align-items:baseline; justify-content:space-between; gap:10px;
+    background:none; border:0; border-bottom:1px solid var(--line);
+    border-radius:0; padding:8px 0;
+  }
+  html .fxp-kpis-c .metric .k{flex:1 1 auto; white-space:normal}
+  html .fxp-kpis-c .metric .sub{flex-basis:100%; text-align:right; order:3}
+}
+@container fxp (min-width:480px){
+  .fxp-kpis-c{grid-template-columns:repeat(2,1fr)}
+}
+@container fxp (min-width:1120px){
+  #fxPlanningCard{
+    --fxp-hero:32px;      /* 2,67x */
+    --fxp-value:20px;     /* 1,67x — razao herói/secundário = 1,60 */
+    --fxp-pad:24px; --fxp-pad-card:16px; --fxp-gap-kpi:16px; --fxp-gap-block:20px;
+  }
+  .fxp-kpis-c{grid-template-columns:repeat(4,1fr)}
+}
+/* Padding do painel na rampa, em degraus inteiros: 22px fracionario quebrava o
+   alinhamento vertical com os demais paineis. Escopo local, um card por tela. */
+html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) var(--fxp-pad)}
+
+/* HIERARQUIA TIPOGRAFICA — a correcao e de ESPECIFICIDADE, nao de valor.
+   .fxp-kpis-a .metric .v (0,3,0) perdia para
+   html[data-ui-version="tesla-inspired"] .metric .v (0,3,1), que impunha
+   --jp-fs-data-md (20px) as SETE metricas: razao heroi/secundario = 1,00, sem
+   nenhuma dominante. Em vez de escalar a especificidade, redefinimos o TOKEN
+   que a propria regra do tema le — funciona para qualquer tema que use o token
+   e nao cria uma corrida de seletores. A regra direta abaixo cobre os temas
+   que nao passam por token. */
+.fxp-kpis-a .metric{--jp-fs-data-md:var(--fxp-hero)}
+.fxp-kpis-c .metric{--jp-fs-data-md:var(--fxp-value)}
+.fxp-kpis-a .metric .v{font-size:var(--fxp-hero)}
+.fxp-kpis-c .metric .v{font-size:var(--fxp-value)}
+/* Base 1,00x e o rotulo; o selo de proveniencia nunca escala. */
+.fxp-kpis .metric .k{font-size:var(--jp-fs-label,var(--fs-xs))}
+.fxp-kpis .fxp-badge{font-size:calc(8.5px * var(--fs-scale))}
 /* Valor principal nunca some: o card cresce, o número fica inteiro. Anula o
    nowrap+ellipsis global de .metric apenas dentro do Planejamento FX. */
 .fxp-kpis .metric{overflow:visible}

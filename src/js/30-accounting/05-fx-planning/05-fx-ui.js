@@ -178,8 +178,14 @@ function fxpOverviewHTML(live){
     <div class="metric"><div class="k">FCR (Art. 13.1) — cobertura</div><div class="v" style="color:${res.fcrStatus==='Regular'?'var(--f1)':'var(--f4)'}">${fxpPct(res.fcrCoverage/100)}</div><div class="sub">${esc(res.fcrStatus)}</div></div>
     <div class="metric"><div class="k">FEO (Art. 13.2) — cobertura temporal</div><div class="v" style="color:${res.feoStatus==='Regular'?'var(--f1)':'var(--f4)'}">${res.feoMonths.toFixed(1).replace('.',',')} meses</div><div class="sub">${esc(res.feoStatus)}</div></div>
   </div>
-  <h3 class="fxp-h3-spaced">Rentabilidade mensal — planejado × realizado</h3>
-  <div id="fxpReturnsChart"></div>
+  <!-- Ordem de sacrifício §05: abaixo do estado máximo o gráfico de
+       rentabilidade recolhe para dentro do disclosure em vez de ser espremido.
+       O estado aberto/fechado é decidido pela largura do container no render.
+       (sem crases neste comentário: ele vive dentro de um template literal) -->
+  <details class="mc-disclosure fxp-disc" id="fxpReturnsBox">
+    <summary><span class="t">Rentabilidade mensal — planejado × realizado</span><span class="chev">▾</span></summary>
+    <div class="mc-disclosure-body"><div id="fxpReturnsChart"></div></div>
+  </details>
   <div id="fxpReservesPanel">${fxpReservesHTML(res)}</div>`;
 }
 // Camada D (P4/P5): os cards FCR/FEO acima já são o resumo; a tabela estatutária
@@ -478,6 +484,11 @@ function renderFxPlanning(){
     window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,live,fxpChartMode);
     const summary=root.querySelector('#fxpMainChartSummary');
     if(summary) summary.textContent=window.JPWFx.charts.fxMainChartSummaryText(live.plan,live,fxpChartMode);
+    // Estado máximo (≥1120) abre o segundo gráfico; abaixo disso ele nasce
+    // recolhido. Medido no container real, não na janela — é o painel que sabe
+    // quanto espaço tem. O usuário pode abrir a qualquer largura.
+    const caixa=root.querySelector('#fxpReturnsBox');
+    if(caixa) caixa.open=root.clientWidth>=1120;
     window.JPWFx.charts.fxDrawReturnsChart(root.querySelector('#fxpReturnsChart'),live);
   }
   if(fxpView==='planning') fxpBindPlanning(root,live);
