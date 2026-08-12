@@ -1764,10 +1764,46 @@
   .mvp-notes-close:focus-visible,.mvpn-card:focus-visible,.mvp-notes-drawer button:focus-visible,.mvp-notes-drawer input:focus-visible,.mvp-notes-drawer select:focus-visible,.mvp-notes-drawer textarea:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
   .mvp-notes-close svg{width:16px; height:16px}
   /* A toolbar guarda só o rótulo da visão, agora como eyebrow tipográfico. */
-  .mvp-notes-toolbar{display:flex; align-items:baseline; justify-content:space-between; padding:14px 16px 10px; flex:none}
+  /* align-items:center (era baseline): com as ações em massa ao lado, alinhar pela linha
+     de base do texto desencontrava o rótulo dos botões. Com um filho só de texto as duas
+     regras rendem idêntico, então nada do layout anterior muda. */
+  .mvp-notes-toolbar{display:flex; align-items:center; justify-content:space-between; padding:14px 16px 10px; flex:none; gap:8px}
   .mvpn-view-title{
     margin:0; font-family:var(--mono); font-size:var(--fs-xs); font-weight:400; color:var(--ink-faint);
     text-transform:uppercase; letter-spacing:.14em;
+    min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  /* Ações em massa (JPW-436587): discretas ao lado do rótulo da visão — mesma família
+     tipográfica do "eyebrow", nunca botões de destaque. Elas relatam o RECORTE, então o
+     número faz parte do rótulo ("Copiar 12") e some quando não há nada a levar. */
+  .mvpn-bulk-actions{display:flex; align-items:center; gap:6px; flex:none; margin-left:10px}
+  .mvpn-bulk-actions[hidden]{display:none}
+  /* Especificidade por ID, e não pelo prefixo do tema: a regra
+     html[data-ui-version="tesla-inspired"] :is(.jp-btn, .reset-btn, .modal-btn.cancel, …)
+     vale (0,3,1) — o :is() herda a mais específica das alternativas, .modal-btn.cancel,
+     que são DUAS classes. Prefixar com o tema empata em (0,3,1) e perde por ordem de
+     origem (a dela vem ~1400 linhas depois). Medido: os botões saíam com 42px de altura
+     (var(--jp-control-h)) e 20px de padding lateral, dominando a barra e espremendo o
+     rótulo da visão até "INTER…". #mvpNotesBulkActions vale (1,1,0) e encerra a disputa
+     nos dois temas — mesmo recurso já usado em .mvp-notes-toolbar #mvpNotesNewBtn. */
+  #mvpNotesBulkActions .mvpn-bulk-btn{
+    font-family:var(--mono); font-size:var(--fs-xs); font-weight:400; letter-spacing:.06em;
+    min-height:0; padding:3px 8px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:var(--radius-sm); background:transparent;
+    white-space:nowrap;
+  }
+  #mvpNotesBulkActions .mvpn-bulk-btn:not(:disabled):hover{
+    color:var(--ink); border-color:var(--ink-faint); background:var(--panel-2);
+  }
+  #mvpNotesBulkActions .mvpn-bulk-btn:disabled{opacity:.45; cursor:not-allowed}
+  /* Retorno da cópia em lote: mesmo vocabulário do botão de copiar do editor
+     (mvpNotesFlashCopyFeedback aplica as mesmas classes). */
+  #mvpNotesBulkActions .mvpn-bulk-btn.mvpn-copy-done{color:var(--violet); border-color:var(--violet)}
+  #mvpNotesBulkActions .mvpn-bulk-btn.mvpn-copy-done.mvpn-copy-failed{color:var(--f4); border-color:var(--f4)}
+  @media (max-width:920px){
+    /* Alvo de toque pleno, como todo controle da gaveta em mobile. */
+    #mvpNotesBulkActions .mvpn-bulk-btn{min-height:44px; padding:0 12px; font-size:var(--fs-sm)}
+    .mvpn-bulk-actions{margin-left:8px}
   }
   /* Desktop: os filtros ficam inline na toolbar (o invólucro é transparente — cabeçalho e
      ações da folha inferior só existem em mobile); o botão "Filtros" não existe aqui. */

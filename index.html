@@ -1250,6 +1250,15 @@
           <!-- Só o rótulo da visão (1c): busca e ações vivem na barra unificada do topo.
                Vira "eyebrow" — mono, caixa alta — anunciando o recorte que a lista mostra. -->
           <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
+          <!-- Ações em massa (JPW-436587). Ficam AQUI, e não no menu "⋯" da pasta, porque
+               operam sobre o RECORTE VISÍVEL (pasta ativa + filtros + busca), que é
+               exatamente o que esta barra anuncia. No menu da pasta cobririam só pastas
+               reais — "Sem pasta" e "Concluído" não têm kebab. O número no rótulo é o que
+               será levado, e renderMvpNotesBulkActions() o mantém vivo. -->
+          <div class="mvpn-bulk-actions" id="mvpNotesBulkActions" hidden>
+            <button type="button" class="reset-btn mvpn-bulk-btn" id="mvpNotesBulkCopyBtn">Copiar</button>
+            <button type="button" class="reset-btn mvpn-bulk-btn" id="mvpNotesBulkExportBtn">Exportar</button>
+          </div>
         </div>
         <div class="mvp-notes-list" id="mvpNotesList" tabindex="-1"></div>
       </div>

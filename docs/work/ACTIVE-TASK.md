@@ -1,100 +1,94 @@
-# Tarefa ativa — Configuração inicial da nota (Notas do MVP, JPW-CBA987)
+# Tarefa ativa — Exportar e copiar notas em massa (JPW-436587)
 
 - Data de abertura: 2026-08-12
-- `BASE_SHA`: `228daf9d2598` (`main`)
-- Branch autorizada: `feature/mvp-notes-creation-modal`
-- Nível: **N1** (fluxo de criação e interface) + **N0-D** (testes e documentação)
-- Autoridade: A2 para o escopo N1. Nenhuma alteração N2/N3: o schema de
-  `S.mvpNotes` permanece na versão 5, sem migração, sem novo campo persistido e
-  sem alteração de backup/importação.
+- `BASE_SHA`: `b286610c8b89` (`main`, com JPW-CBA987 integrado)
+- Branch autorizada: `feature/mvp-notes-bulk-export-copy`
+- Nível: **N1** (ações de leitura e interface) + **N0-D** (testes e documentação)
+- Autoridade: A2. Nenhuma alteração N2/N3 — `S.mvpNotes` permanece na versão 5,
+  sem migração, sem campo novo e sem qualquer escrita de estado.
 - Git: criação da branch autorizada e executada em 2026-08-12. Commit, push,
   merge e deploy permanecem pendentes de autorização separada.
-- Tarefa anterior (Planejamento FX): concluída e integrada à `main`; registro em
-  `CHANGELOG.md`, `docs/architecture/FX-PLANNING.md` e no histórico Git.
+- Tarefa anterior (JPW-CBA987, modal de configuração inicial): concluída,
+  integrada em `b286610`. Os dois commits ainda **não foram enviados** ao
+  `origin` — `git push` falha neste checkout por ausência de credencial no
+  chaveiro; o envio sai pelo GitHub Desktop.
 
-O estado Git corrente (branch, HEAD e árvore) deve ser confirmado pelo preflight.
-Este contrato não substitui fatos mutáveis do disco.
-
-> [!warning] Outra sessão opera o mesmo checkout
-> Entre o preflight de abertura (`3c2b398`) e a criação da branch, o HEAD de
-> `main` avançou sozinho para `228daf9` (`fc8d2a3` tokens + `228daf9` gitignore).
-> Reconfirmar o estado Git antes de qualquer nova edição.
+O estado Git corrente deve ser confirmado pelo preflight. Este contrato não
+substitui fatos mutáveis do disco.
 
 ## Objetivo
 
-Fazer os metadados da nota serem decididos **na origem**, não depois. O botão
-"+" da gaveta de Notas passa a abrir um modal de configuração inicial ("Nova
-Nota") com tipo, prioridade, status inicial, pasta e permissão de IA; o editor
-abre em seguida, no mesmo lugar de sempre.
+Exportar e copiar notas em lote, reduzindo trabalho manual em backup por
+contexto, migração, auditoria e processamento por IA.
 
-O problema real não era "nota vazia criada" — clicar "+" nunca criou nota: cria
-um rascunho em memória, e a gravação sempre foi explícita. O problema é que os
-cinco metadados viviam atrás do botão `[•••]` (inspector) e permaneciam no
-padrão na prática.
+## Decisões do gestor (2026-08-12, vinculantes)
 
-## Decisões vinculantes
+1. **"Arquivada" = Concluída + Descartada.** O campo `archived` do ticket não
+   existe no módulo (auditado: todas as ocorrências de *archived/arquivado* no
+   repositório pertencem a operações de trading). Mapeado para
+   `status ∈ {done, discarded}`, que ficam de fora.
+2. **Markdown, não JSON.** O arquivo não é restaurável e isso é característica
+   declarada, não defeito: o único importador existente
+   (`normalizeImportedState`) exige um backup completo e rejeitaria um arquivo
+   só de notas. Restauração continua sendo função do backup completo da base.
+3. **Preâmbulo de governança do lote** (opção 3 da análise): cada nota mantém a
+   própria instrução de IA, e o lote abre com a regra de leitura que impede uma
+   autorização de atravessar para outra nota.
+4. **Escopo = recorte visível**, não a pasta bruta. Decorre do pedido de "ou com
+   determinado filtro": `mvpNotesFiltered()` já é esse recorte.
 
-1. **Enums reutilizados, não substituídos.** O modal exibe os mesmos
-   `MVP_NOTES_TYPE/PRIORITY/STATUS/POLICY_LABELS` já usados pelo inspector.
-   Nenhuma categoria nova (Diário/Estudo/Projeto/Ideia não existem no módulo).
-2. **Schema plano preservado.** Nenhum agregado `metadata:{}`. Os metadados
-   continuam campos de primeiro nível do item, como leem a normalização, o
-   backup, a exportação em Markdown e o Trace Reference.
-3. **"Sem pasta" é resposta válida** para o campo obrigatório "Salvar em": é
-   visão de primeira classe do módulo (`unfiled`) e uma instalação nova nasce
-   com `folders: []` — exigir pasta real travaria o primeiro uso do aplicativo.
-4. **Modal local à gaveta.** Não reutilizar `#modalOverlay`: irmão anterior de
-   `#mvpNotesOverlay` com o mesmo `z-index` (200), renderizaria por baixo do
-   drawer e ficaria fora do focus trap do módulo.
-5. **A nota continua nascendo só ao Salvar.** "Criar Nota" monta o rascunho e
-   abre o editor; `mvpNotesCreate()` segue exigindo a primeira linha como
-   título. Cancelar não pode tocar o estado.
+## Decisão técnica assumida (registrada)
+
+**Visão "Concluído" é exceção ao critério 1.** Ali o recorte é inteiramente
+concluído e aplicar a exclusão devolveria sempre zero — a ação seria morta numa
+visão inteira. As duas ações operam sobre o que está visível, e a contagem no
+rótulo e na confirmação torna a diferença explícita.
 
 ## Arquivos permitidos
 
-- `index.html` (markup do modal, dentro de `#mvpNotesDrawer`)
-- `src/styles/app.css` (bloco `.mvpn-new-*`)
+- `index.html` (ações na `.mvp-notes-toolbar`)
+- `src/styles/app.css` (bloco `.mvpn-bulk-*` e `align-items` da toolbar)
 - `src/js/40-app/14-mvp-notes.js`
-- `tools/mvp_notes_test.py`, `tools/smoke_test.py`, `tools/finalize_session_test.py`
+- `tools/mvp_notes_test.py`
 - Derivados oficiais: `build-id.js`, `dist/…PORTABLE.html`, `src/js/manifest.json`
 - Documentação: `CHANGELOG.md`, este contrato
 
 ## Invariantes
 
-- `S.mvpNotes.schemaVersion` permanece 5; nenhuma migração introduzida.
-- Nota antiga abre, edita, exporta e importa sem alteração de comportamento.
-- Cancelar / `Escape` / clique fora: zero escrita em `localStorage`.
-- Escolher metadados no modal não marca o rascunho como sujo.
-- O inspector continua sendo a superfície de edição pós-criação.
-- Focus trap e `inert` da gaveta preservados; o modal é a camada mais interna.
+- Exportar e copiar são **leitura pura**: `S.mvpNotes` idêntico antes e depois.
+- Nenhuma chamada de rede.
+- `schemaVersion` permanece 5; nenhuma migração.
+- Nota legada (sem campos do v5) exporta pelos fallbacks da normalização.
+- Rascunho sujo bloqueia as duas ações, como já bloqueia a exportação individual.
+- O serializador por nota (`mvpNotesMarkdown`) e o Trace Reference
+  (`mvpNotesReferenceBlock`) não são alterados — são reutilizados.
 
 ## Critérios de aceite
 
-- `+` abre o modal; abrir a gaveta ou selecionar nota existente, não.
-- Os cinco campos vêm pré-preenchidos com os padrões canônicos.
-- "Criar Nota" leva os cinco metadados ao rascunho e, ao Salvar, ao item.
+- Só notas do recorte entram; concluídas e descartadas ficam de fora.
+- Contagem no rótulo = contagem levada; confirmação declara visível × levado.
+- Casos vazios distinguem "não há nota" de "todas excluídas pelo critério".
 - Desktop (1440×900) e mobile (375×812) verificados no navegador real.
 - `python3 tools/quality_gate.py --tier full` sem `PRODUCT_FAIL`.
 
 ## Fora de escopo (deliberado)
 
-- Criar pasta a partir do modal.
-- Alterar rótulos, enums ou o padrão `analysis_only`.
-- Mover metadados para fora do inspector ou removê-lo.
-- Qualquer alteração em regra financeira, dashboard ou trading.
+- Importador de arquivo de notas (seria N2 — merge, colisão de `id`/`ticket`,
+  resolução de `folderId`). Ticket próprio.
+- Formato ZIP: exigiria encoder próprio ou a primeira dependência externa.
+- Exportação assíncrona com barra de progresso: `content` é limitado a 20.000
+  caracteres e todo o estado vive em `localStorage`; o volume não justifica.
+- Campo `archived` real no schema.
 
 ## Plano de rollback
 
-Reverter os arquivos permitidos para `228daf9d2598` e reexecutar
-`tools/rebuild_monolith.py`. Não há estado persistido novo para desfazer —
-nenhuma base salva muda de forma por esta tarefa.
+Reverter os arquivos permitidos para `b286610c8b89` e reexecutar
+`tools/rebuild_monolith.py`. Não há estado persistido novo para desfazer.
 
 ## Resultado do candidato (2026-08-12)
 
-- `tools/quality_gate.py --tier full`: **PASS=19**, nenhum `PRODUCT_FAIL`,
-  `TEST_HARNESS_FAIL`, `ENVIRONMENT_ERROR`, `BASELINE_FAIL` ou `NOT_RUN`.
-- Defeito encontrado e corrigido durante a verificação: `.mvp-notes-head` é um
-  `<header>` e herda `z-index:40` da regra global; com `z-index:4` o modal
-  ficava por baixo do cabeçalho da gaveta, que seguia clicável. Corrigido para
-  50, contido no contexto de empilhamento do drawer (`position:fixed`).
+- `tools/quality_gate.py --tier full`: **PASS=19**, nenhuma falha.
+- Defeito encontrado e corrigido na verificação visual: empate de especificidade
+  com a regra de botões do tema `tesla-inspired` (0,3,1) fazia os botões saírem
+  em tamanho de controle pleno e truncava o rótulo da visão. Ver `CHANGELOG.md`.
 - Candidato local, não commitado, não enviado, não integrado, não publicado.

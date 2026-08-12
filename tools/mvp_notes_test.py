@@ -1545,6 +1545,154 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 18. JPW-436587: exportar e copiar o recorte visível em massa ----------
+        page = prepare_page(browser, base_url)
+        page.evaluate("""() => { window.__copiado = null;
+          Object.defineProperty(navigator, 'clipboard', {configurable: true,
+            value: {writeText: t => { window.__copiado = t; return Promise.resolve(); }}}); }""")
+        # duas pastas: uma com recorte misto, outra vazia — mais uma nota sem pasta
+        seed = page.evaluate("""() => {
+          const a = mvpNotesCreateFolder('Interface');
+          const b = mvpNotesCreateFolder('Pasta vazia');
+          const nova = (content, status, policy, folderId) => mvpNotesCreate(
+            {content, type: 'bug', priority: 'high', status, folderId,
+             aiImplementationPolicy: policy});
+          const ids = {
+            ativa1: nova('Ativa um\\ncorpo um', 'open', 'blocked', a.id).id,
+            ativa2: nova('Ativa dois\\ncorpo dois', 'in_progress', 'autonomous_allowed', a.id).id,
+            feita:  nova('Concluida na pasta', 'done', 'analysis_only', a.id).id,
+            descartada: nova('Descartada na pasta', 'discarded', 'analysis_only', a.id).id,
+            fora:   nova('Nota de outra pasta', 'open', 'analysis_only', null).id,
+          };
+          renderMvpNotesList();
+          return {pastaA: a.id, pastaB: b.id, ids};
+        }""")
+        click_id(page, 'headerNotesBtn')
+        page.evaluate(f"() => {{ mvpNotesSwitchFolder('{seed['pastaA']}'); }}")
+        acoes = page.locator('#mvpNotesBulkActions')
+
+        # 18.1 o rótulo conta o que SERÁ levado, não o que está na tela
+        assert acoes.is_visible(), 'ações em massa deveriam aparecer com notas no recorte'
+        assert page.locator('#mvpNotesBulkCopyBtn').inner_text() == 'Copiar 2'
+        assert page.locator('#mvpNotesBulkExportBtn').inner_text() == 'Exportar 2'
+        sel = page.evaluate('(() => { const s = mvpNotesBulkSelection();'
+                            ' return {visiveis: s.visiveis, levados: s.itens.length,'
+                            ' tickets: s.itens.map(i => i.ticket), escopo: s.escopo}; })()')
+        assert sel['visiveis'] == 4 and sel['levados'] == 2, sel
+        assert sel['escopo'] == 'Interface'
+
+        # 18.2 só notas daquela pasta; concluída e descartada ficam fora
+        levados = page.evaluate('mvpNotesBulkSelection().itens.map(i => i.id)')
+        assert set(levados) == {seed['ids']['ativa1'], seed['ids']['ativa2']}, levados
+        assert seed['ids']['fora'] not in levados, 'nota de outra pasta não pode entrar'
+
+        # 18.3 exportar: confirmação declara os dois números, e o estado NÃO muda
+        estado_antes = page.evaluate('JSON.stringify(S.mvpNotes)')
+        perguntas = page.evaluate("""() => { window.__perguntas = [];
+          window.confirm = q => { window.__perguntas.push(q); return true; };
+          return true; }""")
+        nome = page.evaluate('mvpNotesBulkExport()')
+        assert nome and nome.startswith('notas-interface-') and nome.endswith('.md'), nome
+        pergunta = page.evaluate('window.__perguntas[0]')
+        assert 'mostra 4 notas' in pergunta and 'as 2 ativas' in pergunta, pergunta
+        assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, \
+            'exportar é leitura pura — não pode alterar o estado'
+
+        # 18.4 integridade do Markdown: conteúdo, ticket, metadados e delimitadores
+        md = page.evaluate('mvpNotesBulkMarkdown(mvpNotesBulkSelection())')
+        assert md.startswith('<!-- jpwealth:notes-export v1 schema=5 scope="Interface" count=2 criterion="ativas" -->')
+        assert md.count('<!-- jpwealth:note ') == 2, 'um delimitador por nota'
+        for trecho in ['# Interface', '2 notas ativas', 'Ativa um', 'corpo um', 'Ativa dois',
+                       'ticket: JPW-', 'ai_implementation_policy: blocked',
+                       'ai_implementation_policy: autonomous_allowed',
+                       # nome simples sai como token YAML sem aspas (mvpNotesYamlValor);
+                       # "Sem pasta", com espaço, sai citado — verificado em 18.10.
+                       'folder: Interface']:
+            assert trecho in md, trecho
+        assert 'Concluida na pasta' not in md and 'Descartada na pasta' not in md
+        assert 'Nota de outra pasta' not in md
+
+        # 18.5 copiar: preâmbulo de governança + um Trace Reference íntegro por nota
+        page.evaluate('window.__copiado = null')
+        click_id(page, 'mvpNotesBulkCopyBtn')
+        page.wait_for_timeout(150)
+        lote = page.evaluate('window.__copiado')
+        assert lote.startswith('JP WEALTH — TRACE REFERENCE (LOTE)'), lote[:60]
+        for trecho in ['Escopo: Interface', 'Notas neste lote: 2',
+                       '1 com implementação autorizada', '1 bloqueada',
+                       'REGRA DE LEITURA DESTE LOTE',
+                       'Nenhuma autorização se estende de uma nota para',
+                       'Nenhuma das políticas autoriza commit, push, merge ou deploy.']:
+            assert trecho in lote, trecho
+        # cada bloco preserva a própria instrução — nada foi removido das notas
+        assert lote.count('JP WEALTH — TRACE REFERENCE\n') == 2, 'dois blocos individuais'
+        assert lote.count('INSTRUÇÃO AO AGENTE') == 2
+        assert 'está BLOQUEADA para implementação por IA' in lote
+        assert 'AUTORIZA IMPLEMENTAÇÃO TÉCNICA' in lote
+        assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, \
+            'copiar é leitura pura — não pode alterar o estado'
+
+        # 18.6 pasta vazia: ações somem e a mensagem distingue "não há" de "todas excluídas"
+        page.evaluate(f"() => {{ mvpNotesSwitchFolder('{seed['pastaB']}'); }}")
+        assert acoes.is_hidden(), 'sem notas no recorte, as ações somem'
+        assert page.evaluate('mvpNotesBulkExport()') is None
+        assert page.locator('#mvpNotesExportLive').inner_text() == 'Nenhuma nota exportável encontrada.'
+
+        # 18.7 recorte só com concluídas/descartadas → mensagem própria
+        page.evaluate(f"""() => {{ mvpNotesSwitchFolder('{seed['pastaA']}');
+          mvpNotesUI.filterStatus = 'done'; renderMvpNotesList(); }}""")
+        assert acoes.is_hidden(), 'recorte inteiramente excluído esconde as ações'
+        assert page.evaluate('mvpNotesBulkExport()') is None
+        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Todas as notas desta visão')
+        page.evaluate("() => { mvpNotesUI.filterStatus = 'all'; renderMvpNotesList(); }")
+
+        # 18.8 visão "Concluído": exceção declarada — ali o recorte É o histórico concluído
+        page.evaluate("() => { mvpNotesSwitchFolder('done'); }")
+        feito = page.evaluate('(() => { const s = mvpNotesBulkSelection();'
+                              ' return {n: s.itens.length, soAtivas: s.soAtivas, escopo: s.escopo}; })()')
+        assert feito == {'n': 1, 'soAtivas': False, 'escopo': 'Concluído'}, feito
+        assert page.locator('#mvpNotesBulkCopyBtn').inner_text() == 'Copiar 1'
+        assert 'Concluida na pasta' in page.evaluate('mvpNotesBulkMarkdown(mvpNotesBulkSelection())')
+
+        # 18.9 rascunho sujo bloqueia as duas ações (mesma regra da exportação individual)
+        page.evaluate("() => { mvpNotesSwitchFolder('all'); mvpNotesSelectNote(mvpNotesFiltered()[0].id); }")
+        page.locator('#mvpNoteContent').fill('editado sem salvar')
+        page.evaluate("() => { window.alert = () => {}; }")
+        assert page.evaluate('mvpNotesBulkExport()') is None, 'rascunho sujo bloqueia exportar'
+        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Existem alterações não salvas')
+        assert page.evaluate('mvpNotesBulkCopy(null)') is None, 'rascunho sujo bloqueia copiar'
+
+        # 18.10 nota LEGADA (sem campos do v5) exporta com os fallbacks da normalização
+        page.evaluate("""() => {
+          mvpNotesUI.draftDirty = false; mvpNotesCloseEditor();
+          S.mvpNotes.items.push({id: 'legado_1', title: 'Nota antiga', description: 'corpo antigo'});
+          migrate(); mvpNotesSwitchFolder('unfiled'); renderMvpNotesList(); }""")
+        legado = page.evaluate("S.mvpNotes.items.find(i => i.id === 'legado_1')")
+        assert legado['type'] == 'task' and legado['priority'] == 'medium'
+        assert legado['aiImplementationPolicy'] == 'analysis_only' and legado['folderId'] is None
+        md_legado = page.evaluate('mvpNotesBulkMarkdown(mvpNotesBulkSelection())')
+        assert 'Nota antiga' in md_legado and 'corpo antigo' in md_legado
+        assert "folder: 'Sem pasta'" in md_legado and 'source_revision: null' in md_legado
+
+        # 18.11 nome de pasta hostil não escapa do comentário HTML do cabeçalho
+        hostil = page.evaluate("""() => {
+          const f = mvpNotesCreateFolder('a --> <b> c');
+          mvpNotesCreate({content: 'Nota hostil', type: 'task', priority: 'low',
+                          status: 'open', folderId: f.id, aiImplementationPolicy: 'blocked'});
+          mvpNotesSwitchFolder(f.id);
+          return mvpNotesBulkMarkdown(mvpNotesBulkSelection()).split('\\n')[0]; }""")
+        assert hostil.count('-->') == 1 and hostil.endswith('-->'), hostil
+        assert '<b>' not in hostil, hostil
+
+        # 18.12 nenhuma chamada de rede em qualquer das duas ações
+        pedidos = []
+        page.on('request', lambda r: pedidos.append(r.url))
+        page.evaluate('mvpNotesBulkCopy(null); mvpNotesBulkExport();')
+        page.wait_for_timeout(150)
+        assert not pedidos, ('exportar/copiar não podem fazer rede', pedidos)
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 13. monólito portátil (dist) ----
         page = prepare_page(browser, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')
@@ -1556,4 +1704,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos), ações em massa sobre o recorte visível (JPW-436587: contagem, exclusão de concluídas/descartadas, Markdown único, preâmbulo de governança do lote, leitura pura, casos vazios, visão Concluído, rascunho sujo, nota legada, nome de pasta hostil e ausência de rede) e monólito verificados.')
