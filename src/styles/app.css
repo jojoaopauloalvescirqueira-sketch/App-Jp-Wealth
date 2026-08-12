@@ -4744,6 +4744,47 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
 .fxp-quote-btn{margin-left:auto; padding:3px 10px; font-size:var(--fs-xs); color:var(--ink-dim); border-color:var(--line)}
 @media(max-width:700px){.fxp-quote-btn{margin-left:0}}
 
+/* ---- Proposta B · duas colunas (1c) ---------------------------------------
+   Grade 2fr/1fr do Dashboard: patrimonial na coluna principal, normativo e
+   cambial na lateral. Colapsa para uma coluna nos estados médio-estreito e
+   mínimo — a lateral desce, não encolhe. */
+.fxp-grid2{display:grid; grid-template-columns:2fr 1fr; gap:var(--fxp-gap-block,16px); align-items:start; min-width:0}
+.fxp-col-main,.fxp-col-side{min-width:0; display:flex; flex-direction:column; gap:var(--fxp-gap-block,16px)}
+@container fxp (max-width:899px){ .fxp-grid2{grid-template-columns:1fr} }
+/* Estado vazio (1h): explicação à esquerda, formulário à direita — o formulário
+   recebe mais espaço porque é onde se age. Colapsa com a explicação PRIMEIRO,
+   já que quem chega aqui ainda não sabe o que vai preencher. */
+.fxp-grid-empty{display:grid; grid-template-columns:1fr 1.4fr; gap:var(--fxp-gap-block,16px); align-items:start; min-width:0}
+@container fxp (max-width:899px){ .fxp-grid-empty{grid-template-columns:1fr} }
+.fxp-empty-h{margin:0 0 6px; font-size:calc(13px * var(--fs-scale))}
+.fxp-layer{margin-top:12px; padding-top:10px; border-top:1px solid var(--line)}
+.fxp-layer-h{font-family:var(--mono); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.12em; color:var(--data-lbl); margin-bottom:4px}
+
+/* Bloco com moldura própria dentro do painel — mesma gramática do .card, sem
+   competir com o cabeçalho dele. */
+.fxp-block{border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--panel-2); padding:12px 14px; min-width:0}
+.fxp-block-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 10px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+.fxp-block-head h3{margin:0; font-size:calc(13px * var(--fs-scale))}
+.fxp-block-head .art{font-family:var(--sans); font-size:var(--fs-xs); color:var(--ink-dim); font-weight:400}
+.fxp-block-head .fxp-spacer{flex:1}
+/* Barra de cobertura das reservas: o número já diz, a barra dá a leitura de
+   relance. Estado normativo nunca depende só da cor — vem com rótulo. */
+.fxp-cov{margin-bottom:12px}
+.fxp-cov:last-of-type{margin-bottom:0}
+.fxp-cov-top{display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap}
+.fxp-cov-lbl{font-family:var(--sans); font-size:var(--fs-xs); color:var(--ink-dim)}
+.fxp-cov-val{font-family:var(--mono); font-size:var(--fs-md); font-weight:700}
+.fxp-cov-bar{height:4px; border-radius:2px; background:var(--line); margin:5px 0 4px; overflow:hidden}
+.fxp-cov-fill{height:100%; border-radius:2px}
+.fxp-cov-meta{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); line-height:1.5}
+/* Resumo cambial da lateral: pares rótulo→valor, sem virar tabela. */
+.fxp-pairs{display:grid; grid-template-columns:1fr auto; gap:6px 10px; align-items:baseline}
+.fxp-pairs dt{font-family:var(--sans); font-size:var(--fs-xs); color:var(--ink-dim); margin:0}
+.fxp-pairs dd{margin:0; font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink); text-align:right}
+.fxp-pairs dd.hl{font-size:var(--fs-md); font-weight:700; color:var(--data-num)}
+.fxp-linkish{background:none; border:0; padding:0; color:var(--violet); cursor:pointer; font-family:var(--sans); font-size:var(--fs-sm)}
+.fxp-linkish:hover{text-decoration:underline}
+
 /* Camada B — o gráfico é o elemento analítico dominante da tela. */
 .fxp-chart-head{display:flex; align-items:center; gap:8px; margin:16px 0 6px; flex-wrap:wrap}
 .fxp-chart-head h3{margin:0; font-size:calc(13px * var(--fs-scale))}
@@ -4766,11 +4807,46 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   .fxp-reserve-row td:last-child{text-align:left; margin-top:2px}
 }
 
+/* ---- Histórico (1g) --------------------------------------------------------
+   Auditoria pode ser densa; o que ela não pode é ser ilegível. Três recursos:
+   grupos separados por fundo, coluna Mês fixa na rolagem horizontal e numerais
+   tabulares para os dígitos alinharem em coluna. */
+.fxp-histfilter{margin-bottom:10px; align-items:baseline}
+.fxp-histcount{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); margin-left:auto}
+.fxp-hist{font-variant-numeric:tabular-nums}
+.fxp-hist th,.fxp-hist td{font-variant-numeric:tabular-nums}
+/* Fundos de grupo: BASELINE e Desvio recuam, VIGENTE fica no fundo da tabela —
+   é a série que se lê primeiro. Diferença sutil de propósito: separa sem
+   fragmentar a leitura horizontal da linha. */
+.fxp-hist .fxg-b{background:color-mix(in srgb, var(--panel-2) 60%, transparent)}
+.fxp-hist .fxg-d{background:color-mix(in srgb, var(--panel-2) 60%, transparent)}
+.fxp-hist thead .fxg-b,.fxp-hist thead .fxg-v,.fxp-hist thead .fxg-d{text-align:center}
+/* Coluna Mês fixa: a tabela rola na horizontal e o mês precisa acompanhar,
+   senão a linha perde a âncora. O fundo é obrigatório — sem ele o conteúdo
+   rolante aparece por baixo. */
+.fxp-hist th:first-child,.fxp-hist td:first-child{
+  position:sticky; left:0; z-index:2; background:var(--panel);
+}
+.fxp-hist thead th:first-child{z-index:3}
+
 /* Zona de perigo: a exclusão continua disponível, longe das ações ordinárias. */
 .fxp-danger{margin-top:24px; padding:14px; border:1px solid var(--f4); border-radius:var(--radius); background:var(--panel-2)}
 .fxp-danger h4{margin:0 0 6px; color:var(--f4); font-size:calc(12px * var(--fs-scale))}
 .fxp-danger-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
 .fxp-danger-row input{max-width:150px}
+
+/* Cartão de tarefa do modo Realizado (1f) — gramática do .mc-exec-clearance:
+   diz qual é o mês, sobre que saldo o resultado incide e por que a ordem
+   importa, ANTES de qualquer campo de formulário. */
+.fxp-taskcard{border:1px solid var(--violet); border-left-width:3px; border-radius:var(--radius-sm);
+  background:var(--panel-2); padding:12px 14px; margin-bottom:16px}
+.fxp-taskcard-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.fxp-taskcard-lbl{font-family:var(--mono); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.12em; color:var(--data-lbl)}
+.fxp-taskcard-val{font-family:var(--mono); font-size:var(--fs-lg); font-weight:700; color:var(--violet)}
+.fxp-taskcard-txt{margin:6px 0 0; font-family:var(--sans); font-size:var(--fs-sm); color:var(--ink-dim); line-height:1.55}
+.fxp-taskcard-txt b{color:var(--ink); font-family:var(--mono)}
+/* Prévia do derivado: informativa, nunca compete com o botão de ação. */
+.fxp-derived-preview{margin:8px 0 0; font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink-dim); line-height:1.5; min-height:1.2em}
 
 /* Tarefa principal do modo Realizado, separada do ledger. */
 .fxp-task{padding:0 0 4px}
