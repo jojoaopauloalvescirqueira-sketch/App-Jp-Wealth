@@ -455,6 +455,9 @@ def run_mvp_notes_survival(browser, url):
     page.locator('#mvpNotesNewFolderBtn').click()
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'pasta deveria ter sido criada'
     page.locator('#mvpNotesNewBtn').click()
+    # Configuração inicial (JPW-CBA987): o "+" abre o modal antes do editor.
+    assert page.locator('#mvpNotesNewOverlay').is_visible(), 'modal de nova nota deveria abrir'
+    page.locator('#mvpNotesNewConfirmBtn').click()
     page.locator('#mvpNoteContent').fill('Nota que sobrevive a Finalizar Sessão')
     page.locator('#mvpNotesSaveBtn').click()
     assert page.evaluate('S.mvpNotes.items.length') == 1, 'nota deveria ter sido criada'

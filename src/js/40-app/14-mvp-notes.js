@@ -32,7 +32,7 @@ const mvpNotesUI={
   filterFolder:'all', filterPeriod:'all', filterPolicy:'all',
   activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
-  filtersOpen:false, inspectorOpen:false,
+  filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
   opener:null, optionsReady:false, inertSnapshot:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
@@ -1139,18 +1139,103 @@ function mvpNotesSelectNote(id){
     if(!mvpNotesIsMobile()){ const a=mvpn('mvpNoteContent'); if(a) a.focus(); }
   });
 }
-function mvpNotesStartNewNote(){
-  mvpNotesConfirmDiscardIfDirty(()=>{
-    mvpNotesUI.selectedId=null;
-    mvpNotesUI.draft=mvpNotesNewDraft();
-    mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
-    mvpNotesUI.draftDirty=false;
-    mvpNotesUI.stage='editor';
-    renderMvpNotesList();
-    renderMvpNotesEditor();
-    mvpNotesApplyStage();
-    const a=mvpn('mvpNoteContent'); if(a) a.focus();
-  });
+// Abre o editor com um rascunho novo. `meta` (opcional) sobrescreve os padrões de
+// mvpNotesNewDraft() com o que o operador escolheu no modal de configuração inicial.
+// SEM guarda de rascunho sujo: quem chama já decidiu (ver mvpNotesStartNewNote).
+function mvpNotesBeginNewNote(meta){
+  mvpNotesUI.selectedId=null;
+  mvpNotesUI.draft=Object.assign(mvpNotesNewDraft(),meta||null);
+  // draftOriginal recebe os MESMOS metadados: a nota nasce limpa, não "não salva". Escolher
+  // no modal não é edição pendente — o rascunho só fica sujo quando se escreve.
+  mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
+  mvpNotesUI.draftDirty=false;
+  mvpNotesUI.stage='editor';
+  renderMvpNotesList();
+  renderMvpNotesEditor();
+  mvpNotesApplyStage();
+  const a=mvpn('mvpNoteContent'); if(a) a.focus();
+}
+function mvpNotesStartNewNote(meta){
+  mvpNotesConfirmDiscardIfDirty(()=>mvpNotesBeginNewNote(meta));
+}
+
+// ---- modal de configuração inicial (JPW-CBA987) ----
+// Os metadados passam a ser decididos ANTES do editor, não depois no inspector. O modal
+// não persiste nada: ele só monta o rascunho. A nota continua nascendo no localStorage
+// apenas em mvpNotesSaveDraft() → mvpNotesCreate(), com a primeira linha como título —
+// por isso "Cancelar" não pode criar nota nem tocar o storage: não há o que desfazer.
+//
+// Todos os cinco selects são preenchidos a partir dos MESMOS mapas de rótulo que o
+// inspector usa. Nenhuma categoria nova é criada aqui, e "Sem pasta" continua sendo o
+// sistema de pastas vigente (visão 'unfiled'), não um valor inventado.
+function mvpNotesFillNewNoteModal(){
+  const base=mvpNotesNewDraft(); // já herda a pasta ativa quando ela é uma pasta real
+  const opt=(map,sel)=>Object.keys(map).map(k=>`<option value="${k}" ${k===sel?'selected':''}>${esc(map[k])}</option>`).join('');
+  const set=(id,html)=>{ const el=mvpn(id); if(el) el.innerHTML=html; };
+  set('mvpNotesNewType',opt(MVP_NOTES_TYPE_LABELS,base.type));
+  set('mvpNotesNewPriority',opt(MVP_NOTES_PRIORITY_LABELS,base.priority));
+  set('mvpNotesNewStatus',opt(MVP_NOTES_STATUS_LABELS,base.status));
+  set('mvpNotesNewFolder',`<option value="" ${!base.folderId?'selected':''}>Sem pasta</option>`
+    +mvpNotesFoldersOrdered().map(f=>`<option value="${esc(f.id)}" ${f.id===base.folderId?'selected':''}>${esc(f.name)}</option>`).join(''));
+  set('mvpNotesNewPolicy',opt(MVP_NOTES_POLICY_LABELS,base.aiImplementationPolicy));
+  const hint=mvpn('mvpNotesNewPolicyHint');
+  if(hint) hint.textContent=MVP_NOTES_POLICY_HINT[base.aiImplementationPolicy]||'';
+}
+function mvpNotesReadNewNoteModal(){
+  const v=id=>{ const el=mvpn(id); return el?el.value:''; };
+  return {type:v('mvpNotesNewType'), priority:v('mvpNotesNewPriority'), status:v('mvpNotesNewStatus'),
+    folderId:v('mvpNotesNewFolder')||null, aiImplementationPolicy:v('mvpNotesNewPolicy')};
+}
+// "Pasta definida" INCLUI "Sem pasta": é escolha legítima e de primeira classe do módulo
+// (visão 'unfiled', com contador e filtro próprios), e uma instalação nova nasce com
+// folders:[] — exigir uma pasta real travaria o primeiro uso do aplicativo. O que se
+// valida aqui é que cada campo carrega um valor CANÔNICO, nunca um valor arbitrário
+// vindo de um select adulterado.
+function mvpNotesValidateNewNote(meta){
+  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo desta nota.';
+  if(!MVP_NOTES_PRIORITIES.includes(meta.priority)) return 'Escolha a prioridade.';
+  if(!MVP_NOTES_STATUSES.includes(meta.status)) return 'Escolha o status inicial.';
+  if(meta.folderId!==null && !mvpNotesFolderById(meta.folderId)) return 'Escolha uma pasta válida.';
+  if(!MVP_NOTES_AI_POLICIES.includes(meta.aiImplementationPolicy)) return 'Defina a permissão de IA.';
+  return null;
+}
+function mvpNotesSetNewNoteModalOpen(open){
+  const ov=mvpn('mvpNotesNewOverlay'); if(!ov) return;
+  // Capturado ANTES de esconder: depois de ov.hidden=true o activeElement já virou <body>
+  // e a devolução de foco ao botão "+" nunca aconteceria.
+  const tinhaFoco=ov.contains(document.activeElement);
+  mvpNotesUI.newNoteOpen=open;
+  ov.hidden=!open;
+  if(open){
+    // Uma superfície por vez — mesmo contrato do inspector e dos filtros.
+    if(mvpNotesUI.inspectorOpen) mvpNotesSetInspectorOpen(false);
+    if(mvpNotesUI.filtersOpen) mvpNotesSetFiltersOpen(false);
+    const err=mvpn('mvpNotesNewError'); if(err){ err.hidden=true; err.textContent=''; }
+    mvpNotesFillNewNoteModal();
+    const first=mvpn('mvpNotesNewType'); if(first) first.focus();
+  }else{
+    const btn=mvpn('mvpNotesNewBtn');
+    if(btn && tinhaFoco) btn.focus(); // Cancelar/Escape devolvem o foco à origem
+  }
+}
+// Entrada do botão "+": respeita rascunho sujo ANTES de abrir o formulário, para não
+// descobrir a pendência só depois de o operador ter preenchido tudo.
+function mvpNotesOpenNewNoteModal(){
+  mvpNotesConfirmDiscardIfDirty(()=>mvpNotesSetNewNoteModalOpen(true));
+}
+function mvpNotesConfirmNewNote(){
+  const meta=mvpNotesReadNewNoteModal();
+  const erro=mvpNotesValidateNewNote(meta);
+  const err=mvpn('mvpNotesNewError');
+  if(erro){
+    if(err){ err.textContent=erro; err.hidden=false; }
+    return null;
+  }
+  if(err){ err.hidden=true; err.textContent=''; }
+  mvpNotesSetNewNoteModalOpen(false);
+  // O rascunho sujo já foi resolvido na abertura do modal — daqui segue direto.
+  mvpNotesBeginNewNote(meta);
+  return meta;
 }
 // Salvar: cria ou atualiza conforme haja nota selecionada. Nota sem nenhum texto não é
 // persistida — não há o que rastrear, e o título derivado seria vazio.
@@ -1482,7 +1567,10 @@ function mvpNotesFocusables(root){
 }
 function mvpNotesTrapFocus(event){
   if(!mvpNotesUI.open || event.key!=='Tab') return;
-  const list=mvpNotesFocusables(mvpn('mvpNotesDrawer')); if(!list.length) return;
+  // Com o modal "Nova Nota" aberto, ELE é a camada mais interna e toma o trap inteiro:
+  // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
+  const raiz=mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer')) : mvpn('mvpNotesDrawer');
+  const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
   if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
@@ -1527,6 +1615,7 @@ function openMvpNotesDrawer(opener){
   // lado a lado — o estágio fica em 'list' e o CSS o ignora acima do breakpoint.
   mvpNotesUI.stage=mvpNotesIsMobile()?'folders':'list';
   mvpNotesSetFiltersOpen(false);
+  mvpNotesSetNewNoteModalOpen(false); // cada abertura começa sem o modal de criação na tela
   mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())); // largura lembrada (desktop)
   mvpNotesApplyPaneWidths();
   const search=mvpn('mvpNotesSearch'); if(search) search.value='';
@@ -1551,6 +1640,7 @@ function openMvpNotesDrawer(opener){
   const closeBtn=mvpn('mvpNotesCloseBtn'); if(closeBtn) closeBtn.focus();
 }
 function closeMvpNotesDrawerNow(){
+  mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesUI.open=false;
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
@@ -1567,8 +1657,32 @@ function closeMvpNotesDrawer(){
 function bindMvpNotesDrawer(){
   mvpn('headerNotesBtn').addEventListener('click',()=>openMvpNotesDrawer(mvpn('headerNotesBtn')));
   mvpn('mvpNotesCloseBtn').addEventListener('click',closeMvpNotesDrawer);
-  mvpn('mvpNotesOverlay').addEventListener('click',e=>{ if(e.target.id==='mvpNotesOverlay') closeMvpNotesDrawer(); });
-  mvpn('mvpNotesNewBtn').addEventListener('click',mvpNotesStartNewNote);
+  mvpn('mvpNotesOverlay').addEventListener('click',e=>{
+    if(e.target.id!=='mvpNotesOverlay') return;
+    // Com o modal aberto, o escuro ao redor da gaveta é "fora do modal", não "fora da
+    // gaveta": cancela a criação em vez de fechar tudo por baixo dela.
+    if(mvpNotesUI.newNoteOpen){ mvpNotesSetNewNoteModalOpen(false); return; }
+    closeMvpNotesDrawer();
+  });
+  mvpn('mvpNotesNewBtn').addEventListener('click',mvpNotesOpenNewNoteModal);
+  // ---- modal de configuração inicial ----
+  const novoOverlay=mvpn('mvpNotesNewOverlay');
+  if(novoOverlay) novoOverlay.addEventListener('click',e=>{ if(e.target===novoOverlay) mvpNotesSetNewNoteModalOpen(false); });
+  const novoCancelar=mvpn('mvpNotesNewCancelBtn');
+  if(novoCancelar) novoCancelar.addEventListener('click',()=>mvpNotesSetNewNoteModalOpen(false));
+  const novoConfirmar=mvpn('mvpNotesNewConfirmBtn');
+  if(novoConfirmar) novoConfirmar.addEventListener('click',mvpNotesConfirmNewNote);
+  const novaPolitica=mvpn('mvpNotesNewPolicy');
+  if(novaPolitica) novaPolitica.addEventListener('change',()=>{
+    const h=mvpn('mvpNotesNewPolicyHint');
+    if(h) h.textContent=MVP_NOTES_POLICY_HINT[novaPolitica.value]||'';
+  });
+  // Enter confirma de qualquer campo — captura rápida continua sendo o objetivo; o modal
+  // não é um formulário para percorrer com o mouse.
+  const novaCaixa=mvpn('mvpNotesNewBox');
+  if(novaCaixa) novaCaixa.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){ e.preventDefault(); mvpNotesConfirmNewNote(); }
+  });
   mvpn('mvpNotesSearch').addEventListener('input',e=>{ mvpNotesUI.query=e.target.value; renderMvpNotesList(); });
   mvpn('mvpNotesFilterType').addEventListener('change',e=>{ mvpNotesUI.filterType=e.target.value; renderMvpNotesList(); });
   mvpn('mvpNotesFilterStatus').addEventListener('change',e=>{ mvpNotesUI.filterStatus=e.target.value; renderMvpNotesList(); });
@@ -1634,6 +1748,9 @@ function bindMvpNotesDrawer(){
     if(!mvpNotesUI.open) return;
     if(event.key==='Escape'){
       event.preventDefault();
+      // Modal de criação: camada mais interna de todas enquanto aberto. Escape = Cancelar,
+      // e cancelar não cria nota nem toca o storage (nada foi persistido ainda).
+      if(mvpNotesUI.newNoteOpen){ mvpNotesSetNewNoteModalOpen(false); return; }
       // Arraste em curso é a camada mais interna: Escape cancela só ele, sem persistir nada.
       if(mvpNotesUI.folderDrag){ mvpNotesFolderDragCleanup(); return; }
       // Menu "⋯" aberto: Escape dispensa o menu, não a gaveta inteira (JPW-YX2Z43).

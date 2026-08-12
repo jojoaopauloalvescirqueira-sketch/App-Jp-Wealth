@@ -1298,6 +1298,36 @@
       <!-- Resultado da exportação individual em Markdown (JPW-9A78DE). -->
       <p class="sr-only" id="mvpNotesExportLive" role="status" aria-live="polite"></p>
     </div>
+    <!-- Configuração inicial da nota (JPW-CBA987) — modal LOCAL à gaveta, deliberadamente
+         NÃO o #modalOverlay global. Aquele é irmão ANTERIOR de #mvpNotesOverlay no documento
+         e tem o mesmo z-index (200 = --jp-layer-modal), então renderizaria ATRÁS da gaveta;
+         e o focus trap do drawer (mvpNotesTrapFocus) o deixaria inalcançável por teclado.
+         Vivendo aqui dentro, herda o isolamento (inert/aria-hidden) já aplicado na abertura
+         e o trap passa a usá-lo como raiz enquanto estiver visível.
+         Os cinco selects são preenchidos por mvpNotesOpenNewNoteModal() a partir dos MESMOS
+         enums canônicos do inspector — nenhuma categoria nova é criada aqui. -->
+    <div class="mvpn-new-overlay" id="mvpNotesNewOverlay" hidden>
+      <div class="mvpn-new-box" id="mvpNotesNewBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesNewTitle" aria-describedby="mvpNotesNewSub">
+        <h3 id="mvpNotesNewTitle">Nova Nota</h3>
+        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como esta nota nasce. Tudo continua editável depois em “Detalhes da nota”.</p>
+        <div class="mvpn-new-grid">
+          <div class="field"><label for="mvpNotesNewType">Tipo</label><select id="mvpNotesNewType"></select></div>
+          <div class="field"><label for="mvpNotesNewPriority">Prioridade</label><select id="mvpNotesNewPriority"></select></div>
+          <div class="field"><label for="mvpNotesNewStatus">Status inicial</label><select id="mvpNotesNewStatus"></select></div>
+          <div class="field"><label for="mvpNotesNewFolder">Salvar em</label><select id="mvpNotesNewFolder"></select></div>
+        </div>
+        <div class="field mvpn-new-policy">
+          <label for="mvpNotesNewPolicy">Permissão de IA</label>
+          <select id="mvpNotesNewPolicy"></select>
+          <span class="mvpn-hint" id="mvpNotesNewPolicyHint"></span>
+        </div>
+        <p class="mvpn-new-error" id="mvpNotesNewError" role="alert" hidden></p>
+        <div class="mvpn-new-actions">
+          <button type="button" class="reset-btn" id="mvpNotesNewCancelBtn">Cancelar</button>
+          <button type="button" class="reset-btn mvpn-primary" id="mvpNotesNewConfirmBtn">Criar Nota</button>
+        </div>
+      </div>
+    </div>
   </section>
 </div>
 <div class="session-notice" id="sessionNotice" role="status" aria-live="polite"></div>

@@ -50,9 +50,24 @@ def open_inspector(page):
     if page.locator('#mvpNotesInspector.open').count() == 0:
         click_id(page, 'mvpNotesInspectorBtn')
 
+NEW_MODAL_FIELDS = {'type': 'mvpNotesNewType', 'priority': 'mvpNotesNewPriority',
+                    'status': 'mvpNotesNewStatus', 'folderId': 'mvpNotesNewFolder',
+                    'policy': 'mvpNotesNewPolicy'}
+
+def start_new_note(page, **meta):
+    """Fluxo canônico de criação (JPW-CBA987): o botão "+" abre o modal de configuração
+    inicial e o editor só aparece depois de "Criar Nota". `meta` sobrescreve os selects
+    do modal; sem argumentos, aceita os padrões já pré-selecionados."""
+    click_id(page, 'mvpNotesNewBtn')
+    assert page.locator('#mvpNotesNewOverlay').is_visible(), 'o modal de nova nota deveria abrir'
+    for field, value in meta.items():
+        page.locator('#' + NEW_MODAL_FIELDS[field]).select_option(value)
+    click_id(page, 'mvpNotesNewConfirmBtn')
+    assert page.locator('#mvpNotesNewOverlay').is_hidden(), 'o modal deveria fechar ao criar'
+
 def create_note(page, type_, title, description, priority, status):
     click_id(page, 'headerNotesBtn')
-    click_id(page, 'mvpNotesNewBtn')
+    start_new_note(page)
     content = title + ('\n' + description if description else '')
     page.locator('#mvpNoteContent').fill(content)
     if (type_, priority, status) != ('task', 'medium', 'open'):
@@ -202,7 +217,7 @@ try:
         assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')") is True
         assert page.locator('.mvpn-card').count() == 3
         assert page.locator('#settingsModal').evaluate('el => el.inert') is True, 'Central deveria ficar inert com o drawer sobreposto'
-        click_id(page, 'mvpNotesNewBtn')
+        start_new_note(page)
         assert page.evaluate('mvpNotesCurrentScreenId()') == 'config', 'tela de origem capturada na Central'
         click_id(page, 'mvpNotesCloseBtn')
         assert page.locator('#settingsModal').evaluate('el => !el.inert') is True, 'Central deveria voltar a ficar usável'
@@ -382,12 +397,12 @@ try:
             'folder': page.evaluate('S.mvpNotes.folders[0]'),
         }
         # nota criada dentro da pasta herda o vínculo; em Todas as Notas/Sem pasta o padrão é null
-        click_id(page, 'mvpNotesNewBtn')
+        start_new_note(page)
         assert page.evaluate('mvpNotesUI.draft.folderId') == iface_id
         page.locator('#mvpNoteContent').fill('Nota da pasta Interface')
         click_id(page, 'mvpNotesSaveBtn')
         page.locator('[data-mvp-folder="all"]').click()
-        click_id(page, 'mvpNotesNewBtn')
+        start_new_note(page)
         assert page.evaluate('mvpNotesUI.draft.folderId') is None
         page.locator('#mvpNoteContent').fill('Nota solta')
         click_id(page, 'mvpNotesSaveBtn')
@@ -455,7 +470,7 @@ try:
         page.locator('#headerNotesBtn').click()
         click_id(page, 'mvpNotesNewFolderBtn')
         backup_folder_id = page.evaluate("S.mvpNotes.folders[0].id")
-        click_id(page, 'mvpNotesNewBtn')
+        start_new_note(page)
         page.locator('#mvpNoteContent').fill('Nota do backup em pasta')
         click_id(page, 'mvpNotesSaveBtn')
         page.locator('#mvpNotesCloseBtn').click()
@@ -700,7 +715,7 @@ try:
         assert page.locator('#mvpNotesListHandle').is_hidden(), 'separador Lista|Editor some em mobile'
         page.locator("[data-mvp-folder='all']").click()
         assert drawer.get_attribute('data-mobile-stage') == 'list'
-        click_id(page, 'mvpNotesNewBtn')
+        start_new_note(page)
         assert drawer.get_attribute('data-mobile-stage') == 'editor'
         click_id(page, 'mvpNotesBackBtn')
         assert drawer.get_attribute('data-mobile-stage') == 'list'
@@ -1451,6 +1466,85 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 17. JPW-CBA987: modal de configuração inicial da nota ----------------
+        page = prepare_page(browser, base_url)
+        click_id(page, 'headerNotesBtn')
+        overlay = page.locator('#mvpNotesNewOverlay')
+
+        # 17.1 o modal NÃO aparece ao abrir a gaveta nem ao navegar/abrir nota existente
+        assert overlay.is_hidden(), 'abrir a gaveta não pode abrir o modal de criação'
+
+        # 17.2 o "+" abre o modal e o editor NÃO abre antes de confirmar
+        click_id(page, 'mvpNotesNewBtn')
+        assert overlay.is_visible(), 'o botão + deveria abrir o modal'
+        assert page.evaluate('mvpNotesUI.draft') is None, 'nenhum rascunho antes de "Criar Nota"'
+        assert page.locator('#mvpNoteContent').is_hidden(), 'o editor não pode abrir antes da confirmação'
+        # os cinco campos existem e vêm pré-preenchidos com os padrões canônicos
+        assert page.locator('#mvpNotesNewType').input_value() == 'task'
+        assert page.locator('#mvpNotesNewPriority').input_value() == 'medium'
+        assert page.locator('#mvpNotesNewStatus').input_value() == 'open'
+        assert page.locator('#mvpNotesNewFolder').input_value() == '', 'padrão é "Sem pasta"'
+        assert page.locator('#mvpNotesNewPolicy').input_value() == 'analysis_only'
+
+        # 17.3 Cancelar: nenhuma nota, nenhum rascunho, storage intocado
+        antes = page.evaluate('JSON.stringify(S.mvpNotes)')
+        click_id(page, 'mvpNotesNewCancelBtn')
+        assert overlay.is_hidden(), 'Cancelar deveria fechar o modal'
+        assert page.evaluate('mvpNotesUI.draft') is None, 'Cancelar não pode deixar rascunho'
+        assert len(notes_state(page)) == 0, 'Cancelar não pode criar nota'
+        assert page.evaluate('JSON.stringify(S.mvpNotes)') == antes, 'Cancelar não pode tocar o estado'
+
+        # 17.4 Escape fecha o modal sem fechar a gaveta por baixo
+        click_id(page, 'mvpNotesNewBtn')
+        assert overlay.is_visible()
+        page.keyboard.press('Escape')
+        assert overlay.is_hidden(), 'Escape deveria fechar o modal'
+        assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')"), \
+            'Escape no modal não pode fechar a gaveta inteira'
+        assert len(notes_state(page)) == 0
+
+        # 17.5 clique fora da caixa cancela
+        click_id(page, 'mvpNotesNewBtn')
+        overlay.click(position={'x': 4, 'y': 4})
+        assert overlay.is_hidden(), 'clique fora da caixa deveria cancelar'
+        assert len(notes_state(page)) == 0
+
+        # 17.6 Criar Nota: os cinco metadados escolhidos chegam ao rascunho e à nota salva
+        page.evaluate("window.prompt = () => 'Pasta do modal'")
+        click_id(page, 'mvpNotesNewFolderBtn')
+        pasta_id = page.evaluate('S.mvpNotes.folders[0].id')
+        start_new_note(page, type='bug', priority='critical', status='in_progress',
+                       folderId=pasta_id, policy='blocked')
+        assert page.locator('#mvpNoteContent').is_visible(), 'o editor abre depois de Criar Nota'
+        rascunho = page.evaluate('({...mvpNotesUI.draft})')
+        assert rascunho['type'] == 'bug' and rascunho['priority'] == 'critical'
+        assert rascunho['status'] == 'in_progress' and rascunho['folderId'] == pasta_id
+        assert rascunho['aiImplementationPolicy'] == 'blocked'
+        assert page.evaluate('mvpNotesUI.draftDirty') is False, \
+            'escolher metadados no modal não é edição pendente'
+        assert len(notes_state(page)) == 0, 'a nota só nasce ao Salvar, como antes'
+
+        # 17.7 a nota persistida nasce com os metadados, em campos PLANOS (schema v5)
+        page.locator('#mvpNoteContent').fill('Nota nascida configurada\ncorpo')
+        click_id(page, 'mvpNotesSaveBtn')
+        salva = notes_state(page)
+        assert len(salva) == 1
+        item = salva[0]
+        assert (item['type'], item['priority'], item['status']) == ('bug', 'critical', 'in_progress')
+        assert item['folderId'] == pasta_id and item['aiImplementationPolicy'] == 'blocked'
+        assert 'metadata' not in item, 'os metadados continuam planos — nenhuma estrutura paralela'
+        assert item['title'] == 'Nota nascida configurada'
+
+        # 17.8 abrir nota existente NÃO reabre o modal, e o inspector segue editando o mesmo dado
+        page.evaluate("() => mvpNotesCloseEditor()")
+        page.locator('.mvpn-card').first.click()
+        assert overlay.is_hidden(), 'selecionar nota existente não pode abrir o modal'
+        open_inspector(page)
+        assert page.locator('#mvpNotePriority').input_value() == 'critical', \
+            'o inspector continua sendo a superfície de edição pós-criação'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 13. monólito portátil (dist) ----
         page = prepare_page(browser, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')
@@ -1462,4 +1556,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos) e monólito verificados.')
