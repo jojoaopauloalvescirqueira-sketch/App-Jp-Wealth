@@ -141,15 +141,41 @@ Superfície pública: `window.JPWFx.{model,engine,state,charts,ui}` +
 ## Interface
 
 Tela principal `#fxplan` com o card `#fxPlanningCard` (fora da personalização
-de layout nesta fase). Quatro modos internos: Visão Geral (KPIs, gráfico principal com transição
-histórico⇥projeção e alternância USD/BRL, rentabilidade em barras, painel de
-reservas), Planejamento (premissas vigentes + exclusão com confirmação
-`EXCLUIR`), Realizado (fechamento mensal + ledger de aportes) e Tabela
-(BASELINE × VIGENTE × desvio + resumo anual derivado + trilha de auditoria).
-Acessibilidade: estado nunca só por cor (badges/texto), resumo textual dos
-gráficos, labels reais, controles nativos; tabelas largas rolam em
-`.fxp-tablewrap`. Textos estruturais usam `.fxp-note` (a classe `.expl` é
-colapsada pela ajuda contextual e fica reservada à prosa doutrinária).
+de layout nesta fase). Quatro modos internos — a chave `table` do quarto modo é
+contrato de DOM e permanece, embora o rótulo seja **Histórico**:
+
+| Modo | Chave | O que traz |
+|---|---|---|
+| Visão Geral | `overview` | grade 2fr/1fr: herói (patrimônio → desvio → baseline), gráfico de trajetória com janela 12m/24m/60m e alternância USD/BRL, rentabilidade mensal; na lateral, reservas com barras de cobertura e ledger cambial com a referência USD/BRL |
+| Planejamento | `planning` | estruturais congelados (leitura) × revisáveis (edição), exceções sob disclosure, prévia do efeito da revisão, trilha de revisões, zona de perigo com confirmação `EXCLUIR` |
+| Realizado | `actuals` | cartão de tarefa do mês aberto, fechamento mensal com prévia do derivado, ledger de aportes |
+| Histórico | `table` | BASELINE × VIGENTE × desvio com coluna Mês fixa e filtro de fase, resumo anual derivado, trilha de auditoria |
+
+**Três prévias ao vivo, nenhuma fórmula reescrita na UI.** Fechamento, revisão e
+janela mostram o efeito antes de confirmar. O padrão é sempre o mesmo: montar um
+candidato em memória e perguntar ao motor — `fxActualTimeline` para o
+fechamento, `fxForecastTimeline` para a revisão, e a janela apenas fatia a série
+já calculada. Enquanto o usuário não confirma, `plan.actuals`, `current` e
+`revisions` permanecem intactos. Reimplementar a álgebra aqui seria duplicar
+domínio; se uma prévia nova precisar de algo que o motor não expõe, o caminho é
+parar e reportar, não recalcular na tela.
+
+**Layout por consulta de container, não de viewport** (`#fxplan` é o container):
+três estados discretos — mínimo <480, médio, máximo ≥1120 — governam escala
+tipográfica, razão dos gráficos, rampa de padding e colapso das duas colunas. O
+painel não conhece a janela, só o próprio container.
+
+Invariante de hierarquia: o valor do patrimônio é ≥ 1,5× qualquer outro valor em
+todo estado. A regra vive em token (`--jp-fs-data-md` redefinido por camada), não
+em disputa de especificidade — a regra do tema tem especificidade maior e venceria
+qualquer seletor local.
+
+Acessibilidade: estado nunca só por cor (badges/texto, e as três séries do
+gráfico também se separam pelo padrão do traço), abas com `tabpanel`,
+`aria-controls`, foco roving e navegação por setas, resumo textual dos gráficos,
+labels reais, controles nativos; tabelas largas rolam em `.fxp-tablewrap`.
+Textos estruturais usam `.fxp-note` (a classe `.expl` é colapsada pela ajuda
+contextual e fica reservada à prosa doutrinária).
 
 ## Testes
 
