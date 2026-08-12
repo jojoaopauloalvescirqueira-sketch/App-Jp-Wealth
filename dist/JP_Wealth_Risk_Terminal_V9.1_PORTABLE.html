@@ -10,21 +10,28 @@
 <style>
   /* ============ DESIGN TOKENS · JP WEALTH TERMINAL ============
      Estética: terminal financeiro institucional. Quase-preto, painéis grafite,
-     linhas finas e visíveis, grid denso, âmbar como única cor de ação.
+     linhas finas e visíveis, grid denso, o azul de sistema como única cor de ação.
 
      REGRA DE NOMES: os identificadores das variáveis são CONTRATO com o JS —
      ~459 blocos de HTML gerados em template string referenciam --violet/--f1/--f4
      por nome. Trocar o VALOR é seguro; trocar o NOME quebraria a renderização.
-     Por isso --violet passa a carregar o âmbar de ação (o nome virou histórico),
-     e --indigo-deep passa a ser o fundo de chip informativo âmbar.
+     Por isso --violet carrega o acento de ação (o nome virou histórico), e
+     --indigo-deep é o fundo de chip informativo do acento.
+
+     TOKENS DERIVADOS DO ACENTO: --accent-tint (fundo de seleção/hover) e
+     --data-num (valor numérico primário) são o próprio --violet em outra
+     intensidade — não são cores independentes. Trocar o acento e esquecer estes
+     dois deixa o tom antigo órfão embaixo de texto no tom novo; foi exatamente o
+     que ocorreu na passagem do âmbar para o azul. Mudou --violet, mude os três.
 
      ESCALA DE RISCO (--f1..--f4) x ACENTO DE AÇÃO (--violet):
-     como o acento virou âmbar, --f2 foi puxado para um amarelo-limão mais frio e
-     --f3 para um laranja-avermelhado, para que nenhum estado de fase seja
-     confundido com "elemento acionável". A ordem semântica verde→vermelho
-     permanece intacta. */
+     no acento âmbar anterior, --f2 foi puxado para um amarelo-limão mais frio e
+     --f3 para um laranja-avermelhado, para que nenhum estado de fase fosse
+     confundido com "elemento acionável". Com o acento azul essa colisão deixa de
+     existir, mas os valores permanecem: a ordem semântica verde→vermelho está
+     calibrada e não se mexe por estética. */
   :root{
-    /* ---- Tema claro: papel institucional, cinza neutro, acento âmbar queimado. ---- */
+    /* ---- Tema claro: papel institucional, cinza neutro, acento azul de sistema. ---- */
     --bg:#EDEDED; --panel:#FFFFFF; --panel-2:#F4F4F4; --line:#D4D4D4;
     --ink:#141414; --ink-dim:#585858; --ink-faint:#8A8A8A;
     --indigo:#007AFF; --violet:#0068D6; --indigo-deep:#E5F1FF;
@@ -33,9 +40,9 @@
     --f3:#BE4517; --f3-bg:#FBEBE3;
     --f4:#C22B2B; --f4-bg:#FBEAEA;
     --good:#16743F; --warn:#7A6410; --alert:#BE4517; --danger:#C22B2B;
-    --accent-tint:rgba(166,96,0,.08);
+    --accent-tint:rgba(0,104,214,.08);   /* --violet a 8% — derivado, não cor própria */
     --bar:#8A1620; --bar-ink:#FFFFFF;
-    --data-num:#A66000; --data-id:#0A6E8C; --data-lbl:#141414; --data-drv:#7A6410;
+    --data-num:#0068D6; --data-id:#0A6E8C; --data-lbl:#141414; --data-drv:#7A6410;
     color-scheme:light;
 
     /* ---- Geometria: cantos retos. Bloco funcional, não card de app. ---- */
@@ -91,7 +98,7 @@
     --f3:#FF7A18; --f3-bg:#2A1400;
     --f4:#FF3B30; --f4-bg:#2A0B09;
     --good:#00C853; --warn:#FFD400; --alert:#FF7A18; --danger:#FF3B30;
-    --accent-tint:rgba(255,158,27,.12);
+    --accent-tint:rgba(64,156,255,.12);  /* --violet a 12% — derivado, não cor própria */
     /* Barra de seção em vinho com texto branco — o cabeçalho de painel não
        compete com o acento de ação. */
     --bar:#8A1620; --bar-ink:#FFFFFF;
@@ -101,7 +108,7 @@
          data-id   ciano   → identificador/dimensão (par, conta, chave, data)
          data-lbl  branco  → rótulo estrutural
          data-drv  amarelo → valor derivado/calculado a partir de outro */
-    --data-num:#FF9E1B; --data-id:#00D4FF; --data-lbl:#FFFFFF; --data-drv:#FFD400;
+    --data-num:#409CFF; --data-id:#00D4FF; --data-lbl:#FFFFFF; --data-drv:#FFD400;
     color-scheme:dark;
   }
   /* Sem gradiente ambiente: terminal tem fundo chapado. */
@@ -307,7 +314,7 @@
   }
   .brand{display:flex; align-items:center; gap:var(--sp-3); min-width:0}
   /* Wordmark próprio: JP —•— WEALTH (linha orbital em CSS puro, sem imagem).
-     Ajustado para a densidade do terminal: órbita curta, ponto âmbar, sem glow. */
+     Ajustado para a densidade do terminal: órbita curta, ponto no acento, sem glow. */
   .wordmark{display:flex; align-items:center; line-height:1; white-space:nowrap}
   .wm-jp{font-family:var(--mono); font-weight:800; font-size:var(--fs-md); letter-spacing:.06em; color:var(--ink)}
   .wm-orbit{position:relative; width:18px; height:1px; margin:0 7px; flex:none;
@@ -611,7 +618,7 @@
     text-transform:uppercase; letter-spacing:.12em; margin-bottom:0;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  /* Valor numérico primário em âmbar — a cor classifica o tipo de dado. */
+  /* Valor numérico primário no acento — a cor classifica o tipo de dado. */
   .metric .v{
     font-family:var(--mono); font-size:var(--fs-lg); font-weight:700; color:var(--data-num);
     line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
@@ -675,7 +682,7 @@
   .phase.collapsed .chev{transform:rotate(-90deg)}
   .phase.collapsed .phase-body{display:none}
   .phase-head .badge{font-size:var(--fs-xs); padding:1px 6px; border-radius:var(--radius-sm); font-weight:700; letter-spacing:.06em}
-  /* "Você está aqui": marca âmbar sólida, sem pulsar — terminal não pisca. */
+  /* "Você está aqui": marca sólida no acento, sem pulsar — terminal não pisca. */
   .phase-head .here{margin-left:var(--sp-2); font-size:var(--fs-xs); font-weight:700; letter-spacing:.1em;
     color:#0B0B0B; background:var(--violet); padding:1px 6px; border-radius:var(--radius-sm)}
   .p1 .phase-head{background:var(--f1-bg); color:var(--f1)} .p1 .badge{background:var(--f1); color:#04140A}
@@ -980,7 +987,7 @@
   }
   /* Campos numéricos alinham à direita, como coluna de tabela. */
   .field input[type=number]{text-align:right}
-  /* Campo de entrada em ÂMBAR SÓLIDO: convenção de terminal para "este valor é
+  /* Campo de entrada no ACENTO SÓLIDO: convenção de terminal para "este valor é
      um input do operador", distinguindo-o à distância de um valor calculado.
      Só campos habilitados — desabilitado continua sendo leitura. */
   .field input:not(:disabled):not([readonly]),
@@ -3187,7 +3194,7 @@
 
   /* ==========================================================
      B0.5 — INPUTS E FORMULÁRIOS
-     O campo âmbar sólido sai. Era a convenção mais datada do sistema:
+     O campo de acento sólido sai. Era a convenção mais datada do sistema:
      um input não precisa gritar para ser reconhecido como input.
      ========================================================== */
   html[data-ui-version="tesla-inspired"] .field{
@@ -3209,7 +3216,7 @@
   html[data-ui-version="tesla-inspired"] :is(.field textarea, .modal-q textarea){
     padding:var(--jp-space-3) var(--jp-space-4); line-height:1.55; min-height:96px; resize:vertical;
   }
-  /* A regra legada que pintava o campo habilitado de âmbar sólido é revertida. */
+  /* A regra legada que pintava o campo habilitado com o acento sólido é revertida. */
   html[data-ui-version="tesla-inspired"] .field input:not(:disabled):not([readonly]),
   html[data-ui-version="tesla-inspired"] .field select:not(:disabled){
     background:var(--jp-surface-inset); color:var(--jp-ink);
@@ -4876,7 +4883,7 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '6582408bed6513c6';
+const JP_WEALTH_BUILD_ID = 'd8216a346144be04';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
