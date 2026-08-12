@@ -2,6 +2,45 @@
 
 ## [Unreleased]
 
+### Notas do MVP · exportar e copiar em massa — candidato de 2026-08-12 (branch `feature/mvp-notes-bulk-export-copy`, JPW-436587)
+
+- Duas ações novas na barra da lista, operando sobre o **recorte visível**
+  (pasta ativa + filtros + busca), não sobre a pasta bruta: **Copiar N** leva o
+  lote para a área de transferência como Trace References; **Exportar N** gera
+  um documento Markdown único. O número no rótulo é o que será levado.
+- O recorte é `mvpNotesFiltered()` — o mesmo que pinta a lista. "Copiar as notas
+  abertas da pasta X" é um caso particular disso (filtro de status dentro da
+  pasta), então não existe segundo mecanismo de seleção a manter em sincronia.
+- **Critério:** leva o backlog ativo, excluindo Concluída e Descartada. A visão
+  "Concluído" é exceção declarada — ali o recorte É o histórico concluído, e
+  aplicar a exclusão devolveria sempre zero. A confirmação da exportação declara
+  os dois números ("mostra 5 notas · exportar as 3 ativas"), então a diferença
+  entre visível e levado nunca é silenciosa.
+- **Preâmbulo de governança no lote copiado.** Cada Trace Reference termina com
+  uma instrução dependente da política de IA da nota; concatenar notas de
+  políticas diferentes produziria instruções contraditórias em sequência. O lote
+  abre declarando a composição (`1 autorizada · 1 somente análise · 1 bloqueada`)
+  e a regra de leitura: nenhuma autorização se estende de uma nota a outra. Os
+  blocos individuais seguem íntegros — nada foi removido.
+- **Leitura pura, verificada por teste:** `S.mvpNotes` byte a byte idêntico antes
+  e depois das duas ações. Sem `save()`, sem `dgLogChange`, sem rede (também
+  coberto por teste). Não é backup e não se confunde com um: o backup completo
+  da base mantém governança própria de sequência e trilha.
+- Markdown reutiliza `mvpNotesMarkdown()` literalmente por nota, incluindo o
+  front matter, com delimitador em comentário HTML (`<!-- jpwealth:note … -->`)
+  — invisível no render e inequívoco para dividir o arquivo de volta. Nome de
+  pasta hostil (`a --> <b> c`) é neutralizado antes de entrar no comentário.
+- O download reutiliza `dgDownloadViaAnchor()`, o helper endurecido do projeto,
+  em vez de repetir a âncora inline como faz a exportação individual.
+- Corrigido no caminho: a regra do tema
+  `html[data-ui-version="tesla-inspired"] :is(…, .modal-btn.cancel, …)` vale
+  **(0,3,1)** — o `:is()` herda a alternativa de duas classes —, então prefixar
+  com o tema apenas EMPATA e perde por ordem de origem. Os botões saíam com 42px
+  de altura e 20px de padding, espremendo o rótulo da visão até "INTER…".
+  Resolvido com `#mvpNotesBulkActions` (1,1,0), mesmo recurso já usado em
+  `.mvp-notes-toolbar #mvpNotesNewBtn`. `.mvp-notes-toolbar` passou de
+  `align-items:baseline` para `center`.
+
 ### Notas do MVP · configuração inicial da nota — candidato de 2026-08-12 (branch `feature/mvp-notes-creation-modal`, JPW-CBA987)
 
 - Criar uma nota passa a abrir o modal **"Nova Nota"** antes do editor: tipo,

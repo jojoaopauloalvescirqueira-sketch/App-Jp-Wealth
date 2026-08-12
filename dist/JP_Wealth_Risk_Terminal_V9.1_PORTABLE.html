@@ -1774,10 +1774,46 @@
   .mvp-notes-close:focus-visible,.mvpn-card:focus-visible,.mvp-notes-drawer button:focus-visible,.mvp-notes-drawer input:focus-visible,.mvp-notes-drawer select:focus-visible,.mvp-notes-drawer textarea:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
   .mvp-notes-close svg{width:16px; height:16px}
   /* A toolbar guarda só o rótulo da visão, agora como eyebrow tipográfico. */
-  .mvp-notes-toolbar{display:flex; align-items:baseline; justify-content:space-between; padding:14px 16px 10px; flex:none}
+  /* align-items:center (era baseline): com as ações em massa ao lado, alinhar pela linha
+     de base do texto desencontrava o rótulo dos botões. Com um filho só de texto as duas
+     regras rendem idêntico, então nada do layout anterior muda. */
+  .mvp-notes-toolbar{display:flex; align-items:center; justify-content:space-between; padding:14px 16px 10px; flex:none; gap:8px}
   .mvpn-view-title{
     margin:0; font-family:var(--mono); font-size:var(--fs-xs); font-weight:400; color:var(--ink-faint);
     text-transform:uppercase; letter-spacing:.14em;
+    min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  /* Ações em massa (JPW-436587): discretas ao lado do rótulo da visão — mesma família
+     tipográfica do "eyebrow", nunca botões de destaque. Elas relatam o RECORTE, então o
+     número faz parte do rótulo ("Copiar 12") e some quando não há nada a levar. */
+  .mvpn-bulk-actions{display:flex; align-items:center; gap:6px; flex:none; margin-left:10px}
+  .mvpn-bulk-actions[hidden]{display:none}
+  /* Especificidade por ID, e não pelo prefixo do tema: a regra
+     html[data-ui-version="tesla-inspired"] :is(.jp-btn, .reset-btn, .modal-btn.cancel, …)
+     vale (0,3,1) — o :is() herda a mais específica das alternativas, .modal-btn.cancel,
+     que são DUAS classes. Prefixar com o tema empata em (0,3,1) e perde por ordem de
+     origem (a dela vem ~1400 linhas depois). Medido: os botões saíam com 42px de altura
+     (var(--jp-control-h)) e 20px de padding lateral, dominando a barra e espremendo o
+     rótulo da visão até "INTER…". #mvpNotesBulkActions vale (1,1,0) e encerra a disputa
+     nos dois temas — mesmo recurso já usado em .mvp-notes-toolbar #mvpNotesNewBtn. */
+  #mvpNotesBulkActions .mvpn-bulk-btn{
+    font-family:var(--mono); font-size:var(--fs-xs); font-weight:400; letter-spacing:.06em;
+    min-height:0; padding:3px 8px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:var(--radius-sm); background:transparent;
+    white-space:nowrap;
+  }
+  #mvpNotesBulkActions .mvpn-bulk-btn:not(:disabled):hover{
+    color:var(--ink); border-color:var(--ink-faint); background:var(--panel-2);
+  }
+  #mvpNotesBulkActions .mvpn-bulk-btn:disabled{opacity:.45; cursor:not-allowed}
+  /* Retorno da cópia em lote: mesmo vocabulário do botão de copiar do editor
+     (mvpNotesFlashCopyFeedback aplica as mesmas classes). */
+  #mvpNotesBulkActions .mvpn-bulk-btn.mvpn-copy-done{color:var(--violet); border-color:var(--violet)}
+  #mvpNotesBulkActions .mvpn-bulk-btn.mvpn-copy-done.mvpn-copy-failed{color:var(--f4); border-color:var(--f4)}
+  @media (max-width:920px){
+    /* Alvo de toque pleno, como todo controle da gaveta em mobile. */
+    #mvpNotesBulkActions .mvpn-bulk-btn{min-height:44px; padding:0 12px; font-size:var(--fs-sm)}
+    .mvpn-bulk-actions{margin-left:8px}
   }
   /* Desktop: os filtros ficam inline na toolbar (o invólucro é transparente — cabeçalho e
      ações da folha inferior só existem em mobile); o botão "Filtros" não existe aqui. */
@@ -4926,7 +4962,7 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'ffb776c92b8dd4d0';
+const JP_WEALTH_BUILD_ID = '498810ed29d955b3';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6170,6 +6206,15 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <!-- Só o rótulo da visão (1c): busca e ações vivem na barra unificada do topo.
                Vira "eyebrow" — mono, caixa alta — anunciando o recorte que a lista mostra. -->
           <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
+          <!-- Ações em massa (JPW-436587). Ficam AQUI, e não no menu "⋯" da pasta, porque
+               operam sobre o RECORTE VISÍVEL (pasta ativa + filtros + busca), que é
+               exatamente o que esta barra anuncia. No menu da pasta cobririam só pastas
+               reais — "Sem pasta" e "Concluído" não têm kebab. O número no rótulo é o que
+               será levado, e renderMvpNotesBulkActions() o mantém vivo. -->
+          <div class="mvpn-bulk-actions" id="mvpNotesBulkActions" hidden>
+            <button type="button" class="reset-btn mvpn-bulk-btn" id="mvpNotesBulkCopyBtn">Copiar</button>
+            <button type="button" class="reset-btn mvpn-bulk-btn" id="mvpNotesBulkExportBtn">Exportar</button>
+          </div>
         </div>
         <div class="mvp-notes-list" id="mvpNotesList" tabindex="-1"></div>
       </div>
@@ -16845,6 +16890,167 @@ function mvpNotesActiveFilterCount(){
   return n;
 }
 
+// ---- ações em massa: exportar e copiar o recorte visível (JPW-436587) ----------------
+// PRINCÍPIO: a unidade de operação é o RECORTE, não a pasta. mvpNotesFiltered() já cruza
+// pasta ativa + status + tipo + prioridade + política + período + busca — é exatamente o
+// que a lista mostra. "Copiar as notas abertas da pasta X" é um caso particular disso
+// (filtro de status em "Aberta" dentro da pasta), então não existe segundo mecanismo de
+// seleção para manter em sincronia com o primeiro.
+//
+// Ambas as ações são LEITURA PURA: não gravam, não chamam save(), não registram no
+// changeLog e não tocam nota alguma. É deliberado — o backup completo da base tem
+// governança própria (sequência, dgLogChange); estas não são backup, são extrato.
+//
+// CRITÉRIO: leva o backlog ATIVO do recorte (exclui Concluída e Descartada). A visão
+// "Concluído" é a exceção necessária — ali o recorte É o histórico concluído, e aplicar a
+// exclusão devolveria sempre zero. A contagem levada aparece no rótulo do botão e na
+// confirmação, então a diferença entre "visíveis" e "levadas" nunca é silenciosa.
+function mvpNotesBulkSelection(){
+  const visiveis=mvpNotesFiltered();
+  const soAtivas=!mvpNotesIsDoneView();
+  const itens=(soAtivas ? visiveis.filter(it=>it.status!=='done' && it.status!=='discarded') : visiveis.slice())
+    .sort(mvpNotesCompareNatural);
+  return {visiveis:visiveis.length, itens, soAtivas, escopo:mvpNotesViewLabel()};
+}
+// Texto indo para DENTRO de um comentário HTML (<!-- ... -->). O nome da pasta é digitado
+// pelo operador: sem isto, uma pasta chamada "a --> b" fecharia o comentário e o resto do
+// cabeçalho viraria conteúdo do documento. Neutraliza a sequência de fechamento e os
+// sinais de marcação; não é escape de HTML (esc()), que aqui não se aplica.
+function mvpNotesComentarioSeguro(texto){
+  return String(texto||'').replace(/[<>]/g,' ').replace(/-{2,}/g,'-').replace(/\s+/g,' ').trim();
+}
+function mvpNotesBulkFilename(sel){
+  const slug=mvpNotesMarkdownSlug(sel.escopo)||'notas';
+  const d=new Date();
+  const dia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return `notas-${slug}-${dia}.md`;
+}
+// Documento único em Markdown. Cada nota mantém o MESMO bloco que a exportação individual
+// já produz (mvpNotesMarkdown), inclusive o front matter — reuso literal do serializador
+// testado, não uma segunda formatação. O delimitador é comentário HTML: invisível no
+// Markdown renderizado e inequívoco para dividir o arquivo de volta em notas (o `---` do
+// front matter não serve como separador, seria ambíguo com ele mesmo).
+function mvpNotesBulkMarkdown(sel){
+  const schema=(S.mvpNotes && S.mvpNotes.schemaVersion)||5;
+  const criterio=sel.soAtivas?'ativas':'concluidas';
+  const n=sel.itens.length;
+  const cabecalho=[
+    `<!-- jpwealth:notes-export v1 schema=${schema} scope="${mvpNotesComentarioSeguro(sel.escopo)}" count=${n} criterion="${criterio}" -->`,
+    `# ${sel.escopo}`,
+    '',
+    `${n} nota${n===1?'':'s'} ${sel.soAtivas?'ativa':'concluída'}${n===1?'':'s'} · exportado em ${mvpNotesFormatDate(new Date().toISOString())}`
+      +(mvpNotesCurrentBuildId()?` · build ${mvpNotesCurrentBuildId()}`:''),
+    ''
+  ].join('\n');
+  const blocos=sel.itens.map(it=>`<!-- jpwealth:note ${it.ticket} -->\n`+mvpNotesMarkdown(it).trim());
+  return cabecalho+'\n'+blocos.join('\n\n')+'\n';
+}
+// Lote para colar num agente de IA. O PREÂMBULO é a peça crítica: cada Trace Reference
+// termina com uma instrução própria e dependente da política da nota — concatenar notas de
+// políticas diferentes produziria instruções contraditórias em sequência ("AUTORIZA
+// IMPLEMENTAÇÃO" logo abaixo de "está BLOQUEADA"). O preâmbulo estabelece a regra de
+// leitura antes de qualquer bloco: nenhuma autorização atravessa de uma nota para outra.
+// Nada é removido dos blocos — a governança por nota continua íntegra.
+const MVPN_BULK_SEPARADOR='\n\n————————————————————————————————\n\n';
+function mvpNotesBulkReferenceBlock(sel){
+  const n=sel.itens.length;
+  const conta=p=>sel.itens.filter(it=>it.aiImplementationPolicy===p).length;
+  const autorizadas=conta('autonomous_allowed'), somente=conta('analysis_only'), bloqueadas=conta('blocked');
+  const preambulo=[
+    'JP WEALTH — TRACE REFERENCE (LOTE)','',
+    `Escopo: ${sel.escopo}`,
+    `Notas neste lote: ${n}`,
+    `Autorização de IA: ${autorizadas} com implementação autorizada · ${somente} somente análise · ${bloqueadas} bloqueada${bloqueadas===1?'':'s'}`,
+    '',
+    'REGRA DE LEITURA DESTE LOTE','',
+    'Cada nota abaixo carrega a PRÓPRIA autorização, declarada no seu cabeçalho e repetida',
+    'na instrução que encerra o seu bloco. Nenhuma autorização se estende de uma nota para',
+    'outra: trate cada bloco isoladamente, sob a política que ele declara. Em caso de',
+    'dúvida sobre qual política se aplica, use a mais restritiva do lote.',
+    '',
+    'Nenhuma das políticas autoriza commit, push, merge ou deploy.'
+  ].join('\n');
+  return preambulo+MVPN_BULK_SEPARADOR+sel.itens.map(mvpNotesReferenceBlock).join(MVPN_BULK_SEPARADOR)+'\n';
+}
+// Rótulo vivo: o número no botão é o que será levado, não o que está na tela. Some quando
+// não há nada a levar — um botão "Copiar 0" seria ruído.
+function renderMvpNotesBulkActions(){
+  const host=mvpn('mvpNotesBulkActions'); if(!host) return;
+  const sel=mvpNotesBulkSelection();
+  const n=sel.itens.length;
+  host.hidden=n===0;
+  if(n===0) return;
+  const copiar=mvpn('mvpNotesBulkCopyBtn'), exportar=mvpn('mvpNotesBulkExportBtn');
+  const qualifica=sel.soAtivas?'ativa':'concluída';
+  if(copiar){
+    copiar.textContent=`Copiar ${n}`;
+    copiar.setAttribute('aria-label',`Copiar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
+  }
+  if(exportar){
+    exportar.textContent=`Exportar ${n}`;
+    exportar.setAttribute('aria-label',`Exportar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
+  }
+}
+// Rascunho sujo bloqueia as duas ações, pela mesma razão que já bloqueia a exportação
+// individual (mvpNotesExportMarkdown): um lote que mistura estado salvo com edição
+// pendente é ambíguo, e rastreabilidade não admite ambiguidade.
+function mvpNotesBulkGuard(live){
+  if(!mvpNotesUI.draftDirty) return null;
+  const msg='Existem alterações não salvas. Salve a nota antes de exportar ou copiar em lote.';
+  const el=mvpn(live); if(el) el.textContent=msg;
+  alert(msg);
+  return msg;
+}
+// Mensagens dos casos especiais, distinguindo "não há nota" de "todas foram excluídas
+// pelo critério" — são situações diferentes e merecem texto diferente.
+function mvpNotesBulkVazioMsg(sel){
+  if(sel.visiveis===0) return 'Nenhuma nota exportável encontrada.';
+  return 'Todas as notas desta visão estão concluídas ou descartadas. Nada para exportar.';
+}
+function mvpNotesBulkCopy(btn){
+  if(mvpNotesBulkGuard('mvpNotesCopyLive')) return null;
+  const sel=mvpNotesBulkSelection();
+  if(!sel.itens.length){
+    mvpNotesFlashCopyFeedback(btn,mvpNotesBulkVazioMsg(sel),true);
+    return null;
+  }
+  const texto=mvpNotesBulkReferenceBlock(sel);
+  const n=sel.itens.length;
+  mvpNotesCopyText(texto)
+    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} nota${n===1?'':'s'} de ${sel.escopo} copiada${n===1?'':'s'}.`,false))
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie nota a nota.',true));
+  return texto;
+}
+function mvpNotesBulkExport(){
+  const live=mvpn('mvpNotesExportLive');
+  if(mvpNotesBulkGuard('mvpNotesExportLive')) return null;
+  const sel=mvpNotesBulkSelection();
+  if(!sel.itens.length){
+    const msg=mvpNotesBulkVazioMsg(sel);
+    if(live) live.textContent=msg;
+    alert(msg);
+    return null;
+  }
+  const n=sel.itens.length;
+  // Confirmação nativa: é o mesmo mecanismo que o módulo já usa para toda decisão de
+  // sim/não dentro da gaveta (excluir pasta, descartar rascunho). A pergunta declara os
+  // dois números — visíveis e levados — para que a diferença nunca surpreenda.
+  const pergunta=sel.visiveis!==n
+    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} notas.\n\nExportar as ${n} ${sel.soAtivas?'ativas':'concluídas'} (concluídas e descartadas ficam de fora)?`
+    : `Exportar ${n} nota${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
+  if(!confirm(pergunta)){
+    if(live) live.textContent='Exportação em lote cancelada.';
+    return null;
+  }
+  const nome=mvpNotesBulkFilename(sel);
+  // dgDownloadViaAnchor é o download endurecido do projeto (âncora no DOM + revogação
+  // adiada). Reuso do helper canônico — a exportação individual ainda tem a sua cópia
+  // inline, anterior a ele.
+  dgDownloadViaAnchor(nome,new Blob([mvpNotesBulkMarkdown(sel)],{type:'text/markdown;charset=utf-8'}));
+  if(live) live.textContent=`${n} nota${n===1?'':'s'} exportada${n===1?'':'s'} como ${nome}.`;
+  return nome;
+}
+
 // ---- pastas (schemaVersion 2) — entidade real e explícita; "Todas as Notas"/"Sem pasta"
 // são visões virtuais (mvpNotesUI.activeFolder='all'/'unfiled'), nunca persistidas como pasta. ----
 function mvpNotesFolders(){ return (S.mvpNotes && Array.isArray(S.mvpNotes.folders)) ? S.mvpNotes.folders : []; }
@@ -17161,7 +17367,14 @@ function renderMvpNotesList(){
   mvpNotesEnsureActiveFolderValid();
   renderMvpNotesFolderNav();
   mvpNotesSyncFilterControls();
-  const titleEl=mvpn('mvpNotesViewTitle'); if(titleEl) titleEl.textContent=mvpNotesViewLabel();
+  // O rótulo trunca com reticências quando a coluna é estreita (nome de pasta longo +
+  // ações em massa ao lado); o title preserva o nome inteiro no ponteiro.
+  const titleEl=mvpn('mvpNotesViewTitle');
+  if(titleEl){ const rotulo=mvpNotesViewLabel(); titleEl.textContent=rotulo; titleEl.title=rotulo; }
+  // Antes do early return de #mvpNotesList: o rótulo com a contagem precisa acompanhar
+  // qualquer mudança de recorte (pasta, filtro, busca, salvar, excluir), não só os
+  // caminhos que chegam a repintar a lista.
+  renderMvpNotesBulkActions();
   // O cabeçalho mobile é função do estágio + da visão ativa, e AMBOS podem ter acabado de
   // mudar (entrar numa pasta, renomeá-la, reordenar, excluir). Reaplicar aqui — a operação
   // é só atributo e texto — garante que nenhum título antigo fique preso no topo. Antes
@@ -18228,6 +18441,11 @@ function bindMvpNotesDrawer(){
   });
   const inspBtn=mvpn('mvpNotesInspectorBtn');
   if(inspBtn) inspBtn.addEventListener('click',()=>mvpNotesSetInspectorOpen(!mvpNotesUI.inspectorOpen));
+  // ---- ações em massa sobre o recorte visível (JPW-436587) ----
+  const bulkCopy=mvpn('mvpNotesBulkCopyBtn');
+  if(bulkCopy) bulkCopy.addEventListener('click',()=>mvpNotesBulkCopy(bulkCopy));
+  const bulkExport=mvpn('mvpNotesBulkExportBtn');
+  if(bulkExport) bulkExport.addEventListener('click',mvpNotesBulkExport);
   const copyRef=mvpn('mvpNotesCopyRefBtn');
   if(copyRef) copyRef.addEventListener('click',()=>{
     if(copyRef.dataset.mvpCopyId) mvpNotesHandleCopy(copyRef.dataset.mvpCopyId,copyRef);
