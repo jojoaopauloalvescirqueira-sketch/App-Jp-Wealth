@@ -190,6 +190,10 @@ try:
         page.locator('#mvpNotesNewFolderBtn').click()
         assert page.evaluate('S.mvpNotes.folders.length')==1, 'pasta deveria ter sido criada'
         page.locator('#mvpNotesNewBtn').click()
+        # Configuração inicial (JPW-CBA987): o "+" abre o modal; o editor vem depois
+        # de "Criar Nota". Aqui aceitamos os padrões já pré-selecionados.
+        assert page.locator('#mvpNotesNewOverlay').is_visible(), 'modal de nova nota deveria abrir'
+        page.locator('#mvpNotesNewConfirmBtn').click()
         page.locator('#mvpNoteContent').fill('Nota de fumaça')
         assert page.evaluate('mvpNotesUI.draft.folderId')==page.evaluate('S.mvpNotes.folders[0].id'), 'nota nova em pasta ativa deveria herdar a pasta'
         page.locator('#mvpNotesSaveBtn').click()

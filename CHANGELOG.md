@@ -2,6 +2,36 @@
 
 ## [Unreleased]
 
+### Notas do MVP · configuração inicial da nota — candidato de 2026-08-12 (branch `feature/mvp-notes-creation-modal`, JPW-CBA987)
+
+- Criar uma nota passa a abrir o modal **"Nova Nota"** antes do editor: tipo,
+  prioridade, status inicial, pasta e permissão de IA são decididos na origem,
+  em vez de permanecerem no padrão até alguém abrir o inspector. O editor abre
+  em seguida, sem nova aba nem nova tela.
+- O modal vive **dentro** de `#mvpNotesDrawer`, não no `#modalOverlay` global:
+  aquele é irmão anterior da gaveta com o mesmo `z-index` (200), então
+  renderizaria por baixo dela, e o focus trap do módulo o tornaria inalcançável
+  por teclado. Nenhum token de camada compartilhado foi tocado — o questionário
+  de transição de fase e o onboarding seguem intactos.
+- Os cinco selects são preenchidos a partir dos **mesmos enums canônicos** que o
+  inspector já usava (`MVP_NOTES_TYPES/PRIORITIES/STATUSES/AI_POLICIES` e
+  `folders[]`). Nenhuma categoria nova, nenhum sistema de pastas paralelo.
+- **Schema intocado (v5).** Os metadados continuam em campos planos do item; não
+  há agregado `metadata:{}` nem migração. Backup, importação, exportação em
+  Markdown e Trace Reference seguem lendo exatamente os mesmos campos, e notas
+  antigas abrem, editam e exportam sem alteração.
+- Cancelar, `Escape` e clique fora não criam nota nem tocam o estado — a nota
+  continua nascendo apenas em `mvpNotesSaveDraft()`, com a primeira linha como
+  título. Escolher metadados no modal não marca o rascunho como não salvo.
+- Acessibilidade: enquanto aberto, o modal toma o focus trap da gaveta
+  (`mvpNotesTrapFocus` passa a usar `#mvpNotesNewBox` como raiz), `Escape` fecha
+  só a camada mais interna e o foco volta ao botão "+". Em ≤920px vira coluna
+  única com alvos de 44px.
+- Correção descoberta na verificação: `.mvp-notes-head` é um `<header>` e herda
+  `z-index:40` da regra global do arquivo — com `z-index:4` o modal renderizava
+  por baixo do cabeçalho da gaveta, que permanecia clicável. Elevado a 50,
+  contido no contexto de empilhamento do próprio drawer (`position:fixed`).
+
 ### Planejamento FX — candidato de 2026-08-11 (branch `feature/fx-planning`)
 
 - Nova área **Planejamento FX** na tela Contabilidade: motor de planejamento

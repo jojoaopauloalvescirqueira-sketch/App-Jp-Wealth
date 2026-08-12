@@ -1956,6 +1956,49 @@
   /* Exclusão visualmente APARTADA das configurações — no fim, atrás de divisor. */
   .mvpn-inspector-danger{padding-top:12px}
   .mvpn-inspector-danger .mvpn-danger{width:100%; justify-content:center; margin:0}
+  /* ---- Modal "Nova Nota" (JPW-CBA987) ----
+     Escurece e cobre APENAS a gaveta (position:absolute dentro de .mvp-notes-drawer, que
+     é fixed), não a viewport inteira: é um sub-diálogo da superfície de notas, não um
+     modal de aplicação. Isso também evita disputa de camada com #modalOverlay, que ocupa
+     o mesmo z-index global.
+     z-index:50 e não 4: .mvp-notes-head é um elemento <header>, e a regra GLOBAL
+     `header{position:sticky; z-index:40}` (topo deste arquivo) alcança também o cabeçalho
+     da gaveta — com 4 o modal renderizava por baixo dele e o cabeçalho continuava
+     clicável (medido: elementFromPoint no canto superior devolvia HEADER.mvp-notes-head).
+     O valor não escapa da gaveta: .mvp-notes-drawer é position:fixed e portanto abre seu
+     próprio contexto de empilhamento — 50 só compete com os irmãos internos do drawer
+     (inspector 2, popovers 3, cabeçalho 40). */
+  .mvpn-new-overlay{
+    position:absolute; inset:0; z-index:50; display:flex;
+    align-items:center; justify-content:center; padding:clamp(12px,3vw,28px);
+    background:rgba(4,7,12,.66); backdrop-filter:blur(3px); overflow-y:auto;
+  }
+  .mvpn-new-overlay[hidden]{display:none}
+  .mvpn-new-box{
+    width:min(460px,100%); margin:auto;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:20px; box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .mvpn-new-box h3{margin:0 0 4px; font-family:var(--mono); font-size:var(--fs-lg); font-weight:800; letter-spacing:-0.01em; color:var(--ink)}
+  .mvpn-new-sub{margin:0 0 16px; font-size:var(--fs-sm); color:var(--ink-dim); line-height:1.45}
+  /* Duas colunas para os quatro campos curtos; a permissão de IA fica em linha inteira
+     porque carrega a explicação abaixo do select. */
+  .mvpn-new-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 var(--sp-3)}
+  .mvpn-new-policy{margin-bottom:var(--sp-2)}
+  .mvpn-new-error{
+    margin:0 0 12px; font-size:var(--fs-sm); line-height:1.4;
+    color:var(--f4); border:1px solid var(--f4); border-radius:var(--radius); padding:8px 10px;
+  }
+  .mvpn-new-error[hidden]{display:none}
+  .mvpn-new-actions{display:flex; gap:var(--sp-2); justify-content:flex-end; margin-top:4px}
+  .mvpn-new-actions .reset-btn{min-width:120px; justify-content:center}
+  @media (max-width:920px){
+    /* Coluna única e alvos de toque de 44px — mesmo contrato do resto da gaveta em mobile. */
+    .mvpn-new-grid{grid-template-columns:1fr}
+    .mvpn-new-box{width:100%}
+    .mvpn-new-actions{flex-direction:column-reverse}
+    .mvpn-new-actions .reset-btn{width:100%; min-height:44px}
+  }
   .mvpn-folder-sidebar{
     flex:0 0 var(--mvpn-folders-w,190px); width:var(--mvpn-folders-w,190px); min-height:0; overflow-y:auto;
     border-right:1px solid var(--line); background:var(--panel-2); padding:10px 0;
