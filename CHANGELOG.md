@@ -2,6 +2,49 @@
 
 ## [Unreleased]
 
+### Tickets MVP — candidato de 2026-08-12 (branch `feature/tickets-mvp`; JPW-NPQRST, JPW-QRNPKM, JPW-785634)
+
+- **JPW-NPQRST — menu de ações do ticket.** Cada card ganhou um `⋯` que abre um
+  popup moderno com as ações reais do ticket: **Copiar referência · Concluir
+  ticket · Exportar como Markdown · Excluir ticket**. Reutiliza a infraestrutura
+  do modal de criação (overlay local à gaveta, focus trap, Escape, clique fora)
+  — `.mvpn-sheet-overlay`/`.mvpn-sheet-box` passaram a ser as regras
+  compartilhadas pelas duas superfícies, sem terceira arquitetura de popup. O
+  ícone de cópia do card virou o primeiro item do menu; nenhuma ação sumiu.
+- **Concluir com confirmação.** Selecionar "Concluir ticket" não altera nada:
+  abre confirmação e só então grava, pelo mecanismo oficial (`mvpNotesUpdate`),
+  que já carimba `completedAt` e preserva os demais campos. Cancelar não escreve
+  — verificado por comparação byte a byte do estado. Ticket já concluído não
+  recebe a ação (nada de "Reabrir" nesta tarefa). Rascunho sujo do mesmo ticket
+  bloqueia a conclusão, mesma regra da exportação.
+- **JPW-QRNPKM — críticos no topo.** `priority === 'critical'` ganha precedência
+  em `mvpNotesGrouped()` e na seleção em massa. É ordenação **derivada**: nada é
+  gravado, nenhuma posição persistida, nenhuma data tocada. Dentro de cada grupo
+  o critério que sempre valeu (ordem natural por título) permanece intacto, e a
+  precedência é aplicada depois do recorte e da separação ativas/concluídas —
+  um crítico concluído sobe entre as concluídas, nunca volta ao backlog ativo.
+  Não havia ordenação escolhida pelo usuário a preservar: o módulo só tem ordem
+  de sistema.
+- **JPW-785634 — o módulo passa a se chamar Tickets.** Renomeação **apenas de
+  apresentação**, em `index.html` e em quatro módulos (`14-mvp-notes.js`,
+  `07-finalize-session.js`, `05-wipe-all.js`, `09-settings-modal.js`).
+  Preservados sem tocar: a chave `jpwealth_v9_state`, o agregado `S.mvpNotes`,
+  `schemaVersion 5`, todos os IDs, os nomes de função e arquivo, o formato de
+  backup e os contratos de importação/exportação. Nenhuma migração. A busca da
+  Central ganhou "Tickets" **mantendo** "Notas do MVP"/"notas" como alias, para
+  quem procurar pelo nome antigo continuar achando o cartão.
+- Não foram tocadas as ocorrências de "notas" que significam *anotações* fora do
+  módulo (`01-daily-ledger.js`, `04-persistence.js`: "anote manualmente os
+  registros — ordens, fechamentos e notas").
+- Corrigido no caminho: o menu não devolvia o foco ao `⋯` quando fechado por
+  clique no backdrop — clicar em elemento não focável leva o `activeElement`
+  para `<body>`, e a guarda anterior só devolvia o foco se ele estivesse *dentro*
+  do overlay.
+- **AGENTIC IMPACT: nenhum.** Nenhuma skill, agente, router, `AGENTS.md`,
+  `CLAUDE.md` ou documento de `docs/governance/` depende semanticamente do nome
+  "Notas". `docs/architecture/CODE-MAP.md` foi atualizado por ser descrição de
+  superfície.
+
 ### Notas do MVP · exportar e copiar em massa — candidato de 2026-08-12 (branch `feature/mvp-notes-bulk-export-copy`, JPW-436587)
 
 - Duas ações novas na barra da lista, operando sobre o **recorte visível**

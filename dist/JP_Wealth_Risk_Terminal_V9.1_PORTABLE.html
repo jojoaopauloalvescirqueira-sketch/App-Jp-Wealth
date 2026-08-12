@@ -2014,12 +2014,15 @@
      O valor não escapa da gaveta: .mvp-notes-drawer é position:fixed e portanto abre seu
      próprio contexto de empilhamento — 50 só compete com os irmãos internos do drawer
      (inspector 2, popovers 3, cabeçalho 40). */
+  .mvpn-sheet-overlay,
   .mvpn-new-overlay{
     position:absolute; inset:0; z-index:50; display:flex;
     align-items:center; justify-content:center; padding:clamp(12px,3vw,28px);
     background:rgba(4,7,12,.66); backdrop-filter:blur(3px); overflow-y:auto;
   }
+  .mvpn-sheet-overlay[hidden],
   .mvpn-new-overlay[hidden]{display:none}
+  .mvpn-sheet-box,
   .mvpn-new-box{
     width:min(460px,100%); margin:auto;
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
@@ -2140,21 +2143,59 @@
      posicionado — nunca aninhado (seria HTML inválido). */
   .mvpn-card-wrap{position:relative; display:flex}
   .mvpn-card-wrap .mvpn-card{flex:1; min-width:0}
-  .mvpn-card-copy{
+  .mvpn-card-copy,
+  .mvpn-card-menu{
     position:absolute; top:8px; right:8px; width:28px; height:28px; flex:none;
     display:inline-flex; align-items:center; justify-content:center; padding:0;
     border:1px solid var(--line); border-radius:var(--radius-sm);
     background:var(--panel); color:var(--ink-faint); cursor:pointer;
   }
   .mvpn-card-copy svg{width:14px; height:14px}
-  .mvpn-card-copy:hover{color:var(--ink); border-color:var(--ink-faint)}
-  .mvpn-card-copy:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
+  .mvpn-card-copy:hover,
+  .mvpn-card-menu:hover{color:var(--ink); border-color:var(--ink-faint)}
+  .mvpn-card-copy:focus-visible,
+  .mvpn-card-menu:focus-visible{outline:2px solid var(--violet); outline-offset:2px}
   /* Confirmação visual: o ✓ substitui o ícone por ~1,6s (o texto vai ao aria-live). */
   .mvpn-copy-check{display:none; font-size:14px; font-weight:700; line-height:1}
-  .mvpn-card-copy.mvpn-copy-done{color:var(--f1); border-color:var(--f1)}
-  .mvpn-card-copy.mvpn-copy-done svg{display:none}
-  .mvpn-card-copy.mvpn-copy-done .mvpn-copy-check{display:inline}
-  .mvpn-card-copy.mvpn-copy-failed{color:var(--f4); border-color:var(--f4)}
+  .mvpn-card-copy.mvpn-copy-done,
+  .mvpn-card-menu.mvpn-copy-done{color:var(--f1); border-color:var(--f1)}
+  .mvpn-card-copy.mvpn-copy-done svg,
+  .mvpn-card-menu.mvpn-copy-done [aria-hidden="true"]:not(.mvpn-copy-check){display:none}
+  .mvpn-card-copy.mvpn-copy-done .mvpn-copy-check,
+  .mvpn-card-menu.mvpn-copy-done .mvpn-copy-check{display:inline}
+  .mvpn-card-copy.mvpn-copy-failed,
+  .mvpn-card-menu.mvpn-copy-failed{color:var(--f4); border-color:var(--f4)}
+  /* Menu de ações do ticket (JPW-NPQRST): o ⋯ ocupa a mesma caixa do antigo ícone de
+     copiar — mesma posição, mesmo alvo de toque, mesmo retorno visual de cópia. */
+  .mvpn-card-menu{font-family:var(--mono); font-size:15px; line-height:1; padding-bottom:3px}
+  .mvpn-card-menu-box{width:min(340px,100%)}
+  .mvpn-card-menu-title{
+    margin:0 0 12px; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:.12em;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .mvpn-card-menu-items{display:flex; flex-direction:column; gap:2px}
+  /* Itens de menu, não botões de formulário: linha inteira, alinhados à esquerda, sem
+     caixa própria em repouso. O ID vence a regra de botões do tema tesla-inspired, que
+     imporia caixa centralizada de 42px (mesma armadilha registrada em #mvpNotesBulkActions). */
+  #mvpNotesCardMenuItems .mvpn-card-menu-item{
+    display:flex; align-items:center; justify-content:flex-start; gap:10px; width:100%;
+    min-height:40px; padding:0 12px; text-align:left; white-space:nowrap;
+    font-family:var(--sans); font-size:var(--fs-sm); font-weight:500; letter-spacing:0;
+    color:var(--ink); background:transparent; border:1px solid transparent;
+    border-radius:var(--radius-sm); cursor:pointer;
+  }
+  #mvpNotesCardMenuItems .mvpn-card-menu-item:hover{background:var(--panel-2); border-color:var(--line)}
+  #mvpNotesCardMenuItems .mvpn-card-menu-item:focus-visible{outline:2px solid var(--violet); outline-offset:-2px}
+  /* Excluir apartado das demais por divisor — mesmo tratamento que o inspector já dá. */
+  #mvpNotesCardMenuItems .mvpn-card-menu-item.mvpn-card-menu-danger{
+    color:var(--f4); margin-top:6px; padding-top:10px; border-top:1px solid var(--line);
+    border-radius:0 0 var(--radius-sm) var(--radius-sm); min-height:46px;
+  }
+  #mvpNotesCardMenuItems .mvpn-card-menu-item.mvpn-card-menu-danger:hover{background:transparent; border-color:transparent; border-top-color:var(--f4)}
+  @media (max-width:920px){
+    #mvpNotesCardMenuItems .mvpn-card-menu-item{min-height:48px; font-size:var(--fs-md)}
+  }
   .mvpn-meta-facts{display:grid; grid-template-columns:auto 1fr; gap:5px 12px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel-2)}
   .mvpn-meta-facts dt{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em}
   .mvpn-meta-facts dd{margin:0; font-size:var(--fs-sm); color:var(--ink-dim)}
@@ -2298,7 +2339,8 @@
     /* Cards: área de toque confortável (≥44px já garantida pelo conteúdo + padding). */
     .mvpn-card{padding:12px 14px}
     /* Cópia do Trace Reference com alvo de toque pleno em mobile. */
-    .mvpn-card-copy{width:44px; height:44px; top:6px; right:6px}
+    .mvpn-card-copy,
+    .mvpn-card-menu{width:44px; height:44px; top:6px; right:6px}
     .mvp-notes-list{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
     /* Transição curta ao trocar de camada. SOMENTE opacidade, nunca transform: as folhas
        inferiores (filtros, inspector) são position:fixed dentro destes painéis, e um
@@ -4962,7 +5004,7 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '498810ed29d955b3';
+const JP_WEALTH_BUILD_ID = '5f026cb8d0b94e87';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5055,7 +5097,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
     </button>
-    <button type="button" class="header-action" id="headerNotesBtn" title="Notas do MVP" aria-label="Abrir notas do MVP">
+    <button type="button" class="header-action" id="headerNotesBtn" title="Tickets" aria-label="Abrir tickets">
       <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
       <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
     </button>
@@ -5910,7 +5952,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          moveLegacySettingsNodes/restoreLegacySettingsNodes (data-settings-category), sem
          nenhuma alteração em 09-settings-modal.js além dos termos de busca. -->
     <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
-      <h2>Notas do MVP <span class="art">backlog interno de testes</span></h2>
+      <h2>Tickets <span class="art">backlog interno de testes</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
       <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
       <div class="field" style="max-width:360px">
@@ -5922,7 +5964,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="note">Ocultar remove apenas o botão do menu superior. Os registros continuam salvos e podem ser reabertos por aqui.</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px">
-        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Notas</button>
+        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Tickets</button>
         <span class="note" id="mvpNotesSettingsCount" style="margin:0"></span>
       </div>
     </div>
@@ -5987,7 +6029,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
            locais de interface (escala da fonte, estado da navegação, ícone do app) e não
            toca em cópias de recuperação existentes. -->
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas do MVP. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e tickets. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
     </div>
   </section>
@@ -6125,31 +6167,31 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/>
           <path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/>
         </svg>
-        <h2 id="mvpNotesTitle">Notas do MVP</h2>
+        <h2 id="mvpNotesTitle">Tickets</h2>
       </div>
       <!-- Busca ao centro da barra (1c). Vive no cabeçalho, não mais na coluna da lista:
            é busca de TODAS as notas, não da coluna. Mesmos IDs de sempre. -->
       <div class="mvpn-search-row">
-        <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
-        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todas as notas" autocomplete="off">
+        <label class="sr-only" for="mvpNotesSearch">Buscar tickets</label>
+        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todos os tickets" autocomplete="off">
         <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-haspopup="true"
-                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar notas" title="Filtrar notas">
+                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar tickets" title="Filtrar tickets">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>
           <span class="mvpn-filters-count" id="mvpNotesFiltersCount" hidden></span>
         </button>
       </div>
       <div class="mvpn-head-actions">
-        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Nova nota">
+        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Novo ticket">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          <span class="mvpn-new-note-label">Nova nota</span>
+          <span class="mvpn-new-note-label">Novo ticket</span>
         </button>
         <span class="mvpn-head-divider" aria-hidden="true"></span>
-        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas do MVP" title="Fechar notas do MVP">
+        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar tickets" title="Fechar tickets">
           <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
         </button>
       </div>
       <!-- Popover de filtros ancorado na barra (desktop) / folha inferior (mobile). -->
-      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de notas">
+      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de tickets">
         <div class="mvpn-filters-sheet-head">Filtros</div>
         <div class="mvp-notes-filters">
           <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
@@ -6184,7 +6226,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            navegação (um único #mvpNotesFolderNavList para os dois mundos). -->
       <!-- PAINEL 1 — Pastas e visões do sistema. Em desktop convive com os outros dois;
            em mobile é o Estado A da navegação em etapas (data-mobile-stage no drawer). -->
-      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de notas">
+      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de tickets">
         <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
@@ -6205,7 +6247,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
           <!-- Só o rótulo da visão (1c): busca e ações vivem na barra unificada do topo.
                Vira "eyebrow" — mono, caixa alta — anunciando o recorte que a lista mostra. -->
-          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
+          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todos os Tickets</h3>
           <!-- Ações em massa (JPW-436587). Ficam AQUI, e não no menu "⋯" da pasta, porque
                operam sobre o RECORTE VISÍVEL (pasta ativa + filtros + busca), que é
                exatamente o que esta barra anuncia. No menu da pasta cobririam só pastas
@@ -6235,21 +6277,21 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <span class="mvpn-editor-title" id="mvpNotesEditorTitle"></span>
           <span class="mvpn-editor-ticket" id="mvpNotesEditorTicket"></span>
           <button type="button" class="reset-btn mvpn-primary mvpn-save-btn" id="mvpNotesSaveBtn" hidden>Salvar</button>
-          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência da nota" title="Copiar referência para um agente de IA">
+          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência do ticket" title="Copiar referência para um agente de IA">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
             <span class="mvpn-copy-check" aria-hidden="true">✓</span>
           </button>
           <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorBtn" aria-expanded="false"
-                  aria-controls="mvpNotesInspector" aria-label="Detalhes da nota" title="Detalhes da nota">
+                  aria-controls="mvpNotesInspector" aria-label="Detalhes do ticket" title="Detalhes do ticket">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
         </div>
-        <label class="sr-only" for="mvpNoteContent">Conteúdo da nota — a primeira linha vira o título</label>
-        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva a nota. A primeira linha vira o título." hidden></textarea>
-        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione uma nota à esquerda ou crie uma nova.</p>
+        <label class="sr-only" for="mvpNoteContent">Conteúdo do ticket — a primeira linha vira o título</label>
+        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva o ticket. A primeira linha vira o título." hidden></textarea>
+        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione um ticket à esquerda ou crie um novo.</p>
         <!-- Inspector: todo o metadado técnico vive aqui, fora do editor. Popover no
              desktop, folha inferior no mobile. -->
-        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes da nota"></div>
+        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes do ticket"></div>
       </div>
       <!-- Confirmação da cópia do Trace Reference: anunciada por leitor de tela, sem
            depender da mudança visual do ícone (ver mvpNotesFlashCopyFeedback). -->
@@ -6271,10 +6313,22 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          e o trap passa a usá-lo como raiz enquanto estiver visível.
          Os cinco selects são preenchidos por mvpNotesOpenNewNoteModal() a partir dos MESMOS
          enums canônicos do inspector — nenhuma categoria nova é criada aqui. -->
-    <div class="mvpn-new-overlay" id="mvpNotesNewOverlay" hidden>
-      <div class="mvpn-new-box" id="mvpNotesNewBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesNewTitle" aria-describedby="mvpNotesNewSub">
-        <h3 id="mvpNotesNewTitle">Nova Nota</h3>
-        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como esta nota nasce. Tudo continua editável depois em “Detalhes da nota”.</p>
+    <!-- Menu de ações do ticket (JPW-NPQRST). Mesma infraestrutura do modal de criação —
+         overlay local à gaveta, focus trap, Escape e clique fora —, conteúdo diferente:
+         é o menu de ações daquele ticket, não um formulário. Não é uma terceira
+         arquitetura de popup: .mvpn-sheet-overlay/.mvpn-sheet-box são as regras
+         compartilhadas pelas duas superfícies. Os itens são pintados por
+         mvpNotesRenderCardMenu() a partir das ações válidas para o ticket. -->
+    <div class="mvpn-sheet-overlay" id="mvpNotesCardMenuOverlay" hidden>
+      <div class="mvpn-sheet-box mvpn-card-menu-box" id="mvpNotesCardMenuBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesCardMenuTitle">
+        <p class="mvpn-card-menu-title" id="mvpNotesCardMenuTitle"></p>
+        <div class="mvpn-card-menu-items" id="mvpNotesCardMenuItems" role="group" aria-labelledby="mvpNotesCardMenuTitle"></div>
+      </div>
+    </div>
+    <div class="mvpn-new-overlay mvpn-sheet-overlay" id="mvpNotesNewOverlay" hidden>
+      <div class="mvpn-new-box mvpn-sheet-box" id="mvpNotesNewBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesNewTitle" aria-describedby="mvpNotesNewSub">
+        <h3 id="mvpNotesNewTitle">Novo Ticket</h3>
+        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como este ticket nasce. Tudo continua editável depois em “Detalhes do ticket”.</p>
         <div class="mvpn-new-grid">
           <div class="field"><label for="mvpNotesNewType">Tipo</label><select id="mvpNotesNewType"></select></div>
           <div class="field"><label for="mvpNotesNewPriority">Prioridade</label><select id="mvpNotesNewPriority"></select></div>
@@ -6289,7 +6343,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <p class="mvpn-new-error" id="mvpNotesNewError" role="alert" hidden></p>
         <div class="mvpn-new-actions">
           <button type="button" class="reset-btn" id="mvpNotesNewCancelBtn">Cancelar</button>
-          <button type="button" class="reset-btn mvpn-primary" id="mvpNotesNewConfirmBtn">Criar Nota</button>
+          <button type="button" class="reset-btn mvpn-primary" id="mvpNotesNewConfirmBtn">Criar Ticket</button>
         </div>
       </div>
     </div>
@@ -14134,7 +14188,7 @@ function wipeAllData(){
   // JP Wealth (removeAuxiliary:false preserva as preferências locais de interface;
   // removeCorrupted:false preserva cópias de recuperação existentes). Texto e
   // comportamento precisam coincidir numa ação irreversível.
-  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth deste navegador: ordens, fases, fechamentos, auditoria, configurações e notas do MVP. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas.\n\nDigite APAGAR para continuar:');
+  const p1=prompt('⚠️ Isto apaga TODA a base do JP Wealth deste navegador: ordens, fases, fechamentos, auditoria, configurações e tickets. A ação é irreversível.\n\nPreferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas.\n\nDigite APAGAR para continuar:');
   if(p1===null) return;
   if(p1.trim()!=='APAGAR'){ alert('Texto diferente de APAGAR — nada foi apagado.'); return; }
   const p2=prompt('Última confirmação. Digite APAGAR novamente:');
@@ -14382,7 +14436,7 @@ function sessionHandleRemoteFinalization(message){
   boot();
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagadas e continuam salvas.');
+  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
 }
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
@@ -14546,7 +14600,7 @@ function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
     '<p class="modal-sub">A próxima ação removerá deste navegador a base local do JP Wealth, os registros operacionais, a contabilidade, as configurações e os dados de acesso armazenados.</p>'+
-    '<p class="session-warning">Exceção: as Notas do MVP (tarefas, bugs, funcionalidades e melhorias registradas no painel de Notas), as pastas em que estão organizadas, o histórico de concluídos e as preferências do painel não são apagados por esta ação — permanecem armazenados neste navegador.</p>'+
+    '<p class="session-warning">Exceção: os Tickets (tarefas, bugs, funcionalidades e melhorias registradas no painel de Tickets), as pastas em que estão organizados, o histórico de concluídos e as preferências do painel não são apagados por esta ação — permanecem armazenados neste navegador.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -14631,7 +14685,7 @@ function finalizeJPWealthSession(){
   if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagadas e continuam salvas.');
+  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
 }
 function bindFinalizeSession(){
   const b=$('finalizeSessionBtn');
@@ -15044,6 +15098,7 @@ function settingsSearchEntries(){
     // Notas do MVP (14-mvp-notes.js) — vários termos apontando para o mesmo card,
     // mesmo padrão de 'core' (multi-termo por entrada), já que aqui cada entrada só
     // casa com o próprio título.
+    ['Tickets','interface','#mvpNotesSettingsCard'],['tickets','interface','#mvpNotesSettingsCard'],
     ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
     ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
     ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
@@ -16576,15 +16631,15 @@ const MVP_NOTES_POLICY_LABELS={blocked:'Bloqueada', analysis_only:'Somente anál
 // Instrução que fecha o Trace Reference, dependente da política. NENHUMA delas autoriza
 // commit, push, merge ou deploy — isso segue governado pelo processo do projeto.
 const MVP_NOTES_POLICY_INSTRUCTION={
-  blocked:'Esta nota está BLOQUEADA para implementação por IA.\nNão altere código com base nesta nota.\nVocê pode apenas reportar que a implementação está bloqueada.',
-  analysis_only:'Esta nota permite SOMENTE ANÁLISE.\nVocê pode investigar, reproduzir, diagnosticar e propor um plano.\nNão altere código.',
-  autonomous_allowed:'Esta nota AUTORIZA IMPLEMENTAÇÃO TÉCNICA dentro do escopo descrito.\nAntes de alterar:\n1. confirme o contexto;\n2. reproduza;\n3. determine causa raiz;\n4. limite alterações ao ticket.\n\nEsta autorização NÃO inclui commit, push, merge ou deploy.'
+  blocked:'Este ticket está BLOQUEADO para implementação por IA.\nNão altere código com base neste ticket.\nVocê pode apenas reportar que a implementação está bloqueada.',
+  analysis_only:'Este ticket permite SOMENTE ANÁLISE.\nVocê pode investigar, reproduzir, diagnosticar e propor um plano.\nNão altere código.',
+  autonomous_allowed:'Este ticket AUTORIZA IMPLEMENTAÇÃO TÉCNICA dentro do escopo descrito.\nAntes de alterar:\n1. confirme o contexto;\n2. reproduza;\n3. determine causa raiz;\n4. limite alterações ao ticket.\n\nEsta autorização NÃO inclui commit, push, merge ou deploy.'
 };
 // Explicação curta exibida no inspector — legível sem depender de cor.
 const MVP_NOTES_POLICY_HINT={
-  blocked:'A IA não está autorizada a implementar esta nota.',
+  blocked:'A IA não está autorizada a implementar este ticket.',
   analysis_only:'A IA pode investigar, reproduzir, diagnosticar e propor solução, mas não alterar o código automaticamente.',
-  autonomous_allowed:'A IA pode implementar tecnicamente esta nota dentro do escopo descrito. Isso NÃO autoriza commit, push, merge ou deploy — essas ações continuam exigindo autorização separada.'
+  autonomous_allowed:'A IA pode implementar tecnicamente este ticket dentro do escopo descrito. Isso NÃO autoriza commit, push, merge ou deploy — essas ações continuam exigindo autorização separada.'
 };
 
 const mvpNotesUI={
@@ -16595,6 +16650,7 @@ const mvpNotesUI={
   activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
   filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
+  cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
   opener:null, optionsReady:false, inertSnapshot:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
@@ -16624,6 +16680,19 @@ function mvpNotesIsDoneView(){ return mvpNotesUI.activeFolder==='done'; }
 // não separam palavras iguais. É a ordem única das notas — elas não são arrastáveis.
 function mvpNotesCompareNatural(a,b){
   return String(a.title||'').localeCompare(String(b.title||''),'pt-BR',{numeric:true,sensitivity:'base'});
+}
+// Precedência de criticidade (JPW-QRNPKM). É ordenação DERIVADA: nada é gravado, nenhuma
+// posição é persistida, nenhuma data é tocada. Dois grupos dentro de cada lista já
+// existente — críticos primeiro —, e dentro de cada grupo o critério que sempre valeu
+// (ordem natural por título) permanece intacto, então a ordem relativa entre itens de
+// mesma criticidade não muda.
+//
+// A precedência é aplicada DEPOIS do recorte (filtros, pasta, busca) e DEPOIS da separação
+// ativas/concluídas — um crítico concluído sobe dentro das concluídas, nunca de volta para
+// o backlog ativo. Criticidade reordena; nunca torna visível o que a visão excluiu.
+function mvpNotesIsCritical(item){ return item && item.priority==='critical'; }
+function mvpNotesComparePriority(a,b){
+  return (mvpNotesIsCritical(a)?0:1)-(mvpNotesIsCritical(b)?0:1) || mvpNotesCompareNatural(a,b);
 }
 function mvpNotesHaystack(item){
   // O ticket entra na busca: colar de volta o código copiado (JPW-XXXXXX) localiza a nota
@@ -16663,7 +16732,7 @@ function mvpNotesMarkdownSlug(texto){
 }
 function mvpNotesMarkdownFilename(item){
   const slug=mvpNotesMarkdownSlug(item.title);
-  return `${item.ticket||'JPW-NOTA'}-${slug||'nota'}.md`;
+  return `${item.ticket||'JPW-TICKET'}-${slug||'ticket'}.md`;
 }
 // Serialização de UM escalar de front matter. Função central: todo valor do YAML passa
 // por aqui, nenhum é concatenado à mão.
@@ -16735,10 +16804,19 @@ function mvpNotesMarkdown(item){
 function mvpNotesExportMarkdown(){
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const live=mvpn('mvpNotesExportLive');
-  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
-  if(mvpNotesUI.draftDirty){
-    alert('Existem alterações não salvas. Salve a nota antes de exportar.');
-    if(live) live.textContent='Existem alterações não salvas. Salve a nota antes de exportar.';
+  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  return mvpNotesExportItemMarkdown(item);
+}
+// Exportação de UM ticket, identificado por parâmetro. Extraída de mvpNotesExportMarkdown()
+// porque o menu do card age sobre o ticket da linha, que nem sempre é o aberto no editor.
+// A guarda de rascunho sujo vale só quando o ticket exportado É o que está sendo editado:
+// exportar outro ticket enquanto há edição pendente em um terceiro não tem ambiguidade.
+function mvpNotesExportItemMarkdown(item){
+  const live=mvpn('mvpNotesExportLive');
+  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  if(mvpNotesUI.draftDirty && mvpNotesUI.selectedId===item.id){
+    alert('Existem alterações não salvas. Salve o ticket antes de exportar.');
+    if(live) live.textContent='Existem alterações não salvas. Salve o ticket antes de exportar.';
     return null;
   }
   const nome=mvpNotesMarkdownFilename(item);
@@ -16755,7 +16833,7 @@ function mvpNotesExportMarkdown(){
   // navegadores ainda não leram o Blob nesse instante e o download sairia vazio.
   // A âncora temporária sai do DOM junto — não fica lixo pendurado no documento.
   setTimeout(()=>{ URL.revokeObjectURL(url); if(a.parentNode) a.remove(); },0);
-  if(live) live.textContent='Nota exportada como Markdown.';
+  if(live) live.textContent='Ticket exportado como Markdown.';
   return nome;
 }
 function mvpNotesReferenceBlock(item){
@@ -16777,7 +16855,7 @@ function mvpNotesReferenceBlock(item){
     'Atualizada:', mvpNotesFormatDate(item.updatedAt)
   ];
   if(item.status==='done' && item.completedAt) L.push('','Concluída:', mvpNotesFormatDate(item.completedAt));
-  L.push('','CONTEÚDO DA NOTA:','', String(item.content||'').trim()||'(sem conteúdo)');
+  L.push('','CONTEÚDO DO TICKET:','', String(item.content||'').trim()||'(sem conteúdo)');
   // A instrução final depende da política de IA da nota: bloqueada, somente análise ou
   // implementação autorizada — cada uma com seu texto próprio (nunca a lista genérica).
   L.push('','INSTRUÇÃO AO AGENTE','',
@@ -16826,7 +16904,7 @@ function mvpNotesHandleCopy(id,btn){
   const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
   mvpNotesCopyText(mvpNotesReferenceBlock(item))
     .then(()=>mvpNotesFlashCopyFeedback(btn,`Referência ${item.ticket} copiada.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra a nota e copie o texto manualmente.',true));
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra o ticket e copie o texto manualmente.',true));
 }
 function mvpNotesCompletedWithinPeriod(item,period){
   if(period==='all') return true;
@@ -16873,8 +16951,8 @@ function mvpNotesFiltered(){
 function mvpNotesGrouped(){
   const todas=mvpNotesFiltered();
   return {
-    ativas: todas.filter(i=>i.status!=='done').sort(mvpNotesCompareNatural),
-    concluidas: todas.filter(i=>i.status==='done').sort(mvpNotesCompareNatural)
+    ativas: todas.filter(i=>i.status!=='done').sort(mvpNotesComparePriority),
+    concluidas: todas.filter(i=>i.status==='done').sort(mvpNotesComparePriority)
   };
 }
 // Contagem de filtros ativos ("Filtros · N") — a busca não conta como filtro.
@@ -16909,7 +16987,7 @@ function mvpNotesBulkSelection(){
   const visiveis=mvpNotesFiltered();
   const soAtivas=!mvpNotesIsDoneView();
   const itens=(soAtivas ? visiveis.filter(it=>it.status!=='done' && it.status!=='discarded') : visiveis.slice())
-    .sort(mvpNotesCompareNatural);
+    .sort(mvpNotesComparePriority); // mesma ordem da lista: o lote sai na ordem que se vê
   return {visiveis:visiveis.length, itens, soAtivas, escopo:mvpNotesViewLabel()};
 }
 // Texto indo para DENTRO de um comentário HTML (<!-- ... -->). O nome da pasta é digitado
@@ -16920,10 +16998,10 @@ function mvpNotesComentarioSeguro(texto){
   return String(texto||'').replace(/[<>]/g,' ').replace(/-{2,}/g,'-').replace(/\s+/g,' ').trim();
 }
 function mvpNotesBulkFilename(sel){
-  const slug=mvpNotesMarkdownSlug(sel.escopo)||'notas';
+  const slug=mvpNotesMarkdownSlug(sel.escopo)||'tickets';
   const d=new Date();
   const dia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  return `notas-${slug}-${dia}.md`;
+  return `tickets-${slug}-${dia}.md`;
 }
 // Documento único em Markdown. Cada nota mantém o MESMO bloco que a exportação individual
 // já produz (mvpNotesMarkdown), inclusive o front matter — reuso literal do serializador
@@ -16938,7 +17016,7 @@ function mvpNotesBulkMarkdown(sel){
     `<!-- jpwealth:notes-export v1 schema=${schema} scope="${mvpNotesComentarioSeguro(sel.escopo)}" count=${n} criterion="${criterio}" -->`,
     `# ${sel.escopo}`,
     '',
-    `${n} nota${n===1?'':'s'} ${sel.soAtivas?'ativa':'concluída'}${n===1?'':'s'} · exportado em ${mvpNotesFormatDate(new Date().toISOString())}`
+    `${n} ticket${n===1?'':'s'} ${sel.soAtivas?'ativo':'concluído'}${n===1?'':'s'} · exportado em ${mvpNotesFormatDate(new Date().toISOString())}`
       +(mvpNotesCurrentBuildId()?` · build ${mvpNotesCurrentBuildId()}`:''),
     ''
   ].join('\n');
@@ -16959,13 +17037,13 @@ function mvpNotesBulkReferenceBlock(sel){
   const preambulo=[
     'JP WEALTH — TRACE REFERENCE (LOTE)','',
     `Escopo: ${sel.escopo}`,
-    `Notas neste lote: ${n}`,
+    `Tickets neste lote: ${n}`,
     `Autorização de IA: ${autorizadas} com implementação autorizada · ${somente} somente análise · ${bloqueadas} bloqueada${bloqueadas===1?'':'s'}`,
     '',
     'REGRA DE LEITURA DESTE LOTE','',
-    'Cada nota abaixo carrega a PRÓPRIA autorização, declarada no seu cabeçalho e repetida',
-    'na instrução que encerra o seu bloco. Nenhuma autorização se estende de uma nota para',
-    'outra: trate cada bloco isoladamente, sob a política que ele declara. Em caso de',
+    'Cada ticket abaixo carrega a PRÓPRIA autorização, declarada no seu cabeçalho e repetida',
+    'na instrução que encerra o seu bloco. Nenhuma autorização se estende de um ticket para',
+    'outro: trate cada bloco isoladamente, sob a política que ele declara. Em caso de',
     'dúvida sobre qual política se aplica, use a mais restritiva do lote.',
     '',
     'Nenhuma das políticas autoriza commit, push, merge ou deploy.'
@@ -16981,14 +17059,14 @@ function renderMvpNotesBulkActions(){
   host.hidden=n===0;
   if(n===0) return;
   const copiar=mvpn('mvpNotesBulkCopyBtn'), exportar=mvpn('mvpNotesBulkExportBtn');
-  const qualifica=sel.soAtivas?'ativa':'concluída';
+  const qualifica=sel.soAtivas?'ativo':'concluído';
   if(copiar){
     copiar.textContent=`Copiar ${n}`;
-    copiar.setAttribute('aria-label',`Copiar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
+    copiar.setAttribute('aria-label',`Copiar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
   }
   if(exportar){
     exportar.textContent=`Exportar ${n}`;
-    exportar.setAttribute('aria-label',`Exportar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
+    exportar.setAttribute('aria-label',`Exportar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
   }
 }
 // Rascunho sujo bloqueia as duas ações, pela mesma razão que já bloqueia a exportação
@@ -16996,7 +17074,7 @@ function renderMvpNotesBulkActions(){
 // pendente é ambíguo, e rastreabilidade não admite ambiguidade.
 function mvpNotesBulkGuard(live){
   if(!mvpNotesUI.draftDirty) return null;
-  const msg='Existem alterações não salvas. Salve a nota antes de exportar ou copiar em lote.';
+  const msg='Existem alterações não salvas. Salve o ticket antes de exportar ou copiar em lote.';
   const el=mvpn(live); if(el) el.textContent=msg;
   alert(msg);
   return msg;
@@ -17004,8 +17082,8 @@ function mvpNotesBulkGuard(live){
 // Mensagens dos casos especiais, distinguindo "não há nota" de "todas foram excluídas
 // pelo critério" — são situações diferentes e merecem texto diferente.
 function mvpNotesBulkVazioMsg(sel){
-  if(sel.visiveis===0) return 'Nenhuma nota exportável encontrada.';
-  return 'Todas as notas desta visão estão concluídas ou descartadas. Nada para exportar.';
+  if(sel.visiveis===0) return 'Nenhum ticket exportável encontrado.';
+  return 'Todos os tickets desta visão estão concluídos ou descartados. Nada para exportar.';
 }
 function mvpNotesBulkCopy(btn){
   if(mvpNotesBulkGuard('mvpNotesCopyLive')) return null;
@@ -17017,8 +17095,8 @@ function mvpNotesBulkCopy(btn){
   const texto=mvpNotesBulkReferenceBlock(sel);
   const n=sel.itens.length;
   mvpNotesCopyText(texto)
-    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} nota${n===1?'':'s'} de ${sel.escopo} copiada${n===1?'':'s'}.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie nota a nota.',true));
+    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} ticket${n===1?'':'s'} de ${sel.escopo} copiado${n===1?'':'s'}.`,false))
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie um ticket por vez.',true));
   return texto;
 }
 function mvpNotesBulkExport(){
@@ -17036,8 +17114,8 @@ function mvpNotesBulkExport(){
   // sim/não dentro da gaveta (excluir pasta, descartar rascunho). A pergunta declara os
   // dois números — visíveis e levados — para que a diferença nunca surpreenda.
   const pergunta=sel.visiveis!==n
-    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} notas.\n\nExportar as ${n} ${sel.soAtivas?'ativas':'concluídas'} (concluídas e descartadas ficam de fora)?`
-    : `Exportar ${n} nota${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
+    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} tickets.\n\nExportar os ${n} ${sel.soAtivas?'ativos':'concluídos'} (concluídos e descartados ficam de fora)?`
+    : `Exportar ${n} ticket${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
   if(!confirm(pergunta)){
     if(live) live.textContent='Exportação em lote cancelada.';
     return null;
@@ -17047,7 +17125,7 @@ function mvpNotesBulkExport(){
   // adiada). Reuso do helper canônico — a exportação individual ainda tem a sua cópia
   // inline, anterior a ele.
   dgDownloadViaAnchor(nome,new Blob([mvpNotesBulkMarkdown(sel)],{type:'text/markdown;charset=utf-8'}));
-  if(live) live.textContent=`${n} nota${n===1?'':'s'} exportada${n===1?'':'s'} como ${nome}.`;
+  if(live) live.textContent=`${n} ticket${n===1?'':'s'} exportado${n===1?'':'s'} como ${nome}.`;
   return nome;
 }
 
@@ -17171,11 +17249,11 @@ function mvpNotesEnsureActiveFolderValid(){
   if(!mvpNotesFolderById(af)) mvpNotesUI.activeFolder='unfiled';
 }
 function mvpNotesViewLabel(){
-  if(mvpNotesUI.activeFolder==='all') return 'Todas as Notas';
+  if(mvpNotesUI.activeFolder==='all') return 'Todos os Tickets';
   if(mvpNotesUI.activeFolder==='unfiled') return 'Sem pasta';
   if(mvpNotesUI.activeFolder==='done') return 'Concluído';
   const f=mvpNotesFolderById(mvpNotesUI.activeFolder);
-  return f ? f.name : 'Todas as Notas';
+  return f ? f.name : 'Todos os Tickets';
 }
 
 // ---- persistência (CRUD) ----
@@ -17242,7 +17320,7 @@ function renderMvpNotesHeader(){
     badge.hidden=count<=0;
     badge.textContent=count>99?'99+':String(count);
   }
-  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas do MVP — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas do MVP');
+  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir tickets — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir tickets');
   renderMvpNotesSettingsCard();
 }
 function renderMvpNotesSettingsCard(){
@@ -17252,7 +17330,7 @@ function renderMvpNotesSettingsCard(){
   const countEl=mvpn('mvpNotesSettingsCount');
   if(countEl){
     const total=mvpNotesItems().length, active=mvpNotesActiveCount();
-    countEl.textContent=total===0 ? 'Nenhuma nota registrada ainda.' : `${total} nota${total===1?'':'s'} registrada${total===1?'':'s'} · ${active} ativa${active===1?'':'s'}.`;
+    countEl.textContent=total===0 ? 'Nenhum ticket registrado ainda.' : `${total} ticket${total===1?'':'s'} registrado${total===1?'':'s'} · ${active} ativo${active===1?'':'s'}.`;
   }
 }
 function bindMvpNotesSettingsCard(){
@@ -17309,10 +17387,11 @@ function mvpNotesCardHTML(item){
         ${mostraPasta?`<span aria-hidden="true">·</span><span class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</span>`:''}
       </div>
     </button>
-    <button type="button" class="mvpn-card-copy" data-mvp-copy-id="${esc(item.id)}"
-      title="Copiar referência ${esc(item.ticket||'')} para colar num agente de IA"
-      aria-label="Copiar referência da nota ${esc(item.ticket||'')}: ${esc(item.title)}">
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+    <button type="button" class="mvpn-card-menu" data-mvp-menu-id="${esc(item.id)}"
+      aria-haspopup="menu" aria-expanded="false"
+      title="Ações do ticket ${esc(item.ticket||'')}"
+      aria-label="Ações do ticket ${esc(item.ticket||'')}: ${esc(item.title)}">
+      <span aria-hidden="true">⋯</span>
       <span class="mvpn-copy-check" aria-hidden="true">✓</span>
     </button>
   </div>`;
@@ -17347,7 +17426,7 @@ function mvpNotesSyncFilterControls(){
       : `Limpar todos os filtros — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`);
   }
   const fbtn=mvpn('mvpNotesFiltersBtn');
-  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar notas — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar notas');
+  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar tickets — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar tickets');
 }
 // Limpeza dos filtros — ação ÚNICA do módulo (JPW-RQPNMK). Zera todos os critérios
 // estruturais e NADA mais: busca, visão/pasta ativa, nota aberta, rascunho e dados
@@ -17383,10 +17462,10 @@ function renderMvpNotesList(){
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, {ativas,concluidas}=mvpNotesGrouped();
   if(total===0){
-    host.innerHTML=`<p class="mvpn-empty">Nenhuma nota registrada. Use "+" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
+    host.innerHTML=`<p class="mvpn-empty">Nenhum ticket registrado. Use "+" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
   }else if(!ativas.length && !concluidas.length){
     const temBusca=!!mvpNotesUI.query.trim(), temFiltro=mvpNotesActiveFilterCount()>0;
-    const msg=(temBusca&&temFiltro)?'Nenhuma nota corresponde à busca e aos filtros atuais.':'Nenhuma nota encontrada.';
+    const msg=(temBusca&&temFiltro)?'Nenhum ticket corresponde à busca e aos filtros atuais.':'Nenhum ticket encontrado.';
     host.innerHTML=`<p class="mvpn-empty">${msg}</p>`;
   }else{
     // O separador só existe quando há concluídas na visão atual, com contador discreto.
@@ -17403,6 +17482,139 @@ function renderMvpNotesList(){
   host.querySelectorAll('[data-mvp-copy-id]').forEach(btn=>btn.addEventListener('click',()=>{
     mvpNotesHandleCopy(btn.dataset.mvpCopyId,btn);
   }));
+  // O ⋯ de cada ticket abre o menu de ações. Os cards são repintados a cada render, então
+  // os listeners morrem junto com os nós antigos — não sobra listener órfão.
+  host.querySelectorAll('[data-mvp-menu-id]').forEach(btn=>btn.addEventListener('click',()=>{
+    mvpNotesOpenCardMenu(btn.dataset.mvpMenuId,btn);
+  }));
+}
+
+// ---- menu de ações do ticket (JPW-NPQRST) -------------------------------------------
+// Abre pelo ⋯ do card, na MESMA infraestrutura do modal de criação: overlay local à
+// gaveta, focus trap, Escape e clique fora. Abrir o menu é operação de leitura — nenhuma
+// escrita acontece aqui; cada ação decide por si, e só "Concluir" e "Excluir" gravam,
+// ambas atrás de confirmação explícita.
+// Conjunto REAL de ações do ticket, na ordem pedida: Copiar, Concluir, demais.
+// "Concluir" não é oferecida para ticket já concluído — ação redundante não entra no menu
+// (o status continua editável pelo inspector, que é onde ele sempre viveu).
+function mvpNotesCardMenuActions(item){
+  const acoes=[{chave:'copiar', rotulo:'Copiar referência'}];
+  if(item.status!=='done') acoes.push({chave:'concluir', rotulo:'Concluir ticket'});
+  acoes.push({chave:'exportar', rotulo:'Exportar como Markdown'});
+  acoes.push({chave:'excluir', rotulo:'Excluir ticket', perigo:true});
+  return acoes;
+}
+function mvpNotesRenderCardMenu(item){
+  const titulo=mvpn('mvpNotesCardMenuTitle');
+  if(titulo) titulo.textContent=`${item.ticket||'Ticket'} · ${item.title||'sem título'}`;
+  const host=mvpn('mvpNotesCardMenuItems'); if(!host) return;
+  host.innerHTML=mvpNotesCardMenuActions(item).map(a=>
+    `<button type="button" class="reset-btn mvpn-card-menu-item${a.perigo?' mvpn-card-menu-danger':''}" data-mvp-menu-acao="${a.chave}">${esc(a.rotulo)}</button>`
+  ).join('');
+  host.querySelectorAll('[data-mvp-menu-acao]').forEach(btn=>btn.addEventListener('click',()=>{
+    mvpNotesRunCardMenuAction(btn.dataset.mvpMenuAcao);
+  }));
+}
+function mvpNotesSetCardMenuOpen(open,id,origem){
+  const ov=mvpn('mvpNotesCardMenuOverlay'); if(!ov) return;
+  // Devolver o foco ao ⋯ vale para Escape, ação executada E clique no backdrop. Este
+  // último não deixa o foco DENTRO do overlay: clicar num elemento não focável leva o
+  // activeElement para <body>. Por isso a condição cobre os três casos e só desiste
+  // quando o foco foi realmente parar em outro elemento de verdade.
+  const podeDevolverFoco=!document.activeElement
+    || document.activeElement===document.body
+    || ov.contains(document.activeElement);
+  const anterior=mvpNotesUI.cardMenuOrigem;
+  if(open){
+    const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
+    // Uma superfície por vez, mesmo contrato do inspector, dos filtros e do modal de criação.
+    if(mvpNotesUI.newNoteOpen) mvpNotesSetNewNoteModalOpen(false);
+    if(mvpNotesUI.filtersOpen) mvpNotesSetFiltersOpen(false);
+    mvpNotesUI.cardMenuId=id;
+    mvpNotesUI.cardMenuOrigem=origem||null;
+    ov.hidden=false;
+    mvpNotesRenderCardMenu(item);
+    if(origem) origem.setAttribute('aria-expanded','true');
+    const primeiro=ov.querySelector('.mvpn-card-menu-item'); if(primeiro) primeiro.focus();
+  }else{
+    mvpNotesUI.cardMenuId=null;
+    mvpNotesUI.cardMenuOrigem=null;
+    ov.hidden=true;
+    const host=mvpn('mvpNotesCardMenuItems'); if(host) host.innerHTML='';
+    if(anterior){
+      anterior.setAttribute('aria-expanded','false');
+      // Só devolve o foco se ele estava DENTRO do menu: se a ação repintou a lista, o nó
+      // de origem pode nem existir mais — daí a checagem de presença no documento.
+      if(podeDevolverFoco && document.contains(anterior)) anterior.focus();
+    }
+  }
+}
+// Abrir nunca abre duas instâncias: o mesmo overlay é reaproveitado e o estado guarda um
+// único cardMenuId. Clicar no ⋯ de outro ticket apenas repinta o conteúdo.
+function mvpNotesOpenCardMenu(id,origem){ mvpNotesSetCardMenuOpen(true,id,origem); }
+function mvpNotesCloseCardMenu(){ mvpNotesSetCardMenuOpen(false); }
+// Concluir: confirmação primeiro, escrita depois. Cancelar não toca em nada — nem status,
+// nem completedAt, nem updatedAt, nem localStorage. A gravação passa pelo mecanismo
+// oficial (mvpNotesUpdate), que já carimba completedAt e preserva os demais campos; não
+// existe segundo sistema de status.
+function mvpNotesConcluirTicket(id){
+  const item=mvpNotesItems().find(it=>it.id===id); if(!item) return null;
+  if(item.status==='done') return null;
+  // Rascunho sujo do MESMO ticket: concluir gravaria o conteúdo salvo por cima da edição
+  // em curso na tela. Recusar é a saída honesta — mesma regra da exportação.
+  if(mvpNotesUI.selectedId===id && mvpNotesUI.draftDirty){
+    alert('Existem alterações não salvas neste ticket. Salve antes de concluir.');
+    return null;
+  }
+  if(!confirm(`Concluir o ticket "${item.title}"?\n\nEle passa a Concluída e sai do backlog ativo, permanecendo na pasta atual.`)) return null;
+  const draft=mvpNotesDraftFromItem(item);
+  draft.status='done';
+  const salvo=mvpNotesUpdate(id,draft);
+  // Ticket aberto no editor: realinhar o rascunho com o que foi gravado, senão o painel
+  // continuaria mostrando "Aberta" e a próxima gravação reverteria o status.
+  if(salvo && mvpNotesUI.selectedId===id){
+    mvpNotesUI.draft=mvpNotesDraftFromItem(salvo);
+    mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
+    mvpNotesUI.draftDirty=false;
+    renderMvpNotesEditor();
+    if(mvpNotesUI.inspectorOpen) mvpNotesSetInspectorOpen(true);
+  }
+  renderMvpNotesList();
+  const live=mvpn('mvpNotesCopyLive');
+  if(live && salvo) live.textContent=`Ticket ${salvo.ticket||''} concluído.`;
+  return salvo;
+}
+function mvpNotesRunCardMenuAction(acao){
+  const id=mvpNotesUI.cardMenuId;
+  const origem=mvpNotesUI.cardMenuOrigem;
+  const item=mvpNotesItems().find(it=>it.id===id);
+  if(!item){ mvpNotesCloseCardMenu(); return null; }
+  if(acao==='copiar'){
+    mvpNotesCloseCardMenu();
+    mvpNotesHandleCopy(id,origem); // retorno visual no próprio ⋯, como era no ícone de cópia
+    return 'copiar';
+  }
+  if(acao==='concluir'){
+    mvpNotesCloseCardMenu();
+    mvpNotesConcluirTicket(id);
+    return 'concluir';
+  }
+  if(acao==='exportar'){
+    mvpNotesCloseCardMenu();
+    mvpNotesExportItemMarkdown(item);
+    return 'exportar';
+  }
+  if(acao==='excluir'){
+    mvpNotesCloseCardMenu();
+    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
+    const eraSelecionado=mvpNotesUI.selectedId===id;
+    mvpNotesDelete(id);
+    if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
+    else renderMvpNotesList();
+    return 'excluir';
+  }
+  mvpNotesCloseCardMenu();
+  return null;
 }
 
 // ---- navegação de pastas (sidebar desktop / seletor+gerenciar em mobile) ----
@@ -17444,7 +17656,7 @@ function renderMvpNotesFolderNav(){
   // "Concluído" é visão do sistema (derivada de status==='done'): não renomeável, não
   // excluível, nunca persistida em folders[] — mesma família de "Todas as Notas"/"Sem pasta".
   const rows=[
-    {id:'all', name:'Todas as Notas', count:mvpNotesAllCount()},
+    {id:'all', name:'Todos os Tickets', count:mvpNotesAllCount()},
     {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()},
     {id:'done', name:'Concluído', count:mvpNotesDoneCount()}
   ];
@@ -17643,7 +17855,7 @@ function mvpNotesHandleDeleteFolder(id){
     const folder=mvpNotesFolderById(id); if(!folder) return;
     const count=mvpNotesFolderItemCount(id);
     const msg=count>0
-      ? `A pasta "${folder.name}" contém ${count} nota${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'essa nota será movida':'essas notas serão movidas'} para "Sem pasta". Deseja continuar?`
+      ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
     mvpNotesDeleteFolder(id);
@@ -17664,8 +17876,8 @@ function mvpNotesApplyStage(){
   drawer.dataset.mobileStage=mvpNotesUI.stage;
   const backBtn=mvpn('mvpNotesBackBtn'), title=mvpn('mvpNotesTitle');
   if(mvpNotesIsMobile()){
-    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Notas do MVP'
-      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar nota':'Nova nota'));
+    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Tickets'
+      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar ticket':'Novo ticket'));
     if(backBtn){
       backBtn.hidden=mvpNotesUI.stage==='folders';
       // O destino do Voltar é dito por extenso, não só pela seta: da nota volta-se para a
@@ -17679,7 +17891,7 @@ function mvpNotesApplyStage(){
       if(rotulo) rotulo.textContent=destino;
     }
   }else{
-    if(title) title.textContent='Notas do MVP';
+    if(title) title.textContent='Tickets';
     if(backBtn) backBtn.hidden=true;
   }
 }
@@ -17753,7 +17965,7 @@ function renderMvpNotesEditor(){
   if(area && area.value!==mvpNotesUI.draft.content) area.value=mvpNotesUI.draft.content;
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const ticketEl=mvpn('mvpNotesEditorTicket');
-  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'nova nota';
+  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'novo ticket';
   const copyBtn=mvpn('mvpNotesCopyRefBtn');
   if(copyBtn){ copyBtn.hidden=!item; if(item) copyBtn.dataset.mvpCopyId=item.id; }
   mvpNotesUpdateLiveTitle();
@@ -17772,8 +17984,8 @@ function mvpNotesInspectorHTML(){
   const fato=(k,v)=>`<dt>${k}</dt><dd>${v}</dd>`;
   return `
     <div class="mvpn-inspector-head">
-      <h4 id="mvpNotesInspectorTitle">Detalhes da nota</h4>
-      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes da nota" title="Fechar detalhes">✕</button>
+      <h4 id="mvpNotesInspectorTitle">Detalhes do ticket</h4>
+      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes do ticket" title="Fechar detalhes">✕</button>
     </div>
     <div class="field"><label for="mvpNoteType">Tipo</label><select id="mvpNoteType">${opt(MVP_NOTES_TYPE_LABELS,d.type)}</select></div>
     <div class="field"><label for="mvpNotePriority">Prioridade</label><select id="mvpNotePriority">${opt(MVP_NOTES_PRIORITY_LABELS,d.priority)}</select></div>
@@ -17797,9 +18009,9 @@ function mvpNotesInspectorHTML(){
         <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
       </div>
       <div class="mvpn-inspector-danger">
-        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
+        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir ticket</button>
       </div>
-    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar a nota.</p>`}`;
+    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar o ticket.</p>`}`;
 }
 function mvpNotesSetInspectorOpen(open){
   const insp=mvpn('mvpNotesInspector'), btn=mvpn('mvpNotesInspectorBtn');
@@ -17843,7 +18055,7 @@ function bindMvpNotesInspector(){
   const del=mvpn('mvpNoteDeleteBtn');
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
-    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return;
+    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
     mvpNotesDelete(item.id);
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
@@ -17922,7 +18134,7 @@ function mvpNotesReadNewNoteModal(){
 // valida aqui é que cada campo carrega um valor CANÔNICO, nunca um valor arbitrário
 // vindo de um select adulterado.
 function mvpNotesValidateNewNote(meta){
-  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo desta nota.';
+  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo deste ticket.';
   if(!MVP_NOTES_PRIORITIES.includes(meta.priority)) return 'Escolha a prioridade.';
   if(!MVP_NOTES_STATUSES.includes(meta.status)) return 'Escolha o status inicial.';
   if(meta.folderId!==null && !mvpNotesFolderById(meta.folderId)) return 'Escolha uma pasta válida.';
@@ -18003,7 +18215,7 @@ function mvpNotesCloseEditor(){
 }
 function mvpNotesConfirmDiscardIfDirty(proceed){
   if(mvpNotesUI.draftDirty){
-    if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
+    if(!confirm('Existem alterações não salvas neste ticket. Deseja descartá-las?')) return;
   }
   proceed();
 }
@@ -18112,7 +18324,7 @@ function mvpNotesSyncPaneHandleAria(folders,list){
     el.setAttribute('aria-valuetext',`${rotulo}: ${Math.round(valor)} pixels`);
   };
   escreve(mvpn('mvpNotesFoldersHandle'),MVP_NOTES_FOLDERS_MIN,fMax,folders,'Largura da coluna de pastas');
-  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de notas');
+  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de tickets');
 }
 // Aplica a geometria a partir das preferências (opcionalmente com um valor em teste durante
 // o arraste). Chamada na abertura, ao mudar o drawer e ao redimensionar a janela.
@@ -18299,7 +18511,9 @@ function mvpNotesTrapFocus(event){
   if(!mvpNotesUI.open || event.key!=='Tab') return;
   // Com o modal "Nova Nota" aberto, ELE é a camada mais interna e toma o trap inteiro:
   // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
-  const raiz=mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer')) : mvpn('mvpNotesDrawer');
+  const raiz=mvpNotesUI.cardMenuId ? (mvpn('mvpNotesCardMenuBox')||mvpn('mvpNotesDrawer'))
+    : mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer'))
+    : mvpn('mvpNotesDrawer');
   const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
   if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
@@ -18346,6 +18560,7 @@ function openMvpNotesDrawer(opener){
   mvpNotesUI.stage=mvpNotesIsMobile()?'folders':'list';
   mvpNotesSetFiltersOpen(false);
   mvpNotesSetNewNoteModalOpen(false); // cada abertura começa sem o modal de criação na tela
+  mvpNotesCloseCardMenu();            // idem para o menu de ações do ticket
   mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())); // largura lembrada (desktop)
   mvpNotesApplyPaneWidths();
   const search=mvpn('mvpNotesSearch'); if(search) search.value='';
@@ -18371,6 +18586,7 @@ function openMvpNotesDrawer(opener){
 }
 function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
+  mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
@@ -18391,10 +18607,14 @@ function bindMvpNotesDrawer(){
     if(e.target.id!=='mvpNotesOverlay') return;
     // Com o modal aberto, o escuro ao redor da gaveta é "fora do modal", não "fora da
     // gaveta": cancela a criação em vez de fechar tudo por baixo dela.
+    if(mvpNotesUI.cardMenuId){ mvpNotesCloseCardMenu(); return; }
     if(mvpNotesUI.newNoteOpen){ mvpNotesSetNewNoteModalOpen(false); return; }
     closeMvpNotesDrawer();
   });
   mvpn('mvpNotesNewBtn').addEventListener('click',mvpNotesOpenNewNoteModal);
+  // ---- menu de ações do ticket ----
+  const menuOverlay=mvpn('mvpNotesCardMenuOverlay');
+  if(menuOverlay) menuOverlay.addEventListener('click',e=>{ if(e.target===menuOverlay) mvpNotesCloseCardMenu(); });
   // ---- modal de configuração inicial ----
   const novoOverlay=mvpn('mvpNotesNewOverlay');
   if(novoOverlay) novoOverlay.addEventListener('click',e=>{ if(e.target===novoOverlay) mvpNotesSetNewNoteModalOpen(false); });
@@ -18483,6 +18703,9 @@ function bindMvpNotesDrawer(){
     if(!mvpNotesUI.open) return;
     if(event.key==='Escape'){
       event.preventDefault();
+      // Menu de ações do ticket: camada mais interna. Escape apenas o dispensa — nenhuma
+      // ação é executada e nada é gravado.
+      if(mvpNotesUI.cardMenuId){ mvpNotesCloseCardMenu(); return; }
       // Modal de criação: camada mais interna de todas enquanto aberto. Escape = Cancelar,
       // e cancelar não cria nota nem toca o storage (nada foi persistido ainda).
       if(mvpNotesUI.newNoteOpen){ mvpNotesSetNewNoteModalOpen(false); return; }

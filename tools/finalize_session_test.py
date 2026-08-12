@@ -162,8 +162,8 @@ def assert_header_actions(page):
     assert page.locator('#headerActions .header-action').count() == 3
     assert page.locator('#headerConfigBtn').get_attribute('title') == 'Configurações'
     assert page.locator('#headerConfigBtn').get_attribute('aria-label') == 'Abrir configurações'
-    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas do MVP'
-    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas do MVP'
+    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
+    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir tickets'
     assert page.locator('#finalizeSessionBtn').get_attribute('title') == 'Finalizar sessão'
     assert page.locator('#finalizeSessionBtn').get_attribute('aria-label') == 'Finalizar sessão neste computador'
     assert page.locator('#headerActions svg[aria-hidden="true"]').count() == 3
@@ -483,14 +483,14 @@ def run_mvp_notes_survival(browser, url):
     click_id(page, 'finalizeSessionBtn')
     assert 'finalizar sessão neste computador' in modal_text(page)
     click_id(page, 'sessionHasCopy')
-    assert 'notas do mvp' in modal_text(page), 'aviso de persistência de notas ausente na confirmação'
+    assert 'tickets' in modal_text(page), 'aviso de persistência de tickets ausente na confirmação'
     assert 'pastas' in modal_text(page), 'aviso deveria mencionar as pastas das notas'
     finish_with_phrase(page)
     page.wait_for_timeout(500)
     assert page.evaluate('S.mvpNotes.items.length') == 1, 'Finalizar Sessão não deveria apagar as notas'
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'Finalizar Sessão não deveria apagar as pastas'
     notice = page.locator('#sessionNotice').inner_text()
-    assert 'Notas do MVP' in notice and 'pastas' in notice, notice
+    assert 'Tickets' in notice and 'pastas' in notice, notice
 
     page.reload(wait_until='load')
     page.wait_for_timeout(700)

@@ -105,7 +105,7 @@ function sessionHandleRemoteFinalization(message){
   boot();
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagadas e continuam salvas.');
+  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
 }
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
@@ -269,7 +269,7 @@ function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
     '<p class="modal-sub">A próxima ação removerá deste navegador a base local do JP Wealth, os registros operacionais, a contabilidade, as configurações e os dados de acesso armazenados.</p>'+
-    '<p class="session-warning">Exceção: as Notas do MVP (tarefas, bugs, funcionalidades e melhorias registradas no painel de Notas), as pastas em que estão organizadas, o histórico de concluídos e as preferências do painel não são apagados por esta ação — permanecem armazenados neste navegador.</p>'+
+    '<p class="session-warning">Exceção: os Tickets (tarefas, bugs, funcionalidades e melhorias registradas no painel de Tickets), as pastas em que estão organizados, o histórico de concluídos e as preferências do painel não são apagados por esta ação — permanecem armazenados neste navegador.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -354,7 +354,7 @@ function finalizeJPWealthSession(){
   if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   window.__onbShown=false;
   initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. As Notas do MVP — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagadas e continuam salvas.');
+  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
 }
 function bindFinalizeSession(){
   const b=$('finalizeSessionBtn');

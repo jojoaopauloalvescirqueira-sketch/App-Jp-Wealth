@@ -14,15 +14,15 @@ const MVP_NOTES_POLICY_LABELS={blocked:'Bloqueada', analysis_only:'Somente anál
 // Instrução que fecha o Trace Reference, dependente da política. NENHUMA delas autoriza
 // commit, push, merge ou deploy — isso segue governado pelo processo do projeto.
 const MVP_NOTES_POLICY_INSTRUCTION={
-  blocked:'Esta nota está BLOQUEADA para implementação por IA.\nNão altere código com base nesta nota.\nVocê pode apenas reportar que a implementação está bloqueada.',
-  analysis_only:'Esta nota permite SOMENTE ANÁLISE.\nVocê pode investigar, reproduzir, diagnosticar e propor um plano.\nNão altere código.',
-  autonomous_allowed:'Esta nota AUTORIZA IMPLEMENTAÇÃO TÉCNICA dentro do escopo descrito.\nAntes de alterar:\n1. confirme o contexto;\n2. reproduza;\n3. determine causa raiz;\n4. limite alterações ao ticket.\n\nEsta autorização NÃO inclui commit, push, merge ou deploy.'
+  blocked:'Este ticket está BLOQUEADO para implementação por IA.\nNão altere código com base neste ticket.\nVocê pode apenas reportar que a implementação está bloqueada.',
+  analysis_only:'Este ticket permite SOMENTE ANÁLISE.\nVocê pode investigar, reproduzir, diagnosticar e propor um plano.\nNão altere código.',
+  autonomous_allowed:'Este ticket AUTORIZA IMPLEMENTAÇÃO TÉCNICA dentro do escopo descrito.\nAntes de alterar:\n1. confirme o contexto;\n2. reproduza;\n3. determine causa raiz;\n4. limite alterações ao ticket.\n\nEsta autorização NÃO inclui commit, push, merge ou deploy.'
 };
 // Explicação curta exibida no inspector — legível sem depender de cor.
 const MVP_NOTES_POLICY_HINT={
-  blocked:'A IA não está autorizada a implementar esta nota.',
+  blocked:'A IA não está autorizada a implementar este ticket.',
   analysis_only:'A IA pode investigar, reproduzir, diagnosticar e propor solução, mas não alterar o código automaticamente.',
-  autonomous_allowed:'A IA pode implementar tecnicamente esta nota dentro do escopo descrito. Isso NÃO autoriza commit, push, merge ou deploy — essas ações continuam exigindo autorização separada.'
+  autonomous_allowed:'A IA pode implementar tecnicamente este ticket dentro do escopo descrito. Isso NÃO autoriza commit, push, merge ou deploy — essas ações continuam exigindo autorização separada.'
 };
 
 const mvpNotesUI={
@@ -33,6 +33,7 @@ const mvpNotesUI={
   activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
   filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
+  cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
   opener:null, optionsReady:false, inertSnapshot:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
@@ -62,6 +63,19 @@ function mvpNotesIsDoneView(){ return mvpNotesUI.activeFolder==='done'; }
 // não separam palavras iguais. É a ordem única das notas — elas não são arrastáveis.
 function mvpNotesCompareNatural(a,b){
   return String(a.title||'').localeCompare(String(b.title||''),'pt-BR',{numeric:true,sensitivity:'base'});
+}
+// Precedência de criticidade (JPW-QRNPKM). É ordenação DERIVADA: nada é gravado, nenhuma
+// posição é persistida, nenhuma data é tocada. Dois grupos dentro de cada lista já
+// existente — críticos primeiro —, e dentro de cada grupo o critério que sempre valeu
+// (ordem natural por título) permanece intacto, então a ordem relativa entre itens de
+// mesma criticidade não muda.
+//
+// A precedência é aplicada DEPOIS do recorte (filtros, pasta, busca) e DEPOIS da separação
+// ativas/concluídas — um crítico concluído sobe dentro das concluídas, nunca de volta para
+// o backlog ativo. Criticidade reordena; nunca torna visível o que a visão excluiu.
+function mvpNotesIsCritical(item){ return item && item.priority==='critical'; }
+function mvpNotesComparePriority(a,b){
+  return (mvpNotesIsCritical(a)?0:1)-(mvpNotesIsCritical(b)?0:1) || mvpNotesCompareNatural(a,b);
 }
 function mvpNotesHaystack(item){
   // O ticket entra na busca: colar de volta o código copiado (JPW-XXXXXX) localiza a nota
@@ -101,7 +115,7 @@ function mvpNotesMarkdownSlug(texto){
 }
 function mvpNotesMarkdownFilename(item){
   const slug=mvpNotesMarkdownSlug(item.title);
-  return `${item.ticket||'JPW-NOTA'}-${slug||'nota'}.md`;
+  return `${item.ticket||'JPW-TICKET'}-${slug||'ticket'}.md`;
 }
 // Serialização de UM escalar de front matter. Função central: todo valor do YAML passa
 // por aqui, nenhum é concatenado à mão.
@@ -173,10 +187,19 @@ function mvpNotesMarkdown(item){
 function mvpNotesExportMarkdown(){
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const live=mvpn('mvpNotesExportLive');
-  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
-  if(mvpNotesUI.draftDirty){
-    alert('Existem alterações não salvas. Salve a nota antes de exportar.');
-    if(live) live.textContent='Existem alterações não salvas. Salve a nota antes de exportar.';
+  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  return mvpNotesExportItemMarkdown(item);
+}
+// Exportação de UM ticket, identificado por parâmetro. Extraída de mvpNotesExportMarkdown()
+// porque o menu do card age sobre o ticket da linha, que nem sempre é o aberto no editor.
+// A guarda de rascunho sujo vale só quando o ticket exportado É o que está sendo editado:
+// exportar outro ticket enquanto há edição pendente em um terceiro não tem ambiguidade.
+function mvpNotesExportItemMarkdown(item){
+  const live=mvpn('mvpNotesExportLive');
+  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  if(mvpNotesUI.draftDirty && mvpNotesUI.selectedId===item.id){
+    alert('Existem alterações não salvas. Salve o ticket antes de exportar.');
+    if(live) live.textContent='Existem alterações não salvas. Salve o ticket antes de exportar.';
     return null;
   }
   const nome=mvpNotesMarkdownFilename(item);
@@ -193,7 +216,7 @@ function mvpNotesExportMarkdown(){
   // navegadores ainda não leram o Blob nesse instante e o download sairia vazio.
   // A âncora temporária sai do DOM junto — não fica lixo pendurado no documento.
   setTimeout(()=>{ URL.revokeObjectURL(url); if(a.parentNode) a.remove(); },0);
-  if(live) live.textContent='Nota exportada como Markdown.';
+  if(live) live.textContent='Ticket exportado como Markdown.';
   return nome;
 }
 function mvpNotesReferenceBlock(item){
@@ -215,7 +238,7 @@ function mvpNotesReferenceBlock(item){
     'Atualizada:', mvpNotesFormatDate(item.updatedAt)
   ];
   if(item.status==='done' && item.completedAt) L.push('','Concluída:', mvpNotesFormatDate(item.completedAt));
-  L.push('','CONTEÚDO DA NOTA:','', String(item.content||'').trim()||'(sem conteúdo)');
+  L.push('','CONTEÚDO DO TICKET:','', String(item.content||'').trim()||'(sem conteúdo)');
   // A instrução final depende da política de IA da nota: bloqueada, somente análise ou
   // implementação autorizada — cada uma com seu texto próprio (nunca a lista genérica).
   L.push('','INSTRUÇÃO AO AGENTE','',
@@ -264,7 +287,7 @@ function mvpNotesHandleCopy(id,btn){
   const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
   mvpNotesCopyText(mvpNotesReferenceBlock(item))
     .then(()=>mvpNotesFlashCopyFeedback(btn,`Referência ${item.ticket} copiada.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra a nota e copie o texto manualmente.',true));
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra o ticket e copie o texto manualmente.',true));
 }
 function mvpNotesCompletedWithinPeriod(item,period){
   if(period==='all') return true;
@@ -311,8 +334,8 @@ function mvpNotesFiltered(){
 function mvpNotesGrouped(){
   const todas=mvpNotesFiltered();
   return {
-    ativas: todas.filter(i=>i.status!=='done').sort(mvpNotesCompareNatural),
-    concluidas: todas.filter(i=>i.status==='done').sort(mvpNotesCompareNatural)
+    ativas: todas.filter(i=>i.status!=='done').sort(mvpNotesComparePriority),
+    concluidas: todas.filter(i=>i.status==='done').sort(mvpNotesComparePriority)
   };
 }
 // Contagem de filtros ativos ("Filtros · N") — a busca não conta como filtro.
@@ -347,7 +370,7 @@ function mvpNotesBulkSelection(){
   const visiveis=mvpNotesFiltered();
   const soAtivas=!mvpNotesIsDoneView();
   const itens=(soAtivas ? visiveis.filter(it=>it.status!=='done' && it.status!=='discarded') : visiveis.slice())
-    .sort(mvpNotesCompareNatural);
+    .sort(mvpNotesComparePriority); // mesma ordem da lista: o lote sai na ordem que se vê
   return {visiveis:visiveis.length, itens, soAtivas, escopo:mvpNotesViewLabel()};
 }
 // Texto indo para DENTRO de um comentário HTML (<!-- ... -->). O nome da pasta é digitado
@@ -358,10 +381,10 @@ function mvpNotesComentarioSeguro(texto){
   return String(texto||'').replace(/[<>]/g,' ').replace(/-{2,}/g,'-').replace(/\s+/g,' ').trim();
 }
 function mvpNotesBulkFilename(sel){
-  const slug=mvpNotesMarkdownSlug(sel.escopo)||'notas';
+  const slug=mvpNotesMarkdownSlug(sel.escopo)||'tickets';
   const d=new Date();
   const dia=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  return `notas-${slug}-${dia}.md`;
+  return `tickets-${slug}-${dia}.md`;
 }
 // Documento único em Markdown. Cada nota mantém o MESMO bloco que a exportação individual
 // já produz (mvpNotesMarkdown), inclusive o front matter — reuso literal do serializador
@@ -376,7 +399,7 @@ function mvpNotesBulkMarkdown(sel){
     `<!-- jpwealth:notes-export v1 schema=${schema} scope="${mvpNotesComentarioSeguro(sel.escopo)}" count=${n} criterion="${criterio}" -->`,
     `# ${sel.escopo}`,
     '',
-    `${n} nota${n===1?'':'s'} ${sel.soAtivas?'ativa':'concluída'}${n===1?'':'s'} · exportado em ${mvpNotesFormatDate(new Date().toISOString())}`
+    `${n} ticket${n===1?'':'s'} ${sel.soAtivas?'ativo':'concluído'}${n===1?'':'s'} · exportado em ${mvpNotesFormatDate(new Date().toISOString())}`
       +(mvpNotesCurrentBuildId()?` · build ${mvpNotesCurrentBuildId()}`:''),
     ''
   ].join('\n');
@@ -397,13 +420,13 @@ function mvpNotesBulkReferenceBlock(sel){
   const preambulo=[
     'JP WEALTH — TRACE REFERENCE (LOTE)','',
     `Escopo: ${sel.escopo}`,
-    `Notas neste lote: ${n}`,
+    `Tickets neste lote: ${n}`,
     `Autorização de IA: ${autorizadas} com implementação autorizada · ${somente} somente análise · ${bloqueadas} bloqueada${bloqueadas===1?'':'s'}`,
     '',
     'REGRA DE LEITURA DESTE LOTE','',
-    'Cada nota abaixo carrega a PRÓPRIA autorização, declarada no seu cabeçalho e repetida',
-    'na instrução que encerra o seu bloco. Nenhuma autorização se estende de uma nota para',
-    'outra: trate cada bloco isoladamente, sob a política que ele declara. Em caso de',
+    'Cada ticket abaixo carrega a PRÓPRIA autorização, declarada no seu cabeçalho e repetida',
+    'na instrução que encerra o seu bloco. Nenhuma autorização se estende de um ticket para',
+    'outro: trate cada bloco isoladamente, sob a política que ele declara. Em caso de',
     'dúvida sobre qual política se aplica, use a mais restritiva do lote.',
     '',
     'Nenhuma das políticas autoriza commit, push, merge ou deploy.'
@@ -419,14 +442,14 @@ function renderMvpNotesBulkActions(){
   host.hidden=n===0;
   if(n===0) return;
   const copiar=mvpn('mvpNotesBulkCopyBtn'), exportar=mvpn('mvpNotesBulkExportBtn');
-  const qualifica=sel.soAtivas?'ativa':'concluída';
+  const qualifica=sel.soAtivas?'ativo':'concluído';
   if(copiar){
     copiar.textContent=`Copiar ${n}`;
-    copiar.setAttribute('aria-label',`Copiar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
+    copiar.setAttribute('aria-label',`Copiar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
   }
   if(exportar){
     exportar.textContent=`Exportar ${n}`;
-    exportar.setAttribute('aria-label',`Exportar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
+    exportar.setAttribute('aria-label',`Exportar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
   }
 }
 // Rascunho sujo bloqueia as duas ações, pela mesma razão que já bloqueia a exportação
@@ -434,7 +457,7 @@ function renderMvpNotesBulkActions(){
 // pendente é ambíguo, e rastreabilidade não admite ambiguidade.
 function mvpNotesBulkGuard(live){
   if(!mvpNotesUI.draftDirty) return null;
-  const msg='Existem alterações não salvas. Salve a nota antes de exportar ou copiar em lote.';
+  const msg='Existem alterações não salvas. Salve o ticket antes de exportar ou copiar em lote.';
   const el=mvpn(live); if(el) el.textContent=msg;
   alert(msg);
   return msg;
@@ -442,8 +465,8 @@ function mvpNotesBulkGuard(live){
 // Mensagens dos casos especiais, distinguindo "não há nota" de "todas foram excluídas
 // pelo critério" — são situações diferentes e merecem texto diferente.
 function mvpNotesBulkVazioMsg(sel){
-  if(sel.visiveis===0) return 'Nenhuma nota exportável encontrada.';
-  return 'Todas as notas desta visão estão concluídas ou descartadas. Nada para exportar.';
+  if(sel.visiveis===0) return 'Nenhum ticket exportável encontrado.';
+  return 'Todos os tickets desta visão estão concluídos ou descartados. Nada para exportar.';
 }
 function mvpNotesBulkCopy(btn){
   if(mvpNotesBulkGuard('mvpNotesCopyLive')) return null;
@@ -455,8 +478,8 @@ function mvpNotesBulkCopy(btn){
   const texto=mvpNotesBulkReferenceBlock(sel);
   const n=sel.itens.length;
   mvpNotesCopyText(texto)
-    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} nota${n===1?'':'s'} de ${sel.escopo} copiada${n===1?'':'s'}.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie nota a nota.',true));
+    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} ticket${n===1?'':'s'} de ${sel.escopo} copiado${n===1?'':'s'}.`,false))
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie um ticket por vez.',true));
   return texto;
 }
 function mvpNotesBulkExport(){
@@ -474,8 +497,8 @@ function mvpNotesBulkExport(){
   // sim/não dentro da gaveta (excluir pasta, descartar rascunho). A pergunta declara os
   // dois números — visíveis e levados — para que a diferença nunca surpreenda.
   const pergunta=sel.visiveis!==n
-    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} notas.\n\nExportar as ${n} ${sel.soAtivas?'ativas':'concluídas'} (concluídas e descartadas ficam de fora)?`
-    : `Exportar ${n} nota${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
+    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} tickets.\n\nExportar os ${n} ${sel.soAtivas?'ativos':'concluídos'} (concluídos e descartados ficam de fora)?`
+    : `Exportar ${n} ticket${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
   if(!confirm(pergunta)){
     if(live) live.textContent='Exportação em lote cancelada.';
     return null;
@@ -485,7 +508,7 @@ function mvpNotesBulkExport(){
   // adiada). Reuso do helper canônico — a exportação individual ainda tem a sua cópia
   // inline, anterior a ele.
   dgDownloadViaAnchor(nome,new Blob([mvpNotesBulkMarkdown(sel)],{type:'text/markdown;charset=utf-8'}));
-  if(live) live.textContent=`${n} nota${n===1?'':'s'} exportada${n===1?'':'s'} como ${nome}.`;
+  if(live) live.textContent=`${n} ticket${n===1?'':'s'} exportado${n===1?'':'s'} como ${nome}.`;
   return nome;
 }
 
@@ -609,11 +632,11 @@ function mvpNotesEnsureActiveFolderValid(){
   if(!mvpNotesFolderById(af)) mvpNotesUI.activeFolder='unfiled';
 }
 function mvpNotesViewLabel(){
-  if(mvpNotesUI.activeFolder==='all') return 'Todas as Notas';
+  if(mvpNotesUI.activeFolder==='all') return 'Todos os Tickets';
   if(mvpNotesUI.activeFolder==='unfiled') return 'Sem pasta';
   if(mvpNotesUI.activeFolder==='done') return 'Concluído';
   const f=mvpNotesFolderById(mvpNotesUI.activeFolder);
-  return f ? f.name : 'Todas as Notas';
+  return f ? f.name : 'Todos os Tickets';
 }
 
 // ---- persistência (CRUD) ----
@@ -680,7 +703,7 @@ function renderMvpNotesHeader(){
     badge.hidden=count<=0;
     badge.textContent=count>99?'99+':String(count);
   }
-  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas do MVP — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas do MVP');
+  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir tickets — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir tickets');
   renderMvpNotesSettingsCard();
 }
 function renderMvpNotesSettingsCard(){
@@ -690,7 +713,7 @@ function renderMvpNotesSettingsCard(){
   const countEl=mvpn('mvpNotesSettingsCount');
   if(countEl){
     const total=mvpNotesItems().length, active=mvpNotesActiveCount();
-    countEl.textContent=total===0 ? 'Nenhuma nota registrada ainda.' : `${total} nota${total===1?'':'s'} registrada${total===1?'':'s'} · ${active} ativa${active===1?'':'s'}.`;
+    countEl.textContent=total===0 ? 'Nenhum ticket registrado ainda.' : `${total} ticket${total===1?'':'s'} registrado${total===1?'':'s'} · ${active} ativo${active===1?'':'s'}.`;
   }
 }
 function bindMvpNotesSettingsCard(){
@@ -747,10 +770,11 @@ function mvpNotesCardHTML(item){
         ${mostraPasta?`<span aria-hidden="true">·</span><span class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</span>`:''}
       </div>
     </button>
-    <button type="button" class="mvpn-card-copy" data-mvp-copy-id="${esc(item.id)}"
-      title="Copiar referência ${esc(item.ticket||'')} para colar num agente de IA"
-      aria-label="Copiar referência da nota ${esc(item.ticket||'')}: ${esc(item.title)}">
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+    <button type="button" class="mvpn-card-menu" data-mvp-menu-id="${esc(item.id)}"
+      aria-haspopup="menu" aria-expanded="false"
+      title="Ações do ticket ${esc(item.ticket||'')}"
+      aria-label="Ações do ticket ${esc(item.ticket||'')}: ${esc(item.title)}">
+      <span aria-hidden="true">⋯</span>
       <span class="mvpn-copy-check" aria-hidden="true">✓</span>
     </button>
   </div>`;
@@ -785,7 +809,7 @@ function mvpNotesSyncFilterControls(){
       : `Limpar todos os filtros — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`);
   }
   const fbtn=mvpn('mvpNotesFiltersBtn');
-  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar notas — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar notas');
+  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar tickets — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar tickets');
 }
 // Limpeza dos filtros — ação ÚNICA do módulo (JPW-RQPNMK). Zera todos os critérios
 // estruturais e NADA mais: busca, visão/pasta ativa, nota aberta, rascunho e dados
@@ -821,10 +845,10 @@ function renderMvpNotesList(){
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, {ativas,concluidas}=mvpNotesGrouped();
   if(total===0){
-    host.innerHTML=`<p class="mvpn-empty">Nenhuma nota registrada. Use "+" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
+    host.innerHTML=`<p class="mvpn-empty">Nenhum ticket registrado. Use "+" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
   }else if(!ativas.length && !concluidas.length){
     const temBusca=!!mvpNotesUI.query.trim(), temFiltro=mvpNotesActiveFilterCount()>0;
-    const msg=(temBusca&&temFiltro)?'Nenhuma nota corresponde à busca e aos filtros atuais.':'Nenhuma nota encontrada.';
+    const msg=(temBusca&&temFiltro)?'Nenhum ticket corresponde à busca e aos filtros atuais.':'Nenhum ticket encontrado.';
     host.innerHTML=`<p class="mvpn-empty">${msg}</p>`;
   }else{
     // O separador só existe quando há concluídas na visão atual, com contador discreto.
@@ -841,6 +865,139 @@ function renderMvpNotesList(){
   host.querySelectorAll('[data-mvp-copy-id]').forEach(btn=>btn.addEventListener('click',()=>{
     mvpNotesHandleCopy(btn.dataset.mvpCopyId,btn);
   }));
+  // O ⋯ de cada ticket abre o menu de ações. Os cards são repintados a cada render, então
+  // os listeners morrem junto com os nós antigos — não sobra listener órfão.
+  host.querySelectorAll('[data-mvp-menu-id]').forEach(btn=>btn.addEventListener('click',()=>{
+    mvpNotesOpenCardMenu(btn.dataset.mvpMenuId,btn);
+  }));
+}
+
+// ---- menu de ações do ticket (JPW-NPQRST) -------------------------------------------
+// Abre pelo ⋯ do card, na MESMA infraestrutura do modal de criação: overlay local à
+// gaveta, focus trap, Escape e clique fora. Abrir o menu é operação de leitura — nenhuma
+// escrita acontece aqui; cada ação decide por si, e só "Concluir" e "Excluir" gravam,
+// ambas atrás de confirmação explícita.
+// Conjunto REAL de ações do ticket, na ordem pedida: Copiar, Concluir, demais.
+// "Concluir" não é oferecida para ticket já concluído — ação redundante não entra no menu
+// (o status continua editável pelo inspector, que é onde ele sempre viveu).
+function mvpNotesCardMenuActions(item){
+  const acoes=[{chave:'copiar', rotulo:'Copiar referência'}];
+  if(item.status!=='done') acoes.push({chave:'concluir', rotulo:'Concluir ticket'});
+  acoes.push({chave:'exportar', rotulo:'Exportar como Markdown'});
+  acoes.push({chave:'excluir', rotulo:'Excluir ticket', perigo:true});
+  return acoes;
+}
+function mvpNotesRenderCardMenu(item){
+  const titulo=mvpn('mvpNotesCardMenuTitle');
+  if(titulo) titulo.textContent=`${item.ticket||'Ticket'} · ${item.title||'sem título'}`;
+  const host=mvpn('mvpNotesCardMenuItems'); if(!host) return;
+  host.innerHTML=mvpNotesCardMenuActions(item).map(a=>
+    `<button type="button" class="reset-btn mvpn-card-menu-item${a.perigo?' mvpn-card-menu-danger':''}" data-mvp-menu-acao="${a.chave}">${esc(a.rotulo)}</button>`
+  ).join('');
+  host.querySelectorAll('[data-mvp-menu-acao]').forEach(btn=>btn.addEventListener('click',()=>{
+    mvpNotesRunCardMenuAction(btn.dataset.mvpMenuAcao);
+  }));
+}
+function mvpNotesSetCardMenuOpen(open,id,origem){
+  const ov=mvpn('mvpNotesCardMenuOverlay'); if(!ov) return;
+  // Devolver o foco ao ⋯ vale para Escape, ação executada E clique no backdrop. Este
+  // último não deixa o foco DENTRO do overlay: clicar num elemento não focável leva o
+  // activeElement para <body>. Por isso a condição cobre os três casos e só desiste
+  // quando o foco foi realmente parar em outro elemento de verdade.
+  const podeDevolverFoco=!document.activeElement
+    || document.activeElement===document.body
+    || ov.contains(document.activeElement);
+  const anterior=mvpNotesUI.cardMenuOrigem;
+  if(open){
+    const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
+    // Uma superfície por vez, mesmo contrato do inspector, dos filtros e do modal de criação.
+    if(mvpNotesUI.newNoteOpen) mvpNotesSetNewNoteModalOpen(false);
+    if(mvpNotesUI.filtersOpen) mvpNotesSetFiltersOpen(false);
+    mvpNotesUI.cardMenuId=id;
+    mvpNotesUI.cardMenuOrigem=origem||null;
+    ov.hidden=false;
+    mvpNotesRenderCardMenu(item);
+    if(origem) origem.setAttribute('aria-expanded','true');
+    const primeiro=ov.querySelector('.mvpn-card-menu-item'); if(primeiro) primeiro.focus();
+  }else{
+    mvpNotesUI.cardMenuId=null;
+    mvpNotesUI.cardMenuOrigem=null;
+    ov.hidden=true;
+    const host=mvpn('mvpNotesCardMenuItems'); if(host) host.innerHTML='';
+    if(anterior){
+      anterior.setAttribute('aria-expanded','false');
+      // Só devolve o foco se ele estava DENTRO do menu: se a ação repintou a lista, o nó
+      // de origem pode nem existir mais — daí a checagem de presença no documento.
+      if(podeDevolverFoco && document.contains(anterior)) anterior.focus();
+    }
+  }
+}
+// Abrir nunca abre duas instâncias: o mesmo overlay é reaproveitado e o estado guarda um
+// único cardMenuId. Clicar no ⋯ de outro ticket apenas repinta o conteúdo.
+function mvpNotesOpenCardMenu(id,origem){ mvpNotesSetCardMenuOpen(true,id,origem); }
+function mvpNotesCloseCardMenu(){ mvpNotesSetCardMenuOpen(false); }
+// Concluir: confirmação primeiro, escrita depois. Cancelar não toca em nada — nem status,
+// nem completedAt, nem updatedAt, nem localStorage. A gravação passa pelo mecanismo
+// oficial (mvpNotesUpdate), que já carimba completedAt e preserva os demais campos; não
+// existe segundo sistema de status.
+function mvpNotesConcluirTicket(id){
+  const item=mvpNotesItems().find(it=>it.id===id); if(!item) return null;
+  if(item.status==='done') return null;
+  // Rascunho sujo do MESMO ticket: concluir gravaria o conteúdo salvo por cima da edição
+  // em curso na tela. Recusar é a saída honesta — mesma regra da exportação.
+  if(mvpNotesUI.selectedId===id && mvpNotesUI.draftDirty){
+    alert('Existem alterações não salvas neste ticket. Salve antes de concluir.');
+    return null;
+  }
+  if(!confirm(`Concluir o ticket "${item.title}"?\n\nEle passa a Concluída e sai do backlog ativo, permanecendo na pasta atual.`)) return null;
+  const draft=mvpNotesDraftFromItem(item);
+  draft.status='done';
+  const salvo=mvpNotesUpdate(id,draft);
+  // Ticket aberto no editor: realinhar o rascunho com o que foi gravado, senão o painel
+  // continuaria mostrando "Aberta" e a próxima gravação reverteria o status.
+  if(salvo && mvpNotesUI.selectedId===id){
+    mvpNotesUI.draft=mvpNotesDraftFromItem(salvo);
+    mvpNotesUI.draftOriginal={...mvpNotesUI.draft};
+    mvpNotesUI.draftDirty=false;
+    renderMvpNotesEditor();
+    if(mvpNotesUI.inspectorOpen) mvpNotesSetInspectorOpen(true);
+  }
+  renderMvpNotesList();
+  const live=mvpn('mvpNotesCopyLive');
+  if(live && salvo) live.textContent=`Ticket ${salvo.ticket||''} concluído.`;
+  return salvo;
+}
+function mvpNotesRunCardMenuAction(acao){
+  const id=mvpNotesUI.cardMenuId;
+  const origem=mvpNotesUI.cardMenuOrigem;
+  const item=mvpNotesItems().find(it=>it.id===id);
+  if(!item){ mvpNotesCloseCardMenu(); return null; }
+  if(acao==='copiar'){
+    mvpNotesCloseCardMenu();
+    mvpNotesHandleCopy(id,origem); // retorno visual no próprio ⋯, como era no ícone de cópia
+    return 'copiar';
+  }
+  if(acao==='concluir'){
+    mvpNotesCloseCardMenu();
+    mvpNotesConcluirTicket(id);
+    return 'concluir';
+  }
+  if(acao==='exportar'){
+    mvpNotesCloseCardMenu();
+    mvpNotesExportItemMarkdown(item);
+    return 'exportar';
+  }
+  if(acao==='excluir'){
+    mvpNotesCloseCardMenu();
+    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
+    const eraSelecionado=mvpNotesUI.selectedId===id;
+    mvpNotesDelete(id);
+    if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
+    else renderMvpNotesList();
+    return 'excluir';
+  }
+  mvpNotesCloseCardMenu();
+  return null;
 }
 
 // ---- navegação de pastas (sidebar desktop / seletor+gerenciar em mobile) ----
@@ -882,7 +1039,7 @@ function renderMvpNotesFolderNav(){
   // "Concluído" é visão do sistema (derivada de status==='done'): não renomeável, não
   // excluível, nunca persistida em folders[] — mesma família de "Todas as Notas"/"Sem pasta".
   const rows=[
-    {id:'all', name:'Todas as Notas', count:mvpNotesAllCount()},
+    {id:'all', name:'Todos os Tickets', count:mvpNotesAllCount()},
     {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()},
     {id:'done', name:'Concluído', count:mvpNotesDoneCount()}
   ];
@@ -1081,7 +1238,7 @@ function mvpNotesHandleDeleteFolder(id){
     const folder=mvpNotesFolderById(id); if(!folder) return;
     const count=mvpNotesFolderItemCount(id);
     const msg=count>0
-      ? `A pasta "${folder.name}" contém ${count} nota${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'essa nota será movida':'essas notas serão movidas'} para "Sem pasta". Deseja continuar?`
+      ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
     mvpNotesDeleteFolder(id);
@@ -1102,8 +1259,8 @@ function mvpNotesApplyStage(){
   drawer.dataset.mobileStage=mvpNotesUI.stage;
   const backBtn=mvpn('mvpNotesBackBtn'), title=mvpn('mvpNotesTitle');
   if(mvpNotesIsMobile()){
-    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Notas do MVP'
-      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar nota':'Nova nota'));
+    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Tickets'
+      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar ticket':'Novo ticket'));
     if(backBtn){
       backBtn.hidden=mvpNotesUI.stage==='folders';
       // O destino do Voltar é dito por extenso, não só pela seta: da nota volta-se para a
@@ -1117,7 +1274,7 @@ function mvpNotesApplyStage(){
       if(rotulo) rotulo.textContent=destino;
     }
   }else{
-    if(title) title.textContent='Notas do MVP';
+    if(title) title.textContent='Tickets';
     if(backBtn) backBtn.hidden=true;
   }
 }
@@ -1191,7 +1348,7 @@ function renderMvpNotesEditor(){
   if(area && area.value!==mvpNotesUI.draft.content) area.value=mvpNotesUI.draft.content;
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const ticketEl=mvpn('mvpNotesEditorTicket');
-  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'nova nota';
+  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'novo ticket';
   const copyBtn=mvpn('mvpNotesCopyRefBtn');
   if(copyBtn){ copyBtn.hidden=!item; if(item) copyBtn.dataset.mvpCopyId=item.id; }
   mvpNotesUpdateLiveTitle();
@@ -1210,8 +1367,8 @@ function mvpNotesInspectorHTML(){
   const fato=(k,v)=>`<dt>${k}</dt><dd>${v}</dd>`;
   return `
     <div class="mvpn-inspector-head">
-      <h4 id="mvpNotesInspectorTitle">Detalhes da nota</h4>
-      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes da nota" title="Fechar detalhes">✕</button>
+      <h4 id="mvpNotesInspectorTitle">Detalhes do ticket</h4>
+      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes do ticket" title="Fechar detalhes">✕</button>
     </div>
     <div class="field"><label for="mvpNoteType">Tipo</label><select id="mvpNoteType">${opt(MVP_NOTES_TYPE_LABELS,d.type)}</select></div>
     <div class="field"><label for="mvpNotePriority">Prioridade</label><select id="mvpNotePriority">${opt(MVP_NOTES_PRIORITY_LABELS,d.priority)}</select></div>
@@ -1235,9 +1392,9 @@ function mvpNotesInspectorHTML(){
         <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
       </div>
       <div class="mvpn-inspector-danger">
-        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
+        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir ticket</button>
       </div>
-    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar a nota.</p>`}`;
+    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar o ticket.</p>`}`;
 }
 function mvpNotesSetInspectorOpen(open){
   const insp=mvpn('mvpNotesInspector'), btn=mvpn('mvpNotesInspectorBtn');
@@ -1281,7 +1438,7 @@ function bindMvpNotesInspector(){
   const del=mvpn('mvpNoteDeleteBtn');
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
-    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return;
+    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
     mvpNotesDelete(item.id);
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
@@ -1360,7 +1517,7 @@ function mvpNotesReadNewNoteModal(){
 // valida aqui é que cada campo carrega um valor CANÔNICO, nunca um valor arbitrário
 // vindo de um select adulterado.
 function mvpNotesValidateNewNote(meta){
-  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo desta nota.';
+  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo deste ticket.';
   if(!MVP_NOTES_PRIORITIES.includes(meta.priority)) return 'Escolha a prioridade.';
   if(!MVP_NOTES_STATUSES.includes(meta.status)) return 'Escolha o status inicial.';
   if(meta.folderId!==null && !mvpNotesFolderById(meta.folderId)) return 'Escolha uma pasta válida.';
@@ -1441,7 +1598,7 @@ function mvpNotesCloseEditor(){
 }
 function mvpNotesConfirmDiscardIfDirty(proceed){
   if(mvpNotesUI.draftDirty){
-    if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
+    if(!confirm('Existem alterações não salvas neste ticket. Deseja descartá-las?')) return;
   }
   proceed();
 }
@@ -1550,7 +1707,7 @@ function mvpNotesSyncPaneHandleAria(folders,list){
     el.setAttribute('aria-valuetext',`${rotulo}: ${Math.round(valor)} pixels`);
   };
   escreve(mvpn('mvpNotesFoldersHandle'),MVP_NOTES_FOLDERS_MIN,fMax,folders,'Largura da coluna de pastas');
-  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de notas');
+  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de tickets');
 }
 // Aplica a geometria a partir das preferências (opcionalmente com um valor em teste durante
 // o arraste). Chamada na abertura, ao mudar o drawer e ao redimensionar a janela.
@@ -1737,7 +1894,9 @@ function mvpNotesTrapFocus(event){
   if(!mvpNotesUI.open || event.key!=='Tab') return;
   // Com o modal "Nova Nota" aberto, ELE é a camada mais interna e toma o trap inteiro:
   // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
-  const raiz=mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer')) : mvpn('mvpNotesDrawer');
+  const raiz=mvpNotesUI.cardMenuId ? (mvpn('mvpNotesCardMenuBox')||mvpn('mvpNotesDrawer'))
+    : mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer'))
+    : mvpn('mvpNotesDrawer');
   const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
   if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
@@ -1784,6 +1943,7 @@ function openMvpNotesDrawer(opener){
   mvpNotesUI.stage=mvpNotesIsMobile()?'folders':'list';
   mvpNotesSetFiltersOpen(false);
   mvpNotesSetNewNoteModalOpen(false); // cada abertura começa sem o modal de criação na tela
+  mvpNotesCloseCardMenu();            // idem para o menu de ações do ticket
   mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth())); // largura lembrada (desktop)
   mvpNotesApplyPaneWidths();
   const search=mvpn('mvpNotesSearch'); if(search) search.value='';
@@ -1809,6 +1969,7 @@ function openMvpNotesDrawer(opener){
 }
 function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
+  mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
@@ -1829,10 +1990,14 @@ function bindMvpNotesDrawer(){
     if(e.target.id!=='mvpNotesOverlay') return;
     // Com o modal aberto, o escuro ao redor da gaveta é "fora do modal", não "fora da
     // gaveta": cancela a criação em vez de fechar tudo por baixo dela.
+    if(mvpNotesUI.cardMenuId){ mvpNotesCloseCardMenu(); return; }
     if(mvpNotesUI.newNoteOpen){ mvpNotesSetNewNoteModalOpen(false); return; }
     closeMvpNotesDrawer();
   });
   mvpn('mvpNotesNewBtn').addEventListener('click',mvpNotesOpenNewNoteModal);
+  // ---- menu de ações do ticket ----
+  const menuOverlay=mvpn('mvpNotesCardMenuOverlay');
+  if(menuOverlay) menuOverlay.addEventListener('click',e=>{ if(e.target===menuOverlay) mvpNotesCloseCardMenu(); });
   // ---- modal de configuração inicial ----
   const novoOverlay=mvpn('mvpNotesNewOverlay');
   if(novoOverlay) novoOverlay.addEventListener('click',e=>{ if(e.target===novoOverlay) mvpNotesSetNewNoteModalOpen(false); });
@@ -1921,6 +2086,9 @@ function bindMvpNotesDrawer(){
     if(!mvpNotesUI.open) return;
     if(event.key==='Escape'){
       event.preventDefault();
+      // Menu de ações do ticket: camada mais interna. Escape apenas o dispensa — nenhuma
+      // ação é executada e nada é gravado.
+      if(mvpNotesUI.cardMenuId){ mvpNotesCloseCardMenu(); return; }
       // Modal de criação: camada mais interna de todas enquanto aberto. Escape = Cancelar,
       // e cancelar não cria nota nem toca o storage (nada foi persistido ainda).
       if(mvpNotesUI.newNoteOpen){ mvpNotesSetNewNoteModalOpen(false); return; }

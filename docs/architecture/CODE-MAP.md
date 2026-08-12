@@ -51,7 +51,7 @@ a lista material mudar.
 | 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional e menu móvel |
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado do Dashboard |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
-| 43 | `src/js/40-app/14-mvp-notes.js` | Notas do MVP |
+| 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
 | 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto |
 | 45 | `src/js/40-app/16-storage-governance.js` | UI da governança de armazenamento |
 | 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal |

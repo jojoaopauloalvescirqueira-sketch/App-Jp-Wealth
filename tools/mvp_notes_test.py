@@ -100,8 +100,8 @@ try:
         # ---- 1. botão por padrão, CRUD dos 4 tipos, contador, captura de tela/build ----
         page = prepare_page(browser, url)
         assert page.locator('#headerNotesBtn').is_visible()
-        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas do MVP'
-        assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas do MVP'
+        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
+        assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir tickets'
         assert page.locator('#headerNotesBadge').is_hidden()
 
         create_note(page, 'task', 'Tarefa de teste', 'descrição da tarefa', 'medium', 'open')
@@ -178,7 +178,7 @@ try:
         assert page.locator('.mvpn-card').count() == 1  # bug agora está in_progress
         page.locator('#mvpNotesFilterPriority').select_option('low')
         assert page.locator('.mvpn-card').count() == 0
-        assert 'Nenhuma nota encontrada' in page.locator('.mvpn-empty').inner_text()
+        assert 'Nenhum ticket encontrado' in page.locator('.mvpn-empty').inner_text()
         assert page.locator('#mvpNotesFiltersCount').inner_text() == '3', 'contador de filtros ativos'
         # busca + filtro combinam (interseção, nunca sobrescrita)
         page.locator('#mvpNotesSearch').fill('Bug de teste')
@@ -336,7 +336,7 @@ try:
         }""")
         click_id(page, 'finalizeSessionBtn')
         click_id(page, 'sessionHasCopy')
-        assert 'notas do mvp' in page.locator('#modalBox').inner_text().lower(), 'aviso de persistência de notas ausente na tela de confirmação'
+        assert 'tickets' in page.locator('#modalBox').inner_text().lower(), 'aviso de persistência de tickets ausente na tela de confirmação'
         click_id(page, 'sessionProceed')
         page.locator('#sessionDeletePhrase').fill('APAGAR TUDO')
         click_id(page, 'sessionDeleteConfirm')
@@ -345,7 +345,7 @@ try:
         assert page.evaluate("S.onboarding.operador") == ''
         assert len(notes_state(page)) == 1, 'Finalizar Sessão não deveria apagar notas'
         notice = page.locator('#sessionNotice').inner_text()
-        assert 'Notas do MVP' in notice, notice
+        assert 'Tickets' in notice, notice
         assert json.loads(page.evaluate("localStorage.getItem('jpwealth_v9_state')"))['mvpNotes']['items'], \
             'notas deveriam ter sido regravadas no localStorage mesmo com persistência bloqueada'
 
@@ -1267,7 +1267,7 @@ try:
           const it = S.mvpNotes.items.find(i => i.id === n.id);
           return {nome: mvpNotesMarkdownFilename(it), md: mvpNotesMarkdown(it)};
         }""")
-        assert vazio['nome'].endswith('-nota.md'), vazio['nome']
+        assert vazio['nome'].endswith('-ticket.md'), vazio['nome']
         assert '\n# ' not in vazio['md'], 'sem H1 quando não há título'
         # exportar é leitura pura: rascunho sujo bloqueia e nada é salvo automaticamente
         antes_upd = notes_state(page)[0]['updatedAt']
@@ -1435,17 +1435,19 @@ try:
             value:{writeText:t=>{window.__copiado=t; return Promise.resolve();}}}); }""")
         click_id(page, 'headerNotesBtn')
         assert page.locator('.mvpn-card-wrap').count() == 1
-        assert page.evaluate("!document.querySelector('.mvpn-card-copy').closest('.mvpn-card')"), \
-            'o botao de copiar nao pode estar aninhado dentro do card'
+        assert page.evaluate("!document.querySelector('.mvpn-card-menu').closest('.mvpn-card')"), \
+            'o botao de acoes nao pode estar aninhado dentro do card'
         antes = notes_state(page)[0]['updatedAt']
-        page.locator('.mvpn-card-copy').first.click()
+        # A cópia passou a viver no menu do ⋯ (JPW-NPQRST); abrir o menu não escreve nada.
+        page.locator('.mvpn-card-menu').first.click()
+        page.locator('[data-mvp-menu-acao="copiar"]').click()
         page.wait_for_timeout(150)
         copiado = page.evaluate('window.__copiado')
         assert copiado.startswith('JP WEALTH — TRACE REFERENCE'), copiado[:60]
         for trecho in [f'Ticket: {ticket}', 'Tipo: Bug', 'Prioridade: Crítica', 'Status: Aberta',
                        'Falha rastreavel', 'Build ID: ', 'Source Revision: não disponível',
                        'INSTRUÇÃO AO AGENTE', 'Autorização IA: SOMENTE ANÁLISE',
-                       'CONTEÚDO DA NOTA:', f'ticket {ticket}']:
+                       'CONTEÚDO DO TICKET:', f'ticket {ticket}']:
             assert trecho in copiado, trecho
         assert not re.search(r'[0-9a-f]{40}', copiado), 'nenhum SHA pode ser inventado'
         assert notes_state(page)[0]['updatedAt'] == antes, 'copiar nao pode alterar a nota'
@@ -1592,9 +1594,9 @@ try:
           window.confirm = q => { window.__perguntas.push(q); return true; };
           return true; }""")
         nome = page.evaluate('mvpNotesBulkExport()')
-        assert nome and nome.startswith('notas-interface-') and nome.endswith('.md'), nome
+        assert nome and nome.startswith('tickets-interface-') and nome.endswith('.md'), nome
         pergunta = page.evaluate('window.__perguntas[0]')
-        assert 'mostra 4 notas' in pergunta and 'as 2 ativas' in pergunta, pergunta
+        assert 'mostra 4 tickets' in pergunta and 'os 2 ativos' in pergunta, pergunta
         assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, \
             'exportar é leitura pura — não pode alterar o estado'
 
@@ -1602,7 +1604,7 @@ try:
         md = page.evaluate('mvpNotesBulkMarkdown(mvpNotesBulkSelection())')
         assert md.startswith('<!-- jpwealth:notes-export v1 schema=5 scope="Interface" count=2 criterion="ativas" -->')
         assert md.count('<!-- jpwealth:note ') == 2, 'um delimitador por nota'
-        for trecho in ['# Interface', '2 notas ativas', 'Ativa um', 'corpo um', 'Ativa dois',
+        for trecho in ['# Interface', '2 tickets ativos', 'Ativa um', 'corpo um', 'Ativa dois',
                        'ticket: JPW-', 'ai_implementation_policy: blocked',
                        'ai_implementation_policy: autonomous_allowed',
                        # nome simples sai como token YAML sem aspas (mvpNotesYamlValor);
@@ -1618,16 +1620,16 @@ try:
         page.wait_for_timeout(150)
         lote = page.evaluate('window.__copiado')
         assert lote.startswith('JP WEALTH — TRACE REFERENCE (LOTE)'), lote[:60]
-        for trecho in ['Escopo: Interface', 'Notas neste lote: 2',
+        for trecho in ['Escopo: Interface', 'Tickets neste lote: 2',
                        '1 com implementação autorizada', '1 bloqueada',
                        'REGRA DE LEITURA DESTE LOTE',
-                       'Nenhuma autorização se estende de uma nota para',
+                       'Nenhuma autorização se estende de um ticket para',
                        'Nenhuma das políticas autoriza commit, push, merge ou deploy.']:
             assert trecho in lote, trecho
         # cada bloco preserva a própria instrução — nada foi removido das notas
         assert lote.count('JP WEALTH — TRACE REFERENCE\n') == 2, 'dois blocos individuais'
         assert lote.count('INSTRUÇÃO AO AGENTE') == 2
-        assert 'está BLOQUEADA para implementação por IA' in lote
+        assert 'está BLOQUEADO para implementação por IA' in lote
         assert 'AUTORIZA IMPLEMENTAÇÃO TÉCNICA' in lote
         assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, \
             'copiar é leitura pura — não pode alterar o estado'
@@ -1636,14 +1638,14 @@ try:
         page.evaluate(f"() => {{ mvpNotesSwitchFolder('{seed['pastaB']}'); }}")
         assert acoes.is_hidden(), 'sem notas no recorte, as ações somem'
         assert page.evaluate('mvpNotesBulkExport()') is None
-        assert page.locator('#mvpNotesExportLive').inner_text() == 'Nenhuma nota exportável encontrada.'
+        assert page.locator('#mvpNotesExportLive').inner_text() == 'Nenhum ticket exportável encontrado.'
 
         # 18.7 recorte só com concluídas/descartadas → mensagem própria
         page.evaluate(f"""() => {{ mvpNotesSwitchFolder('{seed['pastaA']}');
           mvpNotesUI.filterStatus = 'done'; renderMvpNotesList(); }}""")
         assert acoes.is_hidden(), 'recorte inteiramente excluído esconde as ações'
         assert page.evaluate('mvpNotesBulkExport()') is None
-        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Todas as notas desta visão')
+        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Todos os tickets desta visão')
         page.evaluate("() => { mvpNotesUI.filterStatus = 'all'; renderMvpNotesList(); }")
 
         # 18.8 visão "Concluído": exceção declarada — ali o recorte É o histórico concluído
@@ -1693,6 +1695,150 @@ try:
         assert_no_errors(page.jpwealth_observed)
         page.close()
 
+        # ---- 19. Tickets MVP: menu ⋯ moderno, Concluir e criticidade no topo ----------
+        # JPW-NPQRST (menu + Concluir) · JPW-QRNPKM (críticos no topo) · JPW-785634 (copy)
+        page = prepare_page(browser, base_url)
+        page.evaluate("""() => { window.__copiado = null;
+          Object.defineProperty(navigator, 'clipboard', {configurable: true,
+            value: {writeText: t => { window.__copiado = t; return Promise.resolve(); }}}); }""")
+        seed19 = page.evaluate("""() => {
+          const n = (content, priority, status) => mvpNotesCreate(
+            {content, type: 'bug', priority, status, folderId: null,
+             aiImplementationPolicy: 'analysis_only'});
+          const ids = {
+            b: n('B normal', 'medium', 'open').id,
+            a: n('A normal', 'medium', 'open').id,
+            z: n('Z critico', 'critical', 'open').id,
+            c: n('C critico', 'critical', 'open').id,
+            d: n('D concluido', 'medium', 'done').id,
+          };
+          renderMvpNotesList(); return ids; }""")
+        click_id(page, 'headerNotesBtn')
+        titulos = lambda: page.evaluate("[...document.querySelectorAll('.mvpn-card-title')].map(e => e.textContent)")
+
+        # --- JPW-QRNPKM: críticos no topo, critério secundário (título) preservado ---
+        # 19.1 dois críticos primeiro, em ordem natural entre si; normais depois, idem
+        assert titulos() == ['C critico', 'Z critico', 'A normal', 'B normal'], titulos()
+
+        # 19.2 crítico → normal volta para a posição da ordenação normal
+        page.evaluate(f"""() => {{ const it = S.mvpNotes.items.find(i => i.id === '{seed19['z']}');
+          mvpNotesUpdate(it.id, {{...mvpNotesDraftFromItem(it), priority: 'medium'}});
+          renderMvpNotesList(); }}""")
+        assert titulos() == ['C critico', 'A normal', 'B normal', 'Z critico'], titulos()
+
+        # 19.3 normal → crítico sobe, sem reload
+        page.evaluate(f"""() => {{ const it = S.mvpNotes.items.find(i => i.id === '{seed19['b']}');
+          mvpNotesUpdate(it.id, {{...mvpNotesDraftFromItem(it), priority: 'critical'}});
+          renderMvpNotesList(); }}""")
+        assert titulos() == ['B normal', 'C critico', 'A normal', 'Z critico'], titulos()
+
+        # 19.4 criticidade é DERIVADA: nada de position/ordem gravada no item
+        item_z = page.evaluate(f"S.mvpNotes.items.find(i => i.id === '{seed19['b']}')")
+        assert 'position' not in item_z and 'order' not in item_z, item_z
+
+        # 19.5 concluído não volta ao backlog ativo por ser crítico
+        page.evaluate(f"""() => {{ const it = S.mvpNotes.items.find(i => i.id === '{seed19['d']}');
+          mvpNotesUpdate(it.id, {{...mvpNotesDraftFromItem(it), priority: 'critical'}});
+          renderMvpNotesList(); }}""")
+        # "Sem pasta" é a visão que mostra ativas E concluídas destes tickets (em "Todos os
+        # Tickets" a concluída já sai por contrato anterior, não por criticidade).
+        page.evaluate("() => { mvpNotesSwitchFolder('unfiled'); }")
+        grupos = page.evaluate("(() => { const g = mvpNotesGrouped();"
+                               " return {ativas: g.ativas.map(i => i.title), concluidas: g.concluidas.map(i => i.title)}; })()")
+        assert 'D concluido' not in grupos['ativas'], grupos
+        assert grupos['concluidas'] == ['D concluido'], grupos
+        assert grupos['ativas'][0] == 'B normal', ('crítico continua no topo do grupo ativo', grupos)
+        page.evaluate("() => { mvpNotesSwitchFolder('all'); }")
+
+        # --- JPW-NPQRST: menu ⋯ moderno ---
+        menu_ov = page.locator('#mvpNotesCardMenuOverlay')
+        # 19.6 não existe mais o menu legado <details> por ticket, e o ⋯ abre o popup
+        assert page.locator('.mvpn-card-menu').count() == 4, 'um ⋯ por ticket na visão ativa'
+        assert page.locator('.mvpn-card details').count() == 0, 'nenhum <details> legado no card'
+        assert menu_ov.is_hidden()
+        estado_antes = page.evaluate('JSON.stringify(S.mvpNotes)')
+        primeiro = page.locator('.mvpn-card-menu').first
+        primeiro.click()
+        assert menu_ov.is_visible(), 'o ⋯ deveria abrir o menu moderno'
+        assert primeiro.get_attribute('aria-expanded') == 'true'
+        assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, 'abrir o menu não escreve nada'
+
+        # 19.7 ações reais, na ordem pedida: Copiar, Concluir, demais
+        acoes = page.evaluate("[...document.querySelectorAll('[data-mvp-menu-acao]')].map(b => b.dataset.mvpMenuAcao)")
+        assert acoes == ['copiar', 'concluir', 'exportar', 'excluir'], acoes
+        rotulos = page.evaluate("[...document.querySelectorAll('[data-mvp-menu-acao]')].map(b => b.textContent)")
+        assert rotulos[0] == 'Copiar referência' and rotulos[1] == 'Concluir ticket', rotulos
+
+        # 19.8 uma instância só: abrir o ⋯ de outro ticket não empilha overlays
+        page.keyboard.press('Escape')
+        assert menu_ov.is_hidden(), 'Escape fecha o menu'
+        assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')"), \
+            'Escape no menu não fecha a gaveta'
+        page.locator('.mvpn-card-menu').nth(1).click()
+        assert page.locator('#mvpNotesCardMenuOverlay').count() == 1, 'nunca duas instâncias'
+        assert page.evaluate('mvpNotesUI.cardMenuId') == page.evaluate(
+            "document.querySelectorAll('.mvpn-card-menu')[1].dataset.mvpMenuId")
+
+        # 19.9 clique fora fecha e o foco volta ao ⋯ que abriu
+        menu_ov.click(position={'x': 4, 'y': 4})
+        assert menu_ov.is_hidden()
+        assert page.evaluate("document.activeElement === document.querySelectorAll('.mvpn-card-menu')[1]"), \
+            'o foco deve voltar ao ⋯ originador'
+
+        # --- JPW-NPQRST parte B: Concluir com confirmação ---
+        alvo_id = page.evaluate("document.querySelectorAll('.mvpn-card-menu')[0].dataset.mvpMenuId")
+        # 19.10 cancelar não escreve NADA
+        page.evaluate("() => { window.confirm = () => false; }")
+        estado_antes = page.evaluate('JSON.stringify(S.mvpNotes)')
+        page.locator('.mvpn-card-menu').first.click()
+        page.locator('[data-mvp-menu-acao="concluir"]').click()
+        page.wait_for_timeout(100)
+        assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, \
+            'cancelar a conclusão não pode alterar nada'
+        assert menu_ov.is_hidden(), 'o menu fecha mesmo cancelando'
+
+        # 19.11 confirmar altera o status pelo mecanismo oficial e preserva os demais campos
+        antes = page.evaluate(f"({{...S.mvpNotes.items.find(i => i.id === '{alvo_id}')}})")
+        page.evaluate("() => { window.__q = null; window.confirm = q => { window.__q = q; return true; }; }")
+        page.locator('.mvpn-card-menu').first.click()
+        page.locator('[data-mvp-menu-acao="concluir"]').click()
+        page.wait_for_timeout(120)
+        assert 'Concluir o ticket' in page.evaluate('window.__q'), page.evaluate('window.__q')
+        depois = page.evaluate(f"({{...S.mvpNotes.items.find(i => i.id === '{alvo_id}')}})")
+        assert depois['status'] == 'done' and depois['completedAt'], depois
+        for campo in ['id', 'ticket', 'content', 'title', 'type', 'priority', 'folderId',
+                      'aiImplementationPolicy', 'createdAt', 'buildId']:
+            assert depois[campo] == antes[campo], (campo, antes[campo], depois[campo])
+
+        # 19.12 persiste após reload real e o ticket já concluído não oferece "Concluir"
+        page.reload(wait_until='load'); page.wait_for_timeout(600)
+        page.evaluate("() => { window.__onbShown = true; closeModal(); }")
+        click_id(page, 'headerNotesBtn')
+        assert page.evaluate(f"S.mvpNotes.items.find(i => i.id === '{alvo_id}').status") == 'done', \
+            'a conclusão deve sobreviver ao reload'
+        page.evaluate("() => { mvpNotesSwitchFolder('done'); }")
+        page.locator('.mvpn-card-menu').first.click()
+        acoes_done = page.evaluate("[...document.querySelectorAll('[data-mvp-menu-acao]')].map(b => b.dataset.mvpMenuAcao)")
+        assert 'concluir' not in acoes_done, ('ticket concluído não oferece Concluir', acoes_done)
+        page.keyboard.press('Escape')
+
+        # --- JPW-785634: nomenclatura visível ---
+        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
+        assert page.locator('#mvpNotesTitle').inner_text() == 'Tickets'
+        assert page.locator('#mvpNotesNewBtn').get_attribute('title') == 'Novo ticket'
+        assert page.locator('#mvpNotesSearch').get_attribute('placeholder') == 'Buscar em todos os tickets'
+        page.evaluate("() => { mvpNotesSwitchFolder('all'); }")
+        # text_content e não inner_text: .mvpn-view-title tem text-transform:uppercase e o
+        # inner_text devolveria o texto já transformado pelo CSS.
+        assert page.locator('#mvpNotesViewTitle').text_content() == 'Todos os Tickets'
+        # o dado NÃO mudou de forma: mesma chave, mesmo agregado, mesmos IDs
+        assert page.evaluate("Object.keys(JSON.parse(localStorage.getItem('jpwealth_v9_state'))).includes('mvpNotes')"), \
+            'renomear a UI não pode migrar o storage'
+        assert page.evaluate("S.mvpNotes.schemaVersion") == 5, 'sem migração de schema'
+        assert page.evaluate(f"!!S.mvpNotes.items.find(i => i.id === '{alvo_id}')"), 'nenhum ID mudou'
+        assert_no_errors(page.jpwealth_observed)
+        page.close()
+
         # ---- 13. monólito portátil (dist) ----
         page = prepare_page(browser, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')
@@ -1704,4 +1850,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos), ações em massa sobre o recorte visível (JPW-436587: contagem, exclusão de concluídas/descartadas, Markdown único, preâmbulo de governança do lote, leitura pura, casos vazios, visão Concluído, rascunho sujo, nota legada, nome de pasta hostil e ausência de rede) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos), ações em massa sobre o recorte visível (JPW-436587: contagem, exclusão de concluídas/descartadas, Markdown único, preâmbulo de governança do lote, leitura pura, casos vazios, visão Concluído, rascunho sujo, nota legada, nome de pasta hostil e ausência de rede), Tickets MVP (JPW-NPQRST menu ⋯ moderno com Copiar/Concluir/Exportar/Excluir, foco, Escape, clique fora e instância única; JPW-QRNPKM críticos no topo com critério secundário preservado e sem gravar posição; JPW-785634 nomenclatura Tickets sem migração de storage) e monólito verificados.')

@@ -332,6 +332,7 @@ function settingsSearchEntries(){
     // Notas do MVP (14-mvp-notes.js) — vários termos apontando para o mesmo card,
     // mesmo padrão de 'core' (multi-termo por entrada), já que aqui cada entrada só
     // casa com o próprio título.
+    ['Tickets','interface','#mvpNotesSettingsCard'],['tickets','interface','#mvpNotesSettingsCard'],
     ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
     ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
     ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
