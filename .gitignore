@@ -39,6 +39,9 @@ tools/.artifacts/
 test-results/
 playwright-report/
 blob-report/
+# Grafo de conhecimento gerado pelo graphify: artefato derivado e regeneravel,
+# com cache local e caminho absoluto de maquina. Mesma politica de tools/.artifacts/.
+graphify-out/
 
 # Python caches and test caches
 __pycache__/
