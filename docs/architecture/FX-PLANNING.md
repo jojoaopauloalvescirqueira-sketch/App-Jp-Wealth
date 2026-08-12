@@ -48,9 +48,32 @@ Realizado × Baseline, Realizado × Forecast anterior, Forecast atual × Baselin
 - **Câmbio médio de aquisição**: `Σ BRL investido ÷ Σ USD adquirido` — média
   ponderada, nunca média das cotações. Só transações `affectsFxCostBasis:true`
   (BRL→USD); créditos USD-nativos (Prop Firm) ficam fora por construção.
-- **Três câmbios distintos**: `acquisitionFxRate` (pago na aquisição, histórico),
-  `valuationFxRate` (conversão do mês realizado), `projectedFxRate` (premissa).
-  Alterar projeção nunca reescreve custo histórico.
+- **Quatro câmbios distintos, três tempos** — nenhum sobrescreve outro:
+
+  | Conceito | Tempo | O que é | Onde vive |
+  |---|---|---|---|
+  | `acquisitionFxRate` | passado | taxa paga numa aquisição | aporte (persistido) |
+  | `valuationFxRate` | passado | avaliação registrada de um mês fechado | fechamento (persistido) |
+  | `currentUsdBrlQuote` | **presente** | referência externa corrente | `10-domain/08-usd-brl-quote.js` (cache técnico) |
+  | `projectedFxRate` | futuro | premissa do operador | `plan.baseline` / `plan.current` |
+
+  Alterar projeção nunca reescreve custo histórico, e a **premissa futura nunca
+  vale como valor presente**: até `JPW-FGDEKM` o patrimônio corrente em BRL era
+  convertido por `projectedFxRate`, o que apresentava uma hipótese sobre o futuro
+  como fotografia do presente.
+
+  A referência corrente vem do Frankfurter (taxas do BCE), o mesmo provedor de
+  `10-domain/04-stop-statistics.js`, sem chave. É **referência diária**, não spot
+  intradiário — por isso `referenceDate` (data econômica) e `fetchedAt` (quando
+  consultamos) são grandezas separadas, e a interface diz "USD/BRL de referência",
+  nunca "ao vivo". Sem referência disponível, o presente sai em USD; cair em
+  `projectedFxRate` é proibido. O cache é técnico, fora de `S.fxPlanning` e do
+  baseline.
+
+  Conversão por tempo: mês fechado usa a `valuationFxRate` dele; o mês corrente
+  sem taxa registrada usa a referência externa; projeção usa `projectedFxRate`.
+  Mês passado sem taxa própria não é convertido — inventar taxa seria pior que
+  omitir o ponto.
 - Derivados (séries, saldos, variâncias, custo médio, resumo anual) **nunca
   persistem** — recalculados pelas funções puras a cada uso.
 
