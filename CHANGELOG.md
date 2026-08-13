@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+### Navegação hierárquica de Planejamento — candidato de 2026-08-13 (branch `feature/nav-planning-fx-submenu`)
+
+- **Planejamento ganhou um segundo nível estrutural** com Visão Geral,
+  Planejamento FX, Realizado e Histórico. A faixa fica entre o header global e
+  o contexto, participa do fluxo e desloca o conteúdo em 300 ms; não é popup,
+  overlay, card ou sidebar.
+- **Uma única fonte visível de navegação:** as tabs equivalentes foram removidas
+  do conteúdo, preservando os quatro renderizadores e usando somente
+  `window.JPWFx.ui.selectView()` para a seleção visual.
+- **Hover transitório e clique fixado:** hover fino abre e fecha após tolerância
+  de 400 ms; clique, Enter ou Espaço fixam a faixa. Pointerleave, resize, novo
+  clique no acionador e seleção de item não fecham; clique externo ou Escape
+  encerram o estado.
+- **Terceiro tom próprio:** o fundo combina tokens do header e do contexto,
+  produzindo contraste intermediário coerente nos temas claro e escuro.
+- **Mobile em fluxo:** tocar em Planejamento fecha a gaveta global e expande os
+  destinos empilhados sem overlay nem overflow horizontal.
+- **Sem mudança financeira ou persistida.** Nenhum cálculo, estado, schema,
+  chave de storage, backup ou componente de domínio foi alterado.
+- O padrão reutilizável foi registrado em
+  `docs/architecture/NAVIGATION-HIERARCHY.md` e ligado ao mapa de contexto.
+- **Validação:** teste focal PASS, `quality_gate.py --tier full` PASS 19/19,
+  portátil reproduzível e Build ID `4d9b36661c689c26`.
+
 ### Fidelidade integral ao Claude Design e upgrade PWA coerente — candidato de 2026-08-13 (branch `feature/claude-design-fidelity`)
 
 - **As cinco telas foram reconciliadas com o protótipo** no mesmo shell

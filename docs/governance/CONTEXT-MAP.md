@@ -16,7 +16,9 @@
 - Risco, fases, MDD, LIFO, lote: M0 + M2 + `docs/architecture/CODE-MAP.md`.
 - Persistencia/importacao/reset: `STATE-SCHEMA.md`, `DB-STORAGE-GOVERNANCE.md`, `DATA-RECOVERY.md`.
 - PWA/cache: `PWA-UPDATE-LIFECYCLE.md`, `sw.js`, manifest e teste de upgrade.
-- Interface: contratos DOM em `index.html`, CSS, script da tela e teste real no navegador.
+- Interface: contratos DOM em `index.html`, CSS, script da tela e teste real no
+  navegador; navegação global/contextual em
+  `docs/architecture/NAVIGATION-HIERARCHY.md`.
 - MEI-JP: fonte normativa aplicavel, implementacao MEI, historico patrimonial e auditoria matematica registrada.
 - Governanca/agentes: `AGENTS.md`, esta pagina, `AI-WORKFLOW.md`, `QUALITY-GATES.md` e skills locais.
 

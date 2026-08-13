@@ -242,7 +242,7 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · menu mobile de destinos (N1)",
-      "sha256": "43939dabb283b3695f2302ccf8b34d7c82d1122303902441c40a28aa409f4b26"
+      "sha256": "e47688c65afc72aef95febd79f5db9675004f15cddbce7f317f7a30e14b41c11"
     },
     {
       "order": 41,
@@ -362,7 +362,7 @@
       "order": 60,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "3cf3bea01bf6fe24d09e33f128e914f2dd4f1794c33a2032413b99b4708ce230"
+      "sha256": "c01ac178754fd54c38a5b495e7fa974418b451072ad2ada2f19fef988fb2e424"
     }
   ]
 }

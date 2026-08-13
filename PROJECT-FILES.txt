@@ -25,6 +25,7 @@ docs/architecture/CODE-MAP.md
 docs/architecture/DB-STORAGE-GOVERNANCE.md
 docs/architecture/FX-PLANNING.md
 docs/architecture/GALTON-BOARD.md
+docs/architecture/NAVIGATION-HIERARCHY.md
 docs/architecture/PWA-UPDATE-LIFECYCLE.md
 docs/architecture/STATE-SCHEMA.md
 docs/audit/AUDIT-PRELIMINARY.md

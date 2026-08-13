@@ -1,13 +1,13 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `38bccfc11d47521cb17016a8476533298bc47678`
-  mais o diff local de fidelidade ao Claude Design e correção do ciclo PWA.
-- Branch do candidato: `feature/claude-design-fidelity`
-- HEAD atual: `38bccfc11d47521cb17016a8476533298bc47678`
+Source revision representada: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
+  mais o diff local da navegação hierárquica de Planejamento.
+- Branch do candidato: `feature/nav-planning-fx-submenu`
+- HEAD atual: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
 - Estado de integração: candidato local, não commitado, não enviado, não
   integrado e não publicado.
-- Build local: `54a60f3e45fdd76c`.
+- Build local: `4d9b36661c689c26`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
@@ -16,7 +16,7 @@ Source revision representada: `38bccfc11d47521cb17016a8476533298bc47678`
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
 - `src/js/manifest.json` contém 60 scripts, na mesma lista e ordem da base. O
-  candidato altera somente hashes dos 11 scripts editados. `sw.js`, o HTML e o
+  candidato altera somente hashes dos dois scripts editados. `sw.js`, o HTML e o
   portátil permanecem reconciliados com esse manifest.
 - As cinco telas principais compartilham o shell horizontal do protótipo:
   Dashboard, Execution Board, Contas, Contabilidade e Planejamento FX. A
@@ -37,8 +37,13 @@ Source revision representada: `38bccfc11d47521cb17016a8476533298bc47678`
   Diário em razão 3:2, lançamentos em largura total e funções secundárias
   preservadas em disclosures.
 - Planejamento FX: o estado vazio é um cartão central de 936 px com formulário
-  linear; os quatro modos e os contratos do plano continuam cobertos pela suíte
-  focal quando existe planejamento.
+  linear. Os quatro modos agora são selecionados exclusivamente pela segunda
+  faixa estrutural do header; as tabs duplicadas saíram do conteúdo sem remover
+  renderizadores ou funcionalidades.
+- A faixa hierárquica abre transitoriamente por hover e fica fixada por
+  clique/Enter/Espaço. Enquanto fixada, não fecha por saída do ponteiro, resize,
+  novo clique no acionador ou seleção interna; clique externo e Escape fecham.
+  Seu terceiro tom é distinto do header e do contexto em claro/escuro.
 - A política PWA não permite mais um cliente utilizável com HTML novo e scripts
   cacheados do build anterior. Enquanto o worker novo está em `waiting`, o
   controller antigo entrega seu próprio `index.html`; a troca só ocorre após o
@@ -48,8 +53,8 @@ Source revision representada: `38bccfc11d47521cb17016a8476533298bc47678`
 
 ## Escopo e autoridade
 
-- N0-V + N1 + N0-D, autoridade A2: composição, CSS, responsividade, interações
-  de apresentação, ciclo coerente de atualização PWA, testes e documentação.
+- N0-V + N1 + N0-D, autoridade A2: faixa contextual, CSS, responsividade,
+  interações de apresentação, teste e documentação arquitetural.
 - N2/N3: fora do escopo. `DEFAULTS`, `migrate()`, `schemaVersion`, chaves de
   storage, fórmulas, perfis, fases, DD/MDD, lote, LIFO, stops, quarentena,
   contabilidade, MEI-JP e regras do Planejamento FX não mudaram semanticamente.
@@ -62,10 +67,10 @@ Source revision representada: `38bccfc11d47521cb17016a8476533298bc47678`
 
 | Verificação | Resultado | Escopo/observação |
 |---|---|---|
-| `python3 tools/validate_project.py` | PASS | 60 scripts, hashes, ordem, 383 IDs estáticos e portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 19/19 | Zero `PRODUCT_FAIL`, `TEST_HARNESS_FAIL`, `ENVIRONMENT_ERROR`, `BASELINE_FAIL` e `NOT_RUN`; artefato `tools/.artifacts/quality-20260813T142631-full.json`. |
-| `tools/service_worker_upgrade_test.py` | PASS dentro do full | Abas antigas e descoberta no build anterior coerente; worker novo em waiting; próxima abertura nova online/offline; cache externo preservado; zero erro de página/console/requisição. |
-| Navegador real | PASS | Cinco telas em 1440×900 e 390×844, claro e escuro; uma única tela ativa, gaveta mobile vertical, sem overflow horizontal; disclosures, expansão e foco de Contas exercitados; zero warning/erro de console. |
+| `python3 tools/fx_planning_test.py` | PASS | Estrutura em fluxo, hover transitório, clique fixado, clique externo, teclado, terceiro tom, mobile, quatro modos e ausência de duplicidade. |
+| `python3 tools/validate_project.py` | PASS | 60 scripts, 386 IDs estáticos, hashes/ordem coerentes e portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 19/19 | Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T160548-full.json`. |
+| Navegador real | PASS | 1440×900 e 390×844, claro/escuro; três tons distintos; persistência após novo clique; fechamento externo; sem overflow e console limpo. |
 | `git diff --check` | PASS | Sem whitespace errors no candidato congelado antes da reconciliação documental. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 
@@ -76,27 +81,25 @@ somente o artefato cuja árvore corresponda ao estado examinado.
 
 `AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED`
 
-`BASIS:` o changeset altera o contrato de upgrade PWA, a expectativa do teste
-que o protege, a composição visual descrita pelo contexto operacional e a
-evidência atual dos gates. Esses artefatos são consumidos por preflight, skills
-e agentes; portanto a mudança alcança a camada agêntica mesmo sem alterar um
-arquivo de agente ou skill.
+`BASIS:` o changeset cria um contrato arquitetural reutilizável de navegação,
+altera o shell descrito no mapa do código e muda a representação operacional
+consumida por preflight, skills e agentes. Portanto a camada agêntica é
+alcançada mesmo sem alterar agente, skill ou routing.
 
 Naturezas do changeset:
 
-- **MATERIAL:** runtime visual, navegação/apresentação e lifecycle do service
-  worker.
-- **RECONCILIAÇÃO:** contexto, arquitetura PWA, gates, changelog e handoff.
+- **MATERIAL:** runtime visual e interação hierárquica de navegação.
+- **RECONCILIAÇÃO:** contrato arquitetural, contexto, changelog e handoff.
 
 | Categoria | Impacto | Ação local | Evidência/estado |
 |---|---|---|---|
 | `AGENTS.md`, `CLAUDE.md` e autoridade | AFFECTED | NOT_REQUIRED | As regras existentes já exigem preflight, escopo, browser real, gate e reconciliação; nenhuma instrução contradiz o contrato novo. |
 | Skills e routing | AFFECTED | NOT_REQUIRED | `jpw-browser-verification`, `jpw-test-triage`, `jpw-post-change-audit` e `agentic-evolution-governance` já cobrem o fluxo e herdam o contexto canônico. |
-| Bootstrap/preflight e manifest | AFFECTED | REQUIRED | Manifest com hashes finais, precache equivalente e preflight/validate aprovados. |
+| Bootstrap/preflight e manifest | AFFECTED | REQUIRED | Manifest preserva lista/ordem e atualiza somente hashes dos scripts de UI modificados. |
 | Contexto operacional | AFFECTED | REQUIRED | `ACTIVE-TASK`, este `CURRENT-STATE` e `SESSION_HANDOFF` representam o candidato. |
-| Arquitetura/contratos PWA | AFFECTED | REQUIRED | `PWA-UPDATE-LIFECYCLE.md`, teste focal e descrição no `CODE-MAP` reconciliados. |
-| Gates e evidência | AFFECTED | REQUIRED | `QUALITY-GATES.md`, `tests/README.md` e resultado 19/19 reconciliados. |
-| Changelog e README | AFFECTED | REQUIRED | Estado visual, PWA, inventário de 60 scripts e tiers 4/9/19 reconciliados. |
+| Arquitetura/contratos de interface | AFFECTED | REQUIRED | `NAVIGATION-HIERARCHY.md`, `CONTEXT-MAP.md` e `CODE-MAP.md` registram o padrão. |
+| Gates e evidência | AFFECTED | REQUIRED | Teste focal cobre os estados transitório/fixado, estrutura, acessibilidade e mobile. |
+| Changelog e inventário | AFFECTED | REQUIRED | Entrada Unreleased e `PROJECT-FILES.txt` registram o novo contrato. |
 | Norma, schema e ADRs N3 | NOT_AFFECTED | NOT_REQUIRED | Nenhuma regra financeira, estado persistido ou decisão normativa mudou. |
 | Índice/vetor/memória de projeto | NOT_AFFECTED | NOT_REQUIRED | `INDEX NOT REQUIRED`: o projeto não usa índice/vetor derivado para esses documentos. |
 
@@ -138,9 +141,9 @@ Não corrigir silenciosamente. Cada item exige decisão/confirmação N3 e branc
 - A primeira atualização partindo de um worker publicado antes da nova política
   ainda obedece ao código antigo já instalado; fechar todas as abas/clientes da
   origem conclui essa transição. Não limpar storage nem dados financeiros.
-- A verificação visual do Planejamento FX usou o estado vazio; os quatro modos
-  com plano são cobertos por `fx_planning_test.py`, não por uma inspeção manual
-  com dados reais.
+- A verificação visual manual usou o estado vazio; os quatro modos com plano e
+  a remoção das tabs duplicadas são cobertos por `fx_planning_test.py`, sem dados
+  reais.
 - `openOnboardingModal()` continua concentrando aproximadamente duas mil linhas;
   o escopo global legado e a CSP não documentada permanecem dívidas anteriores.
 - A cobertura automatizada continua mais forte nos fluxos recentes do que no
