@@ -497,11 +497,56 @@
          qualquer card entre coluna principal e lateral sem quebrar layout. -->
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main jp-widget-grid" id="gdDashMain">
-        <!-- #mcClearanceCard (data-layout-card="operational-clearance") entra
-             aqui via relocação JS, antes do painel institucional. -->
-        <div class="gd-institutional-panel" data-layout-card="institutional-panel" data-layout-allowed-zones="main" data-widget-size="large" data-widget-allowed-sizes="medium large" aria-hidden="true"></div>
-        <!-- #mcMetricStrip (data-layout-card="metric-strip") entra logo após
-             o painel institucional via relocação JS. -->
+        <!-- Via relocação JS entram aqui, nesta ordem, imediatamente antes do
+             Status do Sistema: #mcClearanceCard (operational-clearance, P1) e
+             #mcMetricStrip (metric-strip, P1). Ver 12-global-dashboard.js. -->
+
+        <!-- Status do Sistema (JPW-789ABC) — o espaço antes decorativo (painel
+             institucional: aria-hidden, zero texto, gradiente listrado, 2×2)
+             passa a carregar estado operacional real. Toda linha é ESPELHO DE
+             LEITURA de estado que já existe: persistência (04-persistence.js),
+             backup (S.dataGovernance.backup), frescor de cotações
+             (instruments[].updated + staleInfo) e governança
+             (getOnboardingCompletionState). Nenhum cálculo novo, nenhum estado
+             paralelo — mesmo princípio dos espelhos de Termômetros/VRM abaixo.
+
+             data-layout-card="institutional-panel" é PRESERVADO: é a âncora de
+             relocação usada em 12-global-dashboard.js:48 e a chave da
+             preferência de layout v3 já salva por quem personalizou a tela.
+             Só o rótulo humano e o tamanho padrão mudam.
+
+             O tamanho volta a "medium" (2×1): o footprint 2×2 era o defeito
+             original — um bloco decorativo ocupando a maior célula da grade,
+             acima dos dados de risco. -->
+        <div class="card gd-system-status" data-layout-card="institutional-panel" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium">
+          <h2>Status do Sistema <span class="art">espelho de leitura — sem cálculo novo</span></h2>
+          <ul class="jpwss-list">
+            <li class="jpwss-row" id="jpwSsPersist">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+            </li>
+            <li class="jpwss-row" id="jpwSsBackup">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+            </li>
+            <li class="jpwss-row" id="jpwSsQuotes">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+            </li>
+            <li class="jpwss-row" id="jpwSsGov">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+              <button type="button" class="jpwss-act" id="jpwSsGovBtn" hidden>Revisar ›</button>
+            </li>
+          </ul>
+          <p class="jpwss-foot">Risk Terminal V9.1 · local-first</p>
+        </div>
+        <!-- #mcMetricStrip não entra mais aqui: desde o rebalanceamento
+             JPW-789ABC ele é relocado para ANTES do Status do Sistema. -->
 
         <!-- Termômetros / Coerência / VRM — espelhos de leitura do mesmo compute()
              já usado no Execution Board. Novos IDs, sem input, sem cálculo novo. -->
@@ -713,7 +758,13 @@
           <p class="jp-slide-eyebrow">Risco e capacidade</p>
           <h2 class="jp-slide-title">Quanto espaço operacional resta agora</h2>
           <!-- N2 · Mission Metrics — status executivos compactos -->
-          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
+          <!-- JPW-789ABC: `medium` (2×1) em vez de `full`. A faixa sobe para a
+               linha 1 da coluna direita, ao lado do Clearance, onde fecha o vazio
+               que sobrava e mantém P1 junto de P1. Os 4 fatos continuam todos
+               visíveis: em `medium` o CSS já os arranja em 2×2
+               ([data-widget-size="medium"].mc-metric-strip em app.css). Nada é
+               ocultado — só reorganizado. `allowed-sizes` segue "medium full". -->
+          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
             <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
             <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
             <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>

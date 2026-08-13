@@ -39,7 +39,7 @@ const JP_WIDGET_SCREENS = {
 const JP_WIDGET_SCREEN_IDS = Object.keys(JP_WIDGET_SCREENS);
 
 const DASH_LAYOUT_LABELS = {
-  'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Painel institucional',
+  'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
   'metric-strip': 'A faixa de métricas principais', 'thermometers': 'Termômetros',
   'leverage-coherence': 'Coerência de Alavancagem', 'vrm': 'VRM · Regime de Volatilidade',
   'posture': 'Postura e conformidade', 'profile-context': 'Perfil e Contexto',
@@ -77,8 +77,8 @@ function dashLayoutDeepFreeze(obj) {
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
     { id: 'operational-clearance', zone: 'main', size: 'large', order: 0 },
-    { id: 'institutional-panel', zone: 'main', size: 'large', order: 1 },
-    { id: 'metric-strip', zone: 'main', size: 'full', order: 2 },
+    { id: 'metric-strip', zone: 'main', size: 'medium', order: 1 },
+    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 2 },
     { id: 'thermometers', zone: 'main', size: 'compact', order: 3 },
     { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 4 },
     { id: 'vrm', zone: 'main', size: 'compact', order: 5 },
@@ -194,14 +194,37 @@ function dashLayoutZoneLabel(zones) {
 
 /* ======================= VALIDAÇÃO E PERSISTÊNCIA (v3) ======================= */
 
-const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3';
+const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4';
+const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
 
 // Valida a lista de widgets de UMA tela contra a política real daquela tela
 // (inventário de IDs esperados + zonas/tamanhos permitidos por widget, lidos
 // do DOM). Cada tela é validada de forma independente — uma tela quebrada
 // nunca contamina outra.
+// MIGRAÇÃO JPW-789ABC — o painel institucional decorativo virou Status do
+// Sistema e perdeu o tamanho 'large' (o footprint 2×2 era exatamente o defeito
+// que o redesign corrige). Sem esta coerção o estrago seria silencioso e
+// desproporcional: 'large' ERA o padrão antigo, então toda preferência já
+// gravada carrega institutional-panel em 'large'; ao reprovar no teste de
+// tamanho permitido, dashLayoutValidateScreenWidgets devolve null para a TELA
+// INTEIRA e dashLayoutNormalizeV4 joga fora TODA a personalização do Dashboard
+// — não só este widget. Coerção pontual, portanto: um widget, um tamanho,
+// preservando zona e ordem escolhidas pelo usuário.
+//
+// Aplicada aqui, no topo do validador, e não em cada chamador: os três
+// caminhos (carga v3, promoção da v2 legada e revalidação ao concluir a
+// edição) passam obrigatoriamente por esta função, então nenhum fica de fora.
+// Nos casos em que não há o que migrar é no-op.
+function dashLayoutMigrateWidgets(screenId, widgets) {
+  if (screenId !== 'dash' || !Array.isArray(widgets)) return widgets;
+  return widgets.map(w => (w && typeof w === 'object' && w.id === 'institutional-panel' && w.size === 'large')
+    ? { ...w, size: 'medium' }
+    : w);
+}
+
 function dashLayoutValidateScreenWidgets(screenId, widgets) {
+  widgets = dashLayoutMigrateWidgets(screenId, widgets);
   const expectedIds = dashLayoutAllowedWidgetIds(screenId);
   if (!Array.isArray(widgets) || widgets.length !== expectedIds.length) return null;
   const seen = new Set();
@@ -221,34 +244,35 @@ function dashLayoutValidateScreenWidgets(screenId, widgets) {
   return widgets.slice().sort((a, b) => a.order - b.order).map((w, i) => ({ id: w.id, zone: w.zone, size: w.size, order: i }));
 }
 
-// Normaliza um envelope v3 bruto: cada tela é resolvida de forma
+// Normaliza um envelope v4 bruto: cada tela é resolvida de forma
 // independente — telas inválidas recebem só o PADRÃO DAQUELA TELA; as
 // demais, válidas, são preservadas exatamente como estavam. Nunca retorna
 // null para o todo por causa de uma tela quebrada.
-function dashLayoutNormalizeV3(raw) {
-  const rawScreens = (raw && typeof raw === 'object' && raw.version === 3 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
+function dashLayoutNormalizeV4(raw) {
+  const rawScreens = (raw && typeof raw === 'object' && raw.version === 4 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
   const screens = {};
   JP_WIDGET_SCREEN_IDS.forEach(screenId => {
     const provided = rawScreens[screenId] && rawScreens[screenId].widgets;
     const validated = dashLayoutValidateScreenWidgets(screenId, provided);
     screens[screenId] = { widgets: validated || JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w })) };
   });
-  return { version: 3, screens };
+  return { version: 4, screens };
 }
 
-function dashLayoutSaveV3(full) {
-  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V3, JSON.stringify(full)); } catch (_) { return false; }
+function dashLayoutSaveV4(full) {
+  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V4, JSON.stringify(full)); } catch (_) { return false; }
   return true;
 }
 function dashLayoutClearAllPreferences() {
+  try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
 }
 
 // Migração v2 (só Dashboard, já com tamanho) → v3 (multitelas). v2 tem
-// precedência zero se v3 já existir — só é olhada se a chave v3 nunca foi
-// criada. Só promove (grava v3 e apaga v2) depois de validar; se a v2 for
-// inválida, não apaga nada e cai no padrão.
+// precedência zero se v3/v4 já existirem — só é olhada se nenhuma das duas
+// foi criada. Só promove depois de validar; se a v2 for inválida, não apaga
+// nada e cai no padrão.
 function dashLayoutValidateV2Legacy(pref) {
   if (!pref || typeof pref !== 'object' || pref.version !== 2) return null;
   // Forma real da v2 (só Dashboard, sem o envelope "screens" da v3):
@@ -257,14 +281,59 @@ function dashLayoutValidateV2Legacy(pref) {
   return dashLayoutValidateScreenWidgets('dash', widgets);
 }
 
+// MIGRAÇÃO ÚNICA v3 → v4 (JPW-789ABC, rebalanceamento do Status do Sistema).
+//
+// Por que ÚNICA e não coerção permanente como a do painel institucional: os
+// dois casos são diferentes. 'large' deixou de ser tamanho PERMITIDO para o
+// painel, então coagi-lo em toda validação é uma rede de segurança que nunca
+// atropela escolha nenhuma — ninguém consegue mais escolher 'large' ali. Já
+// 'full' CONTINUA permitido para a faixa de métricas; coagir 'full'→'medium'
+// a cada carga tornaria a opção impossível de salvar (dashLayoutFinish também
+// valida antes de gravar), quebrando o editor de layout para esse widget.
+// Por isso a conversão acontece uma vez, na promoção de envelope — exatamente
+// o mecanismo que a v2→v3 já usa: lê a chave antiga, grava a nova, apaga a
+// antiga.
+//
+// A ORDEM só é trocada quando o par ainda está na relação do padrão ANTIGO
+// (painel imediatamente antes da faixa). Quem reordenou a tela por conta
+// própria mantém a ordem que escolheu — a migração conserta o padrão, não
+// sobrescreve personalização.
+function dashLayoutMigrateDashV3ToV4(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  const out = widgets.map(w => (w && typeof w === 'object') ? { ...w } : w);
+  const strip = out.find(w => w && w.id === 'metric-strip');
+  const panel = out.find(w => w && w.id === 'institutional-panel');
+  if (!strip || !panel) return out;
+  if (strip.size === 'full') strip.size = 'medium';
+  if (strip.zone === panel.zone && strip.order === panel.order + 1) {
+    const t = strip.order; strip.order = panel.order; panel.order = t;
+  }
+  return out;
+}
+
 function dashLayoutLoadFullState() {
+  const rawV4 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { return null; } })();
+  if (rawV4 !== null) {
+    // v4 existe (mesmo que parcialmente inválida) — tem precedência total e
+    // nunca reabre migração (evita remigrar a cada carga).
+    let parsed = null;
+    try { parsed = JSON.parse(rawV4); } catch (_) { /* trata como ausente abaixo */ }
+    return dashLayoutNormalizeV4(parsed);
+  }
   const rawV3 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { return null; } })();
   if (rawV3 !== null) {
-    // v3 existe (mesmo que parcialmente inválida) — tem precedência total,
-    // nunca olha para v2 de novo (evita migrar repetidamente a cada carga).
-    let parsed = null;
-    try { parsed = JSON.parse(rawV3); } catch (_) { /* trata como ausente abaixo */ }
-    return dashLayoutNormalizeV3(parsed);
+    let v3Parsed = null;
+    try { v3Parsed = JSON.parse(rawV3); } catch (_) { /* ignora */ }
+    const v3Screens = (v3Parsed && typeof v3Parsed === 'object' && v3Parsed.version === 3 && v3Parsed.screens && typeof v3Parsed.screens === 'object') ? v3Parsed.screens : {};
+    const promoted = { version: 4, screens: {} };
+    JP_WIDGET_SCREEN_IDS.forEach(screenId => {
+      const widgets = v3Screens[screenId] && v3Screens[screenId].widgets;
+      promoted.screens[screenId] = { widgets: screenId === 'dash' ? dashLayoutMigrateDashV3ToV4(widgets) : widgets };
+    });
+    const candidate = dashLayoutNormalizeV4(promoted);
+    dashLayoutSaveV4(candidate);
+    try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
+    return candidate;
   }
   const rawV2 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { return null; } })();
   if (rawV2 !== null) {
@@ -272,14 +341,15 @@ function dashLayoutLoadFullState() {
     try { v2Parsed = JSON.parse(rawV2); } catch (_) { /* ignora */ }
     const migratedDash = dashLayoutValidateV2Legacy(v2Parsed);
     if (migratedDash) {
-      const candidate = dashLayoutNormalizeV3({ version: 3, screens: { dash: { widgets: migratedDash } } });
-      dashLayoutSaveV3(candidate);
+      // A v2 nasceu com o padrão antigo, então passa pela mesma promoção.
+      const candidate = dashLayoutNormalizeV4({ version: 4, screens: { dash: { widgets: dashLayoutMigrateDashV3ToV4(migratedDash) } } });
+      dashLayoutSaveV4(candidate);
       try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
       return candidate;
     }
     // v2 presente mas inválida — não promove, não apaga, cai no padrão completo
   }
-  return dashLayoutNormalizeV3(null); // tudo padrão
+  return dashLayoutNormalizeV4(null); // tudo padrão
 }
 
 function dashLayoutApplyScreen(screenId, widgets) {
@@ -726,7 +796,7 @@ function dashLayoutFinish() {
   }
   const full = dashLayoutLoadFullState();
   dirty.forEach(screenId => { full.screens[screenId] = { widgets: validatedByScreen[screenId] }; });
-  dashLayoutSaveV3(full); // uma única escrita, com todas as telas alteradas já validadas
+  dashLayoutSaveV4(full); // uma única escrita, com todas as telas alteradas já validadas
   const labels = dirty.map(id => JP_WIDGET_SCREENS[id].label).join(', ');
   dashLayoutEndSession();
   dashLayoutAnnounce((dirty.length === 1 ? '1 tela salva: ' : dirty.length + ' telas salvas: ') + labels + '.');
@@ -749,7 +819,7 @@ function dashLayoutRestoreDefaultConfirm() {
   }
   const full = dashLayoutLoadFullState();
   full.screens[screenId] = { widgets: dashLayoutCurrentScreenState(screenId) };
-  dashLayoutSaveV3(full);
+  dashLayoutSaveV4(full);
   dashLayoutAnnounce('Layout padrão de ' + label + ' restaurado.');
 }
 
@@ -769,7 +839,7 @@ function dashLayoutRestoreAllConfirm() {
     return;
   }
   dashLayoutClearAllPreferences();
-  dashLayoutApplyAllScreens(dashLayoutNormalizeV3(null));
+  dashLayoutApplyAllScreens(dashLayoutNormalizeV4(null));
   dashLayoutAnnounce('Layout padrão restaurado em todas as telas.');
 }
 

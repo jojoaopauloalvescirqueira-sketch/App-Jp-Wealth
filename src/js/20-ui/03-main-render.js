@@ -276,4 +276,11 @@ function render(){
   renderExecClearance(c);
   renderOnboardingIncompleteBanner();
   renderExecutionOnboardingWarning();
+  // Status do Sistema — espelho de leitura de persistência/backup/frescor/
+  // governança. O guard de typeof segue o idioma já usado no boot para
+  // renderDgStorageCard: este arquivo é ordem 11 do manifest e o renderizador
+  // vive em 40-app/12-global-dashboard.js (41), então no primeiro render
+  // disparado por boot() a função ainda não existe. Aquele arquivo faz a
+  // primeira pintura por conta própria assim que todos os scripts carregam.
+  if(typeof renderSystemStatus==='function') renderSystemStatus();
 }

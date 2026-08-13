@@ -4086,8 +4086,45 @@
      achados na auditoria de legibilidade (ver relatório entregue ao
      usuário). Só estes três widgets precisaram de ajuste; os demais já são
      flexíveis o bastante nos tamanhos propostos. */
-  html[data-shell="global-dashboard"] [data-widget-size="medium"].mc-metric-strip{grid-template-columns:repeat(2,1fr)}
+  /* O seletor precisa do ID para VALER. A camada Tesla declara
+     `html[data-ui-version="tesla-inspired"] #mcMetricStrip{grid-template-columns:repeat(4,1fr)}`
+     — (1,1,1) por causa do ID — e o shell global-dashboard roda POR CIMA dela,
+     com as duas flags ativas ao mesmo tempo. Escrita com classe, esta regra
+     pontuava (0,2,1) e perdia: a faixa continuava em 4 colunas mesmo em
+     `medium`. Nunca se notou porque o tamanho padrão era `full`; ao promover a
+     faixa para `medium` (JPW-789ABC) o defeito apareceu truncando dado P1 —
+     "FASE 1" virava "FASE…" e "$320 / $400" virava "$320…" em tiles de 98px. */
+  html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip{grid-template-columns:repeat(2,1fr)}
   html[data-shell="global-dashboard"] [data-widget-size="compact"] .gd-vrm-atr{flex-direction:column}
+
+  /* JPW-789ABC — variante estreita da região do cockpit.
+     Acima de 1280px o Clearance fica em 2×2 e a coluna direita empilha
+     Metric Strip (P1) sobre Status do Sistema (P2), sem vazio. Abaixo disso o
+     Clearance a 2 colunas fica estreito e cresce muito em altura — medido:
+     546px a 1180 e 648px a 960 —, e o Status, preso à mesma faixa de linhas,
+     era arrastado junto até 0,79 de proporção (mais alto que largo, contra a
+     spec). Dando as 4 colunas ao Clearance ele volta a ser largo e baixo
+     (356px a 1180), e a faixa e o Status passam a dividir a linha seguinte,
+     cada um em `medium`, com proporção 1,38–1,44.
+     Só SPAN — nunca `order`: a ordem visual continua sendo a do DOM
+     (WCAG 1.3.2, mesma razão pela qual a grade não usa `dense`). E `full` é
+     tamanho já permitido para este card (data-widget-allowed-sizes="large
+     full"), então isto não inventa estado novo nem toca a preferência salva. */
+  @media(max-width:1279px){
+    html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card="operational-clearance"]{
+      grid-column:1 / -1; grid-row:auto;
+    }
+    /* Nesta faixa a faixa de métricas divide a linha com o Status e cai para
+       ~279px (a 960), o que dá tiles de 132px e caixa de valor de 100px. O par
+       "$320 / $400" pede 126px e era CORTADO por white-space:nowrap — truncar
+       risco aberto contra teto é justamente o que a hierarquia P1 proíbe.
+       Deixar quebrar em duas linhas preserva o número inteiro sem mexer no
+       corpo tipográfico; a quebra cai no espaço ao redor da barra. A altura
+       extra é absorvida pela linha do grid, que já é minmax(...,auto). */
+    html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip .v{
+      white-space:normal;
+    }
+  }
 
   @media(max-width:900px){
     html[data-shell="global-dashboard"] .jp-widget-grid{display:flex; flex-direction:column}
@@ -4100,12 +4137,20 @@
        mas não altera nada visualmente. */
     html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="compact"]{width:60%; align-self:flex-start}
     html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="medium"]{width:85%; align-self:flex-start}
-    /* O painel institucional é o único card em que [data-layout-card] e o
-       conteúdo visual são o MESMO elemento vazio — o reset genérico
-       min-height:0 acima vence o min-height:180px de .gd-institutional-panel
-       por especificidade e, sem o grid unificando alturas de linha, o card
-       desaba para ~5px e a alça de arraste encosta na do widget vizinho. */
-    html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card].gd-institutional-panel{min-height:180px}
+    /* JPW-789ABC: exceção deliberada à regra de largura acima. A faixa de
+       métricas passou a `medium` para caber ao lado do Clearance no desktop,
+       mas ela carrega os 4 fatos P1 (fase, DD, risco/teto, alav./teto) e no
+       empilhamento vertical viria recuada a 85% logo abaixo de um veredito de
+       100% — lida como subordinada a ele. P1 não pode parecer secundário, então
+       aqui ela volta a ocupar a largura inteira. É o único widget com essa
+       exceção; para os demais a diferenciação por largura continua valendo. */
+    html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="medium"].mc-metric-strip{width:100%; align-self:stretch}
+    /* JPW-789ABC: o min-height:180px que existia aqui era muleta do painel
+       institucional VAZIO — [data-layout-card] e conteúdo visual eram o mesmo
+       elemento sem filhos, então o reset min-height:0 o desabava para ~5px e a
+       alça de arraste encostava na do widget vizinho. O Status do Sistema tem
+       conteúdo real (4 linhas + rodapé), que sustenta a altura sozinho; a
+       muleta morreu junto com o painel decorativo. */
   }
 
   /* Linha de fatos dentro do card de Clearance (Fase da Conta/Risco/Alavancagem) */
@@ -4182,16 +4227,113 @@
   }
   html[data-shell="global-dashboard"] #gdDashSide #onboardingIncompleteBanner .reset-btn{width:100%}
 
-  /* ---------- Painel institucional ----------
-     O painel institucional é gráfico neutro (sem foto, sem citação, sem
-     dado, sem CTA) — não existe imagem institucional aprovada no
-     repositório; ver decisão registrada com o usuário. aria-hidden já vem
-     no HTML. Largura própria definida acima, junto dos outros cards. */
-  html[data-shell="global-dashboard"] .gd-institutional-panel{
-    min-height:180px; border-radius:10px;
-    background:repeating-linear-gradient(135deg,
-      color-mix(in srgb, var(--jp-ink) 92%, transparent) 0 10px,
-      color-mix(in srgb, var(--jp-ink) 82%, transparent) 10px 20px);
+  /* ---------- Status do Sistema (JPW-789ABC) ----------
+     Substitui o painel institucional decorativo (gradiente listrado,
+     aria-hidden, sem texto). Herda TODO o cromo de .card — superfície, raio,
+     sombra, padding 22, cabeçalho h2 + .art — então aqui só vive o que é
+     próprio do componente. Nenhuma cor literal: só tokens de fase (--f1/f2/f4)
+     e de superfície, que já respondem a claro/escuro.
+
+     Proporção (spec do handoff): alvo ~1.8:1 na célula medium (2×1 ≈ 444×240
+     em viewport 1440). A altura NÃO é fixada: a lista distribui o espaço
+     (flex:1 + space-between) e a linha do grid — align-items:stretch por
+     padrão — iguala a altura ao card vizinho da mesma faixa. É assim que a
+     consistência com o vizinho sai de graça, sem número mágico de altura.
+     min-height é o piso de 168px da spec (4 linhas + cabeçalho). */
+  html[data-shell="global-dashboard"] .gd-system-status{
+    container-type:inline-size; container-name:jpwss;
+    display:flex; flex-direction:column; max-width:560px;
+  }
+  /* O piso de 168px da spec (4 linhas + cabeçalho) precisa desta especificidade
+     para EXISTIR: o reset genérico [data-layout-card]{min-height:0} logo acima
+     pontua (0,3,1) e venceria um seletor de classe simples — foi essa mesma
+     armadilha que obrigou o painel antigo a se declarar como
+     [data-layout-card].gd-institutional-panel. Declarado com a classe junto do
+     atributo, empata em especificidade e vence pela ordem. */
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card].gd-system-status,
+  html[data-shell="global-dashboard"] .jp-widget-sidebar [data-layout-card].gd-system-status{
+    min-height:168px;
+  }
+  /* justify-content:flex-start (e não space-between): quando o card estica para
+     acompanhar a altura do Clearance ao lado — medido até 358px no estado de
+     pendência —, space-between distribuiria a folga ENTRE as linhas de estado,
+     abrindo ~42px entre elas. Agrupadas no topo, a folga se junta num só lugar,
+     acima do rodapé, e as 4 linhas continuam lendo como um bloco.
+     O padding-bottom guarda o respiro mínimo acima do filete: o margin-top:auto
+     do rodapé resolve para 0 quando não há folga (esta lista é flex:1 e já a
+     absorve), então o espaço não pode depender dele. */
+  html[data-shell="global-dashboard"] .jpwss-list{
+    list-style:none; margin:0; padding:0 0 var(--jp-space-3);
+    display:flex; flex-direction:column; gap:var(--jp-space-2); flex:1;
+    justify-content:flex-start;
+  }
+  /* A linha é grade de 3 faixas: ponto fixo, rótulo elástico, meta ao natural.
+     minmax(0,1fr) no rótulo é o que permite o ellipsis funcionar sem estourar
+     a célula — o mesmo cuidado de min-width:0 que falta no kicker do Clearance
+     (achado colateral 4 do handoff, fora deste escopo). */
+  html[data-shell="global-dashboard"] .jpwss-row{
+    display:grid; grid-template-columns:auto minmax(0,1fr) auto;
+    align-items:baseline; gap:var(--jp-space-2);
+    font-family:var(--jp-font-ui); font-size:11.5px; line-height:1.45;
+  }
+  html[data-shell="global-dashboard"] .jpwss-dot{
+    width:7px; height:7px; border-radius:var(--jp-radius-pill);
+    background:var(--jp-ink-muted); align-self:center; flex:none;
+  }
+  /* A COR NUNCA É O ÚNICO CANAL (WCAG 1.4.1): o ponto é decorativo
+     (aria-hidden) e o estado está sempre escrito no rótulo — "Backup
+     confirmado" vs "Backup não confirmado". Remover a cor não remove a
+     informação. */
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="ok"] .jpwss-dot{background:var(--f1)}
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="warn"] .jpwss-dot{background:var(--f2)}
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="bad"] .jpwss-dot{background:var(--f4)}
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="bad"] .jpwss-lbl{color:var(--f4); font-weight:600}
+  html[data-shell="global-dashboard"] .jpwss-lbl{
+    color:var(--jp-ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .jpwss-meta{
+    font-family:var(--mono); font-size:10.5px; color:var(--jp-ink-muted);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .jpwss-act{
+    background:none; border:0; padding:0; cursor:pointer;
+    font-family:var(--jp-font-ui); font-size:11px; font-weight:600;
+    color:var(--jp-action); white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .jpwss-act:hover{text-decoration:underline}
+  html[data-shell="global-dashboard"] .jpwss-foot{
+    margin:0; margin-top:auto; padding-top:var(--jp-space-3);
+    border-top:1px solid var(--jp-border);
+    font-family:var(--jp-font-ui); font-size:10px; color:var(--ink-faint);
+  }
+
+  /* Ordem de compressão da spec, por largura do CARD (não do viewport) — o
+     mesmo padrão de container query já usado em #fxplan.
+     Os limiares da spec são 300px (piso da largura ideal) e 240px (largura
+     mínima) medidos no CARD; container-type:inline-size, porém, consulta o
+     CONTENT BOX. Com o padding:22px de .card são 44px de diferença, então os
+     números aqui são os da spec menos esse padding — 256 e 196. Sem essa
+     conta a compressão dispararia 44px cedo demais: medido, o card de 264px
+     do mobile (que está ACIMA do mínimo de 240) já caía em modo chip.
+       card < 300px (content 256)  meta à direita e rodapé de versão saem;
+       card < 240px (content 196)  subtítulo sai e as 4 linhas viram grade 2×2.
+     O que NUNCA sai, em nenhuma largura: as 4 linhas com rótulo textual. São
+     CRITICAL OPERATIONAL — persistência, backup, frescor e governança. */
+  @container jpwss (max-width:255px){
+    html[data-shell="global-dashboard"] .jpwss-meta,
+    html[data-shell="global-dashboard"] .jpwss-foot{display:none}
+  }
+  /* Nota: uma @container só alcança DESCENDENTES do container, nunca o próprio
+     elemento que declara container-type. Por isso nada aqui dentro tenta mexer
+     no min-height do card — seria código morto. O piso de 168px vale também em
+     modo chip (212×168 medidos, proporção 1.26, ainda mais largo que alto). */
+  @container jpwss (max-width:195px){
+    html[data-shell="global-dashboard"] .gd-system-status h2 .art{display:none}
+    html[data-shell="global-dashboard"] .jpwss-list{
+      display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:var(--jp-space-2); align-content:space-between;
+    }
+    html[data-shell="global-dashboard"] .jpwss-row{font-size:10.5px}
   }
 
   /* ---------- Termômetros / Coerência / VRM — espelhos de leitura ----------
@@ -5004,7 +5146,7 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '5f026cb8d0b94e87';
+const JP_WEALTH_BUILD_ID = 'b73bdd3f7ead5b33';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5495,11 +5637,56 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          qualquer card entre coluna principal e lateral sem quebrar layout. -->
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main jp-widget-grid" id="gdDashMain">
-        <!-- #mcClearanceCard (data-layout-card="operational-clearance") entra
-             aqui via relocação JS, antes do painel institucional. -->
-        <div class="gd-institutional-panel" data-layout-card="institutional-panel" data-layout-allowed-zones="main" data-widget-size="large" data-widget-allowed-sizes="medium large" aria-hidden="true"></div>
-        <!-- #mcMetricStrip (data-layout-card="metric-strip") entra logo após
-             o painel institucional via relocação JS. -->
+        <!-- Via relocação JS entram aqui, nesta ordem, imediatamente antes do
+             Status do Sistema: #mcClearanceCard (operational-clearance, P1) e
+             #mcMetricStrip (metric-strip, P1). Ver 12-global-dashboard.js. -->
+
+        <!-- Status do Sistema (JPW-789ABC) — o espaço antes decorativo (painel
+             institucional: aria-hidden, zero texto, gradiente listrado, 2×2)
+             passa a carregar estado operacional real. Toda linha é ESPELHO DE
+             LEITURA de estado que já existe: persistência (04-persistence.js),
+             backup (S.dataGovernance.backup), frescor de cotações
+             (instruments[].updated + staleInfo) e governança
+             (getOnboardingCompletionState). Nenhum cálculo novo, nenhum estado
+             paralelo — mesmo princípio dos espelhos de Termômetros/VRM abaixo.
+
+             data-layout-card="institutional-panel" é PRESERVADO: é a âncora de
+             relocação usada em 12-global-dashboard.js:48 e a chave da
+             preferência de layout v3 já salva por quem personalizou a tela.
+             Só o rótulo humano e o tamanho padrão mudam.
+
+             O tamanho volta a "medium" (2×1): o footprint 2×2 era o defeito
+             original — um bloco decorativo ocupando a maior célula da grade,
+             acima dos dados de risco. -->
+        <div class="card gd-system-status" data-layout-card="institutional-panel" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium">
+          <h2>Status do Sistema <span class="art">espelho de leitura — sem cálculo novo</span></h2>
+          <ul class="jpwss-list">
+            <li class="jpwss-row" id="jpwSsPersist">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+            </li>
+            <li class="jpwss-row" id="jpwSsBackup">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+            </li>
+            <li class="jpwss-row" id="jpwSsQuotes">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+            </li>
+            <li class="jpwss-row" id="jpwSsGov">
+              <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
+              <span class="jpwss-lbl" data-jpwss-lbl></span>
+              <span class="jpwss-meta" data-jpwss-meta></span>
+              <button type="button" class="jpwss-act" id="jpwSsGovBtn" hidden>Revisar ›</button>
+            </li>
+          </ul>
+          <p class="jpwss-foot">Risk Terminal V9.1 · local-first</p>
+        </div>
+        <!-- #mcMetricStrip não entra mais aqui: desde o rebalanceamento
+             JPW-789ABC ele é relocado para ANTES do Status do Sistema. -->
 
         <!-- Termômetros / Coerência / VRM — espelhos de leitura do mesmo compute()
              já usado no Execution Board. Novos IDs, sem input, sem cálculo novo. -->
@@ -5711,7 +5898,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <p class="jp-slide-eyebrow">Risco e capacidade</p>
           <h2 class="jp-slide-title">Quanto espaço operacional resta agora</h2>
           <!-- N2 · Mission Metrics — status executivos compactos -->
-          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
+          <!-- JPW-789ABC: `medium` (2×1) em vez de `full`. A faixa sobe para a
+               linha 1 da coluna direita, ao lado do Clearance, onde fecha o vazio
+               que sobrava e mantém P1 junto de P1. Os 4 fatos continuam todos
+               visíveis: em `medium` o CSS já os arranja em 2×2
+               ([data-widget-size="medium"].mc-metric-strip em app.css). Nada é
+               ocultado — só reorganizado. `allowed-sizes` segue "medium full". -->
+          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
             <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
             <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
             <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
@@ -8484,6 +8677,13 @@ function render(){
   renderExecClearance(c);
   renderOnboardingIncompleteBanner();
   renderExecutionOnboardingWarning();
+  // Status do Sistema — espelho de leitura de persistência/backup/frescor/
+  // governança. O guard de typeof segue o idioma já usado no boot para
+  // renderDgStorageCard: este arquivo é ordem 11 do manifest e o renderizador
+  // vive em 40-app/12-global-dashboard.js (41), então no primeiro render
+  // disparado por boot() a função ainda não existe. Aquele arquivo faz a
+  // primeira pintura por conta própria assim que todos os scripts carregam.
+  if(typeof renderSystemStatus==='function') renderSystemStatus();
 }
 // ============ OPERATIONAL CLEARANCE — veredito executivo (N1) ============
 // "Posso operar agora?" — derivado exclusivamente de compute() + estado salvo (S.onboarding).
@@ -15453,23 +15653,36 @@ function relocateGlobalDashboardShell() {
   const footer = gdEl('gdFooter');
   if (footer) footer.hidden = false;
 
-  // Grid executivo do Dashboard: o card de Clearance nasce dentro do slide 0
-  // do carrossel (mantém o contrato de renderOperationalClearance) e entra
-  // em #gdDashMain imediatamente antes do painel institucional estático. A
-  // faixa de 4 métricas nasce no slide 1, hoje inatingível sob esta flag (o
-  // carrossel do modo imersivo foi aposentado, sem controles para trocar de
-  // slide) — e passa a ficar logo depois do painel institucional. Ambos são
-  // só reposicionados — nenhum ID, listener ou valor muda. A posição final
-  // de TODOS os cards (inclusive estes dois) pode ainda ser reordenada pelo
-  // layout personalizável (13-dashboard-layout.js), que roda depois deste
-  // relocate e só reordena — nunca cria ou clona nós.
+  // Grid executivo do Dashboard: o card de Clearance e a faixa de 4 métricas
+  // nascem dentro dos slides 0 e 1 do carrossel (o Clearance mantém o contrato
+  // de renderOperationalClearance; o carrossel do modo imersivo foi aposentado,
+  // sem controles para trocar de slide) e entram em #gdDashMain nesta ordem:
+  //
+  //     Clearance (P1)  →  Metric Strip (P1)  →  Status do Sistema (P2)
+  //
+  // REBALANCEAMENTO JPW-789ABC: a faixa de métricas vinha DEPOIS do painel, o
+  // que colocava um card P2 no meio do par P1 e, desde que o painel encolheu de
+  // 2×2 para 2×1, deixava 263–386px de vazio ao lado do Clearance (medido). Com
+  // a faixa promovida para a linha 1 da coluna direita, a hierarquia volta a ser
+  // P1 › P1 › P2 e o vazio fecha em zero — o mesmo movimento resolve as duas
+  // coisas. A faixa vira `medium` (2×1) e ocupa a célula que sobrava.
+  //
+  // Ambos são só reposicionados — nenhum ID, listener ou valor muda. A posição
+  // final de TODOS os cards pode ainda ser reordenada pelo layout personalizável
+  // (13-dashboard-layout.js), que roda depois deste relocate e só reordena —
+  // nunca cria ou clona nós.
   const dashMain = gdEl('gdDashMain');
   const instPanel = dashMain && dashMain.querySelector(':scope > [data-layout-card="institutional-panel"]');
   if (instPanel) {
-    const clearanceCard = gdEl('mcClearanceCard');
-    if (clearanceCard && clearanceCard.nextElementSibling !== instPanel) instPanel.before(clearanceCard);
+    // A faixa entra primeiro, imediatamente antes do painel; o Clearance é então
+    // ancorado NELA, não no painel. As guardas de idempotência olham para o
+    // vizinho que cada um deve ter no fim — reexecutar não embaralha a ordem.
     const metricStrip = gdEl('mcMetricStrip');
-    if (metricStrip && metricStrip.previousElementSibling !== instPanel) instPanel.after(metricStrip);
+    if (metricStrip && metricStrip.nextElementSibling !== instPanel) instPanel.before(metricStrip);
+    const clearanceCard = gdEl('mcClearanceCard');
+    // Sem a faixa no DOM, o painel volta a ser a âncora do Clearance.
+    const anchor = (metricStrip && metricStrip.parentElement === dashMain) ? metricStrip : instPanel;
+    if (clearanceCard && clearanceCard.nextElementSibling !== anchor) anchor.before(clearanceCard);
   }
 
   // Alerta real de onboarding: reposicionado (não clonado) para a coluna
@@ -15494,6 +15707,99 @@ function relocateGlobalDashboardShell() {
   if (hero) hero.inert = true;
 }
 relocateGlobalDashboardShell();
+
+/* ================== STATUS DO SISTEMA (JPW-789ABC) ================== */
+// O espaço antes ocupado pelo painel institucional decorativo passa a mostrar
+// estado operacional real. TODA linha é espelho de leitura — nenhum cálculo
+// novo, nenhum estado paralelo, nenhuma escrita. As quatro fontes já existem:
+//
+//   persistência  jpWealthPersistenceFailure / jpWealthPersistenceIsBlocked()  (00-core/04)
+//   backup        S.dataGovernance.backup.lastConfirmedAt                      (00-core/03)
+//   frescor       S.instruments[].updated + staleInfo()                        (10-domain/04)
+//   governança    getOnboardingCompletionState()                               (10-domain/01)
+//
+// staleInfo() é REUSADO em vez de reimplementado: os limiares de frescor
+// (≤3 dias / ≤20 / 21+) são dele e continuam com dono único. Duplicá-los aqui
+// criaria duas verdades sobre quando uma cotação deixa de ser confiável.
+
+function gdSsRow(id, state, label, meta) {
+  const row = gdEl(id); if (!row) return;
+  row.dataset.state = state;
+  const lbl = row.querySelector('[data-jpwss-lbl]'); if (lbl) lbl.textContent = label;
+  const mt = row.querySelector('[data-jpwss-meta]'); if (mt) mt.textContent = meta || '';
+}
+
+function renderSystemStatus() {
+  if (document.documentElement.dataset.shell !== 'global-dashboard') return;
+  if (!gdEl('jpwSsPersist')) return; // componente fora do DOM: nada a fazer
+
+  // 1 · PERSISTÊNCIA — o risco nº 1 do projeto é perda silenciosa de dados,
+  // então a falha de gravação (A-001) nunca é suprimida nem comprimida.
+  // Sem carimbo de horário: `savedTag` é um selo transitório de 1200ms, não
+  // guarda "salvo às hh:mm:ss" em lugar nenhum. Registrar esse horário exigiria
+  // escrever dentro de save() — mudança N2, fora deste escopo e não autorizada.
+  // A spec trata a meta da direita como o PRIMEIRO item comprimível; o que ela
+  // proíbe suprimir é a linha e seu rótulo, que estão aqui.
+  const falha = (typeof jpWealthPersistenceFailure === 'object' && jpWealthPersistenceFailure)
+    ? jpWealthPersistenceFailure.active : false;
+  const travado = (typeof jpWealthPersistenceIsBlocked === 'function') && jpWealthPersistenceIsBlocked();
+  if (falha) {
+    gdSsRow('jpwSsPersist', 'bad', 'Falha ao gravar neste navegador',
+      jpWealthPersistenceFailure.kind === 'serialize' ? 'serialização' : 'armazenamento');
+  } else if (travado) {
+    gdSsRow('jpwSsPersist', 'warn', 'Gravação suspensa — recuperação pendente', '');
+  } else {
+    gdSsRow('jpwSsPersist', 'ok', 'Dados salvos neste navegador', '');
+  }
+
+  // 2 · BACKUP
+  const bk = (S.dataGovernance && S.dataGovernance.backup) || {};
+  if (bk.lastConfirmedAt) {
+    const quando = (typeof dgFmtDateTime === 'function') ? dgFmtDateTime(bk.lastConfirmedAt) : '';
+    gdSsRow('jpwSsBackup', 'ok', 'Backup confirmado', quando);
+  } else {
+    gdSsRow('jpwSsBackup', 'warn', 'Backup não confirmado', 'nunca');
+  }
+
+  // 3 · FRESCOR DAS COTAÇÕES — vale a PIOR das cotações, não a média nem a
+  // melhor: o semáforo responde "posso confiar na grade agora?", e um único
+  // instrumento defasado já compromete a resposta.
+  const instrumentos = Array.isArray(S.instruments) ? S.instruments : [];
+  if (instrumentos.length && typeof staleInfo === 'function' && typeof daysStale === 'function') {
+    const pior = instrumentos.reduce((a, b) => daysStale(a.updated) >= daysStale(b.updated) ? a : b);
+    const st = staleInfo(pior.updated);
+    const estado = st.cls === 'fresh' ? 'ok' : (st.cls === 'warn' ? 'warn' : 'bad');
+    gdSsRow('jpwSsQuotes', estado, 'Cotações de referência', st.label);
+  } else {
+    gdSsRow('jpwSsQuotes', 'warn', 'Cotações de referência', 'sem dados');
+  }
+
+  // 4 · GOVERNANÇA — reusa a MESMA severidade do banner de onboarding, para
+  // que as duas superfícies nunca discordem sobre o estado do período.
+  const btn = gdEl('jpwSsGovBtn');
+  if (typeof getOnboardingCompletionState === 'function') {
+    const gov = getOnboardingCompletionState();
+    const estado = gov.severity === 'complete' ? 'ok' : (gov.severity === 'critical' ? 'bad' : 'warn');
+    gdSsRow('jpwSsGov', estado, 'Governança do período', gov.completed + '/' + gov.total + ' seções');
+    if (btn) btn.hidden = gov.complete;
+  } else if (btn) btn.hidden = true;
+}
+
+// "Revisar ›" reusa o MESMO destino do banner de onboarding
+// (openFirstIncompleteOnboarding) — nenhum fluxo novo de navegação.
+document.addEventListener('click', event => {
+  if (!event.target.closest('#jpwSsGovBtn')) return;
+  if (typeof openFirstIncompleteOnboarding === 'function') openFirstIncompleteOnboarding();
+});
+
+// Primeira pintura. boot() roda render() na ordem 36 do manifest — antes deste
+// arquivo (41) existir —, então aquele primeiro render pula o componente pelo
+// guard de typeof em 03-main-render.js. Um macrotask resolve: setTimeout só
+// entrega quando a thread principal termina de avaliar TODOS os <script>
+// síncronos, inclusive 16-storage-governance.js (45), de onde vem dgFmtDateTime.
+// Não é rAF de propósito — rAF não dispara em aba oculta, lição já paga duas
+// vezes nesta base (ver a varredura dos gauges em 20-ui/03-main-render.js).
+setTimeout(renderSystemStatus, 0);
 
 // Links do rodapé novo com destino real dentro da Central de Configurações
 // (Estatuto, Exportar Dados, Central de Configurações, Documentação) —
@@ -15546,7 +15852,7 @@ const JP_WIDGET_SCREENS = {
 const JP_WIDGET_SCREEN_IDS = Object.keys(JP_WIDGET_SCREENS);
 
 const DASH_LAYOUT_LABELS = {
-  'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Painel institucional',
+  'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
   'metric-strip': 'A faixa de métricas principais', 'thermometers': 'Termômetros',
   'leverage-coherence': 'Coerência de Alavancagem', 'vrm': 'VRM · Regime de Volatilidade',
   'posture': 'Postura e conformidade', 'profile-context': 'Perfil e Contexto',
@@ -15584,8 +15890,8 @@ function dashLayoutDeepFreeze(obj) {
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
     { id: 'operational-clearance', zone: 'main', size: 'large', order: 0 },
-    { id: 'institutional-panel', zone: 'main', size: 'large', order: 1 },
-    { id: 'metric-strip', zone: 'main', size: 'full', order: 2 },
+    { id: 'metric-strip', zone: 'main', size: 'medium', order: 1 },
+    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 2 },
     { id: 'thermometers', zone: 'main', size: 'compact', order: 3 },
     { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 4 },
     { id: 'vrm', zone: 'main', size: 'compact', order: 5 },
@@ -15701,14 +16007,37 @@ function dashLayoutZoneLabel(zones) {
 
 /* ======================= VALIDAÇÃO E PERSISTÊNCIA (v3) ======================= */
 
-const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3';
+const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4';
+const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
 
 // Valida a lista de widgets de UMA tela contra a política real daquela tela
 // (inventário de IDs esperados + zonas/tamanhos permitidos por widget, lidos
 // do DOM). Cada tela é validada de forma independente — uma tela quebrada
 // nunca contamina outra.
+// MIGRAÇÃO JPW-789ABC — o painel institucional decorativo virou Status do
+// Sistema e perdeu o tamanho 'large' (o footprint 2×2 era exatamente o defeito
+// que o redesign corrige). Sem esta coerção o estrago seria silencioso e
+// desproporcional: 'large' ERA o padrão antigo, então toda preferência já
+// gravada carrega institutional-panel em 'large'; ao reprovar no teste de
+// tamanho permitido, dashLayoutValidateScreenWidgets devolve null para a TELA
+// INTEIRA e dashLayoutNormalizeV4 joga fora TODA a personalização do Dashboard
+// — não só este widget. Coerção pontual, portanto: um widget, um tamanho,
+// preservando zona e ordem escolhidas pelo usuário.
+//
+// Aplicada aqui, no topo do validador, e não em cada chamador: os três
+// caminhos (carga v3, promoção da v2 legada e revalidação ao concluir a
+// edição) passam obrigatoriamente por esta função, então nenhum fica de fora.
+// Nos casos em que não há o que migrar é no-op.
+function dashLayoutMigrateWidgets(screenId, widgets) {
+  if (screenId !== 'dash' || !Array.isArray(widgets)) return widgets;
+  return widgets.map(w => (w && typeof w === 'object' && w.id === 'institutional-panel' && w.size === 'large')
+    ? { ...w, size: 'medium' }
+    : w);
+}
+
 function dashLayoutValidateScreenWidgets(screenId, widgets) {
+  widgets = dashLayoutMigrateWidgets(screenId, widgets);
   const expectedIds = dashLayoutAllowedWidgetIds(screenId);
   if (!Array.isArray(widgets) || widgets.length !== expectedIds.length) return null;
   const seen = new Set();
@@ -15728,34 +16057,35 @@ function dashLayoutValidateScreenWidgets(screenId, widgets) {
   return widgets.slice().sort((a, b) => a.order - b.order).map((w, i) => ({ id: w.id, zone: w.zone, size: w.size, order: i }));
 }
 
-// Normaliza um envelope v3 bruto: cada tela é resolvida de forma
+// Normaliza um envelope v4 bruto: cada tela é resolvida de forma
 // independente — telas inválidas recebem só o PADRÃO DAQUELA TELA; as
 // demais, válidas, são preservadas exatamente como estavam. Nunca retorna
 // null para o todo por causa de uma tela quebrada.
-function dashLayoutNormalizeV3(raw) {
-  const rawScreens = (raw && typeof raw === 'object' && raw.version === 3 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
+function dashLayoutNormalizeV4(raw) {
+  const rawScreens = (raw && typeof raw === 'object' && raw.version === 4 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
   const screens = {};
   JP_WIDGET_SCREEN_IDS.forEach(screenId => {
     const provided = rawScreens[screenId] && rawScreens[screenId].widgets;
     const validated = dashLayoutValidateScreenWidgets(screenId, provided);
     screens[screenId] = { widgets: validated || JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w })) };
   });
-  return { version: 3, screens };
+  return { version: 4, screens };
 }
 
-function dashLayoutSaveV3(full) {
-  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V3, JSON.stringify(full)); } catch (_) { return false; }
+function dashLayoutSaveV4(full) {
+  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V4, JSON.stringify(full)); } catch (_) { return false; }
   return true;
 }
 function dashLayoutClearAllPreferences() {
+  try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
 }
 
 // Migração v2 (só Dashboard, já com tamanho) → v3 (multitelas). v2 tem
-// precedência zero se v3 já existir — só é olhada se a chave v3 nunca foi
-// criada. Só promove (grava v3 e apaga v2) depois de validar; se a v2 for
-// inválida, não apaga nada e cai no padrão.
+// precedência zero se v3/v4 já existirem — só é olhada se nenhuma das duas
+// foi criada. Só promove depois de validar; se a v2 for inválida, não apaga
+// nada e cai no padrão.
 function dashLayoutValidateV2Legacy(pref) {
   if (!pref || typeof pref !== 'object' || pref.version !== 2) return null;
   // Forma real da v2 (só Dashboard, sem o envelope "screens" da v3):
@@ -15764,14 +16094,59 @@ function dashLayoutValidateV2Legacy(pref) {
   return dashLayoutValidateScreenWidgets('dash', widgets);
 }
 
+// MIGRAÇÃO ÚNICA v3 → v4 (JPW-789ABC, rebalanceamento do Status do Sistema).
+//
+// Por que ÚNICA e não coerção permanente como a do painel institucional: os
+// dois casos são diferentes. 'large' deixou de ser tamanho PERMITIDO para o
+// painel, então coagi-lo em toda validação é uma rede de segurança que nunca
+// atropela escolha nenhuma — ninguém consegue mais escolher 'large' ali. Já
+// 'full' CONTINUA permitido para a faixa de métricas; coagir 'full'→'medium'
+// a cada carga tornaria a opção impossível de salvar (dashLayoutFinish também
+// valida antes de gravar), quebrando o editor de layout para esse widget.
+// Por isso a conversão acontece uma vez, na promoção de envelope — exatamente
+// o mecanismo que a v2→v3 já usa: lê a chave antiga, grava a nova, apaga a
+// antiga.
+//
+// A ORDEM só é trocada quando o par ainda está na relação do padrão ANTIGO
+// (painel imediatamente antes da faixa). Quem reordenou a tela por conta
+// própria mantém a ordem que escolheu — a migração conserta o padrão, não
+// sobrescreve personalização.
+function dashLayoutMigrateDashV3ToV4(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  const out = widgets.map(w => (w && typeof w === 'object') ? { ...w } : w);
+  const strip = out.find(w => w && w.id === 'metric-strip');
+  const panel = out.find(w => w && w.id === 'institutional-panel');
+  if (!strip || !panel) return out;
+  if (strip.size === 'full') strip.size = 'medium';
+  if (strip.zone === panel.zone && strip.order === panel.order + 1) {
+    const t = strip.order; strip.order = panel.order; panel.order = t;
+  }
+  return out;
+}
+
 function dashLayoutLoadFullState() {
+  const rawV4 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { return null; } })();
+  if (rawV4 !== null) {
+    // v4 existe (mesmo que parcialmente inválida) — tem precedência total e
+    // nunca reabre migração (evita remigrar a cada carga).
+    let parsed = null;
+    try { parsed = JSON.parse(rawV4); } catch (_) { /* trata como ausente abaixo */ }
+    return dashLayoutNormalizeV4(parsed);
+  }
   const rawV3 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { return null; } })();
   if (rawV3 !== null) {
-    // v3 existe (mesmo que parcialmente inválida) — tem precedência total,
-    // nunca olha para v2 de novo (evita migrar repetidamente a cada carga).
-    let parsed = null;
-    try { parsed = JSON.parse(rawV3); } catch (_) { /* trata como ausente abaixo */ }
-    return dashLayoutNormalizeV3(parsed);
+    let v3Parsed = null;
+    try { v3Parsed = JSON.parse(rawV3); } catch (_) { /* ignora */ }
+    const v3Screens = (v3Parsed && typeof v3Parsed === 'object' && v3Parsed.version === 3 && v3Parsed.screens && typeof v3Parsed.screens === 'object') ? v3Parsed.screens : {};
+    const promoted = { version: 4, screens: {} };
+    JP_WIDGET_SCREEN_IDS.forEach(screenId => {
+      const widgets = v3Screens[screenId] && v3Screens[screenId].widgets;
+      promoted.screens[screenId] = { widgets: screenId === 'dash' ? dashLayoutMigrateDashV3ToV4(widgets) : widgets };
+    });
+    const candidate = dashLayoutNormalizeV4(promoted);
+    dashLayoutSaveV4(candidate);
+    try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
+    return candidate;
   }
   const rawV2 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { return null; } })();
   if (rawV2 !== null) {
@@ -15779,14 +16154,15 @@ function dashLayoutLoadFullState() {
     try { v2Parsed = JSON.parse(rawV2); } catch (_) { /* ignora */ }
     const migratedDash = dashLayoutValidateV2Legacy(v2Parsed);
     if (migratedDash) {
-      const candidate = dashLayoutNormalizeV3({ version: 3, screens: { dash: { widgets: migratedDash } } });
-      dashLayoutSaveV3(candidate);
+      // A v2 nasceu com o padrão antigo, então passa pela mesma promoção.
+      const candidate = dashLayoutNormalizeV4({ version: 4, screens: { dash: { widgets: dashLayoutMigrateDashV3ToV4(migratedDash) } } });
+      dashLayoutSaveV4(candidate);
       try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
       return candidate;
     }
     // v2 presente mas inválida — não promove, não apaga, cai no padrão completo
   }
-  return dashLayoutNormalizeV3(null); // tudo padrão
+  return dashLayoutNormalizeV4(null); // tudo padrão
 }
 
 function dashLayoutApplyScreen(screenId, widgets) {
@@ -16233,7 +16609,7 @@ function dashLayoutFinish() {
   }
   const full = dashLayoutLoadFullState();
   dirty.forEach(screenId => { full.screens[screenId] = { widgets: validatedByScreen[screenId] }; });
-  dashLayoutSaveV3(full); // uma única escrita, com todas as telas alteradas já validadas
+  dashLayoutSaveV4(full); // uma única escrita, com todas as telas alteradas já validadas
   const labels = dirty.map(id => JP_WIDGET_SCREENS[id].label).join(', ');
   dashLayoutEndSession();
   dashLayoutAnnounce((dirty.length === 1 ? '1 tela salva: ' : dirty.length + ' telas salvas: ') + labels + '.');
@@ -16256,7 +16632,7 @@ function dashLayoutRestoreDefaultConfirm() {
   }
   const full = dashLayoutLoadFullState();
   full.screens[screenId] = { widgets: dashLayoutCurrentScreenState(screenId) };
-  dashLayoutSaveV3(full);
+  dashLayoutSaveV4(full);
   dashLayoutAnnounce('Layout padrão de ' + label + ' restaurado.');
 }
 
@@ -16276,7 +16652,7 @@ function dashLayoutRestoreAllConfirm() {
     return;
   }
   dashLayoutClearAllPreferences();
-  dashLayoutApplyAllScreens(dashLayoutNormalizeV3(null));
+  dashLayoutApplyAllScreens(dashLayoutNormalizeV4(null));
   dashLayoutAnnounce('Layout padrão restaurado em todas as telas.');
 }
 

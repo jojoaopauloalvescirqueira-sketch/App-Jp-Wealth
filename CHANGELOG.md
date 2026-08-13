@@ -2,6 +2,69 @@
 
 ## [Unreleased]
 
+### Status do Sistema — candidato de 2026-08-12 (branch `feature/system-status-panel`; JPW-789ABC)
+
+- **O painel institucional decorativo virou estado operacional.** Aquele bloco
+  era `aria-hidden`, sem texto, sem controle, um `repeating-linear-gradient` em
+  135° ocupando `large` (2×2 ⇒ ~444×619 em viewport 1440) como **segundo**
+  elemento da coluna principal — e, no mobile, o segundo da tela inteira, antes
+  dos dados de risco. No lugar dele, quatro linhas de estado que já existiam no
+  sistema e não tinham casa no Dashboard: **persistência · backup · frescor das
+  cotações · governança do período**.
+- **Espelho de leitura, não fonte nova.** `renderSystemStatus()` só lê:
+  `jpWealthPersistenceFailure`/`jpWealthPersistenceIsBlocked()` (A-001),
+  `S.dataGovernance.backup.lastConfirmedAt`, `S.instruments[].updated` via o
+  **mesmo** `staleInfo()` do Stop Estatístico (limiares ≤3 / ≤20 / 21+ seguem com
+  dono único, não foram reimplementados) e `getOnboardingCompletionState()` — a
+  mesma severidade do banner de onboarding, para as duas superfícies nunca
+  discordarem. Nenhum cálculo novo, nenhum estado paralelo, nenhuma escrita.
+  "Revisar ›" reusa `openFirstIncompleteOnboarding()`.
+- **A cor nunca é o único canal (WCAG 1.4.1).** O ponto é decorativo e o estado
+  está sempre escrito no rótulo — "Backup confirmado" vs "Backup não
+  confirmado". As quatro linhas com rótulo são CRITICAL OPERATIONAL: comprimem
+  meta, rodapé e subtítulo, mas nunca somem, em nenhuma largura.
+- **Rebalanceamento do cockpit.** Encolher o painel de `large` para `medium`
+  expôs **263–386px de vazio** ao lado do Clearance, que segue em 2×2. A faixa
+  de métricas (P1) subiu para a linha 1 da coluna direita e o Status (P2) desceu
+  para a linha 2: o vazio fecha em **zero** e a ordem de leitura deixa de ser
+  P1 › P2 › P1 — o Status partia o par P1 ao meio — para ser **P1 › P1 › P2**.
+  Abaixo de 1280px o Clearance passa a ocupar as quatro colunas: a 2 colunas ele
+  cresce em altura (546px a 1180, 648px a 960) e arrastava o Status para 0,79 de
+  proporção, mais alto que largo. Só `span`, nunca `order` — ordem visual segue a
+  do DOM (WCAG 1.3.2, mesma razão pela qual a grade não usa `dense`).
+- **Migração de preferência v3 → v4, única e não destrutiva.** `large` deixou de
+  ser permitido para o painel e `full` deixou de ser o padrão da faixa; sem
+  migrar, `dashLayoutValidateScreenWidgets` devolveria `null` para a **tela
+  inteira** e jogaria fora toda a personalização do Dashboard. A coerção de
+  `large` fica permanente no validador (é tamanho proibido, não atropela
+  escolha); a de `full` acontece **uma vez**, na promoção de envelope — `full`
+  continua legal para a faixa, e coagi-lo a cada carga o tornaria impossível de
+  salvar, já que `dashLayoutFinish()` também valida antes de gravar. Verificado:
+  personalização preservada na promoção, e escolher `full` depois dela persiste.
+- **Três defeitos corrigidos no caminho**, todos expostos pela mudança e
+  confirmados por medição: (a) o `min-height` do componente nascia morto — o
+  reset `[data-layout-card]{min-height:0}` pontua (0,3,1) e vencia um seletor de
+  classe; (b) os limiares de `@container` disparavam 44px cedo demais, porque
+  `inline-size` consulta o *content box* e os números da spec são do *card* — o
+  card de 264px do mobile, acima do mínimo de 240, já caía em modo chip; (c) a
+  regra de 2 colunas da faixa em `medium` pontuava (0,2,1) e perdia para
+  `html[data-ui-version="tesla-inspired"] #mcMetricStrip` (1,1,1), da camada
+  Tesla — inócuo enquanto a faixa era `full`, mas ao promovê-la para `medium`
+  passava a truncar dado P1 ("FASE 1" → "FASE…", "$320 / $400" → "$320…").
+- **Limitação conhecida:** na faixa estreita (≤1279px) a caixa do valor tem
+  ~100px e os números quebram em linha em vez de truncar; um token único acima
+  de ~10 caracteres (`$1.234.567`) ainda corta. Inalcançável na conta atual
+  (teto de risco $400) — registrado como pendência, não corrigido aqui.
+- Nenhuma constante financeira, fórmula, fase, teto, perfil ou parâmetro
+  normativo foi tocado. `jpwealth_v9_state` e o formato de backup permanecem
+  inalterados; `save()` não foi modificado (o carimbo `hh:mm:ss` da linha de
+  persistência exigiria mudança N2 e ficou de fora).
+- **AGENTIC IMPACT: nenhum.** Nenhuma skill, agente, router, `AGENTS.md`,
+  `CLAUDE.md` ou documento de `docs/governance/` referencia o painel
+  institucional. A âncora `[data-layout-card="institutional-panel"]` foi
+  **preservada** de propósito: é o contrato de relocação e a chave das
+  preferências de layout já gravadas; só o rótulo humano e o tamanho mudaram.
+
 ### Tickets MVP — candidato de 2026-08-12 (branch `feature/tickets-mvp`; JPW-NPQRST, JPW-QRNPKM, JPW-785634)
 
 - **JPW-NPQRST — menu de ações do ticket.** Cada card ganhou um `⋯` que abre um

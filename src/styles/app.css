@@ -4076,8 +4076,45 @@
      achados na auditoria de legibilidade (ver relatório entregue ao
      usuário). Só estes três widgets precisaram de ajuste; os demais já são
      flexíveis o bastante nos tamanhos propostos. */
-  html[data-shell="global-dashboard"] [data-widget-size="medium"].mc-metric-strip{grid-template-columns:repeat(2,1fr)}
+  /* O seletor precisa do ID para VALER. A camada Tesla declara
+     `html[data-ui-version="tesla-inspired"] #mcMetricStrip{grid-template-columns:repeat(4,1fr)}`
+     — (1,1,1) por causa do ID — e o shell global-dashboard roda POR CIMA dela,
+     com as duas flags ativas ao mesmo tempo. Escrita com classe, esta regra
+     pontuava (0,2,1) e perdia: a faixa continuava em 4 colunas mesmo em
+     `medium`. Nunca se notou porque o tamanho padrão era `full`; ao promover a
+     faixa para `medium` (JPW-789ABC) o defeito apareceu truncando dado P1 —
+     "FASE 1" virava "FASE…" e "$320 / $400" virava "$320…" em tiles de 98px. */
+  html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip{grid-template-columns:repeat(2,1fr)}
   html[data-shell="global-dashboard"] [data-widget-size="compact"] .gd-vrm-atr{flex-direction:column}
+
+  /* JPW-789ABC — variante estreita da região do cockpit.
+     Acima de 1280px o Clearance fica em 2×2 e a coluna direita empilha
+     Metric Strip (P1) sobre Status do Sistema (P2), sem vazio. Abaixo disso o
+     Clearance a 2 colunas fica estreito e cresce muito em altura — medido:
+     546px a 1180 e 648px a 960 —, e o Status, preso à mesma faixa de linhas,
+     era arrastado junto até 0,79 de proporção (mais alto que largo, contra a
+     spec). Dando as 4 colunas ao Clearance ele volta a ser largo e baixo
+     (356px a 1180), e a faixa e o Status passam a dividir a linha seguinte,
+     cada um em `medium`, com proporção 1,38–1,44.
+     Só SPAN — nunca `order`: a ordem visual continua sendo a do DOM
+     (WCAG 1.3.2, mesma razão pela qual a grade não usa `dense`). E `full` é
+     tamanho já permitido para este card (data-widget-allowed-sizes="large
+     full"), então isto não inventa estado novo nem toca a preferência salva. */
+  @media(max-width:1279px){
+    html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card="operational-clearance"]{
+      grid-column:1 / -1; grid-row:auto;
+    }
+    /* Nesta faixa a faixa de métricas divide a linha com o Status e cai para
+       ~279px (a 960), o que dá tiles de 132px e caixa de valor de 100px. O par
+       "$320 / $400" pede 126px e era CORTADO por white-space:nowrap — truncar
+       risco aberto contra teto é justamente o que a hierarquia P1 proíbe.
+       Deixar quebrar em duas linhas preserva o número inteiro sem mexer no
+       corpo tipográfico; a quebra cai no espaço ao redor da barra. A altura
+       extra é absorvida pela linha do grid, que já é minmax(...,auto). */
+    html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip .v{
+      white-space:normal;
+    }
+  }
 
   @media(max-width:900px){
     html[data-shell="global-dashboard"] .jp-widget-grid{display:flex; flex-direction:column}
@@ -4090,12 +4127,20 @@
        mas não altera nada visualmente. */
     html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="compact"]{width:60%; align-self:flex-start}
     html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="medium"]{width:85%; align-self:flex-start}
-    /* O painel institucional é o único card em que [data-layout-card] e o
-       conteúdo visual são o MESMO elemento vazio — o reset genérico
-       min-height:0 acima vence o min-height:180px de .gd-institutional-panel
-       por especificidade e, sem o grid unificando alturas de linha, o card
-       desaba para ~5px e a alça de arraste encosta na do widget vizinho. */
-    html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card].gd-institutional-panel{min-height:180px}
+    /* JPW-789ABC: exceção deliberada à regra de largura acima. A faixa de
+       métricas passou a `medium` para caber ao lado do Clearance no desktop,
+       mas ela carrega os 4 fatos P1 (fase, DD, risco/teto, alav./teto) e no
+       empilhamento vertical viria recuada a 85% logo abaixo de um veredito de
+       100% — lida como subordinada a ele. P1 não pode parecer secundário, então
+       aqui ela volta a ocupar a largura inteira. É o único widget com essa
+       exceção; para os demais a diferenciação por largura continua valendo. */
+    html[data-shell="global-dashboard"] .jp-widget-grid [data-widget-size="medium"].mc-metric-strip{width:100%; align-self:stretch}
+    /* JPW-789ABC: o min-height:180px que existia aqui era muleta do painel
+       institucional VAZIO — [data-layout-card] e conteúdo visual eram o mesmo
+       elemento sem filhos, então o reset min-height:0 o desabava para ~5px e a
+       alça de arraste encostava na do widget vizinho. O Status do Sistema tem
+       conteúdo real (4 linhas + rodapé), que sustenta a altura sozinho; a
+       muleta morreu junto com o painel decorativo. */
   }
 
   /* Linha de fatos dentro do card de Clearance (Fase da Conta/Risco/Alavancagem) */
@@ -4172,16 +4217,113 @@
   }
   html[data-shell="global-dashboard"] #gdDashSide #onboardingIncompleteBanner .reset-btn{width:100%}
 
-  /* ---------- Painel institucional ----------
-     O painel institucional é gráfico neutro (sem foto, sem citação, sem
-     dado, sem CTA) — não existe imagem institucional aprovada no
-     repositório; ver decisão registrada com o usuário. aria-hidden já vem
-     no HTML. Largura própria definida acima, junto dos outros cards. */
-  html[data-shell="global-dashboard"] .gd-institutional-panel{
-    min-height:180px; border-radius:10px;
-    background:repeating-linear-gradient(135deg,
-      color-mix(in srgb, var(--jp-ink) 92%, transparent) 0 10px,
-      color-mix(in srgb, var(--jp-ink) 82%, transparent) 10px 20px);
+  /* ---------- Status do Sistema (JPW-789ABC) ----------
+     Substitui o painel institucional decorativo (gradiente listrado,
+     aria-hidden, sem texto). Herda TODO o cromo de .card — superfície, raio,
+     sombra, padding 22, cabeçalho h2 + .art — então aqui só vive o que é
+     próprio do componente. Nenhuma cor literal: só tokens de fase (--f1/f2/f4)
+     e de superfície, que já respondem a claro/escuro.
+
+     Proporção (spec do handoff): alvo ~1.8:1 na célula medium (2×1 ≈ 444×240
+     em viewport 1440). A altura NÃO é fixada: a lista distribui o espaço
+     (flex:1 + space-between) e a linha do grid — align-items:stretch por
+     padrão — iguala a altura ao card vizinho da mesma faixa. É assim que a
+     consistência com o vizinho sai de graça, sem número mágico de altura.
+     min-height é o piso de 168px da spec (4 linhas + cabeçalho). */
+  html[data-shell="global-dashboard"] .gd-system-status{
+    container-type:inline-size; container-name:jpwss;
+    display:flex; flex-direction:column; max-width:560px;
+  }
+  /* O piso de 168px da spec (4 linhas + cabeçalho) precisa desta especificidade
+     para EXISTIR: o reset genérico [data-layout-card]{min-height:0} logo acima
+     pontua (0,3,1) e venceria um seletor de classe simples — foi essa mesma
+     armadilha que obrigou o painel antigo a se declarar como
+     [data-layout-card].gd-institutional-panel. Declarado com a classe junto do
+     atributo, empata em especificidade e vence pela ordem. */
+  html[data-shell="global-dashboard"] .jp-widget-grid [data-layout-card].gd-system-status,
+  html[data-shell="global-dashboard"] .jp-widget-sidebar [data-layout-card].gd-system-status{
+    min-height:168px;
+  }
+  /* justify-content:flex-start (e não space-between): quando o card estica para
+     acompanhar a altura do Clearance ao lado — medido até 358px no estado de
+     pendência —, space-between distribuiria a folga ENTRE as linhas de estado,
+     abrindo ~42px entre elas. Agrupadas no topo, a folga se junta num só lugar,
+     acima do rodapé, e as 4 linhas continuam lendo como um bloco.
+     O padding-bottom guarda o respiro mínimo acima do filete: o margin-top:auto
+     do rodapé resolve para 0 quando não há folga (esta lista é flex:1 e já a
+     absorve), então o espaço não pode depender dele. */
+  html[data-shell="global-dashboard"] .jpwss-list{
+    list-style:none; margin:0; padding:0 0 var(--jp-space-3);
+    display:flex; flex-direction:column; gap:var(--jp-space-2); flex:1;
+    justify-content:flex-start;
+  }
+  /* A linha é grade de 3 faixas: ponto fixo, rótulo elástico, meta ao natural.
+     minmax(0,1fr) no rótulo é o que permite o ellipsis funcionar sem estourar
+     a célula — o mesmo cuidado de min-width:0 que falta no kicker do Clearance
+     (achado colateral 4 do handoff, fora deste escopo). */
+  html[data-shell="global-dashboard"] .jpwss-row{
+    display:grid; grid-template-columns:auto minmax(0,1fr) auto;
+    align-items:baseline; gap:var(--jp-space-2);
+    font-family:var(--jp-font-ui); font-size:11.5px; line-height:1.45;
+  }
+  html[data-shell="global-dashboard"] .jpwss-dot{
+    width:7px; height:7px; border-radius:var(--jp-radius-pill);
+    background:var(--jp-ink-muted); align-self:center; flex:none;
+  }
+  /* A COR NUNCA É O ÚNICO CANAL (WCAG 1.4.1): o ponto é decorativo
+     (aria-hidden) e o estado está sempre escrito no rótulo — "Backup
+     confirmado" vs "Backup não confirmado". Remover a cor não remove a
+     informação. */
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="ok"] .jpwss-dot{background:var(--f1)}
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="warn"] .jpwss-dot{background:var(--f2)}
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="bad"] .jpwss-dot{background:var(--f4)}
+  html[data-shell="global-dashboard"] .jpwss-row[data-state="bad"] .jpwss-lbl{color:var(--f4); font-weight:600}
+  html[data-shell="global-dashboard"] .jpwss-lbl{
+    color:var(--jp-ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .jpwss-meta{
+    font-family:var(--mono); font-size:10.5px; color:var(--jp-ink-muted);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .jpwss-act{
+    background:none; border:0; padding:0; cursor:pointer;
+    font-family:var(--jp-font-ui); font-size:11px; font-weight:600;
+    color:var(--jp-action); white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .jpwss-act:hover{text-decoration:underline}
+  html[data-shell="global-dashboard"] .jpwss-foot{
+    margin:0; margin-top:auto; padding-top:var(--jp-space-3);
+    border-top:1px solid var(--jp-border);
+    font-family:var(--jp-font-ui); font-size:10px; color:var(--ink-faint);
+  }
+
+  /* Ordem de compressão da spec, por largura do CARD (não do viewport) — o
+     mesmo padrão de container query já usado em #fxplan.
+     Os limiares da spec são 300px (piso da largura ideal) e 240px (largura
+     mínima) medidos no CARD; container-type:inline-size, porém, consulta o
+     CONTENT BOX. Com o padding:22px de .card são 44px de diferença, então os
+     números aqui são os da spec menos esse padding — 256 e 196. Sem essa
+     conta a compressão dispararia 44px cedo demais: medido, o card de 264px
+     do mobile (que está ACIMA do mínimo de 240) já caía em modo chip.
+       card < 300px (content 256)  meta à direita e rodapé de versão saem;
+       card < 240px (content 196)  subtítulo sai e as 4 linhas viram grade 2×2.
+     O que NUNCA sai, em nenhuma largura: as 4 linhas com rótulo textual. São
+     CRITICAL OPERATIONAL — persistência, backup, frescor e governança. */
+  @container jpwss (max-width:255px){
+    html[data-shell="global-dashboard"] .jpwss-meta,
+    html[data-shell="global-dashboard"] .jpwss-foot{display:none}
+  }
+  /* Nota: uma @container só alcança DESCENDENTES do container, nunca o próprio
+     elemento que declara container-type. Por isso nada aqui dentro tenta mexer
+     no min-height do card — seria código morto. O piso de 168px vale também em
+     modo chip (212×168 medidos, proporção 1.26, ainda mais largo que alto). */
+  @container jpwss (max-width:195px){
+    html[data-shell="global-dashboard"] .gd-system-status h2 .art{display:none}
+    html[data-shell="global-dashboard"] .jpwss-list{
+      display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:var(--jp-space-2); align-content:space-between;
+    }
+    html[data-shell="global-dashboard"] .jpwss-row{font-size:10.5px}
   }
 
   /* ---------- Termômetros / Coerência / VRM — espelhos de leitura ----------
