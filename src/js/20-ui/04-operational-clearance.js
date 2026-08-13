@@ -57,9 +57,78 @@ function renderOperationalClearance(c){
   // Linha de fatos do card de Clearance (fidelidade ao Dashboard Claro) —
   // mesmos valores de c.fase/c.riscoTotal/c.tetoRisco/c.alavCar/c.tetoAlav
   // já usados em mcMiniRisco/dAlav/dFase; só um novo local de leitura.
-  set('mcClearanceFactFase', c.fase.nome);
-  set('mcClearanceFactRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
-  set('mcClearanceFactAlav', fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav));
+  // ---- COCKPIT · quatro fatos operacionais (JPW-789ABC-B2, Fase 2A) ----
+  // ESPELHO DE LEITURA: cada célula reusa a MESMA fórmula que o componente
+  // vigente já aplica; nenhuma é reescrita e nenhuma constante é criada.
+  //   DD          ddCeil / (dd/ddCeil) e as faixas de c.mScaled — do gdGaugeDD
+  //   Risco       riscoTotal/tetoRisco — da barra gRiscoBar e do card Coerência
+  //   Alavancagem alavCar/4 com tick do teto em tetoAlav/4 — do gdGaugeAlav
+  //   Cores       as MESMAS regras já vigentes: gRiscoBar usa --f3 acima do
+  //               teto, gAlavBar usa --f2, ambas FCOLORS[c.fi] dentro dele.
+  // Os componentes antigos seguem na tela nesta fase justamente para que a
+  // equivalência seja verificável a olho: qualquer divergência é defeito daqui.
+  const cockpitFact=(id,o)=>{
+    const cell=$(id); if(!cell) return;
+    const v=cell.querySelector('[data-fact-v]');
+    if(v){ v.textContent=o.value; v.style.color=o.over?o.color:''; }
+    const m=cell.querySelector('[data-fact-meta]'); if(m) m.textContent=o.meta;
+    const f=cell.querySelector('[data-fact-fill]');
+    if(f){
+      // Nunca passa de 100%: estouro é dito por cor e por texto, jamais por
+      // transbordo geométrico da barra.
+      f.style.width=(o.pct==null?0:Math.max(0,Math.min(100,o.pct)))+'%';
+      if(o.color) f.style.background=o.color;
+    }
+    const k=cell.querySelector('[data-fact-mark]');
+    if(k){
+      if(o.markPct==null) k.style.display='none';
+      else { k.style.display=''; k.style.left='calc('+Math.max(0,Math.min(100,o.markPct))+'% - 1px)'; }
+    }
+    cell.dataset.over=o.over?'1':'0';
+  };
+  // FASE — categórica: quatro segmentos, o vigente aceso. Não existe
+  // "percentual de fase"; uma barra contínua aqui seria dado inventado.
+  const faseCell=$('mcFactFase');
+  const segWrap=faseCell && faseCell.querySelector('[data-fact-seg-wrap]');
+  if(segWrap) Array.prototype.forEach.call(segWrap.children,(seg,i)=>{
+    seg.style.background = (i===c.fi) ? FCOLORS[c.fi] : '';
+  });
+  const faixaFase = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
+  cockpitFact('mcFactFase',{ value:c.fase.nome, meta:'faixa de DD '+faixaFase, pct:null, markPct:null, over:false });
+  // DRAWDOWN — escala 0 → teto ativo do perfil (mesma ddCeil do gauge), com
+  // marcador no limite da fase vigente. Exceção = atingir o MDD ativo, que é o
+  // mesmo gatilho que já dispara o aviso de quarentena (Art. 3.10).
+  const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
+  const ddOver=c.mddScaled>0 && c.dd>=c.mddScaled;
+  cockpitFact('mcFactDD',{
+    value:fmtPct(c.dd),
+    meta:'de '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE ATIVO':(c.mScaled?' · limite da fase '+fmtPct(c.mScaled[c.fi].ddmax):'')),
+    pct:(c.dd/ddCeil)*100,
+    markPct:c.mScaled?(c.mScaled[c.fi].ddmax/ddCeil)*100:null,
+    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver
+  });
+  // RISCO ABERTO — escala 0 → teto da fase. Teto zero (conta sem parâmetro)
+  // não vira barra cheia falsa nem divisão por zero: mostra trilho vazio.
+  const temTetoRisco=c.tetoRisco>0;
+  const riscoPct=temTetoRisco?(c.riscoTotal/c.tetoRisco)*100:0;
+  const riscoOver=temTetoRisco && c.riscoTotal>c.tetoRisco;
+  cockpitFact('mcFactRisco',{
+    value:fmtMoney(c.riscoTotal),
+    meta:temTetoRisco
+      ? Math.round(riscoPct)+'% do teto · '+fmtMoney(c.tetoRisco)+(riscoOver?' · ACIMA DO TETO':'')
+      : 'sem parâmetro de teto',
+    pct:riscoPct, markPct:null,
+    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver
+  });
+  // ALAVANCAGEM — escala absoluta 0–4x com tick no teto da fase, igual ao
+  // gdGaugeAlav (mostra folga contra o máximo estatutário, não só contra o teto).
+  const alavOver=c.alavCar>c.tetoAlav;
+  cockpitFact('mcFactAlav',{
+    value:fmtX(c.alavCar),
+    meta:'teto '+fmtX(c.tetoAlav)+(alavOver?' · ACIMA DO TETO':' · escala 0–4x'),
+    pct:(c.alavCar/4)*100, markPct:(c.tetoAlav/4)*100,
+    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver
+  });
   set('mcMiniRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
   // Reservas FCR/FEO — lidos do estado salvo no onboarding (fonte única)
   if(!ob.done || !ob.reserveFcrStatus){

@@ -2,6 +2,66 @@
 
 ## [Unreleased]
 
+### Cockpit operacional e VRM compacto — candidato de 2026-08-13 (branch `feature/dashboard-cockpit-p1`; JPW-789ABC-B2, Fases 2A e 2A.5)
+
+- **O card de Clearance virou o cockpit operacional.** Passou a `full` (4
+  colunas) e ganhou os quatro fatos que antes viviam espalhados pelo Dashboard:
+  **fase · drawdown · risco aberto · alavancagem**. Cada um é uma célula com
+  rótulo, valor, escala e contexto — sem gauge, sem dial, sem termômetro. A
+  linha de texto anterior (Fase/Risco/Alavancagem) foi absorvida, preservando o
+  mesmo destino de clique (`data-dash-scroll="governanca"`) e o chevron.
+- **O valor carrega só o número corrente** (`FASE 1`, `3,20%`, `$320`,
+  `1,62x` — máx. ~7 caracteres); teto e contexto descem para a meta em 9,5px.
+  A regra existe por medição: foi a concatenação `$320 / $400` dentro do valor
+  que truncou a 960px na faixa de métricas.
+- **Espelho de leitura, sem cálculo novo.** Toda fórmula é reuso literal da
+  vigente: `ddCeil` e as faixas de `c.mScaled` vêm do `gdGaugeDD`;
+  `riscoTotal/tetoRisco` da `gRiscoBar`; `alavCar/4` com tick do teto em
+  `tetoAlav/4` do `gdGaugeAlav`. As cores seguem as regras já em vigor — `--f3`
+  para risco acima do teto, `--f2` para alavancagem acima do teto.
+- **Estouro nunca transborda.** A barra satura em 100% e a exceção é dita por
+  cor **e** por texto (`ACIMA DO TETO`, `NO LIMITE ATIVO`). Teto zero — conta
+  sem parâmetro — mostra trilho vazio e `sem parâmetro de teto`, nunca divisão
+  por zero nem barra cheia falsa. Verificado nos sete estados extremos.
+- **VRM compacto (Fase 2A.5).** O dial cônico saiu: era a terceira geometria de
+  leitura da mesma grandeza. No lugar, a **mesma** barra do cockpit
+  (`.mc-fact-track/-fill/-mark` reusados, sem CSS paralelo) na **mesma** escala
+  que o dial já usava — `vrmHV × 1,15` — com os dois limites de regime marcados
+  (`vrmN` e `vrmHV`, de `02-risk-calculations.js:47`). O card virou `medium` e
+  divide a linha com o Status do Sistema. ATR(55) e ATR(660) desceram para
+  `<details>` nativo — P3, leitura informativa. Valor, regime e limites
+  permanecem visíveis sem interação.
+- **Reordenação do Dashboard.** O par P2 (Status do Sistema + VRM) subiu para a
+  linha logo abaixo do cockpit. Não reintroduz a inversão que o Bloco 1
+  corrigiu: os quatro fatos P1 mudaram de dono e agora vivem no cockpit, então a
+  faixa de métricas, os termômetros, a coerência e a postura passaram a ser
+  duplicatas aguardando remoção, e desceram para o bloco de legado.
+- **Nada foi removido.** Faixa de métricas, Coerência de Alavancagem,
+  Termômetros, Postura e Perfil e Contexto seguem na tela, de propósito: esta
+  etapa valida a equivalência dos números lado a lado antes da remoção
+  definitiva na Fase 2B. A redundância aumenta temporariamente — é o custo da
+  verificação.
+- **Correção visual de fechamento (P1 da revisão).** O VRM esticava até a
+  altura da linha (232px) com o conteúdo terminando aos 165px, deixando 45px de
+  vazio no rodapé enquanto o Status ao lado usava toda a altura. O disclosure
+  passou a ancorar na base (`margin-top:auto`), com o card em coluna flex — o
+  **pré-requisito** sem o qual aquele `auto` seria inerte num card `display:block`.
+  É a mesma estrutura que o Status já usava. Auditoria A/B dos cinco filhos:
+  apenas o disclosure mudou de posição; os outros quatro mantiveram topo,
+  altura e margens idênticos.
+- Nenhuma constante financeira, fórmula, fase, teto, perfil ou parâmetro
+  normativo foi tocado. `jpwealth_v9_state` e o formato de backup permanecem
+  inalterados; a preferência de layout continua em **v4**, sem migração —
+  quem já personalizou mantém a escolha até a Fase 2B, e o VRM em `compact`
+  legado foi verificado sem truncamento nem overflow.
+- **Limitação conhecida:** `.gd-vrm-main` e `.gd-vrm-dial` ficaram sem uso no
+  CSS. A limpeza foi deliberadamente adiada para a Fase 2B, que produzirá
+  órfãos de cinco cards de uma vez — uma limpeza única é mais auditável que
+  duas parciais.
+- **AGENTIC IMPACT: nenhum.** Nenhuma skill, agente, router, `AGENTS.md`,
+  `CLAUDE.md` ou documento de `docs/governance/` referencia o cockpit ou o VRM.
+  As âncoras `[data-layout-card]` de todos os cards foram preservadas.
+
 ### Status do Sistema — candidato de 2026-08-12 (branch `feature/system-status-panel`; JPW-789ABC)
 
 - **O painel institucional decorativo virou estado operacional.** Aquele bloco

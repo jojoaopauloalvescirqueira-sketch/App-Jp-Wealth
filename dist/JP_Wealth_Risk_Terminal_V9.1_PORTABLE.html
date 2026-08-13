@@ -4153,19 +4153,88 @@
        muleta morreu junto com o painel decorativo. */
   }
 
-  /* Linha de fatos dentro do card de Clearance (Fase da Conta/Risco/Alavancagem) */
-  html[data-shell="global-dashboard"] .mc-clearance-facts{
-    display:flex; gap:28px; flex-wrap:wrap; align-items:center;
-    margin-top:18px; padding-top:14px; border-top:1px solid var(--jp-border); cursor:pointer;
+  /* ---------- COCKPIT · faixa dos quatro fatos (JPW-789ABC-B2) ----------
+     Substitui a antiga .mc-clearance-facts (linha de texto Fase/Risco/Alav).
+     Idioma de terminal financeiro: numero grande, escala fina, contexto pequeno.
+     Sem gauge, sem dial, sem termometro — a barra de 4px E a representacao. */
+  html[data-shell="global-dashboard"] .mc-cockpit-facts{
+    display:flex; align-items:center; gap:var(--jp-space-4);
+    margin-top:24px; padding-top:20px;
+    border-top:1px solid var(--jp-border); cursor:pointer;
+    container-type:inline-size; container-name:jpwcock;
   }
-  html[data-shell="global-dashboard"] .mc-clearance-facts .k{
-    display:block; font-family:var(--jp-font-ui); font-size:9.5px; color:var(--jp-ink-muted); margin-bottom:3px; white-space:nowrap;
+  html[data-shell="global-dashboard"] .mc-cockpit-grid{
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:var(--jp-space-4); flex:1; min-width:0;
   }
-  html[data-shell="global-dashboard"] .mc-clearance-facts b{
-    font-family:var(--jp-font-ui); font-size:12px; font-weight:700; color:var(--jp-ink); white-space:nowrap;
+  html[data-shell="global-dashboard"] .mc-cockpit-chev{
+    color:var(--jp-ink-muted); font-size:16px; flex:none;
   }
-  html[data-shell="global-dashboard"] .mc-clearance-facts-chev{
-    margin-left:auto; color:var(--jp-ink-muted); font-size:16px;
+  /* A celula. min-width:0 em toda ela e no valor: sem isso o texto define a
+     largura da coluna e o grid estoura em vez de comprimir (mesma armadilha do
+     kicker relatada no achado colateral 4 do handoff). */
+  html[data-shell="global-dashboard"] .mc-fact{
+    display:flex; flex-direction:column; gap:6px; min-width:0;
+  }
+  html[data-shell="global-dashboard"] .mc-fact-k{
+    font-family:var(--jp-font-ui); font-size:9.5px; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--jp-ink-muted);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  /* O valor carrega SO o numero corrente (max ~7 caracteres): "FASE 1",
+     "3,20%", "$320", "1,62x". Teto e contexto vivem na meta. */
+  html[data-shell="global-dashboard"] .mc-fact-v{
+    font-family:var(--mono); font-size:22px; font-weight:700; line-height:1.1;
+    color:var(--jp-ink); font-variant-numeric:tabular-nums; min-width:0;
+  }
+  html[data-shell="global-dashboard"] .mc-fact-meta{
+    font-family:var(--jp-font-ui); font-size:9.5px; line-height:1.35;
+    color:var(--jp-ink-muted);
+  }
+  /* Trilho + preenchimento + marcador de teto. O marcador e um tick de 2px que
+     NUNCA sai do trilho; estouro de teto e dito por cor e por texto na meta,
+     jamais por transbordo geometrico. */
+  html[data-shell="global-dashboard"] .mc-fact-track{
+    position:relative; height:4px; border-radius:2px;
+    background:var(--jp-surface-inset); overflow:hidden;
+  }
+  html[data-shell="global-dashboard"] .mc-fact-fill{
+    display:block; height:100%; width:0; border-radius:2px;
+    background:var(--jp-ink-muted); transition:width .3s ease;
+  }
+  html[data-shell="global-dashboard"] .mc-fact-mark{
+    position:absolute; top:-2px; width:2px; height:8px; border-radius:1px;
+    background:var(--jp-ink); opacity:.55;
+  }
+  /* Fase e categorica: quatro segmentos, o vigente aceso. Nao ha "percentual
+     de fase" — inventar uma barra continua aqui seria inventar dado. */
+  html[data-shell="global-dashboard"] .mc-fact-seg{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:3px; height:4px;
+  }
+  html[data-shell="global-dashboard"] .mc-fact-seg i{
+    display:block; border-radius:2px; background:var(--jp-surface-inset);
+  }
+  /* Estado de excecao. A COR do valor nao e fixada aqui de proposito: quem a
+     define e o JS, com o MESMO token da barra, para numero e escala nunca
+     discordarem (a regra vigente de gRiscoBar usa --f3 e a de gAlavBar usa
+     --f2; fixar --f4 aqui criaria um terceiro dialeto). O que o CSS garante e
+     o peso da meta — porque a cor nunca pode ser o unico canal (WCAG 1.4.1):
+     em excecao a meta diz "ACIMA DO TETO" por escrito. */
+  html[data-shell="global-dashboard"] .mc-fact[data-over="1"] .mc-fact-meta{
+    font-weight:600;
+  }
+
+  /* 4x1 -> 2x2 por largura da FAIXA, nao do viewport. Limiar em 660px de
+     content-box = 4 celulas de 165px minimos + 3 gaps de 16. Abaixo disso as
+     celulas ficariam estreitas demais para o valor de 22px. */
+  @container jpwcock (max-width:659px){
+    html[data-shell="global-dashboard"] .mc-cockpit-grid{
+      grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--jp-space-5) var(--jp-space-4);
+    }
+  }
+  /* Faixa muito estreita (mobile): o valor cede 3px para caber sem truncar. */
+  @container jpwcock (max-width:300px){
+    html[data-shell="global-dashboard"] .mc-fact-v{font-size:19px}
   }
 
   /* Faixa de 4 métricas — mesmos dFase/dDD/mcMiniRisco/dAlav, só moldura nova */
@@ -4368,6 +4437,71 @@
   html[data-shell="global-dashboard"] .gd-vrm-atr > div{flex:1; border-radius:6px; background:var(--gd-surface-subtle); padding:8px 10px}
   html[data-shell="global-dashboard"] .gd-vrm-atr .k{display:block; font-family:var(--jp-font-ui); font-size:8.5px; color:var(--jp-ink-muted); margin-bottom:2px}
   html[data-shell="global-dashboard"] .gd-vrm-atr .v{font-family:var(--jp-font-data); font-size:11px; font-weight:600; color:var(--jp-ink)}
+
+  /* ---------- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5) ----------
+     .gd-vrm-main e .gd-vrm-dial acima ficaram sem uso quando o dial saiu do
+     markup; a limpeza de CSS órfão foi expressamente deixada para depois e
+     está registrada como pendência — não é esquecimento.
+     A barra NÃO tem estilo próprio: reusa .mc-fact-track/-fill/-mark do
+     cockpit. Aqui só o que o contexto exige — o track nasce <span> (inline) e
+     precisa virar bloco. */
+  /* Mesmo teto de largura do Status do Sistema, pela mesma razão: acima de
+     560px o card fica esparso para a densidade que carrega. Sem isto os dois
+     desalinham no empilhamento abaixo de 900px — medido a 768px, onde o Status
+     travava em 560 e o VRM ia a 586, deixando as bordas direitas irregulares. */
+  /* Coluna flex — PRÉ-REQUISITO do margin-top:auto do disclosure abaixo. Num
+     card `display:block` aquele auto não teria efeito nenhum (medido: o card
+     nascia bloco e a folga continuava solta no rodapé). É a mesma estrutura
+     que o Status do Sistema já usa para ancorar o seu rodapé. */
+  html[data-shell="global-dashboard"] .gd-vrm-card{
+    max-width:560px; display:flex; flex-direction:column;
+  }
+  html[data-shell="global-dashboard"] .gd-vrm-head{
+    display:flex; align-items:baseline; gap:var(--jp-space-2); flex-wrap:wrap;
+    margin-bottom:var(--jp-space-2);
+  }
+  /* Valor promovido a número principal do card — mesma família e peso do valor
+     das células do cockpit, um degrau abaixo por ser P2, não P1. */
+  html[data-shell="global-dashboard"] .gd-vrm-card .gd-vrm-value{
+    font-family:var(--mono); font-size:19px; font-weight:700; line-height:1.1;
+    color:var(--jp-ink); font-variant-numeric:tabular-nums;
+  }
+  /* Regime como chip: o texto continua sendo o canal primário (WCAG 1.4.1);
+     a cor apenas reforça. currentColor no fundo mantém um só token por estado. */
+  html[data-shell="global-dashboard"] .gd-vrm-card .gd-vrm-regime{
+    font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600;
+    letter-spacing:.04em; text-transform:uppercase;
+    border:1px solid currentColor; border-radius:var(--jp-radius-pill);
+    padding:2px 8px; white-space:nowrap;
+  }
+  html[data-shell="global-dashboard"] .gd-vrm-track{display:block; margin-bottom:var(--jp-space-2)}
+  /* Limites de regime — sempre visíveis, sem interação: são o que dá sentido
+     ao número e à posição da barra. */
+  html[data-shell="global-dashboard"] .gd-vrm-limits{
+    margin:0; font-family:var(--jp-font-ui); font-size:9.5px; line-height:1.4;
+    color:var(--jp-ink-muted);
+  }
+  /* Disclosure nativo (mesmo padrão de <details> já usado no app) para os ATRs,
+     que são leitura informativa — P3. */
+  /* P1 da revisão visual: o card estica até a altura da linha (232px, ditada
+     pelo Status ao lado) mas o conteúdo terminava aos 165px, deixando ~45px de
+     vazio solto no rodapé. `auto` empurra o disclosure para a base e concentra
+     a folga num lugar só — mesma técnica do rodapé do Status.
+     O respiro mínimo migra para padding: com `auto`, quando não há folga o
+     margin resolve para 0 e o filete encostaria no texto acima. */
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc{margin-top:auto; padding-top:var(--jp-space-3)}
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary{
+    cursor:pointer; list-style:none;
+    font-family:var(--jp-font-ui); font-size:10px; font-weight:600;
+    color:var(--jp-action);
+  }
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary::-webkit-details-marker{display:none}
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary::before{content:'▸ '}
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc[open] > summary::before{content:'▾ '}
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary:focus-visible{
+    outline:2px solid var(--jp-action); outline-offset:2px; border-radius:var(--jp-radius-sm);
+  }
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc .gd-vrm-atr{margin-top:var(--jp-space-2)}
 
   /* ---------- Faixa de postura/conformidade — só estados reais ---------- */
   html[data-shell="global-dashboard"] .gd-posture-row{
@@ -5146,7 +5280,7 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'b73bdd3f7ead5b33';
+const JP_WEALTH_BUILD_ID = '73f2769898b516eb';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5748,16 +5882,35 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
             <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceRiscoBar"></div></div>
           </div>
         </div>
-        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
-          <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
-          <div class="gd-vrm-main">
-            <div class="gd-vrm-dial" id="gdVrmDial" aria-hidden="true"></div>
-            <div><div class="gd-vrm-value" id="gdVrmValue">—</div><div class="gd-vrm-regime" id="gdVrmRegime">—</div></div>
+        <!-- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5).
+             O dial semicircular saiu: era a terceira geometria de leitura da
+             mesma grandeza e nao cabia ao lado do Status do Sistema. No lugar,
+             a MESMA barra do cockpit (.mc-fact-track/-fill/-mark reusados, sem
+             CSS paralelo) na MESMA escala que o dial ja usava — vrmHV x 1,15 —
+             com os dois limites de regime marcados: vrmN e vrmHV.
+             `medium` (2 colunas) para dividir a linha com o Status do Sistema.
+             Nada de critico foi escondido: valor, regime e os dois limites
+             ficam visiveis sem interacao; so os ATRs, que sao leitura
+             informativa, descem para disclosure (P3). -->
+        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
+          <h2>VRM · Regime de Volatilidade <span class="art">volatilidade relativa ATR55/ATR660</span></h2>
+          <div class="gd-vrm-head">
+            <span class="gd-vrm-value" id="gdVrmValue">—</span>
+            <span class="gd-vrm-regime" id="gdVrmRegime">—</span>
           </div>
-          <div class="gd-vrm-atr">
-            <div><span class="k">ATR(55) H4</span><span class="v" id="gdVrmAtr55">—</span></div>
-            <div><span class="k">ATR(660) H4</span><span class="v" id="gdVrmAtr660">—</span></div>
-          </div>
+          <span class="mc-fact-track gd-vrm-track" aria-hidden="true">
+            <i class="mc-fact-fill" id="gdVrmFill"></i>
+            <i class="mc-fact-mark" id="gdVrmMarkN"></i>
+            <i class="mc-fact-mark" id="gdVrmMarkHV"></i>
+          </span>
+          <p class="gd-vrm-limits" id="gdVrmLimits">—</p>
+          <details class="gd-vrm-atr-disc">
+            <summary>ATR(55) e ATR(660)</summary>
+            <div class="gd-vrm-atr">
+              <div><span class="k">ATR(55) H4</span><span class="v" id="gdVrmAtr55">—</span></div>
+              <div><span class="k">ATR(660) H4</span><span class="v" id="gdVrmAtr660">—</span></div>
+            </div>
+          </details>
         </div>
 
         <!-- Faixa de postura/conformidade — só estados reais (getOperationalClearance,
@@ -5876,15 +6029,51 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <div class="jp-carousel">
         <div class="jp-slide" data-slide="0">
           <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
-          <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="large" data-widget-allowed-sizes="large full">
+          <!-- COCKPIT OPERACIONAL P1 (JPW-789ABC-B2, Fase 2A).
+               `full` (4 colunas): ao ganhar a faixa de fatos, o card passa a ser
+               o dono dos quatro numeros operacionais e precisa da largura da
+               grade. Em 2x2 as celulas cairiam para ~98px e truncariam — a mesma
+               falha ja medida na faixa de metricas. `full` ja era tamanho
+               permitido (data-widget-allowed-sizes), nao e estado novo. -->
+          <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
             <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
             <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
             <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-            <div class="mc-clearance-facts" id="mcClearanceFacts" data-dash-scroll="governanca">
-              <span><span class="k">Fase da Conta</span><b id="mcClearanceFactFase">—</b></span>
-              <span><span class="k">Risco Aberto</span><b id="mcClearanceFactRisco">—</b></span>
-              <span><span class="k">Alavancagem</span><b id="mcClearanceFactAlav">—</b></span>
-              <span class="mc-clearance-facts-chev" aria-hidden="true">›</span>
+            <!-- Quatro fatos operacionais. Substitui a linha de texto anterior
+                 (Fase/Risco/Alavancagem), preservando o mesmo destino de clique
+                 (data-dash-scroll="governanca") e o mesmo chevron. Cada celula e
+                 ESPELHO DE LEITURA: valor + escala + meta, sem gauge, sem dial,
+                 sem calculo novo. O valor carrega SO o numero corrente (max ~7
+                 caracteres); teto e contexto vao para a meta — foi a
+                 concatenacao "$320 / $400" no valor que truncou a 960px. -->
+            <div class="mc-cockpit-facts" id="mcCockpitFacts" data-dash-scroll="governanca">
+              <div class="mc-cockpit-grid">
+                <div class="mc-fact" id="mcFactFase">
+                  <span class="mc-fact-k">Fase</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-seg" data-fact-seg-wrap aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+                <div class="mc-fact" id="mcFactDD">
+                  <span class="mc-fact-k">Drawdown</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+                <div class="mc-fact" id="mcFactRisco">
+                  <span class="mc-fact-k">Risco Aberto</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+                <div class="mc-fact" id="mcFactAlav">
+                  <span class="mc-fact-k">Alavancagem</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+              </div>
+              <span class="mc-cockpit-chev" aria-hidden="true">›</span>
             </div>
             <div class="mc-action" id="mcClearanceAction">—</div>
           </div>
@@ -8626,10 +8815,35 @@ function render(){
   if(gdVr){ gdVr.textContent=c.regime; gdVr.style.color=regimeColor; }
   const gdA55=$('gdVrmAtr55'); if(gdA55) gdA55.textContent=(S.atr55||0).toLocaleString('pt-BR',{minimumFractionDigits:5,maximumFractionDigits:5});
   const gdA660=$('gdVrmAtr660'); if(gdA660) gdA660.textContent=(S.atr660||0).toLocaleString('pt-BR',{minimumFractionDigits:5,maximumFractionDigits:5});
-  const gdVDial=$('gdVrmDial');
-  if(gdVDial){
-    const frac=Math.max(0,Math.min(1, p.vrmHV>0 ? c.vrm/(p.vrmHV*1.15) : 0));
-    gdVDial.style.background='conic-gradient(from 270deg at 50% 100%, '+regimeColor+' 0turn, '+regimeColor+' '+(frac*0.5).toFixed(4)+'turn, var(--jp-border) '+(frac*0.5).toFixed(4)+'turn, var(--jp-border) .5turn)';
+  // VRM compacto (JPW-789ABC-B2, Fase 2A.5) — a barra substitui o dial e usa a
+  // MESMA escala que ele já usava (p.vrmHV × 1,15), com os DOIS limites que
+  // governam a classificação em 10-domain/02-risk-calculations.js:47:
+  //   vrm > vrmHV → ALTA VOL · vrm > vrmN → TRANSIÇÃO · senão NORMAL
+  // Nenhum limite novo, nenhuma escala nova, nenhum cálculo novo — só troca da
+  // geometria de leitura. Reusa .mc-fact-track/-fill/-mark do cockpit.
+  const vrmEscala = p.vrmHV>0 ? p.vrmHV*1.15 : 0;
+  const gdVFill=$('gdVrmFill');
+  if(gdVFill){
+    const frac = vrmEscala>0 ? Math.max(0,Math.min(1, c.vrm/vrmEscala)) : 0;
+    gdVFill.style.width=(frac*100).toFixed(2)+'%';
+    gdVFill.style.background=regimeColor;
+  }
+  // Sem parâmetro de regime (vrmHV zerado) os marcadores somem em vez de
+  // colapsarem em 0% — marcador em posição falsa é pior que marcador ausente.
+  const gdVrmMarca=(id,valor)=>{
+    const e=$(id); if(!e) return;
+    if(!(vrmEscala>0)){ e.style.display='none'; return; }
+    e.style.display='';
+    e.style.left='calc('+Math.max(0,Math.min(100,(valor/vrmEscala)*100)).toFixed(2)+'% - 1px)';
+  };
+  gdVrmMarca('gdVrmMarkN', p.vrmN);
+  gdVrmMarca('gdVrmMarkHV', p.vrmHV);
+  const gdVLim=$('gdVrmLimits');
+  if(gdVLim){
+    const n2=v=>(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    gdVLim.textContent = vrmEscala>0
+      ? 'NORMAL até '+n2(p.vrmN)+' · TRANSIÇÃO até '+n2(p.vrmHV)+' · acima, ALTA VOL'
+      : 'sem parâmetro de regime';
   }
   // LIFO
   $('lLote').textContent=c.loteTotal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -8744,9 +8958,78 @@ function renderOperationalClearance(c){
   // Linha de fatos do card de Clearance (fidelidade ao Dashboard Claro) —
   // mesmos valores de c.fase/c.riscoTotal/c.tetoRisco/c.alavCar/c.tetoAlav
   // já usados em mcMiniRisco/dAlav/dFase; só um novo local de leitura.
-  set('mcClearanceFactFase', c.fase.nome);
-  set('mcClearanceFactRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
-  set('mcClearanceFactAlav', fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav));
+  // ---- COCKPIT · quatro fatos operacionais (JPW-789ABC-B2, Fase 2A) ----
+  // ESPELHO DE LEITURA: cada célula reusa a MESMA fórmula que o componente
+  // vigente já aplica; nenhuma é reescrita e nenhuma constante é criada.
+  //   DD          ddCeil / (dd/ddCeil) e as faixas de c.mScaled — do gdGaugeDD
+  //   Risco       riscoTotal/tetoRisco — da barra gRiscoBar e do card Coerência
+  //   Alavancagem alavCar/4 com tick do teto em tetoAlav/4 — do gdGaugeAlav
+  //   Cores       as MESMAS regras já vigentes: gRiscoBar usa --f3 acima do
+  //               teto, gAlavBar usa --f2, ambas FCOLORS[c.fi] dentro dele.
+  // Os componentes antigos seguem na tela nesta fase justamente para que a
+  // equivalência seja verificável a olho: qualquer divergência é defeito daqui.
+  const cockpitFact=(id,o)=>{
+    const cell=$(id); if(!cell) return;
+    const v=cell.querySelector('[data-fact-v]');
+    if(v){ v.textContent=o.value; v.style.color=o.over?o.color:''; }
+    const m=cell.querySelector('[data-fact-meta]'); if(m) m.textContent=o.meta;
+    const f=cell.querySelector('[data-fact-fill]');
+    if(f){
+      // Nunca passa de 100%: estouro é dito por cor e por texto, jamais por
+      // transbordo geométrico da barra.
+      f.style.width=(o.pct==null?0:Math.max(0,Math.min(100,o.pct)))+'%';
+      if(o.color) f.style.background=o.color;
+    }
+    const k=cell.querySelector('[data-fact-mark]');
+    if(k){
+      if(o.markPct==null) k.style.display='none';
+      else { k.style.display=''; k.style.left='calc('+Math.max(0,Math.min(100,o.markPct))+'% - 1px)'; }
+    }
+    cell.dataset.over=o.over?'1':'0';
+  };
+  // FASE — categórica: quatro segmentos, o vigente aceso. Não existe
+  // "percentual de fase"; uma barra contínua aqui seria dado inventado.
+  const faseCell=$('mcFactFase');
+  const segWrap=faseCell && faseCell.querySelector('[data-fact-seg-wrap]');
+  if(segWrap) Array.prototype.forEach.call(segWrap.children,(seg,i)=>{
+    seg.style.background = (i===c.fi) ? FCOLORS[c.fi] : '';
+  });
+  const faixaFase = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
+  cockpitFact('mcFactFase',{ value:c.fase.nome, meta:'faixa de DD '+faixaFase, pct:null, markPct:null, over:false });
+  // DRAWDOWN — escala 0 → teto ativo do perfil (mesma ddCeil do gauge), com
+  // marcador no limite da fase vigente. Exceção = atingir o MDD ativo, que é o
+  // mesmo gatilho que já dispara o aviso de quarentena (Art. 3.10).
+  const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
+  const ddOver=c.mddScaled>0 && c.dd>=c.mddScaled;
+  cockpitFact('mcFactDD',{
+    value:fmtPct(c.dd),
+    meta:'de '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE ATIVO':(c.mScaled?' · limite da fase '+fmtPct(c.mScaled[c.fi].ddmax):'')),
+    pct:(c.dd/ddCeil)*100,
+    markPct:c.mScaled?(c.mScaled[c.fi].ddmax/ddCeil)*100:null,
+    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver
+  });
+  // RISCO ABERTO — escala 0 → teto da fase. Teto zero (conta sem parâmetro)
+  // não vira barra cheia falsa nem divisão por zero: mostra trilho vazio.
+  const temTetoRisco=c.tetoRisco>0;
+  const riscoPct=temTetoRisco?(c.riscoTotal/c.tetoRisco)*100:0;
+  const riscoOver=temTetoRisco && c.riscoTotal>c.tetoRisco;
+  cockpitFact('mcFactRisco',{
+    value:fmtMoney(c.riscoTotal),
+    meta:temTetoRisco
+      ? Math.round(riscoPct)+'% do teto · '+fmtMoney(c.tetoRisco)+(riscoOver?' · ACIMA DO TETO':'')
+      : 'sem parâmetro de teto',
+    pct:riscoPct, markPct:null,
+    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver
+  });
+  // ALAVANCAGEM — escala absoluta 0–4x com tick no teto da fase, igual ao
+  // gdGaugeAlav (mostra folga contra o máximo estatutário, não só contra o teto).
+  const alavOver=c.alavCar>c.tetoAlav;
+  cockpitFact('mcFactAlav',{
+    value:fmtX(c.alavCar),
+    meta:'teto '+fmtX(c.tetoAlav)+(alavOver?' · ACIMA DO TETO':' · escala 0–4x'),
+    pct:(c.alavCar/4)*100, markPct:(c.tetoAlav/4)*100,
+    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver
+  });
   set('mcMiniRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
   // Reservas FCR/FEO — lidos do estado salvo no onboarding (fonte única)
   if(!ob.done || !ob.reserveFcrStatus){
@@ -15889,12 +16172,22 @@ function dashLayoutDeepFreeze(obj) {
 // index.html — restaurar padrão é voltar a esta constante, não reler o HTML.
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
-    { id: 'operational-clearance', zone: 'main', size: 'large', order: 0 },
-    { id: 'metric-strip', zone: 'main', size: 'medium', order: 1 },
-    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 2 },
-    { id: 'thermometers', zone: 'main', size: 'compact', order: 3 },
-    { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 4 },
-    { id: 'vrm', zone: 'main', size: 'compact', order: 5 },
+    // JPW-789ABC-B2: `full` desde que o cockpit passou a carregar os quatro
+    // fatos. Em `large` (2 colunas) as células cairiam para ~98px e truncariam.
+    // `large` segue permitido — quem já personalizou mantém a escolha até a
+    // migração da Fase 2B, quando os widgets absorvidos saem de cena.
+    { id: 'operational-clearance', zone: 'main', size: 'full', order: 0 },
+    // JPW-789ABC-B2, Fase 2A.5: o par P2 (Status do Sistema + VRM compacto)
+    // sobe para a linha logo abaixo do cockpit. Isso NÃO inverte a hierarquia
+    // que o Bloco 1 corrigiu — ela mudou de dono: desde a Fase 2A os quatro
+    // fatos P1 vivem dentro do cockpit, e a faixa de métricas passou a ser
+    // duplicata aguardando remoção na Fase 2B, junto de termômetros, coerência
+    // e postura. Todas elas descem para o bloco de legado, abaixo do par P2.
+    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 1 },
+    { id: 'vrm', zone: 'main', size: 'medium', order: 2 },
+    { id: 'metric-strip', zone: 'main', size: 'medium', order: 3 },
+    { id: 'thermometers', zone: 'main', size: 'compact', order: 4 },
+    { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 5 },
     { id: 'posture', zone: 'main', size: 'full', order: 6 },
     { id: 'news-high-impact', zone: 'main', size: 'medium', order: 7 },
     { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 8 },

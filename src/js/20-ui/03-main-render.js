@@ -225,10 +225,35 @@ function render(){
   if(gdVr){ gdVr.textContent=c.regime; gdVr.style.color=regimeColor; }
   const gdA55=$('gdVrmAtr55'); if(gdA55) gdA55.textContent=(S.atr55||0).toLocaleString('pt-BR',{minimumFractionDigits:5,maximumFractionDigits:5});
   const gdA660=$('gdVrmAtr660'); if(gdA660) gdA660.textContent=(S.atr660||0).toLocaleString('pt-BR',{minimumFractionDigits:5,maximumFractionDigits:5});
-  const gdVDial=$('gdVrmDial');
-  if(gdVDial){
-    const frac=Math.max(0,Math.min(1, p.vrmHV>0 ? c.vrm/(p.vrmHV*1.15) : 0));
-    gdVDial.style.background='conic-gradient(from 270deg at 50% 100%, '+regimeColor+' 0turn, '+regimeColor+' '+(frac*0.5).toFixed(4)+'turn, var(--jp-border) '+(frac*0.5).toFixed(4)+'turn, var(--jp-border) .5turn)';
+  // VRM compacto (JPW-789ABC-B2, Fase 2A.5) — a barra substitui o dial e usa a
+  // MESMA escala que ele já usava (p.vrmHV × 1,15), com os DOIS limites que
+  // governam a classificação em 10-domain/02-risk-calculations.js:47:
+  //   vrm > vrmHV → ALTA VOL · vrm > vrmN → TRANSIÇÃO · senão NORMAL
+  // Nenhum limite novo, nenhuma escala nova, nenhum cálculo novo — só troca da
+  // geometria de leitura. Reusa .mc-fact-track/-fill/-mark do cockpit.
+  const vrmEscala = p.vrmHV>0 ? p.vrmHV*1.15 : 0;
+  const gdVFill=$('gdVrmFill');
+  if(gdVFill){
+    const frac = vrmEscala>0 ? Math.max(0,Math.min(1, c.vrm/vrmEscala)) : 0;
+    gdVFill.style.width=(frac*100).toFixed(2)+'%';
+    gdVFill.style.background=regimeColor;
+  }
+  // Sem parâmetro de regime (vrmHV zerado) os marcadores somem em vez de
+  // colapsarem em 0% — marcador em posição falsa é pior que marcador ausente.
+  const gdVrmMarca=(id,valor)=>{
+    const e=$(id); if(!e) return;
+    if(!(vrmEscala>0)){ e.style.display='none'; return; }
+    e.style.display='';
+    e.style.left='calc('+Math.max(0,Math.min(100,(valor/vrmEscala)*100)).toFixed(2)+'% - 1px)';
+  };
+  gdVrmMarca('gdVrmMarkN', p.vrmN);
+  gdVrmMarca('gdVrmMarkHV', p.vrmHV);
+  const gdVLim=$('gdVrmLimits');
+  if(gdVLim){
+    const n2=v=>(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    gdVLim.textContent = vrmEscala>0
+      ? 'NORMAL até '+n2(p.vrmN)+' · TRANSIÇÃO até '+n2(p.vrmHV)+' · acima, ALTA VOL'
+      : 'sem parâmetro de regime';
   }
   // LIFO
   $('lLote').textContent=c.loteTotal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});

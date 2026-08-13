@@ -76,12 +76,22 @@ function dashLayoutDeepFreeze(obj) {
 // index.html — restaurar padrão é voltar a esta constante, não reler o HTML.
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
-    { id: 'operational-clearance', zone: 'main', size: 'large', order: 0 },
-    { id: 'metric-strip', zone: 'main', size: 'medium', order: 1 },
-    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 2 },
-    { id: 'thermometers', zone: 'main', size: 'compact', order: 3 },
-    { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 4 },
-    { id: 'vrm', zone: 'main', size: 'compact', order: 5 },
+    // JPW-789ABC-B2: `full` desde que o cockpit passou a carregar os quatro
+    // fatos. Em `large` (2 colunas) as células cairiam para ~98px e truncariam.
+    // `large` segue permitido — quem já personalizou mantém a escolha até a
+    // migração da Fase 2B, quando os widgets absorvidos saem de cena.
+    { id: 'operational-clearance', zone: 'main', size: 'full', order: 0 },
+    // JPW-789ABC-B2, Fase 2A.5: o par P2 (Status do Sistema + VRM compacto)
+    // sobe para a linha logo abaixo do cockpit. Isso NÃO inverte a hierarquia
+    // que o Bloco 1 corrigiu — ela mudou de dono: desde a Fase 2A os quatro
+    // fatos P1 vivem dentro do cockpit, e a faixa de métricas passou a ser
+    // duplicata aguardando remoção na Fase 2B, junto de termômetros, coerência
+    // e postura. Todas elas descem para o bloco de legado, abaixo do par P2.
+    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 1 },
+    { id: 'vrm', zone: 'main', size: 'medium', order: 2 },
+    { id: 'metric-strip', zone: 'main', size: 'medium', order: 3 },
+    { id: 'thermometers', zone: 'main', size: 'compact', order: 4 },
+    { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 5 },
     { id: 'posture', zone: 'main', size: 'full', order: 6 },
     { id: 'news-high-impact', zone: 'main', size: 'medium', order: 7 },
     { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 8 },

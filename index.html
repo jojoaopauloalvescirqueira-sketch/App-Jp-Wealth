@@ -608,16 +608,35 @@
             <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceRiscoBar"></div></div>
           </div>
         </div>
-        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
-          <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
-          <div class="gd-vrm-main">
-            <div class="gd-vrm-dial" id="gdVrmDial" aria-hidden="true"></div>
-            <div><div class="gd-vrm-value" id="gdVrmValue">—</div><div class="gd-vrm-regime" id="gdVrmRegime">—</div></div>
+        <!-- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5).
+             O dial semicircular saiu: era a terceira geometria de leitura da
+             mesma grandeza e nao cabia ao lado do Status do Sistema. No lugar,
+             a MESMA barra do cockpit (.mc-fact-track/-fill/-mark reusados, sem
+             CSS paralelo) na MESMA escala que o dial ja usava — vrmHV x 1,15 —
+             com os dois limites de regime marcados: vrmN e vrmHV.
+             `medium` (2 colunas) para dividir a linha com o Status do Sistema.
+             Nada de critico foi escondido: valor, regime e os dois limites
+             ficam visiveis sem interacao; so os ATRs, que sao leitura
+             informativa, descem para disclosure (P3). -->
+        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
+          <h2>VRM · Regime de Volatilidade <span class="art">volatilidade relativa ATR55/ATR660</span></h2>
+          <div class="gd-vrm-head">
+            <span class="gd-vrm-value" id="gdVrmValue">—</span>
+            <span class="gd-vrm-regime" id="gdVrmRegime">—</span>
           </div>
-          <div class="gd-vrm-atr">
-            <div><span class="k">ATR(55) H4</span><span class="v" id="gdVrmAtr55">—</span></div>
-            <div><span class="k">ATR(660) H4</span><span class="v" id="gdVrmAtr660">—</span></div>
-          </div>
+          <span class="mc-fact-track gd-vrm-track" aria-hidden="true">
+            <i class="mc-fact-fill" id="gdVrmFill"></i>
+            <i class="mc-fact-mark" id="gdVrmMarkN"></i>
+            <i class="mc-fact-mark" id="gdVrmMarkHV"></i>
+          </span>
+          <p class="gd-vrm-limits" id="gdVrmLimits">—</p>
+          <details class="gd-vrm-atr-disc">
+            <summary>ATR(55) e ATR(660)</summary>
+            <div class="gd-vrm-atr">
+              <div><span class="k">ATR(55) H4</span><span class="v" id="gdVrmAtr55">—</span></div>
+              <div><span class="k">ATR(660) H4</span><span class="v" id="gdVrmAtr660">—</span></div>
+            </div>
+          </details>
         </div>
 
         <!-- Faixa de postura/conformidade — só estados reais (getOperationalClearance,
@@ -736,15 +755,51 @@
       <div class="jp-carousel">
         <div class="jp-slide" data-slide="0">
           <!-- N1 · Operational Clearance — veredito executivo: "posso operar agora?" -->
-          <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="large" data-widget-allowed-sizes="large full">
+          <!-- COCKPIT OPERACIONAL P1 (JPW-789ABC-B2, Fase 2A).
+               `full` (4 colunas): ao ganhar a faixa de fatos, o card passa a ser
+               o dono dos quatro numeros operacionais e precisa da largura da
+               grade. Em 2x2 as celulas cairiam para ~98px e truncariam — a mesma
+               falha ja medida na faixa de metricas. `full` ja era tamanho
+               permitido (data-widget-allowed-sizes), nao e estado novo. -->
+          <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
             <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
             <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
             <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-            <div class="mc-clearance-facts" id="mcClearanceFacts" data-dash-scroll="governanca">
-              <span><span class="k">Fase da Conta</span><b id="mcClearanceFactFase">—</b></span>
-              <span><span class="k">Risco Aberto</span><b id="mcClearanceFactRisco">—</b></span>
-              <span><span class="k">Alavancagem</span><b id="mcClearanceFactAlav">—</b></span>
-              <span class="mc-clearance-facts-chev" aria-hidden="true">›</span>
+            <!-- Quatro fatos operacionais. Substitui a linha de texto anterior
+                 (Fase/Risco/Alavancagem), preservando o mesmo destino de clique
+                 (data-dash-scroll="governanca") e o mesmo chevron. Cada celula e
+                 ESPELHO DE LEITURA: valor + escala + meta, sem gauge, sem dial,
+                 sem calculo novo. O valor carrega SO o numero corrente (max ~7
+                 caracteres); teto e contexto vao para a meta — foi a
+                 concatenacao "$320 / $400" no valor que truncou a 960px. -->
+            <div class="mc-cockpit-facts" id="mcCockpitFacts" data-dash-scroll="governanca">
+              <div class="mc-cockpit-grid">
+                <div class="mc-fact" id="mcFactFase">
+                  <span class="mc-fact-k">Fase</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-seg" data-fact-seg-wrap aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+                <div class="mc-fact" id="mcFactDD">
+                  <span class="mc-fact-k">Drawdown</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+                <div class="mc-fact" id="mcFactRisco">
+                  <span class="mc-fact-k">Risco Aberto</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+                <div class="mc-fact" id="mcFactAlav">
+                  <span class="mc-fact-k">Alavancagem</span>
+                  <span class="mc-fact-v" data-fact-v>—</span>
+                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                  <span class="mc-fact-meta" data-fact-meta>—</span>
+                </div>
+              </div>
+              <span class="mc-cockpit-chev" aria-hidden="true">›</span>
             </div>
             <div class="mc-action" id="mcClearanceAction">—</div>
           </div>
