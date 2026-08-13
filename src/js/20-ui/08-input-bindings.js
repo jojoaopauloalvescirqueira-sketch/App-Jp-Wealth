@@ -19,10 +19,10 @@ function bindParams(){
   $('cLoteMaster').addEventListener('input',e=>{S.loteMaster=parseFloat(e.target.value)||0; save(); renderAplicacao();});
   $('addAccountBtn').addEventListener('click',()=>{
     S.accounts.push({nome:'Nova Conta',tipo:'SATÉLITE',broker:'',platform:'',platformLogin:'',investorPassword:'',perfil:'',perfilLocked:false,sini:0,satu:0});
+    if(typeof accountEditorsOpen!=='undefined') accountEditorsOpen.add(S.accounts.length-1);
     save(); renderContas();
     // foca no nome da nova linha
-    const rows=document.querySelectorAll('#contasBody tr');
-    const last=rows[rows.length-1];
-    if(last) last.querySelector('input[data-f="nome"]').focus();
+    const input=document.querySelector(`#contasBody .account-detail-row[data-idx="${S.accounts.length-1}"] input[data-f="nome"]`);
+    if(input) input.focus();
   });
 }

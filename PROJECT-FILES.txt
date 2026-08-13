@@ -63,6 +63,7 @@ infra/ff-news-feed/README.md
 infra/ff-news-feed/ff-high-impact.json
 infra/ff-news-feed/scripts/fetch_news.py
 manifests/jp-wealth.webmanifest
+netlify.toml
 package.json
 requirements-dev.txt
 skills/agentic-evolution-governance/SKILL.md
@@ -90,6 +91,7 @@ src/js/10-domain/04-stop-statistics.js
 src/js/10-domain/05-brokers-prop-firms.js
 src/js/10-domain/06-quarantine.js
 src/js/10-domain/07-reserve-requirements.js
+src/js/10-domain/08-usd-brl-quote.js
 src/js/20-ui/01-header-readout.js
 src/js/20-ui/02-sidebar.js
 src/js/20-ui/03-main-render.js
@@ -163,4 +165,5 @@ tools/service_worker_upgrade_test.py
 tools/settings_modal_test.py
 tools/smoke_test.py
 tools/storage_governance_test.py
+tools/usd_brl_quote_test.py
 tools/validate_project.py

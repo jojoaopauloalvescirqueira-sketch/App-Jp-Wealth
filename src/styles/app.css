@@ -3162,7 +3162,7 @@
   }
   html[data-ui-version="tesla-inspired"] .card.bare,
   html[data-ui-version="tesla-inspired"] .card:not(:has(> h2)){padding-top:var(--jp-space-6)}
-  :root[data-theme="dark"] html[data-ui-version="tesla-inspired"] .card{background:var(--jp-surface)}
+  html[data-theme="dark"][data-ui-version="tesla-inspired"] .card{background:var(--jp-surface)}
 
   /* ---------- A faixa vinho decorativa sai do sistema ----------
      O cabeçalho de painel deixa de ser cromo em vídeo invertido e passa a
@@ -3605,7 +3605,7 @@
     line-height:1.5;
   }
   html[data-ui-version="tesla-inspired"] .dtable tbody tr:hover td{background:var(--jp-surface-elevated)}
-  :root[data-theme="dark"] html[data-ui-version="tesla-inspired"] .dtable tbody tr:nth-child(even) td{background:transparent}
+  html[data-theme="dark"][data-ui-version="tesla-inspired"] .dtable tbody tr:nth-child(even) td{background:transparent}
   html[data-ui-version="tesla-inspired"] :is(.dtable td.editable input, .dtable td.editable select, .otable input, .otable select){
     min-height:var(--jp-control-h-compact); padding:0 var(--jp-space-3);
     background:var(--jp-surface-inset); border:1px solid transparent;
@@ -4234,7 +4234,7 @@
     background:var(--jp-surface); border:0; border-radius:10px;
     box-shadow:0 1px 3px rgba(0,0,0,.05); padding:16px; gap:6px;
   }
-  :root[data-theme="dark"] html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card{
+  html[data-theme="dark"][data-shell="global-dashboard"] #gdDashMain .mc-mini-card{
     box-shadow:0 1px 3px rgba(0,0,0,.4);
   }
   html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card .k{
@@ -4581,7 +4581,7 @@
     border:0; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.05);
     background:var(--jp-surface); padding:22px;
   }
-  :root[data-theme="dark"] html[data-shell="global-dashboard"] .card{
+  html[data-theme="dark"][data-shell="global-dashboard"] .card{
     box-shadow:0 1px 3px rgba(0,0,0,.4);
   }
   html[data-shell="global-dashboard"] .card h2{
@@ -5253,22 +5253,6 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .n{display:inline}
 }
 
-  /* ---------- CONTAS · colunas derivadas em P3 (Fase 2C) ----------
-     O protótipo mantém na tabela apenas `LOTE VS MESTRE` — o número que se
-     opera — e manda Correção, Normalização V10 e Fator de Perfil para o
-     detalhe de cada linha. Aqui elas saem da leitura primária mas continuam
-     no DOM e acessíveis: o cálculo completo vive no `title` da própria célula
-     de Lote vs Mestre. Nenhum dado foi apagado e o renderizador não mudou de
-     contrato — só deixaram de disputar a largura da tabela.
-     Escopado ao shell novo: sem `data-shell`, a tabela antiga volta inteira. */
-  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(8),
-  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(9),
-  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(10),
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-corr,
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-fw,
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-pf{display:none}
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-lotevs{cursor:help}
-
   /* ---------- PLANEJAMENTO FX · cartão único centrado (Fase 2C) ----------
      O protótipo desenha o FX como UM cartão de 936px centrado numa área de
      1425 (≈65%), não como faixa de largura cheia. O formulário de criação é
@@ -5277,3 +5261,394 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   html[data-shell="global-dashboard"] #fxplan > section{
     max-width:936px; margin-left:auto; margin-right:auto;
   }
+
+/* ==========================================================
+   CLAUDE DESIGN · FIDELIDADE ESTRUTURAL FINAL
+   A referência consolida a leitura em: aviso → cockpit → quatro cards P2,
+   telas operacionais compactas e um único disclosure metodológico. Esta
+   camada vence apenas regras antigas do mesmo shell; cálculos, IDs e estado
+   permanecem nos módulos donos.
+   ========================================================== */
+
+/* Shell compartilhado */
+html[data-shell="global-dashboard"] body{background:var(--jp-bg)}
+html[data-shell="global-dashboard"] .gd-context-row .hdr-readout-dd{display:none!important}
+html[data-shell="global-dashboard"] .dh-kicker{
+  display:flex; align-items:center; gap:8px; min-width:0;
+  font:700 9.5px/1.2 var(--jp-font-ui); letter-spacing:.08em;
+  text-transform:uppercase; color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] .dh-dot{width:7px;height:7px;border-radius:50%;background:var(--mc,var(--jp-action));flex:none}
+html[data-shell="global-dashboard"] .jp-btn{
+  min-height:36px; padding:0 16px; border:1px solid var(--jp-border);
+  border-radius:7px; font:600 11.5px var(--jp-font-ui); cursor:pointer;
+  text-transform:none; letter-spacing:0;
+}
+html[data-shell="global-dashboard"] .jp-btn-primary{background:var(--jp-action);border-color:var(--jp-action);color:#fff}
+html[data-shell="global-dashboard"] .jp-btn-secondary{background:var(--jp-surface);color:var(--jp-ink)}
+html[data-shell="global-dashboard"] .jp-btn:hover{filter:brightness(.97)}
+
+/* Dashboard: uma única grade de largura total, sem coluna lateral */
+html[data-shell="global-dashboard"] #dash.screen.active{display:block}
+html[data-shell="global-dashboard"] #dash .gd-dash-grid{display:block;margin-top:0}
+html[data-shell="global-dashboard"] #gdDashMain{
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-rows:auto; gap:16px; align-items:stretch;
+}
+html[data-shell="global-dashboard"] #gdDashSide{display:none}
+html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
+html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+  grid-column:span 1!important; width:auto; max-width:none; min-height:205px;
+}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center;
+  gap:14px; margin:0; padding:14px 18px; border:1px solid var(--f2);
+  border-left:3px solid var(--f2); border-radius:10px; background:var(--f2-bg);
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner.warning{border-color:var(--f2);border-left-color:var(--f2)}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner.critical{border-color:var(--f4);border-left-color:var(--f4);background:var(--f4-bg)}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner .t{font-size:13px}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner .s{font-size:11px;line-height:1.45}
+html[data-shell="global-dashboard"] #mcClearanceCard{
+  min-height:300px; grid-template-columns:minmax(300px,5fr) minmax(0,7fr);
+}
+html[data-shell="global-dashboard"] #mcClearanceCard::before{display:none}
+html[data-shell="global-dashboard"] #mcClearanceCard .mc-cockpit-acoes{margin-top:22px}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){padding:18px 20px}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-vrm-card,.gd-news-card) h2{font-size:13px;margin-bottom:14px}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card) h2 .art{display:none}
+html[data-shell="global-dashboard"] .jpwss-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+html[data-shell="global-dashboard"] .jpwss-head h2{margin:0;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .jpwss-head img{display:block;width:auto;height:6px;filter:var(--lgf);opacity:.5}
+html[data-shell="global-dashboard"] .jpwss-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+html[data-shell="global-dashboard"] .gd-quick-card{display:flex;flex-direction:column}
+html[data-shell="global-dashboard"] .gd-quick-card .gd-quick-nav{flex:1;justify-content:space-between}
+html[data-shell="global-dashboard"] .gd-news-agenda{margin-top:auto;padding-top:8px}
+html[data-shell="global-dashboard"] .gd-news-card{display:flex;flex-direction:column}
+html[data-shell="global-dashboard"] .gd-news-agenda > summary{
+  cursor:pointer; list-style:none; font:600 10.5px var(--jp-font-ui); color:var(--jp-action);
+}
+html[data-shell="global-dashboard"] .gd-news-agenda > summary::before{content:'▸ ';}
+html[data-shell="global-dashboard"] .gd-news-agenda[open] > summary::before{content:'▾ ';}
+html[data-shell="global-dashboard"] .gd-news-agenda > .jp-table-scroll{margin-top:10px}
+html[data-shell="global-dashboard"] .gd-news-card:has(#gdNewsList .gd-news-item-past) #gdNewsNext[hidden]{display:flex}
+html[data-shell="global-dashboard"] .gd-news-card:has(#gdNewsList .gd-news-item-past) #gdNewsNext[hidden]::after{
+  content:'Sem evento futuro hoje'; font-size:11px; color:var(--jp-ink-muted);
+}
+
+/* Evolução e ritmo: a razão 3:2 do protótipo, seguida de um único disclosure */
+html[data-shell="global-dashboard"] .gd-analysis-grid{
+  display:grid; grid-template-columns:minmax(0,3fr) minmax(300px,2fr);
+  gap:16px; margin-top:16px; align-items:stretch;
+}
+html[data-shell="global-dashboard"] .gd-analysis-grid > .card{margin:0;min-width:0}
+html[data-shell="global-dashboard"] #dashCharts > .metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+html[data-shell="global-dashboard"] #dashCharts > .metrics .metric{padding:9px 10px}
+html[data-shell="global-dashboard"] #dashCharts .chart-box{border:0;padding:0;background:transparent}
+html[data-shell="global-dashboard"] #dashRiskDetail .chart-box{border:0;padding:0;background:transparent}
+html[data-shell="global-dashboard"] #dashRiskDetail > .dtable{margin-top:14px!important}
+html[data-shell="global-dashboard"] #dashCyclePace > .metrics{display:none}
+html[data-shell="global-dashboard"] .gd-methodology{
+  margin-top:16px; border:1px solid var(--jp-border); border-radius:10px;
+  background:var(--jp-surface); box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+html[data-shell="global-dashboard"] .gd-methodology > summary{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:baseline; gap:10px;
+  list-style:none; cursor:pointer; padding:15px 20px;
+  font:700 12px var(--jp-font-ui); color:var(--jp-ink);
+}
+html[data-shell="global-dashboard"] .gd-methodology > summary::-webkit-details-marker{display:none}
+html[data-shell="global-dashboard"] .gd-methodology > summary .art{font-size:10.5px;font-weight:400;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .gd-methodology[open] > summary{border-bottom:1px solid var(--jp-border)}
+html[data-shell="global-dashboard"] .gd-methodology-body{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;
+  padding:20px;
+}
+html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1/-1}
+html[data-shell="global-dashboard"] .gd-method-section h3{margin:0 0 12px;font:700 12px var(--jp-font-ui)}
+html[data-shell="global-dashboard"] .gd-method-section h3 span{font-weight:400;color:var(--jp-ink-muted)}
+
+/* Execution Board */
+html[data-shell="global-dashboard"] #execWidgetGrid{gap:16px;margin-top:0}
+html[data-shell="global-dashboard"] #execClearanceCard{
+  display:grid; grid-template-columns:minmax(300px,5fr) minmax(0,7fr);
+  gap:32px; align-items:center; padding:26px 28px; border-left:3px solid var(--mc);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-copy{min-width:0}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{
+  margin:7px 0 10px; font:700 22px/1.18 var(--jp-font-ui);
+  letter-spacing:-.025em; color:var(--mc); max-width:18ch;
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-action{
+  font:400 12.5px/1.55 var(--jp-font-ui); color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-action .ak{font-size:9.5px}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;
+  padding:0; font-family:var(--jp-font-ui);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-fact{
+  display:flex; flex-direction:column; gap:6px; min-width:0;
+  padding:10px 14px; border:1px solid var(--jp-border);
+  border-radius:8px; background:var(--jp-surface-inset);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-fact > span:first-child{
+  font-size:9.5px; line-height:1.2; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-fact b{
+  margin:0; font:700 16px/1.2 var(--mono); color:var(--jp-ink);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-sub{
+  font:400 10px/1.35 var(--jp-font-ui); color:var(--ink-faint);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-track{
+  display:block; height:4px; overflow:hidden; border-radius:3px; background:var(--jp-border);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-track > i{
+  display:block; width:0; height:100%; border-radius:inherit; background:var(--mc);
+  transition:width .3s ease;
+}
+html[data-shell="global-dashboard"] #execClearanceCard .onb-gov-note.show{
+  display:none;
+}
+html[data-shell="global-dashboard"] #execClearanceCard .onb-gov-note .reset-btn{min-height:32px}
+html[data-shell="global-dashboard"] .risk-primary-indicators{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;
+}
+html[data-shell="global-dashboard"] .risk-primary-indicators .metric{min-width:0;min-height:0;padding:9px 12px}
+html[data-shell="global-dashboard"] .risk-primary-indicators .metric .v{white-space:normal;font-size:14px}
+html[data-shell="global-dashboard"] .risk-primary-indicators .metric .sub{font-size:10px;line-height:1.35}
+html[data-shell="global-dashboard"] #execPhaseGridsCard #phaseContainer > .card:first-child{
+  margin:0 0 14px; padding:0; border:0; border-radius:0;
+  background:transparent; box-shadow:none;
+}
+html[data-shell="global-dashboard"] #execPhaseGridsCard #phaseContainer > .card:first-child h2{margin-bottom:10px;font-size:14px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard{padding:22px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard > h2{margin-bottom:12px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase{margin-bottom:8px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-head{min-height:42px;padding:8px 14px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-body{padding:8px 12px 12px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-meta{padding:6px 4px 10px;font-size:10.5px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable th{padding:4px 7px;font-size:9.5px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable td{padding:5px 7px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable :is(input,select){height:32px;min-height:32px;padding:4px 7px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .stop-note{display:none}
+html[data-shell="global-dashboard"] #execPhaseGridsCard [data-addorder]{min-height:34px;margin-top:8px!important}
+html[data-shell="global-dashboard"] #execPhaseGridsCard tbody tr:nth-child(n+4):not(.is-new-order):has(input[data-f="id"]:placeholder-shown):has(select[data-f="par"] option[value=""]:checked):has(input[data-f="lote"]:placeholder-shown):has(input[data-f="entry"]:placeholder-shown):has(input[data-f="sl"]:placeholder-shown):has(input[data-f="tp"]:placeholder-shown):has(select[data-f="status"] option[value=""]:checked):not(:focus-within){display:none}
+html[data-shell="global-dashboard"] #phaseContainer > [data-migrate]{width:auto!important;min-height:34px}
+html[data-shell="global-dashboard"] .exec-secondary-details{padding:0!important;overflow:hidden;align-self:start!important}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  list-style:none; cursor:pointer; padding:15px 20px;
+  font:700 12px var(--jp-font-ui); color:var(--jp-ink);
+}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary::-webkit-details-marker{display:none}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary::before{content:'▸';color:var(--jp-action)}
+html[data-shell="global-dashboard"] .exec-secondary-details[open] > summary::before{content:'▾'}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary span{margin-left:auto;font-weight:400;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .exec-secondary-body{padding:16px 20px 20px;border-top:1px solid var(--jp-border)}
+html[data-shell="global-dashboard"] .exec-vrm-secondary{margin-top:16px;padding-top:16px;border-top:1px solid var(--jp-border)}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+html[data-shell="global-dashboard"] #execLifoMonitor{
+  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center;
+  gap:8px 12px; padding:22px;
+}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-head{padding:0;border:0;font-size:14px;background:transparent}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{
+  width:max-content; padding:3px 10px; border:0; border-radius:999px;
+  background:var(--f1-bg); font-size:10px;
+}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sug{padding:0;font-size:11px;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(4){grid-column:1/-1;padding:4px 0 8px!important}
+html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body{
+  grid-column:1/-1; gap:10px; padding:0;
+}
+html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body .metric{min-height:0;padding:10px 14px}
+html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(6){grid-column:1/-1;padding:0!important}
+html[data-shell="global-dashboard"] #execLifoMonitor > details{grid-column:1/-1;margin-top:4px}
+html[data-shell="global-dashboard"] #execLifoMonitor > details .risk-note{margin:12px 0 0}
+
+/* Contas: linha de leitura, editor expansível e credenciais explícitas */
+html[data-shell="global-dashboard"] #contasWidgetGrid{gap:16px;margin-top:0}
+html[data-shell="global-dashboard"] #contas .accounts-card-head{justify-content:space-between}
+html[data-shell="global-dashboard"] #contas .account-security-note{
+  margin:14px 0; padding:9px 12px; border-left:3px solid var(--f2);
+  background:var(--f2-bg); border-radius:6px;
+  font:400 11px/1.45 var(--jp-font-ui); color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #contas .account-security-note strong{color:var(--jp-ink)}
+html[data-shell="global-dashboard"] #contas .account-table-note{margin:10px 0 0;font-size:10.5px;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] #contas .jp-table-scroll{overflow-x:auto}
+html[data-shell="global-dashboard"] #contas [data-layout-card="contas-accounts-table"] .dtable{min-width:860px;font-variant-numeric:tabular-nums}
+html[data-shell="global-dashboard"] #contas [data-layout-card="contas-order-application"]{width:100%;max-width:560px}
+html[data-shell="global-dashboard"] #contas [data-layout-card="contas-order-application"] .dtable{width:100%;min-width:0;font-variant-numeric:tabular-nums}
+html[data-shell="global-dashboard"] #contas .account-summary-row td{height:48px;padding:8px 10px;vertical-align:middle}
+html[data-shell="global-dashboard"] #contas .account-editor-toggle{
+  display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;
+  padding:0; border:0; background:transparent; color:var(--jp-ink);
+  font:700 11.5px var(--jp-font-ui); text-align:left; cursor:pointer;
+}
+html[data-shell="global-dashboard"] #contas .account-editor-toggle span{color:var(--jp-action)}
+html[data-shell="global-dashboard"] #contas .account-type,
+html[data-shell="global-dashboard"] #contas .account-chip{
+  display:inline-flex; align-items:center; min-height:22px; padding:2px 8px;
+  border:1px solid var(--jp-border); border-radius:999px; background:transparent;
+  font:600 9.5px var(--jp-font-ui); white-space:nowrap;
+}
+html[data-shell="global-dashboard"] #contas .account-type.master{color:var(--jp-action);border-color:var(--jp-action)}
+html[data-shell="global-dashboard"] #contas .account-type.own{color:var(--f1);border-color:var(--f1)}
+html[data-shell="global-dashboard"] #contas .account-type.satellite{color:var(--f2);border-color:var(--f2)}
+html[data-shell="global-dashboard"] #contas button.account-chip{cursor:pointer;color:var(--f2)}
+html[data-shell="global-dashboard"] #contas button.account-chip.ok{color:var(--f1)}
+html[data-shell="global-dashboard"] #contas .account-detail-row[hidden]{display:none}
+html[data-shell="global-dashboard"] #contas .account-detail-row > td{
+  padding:0 10px 16px; background:var(--jp-surface-inset); border-bottom:1px solid var(--jp-border);
+}
+html[data-shell="global-dashboard"] #contas .account-editor-grid{
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px 14px;
+  padding:16px; border:1px solid var(--jp-border); border-radius:9px; background:var(--jp-surface);
+}
+html[data-shell="global-dashboard"] #contas .account-editor-grid .field{min-width:0;margin:0}
+html[data-shell="global-dashboard"] #contas .account-editor-grid :is(label.field>span,.account-editor-label){
+  display:block; margin-bottom:6px; font:600 10px var(--jp-font-ui); color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #contas .account-password-field{grid-column:span 2}
+html[data-shell="global-dashboard"] #contas .account-calc-detail{grid-column:span 2;align-self:end}
+html[data-shell="global-dashboard"] #contas .account-calc-detail summary{cursor:pointer;font:600 10.5px var(--jp-font-ui);color:var(--jp-action)}
+html[data-shell="global-dashboard"] #contas .account-calc-detail dl{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:10px 0 0;font-size:10.5px}
+html[data-shell="global-dashboard"] #contas .account-calc-detail :is(dt,dd){margin:0}
+html[data-shell="global-dashboard"] #contas .account-calc-detail dd{font-family:var(--mono);font-weight:700;text-align:right}
+
+/* Contabilidade: quatro tiles, análise 3:2 e lançamentos em largura total */
+html[data-shell="global-dashboard"] #contabWidgetGrid{
+  display:grid; grid-template-columns:minmax(0,3fr) minmax(300px,2fr);
+  grid-auto-rows:auto; gap:16px; margin-top:0;
+}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-period-goals"],
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-entries"]{grid-column:1/-1!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-real-vs-projected"]{grid-column:1!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-daily-close"]{grid-column:2!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid .acct-summary-card{
+  padding:0; border:0; background:transparent; box-shadow:none;
+}
+html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px}
+html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics .metric{
+  min-height:96px; padding:16px 18px; border:0; border-radius:10px;
+  background:var(--jp-surface); box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics .metric .v{font-size:18px;white-space:normal}
+html[data-shell="global-dashboard"] .acct-period-link{
+  margin-top:8px; padding:4px 0; border:0; background:transparent;
+  color:var(--jp-action); font:600 10.5px var(--jp-font-ui); cursor:pointer;
+}
+html[data-shell="global-dashboard"] .acct-period-detail{
+  margin-top:12px; padding:18px; border:1px solid var(--jp-border);
+  border-radius:10px; background:var(--jp-surface);
+}
+html[data-shell="global-dashboard"] #contab [data-layout-card="contab-daily-close"] .params-grid{grid-template-columns:1fr}
+html[data-shell="global-dashboard"] #contab #ldAddBtn{width:100%;margin-top:4px}
+html[data-shell="global-dashboard"] #contab [data-layout-card="contab-entries"] > .jp-table-scroll{overflow-x:auto}
+html[data-shell="global-dashboard"] #contab [data-layout-card="contab-entries"] .dtable{width:100%;min-width:700px}
+html[data-shell="global-dashboard"] .acct-entry-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+html[data-shell="global-dashboard"] .acct-export-audit{grid-column:1/-1;justify-self:start;margin-top:0}
+
+/* Planejamento FX: um cartão linear e central no estado vazio */
+html[data-shell="global-dashboard"] #fxPlanningCard[data-fxp-state="empty"]{padding:28px 32px}
+html[data-shell="global-dashboard"] #fxPlanningCard[data-fxp-state="empty"] > h2{display:none}
+html[data-shell="global-dashboard"] .fxp-empty-shell{text-align:left}
+html[data-shell="global-dashboard"] .fxp-empty-kicker{
+  display:flex; justify-content:flex-start; align-items:center; gap:8px;
+  font:700 9.5px var(--jp-font-ui); letter-spacing:.1em;
+  text-transform:uppercase; color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] .fxp-empty-kicker i{width:7px;height:7px;border-radius:50%;background:var(--jp-action)}
+html[data-shell="global-dashboard"] .fxp-empty-shell > h3{margin:8px 0 8px;font:700 26px/1.15 var(--jp-font-ui);letter-spacing:-.02em}
+html[data-shell="global-dashboard"] .fxp-empty-lead{max-width:720px;margin:0;color:var(--jp-ink-muted);font:400 12px/1.65 var(--jp-font-ui)}
+html[data-shell="global-dashboard"] .fxp-empty-method{max-width:720px;margin:14px auto 0;text-align:left}
+html[data-shell="global-dashboard"] .fxp-empty-method > summary{cursor:pointer;text-align:left;font:600 10.5px var(--jp-font-ui);color:var(--jp-action)}
+html[data-shell="global-dashboard"] .fxp-empty-method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+html[data-shell="global-dashboard"] .fxp-empty-method-grid p{margin:0;padding:10px 12px;border:1px solid var(--jp-border);border-radius:8px;background:var(--jp-surface-inset);font-size:10.5px;line-height:1.5;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .fxp-empty-form-grid{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px 16px; margin-top:22px; text-align:left;
+}
+html[data-shell="global-dashboard"] .fxp-empty-form-grid .field{margin:0}
+html[data-shell="global-dashboard"] .fxp-empty-actions{
+  display:flex; justify-content:flex-start; align-items:center; gap:14px;
+  margin-top:20px; color:var(--jp-ink-muted); font-size:10.5px;
+}
+html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-width:210px}
+
+/* Responsivo derivado do layout desktop aprovado */
+@media(max-width:1080px){
+  html[data-shell="global-dashboard"] #execClearanceCard,
+  html[data-shell="global-dashboard"] #mcClearanceCard{grid-template-columns:1fr;gap:20px}
+  html[data-shell="global-dashboard"] #contas .account-editor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+    display:none; position:fixed; inset:66px 0 auto 0; height:auto;
+    flex-direction:column; align-items:stretch; gap:2px; z-index:45;
+    max-height:calc(100dvh - 66px); overflow-y:auto;
+    padding:12px 16px 20px; background:var(--jp-surface);
+    border-bottom:1px solid var(--jp-border); box-shadow:0 18px 40px rgba(0,0,0,.28);
+  }
+  html[data-shell-menu="open"][data-ui-version="tesla-inspired"][data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{display:flex}
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+    justify-content:flex-start; min-height:44px; padding:10px 16px;
+    border-radius:7px; border-bottom:0;
+  }
+  html[data-shell="global-dashboard"] #appMain{padding-left:20px!important;padding-right:20px!important}
+  html[data-shell="global-dashboard"] #gdDashMain{
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+  }
+  html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
+  html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important;width:100%}
+  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+    grid-column:span 1!important; width:100%; align-self:stretch;
+  }
+  html[data-shell="global-dashboard"] .gd-analysis-grid,
+  html[data-shell="global-dashboard"] #contabWidgetGrid{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card]{grid-column:1!important;width:100%!important}
+  html[data-shell="global-dashboard"] #execWidgetGrid > *,
+  html[data-shell="global-dashboard"] #contasWidgetGrid > *{width:100%!important;align-self:stretch!important}
+  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] .gd-methodology-body{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1}
+}
+@media(max-width:680px){
+  html[data-shell="global-dashboard"]{--gd-gutter:16px}
+  html[data-shell="global-dashboard"] #gdDashMain{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){grid-column:1!important;min-height:0}
+  html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{grid-template-columns:auto 1fr}
+  html[data-shell="global-dashboard"] #onboardingIncompleteBanner .reset-btn{grid-column:1/-1;width:100%}
+  html[data-shell="global-dashboard"] #mcClearanceCard{padding:22px 20px;min-height:0}
+  html[data-shell="global-dashboard"] #mcClearanceCard .mc-cockpit-grid,
+  html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] #execClearanceCard{padding:22px 20px}
+  html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{font-size:22px}
+  html[data-shell="global-dashboard"] #execLifoMonitor{grid-template-columns:1fr;padding:20px}
+  html[data-shell="global-dashboard"] #execLifoMonitor > *{grid-column:1!important}
+  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{width:fit-content}
+  html[data-shell="global-dashboard"] .risk-primary-indicators,
+  html[data-shell="global-dashboard"] .fxp-empty-form-grid,
+  html[data-shell="global-dashboard"] .fxp-empty-method-grid,
+  html[data-shell="global-dashboard"] .acct-entry-details{grid-template-columns:1fr!important}
+  html[data-shell="global-dashboard"] #contas .account-editor-grid{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] #contas .account-detail-row .account-editor-grid{
+    position:sticky; left:0; box-sizing:border-box;
+    width:calc(100vw - 99px); max-width:calc(100vw - 99px);
+  }
+  html[data-shell="global-dashboard"] #contas .account-password-field,
+  html[data-shell="global-dashboard"] #contas .account-calc-detail{grid-column:1}
+  html[data-shell="global-dashboard"] #fxPlanningCard[data-fxp-state="empty"]{padding:24px 20px}
+  html[data-shell="global-dashboard"] .fxp-empty-actions{align-items:stretch;flex-direction:column}
+  html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{width:100%}
+  html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics,
+  html[data-shell="global-dashboard"] #acctMetas > .metrics,
+  html[data-shell="global-dashboard"] #dashCharts > .metrics,
+  html[data-shell="global-dashboard"] #dashCyclePanel > .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}

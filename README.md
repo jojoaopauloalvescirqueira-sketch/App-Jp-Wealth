@@ -81,7 +81,10 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 53 scripts do manifest também estejam no precache. O ícone tem variantes
+exige que os 60 scripts do manifest também estejam no precache. Durante uma
+atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
+continua usando um build integral, sem combinar HTML novo com scripts cacheados de
+outro build. O ícone tem variantes
 `Claro` e `Escuro` em `Configurações → Ícone do app` (no iOS é preciso reinstalar o
 atalho após trocar). O HTML portátil em `dist/` é **derivado** — destinado a
 distribuição de arquivo único, reconstruído por `tools/rebuild_monolith.py`, nunca
@@ -108,9 +111,9 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (8 —
-inclui smoke, Central de Configurações, Galton Board e Planejamento FX em Chromium
-real) e **full** (18 verificações, incluindo segurança de importação/XSS, senha de
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (9 —
+inclui smoke, Central de Configurações, Galton Board, Planejamento FX e cotação
+USD/BRL em Chromium real) e **full** (19 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.
@@ -141,11 +144,12 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 ## Estrutura principal
 
 - `index.html` — composição da interface e contratos DOM estáticos.
-- `src/styles/app.css` — estilos extraídos do HTML original.
+- `src/styles/app.css` — design system, temas e responsividade do terminal.
 - `src/js/` — lógica em domínios (`00-core` → `10-domain` → `20-ui` → `30-accounting` → `40-app`); a ordem em `manifest.json` é parte do runtime.
 - `src/js/40-app/18-galton-board/` — seis módulos clássicos isolados da feature.
 - `src/js/30-accounting/05-fx-planning/` — cinco módulos do Planejamento FX;
-  `src/js/10-domain/07-reserve-requirements.js` — FCR/FEO compartilhado.
+  `src/js/10-domain/07-reserve-requirements.js` — FCR/FEO compartilhado;
+  `src/js/10-domain/08-usd-brl-quote.js` — cotação corrente USD/BRL e cache técnico.
 - `src/vendor/planck/` — Planck.js 1.5.0 pinado, licença e proveniência.
 - `assets/`, `manifests/`, `sw.js` — superfície PWA (ícones, manifesto único, service worker com precache).
 - `infra/ff-news-feed/` — documentação do alimentador do widget de notícias (repositório auxiliar, só dados públicos).

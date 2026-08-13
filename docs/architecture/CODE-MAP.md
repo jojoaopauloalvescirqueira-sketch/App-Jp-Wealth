@@ -1,7 +1,7 @@
 # Mapa do código
 
-Fotografia do candidato local de 2026-08-11 (branch `feature/fx-planning`):
-`src/js/manifest.json` contém 59 scripts clássicos. O manifest é a fonte única
+Fotografia do candidato local de 2026-08-13 (branch `feature/claude-design-fidelity`,
+base `main@38bccfc`): `src/js/manifest.json` contém 60 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
 
@@ -63,11 +63,12 @@ a lista material mudar.
 | 52 | `src/js/40-app/18-galton-board/05-renderer.js` | Canvas responsivo HiDPI |
 | 53 | `src/js/40-app/18-galton-board/06-controller.js` | DOM, lifecycle e preferências isoladas |
 | 54 | `src/js/10-domain/07-reserve-requirements.js` | FCR/FEO — função pura compartilhada (Arts. 13.1/13.2) |
-| 55 | `src/js/30-accounting/05-fx-planning/01-fx-model.js` | Planejamento FX: modelo de domínio e validação |
-| 56 | `src/js/30-accounting/05-fx-planning/02-fx-engine.js` | Planejamento FX: motor matemático puro |
-| 57 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
-| 58 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
-| 59 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
+| 55 | `src/js/10-domain/08-usd-brl-quote.js` | Cotação USD/BRL, cache e fallback controlado |
+| 56 | `src/js/30-accounting/05-fx-planning/01-fx-model.js` | Planejamento FX: modelo de domínio e validação |
+| 57 | `src/js/30-accounting/05-fx-planning/02-fx-engine.js` | Planejamento FX: motor matemático puro |
+| 58 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
+| 59 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
+| 60 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
 
 ## Laboratório de Probabilidade
 
@@ -81,17 +82,20 @@ tem `N + 1` compartimentos. O detalhe do contrato está em `GALTON-BOARD.md`.
 Tela principal própria `#fxplan` — quinta entrada da rail, mesma mecânica
 `.tab`/`data-screen` das demais — contendo o card `#fxPlanningCard` (fora da
 personalização de layout nesta fase). Os seis módulos publicam
-`window.JPWFx` + `reserveRequirementsCalc` e o agregado persiste em
-`S.fxPlanning`. A extração de `reserveCalc()` do onboarding para a função pura
+`window.JPWFx` + `reserveRequirementsCalc`; o módulo de cotação publica
+`window.JPWMarket.usdBrl`, e o agregado do plano persiste em `S.fxPlanning`.
+A extração de `reserveCalc()` do onboarding para a função pura
 compartilhada foi autorizada em 2026-08-11; contrato completo em
 `FX-PLANNING.md`.
 
 ## Entrypoints, PWA e artefatos derivados
 
-- `index.html` compõe o DOM e carrega os 59 scripts na ordem do manifest.
+- `index.html` compõe o DOM e carrega os 60 scripts na ordem do manifest.
 - `src/styles/app.css` contém o design system e as regras do laboratório.
 - `sw.js` deve precachear todo caminho declarado no manifest; `validate_project.py`
-  trata a equivalência como invariante.
+  trata a equivalência como invariante. Navegações controladas pelo worker
+  anterior recebem o `index.html` do cache anterior; o worker novo permanece em
+  `waiting` até o fechamento dos clientes, conforme `PWA-UPDATE-LIFECYCLE.md`.
 - `tools/rebuild_monolith.py` é o único gerador de `build-id.js` e
   `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html`; os derivados nunca são editados
   manualmente.

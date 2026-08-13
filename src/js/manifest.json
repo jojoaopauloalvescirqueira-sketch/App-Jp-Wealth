@@ -80,7 +80,7 @@
       "order": 13,
       "path": "src/js/20-ui/05-execution-clearance.js",
       "section": "EXECUTION CLEARANCE — veredito antes dos termômetros",
-      "sha256": "5c834e081b5fefbf1dcb56c16e8235a4a543ff4f4a83cb4055c6b73f5714d5da"
+      "sha256": "251ad099bf6ee3444fb48601de3b792f10bfdd08664dfe21f645c0d94df5c650"
     },
     {
       "order": 14,
@@ -92,7 +92,7 @@
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "52a2c71d983102c53abb28a1ebdaac6d29445cf0ab8fd9217eefddd53df16c26"
+      "sha256": "5672588a77984ee110d4639eca92523ec2da0466820efba85dda5360e84feb6a"
     },
     {
       "order": 16,
@@ -104,13 +104,13 @@
       "order": 17,
       "path": "src/js/20-ui/07-chart-crosshair-tooltip.js",
       "section": "GRÁFICOS · CROSSHAIR + TOOLTIP",
-      "sha256": "098ce530718d1b51d56e9a9ad1abe162b9cc52c885116a9dd621989e3c08ae19"
+      "sha256": "36ec51dbecf5edd149340c9c2e4f250d97202b7af627a581d53a54658aa0edc5"
     },
     {
       "order": 18,
       "path": "src/js/20-ui/08-input-bindings.js",
       "section": "INPUT BINDINGS",
-      "sha256": "cf4e27be1e1cd6d19c13938a57e9cbf1da8d436261dfabcae2e40ef503f799d4"
+      "sha256": "0c44233e3b12280027b62de23ecd2ac3c86bb84514d373cc51142b9bc563a1b2"
     },
     {
       "order": 19,
@@ -128,7 +128,7 @@
       "order": 21,
       "path": "src/js/30-accounting/02-accounting-engine.js",
       "section": "MOTOR DA CONTABILIDADE (perfis V10 centralizados)",
-      "sha256": "cf480b30ab9006d831e89326c4a6942a0ea0ad141dd1e9bb8136ede861416e2b"
+      "sha256": "f4a52369b06b197b94fa30c2e1580d106ade3acc0991812c98e01867dbf969c9"
     },
     {
       "order": 22,
@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "bb6502e8dc5eae649a99a3006760553869198e02c8ac1972ed503eea6b60715d"
+      "sha256": "42f96ac397778b890e81234c55237353113dfc5af5bf54a656ed86b2221e5b27"
     },
     {
       "order": 25,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "842cb1b61b0bfcbdf8d3182dda009e1b98cff1134241c5768cd3fda23c2dd6d6"
+      "sha256": "ace52e15a635890922914ef643a4cc589340daa764da5407f94fe8ff0eb76df7"
     },
     {
       "order": 32,
@@ -236,25 +236,25 @@
       "order": 39,
       "path": "src/js/40-app/10-dashboard-immersive.js",
       "section": "DASHBOARD IMERSIVO · modo, carrossel e navegação interna (N1)",
-      "sha256": "35ed92c20ca3cdba4e83efbf10356d763c4a9380a09902a13588ba5311c72ac2"
+      "sha256": "a2b9dfc7e2b4d8eb985e49c57174d0f3e5b8bc44730e319ab6a10df23e96b127"
     },
     {
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · menu mobile de destinos (N1)",
-      "sha256": "df8101e87bc0cf6c860c40cda8aae7d4059f023ee663f166ee8123e967e44b26"
+      "sha256": "43939dabb283b3695f2302ccf8b34d7c82d1122303902441c40a28aa409f4b26"
     },
     {
       "order": 41,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "208531eccc2ca185ffe70667684bcd4b160c1463f7ad41d196a58a393cb94fe0"
+      "sha256": "7793cfcde7593f90ce71428705e3e0a741bff54664e4aa30397e286e2b848f3c"
     },
     {
       "order": 42,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "afc121a80c78d0fa42ca21eab9b0acc551d098ac72943ee6ec3f6babf9138ac8"
+      "sha256": "28bfbd03864b4a8318ab264116b4ac7b7d13746bcfbb9d122cacfbf192c2f39b"
     },
     {
       "order": 43,
@@ -362,7 +362,7 @@
       "order": 60,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "8dfd400f177e5122071a6b23361cb34ae459fea15f11fd5caf8f0c72c62bec44"
+      "sha256": "3cf3bea01bf6fe24d09e33f128e914f2dd4f1794c33a2032413b99b4708ce230"
     }
   ]
 }

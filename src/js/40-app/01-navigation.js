@@ -18,7 +18,10 @@ function navigateToScreen(t){
   }
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  if(typeof t!=='string'&&t.classList.contains('tab')) t.classList.add('active');
+  const activeTab=typeof t==='string'
+    ? document.querySelector('.tab[data-screen="'+CSS.escape(screenId)+'"]')
+    : (t.classList.contains('tab')?t:null);
+  if(activeTab) activeTab.classList.add('active');
   const screen=$(screenId);
   if(!screen) return;
   screen.classList.add('active');

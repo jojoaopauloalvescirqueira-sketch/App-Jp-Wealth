@@ -17,7 +17,10 @@ function openShellMenu(opener) {
   shellUI.open = true;
   shellUI.opener = opener || toggle;
   document.documentElement.setAttribute('data-shell-menu', 'open');
-  if (toggle) toggle.setAttribute('aria-expanded', 'true');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Fechar menu de telas');
+  }
   const first = nav.querySelector('.tab');
   if (first) first.focus();
 }
@@ -27,7 +30,10 @@ function closeShellMenu(options) {
   shellUI.open = false;
   document.documentElement.removeAttribute('data-shell-menu');
   const toggle = shellEl('[data-shell-menu-toggle]');
-  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu de telas');
+  }
   const opener = shellUI.opener;
   shellUI.opener = null;
   if (!options || options.restoreFocus !== false) {

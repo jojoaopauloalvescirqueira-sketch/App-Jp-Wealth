@@ -34,48 +34,24 @@ function relocateGlobalDashboardShell() {
   const footer = gdEl('gdFooter');
   if (footer) footer.hidden = false;
 
-  // Grid executivo do Dashboard: o card de Clearance e a faixa de 4 métricas
-  // nascem dentro dos slides 0 e 1 do carrossel (o Clearance mantém o contrato
-  // de renderOperationalClearance; o carrossel do modo imersivo foi aposentado,
-  // sem controles para trocar de slide) e entram em #gdDashMain nesta ordem:
-  //
-  //     Clearance (P1)  →  Metric Strip (P1)  →  Status do Sistema (P2)
-  //
-  // REBALANCEAMENTO JPW-789ABC: a faixa de métricas vinha DEPOIS do painel, o
-  // que colocava um card P2 no meio do par P1 e, desde que o painel encolheu de
-  // 2×2 para 2×1, deixava 263–386px de vazio ao lado do Clearance (medido). Com
-  // a faixa promovida para a linha 1 da coluna direita, a hierarquia volta a ser
-  // P1 › P1 › P2 e o vazio fecha em zero — o mesmo movimento resolve as duas
-  // coisas. A faixa vira `medium` (2×1) e ocupa a célula que sobrava.
-  //
-  // Ambos são só reposicionados — nenhum ID, listener ou valor muda. A posição
-  // final de TODOS os cards pode ainda ser reordenada pelo layout personalizável
-  // (13-dashboard-layout.js), que roda depois deste relocate e só reordena —
-  // nunca cria ou clona nós.
+  // Sequência estrutural do protótipo: aviso P1 → cockpit P1 → quatro cards P2.
+  // Os mesmos nós são movidos, nunca clonados, para preservar IDs e listeners.
   const dashMain = gdEl('gdDashMain');
   const instPanel = dashMain && dashMain.querySelector(':scope > [data-layout-card="institutional-panel"]');
-  if (instPanel) {
-    // A faixa entra primeiro, imediatamente antes do painel; o Clearance é então
-    // ancorado NELA, não no painel. As guardas de idempotência olham para o
-    // vizinho que cada um deve ter no fim — reexecutar não embaralha a ordem.
-    const metricStrip = gdEl('mcMetricStrip');
-    if (metricStrip && metricStrip.nextElementSibling !== instPanel) instPanel.before(metricStrip);
+  if (dashMain && instPanel) {
     const clearanceCard = gdEl('mcClearanceCard');
-    // Sem a faixa no DOM, o painel volta a ser a âncora do Clearance.
-    const anchor = (metricStrip && metricStrip.parentElement === dashMain) ? metricStrip : instPanel;
-    if (clearanceCard && clearanceCard.nextElementSibling !== anchor) anchor.before(clearanceCard);
+    if (clearanceCard && clearanceCard.parentElement !== dashMain) instPanel.before(clearanceCard);
   }
 
-  // Alerta real de onboarding: reposicionado (não clonado) para a coluna
-  // lateral do Dashboard, entre "Perfil e Contexto" e "Ações Rápidas". O
-  // mesmo elemento, o mesmo estado (S.onboarding) e o mesmo renderizador
-  // (renderOnboardingIncompleteBanner) continuam sendo a única fonte — só
-  // muda onde ele vive no DOM. Sem esta flag, permanece no topo de <main>
-  // (comportamento legado, visível em todas as telas).
-  const dashSide = gdEl('gdDashSide'), quickCard = gdEl('gdQuickCard'), onbBanner = gdEl('onboardingIncompleteBanner');
-  if (dashSide && quickCard && onbBanner && onbBanner.parentElement !== dashSide) {
-    dashSide.insertBefore(onbBanner, quickCard);
-  }
+  const onbBanner = gdEl('onboardingIncompleteBanner');
+  if (dashMain && onbBanner && onbBanner.parentElement !== dashMain) dashMain.prepend(onbBanner);
+
+  // O protótipo encerra a faixa P2 com Ações Rápidas, na mesma grade de
+  // Status, VRM e Notícias. A personalização reafirma essa posição depois,
+  // mas a relocação inicial garante a composição correta mesmo antes de uma
+  // preferência de layout ser normalizada.
+  const quickCard = gdEl('gdQuickCard');
+  if (dashMain && quickCard && quickCard.parentElement !== dashMain) dashMain.append(quickCard);
 
   // Modo imersivo aposentado (Etapa 1): o herói antigo (.jp-hero) ainda existe
   // no DOM — carrossel, setas, pontos, atalhos de teclado por seta — mas sob
@@ -191,4 +167,6 @@ setTimeout(renderSystemStatus, 0);
 document.addEventListener('click', event => {
   const btn = event.target.closest('[data-gd-settings]');
   if (btn && typeof openSettingsModal === 'function') openSettingsModal(btn.dataset.gdSettings, btn);
+  const quick = event.target.closest('[data-dash-settings]');
+  if (quick && typeof openSettingsModal === 'function') openSettingsModal(quick.dataset.dashSettings, quick);
 });

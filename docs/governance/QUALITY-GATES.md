@@ -30,6 +30,7 @@ Para N0-V e N1:
 - `galton_board_test.py`, incluindo matematica, fisica, persistencia, UI e lifecycle;
 - `fx_planning_test.py`: motor do Planejamento FX (casos 1-20), reservas FCR/FEO,
   baseline x forecast x realizado, persistencia do agregado e fluxo real de UI;
+- `usd_brl_quote_test.py`: cotacao USD/BRL, cache e integracao com o Planejamento FX;
 - browser real nos fluxos e viewports afetados.
 
 ### Full
@@ -57,8 +58,8 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 | Tier | Quantidade | Verificacoes adicionais |
 |---|---:|---|
 | `fast` | 4 | preflight, estrutura, diff-check e frescor material |
-| `standard` | 8 | smoke, Configuracoes, Galton Board e Planejamento FX |
-| `full` | 18 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, corrida assincrona, build, service worker e Notas |
+| `standard` | 9 | smoke, Configuracoes, Galton Board, Planejamento FX e cotacao USD/BRL |
+| `full` | 19 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, corrida assincrona, build, service worker e Notas |
 
 O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
 `codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa
@@ -104,12 +105,13 @@ licença/proveniência, proíbe `Math.random` nos módulos do laboratório e exi
 script do manifest no precache.
 
 `tools/service_worker_upgrade_test.py` exercita a descoberta do worker pelo runtime:
-o harness publica uma raiz nova e abre uma navegação network-first, mas não chama
-`registration.update()` por fora do produto. Polling em Python confirma o worker
-novo em `waiting/installed`; as duas abas já abertas permanecem no build/controller
-antigo, o cliente de descoberta pode ter HTML novo com controller antigo e, depois
-do fechamento de todos os clientes, a próxima abertura recebe o build novo online e
-offline. O teste também confirma que caches externos não são removidos.
+o harness publica uma raiz nova e abre uma navegação ainda controlada pelo worker
+anterior, mas não chama `registration.update()` por fora do produto. Polling em
+Python confirma o worker novo em `waiting/installed`; as duas abas já abertas e o
+cliente de descoberta permanecem integralmente no build/controller antigo, sem
+`pageerror`, erro de console ou requisição falha. Depois do fechamento de todos os
+clientes, a próxima abertura recebe o build novo coerente online e offline. O teste
+também confirma que caches externos não são removidos.
 
 ## Validade da evidencia
 

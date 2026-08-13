@@ -56,10 +56,15 @@ self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
   const url=new URL(event.request.url);
   if(event.request.mode === 'navigate'){
-    event.respondWith(fetch(event.request).then(async response=>{
-      if(response && response.ok) (await caches.open(CACHE_NAME)).put('./index.html',response.clone());
-      return response;
-    }).catch(()=>caches.open(CACHE_NAME).then(cache=>cache.match('./index.html'))));
+    // Uma navegacao controlada precisa permanecer no MESMO build do controller.
+    // Se buscasse o HTML novo na rede enquanto scripts/CSS continuam cache-first
+    // no cache antigo, o cliente de descoberta executaria uma mistura de versoes.
+    // O HTML antigo ja chama registration.update(), portanto ele descobre o worker
+    // novo sem precisar executar o documento novo antes da ativacao normal.
+    event.respondWith(caches.open(CACHE_NAME).then(async cache=>{
+      const cached=await cache.match('./index.html');
+      return cached||fetch(event.request);
+    }));
     return;
   }
   if(url.origin !== self.location.origin){ event.respondWith(fetch(event.request)); return; }

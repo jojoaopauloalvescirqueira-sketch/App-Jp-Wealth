@@ -2,6 +2,45 @@
 
 ## [Unreleased]
 
+### Fidelidade integral ao Claude Design e upgrade PWA coerente — candidato de 2026-08-13 (branch `feature/claude-design-fidelity`)
+
+- **As cinco telas foram reconciliadas com o protótipo** no mesmo shell
+  horizontal, com navegação clássica por sublinhado e gaveta vertical no mobile.
+  Dashboard passou a aviso/cockpit full-width, quatro cards P2 e análise 3:2;
+  drawdown e comparação mensal permanecem acessíveis dentro do disclosure de
+  metodologia.
+- **Execution Board** passou a clearance compacto com quatro fatos, Grade e
+  monitor LIFO 2×2. Stop Estatístico, indicadores complementares e ATR/VRM
+  continuam editáveis/acessíveis em disclosures; nenhum ID ou cálculo foi
+  removido.
+- **Contas** ganhou leitura primária de dez colunas, chip de credenciais e
+  editor completo expansível. Adicionar conta abre o editor e foca o nome; as
+  duas tabelas rolam dentro dos próprios cards em 390 px, sem contaminar a
+  largura do documento.
+- **Contabilidade** agora apresenta quatro indicadores no topo, Real vs
+  Projetado e Fechamento em 3:2 e lançamentos full-width. **Planejamento FX**
+  usa cartão central de 936 px e formulário vazio linear; os quatro modos
+  existentes permanecem inalterados quando há plano.
+- **Upgrade PWA corrigido na raiz.** Um cliente controlado pelo worker anterior
+  recebe o `index.html` do cache anterior e permanece integralmente naquele
+  build enquanto o worker novo espera. Após fechar todos os clientes, a próxima
+  abertura recebe o build novo coerente online e offline; nenhuma limpeza de
+  storage nem takeover forçado foi introduzido.
+- **Responsividade e temas verificados em navegador real** nas cinco telas em
+  1440×900 e 390×844, claro/escuro, com uma única tela ativa, menu mobile
+  vertical, zero overflow horizontal e console limpo nos fluxos exercitados.
+- **Sem mudança normativa ou de persistência.** Fórmulas, constantes, perfis,
+  fases, DD/MDD, lote, LIFO, stops, quarentena, contabilidade, MEI-JP,
+  Planejamento FX, `DEFAULTS`, `migrate()` e chaves de storage permanecem
+  inalterados.
+- **Validação:** `quality_gate.py --tier full` PASS 19/19, build reproduzível,
+  teste de upgrade PWA aprovado e portátil reconstruído oficialmente. Build ID
+  `54a60f3e45fdd76c`.
+- **AGENTIC IMPACT DETECTED.** Lifecycle PWA, teste/gates e contexto visual são
+  consumidos por agentes e skills; arquitetura, contexto, changelog e handoff
+  foram reconciliados. Agentes/routing herdaram as fontes e não exigiram edição;
+  `INDEX NOT REQUIRED`, `SYSTEM RECONCILED`.
+
 - **Fase 2C · reconciliação das cinco telas com o protótipo.** Execution Board:
   9→6 cards (Postura, Termômetros e Coerência absorvidos pelos quatro fatos do
   cockpit, que ganhou Drawdown e passou a levar os tetos no rótulo, como o

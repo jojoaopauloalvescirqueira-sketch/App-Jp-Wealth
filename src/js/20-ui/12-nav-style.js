@@ -16,7 +16,7 @@
 // dizer qual é, em vez de repetir o nome em outro lugar e arriscar divergir.
 const NAV_STYLE_KEY='jpw_nav';
 const NAV_STYLES=['kinetic','pill','classic'];
-const NAV_STYLE_DEFAULT='pill';
+const NAV_STYLE_DEFAULT='classic';
 function navStyleValue(){
   let v=null;
   try{ v=localStorage.getItem(NAV_STYLE_KEY); }catch(e){}

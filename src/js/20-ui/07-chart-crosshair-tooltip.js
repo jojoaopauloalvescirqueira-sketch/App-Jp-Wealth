@@ -63,6 +63,7 @@ function bindChartCrosshair(svg, cfg){
 
 function renderDashCharts(){
   const box=$('dashCharts'); if(!box) return;
+  const riskBox=$('dashRiskDetail');
   const saldoIni=S.params.saldoIni||0;
   const led=ledgerSorted();
   const proj=acctProjection(), m=proj.m;
@@ -177,6 +178,8 @@ function renderDashCharts(){
   const table=mrows?`<table class="dtable" style="margin-top:14px;max-width:520px">
     <thead><tr><th>Mês</th><th class="num">Esperado</th><th class="num">Real</th><th class="num">Δ real−esper.</th></tr></thead>
     <tbody>${mrows}</tbody></table>`:'';
+  const riskMarkup=`<div class="chart-box"><div class="chart-cap">Drawdown (underwater)</div>${svgDD()}</div>
+  ${table}`;
   box.innerHTML=`<div class="metrics">
     <div class="metric ${lucroAcum>=0?'f1':'f4'}"><div class="k">Lucro acumulado</div><div class="v sm" style="color:${lucroAcum>=0?'var(--f1)':'var(--f4)'}">${fmtMoney2(lucroAcum)}</div></div>
     <div class="metric ${evolPct>=0?'f1':'f4'}"><div class="k">Evolução %</div><div class="v sm" style="color:${evolPct>=0?'var(--f1)':'var(--f4)'}">${(evolPct*100).toFixed(2).replace('.',',')}%</div></div>
@@ -184,12 +187,12 @@ function renderDashCharts(){
     <div class="metric ${ddMaxReal<0?'f4':''}"><div class="k">Drawdown máx</div><div class="v sm" style="color:${ddMaxReal<0?'var(--f4)':'var(--ink)'}">${(ddMaxReal*100).toFixed(2).replace('.',',')}%</div></div>
   </div>
   <div class="chart-box" style="margin-top:14px"><div class="chart-cap">Evolução patrimonial · expectativa vs real</div>${svgMoney()}</div>
-  <div class="chart-box" style="margin-top:16px"><div class="chart-cap">Drawdown (underwater)</div>${svgDD()}</div>
-  ${table}
   ${realPts.length>1?'':'<p style="font-size:var(--fs-sm);color:var(--ink-faint);margin-top:10px">Sem fechamentos ainda — a linha de expectativa já aparece; a curva real surge ao registrar o primeiro fechamento diário (aba 07 Contabilidade).</p>'}`;
+  if(riskBox) riskBox.innerHTML=riskMarkup;
+  else box.insertAdjacentHTML('beforeend',riskMarkup);
   // Crosshair só depois do innerHTML — os nós precisam existir no DOM.
   if(chartCfgs.money) bindChartCrosshair(box.querySelector('#chMoney'), chartCfgs.money);
-  if(chartCfgs.dd)    bindChartCrosshair(box.querySelector('#chDD'),    chartCfgs.dd);
+  if(chartCfgs.dd)    bindChartCrosshair((riskBox||box).querySelector('#chDD'), chartCfgs.dd);
 }
 
 // ---- Checklist ----

@@ -3172,7 +3172,7 @@
   }
   html[data-ui-version="tesla-inspired"] .card.bare,
   html[data-ui-version="tesla-inspired"] .card:not(:has(> h2)){padding-top:var(--jp-space-6)}
-  :root[data-theme="dark"] html[data-ui-version="tesla-inspired"] .card{background:var(--jp-surface)}
+  html[data-theme="dark"][data-ui-version="tesla-inspired"] .card{background:var(--jp-surface)}
 
   /* ---------- A faixa vinho decorativa sai do sistema ----------
      O cabeçalho de painel deixa de ser cromo em vídeo invertido e passa a
@@ -3615,7 +3615,7 @@
     line-height:1.5;
   }
   html[data-ui-version="tesla-inspired"] .dtable tbody tr:hover td{background:var(--jp-surface-elevated)}
-  :root[data-theme="dark"] html[data-ui-version="tesla-inspired"] .dtable tbody tr:nth-child(even) td{background:transparent}
+  html[data-theme="dark"][data-ui-version="tesla-inspired"] .dtable tbody tr:nth-child(even) td{background:transparent}
   html[data-ui-version="tesla-inspired"] :is(.dtable td.editable input, .dtable td.editable select, .otable input, .otable select){
     min-height:var(--jp-control-h-compact); padding:0 var(--jp-space-3);
     background:var(--jp-surface-inset); border:1px solid transparent;
@@ -4244,7 +4244,7 @@
     background:var(--jp-surface); border:0; border-radius:10px;
     box-shadow:0 1px 3px rgba(0,0,0,.05); padding:16px; gap:6px;
   }
-  :root[data-theme="dark"] html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card{
+  html[data-theme="dark"][data-shell="global-dashboard"] #gdDashMain .mc-mini-card{
     box-shadow:0 1px 3px rgba(0,0,0,.4);
   }
   html[data-shell="global-dashboard"] #gdDashMain .mc-mini-card .k{
@@ -4591,7 +4591,7 @@
     border:0; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.05);
     background:var(--jp-surface); padding:22px;
   }
-  :root[data-theme="dark"] html[data-shell="global-dashboard"] .card{
+  html[data-theme="dark"][data-shell="global-dashboard"] .card{
     box-shadow:0 1px 3px rgba(0,0,0,.4);
   }
   html[data-shell="global-dashboard"] .card h2{
@@ -5263,22 +5263,6 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .n{display:inline}
 }
 
-  /* ---------- CONTAS · colunas derivadas em P3 (Fase 2C) ----------
-     O protótipo mantém na tabela apenas `LOTE VS MESTRE` — o número que se
-     opera — e manda Correção, Normalização V10 e Fator de Perfil para o
-     detalhe de cada linha. Aqui elas saem da leitura primária mas continuam
-     no DOM e acessíveis: o cálculo completo vive no `title` da própria célula
-     de Lote vs Mestre. Nenhum dado foi apagado e o renderizador não mudou de
-     contrato — só deixaram de disputar a largura da tabela.
-     Escopado ao shell novo: sem `data-shell`, a tabela antiga volta inteira. */
-  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(8),
-  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(9),
-  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(10),
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-corr,
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-fw,
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-pf{display:none}
-  html[data-shell="global-dashboard"] #contas .dtable td.calc-lotevs{cursor:help}
-
   /* ---------- PLANEJAMENTO FX · cartão único centrado (Fase 2C) ----------
      O protótipo desenha o FX como UM cartão de 936px centrado numa área de
      1425 (≈65%), não como faixa de largura cheia. O formulário de criação é
@@ -5287,16 +5271,407 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   html[data-shell="global-dashboard"] #fxplan > section{
     max-width:936px; margin-left:auto; margin-right:auto;
   }
+
+/* ==========================================================
+   CLAUDE DESIGN · FIDELIDADE ESTRUTURAL FINAL
+   A referência consolida a leitura em: aviso → cockpit → quatro cards P2,
+   telas operacionais compactas e um único disclosure metodológico. Esta
+   camada vence apenas regras antigas do mesmo shell; cálculos, IDs e estado
+   permanecem nos módulos donos.
+   ========================================================== */
+
+/* Shell compartilhado */
+html[data-shell="global-dashboard"] body{background:var(--jp-bg)}
+html[data-shell="global-dashboard"] .gd-context-row .hdr-readout-dd{display:none!important}
+html[data-shell="global-dashboard"] .dh-kicker{
+  display:flex; align-items:center; gap:8px; min-width:0;
+  font:700 9.5px/1.2 var(--jp-font-ui); letter-spacing:.08em;
+  text-transform:uppercase; color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] .dh-dot{width:7px;height:7px;border-radius:50%;background:var(--mc,var(--jp-action));flex:none}
+html[data-shell="global-dashboard"] .jp-btn{
+  min-height:36px; padding:0 16px; border:1px solid var(--jp-border);
+  border-radius:7px; font:600 11.5px var(--jp-font-ui); cursor:pointer;
+  text-transform:none; letter-spacing:0;
+}
+html[data-shell="global-dashboard"] .jp-btn-primary{background:var(--jp-action);border-color:var(--jp-action);color:#fff}
+html[data-shell="global-dashboard"] .jp-btn-secondary{background:var(--jp-surface);color:var(--jp-ink)}
+html[data-shell="global-dashboard"] .jp-btn:hover{filter:brightness(.97)}
+
+/* Dashboard: uma única grade de largura total, sem coluna lateral */
+html[data-shell="global-dashboard"] #dash.screen.active{display:block}
+html[data-shell="global-dashboard"] #dash .gd-dash-grid{display:block;margin-top:0}
+html[data-shell="global-dashboard"] #gdDashMain{
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-rows:auto; gap:16px; align-items:stretch;
+}
+html[data-shell="global-dashboard"] #gdDashSide{display:none}
+html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
+html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+  grid-column:span 1!important; width:auto; max-width:none; min-height:205px;
+}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center;
+  gap:14px; margin:0; padding:14px 18px; border:1px solid var(--f2);
+  border-left:3px solid var(--f2); border-radius:10px; background:var(--f2-bg);
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner.warning{border-color:var(--f2);border-left-color:var(--f2)}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner.critical{border-color:var(--f4);border-left-color:var(--f4);background:var(--f4-bg)}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner .t{font-size:13px}
+html[data-shell="global-dashboard"] #onboardingIncompleteBanner .s{font-size:11px;line-height:1.45}
+html[data-shell="global-dashboard"] #mcClearanceCard{
+  min-height:300px; grid-template-columns:minmax(300px,5fr) minmax(0,7fr);
+}
+html[data-shell="global-dashboard"] #mcClearanceCard::before{display:none}
+html[data-shell="global-dashboard"] #mcClearanceCard .mc-cockpit-acoes{margin-top:22px}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){padding:18px 20px}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-vrm-card,.gd-news-card) h2{font-size:13px;margin-bottom:14px}
+html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card) h2 .art{display:none}
+html[data-shell="global-dashboard"] .jpwss-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+html[data-shell="global-dashboard"] .jpwss-head h2{margin:0;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .jpwss-head img{display:block;width:auto;height:6px;filter:var(--lgf);opacity:.5}
+html[data-shell="global-dashboard"] .jpwss-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+html[data-shell="global-dashboard"] .gd-quick-card{display:flex;flex-direction:column}
+html[data-shell="global-dashboard"] .gd-quick-card .gd-quick-nav{flex:1;justify-content:space-between}
+html[data-shell="global-dashboard"] .gd-news-agenda{margin-top:auto;padding-top:8px}
+html[data-shell="global-dashboard"] .gd-news-card{display:flex;flex-direction:column}
+html[data-shell="global-dashboard"] .gd-news-agenda > summary{
+  cursor:pointer; list-style:none; font:600 10.5px var(--jp-font-ui); color:var(--jp-action);
+}
+html[data-shell="global-dashboard"] .gd-news-agenda > summary::before{content:'▸ ';}
+html[data-shell="global-dashboard"] .gd-news-agenda[open] > summary::before{content:'▾ ';}
+html[data-shell="global-dashboard"] .gd-news-agenda > .jp-table-scroll{margin-top:10px}
+html[data-shell="global-dashboard"] .gd-news-card:has(#gdNewsList .gd-news-item-past) #gdNewsNext[hidden]{display:flex}
+html[data-shell="global-dashboard"] .gd-news-card:has(#gdNewsList .gd-news-item-past) #gdNewsNext[hidden]::after{
+  content:'Sem evento futuro hoje'; font-size:11px; color:var(--jp-ink-muted);
+}
+
+/* Evolução e ritmo: a razão 3:2 do protótipo, seguida de um único disclosure */
+html[data-shell="global-dashboard"] .gd-analysis-grid{
+  display:grid; grid-template-columns:minmax(0,3fr) minmax(300px,2fr);
+  gap:16px; margin-top:16px; align-items:stretch;
+}
+html[data-shell="global-dashboard"] .gd-analysis-grid > .card{margin:0;min-width:0}
+html[data-shell="global-dashboard"] #dashCharts > .metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+html[data-shell="global-dashboard"] #dashCharts > .metrics .metric{padding:9px 10px}
+html[data-shell="global-dashboard"] #dashCharts .chart-box{border:0;padding:0;background:transparent}
+html[data-shell="global-dashboard"] #dashRiskDetail .chart-box{border:0;padding:0;background:transparent}
+html[data-shell="global-dashboard"] #dashRiskDetail > .dtable{margin-top:14px!important}
+html[data-shell="global-dashboard"] #dashCyclePace > .metrics{display:none}
+html[data-shell="global-dashboard"] .gd-methodology{
+  margin-top:16px; border:1px solid var(--jp-border); border-radius:10px;
+  background:var(--jp-surface); box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+html[data-shell="global-dashboard"] .gd-methodology > summary{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:baseline; gap:10px;
+  list-style:none; cursor:pointer; padding:15px 20px;
+  font:700 12px var(--jp-font-ui); color:var(--jp-ink);
+}
+html[data-shell="global-dashboard"] .gd-methodology > summary::-webkit-details-marker{display:none}
+html[data-shell="global-dashboard"] .gd-methodology > summary .art{font-size:10.5px;font-weight:400;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .gd-methodology[open] > summary{border-bottom:1px solid var(--jp-border)}
+html[data-shell="global-dashboard"] .gd-methodology-body{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;
+  padding:20px;
+}
+html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1/-1}
+html[data-shell="global-dashboard"] .gd-method-section h3{margin:0 0 12px;font:700 12px var(--jp-font-ui)}
+html[data-shell="global-dashboard"] .gd-method-section h3 span{font-weight:400;color:var(--jp-ink-muted)}
+
+/* Execution Board */
+html[data-shell="global-dashboard"] #execWidgetGrid{gap:16px;margin-top:0}
+html[data-shell="global-dashboard"] #execClearanceCard{
+  display:grid; grid-template-columns:minmax(300px,5fr) minmax(0,7fr);
+  gap:32px; align-items:center; padding:26px 28px; border-left:3px solid var(--mc);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-copy{min-width:0}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{
+  margin:7px 0 10px; font:700 22px/1.18 var(--jp-font-ui);
+  letter-spacing:-.025em; color:var(--mc); max-width:18ch;
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-action{
+  font:400 12.5px/1.55 var(--jp-font-ui); color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-action .ak{font-size:9.5px}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;
+  padding:0; font-family:var(--jp-font-ui);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-fact{
+  display:flex; flex-direction:column; gap:6px; min-width:0;
+  padding:10px 14px; border:1px solid var(--jp-border);
+  border-radius:8px; background:var(--jp-surface-inset);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-fact > span:first-child{
+  font-size:9.5px; line-height:1.2; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-fact b{
+  margin:0; font:700 16px/1.2 var(--mono); color:var(--jp-ink);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-sub{
+  font:400 10px/1.35 var(--jp-font-ui); color:var(--ink-faint);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-track{
+  display:block; height:4px; overflow:hidden; border-radius:3px; background:var(--jp-border);
+}
+html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-track > i{
+  display:block; width:0; height:100%; border-radius:inherit; background:var(--mc);
+  transition:width .3s ease;
+}
+html[data-shell="global-dashboard"] #execClearanceCard .onb-gov-note.show{
+  display:none;
+}
+html[data-shell="global-dashboard"] #execClearanceCard .onb-gov-note .reset-btn{min-height:32px}
+html[data-shell="global-dashboard"] .risk-primary-indicators{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;
+}
+html[data-shell="global-dashboard"] .risk-primary-indicators .metric{min-width:0;min-height:0;padding:9px 12px}
+html[data-shell="global-dashboard"] .risk-primary-indicators .metric .v{white-space:normal;font-size:14px}
+html[data-shell="global-dashboard"] .risk-primary-indicators .metric .sub{font-size:10px;line-height:1.35}
+html[data-shell="global-dashboard"] #execPhaseGridsCard #phaseContainer > .card:first-child{
+  margin:0 0 14px; padding:0; border:0; border-radius:0;
+  background:transparent; box-shadow:none;
+}
+html[data-shell="global-dashboard"] #execPhaseGridsCard #phaseContainer > .card:first-child h2{margin-bottom:10px;font-size:14px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard{padding:22px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard > h2{margin-bottom:12px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase{margin-bottom:8px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-head{min-height:42px;padding:8px 14px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-body{padding:8px 12px 12px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-meta{padding:6px 4px 10px;font-size:10.5px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable th{padding:4px 7px;font-size:9.5px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable td{padding:5px 7px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable :is(input,select){height:32px;min-height:32px;padding:4px 7px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .stop-note{display:none}
+html[data-shell="global-dashboard"] #execPhaseGridsCard [data-addorder]{min-height:34px;margin-top:8px!important}
+html[data-shell="global-dashboard"] #execPhaseGridsCard tbody tr:nth-child(n+4):not(.is-new-order):has(input[data-f="id"]:placeholder-shown):has(select[data-f="par"] option[value=""]:checked):has(input[data-f="lote"]:placeholder-shown):has(input[data-f="entry"]:placeholder-shown):has(input[data-f="sl"]:placeholder-shown):has(input[data-f="tp"]:placeholder-shown):has(select[data-f="status"] option[value=""]:checked):not(:focus-within){display:none}
+html[data-shell="global-dashboard"] #phaseContainer > [data-migrate]{width:auto!important;min-height:34px}
+html[data-shell="global-dashboard"] .exec-secondary-details{padding:0!important;overflow:hidden;align-self:start!important}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  list-style:none; cursor:pointer; padding:15px 20px;
+  font:700 12px var(--jp-font-ui); color:var(--jp-ink);
+}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary::-webkit-details-marker{display:none}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary::before{content:'▸';color:var(--jp-action)}
+html[data-shell="global-dashboard"] .exec-secondary-details[open] > summary::before{content:'▾'}
+html[data-shell="global-dashboard"] .exec-secondary-details > summary span{margin-left:auto;font-weight:400;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .exec-secondary-body{padding:16px 20px 20px;border-top:1px solid var(--jp-border)}
+html[data-shell="global-dashboard"] .exec-vrm-secondary{margin-top:16px;padding-top:16px;border-top:1px solid var(--jp-border)}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+html[data-shell="global-dashboard"] #execLifoMonitor{
+  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center;
+  gap:8px 12px; padding:22px;
+}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-head{padding:0;border:0;font-size:14px;background:transparent}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{
+  width:max-content; padding:3px 10px; border:0; border-radius:999px;
+  background:var(--f1-bg); font-size:10px;
+}
+html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sug{padding:0;font-size:11px;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(4){grid-column:1/-1;padding:4px 0 8px!important}
+html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body{
+  grid-column:1/-1; gap:10px; padding:0;
+}
+html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body .metric{min-height:0;padding:10px 14px}
+html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(6){grid-column:1/-1;padding:0!important}
+html[data-shell="global-dashboard"] #execLifoMonitor > details{grid-column:1/-1;margin-top:4px}
+html[data-shell="global-dashboard"] #execLifoMonitor > details .risk-note{margin:12px 0 0}
+
+/* Contas: linha de leitura, editor expansível e credenciais explícitas */
+html[data-shell="global-dashboard"] #contasWidgetGrid{gap:16px;margin-top:0}
+html[data-shell="global-dashboard"] #contas .accounts-card-head{justify-content:space-between}
+html[data-shell="global-dashboard"] #contas .account-security-note{
+  margin:14px 0; padding:9px 12px; border-left:3px solid var(--f2);
+  background:var(--f2-bg); border-radius:6px;
+  font:400 11px/1.45 var(--jp-font-ui); color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #contas .account-security-note strong{color:var(--jp-ink)}
+html[data-shell="global-dashboard"] #contas .account-table-note{margin:10px 0 0;font-size:10.5px;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] #contas .jp-table-scroll{overflow-x:auto}
+html[data-shell="global-dashboard"] #contas [data-layout-card="contas-accounts-table"] .dtable{min-width:860px;font-variant-numeric:tabular-nums}
+html[data-shell="global-dashboard"] #contas [data-layout-card="contas-order-application"]{width:100%;max-width:560px}
+html[data-shell="global-dashboard"] #contas [data-layout-card="contas-order-application"] .dtable{width:100%;min-width:0;font-variant-numeric:tabular-nums}
+html[data-shell="global-dashboard"] #contas .account-summary-row td{height:48px;padding:8px 10px;vertical-align:middle}
+html[data-shell="global-dashboard"] #contas .account-editor-toggle{
+  display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;
+  padding:0; border:0; background:transparent; color:var(--jp-ink);
+  font:700 11.5px var(--jp-font-ui); text-align:left; cursor:pointer;
+}
+html[data-shell="global-dashboard"] #contas .account-editor-toggle span{color:var(--jp-action)}
+html[data-shell="global-dashboard"] #contas .account-type,
+html[data-shell="global-dashboard"] #contas .account-chip{
+  display:inline-flex; align-items:center; min-height:22px; padding:2px 8px;
+  border:1px solid var(--jp-border); border-radius:999px; background:transparent;
+  font:600 9.5px var(--jp-font-ui); white-space:nowrap;
+}
+html[data-shell="global-dashboard"] #contas .account-type.master{color:var(--jp-action);border-color:var(--jp-action)}
+html[data-shell="global-dashboard"] #contas .account-type.own{color:var(--f1);border-color:var(--f1)}
+html[data-shell="global-dashboard"] #contas .account-type.satellite{color:var(--f2);border-color:var(--f2)}
+html[data-shell="global-dashboard"] #contas button.account-chip{cursor:pointer;color:var(--f2)}
+html[data-shell="global-dashboard"] #contas button.account-chip.ok{color:var(--f1)}
+html[data-shell="global-dashboard"] #contas .account-detail-row[hidden]{display:none}
+html[data-shell="global-dashboard"] #contas .account-detail-row > td{
+  padding:0 10px 16px; background:var(--jp-surface-inset); border-bottom:1px solid var(--jp-border);
+}
+html[data-shell="global-dashboard"] #contas .account-editor-grid{
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px 14px;
+  padding:16px; border:1px solid var(--jp-border); border-radius:9px; background:var(--jp-surface);
+}
+html[data-shell="global-dashboard"] #contas .account-editor-grid .field{min-width:0;margin:0}
+html[data-shell="global-dashboard"] #contas .account-editor-grid :is(label.field>span,.account-editor-label){
+  display:block; margin-bottom:6px; font:600 10px var(--jp-font-ui); color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] #contas .account-password-field{grid-column:span 2}
+html[data-shell="global-dashboard"] #contas .account-calc-detail{grid-column:span 2;align-self:end}
+html[data-shell="global-dashboard"] #contas .account-calc-detail summary{cursor:pointer;font:600 10.5px var(--jp-font-ui);color:var(--jp-action)}
+html[data-shell="global-dashboard"] #contas .account-calc-detail dl{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:10px 0 0;font-size:10.5px}
+html[data-shell="global-dashboard"] #contas .account-calc-detail :is(dt,dd){margin:0}
+html[data-shell="global-dashboard"] #contas .account-calc-detail dd{font-family:var(--mono);font-weight:700;text-align:right}
+
+/* Contabilidade: quatro tiles, análise 3:2 e lançamentos em largura total */
+html[data-shell="global-dashboard"] #contabWidgetGrid{
+  display:grid; grid-template-columns:minmax(0,3fr) minmax(300px,2fr);
+  grid-auto-rows:auto; gap:16px; margin-top:0;
+}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-period-goals"],
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-entries"]{grid-column:1/-1!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-real-vs-projected"]{grid-column:1!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-daily-close"]{grid-column:2!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid .acct-summary-card{
+  padding:0; border:0; background:transparent; box-shadow:none;
+}
+html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px}
+html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics .metric{
+  min-height:96px; padding:16px 18px; border:0; border-radius:10px;
+  background:var(--jp-surface); box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics .metric .v{font-size:18px;white-space:normal}
+html[data-shell="global-dashboard"] .acct-period-link{
+  margin-top:8px; padding:4px 0; border:0; background:transparent;
+  color:var(--jp-action); font:600 10.5px var(--jp-font-ui); cursor:pointer;
+}
+html[data-shell="global-dashboard"] .acct-period-detail{
+  margin-top:12px; padding:18px; border:1px solid var(--jp-border);
+  border-radius:10px; background:var(--jp-surface);
+}
+html[data-shell="global-dashboard"] #contab [data-layout-card="contab-daily-close"] .params-grid{grid-template-columns:1fr}
+html[data-shell="global-dashboard"] #contab #ldAddBtn{width:100%;margin-top:4px}
+html[data-shell="global-dashboard"] #contab [data-layout-card="contab-entries"] > .jp-table-scroll{overflow-x:auto}
+html[data-shell="global-dashboard"] #contab [data-layout-card="contab-entries"] .dtable{width:100%;min-width:700px}
+html[data-shell="global-dashboard"] .acct-entry-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+html[data-shell="global-dashboard"] .acct-export-audit{grid-column:1/-1;justify-self:start;margin-top:0}
+
+/* Planejamento FX: um cartão linear e central no estado vazio */
+html[data-shell="global-dashboard"] #fxPlanningCard[data-fxp-state="empty"]{padding:28px 32px}
+html[data-shell="global-dashboard"] #fxPlanningCard[data-fxp-state="empty"] > h2{display:none}
+html[data-shell="global-dashboard"] .fxp-empty-shell{text-align:left}
+html[data-shell="global-dashboard"] .fxp-empty-kicker{
+  display:flex; justify-content:flex-start; align-items:center; gap:8px;
+  font:700 9.5px var(--jp-font-ui); letter-spacing:.1em;
+  text-transform:uppercase; color:var(--jp-ink-muted);
+}
+html[data-shell="global-dashboard"] .fxp-empty-kicker i{width:7px;height:7px;border-radius:50%;background:var(--jp-action)}
+html[data-shell="global-dashboard"] .fxp-empty-shell > h3{margin:8px 0 8px;font:700 26px/1.15 var(--jp-font-ui);letter-spacing:-.02em}
+html[data-shell="global-dashboard"] .fxp-empty-lead{max-width:720px;margin:0;color:var(--jp-ink-muted);font:400 12px/1.65 var(--jp-font-ui)}
+html[data-shell="global-dashboard"] .fxp-empty-method{max-width:720px;margin:14px auto 0;text-align:left}
+html[data-shell="global-dashboard"] .fxp-empty-method > summary{cursor:pointer;text-align:left;font:600 10.5px var(--jp-font-ui);color:var(--jp-action)}
+html[data-shell="global-dashboard"] .fxp-empty-method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+html[data-shell="global-dashboard"] .fxp-empty-method-grid p{margin:0;padding:10px 12px;border:1px solid var(--jp-border);border-radius:8px;background:var(--jp-surface-inset);font-size:10.5px;line-height:1.5;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .fxp-empty-form-grid{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px 16px; margin-top:22px; text-align:left;
+}
+html[data-shell="global-dashboard"] .fxp-empty-form-grid .field{margin:0}
+html[data-shell="global-dashboard"] .fxp-empty-actions{
+  display:flex; justify-content:flex-start; align-items:center; gap:14px;
+  margin-top:20px; color:var(--jp-ink-muted); font-size:10.5px;
+}
+html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-width:210px}
+
+/* Responsivo derivado do layout desktop aprovado */
+@media(max-width:1080px){
+  html[data-shell="global-dashboard"] #execClearanceCard,
+  html[data-shell="global-dashboard"] #mcClearanceCard{grid-template-columns:1fr;gap:20px}
+  html[data-shell="global-dashboard"] #contas .account-editor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{
+    display:none; position:fixed; inset:66px 0 auto 0; height:auto;
+    flex-direction:column; align-items:stretch; gap:2px; z-index:45;
+    max-height:calc(100dvh - 66px); overflow-y:auto;
+    padding:12px 16px 20px; background:var(--jp-surface);
+    border-bottom:1px solid var(--jp-border); box-shadow:0 18px 40px rgba(0,0,0,.28);
+  }
+  html[data-shell-menu="open"][data-ui-version="tesla-inspired"][data-shell="global-dashboard"] .gd-topbar-nav-slot #nav{display:flex}
+  html[data-ui-version="tesla-inspired"][data-shell="global-dashboard"] .gd-topbar-nav-slot .tab{
+    justify-content:flex-start; min-height:44px; padding:10px 16px;
+    border-radius:7px; border-bottom:0;
+  }
+  html[data-shell="global-dashboard"] #appMain{padding-left:20px!important;padding-right:20px!important}
+  html[data-shell="global-dashboard"] #gdDashMain{
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+  }
+  html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
+  html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important;width:100%}
+  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+    grid-column:span 1!important; width:100%; align-self:stretch;
+  }
+  html[data-shell="global-dashboard"] .gd-analysis-grid,
+  html[data-shell="global-dashboard"] #contabWidgetGrid{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card]{grid-column:1!important;width:100%!important}
+  html[data-shell="global-dashboard"] #execWidgetGrid > *,
+  html[data-shell="global-dashboard"] #contasWidgetGrid > *{width:100%!important;align-self:stretch!important}
+  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] .gd-methodology-body{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1}
+}
+@media(max-width:680px){
+  html[data-shell="global-dashboard"]{--gd-gutter:16px}
+  html[data-shell="global-dashboard"] #gdDashMain{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){grid-column:1!important;min-height:0}
+  html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{grid-template-columns:auto 1fr}
+  html[data-shell="global-dashboard"] #onboardingIncompleteBanner .reset-btn{grid-column:1/-1;width:100%}
+  html[data-shell="global-dashboard"] #mcClearanceCard{padding:22px 20px;min-height:0}
+  html[data-shell="global-dashboard"] #mcClearanceCard .mc-cockpit-grid,
+  html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] #execClearanceCard{padding:22px 20px}
+  html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{font-size:22px}
+  html[data-shell="global-dashboard"] #execLifoMonitor{grid-template-columns:1fr;padding:20px}
+  html[data-shell="global-dashboard"] #execLifoMonitor > *{grid-column:1!important}
+  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{width:fit-content}
+  html[data-shell="global-dashboard"] .risk-primary-indicators,
+  html[data-shell="global-dashboard"] .fxp-empty-form-grid,
+  html[data-shell="global-dashboard"] .fxp-empty-method-grid,
+  html[data-shell="global-dashboard"] .acct-entry-details{grid-template-columns:1fr!important}
+  html[data-shell="global-dashboard"] #contas .account-editor-grid{grid-template-columns:1fr}
+  html[data-shell="global-dashboard"] #contas .account-detail-row .account-editor-grid{
+    position:sticky; left:0; box-sizing:border-box;
+    width:calc(100vw - 99px); max-width:calc(100vw - 99px);
+  }
+  html[data-shell="global-dashboard"] #contas .account-password-field,
+  html[data-shell="global-dashboard"] #contas .account-calc-detail{grid-column:1}
+  html[data-shell="global-dashboard"] #fxPlanningCard[data-fxp-state="empty"]{padding:24px 20px}
+  html[data-shell="global-dashboard"] .fxp-empty-actions{align-items:stretch;flex-direction:column}
+  html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{width:100%}
+  html[data-shell="global-dashboard"] #acctPeriodSummary > .metrics,
+  html[data-shell="global-dashboard"] #acctMetas > .metrics,
+  html[data-shell="global-dashboard"] #dashCharts > .metrics,
+  html[data-shell="global-dashboard"] #dashCyclePanel > .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '5945ed5eecd7021e';
+const JP_WEALTH_BUILD_ID = '54a60f3e45fdd76c';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
-// Bootstrap inline deliberado: navegacoes sao network-first, portanto uma instalacao
-// ainda controlada pelo cache antigo consegue pedir a nova versao do worker mesmo
-// quando seus scripts externos continuam cache-first. A ativacao permanece waiting.
+// Bootstrap inline deliberado: uma navegacao controlada permanece no index do
+// mesmo cache versionado do controller. Este documento coerente pede a nova versao
+// do worker, que permanece em waiting ate todos os clientes antigos fecharem.
 (function(){
   if(window.JP_WEALTH_PORTABLE_BUILD===true) return;
   if(!('serviceWorker' in navigator)||!/^https?:$/.test(window.location.protocol)) return;
@@ -5365,10 +5740,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <div class="hdr-sep"></div>
   <div class="hdr-readout opt"><span class="k">Equity</span><span class="v" id="hdrEquity">—</span></div>
   <div class="hdr-sep"></div>
-  <div class="hdr-readout opt2"><span class="k">DD</span><span class="v" id="hdrDD">—</span></div>
+  <div class="hdr-readout hdr-readout-dd opt2"><span class="k">DD</span><span class="v" id="hdrDD">—</span></div>
   <div class="header-status">
-    <span class="hdr-readout"><span class="v" id="hdrClock">--:--:--</span></span>
     <span class="saved-tag" id="savedTag">salvo</span>
+    <span class="hdr-readout"><span class="v" id="hdrClock">--:--:--</span></span>
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
@@ -5430,7 +5805,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 </nav>
 
 <main id="appMain">
-  <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-allowed-zones="sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full" role="status" aria-live="polite">
+  <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
     <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
@@ -5442,15 +5817,18 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          widget agora é filho direto de #execWidgetGrid, com largura própria
          via data-widget-size. Nenhum ID interno, listener ou renderizador mudou. -->
     <div class="jp-widget-grid" id="execWidgetGrid">
-      <div class="onb-gov-note" id="execOnboardingGovNote" data-layout-card="exec-onboarding-alert" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-        <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-alert"/></svg>
-        <div><div class="t">Governança incompleta</div><div class="s" id="execOnboardingGovText">—</div></div>
-        <button class="reset-btn" id="execOnboardingGovBtn" style="color:var(--f2); border-color:var(--f2)">Revisar formulário</button>
-      </div>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
       <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
-        <div class="mc-ec-title" id="ecTitle">—</div>
-        <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+        <div class="mc-ec-copy">
+          <div class="dh-kicker"><span class="dh-dot" aria-hidden="true"></span>Execution Clearance</div>
+          <div class="mc-ec-title" id="ecTitle">—</div>
+          <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+          <div class="onb-gov-note" id="execOnboardingGovNote">
+            <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-alert"/></svg>
+            <div><div class="t">Governança incompleta</div><div class="s" id="execOnboardingGovText">—</div></div>
+            <button class="reset-btn" id="execOnboardingGovBtn" style="color:var(--f2); border-color:var(--f2)">Revisar formulário</button>
+          </div>
+        </div>
         <!-- Fase 2C: os quatro fatos do protótipo. Fase e Grade Ativa passam a
              dividir a mesma célula (o protótipo rotula "FASE · GRADE ATIVA") e
              entra DRAWDOWN, que faltava aqui e é o fato que os termômetros
@@ -5458,10 +5836,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              protótipo ("RISCO / TETO $400"), liberando o valor para o número
              corrente. -->
         <div class="mc-ec-facts">
-          <span>Fase · Grade Ativa<b id="ecFase">—</b><i class="mc-ec-sub" id="ecGrade">—</i></span>
-          <span>Drawdown<b id="ecDD">—</b><i class="mc-ec-sub" id="ecDDsub">—</i></span>
-          <span><span id="ecRiscoLbl">Risco / Teto</span><b id="ecRisco">—</b></span>
-          <span><span id="ecAlavLbl">Alav. / Teto</span><b id="ecAlav">—</b></span>
+          <span class="mc-ec-fact"><span>Fase · Grade Ativa</span><b id="ecFase">—</b><i class="mc-ec-sub" id="ecGrade">—</i></span>
+          <span class="mc-ec-fact"><span>Drawdown</span><b id="ecDD">—</b><i class="mc-ec-track" aria-hidden="true"><i id="ecDDbar"></i></i><i class="mc-ec-sub" id="ecDDsub">—</i></span>
+          <span class="mc-ec-fact"><span id="ecRiscoLbl">Risco / Teto</span><b id="ecRisco">—</b><i class="mc-ec-track" aria-hidden="true"><i id="ecRiscoBar"></i></i></span>
+          <span class="mc-ec-fact"><span id="ecAlavLbl">Alav. / Teto</span><b id="ecAlav">—</b><i class="mc-ec-track" aria-hidden="true"><i id="ecAlavBar"></i></i></span>
         </div>
       </div>
 
@@ -5476,7 +5854,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            termômetro carregava e que não pode se perder na troca visual. -->
 
       <!-- METRICS + STATUS — bloco único (banners condicionais de altura variável) -->
-      <div id="execMetricsPanel" data-layout-card="exec-metrics-banners" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <details class="card exec-secondary-details" data-layout-card="exec-metrics-banners" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+        <summary>Indicadores complementares e calibração de volatilidade <span>saldo · avisos · VRM · ATR</span></summary>
+        <div class="exec-secondary-body">
+      <div id="execMetricsPanel">
         <div class="metrics">
           <div class="metric"><div class="k">Saldo Mestre <span class="art" style="text-transform:none">(book)</span></div><div class="v sm" id="mSaldo">—</div><div class="sub" id="mSaldoSub">contábil — atualizado pelo fechamento diário</div></div>
           <div class="metric accent"><div class="k">Drawdown Operacional</div><div class="v" id="mDD">—</div><div class="sub" id="mDDsub">risco aberto − resultado fechado da operação</div></div>
@@ -5504,7 +5885,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         </div>
       </div>
 
-      <div class="card" id="execVrmCard" data-layout-card="exec-vrm" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" style="padding:16px">
+      <div id="execVrmCard" class="exec-vrm-secondary">
         <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
         <div class="metrics" style="grid-template-columns:1fr 1fr">
           <div class="metric"><div class="k">VRM</div><div class="v sm" id="mVRM">0,79</div></div>
@@ -5518,6 +5899,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           </div>
         </div>
       </div>
+        </div>
+      </details>
 
       <!-- PHASE GRIDS -->
       <div class="card" id="execPhaseGridsCard" data-layout-card="exec-phase-grids" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
@@ -5528,12 +5911,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <!-- LIFO MONITOR -->
       <div class="lifo" id="execLifoMonitor" data-layout-card="exec-lifo-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
         <div class="lifo-head">Consolidado da Operação Única + Monitor LIFO</div>
-        <div class="lifo-body">
-          <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
-          <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
-          <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
-          <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
-        </div>
+        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
+        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
         <div style="padding:0 16px 14px">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
             <span style="color:var(--ink-dim)">Uso do teto estatutário da fase</span><span id="lMargemPct" style="color:var(--ink)">—</span>
@@ -5541,10 +5920,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <div class="track" style="height:12px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; overflow:hidden">
             <div class="bar" id="lMargemBar" style="height:100%; width:0%; background:var(--f1); transition:width .5s ease, background .3s"></div>
           </div>
-          <div class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</div>
         </div>
-        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
-        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
+        <div class="lifo-body">
+          <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
+          <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
+          <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
+          <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
+        </div>
         <div style="padding:0 16px 16px">
           <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
         </div>
@@ -5564,6 +5946,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
             <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
             <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
           </div>
+          <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
       </div>
     </div>
@@ -5643,8 +6026,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <section class="screen" id="contas">
     <div class="jp-widget-grid" id="contasWidgetGrid">
     <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 style="display:flex; align-items:center; justify-content:space-between">
-        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
+      <h2 class="accounts-card-head">
+        <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
         <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
       </h2>
         <!-- Fase 2C: a Nota de Governança deixa de ser card próprio e vira
@@ -5660,10 +6043,12 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
       </p>
         </details>
+      <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
       <div class="jp-table-scroll"><table class="dtable">
-        <thead><tr><th>Conta / Plataforma</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Correção</th><th>Norm. V10</th><th>Fator Perfil</th><th>Lote vs Mestre</th><th></th></tr></thead>
+        <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
         <tbody id="contasBody"></tbody>
       </table></div>
+      <p class="account-table-note">Correção, Normalização V10 e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
     </div>
     <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
@@ -5671,10 +6056,12 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <label>Lote enviado pela mestre</label>
         <input type="number" step="0.01" id="cLoteMaster" value="0.04">
       </div>
-      <table class="dtable" style="margin-top:8px">
-        <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
-        <tbody id="aplicBody"></tbody>
-      </table>
+      <div class="jp-table-scroll">
+        <table class="dtable" style="margin-top:8px">
+          <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
+          <tbody id="aplicBody"></tbody>
+        </table>
+      </div>
     </div>
     </div>
   </section>
@@ -5737,8 +6124,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              O tamanho volta a "medium" (2×1): o footprint 2×2 era o defeito
              original — um bloco decorativo ocupando a maior célula da grade,
              acima dos dados de risco. -->
-        <div class="card gd-system-status" data-layout-card="institutional-panel" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium">
-          <h2>Status do Sistema <span class="art">espelho de leitura — sem cálculo novo</span></h2>
+        <div class="card gd-system-status" data-layout-card="institutional-panel" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
+          <div class="jpwss-head"><h2>Status do Sistema</h2><img src="assets/jp-wealth-logo.png" alt="" width="66" height="6"></div>
           <ul class="jpwss-list">
             <li class="jpwss-row" id="jpwSsPersist">
               <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
@@ -5762,7 +6149,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
               <button type="button" class="jpwss-act" id="jpwSsGovBtn" hidden>Revisar ›</button>
             </li>
           </ul>
-          <p class="jpwss-foot">Risk Terminal V9.1 · local-first</p>
+          <p class="jpwss-foot"><span>Risk Terminal V9.1 · local-first</span><span>sem backend</span></p>
         </div>
         <!-- #mcMetricStrip não entra mais aqui: desde o rebalanceamento
              JPW-789ABC ele é relocado para ANTES do Status do Sistema. -->
@@ -5782,7 +6169,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              Nada de critico foi escondido: valor, regime e os dois limites
              ficam visiveis sem interacao; so os ATRs, que sao leitura
              informativa, descem para disclosure (P3). -->
-        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
+        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
           <h2>VRM · Regime de Volatilidade <span class="art">volatilidade relativa ATR55/ATR660</span></h2>
           <div class="gd-vrm-head">
             <span class="gd-vrm-value" id="gdVrmValue">—</span>
@@ -5810,7 +6197,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              Forex Factory via repositório alimentador jp-wealth-news-feed
              (ver infra/ff-news-feed/README.md). Só leitura; nada entra em
              cálculo ou estado S. -->
-        <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
+        <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
           <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
@@ -5825,19 +6212,22 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
                oculto quando não resta evento futuro hoje. -->
           <p id="gdNewsNext" class="gd-news-next" hidden></p>
-          <table class="gd-news-table">
-            <thead>
-              <tr>
-                <th scope="col" title="Horário local">Hora</th>
-                <th scope="col">Moeda</th>
-                <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
-                <th scope="col">Notícia</th>
-                <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
-                <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
-              </tr>
-            </thead>
-            <tbody id="gdNewsList"></tbody>
-          </table>
+          <details class="gd-news-agenda">
+            <summary>Agenda completa</summary>
+            <div class="jp-table-scroll"><table class="gd-news-table">
+              <thead>
+                <tr>
+                  <th scope="col" title="Horário local">Hora</th>
+                  <th scope="col">Moeda</th>
+                  <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
+                  <th scope="col">Notícia</th>
+                  <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
+                  <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
+                </tr>
+              </thead>
+              <tbody id="gdNewsList"></tbody>
+            </table></div>
+          </details>
           <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
         </div>
       </div>
@@ -5846,15 +6236,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              entra aqui (reposicionado, não clonado) via relocação JS, só sob
              data-shell="global-dashboard". Sem a flag continua no topo de
              <main>, comportamento legado intocado. -->
-        <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
+        <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
           <div class="gd-card-label">Ações Rápidas</div>
           <nav class="gd-quick-nav">
-            <button type="button" data-dash-go="exec">Execution Board <span aria-hidden="true">›</span></button>
             <button type="button" data-dash-go="motor">Motor de Lote <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="contas">Contas <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="check">Checklist <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="contab">Contabilidade <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-go="check">Checklist Pré-Trade <span aria-hidden="true">›</span></button>
             <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-settings="backup">Base de Dados · Backup <span aria-hidden="true">›</span></button>
           </nav>
         </div>
       </aside>
@@ -5906,9 +6294,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
               <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Estado Operacional</div>
               <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
               <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-              <!-- MOTIVOS: elemento já existente, alimentado por
-                   renderOperationalClearance; oculto quando reasons vem vazio. -->
-              <ul class="mc-reasons" id="mcClearanceReasons"></ul>
               <!-- DUAS ações, como o protótipo: a primária muda com o veredito, a
                    secundária é sempre o caminho para o Execution Board. -->
               <div class="mc-cockpit-acoes">
@@ -5983,48 +6368,43 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
 
-    <!-- SEÇÃO 3 · Evolução do período -->
-    <div class="jp-section" data-dash-section="evolucao">
-      <p class="jp-section-eyebrow">Evolução do período</p>
-      <h2 class="jp-section-title">Como o capital se moveu até aqui</h2>
-      <p class="jp-section-lead">Curvas já calculadas pelo motor de contabilidade — evolução, drawdown e expectativa versus real.</p>
-    <!-- N4 · Painéis lado a lado, abertos por padrão (tiling). Continuam
-         recolhíveis: o operador fecha o que não quer ver, mas o estado inicial
-         é "tudo vivo ao mesmo tempo", como mesa de operação. -->
-    <details class="mc-disclosure" id="dashChartPanel" open>
-      <summary><span class="t">Acompanhamento Gráfico</span><span class="art">evolução · drawdown · expectativa vs real</span><span class="chev">▾</span></summary>
-      <div class="mc-disclosure-body"><div id="dashCharts"></div></div>
-    </details>
+    <div class="gd-analysis-grid" data-dash-section="evolucao">
+      <section class="card gd-analysis-card" id="dashChartPanel">
+        <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
+        <div id="dashCharts"></div>
+      </section>
+      <section class="card gd-pace-card" id="dashPacePanel">
+        <h2>Ritmo do ciclo <span class="art">K8</span></h2>
+        <div id="dashCyclePace"></div>
+      </section>
     </div>
 
-    <!-- SEÇÃO 4 · Governança e prontidão — inclui as razões do clearance,
-         preenchidas pelo renderizador existente no mesmo ID. -->
-    <div class="jp-section" data-dash-section="governanca">
-      <p class="jp-section-eyebrow">Governança e prontidão</p>
-      <h2 class="jp-section-title">Por que este é o estado?</h2>
-      <p class="jp-section-lead">Fatos apurados pelo Operational Clearance a partir do estado vigente. As demais métricas de governança ficam no terceiro slide do hero.</p>
-    </div>
-
-    <!-- SEÇÃO 5 · Análises complementares -->
-    <div class="jp-section" data-dash-section="analises">
-      <p class="jp-section-eyebrow">Análises complementares</p>
-      <h2 class="jp-section-title">Ciclo e acompanhamento mensal</h2>
-    <details class="mc-disclosure" id="dashCyclePanel" open>
-      <summary><span class="t">Métricas do Ciclo</span><span class="art">retorno · DD máx · Mar Ratio · meta</span><span class="chev">▾</span></summary>
-      <div class="mc-disclosure-body">
-        <div class="metrics">
-          <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
-          <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
-          <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
-          <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
-        </div>
+    <details class="gd-methodology" id="dashMethodology" data-dash-section="governanca">
+      <summary><span class="t">Detalhes e metodologia</span><span class="art">motivos · métricas do ciclo · acompanhamento mensal</span><span class="chev">▾</span></summary>
+      <div class="gd-methodology-body">
+        <section class="gd-method-section">
+          <h3>Por que este é o estado?</h3>
+          <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+        </section>
+        <section class="gd-method-section" id="dashCyclePanel">
+          <h3>Métricas do ciclo</h3>
+          <div class="metrics">
+            <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
+            <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
+            <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
+            <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
+          </div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashMonthlyPanel">
+          <h3>Acompanhamento mensal <span>derivado do fechamento diário</span></h3>
+          <div id="mqlMonthly" class="jp-table-scroll"></div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashRiskPanel">
+          <h3>Drawdown e comparação mensal <span>limites estatutários · expectativa vs real</span></h3>
+          <div id="dashRiskDetail" class="jp-table-scroll"></div>
+        </section>
       </div>
     </details>
-    <details class="mc-disclosure" id="dashMonthlyPanel" open>
-      <summary><span class="t">Acompanhamento Mensal</span><span class="art">estilo MQL5 Signals · derivado do fechamento diário (aba 07)</span><span class="chev">▾</span></summary>
-      <div class="mc-disclosure-body"><div id="mqlMonthly" style="overflow-x:auto"></div></div>
-    </details>
-    </div>
   </section>
 
   <!-- ================= 06 CHECKLIST ================= -->
@@ -6046,11 +6426,11 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <!-- ================= 07 CONTABILIDADE ================= -->
   <section class="screen" id="contab">
     <div class="jp-widget-grid" id="contabWidgetGrid">
-    <div class="card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Período &amp; Metas <span class="art">perfil de risco · programação · meta diária</span></h2>
+    <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <h2 class="sr-only">Período &amp; Metas</h2>
       <div id="acctPeriodSummary"></div>
-      <button class="reset-btn" id="acctPeriodToggle" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">▸ Ver / editar Período &amp; Metas</button>
-      <div id="acctPeriodDetail" style="display:none; margin-top:16px">
+      <button class="acct-period-link" id="acctPeriodToggle">▸ Ver / editar Período &amp; Metas</button>
+      <div id="acctPeriodDetail" class="acct-period-detail" style="display:none">
         <div id="acctProfileBtns" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px"></div>
         <div id="acctProfileLockNote" style="margin-bottom:12px"></div>
         <div class="params-grid">
@@ -6067,16 +6447,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div id="acctMetas"></div>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-simulation" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
-      <h2>Simulação Patrimonial <span class="art">projeção estatística educativa pelo perfil ativo · não é promessa de retorno</span></h2>
+    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+      <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
+      <div id="rvpChart" style="width:100%"></div>
       <details class="jp-p3">
-            <summary>Simulação patrimonial (MEI-JP)</summary>
-            <div id="acctSimWrap"></div>
+            <summary>Projeção diária · ideal vs real</summary>
+            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
           </details>
-    </div>
-    <div class="card" data-layout-card="contab-cycle-pace" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium">
-      <h2>Ritmo do Ciclo <span class="art">dias à frente ou atrás do ideal (K8)</span></h2>
-      <div id="acctPace"></div>
     </div>
     <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
@@ -6091,29 +6468,23 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="fx-status" id="ldStatus"></span>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
-      <div id="rvpChart" style="width:100%"></div>
-    </div>
-    <div class="card" data-layout-card="contab-daily-projection" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Projeção Diária · Ideal vs Real <span class="art">juros compostos na meta diária · Σ semanal</span></h2>
-      <details class="jp-p3">
-            <summary>Projeção diária · ideal vs real</summary>
-            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
-          </details>
-    </div>
     <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Lançamentos <span class="art">mais recentes primeiro</span></h2>
-      <table class="dtable">
-        <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>DD vs Inicial</th><th>Nota</th><th></th></tr></thead>
-        <tbody id="ledgerBody"></tbody>
-      </table>
+      <h2>Lançamentos <span class="art">mais recentes primeiro · inclui auditoria e simulação</span></h2>
+      <div class="jp-table-scroll">
+        <table class="dtable">
+          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>DD vs Inicial</th><th>Nota</th><th></th></tr></thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+      <div class="acct-entry-details">
+        <details class="jp-p3"><summary>Simulação patrimonial (MEI-JP)</summary><div id="acctSimWrap"></div></details>
+        <details class="jp-p3"><summary>Log de auditoria</summary>
+          <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
+        </details>
+        <button class="reset-btn acct-export-audit" id="exportAuditBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
+      </div>
     </div>
-    <div class="card" data-layout-card="contab-audit-log" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
-      <h2>Log de Auditoria <span class="art">transições · downgrades · arquivamentos · quarentena · divergências</span></h2>
-      <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
-      <button class="reset-btn" id="exportAuditBtn" style="margin-top:12px; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
-    </div>
+    <div id="acctPace" hidden aria-hidden="true"></div>
     </div>
   </section>
 
@@ -8947,6 +9318,7 @@ function renderExecClearance(c){
   // Fase 2C — fidelidade ao protótipo: o TETO vai para o rótulo e o valor
   // carrega só o número corrente. Mesmas fontes, nenhuma fórmula nova.
   const setTxt=(id,v)=>{ const e=$(id); if(e) e.textContent=v; };
+  const setBar=(id,pct,color)=>{ const e=$(id); if(e){ e.style.width=Math.max(0,Math.min(100,pct||0))+'%'; e.style.background=color; } };
   setTxt('ecRiscoLbl','Risco / Teto '+fmtMoney(c.tetoRisco));
   setTxt('ecRisco', fmtMoney(c.riscoTotal));
   setTxt('ecAlavLbl','Alav. / Teto '+fmtX(c.tetoAlav));
@@ -8955,6 +9327,9 @@ function renderExecClearance(c){
   // removidos carregavam. Mesma escala do gauge (teto ativo do perfil).
   setTxt('ecDD', fmtPct(c.dd));
   setTxt('ecDDsub','de '+fmtPct(c.mddScaled>0?c.mddScaled:0.15));
+  setBar('ecDDbar',(c.dd/(c.mddScaled||0.15))*100,c.dd>=c.alarmScaled?'var(--f4)':'var(--f1)');
+  setBar('ecRiscoBar',c.tetoRisco>0?(c.riscoTotal/c.tetoRisco)*100:0,c.riscoTotal>c.tetoRisco?'var(--f3)':'var(--f2)');
+  setBar('ecAlavBar',c.tetoAlav>0?(c.alavCar/c.tetoAlav)*100:0,c.alavCar>c.tetoAlav?'var(--f3)':'var(--f1)');
 }
 
 // ---- Execution Board phases ----
@@ -9624,13 +9999,10 @@ function riskIndicatorsHTML(active){
       </div>
     </div>
     </details>
-    <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
-      ${chip('Múltiplo de ATR', mult>0?mult.toFixed(1).replace('.',',')+'x':'—', strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'stop% ÷ ATR%')}
-      ${chip('Raiz-N · 1 semana (√30)', pc(rz1), `mínimo p/ resistir 1 sem · <span style="color:${v1.c};font-weight:700">${v1.t}</span>`)}
-      ${chip('Raiz-N · 2 semanas (√55)', pc(rz2), `mínimo p/ resistir 2 sem · <span style="color:${v2.c};font-weight:700">${v2.t}</span>`)}
-      ${chip('Síntese (§9.5)', (stopPct>0&&atrPct>0)?(stopPct>=rz2?'COERENTE 2 SEM':(stopPct>=rz1?'COERENTE 1 SEM':'VULNERÁVEL')):'—',
-        stopPct>=rz2?'resiste às duas janelas':(stopPct>=rz1?'resiste a 1 semana, não a 2':'abaixo do Raiz-N — compensações táticas exigidas'),
-        (stopPct>0&&atrPct>0)?(stopPct>=rz1?'var(--f1)':'var(--f3)'):'')}
+    <div class="risk-primary-indicators">
+      ${chip('Stop da Gênese · Múltiplo de ATR', `${pc(stopPct)} · ${mult>0?mult.toFixed(1).replace('.',',')+'x':'—'}`, strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'distância ao SL mãe ÷ ATR%')}
+      ${chip('Raiz-N · resistência estatística', `√30 ${pc(rz1)} · √55 ${pc(rz2)}`,
+        `1 sem <span style="color:${v1.c};font-weight:700">${v1.t}</span> · 2 sem <span style="color:${v2.c};font-weight:700">${v2.t}</span> · síntese <span style="color:${(stopPct>0&&atrPct>0)?(stopPct>=rz1?'var(--f1)':'var(--f3)'):'var(--ink-faint)'};font-weight:700">${(stopPct>0&&atrPct>0)?(stopPct>=rz2?'COERENTE 2 SEM':(stopPct>=rz1?'COERENTE 1 SEM':'VULNERÁVEL')):'—'}</span>`)}
     </div>
   </div>`;
 }
@@ -9731,7 +10103,10 @@ function renderPhases(){
       // foca no ID da nova linha
       const rows=document.querySelectorAll(`.phase[data-phase="${pi}"] tbody tr`);
       const last=rows[rows.length-1];
-      if(last) last.querySelector('input[data-f="id"]')?.focus();
+      if(last){
+        last.classList.add('is-new-order');
+        last.querySelector('input[data-f="id"]')?.focus();
+      }
     });
   });
   // bind remover ordem — sem fricção se vazia, confirma se tiver dado real
@@ -10147,52 +10522,31 @@ async function requestPinUnlock(operationEpoch=jpWealthPersistenceEpoch()){
   if(h!==S.riskPinHash){ alert('Senha incorreta. Perfil permanece travado.'); return false; }
   return true;
 }
+const accountEditorsOpen=new Set();
+function accountCredentialState(a){
+  const missing=[!a.platform?'plataforma':null,!a.platformLogin?'login':null,!a.investorPassword?'senha do investidor':null].filter(Boolean);
+  return {
+    missing,
+    label:missing.length?missing.length+' pendente'+(missing.length>1?'s':''):'completas',
+    detail:missing.length?'Falta preencher: '+missing.join(', '):normalizePlatformName(a.platform)+' · Login '+a.platformLogin+' · senha cadastrada'
+  };
+}
 function updateAccountCredentialMeta(row,a){
-  const p=row.querySelector('.account-platform');
-  const l=row.querySelector('.account-login');
-  const pass=row.querySelector('.account-pass');
-  if(p) p.textContent=a.platform?normalizePlatformName(a.platform):'a preencher';
-  if(l) l.textContent=a.platformLogin?`Login ${a.platformLogin}`:'login a preencher';
-  if(pass){
-    const has=!!a.investorPassword;
-    pass.textContent=has?'senha investidor cadastrada':'senha investidor não cadastrada';
-    pass.classList.toggle('ok',has);
+  const i=+row.dataset.idx;
+  const summary=document.querySelector(`#contasBody .account-summary-row[data-idx="${i}"]`);
+  const chip=summary&&summary.querySelector('.account-cred');
+  const state=accountCredentialState(a);
+  if(chip){
+    chip.textContent=state.label;
+    chip.title=state.detail;
+    chip.classList.toggle('ok',!state.missing.length);
   }
 }
 function renderContas(){
   const cb=$('contasBody'); cb.innerHTML='';
   S.accounts.forEach((a,i)=>{
     const {lucro,corr,fw,pf,loteVs}=contaCalc(a);
-    const tr=document.createElement('tr');
-    tr.dataset.idx=i;
-    const platformName=a.platform?normalizePlatformName(a.platform):'a preencher';
-    const loginTxt=a.platformLogin?`Login ${esc(a.platformLogin)}`:'login a preencher';
-    const passOk=!!a.investorPassword;
-    // Resumo das credenciais: conta o que falta entre plataforma, login e senha
-    // do investidor. Leitura pura do estado — nenhum campo novo, nenhuma regra.
-    const credFaltando=[!a.platform?'plataforma':null, !a.platformLogin?'login':null, !passOk?'senha do investidor':null].filter(Boolean);
-    const credPend=credFaltando.length;
-    const credDetalhe=credPend?('falta preencher: '+credFaltando.join(', ')):(platformName+' · '+loginTxt+' · senha cadastrada');
-    const contaCell=`<div class="account-field">
-        <div class="account-top">
-          <input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta">
-          <div class="account-meta">
-            <!-- Fase 2C: um chip no lugar de três. O protótipo resume as credenciais
-                 num único selo ("3 pendentes"); os campos individuais continuam logo
-                 abaixo, em account-cred-grid, então nada ficou inacessível. O texto
-                 nomeia o que falta — a cor não é o único canal (WCAG 1.4.1). -->
-            <span class="account-chip account-cred ${credPend?'':'ok'}" title="${esc(credDetalhe)}">${credPend?credPend+' pendente'+(credPend>1?'s':''):'credenciais completas'}</span>
-        </div>
-        <div class="account-cred-grid">
-          <select data-f="platform" title="Plataforma">${platformOptions(a.platform)}</select>
-          <input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma">
-        </div>
-        <span class="pass-label">Senha do Investidor / somente leitura</span>
-        <div class="investor-pass-row">
-          <input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off" title="Senha do Investidor / somente leitura">
-          <button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button>
-        </div>
-      </div>`;
+    const cred=accountCredentialState(a), open=accountEditorsOpen.has(i);
     const perfilCell = a.perfilLocked
       ? `<div style="display:flex; align-items:center; gap:6px">
            <span class="hl">🔒 ${esc(a.perfil)}</span>
@@ -10203,7 +10557,7 @@ function renderContas(){
            ${RISK_PROFILES.map(p=>`<option value="${esc(p.name)}" ${a.perfil&&riskProfileByAny(a.perfil).key===p.key?'selected':''}>${esc(p.name)}</option>`).join('')}
          </select>`;
     const brokerAtual=brokerFor(a.broker);
-    const brokerCell=`<div class="broker-field">
+    const brokerEditor=`<div class="broker-field">
         ${brokerMiniHTML(a.broker)}
         <select data-f="broker">
           ${!brokerAtual&&a.broker?`<option value="${esc(a.broker)}" selected>${esc(a.broker)} · a preencher</option>`:''}
@@ -10211,30 +10565,43 @@ function renderContas(){
           ${BROKER_PARTNERS.map(b=>`<option value="${esc(b.name)}" ${brokerAtual&&brokerAtual.key===b.key?'selected':''}>${esc(b.name)}</option>`).join('')}
         </select>
       </div>`;
-    tr.innerHTML=`
-      <td class="editable">${contaCell}</td>
-      <td class="editable">
-        <select data-f="tipo">
-          <option ${a.tipo==='MESTRE'?'selected':''}>MESTRE</option>
-          <option ${a.tipo==='PRÓPRIA'?'selected':''}>PRÓPRIA</option>
-          <option ${a.tipo==='SATÉLITE'?'selected':''}>SATÉLITE</option>
-        </select>
-      </td>
-      <td class="editable">${brokerCell}</td>
-      <td class="editable">${perfilCell}</td>
-      <td class="editable"><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></td>
-      <td class="editable"><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></td>
+    const typeClass=a.tipo==='MESTRE'?'master':(a.tipo==='PRÓPRIA'?'own':'satellite');
+    const summary=document.createElement('tr');
+    summary.className='account-summary-row'; summary.dataset.idx=i;
+    summary.innerHTML=`
+      <td class="account-name-cell"><button type="button" class="account-editor-toggle" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}">${esc(a.nome||'Conta sem nome')}<span aria-hidden="true">${open?'▾':'▸'}</span></button></td>
+      <td><span class="account-type ${typeClass}">${esc(a.tipo)}</span></td>
+      <td class="account-broker-read">${esc(brokerAtual?brokerAtual.name:(a.broker||'a preencher'))}</td>
+      <td class="account-profile-read">${a.perfilLocked?'🔒 ':''}${esc(a.perfil||'a preencher')}</td>
+      <td class="account-sini-read">${fmtMoney2(+a.sini||0)}</td>
+      <td class="account-satu-read">${fmtMoney2(+a.satu||0)}</td>
       <td class="calc-lucro ${lucro>=0?'pos':'neg'}">${fmtPct(lucro)}</td>
-      <td class="calc-corr">${corr.toFixed(3)}</td>
-      <td class="calc-fw">${fw.toFixed(3)}</td>
-      <td class="calc-pf hl">${pf.toFixed(3)}</td>
-      <td class="calc-lotevs hl" title="Correção ${corr.toFixed(3)} · Normalização V10 ${fw.toFixed(3)} · Fator de Perfil ${pf.toFixed(3)}">${loteVs.toFixed(3)}</td>
-      <td><button class="row-del" title="Excluir conta" data-del="${i}">✕</button></td>
-    `;
-    const sel=tr.querySelector('select[data-f="tipo"]');
-    sel.style.borderColor = a.tipo==='MESTRE'?'var(--violet)':(a.tipo==='SATÉLITE'?'var(--f3)':'var(--f1)');
-    cb.appendChild(tr);
+      <td class="calc-lotevs hl">${loteVs.toFixed(3)}×</td>
+      <td><button type="button" class="account-chip account-cred ${cred.missing.length?'':'ok'}" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}" title="${esc(cred.detail)}">${esc(cred.label)}</button></td>
+      <td><button class="row-del" title="Excluir conta" aria-label="Excluir ${esc(a.nome)}" data-del="${i}">✕</button></td>`;
+    const detail=document.createElement('tr');
+    detail.className='account-detail-row'; detail.dataset.idx=i; detail.id='account-detail-'+i; detail.hidden=!open;
+    detail.innerHTML=`<td colspan="10"><div class="account-editor-grid">
+      <label class="field"><span>Nome da conta</span><input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta"></label>
+      <label class="field"><span>Tipo</span><select data-f="tipo"><option ${a.tipo==='MESTRE'?'selected':''}>MESTRE</option><option ${a.tipo==='PRÓPRIA'?'selected':''}>PRÓPRIA</option><option ${a.tipo==='SATÉLITE'?'selected':''}>SATÉLITE</option></select></label>
+      <div class="field"><span class="account-editor-label">Broker</span>${brokerEditor}</div>
+      <div class="field"><span class="account-editor-label">Perfil</span>${perfilCell}</div>
+      <label class="field"><span>Saldo inicial</span><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></label>
+      <label class="field"><span>Saldo atual</span><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></label>
+      <label class="field"><span>Plataforma</span><select data-f="platform">${platformOptions(a.platform)}</select></label>
+      <label class="field"><span>Login da plataforma</span><input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma"></label>
+      <div class="field account-password-field"><span class="account-editor-label">Senha do investidor / somente leitura</span><div class="investor-pass-row"><input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off"><button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button></div></div>
+      <details class="account-calc-detail"><summary>Memória de Lote vs Mestre</summary><dl><dt>Correção</dt><dd class="calc-corr">${corr.toFixed(3)}</dd><dt>Normalização V10</dt><dd class="calc-fw">${fw.toFixed(3)}</dd><dt>Fator de Perfil</dt><dd class="calc-pf">${pf.toFixed(3)}</dd><dt>Lote vs Mestre</dt><dd>${loteVs.toFixed(3)}×</dd></dl></details>
+    </div></td>`;
+    cb.append(summary,detail);
   });
+
+  cb.querySelectorAll('[data-account-toggle]').forEach(btn=>btn.addEventListener('click',()=>{
+    const i=+btn.dataset.accountToggle;
+    if(accountEditorsOpen.has(i)) accountEditorsOpen.delete(i); else accountEditorsOpen.add(i);
+    renderContas();
+    const next=document.querySelector(`#contasBody [data-account-toggle="${i}"]`); if(next) next.focus();
+  }));
 
   // bind edits
   cb.querySelectorAll('input,select').forEach(inp=>{
@@ -10248,6 +10615,7 @@ function renderContas(){
       S.accounts[i][f]=val;
       if(f==='tipo'){
         inp.style.borderColor = val==='MESTRE'?'var(--violet)':(val==='SATÉLITE'?'var(--f3)':'var(--f1)');
+        save(); renderContas(); return;
       }
       if(f==='perfil' && val){
         // primeira escolha trava sozinha — "só possa ser escolhido uma vez"
@@ -10263,6 +10631,10 @@ function renderContas(){
         save(); renderContas(); return;
       }
       save();
+      if(f==='nome'){
+        const label=document.querySelector(`#contasBody .account-summary-row[data-idx="${i}"] .account-editor-toggle`);
+        if(label && label.firstChild) label.firstChild.nodeValue=val||'Conta sem nome';
+      }
       if(f==='platformLogin'||f==='investorPassword') updateAccountCredentialMeta(tr,S.accounts[i]);
       recomputeContasCalc();
     });
@@ -10299,7 +10671,7 @@ function renderContas(){
         return;
       }
       if(confirm(`Excluir a conta "${S.accounts[i].nome}"?`)){
-        S.accounts.splice(i,1); save(); renderContas();
+        S.accounts.splice(i,1); accountEditorsOpen.clear(); save(); renderContas();
       }
     });
   });
@@ -10308,14 +10680,13 @@ function renderContas(){
 }
 // recalcula só as células derivadas, sem reconstruir inputs (preserva foco/cursor)
 function recomputeContasCalc(){
-  document.querySelectorAll('#contasBody tr').forEach(tr=>{
+  document.querySelectorAll('#contasBody .account-summary-row').forEach(tr=>{
     const i=+tr.dataset.idx; const a=S.accounts[i];
-    const {lucro,corr,fw,pf,loteVs}=contaCalc(a);
+    const {lucro,loteVs}=contaCalc(a);
     const lc=tr.querySelector('.calc-lucro'); lc.textContent=fmtPct(lucro); lc.className='calc-lucro '+(lucro>=0?'pos':'neg');
-    tr.querySelector('.calc-corr').textContent=corr.toFixed(3);
-    tr.querySelector('.calc-fw').textContent=fw.toFixed(3);
-    tr.querySelector('.calc-pf').textContent=pf.toFixed(3);
-    tr.querySelector('.calc-lotevs').textContent=loteVs.toFixed(3);
+    tr.querySelector('.account-sini-read').textContent=fmtMoney2(+a.sini||0);
+    tr.querySelector('.account-satu-read').textContent=fmtMoney2(+a.satu||0);
+    tr.querySelector('.calc-lotevs').textContent=loteVs.toFixed(3)+'×';
   });
   renderAplicacao();
 }
@@ -10496,6 +10867,7 @@ function bindChartCrosshair(svg, cfg){
 
 function renderDashCharts(){
   const box=$('dashCharts'); if(!box) return;
+  const riskBox=$('dashRiskDetail');
   const saldoIni=S.params.saldoIni||0;
   const led=ledgerSorted();
   const proj=acctProjection(), m=proj.m;
@@ -10610,6 +10982,8 @@ function renderDashCharts(){
   const table=mrows?`<table class="dtable" style="margin-top:14px;max-width:520px">
     <thead><tr><th>Mês</th><th class="num">Esperado</th><th class="num">Real</th><th class="num">Δ real−esper.</th></tr></thead>
     <tbody>${mrows}</tbody></table>`:'';
+  const riskMarkup=`<div class="chart-box"><div class="chart-cap">Drawdown (underwater)</div>${svgDD()}</div>
+  ${table}`;
   box.innerHTML=`<div class="metrics">
     <div class="metric ${lucroAcum>=0?'f1':'f4'}"><div class="k">Lucro acumulado</div><div class="v sm" style="color:${lucroAcum>=0?'var(--f1)':'var(--f4)'}">${fmtMoney2(lucroAcum)}</div></div>
     <div class="metric ${evolPct>=0?'f1':'f4'}"><div class="k">Evolução %</div><div class="v sm" style="color:${evolPct>=0?'var(--f1)':'var(--f4)'}">${(evolPct*100).toFixed(2).replace('.',',')}%</div></div>
@@ -10617,12 +10991,12 @@ function renderDashCharts(){
     <div class="metric ${ddMaxReal<0?'f4':''}"><div class="k">Drawdown máx</div><div class="v sm" style="color:${ddMaxReal<0?'var(--f4)':'var(--ink)'}">${(ddMaxReal*100).toFixed(2).replace('.',',')}%</div></div>
   </div>
   <div class="chart-box" style="margin-top:14px"><div class="chart-cap">Evolução patrimonial · expectativa vs real</div>${svgMoney()}</div>
-  <div class="chart-box" style="margin-top:16px"><div class="chart-cap">Drawdown (underwater)</div>${svgDD()}</div>
-  ${table}
   ${realPts.length>1?'':'<p style="font-size:var(--fs-sm);color:var(--ink-faint);margin-top:10px">Sem fechamentos ainda — a linha de expectativa já aparece; a curva real surge ao registrar o primeiro fechamento diário (aba 07 Contabilidade).</p>'}`;
+  if(riskBox) riskBox.innerHTML=riskMarkup;
+  else box.insertAdjacentHTML('beforeend',riskMarkup);
   // Crosshair só depois do innerHTML — os nós precisam existir no DOM.
   if(chartCfgs.money) bindChartCrosshair(box.querySelector('#chMoney'), chartCfgs.money);
-  if(chartCfgs.dd)    bindChartCrosshair(box.querySelector('#chDD'),    chartCfgs.dd);
+  if(chartCfgs.dd)    bindChartCrosshair((riskBox||box).querySelector('#chDD'), chartCfgs.dd);
 }
 
 // ---- Checklist ----
@@ -10676,11 +11050,11 @@ function bindParams(){
   $('cLoteMaster').addEventListener('input',e=>{S.loteMaster=parseFloat(e.target.value)||0; save(); renderAplicacao();});
   $('addAccountBtn').addEventListener('click',()=>{
     S.accounts.push({nome:'Nova Conta',tipo:'SATÉLITE',broker:'',platform:'',platformLogin:'',investorPassword:'',perfil:'',perfilLocked:false,sini:0,satu:0});
+    if(typeof accountEditorsOpen!=='undefined') accountEditorsOpen.add(S.accounts.length-1);
     save(); renderContas();
     // foca no nome da nova linha
-    const rows=document.querySelectorAll('#contasBody tr');
-    const last=rows[rows.length-1];
-    if(last) last.querySelector('input[data-f="nome"]').focus();
+    const input=document.querySelector(`#contasBody .account-detail-row[data-idx="${S.accounts.length-1}"] input[data-f="nome"]`);
+    if(input) input.focus();
   });
 }
 // ============ 07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria ============
@@ -11117,11 +11491,14 @@ function acctWeekRow(sum){ return `<tr style="background:var(--panel-2)"><td col
 let acctDetailOpen=false; // estado de UI (não persiste entre sessões, só entre re-renders) — SET: escondido por padrão
 function renderAcctSummary(m,p){
   const box=$('acctPeriodSummary'); if(!box) return;
+  const k8=p.k8;
+  const paceLabel=k8==null?'—':(k8>0?'+'+k8+' dias':(k8<0?k8+' dias':'no ritmo'));
+  const paceColor=k8==null?'var(--ink-dim)':(k8>=0?'var(--f1)':'var(--f4)');
   box.innerHTML=`<div class="metrics" style="grid-template-columns:repeat(4,1fr)">
     <div class="metric"><div class="k">Perfil vigente</div><div class="v sm">${esc(m.pr.name)} · ${Math.round(m.pr.pct*100)}%</div></div>
     <div class="metric"><div class="k">Saldo inicial</div><div class="v sm">${fmtMoney2(m.saldoIni)}</div></div>
     <div class="metric"><div class="k">Meta anual</div><div class="v sm">${(m.target*100).toFixed(1).replace('.',',')}%</div></div>
-    <div class="metric"><div class="k">Início do período</div><div class="v sm">${S.params.inicio||'—'}</div></div>
+    <div class="metric"><div class="k">Ritmo do ciclo (K8)</div><div class="v sm" style="color:${paceColor}">${paceLabel}</div><div class="sub">${k8==null?'sem medição':(k8<0?'atrás do ideal · sem pressa':(k8>0?'à frente do ideal':'equilíbrio'))}</div></div>
   </div>`;
 }
 function renderAcct(){
@@ -11213,6 +11590,8 @@ function renderAcctPace(p){
       <div class="metric"><div class="k">Δ vs ideal</div><div class="v sm" style="color:${p.real-p.idealToday>=0?'var(--f1)':'var(--f4)'}">${fmtMoney2(p.real-p.idealToday)}</div></div>
     </div>
     <p style="font-size:calc(12px * var(--fs-scale));color:var(--ink-dim);margin-top:12px;line-height:1.55">${interp}</p>`;
+  const dashBox=$('dashCyclePace');
+  if(dashBox) dashBox.innerHTML=box.innerHTML;
 }
 function renderAcctProj(p){
   const wrap=$('acctProjWrap'); if(!wrap) return;
@@ -11663,7 +12042,10 @@ function navigateToScreen(t){
   }
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  if(typeof t!=='string'&&t.classList.contains('tab')) t.classList.add('active');
+  const activeTab=typeof t==='string'
+    ? document.querySelector('.tab[data-screen="'+CSS.escape(screenId)+'"]')
+    : (t.classList.contains('tab')?t:null);
+  if(activeTab) activeTab.classList.add('active');
   const screen=$(screenId);
   if(!screen) return;
   screen.classList.add('active');
@@ -11893,7 +12275,7 @@ function renderObjective(fi){
 // dizer qual é, em vez de repetir o nome em outro lugar e arriscar divergir.
 const NAV_STYLE_KEY='jpw_nav';
 const NAV_STYLES=['kinetic','pill','classic'];
-const NAV_STYLE_DEFAULT='pill';
+const NAV_STYLE_DEFAULT='classic';
 function navStyleValue(){
   let v=null;
   try{ v=localStorage.getItem(NAV_STYLE_KEY); }catch(e){}
@@ -15552,18 +15934,13 @@ function dashAll(sel, root) { return [...(root || document).querySelectorAll(sel
 // Reflete no <html> qual tela está ativa. Lê o DOM já atualizado pela navegação
 // existente; não decide navegação nem mantém um segundo mecanismo de troca.
 function syncActiveScreen() {
-  // Aposentadoria do modo imersivo (Etapa 1 — Fidelidade ao Global Dashboard,
-  // acordada em conversa): sob a flag nova data-shell="global-dashboard",
-  // data-active-screen nunca vira "dash" — o Dashboard passa a usar o mesmo
-  // shell fixo das outras 6 telas, como o design aprovado determina. Sem essa
-  // flag (ou com ela removida), o comportamento imersivo original volta
-  // exatamente como era: esta função não foi reescrita, só ganhou um guard.
+  const active = dashEl('.screen.active');
+  document.documentElement.dataset.routeScreen = active ? active.id : '';
   if (document.documentElement.dataset.shell === 'global-dashboard') {
     document.documentElement.dataset.activeScreen = '';
     closeDashMenu({ restoreFocus: false });
     return;
   }
-  const active = dashEl('.screen.active');
   document.documentElement.dataset.activeScreen = active ? active.id : '';
   if (active && active.id !== 'dash') closeDashMenu({ restoreFocus: false });
 }
@@ -15710,7 +16087,10 @@ function openShellMenu(opener) {
   shellUI.open = true;
   shellUI.opener = opener || toggle;
   document.documentElement.setAttribute('data-shell-menu', 'open');
-  if (toggle) toggle.setAttribute('aria-expanded', 'true');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Fechar menu de telas');
+  }
   const first = nav.querySelector('.tab');
   if (first) first.focus();
 }
@@ -15720,7 +16100,10 @@ function closeShellMenu(options) {
   shellUI.open = false;
   document.documentElement.removeAttribute('data-shell-menu');
   const toggle = shellEl('[data-shell-menu-toggle]');
-  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu de telas');
+  }
   const opener = shellUI.opener;
   shellUI.opener = null;
   if (!options || options.restoreFocus !== false) {
@@ -15783,48 +16166,24 @@ function relocateGlobalDashboardShell() {
   const footer = gdEl('gdFooter');
   if (footer) footer.hidden = false;
 
-  // Grid executivo do Dashboard: o card de Clearance e a faixa de 4 métricas
-  // nascem dentro dos slides 0 e 1 do carrossel (o Clearance mantém o contrato
-  // de renderOperationalClearance; o carrossel do modo imersivo foi aposentado,
-  // sem controles para trocar de slide) e entram em #gdDashMain nesta ordem:
-  //
-  //     Clearance (P1)  →  Metric Strip (P1)  →  Status do Sistema (P2)
-  //
-  // REBALANCEAMENTO JPW-789ABC: a faixa de métricas vinha DEPOIS do painel, o
-  // que colocava um card P2 no meio do par P1 e, desde que o painel encolheu de
-  // 2×2 para 2×1, deixava 263–386px de vazio ao lado do Clearance (medido). Com
-  // a faixa promovida para a linha 1 da coluna direita, a hierarquia volta a ser
-  // P1 › P1 › P2 e o vazio fecha em zero — o mesmo movimento resolve as duas
-  // coisas. A faixa vira `medium` (2×1) e ocupa a célula que sobrava.
-  //
-  // Ambos são só reposicionados — nenhum ID, listener ou valor muda. A posição
-  // final de TODOS os cards pode ainda ser reordenada pelo layout personalizável
-  // (13-dashboard-layout.js), que roda depois deste relocate e só reordena —
-  // nunca cria ou clona nós.
+  // Sequência estrutural do protótipo: aviso P1 → cockpit P1 → quatro cards P2.
+  // Os mesmos nós são movidos, nunca clonados, para preservar IDs e listeners.
   const dashMain = gdEl('gdDashMain');
   const instPanel = dashMain && dashMain.querySelector(':scope > [data-layout-card="institutional-panel"]');
-  if (instPanel) {
-    // A faixa entra primeiro, imediatamente antes do painel; o Clearance é então
-    // ancorado NELA, não no painel. As guardas de idempotência olham para o
-    // vizinho que cada um deve ter no fim — reexecutar não embaralha a ordem.
-    const metricStrip = gdEl('mcMetricStrip');
-    if (metricStrip && metricStrip.nextElementSibling !== instPanel) instPanel.before(metricStrip);
+  if (dashMain && instPanel) {
     const clearanceCard = gdEl('mcClearanceCard');
-    // Sem a faixa no DOM, o painel volta a ser a âncora do Clearance.
-    const anchor = (metricStrip && metricStrip.parentElement === dashMain) ? metricStrip : instPanel;
-    if (clearanceCard && clearanceCard.nextElementSibling !== anchor) anchor.before(clearanceCard);
+    if (clearanceCard && clearanceCard.parentElement !== dashMain) instPanel.before(clearanceCard);
   }
 
-  // Alerta real de onboarding: reposicionado (não clonado) para a coluna
-  // lateral do Dashboard, entre "Perfil e Contexto" e "Ações Rápidas". O
-  // mesmo elemento, o mesmo estado (S.onboarding) e o mesmo renderizador
-  // (renderOnboardingIncompleteBanner) continuam sendo a única fonte — só
-  // muda onde ele vive no DOM. Sem esta flag, permanece no topo de <main>
-  // (comportamento legado, visível em todas as telas).
-  const dashSide = gdEl('gdDashSide'), quickCard = gdEl('gdQuickCard'), onbBanner = gdEl('onboardingIncompleteBanner');
-  if (dashSide && quickCard && onbBanner && onbBanner.parentElement !== dashSide) {
-    dashSide.insertBefore(onbBanner, quickCard);
-  }
+  const onbBanner = gdEl('onboardingIncompleteBanner');
+  if (dashMain && onbBanner && onbBanner.parentElement !== dashMain) dashMain.prepend(onbBanner);
+
+  // O protótipo encerra a faixa P2 com Ações Rápidas, na mesma grade de
+  // Status, VRM e Notícias. A personalização reafirma essa posição depois,
+  // mas a relocação inicial garante a composição correta mesmo antes de uma
+  // preferência de layout ser normalizada.
+  const quickCard = gdEl('gdQuickCard');
+  if (dashMain && quickCard && quickCard.parentElement !== dashMain) dashMain.append(quickCard);
 
   // Modo imersivo aposentado (Etapa 1): o herói antigo (.jp-hero) ainda existe
   // no DOM — carrossel, setas, pontos, atalhos de teclado por seta — mas sob
@@ -15940,6 +16299,8 @@ setTimeout(renderSystemStatus, 0);
 document.addEventListener('click', event => {
   const btn = event.target.closest('[data-gd-settings]');
   if (btn && typeof openSettingsModal === 'function') openSettingsModal(btn.dataset.gdSettings, btn);
+  const quick = event.target.closest('[data-dash-settings]');
+  if (quick && typeof openSettingsModal === 'function') openSettingsModal(quick.dataset.dashSettings, quick);
 });
 // ============ MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS (N1) ============
 // Funcionalidade nova, isolada, atrás de feature flag própria e
@@ -15974,7 +16335,7 @@ document.addEventListener('click', event => {
 // layout. Preferências v3 salvas para telas fora do registro são
 // simplesmente ignoradas pela normalização (itera JP_WIDGET_SCREEN_IDS).
 const JP_WIDGET_SCREENS = {
-  dash: { label: 'Dashboard', zones: ['main', 'sidebar'], main: 'gdDashMain', sidebar: 'gdDashSide' },
+  dash: { label: 'Dashboard', zones: ['main'], main: 'gdDashMain', sidebar: null },
   exec: { label: 'Execution Board', zones: ['main'], main: 'execWidgetGrid', sidebar: null },
   contas: { label: 'Contas', zones: ['main'], main: 'contasWidgetGrid', sidebar: null },
   contab: { label: 'Contabilidade', zones: ['main'], main: 'contabWidgetGrid', sidebar: null }
@@ -15985,16 +16346,14 @@ const DASH_LAYOUT_LABELS = {
   'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
   'vrm': 'VRM · Regime de Volatilidade',
   'onboarding-alert': 'Alerta de onboarding', 'quick-actions': 'Ações Rápidas',
-  'exec-onboarding-alert': 'Aviso de governança', 'exec-clearance': 'Execution Clearance',
+  'exec-clearance': 'Execution Clearance',
   'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
   'exec-lifo-monitor': 'Consolidado LIFO',
   'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
-  'contab-period-goals': 'Período & Metas', 'contab-simulation': 'Simulação Patrimonial',
-  'contab-cycle-pace': 'Ritmo do Ciclo', 'contab-daily-close': 'Fechamento Diário',
-  'contab-real-vs-projected': 'Real vs Projetado', 'contab-daily-projection': 'Projeção Diária',
-  'contab-entries': 'Lançamentos', 'contab-audit-log': 'Log de Auditoria'
+  'contab-period-goals': 'Período & Metas', 'contab-daily-close': 'Fechamento Diário',
+  'contab-real-vs-projected': 'Real vs Projetado', 'contab-entries': 'Lançamentos'
 };
 const DASH_WIDGET_SIZE_LABELS = { compact: 'Compacto', medium: 'Médio', large: 'Grande', full: 'Largura total' };
 const DASH_LAYOUT_SIZE_VALUES = ['compact', 'medium', 'large', 'full'];
@@ -16024,24 +16383,22 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // e suas escalas), os Termômetros (a escala É a representação), a Postura
     // (o veredito + os motivos dizem o mesmo com número e remédio) e o Perfil e
     // Contexto (duplicava a faixa do header item a item).
-    { id: 'operational-clearance', zone: 'main', size: 'full', order: 0 },
-    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 1 },
-    { id: 'vrm', zone: 'main', size: 'medium', order: 2 },
-    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 3 },
-    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 4 },
-    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 5 }
+    { id: 'onboarding-alert', zone: 'main', size: 'full', order: 0 },
+    { id: 'operational-clearance', zone: 'main', size: 'full', order: 1 },
+    { id: 'institutional-panel', zone: 'main', size: 'compact', order: 2 },
+    { id: 'vrm', zone: 'main', size: 'compact', order: 3 },
+    { id: 'news-high-impact', zone: 'main', size: 'compact', order: 4 },
+    { id: 'quick-actions', zone: 'main', size: 'compact', order: 5 }
   ],
   exec: [
     // Ordem do protótipo: Clearance → Grade da Operação Única → Consolidado LIFO.
     // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
     // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
     // abaixo do que o design define como leitura primária.
-    { id: 'exec-onboarding-alert', zone: 'main', size: 'full', order: 0 },
-    { id: 'exec-clearance', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 3 },
-    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 },
-    { id: 'exec-vrm', zone: 'main', size: 'full', order: 5 }
+    { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 1 },
+    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 2 },
+    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 3 }
   ],
   contas: [
     // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
@@ -16051,14 +16408,10 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   contab: [
     // Ordem do protótipo: Real vs Projetado PAREADO com Fechamento Diário.
     // Simulação e Projeção Diária vivem em disclosure (P3) e vão para o fim.
-    { id: 'contab-period-goals', zone: 'main', size: 'medium', order: 0 },
-    { id: 'contab-cycle-pace', zone: 'main', size: 'medium', order: 1 },
-    { id: 'contab-real-vs-projected', zone: 'main', size: 'medium', order: 2 },
-    { id: 'contab-daily-close', zone: 'main', size: 'medium', order: 3 },
-    { id: 'contab-entries', zone: 'main', size: 'full', order: 4 },
-    { id: 'contab-audit-log', zone: 'main', size: 'full', order: 5 },
-    { id: 'contab-simulation', zone: 'main', size: 'full', order: 6 },
-    { id: 'contab-daily-projection', zone: 'main', size: 'full', order: 7 }
+    { id: 'contab-period-goals', zone: 'main', size: 'full', order: 0 },
+    { id: 'contab-real-vs-projected', zone: 'main', size: 'medium', order: 1 },
+    { id: 'contab-daily-close', zone: 'main', size: 'medium', order: 2 },
+    { id: 'contab-entries', zone: 'main', size: 'full', order: 3 }
   ]
 });
 
@@ -16171,10 +16524,15 @@ function dashLayoutMigrateWidgets(screenId, widgets) {
   // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
   // devolve null para a TELA INTEIRA.
   if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
+  if (screenId === 'exec') return widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id));
+  if (screenId === 'contab') return widgets.filter(w => !w || !['contab-cycle-pace','contab-simulation','contab-daily-projection','contab-audit-log'].includes(w.id));
   if (screenId !== 'dash') return widgets;
-  return widgets.map(w => (w && typeof w === 'object' && w.id === 'institutional-panel' && w.size === 'large')
-    ? { ...w, size: 'medium' }
-    : w);
+  return widgets.map(w => {
+    if (!w || typeof w !== 'object') return w;
+    if (w.id === 'onboarding-alert' || w.id === 'operational-clearance') return { ...w, zone:'main', size:'full' };
+    if (['institutional-panel','vrm','news-high-impact','quick-actions'].includes(w.id)) return { ...w, zone:'main', size:'compact' };
+    return w;
+  });
 }
 
 function dashLayoutValidateScreenWidgets(screenId, widgets) {
@@ -23181,56 +23539,30 @@ function fxpWireQuoteOnce(){
 // contrato de DOM.
 function fxpCreateFormHTML(){
   return `
-  <div class="fxp-grid-empty">
-  <aside class="fxp-col-side">
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Nenhum planejamento ativo</h3></div>
-      <!-- Fase 2C: as três camadas descem para disclosure, como no protótipo
-             ("Como as três camadas funcionam ▾"). O texto continua íntegro;
-             o formulário de criação passa a ser a leitura primária do cartão. -->
-        <details class="jp-p3">
-          <summary>Como as três camadas funcionam</summary>
-          <h4 class="fxp-empty-h">Três camadas que nunca se misturam</h4>
-      <p class="fxp-note">O Planejamento FX registra a trajetória patrimonial Forex separando o que você assume, o que aconteceu e o que o Estatuto exige.</p>
-      <div class="fxp-layer"><div class="fxp-layer-h">Premissas ${fxpBadge('PROJ')}</div>
-        <p class="fxp-note">O que você assume: rentabilidade mensal, câmbio projetado e aportes planejados. Ao aprovar, viram o <b>baseline congelado</b> — revisões futuras nunca o sobrescrevem.</p></div>
-      <div class="fxp-layer"><div class="fxp-layer-h">Realizado ${fxpBadge('REAL')}</div>
-        <p class="fxp-note">Fechamentos mensais contíguos e ledger cambial de aportes. O custo médio do dólar usa média ponderada Σ BRL ÷ Σ USD; créditos USD nativos não o contaminam.</p></div>
-      <div class="fxp-layer"><div class="fxp-layer-h">Normativo</div>
-        <p class="fxp-note">FCR (Art. 13.1) e FEO (Art. 13.2) calculados pela mesma função do Formulário de Início. Este painel calcula e informa — nenhuma movimentação é executada.</p></div>
-        </details>
-      <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Rentabilidade planejada é premissa sua — não deriva de perfis de risco nem constitui promessa de retorno.</p>
-    </section>
-  </aside>
-
-  <div class="fxp-col-main">
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Identidade do plano</h3></div>
-      <div class="params-grid">
-        <div class="field"><label for="fxpName">Nome do planejamento</label><input type="text" id="fxpName" placeholder="ex.: Trajetória Família 10 anos"></div>
-        <div class="field"><label for="fxpStart">Mês inicial</label><input type="month" id="fxpStart" value="${fxpCurrentMonthKey()}"></div>
-        <div class="field"><label for="fxpHorizon">Horizonte (meses)</label><input type="number" min="1" max="600" step="1" id="fxpHorizon" value="60"><span class="note">Livre: 12, 36, 60, 120…</span></div>
+  <div class="fxp-empty-shell">
+    <div class="fxp-empty-kicker"><i aria-hidden="true"></i>Planejamento FX</div>
+    <h3>Nenhum planejamento ativo</h3>
+    <p class="fxp-empty-lead">Registre a trajetória patrimonial separando <b>premissas</b> ${fxpBadge('PROJ')}, <b>realizado</b> ${fxpBadge('REAL')} e <b>normativo</b> (FCR/FEO). Ao aprovar, as premissas viram o baseline congelado.</p>
+    <details class="fxp-empty-method">
+      <summary>Como as três camadas funcionam</summary>
+      <div class="fxp-empty-method-grid">
+        <p><b>Premissas.</b> Rentabilidade mensal, câmbio projetado e aportes. Revisões nunca sobrescrevem o baseline.</p>
+        <p><b>Realizado.</b> Fechamentos contíguos e ledger cambial; custo médio do dólar = Σ BRL ÷ Σ USD.</p>
+        <p><b>Normativo.</b> FCR e FEO pela mesma função do Formulário de Início; este painel informa e não movimenta capital.</p>
       </div>
-    </section>
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Ponto de partida</h3><span class="art">não altera a Conta Mestre</span></div>
-      <div class="params-grid">
-        <div class="field"><label for="fxpInitial">Saldo inicial (USD)</label><input type="number" step="0.01" id="fxpInitial" placeholder="0.00"><span class="note">Parâmetro do planejamento — não altera a Conta Mestre nem o patrimônio institucional.</span></div>
-      </div>
-    </section>
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Premissas</h3><span class="art">${fxpBadge('PROJ')}</span></div>
-      <div class="params-grid">
-        <div class="field"><label for="fxpDefaultRate">Rentabilidade planejada (% a.m.)</label><input type="text" id="fxpDefaultRate" placeholder="ex.: 1,50"><span class="note">Premissa sua, não meta do Estatuto.</span></div>
-        <div class="field"><label for="fxpProjFx">Câmbio projetado (R$/USD)</label><input type="text" id="fxpProjFx" placeholder="ex.: 5,40"><span class="note">Opcional — só para exibir projeções em BRL.</span></div>
-        <div class="field"><label for="fxpRecPersonal">Aporte pessoal mensal (USD)</label><input type="number" step="0.01" id="fxpRecPersonal" placeholder="0.00"><span class="note">Opcional.</span></div>
-        <div class="field"><label for="fxpRecProp">Aporte Prop Firm mensal (USD)</label><input type="number" step="0.01" id="fxpRecProp" placeholder="0.00"><span class="note">Opcional.</span></div>
-      </div>
-      <div id="fxpCreateErr"></div>
-      <button class="unlock-phase-btn fxp-actions" id="fxpCreateBtn">Aprovar planejamento</button>
-      <p class="expl" style="margin-top:8px;font-size:var(--fs-xs);color:var(--ink-faint);line-height:1.55">Congela o baseline. A rentabilidade do mês incide sobre o saldo de abertura; aportes entram depois do resultado.</p>
-    </section>
-  </div>
+    </details>
+    <div class="fxp-empty-form-grid">
+      <div class="field"><label for="fxpName">Nome do planejamento</label><input type="text" id="fxpName" placeholder="ex.: Trajetória Família 10 anos"></div>
+      <div class="field"><label for="fxpStart">Mês inicial</label><input type="month" id="fxpStart" value="${fxpCurrentMonthKey()}"></div>
+      <div class="field"><label for="fxpHorizon">Horizonte (meses)</label><input type="number" min="1" max="600" step="1" id="fxpHorizon" value="60"></div>
+      <div class="field"><label for="fxpInitial">Saldo inicial (USD)</label><input type="number" step="0.01" id="fxpInitial" placeholder="0.00"><span class="note">Não altera a Conta Mestre.</span></div>
+      <div class="field"><label for="fxpDefaultRate">Rentabilidade planejada (% a.m.)</label><input type="text" id="fxpDefaultRate" placeholder="ex.: 1,50"><span class="note">Premissa sua, não meta do sistema.</span></div>
+      <div class="field"><label for="fxpProjFx">Câmbio projetado (R$/USD)</label><input type="text" id="fxpProjFx" placeholder="ex.: 5,40"><span class="note">Opcional — só para projeções em BRL.</span></div>
+      <div class="field"><label for="fxpRecPersonal">Aporte pessoal mensal (USD)</label><input type="number" step="0.01" id="fxpRecPersonal" placeholder="0.00"></div>
+      <div class="field"><label for="fxpRecProp">Aporte Prop Firm mensal (USD)</label><input type="number" step="0.01" id="fxpRecProp" placeholder="0.00"></div>
+    </div>
+    <div id="fxpCreateErr"></div>
+    <div class="fxp-empty-actions"><button class="unlock-phase-btn" id="fxpCreateBtn">Aprovar planejamento</button><span>as premissas congelam como baseline nesta aprovação</span></div>
   </div>`;
 }
 function fxpRecurringMap(start,horizon,personal,prop){
@@ -23806,6 +24138,8 @@ function fxpTableHTML(live){
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
   const live=window.JPWFx.state.fxOverviewLive();
+  const card=document.getElementById('fxPlanningCard');
+  if(card) card.dataset.fxpState=live?'active':'empty';
   if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); return; }
   const body=fxpView==='overview'?fxpOverviewHTML(live)
     :fxpView==='planning'?fxpPlanningHTML(live)

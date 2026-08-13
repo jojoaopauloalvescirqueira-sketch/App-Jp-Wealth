@@ -84,56 +84,30 @@ function fxpWireQuoteOnce(){
 // contrato de DOM.
 function fxpCreateFormHTML(){
   return `
-  <div class="fxp-grid-empty">
-  <aside class="fxp-col-side">
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Nenhum planejamento ativo</h3></div>
-      <!-- Fase 2C: as três camadas descem para disclosure, como no protótipo
-             ("Como as três camadas funcionam ▾"). O texto continua íntegro;
-             o formulário de criação passa a ser a leitura primária do cartão. -->
-        <details class="jp-p3">
-          <summary>Como as três camadas funcionam</summary>
-          <h4 class="fxp-empty-h">Três camadas que nunca se misturam</h4>
-      <p class="fxp-note">O Planejamento FX registra a trajetória patrimonial Forex separando o que você assume, o que aconteceu e o que o Estatuto exige.</p>
-      <div class="fxp-layer"><div class="fxp-layer-h">Premissas ${fxpBadge('PROJ')}</div>
-        <p class="fxp-note">O que você assume: rentabilidade mensal, câmbio projetado e aportes planejados. Ao aprovar, viram o <b>baseline congelado</b> — revisões futuras nunca o sobrescrevem.</p></div>
-      <div class="fxp-layer"><div class="fxp-layer-h">Realizado ${fxpBadge('REAL')}</div>
-        <p class="fxp-note">Fechamentos mensais contíguos e ledger cambial de aportes. O custo médio do dólar usa média ponderada Σ BRL ÷ Σ USD; créditos USD nativos não o contaminam.</p></div>
-      <div class="fxp-layer"><div class="fxp-layer-h">Normativo</div>
-        <p class="fxp-note">FCR (Art. 13.1) e FEO (Art. 13.2) calculados pela mesma função do Formulário de Início. Este painel calcula e informa — nenhuma movimentação é executada.</p></div>
-        </details>
-      <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Rentabilidade planejada é premissa sua — não deriva de perfis de risco nem constitui promessa de retorno.</p>
-    </section>
-  </aside>
-
-  <div class="fxp-col-main">
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Identidade do plano</h3></div>
-      <div class="params-grid">
-        <div class="field"><label for="fxpName">Nome do planejamento</label><input type="text" id="fxpName" placeholder="ex.: Trajetória Família 10 anos"></div>
-        <div class="field"><label for="fxpStart">Mês inicial</label><input type="month" id="fxpStart" value="${fxpCurrentMonthKey()}"></div>
-        <div class="field"><label for="fxpHorizon">Horizonte (meses)</label><input type="number" min="1" max="600" step="1" id="fxpHorizon" value="60"><span class="note">Livre: 12, 36, 60, 120…</span></div>
+  <div class="fxp-empty-shell">
+    <div class="fxp-empty-kicker"><i aria-hidden="true"></i>Planejamento FX</div>
+    <h3>Nenhum planejamento ativo</h3>
+    <p class="fxp-empty-lead">Registre a trajetória patrimonial separando <b>premissas</b> ${fxpBadge('PROJ')}, <b>realizado</b> ${fxpBadge('REAL')} e <b>normativo</b> (FCR/FEO). Ao aprovar, as premissas viram o baseline congelado.</p>
+    <details class="fxp-empty-method">
+      <summary>Como as três camadas funcionam</summary>
+      <div class="fxp-empty-method-grid">
+        <p><b>Premissas.</b> Rentabilidade mensal, câmbio projetado e aportes. Revisões nunca sobrescrevem o baseline.</p>
+        <p><b>Realizado.</b> Fechamentos contíguos e ledger cambial; custo médio do dólar = Σ BRL ÷ Σ USD.</p>
+        <p><b>Normativo.</b> FCR e FEO pela mesma função do Formulário de Início; este painel informa e não movimenta capital.</p>
       </div>
-    </section>
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Ponto de partida</h3><span class="art">não altera a Conta Mestre</span></div>
-      <div class="params-grid">
-        <div class="field"><label for="fxpInitial">Saldo inicial (USD)</label><input type="number" step="0.01" id="fxpInitial" placeholder="0.00"><span class="note">Parâmetro do planejamento — não altera a Conta Mestre nem o patrimônio institucional.</span></div>
-      </div>
-    </section>
-    <section class="fxp-block">
-      <div class="fxp-block-head"><h3>Premissas</h3><span class="art">${fxpBadge('PROJ')}</span></div>
-      <div class="params-grid">
-        <div class="field"><label for="fxpDefaultRate">Rentabilidade planejada (% a.m.)</label><input type="text" id="fxpDefaultRate" placeholder="ex.: 1,50"><span class="note">Premissa sua, não meta do Estatuto.</span></div>
-        <div class="field"><label for="fxpProjFx">Câmbio projetado (R$/USD)</label><input type="text" id="fxpProjFx" placeholder="ex.: 5,40"><span class="note">Opcional — só para exibir projeções em BRL.</span></div>
-        <div class="field"><label for="fxpRecPersonal">Aporte pessoal mensal (USD)</label><input type="number" step="0.01" id="fxpRecPersonal" placeholder="0.00"><span class="note">Opcional.</span></div>
-        <div class="field"><label for="fxpRecProp">Aporte Prop Firm mensal (USD)</label><input type="number" step="0.01" id="fxpRecProp" placeholder="0.00"><span class="note">Opcional.</span></div>
-      </div>
-      <div id="fxpCreateErr"></div>
-      <button class="unlock-phase-btn fxp-actions" id="fxpCreateBtn">Aprovar planejamento</button>
-      <p class="expl" style="margin-top:8px;font-size:var(--fs-xs);color:var(--ink-faint);line-height:1.55">Congela o baseline. A rentabilidade do mês incide sobre o saldo de abertura; aportes entram depois do resultado.</p>
-    </section>
-  </div>
+    </details>
+    <div class="fxp-empty-form-grid">
+      <div class="field"><label for="fxpName">Nome do planejamento</label><input type="text" id="fxpName" placeholder="ex.: Trajetória Família 10 anos"></div>
+      <div class="field"><label for="fxpStart">Mês inicial</label><input type="month" id="fxpStart" value="${fxpCurrentMonthKey()}"></div>
+      <div class="field"><label for="fxpHorizon">Horizonte (meses)</label><input type="number" min="1" max="600" step="1" id="fxpHorizon" value="60"></div>
+      <div class="field"><label for="fxpInitial">Saldo inicial (USD)</label><input type="number" step="0.01" id="fxpInitial" placeholder="0.00"><span class="note">Não altera a Conta Mestre.</span></div>
+      <div class="field"><label for="fxpDefaultRate">Rentabilidade planejada (% a.m.)</label><input type="text" id="fxpDefaultRate" placeholder="ex.: 1,50"><span class="note">Premissa sua, não meta do sistema.</span></div>
+      <div class="field"><label for="fxpProjFx">Câmbio projetado (R$/USD)</label><input type="text" id="fxpProjFx" placeholder="ex.: 5,40"><span class="note">Opcional — só para projeções em BRL.</span></div>
+      <div class="field"><label for="fxpRecPersonal">Aporte pessoal mensal (USD)</label><input type="number" step="0.01" id="fxpRecPersonal" placeholder="0.00"></div>
+      <div class="field"><label for="fxpRecProp">Aporte Prop Firm mensal (USD)</label><input type="number" step="0.01" id="fxpRecProp" placeholder="0.00"></div>
+    </div>
+    <div id="fxpCreateErr"></div>
+    <div class="fxp-empty-actions"><button class="unlock-phase-btn" id="fxpCreateBtn">Aprovar planejamento</button><span>as premissas congelam como baseline nesta aprovação</span></div>
   </div>`;
 }
 function fxpRecurringMap(start,horizon,personal,prop){
@@ -709,6 +683,8 @@ function fxpTableHTML(live){
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
   const live=window.JPWFx.state.fxOverviewLive();
+  const card=document.getElementById('fxPlanningCard');
+  if(card) card.dataset.fxpState=live?'active':'empty';
   if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); return; }
   const body=fxpView==='overview'?fxpOverviewHTML(live)
     :fxpView==='planning'?fxpPlanningHTML(live)

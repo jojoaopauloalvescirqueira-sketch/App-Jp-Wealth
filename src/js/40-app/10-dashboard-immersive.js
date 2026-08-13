@@ -17,18 +17,13 @@ function dashAll(sel, root) { return [...(root || document).querySelectorAll(sel
 // Reflete no <html> qual tela está ativa. Lê o DOM já atualizado pela navegação
 // existente; não decide navegação nem mantém um segundo mecanismo de troca.
 function syncActiveScreen() {
-  // Aposentadoria do modo imersivo (Etapa 1 — Fidelidade ao Global Dashboard,
-  // acordada em conversa): sob a flag nova data-shell="global-dashboard",
-  // data-active-screen nunca vira "dash" — o Dashboard passa a usar o mesmo
-  // shell fixo das outras 6 telas, como o design aprovado determina. Sem essa
-  // flag (ou com ela removida), o comportamento imersivo original volta
-  // exatamente como era: esta função não foi reescrita, só ganhou um guard.
+  const active = dashEl('.screen.active');
+  document.documentElement.dataset.routeScreen = active ? active.id : '';
   if (document.documentElement.dataset.shell === 'global-dashboard') {
     document.documentElement.dataset.activeScreen = '';
     closeDashMenu({ restoreFocus: false });
     return;
   }
-  const active = dashEl('.screen.active');
   document.documentElement.dataset.activeScreen = active ? active.id : '';
   if (active && active.id !== 'dash') closeDashMenu({ restoreFocus: false });
 }

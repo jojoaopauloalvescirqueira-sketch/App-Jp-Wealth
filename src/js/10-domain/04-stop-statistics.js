@@ -71,13 +71,10 @@ function riskIndicatorsHTML(active){
       </div>
     </div>
     </details>
-    <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
-      ${chip('Múltiplo de ATR', mult>0?mult.toFixed(1).replace('.',',')+'x':'—', strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'stop% ÷ ATR%')}
-      ${chip('Raiz-N · 1 semana (√30)', pc(rz1), `mínimo p/ resistir 1 sem · <span style="color:${v1.c};font-weight:700">${v1.t}</span>`)}
-      ${chip('Raiz-N · 2 semanas (√55)', pc(rz2), `mínimo p/ resistir 2 sem · <span style="color:${v2.c};font-weight:700">${v2.t}</span>`)}
-      ${chip('Síntese (§9.5)', (stopPct>0&&atrPct>0)?(stopPct>=rz2?'COERENTE 2 SEM':(stopPct>=rz1?'COERENTE 1 SEM':'VULNERÁVEL')):'—',
-        stopPct>=rz2?'resiste às duas janelas':(stopPct>=rz1?'resiste a 1 semana, não a 2':'abaixo do Raiz-N — compensações táticas exigidas'),
-        (stopPct>0&&atrPct>0)?(stopPct>=rz1?'var(--f1)':'var(--f3)'):'')}
+    <div class="risk-primary-indicators">
+      ${chip('Stop da Gênese · Múltiplo de ATR', `${pc(stopPct)} · ${mult>0?mult.toFixed(1).replace('.',',')+'x':'—'}`, strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'distância ao SL mãe ÷ ATR%')}
+      ${chip('Raiz-N · resistência estatística', `√30 ${pc(rz1)} · √55 ${pc(rz2)}`,
+        `1 sem <span style="color:${v1.c};font-weight:700">${v1.t}</span> · 2 sem <span style="color:${v2.c};font-weight:700">${v2.t}</span> · síntese <span style="color:${(stopPct>0&&atrPct>0)?(stopPct>=rz1?'var(--f1)':'var(--f3)'):'var(--ink-faint)'};font-weight:700">${(stopPct>0&&atrPct>0)?(stopPct>=rz2?'COERENTE 2 SEM':(stopPct>=rz1?'COERENTE 1 SEM':'VULNERÁVEL')):'—'}</span>`)}
     </div>
   </div>`;
 }
@@ -178,7 +175,10 @@ function renderPhases(){
       // foca no ID da nova linha
       const rows=document.querySelectorAll(`.phase[data-phase="${pi}"] tbody tr`);
       const last=rows[rows.length-1];
-      if(last) last.querySelector('input[data-f="id"]')?.focus();
+      if(last){
+        last.classList.add('is-new-order');
+        last.querySelector('input[data-f="id"]')?.focus();
+      }
     });
   });
   // bind remover ordem — sem fricção se vazia, confirma se tiver dado real
@@ -594,52 +594,31 @@ async function requestPinUnlock(operationEpoch=jpWealthPersistenceEpoch()){
   if(h!==S.riskPinHash){ alert('Senha incorreta. Perfil permanece travado.'); return false; }
   return true;
 }
+const accountEditorsOpen=new Set();
+function accountCredentialState(a){
+  const missing=[!a.platform?'plataforma':null,!a.platformLogin?'login':null,!a.investorPassword?'senha do investidor':null].filter(Boolean);
+  return {
+    missing,
+    label:missing.length?missing.length+' pendente'+(missing.length>1?'s':''):'completas',
+    detail:missing.length?'Falta preencher: '+missing.join(', '):normalizePlatformName(a.platform)+' · Login '+a.platformLogin+' · senha cadastrada'
+  };
+}
 function updateAccountCredentialMeta(row,a){
-  const p=row.querySelector('.account-platform');
-  const l=row.querySelector('.account-login');
-  const pass=row.querySelector('.account-pass');
-  if(p) p.textContent=a.platform?normalizePlatformName(a.platform):'a preencher';
-  if(l) l.textContent=a.platformLogin?`Login ${a.platformLogin}`:'login a preencher';
-  if(pass){
-    const has=!!a.investorPassword;
-    pass.textContent=has?'senha investidor cadastrada':'senha investidor não cadastrada';
-    pass.classList.toggle('ok',has);
+  const i=+row.dataset.idx;
+  const summary=document.querySelector(`#contasBody .account-summary-row[data-idx="${i}"]`);
+  const chip=summary&&summary.querySelector('.account-cred');
+  const state=accountCredentialState(a);
+  if(chip){
+    chip.textContent=state.label;
+    chip.title=state.detail;
+    chip.classList.toggle('ok',!state.missing.length);
   }
 }
 function renderContas(){
   const cb=$('contasBody'); cb.innerHTML='';
   S.accounts.forEach((a,i)=>{
     const {lucro,corr,fw,pf,loteVs}=contaCalc(a);
-    const tr=document.createElement('tr');
-    tr.dataset.idx=i;
-    const platformName=a.platform?normalizePlatformName(a.platform):'a preencher';
-    const loginTxt=a.platformLogin?`Login ${esc(a.platformLogin)}`:'login a preencher';
-    const passOk=!!a.investorPassword;
-    // Resumo das credenciais: conta o que falta entre plataforma, login e senha
-    // do investidor. Leitura pura do estado — nenhum campo novo, nenhuma regra.
-    const credFaltando=[!a.platform?'plataforma':null, !a.platformLogin?'login':null, !passOk?'senha do investidor':null].filter(Boolean);
-    const credPend=credFaltando.length;
-    const credDetalhe=credPend?('falta preencher: '+credFaltando.join(', ')):(platformName+' · '+loginTxt+' · senha cadastrada');
-    const contaCell=`<div class="account-field">
-        <div class="account-top">
-          <input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta">
-          <div class="account-meta">
-            <!-- Fase 2C: um chip no lugar de três. O protótipo resume as credenciais
-                 num único selo ("3 pendentes"); os campos individuais continuam logo
-                 abaixo, em account-cred-grid, então nada ficou inacessível. O texto
-                 nomeia o que falta — a cor não é o único canal (WCAG 1.4.1). -->
-            <span class="account-chip account-cred ${credPend?'':'ok'}" title="${esc(credDetalhe)}">${credPend?credPend+' pendente'+(credPend>1?'s':''):'credenciais completas'}</span>
-        </div>
-        <div class="account-cred-grid">
-          <select data-f="platform" title="Plataforma">${platformOptions(a.platform)}</select>
-          <input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma">
-        </div>
-        <span class="pass-label">Senha do Investidor / somente leitura</span>
-        <div class="investor-pass-row">
-          <input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off" title="Senha do Investidor / somente leitura">
-          <button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button>
-        </div>
-      </div>`;
+    const cred=accountCredentialState(a), open=accountEditorsOpen.has(i);
     const perfilCell = a.perfilLocked
       ? `<div style="display:flex; align-items:center; gap:6px">
            <span class="hl">🔒 ${esc(a.perfil)}</span>
@@ -650,7 +629,7 @@ function renderContas(){
            ${RISK_PROFILES.map(p=>`<option value="${esc(p.name)}" ${a.perfil&&riskProfileByAny(a.perfil).key===p.key?'selected':''}>${esc(p.name)}</option>`).join('')}
          </select>`;
     const brokerAtual=brokerFor(a.broker);
-    const brokerCell=`<div class="broker-field">
+    const brokerEditor=`<div class="broker-field">
         ${brokerMiniHTML(a.broker)}
         <select data-f="broker">
           ${!brokerAtual&&a.broker?`<option value="${esc(a.broker)}" selected>${esc(a.broker)} · a preencher</option>`:''}
@@ -658,30 +637,43 @@ function renderContas(){
           ${BROKER_PARTNERS.map(b=>`<option value="${esc(b.name)}" ${brokerAtual&&brokerAtual.key===b.key?'selected':''}>${esc(b.name)}</option>`).join('')}
         </select>
       </div>`;
-    tr.innerHTML=`
-      <td class="editable">${contaCell}</td>
-      <td class="editable">
-        <select data-f="tipo">
-          <option ${a.tipo==='MESTRE'?'selected':''}>MESTRE</option>
-          <option ${a.tipo==='PRÓPRIA'?'selected':''}>PRÓPRIA</option>
-          <option ${a.tipo==='SATÉLITE'?'selected':''}>SATÉLITE</option>
-        </select>
-      </td>
-      <td class="editable">${brokerCell}</td>
-      <td class="editable">${perfilCell}</td>
-      <td class="editable"><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></td>
-      <td class="editable"><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></td>
+    const typeClass=a.tipo==='MESTRE'?'master':(a.tipo==='PRÓPRIA'?'own':'satellite');
+    const summary=document.createElement('tr');
+    summary.className='account-summary-row'; summary.dataset.idx=i;
+    summary.innerHTML=`
+      <td class="account-name-cell"><button type="button" class="account-editor-toggle" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}">${esc(a.nome||'Conta sem nome')}<span aria-hidden="true">${open?'▾':'▸'}</span></button></td>
+      <td><span class="account-type ${typeClass}">${esc(a.tipo)}</span></td>
+      <td class="account-broker-read">${esc(brokerAtual?brokerAtual.name:(a.broker||'a preencher'))}</td>
+      <td class="account-profile-read">${a.perfilLocked?'🔒 ':''}${esc(a.perfil||'a preencher')}</td>
+      <td class="account-sini-read">${fmtMoney2(+a.sini||0)}</td>
+      <td class="account-satu-read">${fmtMoney2(+a.satu||0)}</td>
       <td class="calc-lucro ${lucro>=0?'pos':'neg'}">${fmtPct(lucro)}</td>
-      <td class="calc-corr">${corr.toFixed(3)}</td>
-      <td class="calc-fw">${fw.toFixed(3)}</td>
-      <td class="calc-pf hl">${pf.toFixed(3)}</td>
-      <td class="calc-lotevs hl" title="Correção ${corr.toFixed(3)} · Normalização V10 ${fw.toFixed(3)} · Fator de Perfil ${pf.toFixed(3)}">${loteVs.toFixed(3)}</td>
-      <td><button class="row-del" title="Excluir conta" data-del="${i}">✕</button></td>
-    `;
-    const sel=tr.querySelector('select[data-f="tipo"]');
-    sel.style.borderColor = a.tipo==='MESTRE'?'var(--violet)':(a.tipo==='SATÉLITE'?'var(--f3)':'var(--f1)');
-    cb.appendChild(tr);
+      <td class="calc-lotevs hl">${loteVs.toFixed(3)}×</td>
+      <td><button type="button" class="account-chip account-cred ${cred.missing.length?'':'ok'}" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}" title="${esc(cred.detail)}">${esc(cred.label)}</button></td>
+      <td><button class="row-del" title="Excluir conta" aria-label="Excluir ${esc(a.nome)}" data-del="${i}">✕</button></td>`;
+    const detail=document.createElement('tr');
+    detail.className='account-detail-row'; detail.dataset.idx=i; detail.id='account-detail-'+i; detail.hidden=!open;
+    detail.innerHTML=`<td colspan="10"><div class="account-editor-grid">
+      <label class="field"><span>Nome da conta</span><input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta"></label>
+      <label class="field"><span>Tipo</span><select data-f="tipo"><option ${a.tipo==='MESTRE'?'selected':''}>MESTRE</option><option ${a.tipo==='PRÓPRIA'?'selected':''}>PRÓPRIA</option><option ${a.tipo==='SATÉLITE'?'selected':''}>SATÉLITE</option></select></label>
+      <div class="field"><span class="account-editor-label">Broker</span>${brokerEditor}</div>
+      <div class="field"><span class="account-editor-label">Perfil</span>${perfilCell}</div>
+      <label class="field"><span>Saldo inicial</span><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></label>
+      <label class="field"><span>Saldo atual</span><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></label>
+      <label class="field"><span>Plataforma</span><select data-f="platform">${platformOptions(a.platform)}</select></label>
+      <label class="field"><span>Login da plataforma</span><input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma"></label>
+      <div class="field account-password-field"><span class="account-editor-label">Senha do investidor / somente leitura</span><div class="investor-pass-row"><input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off"><button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button></div></div>
+      <details class="account-calc-detail"><summary>Memória de Lote vs Mestre</summary><dl><dt>Correção</dt><dd class="calc-corr">${corr.toFixed(3)}</dd><dt>Normalização V10</dt><dd class="calc-fw">${fw.toFixed(3)}</dd><dt>Fator de Perfil</dt><dd class="calc-pf">${pf.toFixed(3)}</dd><dt>Lote vs Mestre</dt><dd>${loteVs.toFixed(3)}×</dd></dl></details>
+    </div></td>`;
+    cb.append(summary,detail);
   });
+
+  cb.querySelectorAll('[data-account-toggle]').forEach(btn=>btn.addEventListener('click',()=>{
+    const i=+btn.dataset.accountToggle;
+    if(accountEditorsOpen.has(i)) accountEditorsOpen.delete(i); else accountEditorsOpen.add(i);
+    renderContas();
+    const next=document.querySelector(`#contasBody [data-account-toggle="${i}"]`); if(next) next.focus();
+  }));
 
   // bind edits
   cb.querySelectorAll('input,select').forEach(inp=>{
@@ -695,6 +687,7 @@ function renderContas(){
       S.accounts[i][f]=val;
       if(f==='tipo'){
         inp.style.borderColor = val==='MESTRE'?'var(--violet)':(val==='SATÉLITE'?'var(--f3)':'var(--f1)');
+        save(); renderContas(); return;
       }
       if(f==='perfil' && val){
         // primeira escolha trava sozinha — "só possa ser escolhido uma vez"
@@ -710,6 +703,10 @@ function renderContas(){
         save(); renderContas(); return;
       }
       save();
+      if(f==='nome'){
+        const label=document.querySelector(`#contasBody .account-summary-row[data-idx="${i}"] .account-editor-toggle`);
+        if(label && label.firstChild) label.firstChild.nodeValue=val||'Conta sem nome';
+      }
       if(f==='platformLogin'||f==='investorPassword') updateAccountCredentialMeta(tr,S.accounts[i]);
       recomputeContasCalc();
     });
@@ -746,7 +743,7 @@ function renderContas(){
         return;
       }
       if(confirm(`Excluir a conta "${S.accounts[i].nome}"?`)){
-        S.accounts.splice(i,1); save(); renderContas();
+        S.accounts.splice(i,1); accountEditorsOpen.clear(); save(); renderContas();
       }
     });
   });
@@ -755,14 +752,13 @@ function renderContas(){
 }
 // recalcula só as células derivadas, sem reconstruir inputs (preserva foco/cursor)
 function recomputeContasCalc(){
-  document.querySelectorAll('#contasBody tr').forEach(tr=>{
+  document.querySelectorAll('#contasBody .account-summary-row').forEach(tr=>{
     const i=+tr.dataset.idx; const a=S.accounts[i];
-    const {lucro,corr,fw,pf,loteVs}=contaCalc(a);
+    const {lucro,loteVs}=contaCalc(a);
     const lc=tr.querySelector('.calc-lucro'); lc.textContent=fmtPct(lucro); lc.className='calc-lucro '+(lucro>=0?'pos':'neg');
-    tr.querySelector('.calc-corr').textContent=corr.toFixed(3);
-    tr.querySelector('.calc-fw').textContent=fw.toFixed(3);
-    tr.querySelector('.calc-pf').textContent=pf.toFixed(3);
-    tr.querySelector('.calc-lotevs').textContent=loteVs.toFixed(3);
+    tr.querySelector('.account-sini-read').textContent=fmtMoney2(+a.sini||0);
+    tr.querySelector('.account-satu-read').textContent=fmtMoney2(+a.satu||0);
+    tr.querySelector('.calc-lotevs').textContent=loteVs.toFixed(3)+'×';
   });
   renderAplicacao();
 }

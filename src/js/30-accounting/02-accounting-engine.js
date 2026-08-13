@@ -49,11 +49,14 @@ function acctWeekRow(sum){ return `<tr style="background:var(--panel-2)"><td col
 let acctDetailOpen=false; // estado de UI (não persiste entre sessões, só entre re-renders) — SET: escondido por padrão
 function renderAcctSummary(m,p){
   const box=$('acctPeriodSummary'); if(!box) return;
+  const k8=p.k8;
+  const paceLabel=k8==null?'—':(k8>0?'+'+k8+' dias':(k8<0?k8+' dias':'no ritmo'));
+  const paceColor=k8==null?'var(--ink-dim)':(k8>=0?'var(--f1)':'var(--f4)');
   box.innerHTML=`<div class="metrics" style="grid-template-columns:repeat(4,1fr)">
     <div class="metric"><div class="k">Perfil vigente</div><div class="v sm">${esc(m.pr.name)} · ${Math.round(m.pr.pct*100)}%</div></div>
     <div class="metric"><div class="k">Saldo inicial</div><div class="v sm">${fmtMoney2(m.saldoIni)}</div></div>
     <div class="metric"><div class="k">Meta anual</div><div class="v sm">${(m.target*100).toFixed(1).replace('.',',')}%</div></div>
-    <div class="metric"><div class="k">Início do período</div><div class="v sm">${S.params.inicio||'—'}</div></div>
+    <div class="metric"><div class="k">Ritmo do ciclo (K8)</div><div class="v sm" style="color:${paceColor}">${paceLabel}</div><div class="sub">${k8==null?'sem medição':(k8<0?'atrás do ideal · sem pressa':(k8>0?'à frente do ideal':'equilíbrio'))}</div></div>
   </div>`;
 }
 function renderAcct(){
@@ -145,6 +148,8 @@ function renderAcctPace(p){
       <div class="metric"><div class="k">Δ vs ideal</div><div class="v sm" style="color:${p.real-p.idealToday>=0?'var(--f1)':'var(--f4)'}">${fmtMoney2(p.real-p.idealToday)}</div></div>
     </div>
     <p style="font-size:calc(12px * var(--fs-scale));color:var(--ink-dim);margin-top:12px;line-height:1.55">${interp}</p>`;
+  const dashBox=$('dashCyclePace');
+  if(dashBox) dashBox.innerHTML=box.innerHTML;
 }
 function renderAcctProj(p){
   const wrap=$('acctProjWrap'); if(!wrap) return;

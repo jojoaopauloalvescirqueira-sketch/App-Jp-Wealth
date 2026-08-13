@@ -10,9 +10,9 @@
 <link rel="stylesheet" href="src/styles/app.css">
 <script src="build-id.js"></script>
 <script>
-// Bootstrap inline deliberado: navegacoes sao network-first, portanto uma instalacao
-// ainda controlada pelo cache antigo consegue pedir a nova versao do worker mesmo
-// quando seus scripts externos continuam cache-first. A ativacao permanece waiting.
+// Bootstrap inline deliberado: uma navegacao controlada permanece no index do
+// mesmo cache versionado do controller. Este documento coerente pede a nova versao
+// do worker, que permanece em waiting ate todos os clientes antigos fecharem.
 (function(){
   if(window.JP_WEALTH_PORTABLE_BUILD===true) return;
   if(!('serviceWorker' in navigator)||!/^https?:$/.test(window.location.protocol)) return;
@@ -81,10 +81,10 @@
   <div class="hdr-sep"></div>
   <div class="hdr-readout opt"><span class="k">Equity</span><span class="v" id="hdrEquity">—</span></div>
   <div class="hdr-sep"></div>
-  <div class="hdr-readout opt2"><span class="k">DD</span><span class="v" id="hdrDD">—</span></div>
+  <div class="hdr-readout hdr-readout-dd opt2"><span class="k">DD</span><span class="v" id="hdrDD">—</span></div>
   <div class="header-status">
-    <span class="hdr-readout"><span class="v" id="hdrClock">--:--:--</span></span>
     <span class="saved-tag" id="savedTag">salvo</span>
+    <span class="hdr-readout"><span class="v" id="hdrClock">--:--:--</span></span>
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
@@ -146,7 +146,7 @@
 </nav>
 
 <main id="appMain">
-  <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-allowed-zones="sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full" role="status" aria-live="polite">
+  <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
     <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
@@ -158,15 +158,18 @@
          widget agora é filho direto de #execWidgetGrid, com largura própria
          via data-widget-size. Nenhum ID interno, listener ou renderizador mudou. -->
     <div class="jp-widget-grid" id="execWidgetGrid">
-      <div class="onb-gov-note" id="execOnboardingGovNote" data-layout-card="exec-onboarding-alert" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-        <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-alert"/></svg>
-        <div><div class="t">Governança incompleta</div><div class="s" id="execOnboardingGovText">—</div></div>
-        <button class="reset-btn" id="execOnboardingGovBtn" style="color:var(--f2); border-color:var(--f2)">Revisar formulário</button>
-      </div>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
       <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
-        <div class="mc-ec-title" id="ecTitle">—</div>
-        <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+        <div class="mc-ec-copy">
+          <div class="dh-kicker"><span class="dh-dot" aria-hidden="true"></span>Execution Clearance</div>
+          <div class="mc-ec-title" id="ecTitle">—</div>
+          <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+          <div class="onb-gov-note" id="execOnboardingGovNote">
+            <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-alert"/></svg>
+            <div><div class="t">Governança incompleta</div><div class="s" id="execOnboardingGovText">—</div></div>
+            <button class="reset-btn" id="execOnboardingGovBtn" style="color:var(--f2); border-color:var(--f2)">Revisar formulário</button>
+          </div>
+        </div>
         <!-- Fase 2C: os quatro fatos do protótipo. Fase e Grade Ativa passam a
              dividir a mesma célula (o protótipo rotula "FASE · GRADE ATIVA") e
              entra DRAWDOWN, que faltava aqui e é o fato que os termômetros
@@ -174,10 +177,10 @@
              protótipo ("RISCO / TETO $400"), liberando o valor para o número
              corrente. -->
         <div class="mc-ec-facts">
-          <span>Fase · Grade Ativa<b id="ecFase">—</b><i class="mc-ec-sub" id="ecGrade">—</i></span>
-          <span>Drawdown<b id="ecDD">—</b><i class="mc-ec-sub" id="ecDDsub">—</i></span>
-          <span><span id="ecRiscoLbl">Risco / Teto</span><b id="ecRisco">—</b></span>
-          <span><span id="ecAlavLbl">Alav. / Teto</span><b id="ecAlav">—</b></span>
+          <span class="mc-ec-fact"><span>Fase · Grade Ativa</span><b id="ecFase">—</b><i class="mc-ec-sub" id="ecGrade">—</i></span>
+          <span class="mc-ec-fact"><span>Drawdown</span><b id="ecDD">—</b><i class="mc-ec-track" aria-hidden="true"><i id="ecDDbar"></i></i><i class="mc-ec-sub" id="ecDDsub">—</i></span>
+          <span class="mc-ec-fact"><span id="ecRiscoLbl">Risco / Teto</span><b id="ecRisco">—</b><i class="mc-ec-track" aria-hidden="true"><i id="ecRiscoBar"></i></i></span>
+          <span class="mc-ec-fact"><span id="ecAlavLbl">Alav. / Teto</span><b id="ecAlav">—</b><i class="mc-ec-track" aria-hidden="true"><i id="ecAlavBar"></i></i></span>
         </div>
       </div>
 
@@ -192,7 +195,10 @@
            termômetro carregava e que não pode se perder na troca visual. -->
 
       <!-- METRICS + STATUS — bloco único (banners condicionais de altura variável) -->
-      <div id="execMetricsPanel" data-layout-card="exec-metrics-banners" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <details class="card exec-secondary-details" data-layout-card="exec-metrics-banners" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+        <summary>Indicadores complementares e calibração de volatilidade <span>saldo · avisos · VRM · ATR</span></summary>
+        <div class="exec-secondary-body">
+      <div id="execMetricsPanel">
         <div class="metrics">
           <div class="metric"><div class="k">Saldo Mestre <span class="art" style="text-transform:none">(book)</span></div><div class="v sm" id="mSaldo">—</div><div class="sub" id="mSaldoSub">contábil — atualizado pelo fechamento diário</div></div>
           <div class="metric accent"><div class="k">Drawdown Operacional</div><div class="v" id="mDD">—</div><div class="sub" id="mDDsub">risco aberto − resultado fechado da operação</div></div>
@@ -220,7 +226,7 @@
         </div>
       </div>
 
-      <div class="card" id="execVrmCard" data-layout-card="exec-vrm" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" style="padding:16px">
+      <div id="execVrmCard" class="exec-vrm-secondary">
         <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
         <div class="metrics" style="grid-template-columns:1fr 1fr">
           <div class="metric"><div class="k">VRM</div><div class="v sm" id="mVRM">0,79</div></div>
@@ -234,6 +240,8 @@
           </div>
         </div>
       </div>
+        </div>
+      </details>
 
       <!-- PHASE GRIDS -->
       <div class="card" id="execPhaseGridsCard" data-layout-card="exec-phase-grids" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
@@ -244,12 +252,8 @@
       <!-- LIFO MONITOR -->
       <div class="lifo" id="execLifoMonitor" data-layout-card="exec-lifo-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
         <div class="lifo-head">Consolidado da Operação Única + Monitor LIFO</div>
-        <div class="lifo-body">
-          <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
-          <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
-          <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
-          <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
-        </div>
+        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
+        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
         <div style="padding:0 16px 14px">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
             <span style="color:var(--ink-dim)">Uso do teto estatutário da fase</span><span id="lMargemPct" style="color:var(--ink)">—</span>
@@ -257,10 +261,13 @@
           <div class="track" style="height:12px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; overflow:hidden">
             <div class="bar" id="lMargemBar" style="height:100%; width:0%; background:var(--f1); transition:width .5s ease, background .3s"></div>
           </div>
-          <div class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</div>
         </div>
-        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
-        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
+        <div class="lifo-body">
+          <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
+          <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
+          <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
+          <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
+        </div>
         <div style="padding:0 16px 16px">
           <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
         </div>
@@ -280,6 +287,7 @@
             <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
             <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
           </div>
+          <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
       </div>
     </div>
@@ -359,8 +367,8 @@
   <section class="screen" id="contas">
     <div class="jp-widget-grid" id="contasWidgetGrid">
     <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 style="display:flex; align-items:center; justify-content:space-between">
-        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
+      <h2 class="accounts-card-head">
+        <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
         <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
       </h2>
         <!-- Fase 2C: a Nota de Governança deixa de ser card próprio e vira
@@ -376,10 +384,12 @@
         O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
       </p>
         </details>
+      <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
       <div class="jp-table-scroll"><table class="dtable">
-        <thead><tr><th>Conta / Plataforma</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Correção</th><th>Norm. V10</th><th>Fator Perfil</th><th>Lote vs Mestre</th><th></th></tr></thead>
+        <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
         <tbody id="contasBody"></tbody>
       </table></div>
+      <p class="account-table-note">Correção, Normalização V10 e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
     </div>
     <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
@@ -387,10 +397,12 @@
         <label>Lote enviado pela mestre</label>
         <input type="number" step="0.01" id="cLoteMaster" value="0.04">
       </div>
-      <table class="dtable" style="margin-top:8px">
-        <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
-        <tbody id="aplicBody"></tbody>
-      </table>
+      <div class="jp-table-scroll">
+        <table class="dtable" style="margin-top:8px">
+          <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
+          <tbody id="aplicBody"></tbody>
+        </table>
+      </div>
     </div>
     </div>
   </section>
@@ -453,8 +465,8 @@
              O tamanho volta a "medium" (2×1): o footprint 2×2 era o defeito
              original — um bloco decorativo ocupando a maior célula da grade,
              acima dos dados de risco. -->
-        <div class="card gd-system-status" data-layout-card="institutional-panel" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium">
-          <h2>Status do Sistema <span class="art">espelho de leitura — sem cálculo novo</span></h2>
+        <div class="card gd-system-status" data-layout-card="institutional-panel" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
+          <div class="jpwss-head"><h2>Status do Sistema</h2><img src="assets/jp-wealth-logo.png" alt="" width="66" height="6"></div>
           <ul class="jpwss-list">
             <li class="jpwss-row" id="jpwSsPersist">
               <span class="jpwss-dot" data-jpwss-dot aria-hidden="true"></span>
@@ -478,7 +490,7 @@
               <button type="button" class="jpwss-act" id="jpwSsGovBtn" hidden>Revisar ›</button>
             </li>
           </ul>
-          <p class="jpwss-foot">Risk Terminal V9.1 · local-first</p>
+          <p class="jpwss-foot"><span>Risk Terminal V9.1 · local-first</span><span>sem backend</span></p>
         </div>
         <!-- #mcMetricStrip não entra mais aqui: desde o rebalanceamento
              JPW-789ABC ele é relocado para ANTES do Status do Sistema. -->
@@ -498,7 +510,7 @@
              Nada de critico foi escondido: valor, regime e os dois limites
              ficam visiveis sem interacao; so os ATRs, que sao leitura
              informativa, descem para disclosure (P3). -->
-        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
+        <div class="card gd-vrm-card" data-layout-card="vrm" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
           <h2>VRM · Regime de Volatilidade <span class="art">volatilidade relativa ATR55/ATR660</span></h2>
           <div class="gd-vrm-head">
             <span class="gd-vrm-value" id="gdVrmValue">—</span>
@@ -526,7 +538,7 @@
              Forex Factory via repositório alimentador jp-wealth-news-feed
              (ver infra/ff-news-feed/README.md). Só leitura; nada entra em
              cálculo ou estado S. -->
-        <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
+        <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
           <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
@@ -541,19 +553,22 @@
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
                oculto quando não resta evento futuro hoje. -->
           <p id="gdNewsNext" class="gd-news-next" hidden></p>
-          <table class="gd-news-table">
-            <thead>
-              <tr>
-                <th scope="col" title="Horário local">Hora</th>
-                <th scope="col">Moeda</th>
-                <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
-                <th scope="col">Notícia</th>
-                <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
-                <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
-              </tr>
-            </thead>
-            <tbody id="gdNewsList"></tbody>
-          </table>
+          <details class="gd-news-agenda">
+            <summary>Agenda completa</summary>
+            <div class="jp-table-scroll"><table class="gd-news-table">
+              <thead>
+                <tr>
+                  <th scope="col" title="Horário local">Hora</th>
+                  <th scope="col">Moeda</th>
+                  <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
+                  <th scope="col">Notícia</th>
+                  <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
+                  <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
+                </tr>
+              </thead>
+              <tbody id="gdNewsList"></tbody>
+            </table></div>
+          </details>
           <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
         </div>
       </div>
@@ -562,15 +577,13 @@
              entra aqui (reposicionado, não clonado) via relocação JS, só sob
              data-shell="global-dashboard". Sem a flag continua no topo de
              <main>, comportamento legado intocado. -->
-        <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
+        <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
           <div class="gd-card-label">Ações Rápidas</div>
           <nav class="gd-quick-nav">
-            <button type="button" data-dash-go="exec">Execution Board <span aria-hidden="true">›</span></button>
             <button type="button" data-dash-go="motor">Motor de Lote <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="contas">Contas <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="check">Checklist <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="contab">Contabilidade <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-go="check">Checklist Pré-Trade <span aria-hidden="true">›</span></button>
             <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-settings="backup">Base de Dados · Backup <span aria-hidden="true">›</span></button>
           </nav>
         </div>
       </aside>
@@ -622,9 +635,6 @@
               <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Estado Operacional</div>
               <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
               <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-              <!-- MOTIVOS: elemento já existente, alimentado por
-                   renderOperationalClearance; oculto quando reasons vem vazio. -->
-              <ul class="mc-reasons" id="mcClearanceReasons"></ul>
               <!-- DUAS ações, como o protótipo: a primária muda com o veredito, a
                    secundária é sempre o caminho para o Execution Board. -->
               <div class="mc-cockpit-acoes">
@@ -699,48 +709,43 @@
       <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
 
-    <!-- SEÇÃO 3 · Evolução do período -->
-    <div class="jp-section" data-dash-section="evolucao">
-      <p class="jp-section-eyebrow">Evolução do período</p>
-      <h2 class="jp-section-title">Como o capital se moveu até aqui</h2>
-      <p class="jp-section-lead">Curvas já calculadas pelo motor de contabilidade — evolução, drawdown e expectativa versus real.</p>
-    <!-- N4 · Painéis lado a lado, abertos por padrão (tiling). Continuam
-         recolhíveis: o operador fecha o que não quer ver, mas o estado inicial
-         é "tudo vivo ao mesmo tempo", como mesa de operação. -->
-    <details class="mc-disclosure" id="dashChartPanel" open>
-      <summary><span class="t">Acompanhamento Gráfico</span><span class="art">evolução · drawdown · expectativa vs real</span><span class="chev">▾</span></summary>
-      <div class="mc-disclosure-body"><div id="dashCharts"></div></div>
-    </details>
+    <div class="gd-analysis-grid" data-dash-section="evolucao">
+      <section class="card gd-analysis-card" id="dashChartPanel">
+        <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
+        <div id="dashCharts"></div>
+      </section>
+      <section class="card gd-pace-card" id="dashPacePanel">
+        <h2>Ritmo do ciclo <span class="art">K8</span></h2>
+        <div id="dashCyclePace"></div>
+      </section>
     </div>
 
-    <!-- SEÇÃO 4 · Governança e prontidão — inclui as razões do clearance,
-         preenchidas pelo renderizador existente no mesmo ID. -->
-    <div class="jp-section" data-dash-section="governanca">
-      <p class="jp-section-eyebrow">Governança e prontidão</p>
-      <h2 class="jp-section-title">Por que este é o estado?</h2>
-      <p class="jp-section-lead">Fatos apurados pelo Operational Clearance a partir do estado vigente. As demais métricas de governança ficam no terceiro slide do hero.</p>
-    </div>
-
-    <!-- SEÇÃO 5 · Análises complementares -->
-    <div class="jp-section" data-dash-section="analises">
-      <p class="jp-section-eyebrow">Análises complementares</p>
-      <h2 class="jp-section-title">Ciclo e acompanhamento mensal</h2>
-    <details class="mc-disclosure" id="dashCyclePanel" open>
-      <summary><span class="t">Métricas do Ciclo</span><span class="art">retorno · DD máx · Mar Ratio · meta</span><span class="chev">▾</span></summary>
-      <div class="mc-disclosure-body">
-        <div class="metrics">
-          <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
-          <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
-          <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
-          <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
-        </div>
+    <details class="gd-methodology" id="dashMethodology" data-dash-section="governanca">
+      <summary><span class="t">Detalhes e metodologia</span><span class="art">motivos · métricas do ciclo · acompanhamento mensal</span><span class="chev">▾</span></summary>
+      <div class="gd-methodology-body">
+        <section class="gd-method-section">
+          <h3>Por que este é o estado?</h3>
+          <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+        </section>
+        <section class="gd-method-section" id="dashCyclePanel">
+          <h3>Métricas do ciclo</h3>
+          <div class="metrics">
+            <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
+            <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
+            <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
+            <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
+          </div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashMonthlyPanel">
+          <h3>Acompanhamento mensal <span>derivado do fechamento diário</span></h3>
+          <div id="mqlMonthly" class="jp-table-scroll"></div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashRiskPanel">
+          <h3>Drawdown e comparação mensal <span>limites estatutários · expectativa vs real</span></h3>
+          <div id="dashRiskDetail" class="jp-table-scroll"></div>
+        </section>
       </div>
     </details>
-    <details class="mc-disclosure" id="dashMonthlyPanel" open>
-      <summary><span class="t">Acompanhamento Mensal</span><span class="art">estilo MQL5 Signals · derivado do fechamento diário (aba 07)</span><span class="chev">▾</span></summary>
-      <div class="mc-disclosure-body"><div id="mqlMonthly" style="overflow-x:auto"></div></div>
-    </details>
-    </div>
   </section>
 
   <!-- ================= 06 CHECKLIST ================= -->
@@ -762,11 +767,11 @@
   <!-- ================= 07 CONTABILIDADE ================= -->
   <section class="screen" id="contab">
     <div class="jp-widget-grid" id="contabWidgetGrid">
-    <div class="card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Período &amp; Metas <span class="art">perfil de risco · programação · meta diária</span></h2>
+    <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <h2 class="sr-only">Período &amp; Metas</h2>
       <div id="acctPeriodSummary"></div>
-      <button class="reset-btn" id="acctPeriodToggle" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">▸ Ver / editar Período &amp; Metas</button>
-      <div id="acctPeriodDetail" style="display:none; margin-top:16px">
+      <button class="acct-period-link" id="acctPeriodToggle">▸ Ver / editar Período &amp; Metas</button>
+      <div id="acctPeriodDetail" class="acct-period-detail" style="display:none">
         <div id="acctProfileBtns" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px"></div>
         <div id="acctProfileLockNote" style="margin-bottom:12px"></div>
         <div class="params-grid">
@@ -783,16 +788,13 @@
         <div id="acctMetas"></div>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-simulation" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
-      <h2>Simulação Patrimonial <span class="art">projeção estatística educativa pelo perfil ativo · não é promessa de retorno</span></h2>
+    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+      <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
+      <div id="rvpChart" style="width:100%"></div>
       <details class="jp-p3">
-            <summary>Simulação patrimonial (MEI-JP)</summary>
-            <div id="acctSimWrap"></div>
+            <summary>Projeção diária · ideal vs real</summary>
+            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
           </details>
-    </div>
-    <div class="card" data-layout-card="contab-cycle-pace" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium">
-      <h2>Ritmo do Ciclo <span class="art">dias à frente ou atrás do ideal (K8)</span></h2>
-      <div id="acctPace"></div>
     </div>
     <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
@@ -807,29 +809,23 @@
         <span class="fx-status" id="ldStatus"></span>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
-      <div id="rvpChart" style="width:100%"></div>
-    </div>
-    <div class="card" data-layout-card="contab-daily-projection" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Projeção Diária · Ideal vs Real <span class="art">juros compostos na meta diária · Σ semanal</span></h2>
-      <details class="jp-p3">
-            <summary>Projeção diária · ideal vs real</summary>
-            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
-          </details>
-    </div>
     <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Lançamentos <span class="art">mais recentes primeiro</span></h2>
-      <table class="dtable">
-        <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>DD vs Inicial</th><th>Nota</th><th></th></tr></thead>
-        <tbody id="ledgerBody"></tbody>
-      </table>
+      <h2>Lançamentos <span class="art">mais recentes primeiro · inclui auditoria e simulação</span></h2>
+      <div class="jp-table-scroll">
+        <table class="dtable">
+          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>DD vs Inicial</th><th>Nota</th><th></th></tr></thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+      <div class="acct-entry-details">
+        <details class="jp-p3"><summary>Simulação patrimonial (MEI-JP)</summary><div id="acctSimWrap"></div></details>
+        <details class="jp-p3"><summary>Log de auditoria</summary>
+          <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
+        </details>
+        <button class="reset-btn acct-export-audit" id="exportAuditBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
+      </div>
     </div>
-    <div class="card" data-layout-card="contab-audit-log" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
-      <h2>Log de Auditoria <span class="art">transições · downgrades · arquivamentos · quarentena · divergências</span></h2>
-      <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
-      <button class="reset-btn" id="exportAuditBtn" style="margin-top:12px; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
-    </div>
+    <div id="acctPace" hidden aria-hidden="true"></div>
     </div>
   </section>
 

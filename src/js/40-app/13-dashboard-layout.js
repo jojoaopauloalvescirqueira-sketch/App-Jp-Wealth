@@ -31,7 +31,7 @@
 // layout. Preferências v3 salvas para telas fora do registro são
 // simplesmente ignoradas pela normalização (itera JP_WIDGET_SCREEN_IDS).
 const JP_WIDGET_SCREENS = {
-  dash: { label: 'Dashboard', zones: ['main', 'sidebar'], main: 'gdDashMain', sidebar: 'gdDashSide' },
+  dash: { label: 'Dashboard', zones: ['main'], main: 'gdDashMain', sidebar: null },
   exec: { label: 'Execution Board', zones: ['main'], main: 'execWidgetGrid', sidebar: null },
   contas: { label: 'Contas', zones: ['main'], main: 'contasWidgetGrid', sidebar: null },
   contab: { label: 'Contabilidade', zones: ['main'], main: 'contabWidgetGrid', sidebar: null }
@@ -42,16 +42,14 @@ const DASH_LAYOUT_LABELS = {
   'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
   'vrm': 'VRM · Regime de Volatilidade',
   'onboarding-alert': 'Alerta de onboarding', 'quick-actions': 'Ações Rápidas',
-  'exec-onboarding-alert': 'Aviso de governança', 'exec-clearance': 'Execution Clearance',
+  'exec-clearance': 'Execution Clearance',
   'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
   'exec-lifo-monitor': 'Consolidado LIFO',
   'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
-  'contab-period-goals': 'Período & Metas', 'contab-simulation': 'Simulação Patrimonial',
-  'contab-cycle-pace': 'Ritmo do Ciclo', 'contab-daily-close': 'Fechamento Diário',
-  'contab-real-vs-projected': 'Real vs Projetado', 'contab-daily-projection': 'Projeção Diária',
-  'contab-entries': 'Lançamentos', 'contab-audit-log': 'Log de Auditoria'
+  'contab-period-goals': 'Período & Metas', 'contab-daily-close': 'Fechamento Diário',
+  'contab-real-vs-projected': 'Real vs Projetado', 'contab-entries': 'Lançamentos'
 };
 const DASH_WIDGET_SIZE_LABELS = { compact: 'Compacto', medium: 'Médio', large: 'Grande', full: 'Largura total' };
 const DASH_LAYOUT_SIZE_VALUES = ['compact', 'medium', 'large', 'full'];
@@ -81,24 +79,22 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // e suas escalas), os Termômetros (a escala É a representação), a Postura
     // (o veredito + os motivos dizem o mesmo com número e remédio) e o Perfil e
     // Contexto (duplicava a faixa do header item a item).
-    { id: 'operational-clearance', zone: 'main', size: 'full', order: 0 },
-    { id: 'institutional-panel', zone: 'main', size: 'medium', order: 1 },
-    { id: 'vrm', zone: 'main', size: 'medium', order: 2 },
-    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 3 },
-    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 4 },
-    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 5 }
+    { id: 'onboarding-alert', zone: 'main', size: 'full', order: 0 },
+    { id: 'operational-clearance', zone: 'main', size: 'full', order: 1 },
+    { id: 'institutional-panel', zone: 'main', size: 'compact', order: 2 },
+    { id: 'vrm', zone: 'main', size: 'compact', order: 3 },
+    { id: 'news-high-impact', zone: 'main', size: 'compact', order: 4 },
+    { id: 'quick-actions', zone: 'main', size: 'compact', order: 5 }
   ],
   exec: [
     // Ordem do protótipo: Clearance → Grade da Operação Única → Consolidado LIFO.
     // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
     // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
     // abaixo do que o design define como leitura primária.
-    { id: 'exec-onboarding-alert', zone: 'main', size: 'full', order: 0 },
-    { id: 'exec-clearance', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 3 },
-    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 },
-    { id: 'exec-vrm', zone: 'main', size: 'full', order: 5 }
+    { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 1 },
+    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 2 },
+    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 3 }
   ],
   contas: [
     // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
@@ -108,14 +104,10 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   contab: [
     // Ordem do protótipo: Real vs Projetado PAREADO com Fechamento Diário.
     // Simulação e Projeção Diária vivem em disclosure (P3) e vão para o fim.
-    { id: 'contab-period-goals', zone: 'main', size: 'medium', order: 0 },
-    { id: 'contab-cycle-pace', zone: 'main', size: 'medium', order: 1 },
-    { id: 'contab-real-vs-projected', zone: 'main', size: 'medium', order: 2 },
-    { id: 'contab-daily-close', zone: 'main', size: 'medium', order: 3 },
-    { id: 'contab-entries', zone: 'main', size: 'full', order: 4 },
-    { id: 'contab-audit-log', zone: 'main', size: 'full', order: 5 },
-    { id: 'contab-simulation', zone: 'main', size: 'full', order: 6 },
-    { id: 'contab-daily-projection', zone: 'main', size: 'full', order: 7 }
+    { id: 'contab-period-goals', zone: 'main', size: 'full', order: 0 },
+    { id: 'contab-real-vs-projected', zone: 'main', size: 'medium', order: 1 },
+    { id: 'contab-daily-close', zone: 'main', size: 'medium', order: 2 },
+    { id: 'contab-entries', zone: 'main', size: 'full', order: 3 }
   ]
 });
 
@@ -228,10 +220,15 @@ function dashLayoutMigrateWidgets(screenId, widgets) {
   // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
   // devolve null para a TELA INTEIRA.
   if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
+  if (screenId === 'exec') return widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id));
+  if (screenId === 'contab') return widgets.filter(w => !w || !['contab-cycle-pace','contab-simulation','contab-daily-projection','contab-audit-log'].includes(w.id));
   if (screenId !== 'dash') return widgets;
-  return widgets.map(w => (w && typeof w === 'object' && w.id === 'institutional-panel' && w.size === 'large')
-    ? { ...w, size: 'medium' }
-    : w);
+  return widgets.map(w => {
+    if (!w || typeof w !== 'object') return w;
+    if (w.id === 'onboarding-alert' || w.id === 'operational-clearance') return { ...w, zone:'main', size:'full' };
+    if (['institutional-panel','vrm','news-high-impact','quick-actions'].includes(w.id)) return { ...w, zone:'main', size:'compact' };
+    return w;
+  });
 }
 
 function dashLayoutValidateScreenWidgets(screenId, widgets) {

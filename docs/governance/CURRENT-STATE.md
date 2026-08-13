@@ -1,125 +1,122 @@
 # Estado atual do projeto
 
-- Data da fotografia: 2026-08-11
-Source revision representada: `8bb5f371` + diff Planejamento FX (candidato local)
-- Nota da revisão: candidato material da feature **Planejamento FX** na branch
-  `feature/fx-planning`, criada a partir de `main@8bb5f371` (que contém a
-  reconciliação documental do Galton Board sobre `fb33ceb`). O diff está
-  validado e não commitado; commit, push e merge aguardam autorização.
-- Branch do candidato: `feature/fx-planning`
-- HEAD atual: `8bb5f3714673` com diff material não commitado
-- Estado de integração: candidato local; não commitado, não enviado, não
-  integrado e não publicado
-- Validade: esta fotografia descreve o disco no build local `aa658d200db90b27`.
-  Qualquer mudança posterior em fonte, manifest, fixture, gerados ou testes
-  invalida as evidências afetadas.
+- Data da fotografia: 2026-08-13
+Source revision representada: `38bccfc11d47521cb17016a8476533298bc47678`
+  mais o diff local de fidelidade ao Claude Design e correção do ciclo PWA.
+- Branch do candidato: `feature/claude-design-fidelity`
+- HEAD atual: `38bccfc11d47521cb17016a8476533298bc47678`
+- Estado de integração: candidato local, não commitado, não enviado, não
+  integrado e não publicado.
+- Build local: `54a60f3e45fdd76c`.
+- Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
+  gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
 ## Estado confirmado no disco
 
-- A aplicação permanece estática, local-first, sem framework e sem backend
-  obrigatório. Os scripts continuam clássicos e globais.
-- `src/js/manifest.json` registra **59 scripts**: os 53 publicados em `fb33ceb`
-  mais seis anexados ao fim, sem reordenar o legado —
-  `10-domain/07-reserve-requirements.js` (FCR/FEO puro compartilhado) e os
-  cinco módulos de `30-accounting/05-fx-planning/` (modelo, motor, estado,
-  gráficos, interface).
-- A chave financeira principal continua `jpwealth_v9_state`. O schema ganhou o
-  agregado **aditivo** `fxPlanning` (schemaVersion 1, `plan:null`,
-  `auditLog:[]`): guarda estrutural `fxPlanningNormalizeState()` em
-  `migrate()`, normalização profunda em cópia na camada de acesso, campos
-  desconhecidos preservados, trilha podada em 400 e integração com
-  `dgLogChange`. Bases legadas carregam sem perda; builds antigos preservam o
-  agregado dormente. Contrato em `docs/architecture/FX-PLANNING.md`.
-- `reserveCalc()` do onboarding agora **delega** para
-  `reserveRequirementsCalc()` — extração autorizada pelo gestor (decisão 1 de
-  2026-08-11), matemática idêntica campo a campo (caracterizada em teste).
-  Nenhuma constante normativa foi alterada ou duplicada.
-- O Planejamento FX é **tela principal própria**: quinta entrada da rail
-  (`#fxplan`, botão `.tab[data-screen="fxplan"]`, mesma mecânica das quatro
-  telas atuais — pílula, menu móvel e teclado genéricos). A Contabilidade
-  voltou ao estado estrutural anterior, sem restos da feature. O contrato do
-  smoke test passou a **cinco telas** operacionais. Na faixa 901–1160px o
-  topbar exibe pílulas numeradas 01–05 (precedente da rail colapsada) para os
-  cinco rótulos não estourarem o cabeçalho. Quatro modos internos: Visão
-  Geral, Planejamento, Realizado e Tabela. Card fora da personalização de
-  layout nesta fase.
-- Séries do domínio: baseline congelado na aprovação; forecast vigente
-  recalculado do último fechamento real com premissas de `plan.current`
-  (revisões preservadas em `revisions[]`); realizado imutável a mudanças de
-  premissa. Convenções: retorno sobre abertura com aportes após o resultado;
-  realizado com a álgebra do MEI (`R_aj=(V_t−V_{t−1}−F_t)/V_{t−1}`); custo
-  cambial `Σ BRL ÷ Σ USD` com `affectsFxCostBasis` excluindo USD-nativo.
-- `sw.js` precacheia os 59 scripts; `validate_project.py` mantém a equivalência
-  como invariante. O tier `standard` passou a 8 verificações (inclui
-  `fx_planning_test.py`) e o `full` a 18.
+- A aplicação continua estática, local-first, sem framework e sem backend
+  obrigatório. O runtime permanece em scripts clássicos e globais.
+- `src/js/manifest.json` contém 60 scripts, na mesma lista e ordem da base. O
+  candidato altera somente hashes dos 11 scripts editados. `sw.js`, o HTML e o
+  portátil permanecem reconciliados com esse manifest.
+- As cinco telas principais compartilham o shell horizontal do protótipo:
+  Dashboard, Execution Board, Contas, Contabilidade e Planejamento FX. A
+  navegação clássica por sublinhado é o padrão; abaixo de 900 px ela vira uma
+  gaveta vertical com os mesmos cinco destinos.
+- Dashboard: aviso de governança e cockpit ocupam largura total; Status, VRM,
+  Notícias e Ações rápidas formam a faixa P2; Evolução e Ritmo usam razão 3:2;
+  motivos, métricas, acompanhamento mensal, drawdown e comparação mensal ficam
+  preservados em um único disclosure metodológico.
+- Execution Board: clearance compacto com quatro fatos, seguido por Grade e
+  monitor LIFO. Indicadores complementares e ATR/VRM continuam acessíveis em
+  disclosure. A ordem normativa e todos os IDs consumidos pelo runtime foram
+  preservados.
+- Contas: leitura primária em dez colunas, credenciais consolidadas em chip e
+  editor completo expansível por conta. As duas tabelas rolam internamente no
+  mobile; adicionar uma conta abre o editor e leva o foco ao nome.
+- Contabilidade: quatro indicadores no topo, Real vs Projetado e Fechamento
+  Diário em razão 3:2, lançamentos em largura total e funções secundárias
+  preservadas em disclosures.
+- Planejamento FX: o estado vazio é um cartão central de 936 px com formulário
+  linear; os quatro modos e os contratos do plano continuam cobertos pela suíte
+  focal quando existe planejamento.
+- A política PWA não permite mais um cliente utilizável com HTML novo e scripts
+  cacheados do build anterior. Enquanto o worker novo está em `waiting`, o
+  controller antigo entrega seu próprio `index.html`; a troca só ocorre após o
+  fechamento de todos os clientes antigos.
 - `build-id.js` e `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html` foram
-  regenerados exclusivamente por `tools/rebuild_monolith.py`. Build ID
-  `aa658d200db90b27`.
+  regenerados somente por `tools/rebuild_monolith.py`.
 
 ## Escopo e autoridade
 
-- N1/A2: interface, gráficos, navegação interna do card, acessibilidade,
-  responsividade, testes e documentação.
-- N2/A3 delimitado: agregado `S.fxPlanning`, guarda estrutural em `migrate()` e
-  entrada em `DEFAULTS`; extração de `reserveCalc()` expressamente autorizada.
-- N3/A4: fora do escopo. Nenhuma fórmula financeira, perfil, fase, limite, MDD,
-  DD, LIFO, stop, quarentena, contabilidade, MEI ou artigo do Estatuto foi
-  alterado. As dez pendências N3 permanecem intocadas.
-- Git/publicação: criação da branch autorizada e executada; commit, push,
-  merge e deploy continuam sem autorização.
+- N0-V + N1 + N0-D, autoridade A2: composição, CSS, responsividade, interações
+  de apresentação, ciclo coerente de atualização PWA, testes e documentação.
+- N2/N3: fora do escopo. `DEFAULTS`, `migrate()`, `schemaVersion`, chaves de
+  storage, fórmulas, perfis, fases, DD/MDD, lote, LIFO, stops, quarentena,
+  contabilidade, MEI-JP e regras do Planejamento FX não mudaram semanticamente.
+- Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
+  evidências. Não houve dependência, endpoint ou integração de rede nova.
+- Git/publicação: branch criada com autorização. Commit, push, merge e deploy
+  continuam sem autorização.
 
 ## Evidência deste candidato
 
 | Verificação | Resultado | Escopo/observação |
 |---|---|---|
-| `python3 tools/agent_preflight.py --mode edit` | PASS | Branch `feature/fx-planning`, base `8bb5f3714673`, árvore limpa antes das edições. |
-| `python3 tools/validate_project.py` | PASS | 59 scripts, hashes, ordem no HTML, precache equivalente, 377 IDs, portátil reconstruído. |
-| `python3 -u tools/fx_planning_test.py` | PASS | Casos 1–20, reservas campo a campo, baseline×forecast×realizado, persistência (round-trip, legada, corrompida, campos desconhecidos, contiguidade), fluxo de UI, navegação entre as cinco telas com estados ativos exclusivos, ativação por teclado, refresh (rota não persistida → Dashboard), ausência de resíduos em `#contab` e viewport móvel. |
-| `python3 tools/quality_gate.py --tier full` | PASS 18/18 | Zero `PRODUCT_FAIL`, `TEST_HARNESS_FAIL`, `ENVIRONMENT_ERROR`, `BASELINE_FAIL` ou `NOT_RUN`; artefato `tools/.artifacts/quality-20260811T183717-full.json` (reexecutado após a promoção a tela principal; a execução intermediária `183x` detectou e a correção da faixa 901–1160px resolveu o overflow do cabeçalho com cinco rótulos). |
-| `git diff --check` | PASS | Sem whitespace errors. |
-| Navegador real | PASS | Screenshots da tela independente (desktop, mobile e faixa 1024px com pílulas numeradas) e da Contabilidade restaurada, gerados em Chromium com dados sintéticos e entregues ao gestor; varredura de larguras 400–1280px sem scroll horizontal. |
+| `python3 tools/validate_project.py` | PASS | 60 scripts, hashes, ordem, 383 IDs estáticos e portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 19/19 | Zero `PRODUCT_FAIL`, `TEST_HARNESS_FAIL`, `ENVIRONMENT_ERROR`, `BASELINE_FAIL` e `NOT_RUN`; artefato `tools/.artifacts/quality-20260813T142631-full.json`. |
+| `tools/service_worker_upgrade_test.py` | PASS dentro do full | Abas antigas e descoberta no build anterior coerente; worker novo em waiting; próxima abertura nova online/offline; cache externo preservado; zero erro de página/console/requisição. |
+| Navegador real | PASS | Cinco telas em 1440×900 e 390×844, claro e escuro; uma única tela ativa, gaveta mobile vertical, sem overflow horizontal; disclosures, expansão e foco de Contas exercitados; zero warning/erro de console. |
+| `git diff --check` | PASS | Sem whitespace errors no candidato congelado antes da reconciliação documental. |
+| Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 
 Relatórios locais ficam em `tools/.artifacts/` e são ignorados pelo Git. Usar
-apenas o artefato cuja árvore corresponda ao estado examinado.
+somente o artefato cuja árvore corresponda ao estado examinado.
 
 ## Impacto agêntico e reconciliação
 
 `AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED`
 
-`BASIS:` a feature altera manifest (53→59), schema persistido (agregado
-aditivo), composição dos gates (standard 8/full 18), arquitetura (novo domínio
-FX + função normativa compartilhada), inventário e superfície PWA —
-representações consumidas por preflight, skills e agentes.
+`BASIS:` o changeset altera o contrato de upgrade PWA, a expectativa do teste
+que o protege, a composição visual descrita pelo contexto operacional e a
+evidência atual dos gates. Esses artefatos são consumidos por preflight, skills
+e agentes; portanto a mudança alcança a camada agêntica mesmo sem alterar um
+arquivo de agente ou skill.
 
-Blast radius do changeset `8bb5f371 + diff Planejamento FX`:
+Naturezas do changeset:
 
-| Categoria | Impacto | Ação local | Estado no checkpoint |
+- **MATERIAL:** runtime visual, navegação/apresentação e lifecycle do service
+  worker.
+- **RECONCILIAÇÃO:** contexto, arquitetura PWA, gates, changelog e handoff.
+
+| Categoria | Impacto | Ação local | Evidência/estado |
 |---|---|---|---|
-| `AGENTS.md` e autoridade | AFFECTED | NOT_REQUIRED | CURRENT: classificação N1/N2/N3 existente cobre a mudança. |
-| Skills e routing | AFFECTED | NOT_REQUIRED | CURRENT: preflight, change-control, data-safety, normative-audit, browser, test-triage e post-audit roteiam o trabalho. |
-| Bootstrap/preflight e manifest | AFFECTED | REQUIRED | Manifest com 59 entradas e hashes finais; preflight/validate PASS. |
+| `AGENTS.md`, `CLAUDE.md` e autoridade | AFFECTED | NOT_REQUIRED | As regras existentes já exigem preflight, escopo, browser real, gate e reconciliação; nenhuma instrução contradiz o contrato novo. |
+| Skills e routing | AFFECTED | NOT_REQUIRED | `jpw-browser-verification`, `jpw-test-triage`, `jpw-post-change-audit` e `agentic-evolution-governance` já cobrem o fluxo e herdam o contexto canônico. |
+| Bootstrap/preflight e manifest | AFFECTED | REQUIRED | Manifest com hashes finais, precache equivalente e preflight/validate aprovados. |
 | Contexto operacional | AFFECTED | REQUIRED | `ACTIVE-TASK`, este `CURRENT-STATE` e `SESSION_HANDOFF` representam o candidato. |
-| Arquitetura/contratos | AFFECTED | REQUIRED | `FX-PLANNING.md` criado; `CODE-MAP`, `STATE-SCHEMA` e `QUALITY-GATES` reconciliados. |
-| Changelog/inventário | AFFECTED | REQUIRED | `CHANGELOG.md`, `README.md`, `tests/README.md` e `PROJECT-FILES.txt` (166) reconciliados. |
-| Norma e ADRs N3 | NOT_AFFECTED | NOT_REQUIRED | FCR/FEO extraídos sem alteração de valor; nenhuma pendência N3 tocada. |
-| Índice/vetor/memória de projeto | NOT_AFFECTED | NOT_REQUIRED | `INDEX NOT REQUIRED`. |
+| Arquitetura/contratos PWA | AFFECTED | REQUIRED | `PWA-UPDATE-LIFECYCLE.md`, teste focal e descrição no `CODE-MAP` reconciliados. |
+| Gates e evidência | AFFECTED | REQUIRED | `QUALITY-GATES.md`, `tests/README.md` e resultado 19/19 reconciliados. |
+| Changelog e README | AFFECTED | REQUIRED | Estado visual, PWA, inventário de 60 scripts e tiers 4/9/19 reconciliados. |
+| Norma, schema e ADRs N3 | NOT_AFFECTED | NOT_REQUIRED | Nenhuma regra financeira, estado persistido ou decisão normativa mudou. |
+| Índice/vetor/memória de projeto | NOT_AFFECTED | NOT_REQUIRED | `INDEX NOT REQUIRED`: o projeto não usa índice/vetor derivado para esses documentos. |
 
-Natureza: a feature é `MATERIAL`; a atualização destes documentos é
-`RECONCILIAÇÃO`. Não há nova source revision commitada. Runtime, contratos,
-manifest, build, contexto e evidências estão reconciliados: `SYSTEM RECONCILED`.
+Resultado: `SYSTEM RECONCILED` para o blast radius estrito deste changeset. Não
+há propagação multi-projeto nem reindexação a executar. Permanecem drifts
+documentais preexistentes em `ARCHITECTURE.md` e `SECURITY-MODEL.md` (contagens
+anteriores de scripts) e na tabela de superfície de `FX-PLANNING.md`; esses
+arquivos não foram autorizados nesta tarefa e não descrevem o novo lifecycle
+nem a nova composição visual.
 
-## Contratos N2 vigentes
+## Contratos N2 vigentes e inalterados
 
-- `reserveMasterCapital` deriva de `params.saldoIni` também no boot fresco (`7d18bca`).
-- Recuperação só substitui estado após leitura, validação, normalização e
-  confirmação atômica (`8296f1a`).
-- `investorPassword` permanece apenas em memória da sessão (`e0b59d3`).
-- Preferência Galton isolada em `jpwealth_galton_preferences_v1`; wipe seletivo
-  sem `localStorage.clear()`.
-- **Novo (candidato):** agregado `fxPlanning` aditivo em `jpwealth_v9_state`;
-  derivados nunca persistem; campos desconhecidos preservados; mutações
-  auditadas e refletidas no changeLog de backup; `initialBalanceUsd` do plano é
-  parâmetro do planejamento, nunca fonte canônica da Conta Mestre.
+- A chave financeira principal continua `jpwealth_v9_state`; estados antigos
+  passam por `migrate()` e não são substituídos silenciosamente por `DEFAULTS`.
+- `investorPassword` permanece apenas em memória da sessão.
+- Preferência Galton continua isolada em `jpwealth_galton_preferences_v1`.
+- O agregado aditivo `S.fxPlanning` e sua auditoria permanecem inalterados;
+  derivados não são persistidos e campos desconhecidos são preservados.
+- O service worker não limpa `localStorage`, não força takeover e não remove
+  caches de outras aplicações.
 
 ## Pendências normativas bloqueantes
 
@@ -138,21 +135,19 @@ Não corrigir silenciosamente. Cada item exige decisão/confirmação N3 e branc
 
 ## Dívida e riscos residuais
 
-- `openOnboardingModal()` concentra ~2 mil linhas; escopo global legado
-  compartilhado; CSP não documentada (inalterados por esta feature).
-- Planejamento FX: o card não participa da personalização de layout (registro
-  em `13-dashboard-layout.js` é evolução futura); gráfico mensal dedicado de
-  aportes, cenários múltiplos, importação/exportação do Excel e conciliação com
-  `mei.history` ficaram deliberadamente fora do MVP; reconstrução de forecasts
-  anteriores é aproximada quando um mês fechado é editado depois da revisão
-  (sinalizado); painel FCR/FEO reflete o comportamento herdado do onboarding —
-  sem despesas declaradas, FEO exigido 0 aparece como "Regular" (fidelidade à
-  caracterização; mudança disso seria decisão normativa).
-- Cobertura automatizada segue mais forte nos fluxos recentes que no núcleo
-  financeiro legado.
+- A primeira atualização partindo de um worker publicado antes da nova política
+  ainda obedece ao código antigo já instalado; fechar todas as abas/clientes da
+  origem conclui essa transição. Não limpar storage nem dados financeiros.
+- A verificação visual do Planejamento FX usou o estado vazio; os quatro modos
+  com plano são cobertos por `fx_planning_test.py`, não por uma inspeção manual
+  com dados reais.
+- `openOnboardingModal()` continua concentrando aproximadamente duas mil linhas;
+  o escopo global legado e a CSP não documentada permanecem dívidas anteriores.
+- A cobertura automatizada continua mais forte nos fluxos recentes do que no
+  núcleo financeiro legado.
 
 ## Regra de atualização
 
-Quem alterar fonte, teste, manifest, fixture ou gerado depois deste checkpoint
-deve repetir as verificações afetadas. Não remover falha porque deixou de
+Quem alterar fonte, teste, manifest, worker ou gerado depois deste checkpoint
+deve repetir as verificações afetadas. Não remover uma falha porque deixou de
 aparecer em um teste; registrar causa, comando, candidato e evidência.

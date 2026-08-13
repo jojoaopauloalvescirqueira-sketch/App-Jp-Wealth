@@ -20,6 +20,7 @@ function renderExecClearance(c){
   // Fase 2C — fidelidade ao protótipo: o TETO vai para o rótulo e o valor
   // carrega só o número corrente. Mesmas fontes, nenhuma fórmula nova.
   const setTxt=(id,v)=>{ const e=$(id); if(e) e.textContent=v; };
+  const setBar=(id,pct,color)=>{ const e=$(id); if(e){ e.style.width=Math.max(0,Math.min(100,pct||0))+'%'; e.style.background=color; } };
   setTxt('ecRiscoLbl','Risco / Teto '+fmtMoney(c.tetoRisco));
   setTxt('ecRisco', fmtMoney(c.riscoTotal));
   setTxt('ecAlavLbl','Alav. / Teto '+fmtX(c.tetoAlav));
@@ -28,6 +29,9 @@ function renderExecClearance(c){
   // removidos carregavam. Mesma escala do gauge (teto ativo do perfil).
   setTxt('ecDD', fmtPct(c.dd));
   setTxt('ecDDsub','de '+fmtPct(c.mddScaled>0?c.mddScaled:0.15));
+  setBar('ecDDbar',(c.dd/(c.mddScaled||0.15))*100,c.dd>=c.alarmScaled?'var(--f4)':'var(--f1)');
+  setBar('ecRiscoBar',c.tetoRisco>0?(c.riscoTotal/c.tetoRisco)*100:0,c.riscoTotal>c.tetoRisco?'var(--f3)':'var(--f2)');
+  setBar('ecAlavBar',c.tetoAlav>0?(c.alavCar/c.tetoAlav)*100:0,c.alavCar>c.tetoAlav?'var(--f3)':'var(--f1)');
 }
 
 // ---- Execution Board phases ----
