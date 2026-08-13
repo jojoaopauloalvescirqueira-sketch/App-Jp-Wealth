@@ -1,7 +1,8 @@
 # Mapa do código
 
-Fotografia do candidato local de 2026-08-13 (branch `feature/claude-design-fidelity`,
-base `main@38bccfc`): `src/js/manifest.json` contém 60 scripts clássicos. O manifest é a fonte única
+Fotografia do candidato local de 2026-08-13 (branch
+`feature/nav-planning-fx-submenu`, base `main@e835bb5`):
+`src/js/manifest.json` contém 60 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
 
@@ -48,7 +49,7 @@ a lista material mudar.
 | 37 | `src/js/40-app/08-educational-content.js` | Base educacional local |
 | 38 | `src/js/40-app/09-settings-modal.js` | Central modal de Configurações |
 | 39 | `src/js/40-app/10-dashboard-immersive.js` | Dashboard imersivo |
-| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional e menu móvel |
+| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional, menu móvel e segundo nível de navegação |
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado do Dashboard |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
 | 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
@@ -87,6 +88,13 @@ personalização de layout nesta fase). Os seis módulos publicam
 A extração de `reserveCalc()` do onboarding para a função pura
 compartilhada foi autorizada em 2026-08-11; contrato completo em
 `FX-PLANNING.md`.
+
+Planejamento é o primeiro protótipo do segundo nível hierárquico: o acionador
+permanece filho direto de `#nav`, enquanto `#fxNavSubmenuShell` vive no fluxo
+entre header e contexto. Hover abre transitoriamente; clique/Enter/Espaço fixa a
+faixa até clique externo ou Escape. O contrato reutilizável — estrutura,
+terceiro tom, acessibilidade, mobile e testes — está em
+`NAVIGATION-HIERARCHY.md`.
 
 ## Entrypoints, PWA e artefatos derivados
 

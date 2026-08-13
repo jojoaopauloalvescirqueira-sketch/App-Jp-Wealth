@@ -135,37 +135,18 @@ function fxpBindCreate(root){
   });
 }
 
-// ---- Barra de modos ---------------------------------------------------------
-// Padrão de abas completo (JPW-PNMKTS · P10): antes existiam role="tablist" e
-// role="tab" sem tabpanel, sem aria-controls e sem teclado — anunciava-se como
-// abas sem se comportar como abas. Agora tab↔panel estão associados, o foco é
-// roving (só a aba ativa fica tabulável) e setas/Home/End navegam.
-// A chave 'table' permanece — é contrato de DOM (id do painel, data-fxp-view e
-// teste). Só o rótulo muda para Histórico, que é o que a tela faz (1g).
-const FXP_MODES=[['overview','Visão Geral'],['planning','Planejamento'],['actuals','Realizado'],['table','Histórico']];
-function fxpModesHTML(){
-  return `<div class="fxp-modes" role="tablist" aria-label="Modos do Planejamento FX">`+FXP_MODES.map(([k,label])=>
-    `<button type="button" class="reset-btn fxp-mode${fxpView===k?' fxp-mode-on':''}" role="tab"
-      id="fxpTab-${k}" aria-controls="fxpPanel-${k}" aria-selected="${fxpView===k}"
-      tabindex="${fxpView===k?'0':'-1'}" data-fxp-view="${k}">${label}</button>`).join('')+`</div>`;
+// ---- Modos expostos à navegação contextual ---------------------------------
+// A barra interna duplicada foi removida: o único controle visível vive na
+// segunda faixa do header. As chaves continuam estritamente de UI e preservam
+// o contrato dos quatro renderizadores existentes.
+const FXP_MODES=[['overview','Visão Geral'],['planning','Planejamento FX'],['actuals','Realizado'],['table','Histórico']];
+function fxpSelectView(view){
+  if(!FXP_MODES.some(([key])=>key===view)) return false;
+  fxpView=view;
+  renderFxPlanning();
+  return true;
 }
-function fxpBindTabs(root){
-  const tabs=[...root.querySelectorAll('[data-fxp-view]')];
-  const go=k=>{ fxpView=k; renderFxPlanning();
-    const t=document.getElementById('fxpTab-'+k); if(t) t.focus(); };
-  tabs.forEach(b=>b.addEventListener('click',()=>{ fxpView=b.dataset.fxpView; renderFxPlanning(); }));
-  const bar=root.querySelector('.fxp-modes'); if(!bar) return;
-  bar.addEventListener('keydown',ev=>{
-    const i=FXP_MODES.findIndex(([k])=>k===fxpView); if(i<0) return;
-    let n=null;
-    if(ev.key==='ArrowRight'||ev.key==='ArrowDown') n=(i+1)%FXP_MODES.length;
-    else if(ev.key==='ArrowLeft'||ev.key==='ArrowUp') n=(i-1+FXP_MODES.length)%FXP_MODES.length;
-    else if(ev.key==='Home') n=0;
-    else if(ev.key==='End') n=FXP_MODES.length-1;
-    if(n==null) return;
-    ev.preventDefault(); go(FXP_MODES[n][0]);
-  });
-}
+function fxpGetView(){ return fxpView; }
 
 // ---- Visão Geral ------------------------------------------------------------
 function fxpOverviewHTML(live){
@@ -693,9 +674,7 @@ function renderFxPlanning(){
   root.innerHTML=`
     <p class="fxp-note" style="margin-bottom:10px"><b>${esc(live.plan.name)}</b> · ${esc(live.plan.baseline.startMonth)} + ${live.plan.baseline.horizonMonths} meses ·
     ${live.lastClosedMonth?`fechado até <b>${live.lastClosedMonth}</b> · próximo aberto <b>${live.nextOpenMonth||'—'}</b>`:'nenhum mês fechado ainda'}</p>
-    ${fxpModesHTML()}
-    <div class="fxp-section" role="tabpanel" id="fxpPanel-${fxpView}" aria-labelledby="fxpTab-${fxpView}" tabindex="0">${body}</div>`;
-  fxpBindTabs(root);
+    <div class="fxp-section" role="region" id="fxpPanel-${fxpView}" aria-label="${esc(FXP_MODES.find(([key])=>key===fxpView)[1])}" tabindex="0">${body}</div>`;
   if(fxpView==='overview'){
     // Cadência: entrada na tela + volta à visibilidade + TTL + botão manual.
     // Sem polling — refresh(false) respeita o TTL e o cooldown de falha.
@@ -734,7 +713,10 @@ function renderFxPlanning(){
   if(fxpView==='planning') fxpBindPlanning(root,live);
   if(fxpView==='actuals') fxpBindActuals(root,live);
 }
-window.JPWFx.ui={renderFxPlanning};
+// Superfície estritamente visual para o submenu hierárquico do shell. As
+// chaves são os quatro modos já existentes; não persiste estado, não chama o
+// engine e não cria uma segunda fonte de verdade financeira.
+window.JPWFx.ui={renderFxPlanning,selectView:fxpSelectView,getView:fxpGetView};
 // Primeira pintura + repintura ao entrar na tela (dados normativos do painel de
 // reservas podem ter mudado via Formulário de Início).
 renderFxPlanning();
