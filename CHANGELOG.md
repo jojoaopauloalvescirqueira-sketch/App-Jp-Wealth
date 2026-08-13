@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-### Navegação hierárquica de Planejamento — candidato de 2026-08-13 (branch `feature/nav-planning-fx-submenu`)
+### Navegação hierárquica de Planejamento — integrada localmente em 2026-08-13 (`478a558`, merge `55d2267`)
 
 - **Planejamento ganhou um segundo nível estrutural** com Visão Geral,
   Planejamento FX, Realizado e Histórico. A faixa fica entre o header global e

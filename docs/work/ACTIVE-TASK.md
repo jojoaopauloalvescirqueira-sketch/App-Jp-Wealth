@@ -2,15 +2,16 @@
 
 - Data de abertura: 2026-08-13
 - `BASE_SHA`: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387` (`main` limpo)
-- Branch autorizada: `feature/nav-planning-fx-submenu`
+- Branch de implementação: `feature/nav-planning-fx-submenu`
+- Commit material: `478a55826977f37d2f7b60848454f4f3aa80943a`
+- Integração local em `main`: `55d22671c3479b43762922ec01cad454d4e90ac0`
 - Nível: **N0-V** (painel e animação) + **N1** (hover, teclado, foco e
   navegação interna) + **N0-D** (teste e reconciliação documental)
 - Autoridade: **A2**, confirmada pelo gestor após auditoria e plano. Nenhuma
   alteração N2/N3 está autorizada.
-- Git/publicação: criação e troca para a branch autorizadas e executadas.
-  Commit, push, merge e deploy permanecem não autorizados.
-- Estado: implementação e validação técnica concluídas; candidato local aguarda
-  revisão humana final e eventual autorização Git separada.
+- Git/publicação: criação da branch, commit e merge em `main` autorizados e
+  executados. Push e deploy não foram executados.
+- Estado: implementação, validação técnica e integração local concluídas.
 
 ## Estado observado
 

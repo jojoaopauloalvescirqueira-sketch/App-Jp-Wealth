@@ -1,15 +1,18 @@
 # Session Handoff — navegação hierárquica de Planejamento
 
 - Data: 2026-08-13
-- Branch: `feature/nav-planning-fx-submenu`
-- `BASE_SHA` e HEAD: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
-- Estado: candidato material local, validado e não commitado
+- Branch atual: `main`
+- `BASE_SHA`: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
+- Commit material: `478a55826977f37d2f7b60848454f4f3aa80943a`
+- Commit de integração: `55d22671c3479b43762922ec01cad454d4e90ac0`
+- Estado: implementação validada, commitada e integrada localmente em `main`
 - Manifest: 60 scripts; lista/ordem preservadas, dois hashes de UI alterados
 - Build ID: `4d9b36661c689c26`
-- Publicação: nenhuma; commit, push, merge e deploy não autorizados
+- Publicação: nenhuma; push e deploy não executados
 
-Esta nota representa o candidato local após a aprovação visual e o refinamento
-de persistência por clique. Expira se fonte, manifest, teste ou gerado mudar.
+Esta nota representa a árvore material integrada localmente após a aprovação
+visual e o refinamento de persistência por clique. Expira se fonte, manifest,
+teste ou gerado mudar.
 
 ## Implementado
 
@@ -60,8 +63,8 @@ o blast radius estrito.
 
 ## Próxima ação humana
 
-Revisar o candidato em `http://127.0.0.1:8778/`. Commit, push, merge e deploy
-continuam etapas independentes e não autorizadas.
+Decidir separadamente sobre push e deploy. A integração local em `main` já foi
+concluída; esta tarefa não publicou alterações no remoto.
 
 ## Rollback
 

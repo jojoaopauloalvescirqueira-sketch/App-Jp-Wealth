@@ -1,12 +1,11 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
-  mais o diff local da navegação hierárquica de Planejamento.
-- Branch do candidato: `feature/nav-planning-fx-submenu`
-- HEAD atual: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
-- Estado de integração: candidato local, não commitado, não enviado, não
-  integrado e não publicado.
+Source revision representada: `478a55826977f37d2f7b60848454f4f3aa80943a`
+- Branch atual: `main`
+- Commit de integração: `55d22671c3479b43762922ec01cad454d4e90ac0`
+- Estado de integração: implementação commitada e integrada localmente em
+  `main`; ainda não enviada ao remoto nem publicada.
 - Build local: `4d9b36661c689c26`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
@@ -60,8 +59,8 @@ Source revision representada: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
   contabilidade, MEI-JP e regras do Planejamento FX não mudaram semanticamente.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch criada com autorização. Commit, push, merge e deploy
-  continuam sem autorização.
+- Git/publicação: implementação commitada e mesclada em `main` com autorização.
+  Push e deploy não foram executados.
 
 ## Evidência deste candidato
 

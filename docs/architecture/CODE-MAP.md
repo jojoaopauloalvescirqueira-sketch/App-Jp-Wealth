@@ -1,7 +1,7 @@
 # Mapa do código
 
-Fotografia do candidato local de 2026-08-13 (branch
-`feature/nav-planning-fx-submenu`, base `main@e835bb5`):
+Fotografia integrada localmente em `main` em 2026-08-13 (fonte material
+`478a558`, merge `55d2267`):
 `src/js/manifest.json` contém 60 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
