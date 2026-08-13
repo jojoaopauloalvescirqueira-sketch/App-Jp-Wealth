@@ -88,7 +88,12 @@ function fxpCreateFormHTML(){
   <aside class="fxp-col-side">
     <section class="fxp-block">
       <div class="fxp-block-head"><h3>Nenhum planejamento ativo</h3></div>
-      <h4 class="fxp-empty-h">Três camadas que nunca se misturam</h4>
+      <!-- Fase 2C: as três camadas descem para disclosure, como no protótipo
+             ("Como as três camadas funcionam ▾"). O texto continua íntegro;
+             o formulário de criação passa a ser a leitura primária do cartão. -->
+        <details class="jp-p3">
+          <summary>Como as três camadas funcionam</summary>
+          <h4 class="fxp-empty-h">Três camadas que nunca se misturam</h4>
       <p class="fxp-note">O Planejamento FX registra a trajetória patrimonial Forex separando o que você assume, o que aconteceu e o que o Estatuto exige.</p>
       <div class="fxp-layer"><div class="fxp-layer-h">Premissas ${fxpBadge('PROJ')}</div>
         <p class="fxp-note">O que você assume: rentabilidade mensal, câmbio projetado e aportes planejados. Ao aprovar, viram o <b>baseline congelado</b> — revisões futuras nunca o sobrescrevem.</p></div>
@@ -96,6 +101,7 @@ function fxpCreateFormHTML(){
         <p class="fxp-note">Fechamentos mensais contíguos e ledger cambial de aportes. O custo médio do dólar usa média ponderada Σ BRL ÷ Σ USD; créditos USD nativos não o contaminam.</p></div>
       <div class="fxp-layer"><div class="fxp-layer-h">Normativo</div>
         <p class="fxp-note">FCR (Art. 13.1) e FEO (Art. 13.2) calculados pela mesma função do Formulário de Início. Este painel calcula e informa — nenhuma movimentação é executada.</p></div>
+        </details>
       <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Rentabilidade planejada é premissa sua — não deriva de perfis de risco nem constitui promessa de retorno.</p>
     </section>
   </aside>

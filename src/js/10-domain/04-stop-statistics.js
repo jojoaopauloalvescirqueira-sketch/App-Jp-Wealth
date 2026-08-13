@@ -41,6 +41,12 @@ function riskIndicatorsHTML(active){
   const chip=(k,v,sub,col)=>`<div class="metric"><div class="k">${k}</div><div class="v sm" style="${col?'color:'+col:''}">${v}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
   return `<div class="card" style="margin-bottom:14px">
     <h2>Stop Loss Mínimo · Validação Estatística <span class="art">§9 · ao vivo: ${gen&&gen.par?esc(gen.par)+' @ '+(priceLive||'—'):'defina a gênese'} · SL mãe ${gen&&gen.sl>0?gen.sl:'—'}</span></h2>
+    <!-- Fase 2C: o MÉTODO desce para disclosure, como no protótipo ("método ▾").
+         Os campos continuam editáveis e no mesmo lugar do DOM — só deixam de
+         disputar a leitura primária com os vereditos, que ficam à vista logo
+         abaixo. O card do Stop deixa de ocupar o dobro da altura da Grade. -->
+    <details class="jp-p3">
+      <summary>método</summary>
     <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px">
       <div class="field" style="margin-bottom:0; max-width:170px">
         <label>ATR(55) H4 em % <span class="art">§9.2</span></label>
@@ -64,6 +70,7 @@ function riskIndicatorsHTML(active){
         <span class="note">|preço atual − SL mãe| ÷ preço</span>
       </div>
     </div>
+    </details>
     <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
       ${chip('Múltiplo de ATR', mult>0?mult.toFixed(1).replace('.',',')+'x':'—', strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'stop% ÷ ATR%')}
       ${chip('Raiz-N · 1 semana (√30)', pc(rz1), `mínimo p/ resistir 1 sem · <span style="color:${v1.c};font-weight:700">${v1.t}</span>`)}
@@ -608,14 +615,20 @@ function renderContas(){
     const platformName=a.platform?normalizePlatformName(a.platform):'a preencher';
     const loginTxt=a.platformLogin?`Login ${esc(a.platformLogin)}`:'login a preencher';
     const passOk=!!a.investorPassword;
+    // Resumo das credenciais: conta o que falta entre plataforma, login e senha
+    // do investidor. Leitura pura do estado — nenhum campo novo, nenhuma regra.
+    const credFaltando=[!a.platform?'plataforma':null, !a.platformLogin?'login':null, !passOk?'senha do investidor':null].filter(Boolean);
+    const credPend=credFaltando.length;
+    const credDetalhe=credPend?('falta preencher: '+credFaltando.join(', ')):(platformName+' · '+loginTxt+' · senha cadastrada');
     const contaCell=`<div class="account-field">
         <div class="account-top">
           <input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta">
           <div class="account-meta">
-            <span class="account-chip account-platform">${esc(platformName)}</span>
-            <span class="account-chip account-login">${loginTxt}</span>
-            <span class="account-chip account-pass ${passOk?'ok':''}">${passOk?'senha investidor cadastrada':'senha investidor não cadastrada'}</span>
-          </div>
+            <!-- Fase 2C: um chip no lugar de três. O protótipo resume as credenciais
+                 num único selo ("3 pendentes"); os campos individuais continuam logo
+                 abaixo, em account-cred-grid, então nada ficou inacessível. O texto
+                 nomeia o que falta — a cor não é o único canal (WCAG 1.4.1). -->
+            <span class="account-chip account-cred ${credPend?'':'ok'}" title="${esc(credDetalhe)}">${credPend?credPend+' pendente'+(credPend>1?'s':''):'credenciais completas'}</span>
         </div>
         <div class="account-cred-grid">
           <select data-f="platform" title="Plataforma">${platformOptions(a.platform)}</select>
@@ -662,7 +675,7 @@ function renderContas(){
       <td class="calc-corr">${corr.toFixed(3)}</td>
       <td class="calc-fw">${fw.toFixed(3)}</td>
       <td class="calc-pf hl">${pf.toFixed(3)}</td>
-      <td class="calc-lotevs hl">${loteVs.toFixed(3)}</td>
+      <td class="calc-lotevs hl" title="Correção ${corr.toFixed(3)} · Normalização V10 ${fw.toFixed(3)} · Fator de Perfil ${pf.toFixed(3)}">${loteVs.toFixed(3)}</td>
       <td><button class="row-del" title="Excluir conta" data-del="${i}">✕</button></td>
     `;
     const sel=tr.querySelector('select[data-f="tipo"]');

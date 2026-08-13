@@ -56,7 +56,7 @@
       "order": 9,
       "path": "src/js/20-ui/01-header-readout.js",
       "section": "TOP BAR · LEITURA DE ESTADO",
-      "sha256": "6c5e9645c2b3f0696adc1f081a9f16acb78f15e9ed3dbab223471546bf41c38e"
+      "sha256": "2382a37f4214bd8fc886d2d08c147bb69cbb468281eba998b57064a977af6b7f"
     },
     {
       "order": 10,
@@ -68,19 +68,19 @@
       "order": 11,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "3732957facc28febc29b206430792e307537544e6792b1aeaaa4ed082db29d37"
+      "sha256": "38f9ddd2dffe44a52654e53b5f85f3fe3770688460c64cd9cd69a4dca2f81cb0"
     },
     {
       "order": 12,
       "path": "src/js/20-ui/04-operational-clearance.js",
       "section": "OPERATIONAL CLEARANCE — veredito executivo (N1)",
-      "sha256": "cb9d4d995296639a2ebf5a9d3e494942a7df7650dcb8a9ee462e4f91c7ae453e"
+      "sha256": "48860ec6ba431367a7a91864bebf55f1859fd88047d1a96b377a5e8f268a0609"
     },
     {
       "order": 13,
       "path": "src/js/20-ui/05-execution-clearance.js",
       "section": "EXECUTION CLEARANCE — veredito antes dos termômetros",
-      "sha256": "ffc9016aa4a3bb0f63305bac271e1c7d3f25ece683e2a2c767d192e78aff8c30"
+      "sha256": "5c834e081b5fefbf1dcb56c16e8235a4a543ff4f4a83cb4055c6b73f5714d5da"
     },
     {
       "order": 14,
@@ -92,7 +92,7 @@
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "3f988526cbc98e827f25c8311a7671e8f0d587ca4c30e57757b2af6d038b3795"
+      "sha256": "52a2c71d983102c53abb28a1ebdaac6d29445cf0ab8fd9217eefddd53df16c26"
     },
     {
       "order": 16,
@@ -254,7 +254,7 @@
       "order": 42,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "a1fc4ec3979f473622ef11451e567e86ee5a82d7cbf2f7bb2bfa952cef92182e"
+      "sha256": "afc121a80c78d0fa42ca21eab9b0acc551d098ac72943ee6ec3f6babf9138ac8"
     },
     {
       "order": 43,
@@ -362,7 +362,7 @@
       "order": 60,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "506c863829fc94e9f6b90356fa0d9cfc0ace830fb12a6cb8363b3e53ef0c6acb"
+      "sha256": "8dfd400f177e5122071a6b23361cb34ae459fea15f11fd5caf8f0c72c62bec44"
     }
   ]
 }

@@ -4,12 +4,10 @@ function renderHeaderReadout(c){
   const set=(id,txt)=>{ const e=$(id); if(e) e.textContent=txt; };
   const p=(S&&S.params)||{};
   // getActiveRiskProfile() é o acessor canônico (lê S.period.profile e cai em 'base').
-  try{ const pr=getActiveRiskProfile(); set('hdrProfile', (pr&&pr.name)||'—'); set('gdCtxProfile', (pr&&pr.name)||'—'); }
-  catch(_){ set('hdrProfile','—'); set('gdCtxProfile','—'); }
+  try{ const pr=getActiveRiskProfile(); set('hdrProfile', (pr&&pr.name)||'—'); }
+  catch(_){ set('hdrProfile','—'); }
   set('hdrPeriod', p.inicio ? fmtDateEU(p.inicio) : '—');
-  set('gdCtxPeriod', p.inicio ? fmtDateEU(p.inicio) : '—');
   set('hdrEquity', fmtMoney(p.saldoAtu||0));
-  set('gdCtxEquity', fmtMoney(p.saldoAtu||0));
   const ddEl=$('hdrDD');
   if(ddEl && c){
     ddEl.textContent=fmtPct(c.dd||0);
@@ -19,9 +17,6 @@ function renderHeaderReadout(c){
   // Espelho do painel "Perfil e Contexto" do Global Dashboard (Etapa 1) —
   // mesmos dados de c já usados em dFase/dAlav/hdrDD, só novos IDs de leitura.
   if(c){
-    set('gdCtxFase', c.fase.nome);
-    set('gdCtxDD', fmtPct(c.dd||0));
-    set('gdCtxAlav', fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav));
   }
 }
 function startHeaderClock(){

@@ -50,32 +50,32 @@ function renderOperationalClearance(c){
   if(r.reasons.length>3) items.push('<li>+'+(r.reasons.length-3)+' ponto(s) adicional(is) — detalhes no Execution Board.</li>');
   ul.innerHTML=items.join('');
   ul.style.display=items.length?'grid':'none';
-  $('mcClearanceAction').innerHTML='<span class="ak">Ação</span>'+esc(r.action);
+  // Ação primária como BOTÃO curto (o protótipo mostra "Resolver pendências"),
+  // com a orientação completa preservada no title para leitor de tela e hover.
+  // Os rótulos abaixo são rotulagem de UI derivada do texto de r.action que já
+  // existia por estado — nenhuma regra nova, nenhum destino novo.
+  const ACAO_CURTA={clear:'Executar dentro da fase', caution:'Revisar antes de operar',
+                    pending:'Resolver pendências', reduce:'Reduzir exposição',
+                    blocked:'Registrar na auditoria'};
+  const btnAcao=$('mcClearanceAction');
+  if(btnAcao){ btnAcao.textContent=ACAO_CURTA[r.status]||'Ver detalhes'; btnAcao.title=r.action; }
   // N2 — Mission Metrics (status executivos)
   const set=(id,txt)=>{ const e=$(id); if(e) e.textContent=txt; };
   const chip=(id,cls,txt)=>{ const e=$(id); if(e){ e.className='mc-status '+cls; e.textContent=txt; } };
-  // Linha de fatos do card de Clearance (fidelidade ao Dashboard Claro) —
-  // mesmos valores de c.fase/c.riscoTotal/c.tetoRisco/c.alavCar/c.tetoAlav
-  // já usados em mcMiniRisco/dAlav/dFase; só um novo local de leitura.
-  // ---- COCKPIT · quatro fatos operacionais (JPW-789ABC-B2, Fase 2A) ----
-  // ESPELHO DE LEITURA: cada célula reusa a MESMA fórmula que o componente
-  // vigente já aplica; nenhuma é reescrita e nenhuma constante é criada.
-  //   DD          ddCeil / (dd/ddCeil) e as faixas de c.mScaled — do gdGaugeDD
-  //   Risco       riscoTotal/tetoRisco — da barra gRiscoBar e do card Coerência
-  //   Alavancagem alavCar/4 com tick do teto em tetoAlav/4 — do gdGaugeAlav
-  //   Cores       as MESMAS regras já vigentes: gRiscoBar usa --f3 acima do
-  //               teto, gAlavBar usa --f2, ambas FCOLORS[c.fi] dentro dele.
-  // Os componentes antigos seguem na tela nesta fase justamente para que a
-  // equivalência seja verificável a olho: qualquer divergência é defeito daqui.
+  // ---- COCKPIT · quatro fatos (Fase 2C — textos fiéis ao protótipo) ----
+  // ESPELHO DE LEITURA: toda fórmula é reuso da vigente. As metas passaram a
+  // carregar o que o protótipo mostra e que o App tinha perdido:
+  //   fase  -> "postura ofensiva" (PHASE_OBJECTIVE, que a faixa de Postura levava)
+  //   DD    -> alarme E guilhotina (c.alarmScaled e c.mddScaled, já usados no veredito)
+  //   risco -> margem restante (c.margemEstatutaria, já exibida no LIFO)
   const cockpitFact=(id,o)=>{
     const cell=$(id); if(!cell) return;
     const v=cell.querySelector('[data-fact-v]');
-    if(v){ v.textContent=o.value; v.style.color=o.over?o.color:''; }
+    // O protótipo pinta o NÚMERO com a cor do estado, não só a barra.
+    if(v){ v.textContent=o.value; v.style.color=o.color||''; }
     const m=cell.querySelector('[data-fact-meta]'); if(m) m.textContent=o.meta;
     const f=cell.querySelector('[data-fact-fill]');
     if(f){
-      // Nunca passa de 100%: estouro é dito por cor e por texto, jamais por
-      // transbordo geométrico da barra.
       f.style.width=(o.pct==null?0:Math.max(0,Math.min(100,o.pct)))+'%';
       if(o.color) f.style.background=o.color;
     }
@@ -86,50 +86,46 @@ function renderOperationalClearance(c){
     }
     cell.dataset.over=o.over?'1':'0';
   };
-  // FASE — categórica: quatro segmentos, o vigente aceso. Não existe
-  // "percentual de fase"; uma barra contínua aqui seria dado inventado.
   const faseCell=$('mcFactFase');
   const segWrap=faseCell && faseCell.querySelector('[data-fact-seg-wrap]');
   if(segWrap) Array.prototype.forEach.call(segWrap.children,(seg,i)=>{
     seg.style.background = (i===c.fi) ? FCOLORS[c.fi] : '';
   });
-  const faixaFase = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
-  cockpitFact('mcFactFase',{ value:c.fase.nome, meta:'faixa de DD '+faixaFase, pct:null, markPct:null, over:false });
-  // DRAWDOWN — escala 0 → teto ativo do perfil (mesma ddCeil do gauge), com
-  // marcador no limite da fase vigente. Exceção = atingir o MDD ativo, que é o
-  // mesmo gatilho que já dispara o aviso de quarentena (Art. 3.10).
+  const faixa = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
+  // Concordância com "postura" (feminino), como o protótipo escreve
+  // ("postura ofensiva"). PHASE_OBJECTIVE guarda OFENSIVO/CAUTELA/DEFENSIVO/
+  // SALVAGUARDA — só a grafia muda, o dado é o mesmo.
+  const POSTURA_F={'OFENSIVO':'ofensiva','CAUTELA':'de cautela','DEFENSIVO':'defensiva','SALVAGUARDA':'de salvaguarda'};
+  const postura = (typeof PHASE_OBJECTIVE!=='undefined' && PHASE_OBJECTIVE[c.fi]) ? (POSTURA_F[PHASE_OBJECTIVE[c.fi].t]||PHASE_OBJECTIVE[c.fi].t.toLowerCase()) : '';
+  cockpitFact('mcFactFase',{
+    value:c.fase.nome,
+    meta:(postura?'postura '+postura+' · ':'')+'DD '+faixa+' · teto '+fmtX(c.tetoAlav),
+    pct:null, markPct:null, color:FCOLORS[c.fi], over:false });
   const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
   const ddOver=c.mddScaled>0 && c.dd>=c.mddScaled;
   cockpitFact('mcFactDD',{
     value:fmtPct(c.dd),
-    meta:'de '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE ATIVO':(c.mScaled?' · limite da fase '+fmtPct(c.mScaled[c.fi].ddmax):'')),
+    meta:(c.alarmScaled>0?'alarme em '+fmtPct(c.alarmScaled)+' · ':'')+'guilhotina '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE':''),
     pct:(c.dd/ddCeil)*100,
     markPct:c.mScaled?(c.mScaled[c.fi].ddmax/ddCeil)*100:null,
-    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver
-  });
-  // RISCO ABERTO — escala 0 → teto da fase. Teto zero (conta sem parâmetro)
-  // não vira barra cheia falsa nem divisão por zero: mostra trilho vazio.
-  const temTetoRisco=c.tetoRisco>0;
-  const riscoPct=temTetoRisco?(c.riscoTotal/c.tetoRisco)*100:0;
-  const riscoOver=temTetoRisco && c.riscoTotal>c.tetoRisco;
+    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver });
+  const temTeto=c.tetoRisco>0;
+  const riscoPct=temTeto?(c.riscoTotal/c.tetoRisco)*100:0;
+  const riscoOver=temTeto && c.riscoTotal>c.tetoRisco;
   cockpitFact('mcFactRisco',{
     value:fmtMoney(c.riscoTotal),
-    meta:temTetoRisco
-      ? Math.round(riscoPct)+'% do teto · '+fmtMoney(c.tetoRisco)+(riscoOver?' · ACIMA DO TETO':'')
+    meta:temTeto
+      ? Math.round(riscoPct)+'% do teto '+fmtMoney(c.tetoRisco)+' · margem '+fmtMoney(c.margemEstatutaria)+(riscoOver?' · ACIMA DO TETO':'')
       : 'sem parâmetro de teto',
     pct:riscoPct, markPct:null,
-    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver
-  });
-  // ALAVANCAGEM — escala absoluta 0–4x com tick no teto da fase, igual ao
-  // gdGaugeAlav (mostra folga contra o máximo estatutário, não só contra o teto).
+    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver });
   const alavOver=c.alavCar>c.tetoAlav;
+  const alavPctTeto=c.tetoAlav>0?(c.alavCar/c.tetoAlav)*100:0;
   cockpitFact('mcFactAlav',{
     value:fmtX(c.alavCar),
-    meta:'teto '+fmtX(c.tetoAlav)+(alavOver?' · ACIMA DO TETO':' · escala 0–4x'),
+    meta:(c.tetoAlav>0?Math.round(alavPctTeto)+'% do teto '+fmtX(c.tetoAlav):'sem teto definido')+(alavOver?' · ACIMA DO TETO':''),
     pct:(c.alavCar/4)*100, markPct:(c.tetoAlav/4)*100,
-    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver
-  });
-  set('mcMiniRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
+    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver });
   // Reservas FCR/FEO — lidos do estado salvo no onboarding (fonte única)
   if(!ob.done || !ob.reserveFcrStatus){
     set('mcMiniReservas','—'); chip('mcMiniReservasChip','mc-st-muted','Pendente');
@@ -174,28 +170,11 @@ function renderOperationalClearance(c){
     set('dStatus', label);
     chip('mcMiniPendChip',onb.critical?'mc-st-bad':(onb.warning?'mc-st-warn':'mc-st-muted'),`${onb.completed}/${onb.total}`);
   }
-  // Faixa de postura/conformidade (fidelidade ao Claude Design) — só estados
-  // reais já calculados em outro lugar do próprio código: PHASE_OBJECTIVE[c.fi]
-  // (mesmo dado do objectiveCard do Execution Board), c.excesso, c.alavCar/
-  // c.tetoAlav (mesma condição de gAlavBar) e onb (mesma fonte do dStatus
-  // acima). Nenhuma checagem nova, nenhum texto fixo — muda com o estado real.
-  const posture=(prefix,label,sub,color)=>{
-    const l=$(prefix+'Lbl'), s=$(prefix+'Sub');
-    if(l){ l.textContent=label; l.style.color=color; }
-    if(s) s.textContent=sub;
-  };
-  const po=PHASE_OBJECTIVE[c.fi];
-  posture('gdPostureFase', po.t, 'Fase '+(c.fi+1)+' vigente — postura determinada pela fase atual.', 'var('+OBJ_COL[c.fi]+')');
-  posture('gdPostureRisco',
-    c.excesso>0?'Risco Acima do Teto':'Risco Controlado',
-    c.excesso>0?('Exceder o teto em '+fmtMoney(c.excesso)+' — poda necessária.'):'Dentro dos limites operacionais da fase.',
-    c.excesso>0?'var(--jp-danger)':'var(--jp-success)');
-  posture('gdPostureAlav',
-    c.alavCar>c.tetoAlav?'Alavancagem Acima do Teto':'Alavancagem Segura',
-    fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav)+(c.alavCar>c.tetoAlav?' — acima do teto da fase.':' — abaixo do teto permitido.'),
-    c.alavCar>c.tetoAlav?'var(--jp-danger)':'var(--jp-success)');
-  posture('gdPostureGov',
-    onb.complete?'Governança Completa':(onb.critical?`${onb.critical} pendência(s) crítica(s)`:(onb.warning?`${onb.warning} atenção`:`${onb.pending} pendente(s)`)),
-    onb.complete?'Formulário de Início sem pendências.':'Formulário de Início incompleto — revise em Configurações.',
-    onb.complete?'var(--jp-success)':(onb.critical?'var(--jp-danger)':'var(--jp-warning)'));
+  // JPW-789ABC-B2, Fase 2B: a faixa de Postura saiu. Ela traduzia números em
+  // rótulos binários ("Risco Controlado", "Alavancagem Segura"); quem faz isso
+  // agora é a lista de motivos (#mcClearanceReasons, logo abaixo do subtítulo do
+  // cockpit) — que nomeia o fato, QUANTIFICA e aponta o remédio ("podar $120 via
+  // LIFO") — somada às quatro células, que mostram a margem contra cada teto.
+  // PHASE_OBJECTIVE segue vivo em renderObjective() -> #objectiveCard, no
+  // Execution Board; só o consumo pela postura do Dashboard deixou de existir.
 }

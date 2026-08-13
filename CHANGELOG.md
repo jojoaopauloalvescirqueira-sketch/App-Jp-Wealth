@@ -2,6 +2,89 @@
 
 ## [Unreleased]
 
+- **Fase 2C · reconciliação das cinco telas com o protótipo.** Execution Board:
+  9→6 cards (Postura, Termômetros e Coerência absorvidos pelos quatro fatos do
+  cockpit, que ganhou Drawdown e passou a levar os tetos no rótulo, como o
+  protótipo); os seis tiles informativos do LIFO desceram para "Leitura
+  patrimonial e arquivados ▾", ficando à vista os quatro consolidados P1.
+  Contas: as colunas derivadas (Correção, Normalização V10, Fator de Perfil)
+  saíram da leitura primária com o cálculo preservado no `title` da célula de
+  Lote vs Mestre, e as três credenciais viraram um chip único ("3 pendentes").
+  Contabilidade: Simulação Patrimonial e Projeção Diária em `▾`. Planejamento
+  FX: as três camadas em "Como as três camadas funcionam ▾".
+- **Layout de grade alinhado ao protótipo.** As quatro telas tinham todos os
+  cards travados em `full`, o que empilhava tudo em largura cheia por mais
+  disclosure que se acrescentasse — era a causa real de "não estar parecido".
+  Ampliada a política de tamanho dos cards que o design põe lado a lado e
+  ajustados os defaults: Contabilidade passou a dois pares (Período|Ritmo e
+  Real vs Projetado|Fechamento), de 2038px para 1263px; Contas foi de três
+  cards para **dois**, com a Nota de Governança virando `governança ▾` no
+  cabeçalho do Parque; Planejamento FX virou cartão único de **936px centrado**,
+  medida idêntica à do protótipo; Execution Board passou a Clearance → Grade →
+  Consolidado, a ordem do design. Ampliar `allowed-sizes` não invalida
+  preferência salva, então nada disso exigiu migração.
+- **Stop Estatístico com o método em disclosure.** O bloco §9 do Execution Board
+  reduziu-se ao que o protótipo mostra: os vereditos (Múltiplo de ATR, Raiz-N
+  √30 e √55, Síntese §9.5) ficam à vista e os campos de método — ATR(55)%,
+  Fator F e Stop Técnico — descem para `método ▾`, seguindo editáveis e no
+  mesmo lugar do DOM. O card caiu de 1196px para 1000px.
+- **`exec-vrm` foi PRESERVADO contra o protótipo.** Ele hospeda `iAtr55` e
+  `iAtr660` — inputs editáveis vinculados sem guarda em `08-input-bindings.js` e
+  escritos por `04-stop-statistics.js`. Removê-lo quebraria os dois e eliminaria
+  a única entrada dos ATRs, que alimentam o VRM e a classificação de regime. O
+  §3.4 manda sair "gauges/termômetros", não os inputs.
+- **Migração v5 → v6** para a tela `exec`, na mesma cadeia das anteriores.
+  Corrigido no caminho um defeito que teria sido silencioso e grave: o envelope
+  promovido nascia com `version: 5` enquanto o normalizador exigia 6 — era
+  rejeitado e **todas as telas caíam no padrão**, descartando a personalização
+  que a migração acabara de preservar. Verificado em base zerada: reordenação do
+  Execution Board e `news-high-impact` na sidebar sobrevivem à promoção.
+
+### Limpeza do Dashboard e reconciliação com o protótipo — candidato de 2026-08-13 (branch `feature/dashboard-cockpit-p1`; JPW-789ABC-B2, Fases 2B e 2C)
+
+- **Cinco componentes redundantes saíram do Dashboard** — faixa de métricas,
+  Coerência de Alavancagem, Termômetros, Postura e Perfil e Contexto. O mesmo
+  fato chegava a aparecer cinco vezes; agora cada um tem uma representação
+  primária. De 10 cards para **6**; a altura do Dashboard caiu para 923px.
+- **Migração de preferência v4 → v5**, única e não destrutiva: remove os cinco
+  ids extintos, coage `operational-clearance` de `large` para `full` (em duas
+  colunas as células cairiam para ~98px e truncariam dado financeiro) e
+  renumera, preservando zona e tamanho dos sobreviventes. Sem ela, o validador
+  reprovaria por três caminhos independentes e descartaria **toda** a
+  personalização da tela, não apenas os removidos. Verificado com snapshot v4
+  de 11 widgets e três personalizações — todas preservadas.
+- **Corrigida uma inversão na cadeia da v2**: `dashLayoutValidateV2Legacy`
+  validava ANTES de migrar; com 11 widgets contra 6 esperados reprovaria sempre
+  e a v2 cairia no padrão em silêncio.
+- **A camada causal do veredito foi recuperada.** `#mcClearanceReasons` já era
+  calculado por `getOperationalClearance` mas vivia fora do cockpit, num
+  `.jp-section` invisível — ninguém nunca o viu. Agora fica entre subtítulo e
+  fatos, oculto quando não há violação e, quando há, nomeando o fato,
+  quantificando e apontando o remédio ("podar $120 via LIFO"). Substitui com
+  vantagem os rótulos binários da Postura ("Risco Controlado").
+- **Fase 2C — reconciliação com o protótipo aprovado.** Auditoria das cinco
+  telas contra `JP Wealth - Redesign.dc.html` revelou que o cockpit fora
+  construído a partir do handoff textual, não do protótipo. Corrigido, com as
+  medidas tiradas do próprio arquivo: grid de **duas colunas** (527|738 no
+  protótipo, proporcional aqui), veredito de 58px para **34px**, células de
+  fato como **cards** (fundo `panel-2`, borda `line`, radius 10, padding 14/16),
+  barra de 5px, valor colorido pelo estado, **duas ações** e os rótulos do
+  design (`Fase da Conta`, `Drawdown Operacional`, `Alavancagem Carregada`).
+- **Informação recuperada nas metas**, que o protótipo tinha e o App perdera:
+  `postura ofensiva` (que morreu com a faixa de Postura), `alarme em 13,00% ·
+  guilhotina 15,00%` (os dois limiares, não só o teto) e `margem $80`.
+- Nenhuma constante, fórmula, fase, teto ou parâmetro normativo foi tocado;
+  `jpwealth_v9_state` e o formato de backup seguem inalterados. Preservados por
+  verificação: `gaugeDD`/`gaugeAlav`/`objectiveCard` do Execution Board,
+  `11-phase-posture.js` (alimenta `renderObjective`), `#dDDmax` (usado pelo
+  `smoke_test.py`) e o CSS de `mc-metric-strip`/`mc-mini-card`, ainda em uso.
+- **Pendente:** o protótipo cobre cinco telas e só o Dashboard foi reconciliado.
+  Execution Board, Contas, Contabilidade e FX seguem no desenho legado — e
+  nenhuma delas tem a camada P3 (`<details>`) que o protótipo usa como
+  mecanismo central. Registrado para os blocos seguintes.
+- **AGENTIC IMPACT: nenhum.** Nenhuma skill, agente, router ou documento de
+  governança referencia os componentes removidos.
+
 ### Cockpit operacional e VRM compacto — candidato de 2026-08-13 (branch `feature/dashboard-cockpit-p1`; JPW-789ABC-B2, Fases 2A e 2A.5)
 
 - **O card de Clearance virou o cockpit operacional.** Passou a `full` (4

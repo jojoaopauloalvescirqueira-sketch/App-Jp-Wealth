@@ -40,16 +40,13 @@ const JP_WIDGET_SCREEN_IDS = Object.keys(JP_WIDGET_SCREENS);
 
 const DASH_LAYOUT_LABELS = {
   'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
-  'metric-strip': 'A faixa de métricas principais', 'thermometers': 'Termômetros',
-  'leverage-coherence': 'Coerência de Alavancagem', 'vrm': 'VRM · Regime de Volatilidade',
-  'posture': 'Postura e conformidade', 'profile-context': 'Perfil e Contexto',
+  'vrm': 'VRM · Regime de Volatilidade',
   'onboarding-alert': 'Alerta de onboarding', 'quick-actions': 'Ações Rápidas',
   'exec-onboarding-alert': 'Aviso de governança', 'exec-clearance': 'Execution Clearance',
-  'exec-posture': 'Postura operacional', 'exec-thermometers': 'Termômetros',
-  'exec-metrics-banners': 'Métricas e avisos', 'exec-coherence': 'Coerência de Alavancagem',
+  'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
   'exec-lifo-monitor': 'Consolidado LIFO',
-  'contas-governance-note': 'Nota de Governança', 'contas-accounts-table': 'Parque de Contas',
+  'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
   'contab-period-goals': 'Período & Metas', 'contab-simulation': 'Simulação Patrimonial',
   'contab-cycle-pace': 'Ritmo do Ciclo', 'contab-daily-close': 'Fechamento Diário',
@@ -76,53 +73,49 @@ function dashLayoutDeepFreeze(obj) {
 // index.html — restaurar padrão é voltar a esta constante, não reler o HTML.
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
-    // JPW-789ABC-B2: `full` desde que o cockpit passou a carregar os quatro
-    // fatos. Em `large` (2 colunas) as células cairiam para ~98px e truncariam.
-    // `large` segue permitido — quem já personalizou mantém a escolha até a
-    // migração da Fase 2B, quando os widgets absorvidos saem de cena.
+    // JPW-789ABC-B2, Fase 2B — o Dashboard fica com SEIS widgets.
+    // P1: o cockpit, `full`, dono dos quatro fatos operacionais.
+    // P2: Status do Sistema + VRM dividindo a linha seguinte; Notícias abaixo.
+    // Sidebar: pendências de governança e atalhos.
+    // Saíram por absorção: a faixa de métricas e a Coerência (viraram os fatos
+    // e suas escalas), os Termômetros (a escala É a representação), a Postura
+    // (o veredito + os motivos dizem o mesmo com número e remédio) e o Perfil e
+    // Contexto (duplicava a faixa do header item a item).
     { id: 'operational-clearance', zone: 'main', size: 'full', order: 0 },
-    // JPW-789ABC-B2, Fase 2A.5: o par P2 (Status do Sistema + VRM compacto)
-    // sobe para a linha logo abaixo do cockpit. Isso NÃO inverte a hierarquia
-    // que o Bloco 1 corrigiu — ela mudou de dono: desde a Fase 2A os quatro
-    // fatos P1 vivem dentro do cockpit, e a faixa de métricas passou a ser
-    // duplicata aguardando remoção na Fase 2B, junto de termômetros, coerência
-    // e postura. Todas elas descem para o bloco de legado, abaixo do par P2.
     { id: 'institutional-panel', zone: 'main', size: 'medium', order: 1 },
     { id: 'vrm', zone: 'main', size: 'medium', order: 2 },
-    { id: 'metric-strip', zone: 'main', size: 'medium', order: 3 },
-    { id: 'thermometers', zone: 'main', size: 'compact', order: 4 },
-    { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 5 },
-    { id: 'posture', zone: 'main', size: 'full', order: 6 },
-    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 7 },
-    { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 8 },
-    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 9 },
-    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 10 }
+    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 3 },
+    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 4 },
+    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 5 }
   ],
   exec: [
+    // Ordem do protótipo: Clearance → Grade da Operação Única → Consolidado LIFO.
+    // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
+    // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
+    // abaixo do que o design define como leitura primária.
     { id: 'exec-onboarding-alert', zone: 'main', size: 'full', order: 0 },
     { id: 'exec-clearance', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-posture', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-thermometers', zone: 'main', size: 'medium', order: 3 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 2 },
+    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 3 },
     { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 },
-    { id: 'exec-coherence', zone: 'main', size: 'medium', order: 5 },
-    { id: 'exec-vrm', zone: 'main', size: 'full', order: 6 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 7 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 8 }
+    { id: 'exec-vrm', zone: 'main', size: 'full', order: 5 }
   ],
   contas: [
-    { id: 'contas-governance-note', zone: 'main', size: 'full', order: 0 },
-    { id: 'contas-accounts-table', zone: 'main', size: 'full', order: 1 },
-    { id: 'contas-order-application', zone: 'main', size: 'full', order: 2 }
+    // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
+    { id: 'contas-accounts-table', zone: 'main', size: 'full', order: 0 },
+    { id: 'contas-order-application', zone: 'main', size: 'medium', order: 1 }
   ],
   contab: [
-    { id: 'contab-period-goals', zone: 'main', size: 'full', order: 0 },
-    { id: 'contab-simulation', zone: 'main', size: 'full', order: 1 },
-    { id: 'contab-cycle-pace', zone: 'main', size: 'medium', order: 2 },
-    { id: 'contab-daily-close', zone: 'main', size: 'full', order: 3 },
-    { id: 'contab-real-vs-projected', zone: 'main', size: 'full', order: 4 },
-    { id: 'contab-daily-projection', zone: 'main', size: 'full', order: 5 },
-    { id: 'contab-entries', zone: 'main', size: 'full', order: 6 },
-    { id: 'contab-audit-log', zone: 'main', size: 'full', order: 7 }
+    // Ordem do protótipo: Real vs Projetado PAREADO com Fechamento Diário.
+    // Simulação e Projeção Diária vivem em disclosure (P3) e vão para o fim.
+    { id: 'contab-period-goals', zone: 'main', size: 'medium', order: 0 },
+    { id: 'contab-cycle-pace', zone: 'main', size: 'medium', order: 1 },
+    { id: 'contab-real-vs-projected', zone: 'main', size: 'medium', order: 2 },
+    { id: 'contab-daily-close', zone: 'main', size: 'medium', order: 3 },
+    { id: 'contab-entries', zone: 'main', size: 'full', order: 4 },
+    { id: 'contab-audit-log', zone: 'main', size: 'full', order: 5 },
+    { id: 'contab-simulation', zone: 'main', size: 'full', order: 6 },
+    { id: 'contab-daily-projection', zone: 'main', size: 'full', order: 7 }
   ]
 });
 
@@ -204,7 +197,9 @@ function dashLayoutZoneLabel(zones) {
 
 /* ======================= VALIDAÇÃO E PERSISTÊNCIA (v3) ======================= */
 
-const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4';
+const JP_WIDGET_STORAGE_KEY_V6 = 'jpwealth.ui.widgetLayouts.v6';
+const JP_WIDGET_STORAGE_KEY_V5 = 'jpwealth.ui.widgetLayouts.v5'; // só para migração — nunca gravado de novo
+const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
 
@@ -218,7 +213,7 @@ const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migr
 // desproporcional: 'large' ERA o padrão antigo, então toda preferência já
 // gravada carrega institutional-panel em 'large'; ao reprovar no teste de
 // tamanho permitido, dashLayoutValidateScreenWidgets devolve null para a TELA
-// INTEIRA e dashLayoutNormalizeV4 joga fora TODA a personalização do Dashboard
+// INTEIRA e dashLayoutNormalizeV6 joga fora TODA a personalização do Dashboard
 // — não só este widget. Coerção pontual, portanto: um widget, um tamanho,
 // preservando zona e ordem escolhidas pelo usuário.
 //
@@ -227,7 +222,13 @@ const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migr
 // edição) passam obrigatoriamente por esta função, então nenhum fica de fora.
 // Nos casos em que não há o que migrar é no-op.
 function dashLayoutMigrateWidgets(screenId, widgets) {
-  if (screenId !== 'dash' || !Array.isArray(widgets)) return widgets;
+  if (!Array.isArray(widgets)) return widgets;
+  // Widgets que deixaram de existir: descartá-los é permanente e seguro, porque
+  // o id não pode mais ser escolha legítima de ninguém — mesma natureza da
+  // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
+  // devolve null para a TELA INTEIRA.
+  if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
+  if (screenId !== 'dash') return widgets;
   return widgets.map(w => (w && typeof w === 'object' && w.id === 'institutional-panel' && w.size === 'large')
     ? { ...w, size: 'medium' }
     : w);
@@ -258,25 +259,68 @@ function dashLayoutValidateScreenWidgets(screenId, widgets) {
 // independente — telas inválidas recebem só o PADRÃO DAQUELA TELA; as
 // demais, válidas, são preservadas exatamente como estavam. Nunca retorna
 // null para o todo por causa de uma tela quebrada.
-function dashLayoutNormalizeV4(raw) {
-  const rawScreens = (raw && typeof raw === 'object' && raw.version === 4 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
+function dashLayoutNormalizeV6(raw) {
+  const rawScreens = (raw && typeof raw === 'object' && raw.version === 6 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
   const screens = {};
   JP_WIDGET_SCREEN_IDS.forEach(screenId => {
     const provided = rawScreens[screenId] && rawScreens[screenId].widgets;
     const validated = dashLayoutValidateScreenWidgets(screenId, provided);
     screens[screenId] = { widgets: validated || JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w })) };
   });
-  return { version: 4, screens };
+  return { version: 6, screens };
 }
 
-function dashLayoutSaveV4(full) {
-  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V4, JSON.stringify(full)); } catch (_) { return false; }
+function dashLayoutSaveV6(full) {
+  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V6, JSON.stringify(full)); } catch (_) { return false; }
   return true;
 }
 function dashLayoutClearAllPreferences() {
+  try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V6); } catch (_) { /* silencioso */ }
+  try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V5); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
+}
+
+// MIGRAÇÃO ÚNICA v4 → v5 (JPW-789ABC-B2, Fase 2B — remoção dos redundantes).
+//
+// Cinco widgets deixam de existir: a faixa de métricas, a Coerência de
+// Alavancagem, os Termômetros, a Postura e o Perfil e Contexto. Todos foram
+// absorvidos pelo cockpit, pelo Status do Sistema ou pela faixa de contexto do
+// header — nenhum dado sumiu, só as representações duplicadas.
+//
+// Sem esta migração o estrago seria total, não parcial:
+// dashLayoutValidateScreenWidgets reprova por TRÊS caminhos independentes —
+// contagem diferente (11 salvos vs 6 esperados), id desconhecido e obrigatório
+// ausente — e cada um devolve null para a TELA INTEIRA, fazendo
+// dashLayoutNormalizeV6 descartar TODA a personalização do Dashboard, não
+// apenas os cinco removidos.
+//
+// A coerção de `operational-clearance` large → full é ÚNICA e deliberada.
+// `large` continua sendo tamanho permitido, mas deixou de ser compatível com o
+// cockpit de quatro fatos: em duas colunas as células caem para ~98px e
+// truncam dado financeiro. Preserva-se a intenção do usuário (ver o cockpit),
+// não uma configuração que deixou de ser válida. Por ser única, quem escolher
+// `large` de novo depois da migração mantém a escolha.
+const DASH_LAYOUT_REMOVIDOS_V5 = ['metric-strip', 'leverage-coherence', 'thermometers', 'posture', 'profile-context'];
+// Fase 2C: a mesma limpeza chega ao Execution Board. `exec-vrm` NÃO entra aqui —
+// ele hospeda os inputs editáveis de ATR e foi preservado de propósito.
+const EXEC_LAYOUT_REMOVIDOS_V6 = ['exec-posture', 'exec-thermometers', 'exec-coherence'];
+function dashLayoutMigrateExecV5ToV6(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  return widgets
+    .filter(w => w && typeof w === 'object' && EXEC_LAYOUT_REMOVIDOS_V6.indexOf(w.id) < 0)
+    .map(w => ({ ...w }))
+    .sort((a, b) => a.order - b.order)
+    .map((w, i) => ({ ...w, order: i }));
+}
+function dashLayoutMigrateDashV4ToV5(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  return widgets
+    .filter(w => w && typeof w === 'object' && DASH_LAYOUT_REMOVIDOS_V5.indexOf(w.id) < 0)
+    .map(w => (w.id === 'operational-clearance' && w.size === 'large') ? { ...w, size: 'full' } : { ...w })
+    .sort((a, b) => a.order - b.order)
+    .map((w, i) => ({ ...w, order: i }));
 }
 
 // Migração v2 (só Dashboard, já com tamanho) → v3 (multitelas). v2 tem
@@ -288,7 +332,12 @@ function dashLayoutValidateV2Legacy(pref) {
   // Forma real da v2 (só Dashboard, sem o envelope "screens" da v3):
   // { version:2, dashboard:{ widgets:[...] } }
   const widgets = pref.dashboard && pref.dashboard.widgets;
-  return dashLayoutValidateScreenWidgets('dash', widgets);
+  // MIGRA ANTES DE VALIDAR. A ordem importa e estava invertida: a v2 carrega os
+  // 11 widgets do esquema antigo e o validador exige exatamente os 6 atuais, de
+  // modo que validar primeiro reprovaria SEMPRE e a v2 jamais promoveria —
+  // silenciosamente, caindo no padrão. Migrada primeiro, ela chega ao validador
+  // já na forma vigente.
+  return dashLayoutValidateScreenWidgets('dash', dashLayoutPromoteDashParaV5(widgets, 3));
 }
 
 // MIGRAÇÃO ÚNICA v3 → v4 (JPW-789ABC, rebalanceamento do Status do Sistema).
@@ -321,28 +370,53 @@ function dashLayoutMigrateDashV3ToV4(widgets) {
   return out;
 }
 
+// Cada envelope legado é promovido pela CADEIA COMPLETA até a v5, na ordem —
+// uma base parada na v2 passa por v3→v4→v5 numa carga só. Sem isso, quem
+// abrisse o app pela primeira vez depois desta fase perderia a personalização
+// exatamente como se nunca tivesse migrado.
+function dashLayoutPromoteDashParaV5(widgets, apartirDe) {
+  let w = widgets;
+  if (apartirDe <= 3) w = dashLayoutMigrateDashV3ToV4(w);
+  return dashLayoutMigrateDashV4ToV5(w);
+}
+
 function dashLayoutLoadFullState() {
-  const rawV4 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { return null; } })();
-  if (rawV4 !== null) {
-    // v4 existe (mesmo que parcialmente inválida) — tem precedência total e
+  const rawV6 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V6); } catch (_) { return null; } })();
+  if (rawV6 !== null) {
+    // v6 existe (mesmo que parcialmente inválida) — tem precedência total e
     // nunca reabre migração (evita remigrar a cada carga).
     let parsed = null;
-    try { parsed = JSON.parse(rawV4); } catch (_) { /* trata como ausente abaixo */ }
-    return dashLayoutNormalizeV4(parsed);
+    try { parsed = JSON.parse(rawV6); } catch (_) { /* trata como ausente abaixo */ }
+    return dashLayoutNormalizeV6(parsed);
   }
-  const rawV3 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { return null; } })();
-  if (rawV3 !== null) {
-    let v3Parsed = null;
-    try { v3Parsed = JSON.parse(rawV3); } catch (_) { /* ignora */ }
-    const v3Screens = (v3Parsed && typeof v3Parsed === 'object' && v3Parsed.version === 3 && v3Parsed.screens && typeof v3Parsed.screens === 'object') ? v3Parsed.screens : {};
-    const promoted = { version: 4, screens: {} };
+  // v4 e v3 compartilham a mesma forma de envelope ({version, screens}); só
+  // muda por quantos passos de migração o `dash` precisa passar.
+  const legado = [
+    { chave: JP_WIDGET_STORAGE_KEY_V5, versao: 5 },
+    { chave: JP_WIDGET_STORAGE_KEY_V4, versao: 4 },
+    { chave: JP_WIDGET_STORAGE_KEY_V3, versao: 3 }
+  ];
+  for (const { chave, versao } of legado) {
+    const raw = (() => { try { return localStorage.getItem(chave); } catch (_) { return null; } })();
+    if (raw === null) continue;
+    let parsed = null;
+    try { parsed = JSON.parse(raw); } catch (_) { /* ignora */ }
+    const telas = (parsed && typeof parsed === 'object' && parsed.version === versao && parsed.screens && typeof parsed.screens === 'object') ? parsed.screens : {};
+    // A versão do envelope promovido tem de ser a CORRENTE: dashLayoutNormalizeV6
+    // exige version===6 e, com 5 aqui, rejeitava tudo e devolvia os padrões de
+    // todas as telas — perdendo em silêncio a personalização que a migração
+    // acabara de preservar.
+    const promoted = { version: 6, screens: {} };
     JP_WIDGET_SCREEN_IDS.forEach(screenId => {
-      const widgets = v3Screens[screenId] && v3Screens[screenId].widgets;
-      promoted.screens[screenId] = { widgets: screenId === 'dash' ? dashLayoutMigrateDashV3ToV4(widgets) : widgets };
+      const widgets = telas[screenId] && telas[screenId].widgets;
+      promoted.screens[screenId] = { widgets:
+        screenId === 'dash' ? dashLayoutPromoteDashParaV5(widgets, versao)
+        : screenId === 'exec' ? dashLayoutMigrateExecV5ToV6(widgets)
+        : widgets };
     });
-    const candidate = dashLayoutNormalizeV4(promoted);
-    dashLayoutSaveV4(candidate);
-    try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
+    const candidate = dashLayoutNormalizeV6(promoted);
+    dashLayoutSaveV6(candidate);
+    try { localStorage.removeItem(chave); } catch (_) { /* silencioso */ }
     return candidate;
   }
   const rawV2 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { return null; } })();
@@ -351,15 +425,15 @@ function dashLayoutLoadFullState() {
     try { v2Parsed = JSON.parse(rawV2); } catch (_) { /* ignora */ }
     const migratedDash = dashLayoutValidateV2Legacy(v2Parsed);
     if (migratedDash) {
-      // A v2 nasceu com o padrão antigo, então passa pela mesma promoção.
-      const candidate = dashLayoutNormalizeV4({ version: 4, screens: { dash: { widgets: dashLayoutMigrateDashV3ToV4(migratedDash) } } });
-      dashLayoutSaveV4(candidate);
+      // `migratedDash` já veio promovido e validado por dashLayoutValidateV2Legacy.
+      const candidate = dashLayoutNormalizeV6({ version: 5, screens: { dash: { widgets: migratedDash } } });
+      dashLayoutSaveV6(candidate);
       try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
       return candidate;
     }
     // v2 presente mas inválida — não promove, não apaga, cai no padrão completo
   }
-  return dashLayoutNormalizeV4(null); // tudo padrão
+  return dashLayoutNormalizeV6(null); // tudo padrão
 }
 
 function dashLayoutApplyScreen(screenId, widgets) {
@@ -806,7 +880,7 @@ function dashLayoutFinish() {
   }
   const full = dashLayoutLoadFullState();
   dirty.forEach(screenId => { full.screens[screenId] = { widgets: validatedByScreen[screenId] }; });
-  dashLayoutSaveV4(full); // uma única escrita, com todas as telas alteradas já validadas
+  dashLayoutSaveV6(full); // uma única escrita, com todas as telas alteradas já validadas
   const labels = dirty.map(id => JP_WIDGET_SCREENS[id].label).join(', ');
   dashLayoutEndSession();
   dashLayoutAnnounce((dirty.length === 1 ? '1 tela salva: ' : dirty.length + ' telas salvas: ') + labels + '.');
@@ -829,7 +903,7 @@ function dashLayoutRestoreDefaultConfirm() {
   }
   const full = dashLayoutLoadFullState();
   full.screens[screenId] = { widgets: dashLayoutCurrentScreenState(screenId) };
-  dashLayoutSaveV4(full);
+  dashLayoutSaveV6(full);
   dashLayoutAnnounce('Layout padrão de ' + label + ' restaurado.');
 }
 
@@ -849,7 +923,7 @@ function dashLayoutRestoreAllConfirm() {
     return;
   }
   dashLayoutClearAllPreferences();
-  dashLayoutApplyAllScreens(dashLayoutNormalizeV4(null));
+  dashLayoutApplyAllScreens(dashLayoutNormalizeV6(null));
   dashLayoutAnnounce('Layout padrão restaurado em todas as telas.');
 }
 

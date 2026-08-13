@@ -167,14 +167,19 @@
       <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
         <div class="mc-ec-title" id="ecTitle">—</div>
         <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+        <!-- Fase 2C: os quatro fatos do protótipo. Fase e Grade Ativa passam a
+             dividir a mesma célula (o protótipo rotula "FASE · GRADE ATIVA") e
+             entra DRAWDOWN, que faltava aqui e é o fato que os termômetros
+             removidos carregavam. Os tetos migram para o RÓTULO, como no
+             protótipo ("RISCO / TETO $400"), liberando o valor para o número
+             corrente. -->
         <div class="mc-ec-facts">
-          <span>Fase da Conta<b id="ecFase">—</b></span>
-          <span>Grade Ativa<b id="ecGrade">—</b></span>
-          <span>Risco Aberto / Teto<b id="ecRisco">—</b></span>
-          <span>Alav. Carregada / Teto<b id="ecAlav">—</b></span>
+          <span>Fase · Grade Ativa<b id="ecFase">—</b><i class="mc-ec-sub" id="ecGrade">—</i></span>
+          <span>Drawdown<b id="ecDD">—</b><i class="mc-ec-sub" id="ecDDsub">—</i></span>
+          <span><span id="ecRiscoLbl">Risco / Teto</span><b id="ecRisco">—</b></span>
+          <span><span id="ecAlavLbl">Alav. / Teto</span><b id="ecAlav">—</b></span>
         </div>
       </div>
-      <div class="card" id="objectiveCard" data-layout-card="exec-posture" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full"></div>
 
       <!-- JP WEALTH GAUGE — Base semicircular 180° (variante 1a do design).
            Substitui a coluna de termômetros; a lógica de cálculo permanece
@@ -185,70 +190,6 @@
            fixas de exemplo do mockup. O tick externo no gauge de alavancagem é
            o teto da fase vigente: informação normativa que o marcador do
            termômetro carregava e que não pode se perder na troca visual. -->
-      <div class="card thermo-card" data-layout-card="exec-thermometers" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large">
-        <h2 style="align-self:flex-start">Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
-        <!-- Variante 1b do design ("A — circular compacto"): anel de 270° com
-             preenchimento na cor da zona vigente, ponto orbitando na ponta do
-             preenchimento e zonas finas por fora do anel. Entrada animada: o
-             preenchimento e o ponto nascem em 0 e varrem até o valor
-             (semente em 03-main-render.js; prefers-reduced-motion desliga). -->
-        <div class="jpwg-row">
-          <div class="jpwg-unit">
-            <div class="jpwg-gauge jpwg-ring" id="gaugeDD" role="meter" aria-label="Drawdown operacional" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-              <svg viewBox="0 0 200 200">
-                <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
-                <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
-              </svg>
-              <div class="jpwg-ring-center">
-                <span class="jpwg-value" data-jpwg-value>—</span>
-                <span class="jpwg-ring-zonekey" data-jpwg-zonekey>—</span>
-                <span class="jpwg-ring-lbl">DD</span>
-              </div>
-            </div>
-            <div class="jpwg-pill-wrap">
-              <span class="jpwg-pill"><span class="jpwg-pill-dot" data-jpwg-pill-dot></span><span data-jpwg-pill-text>—</span></span>
-              <span class="jpwg-range" data-jpwg-range>DD</span>
-            </div>
-          </div>
-          <div class="jpwg-unit">
-            <div class="jpwg-gauge jpwg-ring" id="gaugeAlav" role="meter" aria-label="Alavancagem carregada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-              <svg viewBox="0 0 200 200">
-                <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
-                <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <!-- Tick externo do teto da fase: informação normativa herdada
-                     do marcador do termômetro antigo. -->
-                <line class="jpwg-ceiling" data-jpwg-ceiling x1="100" y1="6" x2="100" y2="14" transform="rotate(225 100 100)"/>
-                <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
-              </svg>
-              <div class="jpwg-ring-center">
-                <span class="jpwg-value" data-jpwg-value>—</span>
-                <span class="jpwg-ring-zonekey" data-jpwg-zonekey>—</span>
-                <span class="jpwg-ring-lbl">ALAV · 0–4X</span>
-              </div>
-            </div>
-            <div class="jpwg-pill-wrap">
-              <span class="jpwg-pill"><span class="jpwg-pill-dot" data-jpwg-pill-dot></span><span data-jpwg-pill-text>—</span></span>
-              <span class="jpwg-range" data-jpwg-range>ALAV · teto no tick externo</span>
-            </div>
-          </div>
-        </div>
-        <p class="expl" style="font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint); margin-top:6px; align-self:flex-start; line-height:1.4">Alavancagem real utilizada agora (nocional aberto ÷ saldo inicial). O tick externo é o teto da fase vigente.</p>
-        <div class="thermo-zone-labels thermo-legend" id="thermoZoneLabels">
-          <div class="tz f4">F4 · ABISMO 12–15</div>
-          <div class="tz f3">F3 · SOBREVIV. 8–12</div>
-          <div class="tz f2">F2 · DESACEL. 4–8</div>
-          <div class="tz f1">F1 · ATAQUE 0–4</div>
-        </div>
-      </div>
 
       <!-- METRICS + STATUS — bloco único (banners condicionais de altura variável) -->
       <div id="execMetricsPanel" data-layout-card="exec-metrics-banners" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
@@ -279,17 +220,6 @@
         </div>
       </div>
 
-      <div class="card" id="execCoherenceCard" data-layout-card="exec-coherence" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large" style="padding:16px">
-        <h2>Coerência de Alavancagem</h2>
-        <div class="gauge">
-          <div class="lbl"><span class="name">Carregada vs. Teto da Fase</span><span class="val" id="gAlavVal">—</span></div>
-          <div class="track"><div class="bar" id="gAlavBar" style="width:0%; background:var(--f1)"></div></div>
-        </div>
-        <div class="gauge">
-          <div class="lbl"><span class="name">Risco Aberto vs. Teto da Fase</span><span class="val" id="gRiscoVal">—</span></div>
-          <div class="track"><div class="bar" id="gRiscoBar" style="width:0%; background:var(--f1)"></div></div>
-        </div>
-      </div>
       <div class="card" id="execVrmCard" data-layout-card="exec-vrm" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" style="padding:16px">
         <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
         <div class="metrics" style="grid-template-columns:1fr 1fr">
@@ -317,14 +247,8 @@
         <div class="lifo-body">
           <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
           <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
-          <div class="metric" style="border-color:var(--f1)"><div class="k">Lucro Técnico</div><div class="v sm" id="lLucroTec" style="color:var(--f1)">—</div><div class="sub">informativo; não amplia teto absoluto</div></div>
-          <div class="metric"><div class="k">Resultado Fechado <span class="art" style="text-transform:none">(op. atual)</span></div><div class="v sm" id="lNetOp">—</div></div>
-          <div class="metric"><div class="k">Lucro Arquivado</div><div class="v sm" id="lLucroArq">—</div></div>
-          <div class="metric"><div class="k">Perda Arquivada</div><div class="v sm" id="lPerdaArq">—</div></div>
-          <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
           <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
-          <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
         </div>
         <div style="padding:0 16px 14px">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
@@ -340,6 +264,23 @@
         <div style="padding:0 16px 16px">
           <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
         </div>
+
+        <!-- Fase 2C · §3.4: os quatro consolidados P1 (lote, risco, margem
+             estatutária e excesso a podar) ficam à vista; a leitura patrimonial
+             e os arquivados — seis tiles informativos — descem para P3, como no
+             protótipo ("Leitura patrimonial e arquivados ▾"). Nenhum tile foi
+             apagado e nenhum renderizador mudou: os IDs seguem os mesmos. -->
+        <details class="jp-p3">
+          <summary>Leitura patrimonial e arquivados</summary>
+          <div class="metrics">
+            <div class="metric" style="border-color:var(--f1)"><div class="k">Lucro Técnico</div><div class="v sm" id="lLucroTec" style="color:var(--f1)">—</div><div class="sub">informativo; não amplia teto absoluto</div></div>
+            <div class="metric"><div class="k">Resultado Fechado <span class="art" style="text-transform:none">(op. atual)</span></div><div class="v sm" id="lNetOp">—</div></div>
+            <div class="metric"><div class="k">Lucro Arquivado</div><div class="v sm" id="lLucroArq">—</div></div>
+            <div class="metric"><div class="k">Perda Arquivada</div><div class="v sm" id="lPerdaArq">—</div></div>
+            <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
+            <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
+          </div>
+        </details>
       </div>
     </div>
   </section>
@@ -417,36 +358,30 @@
   <!-- ================= 04 CONTAS ================= -->
   <section class="screen" id="contas">
     <div class="jp-widget-grid" id="contasWidgetGrid">
-    <div class="card" data-layout-card="contas-governance-note" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
-      <h2>Nota de Governança</h2>
-      <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+    <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <h2 style="display:flex; align-items:center; justify-content:space-between">
+        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
+        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
+      </h2>
+        <!-- Fase 2C: a Nota de Governança deixa de ser card próprio e vira
+             "governança ▾" no cabeçalho do Parque de Contas, como no protótipo.
+             A prosa é a MESMA — e segue também sob o mecanismo [i]/jpw_expl. -->
+        <details class="jp-p3">
+          <summary>governança</summary>
+          <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
         <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
         <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
         <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
         <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
         O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
       </p>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
-        <span class="jp-legacy-glyph" aria-hidden="true">🔒</span><svg class="jp-icon" aria-hidden="true"><use href="#i-lock"/></svg> O perfil de risco só pode ser escolhido <b style="color:var(--ink-dim)">uma vez</b>. Mudar depois exige senha — fricção deliberada contra decisão impulsiva, não criptografia: qualquer acesso ao DevTools do navegador contorna isso. O objetivo é te dar um segundo de pausa, não uma trava inquebrável.
-      </p>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
-        <span class="jp-legacy-glyph" aria-hidden="true">📌</span><svg class="jp-icon" aria-hidden="true"><use href="#i-pin"/></svg> <b style="color:var(--ink-dim)">Escopo (decisão do gestor, jul/2026):</b> este painel gerencia as <b style="color:var(--ink-dim)">operações da conta master</b>. O fator de correção por conta slave depende de cada conta e é gerido externamente (planilha da supervisão). A fórmula de replicação — Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil (Art. 10.1) — e os fatores de perfil do período (66/50/33%) aplicam-se às cópias/gestão patrimonial quando esse módulo for usado fora da operação master.
-      </p>
-      <div class="credential-warning">
-        Não armazene senha master neste sistema. Use apenas senha do investidor/somente leitura.
-      </div>
-    </div>
-    <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 style="display:flex; align-items:center; justify-content:space-between">
-        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
-        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
-      </h2>
+        </details>
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Conta / Plataforma</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Correção</th><th>Norm. V10</th><th>Fator Perfil</th><th>Lote vs Mestre</th><th></th></tr></thead>
         <tbody id="contasBody"></tbody>
       </table></div>
     </div>
-    <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+    <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
       <div class="field" style="max-width:240px">
         <label>Lote enviado pela mestre</label>
@@ -553,61 +488,6 @@
         <!-- Espelho compacto do gauge — mesma variante 1b do Execution Board
              ("A — circular compacto"), em anel menor. Mesmos valores canônicos
              do compute(), preenchidos em 03-main-render.js. -->
-        <div class="card gd-thermo-card" data-layout-card="thermometers" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
-          <h2>Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
-          <!-- Padrão de integração do design: faixa horizontal em que cada
-               indicador vive no PRÓPRIO sub-card — rótulo em cima, gauge no
-               meio, classificação embaixo — e uma nota de rodapé separada por
-               filete. Em telas estreitas a faixa quebra em coluna e cada
-               sub-card mantém a largura mínima; o gauge escala por viewBox. -->
-          <div class="gd-thermo-group">
-            <div class="jpwg-subcard">
-              <span class="jpwg-subcard-lbl">Drawdown</span>
-              <div class="jpwg-semi" id="gdGaugeDD" role="meter" aria-label="Drawdown operacional" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-                <svg viewBox="0 0 200 106">
-                  <path class="jpwg-semi-track" d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <path class="jpwg-semi-fill" data-jpwg-arc d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <g class="jpwg-orbit" data-jpwg-needle><polygon data-jpwg-needle-tip points="100,27 95.2,12 104.8,12"/></g>
-                </svg>
-                <div class="jpwg-semi-center">
-                  <span class="jpwg-value" data-jpwg-value>—</span>
-                  <span class="jpwg-semi-scale" data-jpwg-scale>—</span>
-                </div>
-              </div>
-              <span class="jpwg-subcard-zone" data-jpwg-subzone>—</span>
-            </div>
-            <div class="jpwg-subcard">
-              <span class="jpwg-subcard-lbl">Alavancagem</span>
-              <div class="jpwg-semi" id="gdGaugeAlav" role="meter" aria-label="Alavancagem carregada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-                <svg viewBox="0 0 200 106">
-                  <path class="jpwg-semi-track" d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <path class="jpwg-semi-fill" data-jpwg-arc d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <!-- Teto da fase: informação normativa herdada do marcador do
-                       termômetro; no semicírculo é um tick radial externo. -->
-                  <line class="jpwg-ceiling" data-jpwg-ceiling x1="100" y1="8" x2="100" y2="17" transform="rotate(-90 100 100)"/>
-                  <g class="jpwg-orbit" data-jpwg-needle><polygon data-jpwg-needle-tip points="100,27 95.2,12 104.8,12"/></g>
-                </svg>
-                <div class="jpwg-semi-center">
-                  <span class="jpwg-value" data-jpwg-value>—</span>
-                  <span class="jpwg-semi-scale">DE 4X</span>
-                </div>
-              </div>
-              <span class="jpwg-subcard-zone" data-jpwg-subzone>—</span>
-            </div>
-          </div>
-          <p class="jpwg-strip-note">Mesma fonte do Execution Board. As zonas do drawdown são as faixas da matriz quadrifásica vigente; o tick externo da alavancagem é o teto da fase.</p>
-        </div>
-        <div class="card gd-coherence-card" data-layout-card="leverage-coherence" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large">
-          <h2>Coerência de Alavancagem</h2>
-          <div class="gd-gauge">
-            <div class="gd-gauge-lbl"><span>Carregada vs. Teto</span><span id="gdCoherenceAlavVal">—</span></div>
-            <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceAlavBar"></div></div>
-          </div>
-          <div class="gd-gauge">
-            <div class="gd-gauge-lbl"><span>Risco Aberto vs. Teto</span><span id="gdCoherenceRiscoVal">—</span></div>
-            <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceRiscoBar"></div></div>
-          </div>
-        </div>
         <!-- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5).
              O dial semicircular saiu: era a terceira geometria de leitura da
              mesma grandeza e nao cabia ao lado do Status do Sistema. No lugar,
@@ -641,24 +521,6 @@
 
         <!-- Faixa de postura/conformidade — só estados reais (getOperationalClearance,
              PHASE_OBJECTIVE, getOnboardingCompletionState). Nenhuma checagem inventada. -->
-        <div class="card gd-posture-row" id="gdPostureRow" data-layout-card="posture" data-layout-allowed-zones="main sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full">
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureFaseLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureFaseSub">—</div>
-          </div>
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureRiscoLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureRiscoSub">—</div>
-          </div>
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureAlavLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureAlavSub">—</div>
-          </div>
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureGovLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureGovSub">—</div>
-          </div>
-        </div>
 
         <!-- Notícias de alto impacto do dia (15-ff-news.js) — dado público do
              Forex Factory via repositório alimentador jp-wealth-news-feed
@@ -696,18 +558,6 @@
         </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
-        <div class="card gd-context-card" data-layout-card="profile-context" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
-          <div class="gd-card-label">Perfil e Contexto</div>
-          <dl class="gd-context-list">
-            <div><dt>Perfil</dt><dd id="gdCtxProfile">—</dd></div>
-            <div><dt>Fase Atual</dt><dd id="gdCtxFase">—</dd></div>
-            <div><dt>Período</dt><dd id="gdCtxPeriod">—</dd></div>
-            <div><dt>Equity</dt><dd id="gdCtxEquity">—</dd></div>
-            <div><dt>Drawdown Operacional</dt><dd id="gdCtxDD">—</dd></div>
-            <div><dt>Alavancagem</dt><dd id="gdCtxAlav">—</dd></div>
-          </dl>
-          <button type="button" class="gd-context-cta" data-dash-go="params">Ver parâmetros do perfil <span aria-hidden="true">›</span></button>
-        </div>
         <!-- #onboardingIncompleteBanner (data-layout-card="onboarding-alert")
              entra aqui (reposicionado, não clonado) via relocação JS, só sob
              data-shell="global-dashboard". Sem a flag continua no topo de
@@ -761,47 +611,53 @@
                grade. Em 2x2 as celulas cairiam para ~98px e truncariam — a mesma
                falha ja medida na faixa de metricas. `full` ja era tamanho
                permitido (data-widget-allowed-sizes), nao e estado novo. -->
+          <!-- COCKPIT OPERACIONAL — fidelidade ao protótipo JP Wealth - Redesign.dc.html
+               (Fase 2C). Geometria medida no protótipo a 1440: card 1361x300, grid de
+               DUAS colunas 527|738 com gap 32 e padding 28/32; a coluna direita traz os
+               quatro fatos em 2x2 (célula 363x116, gap 12). Aqui as colunas são
+               proporcionais (41.7% / 58.3%) porque o cockpit vive na coluna principal
+               de 894px do App, não na largura cheia de 1361 do protótipo. -->
           <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
-            <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
-            <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
-            <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-            <!-- Quatro fatos operacionais. Substitui a linha de texto anterior
-                 (Fase/Risco/Alavancagem), preservando o mesmo destino de clique
-                 (data-dash-scroll="governanca") e o mesmo chevron. Cada celula e
-                 ESPELHO DE LEITURA: valor + escala + meta, sem gauge, sem dial,
-                 sem calculo novo. O valor carrega SO o numero corrente (max ~7
-                 caracteres); teto e contexto vao para a meta — foi a
-                 concatenacao "$320 / $400" no valor que truncou a 960px. -->
-            <div class="mc-cockpit-facts" id="mcCockpitFacts" data-dash-scroll="governanca">
-              <div class="mc-cockpit-grid">
-                <div class="mc-fact" id="mcFactFase">
-                  <span class="mc-fact-k">Fase</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-seg" data-fact-seg-wrap aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
-                <div class="mc-fact" id="mcFactDD">
-                  <span class="mc-fact-k">Drawdown</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
-                <div class="mc-fact" id="mcFactRisco">
-                  <span class="mc-fact-k">Risco Aberto</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
-                <div class="mc-fact" id="mcFactAlav">
-                  <span class="mc-fact-k">Alavancagem</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
+            <div class="mc-cockpit-col">
+              <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Estado Operacional</div>
+              <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
+              <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
+              <!-- MOTIVOS: elemento já existente, alimentado por
+                   renderOperationalClearance; oculto quando reasons vem vazio. -->
+              <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+              <!-- DUAS ações, como o protótipo: a primária muda com o veredito, a
+                   secundária é sempre o caminho para o Execution Board. -->
+              <div class="mc-cockpit-acoes">
+                <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction">—</button>
+                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="exec">Abrir Execution Board</button>
               </div>
-              <span class="mc-cockpit-chev" aria-hidden="true">›</span>
             </div>
-            <div class="mc-action" id="mcClearanceAction">—</div>
+            <div class="mc-cockpit-grid" id="mcCockpitFacts" data-dash-scroll="governanca">
+              <div class="mc-fact" id="mcFactFase">
+                <span class="mc-fact-k">Fase da Conta</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-seg" data-fact-seg-wrap aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+              <div class="mc-fact" id="mcFactDD">
+                <span class="mc-fact-k">Drawdown Operacional</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+              <div class="mc-fact" id="mcFactRisco">
+                <span class="mc-fact-k">Risco Aberto</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+              <div class="mc-fact" id="mcFactAlav">
+                <span class="mc-fact-k">Alavancagem Carregada</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+            </div>
           </div>
           <div class="jp-hero-actions">
             <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec">Abrir Execution Board</button>
@@ -819,12 +675,6 @@
                visíveis: em `medium` o CSS já os arranja em 2×2
                ([data-widget-size="medium"].mc-metric-strip em app.css). Nada é
                ocultado — só reorganizado. `allowed-sizes` segue "medium full". -->
-          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
-          </div>
         </div>
 
         <div class="jp-slide" data-slide="2" hidden>
@@ -869,7 +719,6 @@
       <p class="jp-section-eyebrow">Governança e prontidão</p>
       <h2 class="jp-section-title">Por que este é o estado?</h2>
       <p class="jp-section-lead">Fatos apurados pelo Operational Clearance a partir do estado vigente. As demais métricas de governança ficam no terceiro slide do hero.</p>
-      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
     </div>
 
     <!-- SEÇÃO 5 · Análises complementares -->
@@ -913,7 +762,7 @@
   <!-- ================= 07 CONTABILIDADE ================= -->
   <section class="screen" id="contab">
     <div class="jp-widget-grid" id="contabWidgetGrid">
-    <div class="card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
+    <div class="card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Período &amp; Metas <span class="art">perfil de risco · programação · meta diária</span></h2>
       <div id="acctPeriodSummary"></div>
       <button class="reset-btn" id="acctPeriodToggle" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">▸ Ver / editar Período &amp; Metas</button>
@@ -936,13 +785,16 @@
     </div>
     <div class="card" data-layout-card="contab-simulation" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
       <h2>Simulação Patrimonial <span class="art">projeção estatística educativa pelo perfil ativo · não é promessa de retorno</span></h2>
-      <div id="acctSimWrap"></div>
+      <details class="jp-p3">
+            <summary>Simulação patrimonial (MEI-JP)</summary>
+            <div id="acctSimWrap"></div>
+          </details>
     </div>
     <div class="card" data-layout-card="contab-cycle-pace" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium">
       <h2>Ritmo do Ciclo <span class="art">dias à frente ou atrás do ideal (K8)</span></h2>
       <div id="acctPace"></div>
     </div>
-    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
       <div class="params-grid">
         <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
@@ -955,13 +807,16 @@
         <span class="fx-status" id="ldStatus"></span>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
       <div id="rvpChart" style="width:100%"></div>
     </div>
     <div class="card" data-layout-card="contab-daily-projection" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
       <h2>Projeção Diária · Ideal vs Real <span class="art">juros compostos na meta diária · Σ semanal</span></h2>
-      <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+      <details class="jp-p3">
+            <summary>Projeção diária · ideal vs real</summary>
+            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+          </details>
     </div>
     <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
       <h2>Lançamentos <span class="art">mais recentes primeiro</span></h2>

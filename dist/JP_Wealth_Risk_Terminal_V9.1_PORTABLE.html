@@ -4153,88 +4153,87 @@
        muleta morreu junto com o painel decorativo. */
   }
 
-  /* ---------- COCKPIT · faixa dos quatro fatos (JPW-789ABC-B2) ----------
-     Substitui a antiga .mc-clearance-facts (linha de texto Fase/Risco/Alav).
-     Idioma de terminal financeiro: numero grande, escala fina, contexto pequeno.
-     Sem gauge, sem dial, sem termometro — a barra de 4px E a representacao. */
-  html[data-shell="global-dashboard"] .mc-cockpit-facts{
-    display:flex; align-items:center; gap:var(--jp-space-4);
-    margin-top:24px; padding-top:20px;
-    border-top:1px solid var(--jp-border); cursor:pointer;
-    container-type:inline-size; container-name:jpwcock;
+  /* ---------- COCKPIT OPERACIONAL (Fase 2C — fiel ao protótipo) ----------
+     Medidas tiradas do JP Wealth - Redesign.dc.html a 1440: card 1361×300,
+     grid 527|738 (41.7% / 58.3%) com gap 32 e padding 28/32; fatos 2×2 com
+     gap 12; célula 363×116, padding 14/16, fundo panel-2, borda line, radius 10;
+     barra 5px radius 3; veredito 34px/700 sans, lh 1.12, ls -.02em; valor 22px
+     mono 700 COLORIDO pelo estado; meta 10px ink-faint.
+     As colunas são proporcionais porque o cockpit ocupa a coluna principal do
+     App (894px), não a largura cheia de 1361 do protótipo. */
+  html[data-shell="global-dashboard"] #mcClearanceCard{
+    display:grid; grid-template-columns:41.7fr 58.3fr; gap:32px;
+    align-items:start; padding:28px 32px;
   }
+  html[data-shell="global-dashboard"] .mc-cockpit-col{min-width:0}
+  /* O veredito cai de ~58px para 34px: a 894px de largura ele divide a linha
+     com os fatos e deixou de ser a única coisa da faixa. */
+  html[data-shell="global-dashboard"] #mcClearanceCard .mc-clearance-title{
+    font-family:var(--jp-font-ui); font-size:34px; font-weight:700;
+    line-height:1.12; letter-spacing:-.02em; color:var(--mc);
+    margin:6px 0 8px; max-width:20ch;
+  }
+  html[data-shell="global-dashboard"] #mcClearanceCard .mc-clearance-sub{
+    font-size:12.5px; line-height:1.5; color:var(--jp-ink-muted); max-width:46ch;
+  }
+  html[data-shell="global-dashboard"] .mc-cockpit-acoes{
+    display:flex; flex-wrap:wrap; gap:var(--jp-space-2); margin-top:var(--jp-space-4);
+  }
+  /* Fatos 2×2 */
   html[data-shell="global-dashboard"] .mc-cockpit-grid{
-    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:var(--jp-space-4); flex:1; min-width:0;
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px; min-width:0; cursor:pointer;
   }
-  html[data-shell="global-dashboard"] .mc-cockpit-chev{
-    color:var(--jp-ink-muted); font-size:16px; flex:none;
-  }
-  /* A celula. min-width:0 em toda ela e no valor: sem isso o texto define a
-     largura da coluna e o grid estoura em vez de comprimir (mesma armadilha do
-     kicker relatada no achado colateral 4 do handoff). */
+  /* A célula é CARD, com fundo e borda próprios — foi assim que o protótipo a
+     desenhou; sem isso os quatro fatos flutuam soltos sobre o cockpit. */
   html[data-shell="global-dashboard"] .mc-fact{
-    display:flex; flex-direction:column; gap:6px; min-width:0;
+    display:flex; flex-direction:column; gap:5px; min-width:0;
+    background:var(--jp-surface-inset); border:1px solid var(--jp-border);
+    border-radius:var(--jp-radius-md); padding:14px 16px;
   }
   html[data-shell="global-dashboard"] .mc-fact-k{
     font-family:var(--jp-font-ui); font-size:9.5px; letter-spacing:.04em;
     text-transform:uppercase; color:var(--jp-ink-muted);
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  /* O valor carrega SO o numero corrente (max ~7 caracteres): "FASE 1",
-     "3,20%", "$320", "1,62x". Teto e contexto vivem na meta. */
+  /* Valor colorido pelo estado (o protótipo pinta o número, não só a barra). */
   html[data-shell="global-dashboard"] .mc-fact-v{
-    font-family:var(--mono); font-size:22px; font-weight:700; line-height:1.1;
-    color:var(--jp-ink); font-variant-numeric:tabular-nums; min-width:0;
+    font-family:var(--mono); font-size:22px; font-weight:700; line-height:1.15;
+    font-variant-numeric:tabular-nums; min-width:0; color:var(--jp-ink);
   }
   html[data-shell="global-dashboard"] .mc-fact-meta{
-    font-family:var(--jp-font-ui); font-size:9.5px; line-height:1.35;
-    color:var(--jp-ink-muted);
+    font-family:var(--jp-font-ui); font-size:10px; line-height:1.35;
+    color:var(--ink-faint);
   }
-  /* Trilho + preenchimento + marcador de teto. O marcador e um tick de 2px que
-     NUNCA sai do trilho; estouro de teto e dito por cor e por texto na meta,
-     jamais por transbordo geometrico. */
   html[data-shell="global-dashboard"] .mc-fact-track{
-    position:relative; height:4px; border-radius:2px;
-    background:var(--jp-surface-inset); overflow:hidden;
+    position:relative; height:5px; border-radius:3px;
+    background:var(--jp-border); overflow:hidden;
   }
   html[data-shell="global-dashboard"] .mc-fact-fill{
-    display:block; height:100%; width:0; border-radius:2px;
+    display:block; height:100%; width:0; border-radius:3px;
     background:var(--jp-ink-muted); transition:width .3s ease;
   }
   html[data-shell="global-dashboard"] .mc-fact-mark{
-    position:absolute; top:-2px; width:2px; height:8px; border-radius:1px;
+    position:absolute; top:-2px; width:2px; height:9px; border-radius:1px;
     background:var(--jp-ink); opacity:.55;
   }
-  /* Fase e categorica: quatro segmentos, o vigente aceso. Nao ha "percentual
-     de fase" — inventar uma barra continua aqui seria inventar dado. */
   html[data-shell="global-dashboard"] .mc-fact-seg{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:3px; height:4px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:3px; height:5px;
   }
   html[data-shell="global-dashboard"] .mc-fact-seg i{
-    display:block; border-radius:2px; background:var(--jp-surface-inset);
+    display:block; border-radius:3px; background:var(--jp-border);
   }
-  /* Estado de excecao. A COR do valor nao e fixada aqui de proposito: quem a
-     define e o JS, com o MESMO token da barra, para numero e escala nunca
-     discordarem (a regra vigente de gRiscoBar usa --f3 e a de gAlavBar usa
-     --f2; fixar --f4 aqui criaria um terceiro dialeto). O que o CSS garante e
-     o peso da meta — porque a cor nunca pode ser o unico canal (WCAG 1.4.1):
-     em excecao a meta diz "ACIMA DO TETO" por escrito. */
-  html[data-shell="global-dashboard"] .mc-fact[data-over="1"] .mc-fact-meta{
-    font-weight:600;
-  }
+  /* A cor nunca é o único canal (WCAG 1.4.1): a exceção é dita por escrito na
+     meta ("ACIMA DO TETO"); o peso apenas reforça. */
+  html[data-shell="global-dashboard"] .mc-fact[data-over="1"] .mc-fact-meta{font-weight:600}
 
-  /* 4x1 -> 2x2 por largura da FAIXA, nao do viewport. Limiar em 660px de
-     content-box = 4 celulas de 165px minimos + 3 gaps de 16. Abaixo disso as
-     celulas ficariam estreitas demais para o valor de 22px. */
-  @container jpwcock (max-width:659px){
-    html[data-shell="global-dashboard"] .mc-cockpit-grid{
-      grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--jp-space-5) var(--jp-space-4);
-    }
+  /* Abaixo de 1100px de conteúdo o cockpit empilha: veredito em cima, fatos
+     2×2 embaixo — a coluna de 41.7% ficaria estreita demais para o veredito. */
+  @media(max-width:1279px){
+    html[data-shell="global-dashboard"] #mcClearanceCard{grid-template-columns:1fr; gap:20px}
   }
-  /* Faixa muito estreita (mobile): o valor cede 3px para caber sem truncar. */
-  @container jpwcock (max-width:300px){
-    html[data-shell="global-dashboard"] .mc-fact-v{font-size:19px}
+  @media(max-width:560px){
+    html[data-shell="global-dashboard"] .mc-cockpit-grid{grid-template-columns:1fr}
   }
 
   /* Faixa de 4 métricas — mesmos dFase/dDD/mcMiniRisco/dAlav, só moldura nova */
@@ -4260,21 +4259,6 @@
   html[data-shell="global-dashboard"] .gd-card-label{
     font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600; letter-spacing:.04em;
     text-transform:uppercase; color:var(--jp-ink-muted); margin-bottom:12px;
-  }
-  html[data-shell="global-dashboard"] .gd-context-list{
-    display:flex; flex-direction:column; gap:9px; margin:0 0 14px;
-  }
-  html[data-shell="global-dashboard"] .gd-context-list > div{display:flex; justify-content:space-between; gap:12px}
-  html[data-shell="global-dashboard"] .gd-context-list dt{
-    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:400; color:var(--jp-ink-muted); margin:0;
-  }
-  html[data-shell="global-dashboard"] .gd-context-list dd{
-    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:700; color:var(--jp-ink); margin:0;
-  }
-  html[data-shell="global-dashboard"] .gd-context-cta{
-    display:flex; justify-content:space-between; align-items:center; width:100%;
-    background:transparent; border:0; border-top:1px solid var(--jp-border); padding-top:12px;
-    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:600; color:var(--jp-action); cursor:pointer;
   }
   html[data-shell="global-dashboard"] .gd-quick-nav{display:flex; flex-direction:column}
   html[data-shell="global-dashboard"] .gd-quick-nav button{
@@ -4414,7 +4398,6 @@
      pelos gauges .jpwg-semi dentro de sub-cards; o grupo virou a faixa. */
   /* Faixa horizontal de indicadores: quebra em coluna quando não couberem os
      dois sub-cards com sua largura mínima. */
-  html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; flex-wrap:wrap; gap:14px; align-items:stretch; margin-top:6px}
 
   html[data-shell="global-dashboard"] .gd-gauge{margin-bottom:16px}
   html[data-shell="global-dashboard"] .gd-gauge:last-child{margin-bottom:0}
@@ -4426,11 +4409,6 @@
   html[data-shell="global-dashboard"] .gd-gauge-track{height:8px; border-radius:4px; background:var(--jp-surface-2, var(--gd-surface-subtle))}
   html[data-shell="global-dashboard"] .gd-gauge-bar{height:100%; width:0; border-radius:4px; background:var(--jp-success); transition:width .3s ease}
 
-  html[data-shell="global-dashboard"] .gd-vrm-main{display:flex; align-items:center; gap:14px; margin-bottom:12px}
-  html[data-shell="global-dashboard"] .gd-vrm-dial{
-    width:64px; height:32px; border-radius:64px 64px 0 0; flex:none;
-    background:conic-gradient(from 270deg at 50% 100%, var(--jp-border) 0turn, var(--jp-border) .5turn);
-  }
   html[data-shell="global-dashboard"] .gd-vrm-value{font-family:var(--jp-font-data); font-size:16px; font-weight:700; color:var(--jp-ink)}
   html[data-shell="global-dashboard"] .gd-vrm-regime{font-family:var(--jp-font-ui); font-size:10px; font-weight:600}
   html[data-shell="global-dashboard"] .gd-vrm-atr{display:flex; gap:10px}
@@ -4439,9 +4417,8 @@
   html[data-shell="global-dashboard"] .gd-vrm-atr .v{font-family:var(--jp-font-data); font-size:11px; font-weight:600; color:var(--jp-ink)}
 
   /* ---------- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5) ----------
-     .gd-vrm-main e .gd-vrm-dial acima ficaram sem uso quando o dial saiu do
-     markup; a limpeza de CSS órfão foi expressamente deixada para depois e
-     está registrada como pendência — não é esquecimento.
+     As regras órfãs do dial (.gd-vrm-main, .gd-vrm-dial) foram removidas na
+     Fase 2B, junto das dos cinco cards absorvidos.
      A barra NÃO tem estilo próprio: reusa .mc-fact-track/-fill/-mark do
      cockpit. Aqui só o que o contexto exige — o track nasce <span> (inline) e
      precisa virar bloco. */
@@ -4489,26 +4466,34 @@
      a folga num lugar só — mesma técnica do rodapé do Status.
      O respiro mínimo migra para padding: com `auto`, quando não há folga o
      margin resolve para 0 e o filete encostaria no texto acima. */
-  html[data-shell="global-dashboard"] .gd-vrm-atr-disc{margin-top:auto; padding-top:var(--jp-space-3)}
+  /* ---------- P3 · DISCLOSURE COMPARTILHADO (Fase 2C) ----------
+     Uma regra para todas as telas. O protótipo usa `▾` como mecanismo central
+     do P3 — explicação, metodologia e leitura informativa descem para cá;
+     dado operacional nunca. `<details>` nativo: teclado e leitor de tela vêm
+     de graça, sem JS. */
+  html[data-shell="global-dashboard"] .jp-p3{margin-top:var(--jp-space-3)}
+  html[data-shell="global-dashboard"] .jp-p3 > summary,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary{
     cursor:pointer; list-style:none;
     font-family:var(--jp-font-ui); font-size:10px; font-weight:600;
     color:var(--jp-action);
   }
+  html[data-shell="global-dashboard"] .jp-p3 > summary::-webkit-details-marker,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary::-webkit-details-marker{display:none}
+  html[data-shell="global-dashboard"] .jp-p3 > summary::before,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary::before{content:'▸ '}
+  html[data-shell="global-dashboard"] .jp-p3[open] > summary::before,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc[open] > summary::before{content:'▾ '}
+  html[data-shell="global-dashboard"] .jp-p3 > summary:focus-visible,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary:focus-visible{
     outline:2px solid var(--jp-action); outline-offset:2px; border-radius:var(--jp-radius-sm);
   }
+  html[data-shell="global-dashboard"] .jp-p3 > *:not(summary){margin-top:var(--jp-space-2)}
+  /* O VRM ancora o seu no rodapé do card (a folga se junta num lugar só). */
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc{margin-top:auto; padding-top:var(--jp-space-3)}
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc .gd-vrm-atr{margin-top:var(--jp-space-2)}
 
   /* ---------- Faixa de postura/conformidade — só estados reais ---------- */
-  html[data-shell="global-dashboard"] .gd-posture-row{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; padding:18px 22px;
-  }
-  html[data-shell="global-dashboard"] .gd-posture-label{font-family:var(--jp-font-ui); font-size:12px; font-weight:600; margin-bottom:3px}
-  html[data-shell="global-dashboard"] .gd-posture-sub{font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); line-height:1.4}
 
   /* ---------- Notícias de alto impacto (Forex Factory, 15-ff-news.js) ----------
      Só tokens existentes — nenhuma cor nova; claro/escuro herdados. */
@@ -5277,10 +5262,35 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .lbl{display:none}
   html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .n{display:inline}
 }
+
+  /* ---------- CONTAS · colunas derivadas em P3 (Fase 2C) ----------
+     O protótipo mantém na tabela apenas `LOTE VS MESTRE` — o número que se
+     opera — e manda Correção, Normalização V10 e Fator de Perfil para o
+     detalhe de cada linha. Aqui elas saem da leitura primária mas continuam
+     no DOM e acessíveis: o cálculo completo vive no `title` da própria célula
+     de Lote vs Mestre. Nenhum dado foi apagado e o renderizador não mudou de
+     contrato — só deixaram de disputar a largura da tabela.
+     Escopado ao shell novo: sem `data-shell`, a tabela antiga volta inteira. */
+  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(8),
+  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(9),
+  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(10),
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-corr,
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-fw,
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-pf{display:none}
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-lotevs{cursor:help}
+
+  /* ---------- PLANEJAMENTO FX · cartão único centrado (Fase 2C) ----------
+     O protótipo desenha o FX como UM cartão de 936px centrado numa área de
+     1425 (≈65%), não como faixa de largura cheia. O formulário de criação é
+     leitura primária; as três camadas já desceram para disclosure. */
+  html[data-shell="global-dashboard"] #fxplan > .card,
+  html[data-shell="global-dashboard"] #fxplan > section{
+    max-width:936px; margin-left:auto; margin-right:auto;
+  }
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '73f2769898b516eb';
+const JP_WEALTH_BUILD_ID = '5945ed5eecd7021e';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5441,14 +5451,19 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
         <div class="mc-ec-title" id="ecTitle">—</div>
         <div class="mc-ec-action"><span class="ak">Ação</span><span id="ecAcao">—</span></div>
+        <!-- Fase 2C: os quatro fatos do protótipo. Fase e Grade Ativa passam a
+             dividir a mesma célula (o protótipo rotula "FASE · GRADE ATIVA") e
+             entra DRAWDOWN, que faltava aqui e é o fato que os termômetros
+             removidos carregavam. Os tetos migram para o RÓTULO, como no
+             protótipo ("RISCO / TETO $400"), liberando o valor para o número
+             corrente. -->
         <div class="mc-ec-facts">
-          <span>Fase da Conta<b id="ecFase">—</b></span>
-          <span>Grade Ativa<b id="ecGrade">—</b></span>
-          <span>Risco Aberto / Teto<b id="ecRisco">—</b></span>
-          <span>Alav. Carregada / Teto<b id="ecAlav">—</b></span>
+          <span>Fase · Grade Ativa<b id="ecFase">—</b><i class="mc-ec-sub" id="ecGrade">—</i></span>
+          <span>Drawdown<b id="ecDD">—</b><i class="mc-ec-sub" id="ecDDsub">—</i></span>
+          <span><span id="ecRiscoLbl">Risco / Teto</span><b id="ecRisco">—</b></span>
+          <span><span id="ecAlavLbl">Alav. / Teto</span><b id="ecAlav">—</b></span>
         </div>
       </div>
-      <div class="card" id="objectiveCard" data-layout-card="exec-posture" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full"></div>
 
       <!-- JP WEALTH GAUGE — Base semicircular 180° (variante 1a do design).
            Substitui a coluna de termômetros; a lógica de cálculo permanece
@@ -5459,70 +5474,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            fixas de exemplo do mockup. O tick externo no gauge de alavancagem é
            o teto da fase vigente: informação normativa que o marcador do
            termômetro carregava e que não pode se perder na troca visual. -->
-      <div class="card thermo-card" data-layout-card="exec-thermometers" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large">
-        <h2 style="align-self:flex-start">Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
-        <!-- Variante 1b do design ("A — circular compacto"): anel de 270° com
-             preenchimento na cor da zona vigente, ponto orbitando na ponta do
-             preenchimento e zonas finas por fora do anel. Entrada animada: o
-             preenchimento e o ponto nascem em 0 e varrem até o valor
-             (semente em 03-main-render.js; prefers-reduced-motion desliga). -->
-        <div class="jpwg-row">
-          <div class="jpwg-unit">
-            <div class="jpwg-gauge jpwg-ring" id="gaugeDD" role="meter" aria-label="Drawdown operacional" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-              <svg viewBox="0 0 200 200">
-                <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
-                <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
-              </svg>
-              <div class="jpwg-ring-center">
-                <span class="jpwg-value" data-jpwg-value>—</span>
-                <span class="jpwg-ring-zonekey" data-jpwg-zonekey>—</span>
-                <span class="jpwg-ring-lbl">DD</span>
-              </div>
-            </div>
-            <div class="jpwg-pill-wrap">
-              <span class="jpwg-pill"><span class="jpwg-pill-dot" data-jpwg-pill-dot></span><span data-jpwg-pill-text>—</span></span>
-              <span class="jpwg-range" data-jpwg-range>DD</span>
-            </div>
-          </div>
-          <div class="jpwg-unit">
-            <div class="jpwg-gauge jpwg-ring" id="gaugeAlav" role="meter" aria-label="Alavancagem carregada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-              <svg viewBox="0 0 200 200">
-                <path class="jpwg-ring-zone" data-jpwg-zone="0" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f1)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="1" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f2)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="2" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f3)"/>
-                <path class="jpwg-ring-zone" data-jpwg-zone="3" d="M 40.6 159.4 A 84 84 0 1 1 159.4 159.4" stroke="var(--f4)"/>
-                <path class="jpwg-ring-track" d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <path class="jpwg-ring-fill" data-jpwg-arc d="M 51.92 148.08 A 68 68 0 1 1 148.08 148.08"/>
-                <!-- Tick externo do teto da fase: informação normativa herdada
-                     do marcador do termômetro antigo. -->
-                <line class="jpwg-ceiling" data-jpwg-ceiling x1="100" y1="6" x2="100" y2="14" transform="rotate(225 100 100)"/>
-                <g class="jpwg-orbit" data-jpwg-needle><circle data-jpwg-needle-tip cx="100" cy="16" r="3.6"/></g>
-              </svg>
-              <div class="jpwg-ring-center">
-                <span class="jpwg-value" data-jpwg-value>—</span>
-                <span class="jpwg-ring-zonekey" data-jpwg-zonekey>—</span>
-                <span class="jpwg-ring-lbl">ALAV · 0–4X</span>
-              </div>
-            </div>
-            <div class="jpwg-pill-wrap">
-              <span class="jpwg-pill"><span class="jpwg-pill-dot" data-jpwg-pill-dot></span><span data-jpwg-pill-text>—</span></span>
-              <span class="jpwg-range" data-jpwg-range>ALAV · teto no tick externo</span>
-            </div>
-          </div>
-        </div>
-        <p class="expl" style="font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint); margin-top:6px; align-self:flex-start; line-height:1.4">Alavancagem real utilizada agora (nocional aberto ÷ saldo inicial). O tick externo é o teto da fase vigente.</p>
-        <div class="thermo-zone-labels thermo-legend" id="thermoZoneLabels">
-          <div class="tz f4">F4 · ABISMO 12–15</div>
-          <div class="tz f3">F3 · SOBREVIV. 8–12</div>
-          <div class="tz f2">F2 · DESACEL. 4–8</div>
-          <div class="tz f1">F1 · ATAQUE 0–4</div>
-        </div>
-      </div>
 
       <!-- METRICS + STATUS — bloco único (banners condicionais de altura variável) -->
       <div id="execMetricsPanel" data-layout-card="exec-metrics-banners" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
@@ -5553,17 +5504,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         </div>
       </div>
 
-      <div class="card" id="execCoherenceCard" data-layout-card="exec-coherence" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large" style="padding:16px">
-        <h2>Coerência de Alavancagem</h2>
-        <div class="gauge">
-          <div class="lbl"><span class="name">Carregada vs. Teto da Fase</span><span class="val" id="gAlavVal">—</span></div>
-          <div class="track"><div class="bar" id="gAlavBar" style="width:0%; background:var(--f1)"></div></div>
-        </div>
-        <div class="gauge">
-          <div class="lbl"><span class="name">Risco Aberto vs. Teto da Fase</span><span class="val" id="gRiscoVal">—</span></div>
-          <div class="track"><div class="bar" id="gRiscoBar" style="width:0%; background:var(--f1)"></div></div>
-        </div>
-      </div>
       <div class="card" id="execVrmCard" data-layout-card="exec-vrm" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" style="padding:16px">
         <h2>VRM · Regime de Volatilidade <span class="art">ATR55/ATR660</span></h2>
         <div class="metrics" style="grid-template-columns:1fr 1fr">
@@ -5591,14 +5531,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div class="lifo-body">
           <div class="metric"><div class="k">Lote Total (aberto)</div><div class="v sm" id="lLote">—</div></div>
           <div class="metric"><div class="k">Risco Aberto Total</div><div class="v sm" id="lRisco">—</div><div class="sub">risco real das ordens abertas</div></div>
-          <div class="metric" style="border-color:var(--f1)"><div class="k">Lucro Técnico</div><div class="v sm" id="lLucroTec" style="color:var(--f1)">—</div><div class="sub">informativo; não amplia teto absoluto</div></div>
-          <div class="metric"><div class="k">Resultado Fechado <span class="art" style="text-transform:none">(op. atual)</span></div><div class="v sm" id="lNetOp">—</div></div>
-          <div class="metric"><div class="k">Lucro Arquivado</div><div class="v sm" id="lLucroArq">—</div></div>
-          <div class="metric"><div class="k">Perda Arquivada</div><div class="v sm" id="lPerdaArq">—</div></div>
-          <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
           <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
-          <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
         </div>
         <div style="padding:0 16px 14px">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
@@ -5614,6 +5548,23 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div style="padding:0 16px 16px">
           <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
         </div>
+
+        <!-- Fase 2C · §3.4: os quatro consolidados P1 (lote, risco, margem
+             estatutária e excesso a podar) ficam à vista; a leitura patrimonial
+             e os arquivados — seis tiles informativos — descem para P3, como no
+             protótipo ("Leitura patrimonial e arquivados ▾"). Nenhum tile foi
+             apagado e nenhum renderizador mudou: os IDs seguem os mesmos. -->
+        <details class="jp-p3">
+          <summary>Leitura patrimonial e arquivados</summary>
+          <div class="metrics">
+            <div class="metric" style="border-color:var(--f1)"><div class="k">Lucro Técnico</div><div class="v sm" id="lLucroTec" style="color:var(--f1)">—</div><div class="sub">informativo; não amplia teto absoluto</div></div>
+            <div class="metric"><div class="k">Resultado Fechado <span class="art" style="text-transform:none">(op. atual)</span></div><div class="v sm" id="lNetOp">—</div></div>
+            <div class="metric"><div class="k">Lucro Arquivado</div><div class="v sm" id="lLucroArq">—</div></div>
+            <div class="metric"><div class="k">Perda Arquivada</div><div class="v sm" id="lPerdaArq">—</div></div>
+            <div class="metric"><div class="k">Teto Risco Fase</div><div class="v sm" id="lTeto">—</div></div>
+            <div class="metric" style="border-color:var(--violet)"><div class="k">Margem Livre Informativa</div><div class="v sm" id="lMargem" style="color:var(--violet)">—</div><div class="sub">inclui lucro técnico; não autoriza violar teto</div></div>
+          </div>
+        </details>
       </div>
     </div>
   </section>
@@ -5691,36 +5642,30 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <!-- ================= 04 CONTAS ================= -->
   <section class="screen" id="contas">
     <div class="jp-widget-grid" id="contasWidgetGrid">
-    <div class="card" data-layout-card="contas-governance-note" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
-      <h2>Nota de Governança</h2>
-      <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+    <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <h2 style="display:flex; align-items:center; justify-content:space-between">
+        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
+        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
+      </h2>
+        <!-- Fase 2C: a Nota de Governança deixa de ser card próprio e vira
+             "governança ▾" no cabeçalho do Parque de Contas, como no protótipo.
+             A prosa é a MESMA — e segue também sob o mecanismo [i]/jpw_expl. -->
+        <details class="jp-p3">
+          <summary>governança</summary>
+          <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
         <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
         <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
         <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
         <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
         O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
       </p>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
-        <span class="jp-legacy-glyph" aria-hidden="true">🔒</span><svg class="jp-icon" aria-hidden="true"><use href="#i-lock"/></svg> O perfil de risco só pode ser escolhido <b style="color:var(--ink-dim)">uma vez</b>. Mudar depois exige senha — fricção deliberada contra decisão impulsiva, não criptografia: qualquer acesso ao DevTools do navegador contorna isso. O objetivo é te dar um segundo de pausa, não uma trava inquebrável.
-      </p>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-faint); line-height:1.6; margin-top:10px">
-        <span class="jp-legacy-glyph" aria-hidden="true">📌</span><svg class="jp-icon" aria-hidden="true"><use href="#i-pin"/></svg> <b style="color:var(--ink-dim)">Escopo (decisão do gestor, jul/2026):</b> este painel gerencia as <b style="color:var(--ink-dim)">operações da conta master</b>. O fator de correção por conta slave depende de cada conta e é gerido externamente (planilha da supervisão). A fórmula de replicação — Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil (Art. 10.1) — e os fatores de perfil do período (66/50/33%) aplicam-se às cópias/gestão patrimonial quando esse módulo for usado fora da operação master.
-      </p>
-      <div class="credential-warning">
-        Não armazene senha master neste sistema. Use apenas senha do investidor/somente leitura.
-      </div>
-    </div>
-    <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 style="display:flex; align-items:center; justify-content:space-between">
-        <span>Parque de Contas <span class="art">edite direto na tabela</span></span>
-        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
-      </h2>
+        </details>
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Conta / Plataforma</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Correção</th><th>Norm. V10</th><th>Fator Perfil</th><th>Lote vs Mestre</th><th></th></tr></thead>
         <tbody id="contasBody"></tbody>
       </table></div>
     </div>
-    <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+    <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
       <div class="field" style="max-width:240px">
         <label>Lote enviado pela mestre</label>
@@ -5827,61 +5772,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <!-- Espelho compacto do gauge — mesma variante 1b do Execution Board
              ("A — circular compacto"), em anel menor. Mesmos valores canônicos
              do compute(), preenchidos em 03-main-render.js. -->
-        <div class="card gd-thermo-card" data-layout-card="thermometers" data-layout-allowed-zones="main sidebar" data-widget-size="compact" data-widget-allowed-sizes="compact medium large">
-          <h2>Termômetros <span class="art">DD ativo do perfil · Alav. 0–4x</span></h2>
-          <!-- Padrão de integração do design: faixa horizontal em que cada
-               indicador vive no PRÓPRIO sub-card — rótulo em cima, gauge no
-               meio, classificação embaixo — e uma nota de rodapé separada por
-               filete. Em telas estreitas a faixa quebra em coluna e cada
-               sub-card mantém a largura mínima; o gauge escala por viewBox. -->
-          <div class="gd-thermo-group">
-            <div class="jpwg-subcard">
-              <span class="jpwg-subcard-lbl">Drawdown</span>
-              <div class="jpwg-semi" id="gdGaugeDD" role="meter" aria-label="Drawdown operacional" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-                <svg viewBox="0 0 200 106">
-                  <path class="jpwg-semi-track" d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <path class="jpwg-semi-fill" data-jpwg-arc d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <g class="jpwg-orbit" data-jpwg-needle><polygon data-jpwg-needle-tip points="100,27 95.2,12 104.8,12"/></g>
-                </svg>
-                <div class="jpwg-semi-center">
-                  <span class="jpwg-value" data-jpwg-value>—</span>
-                  <span class="jpwg-semi-scale" data-jpwg-scale>—</span>
-                </div>
-              </div>
-              <span class="jpwg-subcard-zone" data-jpwg-subzone>—</span>
-            </div>
-            <div class="jpwg-subcard">
-              <span class="jpwg-subcard-lbl">Alavancagem</span>
-              <div class="jpwg-semi" id="gdGaugeAlav" role="meter" aria-label="Alavancagem carregada" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="—">
-                <svg viewBox="0 0 200 106">
-                  <path class="jpwg-semi-track" d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <path class="jpwg-semi-fill" data-jpwg-arc d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <!-- Teto da fase: informação normativa herdada do marcador do
-                       termômetro; no semicírculo é um tick radial externo. -->
-                  <line class="jpwg-ceiling" data-jpwg-ceiling x1="100" y1="8" x2="100" y2="17" transform="rotate(-90 100 100)"/>
-                  <g class="jpwg-orbit" data-jpwg-needle><polygon data-jpwg-needle-tip points="100,27 95.2,12 104.8,12"/></g>
-                </svg>
-                <div class="jpwg-semi-center">
-                  <span class="jpwg-value" data-jpwg-value>—</span>
-                  <span class="jpwg-semi-scale">DE 4X</span>
-                </div>
-              </div>
-              <span class="jpwg-subcard-zone" data-jpwg-subzone>—</span>
-            </div>
-          </div>
-          <p class="jpwg-strip-note">Mesma fonte do Execution Board. As zonas do drawdown são as faixas da matriz quadrifásica vigente; o tick externo da alavancagem é o teto da fase.</p>
-        </div>
-        <div class="card gd-coherence-card" data-layout-card="leverage-coherence" data-layout-allowed-zones="main sidebar" data-widget-size="medium" data-widget-allowed-sizes="medium large">
-          <h2>Coerência de Alavancagem</h2>
-          <div class="gd-gauge">
-            <div class="gd-gauge-lbl"><span>Carregada vs. Teto</span><span id="gdCoherenceAlavVal">—</span></div>
-            <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceAlavBar"></div></div>
-          </div>
-          <div class="gd-gauge">
-            <div class="gd-gauge-lbl"><span>Risco Aberto vs. Teto</span><span id="gdCoherenceRiscoVal">—</span></div>
-            <div class="gd-gauge-track"><div class="gd-gauge-bar" id="gdCoherenceRiscoBar"></div></div>
-          </div>
-        </div>
         <!-- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5).
              O dial semicircular saiu: era a terceira geometria de leitura da
              mesma grandeza e nao cabia ao lado do Status do Sistema. No lugar,
@@ -5915,24 +5805,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
         <!-- Faixa de postura/conformidade — só estados reais (getOperationalClearance,
              PHASE_OBJECTIVE, getOnboardingCompletionState). Nenhuma checagem inventada. -->
-        <div class="card gd-posture-row" id="gdPostureRow" data-layout-card="posture" data-layout-allowed-zones="main sidebar" data-widget-size="full" data-widget-allowed-sizes="medium full">
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureFaseLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureFaseSub">—</div>
-          </div>
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureRiscoLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureRiscoSub">—</div>
-          </div>
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureAlavLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureAlavSub">—</div>
-          </div>
-          <div class="gd-posture-item">
-            <div class="gd-posture-label" id="gdPostureGovLbl">—</div>
-            <div class="gd-posture-sub" id="gdPostureGovSub">—</div>
-          </div>
-        </div>
 
         <!-- Notícias de alto impacto do dia (15-ff-news.js) — dado público do
              Forex Factory via repositório alimentador jp-wealth-news-feed
@@ -5970,18 +5842,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
-        <div class="card gd-context-card" data-layout-card="profile-context" data-layout-allowed-zones="sidebar" data-widget-size="medium" data-widget-allowed-sizes="compact medium large">
-          <div class="gd-card-label">Perfil e Contexto</div>
-          <dl class="gd-context-list">
-            <div><dt>Perfil</dt><dd id="gdCtxProfile">—</dd></div>
-            <div><dt>Fase Atual</dt><dd id="gdCtxFase">—</dd></div>
-            <div><dt>Período</dt><dd id="gdCtxPeriod">—</dd></div>
-            <div><dt>Equity</dt><dd id="gdCtxEquity">—</dd></div>
-            <div><dt>Drawdown Operacional</dt><dd id="gdCtxDD">—</dd></div>
-            <div><dt>Alavancagem</dt><dd id="gdCtxAlav">—</dd></div>
-          </dl>
-          <button type="button" class="gd-context-cta" data-dash-go="params">Ver parâmetros do perfil <span aria-hidden="true">›</span></button>
-        </div>
         <!-- #onboardingIncompleteBanner (data-layout-card="onboarding-alert")
              entra aqui (reposicionado, não clonado) via relocação JS, só sob
              data-shell="global-dashboard". Sem a flag continua no topo de
@@ -6035,47 +5895,53 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
                grade. Em 2x2 as celulas cairiam para ~98px e truncariam — a mesma
                falha ja medida na faixa de metricas. `full` ja era tamanho
                permitido (data-widget-allowed-sizes), nao e estado novo. -->
+          <!-- COCKPIT OPERACIONAL — fidelidade ao protótipo JP Wealth - Redesign.dc.html
+               (Fase 2C). Geometria medida no protótipo a 1440: card 1361x300, grid de
+               DUAS colunas 527|738 com gap 32 e padding 28/32; a coluna direita traz os
+               quatro fatos em 2x2 (célula 363x116, gap 12). Aqui as colunas são
+               proporcionais (41.7% / 58.3%) porque o cockpit vive na coluna principal
+               de 894px do App, não na largura cheia de 1361 do protótipo. -->
           <div class="card mc-hero mc-status-clear" id="mcClearanceCard" data-layout-card="operational-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
-            <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Operational Clearance <span class="art">veredito calculado do estado vigente · espelha o Execution Board</span></div>
-            <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
-            <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
-            <!-- Quatro fatos operacionais. Substitui a linha de texto anterior
-                 (Fase/Risco/Alavancagem), preservando o mesmo destino de clique
-                 (data-dash-scroll="governanca") e o mesmo chevron. Cada celula e
-                 ESPELHO DE LEITURA: valor + escala + meta, sem gauge, sem dial,
-                 sem calculo novo. O valor carrega SO o numero corrente (max ~7
-                 caracteres); teto e contexto vao para a meta — foi a
-                 concatenacao "$320 / $400" no valor que truncou a 960px. -->
-            <div class="mc-cockpit-facts" id="mcCockpitFacts" data-dash-scroll="governanca">
-              <div class="mc-cockpit-grid">
-                <div class="mc-fact" id="mcFactFase">
-                  <span class="mc-fact-k">Fase</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-seg" data-fact-seg-wrap aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
-                <div class="mc-fact" id="mcFactDD">
-                  <span class="mc-fact-k">Drawdown</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
-                <div class="mc-fact" id="mcFactRisco">
-                  <span class="mc-fact-k">Risco Aberto</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
-                <div class="mc-fact" id="mcFactAlav">
-                  <span class="mc-fact-k">Alavancagem</span>
-                  <span class="mc-fact-v" data-fact-v>—</span>
-                  <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
-                  <span class="mc-fact-meta" data-fact-meta>—</span>
-                </div>
+            <div class="mc-cockpit-col">
+              <div class="dh-kicker"><span class="dh-dot" id="mcClearanceDot"></span>Estado Operacional</div>
+              <div class="mc-clearance-title" id="mcClearanceTitle">—</div>
+              <div class="mc-clearance-sub" id="mcClearanceSub">—</div>
+              <!-- MOTIVOS: elemento já existente, alimentado por
+                   renderOperationalClearance; oculto quando reasons vem vazio. -->
+              <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+              <!-- DUAS ações, como o protótipo: a primária muda com o veredito, a
+                   secundária é sempre o caminho para o Execution Board. -->
+              <div class="mc-cockpit-acoes">
+                <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction">—</button>
+                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="exec">Abrir Execution Board</button>
               </div>
-              <span class="mc-cockpit-chev" aria-hidden="true">›</span>
             </div>
-            <div class="mc-action" id="mcClearanceAction">—</div>
+            <div class="mc-cockpit-grid" id="mcCockpitFacts" data-dash-scroll="governanca">
+              <div class="mc-fact" id="mcFactFase">
+                <span class="mc-fact-k">Fase da Conta</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-seg" data-fact-seg-wrap aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+              <div class="mc-fact" id="mcFactDD">
+                <span class="mc-fact-k">Drawdown Operacional</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+              <div class="mc-fact" id="mcFactRisco">
+                <span class="mc-fact-k">Risco Aberto</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+              <div class="mc-fact" id="mcFactAlav">
+                <span class="mc-fact-k">Alavancagem Carregada</span>
+                <span class="mc-fact-v" data-fact-v>—</span>
+                <span class="mc-fact-track" aria-hidden="true"><i class="mc-fact-fill" data-fact-fill></i><i class="mc-fact-mark" data-fact-mark></i></span>
+                <span class="mc-fact-meta" data-fact-meta>—</span>
+              </div>
+            </div>
           </div>
           <div class="jp-hero-actions">
             <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec">Abrir Execution Board</button>
@@ -6093,12 +5959,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
                visíveis: em `medium` o CSS já os arranja em 2×2
                ([data-widget-size="medium"].mc-metric-strip em app.css). Nada é
                ocultado — só reorganizado. `allowed-sizes` segue "medium full". -->
-          <div class="mc-metric-strip" id="mcMetricStrip" data-layout-card="metric-strip" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Fase Vigente</div><div class="v" id="dFase">FASE 1</div></div>
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Drawdown</div><div class="v" id="dDD" style="color:var(--violet)">0,00%</div></div>
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Risco Aberto / Teto</div><div class="v" id="mcMiniRisco">—</div></div>
-            <div class="mc-mini-card jp-metric-primary"><div class="k">Alav. Permitida</div><div class="v" id="dAlav">4,0x</div></div>
-          </div>
         </div>
 
         <div class="jp-slide" data-slide="2" hidden>
@@ -6143,7 +6003,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <p class="jp-section-eyebrow">Governança e prontidão</p>
       <h2 class="jp-section-title">Por que este é o estado?</h2>
       <p class="jp-section-lead">Fatos apurados pelo Operational Clearance a partir do estado vigente. As demais métricas de governança ficam no terceiro slide do hero.</p>
-      <ul class="mc-reasons" id="mcClearanceReasons"></ul>
     </div>
 
     <!-- SEÇÃO 5 · Análises complementares -->
@@ -6187,7 +6046,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <!-- ================= 07 CONTABILIDADE ================= -->
   <section class="screen" id="contab">
     <div class="jp-widget-grid" id="contabWidgetGrid">
-    <div class="card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
+    <div class="card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Período &amp; Metas <span class="art">perfil de risco · programação · meta diária</span></h2>
       <div id="acctPeriodSummary"></div>
       <button class="reset-btn" id="acctPeriodToggle" style="margin-top:12px; color:var(--violet); border-color:var(--violet)">▸ Ver / editar Período &amp; Metas</button>
@@ -6210,13 +6069,16 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     </div>
     <div class="card" data-layout-card="contab-simulation" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
       <h2>Simulação Patrimonial <span class="art">projeção estatística educativa pelo perfil ativo · não é promessa de retorno</span></h2>
-      <div id="acctSimWrap"></div>
+      <details class="jp-p3">
+            <summary>Simulação patrimonial (MEI-JP)</summary>
+            <div id="acctSimWrap"></div>
+          </details>
     </div>
     <div class="card" data-layout-card="contab-cycle-pace" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium">
       <h2>Ritmo do Ciclo <span class="art">dias à frente ou atrás do ideal (K8)</span></h2>
       <div id="acctPace"></div>
     </div>
-    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
       <div class="params-grid">
         <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
@@ -6229,13 +6091,16 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="fx-status" id="ldStatus"></span>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
       <div id="rvpChart" style="width:100%"></div>
     </div>
     <div class="card" data-layout-card="contab-daily-projection" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
       <h2>Projeção Diária · Ideal vs Real <span class="art">juros compostos na meta diária · Σ semanal</span></h2>
-      <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+      <details class="jp-p3">
+            <summary>Projeção diária · ideal vs real</summary>
+            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+          </details>
     </div>
     <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
       <h2>Lançamentos <span class="art">mais recentes primeiro</span></h2>
@@ -8548,12 +8413,10 @@ function renderHeaderReadout(c){
   const set=(id,txt)=>{ const e=$(id); if(e) e.textContent=txt; };
   const p=(S&&S.params)||{};
   // getActiveRiskProfile() é o acessor canônico (lê S.period.profile e cai em 'base').
-  try{ const pr=getActiveRiskProfile(); set('hdrProfile', (pr&&pr.name)||'—'); set('gdCtxProfile', (pr&&pr.name)||'—'); }
-  catch(_){ set('hdrProfile','—'); set('gdCtxProfile','—'); }
+  try{ const pr=getActiveRiskProfile(); set('hdrProfile', (pr&&pr.name)||'—'); }
+  catch(_){ set('hdrProfile','—'); }
   set('hdrPeriod', p.inicio ? fmtDateEU(p.inicio) : '—');
-  set('gdCtxPeriod', p.inicio ? fmtDateEU(p.inicio) : '—');
   set('hdrEquity', fmtMoney(p.saldoAtu||0));
-  set('gdCtxEquity', fmtMoney(p.saldoAtu||0));
   const ddEl=$('hdrDD');
   if(ddEl && c){
     ddEl.textContent=fmtPct(c.dd||0);
@@ -8563,9 +8426,6 @@ function renderHeaderReadout(c){
   // Espelho do painel "Perfil e Contexto" do Global Dashboard (Etapa 1) —
   // mesmos dados de c já usados em dFase/dAlav/hdrDD, só novos IDs de leitura.
   if(c){
-    set('gdCtxFase', c.fase.nome);
-    set('gdCtxDD', fmtPct(c.dd||0));
-    set('gdCtxAlav', fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav));
   }
 }
 function startHeaderClock(){
@@ -8705,15 +8565,10 @@ function render(){
   if(zoneEl && c.mScaled){
     zoneEl.innerHTML=[3,2,1,0].map(i=>`<div class="tz f${i+1}">${zn[i]} ${fmtPct(c.mScaled[i].ddmin)}–${fmtPct(c.mScaled[i].ddmax)}</div>`).join('');
   }
-  // Faixa de integração do Dashboard: variante C (semicírculo), como o design
-  // usa nesta faixa — mais rasa que o anel, para linha densa de KPI. Mesma
-  // função, mesmos valores; só a geometria muda (semi:true).
-  feedRing('gdGaugeDD',{semi:true, pct:ddPct, zones:ddZones, zi:c.fi, value:fmtPct(c.dd),
-    zoneKey:zn[c.fi], scaleText:'DE '+fmtPct(ddCeil),
-    ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
-  feedRing('gdGaugeAlav',{semi:true, pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi), value:fmtX(c.alavCar),
-    zoneKey:(alavAcima?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav)), ceilingPct:(c.tetoAlav/4)*100,
-    ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
+  // JPW-789ABC-B2, Fase 2B: os gauges gdGaugeDD/gdGaugeAlav do Dashboard saíram
+  // — a barra com marcador de teto dentro do cockpit É a representação agora.
+  // ddPct/alavPct/ddZones seguem calculados acima porque alimentam gaugeDD e
+  // gaugeAlav, que são do EXECUTION BOARD e não fazem parte deste bloco.
   // metrics
   $('mSaldo').textContent=fmtMoney(p.saldoAtu);
   $('mSaldoSub').textContent='inicial '+fmtMoney(p.saldoIni)+' — contábil, não move o termômetro'
@@ -8748,7 +8603,9 @@ function render(){
     $('quarantineTxt').textContent=`DD ${fmtPct(c.dd)} atingiu o limite ativo de ${fmtPct(c.mddScaled)} (Art. 3.10). Se for real, formalize a quarentena. Se foi erro de preenchimento (stop errado), corrija — este aviso some sozinho, nada fica travado.`;
     if(qbtn) qbtn.style.display='inline-block';
   } else { qb.style.display='none'; if(qbtn) qbtn.style.display='none'; }
-  renderObjective(c.fi);
+  // renderObjective saiu: seu alvo (#objectiveCard, na faixa de Postura do
+  // Execution Board) foi removido na Fase 2C. PHASE_OBJECTIVE continua vivo —
+  // agora alimenta a meta "postura ofensiva" da célula de Fase do cockpit.
   // arquivar operação: visível quando não há posição aberta e existe resultado fechado a consolidar
   const abtn=$('archiveOpBtn');
   if(abtn){
@@ -8792,20 +8649,11 @@ function render(){
     mmBanner.style.display='none';
   }
   // gauges
-  const alavPctW=Math.min(100,(c.alavCar/c.tetoAlav)*100);
-  $('gAlavVal').textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
-  const gAlavBar=$('gAlavBar'); gAlavBar.style.width=alavPctW+'%';
-  gAlavBar.style.background = c.alavCar>c.tetoAlav?'var(--f2)':FCOLORS[c.fi];
-  const riscoPctW=c.tetoRisco>0?Math.min(100,(c.riscoTotal/c.tetoRisco)*100):0;
-  $('gRiscoVal').textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
-  const gRiscoBar=$('gRiscoBar'); gRiscoBar.style.width=riscoPctW+'%';
-  gRiscoBar.style.background = c.riscoTotal>c.tetoRisco?'var(--f3)':FCOLORS[c.fi];
-  const gdCAv=$('gdCoherenceAlavVal'); if(gdCAv) gdCAv.textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
-  const gdCAb=$('gdCoherenceAlavBar');
-  if(gdCAb){ gdCAb.style.width=alavPctW+'%'; gdCAb.style.background=c.alavCar>c.tetoAlav?'var(--f2)':FCOLORS[c.fi]; }
-  const gdCRv=$('gdCoherenceRiscoVal'); if(gdCRv) gdCRv.textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
-  const gdCRb=$('gdCoherenceRiscoBar');
-  if(gdCRb){ gdCRb.style.width=riscoPctW+'%'; gdCRb.style.background=c.riscoTotal>c.tetoRisco?'var(--f3)':FCOLORS[c.fi]; }
+  // Fase 2C: a Coerência de Alavancagem saiu também do Execution Board — as duas
+  // barras já viraram as escalas dos fatos do cockpit, no Dashboard e aqui.
+  // JPW-789ABC-B2, Fase 2B: a Coerência de Alavancagem saiu — suas duas barras
+  // foram absorvidas pelas escalas dos fatos Risco e Alavancagem do cockpit,
+  // com as MESMAS fórmulas (alavPctW/riscoPctW) e as mesmas regras de cor.
   // VRM
   $('mVRM').textContent=c.vrm.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   $('mRegime').textContent=c.regime;
@@ -8879,10 +8727,8 @@ function render(){
   }
   const ls=$('lifoSem'); ls.textContent=c.sem; ls.style.color=c.semCls;
   $('lifoSug').innerHTML=c.sug;
-  // dashboard mirror
-  $('dFase').textContent=c.fase.nome;
-  $('dDD').textContent=fmtPct(c.dd);
-  $('dAlav').textContent=fmtX(c.tetoAlav);
+  // dashboard mirror — a faixa de métricas saiu na Fase 2B (os quatro fatos
+  // vivem no cockpit). #dStatus permanece: é de outro card, não da faixa.
   $('dStatus').textContent=c.status.split('—')[0].trim();
   // (grade única: a fase ativa é rotulada explicitamente em renderPhases; sem badge dinâmico por índice)
   // Camadas de veredito (UX de decisão): Operational Clearance (dash) + Execution Clearance (exec).
@@ -8951,32 +8797,32 @@ function renderOperationalClearance(c){
   if(r.reasons.length>3) items.push('<li>+'+(r.reasons.length-3)+' ponto(s) adicional(is) — detalhes no Execution Board.</li>');
   ul.innerHTML=items.join('');
   ul.style.display=items.length?'grid':'none';
-  $('mcClearanceAction').innerHTML='<span class="ak">Ação</span>'+esc(r.action);
+  // Ação primária como BOTÃO curto (o protótipo mostra "Resolver pendências"),
+  // com a orientação completa preservada no title para leitor de tela e hover.
+  // Os rótulos abaixo são rotulagem de UI derivada do texto de r.action que já
+  // existia por estado — nenhuma regra nova, nenhum destino novo.
+  const ACAO_CURTA={clear:'Executar dentro da fase', caution:'Revisar antes de operar',
+                    pending:'Resolver pendências', reduce:'Reduzir exposição',
+                    blocked:'Registrar na auditoria'};
+  const btnAcao=$('mcClearanceAction');
+  if(btnAcao){ btnAcao.textContent=ACAO_CURTA[r.status]||'Ver detalhes'; btnAcao.title=r.action; }
   // N2 — Mission Metrics (status executivos)
   const set=(id,txt)=>{ const e=$(id); if(e) e.textContent=txt; };
   const chip=(id,cls,txt)=>{ const e=$(id); if(e){ e.className='mc-status '+cls; e.textContent=txt; } };
-  // Linha de fatos do card de Clearance (fidelidade ao Dashboard Claro) —
-  // mesmos valores de c.fase/c.riscoTotal/c.tetoRisco/c.alavCar/c.tetoAlav
-  // já usados em mcMiniRisco/dAlav/dFase; só um novo local de leitura.
-  // ---- COCKPIT · quatro fatos operacionais (JPW-789ABC-B2, Fase 2A) ----
-  // ESPELHO DE LEITURA: cada célula reusa a MESMA fórmula que o componente
-  // vigente já aplica; nenhuma é reescrita e nenhuma constante é criada.
-  //   DD          ddCeil / (dd/ddCeil) e as faixas de c.mScaled — do gdGaugeDD
-  //   Risco       riscoTotal/tetoRisco — da barra gRiscoBar e do card Coerência
-  //   Alavancagem alavCar/4 com tick do teto em tetoAlav/4 — do gdGaugeAlav
-  //   Cores       as MESMAS regras já vigentes: gRiscoBar usa --f3 acima do
-  //               teto, gAlavBar usa --f2, ambas FCOLORS[c.fi] dentro dele.
-  // Os componentes antigos seguem na tela nesta fase justamente para que a
-  // equivalência seja verificável a olho: qualquer divergência é defeito daqui.
+  // ---- COCKPIT · quatro fatos (Fase 2C — textos fiéis ao protótipo) ----
+  // ESPELHO DE LEITURA: toda fórmula é reuso da vigente. As metas passaram a
+  // carregar o que o protótipo mostra e que o App tinha perdido:
+  //   fase  -> "postura ofensiva" (PHASE_OBJECTIVE, que a faixa de Postura levava)
+  //   DD    -> alarme E guilhotina (c.alarmScaled e c.mddScaled, já usados no veredito)
+  //   risco -> margem restante (c.margemEstatutaria, já exibida no LIFO)
   const cockpitFact=(id,o)=>{
     const cell=$(id); if(!cell) return;
     const v=cell.querySelector('[data-fact-v]');
-    if(v){ v.textContent=o.value; v.style.color=o.over?o.color:''; }
+    // O protótipo pinta o NÚMERO com a cor do estado, não só a barra.
+    if(v){ v.textContent=o.value; v.style.color=o.color||''; }
     const m=cell.querySelector('[data-fact-meta]'); if(m) m.textContent=o.meta;
     const f=cell.querySelector('[data-fact-fill]');
     if(f){
-      // Nunca passa de 100%: estouro é dito por cor e por texto, jamais por
-      // transbordo geométrico da barra.
       f.style.width=(o.pct==null?0:Math.max(0,Math.min(100,o.pct)))+'%';
       if(o.color) f.style.background=o.color;
     }
@@ -8987,50 +8833,46 @@ function renderOperationalClearance(c){
     }
     cell.dataset.over=o.over?'1':'0';
   };
-  // FASE — categórica: quatro segmentos, o vigente aceso. Não existe
-  // "percentual de fase"; uma barra contínua aqui seria dado inventado.
   const faseCell=$('mcFactFase');
   const segWrap=faseCell && faseCell.querySelector('[data-fact-seg-wrap]');
   if(segWrap) Array.prototype.forEach.call(segWrap.children,(seg,i)=>{
     seg.style.background = (i===c.fi) ? FCOLORS[c.fi] : '';
   });
-  const faixaFase = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
-  cockpitFact('mcFactFase',{ value:c.fase.nome, meta:'faixa de DD '+faixaFase, pct:null, markPct:null, over:false });
-  // DRAWDOWN — escala 0 → teto ativo do perfil (mesma ddCeil do gauge), com
-  // marcador no limite da fase vigente. Exceção = atingir o MDD ativo, que é o
-  // mesmo gatilho que já dispara o aviso de quarentena (Art. 3.10).
+  const faixa = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
+  // Concordância com "postura" (feminino), como o protótipo escreve
+  // ("postura ofensiva"). PHASE_OBJECTIVE guarda OFENSIVO/CAUTELA/DEFENSIVO/
+  // SALVAGUARDA — só a grafia muda, o dado é o mesmo.
+  const POSTURA_F={'OFENSIVO':'ofensiva','CAUTELA':'de cautela','DEFENSIVO':'defensiva','SALVAGUARDA':'de salvaguarda'};
+  const postura = (typeof PHASE_OBJECTIVE!=='undefined' && PHASE_OBJECTIVE[c.fi]) ? (POSTURA_F[PHASE_OBJECTIVE[c.fi].t]||PHASE_OBJECTIVE[c.fi].t.toLowerCase()) : '';
+  cockpitFact('mcFactFase',{
+    value:c.fase.nome,
+    meta:(postura?'postura '+postura+' · ':'')+'DD '+faixa+' · teto '+fmtX(c.tetoAlav),
+    pct:null, markPct:null, color:FCOLORS[c.fi], over:false });
   const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
   const ddOver=c.mddScaled>0 && c.dd>=c.mddScaled;
   cockpitFact('mcFactDD',{
     value:fmtPct(c.dd),
-    meta:'de '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE ATIVO':(c.mScaled?' · limite da fase '+fmtPct(c.mScaled[c.fi].ddmax):'')),
+    meta:(c.alarmScaled>0?'alarme em '+fmtPct(c.alarmScaled)+' · ':'')+'guilhotina '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE':''),
     pct:(c.dd/ddCeil)*100,
     markPct:c.mScaled?(c.mScaled[c.fi].ddmax/ddCeil)*100:null,
-    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver
-  });
-  // RISCO ABERTO — escala 0 → teto da fase. Teto zero (conta sem parâmetro)
-  // não vira barra cheia falsa nem divisão por zero: mostra trilho vazio.
-  const temTetoRisco=c.tetoRisco>0;
-  const riscoPct=temTetoRisco?(c.riscoTotal/c.tetoRisco)*100:0;
-  const riscoOver=temTetoRisco && c.riscoTotal>c.tetoRisco;
+    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver });
+  const temTeto=c.tetoRisco>0;
+  const riscoPct=temTeto?(c.riscoTotal/c.tetoRisco)*100:0;
+  const riscoOver=temTeto && c.riscoTotal>c.tetoRisco;
   cockpitFact('mcFactRisco',{
     value:fmtMoney(c.riscoTotal),
-    meta:temTetoRisco
-      ? Math.round(riscoPct)+'% do teto · '+fmtMoney(c.tetoRisco)+(riscoOver?' · ACIMA DO TETO':'')
+    meta:temTeto
+      ? Math.round(riscoPct)+'% do teto '+fmtMoney(c.tetoRisco)+' · margem '+fmtMoney(c.margemEstatutaria)+(riscoOver?' · ACIMA DO TETO':'')
       : 'sem parâmetro de teto',
     pct:riscoPct, markPct:null,
-    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver
-  });
-  // ALAVANCAGEM — escala absoluta 0–4x com tick no teto da fase, igual ao
-  // gdGaugeAlav (mostra folga contra o máximo estatutário, não só contra o teto).
+    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver });
   const alavOver=c.alavCar>c.tetoAlav;
+  const alavPctTeto=c.tetoAlav>0?(c.alavCar/c.tetoAlav)*100:0;
   cockpitFact('mcFactAlav',{
     value:fmtX(c.alavCar),
-    meta:'teto '+fmtX(c.tetoAlav)+(alavOver?' · ACIMA DO TETO':' · escala 0–4x'),
+    meta:(c.tetoAlav>0?Math.round(alavPctTeto)+'% do teto '+fmtX(c.tetoAlav):'sem teto definido')+(alavOver?' · ACIMA DO TETO':''),
     pct:(c.alavCar/4)*100, markPct:(c.tetoAlav/4)*100,
-    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver
-  });
-  set('mcMiniRisco', fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco));
+    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver });
   // Reservas FCR/FEO — lidos do estado salvo no onboarding (fonte única)
   if(!ob.done || !ob.reserveFcrStatus){
     set('mcMiniReservas','—'); chip('mcMiniReservasChip','mc-st-muted','Pendente');
@@ -9075,30 +8917,13 @@ function renderOperationalClearance(c){
     set('dStatus', label);
     chip('mcMiniPendChip',onb.critical?'mc-st-bad':(onb.warning?'mc-st-warn':'mc-st-muted'),`${onb.completed}/${onb.total}`);
   }
-  // Faixa de postura/conformidade (fidelidade ao Claude Design) — só estados
-  // reais já calculados em outro lugar do próprio código: PHASE_OBJECTIVE[c.fi]
-  // (mesmo dado do objectiveCard do Execution Board), c.excesso, c.alavCar/
-  // c.tetoAlav (mesma condição de gAlavBar) e onb (mesma fonte do dStatus
-  // acima). Nenhuma checagem nova, nenhum texto fixo — muda com o estado real.
-  const posture=(prefix,label,sub,color)=>{
-    const l=$(prefix+'Lbl'), s=$(prefix+'Sub');
-    if(l){ l.textContent=label; l.style.color=color; }
-    if(s) s.textContent=sub;
-  };
-  const po=PHASE_OBJECTIVE[c.fi];
-  posture('gdPostureFase', po.t, 'Fase '+(c.fi+1)+' vigente — postura determinada pela fase atual.', 'var('+OBJ_COL[c.fi]+')');
-  posture('gdPostureRisco',
-    c.excesso>0?'Risco Acima do Teto':'Risco Controlado',
-    c.excesso>0?('Exceder o teto em '+fmtMoney(c.excesso)+' — poda necessária.'):'Dentro dos limites operacionais da fase.',
-    c.excesso>0?'var(--jp-danger)':'var(--jp-success)');
-  posture('gdPostureAlav',
-    c.alavCar>c.tetoAlav?'Alavancagem Acima do Teto':'Alavancagem Segura',
-    fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav)+(c.alavCar>c.tetoAlav?' — acima do teto da fase.':' — abaixo do teto permitido.'),
-    c.alavCar>c.tetoAlav?'var(--jp-danger)':'var(--jp-success)');
-  posture('gdPostureGov',
-    onb.complete?'Governança Completa':(onb.critical?`${onb.critical} pendência(s) crítica(s)`:(onb.warning?`${onb.warning} atenção`:`${onb.pending} pendente(s)`)),
-    onb.complete?'Formulário de Início sem pendências.':'Formulário de Início incompleto — revise em Configurações.',
-    onb.complete?'var(--jp-success)':(onb.critical?'var(--jp-danger)':'var(--jp-warning)'));
+  // JPW-789ABC-B2, Fase 2B: a faixa de Postura saiu. Ela traduzia números em
+  // rótulos binários ("Risco Controlado", "Alavancagem Segura"); quem faz isso
+  // agora é a lista de motivos (#mcClearanceReasons, logo abaixo do subtítulo do
+  // cockpit) — que nomeia o fato, QUANTIFICA e aponta o remédio ("podar $120 via
+  // LIFO") — somada às quatro células, que mostram a margem contra cada teto.
+  // PHASE_OBJECTIVE segue vivo em renderObjective() -> #objectiveCard, no
+  // Execution Board; só o consumo pela postura do Dashboard deixou de existir.
 }
 // ============ EXECUTION CLEARANCE — veredito antes dos termômetros ============
 function renderExecClearance(c){
@@ -9119,8 +8944,17 @@ function renderExecClearance(c){
   $('ecAcao').textContent=acao;
   $('ecFase').textContent=c.fase.nome;
   const dg=$('dpGrade'); $('ecGrade').textContent=(dg&&dg.textContent)||'—';
-  $('ecRisco').textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
-  $('ecAlav').textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
+  // Fase 2C — fidelidade ao protótipo: o TETO vai para o rótulo e o valor
+  // carrega só o número corrente. Mesmas fontes, nenhuma fórmula nova.
+  const setTxt=(id,v)=>{ const e=$(id); if(e) e.textContent=v; };
+  setTxt('ecRiscoLbl','Risco / Teto '+fmtMoney(c.tetoRisco));
+  setTxt('ecRisco', fmtMoney(c.riscoTotal));
+  setTxt('ecAlavLbl','Alav. / Teto '+fmtX(c.tetoAlav));
+  setTxt('ecAlav', fmtX(c.alavCar));
+  // DRAWDOWN entra no cockpit do Execution Board: era o fato que os termômetros
+  // removidos carregavam. Mesma escala do gauge (teto ativo do perfil).
+  setTxt('ecDD', fmtPct(c.dd));
+  setTxt('ecDDsub','de '+fmtPct(c.mddScaled>0?c.mddScaled:0.15));
 }
 
 // ---- Execution Board phases ----
@@ -9760,6 +9594,12 @@ function riskIndicatorsHTML(active){
   const chip=(k,v,sub,col)=>`<div class="metric"><div class="k">${k}</div><div class="v sm" style="${col?'color:'+col:''}">${v}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
   return `<div class="card" style="margin-bottom:14px">
     <h2>Stop Loss Mínimo · Validação Estatística <span class="art">§9 · ao vivo: ${gen&&gen.par?esc(gen.par)+' @ '+(priceLive||'—'):'defina a gênese'} · SL mãe ${gen&&gen.sl>0?gen.sl:'—'}</span></h2>
+    <!-- Fase 2C: o MÉTODO desce para disclosure, como no protótipo ("método ▾").
+         Os campos continuam editáveis e no mesmo lugar do DOM — só deixam de
+         disputar a leitura primária com os vereditos, que ficam à vista logo
+         abaixo. O card do Stop deixa de ocupar o dobro da altura da Grade. -->
+    <details class="jp-p3">
+      <summary>método</summary>
     <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px">
       <div class="field" style="margin-bottom:0; max-width:170px">
         <label>ATR(55) H4 em % <span class="art">§9.2</span></label>
@@ -9783,6 +9623,7 @@ function riskIndicatorsHTML(active){
         <span class="note">|preço atual − SL mãe| ÷ preço</span>
       </div>
     </div>
+    </details>
     <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
       ${chip('Múltiplo de ATR', mult>0?mult.toFixed(1).replace('.',',')+'x':'—', strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'stop% ÷ ATR%')}
       ${chip('Raiz-N · 1 semana (√30)', pc(rz1), `mínimo p/ resistir 1 sem · <span style="color:${v1.c};font-weight:700">${v1.t}</span>`)}
@@ -10327,14 +10168,20 @@ function renderContas(){
     const platformName=a.platform?normalizePlatformName(a.platform):'a preencher';
     const loginTxt=a.platformLogin?`Login ${esc(a.platformLogin)}`:'login a preencher';
     const passOk=!!a.investorPassword;
+    // Resumo das credenciais: conta o que falta entre plataforma, login e senha
+    // do investidor. Leitura pura do estado — nenhum campo novo, nenhuma regra.
+    const credFaltando=[!a.platform?'plataforma':null, !a.platformLogin?'login':null, !passOk?'senha do investidor':null].filter(Boolean);
+    const credPend=credFaltando.length;
+    const credDetalhe=credPend?('falta preencher: '+credFaltando.join(', ')):(platformName+' · '+loginTxt+' · senha cadastrada');
     const contaCell=`<div class="account-field">
         <div class="account-top">
           <input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta">
           <div class="account-meta">
-            <span class="account-chip account-platform">${esc(platformName)}</span>
-            <span class="account-chip account-login">${loginTxt}</span>
-            <span class="account-chip account-pass ${passOk?'ok':''}">${passOk?'senha investidor cadastrada':'senha investidor não cadastrada'}</span>
-          </div>
+            <!-- Fase 2C: um chip no lugar de três. O protótipo resume as credenciais
+                 num único selo ("3 pendentes"); os campos individuais continuam logo
+                 abaixo, em account-cred-grid, então nada ficou inacessível. O texto
+                 nomeia o que falta — a cor não é o único canal (WCAG 1.4.1). -->
+            <span class="account-chip account-cred ${credPend?'':'ok'}" title="${esc(credDetalhe)}">${credPend?credPend+' pendente'+(credPend>1?'s':''):'credenciais completas'}</span>
         </div>
         <div class="account-cred-grid">
           <select data-f="platform" title="Plataforma">${platformOptions(a.platform)}</select>
@@ -10381,7 +10228,7 @@ function renderContas(){
       <td class="calc-corr">${corr.toFixed(3)}</td>
       <td class="calc-fw">${fw.toFixed(3)}</td>
       <td class="calc-pf hl">${pf.toFixed(3)}</td>
-      <td class="calc-lotevs hl">${loteVs.toFixed(3)}</td>
+      <td class="calc-lotevs hl" title="Correção ${corr.toFixed(3)} · Normalização V10 ${fw.toFixed(3)} · Fator de Perfil ${pf.toFixed(3)}">${loteVs.toFixed(3)}</td>
       <td><button class="row-del" title="Excluir conta" data-del="${i}">✕</button></td>
     `;
     const sel=tr.querySelector('select[data-f="tipo"]');
@@ -16136,16 +15983,13 @@ const JP_WIDGET_SCREEN_IDS = Object.keys(JP_WIDGET_SCREENS);
 
 const DASH_LAYOUT_LABELS = {
   'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
-  'metric-strip': 'A faixa de métricas principais', 'thermometers': 'Termômetros',
-  'leverage-coherence': 'Coerência de Alavancagem', 'vrm': 'VRM · Regime de Volatilidade',
-  'posture': 'Postura e conformidade', 'profile-context': 'Perfil e Contexto',
+  'vrm': 'VRM · Regime de Volatilidade',
   'onboarding-alert': 'Alerta de onboarding', 'quick-actions': 'Ações Rápidas',
   'exec-onboarding-alert': 'Aviso de governança', 'exec-clearance': 'Execution Clearance',
-  'exec-posture': 'Postura operacional', 'exec-thermometers': 'Termômetros',
-  'exec-metrics-banners': 'Métricas e avisos', 'exec-coherence': 'Coerência de Alavancagem',
+  'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
   'exec-lifo-monitor': 'Consolidado LIFO',
-  'contas-governance-note': 'Nota de Governança', 'contas-accounts-table': 'Parque de Contas',
+  'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
   'contab-period-goals': 'Período & Metas', 'contab-simulation': 'Simulação Patrimonial',
   'contab-cycle-pace': 'Ritmo do Ciclo', 'contab-daily-close': 'Fechamento Diário',
@@ -16172,53 +16016,49 @@ function dashLayoutDeepFreeze(obj) {
 // index.html — restaurar padrão é voltar a esta constante, não reler o HTML.
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
-    // JPW-789ABC-B2: `full` desde que o cockpit passou a carregar os quatro
-    // fatos. Em `large` (2 colunas) as células cairiam para ~98px e truncariam.
-    // `large` segue permitido — quem já personalizou mantém a escolha até a
-    // migração da Fase 2B, quando os widgets absorvidos saem de cena.
+    // JPW-789ABC-B2, Fase 2B — o Dashboard fica com SEIS widgets.
+    // P1: o cockpit, `full`, dono dos quatro fatos operacionais.
+    // P2: Status do Sistema + VRM dividindo a linha seguinte; Notícias abaixo.
+    // Sidebar: pendências de governança e atalhos.
+    // Saíram por absorção: a faixa de métricas e a Coerência (viraram os fatos
+    // e suas escalas), os Termômetros (a escala É a representação), a Postura
+    // (o veredito + os motivos dizem o mesmo com número e remédio) e o Perfil e
+    // Contexto (duplicava a faixa do header item a item).
     { id: 'operational-clearance', zone: 'main', size: 'full', order: 0 },
-    // JPW-789ABC-B2, Fase 2A.5: o par P2 (Status do Sistema + VRM compacto)
-    // sobe para a linha logo abaixo do cockpit. Isso NÃO inverte a hierarquia
-    // que o Bloco 1 corrigiu — ela mudou de dono: desde a Fase 2A os quatro
-    // fatos P1 vivem dentro do cockpit, e a faixa de métricas passou a ser
-    // duplicata aguardando remoção na Fase 2B, junto de termômetros, coerência
-    // e postura. Todas elas descem para o bloco de legado, abaixo do par P2.
     { id: 'institutional-panel', zone: 'main', size: 'medium', order: 1 },
     { id: 'vrm', zone: 'main', size: 'medium', order: 2 },
-    { id: 'metric-strip', zone: 'main', size: 'medium', order: 3 },
-    { id: 'thermometers', zone: 'main', size: 'compact', order: 4 },
-    { id: 'leverage-coherence', zone: 'main', size: 'medium', order: 5 },
-    { id: 'posture', zone: 'main', size: 'full', order: 6 },
-    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 7 },
-    { id: 'profile-context', zone: 'sidebar', size: 'medium', order: 8 },
-    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 9 },
-    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 10 }
+    { id: 'news-high-impact', zone: 'main', size: 'medium', order: 3 },
+    { id: 'onboarding-alert', zone: 'sidebar', size: 'full', order: 4 },
+    { id: 'quick-actions', zone: 'sidebar', size: 'medium', order: 5 }
   ],
   exec: [
+    // Ordem do protótipo: Clearance → Grade da Operação Única → Consolidado LIFO.
+    // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
+    // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
+    // abaixo do que o design define como leitura primária.
     { id: 'exec-onboarding-alert', zone: 'main', size: 'full', order: 0 },
     { id: 'exec-clearance', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-posture', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-thermometers', zone: 'main', size: 'medium', order: 3 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 2 },
+    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 3 },
     { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 },
-    { id: 'exec-coherence', zone: 'main', size: 'medium', order: 5 },
-    { id: 'exec-vrm', zone: 'main', size: 'full', order: 6 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 7 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 8 }
+    { id: 'exec-vrm', zone: 'main', size: 'full', order: 5 }
   ],
   contas: [
-    { id: 'contas-governance-note', zone: 'main', size: 'full', order: 0 },
-    { id: 'contas-accounts-table', zone: 'main', size: 'full', order: 1 },
-    { id: 'contas-order-application', zone: 'main', size: 'full', order: 2 }
+    // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
+    { id: 'contas-accounts-table', zone: 'main', size: 'full', order: 0 },
+    { id: 'contas-order-application', zone: 'main', size: 'medium', order: 1 }
   ],
   contab: [
-    { id: 'contab-period-goals', zone: 'main', size: 'full', order: 0 },
-    { id: 'contab-simulation', zone: 'main', size: 'full', order: 1 },
-    { id: 'contab-cycle-pace', zone: 'main', size: 'medium', order: 2 },
-    { id: 'contab-daily-close', zone: 'main', size: 'full', order: 3 },
-    { id: 'contab-real-vs-projected', zone: 'main', size: 'full', order: 4 },
-    { id: 'contab-daily-projection', zone: 'main', size: 'full', order: 5 },
-    { id: 'contab-entries', zone: 'main', size: 'full', order: 6 },
-    { id: 'contab-audit-log', zone: 'main', size: 'full', order: 7 }
+    // Ordem do protótipo: Real vs Projetado PAREADO com Fechamento Diário.
+    // Simulação e Projeção Diária vivem em disclosure (P3) e vão para o fim.
+    { id: 'contab-period-goals', zone: 'main', size: 'medium', order: 0 },
+    { id: 'contab-cycle-pace', zone: 'main', size: 'medium', order: 1 },
+    { id: 'contab-real-vs-projected', zone: 'main', size: 'medium', order: 2 },
+    { id: 'contab-daily-close', zone: 'main', size: 'medium', order: 3 },
+    { id: 'contab-entries', zone: 'main', size: 'full', order: 4 },
+    { id: 'contab-audit-log', zone: 'main', size: 'full', order: 5 },
+    { id: 'contab-simulation', zone: 'main', size: 'full', order: 6 },
+    { id: 'contab-daily-projection', zone: 'main', size: 'full', order: 7 }
   ]
 });
 
@@ -16300,7 +16140,9 @@ function dashLayoutZoneLabel(zones) {
 
 /* ======================= VALIDAÇÃO E PERSISTÊNCIA (v3) ======================= */
 
-const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4';
+const JP_WIDGET_STORAGE_KEY_V6 = 'jpwealth.ui.widgetLayouts.v6';
+const JP_WIDGET_STORAGE_KEY_V5 = 'jpwealth.ui.widgetLayouts.v5'; // só para migração — nunca gravado de novo
+const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
 
@@ -16314,7 +16156,7 @@ const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migr
 // desproporcional: 'large' ERA o padrão antigo, então toda preferência já
 // gravada carrega institutional-panel em 'large'; ao reprovar no teste de
 // tamanho permitido, dashLayoutValidateScreenWidgets devolve null para a TELA
-// INTEIRA e dashLayoutNormalizeV4 joga fora TODA a personalização do Dashboard
+// INTEIRA e dashLayoutNormalizeV6 joga fora TODA a personalização do Dashboard
 // — não só este widget. Coerção pontual, portanto: um widget, um tamanho,
 // preservando zona e ordem escolhidas pelo usuário.
 //
@@ -16323,7 +16165,13 @@ const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migr
 // edição) passam obrigatoriamente por esta função, então nenhum fica de fora.
 // Nos casos em que não há o que migrar é no-op.
 function dashLayoutMigrateWidgets(screenId, widgets) {
-  if (screenId !== 'dash' || !Array.isArray(widgets)) return widgets;
+  if (!Array.isArray(widgets)) return widgets;
+  // Widgets que deixaram de existir: descartá-los é permanente e seguro, porque
+  // o id não pode mais ser escolha legítima de ninguém — mesma natureza da
+  // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
+  // devolve null para a TELA INTEIRA.
+  if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
+  if (screenId !== 'dash') return widgets;
   return widgets.map(w => (w && typeof w === 'object' && w.id === 'institutional-panel' && w.size === 'large')
     ? { ...w, size: 'medium' }
     : w);
@@ -16354,25 +16202,68 @@ function dashLayoutValidateScreenWidgets(screenId, widgets) {
 // independente — telas inválidas recebem só o PADRÃO DAQUELA TELA; as
 // demais, válidas, são preservadas exatamente como estavam. Nunca retorna
 // null para o todo por causa de uma tela quebrada.
-function dashLayoutNormalizeV4(raw) {
-  const rawScreens = (raw && typeof raw === 'object' && raw.version === 4 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
+function dashLayoutNormalizeV6(raw) {
+  const rawScreens = (raw && typeof raw === 'object' && raw.version === 6 && raw.screens && typeof raw.screens === 'object') ? raw.screens : {};
   const screens = {};
   JP_WIDGET_SCREEN_IDS.forEach(screenId => {
     const provided = rawScreens[screenId] && rawScreens[screenId].widgets;
     const validated = dashLayoutValidateScreenWidgets(screenId, provided);
     screens[screenId] = { widgets: validated || JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w })) };
   });
-  return { version: 4, screens };
+  return { version: 6, screens };
 }
 
-function dashLayoutSaveV4(full) {
-  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V4, JSON.stringify(full)); } catch (_) { return false; }
+function dashLayoutSaveV6(full) {
+  try { localStorage.setItem(JP_WIDGET_STORAGE_KEY_V6, JSON.stringify(full)); } catch (_) { return false; }
   return true;
 }
 function dashLayoutClearAllPreferences() {
+  try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V6); } catch (_) { /* silencioso */ }
+  try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V5); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
   try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
+}
+
+// MIGRAÇÃO ÚNICA v4 → v5 (JPW-789ABC-B2, Fase 2B — remoção dos redundantes).
+//
+// Cinco widgets deixam de existir: a faixa de métricas, a Coerência de
+// Alavancagem, os Termômetros, a Postura e o Perfil e Contexto. Todos foram
+// absorvidos pelo cockpit, pelo Status do Sistema ou pela faixa de contexto do
+// header — nenhum dado sumiu, só as representações duplicadas.
+//
+// Sem esta migração o estrago seria total, não parcial:
+// dashLayoutValidateScreenWidgets reprova por TRÊS caminhos independentes —
+// contagem diferente (11 salvos vs 6 esperados), id desconhecido e obrigatório
+// ausente — e cada um devolve null para a TELA INTEIRA, fazendo
+// dashLayoutNormalizeV6 descartar TODA a personalização do Dashboard, não
+// apenas os cinco removidos.
+//
+// A coerção de `operational-clearance` large → full é ÚNICA e deliberada.
+// `large` continua sendo tamanho permitido, mas deixou de ser compatível com o
+// cockpit de quatro fatos: em duas colunas as células caem para ~98px e
+// truncam dado financeiro. Preserva-se a intenção do usuário (ver o cockpit),
+// não uma configuração que deixou de ser válida. Por ser única, quem escolher
+// `large` de novo depois da migração mantém a escolha.
+const DASH_LAYOUT_REMOVIDOS_V5 = ['metric-strip', 'leverage-coherence', 'thermometers', 'posture', 'profile-context'];
+// Fase 2C: a mesma limpeza chega ao Execution Board. `exec-vrm` NÃO entra aqui —
+// ele hospeda os inputs editáveis de ATR e foi preservado de propósito.
+const EXEC_LAYOUT_REMOVIDOS_V6 = ['exec-posture', 'exec-thermometers', 'exec-coherence'];
+function dashLayoutMigrateExecV5ToV6(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  return widgets
+    .filter(w => w && typeof w === 'object' && EXEC_LAYOUT_REMOVIDOS_V6.indexOf(w.id) < 0)
+    .map(w => ({ ...w }))
+    .sort((a, b) => a.order - b.order)
+    .map((w, i) => ({ ...w, order: i }));
+}
+function dashLayoutMigrateDashV4ToV5(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  return widgets
+    .filter(w => w && typeof w === 'object' && DASH_LAYOUT_REMOVIDOS_V5.indexOf(w.id) < 0)
+    .map(w => (w.id === 'operational-clearance' && w.size === 'large') ? { ...w, size: 'full' } : { ...w })
+    .sort((a, b) => a.order - b.order)
+    .map((w, i) => ({ ...w, order: i }));
 }
 
 // Migração v2 (só Dashboard, já com tamanho) → v3 (multitelas). v2 tem
@@ -16384,7 +16275,12 @@ function dashLayoutValidateV2Legacy(pref) {
   // Forma real da v2 (só Dashboard, sem o envelope "screens" da v3):
   // { version:2, dashboard:{ widgets:[...] } }
   const widgets = pref.dashboard && pref.dashboard.widgets;
-  return dashLayoutValidateScreenWidgets('dash', widgets);
+  // MIGRA ANTES DE VALIDAR. A ordem importa e estava invertida: a v2 carrega os
+  // 11 widgets do esquema antigo e o validador exige exatamente os 6 atuais, de
+  // modo que validar primeiro reprovaria SEMPRE e a v2 jamais promoveria —
+  // silenciosamente, caindo no padrão. Migrada primeiro, ela chega ao validador
+  // já na forma vigente.
+  return dashLayoutValidateScreenWidgets('dash', dashLayoutPromoteDashParaV5(widgets, 3));
 }
 
 // MIGRAÇÃO ÚNICA v3 → v4 (JPW-789ABC, rebalanceamento do Status do Sistema).
@@ -16417,28 +16313,53 @@ function dashLayoutMigrateDashV3ToV4(widgets) {
   return out;
 }
 
+// Cada envelope legado é promovido pela CADEIA COMPLETA até a v5, na ordem —
+// uma base parada na v2 passa por v3→v4→v5 numa carga só. Sem isso, quem
+// abrisse o app pela primeira vez depois desta fase perderia a personalização
+// exatamente como se nunca tivesse migrado.
+function dashLayoutPromoteDashParaV5(widgets, apartirDe) {
+  let w = widgets;
+  if (apartirDe <= 3) w = dashLayoutMigrateDashV3ToV4(w);
+  return dashLayoutMigrateDashV4ToV5(w);
+}
+
 function dashLayoutLoadFullState() {
-  const rawV4 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V4); } catch (_) { return null; } })();
-  if (rawV4 !== null) {
-    // v4 existe (mesmo que parcialmente inválida) — tem precedência total e
+  const rawV6 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V6); } catch (_) { return null; } })();
+  if (rawV6 !== null) {
+    // v6 existe (mesmo que parcialmente inválida) — tem precedência total e
     // nunca reabre migração (evita remigrar a cada carga).
     let parsed = null;
-    try { parsed = JSON.parse(rawV4); } catch (_) { /* trata como ausente abaixo */ }
-    return dashLayoutNormalizeV4(parsed);
+    try { parsed = JSON.parse(rawV6); } catch (_) { /* trata como ausente abaixo */ }
+    return dashLayoutNormalizeV6(parsed);
   }
-  const rawV3 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { return null; } })();
-  if (rawV3 !== null) {
-    let v3Parsed = null;
-    try { v3Parsed = JSON.parse(rawV3); } catch (_) { /* ignora */ }
-    const v3Screens = (v3Parsed && typeof v3Parsed === 'object' && v3Parsed.version === 3 && v3Parsed.screens && typeof v3Parsed.screens === 'object') ? v3Parsed.screens : {};
-    const promoted = { version: 4, screens: {} };
+  // v4 e v3 compartilham a mesma forma de envelope ({version, screens}); só
+  // muda por quantos passos de migração o `dash` precisa passar.
+  const legado = [
+    { chave: JP_WIDGET_STORAGE_KEY_V5, versao: 5 },
+    { chave: JP_WIDGET_STORAGE_KEY_V4, versao: 4 },
+    { chave: JP_WIDGET_STORAGE_KEY_V3, versao: 3 }
+  ];
+  for (const { chave, versao } of legado) {
+    const raw = (() => { try { return localStorage.getItem(chave); } catch (_) { return null; } })();
+    if (raw === null) continue;
+    let parsed = null;
+    try { parsed = JSON.parse(raw); } catch (_) { /* ignora */ }
+    const telas = (parsed && typeof parsed === 'object' && parsed.version === versao && parsed.screens && typeof parsed.screens === 'object') ? parsed.screens : {};
+    // A versão do envelope promovido tem de ser a CORRENTE: dashLayoutNormalizeV6
+    // exige version===6 e, com 5 aqui, rejeitava tudo e devolvia os padrões de
+    // todas as telas — perdendo em silêncio a personalização que a migração
+    // acabara de preservar.
+    const promoted = { version: 6, screens: {} };
     JP_WIDGET_SCREEN_IDS.forEach(screenId => {
-      const widgets = v3Screens[screenId] && v3Screens[screenId].widgets;
-      promoted.screens[screenId] = { widgets: screenId === 'dash' ? dashLayoutMigrateDashV3ToV4(widgets) : widgets };
+      const widgets = telas[screenId] && telas[screenId].widgets;
+      promoted.screens[screenId] = { widgets:
+        screenId === 'dash' ? dashLayoutPromoteDashParaV5(widgets, versao)
+        : screenId === 'exec' ? dashLayoutMigrateExecV5ToV6(widgets)
+        : widgets };
     });
-    const candidate = dashLayoutNormalizeV4(promoted);
-    dashLayoutSaveV4(candidate);
-    try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V3); } catch (_) { /* silencioso */ }
+    const candidate = dashLayoutNormalizeV6(promoted);
+    dashLayoutSaveV6(candidate);
+    try { localStorage.removeItem(chave); } catch (_) { /* silencioso */ }
     return candidate;
   }
   const rawV2 = (() => { try { return localStorage.getItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { return null; } })();
@@ -16447,15 +16368,15 @@ function dashLayoutLoadFullState() {
     try { v2Parsed = JSON.parse(rawV2); } catch (_) { /* ignora */ }
     const migratedDash = dashLayoutValidateV2Legacy(v2Parsed);
     if (migratedDash) {
-      // A v2 nasceu com o padrão antigo, então passa pela mesma promoção.
-      const candidate = dashLayoutNormalizeV4({ version: 4, screens: { dash: { widgets: dashLayoutMigrateDashV3ToV4(migratedDash) } } });
-      dashLayoutSaveV4(candidate);
+      // `migratedDash` já veio promovido e validado por dashLayoutValidateV2Legacy.
+      const candidate = dashLayoutNormalizeV6({ version: 5, screens: { dash: { widgets: migratedDash } } });
+      dashLayoutSaveV6(candidate);
       try { localStorage.removeItem(JP_WIDGET_STORAGE_KEY_V2); } catch (_) { /* silencioso */ }
       return candidate;
     }
     // v2 presente mas inválida — não promove, não apaga, cai no padrão completo
   }
-  return dashLayoutNormalizeV4(null); // tudo padrão
+  return dashLayoutNormalizeV6(null); // tudo padrão
 }
 
 function dashLayoutApplyScreen(screenId, widgets) {
@@ -16902,7 +16823,7 @@ function dashLayoutFinish() {
   }
   const full = dashLayoutLoadFullState();
   dirty.forEach(screenId => { full.screens[screenId] = { widgets: validatedByScreen[screenId] }; });
-  dashLayoutSaveV4(full); // uma única escrita, com todas as telas alteradas já validadas
+  dashLayoutSaveV6(full); // uma única escrita, com todas as telas alteradas já validadas
   const labels = dirty.map(id => JP_WIDGET_SCREENS[id].label).join(', ');
   dashLayoutEndSession();
   dashLayoutAnnounce((dirty.length === 1 ? '1 tela salva: ' : dirty.length + ' telas salvas: ') + labels + '.');
@@ -16925,7 +16846,7 @@ function dashLayoutRestoreDefaultConfirm() {
   }
   const full = dashLayoutLoadFullState();
   full.screens[screenId] = { widgets: dashLayoutCurrentScreenState(screenId) };
-  dashLayoutSaveV4(full);
+  dashLayoutSaveV6(full);
   dashLayoutAnnounce('Layout padrão de ' + label + ' restaurado.');
 }
 
@@ -16945,7 +16866,7 @@ function dashLayoutRestoreAllConfirm() {
     return;
   }
   dashLayoutClearAllPreferences();
-  dashLayoutApplyAllScreens(dashLayoutNormalizeV4(null));
+  dashLayoutApplyAllScreens(dashLayoutNormalizeV6(null));
   dashLayoutAnnounce('Layout padrão restaurado em todas as telas.');
 }
 
@@ -23264,7 +23185,12 @@ function fxpCreateFormHTML(){
   <aside class="fxp-col-side">
     <section class="fxp-block">
       <div class="fxp-block-head"><h3>Nenhum planejamento ativo</h3></div>
-      <h4 class="fxp-empty-h">Três camadas que nunca se misturam</h4>
+      <!-- Fase 2C: as três camadas descem para disclosure, como no protótipo
+             ("Como as três camadas funcionam ▾"). O texto continua íntegro;
+             o formulário de criação passa a ser a leitura primária do cartão. -->
+        <details class="jp-p3">
+          <summary>Como as três camadas funcionam</summary>
+          <h4 class="fxp-empty-h">Três camadas que nunca se misturam</h4>
       <p class="fxp-note">O Planejamento FX registra a trajetória patrimonial Forex separando o que você assume, o que aconteceu e o que o Estatuto exige.</p>
       <div class="fxp-layer"><div class="fxp-layer-h">Premissas ${fxpBadge('PROJ')}</div>
         <p class="fxp-note">O que você assume: rentabilidade mensal, câmbio projetado e aportes planejados. Ao aprovar, viram o <b>baseline congelado</b> — revisões futuras nunca o sobrescrevem.</p></div>
@@ -23272,6 +23198,7 @@ function fxpCreateFormHTML(){
         <p class="fxp-note">Fechamentos mensais contíguos e ledger cambial de aportes. O custo médio do dólar usa média ponderada Σ BRL ÷ Σ USD; créditos USD nativos não o contaminam.</p></div>
       <div class="fxp-layer"><div class="fxp-layer-h">Normativo</div>
         <p class="fxp-note">FCR (Art. 13.1) e FEO (Art. 13.2) calculados pela mesma função do Formulário de Início. Este painel calcula e informa — nenhuma movimentação é executada.</p></div>
+        </details>
       <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Rentabilidade planejada é premissa sua — não deriva de perfis de risco nem constitui promessa de retorno.</p>
     </section>
   </aside>

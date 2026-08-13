@@ -115,15 +115,10 @@ function render(){
   if(zoneEl && c.mScaled){
     zoneEl.innerHTML=[3,2,1,0].map(i=>`<div class="tz f${i+1}">${zn[i]} ${fmtPct(c.mScaled[i].ddmin)}–${fmtPct(c.mScaled[i].ddmax)}</div>`).join('');
   }
-  // Faixa de integração do Dashboard: variante C (semicírculo), como o design
-  // usa nesta faixa — mais rasa que o anel, para linha densa de KPI. Mesma
-  // função, mesmos valores; só a geometria muda (semi:true).
-  feedRing('gdGaugeDD',{semi:true, pct:ddPct, zones:ddZones, zi:c.fi, value:fmtPct(c.dd),
-    zoneKey:zn[c.fi], scaleText:'DE '+fmtPct(ddCeil),
-    ariaText:zn[c.fi]+' — DD '+fmtPct(c.dd)+' de '+fmtPct(ddCeil)});
-  feedRing('gdGaugeAlav',{semi:true, pct:alavPct, zones:[[0,25],[25,50],[50,75],[75,100]], zi:(alavAcima?3:alavZi), value:fmtX(c.alavCar),
-    zoneKey:(alavAcima?'ACIMA DO TETO '+fmtX(c.tetoAlav):'dentro do teto '+fmtX(c.tetoAlav)), ceilingPct:(c.tetoAlav/4)*100,
-    ariaText:'Alavancagem '+fmtX(c.alavCar)+' de 4x — teto da fase '+fmtX(c.tetoAlav)});
+  // JPW-789ABC-B2, Fase 2B: os gauges gdGaugeDD/gdGaugeAlav do Dashboard saíram
+  // — a barra com marcador de teto dentro do cockpit É a representação agora.
+  // ddPct/alavPct/ddZones seguem calculados acima porque alimentam gaugeDD e
+  // gaugeAlav, que são do EXECUTION BOARD e não fazem parte deste bloco.
   // metrics
   $('mSaldo').textContent=fmtMoney(p.saldoAtu);
   $('mSaldoSub').textContent='inicial '+fmtMoney(p.saldoIni)+' — contábil, não move o termômetro'
@@ -158,7 +153,9 @@ function render(){
     $('quarantineTxt').textContent=`DD ${fmtPct(c.dd)} atingiu o limite ativo de ${fmtPct(c.mddScaled)} (Art. 3.10). Se for real, formalize a quarentena. Se foi erro de preenchimento (stop errado), corrija — este aviso some sozinho, nada fica travado.`;
     if(qbtn) qbtn.style.display='inline-block';
   } else { qb.style.display='none'; if(qbtn) qbtn.style.display='none'; }
-  renderObjective(c.fi);
+  // renderObjective saiu: seu alvo (#objectiveCard, na faixa de Postura do
+  // Execution Board) foi removido na Fase 2C. PHASE_OBJECTIVE continua vivo —
+  // agora alimenta a meta "postura ofensiva" da célula de Fase do cockpit.
   // arquivar operação: visível quando não há posição aberta e existe resultado fechado a consolidar
   const abtn=$('archiveOpBtn');
   if(abtn){
@@ -202,20 +199,11 @@ function render(){
     mmBanner.style.display='none';
   }
   // gauges
-  const alavPctW=Math.min(100,(c.alavCar/c.tetoAlav)*100);
-  $('gAlavVal').textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
-  const gAlavBar=$('gAlavBar'); gAlavBar.style.width=alavPctW+'%';
-  gAlavBar.style.background = c.alavCar>c.tetoAlav?'var(--f2)':FCOLORS[c.fi];
-  const riscoPctW=c.tetoRisco>0?Math.min(100,(c.riscoTotal/c.tetoRisco)*100):0;
-  $('gRiscoVal').textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
-  const gRiscoBar=$('gRiscoBar'); gRiscoBar.style.width=riscoPctW+'%';
-  gRiscoBar.style.background = c.riscoTotal>c.tetoRisco?'var(--f3)':FCOLORS[c.fi];
-  const gdCAv=$('gdCoherenceAlavVal'); if(gdCAv) gdCAv.textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
-  const gdCAb=$('gdCoherenceAlavBar');
-  if(gdCAb){ gdCAb.style.width=alavPctW+'%'; gdCAb.style.background=c.alavCar>c.tetoAlav?'var(--f2)':FCOLORS[c.fi]; }
-  const gdCRv=$('gdCoherenceRiscoVal'); if(gdCRv) gdCRv.textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
-  const gdCRb=$('gdCoherenceRiscoBar');
-  if(gdCRb){ gdCRb.style.width=riscoPctW+'%'; gdCRb.style.background=c.riscoTotal>c.tetoRisco?'var(--f3)':FCOLORS[c.fi]; }
+  // Fase 2C: a Coerência de Alavancagem saiu também do Execution Board — as duas
+  // barras já viraram as escalas dos fatos do cockpit, no Dashboard e aqui.
+  // JPW-789ABC-B2, Fase 2B: a Coerência de Alavancagem saiu — suas duas barras
+  // foram absorvidas pelas escalas dos fatos Risco e Alavancagem do cockpit,
+  // com as MESMAS fórmulas (alavPctW/riscoPctW) e as mesmas regras de cor.
   // VRM
   $('mVRM').textContent=c.vrm.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   $('mRegime').textContent=c.regime;
@@ -289,10 +277,8 @@ function render(){
   }
   const ls=$('lifoSem'); ls.textContent=c.sem; ls.style.color=c.semCls;
   $('lifoSug').innerHTML=c.sug;
-  // dashboard mirror
-  $('dFase').textContent=c.fase.nome;
-  $('dDD').textContent=fmtPct(c.dd);
-  $('dAlav').textContent=fmtX(c.tetoAlav);
+  // dashboard mirror — a faixa de métricas saiu na Fase 2B (os quatro fatos
+  // vivem no cockpit). #dStatus permanece: é de outro card, não da faixa.
   $('dStatus').textContent=c.status.split('—')[0].trim();
   // (grade única: a fase ativa é rotulada explicitamente em renderPhases; sem badge dinâmico por índice)
   // Camadas de veredito (UX de decisão): Operational Clearance (dash) + Execution Clearance (exec).

@@ -4143,88 +4143,87 @@
        muleta morreu junto com o painel decorativo. */
   }
 
-  /* ---------- COCKPIT · faixa dos quatro fatos (JPW-789ABC-B2) ----------
-     Substitui a antiga .mc-clearance-facts (linha de texto Fase/Risco/Alav).
-     Idioma de terminal financeiro: numero grande, escala fina, contexto pequeno.
-     Sem gauge, sem dial, sem termometro — a barra de 4px E a representacao. */
-  html[data-shell="global-dashboard"] .mc-cockpit-facts{
-    display:flex; align-items:center; gap:var(--jp-space-4);
-    margin-top:24px; padding-top:20px;
-    border-top:1px solid var(--jp-border); cursor:pointer;
-    container-type:inline-size; container-name:jpwcock;
+  /* ---------- COCKPIT OPERACIONAL (Fase 2C — fiel ao protótipo) ----------
+     Medidas tiradas do JP Wealth - Redesign.dc.html a 1440: card 1361×300,
+     grid 527|738 (41.7% / 58.3%) com gap 32 e padding 28/32; fatos 2×2 com
+     gap 12; célula 363×116, padding 14/16, fundo panel-2, borda line, radius 10;
+     barra 5px radius 3; veredito 34px/700 sans, lh 1.12, ls -.02em; valor 22px
+     mono 700 COLORIDO pelo estado; meta 10px ink-faint.
+     As colunas são proporcionais porque o cockpit ocupa a coluna principal do
+     App (894px), não a largura cheia de 1361 do protótipo. */
+  html[data-shell="global-dashboard"] #mcClearanceCard{
+    display:grid; grid-template-columns:41.7fr 58.3fr; gap:32px;
+    align-items:start; padding:28px 32px;
   }
+  html[data-shell="global-dashboard"] .mc-cockpit-col{min-width:0}
+  /* O veredito cai de ~58px para 34px: a 894px de largura ele divide a linha
+     com os fatos e deixou de ser a única coisa da faixa. */
+  html[data-shell="global-dashboard"] #mcClearanceCard .mc-clearance-title{
+    font-family:var(--jp-font-ui); font-size:34px; font-weight:700;
+    line-height:1.12; letter-spacing:-.02em; color:var(--mc);
+    margin:6px 0 8px; max-width:20ch;
+  }
+  html[data-shell="global-dashboard"] #mcClearanceCard .mc-clearance-sub{
+    font-size:12.5px; line-height:1.5; color:var(--jp-ink-muted); max-width:46ch;
+  }
+  html[data-shell="global-dashboard"] .mc-cockpit-acoes{
+    display:flex; flex-wrap:wrap; gap:var(--jp-space-2); margin-top:var(--jp-space-4);
+  }
+  /* Fatos 2×2 */
   html[data-shell="global-dashboard"] .mc-cockpit-grid{
-    display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:var(--jp-space-4); flex:1; min-width:0;
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px; min-width:0; cursor:pointer;
   }
-  html[data-shell="global-dashboard"] .mc-cockpit-chev{
-    color:var(--jp-ink-muted); font-size:16px; flex:none;
-  }
-  /* A celula. min-width:0 em toda ela e no valor: sem isso o texto define a
-     largura da coluna e o grid estoura em vez de comprimir (mesma armadilha do
-     kicker relatada no achado colateral 4 do handoff). */
+  /* A célula é CARD, com fundo e borda próprios — foi assim que o protótipo a
+     desenhou; sem isso os quatro fatos flutuam soltos sobre o cockpit. */
   html[data-shell="global-dashboard"] .mc-fact{
-    display:flex; flex-direction:column; gap:6px; min-width:0;
+    display:flex; flex-direction:column; gap:5px; min-width:0;
+    background:var(--jp-surface-inset); border:1px solid var(--jp-border);
+    border-radius:var(--jp-radius-md); padding:14px 16px;
   }
   html[data-shell="global-dashboard"] .mc-fact-k{
     font-family:var(--jp-font-ui); font-size:9.5px; letter-spacing:.04em;
     text-transform:uppercase; color:var(--jp-ink-muted);
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  /* O valor carrega SO o numero corrente (max ~7 caracteres): "FASE 1",
-     "3,20%", "$320", "1,62x". Teto e contexto vivem na meta. */
+  /* Valor colorido pelo estado (o protótipo pinta o número, não só a barra). */
   html[data-shell="global-dashboard"] .mc-fact-v{
-    font-family:var(--mono); font-size:22px; font-weight:700; line-height:1.1;
-    color:var(--jp-ink); font-variant-numeric:tabular-nums; min-width:0;
+    font-family:var(--mono); font-size:22px; font-weight:700; line-height:1.15;
+    font-variant-numeric:tabular-nums; min-width:0; color:var(--jp-ink);
   }
   html[data-shell="global-dashboard"] .mc-fact-meta{
-    font-family:var(--jp-font-ui); font-size:9.5px; line-height:1.35;
-    color:var(--jp-ink-muted);
+    font-family:var(--jp-font-ui); font-size:10px; line-height:1.35;
+    color:var(--ink-faint);
   }
-  /* Trilho + preenchimento + marcador de teto. O marcador e um tick de 2px que
-     NUNCA sai do trilho; estouro de teto e dito por cor e por texto na meta,
-     jamais por transbordo geometrico. */
   html[data-shell="global-dashboard"] .mc-fact-track{
-    position:relative; height:4px; border-radius:2px;
-    background:var(--jp-surface-inset); overflow:hidden;
+    position:relative; height:5px; border-radius:3px;
+    background:var(--jp-border); overflow:hidden;
   }
   html[data-shell="global-dashboard"] .mc-fact-fill{
-    display:block; height:100%; width:0; border-radius:2px;
+    display:block; height:100%; width:0; border-radius:3px;
     background:var(--jp-ink-muted); transition:width .3s ease;
   }
   html[data-shell="global-dashboard"] .mc-fact-mark{
-    position:absolute; top:-2px; width:2px; height:8px; border-radius:1px;
+    position:absolute; top:-2px; width:2px; height:9px; border-radius:1px;
     background:var(--jp-ink); opacity:.55;
   }
-  /* Fase e categorica: quatro segmentos, o vigente aceso. Nao ha "percentual
-     de fase" — inventar uma barra continua aqui seria inventar dado. */
   html[data-shell="global-dashboard"] .mc-fact-seg{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:3px; height:4px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:3px; height:5px;
   }
   html[data-shell="global-dashboard"] .mc-fact-seg i{
-    display:block; border-radius:2px; background:var(--jp-surface-inset);
+    display:block; border-radius:3px; background:var(--jp-border);
   }
-  /* Estado de excecao. A COR do valor nao e fixada aqui de proposito: quem a
-     define e o JS, com o MESMO token da barra, para numero e escala nunca
-     discordarem (a regra vigente de gRiscoBar usa --f3 e a de gAlavBar usa
-     --f2; fixar --f4 aqui criaria um terceiro dialeto). O que o CSS garante e
-     o peso da meta — porque a cor nunca pode ser o unico canal (WCAG 1.4.1):
-     em excecao a meta diz "ACIMA DO TETO" por escrito. */
-  html[data-shell="global-dashboard"] .mc-fact[data-over="1"] .mc-fact-meta{
-    font-weight:600;
-  }
+  /* A cor nunca é o único canal (WCAG 1.4.1): a exceção é dita por escrito na
+     meta ("ACIMA DO TETO"); o peso apenas reforça. */
+  html[data-shell="global-dashboard"] .mc-fact[data-over="1"] .mc-fact-meta{font-weight:600}
 
-  /* 4x1 -> 2x2 por largura da FAIXA, nao do viewport. Limiar em 660px de
-     content-box = 4 celulas de 165px minimos + 3 gaps de 16. Abaixo disso as
-     celulas ficariam estreitas demais para o valor de 22px. */
-  @container jpwcock (max-width:659px){
-    html[data-shell="global-dashboard"] .mc-cockpit-grid{
-      grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--jp-space-5) var(--jp-space-4);
-    }
+  /* Abaixo de 1100px de conteúdo o cockpit empilha: veredito em cima, fatos
+     2×2 embaixo — a coluna de 41.7% ficaria estreita demais para o veredito. */
+  @media(max-width:1279px){
+    html[data-shell="global-dashboard"] #mcClearanceCard{grid-template-columns:1fr; gap:20px}
   }
-  /* Faixa muito estreita (mobile): o valor cede 3px para caber sem truncar. */
-  @container jpwcock (max-width:300px){
-    html[data-shell="global-dashboard"] .mc-fact-v{font-size:19px}
+  @media(max-width:560px){
+    html[data-shell="global-dashboard"] .mc-cockpit-grid{grid-template-columns:1fr}
   }
 
   /* Faixa de 4 métricas — mesmos dFase/dDD/mcMiniRisco/dAlav, só moldura nova */
@@ -4250,21 +4249,6 @@
   html[data-shell="global-dashboard"] .gd-card-label{
     font-family:var(--jp-font-ui); font-size:9.5px; font-weight:600; letter-spacing:.04em;
     text-transform:uppercase; color:var(--jp-ink-muted); margin-bottom:12px;
-  }
-  html[data-shell="global-dashboard"] .gd-context-list{
-    display:flex; flex-direction:column; gap:9px; margin:0 0 14px;
-  }
-  html[data-shell="global-dashboard"] .gd-context-list > div{display:flex; justify-content:space-between; gap:12px}
-  html[data-shell="global-dashboard"] .gd-context-list dt{
-    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:400; color:var(--jp-ink-muted); margin:0;
-  }
-  html[data-shell="global-dashboard"] .gd-context-list dd{
-    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:700; color:var(--jp-ink); margin:0;
-  }
-  html[data-shell="global-dashboard"] .gd-context-cta{
-    display:flex; justify-content:space-between; align-items:center; width:100%;
-    background:transparent; border:0; border-top:1px solid var(--jp-border); padding-top:12px;
-    font-family:var(--jp-font-ui); font-size:11.5px; font-weight:600; color:var(--jp-action); cursor:pointer;
   }
   html[data-shell="global-dashboard"] .gd-quick-nav{display:flex; flex-direction:column}
   html[data-shell="global-dashboard"] .gd-quick-nav button{
@@ -4404,7 +4388,6 @@
      pelos gauges .jpwg-semi dentro de sub-cards; o grupo virou a faixa. */
   /* Faixa horizontal de indicadores: quebra em coluna quando não couberem os
      dois sub-cards com sua largura mínima. */
-  html[data-shell="global-dashboard"] .gd-thermo-group{display:flex; flex-wrap:wrap; gap:14px; align-items:stretch; margin-top:6px}
 
   html[data-shell="global-dashboard"] .gd-gauge{margin-bottom:16px}
   html[data-shell="global-dashboard"] .gd-gauge:last-child{margin-bottom:0}
@@ -4416,11 +4399,6 @@
   html[data-shell="global-dashboard"] .gd-gauge-track{height:8px; border-radius:4px; background:var(--jp-surface-2, var(--gd-surface-subtle))}
   html[data-shell="global-dashboard"] .gd-gauge-bar{height:100%; width:0; border-radius:4px; background:var(--jp-success); transition:width .3s ease}
 
-  html[data-shell="global-dashboard"] .gd-vrm-main{display:flex; align-items:center; gap:14px; margin-bottom:12px}
-  html[data-shell="global-dashboard"] .gd-vrm-dial{
-    width:64px; height:32px; border-radius:64px 64px 0 0; flex:none;
-    background:conic-gradient(from 270deg at 50% 100%, var(--jp-border) 0turn, var(--jp-border) .5turn);
-  }
   html[data-shell="global-dashboard"] .gd-vrm-value{font-family:var(--jp-font-data); font-size:16px; font-weight:700; color:var(--jp-ink)}
   html[data-shell="global-dashboard"] .gd-vrm-regime{font-family:var(--jp-font-ui); font-size:10px; font-weight:600}
   html[data-shell="global-dashboard"] .gd-vrm-atr{display:flex; gap:10px}
@@ -4429,9 +4407,8 @@
   html[data-shell="global-dashboard"] .gd-vrm-atr .v{font-family:var(--jp-font-data); font-size:11px; font-weight:600; color:var(--jp-ink)}
 
   /* ---------- VRM COMPACTO (JPW-789ABC-B2, Fase 2A.5) ----------
-     .gd-vrm-main e .gd-vrm-dial acima ficaram sem uso quando o dial saiu do
-     markup; a limpeza de CSS órfão foi expressamente deixada para depois e
-     está registrada como pendência — não é esquecimento.
+     As regras órfãs do dial (.gd-vrm-main, .gd-vrm-dial) foram removidas na
+     Fase 2B, junto das dos cinco cards absorvidos.
      A barra NÃO tem estilo próprio: reusa .mc-fact-track/-fill/-mark do
      cockpit. Aqui só o que o contexto exige — o track nasce <span> (inline) e
      precisa virar bloco. */
@@ -4479,26 +4456,34 @@
      a folga num lugar só — mesma técnica do rodapé do Status.
      O respiro mínimo migra para padding: com `auto`, quando não há folga o
      margin resolve para 0 e o filete encostaria no texto acima. */
-  html[data-shell="global-dashboard"] .gd-vrm-atr-disc{margin-top:auto; padding-top:var(--jp-space-3)}
+  /* ---------- P3 · DISCLOSURE COMPARTILHADO (Fase 2C) ----------
+     Uma regra para todas as telas. O protótipo usa `▾` como mecanismo central
+     do P3 — explicação, metodologia e leitura informativa descem para cá;
+     dado operacional nunca. `<details>` nativo: teclado e leitor de tela vêm
+     de graça, sem JS. */
+  html[data-shell="global-dashboard"] .jp-p3{margin-top:var(--jp-space-3)}
+  html[data-shell="global-dashboard"] .jp-p3 > summary,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary{
     cursor:pointer; list-style:none;
     font-family:var(--jp-font-ui); font-size:10px; font-weight:600;
     color:var(--jp-action);
   }
+  html[data-shell="global-dashboard"] .jp-p3 > summary::-webkit-details-marker,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary::-webkit-details-marker{display:none}
+  html[data-shell="global-dashboard"] .jp-p3 > summary::before,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary::before{content:'▸ '}
+  html[data-shell="global-dashboard"] .jp-p3[open] > summary::before,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc[open] > summary::before{content:'▾ '}
+  html[data-shell="global-dashboard"] .jp-p3 > summary:focus-visible,
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc > summary:focus-visible{
     outline:2px solid var(--jp-action); outline-offset:2px; border-radius:var(--jp-radius-sm);
   }
+  html[data-shell="global-dashboard"] .jp-p3 > *:not(summary){margin-top:var(--jp-space-2)}
+  /* O VRM ancora o seu no rodapé do card (a folga se junta num lugar só). */
+  html[data-shell="global-dashboard"] .gd-vrm-atr-disc{margin-top:auto; padding-top:var(--jp-space-3)}
   html[data-shell="global-dashboard"] .gd-vrm-atr-disc .gd-vrm-atr{margin-top:var(--jp-space-2)}
 
   /* ---------- Faixa de postura/conformidade — só estados reais ---------- */
-  html[data-shell="global-dashboard"] .gd-posture-row{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; padding:18px 22px;
-  }
-  html[data-shell="global-dashboard"] .gd-posture-label{font-family:var(--jp-font-ui); font-size:12px; font-weight:600; margin-bottom:3px}
-  html[data-shell="global-dashboard"] .gd-posture-sub{font-family:var(--jp-font-ui); font-size:10.5px; color:var(--jp-ink-muted); line-height:1.4}
 
   /* ---------- Notícias de alto impacto (Forex Factory, 15-ff-news.js) ----------
      Só tokens existentes — nenhuma cor nova; claro/escuro herdados. */
@@ -5267,3 +5252,28 @@ html[data-ui-version="tesla-inspired"] #fxPlanningCard{padding:0 var(--fxp-pad) 
   html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .lbl{display:none}
   html[data-shell="global-dashboard"] .gd-topbar-nav-slot .tab .n{display:inline}
 }
+
+  /* ---------- CONTAS · colunas derivadas em P3 (Fase 2C) ----------
+     O protótipo mantém na tabela apenas `LOTE VS MESTRE` — o número que se
+     opera — e manda Correção, Normalização V10 e Fator de Perfil para o
+     detalhe de cada linha. Aqui elas saem da leitura primária mas continuam
+     no DOM e acessíveis: o cálculo completo vive no `title` da própria célula
+     de Lote vs Mestre. Nenhum dado foi apagado e o renderizador não mudou de
+     contrato — só deixaram de disputar a largura da tabela.
+     Escopado ao shell novo: sem `data-shell`, a tabela antiga volta inteira. */
+  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(8),
+  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(9),
+  html[data-shell="global-dashboard"] #contas .dtable th:nth-child(10),
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-corr,
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-fw,
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-pf{display:none}
+  html[data-shell="global-dashboard"] #contas .dtable td.calc-lotevs{cursor:help}
+
+  /* ---------- PLANEJAMENTO FX · cartão único centrado (Fase 2C) ----------
+     O protótipo desenha o FX como UM cartão de 936px centrado numa área de
+     1425 (≈65%), não como faixa de largura cheia. O formulário de criação é
+     leitura primária; as três camadas já desceram para disclosure. */
+  html[data-shell="global-dashboard"] #fxplan > .card,
+  html[data-shell="global-dashboard"] #fxplan > section{
+    max-width:936px; margin-left:auto; margin-right:auto;
+  }

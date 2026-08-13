@@ -17,8 +17,17 @@ function renderExecClearance(c){
   $('ecAcao').textContent=acao;
   $('ecFase').textContent=c.fase.nome;
   const dg=$('dpGrade'); $('ecGrade').textContent=(dg&&dg.textContent)||'—';
-  $('ecRisco').textContent=fmtMoney(c.riscoTotal)+' / '+fmtMoney(c.tetoRisco);
-  $('ecAlav').textContent=fmtX(c.alavCar)+' / '+fmtX(c.tetoAlav);
+  // Fase 2C — fidelidade ao protótipo: o TETO vai para o rótulo e o valor
+  // carrega só o número corrente. Mesmas fontes, nenhuma fórmula nova.
+  const setTxt=(id,v)=>{ const e=$(id); if(e) e.textContent=v; };
+  setTxt('ecRiscoLbl','Risco / Teto '+fmtMoney(c.tetoRisco));
+  setTxt('ecRisco', fmtMoney(c.riscoTotal));
+  setTxt('ecAlavLbl','Alav. / Teto '+fmtX(c.tetoAlav));
+  setTxt('ecAlav', fmtX(c.alavCar));
+  // DRAWDOWN entra no cockpit do Execution Board: era o fato que os termômetros
+  // removidos carregavam. Mesma escala do gauge (teto ativo do perfil).
+  setTxt('ecDD', fmtPct(c.dd));
+  setTxt('ecDDsub','de '+fmtPct(c.mddScaled>0?c.mddScaled:0.15));
 }
 
 // ---- Execution Board phases ----
