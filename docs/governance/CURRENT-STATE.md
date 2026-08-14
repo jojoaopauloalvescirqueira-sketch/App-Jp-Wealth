@@ -1,12 +1,14 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `19590249a47c37bc0228dd06a59e2c3a635ee920`
-- Branch atual: `feature/nav-exec-submenu`
-- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
-- Estado de integração: implementação concluída e validada tecnicamente;
-  **não commitada**, não integrada, não enviada ao remoto e não publicada.
-  Aguarda teste manual do gestor e autorização de commit.
+Source revision representada: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
+- Branch atual: `main`
+- Commit material: `d2ad73f` na branch `feature/nav-exec-submenu`
+- Commit de integração: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
+- Estado de integração: implementação commitada e integrada localmente em
+  `main` com autorização do gestor; **não enviada ao remoto e não publicada**.
+  O teste manual das telas pelo gestor continua pendente — a autorização de
+  commit foi dada antes dessa inspeção, e toda a evidência é programática.
 - Build local: `7751a049cfd23dab`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
@@ -68,8 +70,9 @@ Source revision representada: `19590249a47c37bc0228dd06a59e2c3a635ee920`
   contabilidade, MEI-JP e regras do Planejamento FX não mudaram semanticamente.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch criada e implementação autorizadas. Commit, merge,
-  push e deploy **não** foram executados e dependem de autorização própria.
+- Git/publicação: branch, implementação, commit e merge autorizados e
+  executados. Push e deploy **não** foram executados e dependem de
+  autorização própria.
 
 ## Evidência deste candidato
 
@@ -78,8 +81,9 @@ Source revision representada: `19590249a47c37bc0228dd06a59e2c3a635ee920`
 | `python3 tools/exec_submenu_test.py` | PASS | Teste novo: estrutura em fluxo, deslocamento, destino inicial, equivalência do Painel Operacional, preservação de estado na ida e volta, teclado, `inert` por comportamento, hover e fixação, troca de módulo, não regressão das cinco abas, temas e mobile. |
 | `python3 tools/fx_planning_test.py` | PASS | Planejamento inalterado sob o controlador genérico, após renomeação dos seletores. |
 | `python3 tools/validate_project.py` | PASS | 61 scripts, 392 IDs estáticos, zero duplicados, hashes/ordem coerentes e portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 19/19 | Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T214413-full.json`. **Executado antes do registro do teste novo no tier e da reconciliação documental — repetir no candidato final.** |
-| Navegador real | NOT_RUN | O gestor ainda não inspecionou as telas; toda a evidência é programática. |
+| `python3 tools/quality_gate.py --tier full` | PASS 20/20 | Candidato final, já com `exec-submenu` registrado no tier `standard`. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T215752-full.json`. |
+| `python3 tools/quality_gate.py --tier fast` | PASS 4/4 | Repetido sobre a reconciliação documental posterior ao full. |
+| Navegador real | NOT_RUN | O gestor ainda não inspecionou as telas; toda a evidência é programática. A integração foi autorizada mesmo assim. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 
