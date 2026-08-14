@@ -164,6 +164,19 @@ const DEFAULTS = {
   // Guarda estrutural de boot: fxPlanningNormalizeState() (04-persistence.js);
   // normalização profunda: camada de acesso (05-fx-planning/03-fx-state.js).
   fxPlanning:{schemaVersion:1, plan:null, auditLog:[]},
+  // Estudos NoCoda: memória técnica do canal de Fibonacci por instrumento.
+  // studies é um mapa instrumentId -> estudo vigente; o default é VAZIO, e não
+  // parâmetros fictícios — "nenhum estudo cadastrado ainda". A chave é o
+  // instrumentId() canônico (10-domain/01-risk-instruments.js), a mesma
+  // identidade que as ordens já usam; NÃO há cópia do catálogo aqui.
+  // Cada estudo guarda apenas CAUSAS — três âncoras (datetime + price) e
+  // updatedAt. Toda geometria (linha 0 projetada, range assinado, range do
+  // canal, subdivisão, os 65 níveis) é DERIVADA e nunca persiste: seria uma
+  // segunda fonte de verdade capaz de divergir das âncoras.
+  // Estudo de instrumento que saiu da lista operacional é PRESERVADO: mudança
+  // de configuração não destrói memória técnica.
+  // Guarda estrutural de boot: nocodaNormalizeState() (04-persistence.js).
+  nocoda:{schemaVersion:1, studies:{}},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o

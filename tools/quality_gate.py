@@ -28,6 +28,7 @@ STANDARD = FAST + (
     ("galton-board", [sys.executable, "tools/galton_board_test.py"]),
     ("fx-planning", [sys.executable, "tools/fx_planning_test.py"]),
     ("exec-submenu", [sys.executable, "tools/exec_submenu_test.py"]),
+    ("nocoda", [sys.executable, "tools/nocoda_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (

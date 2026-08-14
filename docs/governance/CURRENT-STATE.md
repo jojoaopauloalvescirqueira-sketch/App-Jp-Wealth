@@ -1,14 +1,16 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
-- Branch atual: `main`
-- Commit material: `d2ad73f` na branch `feature/nav-exec-submenu`
-- Commit de integração: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
-- Estado de integração: implementação commitada e integrada localmente em
-  `main` com autorização do gestor; **não enviada ao remoto e não publicada**.
-  O teste manual das telas pelo gestor continua pendente — a autorização de
-  commit foi dada antes dessa inspeção, e toda a evidência é programática.
+Source revision representada: `60070a2070a191817077513dd45002ddc69e0a54`
+- Branch atual: `feature/exec-nocoda-studies`
+- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
+- Estado de integração: implementação dos Estudos NoCoda concluída e validada
+  tecnicamente; **não commitada**, não integrada e não publicada. Aguarda teste
+  manual do gestor.
+- Nota sobre o remoto: o segundo nível do Execution Board (`d2ad73f`, merge
+  `83a18dd`, reconciliação `60070a2`) foi para `origin/main` por push externo a
+  esta sessão — GitHub Desktop ou outra sessão no mesmo checkout. Nenhum `git
+  push` foi executado aqui.
 - Build local: `7751a049cfd23dab`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
@@ -17,10 +19,10 @@ Source revision representada: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
 
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
-- `src/js/manifest.json` contém 61 scripts: os 60 da base, com hash atualizado
-  apenas do controlador de shell editado, mais `src/js/20-ui/13-exec-views.js`
-  na ordem 61. `sw.js`, o HTML e o portátil permanecem reconciliados com esse
-  manifest, e o precache cobre os 61.
+- `src/js/manifest.json` contém 63 scripts: os 61 anteriores mais
+  `src/js/10-domain/09-nocoda-geometry.js` (62) e
+  `src/js/20-ui/14-nocoda-studies.js` (63). `sw.js`, o HTML e o portátil
+  permanecem reconciliados, e o precache cobre os 63.
 - As cinco telas principais compartilham o shell horizontal do protótipo:
   Dashboard, Execution Board, Contas, Contabilidade e Planejamento FX. A
   navegação clássica por sublinhado é o padrão; abaixo de 900 px ela vira uma
@@ -29,8 +31,8 @@ Source revision representada: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
   Notícias e Ações rápidas formam a faixa P2; Evolução e Ritmo usam razão 3:2;
   motivos, métricas, acompanhamento mensal, drawdown e comparação mensal ficam
   preservados em um único disclosure metodológico.
-- Execution Board: passou a ter segundo nível com três workspaces — Visão Geral
-  (estrutural, sem conteúdo funcional), Painel Operacional e Estudos dos Pivots
+- Execution Board: segundo nível com quatro workspaces — Visão Geral
+  (estrutural), Painel Operacional, Estudos NoCoda e Estudos dos Pivots
   (reservado). O Painel Operacional é o próprio `#execWidgetGrid`: clearance
   compacto com quatro fatos, Grade e monitor LIFO, com indicadores
   complementares e ATR/VRM em disclosure. Nenhum nó foi movido, os 67 ids
@@ -57,33 +59,44 @@ Source revision representada: `83a18ddaeeb22aafbde0d7be4edcb587d1290b3b`
   cacheados do build anterior. Enquanto o worker novo está em `waiting`, o
   controller antigo entrega seu próprio `index.html`; a troca só ocorre após o
   fechamento de todos os clientes antigos.
+- Estudos NoCoda: workspace do Execution Board que guarda três âncoras por
+  instrumento e deriva o range −1→0 e o da subdivisão 0,125. Os instrumentos vêm
+  de `instrumentCatalog()`, derivado de `S.instruments` — não há catálogo
+  próprio. A identidade é `instrumentId()`, o `name` normalizado que já era a
+  chave de facto; **nenhum campo novo entrou no catálogo**. O agregado
+  `S.nocoda` guarda somente causas; geometria nunca persiste. Contrato em
+  `docs/architecture/NOCODA-STUDIES.md`.
 - `build-id.js` e `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html` foram
   regenerados somente por `tools/rebuild_monolith.py`.
 
 ## Escopo e autoridade
 
-- N0-V + N1 + N0-D, autoridade A2: workspaces do Execution Board, faixa
-  contextual compartilhada, CSS, responsividade, interações de apresentação,
-  teste e documentação arquitetural.
-- N2/N3: fora do escopo. `DEFAULTS`, `migrate()`, `schemaVersion`, chaves de
-  storage, fórmulas, perfis, fases, DD/MDD, lote, LIFO, stops, quarentena,
-  contabilidade, MEI-JP e regras do Planejamento FX não mudaram semanticamente.
+- N1 + N0-V + N0-D, autoridade A2: domínio NoCoda, workspaces do Execution
+  Board, faixa contextual compartilhada, CSS, interações de apresentação, teste
+  e documentação arquitetural.
+- `DEFAULTS` e `migrate()` receberam o agregado ADITIVO `S.nocoda` com guarda
+  estrutural própria — chave nova com default vazio, sem tocar nenhum agregado
+  existente e sem migração de dado do operador. A identidade de instrumento foi
+  formalizada em função (`instrumentId`) sem acrescentar campo ao catálogo,
+  decisão tomada justamente para não entrar em faixa N2.
+- N2/N3: fora do escopo. Chaves de storage existentes, fórmulas, perfis, fases,
+  DD/MDD, lote, LIFO, stops, quarentena, contabilidade, MEI-JP e regras do
+  Planejamento FX não mudaram semanticamente.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch, implementação, commit e merge autorizados e
-  executados. Push e deploy **não** foram executados e dependem de
-  autorização própria.
+- Git/publicação: branch e implementação autorizadas. Commit, merge, push e
+  deploy **não** foram executados nesta tarefa.
 
 ## Evidência deste candidato
 
 | Verificação | Resultado | Escopo/observação |
 |---|---|---|
-| `python3 tools/exec_submenu_test.py` | PASS | Teste novo: estrutura em fluxo, deslocamento, destino inicial, equivalência do Painel Operacional, preservação de estado na ida e volta, teclado, `inert` por comportamento, hover e fixação, troca de módulo, não regressão das cinco abas, temas e mobile. |
-| `python3 tools/fx_planning_test.py` | PASS | Planejamento inalterado sob o controlador genérico, após renomeação dos seletores. |
-| `python3 tools/validate_project.py` | PASS | 61 scripts, 392 IDs estáticos, zero duplicados, hashes/ordem coerentes e portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 20/20 | Candidato final, já com `exec-submenu` registrado no tier `standard`. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T215752-full.json`. |
-| `python3 tools/quality_gate.py --tier fast` | PASS 4/4 | Repetido sobre a reconciliação documental posterior ao full. |
-| Navegador real | NOT_RUN | O gestor ainda não inspecionou as telas; toda a evidência é programática. A integração foi autorizada mesmo assim. |
+| `python3 tools/nocoda_test.py` | PASS | Teste novo: fixture canônica da especificação, rejeição explícita de `abs(P3−P1)` e `abs(P3−P2)`, invariantes P0(T1)=P1 / P0(T2)=P2 / P(−1,T3)=P3, canal horizontal, âncora sobre a linha, interpolação e extrapolação, sinais, seis casos de validação com caso de controle, NaN/Infinity, escala de 65 níveis sem deriva, contagem 8/9, identidade de instrumento, ausência de símbolo hardcoded, seletor derivado, cálculo sem persistir, salvar/recarregar, segundos preservados, `updatedAt`, isolamento entre instrumentos, ciclo de backup, ausência de mutação operacional, estudo preservado após remoção do instrumento e três formas de estado antigo ou malformado. |
+| `python3 tools/exec_submenu_test.py` | PASS | Quarto workspace integrado sem regressão do segundo nível. |
+| `python3 tools/fx_planning_test.py` | PASS | Planejamento inalterado. |
+| `python3 tools/validate_project.py` | PASS | 63 scripts, 393 IDs estáticos, zero duplicados, hashes/ordem coerentes e portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 21/21 | Candidato final, com `nocoda` registrado no tier `standard`. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T223459-full.json`. |
+| Navegador real | NOT_RUN | O gestor ainda não inspecionou o workspace; toda a evidência é programática. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 

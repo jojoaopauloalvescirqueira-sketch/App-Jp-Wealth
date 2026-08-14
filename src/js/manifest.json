@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "6457a3e5c3886b6420e45967067c3db2060bddbf95cec97d8d6461cdf6f42e04"
+      "sha256": "95b05d69165616f3458c16da12be1ba8d1353bc76752f33dfb1094c32be97a79"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "9e2620fec119ff2009ee5a7fa59accf2bb91132f0218eeb03c5ad8bcd091d238"
+      "sha256": "61ddf541008c311bf9bb05ee53141925ed61b2875df0693bbc238dac9ac9b37e"
     },
     {
       "order": 5,
@@ -44,7 +44,7 @@
       "order": 7,
       "path": "src/js/10-domain/01-risk-instruments.js",
       "section": "MOTOR DE RISCO POR INSTRUMENTO",
-      "sha256": "2771666f5b634e03c6d62feb36b94278dd084c3bb2d8674b06022de1372e8ddd"
+      "sha256": "7dee71a663bd9f4bd2190673901df352db879b7d0379e1d81d079dc4e0d8e4e5"
     },
     {
       "order": 8,
@@ -368,7 +368,19 @@
       "order": 61,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "e08be56968465b67d0f48b27f72ea8eb53f06cd6b8f6a85ac9c324715e20e837"
+      "sha256": "e4dde20e187d08a7649abcabd4d9ee6a2de3cbe8c4f7c3199495cae5f9afd193"
+    },
+    {
+      "order": 62,
+      "path": "src/js/10-domain/09-nocoda-geometry.js",
+      "section": "NOCODA · geometria do canal (dominio puro)",
+      "sha256": "268858faa34378c4dd3c90827699e59d48a1022a1f2287e6bc840bf51265147f"
+    },
+    {
+      "order": 63,
+      "path": "src/js/20-ui/14-nocoda-studies.js",
+      "section": "ESTUDOS NOCODA · interface do workspace",
+      "sha256": "7dda7e700186309cf41d99da92b69c93140c268d06f6082b8f3586c13018e603"
     }
   ]
 }

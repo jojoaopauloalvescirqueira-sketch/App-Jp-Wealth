@@ -37,6 +37,8 @@ const PRECACHE_URLS = [
   './src/js/30-accounting/05-fx-planning/03-fx-state.js',
   './src/js/30-accounting/05-fx-planning/04-fx-charts.js', './src/js/30-accounting/05-fx-planning/05-fx-ui.js',
   './src/js/20-ui/13-exec-views.js',
+  './src/js/10-domain/09-nocoda-geometry.js',
+  './src/js/20-ui/14-nocoda-studies.js',
   './manifests/jp-wealth.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
 ].flatMap(url=>url.startsWith('./assets/pwa-icon-')?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);

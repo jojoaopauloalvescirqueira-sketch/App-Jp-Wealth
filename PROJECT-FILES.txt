@@ -93,6 +93,7 @@ src/js/10-domain/05-brokers-prop-firms.js
 src/js/10-domain/06-quarantine.js
 src/js/10-domain/07-reserve-requirements.js
 src/js/10-domain/08-usd-brl-quote.js
+src/js/10-domain/09-nocoda-geometry.js
 src/js/20-ui/01-header-readout.js
 src/js/20-ui/02-sidebar.js
 src/js/20-ui/03-main-render.js
@@ -106,6 +107,7 @@ src/js/20-ui/10-font-scale.js
 src/js/20-ui/11-phase-posture.js
 src/js/20-ui/12-nav-style.js
 src/js/20-ui/13-exec-views.js
+src/js/20-ui/14-nocoda-studies.js
 src/js/30-accounting/01-daily-ledger.js
 src/js/30-accounting/02-accounting-engine.js
 src/js/30-accounting/03-mei-jp.js
@@ -158,6 +160,7 @@ tools/galton_board_test.py
 tools/import_xss_security_test.py
 tools/investor_password_test.py
 tools/mvp_notes_test.py
+tools/nocoda_test.py
 tools/persistence_failure_test.py
 tools/persistence_recovery_test.py
 tools/preflight_context_test.py

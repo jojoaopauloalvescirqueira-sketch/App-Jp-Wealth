@@ -18,8 +18,16 @@
 const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
+  ['nocoda', 'execNocoda'],
   ['pivots', 'execPivots']
 ];
+// Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
+// HTML. O NoCoda deriva seu seletor do catalogo vivo do Motor de Lote, entao
+// precisa repintar a cada entrada — um instrumento destravado em Configuracoes
+// tem de aparecer sem recarregar a pagina.
+const EXEC_VIEW_RENDERERS = {
+  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); }
+};
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;
 // Marca de escolha explícita do usuário. Existe porque navegar para o módulo e
@@ -40,6 +48,10 @@ function execApplyView(view) {
 function execSetView(view) {
   execView = view;
   execApplyView(view);
+  // A montagem vem DEPOIS de tirar o hidden: renderizar num container oculto
+  // impediria qualquer medida futura e deixaria o foco em no invisivel.
+  const render = EXEC_VIEW_RENDERERS[view];
+  if (typeof render === 'function') render();
 }
 
 function execSelectView(view) {

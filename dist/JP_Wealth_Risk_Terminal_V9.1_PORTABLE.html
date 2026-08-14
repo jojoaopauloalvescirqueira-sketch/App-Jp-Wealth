@@ -5768,10 +5768,38 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
   html[data-shell="global-dashboard"] .nav-sub-clip,
   html[data-shell="global-dashboard"] .nav-sub-menu button{transition:none!important}
 }
+
+/* ==========================================================
+   ESTUDOS NOCODA · workspace do Execution Board
+   Sem design system novo: reaproveita .card, .field, .metrics,
+   .params-grid, .reset-btn e .fx-status. Só o agrupamento por
+   âncora e a mensagem por campo precisaram de regra própria.
+   ========================================================== */
+.nc-picker{max-width:340px}
+.nc-anchors{align-items:start}
+.nc-anchor{border:1px solid var(--line); border-radius:8px; padding:12px 14px 4px; margin:0 0 12px; min-width:0}
+.nc-anchor legend{font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); padding:0 6px}
+.nc-anchor .field{margin-bottom:10px}
+.nc-anchor input{width:100%; min-width:0}
+/* Mensagem por campo: só ocupa espaço quando existe erro, para o formulário
+   não ficar com lacunas permanentes entre as âncoras. */
+.nc-field-err{color:var(--f4); font-size:calc(11px * var(--fs-scale)); line-height:1.45; margin:0 0 8px}
+.nc-field-err:empty{display:none}
+.nc-err{color:var(--f4); font-size:calc(12px * var(--fs-scale)); margin-top:8px; line-height:1.5}
+.nc-results{margin-top:4px}
+.nc-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px}
+[data-nc-field][aria-invalid="true"]{border-color:var(--f4)}
+
+@media(max-width:880px){
+  .nc-picker{max-width:100%}
+  /* Data e valor empilham; o alvo de toque continua confortável. */
+  .nc-anchor .field input{min-height:40px}
+}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '7751a049cfd23dab';
+const JP_WEALTH_BUILD_ID = 'a9616da128609077';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5908,6 +5936,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <button type="button" data-nav-sub-view="panel">
         <span class="nav-sub-item-title">Painel Operacional</span>
         <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
+      </button>
+      <button type="button" data-nav-sub-view="nocoda">
+        <span class="nav-sub-item-title">Estudos NoCoda</span>
+        <span class="nav-sub-item-desc">Âncoras do canal por instrumento</span>
       </button>
       <button type="button" data-nav-sub-view="pivots">
         <span class="nav-sub-item-title">Estudos dos Pivots</span>
@@ -6142,6 +6174,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         </details>
       </div>
     </div>
+    <!-- Estudos NoCoda: memória técnica do canal por instrumento. O conteúdo é
+         renderizado por 20-ui/14-nocoda-studies.js a cada entrada no workspace,
+         porque o seletor deriva do catálogo vivo do Motor de Lote. -->
+    <div class="exec-view" id="execNocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
     <div class="exec-view" id="execPivots" role="region" aria-labelledby="execPivotsTitle" hidden>
       <div class="card">
         <h2 id="execPivotsTitle">Estudos dos Pivots</h2>
@@ -7241,6 +7277,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
 
 
+
+
 <script>
 // ============ PERFIS DE RISCO V10.0 (fonte única) ============
 const BASE_TARGET_MONTHLY=0.0275;
@@ -7539,6 +7577,19 @@ const DEFAULTS = {
   // Guarda estrutural de boot: fxPlanningNormalizeState() (04-persistence.js);
   // normalização profunda: camada de acesso (05-fx-planning/03-fx-state.js).
   fxPlanning:{schemaVersion:1, plan:null, auditLog:[]},
+  // Estudos NoCoda: memória técnica do canal de Fibonacci por instrumento.
+  // studies é um mapa instrumentId -> estudo vigente; o default é VAZIO, e não
+  // parâmetros fictícios — "nenhum estudo cadastrado ainda". A chave é o
+  // instrumentId() canônico (10-domain/01-risk-instruments.js), a mesma
+  // identidade que as ordens já usam; NÃO há cópia do catálogo aqui.
+  // Cada estudo guarda apenas CAUSAS — três âncoras (datetime + price) e
+  // updatedAt. Toda geometria (linha 0 projetada, range assinado, range do
+  // canal, subdivisão, os 65 níveis) é DERIVADA e nunca persiste: seria uma
+  // segunda fonte de verdade capaz de divergir das âncoras.
+  // Estudo de instrumento que saiu da lista operacional é PRESERVADO: mudança
+  // de configuração não destrói memória técnica.
+  // Guarda estrutural de boot: nocodaNormalizeState() (04-persistence.js).
+  nocoda:{schemaVersion:1, studies:{}},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
@@ -8104,12 +8155,46 @@ function fxPlanningNormalizeState(){
   if(!Array.isArray(fx.auditLog)) fx.auditLog=[];
   if(fx.auditLog.length>400) fx.auditLog=fx.auditLog.slice(-400);
 }
+// Estudos NoCoda: guarda ESTRUTURAL de boot. Vive aqui, e não no módulo da
+// feature, porque migrate() roda dentro de load() antes de qualquer script
+// tardio existir — o mesmo motivo dos três normalizadores acima.
+//
+// A guarda é deliberadamente conservadora: descarta apenas o que tem FORMA
+// errada e preserva campos desconhecidos dentro de cada estudo, conforme
+// STATE-SCHEMA.md §3. Não valida a matemática das âncoras — um estudo
+// numericamente incoerente é problema da camada de cálculo, que simplesmente
+// não produz geometria; apagá-lo aqui destruiria entrada do operador em
+// silêncio, no caminho que também atende backup importado.
+function nocodaNormalizeState(){
+  if(!S.nocoda || typeof S.nocoda!=='object' || Array.isArray(S.nocoda))
+    S.nocoda=structuredClone(DEFAULTS.nocoda);
+  const nc=S.nocoda;
+  if(!Number.isFinite(+nc.schemaVersion) || +nc.schemaVersion<1) nc.schemaVersion=1;
+  if(!nc.studies || typeof nc.studies!=='object' || Array.isArray(nc.studies)) nc.studies={};
+  for(const key of Object.keys(nc.studies)){
+    const study=nc.studies[key];
+    // Chave fora da forma canônica de instrumentId() não é descartada: é
+    // REALOCADA para a chave canônica, para não perder memória técnica de uma
+    // base gravada com espaçamento ou caixa diferente.
+    const canonical=String(key).toUpperCase().replace(/[^A-Z0-9]/g,'');
+    if(!study || typeof study!=='object' || Array.isArray(study)){ delete nc.studies[key]; continue; }
+    for(const anchorKey of ['anchor1','anchor2','anchor3']){
+      const a=study[anchorKey];
+      if(!a || typeof a!=='object' || Array.isArray(a)) study[anchorKey]={datetime:'', price:null};
+    }
+    if(canonical && canonical!==key){
+      if(!(canonical in nc.studies)) nc.studies[canonical]=study;
+      delete nc.studies[key];
+    } else if(!canonical){ delete nc.studies[key]; }
+  }
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
+  nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -8714,10 +8799,30 @@ async function dgFsWriteFile(handle,name,blob){
 // P&L de uma ordem é denominado na MOEDA DE COTAÇÃO do par; o risco em $ precisa converter.
 const QUOTE_CCY={EURUSD:'USD',GBPUSD:'USD',AUDUSD:'USD',NZDUSD:'USD',US500:'USD',XAUUSD:'USD',
   USDJPY:'JPY',USDCHF:'CHF',USDCAD:'CAD',AUDCAD:'CAD'};
+// IDENTIDADE CANÔNICA DO INSTRUMENTO.
+// O catálogo não tem campo `id`: a identidade sempre foi o `name` normalizado,
+// e esta função apenas dá nome à regra que já era aplicada aqui dentro. Ela é a
+// fonte única — quem precisar referenciar um instrumento (ordens, estudos,
+// índices) usa esta chave em vez de reimplementar o `replace`.
+// Devolve '' para entrada vazia ou inválida, nunca null, para poder ser
+// comparada com segurança.
+function instrumentId(par){
+  return String(par==null?'':par).toUpperCase().replace(/[^A-Z0-9]/g,'');
+}
 function instFor(par){
   if(!par) return null;
-  const k=String(par).toUpperCase().replace(/[^A-Z0-9]/g,'');
-  return S.instruments.find(i=>i.name===k)||null;
+  const k=instrumentId(par);
+  return k ? (S.instruments.find(i=>i.name===k)||null) : null;
+}
+// Lista canônica operável, derivada de S.instruments — nunca uma cópia.
+// `banned && !unlocked` é o mesmo predicado que o seletor das grades e o veto
+// de execução já usam; quem precisar do catálogo inteiro passa {all:true}.
+function instrumentCatalog(options){
+  const all = !!(options && options.all);
+  const list = Array.isArray(S.instruments) ? S.instruments : [];
+  return list
+    .filter(i => i && i.name && (all || !(i.banned && !i.unlocked)))
+    .map(i => ({ id: instrumentId(i.name), name: i.name, banned: !!i.banned, unlocked: !!i.unlocked }));
 }
 function quoteToUSD(ccy){ // 1 unidade da moeda de cotação em USD
   if(!ccy || ccy==='USD') return 1;
@@ -24604,8 +24709,16 @@ document.querySelectorAll('.tab[data-screen="fxplan"]').forEach(t=>t.addEventLis
 const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
+  ['nocoda', 'execNocoda'],
   ['pivots', 'execPivots']
 ];
+// Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
+// HTML. O NoCoda deriva seu seletor do catalogo vivo do Motor de Lote, entao
+// precisa repintar a cada entrada — um instrumento destravado em Configuracoes
+// tem de aparecer sem recarregar a pagina.
+const EXEC_VIEW_RENDERERS = {
+  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); }
+};
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;
 // Marca de escolha explícita do usuário. Existe porque navegar para o módulo e
@@ -24626,6 +24739,10 @@ function execApplyView(view) {
 function execSetView(view) {
   execView = view;
   execApplyView(view);
+  // A montagem vem DEPOIS de tirar o hidden: renderizar num container oculto
+  // impediria qualquer medida futura e deixaria o foco em no invisivel.
+  const render = EXEC_VIEW_RENDERERS[view];
+  if (typeof render === 'function') render();
 }
 
 function execSelectView(view) {
@@ -24672,6 +24789,404 @@ execWatchModuleEntry();
 // Superfície pública consumida pelo controlador da faixa compartilhada
 // (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.
 window.JPWExec = { ui: { selectView: execSelectView, getView: execGetView } };
+// ============ NOCODA · GEOMETRIA DO CANAL (N1 — dominio puro) ============
+// Nucleo matematico do metodo NoCoda. E deliberadamente puro: recebe numeros e
+// strings, devolve numeros, e nao toca DOM, localStorage, S, rede ou qualquer
+// modulo tardio. Isso o torna testavel isoladamente e reutilizavel.
+//
+// PRINCIPIO DE SEGURANCA OPERACIONAL: nada aqui autoriza operacao. O estudo e
+// memoria tecnica — nenhuma funcao deste arquivo altera risco, fase, clearance,
+// alavancagem, ordem ou estado estatutario, e nenhum valor derivado daqui pode
+// ser lido como permissao para operar.
+//
+// GEOMETRIA. As ancoras 1 e 2 definem a linha de nivel 0; a ancora 3 pertence a
+// linha paralela de nivel -1. A linha 0 e linear no tempo:
+//
+//   P0(t) = P1 + (P2 - P1) * (t - T1) / (T2 - T1)
+//
+// O range do canal e medido na MESMA coordenada temporal — projetando a linha 0
+// ate T3 — e nunca por abs(P3-P1) ou abs(P3-P2), que ignoram a inclinacao.
+
+const NOCODA_STEP = 0.125;          // passo entre linhas consecutivas
+const NOCODA_SUBDIVISIONS = 8;      // 1 / 0,125 — intervalos entre -1 e 0
+const NOCODA_LEVEL_MIN = -4;
+const NOCODA_LEVEL_MAX = 4;
+// 64 intervalos entre -4 e +4, portanto 65 linhas contando as duas pontas.
+const NOCODA_LEVEL_COUNT = (NOCODA_LEVEL_MAX - NOCODA_LEVEL_MIN) * NOCODA_SUBDIVISIONS + 1;
+
+// Aceita 'AAAA-MM-DDTHH:MM:SS' e 'AAAA-MM-DD HH:MM:SS'; os segundos sao
+// opcionais na entrada porque alguns navegadores omitem quando valem zero.
+const NOCODA_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?$/;
+
+// Converte o carimbo digitado em milissegundos.
+//
+// Os componentes sao interpretados como UTC de proposito. O horario vem do
+// MetaTrader e e um carimbo SEM fuso; se fosse lido como hora local, duas
+// ancoras em lados opostos de uma virada de horario de verao produziriam uma
+// diferenca de tempo distinta conforme o fuso de quem abre o app — e o mesmo
+// estudo daria ranges diferentes em maquinas diferentes. Lendo como UTC a
+// aritmetica fica deterministica em qualquer lugar, e a interface continua
+// exibindo exatamente o que foi digitado. Nenhuma conversao de fuso ocorre.
+function nocodaParseTime(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  const match = NOCODA_TIME_RE.exec(String(value == null ? '' : value).trim());
+  if (!match) return null;
+  const year = +match[1], month = +match[2], day = +match[3];
+  const hour = +match[4], minute = +match[5], second = match[6] ? +match[6] : 0;
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  if (hour > 23 || minute > 59 || second > 59) return null;
+  const ms = Date.UTC(year, month - 1, day, hour, minute, second);
+  if (!Number.isFinite(ms)) return null;
+  // Rejeita data inexistente: Date.UTC transborda 31/02 para 03/03 em silencio.
+  const back = new Date(ms);
+  if (back.getUTCFullYear() !== year || back.getUTCMonth() !== month - 1 || back.getUTCDate() !== day) return null;
+  return ms;
+}
+
+function nocodaIsValidPrice(value) {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+// Preco na linha de nivel 0 em qualquer instante t. Interpola e extrapola: t
+// nao precisa estar entre T1 e T2.
+function nocodaProjectBasePrice(t1, p1, t2, p2, t) {
+  return p1 + (p2 - p1) * ((t - t1) / (t2 - t1));
+}
+
+// Nivel pelo indice inteiro k, k = 0..64. Usar indice em vez de acumular
+// +0,125 num laco evita o erro binario que se soma a cada iteracao.
+function nocodaLevelAt(k) {
+  return NOCODA_LEVEL_MIN + k / NOCODA_SUBDIVISIONS;
+}
+
+// Valida as tres ancoras e devolve os valores ja normalizados em numeros.
+// Erros sao por campo, para a interface poder apontar onde esta o problema.
+function nocodaValidateAnchors(anchors) {
+  const errors = [];
+  const source = anchors && typeof anchors === 'object' ? anchors : {};
+  const times = [];
+  const prices = [];
+
+  ['anchor1', 'anchor2', 'anchor3'].forEach((key, index) => {
+    const anchor = source[key] && typeof source[key] === 'object' ? source[key] : {};
+    const ms = nocodaParseTime(anchor.datetime);
+    if (ms === null) {
+      errors.push({ field: key + '.datetime', message: 'Data/hora da âncora ' + (index + 1) + ' é inválida.' });
+    }
+    times.push(ms);
+
+    const raw = anchor.price;
+    const price = typeof raw === 'number' ? raw : Number(String(raw == null ? '' : raw).trim().replace(',', '.'));
+    if (!nocodaIsValidPrice(price)) {
+      errors.push({ field: key + '.price', message: 'Valor da âncora ' + (index + 1) + ' precisa ser um número finito e positivo.' });
+    }
+    prices.push(nocodaIsValidPrice(price) ? price : null);
+  });
+
+  // T1 == T2 deixa a inclinacao da linha 0 indefinida (divisao por zero).
+  // Nao ha restricao analoga para T3: interpolacao e extrapolacao sao ambas
+  // legitimas, entao T3 pode estar antes, entre ou depois de T1 e T2.
+  if (times[0] !== null && times[1] !== null && times[0] === times[1]) {
+    errors.push({ field: 'anchor2.datetime', message: 'Âncoras 1 e 2 não podem ter a mesma data/hora — a inclinação da linha 0 ficaria indefinida.' });
+  }
+
+  if (errors.length) return { ok: false, errors, values: null };
+  return {
+    ok: true,
+    errors: [],
+    values: { t1: times[0], p1: prices[0], t2: times[1], p2: prices[1], t3: times[2], p3: prices[2] }
+  };
+}
+
+// Resultado derivado do estudo. Nada disto e persistido: o estudo guarda as
+// causas (as tres ancoras) e as consequencias sao recalculadas.
+function nocodaGeometry(anchors) {
+  const validation = nocodaValidateAnchors(anchors);
+  if (!validation.ok) return null;
+  const { t1, p1, t2, p2, t3, p3 } = validation.values;
+  const basePriceAtThirdAnchor = nocodaProjectBasePrice(t1, p1, t2, p2, t3);
+  const signedRange = p3 - basePriceAtThirdAnchor;
+  const channelRange = Math.abs(signedRange);
+  return {
+    basePriceAtThirdAnchor,
+    // O sinal diz de que lado da linha 0 esta a linha -1. Serve a geometria
+    // completa do canal; a interface do MVP mostra so o modulo.
+    signedRange,
+    channelRange,
+    subdivisionRange: channelRange / NOCODA_SUBDIVISIONS
+  };
+}
+
+// Preco de qualquer nivel L no instante t: P(L,t) = P0(t) - L * signedRange.
+// Em L=0 devolve a linha base; em L=-1, a linha que contem a terceira ancora.
+// O MVP nao desenha as 65 linhas — esta funcao existe para o motor permanecer
+// coerente e testavel quando isso for implementado.
+function nocodaLevelPrice(level, t, anchors) {
+  const validation = nocodaValidateAnchors(anchors);
+  if (!validation.ok) return null;
+  const { t1, p1, t2, p2, t3, p3 } = validation.values;
+  const base = nocodaProjectBasePrice(t1, p1, t2, p2, t);
+  const signedRange = p3 - nocodaProjectBasePrice(t1, p1, t2, p2, t3);
+  return base - level * signedRange;
+}
+
+// Superficie publica do dominio. Somente matematica — sem estado, sem UI.
+window.JPWNocoda = {
+  geometry: {
+    parseTime: nocodaParseTime,
+    isValidPrice: nocodaIsValidPrice,
+    projectBasePrice: nocodaProjectBasePrice,
+    levelAt: nocodaLevelAt,
+    levelPrice: nocodaLevelPrice,
+    validate: nocodaValidateAnchors,
+    compute: nocodaGeometry,
+    STEP: NOCODA_STEP,
+    SUBDIVISIONS: NOCODA_SUBDIVISIONS,
+    LEVEL_MIN: NOCODA_LEVEL_MIN,
+    LEVEL_MAX: NOCODA_LEVEL_MAX,
+    LEVEL_COUNT: NOCODA_LEVEL_COUNT
+  }
+};
+// ============ ESTUDOS NOCODA · INTERFACE (N1 — apresentação) ============
+// Workspace do Execution Board para a memória técnica do canal NoCoda.
+//
+// SEPARAÇÃO DE RESPONSABILIDADES, deliberada:
+//   · a lista de instrumentos vem de instrumentCatalog() — NUNCA há símbolo
+//     escrito aqui, e nenhuma cópia do catálogo entra no estado NoCoda;
+//   · toda a matemática vive em 10-domain/09-nocoda-geometry.js, puro e sem
+//     DOM; este arquivo só lê entrada, chama o motor e escreve texto;
+//   · a persistência é S.nocoda.studies, gravada apenas no clique em salvar.
+//
+// PRINCÍPIO DE SEGURANÇA OPERACIONAL: nada aqui autoriza operação. Navegar até
+// este workspace ou salvar um estudo não altera fase, clearance, risco,
+// alavancagem, ordem, LIFO, quarentena ou qualquer estado estatutário.
+
+const NC_ANCHOR_KEYS = ['anchor1', 'anchor2', 'anchor3'];
+const NC_EMPTY_ANCHOR = { datetime: '', price: '' };
+
+// Estado EFÊMERO — instrumento em foco e rascunho não salvo. Não entra em S,
+// localStorage, backup, schema ou migração.
+let ncSelectedId = null;
+let ncDraft = null;
+let ncDirty = false;
+
+function ncStudies() {
+  return (S.nocoda && S.nocoda.studies && typeof S.nocoda.studies === 'object') ? S.nocoda.studies : {};
+}
+
+// Rascunho a partir do estudo persistido — ou vazio quando ainda não há estudo.
+function ncDraftFrom(instrumentId) {
+  const saved = ncStudies()[instrumentId];
+  const draft = {};
+  NC_ANCHOR_KEYS.forEach(key => {
+    const anchor = (saved && saved[key] && typeof saved[key] === 'object') ? saved[key] : NC_EMPTY_ANCHOR;
+    draft[key] = {
+      datetime: anchor.datetime == null ? '' : String(anchor.datetime),
+      price: (anchor.price == null || anchor.price === '') ? '' : String(anchor.price)
+    };
+  });
+  return draft;
+}
+
+// Formatação de apresentação. O app não tem formatador de alta precisão nomeado
+// e o catálogo não tem metadado de dígitos por instrumento (auditado); em vez de
+// inventar uma segunda tabela de precisão só para o NoCoda, usa-se um formatter
+// neutro de até 8 casas com zeros à direita removidos. O cálculo interno NUNCA
+// depende deste texto.
+function ncFormat(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return '—';
+  const fixed = value.toFixed(8);
+  const trimmed = fixed.replace(/0+$/, '').replace(/\.$/, '');
+  return (trimmed === '' || trimmed === '-0' ? '0' : trimmed).replace('.', ',');
+}
+
+function ncAnchorFieldsHTML(index) {
+  const key = NC_ANCHOR_KEYS[index];
+  const anchor = ncDraft[key];
+  const n = index + 1;
+  return `
+    <fieldset class="nc-anchor">
+      <legend>Âncora ${n}${n === 3 ? ' <span class="art">linha −1</span>' : (n === 1 ? ' <span class="art">linha 0</span>' : '')}</legend>
+      <div class="field">
+        <label for="ncDate${n}">Data/hora</label>
+        <input type="datetime-local" step="1" id="ncDate${n}" data-nc-field="${key}.datetime"
+               value="${esc(anchor.datetime)}" aria-describedby="ncErr${n}">
+      </div>
+      <div class="field">
+        <label for="ncPrice${n}">Valor</label>
+        <input type="text" inputmode="decimal" id="ncPrice${n}" data-nc-field="${key}.price"
+               value="${esc(anchor.price)}" placeholder="ex.: 1,23412" aria-describedby="ncErr${n}">
+      </div>
+      <p class="nc-field-err" id="ncErr${n}" role="alert"></p>
+    </fieldset>`;
+}
+
+function renderNocodaStudies() {
+  const root = document.getElementById('execNocoda');
+  if (!root) return;
+  const catalog = (typeof instrumentCatalog === 'function') ? instrumentCatalog() : [];
+
+  if (!catalog.length) {
+    root.innerHTML = `<div class="card"><h2>Estudos NoCoda</h2>
+      <p class="expl">Nenhum instrumento operável no Motor de Lote. O catálogo é a fonte canônica desta tela.</p></div>`;
+    return;
+  }
+
+  if (!ncSelectedId || !catalog.some(i => i.id === ncSelectedId)) {
+    ncSelectedId = catalog[0].id;
+    ncDraft = ncDraftFrom(ncSelectedId);
+    ncDirty = false;
+  }
+  if (!ncDraft) ncDraft = ncDraftFrom(ncSelectedId);
+
+  const saved = ncStudies()[ncSelectedId];
+  const options = catalog.map(i =>
+    `<option value="${esc(i.id)}"${i.id === ncSelectedId ? ' selected' : ''}>${esc(i.name)}${ncStudies()[i.id] ? ' ·' : ''}</option>`
+  ).join('');
+
+  root.innerHTML = `
+    <div class="card">
+      <h2>Estudos NoCoda <span class="art">memória técnica do canal — não autoriza operação</span></h2>
+      <p class="expl">Guarda as três âncoras do Fibo Channel de cada instrumento e deriva o range entre os níveis −1 e 0 e o de cada subdivisão de 0,125. Os instrumentos vêm do Motor de Lote; esta tela não tem catálogo próprio.</p>
+
+      <div class="field nc-picker">
+        <label for="ncInstrument">Instrumento</label>
+        <select id="ncInstrument">${options}</select>
+        <span class="note">O ponto marca instrumentos que já possuem estudo salvo.</span>
+      </div>
+
+      <div class="params-grid nc-anchors">
+        ${ncAnchorFieldsHTML(0)}${ncAnchorFieldsHTML(1)}${ncAnchorFieldsHTML(2)}
+      </div>
+
+      <div class="metrics nc-results">
+        <div class="metric">
+          <div class="k">Range −1 → 0</div>
+          <div class="v sm" id="ncRange">—</div>
+          <div class="sub">medido na projeção da linha 0 até a âncora 3</div>
+        </div>
+        <div class="metric">
+          <div class="k">Subdivisão 0,125</div>
+          <div class="v sm" id="ncSubdivision">—</div>
+          <div class="sub">um oitavo do range do canal</div>
+        </div>
+      </div>
+
+      <div id="ncFormErr"></div>
+      <div class="nc-actions">
+        <button class="reset-btn" id="ncSaveBtn">Salvar parâmetros</button>
+        <span class="fx-status" id="ncStatus">${saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
+      </div>
+    </div>`;
+
+  ncBind(root);
+  ncUpdateDerived();
+}
+
+function ncBind(root) {
+  const select = root.querySelector('#ncInstrument');
+  if (select) select.addEventListener('change', () => ncSelectInstrument(select.value, select));
+
+  root.querySelectorAll('[data-nc-field]').forEach(input => {
+    input.addEventListener('input', () => {
+      const [anchorKey, field] = input.dataset.ncField.split('.');
+      ncDraft[anchorKey][field] = input.value;
+      ncDirty = true;
+      // Calcular não é salvar: a prévia é recalculada a cada tecla, mas nada
+      // é persistido antes do clique explícito em salvar.
+      ncUpdateDerived();
+    });
+  });
+
+  const save = root.querySelector('#ncSaveBtn');
+  if (save) save.addEventListener('click', ncSaveStudy);
+}
+
+function ncSelectInstrument(nextId, selectEl) {
+  if (nextId === ncSelectedId) return;
+  // Alterações pendentes: o app não tem arquitetura de rascunho, e o padrão
+  // dominante de confirmação é confirm() nativo. Basta impedir descarte
+  // silencioso — não se introduz um sistema de drafts só para esta tela.
+  if (ncDirty && !confirm('Há parâmetros alterados e não salvos neste instrumento. Trocar de instrumento descarta essas alterações. Continuar?')) {
+    if (selectEl) selectEl.value = ncSelectedId;
+    return;
+  }
+  ncSelectedId = nextId;
+  ncDraft = ncDraftFrom(ncSelectedId);
+  ncDirty = false;
+  renderNocodaStudies();
+}
+
+// Recalcula somente os dois resultados e as mensagens de erro. Não reconstrói o
+// formulário: um innerHTML a cada tecla destruiria foco e posição do cursor.
+function ncUpdateDerived() {
+  const geometry = window.JPWNocoda && window.JPWNocoda.geometry;
+  if (!geometry) return;
+  const rangeEl = document.getElementById('ncRange');
+  const subEl = document.getElementById('ncSubdivision');
+  const result = geometry.compute(ncDraft);
+  if (rangeEl) rangeEl.textContent = result ? ncFormat(result.channelRange) : '—';
+  if (subEl) subEl.textContent = result ? ncFormat(result.subdivisionRange) : '—';
+  return result;
+}
+
+// Mensagens por campo (aria-invalid + parágrafo role="alert" associado) e
+// resumo em bloco — o app só tinha validação em bloco; a associação por campo
+// é o que o contrato de acessibilidade desta feature exige.
+function ncShowErrors(errors) {
+  NC_ANCHOR_KEYS.forEach((key, index) => {
+    const messages = errors.filter(e => e.field.startsWith(key)).map(e => e.message);
+    const box = document.getElementById('ncErr' + (index + 1));
+    if (box) box.textContent = messages.join(' ');
+    ['datetime', 'price'].forEach(field => {
+      const input = document.querySelector(`[data-nc-field="${key}.${field}"]`);
+      if (!input) return;
+      const bad = errors.some(e => e.field === key + '.' + field);
+      if (bad) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+    });
+  });
+  const summary = document.getElementById('ncFormErr');
+  if (summary) {
+    summary.innerHTML = errors.length
+      ? `<div class="nc-err" role="alert">${errors.map(e => esc(e.message)).join('<br>')}</div>`
+      : '';
+  }
+}
+
+function ncSaveStudy() {
+  const geometry = window.JPWNocoda && window.JPWNocoda.geometry;
+  if (!geometry || !ncSelectedId) return;
+  const validation = geometry.validate(ncDraft);
+  ncShowErrors(validation.errors || []);
+  const status = document.getElementById('ncStatus');
+  if (!validation.ok) {
+    if (status) { status.className = 'fx-status err'; status.textContent = 'não salvo — corrija os campos indicados'; }
+    return;
+  }
+
+  // Persiste somente as CAUSAS, já normalizadas. Nenhum derivado é gravado:
+  // range, subdivisão e níveis são recalculados a partir das âncoras.
+  const values = validation.values;
+  if (!S.nocoda || typeof S.nocoda !== 'object') S.nocoda = structuredClone(DEFAULTS.nocoda);
+  if (!S.nocoda.studies || typeof S.nocoda.studies !== 'object') S.nocoda.studies = {};
+  const previous = S.nocoda.studies[ncSelectedId];
+  S.nocoda.studies[ncSelectedId] = Object.assign({}, previous, {
+    anchor1: { datetime: ncDraft.anchor1.datetime, price: values.p1 },
+    anchor2: { datetime: ncDraft.anchor2.datetime, price: values.p2 },
+    anchor3: { datetime: ncDraft.anchor3.datetime, price: values.p3 },
+    updatedAt: new Date().toISOString()
+  });
+  save();
+
+  ncDraft = ncDraftFrom(ncSelectedId);
+  ncDirty = false;
+  if (status) { status.className = 'fx-status ok'; status.textContent = 'parâmetros salvos'; }
+  ncUpdateDerived();
+}
+
+// Superfície pública consumida pelo controlador de views do Execution Board.
+window.JPWNocodaUI = { render: renderNocodaStudies };
 </script>
 </body>
 </html>

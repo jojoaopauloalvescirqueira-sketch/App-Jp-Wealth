@@ -5758,3 +5758,31 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
   html[data-shell="global-dashboard"] .nav-sub-clip,
   html[data-shell="global-dashboard"] .nav-sub-menu button{transition:none!important}
 }
+
+/* ==========================================================
+   ESTUDOS NOCODA · workspace do Execution Board
+   Sem design system novo: reaproveita .card, .field, .metrics,
+   .params-grid, .reset-btn e .fx-status. Só o agrupamento por
+   âncora e a mensagem por campo precisaram de regra própria.
+   ========================================================== */
+.nc-picker{max-width:340px}
+.nc-anchors{align-items:start}
+.nc-anchor{border:1px solid var(--line); border-radius:8px; padding:12px 14px 4px; margin:0 0 12px; min-width:0}
+.nc-anchor legend{font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); padding:0 6px}
+.nc-anchor .field{margin-bottom:10px}
+.nc-anchor input{width:100%; min-width:0}
+/* Mensagem por campo: só ocupa espaço quando existe erro, para o formulário
+   não ficar com lacunas permanentes entre as âncoras. */
+.nc-field-err{color:var(--f4); font-size:calc(11px * var(--fs-scale)); line-height:1.45; margin:0 0 8px}
+.nc-field-err:empty{display:none}
+.nc-err{color:var(--f4); font-size:calc(12px * var(--fs-scale)); margin-top:8px; line-height:1.5}
+.nc-results{margin-top:4px}
+.nc-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px}
+[data-nc-field][aria-invalid="true"]{border-color:var(--f4)}
+
+@media(max-width:880px){
+  .nc-picker{max-width:100%}
+  /* Data e valor empilham; o alvo de toque continua confortável. */
+  .nc-anchor .field input{min-height:40px}
+}

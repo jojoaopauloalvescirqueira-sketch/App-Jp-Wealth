@@ -2,10 +2,30 @@
 // P&L de uma ordem é denominado na MOEDA DE COTAÇÃO do par; o risco em $ precisa converter.
 const QUOTE_CCY={EURUSD:'USD',GBPUSD:'USD',AUDUSD:'USD',NZDUSD:'USD',US500:'USD',XAUUSD:'USD',
   USDJPY:'JPY',USDCHF:'CHF',USDCAD:'CAD',AUDCAD:'CAD'};
+// IDENTIDADE CANÔNICA DO INSTRUMENTO.
+// O catálogo não tem campo `id`: a identidade sempre foi o `name` normalizado,
+// e esta função apenas dá nome à regra que já era aplicada aqui dentro. Ela é a
+// fonte única — quem precisar referenciar um instrumento (ordens, estudos,
+// índices) usa esta chave em vez de reimplementar o `replace`.
+// Devolve '' para entrada vazia ou inválida, nunca null, para poder ser
+// comparada com segurança.
+function instrumentId(par){
+  return String(par==null?'':par).toUpperCase().replace(/[^A-Z0-9]/g,'');
+}
 function instFor(par){
   if(!par) return null;
-  const k=String(par).toUpperCase().replace(/[^A-Z0-9]/g,'');
-  return S.instruments.find(i=>i.name===k)||null;
+  const k=instrumentId(par);
+  return k ? (S.instruments.find(i=>i.name===k)||null) : null;
+}
+// Lista canônica operável, derivada de S.instruments — nunca uma cópia.
+// `banned && !unlocked` é o mesmo predicado que o seletor das grades e o veto
+// de execução já usam; quem precisar do catálogo inteiro passa {all:true}.
+function instrumentCatalog(options){
+  const all = !!(options && options.all);
+  const list = Array.isArray(S.instruments) ? S.instruments : [];
+  return list
+    .filter(i => i && i.name && (all || !(i.banned && !i.unlocked)))
+    .map(i => ({ id: instrumentId(i.name), name: i.name, banned: !!i.banned, unlocked: !!i.unlocked }));
 }
 function quoteToUSD(ccy){ // 1 unidade da moeda de cotação em USD
   if(!ccy || ccy==='USD') return 1;
