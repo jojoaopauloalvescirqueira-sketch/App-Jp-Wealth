@@ -1,12 +1,13 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `44bae5228d7df9bcd46ede0fa8a3d1a6210cfaff`
-- Branch atual: `main`
-- Commit de integração: `55d22671c3479b43762922ec01cad454d4e90ac0`
-- Estado de integração: implementação commitada e integrada localmente em
-  `main`; ainda não enviada ao remoto nem publicada.
-- Build local: `4d9b36661c689c26`.
+Source revision representada: `19590249a47c37bc0228dd06a59e2c3a635ee920`
+- Branch atual: `feature/nav-exec-submenu`
+- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
+- Estado de integração: implementação concluída e validada tecnicamente;
+  **não commitada**, não integrada, não enviada ao remoto e não publicada.
+  Aguarda teste manual do gestor e autorização de commit.
+- Build local: `7751a049cfd23dab`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
@@ -14,9 +15,10 @@ Source revision representada: `44bae5228d7df9bcd46ede0fa8a3d1a6210cfaff`
 
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
-- `src/js/manifest.json` contém 60 scripts, na mesma lista e ordem da base. O
-  candidato altera somente hashes dos dois scripts editados. `sw.js`, o HTML e o
-  portátil permanecem reconciliados com esse manifest.
+- `src/js/manifest.json` contém 61 scripts: os 60 da base, com hash atualizado
+  apenas do controlador de shell editado, mais `src/js/20-ui/13-exec-views.js`
+  na ordem 61. `sw.js`, o HTML e o portátil permanecem reconciliados com esse
+  manifest, e o precache cobre os 61.
 - As cinco telas principais compartilham o shell horizontal do protótipo:
   Dashboard, Execution Board, Contas, Contabilidade e Planejamento FX. A
   navegação clássica por sublinhado é o padrão; abaixo de 900 px ela vira uma
@@ -25,10 +27,14 @@ Source revision representada: `44bae5228d7df9bcd46ede0fa8a3d1a6210cfaff`
   Notícias e Ações rápidas formam a faixa P2; Evolução e Ritmo usam razão 3:2;
   motivos, métricas, acompanhamento mensal, drawdown e comparação mensal ficam
   preservados em um único disclosure metodológico.
-- Execution Board: clearance compacto com quatro fatos, seguido por Grade e
-  monitor LIFO. Indicadores complementares e ATR/VRM continuam acessíveis em
-  disclosure. A ordem normativa e todos os IDs consumidos pelo runtime foram
-  preservados.
+- Execution Board: passou a ter segundo nível com três workspaces — Visão Geral
+  (estrutural, sem conteúdo funcional), Painel Operacional e Estudos dos Pivots
+  (reservado). O Painel Operacional é o próprio `#execWidgetGrid`: clearance
+  compacto com quatro fatos, Grade e monitor LIFO, com indicadores
+  complementares e ATR/VRM em disclosure. Nenhum nó foi movido, os 67 ids
+  internos e a ordem normativa foram preservados, e os quatro widgets continuam
+  filhos diretos da grade. A troca de workspace é `hidden` + `inert`, sem
+  desmontar DOM e sem persistir nada.
 - Contas: leitura primária em dez colunas, credenciais consolidadas em chip e
   editor completo expansível por conta. As duas tabelas rolam internamente no
   mobile; adicionar uma conta abre o editor e leva o foco ao nome.
@@ -39,8 +45,10 @@ Source revision representada: `44bae5228d7df9bcd46ede0fa8a3d1a6210cfaff`
   linear. Os quatro modos agora são selecionados exclusivamente pela segunda
   faixa estrutural do header; as tabs duplicadas saíram do conteúdo sem remover
   renderizadores ou funcionalidades.
-- A faixa hierárquica abre transitoriamente por hover e fica fixada por
-  clique/Enter/Espaço. Enquanto fixada, não fecha por saída do ponteiro, resize,
+- A faixa hierárquica é única e compartilhada (`#navSubShell`), hospedando o
+  painel de Planejamento e o do Execution Board; só um módulo fica aberto por
+  vez e o aberto é identificado por `aria-expanded` no próprio acionador. Ela
+  abre transitoriamente por hover e fica fixada por clique/Enter/Espaço. Enquanto fixada, não fecha por saída do ponteiro, resize,
   novo clique no acionador ou seleção interna; clique externo e Escape fecham.
   Seu terceiro tom é distinto do header e do contexto em claro/escuro.
 - A política PWA não permite mais um cliente utilizável com HTML novo e scripts
@@ -52,25 +60,27 @@ Source revision representada: `44bae5228d7df9bcd46ede0fa8a3d1a6210cfaff`
 
 ## Escopo e autoridade
 
-- N0-V + N1 + N0-D, autoridade A2: faixa contextual, CSS, responsividade,
-  interações de apresentação, teste e documentação arquitetural.
+- N0-V + N1 + N0-D, autoridade A2: workspaces do Execution Board, faixa
+  contextual compartilhada, CSS, responsividade, interações de apresentação,
+  teste e documentação arquitetural.
 - N2/N3: fora do escopo. `DEFAULTS`, `migrate()`, `schemaVersion`, chaves de
   storage, fórmulas, perfis, fases, DD/MDD, lote, LIFO, stops, quarentena,
   contabilidade, MEI-JP e regras do Planejamento FX não mudaram semanticamente.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: implementação commitada e mesclada em `main` com autorização.
-  Push e deploy não foram executados.
+- Git/publicação: branch criada e implementação autorizadas. Commit, merge,
+  push e deploy **não** foram executados e dependem de autorização própria.
 
 ## Evidência deste candidato
 
 | Verificação | Resultado | Escopo/observação |
 |---|---|---|
-| `python3 tools/fx_planning_test.py` | PASS | Estrutura em fluxo, hover transitório, clique fixado, clique externo, teclado, terceiro tom, mobile, quatro modos e ausência de duplicidade. |
-| `python3 tools/validate_project.py` | PASS | 60 scripts, 386 IDs estáticos, hashes/ordem coerentes e portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 19/19 | Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T160548-full.json`. |
-| Navegador real | PASS | 1440×900 e 390×844, claro/escuro; três tons distintos; persistência após novo clique; fechamento externo; sem overflow e console limpo. |
-| `git diff --check` | PASS | Sem whitespace errors no candidato congelado antes da reconciliação documental. |
+| `python3 tools/exec_submenu_test.py` | PASS | Teste novo: estrutura em fluxo, deslocamento, destino inicial, equivalência do Painel Operacional, preservação de estado na ida e volta, teclado, `inert` por comportamento, hover e fixação, troca de módulo, não regressão das cinco abas, temas e mobile. |
+| `python3 tools/fx_planning_test.py` | PASS | Planejamento inalterado sob o controlador genérico, após renomeação dos seletores. |
+| `python3 tools/validate_project.py` | PASS | 61 scripts, 392 IDs estáticos, zero duplicados, hashes/ordem coerentes e portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 19/19 | Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T214413-full.json`. **Executado antes do registro do teste novo no tier e da reconciliação documental — repetir no candidato final.** |
+| Navegador real | NOT_RUN | O gestor ainda não inspecionou as telas; toda a evidência é programática. |
+| `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 
 Relatórios locais ficam em `tools/.artifacts/` e são ignorados pelo Git. Usar

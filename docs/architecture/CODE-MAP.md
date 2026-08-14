@@ -49,7 +49,7 @@ a lista material mudar.
 | 37 | `src/js/40-app/08-educational-content.js` | Base educacional local |
 | 38 | `src/js/40-app/09-settings-modal.js` | Central modal de Configurações |
 | 39 | `src/js/40-app/10-dashboard-immersive.js` | Dashboard imersivo |
-| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional, menu móvel e segundo nível de navegação |
+| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional: gaveta móvel e controlador genérico da faixa do segundo nível |
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado do Dashboard |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
 | 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
@@ -70,6 +70,7 @@ a lista material mudar.
 | 58 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
 | 59 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
 | 60 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
+| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: workspaces do módulo (Visão Geral, Painel Operacional, Estudos dos Pivots) |
 
 ## Laboratório de Probabilidade
 
@@ -89,12 +90,17 @@ A extração de `reserveCalc()` do onboarding para a função pura
 compartilhada foi autorizada em 2026-08-11; contrato completo em
 `FX-PLANNING.md`.
 
-Planejamento é o primeiro protótipo do segundo nível hierárquico: o acionador
-permanece filho direto de `#nav`, enquanto `#fxNavSubmenuShell` vive no fluxo
-entre header e contexto. Hover abre transitoriamente; clique/Enter/Espaço fixa a
-faixa até clique externo ou Escape. O contrato reutilizável — estrutura,
-terceiro tom, acessibilidade, mobile e testes — está em
-`NAVIGATION-HIERARCHY.md`.
+Planejamento e Execution Board usam o segundo nível hierárquico: cada acionador
+permanece filho direto de `#nav`, enquanto a faixa única `#navSubShell` vive no
+fluxo entre header e contexto e hospeda o painel de cada módulo. Hover abre
+transitoriamente; clique/Enter/Espaço fixa a faixa até clique externo ou Escape.
+
+No Execution Board o segundo nível troca workspaces: `#execOverview`,
+`#execWidgetGrid` (o Painel Operacional — o mesmo grid de sempre, sem um nó
+movido) e `#execPivots`, irmãos diretos de `section#exec` e alternados por
+`hidden` + `inert`. As restrições estruturais dessa realocação — nunca `.screen`
+aninhada, nunca dentro da `.jp-widget-grid`, nunca desmontar — e o contrato
+reutilizável completo estão em `NAVIGATION-HIERARCHY.md`.
 
 ## Entrypoints, PWA e artefatos derivados
 

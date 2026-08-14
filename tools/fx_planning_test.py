@@ -503,9 +503,9 @@ def run_ui_flow(browser, url):
     # No estado vazio o submenu pode registrar a intenção visual, mas não cria
     # plano nem toca em S.fxPlanning. A criação continua sendo ação exclusiva
     # do formulário e a intenção volta a Visão Geral antes do fluxo principal.
-    page.focus("#fxNavTrigger")
+    page.focus("#fxplanNavTrigger")
     page.keyboard.press("ArrowDown")
-    page.click('#fxNavSubmenu [data-fx-nav-view="table"]')
+    page.click('#fxplanNavSubmenu [data-nav-sub-view="table"]')
     empty_nav = page.evaluate(
         "() => ({view: window.JPWFx.ui.getView(), plan: S.fxPlanning.plan, create: !!document.querySelector('#fxpCreateBtn')})"
     )
@@ -527,14 +527,14 @@ def run_ui_flow(browser, url):
     # mas a segunda faixa é irmã estrutural do header, não popover interno.
     nav_contract = page.evaluate(
         """() => ({
-          directTrigger: document.querySelector('#nav > #fxNavTrigger') !== null,
-          directPanel: document.querySelector('#nav > #fxNavSubmenu') !== null,
-          structuralOrder: document.querySelector('header').nextElementSibling?.id === 'fxNavSubmenuShell'
-            && fxNavSubmenuShell.nextElementSibling?.id === 'gdContextRow',
+          directTrigger: document.querySelector('#nav > #fxplanNavTrigger') !== null,
+          directPanel: document.querySelector('#nav > #fxplanNavSubmenu') !== null,
+          structuralOrder: document.querySelector('header').nextElementSibling?.id === 'navSubShell'
+            && navSubShell.nextElementSibling?.id === 'gdContextRow',
           popupTriggers: [...document.querySelectorAll('#nav > .tab[aria-haspopup]')].map(el => el.id),
-          keys: [...document.querySelectorAll('#fxNavSubmenu [data-fx-nav-view]')]
-            .map(el => el.dataset.fxNavView),
-          descriptions: [...document.querySelectorAll('#fxNavSubmenu .fx-nav-item-desc')]
+          keys: [...document.querySelectorAll('#fxplanNavSubmenu [data-nav-sub-view]')]
+            .map(el => el.dataset.navSubView),
+          descriptions: [...document.querySelectorAll('#fxplanNavSubmenu .nav-sub-item-desc')]
             .map(el => el.textContent.trim()),
           duplicateInternalNav: document.querySelectorAll('#fxPlanningRoot [data-fxp-view]').length,
           api: !!(window.JPWFx.ui && window.JPWFx.ui.selectView && window.JPWFx.ui.getView)
@@ -554,24 +554,24 @@ def run_ui_flow(browser, url):
     page.wait_for_timeout(340)
     before_open = page.evaluate(
         """() => ({
-          shell: fxNavSubmenuShell.getBoundingClientRect(),
+          shell: navSubShell.getBoundingClientRect(),
           context: gdContextRow.getBoundingClientRect(),
           main: appMain.getBoundingClientRect()
         })"""
     )
-    page.hover("#fxNavTrigger")
-    page.wait_for_function("() => fxNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.hover("#fxplanNavTrigger")
+    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
     page.wait_for_timeout(340)
     after_open = page.evaluate(
         """() => ({
-          shell: fxNavSubmenuShell.getBoundingClientRect(),
+          shell: navSubShell.getBoundingClientRect(),
           context: gdContextRow.getBoundingClientRect(),
           main: appMain.getBoundingClientRect(),
-          position: getComputedStyle(fxNavSubmenuShell).position,
-          shadow: getComputedStyle(fxNavSubmenuShell).boxShadow,
+          position: getComputedStyle(navSubShell).position,
+          shadow: getComputedStyle(navSubShell).boxShadow,
           tones: {
             header: getComputedStyle(document.querySelector('header')).backgroundColor,
-            submenu: getComputedStyle(fxNavSubmenuShell).backgroundColor,
+            submenu: getComputedStyle(navSubShell).backgroundColor,
             context: getComputedStyle(gdContextRow).backgroundColor
           }
         })"""
@@ -585,80 +585,80 @@ def run_ui_flow(browser, url):
     )
     assert after_open["position"] == "static" and after_open["shadow"] == "none", after_open
     assert len(set(after_open["tones"].values())) == 3, f"faixa não tem terceiro tom próprio: {after_open['tones']}"
-    page.hover("#fxNavSubmenu")
+    page.hover("#fxplanNavSubmenu")
     page.wait_for_timeout(450)
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "true", "travessia acionador → faixa fechou cedo"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "travessia acionador → faixa fechou cedo"
     page.mouse.move(12, 420)
     page.wait_for_timeout(250)
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "true", "delay menor que 300 ms"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "delay menor que 300 ms"
     page.wait_for_timeout(220)
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "false", "submenu não fechou após 400 ms"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "false", "submenu não fechou após 400 ms"
 
     # Teclado com roving tabindex, Home/End e retorno de foco por Escape.
-    page.focus("#fxNavTrigger")
+    page.focus("#fxplanNavTrigger")
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.fxNavView") == "overview"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "overview"
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.fxNavView") == "planning"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "planning"
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.fxNavView") == "table"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "table"
     page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.fxNavView") == "overview"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "overview"
     page.keyboard.press("Escape")
-    assert page.evaluate("() => document.activeElement.id") == "fxNavTrigger", "Escape não devolveu foco"
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "false"
+    assert page.evaluate("() => document.activeElement.id") == "fxplanNavTrigger", "Escape não devolveu foco"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "false"
 
     # Clique fixa a faixa: pointerleave, resize e novo clique no acionador não
     # fecham. Um item interno também mantém aberto; somente clique externo (ou
     # Escape acessível) encerra o estado fixado.
-    page.click("#fxNavTrigger")
+    page.click("#fxplanNavTrigger")
     pinned_open = page.evaluate(
-        "() => ({expanded: fxNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.fxNavPinned})"
+        "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned})"
     )
     assert pinned_open == {"expanded": "true", "pinned": "true"}, pinned_open
     page.mouse.move(12, 420)
     page.wait_for_timeout(520)
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "true", "pointerleave fechou faixa fixada"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "pointerleave fechou faixa fixada"
     page.set_viewport_size({"width": 1390, "height": 900})
     page.wait_for_timeout(80)
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "true", "resize fechou faixa fixada"
-    page.click("#fxNavTrigger")
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "true", "novo clique alternou faixa fixada"
-    page.click('#fxNavSubmenu [data-fx-nav-view="planning"]')
-    assert page.evaluate("() => document.documentElement.dataset.fxNavPinned") == "true"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "resize fechou faixa fixada"
+    page.click("#fxplanNavTrigger")
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "novo clique alternou faixa fixada"
+    page.click('#fxplanNavSubmenu [data-nav-sub-view="planning"]')
+    assert page.evaluate("() => document.documentElement.dataset.navSubPinned") == "true"
     page.click("#fxPlanningRoot .fxp-note")
     outside_close = page.evaluate(
-        "() => ({expanded: fxNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.fxNavPinned || null})"
+        "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null})"
     )
     assert outside_close == {"expanded": "false", "pinned": None}, f"clique externo não fechou: {outside_close}"
     page.set_viewport_size({"width": 1440, "height": 900})
 
     # Tab sai naturalmente da faixa sem criar focus trap; abertura por seta é
     # transitória e não cria o estado fixado.
-    page.focus("#fxNavTrigger")
+    page.focus("#fxplanNavTrigger")
     page.keyboard.press("ArrowDown")
     page.keyboard.press("Tab")
     page.wait_for_timeout(20)
     tab_exit = page.evaluate(
-        "() => ({expanded: fxNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.fxNavPinned || null, inside: fxNavSubmenu.contains(document.activeElement)})"
+        "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null, inside: fxplanNavSubmenu.contains(document.activeElement)})"
     )
     assert tab_exit == {"expanded": "true", "pinned": None, "inside": False}, f"Tab ficou preso ou fixou a faixa: {tab_exit}"
     page.keyboard.press("Escape")
-    assert page.get_attribute("#fxNavTrigger", "aria-expanded") == "false"
+    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "false"
 
     # Cada destino usa a mesma chave dos renderizadores existentes, ativa
     # somente #fxplan e mantém uma única fonte visível de navegação.
     for key in ("overview", "planning", "actuals", "table"):
-        page.focus("#fxNavTrigger")
+        page.focus("#fxplanNavTrigger")
         page.keyboard.press("ArrowDown")
-        page.click(f'#fxNavSubmenu [data-fx-nav-view="{key}"]')
+        page.click(f'#fxplanNavSubmenu [data-nav-sub-view="{key}"]')
         selected = page.evaluate(
             """key => ({
               view: window.JPWFx.ui.getView(),
               screens: [...document.querySelectorAll('.screen.active')].map(el => el.id),
-              current: document.querySelector(`[data-fx-nav-view="${key}"]`)?.getAttribute('aria-current'),
+              current: document.querySelector(`#fxplanNavSubmenu [data-nav-sub-view="${key}"]`)?.getAttribute('aria-current'),
               duplicateInternalNav: document.querySelectorAll('#fxPlanningRoot [data-fxp-view]').length,
-              expanded: fxNavTrigger.getAttribute('aria-expanded')
+              expanded: fxplanNavTrigger.getAttribute('aria-expanded')
             })""",
             key,
         )
@@ -670,7 +670,7 @@ def run_ui_flow(browser, url):
             "expanded": "true",
         }, selected
 
-    page.click('#fxNavSubmenu [data-fx-nav-view="actuals"]')
+    page.click('#fxplanNavSubmenu [data-nav-sub-view="actuals"]')
     page.wait_for_selector("#fxpActBtn")
     page.fill("#fxpActValue", "-0,70")
     page.click("#fxpActBtn")
@@ -682,9 +682,9 @@ def run_ui_flow(browser, url):
     page.wait_for_selector('button[data-fxp-del]')
 
     page.evaluate("() => window.scrollTo(0, 0)")
-    page.hover("#fxNavTrigger")
-    page.wait_for_function("() => fxNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#fxNavSubmenu [data-fx-nav-view="overview"]')
+    page.hover("#fxplanNavTrigger")
+    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click('#fxplanNavSubmenu [data-nav-sub-view="overview"]')
     page.wait_for_selector("#fxpMainChart svg")
     body_text = page.text_content("#fxPlanningRoot")
     # 1000 × (1 − 0,007) + 540/5,40 = 993 + 100 = 1.093,00
@@ -692,9 +692,9 @@ def run_ui_flow(browser, url):
     assert "R$ 5,4000" in body_text, "câmbio médio de aquisição ausente na visão geral"
 
     page.evaluate("() => window.scrollTo(0, 0)")
-    page.hover("#fxNavTrigger")
-    page.wait_for_function("() => fxNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#fxNavSubmenu [data-fx-nav-view="table"]')
+    page.hover("#fxplanNavTrigger")
+    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click('#fxplanNavSubmenu [data-nav-sub-view="table"]')
     page.wait_for_selector(".fxp-tablewrap .fxp-badge-real")
     table_text = page.text_content("#fxPlanningRoot")
     assert "BASELINE" in table_text and "VIGENTE" in table_text, "tabela sem separação baseline/vigente"
@@ -728,7 +728,7 @@ def run_ui_flow(browser, url):
     page.focus('.tab[data-screen="fxplan"]')
     page.keyboard.press("Enter")
     assert page.evaluate(
-        "() => document.activeElement.dataset.fxNavView === window.JPWFx.ui.getView() && document.documentElement.dataset.fxNavPinned === 'true'"
+        "() => document.activeElement.dataset.navSubView === window.JPWFx.ui.getView() && document.documentElement.dataset.navSubPinned === 'true'"
     ), "Enter não focou o modo visual vigente"
     page.keyboard.press("Enter")
     page.wait_for_selector("#fxplan.active", state="attached")
@@ -744,27 +744,27 @@ def run_ui_flow(browser, url):
     page.set_viewport_size({"width": 390, "height": 844})
     page.wait_for_timeout(250)
     page.click("[data-shell-menu-toggle]")
-    page.click("#fxNavTrigger")
+    page.click("#fxplanNavTrigger")
     page.wait_for_timeout(340)
     mobile_menu = page.evaluate(
         """() => ({
           shell: document.documentElement.dataset.shellMenu,
-          fx: fxNavTrigger.getAttribute('aria-expanded'),
-          shellHeight: fxNavSubmenuShell.getBoundingClientRect().height,
+          fx: fxplanNavTrigger.getAttribute('aria-expanded'),
+          shellHeight: navSubShell.getBoundingClientRect().height,
           contextY: gdContextRow.getBoundingClientRect().y,
-          submenuBottom: fxNavSubmenuShell.getBoundingClientRect().bottom,
-          position: getComputedStyle(fxNavSubmenuShell).position
+          submenuBottom: navSubShell.getBoundingClientRect().bottom,
+          position: getComputedStyle(navSubShell).position
         })"""
     )
     assert mobile_menu["shell"] is None and mobile_menu["fx"] == "true", mobile_menu
     assert mobile_menu["position"] == "static" and mobile_menu["shellHeight"] > 200, mobile_menu
     assert mobile_menu["submenuBottom"] <= mobile_menu["contextY"] + 1, f"submenu mobile sobreposto: {mobile_menu}"
-    page.click('#fxNavSubmenu [data-fx-nav-view="actuals"]')
+    page.click('#fxplanNavSubmenu [data-nav-sub-view="actuals"]')
     mobile_selected = page.evaluate(
         """() => ({
           shell: document.documentElement.dataset.shellMenu || null,
-          fx: fxNavTrigger.getAttribute('aria-expanded'),
-          pinned: document.documentElement.dataset.fxNavPinned,
+          fx: fxplanNavTrigger.getAttribute('aria-expanded'),
+          pinned: document.documentElement.dataset.navSubPinned,
           view: window.JPWFx.ui.getView(),
           active: [...document.querySelectorAll('.screen.active')].map(el => el.id)
         })"""
@@ -774,14 +774,14 @@ def run_ui_flow(browser, url):
     }, mobile_selected
     # Segundo toque no acionador mantém o estado fixado; tocar fora encerra.
     page.click("[data-shell-menu-toggle]")
-    page.click("#fxNavTrigger")
+    page.click("#fxplanNavTrigger")
     mobile_toggle = page.evaluate(
-        "() => ({shell: document.documentElement.dataset.shellMenu || null, fx: fxNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.fxNavPinned})"
+        "() => ({shell: document.documentElement.dataset.shellMenu || null, fx: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned})"
     )
     assert mobile_toggle == {"shell": None, "fx": "true", "pinned": "true"}, mobile_toggle
     page.click("#fxPlanningRoot .fxp-note")
     assert page.evaluate(
-        "() => ({fx: fxNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.fxNavPinned || null})"
+        "() => ({fx: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null})"
     ) == {"fx": "false", "pinned": None}, "toque externo não fechou faixa mobile"
     scroll = page.evaluate(
         "() => ({doc: document.documentElement.scrollWidth, win: window.innerWidth})"

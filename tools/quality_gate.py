@@ -27,6 +27,7 @@ STANDARD = FAST + (
     ("settings", [sys.executable, "tools/settings_modal_test.py"]),
     ("galton-board", [sys.executable, "tools/galton_board_test.py"]),
     ("fx-planning", [sys.executable, "tools/fx_planning_test.py"]),
+    ("exec-submenu", [sys.executable, "tools/exec_submenu_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (
