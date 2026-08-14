@@ -1,12 +1,13 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `a5d7b93491ea9eba143431b5adaacbfa85fd4fe9`
-- Branch atual: `fix/security-medium-findings`
-- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
-- Estado de integração: correções dos três achados `Medium` da auditoria de
-  segurança concluídas e validadas tecnicamente; **não commitadas**, não
-  integradas e não publicadas.
+Source revision representada: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
+- Branch atual: `main`
+- Commit material: `4635794` na branch `fix/security-medium-findings`
+- Commit de integração: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
+- Estado de integração: correções dos três achados `Medium` commitadas e
+  integradas localmente em `main` com autorização do gestor. **Push não
+  executado** — a publicação fica com o gestor. O teste manual segue pendente.
 - Migração do Motor de Lote: integrada em `main` (`792b705`, merge `043da1b`,
   reconciliação `a5d7b93`) e publicada pelo gestor.
 - Histórico já em `origin/main`: segundo nível do Execution Board
@@ -95,8 +96,8 @@ Source revision representada: `a5d7b93491ea9eba143431b5adaacbfa85fd4fe9`
   pela canonicalização.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Nenhuma dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch e implementação autorizadas. Commit, merge e push
-  **não** foram executados nesta tarefa.
+- Git/publicação: branch, implementação, commit e merge autorizados e
+  executados. Push e deploy ficam com o gestor.
 
 ## Evidência deste candidato
 
