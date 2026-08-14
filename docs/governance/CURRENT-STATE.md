@@ -2,10 +2,12 @@
 
 - Data da fotografia: 2026-08-13
 Source revision representada: `60ec561e6e60c71090b1490f1dbfb744e9b65dbb`
-- Branch atual: `feature/exec-motor-migration`
-- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
-- Estado de integração: migração do Motor de Lote concluída e validada
-  tecnicamente; **não commitada**, não integrada e não publicada.
+- Branch atual: `main`
+- Commit material: `792b705` na branch `feature/exec-motor-migration`
+- Commit de integração: `043da1bd65531682a4a0c01031048f81244c0133`
+- Estado de integração: migração do Motor de Lote commitada e integrada
+  localmente em `main` com autorização do gestor. **Push não executado** — o
+  gestor publica. O teste manual da tela migrada continua pendente.
 - Histórico já em `origin/main`: segundo nível do Execution Board
   (`d2ad73f` → merge `83a18dd` → `60070a2`) e Estudos NoCoda
   (`c3c5f21` → merge `af229ad` → `60ec561`). Nenhum `git push` foi executado
@@ -83,8 +85,8 @@ Source revision representada: `60ec561e6e60c71090b1490f1dbfb744e9b65dbb`
   contabilidade, MEI-JP, Planejamento FX e Estudos NoCoda não mudaram.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch e implementação autorizadas. Commit, merge e push
-  **não** foram executados nesta tarefa.
+- Git/publicação: branch, implementação, commit e merge autorizados e
+  executados. Push e deploy ficam com o gestor.
 
 ## Evidência deste candidato
 
