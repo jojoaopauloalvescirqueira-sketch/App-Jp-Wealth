@@ -52,6 +52,11 @@ def estado_malicioso():
             {'nome': PAYLOAD, 'ddmin': 0.99, 'ddmax': 0.99, 'alav': 99},
             {'nome': PAYLOAD, 'ddmin': 0.99, 'ddmax': 0.99, 'alav': 99},
         ],
+        # Mapa de Liquidez do questionario de inicio: os dois unicos campos do
+        # painel que chegavam a innerHTML sem esc(). Pela interface sao <select>
+        # de opcoes fixas, mas migrate() nao normaliza campo algum de
+        # S.onboarding — o valor do arquivo chega cru ao render.
+        'onboarding': {'fcrLiquidity': PAYLOAD, 'feoLiquidity': PAYLOAD},
         'phaseUnlocked': [True, True, False, False],  # destrava F2: exercita grade ativa + histórico
         'quarantine': {'inicio': PAYLOAD, 'fim': PAYLOAD},
         'transitionLog': [{'fase': 2, 'ts': PAYLOAD, 'resumo': {'x': PAYLOAD}}],
@@ -193,6 +198,51 @@ def afirmar_canonico(sonda, rotulo):
         f'[{rotulo}] Matriz Quadrifásica do arquivo sobreviveu à importação: {sonda["matrizAtual"]!r}'
 
 
+def afirmar_mapa_de_liquidez_seguro(browser, url, rotulo):
+    """Mapa de Liquidez do questionario de inicio nao executa payload de backup.
+
+    centralCashPanelHTML() e local ao modulo do onboarding e o painel so existe
+    depois que o modal e montado — por isso este bloco ABRE o questionario no
+    passo do Caixa Central em vez de chamar um renderizador global. Sem abrir, o
+    payload nunca chega ao DOM e a assercao passaria vazia.
+    """
+    ctx, page = abrir(browser, url, seed=estado_malicioso())
+    page.on('dialog', lambda d: d.accept())
+    page.evaluate("() => { window.__onbShown = true; openOnboardingModal('edit','cash'); }")
+    page.wait_for_timeout(500)
+    medida = page.evaluate("""() => {
+      const painel = document.getElementById('obCentralCashPanel');
+      // MESMO criterio de sondar(): so conta HANDLER vivo (atributo on*). O
+      // marcador dentro de um value="" escapado e justamente a prova de que o
+      // escape funcionou — conta-lo daria falso positivo.
+      const vivos = [...document.querySelectorAll('*')].filter(el => {
+        for (const at of el.attributes || []) {
+          if (/^on/i.test(at.name) && String(at.value).includes('__JPW_XSS__')) return true;
+        }
+        return false;
+      }).length;
+      return {
+        montou: !!painel,
+        imgs: painel ? painel.querySelectorAll('img[src="x"], img[src="y"]').length : -1,
+        atributosVivos: vivos,
+        executou: window.__JPW_XSS__ === 1,
+        // O payload precisa estar la como TEXTO: se sumisse, o teste passaria
+        // por ausencia de dado em vez de por escape correto.
+        comoTexto: painel ? painel.innerText.includes('__JPW_XSS__') : False_,
+      };
+    }""".replace('False_', 'false'))
+    assert medida['montou'], f'[{rotulo}] painel do Caixa Central nao montou — assercao seria vazia'
+    # Seguranca primeiro: se o payload executar, e ISSO que o relatorio precisa
+    # dizer. A guarda de vacuidade fica por ultimo, porque sem esc() o payload
+    # vira ELEMENTO e some do innerText — falhar ali por primeiro daria uma
+    # mensagem enganosa para o defeito mais grave.
+    assert not medida['executou'], f'[{rotulo}] payload do Mapa de Liquidez EXECUTOU'
+    assert medida['imgs'] == 0, f"[{rotulo}] payload injetou {medida['imgs']} elemento(s) no painel"
+    assert medida['atributosVivos'] == 0, f"[{rotulo}] marcador vivo em atributo de evento: {medida['atributosVivos']}"
+    assert medida['comoTexto'], f'[{rotulo}] payload nao chegou ao painel como texto — escape ausente ou assercao vazia'
+    ctx.close()
+
+
 def suite_maliciosa(browser, url, rotulo):
     # --- 1) Estado adulterado JÁ PERSISTIDO (o caminho do stored XSS) ---------
     ctx, page = abrir(browser, url, seed=estado_malicioso())
@@ -269,6 +319,7 @@ def main():
             for rotulo, alvo in (('modular', 'index.html'),
                                  ('portatil', 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')):
                 suite_maliciosa(browser, base + alvo, rotulo)
+                afirmar_mapa_de_liquidez_seguro(browser, base + alvo, rotulo)
                 suite_legitima(browser, base + alvo, rotulo)
             browser.close()
     finally:

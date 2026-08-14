@@ -451,8 +451,15 @@ function openOnboardingModal(mode, initialStep){
         </div>
         <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr)); margin-bottom:12px">
           <div class="metric"><div class="k">Score de Rastreabilidade</div><div class="v sm" style="color:${scoreColor}">${c.score}/100</div>${metricBar(c.score,scoreColor)}<div class="sub">Classificação: ${c.traceClass}</div></div>
-          <div class="metric"><div class="k">Liquidez FCR</div><div class="v sm" style="color:${fcrL.color}">${fcrLiquidity||'—'}</div><div class="sub">${fcrL.label} · FCR ideal D+0/D+1</div></div>
-          <div class="metric"><div class="k">Liquidez FEO</div><div class="v sm" style="color:${feoL.color}">${feoLiquidity||'—'}</div><div class="sub">${feoL.label} · FEO até D+2</div></div>
+          <!-- esc() OBRIGATÓRIO: estes dois vêm de S.onboarding e, portanto, de
+               backup — arquivo externo tratado como hostil por contrato. Pela
+               interface são <select> de opções fixas, mas migrate() não normaliza
+               campo algum de S.onboarding, então o valor do arquivo chega cru
+               aqui. Eram as duas únicas omissões deste painel; todos os vizinhos
+               (esc(reserveNotes), optList()) já escapavam. Mesma classe do
+               achado anterior em S.params.inicio. -->
+          <div class="metric"><div class="k">Liquidez FCR</div><div class="v sm" style="color:${fcrL.color}">${esc(fcrLiquidity)||'—'}</div><div class="sub">${fcrL.label} · FCR ideal D+0/D+1</div></div>
+          <div class="metric"><div class="k">Liquidez FEO</div><div class="v sm" style="color:${feoL.color}">${esc(feoLiquidity)||'—'}</div><div class="sub">${feoL.label} · FEO até D+2</div></div>
         </div>
         <div class="card" style="margin:0; padding:12px; box-shadow:none; background:var(--panel-2)">
           <h2 style="font-size:calc(13px * var(--fs-scale)); margin-bottom:8px">Composição do Caixa Central</h2>

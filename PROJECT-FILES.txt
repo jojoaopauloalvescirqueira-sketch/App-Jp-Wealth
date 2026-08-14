@@ -166,6 +166,7 @@ tools/investor_password_test.py
 tools/mvp_notes_test.py
 tools/nocoda_test.py
 tools/pivot_studies_test.py
+tools/order_guards_test.py
 tools/persistence_failure_test.py
 tools/persistence_recovery_test.py
 tools/preflight_context_test.py
@@ -174,6 +175,7 @@ tools/rebuild_monolith.py
 tools/serve.py
 tools/service_worker_upgrade_test.py
 tools/settings_modal_test.py
+tools/state_integrity_test.py
 tools/smoke_test.py
 tools/storage_governance_test.py
 tools/usd_brl_quote_test.py

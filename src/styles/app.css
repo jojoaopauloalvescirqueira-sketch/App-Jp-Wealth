@@ -5836,6 +5836,11 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 /* Fora do critério: marcado, nunca escondido e nunca apagado. */
 .pv-outside td{opacity:.72}
 .pv-outside td:first-child{border-left:2px solid var(--f4)}
+/* Sem cálculo possível: alcançável e distinguível. A borda é mais forte que a
+   de "fora do critério" porque aqui não há veredito nenhum a dar. */
+.pv-broken td{opacity:.7}
+.pv-broken td:first-child{border-left:2px solid var(--danger)}
+.pv-broken-note{margin-top:10px}
 .pv-highlight td{background:var(--accent-tint)}
 .pv-row-actions{white-space:nowrap}
 .pv-mini{background:none; border:1px solid var(--line); border-radius:var(--radius-sm);

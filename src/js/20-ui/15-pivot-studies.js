@@ -143,6 +143,19 @@ function pvCloseForm() {
   pvFormOpen = false; pvEditingId = null; pvDraft = null; pvDirty = false;
 }
 
+// O estudo em foco sumiu por baixo da tela — outra aba, importação de backup ou
+// limpeza. Repintar ressincroniza a seleção; avisar é o que impede o clique de
+// terminar em nada. O contrato anti-silêncio deste arquivo vale para os três
+// caminhos de ação, não só para o salvar.
+function pvStudyEmFoco(acao) {
+  const study = pvStudyById(pvStudyId);
+  if (study) return study;
+  pvCloseForm();
+  renderPivotStudies();
+  alert('O estudo que estava aberto não existe mais nesta base — ela foi substituída em outra aba, por importação de backup ou por limpeza.\n\nNada foi ' + acao + '. A tela acaba de ser recarregada com o estado atual.');
+  return null;
+}
+
 // ---- render --------------------------------------------------------------
 
 function renderPivotStudies() {
@@ -233,12 +246,20 @@ function pvStudyHTML(study, math) {
   // dois, para que o "n" jamais descreva uma amostra diferente da tabela.
   const stats = math.stats(study.pivots, { scope: pvFilters.criterion });
   const records = pvVisibleRecords(study, math);
+  // Registros que não produzem derivados (preços iguais, fim anterior ao início,
+  // preço não numérico) vêm de backup — a normalização de propósito não valida a
+  // matemática, para não apagar entrada do operador em silêncio. Preservar sem
+  // dar acesso, porém, é pior que apagar: o total dizia "1 de 3" e os outros dois
+  // não apareciam em filtro nenhum, sem editar e sem excluir. Ficam aqui, em
+  // linha degradada, com o motivo e as duas ações — fora da amostra, como já
+  // estavam, mas alcançáveis.
+  const quebrados = study.pivots.filter(p => !math.derive(p));
   return `
     <div class="pv-study">
       <p class="pv-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
       ${pvStatsHTML(stats)}
       ${pvFiltersHTML()}
-      ${pvTableHTML(records, stats)}
+      ${pvTableHTML(records, stats, quebrados, math)}
       <div class="pv-actions">
         <button type="button" class="reset-btn" id="pvAddPivotBtn"${pvFormOpen ? ' disabled' : ''}>+ Adicionar Pivot</button>
       </div>
@@ -358,8 +379,34 @@ function pvFiltersHTML() {
 
 // Tabela com rótulos por célula (data-label): abaixo de 760px o CSS a converte
 // em cards, sem markup duplicado e sem rolagem horizontal impraticável.
-function pvTableHTML(records, stats) {
-  if (!records.length) {
+// Linha degradada de um registro incalculável: derivados como '—', motivo em
+// palavras e as MESMAS ações da linha normal. Nunca é filtrada — nenhum filtro
+// sabe classificá-la, e escondê-la de novo recriaria o dado preso.
+function pvBrokenRowHTML(pivot, math, index) {
+  const validation = math.validate(pivot);
+  const motivo = (validation.errors && validation.errors.length)
+    ? validation.errors[0].message
+    : 'Registro incompleto para cálculo.';
+  return `
+    <tr data-pv-row="${esc(pivot.id)}" class="pv-broken">
+      <td data-label="#">${index}</td>
+      <td data-label="TF">${esc(pivot.timeframe || '—')}</td>
+      <td data-label="Início">${esc(pvFmtDatetime(pivot.startDatetime))}<span class="pv-cell-sub">${esc(pvFmtPrice(pvMath().parseNumber(pivot.startPrice)))}</span></td>
+      <td data-label="Fim">${esc(pvFmtDatetime(pivot.endDatetime))}<span class="pv-cell-sub">${esc(pvFmtPrice(pvMath().parseNumber(pivot.endPrice)))}</span></td>
+      <td data-label="Direção">—</td>
+      <td data-label="Amplitude">—</td>
+      <td data-label="Duração">—</td>
+      <td data-label="Correção">${pvFmtPct(pvMath().parseNumber(pivot.maxCorrectionPct))}<span class="pv-cell-sub">${esc(motivo)}</span></td>
+      <td data-label="Ações" class="pv-row-actions">
+        <button type="button" class="pv-mini" data-pv-edit="${esc(pivot.id)}">Corrigir</button>
+        <button type="button" class="pv-mini pv-danger" data-pv-delete="${esc(pivot.id)}">Excluir</button>
+      </td>
+    </tr>`;
+}
+
+function pvTableHTML(records, stats, quebrados, math) {
+  const rotos = quebrados || [];
+  if (!records.length && !rotos.length) {
     return `<p class="expl pv-empty">${stats.registered
       ? 'Nenhum pivot atende aos filtros atuais. Os registros continuam gravados.'
       : 'Nenhum pivot registrado neste estudo ainda.'}</p>`;
@@ -382,15 +429,16 @@ function pvTableHTML(records, stats) {
   return `
     <div class="jp-table-scroll pv-tablewrap">
       <table class="dtable pv-table">
-        <caption class="pv-caption">${records.length} de ${stats.registered} pivot(s) registrado(s) neste estudo</caption>
+        <caption class="pv-caption">${records.length} de ${stats.registered} pivot(s) registrado(s) neste estudo${rotos.length ? ` · ${rotos.length} sem cálculo` : ''}</caption>
         <thead><tr>
           <th scope="col">#</th><th scope="col">TF</th><th scope="col">Início</th><th scope="col">Fim</th>
           <th scope="col">Direção</th><th scope="col">Amplitude</th><th scope="col">Duração</th>
           <th scope="col">Correção</th><th scope="col">Ações</th>
         </tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rows}${rotos.map((p, i) => pvBrokenRowHTML(p, math, records.length + i + 1)).join('')}</tbody>
       </table>
-    </div>`;
+    </div>
+    ${rotos.length ? `<p class="note pv-broken-note">${rotos.length} registro(s) não produz(em) cálculo e por isso ficam fora da amostra e de qualquer filtro — aparecem no fim da lista, com o motivo. Corrija ou exclua; nada foi apagado.</p>` : ''}`;
 }
 
 // ---- formulário do pivot -------------------------------------------------
@@ -494,6 +542,13 @@ function pvCreateStudy() {
     .filter(st => math.periodsOverlap(st.periodStart, st.periodEnd, periodStart, periodEnd));
   if (overlapping.length && !confirm(`Já existe outro estudo deste instrumento com período parcialmente coincidente (${pvFmtDate(overlapping[0].periodStart)} → ${pvFmtDate(overlapping[0].periodEnd)}).\n\nCriar mesmo assim?`)) return;
 
+  // Criar um estudo TROCA o estudo em foco, então segue a mesma guarda de
+  // descarte de todos os outros caminhos de troca (instrumento, estudo, Novo
+  // Estudo, Editar, Cancelar). Sem ela, o painel "Novo estudo" e o formulário de
+  // pivot podiam estar abertos ao mesmo tempo e o rascunho completo do operador
+  // era apagado sem uma palavra. O confirm vem ANTES de criar: cancelar deixa
+  // tudo como estava, e o operador pode salvar o pivot primeiro.
+  if (!pvConfirmDiscard()) return;
   const now = new Date().toISOString();
   const study = {
     id: pivotStudyId(), instrumentId: pvInstrumentId,
@@ -524,7 +579,7 @@ function pvDeleteStudy() {
 }
 
 function pvOpenForm(pivotId) {
-  const study = pvStudyById(pvStudyId);
+  const study = pvStudyEmFoco('registrado');
   if (!study) return;
   if (pivotId) {
     const pivot = study.pivots.find(p => p.id === pivotId);
@@ -550,8 +605,9 @@ function pvOpenForm(pivotId) {
 
 function pvSavePivot() {
   const math = pvMath();
-  const study = pvStudyById(pvStudyId);
-  if (!math || !study) return;
+  if (!math) return;
+  const study = pvStudyEmFoco('salvo');
+  if (!study) return;
   const validation = math.validate(pvDraft);
   pvShowErrors(validation.errors || []);
   if (!validation.ok) return;
@@ -582,7 +638,7 @@ function pvSavePivot() {
 }
 
 function pvDeletePivot(pivotId) {
-  const study = pvStudyById(pvStudyId);
+  const study = pvStudyEmFoco('excluído');
   if (!study) return;
   const pivot = study.pivots.find(p => p.id === pivotId);
   if (!pivot) return;

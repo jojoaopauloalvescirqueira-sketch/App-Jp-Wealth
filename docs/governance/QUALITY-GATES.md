@@ -35,6 +35,10 @@ Para N0-V e N1:
 - `nocoda_test.py`: geometria do canal NoCoda, identidade de instrumento e persistencia;
 - `pivot_studies_test.py`: derivacao e estatistica dos Estudos dos Pivots, criterio de
   correcao, ordenacao numerica, CRUD real e compatibilidade de estado;
+- `order_guards_test.py`: nenhuma edicao de ordem ultrapassa o teto de risco da fase,
+  com caso de controle para a guarda nao recusar tudo;
+- `state_integrity_test.py`: backup hostil recusado antes de tocar na base, backfill
+  de `S.params` e importacao atravessando as abas;
 - browser real nos fluxos e viewports afetados.
 
 ### Full
