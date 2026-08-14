@@ -601,6 +601,54 @@ function nocodaNormalizeState(){
     } else if(!canonical){ delete nc.studies[key]; }
   }
 }
+// Estudos dos Pivots: identidade dos registros. Mesmo formato dos ids do app
+// (prefixo + tempo em base 36 + sufixo aleatório) — nenhum esquema novo.
+function pivotStudyId(){ return 'pvs_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// Estudos dos Pivots: guarda ESTRUTURAL de boot, pelo mesmo motivo dos quatro
+// normalizadores acima — migrate() roda dentro de load() antes de qualquer
+// script tardio existir, e é também o caminho por onde passa backup importado.
+//
+// Conservadora por contrato: descarta apenas o que não tem FORMA de registro e
+// preserva campos desconhecidos (STATE-SCHEMA.md §3). NÃO valida a matemática
+// nem o critério de correção — pivot incoerente simplesmente não produz
+// derivados e fica fora da estatística; apagá-lo aqui destruiria memória
+// técnica do operador em silêncio. Timeframe fora de H1/H4 também sobrevive:
+// deixa de contar nas sínteses por timeframe, e nada mais.
+function pivotStudiesNormalizeState(){
+  if(!S.pivotStudies || typeof S.pivotStudies!=='object' || Array.isArray(S.pivotStudies))
+    S.pivotStudies=structuredClone(DEFAULTS.pivotStudies);
+  const ps=S.pivotStudies;
+  if(!Number.isFinite(+ps.schemaVersion) || +ps.schemaVersion<1) ps.schemaVersion=1;
+  if(!Array.isArray(ps.studies)) ps.studies=[];
+  // Ids duplicados quebrariam edição e exclusão (o alvo viraria ambíguo).
+  // Colisão é reescrita com id novo em vez de o registro ser descartado.
+  const seenStudy=new Set();
+  ps.studies=ps.studies.filter(st=>st && typeof st==='object' && !Array.isArray(st));
+  ps.studies.forEach(st=>{
+    if(typeof st.id!=='string' || !st.id || seenStudy.has(st.id)) st.id=pivotStudyId();
+    seenStudy.add(st.id);
+    // Mesma identidade canônica das ordens e dos Estudos NoCoda.
+    st.instrumentId=String(st.instrumentId==null?'':st.instrumentId).toUpperCase().replace(/[^A-Z0-9]/g,'');
+    st.periodStart=String(st.periodStart==null?'':st.periodStart);
+    st.periodEnd=String(st.periodEnd==null?'':st.periodEnd);
+    if(typeof st.createdAt!=='string') st.createdAt='';
+    if(typeof st.updatedAt!=='string') st.updatedAt=st.createdAt;
+    if(!Array.isArray(st.pivots)) st.pivots=[];
+    st.pivots=st.pivots.filter(pv=>pv && typeof pv==='object' && !Array.isArray(pv));
+    const seenPivot=new Set();
+    st.pivots.forEach(pv=>{
+      if(typeof pv.id!=='string' || !pv.id || seenPivot.has(pv.id)) pv.id=pivotRecordId();
+      seenPivot.add(pv.id);
+      pv.timeframe=String(pv.timeframe==null?'':pv.timeframe).toUpperCase();
+      pv.startDatetime=String(pv.startDatetime==null?'':pv.startDatetime);
+      pv.endDatetime=String(pv.endDatetime==null?'':pv.endDatetime);
+      pv.notes=String(pv.notes==null?'':pv.notes);
+      if(typeof pv.createdAt!=='string') pv.createdAt='';
+      if(typeof pv.updatedAt!=='string') pv.updatedAt=pv.createdAt;
+    });
+  });
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
@@ -608,6 +656,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
   nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
+  pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){

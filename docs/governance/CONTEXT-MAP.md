@@ -21,6 +21,8 @@
   `docs/architecture/NAVIGATION-HIERARCHY.md`.
 - Estudos NoCoda: `docs/architecture/NOCODA-STUDIES.md` — geometria do canal,
   identidade de instrumento e o agregado `S.nocoda`.
+- Estudos dos Pivots: `docs/architecture/PIVOT-STUDIES.md` — derivação,
+  critério de correção, estatística descritiva e o agregado `S.pivotStudies`.
 - MEI-JP: fonte normativa aplicavel, implementacao MEI, historico patrimonial e auditoria matematica registrada.
 - Governanca/agentes: `AGENTS.md`, esta pagina, `AI-WORKFLOW.md`, `QUALITY-GATES.md` e skills locais.
 

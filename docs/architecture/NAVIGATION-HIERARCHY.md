@@ -135,6 +135,19 @@ O `[hidden]` precisa de uma regra de especificidade de ID
 (`#exec > [hidden]{display:none}`): as regras de `.jp-widget-grid` declaram
 `display` e venceriam o estilo de agente de usuário.
 
+**Montagem sob demanda.** Um workspace cujo conteúdo depende de estado vivo —
+Estudos NoCoda e Estudos dos Pivots derivam seus seletores do catálogo de
+instrumentos — declara um renderizador em `EXEC_VIEW_RENDERERS` e é repintado a
+cada entrada, para que uma mudança feita em outra tela apareça sem recarregar a
+página. A montagem vem **depois** de tirar o `hidden`: renderizar num container
+oculto impediria qualquer medida e deixaria o foco em nó invisível.
+
+Repintar não pode descartar trabalho do operador. O estado efêmero de cada
+workspace (seleção, filtros, formulário aberto, rascunho não salvo) vive em
+variáveis de módulo, e o render o reconstitui — sair do workspace com um
+formulário preenchido e voltar devolve o formulário como estava. Descarte só
+acontece por ação que troque o objeto em foco, e aí é confirmado.
+
 **Destino inicial.** Quando o módulo define uma área de entrada, ela é aplicada
 ao entrar no módulo vindo de outra tela. A detecção observa a classe `.active`
 da própria `section` por `MutationObserver` — não embrulha `navigateToScreen`,

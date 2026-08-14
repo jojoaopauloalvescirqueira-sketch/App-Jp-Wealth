@@ -73,6 +73,8 @@ a lista material mudar.
 | 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: workspaces do módulo (Visão Geral, Painel Operacional, Estudos NoCoda, Estudos dos Pivots, Motor de Lote) |
 | 62 | `src/js/10-domain/09-nocoda-geometry.js` | NoCoda: geometria do canal — núcleo puro, sem DOM nem persistência |
 | 63 | `src/js/20-ui/14-nocoda-studies.js` | NoCoda: workspace de estudos (seletor, âncoras, resultados derivados) |
+| 64 | `src/js/10-domain/10-pivot-studies.js` | Pivots: derivação, validação, estatística descritiva e ordenação — núcleo puro |
+| 65 | `src/js/20-ui/15-pivot-studies.js` | Pivots: workspace de estudos (estudos por período, CRUD de pivots, resumo, filtros) |
 
 ## Laboratório de Probabilidade
 

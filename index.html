@@ -150,7 +150,7 @@
       </button>
       <button type="button" data-nav-sub-view="pivots">
         <span class="nav-sub-item-title">Estudos dos Pivots</span>
-        <span class="nav-sub-item-desc">Superfície reservada</span>
+        <span class="nav-sub-item-desc">Amostra histórica de pivots H1/H4</span>
       </button>
       <button type="button" data-nav-sub-view="motor">
         <span class="nav-sub-item-title">Motor de Lote</span>
@@ -389,12 +389,11 @@
          renderizado por 20-ui/14-nocoda-studies.js a cada entrada no workspace,
          porque o seletor deriva do catálogo vivo do Motor de Lote. -->
     <div class="exec-view" id="execNocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
-    <div class="exec-view" id="execPivots" role="region" aria-labelledby="execPivotsTitle" hidden>
-      <div class="card">
-        <h2 id="execPivotsTitle">Estudos dos Pivots</h2>
-        <p class="expl">Superfície reservada. O destino existe para receber especificação funcional própria — nenhum estudo, nível, projeção ou leitura de mercado é calculado aqui.</p>
-      </div>
-    </div>
+    <!-- Estudos dos Pivots: memória empírica dos maiores pivots H1/H4 por
+         instrumento e período. O conteúdo é renderizado por
+         20-ui/15-pivot-studies.js a cada entrada no workspace, porque o seletor
+         deriva do catálogo vivo do Motor de Lote e a tela reflete o estado. -->
+    <div class="exec-view" id="execPivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
     <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
          #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
          nenhum dado tocado. A <section id="motor"> hospedeira foi removida
@@ -1494,5 +1493,7 @@
 <script src="src/js/20-ui/13-exec-views.js"></script>
 <script src="src/js/10-domain/09-nocoda-geometry.js"></script>
 <script src="src/js/20-ui/14-nocoda-studies.js"></script>
+<script src="src/js/10-domain/10-pivot-studies.js"></script>
+<script src="src/js/20-ui/15-pivot-studies.js"></script>
 </body>
 </html>

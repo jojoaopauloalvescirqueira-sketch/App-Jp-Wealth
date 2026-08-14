@@ -177,6 +177,19 @@ const DEFAULTS = {
   // de configuração não destrói memória técnica.
   // Guarda estrutural de boot: nocodaNormalizeState() (04-persistence.js).
   nocoda:{schemaVersion:1, studies:{}},
+  // Estudos dos Pivots: memória empírica dos maiores pivots H1/H4 que o
+  // operador identificou no gráfico. LISTA, e não mapa por instrumento como o
+  // NoCoda: aqui a natureza é histórica e o mesmo instrumento pode ter vários
+  // estudos de períodos distintos, que não se sobrescrevem.
+  // Cada estudo referencia o instrumentId() canônico e CONTÉM seus pivots —
+  // a contenção é a relação, e por isso não existe pivot órfão.
+  // Só CAUSAS persistem (timeframe, extremos de tempo e preço, correção
+  // informada). Direção, range, amplitude, duração, ranking e toda a
+  // estatística são DERIVADOS em 10-domain/10-pivot-studies.js e nunca gravados.
+  // Estudo de instrumento que saiu da lista operacional é PRESERVADO, e pivot
+  // que passa a exceder o critério de correção é RECLASSIFICADO, nunca apagado.
+  // Guarda estrutural de boot: pivotStudiesNormalizeState() (04-persistence.js).
+  pivotStudies:{schemaVersion:1, studies:[]},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o

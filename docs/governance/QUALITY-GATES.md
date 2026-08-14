@@ -31,6 +31,10 @@ Para N0-V e N1:
 - `fx_planning_test.py`: motor do Planejamento FX (casos 1-20), reservas FCR/FEO,
   baseline x forecast x realizado, persistencia do agregado e fluxo real de UI;
 - `usd_brl_quote_test.py`: cotacao USD/BRL, cache e integracao com o Planejamento FX;
+- `exec_submenu_test.py`: faixa contextual do Execution Board, destinos, teclado e foco;
+- `nocoda_test.py`: geometria do canal NoCoda, identidade de instrumento e persistencia;
+- `pivot_studies_test.py`: derivacao e estatistica dos Estudos dos Pivots, criterio de
+  correcao, ordenacao numerica, CRUD real e compatibilidade de estado;
 - browser real nos fluxos e viewports afetados.
 
 ### Full

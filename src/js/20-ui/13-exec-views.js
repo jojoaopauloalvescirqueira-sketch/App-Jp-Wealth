@@ -26,11 +26,16 @@ const EXEC_VIEWS = [
   ['motor', 'motorWidgetGrid']
 ];
 // Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
-// HTML. O NoCoda deriva seu seletor do catalogo vivo do Motor de Lote, entao
-// precisa repintar a cada entrada — um instrumento destravado em Configuracoes
-// tem de aparecer sem recarregar a pagina.
+// HTML. NoCoda e Pivots derivam seus seletores do catalogo vivo do Motor de
+// Lote, entao precisam repintar a cada entrada — um instrumento destravado em
+// Configuracoes tem de aparecer sem recarregar a pagina.
+//
+// Repintar NAO descarta rascunho: o estado efemero de cada workspace vive em
+// variaveis de modulo, e o render o reconstitui. Sair do Estudos dos Pivots com
+// um pivot em edicao e voltar devolve o formulario como estava.
 const EXEC_VIEW_RENDERERS = {
-  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); }
+  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); },
+  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); }
 };
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;

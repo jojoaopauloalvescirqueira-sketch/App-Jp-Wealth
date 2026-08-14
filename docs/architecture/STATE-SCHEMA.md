@@ -24,6 +24,14 @@ jpwealth_v9_state
 - `fxPlanning`: Planejamento FX — plano (baseline congelado, premissas vigentes,
   revisões, fechamentos mensais, ledger cambial) e trilha de auditoria própria.
   Derivados nunca persistem; contrato em `FX-PLANNING.md`.
+- `nocoda`: Estudos NoCoda — mapa `instrumentId → estudo vigente` com as três
+  âncoras do canal. Um estudo por instrumento; derivados nunca persistem.
+  Contrato em `NOCODA-STUDIES.md`.
+- `pivotStudies`: Estudos dos Pivots — lista histórica de estudos por
+  instrumento e período, cada um contendo seus pivots H1/H4. Vários estudos do
+  mesmo instrumento coexistem. Só causas persistem (timeframe, extremos de tempo
+  e preço, correção informada); direção, amplitude, duração, ranking e toda a
+  estatística são derivados. Contrato em `PIVOT-STUDIES.md`.
 
 ## Regras de evolução
 

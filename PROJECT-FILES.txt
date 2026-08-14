@@ -26,6 +26,8 @@ docs/architecture/DB-STORAGE-GOVERNANCE.md
 docs/architecture/FX-PLANNING.md
 docs/architecture/GALTON-BOARD.md
 docs/architecture/NAVIGATION-HIERARCHY.md
+docs/architecture/NOCODA-STUDIES.md
+docs/architecture/PIVOT-STUDIES.md
 docs/architecture/PWA-UPDATE-LIFECYCLE.md
 docs/architecture/STATE-SCHEMA.md
 docs/audit/AUDIT-PRELIMINARY.md
@@ -94,6 +96,7 @@ src/js/10-domain/06-quarantine.js
 src/js/10-domain/07-reserve-requirements.js
 src/js/10-domain/08-usd-brl-quote.js
 src/js/10-domain/09-nocoda-geometry.js
+src/js/10-domain/10-pivot-studies.js
 src/js/20-ui/01-header-readout.js
 src/js/20-ui/02-sidebar.js
 src/js/20-ui/03-main-render.js
@@ -108,6 +111,7 @@ src/js/20-ui/11-phase-posture.js
 src/js/20-ui/12-nav-style.js
 src/js/20-ui/13-exec-views.js
 src/js/20-ui/14-nocoda-studies.js
+src/js/20-ui/15-pivot-studies.js
 src/js/30-accounting/01-daily-ledger.js
 src/js/30-accounting/02-accounting-engine.js
 src/js/30-accounting/03-mei-jp.js
@@ -161,6 +165,7 @@ tools/import_xss_security_test.py
 tools/investor_password_test.py
 tools/mvp_notes_test.py
 tools/nocoda_test.py
+tools/pivot_studies_test.py
 tools/persistence_failure_test.py
 tools/persistence_recovery_test.py
 tools/preflight_context_test.py

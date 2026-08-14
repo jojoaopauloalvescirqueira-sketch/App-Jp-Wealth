@@ -2,6 +2,69 @@
 
 ## [Unreleased]
 
+### Estudos dos Pivots — MVP — 2026-08-14
+
+Quarto destino do Execution Board deixa de ser superfície reservada e recebe
+função: memória empírica dos maiores pivots H1/H4 que o operador identificou no
+gráfico. O software não detecta pivots — ele estrutura, calcula, compara,
+organiza e preserva o que foi observado.
+
+- **Navegação sem obra nova.** O item, o container `#execPivots` e o registro em
+  `EXEC_VIEWS` já existiam desde a reestruturação do módulo. Só a descrição do
+  item mudou e o placeholder saiu. Nenhum controlador, dropdown ou sistema de
+  hover foi criado.
+- **Instrumentos da fonte canônica.** `instrumentCatalog()`, a mesma que o Motor
+  de Lote e os Estudos NoCoda consomem. Não existe lista própria, e o teste falha
+  se um símbolo aparecer nos arquivos da feature. O seletor oferece o catálogo
+  operável mais os instrumentos que já têm estudo, para que remoção no Motor de
+  Lote não torne memória técnica inalcançável.
+- **Estudo histórico, não vigente.** Diferente do NoCoda, `S.pivotStudies` é
+  LISTA: vários estudos do mesmo instrumento coexistem por período e nenhum
+  sobrescreve o outro. Período sobreposto avisa e não proíbe.
+- **Só causas persistem.** Timeframe, extremos de tempo e preço, correção
+  informada e observação. Direção, range, amplitude percentual, duração, veredito
+  do critério, ranking e toda a estatística são derivados a cada leitura — há
+  teste que falha se um derivado for gravado.
+- **Critério de correção em ponto único.** `PIVOT_MAX_CORRECTION_PCT = 61.8`,
+  limite invalidante (`< 61,8` atende). A interface lê a constante e não repete o
+  número. É **critério informado, não verificado**: o app não tem OHLC e não
+  afirma ter conferido o histórico do mercado.
+- **Nada é destruído por classificação.** Pivot que passa a exceder o limite é
+  reclassificado e marcado, nunca apagado; filtro, troca de timeframe, de
+  instrumento ou de período não removem registro. A única exclusão é explícita e
+  confirmada.
+- **Estatística descritiva com viés declarado.** `n` sempre acompanha as medidas
+  centrais; `n = 0` mostra "Sem dados" e nunca `0%`. A tela declara que a amostra
+  é selecionada pelo operador, e o teste varre o texto renderizado atrás de
+  linguagem de probabilidade, expectativa ou previsão.
+- **Convenção temporal reusada.** O parser de carimbo MT5 dos Estudos NoCoda é
+  chamado, não duplicado — dois parsers do mesmo dado seriam duas verdades.
+- **Dois defeitos achados na revisão adversarial do próprio candidato e
+  corrigidos antes da entrega:**
+  - o critério de correção era unilateral (`< 61,8`) e não conferia o domínio
+    0–100%. Pelo formulário não havia como explorá-lo, mas um **backup
+    adulterado** — o mesmo vetor dos três achados `Medium` da auditoria — com
+    `maxCorrectionPct: -500` atravessava a normalização (que de propósito não
+    apaga registro), entrava na amostra **principal** como "atende ao critério" e
+    envenenava a mediana das correções. O domínio passou para o núcleo; o
+    registro segue gravado, agora rotulado "correção fora de 0–100%".
+  - trocar de estudo ou de instrumento com o formulário de pivot aberto e
+    **limpo** não o fechava: ele continuava apontando para um pivot de outro
+    estudo, e o `Salvar` seguinte não achava o alvo e retornava em silêncio — o
+    operador digitava, clicava e nada acontecia. Agora a troca fecha o
+    formulário, e salvar com alvo inexistente produz mensagem explícita.
+- **Testes:** `tools/pivot_studies_test.py` no tier `standard`. A suíte foi
+  submetida a teste de mutação com dez defeitos plantados no produto (critério
+  inclusivo, mediana sem caso par, ordenação lexicográfica, amplitude no
+  denominador errado, duração aceitando instantes iguais, preço igual virando
+  baixa, derivado persistido, filtro que não filtra, critério unilateral e
+  formulário sobrevivendo à troca de estudo) — os dez foram acusados.
+- **Reconciliação:** contrato em `docs/architecture/PIVOT-STUDIES.md`; agregado
+  em `STATE-SCHEMA.md`; scripts 63 → 65 em manifest, `sw.js`, HTML e portátil.
+  Aproveitou-se para corrigir duas defasagens de inventário anteriores —
+  `SECURITY-MODEL.md` ainda declarava 53 scripts no precache em uma segunda
+  ocorrência, e `NOCODA-STUDIES.md` nunca entrara em `PROJECT-FILES.txt`.
+
 ### Correções de segurança da auditoria — 2026-08-13
 
 Os três achados `Medium` que sobreviveram à verificação adversarial. Todos
