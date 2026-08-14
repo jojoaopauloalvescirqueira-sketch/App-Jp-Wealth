@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+### Segundo nível do Execution Board e generalização da faixa — 2026-08-13
+
+- **Execution Board ganhou segundo nível** com três destinos, nesta ordem:
+  **Visão Geral** (superfície estrutural nova, sem indicador, cálculo ou
+  resumo financeiro), **Painel Operacional** e **Estudos dos Pivots**
+  (superfície reservada, também sem conteúdo funcional).
+- **O Painel Operacional é o `#execWidgetGrid` de sempre.** Nenhum nó foi
+  movido, nenhum dos 67 ids internos mudou, os quatro widgets continuam filhos
+  diretos da grade e a preferência de layout gravada não foi tocada. A
+  realocação é de hierarquia de navegação, não de conteúdo — não houve
+  duplicação de HTML, controlador, estado, listener ou renderizador.
+- **Troca por `hidden` + `inert`, sem desmontar:** alternar workspace preserva
+  valores digitados, foco, disclosures abertos e o DOM injetado pelos
+  renderizadores. Nenhum estado de ordem, fase, risco ou LIFO foi criado,
+  alterado ou removido; nada do segundo nível é persistido.
+- **Visão Geral é o destino inicial do módulo**, aplicada ao entrar vindo de
+  outra tela por observação da classe `.active` — reabrir a faixa estando já no
+  Execution Board não tira o operador do Painel Operacional.
+- **Faixa do segundo nível generalizada e compartilhada:** `#fxNavSubmenuShell`
+  e o prefixo `.fx-nav-*` deram lugar a `#navSubShell` e `.nav-sub-*`, com o
+  controlador dirigido por registro em vez dos dez ganchos cravados em `fx`.
+  O módulo aberto passou a ser distinguido por `aria-expanded` no próprio
+  acionador; o atributo global anterior acendia todos de uma vez. Planejamento
+  migrou para o mesmo motor sem mudança de comportamento.
+- **Teste novo** `tools/exec_submenu_test.py`, registrado no tier `standard`:
+  estrutura em fluxo, deslocamento, destino inicial, equivalência do painel,
+  preservação de estado, teclado, `inert` verificado por comportamento, hover e
+  fixação, troca de módulo, não regressão das cinco abas, temas e mobile.
+
 ### Navegação hierárquica de Planejamento — integrada localmente em 2026-08-13 (`478a558`, merge `55d2267`)
 
 - **Planejamento ganhou um segundo nível estrutural** com Visão Geral,

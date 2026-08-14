@@ -116,28 +116,56 @@
   </div>
 </header>
 
-<!-- Segundo nível estrutural de Planejamento. Diferente de um dropdown, esta
+<!-- Segundo nível estrutural da navegação — contrato em
+     docs/architecture/NAVIGATION-HIERARCHY.md. Diferente de um dropdown, esta
      faixa permanece fora de #nav e participa do fluxo normal da página: ao
-     expandir, desloca a faixa de contexto e o conteúdo sem sobreposição. -->
-<div class="fx-nav-submenu-shell" id="fxNavSubmenuShell">
-  <div class="fx-nav-submenu-clip">
-    <nav class="fx-nav-submenu" id="fxNavSubmenu" aria-labelledby="fxNavTrigger"
-         aria-hidden="true" inert>
-      <button type="button" data-fx-nav-view="overview">
-        <span class="fx-nav-item-title">Visão Geral</span>
-        <span class="fx-nav-item-desc">Resumo do planejamento atual</span>
+     expandir, desloca a faixa de contexto e o conteúdo sem sobreposição.
+
+     A faixa é COMPARTILHADA por todos os módulos com segundo nível. Só um pode
+     estar aberto por vez (selecionar outro módulo é clique externo e fecha o
+     anterior), então um único slot no grid do body basta — e evita que dois
+     acionadores acendam juntos, que era o risco de duplicar o mecanismo.
+     Cada módulo traz seu próprio <nav>; o controlador em
+     40-app/11-operational-shell.js exibe apenas o do módulo acionado.
+
+     Convenção de ids, lida por derivação e não por registro manual:
+     `<data-screen>NavTrigger` no botão de #nav e `<data-screen>NavSubmenu`
+     aqui. Um módulo novo só precisa do par de ids, do <nav> e da superfície
+     de UI declarada em NAV_SUBMENU_SURFACES. -->
+<div class="nav-sub-shell" id="navSubShell">
+  <div class="nav-sub-clip">
+    <nav class="nav-sub-menu" id="execNavSubmenu" aria-labelledby="execNavTrigger"
+         aria-hidden="true" hidden inert>
+      <button type="button" data-nav-sub-view="overview">
+        <span class="nav-sub-item-title">Visão Geral</span>
+        <span class="nav-sub-item-desc">Síntese do módulo</span>
       </button>
-      <button type="button" data-fx-nav-view="planning">
-        <span class="fx-nav-item-title">Planejamento FX</span>
-        <span class="fx-nav-item-desc">Cenários cambiais e projeções</span>
+      <button type="button" data-nav-sub-view="panel">
+        <span class="nav-sub-item-title">Painel Operacional</span>
+        <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
       </button>
-      <button type="button" data-fx-nav-view="actuals">
-        <span class="fx-nav-item-title">Realizado</span>
-        <span class="fx-nav-item-desc">Comparação planejado vs executado</span>
+      <button type="button" data-nav-sub-view="pivots">
+        <span class="nav-sub-item-title">Estudos dos Pivots</span>
+        <span class="nav-sub-item-desc">Superfície reservada</span>
       </button>
-      <button type="button" data-fx-nav-view="table">
-        <span class="fx-nav-item-title">Histórico</span>
-        <span class="fx-nav-item-desc">Evolução temporal</span>
+    </nav>
+    <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
+         aria-hidden="true" hidden inert>
+      <button type="button" data-nav-sub-view="overview">
+        <span class="nav-sub-item-title">Visão Geral</span>
+        <span class="nav-sub-item-desc">Resumo do planejamento atual</span>
+      </button>
+      <button type="button" data-nav-sub-view="planning">
+        <span class="nav-sub-item-title">Planejamento FX</span>
+        <span class="nav-sub-item-desc">Cenários cambiais e projeções</span>
+      </button>
+      <button type="button" data-nav-sub-view="actuals">
+        <span class="nav-sub-item-title">Realizado</span>
+        <span class="nav-sub-item-desc">Comparação planejado vs executado</span>
+      </button>
+      <button type="button" data-nav-sub-view="table">
+        <span class="nav-sub-item-title">Histórico</span>
+        <span class="nav-sub-item-desc">Evolução temporal</span>
       </button>
     </nav>
   </div>
@@ -165,12 +193,15 @@
        haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-screen="exec" title="Execution Board"
+          aria-expanded="false" aria-controls="execNavSubmenu">
+    <span class="n">02</span><span class="lbl">Execution Board</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+  </button>
   <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>
   <button class="tab" data-screen="contab" title="Contabilidade"><span class="n">04</span><span class="lbl">Contabilidade</span></button>
-  <button class="tab fx-nav-trigger" id="fxNavTrigger" data-screen="fxplan" title="Planejamento"
-          aria-expanded="false" aria-controls="fxNavSubmenu">
-    <span class="n">05</span><span class="lbl">Planejamento</span><span class="fx-nav-caret" aria-hidden="true">⌄</span>
+  <button class="tab nav-sub-trigger" id="fxplanNavTrigger" data-screen="fxplan" title="Planejamento"
+          aria-expanded="false" aria-controls="fxplanNavSubmenu">
+    <span class="n">05</span><span class="lbl">Planejamento</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
@@ -183,11 +214,36 @@
   </div>
   <!-- ================= 01 EXECUTION BOARD ================= -->
   <section class="screen" id="exec">
+    <!-- WORKSPACES DO MÓDULO (segundo nível — contrato em
+         docs/architecture/NAVIGATION-HIERARCHY.md).
+
+         São irmãos diretos da .screen, e essa posição é obrigatória:
+         · NUNCA .screen aninhada — 01-navigation.js:20 limpa .active de toda
+           .screen do documento, e três leitores resolvem `.screen.active` /
+           closest('.screen') pelo primeiro nó em ordem de documento
+           (13-dashboard-layout.js, 10-dashboard-immersive.js, 14-mvp-notes.js);
+         · NUNCA dentro de #execWidgetGrid — 13-dashboard-layout.js:442
+           reparenteia todo [data-layout-card] para filho direto do grid a cada
+           boot e desfaria o wrapper em silêncio, invalidando a preferência de
+           layout da tela inteira.
+
+         A troca é por hidden+inert: o DOM permanece montado, nenhum estado
+         operacional é desmontado e nada disso é persistido (o estado do
+         segundo nível é efêmero por contrato). O Painel Operacional é o
+         #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
+    <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
+      <div class="card">
+        <h2 id="execOverviewTitle">Visão Geral</h2>
+        <p class="expl">Superfície reservada para a síntese do Execution Board. O conteúdo funcional será especificado em tarefa própria — nenhum indicador, cálculo, score ou resumo financeiro é derivado aqui.</p>
+      </div>
+    </div>
     <!-- Grade modular do Execution Board (motor compartilhado, 13-dashboard-layout.js).
          .eb-top e .coherence (grids fixos de 2 colunas) foram desfeitos — cada
          widget agora é filho direto de #execWidgetGrid, com largura própria
-         via data-widget-size. Nenhum ID interno, listener ou renderizador mudou. -->
-    <div class="jp-widget-grid" id="execWidgetGrid">
+         via data-widget-size. Nenhum ID interno, listener ou renderizador mudou.
+         Passou a ser o workspace "Painel Operacional"; nasce oculto porque a
+         Visão Geral é o destino inicial do módulo. -->
+    <div class="jp-widget-grid" id="execWidgetGrid" hidden>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
       <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
         <div class="mc-ec-copy">
@@ -319,6 +375,12 @@
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+    </div>
+    <div class="exec-view" id="execPivots" role="region" aria-labelledby="execPivotsTitle" hidden>
+      <div class="card">
+        <h2 id="execPivotsTitle">Estudos dos Pivots</h2>
+        <p class="expl">Superfície reservada. O destino existe para receber especificação funcional própria — nenhum estudo, nível, projeção ou leitura de mercado é calculado aqui.</p>
       </div>
     </div>
   </section>
@@ -1414,5 +1476,6 @@
 <script src="src/js/30-accounting/05-fx-planning/03-fx-state.js"></script>
 <script src="src/js/30-accounting/05-fx-planning/04-fx-charts.js"></script>
 <script src="src/js/30-accounting/05-fx-planning/05-fx-ui.js"></script>
+<script src="src/js/20-ui/13-exec-views.js"></script>
 </body>
 </html>

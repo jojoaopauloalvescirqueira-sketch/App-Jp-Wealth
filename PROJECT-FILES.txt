@@ -105,6 +105,7 @@ src/js/20-ui/09-contextual-help.js
 src/js/20-ui/10-font-scale.js
 src/js/20-ui/11-phase-posture.js
 src/js/20-ui/12-nav-style.js
+src/js/20-ui/13-exec-views.js
 src/js/30-accounting/01-daily-ledger.js
 src/js/30-accounting/02-accounting-engine.js
 src/js/30-accounting/03-mei-jp.js
@@ -149,6 +150,7 @@ tests/README.md
 tools/agent_preflight.py
 tools/async_generation_test.py
 tools/build_reproducibility_test.py
+tools/exec_submenu_test.py
 tools/finalize_session_test.py
 tools/fx_planning_test.py
 tools/galton_board_benchmark.py

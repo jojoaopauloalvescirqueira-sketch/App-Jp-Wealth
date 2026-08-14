@@ -5654,86 +5654,107 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
 }
 
 /* ==========================================================
-   NAVEGAÇÃO HIERÁRQUICA · PLANEJAMENTO FX (faixa estrutural N1)
-   O acionador continua filho direto de #nav para preservar Classic/Pill/
+   NAVEGAÇÃO HIERÁRQUICA · FAIXA COMPARTILHADA (segundo nível, N1)
+   Contrato: docs/architecture/NAVIGATION-HIERARCHY.md.
+
+   Os acionadores continuam filhos diretos de #nav para preservar Classic/Pill/
    Kinetic. O segundo nível vive em uma linha própria do fluxo da página:
    expande o conjunto do header e desloca contexto + conteúdo sem overlay.
+
+   A faixa é UMA só, compartilhada por todos os módulos com segundo nível —
+   por isso existe um único slot `navsub` no grid do body. O módulo aberto é
+   distinguido por `aria-expanded="true"` no próprio acionador, e não por um
+   atributo global na raiz: com atributo global, TODOS os acionadores acendiam
+   juntos assim que qualquer submenu abrisse.
    ========================================================== */
-.fx-nav-submenu-shell{display:none}
+.nav-sub-shell{display:none}
 html[data-shell="global-dashboard"][data-ui-version="tesla-inspired"] body{
   grid-template-columns:1fr;
   grid-template-rows:auto auto auto 1fr;
-  grid-template-areas:"hdr" "fxsub" "context" "main";
+  grid-template-areas:"hdr" "navsub" "context" "main";
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell{grid-area:fxsub}
+html[data-shell="global-dashboard"] .nav-sub-shell{grid-area:navsub}
 html[data-shell="global-dashboard"] .gd-context-row{grid-area:context}
-html[data-shell="global-dashboard"] .fx-nav-trigger{display:inline-flex;align-items:center;gap:5px}
-html[data-shell="global-dashboard"] .fx-nav-caret{
+html[data-shell="global-dashboard"] .nav-sub-trigger{display:inline-flex;align-items:center;gap:5px}
+html[data-shell="global-dashboard"] .nav-sub-caret{
   display:inline-block;font-size:12px;line-height:1;color:currentColor;
   transform:translateY(-1px);transition:transform 300ms var(--jp-ease);
 }
-html[data-fx-nav="open"] .fx-nav-trigger .fx-nav-caret{transform:translateY(1px) rotate(180deg)}
-html[data-shell="global-dashboard"][data-fx-nav="open"] .gd-topbar-nav-slot .fx-nav-trigger{
+.nav-sub-trigger[aria-expanded="true"] .nav-sub-caret{transform:translateY(1px) rotate(180deg)}
+html[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-sub-trigger[aria-expanded="true"]{
   color:var(--jp-action);font-weight:600;border-bottom-color:var(--jp-action);
 }
 
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell{
+html[data-shell="global-dashboard"] .nav-sub-shell{
   grid-column:1/-1;display:grid;grid-template-rows:0fr;min-width:0;
-  --fx-nav-surface:color-mix(in srgb,var(--jp-surface) 30%,var(--gd-surface-subtle));
-  overflow:clip;background:var(--fx-nav-surface);border-bottom:1px solid transparent;
+  --nav-sub-surface:color-mix(in srgb,var(--jp-surface) 30%,var(--gd-surface-subtle));
+  overflow:clip;background:var(--nav-sub-surface);border-bottom:1px solid transparent;
   transition:grid-template-rows 300ms var(--jp-ease),border-color 300ms var(--jp-ease);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell.is-open{
+html[data-shell="global-dashboard"] .nav-sub-shell.is-open{
   grid-template-rows:1fr;border-bottom-color:var(--jp-border);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-clip{
+html[data-shell="global-dashboard"] .nav-sub-clip{
   min-height:0;overflow:hidden;opacity:0;transform:translateY(-6px);
   transition:opacity 220ms var(--jp-ease),transform 300ms var(--jp-ease);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell.is-open .fx-nav-submenu-clip{
+html[data-shell="global-dashboard"] .nav-sub-shell.is-open .nav-sub-clip{
   opacity:1;transform:translateY(0);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu{
+/* Colunas derivadas da contagem de itens: `grid-auto-flow:column` cria uma
+   faixa por filho, todas iguais. Assim um módulo com 3 destinos e outro com 4
+   usam a mesma regra sem número mágico e sem coluna órfã. */
+html[data-shell="global-dashboard"] .nav-sub-menu{
   width:min(var(--gd-max-w),100%);margin-inline:auto;padding:18px var(--gd-gutter) 20px;
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,2vw,28px);
+  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(12px,2vw,28px);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu button{
+/* O <nav> do módulo inativo é `hidden`; sem esta regra o display:grid acima
+   venceria o estilo de agente de usuário e ele continuaria visível. */
+html[data-shell="global-dashboard"] .nav-sub-menu[hidden]{display:none}
+html[data-shell="global-dashboard"] .nav-sub-menu button{
   display:grid;grid-template-columns:1fr;gap:4px;width:100%;min-height:54px;
   padding:9px 12px;border:0;border-left:2px solid transparent;border-radius:0;
   background:transparent;color:var(--jp-ink);text-align:left;cursor:pointer;
   font-family:var(--jp-font-ui);text-transform:none;letter-spacing:0;
   transition:background 140ms var(--jp-ease),border-color 140ms var(--jp-ease),color 140ms var(--jp-ease);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu button:hover,
-html[data-shell="global-dashboard"] .fx-nav-submenu button:focus-visible{
+html[data-shell="global-dashboard"] .nav-sub-menu button:hover,
+html[data-shell="global-dashboard"] .nav-sub-menu button:focus-visible{
   background:var(--gd-surface-subtle);outline:none;
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu button:focus-visible{box-shadow:inset 0 0 0 1px var(--jp-action)}
-html[data-shell="global-dashboard"] .fx-nav-submenu button.is-current{
+html[data-shell="global-dashboard"] .nav-sub-menu button:focus-visible{box-shadow:inset 0 0 0 1px var(--jp-action)}
+html[data-shell="global-dashboard"] .nav-sub-menu button.is-current{
   color:var(--jp-action);border-left-color:var(--jp-action);
   background:color-mix(in srgb,var(--jp-action) 8%,transparent);
 }
-html[data-shell="global-dashboard"] .fx-nav-item-title{font-size:13px;font-weight:650;line-height:1.25}
-html[data-shell="global-dashboard"] .fx-nav-item-desc{font-size:11px;font-weight:400;line-height:1.4;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .nav-sub-item-title{font-size:13px;font-weight:650;line-height:1.25}
+html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weight:400;line-height:1.4;color:var(--jp-ink-muted)}
+
+/* Workspaces do Execution Board. A especificidade de ID é deliberada: as
+   regras de `.jp-widget-grid` declaram display (grid no desktop, flex abaixo
+   de 900px) e venceriam o `[hidden]` do agente de usuário, deixando o Painel
+   Operacional visível sob a Visão Geral. */
+#exec > [hidden]{display:none}
+html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
-  html[data-shell="global-dashboard"] .fx-nav-trigger .fx-nav-caret{display:none}
+  html[data-shell="global-dashboard"] .nav-sub-trigger .nav-sub-caret{display:none}
 }
 
 @media(max-width:900px){
-  html[data-shell="global-dashboard"] .fx-nav-trigger{width:100%}
-  html[data-shell="global-dashboard"] .fx-nav-trigger .fx-nav-caret{margin-left:auto}
-  html[data-shell="global-dashboard"] .fx-nav-submenu{
-    width:100%;padding:12px 16px 18px;grid-template-columns:1fr;gap:2px;
+  html[data-shell="global-dashboard"] .nav-sub-trigger{width:100%}
+  html[data-shell="global-dashboard"] .nav-sub-trigger .nav-sub-caret{margin-left:auto}
+  html[data-shell="global-dashboard"] .nav-sub-menu{
+    width:100%;padding:12px 16px 18px;grid-auto-flow:row;gap:2px;
   }
-  html[data-shell="global-dashboard"] .fx-nav-submenu button{
+  html[data-shell="global-dashboard"] .nav-sub-menu button{
     min-height:58px;padding:10px 14px;
   }
 }
 
 @media(prefers-reduced-motion:reduce){
-  html[data-shell="global-dashboard"] .fx-nav-caret,
-  html[data-shell="global-dashboard"] .fx-nav-submenu-shell,
-  html[data-shell="global-dashboard"] .fx-nav-submenu-clip,
-  html[data-shell="global-dashboard"] .fx-nav-submenu button{transition:none!important}
+  html[data-shell="global-dashboard"] .nav-sub-caret,
+  html[data-shell="global-dashboard"] .nav-sub-shell,
+  html[data-shell="global-dashboard"] .nav-sub-clip,
+  html[data-shell="global-dashboard"] .nav-sub-menu button{transition:none!important}
 }

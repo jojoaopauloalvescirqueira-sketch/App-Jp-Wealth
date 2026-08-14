@@ -5664,93 +5664,114 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
 }
 
 /* ==========================================================
-   NAVEGAÇÃO HIERÁRQUICA · PLANEJAMENTO FX (faixa estrutural N1)
-   O acionador continua filho direto de #nav para preservar Classic/Pill/
+   NAVEGAÇÃO HIERÁRQUICA · FAIXA COMPARTILHADA (segundo nível, N1)
+   Contrato: docs/architecture/NAVIGATION-HIERARCHY.md.
+
+   Os acionadores continuam filhos diretos de #nav para preservar Classic/Pill/
    Kinetic. O segundo nível vive em uma linha própria do fluxo da página:
    expande o conjunto do header e desloca contexto + conteúdo sem overlay.
+
+   A faixa é UMA só, compartilhada por todos os módulos com segundo nível —
+   por isso existe um único slot `navsub` no grid do body. O módulo aberto é
+   distinguido por `aria-expanded="true"` no próprio acionador, e não por um
+   atributo global na raiz: com atributo global, TODOS os acionadores acendiam
+   juntos assim que qualquer submenu abrisse.
    ========================================================== */
-.fx-nav-submenu-shell{display:none}
+.nav-sub-shell{display:none}
 html[data-shell="global-dashboard"][data-ui-version="tesla-inspired"] body{
   grid-template-columns:1fr;
   grid-template-rows:auto auto auto 1fr;
-  grid-template-areas:"hdr" "fxsub" "context" "main";
+  grid-template-areas:"hdr" "navsub" "context" "main";
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell{grid-area:fxsub}
+html[data-shell="global-dashboard"] .nav-sub-shell{grid-area:navsub}
 html[data-shell="global-dashboard"] .gd-context-row{grid-area:context}
-html[data-shell="global-dashboard"] .fx-nav-trigger{display:inline-flex;align-items:center;gap:5px}
-html[data-shell="global-dashboard"] .fx-nav-caret{
+html[data-shell="global-dashboard"] .nav-sub-trigger{display:inline-flex;align-items:center;gap:5px}
+html[data-shell="global-dashboard"] .nav-sub-caret{
   display:inline-block;font-size:12px;line-height:1;color:currentColor;
   transform:translateY(-1px);transition:transform 300ms var(--jp-ease);
 }
-html[data-fx-nav="open"] .fx-nav-trigger .fx-nav-caret{transform:translateY(1px) rotate(180deg)}
-html[data-shell="global-dashboard"][data-fx-nav="open"] .gd-topbar-nav-slot .fx-nav-trigger{
+.nav-sub-trigger[aria-expanded="true"] .nav-sub-caret{transform:translateY(1px) rotate(180deg)}
+html[data-shell="global-dashboard"] .gd-topbar-nav-slot .nav-sub-trigger[aria-expanded="true"]{
   color:var(--jp-action);font-weight:600;border-bottom-color:var(--jp-action);
 }
 
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell{
+html[data-shell="global-dashboard"] .nav-sub-shell{
   grid-column:1/-1;display:grid;grid-template-rows:0fr;min-width:0;
-  --fx-nav-surface:color-mix(in srgb,var(--jp-surface) 30%,var(--gd-surface-subtle));
-  overflow:clip;background:var(--fx-nav-surface);border-bottom:1px solid transparent;
+  --nav-sub-surface:color-mix(in srgb,var(--jp-surface) 30%,var(--gd-surface-subtle));
+  overflow:clip;background:var(--nav-sub-surface);border-bottom:1px solid transparent;
   transition:grid-template-rows 300ms var(--jp-ease),border-color 300ms var(--jp-ease);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell.is-open{
+html[data-shell="global-dashboard"] .nav-sub-shell.is-open{
   grid-template-rows:1fr;border-bottom-color:var(--jp-border);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-clip{
+html[data-shell="global-dashboard"] .nav-sub-clip{
   min-height:0;overflow:hidden;opacity:0;transform:translateY(-6px);
   transition:opacity 220ms var(--jp-ease),transform 300ms var(--jp-ease);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu-shell.is-open .fx-nav-submenu-clip{
+html[data-shell="global-dashboard"] .nav-sub-shell.is-open .nav-sub-clip{
   opacity:1;transform:translateY(0);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu{
+/* Colunas derivadas da contagem de itens: `grid-auto-flow:column` cria uma
+   faixa por filho, todas iguais. Assim um módulo com 3 destinos e outro com 4
+   usam a mesma regra sem número mágico e sem coluna órfã. */
+html[data-shell="global-dashboard"] .nav-sub-menu{
   width:min(var(--gd-max-w),100%);margin-inline:auto;padding:18px var(--gd-gutter) 20px;
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,2vw,28px);
+  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(12px,2vw,28px);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu button{
+/* O <nav> do módulo inativo é `hidden`; sem esta regra o display:grid acima
+   venceria o estilo de agente de usuário e ele continuaria visível. */
+html[data-shell="global-dashboard"] .nav-sub-menu[hidden]{display:none}
+html[data-shell="global-dashboard"] .nav-sub-menu button{
   display:grid;grid-template-columns:1fr;gap:4px;width:100%;min-height:54px;
   padding:9px 12px;border:0;border-left:2px solid transparent;border-radius:0;
   background:transparent;color:var(--jp-ink);text-align:left;cursor:pointer;
   font-family:var(--jp-font-ui);text-transform:none;letter-spacing:0;
   transition:background 140ms var(--jp-ease),border-color 140ms var(--jp-ease),color 140ms var(--jp-ease);
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu button:hover,
-html[data-shell="global-dashboard"] .fx-nav-submenu button:focus-visible{
+html[data-shell="global-dashboard"] .nav-sub-menu button:hover,
+html[data-shell="global-dashboard"] .nav-sub-menu button:focus-visible{
   background:var(--gd-surface-subtle);outline:none;
 }
-html[data-shell="global-dashboard"] .fx-nav-submenu button:focus-visible{box-shadow:inset 0 0 0 1px var(--jp-action)}
-html[data-shell="global-dashboard"] .fx-nav-submenu button.is-current{
+html[data-shell="global-dashboard"] .nav-sub-menu button:focus-visible{box-shadow:inset 0 0 0 1px var(--jp-action)}
+html[data-shell="global-dashboard"] .nav-sub-menu button.is-current{
   color:var(--jp-action);border-left-color:var(--jp-action);
   background:color-mix(in srgb,var(--jp-action) 8%,transparent);
 }
-html[data-shell="global-dashboard"] .fx-nav-item-title{font-size:13px;font-weight:650;line-height:1.25}
-html[data-shell="global-dashboard"] .fx-nav-item-desc{font-size:11px;font-weight:400;line-height:1.4;color:var(--jp-ink-muted)}
+html[data-shell="global-dashboard"] .nav-sub-item-title{font-size:13px;font-weight:650;line-height:1.25}
+html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weight:400;line-height:1.4;color:var(--jp-ink-muted)}
+
+/* Workspaces do Execution Board. A especificidade de ID é deliberada: as
+   regras de `.jp-widget-grid` declaram display (grid no desktop, flex abaixo
+   de 900px) e venceriam o `[hidden]` do agente de usuário, deixando o Painel
+   Operacional visível sob a Visão Geral. */
+#exec > [hidden]{display:none}
+html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
-  html[data-shell="global-dashboard"] .fx-nav-trigger .fx-nav-caret{display:none}
+  html[data-shell="global-dashboard"] .nav-sub-trigger .nav-sub-caret{display:none}
 }
 
 @media(max-width:900px){
-  html[data-shell="global-dashboard"] .fx-nav-trigger{width:100%}
-  html[data-shell="global-dashboard"] .fx-nav-trigger .fx-nav-caret{margin-left:auto}
-  html[data-shell="global-dashboard"] .fx-nav-submenu{
-    width:100%;padding:12px 16px 18px;grid-template-columns:1fr;gap:2px;
+  html[data-shell="global-dashboard"] .nav-sub-trigger{width:100%}
+  html[data-shell="global-dashboard"] .nav-sub-trigger .nav-sub-caret{margin-left:auto}
+  html[data-shell="global-dashboard"] .nav-sub-menu{
+    width:100%;padding:12px 16px 18px;grid-auto-flow:row;gap:2px;
   }
-  html[data-shell="global-dashboard"] .fx-nav-submenu button{
+  html[data-shell="global-dashboard"] .nav-sub-menu button{
     min-height:58px;padding:10px 14px;
   }
 }
 
 @media(prefers-reduced-motion:reduce){
-  html[data-shell="global-dashboard"] .fx-nav-caret,
-  html[data-shell="global-dashboard"] .fx-nav-submenu-shell,
-  html[data-shell="global-dashboard"] .fx-nav-submenu-clip,
-  html[data-shell="global-dashboard"] .fx-nav-submenu button{transition:none!important}
+  html[data-shell="global-dashboard"] .nav-sub-caret,
+  html[data-shell="global-dashboard"] .nav-sub-shell,
+  html[data-shell="global-dashboard"] .nav-sub-clip,
+  html[data-shell="global-dashboard"] .nav-sub-menu button{transition:none!important}
 }
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '4d9b36661c689c26';
+const JP_WEALTH_BUILD_ID = '7751a049cfd23dab';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5860,28 +5881,56 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   </div>
 </header>
 
-<!-- Segundo nível estrutural de Planejamento. Diferente de um dropdown, esta
+<!-- Segundo nível estrutural da navegação — contrato em
+     docs/architecture/NAVIGATION-HIERARCHY.md. Diferente de um dropdown, esta
      faixa permanece fora de #nav e participa do fluxo normal da página: ao
-     expandir, desloca a faixa de contexto e o conteúdo sem sobreposição. -->
-<div class="fx-nav-submenu-shell" id="fxNavSubmenuShell">
-  <div class="fx-nav-submenu-clip">
-    <nav class="fx-nav-submenu" id="fxNavSubmenu" aria-labelledby="fxNavTrigger"
-         aria-hidden="true" inert>
-      <button type="button" data-fx-nav-view="overview">
-        <span class="fx-nav-item-title">Visão Geral</span>
-        <span class="fx-nav-item-desc">Resumo do planejamento atual</span>
+     expandir, desloca a faixa de contexto e o conteúdo sem sobreposição.
+
+     A faixa é COMPARTILHADA por todos os módulos com segundo nível. Só um pode
+     estar aberto por vez (selecionar outro módulo é clique externo e fecha o
+     anterior), então um único slot no grid do body basta — e evita que dois
+     acionadores acendam juntos, que era o risco de duplicar o mecanismo.
+     Cada módulo traz seu próprio <nav>; o controlador em
+     40-app/11-operational-shell.js exibe apenas o do módulo acionado.
+
+     Convenção de ids, lida por derivação e não por registro manual:
+     `<data-screen>NavTrigger` no botão de #nav e `<data-screen>NavSubmenu`
+     aqui. Um módulo novo só precisa do par de ids, do <nav> e da superfície
+     de UI declarada em NAV_SUBMENU_SURFACES. -->
+<div class="nav-sub-shell" id="navSubShell">
+  <div class="nav-sub-clip">
+    <nav class="nav-sub-menu" id="execNavSubmenu" aria-labelledby="execNavTrigger"
+         aria-hidden="true" hidden inert>
+      <button type="button" data-nav-sub-view="overview">
+        <span class="nav-sub-item-title">Visão Geral</span>
+        <span class="nav-sub-item-desc">Síntese do módulo</span>
       </button>
-      <button type="button" data-fx-nav-view="planning">
-        <span class="fx-nav-item-title">Planejamento FX</span>
-        <span class="fx-nav-item-desc">Cenários cambiais e projeções</span>
+      <button type="button" data-nav-sub-view="panel">
+        <span class="nav-sub-item-title">Painel Operacional</span>
+        <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
       </button>
-      <button type="button" data-fx-nav-view="actuals">
-        <span class="fx-nav-item-title">Realizado</span>
-        <span class="fx-nav-item-desc">Comparação planejado vs executado</span>
+      <button type="button" data-nav-sub-view="pivots">
+        <span class="nav-sub-item-title">Estudos dos Pivots</span>
+        <span class="nav-sub-item-desc">Superfície reservada</span>
       </button>
-      <button type="button" data-fx-nav-view="table">
-        <span class="fx-nav-item-title">Histórico</span>
-        <span class="fx-nav-item-desc">Evolução temporal</span>
+    </nav>
+    <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
+         aria-hidden="true" hidden inert>
+      <button type="button" data-nav-sub-view="overview">
+        <span class="nav-sub-item-title">Visão Geral</span>
+        <span class="nav-sub-item-desc">Resumo do planejamento atual</span>
+      </button>
+      <button type="button" data-nav-sub-view="planning">
+        <span class="nav-sub-item-title">Planejamento FX</span>
+        <span class="nav-sub-item-desc">Cenários cambiais e projeções</span>
+      </button>
+      <button type="button" data-nav-sub-view="actuals">
+        <span class="nav-sub-item-title">Realizado</span>
+        <span class="nav-sub-item-desc">Comparação planejado vs executado</span>
+      </button>
+      <button type="button" data-nav-sub-view="table">
+        <span class="nav-sub-item-title">Histórico</span>
+        <span class="nav-sub-item-desc">Evolução temporal</span>
       </button>
     </nav>
   </div>
@@ -5909,12 +5958,15 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
        haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab" data-screen="exec" title="Execution Board"><span class="n">02</span><span class="lbl">Execution Board</span></button>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-screen="exec" title="Execution Board"
+          aria-expanded="false" aria-controls="execNavSubmenu">
+    <span class="n">02</span><span class="lbl">Execution Board</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+  </button>
   <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>
   <button class="tab" data-screen="contab" title="Contabilidade"><span class="n">04</span><span class="lbl">Contabilidade</span></button>
-  <button class="tab fx-nav-trigger" id="fxNavTrigger" data-screen="fxplan" title="Planejamento"
-          aria-expanded="false" aria-controls="fxNavSubmenu">
-    <span class="n">05</span><span class="lbl">Planejamento</span><span class="fx-nav-caret" aria-hidden="true">⌄</span>
+  <button class="tab nav-sub-trigger" id="fxplanNavTrigger" data-screen="fxplan" title="Planejamento"
+          aria-expanded="false" aria-controls="fxplanNavSubmenu">
+    <span class="n">05</span><span class="lbl">Planejamento</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
@@ -5927,11 +5979,36 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   </div>
   <!-- ================= 01 EXECUTION BOARD ================= -->
   <section class="screen" id="exec">
+    <!-- WORKSPACES DO MÓDULO (segundo nível — contrato em
+         docs/architecture/NAVIGATION-HIERARCHY.md).
+
+         São irmãos diretos da .screen, e essa posição é obrigatória:
+         · NUNCA .screen aninhada — 01-navigation.js:20 limpa .active de toda
+           .screen do documento, e três leitores resolvem `.screen.active` /
+           closest('.screen') pelo primeiro nó em ordem de documento
+           (13-dashboard-layout.js, 10-dashboard-immersive.js, 14-mvp-notes.js);
+         · NUNCA dentro de #execWidgetGrid — 13-dashboard-layout.js:442
+           reparenteia todo [data-layout-card] para filho direto do grid a cada
+           boot e desfaria o wrapper em silêncio, invalidando a preferência de
+           layout da tela inteira.
+
+         A troca é por hidden+inert: o DOM permanece montado, nenhum estado
+         operacional é desmontado e nada disso é persistido (o estado do
+         segundo nível é efêmero por contrato). O Painel Operacional é o
+         #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
+    <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
+      <div class="card">
+        <h2 id="execOverviewTitle">Visão Geral</h2>
+        <p class="expl">Superfície reservada para a síntese do Execution Board. O conteúdo funcional será especificado em tarefa própria — nenhum indicador, cálculo, score ou resumo financeiro é derivado aqui.</p>
+      </div>
+    </div>
     <!-- Grade modular do Execution Board (motor compartilhado, 13-dashboard-layout.js).
          .eb-top e .coherence (grids fixos de 2 colunas) foram desfeitos — cada
          widget agora é filho direto de #execWidgetGrid, com largura própria
-         via data-widget-size. Nenhum ID interno, listener ou renderizador mudou. -->
-    <div class="jp-widget-grid" id="execWidgetGrid">
+         via data-widget-size. Nenhum ID interno, listener ou renderizador mudou.
+         Passou a ser o workspace "Painel Operacional"; nasce oculto porque a
+         Visão Geral é o destino inicial do módulo. -->
+    <div class="jp-widget-grid" id="execWidgetGrid" hidden>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
       <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
         <div class="mc-ec-copy">
@@ -6063,6 +6140,12 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+    </div>
+    <div class="exec-view" id="execPivots" role="region" aria-labelledby="execPivotsTitle" hidden>
+      <div class="card">
+        <h2 id="execPivotsTitle">Estudos dos Pivots</h2>
+        <p class="expl">Superfície reservada. O destino existe para receber especificação funcional própria — nenhum estudo, nível, projeção ou leitura de mercado é calculado aqui.</p>
       </div>
     </div>
   </section>
@@ -7097,6 +7180,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -16184,102 +16268,159 @@ function initDashboardImmersive() {
 }
 initDashboardImmersive();
 // ============ SHELL OPERACIONAL · NAVEGAÇÃO RESPONSIVA (N1) ============
-// Camada estritamente de interface: controla a gaveta global no mobile e o
-// segundo nível estrutural de Planejamento, com hover transitório, clique
-// fixado, foco, Escape e clique externo. Os módulos globais continuam usando
-// os listeners de 01-navigation.js; o segundo nível encaminha apenas a visão
-// interna para a superfície pública de UI do Planejamento.
+// Camada estritamente de interface: controla a gaveta global no mobile e a
+// faixa compartilhada do segundo nível, com hover transitório, clique fixado,
+// foco, Escape e clique externo. Os módulos globais continuam usando os
+// listeners de 01-navigation.js; o segundo nível apenas encaminha a chave de
+// visão para a superfície pública de UI do módulo — nunca toca domínio.
+//
+// A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
+// selecionar outro módulo global é clique externo e fecha o anterior. Por isso
+// basta um slot no grid do body, e o módulo aberto é distinguido por
+// `aria-expanded="true"` no próprio acionador — não por atributo global na
+// raiz, que acenderia todos os acionadores de uma vez.
+//
+// Para dar segundo nível a um módulo novo bastam três coisas, nenhuma delas
+// neste arquivo além da última linha:
+//   1. um botão `.tab.nav-sub-trigger` com id `<data-screen>NavTrigger`;
+//   2. um `<nav class="nav-sub-menu">` com id `<data-screen>NavSubmenu` dentro
+//      de #navSubShell, com botões `[data-nav-sub-view]`;
+//   3. uma entrada em NAV_SUBMENU_SURFACES apontando para a superfície de UI.
 
 const shellUI = { open: false, opener: null };
-const fxNavUI = { open: false, pinned: false, closeTimer: null, opener: null };
-const FX_NAV_CLOSE_DELAY = 400;
+const navSubUI = { open: false, pinned: false, closeTimer: null, opener: null, screen: null };
+const NAV_SUB_CLOSE_DELAY = 400;
+
+// Contrato da superfície de módulo: `selectView(chave)` e `getView()`.
+// O controlador não conhece as chaves — quem as valida é o próprio módulo.
+const NAV_SUBMENU_SURFACES = {
+  exec: () => (window.JPWExec && window.JPWExec.ui) || null,
+  fxplan: () => (window.JPWFx && window.JPWFx.ui) || null
+};
 
 function shellEl(sel) { return document.querySelector(sel); }
 
-function fxNavEls() {
-  const trigger = document.getElementById('fxNavTrigger');
-  const panel = document.getElementById('fxNavSubmenu');
-  const shell = document.getElementById('fxNavSubmenuShell');
-  return { trigger, panel, shell, items: panel ? [...panel.querySelectorAll('[data-fx-nav-view]')] : [] };
+function navSubEls(screen) {
+  const key = screen || navSubUI.screen;
+  const trigger = key ? document.getElementById(key + 'NavTrigger') : null;
+  const panel = key ? document.getElementById(key + 'NavSubmenu') : null;
+  const shell = document.getElementById('navSubShell');
+  return {
+    screen: key, trigger, panel, shell,
+    items: panel ? [...panel.querySelectorAll('[data-nav-sub-view]')] : []
+  };
 }
 
-function cancelFxNavClose() {
-  if (fxNavUI.closeTimer) clearTimeout(fxNavUI.closeTimer);
-  fxNavUI.closeTimer = null;
+function navSubSurface(screen) {
+  const resolve = NAV_SUBMENU_SURFACES[screen || navSubUI.screen];
+  return typeof resolve === 'function' ? resolve() : null;
 }
 
-function syncFxNavCurrent() {
-  const { items } = fxNavEls();
-  const current = window.JPWFx && window.JPWFx.ui && typeof window.JPWFx.ui.getView === 'function'
-    ? window.JPWFx.ui.getView() : 'overview';
+function cancelNavSubClose() {
+  if (navSubUI.closeTimer) clearTimeout(navSubUI.closeTimer);
+  navSubUI.closeTimer = null;
+}
+
+// Monta o painel do módulo alvo e desmonta os demais. `hidden` só muda aqui:
+// abrir e fechar a faixa não esconde o painel, senão a animação de recolher
+// mostraria uma faixa vazia encolhendo.
+function mountNavSubPanel(screen) {
+  document.querySelectorAll('#navSubShell .nav-sub-menu').forEach(panel => {
+    panel.hidden = panel.id !== screen + 'NavSubmenu';
+  });
+}
+
+function syncNavSubCurrent(screen) {
+  const { items } = navSubEls(screen);
+  const surface = navSubSurface(screen);
+  const current = surface && typeof surface.getView === 'function' ? surface.getView() : null;
   items.forEach(item => {
-    const active = item.dataset.fxNavView === current;
+    const active = item.dataset.navSubView === current;
     item.classList.toggle('is-current', active);
     if (active) item.setAttribute('aria-current', 'page');
     else item.removeAttribute('aria-current');
     item.tabIndex = active ? 0 : -1;
   });
-  return items.find(item => item.dataset.fxNavView === current) || items[0] || null;
+  const found = items.find(item => item.dataset.navSubView === current);
+  // Sem visão correspondente (módulo ainda não carregado) o primeiro item
+  // continua alcançável por Tab — a faixa nunca fica sem ponto de entrada.
+  if (!found && items[0]) items[0].tabIndex = 0;
+  return found || items[0] || null;
 }
 
-function openFxNav(options) {
-  const { trigger, panel, shell, items } = fxNavEls();
+function openNavSub(screen, options) {
+  const target = screen || navSubUI.screen;
+  const { trigger, panel, shell, items } = navSubEls(target);
   if (!trigger || !panel || !shell) return;
-  cancelFxNavClose();
-  fxNavUI.open = true;
-  if (options && options.pin) fxNavUI.pinned = true;
-  fxNavUI.opener = (options && options.opener) || trigger;
-  document.documentElement.setAttribute('data-fx-nav', 'open');
-  if (fxNavUI.pinned) document.documentElement.setAttribute('data-fx-nav-pinned', 'true');
+  // Trocar de módulo com a faixa já aberta: o anterior perde estado de aberto
+  // antes de o novo assumir, para não restar dois acionadores expandidos.
+  if (navSubUI.screen && navSubUI.screen !== target) collapseNavSubPanel(navSubUI.screen);
+  cancelNavSubClose();
+  navSubUI.open = true;
+  navSubUI.screen = target;
+  if (options && options.pin) navSubUI.pinned = true;
+  navSubUI.opener = (options && options.opener) || trigger;
+  mountNavSubPanel(target);
+  document.documentElement.setAttribute('data-nav-sub', 'open');
+  if (navSubUI.pinned) document.documentElement.setAttribute('data-nav-sub-pinned', 'true');
   trigger.setAttribute('aria-expanded', 'true');
   shell.classList.add('is-open');
   panel.setAttribute('aria-hidden', 'false');
   panel.inert = false;
   if (typeof navPillApplyGeometry === 'function') navPillApplyGeometry(trigger);
-  const current = syncFxNavCurrent();
+  const current = syncNavSubCurrent(target);
   if (options && options.focus === 'last') {
     const last = items[items.length - 1];
     if (last) { items.forEach(item => { item.tabIndex = item === last ? 0 : -1; }); last.focus(); }
   } else if (options && options.focus && current) current.focus();
 }
 
-function closeFxNav(options) {
-  cancelFxNavClose();
-  const { trigger, panel, shell, items } = fxNavEls();
-  if (!trigger || !panel || !shell) return;
-  const wasOpen = fxNavUI.open;
-  fxNavUI.open = false;
-  fxNavUI.pinned = false;
-  document.documentElement.removeAttribute('data-fx-nav');
-  document.documentElement.removeAttribute('data-fx-nav-pinned');
-  trigger.setAttribute('aria-expanded', 'false');
-  shell.classList.remove('is-open');
-  panel.setAttribute('aria-hidden', 'true');
-  panel.inert = true;
+// Retira o estado de aberto de um módulo sem mexer na faixa: usado ao trocar
+// de módulo e como parte do fechamento.
+function collapseNavSubPanel(screen) {
+  const { trigger, panel, items } = navSubEls(screen);
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  if (panel) { panel.setAttribute('aria-hidden', 'true'); panel.inert = true; }
   items.forEach(item => { item.tabIndex = -1; });
+}
+
+function closeNavSub(options) {
+  cancelNavSubClose();
+  const shell = document.getElementById('navSubShell');
+  const screen = navSubUI.screen;
+  if (!shell || !screen) return;
+  const wasOpen = navSubUI.open;
+  navSubUI.open = false;
+  navSubUI.pinned = false;
+  document.documentElement.removeAttribute('data-nav-sub');
+  document.documentElement.removeAttribute('data-nav-sub-pinned');
+  shell.classList.remove('is-open');
+  collapseNavSubPanel(screen);
   if (typeof scheduleNavPill === 'function') scheduleNavPill();
-  const opener = fxNavUI.opener || trigger;
-  fxNavUI.opener = null;
+  const opener = navSubUI.opener || navSubEls(screen).trigger;
+  navSubUI.opener = null;
+  navSubUI.screen = null;
   if (wasOpen && options && options.restoreFocus && opener && document.contains(opener)) opener.focus();
 }
 
-function scheduleFxNavClose() {
-  cancelFxNavClose();
-  if (fxNavUI.pinned) return;
-  fxNavUI.closeTimer = setTimeout(() => closeFxNav(), FX_NAV_CLOSE_DELAY);
+function scheduleNavSubClose() {
+  cancelNavSubClose();
+  if (navSubUI.pinned) return;
+  navSubUI.closeTimer = setTimeout(() => closeNavSub(), NAV_SUB_CLOSE_DELAY);
 }
 
-function selectFxNavView(view) {
-  if (typeof navigateToScreen === 'function') navigateToScreen('fxplan');
-  if (window.JPWFx && window.JPWFx.ui && typeof window.JPWFx.ui.selectView === 'function') {
-    window.JPWFx.ui.selectView(view);
-  }
-  syncFxNavCurrent();
+function selectNavSubView(view) {
+  const screen = navSubUI.screen;
+  if (!screen) return;
+  if (typeof navigateToScreen === 'function') navigateToScreen(screen);
+  const surface = navSubSurface(screen);
+  if (surface && typeof surface.selectView === 'function') surface.selectView(view);
+  syncNavSubCurrent(screen);
   if (shellUI.open) closeShellMenu({ restoreFocus: false });
 }
 
-function moveFxNavFocus(direction) {
-  const { items } = fxNavEls();
+function moveNavSubFocus(direction) {
+  const { items } = navSubEls();
   if (!items.length) return;
   const current = Math.max(0, items.indexOf(document.activeElement));
   const next = direction === 'first' ? 0
@@ -16321,71 +16462,78 @@ function closeShellMenu(options) {
 }
 
 function initOperationalShell() {
-  const { trigger: fxTrigger, panel: fxPanel, items: fxItems } = fxNavEls();
-  if (fxTrigger && fxPanel) {
-    fxItems.forEach(item => { item.tabIndex = -1; });
+  const navSubShell = document.getElementById('navSubShell');
+  const globalNav = document.getElementById('nav');
+  const triggers = globalNav ? [...globalNav.querySelectorAll('.nav-sub-trigger')] : [];
+
+  if (navSubShell && triggers.length) {
     const finePointer = window.matchMedia('(hover:hover) and (pointer:fine)');
     const hoverCapable = () => finePointer.matches && !window.matchMedia('(max-width:900px)').matches;
-    const globalNav = fxTrigger.closest('#nav');
-    fxTrigger.addEventListener('pointerenter', () => { if (hoverCapable()) openFxNav({ opener: fxTrigger }); });
-    if (globalNav) {
-      globalNav.addEventListener('pointerenter', () => { if (fxNavUI.open) cancelFxNavClose(); });
-      globalNav.addEventListener('pointerleave', event => {
-        if (hoverCapable() && !fxPanel.contains(event.relatedTarget)) scheduleFxNavClose();
+
+    triggers.forEach(trigger => {
+      const screen = trigger.dataset.screen;
+      const { panel, items } = navSubEls(screen);
+      if (!panel) return;
+      items.forEach(item => { item.tabIndex = -1; });
+      trigger.addEventListener('pointerenter', () => { if (hoverCapable()) openNavSub(screen, { opener: trigger }); });
+      trigger.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: true });
+        } else if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: true, pin: true });
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: 'last' });
+        } else if (event.key === 'Escape' && navSubUI.open) {
+          event.preventDefault(); closeNavSub({ restoreFocus: true });
+        }
       });
-    }
-    fxPanel.addEventListener('pointerenter', cancelFxNavClose);
-    fxPanel.addEventListener('pointerleave', event => {
-      if (hoverCapable() && !(globalNav && globalNav.contains(event.relatedTarget))) scheduleFxNavClose();
     });
-    fxTrigger.addEventListener('keydown', event => {
-      if (event.key === 'ArrowDown') {
-        event.preventDefault(); openFxNav({ opener: fxTrigger, focus: true });
-      } else if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault(); openFxNav({ opener: fxTrigger, focus: true, pin: true });
-      } else if (event.key === 'ArrowUp') {
-        event.preventDefault(); openFxNav({ opener: fxTrigger, focus: 'last' });
-      } else if (event.key === 'Escape' && fxNavUI.open) {
-        event.preventDefault(); closeFxNav({ restoreFocus: true });
-      }
+
+    globalNav.addEventListener('pointerenter', () => { if (navSubUI.open) cancelNavSubClose(); });
+    globalNav.addEventListener('pointerleave', event => {
+      if (hoverCapable() && !navSubShell.contains(event.relatedTarget)) scheduleNavSubClose();
     });
-    fxPanel.addEventListener('keydown', event => {
-      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') { event.preventDefault(); moveFxNavFocus(1); }
-      else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') { event.preventDefault(); moveFxNavFocus(-1); }
-      else if (event.key === 'Home') { event.preventDefault(); moveFxNavFocus('first'); }
-      else if (event.key === 'End') { event.preventDefault(); moveFxNavFocus('last'); }
-      else if (event.key === 'Escape') { event.preventDefault(); closeFxNav({ restoreFocus: true }); }
+    navSubShell.addEventListener('pointerenter', cancelNavSubClose);
+    navSubShell.addEventListener('pointerleave', event => {
+      if (hoverCapable() && !globalNav.contains(event.relatedTarget)) scheduleNavSubClose();
+    });
+    navSubShell.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') { event.preventDefault(); moveNavSubFocus(1); }
+      else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') { event.preventDefault(); moveNavSubFocus(-1); }
+      else if (event.key === 'Home') { event.preventDefault(); moveNavSubFocus('first'); }
+      else if (event.key === 'End') { event.preventDefault(); moveNavSubFocus('last'); }
+      else if (event.key === 'Escape') { event.preventDefault(); closeNavSub({ restoreFocus: true }); }
     });
   }
 
   document.addEventListener('click', event => {
     const toggle = event.target.closest('[data-shell-menu-toggle]');
     if (toggle) { shellUI.open ? closeShellMenu() : openShellMenu(toggle); return; }
-    const fxTriggerHit = event.target.closest('#fxNavTrigger');
-    if (fxTriggerHit) {
-      openFxNav({ opener: fxTriggerHit, focus: shellUI.open, pin: true });
+    const triggerHit = event.target.closest('.nav-sub-trigger');
+    if (triggerHit) {
+      openNavSub(triggerHit.dataset.screen, { opener: triggerHit, focus: shellUI.open, pin: true });
       if (shellUI.open) closeShellMenu({ restoreFocus: false });
       return;
     }
-    const fxItem = event.target.closest('[data-fx-nav-view]');
-    if (fxItem) { selectFxNavView(fxItem.dataset.fxNavView); return; }
-    if (fxNavUI.open && !event.target.closest('#fxNavSubmenu')) closeFxNav();
+    const item = event.target.closest('[data-nav-sub-view]');
+    if (item) { selectNavSubView(item.dataset.navSubView); return; }
+    if (navSubUI.open && !event.target.closest('#navSubShell')) closeNavSub();
     // Selecionar outro destino global fecha somente a gaveta mobile — sem
     // devolver foco, porque a navegação já levou o usuário para outra tela.
-    if (shellUI.open && event.target.closest('#nav .tab:not(#fxNavTrigger)')) { closeShellMenu({ restoreFocus: false }); return; }
+    if (shellUI.open && event.target.closest('#nav .tab:not(.nav-sub-trigger)')) { closeShellMenu({ restoreFocus: false }); return; }
     // Clique fora do painel e fora do botão fecha.
     if (shellUI.open && !event.target.closest('#nav')) closeShellMenu({ restoreFocus: false });
   });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && fxNavUI.open) { event.preventDefault(); closeFxNav({ restoreFocus: true }); return; }
+    if (event.key === 'Escape' && navSubUI.open) { event.preventDefault(); closeNavSub({ restoreFocus: true }); return; }
     if (event.key === 'Escape' && shellUI.open) { event.preventDefault(); closeShellMenu(); }
   });
 
   // Abertura transitória não atravessa mudança de breakpoint; a abertura
   // fixada sobrevive ao resize e apenas adapta sua composição responsiva.
   window.addEventListener('resize', () => {
-    if (fxNavUI.open && !fxNavUI.pinned) closeFxNav();
+    if (navSubUI.open && !navSubUI.pinned) closeNavSub();
     if (shellUI.open) closeShellMenu({ restoreFocus: false });
   });
 }
@@ -24436,6 +24584,94 @@ window.JPWFx.ui={renderFxPlanning,selectView:fxpSelectView,getView:fxpGetView};
 // reservas podem ter mudado via Formulário de Início).
 renderFxPlanning();
 document.querySelectorAll('.tab[data-screen="fxplan"]').forEach(t=>t.addEventListener('click',()=>renderFxPlanning()));
+// ============ EXECUTION BOARD · WORKSPACES DO MÓDULO (N1 — apresentação) ============
+// Superfície estritamente visual do segundo nível do Execution Board: decide
+// qual workspace de section#exec está visível, e nada além disso. Não calcula,
+// não persiste, não conhece ordem, fase, risco, LIFO ou clearance, e não cria
+// uma segunda fonte de verdade — os renderizadores existentes continuam donos
+// integrais do conteúdo.
+//
+// A troca é `hidden` + `inert` sobre nós que permanecem MONTADOS. Nenhum estado
+// operacional é desmontado: valores digitados e ainda não confirmados, foco,
+// disclosures abertos e o DOM que renderPhases() reconstrói em #phaseContainer
+// sobrevivem à ida e à volta. Por isso não existe re-render nesta troca.
+//
+// O estado é efêmero por contrato (docs/architecture/NAVIGATION-HIERARCHY.md):
+// não entra em S, localStorage, backup, schema nem migração.
+
+// Chave de visão -> id do container. O Painel Operacional é o #execWidgetGrid
+// original: nenhum nó foi movido e nenhum id mudou na realocação.
+const EXEC_VIEWS = [
+  ['overview', 'execOverview'],
+  ['panel', 'execWidgetGrid'],
+  ['pivots', 'execPivots']
+];
+const EXEC_DEFAULT_VIEW = 'overview';
+let execView = EXEC_DEFAULT_VIEW;
+// Marca de escolha explícita do usuário. Existe porque navegar para o módulo e
+// escolher a visão acontecem no mesmo gesto quando o clique parte da faixa: sem
+// ela, o destino inicial atropelaria a escolha que acabou de ser feita.
+let execViewExplicit = false;
+
+function execApplyView(view) {
+  EXEC_VIEWS.forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const active = key === view;
+    el.hidden = !active;
+    el.inert = !active;
+  });
+}
+
+function execSetView(view) {
+  execView = view;
+  execApplyView(view);
+}
+
+function execSelectView(view) {
+  if (!EXEC_VIEWS.some(([key]) => key === view)) return false;
+  execViewExplicit = true;
+  execSetView(view);
+  return true;
+}
+
+function execGetView() { return execView; }
+
+// Destino inicial do módulo: entrar no Execution Board vindo de outra tela abre
+// a Visão Geral. Observar a classe .active cobre TODOS os caminhos de entrada —
+// aba, Ações Rápidas, CTA do Dashboard, chamada por string — sem embrulhar
+// navigateToScreen, que já carrega duas camadas de wrapper (10-dashboard-
+// immersive.js e 13-dashboard-layout.js) cuja ordem não deve crescer.
+//
+// navigateToScreen remove .active de todas as .screen e recoloca na alvo dentro
+// do mesmo bloco síncrono. As duas mutações chegam juntas em um único callback,
+// então reabrir a faixa estando já no módulo não conta como entrada nova e não
+// tira o usuário do Painel Operacional.
+function execWatchModuleEntry() {
+  const screen = document.getElementById('exec');
+  if (!screen || typeof MutationObserver !== 'function') return;
+  let wasActive = screen.classList.contains('active');
+  const observer = new MutationObserver(() => {
+    const isActive = screen.classList.contains('active');
+    if (isActive && !wasActive && !execViewExplicit) {
+      execSetView(EXEC_DEFAULT_VIEW);
+      // A faixa pode já ter sincronizado o item ativo antes deste callback
+      // (o clique é síncrono, este observador é microtarefa). Repintar o
+      // destaque evita que ele fique apontando a visão anterior.
+      if (typeof syncNavSubCurrent === 'function') syncNavSubCurrent('exec');
+    }
+    execViewExplicit = false;
+    wasActive = isActive;
+  });
+  observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
+}
+
+execApplyView(execView);
+execWatchModuleEntry();
+
+// Superfície pública consumida pelo controlador da faixa compartilhada
+// (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.
+window.JPWExec = { ui: { selectView: execSelectView, getView: execGetView } };
 </script>
 </body>
 </html>

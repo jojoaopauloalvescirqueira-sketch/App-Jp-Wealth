@@ -241,8 +241,8 @@
     {
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
-      "section": "SHELL OPERACIONAL · menu mobile de destinos (N1)",
-      "sha256": "e47688c65afc72aef95febd79f5db9675004f15cddbce7f317f7a30e14b41c11"
+      "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada do segundo nivel (N1)",
+      "sha256": "2943f489de3e1c9188549be1fcd17b78e44c19c9685e9899ff3a1ab6641f4220"
     },
     {
       "order": 41,
@@ -363,6 +363,12 @@
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
       "sha256": "c01ac178754fd54c38a5b495e7fa974418b451072ad2ada2f19fef988fb2e424"
+    },
+    {
+      "order": 61,
+      "path": "src/js/20-ui/13-exec-views.js",
+      "section": "EXECUTION BOARD · workspaces do modulo (N1)",
+      "sha256": "e08be56968465b67d0f48b27f72ea8eb53f06cd6b8f6a85ac9c324715e20e837"
     }
   ]
 }
