@@ -5786,3 +5786,92 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
   /* Data e valor empilham; o alvo de toque continua confortável. */
   .nc-anchor .field input{min-height:40px}
 }
+
+/* ==========================================================
+   ESTUDOS DOS PIVOTS · workspace do Execution Board
+   Sem design system novo: reaproveita .card, .field, .metrics,
+   .seg, .dtable, .jp-table-scroll, .reset-btn e .note. Nenhuma
+   cor literal — só tokens, para claro e escuro saírem juntos.
+   ========================================================== */
+.pv-picker{display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px}
+.pv-picker .field{margin:0; min-width:200px}
+.pv-picker-actions{display:flex; gap:10px; flex-wrap:wrap}
+.pv-picker-note{flex-basis:100%; margin:0}
+.pv-danger{color:var(--danger)}
+.pv-empty{margin-top:14px}
+.pv-period{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink-dim); margin:16px 0 0}
+.pv-newstudy{border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin:16px 0 0; min-width:0}
+.pv-newstudy legend, .pv-form legend{font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); padding:0 6px}
+.pv-newstudy-fields{display:flex; flex-wrap:wrap; gap:14px; margin-top:8px}
+.pv-newstudy-fields .field{margin:0; min-width:180px}
+.pv-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px}
+.pv-actions .ghost{background:transparent; color:var(--ink-dim)}
+
+.pv-stats{margin-top:18px}
+.pv-stats h3, .pv-compare h4, .pv-top h4{font-family:var(--mono); font-size:calc(12px * var(--fs-scale));
+  letter-spacing:.5px; text-transform:uppercase; color:var(--ink-dim); margin:0 0 10px}
+.pv-metrics{grid-template-columns:repeat(auto-fit, minmax(190px, 1fr))}
+.pv-split{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; align-items:start}
+.pv-compare-table th[scope="row"]{text-align:left; color:var(--ink-dim); font-weight:600}
+.pv-top h5{font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim);
+  letter-spacing:.5px; margin:12px 0 6px}
+.pv-top-list{margin:0; padding-left:20px; font-family:var(--mono); font-size:var(--fs-sm)}
+.pv-top-list li{margin-bottom:4px}
+/* Atalho para o registro correspondente: é botão de verdade (foco e teclado),
+   apenas pintado como link para não competir com as ações da tabela. */
+.pv-top-link{background:none; border:none; padding:0; cursor:pointer; font:inherit;
+  color:var(--violet); text-decoration:underline; text-underline-offset:2px}
+.pv-top-when{color:var(--ink-faint); margin-left:8px}
+.pv-distribution{font-size:var(--fs-sm); color:var(--ink-dim); margin:14px 0 0}
+.pv-outside-note, .pv-bias{margin-top:10px}
+
+.pv-filters{display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; margin:18px 0 12px}
+.pv-filter{margin:0}
+.pv-filter-label{display:block; font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px}
+.pv-caption{caption-side:top; text-align:left; font-size:var(--fs-sm); color:var(--ink-faint); padding-bottom:8px}
+.pv-table td{vertical-align:top}
+.pv-cell-sub{display:block; color:var(--ink-faint); font-size:calc(10px * var(--fs-scale)); margin-top:2px}
+/* Fora do critério: marcado, nunca escondido e nunca apagado. */
+.pv-outside td{opacity:.72}
+.pv-outside td:first-child{border-left:2px solid var(--f4)}
+.pv-highlight td{background:var(--accent-tint)}
+.pv-row-actions{white-space:nowrap}
+.pv-mini{background:none; border:1px solid var(--line); border-radius:var(--radius-sm);
+  color:var(--ink-dim); font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  padding:3px 8px; cursor:pointer; margin-right:6px}
+.pv-mini:hover{color:var(--ink)}
+
+.pv-form{border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-top:16px; min-width:0}
+.pv-form-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0 14px; margin-top:8px}
+.pv-form .field{margin-bottom:10px}
+.pv-form input, .pv-form select{width:100%; min-width:0}
+.pv-preview{margin:12px 0 0; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr))}
+/* Mensagem por campo: só ocupa espaço quando existe erro. */
+.pv-field-err{color:var(--f4); font-size:calc(11px * var(--fs-scale)); line-height:1.45; margin:0 0 8px}
+.pv-field-err:empty{display:none}
+.pv-err{color:var(--f4); font-size:calc(12px * var(--fs-scale)); margin-top:8px; line-height:1.5}
+[data-pv-field][aria-invalid="true"]{border-color:var(--f4)}
+
+@media(max-width:980px){
+  .pv-split{grid-template-columns:1fr}
+}
+/* Abaixo de 760px a tabela vira cards: cada célula ganha seu rótulo à esquerda
+   pelo data-label que o render já escreve. Sem markup duplicado e sem rolagem
+   horizontal impraticável no celular. */
+@media(max-width:760px){
+  .pv-tablewrap{overflow:visible}
+  .pv-table, .pv-table tbody, .pv-table tr, .pv-table td{display:block; width:auto}
+  .pv-table thead{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+  .pv-table tr{border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:10px}
+  .pv-table td{border:none; display:flex; justify-content:space-between; gap:12px; padding:3px 0; text-align:right}
+  .pv-table td::before{content:attr(data-label); color:var(--ink-faint); font-family:var(--mono);
+    font-size:calc(10px * var(--fs-scale)); letter-spacing:.4px; text-align:left}
+  .pv-cell-sub{display:inline; margin:0 0 0 8px}
+  .pv-outside td:first-child{border-left:none}
+  .pv-outside{border-left:2px solid var(--f4)}
+  .pv-picker .field, .pv-newstudy-fields .field{min-width:100%}
+  .pv-form input, .pv-form select{min-height:40px}
+  .pv-mini{min-height:32px}
+}

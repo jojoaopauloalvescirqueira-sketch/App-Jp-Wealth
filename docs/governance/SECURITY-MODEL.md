@@ -92,7 +92,7 @@
 
 ## Controles verificados
 
-- O validador exige que o precache cubra todos os 53 scripts do manifest. O candidato
+- O validador exige que o precache cubra todos os 65 scripts do manifest. O candidato
   tambem corrige a omissao de baseline de `12-nav-style.js` e
   `17-economic-calendar.js`; o teste de upgrade final deve ser rerodado depois do
   rebuild.

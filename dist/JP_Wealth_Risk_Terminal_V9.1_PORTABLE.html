@@ -5796,10 +5796,99 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
   /* Data e valor empilham; o alvo de toque continua confortável. */
   .nc-anchor .field input{min-height:40px}
 }
+
+/* ==========================================================
+   ESTUDOS DOS PIVOTS · workspace do Execution Board
+   Sem design system novo: reaproveita .card, .field, .metrics,
+   .seg, .dtable, .jp-table-scroll, .reset-btn e .note. Nenhuma
+   cor literal — só tokens, para claro e escuro saírem juntos.
+   ========================================================== */
+.pv-picker{display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px}
+.pv-picker .field{margin:0; min-width:200px}
+.pv-picker-actions{display:flex; gap:10px; flex-wrap:wrap}
+.pv-picker-note{flex-basis:100%; margin:0}
+.pv-danger{color:var(--danger)}
+.pv-empty{margin-top:14px}
+.pv-period{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink-dim); margin:16px 0 0}
+.pv-newstudy{border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin:16px 0 0; min-width:0}
+.pv-newstudy legend, .pv-form legend{font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); padding:0 6px}
+.pv-newstudy-fields{display:flex; flex-wrap:wrap; gap:14px; margin-top:8px}
+.pv-newstudy-fields .field{margin:0; min-width:180px}
+.pv-actions{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px}
+.pv-actions .ghost{background:transparent; color:var(--ink-dim)}
+
+.pv-stats{margin-top:18px}
+.pv-stats h3, .pv-compare h4, .pv-top h4{font-family:var(--mono); font-size:calc(12px * var(--fs-scale));
+  letter-spacing:.5px; text-transform:uppercase; color:var(--ink-dim); margin:0 0 10px}
+.pv-metrics{grid-template-columns:repeat(auto-fit, minmax(190px, 1fr))}
+.pv-split{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; align-items:start}
+.pv-compare-table th[scope="row"]{text-align:left; color:var(--ink-dim); font-weight:600}
+.pv-top h5{font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim);
+  letter-spacing:.5px; margin:12px 0 6px}
+.pv-top-list{margin:0; padding-left:20px; font-family:var(--mono); font-size:var(--fs-sm)}
+.pv-top-list li{margin-bottom:4px}
+/* Atalho para o registro correspondente: é botão de verdade (foco e teclado),
+   apenas pintado como link para não competir com as ações da tabela. */
+.pv-top-link{background:none; border:none; padding:0; cursor:pointer; font:inherit;
+  color:var(--violet); text-decoration:underline; text-underline-offset:2px}
+.pv-top-when{color:var(--ink-faint); margin-left:8px}
+.pv-distribution{font-size:var(--fs-sm); color:var(--ink-dim); margin:14px 0 0}
+.pv-outside-note, .pv-bias{margin-top:10px}
+
+.pv-filters{display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; margin:18px 0 12px}
+.pv-filter{margin:0}
+.pv-filter-label{display:block; font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  letter-spacing:.6px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px}
+.pv-caption{caption-side:top; text-align:left; font-size:var(--fs-sm); color:var(--ink-faint); padding-bottom:8px}
+.pv-table td{vertical-align:top}
+.pv-cell-sub{display:block; color:var(--ink-faint); font-size:calc(10px * var(--fs-scale)); margin-top:2px}
+/* Fora do critério: marcado, nunca escondido e nunca apagado. */
+.pv-outside td{opacity:.72}
+.pv-outside td:first-child{border-left:2px solid var(--f4)}
+.pv-highlight td{background:var(--accent-tint)}
+.pv-row-actions{white-space:nowrap}
+.pv-mini{background:none; border:1px solid var(--line); border-radius:var(--radius-sm);
+  color:var(--ink-dim); font-family:var(--mono); font-size:calc(10px * var(--fs-scale));
+  padding:3px 8px; cursor:pointer; margin-right:6px}
+.pv-mini:hover{color:var(--ink)}
+
+.pv-form{border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-top:16px; min-width:0}
+.pv-form-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0 14px; margin-top:8px}
+.pv-form .field{margin-bottom:10px}
+.pv-form input, .pv-form select{width:100%; min-width:0}
+.pv-preview{margin:12px 0 0; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr))}
+/* Mensagem por campo: só ocupa espaço quando existe erro. */
+.pv-field-err{color:var(--f4); font-size:calc(11px * var(--fs-scale)); line-height:1.45; margin:0 0 8px}
+.pv-field-err:empty{display:none}
+.pv-err{color:var(--f4); font-size:calc(12px * var(--fs-scale)); margin-top:8px; line-height:1.5}
+[data-pv-field][aria-invalid="true"]{border-color:var(--f4)}
+
+@media(max-width:980px){
+  .pv-split{grid-template-columns:1fr}
+}
+/* Abaixo de 760px a tabela vira cards: cada célula ganha seu rótulo à esquerda
+   pelo data-label que o render já escreve. Sem markup duplicado e sem rolagem
+   horizontal impraticável no celular. */
+@media(max-width:760px){
+  .pv-tablewrap{overflow:visible}
+  .pv-table, .pv-table tbody, .pv-table tr, .pv-table td{display:block; width:auto}
+  .pv-table thead{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+  .pv-table tr{border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:10px}
+  .pv-table td{border:none; display:flex; justify-content:space-between; gap:12px; padding:3px 0; text-align:right}
+  .pv-table td::before{content:attr(data-label); color:var(--ink-faint); font-family:var(--mono);
+    font-size:calc(10px * var(--fs-scale)); letter-spacing:.4px; text-align:left}
+  .pv-cell-sub{display:inline; margin:0 0 0 8px}
+  .pv-outside td:first-child{border-left:none}
+  .pv-outside{border-left:2px solid var(--f4)}
+  .pv-picker .field, .pv-newstudy-fields .field{min-width:100%}
+  .pv-form input, .pv-form select{min-height:40px}
+  .pv-mini{min-height:32px}
+}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '7afbb45b9c048ae7';
+const JP_WEALTH_BUILD_ID = 'cbce66f6bce2dc72';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5943,7 +6032,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       </button>
       <button type="button" data-nav-sub-view="pivots">
         <span class="nav-sub-item-title">Estudos dos Pivots</span>
-        <span class="nav-sub-item-desc">Superfície reservada</span>
+        <span class="nav-sub-item-desc">Amostra histórica de pivots H1/H4</span>
       </button>
       <button type="button" data-nav-sub-view="motor">
         <span class="nav-sub-item-title">Motor de Lote</span>
@@ -6182,12 +6271,11 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          renderizado por 20-ui/14-nocoda-studies.js a cada entrada no workspace,
          porque o seletor deriva do catálogo vivo do Motor de Lote. -->
     <div class="exec-view" id="execNocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
-    <div class="exec-view" id="execPivots" role="region" aria-labelledby="execPivotsTitle" hidden>
-      <div class="card">
-        <h2 id="execPivotsTitle">Estudos dos Pivots</h2>
-        <p class="expl">Superfície reservada. O destino existe para receber especificação funcional própria — nenhum estudo, nível, projeção ou leitura de mercado é calculado aqui.</p>
-      </div>
-    </div>
+    <!-- Estudos dos Pivots: memória empírica dos maiores pivots H1/H4 por
+         instrumento e período. O conteúdo é renderizado por
+         20-ui/15-pivot-studies.js a cada entrada no workspace, porque o seletor
+         deriva do catálogo vivo do Motor de Lote e a tela reflete o estado. -->
+    <div class="exec-view" id="execPivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
     <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
          #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
          nenhum dado tocado. A <section id="motor"> hospedeira foi removida
@@ -7286,6 +7374,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
 
 
+
+
 <script>
 // ============ PERFIS DE RISCO V10.0 (fonte única) ============
 const BASE_TARGET_MONTHLY=0.0275;
@@ -7597,6 +7687,19 @@ const DEFAULTS = {
   // de configuração não destrói memória técnica.
   // Guarda estrutural de boot: nocodaNormalizeState() (04-persistence.js).
   nocoda:{schemaVersion:1, studies:{}},
+  // Estudos dos Pivots: memória empírica dos maiores pivots H1/H4 que o
+  // operador identificou no gráfico. LISTA, e não mapa por instrumento como o
+  // NoCoda: aqui a natureza é histórica e o mesmo instrumento pode ter vários
+  // estudos de períodos distintos, que não se sobrescrevem.
+  // Cada estudo referencia o instrumentId() canônico e CONTÉM seus pivots —
+  // a contenção é a relação, e por isso não existe pivot órfão.
+  // Só CAUSAS persistem (timeframe, extremos de tempo e preço, correção
+  // informada). Direção, range, amplitude, duração, ranking e toda a
+  // estatística são DERIVADOS em 10-domain/10-pivot-studies.js e nunca gravados.
+  // Estudo de instrumento que saiu da lista operacional é PRESERVADO, e pivot
+  // que passa a exceder o critério de correção é RECLASSIFICADO, nunca apagado.
+  // Guarda estrutural de boot: pivotStudiesNormalizeState() (04-persistence.js).
+  pivotStudies:{schemaVersion:1, studies:[]},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
@@ -8211,6 +8314,54 @@ function nocodaNormalizeState(){
     } else if(!canonical){ delete nc.studies[key]; }
   }
 }
+// Estudos dos Pivots: identidade dos registros. Mesmo formato dos ids do app
+// (prefixo + tempo em base 36 + sufixo aleatório) — nenhum esquema novo.
+function pivotStudyId(){ return 'pvs_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+// Estudos dos Pivots: guarda ESTRUTURAL de boot, pelo mesmo motivo dos quatro
+// normalizadores acima — migrate() roda dentro de load() antes de qualquer
+// script tardio existir, e é também o caminho por onde passa backup importado.
+//
+// Conservadora por contrato: descarta apenas o que não tem FORMA de registro e
+// preserva campos desconhecidos (STATE-SCHEMA.md §3). NÃO valida a matemática
+// nem o critério de correção — pivot incoerente simplesmente não produz
+// derivados e fica fora da estatística; apagá-lo aqui destruiria memória
+// técnica do operador em silêncio. Timeframe fora de H1/H4 também sobrevive:
+// deixa de contar nas sínteses por timeframe, e nada mais.
+function pivotStudiesNormalizeState(){
+  if(!S.pivotStudies || typeof S.pivotStudies!=='object' || Array.isArray(S.pivotStudies))
+    S.pivotStudies=structuredClone(DEFAULTS.pivotStudies);
+  const ps=S.pivotStudies;
+  if(!Number.isFinite(+ps.schemaVersion) || +ps.schemaVersion<1) ps.schemaVersion=1;
+  if(!Array.isArray(ps.studies)) ps.studies=[];
+  // Ids duplicados quebrariam edição e exclusão (o alvo viraria ambíguo).
+  // Colisão é reescrita com id novo em vez de o registro ser descartado.
+  const seenStudy=new Set();
+  ps.studies=ps.studies.filter(st=>st && typeof st==='object' && !Array.isArray(st));
+  ps.studies.forEach(st=>{
+    if(typeof st.id!=='string' || !st.id || seenStudy.has(st.id)) st.id=pivotStudyId();
+    seenStudy.add(st.id);
+    // Mesma identidade canônica das ordens e dos Estudos NoCoda.
+    st.instrumentId=String(st.instrumentId==null?'':st.instrumentId).toUpperCase().replace(/[^A-Z0-9]/g,'');
+    st.periodStart=String(st.periodStart==null?'':st.periodStart);
+    st.periodEnd=String(st.periodEnd==null?'':st.periodEnd);
+    if(typeof st.createdAt!=='string') st.createdAt='';
+    if(typeof st.updatedAt!=='string') st.updatedAt=st.createdAt;
+    if(!Array.isArray(st.pivots)) st.pivots=[];
+    st.pivots=st.pivots.filter(pv=>pv && typeof pv==='object' && !Array.isArray(pv));
+    const seenPivot=new Set();
+    st.pivots.forEach(pv=>{
+      if(typeof pv.id!=='string' || !pv.id || seenPivot.has(pv.id)) pv.id=pivotRecordId();
+      seenPivot.add(pv.id);
+      pv.timeframe=String(pv.timeframe==null?'':pv.timeframe).toUpperCase();
+      pv.startDatetime=String(pv.startDatetime==null?'':pv.startDatetime);
+      pv.endDatetime=String(pv.endDatetime==null?'':pv.endDatetime);
+      pv.notes=String(pv.notes==null?'':pv.notes);
+      if(typeof pv.createdAt!=='string') pv.createdAt='';
+      if(typeof pv.updatedAt!=='string') pv.updatedAt=pv.createdAt;
+    });
+  });
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
@@ -8218,6 +8369,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
   nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
+  pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -24799,11 +24951,16 @@ const EXEC_VIEWS = [
   ['motor', 'motorWidgetGrid']
 ];
 // Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
-// HTML. O NoCoda deriva seu seletor do catalogo vivo do Motor de Lote, entao
-// precisa repintar a cada entrada — um instrumento destravado em Configuracoes
-// tem de aparecer sem recarregar a pagina.
+// HTML. NoCoda e Pivots derivam seus seletores do catalogo vivo do Motor de
+// Lote, entao precisam repintar a cada entrada — um instrumento destravado em
+// Configuracoes tem de aparecer sem recarregar a pagina.
+//
+// Repintar NAO descarta rascunho: o estado efemero de cada workspace vive em
+// variaveis de modulo, e o render o reconstitui. Sair do Estudos dos Pivots com
+// um pivot em edicao e voltar devolve o formulario como estava.
 const EXEC_VIEW_RENDERERS = {
-  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); }
+  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); },
+  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); }
 };
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;
@@ -25273,6 +25430,1135 @@ function ncSaveStudy() {
 
 // Superfície pública consumida pelo controlador de views do Execution Board.
 window.JPWNocodaUI = { render: renderNocodaStudies };
+// ============ ESTUDOS DOS PIVOTS · NUCLEO (N1 — dominio puro) ============
+// Matematica e estatistica descritiva dos pivots registrados manualmente pelo
+// operador. Deliberadamente puro: recebe numeros e strings, devolve numeros, e
+// nao toca DOM, localStorage, S, rede ou qualquer modulo tardio.
+//
+// PRINCIPIO DE SEGURANCA OPERACIONAL: nada aqui autoriza operacao. O estudo e
+// memoria tecnica retrospectiva — nenhuma funcao deste arquivo altera risco,
+// fase, clearance, alavancagem, ordem, lote ou estado estatutario.
+//
+// PRINCIPIO ESTATISTICO: a amostra e SELECIONADA pelo operador, que registra
+// deliberadamente os maiores pivots que encontrou. Por isso tudo aqui e
+// descritivo da amostra e nada e inferencial: nao existe probabilidade,
+// frequencia esperada, alvo, projecao ou "proximo pivot". Somar essas coisas
+// aqui seria transformar viés de selecao em previsao.
+
+const PIVOT_TIMEFRAMES = ['H1', 'H4'];
+
+// CRITERIO DE CORRECAO NoCoda. Fonte normativa: especificacao do gestor para
+// esta feature (secao 17), que fixa 61,8 como limite INVALIDANTE — a correcao
+// precisa ser estritamente menor para o pivot entrar na amostra principal.
+// Declarado uma unica vez: nenhum outro arquivo repete o numero.
+const PIVOT_MAX_CORRECTION_PCT = 61.8;
+
+// Limites da correcao informada. A retracao e uma fracao da propria perna: 0%
+// significa movimento sem retracao interna e 100% significa que o preco voltou
+// ao ponto de partida — alem disso o registro deixa de descrever este pivot.
+const PIVOT_CORRECTION_MIN = 0;
+const PIVOT_CORRECTION_MAX = 100;
+
+const PIVOT_MS_HOUR = 3600000;
+const PIVOT_MS_DAY = 86400000;
+
+// Data sem hora, usada no periodo do estudo (AAAA-MM-DD).
+const PIVOT_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+// ---- entrada -------------------------------------------------------------
+
+// Carimbo de data/hora do pivot. Reusa a convencao temporal ja estabelecida
+// pelos Estudos NoCoda (10-domain/09-nocoda-geometry.js) em vez de duplicar o
+// parser: os dois recebem o MESMO carimbo sem fuso vindo do MetaTrader, e uma
+// segunda implementacao seria uma segunda verdade sobre o mesmo dado. A leitura
+// como UTC nao converte fuso nenhum — torna a aritmetica deterministica para
+// que o mesmo estudo produza a mesma duracao em qualquer maquina.
+function pivotParseTime(value) {
+  return (typeof nocodaParseTime === 'function') ? nocodaParseTime(value) : null;
+}
+
+// Data do periodo. Devolve a string canonica AAAA-MM-DD ou null.
+function pivotParseDate(value) {
+  const match = PIVOT_DATE_RE.exec(String(value == null ? '' : value).trim());
+  if (!match) return null;
+  const year = +match[1], month = +match[2], day = +match[3];
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  const ms = Date.UTC(year, month - 1, day);
+  const back = new Date(ms);
+  // Date.UTC transborda 31/02 para 03/03 em silencio.
+  if (back.getUTCFullYear() !== year || back.getUTCMonth() !== month - 1 || back.getUTCDate() !== day) return null;
+  return match[1] + '-' + match[2] + '-' + match[3];
+}
+
+// Numero digitado. Aceita virgula decimal, como o resto do app. String vazia,
+// texto, NaN e Infinity devolvem null — nunca 0, que e valor observado.
+function pivotParseNumber(raw) {
+  if (typeof raw === 'number') return Number.isFinite(raw) ? raw : null;
+  const text = String(raw == null ? '' : raw).trim().replace(',', '.');
+  if (text === '') return null;
+  const value = Number(text);
+  return Number.isFinite(value) ? value : null;
+}
+
+function pivotIsValidPrice(value) {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+function pivotIsValidTimeframe(value) {
+  return PIVOT_TIMEFRAMES.indexOf(String(value == null ? '' : value).toUpperCase()) >= 0;
+}
+
+// ---- derivados -----------------------------------------------------------
+// Nada abaixo e persistido: o estudo guarda as CAUSAS (timeframe, extremos de
+// tempo e preco, correcao informada) e as consequencias sao recalculadas.
+
+// Direcao DERIVADA, nunca digitada. Precos iguais nao descrevem pivot
+// direcional — devolve null, e a camada de gravacao recusa o registro.
+function pivotDirection(startPrice, endPrice) {
+  if (!pivotIsValidPrice(startPrice) || !pivotIsValidPrice(endPrice)) return null;
+  if (endPrice > startPrice) return 'bullish';
+  if (endPrice < startPrice) return 'bearish';
+  return null;
+}
+
+function pivotAbsoluteRange(startPrice, endPrice) {
+  if (!pivotIsValidPrice(startPrice) || !pivotIsValidPrice(endPrice)) return null;
+  return Math.abs(endPrice - startPrice);
+}
+
+// Amplitude percentual — a medida principal de magnitude entre pivots.
+// M = |Pf - Pi| / Pi * 100. Sem arredondamento: quem arredonda e a apresentacao.
+function pivotPercentageRange(startPrice, endPrice) {
+  if (!pivotIsValidPrice(startPrice) || !pivotIsValidPrice(endPrice)) return null;
+  return Math.abs(endPrice - startPrice) / startPrice * 100;
+}
+
+// Duracao em milissegundos. Exige fim ESTRITAMENTE posterior ao inicio.
+function pivotDurationMs(startDatetime, endDatetime) {
+  const start = pivotParseTime(startDatetime);
+  const end = pivotParseTime(endDatetime);
+  if (start === null || end === null || !(end > start)) return null;
+  return end - start;
+}
+
+// "20d 8h", "18h", "18h 30min", "45min". Apresentacao apenas — a duracao
+// comparada e ordenada e sempre o numero em milissegundos.
+function pivotFormatDuration(ms) {
+  if (typeof ms !== 'number' || !Number.isFinite(ms) || ms < 0) return '—';
+  const days = Math.floor(ms / PIVOT_MS_DAY);
+  const hours = Math.floor((ms % PIVOT_MS_DAY) / PIVOT_MS_HOUR);
+  const minutes = Math.floor((ms % PIVOT_MS_HOUR) / 60000);
+  if (days > 0) return hours > 0 ? days + 'd ' + hours + 'h' : days + 'd';
+  if (hours > 0) return minutes > 0 ? hours + 'h ' + minutes + 'min' : hours + 'h';
+  return minutes + 'min';
+}
+
+// DOMINIO da correcao, antes do criterio. A retracao e fracao da propria perna:
+// fora de 0–100 o numero nao descreve este movimento, e nao ha veredito de
+// criterio a dar sobre ele.
+//
+// A checagem vive AQUI, e nao apenas no formulario, porque o formulario nao e o
+// unico caminho de entrada: um backup importado atravessa
+// pivotStudiesNormalizeState(), que de proposito sanea so a FORMA e nao apaga
+// registro do operador. Sem esta guarda, um arquivo com correcao negativa
+// passaria no teste unilateral `< 61,8`, entraria na amostra PRINCIPAL como
+// "atende ao criterio" e envenenaria a mediana das correcoes.
+function pivotCorrectionInDomain(value) {
+  return typeof value === 'number' && Number.isFinite(value)
+    && value >= PIVOT_CORRECTION_MIN && value <= PIVOT_CORRECTION_MAX;
+}
+
+// CRITERIO INFORMADO, nao verificado. O app nao possui dados OHLC: ele registra
+// o percentual que o operador identificou e o compara com o limite. Nenhuma
+// funcao daqui afirma ter conferido o historico do grafico.
+function pivotWithinCorrectionRule(maxCorrectionPct) {
+  return pivotCorrectionInDomain(maxCorrectionPct)
+    && maxCorrectionPct < PIVOT_MAX_CORRECTION_PCT;
+}
+
+// Todos os derivados de um pivot persistido. Devolve null quando o registro nao
+// descreve um pivot calculavel — a estatistica simplesmente o ignora, e nenhum
+// dado e apagado por isso.
+function pivotDerive(pivot) {
+  if (!pivot || typeof pivot !== 'object') return null;
+  const startPrice = pivotParseNumber(pivot.startPrice);
+  const endPrice = pivotParseNumber(pivot.endPrice);
+  const direction = pivotDirection(startPrice, endPrice);
+  const durationMs = pivotDurationMs(pivot.startDatetime, pivot.endDatetime);
+  if (direction === null || durationMs === null) return null;
+  const correction = pivotParseNumber(pivot.maxCorrectionPct);
+  return {
+    direction,
+    absoluteRange: pivotAbsoluteRange(startPrice, endPrice),
+    percentageRange: pivotPercentageRange(startPrice, endPrice),
+    durationMs,
+    maxCorrectionPct: correction,
+    // Distinguir "excede o criterio" de "valor fora do dominio" e o que permite
+    // a interface dizer a verdade sobre cada registro sem apagar nenhum.
+    correctionInDomain: pivotCorrectionInDomain(correction),
+    withinRule: pivotWithinCorrectionRule(correction)
+  };
+}
+
+// ---- validacao -----------------------------------------------------------
+// Erros por CAMPO, para a interface poder apontar onde esta o problema.
+
+function pivotValidate(input) {
+  const errors = [];
+  const source = input && typeof input === 'object' ? input : {};
+
+  const timeframe = String(source.timeframe == null ? '' : source.timeframe).toUpperCase();
+  if (!pivotIsValidTimeframe(timeframe)) {
+    errors.push({ field: 'timeframe', message: 'Timeframe precisa ser H1 ou H4.' });
+  }
+
+  const start = pivotParseTime(source.startDatetime);
+  if (start === null) errors.push({ field: 'startDatetime', message: 'Data/hora inicial é inválida.' });
+  const end = pivotParseTime(source.endDatetime);
+  if (end === null) errors.push({ field: 'endDatetime', message: 'Data/hora final é inválida.' });
+  if (start !== null && end !== null && !(end > start)) {
+    errors.push({
+      field: 'endDatetime',
+      message: start === end
+        ? 'Início e fim não podem ser o mesmo instante.'
+        : 'A data/hora final precisa ser posterior à inicial.'
+    });
+  }
+
+  const startPrice = pivotParseNumber(source.startPrice);
+  if (!pivotIsValidPrice(startPrice)) {
+    errors.push({ field: 'startPrice', message: 'Preço inicial precisa ser um número finito e positivo.' });
+  }
+  const endPrice = pivotParseNumber(source.endPrice);
+  if (!pivotIsValidPrice(endPrice)) {
+    errors.push({ field: 'endPrice', message: 'Preço final precisa ser um número finito e positivo.' });
+  }
+  // Preco igual nos dois extremos nao e pivot direcional (secao 13): o registro
+  // e recusado, e nao salvo como "neutro".
+  if (pivotIsValidPrice(startPrice) && pivotIsValidPrice(endPrice) && startPrice === endPrice) {
+    errors.push({ field: 'endPrice', message: 'Preço final igual ao inicial não descreve um pivot direcional.' });
+  }
+
+  const correction = pivotParseNumber(source.maxCorrectionPct);
+  if (correction === null) {
+    errors.push({ field: 'maxCorrectionPct', message: 'Informe a maior correção interna observada, em percentual.' });
+  } else if (!pivotCorrectionInDomain(correction)) {
+    // Mesma regra de dominio usada pela classificacao — uma fonte, dois usos.
+    // Nao e o criterio de 61,8: este limite recusa entrada impossivel, e 61,8
+    // classifica entrada valida.
+    errors.push({ field: 'maxCorrectionPct', message: 'A correção precisa estar entre 0% e 100%.' });
+  }
+
+  if (errors.length) return { ok: false, errors, values: null };
+  return {
+    ok: true,
+    errors: [],
+    values: {
+      timeframe,
+      startDatetime: String(source.startDatetime),
+      startPrice,
+      endDatetime: String(source.endDatetime),
+      endPrice,
+      maxCorrectionPct: correction,
+      notes: String(source.notes == null ? '' : source.notes).trim()
+    }
+  };
+}
+
+function pivotStudyValidatePeriod(periodStart, periodEnd) {
+  const errors = [];
+  const start = pivotParseDate(periodStart);
+  if (start === null) errors.push({ field: 'periodStart', message: 'Data inicial do período é inválida.' });
+  const end = pivotParseDate(periodEnd);
+  if (end === null) errors.push({ field: 'periodEnd', message: 'Data final do período é inválida.' });
+  // Periodo de um unico dia e legitimo, por isso <= e nao <.
+  if (start !== null && end !== null && start > end) {
+    errors.push({ field: 'periodEnd', message: 'A data final do período não pode ser anterior à inicial.' });
+  }
+  if (errors.length) return { ok: false, errors, values: null };
+  return { ok: true, errors: [], values: { periodStart: start, periodEnd: end } };
+}
+
+// Sobreposicao de janelas fechadas nos dois extremos. NAO proibe nada: existe
+// para a interface poder AVISAR antes de criar um estudo concorrente, porque
+// metodologias e revisoes diferentes sobre o mesmo periodo sao legitimas.
+function pivotStudyPeriodsOverlap(aStart, aEnd, bStart, bEnd) {
+  const a1 = pivotParseDate(aStart), a2 = pivotParseDate(aEnd);
+  const b1 = pivotParseDate(bStart), b2 = pivotParseDate(bEnd);
+  if (a1 === null || a2 === null || b1 === null || b2 === null) return false;
+  return a1 <= b2 && b1 <= a2;
+}
+
+// ---- estatistica descritiva ----------------------------------------------
+
+// Mediana correta: ordenacao NUMERICA, media dos dois centrais quando n e par.
+// Amostra vazia devolve null — ausencia de observacao nao e zero observado.
+function pivotMedian(values) {
+  const list = (Array.isArray(values) ? values : []).filter(v => typeof v === 'number' && Number.isFinite(v));
+  if (!list.length) return null;
+  const sorted = list.slice().sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function pivotMean(values) {
+  const list = (Array.isArray(values) ? values : []).filter(v => typeof v === 'number' && Number.isFinite(v));
+  if (!list.length) return null;
+  return list.reduce((sum, v) => sum + v, 0) / list.length;
+}
+
+function pivotMax(records) {
+  let best = null;
+  (records || []).forEach(r => {
+    if (best === null || r.percentageRange > best.percentageRange) best = r;
+  });
+  return best;
+}
+
+// Records enriquecidos: o pivot persistido + seus derivados + o indice de
+// origem, para a interface conseguir voltar ao registro a partir do ranking.
+function pivotRecords(pivots) {
+  const list = Array.isArray(pivots) ? pivots : [];
+  const out = [];
+  list.forEach((pivot, index) => {
+    const derived = pivotDerive(pivot);
+    if (!derived) return;
+    out.push(Object.assign({ id: pivot.id, timeframe: String(pivot.timeframe || '').toUpperCase(), pivot, index }, derived));
+  });
+  return out;
+}
+
+function pivotTop(records, count) {
+  return records.slice().sort((a, b) => b.percentageRange - a.percentageRange).slice(0, count);
+}
+
+// Sintese de um timeframe. Cada campo e null quando a amostra nao o sustenta —
+// nunca 0, que seria observacao. `n` acompanha SEMPRE as medidas centrais.
+function pivotTimeframeSummary(records) {
+  const amplitudes = records.map(r => r.percentageRange);
+  const durations = records.map(r => r.durationMs);
+  const best = pivotMax(records);
+  return {
+    n: records.length,
+    max: best ? best.percentageRange : null,
+    maxPivotId: best ? best.id : null,
+    mean: pivotMean(amplitudes),
+    median: pivotMedian(amplitudes),
+    medianDurationMs: pivotMedian(durations)
+  };
+}
+
+// Estatistica descritiva do estudo.
+//
+// Por padrao SO os pivots dentro do criterio compoem a amostra principal: os
+// que excedem 61,8% continuam gravados e contados a parte, nunca misturados em
+// silencio. {includeOutside:true} — ou {scope:'all'} — inclui todos, quando o
+// filtro pedir todos; {scope:'outside'} descreve somente os excedentes, para
+// auditoria. A amostra descrita e SEMPRE a mesma que a lista exibe: numero de
+// resumo divergente da tabela ao lado seria informacao errada.
+const PIVOT_SCOPES = ['valid', 'all', 'outside'];
+function pivotStudyStats(pivots, options) {
+  const requested = options && typeof options.scope === 'string' ? options.scope : null;
+  const scope = PIVOT_SCOPES.indexOf(requested) >= 0 ? requested
+    : ((options && options.includeOutside) ? 'all' : 'valid');
+  const all = pivotRecords(pivots);
+  const sample = scope === 'all' ? all
+    : all.filter(r => scope === 'outside' ? !r.withinRule : r.withinRule);
+  const byTimeframe = {};
+  PIVOT_TIMEFRAMES.forEach(tf => { byTimeframe[tf] = sample.filter(r => r.timeframe === tf); });
+
+  const amplitudes = sample.map(r => r.percentageRange);
+  const best = pivotMax(sample);
+  const timeframes = {};
+  PIVOT_TIMEFRAMES.forEach(tf => {
+    timeframes[tf] = Object.assign(pivotTimeframeSummary(byTimeframe[tf]), { top: pivotTop(byTimeframe[tf], 3) });
+  });
+
+  return {
+    // Total registrado x amostra considerada: a diferenca e o que o criterio
+    // deixou de fora, e precisa ficar visivel.
+    registered: (Array.isArray(pivots) ? pivots : []).length,
+    computable: all.length,
+    outside: all.filter(r => !r.withinRule).length,
+    scope,
+    includeOutside: scope === 'all',
+    n: sample.length,
+    max: best ? best.percentageRange : null,
+    maxTimeframe: best ? best.timeframe : null,
+    maxPivotId: best ? best.id : null,
+    mean: pivotMean(amplitudes),
+    median: pivotMedian(amplitudes),
+    medianDurationMs: pivotMedian(sample.map(r => r.durationMs)),
+    // Nome deliberadamente preciso: mediana das correcoes MAXIMAS INFORMADAS
+    // nos pivots registrados — nao "correcao media do mercado". Só entram
+    // valores dentro do dominio: uma mediana calculada sobre -500 nao seria
+    // uma correcao, e o registro continua gravado e visivel de todo modo.
+    medianCorrection: pivotMedian(sample.filter(r => r.correctionInDomain).map(r => r.maxCorrectionPct)),
+    outOfDomain: all.filter(r => !r.correctionInDomain).length,
+    bullish: sample.filter(r => r.direction === 'bullish').length,
+    bearish: sample.filter(r => r.direction === 'bearish').length,
+    timeframes
+  };
+}
+
+// ---- ordenacao -----------------------------------------------------------
+// Comparacao SEMPRE numerica. Ordenar amplitude como texto poria 10% antes de
+// 9%; o mesmo vale para data, duracao e correcao.
+
+const PIVOT_SORT_KEYS = ['amplitude', 'date', 'duration', 'correction'];
+
+function pivotSortValue(record, key) {
+  if (key === 'amplitude') return record.percentageRange;
+  if (key === 'duration') return record.durationMs;
+  if (key === 'correction') return typeof record.maxCorrectionPct === 'number' ? record.maxCorrectionPct : -Infinity;
+  return pivotParseTime(record.pivot.startDatetime); // 'date'
+}
+
+// Padrao do estudo: maior amplitude primeiro — e exatamente o que a feature
+// existe para responder. Desempate estavel pelo instante inicial.
+function pivotSortRecords(records, key, ascending) {
+  const sortKey = PIVOT_SORT_KEYS.indexOf(key) >= 0 ? key : 'amplitude';
+  const factor = ascending ? 1 : -1;
+  return records.slice().sort((a, b) => {
+    const va = pivotSortValue(a, sortKey), vb = pivotSortValue(b, sortKey);
+    if (va !== vb) return (va < vb ? -1 : 1) * factor;
+    const ta = pivotParseTime(a.pivot.startDatetime), tb = pivotParseTime(b.pivot.startDatetime);
+    return (ta === tb ? 0 : (ta < tb ? -1 : 1));
+  });
+}
+
+// Superficie publica do dominio. Somente matematica — sem estado, sem UI.
+window.JPWPivots = {
+  math: {
+    parseTime: pivotParseTime,
+    parseDate: pivotParseDate,
+    parseNumber: pivotParseNumber,
+    isValidPrice: pivotIsValidPrice,
+    isValidTimeframe: pivotIsValidTimeframe,
+    direction: pivotDirection,
+    absoluteRange: pivotAbsoluteRange,
+    percentageRange: pivotPercentageRange,
+    durationMs: pivotDurationMs,
+    formatDuration: pivotFormatDuration,
+    correctionInDomain: pivotCorrectionInDomain,
+    withinCorrectionRule: pivotWithinCorrectionRule,
+    derive: pivotDerive,
+    validate: pivotValidate,
+    validatePeriod: pivotStudyValidatePeriod,
+    periodsOverlap: pivotStudyPeriodsOverlap,
+    median: pivotMedian,
+    mean: pivotMean,
+    records: pivotRecords,
+    stats: pivotStudyStats,
+    sort: pivotSortRecords,
+    TIMEFRAMES: PIVOT_TIMEFRAMES,
+    MAX_CORRECTION_PCT: PIVOT_MAX_CORRECTION_PCT,
+    CORRECTION_MIN: PIVOT_CORRECTION_MIN,
+    CORRECTION_MAX: PIVOT_CORRECTION_MAX,
+    SORT_KEYS: PIVOT_SORT_KEYS,
+    SCOPES: PIVOT_SCOPES
+  }
+};
+// ============ ESTUDOS DOS PIVOTS · INTERFACE (N1 — apresentação) ============
+// Workspace do Execution Board para a memória empírica dos maiores pivots H1/H4
+// identificados manualmente pelo operador.
+//
+// SEPARAÇÃO DE RESPONSABILIDADES, deliberada:
+//   · a lista de instrumentos vem de instrumentCatalog() — NUNCA há símbolo
+//     escrito aqui, e nenhuma cópia do catálogo entra no estado dos estudos;
+//   · toda a matemática e a estatística vivem em 10-domain/10-pivot-studies.js,
+//     puras e sem DOM; este arquivo lê entrada, chama o motor e escreve texto;
+//   · a persistência é S.pivotStudies.studies, gravada apenas em ação explícita.
+//
+// PRINCÍPIO DE SEGURANÇA OPERACIONAL: nada aqui autoriza operação. Navegar até
+// este workspace ou salvar um pivot não altera fase, clearance, risco,
+// alavancagem, ordem, LIFO, quarentena ou qualquer estado estatutário.
+//
+// PRINCÍPIO ESTATÍSTICO: a amostra é escolhida pelo operador, que registra de
+// propósito os MAIORES pivots que encontrou. Toda a tela fala de "pivots
+// registrados neste estudo" e nenhuma frase converte essa amostra em
+// probabilidade, frequência, expectativa ou alvo.
+
+// Estado EFÊMERO — seleção, filtros, ordenação e rascunhos não salvos. Não
+// entra em S, localStorage, backup, schema ou migração.
+let pvInstrumentId = null;
+let pvStudyId = null;
+let pvNewStudyOpen = false;
+let pvNewStudyDraft = { periodStart: '', periodEnd: '' };
+let pvFormOpen = false;
+let pvEditingId = null;      // null enquanto o formulário for de pivot novo
+let pvDraft = null;
+let pvDirty = false;
+let pvFilters = { timeframe: 'all', direction: 'all', criterion: 'valid' };
+let pvSort = { key: 'amplitude', ascending: false };
+let pvHighlightId = null;
+
+const PV_EMPTY_DRAFT = {
+  timeframe: 'H4', startDatetime: '', startPrice: '',
+  endDatetime: '', endPrice: '', maxCorrectionPct: '', notes: ''
+};
+const PV_FIELDS = ['timeframe', 'startDatetime', 'startPrice', 'endDatetime', 'endPrice', 'maxCorrectionPct', 'notes'];
+const PV_SORT_LABELS = [
+  ['amplitude', false, 'Amplitude ↓'], ['amplitude', true, 'Amplitude ↑'],
+  ['date', true, 'Data'], ['duration', false, 'Duração'], ['correction', false, 'Correção']
+];
+
+function pvMath() { return (window.JPWPivots && window.JPWPivots.math) || null; }
+function pvStudies() {
+  return (S.pivotStudies && Array.isArray(S.pivotStudies.studies)) ? S.pivotStudies.studies : [];
+}
+function pvStudyById(id) { return pvStudies().find(st => st.id === id) || null; }
+function pvStudiesFor(instrumentId) {
+  return pvStudies().filter(st => st.instrumentId === instrumentId);
+}
+
+// ---- formatação ----------------------------------------------------------
+// O catálogo não tem metadado de dígitos por instrumento (auditado nos Estudos
+// NoCoda). Em vez de criar uma segunda tabela de precisão, preço usa formatter
+// neutro de até 8 casas com zeros à direita removidos. O cálculo interno NUNCA
+// depende deste texto.
+function pvFmtPrice(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return '—';
+  const trimmed = value.toFixed(8).replace(/0+$/, '').replace(/\.$/, '');
+  return (trimmed === '' || trimmed === '-0' ? '0' : trimmed).replace('.', ',');
+}
+// fmtPct() é o formatador percentual canônico do app e recebe FRAÇÃO; as
+// amplitudes já estão em pontos percentuais, daí o /100. Reusar é melhor que
+// abrir um segundo formatador percentual só para esta tela.
+function pvFmtPct(value) {
+  return (typeof value === 'number' && Number.isFinite(value)) ? fmtPct(value / 100) : '—';
+}
+function pvFmtDuration(ms) {
+  const math = pvMath();
+  return (math && typeof ms === 'number' && Number.isFinite(ms)) ? math.formatDuration(ms) : '—';
+}
+// Exibe o carimbo como foi digitado, sem conversão de fuso: só reordena os
+// campos para a convenção brasileira.
+function pvFmtDatetime(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(String(value || ''));
+  return match ? `${match[3]}/${match[2]}/${match[1]} ${match[4]}:${match[5]}` : '—';
+}
+function pvFmtDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+  return match ? `${match[3]}/${match[2]}/${match[1]}` : '—';
+}
+function pvDirectionLabel(direction) {
+  return direction === 'bullish' ? 'Alta' : (direction === 'bearish' ? 'Baixa' : '—');
+}
+// Três estados, não dois. Um registro vindo de backup pode trazer correção fora
+// de 0–100%: chamá-lo de "excedido" seria impreciso, e apagá-lo é proibido.
+function pvCriterionLabel(record) {
+  if (!record.correctionInDomain) return 'correção fora de 0–100% — registro preservado';
+  return record.withinRule ? 'critério informado: atendido' : 'critério informado: excedido';
+}
+
+// ---- seleção -------------------------------------------------------------
+
+// Instrumentos oferecidos: o catálogo operável MAIS os instrumentos que já
+// possuem estudo. A união é o que garante a seção 53 — instrumento removido ou
+// desativado no Motor de Lote sai da operação, mas sua memória técnica continua
+// alcançável em vez de virar dado órfão inacessível.
+function pvInstrumentOptions() {
+  const catalog = (typeof instrumentCatalog === 'function') ? instrumentCatalog() : [];
+  const options = catalog.map(i => ({ id: i.id, name: i.name, operable: true }));
+  const known = new Set(options.map(o => o.id));
+  pvStudies().forEach(st => {
+    if (st.instrumentId && !known.has(st.instrumentId)) {
+      known.add(st.instrumentId);
+      options.push({ id: st.instrumentId, name: st.instrumentId, operable: false });
+    }
+  });
+  return options;
+}
+
+function pvEnsureSelection() {
+  const options = pvInstrumentOptions();
+  if (!options.length) { pvInstrumentId = null; pvStudyId = null; return options; }
+  if (!pvInstrumentId || !options.some(o => o.id === pvInstrumentId)) {
+    // Preferir um instrumento que já tenha estudo evita abrir sempre no vazio.
+    const withStudy = options.find(o => pvStudiesFor(o.id).length);
+    pvInstrumentId = (withStudy || options[0]).id;
+    pvStudyId = null;
+  }
+  const mine = pvStudiesFor(pvInstrumentId);
+  if (!pvStudyId || !mine.some(st => st.id === pvStudyId)) pvStudyId = mine.length ? mine[0].id : null;
+  return options;
+}
+
+// Guarda de descarte (seção 49). O app não tem arquitetura de rascunho e o
+// padrão dominante de confirmação é confirm() nativo; basta impedir descarte
+// silencioso, sem introduzir um sistema de drafts só para esta tela.
+//
+// Fecha o formulário nos DOIS caminhos, e não só quando havia alteração. O
+// formulário é filho do estudo selecionado e edita um pivot dele: deixá-lo
+// aberto ao trocar de estudo ou de instrumento o apontava para um registro que
+// já não pertence à seleção, e o "Salvar" seguinte não encontrava o alvo e
+// retornava em silêncio — o operador digitava, clicava e nada acontecia.
+function pvConfirmDiscard() {
+  if (pvDirty && !confirm('Há um pivot em edição com alterações não salvas. Continuar descarta essas alterações.')) return false;
+  pvCloseForm();
+  return true;
+}
+
+function pvCloseForm() {
+  pvFormOpen = false; pvEditingId = null; pvDraft = null; pvDirty = false;
+}
+
+// ---- render --------------------------------------------------------------
+
+function renderPivotStudies() {
+  const root = document.getElementById('execPivots');
+  if (!root) return;
+  const math = pvMath();
+  if (!math) return;
+
+  const options = pvEnsureSelection();
+  const head = `<h2>Estudos dos Pivots <span class="art">memória empírica — não autoriza operação</span></h2>`;
+
+  if (!options.length) {
+    root.innerHTML = `<div class="card">${head}
+      <p class="expl">Nenhum instrumento operável no Motor de Lote e nenhum estudo gravado. O catálogo é a fonte canônica desta tela.</p></div>`;
+    return;
+  }
+
+  const study = pvStudyById(pvStudyId);
+  root.innerHTML = `
+    <div class="card">
+      ${head}
+      <p class="expl">Registra os maiores pivots H1 e H4 que você identificou no gráfico e organiza a amostra: amplitude, duração, direção e a maior correção interna informada. O software não detecta pivots — ele estrutura, calcula, ordena e preserva o que você observou.</p>
+      ${pvPickerHTML(options)}
+      ${pvNewStudyOpen ? pvNewStudyHTML() : ''}
+      ${study ? pvStudyHTML(study, math) : pvEmptyStudyHTML()}
+    </div>`;
+
+  pvBind(root);
+  if (pvFormOpen) pvUpdateDerived();
+  if (pvHighlightId) pvApplyHighlight();
+}
+
+function pvPickerHTML(options) {
+  const instrumentOptions = options.map(o =>
+    `<option value="${esc(o.id)}"${o.id === pvInstrumentId ? ' selected' : ''}>${esc(o.name)}${o.operable ? '' : ' (fora do catálogo)'}${pvStudiesFor(o.id).length ? ' ·' : ''}</option>`
+  ).join('');
+  const mine = pvStudiesFor(pvInstrumentId);
+  const studyOptions = mine.length
+    ? mine.map(st => `<option value="${esc(st.id)}"${st.id === pvStudyId ? ' selected' : ''}>${esc(pvFmtDate(st.periodStart))} → ${esc(pvFmtDate(st.periodEnd))} (${st.pivots.length})</option>`).join('')
+    : '<option value="">nenhum estudo neste instrumento</option>';
+  return `
+    <div class="pv-picker">
+      <div class="field">
+        <label for="pvInstrument">Instrumento</label>
+        <select id="pvInstrument">${instrumentOptions}</select>
+      </div>
+      <div class="field">
+        <label for="pvStudy">Estudo</label>
+        <select id="pvStudy"${mine.length ? '' : ' disabled'}>${studyOptions}</select>
+      </div>
+      <div class="pv-picker-actions">
+        <button type="button" class="reset-btn" id="pvNewStudyBtn">Novo Estudo</button>
+        ${pvStudyId ? '<button type="button" class="reset-btn pv-danger" id="pvDeleteStudyBtn">Excluir estudo</button>' : ''}
+      </div>
+      <p class="note pv-picker-note">O ponto marca instrumentos que já possuem estudo. Instrumento retirado do Motor de Lote continua listado enquanto tiver memória técnica gravada.</p>
+    </div>`;
+}
+
+function pvNewStudyHTML() {
+  return `
+    <fieldset class="pv-newstudy">
+      <legend>Novo estudo</legend>
+      <p class="note">O período é a janela histórica que você efetivamente analisou. Um mesmo instrumento pode ter vários estudos de períodos diferentes — nenhum sobrescreve o outro.</p>
+      <div class="pv-newstudy-fields">
+        <div class="field">
+          <label for="pvPeriodStart">Data inicial</label>
+          <input type="date" id="pvPeriodStart" value="${esc(pvNewStudyDraft.periodStart)}" aria-describedby="pvNewStudyErr">
+        </div>
+        <div class="field">
+          <label for="pvPeriodEnd">Data final</label>
+          <input type="date" id="pvPeriodEnd" value="${esc(pvNewStudyDraft.periodEnd)}" aria-describedby="pvNewStudyErr">
+        </div>
+      </div>
+      <p class="pv-field-err" id="pvNewStudyErr" role="alert"></p>
+      <div class="pv-actions">
+        <button type="button" class="reset-btn" id="pvCreateStudyBtn">Criar</button>
+        <button type="button" class="reset-btn ghost" id="pvCancelStudyBtn">Cancelar</button>
+      </div>
+    </fieldset>`;
+}
+
+function pvEmptyStudyHTML() {
+  return `<p class="expl pv-empty">Nenhum estudo selecionado para este instrumento. Crie um estudo informando o período histórico analisado.</p>`;
+}
+
+function pvStudyHTML(study, math) {
+  // Mesmo escopo para o resumo e para a lista: o filtro de critério governa os
+  // dois, para que o "n" jamais descreva uma amostra diferente da tabela.
+  const stats = math.stats(study.pivots, { scope: pvFilters.criterion });
+  const records = pvVisibleRecords(study, math);
+  return `
+    <div class="pv-study">
+      <p class="pv-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
+      ${pvStatsHTML(stats)}
+      ${pvFiltersHTML()}
+      ${pvTableHTML(records, stats)}
+      <div class="pv-actions">
+        <button type="button" class="reset-btn" id="pvAddPivotBtn"${pvFormOpen ? ' disabled' : ''}>+ Adicionar Pivot</button>
+      </div>
+      ${pvFormOpen ? pvFormHTML() : ''}
+    </div>`;
+}
+
+// ---- estatística ---------------------------------------------------------
+
+function pvMetric(label, value, sub) {
+  return `<div class="metric"><div class="k">${label}</div><div class="v sm">${value}</div>${sub ? `<div class="sub">${sub}</div>` : ''}</div>`;
+}
+
+// "Sem dados" e "0%" são coisas diferentes: zero é um valor observado, ausência
+// de observação não é. Amostra vazia nunca vira zero nesta tela.
+function pvStatValue(value, formatter) {
+  return (value === null || value === undefined) ? '<span class="muted">Sem dados</span>' : formatter(value);
+}
+
+function pvStatsHTML(stats) {
+  const tfSummary = stats.timeframes;
+  const scope = stats.scope === 'all' ? 'todos os pivots registrados'
+    : (stats.scope === 'outside' ? 'somente os que excedem o critério' : 'pivots dentro do critério');
+  return `
+    <div class="pv-stats">
+      <h3>Resumo da amostra <span class="art">n = ${stats.n} · ${scope}</span></h3>
+      <div class="metrics pv-metrics">
+        ${pvMetric('Pivots na amostra', String(stats.n), `H1 = ${tfSummary.H1.n} · H4 = ${tfSummary.H4.n}`)}
+        ${pvMetric('Maior pivot registrado', pvStatValue(stats.max, pvFmtPct), stats.maxTimeframe ? esc(stats.maxTimeframe) : 'sem amostra')}
+        ${pvMetric('Mediana da amplitude', pvStatValue(stats.median, pvFmtPct), 'medida central principal')}
+        ${pvMetric('Média da amplitude', pvStatValue(stats.mean, pvFmtPct), 'secundária à mediana')}
+        ${pvMetric('Duração mediana', pvStatValue(stats.medianDurationMs, pvFmtDuration), 'dos pivots da amostra')}
+        ${pvMetric('Correção máxima mediana', pvStatValue(stats.medianCorrection, pvFmtPct), 'mediana das correções informadas')}
+      </div>
+      <div class="pv-split">
+        ${pvComparisonHTML(stats)}
+        ${pvTopHTML(stats)}
+      </div>
+      <p class="pv-distribution">Distribuição por direção nesta amostra — Alta: <b>${stats.bullish}</b> · Baixa: <b>${stats.bearish}</b>.</p>
+      ${stats.outside ? `<p class="note pv-outside-note">${stats.outside} pivot(s) registrado(s) excede(m) o critério de ${pvFmtPct(pvMath().MAX_CORRECTION_PCT)} e ${stats.scope === 'valid' ? 'ficam fora da amostra principal' : 'compõem esta amostra pelo filtro de critério'}. Continuam gravados e podem ser editados.</p>` : ''}
+      <p class="note pv-bias">Estatísticas descritivas dos pivots registrados neste estudo. A amostra é selecionada pelo operador e não representa a frequência de todos os pivots do instrumento — os números acima não estimam probabilidade, expectativa ou próximo movimento.</p>
+    </div>`;
+}
+
+function pvComparisonHTML(stats) {
+  const row = (label, pick, formatter) => `
+    <tr><th scope="row">${label}</th>
+      <td>${pvStatValue(pick(stats.timeframes.H1), formatter)}</td>
+      <td>${pvStatValue(pick(stats.timeframes.H4), formatter)}</td></tr>`;
+  return `
+    <div class="pv-compare">
+      <h4>H1 × H4</h4>
+      <div class="jp-table-scroll">
+        <table class="dtable pv-compare-table">
+          <thead><tr><th scope="col">Medida</th><th scope="col">H1</th><th scope="col">H4</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">n</th><td>${stats.timeframes.H1.n}</td><td>${stats.timeframes.H4.n}</td></tr>
+            ${row('Máximo', s => s.max, pvFmtPct)}
+            ${row('Mediana', s => s.median, pvFmtPct)}
+            ${row('Duração mediana', s => s.medianDurationMs, pvFmtDuration)}
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Diferenças observadas entre os dois timeframes desta amostra. Nenhuma conclusão automática é derivada daqui.</p>
+    </div>`;
+}
+
+function pvTopHTML(stats) {
+  const list = tf => {
+    const top = stats.timeframes[tf].top;
+    if (!top.length) return `<p class="note">${tf}: <span class="muted">Sem dados</span></p>`;
+    // A numeracao e do proprio <ol>: repeti-la no rotulo do botao produziria
+    // "1. 1. 4,07%" na tela e leitura duplicada em leitor de tela.
+    return `<h5>TOP ${tf}</h5><ol class="pv-top-list">` + top.map(r =>
+      `<li><button type="button" class="pv-top-link" data-pv-goto="${esc(r.id)}">${pvFmtPct(r.percentageRange)}</button>
+        <span class="pv-top-when">${esc(pvFmtDatetime(r.pivot.startDatetime))}</span></li>`).join('') + '</ol>';
+  };
+  return `<div class="pv-top"><h4>Maiores amplitudes</h4>${list('H1')}${list('H4')}</div>`;
+}
+
+// ---- filtros, ordenação e tabela ----------------------------------------
+
+function pvVisibleRecords(study, math) {
+  let records = math.records(study.pivots);
+  if (pvFilters.criterion === 'valid') records = records.filter(r => r.withinRule);
+  else if (pvFilters.criterion === 'outside') records = records.filter(r => !r.withinRule);
+  if (pvFilters.timeframe !== 'all') records = records.filter(r => r.timeframe === pvFilters.timeframe);
+  if (pvFilters.direction !== 'all') records = records.filter(r => r.direction === pvFilters.direction);
+  return math.sort(records, pvSort.key, pvSort.ascending);
+}
+
+function pvSegHTML(group, label, entries, current) {
+  const buttons = entries.map(([value, text]) =>
+    `<button type="button" data-pv-filter="${group}" data-pv-value="${value}" class="${value === current ? 'on' : ''}" aria-pressed="${value === current}">${text}</button>`
+  ).join('');
+  return `<div class="field pv-filter"><span class="pv-filter-label" id="pvFilter_${group}">${label}</span>
+    <div class="seg" role="group" aria-labelledby="pvFilter_${group}">${buttons}</div></div>`;
+}
+
+function pvFiltersHTML() {
+  const sortOptions = PV_SORT_LABELS.map(([key, ascending, text]) => {
+    const value = key + ':' + (ascending ? 'asc' : 'desc');
+    const selected = key === pvSort.key && ascending === pvSort.ascending;
+    return `<option value="${value}"${selected ? ' selected' : ''}>${text}</option>`;
+  }).join('');
+  return `
+    <div class="pv-filters">
+      ${pvSegHTML('timeframe', 'Timeframe', [['all', 'Todos'], ['H1', 'H1'], ['H4', 'H4']], pvFilters.timeframe)}
+      ${pvSegHTML('direction', 'Direção', [['all', 'Todas'], ['bullish', 'Alta'], ['bearish', 'Baixa']], pvFilters.direction)}
+      ${pvSegHTML('criterion', 'Critério', [['valid', 'Somente válidos'], ['all', 'Todos'], ['outside', 'Fora do critério']], pvFilters.criterion)}
+      <div class="field pv-filter">
+        <label for="pvSort">Ordenar por</label>
+        <select id="pvSort">${sortOptions}</select>
+      </div>
+    </div>`;
+}
+
+// Tabela com rótulos por célula (data-label): abaixo de 760px o CSS a converte
+// em cards, sem markup duplicado e sem rolagem horizontal impraticável.
+function pvTableHTML(records, stats) {
+  if (!records.length) {
+    return `<p class="expl pv-empty">${stats.registered
+      ? 'Nenhum pivot atende aos filtros atuais. Os registros continuam gravados.'
+      : 'Nenhum pivot registrado neste estudo ainda.'}</p>`;
+  }
+  const rows = records.map((r, index) => `
+    <tr data-pv-row="${esc(r.id)}"${r.withinRule ? '' : ' class="pv-outside"'}>
+      <td data-label="#">${index + 1}</td>
+      <td data-label="TF">${esc(r.timeframe)}</td>
+      <td data-label="Início">${esc(pvFmtDatetime(r.pivot.startDatetime))}<span class="pv-cell-sub">${esc(pvFmtPrice(pvMath().parseNumber(r.pivot.startPrice)))}</span></td>
+      <td data-label="Fim">${esc(pvFmtDatetime(r.pivot.endDatetime))}<span class="pv-cell-sub">${esc(pvFmtPrice(pvMath().parseNumber(r.pivot.endPrice)))}</span></td>
+      <td data-label="Direção">${pvDirectionLabel(r.direction)}</td>
+      <td data-label="Amplitude"><b>${pvFmtPct(r.percentageRange)}</b><span class="pv-cell-sub">${esc(pvFmtPrice(r.absoluteRange))}</span></td>
+      <td data-label="Duração">${esc(pvFmtDuration(r.durationMs))}</td>
+      <td data-label="Correção">${pvFmtPct(r.maxCorrectionPct)}<span class="pv-cell-sub">${pvCriterionLabel(r)}</span></td>
+      <td data-label="Ações" class="pv-row-actions">
+        <button type="button" class="pv-mini" data-pv-edit="${esc(r.id)}">Editar</button>
+        <button type="button" class="pv-mini pv-danger" data-pv-delete="${esc(r.id)}">Excluir</button>
+      </td>
+    </tr>`).join('');
+  return `
+    <div class="jp-table-scroll pv-tablewrap">
+      <table class="dtable pv-table">
+        <caption class="pv-caption">${records.length} de ${stats.registered} pivot(s) registrado(s) neste estudo</caption>
+        <thead><tr>
+          <th scope="col">#</th><th scope="col">TF</th><th scope="col">Início</th><th scope="col">Fim</th>
+          <th scope="col">Direção</th><th scope="col">Amplitude</th><th scope="col">Duração</th>
+          <th scope="col">Correção</th><th scope="col">Ações</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ---- formulário do pivot -------------------------------------------------
+
+function pvFieldHTML(field, label, input) {
+  return `<div class="field">
+    <label for="pv_${field}">${label}</label>
+    ${input}
+    <p class="pv-field-err" id="pvErr_${field}" role="alert"></p>
+  </div>`;
+}
+
+function pvFormHTML() {
+  const d = pvDraft;
+  const timeframeOptions = pvMath().TIMEFRAMES.map(tf =>
+    `<option value="${tf}"${d.timeframe === tf ? ' selected' : ''}>${tf}</option>`).join('');
+  return `
+    <fieldset class="pv-form">
+      <legend>${pvEditingId ? 'Editar pivot' : 'Novo pivot'}</legend>
+      <div class="pv-form-grid">
+        ${pvFieldHTML('timeframe', 'Timeframe', `<select id="pv_timeframe" data-pv-field="timeframe" aria-describedby="pvErr_timeframe">${timeframeOptions}</select>`)}
+        ${pvFieldHTML('startDatetime', 'Data/hora inicial', `<input type="datetime-local" step="1" id="pv_startDatetime" data-pv-field="startDatetime" value="${esc(d.startDatetime)}" aria-describedby="pvErr_startDatetime">`)}
+        ${pvFieldHTML('startPrice', 'Preço inicial', `<input type="text" inputmode="decimal" id="pv_startPrice" data-pv-field="startPrice" value="${esc(d.startPrice)}" placeholder="ex.: 1,23412" aria-describedby="pvErr_startPrice">`)}
+        ${pvFieldHTML('endDatetime', 'Data/hora final', `<input type="datetime-local" step="1" id="pv_endDatetime" data-pv-field="endDatetime" value="${esc(d.endDatetime)}" aria-describedby="pvErr_endDatetime">`)}
+        ${pvFieldHTML('endPrice', 'Preço final', `<input type="text" inputmode="decimal" id="pv_endPrice" data-pv-field="endPrice" value="${esc(d.endPrice)}" placeholder="ex.: 1,31207" aria-describedby="pvErr_endPrice">`)}
+        ${pvFieldHTML('maxCorrectionPct', 'Maior correção interna (%)', `<input type="text" inputmode="decimal" id="pv_maxCorrectionPct" data-pv-field="maxCorrectionPct" value="${esc(d.maxCorrectionPct)}" placeholder="ex.: 47,2" aria-describedby="pvErr_maxCorrectionPct">`)}
+      </div>
+      ${pvFieldHTML('notes', 'Observação (opcional)', `<input type="text" id="pv_notes" data-pv-field="notes" value="${esc(d.notes)}" maxlength="140">`)}
+      <p class="note">A correção é a maior retração interna que <b>você</b> identificou no gráfico. O app não possui dados OHLC: ele registra o percentual informado e o compara com o limite de ${pvFmtPct(pvMath().MAX_CORRECTION_PCT)} — não verifica o histórico do mercado.</p>
+      <div class="metrics pv-preview" id="pvPreview"></div>
+      <div id="pvFormErr"></div>
+      <div class="pv-actions">
+        <button type="button" class="reset-btn" id="pvSavePivotBtn">${pvEditingId ? 'Salvar alterações' : 'Salvar pivot'}</button>
+        <button type="button" class="reset-btn ghost" id="pvCancelPivotBtn">Cancelar</button>
+      </div>
+    </fieldset>`;
+}
+
+// Recalcula somente a prévia. Não reconstrói o formulário: um innerHTML a cada
+// tecla destruiria foco e posição do cursor.
+function pvUpdateDerived() {
+  const box = document.getElementById('pvPreview');
+  const math = pvMath();
+  if (!box || !math || !pvDraft) return null;
+  const derived = math.derive({
+    startPrice: pvDraft.startPrice, endPrice: pvDraft.endPrice,
+    startDatetime: pvDraft.startDatetime, endDatetime: pvDraft.endDatetime,
+    maxCorrectionPct: pvDraft.maxCorrectionPct
+  });
+  const correction = math.parseNumber(pvDraft.maxCorrectionPct);
+  // Veredito em uma palavra: o cartao de metrica trunca com reticencias, e
+  // "Critério informado: ate…" nao informa nada. A ressalva de que o criterio e
+  // INFORMADO, e nao verificado, vive no rotulo e na legenda abaixo.
+  const criterion = correction === null ? '—'
+    : (!math.correctionInDomain(correction) ? 'Fora de 0–100%'
+      : (math.withinCorrectionRule(correction) ? 'Atendido' : 'Excedido'));
+  box.innerHTML =
+    pvMetric('Direção', derived ? pvDirectionLabel(derived.direction) : '—') +
+    pvMetric('Amplitude', derived ? pvFmtPct(derived.percentageRange) : '—', derived ? esc(pvFmtPrice(derived.absoluteRange)) : '') +
+    pvMetric('Duração', derived ? esc(pvFmtDuration(derived.durationMs)) : '—') +
+    pvMetric('Critério informado', criterion, `limite ${pvFmtPct(math.MAX_CORRECTION_PCT)}`);
+  return derived;
+}
+
+function pvShowErrors(errors) {
+  PV_FIELDS.forEach(field => {
+    const box = document.getElementById('pvErr_' + field);
+    const messages = errors.filter(e => e.field === field).map(e => e.message);
+    if (box) box.textContent = messages.join(' ');
+    const input = document.getElementById('pv_' + field);
+    if (!input) return;
+    if (messages.length) input.setAttribute('aria-invalid', 'true');
+    else input.removeAttribute('aria-invalid');
+  });
+  const summary = document.getElementById('pvFormErr');
+  if (summary) {
+    summary.innerHTML = errors.length
+      ? `<div class="pv-err" role="alert">${errors.map(e => esc(e.message)).join('<br>')}</div>`
+      : '';
+  }
+}
+
+// ---- ações ---------------------------------------------------------------
+
+function pvTouchStudy(study) {
+  study.updatedAt = new Date().toISOString();
+}
+
+function pvCreateStudy() {
+  const math = pvMath();
+  const validation = math.validatePeriod(pvNewStudyDraft.periodStart, pvNewStudyDraft.periodEnd);
+  const box = document.getElementById('pvNewStudyErr');
+  if (!validation.ok) {
+    if (box) box.textContent = validation.errors.map(e => e.message).join(' ');
+    return;
+  }
+  const { periodStart, periodEnd } = validation.values;
+  // Sobreposição AVISA e não proíbe: metodologias ou revisões diferentes sobre
+  // o mesmo período são legítimas, e a decisão é do operador.
+  const overlapping = pvStudiesFor(pvInstrumentId)
+    .filter(st => math.periodsOverlap(st.periodStart, st.periodEnd, periodStart, periodEnd));
+  if (overlapping.length && !confirm(`Já existe outro estudo deste instrumento com período parcialmente coincidente (${pvFmtDate(overlapping[0].periodStart)} → ${pvFmtDate(overlapping[0].periodEnd)}).\n\nCriar mesmo assim?`)) return;
+
+  const now = new Date().toISOString();
+  const study = {
+    id: pivotStudyId(), instrumentId: pvInstrumentId,
+    periodStart, periodEnd, createdAt: now, updatedAt: now, pivots: []
+  };
+  if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
+  if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
+  S.pivotStudies.studies.push(study);
+  save();
+
+  pvStudyId = study.id;
+  pvNewStudyOpen = false;
+  pvNewStudyDraft = { periodStart: '', periodEnd: '' };
+  pvCloseForm(); // invariante: trocar o estudo em foco fecha o formulário
+  renderPivotStudies();
+}
+
+function pvDeleteStudy() {
+  const study = pvStudyById(pvStudyId);
+  if (!study) return;
+  const count = study.pivots.length;
+  if (!confirm(`Excluir o estudo ${pvFmtDate(study.periodStart)} → ${pvFmtDate(study.periodEnd)} de ${study.instrumentId}?\n\n${count} pivot(s) registrado(s) serão apagados junto. A ação é irreversível.`)) return;
+  S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id);
+  save();
+  pvStudyId = null;
+  pvCloseForm();
+  renderPivotStudies();
+}
+
+function pvOpenForm(pivotId) {
+  const study = pvStudyById(pvStudyId);
+  if (!study) return;
+  if (pivotId) {
+    const pivot = study.pivots.find(p => p.id === pivotId);
+    if (!pivot) return;
+    pvEditingId = pivotId;
+    pvDraft = {
+      timeframe: pivot.timeframe, startDatetime: pivot.startDatetime,
+      startPrice: pivot.startPrice == null ? '' : String(pivot.startPrice),
+      endDatetime: pivot.endDatetime,
+      endPrice: pivot.endPrice == null ? '' : String(pivot.endPrice),
+      maxCorrectionPct: pivot.maxCorrectionPct == null ? '' : String(pivot.maxCorrectionPct),
+      notes: pivot.notes || ''
+    };
+  } else {
+    pvEditingId = null;
+    pvDraft = Object.assign({}, PV_EMPTY_DRAFT);
+  }
+  pvFormOpen = true; pvDirty = false;
+  renderPivotStudies();
+  const first = document.getElementById('pv_timeframe');
+  if (first) first.focus();
+}
+
+function pvSavePivot() {
+  const math = pvMath();
+  const study = pvStudyById(pvStudyId);
+  if (!math || !study) return;
+  const validation = math.validate(pvDraft);
+  pvShowErrors(validation.errors || []);
+  if (!validation.ok) return;
+
+  // Persiste somente as CAUSAS, já normalizadas. Direção, range, amplitude,
+  // duração e o veredito do critério são recalculados a cada leitura.
+  const values = validation.values;
+  const now = new Date().toISOString();
+  if (pvEditingId) {
+    const pivot = study.pivots.find(p => p.id === pvEditingId);
+    // Alvo sumiu (excluído em outra aba, ou estado recarregado por baixo).
+    // Falhar em silêncio faria o operador digitar, clicar em salvar e não
+    // receber nada — nem o registro, nem uma explicação.
+    if (!pivot) {
+      pvShowErrors([{ field: 'timeframe', message: 'O pivot que estava sendo editado não existe mais neste estudo. Nada foi salvo — feche o formulário e registre novamente.' }]);
+      return;
+    }
+    // Editar ATUALIZA o registro; nunca cria um segundo. Campos desconhecidos
+    // que tenham vindo de backup atravessam intactos.
+    Object.assign(pivot, values, { updatedAt: now });
+  } else {
+    study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+  }
+  pvTouchStudy(study);
+  save();
+  pvCloseForm();
+  renderPivotStudies();
+}
+
+function pvDeletePivot(pivotId) {
+  const study = pvStudyById(pvStudyId);
+  if (!study) return;
+  const pivot = study.pivots.find(p => p.id === pivotId);
+  if (!pivot) return;
+  if (!confirm(`Excluir este pivot ${pivot.timeframe} (${pvFmtDatetime(pivot.startDatetime)} → ${pvFmtDatetime(pivot.endDatetime)})?\n\nA ação é irreversível.`)) return;
+  study.pivots = study.pivots.filter(p => p.id !== pivotId);
+  pvTouchStudy(study);
+  save();
+  if (pvEditingId === pivotId) pvCloseForm();
+  renderPivotStudies();
+}
+
+// Localizar o registro a partir do ranking. Se os filtros vigentes escondem o
+// alvo, eles são afrouxados — o clique perderia o sentido se não levasse a
+// lugar nenhum. Nenhum dado muda: filtro é visualização.
+function pvGoToPivot(pivotId) {
+  const study = pvStudyById(pvStudyId);
+  if (!study) return;
+  const pivot = study.pivots.find(p => p.id === pivotId);
+  if (!pivot) return;
+  if (pvFilters.timeframe !== 'all' && pvFilters.timeframe !== pivot.timeframe) pvFilters.timeframe = 'all';
+  pvFilters.direction = 'all';
+  pvHighlightId = pivotId;
+  renderPivotStudies();
+}
+
+function pvApplyHighlight() {
+  const row = document.querySelector(`[data-pv-row="${pvHighlightId}"]`);
+  pvHighlightId = null;
+  if (!row) return;
+  row.classList.add('pv-highlight');
+  if (typeof row.scrollIntoView === 'function') row.scrollIntoView({ block: 'center' });
+  setTimeout(() => row.classList.remove('pv-highlight'), 2200);
+}
+
+// ---- bind ----------------------------------------------------------------
+
+function pvBind(root) {
+  const instrument = root.querySelector('#pvInstrument');
+  if (instrument) instrument.addEventListener('change', () => {
+    if (!pvConfirmDiscard()) { instrument.value = pvInstrumentId; return; }
+    pvInstrumentId = instrument.value; pvStudyId = null; pvNewStudyOpen = false;
+    renderPivotStudies();
+  });
+
+  const studySelect = root.querySelector('#pvStudy');
+  if (studySelect) studySelect.addEventListener('change', () => {
+    if (!pvConfirmDiscard()) { studySelect.value = pvStudyId; return; }
+    pvStudyId = studySelect.value;
+    renderPivotStudies();
+  });
+
+  const newStudy = root.querySelector('#pvNewStudyBtn');
+  if (newStudy) newStudy.addEventListener('click', () => {
+    if (!pvConfirmDiscard()) return;
+    pvNewStudyOpen = true; renderPivotStudies();
+    const field = document.getElementById('pvPeriodStart');
+    if (field) field.focus();
+  });
+
+  const deleteStudy = root.querySelector('#pvDeleteStudyBtn');
+  if (deleteStudy) deleteStudy.addEventListener('click', pvDeleteStudy);
+
+  ['periodStart', 'periodEnd'].forEach(key => {
+    const input = root.querySelector('#pv' + key.charAt(0).toUpperCase() + key.slice(1));
+    if (input) input.addEventListener('input', () => { pvNewStudyDraft[key] = input.value; });
+  });
+  const create = root.querySelector('#pvCreateStudyBtn');
+  if (create) create.addEventListener('click', pvCreateStudy);
+  const cancelStudy = root.querySelector('#pvCancelStudyBtn');
+  if (cancelStudy) cancelStudy.addEventListener('click', () => {
+    pvNewStudyOpen = false; pvNewStudyDraft = { periodStart: '', periodEnd: '' }; renderPivotStudies();
+  });
+
+  root.querySelectorAll('[data-pv-filter]').forEach(button => {
+    button.addEventListener('click', () => {
+      pvFilters[button.dataset.pvFilter] = button.dataset.pvValue;
+      renderPivotStudies();
+    });
+  });
+  const sort = root.querySelector('#pvSort');
+  if (sort) sort.addEventListener('change', () => {
+    const [key, direction] = sort.value.split(':');
+    pvSort = { key, ascending: direction === 'asc' };
+    renderPivotStudies();
+  });
+
+  const add = root.querySelector('#pvAddPivotBtn');
+  if (add) add.addEventListener('click', () => pvOpenForm(null));
+  root.querySelectorAll('[data-pv-edit]').forEach(button =>
+    button.addEventListener('click', () => { if (pvConfirmDiscard()) pvOpenForm(button.dataset.pvEdit); }));
+  root.querySelectorAll('[data-pv-delete]').forEach(button =>
+    button.addEventListener('click', () => pvDeletePivot(button.dataset.pvDelete)));
+  root.querySelectorAll('[data-pv-goto]').forEach(button =>
+    button.addEventListener('click', () => pvGoToPivot(button.dataset.pvGoto)));
+
+  root.querySelectorAll('[data-pv-field]').forEach(input => {
+    input.addEventListener('input', () => {
+      pvDraft[input.dataset.pvField] = input.value;
+      pvDirty = true;
+      // Calcular não é salvar: a prévia acompanha cada tecla, mas nada é
+      // persistido antes da ação explícita de salvar.
+      pvUpdateDerived();
+    });
+  });
+  const savePivot = root.querySelector('#pvSavePivotBtn');
+  if (savePivot) savePivot.addEventListener('click', pvSavePivot);
+  const cancelPivot = root.querySelector('#pvCancelPivotBtn');
+  if (cancelPivot) cancelPivot.addEventListener('click', () => {
+    if (!pvConfirmDiscard()) return;
+    pvCloseForm(); renderPivotStudies();
+  });
+}
+
+// Superfície pública consumida pelo controlador de views do Execution Board.
+window.JPWPivotsUI = { render: renderPivotStudies };
 </script>
 </body>
 </html>

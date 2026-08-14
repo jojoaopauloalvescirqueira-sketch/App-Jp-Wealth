@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "95b05d69165616f3458c16da12be1ba8d1353bc76752f33dfb1094c32be97a79"
+      "sha256": "0a071eee721dfb3f9f991dd1fa6269656d7b7bd2d88c91b14f1aea45552a0c7f"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "4fa4bdb17acac8635459b244158af9720bb8fe3b681959354de81a25001f1450"
+      "sha256": "6939c58ae3bb1d548216793bbffc12e285245e3f46562e42a5a0af6a0936e1ff"
     },
     {
       "order": 5,
@@ -368,7 +368,7 @@
       "order": 61,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "32f908860f527e8166bb10bdab9f5360e75e09a01a78bf5772f5fe9a5e952c29"
+      "sha256": "4a2a3dd96468b41241b20271946b6eb2c423b8cced05370c9e9be16b86bf7b39"
     },
     {
       "order": 62,
@@ -381,6 +381,18 @@
       "path": "src/js/20-ui/14-nocoda-studies.js",
       "section": "ESTUDOS NOCODA · interface do workspace",
       "sha256": "7dda7e700186309cf41d99da92b69c93140c268d06f6082b8f3586c13018e603"
+    },
+    {
+      "order": 64,
+      "path": "src/js/10-domain/10-pivot-studies.js",
+      "section": "ESTUDOS DOS PIVOTS · nucleo matematico e estatistico (dominio puro)",
+      "sha256": "b2853c1f1856965d6d5b164fb7732e1c386f53e2aa6fda56cf3d1a222eaa3fb5"
+    },
+    {
+      "order": 65,
+      "path": "src/js/20-ui/15-pivot-studies.js",
+      "section": "ESTUDOS DOS PIVOTS · interface do workspace",
+      "sha256": "079dab7f8858b267c2b85074c55a2d58cc0fe5c5a0bd37672c5463d0dc64216c"
     }
   ]
 }
