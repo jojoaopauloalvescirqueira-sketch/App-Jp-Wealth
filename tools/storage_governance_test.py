@@ -390,12 +390,22 @@ def main():
         # nada e o teste não provaria coisa alguma.
         contexto = browser.new_context(viewport=VIEWPORT)
         aba1 = prepare_page(contexto, url)
-        aba2 = prepare_page(contexto, url)
 
-        # Marca de operador em ambas, para distinguir "base apagada" de "base virgem".
+        # Marca de operador, para distinguir "base apagada" de "base virgem".
+        #
+        # ORDEM IMPORTA, e era daqui que vinha a intermitência: antes, aba2 nascia
+        # ANTES desta gravação e depois recarregava. Entre uma coisa e outra ela
+        # mantinha em memória o S anterior, e qualquer gravação assíncrona dela
+        # reescrevia a chave com o valor velho — o reload seguinte lia 0 e a
+        # pré-condição caía. Gravar primeiro, confirmar que a marca chegou À CHAVE,
+        # e só então abrir a segunda aba elimina a janela inteira. As duas abas
+        # continuam vivas e simultâneas quando a limpeza acontece, que é o que a
+        # seção precisa provar.
         aba1.evaluate("() => { S.params.saldoIni = 123456; save(); }")
-        aba2.reload()
-        aba2.wait_for_function("() => typeof S === 'object' && S.params")
+        aba1.wait_for_function(
+            "() => (JSON.parse(localStorage.getItem('jpwealth_v9_state') || '{}').params || {}).saldoIni === 123456")
+
+        aba2 = prepare_page(contexto, url)
         assert aba2.evaluate("() => S.params.saldoIni") == 123456, 'pré-condição: aba2 não leu a base'
 
         aba1.evaluate("""() => {
