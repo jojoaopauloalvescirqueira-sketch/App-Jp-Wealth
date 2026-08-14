@@ -9,7 +9,7 @@ const SETTINGS_GROUPS=[
   {id:'general', label:'Geral', icon:'general'},
   {id:'appearance-interface', label:'Aparência e Interface', desc:'Tema, ícone, organização visual e editor.', icon:'appearance', children:['appearance','interface','editor']},
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
-  {id:'operations', label:'Operação', desc:'Parâmetros do ciclo, Motor de Lote e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-motor','tool-check']},
+  {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational']},
   {id:'probability-lab', label:'Laboratório de Probabilidade', desc:'Experimentos locais de física e estatística, isolados do motor financeiro.', icon:'probability', children:['galton-board']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
@@ -25,7 +25,6 @@ const SETTINGS_LEAVES={
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Diretrizes e regras normativas vigentes.', terms:['estatuto','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
-  'tool-motor':{label:'Motor de Lote', group:'operations', desc:'Position sizing com câmbio atualizado e teto por operação.', terms:['motor de lote','position sizing','lote','câmbio','nocional','teto','instrumento','perfis de risco']},
   'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
   backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar','pasta padrão','pasta de armazenamento','sequência de exportação','backup confirmado','reautorizar pasta','alterações desde o backup']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
@@ -159,7 +158,6 @@ function buildSettingsContent(){
   createSettingsPanel('statute','<p class="settings-lead">Conteúdo predominantemente de leitura. O documento normativo não é editável nesta central.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Abrir documento integral (PDF)</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
   createSettingsPanel('tool-params','<p class="settings-lead">A tela de Parâmetros completa — leituras analíticas com os valores, unidades e persistência originais.</p><div data-settings-slot="tool-params"></div>');
-  createSettingsPanel('tool-motor','<p class="settings-lead">O Motor de Lote completo — cálculo de position sizing com o câmbio, tetos e validações originais.</p><div data-settings-slot="tool-motor"></div>');
   createSettingsPanel('tool-check','<p class="settings-lead">O Checklist Pré-Trade completo — mesma pontuação, mesmos critérios, mesma persistência.</p><div data-settings-slot="tool-check"></div>');
   createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
@@ -203,7 +201,6 @@ function moveSettingsSearchToHeader(){
 // fechar — exatamente o contrato dos nós legados do #config.
 const SETTINGS_SCREEN_GRIDS={
   'tool-params':{grid:'paramsWidgetGrid',host:'params'},
-  'tool-motor':{grid:'motorWidgetGrid',host:'motor'},
   'tool-check':{grid:'checkWidgetGrid',host:'check'}
 };
 function moveLegacySettingsNodes(){
@@ -242,13 +239,6 @@ function activateSettingsCategory(id,options={}){
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
   settingsUpdateSidebarActive(targetId);
   settingsUpdatePageHeader(targetId);
-  // Mesmo gatilho que vivia em navigateToScreen('motor'): 1ª visita ao
-  // Motor de Lote na sessão tenta atualizar o câmbio — silencioso se
-  // offline (o status na própria tela informa, nunca falha em silêncio).
-  if(targetId==='tool-motor' && typeof fxAutoFetchedThisSession!=='undefined' && !fxAutoFetchedThisSession && typeof updateFxRates==='function'){
-    fxAutoFetchedThisSession=true;
-    updateFxRates();
-  }
   if(targetId==='galton-board'&&typeof activateGaltonBoard==='function') activateGaltonBoard();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }

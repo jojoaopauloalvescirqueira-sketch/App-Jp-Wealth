@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+### Motor de Lote migrado para o Execution Board — 2026-08-13
+
+- **`Configurações → Operação → Motor de Lote` virou `Execution Board → Motor de
+  Lote`**, quinto destino do submenu. O acesso antigo foi removido: não existe
+  mais caminho duplicado.
+- **Nenhuma reimplementação.** É o mesmo `#motorWidgetGrid`, movido de dentro da
+  `section#motor` para dentro de `section#exec` — nenhum nó recriado, nenhum id
+  alterado, nenhum listener refeito. `renderMotor()`, os cálculos, os tetos, o
+  câmbio e a persistência ficaram intocados.
+- **Persistência sem mudança alguma:** `S.instruments`, `S.expAlvo` e
+  `ins.unlocked` continuam idênticos. Nenhum schema, migração ou dado tocado.
+- **Cinco estruturas da Central saíram juntas** — `children` do grupo Operação,
+  `SETTINGS_LEAVES`, o painel, o mapa de transporte de DOM e um ramo de gatilho
+  de câmbio. A remoção do transporte era obrigatória:
+  `restoreLegacySettingsNodes()` reanexava o grid à `section#motor` a cada
+  fechamento da Central e o arrancaria de dentro do Execution Board.
+- **Código morto removido:** o gatilho de câmbio "1× por sessão" da Central
+  nunca disparava — `06-boot.js` já o executa no boot, carrega antes e a flag
+  nunca é resetada. O comentário obsoleto em `01-navigation.js` foi corrigido.
+- **Atributos vestigiais removidos** dos dois cards do Motor: `data-layout-card`
+  não estava registrado no motor de layout, mas faria a regra
+  `html[data-layout-editing] .screen.active [data-layout-card] > *` congelar o
+  botão de câmbio, o input de exposição-alvo e as tabelas durante uma sessão de
+  personalização do Execution Board.
+- **Ação Rápida do Dashboard preservada** por `SCREEN_TO_MODULE_VIEW`, irmão do
+  mapa que ele substitui. Sem ele, `navigateToScreen('motor')` limparia todas as
+  telas ativas e sairia sem ativar nenhuma, deixando o app sem tela visível.
+- **Estudos NoCoda inalterado:** continua consumindo `instrumentCatalog()`,
+  derivado de `S.instruments`. O Motor sempre foi outro consumidor da mesma
+  fonte, não a fonte — por isso movê-lo não afeta o NoCoda.
+
 ### Estudos NoCoda — MVP — 2026-08-13
 
 - **Novo destino `Execution Board → Estudos NoCoda`**, terceiro item do submenu,

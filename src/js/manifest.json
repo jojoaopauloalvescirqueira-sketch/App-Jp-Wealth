@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "42f96ac397778b890e81234c55237353113dfc5af5bf54a656ed86b2221e5b27"
+      "sha256": "5e0313dcb26f97d6eecaf8fcf4ff95e68ea5bc245214434eaaad9769f0700bf6"
     },
     {
       "order": 25,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "f6b96908813dfa09c62b3951ca88f4d6162f88f2bf3df056ff80b1f9ffff1c29"
+      "sha256": "839707d808507ae30fb65eec5f3cbef547a51a42bb947b3efa25cc487ad529d1"
     },
     {
       "order": 39,
@@ -368,7 +368,7 @@
       "order": 61,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "e4dde20e187d08a7649abcabd4d9ee6a2de3cbe8c4f7c3199495cae5f9afd193"
+      "sha256": "32f908860f527e8166bb10bdab9f5360e75e09a01a78bf5772f5fe9a5e952c29"
     },
     {
       "order": 62,

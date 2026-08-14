@@ -25,10 +25,12 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_VIEWS = ["overview", "panel", "nocoda", "pivots"]
-EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Estudos NoCoda", "Estudos dos Pivots"]
-# Ids dos containers, na mesma ordem de EXPECTED_VIEWS.
-EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execNocoda", "execPivots"]
+EXPECTED_VIEWS = ["overview", "panel", "nocoda", "pivots", "motor"]
+EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Estudos NoCoda",
+                   "Estudos dos Pivots", "Motor de Lote"]
+# Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
+# proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
+EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execNocoda", "execPivots", "motorWidgetGrid"]
 # Os quatro widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -156,9 +158,9 @@ def run_initial_destination(page):
           view: window.JPWExec.ui.getView(),
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id),
           nestedScreens: document.querySelectorAll('#exec .screen').length,
-          visible: ['execOverview','execWidgetGrid','execNocoda','execPivots']
+          visible: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
             .filter(id => !document.getElementById(id).hidden),
-          inert: ['execOverview','execWidgetGrid','execNocoda','execPivots']
+          inert: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
             .filter(id => document.getElementById(id).inert),
           current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
             ?.getAttribute('aria-current')
@@ -168,7 +170,7 @@ def run_initial_destination(page):
     assert state["screens"] == ["exec"], f"modulo ativo incorreto: {state['screens']}"
     assert state["nestedScreens"] == 0, "workspace virou .screen aninhada — quebra .screen.active/closest"
     assert state["visible"] == ["execOverview"], f"mais de um workspace visivel: {state['visible']}"
-    assert state["inert"] == ["execWidgetGrid", "execNocoda", "execPivots"], f"inert incorreto: {state['inert']}"
+    assert state["inert"] == ["execWidgetGrid", "execNocoda", "execPivots", "motorWidgetGrid"], f"inert incorreto: {state['inert']}"
     assert state["current"] == "page", "destino ativo sem aria-current"
 
 
@@ -190,7 +192,7 @@ def run_panel_equivalence(page):
                           'execLifoMonitor','statusBanner','quarantineBanner','downgradeBanner',
                           'mVRM','iAtr55','lLote','lRisco','archiveOpBtn']
               .filter(id => document.getElementById(id) === null),
-            visible: ['execOverview','execWidgetGrid','execNocoda','execPivots']
+            visible: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
               .filter(id => !document.getElementById(id).hidden)
           };
         }"""
@@ -368,6 +370,119 @@ def run_module_switch(page):
     assert back == {"view": "overview", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
 
 
+def run_motor_migration(page):
+    """O Motor de Lote migrou de Configuracoes para ca — uma so implementacao."""
+    # 1. Alcancavel pelo submenu do Execution Board.
+    page.click("#execNavTrigger")
+    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click('#execNavSubmenu [data-nav-sub-view="motor"]')
+    page.wait_for_function("() => window.JPWExec.ui.getView() === 'motor'")
+
+    estrutura = page.evaluate(
+        """() => {
+          const grid = document.getElementById('motorWidgetGrid');
+          return {
+            grids: document.querySelectorAll('#motorWidgetGrid').length,
+            pai: grid.parentElement.id,
+            visivel: !grid.hidden,
+            sectionMotor: document.getElementById('motor') !== null,
+            // Conteudo operacional intacto, pelos ids que o renderizador usa.
+            ids: ['fxUpdateBtn','fxFetchStatus','mExpAlvo','motorBody','profileBody']
+              .filter(id => document.getElementById(id) === null),
+            linhas: document.querySelectorAll('#motorBody tr').length,
+            perfis: document.querySelectorAll('#profileBody tr').length,
+            // Atributos vestigiais do motor de layout nao podem voltar: a regra
+            // de edicao escopada por TELA congelaria estes controles.
+            layoutCards: document.querySelectorAll('#motorWidgetGrid [data-layout-card]').length
+          };
+        }"""
+    )
+    assert estrutura["grids"] == 1, "o Motor de Lote foi duplicado"
+    assert estrutura["pai"] == "exec", f"grade do Motor fora de section#exec: {estrutura['pai']}"
+    assert estrutura["visivel"], "workspace do Motor nao ficou visivel ao ser selecionado"
+    assert not estrutura["sectionMotor"], "a section#motor hospedeira continuou existindo"
+    assert not estrutura["ids"], f"superficies do Motor ausentes: {estrutura['ids']}"
+    assert estrutura["linhas"] > 0, "tabela de instrumentos vazia — renderMotor() nao alcancou o no migrado"
+    assert estrutura["perfis"] > 0, "tabela de perfis de risco vazia"
+    assert estrutura["layoutCards"] == 0, (
+        "cards do Motor voltaram a ter data-layout-card — a regra "
+        "html[data-layout-editing] .screen.active [data-layout-card] > * os congelaria"
+    )
+
+    # 2. Os controles respondem no lugar novo: os listeners ligados por id no
+    #    boot sobrevivem ao no ter mudado de pai.
+    page.fill("#mExpAlvo", "0.55")
+    page.dispatch_event("#mExpAlvo", "input")
+    assert page.evaluate("() => S.expAlvo") == 0.55, "o input de exposicao-alvo parou de gravar"
+    page.fill("#mExpAlvo", "0.4")
+    page.dispatch_event("#mExpAlvo", "input")
+
+    # 3. Sumiu da Central, sem sobra em nenhuma das cinco estruturas.
+    central = page.evaluate(
+        """() => ({
+          folha: typeof SETTINGS_LEAVES['tool-motor'],
+          emGrupo: SETTINGS_GROUPS.some(g => (g.children || []).includes('tool-motor')),
+          descMenciona: SETTINGS_GROUPS.some(g => /Motor de Lote/i.test(g.desc || '')),
+          transporte: Object.keys(SETTINGS_SCREEN_GRIDS),
+          rotaLegada: typeof SCREEN_TO_SETTINGS_LEAF['motor'],
+          painel: document.querySelector('[data-settings-slot="tool-motor"]') !== null
+        })"""
+    )
+    assert central["folha"] == "undefined", "folha tool-motor continua registrada"
+    assert not central["emGrupo"], "tool-motor continua em children de um grupo"
+    assert not central["descMenciona"], "descricao de grupo ainda menciona Motor de Lote"
+    assert "tool-motor" not in central["transporte"], (
+        "transporte de DOM ainda mapeia tool-motor — restoreLegacySettingsNodes() "
+        "arrancaria o grid de dentro de #exec ao fechar a Central"
+    )
+    assert central["rotaLegada"] == "undefined", "SCREEN_TO_SETTINGS_LEAF ainda desvia motor"
+    assert not central["painel"], "painel tool-motor continua no DOM"
+
+    # 4. Abrir e FECHAR a Central nao pode mover o grid — era o risco principal.
+    page.evaluate("() => openSettingsModal('about')")
+    page.wait_for_timeout(200)
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(300)
+    depois = page.evaluate(
+        "() => ({pai: document.getElementById('motorWidgetGrid').parentElement.id, grids: document.querySelectorAll('#motorWidgetGrid').length})"
+    )
+    assert depois == {"pai": "exec", "grids": 1}, (
+        f"o ciclo abrir/fechar da Central moveu a grade do Motor: {depois}"
+    )
+
+    # 5. A Acao Rapida do Dashboard leva ao workspace, e nao a lugar nenhum.
+    page.click('#nav .tab[data-screen="dash"]')
+    page.wait_for_function("() => document.querySelector('.screen.active')?.id === 'dash'")
+    page.evaluate("() => navigateToScreen('motor')")
+    rota = page.evaluate(
+        """() => ({
+          tela: document.querySelector('.screen.active')?.id || null,
+          view: window.JPWExec.ui.getView(),
+          telasAtivas: document.querySelectorAll('.screen.active').length
+        })"""
+    )
+    assert rota == {"tela": "exec", "view": "motor", "telasAtivas": 1}, (
+        f"navigateToScreen('motor') nao caiu no workspace: {rota}"
+    )
+
+    # 6. O NoCoda continua consumindo a mesma fonte canonica de instrumentos.
+    fonte = page.evaluate(
+        """() => {
+          const cat = instrumentCatalog();
+          const linhas = [...document.querySelectorAll('#motorBody tr td:first-child')]
+            .map(td => instrumentId(td.textContent));
+          return {
+            catalogo: cat.length,
+            todosNoMotor: cat.every(i => linhas.includes(i.id)),
+            semLista: typeof window.NOCODA_INSTRUMENTS === 'undefined'
+          };
+        }"""
+    )
+    assert fonte["catalogo"] > 0, "catalogo de instrumentos vazio"
+    assert fonte["todosNoMotor"], "Motor e catalogo divergiram — deixaram de compartilhar a fonte"
+    assert fonte["semLista"], "surgiu uma lista paralela de instrumentos"
+
+
 def run_no_regression(page):
     """As cinco abas globais continuam ativando suas proprias telas."""
     tabs = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-screen]')].map(el => el.dataset.screen)")
@@ -447,6 +562,7 @@ def main():
             run_focus_and_keyboard(page)
             run_hover_and_pin(page)
             run_module_switch(page)
+            run_motor_migration(page)
             run_no_regression(page)
             run_themes(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
