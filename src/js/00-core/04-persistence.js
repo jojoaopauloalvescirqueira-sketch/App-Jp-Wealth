@@ -526,6 +526,22 @@ function canonicalizeStructuralMetadata(){
       if(ins && typeof ins==='object') ins.name=String(ins.name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     });
   }
+  // Matriz Quadrifásica: catálogo fechado pela MESMA razão das fases acima — nenhuma tela
+  // do app escreve ddmin/ddmax/alav. O card em Parâmetros é somente-leitura (tbody vazio
+  // preenchido por render, sem input), enquanto pMDD/pAlarm/pGenRisk ao lado SÃO editáveis:
+  // a matriz é justamente o que a interface nega ao operador.
+  //
+  // A guarda adiante valida a FORMA (4 linhas, campos numéricos) e por isso deixava passar
+  // qualquer VALOR vindo de arquivo. Um backup com ddmax:0.99/alav:99 atravessava e passava
+  // a definir a fase vigente, o teto de risco e o teto de alavancagem — compute(),
+  // phaseTetoRisco() e o veredito de coerência leem daqui. O terminal exibiria "COERENTE"
+  // com exposição muito além do limite estatutário.
+  //
+  // Isto NÃO altera parâmetro normativo: reconstrói a matriz a partir da fonte oficial
+  // (DEFAULTS, que expressa o Estatuto) em vez de aceitar a do arquivo. Nenhum valor novo
+  // é introduzido e nenhum dado do operador é tocado — ordens, preços, tetos por
+  // instrumento, banimentos e saldos seguem intactos.
+  if(Array.isArray(S.matrix)) S.matrix=structuredClone(DEFAULTS.matrix);
 }
 // ---- Planejamento FX: guarda ESTRUTURAL do agregado no boot ----
 // migrate() roda em load() (06-boot.js) antes dos módulos 05-fx-planning/**

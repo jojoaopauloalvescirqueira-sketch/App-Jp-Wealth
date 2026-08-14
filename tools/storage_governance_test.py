@@ -383,9 +383,50 @@ def main():
         page.close()
         contexto.close()
 
+        # ---- 9. Zona de Perigo atravessa as abas ------------------------------------
+        # Uma exclusão que não se propaga não é exclusão: a outra aba mantém o S inteiro
+        # em memória e a PRIMEIRA gravação dela ressuscitava o documento na chave recém
+        # apagada. As duas páginas nascem do MESMO contexto — sem isso compartilhariam
+        # nada e o teste não provaria coisa alguma.
+        contexto = browser.new_context(viewport=VIEWPORT)
+        aba1 = prepare_page(contexto, url)
+        aba2 = prepare_page(contexto, url)
+
+        # Marca de operador em ambas, para distinguir "base apagada" de "base virgem".
+        aba1.evaluate("() => { S.params.saldoIni = 123456; save(); }")
+        aba2.reload()
+        aba2.wait_for_function("() => typeof S === 'object' && S.params")
+        assert aba2.evaluate("() => S.params.saldoIni") == 123456, 'pré-condição: aba2 não leu a base'
+
+        aba1.evaluate("""() => {
+          window.prompt = () => 'APAGAR'; window.confirm = () => true;
+          wipeAllData();
+          window.prompt = () => null; window.confirm = () => false;
+        }""")
+        aba2.wait_for_function(
+            "() => S && S.params && S.params.saldoIni !== 123456", timeout=5000)
+
+        # A aba remota reagiu: estado zerado E a chave segue apagada depois que ela grava.
+        remoto = aba2.evaluate("""() => {
+          save();                                  // a gravação que antes ressuscitava tudo
+          const bruto = localStorage.getItem('jpwealth_v9_state');
+          return {
+            saldo: S.params.saldoIni,
+            ressuscitou: !!(bruto && bruto.includes('123456')),
+          };
+        }""")
+        assert remoto['saldo'] != 123456, f'aba remota manteve o estado apagado: {remoto}'
+        assert not remoto['ressuscitou'], (
+            'a gravação da aba remota ressuscitou a base apagada — a exclusão não se propagou'
+        )
+        assert_no_errors(aba1.jpwealth_observed)
+        assert_no_errors(aba2.jpwealth_observed)
+        aba1.close(); aba2.close()
+        contexto.close()
+
         browser.close()
     server.shutdown()
-    print('STORAGE GOVERNANCE TEST OK — schema, sequência, colisão, diálogo, termo, 30 dias, migração, wipe e persistência verificados.')
+    print('STORAGE GOVERNANCE TEST OK — schema, sequência, colisão, diálogo, termo, 30 dias, migração, wipe (local e entre abas) e persistência verificados.')
 
 if __name__ == '__main__':
     main()

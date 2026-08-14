@@ -107,16 +107,65 @@ function sessionHandleRemoteFinalization(message){
   initSessionCheckpoint();
   showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
 }
+// ---- Difusão da Zona de Perigo entre abas ----
+// A limpeza total era o único fluxo destrutivo que não avisava as outras abas: a base
+// morria aqui e a PRIMEIRA gravação de uma aba antiga — que ainda tem o S completo em
+// memória — ressuscitava o documento inteiro na chave recém-apagada. Uma exclusão que
+// não se propaga não é exclusão.
+//
+// Reusa canal, fallback por `storage` e dedup por token da finalização, mas com tipo e
+// handler próprios: a SEMÂNTICA das duas limpezas é diferente e não pode ser confundida.
+// Finalizar Sessão remove auxiliares e cópias de recuperação; a Zona de Perigo preserva
+// as duas, e o texto que o operador confirmou promete exatamente isso.
+function sessionNotifyBaseWiped(){
+  const message={type:'jpwealth-base-wiped',token:sessionWipeToken()};
+  sessionLastWipeToken=message.token;
+  if(sessionCrossTabChannel){
+    try{ sessionCrossTabChannel.postMessage(message); }catch(e){}
+  }
+  try{
+    localStorage.setItem(SESSION_WIPE_STORAGE_KEY,JSON.stringify(message));
+    localStorage.removeItem(SESSION_WIPE_STORAGE_KEY);
+  }catch(e){}
+}
+function sessionHandleRemoteBaseWipe(message){
+  if(!message || message.type!=='jpwealth-base-wiped' || message.token===sessionLastWipeToken) return;
+  sessionLastWipeToken=message.token;
+  // Mesma dança de epoch do fluxo local: invalida a geração ANTES de destruir, para que
+  // nenhuma continuação assíncrona iniciada antes daqui regrave o que acabou de ser
+  // apagado. O par block+resume deixa o epoch duas casas à frente.
+  blockJPWealthPersistence();
+  const report=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
+  if(!report.ok){
+    // Nada foi apagado nesta aba: devolve a persistência exatamente como estava.
+    resumeJPWealthPersistence();
+    showSessionNotice('Outra aba apagou a base do JP Wealth, mas algumas chaves não puderam ser removidas neste navegador: '+report.failures.join(', '));
+    return;
+  }
+  S=structuredClone(DEFAULTS);
+  resumeJPWealthPersistence();
+  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
+  window.__onbShown=false; // base vazia → o questionário de início volta, como no fluxo local
+  closeModal();
+  boot();
+  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
+  showSessionNotice('A base do JP Wealth foi apagada em outra aba. Esta aba voltou ao estado inicial; preferências locais de interface e cópias de recuperação existentes foram preservadas.');
+}
+function sessionHandleRemoteMessage(message){
+  if(!message) return;
+  if(message.type==='jpwealth-session-finalized') sessionHandleRemoteFinalization(message);
+  else if(message.type==='jpwealth-base-wiped') sessionHandleRemoteBaseWipe(message);
+}
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
     try{
       sessionCrossTabChannel=new BroadcastChannel(SESSION_WIPE_CHANNEL);
-      sessionCrossTabChannel.addEventListener('message',e=>sessionHandleRemoteFinalization(e.data));
+      sessionCrossTabChannel.addEventListener('message',e=>sessionHandleRemoteMessage(e.data));
     }catch(e){ sessionCrossTabChannel=null; }
   }
   window.addEventListener('storage',e=>{
     if(e.key!==SESSION_WIPE_STORAGE_KEY || !e.newValue) return;
-    try{ sessionHandleRemoteFinalization(JSON.parse(e.newValue)); }catch(error){}
+    try{ sessionHandleRemoteMessage(JSON.parse(e.newValue)); }catch(error){}
   });
 }
 function localStorageKeys(){

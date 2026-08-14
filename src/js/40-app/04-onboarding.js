@@ -2415,7 +2415,7 @@ function renderConfigOnboarding(){
     ${row('Alavancagem da corretora', esc(ob.alavCorretora))}
     ${row('Login da Conta', esc(ob.brokerLogin||''))}${row('Servidor da Corretora', esc(ob.brokerServer||''))}
     ${row('Senha de Investidor', maskedInvestorPassword)}
-    ${row('Início do período', S.params.inicio||'—')}${row('Saldo inicial', fmtMoney2(S.params.saldoIni||0))}
+    ${row('Início do período', esc(S.params.inicio||'—'))}${row('Saldo inicial', fmtMoney2(S.params.saldoIni||0))}
     ${row('Moeda-base da conta', esc(normalizeAccountCurrency(ob.moedaBase)))}
     ${propRulesRows}
     ${row('Sistema de risco', pr.name+' · '+Math.round(pr.pct*100)+'%')}

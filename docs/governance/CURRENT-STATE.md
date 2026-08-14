@@ -1,19 +1,20 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `60ec561e6e60c71090b1490f1dbfb744e9b65dbb`
-- Branch atual: `main`
-- Commit material: `792b705` na branch `feature/exec-motor-migration`
-- Commit de integração: `043da1bd65531682a4a0c01031048f81244c0133`
-- Estado de integração: migração do Motor de Lote commitada e integrada
-  localmente em `main` com autorização do gestor. **Push não executado** — o
-  gestor publica. O teste manual da tela migrada continua pendente.
+Source revision representada: `a5d7b93491ea9eba143431b5adaacbfa85fd4fe9`
+- Branch atual: `fix/security-medium-findings`
+- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
+- Estado de integração: correções dos três achados `Medium` da auditoria de
+  segurança concluídas e validadas tecnicamente; **não commitadas**, não
+  integradas e não publicadas.
+- Migração do Motor de Lote: integrada em `main` (`792b705`, merge `043da1b`,
+  reconciliação `a5d7b93`) e publicada pelo gestor.
 - Histórico já em `origin/main`: segundo nível do Execution Board
   (`d2ad73f` → merge `83a18dd` → `60070a2`) e Estudos NoCoda
   (`c3c5f21` → merge `af229ad` → `60ec561`). Nenhum `git push` foi executado
   nesta sessão em momento algum — a publicação saiu por GitHub Desktop ou por
   outra sessão no mesmo checkout.
-- Build local: `7751a049cfd23dab`.
+- Build local: `7afbb45b9c048ae7`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
@@ -68,37 +69,44 @@ Source revision representada: `60ec561e6e60c71090b1490f1dbfb744e9b65dbb`
   chave de facto; **nenhum campo novo entrou no catálogo**. O agregado
   `S.nocoda` guarda somente causas; geometria nunca persiste. Contrato em
   `docs/architecture/NOCODA-STUDIES.md`.
+- Fronteira de confiança da importação: `canonicalizeStructuralMetadata()` agora
+  reconstrói também a **Matriz Quadrifásica** a partir de `DEFAULTS`, além das
+  chaves estruturais das fases e dos tickers. Um backup adulterado deixa de
+  definir fase vigente, teto de risco e teto de alavancagem.
+- `S.params.inicio` passou a ser escapado no resumo do onboarding — era o único
+  campo do template sem `esc()` e constituía vetor de XSS armazenado.
+- A Zona de Perigo propaga a exclusão para as demais abas pelo canal da
+  Finalização de Sessão, com tipo e handler próprios: ela preserva preferências
+  auxiliares e cópias de recuperação, ao contrário da finalização.
 - `build-id.js` e `dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html` foram
   regenerados somente por `tools/rebuild_monolith.py`.
 
 ## Escopo e autoridade
 
-- N1 + N0-V + N0-D, autoridade A2: migração da superfície de acesso do Motor de
-  Lote, quinto workspace do Execution Board, remoção da folha da Central, teste
-  e documentação arquitetural.
-- **Persistência intocada nesta tarefa.** `DEFAULTS`, `migrate()`, schema,
-  chaves de storage e dados do operador não foram alterados: `S.instruments`,
-  `S.expAlvo` e `ins.unlocked` continuam idênticos. A migração move um nó de
-  DOM e remove registros de navegação — nada mais.
-- N2/N3: fora do escopo. `renderMotor()`, position sizing, tetos, perfis de
-  risco, câmbio, fórmulas, fases, DD/MDD, lote, LIFO, stops, quarentena,
-  contabilidade, MEI-JP, Planejamento FX e Estudos NoCoda não mudaram.
+- N1 + N0-D, autoridade A2: correção dos três achados `Medium` sustentados pela
+  auditoria de segurança, testes de regressão e reconciliação documental.
+- **Nenhum parâmetro normativo foi alterado.** A correção da matriz não
+  introduz, muda ou remove percentual, fator ou limite: ela faz a fonte oficial
+  (`DEFAULTS`, que expressa o Estatuto) prevalecer sobre o arquivo importado,
+  aplicando ao caso a doutrina que a própria função já enunciava para fases e
+  tickers. É restauração de aderência, não mudança de norma.
+- Schema, `schemaVersion`, chaves de storage e dados do operador intocados.
+  Ordens, preços, tetos por instrumento, banimentos e saldos não são alcançados
+  pela canonicalização.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
-  evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch, implementação, commit e merge autorizados e
-  executados. Push e deploy ficam com o gestor.
+  evidências. Nenhuma dependência, endpoint ou integração de rede nova.
+- Git/publicação: branch e implementação autorizadas. Commit, merge e push
+  **não** foram executados nesta tarefa.
 
 ## Evidência deste candidato
 
 | Verificação | Resultado | Escopo/observação |
 |---|---|---|
-| `python3 tools/exec_submenu_test.py` | PASS | Quinto workspace integrado, mais seis blocos novos de migração: uma só implementação, `section#motor` removida, superfícies operacionais presentes, tabelas renderizadas, atributos vestigiais ausentes, controles gravando no lugar novo, cinco estruturas da Central removidas, ciclo abrir/fechar da Central sem mover a grade, Ação Rápida caindo no workspace e catálogo de instrumentos compartilhado. |
-| `python3 tools/settings_modal_test.py` | PASS | A Central abre e navega sem a folha `tool-motor`. |
-| `python3 tools/nocoda_test.py` | PASS | Estudos NoCoda inalterado — continua consumindo `instrumentCatalog()`. |
-| `python3 tools/fx_planning_test.py` | PASS | Planejamento inalterado. |
-| `python3 tools/validate_project.py` | PASS | 63 scripts, 392 IDs estáticos (−1: o id da `section#motor` removida), zero duplicados, portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 21/21 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T230009-full.json`. |
-| Navegador real | NOT_RUN | O gestor ainda não inspecionou a tela migrada. |
+| `python3 tools/import_xss_security_test.py` | PASS | Estendido: fixture passou a incluir `params.inicio` com payload e matriz adulterada (`ddmax:0.99`, `alav:99`); a sonda desenha `renderConfigOnboarding()` e compara `S.matrix` com `DEFAULTS.matrix` **dentro da página**, para não criar segunda cópia da tabela normativa no teste. Antes do rebuild o teste REPROVOU no alvo portátil, provando que a asserção não é vazia. |
+| `python3 tools/storage_governance_test.py` | PASS | Seção 9 nova: duas abas no mesmo contexto, marca de operador, limpeza numa e verificação de que a outra zera **e que a gravação dela não ressuscita a base** — que era exatamente o defeito. |
+| `python3 tools/validate_project.py` | PASS | 63 scripts, 392 IDs estáticos, zero duplicados, portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 21/21 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T235747-full.json`. |
+| Navegador real | NOT_RUN | Nenhuma das telas recentes foi inspecionada por um humano. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 

@@ -40,7 +40,18 @@ def serve():
 def estado_malicioso():
     """Backup adulterado: payload em cada campo estrutural auditado."""
     return {
-        'params': {'saldoIni': 10000, 'saldoAtu': 10000},
+        # params.inicio chegava a innerHTML sem esc() no resumo do onboarding —
+        # cada campo vizinho escapava, este nao. Vetor de stored XSS.
+        'params': {'saldoIni': 10000, 'saldoAtu': 10000, 'inicio': PAYLOAD},
+        # Matriz Quadrifasica: catalogo normativo fechado que nenhuma tela escreve.
+        # A guarda antiga validava so a FORMA, entao estes valores atravessavam e
+        # passavam a definir fase vigente, teto de risco e teto de alavancagem.
+        'matrix': [
+            {'nome': PAYLOAD, 'ddmin': 0, 'ddmax': 0.99, 'alav': 99},
+            {'nome': PAYLOAD, 'ddmin': 0.99, 'ddmax': 0.99, 'alav': 99},
+            {'nome': PAYLOAD, 'ddmin': 0.99, 'ddmax': 0.99, 'alav': 99},
+            {'nome': PAYLOAD, 'ddmin': 0.99, 'ddmax': 0.99, 'alav': 99},
+        ],
         'phaseUnlocked': [True, True, False, False],  # destrava F2: exercita grade ativa + histórico
         'quarantine': {'inicio': PAYLOAD, 'fim': PAYLOAD},
         'transitionLog': [{'fase': 2, 'ts': PAYLOAD, 'resumo': {'x': PAYLOAD}}],
@@ -106,6 +117,7 @@ def sondar(page):
       desenhar('renderMotor', ()=>renderMotor());
       desenhar('renderAuditLog', ()=>renderAuditLog());
       desenhar('renderConfigQuarantine', ()=>renderConfigQuarantine());
+      desenhar('renderConfigOnboarding', ()=>renderConfigOnboarding());
       const conteudo = {
         fases: (document.getElementById('phaseContainer')||{}).innerHTML || '',
         motor: (document.getElementById('motorBody')||{}).innerHTML || '',
@@ -135,6 +147,12 @@ def sondar(page):
         fase0: S.phases[0] ? {title:S.phases[0].title, cls:S.phases[0].cls,
                               faseNome:S.phases[0].faseNome, alavtxt:S.phases[0].alavtxt} : null,
         nomesInstrumentos: S.instruments.map(i => i.name),
+        // Compara com DEFAULTS na propria pagina: repetir a tabela normativa aqui
+        // criaria uma segunda fonte de verdade justamente do que se quer proteger.
+        matrizCanonica: JSON.stringify(S.matrix) === JSON.stringify(DEFAULTS.matrix),
+        matrizAtual: S.matrix,
+        tamResumoOnb: (document.getElementById('cfgOnbSummary')||{}).innerHTML ?
+                      (document.getElementById('cfgOnbSummary').innerHTML||'').length : -1,
         ordensFase0: S.phases[0] ? S.phases[0].orders.length : -1,
         errosRender: erros,
         tamFases: conteudo.fases.length,
@@ -169,6 +187,10 @@ def afirmar_canonico(sonda, rotulo):
         assert nome == '' or nome.isalnum() and nome.isupper() or nome.isdigit(), \
             f'[{rotulo}] nome de instrumento fora do formato de ticker: {nome!r}'
     assert '<' not in ''.join(sonda['nomesInstrumentos']), f'[{rotulo}] marcação sobreviveu em instruments[].name'
+    # A matriz e catalogo fechado: qualquer valor vindo de arquivo tem de ser
+    # descartado em favor da fonte oficial. Sem isto, um backup define os tetos.
+    assert sonda['matrizCanonica'], \
+        f'[{rotulo}] Matriz Quadrifásica do arquivo sobreviveu à importação: {sonda["matrizAtual"]!r}'
 
 
 def suite_maliciosa(browser, url, rotulo):
