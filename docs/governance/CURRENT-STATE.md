@@ -1,10 +1,14 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-14
-Source revision representada: `a188f2948d77a6d43136feeea24e88b6830944da`
+Source revision representada: `a7183646a5be26fac5f422702cec4fb8a12c8053`
 - Branch atual: `main`
-- Commit material: `7a93602` na branch `feature/exec-pivot-studies`
-- Commit de integração: `a188f2948d77a6d43136feeea24e88b6830944da`
+- Commit material: `ed92925` na branch `fix/bug-hunt-findings`
+- Commit de integração: `a7183646a5be26fac5f422702cec4fb8a12c8053`
+- Também integrado: `cdb5b50` na branch `fix/gate-timing-determinism`
+  (merge `b1d0ab29c10aaf6ddf12276f03df781bd48ba0a6`)
+- Submenu Estudos dos Pivots: integrado em `main` (`7a93602`, merge `a188f29`,
+  reconciliação `f1c1f36`).
 - Estado de integração: submenu Estudos dos Pivots commitado e integrado
   localmente em `main` com autorização do gestor. **Push não executado** — a
   publicação fica com o gestor. O teste manual segue pendente: o gestor
@@ -18,7 +22,7 @@ Source revision representada: `a188f2948d77a6d43136feeea24e88b6830944da`
   (`c3c5f21` → merge `af229ad` → `60ec561`). Nenhum `git push` foi executado
   nesta sessão em momento algum — a publicação saiu por GitHub Desktop ou por
   outra sessão no mesmo checkout.
-- Build local: `cbce66f6bce2dc72`.
+- Build local: `fa5b65ae5dd68125`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
@@ -111,12 +115,39 @@ Source revision representada: `a188f2948d77a6d43136feeea24e88b6830944da`
 | `python3 tools/import_xss_security_test.py` | PASS | Estendido: fixture passou a incluir `params.inicio` com payload e matriz adulterada (`ddmax:0.99`, `alav:99`); a sonda desenha `renderConfigOnboarding()` e compara `S.matrix` com `DEFAULTS.matrix` **dentro da página**, para não criar segunda cópia da tabela normativa no teste. Antes do rebuild o teste REPROVOU no alvo portátil, provando que a asserção não é vazia. |
 | `python3 tools/storage_governance_test.py` | PASS | Seção 9 nova: duas abas no mesmo contexto, marca de operador, limpeza numa e verificação de que a outra zera **e que a gravação dela não ressuscita a base** — que era exatamente o defeito. |
 | `python3 tools/validate_project.py` | PASS | 65 scripts, 391 IDs estáticos, zero duplicados, portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 22/22 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260814T102617-full.json`. |
+| `python3 tools/quality_gate.py --tier full` | PASS 24/24 | Rodado SOBRE O MERGE, não só nas branches: duas branches verdes isoladas podem compor um resultado quebrado. Relatório `tools/.artifacts/quality-20260814T143149-full.json`. |
 | `python3 tools/pivot_studies_test.py` | PASS | Novo, no tier `standard`. Submetido a teste de mutação com dez defeitos plantados no produto — os dez foram acusados, provando que as asserções não são vazias. |
 | Estabilidade do harness | PARCIAL | Dois dos três testes intermitentes tiveram a causa **provada e corrigida** (ver abaixo). `nocoda_test.py` segue sem mecanismo identificado: falhou duas vezes em rodadas reais do `--tier full`, e não reproduziu em 19 execuções dirigidas. |
 | Navegador real | NOT_RUN | Nenhuma das telas recentes foi inspecionada por um humano. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
+
+## Caça a bugs por execução real — 2026-08-14
+
+Cinco sondas independentes exercitaram o app em navegador e devolveram 27
+achados brutos; a verificação adversarial foi limitada a **dois por dimensão**,
+de modo que **17 nunca foram verificados**. Dos 10 verificados, 8 sobreviveram e
+foram corrigidos, mais 1 achado por releitura do código dos Pivots. Detalhe de
+cada um no `CHANGELOG.md`.
+
+**Não corrigido, deliberadamente.** O achado de que Finalizar Sessão apagaria os
+Tickets com uma segunda aba aberta **não reproduziu**: a aba remota grava o
+documento já com o Ticket, com ou sem correção — medido instrumentando
+`localStorage.setItem` na aba remota, que registra uma única escrita contendo o
+Ticket nos dois casos. Uma correção chegou a ser escrita e foi **removida** ao
+falhar no teste de mutação. O verificador alegou 4 reproduções; a divergência
+fica registrada em vez de virar código por palpite.
+
+**Defeito introduzido e pego pelo gate.** A primeira versão do gancho que repinta
+o workspace guardava com `typeof execGetView==='function'`. A declaração de
+função é içada, mas o `let execView` que ela lê fica na zona morta temporal na
+primeira execução — `13-exec-views.js` é o script 61 e `boot()` é o 34 — e o boot
+inteiro estourava. Seis checks caíram. A guarda passou a ser o objeto
+`window.JPWExec`, que só existe depois de o módulo avaliar.
+
+**Disciplina aplicada a toda asserção nova:** a correção é revertida e a suíte
+tem de acusar. Duas asserções vazias minhas foram descobertas assim — uma
+chamava função local a outro escopo, outra falhava na assertiva errada.
 
 ## Determinismo do harness
 
