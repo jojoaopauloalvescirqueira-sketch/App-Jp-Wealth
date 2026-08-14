@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+### Correções de segurança da auditoria — 2026-08-13
+
+Os três achados `Medium` que sobreviveram à verificação adversarial. Todos
+compartilhavam o mesmo vetor: um backup adulterado — inclusive o próprio backup
+do operador alterado numa pasta sincronizada, que é o cenário realista.
+
+- **Matriz Quadrifásica deixou de ser aceita do arquivo.** `S.matrix` é catálogo
+  normativo fechado, mas `migrate()` validava só a forma: um backup com
+  `ddmax:0.99`/`alav:99` atravessava e passava a definir fase vigente, teto de
+  risco e teto de alavancagem, com o terminal exibindo "COERENTE" sob exposição
+  muito além do limite estatutário. Agora `canonicalizeStructuralMetadata()` a
+  reconstrói de `DEFAULTS`, pela mesma doutrina já aplicada às fases e aos
+  tickers. **Nenhum valor normativo mudou** — a fonte oficial passou a
+  prevalecer sobre o arquivo.
+- **XSS armazenado em `S.params.inicio` corrigido.** O campo chegava a
+  `innerHTML` sem escape no resumo do onboarding, enquanto todos os vizinhos
+  usavam `esc()`. A varredura do template confirmou que era a única omissão.
+- **Zona de Perigo passou a atravessar as abas.** A limpeza total invalidava a
+  geração de persistência só da própria aba; outra aba mantinha o estado em
+  memória e a primeira gravação dela ressuscitava a base inteira. Reutiliza o
+  canal da Finalização de Sessão com tipo e handler próprios, porque a semântica
+  difere: a Zona de Perigo preserva preferências auxiliares e cópias de
+  recuperação, e o texto que o operador confirma promete exatamente isso.
+- **Reconciliação:** `SECURITY-MODEL.md` registra os três em "Riscos resolvidos"
+  e teve corrigida a contagem de scripts do precache, que estava em 53 (real: 63).
+
 ### Motor de Lote migrado para o Execution Board — 2026-08-13
 
 - **`Configurações → Operação → Motor de Lote` virou `Execution Board → Motor de

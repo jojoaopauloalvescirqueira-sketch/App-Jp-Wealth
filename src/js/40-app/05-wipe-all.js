@@ -36,6 +36,11 @@ function wipeAllData(){
   // block+resume deixa o epoch duas casas à frente, então nenhuma continuação da
   // geração anterior volta a casar.
   resumeJPWealthPersistence();
+  // O epoch só protege ESTA aba. Outra aba aberta mantém o S completo em memória e
+  // ressuscitaria a base inteira na primeira gravação — a exclusão precisa atravessar
+  // as abas para ser exclusão. Mesmo canal da Finalização de Sessão, com semântica
+  // própria (auxiliares e cópias de recuperação preservadas).
+  if(typeof sessionNotifyBaseWiped==='function') sessionNotifyBaseWiped();
   // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
   // junto. Fire-and-forget: sem metadados o handle já seria inerte; limpar evita órfão.
   if(typeof dgFsClearHandle==='function') dgFsClearHandle();

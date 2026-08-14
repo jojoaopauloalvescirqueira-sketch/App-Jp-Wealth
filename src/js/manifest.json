@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "61ddf541008c311bf9bb05ee53141925ed61b2875df0693bbc238dac9ac9b37e"
+      "sha256": "4fa4bdb17acac8635459b244158af9720bb8fe3b681959354de81a25001f1450"
     },
     {
       "order": 5,
@@ -194,13 +194,13 @@
       "order": 32,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "50b73531a4ac4c9c305a682e9f25c0582c88a519c120774c8b4210af30549921"
+      "sha256": "f6810c7f7ce4066dd9cd1029006ee36ce7b9ac301028bf2b535f774dd316ee99"
     },
     {
       "order": 33,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "f8bf8cc9df209b03ee48c21079a6df0a3675baf9cd3c2306d99dcfd078007fd9"
+      "sha256": "2f0ced53e437ad3b5d7efedfcfddcc0e3423bc497ee20da9e7f34a0adc78280e"
     },
     {
       "order": 34,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "492b980c5a025cb3f0366038e2f077db13d47fe1fb6b87a77630b16b4e378a69"
+      "sha256": "394995e19054197502eaaf5659e236402684a1d94c4b9c9efc02203e760722d1"
     },
     {
       "order": 36,

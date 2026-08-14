@@ -5799,7 +5799,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'c6041670391454b3';
+const JP_WEALTH_BUILD_ID = '7afbb45b9c048ae7';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8136,6 +8136,22 @@ function canonicalizeStructuralMetadata(){
       if(ins && typeof ins==='object') ins.name=String(ins.name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     });
   }
+  // Matriz Quadrifásica: catálogo fechado pela MESMA razão das fases acima — nenhuma tela
+  // do app escreve ddmin/ddmax/alav. O card em Parâmetros é somente-leitura (tbody vazio
+  // preenchido por render, sem input), enquanto pMDD/pAlarm/pGenRisk ao lado SÃO editáveis:
+  // a matriz é justamente o que a interface nega ao operador.
+  //
+  // A guarda adiante valida a FORMA (4 linhas, campos numéricos) e por isso deixava passar
+  // qualquer VALOR vindo de arquivo. Um backup com ddmax:0.99/alav:99 atravessava e passava
+  // a definir a fase vigente, o teto de risco e o teto de alavancagem — compute(),
+  // phaseTetoRisco() e o veredito de coerência leem daqui. O terminal exibiria "COERENTE"
+  // com exposição muito além do limite estatutário.
+  //
+  // Isto NÃO altera parâmetro normativo: reconstrói a matriz a partir da fonte oficial
+  // (DEFAULTS, que expressa o Estatuto) em vez de aceitar a do arquivo. Nenhum valor novo
+  // é introduzido e nenhum dado do operador é tocado — ordens, preços, tetos por
+  // instrumento, banimentos e saldos seguem intactos.
+  if(Array.isArray(S.matrix)) S.matrix=structuredClone(DEFAULTS.matrix);
 }
 // ---- Planejamento FX: guarda ESTRUTURAL do agregado no boot ----
 // migrate() roda em load() (06-boot.js) antes dos módulos 05-fx-planning/**
@@ -15166,7 +15182,7 @@ function renderConfigOnboarding(){
     ${row('Alavancagem da corretora', esc(ob.alavCorretora))}
     ${row('Login da Conta', esc(ob.brokerLogin||''))}${row('Servidor da Corretora', esc(ob.brokerServer||''))}
     ${row('Senha de Investidor', maskedInvestorPassword)}
-    ${row('Início do período', S.params.inicio||'—')}${row('Saldo inicial', fmtMoney2(S.params.saldoIni||0))}
+    ${row('Início do período', esc(S.params.inicio||'—'))}${row('Saldo inicial', fmtMoney2(S.params.saldoIni||0))}
     ${row('Moeda-base da conta', esc(normalizeAccountCurrency(ob.moedaBase)))}
     ${propRulesRows}
     ${row('Sistema de risco', pr.name+' · '+Math.round(pr.pct*100)+'%')}
@@ -15251,6 +15267,11 @@ function wipeAllData(){
   // block+resume deixa o epoch duas casas à frente, então nenhuma continuação da
   // geração anterior volta a casar.
   resumeJPWealthPersistence();
+  // O epoch só protege ESTA aba. Outra aba aberta mantém o S completo em memória e
+  // ressuscitaria a base inteira na primeira gravação — a exclusão precisa atravessar
+  // as abas para ser exclusão. Mesmo canal da Finalização de Sessão, com semântica
+  // própria (auxiliares e cópias de recuperação preservadas).
+  if(typeof sessionNotifyBaseWiped==='function') sessionNotifyBaseWiped();
   // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
   // junto. Fire-and-forget: sem metadados o handle já seria inerte; limpar evita órfão.
   if(typeof dgFsClearHandle==='function') dgFsClearHandle();
@@ -15476,16 +15497,65 @@ function sessionHandleRemoteFinalization(message){
   initSessionCheckpoint();
   showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
 }
+// ---- Difusão da Zona de Perigo entre abas ----
+// A limpeza total era o único fluxo destrutivo que não avisava as outras abas: a base
+// morria aqui e a PRIMEIRA gravação de uma aba antiga — que ainda tem o S completo em
+// memória — ressuscitava o documento inteiro na chave recém-apagada. Uma exclusão que
+// não se propaga não é exclusão.
+//
+// Reusa canal, fallback por `storage` e dedup por token da finalização, mas com tipo e
+// handler próprios: a SEMÂNTICA das duas limpezas é diferente e não pode ser confundida.
+// Finalizar Sessão remove auxiliares e cópias de recuperação; a Zona de Perigo preserva
+// as duas, e o texto que o operador confirmou promete exatamente isso.
+function sessionNotifyBaseWiped(){
+  const message={type:'jpwealth-base-wiped',token:sessionWipeToken()};
+  sessionLastWipeToken=message.token;
+  if(sessionCrossTabChannel){
+    try{ sessionCrossTabChannel.postMessage(message); }catch(e){}
+  }
+  try{
+    localStorage.setItem(SESSION_WIPE_STORAGE_KEY,JSON.stringify(message));
+    localStorage.removeItem(SESSION_WIPE_STORAGE_KEY);
+  }catch(e){}
+}
+function sessionHandleRemoteBaseWipe(message){
+  if(!message || message.type!=='jpwealth-base-wiped' || message.token===sessionLastWipeToken) return;
+  sessionLastWipeToken=message.token;
+  // Mesma dança de epoch do fluxo local: invalida a geração ANTES de destruir, para que
+  // nenhuma continuação assíncrona iniciada antes daqui regrave o que acabou de ser
+  // apagado. O par block+resume deixa o epoch duas casas à frente.
+  blockJPWealthPersistence();
+  const report=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
+  if(!report.ok){
+    // Nada foi apagado nesta aba: devolve a persistência exatamente como estava.
+    resumeJPWealthPersistence();
+    showSessionNotice('Outra aba apagou a base do JP Wealth, mas algumas chaves não puderam ser removidas neste navegador: '+report.failures.join(', '));
+    return;
+  }
+  S=structuredClone(DEFAULTS);
+  resumeJPWealthPersistence();
+  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
+  window.__onbShown=false; // base vazia → o questionário de início volta, como no fluxo local
+  closeModal();
+  boot();
+  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
+  showSessionNotice('A base do JP Wealth foi apagada em outra aba. Esta aba voltou ao estado inicial; preferências locais de interface e cópias de recuperação existentes foram preservadas.');
+}
+function sessionHandleRemoteMessage(message){
+  if(!message) return;
+  if(message.type==='jpwealth-session-finalized') sessionHandleRemoteFinalization(message);
+  else if(message.type==='jpwealth-base-wiped') sessionHandleRemoteBaseWipe(message);
+}
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
     try{
       sessionCrossTabChannel=new BroadcastChannel(SESSION_WIPE_CHANNEL);
-      sessionCrossTabChannel.addEventListener('message',e=>sessionHandleRemoteFinalization(e.data));
+      sessionCrossTabChannel.addEventListener('message',e=>sessionHandleRemoteMessage(e.data));
     }catch(e){ sessionCrossTabChannel=null; }
   }
   window.addEventListener('storage',e=>{
     if(e.key!==SESSION_WIPE_STORAGE_KEY || !e.newValue) return;
-    try{ sessionHandleRemoteFinalization(JSON.parse(e.newValue)); }catch(error){}
+    try{ sessionHandleRemoteMessage(JSON.parse(e.newValue)); }catch(error){}
   });
 }
 function localStorageKeys(){

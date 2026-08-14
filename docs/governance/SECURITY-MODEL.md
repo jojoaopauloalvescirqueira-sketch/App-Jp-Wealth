@@ -67,7 +67,28 @@
 
 ## Riscos resolvidos
 
-1. `investorPassword` integrava o estado persistido em texto claro. Resolvido em `e0b59d3`: a senha foi removida da persistencia — o replacer de gravacao a esvazia em toda escrita, e ela permanece disponivel apenas em memoria durante a sessao corrente. Evidencia permanente: `tools/investor_password_test.py`, que verifica que localStorage, checkpoint, backup e migracao de estados antigos nunca carregam o segredo.
+1. **Matriz Quadrifásica aceita de arquivo externo.** `S.matrix` é catálogo
+   normativo fechado — nenhuma tela do app a escreve —, mas `migrate()` validava
+   apenas a FORMA (quatro linhas, campos numéricos). Um backup adulterado com
+   `ddmax`/`alav` arbitrários atravessava e passava a definir fase vigente, teto
+   de risco e teto de alavancagem, com o terminal exibindo coerência. Resolvido
+   em `canonicalizeStructuralMetadata()`, que agora reconstrói a matriz a partir
+   de `DEFAULTS` pela mesma doutrina já aplicada às fases e aos tickers. Nenhum
+   valor normativo foi alterado: a fonte oficial passou a prevalecer sobre o
+   arquivo. Evidência: `tools/import_xss_security_test.py`.
+2. **XSS armazenado em `S.params.inicio`.** O campo chegava a `innerHTML` sem
+   escape no resumo do onboarding (`renderConfigOnboarding()`), enquanto todos os
+   campos vizinhos usavam `esc()`. Vetor: importação de backup. Resolvido pela
+   aplicação do escape; a varredura do template confirmou que era a única
+   omissão. Evidência: `tools/import_xss_security_test.py`.
+3. **Zona de Perigo não propagava entre abas.** `wipeAllData()` invalidava a
+   geração de persistência apenas da própria aba; outra aba aberta mantinha o
+   estado inteiro em memória e a primeira gravação dela ressuscitava a base
+   apagada. Resolvido reutilizando o canal da Finalização de Sessão com tipo e
+   handler próprios — a semântica difere, porque a Zona de Perigo preserva
+   preferências auxiliares e cópias de recuperação. Evidência:
+   `tools/storage_governance_test.py` §9.
+4. `investorPassword` integrava o estado persistido em texto claro. Resolvido em `e0b59d3`: a senha foi removida da persistencia — o replacer de gravacao a esvazia em toda escrita, e ela permanece disponivel apenas em memoria durante a sessao corrente. Evidencia permanente: `tools/investor_password_test.py`, que verifica que localStorage, checkpoint, backup e migracao de estados antigos nunca carregam o segredo.
 
 ## Controles verificados
 
