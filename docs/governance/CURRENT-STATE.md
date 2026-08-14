@@ -113,10 +113,47 @@ Source revision representada: `a188f2948d77a6d43136feeea24e88b6830944da`
 | `python3 tools/validate_project.py` | PASS | 65 scripts, 391 IDs estáticos, zero duplicados, portátil reconstruído. |
 | `python3 tools/quality_gate.py --tier full` | PASS 22/22 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260814T102617-full.json`. |
 | `python3 tools/pivot_studies_test.py` | PASS | Novo, no tier `standard`. Submetido a teste de mutação com dez defeitos plantados no produto — os dez foram acusados, provando que as asserções não são vazias. |
-| Estabilidade do harness | ATENÇÃO | `storage_governance_test.py` (§9), `nocoda_test.py` e `fx_planning_test.py` falharam de forma intermitente sob carga de CPU, sempre em pré-condição de timing e nunca em asserção de produto. Cada um passa 4/4 isolado, e a rodada final é limpa. Causa provável: gravação assíncrona de câmbio (`updateFxRates()`) caindo dentro da janela de comparação. Fora do escopo desta tarefa. |
+| Estabilidade do harness | PARCIAL | Dois dos três testes intermitentes tiveram a causa **provada e corrigida** (ver abaixo). `nocoda_test.py` segue sem mecanismo identificado: falhou duas vezes em rodadas reais do `--tier full`, e não reproduziu em 19 execuções dirigidas. |
 | Navegador real | NOT_RUN | Nenhuma das telas recentes foi inspecionada por um humano. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
+
+## Determinismo do harness
+
+Dois testes falhavam de forma intermitente por **corrida de ordem no próprio
+teste**, nunca por defeito de produto. Os dois mecanismos foram provados
+construindo a falha de propósito, e não esperando ela acontecer:
+
+- `storage_governance_test.py` §9 abria a segunda aba **antes** de a primeira
+  gravar a marca do operador. Enquanto isso a segunda mantinha o `S` anterior em
+  memória, e qualquer gravação dela reescrevia a chave com o valor velho.
+  Demonstrado: com a ordem antiga, um `save()` na segunda aba derruba a chave de
+  `123456` para `10000`, e o reload seguinte lê `10000`. Corrigido gravando
+  primeiro, confirmando a marca **na chave** e só então abrindo a segunda aba —
+  as duas continuam vivas e simultâneas quando a limpeza acontece.
+- `fx_planning_test.py` redimensionava a viewport de 1390 para 1440 e abria a
+  faixa contextual em seguida. O handler de `resize`
+  (`40-app/11-operational-shell.js`) fecha a faixa **transitória**; quando o
+  evento era processado depois da abertura, fechava o que acabara de abrir e o
+  teste acusava focus trap inexistente. Demonstrado: disparar `resize` com a
+  faixa aberta leva `aria-expanded` de `true` para `false`. Corrigido esperando
+  o evento ser efetivamente processado antes de abrir.
+
+`exec_submenu_test.py` tem o mesmo par viewport/faixa, mas **não** é vulnerável:
+ali o clique fixa a faixa, e faixa fixada sobrevive ao `resize` por contrato.
+
+Hipóteses testadas e **descartadas** para os três casos — registradas para não
+serem refeitas: a tempestade de repintura que `updateFxRates()` dispara depois do
+`await` não fecha a faixa e não altera nenhuma das chaves comparadas
+(`params`, `phases`, `ledger`, `instruments`, `accounts`, `fxPlanning`); com a
+rede stubada nenhum par é atualizado, então não há `save()` nem escrita em
+`S.instruments`; e nenhuma deriva de estado foi observada em 7 s de boot ocioso.
+
+`nocoda_test.py:644` (`antes == depois`) permanece **sem mecanismo
+identificado**. Falhou duas vezes em rodadas reais do `--tier full` e não
+reproduziu em 19 execuções dirigidas: 3 isoladas, 8 sob 12 processos de CPU,
+4 sob três suítes Playwright concorrentes e 4 sob 20 processos. Não recebeu
+mudança — corrigir por palpite seria pior que deixar registrado.
 
 Relatórios locais ficam em `tools/.artifacts/` e são ignorados pelo Git. Usar
 somente o artefato cuja árvore corresponda ao estado examinado.

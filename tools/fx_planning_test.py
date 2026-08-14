@@ -631,7 +631,18 @@ def run_ui_flow(browser, url):
         "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null})"
     )
     assert outside_close == {"expanded": "false", "pinned": None}, f"clique externo não fechou: {outside_close}"
+
+    # ORDEM IMPORTA, e era daqui que vinha a intermitência. O handler de resize
+    # fecha a faixa TRANSITÓRIA (40-app/11-operational-shell.js). A viewport volta
+    # de 1390 para 1440 aqui, e o bloco seguinte abre a faixa por teclado: quando
+    # o evento era processado depois da abertura, fechava o que acabara de abrir
+    # e o teste acusava focus trap onde não havia nenhum. Esperar o evento ser
+    # efetivamente PROCESSADO elimina a janela, sem afrouxar o que se verifica.
+    page.evaluate(
+        "() => { window.__resizeSeen = false;"
+        "        window.addEventListener('resize', () => { window.__resizeSeen = true; }, {once: true}); }")
     page.set_viewport_size({"width": 1440, "height": 900})
+    page.wait_for_function("() => window.__resizeSeen === true")
 
     # Tab sai naturalmente da faixa sem criar focus trap; abertura por seta é
     # transitória e não cria o estado fixado.
