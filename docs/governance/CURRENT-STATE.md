@@ -1,13 +1,16 @@
 # Estado atual do projeto
 
-- Data da fotografia: 2026-08-13
-Source revision representada: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
+- Data da fotografia: 2026-08-14
+Source revision representada: `a188f2948d77a6d43136feeea24e88b6830944da`
 - Branch atual: `main`
-- Commit material: `4635794` na branch `fix/security-medium-findings`
-- Commit de integração: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
-- Estado de integração: correções dos três achados `Medium` commitadas e
-  integradas localmente em `main` com autorização do gestor. **Push não
-  executado** — a publicação fica com o gestor. O teste manual segue pendente.
+- Commit material: `7a93602` na branch `feature/exec-pivot-studies`
+- Commit de integração: `a188f2948d77a6d43136feeea24e88b6830944da`
+- Estado de integração: submenu Estudos dos Pivots commitado e integrado
+  localmente em `main` com autorização do gestor. **Push não executado** — a
+  publicação fica com o gestor. O teste manual segue pendente: o gestor
+  autorizou merge e commit sem essa etapa.
+- Correções de segurança dos três achados `Medium`: integradas em `main`
+  (`4635794`, merge `dc55120`, reconciliação `f0aac02`) e publicadas.
 - Migração do Motor de Lote: integrada em `main` (`792b705`, merge `043da1b`,
   reconciliação `a5d7b93`) e publicada pelo gestor.
 - Histórico já em `origin/main`: segundo nível do Execution Board
@@ -15,7 +18,7 @@ Source revision representada: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
   (`c3c5f21` → merge `af229ad` → `60ec561`). Nenhum `git push` foi executado
   nesta sessão em momento algum — a publicação saiu por GitHub Desktop ou por
   outra sessão no mesmo checkout.
-- Build local: `7afbb45b9c048ae7`.
+- Build local: `cbce66f6bce2dc72`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
@@ -23,10 +26,10 @@ Source revision representada: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
 
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
-- `src/js/manifest.json` contém 63 scripts: os 61 anteriores mais
-  `src/js/10-domain/09-nocoda-geometry.js` (62) e
-  `src/js/20-ui/14-nocoda-studies.js` (63). `sw.js`, o HTML e o portátil
-  permanecem reconciliados, e o precache cobre os 63.
+- `src/js/manifest.json` contém 65 scripts: os 63 anteriores mais
+  `src/js/10-domain/10-pivot-studies.js` (64) e
+  `src/js/20-ui/15-pivot-studies.js` (65). `sw.js`, o HTML e o portátil
+  permanecem reconciliados, e o precache cobre os 65.
 - As cinco telas principais compartilham o shell horizontal do protótipo:
   Dashboard, Execution Board, Contas, Contabilidade e Planejamento FX. A
   navegação clássica por sublinhado é o padrão; abaixo de 900 px ela vira uma
@@ -36,8 +39,10 @@ Source revision representada: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
   motivos, métricas, acompanhamento mensal, drawdown e comparação mensal ficam
   preservados em um único disclosure metodológico.
 - Execution Board: segundo nível com cinco workspaces — Visão Geral
-  (estrutural), Painel Operacional, Estudos NoCoda, Estudos dos Pivots
-  (reservado) e Motor de Lote, migrado de Configurações. O Painel Operacional é o próprio `#execWidgetGrid`: clearance
+  (estrutural), Painel Operacional, Estudos NoCoda, Estudos dos Pivots e
+  Motor de Lote, migrado de Configurações. Estudos dos Pivots deixou de ser
+  superfície reservada: guarda estudos por instrumento e período, com CRUD de
+  pivots H1/H4 e estatística descritiva derivada (`S.pivotStudies`). O Painel Operacional é o próprio `#execWidgetGrid`: clearance
   compacto com quatro fatos, Grade e monitor LIFO, com indicadores
   complementares e ATR/VRM em disclosure. Nenhum nó foi movido, os 67 ids
   internos e a ordem normativa foram preservados, e os quatro widgets continuam
@@ -105,8 +110,10 @@ Source revision representada: `dc55120a540a1d3b1a06c8e0d8a09122ec66850c`
 |---|---|---|
 | `python3 tools/import_xss_security_test.py` | PASS | Estendido: fixture passou a incluir `params.inicio` com payload e matriz adulterada (`ddmax:0.99`, `alav:99`); a sonda desenha `renderConfigOnboarding()` e compara `S.matrix` com `DEFAULTS.matrix` **dentro da página**, para não criar segunda cópia da tabela normativa no teste. Antes do rebuild o teste REPROVOU no alvo portátil, provando que a asserção não é vazia. |
 | `python3 tools/storage_governance_test.py` | PASS | Seção 9 nova: duas abas no mesmo contexto, marca de operador, limpeza numa e verificação de que a outra zera **e que a gravação dela não ressuscita a base** — que era exatamente o defeito. |
-| `python3 tools/validate_project.py` | PASS | 63 scripts, 392 IDs estáticos, zero duplicados, portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 21/21 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T235747-full.json`. |
+| `python3 tools/validate_project.py` | PASS | 65 scripts, 391 IDs estáticos, zero duplicados, portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 22/22 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260814T102617-full.json`. |
+| `python3 tools/pivot_studies_test.py` | PASS | Novo, no tier `standard`. Submetido a teste de mutação com dez defeitos plantados no produto — os dez foram acusados, provando que as asserções não são vazias. |
+| Estabilidade do harness | ATENÇÃO | `storage_governance_test.py` (§9), `nocoda_test.py` e `fx_planning_test.py` falharam de forma intermitente sob carga de CPU, sempre em pré-condição de timing e nunca em asserção de produto. Cada um passa 4/4 isolado, e a rodada final é limpa. Causa provável: gravação assíncrona de câmbio (`updateFxRates()`) caindo dentro da janela de comparação. Fora do escopo desta tarefa. |
 | Navegador real | NOT_RUN | Nenhuma das telas recentes foi inspecionada por um humano. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
