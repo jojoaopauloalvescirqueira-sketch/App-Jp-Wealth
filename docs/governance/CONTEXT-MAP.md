@@ -19,6 +19,8 @@
 - Interface: contratos DOM em `index.html`, CSS, script da tela e teste real no
   navegador; navegação global/contextual em
   `docs/architecture/NAVIGATION-HIERARCHY.md`.
+- Estudos NoCoda: `docs/architecture/NOCODA-STUDIES.md` — geometria do canal,
+  identidade de instrumento e o agregado `S.nocoda`.
 - MEI-JP: fonte normativa aplicavel, implementacao MEI, historico patrimonial e auditoria matematica registrada.
 - Governanca/agentes: `AGENTS.md`, esta pagina, `AI-WORKFLOW.md`, `QUALITY-GATES.md` e skills locais.
 

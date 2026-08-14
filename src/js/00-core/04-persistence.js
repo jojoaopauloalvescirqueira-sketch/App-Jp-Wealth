@@ -552,12 +552,46 @@ function fxPlanningNormalizeState(){
   if(!Array.isArray(fx.auditLog)) fx.auditLog=[];
   if(fx.auditLog.length>400) fx.auditLog=fx.auditLog.slice(-400);
 }
+// Estudos NoCoda: guarda ESTRUTURAL de boot. Vive aqui, e não no módulo da
+// feature, porque migrate() roda dentro de load() antes de qualquer script
+// tardio existir — o mesmo motivo dos três normalizadores acima.
+//
+// A guarda é deliberadamente conservadora: descarta apenas o que tem FORMA
+// errada e preserva campos desconhecidos dentro de cada estudo, conforme
+// STATE-SCHEMA.md §3. Não valida a matemática das âncoras — um estudo
+// numericamente incoerente é problema da camada de cálculo, que simplesmente
+// não produz geometria; apagá-lo aqui destruiria entrada do operador em
+// silêncio, no caminho que também atende backup importado.
+function nocodaNormalizeState(){
+  if(!S.nocoda || typeof S.nocoda!=='object' || Array.isArray(S.nocoda))
+    S.nocoda=structuredClone(DEFAULTS.nocoda);
+  const nc=S.nocoda;
+  if(!Number.isFinite(+nc.schemaVersion) || +nc.schemaVersion<1) nc.schemaVersion=1;
+  if(!nc.studies || typeof nc.studies!=='object' || Array.isArray(nc.studies)) nc.studies={};
+  for(const key of Object.keys(nc.studies)){
+    const study=nc.studies[key];
+    // Chave fora da forma canônica de instrumentId() não é descartada: é
+    // REALOCADA para a chave canônica, para não perder memória técnica de uma
+    // base gravada com espaçamento ou caixa diferente.
+    const canonical=String(key).toUpperCase().replace(/[^A-Z0-9]/g,'');
+    if(!study || typeof study!=='object' || Array.isArray(study)){ delete nc.studies[key]; continue; }
+    for(const anchorKey of ['anchor1','anchor2','anchor3']){
+      const a=study[anchorKey];
+      if(!a || typeof a!=='object' || Array.isArray(a)) study[anchorKey]={datetime:'', price:null};
+    }
+    if(canonical && canonical!==key){
+      if(!(canonical in nc.studies)) nc.studies[canonical]=study;
+      delete nc.studies[key];
+    } else if(!canonical){ delete nc.studies[key]; }
+  }
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
   fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
+  nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){

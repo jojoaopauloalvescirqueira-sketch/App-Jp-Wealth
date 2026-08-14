@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+### Estudos NoCoda — MVP — 2026-08-13
+
+- **Novo destino `Execution Board → Estudos NoCoda`**, terceiro item do submenu,
+  entre Painel Operacional e Estudos dos Pivots. Usa a faixa contextual genérica
+  já existente; nenhum controlador paralelo foi criado.
+- **Memória técnica por instrumento:** três âncoras (data/hora + preço) que
+  reconstroem a geometria do Fibo Channel, com dois resultados derivados ao
+  vivo — range entre os níveis −1 e 0, e range da subdivisão de 0,125.
+- **Núcleo matemático isolado** em `src/js/10-domain/09-nocoda-geometry.js`:
+  puro, determinístico, sem DOM, sem `S` e sem `localStorage`. O range é medido
+  projetando a linha 0 até a terceira âncora — nunca por `abs(P3−P1)` ou
+  `abs(P3−P2)`, que ignoram a inclinação. Níveis por índice inteiro, sem
+  acumular `0,125` em laço.
+- **Fonte canônica preservada:** os instrumentos vêm de `instrumentCatalog()`,
+  derivado de `S.instruments`. Não há lista, símbolo ou metadado de instrumento
+  escrito no NoCoda, e o teste falha se aparecer.
+- **`instrumentId()` formaliza a identidade que já existia** — o `name`
+  normalizado, extraído de dentro de `instFor()` para uma função única. Nenhum
+  campo novo no catálogo, nenhuma migração de dado, nenhuma segunda identidade.
+- **Agregado aditivo `S.nocoda`** com guarda estrutural `nocodaNormalizeState()`
+  em `migrate()`. Persiste apenas causas — âncoras e `updatedAt`; toda geometria
+  é recalculada. Estudo de instrumento removido da lista operacional é
+  **preservado**. Estado anterior à feature continua carregando.
+- **Calcular não é salvar:** a prévia atualiza a cada tecla, a persistência só
+  ocorre no clique explícito, e trocar de instrumento com alterações pendentes
+  pede confirmação antes de descartar.
+- **Nada disto autoriza operação:** navegar ou salvar um estudo não altera fase,
+  clearance, risco, alavancagem, ordem, LIFO, quarentena ou contabilidade —
+  verificado por teste de não regressão que compara os domínios operacionais
+  antes e depois.
+- **Teste novo** `tools/nocoda_test.py`, no tier `standard`, com a fixture
+  canônica da especificação e as invariantes de sinal e de nível.
+
 ### Segundo nível do Execution Board e generalização da faixa — 2026-08-13
 
 - **Execution Board ganhou segundo nível** com três destinos, nesta ordem:

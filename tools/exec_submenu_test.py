@@ -25,8 +25,10 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_VIEWS = ["overview", "panel", "pivots"]
-EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Estudos dos Pivots"]
+EXPECTED_VIEWS = ["overview", "panel", "nocoda", "pivots"]
+EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Estudos NoCoda", "Estudos dos Pivots"]
+# Ids dos containers, na mesma ordem de EXPECTED_VIEWS.
+EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execNocoda", "execPivots"]
 # Os quatro widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -154,9 +156,9 @@ def run_initial_destination(page):
           view: window.JPWExec.ui.getView(),
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id),
           nestedScreens: document.querySelectorAll('#exec .screen').length,
-          visible: ['execOverview','execWidgetGrid','execPivots']
+          visible: ['execOverview','execWidgetGrid','execNocoda','execPivots']
             .filter(id => !document.getElementById(id).hidden),
-          inert: ['execOverview','execWidgetGrid','execPivots']
+          inert: ['execOverview','execWidgetGrid','execNocoda','execPivots']
             .filter(id => document.getElementById(id).inert),
           current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
             ?.getAttribute('aria-current')
@@ -166,7 +168,7 @@ def run_initial_destination(page):
     assert state["screens"] == ["exec"], f"modulo ativo incorreto: {state['screens']}"
     assert state["nestedScreens"] == 0, "workspace virou .screen aninhada — quebra .screen.active/closest"
     assert state["visible"] == ["execOverview"], f"mais de um workspace visivel: {state['visible']}"
-    assert state["inert"] == ["execWidgetGrid", "execPivots"], f"inert incorreto: {state['inert']}"
+    assert state["inert"] == ["execWidgetGrid", "execNocoda", "execPivots"], f"inert incorreto: {state['inert']}"
     assert state["current"] == "page", "destino ativo sem aria-current"
 
 
@@ -188,7 +190,7 @@ def run_panel_equivalence(page):
                           'execLifoMonitor','statusBanner','quarantineBanner','downgradeBanner',
                           'mVRM','iAtr55','lLote','lRisco','archiveOpBtn']
               .filter(id => document.getElementById(id) === null),
-            visible: ['execOverview','execWidgetGrid','execPivots']
+            visible: ['execOverview','execWidgetGrid','execNocoda','execPivots']
               .filter(id => !document.getElementById(id).hidden)
           };
         }"""
@@ -287,13 +289,13 @@ def run_focus_and_keyboard(page):
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "pivots"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "nocoda"
     page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "overview"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0]
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "pivots"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[-1]
     page.keyboard.press("ArrowRight")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "overview", "setas nao circulam"
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0], "setas nao circulam"
     page.keyboard.press("Escape")
     assert page.evaluate("() => document.activeElement.id") == "execNavTrigger", "Escape nao devolveu foco"
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "false"

@@ -144,6 +144,10 @@
         <span class="nav-sub-item-title">Painel Operacional</span>
         <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
       </button>
+      <button type="button" data-nav-sub-view="nocoda">
+        <span class="nav-sub-item-title">Estudos NoCoda</span>
+        <span class="nav-sub-item-desc">Âncoras do canal por instrumento</span>
+      </button>
       <button type="button" data-nav-sub-view="pivots">
         <span class="nav-sub-item-title">Estudos dos Pivots</span>
         <span class="nav-sub-item-desc">Superfície reservada</span>
@@ -377,6 +381,10 @@
         </details>
       </div>
     </div>
+    <!-- Estudos NoCoda: memória técnica do canal por instrumento. O conteúdo é
+         renderizado por 20-ui/14-nocoda-studies.js a cada entrada no workspace,
+         porque o seletor deriva do catálogo vivo do Motor de Lote. -->
+    <div class="exec-view" id="execNocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
     <div class="exec-view" id="execPivots" role="region" aria-labelledby="execPivotsTitle" hidden>
       <div class="card">
         <h2 id="execPivotsTitle">Estudos dos Pivots</h2>
@@ -1477,5 +1485,7 @@
 <script src="src/js/30-accounting/05-fx-planning/04-fx-charts.js"></script>
 <script src="src/js/30-accounting/05-fx-planning/05-fx-ui.js"></script>
 <script src="src/js/20-ui/13-exec-views.js"></script>
+<script src="src/js/10-domain/09-nocoda-geometry.js"></script>
+<script src="src/js/20-ui/14-nocoda-studies.js"></script>
 </body>
 </html>
