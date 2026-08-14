@@ -1,18 +1,16 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `af229ad62e043569dd51b83c2674423c26841d84`
-- Branch atual: `main`
-- Commit material: `c3c5f21` na branch `feature/exec-nocoda-studies`
-- Commit de integração: `af229ad62e043569dd51b83c2674423c26841d84`
-- Estado de integração: Estudos NoCoda commitados e integrados localmente em
-  `main` com autorização do gestor. **Push não executado nesta sessão** — o
-  gestor fará a publicação. O teste manual do workspace continua pendente:
-  a autorização de commit foi dada antes dessa inspeção.
-- Nota sobre o remoto: o segundo nível do Execution Board (`d2ad73f`, merge
-  `83a18dd`, reconciliação `60070a2`) foi para `origin/main` por push externo a
-  esta sessão — GitHub Desktop ou outra sessão no mesmo checkout. Nenhum `git
-  push` foi executado aqui.
+Source revision representada: `60ec561e6e60c71090b1490f1dbfb744e9b65dbb`
+- Branch atual: `feature/exec-motor-migration`
+- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
+- Estado de integração: migração do Motor de Lote concluída e validada
+  tecnicamente; **não commitada**, não integrada e não publicada.
+- Histórico já em `origin/main`: segundo nível do Execution Board
+  (`d2ad73f` → merge `83a18dd` → `60070a2`) e Estudos NoCoda
+  (`c3c5f21` → merge `af229ad` → `60ec561`). Nenhum `git push` foi executado
+  nesta sessão em momento algum — a publicação saiu por GitHub Desktop ou por
+  outra sessão no mesmo checkout.
 - Build local: `7751a049cfd23dab`.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
@@ -33,9 +31,9 @@ Source revision representada: `af229ad62e043569dd51b83c2674423c26841d84`
   Notícias e Ações rápidas formam a faixa P2; Evolução e Ritmo usam razão 3:2;
   motivos, métricas, acompanhamento mensal, drawdown e comparação mensal ficam
   preservados em um único disclosure metodológico.
-- Execution Board: segundo nível com quatro workspaces — Visão Geral
-  (estrutural), Painel Operacional, Estudos NoCoda e Estudos dos Pivots
-  (reservado). O Painel Operacional é o próprio `#execWidgetGrid`: clearance
+- Execution Board: segundo nível com cinco workspaces — Visão Geral
+  (estrutural), Painel Operacional, Estudos NoCoda, Estudos dos Pivots
+  (reservado) e Motor de Lote, migrado de Configurações. O Painel Operacional é o próprio `#execWidgetGrid`: clearance
   compacto com quatro fatos, Grade e monitor LIFO, com indicadores
   complementares e ATR/VRM em disclosure. Nenhum nó foi movido, os 67 ids
   internos e a ordem normativa foram preservados, e os quatro widgets continuam
@@ -73,32 +71,32 @@ Source revision representada: `af229ad62e043569dd51b83c2674423c26841d84`
 
 ## Escopo e autoridade
 
-- N1 + N0-V + N0-D, autoridade A2: domínio NoCoda, workspaces do Execution
-  Board, faixa contextual compartilhada, CSS, interações de apresentação, teste
+- N1 + N0-V + N0-D, autoridade A2: migração da superfície de acesso do Motor de
+  Lote, quinto workspace do Execution Board, remoção da folha da Central, teste
   e documentação arquitetural.
-- `DEFAULTS` e `migrate()` receberam o agregado ADITIVO `S.nocoda` com guarda
-  estrutural própria — chave nova com default vazio, sem tocar nenhum agregado
-  existente e sem migração de dado do operador. A identidade de instrumento foi
-  formalizada em função (`instrumentId`) sem acrescentar campo ao catálogo,
-  decisão tomada justamente para não entrar em faixa N2.
-- N2/N3: fora do escopo. Chaves de storage existentes, fórmulas, perfis, fases,
-  DD/MDD, lote, LIFO, stops, quarentena, contabilidade, MEI-JP e regras do
-  Planejamento FX não mudaram semanticamente.
+- **Persistência intocada nesta tarefa.** `DEFAULTS`, `migrate()`, schema,
+  chaves de storage e dados do operador não foram alterados: `S.instruments`,
+  `S.expAlvo` e `ins.unlocked` continuam idênticos. A migração move um nó de
+  DOM e remove registros de navegação — nada mais.
+- N2/N3: fora do escopo. `renderMotor()`, position sizing, tetos, perfis de
+  risco, câmbio, fórmulas, fases, DD/MDD, lote, LIFO, stops, quarentena,
+  contabilidade, MEI-JP, Planejamento FX e Estudos NoCoda não mudaram.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch, implementação, commit e merge autorizados e
-  executados. Push e deploy ficam com o gestor.
+- Git/publicação: branch e implementação autorizadas. Commit, merge e push
+  **não** foram executados nesta tarefa.
 
 ## Evidência deste candidato
 
 | Verificação | Resultado | Escopo/observação |
 |---|---|---|
-| `python3 tools/nocoda_test.py` | PASS | Teste novo: fixture canônica da especificação, rejeição explícita de `abs(P3−P1)` e `abs(P3−P2)`, invariantes P0(T1)=P1 / P0(T2)=P2 / P(−1,T3)=P3, canal horizontal, âncora sobre a linha, interpolação e extrapolação, sinais, seis casos de validação com caso de controle, NaN/Infinity, escala de 65 níveis sem deriva, contagem 8/9, identidade de instrumento, ausência de símbolo hardcoded, seletor derivado, cálculo sem persistir, salvar/recarregar, segundos preservados, `updatedAt`, isolamento entre instrumentos, ciclo de backup, ausência de mutação operacional, estudo preservado após remoção do instrumento e três formas de estado antigo ou malformado. |
-| `python3 tools/exec_submenu_test.py` | PASS | Quarto workspace integrado sem regressão do segundo nível. |
+| `python3 tools/exec_submenu_test.py` | PASS | Quinto workspace integrado, mais seis blocos novos de migração: uma só implementação, `section#motor` removida, superfícies operacionais presentes, tabelas renderizadas, atributos vestigiais ausentes, controles gravando no lugar novo, cinco estruturas da Central removidas, ciclo abrir/fechar da Central sem mover a grade, Ação Rápida caindo no workspace e catálogo de instrumentos compartilhado. |
+| `python3 tools/settings_modal_test.py` | PASS | A Central abre e navega sem a folha `tool-motor`. |
+| `python3 tools/nocoda_test.py` | PASS | Estudos NoCoda inalterado — continua consumindo `instrumentCatalog()`. |
 | `python3 tools/fx_planning_test.py` | PASS | Planejamento inalterado. |
-| `python3 tools/validate_project.py` | PASS | 63 scripts, 393 IDs estáticos, zero duplicados, hashes/ordem coerentes e portátil reconstruído. |
-| `python3 tools/quality_gate.py --tier full` | PASS 21/21 | Candidato final, com `nocoda` registrado no tier `standard`. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T223459-full.json`. |
-| Navegador real | NOT_RUN | O gestor ainda não inspecionou o workspace; toda a evidência é programática. |
+| `python3 tools/validate_project.py` | PASS | 63 scripts, 392 IDs estáticos (−1: o id da `section#motor` removida), zero duplicados, portátil reconstruído. |
+| `python3 tools/quality_gate.py --tier full` | PASS 21/21 | Candidato final. Zero falha e zero `NOT_RUN`; relatório `tools/.artifacts/quality-20260813T230009-full.json`. |
+| Navegador real | NOT_RUN | O gestor ainda não inspecionou a tela migrada. |
 | `git diff --check` | PASS | Dentro do gate. |
 | Build reproduzível | PASS dentro do full | `build-id.js` e portátil derivam das fontes oficiais. |
 

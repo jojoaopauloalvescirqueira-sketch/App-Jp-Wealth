@@ -5799,7 +5799,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'a9616da128609077';
+const JP_WEALTH_BUILD_ID = 'c6041670391454b3';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -5944,6 +5944,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <button type="button" data-nav-sub-view="pivots">
         <span class="nav-sub-item-title">Estudos dos Pivots</span>
         <span class="nav-sub-item-desc">Superfície reservada</span>
+      </button>
+      <button type="button" data-nav-sub-view="motor">
+        <span class="nav-sub-item-title">Motor de Lote</span>
+        <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
       </button>
     </nav>
     <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
@@ -6184,6 +6188,44 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <p class="expl">Superfície reservada. O destino existe para receber especificação funcional própria — nenhum estudo, nível, projeção ou leitura de mercado é calculado aqui.</p>
       </div>
     </div>
+    <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
+         #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
+         nenhum dado tocado. A <section id="motor"> hospedeira foi removida
+         junto com o transporte de DOM da Central, que reanexava este grid a ela
+         a cada fechamento e o arrancaria daqui.
+         Os atributos data-layout-card saíram por serem vestigiais: estes dois
+         cards nunca estiveram registrados no motor de layout. -->
+    <div class="jp-widget-grid" id="motorWidgetGrid" hidden>
+    <div class="card" data-widget-size="full">
+      <h2>Motor de Lote · Position Sizing <span class="art">lote = exp-alvo × saldo ÷ valor nominal</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:10px">
+        O valor nocional do contrato muda com o preço do ativo — isso é mais crítico em instrumentos de valor nominal variável; <b style="color:var(--ink)">US500</b> está suspenso e aparece apenas para referência/histórico até deliberação formal.
+        Para <b style="color:var(--ink)">USDJPY / USDCHF / USDCAD</b> o nocional de 1 lote é fixo em $100.000 (par de base USD) — o preço exibido serve para a conversão da moeda de cotação, não para o nocional.
+        Cada edição de preço grava a data. <span class="stale-fresh">● 0–3 dias</span> ·
+        <span class="stale-warn">● 4–20 dias</span> · <span class="stale-danger">● 21+ dias, não confiável</span>.
+        O <b style="color:var(--ink)">Teto/Op</b> é aplicado nas grades: nenhuma ordem aberta pode exceder o lote máximo do instrumento.
+      </p>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap">
+        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">🔄</span><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Atualizar câmbio agora</button>
+        <span class="fx-status" id="fxFetchStatus">Câmbio: 8 pares via Frankfurter (ECB, diário, sem chave) · US500 suspenso; XAUUSD bloqueado.</span>
+      </div>
+      <div class="field" style="max-width:280px">
+        <label>Exposição-alvo (regime normal)</label>
+        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
+      </div>
+      <div class="jp-table-scroll"><table class="dtable" style="margin-top:8px">
+        <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
+        <tbody id="motorBody"></tbody>
+      </table></div>
+    </div>
+    <div class="card" data-widget-size="full">
+      <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
+      <div class="jp-table-scroll"><table class="dtable">
+        <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
+        <tbody id="profileBody"></tbody>
+      </table></div>
+    </div>
+    </div>
   </section>
 
   <!-- ================= 02 PARÂMETROS ================= -->
@@ -6216,41 +6258,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
         <tbody id="matrixBody"></tbody>
-      </table></div>
-    </div>
-    </div>
-  </section>
-
-  <!-- ================= 03 MOTOR DE LOTE ================= -->
-  <section class="screen" id="motor">
-    <div class="jp-widget-grid" id="motorWidgetGrid">
-    <div class="card" data-layout-card="motor-position-sizing" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Motor de Lote · Position Sizing <span class="art">lote = exp-alvo × saldo ÷ valor nominal</span></h2>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:10px">
-        O valor nocional do contrato muda com o preço do ativo — isso é mais crítico em instrumentos de valor nominal variável; <b style="color:var(--ink)">US500</b> está suspenso e aparece apenas para referência/histórico até deliberação formal.
-        Para <b style="color:var(--ink)">USDJPY / USDCHF / USDCAD</b> o nocional de 1 lote é fixo em $100.000 (par de base USD) — o preço exibido serve para a conversão da moeda de cotação, não para o nocional.
-        Cada edição de preço grava a data. <span class="stale-fresh">● 0–3 dias</span> ·
-        <span class="stale-warn">● 4–20 dias</span> · <span class="stale-danger">● 21+ dias, não confiável</span>.
-        O <b style="color:var(--ink)">Teto/Op</b> é aplicado nas grades: nenhuma ordem aberta pode exceder o lote máximo do instrumento.
-      </p>
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap">
-        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">🔄</span><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Atualizar câmbio agora</button>
-        <span class="fx-status" id="fxFetchStatus">Câmbio: 8 pares via Frankfurter (ECB, diário, sem chave) · US500 suspenso; XAUUSD bloqueado.</span>
-      </div>
-      <div class="field" style="max-width:280px">
-        <label>Exposição-alvo (regime normal)</label>
-        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
-      </div>
-      <div class="jp-table-scroll"><table class="dtable" style="margin-top:8px">
-        <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
-        <tbody id="motorBody"></tbody>
-      </table></div>
-    </div>
-    <div class="card" data-layout-card="motor-risk-profiles" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
-      <div class="jp-table-scroll"><table class="dtable">
-        <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
-        <tbody id="profileBody"></tbody>
       </table></div>
     </div>
     </div>
@@ -12327,12 +12334,20 @@ function bindContab(){
   });
 }
 // ============ NAV ============
-// Telas que migraram para a Central de Configurações (grupo "Operação"):
-// qualquer navegação para elas — Ações Rápidas, CTAs, chamadas por string —
-// abre a Central direto na subpágina equivalente. O gatilho de câmbio do
-// Motor (1× por sessão) vive agora na abertura da subpágina, em
-// 09-settings-modal.js (activateSettingsCategory).
-const SCREEN_TO_SETTINGS_LEAF={params:'tool-params',motor:'tool-motor',check:'tool-check'};
+// Telas que vivem na Central de Configurações (grupo "Operação"): qualquer
+// navegação para elas — Ações Rápidas, CTAs, chamadas por string — abre a
+// Central direto na subpágina equivalente.
+//
+// O gatilho de câmbio do Motor (1× por sessão) NÃO vive aqui e nunca viveu na
+// Central: está em 40-app/06-boot.js, incondicional no boot. O ramo que existia
+// em 09-settings-modal.js era código morto — 06-boot.js carrega antes e a flag
+// nunca é resetada — e saiu junto com a migração do Motor.
+const SCREEN_TO_SETTINGS_LEAF={params:'tool-params',check:'tool-check'};
+// Destinos que deixaram de ser tela própria e viraram workspace de um módulo.
+// Sem este desvio, navigateToScreen('motor') limparia .active de todas as telas
+// e sairia no `if(!screen) return` sem ativar nenhuma — o app ficaria sem tela
+// visível. Mesma forma do mapa acima, que este substitui para o Motor de Lote.
+const SCREEN_TO_MODULE_VIEW={motor:{screen:'exec',view:'motor'}};
 function navigateToScreen(t){
   const screenId=typeof t==='string'?t:t.dataset.screen;
   if(screenId==='config'){
@@ -12342,6 +12357,13 @@ function navigateToScreen(t){
   if(SCREEN_TO_SETTINGS_LEAF[screenId]){
     const opener=typeof t==='string'?(document.activeElement instanceof HTMLElement?document.activeElement:undefined):t;
     if(typeof openSettingsModal==='function') openSettingsModal(SCREEN_TO_SETTINGS_LEAF[screenId],opener);
+    return;
+  }
+  const moduleView=SCREEN_TO_MODULE_VIEW[screenId];
+  if(moduleView){
+    navigateToScreen(moduleView.screen);
+    if(window.JPWExec&&window.JPWExec.ui&&typeof window.JPWExec.ui.selectView==='function')
+      window.JPWExec.ui.selectView(moduleView.view);
     return;
   }
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -15791,7 +15813,7 @@ const SETTINGS_GROUPS=[
   {id:'general', label:'Geral', icon:'general'},
   {id:'appearance-interface', label:'Aparência e Interface', desc:'Tema, ícone, organização visual e editor.', icon:'appearance', children:['appearance','interface','editor']},
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
-  {id:'operations', label:'Operação', desc:'Parâmetros do ciclo, Motor de Lote e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-motor','tool-check']},
+  {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational']},
   {id:'probability-lab', label:'Laboratório de Probabilidade', desc:'Experimentos locais de física e estatística, isolados do motor financeiro.', icon:'probability', children:['galton-board']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
@@ -15807,7 +15829,6 @@ const SETTINGS_LEAVES={
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Diretrizes e regras normativas vigentes.', terms:['estatuto','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
-  'tool-motor':{label:'Motor de Lote', group:'operations', desc:'Position sizing com câmbio atualizado e teto por operação.', terms:['motor de lote','position sizing','lote','câmbio','nocional','teto','instrumento','perfis de risco']},
   'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
   backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar','pasta padrão','pasta de armazenamento','sequência de exportação','backup confirmado','reautorizar pasta','alterações desde o backup']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
@@ -15941,7 +15962,6 @@ function buildSettingsContent(){
   createSettingsPanel('statute','<p class="settings-lead">Conteúdo predominantemente de leitura. O documento normativo não é editável nesta central.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Abrir documento integral (PDF)</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
   createSettingsPanel('tool-params','<p class="settings-lead">A tela de Parâmetros completa — leituras analíticas com os valores, unidades e persistência originais.</p><div data-settings-slot="tool-params"></div>');
-  createSettingsPanel('tool-motor','<p class="settings-lead">O Motor de Lote completo — cálculo de position sizing com o câmbio, tetos e validações originais.</p><div data-settings-slot="tool-motor"></div>');
   createSettingsPanel('tool-check','<p class="settings-lead">O Checklist Pré-Trade completo — mesma pontuação, mesmos critérios, mesma persistência.</p><div data-settings-slot="tool-check"></div>');
   createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
@@ -15985,7 +16005,6 @@ function moveSettingsSearchToHeader(){
 // fechar — exatamente o contrato dos nós legados do #config.
 const SETTINGS_SCREEN_GRIDS={
   'tool-params':{grid:'paramsWidgetGrid',host:'params'},
-  'tool-motor':{grid:'motorWidgetGrid',host:'motor'},
   'tool-check':{grid:'checkWidgetGrid',host:'check'}
 };
 function moveLegacySettingsNodes(){
@@ -16024,13 +16043,6 @@ function activateSettingsCategory(id,options={}){
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
   settingsUpdateSidebarActive(targetId);
   settingsUpdatePageHeader(targetId);
-  // Mesmo gatilho que vivia em navigateToScreen('motor'): 1ª visita ao
-  // Motor de Lote na sessão tenta atualizar o câmbio — silencioso se
-  // offline (o status na própria tela informa, nunca falha em silêncio).
-  if(targetId==='tool-motor' && typeof fxAutoFetchedThisSession!=='undefined' && !fxAutoFetchedThisSession && typeof updateFxRates==='function'){
-    fxAutoFetchedThisSession=true;
-    updateFxRates();
-  }
   if(targetId==='galton-board'&&typeof activateGaltonBoard==='function') activateGaltonBoard();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
@@ -24710,7 +24722,11 @@ const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
   ['nocoda', 'execNocoda'],
-  ['pivots', 'execPivots']
+  ['pivots', 'execPivots'],
+  // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
+  // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
+  // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
+  ['motor', 'motorWidgetGrid']
 ];
 // Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
 // HTML. O NoCoda deriva seu seletor do catalogo vivo do Motor de Lote, entao

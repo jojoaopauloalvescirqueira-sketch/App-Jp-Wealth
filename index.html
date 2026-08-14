@@ -152,6 +152,10 @@
         <span class="nav-sub-item-title">Estudos dos Pivots</span>
         <span class="nav-sub-item-desc">Superfície reservada</span>
       </button>
+      <button type="button" data-nav-sub-view="motor">
+        <span class="nav-sub-item-title">Motor de Lote</span>
+        <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
+      </button>
     </nav>
     <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
          aria-hidden="true" hidden inert>
@@ -391,6 +395,44 @@
         <p class="expl">Superfície reservada. O destino existe para receber especificação funcional própria — nenhum estudo, nível, projeção ou leitura de mercado é calculado aqui.</p>
       </div>
     </div>
+    <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
+         #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
+         nenhum dado tocado. A <section id="motor"> hospedeira foi removida
+         junto com o transporte de DOM da Central, que reanexava este grid a ela
+         a cada fechamento e o arrancaria daqui.
+         Os atributos data-layout-card saíram por serem vestigiais: estes dois
+         cards nunca estiveram registrados no motor de layout. -->
+    <div class="jp-widget-grid" id="motorWidgetGrid" hidden>
+    <div class="card" data-widget-size="full">
+      <h2>Motor de Lote · Position Sizing <span class="art">lote = exp-alvo × saldo ÷ valor nominal</span></h2>
+      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:10px">
+        O valor nocional do contrato muda com o preço do ativo — isso é mais crítico em instrumentos de valor nominal variável; <b style="color:var(--ink)">US500</b> está suspenso e aparece apenas para referência/histórico até deliberação formal.
+        Para <b style="color:var(--ink)">USDJPY / USDCHF / USDCAD</b> o nocional de 1 lote é fixo em $100.000 (par de base USD) — o preço exibido serve para a conversão da moeda de cotação, não para o nocional.
+        Cada edição de preço grava a data. <span class="stale-fresh">● 0–3 dias</span> ·
+        <span class="stale-warn">● 4–20 dias</span> · <span class="stale-danger">● 21+ dias, não confiável</span>.
+        O <b style="color:var(--ink)">Teto/Op</b> é aplicado nas grades: nenhuma ordem aberta pode exceder o lote máximo do instrumento.
+      </p>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap">
+        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">🔄</span><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Atualizar câmbio agora</button>
+        <span class="fx-status" id="fxFetchStatus">Câmbio: 8 pares via Frankfurter (ECB, diário, sem chave) · US500 suspenso; XAUUSD bloqueado.</span>
+      </div>
+      <div class="field" style="max-width:280px">
+        <label>Exposição-alvo (regime normal)</label>
+        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
+      </div>
+      <div class="jp-table-scroll"><table class="dtable" style="margin-top:8px">
+        <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
+        <tbody id="motorBody"></tbody>
+      </table></div>
+    </div>
+    <div class="card" data-widget-size="full">
+      <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
+      <div class="jp-table-scroll"><table class="dtable">
+        <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
+        <tbody id="profileBody"></tbody>
+      </table></div>
+    </div>
+    </div>
   </section>
 
   <!-- ================= 02 PARÂMETROS ================= -->
@@ -423,41 +465,6 @@
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
         <tbody id="matrixBody"></tbody>
-      </table></div>
-    </div>
-    </div>
-  </section>
-
-  <!-- ================= 03 MOTOR DE LOTE ================= -->
-  <section class="screen" id="motor">
-    <div class="jp-widget-grid" id="motorWidgetGrid">
-    <div class="card" data-layout-card="motor-position-sizing" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Motor de Lote · Position Sizing <span class="art">lote = exp-alvo × saldo ÷ valor nominal</span></h2>
-      <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-bottom:10px">
-        O valor nocional do contrato muda com o preço do ativo — isso é mais crítico em instrumentos de valor nominal variável; <b style="color:var(--ink)">US500</b> está suspenso e aparece apenas para referência/histórico até deliberação formal.
-        Para <b style="color:var(--ink)">USDJPY / USDCHF / USDCAD</b> o nocional de 1 lote é fixo em $100.000 (par de base USD) — o preço exibido serve para a conversão da moeda de cotação, não para o nocional.
-        Cada edição de preço grava a data. <span class="stale-fresh">● 0–3 dias</span> ·
-        <span class="stale-warn">● 4–20 dias</span> · <span class="stale-danger">● 21+ dias, não confiável</span>.
-        O <b style="color:var(--ink)">Teto/Op</b> é aplicado nas grades: nenhuma ordem aberta pode exceder o lote máximo do instrumento.
-      </p>
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap">
-        <button class="reset-btn" id="fxUpdateBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">🔄</span><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Atualizar câmbio agora</button>
-        <span class="fx-status" id="fxFetchStatus">Câmbio: 8 pares via Frankfurter (ECB, diário, sem chave) · US500 suspenso; XAUUSD bloqueado.</span>
-      </div>
-      <div class="field" style="max-width:280px">
-        <label>Exposição-alvo (regime normal)</label>
-        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
-      </div>
-      <div class="jp-table-scroll"><table class="dtable" style="margin-top:8px">
-        <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
-        <tbody id="motorBody"></tbody>
-      </table></div>
-    </div>
-    <div class="card" data-layout-card="motor-risk-profiles" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
-      <div class="jp-table-scroll"><table class="dtable">
-        <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
-        <tbody id="profileBody"></tbody>
       </table></div>
     </div>
     </div>

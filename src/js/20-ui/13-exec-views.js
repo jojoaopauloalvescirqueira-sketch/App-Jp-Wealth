@@ -19,7 +19,11 @@ const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
   ['nocoda', 'execNocoda'],
-  ['pivots', 'execPivots']
+  ['pivots', 'execPivots'],
+  // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
+  // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
+  // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
+  ['motor', 'motorWidgetGrid']
 ];
 // Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
 // HTML. O NoCoda deriva seu seletor do catalogo vivo do Motor de Lote, entao
