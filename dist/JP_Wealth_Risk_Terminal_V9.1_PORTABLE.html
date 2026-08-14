@@ -5846,6 +5846,11 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 /* Fora do critério: marcado, nunca escondido e nunca apagado. */
 .pv-outside td{opacity:.72}
 .pv-outside td:first-child{border-left:2px solid var(--f4)}
+/* Sem cálculo possível: alcançável e distinguível. A borda é mais forte que a
+   de "fora do critério" porque aqui não há veredito nenhum a dar. */
+.pv-broken td{opacity:.7}
+.pv-broken td:first-child{border-left:2px solid var(--danger)}
+.pv-broken-note{margin-top:10px}
 .pv-highlight td{background:var(--accent-tint)}
 .pv-row-actions{white-space:nowrap}
 .pv-mini{background:none; border:1px solid var(--line); border-radius:var(--radius-sm);
@@ -5888,7 +5893,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'cbce66f6bce2dc72';
+const JP_WEALTH_BUILD_ID = 'fa5b65ae5dd68125';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8362,8 +8367,45 @@ function pivotStudiesNormalizeState(){
     });
   });
 }
+// ---- S.params: o denominador de tudo ----------------------------------------
+// O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
+// presente no arquivo, nenhuma sub-chave faltante era reposta — e params era o
+// único agregado numérico central sem laço por chave (onboarding, mei e
+// dataGovernance já tinham o seu).
+//
+// A consequência não era um número feio, era um veredito falso: sem saldoIni,
+// compute() faz dd=0 (guarda `p.saldoIni>0 ? … : 0`) e tetoRisco=NaN, logo
+// `excesso>0` é falso e o parecer cai no ramo mais permissivo — o terminal
+// exibia "FASE 1 — OPERACIONAL NORMAL / 🟢 COERENTE" com risco aberto real de
+// US$ 5.000. O mesmo valia para vrmN/vrmHV ausentes, que faziam o regime de
+// volatilidade cair sempre em NORMAL.
+//
+// NENHUM PARÂMETRO NORMATIVO É ALTERADO aqui: os limiares estatutários voltam a
+// vir de DEFAULTS, que é onde o Estatuto está expresso, em vez de ficarem
+// `undefined`. Saldo, saldo atual e data de início são DADO DO OPERADOR e não
+// são inventados — na ausência de saldoIni utilizável o estado é tratado como
+// corrompido e roteado para o modo de recuperação A-005, que preserva a base,
+// bloqueia gravação e avisa. Fabricar um saldo seria pior que falhar.
+const PARAMS_DADOS_DO_OPERADOR=['saldoIni','saldoAtu','inicio'];
+function paramsNormalizeState(){
+  if(!S.params || typeof S.params!=='object' || Array.isArray(S.params))
+    S.params=structuredClone(DEFAULTS.params);
+  for(const k in DEFAULTS.params){
+    if(PARAMS_DADOS_DO_OPERADOR.includes(k)) continue;
+    const ref=DEFAULTS.params[k], atual=S.params[k];
+    if(!(k in S.params)){ S.params[k]=structuredClone(ref); continue; }
+    // Repõe apenas o que tem TIPO errado; valor legítimo do operador atravessa.
+    if(typeof ref==='number' && !(typeof atual==='number' && Number.isFinite(atual))) S.params[k]=ref;
+    else if(typeof ref==='string' && typeof atual!=='string') S.params[k]=ref;
+  }
+  if(!(typeof S.params.saldoIni==='number' && Number.isFinite(S.params.saldoIni)))
+    throw new Error('Estado sem saldo inicial numérico: o denominador de drawdown e do teto de risco não existe.');
+  if(!(typeof S.params.saldoAtu==='number' && Number.isFinite(S.params.saldoAtu))) S.params.saldoAtu=S.params.saldoIni;
+  if(typeof S.params.inicio!=='string') S.params.inicio=String(S.params.inicio==null?'':S.params.inicio);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  paramsNormalizeState(); // antes de tudo: compute() e os tetos leem daqui
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui
@@ -10705,6 +10747,24 @@ function renderPhases(){
         if(o.status==='Aberta'){
           const msg=orderGateMsg(pi,oi);
           if(msg){ o.par=prevPar; sel.value=prevPar||''; alert(msg); return; }
+          // TETO DE RISCO DA FASE: trocar o instrumento muda o risco em USD da
+          // ordem tanto quanto mudar o lote, porque orderRisk() depende de cpl e
+          // da conversão da moeda de cotação — de JPY para USD o fator chega a
+          // duas ordens de grandeza. O ramo de <input> já barrava lote/entry/sl
+          // com esta mesma guarda; a troca de par escapava dela e ultrapassava o
+          // teto consolidado da grade sem alerta, sem reversão e sem o
+          // questionário de transição.
+          //
+          // NENHUM PARÂMETRO NORMATIVO MUDA: aplica-se a checagem que já existe,
+          // com os mesmos limites, a um caminho que estava sem ela. É restauração
+          // de aderência ao Estatuto, não alteração dele.
+          const check=checkPhaseCap(pi,oi);
+          if(check.excede){
+            o.par=prevPar; sel.value=prevPar||'';
+            alert('🚫 TETO DE RISCO — '+phaseCapBreachMessage(pi,check));
+            save(); render(); renderPhases();
+            return;
+          }
         }
       } else {
         S.phases[pi].orders[oi][f]=sel.value;
@@ -11789,10 +11849,23 @@ function normalizeImportedState(raw){
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) throw new Error('JSON inválido: raiz precisa ser um objeto.');
   const candidate = raw.state && typeof raw.state==='object' ? raw.state : raw;
   if(!candidate || typeof candidate!=='object' || Array.isArray(candidate)) throw new Error('Backup sem objeto de estado.');
-  if(!candidate.params || typeof candidate.params!=='object') throw new Error('Backup sem params.');
+  if(!candidate.params || typeof candidate.params!=='object' || Array.isArray(candidate.params)) throw new Error('Backup com params inválido.');
   if(candidate.ledger && !Array.isArray(candidate.ledger)) throw new Error('Backup com ledger inválido.');
   if(candidate.ledgerArchive && !Array.isArray(candidate.ledgerArchive)) throw new Error('Backup com ledgerArchive inválido.');
   if(candidate.phases && !Array.isArray(candidate.phases)) throw new Error('Backup com phases inválido.');
+  // Agregados que os renderizadores percorrem com .map/.forEach SEM guarda de
+  // forma em migrate(). Sem esta recusa, um backup com `checklist:{}` atravessava
+  // validação e migração inteiras sem lançar, e a exceção só estourava em boot() —
+  // DEPOIS de S=imported e da gravação no localStorage. A ordem era fatal: quando
+  // o erro aparecia a base original já não existia, e como migrate() não lançara,
+  // o modo de recuperação A-005 não entrava (sem cópia _corrompido_, sem bloqueio
+  // de gravação, sem faixa de aviso) — o operador ficava com a tela em branco.
+  // Recusar ANTES de tocar em qualquer coisa é o mesmo contrato transacional que
+  // as quatro linhas acima já expressavam.
+  for(const chave of ['checklist','accounts','instruments','profiles','ledgerArchive','transitionLog']){
+    if(chave in candidate && candidate[chave]!=null && !Array.isArray(candidate[chave]))
+      throw new Error('Backup com '+chave+' inválido: esperava lista.');
+  }
   const current=S;
   let imported;
   try{
@@ -11841,6 +11914,13 @@ function importFullBackupFile(file){
     if(jpWealthPersistenceIsBlocked()) resumeJPWealthPersistence();
     const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
     if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
+    // A base foi SUBSTITUÍDA — atravessa as abas pelo mesmo canal da Zona de
+    // Perigo e da Finalização. Sem isto, outra aba mantinha o S anterior em
+    // memória e a primeira gravação dela ressuscitava o documento antigo por
+    // cima do backup recém-restaurado, sem aviso nenhum nas duas telas. Só
+    // difunde depois da gravação comprovada: avisar sobre uma base que não
+    // chegou ao disco faria as outras abas recarregarem o estado errado.
+    if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported();
     boot();
     alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
   };
@@ -13370,8 +13450,15 @@ function openOnboardingModal(mode, initialStep){
         </div>
         <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr)); margin-bottom:12px">
           <div class="metric"><div class="k">Score de Rastreabilidade</div><div class="v sm" style="color:${scoreColor}">${c.score}/100</div>${metricBar(c.score,scoreColor)}<div class="sub">Classificação: ${c.traceClass}</div></div>
-          <div class="metric"><div class="k">Liquidez FCR</div><div class="v sm" style="color:${fcrL.color}">${fcrLiquidity||'—'}</div><div class="sub">${fcrL.label} · FCR ideal D+0/D+1</div></div>
-          <div class="metric"><div class="k">Liquidez FEO</div><div class="v sm" style="color:${feoL.color}">${feoLiquidity||'—'}</div><div class="sub">${feoL.label} · FEO até D+2</div></div>
+          <!-- esc() OBRIGATÓRIO: estes dois vêm de S.onboarding e, portanto, de
+               backup — arquivo externo tratado como hostil por contrato. Pela
+               interface são <select> de opções fixas, mas migrate() não normaliza
+               campo algum de S.onboarding, então o valor do arquivo chega cru
+               aqui. Eram as duas únicas omissões deste painel; todos os vizinhos
+               (esc(reserveNotes), optList()) já escapavam. Mesma classe do
+               achado anterior em S.params.inicio. -->
+          <div class="metric"><div class="k">Liquidez FCR</div><div class="v sm" style="color:${fcrL.color}">${esc(fcrLiquidity)||'—'}</div><div class="sub">${fcrL.label} · FCR ideal D+0/D+1</div></div>
+          <div class="metric"><div class="k">Liquidez FEO</div><div class="v sm" style="color:${feoL.color}">${esc(feoLiquidity)||'—'}</div><div class="sub">${feoL.label} · FEO até D+2</div></div>
         </div>
         <div class="card" style="margin:0; padding:12px; box-shadow:none; background:var(--panel-2)">
           <h2 style="font-size:calc(13px * var(--fs-scale)); margin-bottom:8px">Composição do Caixa Central</h2>
@@ -15693,10 +15780,49 @@ function sessionHandleRemoteBaseWipe(message){
   if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   showSessionNotice('A base do JP Wealth foi apagada em outra aba. Esta aba voltou ao estado inicial; preferências locais de interface e cópias de recuperação existentes foram preservadas.');
 }
+// ---- Difusão da IMPORTAÇÃO de backup entre abas ----
+// Substituir o documento inteiro por outro é destruição da base tanto quanto a
+// Zona de Perigo — e era o único fluxo dessa natureza que não avisava as demais
+// abas. Sem aviso, a aba antiga mantém o S anterior em memória e a PRIMEIRA
+// gravação dela ressuscita o documento inteiro por cima da base que o operador
+// acabou de restaurar. O raciocínio já registrado em 05-wipe-all.js vale aqui
+// palavra por palavra.
+//
+// A semântica, porém, é diferente das outras duas: aqui não se apaga nada — há
+// um documento novo e legítimo na chave. Por isso a aba remota RECARREGA em vez
+// de zerar, e nenhuma chave auxiliar é removida.
+function sessionNotifyBaseImported(){
+  const message={type:'jpwealth-base-imported',token:sessionWipeToken()};
+  sessionLastWipeToken=message.token;
+  if(sessionCrossTabChannel){
+    try{ sessionCrossTabChannel.postMessage(message); }catch(e){}
+  }
+  try{
+    localStorage.setItem(SESSION_WIPE_STORAGE_KEY,JSON.stringify(message));
+    localStorage.removeItem(SESSION_WIPE_STORAGE_KEY);
+  }catch(e){}
+}
+function sessionHandleRemoteBaseImport(message){
+  if(!message || message.type!=='jpwealth-base-imported' || message.token===sessionLastWipeToken) return;
+  sessionLastWipeToken=message.token;
+  // O par block+resume invalida a geração da persistência: qualquer continuação
+  // assíncrona iniciada com o S antigo confere o epoch depois do await e desiste,
+  // em vez de gravar o documento obsoleto sobre o importado.
+  blockJPWealthPersistence();
+  resumeJPWealthPersistence();
+  load();
+  window.__onbShown=true;
+  closeModal();
+  boot();
+  window.__onbShown=false;
+  if(typeof initSessionCheckpoint==='function') initSessionCheckpoint();
+  showSessionNotice('Outra aba importou um backup completo. Esta aba foi recarregada com a base importada — nada do estado anterior foi mantido em memória.');
+}
 function sessionHandleRemoteMessage(message){
   if(!message) return;
   if(message.type==='jpwealth-session-finalized') sessionHandleRemoteFinalization(message);
   else if(message.type==='jpwealth-base-wiped') sessionHandleRemoteBaseWipe(message);
+  else if(message.type==='jpwealth-base-imported') sessionHandleRemoteBaseImport(message);
 }
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){
@@ -15966,6 +16092,28 @@ function boot(){
   // execução (linha final deste arquivo) a função ainda não existe, e o próprio módulo
   // de Notas se renderiza ao carregar (initMvpNotes); aqui cobre todos os boots seguintes.
   if(typeof renderMvpNotesHeader==='function') renderMvpNotesHeader();
+  // A-002, mesma doutrina: os workspaces do Execution Board montados sob demanda
+  // (Estudos NoCoda e Estudos dos Pivots) só são desenhados ao ENTRAR neles, por
+  // EXEC_VIEW_RENDERERS. Quem estivesse com um deles aberto quando S fosse
+  // SUBSTITUÍDO — importação de backup, Zona de Perigo, finalização vinda de
+  // outra aba — continuava vendo a tela do estado anterior, e pior: ela seguia
+  // clicável, com os caminhos de ação morrendo em return silencioso porque o
+  // estudo em foco já não existia. Repintar aqui fecha o ciclo para os dois.
+  // Só o workspace VISÍVEL é redesenhado: montar num container `hidden` não
+  // mede nada e o próprio execSetView() repinta na entrada seguinte.
+  //
+  // A guarda é o OBJETO window.JPWExec, e não `typeof execGetView==='function'`:
+  // 13-exec-views.js é o script 61 e este boot é o 34, então na primeira
+  // execução a declaração de função já está içada — o teste de tipo passaria —
+  // mas o `let execView` que ela lê ainda está na zona morta temporal, e a
+  // chamada estoura com "Cannot access 'execView' before initialization",
+  // derrubando o boot inteiro. O objeto só passa a existir depois que o módulo
+  // termina de avaliar, o que é exatamente a condição que se quer testar.
+  if(window.JPWExec && window.JPWExec.ui && typeof window.JPWExec.ui.getView==='function'){
+    const workspaceVisivel=window.JPWExec.ui.getView();
+    if(workspaceVisivel==='pivots' && window.JPWPivotsUI && typeof window.JPWPivotsUI.render==='function') window.JPWPivotsUI.render();
+    if(workspaceVisivel==='nocoda' && window.JPWNocodaUI && typeof window.JPWNocodaUI.render==='function') window.JPWNocodaUI.render();
+  }
   // Governança de armazenamento (JPW-HJFGDE) — mesmo padrão de guarda: na PRIMEIRA
   // execução o módulo (16-storage-governance.js, script tardio) ainda não carregou e se
   // auto-renderiza ao carregar; aqui cobre os boots seguintes (import, wipe, finalize),
@@ -26004,6 +26152,19 @@ function pvCloseForm() {
   pvFormOpen = false; pvEditingId = null; pvDraft = null; pvDirty = false;
 }
 
+// O estudo em foco sumiu por baixo da tela — outra aba, importação de backup ou
+// limpeza. Repintar ressincroniza a seleção; avisar é o que impede o clique de
+// terminar em nada. O contrato anti-silêncio deste arquivo vale para os três
+// caminhos de ação, não só para o salvar.
+function pvStudyEmFoco(acao) {
+  const study = pvStudyById(pvStudyId);
+  if (study) return study;
+  pvCloseForm();
+  renderPivotStudies();
+  alert('O estudo que estava aberto não existe mais nesta base — ela foi substituída em outra aba, por importação de backup ou por limpeza.\n\nNada foi ' + acao + '. A tela acaba de ser recarregada com o estado atual.');
+  return null;
+}
+
 // ---- render --------------------------------------------------------------
 
 function renderPivotStudies() {
@@ -26094,12 +26255,20 @@ function pvStudyHTML(study, math) {
   // dois, para que o "n" jamais descreva uma amostra diferente da tabela.
   const stats = math.stats(study.pivots, { scope: pvFilters.criterion });
   const records = pvVisibleRecords(study, math);
+  // Registros que não produzem derivados (preços iguais, fim anterior ao início,
+  // preço não numérico) vêm de backup — a normalização de propósito não valida a
+  // matemática, para não apagar entrada do operador em silêncio. Preservar sem
+  // dar acesso, porém, é pior que apagar: o total dizia "1 de 3" e os outros dois
+  // não apareciam em filtro nenhum, sem editar e sem excluir. Ficam aqui, em
+  // linha degradada, com o motivo e as duas ações — fora da amostra, como já
+  // estavam, mas alcançáveis.
+  const quebrados = study.pivots.filter(p => !math.derive(p));
   return `
     <div class="pv-study">
       <p class="pv-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
       ${pvStatsHTML(stats)}
       ${pvFiltersHTML()}
-      ${pvTableHTML(records, stats)}
+      ${pvTableHTML(records, stats, quebrados, math)}
       <div class="pv-actions">
         <button type="button" class="reset-btn" id="pvAddPivotBtn"${pvFormOpen ? ' disabled' : ''}>+ Adicionar Pivot</button>
       </div>
@@ -26219,8 +26388,34 @@ function pvFiltersHTML() {
 
 // Tabela com rótulos por célula (data-label): abaixo de 760px o CSS a converte
 // em cards, sem markup duplicado e sem rolagem horizontal impraticável.
-function pvTableHTML(records, stats) {
-  if (!records.length) {
+// Linha degradada de um registro incalculável: derivados como '—', motivo em
+// palavras e as MESMAS ações da linha normal. Nunca é filtrada — nenhum filtro
+// sabe classificá-la, e escondê-la de novo recriaria o dado preso.
+function pvBrokenRowHTML(pivot, math, index) {
+  const validation = math.validate(pivot);
+  const motivo = (validation.errors && validation.errors.length)
+    ? validation.errors[0].message
+    : 'Registro incompleto para cálculo.';
+  return `
+    <tr data-pv-row="${esc(pivot.id)}" class="pv-broken">
+      <td data-label="#">${index}</td>
+      <td data-label="TF">${esc(pivot.timeframe || '—')}</td>
+      <td data-label="Início">${esc(pvFmtDatetime(pivot.startDatetime))}<span class="pv-cell-sub">${esc(pvFmtPrice(pvMath().parseNumber(pivot.startPrice)))}</span></td>
+      <td data-label="Fim">${esc(pvFmtDatetime(pivot.endDatetime))}<span class="pv-cell-sub">${esc(pvFmtPrice(pvMath().parseNumber(pivot.endPrice)))}</span></td>
+      <td data-label="Direção">—</td>
+      <td data-label="Amplitude">—</td>
+      <td data-label="Duração">—</td>
+      <td data-label="Correção">${pvFmtPct(pvMath().parseNumber(pivot.maxCorrectionPct))}<span class="pv-cell-sub">${esc(motivo)}</span></td>
+      <td data-label="Ações" class="pv-row-actions">
+        <button type="button" class="pv-mini" data-pv-edit="${esc(pivot.id)}">Corrigir</button>
+        <button type="button" class="pv-mini pv-danger" data-pv-delete="${esc(pivot.id)}">Excluir</button>
+      </td>
+    </tr>`;
+}
+
+function pvTableHTML(records, stats, quebrados, math) {
+  const rotos = quebrados || [];
+  if (!records.length && !rotos.length) {
     return `<p class="expl pv-empty">${stats.registered
       ? 'Nenhum pivot atende aos filtros atuais. Os registros continuam gravados.'
       : 'Nenhum pivot registrado neste estudo ainda.'}</p>`;
@@ -26243,15 +26438,16 @@ function pvTableHTML(records, stats) {
   return `
     <div class="jp-table-scroll pv-tablewrap">
       <table class="dtable pv-table">
-        <caption class="pv-caption">${records.length} de ${stats.registered} pivot(s) registrado(s) neste estudo</caption>
+        <caption class="pv-caption">${records.length} de ${stats.registered} pivot(s) registrado(s) neste estudo${rotos.length ? ` · ${rotos.length} sem cálculo` : ''}</caption>
         <thead><tr>
           <th scope="col">#</th><th scope="col">TF</th><th scope="col">Início</th><th scope="col">Fim</th>
           <th scope="col">Direção</th><th scope="col">Amplitude</th><th scope="col">Duração</th>
           <th scope="col">Correção</th><th scope="col">Ações</th>
         </tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rows}${rotos.map((p, i) => pvBrokenRowHTML(p, math, records.length + i + 1)).join('')}</tbody>
       </table>
-    </div>`;
+    </div>
+    ${rotos.length ? `<p class="note pv-broken-note">${rotos.length} registro(s) não produz(em) cálculo e por isso ficam fora da amostra e de qualquer filtro — aparecem no fim da lista, com o motivo. Corrija ou exclua; nada foi apagado.</p>` : ''}`;
 }
 
 // ---- formulário do pivot -------------------------------------------------
@@ -26355,6 +26551,13 @@ function pvCreateStudy() {
     .filter(st => math.periodsOverlap(st.periodStart, st.periodEnd, periodStart, periodEnd));
   if (overlapping.length && !confirm(`Já existe outro estudo deste instrumento com período parcialmente coincidente (${pvFmtDate(overlapping[0].periodStart)} → ${pvFmtDate(overlapping[0].periodEnd)}).\n\nCriar mesmo assim?`)) return;
 
+  // Criar um estudo TROCA o estudo em foco, então segue a mesma guarda de
+  // descarte de todos os outros caminhos de troca (instrumento, estudo, Novo
+  // Estudo, Editar, Cancelar). Sem ela, o painel "Novo estudo" e o formulário de
+  // pivot podiam estar abertos ao mesmo tempo e o rascunho completo do operador
+  // era apagado sem uma palavra. O confirm vem ANTES de criar: cancelar deixa
+  // tudo como estava, e o operador pode salvar o pivot primeiro.
+  if (!pvConfirmDiscard()) return;
   const now = new Date().toISOString();
   const study = {
     id: pivotStudyId(), instrumentId: pvInstrumentId,
@@ -26385,7 +26588,7 @@ function pvDeleteStudy() {
 }
 
 function pvOpenForm(pivotId) {
-  const study = pvStudyById(pvStudyId);
+  const study = pvStudyEmFoco('registrado');
   if (!study) return;
   if (pivotId) {
     const pivot = study.pivots.find(p => p.id === pivotId);
@@ -26411,8 +26614,9 @@ function pvOpenForm(pivotId) {
 
 function pvSavePivot() {
   const math = pvMath();
-  const study = pvStudyById(pvStudyId);
-  if (!math || !study) return;
+  if (!math) return;
+  const study = pvStudyEmFoco('salvo');
+  if (!study) return;
   const validation = math.validate(pvDraft);
   pvShowErrors(validation.errors || []);
   if (!validation.ok) return;
@@ -26443,7 +26647,7 @@ function pvSavePivot() {
 }
 
 function pvDeletePivot(pivotId) {
-  const study = pvStudyById(pvStudyId);
+  const study = pvStudyEmFoco('excluído');
   if (!study) return;
   const pivot = study.pivots.find(p => p.id === pivotId);
   if (!pivot) return;

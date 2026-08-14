@@ -298,6 +298,24 @@ function renderPhases(){
         if(o.status==='Aberta'){
           const msg=orderGateMsg(pi,oi);
           if(msg){ o.par=prevPar; sel.value=prevPar||''; alert(msg); return; }
+          // TETO DE RISCO DA FASE: trocar o instrumento muda o risco em USD da
+          // ordem tanto quanto mudar o lote, porque orderRisk() depende de cpl e
+          // da conversão da moeda de cotação — de JPY para USD o fator chega a
+          // duas ordens de grandeza. O ramo de <input> já barrava lote/entry/sl
+          // com esta mesma guarda; a troca de par escapava dela e ultrapassava o
+          // teto consolidado da grade sem alerta, sem reversão e sem o
+          // questionário de transição.
+          //
+          // NENHUM PARÂMETRO NORMATIVO MUDA: aplica-se a checagem que já existe,
+          // com os mesmos limites, a um caminho que estava sem ela. É restauração
+          // de aderência ao Estatuto, não alteração dele.
+          const check=checkPhaseCap(pi,oi);
+          if(check.excede){
+            o.par=prevPar; sel.value=prevPar||'';
+            alert('🚫 TETO DE RISCO — '+phaseCapBreachMessage(pi,check));
+            save(); render(); renderPhases();
+            return;
+          }
         }
       } else {
         S.phases[pi].orders[oi][f]=sel.value;

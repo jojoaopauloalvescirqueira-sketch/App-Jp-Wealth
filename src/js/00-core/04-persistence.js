@@ -649,8 +649,45 @@ function pivotStudiesNormalizeState(){
     });
   });
 }
+// ---- S.params: o denominador de tudo ----------------------------------------
+// O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
+// presente no arquivo, nenhuma sub-chave faltante era reposta — e params era o
+// único agregado numérico central sem laço por chave (onboarding, mei e
+// dataGovernance já tinham o seu).
+//
+// A consequência não era um número feio, era um veredito falso: sem saldoIni,
+// compute() faz dd=0 (guarda `p.saldoIni>0 ? … : 0`) e tetoRisco=NaN, logo
+// `excesso>0` é falso e o parecer cai no ramo mais permissivo — o terminal
+// exibia "FASE 1 — OPERACIONAL NORMAL / 🟢 COERENTE" com risco aberto real de
+// US$ 5.000. O mesmo valia para vrmN/vrmHV ausentes, que faziam o regime de
+// volatilidade cair sempre em NORMAL.
+//
+// NENHUM PARÂMETRO NORMATIVO É ALTERADO aqui: os limiares estatutários voltam a
+// vir de DEFAULTS, que é onde o Estatuto está expresso, em vez de ficarem
+// `undefined`. Saldo, saldo atual e data de início são DADO DO OPERADOR e não
+// são inventados — na ausência de saldoIni utilizável o estado é tratado como
+// corrompido e roteado para o modo de recuperação A-005, que preserva a base,
+// bloqueia gravação e avisa. Fabricar um saldo seria pior que falhar.
+const PARAMS_DADOS_DO_OPERADOR=['saldoIni','saldoAtu','inicio'];
+function paramsNormalizeState(){
+  if(!S.params || typeof S.params!=='object' || Array.isArray(S.params))
+    S.params=structuredClone(DEFAULTS.params);
+  for(const k in DEFAULTS.params){
+    if(PARAMS_DADOS_DO_OPERADOR.includes(k)) continue;
+    const ref=DEFAULTS.params[k], atual=S.params[k];
+    if(!(k in S.params)){ S.params[k]=structuredClone(ref); continue; }
+    // Repõe apenas o que tem TIPO errado; valor legítimo do operador atravessa.
+    if(typeof ref==='number' && !(typeof atual==='number' && Number.isFinite(atual))) S.params[k]=ref;
+    else if(typeof ref==='string' && typeof atual!=='string') S.params[k]=ref;
+  }
+  if(!(typeof S.params.saldoIni==='number' && Number.isFinite(S.params.saldoIni)))
+    throw new Error('Estado sem saldo inicial numérico: o denominador de drawdown e do teto de risco não existe.');
+  if(!(typeof S.params.saldoAtu==='number' && Number.isFinite(S.params.saldoAtu))) S.params.saldoAtu=S.params.saldoIni;
+  if(typeof S.params.inicio!=='string') S.params.inicio=String(S.params.inicio==null?'':S.params.inicio);
+}
 function migrate(){ // garante chaves novas se schema evoluir
   for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  paramsNormalizeState(); // antes de tudo: compute() e os tetos leem daqui
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
   dgNormalizeState(); // governança da base (JPW-HJFGDE): mesma regra — defaults acima, forma aqui

@@ -251,10 +251,23 @@ function normalizeImportedState(raw){
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) throw new Error('JSON inválido: raiz precisa ser um objeto.');
   const candidate = raw.state && typeof raw.state==='object' ? raw.state : raw;
   if(!candidate || typeof candidate!=='object' || Array.isArray(candidate)) throw new Error('Backup sem objeto de estado.');
-  if(!candidate.params || typeof candidate.params!=='object') throw new Error('Backup sem params.');
+  if(!candidate.params || typeof candidate.params!=='object' || Array.isArray(candidate.params)) throw new Error('Backup com params inválido.');
   if(candidate.ledger && !Array.isArray(candidate.ledger)) throw new Error('Backup com ledger inválido.');
   if(candidate.ledgerArchive && !Array.isArray(candidate.ledgerArchive)) throw new Error('Backup com ledgerArchive inválido.');
   if(candidate.phases && !Array.isArray(candidate.phases)) throw new Error('Backup com phases inválido.');
+  // Agregados que os renderizadores percorrem com .map/.forEach SEM guarda de
+  // forma em migrate(). Sem esta recusa, um backup com `checklist:{}` atravessava
+  // validação e migração inteiras sem lançar, e a exceção só estourava em boot() —
+  // DEPOIS de S=imported e da gravação no localStorage. A ordem era fatal: quando
+  // o erro aparecia a base original já não existia, e como migrate() não lançara,
+  // o modo de recuperação A-005 não entrava (sem cópia _corrompido_, sem bloqueio
+  // de gravação, sem faixa de aviso) — o operador ficava com a tela em branco.
+  // Recusar ANTES de tocar em qualquer coisa é o mesmo contrato transacional que
+  // as quatro linhas acima já expressavam.
+  for(const chave of ['checklist','accounts','instruments','profiles','ledgerArchive','transitionLog']){
+    if(chave in candidate && candidate[chave]!=null && !Array.isArray(candidate[chave]))
+      throw new Error('Backup com '+chave+' inválido: esperava lista.');
+  }
   const current=S;
   let imported;
   try{
@@ -303,6 +316,13 @@ function importFullBackupFile(file){
     if(jpWealthPersistenceIsBlocked()) resumeJPWealthPersistence();
     const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
     if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
+    // A base foi SUBSTITUÍDA — atravessa as abas pelo mesmo canal da Zona de
+    // Perigo e da Finalização. Sem isto, outra aba mantinha o S anterior em
+    // memória e a primeira gravação dela ressuscitava o documento antigo por
+    // cima do backup recém-restaurado, sem aviso nenhum nas duas telas. Só
+    // difunde depois da gravação comprovada: avisar sobre uma base que não
+    // chegou ao disco faria as outras abas recarregarem o estado errado.
+    if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported();
     boot();
     alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
   };

@@ -2,6 +2,93 @@
 
 ## [Unreleased]
 
+### Correções da caça a bugs por execução real — 2026-08-14
+
+Oito achados confirmados por execução em navegador e reproduzidos de forma
+independente por um segundo verificador, mais um que eu mesmo achei relendo o
+código dos Pivots. **Um deles não sobreviveu à minha própria tentativa de
+reprodução e por isso NÃO virou código** — está registrado abaixo.
+
+**Segurança**
+
+- **XSS armazenado no Mapa de Liquidez do questionário de início.**
+  `S.onboarding.fcrLiquidity` e `feoLiquidity` chegavam a `innerHTML` sem
+  `esc()`, enquanto todos os vizinhos do mesmo painel já escapavam. Pela
+  interface são `<select>` de opções fixas, mas `migrate()` não normaliza campo
+  algum de `S.onboarding` — o vetor é o backup, que o projeto trata como arquivo
+  externo hostil. Verificado: um payload usando só APIs do app alterava o MDD
+  estatutário e destravava as quatro fases.
+
+**Integridade do estado**
+
+- **Backup com agregado de forma errada era gravado antes de quebrar.**
+  `checklist`, `accounts` ou `instruments` vindos como objeto atravessavam
+  validação e migração sem lançar; `S=imported` e a gravação aconteciam **antes**
+  de `boot()`, que só então estourava. Quando o erro aparecia a base original já
+  não existia, e como `migrate()` não lançara o modo de recuperação A-005 não
+  entrava: sem cópia, sem bloqueio, sem aviso, tela em branco. Agora a recusa
+  acontece antes de tocar em qualquer coisa.
+- **`migrate()` não repunha sub-chaves de `S.params`.** O laço genérico só cobre
+  o primeiro nível. Sem `saldoIni`, `compute()` fazia `dd=0` e `tetoRisco=NaN`, e
+  o veredito caía no ramo mais permissivo — o terminal exibia "FASE 1 —
+  OPERACIONAL NORMAL / COERENTE" com risco aberto real de US$ 5.000. Limiares
+  normativos ausentes voltam de `DEFAULTS`; **saldo e data não são inventados** —
+  na falta do denominador o estado é tratado como corrompido e roteado para a
+  recuperação, que preserva a base.
+- **Importação de backup não atravessava as abas.** Era o único fluxo que
+  substitui o documento inteiro sem avisar as demais: a primeira gravação da aba
+  antiga ressuscitava a base anterior por cima do que o operador acabara de
+  restaurar. Passa a difundir pelo mesmo canal da Zona de Perigo e da
+  Finalização, com semântica própria — a aba remota recarrega em vez de zerar.
+
+**Limite estatutário**
+
+- **Troca de par na grade escapava do teto de risco da fase.** O ramo de
+  `<input>` aplicava `checkPhaseCap()` a lote, entrada e stop; a troca de
+  instrumento não passava por ela, e o risco em USD muda por fator de até duas
+  ordens de grandeza com a moeda de cotação. **Nenhum parâmetro normativo mudou**
+  — aplica-se a checagem que já existia, com os mesmos limites, a um caminho que
+  estava sem ela.
+
+**Estudos dos Pivots**
+
+- **Workspace montado sob demanda não repintava quando `S` era substituído.**
+  Quem estivesse com Estudos NoCoda ou Estudos dos Pivots aberto durante uma
+  importação continuava vendo — e clicando — um estudo que a importação acabara
+  de eliminar, com os três caminhos de ação morrendo em `return` silencioso.
+  `boot()` passa a repintar o workspace visível, e as ações avisam em vez de não
+  fazer nada.
+- **Criar estudo descartava o rascunho de pivot sem perguntar**, ao contrário de
+  todos os outros caminhos que trocam o foco.
+- **Pivot sem cálculo possível ficava preso.** Vindo de backup, era contado no
+  total ("1 de 3") mas não aparecia em filtro nenhum, sem editar e sem excluir —
+  preservar sem dar acesso é pior que apagar. Agora aparece em linha degradada,
+  com o motivo e as duas ações.
+
+**Não corrigido, e por quê**
+
+- O achado de que **Finalizar Sessão apagaria os Tickets** com uma segunda aba
+  aberta **não reproduziu aqui**: a aba remota grava o documento já com o Ticket,
+  com ou sem correção. Uma correção chegou a ser escrita e foi **removida** ao
+  não passar no teste de mutação. Fica registrado em `CURRENT-STATE.md`.
+- Dos 27 achados brutos da caça, **17 nunca foram verificados** — a verificação
+  adversarial foi limitada a dois por dimensão. Os 8 confirmados vieram desse
+  subconjunto.
+
+**Defeito introduzido e pego pelo gate:** a primeira versão do gancho de repintura
+guardava com `typeof execGetView==='function'`. A declaração de função é içada,
+mas o `let execView` que ela lê fica na zona morta temporal na primeira execução
+— o boot inteiro estourava. A guarda passou a ser o objeto `window.JPWExec`, que
+só existe depois de o módulo avaliar.
+
+**Testes:** dois arquivos novos no tier `standard` —
+`tools/order_guards_test.py` (guarda estatutária, com caso de controle que
+falharia se a guarda recusasse tudo) e `tools/state_integrity_test.py` (backup
+hostil, backfill de params, importação entre abas). `pivot_studies_test.py` e
+`import_xss_security_test.py` foram estendidos. Todas as asserções novas passaram
+por teste de mutação: a correção é revertida e a suíte tem de acusar. Gate
+`--tier full` PASS 24/24.
+
 ### Estudos dos Pivots — MVP — 2026-08-14
 
 Quarto destino do Execution Board deixa de ser superfície reservada e recebe

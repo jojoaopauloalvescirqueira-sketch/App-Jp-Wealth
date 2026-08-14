@@ -567,6 +567,102 @@ def run_form_belongs_to_selected_study(page):
     page.wait_for_function("a => !S.pivotStudies.studies.some(s => s.id === a)", arg=origem)
 
 
+def run_broken_records_are_reachable(page):
+    """Registro sem cálculo possível fica VISÍVEL e acionável, nunca preso.
+
+    A normalização de propósito não valida a matemática — apagar entrada do
+    operador em silêncio é proibido. Mas preservar sem dar acesso era pior: o
+    total dizia "1 de 3" e os outros dois não apareciam em filtro nenhum, sem
+    editar e sem excluir. Agora aparecem em linha degradada, com o motivo.
+    """
+    page.evaluate(
+        """() => {
+          const inst = document.getElementById('pvInstrument').value;
+          const mk = (id, sp, ep, sd, ed) => ({id, timeframe:'H4', startDatetime:sd,
+            startPrice:sp, endDatetime:ed, endPrice:ep, maxCorrectionPct:20,
+            notes:'', createdAt:'', updatedAt:''});
+          S.pivotStudies = {schemaVersion:1, studies:[{id:'QUEBRADO', instrumentId:inst,
+            periodStart:'2025-01-01', periodEnd:'2025-12-31', createdAt:'', updatedAt:'',
+            pivots:[
+              mk('bom','1.10','1.20','2025-02-01T00:00:00','2025-02-05T00:00:00'),
+              mk('igual','1.10','1.10','2025-03-01T00:00:00','2025-03-05T00:00:00'),
+              mk('invertido','1.10','1.20','2025-04-10T00:00:00','2025-04-01T00:00:00')]}]};
+          save(); window.JPWPivotsUI.render();
+        }"""
+    )
+    visiveis = page.evaluate("() => [...document.querySelectorAll('[data-pv-row]')].map(r => r.dataset.pvRow)")
+    assert set(visiveis) == {"bom", "igual", "invertido"}, f"registros sem cálculo ficaram invisíveis: {visiveis}"
+    for alvo in ("igual", "invertido"):
+        assert page.evaluate(f"() => !!document.querySelector('[data-pv-edit=\"{alvo}\"]')"), f"{alvo} sem ação de corrigir"
+        assert page.evaluate(f"() => !!document.querySelector('[data-pv-delete=\"{alvo}\"]')"), f"{alvo} sem ação de excluir"
+        assert page.evaluate(f"() => document.querySelector('[data-pv-row=\"{alvo}\"]').className").find("pv-broken") >= 0
+    assert page.evaluate("() => !!document.querySelector('.pv-broken-note')"), "sem explicação do que são as linhas sem cálculo"
+    # E a exclusão funciona de verdade — o registro deixa de estar preso.
+    page.click('[data-pv-delete="igual"]')
+    page.wait_for_function("() => !S.pivotStudies.studies[0].pivots.some(p => p.id === 'igual')")
+    assert page.evaluate("() => S.pivotStudies.studies[0].pivots.length") == 2
+
+
+def run_create_study_asks_before_discarding(page):
+    """Criar estudo troca o foco: passa pela MESMA guarda de descarte dos outros."""
+    page.evaluate(
+        """() => {
+          const inst = document.getElementById('pvInstrument').value;
+          S.pivotStudies = {schemaVersion:1, studies:[{id:'A', instrumentId:inst,
+            periodStart:'2025-01-01', periodEnd:'2025-12-31', createdAt:'', updatedAt:'', pivots:[]}]};
+          save(); window.JPWPivotsUI.render();
+        }"""
+    )
+    page.click("#pvAddPivotBtn")
+    page.wait_for_selector("#pv_startPrice")
+    page.evaluate("""() => { const e = document.getElementById('pv_startPrice');
+                             e.value = '1,2345'; e.dispatchEvent(new Event('input', {bubbles:true})); }""")
+    # O confirm() é instrumentado NA PÁGINA, e não pelo handler de diálogo do
+    # Playwright: main() já registra um handler global que aceita tudo, e dois
+    # handlers competindo tornariam o resultado dependente da ordem de registro.
+    page.evaluate(
+        "() => { window.__perguntas = []; window.__confirmOriginal = window.confirm;"
+        "        window.confirm = m => { window.__perguntas.push(m); return false; }; }")
+    page.click("#pvNewStudyBtn")
+    page.wait_for_timeout(200)
+    perguntas = page.evaluate("() => window.__perguntas")
+    assert perguntas and "não salvas" in perguntas[0], f"criar estudo não perguntou antes de descartar: {perguntas}"
+    assert page.evaluate("() => !!document.getElementById('pv_startPrice')"), (
+        "recusar o descarte deveria preservar o formulário"
+    )
+    page.evaluate("() => { window.confirm = window.__confirmOriginal; }")
+    page.evaluate("() => { window.JPWPivotsUI.render(); }")
+
+
+def run_workspace_repaints_after_state_swap(page):
+    """Trocar S por baixo da tela repinta o workspace, e nenhuma ação fica muda.
+
+    boot() não desenhava os workspaces montados sob demanda: quem estivesse com
+    Estudos dos Pivots aberto durante uma importação continuava vendo — e
+    clicando — um estudo que a importação acabara de eliminar, com os três
+    caminhos de ação morrendo em return silencioso.
+    """
+    page.evaluate(
+        """() => {
+          const inst = document.getElementById('pvInstrument').value;
+          S.pivotStudies = {schemaVersion:1, studies:[{id:'ANTES', instrumentId:inst,
+            periodStart:'2025-01-01', periodEnd:'2025-12-31', createdAt:'', updatedAt:'',
+            pivots:[{id:'p1', timeframe:'H4', startDatetime:'2025-02-01T00:00:00', startPrice:1.1,
+                     endDatetime:'2025-02-05T00:00:00', endPrice:1.2, maxCorrectionPct:20,
+                     notes:'', createdAt:'', updatedAt:''}]}]};
+          save(); window.JPWPivotsUI.render();
+        }"""
+    )
+    assert page.evaluate("() => document.querySelectorAll('[data-pv-row]').length") == 1
+    # Substituição de S pelo MESMO caminho de um import: troca e boot().
+    page.evaluate("""() => { S.pivotStudies = {schemaVersion:1, studies:[]}; save(); boot(); }""")
+    page.wait_for_timeout(200)
+    assert page.evaluate("() => document.querySelectorAll('[data-pv-row]').length") == 0, (
+        "a tela seguiu mostrando um estudo que já não existe"
+    )
+    assert page.evaluate("() => !document.querySelector('.pv-caption')"), "caption obsoleta permaneceu"
+
+
 def run_multiple_studies_same_instrument(page):
     """Historico: periodos distintos coexistem e nao se sobrescrevem."""
     instrumento = page.evaluate("() => document.getElementById('pvInstrument').value")
@@ -843,6 +939,12 @@ def main():
             run_no_operational_mutation(page)
             run_removed_instrument_keeps_study(page, primeiro)
             run_delete_pivot(page, primeiro)
+            # Estes tres SUBSTITUEM S.pivotStudies inteiro para montar o cenario;
+            # por isso vem no fim, depois dos blocos que dependem do estado
+            # acumulado pelo fluxo acima.
+            run_broken_records_are_reachable(page)
+            run_create_study_asks_before_discarding(page)
+            run_workspace_repaints_after_state_swap(page)
             assert not observed["pageerror"], f"pageerror no fluxo de UI: {observed['pageerror']}"
             context.close()
 

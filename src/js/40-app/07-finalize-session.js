@@ -151,10 +151,49 @@ function sessionHandleRemoteBaseWipe(message){
   if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   showSessionNotice('A base do JP Wealth foi apagada em outra aba. Esta aba voltou ao estado inicial; preferências locais de interface e cópias de recuperação existentes foram preservadas.');
 }
+// ---- Difusão da IMPORTAÇÃO de backup entre abas ----
+// Substituir o documento inteiro por outro é destruição da base tanto quanto a
+// Zona de Perigo — e era o único fluxo dessa natureza que não avisava as demais
+// abas. Sem aviso, a aba antiga mantém o S anterior em memória e a PRIMEIRA
+// gravação dela ressuscita o documento inteiro por cima da base que o operador
+// acabou de restaurar. O raciocínio já registrado em 05-wipe-all.js vale aqui
+// palavra por palavra.
+//
+// A semântica, porém, é diferente das outras duas: aqui não se apaga nada — há
+// um documento novo e legítimo na chave. Por isso a aba remota RECARREGA em vez
+// de zerar, e nenhuma chave auxiliar é removida.
+function sessionNotifyBaseImported(){
+  const message={type:'jpwealth-base-imported',token:sessionWipeToken()};
+  sessionLastWipeToken=message.token;
+  if(sessionCrossTabChannel){
+    try{ sessionCrossTabChannel.postMessage(message); }catch(e){}
+  }
+  try{
+    localStorage.setItem(SESSION_WIPE_STORAGE_KEY,JSON.stringify(message));
+    localStorage.removeItem(SESSION_WIPE_STORAGE_KEY);
+  }catch(e){}
+}
+function sessionHandleRemoteBaseImport(message){
+  if(!message || message.type!=='jpwealth-base-imported' || message.token===sessionLastWipeToken) return;
+  sessionLastWipeToken=message.token;
+  // O par block+resume invalida a geração da persistência: qualquer continuação
+  // assíncrona iniciada com o S antigo confere o epoch depois do await e desiste,
+  // em vez de gravar o documento obsoleto sobre o importado.
+  blockJPWealthPersistence();
+  resumeJPWealthPersistence();
+  load();
+  window.__onbShown=true;
+  closeModal();
+  boot();
+  window.__onbShown=false;
+  if(typeof initSessionCheckpoint==='function') initSessionCheckpoint();
+  showSessionNotice('Outra aba importou um backup completo. Esta aba foi recarregada com a base importada — nada do estado anterior foi mantido em memória.');
+}
 function sessionHandleRemoteMessage(message){
   if(!message) return;
   if(message.type==='jpwealth-session-finalized') sessionHandleRemoteFinalization(message);
   else if(message.type==='jpwealth-base-wiped') sessionHandleRemoteBaseWipe(message);
+  else if(message.type==='jpwealth-base-imported') sessionHandleRemoteBaseImport(message);
 }
 function initSessionCrossTab(){
   if(typeof BroadcastChannel==='function'){

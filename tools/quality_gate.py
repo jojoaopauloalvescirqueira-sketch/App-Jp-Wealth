@@ -30,6 +30,7 @@ STANDARD = FAST + (
     ("exec-submenu", [sys.executable, "tools/exec_submenu_test.py"]),
     ("nocoda", [sys.executable, "tools/nocoda_test.py"]),
     ("pivot-studies", [sys.executable, "tools/pivot_studies_test.py"]),
+    ("order-guards", [sys.executable, "tools/order_guards_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (
@@ -39,6 +40,7 @@ FULL = STANDARD + (
     ("persistence-recovery", [sys.executable, "tools/persistence_recovery_test.py"]),
     ("investor-password", [sys.executable, "tools/investor_password_test.py"]),
     ("import-xss", [sys.executable, "tools/import_xss_security_test.py"]),
+    ("state-integrity", [sys.executable, "tools/state_integrity_test.py"]),
     ("async-generation", [sys.executable, "tools/async_generation_test.py"]),
     ("build-reproducibility", [sys.executable, "tools/build_reproducibility_test.py"]),
     ("service-worker-upgrade", [sys.executable, "tools/service_worker_upgrade_test.py"]),
