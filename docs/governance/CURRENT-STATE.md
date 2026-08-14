@@ -1,12 +1,14 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-13
-Source revision representada: `60070a2070a191817077513dd45002ddc69e0a54`
-- Branch atual: `feature/exec-nocoda-studies`
-- Commit de integração: nenhum — o candidato está **na árvore de trabalho**.
-- Estado de integração: implementação dos Estudos NoCoda concluída e validada
-  tecnicamente; **não commitada**, não integrada e não publicada. Aguarda teste
-  manual do gestor.
+Source revision representada: `af229ad62e043569dd51b83c2674423c26841d84`
+- Branch atual: `main`
+- Commit material: `c3c5f21` na branch `feature/exec-nocoda-studies`
+- Commit de integração: `af229ad62e043569dd51b83c2674423c26841d84`
+- Estado de integração: Estudos NoCoda commitados e integrados localmente em
+  `main` com autorização do gestor. **Push não executado nesta sessão** — o
+  gestor fará a publicação. O teste manual do workspace continua pendente:
+  a autorização de commit foi dada antes dessa inspeção.
 - Nota sobre o remoto: o segundo nível do Execution Board (`d2ad73f`, merge
   `83a18dd`, reconciliação `60070a2`) foi para `origin/main` por push externo a
   esta sessão — GitHub Desktop ou outra sessão no mesmo checkout. Nenhum `git
@@ -84,8 +86,8 @@ Source revision representada: `60070a2070a191817077513dd45002ddc69e0a54`
   Planejamento FX não mudaram semanticamente.
 - Nenhum dado real, backup, token ou credencial entrou no worktree ou nas
   evidências. Não houve dependência, endpoint ou integração de rede nova.
-- Git/publicação: branch e implementação autorizadas. Commit, merge, push e
-  deploy **não** foram executados nesta tarefa.
+- Git/publicação: branch, implementação, commit e merge autorizados e
+  executados. Push e deploy ficam com o gestor.
 
 ## Evidência deste candidato
 
