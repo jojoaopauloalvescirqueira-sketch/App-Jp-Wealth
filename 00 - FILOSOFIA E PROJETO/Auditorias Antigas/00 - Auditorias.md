@@ -18,8 +18,8 @@ Este índice reúne os anexos atualmente preservados na pasta `50 - WORK JP WEAL
 
 ## Anexos
 
-- [[JP Wealth OS/00 - PROJECT/Auditorias Antigas/Análise do Regime de Exceção Jp Wealth.pdf]]
-- [[JP Wealth OS/00 - PROJECT/Auditorias Antigas/tese_diretrizes_quadrifasicas.pdf]]
+- [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Auditorias Antigas/Análise do Regime de Exceção Jp Wealth.pdf]]
+- [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Auditorias Antigas/tese_diretrizes_quadrifasicas.pdf]]
 
 ## Inventário
 

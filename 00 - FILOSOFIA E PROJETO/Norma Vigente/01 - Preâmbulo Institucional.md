@@ -26,5 +26,5 @@ O mérito da gestão não é medido pela magnitude de seus ganhos, mas por sua c
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
-- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições]]
+- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
+- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições]]

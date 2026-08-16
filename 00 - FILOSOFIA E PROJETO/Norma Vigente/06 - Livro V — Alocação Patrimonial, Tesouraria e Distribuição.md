@@ -133,6 +133,6 @@ Mantêm-se contas modelo nas corretoras Vantage (Cent) e Hantec (Cent), sem apor
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]
-- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)]]
+- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]
+- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)]]

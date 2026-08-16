@@ -18,7 +18,7 @@ Guardar a transcrição navegável do Estatuto vigente, uma nota por Livro. Serv
 
 **Esta pasta é cópia, não fonte.** A fonte de autoridade é `1B FONTES OFICIAIS`. Em qualquer divergência, prevalece o documento ratificado.
 
-O índice do conteúdo é [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]. Esta nota define o contrato da pasta; aquela lista o que há dentro.
+O índice do conteúdo é [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]. Esta nota define o contrato da pasta; aquela lista o que há dentro.
 
 ## O que entra
 

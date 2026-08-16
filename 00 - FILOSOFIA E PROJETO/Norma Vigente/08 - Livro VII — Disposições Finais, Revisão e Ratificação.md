@@ -50,6 +50,6 @@ Local e data: ______________________________
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)]]
-- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/09 - Anexo A — Tabela Mestra Consolidada de Fases]]
+- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)]]
+- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/09 - Anexo A — Tabela Mestra Consolidada de Fases]]

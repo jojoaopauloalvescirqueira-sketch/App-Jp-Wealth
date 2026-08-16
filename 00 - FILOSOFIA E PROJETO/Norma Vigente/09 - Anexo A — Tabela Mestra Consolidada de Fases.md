@@ -29,6 +29,6 @@ Faixas de drawdown por fase, Conta Mestre e satélites por perfil (fatores do Ar
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/08 - Livro VII — Disposições Finais, Revisão e Ratificação]]
-- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/10 - Anexo B — Registro de Deliberações e Alterações da Consolidação]]
+- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/08 - Livro VII — Disposições Finais, Revisão e Ratificação]]
+- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/10 - Anexo B — Registro de Deliberações e Alterações da Consolidação]]

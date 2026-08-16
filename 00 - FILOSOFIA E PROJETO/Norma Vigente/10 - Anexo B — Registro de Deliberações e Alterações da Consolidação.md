@@ -55,6 +55,6 @@ aliases:
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/09 - Anexo A — Tabela Mestra Consolidada de Fases]]
-- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/11 - Anexo C — Itens Pendentes de Ratificação]]
+- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/09 - Anexo A — Tabela Mestra Consolidada de Fases]]
+- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/11 - Anexo C — Itens Pendentes de Ratificação]]
