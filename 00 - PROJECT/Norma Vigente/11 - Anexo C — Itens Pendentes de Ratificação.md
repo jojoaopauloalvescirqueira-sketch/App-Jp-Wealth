@@ -33,5 +33,5 @@ Parâmetros propostos nesta consolidação com valor-padrão vigente até delibe
 
 ## Navegação
 
-- Índice: [[00 - Estatuto V10]]
-- Anterior: [[10 - Anexo B — Registro de Deliberações e Alterações da Consolidação]]
+- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/10 - Anexo B — Registro de Deliberações e Alterações da Consolidação]]

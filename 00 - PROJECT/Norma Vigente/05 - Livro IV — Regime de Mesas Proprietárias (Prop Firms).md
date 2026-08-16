@@ -116,6 +116,6 @@ A cada 15 dias sem novas ordens, a Auditoria executará operação simbólica de
 
 ## Navegação
 
-- Índice: [[00 - Estatuto V10]]
-- Anterior: [[04 - Livro III — Governança, Funções e Controles Humanos]]
-- Próximo: [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição]]
+- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos]]
+- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição]]

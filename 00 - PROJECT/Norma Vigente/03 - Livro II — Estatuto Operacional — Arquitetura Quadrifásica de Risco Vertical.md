@@ -273,6 +273,6 @@ IV — distribuição de dividendos ou realocação patrimonial. A relação ent
 
 ## Navegação
 
-- Índice: [[00 - Estatuto V10]]
-- Anterior: [[02 - Livro I — Hierarquia Normativa e Definições]]
-- Próximo: [[04 - Livro III — Governança, Funções e Controles Humanos]]
+- Índice: [[JP Wealth OS/00 - PROJECT/Norma Vigente/00 - Estatuto V10]]
+- Anterior: [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições]]
+- Próximo: [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos]]

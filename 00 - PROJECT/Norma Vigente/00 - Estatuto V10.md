@@ -36,69 +36,69 @@ aliases:
 
 Uma nota por Livro. Os Títulos são cabeçalhos dentro de cada nota — os links abaixo saltam direto para eles.
 
-### [[01 - Preâmbulo Institucional|Preâmbulo Institucional]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/01 - Preâmbulo Institucional|Preâmbulo Institucional]]
 
-### [[02 - Livro I — Hierarquia Normativa e Definições|Livro I — Hierarquia Normativa e Definições]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições|Livro I — Hierarquia Normativa e Definições]]
 
-- [[02 - Livro I — Hierarquia Normativa e Definições#Título 1 — Natureza e Escopo|Título 1 — Natureza e Escopo]]
-- [[02 - Livro I — Hierarquia Normativa e Definições#Título 2 — Hierarquia Normativa e Resolução de Conflitos|Título 2 — Hierarquia Normativa e Resolução de Conflitos]]
-- [[02 - Livro I — Hierarquia Normativa e Definições#Título 3 — Princípios e Cultura de Gestão|Título 3 — Princípios e Cultura de Gestão]]
-- [[02 - Livro I — Hierarquia Normativa e Definições#Título 4 — Definições Formais (Glossário Normativo)|Título 4 — Definições Formais (Glossário Normativo)]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições#Título 1 — Natureza e Escopo|Título 1 — Natureza e Escopo]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições#Título 2 — Hierarquia Normativa e Resolução de Conflitos|Título 2 — Hierarquia Normativa e Resolução de Conflitos]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições#Título 3 — Princípios e Cultura de Gestão|Título 3 — Princípios e Cultura de Gestão]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/02 - Livro I — Hierarquia Normativa e Definições#Título 4 — Definições Formais (Glossário Normativo)|Título 4 — Definições Formais (Glossário Normativo)]]
 
-### [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical|Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical|Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical]]
 
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 5 — Estrutura Operacional|Título 5 — Estrutura Operacional]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 6 — Matriz Quadrifásica de Risco|Título 6 — Matriz Quadrifásica de Risco]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 7 — Protocolo de Desalavancagem Tática (PDT / LIFO)|Título 7 — Protocolo de Desalavancagem Tática (PDT / LIFO)]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 8 — Dimensionamento e Métricas de Risco|Título 8 — Dimensionamento e Métricas de Risco]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 9 — Construção Tática da Posição|Título 9 — Construção Tática da Posição]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 10 — Firewall Assimétrico e Replicação para Contas Satélites|Título 10 — Firewall Assimétrico e Replicação para Contas Satélites]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 11 — Protocolo de Emergência, Encerramento e Quarentena|Título 11 — Protocolo de Emergência, Encerramento e Quarentena]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 12 — Regimes Patrimoniais do Ciclo|Título 12 — Regimes Patrimoniais do Ciclo]]
-- [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 13 — Reservas Segregadas|Título 13 — Reservas Segregadas]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 5 — Estrutura Operacional|Título 5 — Estrutura Operacional]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 6 — Matriz Quadrifásica de Risco|Título 6 — Matriz Quadrifásica de Risco]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 7 — Protocolo de Desalavancagem Tática (PDT / LIFO)|Título 7 — Protocolo de Desalavancagem Tática (PDT / LIFO)]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 8 — Dimensionamento e Métricas de Risco|Título 8 — Dimensionamento e Métricas de Risco]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 9 — Construção Tática da Posição|Título 9 — Construção Tática da Posição]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 10 — Firewall Assimétrico e Replicação para Contas Satélites|Título 10 — Firewall Assimétrico e Replicação para Contas Satélites]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 11 — Protocolo de Emergência, Encerramento e Quarentena|Título 11 — Protocolo de Emergência, Encerramento e Quarentena]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 12 — Regimes Patrimoniais do Ciclo|Título 12 — Regimes Patrimoniais do Ciclo]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical#Título 13 — Reservas Segregadas|Título 13 — Reservas Segregadas]]
 
-### [[04 - Livro III — Governança, Funções e Controles Humanos|Livro III — Governança, Funções e Controles Humanos]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos|Livro III — Governança, Funções e Controles Humanos]]
 
-- [[04 - Livro III — Governança, Funções e Controles Humanos#Título 14 — Princípio Filosófico da Governança|Título 14 — Princípio Filosófico da Governança]]
-- [[04 - Livro III — Governança, Funções e Controles Humanos#Título 15 — Compliance Board|Título 15 — Compliance Board]]
-- [[04 - Livro III — Governança, Funções e Controles Humanos#Título 16 — Função do Gestor Geral|Título 16 — Função do Gestor Geral]]
-- [[04 - Livro III — Governança, Funções e Controles Humanos#Título 17 — Função de Auditoria e Supervisão (Kharen)|Título 17 — Função de Auditoria e Supervisão (Kharen)]]
-- [[04 - Livro III — Governança, Funções e Controles Humanos#Título 18 — Continuidade, Canais e Ferramentas de Controle|Título 18 — Continuidade, Canais e Ferramentas de Controle]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos#Título 14 — Princípio Filosófico da Governança|Título 14 — Princípio Filosófico da Governança]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos#Título 15 — Compliance Board|Título 15 — Compliance Board]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos#Título 16 — Função do Gestor Geral|Título 16 — Função do Gestor Geral]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos#Título 17 — Função de Auditoria e Supervisão (Kharen)|Título 17 — Função de Auditoria e Supervisão (Kharen)]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/04 - Livro III — Governança, Funções e Controles Humanos#Título 18 — Continuidade, Canais e Ferramentas de Controle|Título 18 — Continuidade, Canais e Ferramentas de Controle]]
 
-### [[05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)|Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)|Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]
 
-- [[05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 19 — Adaptação do Modelo e Revogações|Título 19 — Adaptação do Modelo e Revogações]]
-- [[05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 20 — Salvaguardas Internas|Título 20 — Salvaguardas Internas]]
-- [[05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 21 — Estrutura de Contas e Perfis|Título 21 — Estrutura de Contas e Perfis]]
-- [[05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 22 — Instrumentos, Tetos e Atividade|Título 22 — Instrumentos, Tetos e Atividade]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 19 — Adaptação do Modelo e Revogações|Título 19 — Adaptação do Modelo e Revogações]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 20 — Salvaguardas Internas|Título 20 — Salvaguardas Internas]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 21 — Estrutura de Contas e Perfis|Título 21 — Estrutura de Contas e Perfis]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)#Título 22 — Instrumentos, Tetos e Atividade|Título 22 — Instrumentos, Tetos e Atividade]]
 
-### [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição|Livro V — Alocação Patrimonial, Tesouraria e Distribuição]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição|Livro V — Alocação Patrimonial, Tesouraria e Distribuição]]
 
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 23 — Missão Patrimonial|Título 23 — Missão Patrimonial]]
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 24 — Estrutura Macro e Micro de Alocação|Título 24 — Estrutura Macro e Micro de Alocação]]
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 25 — Rebalanceamento e Registros|Título 25 — Rebalanceamento e Registros]]
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 26 — Reservas: Reconciliação Normativa|Título 26 — Reservas: Reconciliação Normativa]]
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 27 — Caixa Institucional (Caixa Central)|Título 27 — Caixa Institucional (Caixa Central)]]
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 28 — Política de Distribuição de Lucros|Título 28 — Política de Distribuição de Lucros]]
-- [[06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 29 — Corretoras e Diversificação|Título 29 — Corretoras e Diversificação]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 23 — Missão Patrimonial|Título 23 — Missão Patrimonial]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 24 — Estrutura Macro e Micro de Alocação|Título 24 — Estrutura Macro e Micro de Alocação]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 25 — Rebalanceamento e Registros|Título 25 — Rebalanceamento e Registros]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 26 — Reservas: Reconciliação Normativa|Título 26 — Reservas: Reconciliação Normativa]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 27 — Caixa Institucional (Caixa Central)|Título 27 — Caixa Institucional (Caixa Central)]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 28 — Política de Distribuição de Lucros|Título 28 — Política de Distribuição de Lucros]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/06 - Livro V — Alocação Patrimonial, Tesouraria e Distribuição#Título 29 — Corretoras e Diversificação|Título 29 — Corretoras e Diversificação]]
 
-### [[07 - Livro VI — Método e Execução Técnica (Nocuda)|Livro VI — Método e Execução Técnica (Nocuda®)]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)|Livro VI — Método e Execução Técnica (Nocuda®)]]
 
-- [[07 - Livro VI — Método e Execução Técnica (Nocuda)#Título 30 — Status Doutrinário|Título 30 — Status Doutrinário]]
-- [[07 - Livro VI — Método e Execução Técnica (Nocuda)#Título 31 — Checklist de Análise Técnica (Perfil Swing)|Título 31 — Checklist de Análise Técnica (Perfil Swing)]]
-- [[07 - Livro VI — Método e Execução Técnica (Nocuda)#Título 32 — Referências Quantitativas de Planejamento|Título 32 — Referências Quantitativas de Planejamento]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)#Título 30 — Status Doutrinário|Título 30 — Status Doutrinário]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)#Título 31 — Checklist de Análise Técnica (Perfil Swing)|Título 31 — Checklist de Análise Técnica (Perfil Swing)]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)#Título 32 — Referências Quantitativas de Planejamento|Título 32 — Referências Quantitativas de Planejamento]]
 
-### [[08 - Livro VII — Disposições Finais, Revisão e Ratificação|Livro VII — Disposições Finais, Revisão e Ratificação]]
+### [[JP Wealth OS/00 - PROJECT/Norma Vigente/08 - Livro VII — Disposições Finais, Revisão e Ratificação|Livro VII — Disposições Finais, Revisão e Ratificação]]
 
-- [[08 - Livro VII — Disposições Finais, Revisão e Ratificação#Título 33 — Revisão e Evolução|Título 33 — Revisão e Evolução]]
-- [[08 - Livro VII — Disposições Finais, Revisão e Ratificação#Título 34 — Compromisso e Vigência|Título 34 — Compromisso e Vigência]]
-- [[08 - Livro VII — Disposições Finais, Revisão e Ratificação#Ratificação|Ratificação]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/08 - Livro VII — Disposições Finais, Revisão e Ratificação#Título 33 — Revisão e Evolução|Título 33 — Revisão e Evolução]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/08 - Livro VII — Disposições Finais, Revisão e Ratificação#Título 34 — Compromisso e Vigência|Título 34 — Compromisso e Vigência]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/08 - Livro VII — Disposições Finais, Revisão e Ratificação#Ratificação|Ratificação]]
 
 ### Anexos
 
-- [[09 - Anexo A — Tabela Mestra Consolidada de Fases|Anexo A — Tabela Mestra Consolidada de Fases]]
-- [[10 - Anexo B — Registro de Deliberações e Alterações da Consolidação|Anexo B — Registro de Deliberações e Alterações da Consolidação]]
-- [[11 - Anexo C — Itens Pendentes de Ratificação|Anexo C — Itens Pendentes de Ratificação]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/09 - Anexo A — Tabela Mestra Consolidada de Fases|Anexo A — Tabela Mestra Consolidada de Fases]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/10 - Anexo B — Registro de Deliberações e Alterações da Consolidação|Anexo B — Registro de Deliberações e Alterações da Consolidação]]
+- [[JP Wealth OS/00 - PROJECT/Norma Vigente/11 - Anexo C — Itens Pendentes de Ratificação|Anexo C — Itens Pendentes de Ratificação]]
 
 ---
 
