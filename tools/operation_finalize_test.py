@@ -151,6 +151,96 @@ def run_success_path(page):
     assert r["ultimoLog"]["fase"] == "operação finalizada", r["ultimoLog"]
 
 
+def run_grid_phase_scoped_by_operation(page):
+    """maxGridPhaseReached vem SO dos eventos daquela operationId.
+
+    A derivacao anterior recortava o transitionLog por janela temporal aberta
+    so na borda inferior. O log e cumulativo e nunca podado, entao transicoes
+    de OUTRAS operacoes entravam no calculo e o registro imutavel ficava com
+    uma fase que aquela operacao nunca alcancou.
+    """
+    r = page.evaluate(
+        """() => {
+          const casos = {};
+          const base = (id, extra) => {
+            __semear(Object.assign({id}, extra||{}));
+            S.transitionLog = [];
+          };
+          // 1. A chega a F3; B chega a F4. B nao pode contaminar A.
+          base('op_A');
+          S.transitionLog.push({fase:2, gridPhase:1, ts:'2026-08-02T00:00:00Z', operationId:'op_A'});
+          S.transitionLog.push({fase:3, gridPhase:2, ts:'2026-08-03T00:00:00Z', operationId:'op_A'});
+          S.transitionLog.push({fase:4, gridPhase:3, ts:'2026-08-09T00:00:00Z', operationId:'op_B'});
+          casos.A = JPWOperation.buildSnapshot(S.activeOperation,{defenseCount:0}).record.maxGridPhaseReached;
+
+          // 2. Downgrade posterior NAO apaga o maximo.
+          S.transitionLog.push({fase:'downgrade 3\u21922', ts:'2026-08-04T00:00:00Z', operationId:'op_A'});
+          casos.aposDowngrade = JPWOperation.buildSnapshot(S.activeOperation,{defenseCount:0}).record.maxGridPhaseReached;
+
+          // 3. Legado adotado: sem delimitacao inequivoca -> null.
+          base('op_L');
+          S.activeOperation.adoptedLegacyAt = '2026-08-01T00:00:00Z';
+          S.transitionLog.push({fase:3, gridPhase:2, ts:'2026-08-03T00:00:00Z', operationId:'op_L'});
+          casos.legado = JPWOperation.buildSnapshot(S.activeOperation,{defenseCount:0}).record.maxGridPhaseReached;
+
+          // 4. Eventos SEM gridPhase (alertas) com a mesma operationId nao contam.
+          base('op_C');
+          S.transitionLog.push({fase:'stop quantitativo acima da fase', ts:'2026-08-03T00:00:00Z', operationId:'op_C'});
+          S.transitionLog.push({fase:'operação finalizada', ts:'2026-08-04T00:00:00Z', operationId:'op_C'});
+          casos.soAlertas = JPWOperation.buildSnapshot(S.activeOperation,{defenseCount:0}).record.maxGridPhaseReached;
+
+          // 5. Evento legado SEM operationId nao e atribuido por cronologia.
+          base('op_D');
+          S.transitionLog.push({fase:4, gridPhase:3, ts:'2026-08-03T00:00:00Z'});   // sem vinculo
+          casos.semVinculo = JPWOperation.buildSnapshot(S.activeOperation,{defenseCount:0}).record.maxGridPhaseReached;
+          return casos;
+        }"""
+    )
+    assert r["A"] == 2, (
+        f"maxGridPhaseReached de A = {r['A']!r}; esperado 2 (F3). Se for 3, os "
+        "eventos da operacao B contaminaram o registro de A"
+    )
+    assert r["aposDowngrade"] == 2, (
+        f"downgrade apagou o maximo atingido: {r['aposDowngrade']!r} — o que foi "
+        "alcancado foi alcancado"
+    )
+    assert r["legado"] is None, (
+        f"legado adotado recebeu fase {r['legado']!r} — sem delimitacao inequivoca "
+        "o valor tem de ser null, nunca aproximado"
+    )
+    assert r["soAlertas"] == 0, (
+        f"eventos sem gridPhase entraram no calculo: {r['soAlertas']!r}"
+    )
+    assert r["semVinculo"] == 0, (
+        f"evento legado SEM operationId foi atribuido: {r['semVinculo']!r} — "
+        "atribuicao por cronologia e exatamente a heuristica proibida"
+    )
+
+
+def run_transition_events_are_stamped(page):
+    """Evento novo recebe o operationId da operacao viva; sem operacao, null."""
+    r = page.evaluate(
+        """() => {
+          S.activeOperation = {schemaVersion:1, operationId:'op_stamp', openedAt:null,
+                               openedAtSource:null, maxAccountPhaseReached:null};
+          const comOp = operationStampTransition({fase:3, ts:'x'}, 2);
+          S.activeOperation = null;
+          const semOp = operationStampTransition({fase:3, ts:'x'}, 2);
+          const semFase = operationStampTransition({fase:'downgrade 3\u21922', ts:'x'});
+          return {comOp, semOp, semFase};
+        }"""
+    )
+    assert r["comOp"]["operationId"] == "op_stamp" and r["comOp"]["gridPhase"] == 2, (
+        f"evento nao foi carimbado com a operacao viva: {r['comOp']}"
+    )
+    assert r["semOp"]["operationId"] is None, (
+        f"vinculo FABRICADO sem operacao viva: {r['semOp']['operationId']!r}"
+    )
+    assert "gridPhase" not in r["semFase"], (
+        f"evento sem fase atingida ganhou gridPhase: {r['semFase']}"
+    )
+
+
 def run_idempotency(page):
     """Mesmo operationId ja no historico: nada acontece de novo."""
     r = page.evaluate(
@@ -740,6 +830,8 @@ def main():
             run_blocks_open_position(page)
             run_blocks_empty(page)
             run_success_path(page)
+            run_grid_phase_scoped_by_operation(page)
+            run_transition_events_are_stamped(page)
             run_idempotency(page)
             run_persistence_failure_rollback(page)
             run_save_exception_full_rollback(page)

@@ -632,6 +632,30 @@ function operationPhaseIdxOrNull(v){
   return Math.min(3, Math.floor(v));
 }
 
+// Carimba um evento de transição com a identidade da operação VIVA no ato, e
+// com a Fase da Grade efetivamente atingida.
+//
+// O vínculo é criado no INSTANTE da transição, quando a identidade é conhecida.
+// Não existe migração retroativa: atribuir operationId a evento antigo por
+// inferência — janela temporal, ordem dos eventos, proximidade do openedAt —
+// fabricaria uma associação que ninguém observou. Evento legado fica sem
+// vínculo e, por isso, fora de qualquer derivação escopada.
+//
+// Sem operação viva, `null`: vínculo ausente é melhor que vínculo inventado.
+//
+// gridPhase é EXPLÍCITO em vez de derivado do campo `fase`, que é heterogêneo —
+// numérico no destravamento por questionário, texto no downgrade e no stop
+// quantitativo. Ler string para descobrir fase seria adivinhação, e o caminho
+// do stop destrava fase sem nunca escrever um número.
+function operationStampTransition(ev, gridPhaseIdx){
+  if(!ev || typeof ev!=='object') return ev;
+  const op=S.activeOperation;
+  ev.operationId=(op && typeof op.operationId==='string' && op.operationId)?op.operationId:null;
+  const idx=operationPhaseIdxOrNull(gridPhaseIdx);
+  if(idx!==null) ev.gridPhase=idx;
+  return ev;
+}
+
 // Sonda da Fase da Conta VIGENTE. Distingue TRÊS desfechos, e a distinção é o
 // ponto todo — antes, um `catch` mudo fundia os dois últimos:
 //

@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "72b6dbf91503bd0cb5b3a8f0265306fe4cd6afd73a6b345ef7c6a4d122151c1a"
+      "sha256": "85aa4b802545bc4772b911dbbf4539bedcf03d64d295998e4df9d1b19deade5c"
     },
     {
       "order": 5,
@@ -86,7 +86,7 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "012c73559491b65abe8ee9bcef258e67c23cfaf67445909dd406795ea18af050"
+      "sha256": "f601505839e636b3bff3eb8288611fa2e2ed24ca90b925a991209387081f6024"
     },
     {
       "order": 15,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "84f33e95a357625f9791ec288e76e476b57dc8313bbb293a3c335961c6b47c24"
+      "sha256": "63819b07926740e2cd8ab1a3baeda3d4316eb581fb21860d26157fd0d9be7941"
     },
     {
       "order": 67,

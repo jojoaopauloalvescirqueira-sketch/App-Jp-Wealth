@@ -66,21 +66,36 @@ function operationResolveThesis(vivas){
   return { ok:true, instrument: pares[0] || null, direction: tipos[0] || null };
 }
 
-// Fase da GRADE máxima, derivada do transitionLog — a única fase com evidência
-// histórica no projeto. Só é derivável quando a janela da operação pode ser
-// delimitada com segurança: sem openedAt não há recorte, e sem recorte o valor
-// seria heurística sobre eventos de outras operações. Nesse caso: null.
-function operationResolveGridPhaseMax(openedAt){
-  if (typeof openedAt !== 'string' || !openedAt) return null;
-  const inicio = Date.parse(openedAt);
-  if (!Number.isFinite(inicio)) return null;
-  let max = 0; // a Fase 1 está sempre destravada por contrato
+// Fase da GRADE máxima, derivada dos eventos ESCOPADOS por operationId.
+//
+// A versão anterior recortava o transitionLog por janela temporal, aberta só na
+// borda inferior. O log é cumulativo e nunca podado, então transições de outras
+// operações — inclusive posteriores — entravam no cálculo e o registro histórico
+// ficava com uma fase que aquela operação nunca alcançou.
+//
+// Agora o vínculo é explícito: cada evento carrega o operationId da operação
+// viva no instante da transição, e só entram os que casam. Não há aproximação
+// por cronologia, por ordem dos eventos nem por proximidade do openedAt.
+//
+// Operação ADOTADA como legada: null. A vida dela anterior a esta versão
+// produziu eventos sem vínculo, e não existe delimitação inequívoca — atribuir
+// os eventos "que parecem dela" seria exatamente a heurística proibida.
+//
+// Operação nascida sob o regime novo e sem evento de destravamento: 0. Não é
+// suposição — é o contrato estrutural de que a Fase 1 está sempre destravada
+// (phaseUnlocked[0]) somado à certeza de que qualquer destravamento posterior
+// ao nascimento teria sido carimbado.
+function operationResolveGridPhaseMax(op){
+  if (!op || typeof op !== 'object') return null;
+  if (typeof op.operationId !== 'string' || !op.operationId) return null;
+  if (op.adoptedLegacyAt) return null;
+  let max = 0;
   (S.transitionLog || []).forEach(ev => {
     if (!ev || typeof ev !== 'object') return;
-    const ts = Date.parse(ev.ts);
-    if (!Number.isFinite(ts) || ts < inicio) return;
-    const n = Number(ev.fase);
-    if (Number.isFinite(n) && n >= 1 && n <= 4) max = Math.max(max, n - 1);
+    if (ev.operationId !== op.operationId) return;
+    const idx = (typeof ev.gridPhase === 'number' && Number.isFinite(ev.gridPhase)) ? ev.gridPhase : null;
+    if (idx === null) return;   // downgrade e alertas não carregam gridPhase
+    max = Math.max(max, Math.min(3, Math.floor(idx)));
   });
   return max;
 }
@@ -147,7 +162,7 @@ function operationBuildSnapshot(op, entrada){
     maxAccountPhaseIntegrity: op.phaseCaptureFault ? 'degraded' : 'observed',
     phaseCaptureFault: op.phaseCaptureFault ? structuredClone(op.phaseCaptureFault) : null,
 
-    maxGridPhaseReached: operationResolveGridPhaseMax(openedAt),
+    maxGridPhaseReached: operationResolveGridPhaseMax(op),
 
     // Sem identidade estável de ordem no modelo atual: o campo `id` é texto
     // livre do operador e a identidade de facto é posicional. Registramos a
@@ -261,6 +276,9 @@ function finalizeOperation(entrada){
     candidato.transitionLog.push({
       fase: 'operação finalizada',
       ts: snap.record.closedAt,
+      // Vinculo explicito tambem aqui: o evento de encerramento pertence a esta
+      // operacao e nao pode ser confundido com o de outra na auditoria.
+      operationId: snap.record.operationId,
       resumo: { operationId: snap.record.operationId, resultado: snap.record.netResult,
                 cicloAcumulado: candidato.cycleRealizado }
     });
