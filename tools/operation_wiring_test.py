@@ -240,7 +240,44 @@ def run_reset_does_not_leak_identity(page):
     )
     assert a["id"], "Genese A nao criou operacao"
 
-    # ATO REAL de reinicio de periodo: as mesmas mutacoes que o fluxo executa.
+    # O fluxo real de reinicio vive em commitOnboardingStart(), closure dentro
+    # de openOnboardingModal() — as ~2 mil linhas ja registradas como divida no
+    # CURRENT-STATE. Aciona-la exigiria preencher o formulario inteiro, e
+    # refatora-la esta fora do escopo desta tarefa.
+    #
+    # Por isso a verificacao tem DUAS partes, e a distincao e explicita:
+    # (a) GUARDA SOBRE O CODIGO REAL — le o arquivo servido e exige que o bloco
+    #     de reinicio limpe a entidade e NAO toque no historico. E o que mata a
+    #     mutacao; sem ela, alterar o fluxo passaria despercebido.
+    # (b) COMPORTAMENTO — executa as mesmas mutacoes e prova que a Genese
+    #     seguinte nasce sem herdar nada.
+    fonte = page.evaluate(
+        """async () => {
+          const r = await fetch('/src/js/40-app/04-onboarding.js');
+          const txt = await r.text();
+          const i = txt.indexOf('S.cycleRealizado=0;');
+          // a partir de i: a primeira ocorrencia desta ancora fica ANTES do bloco
+          const j = txt.indexOf('S.onboarding=nextOnboarding;', i);
+          if (i < 0 || j < 0 || j <= i) return {erro:'bloco de reinicio nao localizado'};
+          const bloco = txt.slice(i, j);
+          return {
+            limpa: /S\.activeOperation\s*=\s*null/.test(bloco),
+            tocaHistorico: /operationHistory/.test(bloco),
+            consolida: /cycleRealizado\s*\+=/.test(bloco)
+          };
+        }"""
+    )
+    assert "erro" not in fonte, fonte.get("erro")
+    assert fonte["limpa"], (
+        "o fluxo REAL de reinicio de periodo nao limpa S.activeOperation — a "
+        "Genese seguinte herdaria identidade, abertura e fase maxima"
+    )
+    assert not fonte["tocaHistorico"], (
+        "o reinicio toca operationHistory — abandonar administrativamente NAO "
+        "pode fabricar registro historico; encerrar e ato proprio"
+    )
+    assert not fonte["consolida"], "o reinicio consolida em cycleRealizado"
+
     reset = page.evaluate(
         """() => {
           const antes = {registros:(S.operationHistory.records||[]).length,
