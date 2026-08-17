@@ -1,9 +1,15 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-17
-Source revision representada: `main` após a integração do Calendário Econômico
+Source revision representada: `main` após a integração do Quality Gate de CI
 - Branch atual: `main`
-- Commit material: série `b65dad3 → 6eee442` na branch
+- **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
+  `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
+  tag `archived/governanca-multiagente`. Até aqui `.github/` só tinha
+  `pull_request_template.md`. **A primeira execução ainda não aconteceu** — o
+  workflow só roda no GitHub, e `main` ainda não foi publicada com ele. Detalhe
+  na seção própria abaixo.
+- Commit material anterior: série `b65dad3 → 6eee442` na branch
   `feature/exec-economic-calendar`
 - **Calendário Econômico no Execution Board** (2026-08-17): terceiro destino do
   submenu, entre Painel Operacional e as ferramentas de estudo. **Um domínio,
@@ -46,6 +52,68 @@ Source revision representada: `main` após a integração do Calendário Econôm
 - Build local: `fa5b65ae5dd68125` — **inalterado**, porque nenhuma fonte mudou.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
+
+## Integração contínua — 2026-08-17
+
+`.github/workflows/quality-gate.yml` existe em `main` desde o merge `91687dc`.
+Antes disso o repositório **nunca teve CI**: `git log --all -- .github/workflows/`
+devolve um único commit anterior, `045c264` (2026-08-10), que jamais foi
+integrado e ficou invisível atrás de uma branch com nome enganoso.
+
+| Gatilho | Tier | Observação |
+|---|---|---|
+| `push` em `main` | `standard` | Gatilho principal — o fluxo aqui é merge local + publicação direta, sem PR |
+| `pull_request` | `standard` | Preservado do original, caso PRs voltem a ser usados |
+| `workflow_dispatch` | `standard` ou `full` | Único caminho para o tier `full` |
+
+`standard` em push e PR é o que `CHANGE-PROCESS.md` exige para N0-V e N1;
+`full` fica para candidato de release e mudanças N2/N3.
+
+Compatibilidade auditada: a única dependência externa dos testes é `playwright`
+(pinada em `requirements-dev.txt`); o gate dispara subprocessos por
+`sys.executable`, então o Python do `setup-python` é o mesmo que roda os testes;
+e **Node.js não é requisito** — `validate_project.py` cai para o Chromium do
+Playwright para validar sintaxe JavaScript.
+
+**Pendências desta superfície:**
+
+- **A primeira execução não aconteceu.** O workflow entra em vigor no próximo
+  `git push origin main`, que o dispara no mesmo ato — a estreia do CI será
+  sobre ele mesmo.
+- **Os dois SHAs de action pinados não foram verificados**
+  (`actions/checkout@11bd719`, `actions/setup-python@a26af69`). A máquina de
+  trabalho não tem credencial de rede para a API do GitHub. A pinagem por SHA é
+  a postura correta de supply chain e foi preservada; se a estreia falhar, é o
+  primeiro suspeito — o gate em si roda 13/13 localmente.
+- Um defeito do arquivo original foi corrigido antes de restaurar: `cache: pip`
+  sem `cache-dependency-path` abortaria o passo de setup, porque o cache do
+  `setup-python` procura `requirements.txt` ou `pyproject.toml` e este
+  repositório não tem nenhum dos dois.
+
+## Higiene de branches — 2026-08-17
+
+O repositório passou de 24 branches locais para **uma** (`main`). Vinte e três
+foram apagadas com autorização do gestor:
+
+- **18 já mescladas** em `main` — apagadas com `git branch -d`, que recusa se
+  houver commit fora de `main`. Nenhuma recusou; nada se perdeu, porque os
+  commits seguem alcançáveis a partir de `main`.
+- **5 não mescladas** — cada uma **convertida em tag anotada** `archived/<nome>`
+  antes da exclusão. O conteúdo está preservado de forma permanente: tag é
+  referência, e o `gc` nunca coleta commit alcançável por uma. A mensagem de
+  cada tag traz o comando de retomada.
+
+| Tag | Commit | Triagem |
+|---|---|---|
+| `archived/governanca-multiagente` | `045c264` | **Não superada** — virou o CI acima |
+| `archived/onboarding-patrimonial-wip` | `46e0f42` | Metade já em `main`; a outra colide com a etapa `database` |
+| `archived/settings-central-redesign` | `0092d26` | Superada por `657e59e`, em forma melhor |
+| `archived/notes-header-unified-bar` | `b96d6f1` | Superada por `429afe2`; o JS mexe em nó que `main` apagou |
+| `archived/reconcile-context-post-product` | `971226a` | Fotografia de contexto 74 commits atrasada |
+
+Dois commits pendurados aparecem em `git fsck` (`f87c56f`, `a27d650`, ambos de
+2026-08-16): são stashes do GitHub Desktop, anteriores a esta limpeza e não
+relacionados a ela. Não foram inspecionados.
 
 ## Calendário Econômico — estado de verificação — 2026-08-17
 

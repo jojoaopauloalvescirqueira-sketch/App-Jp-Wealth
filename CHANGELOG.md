@@ -2,6 +2,44 @@
 
 ## [Unreleased]
 
+### Quality Gate de CI restaurado — 2026-08-17
+
+O repositório passa a ter integração contínua. Até aqui `.github/` continha
+apenas `pull_request_template.md`, e **nenhum commit da história havia criado
+`.github/workflows/`** — exceto um, esquecido.
+
+- **Recuperado de uma branch abandonada, não escrito do zero.** O arquivo veio
+  de `045c264` (2026-08-10), preservado na tag `archived/governanca-multiagente`.
+  Não fora superado: em 92 commits posteriores a `main` nunca escreveu
+  equivalente nem registrou decisão de dispensar CI. Ficou invisível atrás de um
+  nome enganoso — a branch chamava-se `audit/governanca-multiagente` para um
+  commit "Create quality-gate.yml" feito pelo editor web do GitHub.
+- **Um defeito corrigido antes de restaurar.** O passo de setup declarava
+  `cache: pip` sem `cache-dependency-path`. O cache do `setup-python` procura
+  `requirements.txt` ou `pyproject.toml`, e este repositório não tem nenhum dos
+  dois — a única lista é `requirements-dev.txt`. O workflow morreria na segunda
+  etapa, antes de rodar teste algum. Restaurar CI quebrado não restaura CI.
+- **Gatilho alinhado ao fluxo real.** O original só disparava em `pull_request`
+  e `workflow_dispatch`, mas o trabalho aqui é feito em branch, mesclado
+  **localmente** e publicado direto em `main` — nenhuma integração desta série
+  passou por PR. Sem `push: branches: [main]` o gate ficaria instalado e mudo.
+  `pull_request` foi preservado para o caso de PRs voltarem a ser usados.
+- **Tier por gatilho:** `push` e `pull_request` caem em `standard`, que é o que
+  o `CHANGE-PROCESS.md` exige para N0-V e N1; `full` fica acessível por
+  acionamento manual, para candidato de release e mudanças N2/N3.
+- **Compatibilidade auditada contra o estado atual:** a única dependência
+  externa dos testes é `playwright`, já pinada em `requirements-dev.txt`; o gate
+  dispara subprocessos por `sys.executable`, então o Python do `setup-python` é
+  o mesmo que roda os testes; e `playwright install --with-deps chromium` basta,
+  porque **Node.js não é requisito** — `validate_project.py` cai para o Chromium
+  do Playwright para validar sintaxe JavaScript.
+- **Não verificado:** os dois SHAs de action pinados
+  (`actions/checkout@11bd719`, `actions/setup-python@a26af69`) não puderam ser
+  conferidos contra o remoto — a máquina de trabalho não tem credencial de rede
+  para a API do GitHub. A pinagem por SHA é a postura correta de supply chain e
+  foi preservada intacta, mas se a primeira execução falhar, é o primeiro
+  suspeito: o gate em si roda 13/13 localmente.
+
 ### Calendário Econômico no Execution Board — 2026-08-17
 
 Terceiro destino do submenu, entre Painel Operacional e as ferramentas de
