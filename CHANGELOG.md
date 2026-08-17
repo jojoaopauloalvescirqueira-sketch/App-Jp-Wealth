@@ -2,6 +2,54 @@
 
 ## [Unreleased]
 
+### Calendário Econômico no Execution Board — 2026-08-17
+
+Terceiro destino do submenu, entre Painel Operacional e as ferramentas de
+estudo. **Um domínio, duas instâncias visuais** — o overlay `#ecalOverlay`
+continua existindo com seus dois pontos de entrada intocados.
+
+A premissa de origem da tarefa era que o calendário "pertencia ao Dashboard" e
+precisava ser extraído. A auditoria mostrou outra coisa: o que vive no Dashboard
+é o widget de **Notícias**; o calendário já era superfície global, e já
+consumia o cache do widget sem fetch, cache ou sanitização próprios. O trabalho
+real não era criar fonte única — era **quebrar uma dependência de ciclo de vida**
+e dar ao calendário casa canônica.
+
+- **A dependência invertida, eliminada.** `initFfNews()` abria com
+  `if(!card) return` sobre o card do Dashboard, e esse `return` matava os dois
+  `setInterval`, o listener `online` e o fetch inicial. O ciclo de vida do dado
+  era refém da presença física de um nó do Dashboard. Separado em
+  `initFfNewsWidget()` (view) e `initFfNewsDomain()` (cache, rede, timers).
+  Segundo acoplamento no mesmo eixo: `ffNewsRender()` saía cedo sem os nós do
+  widget e engolia junto a repintura do calendário — o fan-out virou
+  `ffNewsRenderAll()`.
+- **Render parametrizado por raiz.** `ecalRenderRoot(root, filter)` resolve os
+  nós por `data-ecal-role` dentro da raiz recebida. O overlay preserva os 9 ids;
+  o workspace não tem id interno algum. Reusar o markup produziria ids
+  duplicados — e, pior que DOM inválido, `#exec` precede o overlay no documento,
+  então `getElementById` devolveria os nós errados e o modal ficaria sem render.
+- **Filtro é estado de apresentação, não de domínio.** Os eventos são
+  compartilhados; o recorte de moeda de cada superfície não. O overlay reabre em
+  Todas; o workspace preserva a escolha na sessão.
+- **Bind invertido.** O widget passou a ser dono do próprio botão `⋯` e chama
+  `window.JPWEcal.openMenu()`; antes o calendário buscava `#gdNewsMoreBtn` dentro
+  do card. O chip de moeda deixou de usar `.gd-news-cur`, classe namespaced sob
+  o shell do Dashboard, e ganhou `.ecal-cur` com as mesmas declarações.
+- **Achados da revisão adversarial do próprio diff, corrigidos:** a repintura do
+  workspace em subárvore invisível a cada minuto (faltava checar `.screen.active`
+  — `hidden` não é limpo ao sair do módulo); a região `aria-live` reescrita a
+  cada tique, que fazia o leitor de tela reanunciar o mesmo rótulo; e uma
+  varredura do teste que continuou literal depois de o commit anterior afirmar
+  tê-la corrigido.
+- **`06-boot.js` não foi tocado**, deliberadamente: o gancho que repinta o
+  workspace visível existe porque NoCoda e Pivots derivam de `S`. O calendário lê
+  `localStorage` — incluí-lo implicaria dependência inexistente.
+- **Inalterados:** fornecedor, URL, frequência, TTL, formato do cache, política
+  de timezone, classificação de impacto e semântica dos eventos.
+- **Verificação:** nada foi executado em navegador — Node.js e Playwright estão
+  ausentes na máquina. `run_economic_calendar()` foi **escrito e nunca
+  executado**; vale como especificação, não como evidência.
+
 ### Reconciliação de contagens defasadas e do padrão ARIA do FX — 2026-08-17
 
 Drift documental acumulado pela série de submenus: cada tarefa reconciliou os
