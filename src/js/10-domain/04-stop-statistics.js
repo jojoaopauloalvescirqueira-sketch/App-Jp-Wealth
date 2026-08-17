@@ -205,6 +205,11 @@ function renderPhases(){
       let val=inp.value;
       if(['lote','entry','sl','tp','result'].includes(f)) val=parseFloat(val)||0;
       S.phases[pi].orders[oi][f]=val;
+      // Mudança de status pelo grid: mesmo carimbo do modal de fechamento. A
+      // Gênese abrindo por aqui também faz nascer a Operação Única.
+      if(f==='status' && typeof operationOnOrderStatus==='function'){
+        operationOnOrderStatus(S.phases[pi].orders[oi],val,pi,oi);
+      }
       if((f==='sl'||f==='tp') && S.phases[pi].orders[oi].needsReview){
         S.phases[pi].orders[oi].needsReview=false; // tocou no stop -> considera revisado
       }

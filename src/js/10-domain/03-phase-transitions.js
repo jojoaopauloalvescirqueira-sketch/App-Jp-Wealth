@@ -458,6 +458,8 @@ function openCloseOrderModal(pi,oi){
     }
     o.status='Fechada';
     o.result=resultVal;
+    // Carimbo de fechamento da ordem — capturado no ato, uma única vez.
+    if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Fechada',pi,oi);
     save();
     closeModal();
     render(); renderPhases();

@@ -1,0 +1,305 @@
+#!/usr/bin/env python3
+"""Caracterizacao da Camada 1 — Fundacao da Operacao Unica.
+
+Ate esta versao a Operacao Unica nao existia como entidade: era um conceito
+emergente do conteudo das grades. Este teste cobre o que a fundacao passou a
+garantir — identidade estavel, ciclo de vida explicito, carimbos por ordem e
+captura PROSPECTIVA e MONOTONICA da maior Fase da Conta atingida.
+
+A invariante mais importante aqui nao e "o campo existe": e que informacao
+DESCONHECIDA nunca vira zero, agora ou valor presumido. Um openedAt legado
+permanece null, e o maximo de fase so cresce a partir do que foi efetivamente
+observado.
+
+Todas as fixtures sao SINTETICAS. O teste nao importa backup real e nao toca
+credencial.
+"""
+
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+import os
+import socket
+import threading
+
+from playwright.sync_api import sync_playwright
+
+
+ROOT = Path(__file__).resolve().parents[1]
+os.chdir(ROOT)
+
+
+class QuietHandler(SimpleHTTPRequestHandler):
+    def log_message(self, *_args):
+        pass
+
+
+def serve():
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = probe.getsockname()[1]
+    server = ThreadingHTTPServer(("127.0.0.1", port), QuietHandler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server, f"http://127.0.0.1:{port}/index.html"
+
+
+def prepare_page(browser, url):
+    context = browser.new_context(viewport={"width": 1440, "height": 900})
+    context.add_init_script("window.__onbShown=true;")
+    page = context.new_page()
+    observed = {"pageerror": []}
+    page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
+    # Rede externa neutralizada: o teste nao depende de feed nem de cotacao.
+    page.route(
+        "**/*",
+        lambda route: route.continue_()
+        if "127.0.0.1" in route.request.url
+        else route.fulfill(status=200, content_type="application/json", body="{}"),
+    )
+    page.goto(url, wait_until="domcontentloaded")
+    page.wait_for_function("() => typeof save === 'function' && typeof migrate === 'function'")
+    return context, page, observed
+
+
+def run_default_shape(page):
+    """Estado novo nasce sem operacao e com envelope de historico vazio."""
+    fatos = page.evaluate(
+        """() => ({
+          activeOperationDefault: DEFAULTS.activeOperation,
+          historyDefault: JSON.parse(JSON.stringify(DEFAULTS.operationHistory)),
+          temChaves: ('activeOperation' in DEFAULTS) && ('operationHistory' in DEFAULTS)
+        })"""
+    )
+    assert fatos["temChaves"], "DEFAULTS nao declara as chaves da fundacao"
+    assert fatos["activeOperationDefault"] is None, (
+        f"default de activeOperation deveria ser null (nenhuma operacao em curso), "
+        f"recebido {fatos['activeOperationDefault']!r} — objeto vazio seria operacao fantasma"
+    )
+    assert fatos["historyDefault"] == {"schemaVersion": 1, "records": []}, (
+        f"envelope do historico divergente: {fatos['historyDefault']}"
+    )
+
+
+def run_legacy_adoption(page):
+    """Operacao legada viva e ADOTADA: ganha identidade sem ganhar passado."""
+    fatos = page.evaluate(
+        """() => {
+          // Estado anterior a esta versao: grades com operacao em curso e
+          // nenhuma entidade. Exatamente o que existe hoje em campo.
+          S.activeOperation = null;
+          S.phases[0].orders[0] = {id:'G1',par:'EURUSD',tipo:'BUY',lote:1,entry:1.1,sl:1.09,tp:1.2,result:0,status:'Aberta'};
+          migrate();
+          const op = S.activeOperation;
+          return {
+            criada: !!op,
+            id: op && op.operationId,
+            openedAt: op && op.openedAt,
+            openedAtSource: op && op.openedAtSource,
+            maxFase: op && op.maxAccountPhaseReached,
+            adotada: !!(op && op.adoptedLegacyAt)
+          };
+        }"""
+    )
+    assert fatos["criada"], "operacao legada viva nao foi adotada — ficaria sem identidade para sempre"
+    assert isinstance(fatos["id"], str) and fatos["id"], f"identidade ausente: {fatos['id']!r}"
+    assert fatos["openedAt"] is None, (
+        f"openedAt legado deveria permanecer null, recebido {fatos['openedAt']!r} — "
+        "inventar a abertura falsificaria proveniencia"
+    )
+    assert fatos["openedAtSource"] is None, f"proveniencia inventada: {fatos['openedAtSource']!r}"
+    assert fatos["maxFase"] is None, (
+        f"maxAccountPhaseReached legado deveria ser null e nao 0: {fatos['maxFase']!r} — "
+        "desconhecido nao e Fase 1"
+    )
+    assert fatos["adotada"], "adocao nao foi marcada"
+
+
+def run_identity_stability(page):
+    """operationId nasce UMA vez e sobrevive a migrate() e save() repetidos."""
+    fatos = page.evaluate(
+        """() => {
+          const antes = S.activeOperation.operationId;
+          migrate(); save(); migrate(); save();
+          return {antes, depois: S.activeOperation.operationId};
+        }"""
+    )
+    assert fatos["antes"] == fatos["depois"], (
+        f"operationId mudou entre chamadas: {fatos['antes']} -> {fatos['depois']} — "
+        "identidade recalculavel nao e identidade"
+    )
+
+
+def run_genesis_birth(page):
+    """Abrir a Genese faz nascer a operacao com proveniencia automatica."""
+    fatos = page.evaluate(
+        """() => {
+          // Base limpa: nenhuma operacao, grades zeradas.
+          S.activeOperation = null;
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          const genese = S.phases[0].orders[0];
+          genese.par = 'EURUSD'; genese.lote = 1; genese.entry = 1.1; genese.sl = 1.09;
+          genese.status = 'Aberta';
+          operationOnOrderStatus(genese, 'Aberta', 0, 0);
+          const op = S.activeOperation;
+          const primeiroOpenedAt = op.openedAt;
+          const primeiroId = op.operationId;
+          const ordemOpenedAt = genese.openedAt;
+          // Reabrir NAO pode reescrever a abertura original.
+          operationOnOrderStatus(genese, 'Aberta', 0, 0);
+          return {
+            nasceu: !!op,
+            id: primeiroId,
+            openedAt: primeiroOpenedAt,
+            source: op.openedAtSource,
+            ordemOpenedAt,
+            openedAtEstavel: op.openedAt === primeiroOpenedAt,
+            idEstavel: op.operationId === primeiroId,
+            ordemEstavel: genese.openedAt === ordemOpenedAt
+          };
+        }"""
+    )
+    assert fatos["nasceu"], "abrir a Genese nao criou a Operacao Unica"
+    assert fatos["source"] == "genesis_transition", (
+        f"proveniencia deveria ser genesis_transition, recebido {fatos['source']!r}"
+    )
+    assert isinstance(fatos["openedAt"], str) and fatos["openedAt"], "openedAt nao foi carimbado"
+    assert isinstance(fatos["ordemOpenedAt"], str), "openedAt da ordem nao foi carimbado"
+    assert fatos["openedAtEstavel"], "reabrir reescreveu o openedAt da operacao"
+    assert fatos["idEstavel"], "reabrir gerou identidade nova"
+    assert fatos["ordemEstavel"], "reabrir reescreveu o openedAt da ordem"
+
+
+def run_order_close_stamp(page):
+    """Fechar carimba closedAt uma vez; fechar de novo nao move o carimbo."""
+    fatos = page.evaluate(
+        """() => {
+          const o = S.phases[0].orders[0];
+          operationOnOrderStatus(o, 'Fechada', 0, 0);
+          const primeiro = o.closedAt;
+          operationOnOrderStatus(o, 'Fechada', 0, 0);
+          return {primeiro, segundo: o.closedAt, openedAtIntacto: !!o.openedAt};
+        }"""
+    )
+    assert isinstance(fatos["primeiro"], str) and fatos["primeiro"], "closedAt nao carimbado"
+    assert fatos["primeiro"] == fatos["segundo"], (
+        f"closedAt reescrito: {fatos['primeiro']} -> {fatos['segundo']}"
+    )
+    assert fatos["openedAtIntacto"], "fechar apagou o openedAt da ordem"
+
+
+def run_phase_capture_monotonic(page):
+    """maxAccountPhaseReached e capturado em save() e NUNCA regride."""
+    fatos = page.evaluate(
+        """() => {
+          const passos = [];
+          const registrar = (rot) => passos.push({
+            rot,
+            faseAtual: currentAccountPhaseIdx(),
+            max: S.activeOperation.maxAccountPhaseReached
+          });
+          // Fase da Conta deriva do drawdown: risco aberto + perdas.
+          // Um prejuizo grande empurra a fase para cima.
+          S.params.saldoIni = 10000;
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:'Fechada'};
+          save(); registrar('inicio');
+          // Perda que eleva o drawdown e, com ele, a Fase da Conta.
+          S.phases[0].orders[0].result = -900;
+          save(); registrar('apos perda');
+          const pico = S.activeOperation.maxAccountPhaseReached;
+          // Recuperacao: a fase VIGENTE cai, o maximo NAO pode cair junto.
+          S.phases[0].orders[0].result = 0;
+          save(); registrar('apos recuperacao');
+          return {passos, pico, maxFinal: S.activeOperation.maxAccountPhaseReached};
+        }"""
+    )
+    passos = fatos["passos"]
+    subiu = passos[1]["max"] is not None and (
+        passos[0]["max"] is None or passos[1]["max"] >= passos[0]["max"]
+    )
+    assert subiu, f"maximo nao acompanhou a subida da fase: {passos}"
+    assert fatos["maxFinal"] == fatos["pico"], (
+        f"maximo REGREDIU quando a fase vigente caiu: pico {fatos['pico']} -> {fatos['maxFinal']} — "
+        "monotonicidade e o contrato deste campo"
+    )
+    assert passos[2]["faseAtual"] is not None, "fase vigente ficou indeterminada"
+
+
+def run_history_envelope(page):
+    """Envelope do historico resiste a forma invalida e a id duplicado."""
+    fatos = page.evaluate(
+        """() => {
+          S.operationHistory = 'lixo';
+          migrate();
+          const aposLixo = JSON.parse(JSON.stringify(S.operationHistory));
+          S.operationHistory.records = [
+            {operationId:'dup', schemaVersion:1},
+            {operationId:'dup', schemaVersion:1},
+            'nao e objeto'
+          ];
+          migrate();
+          const ids = S.operationHistory.records.map(r => r.operationId);
+          return {
+            aposLixo,
+            total: S.operationHistory.records.length,
+            unicos: new Set(ids).size,
+            temSnapshot: S.operationHistory.records.every(r => Array.isArray(r.ordersSnapshot))
+          };
+        }"""
+    )
+    assert fatos["aposLixo"] == {"schemaVersion": 1, "records": []}, (
+        f"envelope invalido nao foi reconstruido: {fatos['aposLixo']}"
+    )
+    assert fatos["total"] == 2, f"registro nao-objeto deveria ser descartado: {fatos['total']}"
+    assert fatos["unicos"] == 2, (
+        "id duplicado sobreviveu — a idempotencia da finalizacao ficaria ambigua"
+    )
+    assert fatos["temSnapshot"], "ordersSnapshot nao foi garantido como array"
+
+
+def run_save_never_broken(page):
+    """A captura e ACESSORIA: estado corrompido nao pode derrubar save()."""
+    fatos = page.evaluate(
+        """() => {
+          S.activeOperation = {schemaVersion:1, operationId:'x', openedAt:null,
+                               openedAtSource:null, maxAccountPhaseReached:null};
+          // params quebrado faria compute() lancar
+          const bak = S.params;
+          S.params = null;
+          let ok = null, erro = null;
+          try { ok = save(); } catch(e) { erro = String(e); }
+          S.params = bak;
+          save();
+          return {ok, erro};
+        }"""
+    )
+    assert fatos["erro"] is None, (
+        f"save() lancou por causa da captura acessoria: {fatos['erro']} — "
+        "o estado do operador nunca pode depender dela"
+    )
+    assert fatos["ok"] is True, f"save() deixou de gravar: {fatos['ok']!r}"
+
+
+def main():
+    server, url = serve()
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            context, page, observed = prepare_page(browser, url)
+            run_default_shape(page)
+            run_legacy_adoption(page)
+            run_identity_stability(page)
+            run_genesis_birth(page)
+            run_order_close_stamp(page)
+            run_phase_capture_monotonic(page)
+            run_history_envelope(page)
+            run_save_never_broken(page)
+            assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
+            context.close()
+            browser.close()
+    finally:
+        server.shutdown()
+    print("OPERATION IDENTITY TEST PASS")
+
+
+if __name__ == "__main__":
+    main()

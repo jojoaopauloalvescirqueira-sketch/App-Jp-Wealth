@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "0a071eee721dfb3f9f991dd1fa6269656d7b7bd2d88c91b14f1aea45552a0c7f"
+      "sha256": "464f4358c2db95479f6863c931ff7b58223e478fdca50d6304a1b38dcb7dbfe1"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "d43f55d49967f822a377a5a7fe8425519effd966764a7ff012496e4ad476b6d8"
+      "sha256": "3add22e7a74974233fe97ac49279440a121f8d12812629efb71903116c5cc016"
     },
     {
       "order": 5,
@@ -86,13 +86,13 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "8238d399584a164c4aa57e902a89af80c270c9241c76bebd06d55976ebc00365"
+      "sha256": "012c73559491b65abe8ee9bcef258e67c23cfaf67445909dd406795ea18af050"
     },
     {
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "b46447f67d70ae82690683fed41cc4c8e7c612d824c5ebe9a5e47397e18a1cef"
+      "sha256": "811257c8fa272b1566e9ec6b1b1a6cbb9888e323aebe8b70c67c1ab135f3ca3d"
     },
     {
       "order": 16,

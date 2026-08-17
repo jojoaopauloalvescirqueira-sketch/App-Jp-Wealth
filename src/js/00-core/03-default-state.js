@@ -190,6 +190,28 @@ const DEFAULTS = {
   // que passa a exceder o critério de correção é RECLASSIFICADO, nunca apagado.
   // Guarda estrutural de boot: pivotStudiesNormalizeState() (04-persistence.js).
   pivotStudies:{schemaVersion:1, studies:[]},
+  // ---- Operação Única: identidade e ciclo de vida (Camada 1 — Fundação) ----
+  // Até esta versão a Operação Única NÃO existia como entidade: era um conceito
+  // emergente do conteúdo das grades. netOpAtual() soma os `result` de toda
+  // ordem 'Fechada' em S.phases, e até a EXISTÊNCIA da operação era derivada
+  // (`!temAberta && temFechada`). Sem entidade não há identidade estável, não há
+  // openedAt e não há como preservar a maior Fase da Conta atingida — três
+  // lacunas que o Histórico não poderia reconstruir depois.
+  //
+  // `null` é o default correto e não um objeto vazio: "não há operação em curso"
+  // é um estado real, distinto de "há uma operação sem dados". A entidade nasce
+  // quando a Ordem Gênese é efetivamente aberta pela primeira vez.
+  //
+  // maxAccountPhaseReached é MONOTÔNICO e capturado PROSPECTIVAMENTE — a Fase da
+  // Conta é derivada do drawdown por compute() e o sistema nunca guardou seu
+  // máximo histórico. Reconstruí-lo no fechamento seria heurística sobre dado
+  // que jamais foi observado.
+  // Guarda estrutural de boot: operationNormalizeState() (04-persistence.js).
+  activeOperation:null,
+  // Memória institucional das Operações Únicas finalizadas. Lista, e não mapa:
+  // a natureza é histórica e append-only. Registros são IMUTÁVEIS — o Histórico
+  // é evidência, não planilha editável.
+  operationHistory:{schemaVersion:1, records:[]},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o

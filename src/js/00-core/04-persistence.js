@@ -615,6 +615,136 @@ function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random()
 // derivados e fica fora da estatística; apagá-lo aqui destruiria memória
 // técnica do operador em silêncio. Timeframe fora de H1/H4 também sobrevive:
 // deixa de contar nas sínteses por timeframe, e nada mais.
+// ---- Operação Única: identidade, ciclo de vida e histórico (Camada 1) ----
+// Mesma forma dos geradores de id já existentes no arquivo. Não precisa ser
+// determinístico; precisa ser PERMANENTE — gerado uma vez, persistido, jamais
+// recalculado a partir de campo mutável.
+function operationRecordId(){ return 'op_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+
+// Índice da Fase da Conta VIGENTE (0..3), derivado por compute().
+// Devolve null quando não pode ser estabelecido — desconhecido nunca vira 0.
+function currentAccountPhaseIdx(){
+  try{
+    if(typeof compute!=='function') return null;
+    const c=compute();
+    const idx=c && c.fase ? S.matrix.findIndex(m=>m && m.nome===c.fase.nome) : -1;
+    return idx>=0 ? idx : null;
+  }catch(_){ return null; }
+}
+
+// Captura PROSPECTIVA e MONOTÔNICA da maior Fase da Conta atingida.
+//
+// Chamada de dentro de save() — o menor ponto autoritativo do projeto. Não é
+// render (que nunca deve gravar estado) e não é um listener por tela: é o único
+// lugar por onde TODA mutação persistida passa, incluindo caminhos que nenhuma
+// enumeração de call sites cobriria. O máximo passa a refletir estados que o
+// sistema efetivamente comprometeu ao disco.
+//
+// Três guardas, e nenhuma é decorativa: sem operação viva não há o que medir;
+// compute() é o script 8 e este arquivo é o 4, então durante o boot a função
+// pode ainda não ter avaliado; e uma falha aqui JAMAIS pode impedir a
+// persistência — a captura é acessória, o estado do operador não é.
+function operationTouchAccountPhase(){
+  try{
+    const op=S.activeOperation;
+    if(!op || typeof op!=='object') return;
+    const idx=currentAccountPhaseIdx();
+    if(idx==null) return;
+    const antes=Number.isFinite(+op.maxAccountPhaseReached)?+op.maxAccountPhaseReached:-1;
+    if(idx>antes) op.maxAccountPhaseReached=idx;
+  }catch(_){ /* captura acessória: nunca derruba save() */ }
+}
+
+// Carimba a transição de status de uma ordem e, quando for a Gênese abrindo
+// pela primeira vez, faz NASCER a Operação Única.
+//
+// Chamado pelos pontos que realmente mutam o status — o grid e o modal de
+// fechamento — e nunca por render: timestamp recalculado a cada repintura não
+// seria evidência, seria ruído.
+//
+// A Gênese é identificada por POSIÇÃO (fase 1, linha 1), a mesma regra que
+// genesisOrder() já usa e que checkPhaseCap() aplica normativamente ao teto do
+// Art. 8.6. Não é taxonomia nova: é a que o app já executa.
+//
+// Carimba UMA vez. Reabrir uma ordem não reescreve a abertura original, e
+// fechar de novo não move o fechamento — proveniência não se sobrescreve.
+function operationOnOrderStatus(o, statusDepois, pi, oi){
+  if(!o || typeof o!=='object') return;
+  const agora=new Date().toISOString();
+  if(statusDepois==='Aberta' && !o.openedAt) o.openedAt=agora;
+  if(statusDepois==='Fechada' && !o.closedAt) o.closedAt=agora;
+  if(statusDepois==='Aberta' && pi===0 && oi===0 && !S.activeOperation){
+    S.activeOperation={
+      schemaVersion:1,
+      operationId:operationRecordId(),
+      openedAt:agora,
+      openedAtSource:'genesis_transition',
+      maxAccountPhaseReached:null
+    };
+  }
+}
+
+function operationNormalizeState(){
+  // activeOperation: null é estado legítimo ("nenhuma operação em curso").
+  // Qualquer coisa que não seja objeto simples vira null em vez de virar {}:
+  // objeto vazio seria uma operação fantasma sem identidade nem abertura.
+  const op=S.activeOperation;
+  if(op===null || op===undefined || typeof op!=='object' || Array.isArray(op)){
+    S.activeOperation=null;
+  }else{
+    if(!Number.isFinite(+op.schemaVersion) || +op.schemaVersion<1) op.schemaVersion=1;
+    // Identidade ausente é REPARADA, não descartada: uma operação viva de antes
+    // desta versão recebe id uma única vez e o mantém dali em diante.
+    if(typeof op.operationId!=='string' || !op.operationId) op.operationId=operationRecordId();
+    // openedAt desconhecido permanece null. Nunca Date.now(): inventar a
+    // abertura de uma operação legada seria falsificar proveniência.
+    if(typeof op.openedAt!=='string' || !op.openedAt) op.openedAt=null;
+    const fontesAbertura=['genesis_transition','manual_legacy'];
+    if(!fontesAbertura.includes(op.openedAtSource)) op.openedAtSource=op.openedAt?'manual_legacy':null;
+    if(!Number.isFinite(+op.maxAccountPhaseReached) || +op.maxAccountPhaseReached<0) op.maxAccountPhaseReached=null;
+    else op.maxAccountPhaseReached=Math.min(3,Math.floor(+op.maxAccountPhaseReached));
+  }
+  // ADOÇÃO DE OPERAÇÃO LEGADA. Uma operação iniciada antes desta versão tem
+  // grades preenchidas e nenhuma entidade. Sem adotá-la, ela atravessaria toda
+  // a sua vida sem identidade e sem capturar a Fase da Conta — e o Histórico
+  // receberia um registro cego justamente da primeira operação finalizada.
+  //
+  // A adoção cria identidade e COMEÇA a capturar daqui em diante. Não inventa o
+  // passado: openedAt fica null e a proveniência fica indefinida até que o
+  // operador informe a data na finalização (aí vira manual_legacy).
+  if(!S.activeOperation && Array.isArray(S.phases)){
+    const viva=S.phases.some(ph=>Array.isArray(ph && ph.orders) && ph.orders.some(
+      o=>o && (o.status==='Aberta' || o.status==='Fechada' || o.status==='Migrada')));
+    if(viva){
+      S.activeOperation={
+        schemaVersion:1,
+        operationId:operationRecordId(),
+        openedAt:null,
+        openedAtSource:null,
+        maxAccountPhaseReached:null,
+        adoptedLegacyAt:new Date().toISOString()
+      };
+    }
+  }
+  // operationHistory: envelope com lista append-only.
+  if(!S.operationHistory || typeof S.operationHistory!=='object' || Array.isArray(S.operationHistory))
+    S.operationHistory=structuredClone(DEFAULTS.operationHistory);
+  const h=S.operationHistory;
+  if(!Number.isFinite(+h.schemaVersion) || +h.schemaVersion<1) h.schemaVersion=1;
+  if(!Array.isArray(h.records)) h.records=[];
+  h.records=h.records.filter(r=>r && typeof r==='object' && !Array.isArray(r));
+  // Id duplicado quebraria a idempotência da finalização: o teste "já existe no
+  // histórico?" viraria ambíguo. Colisão é reescrita, o registro nunca é
+  // descartado — histórico é evidência.
+  const vistos=new Set();
+  h.records.forEach(r=>{
+    if(typeof r.operationId!=='string' || !r.operationId || vistos.has(r.operationId)) r.operationId=operationRecordId();
+    vistos.add(r.operationId);
+    if(!Number.isFinite(+r.schemaVersion) || +r.schemaVersion<1) r.schemaVersion=1;
+    if(!Array.isArray(r.ordersSnapshot)) r.ordersSnapshot=[];
+  });
+}
+
 function pivotStudiesNormalizeState(){
   if(!S.pivotStudies || typeof S.pivotStudies!=='object' || Array.isArray(S.pivotStudies))
     S.pivotStudies=structuredClone(DEFAULTS.pivotStudies);
@@ -694,6 +824,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
   nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
   pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
+  operationNormalizeState(); // Operação Única: identidade da operação viva + envelope do histórico
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -1085,6 +1216,10 @@ function save(){
   // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.
   if(jpWealthLoadRecovery.active) return false;
   if(jpWealthPersistenceBlocked) return false;
+  // Captura prospectiva da maior Fase da Conta atingida pela operação viva.
+  // DEPOIS dos dois portões e ANTES da serialização: o que não vai ser gravado
+  // também não deve mover o máximo, e o que for gravado tem de já contê-lo.
+  operationTouchAccountPhase();
   // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
   // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
   // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez
