@@ -81,7 +81,7 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 60 scripts do manifest também estejam no precache. Durante uma
+exige que os 65 scripts do manifest também estejam no precache. Durante uma
 atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
 continua usando um build integral, sem combinar HTML novo com scripts cacheados de
 outro build. O ícone tem variantes
@@ -111,9 +111,9 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (9 —
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (13 —
 inclui smoke, Central de Configurações, Galton Board, Planejamento FX e cotação
-USD/BRL em Chromium real) e **full** (19 verificações, incluindo segurança de importação/XSS, senha de
+USD/BRL em Chromium real) e **full** (24 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.

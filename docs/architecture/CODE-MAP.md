@@ -1,8 +1,8 @@
 # Mapa do código
 
-Fotografia integrada localmente em `main` em 2026-08-13 (fonte material
-`478a558`, merge `55d2267`):
-`src/js/manifest.json` contém 60 scripts clássicos. O manifest é a fonte única
+Fotografia integrada localmente em `main` em 2026-08-14 (fonte material
+`7a93602`, merge `a188f29`, reconciliação `f1c1f36`):
+`src/js/manifest.json` contém 65 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
 
@@ -118,7 +118,7 @@ reutilizável completo estão em `NAVIGATION-HIERARCHY.md`.
 
 ## Entrypoints, PWA e artefatos derivados
 
-- `index.html` compõe o DOM e carrega os 60 scripts na ordem do manifest.
+- `index.html` compõe o DOM e carrega os 65 scripts na ordem do manifest.
 - `src/styles/app.css` contém o design system e as regras do laboratório.
 - `sw.js` deve precachear todo caminho declarado no manifest; `validate_project.py`
   trata a equivalência como invariante. Navegações controladas pelo worker
