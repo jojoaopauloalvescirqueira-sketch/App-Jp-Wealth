@@ -160,6 +160,10 @@
         <span class="nav-sub-item-title">Motor de Lote</span>
         <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
       </button>
+      <button type="button" data-nav-sub-view="history">
+        <span class="nav-sub-item-title">Histórico</span>
+        <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
+      </button>
     </nav>
     <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
          aria-hidden="true" hidden inert>
@@ -429,6 +433,11 @@
          20-ui/15-pivot-studies.js a cada entrada no workspace, porque o seletor
          deriva do catálogo vivo do Motor de Lote e a tela reflete o estado. -->
     <div class="exec-view" id="execPivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
+    <!-- Histórico: consumidor SOMENTE LEITURA de S.operationHistory. O conteúdo é
+         renderizado por 20-ui/16-operation-history.js a cada entrada, porque uma
+         finalização feita no Painel Operacional muda a lista. Nenhum caminho
+         deste workspace muta estado financeiro. -->
+    <div class="exec-view" id="execHistory" role="region" aria-label="Histórico de Operações Únicas" hidden></div>
     <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
          #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
          nenhum dado tocado. A <section id="motor"> hospedeira foi removida
@@ -1540,5 +1549,6 @@
 <script src="src/js/10-domain/10-pivot-studies.js"></script>
 <script src="src/js/20-ui/15-pivot-studies.js"></script>
 <script src="src/js/10-domain/11-operation-lifecycle.js"></script>
+<script src="src/js/20-ui/16-operation-history.js"></script>
 </body>
 </html>

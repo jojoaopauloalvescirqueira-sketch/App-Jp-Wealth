@@ -27,7 +27,11 @@ const EXEC_VIEWS = [
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
   // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
-  ['motor', 'motorWidgetGrid']
+  ['motor', 'motorWidgetGrid'],
+  // Historico: memoria institucional das Operacoes Unicas finalizadas. Consumidor
+  // somente leitura de S.operationHistory — nao recalcula fato historico algum a
+  // partir das grades vivas.
+  ['history', 'execHistory']
 ];
 // Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
 // HTML. NoCoda e Pivots derivam seus seletores do catalogo vivo do Motor de
@@ -44,7 +48,10 @@ const EXEC_VIEW_RENDERERS = {
   // 1 min), entao a entrada no workspace repinta a partir do dado corrente. O
   // dominio nao e consultado pela rede aqui — quem revalida e o ciclo do
   // proprio widget, em 15-ff-news.js.
-  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); }
+  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); },
+  // Repinta a cada entrada porque o conteudo depende de S.operationHistory, que
+  // muda quando uma operacao e finalizada noutra parte do app.
+  history: () => { if (window.JPWHistoryUI && typeof window.JPWHistoryUI.render === 'function') window.JPWHistoryUI.render(); }
 };
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;
