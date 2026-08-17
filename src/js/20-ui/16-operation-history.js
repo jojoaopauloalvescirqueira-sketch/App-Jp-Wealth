@@ -50,7 +50,9 @@ function histFmtDate(iso){
   return Number.isFinite(t) ? new Date(t).toLocaleDateString('pt-BR') : '—';
 }
 function histPhaseName(idx){
-  if (!Number.isFinite(+idx)) return '—';
+  // typeof, e nao coercao: `+null === 0` renderizaria 'Fase 1' para um maximo
+  // que nunca foi observado — o registro diz null e a tela mentiria.
+  if (typeof idx !== 'number' || !Number.isFinite(idx)) return '—';
   const f = (S.matrix || [])[+idx];
   return (f && f.nome) ? f.nome : ('Fase ' + ((+idx) + 1));
 }

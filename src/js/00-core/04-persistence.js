@@ -621,6 +621,17 @@ function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random()
 // recalculado a partir de campo mutável.
 function operationRecordId(){ return 'op_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 
+// Índice de fase CONHECIDO, ou null. Existe porque a coerção numérica destrói a
+// distinção que este campo carrega: `+null === 0`, `Number.isFinite(0) === true`
+// e `0 < 0` é falso, então toda guarda escrita com `+valor` deixava um
+// DESCONHECIDO virar "Fase 1 observada" — uma afirmação sobre o passado que
+// ninguém fez. Só number finito conta como conhecido; null, undefined, string
+// de backup adulterado e negativo devolvem null.
+function operationPhaseIdxOrNull(v){
+  if(typeof v!=='number' || !Number.isFinite(v) || v<0) return null;
+  return Math.min(3, Math.floor(v));
+}
+
 // Sonda da Fase da Conta VIGENTE. Distingue TRÊS desfechos, e a distinção é o
 // ponto todo — antes, um `catch` mudo fundia os dois últimos:
 //
@@ -689,8 +700,10 @@ function operationTouchAccountPhase(){
     return;
   }
   if(probe.idx==null) return;
-  const antes=Number.isFinite(+op.maxAccountPhaseReached)?+op.maxAccountPhaseReached:-1;
-  if(probe.idx>antes) op.maxAccountPhaseReached=probe.idx;
+  // Desconhecido não é -1 nem 0: é ausência. A primeira captura estabelece o
+  // valor qualquer que ele seja, inclusive Fase 1 — e daí em diante só sobe.
+  const antes=operationPhaseIdxOrNull(op.maxAccountPhaseReached);
+  if(antes===null || probe.idx>antes) op.maxAccountPhaseReached=probe.idx;
 }
 
 // Carimba a transição de status de uma ordem e, quando for a Gênese abrindo
@@ -750,8 +763,7 @@ function operationNormalizeState(){
     if(typeof op.openedAt!=='string' || !op.openedAt) op.openedAt=null;
     const fontesAbertura=['genesis_transition','manual_legacy'];
     if(!fontesAbertura.includes(op.openedAtSource)) op.openedAtSource=op.openedAt?'manual_legacy':null;
-    if(!Number.isFinite(+op.maxAccountPhaseReached) || +op.maxAccountPhaseReached<0) op.maxAccountPhaseReached=null;
-    else op.maxAccountPhaseReached=Math.min(3,Math.floor(+op.maxAccountPhaseReached));
+    op.maxAccountPhaseReached=operationPhaseIdxOrNull(op.maxAccountPhaseReached);
     // Marca de captura degradada: preservada se tiver forma válida, descartada
     // se vier deformada. Nunca inventada.
     const f=op.phaseCaptureFault;

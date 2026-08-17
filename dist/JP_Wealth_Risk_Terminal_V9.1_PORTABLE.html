@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'd8f6c70a91fe6909';
+const JP_WEALTH_BUILD_ID = '8a415d28d11b377f';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8471,6 +8471,17 @@ function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random()
 // recalculado a partir de campo mutável.
 function operationRecordId(){ return 'op_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 
+// Índice de fase CONHECIDO, ou null. Existe porque a coerção numérica destrói a
+// distinção que este campo carrega: `+null === 0`, `Number.isFinite(0) === true`
+// e `0 < 0` é falso, então toda guarda escrita com `+valor` deixava um
+// DESCONHECIDO virar "Fase 1 observada" — uma afirmação sobre o passado que
+// ninguém fez. Só number finito conta como conhecido; null, undefined, string
+// de backup adulterado e negativo devolvem null.
+function operationPhaseIdxOrNull(v){
+  if(typeof v!=='number' || !Number.isFinite(v) || v<0) return null;
+  return Math.min(3, Math.floor(v));
+}
+
 // Sonda da Fase da Conta VIGENTE. Distingue TRÊS desfechos, e a distinção é o
 // ponto todo — antes, um `catch` mudo fundia os dois últimos:
 //
@@ -8539,8 +8550,10 @@ function operationTouchAccountPhase(){
     return;
   }
   if(probe.idx==null) return;
-  const antes=Number.isFinite(+op.maxAccountPhaseReached)?+op.maxAccountPhaseReached:-1;
-  if(probe.idx>antes) op.maxAccountPhaseReached=probe.idx;
+  // Desconhecido não é -1 nem 0: é ausência. A primeira captura estabelece o
+  // valor qualquer que ele seja, inclusive Fase 1 — e daí em diante só sobe.
+  const antes=operationPhaseIdxOrNull(op.maxAccountPhaseReached);
+  if(antes===null || probe.idx>antes) op.maxAccountPhaseReached=probe.idx;
 }
 
 // Carimba a transição de status de uma ordem e, quando for a Gênese abrindo
@@ -8600,8 +8613,7 @@ function operationNormalizeState(){
     if(typeof op.openedAt!=='string' || !op.openedAt) op.openedAt=null;
     const fontesAbertura=['genesis_transition','manual_legacy'];
     if(!fontesAbertura.includes(op.openedAtSource)) op.openedAtSource=op.openedAt?'manual_legacy':null;
-    if(!Number.isFinite(+op.maxAccountPhaseReached) || +op.maxAccountPhaseReached<0) op.maxAccountPhaseReached=null;
-    else op.maxAccountPhaseReached=Math.min(3,Math.floor(+op.maxAccountPhaseReached));
+    op.maxAccountPhaseReached=operationPhaseIdxOrNull(op.maxAccountPhaseReached);
     // Marca de captura degradada: preservada se tiver forma válida, descartada
     // se vier deformada. Nunca inventada.
     const f=op.phaseCaptureFault;
@@ -27334,7 +27346,10 @@ function operationBuildSnapshot(op, entrada){
     if (Number.isFinite(t)) { openedAt = new Date(t).toISOString(); openedAtSource = 'manual_legacy'; }
   }
 
-  const defesas = Number(entrada && entrada.defenseCount);
+  // typeof number, e não Number(): `Number(null) === 0` faria uma contagem
+  // AUSENTE virar "zero defesas informadas" — que é uma afirmação do operador,
+  // não um default. O mesmo vale para string vazia, que Number() também zera.
+  const defesas = (entrada && typeof entrada.defenseCount === 'number') ? entrada.defenseCount : NaN;
   if (!Number.isFinite(defesas) || defesas < 0 || Math.floor(defesas) !== defesas) {
     return { ok:false, motivo:'defense_count_invalid' };
   }
@@ -27366,7 +27381,10 @@ function operationBuildSnapshot(op, entrada){
     // linhas). Contagem informada pelo operador, com a proveniência dita.
     defenseCountSource: 'manual',
 
-    maxAccountPhaseReached: Number.isFinite(+op.maxAccountPhaseReached) ? +op.maxAccountPhaseReached : null,
+    // operationPhaseIdxOrNull e nao `+op.…`: a coercao faria null virar 0 e
+    // gravar "Fase 1 observada" num registro IMUTAVEL, sobre uma operação cuja
+    // fase máxima nunca foi observada.
+    maxAccountPhaseReached: operationPhaseIdxOrNull(op.maxAccountPhaseReached),
     // Qualidade epistemológica do campo acima. Se houve falha de captura durante
     // a operação, o valor continua sendo o maior OBSERVADO — mas o histórico não
     // pode apresentá-lo como medição completa.
@@ -27562,7 +27580,10 @@ function operationFmtDuration(openedAt, closedAt){
 }
 
 function operationFmtPhase(idx){
-  if(!Number.isFinite(+idx)) return '—';
+  // typeof, e não coerção: `+null === 0` mostraria "Fase 1" na revisão para um
+  // máximo que nunca foi observado, e o operador confirmaria uma afirmação
+  // falsa sobre o passado.
+  if(typeof idx!=='number' || !Number.isFinite(idx)) return '—';
   const f=(S.matrix||[])[+idx];
   return (f && f.nome) ? f.nome : ('Fase '+((+idx)+1));
 }
@@ -27738,7 +27759,9 @@ function histFmtDate(iso){
   return Number.isFinite(t) ? new Date(t).toLocaleDateString('pt-BR') : '—';
 }
 function histPhaseName(idx){
-  if (!Number.isFinite(+idx)) return '—';
+  // typeof, e nao coercao: `+null === 0` renderizaria 'Fase 1' para um maximo
+  // que nunca foi observado — o registro diz null e a tela mentiria.
+  if (typeof idx !== 'number' || !Number.isFinite(idx)) return '—';
   const f = (S.matrix || [])[+idx];
   return (f && f.nome) ? f.nome : ('Fase ' + ((+idx) + 1));
 }

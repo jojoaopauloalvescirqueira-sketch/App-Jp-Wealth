@@ -158,6 +158,54 @@ def run_existing_operation_unknowns(page):
     assert fatos["maxTeto"] == 3, f"max acima do teto nao foi limitado a 3: {fatos['maxTeto']!r}"
 
 
+def run_unknown_is_never_zero(page):
+    """DESCONHECIDO e FASE 1 sao estados diferentes, em toda a cadeia.
+
+    `+null === 0` e `Number.isFinite(0) === true`: qualquer guarda escrita com
+    coercao deixa um maximo NUNCA OBSERVADO virar "Fase 1 observada" — e o
+    registro do Historico e imutavel, entao a afirmacao falsa fica para sempre.
+    """
+    r = page.evaluate(
+        """() => {
+          const casos = {};
+          // normalizador
+          S.activeOperation = {operationId:'op_n', maxAccountPhaseReached:null};
+          migrate(); casos.normNull = S.activeOperation.maxAccountPhaseReached;
+          S.activeOperation = {operationId:'op_n'};                       // ausente
+          migrate(); casos.normAusente = S.activeOperation.maxAccountPhaseReached;
+          S.activeOperation = {operationId:'op_n', maxAccountPhaseReached:'0'};  // string
+          migrate(); casos.normString = S.activeOperation.maxAccountPhaseReached;
+          S.activeOperation = {operationId:'op_n', maxAccountPhaseReached:0};    // Fase 1 REAL
+          migrate(); casos.normZeroReal = S.activeOperation.maxAccountPhaseReached;
+          // helper puro
+          casos.helperNull = operationPhaseIdxOrNull(null);
+          casos.helperZero = operationPhaseIdxOrNull(0);
+          // captura: primeira observacao estabelece, mesmo sendo Fase 1
+          S.params.saldoIni = 10000;
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.activeOperation = {schemaVersion:1, operationId:'op_cap', openedAt:null,
+                               openedAtSource:null, maxAccountPhaseReached:null};
+          save();
+          casos.aposPrimeiraCaptura = S.activeOperation.maxAccountPhaseReached;
+          // renderizadores
+          casos.fmtNull = operationFmtPhase(null);
+          casos.fmtZero = operationFmtPhase(0);
+          return casos;
+        }"""
+    )
+    assert r["normNull"] is None, f"null virou {r['normNull']!r} no normalizador"
+    assert r["normAusente"] is None, f"campo ausente virou {r['normAusente']!r}"
+    assert r["normString"] is None, f"string '0' virou {r['normString']!r} — backup adulterado"
+    assert r["normZeroReal"] == 0, f"Fase 1 REAL foi descartada: {r['normZeroReal']!r}"
+    assert r["helperNull"] is None and r["helperZero"] == 0, f"helper: {r}"
+    assert r["aposPrimeiraCaptura"] == 0, (
+        f"a primeira captura nao estabeleceu o valor: {r['aposPrimeiraCaptura']!r} — "
+        "desconhecido nao pode bloquear a observacao de Fase 1"
+    )
+    assert r["fmtNull"] == "—", f"desconhecido renderizado como {r['fmtNull']!r}"
+    assert r["fmtZero"] != "—", f"Fase 1 real renderizada como travessao: {r['fmtZero']!r}"
+
+
 def run_identity_stability(page):
     """operationId nasce UMA vez e sobrevive a migrate() e save() repetidos."""
     fatos = page.evaluate(
@@ -408,6 +456,7 @@ def main():
             run_default_shape(page)
             run_legacy_adoption(page)
             run_existing_operation_unknowns(page)
+            run_unknown_is_never_zero(page)
             run_identity_stability(page)
             run_genesis_birth(page)
             run_order_close_stamp(page)

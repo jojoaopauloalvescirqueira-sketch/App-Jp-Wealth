@@ -102,7 +102,10 @@ function operationBuildSnapshot(op, entrada){
     if (Number.isFinite(t)) { openedAt = new Date(t).toISOString(); openedAtSource = 'manual_legacy'; }
   }
 
-  const defesas = Number(entrada && entrada.defenseCount);
+  // typeof number, e não Number(): `Number(null) === 0` faria uma contagem
+  // AUSENTE virar "zero defesas informadas" — que é uma afirmação do operador,
+  // não um default. O mesmo vale para string vazia, que Number() também zera.
+  const defesas = (entrada && typeof entrada.defenseCount === 'number') ? entrada.defenseCount : NaN;
   if (!Number.isFinite(defesas) || defesas < 0 || Math.floor(defesas) !== defesas) {
     return { ok:false, motivo:'defense_count_invalid' };
   }
@@ -134,7 +137,10 @@ function operationBuildSnapshot(op, entrada){
     // linhas). Contagem informada pelo operador, com a proveniência dita.
     defenseCountSource: 'manual',
 
-    maxAccountPhaseReached: Number.isFinite(+op.maxAccountPhaseReached) ? +op.maxAccountPhaseReached : null,
+    // operationPhaseIdxOrNull e nao `+op.…`: a coercao faria null virar 0 e
+    // gravar "Fase 1 observada" num registro IMUTAVEL, sobre uma operação cuja
+    // fase máxima nunca foi observada.
+    maxAccountPhaseReached: operationPhaseIdxOrNull(op.maxAccountPhaseReached),
     // Qualidade epistemológica do campo acima. Se houve falha de captura durante
     // a operação, o valor continua sendo o maior OBSERVADO — mas o histórico não
     // pode apresentá-lo como medição completa.
@@ -330,7 +336,10 @@ function operationFmtDuration(openedAt, closedAt){
 }
 
 function operationFmtPhase(idx){
-  if(!Number.isFinite(+idx)) return '—';
+  // typeof, e não coerção: `+null === 0` mostraria "Fase 1" na revisão para um
+  // máximo que nunca foi observado, e o operador confirmaria uma afirmação
+  // falsa sobre o passado.
+  if(typeof idx!=='number' || !Number.isFinite(idx)) return '—';
   const f=(S.matrix||[])[+idx];
   return (f && f.nome) ? f.nome : ('Fase '+((+idx)+1));
 }
