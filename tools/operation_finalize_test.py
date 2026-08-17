@@ -317,6 +317,213 @@ def run_thesis_conflict_reported(page):
     assert r["registros"] == 0, "registro criado apesar do conflito"
 
 
+# ---- Camada 2B — superficie de revisao ----
+
+FOTO_FINANCEIRA = """
+  window.__foto = () => JSON.stringify({
+    ciclo: S.cycleRealizado,
+    registros: (S.operationHistory.records||[]).length,
+    ordens: JPWOperation.liveOrders().length,
+    opId: S.activeOperation && S.activeOperation.operationId,
+    phaseUnlocked: S.phaseUnlocked,
+    logs: S.transitionLog.length
+  });
+"""
+
+
+def run_modal_opens_without_mutation(page):
+    """Abrir a revisao nao pode mutar nada."""
+    r = page.evaluate(
+        """() => {
+          __semear({});
+          const antes = __foto();
+          JPWOperation.openReview();
+          const aberto = document.getElementById('modalOverlay').classList.contains('show');
+          const temConfirm = !!document.getElementById('finalConfirm');
+          const depois = __foto();
+          closeModal();
+          return {antes, depois, aberto, temConfirm};
+        }"""
+    )
+    assert r["aberto"] and r["temConfirm"], "modal de revisao nao abriu"
+    assert r["antes"] == r["depois"], f"abrir o modal MUTOU estado: {r['antes']} -> {r['depois']}"
+
+
+def run_modal_cancel_no_mutation(page):
+    """Cancelar nao muta."""
+    r = page.evaluate(
+        """() => {
+          __semear({});
+          const antes = __foto();
+          JPWOperation.openReview();
+          document.getElementById('modalCancel').click();
+          return {antes, depois: __foto(),
+                  fechado: !document.getElementById('modalOverlay').classList.contains('show')};
+        }"""
+    )
+    assert r["fechado"], "cancelar nao fechou o modal"
+    assert r["antes"] == r["depois"], f"cancelar mutou estado: {r['antes']} -> {r['depois']}"
+
+
+def run_wrong_confirmation_no_mutation(page):
+    """FECHADO incorreto nao finaliza."""
+    r = page.evaluate(
+        """() => {
+          __semear({});
+          const antes = __foto();
+          JPWOperation.openReview();
+          document.getElementById('finalDefenses').value = '1';
+          document.getElementById('finalConfirm').value = 'fechado';   // minusculo
+          document.getElementById('modalConfirm').click();
+          const aindaAberto = document.getElementById('modalOverlay').classList.contains('show');
+          const err = document.querySelector('[data-qid="confirmtxt"] .modal-err').classList.contains('show');
+          const depois = __foto();
+          closeModal();
+          return {antes, depois, aindaAberto, err};
+        }"""
+    )
+    assert r["antes"] == r["depois"], f"confirmacao errada MUTOU estado: {r['antes']} -> {r['depois']}"
+    assert r["aindaAberto"], "modal fechou apesar da confirmacao invalida"
+    assert r["err"], "erro de confirmacao nao foi sinalizado"
+
+
+def run_empty_defenses_is_not_zero(page):
+    """Campo vazio NAO vira 0 em silencio; 0 digitado e legitimo."""
+    vazio = page.evaluate(
+        """() => {
+          __semear({});
+          const antes = __foto();
+          JPWOperation.openReview();
+          document.getElementById('finalConfirm').value = 'FECHADO';
+          // defesas deixado VAZIO de proposito
+          document.getElementById('modalConfirm').click();
+          const err = document.querySelector('[data-qid="defesas"] .modal-err').classList.contains('show');
+          const depois = __foto();
+          closeModal();
+          return {antes, depois, err, valorInicial: 0};
+        }"""
+    )
+    assert vazio["antes"] == vazio["depois"], (
+        "campo de defesas VAZIO finalizou a operacao — zero defesas e uma afirmacao "
+        "do operador, nao um default silencioso"
+    )
+    assert vazio["err"], "campo vazio nao foi sinalizado como invalido"
+
+    zero = page.evaluate(
+        """() => {
+          __semear({});
+          JPWOperation.openReview();
+          document.getElementById('finalDefenses').value = '0';
+          document.getElementById('finalConfirm').value = 'FECHADO';
+          document.getElementById('modalConfirm').click();
+          const reg = S.operationHistory.records[0];
+          return {n: S.operationHistory.records.length,
+                  defesas: reg && reg.defenseCount, fonte: reg && reg.defenseCountSource};
+        }"""
+    )
+    assert zero["n"] == 1, f"0 informado nao finalizou: {zero}"
+    assert zero["defesas"] == 0 and zero["fonte"] == "manual", (
+        f"zero informado nao foi persistido como tal: {zero}"
+    )
+
+
+def run_legacy_requires_manual_date(page):
+    """Legado sem openedAt exige data no proprio modal."""
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null});
+          const antes = __foto();
+          JPWOperation.openReview();
+          const temCampo = !!document.getElementById('finalOpenedAt');
+          document.getElementById('finalDefenses').value = '0';
+          document.getElementById('finalConfirm').value = 'FECHADO';
+          document.getElementById('modalConfirm').click();   // sem informar a data
+          const err = document.querySelector('[data-qid="abertura"] .modal-err').classList.contains('show');
+          const depois = __foto();
+          // agora com data valida
+          document.getElementById('finalOpenedAt').value = '2026-08-01T10:00';
+          document.getElementById('modalConfirm').click();
+          const reg = S.operationHistory.records[0];
+          return {temCampo, err, antes, depois,
+                  n:S.operationHistory.records.length,
+                  fonte: reg && reg.openedAtSource, abertura: reg && reg.openedAt};
+        }"""
+    )
+    assert r["temCampo"], "modal nao ofereceu campo de abertura para operacao legada"
+    assert r["err"], "data ausente nao foi sinalizada"
+    assert r["antes"] == r["depois"], "finalizou sem a data obrigatoria"
+    assert r["n"] == 1, f"nao finalizou com data valida: {r}"
+    assert r["fonte"] == "manual_legacy", f"proveniencia errada: {r['fonte']!r}"
+    assert r["abertura"], "abertura informada nao foi persistida"
+
+
+def run_degraded_shown_in_review(page):
+    """Integridade degradada aparece na revisao e nao bloqueia."""
+    r = page.evaluate(
+        """() => {
+          __semear({fault:true, maxFase:2});
+          JPWOperation.openReview();
+          const bloco = document.querySelector('[data-qid="integridade"]');
+          const txt = bloco ? bloco.textContent : '';
+          document.getElementById('finalDefenses').value = '0';
+          document.getElementById('finalConfirm').value = 'FECHADO';
+          document.getElementById('modalConfirm').click();
+          return {mostrou: !!bloco, txt, n: S.operationHistory.records.length};
+        }"""
+    )
+    assert r["mostrou"], "integridade degradada nao foi mostrada na revisao"
+    assert "Degradada" in r["txt"], f"aviso sem o termo esperado: {r['txt'][:120]}"
+    assert r["n"] == 1, "a marca de degradacao bloqueou a finalizacao"
+
+
+def run_persist_failure_keeps_modal(page):
+    """save() false: modal NAO comunica sucesso e a operacao continua viva."""
+    r = page.evaluate(
+        """() => {
+          __semear({});
+          const antes = __foto();
+          JPWOperation.openReview();
+          document.getElementById('finalDefenses').value = '0';
+          document.getElementById('finalConfirm').value = 'FECHADO';
+          jpWealthPersistenceBlocked = true;
+          document.getElementById('modalConfirm').click();
+          jpWealthPersistenceBlocked = false;
+          const aberto = document.getElementById('modalOverlay').classList.contains('show');
+          const falha = document.getElementById('finalFail');
+          const ctaLiberado = !document.getElementById('modalConfirm').disabled;
+          const depois = __foto();
+          closeModal();
+          return {antes, depois, aberto, msg: falha ? falha.textContent : '', ctaLiberado};
+        }"""
+    )
+    assert r["antes"] == r["depois"], f"falha de persistencia mutou estado: {r['antes']} -> {r['depois']}"
+    assert r["aberto"], "modal fechou comunicando sucesso apesar de save() ter falhado"
+    assert r["msg"], "falha nao foi comunicada ao operador"
+    assert r["ctaLiberado"], "CTA ficou travado apos a falha — operador nao poderia tentar de novo"
+
+
+def run_double_click_single_finalization(page):
+    """Dois cliques rapidos: uma finalizacao."""
+    r = page.evaluate(
+        """() => {
+          __semear({ciclo:500});
+          const cicloAntes = S.cycleRealizado;
+          const net = netOpAtual();
+          JPWOperation.openReview();
+          document.getElementById('finalDefenses').value = '0';
+          document.getElementById('finalConfirm').value = 'FECHADO';
+          const btn = document.getElementById('modalConfirm');
+          btn.click(); btn.click(); btn.click();
+          return {n: S.operationHistory.records.length,
+                  ciclo: S.cycleRealizado, esperado: cicloAntes + net};
+        }"""
+    )
+    assert r["n"] == 1, f"duplo clique criou {r['n']} registros"
+    assert r["ciclo"] == r["esperado"], (
+        f"duplo clique consolidou mais de uma vez: {r['ciclo']} != {r['esperado']}"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -324,6 +531,7 @@ def main():
             browser = playwright.chromium.launch()
             context, page, observed = prepare_page(browser, url)
             page.evaluate(SEMEAR)
+            page.evaluate(FOTO_FINANCEIRA)
             run_blocks_open_position(page)
             run_blocks_empty(page)
             run_success_path(page)
@@ -334,6 +542,15 @@ def main():
             run_return_is_frozen(page)
             run_degraded_integrity_preserved(page)
             run_thesis_conflict_reported(page)
+            # ---- Camada 2B ----
+            run_modal_opens_without_mutation(page)
+            run_modal_cancel_no_mutation(page)
+            run_wrong_confirmation_no_mutation(page)
+            run_empty_defenses_is_not_zero(page)
+            run_legacy_requires_manual_date(page)
+            run_degraded_shown_in_review(page)
+            run_persist_failure_keeps_modal(page)
+            run_double_click_single_finalization(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

@@ -249,11 +249,147 @@ function finalizeOperation(entrada){
   }
 }
 
+// ---- SUPERFÍCIE DE REVISÃO (Camada 2B) ----
+// A revisão faz parte do protocolo de segurança, não do acabamento: dialogs
+// nativos encadeados não são equivalentes a uma superfície que mostra a
+// operação inteira antes de destruí-la. Reutiliza o modal do projeto
+// (#modalOverlay/#modalBox, closeModal) — nenhum sistema paralelo.
+//
+// A UI NÃO consolida nada. Ela coleta, revisa e chama finalizeOperation();
+// quem decide é o domínio.
+
+function operationFmtDuration(openedAt, closedAt){
+  const a=Date.parse(openedAt), b=Date.parse(closedAt);
+  if(!Number.isFinite(a) || !Number.isFinite(b) || b<a) return '—';
+  const min=Math.floor((b-a)/60000);
+  const d=Math.floor(min/1440), h=Math.floor((min%1440)/60), m=min%60;
+  if(d) return d+'d '+h+'h';
+  if(h) return h+'h '+String(m).padStart(2,'0')+'min';
+  return m+'min';
+}
+
+function operationFmtPhase(idx){
+  if(!Number.isFinite(+idx)) return '—';
+  const f=(S.matrix||[])[+idx];
+  return (f && f.nome) ? f.nome : ('Fase '+((+idx)+1));
+}
+
+function operationReviewRow(rotulo, valor){
+  return '<div class="modal-q"><div class="ql">'+esc(rotulo)+'</div><div class="op-final-val">'+esc(valor)+'</div></div>';
+}
+
+function openFinalizeOperationModal(){
+  const pre=operationCanFinalize();
+  const box=$('modalBox');
+  $('modalOverlay').classList.add('show');
+  if(!pre.ok){
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">'+esc(pre.mensagem||'A operação não pode ser finalizada agora.')+'</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  const op=S.activeOperation||{operationId:'(será gerado na confirmação)'};
+  // PRÉVIA: construída só para ser lida. buildSnapshot não muta estado algum.
+  const previa=operationBuildSnapshot(op,{defenseCount:0});
+  if(!previa.ok && (previa.motivo==='instrument_conflict' || previa.motivo==='direction_conflict')){
+    const qual=previa.motivo==='instrument_conflict'?'instrumentos':'direções';
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">As ordens desta operação têm '+esc(qual)+' divergentes: <b>'+esc(previa.valores.join(' · '))+'</b>.<br>'+
+      'A finalização está bloqueada. O sistema não escolhe um valor por você — isso criaria memória histórica falsa.</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  if(!previa.ok){
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">Não foi possível montar a revisão ('+esc(previa.motivo)+').</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  const r=previa.record;
+  const legada=!r.openedAt;
+  const retorno=(r.referenceBalance>0)?((r.netResult/r.referenceBalance)*100).toFixed(2)+'%':'—';
+  const degradada=r.maxAccountPhaseIntegrity==='degraded';
+
+  box.innerHTML=
+    '<h3>Finalizar Operação Única</h3>'+
+    '<div class="modal-sub">Encerra formalmente a tese, preserva a operação no Histórico, consolida o resultado no ciclo e libera as grades. '+
+    'Diferente de <b>fechar uma ordem</b>, que encerra apenas uma posição individual.</div>'+
+    operationReviewRow('Instrumento', r.instrument||'—')+
+    operationReviewRow('Direção', r.direction||'—')+
+    operationReviewRow('Abertura', r.openedAt?new Date(r.openedAt).toLocaleString('pt-BR'):'Desconhecida')+
+    operationReviewRow('Encerramento formal', new Date(r.closedAt).toLocaleString('pt-BR'))+
+    operationReviewRow('Duração', r.openedAt?operationFmtDuration(r.openedAt,r.closedAt):'—')+
+    operationReviewRow('Ordens da operação', String(r.ordersSnapshot.length))+
+    operationReviewRow('Resultado líquido', fmtMoney2(r.netResult))+
+    operationReviewRow('Retorno sobre a base do ciclo', retorno)+
+    operationReviewRow('Fase máxima da Conta', operationFmtPhase(r.maxAccountPhaseReached))+
+    operationReviewRow('Fase máxima da Grade', r.maxGridPhaseReached==null?'—':operationFmtPhase(r.maxGridPhaseReached))+
+    (degradada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Degradada</b></div>'+
+      '<div class="modal-sub">Houve falha de captura durante esta operação. O valor acima é o maior <b>conhecido</b>, não necessariamente o máximo absoluto atingido. A finalização não é bloqueada por isso.</div></div>'):'')+
+    (legada?('<div class="modal-q" data-qid="abertura"><div class="ql">Data/hora de abertura da operação — obrigatória, pois não foi registrada automaticamente:</div>'+
+      '<input type="datetime-local" id="finalOpenedAt"><div class="modal-err">Informe a data/hora de abertura.</div></div>'):'')+
+    '<div class="modal-q" data-qid="defesas"><div class="ql">Número de defesas realizadas (inteiro ≥ 0):</div>'+
+    '<input type="text" inputmode="numeric" id="finalDefenses" autocomplete="off" placeholder="informe">'+
+    '<div class="modal-sub">O modelo de ordens não classifica defesa; a contagem é informada e fica registrada como tal.</div>'+
+    '<div class="modal-err">Informe um inteiro maior ou igual a zero.</div></div>'+
+    '<div class="modal-q" data-qid="confirmtxt"><div class="ql">Digite <b>FECHADO</b> para confirmar:</div>'+
+    '<input type="text" id="finalConfirm" autocomplete="off"><div class="modal-err">Precisa digitar exatamente "FECHADO".</div></div>'+
+    '<div class="modal-q" data-qid="falha" hidden><div class="modal-err show" id="finalFail"></div></div>'+
+    '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Cancelar</button>'+
+    '<button class="modal-btn confirm" id="modalConfirm">Finalizar Operação</button></div>';
+
+  $('modalCancel').addEventListener('click',closeModal);
+  const erro=(qid,on)=>{ const n=box.querySelector('[data-qid="'+qid+'"] .modal-err'); if(n) n.classList.toggle('show',!!on); };
+  const btn=$('modalConfirm');
+  btn.addEventListener('click',()=>{
+    if(btn.disabled) return; // reentrância: o segundo clique não passa
+    erro('defesas',false); erro('confirmtxt',false); if(legada) erro('abertura',false);
+    let falhou=false;
+    // Campo VAZIO não vira 0 em silêncio: zero defesas é uma afirmação do
+    // operador, e precisa ser digitada.
+    const dTxt=String(box.querySelector('#finalDefenses').value||'').trim();
+    const d=/^\d+$/.test(dTxt)?parseInt(dTxt,10):NaN;
+    if(!Number.isFinite(d)){ erro('defesas',true); falhou=true; }
+    let openedAtManual='';
+    if(legada){
+      openedAtManual=String(box.querySelector('#finalOpenedAt').value||'').trim();
+      if(!openedAtManual || !Number.isFinite(Date.parse(openedAtManual))){ erro('abertura',true); falhou=true; }
+    }
+    if(String(box.querySelector('#finalConfirm').value||'').trim()!=='FECHADO'){ erro('confirmtxt',true); falhou=true; }
+    if(falhou) return;
+
+    btn.disabled=true;
+    const res=finalizeOperation({defenseCount:d, openedAtManual});
+    if(!res.ok){
+      // Falha NÃO fecha o modal comunicando sucesso. A operação continua viva
+      // e o operador pode tentar de novo.
+      const cx=box.querySelector('[data-qid="falha"]');
+      const msg=box.querySelector('#finalFail');
+      if(cx&&msg){ msg.textContent=res.mensagem||('A finalização não foi concluída ('+res.motivo+'). Nada foi alterado.'); cx.hidden=false; }
+      btn.disabled=false;
+      return;
+    }
+    closeModal();
+    if(typeof render==='function') render();
+    if(typeof renderPhases==='function') renderPhases();
+    if(typeof renderLedger==='function') renderLedger();
+  });
+  const foco=box.querySelector(legada?'#finalOpenedAt':'#finalDefenses');
+  if(foco) foco.focus();
+}
+
 // Superfície pública consumida pela interface (Painel Operacional) e pelos
-// testes. O domínio não conhece DOM.
+// testes. O domínio não conhece DOM; a revisão é a única parte que o conhece.
 window.JPWOperation = {
   canFinalize: operationCanFinalize,
   buildSnapshot: operationBuildSnapshot,
   finalize: finalizeOperation,
-  liveOrders: operationLiveOrders
+  liveOrders: operationLiveOrders,
+  openReview: openFinalizeOperationModal
 };

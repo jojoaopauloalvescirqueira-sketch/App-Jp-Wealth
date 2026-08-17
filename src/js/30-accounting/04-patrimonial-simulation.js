@@ -147,43 +147,16 @@ function bindContab(){
   // chamava save(), ignorando o retorno. Duas autoridades de consolidação
   // significariam risco de dupla contabilização; uma ordem destrutiva antes da
   // gravação significava perder a operação quando a gravação recusasse.
+  // O handler apenas ABRE a superfície de revisão. Coleta, validação,
+  // confirmação e chamada da autoridade vivem no modal — e a consolidação, no
+  // domínio. Dialogs nativos encadeados nao sao equivalentes a uma revisao que
+  // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
     const api=window.JPWOperation;
-    if(!api){ alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.'); return; }
-    const pre=api.canFinalize();
-    if(!pre.ok){ alert(pre.mensagem||'A operação não pode ser finalizada agora.'); return; }
-    // Prévia sem mutação alguma: o candidato é construído só para ser revisado.
-    const previa=api.buildSnapshot(S.activeOperation||{operationId:'(a gerar)'},{defenseCount:0});
-    if(!previa.ok && previa.motivo==='instrument_conflict'){
-      alert('As ordens desta operação têm instrumentos diferentes ('+previa.valores.join(', ')+'). Corrija antes de finalizar — o Histórico não pode escolher um por você.');
+    if(!api || typeof api.openReview!=='function'){
+      alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    if(!previa.ok && previa.motivo==='direction_conflict'){
-      alert('As ordens desta operação têm direções diferentes ('+previa.valores.join(', ')+'). Corrija antes de finalizar.');
-      return;
-    }
-    const net=netOpAtual();
-    const legada=!(S.activeOperation && S.activeOperation.openedAt);
-    let openedAtManual='';
-    if(legada){
-      // Operação anterior a esta versão: a abertura não foi observada. Perguntar
-      // é honesto; inventar Date.now() seria falsificar proveniência.
-      openedAtManual=prompt('Esta operação começou antes do registro automático de abertura.\n\nInforme a data/hora de abertura (AAAA-MM-DD HH:MM).\nDeixe em branco para registrar como desconhecida.')||'';
-    }
-    const defesasTxt=prompt('Número de defesas realizadas nesta operação (inteiro ≥ 0).\n\nO modelo de ordens não classifica defesa; a contagem é informada e fica registrada como tal.','0');
-    if(defesasTxt===null) return;
-    const defesas=parseInt(defesasTxt,10);
-    if(!Number.isFinite(defesas)||defesas<0){ alert('Número de defesas inválido.'); return; }
-    const degradada=!!(S.activeOperation && S.activeOperation.phaseCaptureFault);
-    const aviso=degradada?'\n\n⚠ Houve falha na captura da Fase da Conta durante esta operação. O máximo registrado pode estar subestimado, e o Histórico marcará a integridade como degradada.':'';
-    const conf=prompt('FINALIZAR OPERAÇÃO ÚNICA\n\nEncerra formalmente a tese, consolida o resultado no ciclo e preserva a operação no Histórico.\n\nResultado líquido a consolidar: '+fmtMoney2(net)+'\nOrdens da operação: '+pre.ordens+'\nDefesas informadas: '+defesas+aviso+'\n\n· Perda realizada CONTINUA no drawdown do ciclo (Art. 3.4§2).\n· Lucro arquivado NÃO amplia limites de risco (Art. 4.3).\n· As grades são zeradas e as Fases 2–4 retravadas.\n\nDigite FECHADO para confirmar:');
-    if(conf===null) return;
-    if(String(conf).trim()!=='FECHADO'){ alert('Confirmação incorreta. A operação NÃO foi finalizada.'); return; }
-    const r=api.finalize({defenseCount:defesas, openedAtManual});
-    if(!r.ok){
-      alert(r.mensagem||('A finalização não foi concluída ('+r.motivo+'). Nada foi alterado.'));
-      return;
-    }
-    render(); renderPhases(); renderLedger();
+    api.openReview();
   });
 }
