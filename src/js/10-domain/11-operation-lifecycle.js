@@ -184,17 +184,35 @@ function operationValidateCandidate(candidato, anterior, record){
   return { ok:true };
 }
 
-// Pergunta ao DISCO se o registro chegou lá. É a única fonte capaz de decidir o
-// desfecho quando save() lança: a pilha não diz se a exceção veio antes ou
+// Pergunta ao DISCO se ESTE registro chegou lá. É a única fonte capaz de decidir
+// o desfecho quando save() lança: a pilha não diz se a exceção veio antes ou
 // depois do setItem, e adivinhar erraria metade das vezes.
-function operationPersistedHas(operationId){
+//
+// Compara operationId E finalizedAt, não só o id. Um registro anterior com o
+// mesmo operationId — de outra aba que finalizou primeiro, ou de um documento
+// que já continha aquela operação — passaria por um teste só de id e faria a
+// função afirmar que gravamos o que não gravamos. finalizedAt é gerado na
+// construção deste snapshot e distingue o nosso registro de qualquer outro.
+//
+// Qualquer dúvida devolve false: storage indisponível, JSON inválido, documento
+// vazio ou envelope de forma inesperada. Falso negativo faz reverter, que é o
+// desfecho compatível com a mensagem dada ao operador ("nada foi alterado"); e
+// o estado converge no próximo carregamento, porque o disco é a fonte da
+// verdade e um documento que contenha o registro trará activeOperation nula.
+function operationPersistedHas(record){
+  if (!record || typeof record !== 'object') return false;
   try{
     const chave = (typeof LSKEY === 'string' && LSKEY) ? LSKEY : 'jpwealth_v9_state';
     const raw = localStorage.getItem(chave);
-    if (!raw) return false;
+    if (typeof raw !== 'string' || !raw) return false;
     const doc = JSON.parse(raw);
-    const recs = doc && doc.operationHistory && doc.operationHistory.records;
-    return Array.isArray(recs) && recs.some(r => r && r.operationId === operationId);
+    if (!doc || typeof doc !== 'object' || Array.isArray(doc)) return false;
+    const env = doc.operationHistory;
+    if (!env || typeof env !== 'object' || !Array.isArray(env.records)) return false;
+    return env.records.some(r =>
+      r && typeof r === 'object' &&
+      r.operationId === record.operationId &&
+      r.finalizedAt === record.finalizedAt);
   }catch(_){ return false; }
 }
 
@@ -266,7 +284,7 @@ function finalizeOperation(entrada){
     try {
       gravou = save() === true;
     } catch (e) {
-      gravou = operationPersistedHas(snap.record.operationId);
+      gravou = operationPersistedHas(snap.record);
       if (!gravou) {
         S = anterior;
         return { ok:false, motivo:'persist_exception', erro:String((e && e.message) || e),

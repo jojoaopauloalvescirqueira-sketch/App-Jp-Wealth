@@ -301,6 +301,54 @@ def run_save_exception_after_write_keeps_result(page):
     assert r["memOrdens"] == 0, "grades nao foram liberadas apesar da gravacao bem-sucedida"
 
 
+def run_persisted_probe_cannot_be_fooled(page):
+    """A confirmacao de gravacao nao pode confundir-se em nenhum dos casos.
+
+    A sonda decide o desfecho quando save() lanca. Se ela afirmar "gravamos"
+    sem termos gravado, o candidato fica vivo em memoria divergindo do disco —
+    exatamente o que a transacao existe para impedir.
+    """
+    r = page.evaluate(
+        """() => {
+          const chave = 'jpwealth_v9_state';
+          const nosso = {operationId:'op_probe', finalizedAt:'2026-08-17T12:00:00.000Z'};
+          const bak = localStorage.getItem(chave);
+          const casos = {};
+          const por = (rotulo, valor) => {
+            if (valor === null) localStorage.removeItem(chave);
+            else localStorage.setItem(chave, valor);
+            casos[rotulo] = operationPersistedHas(nosso);
+          };
+          por('storage vazio', null);
+          por('string vazia', '');
+          por('json invalido', '{ nao e json');
+          por('documento nao-objeto', '[]');
+          por('sem envelope', JSON.stringify({}));
+          por('envelope sem records', JSON.stringify({operationHistory:{schemaVersion:1}}));
+          por('records nao-array', JSON.stringify({operationHistory:{records:'x'}}));
+          // O caso perigoso: MESMO ID, registro de outra finalizacao.
+          por('mesmo id, finalizedAt diferente', JSON.stringify({operationHistory:{records:[
+            {operationId:'op_probe', finalizedAt:'2020-01-01T00:00:00.000Z'}]}}));
+          por('registro nulo na lista', JSON.stringify({operationHistory:{records:[null]}}));
+          // O unico caso verdadeiro.
+          por('nosso registro', JSON.stringify({operationHistory:{records:[
+            {operationId:'op_probe', finalizedAt:'2026-08-17T12:00:00.000Z'}]}}));
+          // Argumento invalido
+          localStorage.setItem(chave, JSON.stringify({operationHistory:{records:[nosso]}}));
+          casos['record nulo'] = operationPersistedHas(null);
+          if (bak === null) localStorage.removeItem(chave); else localStorage.setItem(chave, bak);
+          return casos;
+        }"""
+    )
+    verdadeiro = r.pop("nosso registro")
+    assert verdadeiro is True, "a sonda nao reconheceu o proprio registro gravado"
+    falsos = {k: v for k, v in r.items() if v is not False}
+    assert not falsos, (
+        f"a sonda afirmou gravacao em caso(s) que nao a comprovam: {falsos} — "
+        "cada um desses faria a memoria divergir do disco"
+    )
+
+
 def run_identity_not_forged_in_finalize(page):
     """Finalizacao nao fabrica identidade, e tentativas falhas nao a trocam."""
     ausente = page.evaluate(
@@ -696,6 +744,7 @@ def main():
             run_persistence_failure_rollback(page)
             run_save_exception_full_rollback(page)
             run_save_exception_after_write_keeps_result(page)
+            run_persisted_probe_cannot_be_fooled(page)
             run_identity_not_forged_in_finalize(page)
             run_identity_born_in_lifecycle(page)
             run_save_hook_never_resurrects(page)
