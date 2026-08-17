@@ -691,13 +691,13 @@
                como informação secundária, sem redesign. -->
           <h2>Calendário Econômico · hoje <span class="art">Forex Factory</span></h2>
           <div class="gd-news-status">
-            <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
+            <span id="gdNewsStatus" aria-live="polite">Carregando calendário econômico…</span>
             <span class="gd-news-actions">
-              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico">↻</button>
               <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
                    semântica, é o que o guardrail do arrasto já ignora — segurar
                    aqui nunca inicia reorganização do card. -->
-              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções de Notícias de Alto Impacto" aria-haspopup="menu" aria-expanded="false">⋯</button>
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false">⋯</button>
             </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
@@ -711,7 +711,7 @@
                   <th scope="col" title="Horário local">Hora</th>
                   <th scope="col">Moeda</th>
                   <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
-                  <th scope="col">Notícia</th>
+                  <th scope="col">Evento</th>
                   <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
                   <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
                 </tr>
@@ -719,7 +719,7 @@
               <tbody id="gdNewsList"></tbody>
             </table></div>
           </details>
-          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
+          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem eventos de alto impacto hoje.</div>
         </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
@@ -1179,7 +1179,7 @@
 <div id="jpPopoverLayer"></div>
 
 <!-- Calendário Econômico (17-economic-calendar.js) — UMA implementação, DOIS
-     pontos de entrada: o menu ⋯ do widget de Notícias e a linha "Calendário
+     pontos de entrada: o menu ⋯ do card "Calendário Econômico · hoje" e a linha "Calendário
      Econômico" no menu de Configurações (ação de nível superior, um passo).
      Lê o MESMO cache sanitizado de 15-ff-news.js (ffNewsReadCache) — nenhum
      fetch, cache ou sanitização próprios. Escopo SEMANAL de propósito: a fonte

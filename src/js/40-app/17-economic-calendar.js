@@ -69,7 +69,7 @@ function ecalRenderRoot(root, filter){
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no widget de Notícias.';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico do Dashboard.';
     empty.hidden=false;
     return;
   }
@@ -276,7 +276,7 @@ function ecalOpenMenu(anchor){
   el.className='jp-popover ecal-news-menu';
   el.id='ecalNewsMenu';
   el.setAttribute('role','menu');
-  el.setAttribute('aria-label','Opções de Notícias de Alto Impacto');
+  el.setAttribute('aria-label','Opções do Calendário Econômico');
   const item=document.createElement('button');
   item.type='button';
   item.setAttribute('role','menuitem');

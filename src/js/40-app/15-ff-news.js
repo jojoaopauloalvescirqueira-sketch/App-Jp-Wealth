@@ -68,7 +68,7 @@ function ffNewsIsToday(date){
 }
 
 function ffNewsStatusText(cache){
-  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando notícias…';
+  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})

@@ -5914,7 +5914,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '52212fff2f00b5cc';
+const JP_WEALTH_BUILD_ID = '772b28d29d088507';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6599,13 +6599,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
                como informação secundária, sem redesign. -->
           <h2>Calendário Econômico · hoje <span class="art">Forex Factory</span></h2>
           <div class="gd-news-status">
-            <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
+            <span id="gdNewsStatus" aria-live="polite">Carregando calendário econômico…</span>
             <span class="gd-news-actions">
-              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico">↻</button>
               <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
                    semântica, é o que o guardrail do arrasto já ignora — segurar
                    aqui nunca inicia reorganização do card. -->
-              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções de Notícias de Alto Impacto" aria-haspopup="menu" aria-expanded="false">⋯</button>
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false">⋯</button>
             </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
@@ -6619,7 +6619,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
                   <th scope="col" title="Horário local">Hora</th>
                   <th scope="col">Moeda</th>
                   <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
-                  <th scope="col">Notícia</th>
+                  <th scope="col">Evento</th>
                   <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
                   <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
                 </tr>
@@ -6627,7 +6627,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
               <tbody id="gdNewsList"></tbody>
             </table></div>
           </details>
-          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
+          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem eventos de alto impacto hoje.</div>
         </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
@@ -7087,7 +7087,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div id="jpPopoverLayer"></div>
 
 <!-- Calendário Econômico (17-economic-calendar.js) — UMA implementação, DOIS
-     pontos de entrada: o menu ⋯ do widget de Notícias e a linha "Calendário
+     pontos de entrada: o menu ⋯ do card "Calendário Econômico · hoje" e a linha "Calendário
      Econômico" no menu de Configurações (ação de nível superior, um passo).
      Lê o MESMO cache sanitizado de 15-ff-news.js (ffNewsReadCache) — nenhum
      fetch, cache ou sanitização próprios. Escopo SEMANAL de propósito: a fonte
@@ -20708,7 +20708,7 @@ function ffNewsIsToday(date){
 }
 
 function ffNewsStatusText(cache){
-  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando notícias…';
+  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
@@ -21253,7 +21253,7 @@ function ecalRenderRoot(root, filter){
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no widget de Notícias.';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico do Dashboard.';
     empty.hidden=false;
     return;
   }
@@ -21460,7 +21460,7 @@ function ecalOpenMenu(anchor){
   el.className='jp-popover ecal-news-menu';
   el.id='ecalNewsMenu';
   el.setAttribute('role','menu');
-  el.setAttribute('aria-label','Opções de Notícias de Alto Impacto');
+  el.setAttribute('aria-label','Opções do Calendário Econômico');
   const item=document.createElement('button');
   item.type='button';
   item.setAttribute('role','menuitem');
