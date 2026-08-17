@@ -205,11 +205,10 @@ function renderPhases(){
       let val=inp.value;
       if(['lote','entry','sl','tp','result'].includes(f)) val=parseFloat(val)||0;
       S.phases[pi].orders[oi][f]=val;
-      // Mudança de status pelo grid: mesmo carimbo do modal de fechamento. A
-      // Gênese abrindo por aqui também faz nascer a Operação Única.
-      if(f==='status' && typeof operationOnOrderStatus==='function'){
-        operationOnOrderStatus(S.phases[pi].orders[oi],val,pi,oi);
-      }
+      // NÃO há gancho de status aqui: este laço é querySelectorAll('input') e o
+      // campo Status é um <select>. A chamada que existia neste ponto era
+      // inalcançável — a Operação Única nunca nascia pelo grid. O gancho vive no
+      // laço de <select>, depois das guardas de abertura.
       if((f==='sl'||f==='tp') && S.phases[pi].orders[oi].needsReview){
         S.phases[pi].orders[oi].needsReview=false; // tocou no stop -> considera revisado
       }
@@ -285,6 +284,18 @@ function renderPhases(){
           alert(msg);
           return;
         }
+        // ABERTURA EFETIVA — todas as guardas passaram e o status ficou 'Aberta'.
+        // É AQUI que a Operação Única nasce, e não no laço de <input>: o campo
+        // Status é um <select> (03-phase-transitions.js), e querySelectorAll
+        // ('input') nunca o alcança. O gancho colocado lá era código morto, e
+        // com ele a entidade jamais nascia pelo grid — nenhum openedAt, nenhuma
+        // captura de Fase da Conta, e toda operação virava "legada" no load
+        // seguinte.
+        //
+        // Depois das guardas, e não antes: uma abertura recusada por par
+        // ausente, stop ausente, portão de tese ou teto de fase é revertida, e
+        // uma operação não pode nascer de um ato que não aconteceu.
+        if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Aberta',pi,oi);
       } else if(f==='status' && sel.value==='Fechada'){
         const prevStatus=o.status;
         sel.value=prevStatus||''; // reverte visualmente até confirmar no modal
