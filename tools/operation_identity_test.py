@@ -113,6 +113,51 @@ def run_legacy_adoption(page):
     assert fatos["adotada"], "adocao nao foi marcada"
 
 
+def run_existing_operation_unknowns(page):
+    """Operacao JA existente com campos ausentes: desconhecido continua null.
+
+    Complementa a adocao de legado, que cria o objeto ja normalizado e por isso
+    nao exercita o ramo de reparo. Sem este caso, trocar `null` por `0` no
+    normalizador passaria despercebido — e `0` nao e ausencia, e' "Fase 1".
+    """
+    fatos = page.evaluate(
+        """() => {
+          S.activeOperation = {operationId:'op_preexistente'};   // sem os demais campos
+          migrate();
+          const a = S.activeOperation;
+          S.activeOperation = {operationId:'op_lixo', maxAccountPhaseReached:'abc', openedAt:42, openedAtSource:'inventada'};
+          migrate();
+          const b = S.activeOperation;
+          S.activeOperation = {operationId:'op_alto', maxAccountPhaseReached:99};
+          migrate();
+          const c = S.activeOperation;
+          return {
+            idPreservado: a.operationId === 'op_preexistente',
+            maxAusente: a.maxAccountPhaseReached,
+            openedAtAusente: a.openedAt,
+            sourceAusente: a.openedAtSource,
+            maxLixo: b.maxAccountPhaseReached,
+            openedAtLixo: b.openedAt,
+            sourceInvalida: b.openedAtSource,
+            maxTeto: c.maxAccountPhaseReached
+          };
+        }"""
+    )
+    assert fatos["idPreservado"], "identidade preexistente foi descartada"
+    assert fatos["maxAusente"] is None, (
+        f"max ausente virou {fatos['maxAusente']!r} — desconhecido nao e Fase 1"
+    )
+    assert fatos["maxLixo"] is None, f"max invalido virou {fatos['maxLixo']!r}"
+    assert fatos["openedAtAusente"] is None and fatos["openedAtLixo"] is None, (
+        "openedAt nao-string deveria virar null"
+    )
+    assert fatos["sourceAusente"] is None, f"proveniencia inventada: {fatos['sourceAusente']!r}"
+    assert fatos["sourceInvalida"] is None, (
+        f"proveniencia fora do vocabulario aceita: {fatos['sourceInvalida']!r}"
+    )
+    assert fatos["maxTeto"] == 3, f"max acima do teto nao foi limitado a 3: {fatos['maxTeto']!r}"
+
+
 def run_identity_stability(page):
     """operationId nasce UMA vez e sobrevive a migrate() e save() repetidos."""
     fatos = page.evaluate(
@@ -143,7 +188,14 @@ def run_genesis_birth(page):
           const primeiroOpenedAt = op.openedAt;
           const primeiroId = op.operationId;
           const ordemOpenedAt = genese.openedAt;
-          // Reabrir NAO pode reescrever a abertura original.
+          // SENTINELA, e nao comparacao de relogio. Duas chamadas no mesmo
+          // milissegundo produzem toISOString() identico, e a igualdade passaria
+          // mesmo com sobrescrita — foi exatamente assim que um defeito plantado
+          // sobreviveu ao teste. Marcando com um valor impossivel de ser gerado,
+          // qualquer reescrita fica visivel.
+          const SENT = '1970-01-01T00:00:00.000Z';
+          genese.openedAt = SENT;
+          op.openedAt = SENT;
           operationOnOrderStatus(genese, 'Aberta', 0, 0);
           return {
             nasceu: !!op,
@@ -151,9 +203,9 @@ def run_genesis_birth(page):
             openedAt: primeiroOpenedAt,
             source: op.openedAtSource,
             ordemOpenedAt,
-            openedAtEstavel: op.openedAt === primeiroOpenedAt,
+            openedAtEstavel: op.openedAt === SENT,
             idEstavel: op.operationId === primeiroId,
-            ordemEstavel: genese.openedAt === ordemOpenedAt
+            ordemEstavel: genese.openedAt === SENT
           };
         }"""
     )
@@ -287,6 +339,7 @@ def main():
             context, page, observed = prepare_page(browser, url)
             run_default_shape(page)
             run_legacy_adoption(page)
+            run_existing_operation_unknowns(page)
             run_identity_stability(page)
             run_genesis_birth(page)
             run_order_close_stamp(page)
