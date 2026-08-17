@@ -1,6 +1,11 @@
 name: Quality Gate
 
 on:
+  # Gatilho principal deste projeto. O fluxo real e trabalhar em branch,
+  # mesclar LOCALMENTE e publicar main — nao ha passagem por pull request,
+  # entao sem este gatilho o gate so rodaria por acionamento manual.
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
     inputs:
