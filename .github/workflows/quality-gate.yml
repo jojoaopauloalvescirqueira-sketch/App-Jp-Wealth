@@ -1,0 +1,54 @@
+name: Quality Gate
+
+on:
+  # Gatilho principal deste projeto. O fluxo real e trabalhar em branch,
+  # mesclar LOCALMENTE e publicar main — nao ha passagem por pull request,
+  # entao sem este gatilho o gate so rodaria por acionamento manual.
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: Quality tier
+        required: true
+        default: standard
+        type: choice
+        options:
+          - standard
+          - full
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+          cache: pip
+          # Sem isto o passo ABORTA: o cache do setup-python procura
+          # requirements.txt ou pyproject.toml, e este repositorio nao tem
+          # nenhum dos dois — a unica lista e requirements-dev.txt.
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install test runtime
+        run: |
+          python -m pip install --requirement requirements-dev.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Run quality gate
+        env:
+          QUALITY_TIER: ${{ inputs.tier || 'standard' }}
+        run: python tools/quality_gate.py --tier "$QUALITY_TIER"
