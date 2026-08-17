@@ -2,6 +2,85 @@
 
 ## [Unreleased]
 
+### Calendário Econômico no Execution Board — 2026-08-17
+
+Terceiro destino do submenu, entre Painel Operacional e as ferramentas de
+estudo. **Um domínio, duas instâncias visuais** — o overlay `#ecalOverlay`
+continua existindo com seus dois pontos de entrada intocados.
+
+A premissa de origem da tarefa era que o calendário "pertencia ao Dashboard" e
+precisava ser extraído. A auditoria mostrou outra coisa: o que vive no Dashboard
+é o widget de **Notícias**; o calendário já era superfície global, e já
+consumia o cache do widget sem fetch, cache ou sanitização próprios. O trabalho
+real não era criar fonte única — era **quebrar uma dependência de ciclo de vida**
+e dar ao calendário casa canônica.
+
+- **A dependência invertida, eliminada.** `initFfNews()` abria com
+  `if(!card) return` sobre o card do Dashboard, e esse `return` matava os dois
+  `setInterval`, o listener `online` e o fetch inicial. O ciclo de vida do dado
+  era refém da presença física de um nó do Dashboard. Separado em
+  `initFfNewsWidget()` (view) e `initFfNewsDomain()` (cache, rede, timers).
+  Segundo acoplamento no mesmo eixo: `ffNewsRender()` saía cedo sem os nós do
+  widget e engolia junto a repintura do calendário — o fan-out virou
+  `ffNewsRenderAll()`.
+- **Render parametrizado por raiz.** `ecalRenderRoot(root, filter)` resolve os
+  nós por `data-ecal-role` dentro da raiz recebida. O overlay preserva os 9 ids;
+  o workspace não tem id interno algum. Reusar o markup produziria ids
+  duplicados — e, pior que DOM inválido, `#exec` precede o overlay no documento,
+  então `getElementById` devolveria os nós errados e o modal ficaria sem render.
+- **Filtro é estado de apresentação, não de domínio.** Os eventos são
+  compartilhados; o recorte de moeda de cada superfície não. O overlay reabre em
+  Todas; o workspace preserva a escolha na sessão.
+- **Bind invertido.** O widget passou a ser dono do próprio botão `⋯` e chama
+  `window.JPWEcal.openMenu()`; antes o calendário buscava `#gdNewsMoreBtn` dentro
+  do card. O chip de moeda deixou de usar `.gd-news-cur`, classe namespaced sob
+  o shell do Dashboard, e ganhou `.ecal-cur` com as mesmas declarações.
+- **Achados da revisão adversarial do próprio diff, corrigidos:** a repintura do
+  workspace em subárvore invisível a cada minuto (faltava checar `.screen.active`
+  — `hidden` não é limpo ao sair do módulo); a região `aria-live` reescrita a
+  cada tique, que fazia o leitor de tela reanunciar o mesmo rótulo; e uma
+  varredura do teste que continuou literal depois de o commit anterior afirmar
+  tê-la corrigido.
+- **`06-boot.js` não foi tocado**, deliberadamente: o gancho que repinta o
+  workspace visível existe porque NoCoda e Pivots derivam de `S`. O calendário lê
+  `localStorage` — incluí-lo implicaria dependência inexistente.
+- **Inalterados:** fornecedor, URL, frequência, TTL, formato do cache, política
+  de timezone, classificação de impacto e semântica dos eventos.
+- **Verificação — automação:** `quality_gate.py --tier standard` executado e
+  aprovado, **13/13 PASS**, zero `FAIL`, zero `NOT_RUN`, zero
+  `ENVIRONMENT_ERROR` (`tools/.artifacts/quality-20260817T151725-standard.json`).
+  Node.js não era requisito: `validate_project.py` cai para o Chromium do
+  Playwright, e o tier foi rodado a partir de uma venv isolada com
+  `playwright==1.60.0`, o pino do `requirements-dev.txt`.
+  `run_economic_calendar()` **foi executado e passou**.
+
+  > Correção de registro: até a reconciliação de 2026-08-17 esta entrada
+  > afirmava que "nada foi executado em navegador" e que o teste novo "vale como
+  > especificação, não como evidência". Era verdade quando escrita — o ambiente
+  > não tinha Playwright — e deixou de ser assim que o tier rodou. Fica anotado
+  > em vez de reescrito em silêncio.
+
+- **Verificação — mutação:** o teste novo foi submetido a quatro defeitos
+  plantados no produto e **acusou os quatro**, provando que as asserções não são
+  vazias: (1) `window.JPWEcalUI={render:ecalRender}`, que faria o workspace
+  desenhar na raiz do overlay — o cenário exato que a revisão adversarial
+  apontara como invisível ao gate; (2) o chip de moeda voltando a
+  `.gd-news-cur`; (3) `id="ecalBody"` no corpo do workspace, colidindo com o
+  overlay; (4) o filtro deixando de recortar por moeda. Controle após restaurar:
+  PASS.
+- **Verificação — visual:** `INSPEÇÃO VISUAL HUMANA NÃO REALIZADA`. Foi coletada
+  **evidência automatizada por captura de tela** das cinco superfícies
+  (card do Dashboard, workspace do Execution Board, overlay pelo menu `⋯`, tema
+  claro e mobile a 390 px), com medição em runtime de zero id duplicado e zero
+  overflow horizontal. Isso é a mesma classe de evidência do gate — Chromium
+  dirigido por automação — e **não substitui o julgamento visual de um humano**,
+  que segue pendente. Um `PASS` visual só pode ser registrado aqui depois que o
+  gestor inspecionar e informar as superfícies conferidas.
+- **Ambiente:** o registro do service worker falha no navegador embutido usado na
+  captura (`sw.js` é servido em HTTP 200, mas `register()` recusa). É restrição
+  do sandbox: `sw.js` não foi tocado por nenhum commit desta tarefa. O ciclo do
+  worker é coberto pelo tier `full`, que **não** foi executado.
+
 ### Reconciliação de contagens defasadas e do padrão ARIA do FX — 2026-08-17
 
 Drift documental acumulado pela série de submenus: cada tarefa reconciliou os

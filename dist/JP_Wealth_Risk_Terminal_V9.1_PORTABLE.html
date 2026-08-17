@@ -1473,6 +1473,27 @@
   .ecal-empty{margin:0; padding:18px 20px; color:var(--ink-dim)}
   .ecal-foot{display:flex; flex-direction:column; gap:3px; padding:10px 20px 14px; border-top:1px solid var(--line); flex:none; font-size:var(--fs-xs); color:var(--ink-faint)}
   .ecal-foot #ecalFreshness{font-family:var(--mono)}
+  /* Chip de moeda do calendário. Classe PRÓPRIA: o render usava .gd-news-cur,
+     namespaced sob html[data-shell="global-dashboard"] — o calendário dependia
+     de uma classe do Dashboard para desenhar um nó que não é do Dashboard.
+     Declarações idênticas às de .gd-news-cur (app.css:4552), tokens de :root,
+     agora sem dono errado. */
+  .ecal-cur{
+    font-family:var(--jp-font-ui); font-size:9px; font-weight:700; letter-spacing:.04em;
+    border:1px solid var(--jp-border); border-radius:4px; padding:1px 5px; color:var(--jp-ink-muted);
+  }
+  /* Workspace do Execution Board — segunda instância visual do MESMO domínio.
+     O overlay é diálogo: flex com altura própria e corpo que rola por dentro
+     (.ecal-body{flex:1; overflow-y:auto}). Aqui o conteúdo flui no card e quem
+     rola é a tela, então o corpo perde flex e overflow próprios. As regras de
+     dia/item/hora/números são compartilhadas e não precisam de nada. */
+  .ecal-ws{display:flex; flex-direction:column}
+  .ecal-ws-head h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
+  .ecal-ws .ecal-filters{margin:12px 0 0}
+  .ecal-ws-body{flex:none; overflow:visible; padding:14px 0 4px}
+  .ecal-ws .ecal-empty{padding:16px 0}
+  .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .ecal-ws-fresh{font-family:var(--mono)}
   .ecal-news-menu button[role="menuitem"]{
     display:block; width:100%; text-align:left; border:0; border-radius:7px;
     padding:9px 10px; background:transparent; color:var(--ink); font:inherit;
@@ -5893,7 +5914,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'fa5b65ae5dd68125';
+const JP_WEALTH_BUILD_ID = '772b28d29d088507';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6030,6 +6051,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <button type="button" data-nav-sub-view="panel">
         <span class="nav-sub-item-title">Painel Operacional</span>
         <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
+      </button>
+      <button type="button" data-nav-sub-view="ecal">
+        <span class="nav-sub-item-title">Calendário Econômico</span>
+        <span class="nav-sub-item-desc">Semana corrente de alto impacto</span>
       </button>
       <button type="button" data-nav-sub-view="nocoda">
         <span class="nav-sub-item-title">Estudos NoCoda</span>
@@ -6270,6 +6295,37 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+    </div>
+    <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA
+         VISUAL do mesmo domínio — não é um segundo calendário. O overlay
+         #ecalOverlay continua existindo com seus dois pontos de entrada; as duas
+         superfícies leem o MESMO cache (ffNewsReadCache) e a MESMA função de
+         render, parametrizada por raiz.
+         Sem id nos nós internos DE PROPÓSITO: os 9 ids do overlay são globais e
+         fixos, e duplicá-los reprovaria validate_project.py e deixaria o modal
+         sem render, porque #exec precede o overlay no documento e
+         getElementById devolve o primeiro nó. Aqui a identidade é por
+         data-ecal-role, resolvida dentro da própria raiz. -->
+    <div class="exec-view" id="execEcal" role="region" aria-label="Calendário Econômico" hidden>
+      <div class="card ecal-ws">
+        <div class="ecal-ws-head">
+          <h2>Calendário Econômico</h2>
+          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+        </div>
+        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
+          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+        </div>
+        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
+        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
+        <p class="ecal-ws-foot">
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
+          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+        </p>
       </div>
     </div>
     <!-- Estudos NoCoda: memória técnica do canal por instrumento. O conteúdo é
@@ -6532,15 +6588,24 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              (ver infra/ff-news-feed/README.md). Só leitura; nada entra em
              cálculo ou estado S. -->
         <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
-          <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
+          <!-- Rótulo alinhado ao domínio: este card é a projeção DE HOJE do
+               Calendário Econômico, cuja casa canônica é Execution Board →
+               Calendário Econômico (semana corrente). Não é um segundo
+               calendário — mesma fonte, mesmo cache, mesma sanitização.
+               "· hoje" fica na parte VISÍVEL, e não no .art, porque
+               `#gdDashMain > .gd-news-card h2 .art{display:none}` (app.css)
+               oculta o sufixo no layout padrão do Dashboard — era ali que
+               "Forex Factory · hoje" vinha sendo suprimido. A fonte permanece
+               como informação secundária, sem redesign. -->
+          <h2>Calendário Econômico · hoje <span class="art">Forex Factory</span></h2>
           <div class="gd-news-status">
-            <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
+            <span id="gdNewsStatus" aria-live="polite">Carregando calendário econômico…</span>
             <span class="gd-news-actions">
-              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar notícias agora">↻</button>
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico">↻</button>
               <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
                    semântica, é o que o guardrail do arrasto já ignora — segurar
                    aqui nunca inicia reorganização do card. -->
-              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções de Notícias de Alto Impacto" aria-haspopup="menu" aria-expanded="false">⋯</button>
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false">⋯</button>
             </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
@@ -6554,7 +6619,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
                   <th scope="col" title="Horário local">Hora</th>
                   <th scope="col">Moeda</th>
                   <th scope="col" class="gd-news-imp" title="Impacto">Imp.</th>
-                  <th scope="col">Notícia</th>
+                  <th scope="col">Evento</th>
                   <th scope="col" class="gd-news-num" title="Previsão">Prev.</th>
                   <th scope="col" class="gd-news-num" title="Anterior">Ant.</th>
                 </tr>
@@ -6562,7 +6627,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
               <tbody id="gdNewsList"></tbody>
             </table></div>
           </details>
-          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem notícias de alto impacto hoje.</div>
+          <div class="gd-news-empty" id="gdNewsEmpty" hidden>Sem eventos de alto impacto hoje.</div>
         </div>
       </div>
       <aside class="gd-dash-side jp-widget-sidebar" id="gdDashSide">
@@ -7022,7 +7087,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div id="jpPopoverLayer"></div>
 
 <!-- Calendário Econômico (17-economic-calendar.js) — UMA implementação, DOIS
-     pontos de entrada: o menu ⋯ do widget de Notícias e a linha "Calendário
+     pontos de entrada: o menu ⋯ do card "Calendário Econômico · hoje" e a linha "Calendário
      Econômico" no menu de Configurações (ação de nível superior, um passo).
      Lê o MESMO cache sanitizado de 15-ff-news.js (ffNewsReadCache) — nenhum
      fetch, cache ou sanitização próprios. Escopo SEMANAL de propósito: a fonte
@@ -7033,23 +7098,23 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     <header class="ecal-head">
       <div class="ecal-head-text">
         <h2 id="ecalTitle">Calendário Econômico</h2>
-        <p class="ecal-sub" id="ecalRange" aria-live="polite"></p>
+        <p class="ecal-sub" id="ecalRange" data-ecal-role="range" aria-live="polite"></p>
       </div>
       <button type="button" class="ecal-close" id="ecalCloseBtn" aria-label="Fechar calendário econômico" title="Fechar">
         <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
       </button>
     </header>
-    <div class="seg ecal-filters" id="ecalFilters" role="group" aria-label="Filtrar por moeda">
+    <div class="seg ecal-filters" id="ecalFilters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
       <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
       <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
       <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
       <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
       <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
     </div>
-    <div class="ecal-body" id="ecalBody" tabindex="-1"></div>
-    <p class="ecal-empty" id="ecalEmpty" hidden></p>
+    <div class="ecal-body" id="ecalBody" data-ecal-role="body" tabindex="-1"></div>
+    <p class="ecal-empty" id="ecalEmpty" data-ecal-role="empty" hidden></p>
     <footer class="ecal-foot">
-      <span id="ecalFreshness"></span>
+      <span id="ecalFreshness" data-ecal-role="freshness"></span>
       <span class="ecal-foot-note">Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
     </footer>
   </section>
@@ -20643,7 +20708,7 @@ function ffNewsIsToday(date){
 }
 
 function ffNewsStatusText(cache){
-  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando notícias…';
+  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
@@ -20749,9 +20814,19 @@ function ffNewsRender(){
     tr.append(tdTime,tdCur,tdImpact,tdTitle,tdPrev,tdAnt);
     list.append(tr);
   }
-  // Calendário Econômico (17-economic-calendar.js) lê o mesmo cache: se estiver
-  // aberto quando este ciclo rodar, re-renderiza junto. Guarda de existência —
-  // este arquivo carrega antes do 17, e no monólito reduzido o 17 pode faltar.
+}
+
+// Fan-out de repintura das superfícies que consomem este cache. O widget do
+// Dashboard e o Calendário Econômico são independentes: a ausência de um não
+// pode impedir a repintura do outro.
+//
+// Antes desta separação a chamada do calendário ficava DENTRO de ffNewsRender(),
+// depois do `return` que sai quando os nós do widget não existem — logo um fetch
+// bem-sucedido gravava cache novo e o calendário aberto nunca acompanhava.
+// Guarda de existência mantida: este arquivo carrega antes do 17, e no monólito
+// reduzido o 17 pode faltar.
+function ffNewsRenderAll(){
+  ffNewsRender();
   if(typeof ecalRenderIfOpen==='function') ecalRenderIfOpen();
 }
 
@@ -20779,29 +20854,55 @@ function ffNewsFetch(force){
     .finally(()=>{
       ffNewsInFlight=false;
       if(btn) btn.disabled=false;
-      ffNewsRender();
+      ffNewsRenderAll();
     });
 }
 
-function initFfNews(){
+// Inicialização em DUAS partes, deliberadamente separadas.
+//
+// VIEW do widget: tudo que precisa do DOM do card do Dashboard. Continua
+// condicionada à existência do card, como deve ser.
+function initFfNewsWidget(){
   const card=document.querySelector('[data-layout-card="news-high-impact"]');
   if(!card) return;
   const btn=document.getElementById('gdNewsRefreshBtn');
   if(btn) btn.addEventListener('click',()=>ffNewsFetch(true));
+  // Menu ⋯ → Calendário Econômico. O botão é deste card, então o bind é deste
+  // módulo: antes o calendário procurava #gdNewsMoreBtn dentro do Dashboard.
+  // A chamada é resolvida no clique, não agora — este arquivo é o script 44 e
+  // o calendário é o 46, então window.JPWEcal ainda não existe neste ponto.
+  const more=document.getElementById('gdNewsMoreBtn');
+  if(more) more.addEventListener('click',()=>{
+    if(window.JPWEcal && typeof window.JPWEcal.openMenu==='function') window.JPWEcal.openMenu(more);
+  });
+}
+
+// DOMÍNIO: cache, rede, timers e 'online'. NÃO depende de nó algum do
+// Dashboard — o Calendário Econômico consome este mesmo cache a partir do
+// Execution Board, onde o card de Notícias pode não estar montado.
+//
+// Até esta separação, o `if(!card) return` de initFfNews() matava junto os dois
+// intervalos, o listener 'online' e o fetch inicial: sem o card, nada
+// revalidava e o calendário exibiria cache velho indefinidamente, em silêncio.
+// Fonte, frequência, TTL, formato do cache e timezone permanecem intocados —
+// só a condição de partida mudou.
+function initFfNewsDomain(){
   window.addEventListener('online',()=>ffNewsFetch(false));
   // Poll leve: re-render cobre a virada do dia; fetch só quando o cache
   // envelheceu e a aba está visível — respeita o rate-limit da fonte.
   setInterval(()=>{
-    ffNewsRender();
+    ffNewsRenderAll();
     if(document.visibilityState==='visible') ffNewsFetch(false);
   },FF_NEWS_POLL_MS);
   // Tique de 1 min só de render: mantém a contagem regressiva e a transição
   // próximo→passado precisas sem nenhum consumo adicional da fonte.
-  setInterval(ffNewsRender,FF_NEWS_TICK_MS);
-  ffNewsRender();
+  setInterval(ffNewsRenderAll,FF_NEWS_TICK_MS);
+  ffNewsRenderAll();
   ffNewsFetch(false);
 }
-initFfNews();
+
+initFfNewsWidget();
+initFfNewsDomain();
 // ============ GOVERNANÇA DE ARMAZENAMENTO — UI (JPW-HJFGDE) ============
 // Camada de apresentação sobre 00-core/06-storage-fs.js e os helpers dg* de
 // 04-persistence.js: cartão de status da pasta padrão (Central → Backup e Recuperação),
@@ -21132,26 +21233,44 @@ function ecalRangeLabel(events){
 }
 
 // ---- render (textContent em todo dado externo — disciplina do widget) ----
-function ecalRender(){
-  const body=ecalEl('ecalBody'), empty=ecalEl('ecalEmpty'), fresh=ecalEl('ecalFreshness'), range=ecalEl('ecalRange');
+// NÚCLEO PARAMETRIZADO POR RAIZ. Serve as duas instâncias visuais — o overlay
+// #ecalOverlay e o workspace #execEcal do Execution Board — a partir da mesma
+// leitura de cache e das mesmas regras. Não existe segundo calendário: existe
+// uma função de render e dois lugares onde ela desenha.
+//
+// A resolução é por data-ecal-role DENTRO da raiz, nunca por getElementById:
+// os 9 ids do overlay são globais e fixos, e o workspace deliberadamente não
+// tem id interno algum. Fosse por id, a segunda superfície capturaria os nós da
+// primeira — #exec precede o overlay no documento.
+function ecalPart(root, role){ return root?root.querySelector('[data-ecal-role="'+role+'"]'):null; }
+
+function ecalRenderRoot(root, filter){
+  const body=ecalPart(root,'body'), empty=ecalPart(root,'empty'),
+        fresh=ecalPart(root,'freshness'), range=ecalPart(root,'range');
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no widget de Notícias.';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico do Dashboard.';
     empty.hidden=false;
     return;
   }
   const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
   fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
-  range.textContent=ecalRangeLabel(data.events);
-  const filtered=data.events.filter(e=>ecalState.filter==='all'||e.country===ecalState.filter);
+  // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
+  // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
+  // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o
+  // leitor de tela reanunciar o mesmo intervalo indefinidamente, por cima da
+  // leitura em curso. O anúncio deve acontecer quando o rótulo MUDA.
+  const rangeLabel=ecalRangeLabel(data.events);
+  if(range.textContent!==rangeLabel) range.textContent=rangeLabel;
+  const filtered=data.events.filter(e=>filter==='all'||e.country===filter);
   if(!filtered.length){
-    empty.textContent=ecalState.filter==='all'
+    empty.textContent=filter==='all'
       ? 'A fonte não lista eventos de alto impacto para a semana corrente.'
-      : 'Sem eventos de alto impacto em '+ecalState.filter+' nesta semana.';
+      : 'Sem eventos de alto impacto em '+filter+' nesta semana.';
     empty.hidden=false;
     return;
   }
@@ -21180,7 +21299,10 @@ function ecalRender(){
     time.dateTime=e.date;
     time.textContent=e.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     const cur=document.createElement('span');
-    cur.className='gd-news-cur';
+    // .ecal-cur, não .gd-news-cur: a classe do widget é namespaced sob
+    // html[data-shell="global-dashboard"] e amarrava o calendário ao Dashboard.
+    // Declarações idênticas, dono correto (app.css).
+    cur.className='ecal-cur';
     cur.textContent=e.country;
     const title=document.createElement('span');
     title.className='ecal-title';
@@ -21199,20 +21321,61 @@ function ecalRender(){
   }
 }
 
-// Chamado por ffNewsRender() ao fim de cada ciclo do widget: se o calendário
-// estiver aberto quando um fetch/tick atualizar o cache, a tela acompanha —
-// sem isso, dado novo só apareceria fechando e reabrindo.
-function ecalRenderIfOpen(){ if(!ecalState || !ecalState.open) return; ecalRender(); }
+// ---- instância 1: o overlay, com seus dois pontos de entrada intocados ----
+function ecalRender(){ ecalRenderRoot(ecalEl('ecalOverlay'), ecalState.filter); }
+
+// ---- instância 2: o workspace canônico do Execution Board ----
+// Estado de APRESENTAÇÃO próprio. O filtro de moeda é recorte da view, não
+// verdade do domínio: os eventos são compartilhados, qual subconjunto cada
+// superfície exibe não é — e compartilhá-lo faria a escolha numa tela mudar a
+// outra pelas costas do operador. `var` pela mesma razão de ecalState, acima.
+var ecalWsState={filter:'all'};
+function ecalWsRoot(){ return document.getElementById('execEcal'); }
+function ecalRenderWorkspace(){ ecalRenderRoot(ecalWsRoot(), ecalWsState.filter); }
+
+function ecalSyncFilters(root, filter){
+  const box=ecalPart(root,'filters'); if(!box) return;
+  box.querySelectorAll('button[data-ecal-cur]').forEach(b=>{
+    const on=b.dataset.ecalCur===filter;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',String(on));
+  });
+}
 
 function ecalSetFilter(cur){
   // §16 do ticket: abre sempre em Todas; a troca vale só enquanto aberto.
   ecalState.filter=ECAL_CURRENCIES.includes(cur)?cur:'all';
-  document.querySelectorAll('#ecalFilters button').forEach(b=>{
-    const on=b.dataset.ecalCur===ecalState.filter;
-    b.classList.toggle('on',on);
-    b.setAttribute('aria-pressed',String(on));
-  });
+  ecalSyncFilters(ecalEl('ecalOverlay'), ecalState.filter);
   ecalRender();
+}
+function ecalWsSetFilter(cur){
+  // O workspace é superfície permanente: o filtro dele persiste na sessão em
+  // vez de voltar a Todas, ao contrário do overlay, que reabre sempre limpo.
+  ecalWsState.filter=ECAL_CURRENCIES.includes(cur)?cur:'all';
+  ecalSyncFilters(ecalWsRoot(), ecalWsState.filter);
+  ecalRenderWorkspace();
+}
+
+// Chamado por ffNewsRenderAll() ao fim de cada ciclo do domínio: se uma
+// superfície estiver visível quando um fetch/tique atualizar o cache, ela
+// acompanha — sem isso, dado novo só apareceria reabrindo.
+function ecalRenderIfOpen(){
+  if(ecalState && ecalState.open) ecalRender();
+  // A guarda `if(ecalWsState)` NÃO é redundante: este arquivo é o script 46 e
+  // 15-ff-news.js é o 44, que chama esta função durante a própria avaliação, no
+  // monólito — a declaração está içada, o valor ainda não. Mesma razão do `var`
+  // documentado no topo. Removê-la derruba o boot inteiro.
+  if(!ecalWsState) return;
+  const root=ecalWsRoot();
+  if(!root || root.hidden) return;
+  // `hidden` sozinho não basta. execApplyView() é o único a escrevê-lo e não
+  // tem caminho de SAÍDA do módulo: sair do Execution Board para outra tela só
+  // troca a classe .active, e .screen{display:none} esconde por CSS deixando
+  // #execEcal com hidden=false. Sem esta segunda condição o tique de 1 min
+  // reconstruiria o workspace inteiro dentro de uma subárvore invisível, para
+  // sempre — cerca de 1.400 repinturas descartadas por dia de app aberto.
+  if(!root.closest('.screen.active')) return;
+  ecalRenderWorkspace();
 }
 
 // ---- foco: armadilha simples, mesmo contrato dos outros diálogos ----
@@ -21297,7 +21460,7 @@ function ecalOpenMenu(anchor){
   el.className='jp-popover ecal-news-menu';
   el.id='ecalNewsMenu';
   el.setAttribute('role','menu');
-  el.setAttribute('aria-label','Opções de Notícias de Alto Impacto');
+  el.setAttribute('aria-label','Opções do Calendário Econômico');
   const item=document.createElement('button');
   item.type='button';
   item.setAttribute('role','menuitem');
@@ -21329,8 +21492,6 @@ function ecalOpenMenu(anchor){
 }
 
 function initEconomicCalendar(){
-  const more=document.getElementById('gdNewsMoreBtn');
-  if(more) more.addEventListener('click',()=>ecalOpenMenu(more));
   const close=ecalEl('ecalCloseBtn');
   if(close) close.addEventListener('click',closeEconomicCalendar);
   const overlay=ecalEl('ecalOverlay');
@@ -21338,6 +21499,13 @@ function initEconomicCalendar(){
   const filters=ecalEl('ecalFilters');
   if(filters) filters.addEventListener('click',e=>{
     const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalSetFilter(b.dataset.ecalCur);
+  });
+  // Filtros do workspace: faixa estática no HTML, um único bind. O render
+  // reconstrói apenas o corpo — a faixa não é recriada, então o listener não
+  // se multiplica a cada entrada no workspace.
+  const wsFilters=ecalPart(ecalWsRoot(),'filters');
+  if(wsFilters) wsFilters.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalWsSetFilter(b.dataset.ecalCur);
   });
   // Lançador da Central por DELEGAÇÃO: o painel da folha é criado pela própria
   // Central depois deste módulo carregar, então um bind direto não o acharia.
@@ -21349,6 +21517,14 @@ function initEconomicCalendar(){
   });
 }
 initEconomicCalendar();
+
+// ---- superfície pública ----
+// O widget de Notícias chama openMenu() para o SEU botão ⋯. Antes era este
+// módulo que ia buscar #gdNewsMoreBtn dentro do card do Dashboard — dependência
+// na direção errada: o calendário não deve conhecer os nós do Dashboard.
+window.JPWEcal={open:openEconomicCalendar, openMenu:ecalOpenMenu, close:closeEconomicCalendar};
+// Contrato dos workspaces montados sob demanda (13-exec-views.js).
+window.JPWEcalUI={render:ecalRenderWorkspace};
 (function(global,factory){typeof exports==="object"&&typeof module!=="undefined"?factory(exports):typeof define==="function"&&define.amd?define(["exports"],factory):(global=typeof globalThis!=="undefined"?globalThis:global||self,factory(global.planck={}))})(this,function(exports2){"use strict";
 /**
  * Planck.js v1.5.0
@@ -25091,6 +25267,10 @@ document.querySelectorAll('.tab[data-screen="fxplan"]').forEach(t=>t.addEventLis
 const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
+  // Calendario Economico: casa canonica da ferramenta. O overlay #ecalOverlay
+  // continua existindo com seus dois pontos de entrada — sao duas instancias
+  // visuais do mesmo dominio, nao dois calendarios.
+  ['ecal', 'execEcal'],
   ['nocoda', 'execNocoda'],
   ['pivots', 'execPivots'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
@@ -25108,7 +25288,12 @@ const EXEC_VIEWS = [
 // um pivot em edicao e voltar devolve o formulario como estava.
 const EXEC_VIEW_RENDERERS = {
   nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); },
-  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); }
+  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); },
+  // Calendario: o cache do widget de Noticias e vivo (poll de 5 min, tique de
+  // 1 min), entao a entrada no workspace repinta a partir do dado corrente. O
+  // dominio nao e consultado pela rede aqui — quem revalida e o ciclo do
+  // proprio widget, em 15-ff-news.js.
+  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); }
 };
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;

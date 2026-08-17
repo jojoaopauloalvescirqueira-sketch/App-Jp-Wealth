@@ -15,6 +15,7 @@ para provar identidade de no sem alterar o estado financeiro persistido.
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import json
 import os
 import socket
 import threading
@@ -25,12 +26,13 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_VIEWS = ["overview", "panel", "nocoda", "pivots", "motor"]
-EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Estudos NoCoda",
-                   "Estudos dos Pivots", "Motor de Lote"]
+EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor"]
+EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Calendário Econômico",
+                   "Estudos NoCoda", "Estudos dos Pivots", "Motor de Lote"]
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execNocoda", "execPivots", "motorWidgetGrid"]
+EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
+                       "execPivots", "motorWidgetGrid"]
 # Os quatro widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -153,24 +155,28 @@ def run_displacement(page):
 
 def run_initial_destination(page):
     """Entrar no modulo abre a Visao Geral; apenas um workspace fica visivel."""
+    # A lista de containers vem de EXPECTED_CONTAINERS, nao de literais inline.
+    # Ate esta tarefa a constante existia mas NUNCA era referenciada, e as duas
+    # varreduras abaixo repetiam os ids a mao: quem acrescentasse um destino e
+    # atualizasse so a constante teria um teste verde sem cobrir o container
+    # novo. Injetar a constante fecha essa divergencia na origem.
+    containers = json.dumps(EXPECTED_CONTAINERS)
     state = page.evaluate(
         """() => ({
           view: window.JPWExec.ui.getView(),
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id),
           nestedScreens: document.querySelectorAll('#exec .screen').length,
-          visible: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
-            .filter(id => !document.getElementById(id).hidden),
-          inert: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
-            .filter(id => document.getElementById(id).inert),
+          visible: %s.filter(id => !document.getElementById(id).hidden),
+          inert: %s.filter(id => document.getElementById(id).inert),
           current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
             ?.getAttribute('aria-current')
-        })"""
+        })""" % (containers, containers)
     )
     assert state["view"] == "overview", f"destino inicial nao e a Visao Geral: {state}"
     assert state["screens"] == ["exec"], f"modulo ativo incorreto: {state['screens']}"
     assert state["nestedScreens"] == 0, "workspace virou .screen aninhada — quebra .screen.active/closest"
     assert state["visible"] == ["execOverview"], f"mais de um workspace visivel: {state['visible']}"
-    assert state["inert"] == ["execWidgetGrid", "execNocoda", "execPivots", "motorWidgetGrid"], f"inert incorreto: {state['inert']}"
+    assert state["inert"] == [c for c in EXPECTED_CONTAINERS if c != "execOverview"], f"inert incorreto: {state['inert']}"
     assert state["current"] == "page", "destino ativo sem aria-current"
 
 
@@ -192,10 +198,9 @@ def run_panel_equivalence(page):
                           'execLifoMonitor','statusBanner','quarantineBanner','downgradeBanner',
                           'mVRM','iAtr55','lLote','lRisco','archiveOpBtn']
               .filter(id => document.getElementById(id) === null),
-            visible: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
-              .filter(id => !document.getElementById(id).hidden)
+            visible: %s.filter(id => !document.getElementById(id).hidden)
           };
-        }"""
+        }""" % json.dumps(EXPECTED_CONTAINERS)
     )
     assert facts["grids"] == 1, "o Painel Operacional foi duplicado"
     assert facts["gridParent"] == "exec", f"grade saiu de section#exec: {facts['gridParent']}"
@@ -291,7 +296,11 @@ def run_focus_and_keyboard(page):
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "nocoda"
+    # Vizinho seguinte de "panel" na ordem do submenu — deriva de EXPECTED_VIEWS
+    # para nao voltar a travar um destino especifico por literal.
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[
+        EXPECTED_VIEWS.index("panel") + 1
+    ]
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0]
     page.keyboard.press("End")
@@ -368,6 +377,122 @@ def run_module_switch(page):
         })"""
     )
     assert back == {"view": "overview", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
+
+
+def run_economic_calendar(page):
+    """Calendario Economico: UM dominio, DUAS instancias visuais.
+
+    O overlay #ecalOverlay e o workspace #execEcal leem o MESMO cache e usam a
+    MESMA funcao de render, parametrizada por raiz. O que este teste protege e
+    justamente o que a revisao adversarial apontou como sem cobertura: que
+    selecionar o destino pinta o workspace (e nao a raiz errada), que os ids do
+    overlay nao foram duplicados, e que o bind dos filtros nao se multiplica.
+    """
+    # Cache determinístico ANTES de entrar no destino: o teste nao pode depender
+    # da rede nem do feed publico. Mesma forma que ffNewsReadCache() sanitiza.
+    page.evaluate(
+        """() => {
+          const dia = new Date(); dia.setHours(12, 0, 0, 0);
+          localStorage.setItem('jpwealth.ui.ffNews.v1', JSON.stringify({
+            fetchedAt: Date.now(),
+            payload: {version: 1, generated_at: '2026-08-17T12:00:00Z', events: [
+              {title: 'JPW Teste USD', country: 'USD', date: dia.toISOString(),
+               impact: 'High', forecast: '1.0', previous: '0.9'},
+              {title: 'JPW Teste EUR', country: 'EUR', date: dia.toISOString(),
+               impact: 'High', forecast: '2.0', previous: '1.9'}
+            ]}
+          }));
+        }"""
+    )
+    page.click("#execNavTrigger")
+    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click('#execNavSubmenu [data-nav-sub-view="ecal"]')
+    page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+
+    fatos = page.evaluate(
+        """() => {
+          const ws = document.getElementById('execEcal');
+          const ov = document.getElementById('ecalOverlay');
+          const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
+          const papeis = [...ws.querySelectorAll('[data-ecal-role]')]
+            .map(el => el.dataset.ecalRole).sort();
+          return {
+            visivel: !ws.hidden,
+            // O workspace nao pode ter id interno: os 9 do overlay sao globais.
+            idsInternos: ws.querySelectorAll('[id]').length,
+            duplicados: ids.length - new Set(ids).size,
+            papeis,
+            // Pintou no lugar certo? O corpo do workspace tem eventos e o do
+            // overlay continua vazio (ninguem abriu o modal).
+            itensWorkspace: ws.querySelectorAll('.ecal-item').length,
+            itensOverlay: ov.querySelectorAll('.ecal-item').length,
+            overlayAberto: ov.classList.contains('show'),
+            // O chip de moeda nao pode mais usar a classe do Dashboard.
+            chipsDashboard: ws.querySelectorAll('.gd-news-cur').length,
+            chipsProprios: ws.querySelectorAll('.ecal-cur').length
+          };
+        }"""
+    )
+    assert fatos["visivel"], "selecionar o destino nao exibiu #execEcal"
+    assert fatos["duplicados"] == 0, "a segunda instancia duplicou ids no documento"
+    assert fatos["idsInternos"] == 0, (
+        f"workspace ganhou id interno ({fatos['idsInternos']}) — colide com o overlay"
+    )
+    assert fatos["papeis"] == ["body", "empty", "filters", "freshness", "range"], (
+        f"papeis do workspace incompletos: {fatos['papeis']}"
+    )
+    assert fatos["itensWorkspace"] == 2, (
+        f"workspace nao pintou os eventos do cache: {fatos['itensWorkspace']} — "
+        "se for 0 com o overlay preenchido, o render recebeu a raiz errada"
+    )
+    assert fatos["itensOverlay"] == 0, "render do workspace vazou para o overlay"
+    assert not fatos["overlayAberto"], "entrar no workspace abriu o modal"
+    assert fatos["chipsDashboard"] == 0, "calendario ainda usa .gd-news-cur do Dashboard"
+    assert fatos["chipsProprios"] == 2, f"chips proprios ausentes: {fatos['chipsProprios']}"
+
+    # Filtro da instancia: recorte de VIEW, nao do dominio.
+    page.click('#execEcal [data-ecal-cur="USD"]')
+    filtrado = page.evaluate(
+        """() => ({
+          itens: document.querySelectorAll('#execEcal .ecal-item').length,
+          pressionado: document.querySelector('#execEcal [data-ecal-cur="USD"]')
+            .getAttribute('aria-pressed')
+        })"""
+    )
+    assert filtrado["itens"] == 1, f"filtro de moeda nao recortou: {filtrado['itens']}"
+    assert filtrado["pressionado"] == "true", "aria-pressed nao acompanhou o filtro"
+
+    # Ida e volta nao multiplica listener: se o bind dos filtros fosse
+    # registrado a cada render, um unico clique dispararia N vezes e o
+    # contador de itens divergiria depois de varias entradas.
+    #
+    # A troca usa a API publica, e nao cliques no submenu: a faixa contextual
+    # nao permanece aberta entre as iteracoes, e clicar num destino com a faixa
+    # recolhida faz o <header> interceptar o ponteiro. O alvo deste laco e o
+    # ciclo montar/desmontar do workspace, nao a navegacao — que ja foi
+    # exercitada por clique real na entrada deste teste.
+    for _ in range(3):
+        page.evaluate("() => window.JPWExec.ui.selectView('panel')")
+        page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
+        page.evaluate("() => window.JPWExec.ui.selectView('ecal')")
+        page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+    page.click('#execEcal [data-ecal-cur="all"]')
+    estavel = page.evaluate("() => document.querySelectorAll('#execEcal .ecal-item').length")
+    assert estavel == 2, f"apos 3 idas e voltas o workspace divergiu: {estavel}"
+
+    # Fonte unica: o overlay, aberto pela API publica, mostra os MESMOS eventos.
+    page.evaluate("() => window.JPWEcal.open()")
+    page.wait_for_function("() => ecalOverlay.classList.contains('show')")
+    mesmos = page.evaluate(
+        """() => ({
+          overlay: [...document.querySelectorAll('#ecalOverlay .ecal-title')].map(e => e.textContent),
+          workspace: [...document.querySelectorAll('#execEcal .ecal-title')].map(e => e.textContent)
+        })"""
+    )
+    assert mesmos["overlay"] == mesmos["workspace"], (
+        f"as duas superficies divergiram: {mesmos}"
+    )
+    page.evaluate("() => window.JPWEcal.close()")
 
 
 def run_motor_migration(page):
@@ -562,6 +687,7 @@ def main():
             run_focus_and_keyboard(page)
             run_hover_and_pin(page)
             run_module_switch(page)
+            run_economic_calendar(page)
             run_motor_migration(page)
             run_no_regression(page)
             run_themes(page)

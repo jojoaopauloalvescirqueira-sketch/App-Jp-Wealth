@@ -49,26 +49,44 @@ function ecalRangeLabel(events){
 }
 
 // ---- render (textContent em todo dado externo — disciplina do widget) ----
-function ecalRender(){
-  const body=ecalEl('ecalBody'), empty=ecalEl('ecalEmpty'), fresh=ecalEl('ecalFreshness'), range=ecalEl('ecalRange');
+// NÚCLEO PARAMETRIZADO POR RAIZ. Serve as duas instâncias visuais — o overlay
+// #ecalOverlay e o workspace #execEcal do Execution Board — a partir da mesma
+// leitura de cache e das mesmas regras. Não existe segundo calendário: existe
+// uma função de render e dois lugares onde ela desenha.
+//
+// A resolução é por data-ecal-role DENTRO da raiz, nunca por getElementById:
+// os 9 ids do overlay são globais e fixos, e o workspace deliberadamente não
+// tem id interno algum. Fosse por id, a segunda superfície capturaria os nós da
+// primeira — #exec precede o overlay no documento.
+function ecalPart(root, role){ return root?root.querySelector('[data-ecal-role="'+role+'"]'):null; }
+
+function ecalRenderRoot(root, filter){
+  const body=ecalPart(root,'body'), empty=ecalPart(root,'empty'),
+        fresh=ecalPart(root,'freshness'), range=ecalPart(root,'range');
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no widget de Notícias.';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico do Dashboard.';
     empty.hidden=false;
     return;
   }
   const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
   fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
-  range.textContent=ecalRangeLabel(data.events);
-  const filtered=data.events.filter(e=>ecalState.filter==='all'||e.country===ecalState.filter);
+  // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
+  // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
+  // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o
+  // leitor de tela reanunciar o mesmo intervalo indefinidamente, por cima da
+  // leitura em curso. O anúncio deve acontecer quando o rótulo MUDA.
+  const rangeLabel=ecalRangeLabel(data.events);
+  if(range.textContent!==rangeLabel) range.textContent=rangeLabel;
+  const filtered=data.events.filter(e=>filter==='all'||e.country===filter);
   if(!filtered.length){
-    empty.textContent=ecalState.filter==='all'
+    empty.textContent=filter==='all'
       ? 'A fonte não lista eventos de alto impacto para a semana corrente.'
-      : 'Sem eventos de alto impacto em '+ecalState.filter+' nesta semana.';
+      : 'Sem eventos de alto impacto em '+filter+' nesta semana.';
     empty.hidden=false;
     return;
   }
@@ -97,7 +115,10 @@ function ecalRender(){
     time.dateTime=e.date;
     time.textContent=e.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     const cur=document.createElement('span');
-    cur.className='gd-news-cur';
+    // .ecal-cur, não .gd-news-cur: a classe do widget é namespaced sob
+    // html[data-shell="global-dashboard"] e amarrava o calendário ao Dashboard.
+    // Declarações idênticas, dono correto (app.css).
+    cur.className='ecal-cur';
     cur.textContent=e.country;
     const title=document.createElement('span');
     title.className='ecal-title';
@@ -116,20 +137,61 @@ function ecalRender(){
   }
 }
 
-// Chamado por ffNewsRender() ao fim de cada ciclo do widget: se o calendário
-// estiver aberto quando um fetch/tick atualizar o cache, a tela acompanha —
-// sem isso, dado novo só apareceria fechando e reabrindo.
-function ecalRenderIfOpen(){ if(!ecalState || !ecalState.open) return; ecalRender(); }
+// ---- instância 1: o overlay, com seus dois pontos de entrada intocados ----
+function ecalRender(){ ecalRenderRoot(ecalEl('ecalOverlay'), ecalState.filter); }
+
+// ---- instância 2: o workspace canônico do Execution Board ----
+// Estado de APRESENTAÇÃO próprio. O filtro de moeda é recorte da view, não
+// verdade do domínio: os eventos são compartilhados, qual subconjunto cada
+// superfície exibe não é — e compartilhá-lo faria a escolha numa tela mudar a
+// outra pelas costas do operador. `var` pela mesma razão de ecalState, acima.
+var ecalWsState={filter:'all'};
+function ecalWsRoot(){ return document.getElementById('execEcal'); }
+function ecalRenderWorkspace(){ ecalRenderRoot(ecalWsRoot(), ecalWsState.filter); }
+
+function ecalSyncFilters(root, filter){
+  const box=ecalPart(root,'filters'); if(!box) return;
+  box.querySelectorAll('button[data-ecal-cur]').forEach(b=>{
+    const on=b.dataset.ecalCur===filter;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',String(on));
+  });
+}
 
 function ecalSetFilter(cur){
   // §16 do ticket: abre sempre em Todas; a troca vale só enquanto aberto.
   ecalState.filter=ECAL_CURRENCIES.includes(cur)?cur:'all';
-  document.querySelectorAll('#ecalFilters button').forEach(b=>{
-    const on=b.dataset.ecalCur===ecalState.filter;
-    b.classList.toggle('on',on);
-    b.setAttribute('aria-pressed',String(on));
-  });
+  ecalSyncFilters(ecalEl('ecalOverlay'), ecalState.filter);
   ecalRender();
+}
+function ecalWsSetFilter(cur){
+  // O workspace é superfície permanente: o filtro dele persiste na sessão em
+  // vez de voltar a Todas, ao contrário do overlay, que reabre sempre limpo.
+  ecalWsState.filter=ECAL_CURRENCIES.includes(cur)?cur:'all';
+  ecalSyncFilters(ecalWsRoot(), ecalWsState.filter);
+  ecalRenderWorkspace();
+}
+
+// Chamado por ffNewsRenderAll() ao fim de cada ciclo do domínio: se uma
+// superfície estiver visível quando um fetch/tique atualizar o cache, ela
+// acompanha — sem isso, dado novo só apareceria reabrindo.
+function ecalRenderIfOpen(){
+  if(ecalState && ecalState.open) ecalRender();
+  // A guarda `if(ecalWsState)` NÃO é redundante: este arquivo é o script 46 e
+  // 15-ff-news.js é o 44, que chama esta função durante a própria avaliação, no
+  // monólito — a declaração está içada, o valor ainda não. Mesma razão do `var`
+  // documentado no topo. Removê-la derruba o boot inteiro.
+  if(!ecalWsState) return;
+  const root=ecalWsRoot();
+  if(!root || root.hidden) return;
+  // `hidden` sozinho não basta. execApplyView() é o único a escrevê-lo e não
+  // tem caminho de SAÍDA do módulo: sair do Execution Board para outra tela só
+  // troca a classe .active, e .screen{display:none} esconde por CSS deixando
+  // #execEcal com hidden=false. Sem esta segunda condição o tique de 1 min
+  // reconstruiria o workspace inteiro dentro de uma subárvore invisível, para
+  // sempre — cerca de 1.400 repinturas descartadas por dia de app aberto.
+  if(!root.closest('.screen.active')) return;
+  ecalRenderWorkspace();
 }
 
 // ---- foco: armadilha simples, mesmo contrato dos outros diálogos ----
@@ -214,7 +276,7 @@ function ecalOpenMenu(anchor){
   el.className='jp-popover ecal-news-menu';
   el.id='ecalNewsMenu';
   el.setAttribute('role','menu');
-  el.setAttribute('aria-label','Opções de Notícias de Alto Impacto');
+  el.setAttribute('aria-label','Opções do Calendário Econômico');
   const item=document.createElement('button');
   item.type='button';
   item.setAttribute('role','menuitem');
@@ -246,8 +308,6 @@ function ecalOpenMenu(anchor){
 }
 
 function initEconomicCalendar(){
-  const more=document.getElementById('gdNewsMoreBtn');
-  if(more) more.addEventListener('click',()=>ecalOpenMenu(more));
   const close=ecalEl('ecalCloseBtn');
   if(close) close.addEventListener('click',closeEconomicCalendar);
   const overlay=ecalEl('ecalOverlay');
@@ -255,6 +315,13 @@ function initEconomicCalendar(){
   const filters=ecalEl('ecalFilters');
   if(filters) filters.addEventListener('click',e=>{
     const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalSetFilter(b.dataset.ecalCur);
+  });
+  // Filtros do workspace: faixa estática no HTML, um único bind. O render
+  // reconstrói apenas o corpo — a faixa não é recriada, então o listener não
+  // se multiplica a cada entrada no workspace.
+  const wsFilters=ecalPart(ecalWsRoot(),'filters');
+  if(wsFilters) wsFilters.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-ecal-cur]'); if(b) ecalWsSetFilter(b.dataset.ecalCur);
   });
   // Lançador da Central por DELEGAÇÃO: o painel da folha é criado pela própria
   // Central depois deste módulo carregar, então um bind direto não o acharia.
@@ -266,3 +333,11 @@ function initEconomicCalendar(){
   });
 }
 initEconomicCalendar();
+
+// ---- superfície pública ----
+// O widget de Notícias chama openMenu() para o SEU botão ⋯. Antes era este
+// módulo que ia buscar #gdNewsMoreBtn dentro do card do Dashboard — dependência
+// na direção errada: o calendário não deve conhecer os nós do Dashboard.
+window.JPWEcal={open:openEconomicCalendar, openMenu:ecalOpenMenu, close:closeEconomicCalendar};
+// Contrato dos workspaces montados sob demanda (13-exec-views.js).
+window.JPWEcalUI={render:ecalRenderWorkspace};

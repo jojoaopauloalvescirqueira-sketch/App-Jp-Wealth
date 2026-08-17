@@ -1,10 +1,19 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-17
-Source revision representada: `df964b9`
+Source revision representada: `main` após a integração do Calendário Econômico
 - Branch atual: `main`
-- Commit material: `6964ab6` + `87019b6` na branch `fix/docs-script-count-drift`
-- Commit de integração: `df964b9`
+- Commit material: série `b65dad3 → 6eee442` na branch
+  `feature/exec-economic-calendar`
+- **Calendário Econômico no Execution Board** (2026-08-17): terceiro destino do
+  submenu, entre Painel Operacional e as ferramentas de estudo. **Um domínio,
+  três superfícies** — workspace canônico `#execEcal`, projeção diária no card do
+  Dashboard e o overlay `#ecalOverlay` com seus dois pontos de entrada
+  preservados. Nenhuma duplicação de fetch, cache, sanitização, timers de
+  domínio, identidade de evento ou regras de impacto. Detalhe no `CHANGELOG.md`;
+  estado de verificação na seção própria abaixo.
+- Anterior — commit material: `6964ab6` + `87019b6` na branch
+  `fix/docs-script-count-drift`, integração `df964b9`
 - **Reconciliação do drift documental** (2026-08-17): contagens defasadas e o
   parágrafo de acessibilidade do Planejamento FX. **Documentação apenas** —
   nenhum arquivo de runtime, teste, manifest, worker ou gerado foi tocado, e por
@@ -37,6 +46,37 @@ Source revision representada: `df964b9`
 - Build local: `fa5b65ae5dd68125` — **inalterado**, porque nenhuma fonte mudou.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
+
+## Calendário Econômico — estado de verificação — 2026-08-17
+
+A distinção abaixo é deliberada e não deve ser colapsada em leituras futuras:
+**automação em Chromium headless ≠ inspeção visual humana.**
+
+| Camada | Resultado | Escopo |
+|---|---|---|
+| `quality_gate.py --tier standard` | **PASS 13/13** | Zero `FAIL`, zero `NOT_RUN`, zero `ENVIRONMENT_ERROR`. Artefato `quality-20260817T151725-standard.json` |
+| `run_economic_calendar()` | **PASS** | Novo. Fonte única, zero id duplicado, render na raiz correta, filtro, estabilidade após três idas e voltas |
+| Teste de mutação | **PASS** | Quatro defeitos plantados, quatro acusados; controle verde após restaurar |
+| `smoke_test.py` sobre o monólito | **PASS** | Zero `pageerror` — resolve empiricamente o risco de TDZ da chamada script 44 → 46 durante a avaliação |
+| Evidência automatizada por captura | **COLETADA** | Cinco superfícies; zero id duplicado e zero overflow horizontal medidos em runtime |
+| **Inspeção visual humana** | **NÃO REALIZADA** | Nenhum `PASS` visual foi registrado. O gestor autorizou o merge sem essa etapa |
+
+Node.js **não** é requisito do tier standard: `validate_project.py` cai para o
+Chromium do Playwright. O tier foi executado a partir de venv isolada com
+`playwright==1.60.0`, o pino do `requirements-dev.txt`.
+
+Pendências desta feature, para quem retomar:
+
+- **Inspeção visual humana** das cinco superfícies (card do Dashboard, workspace,
+  overlay, tema claro/escuro, mobile) segue em aberto.
+- **Tier `full` não executado**, e com ele `service_worker_upgrade_test.py`. O
+  registro do service worker falha no navegador embutido usado na captura —
+  restrição de sandbox, com `sw.js` intocado por esta tarefa —, então o ciclo do
+  worker não foi exercitado em lugar nenhum desta série.
+- Dívidas **preexistentes** deliberadamente fora de escopo: os dois `setInterval`
+  sem `clearInterval` em `15-ff-news.js`, a política de timezone implícita no
+  fuso do dispositivo e os 7 ids duplicados do portátil (idênticos antes e
+  depois desta série).
 
 ## Reconciliação do drift documental — 2026-08-17
 

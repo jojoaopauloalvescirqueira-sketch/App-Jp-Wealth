@@ -103,8 +103,9 @@ isolada. A faixa usa divisor discreto, sem borda de card ou sombra pesada.
 O segundo nível deve chamar o mecanismo visual já existente do módulo. Não se
 cria estado paralelo para conteúdo ativo. As chaves são encaminhadas para a
 superfície pública do módulo — `window.JPWFx.ui` (`overview`, `planning`,
-`actuals`, `table`) e `window.JPWExec.ui` (`overview`, `panel`, `nocoda`, `pivots`, `motor`) —
-que expõe exatamente `selectView(chave)` e `getView()`.
+`actuals`, `table`) e `window.JPWExec.ui` (`overview`, `panel`, `ecal`,
+`nocoda`, `pivots`, `motor`) — que expõe exatamente `selectView(chave)` e
+`getView()`.
 
 Quando a faixa superior substitui tabs equivalentes no conteúdo, essas tabs
 devem ser removidas para existir uma única fonte visível de navegação. Conteúdo,

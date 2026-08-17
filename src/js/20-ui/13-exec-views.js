@@ -18,6 +18,10 @@
 const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
+  // Calendario Economico: casa canonica da ferramenta. O overlay #ecalOverlay
+  // continua existindo com seus dois pontos de entrada — sao duas instancias
+  // visuais do mesmo dominio, nao dois calendarios.
+  ['ecal', 'execEcal'],
   ['nocoda', 'execNocoda'],
   ['pivots', 'execPivots'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
@@ -35,7 +39,12 @@ const EXEC_VIEWS = [
 // um pivot em edicao e voltar devolve o formulario como estava.
 const EXEC_VIEW_RENDERERS = {
   nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); },
-  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); }
+  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); },
+  // Calendario: o cache do widget de Noticias e vivo (poll de 5 min, tique de
+  // 1 min), entao a entrada no workspace repinta a partir do dado corrente. O
+  // dominio nao e consultado pela rede aqui — quem revalida e o ciclo do
+  // proprio widget, em 15-ff-news.js.
+  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); }
 };
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;
