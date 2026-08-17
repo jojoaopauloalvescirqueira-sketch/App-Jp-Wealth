@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "14afa5d4a4e5cde36860c236bb6769e269c382af44ef88dec1b3ae955d99d0f1"
+      "sha256": "3ccd726853ef61bf1f520e08aa99dcdcd889c9d709fe2ffae70bbf848ea1e2cb"
     },
     {
       "order": 24,
@@ -393,6 +393,12 @@
       "path": "src/js/20-ui/15-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · interface do workspace",
       "sha256": "2230065776716f26420ac5b90852f1703d7fb139a23144e864e96511d25279df"
+    },
+    {
+      "order": 66,
+      "path": "src/js/10-domain/11-operation-lifecycle.js",
+      "section": "Operacao Unica: finalizacao transacional e snapshot historico",
+      "sha256": "deecbe15dfa18fb942bb4018db21b05b2b73d6ad3824280a13b4f18b44215132"
     }
   ]
 }
