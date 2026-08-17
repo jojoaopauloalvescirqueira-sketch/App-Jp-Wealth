@@ -53,9 +53,9 @@ a lista material mudar.
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado do Dashboard |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
 | 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
-| 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto |
+| 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget do Dashboard, inicializados em separado |
 | 45 | `src/js/40-app/16-storage-governance.js` | UI da governança de armazenamento |
-| 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal |
+| 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal: render parametrizado por raiz (`data-ecal-role`), servindo o overlay `#ecalOverlay` e o workspace `#execEcal` — duas instâncias visuais, um domínio |
 | 47 | `src/vendor/planck/planck-1.5.0.min.js` | Planck.js 1.5.0 vendorizado, MIT |
 | 48 | `src/js/40-app/18-galton-board/01-config.js` | Configuração, presets e geometria do Galton Board |
 | 49 | `src/js/40-app/18-galton-board/02-rng.js` | PRNG determinístico |
@@ -70,7 +70,7 @@ a lista material mudar.
 | 58 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
 | 59 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
 | 60 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
-| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: workspaces do módulo (Visão Geral, Painel Operacional, Estudos NoCoda, Estudos dos Pivots, Motor de Lote) |
+| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: workspaces do módulo (Visão Geral, Painel Operacional, Calendário Econômico, Estudos NoCoda, Estudos dos Pivots, Motor de Lote) |
 | 62 | `src/js/10-domain/09-nocoda-geometry.js` | NoCoda: geometria do canal — núcleo puro, sem DOM nem persistência |
 | 63 | `src/js/20-ui/14-nocoda-studies.js` | NoCoda: workspace de estudos (seletor, âncoras, resultados derivados) |
 | 64 | `src/js/10-domain/10-pivot-studies.js` | Pivots: derivação, validação, estatística descritiva e ordenação — núcleo puro |

@@ -5914,7 +5914,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '001f412a97fc8fca';
+const JP_WEALTH_BUILD_ID = 'fe9fc438c959053e';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -21250,7 +21250,13 @@ function ecalRenderRoot(root, filter){
   }
   const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
   fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
-  range.textContent=ecalRangeLabel(data.events);
+  // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
+  // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
+  // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o
+  // leitor de tela reanunciar o mesmo intervalo indefinidamente, por cima da
+  // leitura em curso. O anúncio deve acontecer quando o rótulo MUDA.
+  const rangeLabel=ecalRangeLabel(data.events);
+  if(range.textContent!==rangeLabel) range.textContent=rangeLabel;
   const filtered=data.events.filter(e=>filter==='all'||e.country===filter);
   if(!filtered.length){
     empty.textContent=filter==='all'
@@ -21346,13 +21352,21 @@ function ecalWsSetFilter(cur){
 // acompanha — sem isso, dado novo só apareceria reabrindo.
 function ecalRenderIfOpen(){
   if(ecalState && ecalState.open) ecalRender();
-  // Workspace: repinta só quando de fato visível. `hidden` é o próprio contrato
-  // de troca do Execution Board (13-exec-views.js) — consultá-lo evita criar
-  // uma segunda fonte de verdade sobre qual workspace está ativo.
-  if(ecalWsState){
-    const root=ecalWsRoot();
-    if(root && !root.hidden) ecalRenderWorkspace();
-  }
+  // A guarda `if(ecalWsState)` NÃO é redundante: este arquivo é o script 46 e
+  // 15-ff-news.js é o 44, que chama esta função durante a própria avaliação, no
+  // monólito — a declaração está içada, o valor ainda não. Mesma razão do `var`
+  // documentado no topo. Removê-la derruba o boot inteiro.
+  if(!ecalWsState) return;
+  const root=ecalWsRoot();
+  if(!root || root.hidden) return;
+  // `hidden` sozinho não basta. execApplyView() é o único a escrevê-lo e não
+  // tem caminho de SAÍDA do módulo: sair do Execution Board para outra tela só
+  // troca a classe .active, e .screen{display:none} esconde por CSS deixando
+  // #execEcal com hidden=false. Sem esta segunda condição o tique de 1 min
+  // reconstruiria o workspace inteiro dentro de uma subárvore invisível, para
+  // sempre — cerca de 1.400 repinturas descartadas por dia de app aberto.
+  if(!root.closest('.screen.active')) return;
+  ecalRenderWorkspace();
 }
 
 // ---- foco: armadilha simples, mesmo contrato dos outros diálogos ----

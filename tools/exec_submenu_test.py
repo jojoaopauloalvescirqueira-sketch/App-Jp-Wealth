@@ -198,10 +198,9 @@ def run_panel_equivalence(page):
                           'execLifoMonitor','statusBanner','quarantineBanner','downgradeBanner',
                           'mVRM','iAtr55','lLote','lRisco','archiveOpBtn']
               .filter(id => document.getElementById(id) === null),
-            visible: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
-              .filter(id => !document.getElementById(id).hidden)
+            visible: %s.filter(id => !document.getElementById(id).hidden)
           };
-        }"""
+        }""" % json.dumps(EXPECTED_CONTAINERS)
     )
     assert facts["grids"] == 1, "o Painel Operacional foi duplicado"
     assert facts["gridParent"] == "exec", f"grade saiu de section#exec: {facts['gridParent']}"
@@ -378,6 +377,116 @@ def run_module_switch(page):
         })"""
     )
     assert back == {"view": "overview", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
+
+
+def run_economic_calendar(page):
+    """Calendario Economico: UM dominio, DUAS instancias visuais.
+
+    O overlay #ecalOverlay e o workspace #execEcal leem o MESMO cache e usam a
+    MESMA funcao de render, parametrizada por raiz. O que este teste protege e
+    justamente o que a revisao adversarial apontou como sem cobertura: que
+    selecionar o destino pinta o workspace (e nao a raiz errada), que os ids do
+    overlay nao foram duplicados, e que o bind dos filtros nao se multiplica.
+    """
+    # Cache determinístico ANTES de entrar no destino: o teste nao pode depender
+    # da rede nem do feed publico. Mesma forma que ffNewsReadCache() sanitiza.
+    page.evaluate(
+        """() => {
+          const dia = new Date(); dia.setHours(12, 0, 0, 0);
+          localStorage.setItem('jpwealth.ui.ffNews.v1', JSON.stringify({
+            fetchedAt: Date.now(),
+            payload: {version: 1, generated_at: '2026-08-17T12:00:00Z', events: [
+              {title: 'JPW Teste USD', country: 'USD', date: dia.toISOString(),
+               impact: 'High', forecast: '1.0', previous: '0.9'},
+              {title: 'JPW Teste EUR', country: 'EUR', date: dia.toISOString(),
+               impact: 'High', forecast: '2.0', previous: '1.9'}
+            ]}
+          }));
+        }"""
+    )
+    page.click("#execNavTrigger")
+    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click('#execNavSubmenu [data-nav-sub-view="ecal"]')
+    page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+
+    fatos = page.evaluate(
+        """() => {
+          const ws = document.getElementById('execEcal');
+          const ov = document.getElementById('ecalOverlay');
+          const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
+          const papeis = [...ws.querySelectorAll('[data-ecal-role]')]
+            .map(el => el.dataset.ecalRole).sort();
+          return {
+            visivel: !ws.hidden,
+            // O workspace nao pode ter id interno: os 9 do overlay sao globais.
+            idsInternos: ws.querySelectorAll('[id]').length,
+            duplicados: ids.length - new Set(ids).size,
+            papeis,
+            // Pintou no lugar certo? O corpo do workspace tem eventos e o do
+            // overlay continua vazio (ninguem abriu o modal).
+            itensWorkspace: ws.querySelectorAll('.ecal-item').length,
+            itensOverlay: ov.querySelectorAll('.ecal-item').length,
+            overlayAberto: ov.classList.contains('show'),
+            // O chip de moeda nao pode mais usar a classe do Dashboard.
+            chipsDashboard: ws.querySelectorAll('.gd-news-cur').length,
+            chipsProprios: ws.querySelectorAll('.ecal-cur').length
+          };
+        }"""
+    )
+    assert fatos["visivel"], "selecionar o destino nao exibiu #execEcal"
+    assert fatos["duplicados"] == 0, "a segunda instancia duplicou ids no documento"
+    assert fatos["idsInternos"] == 0, (
+        f"workspace ganhou id interno ({fatos['idsInternos']}) — colide com o overlay"
+    )
+    assert fatos["papeis"] == ["body", "empty", "filters", "freshness", "range"], (
+        f"papeis do workspace incompletos: {fatos['papeis']}"
+    )
+    assert fatos["itensWorkspace"] == 2, (
+        f"workspace nao pintou os eventos do cache: {fatos['itensWorkspace']} — "
+        "se for 0 com o overlay preenchido, o render recebeu a raiz errada"
+    )
+    assert fatos["itensOverlay"] == 0, "render do workspace vazou para o overlay"
+    assert not fatos["overlayAberto"], "entrar no workspace abriu o modal"
+    assert fatos["chipsDashboard"] == 0, "calendario ainda usa .gd-news-cur do Dashboard"
+    assert fatos["chipsProprios"] == 2, f"chips proprios ausentes: {fatos['chipsProprios']}"
+
+    # Filtro da instancia: recorte de VIEW, nao do dominio.
+    page.click('#execEcal [data-ecal-cur="USD"]')
+    filtrado = page.evaluate(
+        """() => ({
+          itens: document.querySelectorAll('#execEcal .ecal-item').length,
+          pressionado: document.querySelector('#execEcal [data-ecal-cur="USD"]')
+            .getAttribute('aria-pressed')
+        })"""
+    )
+    assert filtrado["itens"] == 1, f"filtro de moeda nao recortou: {filtrado['itens']}"
+    assert filtrado["pressionado"] == "true", "aria-pressed nao acompanhou o filtro"
+
+    # Ida e volta nao multiplica listener: se o bind dos filtros fosse
+    # registrado a cada render, um unico clique dispararia N vezes e o
+    # contador de itens divergiria depois de varias entradas.
+    for _ in range(3):
+        page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+        page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
+        page.click('#execNavSubmenu [data-nav-sub-view="ecal"]')
+        page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+    page.click('#execEcal [data-ecal-cur="all"]')
+    estavel = page.evaluate("() => document.querySelectorAll('#execEcal .ecal-item').length")
+    assert estavel == 2, f"apos 3 idas e voltas o workspace divergiu: {estavel}"
+
+    # Fonte unica: o overlay, aberto pela API publica, mostra os MESMOS eventos.
+    page.evaluate("() => window.JPWEcal.open()")
+    page.wait_for_function("() => ecalOverlay.classList.contains('show')")
+    mesmos = page.evaluate(
+        """() => ({
+          overlay: [...document.querySelectorAll('#ecalOverlay .ecal-title')].map(e => e.textContent),
+          workspace: [...document.querySelectorAll('#execEcal .ecal-title')].map(e => e.textContent)
+        })"""
+    )
+    assert mesmos["overlay"] == mesmos["workspace"], (
+        f"as duas superficies divergiram: {mesmos}"
+    )
+    page.evaluate("() => window.JPWEcal.close()")
 
 
 def run_motor_migration(page):
@@ -572,6 +681,7 @@ def main():
             run_focus_and_keyboard(page)
             run_hover_and_pin(page)
             run_module_switch(page)
+            run_economic_calendar(page)
             run_motor_migration(page)
             run_no_regression(page)
             run_themes(page)
