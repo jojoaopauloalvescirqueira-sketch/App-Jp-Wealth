@@ -144,6 +144,10 @@
         <span class="nav-sub-item-title">Painel Operacional</span>
         <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
       </button>
+      <button type="button" data-nav-sub-view="ecal">
+        <span class="nav-sub-item-title">Calendário Econômico</span>
+        <span class="nav-sub-item-desc">Semana corrente de alto impacto</span>
+      </button>
       <button type="button" data-nav-sub-view="nocoda">
         <span class="nav-sub-item-title">Estudos NoCoda</span>
         <span class="nav-sub-item-desc">Âncoras do canal por instrumento</span>
@@ -383,6 +387,37 @@
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+    </div>
+    <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA
+         VISUAL do mesmo domínio — não é um segundo calendário. O overlay
+         #ecalOverlay continua existindo com seus dois pontos de entrada; as duas
+         superfícies leem o MESMO cache (ffNewsReadCache) e a MESMA função de
+         render, parametrizada por raiz.
+         Sem id nos nós internos DE PROPÓSITO: os 9 ids do overlay são globais e
+         fixos, e duplicá-los reprovaria validate_project.py e deixaria o modal
+         sem render, porque #exec precede o overlay no documento e
+         getElementById devolve o primeiro nó. Aqui a identidade é por
+         data-ecal-role, resolvida dentro da própria raiz. -->
+    <div class="exec-view" id="execEcal" role="region" aria-label="Calendário Econômico" hidden>
+      <div class="card ecal-ws">
+        <div class="ecal-ws-head">
+          <h2>Calendário Econômico</h2>
+          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+        </div>
+        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
+          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+        </div>
+        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
+        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
+        <p class="ecal-ws-foot">
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
+          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+        </p>
       </div>
     </div>
     <!-- Estudos NoCoda: memória técnica do canal por instrumento. O conteúdo é
@@ -1146,23 +1181,23 @@
     <header class="ecal-head">
       <div class="ecal-head-text">
         <h2 id="ecalTitle">Calendário Econômico</h2>
-        <p class="ecal-sub" id="ecalRange" aria-live="polite"></p>
+        <p class="ecal-sub" id="ecalRange" data-ecal-role="range" aria-live="polite"></p>
       </div>
       <button type="button" class="ecal-close" id="ecalCloseBtn" aria-label="Fechar calendário econômico" title="Fechar">
         <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
       </button>
     </header>
-    <div class="seg ecal-filters" id="ecalFilters" role="group" aria-label="Filtrar por moeda">
+    <div class="seg ecal-filters" id="ecalFilters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
       <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
       <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
       <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
       <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
       <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
     </div>
-    <div class="ecal-body" id="ecalBody" tabindex="-1"></div>
-    <p class="ecal-empty" id="ecalEmpty" hidden></p>
+    <div class="ecal-body" id="ecalBody" data-ecal-role="body" tabindex="-1"></div>
+    <p class="ecal-empty" id="ecalEmpty" data-ecal-role="empty" hidden></p>
     <footer class="ecal-foot">
-      <span id="ecalFreshness"></span>
+      <span id="ecalFreshness" data-ecal-role="freshness"></span>
       <span class="ecal-foot-note">Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
     </footer>
   </section>

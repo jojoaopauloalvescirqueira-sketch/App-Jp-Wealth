@@ -266,7 +266,7 @@
       "order": 44,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
-      "sha256": "165052214655535e94453225721da7c79e41cb4ffd00f447e6e8e5ea47222c62"
+      "sha256": "9fc4790f4e3be26aeb4ebdf6ea5684fa7351cc3c534b7111a9ae57357ad1a32c"
     },
     {
       "order": 45,
@@ -278,7 +278,7 @@
       "order": 46,
       "path": "src/js/40-app/17-economic-calendar.js",
       "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
-      "sha256": "5149a3cd43f194fbdd0ca22e5bbe73518b27bc7531290de3116e7c6b8ff43df2"
+      "sha256": "900073ee8874807f419e92a2dd8b4c88fde8911ee4233e7342989a7fae4129f9"
     },
     {
       "order": 47,
@@ -368,7 +368,7 @@
       "order": 61,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "4a2a3dd96468b41241b20271946b6eb2c423b8cced05370c9e9be16b86bf7b39"
+      "sha256": "a8c8ec8b5453c5b8ccd092b4487052084efc3db4096e320889f6377cd9a973a0"
     },
     {
       "order": 62,

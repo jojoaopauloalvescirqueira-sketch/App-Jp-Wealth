@@ -1463,6 +1463,27 @@
   .ecal-empty{margin:0; padding:18px 20px; color:var(--ink-dim)}
   .ecal-foot{display:flex; flex-direction:column; gap:3px; padding:10px 20px 14px; border-top:1px solid var(--line); flex:none; font-size:var(--fs-xs); color:var(--ink-faint)}
   .ecal-foot #ecalFreshness{font-family:var(--mono)}
+  /* Chip de moeda do calendário. Classe PRÓPRIA: o render usava .gd-news-cur,
+     namespaced sob html[data-shell="global-dashboard"] — o calendário dependia
+     de uma classe do Dashboard para desenhar um nó que não é do Dashboard.
+     Declarações idênticas às de .gd-news-cur (app.css:4552), tokens de :root,
+     agora sem dono errado. */
+  .ecal-cur{
+    font-family:var(--jp-font-ui); font-size:9px; font-weight:700; letter-spacing:.04em;
+    border:1px solid var(--jp-border); border-radius:4px; padding:1px 5px; color:var(--jp-ink-muted);
+  }
+  /* Workspace do Execution Board — segunda instância visual do MESMO domínio.
+     O overlay é diálogo: flex com altura própria e corpo que rola por dentro
+     (.ecal-body{flex:1; overflow-y:auto}). Aqui o conteúdo flui no card e quem
+     rola é a tela, então o corpo perde flex e overflow próprios. As regras de
+     dia/item/hora/números são compartilhadas e não precisam de nada. */
+  .ecal-ws{display:flex; flex-direction:column}
+  .ecal-ws-head h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
+  .ecal-ws .ecal-filters{margin:12px 0 0}
+  .ecal-ws-body{flex:none; overflow:visible; padding:14px 0 4px}
+  .ecal-ws .ecal-empty{padding:16px 0}
+  .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
+  .ecal-ws-fresh{font-family:var(--mono)}
   .ecal-news-menu button[role="menuitem"]{
     display:block; width:100%; text-align:left; border:0; border-radius:7px;
     padding:9px 10px; background:transparent; color:var(--ink); font:inherit;

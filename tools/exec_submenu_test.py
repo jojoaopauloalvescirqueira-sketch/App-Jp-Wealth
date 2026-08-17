@@ -15,6 +15,7 @@ para provar identidade de no sem alterar o estado financeiro persistido.
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import json
 import os
 import socket
 import threading
@@ -25,12 +26,13 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_VIEWS = ["overview", "panel", "nocoda", "pivots", "motor"]
-EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Estudos NoCoda",
-                   "Estudos dos Pivots", "Motor de Lote"]
+EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor"]
+EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Calendário Econômico",
+                   "Estudos NoCoda", "Estudos dos Pivots", "Motor de Lote"]
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execNocoda", "execPivots", "motorWidgetGrid"]
+EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
+                       "execPivots", "motorWidgetGrid"]
 # Os quatro widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -153,24 +155,28 @@ def run_displacement(page):
 
 def run_initial_destination(page):
     """Entrar no modulo abre a Visao Geral; apenas um workspace fica visivel."""
+    # A lista de containers vem de EXPECTED_CONTAINERS, nao de literais inline.
+    # Ate esta tarefa a constante existia mas NUNCA era referenciada, e as duas
+    # varreduras abaixo repetiam os ids a mao: quem acrescentasse um destino e
+    # atualizasse so a constante teria um teste verde sem cobrir o container
+    # novo. Injetar a constante fecha essa divergencia na origem.
+    containers = json.dumps(EXPECTED_CONTAINERS)
     state = page.evaluate(
         """() => ({
           view: window.JPWExec.ui.getView(),
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id),
           nestedScreens: document.querySelectorAll('#exec .screen').length,
-          visible: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
-            .filter(id => !document.getElementById(id).hidden),
-          inert: ['execOverview','execWidgetGrid','execNocoda','execPivots','motorWidgetGrid']
-            .filter(id => document.getElementById(id).inert),
+          visible: %s.filter(id => !document.getElementById(id).hidden),
+          inert: %s.filter(id => document.getElementById(id).inert),
           current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
             ?.getAttribute('aria-current')
-        })"""
+        })""" % (containers, containers)
     )
     assert state["view"] == "overview", f"destino inicial nao e a Visao Geral: {state}"
     assert state["screens"] == ["exec"], f"modulo ativo incorreto: {state['screens']}"
     assert state["nestedScreens"] == 0, "workspace virou .screen aninhada — quebra .screen.active/closest"
     assert state["visible"] == ["execOverview"], f"mais de um workspace visivel: {state['visible']}"
-    assert state["inert"] == ["execWidgetGrid", "execNocoda", "execPivots", "motorWidgetGrid"], f"inert incorreto: {state['inert']}"
+    assert state["inert"] == [c for c in EXPECTED_CONTAINERS if c != "execOverview"], f"inert incorreto: {state['inert']}"
     assert state["current"] == "page", "destino ativo sem aria-current"
 
 
@@ -291,7 +297,11 @@ def run_focus_and_keyboard(page):
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "nocoda"
+    # Vizinho seguinte de "panel" na ordem do submenu — deriva de EXPECTED_VIEWS
+    # para nao voltar a travar um destino especifico por literal.
+    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[
+        EXPECTED_VIEWS.index("panel") + 1
+    ]
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0]
     page.keyboard.press("End")

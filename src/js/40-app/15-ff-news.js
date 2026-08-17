@@ -227,6 +227,14 @@ function initFfNewsWidget(){
   if(!card) return;
   const btn=document.getElementById('gdNewsRefreshBtn');
   if(btn) btn.addEventListener('click',()=>ffNewsFetch(true));
+  // Menu ⋯ → Calendário Econômico. O botão é deste card, então o bind é deste
+  // módulo: antes o calendário procurava #gdNewsMoreBtn dentro do Dashboard.
+  // A chamada é resolvida no clique, não agora — este arquivo é o script 44 e
+  // o calendário é o 46, então window.JPWEcal ainda não existe neste ponto.
+  const more=document.getElementById('gdNewsMoreBtn');
+  if(more) more.addEventListener('click',()=>{
+    if(window.JPWEcal && typeof window.JPWEcal.openMenu==='function') window.JPWEcal.openMenu(more);
+  });
 }
 
 // DOMÍNIO: cache, rede, timers e 'online'. NÃO depende de nó algum do
