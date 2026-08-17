@@ -151,7 +151,10 @@ function openTransitionModal(faseNum){
     if(!ok) return;
     // libera a fase
     S.phaseUnlocked[faseNum-1]=true;
-    S.transitionLog.push({fase:faseNum, ts:new Date().toISOString(), resumo:collected});
+    // Carimbado com a operacao viva e a fase atingida: o Historico deriva
+    // maxGridPhaseReached SO dos eventos daquela operationId.
+    S.transitionLog.push(operationStampTransition(
+      {fase:faseNum, ts:new Date().toISOString(), resumo:collected}, faseNum-1));
     save();
     closeModal();
     if(faseNum>=2) mirrorPhaseForward(faseNum-2);
@@ -231,7 +234,10 @@ function openDowngradeModal(fromIdx,toIdx){
     });
     if(!ok) return;
     for(let i=toIdx+1;i<=fromIdx;i++){ S.phaseUnlocked[i]=false; }
-    S.transitionLog.push({fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected});
+    // Sem gridPhase de proposito: downgrade RETRAVA, nao atinge. O maximo
+    // anterior permanece — o que foi alcancado foi alcancado.
+    S.transitionLog.push(operationStampTransition(
+      {fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected}));
     save();
     closeModal();
     render(); renderPhases();
@@ -347,8 +353,10 @@ function stopLimitSummary(pi, oi, check){
     }
   };
 }
-function auditStopLimit(kind, resumo){
-  S.transitionLog.push({fase:kind, ts:localDateTimeISO(), resumo});
+function auditStopLimit(kind, resumo, gridPhaseIdx){
+  // gridPhaseIdx so e passado quando a chamada REALMENTE destrava fase.
+  S.transitionLog.push(operationStampTransition(
+    {fase:kind, ts:localDateTimeISO(), resumo}, gridPhaseIdx));
 }
 function handleStopLimitBreach(pi, oi, check){
   const o=S.phases[pi].orders[oi];
@@ -364,7 +372,8 @@ function handleStopLimitBreach(pi, oi, check){
     );
     if(ok===phrase){
       for(let i=0;i<=info.supported;i++) S.phaseUnlocked[i]=true;
-      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase});
+      // Este e o UNICO caminho de stop que destrava fase; os demais so alertam.
+      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase}, info.supported);
       delete o.stopPhaseWarning;
       save(); render(); renderPhases();
       return true;
