@@ -621,16 +621,35 @@ function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random()
 // recalculado a partir de campo mutável.
 function operationRecordId(){ return 'op_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 
-// Índice da Fase da Conta VIGENTE (0..3), derivado por compute().
-// Devolve null quando não pode ser estabelecido — desconhecido nunca vira 0.
-function currentAccountPhaseIdx(){
+// Sonda da Fase da Conta VIGENTE. Distingue TRÊS desfechos, e a distinção é o
+// ponto todo — antes, um `catch` mudo fundia os dois últimos:
+//
+//   {ok:true,  idx:0..3}  fase estabelecida
+//   {ok:true,  idx:null}  NÃO APLICÁVEL — estado insuficiente ou legado. É
+//                         fluxo normal, tratado por verificação explícita, e
+//                         nunca por exceção.
+//   {ok:false, erro}      falha INESPERADA do próprio mecanismo. Não é ausência
+//                         de dado: é defeito, e defeito não pode ser descartado.
+//
+// As precondições são checadas ANTES de chamar compute() justamente para que o
+// try não vire muleta de fluxo normal: params ausente e matriz malformada são
+// estados legítimos de base legada, e o helper os trata sozinho.
+function accountPhaseProbe(){
+  if(typeof compute!=='function') return {ok:true, idx:null};
+  if(!S.params || typeof S.params!=='object') return {ok:true, idx:null};
+  if(!Array.isArray(S.matrix) || !S.matrix.length) return {ok:true, idx:null};
   try{
-    if(typeof compute!=='function') return null;
     const c=compute();
-    const idx=c && c.fase ? S.matrix.findIndex(m=>m && m.nome===c.fase.nome) : -1;
-    return idx>=0 ? idx : null;
-  }catch(_){ return null; }
+    if(!c || !c.fase || typeof c.fase.nome!=='string') return {ok:true, idx:null};
+    const idx=S.matrix.findIndex(m=>m && m.nome===c.fase.nome);
+    return {ok:true, idx: idx>=0 ? idx : null};
+  }catch(e){
+    return {ok:false, erro:String((e && e.message) || e)};
+  }
 }
+
+// Compatibilidade de leitura para quem só quer o índice.
+function currentAccountPhaseIdx(){ const p=accountPhaseProbe(); return p.ok?p.idx:null; }
 
 // Captura PROSPECTIVA e MONOTÔNICA da maior Fase da Conta atingida.
 //
@@ -640,19 +659,38 @@ function currentAccountPhaseIdx(){
 // enumeração de call sites cobriria. O máximo passa a refletir estados que o
 // sistema efetivamente comprometeu ao disco.
 //
-// Três guardas, e nenhuma é decorativa: sem operação viva não há o que medir;
-// compute() é o script 8 e este arquivo é o 4, então durante o boot a função
-// pode ainda não ter avaliado; e uma falha aqui JAMAIS pode impedir a
-// persistência — a captura é acessória, o estado do operador não é.
+// ESTE CAMPO NÃO É TELEMETRIA. A Fase da Conta máxima é memória prospectiva:
+// se não for capturada no instante em que ocorre, é irreconstruível depois. Por
+// isso a política de falha tem de separar duas coisas que um `catch` mudo
+// fundiria:
+//
+//   não aplicável  -> a sonda devolve idx:null e nada acontece. Fluxo normal.
+//   defeito        -> a falha é GRAVADA na própria entidade e vai ao console.
+//
+// save() prossegue nos dois casos, e isso é deliberado: derrubar a persistência
+// do estado financeiro por causa de um campo derivado trocaria uma lacuna de
+// evidência por perda de dado do operador — troca ruim. Mas o sistema não pode
+// declarar que capturou o que não capturou. `phaseCaptureFault` fica na
+// operação, viaja para o snapshot da Camada 2 e torna a lacuna AUDITÁVEL em vez
+// de silenciosa.
+//
+// A marca não é limpa por um sucesso posterior: se a captura falhou uma vez, o
+// máximo pode estar subestimado para sempre, e apagar a evidência disso seria
+// exatamente o tipo de mentira que este projeto combate.
 function operationTouchAccountPhase(){
-  try{
-    const op=S.activeOperation;
-    if(!op || typeof op!=='object') return;
-    const idx=currentAccountPhaseIdx();
-    if(idx==null) return;
-    const antes=Number.isFinite(+op.maxAccountPhaseReached)?+op.maxAccountPhaseReached:-1;
-    if(idx>antes) op.maxAccountPhaseReached=idx;
-  }catch(_){ /* captura acessória: nunca derruba save() */ }
+  const op=S.activeOperation;
+  if(!op || typeof op!=='object' || Array.isArray(op)) return;
+  const probe=accountPhaseProbe();
+  if(!probe.ok){
+    op.phaseCaptureFault={at:new Date().toISOString(), reason:probe.erro};
+    if(typeof console!=='undefined' && console.error){
+      console.error('[operação] captura da Fase da Conta falhou:', probe.erro);
+    }
+    return;
+  }
+  if(probe.idx==null) return;
+  const antes=Number.isFinite(+op.maxAccountPhaseReached)?+op.maxAccountPhaseReached:-1;
+  if(probe.idx>antes) op.maxAccountPhaseReached=probe.idx;
 }
 
 // Carimba a transição de status de uma ordem e, quando for a Gênese abrindo
@@ -703,6 +741,10 @@ function operationNormalizeState(){
     if(!fontesAbertura.includes(op.openedAtSource)) op.openedAtSource=op.openedAt?'manual_legacy':null;
     if(!Number.isFinite(+op.maxAccountPhaseReached) || +op.maxAccountPhaseReached<0) op.maxAccountPhaseReached=null;
     else op.maxAccountPhaseReached=Math.min(3,Math.floor(+op.maxAccountPhaseReached));
+    // Marca de captura degradada: preservada se tiver forma válida, descartada
+    // se vier deformada. Nunca inventada.
+    const f=op.phaseCaptureFault;
+    if(!f || typeof f!=='object' || Array.isArray(f) || typeof f.reason!=='string') delete op.phaseCaptureFault;
   }
   // ADOÇÃO DE OPERAÇÃO LEGADA. Uma operação iniciada antes desta versão tem
   // grades preenchidas e nenhuma entidade. Sem adotá-la, ela atravessaria toda

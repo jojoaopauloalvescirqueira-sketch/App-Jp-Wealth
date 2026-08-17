@@ -308,27 +308,95 @@ def run_history_envelope(page):
     assert fatos["temSnapshot"], "ordersSnapshot nao foi garantido como array"
 
 
-def run_save_never_broken(page):
-    """A captura e ACESSORIA: estado corrompido nao pode derrubar save()."""
+def run_not_applicable_is_normal_flow(page):
+    """Estado legado/insuficiente e NAO APLICAVEL — tratado sem excecao."""
     fatos = page.evaluate(
         """() => {
           S.activeOperation = {schemaVersion:1, operationId:'x', openedAt:null,
                                openedAtSource:null, maxAccountPhaseReached:null};
-          // params quebrado faria compute() lancar
           const bak = S.params;
-          S.params = null;
+          S.params = null;                    // base legada/malformada
+          const probe = accountPhaseProbe();
           let ok = null, erro = null;
           try { ok = save(); } catch(e) { erro = String(e); }
+          const fault = S.activeOperation.phaseCaptureFault || null;
           S.params = bak;
           save();
-          return {ok, erro};
+          return {probeOk: probe.ok, probeIdx: probe.idx, ok, erro, fault};
         }"""
     )
-    assert fatos["erro"] is None, (
-        f"save() lancou por causa da captura acessoria: {fatos['erro']} — "
-        "o estado do operador nunca pode depender dela"
-    )
+    assert fatos["erro"] is None, f"save() lancou: {fatos['erro']}"
     assert fatos["ok"] is True, f"save() deixou de gravar: {fatos['ok']!r}"
+    assert fatos["probeOk"] is True and fatos["probeIdx"] is None, (
+        f"estado insuficiente deveria ser NAO APLICAVEL (ok=true, idx=null), "
+        f"recebido ok={fatos['probeOk']} idx={fatos['probeIdx']!r}"
+    )
+    assert fatos["fault"] is None, (
+        "estado legado foi classificado como DEFEITO — nao aplicavel nao e falha, "
+        "e marcar tudo como falha tornaria a marca inutil"
+    )
+
+
+def run_capture_failure_is_observable(page):
+    """Falha do MECANISMO nao pode passar por sucesso silencioso.
+
+    Este e o endurecimento exigido: a fase sobe, a reconciliacao quebra, e o
+    sistema NAO pode preservar o valor antigo fingindo que capturou. save()
+    continua gravando — indisponibilidade global por causa de um campo derivado
+    seria troca pior —, mas a lacuna fica registrada na propria entidade.
+    """
+    fatos = page.evaluate(
+        """() => {
+          S.params.saldoIni = 10000;
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.activeOperation = {schemaVersion:1, operationId:'falha', openedAt:null,
+                               openedAtSource:null, maxAccountPhaseReached:0};
+          // Defeito INESPERADO do mecanismo — nao ausencia de dado.
+          const bak = window.compute;
+          window.compute = () => { throw new Error('falha sintetica de reconciliacao'); };
+          // Condicao que ELEVARIA a fase se a captura estivesse sa.
+          S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:-900,status:'Fechada'};
+          const probe = accountPhaseProbe();
+          let ok = null, erro = null;
+          try { ok = save(); } catch(e) { erro = String(e); }
+          const op = S.activeOperation;
+          const snapshot = {
+            probeOk: probe.ok,
+            temRazao: typeof probe.erro === 'string' && probe.erro.length > 0,
+            ok, erro,
+            max: op.maxAccountPhaseReached,
+            fault: op.phaseCaptureFault ? {temAt: !!op.phaseCaptureFault.at,
+                                           razao: op.phaseCaptureFault.reason} : null
+          };
+          window.compute = bak;
+          // Sucesso posterior NAO apaga a evidencia da falha.
+          save();
+          snapshot.faultPersisteAposSucesso = !!S.activeOperation.phaseCaptureFault;
+          return snapshot;
+        }"""
+    )
+    assert fatos["erro"] is None, f"save() lancou: {fatos['erro']}"
+    assert fatos["ok"] is True, (
+        "save() parou de gravar por causa de um campo derivado — trocaria lacuna "
+        "de evidencia por perda de dado do operador"
+    )
+    assert fatos["probeOk"] is False and fatos["temRazao"], (
+        f"defeito do mecanismo foi classificado como ausencia de dado: {fatos}"
+    )
+    assert fatos["fault"] is not None, (
+        "a falha foi ENGOLIDA: o sistema persistiu declarando captura que nao houve"
+    )
+    assert fatos["fault"]["temAt"] and fatos["fault"]["razao"], (
+        f"marca de falha sem conteudo auditavel: {fatos['fault']}"
+    )
+    assert fatos["max"] == 0, (
+        f"o maximo foi alterado apesar da falha: {fatos['max']!r} — "
+        "capturar errado e pior que nao capturar"
+    )
+    assert fatos["faultPersisteAposSucesso"], (
+        "um save() bem-sucedido apagou a evidencia da falha anterior — o maximo "
+        "pode estar subestimado para sempre e a auditoria perderia o rastro"
+    )
 
 
 def main():
@@ -345,7 +413,8 @@ def main():
             run_order_close_stamp(page)
             run_phase_capture_monotonic(page)
             run_history_envelope(page)
-            run_save_never_broken(page)
+            run_not_applicable_is_normal_flow(page)
+            run_capture_failure_is_observable(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()
