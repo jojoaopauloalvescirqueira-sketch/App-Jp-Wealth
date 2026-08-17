@@ -5914,7 +5914,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'fe9fc438c959053e';
+const JP_WEALTH_BUILD_ID = '52212fff2f00b5cc';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6588,7 +6588,16 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              (ver infra/ff-news-feed/README.md). Só leitura; nada entra em
              cálculo ou estado S. -->
         <div class="card gd-news-card" data-layout-card="news-high-impact" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
-          <h2>Notícias de alto impacto <span class="art">Forex Factory · hoje</span></h2>
+          <!-- Rótulo alinhado ao domínio: este card é a projeção DE HOJE do
+               Calendário Econômico, cuja casa canônica é Execution Board →
+               Calendário Econômico (semana corrente). Não é um segundo
+               calendário — mesma fonte, mesmo cache, mesma sanitização.
+               "· hoje" fica na parte VISÍVEL, e não no .art, porque
+               `#gdDashMain > .gd-news-card h2 .art{display:none}` (app.css)
+               oculta o sufixo no layout padrão do Dashboard — era ali que
+               "Forex Factory · hoje" vinha sendo suprimido. A fonte permanece
+               como informação secundária, sem redesign. -->
+          <h2>Calendário Econômico · hoje <span class="art">Forex Factory</span></h2>
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando notícias…</span>
             <span class="gd-news-actions">
