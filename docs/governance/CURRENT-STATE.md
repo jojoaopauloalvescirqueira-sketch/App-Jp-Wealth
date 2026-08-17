@@ -1,18 +1,30 @@
 # Estado atual do projeto
 
-- Data da fotografia: 2026-08-14
-Source revision representada: `a7183646a5be26fac5f422702cec4fb8a12c8053`
+- Data da fotografia: 2026-08-17
+Source revision representada: `df964b9`
 - Branch atual: `main`
-- Commit material: `ed92925` na branch `fix/bug-hunt-findings`
-- Commit de integração: `a7183646a5be26fac5f422702cec4fb8a12c8053`
+- Commit material: `6964ab6` + `87019b6` na branch `fix/docs-script-count-drift`
+- Commit de integração: `df964b9`
+- **Reconciliação do drift documental** (2026-08-17): contagens defasadas e o
+  parágrafo de acessibilidade do Planejamento FX. **Documentação apenas** —
+  nenhum arquivo de runtime, teste, manifest, worker ou gerado foi tocado, e por
+  isso nenhuma evidência anterior de gate foi invalidada. Detalhe no
+  `CHANGELOG.md`; resumo na seção própria abaixo.
+- Anterior — commit material: `ed92925` na branch `fix/bug-hunt-findings`,
+  integração `a7183646a5be26fac5f422702cec4fb8a12c8053`
 - Também integrado: `cdb5b50` na branch `fix/gate-timing-determinism`
   (merge `b1d0ab29c10aaf6ddf12276f03df781bd48ba0a6`)
 - Submenu Estudos dos Pivots: integrado em `main` (`7a93602`, merge `a188f29`,
   reconciliação `f1c1f36`).
-- Estado de integração: submenu Estudos dos Pivots commitado e integrado
-  localmente em `main` com autorização do gestor. **Push não executado** — a
-  publicação fica com o gestor. O teste manual segue pendente: o gestor
-  autorizou merge e commit sem essa etapa.
+- Estado de publicação: `origin/main` está em `c5b0b86`, de modo que **toda a
+  série de submenus, inclusive os Estudos dos Pivots, já foi publicada** — o
+  registro anterior de "push não executado" descrevia a sessão que o escreveu,
+  não o estado do remoto. Somente os três commits desta reconciliação
+  (`6964ab6`, `87019b6`, `df964b9`) estão à frente e aguardam push do gestor.
+  Ressalva: a comparação usa o ref local de `origin/main`; `git fetch` falhou
+  nesta máquina por ausência de credenciais, então o remoto ao vivo não foi
+  consultado. O teste manual em navegador segue pendente — o gestor autorizou
+  merge e commit sem essa etapa.
 - Correções de segurança dos três achados `Medium`: integradas em `main`
   (`4635794`, merge `dc55120`, reconciliação `f0aac02`) e publicadas.
 - Migração do Motor de Lote: integrada em `main` (`792b705`, merge `043da1b`,
@@ -22,9 +34,63 @@ Source revision representada: `a7183646a5be26fac5f422702cec4fb8a12c8053`
   (`c3c5f21` → merge `af229ad` → `60ec561`). Nenhum `git push` foi executado
   nesta sessão em momento algum — a publicação saiu por GitHub Desktop ou por
   outra sessão no mesmo checkout.
-- Build local: `fa5b65ae5dd68125`.
+- Build local: `fa5b65ae5dd68125` — **inalterado**, porque nenhuma fonte mudou.
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
+
+## Reconciliação do drift documental — 2026-08-17
+
+Correção de números que a série de submenus deixou defasados: cada tarefa
+reconciliou os arquivos do próprio escopo e outras páginas continuaram
+declarando os valores antigos. As três correções foram conferidas contra o
+disco, não contra a documentação vizinha:
+
+- **Scripts:** `ARCHITECTURE.md` dizia 53 e `CODE-MAP.md`/`README.md` diziam 60;
+  são 65. Verificado de forma independente: 65 em `src/js/manifest.json`, os
+  mesmos 65 no precache de `sw.js` e a ordem do `index.html` idêntica à do
+  manifest.
+- **Tiers:** `README.md` e `QUALITY-GATES.md` diziam `standard` 9 e `full` 19;
+  os valores reais, lidos de `TIERS` em `tools/quality_gate.py`, são 13 e 24.
+  Esta página já registrava `PASS 24/24`, ou seja, a documentação contradizia a
+  própria evidência do gate.
+- **Padrão ARIA do Planejamento FX:** `FX-PLANNING.md` descrevia `tabpanel`,
+  `aria-controls`, foco roving e navegação por setas. Nada disso existe desde
+  que a faixa estrutural compartilhada assumiu a seleção dos modos — a string
+  `tabpanel` não aparece em `src/js/` nem no `index.html`. Era o único ponto em
+  que a documentação afirmava uma superfície de acessibilidade inexistente.
+
+Preservados por serem históricos corretos, e não drift: "46 scripts" do baseline
+`d9510dbb55f0`, "53 scripts" do candidato `codex/galton-board` e "63 scripts" na
+evidência da `ACTIVE-TASK`.
+
+Evidência: `quality_gate.py --tier fast` PASS 3/4 e `git diff --check` PASS. O
+check `structure` (`validate_project.py`) retornou `ENVIRONMENT_ERROR` — **Node.js
+e Playwright não estão instalados nesta máquina** —, e pela mesma causa os tiers
+`standard` e `full` ficaram `NOT_RUN`. A mudança não alcança runtime, então a
+lacuna não pesa sobre este changeset; mas qualquer tarefa futura que toque código
+precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
+
+## Pendências abertas fora do escopo desta tarefa
+
+- **Workspace "Visão Geral" do Execution Board segue vazio.** É o único dos cinco
+  sem função: o `index.html` declara "superfície reservada … o conteúdo funcional
+  será especificado em tarefa própria". Decisão deliberada desde `d2ad73f`, ainda
+  sem tarefa aberta.
+- **Cinco commits de documentação entraram direto em `main`, sem branch**
+  (`9c15f36`, `9a30705`, `bae18b2`, `fd8103d`, `c5b0b86`), criando
+  `00 - FILOSOFIA E PROJETO/` e `01 - ESTRUTURA DO SOFTWARE/`. Não tocam runtime.
+  Ficam registrados porque contrariam a política de branch do `CLAUDE.md` e
+  porque o preflight os vinha acusando como alteração material posterior à
+  source revision.
+- **Possível conflito de fonte normativa, aguardando decisão humana.** O
+  `AGENTS.md` fixa `docs/normative/` como M0. A pasta nova
+  `00 - FILOSOFIA E PROJETO/Norma Vigente/` contém um "Estatuto V10" e um
+  "Antigo Estatuto" fora desse caminho. Se for material de trabalho, nada muda;
+  se for norma vigente, existem duas fontes concorrentes. **Nenhum agente deve
+  tratar a pasta nova como autoritativa até que o gestor decida** — `AGENTS.md`
+  manda registrar o conflito em vez de escolher em silêncio.
+- **Verificação humana em navegador continua `NOT_RUN`** para as telas da série
+  de submenus, como já registrado abaixo.
 
 ## Estado confirmado no disco
 
