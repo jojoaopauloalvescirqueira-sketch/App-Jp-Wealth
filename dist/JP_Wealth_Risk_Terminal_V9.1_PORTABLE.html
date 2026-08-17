@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '164ded165b8dba3a';
+const JP_WEALTH_BUILD_ID = '09cff0a60a1bfa40';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8561,12 +8561,23 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   const agora=new Date().toISOString();
   if(statusDepois==='Aberta' && !o.openedAt) o.openedAt=agora;
   if(statusDepois==='Fechada' && !o.closedAt) o.closedAt=agora;
-  if(statusDepois==='Aberta' && pi===0 && oi===0 && !S.activeOperation){
+  // A identidade nasce AQUI, na camada de ciclo de vida — nunca na finalização.
+  // Se fosse criada lá, uma tentativa que falhasse (conflito de instrumento,
+  // persistência recusada) deixaria efeito colateral no estado de entrada, e a
+  // tentativa seguinte geraria OUTRO id: a Operação Única mudaria de identidade
+  // em função de quantas vezes o operador tentou encerrá-la.
+  //
+  // A abertura da Gênese é o caso normativo e o único com proveniência
+  // automática. Qualquer outra ordem tornando-se operacional sem entidade viva
+  // também faz a operação nascer — é uma operação real —, mas com abertura
+  // DESCONHECIDA, que o operador informa na finalização.
+  if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
+    const genese = statusDepois==='Aberta' && pi===0 && oi===0;
     S.activeOperation={
       schemaVersion:1,
       operationId:operationRecordId(),
-      openedAt:agora,
-      openedAtSource:'genesis_transition',
+      openedAt: genese?agora:null,
+      openedAtSource: genese?'genesis_transition':null,
       maxAccountPhaseReached:null
     };
   }
@@ -27394,6 +27405,20 @@ function operationValidateCandidate(candidato, anterior, record){
   return { ok:true };
 }
 
+// Pergunta ao DISCO se o registro chegou lá. É a única fonte capaz de decidir o
+// desfecho quando save() lança: a pilha não diz se a exceção veio antes ou
+// depois do setItem, e adivinhar erraria metade das vezes.
+function operationPersistedHas(operationId){
+  try{
+    const chave = (typeof LSKEY === 'string' && LSKEY) ? LSKEY : 'jpwealth_v9_state';
+    const raw = localStorage.getItem(chave);
+    if (!raw) return false;
+    const doc = JSON.parse(raw);
+    const recs = doc && doc.operationHistory && doc.operationHistory.records;
+    return Array.isArray(recs) && recs.some(r => r && r.operationId === operationId);
+  }catch(_){ return false; }
+}
+
 // ---- TRANSAÇÃO ----
 // ou toda a finalização acontece, ou nada acontece.
 function finalizeOperation(entrada){
@@ -27403,15 +27428,18 @@ function finalizeOperation(entrada){
     const pre = operationCanFinalize();
     if (!pre.ok) return pre;
 
-    // Identidade: operação viva sem entidade (fluxo que nunca passou pela
-    // abertura da Gênese) recebe id agora, com abertura desconhecida.
-    if (!S.activeOperation) {
-      S.activeOperation = {
-        schemaVersion: 1, operationId: operationRecordId(),
-        openedAt: null, openedAtSource: null, maxAccountPhaseReached: null
-      };
-    }
+    // A identidade NÃO é fabricada aqui. Ela pertence ao ciclo de vida
+    // (operationOnOrderStatus, no ato em que a operação passa a existir) e à
+    // migração (adoção de legado em operationNormalizeState). Uma operação viva
+    // que chega aqui sem entidade é violação de estado, não caso a remediar:
+    // criar o id neste ponto mutaria o estado de ENTRADA de uma transação que
+    // ainda pode falhar, e a tentativa seguinte geraria outro id — a Operação
+    // Única trocaria de identidade conforme o número de tentativas.
     const op = S.activeOperation;
+    if (!op || typeof op !== 'object') {
+      return { ok:false, motivo:'no_identity',
+        mensagem:'A operação não tem identidade registrada. Recarregue a página para que a normalização a estabeleça antes de finalizar.' };
+    }
 
     // IDEMPOTÊNCIA: mesmo operationId já no histórico ⇒ nada acontece de novo.
     // Sem isto, um segundo disparo criaria segundo registro, somaria
@@ -27440,12 +27468,38 @@ function finalizeOperation(entrada){
     const val = operationValidateCandidate(candidato, anterior, snap.record);
     if (!val.ok) return val;
 
-    // Troca e persistência. save() serializa a global, então o candidato
-    // precisa ser o S no instante da gravação — e volta a ser o anterior se a
-    // gravação recusar. É por isso que o retorno de save() é verificado aqui,
-    // coisa que o fluxo antigo nunca fez.
+    // Troca e persistência. save() serializa a global, então o candidato precisa
+    // ser o S no instante da gravação.
+    //
+    // save() DEVOLVE false nas duas falhas previstas (serialização e
+    // armazenamento), mas também PODE LANÇAR: o tratamento de erro dele chama
+    // renderPersistenceFailureWarning(), que toca DOM, e o caminho de sucesso
+    // chama clearPersistenceFailureState(). Sem o try, uma exceção escaparia
+    // depois de S já ser o candidato — grades zeradas em memória, nada gravado.
+    //
+    // O rollback não pode ser cego: se a exceção vier DEPOIS de a gravação ter
+    // ocorrido, reverter faria a memória divergir do disco no sentido oposto, e
+    // o próximo save() apagaria a finalização já persistida. Por isso o desfecho
+    // é decidido pelo DISCO, não pela pilha: lê-se de volta o documento e
+    // pergunta-se se o registro está lá.
     S = candidato;
-    if (!save()) {
+    let gravou;
+    try {
+      gravou = save() === true;
+    } catch (e) {
+      gravou = operationPersistedHas(snap.record.operationId);
+      if (!gravou) {
+        S = anterior;
+        return { ok:false, motivo:'persist_exception', erro:String((e && e.message) || e),
+          mensagem:'A finalização foi cancelada: a gravação falhou. Nada foi alterado.' };
+      }
+      // Gravou e só então lançou (repintura de aviso, timer). O estado vivo já
+      // corresponde ao disco; reverter é que criaria a divergência.
+      if (typeof console !== 'undefined' && console.error) {
+        console.error('[operação] finalização persistida, mas o pós-processamento de save() lançou:', e);
+      }
+    }
+    if (!gravou) {
       S = anterior;
       return { ok:false, motivo:'persist_failed',
         mensagem:'A finalização foi cancelada: o estado não pôde ser gravado. Nada foi alterado.' };

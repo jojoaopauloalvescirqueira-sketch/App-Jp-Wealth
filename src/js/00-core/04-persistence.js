@@ -711,12 +711,23 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   const agora=new Date().toISOString();
   if(statusDepois==='Aberta' && !o.openedAt) o.openedAt=agora;
   if(statusDepois==='Fechada' && !o.closedAt) o.closedAt=agora;
-  if(statusDepois==='Aberta' && pi===0 && oi===0 && !S.activeOperation){
+  // A identidade nasce AQUI, na camada de ciclo de vida — nunca na finalização.
+  // Se fosse criada lá, uma tentativa que falhasse (conflito de instrumento,
+  // persistência recusada) deixaria efeito colateral no estado de entrada, e a
+  // tentativa seguinte geraria OUTRO id: a Operação Única mudaria de identidade
+  // em função de quantas vezes o operador tentou encerrá-la.
+  //
+  // A abertura da Gênese é o caso normativo e o único com proveniência
+  // automática. Qualquer outra ordem tornando-se operacional sem entidade viva
+  // também faz a operação nascer — é uma operação real —, mas com abertura
+  // DESCONHECIDA, que o operador informa na finalização.
+  if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
+    const genese = statusDepois==='Aberta' && pi===0 && oi===0;
     S.activeOperation={
       schemaVersion:1,
       operationId:operationRecordId(),
-      openedAt:agora,
-      openedAtSource:'genesis_transition',
+      openedAt: genese?agora:null,
+      openedAtSource: genese?'genesis_transition':null,
       maxAccountPhaseReached:null
     };
   }

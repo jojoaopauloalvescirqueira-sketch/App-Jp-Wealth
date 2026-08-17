@@ -211,6 +211,155 @@ def run_persistence_failure_rollback(page):
     assert d["phaseUnlocked"] == a["phaseUnlocked"], "fases foram retravadas apesar da falha"
 
 
+def run_save_exception_full_rollback(page):
+    """save() LANCANDO nao pode deixar o estado vivo no candidato.
+
+    save() devolve false nas duas falhas previstas, mas PODE lancar: o
+    tratamento de erro dele chama renderPersistenceFailureWarning(), que toca
+    DOM. Sem cobertura, a excecao escaparia depois de S ja ser o candidato —
+    grades zeradas em memoria, nada gravado. O teste compara o ESTADO INTEIRO,
+    e nao uma propriedade.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({ciclo:1234});
+          save();
+          const antes = JSON.stringify(S);
+          const bak = window.save;
+          window.save = () => { throw new Error('falha sintetica de gravacao'); };
+          let res, erro = null;
+          try { res = JPWOperation.finalize({defenseCount:0}); }
+          catch(e) { erro = String(e); }
+          window.save = bak;
+          return {res, erro, antes, depois: JSON.stringify(S)};
+        }"""
+    )
+    assert r["erro"] is None, (
+        f"a excecao de save() ESCAPOU de finalizeOperation: {r['erro']} — "
+        "o chamador ficaria sem saber o que aconteceu com o estado"
+    )
+    assert r["res"]["ok"] is False and r["res"]["motivo"] == "persist_exception", (
+        f"excecao nao foi classificada: {r['res']}"
+    )
+    assert r["antes"] == r["depois"], (
+        "S NAO voltou ao estado anterior apos a excecao — grades, cycleRealizado, "
+        "operationHistory, transitionLog e activeOperation precisam ficar "
+        "logicamente identicos ao que eram antes da tentativa"
+    )
+
+
+def run_save_exception_after_write_keeps_result(page):
+    """save() que GRAVA e so entao lanca nao pode ser revertido.
+
+    Segunda janela real de excecao: o setItem ocorre e o pos-processamento
+    (clearPersistenceFailureState -> repintura, timer) lanca. Reverter aqui
+    faria a MEMORIA divergir do DISCO no sentido oposto — o disco teria a
+    finalizacao e a sessao nao —, e o proximo save() apagaria a finalizacao ja
+    persistida. Por isso o desfecho e decidido lendo o documento de volta, e nao
+    pela pilha: rollback cego passaria neste caso e destruiria o resultado.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({ciclo:900});
+          save();
+          const cicloAntes = S.cycleRealizado;
+          const net = netOpAtual();
+          const bak = window.save;
+          // Grava DE VERDADE e so entao lanca.
+          window.save = () => {
+            localStorage.setItem('jpwealth_v9_state',
+              JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+            throw new Error('pos-processamento de save lancou');
+          };
+          let res, erro = null;
+          try { res = JPWOperation.finalize({defenseCount:0}); }
+          catch(e) { erro = String(e); }
+          window.save = bak;
+          const disco = JSON.parse(localStorage.getItem('jpwealth_v9_state'));
+          return {
+            res, erro,
+            memRegistros: S.operationHistory.records.length,
+            discoRegistros: (disco.operationHistory.records||[]).length,
+            memCiclo: S.cycleRealizado, discoCiclo: disco.cycleRealizado,
+            esperado: cicloAntes + net,
+            memOrdens: JPWOperation.liveOrders().length
+          };
+        }"""
+    )
+    assert r["erro"] is None, f"excecao escapou: {r['erro']}"
+    assert r["res"]["ok"] is True, (
+        f"a finalizacao foi REVERTIDA apesar de ter sido gravada: {r['res']} — "
+        "o disco ficaria com o registro e a sessao sem ele, e o proximo save() "
+        "apagaria a finalizacao persistida"
+    )
+    assert r["memRegistros"] == r["discoRegistros"] == 1, (
+        f"memoria e disco divergiram: mem={r['memRegistros']} disco={r['discoRegistros']}"
+    )
+    assert r["memCiclo"] == r["discoCiclo"] == r["esperado"], (
+        f"ciclo divergente: mem={r['memCiclo']} disco={r['discoCiclo']} esperado={r['esperado']}"
+    )
+    assert r["memOrdens"] == 0, "grades nao foram liberadas apesar da gravacao bem-sucedida"
+
+
+def run_identity_not_forged_in_finalize(page):
+    """Finalizacao nao fabrica identidade, e tentativas falhas nao a trocam."""
+    ausente = page.evaluate(
+        """() => {
+          __semear({});
+          S.activeOperation = null;      // viva, mas sem identidade
+          const antes = JSON.stringify(S);
+          const res = JPWOperation.finalize({defenseCount:0});
+          return {res, mudou: JSON.stringify(S) !== antes};
+        }"""
+    )
+    assert ausente["res"]["ok"] is False and ausente["res"]["motivo"] == "no_identity", (
+        f"finalizacao fabricou identidade em vez de recusar: {ausente['res']}"
+    )
+    assert not ausente["mudou"], (
+        "a tentativa recusada MUTOU o estado de entrada — identidade criada "
+        "dentro da finalizacao deixa efeito colateral quando ela falha"
+    )
+
+    estavel = page.evaluate(
+        """() => {
+          __semear({});
+          S.phases[1].orders[0].par = 'GBPUSD';        // conflito: vai falhar
+          const id1 = S.activeOperation.operationId;
+          JPWOperation.finalize({defenseCount:0});
+          const id2 = S.activeOperation.operationId;
+          JPWOperation.finalize({defenseCount:0});
+          return {id1, id2, id3: S.activeOperation.operationId};
+        }"""
+    )
+    assert estavel["id1"] == estavel["id2"] == estavel["id3"], (
+        f"a identidade mudou entre tentativas falhas: {estavel} — uma Operacao "
+        "Unica nao pode trocar de id conforme o numero de tentativas"
+    )
+
+
+def run_identity_born_in_lifecycle(page):
+    """Ordem tornando-se operacional sem entidade faz a operacao nascer."""
+    r = page.evaluate(
+        """() => {
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.activeOperation = null;
+          // NAO e a Genese abrindo: e uma ordem fechada direto pelo grid.
+          const o = S.phases[1].orders[0];
+          o.par='EURUSD'; o.tipo='BUY'; o.status='Fechada'; o.result=10;
+          operationOnOrderStatus(o,'Fechada',1,0);
+          const op = S.activeOperation;
+          return {criou: !!op, openedAt: op && op.openedAt, fonte: op && op.openedAtSource};
+        }"""
+    )
+    assert r["criou"], (
+        "ordem operacional sem entidade nao fez a operacao nascer — ela chegaria "
+        "a finalizacao sem identidade e seria recusada"
+    )
+    assert r["openedAt"] is None and r["fonte"] is None, (
+        f"abertura inventada para ordem que nao e a Genese: {r}"
+    )
+
+
 def run_save_hook_never_resurrects(page):
     """O gancho centralizado em save() nao pode ressuscitar a operacao."""
     r = page.evaluate(
@@ -545,6 +694,10 @@ def main():
             run_success_path(page)
             run_idempotency(page)
             run_persistence_failure_rollback(page)
+            run_save_exception_full_rollback(page)
+            run_save_exception_after_write_keeps_result(page)
+            run_identity_not_forged_in_finalize(page)
+            run_identity_born_in_lifecycle(page)
             run_save_hook_never_resurrects(page)
             run_snapshot_is_independent(page)
             run_return_is_frozen(page)

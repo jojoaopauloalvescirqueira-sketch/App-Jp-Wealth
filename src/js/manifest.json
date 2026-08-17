@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "afcb6b10d21d71fc144b55a6a5a973b16fd3b9ef7ec478fcbb42dcab2599a692"
+      "sha256": "459971c20cca048a8136082651d1764efb47b19241eec472fe336a65fa64236a"
     },
     {
       "order": 5,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "1d230b2820820610aaaa6c17a1250d7fe1ab2d64e6814dc06bf8c9b021a1ab2f"
+      "sha256": "01080af835aca1d7ffb11a82afd4e99863860becfc8bcfda30715b45bab4be90"
     },
     {
       "order": 67,
