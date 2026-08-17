@@ -1,7 +1,7 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-17
-Source revision representada: `main` após a integração do Quality Gate de CI
+Source revision representada: `0826e5e`
 - Branch atual: `main`
 - **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
   `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
