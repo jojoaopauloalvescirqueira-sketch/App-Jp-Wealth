@@ -465,10 +465,16 @@ def run_economic_calendar(page):
     # Ida e volta nao multiplica listener: se o bind dos filtros fosse
     # registrado a cada render, um unico clique dispararia N vezes e o
     # contador de itens divergiria depois de varias entradas.
+    #
+    # A troca usa a API publica, e nao cliques no submenu: a faixa contextual
+    # nao permanece aberta entre as iteracoes, e clicar num destino com a faixa
+    # recolhida faz o <header> interceptar o ponteiro. O alvo deste laco e o
+    # ciclo montar/desmontar do workspace, nao a navegacao — que ja foi
+    # exercitada por clique real na entrada deste teste.
     for _ in range(3):
-        page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+        page.evaluate("() => window.JPWExec.ui.selectView('panel')")
         page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
-        page.click('#execNavSubmenu [data-nav-sub-view="ecal"]')
+        page.evaluate("() => window.JPWExec.ui.selectView('ecal')")
         page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
     page.click('#execEcal [data-ecal-cur="all"]')
     estavel = page.evaluate("() => document.querySelectorAll('#execEcal .ecal-item').length")
