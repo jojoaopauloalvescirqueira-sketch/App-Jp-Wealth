@@ -171,9 +171,12 @@ em disputa de especificidade — a regra do tema tem especificidade maior e venc
 qualquer seletor local.
 
 Acessibilidade: estado nunca só por cor (badges/texto, e as três séries do
-gráfico também se separam pelo padrão do traço), abas com `tabpanel`,
-`aria-controls`, foco roving e navegação por setas, resumo textual dos gráficos,
-labels reais, controles nativos; tabelas largas rolam em `.fxp-tablewrap`.
+gráfico também se separam pelo padrão do traço); os quatro modos não usam mais
+o padrão ARIA de abas — a seleção vive nos botões `data-nav-sub-view` da faixa
+estrutural compartilhada (`#navSubShell`/`#fxplanNavSubmenu`) e o conteúdo é
+`role="region"` com `aria-label` próprio, sem `tabpanel` nem `aria-controls`
+por modo; resumo textual dos gráficos, labels reais, controles nativos;
+tabelas largas rolam em `.fxp-tablewrap`.
 Textos estruturais usam `.fxp-note` (a classe `.expl` é colapsada pela ajuda
 contextual e fica reservada à prosa doutrinária).
 

@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+### Reconciliação de contagens defasadas e do padrão ARIA do FX — 2026-08-17
+
+Drift documental acumulado pela série de submenus: cada tarefa reconciliou os
+arquivos do próprio escopo e deixou para trás números que outras páginas ainda
+declaravam. Nada de runtime, teste, manifest, worker ou gerado foi tocado.
+
+- **Contagem de scripts corrigida em três páginas.** `ARCHITECTURE.md` declarava
+  53 e `CODE-MAP.md`/`README.md` declaravam 60; o manifest tem 65 desde a
+  integração dos Estudos dos Pivots. Conferido de forma independente: 65 em
+  `src/js/manifest.json`, os mesmos 65 no precache de `sw.js` e a ordem do
+  `index.html` idêntica à do manifest. A fotografia do `CODE-MAP.md` passou de
+  `478a558`/`55d2267` para `7a93602`/`a188f29`/`f1c1f36`.
+- **Contagem por tier corrigida.** `README.md` e `QUALITY-GATES.md` declaravam
+  `standard` 9 e `full` 19; os valores reais, lidos de `TIERS` em
+  `tools/quality_gate.py`, são 13 e 24. As suítes `exec-submenu`, `nocoda`,
+  `pivot-studies` e `order-guards` entraram no `standard` sem que a tabela fosse
+  reconciliada — e o `CURRENT-STATE.md` já registrava `PASS 24/24`, de modo que
+  a documentação contradizia a própria evidência do gate.
+- **Padrão ARIA do Planejamento FX corrigido.** `FX-PLANNING.md` afirmava que os
+  quatro modos usavam `tabpanel`, `aria-controls`, foco roving e navegação por
+  setas. Não usam desde que a faixa estrutural compartilhada assumiu a seleção:
+  os modos vivem em botões `data-nav-sub-view` de `#fxplanNavSubmenu` e o
+  conteúdo é `role="region"` com `aria-label` próprio. Verificado — a string
+  `tabpanel` não aparece em `src/js/` nem no `index.html`. Era o único ponto em
+  que a documentação descrevia uma **superfície de acessibilidade inexistente**.
+- **Deixado intacto por serem históricos corretos:** "46 scripts" do baseline
+  `d9510dbb55f0`, "53 scripts" do candidato `codex/galton-board` e "63 scripts"
+  na evidência da `ACTIVE-TASK` descrevem o estado da época, não o vigente.
+- **Verificação:** `quality_gate.py --tier fast` PASS 3/4 e `git diff --check`
+  PASS. O check `structure` (`validate_project.py`) retornou `ENVIRONMENT_ERROR`
+  — Node.js e Playwright ausentes na máquina —, e por isso os tiers `standard` e
+  `full` ficaram `NOT_RUN`. A mudança não alcança runtime.
+
 ### Correções da caça a bugs por execução real — 2026-08-14
 
 Oito achados confirmados por execução em navegador e reproduzidos de forma
