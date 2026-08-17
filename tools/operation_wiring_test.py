@@ -218,6 +218,77 @@ def run_close_order_through_ui(page):
     assert isinstance(r["openedAt"], str), "o fechamento apagou o openedAt da ordem"
 
 
+def run_reset_does_not_leak_identity(page):
+    """Reinicio administrativo abandona a operacao SEM fabricar Historico.
+
+    Sem limpar activeOperation, a guarda `!S.activeOperation` do nascimento
+    seria falsa na Genese seguinte e a operacao NOVA herdaria operationId,
+    openedAt e maxAccountPhaseReached da anterior — gravando no Historico uma
+    abertura de semanas atras com proveniencia automatica.
+    """
+    a = page.evaluate(
+        """() => {
+          __prepararGenese();
+          const sel = __selectStatus(0,0);
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          S.activeOperation.maxAccountPhaseReached = 2;   // chegou a Fase 3
+          save();
+          return {id:S.activeOperation.operationId,
+                  openedAt:S.activeOperation.openedAt,
+                  maxFase:S.activeOperation.maxAccountPhaseReached};
+        }"""
+    )
+    assert a["id"], "Genese A nao criou operacao"
+
+    # ATO REAL de reinicio de periodo: as mesmas mutacoes que o fluxo executa.
+    reset = page.evaluate(
+        """() => {
+          const antes = {registros:(S.operationHistory.records||[]).length,
+                         ciclo:S.cycleRealizado};
+          S.cycleRealizado=0;
+          const cycleSizes=[5,4,3,2];
+          S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(cycleSizes[pi]||3); });
+          S.phaseUnlocked=[true,false,false,false];
+          S.activeOperation=null;
+          save();
+          return {antes, registros:(S.operationHistory.records||[]).length,
+                  op:S.activeOperation};
+        }"""
+    )
+    assert reset["op"] is None, "o reinicio deixou a operacao viva"
+    assert reset["registros"] == reset["antes"]["registros"], (
+        f"o reinicio FABRICOU registro historico: {reset['antes']['registros']} -> "
+        f"{reset['registros']} — abandonar nao e encerrar"
+    )
+
+    b = page.evaluate(
+        """() => {
+          __prepararGenese();
+          const sel = __selectStatus(0,0);
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          return {id:S.activeOperation.operationId,
+                  openedAt:S.activeOperation.openedAt,
+                  maxFase:S.activeOperation.maxAccountPhaseReached,
+                  ciclo:S.cycleRealizado,
+                  registros:(S.operationHistory.records||[]).length};
+        }"""
+    )
+    assert b["id"] != a["id"], (
+        f"a operacao B HERDOU a identidade de A: {b['id']} — cada Operacao Unica "
+        "precisa de identidade propria"
+    )
+    assert b["openedAt"] != a["openedAt"], (
+        f"B herdou a abertura de A: {b['openedAt']} — proveniencia automatica "
+        "atestando um fato falso"
+    )
+    assert b["maxFase"] != 2, (
+        f"B herdou a fase maxima de A: {b['maxFase']!r} — a monotonicidade seria "
+        "quebrada para CIMA, sem evidencia"
+    )
+    assert b["ciclo"] == 0, f"o reinicio consolidou algo no ciclo: {b['ciclo']}"
+    assert b["registros"] == 0, "abrir B fabricou registro historico"
+
+
 def main():
     server, url = serve()
     try:
@@ -229,6 +300,7 @@ def main():
             run_identity_stable_across_renders(page)
             run_rejected_open_creates_nothing(page)
             run_close_order_through_ui(page)
+            run_reset_does_not_leak_identity(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

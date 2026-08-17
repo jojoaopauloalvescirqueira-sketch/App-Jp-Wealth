@@ -194,7 +194,7 @@
       "order": 32,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "e93c5475137b435ad4915646e53786a605db44757fe713c62934ea256841cdf6"
+      "sha256": "50f1c7fa0904c9dcbd803193ed9be8b5fd7986b8f4beb3994f876c5b77f1459f"
     },
     {
       "order": 33,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "a70c1807caf8347759ed1de0708acea4138b63ad0c178dbf59f6043edef55483"
+      "sha256": "f92afa80c7efc233c2118a8f4f5fd8f21c63ad4e8c630939a55f0569d2be1685"
     },
     {
       "order": 36,
