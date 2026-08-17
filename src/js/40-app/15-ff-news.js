@@ -174,9 +174,19 @@ function ffNewsRender(){
     tr.append(tdTime,tdCur,tdImpact,tdTitle,tdPrev,tdAnt);
     list.append(tr);
   }
-  // Calendário Econômico (17-economic-calendar.js) lê o mesmo cache: se estiver
-  // aberto quando este ciclo rodar, re-renderiza junto. Guarda de existência —
-  // este arquivo carrega antes do 17, e no monólito reduzido o 17 pode faltar.
+}
+
+// Fan-out de repintura das superfícies que consomem este cache. O widget do
+// Dashboard e o Calendário Econômico são independentes: a ausência de um não
+// pode impedir a repintura do outro.
+//
+// Antes desta separação a chamada do calendário ficava DENTRO de ffNewsRender(),
+// depois do `return` que sai quando os nós do widget não existem — logo um fetch
+// bem-sucedido gravava cache novo e o calendário aberto nunca acompanhava.
+// Guarda de existência mantida: este arquivo carrega antes do 17, e no monólito
+// reduzido o 17 pode faltar.
+function ffNewsRenderAll(){
+  ffNewsRender();
   if(typeof ecalRenderIfOpen==='function') ecalRenderIfOpen();
 }
 
@@ -204,26 +214,44 @@ function ffNewsFetch(force){
     .finally(()=>{
       ffNewsInFlight=false;
       if(btn) btn.disabled=false;
-      ffNewsRender();
+      ffNewsRenderAll();
     });
 }
 
-function initFfNews(){
+// Inicialização em DUAS partes, deliberadamente separadas.
+//
+// VIEW do widget: tudo que precisa do DOM do card do Dashboard. Continua
+// condicionada à existência do card, como deve ser.
+function initFfNewsWidget(){
   const card=document.querySelector('[data-layout-card="news-high-impact"]');
   if(!card) return;
   const btn=document.getElementById('gdNewsRefreshBtn');
   if(btn) btn.addEventListener('click',()=>ffNewsFetch(true));
+}
+
+// DOMÍNIO: cache, rede, timers e 'online'. NÃO depende de nó algum do
+// Dashboard — o Calendário Econômico consome este mesmo cache a partir do
+// Execution Board, onde o card de Notícias pode não estar montado.
+//
+// Até esta separação, o `if(!card) return` de initFfNews() matava junto os dois
+// intervalos, o listener 'online' e o fetch inicial: sem o card, nada
+// revalidava e o calendário exibiria cache velho indefinidamente, em silêncio.
+// Fonte, frequência, TTL, formato do cache e timezone permanecem intocados —
+// só a condição de partida mudou.
+function initFfNewsDomain(){
   window.addEventListener('online',()=>ffNewsFetch(false));
   // Poll leve: re-render cobre a virada do dia; fetch só quando o cache
   // envelheceu e a aba está visível — respeita o rate-limit da fonte.
   setInterval(()=>{
-    ffNewsRender();
+    ffNewsRenderAll();
     if(document.visibilityState==='visible') ffNewsFetch(false);
   },FF_NEWS_POLL_MS);
   // Tique de 1 min só de render: mantém a contagem regressiva e a transição
   // próximo→passado precisas sem nenhum consumo adicional da fonte.
-  setInterval(ffNewsRender,FF_NEWS_TICK_MS);
-  ffNewsRender();
+  setInterval(ffNewsRenderAll,FF_NEWS_TICK_MS);
+  ffNewsRenderAll();
   ffNewsFetch(false);
 }
-initFfNews();
+
+initFfNewsWidget();
+initFfNewsDomain();
