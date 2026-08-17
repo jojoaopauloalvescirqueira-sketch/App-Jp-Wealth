@@ -375,9 +375,13 @@ def run_wrong_confirmation_no_mutation(page):
           document.getElementById('finalDefenses').value = '1';
           document.getElementById('finalConfirm').value = 'fechado';   // minusculo
           document.getElementById('modalConfirm').click();
-          const aindaAberto = document.getElementById('modalOverlay').classList.contains('show');
-          const err = document.querySelector('[data-qid="confirmtxt"] .modal-err').classList.contains('show');
+          // Estado financeiro medido PRIMEIRO: se a mutacao fizer o modal
+          // fechar, a leitura de DOM abaixo devolveria null e o teste quebraria
+          // por TypeError em vez de acusar a propriedade violada.
           const depois = __foto();
+          const aindaAberto = document.getElementById('modalOverlay').classList.contains('show');
+          const nodeErr = document.querySelector('[data-qid="confirmtxt"] .modal-err');
+          const err = !!nodeErr && nodeErr.classList.contains('show');
           closeModal();
           return {antes, depois, aindaAberto, err};
         }"""
@@ -397,10 +401,11 @@ def run_empty_defenses_is_not_zero(page):
           document.getElementById('finalConfirm').value = 'FECHADO';
           // defesas deixado VAZIO de proposito
           document.getElementById('modalConfirm').click();
-          const err = document.querySelector('[data-qid="defesas"] .modal-err').classList.contains('show');
           const depois = __foto();
+          const nodeErr = document.querySelector('[data-qid="defesas"] .modal-err');
+          const err = !!nodeErr && nodeErr.classList.contains('show');
           closeModal();
-          return {antes, depois, err, valorInicial: 0};
+          return {antes, depois, err};
         }"""
     )
     assert vazio["antes"] == vazio["depois"], (
@@ -438,11 +443,13 @@ def run_legacy_requires_manual_date(page):
           document.getElementById('finalDefenses').value = '0';
           document.getElementById('finalConfirm').value = 'FECHADO';
           document.getElementById('modalConfirm').click();   // sem informar a data
-          const err = document.querySelector('[data-qid="abertura"] .modal-err').classList.contains('show');
           const depois = __foto();
+          const nodeErr = document.querySelector('[data-qid="abertura"] .modal-err');
+          const err = !!nodeErr && nodeErr.classList.contains('show');
           // agora com data valida
-          document.getElementById('finalOpenedAt').value = '2026-08-01T10:00';
-          document.getElementById('modalConfirm').click();
+          const campoData = document.getElementById('finalOpenedAt');
+          if (campoData) { campoData.value = '2026-08-01T10:00';
+                           document.getElementById('modalConfirm').click(); }
           const reg = S.operationHistory.records[0];
           return {temCampo, err, antes, depois,
                   n:S.operationHistory.records.length,
@@ -488,10 +495,11 @@ def run_persist_failure_keeps_modal(page):
           jpWealthPersistenceBlocked = true;
           document.getElementById('modalConfirm').click();
           jpWealthPersistenceBlocked = false;
+          const depois = __foto();
           const aberto = document.getElementById('modalOverlay').classList.contains('show');
           const falha = document.getElementById('finalFail');
-          const ctaLiberado = !document.getElementById('modalConfirm').disabled;
-          const depois = __foto();
+          const cta = document.getElementById('modalConfirm');
+          const ctaLiberado = !!cta && !cta.disabled;
           closeModal();
           return {antes, depois, aberto, msg: falha ? falha.textContent : '', ctaLiberado};
         }"""
