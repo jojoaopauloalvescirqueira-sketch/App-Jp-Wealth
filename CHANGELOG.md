@@ -46,9 +46,40 @@ e dar ao calendário casa canônica.
   `localStorage` — incluí-lo implicaria dependência inexistente.
 - **Inalterados:** fornecedor, URL, frequência, TTL, formato do cache, política
   de timezone, classificação de impacto e semântica dos eventos.
-- **Verificação:** nada foi executado em navegador — Node.js e Playwright estão
-  ausentes na máquina. `run_economic_calendar()` foi **escrito e nunca
-  executado**; vale como especificação, não como evidência.
+- **Verificação — automação:** `quality_gate.py --tier standard` executado e
+  aprovado, **13/13 PASS**, zero `FAIL`, zero `NOT_RUN`, zero
+  `ENVIRONMENT_ERROR` (`tools/.artifacts/quality-20260817T151725-standard.json`).
+  Node.js não era requisito: `validate_project.py` cai para o Chromium do
+  Playwright, e o tier foi rodado a partir de uma venv isolada com
+  `playwright==1.60.0`, o pino do `requirements-dev.txt`.
+  `run_economic_calendar()` **foi executado e passou**.
+
+  > Correção de registro: até a reconciliação de 2026-08-17 esta entrada
+  > afirmava que "nada foi executado em navegador" e que o teste novo "vale como
+  > especificação, não como evidência". Era verdade quando escrita — o ambiente
+  > não tinha Playwright — e deixou de ser assim que o tier rodou. Fica anotado
+  > em vez de reescrito em silêncio.
+
+- **Verificação — mutação:** o teste novo foi submetido a quatro defeitos
+  plantados no produto e **acusou os quatro**, provando que as asserções não são
+  vazias: (1) `window.JPWEcalUI={render:ecalRender}`, que faria o workspace
+  desenhar na raiz do overlay — o cenário exato que a revisão adversarial
+  apontara como invisível ao gate; (2) o chip de moeda voltando a
+  `.gd-news-cur`; (3) `id="ecalBody"` no corpo do workspace, colidindo com o
+  overlay; (4) o filtro deixando de recortar por moeda. Controle após restaurar:
+  PASS.
+- **Verificação — visual:** `INSPEÇÃO VISUAL HUMANA NÃO REALIZADA`. Foi coletada
+  **evidência automatizada por captura de tela** das cinco superfícies
+  (card do Dashboard, workspace do Execution Board, overlay pelo menu `⋯`, tema
+  claro e mobile a 390 px), com medição em runtime de zero id duplicado e zero
+  overflow horizontal. Isso é a mesma classe de evidência do gate — Chromium
+  dirigido por automação — e **não substitui o julgamento visual de um humano**,
+  que segue pendente. Um `PASS` visual só pode ser registrado aqui depois que o
+  gestor inspecionar e informar as superfícies conferidas.
+- **Ambiente:** o registro do service worker falha no navegador embutido usado na
+  captura (`sw.js` é servido em HTTP 200, mas `register()` recusa). É restrição
+  do sandbox: `sw.js` não foi tocado por nenhum commit desta tarefa. O ciclo do
+  worker é coberto pelo tier `full`, que **não** foi executado.
 
 ### Reconciliação de contagens defasadas e do padrão ARIA do FX — 2026-08-17
 
