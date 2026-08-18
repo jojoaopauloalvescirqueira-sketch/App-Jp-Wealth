@@ -90,6 +90,53 @@ commit próprio, com campanha de mutação individual:
 | citações penduradas na guarda de exclusividade | `17214ba` | — |
 | **desfecho da gravação com três estados** | `e7313aa` | 9 |
 
+**Segunda rodada corretiva — auditoria adversarial de nove lentes.** Ela devolveu
+`AUDIT_FAIL` com 16 achados, 13 invalidantes, que colapsavam em três defeitos.
+Todos produziam afirmação falsa em registro imutável:
+
+| item | commit | mutações |
+|---|---|---|
+| **C** captura da Fase da Conta só em ato confirmado | `e6f653d` | 4 |
+| **B** operação nasce antes dos efeitos que lhe pertencem | `58be507` + `fc25e7b` | 3 |
+| **A** exclusão da última ordem abandona; órfã não é herdada | `13b9811` | 4 |
+| **C×A** captura depois de resolvido o ciclo de vida | `d161207` | 3 |
+
+**Terceira rodada — as regressões da própria correção C.** A auditoria dirigida a
+C, B e A encontrou três caminhos em que a captura, retirada de `save()`, não
+havia sido reposta:
+
+| item | commit | mutações |
+|---|---|---|
+| **R1** breach que compromete o stop observa a fase | `ffa637a` + `c2b17c5` | 3 |
+| **R2** status devolvido a não operacional retira a ordem | `356fe37` | 4 |
+| **R3** Fase da Conta observada antes da revisão | `d328e2b` + `b5b5766` | 3 |
+| **R4** troca de Par aceita observa a Fase da Conta | `ca301de` | 3 |
+
+`480e7a2..ca301de` são **11 commits**, e nenhum deles tocou este arquivo nem o
+`CHANGELOG` — a reconciliação documental que os cobre é a deste checkpoint.
+
+**Reclassificação do R4, decidida pelo humano contra o parecer da auditoria.** O
+achado de `04-stop-statistics.js` na saída terminal do laço de `<select>` havia
+sido rebaixado a dívida, com o argumento de que o sítio é byte-idêntico antes e
+depois de R1/R2/R3. O argumento prova apenas que não é regressão *daqueles*
+patches. Como é **esta feature** que torna `maxAccountPhaseReached` dado
+histórico imutável, qualquer caminho de uso ordinário capaz de subestimá-lo é
+defeito do candidato: `PRODUCT_DEFECT`. Medido nos defaults de fábrica com saldo
+40.000, trocar `USDJPY` por `EURUSD` numa ordem aberta leva o risco de 15,44 para
+2.500 USD — drawdown de 6,25% contra teto de 4% da Fase 1 —, a conta opera na
+Fase 2 no disco e na tela, e o máximo permanecia em zero.
+
+**O princípio de C, completo depois de R1 e R4:**
+
+```
+valor transitório / digitando        -> não captura
+guarda rejeita e reverte             -> não captura
+valor sobrevive à guarda e persiste  -> CAPTURA
+```
+
+`operationTouchAccountPhase` nunca voltou para `save()`. Os oito sítios de
+captura são todos atos semanticamente confirmados.
+
 **Correção de rótulo, registrada porque o erro foi de método.** `be43dde` foi
 commitado como se fosse o item #8 da fila e não era. Ele trata da integridade
 ternária da **Fase da Conta** (`observed` / `unobserved` / `degraded`) e
@@ -103,11 +150,21 @@ fila. As respostas confirmaram recomendações minhas sobre um assunto que não 
 o item pendente, o que deu à correção uma aparência de validação que ela não
 tinha. Perguntar sobre a coisa errada não é o mesmo que perguntar.
 
-**65 experimentos de mutação, todos acusados por asserção própria.** Nenhum foi
-aceito por `TypeError`. Sete precisaram de correção antes de valer como
-evidência: três testes detectavam por exceção em vez de asserção, dois eram
-mutações infiéis, uma estava pareada com a função errada e uma dependia de
-instrumentação herdada de outro teste — vacuamente verdadeira quando isolada.
+**92 experimentos de mutação ao longo das três rodadas**, todos acusados por
+asserção própria ou registrados como no-op provado. Nenhum foi aceito por
+`TypeError`. Treze precisaram de correção antes de valer como evidência: testes
+que detectavam por exceção em vez de asserção, mutações infiéis (uma quebrava a
+construção do modal, outra era inócua contra o caso escolhido), duas pareadas
+com a função errada, uma que dependia de instrumentação herdada de outro teste, e
+uma cuja igualdade passava sem haver observação alguma — revisão e registro
+empatando em `null`.
+
+Cinco sobreviventes ficaram registradas como **no-op provado**, não como lacuna:
+anular `jaFinalizada` não produz duplicação porque três autoridades independentes
+barram antes; a guarda `S.activeOperation &&` na captura é redundante depois de o
+ciclo de vida estar resolvido; captura duplicada entre checkpoint e confirmação
+não tem efeito porque a fase não muda entre os dois instantes; e capturar no
+caminho revertido observa o valor já restaurado.
 
 **Categoria de teste criada nesta série.** Um defeito de fiação passou por
 testes unitários verdes: o gancho estava num laço morto (`querySelectorAll('input')`,
@@ -131,9 +188,29 @@ sistema conclui "não gravou", a memória volta para a operação ativa e o pró
 financeira foi formalmente encerrada. Contrato em `DB-STORAGE-GOVERNANCE.md`,
 regra 7.
 
-**Evidência.** Gate `standard` 17/17 em cada commit da série e tier `full`
-**28/28** sobre o candidato, ambos lidos integralmente. Falta a auditoria curta
-dirigida e a inspeção visual humana.
+**Evidência do candidato `ca301de`.** Gate `standard` 17/17 em cada commit da
+série e tier `full` **28/28**, ambos lidos integralmente, com o artefato do
+`full` registrando `head: ca301ded4c3c` — a verificação cobre o candidato exato,
+e não uma aproximação dele.
+
+**Vereditos de auditoria, em ordem:** `AUDIT_FAIL` (nove lentes, 13 invalidantes
+→ C, B, A); `AUDIT_FAIL` (dirigida, 6 invalidantes → R1, R2, R3);
+`AUDIT_PASS_WITH_DEBT` (dirigida a R1/R2/R3, 4/4 lentes, zero invalidantes, uma
+dívida que o humano reclassificou como defeito → R4). A lente de interação
+`R4×C` concluiu com zero achados. **A lente `R4` está pendente**, bloqueada por
+`529 Overloaded` em três tentativas — indisponibilidade de infraestrutura, que
+não diz nada sobre o produto. É o único item que o merge aguarda.
+
+**Fragilidades do harness, registradas e não corrigidas.** `nocoda_test.py`
+(`run_no_operational_mutation`) falhou uma vez num `full` que competia com quatro
+agentes de auditoria pela máquina, e passou 9/9 isolado, no `standard` e no
+`full` sem carga: `TEST_HARNESS_FAIL` por sensibilidade temporal, com mecanismo
+não identificado. O script de auditoria devolvia `AUDIT_PASS` com zero agentes
+concluídos — corrigido nas execuções seguintes com gate de validade por lente, e
+o defeito do padrão genérico fica registrado. Retomar uma execução que já era
+retomada perde o cache dos agentes anteriores. E `page.evaluate` com duas
+atribuições soltas faz o Playwright invocar a última função: um helper de teste
+era chamado sem argumentos e o erro aparecia como se fosse do produto.
 
 **Ponto para a auditoria dirigida.** A barreira do `UNKNOWN` é deliberadamente
 de sessão. Falta verificar o comportamento **entre sessões**: com o estado nesse

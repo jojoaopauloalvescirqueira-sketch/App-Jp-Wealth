@@ -79,11 +79,78 @@ materiais. Cada correção em commit próprio, com campanha de mutação individ
 do segundo por perda de contexto, e a correção de rótulo está registrada no
 `CURRENT-STATE.md`.
 
+#### Segunda rodada: três defeitos de afirmação histórica
+
+Auditoria adversarial de nove lentes devolveu `AUDIT_FAIL` com 13 achados
+invalidantes, que colapsavam em três defeitos — todos gravando afirmação falsa em
+registro imutável.
+
+- **`e6f653d`** — `operationTouchAccountPhase()` rodava dentro de `save()`, e
+  `save()` é chamado a cada **tecla** nos campos numéricos da grade. Digitar
+  "1.09" passa por "1", cujo risco eleva a Fase da Conta; a captura é monotônica,
+  então o pico virava `maxAccountPhaseReached` e ia ao disco com integridade
+  `observed`. Medido: fase real 2, digitar "1" levava o máximo a 3, e terminar o
+  número não o trazia de volta. A captura saiu de `save()` e passou a ocorrer só
+  em atos semanticamente confirmados.
+- **`58be507`** — `handleStopLimitBreach` destrava fase e carimba o evento via
+  `operationStampTransition`, que lê `S.activeOperation`; o nascimento da entidade
+  estava **depois** dele, então o destravamento provocado pela própria Gênese saía
+  com `operationId: null`, era descartado, e o registro afirmava "Fase máxima da
+  Grade: FASE 1" para uma operação que viveu inteira na FASE 2. A ordem causal
+  passou a ser: guardas rejeitadoras → nascimento → efeitos operation-scoped.
+- **`13b9811`** — apagar as linhas esvaziava a operação fora dos atos formais;
+  `activeOperation` sobrevivia órfã e a tese seguinte herdava identidade, abertura
+  e proveniência. Medido: registro GBPUSD gravado como aberto em 1º de agosto, com
+  `genesis_transition`, sob o `operationId` da operação anterior.
+- **`d161207`** — interação entre as duas correções acima: a captura rodava antes
+  do fail-safe, então ia para a entidade que seria descartada e a recém-nascida
+  saía sem observação do próprio instante de nascimento.
+
+#### Terceira rodada: as regressões da correção C
+
+A auditoria dirigida a C, B e A encontrou três caminhos em que a captura, retirada
+de `save()`, não havia sido reposta. Um quarto foi reclassificado por decisão
+humana.
+
+- **`ffa637a`** + **`c2b17c5`** — `handleStopLimitBreach` nunca reverte o stop.
+  Nas saídas sem confirmação — frase recusada, limite da Gênese, defesa final da
+  Fase 4, limite absoluto — o valor permanece e é persistido, e a conta passa a
+  operar acima do teto da fase sem que nada observe.
+- **`356fe37`** — devolver o Status a `—` caía no ramo genérico do `<select>`:
+  nada limpava `activeOperation` e o carimbo `openedAt` ficava na linha, então
+  reabrir a mesma linha pulava o fail-safe e a tese nova herdava a identidade.
+  Passou a ser retirada explícita da ordem do ciclo, com a mesma semântica do
+  abandono por exclusão.
+- **`d328e2b`** + **`b5b5766`** — a captura que C pusera dentro de
+  `finalizeOperation` rodava depois de o operador aprovar a revisão, enquanto
+  `repintarRevisao` monta o record sem capturar: numa operação adotada de legado a
+  revisão mostrava `—`/`unobserved` e o registro saía com valor/`observed`. A
+  captura foi para um checkpoint explícito, antes de qualquer record existir.
+- **`ca301de`** — trocar o instrumento muda `orderRisk()` tanto quanto mudar o
+  lote. A troca aceita é persistida pela saída terminal do laço de `<select>`, que
+  ficou sem captura. Medido com saldo 40.000: `USDJPY` → `EURUSD` leva o risco de
+  15,44 para 2.500 USD, drawdown de 6,25% contra teto de 4%, e o máximo
+  permanecia zero; estreitado o stop depois, a captura do `<input>` observava a
+  fase já recuada e a monotonicidade selava a subestimação.
+
+O princípio ficou completo: **valor transitório não captura; valor rejeitado e
+revertido não captura; valor que sobrevive à guarda e é persistido captura.**
+`operationTouchAccountPhase` nunca voltou para `save()`.
+
 #### Evidência
 
-65 experimentos de mutação, todos acusados por asserção própria — nenhum aceito
-por `TypeError`. Gate `standard` 17/17 em cada commit e tier `full` 28/28 sobre o
-candidato, ambos lidos integralmente.
+92 experimentos de mutação ao longo das três rodadas, todos acusados por asserção
+própria ou registrados como no-op provado — nenhum aceito por `TypeError`. Treze
+precisaram de correção antes de valer como evidência, e cinco sobreviventes ficaram
+registradas como redundância funcional, não como lacuna.
+
+Gate `standard` 17/17 em cada commit e tier `full` **28/28** sobre o candidato
+`ca301de`, ambos lidos integralmente, com o artefato do `full` registrando
+`head: ca301ded4c3c`.
+
+Falta a lente de auditoria `R4`, bloqueada por `529 Overloaded` em três
+tentativas — indisponibilidade de infraestrutura, não sinal sobre o produto. É o
+único item que a integração aguarda.
 
 Categoria de teste nova: `operation_wiring_test.py`, evento real de DOM
 atravessando domínio, estado e disco. Criada porque o BLOCKER passou por testes
