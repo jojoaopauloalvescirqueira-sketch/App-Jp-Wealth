@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Finanças Pessoais — Fundação (PF-01) — 2026-08-18
+
+Branch `feature/personal-finance-foundation`. **Não integrada.**
+
+Nasce o domínio de Finanças Pessoais: agregado `S.personalFinance` com schema
+v1 congelado (`moneyUnit BRL_CENTS` — inteiros em centavos, null ≠ 0),
+normalizador que repara forma e jamais conteúdo, política monetária canônica
+(`parseBRLCents`/`formatBRLCents`, sem ponto flutuante no caminho), sentinela
+de unidade desconhecida (módulo em modo leitura, estado intacto), sobrevivência
+integral a Finalizar Sessão (herança explícita — sem ela, uma ação existente
+destruiria o módulo), round-trip de backup provado em contexto isolado, e o
+menu `06 · Finanças Pessoais` com seis destinos skeleton. Nenhuma
+funcionalidade de PF-02+ foi antecipada. Contrato: `docs/architecture/PERSONAL-FINANCE.md`.
+
 ### Operação Única — Histórico e Finalização formal — 2026-08-17
 
 Branch `feature/exec-operation-history` (`c9fd11e → 17214ba`). **Não integrada.**

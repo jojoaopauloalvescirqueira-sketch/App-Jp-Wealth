@@ -78,8 +78,8 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 | Tier | Quantidade | Verificacoes adicionais |
 |---|---:|---|
 | `fast` | 4 | preflight, estrutura, diff-check e frescor material |
-| `standard` | 17 | smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) e cotacao USD/BRL |
-| `full` | 28 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
+| `standard` | 23 | smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) cotacao USD/BRL, fases visiveis, tres colunas do Exec e Financas Pessoais (fundacao, preservacao na finalizacao, round-trip de backup e navegacao) |
+| `full` | 34 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
 
 O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
 `codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa
