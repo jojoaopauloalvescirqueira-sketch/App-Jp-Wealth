@@ -484,6 +484,73 @@ def run_reverted_breach_does_not_contaminate(page):
     )
 
 
+def run_refused_phase_change_still_observes(page):
+    """Confirmacao de mudanca de fase RECUSADA: o stop fica, a fase e observada.
+
+    Ramo distinto do anterior. Aqui check.tipo==='fase' com uma fase que
+    suportaria, entao o sistema PEDE a frase de confirmacao; recusada, a fase
+    NAO e destravada — mas o stop permanece e e persistido, e a conta opera
+    acima do teto. E o caminho que a auditoria apontou como o unico que
+    comprometia sem observar.
+    """
+    r = page.evaluate(
+        """() => {
+          window.__avisos = [];
+          window.alert = m => window.__avisos.push(String(m));
+          window.confirm = () => true;
+          window.prompt = () => null;          // RECUSA a frase
+          S.params.saldoIni = 10000; S.cycleRealizado = -360;
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.phaseUnlocked = [true,false,false,false];
+          S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.05,
+            entry:1.10, sl:1.098, tp:1.20, result:0, status:'Aberta',
+            openedAt:'2026-08-01T10:00:00.000Z'};
+          S.activeOperation = {schemaVersion:1, operationId:'op_r1b',
+            openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+            maxAccountPhaseReached:0};
+          save();
+          navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+          const el = document.querySelector(
+            '#phaseContainer input[data-p="0"][data-o="0"][data-f="sl"]');
+          if (!el) return {erro:'campo sl ausente'};
+          const st = () => ({fase:accountPhaseProbe().idx,
+                             max:S.activeOperation.maxAccountPhaseReached,
+                             sl:S.phases[0].orders[0].sl,
+                             unlocked:S.phaseUnlocked.slice()});
+          const inicial = st();
+          el.dispatchEvent(new Event('focus', {bubbles:true}));
+          el.value = '1.09';
+          el.dispatchEvent(new Event('input', {bubbles:true}));
+          const check = checkPhaseCap(0,0);
+          const aposDigitar = st();
+          el.dispatchEvent(new Event('change', {bubbles:true}));
+          return {inicial, aposDigitar, check:{excede:check.excede, tipo:check.tipo},
+                  suporte: phaseSupportForRisk(check.total),
+                  aposCommit: st(), avisos: window.__avisos};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["check"]["excede"] and r["check"]["tipo"] == "fase" and r["suporte"] == 1, (
+        f"o cenario nao caiu no ramo de MUDANCA DE FASE: {r['check']}, suporte "
+        f"{r['suporte']} — este teste cobre um ramo diferente do limite da Genese"
+    )
+    assert any("Stop mantido para simulação" in a for a in r["avisos"]), (
+        f"o aviso da confirmacao recusada nao apareceu: {r['avisos']}"
+    )
+    assert r["aposCommit"]["unlocked"] == [True, False, False, False], (
+        f"a fase foi destravada apesar da recusa: {r['aposCommit']['unlocked']}"
+    )
+    assert r["aposCommit"]["sl"] == 1.09, (
+        f"o stop foi revertido ({r['aposCommit']['sl']}) — o caso deixou de ser "
+        "'valor comprometido'"
+    )
+    assert r["aposDigitar"]["max"] == 0, "a digitacao contaminou o maximo"
+    assert r["aposCommit"]["max"] == 1, (
+        f"o maximo continuou {r['aposCommit']['max']} — a confirmacao recusada nao "
+        "reverte o stop, a conta opera acima do teto, e ninguem observou"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -502,6 +569,7 @@ def main():
             # ---- R1: breach comprometido observa a Fase da Conta ----
             run_committed_breach_is_observed(page)
             run_reverted_breach_does_not_contaminate(page)
+            run_refused_phase_change_still_observes(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()
