@@ -39,6 +39,7 @@ STANDARD = FAST + (
     ("exec-three-column", [sys.executable, "tools/exec_three_column_test.py"]),
     ("finpes-foundation", [sys.executable, "tools/finpes_foundation_test.py"]),
     ("finpes-finalize-preservation", [sys.executable, "tools/finpes_finalize_preservation_test.py"]),
+    ("finpes-backup-roundtrip", [sys.executable, "tools/finpes_backup_roundtrip_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (
