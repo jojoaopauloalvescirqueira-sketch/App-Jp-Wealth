@@ -2404,6 +2404,125 @@ def run_typing_does_not_forge_account_phase(page):
     )
 
 
+def run_reviewed_record_equals_persisted_snapshot(page):
+    """LITERAL: o record da revisao == campos imutaveis do snapshot persistido.
+
+    A captura da Fase da Conta rodava DENTRO de finalizeOperation, depois de o
+    operador ja ter lido e aprovado a revisao. Numa operacao adotada de legado —
+    que nasce com maxAccountPhaseReached null e nunca foi capturada — a revisao
+    mostrava "—" com integridade 'unobserved' e o registro saia com valor e
+    'observed'. A confirmacao alterava em silencio exatamente o que acabara de
+    ser revisado.
+
+    O caso legado e o discriminante: com uma operacao ja capturada os dois lados
+    coincidem por acaso e o teste passaria sem medir nada.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_rev_eq', maxFase:null});
+          // Operacao ADOTADA de legado: sem captura previa e sem abertura.
+          S.activeOperation.adoptedLegacyAt = '2026-08-01T00:00:00.000Z';
+          S.activeOperation.openedAt = null;
+          S.activeOperation.openedAtSource = null;
+          delete S.activeOperation.maxAccountPhaseReached;
+          save();
+          const antesDeAbrir = {
+            max: S.activeOperation.maxAccountPhaseReached ?? null,
+            fase: accountPhaseProbe().idx
+          };
+          JPWOperation.openReview();
+          // O record EXATO que a revisao esta mostrando, montado com a mesma
+          // entrada que a confirmacao usara.
+          const revisado = operationBuildSnapshot(S.activeOperation, {defenseCount:3});
+          const lido = __revisao();
+          __digitar('#finalOpenedAt', '2026-07-15T08:30');
+          __digitar('#finalDefenses', '3');
+          const revisadoComData = operationBuildSnapshot(S.activeOperation,
+            {defenseCount:3, openedAtManual:'2026-07-15T08:30'});
+          const lidoFinal = __revisao();
+          __digitar('#finalConfirm', 'FECHADO');
+          document.getElementById('modalConfirm').click();
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {antesDeAbrir, lido, lidoFinal,
+                  revisado: revisado.ok ? {
+                    max: revisado.record.maxAccountPhaseReached,
+                    integridade: revisado.record.maxAccountPhaseIntegrity,
+                    falha: revisado.record.phaseCaptureFault} : {erro:revisado.motivo},
+                  revisadoComData: revisadoComData.ok ? {
+                    max: revisadoComData.record.maxAccountPhaseReached,
+                    integridade: revisadoComData.record.maxAccountPhaseIntegrity} : null,
+                  persistido: rec ? {
+                    max: rec.maxAccountPhaseReached,
+                    integridade: rec.maxAccountPhaseIntegrity,
+                    falha: rec.phaseCaptureFault} : null};
+        }"""
+    )
+    assert r["antesDeAbrir"]["max"] is None, (
+        f"a operacao ja tinha captura antes de abrir a revisao: {r['antesDeAbrir']} — "
+        "os dois lados coincidiriam por acaso e o teste nao mediria nada"
+    )
+    assert r["antesDeAbrir"]["fase"] is not None, (
+        "a fase da conta nao e determinavel no cenario; a captura nao teria efeito"
+    )
+    assert r["persistido"], "a finalizacao nao produziu registro"
+    assert r["revisadoComData"], f"a revisao nao pode ser montada: {r['revisado']}"
+    assert r["revisadoComData"]["max"] == r["persistido"]["max"], (
+        f"o maximo REVISADO ({r['revisadoComData']['max']!r}) diverge do PERSISTIDO "
+        f"({r['persistido']['max']!r}) — a confirmacao alterou em silencio um campo "
+        "que o operador acabou de aprovar"
+    )
+    assert r["revisadoComData"]["integridade"] == r["persistido"]["integridade"], (
+        f"a integridade divergiu: revisao {r['revisadoComData']['integridade']!r} vs "
+        f"registro {r['persistido']['integridade']!r}"
+    )
+    assert r["revisado"]["falha"] == r["persistido"]["falha"], (
+        "a marca de falha de captura divergiu entre revisao e registro"
+    )
+    # E o que a TELA mostrou tem de bater com o registro, nao so o record interno.
+    esperado = ('—' if r["persistido"]["max"] is None else None)
+    if esperado is not None:
+        assert r["lidoFinal"]["Fase máxima da Conta"] == esperado, (
+            f"a tela exibiu {r['lidoFinal']['Fase máxima da Conta']!r} para um maximo nulo"
+        )
+
+
+def run_cancelling_the_review_fabricates_nothing(page):
+    """Cancelar a revisao nao fabrica finalizacao, Historico nem ciclo."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_rev_cancel', maxFase:null});
+          delete S.activeOperation.maxAccountPhaseReached;
+          save();
+          const antes = {ciclo:S.cycleRealizado,
+                         registros:S.operationHistory.records.length,
+                         ordens:JPWOperation.liveOrders().length,
+                         opId:S.activeOperation.operationId,
+                         fases:JSON.parse(JSON.stringify(S.phaseUnlocked))};
+          JPWOperation.openReview();
+          document.getElementById('modalCancel').click();
+          return {antes, depois:{ciclo:S.cycleRealizado,
+                    registros:S.operationHistory.records.length,
+                    ordens:JPWOperation.liveOrders().length,
+                    opId:S.activeOperation && S.activeOperation.operationId,
+                    fases:JSON.parse(JSON.stringify(S.phaseUnlocked))},
+                  maxAposCancelar: S.activeOperation.maxAccountPhaseReached ?? null,
+                  aberto: document.getElementById('modalOverlay').classList.contains('show')};
+        }"""
+    )
+    a, d = r["antes"], r["depois"]
+    assert not r["aberto"], "o modal continuou aberto apos cancelar"
+    assert d["registros"] == a["registros"] == 0, f"cancelar gravou Historico: {d['registros']}"
+    assert d["ciclo"] == a["ciclo"], f"cancelar mexeu no ciclo: {a['ciclo']} -> {d['ciclo']}"
+    assert d["ordens"] == a["ordens"], "cancelar liberou grades"
+    assert d["opId"] == a["opId"], "cancelar trocou a identidade da operacao"
+    assert d["fases"] == a["fases"], "cancelar mexeu nas fases"
+    assert r["maxAposCancelar"] is not None, (
+        "a observacao do checkpoint foi desfeita pelo cancelamento — a fase daquele "
+        "instante existiu, e apagar a observacao seria destruir dado verdadeiro"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -2481,6 +2600,9 @@ def main():
             run_unknown_barrier_survives_generic_resume(page)
             run_same_operation_id_other_finalized_at_is_not_confirmation(page)
             run_review_offers_no_retry_when_outcome_is_unknown(page)
+            # ---- R3: revisao == snapshot persistido ----
+            run_reviewed_record_equals_persisted_snapshot(page)
+            run_cancelling_the_review_fabricates_nothing(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

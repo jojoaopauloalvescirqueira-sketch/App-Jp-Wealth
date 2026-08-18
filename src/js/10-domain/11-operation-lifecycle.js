@@ -348,10 +348,12 @@ function finalizeOperation(entrada){
     const jaFinalizada = ((S.operationHistory || {}).records || []).some(r => r && r.operationId === op.operationId);
     if (jaFinalizada) return { ok:false, motivo:'already_finalized', operationId: op.operationId };
 
-    // Ultimo ato confirmado da operacao: a Fase da Conta no instante do
-    // encerramento entra no maximo antes de o registro ser montado.
-    if (typeof operationTouchAccountPhase === 'function') operationTouchAccountPhase();
-
+    // AQUI NAO SE CAPTURA. A observacao da Fase da Conta acontece no checkpoint
+    // explicito de openFinalizeOperationModal, ANTES de a revisao ser montada.
+    // Capturar neste ponto fazia a confirmacao alterar em silencio campos que o
+    // operador acabara de revisar — maxAccountPhaseReached,
+    // maxAccountPhaseIntegrity e phaseCaptureFault —, reabrindo a invariante
+    // "revisao = snapshot" fixada em ba3be3a.
     const snap = operationBuildSnapshot(op, entrada);
     if (!snap.ok) return snap;
 
@@ -568,6 +570,16 @@ function openFinalizeOperationModal(){
     $('modalCancel').focus();
     return;
   }
+  // CHECKPOINT EXPLICITO. Pedir a finalizacao e um ato do operador, e e AQUI que
+  // a Fase da Conta e observada — uma vez so, antes de qualquer record existir.
+  // Dai em diante a revisao e a confirmacao leem o mesmo valor, e a confirmacao
+  // nao tem como alterar em silencio o que acabou de ser revisado.
+  //
+  // Cancelar nao desfaz esta observacao, e isso e correto: a fase daquele
+  // instante existiu de verdade. O que nao pode existir e revisao e registro
+  // divergindo.
+  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+
   // PRÉVIA: construída só para ser lida. buildSnapshot não muta estado algum.
   const previa=operationBuildSnapshot(op,{defenseCount:0});
   if(!previa.ok && (previa.motivo==='instrument_conflict' || previa.motivo==='direction_conflict')){
