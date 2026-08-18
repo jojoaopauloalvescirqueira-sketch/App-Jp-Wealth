@@ -518,6 +518,57 @@ def run_rows_still_respond_after_repaint(page):
     assert r["registros"] == 3, "interagir com a tabela alterou os registros"
 
 
+def run_history_distinguishes_the_three_integrities(page):
+    """O Historico distingue observado, nao observado e degradado.
+
+    'Fase maxima: —' sozinho e ambiguo: pode significar que a captura nunca se
+    aplicou ou que ela falhou. Os dois casos exigem leituras diferentes de quem
+    audita o registro anos depois, e nao podem chegar identicos a tela.
+    """
+    r = page.evaluate(
+        """() => {
+          __semearHist();
+          // Quarto registro: fase JAMAIS capturada, sem falha nenhuma.
+          S.operationHistory.records.push({
+            schemaVersion:1, operationId:'op_ddd', instrument:'EURUSD', direction:'BUY',
+            openedAt:'2026-07-20T10:00:00.000Z', openedAtSource:'genesis_transition',
+            closedAt:'2026-07-22T10:00:00.000Z', closedAtSource:'formal_confirmation',
+            referenceBalance:10000, referenceBalanceType:'cycle_initial_balance',
+            netResult:120, defenseCount:0, defenseCountSource:'manual',
+            maxAccountPhaseReached:null, maxAccountPhaseIntegrity:'unobserved',
+            phaseCaptureFault:null, maxGridPhaseReached:null,
+            ordersSnapshot:[], finalizedAt:'2026-07-22T10:00:00.000Z'});
+          JPWHistoryUI.render();
+          const detalhe = id => {
+            const tr = document.querySelector('[data-hist-id="'+id+'"]');
+            tr.click();
+            const d = document.querySelector('[data-hist-detail="'+id+'"]');
+            const bloco = [...d.querySelectorAll('.hist-detail-grid > div')]
+              .find(x => x.textContent.includes('Fase máxima da Conta'));
+            const txt = bloco ? bloco.textContent : '';
+            tr.click();
+            return txt;
+          };
+          return {observed: detalhe('op_aaa'),
+                  degraded: detalhe('op_ccc'),
+                  unobserved: detalhe('op_ddd')};
+        }"""
+    )
+    assert "degradada" not in r["observed"] and "não observada" not in r["observed"], (
+        f"observacao normal recebeu marca de imperfeicao: {r['observed']!r}"
+    )
+    assert "integridade degradada" in r["degraded"], (
+        f"degradacao nao foi sinalizada: {r['degraded']!r}"
+    )
+    assert "não observada" in r["unobserved"], (
+        f"'nunca capturada' nao foi sinalizada: {r['unobserved']!r} — chegaria a "
+        "tela igual a uma medicao concluida que deu ausencia"
+    )
+    assert r["degraded"] != r["unobserved"], (
+        "os dois estados imperfeitos foram apresentados com o mesmo texto"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -538,6 +589,7 @@ def main():
             run_search_repaints_statistics_too(page)
             run_controls_survive_the_repaint(page)
             run_rows_still_respond_after_repaint(page)
+            run_history_distinguishes_the_three_integrities(page)
             run_keyboard_and_semantics(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             assert not observed["console"], f"console error: {observed['console']}"

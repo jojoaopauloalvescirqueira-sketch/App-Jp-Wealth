@@ -177,10 +177,24 @@ function operationBuildSnapshot(op, entrada){
     // gravar "Fase 1 observada" num registro IMUTAVEL, sobre uma operação cuja
     // fase máxima nunca foi observada.
     maxAccountPhaseReached: operationPhaseIdxOrNull(op.maxAccountPhaseReached),
-    // Qualidade epistemológica do campo acima. Se houve falha de captura durante
-    // a operação, o valor continua sendo o maior OBSERVADO — mas o histórico não
-    // pode apresentá-lo como medição completa.
-    maxAccountPhaseIntegrity: op.phaseCaptureFault ? 'degraded' : 'observed',
+    // Qualidade epistemológica do campo acima, em TRÊS estados — porque três são
+    // os desfechos reais da captura, e o par observed/degraded os reduzia a dois:
+    //
+    //   observed    a captura ocorreu ao menos uma vez e o valor veio dela;
+    //   degraded    a captura FALHOU em algum momento, então o valor é o maior
+    //               CONHECIDO e pode subestimar o máximo absoluto;
+    //   unobserved  a captura nunca se aplicou — não há valor e não houve falha.
+    //
+    // `unobserved` não precisa de campo novo: é exatamente a ausência das duas
+    // evidências. Valor presente ⟺ alguma captura teve sucesso, porque
+    // operationTouchAccountPhase só grava quando o probe devolve índice.
+    //
+    // Sem o terceiro estado, uma operação cuja fase JAMAIS foi capturada era
+    // persistida como 'observed' — o registro imutável afirmava uma observação
+    // que nunca houve, que é a coerção que este projeto recusa em toda parte.
+    maxAccountPhaseIntegrity: op.phaseCaptureFault
+      ? 'degraded'
+      : (operationPhaseIdxOrNull(op.maxAccountPhaseReached) === null ? 'unobserved' : 'observed'),
     phaseCaptureFault: op.phaseCaptureFault ? structuredClone(op.phaseCaptureFault) : null,
 
     maxGridPhaseReached: operationResolveGridPhaseMax(op),
@@ -407,6 +421,7 @@ function operationParseDefenses(txt){
 function operationReviewHTML(r, defesas){
   const retorno=(r.referenceBalance>0)?((r.netResult/r.referenceBalance)*100).toFixed(2)+'%':'—';
   const degradada=r.maxAccountPhaseIntegrity==='degraded';
+  const naoObservada=r.maxAccountPhaseIntegrity==='unobserved';
   const abertura=r.openedAt
     ? (new Date(r.openedAt).toLocaleString('pt-BR')+(r.openedAtSource==='manual_legacy'?' (informada manualmente)':''))
     : 'Desconhecida';
@@ -433,7 +448,9 @@ function operationReviewHTML(r, defesas){
     operationReviewRow('Fase máxima da Conta', operationFmtPhase(r.maxAccountPhaseReached))+
     operationReviewRow('Fase máxima da Grade', r.maxGridPhaseReached==null?'—':operationFmtPhase(r.maxGridPhaseReached))+
     (degradada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Degradada</b></div>'+
-      '<div class="modal-sub">Houve falha de captura durante esta operação. O valor acima é o maior <b>conhecido</b>, não necessariamente o máximo absoluto atingido. A finalização não é bloqueada por isso.</div></div>'):'');
+      '<div class="modal-sub">Houve falha de captura durante esta operação. O valor acima é o maior <b>conhecido</b>, não necessariamente o máximo absoluto atingido. A finalização não é bloqueada por isso.</div></div>')
+    :naoObservada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Não observada</b></div>'+
+      '<div class="modal-sub">A captura nunca se aplicou durante esta operação, e nenhuma falha foi registrada. O registro guardará a ausência como ausência — não como Fase 1 nem como medição concluída. A finalização não é bloqueada por isso.</div></div>'):'');
 }
 
 function openFinalizeOperationModal(){

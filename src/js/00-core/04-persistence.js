@@ -684,7 +684,12 @@ function accountPhaseProbe(){
     const c=compute();
     if(!c || !c.fase || typeof c.fase.nome!=='string') return {ok:true, idx:null};
     const idx=S.matrix.findIndex(m=>m && m.nome===c.fase.nome);
-    return {ok:true, idx: idx>=0 ? idx : null};
+    // compute() TEVE sucesso e devolveu uma fase que nao existe na matriz
+    // normativa. Isso nao e "nao aplicavel" — e inconsistencia entre o calculo
+    // e a matriz. Devolver {ok:true, idx:null} aqui empacotava um defeito real
+    // junto de "ainda nao ha dados", e a lacuna sumia sem deixar marca.
+    if(idx<0) return {ok:false, erro:'fase computada ("'+String(c.fase.nome)+'") ausente de S.matrix'};
+    return {ok:true, idx};
   }catch(e){
     return {ok:false, erro:String((e && e.message) || e)};
   }

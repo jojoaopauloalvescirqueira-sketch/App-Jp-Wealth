@@ -1798,6 +1798,201 @@ def run_chronology_guard_holds_without_repaint(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# Integridade da Fase da Conta: tres estados, nao dois (#8)
+# ---------------------------------------------------------------------------
+# maxAccountPhaseIntegrity era derivada so da presenca de phaseCaptureFault, e
+# valia 'observed' por padrao. Uma operacao cuja fase JAMAIS foi capturada era
+# persistida como observada — o registro imutavel afirmava uma observacao que
+# nunca houve. Sao tres os desfechos reais da captura, e agora sao tres os
+# valores: observed / unobserved / degraded.
+
+
+def run_integrity_observed_when_captured(page):
+    """Captura bem-sucedida: 'observed' com valor presente."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_int_obs'});
+          save();
+          const probe = accountPhaseProbe();
+          const res = JPWOperation.finalize({defenseCount:0});
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {probe, ok:res.ok,
+                  integridade: rec && rec.maxAccountPhaseIntegrity,
+                  max: rec ? rec.maxAccountPhaseReached : null,
+                  falha: rec ? rec.phaseCaptureFault : null};
+        }"""
+    )
+    assert r["ok"], "a finalizacao falhou"
+    assert r["probe"]["ok"] and r["probe"]["idx"] is not None, (
+        f"o cenario nao capturou fase alguma: {r['probe']} — o caso testado nao "
+        "seria o de observacao bem-sucedida"
+    )
+    assert r["integridade"] == "observed", f"integridade: {r['integridade']!r}"
+    assert r["max"] is not None, "valor ausente num registro declarado observado"
+    assert r["falha"] is None, "falha registrada num caso sem falha"
+
+
+def run_integrity_unobserved_when_never_captured(page):
+    """Nunca capturada: 'unobserved', e NAO 'observed'.
+
+    Sem o terceiro estado, este registro afirmava observacao concluida sobre um
+    campo que ninguem chegou a medir.
+    """
+    r = page.evaluate(
+        """() => {
+          const real = window.compute;
+          window.compute = () => null;   // precondicao ausente: nada a capturar
+          let out;
+          try {
+            __semear({id:'op_int_unobs', maxFase:null});
+            save();
+            const probe = accountPhaseProbe();
+            const marca = S.activeOperation.phaseCaptureFault || null;
+            const res = JPWOperation.finalize({defenseCount:0});
+            const recs = S.operationHistory.records;
+            const rec = recs[recs.length-1] || null;
+            out = {probe, marca, ok:res.ok,
+                   integridade: rec && rec.maxAccountPhaseIntegrity,
+                   max: rec ? rec.maxAccountPhaseReached : null,
+                   falha: rec ? rec.phaseCaptureFault : null};
+          } finally { window.compute = real; }
+          return out;
+        }"""
+    )
+    assert r["probe"]["ok"] is True and r["probe"]["idx"] is None, (
+        f"o cenario nao produziu 'nao aplicavel': {r['probe']}"
+    )
+    assert r["marca"] is None, "uma falha foi registrada onde nao houve falha"
+    assert r["ok"], "a ausencia de observacao BLOQUEOU a finalizacao"
+    assert r["integridade"] == "unobserved", (
+        f"registro declarou {r['integridade']!r} sobre um campo que nunca foi "
+        "capturado — ausencia de medicao apresentada como medicao concluida"
+    )
+    assert r["max"] is None, f"valor presente sem captura: {r['max']!r}"
+    assert r["falha"] is None, "falha inventada"
+
+
+def run_integrity_degraded_on_capture_failure(page):
+    """Captura que LANCA: 'degraded', e a marca sobrevive ao sucesso posterior."""
+    r = page.evaluate(
+        """() => {
+          const real = window.compute;
+          let out;
+          try {
+            __semear({id:'op_int_deg', maxFase:2});
+            window.compute = () => { throw new Error('falha sintetica de captura'); };
+            const probe = accountPhaseProbe();
+            save();                                  // grava a marca
+            const marca = S.activeOperation.phaseCaptureFault || null;
+            window.compute = real;                   // captura volta a funcionar
+            save();
+            const marcaDepois = S.activeOperation.phaseCaptureFault || null;
+            const res = JPWOperation.finalize({defenseCount:0});
+            const recs = S.operationHistory.records;
+            const rec = recs[recs.length-1] || null;
+            out = {probe, marca, marcaDepois, ok:res.ok,
+                   integridade: rec && rec.maxAccountPhaseIntegrity,
+                   max: rec ? rec.maxAccountPhaseReached : null,
+                   falha: rec ? rec.phaseCaptureFault : null};
+          } finally { window.compute = real; }
+          return out;
+        }"""
+    )
+    assert r["probe"]["ok"] is False and "falha sintetica" in (r["probe"].get("erro") or ""), (
+        f"a excecao nao foi classificada como defeito: {r['probe']}"
+    )
+    assert r["marca"], "a falha de captura nao foi gravada na entidade"
+    assert r["marcaDepois"], (
+        "um sucesso posterior APAGOU a marca — se a captura falhou uma vez, o "
+        "maximo pode estar subestimado para sempre"
+    )
+    assert r["ok"], "a degradacao BLOQUEOU a finalizacao"
+    assert r["integridade"] == "degraded", f"integridade: {r['integridade']!r}"
+    assert r["falha"] and r["falha"].get("reason"), f"registro sem motivo: {r['falha']}"
+
+
+def run_phase_absent_from_matrix_is_a_defect(page):
+    """Fase computada ausente da matriz e DEFEITO, nao 'nao aplicavel'.
+
+    compute() teve sucesso e devolveu um nome que a matriz normativa nao
+    contem. Empacotar isso junto de "ainda nao ha dados" fazia uma
+    inconsistencia real desaparecer sem deixar marca.
+    """
+    r = page.evaluate(
+        """() => {
+          const real = window.compute;
+          let out;
+          try {
+            window.compute = () => ({fase:{nome:'FASE INEXISTENTE'}});
+            const probe = accountPhaseProbe();
+            __semear({id:'op_int_semmatriz', maxFase:null});
+            save();
+            const marca = S.activeOperation.phaseCaptureFault || null;
+            const res = JPWOperation.finalize({defenseCount:0});
+            const recs = S.operationHistory.records;
+            const rec = recs[recs.length-1] || null;
+            out = {probe, marca, ok:res.ok,
+                   integridade: rec && rec.maxAccountPhaseIntegrity,
+                   max: rec ? rec.maxAccountPhaseReached : null};
+          } finally { window.compute = real; }
+          return out;
+        }"""
+    )
+    assert r["probe"]["ok"] is False, (
+        f"fase ausente da matriz continuou passando por 'nao aplicavel': {r['probe']}"
+    )
+    assert "FASE INEXISTENTE" in (r["probe"].get("erro") or ""), (
+        f"o motivo nao nomeia a fase inconsistente: {r['probe'].get('erro')!r}"
+    )
+    assert r["marca"], "a inconsistencia nao deixou marca na entidade"
+    assert r["integridade"] == "degraded", (
+        f"registro declarou {r['integridade']!r} — a inconsistencia entre compute() "
+        "e a matriz precisa aparecer como degradacao, nao como ausencia neutra"
+    )
+    assert r["max"] is None, f"valor gravado a partir de fase inconsistente: {r['max']!r}"
+
+
+def run_review_shows_the_three_states(page):
+    """A revisao distingue os tres estados antes da confirmacao."""
+    r = page.evaluate(
+        """() => {
+          const real = window.compute;
+          const bloco = () => {
+            const b = document.querySelector('[data-qid="integridade"]');
+            return b ? b.textContent : '';
+          };
+          let out = {};
+          try {
+            __semear({id:'op_int_r1'}); save();
+            JPWOperation.openReview(); out.observed = bloco(); closeModal();
+
+            window.compute = () => null;
+            __semear({id:'op_int_r2', maxFase:null}); save();
+            JPWOperation.openReview(); out.unobserved = bloco(); closeModal();
+            window.compute = real;
+
+            __semear({id:'op_int_r3', maxFase:2, fault:true}); save();
+            JPWOperation.openReview(); out.degraded = bloco(); closeModal();
+          } finally { window.compute = real; }
+          return out;
+        }"""
+    )
+    assert r["observed"] == "", (
+        f"observacao normal exibiu aviso de integridade: {r['observed'][:120]!r}"
+    )
+    assert "Não observada" in r["unobserved"], (
+        f"a revisao nao distinguiu 'nunca capturada': {r['unobserved'][:160]!r}"
+    )
+    assert "Degradada" in r["degraded"], (
+        f"a revisao nao mostrou degradacao: {r['degraded'][:160]!r}"
+    )
+    assert r["unobserved"] != r["degraded"], (
+        "os dois estados imperfeitos foram apresentados com o mesmo texto"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -1860,6 +2055,12 @@ def main():
             run_chronology_blocks_future_opening_in_review(page)
             run_chronology_domain_blocks_ui_bypass(page)
             run_chronology_guard_holds_without_repaint(page)
+            # ---- integridade ternaria da Fase da Conta (#8) ----
+            run_integrity_observed_when_captured(page)
+            run_integrity_unobserved_when_never_captured(page)
+            run_integrity_degraded_on_capture_failure(page)
+            run_phase_absent_from_matrix_is_a_defect(page)
+            run_review_shows_the_three_states(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

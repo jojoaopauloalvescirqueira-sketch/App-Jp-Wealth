@@ -125,6 +125,10 @@ function histRenderDetail(r){
     '<td>' + esc(o.closedAt ? histFmtDate(o.closedAt) : '—') + '</td></tr>').join('');
   const ret = histReturnPct(r);
   const degradada = r.maxAccountPhaseIntegrity === 'degraded';
+  // Registros gravados ANTES do terceiro estado existir trazem 'observed' mesmo
+  // quando nada foi capturado. Nao se reescreve historico: eles ficam como
+  // estao, e a Fase maxima aparece como '—' de qualquer forma.
+  const naoObservada = r.maxAccountPhaseIntegrity === 'unobserved';
   return '<div class="hist-detail" data-hist-detail="' + esc(r.operationId) + '">' +
     '<div class="hist-detail-grid">' +
     '<div><b>Operation ID</b><br><span class="hist-mono">' + esc(r.operationId) + '</span></div>' +
@@ -135,7 +139,8 @@ function histRenderDetail(r){
     '<div><b>Encerramento</b><br>' + esc(histFmtDate(r.closedAt)) + '</div>' +
     '<div><b>Duração</b><br>' + esc(histFmtDuration(histDurationMs(r))) + '</div>' +
     '<div><b>Fase máxima da Conta</b><br>' + esc(histPhaseName(r.maxAccountPhaseReached)) +
-      (degradada ? ' <span class="hist-degradada" title="Houve falha de captura durante a operação: este é o maior valor conhecido, não necessariamente o máximo absoluto.">máximo conhecido / integridade degradada</span>' : '') + '</div>' +
+      (degradada ? ' <span class="hist-degradada" title="Houve falha de captura durante a operação: este é o maior valor conhecido, não necessariamente o máximo absoluto.">máximo conhecido / integridade degradada</span>'
+       : naoObservada ? ' <span class="hist-degradada" title="A captura da Fase da Conta nunca se aplicou durante esta operação, e nenhuma falha foi registrada. Ausência de medição, não medição de ausência.">não observada</span>' : '') + '</div>' +
     '<div><b>Fase máxima da Grade</b><br>' + esc(r.maxGridPhaseReached == null ? '—' : histPhaseName(r.maxGridPhaseReached)) + '</div>' +
     '<div><b>Defesas</b><br>' + esc(String(r.defenseCount ?? '—')) +
       (r.defenseCountSource ? ' <span class="hist-src">(' + esc(r.defenseCountSource) + ')</span>' : '') + '</div>' +
