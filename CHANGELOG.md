@@ -2,6 +2,78 @@
 
 ## [Unreleased]
 
+### Operação Única — Histórico e Finalização formal — 2026-08-17
+
+Branch `feature/exec-operation-history` (`c9fd11e → 17214ba`). **Não integrada.**
+
+A Operação Única existia como conceito espalhado pelas grades: um conjunto de
+ordens que o operador sabia pertencerem à mesma tese, sem nada no estado que o
+afirmasse. Fechar a última ordem apagava a operação da tela sem deixar registro,
+e a fase máxima atingida — informação que só existe enquanto a operação vive —
+se perdia junto.
+
+Passou a ser entidade persistida, com encerramento formal e memória
+institucional consultável.
+
+**Distinção central.** Fechar a última ordem **não** finaliza a Operação. O Art.
+4.4 do Estatuto já dizia isso textualmente — "zeragem tática sem confirmação de
+encerramento não extingue a Operação" — e prescreve dupla confirmação por
+registro escrito `FECHADO`, que é o protocolo da revisão implementada.
+
+**Três camadas.** Fundação (`activeOperation` persistida, com proveniência de
+abertura e captura prospectiva da fase máxima), finalização transacional
+(`candidato → validar → trocar → save() → rollback`, com o desfecho de exceção
+decidido pela leitura do disco, não pela pilha) e Histórico somente leitura, com
+denominadores explícitos em toda estatística.
+
+**Nada de dado inventado.** Abertura de operação legada é informada pelo
+operador com proveniência `manual_legacy`; desconhecido nunca vira zero, agora
+ou falso; conflito de instrumento ou direção bloqueia a finalização em vez de o
+sistema escolher por conta própria.
+
+#### Série corretiva
+
+Revisão adversarial por 24 agentes acusou um BLOCKER de fiação e sete defeitos
+materiais. Cada correção em commit próprio, com campanha de mutação individual.
+
+- **`1a0c40c`** — a auditoria de governança era registrada **depois** de
+  `save()`, existindo só na memória da sessão e morrendo no reload. Passou a
+  nascer dentro do candidato: uma persistência lógica, e o `recordId` é o
+  `operationId` real em vez do identificador vazio do log legado.
+- **`ba3be3a`** — a revisão era construída uma vez, na abertura do modal, com
+  `defenseCount:0` cravado. O operador aprovava um registro e outro ia ao disco.
+  A revisão passou a ser repintada a cada entrada manual, com o mesmo objeto que
+  `finalizeOperation` recebe. `closedAt` é carimbado na confirmação, e a tela diz
+  isso por extenso em vez de exibir um horário que será outro.
+- **`a21dcd8`** — abertura informada no futuro produzia registro imutável
+  afirmando que a operação foi aberta depois de encerrada, e o único sinal era
+  uma duração exibida como `—`, o mesmo traço de "dado indisponível". Passou a
+  ser recusa: `openedAt <= closedAt`, sem correção automática, sem conversão para
+  `null`, sem `Date.now()` disfarçado.
+- **`bfc2b59`** — a busca do Histórico reescrevia o cartão inteiro a cada tecla e
+  destruía o próprio campo. Repintura passou a ser parcial.
+- **`f64cea2`** — a guarda de exclusividade procurava referência só entre ordens
+  `Aberta`. Com a Gênese fechada e a operação viva, liberava outro instrumento e
+  outra direção, e o estado resultante era irreparável pela interface. Passou a
+  usar a mesma noção de pertencimento do domínio.
+- **`be43dde`** — `maxAccountPhaseIntegrity` era binária sobre realidade
+  ternária: operação cuja fase jamais foi capturada era persistida como
+  `observed`. Ganhou `unobserved`. E `compute()` devolvendo fase ausente da
+  matriz deixou de passar por "não aplicável" e virou defeito nomeado.
+- **`17214ba`** — as citações `Art. 3.5`/`3.6` apontavam para artigos
+  inexistentes. Corrigidas para `4.2`, `4.4` e `5.1`, conferidas contra a Norma
+  Vigente.
+
+#### Evidência
+
+56 experimentos de mutação, todos acusados por asserção própria — nenhum aceito
+por `TypeError`. Gate `standard` 17/17 em cada commit, lido integralmente.
+
+Categoria de teste nova: `operation_wiring_test.py`, evento real de DOM
+atravessando domínio, estado e disco. Criada porque o BLOCKER passou por testes
+unitários verdes — o gancho estava num laço morto sobre `<input>` enquanto o
+campo Status é um `<select>`.
+
 ### Quality Gate de CI restaurado — 2026-08-17
 
 O repositório passa a ter integração contínua. Até aqui `.github/` continha

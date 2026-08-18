@@ -37,9 +37,21 @@ Para N0-V e N1:
   correcao, ordenacao numerica, CRUD real e compatibilidade de estado;
 - `order_guards_test.py`: nenhuma edicao de ordem ultrapassa o teto de risco da fase,
   com caso de controle para a guarda nao recusar tudo;
-- `state_integrity_test.py`: backup hostil recusado antes de tocar na base, backfill
-  de `S.params` e importacao atravessando as abas;
+- `operation_identity_test.py`: identidade da Operacao Unica, proveniencia da
+  abertura e normalizacao de estado legado;
+- `operation_finalize_test.py`: finalizacao transacional (candidato, validacao,
+  troca, rollback em falha e em excecao), trilha de auditoria na mesma gravacao,
+  revisao igual ao snapshot persistido, integridade ternaria da Fase da Conta e
+  invariante cronologica `openedAt <= closedAt`;
+- `operation_history_test.py`: Historico somente leitura, denominadores
+  explicitos, repintura parcial preservando foco e cursor da busca;
+- `operation_wiring_test.py`: evento REAL de DOM atravessando dominio, estado e
+  disco — categoria criada depois de um defeito de fiacao passar por testes
+  unitarios verdes;
 - browser real nos fluxos e viewports afetados.
+
+`state_integrity_test.py` pertence ao tier `full`, e nao ao `standard` — a
+listagem anterior o colocava aqui por engano.
 
 ### Full
 
@@ -66,8 +78,8 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 | Tier | Quantidade | Verificacoes adicionais |
 |---|---:|---|
 | `fast` | 4 | preflight, estrutura, diff-check e frescor material |
-| `standard` | 13 | smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem e cotacao USD/BRL |
-| `full` | 24 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, corrida assincrona, build, service worker e Notas |
+| `standard` | 17 | smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) e cotacao USD/BRL |
+| `full` | 28 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
 
 O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
 `codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa

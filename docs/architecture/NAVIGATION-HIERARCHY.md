@@ -138,10 +138,22 @@ O `[hidden]` precisa de uma regra de especificidade de ID
 
 **Montagem sob demanda.** Um workspace cujo conteúdo depende de estado vivo —
 Estudos NoCoda e Estudos dos Pivots derivam seus seletores do catálogo de
-instrumentos — declara um renderizador em `EXEC_VIEW_RENDERERS` e é repintado a
-cada entrada, para que uma mudança feita em outra tela apareça sem recarregar a
+instrumentos, e o Histórico lê `operationHistory` — declara um renderizador em
+`EXEC_VIEW_RENDERERS` e é repintado a cada entrada, para que uma mudança feita em outra tela apareça sem recarregar a
 página. A montagem vem **depois** de tirar o `hidden`: renderizar num container
 oculto impediria qualquer medida e deixaria o foco em nó invisível.
+
+**Repintura parcial dentro do workspace.** O renderizador de entrada monta a
+tela; a partir dali, filtro, busca e seleção reescrevem **apenas** a região de
+resultados, nunca os controles. O Histórico é o caso que estabeleceu a regra:
+reescrever o cartão inteiro a cada tecla destruía o próprio `<input>` de busca —
+o texto sobrevivia, porque era reimpresso do estado, mas o foco e a posição do
+cursor iam junto com o nó, e o operador precisava clicar no campo de novo a cada
+caractere. Duas consequências estruturais: a região repintada precisa incluir
+tudo que depende da consulta (as estatísticas junto da tabela, senão os
+denominadores ficam do conjunto anterior), e os ouvintes das linhas — que são
+recriadas — precisam ser refeitos, enquanto os dos controles não, porque eles
+sobrevivem e receberiam ouvinte duplicado a cada tecla.
 
 Repintar não pode descartar trabalho do operador. O estado efêmero de cada
 workspace (seleção, filtros, formulário aberto, rascunho não salvo) vive em

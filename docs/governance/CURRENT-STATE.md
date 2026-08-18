@@ -53,6 +53,64 @@ Source revision representada: `0826e5e`
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
+## Operação Única — Histórico e Finalização formal — 2026-08-17
+
+Branch `feature/exec-operation-history`, série `c9fd11e → 17214ba`. **Não
+integrada**: aguarda tier `full`, inspeção visual humana e autorização de merge.
+
+**O que passou a existir.** A Operação Única deixou de ser um conceito implícito
+nas grades e virou entidade persistida (`activeOperation`), com finalização
+transacional e memória institucional (`operationHistory`) consultável no sétimo
+workspace do Execution Board.
+
+O ato central é a distinção que o Estatuto já fazia e o software não: **fechar a
+última ordem não finaliza a Operação**. O Art. 4.4 diz textualmente que zeragem
+tática sem confirmação escrita não a extingue, e prescreve dupla confirmação por
+registro escrito `FECHADO` — que é exatamente o protocolo implementado na
+revisão de finalização.
+
+**Arquitetura em três camadas**, autorizada como opção B: fundação (entidade
+persistida), finalização transacional (`candidato → validar → trocar → save() →
+rollback`) e Histórico somente leitura. `cycleRealizado` manteve semântica
+intocada; a consolidação existente foi incorporada ao fluxo transacional sob
+autoridade A4 delimitada.
+
+**Série corretiva após revisão adversarial.** Uma revisão por 24 agentes acusou
+um BLOCKER de fiação e sete defeitos materiais. Todos corrigidos, cada um em
+commit próprio, com campanha de mutação individual:
+
+| item | commit | mutações |
+|---|---|---|
+| trilha de auditoria dentro do commit | `1a0c40c` | 7 |
+| revisão igual ao snapshot persistido | `ba3be3a` | 19 |
+| consistência temporal (`openedAt <= closedAt`) | `a21dcd8` | 10 |
+| busca do Histórico deixa de destruir o próprio campo | `bfc2b59` | 5 |
+| exclusividade da tese vale até a finalização formal | `f64cea2` | 8 |
+| integridade da Fase da Conta com três estados | `be43dde` | 7 |
+| citações penduradas na guarda de exclusividade | `17214ba` | — |
+
+**56 experimentos de mutação, todos acusados por asserção própria.** Nenhum foi
+aceito por `TypeError`. Sete precisaram de correção antes de valer como
+evidência: três testes detectavam por exceção em vez de asserção, dois eram
+mutações infiéis, uma estava pareada com a função errada e uma dependia de
+instrumentação herdada de outro teste — vacuamente verdadeira quando isolada.
+
+**Categoria de teste criada nesta série.** Um defeito de fiação passou por
+testes unitários verdes: o gancho estava num laço morto (`querySelectorAll('input')`,
+enquanto Status é um `<select>`). Ficou provado empiricamente que reintroduzir o
+defeito faz o teste de fiação FALHAR enquanto o unitário PASSA. Daí
+`operation_wiring_test.py`: evento real de DOM → domínio → estado → disco.
+
+**Achado normativo.** A varredura das citações do código contra os 92 artigos da
+Norma Vigente acusou **oito numerações penduradas** — `Art. 1.3, 3.5, 3.6, 3.7,
+3.8, 3.10, 8.6, 9.5` — em doze arquivos. A Norma tem `3.1-3.4`, `8.1-8.5` e
+`9.1-9.3`. Só foram corrigidas as três da guarda de exclusividade, únicas com
+evidência textual do correspondente vigente. As demais seguem pendentes, na
+seção de pendências.
+
+**Evidência.** Gate `standard` 17/17 em cada commit da série, lido integralmente.
+Tier `full` ainda não executado.
+
 ## Integração contínua — 2026-08-17
 
 `.github/workflows/quality-gate.yml` existe em `main` desde o merge `91687dc`.
@@ -179,6 +237,30 @@ lacuna não pesa sobre este changeset; mas qualquer tarefa futura que toque cód
 precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
 
 ## Pendências abertas fora do escopo desta tarefa
+
+- **Numerações de artigo penduradas no código** (2026-08-17). Oito citações
+  apontam para artigos inexistentes na Norma Vigente: `Art. 1.3, 3.5, 3.6, 3.7,
+  3.8, 3.10, 8.6, 9.5`, em doze arquivos — `Art. 3.10` sozinho em sete. Só as
+  três da guarda de Operação Única Exclusiva foram corrigidas (`17214ba`), por
+  serem as únicas com correspondente vigente verificado textualmente. Duas
+  ocorrências de `Art. 3.5§2` — `04-patrimonial-simulation.js:142` e
+  `11-operation-lifecycle.js:41` — foram deixadas intactas de propósito: tratam
+  de consolidação e pré-condições de encerramento, e trocar citação por
+  suposição seria o mesmo defeito com o sinal invertido.
+- **Remediação de estado já conflitado** (2026-08-17). `f64cea2` impede a
+  criação de operação com duas teses, mas não trata base que já esteja nesse
+  estado. Um caso real exigiria ferramenta de retificação histórica com ato
+  explícito, auditoria, proveniência e revisão humana — mudança própria, não
+  apêndice do Histórico. Enquanto isso, a Finalização detecta e bloqueia, sem
+  correção automática.
+- **Ordem fechada é imutável na grade** (2026-08-17). `readOnly = isMigrada ||
+  frozen || isFechada` desabilita `par`, `tipo` e `status`. É o que torna um
+  conflito preexistente irreparável pela interface. Não foi alterado: reabrir
+  ordem fechada tem consequências contábeis próprias e exige decisão humana.
+- **`commitOnboardingStart` inalcançável por teste** (2026-08-17). O fluxo real
+  de reinício de período é closure dentro de `openOnboardingModal`, com ~2 mil
+  linhas. A garantia do reinício administrativo é hoje uma guarda estrutural
+  sobre o código-fonte servido, e não prova de alcançabilidade pela interface.
 
 - **Workspace "Visão Geral" do Execution Board segue vazio.** É o único dos cinco
   sem função: o `index.html` declara "superfície reservada … o conteúdo funcional
