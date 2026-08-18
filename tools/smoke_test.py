@@ -69,7 +69,9 @@ try:
         # Board, Contas, Contabilidade e Planejamento FX); as ferramentas
         # auxiliares vivem na Central. O header possui Configuracoes, Notas e
         # Finalizar sessao.
-        assert facts['tabs']==5, facts
+        # 6 desde PF-01: 06 Financas Pessoais entrou na navegacao principal.
+        # Este assert e o guardiao da contagem — atualizacao DELIBERADA.
+        assert facts['tabs']==6, facts
         assert facts['headerActions']==3, facts
         assert facts['state'] is True, facts
         assert facts['storageKey']=='jpwealth_v9_state', facts

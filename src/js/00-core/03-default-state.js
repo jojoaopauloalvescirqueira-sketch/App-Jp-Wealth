@@ -212,6 +212,41 @@ const DEFAULTS = {
   // a natureza é histórica e append-only. Registros são IMUTÁVEIS — o Histórico
   // é evidência, não planilha editável.
   operationHistory:{schemaVersion:1, records:[]},
+  // ---- Finanças Pessoais (PF-01 — Fundação; schema v1 CONGELADO) ----
+  // Domínio novo e FECHADO: não cruza contas de trading, Estatuto, Contabilidade
+  // nem Planejamento FX. Contrato normativo em docs/architecture/PERSONAL-FINANCE.md.
+  //
+  // moneyUnit é INVARIANTE, não preferência: todos os montantes do agregado são
+  // INTEIROS EM CENTAVOS DE BRL (R$ 1.420,50 → 142050). null = não informado;
+  // 0 = zero explicitamente declarado — a distinção é normativa (ausência ≠ zero).
+  // Unidade inesperada nunca é reinterpretada: a superfície entra em modo leitura
+  // (READ_ONLY_UNSUPPORTED_MONEY_UNIT, 10-domain/12-personal-finance.js).
+  //
+  // months é um mapa 'YYYY-MM' → registro mensal. Mês AUSENTE é mês VIRTUAL:
+  // projeção derivada das regras recorrentes, que não integra histórico realizado.
+  // O mês nasce no primeiro ato de edição (materialização) — nunca por cópia do
+  // anterior (a planilha de origem provou onde a cópia mensal termina) e nunca
+  // durante render. Mês materializado não é reescrito por automação alguma;
+  // edição humana deliberada é permitida em qualquer época.
+  //
+  // Dívida é IDENTIDADE TEMPORAL (startMonth/closedMonth; sem campo status — o
+  // rótulo ATIVA/QUITADA é derivado). O saldo vive em months[*].debtSnapshots:
+  // observação daquele mês, máx. 1 por dívida/mês. Estado atual jamais
+  // reinterpreta o passado. Totais, coberturas, sobras, ratios, disponível e
+  // patrimônio são DERIVADOS e nunca persistem.
+  //
+  // Default VAZIO por doutrina (nenhum dado fictício). Memória LONGITUDINAL:
+  // sobrevive a Finalizar Sessão por herança explícita (07-finalize-session.js).
+  // Guarda estrutural de boot: personalFinanceNormalizeState() (04-persistence.js).
+  personalFinance:{
+    schemaVersion:1,
+    moneyUnit:'BRL_CENTS',
+    months:{},
+    recurringIncome:[],
+    debts:[],
+    creditLines:[],
+    scenarios:[],
+  },
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o

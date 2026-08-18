@@ -49,6 +49,18 @@ jpwealth_v9_state
   `unobserved`; `unknown` aparece em discussão como sinônimo informal, mas não é
   o valor gravado. Invariante de integridade: `openedAt <= closedAt` quando
   ambos existem; uma operação não pode terminar antes de começar.
+- `personalFinance`: Finanças Pessoais — domínio fechado (não cruza trading),
+  schema v1 **congelado**: `{schemaVersion, moneyUnit:'BRL_CENTS', months{},
+  recurringIncome[], debts[], creditLines[], scenarios[]}`. Montantes são
+  inteiros em centavos de BRL; `null` = não informado ≠ `0` explícito. Mês
+  ausente é virtual (projeção); o mês nasce no primeiro ato de edição, nunca
+  por cópia nem em render. Dívida é identidade temporal
+  (`startMonth`/`closedMonth`, sem status persistido); saldo é observação
+  mensal em `months[*].debtSnapshots`. Derivados nunca persistem. `moneyUnit`
+  inesperada jamais é reinterpretada → módulo em modo leitura. Memória
+  longitudinal: sobrevive a Finalizar Sessão por herança explícita. O
+  normalizador repara FORMA e jamais conteúdo (valor inválido é preservado e
+  sinalizado, nunca "consertado"). Contrato em `PERSONAL-FINANCE.md`.
 - `pivotStudies`: Estudos dos Pivots — lista histórica de estudos por
   instrumento e período, cada um contendo seus pivots H1/H4. Vários estudos do
   mesmo instrumento coexistem. Só causas persistem (timeframe, extremos de tempo

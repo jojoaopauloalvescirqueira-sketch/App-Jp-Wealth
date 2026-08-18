@@ -5839,6 +5839,9 @@ html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weigh
    de 900px) e venceriam o `[hidden]` do agente de usuário, deixando o Painel
    Operacional visível sob a Visão Geral. */
 #exec > [hidden]{display:none}
+/* Financas Pessoais (PF-01): mesma regra estrutural — [hidden] perde para
+   regras que declaram display, entao cada section de workspaces precisa da sua. */
+html[data-shell="global-dashboard"] #finpes > [hidden]{display:none}
 html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
@@ -5987,7 +5990,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'd3bbe22bd3c17f28';
+const JP_WEALTH_BUILD_ID = 'af570e65792539e7';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6165,6 +6168,35 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="nav-sub-item-desc">Evolução temporal</span>
       </button>
     </nav>
+    <!-- Finanças Pessoais (PF-01): seis destinos. As chaves são contrato da
+         superfície window.JPWFin.ui (20-ui/17-finpes-views.js). -->
+    <nav class="nav-sub-menu" id="finpesNavSubmenu" aria-labelledby="finpesNavTrigger"
+         aria-hidden="true" hidden inert>
+      <button type="button" data-nav-sub-view="overview">
+        <span class="nav-sub-item-title">Visão Geral</span>
+        <span class="nav-sub-item-desc">Consolidado do mês e pendências</span>
+      </button>
+      <button type="button" data-nav-sub-view="mensal">
+        <span class="nav-sub-item-title">Orçamento Mensal</span>
+        <span class="nav-sub-item-desc">Receitas, despesas e destino da sobra</span>
+      </button>
+      <button type="button" data-nav-sub-view="dividas">
+        <span class="nav-sub-item-title">Dívidas &amp; Crédito</span>
+        <span class="nav-sub-item-desc">Passivos e uso dos limites</span>
+      </button>
+      <button type="button" data-nav-sub-view="comparativo">
+        <span class="nav-sub-item-title">Comparativo Mensal</span>
+        <span class="nav-sub-item-desc">Evolução mês a mês</span>
+      </button>
+      <button type="button" data-nav-sub-view="cenarios">
+        <span class="nav-sub-item-title">Cenários</span>
+        <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
+      </button>
+      <button type="button" data-nav-sub-view="inventario">
+        <span class="nav-sub-item-title">Inventário</span>
+        <span class="nav-sub-item-desc">Ativos, passivos e patrimônio</span>
+      </button>
+    </nav>
   </div>
 </div>
 
@@ -6199,6 +6231,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <button class="tab nav-sub-trigger" id="fxplanNavTrigger" data-screen="fxplan" title="Planejamento"
           aria-expanded="false" aria-controls="fxplanNavSubmenu">
     <span class="n">05</span><span class="lbl">Planejamento</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+  </button>
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-screen="finpes" title="Finanças Pessoais"
+          aria-expanded="false" aria-controls="finpesNavSubmenu">
+    <span class="n">06</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
@@ -6988,6 +7024,56 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     </div>
   </section>
 
+  <!-- ================= 06 FINANÇAS PESSOAIS (PF-01 — Fundação) =================
+       Seis workspaces skeleton, filhos DIRETOS da section (padrão #exec:
+       hidden+inert trocados por 20-ui/17-finpes-views.js; regra CSS gêmea
+       #finpes > [hidden]{display:none} em app.css). Nesta entrega os
+       workspaces comunicam honestamente "em desenvolvimento" — nenhum número
+       fictício. O banner #finpesUnitNotice é a face visível do sentinela de
+       unidade monetária (READ_ONLY_UNSUPPORTED_MONEY_UNIT). -->
+  <section class="screen" id="finpes">
+    <div class="status-banner sb-danger" id="finpesUnitNotice" hidden style="margin-bottom:16px">
+      <span class="ico">⛔</span><svg class="jp-icon jp-i-danger" aria-hidden="true"><use href="#i-danger"/></svg>
+      <span id="finpesUnitNoticeTxt">Unidade monetária do agregado não reconhecida — Finanças Pessoais está em modo leitura. Nenhum dado foi alterado. Restaure um backup íntegro ou contate o suporte da sua base.</span>
+    </div>
+    <div id="finpesOverview">
+      <div class="card">
+        <h2>Visão Geral <span class="art">Finanças Pessoais · consolidado derivado — nunca segunda fonte de verdade</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-06). Esta visão consolidará receita, despesa, sobra, destinações, pendências, dívida e crédito dos módulos ao lado — todos derivados, nenhum editável aqui.</p>
+      </div>
+    </div>
+    <div id="finpesMensal" hidden>
+      <div class="card">
+        <h2>Orçamento Mensal <span class="art">mês = unidade atômica · planejado ≠ realizado · ausência ≠ zero</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-02). Receitas com recorrência, despesas Meta/Previsto/Executado, resumo com cobertura, destino do excedente, informações importantes e pendências de meses anteriores.</p>
+      </div>
+    </div>
+    <div id="finpesDividas" hidden>
+      <div class="card">
+        <h2>Dívidas &amp; Crédito <span class="art">identidade temporal · saldo é observação do mês</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-03). Cadastro de dívidas (startMonth/closedMonth), observação mensal de saldo, limites de crédito com utilização — estouro alerta, nunca é truncado.</p>
+      </div>
+    </div>
+    <div id="finpesComparativo" hidden>
+      <div class="card">
+        <h2>Comparativo Mensal <span class="art">derivado dos registros · soma parcial nunca vira total</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-04). Mês atual × anterior e × mesmo mês do ano anterior, com marcadores de cobertura; apenas meses materializados alimentam indicadores realizados.</p>
+      </div>
+    </div>
+    <div id="finpesCenarios" hidden>
+      <div class="card">
+        <h2>Cenários <span class="art">composição completa · jamais altera os meses reais</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-05). Composições de receitas e despesas por horizonte (hoje e futuros), com sobra e cascata derivadas.</p>
+      </div>
+    </div>
+    <div id="finpesInventario" hidden>
+      <div class="card">
+        <h2>Inventário <span class="art">patrimônio = ativos − passivos · sempre derivado</span></h2>
+        <p class="risk-note">Integração em desenvolvimento (PF-07). Reserva, investimentos, imóveis, veículos, bens e passivos; o patrimônio líquido nunca será um campo editável.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= 08 CONFIGURAÇÕES ================= -->
   <section class="screen settings-legacy-host" id="config" aria-hidden="true">
     <div class="card" data-settings-category="appearance" data-settings-search="tema aparência ícone paleta contraste acabamento">
@@ -7538,6 +7624,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
 
 
+
+
 <script>
 // ============ PERFIS DE RISCO V10.0 (fonte única) ============
 const BASE_TARGET_MONTHLY=0.0275;
@@ -7884,6 +7972,41 @@ const DEFAULTS = {
   // a natureza é histórica e append-only. Registros são IMUTÁVEIS — o Histórico
   // é evidência, não planilha editável.
   operationHistory:{schemaVersion:1, records:[]},
+  // ---- Finanças Pessoais (PF-01 — Fundação; schema v1 CONGELADO) ----
+  // Domínio novo e FECHADO: não cruza contas de trading, Estatuto, Contabilidade
+  // nem Planejamento FX. Contrato normativo em docs/architecture/PERSONAL-FINANCE.md.
+  //
+  // moneyUnit é INVARIANTE, não preferência: todos os montantes do agregado são
+  // INTEIROS EM CENTAVOS DE BRL (R$ 1.420,50 → 142050). null = não informado;
+  // 0 = zero explicitamente declarado — a distinção é normativa (ausência ≠ zero).
+  // Unidade inesperada nunca é reinterpretada: a superfície entra em modo leitura
+  // (READ_ONLY_UNSUPPORTED_MONEY_UNIT, 10-domain/12-personal-finance.js).
+  //
+  // months é um mapa 'YYYY-MM' → registro mensal. Mês AUSENTE é mês VIRTUAL:
+  // projeção derivada das regras recorrentes, que não integra histórico realizado.
+  // O mês nasce no primeiro ato de edição (materialização) — nunca por cópia do
+  // anterior (a planilha de origem provou onde a cópia mensal termina) e nunca
+  // durante render. Mês materializado não é reescrito por automação alguma;
+  // edição humana deliberada é permitida em qualquer época.
+  //
+  // Dívida é IDENTIDADE TEMPORAL (startMonth/closedMonth; sem campo status — o
+  // rótulo ATIVA/QUITADA é derivado). O saldo vive em months[*].debtSnapshots:
+  // observação daquele mês, máx. 1 por dívida/mês. Estado atual jamais
+  // reinterpreta o passado. Totais, coberturas, sobras, ratios, disponível e
+  // patrimônio são DERIVADOS e nunca persistem.
+  //
+  // Default VAZIO por doutrina (nenhum dado fictício). Memória LONGITUDINAL:
+  // sobrevive a Finalizar Sessão por herança explícita (07-finalize-session.js).
+  // Guarda estrutural de boot: personalFinanceNormalizeState() (04-persistence.js).
+  personalFinance:{
+    schemaVersion:1,
+    moneyUnit:'BRL_CENTS',
+    months:{},
+    recurringIncome:[],
+    debts:[],
+    creditLines:[],
+    scenarios:[],
+  },
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
@@ -8851,6 +8974,53 @@ function pivotStudiesNormalizeState(){
     });
   });
 }
+// ---- Finanças Pessoais: guarda estrutural de boot (PF-01; schema v1) --------
+// Contrato: docs/architecture/PERSONAL-FINANCE.md. Duas leis regem este
+// normalizador, e a fronteira entre elas é o coração do agregado:
+//
+//   REPARO DE FORMA  — contêiner ausente ou de tipo errado volta ao contêiner
+//     vazio correto (padrão nocoda/pivotStudies). Isso é estrutura.
+//   CONTEÚDO — JAMAIS tocado. Nenhum valor financeiro é coagido, arredondado,
+//     convertido, zerado ou "consertado". null nunca vira 0; número inválido
+//     nunca vira número válido; campo desconhecido atravessa intacto (regra 3
+//     do STATE-SCHEMA.md). Dado fora de domínio (ex.: montante negativo vindo
+//     de backup adulterado) é PRESERVADO — quem o sinaliza e bloqueia é a
+//     superfície, não a migração. Corrigir em silêncio seria fabricação.
+//
+// Nunca lança: exceção aqui derrubaria a base inteira para o modo de
+// recuperação A-005 por causa de um agregado que nem é pré-requisito do boot.
+// Idempotente: rodar duas vezes não altera nada.
+function personalFinanceIsEmpty(pf){
+  // "vazio" = forma de nascimento: sem mês e sem registro algum. Usado apenas
+  // para decidir se moneyUnit ausente pode ser semeada sem reinterpretar dado.
+  const semMeses = !pf.months || typeof pf.months!=='object' || Object.keys(pf.months).length===0;
+  const listas = ['recurringIncome','debts','creditLines','scenarios'];
+  return semMeses && listas.every(k=>!Array.isArray(pf[k]) || pf[k].length===0);
+}
+function personalFinanceNormalizeState(){
+  const def=DEFAULTS.personalFinance;
+  if(!S.personalFinance || typeof S.personalFinance!=='object' || Array.isArray(S.personalFinance)){
+    S.personalFinance=structuredClone(def);
+    return;
+  }
+  const pf=S.personalFinance;
+  // schemaVersion: inteiro >= 1. Versão FUTURA é preservada — rebaixá-la faria
+  // um app antigo mentir sobre o que o dado é; o sentinela de unidade e os
+  // consumidores decidem o que fazer com o que não entendem.
+  if(!(Number.isInteger(pf.schemaVersion) && pf.schemaVersion>=1)) pf.schemaVersion=1;
+  // moneyUnit: NUNCA reinterpretada nem sobrescrita. Só nasce quando o agregado
+  // está comprovadamente vazio — aí não há dado cuja unidade se possa trair.
+  // Ausente COM dados = unidade desconhecida → a superfície entra em modo
+  // leitura (pfMoneyUnitSupported, 10-domain/12-personal-finance.js).
+  if(!('moneyUnit' in pf) && personalFinanceIsEmpty(pf)) pf.moneyUnit='BRL_CENTS';
+  // Contêineres: reparo de forma apenas. months é mapa (objeto simples);
+  // as quatro coleções são listas. Conteúdo interno não é percorrido: registros
+  // e campos desconhecidos atravessam intactos, na forma em que estão.
+  if(!pf.months || typeof pf.months!=='object' || Array.isArray(pf.months)) pf.months={};
+  for(const k of ['recurringIncome','debts','creditLines','scenarios']){
+    if(!Array.isArray(pf[k])) pf[k]=[];
+  }
+}
 // ---- S.params: o denominador de tudo ----------------------------------------
 // O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
 // presente no arquivo, nenhuma sub-chave faltante era reposta — e params era o
@@ -8897,6 +9067,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
   pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
   operationNormalizeState(); // Operação Única: identidade da operação viva + envelope do histórico
+  personalFinanceNormalizeState(); // Finanças Pessoais: forma do agregado; conteúdo jamais tocado
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -16653,6 +16824,13 @@ function emptyJPWealthState(){
   // de ordens, ledger, onboarding etc., zerados acima). 'S' aqui ainda é o estado
   // anterior à troca (a reatribuição só ocorre no retorno desta função).
   empty.mvpNotes=(S&&S.mvpNotes)?structuredClone(S.mvpNotes):structuredClone(DEFAULTS.mvpNotes);
+  // Finanças Pessoais é memória LONGITUDINAL da vida financeira do operador,
+  // não dado operacional do período de trading que se encerra aqui. Mesma
+  // herança das notas — decisão humana registrada no congelamento do schema
+  // v1 (PF-01, Bloco D): Finalizar Sessão não apaga, não recria vazio e não
+  // modifica o agregado. Versões do app anteriores a esta linha zeravam o
+  // agregado neste fluxo — risco residual documentado no contrato.
+  empty.personalFinance=(S&&S.personalFinance)?structuredClone(S.personalFinance):structuredClone(DEFAULTS.personalFinance);
   return empty;
 }
 // clearJPWealthLocalData() acima de cada chamador já apagou a chave inteira, e save()
@@ -17538,7 +17716,8 @@ const NAV_SUB_CLOSE_DELAY = 400;
 // O controlador não conhece as chaves — quem as valida é o próprio módulo.
 const NAV_SUBMENU_SURFACES = {
   exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  fxplan: () => (window.JPWFx && window.JPWFx.ui) || null
+  fxplan: () => (window.JPWFx && window.JPWFx.ui) || null,
+  finpes: () => (window.JPWFin && window.JPWFin.ui) || null
 };
 
 function shellEl(sel) { return document.querySelector(sel); }
@@ -28875,6 +29054,196 @@ function renderOperationHistory(){
 
 // Contrato dos workspaces montados sob demanda (20-ui/13-exec-views.js).
 window.JPWHistoryUI = { render: renderOperationHistory };
+// ============ FINANÇAS PESSOAIS · núcleo do domínio (PF-01) ============
+// Contrato normativo: docs/architecture/PERSONAL-FINANCE.md. Schema v1 CONGELADO.
+//
+// Este arquivo é a ÚNICA fonte da política monetária do módulo. Não existe um
+// segundo parser nem um segundo formatador: espalhar parsers pela UI foi
+// declarado defeito de revisão no congelamento do schema. Todo ponto de
+// entrada e saída de dinheiro de Finanças Pessoais passa por aqui.
+//
+// A unidade do agregado é BRL_CENTS: inteiros em centavos de real.
+// R$ 1.420,50 → 142050. null = não informado; 0 = zero explicitamente
+// declarado. A distinção é normativa (ausência ≠ zero) e o parser a preserva:
+// devolve null para vazio, inteiro para valor válido e NaN para inválido —
+// três estados que jamais se confundem.
+
+const PF_MONEY_UNIT = 'BRL_CENTS';
+// Competência mensal: 'YYYY-MM'. Mesma forma do FX_MONTH_RE do Planejamento FX,
+// duplicada de propósito: reutilizar a constante de outro domínio acoplaria
+// Finanças Pessoais ao FX — exatamente a fronteira que o contrato proíbe cruzar.
+const PF_MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+// Identidade permanente: gerada uma vez, persistida, jamais recalculada.
+// Mesmo padrão canônico de dgId/pivotStudyId/operationRecordId — a replicação
+// por módulo É o padrão do projeto (não há helper compartilhado).
+function pfId(prefix){
+  return String(prefix||'pf')+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
+}
+
+function pfMonthKeyValid(m){
+  return typeof m==='string' && PF_MONTH_RE.test(m);
+}
+
+// ---- parseBRLCents: string → centavos, SEM ponto flutuante no caminho ------
+// O número nunca visita parseFloat: os dígitos são extraídos por forma
+// reconhecida e o valor é montado por aritmética inteira. Formas aceitas:
+//   "1420"      → 142000     (inteiro em reais)
+//   "1420,50"   → 142050     (vírgula decimal, 1–2 casas)
+//   "1420.50"   → 142050     (ponto decimal, 1–2 casas)
+//   "1.420,50"  → 142050     (milhar BR com decimal)
+//   "1.420"     → 142000     (milhar BR sem decimal — grupos de 3 exatos)
+// Rejeitadas (NaN): letras, parcial numérico, mais de 2 casas decimais,
+// mistura ambígua de separadores ("1,420.50"), grupos de milhar quebrados,
+// espaços internos, e inteiros com mais de 13 dígitos (overflow além de
+// Number.MAX_SAFE_INTEGER em centavos).
+// Vazio (após trim) → null: "não informado" é estado real, não erro.
+//
+// O sinal negativo é RECONHECIDO sintaticamente (útil para a UI detectar e
+// explicar), mas parser ≠ guarda semântica: os atos do domínio recusam
+// negativo nos campos cujo contrato exige ≥ 0 (pfAmountInDomain abaixo).
+function parseBRLCents(txt){
+  const t = String(txt==null?'':txt).trim();
+  if(!t) return null;
+  let s=t, neg=false;
+  if(s[0]==='-' || s[0]==='−'){ neg=true; s=s.slice(1); }
+  let m, intDigits, decDigits;
+  if((m=/^(\d{1,3}(?:\.\d{3})+),(\d{1,2})$/.exec(s))){ intDigits=m[1].replace(/\./g,''); decDigits=m[2]; }
+  else if((m=/^(\d{1,3}(?:\.\d{3})+)$/.exec(s)))     { intDigits=m[1].replace(/\./g,''); decDigits=''; }
+  else if((m=/^(\d+)[.,](\d{1,2})$/.exec(s)))        { intDigits=m[1]; decDigits=m[2]; }
+  else if((m=/^(\d+)$/.exec(s)))                     { intDigits=m[1]; decDigits=''; }
+  else return NaN;
+  if(intDigits.length>13) return NaN; // overflow: 10^13 reais já excede o domínio seguro em centavos
+  const cents = Number(intDigits)*100 + Number((decDigits+'00').slice(0,2));
+  if(!Number.isSafeInteger(cents)) return NaN;
+  return neg ? -cents : cents;
+}
+
+// ---- formatBRLCents: centavos → "R$ 1.420,50", por aritmética de STRING ----
+// Sem divisão por 100 em float: o inteiro é fatiado em texto. Exato para
+// qualquer centavo seguro, inclusive derivados negativos ("-R$ 1.879,00").
+// null/undefined → '—' (não informado). Qualquer coisa que não seja inteiro
+// seguro → '—': este formatador não legitima valor que o domínio não aceita.
+function formatBRLCents(cents){
+  if(cents===null || cents===undefined) return '—';
+  if(typeof cents!=='number' || !Number.isSafeInteger(cents)) return '—';
+  const neg = cents<0;
+  const s = String(Math.abs(cents)).padStart(3,'0');
+  const inteiro = s.slice(0,-2).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  return (neg?'-R$ ':'R$ ')+inteiro+','+s.slice(-2);
+}
+
+// ---- guarda semântica de domínio -------------------------------------------
+// Campos de ENTRADA do agregado são ≥ 0 (a direção é do campo, não do sinal).
+// allowNull decide se "não informado" é aceitável naquele ato.
+function pfAmountInDomain(cents, opts){
+  const allowNull = !!(opts && opts.allowNull);
+  if(cents===null) return allowNull;
+  return typeof cents==='number' && Number.isSafeInteger(cents) && cents>=0;
+}
+
+// ---- sentinela de unidade monetária (Bloco C) ------------------------------
+// moneyUnit é INVARIANTE. Unidade que não seja BRL_CENTS jamais é convertida,
+// reinterpretada ou sobrescrita: o agregado fica intacto e o MÓDULO entra em
+// modo leitura. O bloqueio é do módulo, nunca do JP Wealth inteiro.
+const PF_READ_ONLY_UNSUPPORTED_MONEY_UNIT = 'READ_ONLY_UNSUPPORTED_MONEY_UNIT';
+function pfMoneyUnitSupported(){
+  return !!(S && S.personalFinance && S.personalFinance.moneyUnit===PF_MONEY_UNIT);
+}
+// Toda ação MUTÁVEL de Finanças Pessoais consulta esta guarda antes de tocar
+// no estado. Retorna null quando a escrita está liberada, ou o código do
+// bloqueio. PF-01 não tem ato de escrita ainda; a guarda nasce agora para que
+// PF-02+ não tenha como esquecê-la (e para o teste provar o bloqueio).
+function pfWriteBlockReason(){
+  if(!pfMoneyUnitSupported()) return PF_READ_ONLY_UNSUPPORTED_MONEY_UNIT;
+  return null;
+}
+// ============ FINANÇAS PESSOAIS · WORKSPACES DO MÓDULO (PF-01 — apresentação) ============
+// Superfície estritamente visual do segundo nível de Finanças Pessoais: decide
+// qual workspace de section#finpes está visível, e nada além disso. Não
+// calcula, não persiste e não conhece o domínio — o núcleo vive em
+// 10-domain/12-personal-finance.js e os renderizadores chegarão com PF-02+.
+//
+// A troca é `hidden` + `inert` sobre nós que permanecem MONTADOS (padrão
+// 13-exec-views.js). O estado de visão é efêmero por contrato
+// (NAVIGATION-HIERARCHY.md): não entra em S, localStorage, backup nem schema —
+// e NAVEGAR JAMAIS ESCREVE NO ESTADO, doutrina que em Finanças Pessoais é
+// também a fronteira da materialização de mês (abrir um mês não o cria).
+
+const FINPES_VIEWS = [
+  ['overview', 'finpesOverview'],
+  ['mensal', 'finpesMensal'],
+  ['dividas', 'finpesDividas'],
+  ['comparativo', 'finpesComparativo'],
+  ['cenarios', 'finpesCenarios'],
+  ['inventario', 'finpesInventario']
+];
+const FINPES_DEFAULT_VIEW = 'overview';
+let finpesView = FINPES_DEFAULT_VIEW;
+// Marca de escolha explícita: navegar para o módulo e escolher a visão
+// acontecem no mesmo gesto quando o clique parte da faixa (ver 13-exec-views).
+let finpesViewExplicit = false;
+
+// Face visível do sentinela de unidade monetária (Bloco C). O banner
+// #finpesUnitNotice vive estático no HTML; aqui só se decide sua visibilidade.
+// O bloqueio é do MÓDULO: nada aqui toca o restante do JP Wealth.
+function finpesApplyUnitNotice() {
+  const el = document.getElementById('finpesUnitNotice');
+  if (!el) return;
+  const bloqueio = (typeof pfWriteBlockReason === 'function') ? pfWriteBlockReason() : null;
+  el.hidden = !bloqueio;
+}
+
+function finpesApplyView(view) {
+  FINPES_VIEWS.forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const active = key === view;
+    el.hidden = !active;
+    el.inert = !active;
+  });
+  finpesApplyUnitNotice();
+}
+
+function finpesSetView(view) {
+  finpesView = view;
+  finpesApplyView(view);
+}
+
+function finpesSelectView(view) {
+  if (!FINPES_VIEWS.some(([key]) => key === view)) return false;
+  finpesViewExplicit = true;
+  finpesSetView(view);
+  return true;
+}
+
+function finpesGetView() { return finpesView; }
+
+// Destino inicial: entrar em Finanças Pessoais vindo de outra tela abre a
+// Visão Geral. Mesmo mecanismo do Execution Board — observar .active cobre
+// todos os caminhos de entrada sem embrulhar navigateToScreen.
+function finpesWatchModuleEntry() {
+  const screen = document.getElementById('finpes');
+  if (!screen || typeof MutationObserver !== 'function') return;
+  let wasActive = screen.classList.contains('active');
+  const observer = new MutationObserver(() => {
+    const isActive = screen.classList.contains('active');
+    if (isActive && !wasActive && !finpesViewExplicit) {
+      finpesSetView(FINPES_DEFAULT_VIEW);
+      if (typeof syncNavSubCurrent === 'function') syncNavSubCurrent('finpes');
+    }
+    finpesViewExplicit = false;
+    wasActive = isActive;
+  });
+  observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
+}
+
+finpesApplyView(finpesView);
+finpesWatchModuleEntry();
+
+// Superfície pública consumida pelo controlador da faixa compartilhada
+// (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.
+window.JPWFin = { ui: { selectView: finpesSelectView, getView: finpesGetView } };
 </script>
 </body>
 </html>

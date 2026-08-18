@@ -26,7 +26,8 @@ const NAV_SUB_CLOSE_DELAY = 400;
 // O controlador não conhece as chaves — quem as valida é o próprio módulo.
 const NAV_SUBMENU_SURFACES = {
   exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  fxplan: () => (window.JPWFx && window.JPWFx.ui) || null
+  fxplan: () => (window.JPWFx && window.JPWFx.ui) || null,
+  finpes: () => (window.JPWFin && window.JPWFin.ui) || null
 };
 
 function shellEl(sel) { return document.querySelector(sel); }

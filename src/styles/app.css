@@ -5829,6 +5829,9 @@ html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weigh
    de 900px) e venceriam o `[hidden]` do agente de usuário, deixando o Painel
    Operacional visível sob a Visão Geral. */
 #exec > [hidden]{display:none}
+/* Financas Pessoais (PF-01): mesma regra estrutural — [hidden] perde para
+   regras que declaram display, entao cada section de workspaces precisa da sua. */
+html[data-shell="global-dashboard"] #finpes > [hidden]{display:none}
 html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){

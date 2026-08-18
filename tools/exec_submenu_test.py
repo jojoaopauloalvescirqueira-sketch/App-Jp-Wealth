@@ -115,7 +115,7 @@ def run_structure(page):
     assert contract["panelOutsideNav"], "painel do segundo nivel entrou dentro de #nav"
     assert contract["structuralOrder"], f"faixa fora da ordem header -> faixa -> contexto: {contract}"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
-    assert contract["panelsInShell"] == ["execNavSubmenu", "fxplanNavSubmenu"], contract["panelsInShell"]
+    assert contract["panelsInShell"] == ["execNavSubmenu", "fxplanNavSubmenu", "finpesNavSubmenu"], contract["panelsInShell"]
     assert contract["keys"] == EXPECTED_VIEWS, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
     # "Altura efetiva zero" = nenhuma caixa de conteudo. A faixa mantem a
@@ -618,7 +618,7 @@ def run_motor_migration(page):
 def run_no_regression(page):
     """As cinco abas globais continuam ativando suas proprias telas."""
     tabs = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-screen]')].map(el => el.dataset.screen)")
-    assert tabs == ["dash", "exec", "contas", "contab", "fxplan"], f"abas globais mudaram: {tabs}"
+    assert tabs == ["dash", "exec", "contas", "contab", "fxplan", "finpes"], f"abas globais mudaram: {tabs}"
     for screen in tabs:
         page.click(f'#nav .tab[data-screen="{screen}"]')
         active = page.evaluate("() => document.querySelector('.screen.active')?.id")

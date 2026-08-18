@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "464f4358c2db95479f6863c931ff7b58223e478fdca50d6304a1b38dcb7dbfe1"
+      "sha256": "4bf0ce7fdd927a209f5978354f28e2c184945616d114dc417c03c8bce1c00102"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "a479d9439dc2baa459bd7814f6614db515abc3317cbad093bec00c1b329daf20"
+      "sha256": "75252da1639af560d082ffda3b8327b9d556c32b6449ef71ac9b5b0abecda79c"
     },
     {
       "order": 5,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "f92afa80c7efc233c2118a8f4f5fd8f21c63ad4e8c630939a55f0569d2be1685"
+      "sha256": "959a322c712df2f2e5f8d87f9efe4f66fa02946313f9d71ad00e1f70c8805533"
     },
     {
       "order": 36,
@@ -242,7 +242,7 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada do segundo nivel (N1)",
-      "sha256": "2943f489de3e1c9188549be1fcd17b78e44c19c9685e9899ff3a1ab6641f4220"
+      "sha256": "014f650cb96aae9e929055d75d8e13b2965026b5c04147b91d7f1c9e685cb939"
     },
     {
       "order": 41,
@@ -405,6 +405,18 @@
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
       "sha256": "a93b5d9cd1650b4791c5a8856ea4d3b4a251c1ea62097c618e738fbbd87c2de4"
+    },
+    {
+      "order": 68,
+      "path": "src/js/10-domain/12-personal-finance.js",
+      "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
+      "sha256": "b55659aa70524d1033626317acea8b1f1a72864d465fe724e06381ebf2fc93c6"
+    },
+    {
+      "order": 69,
+      "path": "src/js/20-ui/17-finpes-views.js",
+      "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
+      "sha256": "aa03ca9020da37aa07eede18ca6207adfa0288fb8f63f90fbbb3a37210304d9d"
     }
   ]
 }

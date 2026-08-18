@@ -184,6 +184,35 @@
         <span class="nav-sub-item-desc">Evolução temporal</span>
       </button>
     </nav>
+    <!-- Finanças Pessoais (PF-01): seis destinos. As chaves são contrato da
+         superfície window.JPWFin.ui (20-ui/17-finpes-views.js). -->
+    <nav class="nav-sub-menu" id="finpesNavSubmenu" aria-labelledby="finpesNavTrigger"
+         aria-hidden="true" hidden inert>
+      <button type="button" data-nav-sub-view="overview">
+        <span class="nav-sub-item-title">Visão Geral</span>
+        <span class="nav-sub-item-desc">Consolidado do mês e pendências</span>
+      </button>
+      <button type="button" data-nav-sub-view="mensal">
+        <span class="nav-sub-item-title">Orçamento Mensal</span>
+        <span class="nav-sub-item-desc">Receitas, despesas e destino da sobra</span>
+      </button>
+      <button type="button" data-nav-sub-view="dividas">
+        <span class="nav-sub-item-title">Dívidas &amp; Crédito</span>
+        <span class="nav-sub-item-desc">Passivos e uso dos limites</span>
+      </button>
+      <button type="button" data-nav-sub-view="comparativo">
+        <span class="nav-sub-item-title">Comparativo Mensal</span>
+        <span class="nav-sub-item-desc">Evolução mês a mês</span>
+      </button>
+      <button type="button" data-nav-sub-view="cenarios">
+        <span class="nav-sub-item-title">Cenários</span>
+        <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
+      </button>
+      <button type="button" data-nav-sub-view="inventario">
+        <span class="nav-sub-item-title">Inventário</span>
+        <span class="nav-sub-item-desc">Ativos, passivos e patrimônio</span>
+      </button>
+    </nav>
   </div>
 </div>
 
@@ -218,6 +247,10 @@
   <button class="tab nav-sub-trigger" id="fxplanNavTrigger" data-screen="fxplan" title="Planejamento"
           aria-expanded="false" aria-controls="fxplanNavSubmenu">
     <span class="n">05</span><span class="lbl">Planejamento</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+  </button>
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-screen="finpes" title="Finanças Pessoais"
+          aria-expanded="false" aria-controls="finpesNavSubmenu">
+    <span class="n">06</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
@@ -1007,6 +1040,56 @@
     </div>
   </section>
 
+  <!-- ================= 06 FINANÇAS PESSOAIS (PF-01 — Fundação) =================
+       Seis workspaces skeleton, filhos DIRETOS da section (padrão #exec:
+       hidden+inert trocados por 20-ui/17-finpes-views.js; regra CSS gêmea
+       #finpes > [hidden]{display:none} em app.css). Nesta entrega os
+       workspaces comunicam honestamente "em desenvolvimento" — nenhum número
+       fictício. O banner #finpesUnitNotice é a face visível do sentinela de
+       unidade monetária (READ_ONLY_UNSUPPORTED_MONEY_UNIT). -->
+  <section class="screen" id="finpes">
+    <div class="status-banner sb-danger" id="finpesUnitNotice" hidden style="margin-bottom:16px">
+      <span class="ico">⛔</span><svg class="jp-icon jp-i-danger" aria-hidden="true"><use href="#i-danger"/></svg>
+      <span id="finpesUnitNoticeTxt">Unidade monetária do agregado não reconhecida — Finanças Pessoais está em modo leitura. Nenhum dado foi alterado. Restaure um backup íntegro ou contate o suporte da sua base.</span>
+    </div>
+    <div id="finpesOverview">
+      <div class="card">
+        <h2>Visão Geral <span class="art">Finanças Pessoais · consolidado derivado — nunca segunda fonte de verdade</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-06). Esta visão consolidará receita, despesa, sobra, destinações, pendências, dívida e crédito dos módulos ao lado — todos derivados, nenhum editável aqui.</p>
+      </div>
+    </div>
+    <div id="finpesMensal" hidden>
+      <div class="card">
+        <h2>Orçamento Mensal <span class="art">mês = unidade atômica · planejado ≠ realizado · ausência ≠ zero</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-02). Receitas com recorrência, despesas Meta/Previsto/Executado, resumo com cobertura, destino do excedente, informações importantes e pendências de meses anteriores.</p>
+      </div>
+    </div>
+    <div id="finpesDividas" hidden>
+      <div class="card">
+        <h2>Dívidas &amp; Crédito <span class="art">identidade temporal · saldo é observação do mês</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-03). Cadastro de dívidas (startMonth/closedMonth), observação mensal de saldo, limites de crédito com utilização — estouro alerta, nunca é truncado.</p>
+      </div>
+    </div>
+    <div id="finpesComparativo" hidden>
+      <div class="card">
+        <h2>Comparativo Mensal <span class="art">derivado dos registros · soma parcial nunca vira total</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-04). Mês atual × anterior e × mesmo mês do ano anterior, com marcadores de cobertura; apenas meses materializados alimentam indicadores realizados.</p>
+      </div>
+    </div>
+    <div id="finpesCenarios" hidden>
+      <div class="card">
+        <h2>Cenários <span class="art">composição completa · jamais altera os meses reais</span></h2>
+        <p class="risk-note">Em desenvolvimento (PF-05). Composições de receitas e despesas por horizonte (hoje e futuros), com sobra e cascata derivadas.</p>
+      </div>
+    </div>
+    <div id="finpesInventario" hidden>
+      <div class="card">
+        <h2>Inventário <span class="art">patrimônio = ativos − passivos · sempre derivado</span></h2>
+        <p class="risk-note">Integração em desenvolvimento (PF-07). Reserva, investimentos, imóveis, veículos, bens e passivos; o patrimônio líquido nunca será um campo editável.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= 08 CONFIGURAÇÕES ================= -->
   <section class="screen settings-legacy-host" id="config" aria-hidden="true">
     <div class="card" data-settings-category="appearance" data-settings-search="tema aparência ícone paleta contraste acabamento">
@@ -1558,5 +1641,7 @@
 <script src="src/js/20-ui/15-pivot-studies.js"></script>
 <script src="src/js/10-domain/11-operation-lifecycle.js"></script>
 <script src="src/js/20-ui/16-operation-history.js"></script>
+<script src="src/js/10-domain/12-personal-finance.js"></script>
+<script src="src/js/20-ui/17-finpes-views.js"></script>
 </body>
 </html>
