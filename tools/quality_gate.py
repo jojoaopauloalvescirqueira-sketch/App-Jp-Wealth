@@ -37,6 +37,7 @@ STANDARD = FAST + (
     ("operation-wiring", [sys.executable, "tools/operation_wiring_test.py"]),
     ("phases-visibility", [sys.executable, "tools/phases_visibility_test.py"]),
     ("exec-three-column", [sys.executable, "tools/exec_three_column_test.py"]),
+    ("finpes-foundation", [sys.executable, "tools/finpes_foundation_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (

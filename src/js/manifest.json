@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "464f4358c2db95479f6863c931ff7b58223e478fdca50d6304a1b38dcb7dbfe1"
+      "sha256": "4bf0ce7fdd927a209f5978354f28e2c184945616d114dc417c03c8bce1c00102"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "a479d9439dc2baa459bd7814f6614db515abc3317cbad093bec00c1b329daf20"
+      "sha256": "75252da1639af560d082ffda3b8327b9d556c32b6449ef71ac9b5b0abecda79c"
     },
     {
       "order": 5,

@@ -1,0 +1,72 @@
+{
+  "_comentario": [
+    "Fixture SINTETICA do agregado personalFinance (schema v1, BRL_CENTS).",
+    "Criada ANTES da mudanca de schema (STATE-SCHEMA.md, regra 4).",
+    "Nenhum dado real: nomes, valores e datas sao inventados.",
+    "Cobre deliberadamente: null vs 0 explicito, linha cancelada com e sem valor,",
+    "canal de despesa desconhecido, divida quitada com historia, credito estourado,",
+    "e CAMPOS DESCONHECIDOS em tres niveis (agregado, mes, registro) para provar",
+    "que o round-trip nao os perde."
+  ],
+  "personalFinance": {
+    "schemaVersion": 1,
+    "moneyUnit": "BRL_CENTS",
+    "extensaoFutura": { "origem": "fixture", "nota": "campo desconhecido no nivel do agregado" },
+    "months": {
+      "2026-07": {
+        "createdAt": "2026-07-02T10:00:00.000Z",
+        "campoDesconhecidoDoMes": "sobrevive ao round-trip",
+        "incomes": [
+          { "id": "pfi_fx01", "name": "Salario Empresa Alfa", "projectedAmount": 1200000, "receivedAmount": 1200000, "status": "RECEBIDA", "ruleId": "pfr_fx01" },
+          { "id": "pfi_fx02", "name": "Aluguel Kitnet Beta", "projectedAmount": 280000, "receivedAmount": null, "status": "PROJETADA", "ruleId": null },
+          { "id": "pfi_fx03", "name": "Freela Gama", "projectedAmount": 200000, "receivedAmount": 50000, "status": "CANCELADA", "ruleId": null },
+          { "id": "pfi_fx04", "name": "Bico Delta", "projectedAmount": 100000, "receivedAmount": null, "status": "CANCELADA", "ruleId": null, "obsDesconhecida": "cancelada SEM valor declarado" }
+        ],
+        "expenses": [
+          { "id": "pfe_fx01", "name": "Internet Fibra", "installments": null, "targetAmount": 12000, "expectedAmount": 12000, "executedCash": 12000, "executedCard": 0, "status": "PAGO" },
+          { "id": "pfe_fx02", "name": "Emprestimo Sigma", "installments": { "total": 24, "paid": 16 }, "targetAmount": 92000, "expectedAmount": 80000, "executedCash": 80000, "executedCard": null, "status": "PENDENTE" },
+          { "id": "pfe_fx03", "name": "Assinatura Omega", "installments": null, "targetAmount": 5000, "expectedAmount": 5000, "executedCash": null, "executedCard": 3000, "status": "CANCELADO" }
+        ],
+        "debtSnapshots": [
+          { "debtId": "pfd_fx01", "balance": 1200000, "installmentsPaid": 16 },
+          { "debtId": "pfd_fx02", "balance": 45000, "installmentsPaid": null }
+        ],
+        "allocations": [
+          { "id": "pfa_fx01", "label": "Reserva Emergencia", "amount": 100000 },
+          { "id": "pfa_fx02", "label": "Amortizacao Sigma", "amount": 50000 }
+        ],
+        "notes": [
+          { "id": "pfn_fx01", "text": "Renegociar plano da fibra", "status": "PENDENTE", "createdAt": "2026-07-03T09:00:00.000Z" },
+          { "id": "pfn_fx02", "text": "Conferir fatura Omega", "status": "RESOLVIDO", "createdAt": "2026-07-05T14:30:00.000Z" }
+        ]
+      },
+      "2026-08": {
+        "createdAt": "2026-08-01T08:00:00.000Z",
+        "incomes": [
+          { "id": "pfi_fx05", "name": "Salario Empresa Alfa", "projectedAmount": 1200000, "receivedAmount": 0, "status": "RECEBIDA", "ruleId": "pfr_fx01", "notaZero": "zero EXPLICITO: confirmo que nada entrou" }
+        ],
+        "expenses": [],
+        "debtSnapshots": [ { "debtId": "pfd_fx01", "balance": 1050000, "installmentsPaid": 17 } ],
+        "allocations": [],
+        "notes": []
+      }
+    },
+    "recurringIncome": [
+      { "id": "pfr_fx01", "name": "Salario Empresa Alfa", "amount": 1200000, "periodicity": "MENSAL", "startMonth": "2026-01", "endMonth": null, "active": true }
+    ],
+    "debts": [
+      { "id": "pfd_fx01", "creditor": "Banco Sigma", "type": "EMPRESTIMO", "description": "Emprestimo pessoal 24x", "originalAmount": 2208000, "installmentAmount": 92000, "installmentsTotal": 24, "startMonth": "2026-01", "closedMonth": null },
+      { "id": "pfd_fx02", "creditor": "Loja Epsilon", "type": "CREDIARIO", "description": "Geladeira 10x", "originalAmount": 450000, "installmentAmount": 45000, "installmentsTotal": 10, "startMonth": "2025-11", "closedMonth": "2026-08" }
+    ],
+    "creditLines": [
+      { "id": "pfc_fx01", "institution": "Banco Sigma", "instrument": "Cartao Roxo", "type": "CARTAO", "totalLimit": 500000, "used": 550000, "notaEstouro": "used > totalLimit e legitimo: 110%" },
+      { "id": "pfc_fx02", "institution": "Banco Tau", "instrument": "Cheque Especial", "type": "CHEQUE_ESPECIAL", "totalLimit": 0, "used": null }
+    ],
+    "scenarios": [
+      { "id": "pfs_fx01", "name": "Base pos-quitacao", "horizon": "2027-03", "kind": "BASE",
+        "incomes": [ { "id": "pfsi_fx01", "name": "Salario", "amount": 1200000 } ],
+        "expenses": [ { "id": "pfse_fx01", "name": "Custo fixo", "amount": 700000 } ],
+        "baselineFrom": "2026-07", "createdAt": "2026-07-10T12:00:00.000Z" }
+    ]
+  }
+}

@@ -954,6 +954,53 @@ function pivotStudiesNormalizeState(){
     });
   });
 }
+// ---- Finanças Pessoais: guarda estrutural de boot (PF-01; schema v1) --------
+// Contrato: docs/architecture/PERSONAL-FINANCE.md. Duas leis regem este
+// normalizador, e a fronteira entre elas é o coração do agregado:
+//
+//   REPARO DE FORMA  — contêiner ausente ou de tipo errado volta ao contêiner
+//     vazio correto (padrão nocoda/pivotStudies). Isso é estrutura.
+//   CONTEÚDO — JAMAIS tocado. Nenhum valor financeiro é coagido, arredondado,
+//     convertido, zerado ou "consertado". null nunca vira 0; número inválido
+//     nunca vira número válido; campo desconhecido atravessa intacto (regra 3
+//     do STATE-SCHEMA.md). Dado fora de domínio (ex.: montante negativo vindo
+//     de backup adulterado) é PRESERVADO — quem o sinaliza e bloqueia é a
+//     superfície, não a migração. Corrigir em silêncio seria fabricação.
+//
+// Nunca lança: exceção aqui derrubaria a base inteira para o modo de
+// recuperação A-005 por causa de um agregado que nem é pré-requisito do boot.
+// Idempotente: rodar duas vezes não altera nada.
+function personalFinanceIsEmpty(pf){
+  // "vazio" = forma de nascimento: sem mês e sem registro algum. Usado apenas
+  // para decidir se moneyUnit ausente pode ser semeada sem reinterpretar dado.
+  const semMeses = !pf.months || typeof pf.months!=='object' || Object.keys(pf.months).length===0;
+  const listas = ['recurringIncome','debts','creditLines','scenarios'];
+  return semMeses && listas.every(k=>!Array.isArray(pf[k]) || pf[k].length===0);
+}
+function personalFinanceNormalizeState(){
+  const def=DEFAULTS.personalFinance;
+  if(!S.personalFinance || typeof S.personalFinance!=='object' || Array.isArray(S.personalFinance)){
+    S.personalFinance=structuredClone(def);
+    return;
+  }
+  const pf=S.personalFinance;
+  // schemaVersion: inteiro >= 1. Versão FUTURA é preservada — rebaixá-la faria
+  // um app antigo mentir sobre o que o dado é; o sentinela de unidade e os
+  // consumidores decidem o que fazer com o que não entendem.
+  if(!(Number.isInteger(pf.schemaVersion) && pf.schemaVersion>=1)) pf.schemaVersion=1;
+  // moneyUnit: NUNCA reinterpretada nem sobrescrita. Só nasce quando o agregado
+  // está comprovadamente vazio — aí não há dado cuja unidade se possa trair.
+  // Ausente COM dados = unidade desconhecida → a superfície entra em modo
+  // leitura (pfMoneyUnitSupported, 10-domain/12-personal-finance.js).
+  if(!('moneyUnit' in pf) && personalFinanceIsEmpty(pf)) pf.moneyUnit='BRL_CENTS';
+  // Contêineres: reparo de forma apenas. months é mapa (objeto simples);
+  // as quatro coleções são listas. Conteúdo interno não é percorrido: registros
+  // e campos desconhecidos atravessam intactos, na forma em que estão.
+  if(!pf.months || typeof pf.months!=='object' || Array.isArray(pf.months)) pf.months={};
+  for(const k of ['recurringIncome','debts','creditLines','scenarios']){
+    if(!Array.isArray(pf[k])) pf[k]=[];
+  }
+}
 // ---- S.params: o denominador de tudo ----------------------------------------
 // O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
 // presente no arquivo, nenhuma sub-chave faltante era reposta — e params era o
@@ -1000,6 +1047,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
   pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
   operationNormalizeState(); // Operação Única: identidade da operação viva + envelope do histórico
+  personalFinanceNormalizeState(); // Finanças Pessoais: forma do agregado; conteúdo jamais tocado
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
