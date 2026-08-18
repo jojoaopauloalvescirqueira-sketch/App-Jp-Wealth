@@ -197,9 +197,59 @@ e não uma aproximação dele.
 → C, B, A); `AUDIT_FAIL` (dirigida, 6 invalidantes → R1, R2, R3);
 `AUDIT_PASS_WITH_DEBT` (dirigida a R1/R2/R3, 4/4 lentes, zero invalidantes, uma
 dívida que o humano reclassificou como defeito → R4). A lente de interação
-`R4×C` concluiu com zero achados. **A lente `R4` está pendente**, bloqueada por
-`529 Overloaded` em três tentativas — indisponibilidade de infraestrutura, que
-não diz nada sobre o produto. É o único item que o merge aguarda.
+`R4×C` concluiu com zero achados.
+
+**Lente `R4` independente — dispensada por waiver explícito.**
+
+```
+R4 independent audit:
+NOT_EXECUTED / INFRASTRUCTURE_BLOCKED
+
+causa:
+quatro tentativas consecutivas encerradas por 529 Overloaded,
+sem produção de evidência sobre o produto.
+
+decisão:
+waiver explícito aprovado pelo responsável;
+a lente R4 independente NÃO permanece como gate pendente
+para Human Acceptance ou integração.
+```
+
+**Taxonomia, para que não se leia o que não está escrito: `waiver ≠ AUDIT_PASS`.**
+A lente não foi executada com sucesso em nenhuma das quatro tentativas — foi
+dispensada conscientemente, pela indisponibilidade persistente da infraestrutura
+e pela suficiência das evidências alternativas. Nenhuma das quatro falhas
+produziu informação sobre o candidato, nem a favor nem contra.
+
+Base objetiva do waiver:
+
+```
+R4 interface tests       3/3 PASS
+mutation                 2 killed + 1 proven no-op
+standard                 17/17 PASS
+full                     28/28 PASS sobre ca301de
+R4×C                     concluída, zero achados
+```
+
+As três propriedades que a lente tentaria falsificar — captura do pico na troca
+aceita, monotonicidade no recuo, e não-contaminação na troca revertida — são
+exatamente as três cobertas pelos testes de interface e provadas detectáveis pela
+mutação dirigida. A lente seria uma quarta camada independente, por leitura de
+código, e não a única evidência.
+
+**Uma sessão futura não deve reabrir a R4 como gate.** Se houver motivo novo para
+executá-la, isso é decisão nova, e não continuação de pendência.
+
+**Estado do desenvolvimento.**
+
+```
+DESENVOLVIMENTO DO HISTÓRICO ENCERRADO
+próximo gate = HUMAN ACCEPTANCE
+```
+
+Não há etapa técnica pendente antes da inspeção humana. Depois dela: integração
+controlada, merge em `main`, validação pós-merge, e push somente com autorização
+expressa.
 
 **Fragilidades do harness, registradas e não corrigidas.** `nocoda_test.py`
 (`run_no_operational_mutation`) falhou uma vez num `full` que competia com quatro

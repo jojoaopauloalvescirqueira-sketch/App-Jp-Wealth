@@ -148,9 +148,29 @@ Gate `standard` 17/17 em cada commit e tier `full` **28/28** sobre o candidato
 `ca301de`, ambos lidos integralmente, com o artefato do `full` registrando
 `head: ca301ded4c3c`.
 
-Falta a lente de auditoria `R4`, bloqueada por `529 Overloaded` em três
-tentativas — indisponibilidade de infraestrutura, não sinal sobre o produto. É o
-único item que a integração aguarda.
+A lente de auditoria independente `R4` **não foi executada** e foi **dispensada
+por waiver explícito** do responsável:
+
+```
+R4 independent audit:
+NOT_EXECUTED / INFRASTRUCTURE_BLOCKED
+
+causa:
+quatro tentativas consecutivas encerradas por 529 Overloaded,
+sem produção de evidência sobre o produto.
+
+decisão:
+waiver explícito aprovado pelo responsável;
+a lente R4 independente NÃO permanece como gate pendente
+para Human Acceptance ou integração.
+```
+
+`waiver ≠ AUDIT_PASS` — a lente não passou, foi dispensada. Base objetiva:
+testes de interface do R4 3/3, mutação com 2 acusadas e 1 no-op provado,
+`standard` 17/17, `full` 28/28 sobre `ca301de`, e a lente de interação `R4×C`
+concluída com zero achados.
+
+Desenvolvimento do Histórico **encerrado**; o próximo gate é a aceitação humana.
 
 Categoria de teste nova: `operation_wiring_test.py`, evento real de DOM
 atravessando domínio, estado e disco. Criada porque o BLOCKER passou por testes
