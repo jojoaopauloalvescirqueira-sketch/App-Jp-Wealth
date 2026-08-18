@@ -35,6 +35,7 @@ STANDARD = FAST + (
     ("operation-finalize", [sys.executable, "tools/operation_finalize_test.py"]),
     ("operation-history", [sys.executable, "tools/operation_history_test.py"]),
     ("operation-wiring", [sys.executable, "tools/operation_wiring_test.py"]),
+    ("phases-visibility", [sys.executable, "tools/phases_visibility_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (
