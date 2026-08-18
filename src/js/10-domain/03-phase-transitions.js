@@ -403,7 +403,24 @@ function orderGateMsg(pi, oi){
   if(ins && ins.teto>0 && o.lote>ins.teto){
     return `🚫 Lote ${o.lote} acima do Teto/Op de ${ins.name} (${ins.teto}) — Regra 1 do Controle Objetivo de Risco. Ajuste o lote ou revise o teto no Motor de Lote.`;
   }
-  // Operação Única Exclusiva: toda posição aberta pertence à mesma tese (mesmo par, mesma direção)
+  // OPERAÇÃO ÚNICA EXCLUSIVA: uma tese por vez — mesmo instrumento, mesma direção.
+  //
+  // A referência vem de qualquer ordem que PERTENÇA à operação em curso, e não
+  // apenas das que estão `Aberta`. Fechar a última ordem NÃO finaliza a Operação
+  // Única: ela permanece em andamento até a Finalização formal, que é o ato que
+  // limpa as grades e zera activeOperation. Enquanto isso não acontece, as ordens
+  // que estão nas grades continuam sendo daquela operação.
+  //
+  // A versão anterior procurava referência só entre ordens `Aberta`. Com a Gênese
+  // já fechada e a operação ainda viva, ela não encontrava nada e liberava a
+  // abertura de outro instrumento e outra direção — a operação passava a conter
+  // duas teses. O estado resultante é um beco sem saída: a Finalização o bloqueia
+  // corretamente, mas numa ordem fechada `par`, `tipo` e `status` ficam todos
+  // desabilitados na grade, e as únicas saídas restantes destroem informação.
+  //
+  // operationOrderIsLive é a MESMA função que o domínio usa para montar a
+  // operação (operationLiveOrders). Duas definições de "pertence à operação" foi
+  // exatamente o que abriu o buraco; não se reintroduz uma cópia local aqui.
   let ref=null;
   outer:
   for(let p2=0;p2<S.phases.length;p2++){
@@ -411,16 +428,16 @@ function orderGateMsg(pi, oi){
     for(let o2=0;o2<os.length;o2++){
       if(p2===pi&&o2===oi) continue;
       const q=os[o2];
-      if(q.status==='Aberta'&&q.par){ ref=q; break outer; }
+      if(operationOrderIsLive(q)&&q.par){ ref=q; break outer; }
     }
   }
   if(ref){
     const norm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     if(o.par && norm(o.par)!==norm(ref.par)){
-      return `🚫 Operação Única Exclusiva (Art. 3.6): já existe posição aberta em ${ref.par}. Não é permitido abrir ${o.par} enquanto a operação atual não for encerrada.`;
+      return `🚫 Operação Única Exclusiva (Art. 3.6): a operação em andamento é em ${ref.par}. Não é permitido abrir ${o.par} enquanto ela não for formalmente finalizada — fechar as ordens não encerra a operação.`;
     }
     if(o.tipo && ref.tipo && o.tipo!==ref.tipo){
-      return `🚫 Operação Única (Art. 3.5): a tese ativa é ${ref.tipo} em ${ref.par}. Posição na direção contrária não pertence à mesma tese — encerre a operação antes de inverter.`;
+      return `🚫 Operação Única (Art. 3.5): a tese em andamento é ${ref.tipo} em ${ref.par}. Posição na direção contrária não pertence à mesma tese — finalize a operação antes de inverter.`;
     }
   }
   return null;
