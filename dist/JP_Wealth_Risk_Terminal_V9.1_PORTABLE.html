@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'e340e34e589ce1f6';
+const JP_WEALTH_BUILD_ID = '8adfbd7793bceb25';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -13242,11 +13242,15 @@ function bindContab(){
   // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
     const api=window.JPWOperation;
-    if(!api || typeof api.openReview!=='function'){
+    if(!api || typeof api.start!=='function'){
       alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    api.openReview();
+    // PREFLIGHT, e nao a revisao direta: ele decide entre bloquear (com a ordem
+    // impeditiva nomeada), pedir complementacao dos resultados ausentes, ou
+    // seguir para a revisao canonica. A consolidacao segue exclusiva de
+    // finalizeOperation — nada aqui a alcanca sem passar pela revisao.
+    api.start();
   });
 }
 // ============ NAV ============
@@ -28114,6 +28118,139 @@ function operationReviewHTML(r, defesas){
       '<div class="modal-sub">A captura nunca se aplicou durante esta operação, e nenhuma falha foi registrada. O registro guardará a ausência como ausência — não como Fase 1 nem como medição concluída. A finalização não é bloqueada por isso.</div></div>'):'');
 }
 
+// ---------------------------------------------------------------------------
+// PREFLIGHT DA FINALIZAÇÃO
+// ---------------------------------------------------------------------------
+// Orquestra; NÃO consolida. Decide entre bloquear, complementar ou seguir para a
+// revisão canônica. A consolidação continua sendo exclusividade de
+// finalizeOperation, e nada aqui a chama direto.
+//
+// Só ordens FECHADAS precisam de resultado: netOpAtual() soma exclusivamente
+// `status==='Fechada'`. Exigir resultado de uma ordem 'Migrada' bloquearia a
+// finalização por um dado que aquela linha nunca teve motivo para ter.
+function operationOrderLabel(pi, oi, o){
+  const slot = (pi===0 && oi===0) ? 'GÊNESE' : (pi===0 ? 'DEF '+oi : 'DEF '+(pi+1)+'.'+(oi+1));
+  const partes = [slot];
+  if (o && o.par) partes.push(String(o.par));
+  if (o && o.id) partes.push('ID '+String(o.id));
+  return partes.join(' · ');
+}
+
+function operationPreflight(){
+  const vivas = operationLiveOrders();
+  if (!vivas.length) {
+    return { estado:'no_operation',
+      mensagem:'Não há operação registrada nas grades para finalizar.' };
+  }
+  const abertas = vivas.filter(x => x.o.status === 'Aberta');
+  if (abertas.length) return { estado:'blocked', abertas };
+  const incompletas = vivas.filter(x =>
+    x.o.status === 'Fechada' &&
+    (typeof orderResultMissing === 'function' ? orderResultMissing(x.o) : !Number.isFinite(x.o.result)));
+  if (incompletas.length) return { estado:'incomplete', incompletas };
+  return { estado:'ready', ordens: vivas.length };
+}
+
+// Superfície de BLOQUEIO. Nomeia as ordens que impedem o encerramento e não muta
+// nada — nem status, nem resultado, nem identidade. Antes o botão simplesmente
+// sumia; agora ele existe e explica.
+function openFinalizeBlockedModal(abertas){
+  const box=$('modalBox');
+  $('modalOverlay').classList.add('show');
+  const lista = abertas.map(x =>
+    '<li>'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</li>').join('');
+  const umaSo = abertas.length === 1;
+  const genese = abertas.some(x => x.pi===0 && x.oi===0);
+  box.innerHTML =
+    '<h3>Finalizar Operação</h3>'+
+    '<div class="modal-err show">🚫 Não é possível finalizar esta operação.</div>'+
+    '<div class="modal-sub">'+
+      (genese
+        ? 'A Ordem Gênese permanece aberta. Feche a posição antes de realizar o encerramento formal.'
+        : (umaSo
+            ? 'Existe uma ordem aberta vinculada à operação. Feche todas as posições antes da consolidação.'
+            : 'Existem ordens abertas vinculadas à operação. Feche todas as posições antes da consolidação.'))+
+    '</div>'+
+    '<div class="modal-q"><div class="ql">'+(umaSo?'Ordem aberta':'Ordens abertas')+':</div>'+
+      '<ul style="margin:6px 0 0 18px">'+lista+'</ul></div>'+
+    '<div class="modal-sub">Fechar uma ordem encerra uma posição. Finalizar a Operação Única consolida o resultado e a registra no Histórico — Art. 4.4.</div>'+
+    '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+  $('modalCancel').addEventListener('click', closeModal);
+  $('modalCancel').focus();
+}
+
+// Superfície de COMPLEMENTAÇÃO. Uma só, com todas as ordens incompletas
+// identificadas. Os campos são RASCUNHO: nada toca S enquanto o operador não
+// confirmar, e cancelar não deixa metade dos valores aplicados.
+function openFinalizeCompletionModal(incompletas){
+  const box=$('modalBox');
+  $('modalOverlay').classList.add('show');
+  const linhas = incompletas.map((x, i) =>
+    '<div class="modal-q" data-qid="ord'+i+'">'+
+      '<div class="ql">'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</div>'+
+      '<input type="text" inputmode="decimal" data-compl="'+i+'" autocomplete="off" placeholder="informe">'+
+      '<div class="modal-err">Informe um número. Ponto ou vírgula decimal; sem separador de milhar. Em branco não é zero — se fechou no zero a zero, digite <b>0</b>.</div>'+
+    '</div>').join('');
+  box.innerHTML =
+    '<h3>Finalizar Operação — completar resultados</h3>'+
+    '<div class="modal-sub">'+
+      (incompletas.length===1
+        ? 'Uma ordem fechada está sem resultado informado. '
+        : incompletas.length+' ordens fechadas estão sem resultado informado. ')+
+      'O resultado entra no consolidado da Operação Única e no registro do Histórico, então precisa ser informado antes do encerramento.</div>'+
+    linhas+
+    '<div class="modal-actions">'+
+      '<button class="modal-btn cancel" id="modalCancel">Cancelar</button>'+
+      '<button class="modal-btn confirm" id="modalConfirm">Confirmar resultados</button>'+
+    '</div>';
+  $('modalCancel').addEventListener('click', closeModal);
+  $('modalConfirm').addEventListener('click', () => {
+    // RASCUNHO: lê tudo, valida tudo, e só então aplica. Validar-e-aplicar em
+    // laço deixaria as primeiras ordens gravadas e as últimas não, se alguma
+    // falhasse no meio — e cancelar depois disso não teria o que desfazer.
+    const rascunho = [];
+    let algumInvalido = false;
+    incompletas.forEach((x, i) => {
+      const campo = box.querySelector('[data-compl="'+i+'"]');
+      const erro  = box.querySelector('[data-qid="ord'+i+'"] .modal-err');
+      const v = (typeof orderParseResult === 'function')
+        ? orderParseResult(campo ? campo.value : '')
+        : NaN;
+      if (!Number.isFinite(v)) { if (erro) erro.classList.add('show'); algumInvalido = true; }
+      else { if (erro) erro.classList.remove('show'); rascunho.push({ x, v }); }
+    });
+    if (algumInvalido) return;   // NADA foi aplicado
+
+    rascunho.forEach(({ x, v }) => { x.o.result = v; });
+    save();
+    closeModal();
+    if (typeof render === 'function') render();
+    if (typeof renderPhases === 'function') renderPhases();
+    // REVALIDA antes de seguir: o estado mudou, e o preflight decide de novo.
+    startFinalizeOperation();
+  });
+  const primeiro = box.querySelector('[data-compl="0"]');
+  if (primeiro) primeiro.focus();
+}
+
+// PONTO DE ENTRADA do botão. Nunca chama finalizeOperation direto.
+function startFinalizeOperation(){
+  const pre = operationPreflight();
+  if (pre.estado === 'blocked')    return openFinalizeBlockedModal(pre.abertas);
+  if (pre.estado === 'incomplete') return openFinalizeCompletionModal(pre.incompletas);
+  if (pre.estado === 'no_operation'){
+    const box=$('modalBox');
+    $('modalOverlay').classList.add('show');
+    box.innerHTML='<h3>Finalizar Operação</h3>'+
+      '<div class="modal-sub">'+esc(pre.mensagem)+'</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click', closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  return openFinalizeOperationModal();
+}
+
 function openFinalizeOperationModal(){
   const pre=operationCanFinalize();
   const box=$('modalBox');
@@ -28331,7 +28468,10 @@ window.JPWOperation = {
   buildSnapshot: operationBuildSnapshot,
   finalize: finalizeOperation,
   liveOrders: operationLiveOrders,
-  openReview: openFinalizeOperationModal
+  openReview: openFinalizeOperationModal,
+  // Ponto de entrada do botao: preflight -> bloqueio | complementacao | revisao.
+  start: startFinalizeOperation,
+  preflight: operationPreflight
 };
 // ============ HISTÓRICO DE OPERAÇÕES ÚNICAS (Camada 3 — N1, leitura) ============
 // Workspace do Execution Board. Consumidor ESTRITAMENTE somente leitura de

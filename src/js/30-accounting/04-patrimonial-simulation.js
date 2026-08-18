@@ -153,10 +153,14 @@ function bindContab(){
   // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
     const api=window.JPWOperation;
-    if(!api || typeof api.openReview!=='function'){
+    if(!api || typeof api.start!=='function'){
       alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    api.openReview();
+    // PREFLIGHT, e nao a revisao direta: ele decide entre bloquear (com a ordem
+    // impeditiva nomeada), pedir complementacao dos resultados ausentes, ou
+    // seguir para a revisao canonica. A consolidacao segue exclusiva de
+    // finalizeOperation — nada aqui a alcanca sem passar pela revisao.
+    api.start();
   });
 }

@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "f4f59bc042276b0ce878e0a89e38238929dcef41534f4352342a3f2cb7d47dfe"
+      "sha256": "1d49e6fad08b3a6593cd2441e233e25070c3fec656962db9a50fba6be929ed06"
     },
     {
       "order": 24,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "9970ed30343fcbf9dee4b3b6362a325a7ddad75f4a9bd0375841cc049fdf88d3"
+      "sha256": "7259baafabeb450a326280c7c813f9ea5220941c122416254976b87cfd2c528f"
     },
     {
       "order": 67,

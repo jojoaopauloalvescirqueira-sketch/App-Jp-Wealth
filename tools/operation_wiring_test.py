@@ -727,6 +727,272 @@ def run_withdrawing_one_order_keeps_the_operation(page):
     assert r["aberturaDepois"] == r["aberturaAntes"], "a abertura da operacao mudou"
 
 
+# ---------------------------------------------------------------------------
+# Bloco D — preflight da finalizacao
+# ---------------------------------------------------------------------------
+# O preflight ORQUESTRA e nao consolida: bloqueia com a ordem impeditiva
+# nomeada, pede complementacao dos resultados genuinamente ausentes, ou segue
+# para a revisao canonica. finalizeOperation continua sendo a unica autoridade
+# de consolidacao, e nada aqui a alcanca sem passar pela revisao.
+
+PREPARAR_D = """() => {
+  window.__avisos = [];
+  window.alert = m => window.__avisos.push(String(m));
+  window.confirm = () => true;
+  window.prompt = () => null;
+  // cfg: {abertas:[[pi,oi]], fechadas:[[pi,oi,result]]}  result null = ausente
+  window.__cenarioD = (cfg) => {
+    S.params.saldoIni = 40000; S.cycleRealizado = 0;
+    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+    S.phaseUnlocked = [true,false,false,false];
+    S.operationHistory = {schemaVersion:1, records:[]};
+    const base = (id,par) => ({id, par:par||'EURUSD', tipo:'BUY', lote:0.01,
+      entry:1.10, sl:1.09, tp:1.20, openedAt:'2026-08-01T10:00:00.000Z'});
+    (cfg.abertas||[]).forEach(([pi,oi], n) => {
+      const o = base('A'+n); o.status='Aberta';
+      S.phases[pi].orders[oi] = o;
+    });
+    (cfg.fechadas||[]).forEach(([pi,oi,res], n) => {
+      const o = base('F'+n); o.status='Fechada'; o.closedAt='2026-08-05T10:00:00.000Z';
+      if (res === null || res === undefined) { delete o.result; } else { o.result = res; }
+      S.phases[pi].orders[oi] = o;
+    });
+    S.activeOperation = {schemaVersion:1, operationId:'op_d',
+      openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+      maxAccountPhaseReached:0};
+    save();
+    navigateToScreen('exec'); JPWExec.ui.selectView('motor');
+    render(); renderPhases();
+  };
+  window.__foto = () => JSON.stringify({
+    ciclo:S.cycleRealizado, phases:S.phases, registros:S.operationHistory.records,
+    op:S.activeOperation, unlocked:S.phaseUnlocked
+  });
+  window.__superficie = () => {
+    const box = document.getElementById('modalBox');
+    if (!document.getElementById('modalOverlay').classList.contains('show')) return 'fechada';
+    if (box.querySelector('[data-compl="0"]')) return 'complementacao';
+    if (box.querySelector('#finalConfirm')) return 'revisao';
+    if (box.textContent.indexOf('Não é possível finalizar') >= 0) return 'bloqueio';
+    return 'outra';
+  };
+  window.__clicaFinalizar = () => {
+    const b = document.getElementById('archiveOpBtn');
+    if (!b) return 'botao ausente';
+    b.click();
+    return __superficie();
+  };
+}"""
+
+
+def run_preflight_blocks_open_genesis(page):
+    """(1) Genese aberta: botao visivel, clique bloqueia, estado inalterado."""
+    page.evaluate(PREPARAR_D)
+    r = page.evaluate(
+        """() => {
+          __cenarioD({abertas:[[0,0]], fechadas:[[0,1,250]]});
+          const btn = document.getElementById('archiveOpBtn');
+          const visivel = btn && btn.style.display !== 'none';
+          const antes = __foto();
+          const superficie = __clicaFinalizar();
+          const texto = document.getElementById('modalBox').textContent;
+          return {visivel, superficie, texto, intacto: __foto() === antes,
+                  registros: S.operationHistory.records.length};
+        }"""
+    )
+    assert r["visivel"], (
+        "o botao Finalizar Operacao esta ESCONDIDO com ordem aberta — a acao tem de "
+        "existir e explicar, nao sumir"
+    )
+    assert r["superficie"] == "bloqueio", f"superficie apresentada: {r['superficie']!r}"
+    assert "Ordem Gênese" in r["texto"], (
+        f"a mensagem nao identifica a Genese: {r['texto'][:200]!r}"
+    )
+    assert "GÊNESE" in r["texto"], "a ordem impeditiva nao foi nomeada na lista"
+    assert r["intacto"], "o clique MUTOU o estado apesar do bloqueio"
+    assert r["registros"] == 0, "o bloqueio gravou Historico"
+
+
+def run_preflight_blocks_other_open_order(page):
+    """(2) Outra ordem aberta: mesmo comportamento, sem citar Genese."""
+    r = page.evaluate(
+        """() => {
+          __cenarioD({abertas:[[0,2]], fechadas:[[0,0,250]]});
+          const antes = __foto();
+          const superficie = __clicaFinalizar();
+          const texto = document.getElementById('modalBox').textContent;
+          return {superficie, texto, intacto: __foto() === antes};
+        }"""
+    )
+    assert r["superficie"] == "bloqueio", f"superficie: {r['superficie']!r}"
+    assert "Ordem Gênese" not in r["texto"], (
+        "a mensagem culpou a Genese sendo outra a ordem aberta"
+    )
+    assert "DEF 2" in r["texto"], f"a ordem impeditiva nao foi nomeada: {r['texto'][:200]!r}"
+    assert r["intacto"], "o clique mutou o estado"
+
+
+def run_preflight_asks_for_the_single_missing_result(page):
+    """(3) Uma fechada sem resultado: a superficie mostra exatamente aquela."""
+    r = page.evaluate(
+        """() => {
+          __cenarioD({fechadas:[[0,0,250],[0,1,null]]});
+          const superficie = __clicaFinalizar();
+          const box = document.getElementById('modalBox');
+          const campos = box.querySelectorAll('[data-compl]').length;
+          return {superficie, campos, texto: box.textContent};
+        }"""
+    )
+    assert r["superficie"] == "complementacao", f"superficie: {r['superficie']!r}"
+    assert r["campos"] == 1, f"campos apresentados: {r['campos']} — so uma ordem falta"
+    assert "DEF 1" in r["texto"], f"a ordem incompleta nao foi identificada: {r['texto'][:200]!r}"
+    assert "GÊNESE" not in r["texto"], "pediu resultado de uma ordem que ja o tinha"
+
+
+def run_preflight_uses_one_surface_for_many(page):
+    """(4) Varias incompletas: UMA superficie, cada ordem identificada."""
+    r = page.evaluate(
+        """() => {
+          __cenarioD({fechadas:[[0,0,null],[0,1,null],[1,0,null]]});
+          const superficie = __clicaFinalizar();
+          const box = document.getElementById('modalBox');
+          const rotulos = [...box.querySelectorAll('[data-qid^="ord"] .ql')].map(x => x.textContent);
+          return {superficie, campos: box.querySelectorAll('[data-compl]').length, rotulos};
+        }"""
+    )
+    assert r["superficie"] == "complementacao", f"superficie: {r['superficie']!r}"
+    assert r["campos"] == 3, f"esperava 3 campos numa unica superficie, veio {r['campos']}"
+    assert len(set(r["rotulos"])) == 3, (
+        f"os rotulos nao distinguem as ordens: {r['rotulos']} — o operador nao saberia "
+        "qual resultado esta informando"
+    )
+    assert any("GÊNESE" in x for x in r["rotulos"]), f"rotulos: {r['rotulos']}"
+
+
+def run_completion_accepts_zero_negative_positive(page):
+    """(5)(6)(7) Zero, negativo e positivo sao complementacoes validas."""
+    for txt, esperado in (("0", 0), ("-500", -500), ("1420,50", 1420.5)):
+        r = page.evaluate(
+            """txt => {
+              __cenarioD({fechadas:[[0,0,null]]});
+              __clicaFinalizar();
+              document.querySelector('[data-compl="0"]').value = txt;
+              document.getElementById('modalConfirm').click();
+              return {superficie: __superficie(),
+                      result: S.phases[0].orders[0].result,
+                      tipo: typeof S.phases[0].orders[0].result};
+            }""", txt)
+        assert r["result"] == esperado and r["tipo"] == "number", (
+            f"{txt!r}: gravou {r['result']!r} ({r['tipo']}), esperado {esperado}"
+        )
+        assert r["superficie"] == "revisao", (
+            f"{txt!r}: apos completar, a superficie deveria ser a revisao canonica, "
+            f"veio {r['superficie']!r}"
+        )
+        page.evaluate("() => closeModal()")
+
+
+def run_completion_blocks_invalid(page):
+    """(8) Invalido e parse parcial bloqueiam, e nada e aplicado."""
+    for txt in ("", "abc", "1.2.3", "1.420,50"):
+        r = page.evaluate(
+            """txt => {
+              __cenarioD({fechadas:[[0,0,null]]});
+              const antes = __foto();
+              __clicaFinalizar();
+              document.querySelector('[data-compl="0"]').value = txt;
+              document.getElementById('modalConfirm').click();
+              return {superficie: __superficie(),
+                      erroVisivel: !!document.querySelector('[data-qid="ord0"] .modal-err.show'),
+                      temResult: Number.isFinite(S.phases[0].orders[0].result),
+                      intacto: __foto() === antes};
+            }""", txt)
+        assert r["superficie"] == "complementacao", (
+            f"{txt!r}: saiu da complementacao ({r['superficie']!r})"
+        )
+        assert r["erroVisivel"], f"{txt!r}: nao foi acusado"
+        assert not r["temResult"], f"{txt!r}: gravou resultado apesar de invalido"
+        assert r["intacto"], f"{txt!r}: mutou o estado"
+        page.evaluate("() => closeModal()")
+
+
+def run_completion_cancel_applies_nothing(page):
+    """(9) Cancelar com valores parciais digitados nao aplica NADA."""
+    r = page.evaluate(
+        """() => {
+          __cenarioD({fechadas:[[0,0,null],[0,1,null],[1,0,null]]});
+          const antes = __foto();
+          __clicaFinalizar();
+          // O operador preenche DUAS das tres e desiste.
+          document.querySelector('[data-compl="0"]').value = '250';
+          document.querySelector('[data-compl="1"]').value = '-80';
+          document.getElementById('modalCancel').click();
+          return {superficie: __superficie(), intacto: __foto() === antes,
+                  r0: Number.isFinite(S.phases[0].orders[0].result),
+                  r1: Number.isFinite(S.phases[0].orders[1].result),
+                  registros: S.operationHistory.records.length,
+                  op: !!S.activeOperation};
+        }"""
+    )
+    assert r["superficie"] == "fechada", f"o modal nao fechou: {r['superficie']!r}"
+    assert not r["r0"] and not r["r1"], (
+        "valores digitados e NAO confirmados foram aplicados — cancelar deixaria a "
+        "operacao com metade dos resultados gravados"
+    )
+    assert r["intacto"], "cancelar mutou o estado"
+    assert r["registros"] == 0, "cancelar gravou Historico"
+    assert r["op"], "cancelar destruiu a operacao viva"
+
+
+def run_completion_revalidates_then_reviews(page):
+    """(10)(11)(12) Completo segue para a revisao; ja completo nao pergunta nada."""
+    completo = page.evaluate(
+        """() => {
+          __cenarioD({fechadas:[[0,0,250],[0,1,-80]]});
+          const superficie = __clicaFinalizar();
+          return {superficie, temCampo: !!document.querySelector('[data-compl]')};
+        }"""
+    )
+    assert completo["superficie"] == "revisao", (
+        f"(11) operacao completa deveria ir direto a revisao, veio {completo['superficie']!r}"
+    )
+    assert not completo["temCampo"], "(11) abriu questionario sem haver o que completar"
+    page.evaluate("() => closeModal()")
+
+    encadeado = page.evaluate(
+        """() => {
+          __cenarioD({fechadas:[[0,0,null],[0,1,null]]});
+          const s1 = __clicaFinalizar();
+          document.querySelector('[data-compl="0"]').value = '250';
+          document.querySelector('[data-compl="1"]').value = '-80';
+          document.getElementById('modalConfirm').click();
+          const s2 = __superficie();
+          // A revisao tem de refletir os valores recem-informados.
+          const box = document.getElementById('modalBox');
+          const linhas = {};
+          box.querySelectorAll('#finalReview .modal-q').forEach(q => {
+            const l=q.querySelector('.ql'), v=q.querySelector('.op-final-val');
+            if(l&&v) linhas[l.textContent.trim()] = v.textContent.trim();
+          });
+          return {s1, s2, linhas, net: netOpAtual(),
+                  registros: S.operationHistory.records.length};
+        }"""
+    )
+    assert encadeado["s1"] == "complementacao", f"(12) primeira superficie: {encadeado['s1']!r}"
+    assert encadeado["s2"] == "revisao", (
+        f"(10) apos completar, o preflight deveria revalidar e abrir a revisao, veio "
+        f"{encadeado['s2']!r}"
+    )
+    assert encadeado["net"] == 170, f"(10) consolidado apos complementar: {encadeado['net']}"
+    assert encadeado["registros"] == 0, (
+        "(10) a complementacao gravou Historico — ela completa estado, nao finaliza"
+    )
+    assert "Resultado líquido" in encadeado["linhas"], (
+        f"(10) a revisao nao apresentou o resultado: {list(encadeado['linhas'])}"
+    )
+    page.evaluate("() => closeModal()")
+
+
 def main():
     server, url = serve()
     try:
@@ -742,6 +1008,16 @@ def main():
             # ---- R2: retirada explicita da ordem do ciclo ----
             run_status_reverted_withdraws_the_order(page)
             run_withdrawing_one_order_keeps_the_operation(page)
+            # ---- Bloco D: preflight da finalizacao ----
+            page.evaluate(PREPARAR_D)
+            run_preflight_blocks_open_genesis(page)
+            run_preflight_blocks_other_open_order(page)
+            run_preflight_asks_for_the_single_missing_result(page)
+            run_preflight_uses_one_surface_for_many(page)
+            run_completion_accepts_zero_negative_positive(page)
+            run_completion_blocks_invalid(page)
+            run_completion_cancel_applies_nothing(page)
+            run_completion_revalidates_then_reviews(page)
             run_deleting_last_operational_order_abandons(page)
             run_deleting_one_of_many_keeps_the_operation(page)
             run_new_thesis_never_inherits_orphan_identity(page)
