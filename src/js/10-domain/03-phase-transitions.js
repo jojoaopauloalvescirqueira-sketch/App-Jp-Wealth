@@ -482,6 +482,29 @@ const DIVERGENCE_REASONS=[
 // Chamar prejuizo de lucro era o defeito; renomear o conceito normativo seria
 // outro. Os identificadores internos nao mudaram.
 // Depois de confirmada, a linha trava por completo: só pode ser apagada, nunca mais editada. ----
+// Leitura ÚNICA do resultado de uma ordem. NaN significa AUSENTE ou INVÁLIDO —
+// nunca 0. Zero é resultado válido e é afirmação do operador: a ordem fechou no
+// zero a zero. O `parseFloat(x)||0` que existia aqui colapsava três estados
+// distintos num só — ausência, texto inválido e zero real —, e um resultado em
+// branco entrava silenciosamente em netOpAtual() como zero.
+//
+// Aceita vírgula decimal porque o operador digita em pt-BR.
+function orderParseResult(txt){
+  const t=String(txt==null?'':txt).trim().replace(',','.');
+  if(!t) return NaN;
+  if(!/^-?\d+(?:\.\d+)?$/.test(t)) return NaN;
+  return parseFloat(t);
+}
+// Ordem cujo resultado NÃO foi informado. Só reconhece ausência GENUÍNA: valor
+// que não é número finito. Ordens gravadas antes desta correção, que receberam
+// zero por coerção, são indistinguíveis de um zero verdadeiro — e adivinhar
+// quais eram quais seria fabricar dado histórico.
+function orderResultMissing(o){
+  // Number.isFinite NAO coage: devolve false para undefined, null, '' e '5'.
+  // Um typeof extra seria redundante e so tornaria a precedencia confusa.
+  return !!o && !Number.isFinite(o.result);
+}
+
 function openCloseOrderModal(pi,oi){
   const o=S.phases[pi].orders[oi];
   const box=$('modalBox');
@@ -491,8 +514,9 @@ function openCloseOrderModal(pi,oi){
     <h3>🔒 Confirmar Fechamento — ${esc(o.id)||'(sem ID)'} ${esc(o.par)}</h3>
     <div class="modal-sub">Depois de confirmado, esta linha NÃO pode mais ser editada — só apagada. ${projetado>0?'Risco programado desta ordem: '+fmtMoney(projetado):''}</div>
     <div class="modal-q" data-qid="resultado">
-      <div class="ql">Resultado da ordem ($) — negativo se foi prejuízo:</div>
-      <input type="text" inputmode="decimal" id="closeResultInput" placeholder="0" value="${esc(o.result||'')}">
+      <div class="ql">Resultado da ordem ($) — negativo se foi prejuízo, <b>0</b> se fechou no zero a zero:</div>
+      <input type="text" inputmode="decimal" id="closeResultInput" placeholder="informe" value="${Number.isFinite(o.result)?esc(String(o.result)):''}">
+      <div class="modal-err">Informe o resultado. Em branco não é zero — se a ordem fechou no zero a zero, digite <b>0</b>.</div>
     </div>
     <div class="modal-q" data-qid="confirmtxt">
       <div class="ql">Digite <b>FECHADO</b> para confirmar:</div>
@@ -505,12 +529,22 @@ function openCloseOrderModal(pi,oi){
     </div>`;
   $('modalCancel').addEventListener('click', closeModal);
   $('modalConfirm').addEventListener('click',()=>{
-    const resultVal=parseFloat(box.querySelector('#closeResultInput').value)||0;
+    const resultVal=orderParseResult(box.querySelector('#closeResultInput').value);
     const confirmTxt=box.querySelector('#closeConfirmInput').value.trim();
+    let falhou=false;
+    // RESULTADO EXPLÍCITO é condição de fechamento. Uma ordem não pode nascer
+    // fechada sem resultado: ela entra em netOpAtual(), que alimenta o
+    // consolidado da Operação Única e, por ele, o registro imutável.
+    box.querySelector('[data-qid="resultado"] .modal-err').classList.remove('show');
+    if(!Number.isFinite(resultVal)){
+      box.querySelector('[data-qid="resultado"] .modal-err').classList.add('show');
+      falhou=true;
+    }
     if(confirmTxt!=='FECHADO'){
       box.querySelector('[data-qid="confirmtxt"] .modal-err').classList.add('show');
-      return;
+      falhou=true;
     }
+    if(falhou) return;
     o.status='Fechada';
     o.result=resultVal;
     // Carimbo de fechamento da ordem — capturado no ato, uma única vez.
