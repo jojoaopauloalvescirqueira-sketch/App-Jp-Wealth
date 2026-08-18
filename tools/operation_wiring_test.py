@@ -752,6 +752,11 @@ PREPARAR_D = """() => {
       const o = base('A'+n); o.status='Aberta';
       S.phases[pi].orders[oi] = o;
     });
+    (cfg.migradas||[]).forEach(([pi,oi], n) => {
+      const o = base('M'+n); o.status='Migrada';
+      delete o.result;                       // Migrada NUNCA foi fechada: nao tem resultado
+      S.phases[pi].orders[oi] = o;
+    });
     (cfg.fechadas||[]).forEach(([pi,oi,res], n) => {
       const o = base('F'+n); o.status='Fechada'; o.closedAt='2026-08-05T10:00:00.000Z';
       if (res === null || res === undefined) { delete o.result; } else { o.result = res; }
@@ -993,6 +998,78 @@ def run_completion_revalidates_then_reviews(page):
     page.evaluate("() => closeModal()")
 
 
+def run_completion_applies_all_or_nothing(page):
+    """Confirmar com MISTURA de valido e invalido nao aplica NENHUM.
+
+    Validar-e-aplicar em laco gravaria as ordens validas e recusaria as
+    invalidas: a operacao ficaria com metade dos resultados dentro, e o operador
+    veria a mesma tela sem saber que parte ja foi para o estado. O contrato e
+    tudo-ou-nada.
+    """
+    r = page.evaluate(
+        """() => {
+          __cenarioD({fechadas:[[0,0,null],[0,1,null],[1,0,null]]});
+          const antes = __foto();
+          __clicaFinalizar();
+          document.querySelector('[data-compl="0"]').value = '250';    // valido
+          document.querySelector('[data-compl="1"]').value = 'abc';    // INVALIDO
+          document.querySelector('[data-compl="2"]').value = '-80';    // valido
+          document.getElementById('modalConfirm').click();
+          return {superficie: __superficie(),
+                  erro1: !!document.querySelector('[data-qid="ord1"] .modal-err.show'),
+                  aplicados: [S.phases[0].orders[0].result,
+                              S.phases[0].orders[1].result,
+                              S.phases[1].orders[0].result].filter(Number.isFinite).length,
+                  intacto: __foto() === antes};
+        }"""
+    )
+    assert r["superficie"] == "complementacao", (
+        f"saiu da complementacao com entrada invalida: {r['superficie']!r}"
+    )
+    assert r["erro1"], "a ordem invalida nao foi acusada"
+    assert r["aplicados"] == 0, (
+        f"{r['aplicados']} de 3 resultados foram aplicados apesar de um ser invalido — "
+        "aplicacao PARCIAL: o operador ficaria com metade dos valores no estado sem "
+        "saber, e cancelar nao teria o que desfazer"
+    )
+    assert r["intacto"], "o estado foi mutado por uma confirmacao recusada"
+    page.evaluate("() => closeModal()")
+
+
+def run_migrated_order_needs_no_result(page):
+    """Ordem 'Migrada' nao tem resultado a informar, e nao pode bloquear.
+
+    netOpAtual() soma exclusivamente `status==='Fechada'`. Uma Migrada e ordem
+    VIVA — conta para a exclusividade da tese — mas nunca foi fechada: exigir
+    resultado dela pediria um dado que aquela linha nao tem motivo para ter, e a
+    finalizacao ficaria presa num questionario impossivel de satisfazer.
+    """
+    r = page.evaluate(
+        """() => {
+          __cenarioD({migradas:[[0,0]], fechadas:[[1,0,250]]});
+          const vivas = operationLiveOrders().length;
+          const pre = JPWOperation.preflight();
+          const superficie = __clicaFinalizar();
+          const campos = document.querySelectorAll('[data-compl]').length;
+          const texto = document.getElementById('modalBox').textContent;
+          return {vivas, estado: pre.estado, superficie, campos, texto};
+        }"""
+    )
+    assert r["vivas"] == 2, (
+        f"a fixture nao produziu Migrada + Fechada vivas: {r['vivas']} — sem a Migrada "
+        "o caso nao exercita nada"
+    )
+    assert r["estado"] == "ready", (
+        f"o preflight considerou a operacao incompleta ({r['estado']!r}) por causa de "
+        "uma ordem Migrada, que nunca teve resultado a informar"
+    )
+    assert r["superficie"] == "revisao", f"superficie: {r['superficie']!r}"
+    assert r["campos"] == 0, (
+        f"abriu {r['campos']} campo(s) de complementacao para uma operacao completa"
+    )
+    page.evaluate("() => closeModal()")
+
+
 def main():
     server, url = serve()
     try:
@@ -1018,6 +1095,8 @@ def main():
             run_completion_blocks_invalid(page)
             run_completion_cancel_applies_nothing(page)
             run_completion_revalidates_then_reviews(page)
+            run_completion_applies_all_or_nothing(page)
+            run_migrated_order_needs_no_result(page)
             run_deleting_last_operational_order_abandons(page)
             run_deleting_one_of_many_keeps_the_operation(page)
             run_new_thesis_never_inherits_orphan_identity(page)
