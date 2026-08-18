@@ -63,11 +63,27 @@ materiais. Cada correção em commit próprio, com campanha de mutação individ
 - **`17214ba`** — as citações `Art. 3.5`/`3.6` apontavam para artigos
   inexistentes. Corrigidas para `4.2`, `4.4` e `5.1`, conferidas contra a Norma
   Vigente.
+- **`e7313aa`** — a sonda que decide o destino de uma finalização devolvia
+  booleano, e um `catch(_){ return false; }` transformava leitura impossível em
+  prova de ausência. `setItem` gravava, uma exceção posterior interrompia o
+  fluxo, a leitura de volta falhava, o sistema concluía "não gravou", a memória
+  voltava para a operação ativa e o `save()` seguinte apagava do disco uma
+  finalização que estava lá. Passou a haver três desfechos — `CONFIRMED`,
+  `NOT_PERSISTED` e `UNKNOWN` —, com a confirmação exigindo `operationId` **e**
+  `finalizedAt`, porque uma tentativa anterior da mesma operação daria como
+  persistida uma gravação que não foi esta. No `UNKNOWN` nada é revertido, nada
+  é declarado, e uma barreira própria — separada do portão genérico e sem função
+  pública de liberação — veta toda gravação futura.
+
+`be43dde` e `e7313aa` são itens distintos. O primeiro foi commitado sob o rótulo
+do segundo por perda de contexto, e a correção de rótulo está registrada no
+`CURRENT-STATE.md`.
 
 #### Evidência
 
-56 experimentos de mutação, todos acusados por asserção própria — nenhum aceito
-por `TypeError`. Gate `standard` 17/17 em cada commit, lido integralmente.
+65 experimentos de mutação, todos acusados por asserção própria — nenhum aceito
+por `TypeError`. Gate `standard` 17/17 em cada commit e tier `full` 28/28 sobre o
+candidato, ambos lidos integralmente.
 
 Categoria de teste nova: `operation_wiring_test.py`, evento real de DOM
 atravessando domínio, estado e disco. Criada porque o BLOCKER passou por testes

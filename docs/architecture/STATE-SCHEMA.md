@@ -45,13 +45,39 @@ jpwealth_v9_state
   admite **três** valores — `observed`, `unobserved` e `degraded` —, porque
   "capturado", "nunca capturado" e "captura falhou" são estados
   epistemologicamente distintos e o par binário anterior fazia o terceiro se
-  passar pelo primeiro. Invariante de integridade: `openedAt <= closedAt` quando
+  passar pelo primeiro. O literal persistido para o estado do meio é
+  `unobserved`; `unknown` aparece em discussão como sinônimo informal, mas não é
+  o valor gravado. Invariante de integridade: `openedAt <= closedAt` quando
   ambos existem; uma operação não pode terminar antes de começar.
 - `pivotStudies`: Estudos dos Pivots — lista histórica de estudos por
   instrumento e período, cada um contendo seus pivots H1/H4. Vários estudos do
   mesmo instrumento coexistem. Só causas persistem (timeframe, extremos de tempo
   e preço, correção informada); direção, amplitude, duração, ranking e toda a
   estatística são derivados. Contrato em `PIVOT-STUDIES.md`.
+
+## Desfecho de gravação — fora do documento persistido
+
+`operationProbePersisted(record)` responde em **três** estados sobre uma
+tentativa específica de gravação:
+
+| desfecho | significado | consequência |
+|---|---|---|
+| `CONFIRMED` | `operationId` **e** `finalizedAt` daquela tentativa estão no disco | mantém o candidato; finalização concluída |
+| `NOT_PERSISTED` | evidência positiva de que a tentativa não chegou ao disco | rollback seguro |
+| `UNKNOWN` | não se prova presença nem ausência | congela: sem rollback, sem veredito, gravação vetada |
+
+A confirmação exige os **dois** campos. Só o `operationId` não basta: uma
+tentativa anterior da mesma operação pode ter gravado, e confirmar por
+identidade daria como persistida uma gravação que não foi esta.
+
+`save() === false` continua sendo prova de não-escrita — os portões retornam
+antes de tocar no armazenamento, o erro de serialização retorna antes do
+`setItem`, e `setItem` é atômico. A ambiguidade vive exclusivamente no caminho
+de **exceção**, que pode vir de antes ou de depois da escrita.
+
+A barreira do `UNKNOWN` é de **sessão** e não entra no documento persistido —
+gravá-la exigiria a gravação que ela veta. Contrato completo na regra 7 de
+`DB-STORAGE-GOVERNANCE.md`.
 
 ## Regras de evolução
 

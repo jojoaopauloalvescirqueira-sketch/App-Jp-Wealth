@@ -88,8 +88,22 @@ commit próprio, com campanha de mutação individual:
 | exclusividade da tese vale até a finalização formal | `f64cea2` | 8 |
 | integridade da Fase da Conta com três estados | `be43dde` | 7 |
 | citações penduradas na guarda de exclusividade | `17214ba` | — |
+| **desfecho da gravação com três estados** | `e7313aa` | 9 |
 
-**56 experimentos de mutação, todos acusados por asserção própria.** Nenhum foi
+**Correção de rótulo, registrada porque o erro foi de método.** `be43dde` foi
+commitado como se fosse o item #8 da fila e não era. Ele trata da integridade
+ternária da **Fase da Conta** (`observed` / `unobserved` / `degraded`) e
+permanece válido como hardening próprio. O #8 da fila era o **desfecho da
+persistência**, corrigido em `e7313aa`.
+
+A troca ocorreu após uma compactação de contexto. Eu havia perdido o
+enunciado, declarei isso — e então formulei perguntas sobre o ternário errado,
+tendo encontrado um ternário legítimo no código e o assumido como sendo o da
+fila. As respostas confirmaram recomendações minhas sobre um assunto que não era
+o item pendente, o que deu à correção uma aparência de validação que ela não
+tinha. Perguntar sobre a coisa errada não é o mesmo que perguntar.
+
+**65 experimentos de mutação, todos acusados por asserção própria.** Nenhum foi
 aceito por `TypeError`. Sete precisaram de correção antes de valer como
 evidência: três testes detectavam por exceção em vez de asserção, dois eram
 mutações infiéis, uma estava pareada com a função errada e uma dependia de
@@ -108,8 +122,25 @@ Norma Vigente acusou **oito numerações penduradas** — `Art. 1.3, 3.5, 3.6, 3
 evidência textual do correspondente vigente. As demais seguem pendentes, na
 seção de pendências.
 
-**Evidência.** Gate `standard` 17/17 em cada commit da série, lido integralmente.
-Tier `full` ainda não executado.
+**O defeito mais grave da série** foi o último. A sonda que decide o destino de
+uma finalização devolvia booleano, e um `catch(_){ return false; }` transformava
+leitura impossível em prova de ausência. Dali saía a perda silenciosa: `setItem`
+grava, uma exceção posterior interrompe o fluxo, a leitura de volta falha, o
+sistema conclui "não gravou", a memória volta para a operação ativa e o próximo
+`save()` sobrescreve o disco — memória e disco discordando sobre se uma operação
+financeira foi formalmente encerrada. Contrato em `DB-STORAGE-GOVERNANCE.md`,
+regra 7.
+
+**Evidência.** Gate `standard` 17/17 em cada commit da série e tier `full`
+**28/28** sobre o candidato, ambos lidos integralmente. Falta a auditoria curta
+dirigida e a inspeção visual humana.
+
+**Ponto para a auditoria dirigida.** A barreira do `UNKNOWN` é deliberadamente
+de sessão. Falta verificar o comportamento **entre sessões**: com o estado nesse
+desfecho, uma reabertura não pode ter fallback que transforme falha de leitura em
+sobrescrita. O esperado é que o disco com o candidato carregue o candidato, o
+disco com o estado anterior carregue o anterior, e um disco ilegível leve ao modo
+de recuperação sem gravar por cima.
 
 ## Integração contínua — 2026-08-17
 
