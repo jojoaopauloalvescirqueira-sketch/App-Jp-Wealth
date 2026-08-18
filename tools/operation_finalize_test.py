@@ -1565,6 +1565,239 @@ def run_review_repaints_after_failed_attempt(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# Consistencia temporal do registro historico (#9)
+# ---------------------------------------------------------------------------
+# Invariante UNICA: openedAt <= closedAt. Uma operacao nao pode terminar antes
+# de comecar. Nenhuma outra regra cronologica entra aqui — nem idade maxima,
+# nem horario de mercado, nem dias uteis, nem duracao minima.
+
+
+def run_chronology_accepts_opening_before_close(page):
+    """Abertura anterior ao encerramento: aceita, como sempre foi."""
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:'2026-08-01T10:00:00.000Z', id:'op_crono_ok'});
+          save();
+          JPWOperation.openReview();
+          const revisao = document.getElementById('finalReview').textContent;
+          __digitar('#finalDefenses','0'); __digitar('#finalConfirm','FECHADO');
+          document.getElementById('modalConfirm').click();
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {gravou: !!rec, revisao,
+                  ordem: rec ? Date.parse(rec.openedAt) <= Date.parse(rec.closedAt) : null};
+        }"""
+    )
+    assert r["gravou"], "operacao cronologicamente valida foi recusada"
+    assert r["ordem"] is True, "registro gravado fora de ordem"
+    assert "posterior ao encerramento" not in r["revisao"], (
+        "a revisao acusou cronologia impossivel num caso valido"
+    )
+
+
+def run_chronology_accepts_equal_timestamps(page):
+    """openedAt == closedAt nao e proibido por esta regra.
+
+    Igualdade exige relogio controlado: sem isso a comparacao seria "openedAt
+    anterior por alguns milissegundos", que e outro caso. O relogio e congelado
+    so durante a construcao e restaurado em seguida.
+    """
+    r = page.evaluate(
+        """() => {
+          const Real = Date;
+          const fixo = Real.parse('2026-08-17T12:00:00.000Z');
+          const Falso = class extends Real {
+            constructor(...a){ if(!a.length) super(fixo); else super(...a); }
+            static now(){ return fixo; }
+          };
+          __semear({openedAt:'2026-08-17T12:00:00.000Z', id:'op_crono_igual'});
+          save();
+          let res, snap;
+          try {
+            window.Date = Falso;
+            snap = JPWOperation.buildSnapshot(S.activeOperation, {defenseCount:0});
+            res = JPWOperation.finalize({defenseCount:0});
+          } finally { window.Date = Real; }
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {snapOk: snap.ok, motivo: snap.motivo || null,
+                  iguais: snap.ok ? snap.record.openedAt === snap.record.closedAt : null,
+                  finalizou: res.ok, gravou: !!rec};
+        }"""
+    )
+    assert r["snapOk"], (
+        f"abertura IGUAL ao encerramento foi recusada por {r['motivo']!r} — a "
+        "regra e openedAt > closedAt, nao >="
+    )
+    assert r["iguais"] is True, (
+        "o relogio nao ficou congelado; o caso testado nao foi o de igualdade"
+    )
+    assert r["finalizou"] and r["gravou"], "a finalizacao com timestamps iguais falhou"
+
+
+def run_chronology_blocks_future_opening_in_review(page):
+    """Abertura posterior ao encerramento: a revisao ACUSA e o botao bloqueia.
+
+    '—' significa dado indisponivel. Cronologia impossivel e dado contraditorio,
+    e os dois estados nao podem ter a mesma apresentacao — era assim que o
+    operador confirmava um registro imutavel afirmando que a operacao foi aberta
+    depois de encerrada.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null, id:'op_crono_futuro'});
+          save();
+          const antes = {ciclo:S.cycleRealizado, registros:S.operationHistory.records.length,
+                         ordens:JPWOperation.liveOrders().length,
+                         fases:JSON.parse(JSON.stringify(S.phaseUnlocked)),
+                         opId:S.activeOperation.operationId};
+          JPWOperation.openReview();
+          __digitar('#finalOpenedAt','2029-01-01T00:00');
+          const revisao = document.getElementById('finalReview').textContent;
+          const linhas = __revisao();
+          const erroTexto = document.querySelector('[data-qid="abertura"] .modal-err').textContent;
+          const erroAceso = !!document.querySelector('[data-qid="abertura"] .modal-err.show');
+          __digitar('#finalDefenses','0'); __digitar('#finalConfirm','FECHADO');
+          document.getElementById('modalConfirm').click();
+          const depois = {ciclo:S.cycleRealizado, registros:S.operationHistory.records.length,
+                          ordens:JPWOperation.liveOrders().length,
+                          fases:JSON.parse(JSON.stringify(S.phaseUnlocked)),
+                          opId:S.activeOperation && S.activeOperation.operationId};
+          const disco = JSON.parse(localStorage.getItem('jpwealth_v9_state') || 'null');
+          return {revisao, linhas, erroTexto, erroAceso, antes, depois,
+                  aindaAberto: document.getElementById('modalOverlay').classList.contains('show'),
+                  discoRegistros: disco ? (disco.operationHistory.records||[]).length : null};
+        }"""
+    )
+    assert "posterior ao encerramento" in r["revisao"], (
+        f"a revisao nao acusou a cronologia impossivel; exibiu {r['revisao'][:160]!r}"
+    )
+    assert "Duração até agora" not in r["linhas"], (
+        "a revisao seguiu exibindo linhas normais e escondeu a contradicao num "
+        "traco de 'indisponivel'"
+    )
+    assert r["erroAceso"], "o campo de abertura nao foi marcado como invalido"
+    assert "posterior ao encerramento" in r["erroTexto"], (
+        f"o campo diz {r['erroTexto']!r} — dizer 'informe a data' a quem ja "
+        "informou mente sobre o que esta errado"
+    )
+    assert r["aindaAberto"], "o modal fechou apesar da recusa"
+    a, d = r["antes"], r["depois"]
+    assert d["registros"] == a["registros"] == 0, f"historico recebeu registro: {d['registros']}"
+    assert r["discoRegistros"] == 0, f"disco recebeu registro: {r['discoRegistros']}"
+    assert d["ciclo"] == a["ciclo"], f"cycleRealizado consolidou: {a['ciclo']} -> {d['ciclo']}"
+    assert d["ordens"] == a["ordens"], f"grades foram zeradas: {a['ordens']} -> {d['ordens']}"
+    assert d["fases"] == a["fases"], "fases foram retravadas"
+    assert d["opId"] == a["opId"], "a identidade da operacao viva se perdeu"
+
+
+def run_chronology_domain_blocks_ui_bypass(page):
+    """A protecao nao vive so na interface.
+
+    Duas rotas que nao passam pela tela: chamada direta de finalize com
+    openedAtManual no futuro, e entidade cuja PROPRIA openedAt ja e futura
+    (estado corrompido ou vindo de importacao). As duas sao recusadas pelo
+    dominio, e nada e mutado.
+    """
+    r = page.evaluate(
+        """() => {
+          const out = {};
+          // (a) bypass pela chamada direta, sem abrir o modal
+          __semear({openedAt:null, id:'op_bypass_a'});
+          save();
+          const antesA = JSON.stringify(S);
+          const a = JPWOperation.finalize({defenseCount:0, openedAtManual:'2029-01-01T00:00'});
+          out.a = {motivo:a.motivo, ok:a.ok, estadoIntacto: JSON.stringify(S) === antesA};
+          // (b) a propria entidade tem abertura no futuro
+          __semear({openedAt:'2031-05-05T10:00:00.000Z', id:'op_bypass_b'});
+          save();
+          const antesB = JSON.stringify(S);
+          const b = JPWOperation.finalize({defenseCount:0});
+          out.b = {motivo:b.motivo, ok:b.ok, estadoIntacto: JSON.stringify(S) === antesB};
+          return out;
+        }"""
+    )
+    for rot, c in (("chamada direta", r["a"]), ("entidade com abertura futura", r["b"])):
+        assert c["ok"] is False, f"{rot}: o dominio ACEITOU cronologia impossivel"
+        assert c["motivo"] == "chronology_invalid", (
+            f"{rot}: recusado por {c['motivo']!r} em vez da regra cronologica"
+        )
+        assert c["estadoIntacto"], (
+            f"{rot}: a recusa mutou o estado — nenhuma mutacao pode sobreviver a "
+            "uma finalizacao rejeitada"
+        )
+
+
+def run_chronology_guard_holds_without_repaint(page):
+    """A guarda do botao responde sozinha quando nenhuma repintura ocorreu.
+
+    Caminho isolado de proposito: a data futura e atribuida ao campo SEM evento
+    'input', depois do ultimo evento valido. Nenhuma repintura roda com esse
+    valor, entao a revisao continua dizendo "Desconhecida" e quem tem de barrar
+    e a guarda do proprio botao — que pergunta ao dominio em vez de
+    reimplementar a comparacao. E tambem o unico caminho em que revisao e
+    registro ainda poderiam divergir.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null, id:'op_crono_sem_repintura'});
+          save();
+          const antes = JSON.stringify(S);
+          JPWOperation.openReview();
+          __digitar('#finalDefenses','0');
+          __digitar('#finalConfirm','FECHADO');
+          // Sem evento: a repintura NAO roda com este valor.
+          document.getElementById('finalOpenedAt').value = '2029-01-01T00:00';
+          const revisaoAntes = document.getElementById('finalReview').textContent;
+          // Sonda: a guarda do botao tem de barrar ANTES de invocar a transacao.
+          // Se finalizeOperation for chamada, o contador sobe.
+          const realFinalize = window.finalizeOperation;
+          let chamadas = 0;
+          window.finalizeOperation = (...a) => { chamadas++; return realFinalize(...a); };
+          document.getElementById('modalConfirm').click();
+          window.finalizeOperation = realFinalize;
+          return {
+            revisaoAntes, chamadas,
+            falhaVisivel: !document.querySelector('[data-qid="falha"]').hidden,
+            erroTexto: document.querySelector('[data-qid="abertura"] .modal-err').textContent,
+            erroAceso: !!document.querySelector('[data-qid="abertura"] .modal-err.show'),
+            registros: S.operationHistory.records.length,
+            estadoIntacto: JSON.stringify(S) === antes,
+            aindaAberto: document.getElementById('modalOverlay').classList.contains('show')
+          };
+        }"""
+    )
+    assert "Desconhecida" in r["revisaoAntes"], (
+        "a repintura rodou com a data futura; o caminho isolado nao foi exercido "
+        "e o teste mediria a guarda da revisao, nao a do botao"
+    )
+    assert r["registros"] == 0, (
+        "a finalizacao PERSISTIU um registro cronologicamente impossivel por uma "
+        "rota que nao passou pela revisao"
+    )
+    assert r["estadoIntacto"], "a recusa mutou o estado"
+    assert r["erroAceso"], "o campo nao foi marcado como invalido"
+    assert "posterior ao encerramento" in r["erroTexto"], (
+        f"o campo acusou {r['erroTexto']!r} — dizer 'informe a data/hora' a quem "
+        "acabou de informar esconde qual e o defeito real da entrada"
+    )
+    assert r["aindaAberto"], "o modal fechou apesar da recusa"
+    # A guarda da interface existe para dar resposta IMEDIATA, sem entrar na
+    # transacao. O dominio recusaria de qualquer forma — e ha teste separado
+    # provando isso —, mas quem barra aqui e a tela, e barrar depois de invocar
+    # a finalizacao nao e a mesma coisa que barrar antes.
+    assert r["chamadas"] == 0, (
+        f"finalizeOperation foi invocada {r['chamadas']}x apesar de a entrada ser "
+        "cronologicamente impossivel; a interface delegou ao dominio o que devia "
+        "recusar de imediato"
+    )
+    assert not r["falhaVisivel"], (
+        "a recusa apareceu na caixa de falha da transacao em vez de no campo que "
+        "esta invalido"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -1621,6 +1854,12 @@ def main():
             run_review_without_identity_claims_nothing(page)
             run_review_error_follows_the_repaint(page)
             run_review_repaints_after_failed_attempt(page)
+            # ---- consistencia temporal (#9) ----
+            run_chronology_accepts_opening_before_close(page)
+            run_chronology_accepts_equal_timestamps(page)
+            run_chronology_blocks_future_opening_in_review(page)
+            run_chronology_domain_blocks_ui_bypass(page)
+            run_chronology_guard_holds_without_repaint(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

@@ -100,6 +100,12 @@ function operationResolveGridPhaseMax(op){
   return max;
 }
 
+// Uma operação não pode terminar antes de começar. Esta é a única regra
+// cronológica desta guarda: nada de idade máxima, horário de mercado, dias
+// úteis, duração mínima ou limite de calendário. Só a impossibilidade.
+const OPERATION_MSG_ABERTURA_AUSENTE='Informe a data/hora de abertura.';
+const OPERATION_MSG_CRONOLOGIA='A data/hora de abertura não pode ser posterior ao encerramento da operação.';
+
 // Fotografia INDEPENDENTE da operação, construída antes de qualquer destruição.
 // structuredClone por campo: o histórico jamais pode manter referência viva para
 // S.phases — mutar a próxima operação não pode reescrever a anterior.
@@ -125,6 +131,21 @@ function operationBuildSnapshot(op, entrada){
     return { ok:false, motivo:'defense_count_invalid' };
   }
 
+  // closedAt em variavel: a invariante precisa compara-lo com openedAt ANTES de
+  // existir registro. Carimbado aqui, no ato da construcao — em finalizeOperation
+  // isso e o instante efetivo da confirmacao.
+  const closedAt = new Date().toISOString();
+
+  // INTEGRIDADE CRONOLOGICA. Recusa e o unico desfecho: converter para null
+  // apagaria uma afirmacao do operador, corrigir automaticamente inventaria
+  // dado historico, e substituir por Date.now() seria o "agora disfarcado de
+  // abertura" que esta base recusa em todos os outros pontos. Igualdade e
+  // permitida — abrir e encerrar no mesmo instante e improvavel, nao impossivel.
+  if (openedAt && Date.parse(openedAt) > Date.parse(closedAt)) {
+    return { ok:false, motivo:'chronology_invalid',
+      openedAt, closedAt, mensagem: OPERATION_MSG_CRONOLOGIA };
+  }
+
   const saldoIni = Number(S.params && S.params.saldoIni);
   const record = {
     schemaVersion: OPERATION_HISTORY_SCHEMA_VERSION,
@@ -135,7 +156,7 @@ function operationBuildSnapshot(op, entrada){
 
     openedAt,
     openedAtSource,
-    closedAt: new Date().toISOString(),
+    closedAt,
     closedAtSource: 'formal_confirmation',
 
     // Base do retorno CONGELADA no registro. Sem isso o retorno de uma operação
@@ -481,7 +502,7 @@ function openFinalizeOperationModal(){
     'Diferente de <b>fechar uma ordem</b>, que encerra apenas uma posição individual.</div>'+
     '<div id="finalReview"></div>'+
     (legada?('<div class="modal-q" data-qid="abertura"><div class="ql">Data/hora de abertura da operação — obrigatória, pois não foi registrada automaticamente:</div>'+
-      '<input type="datetime-local" id="finalOpenedAt"><div class="modal-err">Informe a data/hora de abertura.</div></div>'):'')+
+      '<input type="datetime-local" id="finalOpenedAt"><div class="modal-err">'+esc(OPERATION_MSG_ABERTURA_AUSENTE)+'</div></div>'):'')+
     '<div class="modal-q" data-qid="defesas"><div class="ql">Número de defesas realizadas (inteiro ≥ 0):</div>'+
     '<input type="text" inputmode="numeric" id="finalDefenses" autocomplete="off" placeholder="informe">'+
     '<div class="modal-sub">O modelo de ordens não classifica defesa; a contagem é informada e fica registrada como tal.</div>'+
@@ -497,6 +518,10 @@ function openFinalizeOperationModal(){
   const revisao=box.querySelector('#finalReview');
 
   const erro=(qid,on)=>{ const n=box.querySelector('[data-qid="'+qid+'"] .modal-err'); if(n) n.classList.toggle('show',!!on); };
+  // O campo de abertura tem DOIS motivos de recusa — ausente e cronologicamente
+  // impossivel — e dizer "informe a data" para quem ja informou seria mentir
+  // sobre o que esta errado.
+  const msgAbertura=txt=>{ const n=box.querySelector('[data-qid="abertura"] .modal-err'); if(n) n.textContent=txt; };
 
   // ENTRADA CORRENTE: exatamente o objeto que finalizeOperation receberá. A
   // revisão e a confirmação leem a mesma fonte, então não existe o caso de o
@@ -519,9 +544,16 @@ function openFinalizeOperationModal(){
       defenseCount: Number.isFinite(ent.defenseCount)?ent.defenseCount:0,
       openedAtManual: ent.openedAtManual
     });
+    // '—' significa dado INDISPONIVEL. Cronologia impossivel e dado
+    // CONTRADITORIO — estados epistemicamente distintos, que nao podem ter a
+    // mesma apresentacao. A revisao diz qual e o problema.
+    const cronoInvalida = !p.ok && p.motivo==='chronology_invalid';
     revisao.innerHTML=p.ok
       ? operationReviewHTML(p.record, ent.defenseCount)
-      : '<div class="modal-err show">Não foi possível montar a revisão ('+esc(p.motivo)+').</div>';
+      : (cronoInvalida
+          ? '<div class="modal-err show">'+esc(p.mensagem)+'</div>'
+          : '<div class="modal-err show">Não foi possível montar a revisão ('+esc(p.motivo)+').</div>');
+    if(cronoInvalida){ msgAbertura(OPERATION_MSG_CRONOLOGIA); erro('abertura',true); }
     // A validacao acompanha a revisao. Ligar so a leitura ao evento fazia o
     // modal afirmar duas coisas ao mesmo tempo: a linha "Abertura" ja exibindo
     // a data informada e, tres centimetros abaixo, a mensagem vermelha dizendo
@@ -529,7 +561,9 @@ function openFinalizeOperationModal(){
     // ser valida; nunca aceso aqui, porque acusar antes da confirmacao seria
     // reclamar de um campo que o operador ainda esta preenchendo.
     if(Number.isFinite(ent.defenseCount)) erro('defesas',false);
-    if(legada && ent.openedAtManual && Number.isFinite(Date.parse(ent.openedAtManual))) erro('abertura',false);
+    if(legada && ent.openedAtManual && Number.isFinite(Date.parse(ent.openedAtManual)) && !cronoInvalida){
+      msgAbertura(OPERATION_MSG_ABERTURA_AUSENTE); erro('abertura',false);
+    }
   }
   repintarRevisao();
   // 'change' alem de 'input': o seletor nativo de data e o preenchimento
@@ -550,7 +584,23 @@ function openFinalizeOperationModal(){
     // operador, e precisa ser digitada. Mesmo parse da revisão.
     const ent=entradaCorrente();
     if(!Number.isFinite(ent.defenseCount)){ erro('defesas',true); falhou=true; }
-    if(legada && (!ent.openedAtManual || !Number.isFinite(Date.parse(ent.openedAtManual)))){ erro('abertura',true); falhou=true; }
+    if(legada && (!ent.openedAtManual || !Number.isFinite(Date.parse(ent.openedAtManual)))){
+      msgAbertura(OPERATION_MSG_ABERTURA_AUSENTE); erro('abertura',true); falhou=true;
+    }
+    // A interface PERGUNTA ao domínio em vez de reimplementar a comparação: a
+    // mesma função que constrói o registro decide se ele é possível, então as
+    // duas pontas não podem divergir. A proteção real vive em
+    // operationBuildSnapshot e vale mesmo para quem chame finalizeOperation
+    // direto, sem passar por esta tela.
+    if(!falhou){
+      const prova=operationBuildSnapshot(op,{
+        defenseCount: Number.isFinite(ent.defenseCount)?ent.defenseCount:0,
+        openedAtManual: ent.openedAtManual
+      });
+      if(!prova.ok && prova.motivo==='chronology_invalid'){
+        msgAbertura(prova.mensagem); erro('abertura',true); falhou=true;
+      }
+    }
     if(String(box.querySelector('#finalConfirm').value||'').trim()!=='FECHADO'){ erro('confirmtxt',true); falhou=true; }
     if(falhou) return;
 
