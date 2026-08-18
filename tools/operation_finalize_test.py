@@ -819,6 +819,187 @@ def run_double_click_single_finalization(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# Trilha de auditoria: mesma transacao, mesma gravacao (#4)
+# ---------------------------------------------------------------------------
+# dgLogChange documenta a propria doutrina: "quem muta o estado e quem
+# persiste — o log entra na mesma gravacao". Registrar a finalizacao DEPOIS de
+# save() viola isso: o evento existiria so na memoria da sessao e morreria no
+# proximo reload. Os cinco casos abaixo fixam o contrato nas duas direcoes —
+# se a finalizacao venceu, a auditoria esta NO DISCO; se foi revertida, a
+# auditoria foi revertida junto.
+
+AUDIT_HELPER = """
+  window.__auditar = (id) => {
+    const doc = JSON.parse(localStorage.getItem('jpwealth_v9_state') || '{}');
+    const conta = (st) => {
+      const log = (st && st.dataGovernance && st.dataGovernance.changeLog) || [];
+      return log.filter(e => e.entity === 'operation'
+                          && e.action === 'finalized'
+                          && e.recordId === id).length;
+    };
+    return {mem: conta(S), disco: conta(doc),
+            teto: (S.dataGovernance.changeLog || []).length >= DG_CHANGELOG_MAX};
+  };
+"""
+
+
+def run_audit_is_in_the_persisted_document(page):
+    """Sucesso: o evento de auditoria esta no MESMO documento gravado.
+
+    Este e o caso que a mutacao alvo quebra. Ele nao le a memoria para decidir:
+    le o localStorage. Auditoria escrita depois de save() aparece em memoria e
+    NAO aparece no disco, e e exatamente essa divergencia que o assert acusa.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_audit_ok', ciclo:100});
+          save();
+          const antes = __auditar('op_audit_ok');
+          const res = JPWOperation.finalize({defenseCount:0});
+          return {res, antes, depois: __auditar('op_audit_ok')};
+        }"""
+    )
+    assert r["res"]["ok"] is True, f"finalizacao falhou: {r['res']}"
+    assert r["antes"]["mem"] == 0 and r["antes"]["disco"] == 0, (
+        f"o evento ja existia antes da finalizacao: {r['antes']} — o teste nao "
+        "estaria medindo nada"
+    )
+    assert not r["depois"]["teto"], (
+        "o changeLog atingiu DG_CHANGELOG_MAX; o resultado mediria truncamento"
+    )
+    assert r["depois"]["mem"] == 1, f"auditoria ausente da memoria: {r['depois']}"
+    assert r["depois"]["disco"] == 1, (
+        f"AUDITORIA NAO CHEGOU AO DISCO: {r['depois']} — o evento foi registrado "
+        "depois de save() e morre no proximo reload; a finalizacao ficaria "
+        "gravada sem rastro no log de governanca"
+    )
+
+
+def run_audit_uses_the_real_operation_identity(page):
+    """recordId e o operationId real, nao vazio nem uma segunda identidade."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_audit_ident', ciclo:100});
+          save();
+          const res = JPWOperation.finalize({defenseCount:0});
+          const doc = JSON.parse(localStorage.getItem('jpwealth_v9_state'));
+          const ev = (doc.dataGovernance.changeLog || [])
+            .filter(e => e.entity === 'operation' && e.action === 'finalized').pop();
+          return {res, ev, recId: res.record.operationId,
+                  histIds: doc.operationHistory.records.map(x => x.operationId)};
+        }"""
+    )
+    assert r["res"]["ok"] is True, f"finalizacao falhou: {r['res']}"
+    assert r["ev"], "nenhum evento de finalizacao no documento persistido"
+    assert r["ev"]["recordId"] == "op_audit_ident", (
+        f"recordId nao e a identidade real da operacao: {r['ev']['recordId']!r}"
+    )
+    assert r["ev"]["recordId"] == r["recId"], (
+        "auditoria e registro historico usam identidades diferentes"
+    )
+    assert r["ev"]["recordId"] in r["histIds"], (
+        "o recordId da auditoria nao localiza nenhum registro no Historico — "
+        "o evento seria uma ancora morta"
+    )
+
+
+def run_audit_rolled_back_on_persist_failure(page):
+    """save() devolve false: nenhum evento de finalizacao sobrevive em memoria."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_audit_fail', ciclo:100});
+          save();
+          jpWealthPersistenceBlocked = true;
+          const res = JPWOperation.finalize({defenseCount:0});
+          jpWealthPersistenceBlocked = false;
+          return {res, audit: __auditar('op_audit_fail')};
+        }"""
+    )
+    assert r["res"]["ok"] is False, f"esperava falha de persistencia: {r['res']}"
+    assert r["audit"]["mem"] == 0, (
+        f"a auditoria SOBREVIVEU ao rollback: {r['audit']} — a sessao afirmaria "
+        "no log de governanca que a operacao foi finalizada, enquanto a "
+        "operacao continua viva e a grade intacta"
+    )
+    assert r["audit"]["disco"] == 0, f"auditoria de finalizacao inexistente foi gravada: {r['audit']}"
+
+
+def run_audit_rolled_back_on_exception_before_write(page):
+    """Excecao ANTES da gravacao: o rollback devolve tambem a trilha."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_audit_throw', ciclo:100});
+          save();
+          const bak = window.save;
+          window.save = () => { throw new Error('falha sintetica'); };
+          let res, erro = null;
+          try { res = JPWOperation.finalize({defenseCount:0}); } catch(e) { erro = String(e); }
+          window.save = bak;
+          return {res, erro, audit: __auditar('op_audit_throw')};
+        }"""
+    )
+    assert r["erro"] is None, f"excecao escapou: {r['erro']}"
+    assert r["res"]["ok"] is False and r["res"]["motivo"] == "persist_exception", (
+        f"excecao nao classificada: {r['res']}"
+    )
+    assert r["audit"]["mem"] == 0 and r["audit"]["disco"] == 0, (
+        f"a trilha de auditoria ficou fora do rollback: {r['audit']}"
+    )
+
+
+def run_audit_survives_exception_after_write(page):
+    """Excecao APOS gravacao confirmada: a trilha ja esta no documento.
+
+    Espelho do caso anterior. Como o resultado e mantido — o disco tem a
+    finalizacao —, a auditoria precisa estar la junto, e nao pendurada num
+    passo posterior que a excecao impediu de rodar.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_audit_after', ciclo:100});
+          save();
+          const bak = window.save;
+          window.save = () => {
+            localStorage.setItem('jpwealth_v9_state',
+              JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+            throw new Error('pos-processamento lancou');
+          };
+          let res, erro = null;
+          try { res = JPWOperation.finalize({defenseCount:0}); } catch(e) { erro = String(e); }
+          window.save = bak;
+          return {res, erro, audit: __auditar('op_audit_after')};
+        }"""
+    )
+    assert r["erro"] is None, f"excecao escapou: {r['erro']}"
+    assert r["res"]["ok"] is True, f"resultado gravado foi revertido: {r['res']}"
+    assert r["audit"]["disco"] == 1, (
+        f"o documento gravado ficou SEM a auditoria: {r['audit']} — a "
+        "finalizacao esta no disco e o log de governanca nao a registra"
+    )
+    assert r["audit"]["mem"] == 1, f"memoria divergiu do disco: {r['audit']}"
+
+
+def run_audit_single_event_per_operation(page):
+    """Dupla tentativa: um unico evento para a mesma operationId."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_audit_dupla', ciclo:100});
+          save();
+          const a = JPWOperation.finalize({defenseCount:0});
+          const b = JPWOperation.finalize({defenseCount:0});
+          return {a, b, audit: __auditar('op_audit_dupla')};
+        }"""
+    )
+    assert r["a"]["ok"] is True, f"primeira finalizacao falhou: {r['a']}"
+    assert r["b"]["ok"] is False, f"segunda finalizacao foi aceita: {r['b']}"
+    assert r["audit"]["disco"] == 1, (
+        f"a operacao gerou {r['audit']['disco']} eventos de finalizacao no log — "
+        "o detalhamento cronologico contaria a mesma finalizacao duas vezes"
+    )
+    assert r["audit"]["mem"] == 1, f"memoria com contagem divergente: {r['audit']}"
+
+
 def main():
     server, url = serve()
     try:
@@ -844,6 +1025,14 @@ def main():
             run_return_is_frozen(page)
             run_degraded_integrity_preserved(page)
             run_thesis_conflict_reported(page)
+            # ---- trilha de auditoria na mesma transacao (#4) ----
+            page.evaluate(AUDIT_HELPER)
+            run_audit_is_in_the_persisted_document(page)
+            run_audit_uses_the_real_operation_identity(page)
+            run_audit_rolled_back_on_persist_failure(page)
+            run_audit_rolled_back_on_exception_before_write(page)
+            run_audit_survives_exception_after_write(page)
+            run_audit_single_event_per_operation(page)
             # ---- Camada 2B ----
             run_modal_opens_without_mutation(page)
             run_modal_cancel_no_mutation(page)

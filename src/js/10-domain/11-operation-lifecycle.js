@@ -282,6 +282,14 @@ function finalizeOperation(entrada){
       resumo: { operationId: snap.record.operationId, resultado: snap.record.netResult,
                 cicloAcumulado: candidato.cycleRealizado }
     });
+    // Trilha de auditoria DENTRO do candidato, e não depois do save(). O
+    // recordId e o operationId real — nao existe segunda identidade so para
+    // auditoria. O log legado gravava recordId VAZIO e o evento ficava sem
+    // ancora; agora ele aponta para a operacao que encerrou.
+    if (typeof dgLogChange === 'function') {
+      dgLogChange('operation', 'finalized', snap.record.operationId,
+        'Operação Única finalizada e preservada no Histórico', candidato);
+    }
     candidato.phases.forEach((ph, pi) => { ph.orders = emptyOrders(OPERATION_GRID_SIZES[pi] || 3); });
     candidato.phaseUnlocked = [true, false, false, false];
     candidato.activeOperation = null;
@@ -324,9 +332,6 @@ function finalizeOperation(entrada){
       S = anterior;
       return { ok:false, motivo:'persist_failed',
         mensagem:'A finalização foi cancelada: o estado não pôde ser gravado. Nada foi alterado.' };
-    }
-    if (typeof dgLogChange === 'function') {
-      dgLogChange('operation', 'finalized', snap.record.operationId, 'Operação Única finalizada e preservada no Histórico');
     }
     return { ok:true, record: snap.record };
   } finally {

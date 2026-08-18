@@ -410,15 +410,22 @@ function dgExportFileName(seq,when){
 // Registra um evento no log resumido. NÃO chama save(): quem muta o estado é quem
 // persiste — todos os pontos instrumentados já chamam save() logo depois, e o log entra
 // na mesma gravação. label é o texto humano do detalhamento cronológico (§11).
-function dgLogChange(entity,action,recordId,label){
-  if(!S.dataGovernance || !Array.isArray(S.dataGovernance.changeLog)) return;
-  S.dataGovernance.changeLog.push({
+// `alvo` opcional: escreve num estado CANDIDATO em vez da global. Existe para
+// que uma transação possa montar o log de auditoria dentro do próprio candidato
+// e persistir tudo numa gravação só — que é exatamente a doutrina enunciada
+// acima. Sem ele, um fluxo transacional só teria a opção de registrar DEPOIS do
+// save(), e o evento nunca chegaria ao disco. Omitido, o comportamento é o de
+// sempre: muta a global.
+function dgLogChange(entity,action,recordId,label,alvo){
+  const st=alvo||S;
+  if(!st.dataGovernance || !Array.isArray(st.dataGovernance.changeLog)) return;
+  st.dataGovernance.changeLog.push({
     id:dgId(), ts:new Date().toISOString(),
     entity:String(entity||''), action:String(action||''),
     recordId:recordId==null?'':String(recordId), label:String(label||''),
   });
-  if(S.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
-    S.dataGovernance.changeLog=S.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
+  if(st.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
+    st.dataGovernance.changeLog=st.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
   }
 }
 // Alterações desde o último backup CONFIRMADO (§11). Sem confirmação nunca feita,

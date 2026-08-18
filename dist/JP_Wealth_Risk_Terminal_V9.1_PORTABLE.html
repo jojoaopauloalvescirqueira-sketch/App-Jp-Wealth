@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '51e5a0349d14bb06';
+const JP_WEALTH_BUILD_ID = 'f00f23a446d346b5';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8260,15 +8260,22 @@ function dgExportFileName(seq,when){
 // Registra um evento no log resumido. NÃO chama save(): quem muta o estado é quem
 // persiste — todos os pontos instrumentados já chamam save() logo depois, e o log entra
 // na mesma gravação. label é o texto humano do detalhamento cronológico (§11).
-function dgLogChange(entity,action,recordId,label){
-  if(!S.dataGovernance || !Array.isArray(S.dataGovernance.changeLog)) return;
-  S.dataGovernance.changeLog.push({
+// `alvo` opcional: escreve num estado CANDIDATO em vez da global. Existe para
+// que uma transação possa montar o log de auditoria dentro do próprio candidato
+// e persistir tudo numa gravação só — que é exatamente a doutrina enunciada
+// acima. Sem ele, um fluxo transacional só teria a opção de registrar DEPOIS do
+// save(), e o evento nunca chegaria ao disco. Omitido, o comportamento é o de
+// sempre: muta a global.
+function dgLogChange(entity,action,recordId,label,alvo){
+  const st=alvo||S;
+  if(!st.dataGovernance || !Array.isArray(st.dataGovernance.changeLog)) return;
+  st.dataGovernance.changeLog.push({
     id:dgId(), ts:new Date().toISOString(),
     entity:String(entity||''), action:String(action||''),
     recordId:recordId==null?'':String(recordId), label:String(label||''),
   });
-  if(S.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
-    S.dataGovernance.changeLog=S.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
+  if(st.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
+    st.dataGovernance.changeLog=st.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
   }
 }
 // Alterações desde o último backup CONFIRMADO (§11). Sem confirmação nunca feita,
@@ -27578,6 +27585,14 @@ function finalizeOperation(entrada){
       resumo: { operationId: snap.record.operationId, resultado: snap.record.netResult,
                 cicloAcumulado: candidato.cycleRealizado }
     });
+    // Trilha de auditoria DENTRO do candidato, e não depois do save(). O
+    // recordId e o operationId real — nao existe segunda identidade so para
+    // auditoria. O log legado gravava recordId VAZIO e o evento ficava sem
+    // ancora; agora ele aponta para a operacao que encerrou.
+    if (typeof dgLogChange === 'function') {
+      dgLogChange('operation', 'finalized', snap.record.operationId,
+        'Operação Única finalizada e preservada no Histórico', candidato);
+    }
     candidato.phases.forEach((ph, pi) => { ph.orders = emptyOrders(OPERATION_GRID_SIZES[pi] || 3); });
     candidato.phaseUnlocked = [true, false, false, false];
     candidato.activeOperation = null;
@@ -27620,9 +27635,6 @@ function finalizeOperation(entrada){
       S = anterior;
       return { ok:false, motivo:'persist_failed',
         mensagem:'A finalização foi cancelada: o estado não pôde ser gravado. Nada foi alterado.' };
-    }
-    if (typeof dgLogChange === 'function') {
-      dgLogChange('operation', 'finalized', snap.record.operationId, 'Operação Única finalizada e preservada no Histórico');
     }
     return { ok:true, record: snap.record };
   } finally {
