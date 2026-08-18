@@ -238,6 +238,101 @@ def run_money_unit_sentinela(browser, url, falhas):
     ctx.close()
 
 
+def run_politica_monetaria(page, falhas):
+    """Contrato canonico de parseBRLCents/formatBRLCents — a fronteira de entrada
+    de TODO o dominio financeiro. Tres estados que jamais se confundem:
+    null (vazio), inteiro (valido), NaN (invalido)."""
+    r = page.evaluate("""() => {
+        const casos_parse = [
+          // [entrada, esperado]  — esperado 'NaN' representa invalido
+          ['0', 0], ['0,00', 0], ['0.10', 10], ['0,10', 10],
+          ['1420,50', 142050], ['1420.50', 142050], ['1.420,50', 142050],
+          ['1.420', 142000], ['1.42', 142], ['1420', 142000],
+          ['1420,5', 142050], ['12', 1200], ['  250  ', 25000],
+          ['-80', -8000], ['−1.879,00', -187900],       // sinal reconhecido (guarda decide)
+          ['', null], ['   ', null],                     // vazio = nao informado
+          ['abc', 'NaN'], ['12a', 'NaN'], ['1420,505', 'NaN'],
+          ['1,420', 'NaN'], ['1,420.50', 'NaN'],         // ambiguidade/3 casas
+          ['1.4205,5', 'NaN'], ['1 420', 'NaN'],         // milhar quebrado, espaco interno
+          ['12.34.56', 'NaN'],
+          ['99999999999999', 'NaN'],                     // 14 digitos: overflow recusado
+          ['10000000000000', 'NaN'],                     // 14 digitos CUJOS CENTAVOS ainda cabem em safe int:
+                                                         // so o corte de comprimento recusa — o caso que separa
+                                                         // a regra explicita do acidente do isSafeInteger
+          ['9999999999999', 999999999999900],            // 13 digitos: teto aceito
+        ];
+        const erros = [];
+        for(const [ent, esp] of casos_parse){
+          const got = parseBRLCents(ent);
+          const ok = (esp==='NaN') ? Number.isNaN(got) : Object.is(got, esp);
+          if(!ok) erros.push(`parse(${JSON.stringify(ent)}) => ${got}, esperava ${esp}`);
+        }
+        const casos_fmt = [
+          [142050, 'R$ 1.420,50'], [0, 'R$ 0,00'], [null, '—'],
+          [-187900, '-R$ 1.879,00'], [30, 'R$ 0,30'], [1000000000, 'R$ 10.000.000,00'],
+          [10.5, '—'],                                   // nao-inteiro nao e centavo
+          // teto do dominio do formatador: MAX_SAFE_INTEGER. A aritmetica de
+          // STRING e exata aqui; divisao float erraria o centavo (erro > 0,005).
+          [9007199254740991, 'R$ 90.071.992.547.409,91'],
+          [-9007199254740991, '-R$ 90.071.992.547.409,91'],
+        ];
+        for(const [ent, esp] of casos_fmt){
+          const got = formatBRLCents(ent);
+          if(got!==esp) erros.push(`format(${ent}) => ${JSON.stringify(got)}, esperava ${JSON.stringify(esp)}`);
+        }
+        // exatidao que o float nao daria: R$0,10 + R$0,20 em centavos
+        const soma = parseBRLCents('0,10') + parseBRLCents('0,20');
+        if(soma !== 30) erros.push(`0,10+0,20 => ${soma} centavos, esperava 30 exato`);
+        if(formatBRLCents(soma) !== 'R$ 0,30') erros.push('formatacao da soma nao e R$ 0,30');
+        // guarda semantica: negativo recusado onde o dominio exige >= 0
+        if(pfAmountInDomain(-8000, {allowNull:false}) !== false)
+          erros.push('guarda aceitou montante negativo em campo >= 0');
+        if(pfAmountInDomain(null, {allowNull:true}) !== true)
+          erros.push('guarda recusou null onde nao informado e aceitavel');
+        if(pfAmountInDomain(null, {allowNull:false}) !== false)
+          erros.push('guarda aceitou null onde o ato exige valor');
+        if(pfAmountInDomain(142050, {allowNull:false}) !== true)
+          erros.push('guarda recusou valor valido');
+        if(pfAmountInDomain(10.5, {allowNull:false}) !== false)
+          erros.push('guarda aceitou nao-inteiro como centavo');
+        return erros;
+    }""")
+    for e in r:
+        falhas.append("politica monetaria: " + e)
+
+
+def run_sentinela_bloqueia_escrita(browser, url, falhas):
+    """moneyUnit desconhecida: modulo bloqueado para escrita, estado preservado,
+    e o bloqueio NAO e global — o resto do JP Wealth segue operante."""
+    mut = """
+      S.personalFinance = { schemaVersion:1, moneyUnit:'USD_CENTS',
+        months:{}, recurringIncome:[], debts:[], creditLines:[], scenarios:[] };
+    """
+    ctx, page, erros = abrir(browser, url, mutacao_js=mut)
+    r = page.evaluate("""() => ({
+        suportada: pfMoneyUnitSupported(),
+        bloqueio: pfWriteBlockReason(),
+        unidade: S.personalFinance.moneyUnit,
+        appVivo: typeof save === 'function' && typeof compute === 'function',
+    })""")
+    if r["suportada"] is not False:
+        falhas.append("sentinela: unidade desconhecida deveria reprovar pfMoneyUnitSupported")
+    if r["bloqueio"] != "READ_ONLY_UNSUPPORTED_MONEY_UNIT":
+        falhas.append(f"sentinela: bloqueio de escrita ausente ou errado: {r['bloqueio']}")
+    if r["unidade"] != "USD_CENTS":
+        falhas.append(f"sentinela: estado nao foi preservado: {r['unidade']}")
+    if not r["appVivo"]:
+        falhas.append("sentinela: bloqueio vazou para o JP Wealth inteiro")
+    ctx.close()
+
+    # unidade correta: escrita liberada
+    ctx, page, erros = abrir(browser, url)
+    r = page.evaluate("""() => ({ bloqueio: pfWriteBlockReason() })""")
+    if r["bloqueio"] is not None:
+        falhas.append(f"sentinela: BRL_CENTS deveria liberar escrita; veio {r['bloqueio']}")
+    ctx.close()
+
+
 def run_schema_version_futura(browser, url, falhas):
     mut = """
       S.personalFinance = { schemaVersion:7, moneyUnit:'BRL_CENTS', months:{},
@@ -264,6 +359,7 @@ def main():
             ctx, page, erros = abrir(browser, url)
             run_default_vazio(page, falhas)
             run_idempotencia(page, falhas)
+            run_politica_monetaria(page, falhas)
             if erros:
                 falhas.append(f"pageerror no boot fresco: {erros}")
             ctx.close()
@@ -271,6 +367,7 @@ def main():
             run_migracao_base_anterior(browser, url, falhas)
             run_forma_vs_conteudo(browser, url, falhas)
             run_money_unit_sentinela(browser, url, falhas)
+            run_sentinela_bloqueia_escrita(browser, url, falhas)
             run_schema_version_futura(browser, url, falhas)
 
             browser.close()

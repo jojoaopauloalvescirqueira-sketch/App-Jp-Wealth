@@ -405,6 +405,12 @@
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
       "sha256": "a93b5d9cd1650b4791c5a8856ea4d3b4a251c1ea62097c618e738fbbd87c2de4"
+    },
+    {
+      "order": 68,
+      "path": "src/js/10-domain/12-personal-finance.js",
+      "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
+      "sha256": "b55659aa70524d1033626317acea8b1f1a72864d465fe724e06381ebf2fc93c6"
     }
   ]
 }
