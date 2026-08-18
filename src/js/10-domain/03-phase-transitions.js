@@ -391,7 +391,11 @@ function handleStopLimitBreach(pi, oi, check){
   save(); render(); renderPhasesLite(pi); renderAuditLog();
   return false;
 }
-// ---- Guardas de instrumento e tese (Art. 3.5/3.6, decreto de banimento, Teto/Op) ----
+// ---- Guardas de instrumento e tese (Art. 4.2/5.1, decreto de banimento, Teto/Op) ----
+// A numeracao anterior (3.5/3.6) nao existe na Norma Vigente: o Livro I vai de
+// 3.1 a 3.4. O regime esta no Art. 5.1 (Livro II — Operacao Unica Exclusiva) e a
+// definicao de Operacao como "conjunto de ordens no mesmo ativo e na mesma
+// direcao" esta no Art. 4.2 (Livro I).
 // retorna null se ok, ou a mensagem de bloqueio
 function orderGateMsg(pi, oi){
   const o=S.phases[pi].orders[oi];
@@ -434,10 +438,10 @@ function orderGateMsg(pi, oi){
   if(ref){
     const norm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     if(o.par && norm(o.par)!==norm(ref.par)){
-      return `🚫 Operação Única Exclusiva (Art. 3.6): a operação em andamento é em ${ref.par}. Não é permitido abrir ${o.par} enquanto ela não for formalmente finalizada — fechar as ordens não encerra a operação.`;
+      return `🚫 Operação Única Exclusiva (Art. 5.1): a operação em andamento é em ${ref.par}. Não é permitido abrir ${o.par} enquanto ela não for formalmente finalizada — zeragem tática sem confirmação de encerramento não extingue a Operação (Art. 4.4).`;
     }
     if(o.tipo && ref.tipo && o.tipo!==ref.tipo){
-      return `🚫 Operação Única (Art. 3.5): a tese em andamento é ${ref.tipo} em ${ref.par}. Posição na direção contrária não pertence à mesma tese — finalize a operação antes de inverter.`;
+      return `🚫 Operação Única (Art. 4.2): a tese em andamento é ${ref.tipo} em ${ref.par}. Uma Operação é o conjunto de ordens no mesmo ativo e na mesma direção — finalize a operação antes de inverter.`;
     }
   }
   return null;
