@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '4c75d66dc916b3a6';
+const JP_WEALTH_BUILD_ID = '5515408971b6ac35';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -11164,18 +11164,26 @@ function renderPhases(){
       if(f==='status' && sel.value==='Aberta'){
         const prevStatus=o.status;
         o.status='Aberta'; // aplica temporariamente para as guardas considerarem esta ordem
+
+        // ---- GUARDAS PURAMENTE REJEITADORAS ----------------------------------
+        // Todas antes do nascimento: uma ordem RECUSADA jamais pode criar
+        // entidade. Nenhuma delas produz efeito colateral — só decidem se o ato
+        // acontece.
         let msg=null;
         if(!o.par) msg='🚫 Defina o PAR antes de marcar a ordem como Aberta — sem par o risco e o nocional ficam indefinidos.';
         if(!msg && !(o.sl>0) && o.lote>0) msg='🚫 Não é permitido abrir ordem sem stop — registre o SL antes de marcar como Aberta (Função de Auditoria / Estatuto).';
         if(!msg) msg=orderGateMsg(pi,oi);
-        if(!msg){
-          const check=checkPhaseCap(pi,oi);
-          if(check.excede){
-            handleStopLimitBreach(pi,oi,check);
-            msg=null;
-          }
+        if(msg){
+          o.status=prevStatus; // reverte
+          sel.value=prevStatus||'';
+          alert(msg);
+          return;
         }
-        if(!msg && shouldWarnManualRiskConfirmation()){
+        // Última rejeição possível. Ela ficava DEPOIS de handleStopLimitBreach,
+        // e foi trazida para cá porque um "não" do operador aqui reverteria uma
+        // abertura que já tinha destravado fase e carimbado evento — efeito
+        // colateral sobrevivendo a um ato recusado.
+        if(shouldWarnManualRiskConfirmation()){
           const ok=confirm('Você está prestes a registrar uma operação sem Equity Protector ativo. Confirme que o risco, o drawdown e a exposição foram verificados manualmente.');
           if(!ok){
             o.status=prevStatus;
@@ -11183,24 +11191,29 @@ function renderPhases(){
             return;
           }
         }
-        if(msg){
-          o.status=prevStatus; // reverte
-          sel.value=prevStatus||'';
-          alert(msg);
-          return;
-        }
-        // ABERTURA EFETIVA — todas as guardas passaram e o status ficou 'Aberta'.
-        // É AQUI que a Operação Única nasce, e não no laço de <input>: o campo
-        // Status é um <select> (03-phase-transitions.js), e querySelectorAll
-        // ('input') nunca o alcança. O gancho colocado lá era código morto, e
-        // com ele a entidade jamais nascia pelo grid — nenhum openedAt, nenhuma
-        // captura de Fase da Conta, e toda operação virava "legada" no load
-        // seguinte.
+
+        // ---- ABERTURA ACEITA: A OPERAÇÃO NASCE AQUI --------------------------
+        // Depois da última guarda que pode rejeitar, e ANTES do primeiro efeito
+        // colateral que pertence à operação aceita.
         //
-        // Depois das guardas, e não antes: uma abertura recusada por par
-        // ausente, stop ausente, portão de tese ou teto de fase é revertida, e
-        // uma operação não pode nascer de um ato que não aconteceu.
+        // O nascimento vive neste laço de <select> — e não no de <input> — porque
+        // o campo Status é um <select>: o gancho que existia lá era código morto e
+        // a entidade jamais nascia pelo grid.
+        //
+        // A ORDEM IMPORTA. handleStopLimitBreach destrava fase e carimba o evento
+        // via operationStampTransition, que lê S.activeOperation. Com o nascimento
+        // depois dele, o destravamento provocado pela PRÓPRIA Gênese da operação
+        // era carimbado com operationId:null, operationResolveGridPhaseMax o
+        // descartava, e o registro imutável afirmava "Fase máxima da Grade: FASE 1"
+        // para uma operação que viveu inteira na FASE 2 — a fase que essa mesma
+        // ordem forçou. Não se reconstrói isso por cronologia: o vínculo tem de
+        // existir no instante do carimbo.
         if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Aberta',pi,oi);
+
+        // ---- EFEITOS COLATERAIS DA OPERAÇÃO ACEITA ---------------------------
+        // Já existe identidade viva: o evento de destravamento nasce vinculado.
+        const check=checkPhaseCap(pi,oi);
+        if(check.excede) handleStopLimitBreach(pi,oi,check);
       } else if(f==='status' && sel.value==='Fechada'){
         const prevStatus=o.status;
         sel.value=prevStatus||''; // reverte visualmente até confirmar no modal

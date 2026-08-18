@@ -326,6 +326,131 @@ def run_reset_does_not_leak_identity(page):
     assert b["registros"] == 0, "abrir B fabricou registro historico"
 
 
+def run_unlock_by_own_genesis_is_stamped_with_real_identity(page):
+    """A Genese que destrava fase carimba o evento com a identidade REAL.
+
+    handleStopLimitBreach destrava a fase e carimba o evento via
+    operationStampTransition, que le S.activeOperation. Enquanto o nascimento
+    ficava DEPOIS dele, o destravamento provocado pela PROPRIA primeira ordem da
+    operacao era carimbado com operationId:null; operationResolveGridPhaseMax
+    descartava o evento orfao e devolvia 0, e o registro imutavel afirmava
+    "Fase maxima da Grade: FASE 1" para uma operacao que viveu inteira na FASE 2
+    — a fase que essa mesma ordem forcou.
+    """
+    r = page.evaluate(
+        """() => {
+          const avisos=[];
+          window.alert = m => avisos.push(String(m));
+          window.confirm = () => true;
+          __prepararGenese();
+          // Perda de ciclo arquivada: e ela que faz a Genese estourar o teto da
+          // FASE 1 pelo ramo 'fase' (e nao pelo limite proprio da Genese), que e
+          // a unica porta para o destravamento por stop quantitativo.
+          S.cycleRealizado = -360;
+          const g = S.phases[0].orders[0];
+          g.lote = 0.05; g.entry = 1.08; g.sl = 1.07;
+          save(); renderPhases();
+
+          // checkPhaseCap retorna cedo quando o status nao e 'Aberta'. Para
+          // PREVER o desfecho, aplica-se o status temporariamente e desfaz-se —
+          // o ato real acontece pelo <select>, logo abaixo.
+          g.status = 'Aberta';
+          const check = checkPhaseCap(0,0);
+          const suporte = phaseSupportForRisk(check.total);
+          g.status = '';
+          renderPhases();
+          // Responde a frase EXATA que o sistema exige.
+          window.prompt = () => 'CONFIRMO ' + S.phases[suporte].faseNome;
+
+          const sel = __selectStatus(0,0);
+          if (!sel) return {erro:'select de status nao encontrado'};
+          sel.value = 'Aberta';
+          sel.dispatchEvent(new Event('change', {bubbles:true}));
+
+          const op = S.activeOperation;
+          const eventos = (S.transitionLog||[]).map(e => ({
+            fase:e.fase, gridPhase:e.gridPhase, operationId:e.operationId}));
+          return {
+            check:{excede:check.excede, tipo:check.tipo, total:check.total}, suporte,
+            unlocked: S.phaseUnlocked.slice(),
+            opId: op && op.operationId,
+            eventos,
+            gridMax: op ? operationResolveGridPhaseMax(op) : null,
+            avisos
+          };
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["check"]["excede"] and r["check"]["tipo"] == "fase", (
+        f"a fixture nao levou ao ramo de destravamento por fase: {r['check']} — "
+        "sem isso o teste nao exercita o defeito"
+    )
+    assert r["suporte"] == 1, f"a fase que suporta deveria ser a 2 (indice 1): {r['suporte']}"
+    assert r["unlocked"] == [True, True, False, False], (
+        f"a FASE 2 nao foi destravada: {r['unlocked']} — a confirmacao nao passou"
+    )
+    assert r["opId"], "a operacao nao nasceu"
+    carimbados = [e for e in r["eventos"] if e.get("gridPhase") is not None]
+    assert carimbados, f"nenhum evento de destravamento foi registrado: {r['eventos']}"
+    for e in carimbados:
+        assert e["operationId"] == r["opId"], (
+            f"evento de destravamento carimbado com operationId {e['operationId']!r} "
+            f"em vez de {r['opId']!r} — o destravamento causado pela propria Genese "
+            "ficaria orfao e some do maximo da grade"
+        )
+    assert r["gridMax"] == 1, (
+        f"maxGridPhaseReached = {r['gridMax']} — a operacao viveu na FASE 2 desde a "
+        "sua primeira ordem, e o registro afirmaria FASE 1"
+    )
+
+
+def run_manual_risk_refusal_creates_no_entity(page):
+    """Recusar a confirmacao manual de risco nao cria entidade nem efeito.
+
+    Essa confirmacao ficava DEPOIS de handleStopLimitBreach. Um "nao" do
+    operador ali reverteria uma abertura que ja tinha destravado fase e
+    carimbado evento — efeito colateral sobrevivendo a um ato recusado. Ela
+    passou a ser a ultima guarda REJEITADORA, antes do nascimento.
+    """
+    r = page.evaluate(
+        """() => {
+          window.alert = () => {};
+          window.prompt = () => null;
+          __prepararGenese();
+          S.cycleRealizado = -360;
+          const g = S.phases[0].orders[0];
+          g.lote = 0.05; g.entry = 1.08; g.sl = 1.07;
+          save(); renderPhases();
+          const unlockedAntes = S.phaseUnlocked.slice();
+          const logAntes = (S.transitionLog||[]).length;
+          // O operador RECUSA a confirmacao manual de risco.
+          window.confirm = () => false;
+          const exigiu = shouldWarnManualRiskConfirmation();
+          const sel = __selectStatus(0,0);
+          sel.value = 'Aberta';
+          sel.dispatchEvent(new Event('change', {bubbles:true}));
+          return {exigiu, status:S.phases[0].orders[0].status,
+                  op:S.activeOperation, unlockedAntes,
+                  unlockedDepois:S.phaseUnlocked.slice(),
+                  logAntes, logDepois:(S.transitionLog||[]).length};
+        }"""
+    )
+    if not r["exigiu"]:
+        # Sem Equity Protector inativo a confirmacao nao e pedida; o caso nao
+        # existe nesta fixture e afirmar qualquer coisa aqui seria vacuo.
+        assert r["op"], "a operacao deveria ter nascido quando nao ha confirmacao a recusar"
+        return
+    assert r["status"] != "Aberta", f"a ordem abriu apesar da recusa: {r['status']!r}"
+    assert r["op"] is None, (
+        f"a recusa criou entidade: {r['op']} — ordem recusada jamais cria operacao"
+    )
+    assert r["unlockedDepois"] == r["unlockedAntes"], (
+        f"a recusa deixou fase destravada: {r['unlockedAntes']} -> {r['unlockedDepois']} — "
+        "efeito colateral sobreviveu a um ato que nao aconteceu"
+    )
+    assert r["logDepois"] == r["logAntes"], "a recusa deixou evento no transitionLog"
+
+
 def main():
     server, url = serve()
     try:
@@ -336,6 +461,8 @@ def main():
             run_genesis_birth_through_ui(page)
             run_identity_stable_across_renders(page)
             run_rejected_open_creates_nothing(page)
+            run_unlock_by_own_genesis_is_stamped_with_real_identity(page)
+            run_manual_risk_refusal_creates_no_entity(page)
             run_close_order_through_ui(page)
             run_reset_does_not_leak_identity(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
