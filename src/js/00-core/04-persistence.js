@@ -798,6 +798,10 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   // automática. Qualquer outra ordem tornando-se operacional sem entidade viva
   // também faz a operação nascer — é uma operação real —, mas com abertura
   // DESCONHECIDA, que o operador informa na finalização.
+  // Ato CONFIRMADO: a ordem passou por todas as guardas e mudou de status.
+  if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
+    operationTouchAccountPhase();
+  }
   if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
     const genese = statusDepois==='Aberta' && pi===0 && oi===0;
     S.activeOperation={
@@ -1347,10 +1351,18 @@ function save(){
   // Precede o portão genérico: este não é reaberto por resumeJPWealthPersistence.
   if(jpWealthPersistenceOutcomeUnknown) return false;
   if(jpWealthPersistenceBlocked) return false;
-  // Captura prospectiva da maior Fase da Conta atingida pela operação viva.
-  // DEPOIS dos dois portões e ANTES da serialização: o que não vai ser gravado
-  // também não deve mover o máximo, e o que for gravado tem de já contê-lo.
-  operationTouchAccountPhase();
+  // AQUI NAO SE CAPTURA A FASE DA CONTA. save() e chamado a cada TECLA nos campos
+  // numericos da grade, e um valor meio digitado produz uma Fase da Conta
+  // transitoria: digitar "1.09" passa por "1", cujo risco joga a conta para a
+  // Fase 4. Como a captura e monotonica, aquele pico era gravado como maximo
+  // OBSERVADO e nunca mais descia — o registro imutavel afirmava uma fase que a
+  // conta jamais atingiu.
+  //
+  // Persistir o valor corrente e uma coisa; afirmar historia e outra. A captura
+  // passou para os atos semanticamente CONFIRMADOS: edicao comprometida de campo
+  // (evento 'change', depois das guardas e das reversoes), resultado informado,
+  // ordem tornando-se operacional, destravamento de fase confirmado, e
+  // finalizacao. Todos chamam operationTouchAccountPhase() explicitamente.
   // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
   // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
   // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez

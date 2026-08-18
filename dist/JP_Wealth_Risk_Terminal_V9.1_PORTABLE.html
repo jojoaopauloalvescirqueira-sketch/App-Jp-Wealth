@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '08b12225424840db';
+const JP_WEALTH_BUILD_ID = '4c75d66dc916b3a6';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8648,6 +8648,10 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   // automática. Qualquer outra ordem tornando-se operacional sem entidade viva
   // também faz a operação nascer — é uma operação real —, mas com abertura
   // DESCONHECIDA, que o operador informa na finalização.
+  // Ato CONFIRMADO: a ordem passou por todas as guardas e mudou de status.
+  if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
+    operationTouchAccountPhase();
+  }
   if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
     const genese = statusDepois==='Aberta' && pi===0 && oi===0;
     S.activeOperation={
@@ -9197,10 +9201,18 @@ function save(){
   // Precede o portão genérico: este não é reaberto por resumeJPWealthPersistence.
   if(jpWealthPersistenceOutcomeUnknown) return false;
   if(jpWealthPersistenceBlocked) return false;
-  // Captura prospectiva da maior Fase da Conta atingida pela operação viva.
-  // DEPOIS dos dois portões e ANTES da serialização: o que não vai ser gravado
-  // também não deve mover o máximo, e o que for gravado tem de já contê-lo.
-  operationTouchAccountPhase();
+  // AQUI NAO SE CAPTURA A FASE DA CONTA. save() e chamado a cada TECLA nos campos
+  // numericos da grade, e um valor meio digitado produz uma Fase da Conta
+  // transitoria: digitar "1.09" passa por "1", cujo risco joga a conta para a
+  // Fase 4. Como a captura e monotonica, aquele pico era gravado como maximo
+  // OBSERVADO e nunca mais descia — o registro imutavel afirmava uma fase que a
+  // conta jamais atingiu.
+  //
+  // Persistir o valor corrente e uma coisa; afirmar historia e outra. A captura
+  // passou para os atos semanticamente CONFIRMADOS: edicao comprometida de campo
+  // (evento 'change', depois das guardas e das reversoes), resultado informado,
+  // ordem tornando-se operacional, destravamento de fase confirmado, e
+  // finalizacao. Todos chamam operationTouchAccountPhase() explicitamente.
   // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
   // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
   // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez
@@ -10409,6 +10421,8 @@ function openTransitionModal(faseNum){
     // maxGridPhaseReached SO dos eventos daquela operationId.
     S.transitionLog.push(operationStampTransition(
       {fase:faseNum, ts:new Date().toISOString(), resumo:collected}, faseNum-1));
+    // Destravamento CONFIRMADO pelo questionário: ato semântico, não digitação.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save();
     closeModal();
     if(faseNum>=2) mirrorPhaseForward(faseNum-2);
@@ -10626,6 +10640,8 @@ function handleStopLimitBreach(pi, oi, check){
     );
     if(ok===phrase){
       for(let i=0;i<=info.supported;i++) S.phaseUnlocked[i]=true;
+      // Destravamento CONFIRMADO pela frase exigida ao operador.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
       // Este e o UNICO caminho de stop que destrava fase; os demais so alertam.
       auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase}, info.supported);
       delete o.stopPhaseWarning;
@@ -11096,7 +11112,11 @@ function renderPhases(){
     inp.addEventListener('change',()=>{
       const pi=+inp.dataset.p, oi=+inp.dataset.o, f=inp.dataset.f;
       const o=S.phases[pi].orders[oi];
-      if(f==='result'){ checkDivergence(pi,oi); return; }
+      // Resultado informado e ato confirmado, e e o que mais move o drawdown.
+      if(f==='result'){
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+        save(); checkDivergence(pi,oi); return;
+      }
       const revert=()=>{
         const raw=inp.dataset.prevval??'';
         const val=['lote','entry','sl','tp'].includes(f)?(parseFloat(raw)||0):raw;
@@ -11129,6 +11149,12 @@ function renderPhases(){
         }
       }
       if(f==='par'){ renderPhases(); } // par novo muda risco/nocional — redesenha
+      // EDICAO COMPROMETIDA: chegar aqui significa que o valor sobreviveu a
+      // todas as guardas e a todas as reversoes — os caminhos de recusa saem por
+      // `return` antes. So agora o estado e uma afirmacao do operador, e so agora
+      // a Fase da Conta pode virar evidencia historica.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+      save();
     });
   });
   cont.querySelectorAll('select').forEach(sel=>{
@@ -27706,6 +27732,10 @@ function finalizeOperation(entrada){
     // cycleRealizado outra vez e faria segundo reset.
     const jaFinalizada = ((S.operationHistory || {}).records || []).some(r => r && r.operationId === op.operationId);
     if (jaFinalizada) return { ok:false, motivo:'already_finalized', operationId: op.operationId };
+
+    // Ultimo ato confirmado da operacao: a Fase da Conta no instante do
+    // encerramento entra no maximo antes de o registro ser montado.
+    if (typeof operationTouchAccountPhase === 'function') operationTouchAccountPhase();
 
     const snap = operationBuildSnapshot(op, entrada);
     if (!snap.ok) return snap;

@@ -185,7 +185,12 @@ def run_unknown_is_never_zero(page):
           S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
           S.activeOperation = {schemaVersion:1, operationId:'op_cap', openedAt:null,
                                openedAtSource:null, maxAccountPhaseReached:null};
-          save();
+          // A captura NAO mora mais em save(): save() roda a cada tecla, e um
+          // valor meio digitado nao pode virar evidencia historica. Aqui se
+          // exercita a funcao de captura diretamente, que e o objeto deste teste
+          // de unidade; QUAIS atos a disparam e propriedade de fiacao, coberta
+          // por run_typing_does_not_forge_account_phase na suite de finalizacao.
+          operationTouchAccountPhase();
           casos.aposPrimeiraCaptura = S.activeOperation.maxAccountPhaseReached;
           // renderizadores
           casos.fmtNull = operationFmtPhase(null);
@@ -287,7 +292,13 @@ def run_order_close_stamp(page):
 
 
 def run_phase_capture_monotonic(page):
-    """maxAccountPhaseReached e capturado em save() e NUNCA regride."""
+    """maxAccountPhaseReached e capturado em ATO CONFIRMADO e NUNCA regride.
+
+    A captura saiu de save() de proposito: save() roda a cada tecla dos campos
+    numericos da grade, e um valor meio digitado nao pode virar evidencia
+    historica. Aqui a captura e invocada diretamente — QUAIS atos a disparam e
+    propriedade de fiacao, coberta em operation_finalize_test.py.
+    """
     fatos = page.evaluate(
         """() => {
           const passos = [];
@@ -301,14 +312,14 @@ def run_phase_capture_monotonic(page):
           S.params.saldoIni = 10000;
           S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
           S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:'Fechada'};
-          save(); registrar('inicio');
+          operationTouchAccountPhase(); save(); registrar('inicio');
           // Perda que eleva o drawdown e, com ele, a Fase da Conta.
           S.phases[0].orders[0].result = -900;
-          save(); registrar('apos perda');
+          operationTouchAccountPhase(); save(); registrar('apos perda');
           const pico = S.activeOperation.maxAccountPhaseReached;
           // Recuperacao: a fase VIGENTE cai, o maximo NAO pode cair junto.
           S.phases[0].orders[0].result = 0;
-          save(); registrar('apos recuperacao');
+          operationTouchAccountPhase(); save(); registrar('apos recuperacao');
           return {passos, pico, maxFinal: S.activeOperation.maxAccountPhaseReached};
         }"""
     )
@@ -366,7 +377,7 @@ def run_not_applicable_is_normal_flow(page):
           S.params = null;                    // base legada/malformada
           const probe = accountPhaseProbe();
           let ok = null, erro = null;
-          try { ok = save(); } catch(e) { erro = String(e); }
+          try { operationTouchAccountPhase(); ok = save(); } catch(e) { erro = String(e); }
           const fault = S.activeOperation.phaseCaptureFault || null;
           S.params = bak;
           save();
@@ -406,7 +417,7 @@ def run_capture_failure_is_observable(page):
           S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:-900,status:'Fechada'};
           const probe = accountPhaseProbe();
           let ok = null, erro = null;
-          try { ok = save(); } catch(e) { erro = String(e); }
+          try { operationTouchAccountPhase(); ok = save(); } catch(e) { erro = String(e); }
           const op = S.activeOperation;
           const snapshot = {
             probeOk: probe.ok,
@@ -418,7 +429,7 @@ def run_capture_failure_is_observable(page):
           };
           window.compute = bak;
           // Sucesso posterior NAO apaga a evidencia da falha.
-          save();
+          operationTouchAccountPhase(); save();
           snapshot.faultPersisteAposSucesso = !!S.activeOperation.phaseCaptureFault;
           return snapshot;
         }"""

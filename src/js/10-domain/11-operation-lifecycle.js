@@ -348,6 +348,10 @@ function finalizeOperation(entrada){
     const jaFinalizada = ((S.operationHistory || {}).records || []).some(r => r && r.operationId === op.operationId);
     if (jaFinalizada) return { ok:false, motivo:'already_finalized', operationId: op.operationId };
 
+    // Ultimo ato confirmado da operacao: a Fase da Conta no instante do
+    // encerramento entra no maximo antes de o registro ser montado.
+    if (typeof operationTouchAccountPhase === 'function') operationTouchAccountPhase();
+
     const snap = operationBuildSnapshot(op, entrada);
     if (!snap.ok) return snap;
 

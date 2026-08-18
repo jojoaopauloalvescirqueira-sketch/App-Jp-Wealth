@@ -1884,10 +1884,14 @@ def run_integrity_degraded_on_capture_failure(page):
             __semear({id:'op_int_deg', maxFase:2});
             window.compute = () => { throw new Error('falha sintetica de captura'); };
             const probe = accountPhaseProbe();
-            save();                                  // grava a marca
+            // ATO CONFIRMADO, e nao save(): uma ordem tornando-se operacional.
+            // save() generico deixou de capturar de proposito — ele roda a cada
+            // tecla, e um valor meio digitado nao pode virar evidencia historica.
+            const o0 = S.phases[0].orders[0];
+            operationOnOrderStatus(o0, 'Fechada', 0, 0);   // grava a marca
             const marca = S.activeOperation.phaseCaptureFault || null;
-            window.compute = real;                   // captura volta a funcionar
-            save();
+            window.compute = real;                         // captura volta a funcionar
+            operationOnOrderStatus(o0, 'Fechada', 0, 0);
             const marcaDepois = S.activeOperation.phaseCaptureFault || null;
             const res = JPWOperation.finalize({defenseCount:0});
             const recs = S.operationHistory.records;
@@ -1928,7 +1932,9 @@ def run_phase_absent_from_matrix_is_a_defect(page):
             window.compute = () => ({fase:{nome:'FASE INEXISTENTE'}});
             const probe = accountPhaseProbe();
             __semear({id:'op_int_semmatriz', maxFase:null});
-            save();
+            // Ato confirmado, nao save(): ver comentario em
+            // run_integrity_degraded_on_capture_failure.
+            operationOnOrderStatus(S.phases[0].orders[0], 'Fechada', 0, 0);
             const marca = S.activeOperation.phaseCaptureFault || null;
             const res = JPWOperation.finalize({defenseCount:0});
             const recs = S.operationHistory.records;
@@ -2295,6 +2301,109 @@ def run_review_offers_no_retry_when_outcome_is_unknown(page):
     )
 
 
+def run_typing_does_not_forge_account_phase(page):
+    """Digitacao transitoria NAO vira maximo historico; ato confirmado vira.
+
+    save() roda a cada TECLA nos campos numericos da grade. Enquanto a captura
+    da Fase da Conta morava dentro dele, digitar "1.09" passava por "1", cujo
+    risco eleva a Fase da Conta — e como a captura e monotonica, aquele pico
+    virava maximo OBSERVADO e nunca mais descia. O registro imutavel afirmava
+    uma fase que a conta jamais atingiu.
+
+    Percorre o caminho REAL: eventos `input` caractere a caractere no <input> da
+    grade, depois `change` comprometido, depois uma alteracao legitima.
+
+    A grade e montada com apenas a FASE 1 destravada de proposito: com a Fase 2
+    aberta, healSupersededPhases espelha a Genese adiante e marca a original como
+    `Migrada` — que nao conta risco. O teste mediria zero e passaria por vacuidade.
+    """
+    r = page.evaluate(
+        """() => {
+          window.__avisos = [];
+          window.alert = m => window.__avisos.push(String(m));
+          window.confirm = () => true;
+          window.prompt = () => null;
+
+          __semear({id:'op_typing', maxFase:0});
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.phaseUnlocked = [true,false,false,false];
+          S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.05,
+            entry:1.10, sl:1.09, tp:1.20, result:0, status:'Aberta',
+            openedAt:'2026-08-01T10:00:00.000Z'};
+          S.phases[0].orders[1] = {id:'D1', par:'EURUSD', tipo:'BUY', lote:0.05,
+            entry:1.11, sl:1.10, tp:1.21, result:-150, status:'Fechada',
+            openedAt:'2026-08-02T10:00:00.000Z', closedAt:'2026-08-03T10:00:00.000Z'};
+          S.activeOperation.maxAccountPhaseReached = 0;
+          save();
+          navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+
+          const campo = (p,oi,f) => document.querySelector(
+            '#phaseContainer input[data-p="'+p+'"][data-o="'+oi+'"][data-f="'+f+'"]');
+          const max = () => S.activeOperation.maxAccountPhaseReached;
+          const fase = () => accountPhaseProbe().idx;
+
+          const inicial = {fase: fase(), max: max(), status: S.phases[0].orders[0].status};
+
+          const sl = campo(0,0,'sl');
+          if (!sl) return {erro:'campo sl nao encontrado na grade'};
+          const trilha = [];
+          for (const v of ['1','1.','1.0','1.09']) {
+            sl.value = v;
+            sl.dispatchEvent(new Event('input', {bubbles:true}));
+            trilha.push({digitado:v, faseTransitoria:fase(), max:max()});
+          }
+          sl.dispatchEvent(new Event('change', {bubbles:true}));
+          const aposCommit = {fase: fase(), max: max(), slNoModelo: S.phases[0].orders[0].sl};
+
+          const res = campo(0,1,'result');
+          if (!res) return {erro:'campo result nao encontrado na grade'};
+          res.value = '-500';
+          res.dispatchEvent(new Event('input', {bubbles:true}));
+          const aposDigitar = {fase: fase(), max: max()};
+          res.dispatchEvent(new Event('change', {bubbles:true}));
+          const aposConfirmar = {fase: fase(), max: max()};
+
+          return {inicial, trilha, aposCommit, aposDigitar, aposConfirmar};
+        }"""
+    )
+    assert not r.get("erro"), r.get("erro")
+    assert r["inicial"]["status"] == "Aberta", (
+        f"a ordem nao ficou Aberta apos renderizar: {r['inicial']} — se virou "
+        "Migrada, ela nao conta risco e o teste nao mede nada"
+    )
+    assert r["inicial"]["fase"] == 0 and r["inicial"]["max"] == 0, (
+        f"pre-condicao inesperada: {r['inicial']}"
+    )
+
+    transitorias = [p["faseTransitoria"] for p in r["trilha"]]
+    assert max(transitorias) > 0, (
+        f"nenhum passo intermediario elevou a fase: {r['trilha']} — sem isso o "
+        "teste nao exercita o defeito e passaria por vacuidade"
+    )
+    for passo in r["trilha"]:
+        assert passo["max"] == 0, (
+            f"digitar {passo['digitado']!r} elevou o maximo para {passo['max']} — "
+            "um estado intermediario de digitacao virou evidencia historica de "
+            "uma fase que a conta nunca atingiu"
+        )
+
+    assert r["aposCommit"]["slNoModelo"] == 1.09, f"valor final nao aplicado: {r['aposCommit']}"
+    assert r["aposCommit"]["fase"] == 0, f"fase apos commit: {r['aposCommit']['fase']}"
+    assert r["aposCommit"]["max"] == 0, (
+        f"o commit de um valor que MANTEM a fase elevou o maximo para {r['aposCommit']['max']}"
+    )
+
+    assert r["aposDigitar"]["max"] == 0, "digitar o resultado moveu o maximo antes da confirmacao"
+    assert r["aposConfirmar"]["fase"] == 1, (
+        f"a alteracao legitima nao elevou a fase: {r['aposConfirmar']}"
+    )
+    assert r["aposConfirmar"]["max"] == 1, (
+        f"alteracao CONFIRMADA que levou a conta a outra fase nao atualizou o "
+        f"maximo ({r['aposConfirmar']['max']}) — mover a captura para atos "
+        "confirmados nao pode significar deixar de capturar"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -2363,6 +2472,7 @@ def main():
             run_integrity_degraded_on_capture_failure(page)
             run_phase_absent_from_matrix_is_a_defect(page)
             run_review_shows_the_three_states(page)
+            run_typing_does_not_forge_account_phase(page)
             # ---- desfecho ternario da gravacao (#8 original) ----
             run_outcome_not_persisted_before_write(page)
             run_outcome_confirmed_after_write(page)

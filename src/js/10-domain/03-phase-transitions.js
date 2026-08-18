@@ -155,6 +155,8 @@ function openTransitionModal(faseNum){
     // maxGridPhaseReached SO dos eventos daquela operationId.
     S.transitionLog.push(operationStampTransition(
       {fase:faseNum, ts:new Date().toISOString(), resumo:collected}, faseNum-1));
+    // Destravamento CONFIRMADO pelo questionário: ato semântico, não digitação.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save();
     closeModal();
     if(faseNum>=2) mirrorPhaseForward(faseNum-2);
@@ -372,6 +374,8 @@ function handleStopLimitBreach(pi, oi, check){
     );
     if(ok===phrase){
       for(let i=0;i<=info.supported;i++) S.phaseUnlocked[i]=true;
+      // Destravamento CONFIRMADO pela frase exigida ao operador.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
       // Este e o UNICO caminho de stop que destrava fase; os demais so alertam.
       auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase}, info.supported);
       delete o.stopPhaseWarning;

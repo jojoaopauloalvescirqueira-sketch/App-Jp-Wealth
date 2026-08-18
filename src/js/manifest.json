@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "62b4fb0a5bbe055a723ca6238da92af3fa1df466f4b2e771a1608d178a847ee8"
+      "sha256": "ded5ee06e96dfa9bf3e0c20aae4c36fcd26e15e64dcf8df00bf9cae536d3f9d7"
     },
     {
       "order": 5,
@@ -86,13 +86,13 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "011172fe1bb52157b267385473200b3a21d0a0734508e93773c0c2f095366572"
+      "sha256": "1d623cedf8ac748d2a2c47ae99c6c597f4bcfc7ec475fda90f49a57f3ae9ef6e"
     },
     {
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "282baab7180dac90c882f00a13cd8932f6293570ba034165e5e2e6e3437c729f"
+      "sha256": "309cdd059a5cdd3b6d89dc68c413b8db141338fe44b4cb6ad3831b015ee33571"
     },
     {
       "order": 16,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "bae7a70947bed4c844f1352745ffcaed56925d210610559ec5a35a6b55c323ad"
+      "sha256": "8e10347caea48f394c77f0f69321ecb993a6ae1670efb3fca4ce5353f5d146eb"
     },
     {
       "order": 67,

@@ -217,7 +217,11 @@ function renderPhases(){
     inp.addEventListener('change',()=>{
       const pi=+inp.dataset.p, oi=+inp.dataset.o, f=inp.dataset.f;
       const o=S.phases[pi].orders[oi];
-      if(f==='result'){ checkDivergence(pi,oi); return; }
+      // Resultado informado e ato confirmado, e e o que mais move o drawdown.
+      if(f==='result'){
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+        save(); checkDivergence(pi,oi); return;
+      }
       const revert=()=>{
         const raw=inp.dataset.prevval??'';
         const val=['lote','entry','sl','tp'].includes(f)?(parseFloat(raw)||0):raw;
@@ -250,6 +254,12 @@ function renderPhases(){
         }
       }
       if(f==='par'){ renderPhases(); } // par novo muda risco/nocional — redesenha
+      // EDICAO COMPROMETIDA: chegar aqui significa que o valor sobreviveu a
+      // todas as guardas e a todas as reversoes — os caminhos de recusa saem por
+      // `return` antes. So agora o estado e uma afirmacao do operador, e so agora
+      // a Fase da Conta pode virar evidencia historica.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+      save();
     });
   });
   cont.querySelectorAll('select').forEach(sel=>{
