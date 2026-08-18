@@ -371,6 +371,50 @@ function operationReviewRow(rotulo, valor){
   return '<div class="modal-q"><div class="ql">'+esc(rotulo)+'</div><div class="op-final-val">'+esc(valor)+'</div></div>';
 }
 
+// Leitura ÚNICA do campo de defesas. A revisão e a confirmação precisam
+// interpretar o texto digitado exatamente do mesmo jeito; duas regras de parse
+// seriam duas respostas possíveis para "quantas defesas serão gravadas".
+// NaN significa AUSENTE — nunca 0. Zero defesas é afirmação do operador.
+function operationParseDefenses(txt){
+  const t=String(txt==null?'':txt).trim();
+  return /^\d+$/.test(t) ? parseInt(t,10) : NaN;
+}
+
+// Bloco de leitura da revisão, montado a partir de um registro JÁ construído.
+// Recebe o record que seria persistido AGORA com as entradas correntes, e não
+// valores soltos: o que o operador lê é o snapshot, não uma paráfrase dele.
+function operationReviewHTML(r, defesas){
+  const retorno=(r.referenceBalance>0)?((r.netResult/r.referenceBalance)*100).toFixed(2)+'%':'—';
+  const degradada=r.maxAccountPhaseIntegrity==='degraded';
+  const abertura=r.openedAt
+    ? (new Date(r.openedAt).toLocaleString('pt-BR')+(r.openedAtSource==='manual_legacy'?' (informada manualmente)':''))
+    : 'Desconhecida';
+  return operationReviewRow('Instrumento', r.instrument||'—')+
+    operationReviewRow('Direção', r.direction||'—')+
+    operationReviewRow('Abertura', abertura)+
+    // closedAt é capturado no instante EFETIVO da confirmação. Exibir aqui um
+    // horário de aparência definitiva e gravar outro quarenta segundos depois
+    // seria a mesma divergência que este bloco existe para eliminar. O contrato
+    // é dito em vez de simulado.
+    operationReviewRow('Encerramento formal', 'Registrado no instante da confirmação')+
+    operationReviewRow('Duração até agora', r.openedAt?operationFmtDuration(r.openedAt,r.closedAt):'—')+
+    operationReviewRow('Ordens da operação', String(r.ordersSnapshot.length))+
+    operationReviewRow('Resultado líquido', fmtMoney2(r.netResult))+
+    // A base do retorno e CONGELADA no registro e deriva de um parametro manual
+    // (saldo inicial do ciclo). Mostrar so a porcentagem escondia o denominador
+    // que sera auditado anos depois — 250/10000 e 250/12500 sao aprovacoes
+    // diferentes que produziam a mesma linha de leitura.
+    operationReviewRow('Base do retorno', r.referenceBalance==null?'—':fmtMoney2(r.referenceBalance))+
+    operationReviewRow('Retorno sobre a base do ciclo', retorno)+
+    // AUSENTE e ZERO são estados distintos e ambos visíveis. "Não informado"
+    // jamais é persistido: finalizeOperation recusa antes de chegar ao disco.
+    operationReviewRow('Defesas informadas', Number.isFinite(defesas)?String(defesas):'Não informado')+
+    operationReviewRow('Fase máxima da Conta', operationFmtPhase(r.maxAccountPhaseReached))+
+    operationReviewRow('Fase máxima da Grade', r.maxGridPhaseReached==null?'—':operationFmtPhase(r.maxGridPhaseReached))+
+    (degradada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Degradada</b></div>'+
+      '<div class="modal-sub">Houve falha de captura durante esta operação. O valor acima é o maior <b>conhecido</b>, não necessariamente o máximo absoluto atingido. A finalização não é bloqueada por isso.</div></div>'):'');
+}
+
 function openFinalizeOperationModal(){
   const pre=operationCanFinalize();
   const box=$('modalBox');
@@ -383,7 +427,29 @@ function openFinalizeOperationModal(){
     $('modalCancel').focus();
     return;
   }
-  const op=S.activeOperation||{operationId:'(será gerado na confirmação)'};
+  // Entidade AUSENTE nao vira entidade de fachada. O placeholder anterior
+  // ('(sera gerado na confirmacao)') era string nao-vazia, entao atravessava a
+  // guarda de operationResolveGridPhaseMax — que existe para devolver null
+  // quando NAO ha identidade — e a revisao passava a afirmar uma Fase maxima da
+  // Grade sobre uma entidade que nao existe. Pior: montava a revisao inteira,
+  // com botao de finalizar, para um estado que finalizeOperation recusa por
+  // no_identity. O operador preencheria abertura e defesas para so entao
+  // descobrir que nada seria gravado.
+  //
+  // Registro do que NAO se afirma aqui: numa grade sem evento de destravamento
+  // carimbado, uma identidade legitima tambem produz 0 — esse zero e o contrato
+  // documentado da funcao, nao efeito do placeholder. O defeito e afirmar
+  // qualquer coisa sobre uma entidade inexistente e prometer um registro que
+  // jamais sera gravado.
+  const op=S.activeOperation;
+  if(!op || typeof op!=='object'){
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">A operação não tem identidade registrada. Recarregue a página para que a normalização a estabeleça antes de finalizar.</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
   // PRÉVIA: construída só para ser lida. buildSnapshot não muta estado algum.
   const previa=operationBuildSnapshot(op,{defenseCount:0});
   if(!previa.ok && (previa.motivo==='instrument_conflict' || previa.motivo==='direction_conflict')){
@@ -404,27 +470,16 @@ function openFinalizeOperationModal(){
     $('modalCancel').focus();
     return;
   }
-  const r=previa.record;
-  const legada=!r.openedAt;
-  const retorno=(r.referenceBalance>0)?((r.netResult/r.referenceBalance)*100).toFixed(2)+'%':'—';
-  const degradada=r.maxAccountPhaseIntegrity==='degraded';
+  // Legado é propriedade da ENTIDADE, não do registro repintado: assim que o
+  // operador digita a data, o record passa a ter openedAt, e recalcular a
+  // partir dele faria o próprio campo de entrada desaparecer sob os dedos.
+  const legada=!(typeof op.openedAt==='string' && op.openedAt);
 
   box.innerHTML=
     '<h3>Finalizar Operação Única</h3>'+
     '<div class="modal-sub">Encerra formalmente a tese, preserva a operação no Histórico, consolida o resultado no ciclo e libera as grades. '+
     'Diferente de <b>fechar uma ordem</b>, que encerra apenas uma posição individual.</div>'+
-    operationReviewRow('Instrumento', r.instrument||'—')+
-    operationReviewRow('Direção', r.direction||'—')+
-    operationReviewRow('Abertura', r.openedAt?new Date(r.openedAt).toLocaleString('pt-BR'):'Desconhecida')+
-    operationReviewRow('Encerramento formal', new Date(r.closedAt).toLocaleString('pt-BR'))+
-    operationReviewRow('Duração', r.openedAt?operationFmtDuration(r.openedAt,r.closedAt):'—')+
-    operationReviewRow('Ordens da operação', String(r.ordersSnapshot.length))+
-    operationReviewRow('Resultado líquido', fmtMoney2(r.netResult))+
-    operationReviewRow('Retorno sobre a base do ciclo', retorno)+
-    operationReviewRow('Fase máxima da Conta', operationFmtPhase(r.maxAccountPhaseReached))+
-    operationReviewRow('Fase máxima da Grade', r.maxGridPhaseReached==null?'—':operationFmtPhase(r.maxGridPhaseReached))+
-    (degradada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Degradada</b></div>'+
-      '<div class="modal-sub">Houve falha de captura durante esta operação. O valor acima é o maior <b>conhecido</b>, não necessariamente o máximo absoluto atingido. A finalização não é bloqueada por isso.</div></div>'):'')+
+    '<div id="finalReview"></div>'+
     (legada?('<div class="modal-q" data-qid="abertura"><div class="ql">Data/hora de abertura da operação — obrigatória, pois não foi registrada automaticamente:</div>'+
       '<input type="datetime-local" id="finalOpenedAt"><div class="modal-err">Informe a data/hora de abertura.</div></div>'):'')+
     '<div class="modal-q" data-qid="defesas"><div class="ql">Número de defesas realizadas (inteiro ≥ 0):</div>'+
@@ -437,28 +492,70 @@ function openFinalizeOperationModal(){
     '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Cancelar</button>'+
     '<button class="modal-btn confirm" id="modalConfirm">Finalizar Operação</button></div>';
 
-  $('modalCancel').addEventListener('click',closeModal);
+  const inAbertura=legada?box.querySelector('#finalOpenedAt'):null;
+  const inDefesas=box.querySelector('#finalDefenses');
+  const revisao=box.querySelector('#finalReview');
+
   const erro=(qid,on)=>{ const n=box.querySelector('[data-qid="'+qid+'"] .modal-err'); if(n) n.classList.toggle('show',!!on); };
+
+  // ENTRADA CORRENTE: exatamente o objeto que finalizeOperation receberá. A
+  // revisão e a confirmação leem a mesma fonte, então não existe o caso de o
+  // operador aprovar um registro e outro ser gravado.
+  const entradaCorrente=()=>({
+    defenseCount: operationParseDefenses(inDefesas.value),
+    openedAtManual: legada?String(inAbertura.value||'').trim():''
+  });
+
+  // REPINTURA da revisão a cada alteração de entrada manual. Só o bloco de
+  // leitura é reescrito: recriar os <input> destruiria o foco e o texto já
+  // digitado a cada tecla.
+  function repintarRevisao(){
+    const ent=entradaCorrente();
+    // defenseCount ausente faria buildSnapshot recusar, e as demais linhas
+    // ficariam sem revisão nenhuma. Nenhum outro campo do registro deriva de
+    // defenseCount, então a construção usa 0 só para destravar o restante — o
+    // valor MOSTRADO é o real, e "não informado" nunca chega ao disco.
+    const p=operationBuildSnapshot(op,{
+      defenseCount: Number.isFinite(ent.defenseCount)?ent.defenseCount:0,
+      openedAtManual: ent.openedAtManual
+    });
+    revisao.innerHTML=p.ok
+      ? operationReviewHTML(p.record, ent.defenseCount)
+      : '<div class="modal-err show">Não foi possível montar a revisão ('+esc(p.motivo)+').</div>';
+    // A validacao acompanha a revisao. Ligar so a leitura ao evento fazia o
+    // modal afirmar duas coisas ao mesmo tempo: a linha "Abertura" ja exibindo
+    // a data informada e, tres centimetros abaixo, a mensagem vermelha dizendo
+    // que o campo esta ausente. O erro so e APAGADO quando a entrada passa a
+    // ser valida; nunca aceso aqui, porque acusar antes da confirmacao seria
+    // reclamar de um campo que o operador ainda esta preenchendo.
+    if(Number.isFinite(ent.defenseCount)) erro('defesas',false);
+    if(legada && ent.openedAtManual && Number.isFinite(Date.parse(ent.openedAtManual))) erro('abertura',false);
+  }
+  repintarRevisao();
+  // 'change' alem de 'input': o seletor nativo de data e o preenchimento
+  // automatico nem sempre emitem os dois, e uma revisao defasada de um campo
+  // ja alterado e precisamente o defeito que este bloco elimina.
+  ['input','change'].forEach(ev=>{
+    if(inAbertura) inAbertura.addEventListener(ev,repintarRevisao);
+    inDefesas.addEventListener(ev,repintarRevisao);
+  });
+
+  $('modalCancel').addEventListener('click',closeModal);
   const btn=$('modalConfirm');
   btn.addEventListener('click',()=>{
     if(btn.disabled) return; // reentrância: o segundo clique não passa
     erro('defesas',false); erro('confirmtxt',false); if(legada) erro('abertura',false);
     let falhou=false;
     // Campo VAZIO não vira 0 em silêncio: zero defesas é uma afirmação do
-    // operador, e precisa ser digitada.
-    const dTxt=String(box.querySelector('#finalDefenses').value||'').trim();
-    const d=/^\d+$/.test(dTxt)?parseInt(dTxt,10):NaN;
-    if(!Number.isFinite(d)){ erro('defesas',true); falhou=true; }
-    let openedAtManual='';
-    if(legada){
-      openedAtManual=String(box.querySelector('#finalOpenedAt').value||'').trim();
-      if(!openedAtManual || !Number.isFinite(Date.parse(openedAtManual))){ erro('abertura',true); falhou=true; }
-    }
+    // operador, e precisa ser digitada. Mesmo parse da revisão.
+    const ent=entradaCorrente();
+    if(!Number.isFinite(ent.defenseCount)){ erro('defesas',true); falhou=true; }
+    if(legada && (!ent.openedAtManual || !Number.isFinite(Date.parse(ent.openedAtManual)))){ erro('abertura',true); falhou=true; }
     if(String(box.querySelector('#finalConfirm').value||'').trim()!=='FECHADO'){ erro('confirmtxt',true); falhou=true; }
     if(falhou) return;
 
     btn.disabled=true;
-    const res=finalizeOperation({defenseCount:d, openedAtManual});
+    const res=finalizeOperation(ent);
     if(!res.ok){
       // Falha NÃO fecha o modal comunicando sucesso. A operação continua viva
       // e o operador pode tentar de novo.
@@ -466,6 +563,10 @@ function openFinalizeOperationModal(){
       const msg=box.querySelector('#finalFail');
       if(cx&&msg){ msg.textContent=res.mensagem||('A finalização não foi concluída ('+res.motivo+'). Nada foi alterado.'); cx.hidden=false; }
       btn.disabled=false;
+      // O modal continua aberto para nova tentativa, e ela pode acontecer muito
+      // depois. Sem repintar, a revisao reaprovada ficaria carimbada na ultima
+      // tecla digitada enquanto o registro receberia o closedAt da reconfirmacao.
+      repintarRevisao();
       return;
     }
     closeModal();
@@ -473,7 +574,7 @@ function openFinalizeOperationModal(){
     if(typeof renderPhases==='function') renderPhases();
     if(typeof renderLedger==='function') renderLedger();
   });
-  const foco=box.querySelector(legada?'#finalOpenedAt':'#finalDefenses');
+  const foco=legada?inAbertura:inDefesas;
   if(foco) foco.focus();
 }
 

@@ -1000,6 +1000,571 @@ def run_audit_single_event_per_operation(page):
     assert r["audit"]["mem"] == 1, f"memoria com contagem divergente: {r['audit']}"
 
 
+# ---------------------------------------------------------------------------
+# Revisao = snapshot (#5)
+# ---------------------------------------------------------------------------
+# Regra central: tudo que depende de entrada manual e sera imutavelmente
+# persistido aparece na revisao com o VALOR QUE SERA GRAVADO. A revisao antiga
+# era construida uma unica vez, na abertura do modal, com defenseCount:0 cravado
+# e sem openedAtManual — o operador aprovava um registro e outro ia para o
+# disco. Os testes digitam com evento `input` REAL: atribuir .value direto nao
+# dispara repintura nenhuma e nao provaria nada sobre a fiacao.
+
+REVISAO_HELPER = """
+  window.__digitar = (sel, val) => {
+    const el = document.querySelector(sel);
+    // Devolve null em vez de estourar. Se uma repintura destruir o campo, o
+    // desfecho tem de chegar ao Python como DADO e ser acusado por assercao —
+    // um TypeError aqui derrubaria o evaluate e a propriedade violada ficaria
+    // sem acusacao nomeada.
+    if (!el) return null;
+    el.value = val;
+    el.dispatchEvent(new Event('input', {bubbles:true}));
+    return el.value;
+  };
+  window.__revisao = () => {
+    const out = {};
+    document.querySelectorAll('#finalReview .modal-q').forEach(q => {
+      const l = q.querySelector('.ql'), v = q.querySelector('.op-final-val');
+      if (l && v) out[l.textContent.trim()] = v.textContent.trim();
+    });
+    return out;
+  };
+"""
+
+
+def run_review_equals_persisted_record(page):
+    """PROVA DIRETA: o que a revisao mostra e o que o Historico recebe.
+
+    Operacao legada, abertura X e defesas Y informadas pelo operador. A revisao
+    e lida ANTES da confirmacao; o registro e lido DEPOIS; os dois textos tem de
+    coincidir. Na versao anterior a revisao dizia "Desconhecida" e "0" enquanto
+    o disco recebia X e Y.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null, id:'op_prev_par'});
+          JPWOperation.openReview();
+          __digitar('#finalOpenedAt', '2026-07-15T08:30');
+          __digitar('#finalDefenses', '4');
+          const previa = __revisao();
+          __digitar('#finalConfirm', 'FECHADO');
+          document.getElementById('modalConfirm').click();
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          // Formula CANONICA reescrita aqui de proposito, e nao lida do codigo
+          // de producao: se a exibicao adulterar o valor (deslocamento de fuso
+          // so no lado da tela, por exemplo), o teste tem de divergir.
+          return {previa, rec,
+                  esperadoISO: new Date(Date.parse('2026-07-15T08:30')).toISOString(),
+                  esperadoTexto: rec && rec.openedAt
+                    ? new Date(rec.openedAt).toLocaleString('pt-BR')+' (informada manualmente)'
+                    : null};
+        }"""
+    )
+    prev, rec = r["previa"], r["rec"]
+    assert rec, "a finalizacao nao produziu registro"
+    assert rec["openedAt"] == r["esperadoISO"], (
+        f"abertura persistida diverge do informado: {rec['openedAt']} != {r['esperadoISO']}"
+    )
+    assert rec["defenseCount"] == 4, f"defesas persistidas: {rec['defenseCount']}"
+    assert rec["openedAtSource"] == "manual_legacy", f"proveniencia: {rec['openedAtSource']}"
+    # O texto exibido tem de ser o texto do registro gravado, nao um parecido.
+    assert "Desconhecida" not in prev["Abertura"], (
+        f"a revisao mostrou abertura desconhecida enquanto o disco recebeu "
+        f"{rec['openedAt']} — o operador aprovou um registro e outro foi gravado"
+    )
+    assert "(informada manualmente)" in prev["Abertura"], (
+        f"a proveniencia manual nao apareceu na revisao: {prev['Abertura']!r}"
+    )
+    # Igualdade EXATA, nao presenca de substring: uma divergencia de VALOR entre
+    # o que foi lido e o que foi gravado passaria por qualquer teste de substring.
+    assert prev["Abertura"] == r["esperadoTexto"], (
+        f"a revisao exibiu {prev['Abertura']!r} e o registro imutavel guardou "
+        f"{rec['openedAt']!r}, que se le como {r['esperadoTexto']!r} — o operador "
+        "aprovou um horario e outro foi persistido"
+    )
+    assert prev["Defesas informadas"] == "4", (
+        f"a revisao mostrou {prev['Defesas informadas']!r} e o disco recebeu "
+        f"{rec['defenseCount']}"
+    )
+    assert prev["Duração até agora"] != "—", (
+        "a duracao continuou indisponivel apesar da abertura informada"
+    )
+
+
+def run_review_recalculates_on_opened_at_change(page):
+    """Alterar a abertura recalcula a duracao exibida."""
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null, id:'op_prev_dur'});
+          JPWOperation.openReview();
+          // Literal proximo do presente quebraria contra codigo CORRETO em
+          // qualquer maquina cujo relogio local esteja atras da data escrita —
+          // a duracao viraria '—' por abertura no futuro. Derivar do relogio.
+          const pad = n => String(n).padStart(2,'0');
+          const h = new Date(Date.now() - 3600*1000);
+          const umaHoraAtras = h.getFullYear()+'-'+pad(h.getMonth()+1)+'-'+pad(h.getDate())
+                             +'T'+pad(h.getHours())+':'+pad(h.getMinutes());
+          __digitar('#finalOpenedAt', '2020-01-01T00:00');
+          const antiga = __revisao();
+          __digitar('#finalOpenedAt', umaHoraAtras);
+          const recente = __revisao();
+          return {antiga, recente, umaHoraAtras};
+        }"""
+    )
+    a, b = r["antiga"], r["recente"]
+    assert a["Duração até agora"] != "—" and b["Duração até agora"] != "—", (
+        f"duracao indisponivel: {a['Duração até agora']!r} / {b['Duração até agora']!r}"
+    )
+    assert a["Duração até agora"] != b["Duração até agora"], (
+        f"a duracao NAO reagiu a mudanca de abertura: continuou "
+        f"{a['Duração até agora']!r} — a revisao esta congelada na abertura do modal"
+    )
+    assert a["Abertura"] != b["Abertura"], "a abertura exibida nao reagiu"
+
+
+def run_review_absent_defenses_is_not_zero(page):
+    """Campo vazio mostra AUSENTE na revisao. Nunca 0."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_prev_vazio'});
+          JPWOperation.openReview();
+          const inicial = __revisao();
+          __digitar('#finalDefenses', '7');
+          const preenchida = __revisao();
+          __digitar('#finalDefenses', '');
+          const limpa = __revisao();
+          return {inicial, preenchida, limpa};
+        }"""
+    )
+    assert r["inicial"]["Defesas informadas"] == "Não informado", (
+        f"revisao inicial mostrou {r['inicial']['Defesas informadas']!r} — "
+        "ausencia de informacao virou afirmacao do operador"
+    )
+    assert r["preenchida"]["Defesas informadas"] == "7", (
+        f"revisao nao acompanhou a digitacao: {r['preenchida']['Defesas informadas']!r}"
+    )
+    assert r["limpa"]["Defesas informadas"] == "Não informado", (
+        f"apagar o campo deixou {r['limpa']['Defesas informadas']!r} na revisao"
+    )
+
+
+def run_review_explicit_zero_is_shown_and_persisted(page):
+    """Zero DIGITADO e afirmacao: aparece como 0 e chega ao disco como 0."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_prev_zero'});
+          save();
+          JPWOperation.openReview();
+          __digitar('#finalDefenses', '0');
+          const previa = __revisao();
+          __digitar('#finalConfirm', 'FECHADO');
+          document.getElementById('modalConfirm').click();
+          // Leitura DEFENSIVA de proposito. Se a finalizacao for recusada, o
+          // desfecho tem de chegar ao Python como dado para ser ACUSADO por
+          // assercao — um TypeError aqui derrubaria o evaluate antes de
+          // qualquer verificacao e daria falsa sensacao de deteccao.
+          const disco = JSON.parse(localStorage.getItem('jpwealth_v9_state') || 'null');
+          const recs = (disco && disco.operationHistory && disco.operationHistory.records) || [];
+          const rec = recs[recs.length-1] || null;
+          return {previa, gravou: !!rec,
+                  defesas: rec ? rec.defenseCount : null,
+                  fonte: rec ? rec.defenseCountSource : null};
+        }"""
+    )
+    assert r["previa"]["Defesas informadas"] == "0", (
+        f"zero digitado nao apareceu como 0: {r['previa']['Defesas informadas']!r}"
+    )
+    assert r["gravou"], (
+        "a finalizacao foi recusada com zero defesas digitado — zero e uma "
+        "afirmacao valida do operador, nao ausencia de informacao"
+    )
+    assert r["defesas"] == 0, f"zero digitado nao chegou ao disco: {r['defesas']!r}"
+    assert r["fonte"] == "manual", f"proveniencia: {r['fonte']!r}"
+
+
+def run_review_promises_no_fixed_closing_time(page):
+    """closedAt e capturado na CONFIRMACAO, e a revisao nao finge outra coisa.
+
+    Mostrar um horario de aparencia definitiva e gravar outro depois da revisao
+    e a mesma divergencia que este bloco existe para eliminar. O contrato e
+    dito por extenso, e o teste prova as duas metades: o texto nao promete um
+    instante fixo, e o instante gravado e o da confirmacao — nao o da abertura
+    do modal.
+    """
+    r = page.evaluate(
+        """async () => {
+          __semear({id:'op_prev_fecho'});
+          save();
+          JPWOperation.openReview();
+          // Toda a digitacao ANTES da espera: a ultima repintura precisa ficar
+          // do outro lado do intervalo, senao a assercao nao distingue o
+          // carimbo da confirmacao do carimbo da repintura.
+          __digitar('#finalDefenses', '0');
+          __digitar('#finalConfirm', 'FECHADO');
+          const previa = __revisao();
+          const tUltimaRepintura = Date.now();
+          await new Promise(res => setTimeout(res, 1200));
+          const tConfirmacao = Date.now();
+          document.getElementById('modalConfirm').click();
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {previa, tUltimaRepintura, tConfirmacao, gravou: !!rec,
+                  closedAt: rec ? Date.parse(rec.closedAt) : null,
+                  texto: rec ? rec.closedAt : null};
+        }"""
+    )
+    fecho = r["previa"]["Encerramento formal"]
+    assert fecho == "Registrado no instante da confirmação", (
+        f"a revisao anuncia um horario de encerramento: {fecho!r} — o operador "
+        "leria um instante e outro seria gravado"
+    )
+    assert r["gravou"], "a finalizacao nao produziu registro"
+    assert r["tConfirmacao"] - r["tUltimaRepintura"] >= 1000, (
+        "a espera nao ocorreu entre a ultima repintura e o clique; sem esse "
+        "intervalo as duas hipoteses (carimbo na repintura, carimbo na "
+        "confirmacao) produzem o mesmo resultado e a comparacao e vacua"
+    )
+    # A assercao DISCRIMINANTE: o carimbo tem de ser posterior a ultima
+    # repintura por mais que o intervalo, e nao apenas "nao anterior a
+    # confirmacao". Sem ela, reaproveitar o record da previa passaria.
+    assert r["closedAt"] > r["tUltimaRepintura"] + 1000, (
+        f"closedAt e o instante da REPINTURA, nao o da confirmacao: {r['texto']} "
+        f"foi carimbado {r['tConfirmacao'] - r['closedAt']}ms antes do clique, "
+        "enquanto a revisao afirmava 'Registrado no instante da confirmação'"
+    )
+    assert r["closedAt"] >= r["tConfirmacao"] - 50, (
+        f"closedAt anterior a confirmacao: {r['texto']}"
+    )
+
+
+def run_review_repaint_preserves_typing(page):
+    """A repintura nao pode destruir foco nem texto ja digitado.
+
+    A revisao e repintada a cada tecla. Reescrever o modal inteiro seria a saida
+    obvia e erraria: o operador perderia o foco e o conteudo dos campos a cada
+    caractere — o mesmo defeito de foco ja identificado na busca do Historico.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null, id:'op_prev_foco'});
+          JPWOperation.openReview();
+          __digitar('#finalConfirm', 'FECHADO');
+          __digitar('#finalOpenedAt', '2026-07-01T09:00');
+          document.getElementById('finalDefenses').focus();
+          __digitar('#finalDefenses', '1');
+          const focoDepois = document.activeElement && document.activeElement.id;
+          __digitar('#finalDefenses', '12');
+          // Leitura DEFENSIVA: se a repintura destruir os campos, o desfecho tem
+          // de chegar ao Python como dado e ser acusado por assercao. Um
+          // TypeError aqui derrubaria o evaluate e deixaria a propriedade
+          // violada sem acusacao nomeada.
+          const campo = id => document.getElementById(id);
+          return {
+            focoDepois,
+            focoFinal: document.activeElement && document.activeElement.id,
+            temAbertura: !!campo('finalOpenedAt'),
+            temConfirmacao: !!campo('finalConfirm'),
+            temDefesas: !!campo('finalDefenses'),
+            confirmacao: campo('finalConfirm') ? campo('finalConfirm').value : null,
+            abertura: campo('finalOpenedAt') ? campo('finalOpenedAt').value : null,
+            defesas: campo('finalDefenses') ? campo('finalDefenses').value : null,
+            revisao: __revisao()
+          };
+        }"""
+    )
+    assert r["temAbertura"] and r["temConfirmacao"] and r["temDefesas"], (
+        f"a repintura DESTRUIU campos de entrada: abertura={r['temAbertura']}, "
+        f"confirmacao={r['temConfirmacao']}, defesas={r['temDefesas']} — reescrever "
+        "o modal inteiro a cada tecla e a saida obvia e errada"
+    )
+    assert r["focoDepois"] == "finalDefenses" and r["focoFinal"] == "finalDefenses", (
+        f"a repintura roubou o foco: {r['focoDepois']!r} -> {r['focoFinal']!r}"
+    )
+    assert r["confirmacao"] == "FECHADO", (
+        f"a repintura apagou o campo de confirmacao: {r['confirmacao']!r}"
+    )
+    assert r["abertura"] == "2026-07-01T09:00", (
+        f"a repintura apagou a abertura informada: {r['abertura']!r}"
+    )
+    assert r["defesas"] == "12", f"a repintura apagou as defesas: {r['defesas']!r}"
+    assert r["revisao"]["Defesas informadas"] == "12", (
+        f"a revisao ficou defasada do campo: {r['revisao']['Defesas informadas']!r}"
+    )
+
+
+def run_review_return_matches_history_formula(page):
+    """O retorno aprovado na revisao e o retorno que o Historico mostrara.
+
+    A formula do retorno esta implementada DUAS vezes: no modal (camada de
+    dominio) e em histReturnPct (camada de interface). Sao numeros que precisam
+    coincidir para sempre — o operador aprova um percentual e o Historico exibe
+    aquele percentual anos depois. Enquanto houver duas implementacoes, este
+    teste e o que impede a deriva silenciosa entre elas.
+    """
+    r = page.evaluate(
+        """() => {
+          const ler = (semBase) => {
+            __semear({id: semBase ? 'op_ret_sembase' : 'op_ret_com'});
+            const bak = S.params.saldoIni;
+            if (semBase) S.params.saldoIni = 0;
+            save();
+            JPWOperation.openReview();
+            const mostrado = __revisao()['Retorno sobre a base do ciclo'];
+            __digitar('#finalDefenses', '0');
+            __digitar('#finalConfirm', 'FECHADO');
+            document.getElementById('modalConfirm').click();
+            const recs = S.operationHistory.records;
+            const rec = recs[recs.length-1] || null;
+            S.params.saldoIni = bak;
+            if (!rec) return {mostrado, gravou:false};
+            const pct = histReturnPct(rec);
+            return {mostrado, gravou:true, base: rec.referenceBalance,
+                    historico: pct == null ? '—' : pct.toFixed(2) + '%'};
+          };
+          return {comBase: ler(false), semBase: ler(true)};
+        }"""
+    )
+    for rotulo, c in (("com base", r["comBase"]), ("sem base", r["semBase"])):
+        assert c["gravou"], f"{rotulo}: a finalizacao nao produziu registro"
+        assert c["mostrado"] == c["historico"], (
+            f"{rotulo}: a revisao mostrou {c['mostrado']!r} e o Historico mostrara "
+            f"{c['historico']!r} para o MESMO registro — as duas implementacoes "
+            "da formula do retorno divergiram"
+        )
+    assert r["comBase"]["mostrado"] != "—", (
+        "o caso com base valida caiu no ramo indisponivel; a comparacao seria vacua"
+    )
+    assert r["semBase"]["mostrado"] == "—", (
+        f"base ausente deveria ser indisponivel, veio {r['semBase']['mostrado']!r} — "
+        "um denominador inexistente nao pode virar percentual"
+    )
+    assert r["semBase"]["base"] is None, (
+        f"base congelada indevida: {r['semBase']['base']!r}"
+    )
+
+
+def run_review_non_integer_defenses_rejected(page):
+    """Entrada nao-inteira: a regex estrita e um parseInt frouxo divergem AQUI.
+
+    Os demais casos usam '4', '7', '0', '12' e '' — para todos eles as duas
+    regras devolvem o mesmo resultado, entao nenhum deles prendia
+    operationParseDefenses. '2.5' e '3x' sao os valores em que um parse frouxo
+    persistiria 2 e 3 num registro imutavel enquanto a revisao dizia "Não
+    informado". As duas metades sao asseveradas: o que a revisao mostra E o que
+    a confirmacao faz.
+    """
+    r = page.evaluate(
+        """() => {
+          const casos = ['2.5', '3x', ' 4 4', '-1', '1e2'];
+          const out = [];
+          for (const txt of casos) {
+            __semear({id:'op_parse_'+casos.indexOf(txt)});
+            save();
+            JPWOperation.openReview();
+            __digitar('#finalDefenses', txt);
+            const mostrado = __revisao()['Defesas informadas'];
+            __digitar('#finalConfirm', 'FECHADO');
+            document.getElementById('modalConfirm').click();
+            out.push({
+              txt, mostrado,
+              registros: S.operationHistory.records.length,
+              erroAceso: !!document.querySelector('[data-qid="defesas"] .modal-err.show'),
+              aindaAberto: document.getElementById('modalOverlay').classList.contains('show')
+            });
+            closeModal();
+          }
+          return {out};
+        }"""
+    )
+    for c in r["out"]:
+        assert c["mostrado"] == "Não informado", (
+            f"{c['txt']!r}: a revisao mostrou {c['mostrado']!r} — um parse frouxo "
+            "leu um numero onde a regra estrita nao le nenhum"
+        )
+        assert c["registros"] == 0, (
+            f"{c['txt']!r}: a finalizacao PERSISTIU um registro com defesas "
+            "derivadas de texto que a revisao declarou nao informado"
+        )
+        assert c["erroAceso"], f"{c['txt']!r}: entrada invalida sem erro visivel"
+        assert c["aindaAberto"], f"{c['txt']!r}: o modal fechou apesar da recusa"
+
+
+def run_review_shows_frozen_return_base(page):
+    """A base do retorno e persistida e imutavel: precisa estar na revisao.
+
+    Ela deriva de um parametro manual (saldo inicial do ciclo) e fica CONGELADA
+    no registro para continuar auditavel anos depois. Exibir so a porcentagem
+    fazia 250/10000 e 250/12500 chegarem ao operador como uma unica linha de
+    leitura, sem meio de distinguir qual denominador seria gravado.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_base_visivel'});
+          S.params.saldoIni = 12500;
+          save();
+          JPWOperation.openReview();
+          const previa = __revisao();
+          __digitar('#finalDefenses', '0');
+          __digitar('#finalConfirm', 'FECHADO');
+          document.getElementById('modalConfirm').click();
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {previa, gravou: !!rec,
+                  base: rec ? rec.referenceBalance : null,
+                  esperado: rec ? fmtMoney2(rec.referenceBalance) : null};
+        }"""
+    )
+    assert r["gravou"], "a finalizacao nao produziu registro"
+    assert r["base"] == 12500, f"base congelada inesperada: {r['base']!r}"
+    assert "Base do retorno" in r["previa"], (
+        f"a revisao nao exibe a base do retorno; linhas: {list(r['previa'])} — o "
+        "operador aprova uma porcentagem sem ver o denominador que sera gravado"
+    )
+    assert r["previa"]["Base do retorno"] == r["esperado"], (
+        f"a base exibida {r['previa']['Base do retorno']!r} diverge da persistida "
+        f"{r['esperado']!r}"
+    )
+
+
+def run_review_without_identity_claims_nothing(page):
+    """Sem identidade, a revisao nao inventa fase maxima nem promete registro.
+
+    O fallback anterior fabricava {operationId:'(será gerado na confirmação)'}.
+    Por ser string nao-vazia ele atravessava a guarda de
+    operationResolveGridPhaseMax — que existe para devolver null sem identidade
+    — e a revisao afirmava "Fase 1" como maximo OBSERVADO de uma operacao sem
+    evento escopado nenhum. Desconhecido coagido a zero, sobre um registro que
+    finalizeOperation recusaria por no_identity.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_sem_id'});
+          S.activeOperation = null;
+          save();
+          const antes = S.operationHistory.records.length;
+          JPWOperation.openReview();
+          const rev = __revisao();
+          const texto = document.getElementById('modalBox').textContent;
+          const temConfirmar = !!document.getElementById('modalConfirm');
+          const res = JPWOperation.finalize({defenseCount:0});
+          return {linhas: Object.keys(rev), faseGrade: rev['Fase máxima da Grade'],
+                  texto, temConfirmar, motivo: res.motivo,
+                  antes, depois: S.operationHistory.records.length};
+        }"""
+    )
+    assert r["motivo"] == "no_identity", (
+        f"o dominio deixou de recusar a operacao sem identidade: {r['motivo']!r}"
+    )
+    assert r["faseGrade"] is None, (
+        f"a revisao afirmou 'Fase máxima da Grade: {r['faseGrade']}' para uma "
+        "operacao SEM identidade — nenhum evento do transitionLog pode estar "
+        "escopado nela, entao nao existe maximo observado a afirmar"
+    )
+    assert not r["temConfirmar"], (
+        "a revisao ofereceu o botao de finalizar para uma operacao que o "
+        "dominio recusa; o operador preencheria tudo para receber no_identity"
+    )
+    assert "identidade" in r["texto"], (
+        f"a revisao nao explica por que nao da para finalizar: {r['texto'][:160]!r}"
+    )
+    assert r["depois"] == r["antes"] == 0, "algo foi persistido sem identidade"
+
+
+def run_review_error_follows_the_repaint(page):
+    """O modal nao pode afirmar duas coisas contraditorias ao mesmo tempo.
+
+    Ligar a revisao ao evento 'input' sem ligar a validacao criava a assimetria:
+    a linha "Abertura" ja exibindo a data informada e, logo abaixo, a mensagem
+    vermelha dizendo que o campo esta ausente. Antes da mudanca as duas metades
+    ficavam defasadas JUNTAS e a tela nunca se contradizia.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({openedAt:null, id:'op_err_sync'});
+          save();
+          JPWOperation.openReview();
+          __digitar('#finalDefenses', '3');
+          __digitar('#finalConfirm', 'FECHADO');
+          document.getElementById('modalConfirm').click();  // recusa: abertura vazia
+          const aceso = !!document.querySelector('[data-qid="abertura"] .modal-err.show');
+          __digitar('#finalOpenedAt', 'nao-e-data');
+          const aposInvalida = !!document.querySelector('[data-qid="abertura"] .modal-err.show');
+          const revisaoInvalida = __revisao()['Abertura'];
+          __digitar('#finalOpenedAt', '2026-07-01T09:00');
+          const aposValida = !!document.querySelector('[data-qid="abertura"] .modal-err.show');
+          const revisaoValida = __revisao()['Abertura'];
+          return {aceso, aposInvalida, revisaoInvalida, aposValida, revisaoValida};
+        }"""
+    )
+    assert r["aceso"], "a recusa nao acendeu o erro do campo de abertura"
+    assert r["aposInvalida"], (
+        "texto invalido APAGOU o erro; a mensagem so pode sair quando a entrada "
+        "passa a ser valida"
+    )
+    assert "Desconhecida" in r["revisaoInvalida"], (
+        f"texto invalido virou abertura na revisao: {r['revisaoInvalida']!r}"
+    )
+    assert not r["aposValida"], (
+        f"a revisao passou a exibir {r['revisaoValida']!r} enquanto o campo "
+        "continuava marcado em vermelho como ausente — o modal afirma a coisa e "
+        "o contrario dela na mesma tela"
+    )
+    assert "(informada manualmente)" in r["revisaoValida"], (
+        f"a revisao nao acompanhou a data valida: {r['revisaoValida']!r}"
+    )
+
+
+def run_review_repaints_after_failed_attempt(page):
+    """Retentativa depois de falha revisa de novo, e nao reaprova a tela velha.
+
+    A falha de persistencia mantem o modal aberto e o botao habilitado — a
+    segunda tentativa pode acontecer muito depois. Sem repintar, o operador
+    reaprovaria uma revisao carimbada na ultima tecla enquanto finalizeOperation
+    monta um snapshot novo. A base do retorno serve de sonda: ela deriva de um
+    parametro que pode mudar entre as duas tentativas.
+    """
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_retry'});
+          S.params.saldoIni = 10000;
+          save();
+          JPWOperation.openReview();
+          __digitar('#finalDefenses', '0');
+          __digitar('#finalConfirm', 'FECHADO');
+          const antesDaFalha = __revisao()['Base do retorno'];
+          // O parametro muda DEPOIS da ultima tecla: sem repintura na falha, a
+          // revisao ficaria congelada no valor antigo.
+          S.params.saldoIni = 12500;
+          jpWealthPersistenceBlocked = true;
+          document.getElementById('modalConfirm').click();
+          jpWealthPersistenceBlocked = false;
+          const depoisDaFalha = __revisao()['Base do retorno'];
+          const aindaAberto = document.getElementById('modalOverlay').classList.contains('show');
+          document.getElementById('modalConfirm').click();   // segunda tentativa
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {antesDaFalha, depoisDaFalha, aindaAberto,
+                  gravou: !!rec, basePersistida: rec ? rec.referenceBalance : null,
+                  esperado: fmtMoney2(12500)};
+        }"""
+    )
+    assert r["aindaAberto"], "a falha fechou o modal"
+    assert r["antesDaFalha"] != r["depoisDaFalha"], (
+        f"a revisao NAO foi repintada apos a falha: continuou {r['antesDaFalha']!r} "
+        "enquanto o proximo snapshot usaria outro denominador"
+    )
+    assert r["depoisDaFalha"] == r["esperado"], (
+        f"revisao apos a falha: {r['depoisDaFalha']!r}, esperado {r['esperado']!r}"
+    )
+    assert r["gravou"], "a segunda tentativa nao concluiu"
+    assert r["basePersistida"] == 12500, (
+        f"a revisao reaprovada e o registro divergiram: exibia "
+        f"{r['depoisDaFalha']!r} e persistiu {r['basePersistida']!r}"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -1042,6 +1607,20 @@ def main():
             run_degraded_shown_in_review(page)
             run_persist_failure_keeps_modal(page)
             run_double_click_single_finalization(page)
+            # ---- revisao = snapshot (#5) ----
+            page.evaluate(REVISAO_HELPER)
+            run_review_equals_persisted_record(page)
+            run_review_recalculates_on_opened_at_change(page)
+            run_review_absent_defenses_is_not_zero(page)
+            run_review_explicit_zero_is_shown_and_persisted(page)
+            run_review_promises_no_fixed_closing_time(page)
+            run_review_repaint_preserves_typing(page)
+            run_review_return_matches_history_formula(page)
+            run_review_non_integer_defenses_rejected(page)
+            run_review_shows_frozen_return_base(page)
+            run_review_without_identity_claims_nothing(page)
+            run_review_error_follows_the_repaint(page)
+            run_review_repaints_after_failed_attempt(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()
