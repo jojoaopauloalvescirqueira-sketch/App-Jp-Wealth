@@ -471,7 +471,16 @@ const DIVERGENCE_REASONS=[
   'Rompimento de protocolo — stop foi movido/ignorado sem justificativa',
   'Outro',
 ];
-// ---- Fechamento definitivo de ordem — dupla confirmação, captura o Lucro Técnico no mesmo ato.
+// ---- Fechamento definitivo de ordem — dupla confirmação, captura o RESULTADO no
+// mesmo ato.
+//
+// NOMENCLATURA: o campo `o.result` e o resultado da ordem, que pode ser positivo,
+// negativo ou zero. Nao e "Lucro Tecnico" — esse e conceito NORMATIVO do Art. 4.6
+// (resultado de liquidacao parcial de posicoes defensivas em movimento corretivo
+// favoravel, com usos restritos pelo Art. 9.2) e continua com o nome proprio na
+// metrica `compute().lucroTecnico`, que soma apenas os resultados POSITIVOS.
+// Chamar prejuizo de lucro era o defeito; renomear o conceito normativo seria
+// outro. Os identificadores internos nao mudaram.
 // Depois de confirmada, a linha trava por completo: só pode ser apagada, nunca mais editada. ----
 function openCloseOrderModal(pi,oi){
   const o=S.phases[pi].orders[oi];
@@ -482,7 +491,7 @@ function openCloseOrderModal(pi,oi){
     <h3>🔒 Confirmar Fechamento — ${esc(o.id)||'(sem ID)'} ${esc(o.par)}</h3>
     <div class="modal-sub">Depois de confirmado, esta linha NÃO pode mais ser editada — só apagada. ${projetado>0?'Risco programado desta ordem: '+fmtMoney(projetado):''}</div>
     <div class="modal-q" data-qid="resultado">
-      <div class="ql">Lucro Técnico / Resultado desta ordem ($) — negativo se foi prejuízo:</div>
+      <div class="ql">Resultado da ordem ($) — negativo se foi prejuízo:</div>
       <input type="text" inputmode="decimal" id="closeResultInput" placeholder="0" value="${esc(o.result||'')}">
     </div>
     <div class="modal-q" data-qid="confirmtxt">
@@ -616,7 +625,7 @@ function phaseBodyHTML(pi, qAct){
         </select>
       </td>
       <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="result" value="${esc(o.result||'')}" placeholder="0"
-            style="${isFechada?'':'opacity:.35'}" title="Lucro Técnico — só conta quando Fechada (Art. 9.2)" ${dis}></td>
+            style="${isFechada?'':'opacity:.35'}" title="Resultado da ordem — só conta quando Fechada (Art. 9.2)" ${dis}></td>
       <td>${(isMigrada||frozen||qAct)?'':`<button class="row-del" data-delorder="${pi}:${oi}" title="Remover linha">✕</button>`}</td>
     </tr>`;
   });
@@ -632,7 +641,7 @@ function phaseBodyHTML(pi, qAct){
     </div>
     <div style="overflow-x:auto">
     <table class="otable">
-      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Lucro Técnico $</th><th></th></tr></thead>
+      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Resultado $</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
       <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
     </table>

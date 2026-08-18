@@ -68,7 +68,7 @@
       "order": 11,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "38f9ddd2dffe44a52654e53b5f85f3fe3770688460c64cd9cd69a4dca2f81cb0"
+      "sha256": "ec1ae853405ac685896ec1087626c0b0f0d1fa383a02d033f4250fe368a0be8d"
     },
     {
       "order": 12,
@@ -86,7 +86,7 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "f0bb39d26be304bead8ae9437aa392d18c6494d61982a97cb5633fcf01b28d2f"
+      "sha256": "b04b66dd6c6e066186d19a05990f98599452f9fc94858cf0becd4898258a2a87"
     },
     {
       "order": 15,
@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "e02421302c77864a3c4c36d27972984c0544531ce4a2eb36579a4b9144ea6ca6"
+      "sha256": "f4f59bc042276b0ce878e0a89e38238929dcef41534f4352342a3f2cb7d47dfe"
     },
     {
       "order": 24,

@@ -156,12 +156,23 @@ function render(){
   // renderObjective saiu: seu alvo (#objectiveCard, na faixa de Postura do
   // Execution Board) foi removido na Fase 2C. PHASE_OBJECTIVE continua vivo —
   // agora alimenta a meta "postura ofensiva" da célula de Fase do cockpit.
-  // arquivar operação: visível quando não há posição aberta e existe resultado fechado a consolidar
+  // FINALIZAR OPERAÇÃO: visível sempre que existir uma Operação Única para
+  // encerrar — inclusive com posição aberta.
+  //
+  // Antes o botão SUMIA enquanto houvesse ordem aberta. Esconder a ação em vez
+  // de explicar por que ela não pode ocorrer é UX ruim, e contraria o próprio
+  // Art. 4.4: a Operação só se extingue quando a posição líquida volta a zero E
+  // o Gestor confirma formalmente. O operador precisa ver que o ato existe, e
+  // descobrir no clique o que falta para ele acontecer.
+  //
+  // O bloqueio passou a viver no preflight, que nomeia a ordem que impede a
+  // finalização e não muta nada.
   const abtn=$('archiveOpBtn');
   if(abtn){
-    const temAberta=S.phases.some(ph=>ph.orders.some(o=>o.status==='Aberta'));
-    const temFechada=S.phases.some(ph=>ph.orders.some(o=>o.status==='Fechada'));
-    abtn.style.display=(!temAberta&&temFechada)?'inline-block':'none';
+    const temOperacao = (typeof operationLiveOrders==='function')
+      ? operationLiveOrders().length>0
+      : S.phases.some(ph=>ph.orders.some(o=>o && (o.status==='Aberta'||o.status==='Fechada'||o.status==='Migrada')));
+    abtn.style.display = temOperacao ? 'inline-block' : 'none';
   }
   const bn=$('breachNote');
   if(S.protocolBreaches>0){

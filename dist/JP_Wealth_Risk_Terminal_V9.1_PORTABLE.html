@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'd9cc2e3c3d0435fe';
+const JP_WEALTH_BUILD_ID = '783f30dc2c278322';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6313,7 +6313,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
         </div>
         <div style="padding:0 16px 16px">
-          <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
+          <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)" title="Consolida o resultado da Operação Única e registra seu encerramento no Histórico — Art. 4.4."><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Finalizar Operação</button>
         </div>
 
         <!-- Fase 2C · §3.4: os quatro consolidados P1 (lote, risco, margem
@@ -9950,12 +9950,23 @@ function render(){
   // renderObjective saiu: seu alvo (#objectiveCard, na faixa de Postura do
   // Execution Board) foi removido na Fase 2C. PHASE_OBJECTIVE continua vivo —
   // agora alimenta a meta "postura ofensiva" da célula de Fase do cockpit.
-  // arquivar operação: visível quando não há posição aberta e existe resultado fechado a consolidar
+  // FINALIZAR OPERAÇÃO: visível sempre que existir uma Operação Única para
+  // encerrar — inclusive com posição aberta.
+  //
+  // Antes o botão SUMIA enquanto houvesse ordem aberta. Esconder a ação em vez
+  // de explicar por que ela não pode ocorrer é UX ruim, e contraria o próprio
+  // Art. 4.4: a Operação só se extingue quando a posição líquida volta a zero E
+  // o Gestor confirma formalmente. O operador precisa ver que o ato existe, e
+  // descobrir no clique o que falta para ele acontecer.
+  //
+  // O bloqueio passou a viver no preflight, que nomeia a ordem que impede a
+  // finalização e não muta nada.
   const abtn=$('archiveOpBtn');
   if(abtn){
-    const temAberta=S.phases.some(ph=>ph.orders.some(o=>o.status==='Aberta'));
-    const temFechada=S.phases.some(ph=>ph.orders.some(o=>o.status==='Fechada'));
-    abtn.style.display=(!temAberta&&temFechada)?'inline-block':'none';
+    const temOperacao = (typeof operationLiveOrders==='function')
+      ? operationLiveOrders().length>0
+      : S.phases.some(ph=>ph.orders.some(o=>o && (o.status==='Aberta'||o.status==='Fechada'||o.status==='Migrada')));
+    abtn.style.display = temOperacao ? 'inline-block' : 'none';
   }
   const bn=$('breachNote');
   if(S.protocolBreaches>0){
@@ -10779,7 +10790,16 @@ const DIVERGENCE_REASONS=[
   'Rompimento de protocolo — stop foi movido/ignorado sem justificativa',
   'Outro',
 ];
-// ---- Fechamento definitivo de ordem — dupla confirmação, captura o Lucro Técnico no mesmo ato.
+// ---- Fechamento definitivo de ordem — dupla confirmação, captura o RESULTADO no
+// mesmo ato.
+//
+// NOMENCLATURA: o campo `o.result` e o resultado da ordem, que pode ser positivo,
+// negativo ou zero. Nao e "Lucro Tecnico" — esse e conceito NORMATIVO do Art. 4.6
+// (resultado de liquidacao parcial de posicoes defensivas em movimento corretivo
+// favoravel, com usos restritos pelo Art. 9.2) e continua com o nome proprio na
+// metrica `compute().lucroTecnico`, que soma apenas os resultados POSITIVOS.
+// Chamar prejuizo de lucro era o defeito; renomear o conceito normativo seria
+// outro. Os identificadores internos nao mudaram.
 // Depois de confirmada, a linha trava por completo: só pode ser apagada, nunca mais editada. ----
 function openCloseOrderModal(pi,oi){
   const o=S.phases[pi].orders[oi];
@@ -10790,7 +10810,7 @@ function openCloseOrderModal(pi,oi){
     <h3>🔒 Confirmar Fechamento — ${esc(o.id)||'(sem ID)'} ${esc(o.par)}</h3>
     <div class="modal-sub">Depois de confirmado, esta linha NÃO pode mais ser editada — só apagada. ${projetado>0?'Risco programado desta ordem: '+fmtMoney(projetado):''}</div>
     <div class="modal-q" data-qid="resultado">
-      <div class="ql">Lucro Técnico / Resultado desta ordem ($) — negativo se foi prejuízo:</div>
+      <div class="ql">Resultado da ordem ($) — negativo se foi prejuízo:</div>
       <input type="text" inputmode="decimal" id="closeResultInput" placeholder="0" value="${esc(o.result||'')}">
     </div>
     <div class="modal-q" data-qid="confirmtxt">
@@ -10924,7 +10944,7 @@ function phaseBodyHTML(pi, qAct){
         </select>
       </td>
       <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="result" value="${esc(o.result||'')}" placeholder="0"
-            style="${isFechada?'':'opacity:.35'}" title="Lucro Técnico — só conta quando Fechada (Art. 9.2)" ${dis}></td>
+            style="${isFechada?'':'opacity:.35'}" title="Resultado da ordem — só conta quando Fechada (Art. 9.2)" ${dis}></td>
       <td>${(isMigrada||frozen||qAct)?'':`<button class="row-del" data-delorder="${pi}:${oi}" title="Remover linha">✕</button>`}</td>
     </tr>`;
   });
@@ -10940,7 +10960,7 @@ function phaseBodyHTML(pi, qAct){
     </div>
     <div style="overflow-x:auto">
     <table class="otable">
-      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Lucro Técnico $</th><th></th></tr></thead>
+      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Resultado $</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
       <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
     </table>
@@ -13174,7 +13194,7 @@ function bindContab(){
     save(); renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
-  // Finalização da Operação Única (Art. 3.5§2). Este handler NÃO consolida
+  // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
   // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
   //
   // Até a Camada 2 este bloco era o próprio fluxo de arquivamento — consolidava

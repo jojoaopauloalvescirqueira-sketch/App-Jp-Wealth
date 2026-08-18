@@ -139,7 +139,7 @@ function bindContab(){
     save(); renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
-  // Finalização da Operação Única (Art. 3.5§2). Este handler NÃO consolida
+  // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
   // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
   //
   // Até a Camada 2 este bloco era o próprio fluxo de arquivamento — consolidava
