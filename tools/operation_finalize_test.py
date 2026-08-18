@@ -2431,6 +2431,9 @@ def run_reviewed_record_equals_persisted_snapshot(page):
             fase: accountPhaseProbe().idx
           };
           JPWOperation.openReview();
+          // O CHECKPOINT ja observou: sem isto, revisao e registro empatariam
+          // em null e a igualdade passaria sem haver captura alguma.
+          const maxAposAbrir = S.activeOperation.maxAccountPhaseReached ?? null;
           // O record EXATO que a revisao esta mostrando, montado com a mesma
           // entrada que a confirmacao usara.
           const revisado = operationBuildSnapshot(S.activeOperation, {defenseCount:3});
@@ -2444,7 +2447,7 @@ def run_reviewed_record_equals_persisted_snapshot(page):
           document.getElementById('modalConfirm').click();
           const recs = S.operationHistory.records;
           const rec = recs[recs.length-1] || null;
-          return {antesDeAbrir, lido, lidoFinal,
+          return {antesDeAbrir, maxAposAbrir, lido, lidoFinal,
                   revisado: revisado.ok ? {
                     max: revisado.record.maxAccountPhaseReached,
                     integridade: revisado.record.maxAccountPhaseIntegrity,
@@ -2466,6 +2469,19 @@ def run_reviewed_record_equals_persisted_snapshot(page):
         "a fase da conta nao e determinavel no cenario; a captura nao teria efeito"
     )
     assert r["persistido"], "a finalizacao nao produziu registro"
+    assert r["maxAposAbrir"] == r["antesDeAbrir"]["fase"], (
+        f"o CHECKPOINT nao observou a Fase da Conta: {r['maxAposAbrir']!r} apos abrir "
+        f"a revisao, com a fase corrente em {r['antesDeAbrir']['fase']!r}. Sem captura "
+        "alguma, revisao e registro empatam em null e a igualdade abaixo passaria "
+        "sem medir nada"
+    )
+    assert r["persistido"]["max"] == r["maxAposAbrir"], (
+        f"o registro nao carregou a observacao do checkpoint: {r['persistido']['max']!r}"
+    )
+    assert r["persistido"]["integridade"] == "observed", (
+        f"integridade do registro: {r['persistido']['integridade']!r} — houve captura, "
+        "logo a observacao e completa"
+    )
     assert r["revisadoComData"], f"a revisao nao pode ser montada: {r['revisado']}"
     assert r["revisadoComData"]["max"] == r["persistido"]["max"], (
         f"o maximo REVISADO ({r['revisadoComData']['max']!r}) diverge do PERSISTIDO "
