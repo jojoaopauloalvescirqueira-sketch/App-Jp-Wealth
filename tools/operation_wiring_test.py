@@ -418,6 +418,13 @@ def run_manual_risk_refusal_creates_no_entity(page):
           window.prompt = () => null;
           __prepararGenese();
           S.cycleRealizado = -360;
+          // A confirmacao manual so e PEDIDA sem protecao externa ativa. Sem
+          // montar essa condicao, o caso nao existe e o teste passaria sem
+          // exercitar nada — foi assim que uma mutacao sobreviveu.
+          S.onboarding = S.onboarding || {};
+          const _onbAntes = {done:S.onboarding.done, ep:S.onboarding.epStatus};
+          S.onboarding.done = true;
+          S.onboarding.epStatus = 'Não vou utilizar.';
           const g = S.phases[0].orders[0];
           g.lote = 0.05; g.entry = 1.08; g.sl = 1.07;
           save(); renderPhases();
@@ -429,17 +436,23 @@ def run_manual_risk_refusal_creates_no_entity(page):
           const sel = __selectStatus(0,0);
           sel.value = 'Aberta';
           sel.dispatchEvent(new Event('change', {bubbles:true}));
-          return {exigiu, status:S.phases[0].orders[0].status,
+          const fora = {exigiu, status:S.phases[0].orders[0].status,
                   op:S.activeOperation, unlockedAntes,
                   unlockedDepois:S.phaseUnlocked.slice(),
                   logAntes, logDepois:(S.transitionLog||[]).length};
+          // RESTAURA a configuracao de protecao: deixa-la alterada faria o caso
+          // seguinte herdar a confirmacao manual e falhar por contaminacao.
+          S.onboarding.done = _onbAntes.done;
+          S.onboarding.epStatus = _onbAntes.ep;
+          save();
+          return fora;
         }"""
     )
-    if not r["exigiu"]:
-        # Sem Equity Protector inativo a confirmacao nao e pedida; o caso nao
-        # existe nesta fixture e afirmar qualquer coisa aqui seria vacuo.
-        assert r["op"], "a operacao deveria ter nascido quando nao ha confirmacao a recusar"
-        return
+    assert r["exigiu"], (
+        "a fixture nao produziu a condicao em que a confirmacao manual e pedida "
+        "(protecao externa inativa + risco). Sem ela o caso nao existe e o teste "
+        "passaria sem exercitar nada"
+    )
     assert r["status"] != "Aberta", f"a ordem abriu apesar da recusa: {r['status']!r}"
     assert r["op"] is None, (
         f"a recusa criou entidade: {r['op']} — ordem recusada jamais cria operacao"
