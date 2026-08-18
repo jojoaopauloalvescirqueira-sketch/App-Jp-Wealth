@@ -4169,6 +4169,27 @@
     html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip .v{
       white-space:normal;
     }
+
+    /* Bloco F, faixa intermediaria. No desktop largo a linha e
+       Clearance(2) + Consolidado(1) + Monitor(1) = as 4 colunas exatas. Abaixo
+       de 1280 os dois cartoes de 1 coluna cairiam para ~140px, que e a zona em
+       que dado financeiro trunca — o mesmo defeito ja documentado na faixa de
+       metricas logo acima. Entao a linha se reorganiza em vez de encolher: o
+       Clearance toma a largura inteira e o Consolidado e o Monitor dividem a
+       linha seguinte, 2+2.
+
+       So SPAN, nunca `order`: a ordem visual continua sendo a do DOM
+       (WCAG 1.3.2, mesma razao pela qual a grade nao usa `dense`). E os tres
+       tamanhos usados aqui ja constam dos data-widget-allowed-sizes de cada
+       cartao, entao isto nao inventa estado novo nem toca a preferencia salva.
+       Abaixo de 900px o bloco seguinte empilha tudo em coluna unica. */
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-clearance"]{
+      grid-column:1 / -1; grid-row:auto;
+    }
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-consolidado"],
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-monitor"]{
+      grid-column:span 2; grid-row:auto;
+    }
   }
 
   @media(max-width:900px){
@@ -5506,25 +5527,41 @@ html[data-shell="global-dashboard"] .exec-secondary-details[open] > summary::bef
 html[data-shell="global-dashboard"] .exec-secondary-details > summary span{margin-left:auto;font-weight:400;color:var(--jp-ink-muted)}
 html[data-shell="global-dashboard"] .exec-secondary-body{padding:16px 20px 20px;border-top:1px solid var(--jp-border)}
 html[data-shell="global-dashboard"] .exec-vrm-secondary{margin-top:16px;padding-top:16px;border-top:1px solid var(--jp-border)}
-html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Bloco F — o cartao unico virou dois: Consolidado (o que a operacao E) e
+   Monitor (o que FAZER). O que era um bloco de 3 colunas com cabecalho,
+   semaforo e sugestao lado a lado agora sao dois cartoes estreitos dividindo
+   uma linha com o Clearance, entao ambos empilham em coluna unica.
+
+   Os seletores posicionais morreram junto. `> :nth-child(4)` e `> :nth-child(6)`
+   endereçavam a barra do teto e a area do botao pela ORDEM — qualquer filho
+   inserido antes deles apontaria a regra para o elemento errado, em silencio.
+   Viraram .lifo-teto e .lifo-actions: como esta mudanca move os filhos de
+   cartao, seletor por posicao teria que ser reescrito de qualquer forma; foi
+   reescrito para nao depender mais de posicao nenhuma. */
+html[data-shell="global-dashboard"] #execConsolidadoCard,
 html[data-shell="global-dashboard"] #execLifoMonitor{
-  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center;
-  gap:8px 12px; padding:22px;
+  display:grid; grid-template-columns:minmax(0,1fr); align-content:start;
+  gap:10px; padding:22px;
 }
+html[data-shell="global-dashboard"] #execConsolidadoCard .lifo-head,
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-head{padding:0;border:0;font-size:14px;background:transparent}
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{
   width:max-content; padding:3px 10px; border:0; border-radius:999px;
   background:var(--f1-bg); font-size:10px;
 }
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sug{padding:0;font-size:11px;color:var(--jp-ink-muted)}
-html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(4){grid-column:1/-1;padding:4px 0 8px!important}
-html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body{
-  grid-column:1/-1; gap:10px; padding:0;
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-teto{padding:4px 0 8px!important}
+/* auto-fit em vez de contagem fixa: o cartao pode viver em `compact` (1 de 4
+   colunas), `medium` (2) ou `full`, e uma contagem fixa que serve a um tamanho
+   trunca dado financeiro no outro — o defeito ja documentado na faixa de
+   metricas. A largura minima do tile manda, nao o numero de colunas. */
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-body{
+  grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:10px; padding:0;
 }
-html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body .metric{min-height:0;padding:10px 14px}
-html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(6){grid-column:1/-1;padding:0!important}
-html[data-shell="global-dashboard"] #execLifoMonitor > details{grid-column:1/-1;margin-top:4px}
-html[data-shell="global-dashboard"] #execLifoMonitor > details .risk-note{margin:12px 0 0}
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-body .metric{min-height:0;padding:10px 14px}
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-actions{padding:0!important}
+html[data-shell="global-dashboard"] #execConsolidadoCard > details{margin-top:4px}
+html[data-shell="global-dashboard"] #execConsolidadoCard > details .risk-note{margin:12px 0 0}
 
 /* Contas: linha de leitura, editor expansível e credenciais explícitas */
 html[data-shell="global-dashboard"] #contasWidgetGrid{gap:16px;margin-top:0}
@@ -5670,7 +5707,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card]{grid-column:1!important;width:100%!important}
   html[data-shell="global-dashboard"] #execWidgetGrid > *,
   html[data-shell="global-dashboard"] #contasWidgetGrid > *{width:100%!important;align-self:stretch!important}
-  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] #execConsolidadoCard .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-shell="global-dashboard"] .gd-methodology-body{grid-template-columns:1fr}
   html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1}
 }
@@ -5685,7 +5722,9 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-shell="global-dashboard"] #execClearanceCard{padding:22px 20px}
   html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{font-size:22px}
+  html[data-shell="global-dashboard"] #execConsolidadoCard,
   html[data-shell="global-dashboard"] #execLifoMonitor{grid-template-columns:1fr;padding:20px}
+  html[data-shell="global-dashboard"] #execConsolidadoCard > *,
   html[data-shell="global-dashboard"] #execLifoMonitor > *{grid-column:1!important}
   html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{width:fit-content}
   html[data-shell="global-dashboard"] .risk-primary-indicators,

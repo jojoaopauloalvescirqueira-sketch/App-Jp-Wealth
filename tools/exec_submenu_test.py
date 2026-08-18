@@ -33,11 +33,17 @@ EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Calendário Econômico
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
 EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
                        "execPivots", "motorWidgetGrid", "execHistory"]
-# Os quatro widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
+# Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
 # Travar a ordem aqui transformaria uma personalizacao legitima em falha.
-EXPECTED_CARDS = sorted(["exec-clearance", "exec-metrics-banners", "exec-phase-grids", "exec-lifo-monitor"])
+#
+# Eram quatro ate o bloco F, quando `exec-lifo-monitor` se dividiu em
+# `exec-consolidado` (o que a operacao E) e `exec-monitor` (o que FAZER). Esta
+# lista foi atualizada DELIBERADAMENTE: foi ela que acusou a divisao, que e
+# exatamente o servico que se espera dela.
+EXPECTED_CARDS = sorted(["exec-clearance", "exec-metrics-banners", "exec-phase-grids",
+                         "exec-consolidado", "exec-monitor"])
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -195,7 +201,7 @@ def run_panel_equivalence(page):
             directChildren: grid.querySelectorAll(':scope > [data-layout-card]').length,
             duplicateIds: ids.length - new Set(ids).size,
             operational: ['ecTitle','ecFase','ecDD','ecRisco','ecAlav','phaseContainer',
-                          'execLifoMonitor','statusBanner','quarantineBanner','downgradeBanner',
+                          'execLifoMonitor','execConsolidadoCard','statusBanner','quarantineBanner','downgradeBanner',
                           'mVRM','iAtr55','lLote','lRisco','archiveOpBtn']
               .filter(id => document.getElementById(id) === null),
             visible: %s.filter(id => !document.getElementById(id).hidden)
@@ -205,8 +211,9 @@ def run_panel_equivalence(page):
     assert facts["grids"] == 1, "o Painel Operacional foi duplicado"
     assert facts["gridParent"] == "exec", f"grade saiu de section#exec: {facts['gridParent']}"
     assert sorted(facts["cards"]) == EXPECTED_CARDS, f"widgets do painel mudaram: {facts['cards']}"
-    assert facts["directChildren"] == 4, (
-        f"widgets deixaram de ser filhos diretos do grid ({facts['directChildren']}) — "
+    assert facts["directChildren"] == len(EXPECTED_CARDS), (
+        f"widgets deixaram de ser filhos diretos do grid ({facts['directChildren']}"
+        f" de {len(EXPECTED_CARDS)}) — "
         "13-dashboard-layout.js le apenas ':scope > [data-layout-card]'"
     )
     assert facts["duplicateIds"] == 0, "IDs duplicados dentro de #exec"

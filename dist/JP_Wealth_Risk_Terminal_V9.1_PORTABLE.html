@@ -4179,6 +4179,27 @@
     html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip .v{
       white-space:normal;
     }
+
+    /* Bloco F, faixa intermediaria. No desktop largo a linha e
+       Clearance(2) + Consolidado(1) + Monitor(1) = as 4 colunas exatas. Abaixo
+       de 1280 os dois cartoes de 1 coluna cairiam para ~140px, que e a zona em
+       que dado financeiro trunca — o mesmo defeito ja documentado na faixa de
+       metricas logo acima. Entao a linha se reorganiza em vez de encolher: o
+       Clearance toma a largura inteira e o Consolidado e o Monitor dividem a
+       linha seguinte, 2+2.
+
+       So SPAN, nunca `order`: a ordem visual continua sendo a do DOM
+       (WCAG 1.3.2, mesma razao pela qual a grade nao usa `dense`). E os tres
+       tamanhos usados aqui ja constam dos data-widget-allowed-sizes de cada
+       cartao, entao isto nao inventa estado novo nem toca a preferencia salva.
+       Abaixo de 900px o bloco seguinte empilha tudo em coluna unica. */
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-clearance"]{
+      grid-column:1 / -1; grid-row:auto;
+    }
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-consolidado"],
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-monitor"]{
+      grid-column:span 2; grid-row:auto;
+    }
   }
 
   @media(max-width:900px){
@@ -5516,25 +5537,41 @@ html[data-shell="global-dashboard"] .exec-secondary-details[open] > summary::bef
 html[data-shell="global-dashboard"] .exec-secondary-details > summary span{margin-left:auto;font-weight:400;color:var(--jp-ink-muted)}
 html[data-shell="global-dashboard"] .exec-secondary-body{padding:16px 20px 20px;border-top:1px solid var(--jp-border)}
 html[data-shell="global-dashboard"] .exec-vrm-secondary{margin-top:16px;padding-top:16px;border-top:1px solid var(--jp-border)}
-html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Bloco F — o cartao unico virou dois: Consolidado (o que a operacao E) e
+   Monitor (o que FAZER). O que era um bloco de 3 colunas com cabecalho,
+   semaforo e sugestao lado a lado agora sao dois cartoes estreitos dividindo
+   uma linha com o Clearance, entao ambos empilham em coluna unica.
+
+   Os seletores posicionais morreram junto. `> :nth-child(4)` e `> :nth-child(6)`
+   endereçavam a barra do teto e a area do botao pela ORDEM — qualquer filho
+   inserido antes deles apontaria a regra para o elemento errado, em silencio.
+   Viraram .lifo-teto e .lifo-actions: como esta mudanca move os filhos de
+   cartao, seletor por posicao teria que ser reescrito de qualquer forma; foi
+   reescrito para nao depender mais de posicao nenhuma. */
+html[data-shell="global-dashboard"] #execConsolidadoCard,
 html[data-shell="global-dashboard"] #execLifoMonitor{
-  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center;
-  gap:8px 12px; padding:22px;
+  display:grid; grid-template-columns:minmax(0,1fr); align-content:start;
+  gap:10px; padding:22px;
 }
+html[data-shell="global-dashboard"] #execConsolidadoCard .lifo-head,
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-head{padding:0;border:0;font-size:14px;background:transparent}
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{
   width:max-content; padding:3px 10px; border:0; border-radius:999px;
   background:var(--f1-bg); font-size:10px;
 }
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sug{padding:0;font-size:11px;color:var(--jp-ink-muted)}
-html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(4){grid-column:1/-1;padding:4px 0 8px!important}
-html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body{
-  grid-column:1/-1; gap:10px; padding:0;
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-teto{padding:4px 0 8px!important}
+/* auto-fit em vez de contagem fixa: o cartao pode viver em `compact` (1 de 4
+   colunas), `medium` (2) ou `full`, e uma contagem fixa que serve a um tamanho
+   trunca dado financeiro no outro — o defeito ja documentado na faixa de
+   metricas. A largura minima do tile manda, nao o numero de colunas. */
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-body{
+  grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:10px; padding:0;
 }
-html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body .metric{min-height:0;padding:10px 14px}
-html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(6){grid-column:1/-1;padding:0!important}
-html[data-shell="global-dashboard"] #execLifoMonitor > details{grid-column:1/-1;margin-top:4px}
-html[data-shell="global-dashboard"] #execLifoMonitor > details .risk-note{margin:12px 0 0}
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-body .metric{min-height:0;padding:10px 14px}
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-actions{padding:0!important}
+html[data-shell="global-dashboard"] #execConsolidadoCard > details{margin-top:4px}
+html[data-shell="global-dashboard"] #execConsolidadoCard > details .risk-note{margin:12px 0 0}
 
 /* Contas: linha de leitura, editor expansível e credenciais explícitas */
 html[data-shell="global-dashboard"] #contasWidgetGrid{gap:16px;margin-top:0}
@@ -5680,7 +5717,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card]{grid-column:1!important;width:100%!important}
   html[data-shell="global-dashboard"] #execWidgetGrid > *,
   html[data-shell="global-dashboard"] #contasWidgetGrid > *{width:100%!important;align-self:stretch!important}
-  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] #execConsolidadoCard .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-shell="global-dashboard"] .gd-methodology-body{grid-template-columns:1fr}
   html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1}
 }
@@ -5695,7 +5732,9 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-shell="global-dashboard"] #execClearanceCard{padding:22px 20px}
   html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{font-size:22px}
+  html[data-shell="global-dashboard"] #execConsolidadoCard,
   html[data-shell="global-dashboard"] #execLifoMonitor{grid-template-columns:1fr;padding:20px}
+  html[data-shell="global-dashboard"] #execConsolidadoCard > *,
   html[data-shell="global-dashboard"] #execLifoMonitor > *{grid-column:1!important}
   html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{width:fit-content}
   html[data-shell="global-dashboard"] .risk-primary-indicators,
@@ -5948,7 +5987,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'f71fee0c7fb859ac';
+const JP_WEALTH_BUILD_ID = 'd3bbe22bd3c17f28';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6203,7 +6242,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          Visão Geral é o destino inicial do módulo. -->
     <div class="jp-widget-grid" id="execWidgetGrid" hidden>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
-      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
+      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
         <div class="mc-ec-copy">
           <div class="dh-kicker"><span class="dh-dot" aria-hidden="true"></span>Execution Clearance</div>
           <div class="mc-ec-title" id="ecTitle">—</div>
@@ -6293,12 +6332,11 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div id="phaseContainer"></div>
       </div>
 
-      <!-- LIFO MONITOR -->
-      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-lifo-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-        <div class="lifo-head">Consolidado da Operação Única + Monitor LIFO</div>
-        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
-        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
-        <div style="padding:0 16px 14px">
+      <!-- CONSOLIDADO DA OPERACAO UNICA — o que a operacao E agora:
+           uso do teto, lote, risco, margem, excesso, e o ato de finalizar. -->
+      <div class="lifo" id="execConsolidadoCard" data-layout-card="exec-consolidado" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+        <div class="lifo-head">Consolidado da Operação Única</div>
+        <div class="lifo-teto">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
             <span style="color:var(--ink-dim)">Uso do teto estatutário da fase</span><span id="lMargemPct" style="color:var(--ink)">—</span>
           </div>
@@ -6312,7 +6350,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
         </div>
-        <div style="padding:0 16px 16px">
+        <div class="lifo-actions">
           <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)" title="Consolida o resultado da Operação Única e registra seu encerramento no Histórico — Art. 4.4."><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Finalizar Operação</button>
         </div>
 
@@ -6333,6 +6371,15 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+
+      <!-- MONITOR LIFO — o que FAZER: veredito de coerencia e remedio.
+           Separado do Consolidado no bloco F; estavam no mesmo cartao por
+           acidente historico, nao por parentesco de leitura. -->
+      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+        <div class="lifo-head">Monitor LIFO</div>
+        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
+        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
     <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA
@@ -17953,7 +18000,8 @@ const DASH_LAYOUT_LABELS = {
   'exec-clearance': 'Execution Clearance',
   'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
-  'exec-lifo-monitor': 'Consolidado LIFO',
+  'exec-consolidado': 'Consolidado da Operação Única',
+  'exec-monitor': 'Monitor LIFO',
   'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
   'contab-period-goals': 'Período & Metas', 'contab-daily-close': 'Fechamento Diário',
@@ -17999,10 +18047,14 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
     // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
     // abaixo do que o design define como leitura primária.
-    { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 3 }
+    // Bloco F: Clearance | Consolidado | Monitor dividem a PRIMEIRA linha.
+    // A grade tem 4 colunas, entao 2+1+1 fecha a linha exata — o veredito
+    // (Clearance) fica com o dobro dos dois cartoes que ele resume.
+    { id: 'exec-clearance', zone: 'main', size: 'medium', order: 0 },
+    { id: 'exec-consolidado', zone: 'main', size: 'compact', order: 1 },
+    { id: 'exec-monitor', zone: 'main', size: 'compact', order: 2 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 3 },
+    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 }
   ],
   contas: [
     // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
@@ -18102,6 +18154,42 @@ const JP_WIDGET_STORAGE_KEY_V5 = 'jpwealth.ui.widgetLayouts.v5'; // só para mig
 const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
+// Bloco F — `exec-lifo-monitor` virou DOIS cartoes: `exec-consolidado` (o que a
+// operacao E agora) e `exec-monitor` (o que FAZER a respeito). Estavam no mesmo
+// cartao por acidente historico, nao por parentesco de leitura.
+//
+// Sem esta migracao a divisao seria destrutiva, e silenciosamente: o layout
+// salvo carrega 4 ids onde o validador passa a esperar 5, e ele reprova por
+// TRES caminhos independentes — contagem diferente, id desconhecido e
+// obrigatorio ausente. Cada um devolve null para a TELA INTEIRA, entao
+// dashLayoutNormalizeV6 descartaria toda a personalizacao do Execution Board
+// por causa de uma mudanca visual. Mesma natureza do que ja se documentou na
+// migracao v4 -> v5.
+//
+// O que e preservado e o que e coagido, e por que:
+//   POSICAO — preservada. Onde o usuario pos o cartao foi escolha dele; o
+//     Consolidado herda o lugar e o Monitor nasce imediatamente depois.
+//   TAMANHO — coagido para o padrao novo. O cartao antigo declarava
+//     data-widget-allowed-sizes="full", ou seja, `full` era o UNICO valor
+//     possivel: e a ausencia de escolha, nao uma escolha. Herda-lo congelaria
+//     os dois cartoes em largura cheia e a linha de tres nunca apareceria para
+//     quem ja personalizou qualquer outra coisa da tela.
+function dashLayoutSplitExecLifoMonitor(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  if (!widgets.some(w => w && typeof w === 'object' && w.id === 'exec-lifo-monitor')) return widgets;
+  const ordenados = widgets
+    .filter(w => w && typeof w === 'object' && Number.isFinite(w.order))
+    .slice()
+    .sort((a, b) => a.order - b.order);
+  const out = [];
+  ordenados.forEach(w => {
+    if (w.id !== 'exec-lifo-monitor') { out.push({ ...w }); return; }
+    out.push({ ...w, id: 'exec-consolidado', size: 'compact' });
+    out.push({ ...w, id: 'exec-monitor', size: 'compact' });
+  });
+  return out.map((w, i) => ({ ...w, order: i }));
+}
+
 
 // Valida a lista de widgets de UMA tela contra a política real daquela tela
 // (inventário de IDs esperados + zonas/tamanhos permitidos por widget, lidos
@@ -18128,7 +18216,7 @@ function dashLayoutMigrateWidgets(screenId, widgets) {
   // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
   // devolve null para a TELA INTEIRA.
   if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
-  if (screenId === 'exec') return widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id));
+  if (screenId === 'exec') return dashLayoutSplitExecLifoMonitor(widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id)));
   if (screenId === 'contab') return widgets.filter(w => !w || !['contab-cycle-pace','contab-simulation','contab-daily-projection','contab-audit-log'].includes(w.id));
   if (screenId !== 'dash') return widgets;
   return widgets.map(w => {
