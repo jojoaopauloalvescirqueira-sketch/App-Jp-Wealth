@@ -274,6 +274,13 @@ function emptyJPWealthState(){
   // de ordens, ledger, onboarding etc., zerados acima). 'S' aqui ainda é o estado
   // anterior à troca (a reatribuição só ocorre no retorno desta função).
   empty.mvpNotes=(S&&S.mvpNotes)?structuredClone(S.mvpNotes):structuredClone(DEFAULTS.mvpNotes);
+  // Finanças Pessoais é memória LONGITUDINAL da vida financeira do operador,
+  // não dado operacional do período de trading que se encerra aqui. Mesma
+  // herança das notas — decisão humana registrada no congelamento do schema
+  // v1 (PF-01, Bloco D): Finalizar Sessão não apaga, não recria vazio e não
+  // modifica o agregado. Versões do app anteriores a esta linha zeravam o
+  // agregado neste fluxo — risco residual documentado no contrato.
+  empty.personalFinance=(S&&S.personalFinance)?structuredClone(S.personalFinance):structuredClone(DEFAULTS.personalFinance);
   return empty;
 }
 // clearJPWealthLocalData() acima de cada chamador já apagou a chave inteira, e save()
