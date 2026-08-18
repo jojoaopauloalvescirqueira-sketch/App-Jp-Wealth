@@ -370,6 +370,120 @@ def run_rascunho_nao_constitui_tese(page):
     assert d["nasceu"], "a operacao nao nasceu na abertura da Genese"
 
 
+# ---------------------------------------------------------------------------
+# R1 — breach que COMPROMETE o valor precisa observar a Fase da Conta
+# ---------------------------------------------------------------------------
+# handleStopLimitBreach nunca reverte o SL. Nos caminhos sem confirmacao — stop
+# acima da fase recusado, limite da Genese, defesa final da Fase 4, limite
+# absoluto — o valor PERMANECE e e persistido pelo save() interno, e a conta
+# passa a operar acima do teto da fase por definicao de check.excede. Enquanto a
+# captura morava dentro de save(), esses caminhos a recebiam de graca; ao tira-la
+# de la, eles ficaram sendo os unicos que comprometem um valor sem observar a
+# consequencia — e o registro imutavel saia com integridade 'observed' sobre um
+# maximo que nunca foi medido.
+
+CENARIO_R1 = """() => {
+  window.__avisos = [];
+  window.alert = m => window.__avisos.push(String(m));
+  window.confirm = () => true;
+  window.prompt = () => null;          // confirmacao formal RECUSADA
+  S.params.saldoIni = 10000; S.cycleRealizado = 0;
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phaseUnlocked = [true,false,false,false];
+  S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.05, entry:1.10,
+    sl:1.09, tp:1.20, result:0, status:'Aberta', openedAt:'2026-08-01T10:00:00.000Z'};
+  S.phases[0].orders[1] = {id:'D1', par:'EURUSD', tipo:'BUY', lote:0.05, entry:1.11,
+    sl:1.10, tp:1.21, result:-150, status:'Fechada',
+    openedAt:'2026-08-02T10:00:00.000Z', closedAt:'2026-08-03T10:00:00.000Z'};
+  S.activeOperation = {schemaVersion:1, operationId:'op_r1',
+    openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+    maxAccountPhaseReached:0};
+  save();
+  navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+}"""
+
+
+def run_committed_breach_is_observed(page):
+    """Stop que sobrevive a guarda e fica persistido: a fase e capturada."""
+    page.evaluate(CENARIO_R1)
+    r = page.evaluate(
+        """() => {
+          const campo = f => document.querySelector(
+            '#phaseContainer input[data-p="0"][data-o="0"][data-f="'+f+'"]');
+          const st = () => ({fase:accountPhaseProbe().idx,
+                             max:S.activeOperation.maxAccountPhaseReached,
+                             sl:S.phases[0].orders[0].sl});
+          const inicial = st();
+          const sl = campo('sl');
+          if (!sl) return {erro:'campo sl ausente'};
+          sl.value = '1.05';
+          sl.dispatchEvent(new Event('input', {bubbles:true}));
+          const aposDigitar = st();
+          sl.dispatchEvent(new Event('change', {bubbles:true}));
+          return {inicial, aposDigitar, aposCommit: st(), avisos: window.__avisos};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["inicial"] == {"fase": 0, "max": 0, "sl": 1.09}, f"pre-condicao: {r['inicial']}"
+    assert r["aposDigitar"]["fase"] == 1, (
+        f"o valor digitado nao elevou a fase: {r['aposDigitar']} — sem isso o caso "
+        "nao exercita nada"
+    )
+    assert r["aposDigitar"]["max"] == 0, (
+        f"a DIGITACAO contaminou o maximo: {r['aposDigitar']['max']}"
+    )
+    assert any("acima do limite" in a or "TETO" in a or "Nenhuma fase" in a
+               for a in r["avisos"]), f"o breach nao foi sinalizado: {r['avisos']}"
+    assert r["aposCommit"]["sl"] == 1.05, (
+        f"o stop foi revertido ({r['aposCommit']['sl']}) — o caso testado deixou de "
+        "ser 'valor comprometido e persistido'"
+    )
+    assert r["aposCommit"]["fase"] == 1, f"fase apos o commit: {r['aposCommit']['fase']}"
+    assert r["aposCommit"]["max"] == 1, (
+        f"o stop ficou COMPROMETIDO e persistido, a conta passou a operar acima do "
+        f"teto da fase, e o maximo continuou {r['aposCommit']['max']} — o registro "
+        "sairia com integridade 'observed' sobre uma fase que ninguem mediu"
+    )
+
+
+def run_reverted_breach_does_not_contaminate(page):
+    """Breach REVERTIDO nao move o maximo: o valor nao sobreviveu a guarda."""
+    page.evaluate(CENARIO_R1)
+    r = page.evaluate(
+        """() => {
+          const campo = f => document.querySelector(
+            '#phaseContainer input[data-p="0"][data-o="0"][data-f="'+f+'"]');
+          const st = () => ({fase:accountPhaseProbe().idx,
+                             max:S.activeOperation.maxAccountPhaseReached,
+                             entry:S.phases[0].orders[0].entry});
+          const inicial = st();
+          const en = campo('entry');
+          if (!en) return {erro:'campo entry ausente'};
+          en.dispatchEvent(new Event('focus', {bubbles:true}));
+          en.value = '1.20';
+          en.dispatchEvent(new Event('input', {bubbles:true}));
+          const aposDigitar = st();
+          en.dispatchEvent(new Event('change', {bubbles:true}));
+          return {inicial, aposDigitar, aposCommit: st(), avisos: window.__avisos};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["aposDigitar"]["fase"] == 1 and r["aposDigitar"]["max"] == 0, (
+        f"a digitacao nao produziu pico transitorio, ou o contaminou: {r['aposDigitar']}"
+    )
+    assert r["aposCommit"]["entry"] == 1.10, (
+        f"o valor NAO foi revertido ({r['aposCommit']['entry']}) — o caso deixou de "
+        "ser 'rejeitado e revertido'"
+    )
+    assert any("TETO DE RISCO" in a for a in r["avisos"]), (
+        f"a reversao nao foi sinalizada: {r['avisos']}"
+    )
+    assert r["aposCommit"]["max"] == 0, (
+        f"um valor REVERTIDO contaminou o maximo ({r['aposCommit']['max']}) — a "
+        "captura so pode observar o que sobreviveu a guarda"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -385,6 +499,9 @@ def main():
             run_rascunho_nao_constitui_tese(page)
             run_exclusividade_termina_na_finalizacao(page)
             run_estado_legado_conflitado_segue_bloqueado(page)
+            # ---- R1: breach comprometido observa a Fase da Conta ----
+            run_committed_breach_is_observed(page)
+            run_reverted_breach_does_not_contaminate(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

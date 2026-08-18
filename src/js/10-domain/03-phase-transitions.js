@@ -384,6 +384,13 @@ function handleStopLimitBreach(pi, oi, check){
     }
     auditStopLimit('stop quantitativo acima da fase', {...info.resumo, confirmado:false});
     alert('Stop mantido para simulação, com risco visível. A fase não foi alterada porque a confirmação formal não foi concluída.');
+    // A FASE NAO MUDOU, mas o STOP FICOU. A confirmacao recusada nao reverte
+    // o.sl — o valor permanece no modelo e e persistido pelo save() abaixo, e por
+    // definicao de check.excede a conta passa a operar acima do teto da fase.
+    // Esse pico e real e precisa ser observado: enquanto a captura morava dentro
+    // de save(), este caminho a recebia de graca; ao tirar a captura de la, ele
+    // ficou sendo o unico que compromete um valor sem observar a consequencia.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save(); render(); renderPhasesLite(pi); renderAuditLog();
     return false;
   }
@@ -392,6 +399,11 @@ function handleStopLimitBreach(pi, oi, check){
   alert(info.supported<0
     ? `${info.inline}\n\nNenhuma fase suporta este Stop. Ele viola o limite máximo absoluto e deve ser tratado como simulação de risco, não autorização operacional.`
     : info.inline);
+  // Genese, defesa final da Fase 4 e limite absoluto: aqui nao ha sequer
+  // confirmacao a pedir — o alerta e informativo e o stop PERMANECE. Mesmo
+  // motivo do ramo acima: valor comprometido e persistido, logo a Fase da Conta
+  // resultante e afirmacao e nao estado transitorio.
+  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
   save(); render(); renderPhasesLite(pi); renderAuditLog();
   return false;
 }
