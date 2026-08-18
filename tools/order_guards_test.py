@@ -551,6 +551,120 @@ def run_refused_phase_change_still_observes(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# R4 — troca de Par ACEITA observa a Fase da Conta
+# ---------------------------------------------------------------------------
+# Trocar o instrumento muda orderRisk() tanto quanto mudar o lote: depende de cpl
+# e da conversao da moeda de cotacao. A troca aceita e persistida pela saida
+# terminal do laco de <select>, que ficou sem captura quando C a tirou de save()
+# e a repos so no laco de <input>. A conta subia de fase, recuava depois, e o
+# registro imutavel afirmava um maximo INFERIOR ao realmente atingido.
+
+MONTA_R4 = """(cfg) => {
+  window.__avisos = [];
+  window.alert = m => window.__avisos.push(String(m));
+  window.confirm = () => true;
+  window.prompt = () => null;
+  S.params.saldoIni = 40000; S.cycleRealizado = 0;
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phaseUnlocked = cfg.unlocked;
+  S.phases[cfg.pi].orders[0] = {id:'G1', par:'USDJPY', tipo:'BUY', lote:0.05,
+    entry:161.93, sl:161.43, tp:170, result:0, status:'Aberta',
+    openedAt:'2026-08-01T10:00:00.000Z'};
+  S.activeOperation = {schemaVersion:1, operationId:'op_r4',
+    openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+    maxAccountPhaseReached:0};
+  save();
+  navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+}"""
+
+
+def run_accepted_pair_change_is_observed(page):
+    """Troca aceita que eleva a fase e capturada, e o pico sobrevive ao recuo."""
+    page.evaluate(MONTA_R4, {"pi": 1, "unlocked": [True, True, False, False]})
+    r = page.evaluate(
+        """() => {
+          const o = () => S.phases[1].orders[0];
+          const st = () => ({fase:accountPhaseProbe().idx,
+                             max:S.activeOperation.maxAccountPhaseReached,
+                             par:o().par, risco:orderRisk(o())});
+          const inicial = {...st(), teto: phaseTetoRisco(1)};
+          const sel = document.querySelector(
+            '#phaseContainer select[data-p="1"][data-o="0"][data-f="par"]');
+          if (!sel) return {erro:'select de par ausente'};
+          sel.value = 'EURUSD';
+          sel.dispatchEvent(new Event('change', {bubbles:true}));
+          const aposTroca = st();
+          // A conta RECUA: stop estreitado por <input>, que captura.
+          const inp = document.querySelector(
+            '#phaseContainer input[data-p="1"][data-o="0"][data-f="sl"]');
+          if (!inp) return {erro:'input de sl ausente'};
+          inp.dispatchEvent(new Event('focus', {bubbles:true}));
+          inp.value = '161.92';
+          inp.dispatchEvent(new Event('input', {bubbles:true}));
+          inp.dispatchEvent(new Event('change', {bubbles:true}));
+          return {inicial, aposTroca, aposRecuo: st(), avisos: window.__avisos};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["inicial"]["fase"] == 0 and r["inicial"]["max"] == 0, f"pre-condicao: {r['inicial']}"
+    assert r["aposTroca"]["par"] == "EURUSD", (
+        f"a troca foi revertida ({r['aposTroca']['par']}) — o caso deixou de ser "
+        f"'troca aceita'. Risco {r['aposTroca']['risco']} contra teto "
+        f"{r['inicial']['teto']}"
+    )
+    assert not any("TETO DE RISCO" in a for a in r["avisos"]), (
+        f"a troca foi barrada: {r['avisos']}"
+    )
+    assert r["aposTroca"]["fase"] == 1, (
+        f"a troca aceita nao elevou a Fase da Conta ({r['aposTroca']}) — sem isso o "
+        "teste nao exercita o defeito"
+    )
+    assert r["aposTroca"]["max"] == 1, (
+        f"a troca aceita e PERSISTIDA nao foi observada: maximo continuou "
+        f"{r['aposTroca']['max']} com a conta na fase {r['aposTroca']['fase']}"
+    )
+    assert r["aposRecuo"]["fase"] == 0, (
+        f"a conta nao recuou: {r['aposRecuo']} — sem o recuo nao se prova que o "
+        "pico foi preservado"
+    )
+    assert r["aposRecuo"]["max"] == 1, (
+        f"o maximo regrediu para {r['aposRecuo']['max']} depois do recuo — o "
+        "registro imutavel afirmaria uma fase inferior a realmente atingida"
+    )
+
+
+def run_rejected_pair_change_does_not_contaminate(page):
+    """Troca REVERTIDA pelo teto nao move o maximo."""
+    page.evaluate(MONTA_R4, {"pi": 0, "unlocked": [True, False, False, False]})
+    r = page.evaluate(
+        """() => {
+          const o = () => S.phases[0].orders[0];
+          const st = () => ({fase:accountPhaseProbe().idx,
+                             max:S.activeOperation.maxAccountPhaseReached,
+                             par:o().par});
+          const inicial = {...st(), teto: phaseTetoRisco(0)};
+          const sel = document.querySelector(
+            '#phaseContainer select[data-p="0"][data-o="0"][data-f="par"]');
+          if (!sel) return {erro:'select de par ausente'};
+          sel.value = 'EURUSD';
+          sel.dispatchEvent(new Event('change', {bubbles:true}));
+          return {inicial, depois: st(), avisos: window.__avisos};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert any("TETO DE RISCO" in a for a in r["avisos"]), (
+        f"a troca NAO foi barrada: {r['avisos']} — o caso deixou de ser 'recusada'"
+    )
+    assert r["depois"]["par"] == "USDJPY", (
+        f"a troca recusada nao foi revertida: {r['depois']['par']}"
+    )
+    assert r["depois"]["max"] == 0, (
+        f"uma troca RECUSADA e revertida contaminou o maximo ({r['depois']['max']}) — "
+        "a captura so pode observar o que sobreviveu a guarda"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -570,6 +684,9 @@ def main():
             run_committed_breach_is_observed(page)
             run_reverted_breach_does_not_contaminate(page)
             run_refused_phase_change_still_observes(page)
+            # ---- R4: troca de Par aceita observa a Fase da Conta ----
+            run_accepted_pair_change_is_observed(page)
+            run_rejected_pair_change_does_not_contaminate(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

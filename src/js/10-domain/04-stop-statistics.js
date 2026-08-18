@@ -413,6 +413,22 @@ function renderPhases(){
             return;
           }
         }
+        // TROCA ACEITA. Sobreviveu a todas as guardas e sera persistida pelo
+        // save() terminal — os caminhos de recusa saem por `return` acima, com o
+        // par ja restaurado.
+        //
+        // Trocar o instrumento muda orderRisk() tanto quanto mudar o lote:
+        // depende de cpl e da conversao da moeda de cotacao. Logo muda o
+        // drawdown estatutario e PODE elevar a Fase da Conta. Medido nos
+        // defaults de fabrica: de USDJPY para EURUSD, com lote 0,05 e meio
+        // ponto de stop, o risco vai de 15,44 para 2.500 USD — de 0,04% para
+        // 6,25% do saldo, cruzando o teto de 4% da FASE 1.
+        //
+        // Enquanto a captura morava dentro de save(), esta saida a recebia. C
+        // repos a captura no laco de <input> e no ciclo de vida; o laco de
+        // <select> ficou sem nenhuma, e a conta podia subir de fase, recuar
+        // depois, e o registro imutavel afirmar um maximo inferior ao atingido.
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
       } else {
         S.phases[pi].orders[oi][f]=sel.value;
       }
