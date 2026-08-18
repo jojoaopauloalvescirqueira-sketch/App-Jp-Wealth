@@ -10,8 +10,36 @@ function blockJPWealthPersistence(){
   jpWealthSessionEpoch++;
 }
 function resumeJPWealthPersistence(){
+  // NÃO libera jpWealthPersistenceOutcomeUnknown, e isso é o ponto inteiro da
+  // outra barreira: ela existe porque uma gravação posterior pode destruir
+  // exatamente o estado que estamos tentando preservar. Um portão genérico
+  // reaberto por importação ou onboarding não pode decidir isso.
   jpWealthPersistenceBlocked=false;
   jpWealthSessionEpoch++;
+}
+
+// ---- DESFECHO INDETERMINADO DE GRAVAÇÃO -----------------------------------
+// Barreira SEPARADA do portão genérico. Erguida quando uma gravação pode ter
+// ocorrido e não foi possível provar nem que ocorreu nem que não ocorreu —
+// tipicamente: setItem talvez tenha executado e a leitura de volta lançou, ou o
+// documento voltou ilegível.
+//
+// Enquanto ela estiver de pé, NADA grava. O motivo não é excesso de cautela: se
+// o disco contém a finalização e a memória for sobrescrita por um save()
+// posterior, a finalização persistida desaparece — memória e disco discordando
+// sobre se uma operação financeira foi formalmente encerrada é a pior classe de
+// defeito que este sistema pode produzir.
+//
+// A flag NÃO é persistida: persisti-la exigiria justamente a gravação que está
+// vetada. É barreira de sessão; o desempate é humano, com o disco à vista.
+let jpWealthPersistenceOutcomeUnknown=false;
+function jpWealthPersistenceOutcomeIsUnknown(){ return jpWealthPersistenceOutcomeUnknown; }
+function markJPWealthPersistenceOutcomeUnknown(motivo){
+  jpWealthPersistenceOutcomeUnknown=true;
+  jpWealthSessionEpoch++;
+  if(typeof console!=='undefined' && console.error){
+    console.error('[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas:', motivo);
+  }
 }
 // ---- MODO DE RECUPERAÇÃO DE CARREGAMENTO (A-005) --------------------------------
 // Quando o banco salvo não pode ser carregado com segurança (leitura falhou, JSON
@@ -1316,6 +1344,8 @@ function save(){
   // fluxo reabra o portão genérico (importFullBackupFile e openOnboardingModal chamam
   // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.
   if(jpWealthLoadRecovery.active) return false;
+  // Precede o portão genérico: este não é reaberto por resumeJPWealthPersistence.
+  if(jpWealthPersistenceOutcomeUnknown) return false;
   if(jpWealthPersistenceBlocked) return false;
   // Captura prospectiva da maior Fase da Conta atingida pela operação viva.
   // DEPOIS dos dois portões e ANTES da serialização: o que não vai ser gravado

@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '136432075159543f';
+const JP_WEALTH_BUILD_ID = '08b12225424840db';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7860,8 +7860,36 @@ function blockJPWealthPersistence(){
   jpWealthSessionEpoch++;
 }
 function resumeJPWealthPersistence(){
+  // NÃO libera jpWealthPersistenceOutcomeUnknown, e isso é o ponto inteiro da
+  // outra barreira: ela existe porque uma gravação posterior pode destruir
+  // exatamente o estado que estamos tentando preservar. Um portão genérico
+  // reaberto por importação ou onboarding não pode decidir isso.
   jpWealthPersistenceBlocked=false;
   jpWealthSessionEpoch++;
+}
+
+// ---- DESFECHO INDETERMINADO DE GRAVAÇÃO -----------------------------------
+// Barreira SEPARADA do portão genérico. Erguida quando uma gravação pode ter
+// ocorrido e não foi possível provar nem que ocorreu nem que não ocorreu —
+// tipicamente: setItem talvez tenha executado e a leitura de volta lançou, ou o
+// documento voltou ilegível.
+//
+// Enquanto ela estiver de pé, NADA grava. O motivo não é excesso de cautela: se
+// o disco contém a finalização e a memória for sobrescrita por um save()
+// posterior, a finalização persistida desaparece — memória e disco discordando
+// sobre se uma operação financeira foi formalmente encerrada é a pior classe de
+// defeito que este sistema pode produzir.
+//
+// A flag NÃO é persistida: persisti-la exigiria justamente a gravação que está
+// vetada. É barreira de sessão; o desempate é humano, com o disco à vista.
+let jpWealthPersistenceOutcomeUnknown=false;
+function jpWealthPersistenceOutcomeIsUnknown(){ return jpWealthPersistenceOutcomeUnknown; }
+function markJPWealthPersistenceOutcomeUnknown(motivo){
+  jpWealthPersistenceOutcomeUnknown=true;
+  jpWealthSessionEpoch++;
+  if(typeof console!=='undefined' && console.error){
+    console.error('[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas:', motivo);
+  }
 }
 // ---- MODO DE RECUPERAÇÃO DE CARREGAMENTO (A-005) --------------------------------
 // Quando o banco salvo não pode ser carregado com segurança (leitura falhou, JSON
@@ -9166,6 +9194,8 @@ function save(){
   // fluxo reabra o portão genérico (importFullBackupFile e openOnboardingModal chamam
   // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.
   if(jpWealthLoadRecovery.active) return false;
+  // Precede o portão genérico: este não é reaberto por resumeJPWealthPersistence.
+  if(jpWealthPersistenceOutcomeUnknown) return false;
   if(jpWealthPersistenceBlocked) return false;
   // Captura prospectiva da maior Fase da Conta atingida pela operação viva.
   // DEPOIS dos dois portões e ANTES da serialização: o que não vai ser gravado
@@ -27433,6 +27463,10 @@ function operationResolveGridPhaseMax(op){
 // cronológica desta guarda: nada de idade máxima, horário de mercado, dias
 // úteis, duração mínima ou limite de calendário. Só a impossibilidade.
 const OPERATION_MSG_ABERTURA_AUSENTE='Informe a data/hora de abertura.';
+// Nem sucesso, nem falha comum. O texto NAO oferece "tente de novo": uma nova
+// tentativa gravaria, e gravar e exatamente o que nao se pode fazer enquanto o
+// desfecho da anterior for desconhecido.
+const OPERATION_MSG_DESFECHO_INDETERMINADO='Não foi possível determinar com segurança se a finalização foi persistida. Novas gravações foram bloqueadas para preservar a integridade dos dados. Não repita a operação: verifique o estado gravado antes de qualquer nova ação.';
 const OPERATION_MSG_CRONOLOGIA='A data/hora de abertura não pode ser posterior ao encerramento da operação.';
 
 // Fotografia INDEPENDENTE da operação, construída antes de qualquer destruição.
@@ -27584,21 +27618,65 @@ function operationValidateCandidate(candidato, anterior, record){
 // desfecho compatível com a mensagem dada ao operador ("nada foi alterado"); e
 // o estado converge no próximo carregamento, porque o disco é a fonte da
 // verdade e um documento que contenha o registro trará activeOperation nula.
-function operationPersistedHas(record){
-  if (!record || typeof record !== 'object') return false;
+// DESFECHO DA GRAVAÇÃO, em três estados — porque três são os desfechos reais e
+// a versão anterior devolvia booleano:
+//
+//   CONFIRMED      há evidência POSITIVA no disco de que ESTA tentativa gravou;
+//   NOT_PERSISTED  há evidência positiva de que ela NÃO gravou;
+//   UNKNOWN        não foi possível provar nem uma coisa nem outra.
+//
+// O booleano anterior colapsava UNKNOWN em NOT_PERSISTED — inclusive num
+// `catch(_){ return false; }` que transformava leitura impossível em prova de
+// ausência. Daí saía o pior cenário que este sistema pode produzir: setItem
+// grava a finalização, uma exceção posterior interrompe o fluxo, a leitura de
+// volta falha, o sistema conclui "não gravou", desfaz a memória para a operação
+// ativa e o próximo save() sobrescreve o disco — a finalização persistida
+// desaparece sem que ninguém saiba que existiu.
+//
+// A confirmação exige operationId E finalizedAt. Só o operationId não basta:
+// uma tentativa ANTERIOR da mesma operação pode ter gravado, e confirmar por
+// identidade daria como persistida uma tentativa que não foi esta.
+function operationProbePersisted(record){
+  if (!record || typeof record !== 'object' ||
+      typeof record.operationId !== 'string' || typeof record.finalizedAt !== 'string') {
+    // Sem pergunta bem formada não há resposta provada. Nunca NOT_PERSISTED.
+    return 'UNKNOWN';
+  }
+  let raw;
   try{
     const chave = (typeof LSKEY === 'string' && LSKEY) ? LSKEY : 'jpwealth_v9_state';
-    const raw = localStorage.getItem(chave);
-    if (typeof raw !== 'string' || !raw) return false;
-    const doc = JSON.parse(raw);
-    if (!doc || typeof doc !== 'object' || Array.isArray(doc)) return false;
-    const env = doc.operationHistory;
-    if (!env || typeof env !== 'object' || !Array.isArray(env.records)) return false;
-    return env.records.some(r =>
+    raw = localStorage.getItem(chave);
+  }catch(_){
+    return 'UNKNOWN';   // armazenamento inacessível: nada se prova
+  }
+  // Documento ausente é prova de ausência do registro: ele não pode estar num
+  // documento que não existe.
+  if (raw === null || raw === undefined || raw === '') return 'NOT_PERSISTED';
+  if (typeof raw !== 'string') return 'UNKNOWN';
+  let doc;
+  try{ doc = JSON.parse(raw); }
+  catch(_){ return 'UNKNOWN'; }   // ilegível depois de uma escrita possível
+  if (!doc || typeof doc !== 'object' || Array.isArray(doc)) return 'UNKNOWN';
+  const env = doc.operationHistory;
+  // Documento legível SEM o envelope: é um documento anterior a esta feature, ou
+  // anterior à gravação. O registro comprovadamente não está lá — o candidato
+  // sempre carrega operationHistory, então o que foi lido não é o que teríamos
+  // acabado de gravar.
+  if (!env || typeof env !== 'object' || !Array.isArray(env.records)) return 'NOT_PERSISTED';
+  let achou;
+  try{
+    achou = env.records.some(r =>
       r && typeof r === 'object' &&
       r.operationId === record.operationId &&
       r.finalizedAt === record.finalizedAt);
-  }catch(_){ return false; }
+  }catch(_){ return 'UNKNOWN'; }
+  return achou ? 'CONFIRMED' : 'NOT_PERSISTED';
+}
+
+// Compatibilidade: verdadeiro SOMENTE com confirmação positiva. UNKNOWN nunca
+// vira "sim", e também nunca vira "não" para quem consulta o desfecho completo.
+function operationPersistedHas(record){
+  return operationProbePersisted(record) === 'CONFIRMED';
 }
 
 // ---- TRANSAÇÃO ----
@@ -27676,23 +27754,51 @@ function finalizeOperation(entrada){
     // é decidido pelo DISCO, não pela pilha: lê-se de volta o documento e
     // pergunta-se se o registro está lá.
     S = candidato;
-    let gravou;
+    let desfecho;
     try {
-      gravou = save() === true;
+      // save() === false é PROVA de não-escrita: os portões retornam antes de
+      // tocar no armazenamento, o erro de serialização retorna antes do setItem,
+      // e setItem é atômico — se lançou, nada foi gravado. A ambiguidade vive
+      // exclusivamente no caminho de EXCEÇÃO, que pode vir de antes da escrita
+      // (setPersistenceFailureState) ou de depois dela (clearPersistenceFailureState,
+      // repintura, timer).
+      desfecho = (save() === true) ? 'CONFIRMED' : 'NOT_PERSISTED';
     } catch (e) {
-      gravou = operationPersistedHas(snap.record);
-      if (!gravou) {
+      desfecho = operationProbePersisted(snap.record);
+      const detalhe = String((e && e.message) || e);
+
+      if (desfecho === 'UNKNOWN') {
+        // TERCEIRO DESFECHO. Não se reverte às cegas e não se declara nada.
+        //
+        // A memória FICA no candidato — que é o que o disco pode conter —, e
+        // toda gravação futura é vetada por uma barreira própria. Reverter aqui
+        // seria apostar que a escrita não ocorreu; se tiver ocorrido, o próximo
+        // save() apagaria uma finalização já persistida, e memória e disco
+        // passariam a discordar sobre se uma operação financeira foi encerrada.
+        //
+        // Congelar preserva as duas possibilidades e transfere o desempate para
+        // quem pode inspecionar o disco: uma pessoa.
+        markJPWealthPersistenceOutcomeUnknown(
+          'finalização de ' + snap.record.operationId + ': ' + detalhe);
+        return { ok:false, motivo:'persist_outcome_unknown', bloqueado:true,
+          operationId: snap.record.operationId, erro: detalhe,
+          mensagem: OPERATION_MSG_DESFECHO_INDETERMINADO };
+      }
+
+      if (desfecho === 'NOT_PERSISTED') {
         S = anterior;
-        return { ok:false, motivo:'persist_exception', erro:String((e && e.message) || e),
+        return { ok:false, motivo:'persist_exception', erro: detalhe,
           mensagem:'A finalização foi cancelada: a gravação falhou. Nada foi alterado.' };
       }
-      // Gravou e só então lançou (repintura de aviso, timer). O estado vivo já
-      // corresponde ao disco; reverter é que criaria a divergência.
+
+      // CONFIRMED: gravou e só então lançou (repintura de aviso, timer). O estado
+      // vivo já corresponde ao disco; reverter é que criaria a divergência. A
+      // exceção é falha de efeito colateral, e não da finalização.
       if (typeof console !== 'undefined' && console.error) {
         console.error('[operação] finalização persistida, mas o pós-processamento de save() lançou:', e);
       }
     }
-    if (!gravou) {
+    if (desfecho !== 'CONFIRMED') {
       S = anterior;
       return { ok:false, motivo:'persist_failed',
         mensagem:'A finalização foi cancelada: o estado não pôde ser gravado. Nada foi alterado.' };
@@ -27958,6 +28064,14 @@ function openFinalizeOperationModal(){
       const cx=box.querySelector('[data-qid="falha"]');
       const msg=box.querySelector('#finalFail');
       if(cx&&msg){ msg.textContent=res.mensagem||('A finalização não foi concluída ('+res.motivo+'). Nada foi alterado.'); cx.hidden=false; }
+      if(res.motivo==='persist_outcome_unknown'){
+        // O botão NÃO volta a ficar disponível. Nada aqui pode ser tentado de
+        // novo: uma segunda tentativa gravaria, e gravar é justamente o que
+        // destruiria o estado que a barreira existe para preservar. Também não
+        // se repinta a revisão — ela descreveria uma transação cujo desfecho
+        // ninguém conhece.
+        return;
+      }
       btn.disabled=false;
       // O modal continua aberto para nova tentativa, e ela pode acontecer muito
       // depois. Sem repintar, a revisao reaprovada ficaria carimbada na ultima

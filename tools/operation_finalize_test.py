@@ -1993,6 +1993,308 @@ def run_review_shows_the_three_states(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# Desfecho da gravacao: CONFIRMED / NOT_PERSISTED / UNKNOWN (#8)
+# ---------------------------------------------------------------------------
+# A sonda devolvia BOOLEANO, e o `catch(_){ return false; }` transformava leitura
+# impossivel em prova de ausencia. Dali saia o pior cenario possivel: setItem
+# grava a finalizacao, uma excecao posterior interrompe o fluxo, a leitura de
+# volta falha, o sistema conclui "nao gravou", desfaz a memoria e o proximo
+# save() sobrescreve o disco — a finalizacao persistida desaparece.
+#
+# A barreira erguida no caso UNKNOWN veta gravacao pelo resto da SESSAO. Os
+# testes a derrubam escrevendo direto na variavel de modulo, o que nenhum codigo
+# de producao faz: nao existe funcao de liberacao, e essa ausencia e o contrato.
+
+DESTRAVA = "() => { jpWealthPersistenceOutcomeUnknown = false; }"
+
+
+def run_outcome_not_persisted_before_write(page):
+    """(1) Falha ANTES de gravar: NOT_PERSISTED e rollback."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_out_np', ciclo:500});
+          save();
+          const antes = JSON.stringify(S);
+          const bak = window.save;
+          window.save = () => { throw new Error('falha antes da escrita'); };
+          let res;
+          try { res = JPWOperation.finalize({defenseCount:0}); }
+          finally { window.save = bak; }
+          const rec = {operationId:'op_out_np', finalizedAt:'nunca'};
+          return {res, sonda: operationProbePersisted(rec),
+                  bloqueou: jpWealthPersistenceOutcomeIsUnknown(),
+                  revertido: JSON.stringify(S) === antes};
+        }"""
+    )
+    assert r["res"]["ok"] is False and r["res"]["motivo"] == "persist_exception", (
+        f"desfecho errado: {r['res']}"
+    )
+    assert r["sonda"] == "NOT_PERSISTED", f"sonda: {r['sonda']!r}"
+    assert r["revertido"], "o rollback nao devolveu o estado anterior"
+    assert not r["bloqueou"], (
+        "ausencia PROVADA ergueu a barreira de indeterminacao — congelar o "
+        "sistema por uma falha que se sabe nao ter gravado e custo sem causa"
+    )
+
+
+def run_outcome_confirmed_after_write(page):
+    """(2) Grava e SO ENTAO lanca: CONFIRMED, sem rollback."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_out_conf', ciclo:600});
+          save();
+          const cicloAntes = S.cycleRealizado, net = netOpAtual();
+          const bak = window.save;
+          window.save = () => {
+            localStorage.setItem('jpwealth_v9_state',
+              JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+            throw new Error('pos-processamento lancou');
+          };
+          let res;
+          try { res = JPWOperation.finalize({defenseCount:0}); }
+          finally { window.save = bak; }
+          const recs = S.operationHistory.records;
+          const rec = recs[recs.length-1] || null;
+          return {res, gravou: !!rec,
+                  sonda: rec ? operationProbePersisted(rec) : null,
+                  bloqueou: jpWealthPersistenceOutcomeIsUnknown(),
+                  ciclo: S.cycleRealizado, esperado: cicloAntes + net,
+                  ordens: JPWOperation.liveOrders().length};
+        }"""
+    )
+    assert r["res"]["ok"] is True, f"a finalizacao gravada foi revertida: {r['res']}"
+    assert r["sonda"] == "CONFIRMED", f"sonda: {r['sonda']!r}"
+    assert not r["bloqueou"], "confirmacao positiva ergueu a barreira"
+    assert r["ciclo"] == r["esperado"], f"ciclo: {r['ciclo']} != {r['esperado']}"
+    assert r["ordens"] == 0, "grades nao foram liberadas apesar da gravacao"
+
+
+def run_outcome_unknown_when_readback_throws(page):
+    """(3) Escrita possivel + leitura de volta LANCA: UNKNOWN.
+
+    Sem rollback cego, sem declarar sucesso nem falha comum, e novas gravacoes
+    bloqueadas. E o caso que existia para produzir perda silenciosa.
+    """
+    r = page.evaluate(
+        """() => {
+          let out;
+          const bakSave = window.save;
+          const bakGet = localStorage.getItem.bind(localStorage);
+          try {
+            __semear({id:'op_out_unk', ciclo:700});
+            save();
+            const anteriorMem = JSON.stringify(S);
+            const cicloAntes = S.cycleRealizado;
+            window.save = () => {
+              localStorage.setItem('jpwealth_v9_state',
+                JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+              throw new Error('excecao pos-escrita');
+            };
+            localStorage.getItem = () => { throw new Error('leitura indisponivel'); };
+            const res = JPWOperation.finalize({defenseCount:0});
+            localStorage.getItem = bakGet;
+            window.save = bakSave;
+            const memDepois = JSON.stringify(S);
+            const saveDepois = save();
+            out = {res,
+                   bloqueou: jpWealthPersistenceOutcomeIsUnknown(),
+                   reverteu: memDepois === anteriorMem,
+                   registrosMem: S.operationHistory.records.length,
+                   cicloAntes, cicloDepois: S.cycleRealizado,
+                   ordens: JPWOperation.liveOrders().length,
+                   saveDepois};
+          } finally {
+            localStorage.getItem = bakGet; window.save = bakSave;
+            jpWealthPersistenceOutcomeUnknown = false;
+          }
+          return out;
+        }"""
+    )
+    assert r["res"]["ok"] is False, "desfecho indeterminado foi declarado SUCESSO"
+    assert r["res"]["motivo"] == "persist_outcome_unknown", (
+        f"indeterminacao classificada como {r['res']['motivo']!r} — nem sucesso "
+        "nem falha comum, e um desfecho proprio"
+    )
+    assert "não foi possível determinar" in (r["res"].get("mensagem") or "").lower(), (
+        f"mensagem nao comunica a indeterminacao: {r['res'].get('mensagem')!r}"
+    )
+    assert not r["reverteu"], (
+        "houve ROLLBACK CEGO: a memoria voltou para a operacao ativa sem prova de "
+        "que o disco nao contem a finalizacao — a proxima gravacao apagaria uma "
+        "finalizacao possivelmente persistida"
+    )
+    assert r["registrosMem"] == 1, "o candidato nao foi preservado em memoria"
+    assert r["ordens"] == 0, "as grades foram restauradas apesar da indeterminacao"
+    assert r["bloqueou"], "a barreira de indeterminacao NAO foi erguida"
+    assert r["saveDepois"] is False, (
+        "uma gravacao posterior foi ACEITA com o desfecho indeterminado em pe"
+    )
+
+
+def run_outcome_unknown_when_document_is_unreadable(page):
+    """(4) Documento ilegivel depois de escrita possivel: UNKNOWN."""
+    r = page.evaluate(
+        """() => {
+          let out;
+          const bakSave = window.save;
+          const bakGet = localStorage.getItem.bind(localStorage);
+          try {
+            __semear({id:'op_out_ileg', ciclo:800});
+            save();
+            window.save = () => {
+              localStorage.setItem('jpwealth_v9_state', '{ isto nao e json');
+              throw new Error('excecao pos-escrita');
+            };
+            const res = JPWOperation.finalize({defenseCount:0});
+            window.save = bakSave;
+            out = {res, bloqueou: jpWealthPersistenceOutcomeIsUnknown(),
+                   registrosMem: S.operationHistory.records.length,
+                   sondaDireta: operationProbePersisted({operationId:'x', finalizedAt:'y'})};
+          } finally {
+            localStorage.getItem = bakGet; window.save = bakSave;
+            jpWealthPersistenceOutcomeUnknown = false;
+            localStorage.setItem('jpwealth_v9_state', JSON.stringify(S));
+          }
+          return out;
+        }"""
+    )
+    assert r["res"]["motivo"] == "persist_outcome_unknown", (
+        f"documento ilegivel apos escrita possivel foi tratado como {r['res']['motivo']!r} "
+        "— JSON quebrado nao prova ausencia; prova que nao da para saber"
+    )
+    assert r["sondaDireta"] == "UNKNOWN", f"sonda direta: {r['sondaDireta']!r}"
+    assert r["bloqueou"], "a barreira nao foi erguida"
+    assert r["registrosMem"] == 1, "houve rollback cego"
+
+
+def run_unknown_barrier_survives_generic_resume(page):
+    """(5) e (6) A barreira nao cai por resume generico, e save() segue recusado."""
+    r = page.evaluate(
+        """() => {
+          let out;
+          try {
+            markJPWealthPersistenceOutcomeUnknown('teste');
+            const antes = jpWealthPersistenceOutcomeIsUnknown();
+            resumeJPWealthPersistence();          // portao GENERICO
+            const depoisResume = jpWealthPersistenceOutcomeIsUnknown();
+            const bloqueadoGenerico = jpWealthPersistenceIsBlocked();
+            const s1 = save();
+            blockJPWealthPersistence();
+            resumeJPWealthPersistence();
+            const s2 = save();
+            out = {antes, depoisResume, bloqueadoGenerico, s1, s2,
+                   temLiberador: typeof window.resumeJPWealthPersistenceOutcome};
+          } finally { jpWealthPersistenceOutcomeUnknown = false; }
+          return out;
+        }"""
+    )
+    assert r["antes"] is True, "a barreira nao subiu"
+    assert r["depoisResume"] is True, (
+        "resumeJPWealthPersistence() DERRUBOU a barreira de indeterminacao — o "
+        "portao generico e reaberto por importacao e onboarding, e nenhum deles "
+        "pode decidir sobre um desfecho que ninguem conhece"
+    )
+    assert r["bloqueadoGenerico"] is False, "o portao generico nao foi reaberto"
+    assert r["s1"] is False and r["s2"] is False, (
+        f"save() foi aceito com a barreira em pe: {r['s1']}, {r['s2']}"
+    )
+    assert r["temLiberador"] == "undefined", (
+        "existe funcao publica de liberacao da barreira; o desempate e humano, "
+        "com o disco a vista, e nao um botao"
+    )
+
+
+def run_same_operation_id_other_finalized_at_is_not_confirmation(page):
+    """(7) Mesmo operationId com outro finalizedAt NAO confirma esta tentativa."""
+    r = page.evaluate(
+        """() => {
+          __semear({id:'op_out_ident'});
+          S.operationHistory.records = [{
+            schemaVersion:1, operationId:'op_out_ident',
+            finalizedAt:'2020-01-01T00:00:00.000Z', netResult:0, ordersSnapshot:[]}];
+          save();
+          const estaTentativa = {operationId:'op_out_ident', finalizedAt:'2026-08-17T23:00:00.000Z'};
+          const anterior      = {operationId:'op_out_ident', finalizedAt:'2020-01-01T00:00:00.000Z'};
+          return {desta: operationProbePersisted(estaTentativa),
+                  daAnterior: operationProbePersisted(anterior),
+                  compat: operationPersistedHas(estaTentativa)};
+        }"""
+    )
+    assert r["daAnterior"] == "CONFIRMED", (
+        f"a sonda nao reconhece um registro que ESTA no disco: {r['daAnterior']!r}"
+    )
+    assert r["desta"] == "NOT_PERSISTED", (
+        f"a sonda confirmou por IDENTIDADE: {r['desta']!r} — uma tentativa "
+        "anterior da mesma operacao daria como persistida uma gravacao que nao "
+        "foi esta"
+    )
+    assert r["compat"] is False, "o compatibilizador booleano confirmou indevidamente"
+
+
+def run_review_offers_no_retry_when_outcome_is_unknown(page):
+    """A tela nao oferece "tente de novo" com o desfecho indeterminado.
+
+    Repetir gravaria, e gravar e exatamente o que destruiria o estado que a
+    barreira existe para preservar. O botao fica indisponivel, a revisao nao e
+    repintada — ela descreveria uma transacao cujo desfecho ninguem conhece — e
+    a mensagem nao anuncia sucesso nem falha comum.
+    """
+    r = page.evaluate(
+        """() => {
+          let out;
+          const bakSave = window.save;
+          const bakGet = localStorage.getItem.bind(localStorage);
+          try {
+            __semear({id:'op_out_ui', ciclo:900});
+            save();
+            JPWOperation.openReview();
+            __digitar('#finalDefenses','0');
+            __digitar('#finalConfirm','FECHADO');
+            window.save = () => {
+              localStorage.setItem('jpwealth_v9_state',
+                JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+              throw new Error('excecao pos-escrita');
+            };
+            localStorage.getItem = () => { throw new Error('leitura indisponivel'); };
+            document.getElementById('modalConfirm').click();
+            localStorage.getItem = bakGet; window.save = bakSave;
+            const btn = document.getElementById('modalConfirm');
+            const cx = document.querySelector('[data-qid="falha"]');
+            out = {
+              aberto: document.getElementById('modalOverlay').classList.contains('show'),
+              botaoDisponivel: btn ? !btn.disabled : null,
+              mensagem: document.getElementById('finalFail')
+                        ? document.getElementById('finalFail').textContent : '',
+              falhaVisivel: cx ? !cx.hidden : null,
+              bloqueou: jpWealthPersistenceOutcomeIsUnknown()
+            };
+          } finally {
+            localStorage.getItem = bakGet; window.save = bakSave;
+            jpWealthPersistenceOutcomeUnknown = false;
+            closeModal();
+            localStorage.setItem('jpwealth_v9_state', JSON.stringify(S));
+          }
+          return out;
+        }"""
+    )
+    assert r["bloqueou"], "a barreira nao foi erguida pelo fluxo da interface"
+    assert r["aberto"], "o modal fechou, o que se leria como conclusao"
+    assert r["falhaVisivel"], "nada foi comunicado ao operador"
+    assert r["botaoDisponivel"] is False, (
+        "o botao Finalizar voltou a ficar disponivel — a interface esta "
+        "convidando a repetir uma gravacao cujo desfecho e desconhecido, e a "
+        "repeticao e justamente o que pode destruir o estado preservado"
+    )
+    m = (r["mensagem"] or "").lower()
+    assert "não foi possível determinar" in m and "bloquead" in m, (
+        f"a mensagem nao diz o que houve nem o que foi feito: {r['mensagem']!r}"
+    )
+    assert "tente novamente" not in m and "tentar novamente" not in m, (
+        f"a mensagem convida a repetir: {r['mensagem']!r}"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -2061,6 +2363,14 @@ def main():
             run_integrity_degraded_on_capture_failure(page)
             run_phase_absent_from_matrix_is_a_defect(page)
             run_review_shows_the_three_states(page)
+            # ---- desfecho ternario da gravacao (#8 original) ----
+            run_outcome_not_persisted_before_write(page)
+            run_outcome_confirmed_after_write(page)
+            run_outcome_unknown_when_readback_throws(page)
+            run_outcome_unknown_when_document_is_unreadable(page)
+            run_unknown_barrier_survives_generic_resume(page)
+            run_same_operation_id_other_finalized_at_is_not_confirmation(page)
+            run_review_offers_no_retry_when_outcome_is_unknown(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()
