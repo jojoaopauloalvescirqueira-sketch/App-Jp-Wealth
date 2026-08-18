@@ -736,13 +736,32 @@ def run_blank_result_blocks_close(page):
 
 
 def run_invalid_result_blocks_close(page):
-    """Texto invalido tambem nao fecha, e tambem nao vira zero."""
-    page.evaluate(MONTA_FECHAMENTO)
-    r = fecha_pela_ui(page, "abc")
-    assert not r.get("erro"), r["erro"]
-    assert r["erroVisivel"], "texto invalido nao foi acusado"
-    assert r["status"] != "Fechada", f"a ordem fechou com texto invalido: {r['status']!r}"
-    assert r["result"] is None, f"texto invalido virou {r['result']!r}"
+    """Texto invalido nao fecha — inclusive o que parseFloat aceitaria PELA METADE.
+
+    "abc" e o caso facil: parseFloat tambem devolve NaN. O perigoso e o parse
+    PARCIAL, que a regex existe para barrar:
+
+        "1.420,50"  separador de milhar  -> parseFloat da 1.42   (erro de 1000x)
+        "1.2.3"                          -> parseFloat da 1.2
+        "12abc"                          -> parseFloat da 12
+
+    Nesses, um `parseFloat` sozinho grava um numero PLAUSIVEL e errado num campo
+    que alimenta a consolidacao e o registro imutavel. Sem eles, uma mutacao que
+    remove a regex sobrevive.
+    """
+    for txt in ["abc", "1.2.3", "12abc", "1.420,50", "--5", "R$ 500"]:
+        page.evaluate(MONTA_FECHAMENTO)
+        r = fecha_pela_ui(page, txt)
+        assert not r.get("erro"), r["erro"]
+        assert r["erroVisivel"], f"{txt!r}: entrada invalida nao foi acusada"
+        assert r["status"] != "Fechada", (
+            f"{txt!r}: a ordem FECHOU com entrada invalida (status {r['status']!r})"
+        )
+        assert r["result"] is None, (
+            f"{txt!r}: virou {r['result']!r} — um numero plausivel e errado entraria "
+            "na consolidacao e no registro imutavel"
+        )
+        assert r["net"] == 0, f"{txt!r}: netOpAtual contaminado ({r['net']})"
 
 
 def run_explicit_zero_is_a_valid_result(page):
