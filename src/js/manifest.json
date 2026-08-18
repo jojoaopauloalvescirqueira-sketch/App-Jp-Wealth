@@ -68,7 +68,7 @@
       "order": 11,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "38f9ddd2dffe44a52654e53b5f85f3fe3770688460c64cd9cd69a4dca2f81cb0"
+      "sha256": "ec1ae853405ac685896ec1087626c0b0f0d1fa383a02d033f4250fe368a0be8d"
     },
     {
       "order": 12,
@@ -86,13 +86,13 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "f0bb39d26be304bead8ae9437aa392d18c6494d61982a97cb5633fcf01b28d2f"
+      "sha256": "d0741b26ed5701fcb6a758856ab4d679a7d054c1585492325c46975362fd90fd"
     },
     {
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "393d1beb3465c61d544ee7f146e7608ad6ffff093d465f413381e7ecf93d98d8"
+      "sha256": "0e6756412376c1858a46ed2fe1243cb3710c4e7c28678a8357c6fdffc1d526c2"
     },
     {
       "order": 16,
@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "e02421302c77864a3c4c36d27972984c0544531ce4a2eb36579a4b9144ea6ca6"
+      "sha256": "1d49e6fad08b3a6593cd2441e233e25070c3fec656962db9a50fba6be929ed06"
     },
     {
       "order": 24,
@@ -254,7 +254,7 @@
       "order": 42,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "28bfbd03864b4a8318ab264116b4ac7b7d13746bcfbb9d122cacfbf192c2f39b"
+      "sha256": "5ec6c58dd05cb83cd892972e13300b7af56b1832b83404df5b9cd275b201b91e"
     },
     {
       "order": 43,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "9970ed30343fcbf9dee4b3b6362a325a7ddad75f4a9bd0375841cc049fdf88d3"
+      "sha256": "7259baafabeb450a326280c7c813f9ea5220941c122416254976b87cfd2c528f"
     },
     {
       "order": 67,

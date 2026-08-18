@@ -89,46 +89,71 @@ function renderPhases(){
   const qAct=quarantineActive(); // Art. 3.10: quarentena trava edição, permite apenas fechar
   const active=getMaxUnlockedIdx(); // grade ativa = fase mais avançada já liberada
   const cont=$('phaseContainer');
-  const ph=S.phases[active];
   let html=riskIndicatorsHTML(active);
   if(noExternalProtectionActive()){
     html+=`<div class="risk-note" style="margin:0 0 14px; color:var(--f4); border-color:var(--f4)">${noExternalProtectionWarning()}</div>`;
   }
-  // grade ATIVA — a única editável e sempre visível
-  html+=`<div class="phase ${phaseCssClass(ph)}" data-phase="${active}">
-    <div class="phase-head" style="cursor:default">
-      <span class="badge">${esc(String(ph.faseNome||'').replace('FASE ','F'))}</span>
-      <span>${esc(ph.title)}</span>
-      <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
-    </div>
-    <div class="phase-body">${phaseBodyHTML(active, qAct)}</div>
-  </div>`;
-  // botão de MIGRAR para a próxima fase (única forma de progredir — Art. 3.8)
-  if(active<3){
-    if(qAct){
-      html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
-    } else {
-      html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
-    }
-  } else {
-    html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
-  }
-  // FASES ANTERIORES — escondidas por padrão (estética limpa), read-only ao expandir
-  if(active>0){
-    let hist='';
-    for(let pi=0; pi<active; pi++){
-      hist+=`<div class="phase ${phaseCssClass(S.phases[pi])} collapsed" data-phase="${pi}" style="margin-top:10px">
+  // AS QUATRO FASES, SEMPRE PRESENTES, na ordem F1 -> F4.
+  //
+  // Antes o painel mostrava SO a grade ativa; as anteriores ficavam atrás de um
+  // botão "Ver fases anteriores" e as POSTERIORES não eram desenhadas. O
+  // operador não conseguia ver a estrutura quadrifásica inteira.
+  //
+  // Isto é apresentação. Nada aqui altera phaseUnlocked, critério de
+  // desbloqueio, limite, cálculo ou migração: `active` continua vindo de
+  // getMaxUnlockedIdx(), e o botão MIGRAR segue preso à grade ativa com as
+  // mesmas guardas.
+  //
+  // A fase FUTURA é desenhada sem corpo editável de propósito. phaseBodyHTML
+  // calcula readOnly como isMigrada||frozen||isFechada, e phaseFrozen(pi) é
+  // `pi<3 && phaseUnlocked[pi+1]` — para uma fase ainda não liberada isso dá
+  // FALSO, ou seja, os campos viriam habilitados. Renderizar o corpo ali
+  // deixaria o operador lançar ordens numa fase que o Estatuto ainda não
+  // liberou: mudança de comportamento disfarçada de mudança visual.
+  for(let pi=0; pi<S.phases.length; pi++){
+    const p=S.phases[pi];
+    const badge=esc(String(p.faseNome||'').replace('FASE ','F'));
+    const titulo=esc(p.title||'');
+    if(pi<active){
+      html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px">
         <div class="phase-head" data-toggle="${pi}">
-          <span class="badge">${esc(String(S.phases[pi].faseNome||'').replace('FASE ','F'))}</span>
-          <span>${esc(S.phases[pi].title)}</span>
+          <span class="badge">${badge}</span>
+          <span>${titulo}</span>
           <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 histórico</span>
           <span class="chev">▾</span>
         </div>
         <div class="phase-body">${phaseBodyHTML(pi, qAct)}</div>
       </div>`;
+    } else if(pi===active){
+      html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px">
+        <div class="phase-head" style="cursor:default">
+          <span class="badge">${badge}</span>
+          <span>${titulo}</span>
+          <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
+        </div>
+        <div class="phase-body">${phaseBodyHTML(pi, qAct)}</div>
+      </div>`;
+      // MIGRAR para a próxima fase — única forma de progredir (Art. 3.8),
+      // ancorado à grade ativa e com as guardas inalteradas.
+      if(active<3){
+        if(qAct){
+          html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
+        } else {
+          html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
+        }
+      } else {
+        html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
+      }
+    } else {
+      html+=`<div class="phase phase-locked" data-phase="${pi}" style="margin-top:10px; opacity:.6">
+        <div class="phase-head" style="cursor:default">
+          <span class="badge">${badge}</span>
+          <span>${titulo}</span>
+          <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 não atingida</span>
+        </div>
+        <div class="phase-body"><div class="phase-meta" style="padding:10px 4px">Fase ainda não liberada. A progressão é sequencial e depende do questionário de transição da fase anterior (Art. 3.8).</div></div>
+      </div>`;
     }
-    html+=`<button class="reset-btn" id="histToggle" style="margin-top:14px">▸ Ver fases anteriores (${active})</button>
-      <div id="histWrap" style="display:none; margin-top:6px">${hist}</div>`;
   }
   cont.innerHTML=html;
   // bind toggles das fases de histórico
@@ -145,13 +170,6 @@ function renderPhases(){
       if(!S.phaseUnlocked[fn-2]){ alert('🚫 Transição sequencial obrigatória (Art. 3.8).'); return; }
       openTransitionModal(fn);
     });
-  });
-  // bind histórico toggle
-  const ht=$('histToggle');
-  if(ht) ht.addEventListener('click',()=>{
-    const w=$('histWrap'); const open=w.style.display!=='none';
-    w.style.display=open?'none':'block';
-    ht.textContent=(open?'▸':'▾')+' Ver fases anteriores ('+active+')';
   });
   // bind ATR% / Fator F do painel de Stop Estatístico (§9)
   const ap=$('iAtrPct');

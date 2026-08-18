@@ -45,7 +45,8 @@ const DASH_LAYOUT_LABELS = {
   'exec-clearance': 'Execution Clearance',
   'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
-  'exec-lifo-monitor': 'Consolidado LIFO',
+  'exec-consolidado': 'Consolidado da Operação Única',
+  'exec-monitor': 'Monitor LIFO',
   'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
   'contab-period-goals': 'Período & Metas', 'contab-daily-close': 'Fechamento Diário',
@@ -91,10 +92,14 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
     // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
     // abaixo do que o design define como leitura primária.
-    { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 3 }
+    // Bloco F: Clearance | Consolidado | Monitor dividem a PRIMEIRA linha.
+    // A grade tem 4 colunas, entao 2+1+1 fecha a linha exata — o veredito
+    // (Clearance) fica com o dobro dos dois cartoes que ele resume.
+    { id: 'exec-clearance', zone: 'main', size: 'medium', order: 0 },
+    { id: 'exec-consolidado', zone: 'main', size: 'compact', order: 1 },
+    { id: 'exec-monitor', zone: 'main', size: 'compact', order: 2 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 3 },
+    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 }
   ],
   contas: [
     // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
@@ -194,6 +199,42 @@ const JP_WIDGET_STORAGE_KEY_V5 = 'jpwealth.ui.widgetLayouts.v5'; // só para mig
 const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
+// Bloco F — `exec-lifo-monitor` virou DOIS cartoes: `exec-consolidado` (o que a
+// operacao E agora) e `exec-monitor` (o que FAZER a respeito). Estavam no mesmo
+// cartao por acidente historico, nao por parentesco de leitura.
+//
+// Sem esta migracao a divisao seria destrutiva, e silenciosamente: o layout
+// salvo carrega 4 ids onde o validador passa a esperar 5, e ele reprova por
+// TRES caminhos independentes — contagem diferente, id desconhecido e
+// obrigatorio ausente. Cada um devolve null para a TELA INTEIRA, entao
+// dashLayoutNormalizeV6 descartaria toda a personalizacao do Execution Board
+// por causa de uma mudanca visual. Mesma natureza do que ja se documentou na
+// migracao v4 -> v5.
+//
+// O que e preservado e o que e coagido, e por que:
+//   POSICAO — preservada. Onde o usuario pos o cartao foi escolha dele; o
+//     Consolidado herda o lugar e o Monitor nasce imediatamente depois.
+//   TAMANHO — coagido para o padrao novo. O cartao antigo declarava
+//     data-widget-allowed-sizes="full", ou seja, `full` era o UNICO valor
+//     possivel: e a ausencia de escolha, nao uma escolha. Herda-lo congelaria
+//     os dois cartoes em largura cheia e a linha de tres nunca apareceria para
+//     quem ja personalizou qualquer outra coisa da tela.
+function dashLayoutSplitExecLifoMonitor(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  if (!widgets.some(w => w && typeof w === 'object' && w.id === 'exec-lifo-monitor')) return widgets;
+  const ordenados = widgets
+    .filter(w => w && typeof w === 'object' && Number.isFinite(w.order))
+    .slice()
+    .sort((a, b) => a.order - b.order);
+  const out = [];
+  ordenados.forEach(w => {
+    if (w.id !== 'exec-lifo-monitor') { out.push({ ...w }); return; }
+    out.push({ ...w, id: 'exec-consolidado', size: 'compact' });
+    out.push({ ...w, id: 'exec-monitor', size: 'compact' });
+  });
+  return out.map((w, i) => ({ ...w, order: i }));
+}
+
 
 // Valida a lista de widgets de UMA tela contra a política real daquela tela
 // (inventário de IDs esperados + zonas/tamanhos permitidos por widget, lidos
@@ -220,7 +261,7 @@ function dashLayoutMigrateWidgets(screenId, widgets) {
   // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
   // devolve null para a TELA INTEIRA.
   if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
-  if (screenId === 'exec') return widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id));
+  if (screenId === 'exec') return dashLayoutSplitExecLifoMonitor(widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id)));
   if (screenId === 'contab') return widgets.filter(w => !w || !['contab-cycle-pace','contab-simulation','contab-daily-projection','contab-audit-log'].includes(w.id));
   if (screenId !== 'dash') return widgets;
   return widgets.map(w => {

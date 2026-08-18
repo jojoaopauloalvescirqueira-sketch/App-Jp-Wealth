@@ -665,6 +665,134 @@ def run_rejected_pair_change_does_not_contaminate(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# Bloco C — resultado da ordem: ausente, invalido e zero sao estados distintos
+# ---------------------------------------------------------------------------
+# `parseFloat(x)||0` colapsava tres estados num so. Uma ordem fechada sem
+# resultado informado entrava em netOpAtual() como zero, e dali no consolidado da
+# Operacao Unica e no registro imutavel do Historico — sem ninguem perceber.
+
+MONTA_FECHAMENTO = """() => {
+  window.__avisos = [];
+  window.alert = m => window.__avisos.push(String(m));
+  window.confirm = () => true;
+  window.prompt = () => null;
+  S.params.saldoIni = 40000; S.cycleRealizado = 0;
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phaseUnlocked = [true,false,false,false];
+  S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.01,
+    entry:1.10, sl:1.09, tp:1.20, status:'Aberta',
+    openedAt:'2026-08-01T10:00:00.000Z'};
+  delete S.phases[0].orders[0].result;
+  S.activeOperation = {schemaVersion:1, operationId:'op_fech',
+    openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+    maxAccountPhaseReached:0};
+  save();
+  navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+}"""
+
+
+def fecha_pela_ui(page, texto_resultado):
+    """Abre o modal real pelo <select> de status e tenta confirmar."""
+    return page.evaluate(
+        """txt => {
+          const sel = document.querySelector(
+            '#phaseContainer select[data-p="0"][data-o="0"][data-f="status"]');
+          if (!sel) return {erro:'select de status ausente'};
+          sel.value = 'Fechada';
+          sel.dispatchEvent(new Event('change', {bubbles:true}));
+          const inp = document.getElementById('closeResultInput');
+          if (!inp) return {erro:'modal de fechamento nao abriu'};
+          inp.value = txt;
+          document.getElementById('closeConfirmInput').value = 'FECHADO';
+          document.getElementById('modalConfirm').click();
+          const box = document.getElementById('modalBox');
+          const erroVisivel = !!box.querySelector('[data-qid="resultado"] .modal-err.show');
+          const o = S.phases[0].orders[0];
+          return {erroVisivel,
+                  aindaAberto: document.getElementById('modalOverlay').classList.contains('show'),
+                  status: o.status,
+                  result: Number.isFinite(o.result) ? o.result : null,
+                  tipoResult: typeof o.result,
+                  net: netOpAtual()};
+        }""", texto_resultado)
+
+
+def run_blank_result_blocks_close(page):
+    """Resultado em branco NAO fecha a ordem, e nao vira zero."""
+    page.evaluate(MONTA_FECHAMENTO)
+    r = fecha_pela_ui(page, "")
+    assert not r.get("erro"), r["erro"]
+    assert r["erroVisivel"], "o campo de resultado nao acusou a ausencia"
+    assert r["aindaAberto"], "o modal fechou apesar da recusa"
+    assert r["status"] != "Fechada", (
+        f"a ordem FECHOU sem resultado informado (status {r['status']!r})"
+    )
+    assert r["result"] is None, (
+        f"resultado em branco virou {r['result']!r} — ausencia nao e zero, e esse "
+        "zero entraria em netOpAtual() e no registro imutavel"
+    )
+    assert r["net"] == 0, f"netOpAtual contaminado: {r['net']}"
+
+
+def run_invalid_result_blocks_close(page):
+    """Texto invalido nao fecha — inclusive o que parseFloat aceitaria PELA METADE.
+
+    "abc" e o caso facil: parseFloat tambem devolve NaN. O perigoso e o parse
+    PARCIAL, que a regex existe para barrar:
+
+        "1.420,50"  separador de milhar  -> parseFloat da 1.42   (erro de 1000x)
+        "1.2.3"                          -> parseFloat da 1.2
+        "12abc"                          -> parseFloat da 12
+
+    Nesses, um `parseFloat` sozinho grava um numero PLAUSIVEL e errado num campo
+    que alimenta a consolidacao e o registro imutavel. Sem eles, uma mutacao que
+    remove a regex sobrevive.
+    """
+    for txt in ["abc", "1.2.3", "12abc", "1.420,50", "--5", "R$ 500"]:
+        page.evaluate(MONTA_FECHAMENTO)
+        r = fecha_pela_ui(page, txt)
+        assert not r.get("erro"), r["erro"]
+        assert r["erroVisivel"], f"{txt!r}: entrada invalida nao foi acusada"
+        assert r["status"] != "Fechada", (
+            f"{txt!r}: a ordem FECHOU com entrada invalida (status {r['status']!r})"
+        )
+        assert r["result"] is None, (
+            f"{txt!r}: virou {r['result']!r} — um numero plausivel e errado entraria "
+            "na consolidacao e no registro imutavel"
+        )
+        assert r["net"] == 0, f"{txt!r}: netOpAtual contaminado ({r['net']})"
+
+
+def run_explicit_zero_is_a_valid_result(page):
+    """Zero DIGITADO e afirmacao do operador: fecha e vale zero."""
+    page.evaluate(MONTA_FECHAMENTO)
+    r = fecha_pela_ui(page, "0")
+    assert not r.get("erro"), r["erro"]
+    assert not r["erroVisivel"], "zero explicito foi tratado como ausencia"
+    assert r["status"] == "Fechada", f"zero explicito nao fechou a ordem: {r['status']!r}"
+    assert r["result"] == 0 and r["tipoResult"] == "number", (
+        f"zero explicito nao foi gravado como numero: {r['result']!r} ({r['tipoResult']})"
+    )
+    assert not r["aindaAberto"], "o modal nao fechou apos o sucesso"
+
+
+def run_negative_and_positive_results_are_accepted(page):
+    """Negativo e positivo fecham normalmente, com o sinal preservado."""
+    page.evaluate(MONTA_FECHAMENTO)
+    neg = fecha_pela_ui(page, "-500")
+    assert neg["status"] == "Fechada" and neg["result"] == -500, (
+        f"resultado negativo nao foi aceito: {neg}"
+    )
+    assert neg["net"] == -500, f"netOpAtual nao refletiu o prejuizo: {neg['net']}"
+
+    page.evaluate(MONTA_FECHAMENTO)
+    pos = fecha_pela_ui(page, "1420,50")
+    assert pos["status"] == "Fechada" and pos["result"] == 1420.5, (
+        f"resultado positivo com virgula decimal nao foi aceito: {pos}"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -687,6 +815,11 @@ def main():
             # ---- R4: troca de Par aceita observa a Fase da Conta ----
             run_accepted_pair_change_is_observed(page)
             run_rejected_pair_change_does_not_contaminate(page)
+            # ---- Bloco C: ausente != invalido != zero ----
+            run_blank_result_blocks_close(page)
+            run_invalid_result_blocks_close(page)
+            run_explicit_zero_is_a_valid_result(page)
+            run_negative_and_positive_results_are_accepted(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

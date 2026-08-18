@@ -261,7 +261,7 @@
          Visão Geral é o destino inicial do módulo. -->
     <div class="jp-widget-grid" id="execWidgetGrid" hidden>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
-      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
+      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
         <div class="mc-ec-copy">
           <div class="dh-kicker"><span class="dh-dot" aria-hidden="true"></span>Execution Clearance</div>
           <div class="mc-ec-title" id="ecTitle">—</div>
@@ -351,12 +351,11 @@
         <div id="phaseContainer"></div>
       </div>
 
-      <!-- LIFO MONITOR -->
-      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-lifo-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-        <div class="lifo-head">Consolidado da Operação Única + Monitor LIFO</div>
-        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
-        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
-        <div style="padding:0 16px 14px">
+      <!-- CONSOLIDADO DA OPERACAO UNICA — o que a operacao E agora:
+           uso do teto, lote, risco, margem, excesso, e o ato de finalizar. -->
+      <div class="lifo" id="execConsolidadoCard" data-layout-card="exec-consolidado" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+        <div class="lifo-head">Consolidado da Operação Única</div>
+        <div class="lifo-teto">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
             <span style="color:var(--ink-dim)">Uso do teto estatutário da fase</span><span id="lMargemPct" style="color:var(--ink)">—</span>
           </div>
@@ -370,8 +369,8 @@
           <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
         </div>
-        <div style="padding:0 16px 16px">
-          <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
+        <div class="lifo-actions">
+          <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)" title="Consolida o resultado da Operação Única e registra seu encerramento no Histórico — Art. 4.4."><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Finalizar Operação</button>
         </div>
 
         <!-- Fase 2C · §3.4: os quatro consolidados P1 (lote, risco, margem
@@ -391,6 +390,15 @@
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+
+      <!-- MONITOR LIFO — o que FAZER: veredito de coerencia e remedio.
+           Separado do Consolidado no bloco F; estavam no mesmo cartao por
+           acidente historico, nao por parentesco de leitura. -->
+      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+        <div class="lifo-head">Monitor LIFO</div>
+        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
+        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
     <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA

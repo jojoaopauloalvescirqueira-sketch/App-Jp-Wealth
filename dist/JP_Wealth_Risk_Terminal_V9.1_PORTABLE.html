@@ -4179,6 +4179,27 @@
     html[data-shell="global-dashboard"] [data-widget-size="medium"]#mcMetricStrip .v{
       white-space:normal;
     }
+
+    /* Bloco F, faixa intermediaria. No desktop largo a linha e
+       Clearance(2) + Consolidado(1) + Monitor(1) = as 4 colunas exatas. Abaixo
+       de 1280 os dois cartoes de 1 coluna cairiam para ~140px, que e a zona em
+       que dado financeiro trunca — o mesmo defeito ja documentado na faixa de
+       metricas logo acima. Entao a linha se reorganiza em vez de encolher: o
+       Clearance toma a largura inteira e o Consolidado e o Monitor dividem a
+       linha seguinte, 2+2.
+
+       So SPAN, nunca `order`: a ordem visual continua sendo a do DOM
+       (WCAG 1.3.2, mesma razao pela qual a grade nao usa `dense`). E os tres
+       tamanhos usados aqui ja constam dos data-widget-allowed-sizes de cada
+       cartao, entao isto nao inventa estado novo nem toca a preferencia salva.
+       Abaixo de 900px o bloco seguinte empilha tudo em coluna unica. */
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-clearance"]{
+      grid-column:1 / -1; grid-row:auto;
+    }
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-consolidado"],
+    html[data-shell="global-dashboard"] #execWidgetGrid [data-layout-card="exec-monitor"]{
+      grid-column:span 2; grid-row:auto;
+    }
   }
 
   @media(max-width:900px){
@@ -5516,25 +5537,41 @@ html[data-shell="global-dashboard"] .exec-secondary-details[open] > summary::bef
 html[data-shell="global-dashboard"] .exec-secondary-details > summary span{margin-left:auto;font-weight:400;color:var(--jp-ink-muted)}
 html[data-shell="global-dashboard"] .exec-secondary-body{padding:16px 20px 20px;border-top:1px solid var(--jp-border)}
 html[data-shell="global-dashboard"] .exec-vrm-secondary{margin-top:16px;padding-top:16px;border-top:1px solid var(--jp-border)}
-html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Bloco F — o cartao unico virou dois: Consolidado (o que a operacao E) e
+   Monitor (o que FAZER). O que era um bloco de 3 colunas com cabecalho,
+   semaforo e sugestao lado a lado agora sao dois cartoes estreitos dividindo
+   uma linha com o Clearance, entao ambos empilham em coluna unica.
+
+   Os seletores posicionais morreram junto. `> :nth-child(4)` e `> :nth-child(6)`
+   endereçavam a barra do teto e a area do botao pela ORDEM — qualquer filho
+   inserido antes deles apontaria a regra para o elemento errado, em silencio.
+   Viraram .lifo-teto e .lifo-actions: como esta mudanca move os filhos de
+   cartao, seletor por posicao teria que ser reescrito de qualquer forma; foi
+   reescrito para nao depender mais de posicao nenhuma. */
+html[data-shell="global-dashboard"] #execConsolidadoCard,
 html[data-shell="global-dashboard"] #execLifoMonitor{
-  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center;
-  gap:8px 12px; padding:22px;
+  display:grid; grid-template-columns:minmax(0,1fr); align-content:start;
+  gap:10px; padding:22px;
 }
+html[data-shell="global-dashboard"] #execConsolidadoCard .lifo-head,
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-head{padding:0;border:0;font-size:14px;background:transparent}
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{
   width:max-content; padding:3px 10px; border:0; border-radius:999px;
   background:var(--f1-bg); font-size:10px;
 }
 html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sug{padding:0;font-size:11px;color:var(--jp-ink-muted)}
-html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(4){grid-column:1/-1;padding:4px 0 8px!important}
-html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body{
-  grid-column:1/-1; gap:10px; padding:0;
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-teto{padding:4px 0 8px!important}
+/* auto-fit em vez de contagem fixa: o cartao pode viver em `compact` (1 de 4
+   colunas), `medium` (2) ou `full`, e uma contagem fixa que serve a um tamanho
+   trunca dado financeiro no outro — o defeito ja documentado na faixa de
+   metricas. A largura minima do tile manda, nao o numero de colunas. */
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-body{
+  grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:10px; padding:0;
 }
-html[data-shell="global-dashboard"] #execLifoMonitor > .lifo-body .metric{min-height:0;padding:10px 14px}
-html[data-shell="global-dashboard"] #execLifoMonitor > :nth-child(6){grid-column:1/-1;padding:0!important}
-html[data-shell="global-dashboard"] #execLifoMonitor > details{grid-column:1/-1;margin-top:4px}
-html[data-shell="global-dashboard"] #execLifoMonitor > details .risk-note{margin:12px 0 0}
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-body .metric{min-height:0;padding:10px 14px}
+html[data-shell="global-dashboard"] #execConsolidadoCard > .lifo-actions{padding:0!important}
+html[data-shell="global-dashboard"] #execConsolidadoCard > details{margin-top:4px}
+html[data-shell="global-dashboard"] #execConsolidadoCard > details .risk-note{margin:12px 0 0}
 
 /* Contas: linha de leitura, editor expansível e credenciais explícitas */
 html[data-shell="global-dashboard"] #contasWidgetGrid{gap:16px;margin-top:0}
@@ -5680,7 +5717,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card]{grid-column:1!important;width:100%!important}
   html[data-shell="global-dashboard"] #execWidgetGrid > *,
   html[data-shell="global-dashboard"] #contasWidgetGrid > *{width:100%!important;align-self:stretch!important}
-  html[data-shell="global-dashboard"] #execLifoMonitor .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-shell="global-dashboard"] #execConsolidadoCard .lifo-body{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-shell="global-dashboard"] .gd-methodology-body{grid-template-columns:1fr}
   html[data-shell="global-dashboard"] .gd-method-section-wide{grid-column:1}
 }
@@ -5695,7 +5732,9 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   html[data-shell="global-dashboard"] #execClearanceCard{padding:22px 20px}
   html[data-shell="global-dashboard"] #execClearanceCard .mc-ec-title{font-size:22px}
+  html[data-shell="global-dashboard"] #execConsolidadoCard,
   html[data-shell="global-dashboard"] #execLifoMonitor{grid-template-columns:1fr;padding:20px}
+  html[data-shell="global-dashboard"] #execConsolidadoCard > *,
   html[data-shell="global-dashboard"] #execLifoMonitor > *{grid-column:1!important}
   html[data-shell="global-dashboard"] #execLifoMonitor .lifo-sem{width:fit-content}
   html[data-shell="global-dashboard"] .risk-primary-indicators,
@@ -5948,7 +5987,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'd9cc2e3c3d0435fe';
+const JP_WEALTH_BUILD_ID = 'd3bbe22bd3c17f28';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6203,7 +6242,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          Visão Geral é o destino inicial do módulo. -->
     <div class="jp-widget-grid" id="execWidgetGrid" hidden>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
-      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="large full">
+      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
         <div class="mc-ec-copy">
           <div class="dh-kicker"><span class="dh-dot" aria-hidden="true"></span>Execution Clearance</div>
           <div class="mc-ec-title" id="ecTitle">—</div>
@@ -6293,12 +6332,11 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div id="phaseContainer"></div>
       </div>
 
-      <!-- LIFO MONITOR -->
-      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-lifo-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-        <div class="lifo-head">Consolidado da Operação Única + Monitor LIFO</div>
-        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
-        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
-        <div style="padding:0 16px 14px">
+      <!-- CONSOLIDADO DA OPERACAO UNICA — o que a operacao E agora:
+           uso do teto, lote, risco, margem, excesso, e o ato de finalizar. -->
+      <div class="lifo" id="execConsolidadoCard" data-layout-card="exec-consolidado" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+        <div class="lifo-head">Consolidado da Operação Única</div>
+        <div class="lifo-teto">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
             <span style="color:var(--ink-dim)">Uso do teto estatutário da fase</span><span id="lMargemPct" style="color:var(--ink)">—</span>
           </div>
@@ -6312,8 +6350,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <div class="metric" style="border-color:var(--f2)"><div class="k">Margem Estatutária Livre</div><div class="v sm" id="lMargemEst" style="color:var(--f2)">—</div><div class="sub">teto da fase menos risco estatutário</div></div>
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
         </div>
-        <div style="padding:0 16px 16px">
-          <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Arquivar operação — consolidar resultado no ciclo (Art. 3.5§2)</button>
+        <div class="lifo-actions">
+          <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)" title="Consolida o resultado da Operação Única e registra seu encerramento no Histórico — Art. 4.4."><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Finalizar Operação</button>
         </div>
 
         <!-- Fase 2C · §3.4: os quatro consolidados P1 (lote, risco, margem
@@ -6333,6 +6371,15 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           </div>
           <p class="risk-note">Lucro técnico e lucro arquivado podem ajudar a leitura patrimonial/informativa, mas não aumentam o teto estatutário da fase nem o limite absoluto da arquitetura quadrifásica. O risco aberto, perdas fechadas da operação atual e perdas arquivadas continuam visíveis separadamente.</p>
         </details>
+      </div>
+
+      <!-- MONITOR LIFO — o que FAZER: veredito de coerencia e remedio.
+           Separado do Consolidado no bloco F; estavam no mesmo cartao por
+           acidente historico, nao por parentesco de leitura. -->
+      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+        <div class="lifo-head">Monitor LIFO</div>
+        <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
+        <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
     <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA
@@ -9950,12 +9997,23 @@ function render(){
   // renderObjective saiu: seu alvo (#objectiveCard, na faixa de Postura do
   // Execution Board) foi removido na Fase 2C. PHASE_OBJECTIVE continua vivo —
   // agora alimenta a meta "postura ofensiva" da célula de Fase do cockpit.
-  // arquivar operação: visível quando não há posição aberta e existe resultado fechado a consolidar
+  // FINALIZAR OPERAÇÃO: visível sempre que existir uma Operação Única para
+  // encerrar — inclusive com posição aberta.
+  //
+  // Antes o botão SUMIA enquanto houvesse ordem aberta. Esconder a ação em vez
+  // de explicar por que ela não pode ocorrer é UX ruim, e contraria o próprio
+  // Art. 4.4: a Operação só se extingue quando a posição líquida volta a zero E
+  // o Gestor confirma formalmente. O operador precisa ver que o ato existe, e
+  // descobrir no clique o que falta para ele acontecer.
+  //
+  // O bloqueio passou a viver no preflight, que nomeia a ordem que impede a
+  // finalização e não muta nada.
   const abtn=$('archiveOpBtn');
   if(abtn){
-    const temAberta=S.phases.some(ph=>ph.orders.some(o=>o.status==='Aberta'));
-    const temFechada=S.phases.some(ph=>ph.orders.some(o=>o.status==='Fechada'));
-    abtn.style.display=(!temAberta&&temFechada)?'inline-block':'none';
+    const temOperacao = (typeof operationLiveOrders==='function')
+      ? operationLiveOrders().length>0
+      : S.phases.some(ph=>ph.orders.some(o=>o && (o.status==='Aberta'||o.status==='Fechada'||o.status==='Migrada')));
+    abtn.style.display = temOperacao ? 'inline-block' : 'none';
   }
   const bn=$('breachNote');
   if(S.protocolBreaches>0){
@@ -10779,8 +10837,40 @@ const DIVERGENCE_REASONS=[
   'Rompimento de protocolo — stop foi movido/ignorado sem justificativa',
   'Outro',
 ];
-// ---- Fechamento definitivo de ordem — dupla confirmação, captura o Lucro Técnico no mesmo ato.
+// ---- Fechamento definitivo de ordem — dupla confirmação, captura o RESULTADO no
+// mesmo ato.
+//
+// NOMENCLATURA: o campo `o.result` e o resultado da ordem, que pode ser positivo,
+// negativo ou zero. Nao e "Lucro Tecnico" — esse e conceito NORMATIVO do Art. 4.6
+// (resultado de liquidacao parcial de posicoes defensivas em movimento corretivo
+// favoravel, com usos restritos pelo Art. 9.2) e continua com o nome proprio na
+// metrica `compute().lucroTecnico`, que soma apenas os resultados POSITIVOS.
+// Chamar prejuizo de lucro era o defeito; renomear o conceito normativo seria
+// outro. Os identificadores internos nao mudaram.
 // Depois de confirmada, a linha trava por completo: só pode ser apagada, nunca mais editada. ----
+// Leitura ÚNICA do resultado de uma ordem. NaN significa AUSENTE ou INVÁLIDO —
+// nunca 0. Zero é resultado válido e é afirmação do operador: a ordem fechou no
+// zero a zero. O `parseFloat(x)||0` que existia aqui colapsava três estados
+// distintos num só — ausência, texto inválido e zero real —, e um resultado em
+// branco entrava silenciosamente em netOpAtual() como zero.
+//
+// Aceita vírgula decimal porque o operador digita em pt-BR.
+function orderParseResult(txt){
+  const t=String(txt==null?'':txt).trim().replace(',','.');
+  if(!t) return NaN;
+  if(!/^-?\d+(?:\.\d+)?$/.test(t)) return NaN;
+  return parseFloat(t);
+}
+// Ordem cujo resultado NÃO foi informado. Só reconhece ausência GENUÍNA: valor
+// que não é número finito. Ordens gravadas antes desta correção, que receberam
+// zero por coerção, são indistinguíveis de um zero verdadeiro — e adivinhar
+// quais eram quais seria fabricar dado histórico.
+function orderResultMissing(o){
+  // Number.isFinite NAO coage: devolve false para undefined, null, '' e '5'.
+  // Um typeof extra seria redundante e so tornaria a precedencia confusa.
+  return !!o && !Number.isFinite(o.result);
+}
+
 function openCloseOrderModal(pi,oi){
   const o=S.phases[pi].orders[oi];
   const box=$('modalBox');
@@ -10790,8 +10880,9 @@ function openCloseOrderModal(pi,oi){
     <h3>🔒 Confirmar Fechamento — ${esc(o.id)||'(sem ID)'} ${esc(o.par)}</h3>
     <div class="modal-sub">Depois de confirmado, esta linha NÃO pode mais ser editada — só apagada. ${projetado>0?'Risco programado desta ordem: '+fmtMoney(projetado):''}</div>
     <div class="modal-q" data-qid="resultado">
-      <div class="ql">Lucro Técnico / Resultado desta ordem ($) — negativo se foi prejuízo:</div>
-      <input type="text" inputmode="decimal" id="closeResultInput" placeholder="0" value="${esc(o.result||'')}">
+      <div class="ql">Resultado da ordem ($) — negativo se foi prejuízo, <b>0</b> se fechou no zero a zero:</div>
+      <input type="text" inputmode="decimal" id="closeResultInput" placeholder="informe" value="${Number.isFinite(o.result)?esc(String(o.result)):''}">
+      <div class="modal-err">Informe o resultado. Em branco não é zero — se a ordem fechou no zero a zero, digite <b>0</b>.</div>
     </div>
     <div class="modal-q" data-qid="confirmtxt">
       <div class="ql">Digite <b>FECHADO</b> para confirmar:</div>
@@ -10804,12 +10895,22 @@ function openCloseOrderModal(pi,oi){
     </div>`;
   $('modalCancel').addEventListener('click', closeModal);
   $('modalConfirm').addEventListener('click',()=>{
-    const resultVal=parseFloat(box.querySelector('#closeResultInput').value)||0;
+    const resultVal=orderParseResult(box.querySelector('#closeResultInput').value);
     const confirmTxt=box.querySelector('#closeConfirmInput').value.trim();
+    let falhou=false;
+    // RESULTADO EXPLÍCITO é condição de fechamento. Uma ordem não pode nascer
+    // fechada sem resultado: ela entra em netOpAtual(), que alimenta o
+    // consolidado da Operação Única e, por ele, o registro imutável.
+    box.querySelector('[data-qid="resultado"] .modal-err').classList.remove('show');
+    if(!Number.isFinite(resultVal)){
+      box.querySelector('[data-qid="resultado"] .modal-err').classList.add('show');
+      falhou=true;
+    }
     if(confirmTxt!=='FECHADO'){
       box.querySelector('[data-qid="confirmtxt"] .modal-err').classList.add('show');
-      return;
+      falhou=true;
     }
+    if(falhou) return;
     o.status='Fechada';
     o.result=resultVal;
     // Carimbo de fechamento da ordem — capturado no ato, uma única vez.
@@ -10924,7 +11025,7 @@ function phaseBodyHTML(pi, qAct){
         </select>
       </td>
       <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="result" value="${esc(o.result||'')}" placeholder="0"
-            style="${isFechada?'':'opacity:.35'}" title="Lucro Técnico — só conta quando Fechada (Art. 9.2)" ${dis}></td>
+            style="${isFechada?'':'opacity:.35'}" title="Resultado da ordem — só conta quando Fechada (Art. 9.2)" ${dis}></td>
       <td>${(isMigrada||frozen||qAct)?'':`<button class="row-del" data-delorder="${pi}:${oi}" title="Remover linha">✕</button>`}</td>
     </tr>`;
   });
@@ -10940,7 +11041,7 @@ function phaseBodyHTML(pi, qAct){
     </div>
     <div style="overflow-x:auto">
     <table class="otable">
-      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Lucro Técnico $</th><th></th></tr></thead>
+      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Resultado $</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
       <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
     </table>
@@ -11038,46 +11139,71 @@ function renderPhases(){
   const qAct=quarantineActive(); // Art. 3.10: quarentena trava edição, permite apenas fechar
   const active=getMaxUnlockedIdx(); // grade ativa = fase mais avançada já liberada
   const cont=$('phaseContainer');
-  const ph=S.phases[active];
   let html=riskIndicatorsHTML(active);
   if(noExternalProtectionActive()){
     html+=`<div class="risk-note" style="margin:0 0 14px; color:var(--f4); border-color:var(--f4)">${noExternalProtectionWarning()}</div>`;
   }
-  // grade ATIVA — a única editável e sempre visível
-  html+=`<div class="phase ${phaseCssClass(ph)}" data-phase="${active}">
-    <div class="phase-head" style="cursor:default">
-      <span class="badge">${esc(String(ph.faseNome||'').replace('FASE ','F'))}</span>
-      <span>${esc(ph.title)}</span>
-      <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
-    </div>
-    <div class="phase-body">${phaseBodyHTML(active, qAct)}</div>
-  </div>`;
-  // botão de MIGRAR para a próxima fase (única forma de progredir — Art. 3.8)
-  if(active<3){
-    if(qAct){
-      html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
-    } else {
-      html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
-    }
-  } else {
-    html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
-  }
-  // FASES ANTERIORES — escondidas por padrão (estética limpa), read-only ao expandir
-  if(active>0){
-    let hist='';
-    for(let pi=0; pi<active; pi++){
-      hist+=`<div class="phase ${phaseCssClass(S.phases[pi])} collapsed" data-phase="${pi}" style="margin-top:10px">
+  // AS QUATRO FASES, SEMPRE PRESENTES, na ordem F1 -> F4.
+  //
+  // Antes o painel mostrava SO a grade ativa; as anteriores ficavam atrás de um
+  // botão "Ver fases anteriores" e as POSTERIORES não eram desenhadas. O
+  // operador não conseguia ver a estrutura quadrifásica inteira.
+  //
+  // Isto é apresentação. Nada aqui altera phaseUnlocked, critério de
+  // desbloqueio, limite, cálculo ou migração: `active` continua vindo de
+  // getMaxUnlockedIdx(), e o botão MIGRAR segue preso à grade ativa com as
+  // mesmas guardas.
+  //
+  // A fase FUTURA é desenhada sem corpo editável de propósito. phaseBodyHTML
+  // calcula readOnly como isMigrada||frozen||isFechada, e phaseFrozen(pi) é
+  // `pi<3 && phaseUnlocked[pi+1]` — para uma fase ainda não liberada isso dá
+  // FALSO, ou seja, os campos viriam habilitados. Renderizar o corpo ali
+  // deixaria o operador lançar ordens numa fase que o Estatuto ainda não
+  // liberou: mudança de comportamento disfarçada de mudança visual.
+  for(let pi=0; pi<S.phases.length; pi++){
+    const p=S.phases[pi];
+    const badge=esc(String(p.faseNome||'').replace('FASE ','F'));
+    const titulo=esc(p.title||'');
+    if(pi<active){
+      html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px">
         <div class="phase-head" data-toggle="${pi}">
-          <span class="badge">${esc(String(S.phases[pi].faseNome||'').replace('FASE ','F'))}</span>
-          <span>${esc(S.phases[pi].title)}</span>
+          <span class="badge">${badge}</span>
+          <span>${titulo}</span>
           <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 histórico</span>
           <span class="chev">▾</span>
         </div>
         <div class="phase-body">${phaseBodyHTML(pi, qAct)}</div>
       </div>`;
+    } else if(pi===active){
+      html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px">
+        <div class="phase-head" style="cursor:default">
+          <span class="badge">${badge}</span>
+          <span>${titulo}</span>
+          <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
+        </div>
+        <div class="phase-body">${phaseBodyHTML(pi, qAct)}</div>
+      </div>`;
+      // MIGRAR para a próxima fase — única forma de progredir (Art. 3.8),
+      // ancorado à grade ativa e com as guardas inalteradas.
+      if(active<3){
+        if(qAct){
+          html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
+        } else {
+          html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
+        }
+      } else {
+        html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
+      }
+    } else {
+      html+=`<div class="phase phase-locked" data-phase="${pi}" style="margin-top:10px; opacity:.6">
+        <div class="phase-head" style="cursor:default">
+          <span class="badge">${badge}</span>
+          <span>${titulo}</span>
+          <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 não atingida</span>
+        </div>
+        <div class="phase-body"><div class="phase-meta" style="padding:10px 4px">Fase ainda não liberada. A progressão é sequencial e depende do questionário de transição da fase anterior (Art. 3.8).</div></div>
+      </div>`;
     }
-    html+=`<button class="reset-btn" id="histToggle" style="margin-top:14px">▸ Ver fases anteriores (${active})</button>
-      <div id="histWrap" style="display:none; margin-top:6px">${hist}</div>`;
   }
   cont.innerHTML=html;
   // bind toggles das fases de histórico
@@ -11094,13 +11220,6 @@ function renderPhases(){
       if(!S.phaseUnlocked[fn-2]){ alert('🚫 Transição sequencial obrigatória (Art. 3.8).'); return; }
       openTransitionModal(fn);
     });
-  });
-  // bind histórico toggle
-  const ht=$('histToggle');
-  if(ht) ht.addEventListener('click',()=>{
-    const w=$('histWrap'); const open=w.style.display!=='none';
-    w.style.display=open?'none':'block';
-    ht.textContent=(open?'▸':'▾')+' Ver fases anteriores ('+active+')';
   });
   // bind ATR% / Fator F do painel de Stop Estatístico (§9)
   const ap=$('iAtrPct');
@@ -13174,7 +13293,7 @@ function bindContab(){
     save(); renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
-  // Finalização da Operação Única (Art. 3.5§2). Este handler NÃO consolida
+  // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
   // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
   //
   // Até a Camada 2 este bloco era o próprio fluxo de arquivamento — consolidava
@@ -13188,11 +13307,15 @@ function bindContab(){
   // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
     const api=window.JPWOperation;
-    if(!api || typeof api.openReview!=='function'){
+    if(!api || typeof api.start!=='function'){
       alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    api.openReview();
+    // PREFLIGHT, e nao a revisao direta: ele decide entre bloquear (com a ordem
+    // impeditiva nomeada), pedir complementacao dos resultados ausentes, ou
+    // seguir para a revisao canonica. A consolidacao segue exclusiva de
+    // finalizeOperation — nada aqui a alcanca sem passar pela revisao.
+    api.start();
   });
 }
 // ============ NAV ============
@@ -17877,7 +18000,8 @@ const DASH_LAYOUT_LABELS = {
   'exec-clearance': 'Execution Clearance',
   'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
-  'exec-lifo-monitor': 'Consolidado LIFO',
+  'exec-consolidado': 'Consolidado da Operação Única',
+  'exec-monitor': 'Monitor LIFO',
   'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
   'contab-period-goals': 'Período & Metas', 'contab-daily-close': 'Fechamento Diário',
@@ -17923,10 +18047,14 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // `exec-metrics-banners` e `exec-vrm` não existem no protótipo mas ficam por
     // necessidade funcional (o VRM hospeda os inputs de ATR); vão para o fim,
     // abaixo do que o design define como leitura primária.
-    { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-lifo-monitor', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 3 }
+    // Bloco F: Clearance | Consolidado | Monitor dividem a PRIMEIRA linha.
+    // A grade tem 4 colunas, entao 2+1+1 fecha a linha exata — o veredito
+    // (Clearance) fica com o dobro dos dois cartoes que ele resume.
+    { id: 'exec-clearance', zone: 'main', size: 'medium', order: 0 },
+    { id: 'exec-consolidado', zone: 'main', size: 'compact', order: 1 },
+    { id: 'exec-monitor', zone: 'main', size: 'compact', order: 2 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 3 },
+    { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 }
   ],
   contas: [
     // Fase 2C: a Nota de Governança virou disclosure no cabeçalho do Parque.
@@ -18026,6 +18154,42 @@ const JP_WIDGET_STORAGE_KEY_V5 = 'jpwealth.ui.widgetLayouts.v5'; // só para mig
 const JP_WIDGET_STORAGE_KEY_V4 = 'jpwealth.ui.widgetLayouts.v4'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V3 = 'jpwealth.ui.widgetLayouts.v3'; // só para migração — nunca gravado de novo
 const JP_WIDGET_STORAGE_KEY_V2 = 'jpwealth.ui.widgetLayout.v2'; // só para migração — nunca gravado de novo
+// Bloco F — `exec-lifo-monitor` virou DOIS cartoes: `exec-consolidado` (o que a
+// operacao E agora) e `exec-monitor` (o que FAZER a respeito). Estavam no mesmo
+// cartao por acidente historico, nao por parentesco de leitura.
+//
+// Sem esta migracao a divisao seria destrutiva, e silenciosamente: o layout
+// salvo carrega 4 ids onde o validador passa a esperar 5, e ele reprova por
+// TRES caminhos independentes — contagem diferente, id desconhecido e
+// obrigatorio ausente. Cada um devolve null para a TELA INTEIRA, entao
+// dashLayoutNormalizeV6 descartaria toda a personalizacao do Execution Board
+// por causa de uma mudanca visual. Mesma natureza do que ja se documentou na
+// migracao v4 -> v5.
+//
+// O que e preservado e o que e coagido, e por que:
+//   POSICAO — preservada. Onde o usuario pos o cartao foi escolha dele; o
+//     Consolidado herda o lugar e o Monitor nasce imediatamente depois.
+//   TAMANHO — coagido para o padrao novo. O cartao antigo declarava
+//     data-widget-allowed-sizes="full", ou seja, `full` era o UNICO valor
+//     possivel: e a ausencia de escolha, nao uma escolha. Herda-lo congelaria
+//     os dois cartoes em largura cheia e a linha de tres nunca apareceria para
+//     quem ja personalizou qualquer outra coisa da tela.
+function dashLayoutSplitExecLifoMonitor(widgets) {
+  if (!Array.isArray(widgets)) return widgets;
+  if (!widgets.some(w => w && typeof w === 'object' && w.id === 'exec-lifo-monitor')) return widgets;
+  const ordenados = widgets
+    .filter(w => w && typeof w === 'object' && Number.isFinite(w.order))
+    .slice()
+    .sort((a, b) => a.order - b.order);
+  const out = [];
+  ordenados.forEach(w => {
+    if (w.id !== 'exec-lifo-monitor') { out.push({ ...w }); return; }
+    out.push({ ...w, id: 'exec-consolidado', size: 'compact' });
+    out.push({ ...w, id: 'exec-monitor', size: 'compact' });
+  });
+  return out.map((w, i) => ({ ...w, order: i }));
+}
+
 
 // Valida a lista de widgets de UMA tela contra a política real daquela tela
 // (inventário de IDs esperados + zonas/tamanhos permitidos por widget, lidos
@@ -18052,7 +18216,7 @@ function dashLayoutMigrateWidgets(screenId, widgets) {
   // coerção de tamanho proibido. Sem isto, a contagem não bate e o validador
   // devolve null para a TELA INTEIRA.
   if (screenId === 'contas') return widgets.filter(w => !w || w.id !== 'contas-governance-note');
-  if (screenId === 'exec') return widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id));
+  if (screenId === 'exec') return dashLayoutSplitExecLifoMonitor(widgets.filter(w => !w || !['exec-onboarding-alert','exec-vrm'].includes(w.id)));
   if (screenId === 'contab') return widgets.filter(w => !w || !['contab-cycle-pace','contab-simulation','contab-daily-projection','contab-audit-log'].includes(w.id));
   if (screenId !== 'dash') return widgets;
   return widgets.map(w => {
@@ -28060,6 +28224,139 @@ function operationReviewHTML(r, defesas){
       '<div class="modal-sub">A captura nunca se aplicou durante esta operação, e nenhuma falha foi registrada. O registro guardará a ausência como ausência — não como Fase 1 nem como medição concluída. A finalização não é bloqueada por isso.</div></div>'):'');
 }
 
+// ---------------------------------------------------------------------------
+// PREFLIGHT DA FINALIZAÇÃO
+// ---------------------------------------------------------------------------
+// Orquestra; NÃO consolida. Decide entre bloquear, complementar ou seguir para a
+// revisão canônica. A consolidação continua sendo exclusividade de
+// finalizeOperation, e nada aqui a chama direto.
+//
+// Só ordens FECHADAS precisam de resultado: netOpAtual() soma exclusivamente
+// `status==='Fechada'`. Exigir resultado de uma ordem 'Migrada' bloquearia a
+// finalização por um dado que aquela linha nunca teve motivo para ter.
+function operationOrderLabel(pi, oi, o){
+  const slot = (pi===0 && oi===0) ? 'GÊNESE' : (pi===0 ? 'DEF '+oi : 'DEF '+(pi+1)+'.'+(oi+1));
+  const partes = [slot];
+  if (o && o.par) partes.push(String(o.par));
+  if (o && o.id) partes.push('ID '+String(o.id));
+  return partes.join(' · ');
+}
+
+function operationPreflight(){
+  const vivas = operationLiveOrders();
+  if (!vivas.length) {
+    return { estado:'no_operation',
+      mensagem:'Não há operação registrada nas grades para finalizar.' };
+  }
+  const abertas = vivas.filter(x => x.o.status === 'Aberta');
+  if (abertas.length) return { estado:'blocked', abertas };
+  const incompletas = vivas.filter(x =>
+    x.o.status === 'Fechada' &&
+    (typeof orderResultMissing === 'function' ? orderResultMissing(x.o) : !Number.isFinite(x.o.result)));
+  if (incompletas.length) return { estado:'incomplete', incompletas };
+  return { estado:'ready', ordens: vivas.length };
+}
+
+// Superfície de BLOQUEIO. Nomeia as ordens que impedem o encerramento e não muta
+// nada — nem status, nem resultado, nem identidade. Antes o botão simplesmente
+// sumia; agora ele existe e explica.
+function openFinalizeBlockedModal(abertas){
+  const box=$('modalBox');
+  $('modalOverlay').classList.add('show');
+  const lista = abertas.map(x =>
+    '<li>'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</li>').join('');
+  const umaSo = abertas.length === 1;
+  const genese = abertas.some(x => x.pi===0 && x.oi===0);
+  box.innerHTML =
+    '<h3>Finalizar Operação</h3>'+
+    '<div class="modal-err show">🚫 Não é possível finalizar esta operação.</div>'+
+    '<div class="modal-sub">'+
+      (genese
+        ? 'A Ordem Gênese permanece aberta. Feche a posição antes de realizar o encerramento formal.'
+        : (umaSo
+            ? 'Existe uma ordem aberta vinculada à operação. Feche todas as posições antes da consolidação.'
+            : 'Existem ordens abertas vinculadas à operação. Feche todas as posições antes da consolidação.'))+
+    '</div>'+
+    '<div class="modal-q"><div class="ql">'+(umaSo?'Ordem aberta':'Ordens abertas')+':</div>'+
+      '<ul style="margin:6px 0 0 18px">'+lista+'</ul></div>'+
+    '<div class="modal-sub">Fechar uma ordem encerra uma posição. Finalizar a Operação Única consolida o resultado e a registra no Histórico — Art. 4.4.</div>'+
+    '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+  $('modalCancel').addEventListener('click', closeModal);
+  $('modalCancel').focus();
+}
+
+// Superfície de COMPLEMENTAÇÃO. Uma só, com todas as ordens incompletas
+// identificadas. Os campos são RASCUNHO: nada toca S enquanto o operador não
+// confirmar, e cancelar não deixa metade dos valores aplicados.
+function openFinalizeCompletionModal(incompletas){
+  const box=$('modalBox');
+  $('modalOverlay').classList.add('show');
+  const linhas = incompletas.map((x, i) =>
+    '<div class="modal-q" data-qid="ord'+i+'">'+
+      '<div class="ql">'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</div>'+
+      '<input type="text" inputmode="decimal" data-compl="'+i+'" autocomplete="off" placeholder="informe">'+
+      '<div class="modal-err">Informe um número. Ponto ou vírgula decimal; sem separador de milhar. Em branco não é zero — se fechou no zero a zero, digite <b>0</b>.</div>'+
+    '</div>').join('');
+  box.innerHTML =
+    '<h3>Finalizar Operação — completar resultados</h3>'+
+    '<div class="modal-sub">'+
+      (incompletas.length===1
+        ? 'Uma ordem fechada está sem resultado informado. '
+        : incompletas.length+' ordens fechadas estão sem resultado informado. ')+
+      'O resultado entra no consolidado da Operação Única e no registro do Histórico, então precisa ser informado antes do encerramento.</div>'+
+    linhas+
+    '<div class="modal-actions">'+
+      '<button class="modal-btn cancel" id="modalCancel">Cancelar</button>'+
+      '<button class="modal-btn confirm" id="modalConfirm">Confirmar resultados</button>'+
+    '</div>';
+  $('modalCancel').addEventListener('click', closeModal);
+  $('modalConfirm').addEventListener('click', () => {
+    // RASCUNHO: lê tudo, valida tudo, e só então aplica. Validar-e-aplicar em
+    // laço deixaria as primeiras ordens gravadas e as últimas não, se alguma
+    // falhasse no meio — e cancelar depois disso não teria o que desfazer.
+    const rascunho = [];
+    let algumInvalido = false;
+    incompletas.forEach((x, i) => {
+      const campo = box.querySelector('[data-compl="'+i+'"]');
+      const erro  = box.querySelector('[data-qid="ord'+i+'"] .modal-err');
+      const v = (typeof orderParseResult === 'function')
+        ? orderParseResult(campo ? campo.value : '')
+        : NaN;
+      if (!Number.isFinite(v)) { if (erro) erro.classList.add('show'); algumInvalido = true; }
+      else { if (erro) erro.classList.remove('show'); rascunho.push({ x, v }); }
+    });
+    if (algumInvalido) return;   // NADA foi aplicado
+
+    rascunho.forEach(({ x, v }) => { x.o.result = v; });
+    save();
+    closeModal();
+    if (typeof render === 'function') render();
+    if (typeof renderPhases === 'function') renderPhases();
+    // REVALIDA antes de seguir: o estado mudou, e o preflight decide de novo.
+    startFinalizeOperation();
+  });
+  const primeiro = box.querySelector('[data-compl="0"]');
+  if (primeiro) primeiro.focus();
+}
+
+// PONTO DE ENTRADA do botão. Nunca chama finalizeOperation direto.
+function startFinalizeOperation(){
+  const pre = operationPreflight();
+  if (pre.estado === 'blocked')    return openFinalizeBlockedModal(pre.abertas);
+  if (pre.estado === 'incomplete') return openFinalizeCompletionModal(pre.incompletas);
+  if (pre.estado === 'no_operation'){
+    const box=$('modalBox');
+    $('modalOverlay').classList.add('show');
+    box.innerHTML='<h3>Finalizar Operação</h3>'+
+      '<div class="modal-sub">'+esc(pre.mensagem)+'</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click', closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  return openFinalizeOperationModal();
+}
+
 function openFinalizeOperationModal(){
   const pre=operationCanFinalize();
   const box=$('modalBox');
@@ -28277,7 +28574,10 @@ window.JPWOperation = {
   buildSnapshot: operationBuildSnapshot,
   finalize: finalizeOperation,
   liveOrders: operationLiveOrders,
-  openReview: openFinalizeOperationModal
+  openReview: openFinalizeOperationModal,
+  // Ponto de entrada do botao: preflight -> bloqueio | complementacao | revisao.
+  start: startFinalizeOperation,
+  preflight: operationPreflight
 };
 // ============ HISTÓRICO DE OPERAÇÕES ÚNICAS (Camada 3 — N1, leitura) ============
 // Workspace do Execution Board. Consumidor ESTRITAMENTE somente leitura de

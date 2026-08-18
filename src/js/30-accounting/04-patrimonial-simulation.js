@@ -139,7 +139,7 @@ function bindContab(){
     save(); renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
-  // Finalização da Operação Única (Art. 3.5§2). Este handler NÃO consolida
+  // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
   // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
   //
   // Até a Camada 2 este bloco era o próprio fluxo de arquivamento — consolidava
@@ -153,10 +153,14 @@ function bindContab(){
   // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
     const api=window.JPWOperation;
-    if(!api || typeof api.openReview!=='function'){
+    if(!api || typeof api.start!=='function'){
       alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    api.openReview();
+    // PREFLIGHT, e nao a revisao direta: ele decide entre bloquear (com a ordem
+    // impeditiva nomeada), pedir complementacao dos resultados ausentes, ou
+    // seguir para a revisao canonica. A consolidacao segue exclusiva de
+    // finalizeOperation — nada aqui a alcanca sem passar pela revisao.
+    api.start();
   });
 }
