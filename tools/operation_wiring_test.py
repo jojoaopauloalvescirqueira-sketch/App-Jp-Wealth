@@ -603,6 +603,130 @@ def run_new_thesis_never_inherits_orphan_identity(page):
     )
 
 
+def run_status_reverted_withdraws_the_order(page):
+    """Devolver o Status a '—' retira a ordem do ciclo, e a tese seguinte e NOVA.
+
+    Esta porta esvazia a Operacao Unica sem passar pela finalizacao, pelo
+    reinicio de periodo nem pelo botao de exclusao. Antes, activeOperation
+    sobrevivia orfa E o carimbo openedAt ficava na linha: reabrir a MESMA linha
+    fazia `jaPertencia` valer true, o fail-safe ser pulado, e a tese nova herdar
+    identidade, abertura e proveniencia da anterior.
+    """
+    r = page.evaluate(
+        """() => {
+          window.alert = () => {};
+          window.confirm = () => true;
+          window.prompt = () => null;
+          __prepararGenese();
+          const sel = __selectStatus(0,0);
+          if (!sel) return {erro:'select ausente'};
+          sel.value = 'Aberta'; sel.dispatchEvent(new Event('change', {bubbles:true}));
+          const A = S.activeOperation;
+          const carimboA = S.phases[0].orders[0].openedAt;
+          const cicloAntes = S.cycleRealizado;
+          const registrosAntes = S.operationHistory.records.length;
+          const fasesAntes = S.phaseUnlocked.slice();
+
+          // RETIRADA: o operador devolve o Status para '—'.
+          const sel2 = __selectStatus(0,0);
+          sel2.value = ''; sel2.dispatchEvent(new Event('change', {bubbles:true}));
+          const aposRetirar = {
+            op: S.activeOperation,
+            status: S.phases[0].orders[0].status,
+            openedAt: S.phases[0].orders[0].openedAt,
+            closedAt: S.phases[0].orders[0].closedAt,
+            vivas: operationLiveOrders().length,
+            ciclo: S.cycleRealizado,
+            registros: S.operationHistory.records.length,
+            fases: S.phaseUnlocked.slice()
+          };
+
+          // Tese NOVA na MESMA linha.
+          const g = S.phases[0].orders[0];
+          g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.271; g.tp=1.20;
+          save(); renderPhases();
+          const sel3 = __selectStatus(0,0);
+          sel3.value = 'Aberta'; sel3.dispatchEvent(new Event('change', {bubbles:true}));
+          const B = S.activeOperation;
+          return {idA: A && A.operationId, aberturaA: A && A.openedAt, carimboA,
+                  aposRetirar,
+                  idB: B && B.operationId, aberturaB: B && B.openedAt,
+                  fonteB: B && B.openedAtSource,
+                  carimboB: S.phases[0].orders[0].openedAt,
+                  cicloAntes, registrosAntes, fasesAntes};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["idA"] and r["carimboA"], f"a operacao A nao nasceu: {r}"
+    ap = r["aposRetirar"]
+    assert ap["status"] == "", f"o status nao foi devolvido a vazio: {ap['status']!r}"
+    assert ap["vivas"] == 0, f"ainda ha ordem operacional: {ap['vivas']}"
+    assert ap["openedAt"] is None and ap["closedAt"] is None, (
+        f"os carimbos da LINHA sobreviveram a retirada: {ap['openedAt']!r} / "
+        f"{ap['closedAt']!r} — sao eles que fazem o fail-safe ser pulado depois"
+    )
+    assert ap["op"] is None, (
+        f"a identidade sobreviveu a retirada da ultima ordem operacional: {ap['op']}"
+    )
+    assert ap["registros"] == r["registrosAntes"], "a retirada gravou Historico"
+    assert ap["ciclo"] == r["cicloAntes"], "a retirada mexeu em cycleRealizado"
+    assert ap["fases"] == r["fasesAntes"], "a retirada resetou fases"
+    assert r["idB"] and r["idB"] != r["idA"], (
+        f"a tese nova HERDOU a identidade anterior: {r['idB']!r} == {r['idA']!r}"
+    )
+    assert r["aberturaB"] and r["aberturaB"] != r["aberturaA"], (
+        f"a tese nova herdou a abertura da anterior: {r['aberturaB']!r}"
+    )
+    assert r["fonteB"] == "genesis_transition", f"proveniencia da nova: {r['fonteB']!r}"
+    assert r["carimboB"] and r["carimboB"] != r["carimboA"], (
+        f"o carimbo da linha nao foi refeito: {r['carimboB']!r}"
+    )
+
+
+def run_withdrawing_one_order_keeps_the_operation(page):
+    """Retirar UMA linha, havendo outra ordem operacional, preserva a operacao."""
+    r = page.evaluate(
+        """() => {
+          window.alert = () => {}; window.confirm = () => true; window.prompt = () => null;
+          __prepararGenese();
+          const s1 = __selectStatus(0,0);
+          s1.value = 'Aberta'; s1.dispatchEvent(new Event('change', {bubbles:true}));
+          const idAntes = S.activeOperation && S.activeOperation.operationId;
+          const aberturaAntes = S.activeOperation && S.activeOperation.openedAt;
+          // Segunda ordem da MESMA tese, tambem operacional.
+          const d = S.phases[0].orders[1];
+          d.id='D1'; d.par='EURUSD'; d.tipo='BUY'; d.lote=0.01;
+          d.entry=1.1000; d.sl=1.0950; d.tp=1.1200;
+          save(); renderPhases();
+          const s2 = __selectStatus(0,1);
+          if (!s2) return {erro:'select da segunda linha ausente'};
+          s2.value = 'Aberta'; s2.dispatchEvent(new Event('change', {bubbles:true}));
+          const vivasAntes = operationLiveOrders().length;
+          // Retira SO a segunda.
+          const s3 = __selectStatus(0,1);
+          s3.value = ''; s3.dispatchEvent(new Event('change', {bubbles:true}));
+          return {idAntes, aberturaAntes, vivasAntes,
+                  vivasDepois: operationLiveOrders().length,
+                  idDepois: S.activeOperation && S.activeOperation.operationId,
+                  aberturaDepois: S.activeOperation && S.activeOperation.openedAt,
+                  carimboRetirada: S.phases[0].orders[1].openedAt,
+                  carimboMantida: S.phases[0].orders[0].openedAt};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["vivasAntes"] == 2, f"o cenario nao criou duas ordens vivas: {r['vivasAntes']}"
+    assert r["vivasDepois"] == 1, f"a retirada nao removeu a linha: {r['vivasDepois']}"
+    assert r["carimboRetirada"] is None, (
+        f"o carimbo da linha retirada sobreviveu: {r['carimboRetirada']!r}"
+    )
+    assert r["carimboMantida"], "o carimbo da linha MANTIDA foi apagado indevidamente"
+    assert r["idDepois"] == r["idAntes"], (
+        f"a operacao perdeu a identidade ao retirar UMA linha: {r['idAntes']!r} -> "
+        f"{r['idDepois']!r} — retirar uma ordem nao encerra a tese"
+    )
+    assert r["aberturaDepois"] == r["aberturaAntes"], "a abertura da operacao mudou"
+
+
 def main():
     server, url = serve()
     try:
@@ -615,6 +739,9 @@ def main():
             run_rejected_open_creates_nothing(page)
             run_unlock_by_own_genesis_is_stamped_with_real_identity(page)
             run_manual_risk_refusal_creates_no_entity(page)
+            # ---- R2: retirada explicita da ordem do ciclo ----
+            run_status_reverted_withdraws_the_order(page)
+            run_withdrawing_one_order_keeps_the_operation(page)
             run_deleting_last_operational_order_abandons(page)
             run_deleting_one_of_many_keeps_the_operation(page)
             run_new_thesis_never_inherits_orphan_identity(page)

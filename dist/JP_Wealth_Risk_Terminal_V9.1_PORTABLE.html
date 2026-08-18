@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '53c548cc0ebc8c0f';
+const JP_WEALTH_BUILD_ID = '27bb86a78ebb9fb7';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -11297,6 +11297,39 @@ function renderPhases(){
         sel.value=prevStatus||''; // reverte visualmente até confirmar no modal
         openCloseOrderModal(pi,oi);
         return;
+      } else if(f==='status'){
+        // RETIRADA EXPLICITA da ordem do ciclo operacional. O unico valor que
+        // chega aqui pela interface e o vazio ('—'): 'Aberta' e 'Fechada' tem
+        // ramos proprios acima, e 'Migrada' so aparece na linha ja migrada,
+        // cujo <select> e readOnly.
+        const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
+        o.status = sel.value;
+        const aindaOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
+        if(eraOperacional && !aindaOperacional){
+          // Os carimbos da LINHA saem junto. Eles sao a evidencia de que ela
+          // pertenceu a operacao; mante-los fazia `jaPertencia` continuar
+          // verdadeiro na reabertura, o fail-safe de orfandade ser pulado, e a
+          // tese seguinte herdar operationId, openedAt e openedAtSource da
+          // anterior — o mesmo desfecho da exclusao, por outra porta.
+          delete o.openedAt;
+          delete o.closedAt;
+          // Mesma semantica do abandono por exclusao da ultima linha: se esta
+          // era a ultima evidencia operacional, a entidade nao sobrevive.
+          // NENHUM registro no Historico, NENHUMA consolidacao em
+          // cycleRealizado, NENHUM reset de fases. Nao e finalizacao e nao
+          // finge ser.
+          //
+          // Se sobram outras ordens da operacao, ela PERMANECE: retirar uma
+          // linha nao encerra a tese.
+          if(S.activeOperation && typeof operationLiveOrders==='function'
+             && operationLiveOrders().length===0){
+            if(typeof dgLogChange==='function'){
+              dgLogChange('operation','abandoned', S.activeOperation.operationId,
+                'Operação Única abandonada: última ordem operacional devolvida a estado não operacional');
+            }
+            S.activeOperation=null;
+          }
+        }
       } else if(f==='tipo'){
         const prevTipo=o.tipo;
         o.tipo=sel.value;
