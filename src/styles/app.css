@@ -1484,6 +1484,40 @@
   .ecal-ws .ecal-empty{padding:16px 0}
   .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
   .ecal-ws-fresh{font-family:var(--mono)}
+  /* ---- Histórico de Operações Únicas (workspace somente leitura) ---- */
+  .hist-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:14px 0}
+  .hist-stat{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--panel-2)}
+  .hist-stat-l{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em}
+  .hist-stat-v{font-family:var(--mono); font-size:var(--fs-lg); color:var(--ink); margin-top:4px}
+  /* O n da métrica é parte do dado, não nota de rodapé: mediana sem denominador
+     esconde quantas operações realmente entraram na conta. */
+  .hist-stat-n{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); margin-top:2px}
+  .hist-filters{display:flex; flex-wrap:wrap; gap:12px; margin:12px 0}
+  .hist-filters label{display:flex; flex-direction:column; gap:4px; font-size:var(--fs-xs); color:var(--ink-dim)}
+  .hist-table{width:100%; border-collapse:collapse; font-size:var(--fs-sm)}
+  .hist-table th{text-align:left; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:.08em; padding:6px 8px; border-bottom:1px solid var(--line); white-space:nowrap}
+  .hist-table td{padding:7px 8px; border-bottom:1px solid var(--line)}
+  .hist-row{cursor:pointer}
+  .hist-row:hover td,.hist-row:focus-visible td{background:var(--accent-tint)}
+  .hist-num{font-family:var(--mono); text-align:right; white-space:nowrap}
+  .hist-mono{font-family:var(--mono); font-size:var(--fs-xs)}
+  /* Resultado NUNCA só por cor — o texto do valor já carrega o sinal. */
+  .hist-positiva{color:var(--f1)} .hist-negativa{color:var(--f3)}
+  .hist-detail{padding:12px 4px}
+  .hist-detail-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:14px; font-size:var(--fs-sm)}
+  .hist-src{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  /* Integridade degradada: visível como qualificador do número, sem excluir a
+     operação das estatísticas financeiras. */
+  .hist-degradada{font-family:var(--mono); font-size:var(--fs-xs); color:var(--f2)}
+  .hist-orders{width:100%; border-collapse:collapse; font-size:var(--fs-xs)}
+  .hist-orders th{text-align:left; font-family:var(--mono); color:var(--ink-faint); padding:5px 6px; border-bottom:1px solid var(--line); white-space:nowrap}
+  .hist-orders td{padding:5px 6px; border-bottom:1px solid var(--line); white-space:nowrap}
+  .hist-ro{font-size:var(--fs-xs); color:var(--ink-faint); margin:10px 0 0}
+  @media(max-width:760px){
+    .hist-filters label{flex:1 1 100%}
+    .hist-detail-grid{grid-template-columns:1fr 1fr}
+  }
   .ecal-news-menu button[role="menuitem"]{
     display:block; width:100%; text-align:left; border:0; border-radius:7px;
     padding:9px 10px; background:transparent; color:var(--ink); font:inherit;

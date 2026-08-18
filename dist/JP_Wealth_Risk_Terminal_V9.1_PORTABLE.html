@@ -1494,6 +1494,40 @@
   .ecal-ws .ecal-empty{padding:16px 0}
   .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
   .ecal-ws-fresh{font-family:var(--mono)}
+  /* ---- Histórico de Operações Únicas (workspace somente leitura) ---- */
+  .hist-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:14px 0}
+  .hist-stat{border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--panel-2)}
+  .hist-stat-l{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em}
+  .hist-stat-v{font-family:var(--mono); font-size:var(--fs-lg); color:var(--ink); margin-top:4px}
+  /* O n da métrica é parte do dado, não nota de rodapé: mediana sem denominador
+     esconde quantas operações realmente entraram na conta. */
+  .hist-stat-n{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint); margin-top:2px}
+  .hist-filters{display:flex; flex-wrap:wrap; gap:12px; margin:12px 0}
+  .hist-filters label{display:flex; flex-direction:column; gap:4px; font-size:var(--fs-xs); color:var(--ink-dim)}
+  .hist-table{width:100%; border-collapse:collapse; font-size:var(--fs-sm)}
+  .hist-table th{text-align:left; font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint);
+    text-transform:uppercase; letter-spacing:.08em; padding:6px 8px; border-bottom:1px solid var(--line); white-space:nowrap}
+  .hist-table td{padding:7px 8px; border-bottom:1px solid var(--line)}
+  .hist-row{cursor:pointer}
+  .hist-row:hover td,.hist-row:focus-visible td{background:var(--accent-tint)}
+  .hist-num{font-family:var(--mono); text-align:right; white-space:nowrap}
+  .hist-mono{font-family:var(--mono); font-size:var(--fs-xs)}
+  /* Resultado NUNCA só por cor — o texto do valor já carrega o sinal. */
+  .hist-positiva{color:var(--f1)} .hist-negativa{color:var(--f3)}
+  .hist-detail{padding:12px 4px}
+  .hist-detail-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:14px; font-size:var(--fs-sm)}
+  .hist-src{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink-faint)}
+  /* Integridade degradada: visível como qualificador do número, sem excluir a
+     operação das estatísticas financeiras. */
+  .hist-degradada{font-family:var(--mono); font-size:var(--fs-xs); color:var(--f2)}
+  .hist-orders{width:100%; border-collapse:collapse; font-size:var(--fs-xs)}
+  .hist-orders th{text-align:left; font-family:var(--mono); color:var(--ink-faint); padding:5px 6px; border-bottom:1px solid var(--line); white-space:nowrap}
+  .hist-orders td{padding:5px 6px; border-bottom:1px solid var(--line); white-space:nowrap}
+  .hist-ro{font-size:var(--fs-xs); color:var(--ink-faint); margin:10px 0 0}
+  @media(max-width:760px){
+    .hist-filters label{flex:1 1 100%}
+    .hist-detail-grid{grid-template-columns:1fr 1fr}
+  }
   .ecal-news-menu button[role="menuitem"]{
     display:block; width:100%; text-align:left; border:0; border-radius:7px;
     padding:9px 10px; background:transparent; color:var(--ink); font:inherit;
@@ -5914,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '772b28d29d088507';
+const JP_WEALTH_BUILD_ID = 'd9cc2e3c3d0435fe';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6067,6 +6101,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <button type="button" data-nav-sub-view="motor">
         <span class="nav-sub-item-title">Motor de Lote</span>
         <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
+      </button>
+      <button type="button" data-nav-sub-view="history">
+        <span class="nav-sub-item-title">Histórico</span>
+        <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
       </button>
     </nav>
     <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
@@ -6337,6 +6375,11 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          20-ui/15-pivot-studies.js a cada entrada no workspace, porque o seletor
          deriva do catálogo vivo do Motor de Lote e a tela reflete o estado. -->
     <div class="exec-view" id="execPivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
+    <!-- Histórico: consumidor SOMENTE LEITURA de S.operationHistory. O conteúdo é
+         renderizado por 20-ui/16-operation-history.js a cada entrada, porque uma
+         finalização feita no Painel Operacional muda a lista. Nenhum caminho
+         deste workspace muta estado financeiro. -->
+    <div class="exec-view" id="execHistory" role="region" aria-label="Histórico de Operações Únicas" hidden></div>
     <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
          #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
          nenhum dado tocado. A <section id="motor"> hospedeira foi removida
@@ -7446,6 +7489,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
 
 
+
+
 <script>
 // ============ PERFIS DE RISCO V10.0 (fonte única) ============
 const BASE_TARGET_MONTHLY=0.0275;
@@ -7770,6 +7815,28 @@ const DEFAULTS = {
   // que passa a exceder o critério de correção é RECLASSIFICADO, nunca apagado.
   // Guarda estrutural de boot: pivotStudiesNormalizeState() (04-persistence.js).
   pivotStudies:{schemaVersion:1, studies:[]},
+  // ---- Operação Única: identidade e ciclo de vida (Camada 1 — Fundação) ----
+  // Até esta versão a Operação Única NÃO existia como entidade: era um conceito
+  // emergente do conteúdo das grades. netOpAtual() soma os `result` de toda
+  // ordem 'Fechada' em S.phases, e até a EXISTÊNCIA da operação era derivada
+  // (`!temAberta && temFechada`). Sem entidade não há identidade estável, não há
+  // openedAt e não há como preservar a maior Fase da Conta atingida — três
+  // lacunas que o Histórico não poderia reconstruir depois.
+  //
+  // `null` é o default correto e não um objeto vazio: "não há operação em curso"
+  // é um estado real, distinto de "há uma operação sem dados". A entidade nasce
+  // quando a Ordem Gênese é efetivamente aberta pela primeira vez.
+  //
+  // maxAccountPhaseReached é MONOTÔNICO e capturado PROSPECTIVAMENTE — a Fase da
+  // Conta é derivada do drawdown por compute() e o sistema nunca guardou seu
+  // máximo histórico. Reconstruí-lo no fechamento seria heurística sobre dado
+  // que jamais foi observado.
+  // Guarda estrutural de boot: operationNormalizeState() (04-persistence.js).
+  activeOperation:null,
+  // Memória institucional das Operações Únicas finalizadas. Lista, e não mapa:
+  // a natureza é histórica e append-only. Registros são IMUTÁVEIS — o Histórico
+  // é evidência, não planilha editável.
+  operationHistory:{schemaVersion:1, records:[]},
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
@@ -7793,8 +7860,36 @@ function blockJPWealthPersistence(){
   jpWealthSessionEpoch++;
 }
 function resumeJPWealthPersistence(){
+  // NÃO libera jpWealthPersistenceOutcomeUnknown, e isso é o ponto inteiro da
+  // outra barreira: ela existe porque uma gravação posterior pode destruir
+  // exatamente o estado que estamos tentando preservar. Um portão genérico
+  // reaberto por importação ou onboarding não pode decidir isso.
   jpWealthPersistenceBlocked=false;
   jpWealthSessionEpoch++;
+}
+
+// ---- DESFECHO INDETERMINADO DE GRAVAÇÃO -----------------------------------
+// Barreira SEPARADA do portão genérico. Erguida quando uma gravação pode ter
+// ocorrido e não foi possível provar nem que ocorreu nem que não ocorreu —
+// tipicamente: setItem talvez tenha executado e a leitura de volta lançou, ou o
+// documento voltou ilegível.
+//
+// Enquanto ela estiver de pé, NADA grava. O motivo não é excesso de cautela: se
+// o disco contém a finalização e a memória for sobrescrita por um save()
+// posterior, a finalização persistida desaparece — memória e disco discordando
+// sobre se uma operação financeira foi formalmente encerrada é a pior classe de
+// defeito que este sistema pode produzir.
+//
+// A flag NÃO é persistida: persisti-la exigiria justamente a gravação que está
+// vetada. É barreira de sessão; o desempate é humano, com o disco à vista.
+let jpWealthPersistenceOutcomeUnknown=false;
+function jpWealthPersistenceOutcomeIsUnknown(){ return jpWealthPersistenceOutcomeUnknown; }
+function markJPWealthPersistenceOutcomeUnknown(motivo){
+  jpWealthPersistenceOutcomeUnknown=true;
+  jpWealthSessionEpoch++;
+  if(typeof console!=='undefined' && console.error){
+    console.error('[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas:', motivo);
+  }
 }
 // ---- MODO DE RECUPERAÇÃO DE CARREGAMENTO (A-005) --------------------------------
 // Quando o banco salvo não pode ser carregado com segurança (leitura falhou, JSON
@@ -8193,15 +8288,22 @@ function dgExportFileName(seq,when){
 // Registra um evento no log resumido. NÃO chama save(): quem muta o estado é quem
 // persiste — todos os pontos instrumentados já chamam save() logo depois, e o log entra
 // na mesma gravação. label é o texto humano do detalhamento cronológico (§11).
-function dgLogChange(entity,action,recordId,label){
-  if(!S.dataGovernance || !Array.isArray(S.dataGovernance.changeLog)) return;
-  S.dataGovernance.changeLog.push({
+// `alvo` opcional: escreve num estado CANDIDATO em vez da global. Existe para
+// que uma transação possa montar o log de auditoria dentro do próprio candidato
+// e persistir tudo numa gravação só — que é exatamente a doutrina enunciada
+// acima. Sem ele, um fluxo transacional só teria a opção de registrar DEPOIS do
+// save(), e o evento nunca chegaria ao disco. Omitido, o comportamento é o de
+// sempre: muta a global.
+function dgLogChange(entity,action,recordId,label,alvo){
+  const st=alvo||S;
+  if(!st.dataGovernance || !Array.isArray(st.dataGovernance.changeLog)) return;
+  st.dataGovernance.changeLog.push({
     id:dgId(), ts:new Date().toISOString(),
     entity:String(entity||''), action:String(action||''),
     recordId:recordId==null?'':String(recordId), label:String(label||''),
   });
-  if(S.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
-    S.dataGovernance.changeLog=S.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
+  if(st.dataGovernance.changeLog.length>DG_CHANGELOG_MAX){
+    st.dataGovernance.changeLog=st.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
   }
 }
 // Alterações desde o último backup CONFIRMADO (§11). Sem confirmação nunca feita,
@@ -8398,6 +8500,276 @@ function pivotRecordId(){ return 'pv_'+Date.now().toString(36)+'_'+Math.random()
 // derivados e fica fora da estatística; apagá-lo aqui destruiria memória
 // técnica do operador em silêncio. Timeframe fora de H1/H4 também sobrevive:
 // deixa de contar nas sínteses por timeframe, e nada mais.
+// ---- Operação Única: identidade, ciclo de vida e histórico (Camada 1) ----
+// Mesma forma dos geradores de id já existentes no arquivo. Não precisa ser
+// determinístico; precisa ser PERMANENTE — gerado uma vez, persistido, jamais
+// recalculado a partir de campo mutável.
+function operationRecordId(){ return 'op_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+
+// Índice de fase CONHECIDO, ou null. Existe porque a coerção numérica destrói a
+// distinção que este campo carrega: `+null === 0`, `Number.isFinite(0) === true`
+// e `0 < 0` é falso, então toda guarda escrita com `+valor` deixava um
+// DESCONHECIDO virar "Fase 1 observada" — uma afirmação sobre o passado que
+// ninguém fez. Só number finito conta como conhecido; null, undefined, string
+// de backup adulterado e negativo devolvem null.
+function operationPhaseIdxOrNull(v){
+  if(typeof v!=='number' || !Number.isFinite(v) || v<0) return null;
+  return Math.min(3, Math.floor(v));
+}
+
+// Carimba um evento de transição com a identidade da operação VIVA no ato, e
+// com a Fase da Grade efetivamente atingida.
+//
+// O vínculo é criado no INSTANTE da transição, quando a identidade é conhecida.
+// Não existe migração retroativa: atribuir operationId a evento antigo por
+// inferência — janela temporal, ordem dos eventos, proximidade do openedAt —
+// fabricaria uma associação que ninguém observou. Evento legado fica sem
+// vínculo e, por isso, fora de qualquer derivação escopada.
+//
+// Sem operação viva, `null`: vínculo ausente é melhor que vínculo inventado.
+//
+// gridPhase é EXPLÍCITO em vez de derivado do campo `fase`, que é heterogêneo —
+// numérico no destravamento por questionário, texto no downgrade e no stop
+// quantitativo. Ler string para descobrir fase seria adivinhação, e o caminho
+// do stop destrava fase sem nunca escrever um número.
+function operationStampTransition(ev, gridPhaseIdx){
+  if(!ev || typeof ev!=='object') return ev;
+  const op=S.activeOperation;
+  ev.operationId=(op && typeof op.operationId==='string' && op.operationId)?op.operationId:null;
+  const idx=operationPhaseIdxOrNull(gridPhaseIdx);
+  if(idx!==null) ev.gridPhase=idx;
+  return ev;
+}
+
+// Sonda da Fase da Conta VIGENTE. Distingue TRÊS desfechos, e a distinção é o
+// ponto todo — antes, um `catch` mudo fundia os dois últimos:
+//
+//   {ok:true,  idx:0..3}  fase estabelecida
+//   {ok:true,  idx:null}  NÃO APLICÁVEL — estado insuficiente ou legado. É
+//                         fluxo normal, tratado por verificação explícita, e
+//                         nunca por exceção.
+//   {ok:false, erro}      falha INESPERADA do próprio mecanismo. Não é ausência
+//                         de dado: é defeito, e defeito não pode ser descartado.
+//
+// As precondições são checadas ANTES de chamar compute() justamente para que o
+// try não vire muleta de fluxo normal: params ausente e matriz malformada são
+// estados legítimos de base legada, e o helper os trata sozinho.
+function accountPhaseProbe(){
+  if(typeof compute!=='function') return {ok:true, idx:null};
+  if(!S.params || typeof S.params!=='object') return {ok:true, idx:null};
+  if(!Array.isArray(S.matrix) || !S.matrix.length) return {ok:true, idx:null};
+  try{
+    const c=compute();
+    if(!c || !c.fase || typeof c.fase.nome!=='string') return {ok:true, idx:null};
+    const idx=S.matrix.findIndex(m=>m && m.nome===c.fase.nome);
+    // compute() TEVE sucesso e devolveu uma fase que nao existe na matriz
+    // normativa. Isso nao e "nao aplicavel" — e inconsistencia entre o calculo
+    // e a matriz. Devolver {ok:true, idx:null} aqui empacotava um defeito real
+    // junto de "ainda nao ha dados", e a lacuna sumia sem deixar marca.
+    if(idx<0) return {ok:false, erro:'fase computada ("'+String(c.fase.nome)+'") ausente de S.matrix'};
+    return {ok:true, idx};
+  }catch(e){
+    return {ok:false, erro:String((e && e.message) || e)};
+  }
+}
+
+// Compatibilidade de leitura para quem só quer o índice.
+function currentAccountPhaseIdx(){ const p=accountPhaseProbe(); return p.ok?p.idx:null; }
+
+// Captura PROSPECTIVA e MONOTÔNICA da maior Fase da Conta atingida.
+//
+// Chamada de dentro de save() — o menor ponto autoritativo do projeto. Não é
+// render (que nunca deve gravar estado) e não é um listener por tela: é o único
+// lugar por onde TODA mutação persistida passa, incluindo caminhos que nenhuma
+// enumeração de call sites cobriria. O máximo passa a refletir estados que o
+// sistema efetivamente comprometeu ao disco.
+//
+// ESTE CAMPO NÃO É TELEMETRIA. A Fase da Conta máxima é memória prospectiva:
+// se não for capturada no instante em que ocorre, é irreconstruível depois. Por
+// isso a política de falha tem de separar duas coisas que um `catch` mudo
+// fundiria:
+//
+//   não aplicável  -> a sonda devolve idx:null e nada acontece. Fluxo normal.
+//   defeito        -> a falha é GRAVADA na própria entidade e vai ao console.
+//
+// save() prossegue nos dois casos, e isso é deliberado: derrubar a persistência
+// do estado financeiro por causa de um campo derivado trocaria uma lacuna de
+// evidência por perda de dado do operador — troca ruim. Mas o sistema não pode
+// declarar que capturou o que não capturou. `phaseCaptureFault` fica na
+// operação, viaja para o snapshot da Camada 2 e torna a lacuna AUDITÁVEL em vez
+// de silenciosa.
+//
+// A marca não é limpa por um sucesso posterior: se a captura falhou uma vez, o
+// máximo pode estar subestimado para sempre, e apagar a evidência disso seria
+// exatamente o tipo de mentira que este projeto combate.
+function operationTouchAccountPhase(){
+  const op=S.activeOperation;
+  if(!op || typeof op!=='object' || Array.isArray(op)) return;
+  const probe=accountPhaseProbe();
+  if(!probe.ok){
+    op.phaseCaptureFault={at:new Date().toISOString(), reason:probe.erro};
+    if(typeof console!=='undefined' && console.error){
+      console.error('[operação] captura da Fase da Conta falhou:', probe.erro);
+    }
+    return;
+  }
+  if(probe.idx==null) return;
+  // Desconhecido não é -1 nem 0: é ausência. A primeira captura estabelece o
+  // valor qualquer que ele seja, inclusive Fase 1 — e daí em diante só sobe.
+  const antes=operationPhaseIdxOrNull(op.maxAccountPhaseReached);
+  if(antes===null || probe.idx>antes) op.maxAccountPhaseReached=probe.idx;
+}
+
+// Carimba a transição de status de uma ordem e, quando for a Gênese abrindo
+// pela primeira vez, faz NASCER a Operação Única.
+//
+// Chamado pelos pontos que realmente mutam o status — o grid e o modal de
+// fechamento — e nunca por render: timestamp recalculado a cada repintura não
+// seria evidência, seria ruído.
+//
+// A Gênese é identificada por POSIÇÃO (fase 1, linha 1), a mesma regra que
+// genesisOrder() já usa e que checkPhaseCap() aplica normativamente ao teto do
+// Art. 8.6. Não é taxonomia nova: é a que o app já executa.
+//
+// Carimba UMA vez. Reabrir uma ordem não reescreve a abertura original, e
+// fechar de novo não move o fechamento — proveniência não se sobrescreve.
+function operationOnOrderStatus(o, statusDepois, pi, oi){
+  if(!o || typeof o!=='object') return;
+  const agora=new Date().toISOString();
+  // Capturado ANTES dos carimbos: uma ordem que ja tem carimbo ja pertencia a
+  // operacao. Sem essa distincao, re-sinalizar a mesma ordem — o que acontece a
+  // cada re-render — pareceria a chegada de uma tese nova.
+  const jaPertencia = !!(o.openedAt || o.closedAt);
+  if(statusDepois==='Aberta' && !o.openedAt) o.openedAt=agora;
+  if(statusDepois==='Fechada' && !o.closedAt) o.closedAt=agora;
+  // A identidade nasce AQUI, na camada de ciclo de vida — nunca na finalização.
+  // Se fosse criada lá, uma tentativa que falhasse (conflito de instrumento,
+  // persistência recusada) deixaria efeito colateral no estado de entrada, e a
+  // tentativa seguinte geraria OUTRO id: a Operação Única mudaria de identidade
+  // em função de quantas vezes o operador tentou encerrá-la.
+  //
+  // A abertura da Gênese é o caso normativo e o único com proveniência
+  // automática. Qualquer outra ordem tornando-se operacional sem entidade viva
+  // também faz a operação nascer — é uma operação real —, mas com abertura
+  // DESCONHECIDA, que o operador informa na finalização.
+  // FAIL-SAFE. Uma entidade viva que nao tem NENHUMA ordem operacional por tras
+  // dela e orfa: a operacao que ela representava deixou de existir. Reutiliza-la
+  // transferiria operationId, openedAt e proveniencia para uma tese nova — e o
+  // registro imutavel afirmaria que a nova operacao abriu na data da anterior,
+  // com captura automatica. A identidade antiga e DESCARTADA, com registro
+  // auditavel; jamais herdada.
+  //
+  // A contagem exclui a ordem que esta nascendo agora: ela e a primeira da tese
+  // nova, e nao evidencia da anterior.
+  // So se aplica a uma ordem NOVA. E nao se aplica a operacao adotada de legado,
+  // cujas ordens podem nao ter carimbo nenhum: ali a ausencia de carimbo e
+  // esperada e nao indica orfandade.
+  if(S.activeOperation && !jaPertencia && !S.activeOperation.adoptedLegacyAt
+     && (statusDepois==='Aberta' || statusDepois==='Fechada')
+     && typeof operationLiveOrders==='function'){
+    const outras=operationLiveOrders().filter(x=>x && x.o!==o).length;
+    if(outras===0){
+      const orfa=S.activeOperation.operationId;
+      if(typeof dgLogChange==='function'){
+        dgLogChange('operation','orphan_discarded', orfa,
+          'Identidade órfã descartada: nenhuma ordem operacional a sustentava');
+      }
+      if(typeof console!=='undefined' && console.error){
+        console.error('[operação] identidade órfã descartada (sem ordens operacionais):', orfa);
+      }
+      S.activeOperation=null;
+    }
+  }
+  if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
+    const genese = statusDepois==='Aberta' && pi===0 && oi===0;
+    S.activeOperation={
+      schemaVersion:1,
+      operationId:operationRecordId(),
+      openedAt: genese?agora:null,
+      openedAtSource: genese?'genesis_transition':null,
+      maxAccountPhaseReached:null
+    };
+  }
+  // CAPTURA DA FASE DA CONTA — por ultimo, com o ciclo de vida ja RESOLVIDO.
+  //
+  // Ela rodava antes do fail-safe, sobre a entidade CORRENTE. Quando o fail-safe
+  // descartava uma orfa e uma tese nova nascia no mesmo ato, a captura tinha ido
+  // para a entidade descartada, e a recem-nascida saia sem observacao do proprio
+  // instante em que nasceu. Se o pico da fase estivesse ali e a conta recuasse
+  // antes do proximo ato confirmado, o maximo daquela operacao o perdia — nao
+  // uma afirmacao falsa, mas uma subestimacao silenciosa.
+  //
+  // Aqui a captura opera sempre sobre a entidade que PERMANECE viva depois do
+  // ato: a preexistente, ou a que acabou de nascer.
+  if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
+    operationTouchAccountPhase();
+  }
+}
+
+function operationNormalizeState(){
+  // activeOperation: null é estado legítimo ("nenhuma operação em curso").
+  // Qualquer coisa que não seja objeto simples vira null em vez de virar {}:
+  // objeto vazio seria uma operação fantasma sem identidade nem abertura.
+  const op=S.activeOperation;
+  if(op===null || op===undefined || typeof op!=='object' || Array.isArray(op)){
+    S.activeOperation=null;
+  }else{
+    if(!Number.isFinite(+op.schemaVersion) || +op.schemaVersion<1) op.schemaVersion=1;
+    // Identidade ausente é REPARADA, não descartada: uma operação viva de antes
+    // desta versão recebe id uma única vez e o mantém dali em diante.
+    if(typeof op.operationId!=='string' || !op.operationId) op.operationId=operationRecordId();
+    // openedAt desconhecido permanece null. Nunca Date.now(): inventar a
+    // abertura de uma operação legada seria falsificar proveniência.
+    if(typeof op.openedAt!=='string' || !op.openedAt) op.openedAt=null;
+    const fontesAbertura=['genesis_transition','manual_legacy'];
+    if(!fontesAbertura.includes(op.openedAtSource)) op.openedAtSource=op.openedAt?'manual_legacy':null;
+    op.maxAccountPhaseReached=operationPhaseIdxOrNull(op.maxAccountPhaseReached);
+    // Marca de captura degradada: preservada se tiver forma válida, descartada
+    // se vier deformada. Nunca inventada.
+    const f=op.phaseCaptureFault;
+    if(!f || typeof f!=='object' || Array.isArray(f) || typeof f.reason!=='string') delete op.phaseCaptureFault;
+  }
+  // ADOÇÃO DE OPERAÇÃO LEGADA. Uma operação iniciada antes desta versão tem
+  // grades preenchidas e nenhuma entidade. Sem adotá-la, ela atravessaria toda
+  // a sua vida sem identidade e sem capturar a Fase da Conta — e o Histórico
+  // receberia um registro cego justamente da primeira operação finalizada.
+  //
+  // A adoção cria identidade e COMEÇA a capturar daqui em diante. Não inventa o
+  // passado: openedAt fica null e a proveniência fica indefinida até que o
+  // operador informe a data na finalização (aí vira manual_legacy).
+  if(!S.activeOperation && Array.isArray(S.phases)){
+    const viva=S.phases.some(ph=>Array.isArray(ph && ph.orders) && ph.orders.some(
+      o=>o && (o.status==='Aberta' || o.status==='Fechada' || o.status==='Migrada')));
+    if(viva){
+      S.activeOperation={
+        schemaVersion:1,
+        operationId:operationRecordId(),
+        openedAt:null,
+        openedAtSource:null,
+        maxAccountPhaseReached:null,
+        adoptedLegacyAt:new Date().toISOString()
+      };
+    }
+  }
+  // operationHistory: envelope com lista append-only.
+  if(!S.operationHistory || typeof S.operationHistory!=='object' || Array.isArray(S.operationHistory))
+    S.operationHistory=structuredClone(DEFAULTS.operationHistory);
+  const h=S.operationHistory;
+  if(!Number.isFinite(+h.schemaVersion) || +h.schemaVersion<1) h.schemaVersion=1;
+  if(!Array.isArray(h.records)) h.records=[];
+  h.records=h.records.filter(r=>r && typeof r==='object' && !Array.isArray(r));
+  // Id duplicado quebraria a idempotência da finalização: o teste "já existe no
+  // histórico?" viraria ambíguo. Colisão é reescrita, o registro nunca é
+  // descartado — histórico é evidência.
+  const vistos=new Set();
+  h.records.forEach(r=>{
+    if(typeof r.operationId!=='string' || !r.operationId || vistos.has(r.operationId)) r.operationId=operationRecordId();
+    vistos.add(r.operationId);
+    if(!Number.isFinite(+r.schemaVersion) || +r.schemaVersion<1) r.schemaVersion=1;
+    if(!Array.isArray(r.ordersSnapshot)) r.ordersSnapshot=[];
+  });
+}
+
 function pivotStudiesNormalizeState(){
   if(!S.pivotStudies || typeof S.pivotStudies!=='object' || Array.isArray(S.pivotStudies))
     S.pivotStudies=structuredClone(DEFAULTS.pivotStudies);
@@ -8477,6 +8849,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   fxPlanningNormalizeState(); // Planejamento FX: guarda estrutural (forma aqui, profundidade na camada de acesso)
   nocodaNormalizeState(); // Estudos NoCoda: mesma regra — mapa instrumentId -> estudo vigente
   pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
+  operationNormalizeState(); // Operação Única: identidade da operação viva + envelope do histórico
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){
@@ -8867,7 +9240,21 @@ function save(){
   // fluxo reabra o portão genérico (importFullBackupFile e openOnboardingModal chamam
   // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.
   if(jpWealthLoadRecovery.active) return false;
+  // Precede o portão genérico: este não é reaberto por resumeJPWealthPersistence.
+  if(jpWealthPersistenceOutcomeUnknown) return false;
   if(jpWealthPersistenceBlocked) return false;
+  // AQUI NAO SE CAPTURA A FASE DA CONTA. save() e chamado a cada TECLA nos campos
+  // numericos da grade, e um valor meio digitado produz uma Fase da Conta
+  // transitoria: digitar "1.09" passa por "1", cujo risco joga a conta para a
+  // Fase 4. Como a captura e monotonica, aquele pico era gravado como maximo
+  // OBSERVADO e nunca mais descia — o registro imutavel afirmava uma fase que a
+  // conta jamais atingiu.
+  //
+  // Persistir o valor corrente e uma coisa; afirmar historia e outra. A captura
+  // passou para os atos semanticamente CONFIRMADOS: edicao comprometida de campo
+  // (evento 'change', depois das guardas e das reversoes), resultado informado,
+  // ordem tornando-se operacional, destravamento de fase confirmado, e
+  // finalizacao. Todos chamam operationTouchAccountPhase() explicitamente.
   // Serialização e gravação em trys separados: são falhas de natureza diferente. Se o
   // stringify lança (ciclo, BigInt), o armazenamento está saudável mas o backup — que
   // usa a MESMA serialização — tende a falhar junto; o aviso precisa dizer isso em vez
@@ -10072,7 +10459,12 @@ function openTransitionModal(faseNum){
     if(!ok) return;
     // libera a fase
     S.phaseUnlocked[faseNum-1]=true;
-    S.transitionLog.push({fase:faseNum, ts:new Date().toISOString(), resumo:collected});
+    // Carimbado com a operacao viva e a fase atingida: o Historico deriva
+    // maxGridPhaseReached SO dos eventos daquela operationId.
+    S.transitionLog.push(operationStampTransition(
+      {fase:faseNum, ts:new Date().toISOString(), resumo:collected}, faseNum-1));
+    // Destravamento CONFIRMADO pelo questionário: ato semântico, não digitação.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save();
     closeModal();
     if(faseNum>=2) mirrorPhaseForward(faseNum-2);
@@ -10152,7 +10544,10 @@ function openDowngradeModal(fromIdx,toIdx){
     });
     if(!ok) return;
     for(let i=toIdx+1;i<=fromIdx;i++){ S.phaseUnlocked[i]=false; }
-    S.transitionLog.push({fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected});
+    // Sem gridPhase de proposito: downgrade RETRAVA, nao atinge. O maximo
+    // anterior permanece — o que foi alcancado foi alcancado.
+    S.transitionLog.push(operationStampTransition(
+      {fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected}));
     save();
     closeModal();
     render(); renderPhases();
@@ -10268,8 +10663,10 @@ function stopLimitSummary(pi, oi, check){
     }
   };
 }
-function auditStopLimit(kind, resumo){
-  S.transitionLog.push({fase:kind, ts:localDateTimeISO(), resumo});
+function auditStopLimit(kind, resumo, gridPhaseIdx){
+  // gridPhaseIdx so e passado quando a chamada REALMENTE destrava fase.
+  S.transitionLog.push(operationStampTransition(
+    {fase:kind, ts:localDateTimeISO(), resumo}, gridPhaseIdx));
 }
 function handleStopLimitBreach(pi, oi, check){
   const o=S.phases[pi].orders[oi];
@@ -10285,13 +10682,23 @@ function handleStopLimitBreach(pi, oi, check){
     );
     if(ok===phrase){
       for(let i=0;i<=info.supported;i++) S.phaseUnlocked[i]=true;
-      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase});
+      // Destravamento CONFIRMADO pela frase exigida ao operador.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+      // Este e o UNICO caminho de stop que destrava fase; os demais so alertam.
+      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase}, info.supported);
       delete o.stopPhaseWarning;
       save(); render(); renderPhases();
       return true;
     }
     auditStopLimit('stop quantitativo acima da fase', {...info.resumo, confirmado:false});
     alert('Stop mantido para simulação, com risco visível. A fase não foi alterada porque a confirmação formal não foi concluída.');
+    // A FASE NAO MUDOU, mas o STOP FICOU. A confirmacao recusada nao reverte
+    // o.sl — o valor permanece no modelo e e persistido pelo save() abaixo, e por
+    // definicao de check.excede a conta passa a operar acima do teto da fase.
+    // Esse pico e real e precisa ser observado: enquanto a captura morava dentro
+    // de save(), este caminho a recebia de graca; ao tirar a captura de la, ele
+    // ficou sendo o unico que compromete um valor sem observar a consequencia.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save(); render(); renderPhasesLite(pi); renderAuditLog();
     return false;
   }
@@ -10300,10 +10707,19 @@ function handleStopLimitBreach(pi, oi, check){
   alert(info.supported<0
     ? `${info.inline}\n\nNenhuma fase suporta este Stop. Ele viola o limite máximo absoluto e deve ser tratado como simulação de risco, não autorização operacional.`
     : info.inline);
+  // Genese, defesa final da Fase 4 e limite absoluto: aqui nao ha sequer
+  // confirmacao a pedir — o alerta e informativo e o stop PERMANECE. Mesmo
+  // motivo do ramo acima: valor comprometido e persistido, logo a Fase da Conta
+  // resultante e afirmacao e nao estado transitorio.
+  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
   save(); render(); renderPhasesLite(pi); renderAuditLog();
   return false;
 }
-// ---- Guardas de instrumento e tese (Art. 3.5/3.6, decreto de banimento, Teto/Op) ----
+// ---- Guardas de instrumento e tese (Art. 4.2/5.1, decreto de banimento, Teto/Op) ----
+// A numeracao anterior (3.5/3.6) nao existe na Norma Vigente: o Livro I vai de
+// 3.1 a 3.4. O regime esta no Art. 5.1 (Livro II — Operacao Unica Exclusiva) e a
+// definicao de Operacao como "conjunto de ordens no mesmo ativo e na mesma
+// direcao" esta no Art. 4.2 (Livro I).
 // retorna null se ok, ou a mensagem de bloqueio
 function orderGateMsg(pi, oi){
   const o=S.phases[pi].orders[oi];
@@ -10315,7 +10731,24 @@ function orderGateMsg(pi, oi){
   if(ins && ins.teto>0 && o.lote>ins.teto){
     return `🚫 Lote ${o.lote} acima do Teto/Op de ${ins.name} (${ins.teto}) — Regra 1 do Controle Objetivo de Risco. Ajuste o lote ou revise o teto no Motor de Lote.`;
   }
-  // Operação Única Exclusiva: toda posição aberta pertence à mesma tese (mesmo par, mesma direção)
+  // OPERAÇÃO ÚNICA EXCLUSIVA: uma tese por vez — mesmo instrumento, mesma direção.
+  //
+  // A referência vem de qualquer ordem que PERTENÇA à operação em curso, e não
+  // apenas das que estão `Aberta`. Fechar a última ordem NÃO finaliza a Operação
+  // Única: ela permanece em andamento até a Finalização formal, que é o ato que
+  // limpa as grades e zera activeOperation. Enquanto isso não acontece, as ordens
+  // que estão nas grades continuam sendo daquela operação.
+  //
+  // A versão anterior procurava referência só entre ordens `Aberta`. Com a Gênese
+  // já fechada e a operação ainda viva, ela não encontrava nada e liberava a
+  // abertura de outro instrumento e outra direção — a operação passava a conter
+  // duas teses. O estado resultante é um beco sem saída: a Finalização o bloqueia
+  // corretamente, mas numa ordem fechada `par`, `tipo` e `status` ficam todos
+  // desabilitados na grade, e as únicas saídas restantes destroem informação.
+  //
+  // operationOrderIsLive é a MESMA função que o domínio usa para montar a
+  // operação (operationLiveOrders). Duas definições de "pertence à operação" foi
+  // exatamente o que abriu o buraco; não se reintroduz uma cópia local aqui.
   let ref=null;
   outer:
   for(let p2=0;p2<S.phases.length;p2++){
@@ -10323,16 +10756,16 @@ function orderGateMsg(pi, oi){
     for(let o2=0;o2<os.length;o2++){
       if(p2===pi&&o2===oi) continue;
       const q=os[o2];
-      if(q.status==='Aberta'&&q.par){ ref=q; break outer; }
+      if(operationOrderIsLive(q)&&q.par){ ref=q; break outer; }
     }
   }
   if(ref){
     const norm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     if(o.par && norm(o.par)!==norm(ref.par)){
-      return `🚫 Operação Única Exclusiva (Art. 3.6): já existe posição aberta em ${ref.par}. Não é permitido abrir ${o.par} enquanto a operação atual não for encerrada.`;
+      return `🚫 Operação Única Exclusiva (Art. 5.1): a operação em andamento é em ${ref.par}. Não é permitido abrir ${o.par} enquanto ela não for formalmente finalizada — zeragem tática sem confirmação de encerramento não extingue a Operação (Art. 4.4).`;
     }
     if(o.tipo && ref.tipo && o.tipo!==ref.tipo){
-      return `🚫 Operação Única (Art. 3.5): a tese ativa é ${ref.tipo} em ${ref.par}. Posição na direção contrária não pertence à mesma tese — encerre a operação antes de inverter.`;
+      return `🚫 Operação Única (Art. 4.2): a tese em andamento é ${ref.tipo} em ${ref.par}. Uma Operação é o conjunto de ordens no mesmo ativo e na mesma direção — finalize a operação antes de inverter.`;
     }
   }
   return null;
@@ -10379,6 +10812,8 @@ function openCloseOrderModal(pi,oi){
     }
     o.status='Fechada';
     o.result=resultVal;
+    // Carimbo de fechamento da ordem — capturado no ato, uma única vez.
+    if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Fechada',pi,oi);
     save();
     closeModal();
     render(); renderPhases();
@@ -10703,7 +11138,31 @@ function renderPhases(){
       const o=S.phases[pi].orders[oi];
       const temDado = !!(o.id||o.par||o.lote||o.entry||o.sl||o.tp||o.status||o.result);
       if(temDado && !confirm('Esta linha tem dados registrados. Remover mesmo assim?')) return;
+      const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
       S.phases[pi].orders.splice(oi,1);
+      // ABANDONO ADMINISTRATIVO. Excluir a ULTIMA ordem operacional apaga a
+      // evidencia que constituia a Operacao Unica; a entidade nao pode
+      // sobreviver a isso. Se ela sobrevivesse, a guarda de nascimento
+      // (`!S.activeOperation`) falharia na proxima Genese e a nova tese herdaria
+      // identidade, abertura e proveniencia da anterior — medido: um registro
+      // GBPUSD gravado como aberto em outra data, com openedAtSource
+      // 'genesis_transition', sob o operationId da operacao anterior.
+      //
+      // Nao e finalizacao e nao finge ser: NENHUM registro no Historico, NENHUMA
+      // consolidacao em cycleRealizado, NENHUM reset de fases. E o mesmo
+      // tratamento do reinicio administrativo de periodo.
+      //
+      // A limpeza acontece no ATO EXPLICITO, e nao por heuristica de "grades
+      // vazias": uma operacao cujas ordens estao todas FECHADAS continua viva e
+      // suas linhas continuam na grade — e disso depende a exclusividade da tese.
+      if(eraOperacional && S.activeOperation && typeof operationLiveOrders==='function'
+         && operationLiveOrders().length===0){
+        if(typeof dgLogChange==='function'){
+          dgLogChange('operation','abandoned', S.activeOperation.operationId,
+            'Operação Única abandonada: última ordem operacional excluída pelo operador');
+        }
+        S.activeOperation=null;
+      }
       save(); renderPhases();
     });
   });
@@ -10719,6 +11178,10 @@ function renderPhases(){
       let val=inp.value;
       if(['lote','entry','sl','tp','result'].includes(f)) val=parseFloat(val)||0;
       S.phases[pi].orders[oi][f]=val;
+      // NÃO há gancho de status aqui: este laço é querySelectorAll('input') e o
+      // campo Status é um <select>. A chamada que existia neste ponto era
+      // inalcançável — a Operação Única nunca nascia pelo grid. O gancho vive no
+      // laço de <select>, depois das guardas de abertura.
       if((f==='sl'||f==='tp') && S.phases[pi].orders[oi].needsReview){
         S.phases[pi].orders[oi].needsReview=false; // tocou no stop -> considera revisado
       }
@@ -10727,7 +11190,11 @@ function renderPhases(){
     inp.addEventListener('change',()=>{
       const pi=+inp.dataset.p, oi=+inp.dataset.o, f=inp.dataset.f;
       const o=S.phases[pi].orders[oi];
-      if(f==='result'){ checkDivergence(pi,oi); return; }
+      // Resultado informado e ato confirmado, e e o que mais move o drawdown.
+      if(f==='result'){
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+        save(); checkDivergence(pi,oi); return;
+      }
       const revert=()=>{
         const raw=inp.dataset.prevval??'';
         const val=['lote','entry','sl','tp'].includes(f)?(parseFloat(raw)||0):raw;
@@ -10760,6 +11227,12 @@ function renderPhases(){
         }
       }
       if(f==='par'){ renderPhases(); } // par novo muda risco/nocional — redesenha
+      // EDICAO COMPROMETIDA: chegar aqui significa que o valor sobreviveu a
+      // todas as guardas e a todas as reversoes — os caminhos de recusa saem por
+      // `return` antes. So agora o estado e uma afirmacao do operador, e so agora
+      // a Fase da Conta pode virar evidencia historica.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+      save();
     });
   });
   cont.querySelectorAll('select').forEach(sel=>{
@@ -10769,18 +11242,26 @@ function renderPhases(){
       if(f==='status' && sel.value==='Aberta'){
         const prevStatus=o.status;
         o.status='Aberta'; // aplica temporariamente para as guardas considerarem esta ordem
+
+        // ---- GUARDAS PURAMENTE REJEITADORAS ----------------------------------
+        // Todas antes do nascimento: uma ordem RECUSADA jamais pode criar
+        // entidade. Nenhuma delas produz efeito colateral — só decidem se o ato
+        // acontece.
         let msg=null;
         if(!o.par) msg='🚫 Defina o PAR antes de marcar a ordem como Aberta — sem par o risco e o nocional ficam indefinidos.';
         if(!msg && !(o.sl>0) && o.lote>0) msg='🚫 Não é permitido abrir ordem sem stop — registre o SL antes de marcar como Aberta (Função de Auditoria / Estatuto).';
         if(!msg) msg=orderGateMsg(pi,oi);
-        if(!msg){
-          const check=checkPhaseCap(pi,oi);
-          if(check.excede){
-            handleStopLimitBreach(pi,oi,check);
-            msg=null;
-          }
+        if(msg){
+          o.status=prevStatus; // reverte
+          sel.value=prevStatus||'';
+          alert(msg);
+          return;
         }
-        if(!msg && shouldWarnManualRiskConfirmation()){
+        // Última rejeição possível. Ela ficava DEPOIS de handleStopLimitBreach,
+        // e foi trazida para cá porque um "não" do operador aqui reverteria uma
+        // abertura que já tinha destravado fase e carimbado evento — efeito
+        // colateral sobrevivendo a um ato recusado.
+        if(shouldWarnManualRiskConfirmation()){
           const ok=confirm('Você está prestes a registrar uma operação sem Equity Protector ativo. Confirme que o risco, o drawdown e a exposição foram verificados manualmente.');
           if(!ok){
             o.status=prevStatus;
@@ -10788,17 +11269,67 @@ function renderPhases(){
             return;
           }
         }
-        if(msg){
-          o.status=prevStatus; // reverte
-          sel.value=prevStatus||'';
-          alert(msg);
-          return;
-        }
+
+        // ---- ABERTURA ACEITA: A OPERAÇÃO NASCE AQUI --------------------------
+        // Depois da última guarda que pode rejeitar, e ANTES do primeiro efeito
+        // colateral que pertence à operação aceita.
+        //
+        // O nascimento vive neste laço de <select> — e não no de <input> — porque
+        // o campo Status é um <select>: o gancho que existia lá era código morto e
+        // a entidade jamais nascia pelo grid.
+        //
+        // A ORDEM IMPORTA. handleStopLimitBreach destrava fase e carimba o evento
+        // via operationStampTransition, que lê S.activeOperation. Com o nascimento
+        // depois dele, o destravamento provocado pela PRÓPRIA Gênese da operação
+        // era carimbado com operationId:null, operationResolveGridPhaseMax o
+        // descartava, e o registro imutável afirmava "Fase máxima da Grade: FASE 1"
+        // para uma operação que viveu inteira na FASE 2 — a fase que essa mesma
+        // ordem forçou. Não se reconstrói isso por cronologia: o vínculo tem de
+        // existir no instante do carimbo.
+        if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Aberta',pi,oi);
+
+        // ---- EFEITOS COLATERAIS DA OPERAÇÃO ACEITA ---------------------------
+        // Já existe identidade viva: o evento de destravamento nasce vinculado.
+        const check=checkPhaseCap(pi,oi);
+        if(check.excede) handleStopLimitBreach(pi,oi,check);
       } else if(f==='status' && sel.value==='Fechada'){
         const prevStatus=o.status;
         sel.value=prevStatus||''; // reverte visualmente até confirmar no modal
         openCloseOrderModal(pi,oi);
         return;
+      } else if(f==='status'){
+        // RETIRADA EXPLICITA da ordem do ciclo operacional. O unico valor que
+        // chega aqui pela interface e o vazio ('—'): 'Aberta' e 'Fechada' tem
+        // ramos proprios acima, e 'Migrada' so aparece na linha ja migrada,
+        // cujo <select> e readOnly.
+        const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
+        o.status = sel.value;
+        const aindaOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
+        if(eraOperacional && !aindaOperacional){
+          // Os carimbos da LINHA saem junto. Eles sao a evidencia de que ela
+          // pertenceu a operacao; mante-los fazia `jaPertencia` continuar
+          // verdadeiro na reabertura, o fail-safe de orfandade ser pulado, e a
+          // tese seguinte herdar operationId, openedAt e openedAtSource da
+          // anterior — o mesmo desfecho da exclusao, por outra porta.
+          delete o.openedAt;
+          delete o.closedAt;
+          // Mesma semantica do abandono por exclusao da ultima linha: se esta
+          // era a ultima evidencia operacional, a entidade nao sobrevive.
+          // NENHUM registro no Historico, NENHUMA consolidacao em
+          // cycleRealizado, NENHUM reset de fases. Nao e finalizacao e nao
+          // finge ser.
+          //
+          // Se sobram outras ordens da operacao, ela PERMANECE: retirar uma
+          // linha nao encerra a tese.
+          if(S.activeOperation && typeof operationLiveOrders==='function'
+             && operationLiveOrders().length===0){
+            if(typeof dgLogChange==='function'){
+              dgLogChange('operation','abandoned', S.activeOperation.operationId,
+                'Operação Única abandonada: última ordem operacional devolvida a estado não operacional');
+            }
+            S.activeOperation=null;
+          }
+        }
       } else if(f==='tipo'){
         const prevTipo=o.tipo;
         o.tipo=sel.value;
@@ -10831,6 +11362,22 @@ function renderPhases(){
             return;
           }
         }
+        // TROCA ACEITA. Sobreviveu a todas as guardas e sera persistida pelo
+        // save() terminal — os caminhos de recusa saem por `return` acima, com o
+        // par ja restaurado.
+        //
+        // Trocar o instrumento muda orderRisk() tanto quanto mudar o lote:
+        // depende de cpl e da conversao da moeda de cotacao. Logo muda o
+        // drawdown estatutario e PODE elevar a Fase da Conta. Medido nos
+        // defaults de fabrica: de USDJPY para EURUSD, com lote 0,05 e meio
+        // ponto de stop, o risco vai de 15,44 para 2.500 USD — de 0,04% para
+        // 6,25% do saldo, cruzando o teto de 4% da FASE 1.
+        //
+        // Enquanto a captura morava dentro de save(), esta saida a recebia. C
+        // repos a captura no laco de <input> e no ciclo de vida; o laco de
+        // <select> ficou sem nenhuma, e a conta podia subir de fase, recuar
+        // depois, e o registro imutavel afirmar um maximo inferior ao atingido.
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
       } else {
         S.phases[pi].orders[oi][f]=sel.value;
       }
@@ -12627,23 +13174,25 @@ function bindContab(){
     save(); renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
-  // arquivamento da operação (Art. 3.5§2) — consolida o resultado no ciclo e zera as grades
+  // Finalização da Operação Única (Art. 3.5§2). Este handler NÃO consolida
+  // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
+  //
+  // Até a Camada 2 este bloco era o próprio fluxo de arquivamento — consolidava
+  // cycleRealizado, empurrava o transitionLog, ZERAVA as grades e só então
+  // chamava save(), ignorando o retorno. Duas autoridades de consolidação
+  // significariam risco de dupla contabilização; uma ordem destrutiva antes da
+  // gravação significava perder a operação quando a gravação recusasse.
+  // O handler apenas ABRE a superfície de revisão. Coleta, validação,
+  // confirmação e chamada da autoridade vivem no modal — e a consolidação, no
+  // domínio. Dialogs nativos encadeados nao sao equivalentes a uma revisao que
+  // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
-    if(S.phases.some(ph=>ph.orders.some(o=>o.status==='Aberta'))){
-      alert('Ainda há posição aberta — a operação só é considerada encerrada quando não houver posição vinculada à tese (Art. 3.5 §2).');
+    const api=window.JPWOperation;
+    if(!api || typeof api.openReview!=='function'){
+      alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    const net=netOpAtual();
-    if(!confirm(`Arquivar a operação atual?\n\nResultado líquido a consolidar no ciclo: ${fmtMoney2(net)}\n\n· Perda realizada CONTINUA no drawdown do ciclo (Art. 3.4§2).\n· Lucro arquivado NÃO amplia limites de risco (Art. 4.3 — Ilusão do DDC).\n· As grades são zeradas e as Fases 2–4 retravadas.`)) return;
-    S.cycleRealizado=(S.cycleRealizado||0)+net;
-    S.transitionLog.push({fase:'operação arquivada', ts:new Date().toISOString(),
-      resumo:{resultado:net, cicloAcumulado:S.cycleRealizado}});
-    // auditoria resumida (JPW-HJFGDE §11); o transitionLog acima segue sendo o registro normativo
-    if(typeof dgLogChange==='function') dgLogChange('operation','archived','','Operação arquivada e resultado consolidado no ciclo');
-    const sizes=[5,4,3,2];
-    S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(sizes[pi]||3); });
-    S.phaseUnlocked=[true,false,false,false];
-    save(); render(); renderPhases(); renderLedger();
+    api.openReview();
   });
 }
 // ============ NAV ============
@@ -14390,6 +14939,19 @@ function openOnboardingModal(mode, initialStep){
     const cycleSizes=[5,4,3,2];
     S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(cycleSizes[pi]||3); });
     S.phaseUnlocked=[true,false,false,false];
+    // ABANDONO ADMINISTRATIVO da operação viva. Reiniciar o período destrói as
+    // grades que constituíam a Operação Única; a entidade não pode sobreviver a
+    // elas. Sem esta linha, a guarda `!S.activeOperation` do nascimento seria
+    // falsa na Gênese seguinte, e a operação NOVA herdaria operationId, openedAt
+    // e maxAccountPhaseReached da anterior — gravando no Histórico uma abertura
+    // de semanas atrás com proveniência automática e uma fase máxima que ela
+    // nunca atingiu.
+    //
+    // Isto NÃO é uma finalização: não gera registro histórico e não consolida
+    // nada em cycleRealizado (que este fluxo zera por outro motivo, o reinício
+    // do ciclo). Abandonar não é encerrar — encerrar formalmente é ato próprio,
+    // com revisão e confirmação FECHADO.
+    S.activeOperation=null;
     // S.quarantine é intencionalmente NÃO tocada aqui (preservação da quarentena — Estatuto V10).
     if(tinhaEstadoDeCiclo){
       S.transitionLog.push({fase:'ciclo zerado (novo período)', ts:new Date().toISOString(),
@@ -15942,6 +16504,12 @@ function emptyJPWealthState(){
   empty.ledgerArchive=[];
   empty.transitionLog=[];
   empty.cycleRealizado=0;
+  // Explícito, ainda que o clone de DEFAULTS já traga os dois assim: a mesma
+  // disciplina defensiva das linhas vizinhas. Se um dia DEFAULTS deixar de
+  // nascer com operação nula, a Finalização de Sessão continua limpando o
+  // ciclo de vida em vez de entregar uma sessão nova com operação fantasma.
+  empty.activeOperation=null;
+  empty.operationHistory=structuredClone(DEFAULTS.operationHistory);
   empty.quarantine=null;
   empty.riskPinHash=null;
   empty.phaseUnlocked=[true,false,false,false];
@@ -25276,7 +25844,11 @@ const EXEC_VIEWS = [
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
   // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
-  ['motor', 'motorWidgetGrid']
+  ['motor', 'motorWidgetGrid'],
+  // Historico: memoria institucional das Operacoes Unicas finalizadas. Consumidor
+  // somente leitura de S.operationHistory — nao recalcula fato historico algum a
+  // partir das grades vivas.
+  ['history', 'execHistory']
 ];
 // Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
 // HTML. NoCoda e Pivots derivam seus seletores do catalogo vivo do Motor de
@@ -25293,7 +25865,10 @@ const EXEC_VIEW_RENDERERS = {
   // 1 min), entao a entrada no workspace repinta a partir do dado corrente. O
   // dominio nao e consultado pela rede aqui — quem revalida e o ciclo do
   // proprio widget, em 15-ff-news.js.
-  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); }
+  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); },
+  // Repinta a cada entrada porque o conteudo depende de S.operationHistory, que
+  // muda quando uma operacao e finalizada noutra parte do app.
+  history: () => { if (window.JPWHistoryUI && typeof window.JPWHistoryUI.render === 'function') window.JPWHistoryUI.render(); }
 };
 const EXEC_DEFAULT_VIEW = 'overview';
 let execView = EXEC_DEFAULT_VIEW;
@@ -26948,6 +27523,1058 @@ function pvBind(root) {
 
 // Superfície pública consumida pelo controlador de views do Execution Board.
 window.JPWPivotsUI = { render: renderPivotStudies };
+// ============ OPERAÇÃO ÚNICA · FINALIZAÇÃO TRANSACIONAL (Camada 2 — N3) ============
+// Autoridade ÚNICA de encerramento. O arquivamento legado
+// (30-accounting/04-patrimonial-simulation.js) passou a delegar para cá; não
+// existem dois caminhos de consolidação, e por isso não existe risco de dupla
+// contabilização em cycleRealizado.
+//
+// A ordem do fluxo antigo era destrutiva: consolidava, empurrava o log, ZERAVA
+// as grades e só então chamava save() — cujo retorno era ignorado. Se a
+// gravação falhasse (modo de recuperação A-005, cota cheia, bloqueio de
+// persistência), a operação já tinha sido apagada da memória e nada dela
+// sobrevivia. Aqui a regra é a inversa: preservar primeiro, consolidar depois,
+// apagar por último — e apagar só dentro de um estado que já foi persistido.
+//
+// NADA de norma muda: netOpAtual() continua sendo a fórmula canônica do
+// resultado, cycleRealizado continua sendo "resultado líquido acumulado de
+// operações arquivadas no ciclo" e é incrementado exatamente UMA vez por
+// operação formalmente finalizada.
+
+const OPERATION_HISTORY_SCHEMA_VERSION = 1;
+const OPERATION_GRID_SIZES = [5, 4, 3, 2];
+
+// Guarda de reentrância NO DOMÍNIO, e não apenas na interface. Desabilitar o
+// botão protege contra o segundo clique; não protege contra uma segunda chamada
+// programática, e é a consolidação financeira que está em jogo.
+let operationFinalizeInFlight = false;
+
+// Uma ordem "existe" para efeito de operação quando tem status operacional.
+// Linha em branco não conta — nem para snapshot, nem para ordersCount.
+function operationOrderIsLive(o){
+  return !!o && (o.status === 'Aberta' || o.status === 'Fechada' || o.status === 'Migrada');
+}
+
+function operationLiveOrders(){
+  const out = [];
+  (S.phases || []).forEach((ph, pi) => {
+    ((ph && ph.orders) || []).forEach((o, oi) => { if (operationOrderIsLive(o)) out.push({ o, pi, oi }); });
+  });
+  return out;
+}
+
+// Pré-condições do encerramento (Art. 3.5§2 preservado).
+// Posição aberta BLOQUEIA, sem bypass. Grade inteiramente vazia não oferece o
+// que finalizar — e a ausência de operação não é erro, é ausência.
+function operationCanFinalize(){
+  const vivas = operationLiveOrders();
+  const abertas = vivas.filter(x => x.o.status === 'Aberta');
+  if (abertas.length) {
+    return { ok:false, motivo:'open_position', abertas: abertas.length,
+      mensagem:'A Operação não pode ser finalizada enquanto existir posição aberta vinculada à tese.' };
+  }
+  if (!vivas.length) {
+    return { ok:false, motivo:'no_operation',
+      mensagem:'Não há operação registrada nas grades para finalizar.' };
+  }
+  return { ok:true, ordens: vivas.length };
+}
+
+// Instrumento e direção vêm da operação, nunca de pergunta ao operador. Se as
+// ordens divergirem, o conflito é REPORTADO — escolher uma em silêncio criaria
+// memória histórica falsa.
+function operationResolveThesis(vivas){
+  const pares = [...new Set(vivas.map(x => String(x.o.par || '').trim().toUpperCase()).filter(Boolean))];
+  const tipos = [...new Set(vivas.map(x => String(x.o.tipo || '').trim().toUpperCase()).filter(Boolean))];
+  if (pares.length > 1) return { ok:false, motivo:'instrument_conflict', valores:pares };
+  if (tipos.length > 1) return { ok:false, motivo:'direction_conflict', valores:tipos };
+  return { ok:true, instrument: pares[0] || null, direction: tipos[0] || null };
+}
+
+// Fase da GRADE máxima, derivada dos eventos ESCOPADOS por operationId.
+//
+// A versão anterior recortava o transitionLog por janela temporal, aberta só na
+// borda inferior. O log é cumulativo e nunca podado, então transições de outras
+// operações — inclusive posteriores — entravam no cálculo e o registro histórico
+// ficava com uma fase que aquela operação nunca alcançou.
+//
+// Agora o vínculo é explícito: cada evento carrega o operationId da operação
+// viva no instante da transição, e só entram os que casam. Não há aproximação
+// por cronologia, por ordem dos eventos nem por proximidade do openedAt.
+//
+// Operação ADOTADA como legada: null. A vida dela anterior a esta versão
+// produziu eventos sem vínculo, e não existe delimitação inequívoca — atribuir
+// os eventos "que parecem dela" seria exatamente a heurística proibida.
+//
+// Operação nascida sob o regime novo e sem evento de destravamento: 0. Não é
+// suposição — é o contrato estrutural de que a Fase 1 está sempre destravada
+// (phaseUnlocked[0]) somado à certeza de que qualquer destravamento posterior
+// ao nascimento teria sido carimbado.
+function operationResolveGridPhaseMax(op){
+  if (!op || typeof op !== 'object') return null;
+  if (typeof op.operationId !== 'string' || !op.operationId) return null;
+  if (op.adoptedLegacyAt) return null;
+  let max = 0;
+  (S.transitionLog || []).forEach(ev => {
+    if (!ev || typeof ev !== 'object') return;
+    if (ev.operationId !== op.operationId) return;
+    const idx = (typeof ev.gridPhase === 'number' && Number.isFinite(ev.gridPhase)) ? ev.gridPhase : null;
+    if (idx === null) return;   // downgrade e alertas não carregam gridPhase
+    max = Math.max(max, Math.min(3, Math.floor(idx)));
+  });
+  return max;
+}
+
+// Uma operação não pode terminar antes de começar. Esta é a única regra
+// cronológica desta guarda: nada de idade máxima, horário de mercado, dias
+// úteis, duração mínima ou limite de calendário. Só a impossibilidade.
+const OPERATION_MSG_ABERTURA_AUSENTE='Informe a data/hora de abertura.';
+// Nem sucesso, nem falha comum. O texto NAO oferece "tente de novo": uma nova
+// tentativa gravaria, e gravar e exatamente o que nao se pode fazer enquanto o
+// desfecho da anterior for desconhecido.
+const OPERATION_MSG_DESFECHO_INDETERMINADO='Não foi possível determinar com segurança se a finalização foi persistida. Novas gravações foram bloqueadas para preservar a integridade dos dados. Não repita a operação: verifique o estado gravado antes de qualquer nova ação.';
+const OPERATION_MSG_CRONOLOGIA='A data/hora de abertura não pode ser posterior ao encerramento da operação.';
+
+// Fotografia INDEPENDENTE da operação, construída antes de qualquer destruição.
+// structuredClone por campo: o histórico jamais pode manter referência viva para
+// S.phases — mutar a próxima operação não pode reescrever a anterior.
+function operationBuildSnapshot(op, entrada){
+  const vivas = operationLiveOrders();
+  const tese = operationResolveThesis(vivas);
+  if (!tese.ok) return tese;
+
+  // openedAt legado: informado pelo operador, com proveniência explícita.
+  // Nunca Date.now() disfarçado de abertura histórica.
+  let openedAt = (typeof op.openedAt === 'string' && op.openedAt) ? op.openedAt : null;
+  let openedAtSource = op.openedAtSource || null;
+  if (!openedAt && entrada && typeof entrada.openedAtManual === 'string' && entrada.openedAtManual) {
+    const t = Date.parse(entrada.openedAtManual);
+    if (Number.isFinite(t)) { openedAt = new Date(t).toISOString(); openedAtSource = 'manual_legacy'; }
+  }
+
+  // typeof number, e não Number(): `Number(null) === 0` faria uma contagem
+  // AUSENTE virar "zero defesas informadas" — que é uma afirmação do operador,
+  // não um default. O mesmo vale para string vazia, que Number() também zera.
+  const defesas = (entrada && typeof entrada.defenseCount === 'number') ? entrada.defenseCount : NaN;
+  if (!Number.isFinite(defesas) || defesas < 0 || Math.floor(defesas) !== defesas) {
+    return { ok:false, motivo:'defense_count_invalid' };
+  }
+
+  // closedAt em variavel: a invariante precisa compara-lo com openedAt ANTES de
+  // existir registro. Carimbado aqui, no ato da construcao — em finalizeOperation
+  // isso e o instante efetivo da confirmacao.
+  const closedAt = new Date().toISOString();
+
+  // INTEGRIDADE CRONOLOGICA. Recusa e o unico desfecho: converter para null
+  // apagaria uma afirmacao do operador, corrigir automaticamente inventaria
+  // dado historico, e substituir por Date.now() seria o "agora disfarcado de
+  // abertura" que esta base recusa em todos os outros pontos. Igualdade e
+  // permitida — abrir e encerrar no mesmo instante e improvavel, nao impossivel.
+  if (openedAt && Date.parse(openedAt) > Date.parse(closedAt)) {
+    return { ok:false, motivo:'chronology_invalid',
+      openedAt, closedAt, mensagem: OPERATION_MSG_CRONOLOGIA };
+  }
+
+  const saldoIni = Number(S.params && S.params.saldoIni);
+  const record = {
+    schemaVersion: OPERATION_HISTORY_SCHEMA_VERSION,
+    operationId: op.operationId,
+
+    instrument: tese.instrument,
+    direction: tese.direction,
+
+    openedAt,
+    openedAtSource,
+    closedAt,
+    closedAtSource: 'formal_confirmation',
+
+    // Base do retorno CONGELADA no registro. Sem isso o retorno de uma operação
+    // passada mudaria quando o saldo atual mudasse — o histórico deixaria de ser
+    // histórico. O denominador precisa continuar auditável anos depois.
+    referenceBalance: Number.isFinite(saldoIni) && saldoIni > 0 ? saldoIni : null,
+    referenceBalanceType: 'cycle_initial_balance',
+
+    netResult: netOpAtual(), // fórmula canônica única — nunca reimplementada aqui
+
+    defenseCount: defesas,
+    // Não existe campo de papel na ordem; a taxonomia atual é POSICIONAL e
+    // frágil (splice promove outra linha a Gênese, o espelhamento duplica
+    // linhas). Contagem informada pelo operador, com a proveniência dita.
+    defenseCountSource: 'manual',
+
+    // operationPhaseIdxOrNull e nao `+op.…`: a coercao faria null virar 0 e
+    // gravar "Fase 1 observada" num registro IMUTAVEL, sobre uma operação cuja
+    // fase máxima nunca foi observada.
+    maxAccountPhaseReached: operationPhaseIdxOrNull(op.maxAccountPhaseReached),
+    // Qualidade epistemológica do campo acima, em TRÊS estados — porque três são
+    // os desfechos reais da captura, e o par observed/degraded os reduzia a dois:
+    //
+    //   observed    a captura ocorreu ao menos uma vez e o valor veio dela;
+    //   degraded    a captura FALHOU em algum momento, então o valor é o maior
+    //               CONHECIDO e pode subestimar o máximo absoluto;
+    //   unobserved  a captura nunca se aplicou — não há valor e não houve falha.
+    //
+    // `unobserved` não precisa de campo novo: é exatamente a ausência das duas
+    // evidências. Valor presente ⟺ alguma captura teve sucesso, porque
+    // operationTouchAccountPhase só grava quando o probe devolve índice.
+    //
+    // Sem o terceiro estado, uma operação cuja fase JAMAIS foi capturada era
+    // persistida como 'observed' — o registro imutável afirmava uma observação
+    // que nunca houve, que é a coerção que este projeto recusa em toda parte.
+    maxAccountPhaseIntegrity: op.phaseCaptureFault
+      ? 'degraded'
+      : (operationPhaseIdxOrNull(op.maxAccountPhaseReached) === null ? 'unobserved' : 'observed'),
+    phaseCaptureFault: op.phaseCaptureFault ? structuredClone(op.phaseCaptureFault) : null,
+
+    maxGridPhaseReached: operationResolveGridPhaseMax(op),
+
+    // Sem identidade estável de ordem no modelo atual: o campo `id` é texto
+    // livre do operador e a identidade de facto é posicional. Registramos a
+    // posição de origem E o texto, sem fingir que existe orderId.
+    ordersSnapshot: vivas.map(({ o, pi, oi }) => ({
+      phase: pi + 1,
+      gridIndex: oi,
+      label: typeof o.id === 'string' ? o.id : '',
+      par: o.par || '', tipo: o.tipo || '',
+      lote: +o.lote || 0, entry: +o.entry || 0, sl: +o.sl || 0, tp: +o.tp || 0,
+      result: +o.result || 0, status: o.status || '',
+      openedAt: (typeof o.openedAt === 'string' && o.openedAt) ? o.openedAt : null,
+      closedAt: (typeof o.closedAt === 'string' && o.closedAt) ? o.closedAt : null
+    })),
+
+    finalizedAt: new Date().toISOString()
+  };
+  if (op.adoptedLegacyAt) record.adoptedLegacyAt = op.adoptedLegacyAt;
+  return { ok:true, record };
+}
+
+// Validação do próximo estado ANTES de ele virar o estado vivo. O que se checa
+// aqui é exatamente o que não pode acontecer duas vezes nem pela metade.
+function operationValidateCandidate(candidato, anterior, record){
+  const antesN = ((anterior.operationHistory || {}).records || []).length;
+  const depoisN = ((candidato.operationHistory || {}).records || []).length;
+  if (depoisN !== antesN + 1) return { ok:false, motivo:'history_not_appended' };
+
+  const ids = (candidato.operationHistory.records || []).map(r => r && r.operationId);
+  if (new Set(ids).size !== ids.length) return { ok:false, motivo:'duplicate_operation_id' };
+
+  const esperado = (+anterior.cycleRealizado || 0) + (+record.netResult || 0);
+  if (Math.abs((+candidato.cycleRealizado || 0) - esperado) > 1e-9) {
+    return { ok:false, motivo:'cycle_not_consolidated_once' };
+  }
+  if (candidato.activeOperation !== null) return { ok:false, motivo:'operation_not_cleared' };
+
+  const sobrou = (candidato.phases || []).some(ph => ((ph && ph.orders) || []).some(operationOrderIsLive));
+  if (sobrou) return { ok:false, motivo:'grid_not_reset' };
+  return { ok:true };
+}
+
+// Pergunta ao DISCO se ESTE registro chegou lá. É a única fonte capaz de decidir
+// o desfecho quando save() lança: a pilha não diz se a exceção veio antes ou
+// depois do setItem, e adivinhar erraria metade das vezes.
+//
+// Compara operationId E finalizedAt, não só o id. Um registro anterior com o
+// mesmo operationId — de outra aba que finalizou primeiro, ou de um documento
+// que já continha aquela operação — passaria por um teste só de id e faria a
+// função afirmar que gravamos o que não gravamos. finalizedAt é gerado na
+// construção deste snapshot e distingue o nosso registro de qualquer outro.
+//
+// Qualquer dúvida devolve false: storage indisponível, JSON inválido, documento
+// vazio ou envelope de forma inesperada. Falso negativo faz reverter, que é o
+// desfecho compatível com a mensagem dada ao operador ("nada foi alterado"); e
+// o estado converge no próximo carregamento, porque o disco é a fonte da
+// verdade e um documento que contenha o registro trará activeOperation nula.
+// DESFECHO DA GRAVAÇÃO, em três estados — porque três são os desfechos reais e
+// a versão anterior devolvia booleano:
+//
+//   CONFIRMED      há evidência POSITIVA no disco de que ESTA tentativa gravou;
+//   NOT_PERSISTED  há evidência positiva de que ela NÃO gravou;
+//   UNKNOWN        não foi possível provar nem uma coisa nem outra.
+//
+// O booleano anterior colapsava UNKNOWN em NOT_PERSISTED — inclusive num
+// `catch(_){ return false; }` que transformava leitura impossível em prova de
+// ausência. Daí saía o pior cenário que este sistema pode produzir: setItem
+// grava a finalização, uma exceção posterior interrompe o fluxo, a leitura de
+// volta falha, o sistema conclui "não gravou", desfaz a memória para a operação
+// ativa e o próximo save() sobrescreve o disco — a finalização persistida
+// desaparece sem que ninguém saiba que existiu.
+//
+// A confirmação exige operationId E finalizedAt. Só o operationId não basta:
+// uma tentativa ANTERIOR da mesma operação pode ter gravado, e confirmar por
+// identidade daria como persistida uma tentativa que não foi esta.
+function operationProbePersisted(record){
+  if (!record || typeof record !== 'object' ||
+      typeof record.operationId !== 'string' || typeof record.finalizedAt !== 'string') {
+    // Sem pergunta bem formada não há resposta provada. Nunca NOT_PERSISTED.
+    return 'UNKNOWN';
+  }
+  let raw;
+  try{
+    const chave = (typeof LSKEY === 'string' && LSKEY) ? LSKEY : 'jpwealth_v9_state';
+    raw = localStorage.getItem(chave);
+  }catch(_){
+    return 'UNKNOWN';   // armazenamento inacessível: nada se prova
+  }
+  // Documento ausente é prova de ausência do registro: ele não pode estar num
+  // documento que não existe.
+  if (raw === null || raw === undefined || raw === '') return 'NOT_PERSISTED';
+  if (typeof raw !== 'string') return 'UNKNOWN';
+  let doc;
+  try{ doc = JSON.parse(raw); }
+  catch(_){ return 'UNKNOWN'; }   // ilegível depois de uma escrita possível
+  if (!doc || typeof doc !== 'object' || Array.isArray(doc)) return 'UNKNOWN';
+  const env = doc.operationHistory;
+  // Documento legível SEM o envelope: é um documento anterior a esta feature, ou
+  // anterior à gravação. O registro comprovadamente não está lá — o candidato
+  // sempre carrega operationHistory, então o que foi lido não é o que teríamos
+  // acabado de gravar.
+  if (!env || typeof env !== 'object' || !Array.isArray(env.records)) return 'NOT_PERSISTED';
+  let achou;
+  try{
+    achou = env.records.some(r =>
+      r && typeof r === 'object' &&
+      r.operationId === record.operationId &&
+      r.finalizedAt === record.finalizedAt);
+  }catch(_){ return 'UNKNOWN'; }
+  return achou ? 'CONFIRMED' : 'NOT_PERSISTED';
+}
+
+// Compatibilidade: verdadeiro SOMENTE com confirmação positiva. UNKNOWN nunca
+// vira "sim", e também nunca vira "não" para quem consulta o desfecho completo.
+function operationPersistedHas(record){
+  return operationProbePersisted(record) === 'CONFIRMED';
+}
+
+// ---- TRANSAÇÃO ----
+// ou toda a finalização acontece, ou nada acontece.
+function finalizeOperation(entrada){
+  if (operationFinalizeInFlight) return { ok:false, motivo:'in_flight' };
+  operationFinalizeInFlight = true;
+  try{
+    const pre = operationCanFinalize();
+    if (!pre.ok) return pre;
+
+    // A identidade NÃO é fabricada aqui. Ela pertence ao ciclo de vida
+    // (operationOnOrderStatus, no ato em que a operação passa a existir) e à
+    // migração (adoção de legado em operationNormalizeState). Uma operação viva
+    // que chega aqui sem entidade é violação de estado, não caso a remediar:
+    // criar o id neste ponto mutaria o estado de ENTRADA de uma transação que
+    // ainda pode falhar, e a tentativa seguinte geraria outro id — a Operação
+    // Única trocaria de identidade conforme o número de tentativas.
+    const op = S.activeOperation;
+    if (!op || typeof op !== 'object') {
+      return { ok:false, motivo:'no_identity',
+        mensagem:'A operação não tem identidade registrada. Recarregue a página para que a normalização a estabeleça antes de finalizar.' };
+    }
+
+    // IDEMPOTÊNCIA: mesmo operationId já no histórico ⇒ nada acontece de novo.
+    // Sem isto, um segundo disparo criaria segundo registro, somaria
+    // cycleRealizado outra vez e faria segundo reset.
+    const jaFinalizada = ((S.operationHistory || {}).records || []).some(r => r && r.operationId === op.operationId);
+    if (jaFinalizada) return { ok:false, motivo:'already_finalized', operationId: op.operationId };
+
+    // AQUI NAO SE CAPTURA. A observacao da Fase da Conta acontece no checkpoint
+    // explicito de openFinalizeOperationModal, ANTES de a revisao ser montada.
+    // Capturar neste ponto fazia a confirmacao alterar em silencio campos que o
+    // operador acabara de revisar — maxAccountPhaseReached,
+    // maxAccountPhaseIntegrity e phaseCaptureFault —, reabrindo a invariante
+    // "revisao = snapshot" fixada em ba3be3a.
+    const snap = operationBuildSnapshot(op, entrada);
+    if (!snap.ok) return snap;
+
+    // Candidato INDEPENDENTE. A partir daqui nada toca o estado vivo até a troca.
+    const anterior = S;
+    const candidato = structuredClone(S);
+    candidato.operationHistory.records.push(snap.record);
+    candidato.cycleRealizado = (+candidato.cycleRealizado || 0) + (+snap.record.netResult || 0);
+    candidato.transitionLog.push({
+      fase: 'operação finalizada',
+      ts: snap.record.closedAt,
+      // Vinculo explicito tambem aqui: o evento de encerramento pertence a esta
+      // operacao e nao pode ser confundido com o de outra na auditoria.
+      operationId: snap.record.operationId,
+      resumo: { operationId: snap.record.operationId, resultado: snap.record.netResult,
+                cicloAcumulado: candidato.cycleRealizado }
+    });
+    // Trilha de auditoria DENTRO do candidato, e não depois do save(). O
+    // recordId e o operationId real — nao existe segunda identidade so para
+    // auditoria. O log legado gravava recordId VAZIO e o evento ficava sem
+    // ancora; agora ele aponta para a operacao que encerrou.
+    if (typeof dgLogChange === 'function') {
+      dgLogChange('operation', 'finalized', snap.record.operationId,
+        'Operação Única finalizada e preservada no Histórico', candidato);
+    }
+    candidato.phases.forEach((ph, pi) => { ph.orders = emptyOrders(OPERATION_GRID_SIZES[pi] || 3); });
+    candidato.phaseUnlocked = [true, false, false, false];
+    candidato.activeOperation = null;
+
+    const val = operationValidateCandidate(candidato, anterior, snap.record);
+    if (!val.ok) return val;
+
+    // Troca e persistência. save() serializa a global, então o candidato precisa
+    // ser o S no instante da gravação.
+    //
+    // save() DEVOLVE false nas duas falhas previstas (serialização e
+    // armazenamento), mas também PODE LANÇAR: o tratamento de erro dele chama
+    // renderPersistenceFailureWarning(), que toca DOM, e o caminho de sucesso
+    // chama clearPersistenceFailureState(). Sem o try, uma exceção escaparia
+    // depois de S já ser o candidato — grades zeradas em memória, nada gravado.
+    //
+    // O rollback não pode ser cego: se a exceção vier DEPOIS de a gravação ter
+    // ocorrido, reverter faria a memória divergir do disco no sentido oposto, e
+    // o próximo save() apagaria a finalização já persistida. Por isso o desfecho
+    // é decidido pelo DISCO, não pela pilha: lê-se de volta o documento e
+    // pergunta-se se o registro está lá.
+    S = candidato;
+    let desfecho;
+    try {
+      // save() === false é PROVA de não-escrita: os portões retornam antes de
+      // tocar no armazenamento, o erro de serialização retorna antes do setItem,
+      // e setItem é atômico — se lançou, nada foi gravado. A ambiguidade vive
+      // exclusivamente no caminho de EXCEÇÃO, que pode vir de antes da escrita
+      // (setPersistenceFailureState) ou de depois dela (clearPersistenceFailureState,
+      // repintura, timer).
+      desfecho = (save() === true) ? 'CONFIRMED' : 'NOT_PERSISTED';
+    } catch (e) {
+      desfecho = operationProbePersisted(snap.record);
+      const detalhe = String((e && e.message) || e);
+
+      if (desfecho === 'UNKNOWN') {
+        // TERCEIRO DESFECHO. Não se reverte às cegas e não se declara nada.
+        //
+        // A memória FICA no candidato — que é o que o disco pode conter —, e
+        // toda gravação futura é vetada por uma barreira própria. Reverter aqui
+        // seria apostar que a escrita não ocorreu; se tiver ocorrido, o próximo
+        // save() apagaria uma finalização já persistida, e memória e disco
+        // passariam a discordar sobre se uma operação financeira foi encerrada.
+        //
+        // Congelar preserva as duas possibilidades e transfere o desempate para
+        // quem pode inspecionar o disco: uma pessoa.
+        markJPWealthPersistenceOutcomeUnknown(
+          'finalização de ' + snap.record.operationId + ': ' + detalhe);
+        return { ok:false, motivo:'persist_outcome_unknown', bloqueado:true,
+          operationId: snap.record.operationId, erro: detalhe,
+          mensagem: OPERATION_MSG_DESFECHO_INDETERMINADO };
+      }
+
+      if (desfecho === 'NOT_PERSISTED') {
+        S = anterior;
+        return { ok:false, motivo:'persist_exception', erro: detalhe,
+          mensagem:'A finalização foi cancelada: a gravação falhou. Nada foi alterado.' };
+      }
+
+      // CONFIRMED: gravou e só então lançou (repintura de aviso, timer). O estado
+      // vivo já corresponde ao disco; reverter é que criaria a divergência. A
+      // exceção é falha de efeito colateral, e não da finalização.
+      if (typeof console !== 'undefined' && console.error) {
+        console.error('[operação] finalização persistida, mas o pós-processamento de save() lançou:', e);
+      }
+    }
+    if (desfecho !== 'CONFIRMED') {
+      S = anterior;
+      return { ok:false, motivo:'persist_failed',
+        mensagem:'A finalização foi cancelada: o estado não pôde ser gravado. Nada foi alterado.' };
+    }
+    return { ok:true, record: snap.record };
+  } finally {
+    operationFinalizeInFlight = false;
+  }
+}
+
+// ---- SUPERFÍCIE DE REVISÃO (Camada 2B) ----
+// A revisão faz parte do protocolo de segurança, não do acabamento: dialogs
+// nativos encadeados não são equivalentes a uma superfície que mostra a
+// operação inteira antes de destruí-la. Reutiliza o modal do projeto
+// (#modalOverlay/#modalBox, closeModal) — nenhum sistema paralelo.
+//
+// A UI NÃO consolida nada. Ela coleta, revisa e chama finalizeOperation();
+// quem decide é o domínio.
+
+function operationFmtDuration(openedAt, closedAt){
+  const a=Date.parse(openedAt), b=Date.parse(closedAt);
+  if(!Number.isFinite(a) || !Number.isFinite(b) || b<a) return '—';
+  const min=Math.floor((b-a)/60000);
+  const d=Math.floor(min/1440), h=Math.floor((min%1440)/60), m=min%60;
+  if(d) return d+'d '+h+'h';
+  if(h) return h+'h '+String(m).padStart(2,'0')+'min';
+  return m+'min';
+}
+
+function operationFmtPhase(idx){
+  // typeof, e não coerção: `+null === 0` mostraria "Fase 1" na revisão para um
+  // máximo que nunca foi observado, e o operador confirmaria uma afirmação
+  // falsa sobre o passado.
+  if(typeof idx!=='number' || !Number.isFinite(idx)) return '—';
+  const f=(S.matrix||[])[+idx];
+  return (f && f.nome) ? f.nome : ('Fase '+((+idx)+1));
+}
+
+function operationReviewRow(rotulo, valor){
+  return '<div class="modal-q"><div class="ql">'+esc(rotulo)+'</div><div class="op-final-val">'+esc(valor)+'</div></div>';
+}
+
+// Leitura ÚNICA do campo de defesas. A revisão e a confirmação precisam
+// interpretar o texto digitado exatamente do mesmo jeito; duas regras de parse
+// seriam duas respostas possíveis para "quantas defesas serão gravadas".
+// NaN significa AUSENTE — nunca 0. Zero defesas é afirmação do operador.
+function operationParseDefenses(txt){
+  const t=String(txt==null?'':txt).trim();
+  return /^\d+$/.test(t) ? parseInt(t,10) : NaN;
+}
+
+// Bloco de leitura da revisão, montado a partir de um registro JÁ construído.
+// Recebe o record que seria persistido AGORA com as entradas correntes, e não
+// valores soltos: o que o operador lê é o snapshot, não uma paráfrase dele.
+function operationReviewHTML(r, defesas){
+  const retorno=(r.referenceBalance>0)?((r.netResult/r.referenceBalance)*100).toFixed(2)+'%':'—';
+  const degradada=r.maxAccountPhaseIntegrity==='degraded';
+  const naoObservada=r.maxAccountPhaseIntegrity==='unobserved';
+  const abertura=r.openedAt
+    ? (new Date(r.openedAt).toLocaleString('pt-BR')+(r.openedAtSource==='manual_legacy'?' (informada manualmente)':''))
+    : 'Desconhecida';
+  return operationReviewRow('Instrumento', r.instrument||'—')+
+    operationReviewRow('Direção', r.direction||'—')+
+    operationReviewRow('Abertura', abertura)+
+    // closedAt é capturado no instante EFETIVO da confirmação. Exibir aqui um
+    // horário de aparência definitiva e gravar outro quarenta segundos depois
+    // seria a mesma divergência que este bloco existe para eliminar. O contrato
+    // é dito em vez de simulado.
+    operationReviewRow('Encerramento formal', 'Registrado no instante da confirmação')+
+    operationReviewRow('Duração até agora', r.openedAt?operationFmtDuration(r.openedAt,r.closedAt):'—')+
+    operationReviewRow('Ordens da operação', String(r.ordersSnapshot.length))+
+    operationReviewRow('Resultado líquido', fmtMoney2(r.netResult))+
+    // A base do retorno e CONGELADA no registro e deriva de um parametro manual
+    // (saldo inicial do ciclo). Mostrar so a porcentagem escondia o denominador
+    // que sera auditado anos depois — 250/10000 e 250/12500 sao aprovacoes
+    // diferentes que produziam a mesma linha de leitura.
+    operationReviewRow('Base do retorno', r.referenceBalance==null?'—':fmtMoney2(r.referenceBalance))+
+    operationReviewRow('Retorno sobre a base do ciclo', retorno)+
+    // AUSENTE e ZERO são estados distintos e ambos visíveis. "Não informado"
+    // jamais é persistido: finalizeOperation recusa antes de chegar ao disco.
+    operationReviewRow('Defesas informadas', Number.isFinite(defesas)?String(defesas):'Não informado')+
+    operationReviewRow('Fase máxima da Conta', operationFmtPhase(r.maxAccountPhaseReached))+
+    operationReviewRow('Fase máxima da Grade', r.maxGridPhaseReached==null?'—':operationFmtPhase(r.maxGridPhaseReached))+
+    (degradada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Degradada</b></div>'+
+      '<div class="modal-sub">Houve falha de captura durante esta operação. O valor acima é o maior <b>conhecido</b>, não necessariamente o máximo absoluto atingido. A finalização não é bloqueada por isso.</div></div>')
+    :naoObservada?('<div class="modal-q" data-qid="integridade"><div class="ql">Integridade da Fase máxima da Conta: <b>Não observada</b></div>'+
+      '<div class="modal-sub">A captura nunca se aplicou durante esta operação, e nenhuma falha foi registrada. O registro guardará a ausência como ausência — não como Fase 1 nem como medição concluída. A finalização não é bloqueada por isso.</div></div>'):'');
+}
+
+function openFinalizeOperationModal(){
+  const pre=operationCanFinalize();
+  const box=$('modalBox');
+  $('modalOverlay').classList.add('show');
+  if(!pre.ok){
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">'+esc(pre.mensagem||'A operação não pode ser finalizada agora.')+'</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  // Entidade AUSENTE nao vira entidade de fachada. O placeholder anterior
+  // ('(sera gerado na confirmacao)') era string nao-vazia, entao atravessava a
+  // guarda de operationResolveGridPhaseMax — que existe para devolver null
+  // quando NAO ha identidade — e a revisao passava a afirmar uma Fase maxima da
+  // Grade sobre uma entidade que nao existe. Pior: montava a revisao inteira,
+  // com botao de finalizar, para um estado que finalizeOperation recusa por
+  // no_identity. O operador preencheria abertura e defesas para so entao
+  // descobrir que nada seria gravado.
+  //
+  // Registro do que NAO se afirma aqui: numa grade sem evento de destravamento
+  // carimbado, uma identidade legitima tambem produz 0 — esse zero e o contrato
+  // documentado da funcao, nao efeito do placeholder. O defeito e afirmar
+  // qualquer coisa sobre uma entidade inexistente e prometer um registro que
+  // jamais sera gravado.
+  const op=S.activeOperation;
+  if(!op || typeof op!=='object'){
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">A operação não tem identidade registrada. Recarregue a página para que a normalização a estabeleça antes de finalizar.</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  // CHECKPOINT EXPLICITO. Pedir a finalizacao e um ato do operador, e e AQUI que
+  // a Fase da Conta e observada — uma vez so, antes de qualquer record existir.
+  // Dai em diante a revisao e a confirmacao leem o mesmo valor, e a confirmacao
+  // nao tem como alterar em silencio o que acabou de ser revisado.
+  //
+  // Cancelar nao desfaz esta observacao, e isso e correto: a fase daquele
+  // instante existiu de verdade. O que nao pode existir e revisao e registro
+  // divergindo.
+  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+
+  // PRÉVIA: construída só para ser lida. buildSnapshot não muta estado algum.
+  const previa=operationBuildSnapshot(op,{defenseCount:0});
+  if(!previa.ok && (previa.motivo==='instrument_conflict' || previa.motivo==='direction_conflict')){
+    const qual=previa.motivo==='instrument_conflict'?'instrumentos':'direções';
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">As ordens desta operação têm '+esc(qual)+' divergentes: <b>'+esc(previa.valores.join(' · '))+'</b>.<br>'+
+      'A finalização está bloqueada. O sistema não escolhe um valor por você — isso criaria memória histórica falsa.</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  if(!previa.ok){
+    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
+      '<div class="modal-sub">Não foi possível montar a revisão ('+esc(previa.motivo)+').</div>'+
+      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
+    $('modalCancel').addEventListener('click',closeModal);
+    $('modalCancel').focus();
+    return;
+  }
+  // Legado é propriedade da ENTIDADE, não do registro repintado: assim que o
+  // operador digita a data, o record passa a ter openedAt, e recalcular a
+  // partir dele faria o próprio campo de entrada desaparecer sob os dedos.
+  const legada=!(typeof op.openedAt==='string' && op.openedAt);
+
+  box.innerHTML=
+    '<h3>Finalizar Operação Única</h3>'+
+    '<div class="modal-sub">Encerra formalmente a tese, preserva a operação no Histórico, consolida o resultado no ciclo e libera as grades. '+
+    'Diferente de <b>fechar uma ordem</b>, que encerra apenas uma posição individual.</div>'+
+    '<div id="finalReview"></div>'+
+    (legada?('<div class="modal-q" data-qid="abertura"><div class="ql">Data/hora de abertura da operação — obrigatória, pois não foi registrada automaticamente:</div>'+
+      '<input type="datetime-local" id="finalOpenedAt"><div class="modal-err">'+esc(OPERATION_MSG_ABERTURA_AUSENTE)+'</div></div>'):'')+
+    '<div class="modal-q" data-qid="defesas"><div class="ql">Número de defesas realizadas (inteiro ≥ 0):</div>'+
+    '<input type="text" inputmode="numeric" id="finalDefenses" autocomplete="off" placeholder="informe">'+
+    '<div class="modal-sub">O modelo de ordens não classifica defesa; a contagem é informada e fica registrada como tal.</div>'+
+    '<div class="modal-err">Informe um inteiro maior ou igual a zero.</div></div>'+
+    '<div class="modal-q" data-qid="confirmtxt"><div class="ql">Digite <b>FECHADO</b> para confirmar:</div>'+
+    '<input type="text" id="finalConfirm" autocomplete="off"><div class="modal-err">Precisa digitar exatamente "FECHADO".</div></div>'+
+    '<div class="modal-q" data-qid="falha" hidden><div class="modal-err show" id="finalFail"></div></div>'+
+    '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Cancelar</button>'+
+    '<button class="modal-btn confirm" id="modalConfirm">Finalizar Operação</button></div>';
+
+  const inAbertura=legada?box.querySelector('#finalOpenedAt'):null;
+  const inDefesas=box.querySelector('#finalDefenses');
+  const revisao=box.querySelector('#finalReview');
+
+  const erro=(qid,on)=>{ const n=box.querySelector('[data-qid="'+qid+'"] .modal-err'); if(n) n.classList.toggle('show',!!on); };
+  // O campo de abertura tem DOIS motivos de recusa — ausente e cronologicamente
+  // impossivel — e dizer "informe a data" para quem ja informou seria mentir
+  // sobre o que esta errado.
+  const msgAbertura=txt=>{ const n=box.querySelector('[data-qid="abertura"] .modal-err'); if(n) n.textContent=txt; };
+
+  // ENTRADA CORRENTE: exatamente o objeto que finalizeOperation receberá. A
+  // revisão e a confirmação leem a mesma fonte, então não existe o caso de o
+  // operador aprovar um registro e outro ser gravado.
+  const entradaCorrente=()=>({
+    defenseCount: operationParseDefenses(inDefesas.value),
+    openedAtManual: legada?String(inAbertura.value||'').trim():''
+  });
+
+  // REPINTURA da revisão a cada alteração de entrada manual. Só o bloco de
+  // leitura é reescrito: recriar os <input> destruiria o foco e o texto já
+  // digitado a cada tecla.
+  function repintarRevisao(){
+    const ent=entradaCorrente();
+    // defenseCount ausente faria buildSnapshot recusar, e as demais linhas
+    // ficariam sem revisão nenhuma. Nenhum outro campo do registro deriva de
+    // defenseCount, então a construção usa 0 só para destravar o restante — o
+    // valor MOSTRADO é o real, e "não informado" nunca chega ao disco.
+    const p=operationBuildSnapshot(op,{
+      defenseCount: Number.isFinite(ent.defenseCount)?ent.defenseCount:0,
+      openedAtManual: ent.openedAtManual
+    });
+    // '—' significa dado INDISPONIVEL. Cronologia impossivel e dado
+    // CONTRADITORIO — estados epistemicamente distintos, que nao podem ter a
+    // mesma apresentacao. A revisao diz qual e o problema.
+    const cronoInvalida = !p.ok && p.motivo==='chronology_invalid';
+    revisao.innerHTML=p.ok
+      ? operationReviewHTML(p.record, ent.defenseCount)
+      : (cronoInvalida
+          ? '<div class="modal-err show">'+esc(p.mensagem)+'</div>'
+          : '<div class="modal-err show">Não foi possível montar a revisão ('+esc(p.motivo)+').</div>');
+    if(cronoInvalida){ msgAbertura(OPERATION_MSG_CRONOLOGIA); erro('abertura',true); }
+    // A validacao acompanha a revisao. Ligar so a leitura ao evento fazia o
+    // modal afirmar duas coisas ao mesmo tempo: a linha "Abertura" ja exibindo
+    // a data informada e, tres centimetros abaixo, a mensagem vermelha dizendo
+    // que o campo esta ausente. O erro so e APAGADO quando a entrada passa a
+    // ser valida; nunca aceso aqui, porque acusar antes da confirmacao seria
+    // reclamar de um campo que o operador ainda esta preenchendo.
+    if(Number.isFinite(ent.defenseCount)) erro('defesas',false);
+    if(legada && ent.openedAtManual && Number.isFinite(Date.parse(ent.openedAtManual)) && !cronoInvalida){
+      msgAbertura(OPERATION_MSG_ABERTURA_AUSENTE); erro('abertura',false);
+    }
+  }
+  repintarRevisao();
+  // 'change' alem de 'input': o seletor nativo de data e o preenchimento
+  // automatico nem sempre emitem os dois, e uma revisao defasada de um campo
+  // ja alterado e precisamente o defeito que este bloco elimina.
+  ['input','change'].forEach(ev=>{
+    if(inAbertura) inAbertura.addEventListener(ev,repintarRevisao);
+    inDefesas.addEventListener(ev,repintarRevisao);
+  });
+
+  $('modalCancel').addEventListener('click',closeModal);
+  const btn=$('modalConfirm');
+  btn.addEventListener('click',()=>{
+    if(btn.disabled) return; // reentrância: o segundo clique não passa
+    erro('defesas',false); erro('confirmtxt',false); if(legada) erro('abertura',false);
+    let falhou=false;
+    // Campo VAZIO não vira 0 em silêncio: zero defesas é uma afirmação do
+    // operador, e precisa ser digitada. Mesmo parse da revisão.
+    const ent=entradaCorrente();
+    if(!Number.isFinite(ent.defenseCount)){ erro('defesas',true); falhou=true; }
+    if(legada && (!ent.openedAtManual || !Number.isFinite(Date.parse(ent.openedAtManual)))){
+      msgAbertura(OPERATION_MSG_ABERTURA_AUSENTE); erro('abertura',true); falhou=true;
+    }
+    // A interface PERGUNTA ao domínio em vez de reimplementar a comparação: a
+    // mesma função que constrói o registro decide se ele é possível, então as
+    // duas pontas não podem divergir. A proteção real vive em
+    // operationBuildSnapshot e vale mesmo para quem chame finalizeOperation
+    // direto, sem passar por esta tela.
+    if(!falhou){
+      const prova=operationBuildSnapshot(op,{
+        defenseCount: Number.isFinite(ent.defenseCount)?ent.defenseCount:0,
+        openedAtManual: ent.openedAtManual
+      });
+      if(!prova.ok && prova.motivo==='chronology_invalid'){
+        msgAbertura(prova.mensagem); erro('abertura',true); falhou=true;
+      }
+    }
+    if(String(box.querySelector('#finalConfirm').value||'').trim()!=='FECHADO'){ erro('confirmtxt',true); falhou=true; }
+    if(falhou) return;
+
+    btn.disabled=true;
+    const res=finalizeOperation(ent);
+    if(!res.ok){
+      // Falha NÃO fecha o modal comunicando sucesso. A operação continua viva
+      // e o operador pode tentar de novo.
+      const cx=box.querySelector('[data-qid="falha"]');
+      const msg=box.querySelector('#finalFail');
+      if(cx&&msg){ msg.textContent=res.mensagem||('A finalização não foi concluída ('+res.motivo+'). Nada foi alterado.'); cx.hidden=false; }
+      if(res.motivo==='persist_outcome_unknown'){
+        // O botão NÃO volta a ficar disponível. Nada aqui pode ser tentado de
+        // novo: uma segunda tentativa gravaria, e gravar é justamente o que
+        // destruiria o estado que a barreira existe para preservar. Também não
+        // se repinta a revisão — ela descreveria uma transação cujo desfecho
+        // ninguém conhece.
+        return;
+      }
+      btn.disabled=false;
+      // O modal continua aberto para nova tentativa, e ela pode acontecer muito
+      // depois. Sem repintar, a revisao reaprovada ficaria carimbada na ultima
+      // tecla digitada enquanto o registro receberia o closedAt da reconfirmacao.
+      repintarRevisao();
+      return;
+    }
+    closeModal();
+    if(typeof render==='function') render();
+    if(typeof renderPhases==='function') renderPhases();
+    if(typeof renderLedger==='function') renderLedger();
+  });
+  const foco=legada?inAbertura:inDefesas;
+  if(foco) foco.focus();
+}
+
+// Superfície pública consumida pela interface (Painel Operacional) e pelos
+// testes. O domínio não conhece DOM; a revisão é a única parte que o conhece.
+window.JPWOperation = {
+  canFinalize: operationCanFinalize,
+  buildSnapshot: operationBuildSnapshot,
+  finalize: finalizeOperation,
+  liveOrders: operationLiveOrders,
+  openReview: openFinalizeOperationModal
+};
+// ============ HISTÓRICO DE OPERAÇÕES ÚNICAS (Camada 3 — N1, leitura) ============
+// Workspace do Execution Board. Consumidor ESTRITAMENTE somente leitura de
+// S.operationHistory.records: nada aqui recalcula um fato histórico a partir das
+// grades vivas. Resultado, timestamps, fases, defesas, ordens e referenceBalance
+// vêm do snapshot que a Camada 2 preservou.
+//
+// A razão é a que sustenta o projeto inteiro: o estado atual da conta não pode
+// reescrever o passado. Se o saldo mudar hoje, o retorno de uma operação
+// encerrada em maio continua o mesmo, porque o denominador está congelado no
+// registro.
+//
+// Selecionar, filtrar, ordenar, buscar e abrir detalhe são estado de
+// APRESENTAÇÃO — vivem em variáveis de módulo e nunca entram em S, storage,
+// backup, schema ou migração.
+
+// var, e não const/let: mesmo motivo documentado em 17-economic-calendar.js —
+// no monólito este arquivo pode ser alcançado por chamada de outro script antes
+// de avaliar, e o nome precisa existir como undefined em vez de estourar na TDZ.
+var histState = { instrument:'all', direction:'all', result:'all', query:'', selected:null };
+
+function histRecords(){
+  const h = S.operationHistory;
+  return (h && Array.isArray(h.records)) ? h.records : [];
+}
+
+// ---- derivações puras sobre o snapshot (nunca sobre as grades) ----
+function histDurationMs(r){
+  const a = Date.parse(r && r.openedAt), b = Date.parse(r && r.closedAt);
+  return (Number.isFinite(a) && Number.isFinite(b) && b >= a) ? (b - a) : null;
+}
+function histFmtDuration(ms){
+  if (ms == null) return '—';
+  const min = Math.floor(ms / 60000);
+  const d = Math.floor(min / 1440), h = Math.floor((min % 1440) / 60), m = min % 60;
+  if (d) return d + 'd ' + h + 'h';
+  if (h) return h + 'h ' + String(m).padStart(2, '0') + 'min';
+  return m + 'min';
+}
+function histReturnPct(r){
+  const base = +r.referenceBalance;
+  if (!Number.isFinite(base) || base <= 0) return null;
+  return (+r.netResult || 0) / base * 100;
+}
+function histResultClass(r){
+  const n = +r.netResult || 0;
+  return n > 0 ? 'Positiva' : (n < 0 ? 'Negativa' : 'Neutra');
+}
+function histFmtDate(iso){
+  const t = Date.parse(iso);
+  return Number.isFinite(t) ? new Date(t).toLocaleDateString('pt-BR') : '—';
+}
+function histPhaseName(idx){
+  // typeof, e nao coercao: `+null === 0` renderizaria 'Fase 1' para um maximo
+  // que nunca foi observado — o registro diz null e a tela mentiria.
+  if (typeof idx !== 'number' || !Number.isFinite(idx)) return '—';
+  const f = (S.matrix || [])[+idx];
+  return (f && f.nome) ? f.nome : ('Fase ' + ((+idx) + 1));
+}
+
+// Mediana com n EXPLÍCITO. Desconhecido é excluído desta métrica e de mais
+// nenhuma — a operação continua contando no total. Fundir as duas coisas
+// transformaria ausência de dado em observação.
+function histMedian(valores){
+  const v = valores.filter(x => x != null && Number.isFinite(x)).sort((a, b) => a - b);
+  if (!v.length) return { valor:null, n:0 };
+  const meio = Math.floor(v.length / 2);
+  const valor = v.length % 2 ? v[meio] : (v[meio - 1] + v[meio]) / 2;
+  return { valor, n: v.length };
+}
+
+function histFilter(records){
+  const q = String(histState.query || '').trim().toUpperCase();
+  return records.filter(r => {
+    if (histState.instrument !== 'all' && String(r.instrument || '') !== histState.instrument) return false;
+    if (histState.direction !== 'all' && String(r.direction || '') !== histState.direction) return false;
+    if (histState.result !== 'all' && histResultClass(r) !== histState.result) return false;
+    if (q) {
+      const alvo = [r.operationId, r.instrument, ...(r.ordersSnapshot || []).map(o => o.label)]
+        .map(x => String(x || '').toUpperCase()).join(' ');
+      if (!alvo.includes(q)) return false;
+    }
+    return true;
+  }).sort((a, b) => (Date.parse(b.closedAt) || 0) - (Date.parse(a.closedAt) || 0));
+}
+
+// Estatística DESCRITIVA sobre o conjunto filtrado. Nenhum número aqui é
+// previsão, expectativa ou score: são fatos observados, com o denominador dito.
+function histStats(records){
+  const n = records.length;
+  if (!n) return { n:0 };
+  const positivas = records.filter(r => (+r.netResult || 0) > 0).length;
+  const resultados = records.map(r => +r.netResult || 0);
+  const dur = histMedian(records.map(histDurationMs));
+  const def = histMedian(records.map(r => Number.isFinite(+r.defenseCount) ? +r.defenseCount : null));
+  return {
+    n,
+    acumulado: resultados.reduce((s, x) => s + x, 0),
+    positivas,
+    taxaPositivas: positivas / n * 100,
+    duracaoMediana: dur,
+    defesasMedianas: def,
+    maior: Math.max(...resultados),
+    menor: Math.min(...resultados)
+  };
+}
+
+// ---- render ----
+function histCard(rotulo, valor, nota){
+  return '<div class="hist-stat"><div class="hist-stat-l">' + esc(rotulo) + '</div>' +
+    '<div class="hist-stat-v">' + esc(valor) + '</div>' +
+    (nota ? '<div class="hist-stat-n">' + esc(nota) + '</div>' : '') + '</div>';
+}
+
+function histRenderDetail(r){
+  const ordens = (r.ordersSnapshot || []).map(o =>
+    '<tr><td>' + esc(o.label || '(sem ID)') + '</td><td>' + esc('F' + o.phase) + '</td>' +
+    '<td>' + esc(o.par || '—') + '</td><td>' + esc(o.tipo || '—') + '</td>' +
+    '<td class="hist-num">' + esc(String(o.lote ?? '—')) + '</td>' +
+    '<td class="hist-num">' + esc(String(o.entry ?? '—')) + '</td>' +
+    '<td class="hist-num">' + esc(String(o.sl ?? '—')) + '</td>' +
+    '<td class="hist-num">' + esc(String(o.tp ?? '—')) + '</td>' +
+    '<td class="hist-num">' + esc(fmtMoney2(+o.result || 0)) + '</td>' +
+    '<td>' + esc(o.status || '—') + '</td>' +
+    '<td>' + esc(o.openedAt ? histFmtDate(o.openedAt) : '—') + '</td>' +
+    '<td>' + esc(o.closedAt ? histFmtDate(o.closedAt) : '—') + '</td></tr>').join('');
+  const ret = histReturnPct(r);
+  const degradada = r.maxAccountPhaseIntegrity === 'degraded';
+  // Registros gravados ANTES do terceiro estado existir trazem 'observed' mesmo
+  // quando nada foi capturado. Nao se reescreve historico: eles ficam como
+  // estao, e a Fase maxima aparece como '—' de qualquer forma.
+  const naoObservada = r.maxAccountPhaseIntegrity === 'unobserved';
+  return '<div class="hist-detail" data-hist-detail="' + esc(r.operationId) + '">' +
+    '<div class="hist-detail-grid">' +
+    '<div><b>Operation ID</b><br><span class="hist-mono">' + esc(r.operationId) + '</span></div>' +
+    '<div><b>Instrumento</b><br>' + esc(r.instrument || '—') + '</div>' +
+    '<div><b>Direção</b><br>' + esc(r.direction || '—') + '</div>' +
+    '<div><b>Abertura</b><br>' + esc(r.openedAt ? histFmtDate(r.openedAt) : 'Desconhecida') +
+      (r.openedAtSource ? ' <span class="hist-src">(' + esc(r.openedAtSource) + ')</span>' : '') + '</div>' +
+    '<div><b>Encerramento</b><br>' + esc(histFmtDate(r.closedAt)) + '</div>' +
+    '<div><b>Duração</b><br>' + esc(histFmtDuration(histDurationMs(r))) + '</div>' +
+    '<div><b>Fase máxima da Conta</b><br>' + esc(histPhaseName(r.maxAccountPhaseReached)) +
+      (degradada ? ' <span class="hist-degradada" title="Houve falha de captura durante a operação: este é o maior valor conhecido, não necessariamente o máximo absoluto.">máximo conhecido / integridade degradada</span>'
+       : naoObservada ? ' <span class="hist-degradada" title="A captura da Fase da Conta nunca se aplicou durante esta operação, e nenhuma falha foi registrada. Ausência de medição, não medição de ausência.">não observada</span>' : '') + '</div>' +
+    '<div><b>Fase máxima da Grade</b><br>' + esc(r.maxGridPhaseReached == null ? '—' : histPhaseName(r.maxGridPhaseReached)) + '</div>' +
+    '<div><b>Defesas</b><br>' + esc(String(r.defenseCount ?? '—')) +
+      (r.defenseCountSource ? ' <span class="hist-src">(' + esc(r.defenseCountSource) + ')</span>' : '') + '</div>' +
+    '<div><b>Resultado líquido</b><br>' + esc(fmtMoney2(+r.netResult || 0)) + '</div>' +
+    '<div><b>Base do retorno</b><br>' + esc(r.referenceBalance == null ? '—' : fmtMoney2(r.referenceBalance)) +
+      ' <span class="hist-src">(' + esc(r.referenceBalanceType || '—') + ')</span></div>' +
+    '<div><b>Retorno</b><br>' + esc(ret == null ? '—' : ret.toFixed(2) + '%') + '</div>' +
+    '</div>' +
+    '<div class="jp-table-scroll"><table class="hist-orders"><thead><tr>' +
+    '<th scope="col">ID</th><th scope="col">Fase</th><th scope="col">Instrumento</th>' +
+    '<th scope="col">Direção</th><th scope="col">Lote</th><th scope="col">Entrada</th>' +
+    '<th scope="col">SL</th><th scope="col">TP</th><th scope="col">Resultado</th>' +
+    '<th scope="col">Status</th><th scope="col">Abertura</th><th scope="col">Fechamento</th>' +
+    '</tr></thead><tbody>' + (ordens || '<tr><td colspan="12">Sem ordens registradas.</td></tr>') +
+    '</tbody></table></div>' +
+    '<p class="hist-ro">Registro histórico — somente leitura.</p></div>';
+}
+
+// Estatisticas e tabela sao a parte que RESPONDE a filtro, busca e selecao.
+// Ficam separadas da montagem para poderem ser repintadas sem recriar os
+// controles: reescrever o cartao inteiro a cada tecla destroi o <input> de
+// busca e o foco vai junto — o operador digitava uma letra e tinha de clicar
+// no campo de novo para digitar a segunda.
+function histStatsHTML(filtrados){
+  const st = histStats(filtrados);
+  if (!st.n) return '<p class="expl">Nenhuma operação atende aos filtros.</p>';
+  return histCard('Operações finalizadas', String(st.n)) +
+    histCard('Resultado líquido acumulado', fmtMoney2(st.acumulado)) +
+    histCard('Taxa de operações positivas', st.taxaPositivas.toFixed(0) + '%',
+             st.positivas + ' de ' + st.n + ' registradas') +
+    histCard('Duração mediana',
+             st.duracaoMediana.valor == null ? '—' : histFmtDuration(st.duracaoMediana.valor),
+             'n = ' + st.duracaoMediana.n) +
+    histCard('Defesas medianas',
+             st.defesasMedianas.valor == null ? '—' : String(st.defesasMedianas.valor),
+             'n = ' + st.defesasMedianas.n) +
+    histCard('Maior resultado', fmtMoney2(st.maior)) +
+    histCard('Menor resultado', fmtMoney2(st.menor));
+}
+
+function histTableHTML(filtrados){
+  const linhas = filtrados.map(r => {
+    const ret = histReturnPct(r);
+    const cls = histResultClass(r);
+    const aberto = histState.selected === r.operationId;
+    return '<tr class="hist-row" data-hist-id="' + esc(r.operationId) + '" tabindex="0" ' +
+      'role="button" aria-expanded="' + (aberto ? 'true' : 'false') + '">' +
+      '<td class="hist-mono">' + esc(String(r.operationId).slice(0, 14)) + '</td>' +
+      '<td>' + esc(r.instrument || '—') + '</td>' +
+      '<td>' + esc(r.direction || '—') + '</td>' +
+      '<td>' + esc(r.openedAt ? histFmtDate(r.openedAt) : '—') + '</td>' +
+      '<td>' + esc(histFmtDate(r.closedAt)) + '</td>' +
+      '<td>' + esc(histFmtDuration(histDurationMs(r))) + '</td>' +
+      '<td class="hist-num">' + esc(String(r.defenseCount ?? '—')) + '</td>' +
+      '<td class="hist-num hist-' + esc(cls.toLowerCase()) + '">' + esc(fmtMoney2(+r.netResult || 0)) + '</td>' +
+      '<td class="hist-num">' + esc(ret == null ? '—' : ret.toFixed(2) + '%') + '</td>' +
+      '</tr>' + (aberto ? '<tr class="hist-detail-row"><td colspan="9">' + histRenderDetail(r) + '</td></tr>' : '');
+  }).join('');
+  return '<table class="hist-table"><thead><tr>' +
+    '<th scope="col">Operação</th><th scope="col">Instrumento</th><th scope="col">Direção</th>' +
+    '<th scope="col">Abertura</th><th scope="col">Fechamento</th><th scope="col">Duração</th>' +
+    '<th scope="col">Defesas</th><th scope="col">Resultado</th><th scope="col">Retorno</th>' +
+    '</tr></thead><tbody>' + (linhas || '<tr><td colspan="9">Nenhuma operação atende aos filtros.</td></tr>') +
+    '</tbody></table>';
+}
+
+// As linhas sao recriadas a cada repintura, entao os ouvintes delas tambem.
+// Os controles NAO passam por aqui: eles sobrevivem a repintura e receberiam
+// ouvinte duplicado a cada tecla.
+function histBindRows(root){
+  root.querySelectorAll('.hist-row').forEach(tr => {
+    const abrir = () => {
+      const id = tr.dataset.histId;
+      histState.selected = (histState.selected === id) ? null : id;
+      histRepaintResults();
+    };
+    tr.addEventListener('click', abrir);
+    tr.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); }
+    });
+  });
+}
+
+// REPINTURA parcial. Nao toca nos controles nem no <input> de busca: o valor
+// digitado, o foco e a posicao do cursor sao do operador, e nenhuma
+// consequencia de filtrar justifica tira-los dele.
+function histRepaintResults(){
+  const root = document.getElementById('execHistory');
+  if (!root) return;
+  const alvoStats = root.querySelector('#histStats');
+  const alvoTabela = root.querySelector('#histTabela');
+  if (!alvoStats || !alvoTabela) { renderOperationHistory(); return; }
+  const filtrados = histFilter(histRecords());
+  alvoStats.innerHTML = histStatsHTML(filtrados);
+  alvoTabela.innerHTML = histTableHTML(filtrados);
+  histBindRows(root);
+}
+
+// MONTAGEM do workspace. Roda ao entrar na visao; a partir dai filtro, busca e
+// selecao repintam apenas os resultados.
+function renderOperationHistory(){
+  const root = document.getElementById('execHistory');
+  if (!root) return;
+  const todos = histRecords();
+
+  if (!todos.length) {
+    root.innerHTML = '<div class="card"><h2>Histórico</h2>' +
+      '<p class="expl">Sem operações finalizadas.</p></div>';
+    return;
+  }
+
+  const filtrados = histFilter(todos);
+  // A lista de instrumentos vem de TODOS os registros, nao dos filtrados: um
+  // filtro nao pode apagar a propria opcao que permitiria desfaze-lo.
+  const instrumentos = [...new Set(todos.map(r => String(r.instrument || '')).filter(Boolean))].sort();
+
+  const opcao = (v, rot, atual) =>
+    '<option value="' + esc(v) + '"' + (atual === v ? ' selected' : '') + '>' + esc(rot) + '</option>';
+
+  root.innerHTML = '<div class="card">' +
+    '<h2>Histórico</h2>' +
+    '<p class="expl">Memória institucional das Operações Únicas finalizadas. Registro histórico é evidência: ' +
+    'os números descrevem o que foi observado e não projetam desempenho futuro.</p>' +
+    '<div class="hist-stats" id="histStats">' + histStatsHTML(filtrados) + '</div>' +
+    '<div class="hist-filters">' +
+    '<label>Instrumento <select id="histInstrument">' + opcao('all', 'Todos', histState.instrument) +
+      instrumentos.map(i => opcao(i, i, histState.instrument)).join('') + '</select></label>' +
+    '<label>Direção <select id="histDirection">' + opcao('all', 'Todas', histState.direction) +
+      opcao('BUY', 'BUY', histState.direction) + opcao('SELL', 'SELL', histState.direction) + '</select></label>' +
+    '<label>Resultado <select id="histResult">' + opcao('all', 'Todas', histState.result) +
+      opcao('Positiva', 'Positivas', histState.result) + opcao('Negativa', 'Negativas', histState.result) +
+      opcao('Neutra', 'Neutras', histState.result) + '</select></label>' +
+    '<label>Buscar <input type="search" id="histQuery" value="' + esc(histState.query) +
+      '" placeholder="id, instrumento ou ordem"></label>' +
+    '</div>' +
+    '<div class="jp-table-scroll" id="histTabela">' + histTableHTML(filtrados) + '</div></div>';
+
+  // Filtros e seleção mudam APENAS estado de apresentação. Nenhum caminho deste
+  // arquivo chama save(), muta S ou toca a memória institucional.
+  const liga = (id, campo) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => { histState[campo] = el.value; histRepaintResults(); });
+  };
+  liga('histInstrument', 'instrument');
+  liga('histDirection', 'direction');
+  liga('histResult', 'result');
+  const q = document.getElementById('histQuery');
+  if (q) q.addEventListener('input', () => { histState.query = q.value; histRepaintResults(); });
+  histBindRows(root);
+}
+
+// Contrato dos workspaces montados sob demanda (20-ui/13-exec-views.js).
+window.JPWHistoryUI = { render: renderOperationHistory };
 </script>
 </body>
 </html>

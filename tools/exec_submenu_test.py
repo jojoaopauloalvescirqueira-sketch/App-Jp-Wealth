@@ -26,13 +26,13 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor"]
+EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor", "history"]
 EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Calendário Econômico",
-                   "Estudos NoCoda", "Estudos dos Pivots", "Motor de Lote"]
+                   "Estudos NoCoda", "Estudos dos Pivots", "Motor de Lote", "Histórico"]
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
 EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
-                       "execPivots", "motorWidgetGrid"]
+                       "execPivots", "motorWidgetGrid", "execHistory"]
 # Os quatro widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.

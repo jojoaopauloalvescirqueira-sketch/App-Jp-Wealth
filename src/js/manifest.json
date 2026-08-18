@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "0a071eee721dfb3f9f991dd1fa6269656d7b7bd2d88c91b14f1aea45552a0c7f"
+      "sha256": "464f4358c2db95479f6863c931ff7b58223e478fdca50d6304a1b38dcb7dbfe1"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "d43f55d49967f822a377a5a7fe8425519effd966764a7ff012496e4ad476b6d8"
+      "sha256": "a479d9439dc2baa459bd7814f6614db515abc3317cbad093bec00c1b329daf20"
     },
     {
       "order": 5,
@@ -86,13 +86,13 @@
       "order": 14,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "8238d399584a164c4aa57e902a89af80c270c9241c76bebd06d55976ebc00365"
+      "sha256": "f0bb39d26be304bead8ae9437aa392d18c6494d61982a97cb5633fcf01b28d2f"
     },
     {
       "order": 15,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "b46447f67d70ae82690683fed41cc4c8e7c612d824c5ebe9a5e47397e18a1cef"
+      "sha256": "393d1beb3465c61d544ee7f146e7608ad6ffff093d465f413381e7ecf93d98d8"
     },
     {
       "order": 16,
@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "14afa5d4a4e5cde36860c236bb6769e269c382af44ef88dec1b3ae955d99d0f1"
+      "sha256": "e02421302c77864a3c4c36d27972984c0544531ce4a2eb36579a4b9144ea6ca6"
     },
     {
       "order": 24,
@@ -194,7 +194,7 @@
       "order": 32,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "e93c5475137b435ad4915646e53786a605db44757fe713c62934ea256841cdf6"
+      "sha256": "50f1c7fa0904c9dcbd803193ed9be8b5fd7986b8f4beb3994f876c5b77f1459f"
     },
     {
       "order": 33,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "a70c1807caf8347759ed1de0708acea4138b63ad0c178dbf59f6043edef55483"
+      "sha256": "f92afa80c7efc233c2118a8f4f5fd8f21c63ad4e8c630939a55f0569d2be1685"
     },
     {
       "order": 36,
@@ -368,7 +368,7 @@
       "order": 61,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "a8c8ec8b5453c5b8ccd092b4487052084efc3db4096e320889f6377cd9a973a0"
+      "sha256": "49a50ce6e91cdba8a303cf411c6f807567445d1a64f19848b09e35ba6de1fcf0"
     },
     {
       "order": 62,
@@ -393,6 +393,18 @@
       "path": "src/js/20-ui/15-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · interface do workspace",
       "sha256": "2230065776716f26420ac5b90852f1703d7fb139a23144e864e96511d25279df"
+    },
+    {
+      "order": 66,
+      "path": "src/js/10-domain/11-operation-lifecycle.js",
+      "section": "Operacao Unica: finalizacao transacional e snapshot historico",
+      "sha256": "9970ed30343fcbf9dee4b3b6362a325a7ddad75f4a9bd0375841cc049fdf88d3"
+    },
+    {
+      "order": 67,
+      "path": "src/js/20-ui/16-operation-history.js",
+      "section": "Historico de Operacoes Unicas: workspace somente leitura",
+      "sha256": "a93b5d9cd1650b4791c5a8856ea4d3b4a251c1ea62097c618e738fbbd87c2de4"
     }
   ]
 }

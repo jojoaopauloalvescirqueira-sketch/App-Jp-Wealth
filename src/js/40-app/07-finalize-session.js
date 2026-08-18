@@ -248,6 +248,12 @@ function emptyJPWealthState(){
   empty.ledgerArchive=[];
   empty.transitionLog=[];
   empty.cycleRealizado=0;
+  // Explícito, ainda que o clone de DEFAULTS já traga os dois assim: a mesma
+  // disciplina defensiva das linhas vizinhas. Se um dia DEFAULTS deixar de
+  // nascer com operação nula, a Finalização de Sessão continua limpando o
+  // ciclo de vida em vez de entregar uma sessão nova com operação fantasma.
+  empty.activeOperation=null;
+  empty.operationHistory=structuredClone(DEFAULTS.operationHistory);
   empty.quarantine=null;
   empty.riskPinHash=null;
   empty.phaseUnlocked=[true,false,false,false];

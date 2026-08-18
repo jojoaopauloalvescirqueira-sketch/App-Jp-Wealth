@@ -1326,6 +1326,19 @@ function openOnboardingModal(mode, initialStep){
     const cycleSizes=[5,4,3,2];
     S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(cycleSizes[pi]||3); });
     S.phaseUnlocked=[true,false,false,false];
+    // ABANDONO ADMINISTRATIVO da operação viva. Reiniciar o período destrói as
+    // grades que constituíam a Operação Única; a entidade não pode sobreviver a
+    // elas. Sem esta linha, a guarda `!S.activeOperation` do nascimento seria
+    // falsa na Gênese seguinte, e a operação NOVA herdaria operationId, openedAt
+    // e maxAccountPhaseReached da anterior — gravando no Histórico uma abertura
+    // de semanas atrás com proveniência automática e uma fase máxima que ela
+    // nunca atingiu.
+    //
+    // Isto NÃO é uma finalização: não gera registro histórico e não consolida
+    // nada em cycleRealizado (que este fluxo zera por outro motivo, o reinício
+    // do ciclo). Abandonar não é encerrar — encerrar formalmente é ato próprio,
+    // com revisão e confirmação FECHADO.
+    S.activeOperation=null;
     // S.quarantine é intencionalmente NÃO tocada aqui (preservação da quarentena — Estatuto V10).
     if(tinhaEstadoDeCiclo){
       S.transitionLog.push({fase:'ciclo zerado (novo período)', ts:new Date().toISOString(),

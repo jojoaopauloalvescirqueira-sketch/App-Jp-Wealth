@@ -61,7 +61,22 @@ configurada") e a reassociação exige novo gesto do operador ("Localizar esta p
 6. **Estado sem base** (§12): wipe, Finalizar Sessão e base vazia navegam para
    `DEFAULT_START_ROUTE` — fonte única, sem hardcode espalhado. O handle local é
    removido junto com a base (nunca reassocia sozinho uma base futura).
-7. **Termo de responsabilidade** (§5): etapa 07 do onboarding; sem o aceite o
+7. **Não-prova ≠ prova de ausência.** Quando uma gravação pode ter ocorrido e não
+   é possível provar nem que ocorreu nem que não ocorreu, o desfecho é `UNKNOWN`
+   — um terceiro estado, e não um `false`. É a contrapartida da regra 2: se
+   "sucesso ⇒ estado" impede declarar sucesso sem prova, esta impede declarar
+   fracasso sem prova. A equivalência implícita *"não consegui confirmar que
+   gravou" = "não gravou"* produzia perda silenciosa: o disco ficava com a
+   finalização, a memória era revertida, e a gravação seguinte apagava o que
+   havia sido persistido.
+   No `UNKNOWN` nada é revertido, nada é declarado e **toda gravação futura é
+   vetada** por barreira própria (`jpWealthPersistenceOutcomeUnknown`), separada
+   do portão genérico e **não liberável** por `resumeJPWealthPersistence()` — que
+   é reaberto por importação e por onboarding, e nenhum dos dois pode decidir
+   sobre um desfecho que ninguém conhece. Não existe função pública de liberação:
+   o desempate é humano, com o disco à vista. A barreira não é persistida, porque
+   persisti-la exigiria justamente a gravação vetada.
+8. **Termo de responsabilidade** (§5): etapa 07 do onboarding; sem o aceite o
    confirmar não conclui. Registro em `responsibility` com carimbo original
    preservado em reedições.
 

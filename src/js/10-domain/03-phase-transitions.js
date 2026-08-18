@@ -151,7 +151,12 @@ function openTransitionModal(faseNum){
     if(!ok) return;
     // libera a fase
     S.phaseUnlocked[faseNum-1]=true;
-    S.transitionLog.push({fase:faseNum, ts:new Date().toISOString(), resumo:collected});
+    // Carimbado com a operacao viva e a fase atingida: o Historico deriva
+    // maxGridPhaseReached SO dos eventos daquela operationId.
+    S.transitionLog.push(operationStampTransition(
+      {fase:faseNum, ts:new Date().toISOString(), resumo:collected}, faseNum-1));
+    // Destravamento CONFIRMADO pelo questionário: ato semântico, não digitação.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save();
     closeModal();
     if(faseNum>=2) mirrorPhaseForward(faseNum-2);
@@ -231,7 +236,10 @@ function openDowngradeModal(fromIdx,toIdx){
     });
     if(!ok) return;
     for(let i=toIdx+1;i<=fromIdx;i++){ S.phaseUnlocked[i]=false; }
-    S.transitionLog.push({fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected});
+    // Sem gridPhase de proposito: downgrade RETRAVA, nao atinge. O maximo
+    // anterior permanece — o que foi alcancado foi alcancado.
+    S.transitionLog.push(operationStampTransition(
+      {fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected}));
     save();
     closeModal();
     render(); renderPhases();
@@ -347,8 +355,10 @@ function stopLimitSummary(pi, oi, check){
     }
   };
 }
-function auditStopLimit(kind, resumo){
-  S.transitionLog.push({fase:kind, ts:localDateTimeISO(), resumo});
+function auditStopLimit(kind, resumo, gridPhaseIdx){
+  // gridPhaseIdx so e passado quando a chamada REALMENTE destrava fase.
+  S.transitionLog.push(operationStampTransition(
+    {fase:kind, ts:localDateTimeISO(), resumo}, gridPhaseIdx));
 }
 function handleStopLimitBreach(pi, oi, check){
   const o=S.phases[pi].orders[oi];
@@ -364,13 +374,23 @@ function handleStopLimitBreach(pi, oi, check){
     );
     if(ok===phrase){
       for(let i=0;i<=info.supported;i++) S.phaseUnlocked[i]=true;
-      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase});
+      // Destravamento CONFIRMADO pela frase exigida ao operador.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+      // Este e o UNICO caminho de stop que destrava fase; os demais so alertam.
+      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase}, info.supported);
       delete o.stopPhaseWarning;
       save(); render(); renderPhases();
       return true;
     }
     auditStopLimit('stop quantitativo acima da fase', {...info.resumo, confirmado:false});
     alert('Stop mantido para simulação, com risco visível. A fase não foi alterada porque a confirmação formal não foi concluída.');
+    // A FASE NAO MUDOU, mas o STOP FICOU. A confirmacao recusada nao reverte
+    // o.sl — o valor permanece no modelo e e persistido pelo save() abaixo, e por
+    // definicao de check.excede a conta passa a operar acima do teto da fase.
+    // Esse pico e real e precisa ser observado: enquanto a captura morava dentro
+    // de save(), este caminho a recebia de graca; ao tirar a captura de la, ele
+    // ficou sendo o unico que compromete um valor sem observar a consequencia.
+    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
     save(); render(); renderPhasesLite(pi); renderAuditLog();
     return false;
   }
@@ -379,10 +399,19 @@ function handleStopLimitBreach(pi, oi, check){
   alert(info.supported<0
     ? `${info.inline}\n\nNenhuma fase suporta este Stop. Ele viola o limite máximo absoluto e deve ser tratado como simulação de risco, não autorização operacional.`
     : info.inline);
+  // Genese, defesa final da Fase 4 e limite absoluto: aqui nao ha sequer
+  // confirmacao a pedir — o alerta e informativo e o stop PERMANECE. Mesmo
+  // motivo do ramo acima: valor comprometido e persistido, logo a Fase da Conta
+  // resultante e afirmacao e nao estado transitorio.
+  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
   save(); render(); renderPhasesLite(pi); renderAuditLog();
   return false;
 }
-// ---- Guardas de instrumento e tese (Art. 3.5/3.6, decreto de banimento, Teto/Op) ----
+// ---- Guardas de instrumento e tese (Art. 4.2/5.1, decreto de banimento, Teto/Op) ----
+// A numeracao anterior (3.5/3.6) nao existe na Norma Vigente: o Livro I vai de
+// 3.1 a 3.4. O regime esta no Art. 5.1 (Livro II — Operacao Unica Exclusiva) e a
+// definicao de Operacao como "conjunto de ordens no mesmo ativo e na mesma
+// direcao" esta no Art. 4.2 (Livro I).
 // retorna null se ok, ou a mensagem de bloqueio
 function orderGateMsg(pi, oi){
   const o=S.phases[pi].orders[oi];
@@ -394,7 +423,24 @@ function orderGateMsg(pi, oi){
   if(ins && ins.teto>0 && o.lote>ins.teto){
     return `🚫 Lote ${o.lote} acima do Teto/Op de ${ins.name} (${ins.teto}) — Regra 1 do Controle Objetivo de Risco. Ajuste o lote ou revise o teto no Motor de Lote.`;
   }
-  // Operação Única Exclusiva: toda posição aberta pertence à mesma tese (mesmo par, mesma direção)
+  // OPERAÇÃO ÚNICA EXCLUSIVA: uma tese por vez — mesmo instrumento, mesma direção.
+  //
+  // A referência vem de qualquer ordem que PERTENÇA à operação em curso, e não
+  // apenas das que estão `Aberta`. Fechar a última ordem NÃO finaliza a Operação
+  // Única: ela permanece em andamento até a Finalização formal, que é o ato que
+  // limpa as grades e zera activeOperation. Enquanto isso não acontece, as ordens
+  // que estão nas grades continuam sendo daquela operação.
+  //
+  // A versão anterior procurava referência só entre ordens `Aberta`. Com a Gênese
+  // já fechada e a operação ainda viva, ela não encontrava nada e liberava a
+  // abertura de outro instrumento e outra direção — a operação passava a conter
+  // duas teses. O estado resultante é um beco sem saída: a Finalização o bloqueia
+  // corretamente, mas numa ordem fechada `par`, `tipo` e `status` ficam todos
+  // desabilitados na grade, e as únicas saídas restantes destroem informação.
+  //
+  // operationOrderIsLive é a MESMA função que o domínio usa para montar a
+  // operação (operationLiveOrders). Duas definições de "pertence à operação" foi
+  // exatamente o que abriu o buraco; não se reintroduz uma cópia local aqui.
   let ref=null;
   outer:
   for(let p2=0;p2<S.phases.length;p2++){
@@ -402,16 +448,16 @@ function orderGateMsg(pi, oi){
     for(let o2=0;o2<os.length;o2++){
       if(p2===pi&&o2===oi) continue;
       const q=os[o2];
-      if(q.status==='Aberta'&&q.par){ ref=q; break outer; }
+      if(operationOrderIsLive(q)&&q.par){ ref=q; break outer; }
     }
   }
   if(ref){
     const norm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     if(o.par && norm(o.par)!==norm(ref.par)){
-      return `🚫 Operação Única Exclusiva (Art. 3.6): já existe posição aberta em ${ref.par}. Não é permitido abrir ${o.par} enquanto a operação atual não for encerrada.`;
+      return `🚫 Operação Única Exclusiva (Art. 5.1): a operação em andamento é em ${ref.par}. Não é permitido abrir ${o.par} enquanto ela não for formalmente finalizada — zeragem tática sem confirmação de encerramento não extingue a Operação (Art. 4.4).`;
     }
     if(o.tipo && ref.tipo && o.tipo!==ref.tipo){
-      return `🚫 Operação Única (Art. 3.5): a tese ativa é ${ref.tipo} em ${ref.par}. Posição na direção contrária não pertence à mesma tese — encerre a operação antes de inverter.`;
+      return `🚫 Operação Única (Art. 4.2): a tese em andamento é ${ref.tipo} em ${ref.par}. Uma Operação é o conjunto de ordens no mesmo ativo e na mesma direção — finalize a operação antes de inverter.`;
     }
   }
   return null;
@@ -458,6 +504,8 @@ function openCloseOrderModal(pi,oi){
     }
     o.status='Fechada';
     o.result=resultVal;
+    // Carimbo de fechamento da ordem — capturado no ato, uma única vez.
+    if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Fechada',pi,oi);
     save();
     closeModal();
     render(); renderPhases();

@@ -27,11 +27,57 @@ jpwealth_v9_state
 - `nocoda`: Estudos NoCoda — mapa `instrumentId → estudo vigente` com as três
   âncoras do canal. Um estudo por instrumento; derivados nunca persistem.
   Contrato em `NOCODA-STUDIES.md`.
+- `activeOperation`: entidade da **Operação Única em curso**, ou `null` quando
+  não há operação. `null` é estado real — "nenhuma operação" —, e não ausência de
+  dado. Nasce no ato em que a primeira ordem se torna operacional e morre na
+  Finalização formal. Guarda `operationId`, `openedAt` com `openedAtSource`
+  (`genesis_transition` | `manual_legacy` | `null` — abertura de legado nunca é
+  inventada), `maxAccountPhaseReached` (índice ou `null`; desconhecido **não** é
+  Fase 1) e, quando houve falha de captura, `phaseCaptureFault`, que jamais é
+  apagada por sucesso posterior. Contrato de encerramento no Art. 4.4 do
+  Estatuto: zeragem tática sem confirmação escrita não extingue a Operação.
+- `operationHistory`: memória institucional das operações finalizadas —
+  `{schemaVersion, records[]}`. Registros são **imutáveis**: instrumento e
+  direção da tese, timestamps com proveniência, `referenceBalance` congelado
+  (o denominador do retorno precisa continuar auditável anos depois),
+  `netResult`, `defenseCount` com `defenseCountSource`, fases máximas e
+  `ordersSnapshot` desacoplado por `structuredClone`. `maxAccountPhaseIntegrity`
+  admite **três** valores — `observed`, `unobserved` e `degraded` —, porque
+  "capturado", "nunca capturado" e "captura falhou" são estados
+  epistemologicamente distintos e o par binário anterior fazia o terceiro se
+  passar pelo primeiro. O literal persistido para o estado do meio é
+  `unobserved`; `unknown` aparece em discussão como sinônimo informal, mas não é
+  o valor gravado. Invariante de integridade: `openedAt <= closedAt` quando
+  ambos existem; uma operação não pode terminar antes de começar.
 - `pivotStudies`: Estudos dos Pivots — lista histórica de estudos por
   instrumento e período, cada um contendo seus pivots H1/H4. Vários estudos do
   mesmo instrumento coexistem. Só causas persistem (timeframe, extremos de tempo
   e preço, correção informada); direção, amplitude, duração, ranking e toda a
   estatística são derivados. Contrato em `PIVOT-STUDIES.md`.
+
+## Desfecho de gravação — fora do documento persistido
+
+`operationProbePersisted(record)` responde em **três** estados sobre uma
+tentativa específica de gravação:
+
+| desfecho | significado | consequência |
+|---|---|---|
+| `CONFIRMED` | `operationId` **e** `finalizedAt` daquela tentativa estão no disco | mantém o candidato; finalização concluída |
+| `NOT_PERSISTED` | evidência positiva de que a tentativa não chegou ao disco | rollback seguro |
+| `UNKNOWN` | não se prova presença nem ausência | congela: sem rollback, sem veredito, gravação vetada |
+
+A confirmação exige os **dois** campos. Só o `operationId` não basta: uma
+tentativa anterior da mesma operação pode ter gravado, e confirmar por
+identidade daria como persistida uma gravação que não foi esta.
+
+`save() === false` continua sendo prova de não-escrita — os portões retornam
+antes de tocar no armazenamento, o erro de serialização retorna antes do
+`setItem`, e `setItem` é atômico. A ambiguidade vive exclusivamente no caminho
+de **exceção**, que pode vir de antes ou de depois da escrita.
+
+A barreira do `UNKNOWN` é de **sessão** e não entra no documento persistido —
+gravá-la exigiria a gravação que ela veta. Contrato completo na regra 7 de
+`DB-STORAGE-GOVERNANCE.md`.
 
 ## Regras de evolução
 
@@ -40,3 +86,8 @@ jpwealth_v9_state
 3. Migração nunca pode apagar campo desconhecido sem autorização formal.
 4. Antes de mudança de schema, criar fixture anonimizada e teste de ida/volta de backup.
 5. Credenciais não devem integrar fixtures, repositório ou commits.
+6. Registro histórico não se reescreve. Um campo cujo domínio de valores cresce
+   — como `maxAccountPhaseIntegrity`, que passou de dois para três — deixa os
+   registros antigos como estão; corrigir rótulo em massa é pior que o rótulo
+   antigo, porque destrói a distinção entre o que foi observado e o que foi
+   inferido depois.

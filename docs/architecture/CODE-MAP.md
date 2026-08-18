@@ -70,11 +70,13 @@ a lista material mudar.
 | 58 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
 | 59 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
 | 60 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
-| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: workspaces do módulo (Visão Geral, Painel Operacional, Calendário Econômico, Estudos NoCoda, Estudos dos Pivots, Motor de Lote) |
+| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: workspaces do módulo (Visão Geral, Painel Operacional, Calendário Econômico, Estudos NoCoda, Estudos dos Pivots, Motor de Lote, Histórico) |
 | 62 | `src/js/10-domain/09-nocoda-geometry.js` | NoCoda: geometria do canal — núcleo puro, sem DOM nem persistência |
 | 63 | `src/js/20-ui/14-nocoda-studies.js` | NoCoda: workspace de estudos (seletor, âncoras, resultados derivados) |
 | 64 | `src/js/10-domain/10-pivot-studies.js` | Pivots: derivação, validação, estatística descritiva e ordenação — núcleo puro |
 | 65 | `src/js/20-ui/15-pivot-studies.js` | Pivots: workspace de estudos (estudos por período, CRUD de pivots, resumo, filtros) |
+| 66 | `src/js/10-domain/11-operation-lifecycle.js` | Operação Única: ciclo de vida, snapshot histórico, finalização transacional e superfície de revisão |
+| 67 | `src/js/20-ui/16-operation-history.js` | Histórico: workspace somente leitura das operações finalizadas |
 
 ## Laboratório de Probabilidade
 

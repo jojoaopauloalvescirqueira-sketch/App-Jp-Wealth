@@ -2,6 +2,181 @@
 
 ## [Unreleased]
 
+### Operação Única — Histórico e Finalização formal — 2026-08-17
+
+Branch `feature/exec-operation-history` (`c9fd11e → 17214ba`). **Não integrada.**
+
+A Operação Única existia como conceito espalhado pelas grades: um conjunto de
+ordens que o operador sabia pertencerem à mesma tese, sem nada no estado que o
+afirmasse. Fechar a última ordem apagava a operação da tela sem deixar registro,
+e a fase máxima atingida — informação que só existe enquanto a operação vive —
+se perdia junto.
+
+Passou a ser entidade persistida, com encerramento formal e memória
+institucional consultável.
+
+**Distinção central.** Fechar a última ordem **não** finaliza a Operação. O Art.
+4.4 do Estatuto já dizia isso textualmente — "zeragem tática sem confirmação de
+encerramento não extingue a Operação" — e prescreve dupla confirmação por
+registro escrito `FECHADO`, que é o protocolo da revisão implementada.
+
+**Três camadas.** Fundação (`activeOperation` persistida, com proveniência de
+abertura e captura prospectiva da fase máxima), finalização transacional
+(`candidato → validar → trocar → save() → rollback`, com o desfecho de exceção
+decidido pela leitura do disco, não pela pilha) e Histórico somente leitura, com
+denominadores explícitos em toda estatística.
+
+**Nada de dado inventado.** Abertura de operação legada é informada pelo
+operador com proveniência `manual_legacy`; desconhecido nunca vira zero, agora
+ou falso; conflito de instrumento ou direção bloqueia a finalização em vez de o
+sistema escolher por conta própria.
+
+#### Série corretiva
+
+Revisão adversarial por 24 agentes acusou um BLOCKER de fiação e sete defeitos
+materiais. Cada correção em commit próprio, com campanha de mutação individual.
+
+- **`1a0c40c`** — a auditoria de governança era registrada **depois** de
+  `save()`, existindo só na memória da sessão e morrendo no reload. Passou a
+  nascer dentro do candidato: uma persistência lógica, e o `recordId` é o
+  `operationId` real em vez do identificador vazio do log legado.
+- **`ba3be3a`** — a revisão era construída uma vez, na abertura do modal, com
+  `defenseCount:0` cravado. O operador aprovava um registro e outro ia ao disco.
+  A revisão passou a ser repintada a cada entrada manual, com o mesmo objeto que
+  `finalizeOperation` recebe. `closedAt` é carimbado na confirmação, e a tela diz
+  isso por extenso em vez de exibir um horário que será outro.
+- **`a21dcd8`** — abertura informada no futuro produzia registro imutável
+  afirmando que a operação foi aberta depois de encerrada, e o único sinal era
+  uma duração exibida como `—`, o mesmo traço de "dado indisponível". Passou a
+  ser recusa: `openedAt <= closedAt`, sem correção automática, sem conversão para
+  `null`, sem `Date.now()` disfarçado.
+- **`bfc2b59`** — a busca do Histórico reescrevia o cartão inteiro a cada tecla e
+  destruía o próprio campo. Repintura passou a ser parcial.
+- **`f64cea2`** — a guarda de exclusividade procurava referência só entre ordens
+  `Aberta`. Com a Gênese fechada e a operação viva, liberava outro instrumento e
+  outra direção, e o estado resultante era irreparável pela interface. Passou a
+  usar a mesma noção de pertencimento do domínio.
+- **`be43dde`** — `maxAccountPhaseIntegrity` era binária sobre realidade
+  ternária: operação cuja fase jamais foi capturada era persistida como
+  `observed`. Ganhou `unobserved`. E `compute()` devolvendo fase ausente da
+  matriz deixou de passar por "não aplicável" e virou defeito nomeado.
+- **`17214ba`** — as citações `Art. 3.5`/`3.6` apontavam para artigos
+  inexistentes. Corrigidas para `4.2`, `4.4` e `5.1`, conferidas contra a Norma
+  Vigente.
+- **`e7313aa`** — a sonda que decide o destino de uma finalização devolvia
+  booleano, e um `catch(_){ return false; }` transformava leitura impossível em
+  prova de ausência. `setItem` gravava, uma exceção posterior interrompia o
+  fluxo, a leitura de volta falhava, o sistema concluía "não gravou", a memória
+  voltava para a operação ativa e o `save()` seguinte apagava do disco uma
+  finalização que estava lá. Passou a haver três desfechos — `CONFIRMED`,
+  `NOT_PERSISTED` e `UNKNOWN` —, com a confirmação exigindo `operationId` **e**
+  `finalizedAt`, porque uma tentativa anterior da mesma operação daria como
+  persistida uma gravação que não foi esta. No `UNKNOWN` nada é revertido, nada
+  é declarado, e uma barreira própria — separada do portão genérico e sem função
+  pública de liberação — veta toda gravação futura.
+
+`be43dde` e `e7313aa` são itens distintos. O primeiro foi commitado sob o rótulo
+do segundo por perda de contexto, e a correção de rótulo está registrada no
+`CURRENT-STATE.md`.
+
+#### Segunda rodada: três defeitos de afirmação histórica
+
+Auditoria adversarial de nove lentes devolveu `AUDIT_FAIL` com 13 achados
+invalidantes, que colapsavam em três defeitos — todos gravando afirmação falsa em
+registro imutável.
+
+- **`e6f653d`** — `operationTouchAccountPhase()` rodava dentro de `save()`, e
+  `save()` é chamado a cada **tecla** nos campos numéricos da grade. Digitar
+  "1.09" passa por "1", cujo risco eleva a Fase da Conta; a captura é monotônica,
+  então o pico virava `maxAccountPhaseReached` e ia ao disco com integridade
+  `observed`. Medido: fase real 2, digitar "1" levava o máximo a 3, e terminar o
+  número não o trazia de volta. A captura saiu de `save()` e passou a ocorrer só
+  em atos semanticamente confirmados.
+- **`58be507`** — `handleStopLimitBreach` destrava fase e carimba o evento via
+  `operationStampTransition`, que lê `S.activeOperation`; o nascimento da entidade
+  estava **depois** dele, então o destravamento provocado pela própria Gênese saía
+  com `operationId: null`, era descartado, e o registro afirmava "Fase máxima da
+  Grade: FASE 1" para uma operação que viveu inteira na FASE 2. A ordem causal
+  passou a ser: guardas rejeitadoras → nascimento → efeitos operation-scoped.
+- **`13b9811`** — apagar as linhas esvaziava a operação fora dos atos formais;
+  `activeOperation` sobrevivia órfã e a tese seguinte herdava identidade, abertura
+  e proveniência. Medido: registro GBPUSD gravado como aberto em 1º de agosto, com
+  `genesis_transition`, sob o `operationId` da operação anterior.
+- **`d161207`** — interação entre as duas correções acima: a captura rodava antes
+  do fail-safe, então ia para a entidade que seria descartada e a recém-nascida
+  saía sem observação do próprio instante de nascimento.
+
+#### Terceira rodada: as regressões da correção C
+
+A auditoria dirigida a C, B e A encontrou três caminhos em que a captura, retirada
+de `save()`, não havia sido reposta. Um quarto foi reclassificado por decisão
+humana.
+
+- **`ffa637a`** + **`c2b17c5`** — `handleStopLimitBreach` nunca reverte o stop.
+  Nas saídas sem confirmação — frase recusada, limite da Gênese, defesa final da
+  Fase 4, limite absoluto — o valor permanece e é persistido, e a conta passa a
+  operar acima do teto da fase sem que nada observe.
+- **`356fe37`** — devolver o Status a `—` caía no ramo genérico do `<select>`:
+  nada limpava `activeOperation` e o carimbo `openedAt` ficava na linha, então
+  reabrir a mesma linha pulava o fail-safe e a tese nova herdava a identidade.
+  Passou a ser retirada explícita da ordem do ciclo, com a mesma semântica do
+  abandono por exclusão.
+- **`d328e2b`** + **`b5b5766`** — a captura que C pusera dentro de
+  `finalizeOperation` rodava depois de o operador aprovar a revisão, enquanto
+  `repintarRevisao` monta o record sem capturar: numa operação adotada de legado a
+  revisão mostrava `—`/`unobserved` e o registro saía com valor/`observed`. A
+  captura foi para um checkpoint explícito, antes de qualquer record existir.
+- **`ca301de`** — trocar o instrumento muda `orderRisk()` tanto quanto mudar o
+  lote. A troca aceita é persistida pela saída terminal do laço de `<select>`, que
+  ficou sem captura. Medido com saldo 40.000: `USDJPY` → `EURUSD` leva o risco de
+  15,44 para 2.500 USD, drawdown de 6,25% contra teto de 4%, e o máximo
+  permanecia zero; estreitado o stop depois, a captura do `<input>` observava a
+  fase já recuada e a monotonicidade selava a subestimação.
+
+O princípio ficou completo: **valor transitório não captura; valor rejeitado e
+revertido não captura; valor que sobrevive à guarda e é persistido captura.**
+`operationTouchAccountPhase` nunca voltou para `save()`.
+
+#### Evidência
+
+92 experimentos de mutação ao longo das três rodadas, todos acusados por asserção
+própria ou registrados como no-op provado — nenhum aceito por `TypeError`. Treze
+precisaram de correção antes de valer como evidência, e cinco sobreviventes ficaram
+registradas como redundância funcional, não como lacuna.
+
+Gate `standard` 17/17 em cada commit e tier `full` **28/28** sobre o candidato
+`ca301de`, ambos lidos integralmente, com o artefato do `full` registrando
+`head: ca301ded4c3c`.
+
+A lente de auditoria independente `R4` **não foi executada** e foi **dispensada
+por waiver explícito** do responsável:
+
+```
+R4 independent audit:
+NOT_EXECUTED / INFRASTRUCTURE_BLOCKED
+
+causa:
+quatro tentativas consecutivas encerradas por 529 Overloaded,
+sem produção de evidência sobre o produto.
+
+decisão:
+waiver explícito aprovado pelo responsável;
+a lente R4 independente NÃO permanece como gate pendente
+para Human Acceptance ou integração.
+```
+
+`waiver ≠ AUDIT_PASS` — a lente não passou, foi dispensada. Base objetiva:
+testes de interface do R4 3/3, mutação com 2 acusadas e 1 no-op provado,
+`standard` 17/17, `full` 28/28 sobre `ca301de`, e a lente de interação `R4×C`
+concluída com zero achados.
+
+Desenvolvimento do Histórico **encerrado**; o próximo gate é a aceitação humana.
+
+Categoria de teste nova: `operation_wiring_test.py`, evento real de DOM
+atravessando domínio, estado e disco. Criada porque o BLOCKER passou por testes
+unitários verdes — o gancho estava num laço morto sobre `<input>` enquanto o
+campo Status é um `<select>`.
+
 ### Quality Gate de CI restaurado — 2026-08-17
 
 O repositório passa a ter integração contínua. Até aqui `.github/` continha

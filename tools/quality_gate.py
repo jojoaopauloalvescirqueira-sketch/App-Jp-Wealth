@@ -31,6 +31,10 @@ STANDARD = FAST + (
     ("nocoda", [sys.executable, "tools/nocoda_test.py"]),
     ("pivot-studies", [sys.executable, "tools/pivot_studies_test.py"]),
     ("order-guards", [sys.executable, "tools/order_guards_test.py"]),
+    ("operation-identity", [sys.executable, "tools/operation_identity_test.py"]),
+    ("operation-finalize", [sys.executable, "tools/operation_finalize_test.py"]),
+    ("operation-history", [sys.executable, "tools/operation_history_test.py"]),
+    ("operation-wiring", [sys.executable, "tools/operation_wiring_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (

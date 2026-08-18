@@ -53,6 +53,222 @@ Source revision representada: `0826e5e`
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
+## Operação Única — Histórico e Finalização formal — 2026-08-17
+
+Branch `feature/exec-operation-history`, série `c9fd11e → 17214ba`. **Não
+integrada**: aguarda tier `full`, inspeção visual humana e autorização de merge.
+
+**O que passou a existir.** A Operação Única deixou de ser um conceito implícito
+nas grades e virou entidade persistida (`activeOperation`), com finalização
+transacional e memória institucional (`operationHistory`) consultável no sétimo
+workspace do Execution Board.
+
+O ato central é a distinção que o Estatuto já fazia e o software não: **fechar a
+última ordem não finaliza a Operação**. O Art. 4.4 diz textualmente que zeragem
+tática sem confirmação escrita não a extingue, e prescreve dupla confirmação por
+registro escrito `FECHADO` — que é exatamente o protocolo implementado na
+revisão de finalização.
+
+**Arquitetura em três camadas**, autorizada como opção B: fundação (entidade
+persistida), finalização transacional (`candidato → validar → trocar → save() →
+rollback`) e Histórico somente leitura. `cycleRealizado` manteve semântica
+intocada; a consolidação existente foi incorporada ao fluxo transacional sob
+autoridade A4 delimitada.
+
+**Série corretiva após revisão adversarial.** Uma revisão por 24 agentes acusou
+um BLOCKER de fiação e sete defeitos materiais. Todos corrigidos, cada um em
+commit próprio, com campanha de mutação individual:
+
+| item | commit | mutações |
+|---|---|---|
+| trilha de auditoria dentro do commit | `1a0c40c` | 7 |
+| revisão igual ao snapshot persistido | `ba3be3a` | 19 |
+| consistência temporal (`openedAt <= closedAt`) | `a21dcd8` | 10 |
+| busca do Histórico deixa de destruir o próprio campo | `bfc2b59` | 5 |
+| exclusividade da tese vale até a finalização formal | `f64cea2` | 8 |
+| integridade da Fase da Conta com três estados | `be43dde` | 7 |
+| citações penduradas na guarda de exclusividade | `17214ba` | — |
+| **desfecho da gravação com três estados** | `e7313aa` | 9 |
+
+**Segunda rodada corretiva — auditoria adversarial de nove lentes.** Ela devolveu
+`AUDIT_FAIL` com 16 achados, 13 invalidantes, que colapsavam em três defeitos.
+Todos produziam afirmação falsa em registro imutável:
+
+| item | commit | mutações |
+|---|---|---|
+| **C** captura da Fase da Conta só em ato confirmado | `e6f653d` | 4 |
+| **B** operação nasce antes dos efeitos que lhe pertencem | `58be507` + `fc25e7b` | 3 |
+| **A** exclusão da última ordem abandona; órfã não é herdada | `13b9811` | 4 |
+| **C×A** captura depois de resolvido o ciclo de vida | `d161207` | 3 |
+
+**Terceira rodada — as regressões da própria correção C.** A auditoria dirigida a
+C, B e A encontrou três caminhos em que a captura, retirada de `save()`, não
+havia sido reposta:
+
+| item | commit | mutações |
+|---|---|---|
+| **R1** breach que compromete o stop observa a fase | `ffa637a` + `c2b17c5` | 3 |
+| **R2** status devolvido a não operacional retira a ordem | `356fe37` | 4 |
+| **R3** Fase da Conta observada antes da revisão | `d328e2b` + `b5b5766` | 3 |
+| **R4** troca de Par aceita observa a Fase da Conta | `ca301de` | 3 |
+
+`480e7a2..ca301de` são **11 commits**, e nenhum deles tocou este arquivo nem o
+`CHANGELOG` — a reconciliação documental que os cobre é a deste checkpoint.
+
+**Reclassificação do R4, decidida pelo humano contra o parecer da auditoria.** O
+achado de `04-stop-statistics.js` na saída terminal do laço de `<select>` havia
+sido rebaixado a dívida, com o argumento de que o sítio é byte-idêntico antes e
+depois de R1/R2/R3. O argumento prova apenas que não é regressão *daqueles*
+patches. Como é **esta feature** que torna `maxAccountPhaseReached` dado
+histórico imutável, qualquer caminho de uso ordinário capaz de subestimá-lo é
+defeito do candidato: `PRODUCT_DEFECT`. Medido nos defaults de fábrica com saldo
+40.000, trocar `USDJPY` por `EURUSD` numa ordem aberta leva o risco de 15,44 para
+2.500 USD — drawdown de 6,25% contra teto de 4% da Fase 1 —, a conta opera na
+Fase 2 no disco e na tela, e o máximo permanecia em zero.
+
+**O princípio de C, completo depois de R1 e R4:**
+
+```
+valor transitório / digitando        -> não captura
+guarda rejeita e reverte             -> não captura
+valor sobrevive à guarda e persiste  -> CAPTURA
+```
+
+`operationTouchAccountPhase` nunca voltou para `save()`. Os oito sítios de
+captura são todos atos semanticamente confirmados.
+
+**Correção de rótulo, registrada porque o erro foi de método.** `be43dde` foi
+commitado como se fosse o item #8 da fila e não era. Ele trata da integridade
+ternária da **Fase da Conta** (`observed` / `unobserved` / `degraded`) e
+permanece válido como hardening próprio. O #8 da fila era o **desfecho da
+persistência**, corrigido em `e7313aa`.
+
+A troca ocorreu após uma compactação de contexto. Eu havia perdido o
+enunciado, declarei isso — e então formulei perguntas sobre o ternário errado,
+tendo encontrado um ternário legítimo no código e o assumido como sendo o da
+fila. As respostas confirmaram recomendações minhas sobre um assunto que não era
+o item pendente, o que deu à correção uma aparência de validação que ela não
+tinha. Perguntar sobre a coisa errada não é o mesmo que perguntar.
+
+**92 experimentos de mutação ao longo das três rodadas**, todos acusados por
+asserção própria ou registrados como no-op provado. Nenhum foi aceito por
+`TypeError`. Treze precisaram de correção antes de valer como evidência: testes
+que detectavam por exceção em vez de asserção, mutações infiéis (uma quebrava a
+construção do modal, outra era inócua contra o caso escolhido), duas pareadas
+com a função errada, uma que dependia de instrumentação herdada de outro teste, e
+uma cuja igualdade passava sem haver observação alguma — revisão e registro
+empatando em `null`.
+
+Cinco sobreviventes ficaram registradas como **no-op provado**, não como lacuna:
+anular `jaFinalizada` não produz duplicação porque três autoridades independentes
+barram antes; a guarda `S.activeOperation &&` na captura é redundante depois de o
+ciclo de vida estar resolvido; captura duplicada entre checkpoint e confirmação
+não tem efeito porque a fase não muda entre os dois instantes; e capturar no
+caminho revertido observa o valor já restaurado.
+
+**Categoria de teste criada nesta série.** Um defeito de fiação passou por
+testes unitários verdes: o gancho estava num laço morto (`querySelectorAll('input')`,
+enquanto Status é um `<select>`). Ficou provado empiricamente que reintroduzir o
+defeito faz o teste de fiação FALHAR enquanto o unitário PASSA. Daí
+`operation_wiring_test.py`: evento real de DOM → domínio → estado → disco.
+
+**Achado normativo.** A varredura das citações do código contra os 92 artigos da
+Norma Vigente acusou **oito numerações penduradas** — `Art. 1.3, 3.5, 3.6, 3.7,
+3.8, 3.10, 8.6, 9.5` — em doze arquivos. A Norma tem `3.1-3.4`, `8.1-8.5` e
+`9.1-9.3`. Só foram corrigidas as três da guarda de exclusividade, únicas com
+evidência textual do correspondente vigente. As demais seguem pendentes, na
+seção de pendências.
+
+**O defeito mais grave da série** foi o último. A sonda que decide o destino de
+uma finalização devolvia booleano, e um `catch(_){ return false; }` transformava
+leitura impossível em prova de ausência. Dali saía a perda silenciosa: `setItem`
+grava, uma exceção posterior interrompe o fluxo, a leitura de volta falha, o
+sistema conclui "não gravou", a memória volta para a operação ativa e o próximo
+`save()` sobrescreve o disco — memória e disco discordando sobre se uma operação
+financeira foi formalmente encerrada. Contrato em `DB-STORAGE-GOVERNANCE.md`,
+regra 7.
+
+**Evidência do candidato `ca301de`.** Gate `standard` 17/17 em cada commit da
+série e tier `full` **28/28**, ambos lidos integralmente, com o artefato do
+`full` registrando `head: ca301ded4c3c` — a verificação cobre o candidato exato,
+e não uma aproximação dele.
+
+**Vereditos de auditoria, em ordem:** `AUDIT_FAIL` (nove lentes, 13 invalidantes
+→ C, B, A); `AUDIT_FAIL` (dirigida, 6 invalidantes → R1, R2, R3);
+`AUDIT_PASS_WITH_DEBT` (dirigida a R1/R2/R3, 4/4 lentes, zero invalidantes, uma
+dívida que o humano reclassificou como defeito → R4). A lente de interação
+`R4×C` concluiu com zero achados.
+
+**Lente `R4` independente — dispensada por waiver explícito.**
+
+```
+R4 independent audit:
+NOT_EXECUTED / INFRASTRUCTURE_BLOCKED
+
+causa:
+quatro tentativas consecutivas encerradas por 529 Overloaded,
+sem produção de evidência sobre o produto.
+
+decisão:
+waiver explícito aprovado pelo responsável;
+a lente R4 independente NÃO permanece como gate pendente
+para Human Acceptance ou integração.
+```
+
+**Taxonomia, para que não se leia o que não está escrito: `waiver ≠ AUDIT_PASS`.**
+A lente não foi executada com sucesso em nenhuma das quatro tentativas — foi
+dispensada conscientemente, pela indisponibilidade persistente da infraestrutura
+e pela suficiência das evidências alternativas. Nenhuma das quatro falhas
+produziu informação sobre o candidato, nem a favor nem contra.
+
+Base objetiva do waiver:
+
+```
+R4 interface tests       3/3 PASS
+mutation                 2 killed + 1 proven no-op
+standard                 17/17 PASS
+full                     28/28 PASS sobre ca301de
+R4×C                     concluída, zero achados
+```
+
+As três propriedades que a lente tentaria falsificar — captura do pico na troca
+aceita, monotonicidade no recuo, e não-contaminação na troca revertida — são
+exatamente as três cobertas pelos testes de interface e provadas detectáveis pela
+mutação dirigida. A lente seria uma quarta camada independente, por leitura de
+código, e não a única evidência.
+
+**Uma sessão futura não deve reabrir a R4 como gate.** Se houver motivo novo para
+executá-la, isso é decisão nova, e não continuação de pendência.
+
+**Estado do desenvolvimento.**
+
+```
+DESENVOLVIMENTO DO HISTÓRICO ENCERRADO
+próximo gate = HUMAN ACCEPTANCE
+```
+
+Não há etapa técnica pendente antes da inspeção humana. Depois dela: integração
+controlada, merge em `main`, validação pós-merge, e push somente com autorização
+expressa.
+
+**Fragilidades do harness, registradas e não corrigidas.** `nocoda_test.py`
+(`run_no_operational_mutation`) falhou uma vez num `full` que competia com quatro
+agentes de auditoria pela máquina, e passou 9/9 isolado, no `standard` e no
+`full` sem carga: `TEST_HARNESS_FAIL` por sensibilidade temporal, com mecanismo
+não identificado. O script de auditoria devolvia `AUDIT_PASS` com zero agentes
+concluídos — corrigido nas execuções seguintes com gate de validade por lente, e
+o defeito do padrão genérico fica registrado. Retomar uma execução que já era
+retomada perde o cache dos agentes anteriores. E `page.evaluate` com duas
+atribuições soltas faz o Playwright invocar a última função: um helper de teste
+era chamado sem argumentos e o erro aparecia como se fosse do produto.
+
+**Ponto para a auditoria dirigida.** A barreira do `UNKNOWN` é deliberadamente
+de sessão. Falta verificar o comportamento **entre sessões**: com o estado nesse
+desfecho, uma reabertura não pode ter fallback que transforme falha de leitura em
+sobrescrita. O esperado é que o disco com o candidato carregue o candidato, o
+disco com o estado anterior carregue o anterior, e um disco ilegível leve ao modo
+de recuperação sem gravar por cima.
+
 ## Integração contínua — 2026-08-17
 
 `.github/workflows/quality-gate.yml` existe em `main` desde o merge `91687dc`.
@@ -179,6 +395,30 @@ lacuna não pesa sobre este changeset; mas qualquer tarefa futura que toque cód
 precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
 
 ## Pendências abertas fora do escopo desta tarefa
+
+- **Numerações de artigo penduradas no código** (2026-08-17). Oito citações
+  apontam para artigos inexistentes na Norma Vigente: `Art. 1.3, 3.5, 3.6, 3.7,
+  3.8, 3.10, 8.6, 9.5`, em doze arquivos — `Art. 3.10` sozinho em sete. Só as
+  três da guarda de Operação Única Exclusiva foram corrigidas (`17214ba`), por
+  serem as únicas com correspondente vigente verificado textualmente. Duas
+  ocorrências de `Art. 3.5§2` — `04-patrimonial-simulation.js:142` e
+  `11-operation-lifecycle.js:41` — foram deixadas intactas de propósito: tratam
+  de consolidação e pré-condições de encerramento, e trocar citação por
+  suposição seria o mesmo defeito com o sinal invertido.
+- **Remediação de estado já conflitado** (2026-08-17). `f64cea2` impede a
+  criação de operação com duas teses, mas não trata base que já esteja nesse
+  estado. Um caso real exigiria ferramenta de retificação histórica com ato
+  explícito, auditoria, proveniência e revisão humana — mudança própria, não
+  apêndice do Histórico. Enquanto isso, a Finalização detecta e bloqueia, sem
+  correção automática.
+- **Ordem fechada é imutável na grade** (2026-08-17). `readOnly = isMigrada ||
+  frozen || isFechada` desabilita `par`, `tipo` e `status`. É o que torna um
+  conflito preexistente irreparável pela interface. Não foi alterado: reabrir
+  ordem fechada tem consequências contábeis próprias e exige decisão humana.
+- **`commitOnboardingStart` inalcançável por teste** (2026-08-17). O fluxo real
+  de reinício de período é closure dentro de `openOnboardingModal`, com ~2 mil
+  linhas. A garantia do reinício administrativo é hoje uma guarda estrutural
+  sobre o código-fonte servido, e não prova de alcançabilidade pela interface.
 
 - **Workspace "Visão Geral" do Execution Board segue vazio.** É o único dos cinco
   sem função: o `index.html` declara "superfície reservada … o conteúdo funcional

@@ -139,22 +139,24 @@ function bindContab(){
     save(); renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
-  // arquivamento da operação (Art. 3.5§2) — consolida o resultado no ciclo e zera as grades
+  // Finalização da Operação Única (Art. 3.5§2). Este handler NÃO consolida
+  // nada: delega para a autoridade única em 10-domain/11-operation-lifecycle.js.
+  //
+  // Até a Camada 2 este bloco era o próprio fluxo de arquivamento — consolidava
+  // cycleRealizado, empurrava o transitionLog, ZERAVA as grades e só então
+  // chamava save(), ignorando o retorno. Duas autoridades de consolidação
+  // significariam risco de dupla contabilização; uma ordem destrutiva antes da
+  // gravação significava perder a operação quando a gravação recusasse.
+  // O handler apenas ABRE a superfície de revisão. Coleta, validação,
+  // confirmação e chamada da autoridade vivem no modal — e a consolidação, no
+  // domínio. Dialogs nativos encadeados nao sao equivalentes a uma revisao que
+  // mostra a operacao inteira antes de destrui-la.
   $('archiveOpBtn').addEventListener('click',()=>{
-    if(S.phases.some(ph=>ph.orders.some(o=>o.status==='Aberta'))){
-      alert('Ainda há posição aberta — a operação só é considerada encerrada quando não houver posição vinculada à tese (Art. 3.5 §2).');
+    const api=window.JPWOperation;
+    if(!api || typeof api.openReview!=='function'){
+      alert('Módulo de finalização indisponível. Recarregue a página antes de encerrar a operação.');
       return;
     }
-    const net=netOpAtual();
-    if(!confirm(`Arquivar a operação atual?\n\nResultado líquido a consolidar no ciclo: ${fmtMoney2(net)}\n\n· Perda realizada CONTINUA no drawdown do ciclo (Art. 3.4§2).\n· Lucro arquivado NÃO amplia limites de risco (Art. 4.3 — Ilusão do DDC).\n· As grades são zeradas e as Fases 2–4 retravadas.`)) return;
-    S.cycleRealizado=(S.cycleRealizado||0)+net;
-    S.transitionLog.push({fase:'operação arquivada', ts:new Date().toISOString(),
-      resumo:{resultado:net, cicloAcumulado:S.cycleRealizado}});
-    // auditoria resumida (JPW-HJFGDE §11); o transitionLog acima segue sendo o registro normativo
-    if(typeof dgLogChange==='function') dgLogChange('operation','archived','','Operação arquivada e resultado consolidado no ciclo');
-    const sizes=[5,4,3,2];
-    S.phases.forEach((ph,pi)=>{ ph.orders=emptyOrders(sizes[pi]||3); });
-    S.phaseUnlocked=[true,false,false,false];
-    save(); render(); renderPhases(); renderLedger();
+    api.openReview();
   });
 }

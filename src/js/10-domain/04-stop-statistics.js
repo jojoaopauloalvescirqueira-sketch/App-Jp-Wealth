@@ -189,7 +189,31 @@ function renderPhases(){
       const o=S.phases[pi].orders[oi];
       const temDado = !!(o.id||o.par||o.lote||o.entry||o.sl||o.tp||o.status||o.result);
       if(temDado && !confirm('Esta linha tem dados registrados. Remover mesmo assim?')) return;
+      const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
       S.phases[pi].orders.splice(oi,1);
+      // ABANDONO ADMINISTRATIVO. Excluir a ULTIMA ordem operacional apaga a
+      // evidencia que constituia a Operacao Unica; a entidade nao pode
+      // sobreviver a isso. Se ela sobrevivesse, a guarda de nascimento
+      // (`!S.activeOperation`) falharia na proxima Genese e a nova tese herdaria
+      // identidade, abertura e proveniencia da anterior — medido: um registro
+      // GBPUSD gravado como aberto em outra data, com openedAtSource
+      // 'genesis_transition', sob o operationId da operacao anterior.
+      //
+      // Nao e finalizacao e nao finge ser: NENHUM registro no Historico, NENHUMA
+      // consolidacao em cycleRealizado, NENHUM reset de fases. E o mesmo
+      // tratamento do reinicio administrativo de periodo.
+      //
+      // A limpeza acontece no ATO EXPLICITO, e nao por heuristica de "grades
+      // vazias": uma operacao cujas ordens estao todas FECHADAS continua viva e
+      // suas linhas continuam na grade — e disso depende a exclusividade da tese.
+      if(eraOperacional && S.activeOperation && typeof operationLiveOrders==='function'
+         && operationLiveOrders().length===0){
+        if(typeof dgLogChange==='function'){
+          dgLogChange('operation','abandoned', S.activeOperation.operationId,
+            'Operação Única abandonada: última ordem operacional excluída pelo operador');
+        }
+        S.activeOperation=null;
+      }
       save(); renderPhases();
     });
   });
@@ -205,6 +229,10 @@ function renderPhases(){
       let val=inp.value;
       if(['lote','entry','sl','tp','result'].includes(f)) val=parseFloat(val)||0;
       S.phases[pi].orders[oi][f]=val;
+      // NÃO há gancho de status aqui: este laço é querySelectorAll('input') e o
+      // campo Status é um <select>. A chamada que existia neste ponto era
+      // inalcançável — a Operação Única nunca nascia pelo grid. O gancho vive no
+      // laço de <select>, depois das guardas de abertura.
       if((f==='sl'||f==='tp') && S.phases[pi].orders[oi].needsReview){
         S.phases[pi].orders[oi].needsReview=false; // tocou no stop -> considera revisado
       }
@@ -213,7 +241,11 @@ function renderPhases(){
     inp.addEventListener('change',()=>{
       const pi=+inp.dataset.p, oi=+inp.dataset.o, f=inp.dataset.f;
       const o=S.phases[pi].orders[oi];
-      if(f==='result'){ checkDivergence(pi,oi); return; }
+      // Resultado informado e ato confirmado, e e o que mais move o drawdown.
+      if(f==='result'){
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+        save(); checkDivergence(pi,oi); return;
+      }
       const revert=()=>{
         const raw=inp.dataset.prevval??'';
         const val=['lote','entry','sl','tp'].includes(f)?(parseFloat(raw)||0):raw;
@@ -246,6 +278,12 @@ function renderPhases(){
         }
       }
       if(f==='par'){ renderPhases(); } // par novo muda risco/nocional — redesenha
+      // EDICAO COMPROMETIDA: chegar aqui significa que o valor sobreviveu a
+      // todas as guardas e a todas as reversoes — os caminhos de recusa saem por
+      // `return` antes. So agora o estado e uma afirmacao do operador, e so agora
+      // a Fase da Conta pode virar evidencia historica.
+      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+      save();
     });
   });
   cont.querySelectorAll('select').forEach(sel=>{
@@ -255,18 +293,26 @@ function renderPhases(){
       if(f==='status' && sel.value==='Aberta'){
         const prevStatus=o.status;
         o.status='Aberta'; // aplica temporariamente para as guardas considerarem esta ordem
+
+        // ---- GUARDAS PURAMENTE REJEITADORAS ----------------------------------
+        // Todas antes do nascimento: uma ordem RECUSADA jamais pode criar
+        // entidade. Nenhuma delas produz efeito colateral — só decidem se o ato
+        // acontece.
         let msg=null;
         if(!o.par) msg='🚫 Defina o PAR antes de marcar a ordem como Aberta — sem par o risco e o nocional ficam indefinidos.';
         if(!msg && !(o.sl>0) && o.lote>0) msg='🚫 Não é permitido abrir ordem sem stop — registre o SL antes de marcar como Aberta (Função de Auditoria / Estatuto).';
         if(!msg) msg=orderGateMsg(pi,oi);
-        if(!msg){
-          const check=checkPhaseCap(pi,oi);
-          if(check.excede){
-            handleStopLimitBreach(pi,oi,check);
-            msg=null;
-          }
+        if(msg){
+          o.status=prevStatus; // reverte
+          sel.value=prevStatus||'';
+          alert(msg);
+          return;
         }
-        if(!msg && shouldWarnManualRiskConfirmation()){
+        // Última rejeição possível. Ela ficava DEPOIS de handleStopLimitBreach,
+        // e foi trazida para cá porque um "não" do operador aqui reverteria uma
+        // abertura que já tinha destravado fase e carimbado evento — efeito
+        // colateral sobrevivendo a um ato recusado.
+        if(shouldWarnManualRiskConfirmation()){
           const ok=confirm('Você está prestes a registrar uma operação sem Equity Protector ativo. Confirme que o risco, o drawdown e a exposição foram verificados manualmente.');
           if(!ok){
             o.status=prevStatus;
@@ -274,17 +320,67 @@ function renderPhases(){
             return;
           }
         }
-        if(msg){
-          o.status=prevStatus; // reverte
-          sel.value=prevStatus||'';
-          alert(msg);
-          return;
-        }
+
+        // ---- ABERTURA ACEITA: A OPERAÇÃO NASCE AQUI --------------------------
+        // Depois da última guarda que pode rejeitar, e ANTES do primeiro efeito
+        // colateral que pertence à operação aceita.
+        //
+        // O nascimento vive neste laço de <select> — e não no de <input> — porque
+        // o campo Status é um <select>: o gancho que existia lá era código morto e
+        // a entidade jamais nascia pelo grid.
+        //
+        // A ORDEM IMPORTA. handleStopLimitBreach destrava fase e carimba o evento
+        // via operationStampTransition, que lê S.activeOperation. Com o nascimento
+        // depois dele, o destravamento provocado pela PRÓPRIA Gênese da operação
+        // era carimbado com operationId:null, operationResolveGridPhaseMax o
+        // descartava, e o registro imutável afirmava "Fase máxima da Grade: FASE 1"
+        // para uma operação que viveu inteira na FASE 2 — a fase que essa mesma
+        // ordem forçou. Não se reconstrói isso por cronologia: o vínculo tem de
+        // existir no instante do carimbo.
+        if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Aberta',pi,oi);
+
+        // ---- EFEITOS COLATERAIS DA OPERAÇÃO ACEITA ---------------------------
+        // Já existe identidade viva: o evento de destravamento nasce vinculado.
+        const check=checkPhaseCap(pi,oi);
+        if(check.excede) handleStopLimitBreach(pi,oi,check);
       } else if(f==='status' && sel.value==='Fechada'){
         const prevStatus=o.status;
         sel.value=prevStatus||''; // reverte visualmente até confirmar no modal
         openCloseOrderModal(pi,oi);
         return;
+      } else if(f==='status'){
+        // RETIRADA EXPLICITA da ordem do ciclo operacional. O unico valor que
+        // chega aqui pela interface e o vazio ('—'): 'Aberta' e 'Fechada' tem
+        // ramos proprios acima, e 'Migrada' so aparece na linha ja migrada,
+        // cujo <select> e readOnly.
+        const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
+        o.status = sel.value;
+        const aindaOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
+        if(eraOperacional && !aindaOperacional){
+          // Os carimbos da LINHA saem junto. Eles sao a evidencia de que ela
+          // pertenceu a operacao; mante-los fazia `jaPertencia` continuar
+          // verdadeiro na reabertura, o fail-safe de orfandade ser pulado, e a
+          // tese seguinte herdar operationId, openedAt e openedAtSource da
+          // anterior — o mesmo desfecho da exclusao, por outra porta.
+          delete o.openedAt;
+          delete o.closedAt;
+          // Mesma semantica do abandono por exclusao da ultima linha: se esta
+          // era a ultima evidencia operacional, a entidade nao sobrevive.
+          // NENHUM registro no Historico, NENHUMA consolidacao em
+          // cycleRealizado, NENHUM reset de fases. Nao e finalizacao e nao
+          // finge ser.
+          //
+          // Se sobram outras ordens da operacao, ela PERMANECE: retirar uma
+          // linha nao encerra a tese.
+          if(S.activeOperation && typeof operationLiveOrders==='function'
+             && operationLiveOrders().length===0){
+            if(typeof dgLogChange==='function'){
+              dgLogChange('operation','abandoned', S.activeOperation.operationId,
+                'Operação Única abandonada: última ordem operacional devolvida a estado não operacional');
+            }
+            S.activeOperation=null;
+          }
+        }
       } else if(f==='tipo'){
         const prevTipo=o.tipo;
         o.tipo=sel.value;
@@ -317,6 +413,22 @@ function renderPhases(){
             return;
           }
         }
+        // TROCA ACEITA. Sobreviveu a todas as guardas e sera persistida pelo
+        // save() terminal — os caminhos de recusa saem por `return` acima, com o
+        // par ja restaurado.
+        //
+        // Trocar o instrumento muda orderRisk() tanto quanto mudar o lote:
+        // depende de cpl e da conversao da moeda de cotacao. Logo muda o
+        // drawdown estatutario e PODE elevar a Fase da Conta. Medido nos
+        // defaults de fabrica: de USDJPY para EURUSD, com lote 0,05 e meio
+        // ponto de stop, o risco vai de 15,44 para 2.500 USD — de 0,04% para
+        // 6,25% do saldo, cruzando o teto de 4% da FASE 1.
+        //
+        // Enquanto a captura morava dentro de save(), esta saida a recebia. C
+        // repos a captura no laco de <input> e no ciclo de vida; o laco de
+        // <select> ficou sem nenhuma, e a conta podia subir de fase, recuar
+        // depois, e o registro imutavel afirmar um maximo inferior ao atingido.
+        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
       } else {
         S.phases[pi].orders[oi][f]=sel.value;
       }
