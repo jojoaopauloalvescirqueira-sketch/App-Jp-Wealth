@@ -189,7 +189,31 @@ function renderPhases(){
       const o=S.phases[pi].orders[oi];
       const temDado = !!(o.id||o.par||o.lote||o.entry||o.sl||o.tp||o.status||o.result);
       if(temDado && !confirm('Esta linha tem dados registrados. Remover mesmo assim?')) return;
+      const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
       S.phases[pi].orders.splice(oi,1);
+      // ABANDONO ADMINISTRATIVO. Excluir a ULTIMA ordem operacional apaga a
+      // evidencia que constituia a Operacao Unica; a entidade nao pode
+      // sobreviver a isso. Se ela sobrevivesse, a guarda de nascimento
+      // (`!S.activeOperation`) falharia na proxima Genese e a nova tese herdaria
+      // identidade, abertura e proveniencia da anterior — medido: um registro
+      // GBPUSD gravado como aberto em outra data, com openedAtSource
+      // 'genesis_transition', sob o operationId da operacao anterior.
+      //
+      // Nao e finalizacao e nao finge ser: NENHUM registro no Historico, NENHUMA
+      // consolidacao em cycleRealizado, NENHUM reset de fases. E o mesmo
+      // tratamento do reinicio administrativo de periodo.
+      //
+      // A limpeza acontece no ATO EXPLICITO, e nao por heuristica de "grades
+      // vazias": uma operacao cujas ordens estao todas FECHADAS continua viva e
+      // suas linhas continuam na grade — e disso depende a exclusividade da tese.
+      if(eraOperacional && S.activeOperation && typeof operationLiveOrders==='function'
+         && operationLiveOrders().length===0){
+        if(typeof dgLogChange==='function'){
+          dgLogChange('operation','abandoned', S.activeOperation.operationId,
+            'Operação Única abandonada: última ordem operacional excluída pelo operador');
+        }
+        S.activeOperation=null;
+      }
       save(); renderPhases();
     });
   });

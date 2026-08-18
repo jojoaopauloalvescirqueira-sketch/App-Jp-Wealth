@@ -786,6 +786,10 @@ function operationTouchAccountPhase(){
 function operationOnOrderStatus(o, statusDepois, pi, oi){
   if(!o || typeof o!=='object') return;
   const agora=new Date().toISOString();
+  // Capturado ANTES dos carimbos: uma ordem que ja tem carimbo ja pertencia a
+  // operacao. Sem essa distincao, re-sinalizar a mesma ordem — o que acontece a
+  // cada re-render — pareceria a chegada de uma tese nova.
+  const jaPertencia = !!(o.openedAt || o.closedAt);
   if(statusDepois==='Aberta' && !o.openedAt) o.openedAt=agora;
   if(statusDepois==='Fechada' && !o.closedAt) o.closedAt=agora;
   // A identidade nasce AQUI, na camada de ciclo de vida — nunca na finalização.
@@ -801,6 +805,34 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   // Ato CONFIRMADO: a ordem passou por todas as guardas e mudou de status.
   if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
     operationTouchAccountPhase();
+  }
+  // FAIL-SAFE. Uma entidade viva que nao tem NENHUMA ordem operacional por tras
+  // dela e orfa: a operacao que ela representava deixou de existir. Reutiliza-la
+  // transferiria operationId, openedAt e proveniencia para uma tese nova — e o
+  // registro imutavel afirmaria que a nova operacao abriu na data da anterior,
+  // com captura automatica. A identidade antiga e DESCARTADA, com registro
+  // auditavel; jamais herdada.
+  //
+  // A contagem exclui a ordem que esta nascendo agora: ela e a primeira da tese
+  // nova, e nao evidencia da anterior.
+  // So se aplica a uma ordem NOVA. E nao se aplica a operacao adotada de legado,
+  // cujas ordens podem nao ter carimbo nenhum: ali a ausencia de carimbo e
+  // esperada e nao indica orfandade.
+  if(S.activeOperation && !jaPertencia && !S.activeOperation.adoptedLegacyAt
+     && (statusDepois==='Aberta' || statusDepois==='Fechada')
+     && typeof operationLiveOrders==='function'){
+    const outras=operationLiveOrders().filter(x=>x && x.o!==o).length;
+    if(outras===0){
+      const orfa=S.activeOperation.operationId;
+      if(typeof dgLogChange==='function'){
+        dgLogChange('operation','orphan_discarded', orfa,
+          'Identidade órfã descartada: nenhuma ordem operacional a sustentava');
+      }
+      if(typeof console!=='undefined' && console.error){
+        console.error('[operação] identidade órfã descartada (sem ordens operacionais):', orfa);
+      }
+      S.activeOperation=null;
+    }
   }
   if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
     const genese = statusDepois==='Aberta' && pi===0 && oi===0;

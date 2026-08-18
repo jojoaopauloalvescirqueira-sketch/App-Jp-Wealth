@@ -5948,7 +5948,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '5515408971b6ac35';
+const JP_WEALTH_BUILD_ID = '1cafe0ee91b01d17';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8636,6 +8636,10 @@ function operationTouchAccountPhase(){
 function operationOnOrderStatus(o, statusDepois, pi, oi){
   if(!o || typeof o!=='object') return;
   const agora=new Date().toISOString();
+  // Capturado ANTES dos carimbos: uma ordem que ja tem carimbo ja pertencia a
+  // operacao. Sem essa distincao, re-sinalizar a mesma ordem — o que acontece a
+  // cada re-render — pareceria a chegada de uma tese nova.
+  const jaPertencia = !!(o.openedAt || o.closedAt);
   if(statusDepois==='Aberta' && !o.openedAt) o.openedAt=agora;
   if(statusDepois==='Fechada' && !o.closedAt) o.closedAt=agora;
   // A identidade nasce AQUI, na camada de ciclo de vida — nunca na finalização.
@@ -8651,6 +8655,34 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   // Ato CONFIRMADO: a ordem passou por todas as guardas e mudou de status.
   if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
     operationTouchAccountPhase();
+  }
+  // FAIL-SAFE. Uma entidade viva que nao tem NENHUMA ordem operacional por tras
+  // dela e orfa: a operacao que ela representava deixou de existir. Reutiliza-la
+  // transferiria operationId, openedAt e proveniencia para uma tese nova — e o
+  // registro imutavel afirmaria que a nova operacao abriu na data da anterior,
+  // com captura automatica. A identidade antiga e DESCARTADA, com registro
+  // auditavel; jamais herdada.
+  //
+  // A contagem exclui a ordem que esta nascendo agora: ela e a primeira da tese
+  // nova, e nao evidencia da anterior.
+  // So se aplica a uma ordem NOVA. E nao se aplica a operacao adotada de legado,
+  // cujas ordens podem nao ter carimbo nenhum: ali a ausencia de carimbo e
+  // esperada e nao indica orfandade.
+  if(S.activeOperation && !jaPertencia && !S.activeOperation.adoptedLegacyAt
+     && (statusDepois==='Aberta' || statusDepois==='Fechada')
+     && typeof operationLiveOrders==='function'){
+    const outras=operationLiveOrders().filter(x=>x && x.o!==o).length;
+    if(outras===0){
+      const orfa=S.activeOperation.operationId;
+      if(typeof dgLogChange==='function'){
+        dgLogChange('operation','orphan_discarded', orfa,
+          'Identidade órfã descartada: nenhuma ordem operacional a sustentava');
+      }
+      if(typeof console!=='undefined' && console.error){
+        console.error('[operação] identidade órfã descartada (sem ordens operacionais):', orfa);
+      }
+      S.activeOperation=null;
+    }
   }
   if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
     const genese = statusDepois==='Aberta' && pi===0 && oi===0;
@@ -11084,7 +11116,31 @@ function renderPhases(){
       const o=S.phases[pi].orders[oi];
       const temDado = !!(o.id||o.par||o.lote||o.entry||o.sl||o.tp||o.status||o.result);
       if(temDado && !confirm('Esta linha tem dados registrados. Remover mesmo assim?')) return;
+      const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
       S.phases[pi].orders.splice(oi,1);
+      // ABANDONO ADMINISTRATIVO. Excluir a ULTIMA ordem operacional apaga a
+      // evidencia que constituia a Operacao Unica; a entidade nao pode
+      // sobreviver a isso. Se ela sobrevivesse, a guarda de nascimento
+      // (`!S.activeOperation`) falharia na proxima Genese e a nova tese herdaria
+      // identidade, abertura e proveniencia da anterior — medido: um registro
+      // GBPUSD gravado como aberto em outra data, com openedAtSource
+      // 'genesis_transition', sob o operationId da operacao anterior.
+      //
+      // Nao e finalizacao e nao finge ser: NENHUM registro no Historico, NENHUMA
+      // consolidacao em cycleRealizado, NENHUM reset de fases. E o mesmo
+      // tratamento do reinicio administrativo de periodo.
+      //
+      // A limpeza acontece no ATO EXPLICITO, e nao por heuristica de "grades
+      // vazias": uma operacao cujas ordens estao todas FECHADAS continua viva e
+      // suas linhas continuam na grade — e disso depende a exclusividade da tese.
+      if(eraOperacional && S.activeOperation && typeof operationLiveOrders==='function'
+         && operationLiveOrders().length===0){
+        if(typeof dgLogChange==='function'){
+          dgLogChange('operation','abandoned', S.activeOperation.operationId,
+            'Operação Única abandonada: última ordem operacional excluída pelo operador');
+        }
+        S.activeOperation=null;
+      }
       save(); renderPhases();
     });
   });

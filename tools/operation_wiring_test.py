@@ -464,6 +464,145 @@ def run_manual_risk_refusal_creates_no_entity(page):
     assert r["logDepois"] == r["logAntes"], "a recusa deixou evento no transitionLog"
 
 
+def run_deleting_last_operational_order_abandons(page):
+    """Excluir a ULTIMA ordem operacional abandona a operacao — sem fingir fim.
+
+    A exclusao apaga a evidencia que constituia a Operacao Unica. Se a entidade
+    sobrevivesse, a guarda de nascimento (`!S.activeOperation`) falharia na
+    proxima Genese e a nova tese herdaria identidade, abertura e proveniencia.
+    Abandono NAO e finalizacao: nenhum registro, nenhuma consolidacao, nenhum
+    reset de fases.
+    """
+    r = page.evaluate(
+        """() => {
+          window.confirm = () => true;
+          window.alert = () => {};
+          __prepararGenese();
+          S.cycleRealizado = 777;
+          const sel = __selectStatus(0,0);
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          const opAntes = S.activeOperation && S.activeOperation.operationId;
+          const antes = {ciclo:S.cycleRealizado, regs:S.operationHistory.records.length,
+                         fases:S.phaseUnlocked.slice(), vivas:operationLiveOrders().length};
+          const btn = document.querySelector('[data-delorder="0:0"]');
+          if(!btn) return {erro:'botao de exclusao nao encontrado'};
+          btn.click();
+          const disco = __doDisco();
+          return {opAntes, antes,
+                  op: S.activeOperation,
+                  ciclo:S.cycleRealizado, regs:S.operationHistory.records.length,
+                  fases:S.phaseUnlocked.slice(), vivas:operationLiveOrders().length,
+                  opNoDisco: disco.activeOperation,
+                  regsNoDisco:(disco.operationHistory&&disco.operationHistory.records||[]).length};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["opAntes"], "a operacao nao nasceu na abertura"
+    assert r["antes"]["vivas"] == 1, f"pre-condicao: {r['antes']}"
+    assert r["vivas"] == 0, f"a exclusao nao removeu a ordem: {r['vivas']}"
+    assert r["op"] is None, (
+        f"a entidade sobreviveu a exclusao da ultima ordem operacional: {r['op']} — "
+        "a proxima Genese herdaria identidade, abertura e proveniencia dela"
+    )
+    assert r["opNoDisco"] is None, "o abandono nao foi persistido"
+    assert r["regs"] == r["antes"]["regs"] == 0 and r["regsNoDisco"] == 0, (
+        f"o abandono inventou registro no Historico: {r['regs']}/{r['regsNoDisco']}"
+    )
+    assert r["ciclo"] == r["antes"]["ciclo"] == 777, (
+        f"o abandono consolidou em cycleRealizado: {r['antes']['ciclo']} -> {r['ciclo']}"
+    )
+    assert r["fases"] == r["antes"]["fases"], (
+        f"o abandono resetou fases: {r['antes']['fases']} -> {r['fases']}"
+    )
+
+
+def run_deleting_one_of_many_keeps_the_operation(page):
+    """Sobrando ordem operacional, a operacao PERMANECE.
+
+    Controle indispensavel: sem ele a correcao poderia ser a heuristica global
+    "grade mexeu, dissolve", que mataria uma operacao viva.
+    """
+    r = page.evaluate(
+        """() => {
+          window.confirm = () => true; window.alert = () => {};
+          __prepararGenese();
+          const sel = __selectStatus(0,0);
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          const opAntes = S.activeOperation && S.activeOperation.operationId;
+          // Segunda ordem operacional, na mesma tese.
+          const d = S.phases[0].orders[1];
+          d.id='D1'; d.par='EURUSD'; d.tipo='BUY'; d.lote=0.01; d.entry=1.10; d.sl=1.095; d.tp=1.12;
+          d.status='Fechada'; d.result=-20; d.openedAt='2026-08-02T10:00:00.000Z';
+          d.closedAt='2026-08-03T10:00:00.000Z';
+          save(); renderPhases();
+          const btn = document.querySelector('[data-delorder="0:1"]');
+          if(!btn) return {erro:'botao de exclusao nao encontrado'};
+          btn.click();
+          return {opAntes, op:S.activeOperation && S.activeOperation.operationId,
+                  vivas:operationLiveOrders().length};
+        }"""
+    )
+    assert not r.get("erro"), r["erro"]
+    assert r["vivas"] == 1, f"esperava uma ordem operacional restante: {r['vivas']}"
+    assert r["op"] == r["opAntes"], (
+        f"a operacao foi dissolvida havendo ordem operacional restante: "
+        f"{r['opAntes']} -> {r['op']} — 'grade mexeu' nao pode dissolver a tese"
+    )
+
+
+def run_new_thesis_never_inherits_orphan_identity(page):
+    """FAIL-SAFE: identidade orfa nao e reutilizada pela tese seguinte.
+
+    Reproduz a cadeia medida: operacao 1 aberta e fechada, linhas apagadas,
+    operacao 2 em OUTRO instrumento. O registro imutavel da segunda chegava a
+    afirmar a identidade, a abertura e a proveniencia automatica da primeira.
+    """
+    r = page.evaluate(
+        """() => {
+          window.confirm = () => true; window.alert = () => {};
+          __prepararGenese();
+          const sel = __selectStatus(0,0);
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          const op1 = JSON.parse(JSON.stringify(S.activeOperation));
+          // Orfandade FORCADA: apaga a ordem sem passar pelo ato de exclusao,
+          // para exercitar o fail-safe e nao a correcao do handler.
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.activeOperation = JSON.parse(JSON.stringify(op1));
+          save();
+          const orfaViva = S.activeOperation && S.activeOperation.operationId;
+          // Tese NOVA, outro instrumento.
+          const g = S.phases[0].orders[0];
+          g.id='G2'; g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.275; g.tp=1.20;
+          renderPhases();
+          const sel2 = __selectStatus(0,0);
+          sel2.value='Aberta'; sel2.dispatchEvent(new Event('change',{bubbles:true}));
+          const op2 = S.activeOperation;
+          const log = ((S.dataGovernance||{}).changeLog||[])
+            .filter(e => e && e.action==='orphan_discarded').map(e => e.recordId);
+          return {op1:{id:op1.operationId, abertura:op1.openedAt, fonte:op1.openedAtSource},
+                  orfaViva,
+                  op2:op2 && {id:op2.operationId, abertura:op2.openedAt, fonte:op2.openedAtSource},
+                  log};
+        }"""
+    )
+    assert r["orfaViva"] == r["op1"]["id"], f"a orfa nao foi montada: {r}"
+    assert r["op2"], "a nova tese nao produziu entidade"
+    assert r["op2"]["id"] != r["op1"]["id"], (
+        f"a tese nova HERDOU a identidade orfa ({r['op2']['id']}) — o registro "
+        "imutavel afirmaria que ela e a operacao anterior"
+    )
+    assert r["op2"]["abertura"] != r["op1"]["abertura"], (
+        f"a tese nova herdou a abertura da anterior: {r['op2']['abertura']}"
+    )
+    assert r["op2"]["fonte"] == "genesis_transition", (
+        f"proveniencia da nova Genese: {r['op2']['fonte']!r}"
+    )
+    assert r["op1"]["id"] in r["log"], (
+        f"o descarte da identidade orfa nao ficou auditavel: {r['log']} — "
+        "bloquear em silencio esconde um estado inconsistente"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -476,6 +615,9 @@ def main():
             run_rejected_open_creates_nothing(page)
             run_unlock_by_own_genesis_is_stamped_with_real_identity(page)
             run_manual_risk_refusal_creates_no_entity(page)
+            run_deleting_last_operational_order_abandons(page)
+            run_deleting_one_of_many_keeps_the_operation(page)
+            run_new_thesis_never_inherits_orphan_identity(page)
             run_close_order_through_ui(page)
             run_reset_does_not_leak_identity(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
