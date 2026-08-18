@@ -723,8 +723,8 @@ def run_ui_flow(browser, url):
         return out;
     }"""
     )
-    assert [r["screen"] for r in nav_state] == ["dash", "exec", "contas", "contab", "fxplan"], (
-        f"rail deveria ter as cinco telas na ordem: {nav_state}"
+    assert [r["screen"] for r in nav_state] == ["dash", "exec", "contas", "contab", "fxplan", "finpes"], (
+        f"rail deveria ter as seis telas na ordem: {nav_state}"
     )
     for row in nav_state:
         assert row["active"] == [row["screen"]], f"telas ativas divergentes: {row}"

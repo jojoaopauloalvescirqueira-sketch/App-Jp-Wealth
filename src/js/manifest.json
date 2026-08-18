@@ -242,7 +242,7 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada do segundo nivel (N1)",
-      "sha256": "2943f489de3e1c9188549be1fcd17b78e44c19c9685e9899ff3a1ab6641f4220"
+      "sha256": "014f650cb96aae9e929055d75d8e13b2965026b5c04147b91d7f1c9e685cb939"
     },
     {
       "order": 41,
@@ -411,6 +411,12 @@
       "path": "src/js/10-domain/12-personal-finance.js",
       "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
       "sha256": "b55659aa70524d1033626317acea8b1f1a72864d465fe724e06381ebf2fc93c6"
+    },
+    {
+      "order": 69,
+      "path": "src/js/20-ui/17-finpes-views.js",
+      "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
+      "sha256": "aa03ca9020da37aa07eede18ca6207adfa0288fb8f63f90fbbb3a37210304d9d"
     }
   ]
 }

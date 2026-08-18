@@ -40,6 +40,7 @@ STANDARD = FAST + (
     ("finpes-foundation", [sys.executable, "tools/finpes_foundation_test.py"]),
     ("finpes-finalize-preservation", [sys.executable, "tools/finpes_finalize_preservation_test.py"]),
     ("finpes-backup-roundtrip", [sys.executable, "tools/finpes_backup_roundtrip_test.py"]),
+    ("finpes-navigation", [sys.executable, "tools/finpes_navigation_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (
