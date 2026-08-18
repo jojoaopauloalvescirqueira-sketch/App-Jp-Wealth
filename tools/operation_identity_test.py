@@ -458,6 +458,163 @@ def run_capture_failure_is_observable(page):
     )
 
 
+# ---------------------------------------------------------------------------
+# Interacao C x A: a captura opera sobre a entidade que PERMANECE viva
+# ---------------------------------------------------------------------------
+# A captura da Fase da Conta rodava ANTES do fail-safe de orfandade. Quando o
+# fail-safe descartava uma orfa e uma tese nova nascia no mesmo ato, a captura
+# tinha ido para a entidade descartada e a recem-nascida saia sem observacao do
+# proprio instante em que nasceu. Nao e afirmacao falsa — e subestimacao
+# silenciosa do maximo, que a monotonicidade depois preserva errado.
+
+# Funcao EXPLICITA: com duas atribuicoes soltas o Playwright trata a ultima
+# expressao como a funcao a invocar, e chamava __ordemNova sem argumentos.
+MONTA_FASE = """() => {
+  window.__montaFase = (ciclo) => {
+    S.params.saldoIni = 10000;
+    // Reconstroi as grades: um caso anterior desta suite pode ter deixado
+    // S.phases vazio, e ali o forEach nao lanca — so devolve S.phases[0]
+    // indefinido depois, no lugar errado.
+    if (!Array.isArray(S.phases) || S.phases.length !== 4) {
+      S.phases = structuredClone(DEFAULTS.phases);
+    }
+    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+    S.cycleRealizado = ciclo;
+    S.activeOperation = null;
+    S.operationHistory = {schemaVersion:1, records:[]};
+  };
+  // Ordem NOVA: sem carimbo algum, e o que o fail-safe exige para agir.
+  window.__ordemNova = (pi,oi,par) => {
+    const o = S.phases[pi].orders[oi];
+    o.id='X'; o.par=par||'EURUSD'; o.tipo='BUY'; o.lote=0.01;
+    o.entry=1.10; o.sl=1.09; o.tp=1.20; o.result=0;
+    // O status e aplicado ANTES da chamada, como o handler real faz:
+    // operationOnOrderStatus so carimba datas e resolve a identidade — quem muda
+    // o status e o chamador. Sem isto nenhuma ordem fica viva, o fail-safe de
+    // orfandade dispara no ato seguinte e a entidade e trocada por engano.
+    o.status='Aberta';
+    delete o.openedAt; delete o.closedAt;
+    return o;
+  };
+}
+"""
+
+
+def run_capture_lands_on_existing_entity(page):
+    """(1) Entidade normal existente: a captura continua funcionando."""
+    r = page.evaluate(
+        """() => {
+          __montaFase(-900);                       // Fase da Conta = indice 2
+          S.activeOperation = {schemaVersion:1, operationId:'op_norm',
+            openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+            maxAccountPhaseReached:null};
+          const o = __ordemNova(0,0);
+          o.openedAt = '2026-08-01T10:00:00.000Z';   // ja pertence: fail-safe nao age
+          const faseDoAto = accountPhaseProbe().idx;
+          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          return {faseDoAto, id:S.activeOperation.operationId,
+                  max:S.activeOperation.maxAccountPhaseReached};
+        }"""
+    )
+    assert r["faseDoAto"] == 2, f"fixture nao produziu fase definida: {r['faseDoAto']}"
+    assert r["id"] == "op_norm", f"a identidade existente foi trocada: {r['id']!r}"
+    assert r["max"] == 2, (
+        f"a entidade existente nao recebeu a captura do ato: {r['max']!r}"
+    )
+
+
+def run_capture_lands_on_newborn_entity(page):
+    """(2) Nenhuma entidade: nasce, e a fase DAQUELE ato e capturada nela."""
+    r = page.evaluate(
+        """() => {
+          __montaFase(-900);                       // indice 2
+          const o = __ordemNova(0,0);
+          const faseDoAto = accountPhaseProbe().idx;
+          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          const op = S.activeOperation;
+          return {faseDoAto, nasceu: !!op, fonte: op && op.openedAtSource,
+                  max: op && op.maxAccountPhaseReached};
+        }"""
+    )
+    assert r["faseDoAto"] == 2, f"fixture: {r['faseDoAto']}"
+    assert r["nasceu"] and r["fonte"] == "genesis_transition", f"nascimento: {r}"
+    assert r["max"] == 2, (
+        f"a entidade RECEM-NASCIDA saiu com maximo {r['max']!r} — a fase do "
+        "proprio instante do nascimento nao foi observada"
+    )
+
+
+def run_orphan_is_discarded_without_receiving_the_capture(page):
+    """(3) Orfa + tese nova: a captura vai para a NOVA, nao para a descartada."""
+    r = page.evaluate(
+        """() => {
+          __montaFase(-900);                       // indice 2
+          // Orfa: identidade viva sem nenhuma ordem operacional por tras.
+          const orfa = {schemaVersion:1, operationId:'op_orfa',
+            openedAt:'2026-07-01T10:00:00.000Z', openedAtSource:'genesis_transition',
+            maxAccountPhaseReached:null};
+          S.activeOperation = orfa;
+          const o = __ordemNova(0,0, 'GBPUSD');    // tese NOVA, outro instrumento
+          const faseDoAto = accountPhaseProbe().idx;
+          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          const nova = S.activeOperation;
+          return {faseDoAto,
+                  orfaMax: orfa.maxAccountPhaseReached,
+                  orfaId: orfa.operationId,
+                  novaId: nova && nova.operationId,
+                  novaMax: nova && nova.maxAccountPhaseReached,
+                  novaAbertura: nova && nova.openedAt,
+                  novaFonte: nova && nova.openedAtSource};
+        }"""
+    )
+    assert r["faseDoAto"] == 2, f"fixture: {r['faseDoAto']}"
+    assert r["novaId"] and r["novaId"] != r["orfaId"], (
+        f"a identidade orfa foi HERDADA pela tese nova: {r['novaId']!r}"
+    )
+    assert r["novaAbertura"] != "2026-07-01T10:00:00.000Z", (
+        "a abertura da operacao anterior foi transferida para a tese nova"
+    )
+    assert r["novaMax"] == 2, (
+        f"a entidade nova saiu com maximo {r['novaMax']!r} — a captura foi para a "
+        "entidade que seria descartada e o nascimento ficou sem observacao"
+    )
+    assert r["orfaMax"] is None, (
+        f"a orfa DESCARTADA recebeu a captura definitiva ({r['orfaMax']!r}); o "
+        "esforco de observacao foi gasto num objeto que deixou de existir"
+    )
+
+
+def run_peak_at_birth_survives_later_recovery(page):
+    """(4) Pico so no nascimento: o maximo o preserva depois do recuo."""
+    r = page.evaluate(
+        """() => {
+          __montaFase(-1600);                      // indice 3 — o PICO
+          const o = __ordemNova(0,0);
+          const faseNoNascimento = accountPhaseProbe().idx;
+          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          const maxAposNascer = S.activeOperation.maxAccountPhaseReached;
+          // A conta se recupera: a fase corrente cai.
+          S.cycleRealizado = -200;
+          const faseDepois = accountPhaseProbe().idx;
+          // Novo ato confirmado, agora numa fase MENOR.
+          const o2 = __ordemNova(0,1);
+          operationOnOrderStatus(o2, 'Aberta', 0, 1);
+          return {faseNoNascimento, maxAposNascer, faseDepois,
+                  maxFinal:S.activeOperation.maxAccountPhaseReached};
+        }"""
+    )
+    assert r["faseNoNascimento"] == 3 and r["faseDepois"] == 0, (
+        f"a fixture nao produziu pico seguido de recuo: {r}"
+    )
+    assert r["maxAposNascer"] == 3, (
+        f"o pico do nascimento nao foi capturado: {r['maxAposNascer']!r} — sem "
+        "essa observacao nao ha o que a monotonicidade preserve depois"
+    )
+    assert r["maxFinal"] == 3, (
+        f"o maximo regrediu para {r['maxFinal']!r} apos o recuo da conta"
+    )
+
+
 def main():
     server, url = serve()
     try:
@@ -475,6 +632,12 @@ def main():
             run_history_envelope(page)
             run_not_applicable_is_normal_flow(page)
             run_capture_failure_is_observable(page)
+            # ---- interacao C x A: ordem da captura ----
+            page.evaluate(MONTA_FASE)
+            run_capture_lands_on_existing_entity(page)
+            run_capture_lands_on_newborn_entity(page)
+            run_orphan_is_discarded_without_receiving_the_capture(page)
+            run_peak_at_birth_survives_later_recovery(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             context.close()
             browser.close()

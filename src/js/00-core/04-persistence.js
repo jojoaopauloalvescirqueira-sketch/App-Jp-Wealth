@@ -802,10 +802,6 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   // automática. Qualquer outra ordem tornando-se operacional sem entidade viva
   // também faz a operação nascer — é uma operação real —, mas com abertura
   // DESCONHECIDA, que o operador informa na finalização.
-  // Ato CONFIRMADO: a ordem passou por todas as guardas e mudou de status.
-  if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
-    operationTouchAccountPhase();
-  }
   // FAIL-SAFE. Uma entidade viva que nao tem NENHUMA ordem operacional por tras
   // dela e orfa: a operacao que ela representava deixou de existir. Reutiliza-la
   // transferiria operationId, openedAt e proveniencia para uma tese nova — e o
@@ -843,6 +839,20 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
       openedAtSource: genese?'genesis_transition':null,
       maxAccountPhaseReached:null
     };
+  }
+  // CAPTURA DA FASE DA CONTA — por ultimo, com o ciclo de vida ja RESOLVIDO.
+  //
+  // Ela rodava antes do fail-safe, sobre a entidade CORRENTE. Quando o fail-safe
+  // descartava uma orfa e uma tese nova nascia no mesmo ato, a captura tinha ido
+  // para a entidade descartada, e a recem-nascida saia sem observacao do proprio
+  // instante em que nasceu. Se o pico da fase estivesse ali e a conta recuasse
+  // antes do proximo ato confirmado, o maximo daquela operacao o perdia — nao
+  // uma afirmacao falsa, mas uma subestimacao silenciosa.
+  //
+  // Aqui a captura opera sempre sobre a entidade que PERMANECE viva depois do
+  // ato: a preexistente, ou a que acabou de nascer.
+  if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
+    operationTouchAccountPhase();
   }
 }
 
