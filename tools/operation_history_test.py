@@ -328,6 +328,196 @@ def run_keyboard_and_semantics(page):
     assert r["abriu"], "Enter nao abriu o detalhe"
 
 
+# ---------------------------------------------------------------------------
+# Busca e foco (#6)
+# ---------------------------------------------------------------------------
+# Filtrar reescrevia o cartao inteiro, entao o <input> de busca era destruido e
+# recriado a cada tecla: o operador digitava uma letra e precisava clicar no
+# campo de novo para digitar a segunda. Agora so estatisticas e tabela sao
+# repintadas; os controles sobrevivem.
+
+
+def run_search_keeps_the_input_alive(page):
+    """O <input> de busca e o MESMO no depois de repintar — foco e cursor junto.
+
+    Identidade de no e a prova crua: se o elemento sobreviveu, foco e posicao do
+    cursor sobreviveram por consequencia. Verificar so o texto seria vacuo — o
+    valor era reimpresso de histState mesmo quando o campo era recriado.
+    """
+    r = page.evaluate(
+        """() => {
+          __semearHist();
+          // Entrada pela porta REAL: o container do Histórico e mantido montado
+          // porem `hidden` + `inert`, e focus() em elemento nao exibido e no-op.
+          // Chamar so o renderizador mediria foco num container invisivel — o
+          // teste passaria ou falharia por motivo alheio a propriedade.
+          navigateToScreen('exec');
+          JPWExec.ui.selectView('history');
+          const q0 = document.getElementById('histQuery');
+          q0.focus();
+          q0.value = 'op_'; q0.dispatchEvent(new Event('input', {bubbles:true}));
+          const q1 = document.getElementById('histQuery');
+          const focoApos1 = document.activeElement && document.activeElement.id;
+          q1.setSelectionRange(1, 1);
+          q1.value = 'op_c'; q1.setSelectionRange(2, 2);
+          q1.dispatchEvent(new Event('input', {bubbles:true}));
+          const q2 = document.getElementById('histQuery');
+          return {
+            mesmoNoPrimeiro: q0 === q1,
+            mesmoNoSegundo: q1 === q2,
+            focoApos1,
+            focoApos2: document.activeElement && document.activeElement.id,
+            cursor: q2.selectionStart,
+            valor: q2.value,
+            linhas: document.querySelectorAll('#execHistory .hist-row').length
+          };
+        }"""
+    )
+    assert r["mesmoNoPrimeiro"] and r["mesmoNoSegundo"], (
+        f"o campo de busca foi RECRIADO a cada tecla "
+        f"(1a: {r['mesmoNoPrimeiro']}, 2a: {r['mesmoNoSegundo']}) — foco e cursor "
+        "vao junto e o operador tem de clicar de novo a cada caractere"
+    )
+    assert r["focoApos1"] == "histQuery" and r["focoApos2"] == "histQuery", (
+        f"o foco saiu do campo: {r['focoApos1']!r} -> {r['focoApos2']!r}"
+    )
+    assert r["cursor"] == 2, (
+        f"a posicao do cursor foi perdida: {r['cursor']} — digitar no meio do "
+        "texto jogaria o cursor para outro lugar a cada caractere"
+    )
+    assert r["valor"] == "op_c", f"o texto digitado se perdeu: {r['valor']!r}"
+
+
+def run_search_repaints_statistics_too(page):
+    """A repintura parcial nao pode esquecer as estatisticas.
+
+    Repintar so a tabela deixaria os cartoes com os denominadores do conjunto
+    ANTERIOR — 'n = 3' sobre uma lista de uma linha. O erro seria silencioso e
+    numa superficie cuja unica funcao e afirmar numeros com denominador
+    explicito.
+    """
+    r = page.evaluate(
+        """() => {
+          __semearHist();
+          JPWHistoryUI.render();
+          // Le o par rotulo/valor, e nao o textContent inteiro: comparar blocos
+          // de texto passaria por diferenca em qualquer outro cartao e o teste
+          // nao estaria medindo o denominador que diz medir.
+          const denominadores = () => {
+            const out = {};
+            document.querySelectorAll('#execHistory .hist-stats .hist-stat').forEach(c => {
+              const l = c.querySelector('.hist-stat-l'), v = c.querySelector('.hist-stat-v');
+              const n = c.querySelector('.hist-stat-n');
+              if (l && v) out[l.textContent] = {v: v.textContent, n: n ? n.textContent : null};
+            });
+            return out;
+          };
+          const finalizadas = () => {
+            const d = denominadores()['Operações finalizadas'];
+            return d ? d.v : null;
+          };
+          const antes = finalizadas();
+          const linhasAntes = document.querySelectorAll('#execHistory .hist-row').length;
+          const q = document.getElementById('histQuery');
+          q.value = 'op_ccc'; q.dispatchEvent(new Event('input', {bubbles:true}));
+          return {antes, depois: finalizadas(), linhasAntes, todos: denominadores(),
+                  linhasDepois: document.querySelectorAll('#execHistory .hist-row').length};
+        }"""
+    )
+    assert r["antes"] and r["depois"], f"cartao de estatistica ausente: {r}"
+    assert r["linhasAntes"] == 3 and r["linhasDepois"] == 1, (
+        f"a busca nao recortou a lista: {r['linhasAntes']} -> {r['linhasDepois']}"
+    )
+    assert r["antes"] == "3", f"total inicial inesperado: {r['antes']!r}"
+    assert r["antes"] != r["depois"], (
+        f"as estatisticas NAO acompanharam a busca: continuaram {r['antes']!r} "
+        "enquanto a tabela ja mostrava outro conjunto"
+    )
+    assert r["depois"] == "1", (
+        f"total apos a busca: {r['depois']!r} — a tabela mostra 1 linha e o "
+        "cartao afirma outro numero"
+    )
+    taxa = r["todos"].get("Taxa de operações positivas", {}).get("n")
+    assert taxa and "de 1" in taxa, (
+        f"o par explicito da taxa nao acompanhou a busca: {taxa!r} — um "
+        "denominador do conjunto anterior sobre a lista recortada"
+    )
+
+
+def run_controls_survive_the_repaint(page):
+    """Os seletores tambem sobrevivem, com a selecao intacta."""
+    r = page.evaluate(
+        """() => {
+          __semearHist();
+          JPWHistoryUI.render();
+          const alvo = () => document.getElementById('histInstrument');
+          const antes = alvo();
+          antes.value = 'EURUSD'; antes.dispatchEvent(new Event('change'));
+          const q = document.getElementById('histQuery');
+          q.value = 'op_'; q.dispatchEvent(new Event('input', {bubbles:true}));
+          const depois = alvo();
+          return {mesmoNo: antes === depois, valor: depois.value,
+                  opcoes: depois.options.length,
+                  linhas: document.querySelectorAll('#execHistory .hist-row').length};
+        }"""
+    )
+    assert r["mesmoNo"], "o seletor de instrumento foi recriado pela busca"
+    assert r["valor"] == "EURUSD", (
+        f"o filtro selecionado se perdeu na repintura: {r['valor']!r}"
+    )
+    assert r["opcoes"] >= 2, f"a lista de instrumentos encolheu: {r['opcoes']}"
+
+
+def run_rows_still_respond_after_repaint(page):
+    """As linhas sao recriadas na repintura e precisam reagir de novo.
+
+    Sao os unicos ouvintes que a repintura tem de refazer. Esquece-los deixaria
+    a tabela inerte depois da primeira busca — e o defeito so apareceria para
+    quem buscasse antes de abrir um detalhe.
+    """
+    r = page.evaluate(
+        """() => {
+          __semearHist();
+          JPWHistoryUI.render();
+          const q = document.getElementById('histQuery');
+          q.value = 'op_'; q.dispatchEvent(new Event('input', {bubbles:true}));
+          const linha = document.querySelector('#execHistory .hist-row');
+          const idAntes = linha.dataset.histId;
+          // Abrir um detalhe tambem e mudanca de APRESENTACAO: repinta os
+          // resultados, nao o cartao. Reconstruir tudo aqui destruiria o campo
+          // de busca e os seletores no meio de uma consulta.
+          const buscaAntes = document.getElementById('histQuery');
+          const seletorAntes = document.getElementById('histInstrument');
+          linha.click();
+          const buscaSobreviveu = buscaAntes === document.getElementById('histQuery');
+          const seletorSobreviveu = seletorAntes === document.getElementById('histInstrument');
+          const abriu = !!document.querySelector('#execHistory .hist-detail');
+          const expandido = document.querySelector('[data-hist-id="'+idAntes+'"]')
+                              .getAttribute('aria-expanded');
+          document.querySelector('[data-hist-id="'+idAntes+'"]').click();
+          return {abriu, expandido, buscaSobreviveu, seletorSobreviveu,
+                  buscaTexto: document.getElementById('histQuery').value,
+                  fechou: !document.querySelector('#execHistory .hist-detail'),
+                  registros: S.operationHistory.records.length};
+        }"""
+    )
+    assert r["abriu"], (
+        "a linha nao respondeu ao clique depois da repintura — os ouvintes das "
+        "linhas nao foram refeitos"
+    )
+    assert r["expandido"] == "true", f"aria-expanded nao acompanhou: {r['expandido']!r}"
+    assert r["fechou"], "o segundo clique nao recolheu o detalhe"
+    assert r["buscaSobreviveu"] and r["seletorSobreviveu"], (
+        f"abrir um detalhe reconstruiu os controles (busca: {r['buscaSobreviveu']}, "
+        f"seletor: {r['seletorSobreviveu']}) — selecionar uma linha e mudanca de "
+        "apresentacao e nao pode derrubar a consulta em curso"
+    )
+    assert r["buscaTexto"] == "op_", (
+        f"o texto da busca se perdeu ao abrir o detalhe: {r['buscaTexto']!r}"
+    )
+    assert r["registros"] == 3, "interagir com a tabela alterou os registros"
+
+
 def main():
     server, url = serve()
     try:
@@ -343,6 +533,11 @@ def main():
             run_sorted_desc(page)
             run_zero_financial_mutation(page)
             run_detail_is_read_only(page)
+            # ---- busca e foco (#6) ----
+            run_search_keeps_the_input_alive(page)
+            run_search_repaints_statistics_too(page)
+            run_controls_survive_the_repaint(page)
+            run_rows_still_respond_after_repaint(page)
             run_keyboard_and_semantics(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
             assert not observed["console"], f"console error: {observed['console']}"

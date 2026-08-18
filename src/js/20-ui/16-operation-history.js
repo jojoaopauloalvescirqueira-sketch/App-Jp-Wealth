@@ -154,26 +154,15 @@ function histRenderDetail(r){
     '<p class="hist-ro">Registro histórico — somente leitura.</p></div>';
 }
 
-function renderOperationHistory(){
-  const root = document.getElementById('execHistory');
-  if (!root) return;
-  const todos = histRecords();
-
-  if (!todos.length) {
-    root.innerHTML = '<div class="card"><h2>Histórico</h2>' +
-      '<p class="expl">Sem operações finalizadas.</p></div>';
-    return;
-  }
-
-  const filtrados = histFilter(todos);
+// Estatisticas e tabela sao a parte que RESPONDE a filtro, busca e selecao.
+// Ficam separadas da montagem para poderem ser repintadas sem recriar os
+// controles: reescrever o cartao inteiro a cada tecla destroi o <input> de
+// busca e o foco vai junto — o operador digitava uma letra e tinha de clicar
+// no campo de novo para digitar a segunda.
+function histStatsHTML(filtrados){
   const st = histStats(filtrados);
-  const instrumentos = [...new Set(todos.map(r => String(r.instrument || '')).filter(Boolean))].sort();
-
-  const opcao = (v, rot, atual) =>
-    '<option value="' + esc(v) + '"' + (atual === v ? ' selected' : '') + '>' + esc(rot) + '</option>';
-
-  const estat = st.n ? (
-    histCard('Operações finalizadas', String(st.n)) +
+  if (!st.n) return '<p class="expl">Nenhuma operação atende aos filtros.</p>';
+  return histCard('Operações finalizadas', String(st.n)) +
     histCard('Resultado líquido acumulado', fmtMoney2(st.acumulado)) +
     histCard('Taxa de operações positivas', st.taxaPositivas.toFixed(0) + '%',
              st.positivas + ' de ' + st.n + ' registradas') +
@@ -184,9 +173,10 @@ function renderOperationHistory(){
              st.defesasMedianas.valor == null ? '—' : String(st.defesasMedianas.valor),
              'n = ' + st.defesasMedianas.n) +
     histCard('Maior resultado', fmtMoney2(st.maior)) +
-    histCard('Menor resultado', fmtMoney2(st.menor))
-  ) : '<p class="expl">Nenhuma operação atende aos filtros.</p>';
+    histCard('Menor resultado', fmtMoney2(st.menor));
+}
 
+function histTableHTML(filtrados){
   const linhas = filtrados.map(r => {
     const ret = histReturnPct(r);
     const cls = histResultClass(r);
@@ -204,12 +194,72 @@ function renderOperationHistory(){
       '<td class="hist-num">' + esc(ret == null ? '—' : ret.toFixed(2) + '%') + '</td>' +
       '</tr>' + (aberto ? '<tr class="hist-detail-row"><td colspan="9">' + histRenderDetail(r) + '</td></tr>' : '');
   }).join('');
+  return '<table class="hist-table"><thead><tr>' +
+    '<th scope="col">Operação</th><th scope="col">Instrumento</th><th scope="col">Direção</th>' +
+    '<th scope="col">Abertura</th><th scope="col">Fechamento</th><th scope="col">Duração</th>' +
+    '<th scope="col">Defesas</th><th scope="col">Resultado</th><th scope="col">Retorno</th>' +
+    '</tr></thead><tbody>' + (linhas || '<tr><td colspan="9">Nenhuma operação atende aos filtros.</td></tr>') +
+    '</tbody></table>';
+}
+
+// As linhas sao recriadas a cada repintura, entao os ouvintes delas tambem.
+// Os controles NAO passam por aqui: eles sobrevivem a repintura e receberiam
+// ouvinte duplicado a cada tecla.
+function histBindRows(root){
+  root.querySelectorAll('.hist-row').forEach(tr => {
+    const abrir = () => {
+      const id = tr.dataset.histId;
+      histState.selected = (histState.selected === id) ? null : id;
+      histRepaintResults();
+    };
+    tr.addEventListener('click', abrir);
+    tr.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); }
+    });
+  });
+}
+
+// REPINTURA parcial. Nao toca nos controles nem no <input> de busca: o valor
+// digitado, o foco e a posicao do cursor sao do operador, e nenhuma
+// consequencia de filtrar justifica tira-los dele.
+function histRepaintResults(){
+  const root = document.getElementById('execHistory');
+  if (!root) return;
+  const alvoStats = root.querySelector('#histStats');
+  const alvoTabela = root.querySelector('#histTabela');
+  if (!alvoStats || !alvoTabela) { renderOperationHistory(); return; }
+  const filtrados = histFilter(histRecords());
+  alvoStats.innerHTML = histStatsHTML(filtrados);
+  alvoTabela.innerHTML = histTableHTML(filtrados);
+  histBindRows(root);
+}
+
+// MONTAGEM do workspace. Roda ao entrar na visao; a partir dai filtro, busca e
+// selecao repintam apenas os resultados.
+function renderOperationHistory(){
+  const root = document.getElementById('execHistory');
+  if (!root) return;
+  const todos = histRecords();
+
+  if (!todos.length) {
+    root.innerHTML = '<div class="card"><h2>Histórico</h2>' +
+      '<p class="expl">Sem operações finalizadas.</p></div>';
+    return;
+  }
+
+  const filtrados = histFilter(todos);
+  // A lista de instrumentos vem de TODOS os registros, nao dos filtrados: um
+  // filtro nao pode apagar a propria opcao que permitiria desfaze-lo.
+  const instrumentos = [...new Set(todos.map(r => String(r.instrument || '')).filter(Boolean))].sort();
+
+  const opcao = (v, rot, atual) =>
+    '<option value="' + esc(v) + '"' + (atual === v ? ' selected' : '') + '>' + esc(rot) + '</option>';
 
   root.innerHTML = '<div class="card">' +
     '<h2>Histórico</h2>' +
     '<p class="expl">Memória institucional das Operações Únicas finalizadas. Registro histórico é evidência: ' +
     'os números descrevem o que foi observado e não projetam desempenho futuro.</p>' +
-    '<div class="hist-stats">' + estat + '</div>' +
+    '<div class="hist-stats" id="histStats">' + histStatsHTML(filtrados) + '</div>' +
     '<div class="hist-filters">' +
     '<label>Instrumento <select id="histInstrument">' + opcao('all', 'Todos', histState.instrument) +
       instrumentos.map(i => opcao(i, i, histState.instrument)).join('') + '</select></label>' +
@@ -221,35 +271,20 @@ function renderOperationHistory(){
     '<label>Buscar <input type="search" id="histQuery" value="' + esc(histState.query) +
       '" placeholder="id, instrumento ou ordem"></label>' +
     '</div>' +
-    '<div class="jp-table-scroll"><table class="hist-table"><thead><tr>' +
-    '<th scope="col">Operação</th><th scope="col">Instrumento</th><th scope="col">Direção</th>' +
-    '<th scope="col">Abertura</th><th scope="col">Fechamento</th><th scope="col">Duração</th>' +
-    '<th scope="col">Defesas</th><th scope="col">Resultado</th><th scope="col">Retorno</th>' +
-    '</tr></thead><tbody>' + (linhas || '<tr><td colspan="9">Nenhuma operação atende aos filtros.</td></tr>') +
-    '</tbody></table></div></div>';
+    '<div class="jp-table-scroll" id="histTabela">' + histTableHTML(filtrados) + '</div></div>';
 
   // Filtros e seleção mudam APENAS estado de apresentação. Nenhum caminho deste
   // arquivo chama save(), muta S ou toca a memória institucional.
   const liga = (id, campo) => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('change', () => { histState[campo] = el.value; renderOperationHistory(); });
+    if (el) el.addEventListener('change', () => { histState[campo] = el.value; histRepaintResults(); });
   };
   liga('histInstrument', 'instrument');
   liga('histDirection', 'direction');
   liga('histResult', 'result');
   const q = document.getElementById('histQuery');
-  if (q) q.addEventListener('input', () => { histState.query = q.value; renderOperationHistory(); });
-  root.querySelectorAll('.hist-row').forEach(tr => {
-    const abrir = () => {
-      const id = tr.dataset.histId;
-      histState.selected = (histState.selected === id) ? null : id;
-      renderOperationHistory();
-    };
-    tr.addEventListener('click', abrir);
-    tr.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); }
-    });
-  });
+  if (q) q.addEventListener('input', () => { histState.query = q.value; histRepaintResults(); });
+  histBindRows(root);
 }
 
 // Contrato dos workspaces montados sob demanda (20-ui/13-exec-views.js).
