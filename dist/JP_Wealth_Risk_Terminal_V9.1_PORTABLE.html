@@ -6044,7 +6044,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '80090282b8868e41';
+const JP_WEALTH_BUILD_ID = 'b3f082f6d23ca0e7';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -29694,6 +29694,203 @@ function pfActDeleteNote(monthKey, noteId){
     const m = pf.months[monthKey];
     m.notes = m.notes.filter(n=>n.id!==noteId);
     return { recordId: noteId };
+  });
+}
+
+// ============ PF-03 · BLOCO A — DÍVIDAS: RELEVÂNCIA TEMPORAL E SNAPSHOTS ====
+// A distinção é normativa e o schema congelado a encarna: debts[] é IDENTIDADE
+// E CONTRATO (sem saldo — debt.balance global não existe e não pode nascer);
+// months[M].debtSnapshots é OBSERVAÇÃO daquela competência. Estado atual jamais
+// reinterpreta o passado: relevância vem de startMonth/closedMonth, nunca de
+// "está ativa hoje?". Dado antigo não vira fato atual por ser o último.
+
+const PF_DEBT_TYPES = ['FINANCIAMENTO','EMPRESTIMO','CARTAO','CREDIARIO','IMPOSTO','PESSOA_FISICA','OUTRO'];
+
+function pfFindDebt(pf, debtId){
+  if(!pf || !Array.isArray(pf.debts)) return null;
+  return pf.debts.find(d=>d && d.id===debtId) || null;
+}
+function pfDebtRelevant(debt, monthKey){
+  if(!debt || !pfMonthKeyValid(debt.startMonth)) return false;
+  if(debt.startMonth > monthKey) return false;
+  if(debt.closedMonth!=null && pfMonthKeyValid(debt.closedMonth) && monthKey > debt.closedMonth) return false;
+  return true;
+}
+function pfRelevantDebts(monthKey){
+  const pf=S.personalFinance;
+  if(!pf || !Array.isArray(pf.debts)) return [];
+  return pf.debts.filter(d=>pfDebtRelevant(d, monthKey));
+}
+function pfDebtSnapshotIn(monthKey, debtId){
+  const pf=S.personalFinance;
+  const m = pf && pf.months ? pf.months[monthKey] : null;
+  if(!m || !Array.isArray(m.debtSnapshots)) return null;
+  return m.debtSnapshots.find(s=>s && s.debtId===debtId) || null;
+}
+// Meses (ordenados) em que a dívida possui observação — base das guardas de
+// integridade do contrato e do bloqueio de exclusão.
+function pfDebtSnapshotMonths(debtId){
+  const pf=S.personalFinance;
+  if(!pf || !pf.months) return [];
+  const out=[];
+  for(const k of Object.keys(pf.months)){
+    if(!pfMonthKeyValid(k)) continue;
+    const m=pf.months[k];
+    if(m && Array.isArray(m.debtSnapshots) && m.debtSnapshots.some(s=>s && s.debtId===debtId)) out.push(k);
+  }
+  return out.sort();
+}
+// Última observação ATÉ a competência dada — informação secundária DATADA.
+// Jamais entra em total, jamais vira snapshot, jamais é carry-forward.
+function pfLastObservation(debtId, uptoKey){
+  const meses = pfDebtSnapshotMonths(debtId).filter(k=>k<=uptoKey);
+  if(!meses.length) return null;
+  const k = meses[meses.length-1];
+  return { monthKey: k, snapshot: pfDebtSnapshotIn(k, debtId) };
+}
+
+// ---- ato: registrar/corrigir observação da competência ---------------------
+// Máx. 1 por dívida/mês: registrar de novo SUBSTITUI (correção deliberada).
+// Mês virtual materializa pelo materializador CANÔNICO — mesmo resultado de
+// qualquer outro primeiro ato financeiro (receitas recorrentes estampadas).
+function pfActRecordDebtSnapshot(monthKey, debtId, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const debt = pfFindDebt(S.personalFinance, debtId);
+  if(!debt) return { ok:false, erro:'dívida inexistente' };
+  if(!pfDebtRelevant(debt, monthKey))
+    return { ok:false, erro:'dívida fora de vigência em '+monthKey+' (vigência '+debt.startMonth+' → '+(debt.closedMonth||'em aberto')+')' };
+  const balance = dados && dados.balance;
+  if(!(typeof balance==='number' && Number.isSafeInteger(balance) && balance>=0))
+    return { ok:false, erro:'saldo observado é obrigatório (≥ 0) — a observação existe porque foi observada' };
+  const paid = (dados && dados.installmentsPaid!==undefined) ? dados.installmentsPaid : null;
+  if(paid!==null){
+    if(!(Number.isInteger(paid) && paid>=0)) return { ok:false, erro:'parcelas pagas deve ser inteiro ≥ 0 (ou vazio)' };
+    if(debt.installmentsTotal==null)
+      return { ok:false, erro:'dívida sem contrato parcelado — parcelas pagas deve ficar vazio' };
+    if(paid>debt.installmentsTotal)
+      return { ok:false, erro:'parcelas pagas ('+paid+') excede o total do contrato ('+debt.installmentsTotal+')' };
+  }
+  return pfMutate('debt_snapshot', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const existente = m.debtSnapshots.find(s=>s && s.debtId===debtId);
+    if(existente){ existente.balance = balance; existente.installmentsPaid = paid; }
+    else m.debtSnapshots.push({ debtId, balance, installmentsPaid: paid });
+    return { recordId: debtId };
+  });
+}
+
+// ---- derivados de competência ----------------------------------------------
+function pfDebtCoverage(monthKey){
+  const relevantes = pfRelevantDebts(monthKey);
+  const observadas = relevantes.filter(d=>!!pfDebtSnapshotIn(monthKey, d.id)).length;
+  // conjunto vazio: cobertura completa e total zero DEMONSTRADO, não default.
+  return { observadas, relevantes: relevantes.length, completa: observadas===relevantes.length };
+}
+function pfKnownDebtTotal(monthKey){
+  return pfRelevantDebts(monthKey).reduce((acc,d)=>{
+    const s = pfDebtSnapshotIn(monthKey, d.id);
+    return acc + (s ? s.balance : 0);
+  }, 0);
+}
+function pfRemainingInstallments(debt, snap){
+  if(!debt || debt.installmentsTotal==null) return null;
+  if(!snap || snap.installmentsPaid==null) return null;
+  return debt.installmentsTotal - snap.installmentsPaid;  // derivado; jamais persiste
+}
+
+// ============ PF-03 · BLOCO B — CONTRATO DA DÍVIDA ==========================
+// Identidade corrigível pelo operador, MAS: edição de contrato jamais pode
+// tornar observações históricas estruturalmente impossíveis. As guardas abaixo
+// varrem os snapshots existentes ANTES de aplicar — bloqueio atômico com a
+// observação conflitante nomeada. Isso é guarda de integridade, não migration.
+
+function pfValidateDebtContract(dados, debtId){
+  const creditor = String((dados&&dados.creditor)||'').trim();
+  if(!creditor) return { ok:false, erro:'credor/instituição obrigatório' };
+  if(!PF_DEBT_TYPES.includes(dados.type)) return { ok:false, erro:'tipo de dívida desconhecido' };
+  if(!pfMonthKeyValid(dados.startMonth)) return { ok:false, erro:'mês inicial obrigatório (YYYY-MM)' };
+  const closed = (dados.closedMonth===undefined || dados.closedMonth===null || dados.closedMonth==='') ? null : dados.closedMonth;
+  if(closed!==null){
+    if(!pfMonthKeyValid(closed)) return { ok:false, erro:'mês de encerramento inválido (YYYY-MM ou vazio)' };
+    if(closed < dados.startMonth) return { ok:false, erro:'encerramento não pode anteceder o início (closedMonth ≥ startMonth)' };
+  }
+  for(const campo of ['originalAmount','installmentAmount']){
+    const v = (dados[campo]===undefined) ? null : dados[campo];
+    if(!pfAmountInDomain(v,{allowNull:true})) return { ok:false, erro:campo+' fora do domínio (≥ 0 ou vazio)' };
+  }
+  const total = (dados.installmentsTotal===undefined || dados.installmentsTotal===null || dados.installmentsTotal==='') ? null : dados.installmentsTotal;
+  if(total!==null && !(Number.isInteger(total) && total>=1))
+    return { ok:false, erro:'total de parcelas deve ser inteiro ≥ 1 ou vazio (dívida sem contrato parcelado)' };
+
+  // guardas de integridade contra a HISTÓRIA (só em edição)
+  if(debtId){
+    const meses = pfDebtSnapshotMonths(debtId);
+    const antes = meses.filter(k=>k<dados.startMonth);
+    if(antes.length)
+      return { ok:false, erro:'início '+dados.startMonth+' orfanaria a observação de '+antes[0]+' — corrija ou remova o conflito antes' };
+    if(closed!==null){
+      const depois = meses.filter(k=>k>closed);
+      if(depois.length)
+        return { ok:false, erro:'encerramento '+closed+' orfanaria a observação de '+depois[depois.length-1] };
+    }
+    let maxPaid = null;
+    for(const k of meses){
+      const s = pfDebtSnapshotIn(k, debtId);
+      if(s && s.installmentsPaid!=null && (maxPaid===null || s.installmentsPaid>maxPaid)) maxPaid = s.installmentsPaid;
+    }
+    if(maxPaid!==null && total===null)
+      return { ok:false, erro:'existe observação histórica com '+maxPaid+' parcelas pagas — o contrato não pode deixar de ser parcelado' };
+    if(maxPaid!==null && total!==null && total<maxPaid)
+      return { ok:false, erro:'total de parcelas '+total+' é menor que as '+maxPaid+' pagas já observadas historicamente' };
+  }
+  return { ok:true, creditor, closed, total };
+}
+
+function pfActAddDebt(dados){
+  const v = pfValidateDebtContract(dados||{}, null);
+  if(v.ok===false) return v;
+  return pfMutate('debt_add', pf => {
+    const rec = { id: pfId('pfd'), creditor: v.creditor, type: dados.type,
+      description: String(dados.description||'').trim(),
+      originalAmount: (dados.originalAmount===undefined)?null:dados.originalAmount,
+      installmentAmount: (dados.installmentAmount===undefined)?null:dados.installmentAmount,
+      installmentsTotal: v.total,
+      startMonth: dados.startMonth, closedMonth: v.closed };
+    pf.debts.push(rec);
+    return { recordId: rec.id };
+  });
+}
+
+// Edição ATÔMICA do contrato (formulário único): valida tudo — inclusive
+// contra a história — e aplica de uma vez, ou nada.
+function pfActUpdateDebt(debtId, dados){
+  const alvo = pfFindDebt(S.personalFinance, debtId);
+  if(!alvo) return { ok:false, erro:'dívida inexistente' };
+  const v = pfValidateDebtContract(dados||{}, debtId);
+  if(v.ok===false) return v;
+  return pfMutate('debt_update', pf => {
+    const d = pfFindDebt(pf, debtId);
+    d.creditor = v.creditor; d.type = dados.type;
+    d.description = String(dados.description||'').trim();
+    d.originalAmount = (dados.originalAmount===undefined)?null:dados.originalAmount;
+    d.installmentAmount = (dados.installmentAmount===undefined)?null:dados.installmentAmount;
+    d.installmentsTotal = v.total;
+    d.startMonth = dados.startMonth; d.closedMonth = v.closed;
+    return { recordId: debtId };
+  });
+}
+
+// Exclusão: só sem história. Com snapshot em qualquer mês, excluir a
+// identidade orfanaria as observações — o caminho é closedMonth.
+function pfActDeleteDebt(debtId){
+  const alvo = pfFindDebt(S.personalFinance, debtId);
+  if(!alvo) return { ok:false, erro:'dívida inexistente' };
+  const meses = pfDebtSnapshotMonths(debtId);
+  if(meses.length)
+    return { ok:false, erro:'dívida possui observação em '+meses.join(', ')+' — excluir orfanaria a história; encerre com o mês de encerramento' };
+  return pfMutate('debt_delete', pf => {
+    pf.debts = pf.debts.filter(d=>d.id!==debtId);
+    return { recordId: debtId };
   });
 }
 // ============ FINANÇAS PESSOAIS · WORKSPACES DO MÓDULO (PF-01 — apresentação) ============
