@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+### Finanças Pessoais — Visão Geral (PF-06) — 2026-08-19
+
+Branch `feature/personal-finance-overview-v2`. Em desenvolvimento — não integrada.
+
+Consolidado derivado, nunca segunda fonte de verdade: quatro cards (mês atual,
+dívida & crédito, vs mês anterior e pendências) que consomem exclusivamente
+pfCompMetrics, pfTotalAllocated/pfUnallocatedSurplus, pfCreditKPIs,
+pfCompCompare/pfCompBaselines e pfPendingBefore. Mês virtual declara-se não
+registrado (a completude vácua de pfMonthSummary(null) jamais fabrica sobra);
+sobra parcial não exibe valor; crédito é posição vigente rotulada; sentinela
+de leitura em recusa integral (zero R$ sob unidade desconhecida). Zero
+persistência nova, schema v1 intacto, render jamais escreve. Fora da V1 por
+decisão de gate: projeção virtual monetária, mini-série, cenários, score —
+e Patrimônio/Inventário, que deixaram de pertencer a Finanças Pessoais e
+passam a ter domínio e roadmap próprios (INV-*).
+
 ### Finanças Pessoais — Cenários (PF-05) — 2026-08-19
 
 Branch `feature/personal-finance-scenarios`. **Integrada** — candidate

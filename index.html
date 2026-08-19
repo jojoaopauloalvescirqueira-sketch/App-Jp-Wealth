@@ -1053,10 +1053,9 @@
       <span id="finpesUnitNoticeTxt">Unidade monetária do agregado não reconhecida — Finanças Pessoais está em modo leitura. Nenhum dado foi alterado. Restaure um backup íntegro ou contate o suporte da sua base.</span>
     </div>
     <div id="finpesOverview">
-      <div class="card">
-        <h2>Visão Geral <span class="art">Finanças Pessoais · consolidado derivado — nunca segunda fonte de verdade</span></h2>
-        <p class="risk-note">Em desenvolvimento (PF-06). Esta visão consolidará receita, despesa, sobra, destinações, pendências, dívida e crédito dos módulos ao lado — todos derivados, nenhum editável aqui.</p>
-      </div>
+      <!-- PF-06: raiz da Visão Geral — desenhada por 20-ui/22-finpes-overview.js.
+           Consolidado derivado, nunca segunda fonte de verdade; nenhum editável aqui. -->
+      <div id="finpesOverviewRoot"></div>
     </div>
     <div id="finpesMensal" hidden>
       <!-- PF-02: raiz do Orçamento Mensal — desenhada integralmente por
@@ -1640,5 +1639,6 @@
 <script src="src/js/20-ui/19-finpes-debts.js"></script>
 <script src="src/js/20-ui/20-finpes-comparison.js"></script>
 <script src="src/js/20-ui/21-finpes-scenarios.js"></script>
+<script src="src/js/20-ui/22-finpes-overview.js"></script>
 </body>
 </html>
