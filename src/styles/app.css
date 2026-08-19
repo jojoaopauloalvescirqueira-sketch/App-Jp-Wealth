@@ -5895,6 +5895,17 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fc-srow{display:grid; grid-template-columns:minmax(0,1.1fr) repeat(5,minmax(0,1fr)); gap:8px; padding:5px 0; border-bottom:1px solid var(--line); font-size:11px; align-items:baseline}
 .fc-srow.fc-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
 .fc-virtual{opacity:.55}
+.fs-horizon{margin-bottom:20px}
+.fs-horizon-title{font:700 13px var(--mono); letter-spacing:.12em; color:var(--ink-dim); margin:0 0 10px}
+.fs-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; align-items:start}
+.fs-card{margin:0}
+.fs-sec{margin-top:10px; color:var(--ink-dim); font-size:10px; letter-spacing:.1em}
+.fs-item{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.3fr); gap:6px; padding:4px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fs-saldo{font-family:var(--mono); font-size:11px; color:var(--ink-dim); text-align:right}
+.fs-neg{color:var(--f3)}
+.fs-add{margin-top:6px; font-size:11px}
+.fs-foot{display:flex; justify-content:flex-end; gap:6px; margin-top:10px}
+@media(max-width:760px){ .fs-cards{grid-template-columns:1fr} }
 @media(max-width:1100px){ .fc-comp-grid{grid-template-columns:1fr} }
 @media(max-width:760px){ .fc-srow{font-size:10px} .fc-mrow{grid-template-columns:1fr; gap:2px} }
 @media(max-width:1100px){

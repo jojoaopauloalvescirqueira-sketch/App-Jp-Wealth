@@ -410,13 +410,13 @@
       "order": 68,
       "path": "src/js/10-domain/12-personal-finance.js",
       "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
-      "sha256": "2c84583ab4a986e627bde583d761e1afdb45134179ef35d8383b8c746c291daa"
+      "sha256": "30bd5fcdc94cca5b4546a27d7ae54676a8e7f5efde343293edecae411103763b"
     },
     {
       "order": 69,
       "path": "src/js/20-ui/17-finpes-views.js",
       "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
-      "sha256": "e67f3943d15bc10b54cfb710683e67eaf13a5cefba23f14bccff3013ad671a38"
+      "sha256": "00f0bba96dc4ff2597e08214fa660bbefbd4ab26d6ac4b9a896821a4ddccc262"
     },
     {
       "order": 70,
@@ -435,6 +435,12 @@
       "path": "src/js/20-ui/20-finpes-comparison.js",
       "section": "FINANCAS PESSOAIS · Comparativo Mensal (PF-04): renderizador read-only",
       "sha256": "f2c8c423804a43700ce9e81d5735b18396172107ea79be4d402177b8f8b7bbba"
+    },
+    {
+      "order": 73,
+      "path": "src/js/20-ui/21-finpes-scenarios.js",
+      "section": "FINANCAS PESSOAIS · Cenarios (PF-05): hipoteses comparaveis por horizonte",
+      "sha256": "1898e8570887b9dfc86c8f10f05f1688c9fe0fddf033cd3dfd4474fcbba26699"
     }
   ]
 }

@@ -44,6 +44,7 @@ STANDARD = FAST + (
     ("finpes-budget", [sys.executable, "tools/finpes_budget_test.py"]),
     ("finpes-debt-credit", [sys.executable, "tools/finpes_debt_credit_test.py"]),
     ("finpes-comparison", [sys.executable, "tools/finpes_comparison_test.py"]),
+    ("finpes-scenarios", [sys.executable, "tools/finpes_scenarios_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (
