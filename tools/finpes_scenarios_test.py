@@ -268,6 +268,109 @@ def run_ab_write_gate(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCOS C/D (UI) ----------
+
+def boot_ui(browser, url, mutacao_js=None):
+    ctx, page, erros = boot(browser, url, mutacao_js)
+    page.evaluate("() => { navigateToScreen('finpes'); window.JPWFin.ui.selectView('cenarios'); }")
+    return ctx, page, erros
+
+
+def run_cd_ui_fluxo_real(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("""() => {
+        // cancelar modal de novo cenario: zero mutacao
+        const antes = JSON.stringify(S.personalFinance);
+        window.JPWFinScenarios.render();
+        document.querySelector('[data-fs-new]').click();
+        document.getElementById('fsName').value = 'Nao Deve Existir';
+        document.getElementById('modalCancel').click();
+        const cancelou = antes === JSON.stringify(S.personalFinance);
+        // cria pela UI: HOJE (horizon vazio) e MAR/2027
+        document.querySelector('[data-fs-new]').click();
+        document.getElementById('fsName').value = 'Base atual';
+        document.getElementById('fsKind').value = 'BASE';
+        document.getElementById('modalConfirm').click();
+        window.JPWFinScenarios.render();
+        document.querySelector('[data-fs-new]').click();
+        document.getElementById('fsName').value = 'Aperto';
+        document.getElementById('fsKind').value = 'PESSIMISTA';
+        document.getElementById('fsHorizon').value = '2027-03';
+        document.getElementById('modalConfirm').click();
+        window.JPWFinScenarios.render();
+        // itens pela UI (prompts stubados)
+        const sc = S.personalFinance.scenarios[0];
+        let fila = ['Salario', '12.000,00', 'Custo', '9.500,00'];
+        window.prompt = () => fila.shift();
+        document.querySelector(`[data-fs-add-item][data-fs-lista="incomes"][data-fs-sc="${sc.id}"]`).click();
+        document.querySelector(`[data-fs-add-item][data-fs-lista="expenses"][data-fs-sc="${sc.id}"]`).click();
+        const texto = document.getElementById('finpesScenariosRoot').innerText;
+        return { cancelou, cenarios: S.personalFinance.scenarios.length,
+                 hoje: texto.indexOf('HOJE'), mar: texto.indexOf('MARÇO 2027'),
+                 agrupado: texto.indexOf('HOJE') >= 0 && texto.indexOf('MARÇO 2027') > texto.indexOf('HOJE'),
+                 totais: texto.includes('R$ 12.000,00') && texto.includes('R$ 9.500,00') && texto.includes('R$ 2.500,00'),
+                 semForecast: !/(previsão|probabilidade|resultado esperado)/i.test(texto) };
+    }""")
+    if not r["cancelou"]:
+        falhas.append("CD: cancelar o modal MUTOU o estado")
+    if r["cenarios"] != 2 or not r["agrupado"]:
+        falhas.append(f"CD: agrupamento por horizonte (HOJE antes de MARÇO 2027) falhou: {r}")
+    if not r["totais"]:
+        falhas.append(f"CD: totais 12.000/9.500/2.500 nao renderizados")
+    if not r["semForecast"]:
+        falhas.append("CD: linguagem de FORECAST detectada — cenario e hipotese")
+    ctx.close()
+
+
+def run_cd_cascata_visual_e_copia_ui(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("() => {" + SEED_MES + """
+        const m0 = S.personalFinance.months['2026-08'];
+        pfActUpdateIncomeField('2026-08', m0.incomes[1].id, 'projectedAmount', 22000);
+        window.JPWFinScenarios.render();
+        // copia pela UI
+        document.querySelector('[data-fs-from]').click();
+        document.getElementById('fsFromMonth').value = '2026-08';
+        document.getElementById('fsName').value = 'Base de agosto';
+        document.getElementById('fsKind').value = 'BASE';
+        document.getElementById('fsHorizon').value = '2027-03';
+        document.getElementById('modalConfirm').click();
+        window.JPWFinScenarios.render();
+        const sc = S.personalFinance.scenarios[0];
+        const texto = document.getElementById('finpesScenariosRoot').innerText;
+        // cascata visual: saldo apos Aluguel = 1.222.000-172.000... receita total 1.200.000+22.000=1.222.000; despesa 172.000 -> saldo 1.050.000
+        return { criado: !!sc, proveniencia: texto.includes('criado a partir de AGOSTO 2026'),
+                 saldoCascata: texto.includes('R$ 10.500,00'),
+                 baselineFrom: sc && sc.baselineFrom };
+    }""")
+    if not r["criado"] or r["baselineFrom"] != "2026-08":
+        falhas.append(f"CD: copia pela UI falhou: {r}")
+    if not r["proveniencia"]:
+        falhas.append("CD: proveniencia 'criado a partir de AGOSTO 2026' ausente")
+    if not r["saldoCascata"]:
+        falhas.append("CD: saldo da cascata (R$ 10.500,00) ausente do card")
+    ctx.close()
+
+
+def run_cd_sentinela_visual(browser, url, falhas):
+    mut = """
+      S.personalFinance = { schemaVersion:1, moneyUnit:'XX_UNIT', months:{},
+        recurringIncome:[], debts:[], creditLines:[],
+        scenarios:[{id:'pfs_x', name:'X', horizon:null, kind:'BASE', incomes:[], expenses:[], baselineFrom:null, createdAt:'x'}] };
+    """
+    ctx, page, erros = boot_ui(browser, url, mutacao_js=mut)
+    r = page.evaluate("""() => {
+        window.JPWFinScenarios.render();
+        const root = document.getElementById('finpesScenariosRoot');
+        return { botoesDesabilitados: [...root.querySelectorAll('[data-fs-new],[data-fs-from],[data-fs-add-item]')].every(b=>b.disabled),
+                 banner: !document.getElementById('finpesUnitNotice').hidden,
+                 intacto: S.personalFinance.moneyUnit==='XX_UNIT' };
+    }""")
+    if not r["botoesDesabilitados"] or not r["banner"] or not r["intacto"]:
+        falhas.append(f"CD: sentinela visual falhou: {r}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -279,6 +382,9 @@ def main():
             executar("B copia/independencia", lambda: run_b_copia_correta_e_independencia(browser, url, falhas), falhas)
             executar("B virtual", lambda: run_b_virtual_nao_e_baseline(browser, url, falhas), falhas)
             executar("AB write gate", lambda: run_ab_write_gate(browser, url, falhas), falhas)
+            executar("CD ui fluxo", lambda: run_cd_ui_fluxo_real(browser, url, falhas), falhas)
+            executar("CD cascata/copia ui", lambda: run_cd_cascata_visual_e_copia_ui(browser, url, falhas), falhas)
+            executar("CD sentinela", lambda: run_cd_sentinela_visual(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()
