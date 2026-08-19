@@ -50,9 +50,10 @@ function fdDebtsHTML(key, bloqueado){
     if(!relevante) saldo = '<span class="fb-aux">fora de vigência</span>';
     else if(snap) saldo = `<b>${formatBRLCents(snap.balance)}</b>`;
     else {
-      const ult = pfLastObservation(d.id, key);
+      const ult = pfLastObservation(d.id, key);   // ESTRITAMENTE anterior — nunca futuro
       saldo = '<span class="fb-partial">Sem observação nesta competência</span>'
-        + (ult ? `<br><span class="fb-aux">última: ${formatBRLCents(ult.snapshot.balance)} em ${esc(pfMonthLabel(ult.monthKey))}</span>` : '');
+        + (ult ? `<br><span class="fb-aux">última: ${formatBRLCents(ult.snapshot.balance)} em ${esc(pfMonthLabel(ult.monthKey))}</span>`
+               : '<br><span class="fb-aux">Nenhuma observação anterior</span>');
     }
     const pagas = snap && snap.installmentsPaid!=null ? snap.installmentsPaid : '—';
     const rest = pfRemainingInstallments(d, snap);
@@ -70,6 +71,7 @@ function fdDebtsHTML(key, bloqueado){
       <span class="fb-actions">
         <button type="button" class="row-del" data-fd-edit="${esc(d.id)}" title="Editar contrato">✎</button>
         ${relevante?`<button type="button" class="row-del" data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">◉</button>`:''}
+        ${snap?`<button type="button" class="row-del" data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">⊘</button>`:''}
         <button type="button" class="row-del" data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">✕</button>
       </span>
     </div>`;
@@ -150,6 +152,11 @@ function fdBind(root, key, bloqueado){
   if(add) add.addEventListener('click',()=>{ fdOpenDebtModal(null); });
   root.querySelectorAll('[data-fd-edit]').forEach(b=>b.addEventListener('click',()=>{ fdOpenDebtModal(b.dataset.fdEdit); }));
   root.querySelectorAll('[data-fd-obs]').forEach(b=>b.addEventListener('click',()=>{ fdOpenSnapshotModal(key, b.dataset.fdObs); }));
+  root.querySelectorAll('[data-fd-rmobs]').forEach(b=>b.addEventListener('click',()=>{
+    const d = pfFindDebt(S.personalFinance, b.dataset.fdRmobs);
+    if(!confirm('Remover a observação de '+pfMonthLabel(key)+' da dívida "'+(d?d.creditor:'')+'"? A dívida e o restante do mês ficam intactos.')) return;
+    fdAtoUI(pfActRemoveDebtSnapshot(key, b.dataset.fdRmobs));
+  }));
   root.querySelectorAll('[data-fd-del]').forEach(b=>b.addEventListener('click',()=>{
     const d = pfFindDebt(S.personalFinance, b.dataset.fdDel);
     if(d && !confirm('Excluir a dívida "'+d.creditor+'"? (bloqueado se houver observações)')) return;

@@ -6061,7 +6061,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '6ba65fc8f90c8627';
+const JP_WEALTH_BUILD_ID = '7d1ab53e434d0f32';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -29756,10 +29756,13 @@ function pfDebtSnapshotMonths(debtId){
   }
   return out.sort();
 }
-// Última observação ATÉ a competência dada — informação secundária DATADA.
-// Jamais entra em total, jamais vira snapshot, jamais é carry-forward.
+// Observação ESTRITAMENTE ANTERIOR à competência dada (month < M) —
+// informação secundária DATADA. Jamais entra em total, jamais vira snapshot,
+// jamais é carry-forward, e jamais vem do FUTURO: vendo AGO sem snapshot, um
+// snapshot de SET não aparece — leitura histórica não recebe informação
+// posterior, pela mesma lei que impede o presente de reinterpretar o passado.
 function pfLastObservation(debtId, uptoKey){
-  const meses = pfDebtSnapshotMonths(debtId).filter(k=>k<=uptoKey);
+  const meses = pfDebtSnapshotMonths(debtId).filter(k=>k<uptoKey);
   if(!meses.length) return null;
   const k = meses[meses.length-1];
   return { monthKey: k, snapshot: pfDebtSnapshotIn(k, debtId) };
@@ -29791,6 +29794,24 @@ function pfActRecordDebtSnapshot(monthKey, debtId, dados){
     const existente = m.debtSnapshots.find(s=>s && s.debtId===debtId);
     if(existente){ existente.balance = balance; existente.installmentsPaid = paid; }
     else m.debtSnapshots.push({ debtId, balance, installmentsPaid: paid });
+    return { recordId: debtId };
+  });
+}
+
+// ---- ato: remover observação da competência --------------------------------
+// DebtSnapshot é dado MANUAL corrigível do operador — não é evidência sistêmica
+// imutável como operationHistory. Observação registrada na dívida errada não se
+// "corrige" mudando o valor: remove-se, deliberadamente. Remove EXATAMENTE o
+// snapshot debtId/competência — nada mais: a dívida, o mês materializado e os
+// demais dados do mês ficam intactos. Sem tombstone, sem audit log novo: manter
+// dado falso no agregado para fingir trilha seria pior que o rastro.
+function pfActRemoveDebtSnapshot(monthKey, debtId){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const snap = pfDebtSnapshotIn(monthKey, debtId);
+  if(!snap) return { ok:false, erro:'não há observação desta dívida nesta competência' };
+  return pfMutate('debt_snapshot_remove', pf => {
+    const m = pf.months[monthKey];
+    m.debtSnapshots = m.debtSnapshots.filter(x=>!(x && x.debtId===debtId));
     return { recordId: debtId };
   });
 }
@@ -30643,9 +30664,10 @@ function fdDebtsHTML(key, bloqueado){
     if(!relevante) saldo = '<span class="fb-aux">fora de vigência</span>';
     else if(snap) saldo = `<b>${formatBRLCents(snap.balance)}</b>`;
     else {
-      const ult = pfLastObservation(d.id, key);
+      const ult = pfLastObservation(d.id, key);   // ESTRITAMENTE anterior — nunca futuro
       saldo = '<span class="fb-partial">Sem observação nesta competência</span>'
-        + (ult ? `<br><span class="fb-aux">última: ${formatBRLCents(ult.snapshot.balance)} em ${esc(pfMonthLabel(ult.monthKey))}</span>` : '');
+        + (ult ? `<br><span class="fb-aux">última: ${formatBRLCents(ult.snapshot.balance)} em ${esc(pfMonthLabel(ult.monthKey))}</span>`
+               : '<br><span class="fb-aux">Nenhuma observação anterior</span>');
     }
     const pagas = snap && snap.installmentsPaid!=null ? snap.installmentsPaid : '—';
     const rest = pfRemainingInstallments(d, snap);
@@ -30663,6 +30685,7 @@ function fdDebtsHTML(key, bloqueado){
       <span class="fb-actions">
         <button type="button" class="row-del" data-fd-edit="${esc(d.id)}" title="Editar contrato">✎</button>
         ${relevante?`<button type="button" class="row-del" data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">◉</button>`:''}
+        ${snap?`<button type="button" class="row-del" data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">⊘</button>`:''}
         <button type="button" class="row-del" data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">✕</button>
       </span>
     </div>`;
@@ -30743,6 +30766,11 @@ function fdBind(root, key, bloqueado){
   if(add) add.addEventListener('click',()=>{ fdOpenDebtModal(null); });
   root.querySelectorAll('[data-fd-edit]').forEach(b=>b.addEventListener('click',()=>{ fdOpenDebtModal(b.dataset.fdEdit); }));
   root.querySelectorAll('[data-fd-obs]').forEach(b=>b.addEventListener('click',()=>{ fdOpenSnapshotModal(key, b.dataset.fdObs); }));
+  root.querySelectorAll('[data-fd-rmobs]').forEach(b=>b.addEventListener('click',()=>{
+    const d = pfFindDebt(S.personalFinance, b.dataset.fdRmobs);
+    if(!confirm('Remover a observação de '+pfMonthLabel(key)+' da dívida "'+(d?d.creditor:'')+'"? A dívida e o restante do mês ficam intactos.')) return;
+    fdAtoUI(pfActRemoveDebtSnapshot(key, b.dataset.fdRmobs));
+  }));
   root.querySelectorAll('[data-fd-del]').forEach(b=>b.addEventListener('click',()=>{
     const d = pfFindDebt(S.personalFinance, b.dataset.fdDel);
     if(d && !confirm('Excluir a dívida "'+d.creditor+'"? (bloqueado se houver observações)')) return;

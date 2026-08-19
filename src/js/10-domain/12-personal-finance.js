@@ -630,10 +630,13 @@ function pfDebtSnapshotMonths(debtId){
   }
   return out.sort();
 }
-// Última observação ATÉ a competência dada — informação secundária DATADA.
-// Jamais entra em total, jamais vira snapshot, jamais é carry-forward.
+// Observação ESTRITAMENTE ANTERIOR à competência dada (month < M) —
+// informação secundária DATADA. Jamais entra em total, jamais vira snapshot,
+// jamais é carry-forward, e jamais vem do FUTURO: vendo AGO sem snapshot, um
+// snapshot de SET não aparece — leitura histórica não recebe informação
+// posterior, pela mesma lei que impede o presente de reinterpretar o passado.
 function pfLastObservation(debtId, uptoKey){
-  const meses = pfDebtSnapshotMonths(debtId).filter(k=>k<=uptoKey);
+  const meses = pfDebtSnapshotMonths(debtId).filter(k=>k<uptoKey);
   if(!meses.length) return null;
   const k = meses[meses.length-1];
   return { monthKey: k, snapshot: pfDebtSnapshotIn(k, debtId) };
@@ -665,6 +668,24 @@ function pfActRecordDebtSnapshot(monthKey, debtId, dados){
     const existente = m.debtSnapshots.find(s=>s && s.debtId===debtId);
     if(existente){ existente.balance = balance; existente.installmentsPaid = paid; }
     else m.debtSnapshots.push({ debtId, balance, installmentsPaid: paid });
+    return { recordId: debtId };
+  });
+}
+
+// ---- ato: remover observação da competência --------------------------------
+// DebtSnapshot é dado MANUAL corrigível do operador — não é evidência sistêmica
+// imutável como operationHistory. Observação registrada na dívida errada não se
+// "corrige" mudando o valor: remove-se, deliberadamente. Remove EXATAMENTE o
+// snapshot debtId/competência — nada mais: a dívida, o mês materializado e os
+// demais dados do mês ficam intactos. Sem tombstone, sem audit log novo: manter
+// dado falso no agregado para fingir trilha seria pior que o rastro.
+function pfActRemoveDebtSnapshot(monthKey, debtId){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const snap = pfDebtSnapshotIn(monthKey, debtId);
+  if(!snap) return { ok:false, erro:'não há observação desta dívida nesta competência' };
+  return pfMutate('debt_snapshot_remove', pf => {
+    const m = pf.months[monthKey];
+    m.debtSnapshots = m.debtSnapshots.filter(x=>!(x && x.debtId===debtId));
     return { recordId: debtId };
   });
 }

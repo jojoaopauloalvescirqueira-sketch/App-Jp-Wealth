@@ -268,8 +268,14 @@ def run_ab_sem_historia_pode_excluir(browser, url, falhas):
 
 def run_ab_write_gate(browser, url, falhas):
     mut = """
-      S.personalFinance = { schemaVersion:1, moneyUnit:'XX_UNIT', months:{},
+      S.personalFinance = { schemaVersion:1, moneyUnit:'XX_UNIT',
+        months:{'2026-05':{createdAt:'x', incomes:[], expenses:[],
+          debtSnapshots:[{debtId:'pfd_x', balance:100, installmentsPaid:null}],
+          allocations:[], notes:[]}},
         recurringIncome:[], debts:[{id:'pfd_x', creditor:'X', type:'OUTRO', description:'',
+          originalAmount:null, installmentAmount:null, installmentsTotal:null,
+          startMonth:'2026-01', closedMonth:null},
+          {id:'pfd_y', creditor:'Y', type:'OUTRO', description:'',
           originalAmount:null, installmentAmount:null, installmentsTotal:null,
           startMonth:'2026-01', closedMonth:null}], creditLines:[], scenarios:[] };
     """
@@ -279,8 +285,9 @@ def run_ab_write_gate(browser, url, falhas):
         const acts = [
           pfActAddDebt({creditor:'Y', type:'OUTRO', startMonth:'2026-01'}),
           pfActUpdateDebt('pfd_x', {creditor:'Z', type:'OUTRO', startMonth:'2026-01'}),
-          pfActDeleteDebt('pfd_x'),
+          pfActDeleteDebt('pfd_y'),   // sem historia: passa a guarda e tem que morrer NO GATE
           pfActRecordDebtSnapshot('2026-05', 'pfd_x', {balance:1}),
+          pfActRemoveDebtSnapshot('2026-05', 'pfd_x'),
         ];
         return { bloqueados: acts.every(a=>a.ok===false && a.erro==='READ_ONLY_UNSUPPORTED_MONEY_UNIT'),
                  intacto: antes === JSON.stringify(S.personalFinance) };
@@ -466,6 +473,116 @@ def run_d_write_gate_credito(browser, url, falhas):
     ctx.close()
 
 
+# ---------- CORRECOES PRE-HA ----------
+
+def run_fix_remover_observacao(browser, url, falhas):
+    """O cenario do bloqueio: snapshot registrado na divida ERRADA. Corrigir e
+    remover — exatamente aquele debtId/competencia, nada mais."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        pfActAddDebt({creditor:'Nubank Sintetico', type:'CARTAO', description:'', originalAmount:null,
+            installmentAmount:null, installmentsTotal:null, startMonth:'2026-01', closedMonth:null});
+        pfActAddDebt({creditor:'Santander Sintetico', type:'CARTAO', description:'', originalAmount:null,
+            installmentAmount:null, installmentsTotal:null, startMonth:'2026-01', closedMonth:null});
+        const [nb, st] = S.personalFinance.debts.map(d=>d.id);
+        // erro do operador: registrou no Nubank; depois registra no certo
+        pfActRecordDebtSnapshot('2026-08', nb, {balance:1200000});
+        pfActRecordDebtSnapshot('2026-07', nb, {balance:1300000});   // outra competencia: deve FICAR
+        pfActRecordDebtSnapshot('2026-08', st, {balance:1200000});
+        pfActAddNote('2026-08', 'Nota que deve sobreviver');
+        const totalFalso = pfKnownDebtTotal('2026-08');
+        const rm = pfActRemoveDebtSnapshot('2026-08', nb);
+        const m = S.personalFinance.months['2026-08'];
+        return { totalFalso, rmOk: rm.ok,
+                 totalCorrigido: pfKnownDebtTotal('2026-08'),
+                 cobertura: pfDebtCoverage('2026-08'),
+                 santanderFica: !!pfDebtSnapshotIn('2026-08', st),
+                 julhoFica: !!pfDebtSnapshotIn('2026-07', nb),
+                 dividaFica: S.personalFinance.debts.length===2,
+                 mesFica: !!m && m.notes.length===1,
+                 duplaRemocao: pfActRemoveDebtSnapshot('2026-08', nb).ok,
+                 disco: JSON.parse(localStorage.getItem('jpwealth_v9_state')).personalFinance.months['2026-08'].debtSnapshots.length };
+    }""")
+    if r["totalFalso"] != 2400000:
+        falhas.append(f"FIX: pre-condicao do cenario (total falso 24.000) nao montou: {r['totalFalso']}")
+    if not r["rmOk"] or r["totalCorrigido"] != 1200000:
+        falhas.append(f"FIX: remover deveria corrigir o total para 12.000: {r}")
+    if r["cobertura"] != {"observadas":1,"relevantes":2,"completa":False}:
+        falhas.append(f"FIX: cobertura deveria recalcular para 1/2: {r['cobertura']}")
+    if not r["santanderFica"]:
+        falhas.append("FIX: remocao atingiu a divida ERRADA — o snapshot correto sumiu")
+    if not r["julhoFica"]:
+        falhas.append("FIX: remocao atingiu a competencia ERRADA — julho sumiu")
+    if not r["dividaFica"] or not r["mesFica"]:
+        falhas.append("FIX: remocao arrastou divida/mes/nota — deveria remover SOMENTE o snapshot")
+    if r["duplaRemocao"] is not False:
+        falhas.append("FIX: remover o ja-removido deveria recusar (nao ha observacao)")
+    if r["disco"] != 1:
+        falhas.append(f"FIX: disco deveria ter exatamente 1 snapshot apos o save atomico: {r['disco']}")
+    ctx.close()
+
+
+def run_fix_remover_via_ui_e_cancelar(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r1 = page.evaluate("""() => {
+        const key = pfCurrentMonthKey();
+        pfActAddDebt({creditor:'Banco Sigma', type:'CARTAO', description:'', originalAmount:null,
+            installmentAmount:null, installmentsTotal:null, startMonth:'2026-01', closedMonth:null});
+        pfActRecordDebtSnapshot(key, S.personalFinance.debts[0].id, {balance:500000});
+        window.JPWFinDebts.render();
+        const antes = JSON.stringify(S.personalFinance);
+        window.confirm = () => false;
+        document.querySelector('[data-fd-rmobs]').click();
+        return { cancelou: antes === JSON.stringify(S.personalFinance) };
+    }""")
+    r2 = page.evaluate("""() => {
+        const key = pfCurrentMonthKey();
+        window.confirm = () => true;
+        const btn = document.querySelector('[data-fd-rmobs]');
+        if(btn) btn.click();                       // guarda: se a mutacao ja removeu, acusa abaixo
+        const texto = document.getElementById('fdDebts').innerText;
+        return { removeu: !pfDebtSnapshotIn(key, S.personalFinance.debts[0].id),
+                 mostraSemObs: texto.includes('Sem observação nesta competência'),
+                 mostraNenhumaAnterior: texto.includes('Nenhuma observação anterior'),
+                 botaoSumiu: !document.querySelector('[data-fd-rmobs]') };
+    }""")
+    r = { **r1, **r2 }
+    if not r["cancelou"]:
+        falhas.append("FIX: cancelar a confirmacao AINDA removeu — zero mutacao violada")
+    if not r["removeu"] or not r["mostraSemObs"] or not r["botaoSumiu"]:
+        falhas.append(f"FIX: remocao via UI nao refletiu: {r}")
+    if not r["mostraNenhumaAnterior"]:
+        falhas.append("FIX: sem anterior deveria dizer 'Nenhuma observação anterior'")
+    ctx.close()
+
+
+def run_fix_observacao_estritamente_anterior(browser, url, falhas):
+    """Ultima observacao JAMAIS vem do futuro: vendo AGO sem snapshot, SET nao
+    aparece; com JUL existente, JUL aparece."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        pfActAddDebt({creditor:'Banco Sigma', type:'CARTAO', description:'', originalAmount:null,
+            installmentAmount:null, installmentsTotal:null, startMonth:'2026-01', closedMonth:null});
+        const id = S.personalFinance.debts[0].id;
+        pfActRecordDebtSnapshot('2026-09', id, {balance:1000000});
+        pfActRecordDebtSnapshot('2026-10', id, {balance:900000});
+        const vendoAgoSoFuturo = pfLastObservation(id, '2026-08');
+        pfActRecordDebtSnapshot('2026-07', id, {balance:1200000});
+        const vendoAgoComJul = pfLastObservation(id, '2026-08');
+        const vendoSet = pfLastObservation(id, '2026-09');   // estrito: SET nao se ve a si mesmo
+        return { vendoAgoSoFuturo,
+                 comJul: vendoAgoComJul && {mes: vendoAgoComJul.monthKey, saldo: vendoAgoComJul.snapshot.balance},
+                 vendoSet: vendoSet && {mes: vendoSet.monthKey} };
+    }""")
+    if r["vendoAgoSoFuturo"] is not None:
+        falhas.append(f"FIX: vendo AGO com snapshots so em SET/OUT, a ultima deveria ser NENHUMA — informacao FUTURA vazou: {r['vendoAgoSoFuturo']}")
+    if r["comJul"] != {"mes":"2026-07","saldo":1200000}:
+        falhas.append(f"FIX: vendo AGO com JUL existente, a ultima deveria ser JUL 12.000: {r['comJul']}")
+    if r["vendoSet"] != {"mes":"2026-07"}:
+        falhas.append(f"FIX: selecao deve ser ESTRITAMENTE < M (vendo SET, anterior e JUL, nunca o proprio SET): {r['vendoSet']}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -485,6 +602,9 @@ def main():
             executar("D kpis", lambda: run_d_kpis_parciais_e_completos(browser, url, falhas), falhas)
             executar("E ratio", lambda: run_e_ratio_divida_credito(browser, url, falhas), falhas)
             executar("D write gate credito", lambda: run_d_write_gate_credito(browser, url, falhas), falhas)
+            executar("FIX remover observacao", lambda: run_fix_remover_observacao(browser, url, falhas), falhas)
+            executar("FIX remover via UI", lambda: run_fix_remover_via_ui_e_cancelar(browser, url, falhas), falhas)
+            executar("FIX estritamente anterior", lambda: run_fix_observacao_estritamente_anterior(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()
