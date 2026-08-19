@@ -5879,6 +5879,10 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fb-erow{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,.6fr) repeat(4,minmax(0,1fr)) minmax(0,1fr); gap:6px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
 .fb-erow.fb-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
 .fb-parc{text-align:center}
+.fb-sumrow{display:flex; justify-content:space-between; gap:8px; padding:5px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:baseline; flex-wrap:wrap}
+.fb-sumrow b{font-family:var(--mono)}
+.fb-sumsec{margin-top:10px; color:var(--ink-dim); font-size:10px; letter-spacing:.1em}
+.fb-aux{color:var(--ink-faint); font-size:10px}
 @media(max-width:1279px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}
@@ -6034,7 +6038,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '646415e4dc791cd8';
+const JP_WEALTH_BUILD_ID = 'de484bca52d2a92c';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -29558,6 +29562,34 @@ function pfExpenseCoverage(m){
                                    && e.executedCard!==null && e.executedCard!==undefined).length;
   return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
 }
+
+// ============ PF-02 · BLOCO D — RESUMO DO MÊS ===============================
+// Consolidador derivado. A lei central: SOMA PARCIAL NUNCA SE APRESENTA COMO
+// TOTAL. realizedSurplus e incomeExpenseRatio SÓ existem com cobertura
+// completa dos dois lados; o que existe antes disso é "saldo conhecido",
+// rotulado como tal. Nada daqui persiste.
+function pfMonthSummary(m){
+  const projectedIncome      = pfProjectedIncome(m);
+  const plannedExpenses      = pfPlannedExpenses(m);
+  const knownReceivedIncome  = pfKnownReceivedIncome(m);
+  const knownExecutedExpenses= pfKnownExecutedExpenses(m);
+  const incomeCoverage       = pfIncomeCoverage(m);
+  const expenseCoverage      = pfExpenseCoverage(m);
+  const completo             = incomeCoverage.completa && expenseCoverage.completa;
+  const realizedSurplus      = completo ? (knownReceivedIncome - knownExecutedExpenses) : null;
+  // ratio = executado/recebido: exige completude E receita > 0 (jamais dividir
+  // por zero; receita zero completa é "N/A", não infinito nem 0 fictício).
+  const incomeExpenseRatio   = (completo && knownReceivedIncome>0)
+    ? (knownExecutedExpenses / knownReceivedIncome) : null;
+  return {
+    projectedIncome, plannedExpenses,
+    projectedSurplus: projectedIncome - plannedExpenses,
+    knownReceivedIncome, knownExecutedExpenses,
+    knownBalance: knownReceivedIncome - knownExecutedExpenses, // auxiliar; NUNCA rotular como sobra
+    incomeCoverage, expenseCoverage, completo,
+    realizedSurplus, incomeExpenseRatio,
+  };
+}
 // ============ FINANÇAS PESSOAIS · WORKSPACES DO MÓDULO (PF-01 — apresentação) ============
 // Superfície estritamente visual do segundo nível de Finanças Pessoais: decide
 // qual workspace de section#finpes está visível, e nada além disso. Não
@@ -29799,10 +29831,38 @@ function fbExpensesHTML(key, materializado, bloqueado){
     <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button>
   </div>`;
 }
-function fbSummaryHTML(){
+function fbSummaryHTML(key, materializado){
+  const linha=(k,v,extra)=>`<div class="fb-sumrow"><span>${k}</span><b>${v}</b>${extra||''}</div>`;
+  if(!materializado){
+    const proj = pfVirtualIncomes(key).reduce((a,v)=>a+(typeof v.projectedAmount==='number'?v.projectedAmount:0),0);
+    return `<div class="card fb-card" id="fbSummary">
+      <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
+      ${linha('Receita projetada (regras)', formatBRLCents(proj))}
+      ${linha('Sobra projetada', formatBRLCents(proj))}
+      <p class="risk-note">Mês não registrado: os números acima são projeção das regras vigentes. Nada de realizado existe aqui.</p>
+    </div>`;
+  }
+  const m = S.personalFinance.months[key];
+  const r = pfMonthSummary(m);
+  const cobTxt = c => (c.total>0 && !c.completa) ? `<span class="fb-partial">PARCIAL · ${c.conhecidas}/${c.total}</span>` : '';
+  const sobraReal = (r.realizedSurplus!==null)
+    ? linha('Sobra realizada', formatBRLCents(r.realizedSurplus))
+    : linha('Sobra realizada', '—', '<span class="fb-partial">Dados incompletos</span>')
+      + linha('Saldo conhecido até agora', formatBRLCents(r.knownBalance), '<span class="fb-aux">auxiliar — não é a sobra</span>');
+  const ratio = (r.incomeExpenseRatio!==null)
+    ? linha('Comprometimento (desp./rec.)', (r.incomeExpenseRatio*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')
+    : linha('Comprometimento (desp./rec.)', '—', '<span class="fb-partial">'+(r.completo?'receita zero — N/A':'parcial')+'</span>');
   return `<div class="card fb-card" id="fbSummary">
-    <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco D).</p>
+    <h2>Resumo do Mês <span class="art">planejado ≠ realizado · soma parcial nunca vira total</span></h2>
+    <div class="fb-sumsec">PLANEJADO</div>
+    ${linha('Receita projetada', formatBRLCents(r.projectedIncome))}
+    ${linha('Despesa prevista', formatBRLCents(r.plannedExpenses))}
+    ${linha('Sobra projetada', formatBRLCents(r.projectedSurplus))}
+    <div class="fb-sumsec">REALIZADO</div>
+    ${linha('Receita recebida', formatBRLCents(r.knownReceivedIncome), cobTxt(r.incomeCoverage))}
+    ${linha('Despesa executada', formatBRLCents(r.knownExecutedExpenses), cobTxt(r.expenseCoverage))}
+    ${sobraReal}
+    ${ratio}
   </div>`;
 }
 function fbAllocationsHTML(){

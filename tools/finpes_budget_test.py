@@ -480,6 +480,88 @@ def run_c_parcelamento(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCO D ----------
+
+def run_d_parcial_nao_vira_total(browser, url, falhas):
+    """2 de 3 receitas conhecidas -> saldo conhecido aparece, Sobra Realizada NAO."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Salario', projectedAmount: 1200000 });
+        pfActAddIncome(key, { name:'Aluguel', projectedAmount: 280000 });
+        pfActAddIncome(key, { name:'FX', projectedAmount: null });
+        const m0 = S.personalFinance.months[key];
+        pfActUpdateIncomeField(key, m0.incomes[0].id, 'receivedAmount', 1200000);
+        pfActUpdateIncomeField(key, m0.incomes[1].id, 'receivedAmount', 280000);
+        // FX permanece null — cobertura 2/3
+        const r1 = pfMonthSummary(S.personalFinance.months[key]);
+        window.JPWFinBudget.render();
+        const texto = document.getElementById('fbSummary').innerText;
+        return { conhecido: r1.knownReceivedIncome, sobra: r1.realizedSurplus,
+                 saldoAux: r1.knownBalance, ratio: r1.incomeExpenseRatio,
+                 cobertura: r1.incomeCoverage,
+                 mostraIncompleto: texto.includes('Dados incompletos'),
+                 mostraAux: texto.includes('Saldo conhecido'),
+                 naoRotulaComoSobra: !/Sobra realizada\s*R\$/.test(texto) };
+    }""")
+    if r["conhecido"] != 1480000:
+        falhas.append(f"D: conhecido deveria ser 1.480000 (R$ 14.800,00); veio {r['conhecido']}")
+    if r["sobra"] is not None or r["ratio"] is not None:
+        falhas.append(f"D: SOBRA/RATIO NAO EXISTEM com cobertura 2/3: sobra={r['sobra']} ratio={r['ratio']}")
+    if r["cobertura"] != {"conhecidas":2,"total":3,"completa":False}:
+        falhas.append(f"D: cobertura errada: {r['cobertura']}")
+    if not (r["mostraIncompleto"] and r["mostraAux"] and r["naoRotulaComoSobra"]):
+        falhas.append(f"D: UI apresentou parcial como total: {r}")
+    ctx.close()
+
+
+def run_d_completo_e_deficitario(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Salario', projectedAmount: 500000 });
+        const m0 = S.personalFinance.months[key];
+        pfActUpdateIncomeField(key, m0.incomes[0].id, 'receivedAmount', 500000);
+        pfActSetIncomeStatus(key, m0.incomes[0].id, 'RECEBIDA');
+        pfActAddExpense(key, { name:'Aluguel' });
+        const idE = S.personalFinance.months[key].expenses[0].id;
+        pfActUpdateExpenseField(key, idE, 'expectedAmount', 600000);
+        pfActUpdateExpenseField(key, idE, 'executedCash', 600000);
+        pfActUpdateExpenseField(key, idE, 'executedCard', 0);
+        pfActSetExpenseStatus(key, idE, 'PAGO');
+        const r1 = pfMonthSummary(S.personalFinance.months[key]);
+        window.JPWFinBudget.render();
+        const texto = document.getElementById('fbSummary').innerText;
+        return { completo: r1.completo, sobra: r1.realizedSurplus, ratio: r1.incomeExpenseRatio,
+                 exibeNegativa: texto.includes('-R$ 1.000,00') };
+    }""")
+    if not r["completo"] or r["sobra"] != -100000:
+        falhas.append(f"D: mes completo deficitario deveria dar sobra -100000 exatos; veio {r['sobra']}")
+    if abs(r["ratio"] - 1.2) > 1e-9:
+        falhas.append(f"D: ratio deveria ser 1,2 (120%); veio {r['ratio']}")
+    if not r["exibeNegativa"]:
+        falhas.append("D: sobra negativa deveria exibir -R$ 1.000,00 — deficit e legitimo, sem clamp")
+    ctx.close()
+
+
+def run_d_ratio_receita_zero(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Unico', projectedAmount: 100000 });
+        const id = S.personalFinance.months[key].incomes[0].id;
+        pfActUpdateIncomeField(key, id, 'receivedAmount', 0);   // zero EXPLICITO
+        pfActSetIncomeStatus(key, id, 'RECEBIDA');
+        const r1 = pfMonthSummary(S.personalFinance.months[key]);
+        return { completo: r1.completo, sobra: r1.realizedSurplus, ratio: r1.incomeExpenseRatio };
+    }""")
+    if not r["completo"] or r["sobra"] != 0:
+        falhas.append(f"D: receita 0 explicita e completa — sobra 0 real: {r}")
+    if r["ratio"] is not None:
+        falhas.append(f"D: ratio com receita zero deveria ser N/A (null), jamais divisao: {r['ratio']}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -508,6 +590,9 @@ def main():
             executar("C dois canais", lambda: run_c_pago_exige_dois_canais(browser, url, falhas), falhas)
             executar("C cancelado preserva", lambda: run_c_cancelado_preserva_realizado(browser, url, falhas), falhas)
             executar("C parcelamento", lambda: run_c_parcelamento(browser, url, falhas), falhas)
+            executar("D parcial nao vira total", lambda: run_d_parcial_nao_vira_total(browser, url, falhas), falhas)
+            executar("D completo/deficitario", lambda: run_d_completo_e_deficitario(browser, url, falhas), falhas)
+            executar("D ratio receita zero", lambda: run_d_ratio_receita_zero(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()

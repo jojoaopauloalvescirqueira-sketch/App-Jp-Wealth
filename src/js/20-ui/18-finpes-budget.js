@@ -143,10 +143,38 @@ function fbExpensesHTML(key, materializado, bloqueado){
     <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button>
   </div>`;
 }
-function fbSummaryHTML(){
+function fbSummaryHTML(key, materializado){
+  const linha=(k,v,extra)=>`<div class="fb-sumrow"><span>${k}</span><b>${v}</b>${extra||''}</div>`;
+  if(!materializado){
+    const proj = pfVirtualIncomes(key).reduce((a,v)=>a+(typeof v.projectedAmount==='number'?v.projectedAmount:0),0);
+    return `<div class="card fb-card" id="fbSummary">
+      <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
+      ${linha('Receita projetada (regras)', formatBRLCents(proj))}
+      ${linha('Sobra projetada', formatBRLCents(proj))}
+      <p class="risk-note">Mês não registrado: os números acima são projeção das regras vigentes. Nada de realizado existe aqui.</p>
+    </div>`;
+  }
+  const m = S.personalFinance.months[key];
+  const r = pfMonthSummary(m);
+  const cobTxt = c => (c.total>0 && !c.completa) ? `<span class="fb-partial">PARCIAL · ${c.conhecidas}/${c.total}</span>` : '';
+  const sobraReal = (r.realizedSurplus!==null)
+    ? linha('Sobra realizada', formatBRLCents(r.realizedSurplus))
+    : linha('Sobra realizada', '—', '<span class="fb-partial">Dados incompletos</span>')
+      + linha('Saldo conhecido até agora', formatBRLCents(r.knownBalance), '<span class="fb-aux">auxiliar — não é a sobra</span>');
+  const ratio = (r.incomeExpenseRatio!==null)
+    ? linha('Comprometimento (desp./rec.)', (r.incomeExpenseRatio*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')
+    : linha('Comprometimento (desp./rec.)', '—', '<span class="fb-partial">'+(r.completo?'receita zero — N/A':'parcial')+'</span>');
   return `<div class="card fb-card" id="fbSummary">
-    <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco D).</p>
+    <h2>Resumo do Mês <span class="art">planejado ≠ realizado · soma parcial nunca vira total</span></h2>
+    <div class="fb-sumsec">PLANEJADO</div>
+    ${linha('Receita projetada', formatBRLCents(r.projectedIncome))}
+    ${linha('Despesa prevista', formatBRLCents(r.plannedExpenses))}
+    ${linha('Sobra projetada', formatBRLCents(r.projectedSurplus))}
+    <div class="fb-sumsec">REALIZADO</div>
+    ${linha('Receita recebida', formatBRLCents(r.knownReceivedIncome), cobTxt(r.incomeCoverage))}
+    ${linha('Despesa executada', formatBRLCents(r.knownExecutedExpenses), cobTxt(r.expenseCoverage))}
+    ${sobraReal}
+    ${ratio}
   </div>`;
 }
 function fbAllocationsHTML(){

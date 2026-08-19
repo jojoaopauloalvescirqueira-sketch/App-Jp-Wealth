@@ -458,3 +458,31 @@ function pfExpenseCoverage(m){
                                    && e.executedCard!==null && e.executedCard!==undefined).length;
   return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
 }
+
+// ============ PF-02 · BLOCO D — RESUMO DO MÊS ===============================
+// Consolidador derivado. A lei central: SOMA PARCIAL NUNCA SE APRESENTA COMO
+// TOTAL. realizedSurplus e incomeExpenseRatio SÓ existem com cobertura
+// completa dos dois lados; o que existe antes disso é "saldo conhecido",
+// rotulado como tal. Nada daqui persiste.
+function pfMonthSummary(m){
+  const projectedIncome      = pfProjectedIncome(m);
+  const plannedExpenses      = pfPlannedExpenses(m);
+  const knownReceivedIncome  = pfKnownReceivedIncome(m);
+  const knownExecutedExpenses= pfKnownExecutedExpenses(m);
+  const incomeCoverage       = pfIncomeCoverage(m);
+  const expenseCoverage      = pfExpenseCoverage(m);
+  const completo             = incomeCoverage.completa && expenseCoverage.completa;
+  const realizedSurplus      = completo ? (knownReceivedIncome - knownExecutedExpenses) : null;
+  // ratio = executado/recebido: exige completude E receita > 0 (jamais dividir
+  // por zero; receita zero completa é "N/A", não infinito nem 0 fictício).
+  const incomeExpenseRatio   = (completo && knownReceivedIncome>0)
+    ? (knownExecutedExpenses / knownReceivedIncome) : null;
+  return {
+    projectedIncome, plannedExpenses,
+    projectedSurplus: projectedIncome - plannedExpenses,
+    knownReceivedIncome, knownExecutedExpenses,
+    knownBalance: knownReceivedIncome - knownExecutedExpenses, // auxiliar; NUNCA rotular como sobra
+    incomeCoverage, expenseCoverage, completo,
+    realizedSurplus, incomeExpenseRatio,
+  };
+}
