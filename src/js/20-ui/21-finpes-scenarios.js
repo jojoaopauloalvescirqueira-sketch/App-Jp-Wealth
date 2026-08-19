@@ -40,32 +40,40 @@ function finpesScenariosRender(){
   fsBind(root, bloqueado);
 }
 
-function fsMoneyInput(valor, ds){
+// Sentinela de LEITURA (HA PF-05): read-only não autoriza reinterpretar uma
+// unidade desconhecida como BRL — nem em texto, nem em campo editável. A
+// estrutura da hipótese (nomes, kind, horizonte, proveniência, ordem da
+// cascata) permanece legível; todo montante vira "—" até a unidade voltar.
+function fsMoneyText(cents, bloqueado){
+  return bloqueado ? '—' : formatBRLCents(cents);
+}
+function fsMoneyInput(valor, ds, bloqueado){
+  if(bloqueado) return '<span class="fs-saldo" title="Unidade monetária não reconhecida">—</span>';
   const texto = (valor===null||valor===undefined) ? '' : (valor/100).toFixed(2).replace('.',',');
   return `<input type="text" class="fb-money" value="${esc(texto)}" ${ds} inputmode="decimal">`;
 }
 
 function fsCardHTML(sc, bloqueado){
   const receitas = (sc.incomes||[]).map(i=>`<div class="fs-item" data-fs-item>
-      <input type="text" class="fb-text" value="${esc(i.name)}" data-fs-campo="name" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}">
-      ${fsMoneyInput(i.amount,`data-fs-campo="amount" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}"`)}
+      <input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fs-campo="name" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}">
+      ${fsMoneyInput(i.amount,`data-fs-campo="amount" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}"`, bloqueado)}
       <span></span>
-      <button type="button" class="row-del" data-fs-del-item data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}" title="Excluir item">✕</button>
+      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}" title="Excluir item">✕</button>
     </div>`).join('');
   const cascata = pfScenarioCascade(sc);
   const despesas = cascata.map(c=>`<div class="fs-item" data-fs-item>
-      <input type="text" class="fb-text" value="${esc(c.item.name)}" data-fs-campo="name" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}">
-      ${fsMoneyInput(c.item.amount,`data-fs-campo="amount" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}"`)}
-      <span class="fs-saldo ${c.saldo<0?'fs-neg':''}" title="Saldo após esta despesa (cascata)">${formatBRLCents(c.saldo)}</span>
-      <button type="button" class="row-del" data-fs-del-item data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}" title="Excluir item">✕</button>
+      <input type="text" class="fb-text" value="${esc(c.item.name)}" ${bloqueado?'disabled':''} data-fs-campo="name" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}">
+      ${fsMoneyInput(c.item.amount,`data-fs-campo="amount" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}"`, bloqueado)}
+      <span class="fs-saldo ${!bloqueado&&c.saldo<0?'fs-neg':''}" title="Saldo após esta despesa (cascata)">${fsMoneyText(c.saldo, bloqueado)}</span>
+      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}" title="Excluir item">✕</button>
     </div>`).join('');
   const sobra = pfScenarioSurplus(sc);
   return `<div class="card fb-card fs-card" data-fs-card="${esc(sc.id)}">
     <h2>${esc(sc.name)} <span class="art">${esc(FS_KIND_LABELS[sc.kind]||sc.kind)}${sc.baselineFrom?` · criado a partir de ${esc(pfMonthLabel(sc.baselineFrom))}`:''}</span></h2>
     <div class="fb-totals">
-      <span>Receita total: <b>${formatBRLCents(pfScenarioIncome(sc))}</b></span>
-      <span>Despesa total: <b>${formatBRLCents(pfScenarioExpenses(sc))}</b></span>
-      <span>Sobra/Falta: <b class="${sobra<0?'fs-neg':''}">${formatBRLCents(sobra)}</b></span>
+      <span>Receita total: <b>${fsMoneyText(pfScenarioIncome(sc), bloqueado)}</b></span>
+      <span>Despesa total: <b>${fsMoneyText(pfScenarioExpenses(sc), bloqueado)}</b></span>
+      <span>Sobra/Falta: <b class="${!bloqueado&&sobra<0?'fs-neg':''}">${fsMoneyText(sobra, bloqueado)}</b></span>
     </div>
     <div class="fs-sec">RECEITAS DA HIPÓTESE</div>
     ${receitas || '<p class="fb-empty">Nenhuma receita.</p>'}
@@ -74,8 +82,8 @@ function fsCardHTML(sc, bloqueado){
     ${despesas || '<p class="fb-empty">Nenhuma despesa.</p>'}
     <button type="button" class="reset-btn fs-add" data-fs-add-item data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" ${bloqueado?'disabled':''}>+ despesa</button>
     <div class="fs-foot">
-      <button type="button" class="row-del" data-fs-edit="${esc(sc.id)}" title="Editar nome/tipo/horizonte">✎</button>
-      <button type="button" class="row-del" data-fs-del="${esc(sc.id)}" title="Excluir cenário">✕</button>
+      <button type="button" class="row-del" data-fs-edit="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Editar nome/tipo/horizonte">✎</button>
+      <button type="button" class="row-del" data-fs-del="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Excluir cenário">✕</button>
     </div>
   </div>`;
 }

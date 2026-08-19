@@ -13,6 +13,12 @@ registrado (planejado, sem canceladas; fonte incompleta bloqueia nomeando as
 faltas; ids novos; baselineFrom é proveniência, nunca vínculo vivo). Cenário
 jamais escreve em months; mês editado jamais reescreve cenário.
 
+Correção do Human Acceptance: sentinela de LEITURA — sob unidade monetária
+desconhecida a tela permanece legível estruturalmente mas não interpreta
+montante algum como BRL (totais, cascata e campos viram "—"); affordances
+mutáveis desabilitadas por consistência (a segurança segue no write gate).
+Round-trip `XX_UNIT → BRL_CENTS` restaura os valores exatamente.
+
 ### Finanças Pessoais — Comparativo Mensal (PF-04) — 2026-08-18
 
 Branch `feature/personal-finance-monthly-comparison`. **Não integrada.**

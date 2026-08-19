@@ -371,6 +371,66 @@ def run_cd_sentinela_visual(browser, url, falhas):
     ctx.close()
 
 
+def run_cd_sentinela_leitura(browser, url, falhas):
+    """Round-trip BRL_CENTS -> XX_UNIT -> BRL_CENTS (HA PF-05).
+
+    Unidade desconhecida: a tela permanece legivel estruturalmente mas NAO
+    interpreta montante algum como BRL (zero "R$", totais/cascata como "—",
+    nenhum campo monetario editavel); toda escrita segue bloqueada e o agregado
+    fica byte a byte intacto. Restaurada a unidade, os valores originais
+    reaparecem exatamente.
+    """
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("""() => {
+        // fase 1 — BRL_CENTS: interpretacao monetaria normal
+        pfActAddScenario({name:'Hipotese base', kind:'BASE', horizon:null});
+        const sc = S.personalFinance.scenarios[0];
+        pfActAddScenarioItem(sc.id,'incomes',{name:'Salario', amount:1000000});
+        pfActAddScenarioItem(sc.id,'expenses',{name:'Moradia', amount:400000});
+        pfActAddScenarioItem(sc.id,'expenses',{name:'Mercado', amount:250000});
+        window.JPWFinScenarios.render();
+        const root = document.getElementById('finpesScenariosRoot');
+        const antesTexto = root.innerText;
+        const brlNormal = antesTexto.includes('R$ 10.000,00')
+          && antesTexto.includes('R$ 6.000,00') && antesTexto.includes('R$ 3.500,00');
+        // fase 2 — XX_UNIT: leitura nao afirma BRL; escrita segue bloqueada
+        const foto = JSON.stringify(S.personalFinance);
+        S.personalFinance.moneyUnit = 'XX_UNIT';
+        window.JPWFin.ui.selectView('cenarios');
+        const t = root.innerText;
+        const banner = !document.getElementById('finpesUnitNotice').hidden;
+        const zeroBRL = !t.includes('R$');
+        const totaisIndisponiveis = t.includes('Receita total: —')
+          && t.includes('Despesa total: —') && t.includes('Sobra/Falta: —');
+        // nomes vivem em value de <input> (nao aparecem em innerText)
+        const nomes = [...root.querySelectorAll('input.fb-text')].map(el => el.value);
+        const estrutura = t.includes('Hipotese base') && t.includes('CASCATA')
+          && ['Salario','Moradia','Mercado'].every(n => nomes.includes(n));
+        const semCampoMonetario = root.querySelectorAll('input.fb-money').length === 0;
+        const affordancesInertes = [...root.querySelectorAll('button, input')].every(el => el.disabled);
+        const escritaBloqueada =
+          pfActAddScenarioItem(sc.id,'incomes',{name:'X', amount:1}).erro === 'READ_ONLY_UNSUPPORTED_MONEY_UNIT'
+          && pfActUpdateScenarioItem(sc.id,'expenses',sc.expenses[0].id,'amount',1).erro === 'READ_ONLY_UNSUPPORTED_MONEY_UNIT'
+          && pfActDeleteScenario(sc.id).erro === 'READ_ONLY_UNSUPPORTED_MONEY_UNIT';
+        S.personalFinance.moneyUnit = 'BRL_CENTS';
+        const agregadoIntacto = JSON.stringify(S.personalFinance) === foto;
+        // fase 3 — restaurar: valores originais reaparecem exatamente
+        window.JPWFin.ui.selectView('cenarios');
+        const roundTrip = root.innerText === antesTexto;
+        const bannerSumiu = document.getElementById('finpesUnitNotice').hidden;
+        return { brlNormal, banner, zeroBRL, totaisIndisponiveis, estrutura,
+                 semCampoMonetario, affordancesInertes, escritaBloqueada,
+                 agregadoIntacto, roundTrip, bannerSumiu };
+    }""")
+    for chave, valor in r.items():
+        if valor is not True:
+            falhas.append(f"CD sentinela leitura: {chave} falhou: {r}")
+            break
+    if erros:
+        falhas.append(f"CD sentinela leitura: pageerror: {erros[:2]}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -385,6 +445,7 @@ def main():
             executar("CD ui fluxo", lambda: run_cd_ui_fluxo_real(browser, url, falhas), falhas)
             executar("CD cascata/copia ui", lambda: run_cd_cascata_visual_e_copia_ui(browser, url, falhas), falhas)
             executar("CD sentinela", lambda: run_cd_sentinela_visual(browser, url, falhas), falhas)
+            executar("CD sentinela leitura", lambda: run_cd_sentinela_leitura(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()
