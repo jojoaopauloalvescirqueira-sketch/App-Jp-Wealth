@@ -4,7 +4,9 @@
 
 ### Finanças Pessoais — Cenários (PF-05) — 2026-08-19
 
-Branch `feature/personal-finance-scenarios`. **Não integrada.**
+Branch `feature/personal-finance-scenarios`. **Integrada** — candidate
+`aa0baa1`, merge `--no-ff` `46dcbe6` em `main`, publicado em `origin/main`
+(2026-08-19).
 
 Hipóteses financeiras independentes, agrupadas por horizonte (HOJE ou YYYY-MM):
 composição própria de receitas/despesas com valores obrigatórios, sobra e
