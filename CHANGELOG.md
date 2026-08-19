@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+### Finanças Pessoais — Comparativo Mensal (PF-04) — 2026-08-18
+
+Branch `feature/personal-finance-monthly-comparison`. **Não integrada.**
+
+READ → DERIVE → COMPARE: consome os consolidadores canônicos do PF-02/PF-03 e
+jamais recalcula o domínio. Comparação M−1 e M−12 estritamente de calendário;
+soma parcial nunca vira baseline; sobra sem percentual; comprometimento em
+pontos percentuais; baseline zero nega percentual e mantém delta; série de 12
+meses com lacunas honestas; crédito vigente fora de leitura histórica;
+patrimônio declarado pendente até o Inventário. Nada persiste.
+
+### Finanças Pessoais — Dívidas & Crédito (PF-03) — 2026-08-18 (integrada, merge `73bdaab`)
+
+Identidade temporal da dívida (startMonth/closedMonth) separada da observação
+mensal (debtSnapshots); sem carry-forward; contrato não orfana história;
+observação removível deliberadamente; "última observação" estritamente
+anterior; limites de crédito como estado vigente com KPIs por cobertura e
+estouro sem clamp; razão dívida/limite distinta de utilização.
+
+### Finanças Pessoais — Orçamento Mensal (PF-02) — 2026-08-18 (integrada, merge `f6a7ffe`)
+
+Write gate canônico (pfMutate); materialização por ato; receitas com
+recorrência; despesas com dois canais; sobra realizada gateada por completude;
+destino do excedente sem fabricação; pendências por status puro.
+
 ### Finanças Pessoais — Fundação (PF-01) — 2026-08-18
 
 Branch `feature/personal-finance-foundation`. **Não integrada.**
