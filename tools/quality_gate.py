@@ -42,6 +42,7 @@ STANDARD = FAST + (
     ("finpes-backup-roundtrip", [sys.executable, "tools/finpes_backup_roundtrip_test.py"]),
     ("finpes-navigation", [sys.executable, "tools/finpes_navigation_test.py"]),
     ("finpes-budget", [sys.executable, "tools/finpes_budget_test.py"]),
+    ("finpes-debt-credit", [sys.executable, "tools/finpes_debt_credit_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
 )
 FULL = STANDARD + (

@@ -586,3 +586,311 @@ function pfActDeleteNote(monthKey, noteId){
     return { recordId: noteId };
   });
 }
+
+// ============ PF-03 · BLOCO A — DÍVIDAS: RELEVÂNCIA TEMPORAL E SNAPSHOTS ====
+// A distinção é normativa e o schema congelado a encarna: debts[] é IDENTIDADE
+// E CONTRATO (sem saldo — debt.balance global não existe e não pode nascer);
+// months[M].debtSnapshots é OBSERVAÇÃO daquela competência. Estado atual jamais
+// reinterpreta o passado: relevância vem de startMonth/closedMonth, nunca de
+// "está ativa hoje?". Dado antigo não vira fato atual por ser o último.
+
+const PF_DEBT_TYPES = ['FINANCIAMENTO','EMPRESTIMO','CARTAO','CREDIARIO','IMPOSTO','PESSOA_FISICA','OUTRO'];
+
+function pfFindDebt(pf, debtId){
+  if(!pf || !Array.isArray(pf.debts)) return null;
+  return pf.debts.find(d=>d && d.id===debtId) || null;
+}
+function pfDebtRelevant(debt, monthKey){
+  if(!debt || !pfMonthKeyValid(debt.startMonth)) return false;
+  if(debt.startMonth > monthKey) return false;
+  if(debt.closedMonth!=null && pfMonthKeyValid(debt.closedMonth) && monthKey > debt.closedMonth) return false;
+  return true;
+}
+function pfRelevantDebts(monthKey){
+  const pf=S.personalFinance;
+  if(!pf || !Array.isArray(pf.debts)) return [];
+  return pf.debts.filter(d=>pfDebtRelevant(d, monthKey));
+}
+function pfDebtSnapshotIn(monthKey, debtId){
+  const pf=S.personalFinance;
+  const m = pf && pf.months ? pf.months[monthKey] : null;
+  if(!m || !Array.isArray(m.debtSnapshots)) return null;
+  return m.debtSnapshots.find(s=>s && s.debtId===debtId) || null;
+}
+// Meses (ordenados) em que a dívida possui observação — base das guardas de
+// integridade do contrato e do bloqueio de exclusão.
+function pfDebtSnapshotMonths(debtId){
+  const pf=S.personalFinance;
+  if(!pf || !pf.months) return [];
+  const out=[];
+  for(const k of Object.keys(pf.months)){
+    if(!pfMonthKeyValid(k)) continue;
+    const m=pf.months[k];
+    if(m && Array.isArray(m.debtSnapshots) && m.debtSnapshots.some(s=>s && s.debtId===debtId)) out.push(k);
+  }
+  return out.sort();
+}
+// Observação ESTRITAMENTE ANTERIOR à competência dada (month < M) —
+// informação secundária DATADA. Jamais entra em total, jamais vira snapshot,
+// jamais é carry-forward, e jamais vem do FUTURO: vendo AGO sem snapshot, um
+// snapshot de SET não aparece — leitura histórica não recebe informação
+// posterior, pela mesma lei que impede o presente de reinterpretar o passado.
+function pfLastObservation(debtId, uptoKey){
+  const meses = pfDebtSnapshotMonths(debtId).filter(k=>k<uptoKey);
+  if(!meses.length) return null;
+  const k = meses[meses.length-1];
+  return { monthKey: k, snapshot: pfDebtSnapshotIn(k, debtId) };
+}
+
+// ---- ato: registrar/corrigir observação da competência ---------------------
+// Máx. 1 por dívida/mês: registrar de novo SUBSTITUI (correção deliberada).
+// Mês virtual materializa pelo materializador CANÔNICO — mesmo resultado de
+// qualquer outro primeiro ato financeiro (receitas recorrentes estampadas).
+function pfActRecordDebtSnapshot(monthKey, debtId, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const debt = pfFindDebt(S.personalFinance, debtId);
+  if(!debt) return { ok:false, erro:'dívida inexistente' };
+  if(!pfDebtRelevant(debt, monthKey))
+    return { ok:false, erro:'dívida fora de vigência em '+monthKey+' (vigência '+debt.startMonth+' → '+(debt.closedMonth||'em aberto')+')' };
+  const balance = dados && dados.balance;
+  if(!(typeof balance==='number' && Number.isSafeInteger(balance) && balance>=0))
+    return { ok:false, erro:'saldo observado é obrigatório (≥ 0) — a observação existe porque foi observada' };
+  const paid = (dados && dados.installmentsPaid!==undefined) ? dados.installmentsPaid : null;
+  if(paid!==null){
+    if(!(Number.isInteger(paid) && paid>=0)) return { ok:false, erro:'parcelas pagas deve ser inteiro ≥ 0 (ou vazio)' };
+    if(debt.installmentsTotal==null)
+      return { ok:false, erro:'dívida sem contrato parcelado — parcelas pagas deve ficar vazio' };
+    if(paid>debt.installmentsTotal)
+      return { ok:false, erro:'parcelas pagas ('+paid+') excede o total do contrato ('+debt.installmentsTotal+')' };
+  }
+  return pfMutate('debt_snapshot', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const existente = m.debtSnapshots.find(s=>s && s.debtId===debtId);
+    if(existente){ existente.balance = balance; existente.installmentsPaid = paid; }
+    else m.debtSnapshots.push({ debtId, balance, installmentsPaid: paid });
+    return { recordId: debtId };
+  });
+}
+
+// ---- ato: remover observação da competência --------------------------------
+// DebtSnapshot é dado MANUAL corrigível do operador — não é evidência sistêmica
+// imutável como operationHistory. Observação registrada na dívida errada não se
+// "corrige" mudando o valor: remove-se, deliberadamente. Remove EXATAMENTE o
+// snapshot debtId/competência — nada mais: a dívida, o mês materializado e os
+// demais dados do mês ficam intactos. Sem tombstone, sem audit log novo: manter
+// dado falso no agregado para fingir trilha seria pior que o rastro.
+function pfActRemoveDebtSnapshot(monthKey, debtId){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const snap = pfDebtSnapshotIn(monthKey, debtId);
+  if(!snap) return { ok:false, erro:'não há observação desta dívida nesta competência' };
+  return pfMutate('debt_snapshot_remove', pf => {
+    const m = pf.months[monthKey];
+    m.debtSnapshots = m.debtSnapshots.filter(x=>!(x && x.debtId===debtId));
+    return { recordId: debtId };
+  });
+}
+
+// ---- derivados de competência ----------------------------------------------
+function pfDebtCoverage(monthKey){
+  const relevantes = pfRelevantDebts(monthKey);
+  const observadas = relevantes.filter(d=>!!pfDebtSnapshotIn(monthKey, d.id)).length;
+  // conjunto vazio: cobertura completa e total zero DEMONSTRADO, não default.
+  return { observadas, relevantes: relevantes.length, completa: observadas===relevantes.length };
+}
+function pfKnownDebtTotal(monthKey){
+  return pfRelevantDebts(monthKey).reduce((acc,d)=>{
+    const s = pfDebtSnapshotIn(monthKey, d.id);
+    return acc + (s ? s.balance : 0);
+  }, 0);
+}
+function pfRemainingInstallments(debt, snap){
+  if(!debt || debt.installmentsTotal==null) return null;
+  if(!snap || snap.installmentsPaid==null) return null;
+  return debt.installmentsTotal - snap.installmentsPaid;  // derivado; jamais persiste
+}
+
+// ============ PF-03 · BLOCO B — CONTRATO DA DÍVIDA ==========================
+// Identidade corrigível pelo operador, MAS: edição de contrato jamais pode
+// tornar observações históricas estruturalmente impossíveis. As guardas abaixo
+// varrem os snapshots existentes ANTES de aplicar — bloqueio atômico com a
+// observação conflitante nomeada. Isso é guarda de integridade, não migration.
+
+function pfValidateDebtContract(dados, debtId){
+  const creditor = String((dados&&dados.creditor)||'').trim();
+  if(!creditor) return { ok:false, erro:'credor/instituição obrigatório' };
+  if(!PF_DEBT_TYPES.includes(dados.type)) return { ok:false, erro:'tipo de dívida desconhecido' };
+  if(!pfMonthKeyValid(dados.startMonth)) return { ok:false, erro:'mês inicial obrigatório (YYYY-MM)' };
+  const closed = (dados.closedMonth===undefined || dados.closedMonth===null || dados.closedMonth==='') ? null : dados.closedMonth;
+  if(closed!==null){
+    if(!pfMonthKeyValid(closed)) return { ok:false, erro:'mês de encerramento inválido (YYYY-MM ou vazio)' };
+    if(closed < dados.startMonth) return { ok:false, erro:'encerramento não pode anteceder o início (closedMonth ≥ startMonth)' };
+  }
+  for(const campo of ['originalAmount','installmentAmount']){
+    const v = (dados[campo]===undefined) ? null : dados[campo];
+    if(!pfAmountInDomain(v,{allowNull:true})) return { ok:false, erro:campo+' fora do domínio (≥ 0 ou vazio)' };
+  }
+  const total = (dados.installmentsTotal===undefined || dados.installmentsTotal===null || dados.installmentsTotal==='') ? null : dados.installmentsTotal;
+  if(total!==null && !(Number.isInteger(total) && total>=1))
+    return { ok:false, erro:'total de parcelas deve ser inteiro ≥ 1 ou vazio (dívida sem contrato parcelado)' };
+
+  // guardas de integridade contra a HISTÓRIA (só em edição)
+  if(debtId){
+    const meses = pfDebtSnapshotMonths(debtId);
+    const antes = meses.filter(k=>k<dados.startMonth);
+    if(antes.length)
+      return { ok:false, erro:'início '+dados.startMonth+' orfanaria a observação de '+antes[0]+' — corrija ou remova o conflito antes' };
+    if(closed!==null){
+      const depois = meses.filter(k=>k>closed);
+      if(depois.length)
+        return { ok:false, erro:'encerramento '+closed+' orfanaria a observação de '+depois[depois.length-1] };
+    }
+    let maxPaid = null;
+    for(const k of meses){
+      const s = pfDebtSnapshotIn(k, debtId);
+      if(s && s.installmentsPaid!=null && (maxPaid===null || s.installmentsPaid>maxPaid)) maxPaid = s.installmentsPaid;
+    }
+    if(maxPaid!==null && total===null)
+      return { ok:false, erro:'existe observação histórica com '+maxPaid+' parcelas pagas — o contrato não pode deixar de ser parcelado' };
+    if(maxPaid!==null && total!==null && total<maxPaid)
+      return { ok:false, erro:'total de parcelas '+total+' é menor que as '+maxPaid+' pagas já observadas historicamente' };
+  }
+  return { ok:true, creditor, closed, total };
+}
+
+function pfActAddDebt(dados){
+  const v = pfValidateDebtContract(dados||{}, null);
+  if(v.ok===false) return v;
+  return pfMutate('debt_add', pf => {
+    const rec = { id: pfId('pfd'), creditor: v.creditor, type: dados.type,
+      description: String(dados.description||'').trim(),
+      originalAmount: (dados.originalAmount===undefined)?null:dados.originalAmount,
+      installmentAmount: (dados.installmentAmount===undefined)?null:dados.installmentAmount,
+      installmentsTotal: v.total,
+      startMonth: dados.startMonth, closedMonth: v.closed };
+    pf.debts.push(rec);
+    return { recordId: rec.id };
+  });
+}
+
+// Edição ATÔMICA do contrato (formulário único): valida tudo — inclusive
+// contra a história — e aplica de uma vez, ou nada.
+function pfActUpdateDebt(debtId, dados){
+  const alvo = pfFindDebt(S.personalFinance, debtId);
+  if(!alvo) return { ok:false, erro:'dívida inexistente' };
+  const v = pfValidateDebtContract(dados||{}, debtId);
+  if(v.ok===false) return v;
+  return pfMutate('debt_update', pf => {
+    const d = pfFindDebt(pf, debtId);
+    d.creditor = v.creditor; d.type = dados.type;
+    d.description = String(dados.description||'').trim();
+    d.originalAmount = (dados.originalAmount===undefined)?null:dados.originalAmount;
+    d.installmentAmount = (dados.installmentAmount===undefined)?null:dados.installmentAmount;
+    d.installmentsTotal = v.total;
+    d.startMonth = dados.startMonth; d.closedMonth = v.closed;
+    return { recordId: debtId };
+  });
+}
+
+// Exclusão: só sem história. Com snapshot em qualquer mês, excluir a
+// identidade orfanaria as observações — o caminho é closedMonth.
+function pfActDeleteDebt(debtId){
+  const alvo = pfFindDebt(S.personalFinance, debtId);
+  if(!alvo) return { ok:false, erro:'dívida inexistente' };
+  const meses = pfDebtSnapshotMonths(debtId);
+  if(meses.length)
+    return { ok:false, erro:'dívida possui observação em '+meses.join(', ')+' — excluir orfanaria a história; encerre com o mês de encerramento' };
+  return pfMutate('debt_delete', pf => {
+    pf.debts = pf.debts.filter(d=>d.id!==debtId);
+    return { recordId: debtId };
+  });
+}
+
+// ============ PF-03 · BLOCO D — LIMITES DE CRÉDITO ==========================
+// creditLines[] é deliberadamente ESTADO VIGENTE nesta versão — sem série
+// histórica, sem creditSnapshots. used > totalLimit é legítimo (estouro):
+// disponível negativo e utilização > 100% com alerta, jamais clamp.
+// Derivados por linha e KPIs consolidados NUNCA persistem, e subtotal parcial
+// jamais se apresenta como total definitivo.
+
+function pfFindCreditLine(pf, lineId){
+  if(!pf || !Array.isArray(pf.creditLines)) return null;
+  return pf.creditLines.find(c=>c && c.id===lineId) || null;
+}
+function pfActAddCreditLine(dados){
+  const inst = String((dados&&dados.institution)||'').trim();
+  if(!inst) return { ok:false, erro:'instituição obrigatória' };
+  for(const campo of ['totalLimit','used']){
+    const v = (dados[campo]===undefined) ? null : dados[campo];
+    if(!pfAmountInDomain(v,{allowNull:true})) return { ok:false, erro:campo+' fora do domínio (≥ 0 ou vazio)' };
+  }
+  return pfMutate('credit_add', pf => {
+    const rec = { id: pfId('pfc'), institution: inst,
+      instrument: String(dados.instrument||'').trim(),
+      type: String(dados.type||'').trim(),
+      totalLimit: (dados.totalLimit===undefined)?null:dados.totalLimit,
+      used: (dados.used===undefined)?null:dados.used };
+    pf.creditLines.push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActUpdateCreditLineField(lineId, campo, valor){
+  const alvo = pfFindCreditLine(S.personalFinance, lineId);
+  if(!alvo) return { ok:false, erro:'linha de crédito inexistente' };
+  if(['institution','instrument','type'].includes(campo)){
+    const t = String(valor||'').trim();
+    if(campo==='institution' && !t) return { ok:false, erro:'instituição obrigatória' };
+    return pfMutate('credit_update', pf => { pfFindCreditLine(pf,lineId)[campo] = t; return { recordId: lineId }; });
+  }
+  if(campo==='totalLimit' || campo==='used'){
+    if(!pfAmountInDomain(valor,{allowNull:true})) return { ok:false, erro:'valor fora do domínio (≥ 0 ou vazio)' };
+    return pfMutate('credit_update', pf => { pfFindCreditLine(pf,lineId)[campo] = valor; return { recordId: lineId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+function pfActDeleteCreditLine(lineId){
+  const alvo = pfFindCreditLine(S.personalFinance, lineId);
+  if(!alvo) return { ok:false, erro:'linha de crédito inexistente' };
+  return pfMutate('credit_delete', pf => {
+    pf.creditLines = pf.creditLines.filter(c=>c.id!==lineId);
+    return { recordId: lineId };
+  });
+}
+
+// ---- derivados por linha ----------------------------------------------------
+function pfCreditLineDerived(line){
+  const limiteOk = typeof line.totalLimit==='number';
+  const usadoOk  = typeof line.used==='number';
+  const available = (limiteOk && usadoOk) ? (line.totalLimit - line.used) : null;
+  // utilização exige limite > 0 E usado conhecido; limite 0 ou desconhecido = N/A
+  const utilization = (limiteOk && line.totalLimit>0 && usadoOk) ? (line.used / line.totalLimit) : null;
+  return { available, utilization, estouro: available!==null && available<0 };
+}
+
+// ---- KPIs consolidados ------------------------------------------------------
+function pfCreditKPIs(){
+  const linhas = (S.personalFinance.creditLines||[]).filter(Boolean);
+  const comLimite = linhas.filter(l=>typeof l.totalLimit==='number');
+  const comUsado  = linhas.filter(l=>typeof l.used==='number');
+  const knownTotalLimit = comLimite.reduce((a,l)=>a+l.totalLimit,0);
+  const knownUsed       = comUsado.reduce((a,l)=>a+l.used,0);
+  const limitCoverage = { conhecidas: comLimite.length, total: linhas.length, completa: comLimite.length===linhas.length };
+  const usedCoverage  = { conhecidas: comUsado.length,  total: linhas.length, completa: comUsado.length===linhas.length };
+  const ambas = limitCoverage.completa && usedCoverage.completa;
+  return {
+    knownTotalLimit, knownUsed, limitCoverage, usedCoverage,
+    totalFree: ambas ? (knownTotalLimit - knownUsed) : null,
+    utilizationConsolidated: (ambas && knownTotalLimit>0) ? (knownUsed / knownTotalLimit) : null,
+  };
+}
+
+// ---- razão dívida/limite (Bloco E) -----------------------------------------
+// Indicador DESCRITIVO: dívida total OBSERVADA da competência sobre o limite
+// total VIGENTE. Só existe com debtCoverage completa, limitCoverage completa e
+// limite consolidado > 0. Pode superar 100% — sem clamp. NÃO confundir com
+// utilização de crédito (used/limit): são métricas diferentes.
+function pfDebtToCreditRatio(monthKey){
+  const dCov = pfDebtCoverage(monthKey);
+  const k = pfCreditKPIs();
+  if(!dCov.completa || !k.limitCoverage.completa || k.knownTotalLimit<=0) return null;
+  return pfKnownDebtTotal(monthKey) / k.knownTotalLimit;
+}
