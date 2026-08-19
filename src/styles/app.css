@@ -5873,6 +5873,12 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fb-sumrow b{font-family:var(--mono)}
 .fb-sumsec{margin-top:10px; color:var(--ink-dim); font-size:10px; letter-spacing:.1em}
 .fb-aux{color:var(--ink-faint); font-size:10px}
+.fb-noterow{display:flex; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:12px}
+.fb-note-text{flex:1; min-width:0}
+.fb-note-done .fb-note-text{color:var(--ink-faint); text-decoration:line-through}
+.fb-note-toggle{background:none; border:1px solid var(--line); border-radius:4px; color:inherit; cursor:pointer; min-width:26px}
+.fb-alloc{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.2fr) minmax(0,.6fr)}
+.fb-pend-month{margin:8px 0; font-size:13px}
 @media(max-width:1279px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}

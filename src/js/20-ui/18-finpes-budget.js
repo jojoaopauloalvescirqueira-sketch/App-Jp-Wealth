@@ -204,13 +204,60 @@ function fbAssetsHTML(){
     <p class="risk-note">Integração com Inventário pendente (PF-07/PF-08). Sem digitação aqui.</p>
   </div>`;
 }
-function fbNotesHTML(){
+function fbNotesHTML(key, materializado, bloqueado){
+  const m = materializado ? S.personalFinance.months[key] : null;
+  const linhas = m ? (m.notes||[]).map(n=>`<div class="fb-noterow ${n.status==='RESOLVIDO'?'fb-note-done':''}" data-note="${esc(n.id)}">
+      <button type="button" class="fb-note-toggle" data-fn-toggle="${esc(n.id)}" title="Alternar status">${n.status==='PENDENTE'?'⚠':'✓'}</button>
+      <span class="fb-note-text">${esc(n.text)}</span>
+      <span class="fb-status">${esc(n.status)}</span>
+      <button type="button" class="row-del" data-fn-del="${esc(n.id)}" title="Excluir nota">✕</button>
+    </div>`).join('') : '';
   return `<div class="card fb-card" id="fbNotes">
     <h2>Informações Importantes <span class="art">texto + status, nada mais</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco F).</p>
+    ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma informação neste mês.':'Mês não registrado.')+'</p>'}
+    <button type="button" class="reset-btn" data-fn-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar informação</button>
   </div>`;
 }
-function fbPendingBannerHTML(){ return ''; } // Bloco F
+function fbPendingBannerHTML(key){
+  // Indicação persistente e não intrusiva: existe enquanto houver pendência
+  // (status PENDENTE em despesa/nota de mês materializado anterior ao
+  // corrente). Nada inferido de null, texto ou cobertura.
+  const pend = pfPendingBefore(pfCurrentMonthKey());
+  if(!pend.length) return '';
+  const total = pend.reduce((a,p)=>a+p.despesas+p.notas,0);
+  return `<div class="status-banner sb-warn" id="fbPendingBanner" style="margin-bottom:12px">
+    <span class="ico">⚠️</span><span>Existem ${total} pendência(s) em meses anteriores.</span>
+    <button type="button" class="reset-btn" data-fb-review="${esc(pend[0].key)}" style="margin-left:auto">Revisar ${esc(pfMonthLabel(pend[0].key))}</button>
+  </div>`;
+}
+
+// Modal de pendências: UMA vez por sessão de app (flag de módulo, jamais
+// persistida), disparado apenas na navegação DELIBERADA ao mês corrente
+// (entrada no workspace ou botão Hoje) — nunca por rerender.
+function fbMaybePendingPrompt(){
+  if(fbPendingPromptShown) return;
+  if(fbCurrentKey() !== pfCurrentMonthKey()) return;
+  const pend = pfPendingBefore(pfCurrentMonthKey());
+  if(!pend.length) return;
+  fbPendingPromptShown = true;
+  const box=$('modalBox'); $('modalOverlay').classList.add('show');
+  const blocos = pend.map(p=>`<div class="fb-pend-month"><b>${esc(pfMonthLabel(p.key))}</b>
+    ${p.despesas?`<div>• ${p.despesas} despesa(s) pendente(s)</div>`:''}
+    ${p.notas?`<div>• ${p.notas} informação(ões) importante(s) pendente(s)</div>`:''}
+  </div>`).join('');
+  box.innerHTML = `
+    <h3>Existem pendências de meses anteriores.</h3>
+    ${blocos}
+    <div class="modal-actions">
+      <button class="modal-btn" id="fbPendReview">Revisar mês anterior</button>
+      <button class="modal-btn confirm" id="fbPendContinue">Continuar para o mês atual</button>
+    </div>`;
+  $('fbPendContinue').addEventListener('click', ()=>{ closeModal(); });
+  $('fbPendReview').addEventListener('click', ()=>{
+    closeModal();
+    fbGoTo(pend[0].key);   // abre o mês pendente mais antigo — EDITÁVEL
+  });
+}
 
 // ---- binds ------------------------------------------------------------------
 function fbAtoUI(r){
@@ -232,7 +279,7 @@ function fbBind(root, key){
     fbGoTo(pfMonthAdd(fbCurrentKey(), +b.dataset.fbNav));
   }));
   const hoje = root.querySelector('[data-fb-today]');
-  if(hoje) hoje.addEventListener('click',()=>{ fbGoTo(pfCurrentMonthKey()); });
+  if(hoje) hoje.addEventListener('click',()=>{ fbGoTo(pfCurrentMonthKey()); fbMaybePendingPrompt(); });
 
   // ---- receitas (B) ----
   const add = root.querySelector('[data-fi-add]');
@@ -365,6 +412,26 @@ function fbBind(root, key){
     if(rec && !confirm('Excluir a destinação "'+(rec.label||'')+'"?')) return;
     fbAtoUI(pfActDeleteAllocation(key, id));
   }));
+
+  // ---- informações importantes (F) ----
+  const addN = root.querySelector('[data-fn-add]');
+  if(addN) addN.addEventListener('click',()=>{
+    const texto = prompt('Informação importante:');
+    if(texto===null) return;                       // cancelar = zero mutação
+    fbAtoUI(pfActAddNote(key, texto));
+  });
+  root.querySelectorAll('[data-fn-toggle]').forEach(btn=>btn.addEventListener('click',()=>{
+    fbAtoUI(pfActToggleNoteStatus(key, btn.dataset.fnToggle));
+  }));
+  root.querySelectorAll('[data-fn-del]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id = btn.dataset.fnDel;
+    const m = S.personalFinance.months[key];
+    const rec = m && m.notes.find(n=>n.id===id);
+    if(rec && !confirm('Excluir a nota "'+(rec.text||'').slice(0,40)+'"?')) return;
+    fbAtoUI(pfActDeleteNote(key, id));
+  }));
+  const rev = root.querySelector('[data-fb-review]');
+  if(rev) rev.addEventListener('click',()=>{ fbGoTo(rev.dataset.fbReview); });
 }
 
 // ---- modal de recorrência (formulário ATÔMICO: aplica só no confirmar) ------
@@ -425,4 +492,4 @@ function fbOpenRecurrenceModal(key, incomeId){
   });
 }
 
-window.JPWFinBudget = { render: finpesBudgetRender };
+window.JPWFinBudget = { render: finpesBudgetRender, checkPending: fbMaybePendingPrompt };

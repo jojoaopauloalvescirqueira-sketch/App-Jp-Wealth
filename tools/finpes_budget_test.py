@@ -619,6 +619,133 @@ def run_e_excedente_sem_fabricacao(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCO F ----------
+
+def run_f_notas(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        const vazia = pfActAddNote(key, '   ');
+        const ok = pfActAddNote(key, 'Renegociar internet');
+        const id = S.personalFinance.months[key].notes[0].id;
+        const n0 = JSON.parse(JSON.stringify(S.personalFinance.months[key].notes[0]));
+        pfActToggleNoteStatus(key, id);
+        const dep = S.personalFinance.months[key].notes[0].status;
+        pfActToggleNoteStatus(key, id);
+        const volta = S.personalFinance.months[key].notes[0].status;
+        return { vaziaOk: vazia.ok, ok: ok.ok, nasce: n0.status,
+                 chaves: Object.keys(n0).sort(), dep, volta };
+    }""")
+    if r["vaziaOk"] is not False:
+        falhas.append("F: nota vazia deveria ser recusada")
+    if not r["ok"] or r["nasce"] != "PENDENTE":
+        falhas.append(f"F: nota deveria nascer PENDENTE: {r}")
+    if r["chaves"] != ["createdAt","id","status","text"]:
+        falhas.append(f"F: nota deveria ter SO texto+status(+id,createdAt) — sem tags/prioridade: {r['chaves']}")
+    if r["dep"] != "RESOLVIDO" or r["volta"] != "PENDENTE":
+        falhas.append(f"F: toggle de status errado: {r['dep']}/{r['volta']}")
+    ctx.close()
+
+
+def _semear_pendencias(page):
+    """Julho: 2 despesas + 1 nota pendentes; junho: 1 despesa. Mais um mes com
+    nulls SEM status pendente — que NAO pode contar."""
+    page.evaluate("""() => {
+        for(const [k, desp, nota] of [['2026-06',1,0],['2026-07',2,1]]){
+            for(let i=0;i<desp;i++) pfActAddExpense(k, { name:'Desp '+k+'-'+i });
+            for(let i=0;i<nota;i++) pfActAddNote(k, 'Pend '+k);
+        }
+        // mes com null mas SEM pendencia de status: despesa CANCELADA com canais null
+        pfActAddExpense('2026-05', { name:'Cancelada' });
+        const id = S.personalFinance.months['2026-05'].expenses[0].id;
+        pfActSetExpenseStatus('2026-05', id, 'CANCELADO');
+        // nota resolvida tambem nao conta
+        pfActAddNote('2026-05', 'Resolvida');
+        pfActToggleNoteStatus('2026-05', S.personalFinance.months['2026-05'].notes[0].id);
+    }""")
+
+
+def run_f_pendencias_fluxo(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    _semear_pendencias(page)
+    r = page.evaluate("""() => {
+        const pend = pfPendingBefore(pfCurrentMonthKey());
+        // entrada DELIBERADA no workspace dispara o modal (uma vez por sessao)
+        window.JPWFin.ui.selectView('overview');
+        window.JPWFin.ui.selectView('mensal');
+        const modalTexto = document.getElementById('modalBox').innerText;
+        const abriu = document.getElementById('modalOverlay').classList.contains('show');
+        // Revisar abre o mes pendente mais antigo, EDITAVEL
+        document.getElementById('fbPendReview').click();
+        const foiPara = document.querySelector('.fb-month-label').textContent;
+        // resolver a pendencia de junho NO PROPRIO junho (mes passado editavel)
+        const idJun = S.personalFinance.months['2026-06'].expenses[0].id;
+        pfActUpdateExpenseField('2026-06', idJun, 'executedCash', 10000);
+        pfActUpdateExpenseField('2026-06', idJun, 'executedCard', 0);
+        const pago = pfActSetExpenseStatus('2026-06', idJun, 'PAGO');
+        const pendDepois = pfPendingBefore(pfCurrentMonthKey());
+        window.JPWFinBudget.render();
+        const bannerAindaTem = !!document.getElementById('fbPendingBanner');
+        return { pend, modalTexto, abriu, foiPara, pagoOk: pago.ok,
+                 pendDepois, bannerAindaTem };
+    }""")
+    esperado = [{"key":"2026-06","despesas":1,"notas":0},{"key":"2026-07","despesas":2,"notas":1}]
+    if r["pend"] != esperado:
+        falhas.append(f"F: pendencias erradas (null/resolvido NAO contam): {r['pend']}")
+    if not r["abriu"] or "pendências de meses anteriores" not in r["modalTexto"]:
+        falhas.append("F: modal de pendencias nao abriu na entrada deliberada")
+    if "2 despesa(s)" not in r["modalTexto"] or "1 informação" not in r["modalTexto"]:
+        falhas.append(f"F: contagens do modal erradas: {r['modalTexto'][:200]}")
+    if r["foiPara"] != "JUNHO 2026":
+        falhas.append(f"F: Revisar deveria abrir o mes pendente mais antigo editavel; foi para {r['foiPara']}")
+    if not r["pagoOk"]:
+        falhas.append("F: resolver pendencia em mes passado deveria ser permitido (edicao deliberada)")
+    if r["pendDepois"] != [{"key":"2026-07","despesas":2,"notas":1}]:
+        falhas.append(f"F: apos resolver junho, so julho deveria pender: {r['pendDepois']}")
+    if not r["bannerAindaTem"]:
+        falhas.append("F: banner deveria persistir enquanto julho pende")
+    # modal NAO reabre por rerender, por Hoje nem por nova entrada na MESMA
+    # sessao — E a sonda precisa estar NO MES CORRENTE, senao a guarda de
+    # competencia mascara a falta da flag (a mutacao MF2 sobreviveu assim).
+    r2 = page.evaluate("""() => {
+        closeModal();
+        document.querySelector('[data-fb-today]').click();      // volta ao corrente (gatilho deliberado)
+        const aposHoje = document.getElementById('modalOverlay').classList.contains('show');
+        closeModal();
+        window.JPWFinBudget.render(); window.JPWFinBudget.render();
+        window.JPWFin.ui.selectView('overview');
+        window.JPWFin.ui.selectView('mensal');
+        const aposReentrada = document.getElementById('modalOverlay').classList.contains('show');
+        return { aposHoje, aposReentrada,
+                 noCorrente: document.querySelector('.fb-month-label').textContent };
+    }""")
+    if r2["aposHoje"] or r2["aposReentrada"]:
+        falhas.append(f"F: modal em LOOP — deveria aparecer uma vez por sessao: {r2}")
+    ctx.close()
+
+
+def run_f_resolver_tudo_apaga_banner(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    _semear_pendencias(page)
+    r = page.evaluate("""() => {
+        for(const k of ['2026-06','2026-07']){
+            const m = S.personalFinance.months[k];
+            for(const e of m.expenses.filter(x=>x.status==='PENDENTE')){
+                pfActUpdateExpenseField(k, e.id, 'executedCash', 1000);
+                pfActUpdateExpenseField(k, e.id, 'executedCard', 0);
+                pfActSetExpenseStatus(k, e.id, 'PAGO');
+            }
+            for(const n of m.notes.filter(x=>x.status==='PENDENTE')) pfActToggleNoteStatus(k, n.id);
+        }
+        window.JPWFinBudget.render();
+        return { pend: pfPendingBefore(pfCurrentMonthKey()).length,
+                 banner: !!document.getElementById('fbPendingBanner') };
+    }""")
+    if r["pend"] != 0 or r["banner"]:
+        falhas.append(f"F: com tudo resolvido o alerta deveria desaparecer: {r}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -652,6 +779,9 @@ def main():
             executar("D ratio receita zero", lambda: run_d_ratio_receita_zero(browser, url, falhas), falhas)
             executar("E guardas", lambda: run_e_destinacao_guardas(browser, url, falhas), falhas)
             executar("E excedente honesto", lambda: run_e_excedente_sem_fabricacao(browser, url, falhas), falhas)
+            executar("F notas", lambda: run_f_notas(browser, url, falhas), falhas)
+            executar("F pendencias fluxo", lambda: run_f_pendencias_fluxo(browser, url, falhas), falhas)
+            executar("F resolver tudo", lambda: run_f_resolver_tudo_apaga_banner(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()

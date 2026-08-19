@@ -548,3 +548,41 @@ function pfUnallocatedSurplus(m){
   if(r.realizedSurplus===null) return null;
   return r.realizedSurplus - pfTotalAllocated(m);
 }
+
+// ============ PF-02 · BLOCO F — INFORMAÇÕES IMPORTANTES =====================
+// Texto + status, nada mais: sem prioridade, tags, responsável, workflow ou
+// automação — por decisão expressa do contrato.
+function pfFindNote(pf, monthKey, noteId){
+  const m = pf.months[monthKey];
+  if(!m || !Array.isArray(m.notes)) return null;
+  return m.notes.find(n=>n && n.id===noteId) || null;
+}
+function pfActAddNote(monthKey, texto){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const text = String(texto||'').trim();
+  if(!text) return { ok:false, erro:'texto obrigatório' };
+  return pfMutate('note_add', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const rec = { id: pfId('pfn'), text, status:'PENDENTE', createdAt: new Date().toISOString() };
+    m.notes.push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActToggleNoteStatus(monthKey, noteId){
+  const alvo = pfFindNote(S.personalFinance, monthKey, noteId);
+  if(!alvo) return { ok:false, erro:'nota inexistente' };
+  return pfMutate('note_status', pf => {
+    const n = pfFindNote(pf, monthKey, noteId);
+    n.status = (n.status==='PENDENTE') ? 'RESOLVIDO' : 'PENDENTE';
+    return { recordId: noteId };
+  });
+}
+function pfActDeleteNote(monthKey, noteId){
+  const alvo = pfFindNote(S.personalFinance, monthKey, noteId);
+  if(!alvo) return { ok:false, erro:'nota inexistente' };
+  return pfMutate('note_delete', pf => {
+    const m = pf.months[monthKey];
+    m.notes = m.notes.filter(n=>n.id!==noteId);
+    return { recordId: noteId };
+  });
+}
