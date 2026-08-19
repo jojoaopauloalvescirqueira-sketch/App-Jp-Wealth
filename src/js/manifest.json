@@ -410,13 +410,19 @@
       "order": 68,
       "path": "src/js/10-domain/12-personal-finance.js",
       "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
-      "sha256": "b55659aa70524d1033626317acea8b1f1a72864d465fe724e06381ebf2fc93c6"
+      "sha256": "0cf5f0fa745610b6d7a75c36846032bb2ecdbfa075521007751f71d9fbf6a2f6"
     },
     {
       "order": 69,
       "path": "src/js/20-ui/17-finpes-views.js",
       "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
-      "sha256": "aa03ca9020da37aa07eede18ca6207adfa0288fb8f63f90fbbb3a37210304d9d"
+      "sha256": "7243c8a2cf04ceb61fc934edf5a55360147436433eff88b63bb78098aed69b83"
+    },
+    {
+      "order": 70,
+      "path": "src/js/20-ui/18-finpes-budget.js",
+      "section": "FINANCAS PESSOAIS · Orcamento Mensal (PF-02): renderizador do workspace mensal",
+      "sha256": "e3f75d9ce0a7a0a14494bb89623cd07f29f42c7086fc9a24a93303913cd9fc54"
     }
   ]
 }

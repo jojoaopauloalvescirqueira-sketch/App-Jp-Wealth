@@ -102,3 +102,110 @@ function pfWriteBlockReason(){
   if(!pfMoneyUnitSupported()) return PF_READ_ONLY_UNSUPPORTED_MONEY_UNIT;
   return null;
 }
+
+// ============ PF-02 · TEMPO, WRITE GATE E MATERIALIZAÇÃO ====================
+
+// ---- write gate canônico ----------------------------------------------------
+// Invariante normativo do PF-02: TODO ato mutável de Finanças Pessoais passa
+// por aqui. Nenhum botão, modal ou fluxo decide "opcionalmente" se consulta a
+// sentinela — a fronteira de escrita é uma só.
+//
+// fn recebe S.personalFinance e aplica a mudança COERENTE do ato (o ato inteiro,
+// nunca campo a campo de um formulário atômico). Pode devolver {ok:false, erro}
+// para recusar por validação — nesse caso NADA foi mutado por contrato do
+// chamador (valide antes de tocar; o gate não tem como desfazer o que fn fizer).
+// Retorno: {ok, persistido, erro?, ...extras de fn}. save()===false é prova de
+// não-escrita (portões retornam antes do storage) — o chamador decide como
+// avisar; o padrão de falha de persistência da casa segue valendo.
+function pfMutate(acao, fn, meta){
+  const bloqueio = pfWriteBlockReason();
+  if(bloqueio) return { ok:false, persistido:false, erro:bloqueio };
+  const r = fn(S.personalFinance) || {};
+  if(r.ok===false) return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
+  // Rótulo GENÉRICO por contrato de privacidade: ação + recordId, nunca nome
+  // ou valor financeiro — o changeLog persiste e viaja no backup.
+  dgLogChange('personalFinance', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
+  const gravou = save();
+  return { ok: gravou===true, persistido: gravou===true, erro: gravou===true?undefined:'persistencia recusada', ...r };
+}
+
+// ---- competência mensal -----------------------------------------------------
+function pfCurrentMonthKey(){
+  // dateISO/todayISO (10-domain/04-stop-statistics.js) são locais — nunca o
+  // fuso UTC do toISOString, que viraria o mês na noite errada.
+  return todayISO().slice(0,7);
+}
+function pfMonthAdd(key, delta){
+  const [y,m] = key.split('-').map(Number);
+  const idx = y*12 + (m-1) + delta;
+  const ny = Math.floor(idx/12), nm = (idx%12)+1;
+  return String(ny).padStart(4,'0')+'-'+String(nm).padStart(2,'0');
+}
+const PF_MONTH_NAMES = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO',
+  'JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+function pfMonthLabel(key){
+  // Nome é APRESENTAÇÃO; a identidade é sempre a chave YYYY-MM.
+  if(!pfMonthKeyValid(key)) return key;
+  const [y,m] = key.split('-').map(Number);
+  return PF_MONTH_NAMES[m-1]+' '+y;
+}
+
+// ---- mês virtual × materializado -------------------------------------------
+function pfIsMaterialized(key){
+  const pf=S.personalFinance;
+  return !!(pf && pf.months && Object.prototype.hasOwnProperty.call(pf.months,key)
+    && pf.months[key] && typeof pf.months[key]==='object');
+}
+function pfRuleAppliesTo(rule, key){
+  if(!rule || rule.active===false) return false;
+  if(!pfMonthKeyValid(rule.startMonth)) return false;
+  if(rule.startMonth > key) return false;
+  if(rule.endMonth!=null && pfMonthKeyValid(rule.endMonth) && key > rule.endMonth) return false;
+  return true;
+}
+// Projeções de um mês VIRTUAL: derivadas das regras VIGENTES, a cada render.
+// Não são história — mudar a regra muda esta lista, e isso é legítimo porque
+// o mês nunca foi registro.
+function pfVirtualIncomes(key){
+  const pf=S.personalFinance;
+  if(!pf || !Array.isArray(pf.recurringIncome)) return [];
+  return pf.recurringIncome.filter(r=>pfRuleAppliesTo(r,key)).map(r=>({
+    ruleId:r.id, name:String(r.name||''), projectedAmount:(typeof r.amount==='number')?r.amount:null,
+  }));
+}
+// Materialização — SÓ dentro de um ato (via pfMutate). Estampa as projeções
+// das regras vigentes NAQUELE INSTANTE, com ruleId preservado; a partir daqui
+// o mês é independente e nenhuma automação o reescreve.
+function pfMaterializeMonth(pf, key){
+  if(!pfMonthKeyValid(key)) return null;
+  if(pf.months[key] && typeof pf.months[key]==='object') return pf.months[key];
+  pf.months[key] = {
+    createdAt: new Date().toISOString(), // carimbo real do ATO (nunca de render)
+    incomes: (pf.recurringIncome||[]).filter(r=>pfRuleAppliesTo(r,key)).map(r=>({
+      id: pfId('pfi'), name:String(r.name||''),
+      projectedAmount:(typeof r.amount==='number')?r.amount:null,
+      receivedAmount:null, status:'PROJETADA', ruleId:r.id,
+    })),
+    expenses: [], debtSnapshots: [], allocations: [], notes: [],
+  };
+  return pf.months[key];
+}
+
+// ---- pendências de meses anteriores ----------------------------------------
+// Pendência é EXCLUSIVAMENTE status PENDENTE em despesa ou nota de mês
+// MATERIALIZADO anterior ao corrente. Nada é inferido de null, texto livre,
+// cobertura incompleta ou ausência de dado.
+function pfPendingBefore(currentKey){
+  const pf=S.personalFinance;
+  if(!pf || !pf.months) return [];
+  const out=[];
+  for(const key of Object.keys(pf.months).sort()){
+    if(!pfMonthKeyValid(key) || key>=currentKey) continue;
+    const m=pf.months[key];
+    if(!m || typeof m!=='object') continue;
+    const despesas = Array.isArray(m.expenses) ? m.expenses.filter(e=>e && e.status==='PENDENTE').length : 0;
+    const notas    = Array.isArray(m.notes)    ? m.notes.filter(n=>n && n.status==='PENDENTE').length : 0;
+    if(despesas>0 || notas>0) out.push({ key, despesas, notas });
+  }
+  return out;
+}

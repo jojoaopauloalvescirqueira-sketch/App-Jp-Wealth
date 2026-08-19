@@ -45,9 +45,19 @@ function finpesApplyView(view) {
   finpesApplyUnitNotice();
 }
 
+// Workspaces montados ao entrar (padrão EXEC_VIEW_RENDERERS): o Orçamento
+// Mensal deriva tudo do estado vivo e repinta a cada entrada. Repintar não
+// grava nada — render jamais escreve (contrato PF).
+const FINPES_VIEW_RENDERERS = {
+  mensal: () => { if (window.JPWFinBudget && typeof window.JPWFinBudget.render === 'function') window.JPWFinBudget.render(); },
+};
+
 function finpesSetView(view) {
   finpesView = view;
   finpesApplyView(view);
+  // Montagem DEPOIS de tirar o hidden (medidas e foco — ver 13-exec-views).
+  const render = FINPES_VIEW_RENDERERS[view];
+  if (typeof render === 'function') render();
 }
 
 function finpesSelectView(view) {

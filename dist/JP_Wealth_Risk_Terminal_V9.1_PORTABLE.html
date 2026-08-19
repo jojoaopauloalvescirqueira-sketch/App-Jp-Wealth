@@ -5842,6 +5842,39 @@ html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weigh
 /* Financas Pessoais (PF-01): mesma regra estrutural — [hidden] perde para
    regras que declaram display, entao cada section de workspaces precisa da sua. */
 html[data-shell="global-dashboard"] #finpes > [hidden]{display:none}
+
+/* ===== Finanças Pessoais · Orçamento Mensal (PF-02) =====
+   Leitura simultânea no desktop (3 colunas: receitas+ativos+notas |
+   despesas | resumo+destino), reorganização em telas menores. Sem grid
+   customizável e sem widget-grid — decisão de escopo do PF-02. */
+html[data-shell="global-dashboard"] .fb-header{
+  display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+}
+html[data-shell="global-dashboard"] .fb-month-label{
+  font:700 18px var(--jp-font-ui); letter-spacing:.06em; min-width:180px; text-align:center;
+}
+html[data-shell="global-dashboard"] .fb-nav{min-width:36px}
+html[data-shell="global-dashboard"] .fb-virtual-badge{
+  margin-left:auto; padding:3px 10px; border-radius:999px; font-size:11px;
+  color:var(--f2); background:var(--f2-bg); border:1px solid var(--f2);
+}
+html[data-shell="global-dashboard"] .fb-grid{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr); gap:16px;
+}
+html[data-shell="global-dashboard"] .fb-col{display:flex; flex-direction:column; gap:16px; min-width:0}
+html[data-shell="global-dashboard"] .fb-card{margin:0}
+.fb-row{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.9fr); gap:8px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fb-row.fb-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fb-row.fb-ghost{opacity:.55; font-style:italic}
+.fb-status{font-family:var(--mono); font-size:10px}
+.fb-empty{color:var(--ink-faint); font-size:12px; padding:8px 0}
+@media(max-width:1279px){
+  html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}
+}
+@media(max-width:900px){
+  html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:1fr}
+}
 html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
@@ -5990,7 +6023,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'af570e65792539e7';
+const JP_WEALTH_BUILD_ID = '22b8500ce14b1109';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7043,10 +7076,9 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       </div>
     </div>
     <div id="finpesMensal" hidden>
-      <div class="card">
-        <h2>Orçamento Mensal <span class="art">mês = unidade atômica · planejado ≠ realizado · ausência ≠ zero</span></h2>
-        <p class="risk-note">Em desenvolvimento (PF-02). Receitas com recorrência, despesas Meta/Previsto/Executado, resumo com cobertura, destino do excedente, informações importantes e pendências de meses anteriores.</p>
-      </div>
+      <!-- PF-02: raiz do Orçamento Mensal — desenhada integralmente por
+           20-ui/18-finpes-budget.js a cada entrada no workspace. -->
+      <div id="finpesBudgetRoot"></div>
     </div>
     <div id="finpesDividas" hidden>
       <div class="card">
@@ -7557,6 +7589,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -29158,6 +29191,113 @@ function pfWriteBlockReason(){
   if(!pfMoneyUnitSupported()) return PF_READ_ONLY_UNSUPPORTED_MONEY_UNIT;
   return null;
 }
+
+// ============ PF-02 · TEMPO, WRITE GATE E MATERIALIZAÇÃO ====================
+
+// ---- write gate canônico ----------------------------------------------------
+// Invariante normativo do PF-02: TODO ato mutável de Finanças Pessoais passa
+// por aqui. Nenhum botão, modal ou fluxo decide "opcionalmente" se consulta a
+// sentinela — a fronteira de escrita é uma só.
+//
+// fn recebe S.personalFinance e aplica a mudança COERENTE do ato (o ato inteiro,
+// nunca campo a campo de um formulário atômico). Pode devolver {ok:false, erro}
+// para recusar por validação — nesse caso NADA foi mutado por contrato do
+// chamador (valide antes de tocar; o gate não tem como desfazer o que fn fizer).
+// Retorno: {ok, persistido, erro?, ...extras de fn}. save()===false é prova de
+// não-escrita (portões retornam antes do storage) — o chamador decide como
+// avisar; o padrão de falha de persistência da casa segue valendo.
+function pfMutate(acao, fn, meta){
+  const bloqueio = pfWriteBlockReason();
+  if(bloqueio) return { ok:false, persistido:false, erro:bloqueio };
+  const r = fn(S.personalFinance) || {};
+  if(r.ok===false) return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
+  // Rótulo GENÉRICO por contrato de privacidade: ação + recordId, nunca nome
+  // ou valor financeiro — o changeLog persiste e viaja no backup.
+  dgLogChange('personalFinance', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
+  const gravou = save();
+  return { ok: gravou===true, persistido: gravou===true, erro: gravou===true?undefined:'persistencia recusada', ...r };
+}
+
+// ---- competência mensal -----------------------------------------------------
+function pfCurrentMonthKey(){
+  // dateISO/todayISO (10-domain/04-stop-statistics.js) são locais — nunca o
+  // fuso UTC do toISOString, que viraria o mês na noite errada.
+  return todayISO().slice(0,7);
+}
+function pfMonthAdd(key, delta){
+  const [y,m] = key.split('-').map(Number);
+  const idx = y*12 + (m-1) + delta;
+  const ny = Math.floor(idx/12), nm = (idx%12)+1;
+  return String(ny).padStart(4,'0')+'-'+String(nm).padStart(2,'0');
+}
+const PF_MONTH_NAMES = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO',
+  'JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+function pfMonthLabel(key){
+  // Nome é APRESENTAÇÃO; a identidade é sempre a chave YYYY-MM.
+  if(!pfMonthKeyValid(key)) return key;
+  const [y,m] = key.split('-').map(Number);
+  return PF_MONTH_NAMES[m-1]+' '+y;
+}
+
+// ---- mês virtual × materializado -------------------------------------------
+function pfIsMaterialized(key){
+  const pf=S.personalFinance;
+  return !!(pf && pf.months && Object.prototype.hasOwnProperty.call(pf.months,key)
+    && pf.months[key] && typeof pf.months[key]==='object');
+}
+function pfRuleAppliesTo(rule, key){
+  if(!rule || rule.active===false) return false;
+  if(!pfMonthKeyValid(rule.startMonth)) return false;
+  if(rule.startMonth > key) return false;
+  if(rule.endMonth!=null && pfMonthKeyValid(rule.endMonth) && key > rule.endMonth) return false;
+  return true;
+}
+// Projeções de um mês VIRTUAL: derivadas das regras VIGENTES, a cada render.
+// Não são história — mudar a regra muda esta lista, e isso é legítimo porque
+// o mês nunca foi registro.
+function pfVirtualIncomes(key){
+  const pf=S.personalFinance;
+  if(!pf || !Array.isArray(pf.recurringIncome)) return [];
+  return pf.recurringIncome.filter(r=>pfRuleAppliesTo(r,key)).map(r=>({
+    ruleId:r.id, name:String(r.name||''), projectedAmount:(typeof r.amount==='number')?r.amount:null,
+  }));
+}
+// Materialização — SÓ dentro de um ato (via pfMutate). Estampa as projeções
+// das regras vigentes NAQUELE INSTANTE, com ruleId preservado; a partir daqui
+// o mês é independente e nenhuma automação o reescreve.
+function pfMaterializeMonth(pf, key){
+  if(!pfMonthKeyValid(key)) return null;
+  if(pf.months[key] && typeof pf.months[key]==='object') return pf.months[key];
+  pf.months[key] = {
+    createdAt: new Date().toISOString(), // carimbo real do ATO (nunca de render)
+    incomes: (pf.recurringIncome||[]).filter(r=>pfRuleAppliesTo(r,key)).map(r=>({
+      id: pfId('pfi'), name:String(r.name||''),
+      projectedAmount:(typeof r.amount==='number')?r.amount:null,
+      receivedAmount:null, status:'PROJETADA', ruleId:r.id,
+    })),
+    expenses: [], debtSnapshots: [], allocations: [], notes: [],
+  };
+  return pf.months[key];
+}
+
+// ---- pendências de meses anteriores ----------------------------------------
+// Pendência é EXCLUSIVAMENTE status PENDENTE em despesa ou nota de mês
+// MATERIALIZADO anterior ao corrente. Nada é inferido de null, texto livre,
+// cobertura incompleta ou ausência de dado.
+function pfPendingBefore(currentKey){
+  const pf=S.personalFinance;
+  if(!pf || !pf.months) return [];
+  const out=[];
+  for(const key of Object.keys(pf.months).sort()){
+    if(!pfMonthKeyValid(key) || key>=currentKey) continue;
+    const m=pf.months[key];
+    if(!m || typeof m!=='object') continue;
+    const despesas = Array.isArray(m.expenses) ? m.expenses.filter(e=>e && e.status==='PENDENTE').length : 0;
+    const notas    = Array.isArray(m.notes)    ? m.notes.filter(n=>n && n.status==='PENDENTE').length : 0;
+    if(despesas>0 || notas>0) out.push({ key, despesas, notas });
+  }
+  return out;
+}
 // ============ FINANÇAS PESSOAIS · WORKSPACES DO MÓDULO (PF-01 — apresentação) ============
 // Superfície estritamente visual do segundo nível de Finanças Pessoais: decide
 // qual workspace de section#finpes está visível, e nada além disso. Não
@@ -29205,9 +29345,19 @@ function finpesApplyView(view) {
   finpesApplyUnitNotice();
 }
 
+// Workspaces montados ao entrar (padrão EXEC_VIEW_RENDERERS): o Orçamento
+// Mensal deriva tudo do estado vivo e repinta a cada entrada. Repintar não
+// grava nada — render jamais escreve (contrato PF).
+const FINPES_VIEW_RENDERERS = {
+  mensal: () => { if (window.JPWFinBudget && typeof window.JPWFinBudget.render === 'function') window.JPWFinBudget.render(); },
+};
+
 function finpesSetView(view) {
   finpesView = view;
   finpesApplyView(view);
+  // Montagem DEPOIS de tirar o hidden (medidas e foco — ver 13-exec-views).
+  const render = FINPES_VIEW_RENDERERS[view];
+  if (typeof render === 'function') render();
 }
 
 function finpesSelectView(view) {
@@ -29244,6 +29394,129 @@ finpesWatchModuleEntry();
 // Superfície pública consumida pelo controlador da faixa compartilhada
 // (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.
 window.JPWFin = { ui: { selectView: finpesSelectView, getView: finpesGetView } };
+// ============ FINANÇAS PESSOAIS · ORÇAMENTO MENSAL (PF-02) ============
+// Renderizador do workspace #finpesMensal. Consome exclusivamente o núcleo do
+// domínio (10-domain/12-personal-finance.js): todo dinheiro passa por
+// parseBRLCents/formatBRLCents, toda mutação passa por pfMutate (write gate
+// canônico) e todo derivado é recalculado aqui — nunca persistido.
+//
+// O mês exibido é estado de UI EFÊMERO (variável de módulo, padrão fxpView):
+// não entra em S, localStorage, backup nem schema. Navegar é read-only por
+// contrato — abrir um mês NÃO o materializa; só o primeiro ato de edição.
+
+let fbMonth = null;          // 'YYYY-MM' exibido; null = resolver para o corrente
+let fbPendingPromptShown = false; // flag de SESSÃO do modal de pendências (F) — nunca persiste
+
+function fbCurrentKey(){
+  if(!fbMonth || !pfMonthKeyValid(fbMonth)) fbMonth = pfCurrentMonthKey();
+  return fbMonth;
+}
+
+function fbGoTo(key){
+  fbMonth = key;
+  finpesBudgetRender();
+}
+
+// ---- render raiz ------------------------------------------------------------
+function finpesBudgetRender(){
+  const root = document.getElementById('finpesBudgetRoot');
+  if(!root) return;
+  const key = fbCurrentKey();
+  const materializado = pfIsMaterialized(key);
+  const bloqueado = (typeof pfWriteBlockReason==='function') ? pfWriteBlockReason() : null;
+
+  let html = fbHeaderHTML(key, materializado);
+  html += fbPendingBannerHTML(key);
+  html += '<div class="fb-grid">';
+  html += '<div class="fb-col">';
+  html += fbIncomesHTML(key, materializado, bloqueado);
+  html += fbAssetsHTML();
+  html += fbNotesHTML(key, materializado, bloqueado);
+  html += '</div>';
+  html += '<div class="fb-col fb-col-wide">';
+  html += fbExpensesHTML(key, materializado, bloqueado);
+  html += '</div>';
+  html += '<div class="fb-col">';
+  html += fbSummaryHTML(key, materializado);
+  html += fbAllocationsHTML(key, materializado, bloqueado);
+  html += '</div>';
+  html += '</div>';
+  root.innerHTML = html;
+  fbBind(root, key, materializado, bloqueado);
+}
+
+// ---- cabeçalho: ← MÊS ANO → · Hoje -----------------------------------------
+function fbHeaderHTML(key, materializado){
+  const selo = materializado
+    ? ''
+    : '<span class="fb-virtual-badge" title="Mês virtual: projeção derivada das regras recorrentes vigentes. Nada foi registrado; o mês nasce no primeiro ato de edição.">◌ PROJEÇÃO — mês não registrado</span>';
+  return `<div class="fb-header">
+    <button type="button" class="reset-btn fb-nav" data-fb-nav="-1" title="Mês anterior">←</button>
+    <span class="fb-month-label">${esc(pfMonthLabel(key))}</span>
+    <button type="button" class="reset-btn fb-nav" data-fb-nav="1" title="Mês seguinte">→</button>
+    <button type="button" class="reset-btn fb-today" data-fb-today title="Ir para o mês corrente">Hoje</button>
+    ${selo}
+  </div>`;
+}
+
+// Placeholders dos blocos B–F: substituídos bloco a bloco. Cada um declara o
+// que AINDA não faz — nenhum número fictício.
+function fbIncomesHTML(key, materializado, bloqueado){
+  const virtuais = materializado ? [] : pfVirtualIncomes(key);
+  const linhas = materializado
+    ? (S.personalFinance.months[key].incomes||[]).map(i=>
+        `<div class="fb-row"><span>${esc(i.name)}</span><span>${formatBRLCents(i.projectedAmount)}</span><span>${formatBRLCents(i.receivedAmount)}</span><span class="fb-status">${esc(i.status)}</span></div>`).join('')
+    : virtuais.map(v=>
+        `<div class="fb-row fb-ghost" title="Projeção da regra recorrente — nada registrado"><span>◌ ${esc(v.name)}</span><span>${formatBRLCents(v.projectedAmount)}</span><span>—</span><span class="fb-status">PROJEÇÃO</span></div>`).join('');
+  return `<div class="card fb-card" id="fbIncomes">
+    <h2>Receitas <span class="art">projetado ≠ recebido · ausência ≠ zero</span></h2>
+    <div class="fb-row fb-head"><span>Descrição</span><span>Projetado</span><span>Recebido</span><span>Status</span></div>
+    ${linhas || '<p class="fb-empty">Nenhuma receita neste mês.</p>'}
+    <p class="risk-note">Edição de receitas chega no Bloco B.</p>
+  </div>`;
+}
+function fbExpensesHTML(){
+  return `<div class="card fb-card" id="fbExpenses">
+    <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado</span></h2>
+    <p class="risk-note">Em desenvolvimento (Bloco C).</p>
+  </div>`;
+}
+function fbSummaryHTML(){
+  return `<div class="card fb-card" id="fbSummary">
+    <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
+    <p class="risk-note">Em desenvolvimento (Bloco D).</p>
+  </div>`;
+}
+function fbAllocationsHTML(){
+  return `<div class="card fb-card" id="fbAllocations">
+    <h2>Destino do Excedente <span class="art">a sobra é insumo, não resultado</span></h2>
+    <p class="risk-note">Em desenvolvimento (Bloco E).</p>
+  </div>`;
+}
+function fbAssetsHTML(){
+  return `<div class="card fb-card" id="fbAssets">
+    <h2>Ativos <span class="art">patrimônio sempre derivado</span></h2>
+    <p class="risk-note">Integração com Inventário pendente (PF-07/PF-08). Sem digitação aqui.</p>
+  </div>`;
+}
+function fbNotesHTML(){
+  return `<div class="card fb-card" id="fbNotes">
+    <h2>Informações Importantes <span class="art">texto + status, nada mais</span></h2>
+    <p class="risk-note">Em desenvolvimento (Bloco F).</p>
+  </div>`;
+}
+function fbPendingBannerHTML(){ return ''; } // Bloco F
+
+// ---- binds ------------------------------------------------------------------
+function fbBind(root, key){
+  root.querySelectorAll('[data-fb-nav]').forEach(b=>b.addEventListener('click',()=>{
+    fbGoTo(pfMonthAdd(fbCurrentKey(), +b.dataset.fbNav));
+  }));
+  const hoje = root.querySelector('[data-fb-today]');
+  if(hoje) hoje.addEventListener('click',()=>{ fbGoTo(pfCurrentMonthKey()); });
+}
+
+window.JPWFinBudget = { render: finpesBudgetRender };
 </script>
 </body>
 </html>
