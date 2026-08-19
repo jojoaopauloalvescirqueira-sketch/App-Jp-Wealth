@@ -783,3 +783,93 @@ function pfActDeleteDebt(debtId){
     return { recordId: debtId };
   });
 }
+
+// ============ PF-03 · BLOCO D — LIMITES DE CRÉDITO ==========================
+// creditLines[] é deliberadamente ESTADO VIGENTE nesta versão — sem série
+// histórica, sem creditSnapshots. used > totalLimit é legítimo (estouro):
+// disponível negativo e utilização > 100% com alerta, jamais clamp.
+// Derivados por linha e KPIs consolidados NUNCA persistem, e subtotal parcial
+// jamais se apresenta como total definitivo.
+
+function pfFindCreditLine(pf, lineId){
+  if(!pf || !Array.isArray(pf.creditLines)) return null;
+  return pf.creditLines.find(c=>c && c.id===lineId) || null;
+}
+function pfActAddCreditLine(dados){
+  const inst = String((dados&&dados.institution)||'').trim();
+  if(!inst) return { ok:false, erro:'instituição obrigatória' };
+  for(const campo of ['totalLimit','used']){
+    const v = (dados[campo]===undefined) ? null : dados[campo];
+    if(!pfAmountInDomain(v,{allowNull:true})) return { ok:false, erro:campo+' fora do domínio (≥ 0 ou vazio)' };
+  }
+  return pfMutate('credit_add', pf => {
+    const rec = { id: pfId('pfc'), institution: inst,
+      instrument: String(dados.instrument||'').trim(),
+      type: String(dados.type||'').trim(),
+      totalLimit: (dados.totalLimit===undefined)?null:dados.totalLimit,
+      used: (dados.used===undefined)?null:dados.used };
+    pf.creditLines.push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActUpdateCreditLineField(lineId, campo, valor){
+  const alvo = pfFindCreditLine(S.personalFinance, lineId);
+  if(!alvo) return { ok:false, erro:'linha de crédito inexistente' };
+  if(['institution','instrument','type'].includes(campo)){
+    const t = String(valor||'').trim();
+    if(campo==='institution' && !t) return { ok:false, erro:'instituição obrigatória' };
+    return pfMutate('credit_update', pf => { pfFindCreditLine(pf,lineId)[campo] = t; return { recordId: lineId }; });
+  }
+  if(campo==='totalLimit' || campo==='used'){
+    if(!pfAmountInDomain(valor,{allowNull:true})) return { ok:false, erro:'valor fora do domínio (≥ 0 ou vazio)' };
+    return pfMutate('credit_update', pf => { pfFindCreditLine(pf,lineId)[campo] = valor; return { recordId: lineId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+function pfActDeleteCreditLine(lineId){
+  const alvo = pfFindCreditLine(S.personalFinance, lineId);
+  if(!alvo) return { ok:false, erro:'linha de crédito inexistente' };
+  return pfMutate('credit_delete', pf => {
+    pf.creditLines = pf.creditLines.filter(c=>c.id!==lineId);
+    return { recordId: lineId };
+  });
+}
+
+// ---- derivados por linha ----------------------------------------------------
+function pfCreditLineDerived(line){
+  const limiteOk = typeof line.totalLimit==='number';
+  const usadoOk  = typeof line.used==='number';
+  const available = (limiteOk && usadoOk) ? (line.totalLimit - line.used) : null;
+  // utilização exige limite > 0 E usado conhecido; limite 0 ou desconhecido = N/A
+  const utilization = (limiteOk && line.totalLimit>0 && usadoOk) ? (line.used / line.totalLimit) : null;
+  return { available, utilization, estouro: available!==null && available<0 };
+}
+
+// ---- KPIs consolidados ------------------------------------------------------
+function pfCreditKPIs(){
+  const linhas = (S.personalFinance.creditLines||[]).filter(Boolean);
+  const comLimite = linhas.filter(l=>typeof l.totalLimit==='number');
+  const comUsado  = linhas.filter(l=>typeof l.used==='number');
+  const knownTotalLimit = comLimite.reduce((a,l)=>a+l.totalLimit,0);
+  const knownUsed       = comUsado.reduce((a,l)=>a+l.used,0);
+  const limitCoverage = { conhecidas: comLimite.length, total: linhas.length, completa: comLimite.length===linhas.length };
+  const usedCoverage  = { conhecidas: comUsado.length,  total: linhas.length, completa: comUsado.length===linhas.length };
+  const ambas = limitCoverage.completa && usedCoverage.completa;
+  return {
+    knownTotalLimit, knownUsed, limitCoverage, usedCoverage,
+    totalFree: ambas ? (knownTotalLimit - knownUsed) : null,
+    utilizationConsolidated: (ambas && knownTotalLimit>0) ? (knownUsed / knownTotalLimit) : null,
+  };
+}
+
+// ---- razão dívida/limite (Bloco E) -----------------------------------------
+// Indicador DESCRITIVO: dívida total OBSERVADA da competência sobre o limite
+// total VIGENTE. Só existe com debtCoverage completa, limitCoverage completa e
+// limite consolidado > 0. Pode superar 100% — sem clamp. NÃO confundir com
+// utilização de crédito (used/limit): são métricas diferentes.
+function pfDebtToCreditRatio(monthKey){
+  const dCov = pfDebtCoverage(monthKey);
+  const k = pfCreditKPIs();
+  if(!dCov.completa || !k.limitCoverage.completa || k.knownTotalLimit<=0) return null;
+  return pfKnownDebtTotal(monthKey) / k.knownTotalLimit;
+}

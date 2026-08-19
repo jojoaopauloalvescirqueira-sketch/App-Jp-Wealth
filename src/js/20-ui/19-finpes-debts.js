@@ -88,12 +88,51 @@ function fdDebtsHTML(key, bloqueado){
   </div>`;
 }
 
-// ---- CRÉDITO (Bloco D preenche) ---------------------------------------------
-function fdCreditHTML(){
+// ---- CRÉDITO (Bloco D) ------------------------------------------------------
+function fdMoneyInput(valor, ds){
+  const texto = (valor===null||valor===undefined) ? '' : (valor/100).toFixed(2).replace('.',',');
+  return `<input type="text" class="fb-money" value="${esc(texto)}" ${ds} inputmode="decimal" placeholder="—">`;
+}
+function fdCreditHTML(bloqueado){
+  const linhas = (S.personalFinance.creditLines||[]).filter(Boolean).map(l=>{
+    const der = pfCreditLineDerived(l);
+    const disp = der.available===null ? '—' : formatBRLCents(der.available);
+    const util = der.utilization===null ? '<span class="fb-aux">N/A</span>'
+      : (der.utilization*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%';
+    return `<div class="fc-row ${der.estouro?'fc-estouro':''}" data-credit="${esc(l.id)}">
+      <span><input type="text" class="fb-text" value="${esc(l.institution)}" data-fc-campo="institution" data-fc-id="${esc(l.id)}"></span>
+      <span><input type="text" class="fb-text" value="${esc(l.instrument)}" data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></span>
+      <span><input type="text" class="fb-text" value="${esc(l.type)}" data-fc-campo="type" data-fc-id="${esc(l.id)}"></span>
+      <span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`)}</span>
+      <span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`)}</span>
+      <span class="fd-money">${disp}${der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
+      <span class="fd-center">${util}</span>
+      <span class="fb-actions"><button type="button" class="row-del" data-fc-del="${esc(l.id)}" title="Excluir linha">✕</button></span>
+    </div>`;
+  }).join('');
+  const k = pfCreditKPIs();
+  const badge = c => c.total>0 && !c.completa ? ` <span class="fb-partial">PARCIAL · ${c.conhecidas}/${c.total}</span>` : '';
+  const kpis = `
+    <span>Limite total: <b>${k.limitCoverage.completa ? formatBRLCents(k.knownTotalLimit) : formatBRLCents(k.knownTotalLimit)+' conhecidos'}</b>${badge(k.limitCoverage)}</span>
+    <span>Total utilizado: <b>${k.usedCoverage.completa ? formatBRLCents(k.knownUsed) : formatBRLCents(k.knownUsed)+' conhecidos'}</b>${badge(k.usedCoverage)}</span>
+    <span>Total livre: <b>${k.totalFree===null ? '—' : formatBRLCents(k.totalFree)}</b>${k.totalFree===null?' <span class="fb-partial">componentes incompletos</span>':''}</span>
+    <span>Utilização consolidada: <b>${k.utilizationConsolidated===null ? 'N/A' : (k.utilizationConsolidated*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%'}</b></span>`;
   return `<div class="card fb-card" id="fdCredit">
     <h2>Limites de Crédito <span class="art">estado vigente · sem série histórica nesta versão</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco D).</p>
+    <div class="fc-row fc-head"><span>Instituição</span><span>Instrumento</span><span>Tipo</span><span>Limite</span><span>Utilizado</span><span>Disponível</span><span>Utilização</span><span></span></div>
+    ${linhas || '<p class="fb-empty">Nenhuma linha de crédito.</p>'}
+    <div class="fb-totals" id="fdCreditKPIs">${kpis}</div>
+    <div class="fb-totals" id="fdRatio">${fdRatioHTML()}</div>
+    <button type="button" class="reset-btn" data-fc-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar linha de crédito</button>
   </div>`;
+}
+// Razão dívida/limite — rotulada por extenso para não se confundir com a
+// utilização de crédito (used/limit): métricas diferentes.
+function fdRatioHTML(){
+  const key = fdCurrentKey();
+  const ratio = pfDebtToCreditRatio(key);
+  if(ratio===null) return `<span>Dívida observada / limite total: <b>N/A</b> <span class="fb-partial">dados parciais ou limite zero</span></span>`;
+  return `<span>Dívida observada / limite total (${esc(pfMonthLabel(key))}): <b>${(ratio*100).toLocaleString('pt-BR',{maximumFractionDigits:1})}%</b></span>`;
 }
 
 // ---- binds ------------------------------------------------------------------
@@ -115,6 +154,36 @@ function fdBind(root, key, bloqueado){
     const d = pfFindDebt(S.personalFinance, b.dataset.fdDel);
     if(d && !confirm('Excluir a dívida "'+d.creditor+'"? (bloqueado se houver observações)')) return;
     fdAtoUI(pfActDeleteDebt(b.dataset.fdDel));
+  }));
+
+  // ---- crédito (D) ----
+  const addC = root.querySelector('[data-fc-add]');
+  if(addC) addC.addEventListener('click',()=>{
+    const inst = prompt('Instituição:');
+    if(inst===null) return;                       // cancelar = zero mutação
+    fdAtoUI(pfActAddCreditLine({ institution: inst, instrument:'', type:'', totalLimit:null, used:null }));
+  });
+  root.querySelectorAll('[data-fc-campo]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const campo = inp.dataset.fcCampo, id = inp.dataset.fcId;
+      let valor;
+      if(['institution','instrument','type'].includes(campo)) valor = inp.value;
+      else {
+        const c = parseBRLCents(inp.value);
+        if(c===null) valor = null;
+        else if(Number.isNaN(c) || c<0){ alert('⛔ Valor inválido (≥ 0 ou vazio).'); inp.value = inp.dataset.prevval ?? ''; return; }
+        else valor = c;
+      }
+      const r = pfActUpdateCreditLineField(id, campo, valor);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fdAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fc-del]').forEach(b=>b.addEventListener('click',()=>{
+    const l = pfFindCreditLine(S.personalFinance, b.dataset.fcDel);
+    if(l && !confirm('Excluir a linha de crédito "'+l.institution+'"?')) return;
+    fdAtoUI(pfActDeleteCreditLine(b.dataset.fcDel));
   }));
 }
 

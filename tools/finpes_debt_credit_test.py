@@ -369,6 +369,103 @@ def run_c_navegar_readonly(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCOS D/E ----------
+
+def run_d_credito_derivados(browser, url, falhas):
+    """Estouro sem clamp; limite 0/null -> N/A; nada persiste alem de {campos}."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        pfActAddCreditLine({institution:'Banco Sigma', instrument:'Cartao Roxo', type:'CARTAO',
+            totalLimit:500000, used:550000});
+        pfActAddCreditLine({institution:'Banco Tau', instrument:'Cheque', type:'CHEQUE',
+            totalLimit:0, used:100});
+        pfActAddCreditLine({institution:'Banco Psi', instrument:'?', type:'',
+            totalLimit:null, used:200});
+        const [a,b,c] = S.personalFinance.creditLines;
+        const da = pfCreditLineDerived(a), db = pfCreditLineDerived(b), dc = pfCreditLineDerived(c);
+        return { estouro: {disp: da.available, util: da.utilization, flag: da.estouro},
+                 limiteZero: {disp: db.available, util: db.utilization},
+                 limiteNull: {disp: dc.available, util: dc.utilization},
+                 chaves: Object.keys(a).sort() };
+    }""")
+    if r["estouro"] != {"disp":-50000,"util":1.1,"flag":True}:
+        falhas.append(f"D: estouro deveria dar -50000/110%/alerta SEM clamp: {r['estouro']}")
+    if r["limiteZero"] != {"disp":-100,"util":None}:
+        falhas.append(f"D: limite zero -> utilization N/A (sem divisao), disponivel -100: {r['limiteZero']}")
+    if r["limiteNull"] != {"disp":None,"util":None}:
+        falhas.append(f"D: limite desconhecido -> derivados N/A: {r['limiteNull']}")
+    if r["chaves"] != ["id","institution","instrument","totalLimit","type","used"]:
+        falhas.append(f"D: DERIVADO PERSISTIDO na linha de credito: {r['chaves']}")
+    ctx.close()
+
+
+def run_d_kpis_parciais_e_completos(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        pfActAddCreditLine({institution:'A', instrument:'', type:'', totalLimit:3000000, used:1500000});
+        pfActAddCreditLine({institution:'B', instrument:'', type:'', totalLimit:3000000, used:null});
+        const parcial = pfCreditKPIs();
+        pfActUpdateCreditLineField(S.personalFinance.creditLines[1].id, 'used', 1500000);
+        const completo = pfCreditKPIs();
+        return { parcial: {used: parcial.knownUsed, cov: parcial.usedCoverage,
+                           free: parcial.totalFree, util: parcial.utilizationConsolidated},
+                 completo: {free: completo.totalFree, util: completo.utilizationConsolidated} };
+    }""")
+    if r["parcial"] != {"used":1500000,"cov":{"conhecidas":1,"total":2,"completa":False},"free":None,"util":None}:
+        falhas.append(f"D: KPIs com used parcial deveriam reter livre/utilizacao (subtotal nao e total): {r['parcial']}")
+    if r["completo"] != {"free":3000000,"util":0.5}:
+        falhas.append(f"D: KPIs completos deveriam dar livre 3.000000 e 50%: {r['completo']}")
+    ctx.close()
+
+
+def run_e_ratio_divida_credito(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key = '2026-08';
+        pfActAddDebt({creditor:'Sigma', type:'EMPRESTIMO', description:'', originalAmount:null,
+            installmentAmount:null, installmentsTotal:null, startMonth:'2026-01', closedMonth:null});
+        pfActAddCreditLine({institution:'A', instrument:'', type:'', totalLimit:6000000, used:0});
+        const semSnapshot = pfDebtToCreditRatio(key);           // debtCoverage incompleta
+        pfActRecordDebtSnapshot(key, S.personalFinance.debts[0].id, {balance:3000000});
+        const completo = pfDebtToCreditRatio(key);
+        pfActAddCreditLine({institution:'B', instrument:'', type:'', totalLimit:null, used:null});
+        const limiteParcial = pfDebtToCreditRatio(key);         // limitCoverage incompleta
+        return { semSnapshot, completo, limiteParcial,
+                 utilConsolidada: pfCreditKPIs().utilizationConsolidated };
+    }""")
+    if r["semSnapshot"] is not None:
+        falhas.append(f"E: ratio sem cobertura de divida deveria ser N/A: {r['semSnapshot']}")
+    if abs((r["completo"] or 0) - 0.5) > 1e-9:
+        falhas.append(f"E: 30.000/60.000 deveria dar 50%: {r['completo']}")
+    if r["limiteParcial"] is not None:
+        falhas.append(f"E: ratio com limite parcial deveria ser N/A: {r['limiteParcial']}")
+    if r["utilConsolidada"] is not None:
+        falhas.append("E: metricas se confundiram — utilizacao consolidada tambem deveria ser N/A com cobertura parcial (e ratio != utilization)")
+    ctx.close()
+
+
+def run_d_write_gate_credito(browser, url, falhas):
+    mut = """
+      S.personalFinance = { schemaVersion:1, moneyUnit:'XX_UNIT', months:{},
+        recurringIncome:[], debts:[], creditLines:[{id:'pfc_x', institution:'X',
+          instrument:'', type:'', totalLimit:1000, used:null}], scenarios:[] };
+    """
+    ctx, page, erros = boot(browser, url, mutacao_js=mut)
+    r = page.evaluate("""() => {
+        const antes = JSON.stringify(S.personalFinance);
+        const acts = [
+          pfActAddCreditLine({institution:'Y'}),
+          pfActUpdateCreditLineField('pfc_x','used',1),
+          pfActDeleteCreditLine('pfc_x'),
+        ];
+        return { bloqueados: acts.every(a=>a.ok===false && a.erro==='READ_ONLY_UNSUPPORTED_MONEY_UNIT'),
+                 intacto: antes === JSON.stringify(S.personalFinance) };
+    }""")
+    if not r["bloqueados"] or not r["intacto"]:
+        falhas.append(f"D: unidade desconhecida deveria bloquear atos de credito com agregado intacto: {r}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -384,6 +481,10 @@ def main():
             executar("AB write gate", lambda: run_ab_write_gate(browser, url, falhas), falhas)
             executar("C ui fluxo real", lambda: run_c_ui_fluxo_real(browser, url, falhas), falhas)
             executar("C navegar readonly", lambda: run_c_navegar_readonly(browser, url, falhas), falhas)
+            executar("D derivados", lambda: run_d_credito_derivados(browser, url, falhas), falhas)
+            executar("D kpis", lambda: run_d_kpis_parciais_e_completos(browser, url, falhas), falhas)
+            executar("E ratio", lambda: run_e_ratio_divida_credito(browser, url, falhas), falhas)
+            executar("D write gate credito", lambda: run_d_write_gate_credito(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()

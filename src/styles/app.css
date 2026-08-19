@@ -5884,6 +5884,13 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fd-irrelevante{opacity:.5}
 .fd-money{font-family:var(--mono); text-align:right}
 .fd-center{text-align:center; font-family:var(--mono)}
+.fc-row{display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr) minmax(0,.7fr) minmax(0,.5fr); gap:6px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fc-row.fc-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fc-estouro .fd-money{color:var(--f3)}
+@media(max-width:1100px){
+  .fc-row{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.5fr)}
+  .fc-row > :nth-child(2),.fc-row > :nth-child(3),.fc-row > :nth-child(6),.fc-row > :nth-child(7){display:none}
+}
 @media(max-width:1100px){
   .fd-row{grid-template-columns:minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr); }
   .fd-row > :nth-child(3),.fd-row > :nth-child(4),.fd-row > :nth-child(5),
