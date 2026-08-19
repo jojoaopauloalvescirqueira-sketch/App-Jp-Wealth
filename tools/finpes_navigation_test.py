@@ -28,9 +28,14 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
 LSKEY = "jpwealth_v9_state"
-VIEWS = ["overview", "mensal", "dividas", "comparativo", "cenarios", "inventario"]
+# Financas Pessoais tem CINCO destinos. Inventario/Patrimonio nao pertencem
+# a este dominio — saem para dominio proprio (roadmap INV-*), e por isso
+# nem a view nem o workspace podem voltar a existir aqui (PF-CLOSE-01).
+VIEWS = ["overview", "mensal", "dividas", "comparativo", "cenarios"]
 CONTAINERS = ["finpesOverview", "finpesMensal", "finpesDividas",
-              "finpesComparativo", "finpesCenarios", "finpesInventario"]
+              "finpesComparativo", "finpesCenarios"]
+VIEWS_REMOVIDAS = ["inventario"]
+CONTAINERS_REMOVIDOS = ["finpesInventario"]
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -104,6 +109,55 @@ def run_estrutura(page, falhas):
         falhas.append("superficie finpes nao registrada no shell (NAV_SUBMENU_SURFACES)")
 
 
+def run_fronteira_do_dominio(page, falhas):
+    """PF-CLOSE-01: Inventario NAO e destino de Financas Pessoais.
+
+    Prova pelo runtime: exatamente cinco itens no submenu, nenhum rotulo de
+    Inventario, o workspace #finpesInventario nao existe no DOM, FINPES_VIEWS
+    nao contem a chave, selectView('inventario') e RECUSADO (retorna false) e
+    a recusa nao navega silenciosamente para lugar nenhum — a view corrente
+    permanece a que estava.
+    """
+    r = page.evaluate(f"""() => {{
+        window.JPWFin.ui.selectView('mensal');
+        const viewAntes = window.JPWFin.ui.getView();
+        const sub = document.getElementById('finpesNavSubmenu');
+        const itens = [...sub.querySelectorAll('[data-nav-sub-view]')].map(b => b.dataset.navSubView);
+        const rotulos = [...sub.querySelectorAll('.nav-sub-item-title')].map(s => s.textContent);
+        const chavesDominio = (typeof FINPES_VIEWS === 'object') ? FINPES_VIEWS.map(p => p[0]) : null;
+        const removidas = {json.dumps(VIEWS_REMOVIDAS)}.map(v => ({{
+            v, aceito: window.JPWFin.ui.selectView(v),
+            container: !!document.getElementById('finpes' + v.charAt(0).toUpperCase() + v.slice(1)),
+        }}));
+        const containersRemovidos = {json.dumps(CONTAINERS_REMOVIDOS)}.map(id => !!document.getElementById(id));
+        const section = document.getElementById('finpes');
+        return {{
+          itens, rotulos, chavesDominio, removidas, containersRemovidos,
+          viewDepois: window.JPWFin.ui.getView(), viewAntes,
+          textoSecao: section ? section.innerText : '',
+        }};
+    }}""")
+    if r["itens"] != VIEWS:
+        falhas.append(f"submenu deveria ter exatamente {VIEWS}; veio {r['itens']}")
+    if any("Inventário" in x for x in r["rotulos"]):
+        falhas.append(f"rotulo de Inventario ainda no submenu de PF: {r['rotulos']}")
+    if r["chavesDominio"] != VIEWS:
+        falhas.append(f"FINPES_VIEWS deveria conter exatamente {VIEWS}; veio {r['chavesDominio']}")
+    for item in r["removidas"]:
+        if item["aceito"] is not False:
+            falhas.append(f"selectView('{item['v']}') deveria ser RECUSADO; veio {item['aceito']}")
+        if item["container"]:
+            falhas.append(f"workspace de '{item['v']}' ainda existe no DOM")
+    if any(r["containersRemovidos"]):
+        falhas.append(f"containers removidos ainda no DOM: {CONTAINERS_REMOVIDOS}")
+    if r["viewDepois"] != r["viewAntes"]:
+        falhas.append(f"recusa de view invalida navegou silenciosamente: {r['viewAntes']} -> {r['viewDepois']}")
+    # nenhuma promessa do dominio futuro dentro de PF
+    for proibido in ("Inventário", "PF-07", "PF-08"):
+        if proibido in r["textoSecao"]:
+            falhas.append(f"Financas Pessoais ainda promete '{proibido}' na superficie visivel")
+
+
 def run_troca_de_views(page, falhas):
     for view, cont in zip(VIEWS, CONTAINERS):
         r = page.evaluate(f"""() => {{
@@ -136,7 +190,7 @@ def run_navegacao_nao_escreve(page, falhas):
         const saveOriginal = window.save;
         window.save = function(){ saves++; return saveOriginal.apply(this, arguments); };
         navigateToScreen('finpes');
-        for(const v of ['mensal','dividas','comparativo','cenarios','inventario','overview'])
+        for(const v of ['mensal','dividas','comparativo','cenarios','overview'])
             window.JPWFin.ui.selectView(v);
         navigateToScreen('dash');
         navigateToScreen('finpes');
@@ -196,6 +250,7 @@ def main():
 
             ctx, page, erros = boot(browser, url)
             run_estrutura(page, falhas)
+            run_fronteira_do_dominio(page, falhas)
             run_troca_de_views(page, falhas)
             run_navegacao_nao_escreve(page, falhas)
             run_destino_inicial(page, falhas)
@@ -216,7 +271,7 @@ def main():
         for f in falhas:
             print("  - " + f)
         return 1
-    print("FINPES NAVIGATION TEST PASS — menu 06, seis destinos, hidden/inert, navegacao sem escrita, sentinela visual")
+    print("FINPES NAVIGATION TEST PASS — menu 06, cinco destinos, fronteira do dominio, hidden/inert, navegacao sem escrita, sentinela visual")
     return 0
 
 

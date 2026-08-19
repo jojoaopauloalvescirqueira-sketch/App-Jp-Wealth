@@ -6091,7 +6091,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'a07896a524b9a140';
+const JP_WEALTH_BUILD_ID = 'f9e88840b70a89fc';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6269,8 +6269,9 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="nav-sub-item-desc">Evolução temporal</span>
       </button>
     </nav>
-    <!-- Finanças Pessoais (PF-01): seis destinos. As chaves são contrato da
-         superfície window.JPWFin.ui (20-ui/17-finpes-views.js). -->
+    <!-- Finanças Pessoais: cinco destinos. As chaves são contrato da
+         superfície window.JPWFin.ui (20-ui/17-finpes-views.js). Inventário
+         NÃO pertence a este domínio — é domínio próprio (roadmap INV-*). -->
     <nav class="nav-sub-menu" id="finpesNavSubmenu" aria-labelledby="finpesNavTrigger"
          aria-hidden="true" hidden inert>
       <button type="button" data-nav-sub-view="overview">
@@ -6292,10 +6293,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <button type="button" data-nav-sub-view="cenarios">
         <span class="nav-sub-item-title">Cenários</span>
         <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
-      </button>
-      <button type="button" data-nav-sub-view="inventario">
-        <span class="nav-sub-item-title">Inventário</span>
-        <span class="nav-sub-item-desc">Ativos, passivos e patrimônio</span>
       </button>
     </nav>
   </div>
@@ -7158,12 +7155,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     <div id="finpesCenarios" hidden>
       <!-- PF-05: raiz de Cenários — desenhada por 20-ui/21-finpes-scenarios.js. -->
       <div id="finpesScenariosRoot"></div>
-    </div>
-    <div id="finpesInventario" hidden>
-      <div class="card">
-        <h2>Inventário <span class="art">patrimônio = ativos − passivos · sempre derivado</span></h2>
-        <p class="risk-note">Integração em desenvolvimento (PF-07). Reserva, investimentos, imóveis, veículos, bens e passivos; o patrimônio líquido nunca será um campo editável.</p>
-      </div>
     </div>
   </section>
 
@@ -30337,8 +30328,7 @@ const FINPES_VIEWS = [
   ['mensal', 'finpesMensal'],
   ['dividas', 'finpesDividas'],
   ['comparativo', 'finpesComparativo'],
-  ['cenarios', 'finpesCenarios'],
-  ['inventario', 'finpesInventario']
+  ['cenarios', 'finpesCenarios']
 ];
 const FINPES_DEFAULT_VIEW = 'overview';
 let finpesView = FINPES_DEFAULT_VIEW;
@@ -30456,7 +30446,6 @@ function finpesBudgetRender(){
   html += '<div class="fb-grid">';
   html += '<div class="fb-col">';
   html += fbIncomesHTML(key, materializado, bloqueado);
-  html += fbAssetsHTML();
   html += fbNotesHTML(key, materializado, bloqueado);
   html += '</div>';
   html += '<div class="fb-col fb-col-wide">';
@@ -30618,12 +30607,6 @@ function fbAllocationsHTML(key, materializado, bloqueado){
       <span>Sobra não alocada: <b>${naoAlocada!==null?formatBRLCents(naoAlocada):'—'}</b>${naoAlocada===null && m ? ' <span class="fb-partial">realizado incompleto — sem saldo restante</span>':''}</span></div>
     ${excede ? '<div class="status-banner sb-warn" id="fbAllocExceeds" style="margin-top:8px"><span class="ico">⚠️</span><span>As destinações excedem a sobra realizada deste mês. Pode ser legítimo (saldo anterior) — confira.</span></div>' : ''}
     <button type="button" class="reset-btn" data-fa-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar destinação</button>
-  </div>`;
-}
-function fbAssetsHTML(){
-  return `<div class="card fb-card" id="fbAssets">
-    <h2>Ativos <span class="art">patrimônio sempre derivado</span></h2>
-    <p class="risk-note">Integração com Inventário pendente (PF-07/PF-08). Sem digitação aqui.</p>
   </div>`;
 }
 function fbNotesHTML(key, materializado, bloqueado){
@@ -31261,10 +31244,6 @@ function finpesComparisonRender(){
   html += fcCompareCardHTML('VS MESMO MÊS DO ANO ANTERIOR', key, bases.yearAgo);
   html += `</div>`;
   html += fcSeriesHTML(key);
-  html += `<div class="card fb-card" id="fcPatrimonio">
-    <h2>Patrimônio <span class="art">ativos − passivos · sempre derivado</span></h2>
-    <p class="risk-note">Disponível após implementação do Inventário (PF-07/PF-08). Sem cálculo estimado, sem preenchimento manual.</p>
-  </div>`;
   root.innerHTML = html;
   fcBind(root);
 }

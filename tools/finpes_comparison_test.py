@@ -322,19 +322,28 @@ def run_cd_ui_na_e_credito_fora(browser, url, falhas):
         window.JPWFinComparison.render();
         const cards = [...document.querySelectorAll('.fc-compare')].map(c=>c.innerText);
         const serieTexto = document.getElementById('fcSeries').innerText;
-        const patrimonio = document.getElementById('fcPatrimonio').innerText;
+        // PF-CLOSE-01: o card de patrimonio saiu — era placeholder do dominio
+        // Inventario, que nao pertence a Financas Pessoais. Nao pode voltar,
+        // nem ser substituido por metrica fabricada.
+        const raiz = document.getElementById('finpesComparisonRoot').innerText;
         return { cards0: cards[0]||'', temMotivoJul: (cards[0]||'').includes('não registrado'),
                  serieSemCredito: !/[Ll]imite|[Uu]tiliza/.test(serieTexto),
                  cardsSemCredito: !cards.some(t=>/[Ll]imite|[Uu]tiliza/.test(t)),
-                 patrimonioPendente: patrimonio.includes('Inventário'),
+                 semCardPatrimonio: !document.getElementById('fcPatrimonio'),
+                 semPromessaInventario: !/Invent[aá]rio|PF-0[78]/.test(raiz),
+                 semPatrimonioFabricado: !/[Pp]atrim[oô]nio/.test(raiz),
                  semJulgamento: !/(saudável|ruim|perigos|excelente)/i.test(cards.join(' ')+serieTexto) };
     }""")
     if not r["temMotivoJul"]:
         falhas.append(f"CD: card VS MES ANTERIOR deveria explicar o motivo (JUL nao registrado): {r['cards0'][:200]}")
     if not r["serieSemCredito"] or not r["cardsSemCredito"]:
         falhas.append("CD: CREDITO VIGENTE apareceu em leitura historica — estado presente contaminando o passado")
-    if not r["patrimonioPendente"]:
-        falhas.append("CD: patrimonio deveria declarar pendencia do Inventario")
+    if not r["semCardPatrimonio"]:
+        falhas.append("CD: card #fcPatrimonio voltou — Inventario nao pertence a Financas Pessoais")
+    if not r["semPromessaInventario"]:
+        falhas.append("CD: Comparativo voltou a prometer Inventario/PF-07/PF-08")
+    if not r["semPatrimonioFabricado"]:
+        falhas.append("CD: patrimonio reapareceu no Comparativo — placeholder removido nao pode virar metrica")
     if not r["semJulgamento"]:
         falhas.append("CD: linguagem normativa detectada — o comparativo e descritivo")
     ctx.close()
