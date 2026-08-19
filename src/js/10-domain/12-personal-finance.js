@@ -894,3 +894,110 @@ function pfDebtToCreditRatio(monthKey){
   if(!dCov.completa || !k.limitCoverage.completa || k.knownTotalLimit<=0) return null;
   return pfKnownDebtTotal(monthKey) / k.knownTotalLimit;
 }
+
+// ============ PF-04 · COMPARATIVO MENSAL — ADAPTER READ-ONLY ================
+// PF-04 nao e dono de formula financeira primaria: ele LE os consolidadores
+// canonicos (pfMonthSummary do PF-02; pfDebtCoverage/pfKnownDebtTotal do
+// PF-03), DERIVA estados de metrica e COMPARA. Nada aqui persiste, nada aqui
+// recalcula receita, despesa, sobra, divida ou ratio por conta propria.
+// Se a origem esta parcial, o Comparativo continua parcial — jamais "completa"
+// a informacao para conseguir comparar.
+
+const PF_METRIC_COMPLETE = 'COMPLETE';
+const PF_METRIC_PARTIAL = 'PARTIAL';
+const PF_METRIC_UNAVAILABLE = 'UNAVAILABLE';
+
+// Metricas da competencia M — modelo DERIVADO interno (jamais persistido).
+// Mes virtual: "nao registrado" — TODAS as metricas UNAVAILABLE; projecao
+// virtual nunca vira dado historico.
+function pfCompMetrics(M){
+  if(!pfMonthKeyValid(M)) return null;
+  if(!pfIsMaterialized(M)){
+    const u = { status: PF_METRIC_UNAVAILABLE, motivo:'mês não registrado' };
+    return { key:M, materializado:false, receita:{...u}, despesa:{...u}, sobra:{...u}, divida:{...u}, comprometimento:{...u} };
+  }
+  const r = pfMonthSummary(S.personalFinance.months[M]);           // PF-02 canonico
+  const receita = r.incomeCoverage.completa
+    ? { status: PF_METRIC_COMPLETE, value: r.knownReceivedIncome }
+    : { status: PF_METRIC_PARTIAL, known: r.knownReceivedIncome, cov: r.incomeCoverage };
+  const despesa = r.expenseCoverage.completa
+    ? { status: PF_METRIC_COMPLETE, value: r.knownExecutedExpenses }
+    : { status: PF_METRIC_PARTIAL, known: r.knownExecutedExpenses, cov: r.expenseCoverage };
+  const sobra = (r.realizedSurplus!==null)
+    ? { status: PF_METRIC_COMPLETE, value: r.realizedSurplus }
+    : { status: PF_METRIC_PARTIAL, cov: { income:r.incomeCoverage, expense:r.expenseCoverage } };
+  const dCov = pfDebtCoverage(M);                                   // PF-03 canonico
+  const divida = (dCov.relevantes===0)
+    ? { status: PF_METRIC_COMPLETE, value: 0, vazio:true }          // zero DEMONSTRADO
+    : (dCov.completa
+        ? { status: PF_METRIC_COMPLETE, value: pfKnownDebtTotal(M) }
+        : { status: PF_METRIC_PARTIAL, known: pfKnownDebtTotal(M), cov: dCov });
+  const comprometimento = (r.incomeExpenseRatio!==null)
+    ? { status: PF_METRIC_COMPLETE, value: r.incomeExpenseRatio }
+    : (r.completo
+        ? { status: PF_METRIC_UNAVAILABLE, motivo:'receita zero — N/A' }
+        : { status: PF_METRIC_PARTIAL, cov: { income:r.incomeCoverage, expense:r.expenseCoverage } });
+  return { key:M, materializado:true, receita, despesa, sobra, divida, comprometimento };
+}
+
+// ---- comparacao entre competencias ------------------------------------------
+// Regra de comparabilidade: AMBOS os lados COMPLETE, senao N/A com motivo.
+// Delta em centavos inteiros. Percentual so para receita/despesa/divida com
+// baseline > 0 (baseline 0 -> percentual N/A, delta continua). Sobra: JAMAIS
+// percentual (sinal cruza zero — -500 -> +500 nao e "+200%"). Comprometimento:
+// comparado em PONTOS PERCENTUAIS, nunca % relativo.
+const PF_COMP_PCT_METRICS = ['receita','despesa','divida'];
+function pfCompCompare(M, baseKey){
+  const cur = pfCompMetrics(M), base = pfCompMetrics(baseKey);
+  const out = { key:M, baseKey, metrics:{} };
+  for(const nome of ['receita','despesa','sobra','divida','comprometimento']){
+    const c = cur.metrics ? cur.metrics[nome] : cur[nome];
+    const b = base.metrics ? base.metrics[nome] : base[nome];
+    if(c.status!==PF_METRIC_COMPLETE || b.status!==PF_METRIC_COMPLETE){
+      out.metrics[nome] = { available:false,
+        motivo: `${pfMonthLabel(M)}: ${pfCompStatusLabel(c)} · ${pfMonthLabel(baseKey)}: ${pfCompStatusLabel(b)}` };
+      continue;
+    }
+    if(nome==='comprometimento'){
+      // pontos percentuais: diferenca direta dos ratios (float derivado, so exibicao)
+      out.metrics[nome] = { available:true, current:c.value, baseline:b.value,
+        deltaPP: (c.value - b.value) };
+      continue;
+    }
+    const delta = c.value - b.value;   // centavos inteiros
+    const m = { available:true, current:c.value, baseline:b.value, delta,
+      semAlteracao: (b.value===0 && c.value===0) };
+    // percentual SO existe (como chave, inclusive) nas metricas em que faz
+    // sentido: sobra cruza zero e jamais carrega relativeChange.
+    if(PF_COMP_PCT_METRICS.includes(nome))
+      m.relativeChange = (b.value>0) ? (delta / b.value) : null;
+    out.metrics[nome] = m;
+  }
+  return out;
+}
+function pfCompStatusLabel(m){
+  if(m.status===PF_METRIC_COMPLETE) return 'completo';
+  if(m.status===PF_METRIC_PARTIAL){
+    if(m.cov && typeof m.cov.conhecidas==='number') return `parcial ${m.cov.conhecidas}/${m.cov.total}`;
+    if(m.cov && typeof m.cov.observadas==='number') return `parcial ${m.cov.observadas}/${m.cov.relevantes}`;
+    return 'parcial';
+  }
+  return m.motivo || 'não registrado';
+}
+
+// Bases de comparacao: EXATAMENTE M-1 e M-12 do calendario. Jamais "o ultimo
+// mes materializado disponivel" — isso trocaria a pergunta "mes anterior" por
+// "ultimo mes com dados" em silencio.
+function pfCompBaselines(M){
+  return { previousMonth: pfMonthAdd(M,-1), yearAgo: pfMonthAdd(M,-12) };
+}
+
+// ---- serie longitudinal (Bloco C): N meses terminando em M -----------------
+// Derivada a cada chamada do estado vivo (edicao retroativa reflete na hora);
+// mes virtual e gap ("nao registrado") — sem zero ficticio, sem interpolacao,
+// sem carry-forward, sem substituicao de mes.
+function pfCompSeries(M, n){
+  const meses = [];
+  for(let i=n-1;i>=0;i--) meses.push(pfMonthAdd(M,-i));
+  return meses.map(k=>pfCompMetrics(k));
+}
