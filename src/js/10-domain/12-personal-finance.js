@@ -486,3 +486,65 @@ function pfMonthSummary(m){
     realizedSurplus, incomeExpenseRatio,
   };
 }
+
+// ============ PF-02 · BLOCO E — DESTINO DO EXCEDENTE ========================
+// A sobra é insumo: pode ser destinada. allocation.amount é OBRIGATÓRIO e ≥ 0
+// (linha sem valor não se cria — não existe destinação "não informada").
+// Sem inventoryAssetRef: adiado para PF-08 por decisão do congelamento.
+
+function pfFindAllocation(pf, monthKey, allocId){
+  const m = pf.months[monthKey];
+  if(!m || !Array.isArray(m.allocations)) return null;
+  return m.allocations.find(a=>a && a.id===allocId) || null;
+}
+function pfActAddAllocation(monthKey, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const label = String((dados&&dados.label)||'').trim();
+  if(!label) return { ok:false, erro:'destino obrigatório' };
+  const amount = dados && dados.amount;
+  if(!(typeof amount==='number' && Number.isSafeInteger(amount) && amount>=0))
+    return { ok:false, erro:'destinação exige valor ≥ 0 — linha sem valor não se cria' };
+  return pfMutate('allocation_add', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const rec = { id: pfId('pfa'), label, amount };
+    m.allocations.push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActUpdateAllocationField(monthKey, allocId, campo, valor){
+  const alvo = pfFindAllocation(S.personalFinance, monthKey, allocId);
+  if(!alvo) return { ok:false, erro:'destinação inexistente' };
+  if(campo==='label'){
+    const label = String(valor||'').trim();
+    if(!label) return { ok:false, erro:'destino obrigatório' };
+    return pfMutate('allocation_update', pf => { pfFindAllocation(pf,monthKey,allocId).label = label; return { recordId: allocId }; });
+  }
+  if(campo==='amount'){
+    if(!(typeof valor==='number' && Number.isSafeInteger(valor) && valor>=0))
+      return { ok:false, erro:'destinação exige valor ≥ 0 (vazio não vale)' };
+    return pfMutate('allocation_update', pf => { pfFindAllocation(pf,monthKey,allocId).amount = valor; return { recordId: allocId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+function pfActDeleteAllocation(monthKey, allocId){
+  const alvo = pfFindAllocation(S.personalFinance, monthKey, allocId);
+  if(!alvo) return { ok:false, erro:'destinação inexistente' };
+  return pfMutate('allocation_delete', pf => {
+    const m = pf.months[monthKey];
+    m.allocations = m.allocations.filter(a=>a.id!==allocId);
+    return { recordId: allocId };
+  });
+}
+function pfTotalAllocated(m){
+  if(!m || !Array.isArray(m.allocations)) return 0;
+  return m.allocations.reduce((acc,a)=> acc + ((a && typeof a.amount==='number') ? a.amount : 0), 0);
+}
+// unallocatedSurplus SÓ existe quando realizedSurplus existe. Com realizado
+// incompleto, destinar continua permitido — mas nenhum "saldo restante
+// realizado" é fabricado. Excedente negativo é legítimo (dinheiro de saldo
+// anterior): alerta, jamais clamp ou bloqueio.
+function pfUnallocatedSurplus(m){
+  const r = pfMonthSummary(m);
+  if(r.realizedSurplus===null) return null;
+  return r.realizedSurplus - pfTotalAllocated(m);
+}

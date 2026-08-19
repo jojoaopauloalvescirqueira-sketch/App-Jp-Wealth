@@ -562,6 +562,63 @@ def run_d_ratio_receita_zero(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCO E ----------
+
+def run_e_destinacao_guardas(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        const semValor = pfActAddAllocation(key, { label:'Reserva', amount:null });
+        const negativa = pfActAddAllocation(key, { label:'Reserva', amount:-100 });
+        const ok1 = pfActAddAllocation(key, { label:'Reserva Emergencia', amount:100000 });
+        const ok2 = pfActAddAllocation(key, { label:'Investimentos', amount:200000 });
+        const m = S.personalFinance.months[key];
+        return { semValorOk: semValor.ok, negOk: negativa.ok, criadas: m.allocations.length,
+                 total: pfTotalAllocated(m) };
+    }""")
+    if r["semValorOk"] is not False:
+        falhas.append("E: destinacao sem valor deveria ser recusada — linha sem valor nao se cria")
+    if r["negOk"] is not False:
+        falhas.append("E: destinacao negativa deveria ser recusada")
+    if r["criadas"] != 2 or r["total"] != 300000:
+        falhas.append(f"E: totalAllocated errado: {r}")
+    ctx.close()
+
+
+def run_e_excedente_sem_fabricacao(browser, url, falhas):
+    """Realizado incompleto: destinar pode; saldo restante realizado NAO se fabrica."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Salario', projectedAmount: 500000 });  // recebido null -> incompleto
+        pfActAddAllocation(key, { label:'Reserva', amount: 100000 });
+        const m = S.personalFinance.months[key];
+        const naoAlocadaIncompleto = pfUnallocatedSurplus(m);
+        window.JPWFinBudget.render();
+        const textoIncompleto = document.getElementById('fbAllocations').innerText;
+        // completa o realizado: recebe 500, destina 600 -> excede (legitimo, alerta)
+        pfActUpdateIncomeField(key, m.incomes[0].id, 'receivedAmount', 500000);
+        pfActUpdateAllocationField(key, m.allocations[0].id, 'amount', 600000);
+        const naoAlocadaCompleta = pfUnallocatedSurplus(S.personalFinance.months[key]);
+        window.JPWFinBudget.render();
+        const temAlerta = !!document.getElementById('fbAllocExceeds');
+        const textoCompleto = document.getElementById('fbAllocations').innerText;
+        return { naoAlocadaIncompleto, mostraSemSaldo: textoIncompleto.includes('realizado incompleto'),
+                 destinouMesmoAssim: S.personalFinance.months[key].allocations.length===1,
+                 naoAlocadaCompleta, temAlerta,
+                 exibeNegativa: textoCompleto.includes('-R$ 1.000,00') };
+    }""")
+    if r["naoAlocadaIncompleto"] is not None:
+        falhas.append(f"E: com realizado incompleto o saldo restante NAO existe; veio {r['naoAlocadaIncompleto']}")
+    if not r["mostraSemSaldo"] or not r["destinouMesmoAssim"]:
+        falhas.append(f"E: destinar deve continuar permitido sem fabricar saldo: {r}")
+    if r["naoAlocadaCompleta"] != -100000:
+        falhas.append(f"E: excedente negativo legitimo deveria ser -100000 sem clamp; veio {r['naoAlocadaCompleta']}")
+    if not r["temAlerta"] or not r["exibeNegativa"]:
+        falhas.append(f"E: alerta de excesso/valor negativo nao exibidos: {r}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -593,6 +650,8 @@ def main():
             executar("D parcial nao vira total", lambda: run_d_parcial_nao_vira_total(browser, url, falhas), falhas)
             executar("D completo/deficitario", lambda: run_d_completo_e_deficitario(browser, url, falhas), falhas)
             executar("D ratio receita zero", lambda: run_d_ratio_receita_zero(browser, url, falhas), falhas)
+            executar("E guardas", lambda: run_e_destinacao_guardas(browser, url, falhas), falhas)
+            executar("E excedente honesto", lambda: run_e_excedente_sem_fabricacao(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()

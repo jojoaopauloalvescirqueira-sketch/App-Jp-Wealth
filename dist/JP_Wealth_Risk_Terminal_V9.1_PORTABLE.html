@@ -6038,7 +6038,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'de484bca52d2a92c';
+const JP_WEALTH_BUILD_ID = '6aa5a18481a30ff9';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -29590,6 +29590,68 @@ function pfMonthSummary(m){
     realizedSurplus, incomeExpenseRatio,
   };
 }
+
+// ============ PF-02 · BLOCO E — DESTINO DO EXCEDENTE ========================
+// A sobra é insumo: pode ser destinada. allocation.amount é OBRIGATÓRIO e ≥ 0
+// (linha sem valor não se cria — não existe destinação "não informada").
+// Sem inventoryAssetRef: adiado para PF-08 por decisão do congelamento.
+
+function pfFindAllocation(pf, monthKey, allocId){
+  const m = pf.months[monthKey];
+  if(!m || !Array.isArray(m.allocations)) return null;
+  return m.allocations.find(a=>a && a.id===allocId) || null;
+}
+function pfActAddAllocation(monthKey, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const label = String((dados&&dados.label)||'').trim();
+  if(!label) return { ok:false, erro:'destino obrigatório' };
+  const amount = dados && dados.amount;
+  if(!(typeof amount==='number' && Number.isSafeInteger(amount) && amount>=0))
+    return { ok:false, erro:'destinação exige valor ≥ 0 — linha sem valor não se cria' };
+  return pfMutate('allocation_add', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const rec = { id: pfId('pfa'), label, amount };
+    m.allocations.push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActUpdateAllocationField(monthKey, allocId, campo, valor){
+  const alvo = pfFindAllocation(S.personalFinance, monthKey, allocId);
+  if(!alvo) return { ok:false, erro:'destinação inexistente' };
+  if(campo==='label'){
+    const label = String(valor||'').trim();
+    if(!label) return { ok:false, erro:'destino obrigatório' };
+    return pfMutate('allocation_update', pf => { pfFindAllocation(pf,monthKey,allocId).label = label; return { recordId: allocId }; });
+  }
+  if(campo==='amount'){
+    if(!(typeof valor==='number' && Number.isSafeInteger(valor) && valor>=0))
+      return { ok:false, erro:'destinação exige valor ≥ 0 (vazio não vale)' };
+    return pfMutate('allocation_update', pf => { pfFindAllocation(pf,monthKey,allocId).amount = valor; return { recordId: allocId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+function pfActDeleteAllocation(monthKey, allocId){
+  const alvo = pfFindAllocation(S.personalFinance, monthKey, allocId);
+  if(!alvo) return { ok:false, erro:'destinação inexistente' };
+  return pfMutate('allocation_delete', pf => {
+    const m = pf.months[monthKey];
+    m.allocations = m.allocations.filter(a=>a.id!==allocId);
+    return { recordId: allocId };
+  });
+}
+function pfTotalAllocated(m){
+  if(!m || !Array.isArray(m.allocations)) return 0;
+  return m.allocations.reduce((acc,a)=> acc + ((a && typeof a.amount==='number') ? a.amount : 0), 0);
+}
+// unallocatedSurplus SÓ existe quando realizedSurplus existe. Com realizado
+// incompleto, destinar continua permitido — mas nenhum "saldo restante
+// realizado" é fabricado. Excedente negativo é legítimo (dinheiro de saldo
+// anterior): alerta, jamais clamp ou bloqueio.
+function pfUnallocatedSurplus(m){
+  const r = pfMonthSummary(m);
+  if(r.realizedSurplus===null) return null;
+  return r.realizedSurplus - pfTotalAllocated(m);
+}
 // ============ FINANÇAS PESSOAIS · WORKSPACES DO MÓDULO (PF-01 — apresentação) ============
 // Superfície estritamente visual do segundo nível de Finanças Pessoais: decide
 // qual workspace de section#finpes está visível, e nada além disso. Não
@@ -29865,10 +29927,25 @@ function fbSummaryHTML(key, materializado){
     ${ratio}
   </div>`;
 }
-function fbAllocationsHTML(){
+function fbAllocationsHTML(key, materializado, bloqueado){
+  const m = materializado ? S.personalFinance.months[key] : null;
+  const linhas = m ? (m.allocations||[]).map(a=>`<div class="fb-row fb-alloc" data-alloc="${esc(a.id)}">
+      <span><input type="text" class="fb-text" value="${esc(a.label)}" data-fa-campo="label" data-fa-id="${esc(a.id)}"></span>
+      <span>${fbMoneyInput(a.amount,`data-fa-campo="amount" data-fa-id="${esc(a.id)}"`)}</span>
+      <span></span>
+      <span class="fb-actions"><button type="button" class="row-del" data-fa-del="${esc(a.id)}" title="Excluir destinação">✕</button></span>
+    </div>`).join('') : '';
+  const total = m ? pfTotalAllocated(m) : 0;
+  const naoAlocada = m ? pfUnallocatedSurplus(m) : null;
+  const resumo = m ? pfMonthSummary(m) : null;
+  const excede = !!(resumo && resumo.realizedSurplus!==null && total > resumo.realizedSurplus);
   return `<div class="card fb-card" id="fbAllocations">
     <h2>Destino do Excedente <span class="art">a sobra é insumo, não resultado</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco E).</p>
+    ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma destinação neste mês.':'Mês não registrado — destinar registra o mês.')+'</p>'}
+    <div class="fb-totals"><span>Total destinado: <b>${formatBRLCents(total)}</b></span>
+      <span>Sobra não alocada: <b>${naoAlocada!==null?formatBRLCents(naoAlocada):'—'}</b>${naoAlocada===null && m ? ' <span class="fb-partial">realizado incompleto — sem saldo restante</span>':''}</span></div>
+    ${excede ? '<div class="status-banner sb-warn" id="fbAllocExceeds" style="margin-top:8px"><span class="ico">⚠️</span><span>As destinações excedem a sobra realizada deste mês. Pode ser legítimo (saldo anterior) — confira.</span></div>' : ''}
+    <button type="button" class="reset-btn" data-fa-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar destinação</button>
   </div>`;
 }
 function fbAssetsHTML(){
@@ -30006,6 +30083,37 @@ function fbBind(root, key){
     const temDado = rec && ((rec.name||'').trim() || rec.targetAmount!==null || rec.expectedAmount!==null || rec.executedCash!==null || rec.executedCard!==null);
     if(temDado && !confirm('Excluir a despesa "'+(rec.name||'')+'"?')) return;
     fbAtoUI(pfActDeleteExpense(key, id));
+  }));
+
+  // ---- destino do excedente (E) ----
+  const addA = root.querySelector('[data-fa-add]');
+  if(addA) addA.addEventListener('click',()=>{
+    const label = prompt('Destino (ex.: Reserva Emergência):');
+    if(label===null) return;                       // cancelar = zero mutação
+    const bruto = prompt('Valor destinado (R$):');
+    if(bruto===null) return;
+    const c = parseBRLCents(bruto);
+    if(c===null || Number.isNaN(c) || c<0){ alert('⛔ Destinação exige valor ≥ 0 — linha sem valor não se cria.'); return; }
+    fbAtoUI(pfActAddAllocation(key, { label, amount: c }));
+  });
+  root.querySelectorAll('[data-fa-campo]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const campo = inp.dataset.faCampo, id = inp.dataset.faId;
+      let valor;
+      if(campo==='label') valor = inp.value;
+      else { valor = fbParseMoneyOr(inp); if(valor===undefined || valor===null){ if(valor===null) alert('⛔ Destinação exige valor — vazio não vale.'); inp.value = inp.dataset.prevval ?? ''; if(valor===null) return; return; } }
+      const r = pfActUpdateAllocationField(key, id, campo, valor);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fa-del]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id = btn.dataset.faDel;
+    const m = S.personalFinance.months[key];
+    const rec = m && m.allocations.find(a=>a.id===id);
+    if(rec && !confirm('Excluir a destinação "'+(rec.label||'')+'"?')) return;
+    fbAtoUI(pfActDeleteAllocation(key, id));
   }));
 }
 

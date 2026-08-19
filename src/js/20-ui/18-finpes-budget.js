@@ -177,10 +177,25 @@ function fbSummaryHTML(key, materializado){
     ${ratio}
   </div>`;
 }
-function fbAllocationsHTML(){
+function fbAllocationsHTML(key, materializado, bloqueado){
+  const m = materializado ? S.personalFinance.months[key] : null;
+  const linhas = m ? (m.allocations||[]).map(a=>`<div class="fb-row fb-alloc" data-alloc="${esc(a.id)}">
+      <span><input type="text" class="fb-text" value="${esc(a.label)}" data-fa-campo="label" data-fa-id="${esc(a.id)}"></span>
+      <span>${fbMoneyInput(a.amount,`data-fa-campo="amount" data-fa-id="${esc(a.id)}"`)}</span>
+      <span></span>
+      <span class="fb-actions"><button type="button" class="row-del" data-fa-del="${esc(a.id)}" title="Excluir destinação">✕</button></span>
+    </div>`).join('') : '';
+  const total = m ? pfTotalAllocated(m) : 0;
+  const naoAlocada = m ? pfUnallocatedSurplus(m) : null;
+  const resumo = m ? pfMonthSummary(m) : null;
+  const excede = !!(resumo && resumo.realizedSurplus!==null && total > resumo.realizedSurplus);
   return `<div class="card fb-card" id="fbAllocations">
     <h2>Destino do Excedente <span class="art">a sobra é insumo, não resultado</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco E).</p>
+    ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma destinação neste mês.':'Mês não registrado — destinar registra o mês.')+'</p>'}
+    <div class="fb-totals"><span>Total destinado: <b>${formatBRLCents(total)}</b></span>
+      <span>Sobra não alocada: <b>${naoAlocada!==null?formatBRLCents(naoAlocada):'—'}</b>${naoAlocada===null && m ? ' <span class="fb-partial">realizado incompleto — sem saldo restante</span>':''}</span></div>
+    ${excede ? '<div class="status-banner sb-warn" id="fbAllocExceeds" style="margin-top:8px"><span class="ico">⚠️</span><span>As destinações excedem a sobra realizada deste mês. Pode ser legítimo (saldo anterior) — confira.</span></div>' : ''}
+    <button type="button" class="reset-btn" data-fa-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar destinação</button>
   </div>`;
 }
 function fbAssetsHTML(){
@@ -318,6 +333,37 @@ function fbBind(root, key){
     const temDado = rec && ((rec.name||'').trim() || rec.targetAmount!==null || rec.expectedAmount!==null || rec.executedCash!==null || rec.executedCard!==null);
     if(temDado && !confirm('Excluir a despesa "'+(rec.name||'')+'"?')) return;
     fbAtoUI(pfActDeleteExpense(key, id));
+  }));
+
+  // ---- destino do excedente (E) ----
+  const addA = root.querySelector('[data-fa-add]');
+  if(addA) addA.addEventListener('click',()=>{
+    const label = prompt('Destino (ex.: Reserva Emergência):');
+    if(label===null) return;                       // cancelar = zero mutação
+    const bruto = prompt('Valor destinado (R$):');
+    if(bruto===null) return;
+    const c = parseBRLCents(bruto);
+    if(c===null || Number.isNaN(c) || c<0){ alert('⛔ Destinação exige valor ≥ 0 — linha sem valor não se cria.'); return; }
+    fbAtoUI(pfActAddAllocation(key, { label, amount: c }));
+  });
+  root.querySelectorAll('[data-fa-campo]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const campo = inp.dataset.faCampo, id = inp.dataset.faId;
+      let valor;
+      if(campo==='label') valor = inp.value;
+      else { valor = fbParseMoneyOr(inp); if(valor===undefined || valor===null){ if(valor===null) alert('⛔ Destinação exige valor — vazio não vale.'); inp.value = inp.dataset.prevval ?? ''; if(valor===null) return; return; } }
+      const r = pfActUpdateAllocationField(key, id, campo, valor);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fa-del]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id = btn.dataset.faDel;
+    const m = S.personalFinance.months[key];
+    const rec = m && m.allocations.find(a=>a.id===id);
+    if(rec && !confirm('Excluir a destinação "'+(rec.label||'')+'"?')) return;
+    fbAtoUI(pfActDeleteAllocation(key, id));
   }));
 }
 
