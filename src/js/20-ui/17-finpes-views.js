@@ -51,6 +51,7 @@ function finpesApplyView(view) {
 const FINPES_VIEW_RENDERERS = {
   mensal: () => { if (window.JPWFinBudget && typeof window.JPWFinBudget.render === 'function') { window.JPWFinBudget.render(); if (typeof window.JPWFinBudget.checkPending === 'function') window.JPWFinBudget.checkPending(); } },
   dividas: () => { if (window.JPWFinDebts && typeof window.JPWFinDebts.render === 'function') window.JPWFinDebts.render(); },
+  comparativo: () => { if (window.JPWFinComparison && typeof window.JPWFinComparison.render === 'function') window.JPWFinComparison.render(); },
 };
 
 function finpesSetView(view) {
