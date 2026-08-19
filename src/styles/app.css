@@ -5879,6 +5879,16 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fb-note-toggle{background:none; border:1px solid var(--line); border-radius:4px; color:inherit; cursor:pointer; min-width:26px}
 .fb-alloc{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.2fr) minmax(0,.6fr)}
 .fb-pend-month{margin:8px 0; font-size:13px}
+.fd-row{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr) minmax(0,.9fr) minmax(0,.9fr) minmax(0,.5fr) minmax(0,1.4fr) minmax(0,.5fr) minmax(0,.5fr) minmax(0,1fr) minmax(0,.8fr); gap:6px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fd-row.fd-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fd-irrelevante{opacity:.5}
+.fd-money{font-family:var(--mono); text-align:right}
+.fd-center{text-align:center; font-family:var(--mono)}
+@media(max-width:1100px){
+  .fd-row{grid-template-columns:minmax(0,1.4fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr); }
+  .fd-row > :nth-child(3),.fd-row > :nth-child(4),.fd-row > :nth-child(5),
+  .fd-row > :nth-child(7),.fd-row > :nth-child(8),.fd-row > :nth-child(9){display:none}
+}
 @media(max-width:1279px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}

@@ -50,6 +50,7 @@ function finpesApplyView(view) {
 // grava nada — render jamais escreve (contrato PF).
 const FINPES_VIEW_RENDERERS = {
   mensal: () => { if (window.JPWFinBudget && typeof window.JPWFinBudget.render === 'function') { window.JPWFinBudget.render(); if (typeof window.JPWFinBudget.checkPending === 'function') window.JPWFinBudget.checkPending(); } },
+  dividas: () => { if (window.JPWFinDebts && typeof window.JPWFinDebts.render === 'function') window.JPWFinDebts.render(); },
 };
 
 function finpesSetView(view) {

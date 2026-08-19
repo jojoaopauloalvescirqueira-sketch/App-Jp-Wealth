@@ -292,6 +292,83 @@ def run_ab_write_gate(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCO C (UI) ----------
+
+def boot_ui(browser, url):
+    ctx, page, erros = boot(browser, url)
+    page.evaluate("() => { navigateToScreen('finpes'); window.JPWFin.ui.selectView('dividas'); }")
+    return ctx, page, erros
+
+
+def run_c_ui_fluxo_real(browser, url, falhas):
+    """Fluxo pela UI REAL: modal de contrato -> tabela -> modal de observacao ->
+    cobertura; cancelar = zero mutacao; saldo antigo aparece DATADO e fora do total."""
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("""() => {
+        // cancelar o modal de contrato: zero mutacao
+        const antes = JSON.stringify(S.personalFinance);
+        document.querySelector('[data-fd-add]').click();
+        document.getElementById('fdCreditor').value = 'Nao Deve Existir';
+        document.getElementById('modalCancel').click();
+        const cancelou = antes === JSON.stringify(S.personalFinance);
+        // cria pela UI
+        document.querySelector('[data-fd-add]').click();
+        document.getElementById('fdCreditor').value = 'Banco Sigma';
+        document.getElementById('fdType').value = 'EMPRESTIMO';
+        document.getElementById('fdInstAmount').value = '920,00';
+        document.getElementById('fdInstTotal').value = '24';
+        document.getElementById('fdStart').value = '2026-01';
+        document.getElementById('modalConfirm').click();
+        const criou = S.personalFinance.debts.length===1;
+        // observacao da competencia corrente pela UI
+        window.JPWFinDebts.render();
+        document.querySelector('[data-fd-obs]').click();
+        document.getElementById('fdBalance').value = '12.000,00';
+        document.getElementById('fdPaid').value = '16';
+        document.getElementById('modalConfirm').click();
+        const key = pfCurrentMonthKey();
+        const snap = pfDebtSnapshotIn(key, S.personalFinance.debts[0].id);
+        window.JPWFinDebts.render();
+        const totais = document.getElementById('fdDebtTotals').innerText;
+        // mes seguinte: sem observacao -> "Sem observacao" + ultima DATADA fora do total
+        document.querySelector('[data-fd-nav="1"]').click();
+        const texto = document.getElementById('fdDebts').innerText;
+        const totaisProx = document.getElementById('fdDebtTotals').innerText;
+        return { cancelou, criou, snapOk: snap && snap.balance===1200000 && snap.installmentsPaid===16,
+                 totais, temSemObs: texto.includes('Sem observação'),
+                 temUltimaDatada: texto.includes('última: R$ 12.000,00 em'),
+                 totaisProx };
+    }""")
+    if not r["cancelou"]:
+        falhas.append("C: cancelar o modal de contrato MUTOU o estado")
+    if not r["criou"] or not r["snapOk"]:
+        falhas.append(f"C: fluxo real de criacao/observacao falhou: {r}")
+    if "Dívida total" not in r["totais"] or "R$ 12.000,00" not in r["totais"]:
+        falhas.append(f"C: total com cobertura completa deveria ser definitivo: {r['totais']}")
+    if not r["temSemObs"] or not r["temUltimaDatada"]:
+        falhas.append(f"C: mes sem observacao deveria mostrar 'Sem observação' + ultima DATADA: {r}")
+    if "PARCIAL" not in r["totaisProx"] or "R$ 0,00 observados" not in r["totaisProx"]:
+        falhas.append(f"C: total do mes sem observacao deveria ser 0 observados PARCIAL (sem carry-forward): {r['totaisProx']}")
+    ctx.close()
+
+
+def run_c_navegar_readonly(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("""() => {
+        const antes = JSON.stringify(S.personalFinance);
+        let saves=0; const orig=window.save;
+        window.save=function(){ saves++; return orig.apply(this,arguments); };
+        for(let i=0;i<5;i++) document.querySelector('[data-fd-nav="-1"]').click();
+        document.querySelector('[data-fd-today]').click();
+        window.save=orig;
+        return { igual: antes===JSON.stringify(S.personalFinance), saves,
+                 meses: Object.keys(S.personalFinance.months).length };
+    }""")
+    if not r["igual"] or r["saves"]!=0 or r["meses"]!=0:
+        falhas.append(f"C: navegar na competencia de dividas deveria ser read-only: {r}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -305,6 +382,8 @@ def main():
             executar("AB cobertura parcial", lambda: run_ab_cobertura_parcial_sem_carry_forward(browser, url, falhas), falhas)
             executar("AB excluir sem historia", lambda: run_ab_sem_historia_pode_excluir(browser, url, falhas), falhas)
             executar("AB write gate", lambda: run_ab_write_gate(browser, url, falhas), falhas)
+            executar("C ui fluxo real", lambda: run_c_ui_fluxo_real(browser, url, falhas), falhas)
+            executar("C navegar readonly", lambda: run_c_navegar_readonly(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()
