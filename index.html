@@ -1059,10 +1059,9 @@
       </div>
     </div>
     <div id="finpesMensal" hidden>
-      <div class="card">
-        <h2>Orçamento Mensal <span class="art">mês = unidade atômica · planejado ≠ realizado · ausência ≠ zero</span></h2>
-        <p class="risk-note">Em desenvolvimento (PF-02). Receitas com recorrência, despesas Meta/Previsto/Executado, resumo com cobertura, destino do excedente, informações importantes e pendências de meses anteriores.</p>
-      </div>
+      <!-- PF-02: raiz do Orçamento Mensal — desenhada integralmente por
+           20-ui/18-finpes-budget.js a cada entrada no workspace. -->
+      <div id="finpesBudgetRoot"></div>
     </div>
     <div id="finpesDividas" hidden>
       <div class="card">
@@ -1643,5 +1642,6 @@
 <script src="src/js/20-ui/16-operation-history.js"></script>
 <script src="src/js/10-domain/12-personal-finance.js"></script>
 <script src="src/js/20-ui/17-finpes-views.js"></script>
+<script src="src/js/20-ui/18-finpes-budget.js"></script>
 </body>
 </html>

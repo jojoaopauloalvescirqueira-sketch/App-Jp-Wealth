@@ -5832,6 +5832,60 @@ html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weigh
 /* Financas Pessoais (PF-01): mesma regra estrutural — [hidden] perde para
    regras que declaram display, entao cada section de workspaces precisa da sua. */
 html[data-shell="global-dashboard"] #finpes > [hidden]{display:none}
+
+/* ===== Finanças Pessoais · Orçamento Mensal (PF-02) =====
+   Leitura simultânea no desktop (3 colunas: receitas+ativos+notas |
+   despesas | resumo+destino), reorganização em telas menores. Sem grid
+   customizável e sem widget-grid — decisão de escopo do PF-02. */
+html[data-shell="global-dashboard"] .fb-header{
+  display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+}
+html[data-shell="global-dashboard"] .fb-month-label{
+  font:700 18px var(--jp-font-ui); letter-spacing:.06em; min-width:180px; text-align:center;
+}
+html[data-shell="global-dashboard"] .fb-nav{min-width:36px}
+html[data-shell="global-dashboard"] .fb-virtual-badge{
+  margin-left:auto; padding:3px 10px; border-radius:999px; font-size:11px;
+  color:var(--f2); background:var(--f2-bg); border:1px solid var(--f2);
+}
+html[data-shell="global-dashboard"] .fb-grid{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr); gap:16px;
+}
+html[data-shell="global-dashboard"] .fb-col{display:flex; flex-direction:column; gap:16px; min-width:0}
+html[data-shell="global-dashboard"] .fb-card{margin:0}
+.fb-row{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.9fr); gap:8px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fb-row.fb-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fb-row.fb-ghost{opacity:.55; font-style:italic}
+.fb-status{font-family:var(--mono); font-size:10px}
+.fb-empty{color:var(--ink-faint); font-size:12px; padding:8px 0}
+.fb-text,.fb-money{width:100%; min-width:0; background:var(--panel-2); border:1px solid var(--line); border-radius:4px; color:var(--ink); font:inherit; padding:3px 6px}
+.fb-money{font-family:var(--mono); text-align:right}
+.fb-status-sel{background:var(--panel-2); border:1px solid var(--line); border-radius:4px; color:var(--ink); font-size:10px; font-family:var(--mono)}
+.fb-actions{display:flex; gap:4px; align-items:center; justify-content:flex-end}
+.fb-rule-mark{color:var(--violet); margin-left:4px; font-size:11px}
+.fb-totals{display:flex; flex-direction:column; gap:2px; padding:8px 0; font-size:12px; color:var(--ink-dim)}
+.fb-totals b{color:var(--ink); font-family:var(--mono)}
+.fb-partial{color:var(--f2); font-size:10px; font-family:var(--mono); margin-left:6px}
+.fb-erow{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,.6fr) repeat(4,minmax(0,1fr)) minmax(0,1fr); gap:6px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fb-erow.fb-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fb-parc{text-align:center}
+.fb-sumrow{display:flex; justify-content:space-between; gap:8px; padding:5px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:baseline; flex-wrap:wrap}
+.fb-sumrow b{font-family:var(--mono)}
+.fb-sumsec{margin-top:10px; color:var(--ink-dim); font-size:10px; letter-spacing:.1em}
+.fb-aux{color:var(--ink-faint); font-size:10px}
+.fb-noterow{display:flex; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:12px}
+.fb-note-text{flex:1; min-width:0}
+.fb-note-done .fb-note-text{color:var(--ink-faint); text-decoration:line-through}
+.fb-note-toggle{background:none; border:1px solid var(--line); border-radius:4px; color:inherit; cursor:pointer; min-width:26px}
+.fb-alloc{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.2fr) minmax(0,.6fr)}
+.fb-pend-month{margin:8px 0; font-size:13px}
+@media(max-width:1279px){
+  html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}
+}
+@media(max-width:900px){
+  html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:1fr}
+}
 html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
