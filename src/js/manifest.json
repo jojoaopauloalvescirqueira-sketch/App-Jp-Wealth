@@ -416,7 +416,7 @@
       "order": 69,
       "path": "src/js/20-ui/17-finpes-views.js",
       "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
-      "sha256": "00f0bba96dc4ff2597e08214fa660bbefbd4ab26d6ac4b9a896821a4ddccc262"
+      "sha256": "a01c4c4060c081bd8b1401cdaa24aa6d001e422a9b60feee9ad3a62594332287"
     },
     {
       "order": 70,
@@ -441,6 +441,10 @@
       "path": "src/js/20-ui/21-finpes-scenarios.js",
       "section": "FINANCAS PESSOAIS · Cenarios (PF-05): hipoteses comparaveis por horizonte",
       "sha256": "1898e8570887b9dfc86c8f10f05f1688c9fe0fddf033cd3dfd4474fcbba26699"
+    },
+    {
+      "path": "src/js/20-ui/22-finpes-overview.js",
+      "sha256": "4a807a90d89f06cca07f90378e682a36832b442871e31e90b4bbfe98f93da048"
     }
   ]
 }

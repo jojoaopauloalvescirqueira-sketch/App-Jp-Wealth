@@ -49,6 +49,7 @@ function finpesApplyView(view) {
 // Mensal deriva tudo do estado vivo e repinta a cada entrada. Repintar não
 // grava nada — render jamais escreve (contrato PF).
 const FINPES_VIEW_RENDERERS = {
+  overview: () => { if (window.JPWFinOverview && typeof window.JPWFinOverview.render === 'function') window.JPWFinOverview.render(); },
   mensal: () => { if (window.JPWFinBudget && typeof window.JPWFinBudget.render === 'function') { window.JPWFinBudget.render(); if (typeof window.JPWFinBudget.checkPending === 'function') window.JPWFinBudget.checkPending(); } },
   dividas: () => { if (window.JPWFinDebts && typeof window.JPWFinDebts.render === 'function') window.JPWFinDebts.render(); },
   comparativo: () => { if (window.JPWFinComparison && typeof window.JPWFinComparison.render === 'function') window.JPWFinComparison.render(); },

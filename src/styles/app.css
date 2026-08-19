@@ -5906,6 +5906,15 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fs-add{margin-top:6px; font-size:11px}
 .fs-foot{display:flex; justify-content:flex-end; gap:6px; margin-top:10px}
 @media(max-width:760px){ .fs-cards{grid-template-columns:1fr} }
+
+/* ---- PF-06 · Visão Geral (fo-*) ---- */
+.fo-title{font:700 14px var(--mono); letter-spacing:.08em}
+.fo-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px; align-items:start}
+.fo-card{margin:0}
+.fo-row{display:flex; justify-content:space-between; align-items:baseline; gap:8px; padding:4px 0; border-bottom:1px solid var(--line); font-size:12px}
+.fo-name{color:var(--ink-dim); white-space:nowrap}
+.fo-val{text-align:right; min-width:0; overflow-wrap:anywhere}
+@media(max-width:760px){ .fo-grid{grid-template-columns:1fr} .fo-row{font-size:11px} }
 @media(max-width:1100px){ .fc-comp-grid{grid-template-columns:1fr} }
 @media(max-width:760px){ .fc-srow{font-size:10px} .fc-mrow{grid-template-columns:1fr; gap:2px} }
 @media(max-width:1100px){
