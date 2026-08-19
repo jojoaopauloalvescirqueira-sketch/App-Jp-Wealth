@@ -416,13 +416,13 @@
       "order": 69,
       "path": "src/js/20-ui/17-finpes-views.js",
       "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
-      "sha256": "a01c4c4060c081bd8b1401cdaa24aa6d001e422a9b60feee9ad3a62594332287"
+      "sha256": "329505ff95efa1a9ee135ca4bb56214a3c2b7fe3e976f208257ebeeab23da695"
     },
     {
       "order": 70,
       "path": "src/js/20-ui/18-finpes-budget.js",
       "section": "FINANCAS PESSOAIS · Orcamento Mensal (PF-02): renderizador do workspace mensal",
-      "sha256": "431dee23b3e4ccc5c518de2c5921329ca38baa57f5b9db883c47a500027fef4e"
+      "sha256": "9885a5a02842e12e3264794f89e7da90b6d2823a949670bed847c4b26348b64a"
     },
     {
       "order": 71,
@@ -434,7 +434,7 @@
       "order": 72,
       "path": "src/js/20-ui/20-finpes-comparison.js",
       "section": "FINANCAS PESSOAIS · Comparativo Mensal (PF-04): renderizador read-only",
-      "sha256": "f2c8c423804a43700ce9e81d5735b18396172107ea79be4d402177b8f8b7bbba"
+      "sha256": "ec7498ce97e097125e23a314c34b635042fdec0e60ba4bfee5da5dacf861bd56"
     },
     {
       "order": 73,

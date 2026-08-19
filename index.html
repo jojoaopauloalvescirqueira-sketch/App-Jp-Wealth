@@ -184,8 +184,9 @@
         <span class="nav-sub-item-desc">Evolução temporal</span>
       </button>
     </nav>
-    <!-- Finanças Pessoais (PF-01): seis destinos. As chaves são contrato da
-         superfície window.JPWFin.ui (20-ui/17-finpes-views.js). -->
+    <!-- Finanças Pessoais: cinco destinos. As chaves são contrato da
+         superfície window.JPWFin.ui (20-ui/17-finpes-views.js). Inventário
+         NÃO pertence a este domínio — é domínio próprio (roadmap INV-*). -->
     <nav class="nav-sub-menu" id="finpesNavSubmenu" aria-labelledby="finpesNavTrigger"
          aria-hidden="true" hidden inert>
       <button type="button" data-nav-sub-view="overview">
@@ -207,10 +208,6 @@
       <button type="button" data-nav-sub-view="cenarios">
         <span class="nav-sub-item-title">Cenários</span>
         <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
-      </button>
-      <button type="button" data-nav-sub-view="inventario">
-        <span class="nav-sub-item-title">Inventário</span>
-        <span class="nav-sub-item-desc">Ativos, passivos e patrimônio</span>
       </button>
     </nav>
   </div>
@@ -1073,12 +1070,6 @@
     <div id="finpesCenarios" hidden>
       <!-- PF-05: raiz de Cenários — desenhada por 20-ui/21-finpes-scenarios.js. -->
       <div id="finpesScenariosRoot"></div>
-    </div>
-    <div id="finpesInventario" hidden>
-      <div class="card">
-        <h2>Inventário <span class="art">patrimônio = ativos − passivos · sempre derivado</span></h2>
-        <p class="risk-note">Integração em desenvolvimento (PF-07). Reserva, investimentos, imóveis, veículos, bens e passivos; o patrimônio líquido nunca será um campo editável.</p>
-      </div>
     </div>
   </section>
 

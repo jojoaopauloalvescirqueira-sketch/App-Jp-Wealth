@@ -15,8 +15,7 @@ const FINPES_VIEWS = [
   ['mensal', 'finpesMensal'],
   ['dividas', 'finpesDividas'],
   ['comparativo', 'finpesComparativo'],
-  ['cenarios', 'finpesCenarios'],
-  ['inventario', 'finpesInventario']
+  ['cenarios', 'finpesCenarios']
 ];
 const FINPES_DEFAULT_VIEW = 'overview';
 let finpesView = FINPES_DEFAULT_VIEW;

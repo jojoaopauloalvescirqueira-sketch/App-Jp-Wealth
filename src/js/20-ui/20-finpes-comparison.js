@@ -48,10 +48,6 @@ function finpesComparisonRender(){
   html += fcCompareCardHTML('VS MESMO MÊS DO ANO ANTERIOR', key, bases.yearAgo);
   html += `</div>`;
   html += fcSeriesHTML(key);
-  html += `<div class="card fb-card" id="fcPatrimonio">
-    <h2>Patrimônio <span class="art">ativos − passivos · sempre derivado</span></h2>
-    <p class="risk-note">Disponível após implementação do Inventário (PF-07/PF-08). Sem cálculo estimado, sem preenchimento manual.</p>
-  </div>`;
   root.innerHTML = html;
   fcBind(root);
 }

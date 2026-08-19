@@ -34,7 +34,6 @@ function finpesBudgetRender(){
   html += '<div class="fb-grid">';
   html += '<div class="fb-col">';
   html += fbIncomesHTML(key, materializado, bloqueado);
-  html += fbAssetsHTML();
   html += fbNotesHTML(key, materializado, bloqueado);
   html += '</div>';
   html += '<div class="fb-col fb-col-wide">';
@@ -196,12 +195,6 @@ function fbAllocationsHTML(key, materializado, bloqueado){
       <span>Sobra não alocada: <b>${naoAlocada!==null?formatBRLCents(naoAlocada):'—'}</b>${naoAlocada===null && m ? ' <span class="fb-partial">realizado incompleto — sem saldo restante</span>':''}</span></div>
     ${excede ? '<div class="status-banner sb-warn" id="fbAllocExceeds" style="margin-top:8px"><span class="ico">⚠️</span><span>As destinações excedem a sobra realizada deste mês. Pode ser legítimo (saldo anterior) — confira.</span></div>' : ''}
     <button type="button" class="reset-btn" data-fa-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar destinação</button>
-  </div>`;
-}
-function fbAssetsHTML(){
-  return `<div class="card fb-card" id="fbAssets">
-    <h2>Ativos <span class="art">patrimônio sempre derivado</span></h2>
-    <p class="risk-note">Integração com Inventário pendente (PF-07/PF-08). Sem digitação aqui.</p>
   </div>`;
 }
 function fbNotesHTML(key, materializado, bloqueado){
