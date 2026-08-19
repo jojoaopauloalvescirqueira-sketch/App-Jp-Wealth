@@ -23,7 +23,9 @@ Round-trip `XX_UNIT → BRL_CENTS` restaura os valores exatamente.
 
 ### Finanças Pessoais — Comparativo Mensal (PF-04) — 2026-08-18
 
-Branch `feature/personal-finance-monthly-comparison`. **Não integrada.**
+Branch `feature/personal-finance-monthly-comparison`. **Integrada** — candidate
+`e2509d7`, merge `--no-ff` `bc6752a` em `main`, publicado em `origin/main`
+(2026-08-19).
 
 READ → DERIVE → COMPARE: consome os consolidadores canônicos do PF-02/PF-03 e
 jamais recalcula o domínio. Comparação M−1 e M−12 estritamente de calendário;
@@ -48,7 +50,9 @@ destino do excedente sem fabricação; pendências por status puro.
 
 ### Finanças Pessoais — Fundação (PF-01) — 2026-08-18
 
-Branch `feature/personal-finance-foundation`. **Não integrada.**
+Branch `feature/personal-finance-foundation`. **Integrada** — candidate
+`49027c2`, merge `--no-ff` `59a9681` em `main`, publicado em `origin/main`
+(2026-08-18).
 
 Nasce o domínio de Finanças Pessoais: agregado `S.personalFinance` com schema
 v1 congelado (`moneyUnit BRL_CENTS` — inteiros em centavos, null ≠ 0),
@@ -62,7 +66,9 @@ funcionalidade de PF-02+ foi antecipada. Contrato: `docs/architecture/PERSONAL-F
 
 ### Operação Única — Histórico e Finalização formal — 2026-08-17
 
-Branch `feature/exec-operation-history` (`c9fd11e → 17214ba`). **Não integrada.**
+Branch `feature/exec-operation-history` (`c9fd11e → 17214ba`). **Integrada** —
+candidate final `27a87cf` (rodadas corretivas posteriores a `17214ba`), merge
+`--no-ff` `9ac5a8a` em `main`, publicado em `origin/main` (2026-08-18).
 
 A Operação Única existia como conceito espalhado pelas grades: um conjunto de
 ordens que o operador sabia pertencerem à mesma tese, sem nada no estado que o
