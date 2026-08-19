@@ -110,10 +110,37 @@ function fbIncomesHTML(key, materializado, bloqueado){
     <button type="button" class="reset-btn" data-fi-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar receita</button>
   </div>`;
 }
-function fbExpensesHTML(){
+function fbExpensesHTML(key, materializado, bloqueado){
+  let linhas='';
+  if(materializado){
+    const m = S.personalFinance.months[key];
+    linhas = (m.expenses||[]).map(e=>{
+      const parc = e.installments ? `${e.installments.paid}/${e.installments.total}` : '';
+      return `<div class="fb-erow" data-expense="${esc(e.id)}">
+      <span><input type="text" class="fb-text" value="${esc(e.name)}" data-fe-campo="name" data-fe-id="${esc(e.id)}"></span>
+      <span><input type="text" class="fb-money fb-parc" value="${esc(parc)}" placeholder="—" title="Parcelas pagas/total, ex.: 16/24; vazio limpa" data-fe-parc="${esc(e.id)}"></span>
+      <span>${fbMoneyInput(e.targetAmount,`data-fe-campo="targetAmount" data-fe-id="${esc(e.id)}"`)}</span>
+      <span>${fbMoneyInput(e.expectedAmount,`data-fe-campo="expectedAmount" data-fe-id="${esc(e.id)}"`)}</span>
+      <span>${fbMoneyInput(e.executedCash,`data-fe-campo="executedCash" data-fe-id="${esc(e.id)}"`)}</span>
+      <span>${fbMoneyInput(e.executedCard,`data-fe-campo="executedCard" data-fe-id="${esc(e.id)}"`)}</span>
+      <span class="fb-actions"><select class="fb-status-sel" data-fe-status="${esc(e.id)}">
+        ${['PENDENTE','PAGO','CANCELADO'].map(st=>`<option value="${st}" ${st===e.status?'selected':''}>${st}</option>`).join('')}
+      </select>
+      <button type="button" class="row-del" data-fe-del="${esc(e.id)}" title="Excluir despesa">✕</button></span>
+    </div>`;}).join('');
+  }
+  const m = materializado ? S.personalFinance.months[key] : null;
+  const prev = m ? pfPlannedExpenses(m) : 0;
+  const exec = m ? pfKnownExecutedExpenses(m) : null;
+  const cob  = m ? pfExpenseCoverage(m) : null;
+  const cobTxt = (cob && cob.total>0 && !cob.completa) ? ` <span class="fb-partial">PARCIAL · ${cob.conhecidas} de ${cob.total} com os dois canais</span>` : '';
   return `<div class="card fb-card" id="fbExpenses">
-    <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco C).</p>
+    <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado (fora do cartão + cartão)</span></h2>
+    <div class="fb-erow fb-head"><span>Despesa</span><span>Parc.</span><span>Meta</span><span>Previsto</span><span>Fora cartão</span><span>Cartão</span><span></span></div>
+    ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma despesa neste mês.':'Mês não registrado — adicionar despesa registra o mês.')+'</p>'}
+    <div class="fb-totals"><span>Despesa prevista: <b>${formatBRLCents(prev)}</b></span>
+      <span>Despesa executada (conhecida): <b>${m ? formatBRLCents(exec) : '—'}</b>${cobTxt}</span></div>
+    <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button>
   </div>`;
 }
 function fbSummaryHTML(){
@@ -210,6 +237,59 @@ function fbBind(root, key){
   }));
   root.querySelectorAll('[data-fi-cfg]').forEach(btn=>btn.addEventListener('click',()=>{
     fbOpenRecurrenceModal(key, btn.dataset.fiCfg);
+  }));
+
+  // ---- despesas (C) ----
+  const addE = root.querySelector('[data-fe-add]');
+  if(addE) addE.addEventListener('click',()=>{
+    const nome = prompt('Nome da despesa:');
+    if(nome===null) return;                       // cancelar = zero mutação
+    fbAtoUI(pfActAddExpense(key, { name: nome }));
+  });
+  root.querySelectorAll('[data-fe-campo]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const campo = inp.dataset.feCampo, id = inp.dataset.feId;
+      let valor;
+      if(campo==='name') valor = inp.value;
+      else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
+      const r = pfActUpdateExpenseField(key, id, campo, valor);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fe-parc]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const id = inp.dataset.feParc;
+      const t = inp.value.trim();
+      let parc;
+      if(!t) parc = null;
+      else {
+        const m2 = /^(\d{1,3})\s*\/\s*(\d{1,3})$/.exec(t);
+        if(!m2){ alert('⛔ Parcelamento no formato pagas/total, ex.: 16/24 — ou vazio para limpar.'); inp.value = inp.dataset.prevval ?? ''; return; }
+        parc = { paid:+m2[1], total:+m2[2] };
+      }
+      const r = pfActSetExpenseInstallments(key, id, parc);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fe-status]').forEach(sel=>{
+    sel.addEventListener('focus',()=>{ sel.dataset.prevval = sel.value; });
+    sel.addEventListener('change',()=>{
+      const r = pfActSetExpenseStatus(key, sel.dataset.feStatus, sel.value);
+      if(r.ok===false){ sel.value = sel.dataset.prevval || 'PENDENTE'; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fe-del]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id = btn.dataset.feDel;
+    const m = S.personalFinance.months[key];
+    const rec = m && m.expenses.find(e=>e.id===id);
+    const temDado = rec && ((rec.name||'').trim() || rec.targetAmount!==null || rec.expectedAmount!==null || rec.executedCash!==null || rec.executedCard!==null);
+    if(temDado && !confirm('Excluir a despesa "'+(rec.name||'')+'"?')) return;
+    fbAtoUI(pfActDeleteExpense(key, id));
   }));
 }
 

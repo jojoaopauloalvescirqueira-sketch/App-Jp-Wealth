@@ -350,3 +350,111 @@ function pfIncomeCoverage(m){
   const conhecidas = linhas.filter(i=>i.receivedAmount!==null && i.receivedAmount!==undefined).length;
   return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
 }
+
+// ============ PF-02 · BLOCO C — DESPESAS ====================================
+// Meta ≠ Previsto ≠ Executado. O executado tem DOIS canais (fora do cartão e
+// cartão) e o total é SEMPRE derivado — persistir executedTotal seria a
+// segunda fonte de verdade que o contrato proíbe. Na V1 o canal cartão é
+// informado manualmente; quando o subsistema de Cartão existir (PF-FUTURE),
+// este campo torna-se derivado e o input congela.
+
+function pfFindExpense(pf, monthKey, expenseId){
+  const m = pf.months[monthKey];
+  if(!m || !Array.isArray(m.expenses)) return null;
+  return m.expenses.find(e=>e && e.id===expenseId) || null;
+}
+
+function pfActAddExpense(monthKey, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const nome = String((dados&&dados.name)||'').trim();
+  if(!nome) return { ok:false, erro:'nome da despesa obrigatório' };
+  return pfMutate('expense_add', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const rec = { id: pfId('pfe'), name: nome, installments: null,
+                  targetAmount: null, expectedAmount: null,
+                  executedCash: null, executedCard: null, status:'PENDENTE' };
+    m.expenses.push(rec);
+    return { recordId: rec.id };
+  });
+}
+
+const PF_EXPENSE_MONEY_FIELDS = ['targetAmount','expectedAmount','executedCash','executedCard'];
+function pfActUpdateExpenseField(monthKey, expenseId, campo, valor){
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  if(campo==='name'){
+    const nome = String(valor||'').trim();
+    if(!nome) return { ok:false, erro:'nome da despesa obrigatório' };
+    return pfMutate('expense_update', pf => { pfFindExpense(pf,monthKey,expenseId).name = nome; return { recordId: expenseId }; });
+  }
+  if(PF_EXPENSE_MONEY_FIELDS.includes(campo)){
+    if(!pfAmountInDomain(valor,{allowNull:true})) return { ok:false, erro:'valor fora do domínio (≥ 0 ou vazio)' };
+    if((campo==='executedCash'||campo==='executedCard') && valor===null && alvo.status==='PAGO')
+      return { ok:false, erro:'PAGO exige os dois canais explícitos — mude o status antes de limpar um canal' };
+    return pfMutate('expense_update', pf => { pfFindExpense(pf,monthKey,expenseId)[campo] = valor; return { recordId: expenseId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+
+function pfActSetExpenseStatus(monthKey, expenseId, status){
+  if(!['PENDENTE','PAGO','CANCELADO'].includes(status)) return { ok:false, erro:'status desconhecido' };
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  // Guarda do congelamento: PAGO exige os DOIS canais explícitos (0 vale em
+  // qualquer um). Um canal desconhecido torna o total da linha indemonstrável.
+  if(status==='PAGO' && (alvo.executedCash===null || alvo.executedCard===null))
+    return { ok:false, erro:'PAGO exige executado explícito nos dois canais — informe 0 no canal que não foi usado' };
+  return pfMutate('expense_status', pf => { pfFindExpense(pf,monthKey,expenseId).status = status; return { recordId: expenseId }; });
+}
+
+// Parcelamento: {total, paid} com 0 <= paid <= total e total >= 1; null limpa.
+// `remaining` é DERIVADO — jamais persiste (o defeito da FALTA negativa da
+// planilha nasceu exatamente de parcelas incoerentes persistidas).
+function pfActSetExpenseInstallments(monthKey, expenseId, parc){
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  if(parc!==null){
+    const total = parc && parc.total, paid = parc && parc.paid;
+    if(!(Number.isInteger(total) && total>=1)) return { ok:false, erro:'total de parcelas deve ser inteiro ≥ 1' };
+    if(!(Number.isInteger(paid) && paid>=0)) return { ok:false, erro:'parcelas pagas deve ser inteiro ≥ 0' };
+    if(paid>total) return { ok:false, erro:'parcelas pagas não podem exceder o total (paid ≤ total)' };
+  }
+  return pfMutate('expense_installments', pf => {
+    pfFindExpense(pf,monthKey,expenseId).installments = parc===null ? null : { total: parc.total, paid: parc.paid };
+    return { recordId: expenseId };
+  });
+}
+
+function pfActDeleteExpense(monthKey, expenseId){
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  return pfMutate('expense_delete', pf => {
+    const m = pf.months[monthKey];
+    m.expenses = m.expenses.filter(e=>e.id!==expenseId);
+    return { recordId: expenseId };
+  });
+}
+
+// ---- calculadores derivados -------------------------------------------------
+function pfExpenseExecutedKnown(e){
+  // total conhecido da LINHA: soma dos canais informados (para exibição e
+  // agregados "conhecidos"); a COMPLETUDE exige os dois explícitos.
+  const a = (typeof e.executedCash==='number') ? e.executedCash : 0;
+  const b = (typeof e.executedCard==='number') ? e.executedCard : 0;
+  return a + b;
+}
+function pfPlannedExpenses(m){
+  if(!m || !Array.isArray(m.expenses)) return 0;
+  return m.expenses.reduce((acc,e)=> acc + ((e && e.status!=='CANCELADO' && typeof e.expectedAmount==='number') ? e.expectedAmount : 0), 0);
+}
+function pfKnownExecutedExpenses(m){
+  if(!m || !Array.isArray(m.expenses)) return 0;
+  // TODO executado informado soma, INDEPENDENTE do status — dinheiro gasto, gasto.
+  return m.expenses.reduce((acc,e)=> acc + (e ? pfExpenseExecutedKnown(e) : 0), 0);
+}
+function pfExpenseCoverage(m){
+  const linhas = (m && Array.isArray(m.expenses)) ? m.expenses.filter(Boolean) : [];
+  const conhecidas = linhas.filter(e=>e.executedCash!==null && e.executedCash!==undefined
+                                   && e.executedCard!==null && e.executedCard!==undefined).length;
+  return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
+}

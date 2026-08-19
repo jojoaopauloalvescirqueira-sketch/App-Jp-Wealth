@@ -5866,6 +5866,9 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fb-totals{display:flex; flex-direction:column; gap:2px; padding:8px 0; font-size:12px; color:var(--ink-dim)}
 .fb-totals b{color:var(--ink); font-family:var(--mono)}
 .fb-partial{color:var(--f2); font-size:10px; font-family:var(--mono); margin-left:6px}
+.fb-erow{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,.6fr) repeat(4,minmax(0,1fr)) minmax(0,1fr); gap:6px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fb-erow.fb-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fb-parc{text-align:center}
 @media(max-width:1279px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}

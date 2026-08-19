@@ -379,6 +379,107 @@ def run_b_modal_cancelar_zero_mutacao(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCO C ----------
+
+def run_c_despesa_nasce_honesta(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        const r1 = pfActAddExpense(key, { name:'Internet Fibra' });
+        const e = S.personalFinance.months[key].expenses[0];
+        return { ok:r1.ok, status:e.status, chaves: Object.keys(e).sort(),
+                 nulos: [e.targetAmount, e.expectedAmount, e.executedCash, e.executedCard, e.installments] };
+    }""")
+    if not r["ok"] or r["status"] != "PENDENTE":
+        falhas.append(f"C: despesa deveria nascer PENDENTE: {r}")
+    if r["nulos"] != [None,None,None,None,None]:
+        falhas.append(f"C: campos deveriam nascer null (nunca 0): {r['nulos']}")
+    if "executedTotal" in r["chaves"] or "remaining" in r["chaves"]:
+        falhas.append(f"C: DERIVADO PERSISTIDO no registro: {r['chaves']}")
+    ctx.close()
+
+
+def run_c_pago_exige_dois_canais(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddExpense(key, { name:'Internet' });
+        const id = S.personalFinance.months[key].expenses[0].id;
+        pfActUpdateExpenseField(key, id, 'executedCash', 12000);
+        const soUmCanal = pfActSetExpenseStatus(key, id, 'PAGO');       // card null
+        pfActUpdateExpenseField(key, id, 'executedCard', 0);
+        const doisCanais = pfActSetExpenseStatus(key, id, 'PAGO');      // 0 explicito vale
+        const limpaCanal = pfActUpdateExpenseField(key, id, 'executedCard', null); // PAGO: recusa
+        const e = S.personalFinance.months[key].expenses[0];
+        return { soUmCanalOk: soUmCanal.ok, doisOk: doisCanais.ok, limpaOk: limpaCanal.ok,
+                 final: { cash: e.executedCash, card: e.executedCard, status: e.status },
+                 executadoLinha: pfExpenseExecutedKnown(e) };
+    }""")
+    if r["soUmCanalOk"] is not False:
+        falhas.append("C: PAGO com apenas um canal informado deveria ser recusado")
+    if not r["doisOk"]:
+        falhas.append("C: PAGO com cash=12000 e card=0 explicito deveria ser aceito")
+    if r["limpaOk"] is not False:
+        falhas.append("C: limpar canal de linha PAGO deveria ser recusado")
+    if r["final"] != {"cash":12000,"card":0,"status":"PAGO"} or r["executadoLinha"] != 12000:
+        falhas.append(f"C: estado final incoerente: {r}")
+    ctx.close()
+
+
+def run_c_cancelado_preserva_realizado(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddExpense(key, { name:'Assinatura' });
+        pfActAddExpense(key, { name:'Aluguel' });
+        const m0 = S.personalFinance.months[key];
+        const idA = m0.expenses[0].id, idB = m0.expenses[1].id;
+        pfActUpdateExpenseField(key, idA, 'expectedAmount', 5000);
+        pfActUpdateExpenseField(key, idA, 'executedCard', 3000);
+        pfActUpdateExpenseField(key, idB, 'expectedAmount', 172000);
+        pfActSetExpenseStatus(key, idA, 'CANCELADO');
+        const m = S.personalFinance.months[key];
+        return { previsto: pfPlannedExpenses(m), executado: pfKnownExecutedExpenses(m), linhas: m.expenses.length };
+    }""")
+    if r["previsto"] != 172000:
+        falhas.append(f"C: CANCELADO deveria sair do previsto (172000), veio {r['previsto']}")
+    if r["executado"] != 3000:
+        falhas.append(f"C: executado do cancelado deveria permanecer (3000), veio {r['executado']}")
+    if r["linhas"] != 2:
+        falhas.append("C: cancelar nao e apagar")
+    ctx.close()
+
+
+def run_c_parcelamento(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddExpense(key, { name:'Emprestimo' });
+        const id = S.personalFinance.months[key].expenses[0].id;
+        const excede = pfActSetExpenseInstallments(key, id, { paid:25, total:24 });   // defeito da planilha
+        const negativo = pfActSetExpenseInstallments(key, id, { paid:-1, total:24 });
+        const valido = pfActSetExpenseInstallments(key, id, { paid:16, total:24 });
+        const e = S.personalFinance.months[key].expenses[0];
+        const gravado = JSON.stringify(e.installments);          // ANTES do limpa: e.installments e referencia viva
+        const chaves = Object.keys(JSON.parse(gravado||'{}'));
+        const limpa = pfActSetExpenseInstallments(key, id, null);
+        return { excedeOk: excede.ok, negOk: negativo.ok, validoOk: valido.ok,
+                 gravado, chaves,
+                 limpo: S.personalFinance.months[key].expenses[0].installments };
+    }""")
+    if r["excedeOk"] is not False:
+        falhas.append("C: paid > total deveria ser recusado — o defeito da FALTA negativa nao entra")
+    if r["negOk"] is not False:
+        falhas.append("C: parcela negativa deveria ser recusada")
+    if not r["validoOk"] or r["gravado"] != '{"total":24,"paid":16}':
+        falhas.append(f"C: parcelamento valido nao gravou como {{total,paid}}: {r['gravado']}")
+    if "remaining" in r["chaves"]:
+        falhas.append("C: remaining PERSISTIDO — e derivado")
+    if r["limpo"] is not None:
+        falhas.append("C: limpar parcelamento deveria voltar a null")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -403,6 +504,10 @@ def main():
             executar("B recorrencia", lambda: run_b_recorrencia_fluxo_completo(browser, url, falhas), falhas)
             executar("B fantasma", lambda: run_b_fantasma_edita_materializa(browser, url, falhas), falhas)
             executar("B modal cancelar", lambda: run_b_modal_cancelar_zero_mutacao(browser, url, falhas), falhas)
+            executar("C nasce honesta", lambda: run_c_despesa_nasce_honesta(browser, url, falhas), falhas)
+            executar("C dois canais", lambda: run_c_pago_exige_dois_canais(browser, url, falhas), falhas)
+            executar("C cancelado preserva", lambda: run_c_cancelado_preserva_realizado(browser, url, falhas), falhas)
+            executar("C parcelamento", lambda: run_c_parcelamento(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()

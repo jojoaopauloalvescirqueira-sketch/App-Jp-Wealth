@@ -5876,6 +5876,9 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 .fb-totals{display:flex; flex-direction:column; gap:2px; padding:8px 0; font-size:12px; color:var(--ink-dim)}
 .fb-totals b{color:var(--ink); font-family:var(--mono)}
 .fb-partial{color:var(--f2); font-size:10px; font-family:var(--mono); margin-left:6px}
+.fb-erow{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,.6fr) repeat(4,minmax(0,1fr)) minmax(0,1fr); gap:6px; padding:6px 0; border-bottom:1px solid var(--line); font-size:12px; align-items:center}
+.fb-erow.fb-head{color:var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:.08em}
+.fb-parc{text-align:center}
 @media(max-width:1279px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   html[data-shell="global-dashboard"] .fb-col-wide{grid-column:1/-1}
@@ -6031,7 +6034,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '084fe36a0a69ab49';
+const JP_WEALTH_BUILD_ID = '646415e4dc791cd8';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -29447,6 +29450,114 @@ function pfIncomeCoverage(m){
   const conhecidas = linhas.filter(i=>i.receivedAmount!==null && i.receivedAmount!==undefined).length;
   return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
 }
+
+// ============ PF-02 · BLOCO C — DESPESAS ====================================
+// Meta ≠ Previsto ≠ Executado. O executado tem DOIS canais (fora do cartão e
+// cartão) e o total é SEMPRE derivado — persistir executedTotal seria a
+// segunda fonte de verdade que o contrato proíbe. Na V1 o canal cartão é
+// informado manualmente; quando o subsistema de Cartão existir (PF-FUTURE),
+// este campo torna-se derivado e o input congela.
+
+function pfFindExpense(pf, monthKey, expenseId){
+  const m = pf.months[monthKey];
+  if(!m || !Array.isArray(m.expenses)) return null;
+  return m.expenses.find(e=>e && e.id===expenseId) || null;
+}
+
+function pfActAddExpense(monthKey, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const nome = String((dados&&dados.name)||'').trim();
+  if(!nome) return { ok:false, erro:'nome da despesa obrigatório' };
+  return pfMutate('expense_add', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const rec = { id: pfId('pfe'), name: nome, installments: null,
+                  targetAmount: null, expectedAmount: null,
+                  executedCash: null, executedCard: null, status:'PENDENTE' };
+    m.expenses.push(rec);
+    return { recordId: rec.id };
+  });
+}
+
+const PF_EXPENSE_MONEY_FIELDS = ['targetAmount','expectedAmount','executedCash','executedCard'];
+function pfActUpdateExpenseField(monthKey, expenseId, campo, valor){
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  if(campo==='name'){
+    const nome = String(valor||'').trim();
+    if(!nome) return { ok:false, erro:'nome da despesa obrigatório' };
+    return pfMutate('expense_update', pf => { pfFindExpense(pf,monthKey,expenseId).name = nome; return { recordId: expenseId }; });
+  }
+  if(PF_EXPENSE_MONEY_FIELDS.includes(campo)){
+    if(!pfAmountInDomain(valor,{allowNull:true})) return { ok:false, erro:'valor fora do domínio (≥ 0 ou vazio)' };
+    if((campo==='executedCash'||campo==='executedCard') && valor===null && alvo.status==='PAGO')
+      return { ok:false, erro:'PAGO exige os dois canais explícitos — mude o status antes de limpar um canal' };
+    return pfMutate('expense_update', pf => { pfFindExpense(pf,monthKey,expenseId)[campo] = valor; return { recordId: expenseId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+
+function pfActSetExpenseStatus(monthKey, expenseId, status){
+  if(!['PENDENTE','PAGO','CANCELADO'].includes(status)) return { ok:false, erro:'status desconhecido' };
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  // Guarda do congelamento: PAGO exige os DOIS canais explícitos (0 vale em
+  // qualquer um). Um canal desconhecido torna o total da linha indemonstrável.
+  if(status==='PAGO' && (alvo.executedCash===null || alvo.executedCard===null))
+    return { ok:false, erro:'PAGO exige executado explícito nos dois canais — informe 0 no canal que não foi usado' };
+  return pfMutate('expense_status', pf => { pfFindExpense(pf,monthKey,expenseId).status = status; return { recordId: expenseId }; });
+}
+
+// Parcelamento: {total, paid} com 0 <= paid <= total e total >= 1; null limpa.
+// `remaining` é DERIVADO — jamais persiste (o defeito da FALTA negativa da
+// planilha nasceu exatamente de parcelas incoerentes persistidas).
+function pfActSetExpenseInstallments(monthKey, expenseId, parc){
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  if(parc!==null){
+    const total = parc && parc.total, paid = parc && parc.paid;
+    if(!(Number.isInteger(total) && total>=1)) return { ok:false, erro:'total de parcelas deve ser inteiro ≥ 1' };
+    if(!(Number.isInteger(paid) && paid>=0)) return { ok:false, erro:'parcelas pagas deve ser inteiro ≥ 0' };
+    if(paid>total) return { ok:false, erro:'parcelas pagas não podem exceder o total (paid ≤ total)' };
+  }
+  return pfMutate('expense_installments', pf => {
+    pfFindExpense(pf,monthKey,expenseId).installments = parc===null ? null : { total: parc.total, paid: parc.paid };
+    return { recordId: expenseId };
+  });
+}
+
+function pfActDeleteExpense(monthKey, expenseId){
+  const alvo = pfFindExpense(S.personalFinance, monthKey, expenseId);
+  if(!alvo) return { ok:false, erro:'despesa inexistente' };
+  return pfMutate('expense_delete', pf => {
+    const m = pf.months[monthKey];
+    m.expenses = m.expenses.filter(e=>e.id!==expenseId);
+    return { recordId: expenseId };
+  });
+}
+
+// ---- calculadores derivados -------------------------------------------------
+function pfExpenseExecutedKnown(e){
+  // total conhecido da LINHA: soma dos canais informados (para exibição e
+  // agregados "conhecidos"); a COMPLETUDE exige os dois explícitos.
+  const a = (typeof e.executedCash==='number') ? e.executedCash : 0;
+  const b = (typeof e.executedCard==='number') ? e.executedCard : 0;
+  return a + b;
+}
+function pfPlannedExpenses(m){
+  if(!m || !Array.isArray(m.expenses)) return 0;
+  return m.expenses.reduce((acc,e)=> acc + ((e && e.status!=='CANCELADO' && typeof e.expectedAmount==='number') ? e.expectedAmount : 0), 0);
+}
+function pfKnownExecutedExpenses(m){
+  if(!m || !Array.isArray(m.expenses)) return 0;
+  // TODO executado informado soma, INDEPENDENTE do status — dinheiro gasto, gasto.
+  return m.expenses.reduce((acc,e)=> acc + (e ? pfExpenseExecutedKnown(e) : 0), 0);
+}
+function pfExpenseCoverage(m){
+  const linhas = (m && Array.isArray(m.expenses)) ? m.expenses.filter(Boolean) : [];
+  const conhecidas = linhas.filter(e=>e.executedCash!==null && e.executedCash!==undefined
+                                   && e.executedCard!==null && e.executedCard!==undefined).length;
+  return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
+}
 // ============ FINANÇAS PESSOAIS · WORKSPACES DO MÓDULO (PF-01 — apresentação) ============
 // Superfície estritamente visual do segundo nível de Finanças Pessoais: decide
 // qual workspace de section#finpes está visível, e nada além disso. Não
@@ -29655,10 +29766,37 @@ function fbIncomesHTML(key, materializado, bloqueado){
     <button type="button" class="reset-btn" data-fi-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar receita</button>
   </div>`;
 }
-function fbExpensesHTML(){
+function fbExpensesHTML(key, materializado, bloqueado){
+  let linhas='';
+  if(materializado){
+    const m = S.personalFinance.months[key];
+    linhas = (m.expenses||[]).map(e=>{
+      const parc = e.installments ? `${e.installments.paid}/${e.installments.total}` : '';
+      return `<div class="fb-erow" data-expense="${esc(e.id)}">
+      <span><input type="text" class="fb-text" value="${esc(e.name)}" data-fe-campo="name" data-fe-id="${esc(e.id)}"></span>
+      <span><input type="text" class="fb-money fb-parc" value="${esc(parc)}" placeholder="—" title="Parcelas pagas/total, ex.: 16/24; vazio limpa" data-fe-parc="${esc(e.id)}"></span>
+      <span>${fbMoneyInput(e.targetAmount,`data-fe-campo="targetAmount" data-fe-id="${esc(e.id)}"`)}</span>
+      <span>${fbMoneyInput(e.expectedAmount,`data-fe-campo="expectedAmount" data-fe-id="${esc(e.id)}"`)}</span>
+      <span>${fbMoneyInput(e.executedCash,`data-fe-campo="executedCash" data-fe-id="${esc(e.id)}"`)}</span>
+      <span>${fbMoneyInput(e.executedCard,`data-fe-campo="executedCard" data-fe-id="${esc(e.id)}"`)}</span>
+      <span class="fb-actions"><select class="fb-status-sel" data-fe-status="${esc(e.id)}">
+        ${['PENDENTE','PAGO','CANCELADO'].map(st=>`<option value="${st}" ${st===e.status?'selected':''}>${st}</option>`).join('')}
+      </select>
+      <button type="button" class="row-del" data-fe-del="${esc(e.id)}" title="Excluir despesa">✕</button></span>
+    </div>`;}).join('');
+  }
+  const m = materializado ? S.personalFinance.months[key] : null;
+  const prev = m ? pfPlannedExpenses(m) : 0;
+  const exec = m ? pfKnownExecutedExpenses(m) : null;
+  const cob  = m ? pfExpenseCoverage(m) : null;
+  const cobTxt = (cob && cob.total>0 && !cob.completa) ? ` <span class="fb-partial">PARCIAL · ${cob.conhecidas} de ${cob.total} com os dois canais</span>` : '';
   return `<div class="card fb-card" id="fbExpenses">
-    <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado</span></h2>
-    <p class="risk-note">Em desenvolvimento (Bloco C).</p>
+    <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado (fora do cartão + cartão)</span></h2>
+    <div class="fb-erow fb-head"><span>Despesa</span><span>Parc.</span><span>Meta</span><span>Previsto</span><span>Fora cartão</span><span>Cartão</span><span></span></div>
+    ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma despesa neste mês.':'Mês não registrado — adicionar despesa registra o mês.')+'</p>'}
+    <div class="fb-totals"><span>Despesa prevista: <b>${formatBRLCents(prev)}</b></span>
+      <span>Despesa executada (conhecida): <b>${m ? formatBRLCents(exec) : '—'}</b>${cobTxt}</span></div>
+    <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button>
   </div>`;
 }
 function fbSummaryHTML(){
@@ -29755,6 +29893,59 @@ function fbBind(root, key){
   }));
   root.querySelectorAll('[data-fi-cfg]').forEach(btn=>btn.addEventListener('click',()=>{
     fbOpenRecurrenceModal(key, btn.dataset.fiCfg);
+  }));
+
+  // ---- despesas (C) ----
+  const addE = root.querySelector('[data-fe-add]');
+  if(addE) addE.addEventListener('click',()=>{
+    const nome = prompt('Nome da despesa:');
+    if(nome===null) return;                       // cancelar = zero mutação
+    fbAtoUI(pfActAddExpense(key, { name: nome }));
+  });
+  root.querySelectorAll('[data-fe-campo]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const campo = inp.dataset.feCampo, id = inp.dataset.feId;
+      let valor;
+      if(campo==='name') valor = inp.value;
+      else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
+      const r = pfActUpdateExpenseField(key, id, campo, valor);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fe-parc]').forEach(inp=>{
+    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+    inp.addEventListener('change',()=>{
+      const id = inp.dataset.feParc;
+      const t = inp.value.trim();
+      let parc;
+      if(!t) parc = null;
+      else {
+        const m2 = /^(\d{1,3})\s*\/\s*(\d{1,3})$/.exec(t);
+        if(!m2){ alert('⛔ Parcelamento no formato pagas/total, ex.: 16/24 — ou vazio para limpar.'); inp.value = inp.dataset.prevval ?? ''; return; }
+        parc = { paid:+m2[1], total:+m2[2] };
+      }
+      const r = pfActSetExpenseInstallments(key, id, parc);
+      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fe-status]').forEach(sel=>{
+    sel.addEventListener('focus',()=>{ sel.dataset.prevval = sel.value; });
+    sel.addEventListener('change',()=>{
+      const r = pfActSetExpenseStatus(key, sel.dataset.feStatus, sel.value);
+      if(r.ok===false){ sel.value = sel.dataset.prevval || 'PENDENTE'; }
+      fbAtoUI(r);
+    });
+  });
+  root.querySelectorAll('[data-fe-del]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id = btn.dataset.feDel;
+    const m = S.personalFinance.months[key];
+    const rec = m && m.expenses.find(e=>e.id===id);
+    const temDado = rec && ((rec.name||'').trim() || rec.targetAmount!==null || rec.expectedAmount!==null || rec.executedCash!==null || rec.executedCard!==null);
+    if(temDado && !confirm('Excluir a despesa "'+(rec.name||'')+'"?')) return;
+    fbAtoUI(pfActDeleteExpense(key, id));
   }));
 }
 
