@@ -416,7 +416,7 @@
       "order": 69,
       "path": "src/js/20-ui/17-finpes-views.js",
       "section": "FINANCAS PESSOAIS · workspaces do modulo (apresentacao; superficie JPWFin.ui)",
-      "sha256": "e14ad62e43c1fc02f80ac7115607e5eb8b8b91ee70e948e6bacf07d900f8dc74"
+      "sha256": "e67f3943d15bc10b54cfb710683e67eaf13a5cefba23f14bccff3013ad671a38"
     },
     {
       "order": 70,
@@ -429,6 +429,12 @@
       "path": "src/js/20-ui/19-finpes-debts.js",
       "section": "FINANCAS PESSOAIS · Dividas & Credito (PF-03): renderizador do workspace",
       "sha256": "ebdec27b0834aa314122547577e1846573af69d5a5c50ffdf6899fd14a9d4ad1"
+    },
+    {
+      "order": 72,
+      "path": "src/js/20-ui/20-finpes-comparison.js",
+      "section": "FINANCAS PESSOAIS · Comparativo Mensal (PF-04): renderizador read-only",
+      "sha256": "f2c8c423804a43700ce9e81d5735b18396172107ea79be4d402177b8f8b7bbba"
     }
   ]
 }

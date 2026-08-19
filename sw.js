@@ -46,6 +46,7 @@ const PRECACHE_URLS = [
   './src/js/20-ui/17-finpes-views.js',
   './src/js/20-ui/18-finpes-budget.js',
   './src/js/20-ui/19-finpes-debts.js',
+  './src/js/20-ui/20-finpes-comparison.js',
   './src/js/20-ui/16-operation-history.js',
   './manifests/jp-wealth.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'

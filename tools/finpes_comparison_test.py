@@ -248,6 +248,120 @@ def run_ab_edicao_retroativa_sem_cache(browser, url, falhas):
     ctx.close()
 
 
+# ---------- BLOCOS C/D (serie e UI) ----------
+
+def boot_ui(browser, url, mutacao_js=None):
+    ctx, page, erros = boot(browser, url, mutacao_js)
+    page.evaluate("() => { navigateToScreen('finpes'); window.JPWFin.ui.selectView('comparativo'); }")
+    return ctx, page, erros
+
+
+def run_cd_serie_gaps_e_parciais(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("() => {" + seed_completo('2026-06', 1300000, 800000)
+                      + seed_completo('2026-08', 1500000, 900000) + """
+        // JUL parcial: receita sem recebido
+        pfActAddIncome('2026-07', {name:'Salario', projectedAmount:1400000});
+        const serie = pfCompSeries('2026-08', 12);
+        window.JPWFinComparison.render();
+        const texto = document.getElementById('fcSeries').innerText;
+        const linhas = [...document.querySelectorAll('.fc-srow')].map(x=>x.innerText.replace(/\s+/g,' '));
+        // gap DEPOIS de mes materializado: AGO completo, SET virtual — o virtual
+        // jamais herda o anterior (carry-forward na serie e o defeito-alvo)
+        const s2 = pfCompSeries('2026-09', 2);
+        return { n: serie.length, primeiro: serie[0].key, ultimo: serie[serie.length-1].key,
+                 gapAposMaterializado: { key: s2[1].key, mat: s2[1].materializado,
+                                         receitaStatus: s2[1].receita.status },
+                 texto200: texto.slice(0,60), linhas,
+                 gapsNaoViramZero: !linhas.some(l=>l.includes('Não registrado') && l.includes('R$ 0,00')) };
+    }""")
+    g = r["gapAposMaterializado"]
+    if g != {"key":"2026-09","mat":False,"receitaStatus":"UNAVAILABLE"}:
+        falhas.append(f"CD: mes virtual apos materializado HERDOU dados (carry-forward na serie): {g}")
+    if r["n"] != 12 or r["ultimo"] != "2026-08" or r["primeiro"] != "2025-09":
+        falhas.append(f"CD: serie deveria ter 12 meses calendario terminando em AGO: {r['primeiro']}..{r['ultimo']}")
+    linhas = "\n".join(r["linhas"])
+    if "Não registrado" not in linhas:
+        falhas.append("CD: meses virtuais deveriam aparecer como 'Não registrado' (lacuna)")
+    if not r["gapsNaoViramZero"]:
+        falhas.append("CD: lacuna virou zero ficticio na serie")
+    if "parcial 0/1" not in linhas:
+        falhas.append(f"CD: JUL parcial deveria exibir cobertura na serie: {linhas[:300]}")
+    if "R$ 15.000,00" not in linhas or "R$ 13.000,00" not in linhas:
+        falhas.append("CD: valores completos ausentes da serie")
+    ctx.close()
+
+
+def run_cd_navegar_zero_save_e_sem_cache(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("() => {" + seed_completo('2026-08', 1500000, 900000) + """
+        window.JPWFinComparison.render();
+        const chavesAntes = JSON.stringify(Object.keys(S.personalFinance).sort());
+        const antes = JSON.stringify(S.personalFinance);
+        let saves=0; const orig=window.save;
+        window.save=function(){ saves++; return orig.apply(this,arguments); };
+        for(let i=0;i<14;i++) document.querySelector('[data-fc-nav="-1"]').click();
+        document.querySelector('[data-fc-today]').click();
+        window.save=orig;
+        return { igual: antes===JSON.stringify(S.personalFinance), saves,
+                 chavesIguais: chavesAntes===JSON.stringify(Object.keys(S.personalFinance).sort()),
+                 meses: Object.keys(S.personalFinance.months).length };
+    }""")
+    if not r["igual"] or r["saves"]!=0 or r["meses"]!=1:
+        falhas.append(f"CD: navegar no comparativo deveria ser read-only absoluto: {r}")
+    if not r["chavesIguais"]:
+        falhas.append("CD: chave nova no agregado — CACHE PERSISTIDO e proibido")
+    ctx.close()
+
+
+def run_cd_ui_na_e_credito_fora(browser, url, falhas):
+    ctx, page, erros = boot_ui(browser, url)
+    r = page.evaluate("() => {" + seed_completo('2026-08', 1500000, 900000) + """
+        // credito vigente existe — e NAO pode aparecer na serie historica
+        pfActAddCreditLine({institution:'Banco Sigma', instrument:'X', type:'', totalLimit:500000, used:100000});
+        window.JPWFinComparison.render();
+        const cards = [...document.querySelectorAll('.fc-compare')].map(c=>c.innerText);
+        const serieTexto = document.getElementById('fcSeries').innerText;
+        const patrimonio = document.getElementById('fcPatrimonio').innerText;
+        return { cards0: cards[0]||'', temMotivoJul: (cards[0]||'').includes('não registrado'),
+                 serieSemCredito: !/[Ll]imite|[Uu]tiliza/.test(serieTexto),
+                 cardsSemCredito: !cards.some(t=>/[Ll]imite|[Uu]tiliza/.test(t)),
+                 patrimonioPendente: patrimonio.includes('Inventário'),
+                 semJulgamento: !/(saudável|ruim|perigos|excelente)/i.test(cards.join(' ')+serieTexto) };
+    }""")
+    if not r["temMotivoJul"]:
+        falhas.append(f"CD: card VS MES ANTERIOR deveria explicar o motivo (JUL nao registrado): {r['cards0'][:200]}")
+    if not r["serieSemCredito"] or not r["cardsSemCredito"]:
+        falhas.append("CD: CREDITO VIGENTE apareceu em leitura historica — estado presente contaminando o passado")
+    if not r["patrimonioPendente"]:
+        falhas.append("CD: patrimonio deveria declarar pendencia do Inventario")
+    if not r["semJulgamento"]:
+        falhas.append("CD: linguagem normativa detectada — o comparativo e descritivo")
+    ctx.close()
+
+
+def run_cd_money_unit_sentinela(browser, url, falhas):
+    mut = """
+      S.personalFinance = { schemaVersion:1, moneyUnit:'XX_UNIT',
+        months:{'2026-08':{createdAt:'x', incomes:[{id:'i1',name:'A',projectedAmount:100,receivedAmount:100,status:'RECEBIDA',ruleId:null}],
+          expenses:[], debtSnapshots:[], allocations:[], notes:[]}},
+        recurringIncome:[], debts:[], creditLines:[], scenarios:[] };
+    """
+    ctx, page, erros = boot_ui(browser, url, mutacao_js=mut)
+    r = page.evaluate("""() => {
+        window.JPWFinComparison.render();
+        const texto = document.getElementById('finpesComparisonRoot').innerText;
+        return { avisa: texto.includes('não reconhecida'),
+                 semBRL: !texto.includes('R$ '),
+                 intacto: S.personalFinance.moneyUnit==='XX_UNIT' };
+    }""")
+    if not r["avisa"] or not r["semBRL"]:
+        falhas.append(f"CD: unidade desconhecida NAO pode ser formatada como BRL: {r}")
+    if not r["intacto"]:
+        falhas.append("CD: sentinela alterou o agregado")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -261,6 +375,10 @@ def main():
             executar("AB sobra cruza zero", lambda: run_ab_sobra_cruzando_zero(browser, url, falhas), falhas)
             executar("AB divida", lambda: run_ab_divida_no_comparativo(browser, url, falhas), falhas)
             executar("AB retroativa", lambda: run_ab_edicao_retroativa_sem_cache(browser, url, falhas), falhas)
+            executar("CD serie", lambda: run_cd_serie_gaps_e_parciais(browser, url, falhas), falhas)
+            executar("CD zero save", lambda: run_cd_navegar_zero_save_e_sem_cache(browser, url, falhas), falhas)
+            executar("CD ui/credito fora", lambda: run_cd_ui_na_e_credito_fora(browser, url, falhas), falhas)
+            executar("CD sentinela", lambda: run_cd_money_unit_sentinela(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()
