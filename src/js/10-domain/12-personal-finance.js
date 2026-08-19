@@ -209,3 +209,144 @@ function pfPendingBefore(currentKey){
   }
   return out;
 }
+
+// ============ PF-02 · BLOCO B — RECEITAS E RECORRÊNCIA ======================
+// Atos do domínio. Todos passam por pfMutate; todos validam ANTES de tocar o
+// estado (o gate não desfaz o que fn fizer). Campos monetários chegam aqui já
+// em centavos (ou null) — o parse é da UI, a guarda de domínio é daqui.
+
+function pfFindIncome(pf, monthKey, incomeId){
+  const m = pf.months[monthKey];
+  if(!m || !Array.isArray(m.incomes)) return null;
+  return m.incomes.find(i=>i && i.id===incomeId) || null;
+}
+
+function pfActAddIncome(monthKey, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  const nome = String((dados&&dados.name)||'').trim();
+  if(!nome) return { ok:false, erro:'descrição obrigatória' };
+  const proj = (dados&&dados.projectedAmount!==undefined) ? dados.projectedAmount : null;
+  if(!pfAmountInDomain(proj,{allowNull:true})) return { ok:false, erro:'valor projetado fora do domínio (≥ 0 ou vazio)' };
+  return pfMutate('income_add', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const rec = { id: pfId('pfi'), name: nome, projectedAmount: proj,
+                  receivedAmount: null, status:'PROJETADA', ruleId: null };
+    m.incomes.push(rec);
+    return { recordId: rec.id };
+  });
+}
+
+// Edição por campo (name | projectedAmount | receivedAmount). Um campo por ato:
+// a edição inline da linha é discreta por natureza (change), não um formulário
+// atômico — cada commit de campo é o ato inteiro.
+function pfActUpdateIncomeField(monthKey, incomeId, campo, valor){
+  const pf0 = S.personalFinance;
+  const alvo = pfFindIncome(pf0, monthKey, incomeId);
+  if(!alvo) return { ok:false, erro:'receita inexistente' };
+  if(campo==='name'){
+    const nome = String(valor||'').trim();
+    if(!nome) return { ok:false, erro:'descrição obrigatória' };
+    return pfMutate('income_update', pf => { pfFindIncome(pf,monthKey,incomeId).name = nome; return { recordId: incomeId }; });
+  }
+  if(campo==='projectedAmount' || campo==='receivedAmount'){
+    if(!pfAmountInDomain(valor,{allowNull:true})) return { ok:false, erro:'valor fora do domínio (≥ 0 ou vazio)' };
+    if(campo==='receivedAmount' && valor===null && alvo.status==='RECEBIDA')
+      return { ok:false, erro:'RECEBIDA exige recebido explícito — mude o status antes de limpar o valor' };
+    return pfMutate('income_update', pf => { pfFindIncome(pf,monthKey,incomeId)[campo] = valor; return { recordId: incomeId }; });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+
+function pfActSetIncomeStatus(monthKey, incomeId, status){
+  if(!['PROJETADA','RECEBIDA','CANCELADA'].includes(status)) return { ok:false, erro:'status desconhecido' };
+  const alvo = pfFindIncome(S.personalFinance, monthKey, incomeId);
+  if(!alvo) return { ok:false, erro:'receita inexistente' };
+  // Guarda do congelamento: RECEBIDA exige receivedAmount explícito (0 vale).
+  if(status==='RECEBIDA' && alvo.receivedAmount===null)
+    return { ok:false, erro:'RECEBIDA exige o valor recebido explícito — informe 0 se nada entrou' };
+  return pfMutate('income_status', pf => { pfFindIncome(pf,monthKey,incomeId).status = status; return { recordId: incomeId }; });
+}
+
+function pfActDeleteIncome(monthKey, incomeId){
+  const alvo = pfFindIncome(S.personalFinance, monthKey, incomeId);
+  if(!alvo) return { ok:false, erro:'receita inexistente' };
+  return pfMutate('income_delete', pf => {
+    const m = pf.months[monthKey];
+    m.incomes = m.incomes.filter(i=>i.id!==incomeId);
+    return { recordId: incomeId };
+  });
+}
+
+// Editar um FANTASMA (projeção de regra em mês virtual) é um ato real: o mês
+// materializa (estampando TODAS as regras vigentes) e a edição cai na estampa
+// da própria regra.
+function pfActEditGhost(monthKey, ruleId, campo, valor){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  if(pfIsMaterialized(monthKey)) return { ok:false, erro:'mês já registrado' };
+  if((campo==='projectedAmount'||campo==='receivedAmount') && !pfAmountInDomain(valor,{allowNull:true}))
+    return { ok:false, erro:'valor fora do domínio (≥ 0 ou vazio)' };
+  return pfMutate('month_materialize_edit', pf => {
+    const m = pfMaterializeMonth(pf, monthKey);
+    const alvo = m.incomes.find(i=>i.ruleId===ruleId);
+    if(!alvo) return { ok:false, erro:'projeção não encontrada na estampa' };
+    if(campo==='name') alvo.name = String(valor||'').trim() || alvo.name;
+    else alvo[campo] = valor;
+    return { recordId: alvo.id };
+  });
+}
+
+// ---- recorrência ------------------------------------------------------------
+// Formulário ATÔMICO (modal): tudo validado, aplicado num ato só. Ligar cria a
+// regra e vincula ruleId; desligar desativa a regra (active:false) e NUNCA
+// apaga receitas históricas já estampadas. Editar regra vigente muda apenas
+// meses ainda virtuais — por construção: regra só é lida por pfVirtualIncomes
+// e pfMaterializeMonth.
+function pfActConfigureRecurrence(monthKey, incomeId, cfg){
+  const alvo = pfFindIncome(S.personalFinance, monthKey, incomeId);
+  if(!alvo) return { ok:false, erro:'receita inexistente' };
+  const ligar = !!(cfg && cfg.recorrente);
+  if(!ligar){
+    if(!alvo.ruleId) return { ok:true, persistido:true, recordId:incomeId }; // nada a fazer
+    return pfMutate('recurrence_off', pf => {
+      const r = pf.recurringIncome.find(x=>x.id===alvo.ruleId);
+      if(r) r.active = false;
+      return { recordId: alvo.ruleId };
+    });
+  }
+  const amount = cfg.amount;
+  if(!(typeof amount==='number' && Number.isSafeInteger(amount) && amount>=0))
+    return { ok:false, erro:'regra recorrente exige valor (≥ 0) em centavos' };
+  const inicio = cfg.startMonth;
+  if(!pfMonthKeyValid(inicio)) return { ok:false, erro:'início da recorrência inválido (YYYY-MM)' };
+  const fim = (cfg.endMonth===null || cfg.endMonth===undefined || cfg.endMonth==='') ? null : cfg.endMonth;
+  if(fim!==null && (!pfMonthKeyValid(fim) || fim < inicio)) return { ok:false, erro:'fim da recorrência inválido (vazio ou ≥ início)' };
+  return pfMutate('recurrence_on', pf => {
+    const receita = pfFindIncome(pf, monthKey, incomeId);
+    let r = receita.ruleId ? pf.recurringIncome.find(x=>x.id===receita.ruleId) : null;
+    if(!r){
+      r = { id: pfId('pfr'), name: receita.name, amount, periodicity:'MENSAL',
+            startMonth: inicio, endMonth: fim, active: true };
+      pf.recurringIncome.push(r);
+      receita.ruleId = r.id;
+    } else {
+      r.name = receita.name; r.amount = amount; r.startMonth = inicio; r.endMonth = fim; r.active = true;
+    }
+    return { recordId: r.id };
+  });
+}
+
+// ---- calculadores (derivados; consumidos pelo Resumo no Bloco D) ------------
+function pfProjectedIncome(m){
+  if(!m || !Array.isArray(m.incomes)) return 0;
+  return m.incomes.reduce((acc,i)=> acc + ((i && i.status!=='CANCELADA' && typeof i.projectedAmount==='number') ? i.projectedAmount : 0), 0);
+}
+function pfKnownReceivedIncome(m){
+  if(!m || !Array.isArray(m.incomes)) return 0;
+  // TODO valor informado soma, INDEPENDENTE do status — dinheiro que entrou, entrou.
+  return m.incomes.reduce((acc,i)=> acc + ((i && typeof i.receivedAmount==='number') ? i.receivedAmount : 0), 0);
+}
+function pfIncomeCoverage(m){
+  const linhas = (m && Array.isArray(m.incomes)) ? m.incomes.filter(Boolean) : [];
+  const conhecidas = linhas.filter(i=>i.receivedAmount!==null && i.receivedAmount!==undefined).length;
+  return { conhecidas, total: linhas.length, completa: conhecidas===linhas.length };
+}

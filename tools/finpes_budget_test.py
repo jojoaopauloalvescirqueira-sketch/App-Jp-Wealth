@@ -212,6 +212,173 @@ def executar(nome, fn, falhas):
         falhas.append(f"{nome}: EXCECAO no harness (sonda sem guarda?): {str(e).splitlines()[-1][:160]}")
 
 
+# ---------- BLOCO B ----------
+
+def run_b_adicionar_materializa_uma_vez(browser, url, falhas):
+    """Mes virtual -> adicionar receita -> materializa EXATAMENTE uma vez."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key = '2026-08';
+        const antes = Object.keys(S.personalFinance.months).length;
+        window.prompt = () => 'Aluguel Sintetico';
+        const r1 = pfActAddIncome(key, { name:'Aluguel Sintetico', projectedAmount: 280000 });
+        const r2 = pfActAddIncome(key, { name:'Freela Sintetico', projectedAmount: null });
+        const m = S.personalFinance.months[key];
+        return { antes, ok: r1.ok && r2.ok, meses: Object.keys(S.personalFinance.months).length,
+                 linhas: m.incomes.length,
+                 recebidoNasce: m.incomes[0].receivedAmount,
+                 projNull: m.incomes[1].projectedAmount,
+                 disco: JSON.parse(localStorage.getItem('jpwealth_v9_state')).personalFinance.months[key].incomes.length };
+    }""")
+    if r["antes"] != 0 or r["meses"] != 1:
+        falhas.append(f"B: materializacao deveria acontecer exatamente uma vez: {r['antes']}->{r['meses']} meses")
+    if not r["ok"] or r["linhas"] != 2 or r["disco"] != 2:
+        falhas.append(f"B: adicionar receitas falhou ou nao persistiu: {r}")
+    if r["recebidoNasce"] is not None:
+        falhas.append("B: receita nova deveria nascer com recebido null")
+    if r["projNull"] is not None:
+        falhas.append("B: projetado vazio deveria ser null, nao coagido")
+    ctx.close()
+
+
+def run_b_guardas_de_valor_e_status(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Salario', projectedAmount: 1200000 });
+        const id = S.personalFinance.months[key].incomes[0].id;
+        const negativa = pfActUpdateIncomeField(key, id, 'receivedAmount', -100);
+        const recSemValor = pfActSetIncomeStatus(key, id, 'RECEBIDA');
+        const poeZero = pfActUpdateIncomeField(key, id, 'receivedAmount', 0);
+        const recComZero = pfActSetIncomeStatus(key, id, 'RECEBIDA');
+        const limpaRecebida = pfActUpdateIncomeField(key, id, 'receivedAmount', null);
+        const i = S.personalFinance.months[key].incomes[0];
+        return { negOk: negativa.ok, semValorOk: recSemValor.ok, zeroOk: poeZero.ok && recComZero.ok,
+                 limpaOk: limpaRecebida.ok, estado: {recebido: i.receivedAmount, status: i.status} };
+    }""")
+    if r["negOk"] is not False:
+        falhas.append("B: valor negativo deveria ser recusado pela guarda de dominio")
+    if r["semValorOk"] is not False:
+        falhas.append("B: RECEBIDA sem recebido explicito deveria ser recusada")
+    if not r["zeroOk"]:
+        falhas.append("B: recebido 0 EXPLICITO deveria ser aceito e permitir RECEBIDA")
+    if r["limpaOk"] is not False:
+        falhas.append("B: limpar recebido de linha RECEBIDA deveria ser recusado")
+    if r["estado"] != {"recebido": 0, "status": "RECEBIDA"}:
+        falhas.append(f"B: estado final incoerente: {r['estado']}")
+    ctx.close()
+
+
+def run_b_cancelada_preserva_realizado(browser, url, falhas):
+    """CANCELADA sai do projetado; o recebido informado permanece no realizado."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Projeto X', projectedAmount: 200000 });
+        pfActAddIncome(key, { name:'Fixa', projectedAmount: 1000000 });
+        const id = S.personalFinance.months[key].incomes[0].id;
+        pfActUpdateIncomeField(key, id, 'receivedAmount', 50000);
+        pfActSetIncomeStatus(key, id, 'CANCELADA');
+        const m = S.personalFinance.months[key];
+        return { projetado: pfProjectedIncome(m), recebido: pfKnownReceivedIncome(m),
+                 aindaExiste: m.incomes.length };
+    }""")
+    if r["projetado"] != 1000000:
+        falhas.append(f"B: CANCELADA deveria sair do projetado (esperava 1.000000, veio {r['projetado']})")
+    if r["recebido"] != 50000:
+        falhas.append(f"B: recebido da cancelada deveria permanecer no realizado (50000), veio {r['recebido']}")
+    if r["aindaExiste"] != 2:
+        falhas.append("B: cancelar nao e apagar — a linha deve continuar")
+    ctx.close()
+
+
+def run_b_recorrencia_fluxo_completo(browser, url, falhas):
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Salario', projectedAmount: 1200000 });
+        const id = S.personalFinance.months[key].incomes[0].id;
+        // liga recorrencia via ATO (o modal chama exatamente isto no confirmar)
+        const liga = pfActConfigureRecurrence(key, id, { recorrente:true, amount:1200000, startMonth:'2026-08', endMonth:null });
+        const setembroVirtual = pfVirtualIncomes('2026-09');
+        // editar a regra: virtual muda, materializado nao
+        const regra = S.personalFinance.recurringIncome[0];
+        const edita = pfActConfigureRecurrence(key, id, { recorrente:true, amount:1300000, startMonth:'2026-08', endMonth:null });
+        const setembroDepois = pfVirtualIncomes('2026-09');
+        const agostoFicou = S.personalFinance.months['2026-08'].incomes[0].projectedAmount;
+        // desligar nao apaga historico
+        const desliga = pfActConfigureRecurrence(key, id, { recorrente:false });
+        const setembroSem = pfVirtualIncomes('2026-09');
+        const historicoFica = S.personalFinance.months['2026-08'].incomes.length;
+        const linha0 = S.personalFinance.months[key].incomes[0] || null;
+        return { ligaOk: liga.ok, ruleId: linha0 ? linha0.ruleId : 'LINHA_APAGADA',
+                 virt1: setembroVirtual.length && setembroVirtual[0].projectedAmount,
+                 virt2: setembroDepois.length && setembroDepois[0].projectedAmount,
+                 agostoFicou, desligaOk: desliga.ok, virtSem: setembroSem.length,
+                 historicoFica, regraFica: S.personalFinance.recurringIncome.length };
+    }""")
+    if not r["ligaOk"] or not r["ruleId"]:
+        falhas.append(f"B: ligar recorrencia falhou ou nao vinculou ruleId: {r}")
+    if r["virt1"] != 1200000:
+        falhas.append(f"B: setembro virtual deveria projetar 1200000; veio {r['virt1']}")
+    if r["virt2"] != 1300000:
+        falhas.append(f"B: editar a regra deveria mudar o mes virtual; veio {r['virt2']}")
+    if r["agostoFicou"] != 1200000:
+        falhas.append(f"B: REGRA EDITADA REESCREVEU MES MATERIALIZADO: {r['agostoFicou']}")
+    if not r["desligaOk"] or r["virtSem"] != 0:
+        falhas.append(f"B: desligar deveria cessar projecoes futuras: {r}")
+    if r["historicoFica"] != 1 or r["regraFica"] != 1:
+        falhas.append("B: desligar APAGOU historico ou a regra — proibido")
+    ctx.close()
+
+
+def run_b_fantasma_edita_materializa(browser, url, falhas):
+    """Editar linha fantasma de mes virtual materializa e aplica na estampa."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        pfMutate('seed', pf => { pf.recurringIncome.push({id:'pfr_g1', name:'Salario', amount:1200000,
+            periodicity:'MENSAL', startMonth:'2026-01', endMonth:null, active:true}); return {}; });
+        const alvo='2026-09';
+        const antes = pfIsMaterialized(alvo);
+        const r1 = pfActEditGhost(alvo, 'pfr_g1', 'receivedAmount', 1150000);
+        const m = S.personalFinance.months[alvo];
+        return { antes, ok: r1.ok, materializou: pfIsMaterialized(alvo),
+                 recebido: m && m.incomes[0].receivedAmount,
+                 projetadoDaRegra: m && m.incomes[0].projectedAmount,
+                 ruleId: m && m.incomes[0].ruleId };
+    }""")
+    if r["antes"] is not False or not r["ok"] or not r["materializou"]:
+        falhas.append(f"B: editar fantasma deveria materializar: {r}")
+    if r["recebido"] != 1150000 or r["projetadoDaRegra"] != 1200000 or r["ruleId"] != "pfr_g1":
+        falhas.append(f"B: estampa+edicao incoerentes: {r}")
+    ctx.close()
+
+
+def run_b_modal_cancelar_zero_mutacao(browser, url, falhas):
+    """Abrir o modal de recorrencia e CANCELAR: zero mutacao, zero save."""
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const key='2026-08';
+        pfActAddIncome(key, { name:'Salario', projectedAmount: 1200000 });
+        window.JPWFinBudget.render();
+        const antes = JSON.stringify(S.personalFinance);
+        let saves = 0; const orig = window.save;
+        window.save = function(){ saves++; return orig.apply(this, arguments); };
+        document.querySelector('[data-fi-cfg]').click();          // abre modal real
+        document.getElementById('fbRecOn').checked = true;         // mexe no formulario
+        document.getElementById('fbRecAmount').value = '9.999,99';
+        document.getElementById('modalCancel').click();            // cancela
+        window.save = orig;
+        return { igual: antes === JSON.stringify(S.personalFinance), saves,
+                 fechou: !document.getElementById('modalOverlay').classList.contains('show') };
+    }""")
+    if not r["igual"] or r["saves"] != 0:
+        falhas.append(f"B: cancelar o modal MUTOU estado ou gravou ({r['saves']} saves)")
+    if not r["fechou"]:
+        falhas.append("B: modal nao fechou no cancelar")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -230,6 +397,12 @@ def main():
             ctx.close()
 
             executar("A write gate", lambda: run_a_write_gate(browser, url, falhas), falhas)
+            executar("B add materializa 1x", lambda: run_b_adicionar_materializa_uma_vez(browser, url, falhas), falhas)
+            executar("B guardas valor/status", lambda: run_b_guardas_de_valor_e_status(browser, url, falhas), falhas)
+            executar("B cancelada preserva", lambda: run_b_cancelada_preserva_realizado(browser, url, falhas), falhas)
+            executar("B recorrencia", lambda: run_b_recorrencia_fluxo_completo(browser, url, falhas), falhas)
+            executar("B fantasma", lambda: run_b_fantasma_edita_materializa(browser, url, falhas), falhas)
+            executar("B modal cancelar", lambda: run_b_modal_cancelar_zero_mutacao(browser, url, falhas), falhas)
             browser.close()
     finally:
         servidor.shutdown()
