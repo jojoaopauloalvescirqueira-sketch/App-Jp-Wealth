@@ -1001,3 +1001,168 @@ function pfCompSeries(M, n){
   for(let i=n-1;i>=0;i--) meses.push(pfMonthAdd(M,-i));
   return meses.map(k=>pfCompMetrics(k));
 }
+
+// ============ PF-05 · CENÁRIOS ==============================================
+// Cenário é HIPÓTESE FINANCEIRA INDEPENDENTE — não é mês futuro, previsão,
+// projeção probabilística nem registro realizado. Invariante central:
+// cenário pode LER/COPIAR um mês como ponto de partida e JAMAIS escreve em
+// months; editar um mês real jamais modifica cenário existente. baselineFrom
+// é PROVENIÊNCIA de uma cópia, nunca vínculo vivo.
+
+const PF_SCENARIO_KINDS = ['PESSIMISTA','BASE','OTIMISTA','LIVRE'];
+
+function pfFindScenario(pf, scenarioId){
+  if(!pf || !Array.isArray(pf.scenarios)) return null;
+  return pf.scenarios.find(s=>s && s.id===scenarioId) || null;
+}
+function pfValidateScenarioMeta(dados){
+  const name = String((dados&&dados.name)||'').trim();
+  if(!name) return { ok:false, erro:'nome do cenário obrigatório' };
+  if(!PF_SCENARIO_KINDS.includes(dados.kind)) return { ok:false, erro:'tipo de cenário desconhecido' };
+  const horizon = (dados.horizon===undefined || dados.horizon===null || dados.horizon==='') ? null : dados.horizon;
+  if(horizon!==null && !pfMonthKeyValid(horizon)) return { ok:false, erro:'horizonte inválido (vazio = HOJE, ou YYYY-MM)' };
+  return { ok:true, name, horizon };
+}
+function pfActAddScenario(dados){
+  const v = pfValidateScenarioMeta(dados||{});
+  if(v.ok===false) return v;
+  return pfMutate('scenario_add', pf => {
+    const rec = { id: pfId('pfs'), name: v.name, horizon: v.horizon, kind: dados.kind,
+                  incomes: [], expenses: [], baselineFrom: null,
+                  createdAt: new Date().toISOString() };
+    pf.scenarios.push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActUpdateScenarioMeta(scenarioId, dados){
+  const alvo = pfFindScenario(S.personalFinance, scenarioId);
+  if(!alvo) return { ok:false, erro:'cenário inexistente' };
+  const v = pfValidateScenarioMeta(dados||{});
+  if(v.ok===false) return v;
+  return pfMutate('scenario_update', pf => {
+    const s = pfFindScenario(pf, scenarioId);
+    s.name = v.name; s.kind = dados.kind; s.horizon = v.horizon;
+    return { recordId: scenarioId };
+  });
+}
+function pfActDeleteScenario(scenarioId){
+  const alvo = pfFindScenario(S.personalFinance, scenarioId);
+  if(!alvo) return { ok:false, erro:'cenário inexistente' };
+  return pfMutate('scenario_delete', pf => {
+    pf.scenarios = pf.scenarios.filter(s=>s.id!==scenarioId);
+    return { recordId: scenarioId };
+  });
+}
+
+// ---- itens (receitas/despesas da hipótese) ---------------------------------
+// Linha só existe com amount EXPLÍCITO: 0 é válido; ausência não cria linha.
+// Sem status, recorrência, canais ou parcelamento — cenário é deliberadamente
+// mais simples que o mês real.
+function pfValidateScenarioItem(dados){
+  const name = String((dados&&dados.name)||'').trim();
+  if(!name) return { ok:false, erro:'nome do item obrigatório' };
+  const amount = dados.amount;
+  if(!(typeof amount==='number' && Number.isSafeInteger(amount) && amount>=0))
+    return { ok:false, erro:'valor obrigatório (≥ 0) — linha sem valor não se cria' };
+  return { ok:true, name, amount };
+}
+function pfActAddScenarioItem(scenarioId, lista, dados){
+  if(!['incomes','expenses'].includes(lista)) return { ok:false, erro:'lista desconhecida' };
+  const alvo = pfFindScenario(S.personalFinance, scenarioId);
+  if(!alvo) return { ok:false, erro:'cenário inexistente' };
+  const v = pfValidateScenarioItem(dados||{});
+  if(v.ok===false) return v;
+  return pfMutate('scenario_item_add', pf => {
+    const s = pfFindScenario(pf, scenarioId);
+    const rec = { id: pfId(lista==='incomes'?'pfsi':'pfse'), name: v.name, amount: v.amount };
+    s[lista].push(rec);
+    return { recordId: rec.id };
+  });
+}
+function pfActUpdateScenarioItem(scenarioId, lista, itemId, campo, valor){
+  const sc = pfFindScenario(S.personalFinance, scenarioId);
+  if(!sc || !Array.isArray(sc[lista])) return { ok:false, erro:'cenário/lista inexistente' };
+  const alvo = sc[lista].find(i=>i && i.id===itemId);
+  if(!alvo) return { ok:false, erro:'item inexistente' };
+  if(campo==='name'){
+    const nome = String(valor||'').trim();
+    if(!nome) return { ok:false, erro:'nome do item obrigatório' };
+    return pfMutate('scenario_item_update', pf => {
+      pfFindScenario(pf,scenarioId)[lista].find(i=>i.id===itemId).name = nome;
+      return { recordId: itemId };
+    });
+  }
+  if(campo==='amount'){
+    if(!(typeof valor==='number' && Number.isSafeInteger(valor) && valor>=0))
+      return { ok:false, erro:'valor obrigatório (≥ 0) — vazio não vale em cenário' };
+    return pfMutate('scenario_item_update', pf => {
+      pfFindScenario(pf,scenarioId)[lista].find(i=>i.id===itemId).amount = valor;
+      return { recordId: itemId };
+    });
+  }
+  return { ok:false, erro:'campo desconhecido' };
+}
+function pfActDeleteScenarioItem(scenarioId, lista, itemId){
+  const sc = pfFindScenario(S.personalFinance, scenarioId);
+  if(!sc || !Array.isArray(sc[lista])) return { ok:false, erro:'cenário/lista inexistente' };
+  if(!sc[lista].some(i=>i && i.id===itemId)) return { ok:false, erro:'item inexistente' };
+  return pfMutate('scenario_item_delete', pf => {
+    const s = pfFindScenario(pf, scenarioId);
+    s[lista] = s[lista].filter(i=>i.id!==itemId);
+    return { recordId: itemId };
+  });
+}
+
+// ---- fórmulas canônicas do cenário (derivadas; jamais persistem) -----------
+function pfScenarioIncome(sc){
+  return (sc && Array.isArray(sc.incomes)) ? sc.incomes.reduce((a,i)=>a+((i&&typeof i.amount==='number')?i.amount:0),0) : 0;
+}
+function pfScenarioExpenses(sc){
+  return (sc && Array.isArray(sc.expenses)) ? sc.expenses.reduce((a,e)=>a+((e&&typeof e.amount==='number')?e.amount:0),0) : 0;
+}
+function pfScenarioSurplus(sc){
+  return pfScenarioIncome(sc) - pfScenarioExpenses(sc);   // negativo é legítimo; sem clamp
+}
+// Cascata do MyTools: saldo desce despesa a despesa, na ordem persistida do
+// array. O último saldo coincide EXATAMENTE com o surplus por construção.
+function pfScenarioCascade(sc){
+  let saldo = pfScenarioIncome(sc);
+  const out = [];
+  for(const e of (sc && Array.isArray(sc.expenses)) ? sc.expenses : []){
+    saldo -= (e && typeof e.amount==='number') ? e.amount : 0;
+    out.push({ item: e, saldo });
+  }
+  return out;
+}
+
+// ---- cópia unidirecional a partir de um mês REAL (Bloco B) -----------------
+// Decisão de produto: cenário é PLANEJAMENTO — copia projectedAmount das
+// receitas e expectedAmount das despesas NÃO canceladas. Nunca recebido,
+// executado ou realizado. Fonte precisa estar MATERIALIZADA (não se registra
+// proveniência de projeção virtual) e a composição planejada COMPLETA —
+// linha relevante sem valor bloqueia a cópia INTEIRA, nomeando as faltas.
+// Ids sempre novos (cópia profunda; nenhuma referência viva). Um único ato.
+function pfActCreateScenarioFromMonth(monthKey, dados){
+  if(!pfMonthKeyValid(monthKey)) return { ok:false, erro:'competência inválida' };
+  if(!pfIsMaterialized(monthKey))
+    return { ok:false, erro:'mês '+monthKey+' não está registrado — cenário não nasce de projeção virtual' };
+  const v = pfValidateScenarioMeta(dados||{});
+  if(v.ok===false) return v;
+  const m = S.personalFinance.months[monthKey];
+  const faltas = [];
+  const incomesFonte = (m.incomes||[]).filter(i=>i && i.status!=='CANCELADA');
+  const expensesFonte = (m.expenses||[]).filter(e=>e && e.status!=='CANCELADO');
+  for(const i of incomesFonte) if(i.projectedAmount===null || i.projectedAmount===undefined) faltas.push('Receita: '+i.name);
+  for(const e of expensesFonte) if(e.expectedAmount===null || e.expectedAmount===undefined) faltas.push('Despesa: '+e.name);
+  if(faltas.length)
+    return { ok:false, erro:'não é possível criar um cenário completo a partir de '+pfMonthLabel(monthKey)
+      +' — valores planejados ausentes: '+faltas.join(' · ')+'. Corrija o mês ou crie o cenário manualmente.' };
+  return pfMutate('scenario_from_month', pf => {
+    const rec = { id: pfId('pfs'), name: v.name, horizon: v.horizon, kind: dados.kind,
+      incomes: incomesFonte.map(i=>({ id: pfId('pfsi'), name: String(i.name||''), amount: i.projectedAmount })),
+      expenses: expensesFonte.map(e=>({ id: pfId('pfse'), name: String(e.name||''), amount: e.expectedAmount })),
+      baselineFrom: monthKey, createdAt: new Date().toISOString() };
+    pf.scenarios.push(rec);
+    return { recordId: rec.id };
+  });
+}
