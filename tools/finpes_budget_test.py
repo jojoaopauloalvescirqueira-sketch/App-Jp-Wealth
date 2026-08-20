@@ -746,6 +746,95 @@ def run_f_resolver_tudo_apaga_banner(browser, url, falhas):
     ctx.close()
 
 
+def run_sentinela_leitura_pfclose02(browser, url, falhas):
+    """PF-CLOSE-02: unidade desconhecida nao autoriza interpretar como BRL.
+
+    Estrutura da tela permanece legivel (nomes, status, parcelas, coberturas,
+    notas), mas nenhum montante e apresentado, nenhum campo monetario expoe
+    valor, nenhum percentual monetariamente derivado sobrevive, escrita segue
+    bloqueada e o round-trip BRL -> XX_UNIT -> BRL restaura exatamente.
+    Zero DEVE virar "—", nao "R$ 0,00".
+    """
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const M = pfCurrentMonthKey();
+        // fixture com valores desacoplados E um zero canonico deliberado
+        pfActAddIncome(M, {name:'Salario', projectedAmount:1000000});
+        const mes = S.personalFinance.months[M];
+        pfActUpdateIncomeField(M, mes.incomes[0].id, 'receivedAmount', 850000);
+        pfActAddExpense(M, {name:'Isento'});
+        pfActUpdateExpenseField(M, mes.expenses[0].id, 'expectedAmount', 0);   // zero canonico
+        pfActUpdateExpenseField(M, mes.expenses[0].id, 'executedCash', 0);
+        pfActUpdateExpenseField(M, mes.expenses[0].id, 'executedCard', 0);
+        pfActSetExpenseInstallments(M, mes.expenses[0].id, {total:24, paid:16});
+        pfActAddAllocation(M, {label:'Reserva', amount:300000});
+        pfActAddNote(M, 'conferir fatura');
+        window.JPWFinBudget.render();
+        const root = document.getElementById('finpesBudgetRoot');
+        const brlTexto = root.innerText;
+        const brlOk = brlTexto.includes('R$ 8.500,00') && brlTexto.includes('R$ 10.000,00')
+                   && brlTexto.includes('R$ 0,00');
+        const foto = JSON.stringify(S.personalFinance);
+        const lsAntes = localStorage.getItem('jpwealth_v9_state');
+        const mesesAntes = Object.keys(S.personalFinance.months).join(',');
+
+        // --- unidade desconhecida ---
+        let saves = 0; const origSave = window.save;
+        window.save = function(){ saves++; return origSave.apply(this, arguments); };
+        S.personalFinance.moneyUnit = 'XX_UNIT';
+        window.JPWFinBudget.render();
+        const t = root.innerText;
+        const semRS = !t.includes('R$');
+        const semZeroBRL = !/R\$\s*0,00/.test(t);
+        const semPercentual = !/%/.test(t);
+        // estrutura nao monetaria preservada
+        const valores = [...root.querySelectorAll('input')].map(i => i.value);
+        const estrutura = valores.includes('Salario') && valores.includes('Isento')
+          && valores.includes('Reserva') && valores.includes('16/24')
+          && t.includes('conferir fatura') && t.includes('PENDENTE')
+          && t.includes('Receitas') && t.includes('Despesas')
+          && t.includes('Resumo do Mês') && t.includes('Destino do Excedente');
+        // nenhum campo monetario expoe valor
+        const semCampoMonetario = root.querySelectorAll('input.fb-money:not(.fb-parc)').length === 0;
+        const inertes = [...root.querySelectorAll('input, select, button')]
+          .filter(el => !el.hasAttribute('data-fb-nav') && !el.hasAttribute('data-fb-today')
+                     && !el.hasAttribute('data-fb-review'))
+          .every(el => el.disabled);
+        // escrita bloqueada
+        const atos = {
+          income: pfActAddIncome(M, {name:'X', projectedAmount:1}).erro,
+          incomeEdit: pfActUpdateIncomeField(M, mes.incomes[0].id, 'receivedAmount', 1).erro,
+          expense: pfActAddExpense(M, {name:'Y'}).erro,
+          expenseEdit: pfActUpdateExpenseField(M, mes.expenses[0].id, 'expectedAmount', 1).erro,
+          alloc: pfActAddAllocation(M, {label:'Z', amount:1}).erro,
+          note: pfActAddNote(M, 'nao deve entrar').erro,
+        };
+        const escritaBloqueada = Object.values(atos)
+          .every(e => e === 'READ_ONLY_UNSUPPORTED_MONEY_UNIT');
+        window.save = origSave;
+        S.personalFinance.moneyUnit = 'BRL_CENTS';
+        const agregadoIntacto = JSON.stringify(S.personalFinance) === foto;
+        const lsIntacto = localStorage.getItem('jpwealth_v9_state') === lsAntes;
+        const semMaterializacao = Object.keys(S.personalFinance.months).join(',') === mesesAntes;
+
+        // --- round-trip ---
+        window.JPWFinBudget.render();
+        const roundTrip = root.innerText === brlTexto;
+        return { brlOk, semRS, semZeroBRL, semPercentual, estrutura, semCampoMonetario,
+                 inertes, escritaBloqueada, atos, zeroSave: saves===0,
+                 agregadoIntacto, lsIntacto, semMaterializacao, roundTrip };
+    }""")
+    for chave, valor in r.items():
+        if chave == 'atos':
+            continue
+        if valor is not True:
+            falhas.append(f"PF-CLOSE-02 budget: {chave} falhou: {json.dumps(r, ensure_ascii=False)[:700]}")
+            break
+    if erros:
+        falhas.append(f"PF-CLOSE-02 budget: pageerror: {erros[:2]}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -764,6 +853,7 @@ def main():
             ctx.close()
 
             executar("A write gate", lambda: run_a_write_gate(browser, url, falhas), falhas)
+            executar("PF-CLOSE-02 sentinela leitura", lambda: run_sentinela_leitura_pfclose02(browser, url, falhas), falhas)
             executar("B add materializa 1x", lambda: run_b_adicionar_materializa_uma_vez(browser, url, falhas), falhas)
             executar("B guardas valor/status", lambda: run_b_guardas_de_valor_e_status(browser, url, falhas), falhas)
             executar("B cancelada preserva", lambda: run_b_cancelada_preserva_realizado(browser, url, falhas), falhas)
