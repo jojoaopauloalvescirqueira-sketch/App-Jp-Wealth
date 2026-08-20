@@ -2,9 +2,29 @@
 
 ## [Unreleased]
 
+### Finanças Pessoais — Fronteira do domínio (PF-CLOSE-01) — 2026-08-19
+
+Branch `feature/personal-finance-domain-boundary`. **Integrada** — candidate
+`bd89c84`, merge `--no-ff` `ff4cf3d` em `main`, publicado em `origin/main`
+(2026-08-19).
+
+Finanças Pessoais passa a ter **cinco destinos**: Visão Geral, Orçamento Mensal,
+Dívidas & Crédito, Comparativo Mensal e Cenários. Inventário e Patrimônio deixam
+de ser etapa futura deste domínio — tornam-se domínio próprio, com roadmap
+independente (`INV-*`), e por isso saíram do submenu, do workspace
+`#finpesInventario`, de `FINPES_VIEWS` e dos dois placeholders que os anunciavam
+(card `Ativos` no Orçamento e card `Patrimônio` no Comparativo). Os dois cards
+eram estáticos — sem parâmetro, sem leitura de estado, sem helper canônico —, de
+modo que **nenhuma métrica financeira foi perdida e nenhuma substituta foi
+fabricada**. Os gates que antes exigiam Inventário passam a proteger a fronteira
+nova: a rota antiga é recusada sem navegação silenciosa e a seção não pode voltar
+a prometer PF-07/PF-08. Zero mudança de domínio, schema ou persistência.
+
 ### Finanças Pessoais — Visão Geral (PF-06) — 2026-08-19
 
-Branch `feature/personal-finance-overview-v2`. Em desenvolvimento — não integrada.
+Branch `feature/personal-finance-overview-v2`. **Integrada** — candidate
+`2377584`, merge `--no-ff` `1a13a91` em `main`, publicado em `origin/main`
+(2026-08-19).
 
 Consolidado derivado, nunca segunda fonte de verdade: quatro cards (mês atual,
 dívida & crédito, vs mês anterior e pendências) que consomem exclusivamente
