@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Alladin ALD-01 C1 — INTEGRACAO da Foundation Infrastructure no app real.
+"""Alladin — INTEGRACAO da fundacao (C1) e do modelo cadastral (C2) no app real.
 
 Prova as propriedades de persistencia do agregado S.alladin no navegador:
   A  migrate de base legada (sem a chave) — nasce de DEFAULTS, vizinhos intactos
@@ -15,6 +15,14 @@ Prova as propriedades de persistencia do agregado S.alladin no navegador:
   I  ato via aldMutate registra no log operacional (dgLogChange) — log
      NAO-canonico por HD-6; nao e prova de ALD-I26
   J  save()===false e prova de nao-escrita no gate
+  M  MIGRACAO v1 -> v2 (ALD-02 C2, exigencia OP-3.1): carimbo da versao sem
+     transformar registro nem tocar vizinhos
+  P  PERSISTENCIA REVERSIVEL (OP-3.3): criar asset -> save -> RELOAD REAL ->
+     asset integro, owners inclusive
+  Q  FALHA PARCIAL NAO SALVA (OP-3.2): ato recusado deixa agregado E disco
+     byte-identicos
+  R  XSS e privacidade: texto livre e owners[].name atravessam como TEXTO; o log
+     operacional nao carrega nome de proprietario
 
 Caso F e condicionado ao historico local: em clone raso sem o SHA base, o caso
 e reportado como nao executado por ambiente (sem marcador de classificacao) e
@@ -42,6 +50,8 @@ LSKEY = "jpwealth_v9_state"
 # Ultima revisao ANTES da fundacao Alladin (merge da Remediation B do PF).
 # Imutavel no historico: e o "build antigo" canonico da prova de rollback.
 OLD_BUILD_SHA = "fc2973134cc72f9e17a747f9299f3979461d8bc8"
+# Build do C1 (ALLADIN_SCHEMA_VERSION=1): o rollback que o bump OP-4 criou.
+C1_BUILD_SHA = "3f1f9bc09b406f76f552a749e1a00b3f9bfcef24"
 
 PRONTO_NOVO = "() => typeof S === 'object' && window.JPWAlladin && typeof aldMutate === 'function'"
 PRONTO_ANTIGO = "() => typeof S === 'object' && typeof save === 'function' && typeof migrate === 'function'"
@@ -107,7 +117,7 @@ def main() -> int:
                 pf: !!(S.personalFinance && S.personalFinance.moneyUnit === 'BRL_CENTS'),
                 saldo: S.params && typeof S.params.saldoIni === 'number',
             })""")
-            esperado = json.dumps({"schemaVersion": 1, "reportingCurrency": "BRL",
+            esperado = json.dumps({"schemaVersion": 2, "reportingCurrency": "BRL",
                                    "instruments": [], "assets": [], "accounts": [],
                                    "cashAccounts": []}, separators=(",", ":"))
             if r["forma"] != esperado:
@@ -120,10 +130,21 @@ def main() -> int:
         executar(falhas, "A", caso_a)
 
         # ---- B: round-trip com registro e campos desconhecidos -------------
-        FIXTURE_B = ("{schemaVersion:1, reportingCurrency:'BRL',"
+        FIXTURE_B = ("{schemaVersion:2, reportingCurrency:'BRL',"
                      "instruments:[{instrumentId:'aldi_fx_1', name:'Petrobras PN', symbol:'PETR4',"
-                     " currency:'BRL', campoDesconhecido:{x:1}}],"
-                     "assets:[], accounts:[], cashAccounts:[],"
+                     " exchange:'B3', country:null, currency:'BRL', assetClass:'RENDA_VARIAVEL',"
+                     " instrumentFamily:'EQUITY_LIKE', externalIdentifiers:{isin:'BRPETRACNPR6'},"
+                     " symbolHistory:[{symbol:'PETR4X', exchange:'B3', from:null, to:'2026-01-02T00:00:00.000Z'}],"
+                     " recordStatus:'ACTIVE', createdAt:'2026-01-01T00:00:00.000Z', campoDesconhecido:{x:1}}],"
+                     "assets:[{assetId:'alda_fx_1', name:'Apartamento', nature:'IMOVEL', category:null,"
+                     " subcategory:null, strategicPurpose:'MORADIA', strategicGroup:null, tags:['moradia'],"
+                     " recordMode:'INDIVIDUAL', owners:[{name:'Joao', shareBp:5000, isSelf:true},"
+                     " {name:'Maria', shareBp:5000}], location:'Sao Paulo', acquisitionDate:null,"
+                     " recordStatus:'ACTIVE', lifecycleStatus:'ACTIVE', createdAt:'2026-01-01T00:00:00.000Z'}],"
+                     "accounts:[{accountId:'aldacc_fx_1', name:'XP', institution:'XP CCTVM',"
+                     " accountType:'BROKERAGE', recordStatus:'ACTIVE', createdAt:'2026-01-01T00:00:00.000Z'}],"
+                     "cashAccounts:[{cashAccountId:'aldc_fx_1', accountId:'aldacc_fx_1', currency:'BRL',"
+                     " recordStatus:'ACTIVE', createdAt:'2026-01-01T00:00:00.000Z'}],"
                      "extensaoFutura:'preservar'}")
 
         def caso_b():
@@ -178,7 +199,7 @@ def main() -> int:
         executar(falhas, "C", caso_c)
 
         # ---- C2: versao futura como STRING de digitos ('2') tambem fail-closed
-        FIXTURE_C2 = "{schemaVersion:'2', reportingCurrency:'BRL', dadoFuturo:[1,2]}"
+        FIXTURE_C2 = "{schemaVersion:'3', reportingCurrency:'BRL', dadoFuturo:[1,2]}"
 
         def caso_c_string():
             ctx, page, erros = boot(browser, url, PRONTO_NOVO, f"S.alladin = {FIXTURE_C2};")
@@ -191,7 +212,7 @@ def main() -> int:
             }}""")
             if not r["intacto"]:
                 falhas.append("C2: versao futura em string foi coagida — fail-closed furado")
-            if not (r["compat"]["readOnly"] is True and r["compat"]["storedSchemaVersion"] == 2
+            if not (r["compat"]["readOnly"] is True and r["compat"]["storedSchemaVersion"] == 3
                     and r["erro"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"C2: bloqueio/exposicao incoerente: {r!r}")
             if erros:
@@ -211,7 +232,7 @@ def main() -> int:
                 assets: JSON.stringify(S.alladin.assets),
                 extra: S.alladin.extra,
             })""")
-            if r["v"] != 1 or r["rc"] != "BRL" or r["inst"] != "[]":
+            if r["v"] != 2 or r["rc"] != "BRL" or r["inst"] != "[]":
                 falhas.append(f"D: envelope nao coagido como contrato: {r!r}")
             if r["assets"] != '[{"assetId":"alda_1","name":"Bem"}]' or r["extra"] != "fica":
                 falhas.append(f"D: conteudo/extras nao preservados: {r!r}")
@@ -224,7 +245,7 @@ def main() -> int:
         def caso_e():
             ctx, page, erros = boot(browser, url, PRONTO_NOVO, "S.alladin = 'corrompido';")
             r = page.evaluate("() => JSON.stringify(S.alladin)")
-            if json.loads(r).get("schemaVersion") != 1 or json.loads(r).get("instruments") != []:
+            if json.loads(r).get("schemaVersion") != 2 or json.loads(r).get("instruments") != []:
                 falhas.append(f"E: contêiner escalar nao renasceu de DEFAULTS: {r}")
             if erros:
                 falhas.append(f"E: pageerror {erros}")
@@ -245,7 +266,7 @@ def main() -> int:
                     tf.extractall(tmp, filter="data")
                 old_server, old_url = serve(directory=tmp)
                 try:
-                    fixture = ("{schemaVersion:1, reportingCurrency:'BRL',"
+                    fixture = ("{schemaVersion:2, reportingCurrency:'BRL',"
                                "instruments:[{instrumentId:'aldi_roll', symbol:'PETR4'}],"
                                "assets:[], accounts:[], cashAccounts:[], marca:'rollback'}")
                     ctx, page, erros = boot(browser, old_url, PRONTO_ANTIGO,
@@ -331,6 +352,221 @@ def main() -> int:
             ctx.close()
         executar(falhas, "HIJ", caso_hij)
 
+
+        # ---- M: migracao v1 -> v2 (exigencia OP-3.1) ------------------------
+        FIXTURE_M = ("{schemaVersion:1, reportingCurrency:'BRL', instruments:[],"
+                     "assets:[{assetId:'alda_legado', name:'Bem legado'}],"
+                     "accounts:[], cashAccounts:[]}")
+
+        def caso_m():
+            ctx, page, erros = boot(browser, url, PRONTO_NOVO, f"S.alladin = {FIXTURE_M};")
+            r = page.evaluate("""() => ({
+                versao: S.alladin.schemaVersion,
+                registro: JSON.stringify(S.alladin.assets),
+                rc: S.alladin.reportingCurrency,
+                compat: JPWAlladin.compat(),
+                pf: !!(S.personalFinance && S.personalFinance.moneyUnit === 'BRL_CENTS'),
+                saldo: !!(S.params && typeof S.params.saldoIni === 'number'),
+            })""")
+            if r["versao"] != 2:
+                falhas.append(f"M: v1 nao migrou para v2: {r['versao']!r}")
+            if r["registro"] != '[{"assetId":"alda_legado","name":"Bem legado"}]':
+                falhas.append(f"M: a migracao TRANSFORMOU o registro: {r['registro']}")
+            if r["rc"] != "BRL" or not (r["pf"] and r["saldo"]):
+                falhas.append("M: migracao tocou moeda de apresentacao ou vizinhos")
+            if r["compat"]["readOnly"] is not False:
+                falhas.append(f"M: estado migrado ficou bloqueado indevidamente: {r['compat']!r}")
+            if erros:
+                falhas.append(f"M: pageerror {erros}")
+            ctx.close()
+        executar(falhas, "M", caso_m)
+
+        # ---- P: persistencia reversivel (exigencia OP-3.3) ------------------
+        def caso_p():
+            ctx, page, erros = boot(browser, url, PRONTO_NOVO)
+            criado = page.evaluate("""() => JPWAlladin.cadastro.addAsset({
+                name: 'Apartamento', nature: 'IMOVEL', recordMode: 'INDIVIDUAL',
+                location: 'Sao Paulo', acquisitionDate: '2020-03-15', tags: ['moradia'],
+                owners: [{name: 'Joao Paulo', shareBp: 5000, isSelf: true},
+                         {name: 'Maria', shareBp: 5000}]})""")
+            if not (criado.get("ok") and criado.get("persistido")):
+                falhas.append(f"P: ato de criacao nao persistiu: {criado!r}")
+            page.reload(wait_until="load")
+            page.wait_for_function(PRONTO_NOVO)
+            depois = page.evaluate(
+                "id => { const a=(S.alladin.assets||[]).filter(x=>x.assetId===id)[0];"
+                " return a ? {nome:a.name, nature:a.nature, life:a.lifecycleStatus, rec:a.recordStatus,"
+                " aq:a.acquisitionDate, tags:JSON.stringify(a.tags), owners:JSON.stringify(a.owners),"
+                " versao:S.alladin.schemaVersion} : null; }", criado.get("recordId"))
+            if not depois:
+                falhas.append("P: asset nao sobreviveu ao reload")
+            else:
+                esperado = ('[{"name":"Joao Paulo","shareBp":5000,"isSelf":true},'
+                            '{"name":"Maria","shareBp":5000}]')
+                if depois["owners"] != esperado:
+                    falhas.append(f"P: owners nao sobreviveram integros: {depois['owners']}")
+                if not (depois["nome"] == "Apartamento" and depois["nature"] == "IMOVEL"
+                        and depois["life"] == "ACTIVE" and depois["rec"] == "ACTIVE"
+                        and depois["aq"] == "2020-03-15" and depois["tags"] == '["moradia"]'
+                        and depois["versao"] == 2):
+                    falhas.append(f"P: campos divergiram apos reload: {depois!r}")
+            if erros:
+                falhas.append(f"P: pageerror {erros}")
+            ctx.close()
+        executar(falhas, "P", caso_p)
+
+        # ---- Q: falha parcial nao salva (exigencia OP-3.2) ------------------
+        def caso_q():
+            ctx, page, erros = boot(browser, url, PRONTO_NOVO)
+            r = page.evaluate(f"""() => {{
+                const conta = JPWAlladin.cadastro.addAccount({{name:'XP', institution:'XP', accountType:'BROKERAGE'}});
+                const antes = JSON.stringify(S.alladin);
+                const discoAntes = localStorage.getItem({json.dumps(LSKEY)});
+                const recusas = [
+                  JPWAlladin.cadastro.addAsset({{name:'X', nature:'IMOVEL', recordMode:'INDIVIDUAL',
+                     owners:[{{name:'A', shareBp:9000}},{{name:'B', shareBp:9000}}]}}),
+                  JPWAlladin.cadastro.addInstrument({{name:'T', symbol:'T', currency:'BRL',
+                     instrumentFamily:'CRYPTO', assetClass:'CRIPTO'}}),
+                  JPWAlladin.cadastro.addCashAccount({{accountId:'inexistente', currency:'BRL'}}),
+                ];
+                return {{ contaOk: conta.ok && !!discoAntes && discoAntes.indexOf(conta.recordId) >= 0,
+                         igual: JSON.stringify(S.alladin) === antes,
+                         discoIgual: localStorage.getItem({json.dumps(LSKEY)}) === discoAntes,
+                         erros: recusas.map(x => x.erro), oks: recusas.map(x => x.ok) }};
+            }}""")
+            if not r["contaOk"]:
+                falhas.append("Q: caminho de ESCRITA morto no disco — a comparacao seria tautologia")
+            if not r["igual"]:
+                falhas.append("Q: ato recusado MUTOU o agregado — falha parcial salva")
+            if not r["discoIgual"]:
+                falhas.append("Q: ato recusado tocou o disco")
+            if any(r["oks"]):
+                falhas.append(f"Q: ato invalido reportou sucesso: {r['oks']!r}")
+            if r["erros"] != ["ALD_OWNERSHIP_ACIMA_DE_100", "ALD_CRYPTO_SEM_NETWORK",
+                              "ALD_ACCOUNT_NAO_ENCONTRADA"]:
+                falhas.append(f"Q: erros nao acusam a propriedade violada: {r['erros']!r}")
+            if erros:
+                falhas.append(f"Q: pageerror {erros}")
+            ctx.close()
+        executar(falhas, "Q", caso_q)
+
+        # ---- R: XSS em texto livre/owners e privacidade do log --------------
+        def caso_r():
+            ctx, page, erros = boot(browser, url, PRONTO_NOVO)
+            r = page.evaluate("""() => {
+                const payload = '<img src=x onerror=window.__xss=1>';
+                const dono = 'Maria <script>window.__xss=1</script>';
+                const res = JPWAlladin.cadastro.addAsset({
+                    name: payload, nature: 'BEM_PESSOAL', recordMode: 'INDIVIDUAL',
+                    location: '<svg onload=window.__xss=1>', tags: ['<b>tag</b>'],
+                    owners: [{name: dono, shareBp: 10000, isSelf: true}]});
+                const a = (S.alladin.assets || []).slice(-1)[0] || {};
+                const log = JSON.stringify((S.dataGovernance.changeLog || []).slice(-1)[0] || {});
+                return { ok: res.ok, xss: window.__xss === undefined,
+                         nomeTexto: a.name === payload,
+                         ownerTexto: !!a.owners && a.owners[0].name === dono,
+                         logSemNome: log.indexOf('Maria') === -1 && log.indexOf('img src') === -1,
+                         logEntidade: log.indexOf('"entity":"alladin"') >= 0 };
+            }""")
+            if not r["ok"]:
+                falhas.append("R: ato legitimo com texto perigoso deveria ser aceito (escape e da UI)")
+            if not r["xss"]:
+                falhas.append("R: payload EXECUTOU durante cadastro/persistencia")
+            if not (r["nomeTexto"] and r["ownerTexto"]):
+                falhas.append(f"R: payload nao atravessou como texto intacto: {r!r}")
+            if not r["logSemNome"]:
+                falhas.append("R: log operacional carregou nome de proprietario — quebra de privacidade")
+            if not r["logEntidade"]:
+                falhas.append("R: ato cadastral nao registrou no log operacional")
+            if erros:
+                falhas.append(f"R: pageerror {erros}")
+            ctx.close()
+        executar(falhas, "R", caso_r)
+
+
+        # ---- F2: ROLLBACK AO BUILD C1 — o cenario que justificou o bump OP-4 -
+        # F prova preservacao por IGNORANCIA (build pre-Alladin). F2 prova
+        # preservacao por FAIL-CLOSED: o C1 conhece o agregado, ve stored=2 >
+        # supported=1 e recusa tudo, mantendo o dado byte-intacto.
+        def caso_f2():
+            tem = subprocess.run(["git", "cat-file", "-e", C1_BUILD_SHA],
+                                 cwd=ROOT, capture_output=True).returncode == 0
+            if not tem:
+                print("F2: nao executado por ambiente (SHA do C1 ausente do clone)")
+                return
+            with tempfile.TemporaryDirectory() as tmp:
+                tar = subprocess.run(["git", "archive", C1_BUILD_SHA], cwd=ROOT,
+                                     capture_output=True, check=True).stdout
+                with tarfile.open(fileobj=io.BytesIO(tar)) as tf:
+                    tf.extractall(tmp, filter="data")
+                srv, c1url = serve(directory=tmp)
+                try:
+                    ctx, page, erros = boot(browser, c1url, PRONTO_NOVO, f"S.alladin = {FIXTURE_B};")
+                    r = page.evaluate(f"""() => {{
+                        const esperado = JSON.stringify({FIXTURE_B});
+                        const intacto = JSON.stringify(S.alladin) === esperado;
+                        const compat = JPWAlladin.compat();
+                        const ato = aldMutate('c2_probe_no_c1', () => ({{recordId:'x'}}));
+                        S.theme = S.theme === 'dark' ? 'light' : 'dark';
+                        const gravou = save();
+                        const persistido = JSON.parse(localStorage.getItem({json.dumps(LSKEY)}));
+                        return {{ intacto, compat, erro: ato.erro, gravou,
+                                 gravouTheme: persistido.theme === S.theme,
+                                 discoIntacto: JSON.stringify(persistido.alladin) === esperado,
+                                 temCadastro: !!(JPWAlladin.cadastro) }};
+                    }}""")
+                    if r["temCadastro"]:
+                        falhas.append("F2: o build extraido NAO e o C1 (ja tem atos cadastrais)")
+                    c = r["compat"]
+                    if not (c["readOnly"] is True and c["storedSchemaVersion"] == 2
+                            and c["supportedSchemaVersion"] == 1):
+                        falhas.append(f"F2: C1 nao entrou em fail-closed sobre agregado v2: {c!r}")
+                    if r["erro"] != "READ_ONLY_FUTURE_SCHEMA":
+                        falhas.append(f"F2: ato no build C1 nao foi recusado: {r['erro']!r}")
+                    if not (r["intacto"] and r["gravou"] and r["gravouTheme"] and r["discoIntacto"]):
+                        falhas.append(f"F2: agregado v2 nao sobreviveu byte-intacto ao build C1: {r!r}")
+                    if erros:
+                        falhas.append(f"F2: pageerror no build C1 {erros}")
+                    ctx.close()
+                finally:
+                    srv.shutdown()
+        executar(falhas, "F2", caso_f2)
+
+        # ---- S: round-trip de BACKUP (export -> import) com registros C2 -----
+        def caso_s():
+            ctx, page, erros = boot(browser, url, PRONTO_NOVO, f"S.alladin = {FIXTURE_B};")
+            r = page.evaluate(f"""() => {{
+                const esperado = JSON.stringify({FIXTURE_B});
+                const blob = dgBuildBackupBlob(1, 'teste.json', new Date().toISOString());
+                return blob.text().then(txt => {{
+                    const envelope = JSON.parse(txt);
+                    const importado = normalizeImportedState(envelope);
+                    return {{ tipo: envelope.tipo, semSegredo: envelope.segredosIncluidos === false,
+                             noEnvelope: JSON.stringify(envelope.state.alladin) === esperado,
+                             aposImport: JSON.stringify(importado.alladin) === esperado,
+                             versao: importado.alladin.schemaVersion,
+                             owners: JSON.stringify(importado.alladin.assets[0].owners),
+                             vivo: JSON.stringify(S.alladin) === esperado }};
+                }});
+            }}""")
+            if r["tipo"] != "jpwealth_full_backup" or not r["semSegredo"]:
+                falhas.append(f"S: envelope de backup fora do contrato: {r!r}")
+            if not r["noEnvelope"]:
+                falhas.append("S: exportacao alterou o agregado")
+            if not r["aposImport"]:
+                falhas.append("S: round-trip export->import NAO preservou o agregado byte a byte")
+            if r["versao"] != 2:
+                falhas.append(f"S: versao apos importacao divergiu: {r['versao']!r}")
+            if r["owners"] != ('[{"name":"Joao","shareBp":5000,"isSelf":true},'
+                               '{"name":"Maria","shareBp":5000}]'):
+                falhas.append(f"S: owners nao sobreviveram ao backup: {r['owners']}")
+            if not r["vivo"]:
+                falhas.append("S: a exportacao/importacao tocou o estado VIVO")
+            if erros:
+                falhas.append(f"S: pageerror {erros}")
+            ctx.close()
+        executar(falhas, "S", caso_s)
+
         browser.close()
     server.shutdown()
 
@@ -339,7 +575,7 @@ def main() -> int:
         for f in falhas:
             print(" -", f)
         return 1
-    print("alladin_foundation_test PASS (A-J; migracao, round-trip, fail-closed, rollback)")
+    print("alladin_foundation_test PASS (A-J + M,P,Q,R,F2,S: migracao v1->v2, round-trip completo, fail-closed, rollback pre-Alladin e no C1, reload, falha parcial, XSS/privacidade, backup)")
     return 0
 
 

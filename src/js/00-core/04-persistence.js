@@ -1017,7 +1017,7 @@ function personalFinanceNormalizeState(){
 // ALD_SUPPORTED_SCHEMA_VERSION em 10-domain/13-alladin.js (o módulo de domínio
 // roda isolado no harness unitário). As duas DEVEM permanecer iguais — o teste
 // de integração afirma a igualdade. Idem aldSchemaVersionLegivel.
-const ALLADIN_SCHEMA_VERSION=1;
+const ALLADIN_SCHEMA_VERSION=2;
 function alladinSchemaVersionLegivel(v){
   if(Number.isInteger(v)) return v;
   if(typeof v==='string' && /^[0-9]+$/.test(v.trim())) return parseInt(v.trim(),10);
@@ -1042,7 +1042,18 @@ function alladinNormalizeState(){
   // Envelope (só para versão suportada/ilegível): versão inteira >= 1; moeda de
   // apresentação string (config de leitura, não dado econômico — ALD-I18);
   // as quatro coleções são listas. Conteúdo interno não é percorrido.
+  // Envelope corrompido volta à versão MAIS BAIXA e percorre a cadeia. Carimbar
+  // a mais alta pularia transformações futuras e faria o dado mentir sobre si
+  // (achado da auditoria C2).
   if(!(Number.isInteger(a.schemaVersion) && a.schemaVersion>=1)) a.schemaVersion=1;
+  // Cadeia de migração: um passo por versão. v1 → v2 (ALD-02 C2) é apenas o
+  // carimbo — nenhum dado é transformado, porque o v1 do C1 declarava só o
+  // envelope e nasceu sem registros. Versão intermediária desconhecida
+  // interrompe a cadeia: não se inventa transformação.
+  while(a.schemaVersion<ALLADIN_SCHEMA_VERSION){
+    if(a.schemaVersion===1){ a.schemaVersion=2; continue; }
+    break;
+  }
   if(typeof a.reportingCurrency!=='string' || !a.reportingCurrency) a.reportingCurrency=def.reportingCurrency;
   for(const k of ['instruments','assets','accounts','cashAccounts']){
     if(!Array.isArray(a[k])) a[k]=[];
