@@ -2,7 +2,8 @@
 """Navegacao de Financas Pessoais (PF-01, Bloco F).
 
 Prova o checklist minimo do NAVIGATION-HIERARCHY.md para o modulo novo:
-menu principal 06, submenu com seis destinos, superficie JPWFin.ui, troca por
+menu principal 06, submenu com cinco destinos (Inventario nao pertence a este
+dominio — ver run_fronteira_do_dominio), superficie JPWFin.ui, troca por
 hidden+inert com nos MONTADOS, destino inicial, e a doutrina que aqui e tambem
 fronteira de dominio: NAVEGAR JAMAIS ESCREVE NO ESTADO — abrir o modulo ou
 trocar de workspace nao pode materializar mes nem disparar save().

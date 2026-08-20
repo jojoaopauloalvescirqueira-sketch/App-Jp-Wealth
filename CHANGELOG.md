@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+### Finanças Pessoais — Consistência da leitura monetária (PF-CLOSE-02) — 2026-08-19
+
+Branch `feature/personal-finance-money-unit-sentinel`. **Integrada** — candidate
+`05aa41b`, merge `--no-ff` `4b86bc6` em `main`, publicado em `origin/main`
+(2026-08-19).
+
+Sob `moneyUnit` não suportada, o Orçamento Mensal (PF-02) e Dívidas & Crédito
+(PF-03) deixam de interpretar os inteiros guardados como BRL. Adotam o padrão
+estrutural do PF-05: a tela **permanece legível** — nomes, status, parcelas,
+notas, credor, instituição, vigência e coberturas continuam visíveis — e apenas
+a semântica monetária é recusada. Viram `—` todos os montantes e as razões
+derivadas deles (comprometimento, utilização por linha, utilização consolidada,
+dívida/limite); os campos monetários deixam de existir como input, de modo que
+o valor não é exposto nem editável; o badge de estouro, que é inferência
+monetária, é suprimido. Zero canônico **não** vira `R$ 0,00`. PF-04 e PF-06
+mantêm a recusa integral; PF-05 fica intacto.
+
+A autoridade é a já existente `pfWriteBlockReason()` — provado por leitura que
+a guarda tem ramo único e que bloqueio ⟺ unidade não suportada, de modo que
+reutilizá-la na leitura não acopla write-block a ocultação monetária. A escrita
+segue barrada pelo write gate canônico, o render não salva nem materializa, e o
+round-trip `BRL_CENTS → unidade desconhecida → BRL_CENTS` restaura a
+apresentação exatamente, com o agregado preservado byte a byte. Zero mudança de
+domínio, schema ou persistência.
+
 ### Finanças Pessoais — Fronteira do domínio (PF-CLOSE-01) — 2026-08-19
 
 Branch `feature/personal-finance-domain-boundary`. **Integrada** — candidate

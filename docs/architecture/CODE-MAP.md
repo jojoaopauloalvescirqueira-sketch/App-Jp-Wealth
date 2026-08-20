@@ -2,7 +2,7 @@
 
 Fotografia integrada localmente em `main` em 2026-08-14 (fonte material
 `7a93602`, merge `a188f29`, reconciliação `f1c1f36`):
-`src/js/manifest.json` contém 65 scripts clássicos. O manifest é a fonte única
+`src/js/manifest.json` contém 74 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
 
@@ -77,6 +77,13 @@ a lista material mudar.
 | 65 | `src/js/20-ui/15-pivot-studies.js` | Pivots: workspace de estudos (estudos por período, CRUD de pivots, resumo, filtros) |
 | 66 | `src/js/10-domain/11-operation-lifecycle.js` | Operação Única: ciclo de vida, snapshot histórico, finalização transacional e superfície de revisão |
 | 67 | `src/js/20-ui/16-operation-history.js` | Histórico: workspace somente leitura das operações finalizadas |
+| 68 | `src/js/10-domain/12-personal-finance.js` | Finanças Pessoais: núcleo do agregado `S.personalFinance` — schema v1 congelado, BRL_CENTS, write gate, materialização de mês, dívida temporal, comparativo e cenários |
+| 69 | `src/js/20-ui/17-finpes-views.js` | Finanças Pessoais: troca dos cinco workspaces por hidden+inert e face do sentinela de unidade monetária |
+| 70 | `src/js/20-ui/18-finpes-budget.js` | Orçamento Mensal: receitas, despesas, resumo do mês, destino do excedente e informações importantes |
+| 71 | `src/js/20-ui/19-finpes-debts.js` | Dívidas & Crédito: identidade temporal da dívida, observações por competência e limites de crédito vigentes |
+| 72 | `src/js/20-ui/20-finpes-comparison.js` | Comparativo Mensal: M−1 e M−12 com estados COMPLETE/PARTIAL/UNAVAILABLE e série de 12 meses com lacunas honestas |
+| 73 | `src/js/20-ui/21-finpes-scenarios.js` | Cenários: hipóteses independentes agrupadas por horizonte, com cascata e cópia unidirecional de mês registrado |
+| 74 | `src/js/20-ui/22-finpes-overview.js` | Visão Geral: consolidado derivado de quatro cards — mês atual, dívida & crédito, vs mês anterior e pendências |
 
 ## Laboratório de Probabilidade
 
