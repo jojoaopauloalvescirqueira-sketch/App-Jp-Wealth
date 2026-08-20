@@ -117,7 +117,12 @@ PF-01 Fundação (N2, merge `59a9681`) → PF-02 Orçamento Mensal (N3, `f6a7ffe
 PF-03 Dívidas & Crédito (N3, `73bdaab`) → PF-04 Comparativo (N3, `bc6752a`) →
 PF-05 Cenários (**N3**, `46dcbe6`) → PF-06 Visão Geral (N1 condicionado a só
 compor valores canônicos; conduzido proceduralmente como N3, `1a13a91`) →
-PF-CLOSE-01 fronteira do domínio (`ff4cf3d`).
+PF-CLOSE-01 fronteira do domínio (`ff4cf3d`) → PF-CLOSE-02 consistência da
+leitura monetária (`4b86bc6`): sob `moneyUnit` não suportada, PF-02 e PF-03
+passam a recusar a interpretação como BRL — estrutura legível, montantes e
+razões derivadas em `—`, campos monetários sem valor exposto —, alinhando-se
+ao invariante que PF-04/PF-06 já cumpriam por recusa integral e PF-05 pelo
+mesmo padrão estrutural.
 
 O domínio tem **cinco destinos**: Visão Geral, Orçamento Mensal, Dívidas &
 Crédito, Comparativo Mensal e Cenários.
