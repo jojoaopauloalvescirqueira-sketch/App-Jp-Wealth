@@ -131,7 +131,9 @@ Crédito, Comparativo Mensal e Cenários.
 > Até 2026-08-19 este plano encadeava "PF-07 Inventário → PF-08 integrações
 > patrimoniais (+ `inventoryAssetRef`, bump 1→2)". Decisão de produto posterior
 > retirou Inventário/Patrimônio deste domínio: passam a ser **domínio próprio,
-> com roadmap independente `INV-*`**. `PF-07` e `PF-08` não existem. O bump de
+> com roadmap independente `INV-*`** — desde 2026-08-20 nomeado **Alladin**
+> (roadmap `ALD-*`, spec JPW-ALLADIN-SPEC V1.2.1; fundação técnica integrada
+> pelo ALD-01 C1, merge `c6c1aa3`). `PF-07` e `PF-08` não existem. O bump de
 > schema 1→2 que estava reservado ao `inventoryAssetRef` fica **sem reserva** —
 > qualquer migração futura volta a exigir PARAR, reportar e propor migração
 > formal, como manda o congelamento do schema v1. `PF-CLOSE-01` (merge

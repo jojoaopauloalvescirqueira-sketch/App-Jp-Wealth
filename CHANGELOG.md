@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+### Alladin — Fundação C1: Foundation Infrastructure (ALD-01) — 2026-08-20
+
+Branch `feature/alladin-foundation-c1`. **Integrada** — candidate `85d1911`,
+merge `--no-ff` `c6c1aa3` em `main`, publicado em `origin/main` (2026-08-20).
+
+Nasce o domínio **Alladin** (Sistema Patrimonial e Consolidador de
+Investimentos; ex-roadmap `INV-*`, renomeado pela spec canônica
+JPW-ALLADIN-SPEC V1.2.1) como **infraestrutura técnica apenas** — nenhuma
+entidade cadastral, UI, ledger, valuation, performance ou integração.
+Agregado `S.alladin` v1 (`schemaVersion`, `reportingCurrency`, quatro coleções
+vazias) com `alladinNormalizeState()` em `migrate()`: base legada ganha a chave;
+**fail-closed** para `schemaVersion` futura legível (inteiro ou string de
+dígitos) — agregado byte-intacto, todo ato recusado, incompatibilidade exposta
+em `JPWAlladin.compat()`. Dinheiro `{amount, currency}` em unidade mínima
+inteira (schema aceita qualquer ISO 4217; runtime BRL/USD, extensível por
+dado); `aldId`; write gate `aldMutate` cujo veredito de persistência nunca é
+mascarado por `fn` otimista (correção de auditoria sobre o precedente
+`pfMutate`); `dgLogChange` apenas como log operacional não-canônico (HD-6 —
+`ALD-I26` deferred ao ALD-07). Suítes novas no tier `standard` (30; full 41):
+`alladin-unit` (Chromium isolado, sem app, zero rede) e `alladin-foundation`
+(migração, round-trip byte-idêntico, fail-closed, rollback executável por
+build antigo via `git archive fc29731`). Full 41/41 no candidato e na main
+integrada; auditoria independente com zero graves e quatro moderados
+corrigidos pré-commit. Resíduo conhecido (deferred, gate próprio): referências
+`INV-*` em comentários de código; reconciliação documental nesta entrega C4.
+
 ### Finanças Pessoais — Consistência da leitura monetária (PF-CLOSE-02) — 2026-08-19
 
 Branch `feature/personal-finance-money-unit-sentinel`. **Integrada** — candidate
