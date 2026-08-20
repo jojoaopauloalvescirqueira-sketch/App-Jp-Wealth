@@ -1,14 +1,17 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-20
-Source revision representada: `c66479ac053dafb6f7ff624e386a9b8274305f04`
-- Branch atual: `main` (`main` = `origin/main` = `c66479a`)
+Source revision representada: `46bb7761dc663e231bafc2146bc4dd4396e3b014`
+- Branch atual: `main` (`main` = `origin/main` = `46bb776`)
 - **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
   `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
   tag `archived/governanca-multiagente`. Até aqui `.github/` só tinha
-  `pull_request_template.md`. **A primeira execução ainda não aconteceu** — o
-  workflow só roda no GitHub, e `main` ainda não foi publicada com ele. Detalhe
-  na seção própria abaixo.
+  `pull_request_template.md`. **Atualização de 2026-08-20:** `main` já foi
+  publicada com o workflow diversas vezes (pushes `fc29731`, `c6c1aa3`,
+  `46bb776`, verificados read-only desta máquina), logo o gatilho `push: main`
+  ocorreu; **os resultados das execuções no GitHub não são verificáveis deste
+  ambiente** (sem credencial para a API — `gh` indisponível). Detalhe na seção
+  própria abaixo.
 - Commit material anterior: série `b65dad3 → 6eee442` na branch
   `feature/exec-economic-calendar`
 - **Calendário Econômico no Execution Board** (2026-08-17): terceiro destino do
@@ -54,6 +57,45 @@ Source revision representada: `c66479ac053dafb6f7ff624e386a9b8274305f04`
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
+## Alladin — Fundação C1 (ALD-01) — 2026-08-20
+
+O domínio **Alladin** (Sistema Patrimonial e Consolidador de Investimentos;
+ex-roadmap `INV-*`, renomeado pela spec canônica JPW-ALLADIN-SPEC V1.2.1,
+externa ao repo) existe no produto como **fundação técnica apenas**. Cadeia de
+proveniência integral, cada elo verificado por fingerprint:
+
+| Etapa | Identificador |
+|---|---|
+| ALD-01 C1 candidate (fingerprint) | `fe616a7caf709faf3d62b9d2bbc93c0669a869bb4e371c02154766998555038a` |
+| Commit da feature | `85d1911` |
+| Merge `--no-ff` em `main` | `c6c1aa3` |
+| Reconciliação documental C4-A (merge) | `46bb776` |
+
+**O que existe:** agregado `S.alladin` v1 (`schemaVersion`, `reportingCurrency`,
+quatro coleções vazias); `alladinNormalizeState()` em `migrate()` com
+fail-closed para `schemaVersion` futura legível (inteiro ou string de dígitos —
+agregado byte-intacto, todo ato recusado, incompatibilidade exposta em
+`JPWAlladin.compat()`); dinheiro `{amount, currency}` em unidade mínima inteira
+(schema ISO 4217 aberto; runtime BRL/USD extensível por dado); `aldId`; write
+gate `aldMutate` com veredito de persistência inviolável; duas suítes no tier
+`standard` (`alladin-unit` em Chromium isolado sem app; `alladin-foundation`
+com migração, round-trip, fail-closed e rollback executável por build antigo
+via `git archive fc29731`). Full 41/41 no candidato e na `main` integrada;
+auditoria independente com zero graves e quatro moderados corrigidos pré-commit.
+
+**O que NÃO existe** (estado real, não desejado): entidades cadastrais (Asset,
+Instrument, Account, CashAccount), UI, ledger, holdings, valuation, performance,
+allocation, renda, passivos patrimoniais e integrações Trading/PF/FX — **nada
+do domínio econômico foi iniciado**. C2 (modelo cadastral) não autorizado.
+
+**Resíduos registrados:** `ALD-I26` (Audit Trail) deferred ao ALD-07 por
+decisão HD-6 — `dgLogChange` é log operacional não-canônico; referências
+`INV-*` em comentários de código (`index.html:188/1044`,
+`22-finpes-overview.js:11-12`, `12-personal-finance.js:493`) permanecem —
+deferred, gate dedicado futuro, impacto nenhum; feature branch
+`feature/alladin-foundation-c1` preservada como evidência histórica
+(FEATURE-CLEANUP-GATE futuro decidirá).
+
 ## Finanças Pessoais V1 — 2026-08-18 a 2026-08-19
 
 Oito entregas integradas e publicadas em `origin/main`, em série sobre `main`:
@@ -78,7 +120,8 @@ utilização são recalculados a cada render.
 
 **Fronteira do domínio.** Inventário e Patrimônio **não** pertencem a Finanças
 Pessoais. A decisão de produto de 2026-08-19 os moveu para domínio próprio com
-roadmap independente `INV-*`; `PF-07` e `PF-08` não existem. `PF-CLOSE-01`
+roadmap independente `INV-*` — desde 2026-08-20 nomeado **Alladin** (roadmap
+`ALD-*`; fundação integrada, ver seção acima); `PF-07` e `PF-08` não existem. `PF-CLOSE-01`
 removeu do runtime o submenu, o workspace `#finpesInventario`, a entrada em
 `FINPES_VIEWS` e os dois placeholders que anunciavam esse futuro, sem perda de
 métrica financeira. Resíduo conhecido: o comentário sobre `inventoryAssetRef`
@@ -334,9 +377,11 @@ Playwright para validar sintaxe JavaScript.
 
 **Pendências desta superfície:**
 
-- **A primeira execução não aconteceu.** O workflow entra em vigor no próximo
-  `git push origin main`, que o dispara no mesmo ato — a estreia do CI será
-  sobre ele mesmo.
+- **Gatilho já ocorreu; resultado não verificado.** (Atualização de
+  2026-08-20:) `main` foi publicada com o workflow em `fc29731`, `c6c1aa3` e
+  `46bb776` — o `push: main` disparou a estreia no GitHub. Os resultados das
+  execuções não são verificáveis deste ambiente (sem credencial de API);
+  conferir na aba Actions do repositório é pendência do gestor.
 - **Os dois SHAs de action pinados não foram verificados**
   (`actions/checkout@11bd719`, `actions/setup-python@a26af69`). A máquina de
   trabalho não tem credencial de rede para a API do GitHub. A pinagem por SHA é
@@ -485,11 +530,11 @@ precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
 
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
-- `src/js/manifest.json` contém 74 scripts. Os 67 da fotografia anterior mais
-  os sete de Finanças Pessoais: `10-domain/12-personal-finance.js` e
-  `20-ui/17..22-finpes-*.js` (visões, orçamento, dívidas, comparativo, cenários
-  e visão geral). `sw.js`, o HTML e o portátil permanecem reconciliados, e o
-  precache cobre os 74.
+- `src/js/manifest.json` contém 75 scripts. Os 67 da fotografia de 2026-08-17,
+  os sete de Finanças Pessoais (`10-domain/12-personal-finance.js` e
+  `20-ui/17..22-finpes-*.js`) e, desde o ALD-01 C1, `10-domain/13-alladin.js`
+  (fundação Alladin). `sw.js`, o HTML e o portátil permanecem reconciliados, e
+  o precache cobre os 75. Tiers: `fast` 4, `standard` 30, `full` 41.
 - As seis telas principais compartilham o shell horizontal do protótipo:
   Dashboard, Execution Board, Contas, Contabilidade, Planejamento FX e
   **Finanças Pessoais** (`#finpes`, menu `06`). A navegação clássica por
