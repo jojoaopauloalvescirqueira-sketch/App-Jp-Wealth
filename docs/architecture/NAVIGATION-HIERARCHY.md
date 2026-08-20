@@ -5,8 +5,10 @@ a possuir um segundo nível de navegação no JP Wealth. Ele descreve arquitetur
 de interface, não autoriza automaticamente aplicar submenus a outros módulos.
 Cada nova adoção continua exigindo tarefa e aprovação próprias.
 
-Adotam o padrão hoje: **Planejamento** (`fxplan`) e **Execution Board** Finanças Pessoais (`finpes`, seis destinos, superfície `window.JPWFin.ui`, teste `tools/finpes_navigation_test.py`) adota o padrão desde PF-01 (2026-08-18).
-(`exec`).
+Adotam o padrão hoje: **Planejamento** (`fxplan`), **Execution Board** (`exec`) e
+**Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
+Dívidas & Crédito, Comparativo Mensal e Cenários —, superfície `window.JPWFin.ui`,
+teste `tools/finpes_navigation_test.py`), esta desde PF-01 (2026-08-18).
 
 ## Estrutura canônica
 

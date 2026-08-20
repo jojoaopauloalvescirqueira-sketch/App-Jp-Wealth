@@ -22,8 +22,8 @@
 - Estudos NoCoda: `docs/architecture/NOCODA-STUDIES.md` — geometria do canal,
   identidade de instrumento e o agregado `S.nocoda`.
 - Estudos dos Pivots: `docs/architecture/PIVOT-STUDIES.md` — derivação,
-- Finanças Pessoais: `docs/architecture/PERSONAL-FINANCE.md` — contrato do agregado `S.personalFinance` (schema v1 congelado, BRL_CENTS, materialização de mês, dívida temporal).
   critério de correção, estatística descritiva e o agregado `S.pivotStudies`.
+- Finanças Pessoais: `docs/architecture/PERSONAL-FINANCE.md` — contrato do agregado `S.personalFinance` (schema v1 congelado, BRL_CENTS, materialização de mês, dívida temporal).
 - MEI-JP: fonte normativa aplicavel, implementacao MEI, historico patrimonial e auditoria matematica registrada.
 - Governanca/agentes: `AGENTS.md`, esta pagina, `AI-WORKFLOW.md`, `QUALITY-GATES.md` e skills locais.
 
