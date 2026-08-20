@@ -1001,6 +1001,53 @@ function personalFinanceNormalizeState(){
     if(!Array.isArray(pf[k])) pf[k]=[];
   }
 }
+// ---- Alladin: guarda estrutural de boot (ALD-01 C1; schema v1) --------------
+// Contrato: ALD-01 Proposal Rev.2 §1.2. Mesmas duas leis do normalizador de
+// Finanças Pessoais (reparo de FORMA; CONTEÚDO jamais tocado), mais uma terceira,
+// que o endurece:
+//
+//   FAIL-CLOSED — schemaVersion armazenada MAIOR que a suportada significa que
+//     este build não sabe o que o dado é. Não se "ajuda" convertendo o que se
+//     reconhece: a normalização RETORNA SEM TOCAR UM BYTE do agregado, e o
+//     write gate do domínio (aldWriteBlockReason, 10-domain/13-alladin.js)
+//     recusa todo ato. Integridade dos dados > disponibilidade temporária.
+//
+// Nunca lança; idempotente; campos desconhecidos atravessam intactos.
+// ATENÇÃO: ALLADIN_SCHEMA_VERSION é deliberadamente DUPLICADA como
+// ALD_SUPPORTED_SCHEMA_VERSION em 10-domain/13-alladin.js (o módulo de domínio
+// roda isolado no harness unitário). As duas DEVEM permanecer iguais — o teste
+// de integração afirma a igualdade. Idem aldSchemaVersionLegivel.
+const ALLADIN_SCHEMA_VERSION=1;
+function alladinSchemaVersionLegivel(v){
+  if(Number.isInteger(v)) return v;
+  if(typeof v==='string' && /^[0-9]+$/.test(v.trim())) return parseInt(v.trim(),10);
+  return null;
+}
+function alladinNormalizeState(){
+  const def=DEFAULTS.alladin;
+  if(!S.alladin || typeof S.alladin!=='object' || Array.isArray(S.alladin)){
+    // Contêiner ausente ou de tipo não-contêiner: nasce vazio. Um escalar aqui
+    // não carrega registro algum (registros vivem nas coleções) — não há dado
+    // do operador a preservar dentro dele.
+    S.alladin=structuredClone(def);
+    return;
+  }
+  const a=S.alladin;
+  // FAIL-CLOSED antes de qualquer coerção: versão futura LEGÍVEL (inteiro ou
+  // string de dígitos — a grafia provável de um backup editado à mão) ⇒
+  // agregado intocado, byte a byte. Versão ilegível (float, lixo) é envelope
+  // corrompido de versão desconhecida: cai na coerção documentada abaixo.
+  const vLegivel=alladinSchemaVersionLegivel(a.schemaVersion);
+  if(vLegivel!==null && vLegivel>ALLADIN_SCHEMA_VERSION) return;
+  // Envelope (só para versão suportada/ilegível): versão inteira >= 1; moeda de
+  // apresentação string (config de leitura, não dado econômico — ALD-I18);
+  // as quatro coleções são listas. Conteúdo interno não é percorrido.
+  if(!(Number.isInteger(a.schemaVersion) && a.schemaVersion>=1)) a.schemaVersion=1;
+  if(typeof a.reportingCurrency!=='string' || !a.reportingCurrency) a.reportingCurrency=def.reportingCurrency;
+  for(const k of ['instruments','assets','accounts','cashAccounts']){
+    if(!Array.isArray(a[k])) a[k]=[];
+  }
+}
 // ---- S.params: o denominador de tudo ----------------------------------------
 // O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
 // presente no arquivo, nenhuma sub-chave faltante era reposta — e params era o
@@ -1048,6 +1095,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   pivotStudiesNormalizeState(); // Estudos dos Pivots: mesma regra — lista histórica de estudos por período
   operationNormalizeState(); // Operação Única: identidade da operação viva + envelope do histórico
   personalFinanceNormalizeState(); // Finanças Pessoais: forma do agregado; conteúdo jamais tocado
+  alladinNormalizeState(); // Alladin: forma do agregado; versão futura ⇒ fail-closed integral
   // migração por-instrumento: estados salvos antes desta versão não têm 'updated'/'banned'.
   // Sem isso, bloqueios normativos como XAUUSD e US500 seriam perdidos silenciosamente em contas já em uso.
   if(Array.isArray(S.instruments)){

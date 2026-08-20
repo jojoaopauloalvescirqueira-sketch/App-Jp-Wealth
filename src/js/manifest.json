@@ -20,13 +20,13 @@
       "order": 3,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "4bf0ce7fdd927a209f5978354f28e2c184945616d114dc417c03c8bce1c00102"
+      "sha256": "fb030024719ae1d6fb715fb51c731f0e686111aef5fdc13362319e6b9c0a41b8"
     },
     {
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "75252da1639af560d082ffda3b8327b9d556c32b6449ef71ac9b5b0abecda79c"
+      "sha256": "978f811e7d08e45ec0bc9a8b83ceea87f3c751f96ab119398336cf6afd397d5b"
     },
     {
       "order": 5,
@@ -445,6 +445,11 @@
     {
       "path": "src/js/20-ui/22-finpes-overview.js",
       "sha256": "4a807a90d89f06cca07f90378e682a36832b442871e31e90b4bbfe98f93da048"
+    },
+    {
+      "path": "src/js/10-domain/13-alladin.js",
+      "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
+      "sha256": "d8371978ab92cee98f2e5a31e723ed4c059c76f67c18d5e909b19816bee23e3f"
     }
   ]
 }
