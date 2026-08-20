@@ -1,8 +1,8 @@
 # Estado atual do projeto
 
-- Data da fotografia: 2026-08-19
-Source revision representada: `ff4cf3d`
-- Branch atual: `main` (`main` = `origin/main` = `ff4cf3d`)
+- Data da fotografia: 2026-08-20
+Source revision representada: `613c78b2440b1b7ef528bde98713fa7a51fd8a39`
+- Branch atual: `main` (`main` = `origin/main` = `613c78b`)
 - **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
   `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
   tag `archived/governanca-multiagente`. Até aqui `.github/` só tinha
@@ -31,15 +31,16 @@ Source revision representada: `ff4cf3d`
   (merge `b1d0ab29c10aaf6ddf12276f03df781bd48ba0a6`)
 - Submenu Estudos dos Pivots: integrado em `main` (`7a93602`, merge `a188f29`,
   reconciliação `f1c1f36`).
-- Estado de publicação: `origin/main` está em `c5b0b86`, de modo que **toda a
-  série de submenus, inclusive os Estudos dos Pivots, já foi publicada** — o
-  registro anterior de "push não executado" descrevia a sessão que o escreveu,
-  não o estado do remoto. Somente os três commits desta reconciliação
-  (`6964ab6`, `87019b6`, `df964b9`) estão à frente e aguardam push do gestor.
-  Ressalva: a comparação usa o ref local de `origin/main`; `git fetch` falhou
-  nesta máquina por ausência de credenciais, então o remoto ao vivo não foi
-  consultado. O teste manual em navegador segue pendente — o gestor autorizou
-  merge e commit sem essa etapa.
+- Estado de publicação **em 2026-08-17** (registro do episódio; não descreve o
+  remoto de hoje): `origin/main` estava em `c5b0b86`, de modo que **toda a
+  série de submenus, inclusive os Estudos dos Pivots, já havia sido publicada** —
+  o registro anterior de "push não executado" descrevia a sessão que o escreveu,
+  não o estado do remoto. Somente os três commits daquela reconciliação
+  (`6964ab6`, `87019b6`, `df964b9`) estavam à frente e aguardavam push do gestor.
+  Ressalva daquele momento: a comparação usou o ref local de `origin/main`;
+  `git fetch` falhou naquela máquina por ausência de credenciais, então o remoto
+  ao vivo não foi consultado. O teste manual em navegador seguia pendente — o
+  gestor autorizou merge e commit sem essa etapa.
 - Correções de segurança dos três achados `Medium`: integradas em `main`
   (`4635794`, merge `dc55120`, reconciliação `f0aac02`) e publicadas.
 - Migração do Motor de Lote: integrada em `main` (`792b705`, merge `043da1b`,
