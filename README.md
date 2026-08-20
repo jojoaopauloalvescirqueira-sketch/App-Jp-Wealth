@@ -18,13 +18,14 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 
 ## Funcionalidades
 
-### Núcleo operacional — cinco áreas
+### Núcleo operacional — seis áreas
 
 - **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
 - **Execução** — registro de ordens sob as regras do Estatuto: fases, risco programado, classificação de stops (2 ATR, Raiz-N), alavancagem.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
 - **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
+- **Finanças Pessoais** — orçamento doméstico em centavos (`BRL_CENTS`), com Visão Geral consolidada, Orçamento Mensal (receitas, despesas e destino da sobra), Dívidas & Crédito, Comparativo Mensal e Cenários. Tudo derivado do estado vivo: totais, coberturas, sobras e utilização nunca são persistidos, e mês só nasce por ato de edição — abrir não materializa. Inventário e Patrimônio **não** pertencem a este domínio (roadmap próprio `INV-*`).
 
 ### Onboarding e período operacional
 
@@ -81,7 +82,7 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 65 scripts do manifest também estejam no precache. Durante uma
+exige que os 74 scripts do manifest também estejam no precache. Durante uma
 atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
 continua usando um build integral, sem combinar HTML novo com scripts cacheados de
 outro build. O ícone tem variantes
@@ -111,9 +112,9 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (13 —
-inclui smoke, Central de Configurações, Galton Board, Planejamento FX e cotação
-USD/BRL em Chromium real) e **full** (24 verificações, incluindo segurança de importação/XSS, senha de
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (28 —
+inclui smoke, Central de Configurações, Galton Board, Planejamento FX, cotação
+USD/BRL e as nove suítes de Finanças Pessoais em Chromium real) e **full** (39 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.

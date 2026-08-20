@@ -112,9 +112,33 @@ utilização, rótulo ATIVA/QUITADA, relevância de dívida, patrimônio.
 
 ## Plano e classificação
 
-PF-01 Fundação (N2, esta entrega) → PF-02 Orçamento Mensal (N3) → PF-03
-Dívidas & Crédito (N3) → PF-04 Comparativo (N3) → PF-05 Cenários (**N3**) →
-PF-06 Visão Geral (N1, condicionado a só compor valores canônicos) → PF-07
-Inventário → PF-08 integrações patrimoniais (+ `inventoryAssetRef`, bump 1→2).
-FUTURE: Cartão & Parcelamentos (então `executedCard` torna-se derivado e o
-input congela — uma verdade só); importação histórica do Excel.
+**V1 entregue e integrada** (todas em `main`, publicadas em `origin/main`):
+PF-01 Fundação (N2, merge `59a9681`) → PF-02 Orçamento Mensal (N3, `f6a7ffe`) →
+PF-03 Dívidas & Crédito (N3, `73bdaab`) → PF-04 Comparativo (N3, `bc6752a`) →
+PF-05 Cenários (**N3**, `46dcbe6`) → PF-06 Visão Geral (N1 condicionado a só
+compor valores canônicos; conduzido proceduralmente como N3, `1a13a91`) →
+PF-CLOSE-01 fronteira do domínio (`ff4cf3d`).
+
+O domínio tem **cinco destinos**: Visão Geral, Orçamento Mensal, Dívidas &
+Crédito, Comparativo Mensal e Cenários.
+
+> [!important] Inventário e Patrimônio não pertencem a Finanças Pessoais
+> Até 2026-08-19 este plano encadeava "PF-07 Inventário → PF-08 integrações
+> patrimoniais (+ `inventoryAssetRef`, bump 1→2)". Decisão de produto posterior
+> retirou Inventário/Patrimônio deste domínio: passam a ser **domínio próprio,
+> com roadmap independente `INV-*`**. `PF-07` e `PF-08` não existem. O bump de
+> schema 1→2 que estava reservado ao `inventoryAssetRef` fica **sem reserva** —
+> qualquer migração futura volta a exigir PARAR, reportar e propor migração
+> formal, como manda o congelamento do schema v1. `PF-CLOSE-01` (merge
+> `ff4cf3d`) removeu do runtime o submenu, o workspace e os dois placeholders
+> que anunciavam esse futuro; a fronteira é protegida por teste.
+>
+> Resíduo conhecido, ainda não corrigido: o comentário em
+> `src/js/10-domain/12-personal-finance.js:493` ("Sem `inventoryAssetRef`:
+> adiado para PF-08 por decisão do congelamento") permanece no código. É
+> comentário, não contrato executável, e sua correção exige tocar arquivo de
+> domínio — fica reservada a gate próprio.
+
+FUTURE (fora da V1, sem data): Cartão & Parcelamentos (então `executedCard`
+torna-se derivado e o input congela — uma verdade só); importação histórica do
+Excel.

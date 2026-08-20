@@ -1,8 +1,8 @@
 # Estado atual do projeto
 
-- Data da fotografia: 2026-08-17
-Source revision representada: `0826e5e`
-- Branch atual: `main`
+- Data da fotografia: 2026-08-19
+Source revision representada: `ff4cf3d`
+- Branch atual: `main` (`main` = `origin/main` = `ff4cf3d`)
 - **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
   `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
   tag `archived/governanca-multiagente`. Até aqui `.github/` só tinha
@@ -53,10 +53,49 @@ Source revision representada: `0826e5e`
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
+## Finanças Pessoais V1 — 2026-08-18 a 2026-08-19
+
+Seis entregas integradas e publicadas em `origin/main`, em série sobre `main`:
+
+| Entrega | Candidate | Merge |
+|---|---|---|
+| PF-01 Fundação (N2) | `49027c2` | `59a9681` |
+| PF-02 Orçamento Mensal (N3) | `c52c52f` | `f6a7ffe` |
+| PF-03 Dívidas & Crédito (N3) | `4ce3b4f` | `73bdaab` |
+| PF-04 Comparativo Mensal (N3) | `e2509d7` | `bc6752a` |
+| PF-05 Cenários (N3) | `aa0baa1` | `46dcbe6` |
+| PF-06 Visão Geral (N1 condicionado, conduzido como N3) | `2377584` | `1a13a91` |
+| PF-CLOSE-01 fronteira do domínio | `bd89c84` | `ff4cf3d` |
+
+**Estado funcional.** O módulo tem cinco destinos — Visão Geral, Orçamento
+Mensal, Dívidas & Crédito, Comparativo Mensal e Cenários. O agregado
+`S.personalFinance` permanece em `schemaVersion 1` congelado (`BRL_CENTS`,
+inteiros em centavos), com nove suítes no tier `standard`. Nenhuma das entregas
+introduziu campo persistido derivado: totais, coberturas, sobras, ratios e
+utilização são recalculados a cada render.
+
+**Fronteira do domínio.** Inventário e Patrimônio **não** pertencem a Finanças
+Pessoais. A decisão de produto de 2026-08-19 os moveu para domínio próprio com
+roadmap independente `INV-*`; `PF-07` e `PF-08` não existem. `PF-CLOSE-01`
+removeu do runtime o submenu, o workspace `#finpesInventario`, a entrada em
+`FINPES_VIEWS` e os dois placeholders que anunciavam esse futuro, sem perda de
+métrica financeira. Resíduo conhecido: o comentário sobre `inventoryAssetRef`
+em `src/js/10-domain/12-personal-finance.js:493` ainda cita PF-08 — comentário,
+não contrato executável, reservado a gate próprio.
+
+**Desvio de governança registrado.** `PF06-PROTOCOL-DEVIATION-01` — o push de
+`1a13a91` para `origin/main` ocorreu fora da execução controlada do gate
+(out-of-sequence external push). Impacto funcional e de integridade: nenhum —
+o conteúdo remoto foi verificado idêntico ao candidate aprovado. Impacto de
+governança: procedural. Nenhuma remediação destrutiva foi aplicada.
+
 ## Operação Única — Histórico e Finalização formal — 2026-08-17
 
-Branch `feature/exec-operation-history`, série `c9fd11e → 17214ba`. **Não
-integrada**: aguarda tier `full`, inspeção visual humana e autorização de merge.
+Branch `feature/exec-operation-history`, série `c9fd11e → 17214ba`.
+**Integrada** — candidate final `27a87cf` (rodadas corretivas posteriores a
+`17214ba`), merge `--no-ff` `9ac5a8a` em `main` (2026-08-18). A afirmação
+anterior ("Não integrada: aguarda tier full, inspeção visual humana e
+autorização de merge") descrevia o estado de 2026-08-17 e ficou defasada.
 
 **O que passou a existir.** A Operação Única deixou de ser um conceito implícito
 nas grades e virou entidade persistida (`activeOperation`), com finalização
@@ -444,14 +483,16 @@ precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
 
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
-- `src/js/manifest.json` contém 65 scripts: os 63 anteriores mais
-  `src/js/10-domain/10-pivot-studies.js` (64) e
-  `src/js/20-ui/15-pivot-studies.js` (65). `sw.js`, o HTML e o portátil
-  permanecem reconciliados, e o precache cobre os 65.
-- As cinco telas principais compartilham o shell horizontal do protótipo:
-  Dashboard, Execution Board, Contas, Contabilidade e Planejamento FX. A
-  navegação clássica por sublinhado é o padrão; abaixo de 900 px ela vira uma
-  gaveta vertical com os mesmos cinco destinos.
+- `src/js/manifest.json` contém 74 scripts. Os 65 da fotografia anterior mais
+  os nove de Finanças Pessoais: `10-domain/12-personal-finance.js` e
+  `20-ui/17..22-finpes-*.js` (visões, orçamento, dívidas, comparativo, cenários
+  e visão geral). `sw.js`, o HTML e o portátil permanecem reconciliados, e o
+  precache cobre os 74.
+- As seis telas principais compartilham o shell horizontal do protótipo:
+  Dashboard, Execution Board, Contas, Contabilidade, Planejamento FX e
+  **Finanças Pessoais** (`#finpes`, menu `06`). A navegação clássica por
+  sublinhado é o padrão; abaixo de 900 px ela vira uma gaveta vertical com os
+  mesmos destinos.
 - Dashboard: aviso de governança e cockpit ocupam largura total; Status, VRM,
   Notícias e Ações rápidas formam a faixa P2; Evolução e Ritmo usam razão 3:2;
   motivos, métricas, acompanhamento mensal, drawdown e comparação mensal ficam
