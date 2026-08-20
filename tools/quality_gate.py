@@ -47,6 +47,8 @@ STANDARD = FAST + (
     ("finpes-scenarios", [sys.executable, "tools/finpes_scenarios_test.py"]),
     ("finpes-overview", [sys.executable, "tools/finpes_overview_test.py"]),
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
+    ("alladin-unit", [sys.executable, "tools/alladin_unit_test.py"]),
+    ("alladin-foundation", [sys.executable, "tools/alladin_foundation_test.py"]),
 )
 FULL = STANDARD + (
     ("session-finalization", [sys.executable, "tools/finalize_session_test.py"]),

@@ -247,6 +247,32 @@ const DEFAULTS = {
     creditLines:[],
     scenarios:[],
   },
+  // ---- Alladin (ALD-01 C1 — Foundation Infrastructure; schema v1) ----
+  // Sistema Patrimonial e Consolidador de Investimentos. Contrato: JPW-ALLADIN-SPEC
+  // V1.2.1 + ALD-01 Proposal Rev.2. Este C1 entrega apenas a INFRAESTRUTURA do
+  // domínio (agregado, versão, migração, moeda, gate de escrita); entidades
+  // cadastrais chegam no C2, UI no C3. As quatro coleções nascem vazias por
+  // doutrina (nenhum dado fictício).
+  //
+  // reportingCurrency é CONFIGURAÇÃO DE APRESENTAÇÃO (ALD-I18): mudá-la nunca
+  // reescreve registro algum. Todo valor monetário do agregado é {amount,currency}
+  // com amount INTEIRO na unidade mínima da moeda (ALD-I16/I19); o schema aceita
+  // qualquer código ISO 4217 — o que é limitado é o SUPORTE DE RUNTIME
+  // (ALD_RUNTIME_CURRENCIES, 10-domain/13-alladin.js), estendível por dado, e
+  // moeda fora do suporte deixa o registro VÁLIDO, intacto e ilegível ("—").
+  //
+  // schemaVersion FUTURA ⇒ FAIL-CLOSED integral: o domínio inteiro entra em
+  // somente-leitura, a migração não toca um byte do agregado e todo ato é
+  // recusado (alladinNormalizeState, 04-persistence.js). Integridade > disponibilidade.
+  // Derivados (saldos, posições, patrimônio) JAMAIS persistem.
+  alladin:{
+    schemaVersion:1,
+    reportingCurrency:'BRL',
+    instruments:[],
+    assets:[],
+    accounts:[],
+    cashAccounts:[],
+  },
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
 // params.saldoIni (fonte única desde a unificação do onboarding) e a migrate() o
