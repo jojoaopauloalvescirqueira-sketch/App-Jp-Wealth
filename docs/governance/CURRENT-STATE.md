@@ -1,8 +1,8 @@
 # Estado atual do projeto
 
 - Data da fotografia: 2026-08-20
-Source revision representada: `613c78b2440b1b7ef528bde98713fa7a51fd8a39`
-- Branch atual: `main` (`main` = `origin/main` = `613c78b`)
+Source revision representada: `c66479ac053dafb6f7ff624e386a9b8274305f04`
+- Branch atual: `main` (`main` = `origin/main` = `c66479a`)
 - **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
   `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
   tag `archived/governanca-multiagente`. Até aqui `.github/` só tinha
@@ -56,7 +56,7 @@ Source revision representada: `613c78b2440b1b7ef528bde98713fa7a51fd8a39`
 
 ## Finanças Pessoais V1 — 2026-08-18 a 2026-08-19
 
-Seis entregas integradas e publicadas em `origin/main`, em série sobre `main`:
+Oito entregas integradas e publicadas em `origin/main`, em série sobre `main`:
 
 | Entrega | Candidate | Merge |
 |---|---|---|
@@ -67,6 +67,7 @@ Seis entregas integradas e publicadas em `origin/main`, em série sobre `main`:
 | PF-05 Cenários (N3) | `aa0baa1` | `46dcbe6` |
 | PF-06 Visão Geral (N1 condicionado, conduzido como N3) | `2377584` | `1a13a91` |
 | PF-CLOSE-01 fronteira do domínio | `bd89c84` | `ff4cf3d` |
+| PF-CLOSE-02 consistência da leitura monetária | `05aa41b` | `4b86bc6` |
 
 **Estado funcional.** O módulo tem cinco destinos — Visão Geral, Orçamento
 Mensal, Dívidas & Crédito, Comparativo Mensal e Cenários. O agregado
@@ -484,8 +485,8 @@ precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
 
 - A aplicação continua estática, local-first, sem framework e sem backend
   obrigatório. O runtime permanece em scripts clássicos e globais.
-- `src/js/manifest.json` contém 74 scripts. Os 65 da fotografia anterior mais
-  os nove de Finanças Pessoais: `10-domain/12-personal-finance.js` e
+- `src/js/manifest.json` contém 74 scripts. Os 67 da fotografia anterior mais
+  os sete de Finanças Pessoais: `10-domain/12-personal-finance.js` e
   `20-ui/17..22-finpes-*.js` (visões, orçamento, dívidas, comparativo, cenários
   e visão geral). `sw.js`, o HTML e o portátil permanecem reconciliados, e o
   precache cobre os 74.
