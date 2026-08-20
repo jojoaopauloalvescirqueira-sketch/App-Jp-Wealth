@@ -583,6 +583,82 @@ def run_fix_observacao_estritamente_anterior(browser, url, falhas):
     ctx.close()
 
 
+def run_sentinela_leitura_pfclose02(browser, url, falhas):
+    """PF-CLOSE-02: unidade desconhecida nao autoriza interpretar como BRL.
+
+    Credor, tipo, parcelas, vigencia e cobertura continuam legiveis; saldo,
+    valor original, parcela, limite, utilizado, disponivel, totais e razoes
+    monetariamente derivadas viram "—". Zero canonico NAO vira "R$ 0,00".
+    Escrita bloqueada, agregado intacto, round-trip exato.
+    """
+    ctx, page, erros = boot(browser, url)
+    r = page.evaluate("""() => {
+        const M = pfCurrentMonthKey();
+        pfActAddDebt({creditor:'Banco X', type:'FINANCIAMENTO', description:'Imovel',
+                      startMonth: pfMonthAdd(M,-6), originalAmount: 9000000,
+                      installmentAmount: 150000, installmentsTotal: 36});
+        const d = S.personalFinance.debts[0];
+        pfActRecordDebtSnapshot(M, d.id, {balance: 4500000, installmentsPaid: 12});
+        pfActAddCreditLine({institution:'Banco A', instrument:'Cartao', type:'',
+                            totalLimit: 1000000, used: 0});   // zero canonico
+        window.JPWFinDebts.render();
+        const root = document.getElementById('finpesDebtsRoot');
+        const brlTexto = root.innerText;
+        const brlOk = brlTexto.includes('R$ 45.000,00') && brlTexto.includes('R$ 90.000,00')
+                   && brlTexto.includes('R$ 0,00');
+        const foto = JSON.stringify(S.personalFinance);
+        const lsAntes = localStorage.getItem('jpwealth_v9_state');
+
+        let saves = 0; const origSave = window.save;
+        window.save = function(){ saves++; return origSave.apply(this, arguments); };
+        S.personalFinance.moneyUnit = 'XX_UNIT';
+        window.JPWFinDebts.render();
+        const t = root.innerText;
+        const semRS = !t.includes('R$');
+        const semZeroBRL = !/R\$\s*0,00/.test(t);
+        const semPercentual = !/%/.test(t);
+        // estrutura NAO monetaria preservada
+        const valores = [...root.querySelectorAll('input')].map(i => i.value);
+        // rotulo humano do tipo (PF_DEBT_TYPE_LABELS), nao a chave do dominio
+        const estrutura = t.includes('Banco X') && t.includes('Imovel')
+          && t.includes('Financiamento') && t.includes('36')
+          && t.includes('12') && t.includes(pfMonthAdd(M,-6))
+          && valores.includes('Banco A') && valores.includes('Cartao')
+          && t.includes('Dívidas') && t.includes('Limites de Crédito');
+        const semCampoMonetario = root.querySelectorAll('input.fb-money').length === 0;
+        const inertes = [...root.querySelectorAll('input, select, button')]
+          .filter(el => !el.hasAttribute('data-fd-nav') && !el.hasAttribute('data-fd-today'))
+          .every(el => el.disabled);
+        const atos = {
+          debt: pfActAddDebt({creditor:'Z', type:'OUTRO', startMonth:M}).erro,
+          snap: pfActRecordDebtSnapshot(M, d.id, {balance: 1}).erro,
+          rmSnap: pfActRemoveDebtSnapshot(M, d.id).erro,
+          credit: pfActAddCreditLine({institution:'Q'}).erro,
+          creditEdit: pfActUpdateCreditLineField(S.personalFinance.creditLines[0].id, 'used', 1).erro,
+        };
+        const escritaBloqueada = Object.values(atos)
+          .every(e => e === 'READ_ONLY_UNSUPPORTED_MONEY_UNIT');
+        window.save = origSave;
+        S.personalFinance.moneyUnit = 'BRL_CENTS';
+        const agregadoIntacto = JSON.stringify(S.personalFinance) === foto;
+        const lsIntacto = localStorage.getItem('jpwealth_v9_state') === lsAntes;
+        window.JPWFinDebts.render();
+        const roundTrip = root.innerText === brlTexto;
+        return { brlOk, semRS, semZeroBRL, semPercentual, estrutura, semCampoMonetario,
+                 inertes, escritaBloqueada, atos, zeroSave: saves===0,
+                 agregadoIntacto, lsIntacto, roundTrip };
+    }""")
+    for chave, valor in r.items():
+        if chave == 'atos':
+            continue
+        if valor is not True:
+            falhas.append(f"PF-CLOSE-02 debts: {chave} falhou: {json.dumps(r, ensure_ascii=False)[:700]}")
+            break
+    if erros:
+        falhas.append(f"PF-CLOSE-02 debts: pageerror: {erros[:2]}")
+    ctx.close()
+
+
 def main():
     servidor, url = serve()
     falhas = []
@@ -596,6 +672,7 @@ def main():
             executar("AB cobertura parcial", lambda: run_ab_cobertura_parcial_sem_carry_forward(browser, url, falhas), falhas)
             executar("AB excluir sem historia", lambda: run_ab_sem_historia_pode_excluir(browser, url, falhas), falhas)
             executar("AB write gate", lambda: run_ab_write_gate(browser, url, falhas), falhas)
+            executar("PF-CLOSE-02 sentinela leitura", lambda: run_sentinela_leitura_pfclose02(browser, url, falhas), falhas)
             executar("C ui fluxo real", lambda: run_c_ui_fluxo_real(browser, url, falhas), falhas)
             executar("C navegar readonly", lambda: run_c_navegar_readonly(browser, url, falhas), falhas)
             executar("D derivados", lambda: run_d_credito_derivados(browser, url, falhas), falhas)

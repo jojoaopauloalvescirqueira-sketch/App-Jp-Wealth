@@ -40,7 +40,7 @@ function finpesBudgetRender(){
   html += fbExpensesHTML(key, materializado, bloqueado);
   html += '</div>';
   html += '<div class="fb-col">';
-  html += fbSummaryHTML(key, materializado);
+  html += fbSummaryHTML(key, materializado, bloqueado);
   html += fbAllocationsHTML(key, materializado, bloqueado);
   html += '</div>';
   html += '</div>';
@@ -69,7 +69,16 @@ function fbHeaderHTML(key, materializado){
 // Linha fantasma (mês virtual): projeção da regra; editar materializa o mês.
 // Dinheiro: exibido por formatBRLCents, editado como texto e parseado por
 // parseBRLCents — vazio = null, inválido/negativo recusado com reversão.
-function fbMoneyInput(valor, ds){
+// Sentinela de LEITURA (PF-CLOSE-02): unidade desconhecida NAO autoriza
+// interpretar o inteiro guardado como BRL. A estrutura da tela permanece
+// legivel — nomes, status, parcelas, coberturas, notas —, mas todo montante
+// vira "—" e nenhum campo monetario expoe valor. Padrao do PF-05; a autoridade
+// e a mesma ja usada pelo write gate (pfWriteBlockReason, via `bloqueado`).
+function fbMoneyText(cents, bloqueado){
+  return bloqueado ? '—' : formatBRLCents(cents);
+}
+function fbMoneyInput(valor, ds, bloqueado){
+  if(bloqueado) return '<span class="fd-money" title="Unidade monetária não reconhecida">—</span>';
   const texto = (valor===null||valor===undefined) ? '' : (valor/100).toFixed(2).replace('.',',');
   return `<input type="text" class="fb-money" value="${esc(texto)}" ${ds} inputmode="decimal" placeholder="—">`;
 }
@@ -78,20 +87,20 @@ function fbIncomesHTML(key, materializado, bloqueado){
   if(materializado){
     const m = S.personalFinance.months[key];
     linhas = (m.incomes||[]).map(i=>`<div class="fb-row" data-income="${esc(i.id)}">
-      <span><input type="text" class="fb-text" value="${esc(i.name)}" data-fi-campo="name" data-fi-id="${esc(i.id)}">${i.ruleId?'<span class="fb-rule-mark" title="Receita recorrente (regra vigente)">↻</span>':''}</span>
-      <span>${fbMoneyInput(i.projectedAmount,`data-fi-campo="projectedAmount" data-fi-id="${esc(i.id)}"`)}</span>
-      <span>${fbMoneyInput(i.receivedAmount,`data-fi-campo="receivedAmount" data-fi-id="${esc(i.id)}"`)}</span>
-      <span class="fb-actions"><select class="fb-status-sel" data-fi-status="${esc(i.id)}">
+      <span><input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fi-campo="name" data-fi-id="${esc(i.id)}">${i.ruleId?'<span class="fb-rule-mark" title="Receita recorrente (regra vigente)">↻</span>':''}</span>
+      <span>${fbMoneyInput(i.projectedAmount,`data-fi-campo="projectedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</span>
+      <span>${fbMoneyInput(i.receivedAmount,`data-fi-campo="receivedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</span>
+      <span class="fb-actions"><select class="fb-status-sel" ${bloqueado?'disabled':''} data-fi-status="${esc(i.id)}">
         ${['PROJETADA','RECEBIDA','CANCELADA'].map(st=>`<option value="${st}" ${st===i.status?'selected':''}>${st}</option>`).join('')}
       </select>
-      <button type="button" class="row-del" data-fi-cfg="${esc(i.id)}" title="Configurar recorrência">⚙</button>
-      <button type="button" class="row-del" data-fi-del="${esc(i.id)}" title="Excluir receita">✕</button></span>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fi-cfg="${esc(i.id)}" title="Configurar recorrência">⚙</button>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fi-del="${esc(i.id)}" title="Excluir receita">✕</button></span>
     </div>`).join('');
   } else {
     linhas = pfVirtualIncomes(key).map(v=>`<div class="fb-row fb-ghost" title="Projeção da regra recorrente — editar registra o mês">
       <span>◌ ${esc(v.name)} <span class="fb-rule-mark">↻</span></span>
-      <span>${fbMoneyInput(v.projectedAmount,`data-fg-campo="projectedAmount" data-fg-rule="${esc(v.ruleId)}"`)}</span>
-      <span>${fbMoneyInput(null,`data-fg-campo="receivedAmount" data-fg-rule="${esc(v.ruleId)}"`)}</span>
+      <span>${fbMoneyInput(v.projectedAmount,`data-fg-campo="projectedAmount" data-fg-rule="${esc(v.ruleId)}"`, bloqueado)}</span>
+      <span>${fbMoneyInput(null,`data-fg-campo="receivedAmount" data-fg-rule="${esc(v.ruleId)}"`, bloqueado)}</span>
       <span class="fb-status">PROJEÇÃO</span>
     </div>`).join('');
   }
@@ -104,8 +113,8 @@ function fbIncomesHTML(key, materializado, bloqueado){
     <h2>Receitas <span class="art">projetado ≠ recebido · ausência ≠ zero</span></h2>
     <div class="fb-row fb-head"><span>Descrição</span><span>Projetado</span><span>Recebido</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma receita neste mês.</p>'}
-    <div class="fb-totals"><span>Receita projetada: <b>${formatBRLCents(totProj)}</b></span>
-      <span>Receita recebida: <b>${m ? formatBRLCents(totRec) : '—'}</b>${cobTxt}</span></div>
+    <div class="fb-totals"><span>Receita projetada: <b>${fbMoneyText(totProj, bloqueado)}</b></span>
+      <span>Receita recebida: <b>${m ? fbMoneyText(totRec, bloqueado) : '—'}</b>${cobTxt}</span></div>
     <button type="button" class="reset-btn" data-fi-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar receita</button>
   </div>`;
 }
@@ -116,16 +125,16 @@ function fbExpensesHTML(key, materializado, bloqueado){
     linhas = (m.expenses||[]).map(e=>{
       const parc = e.installments ? `${e.installments.paid}/${e.installments.total}` : '';
       return `<div class="fb-erow" data-expense="${esc(e.id)}">
-      <span><input type="text" class="fb-text" value="${esc(e.name)}" data-fe-campo="name" data-fe-id="${esc(e.id)}"></span>
-      <span><input type="text" class="fb-money fb-parc" value="${esc(parc)}" placeholder="—" title="Parcelas pagas/total, ex.: 16/24; vazio limpa" data-fe-parc="${esc(e.id)}"></span>
-      <span>${fbMoneyInput(e.targetAmount,`data-fe-campo="targetAmount" data-fe-id="${esc(e.id)}"`)}</span>
-      <span>${fbMoneyInput(e.expectedAmount,`data-fe-campo="expectedAmount" data-fe-id="${esc(e.id)}"`)}</span>
-      <span>${fbMoneyInput(e.executedCash,`data-fe-campo="executedCash" data-fe-id="${esc(e.id)}"`)}</span>
-      <span>${fbMoneyInput(e.executedCard,`data-fe-campo="executedCard" data-fe-id="${esc(e.id)}"`)}</span>
-      <span class="fb-actions"><select class="fb-status-sel" data-fe-status="${esc(e.id)}">
+      <span><input type="text" class="fb-text" value="${esc(e.name)}" ${bloqueado?'disabled':''} data-fe-campo="name" data-fe-id="${esc(e.id)}"></span>
+      <span><input type="text" class="fb-money fb-parc" value="${esc(parc)}" ${bloqueado?'disabled':''} placeholder="—" title="Parcelas pagas/total, ex.: 16/24; vazio limpa" data-fe-parc="${esc(e.id)}"></span>
+      <span>${fbMoneyInput(e.targetAmount,`data-fe-campo="targetAmount" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
+      <span>${fbMoneyInput(e.expectedAmount,`data-fe-campo="expectedAmount" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
+      <span>${fbMoneyInput(e.executedCash,`data-fe-campo="executedCash" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
+      <span>${fbMoneyInput(e.executedCard,`data-fe-campo="executedCard" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
+      <span class="fb-actions"><select class="fb-status-sel" ${bloqueado?'disabled':''} data-fe-status="${esc(e.id)}">
         ${['PENDENTE','PAGO','CANCELADO'].map(st=>`<option value="${st}" ${st===e.status?'selected':''}>${st}</option>`).join('')}
       </select>
-      <button type="button" class="row-del" data-fe-del="${esc(e.id)}" title="Excluir despesa">✕</button></span>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fe-del="${esc(e.id)}" title="Excluir despesa">✕</button></span>
     </div>`;}).join('');
   }
   const m = materializado ? S.personalFinance.months[key] : null;
@@ -137,19 +146,19 @@ function fbExpensesHTML(key, materializado, bloqueado){
     <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado (fora do cartão + cartão)</span></h2>
     <div class="fb-erow fb-head"><span>Despesa</span><span>Parc.</span><span>Meta</span><span>Previsto</span><span>Fora cartão</span><span>Cartão</span><span></span></div>
     ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma despesa neste mês.':'Mês não registrado — adicionar despesa registra o mês.')+'</p>'}
-    <div class="fb-totals"><span>Despesa prevista: <b>${formatBRLCents(prev)}</b></span>
-      <span>Despesa executada (conhecida): <b>${m ? formatBRLCents(exec) : '—'}</b>${cobTxt}</span></div>
+    <div class="fb-totals"><span>Despesa prevista: <b>${fbMoneyText(prev, bloqueado)}</b></span>
+      <span>Despesa executada (conhecida): <b>${m ? fbMoneyText(exec, bloqueado) : '—'}</b>${cobTxt}</span></div>
     <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button>
   </div>`;
 }
-function fbSummaryHTML(key, materializado){
+function fbSummaryHTML(key, materializado, bloqueado){
   const linha=(k,v,extra)=>`<div class="fb-sumrow"><span>${k}</span><b>${v}</b>${extra||''}</div>`;
   if(!materializado){
     const proj = pfVirtualIncomes(key).reduce((a,v)=>a+(typeof v.projectedAmount==='number'?v.projectedAmount:0),0);
     return `<div class="card fb-card" id="fbSummary">
       <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
-      ${linha('Receita projetada (regras)', formatBRLCents(proj))}
-      ${linha('Sobra projetada', formatBRLCents(proj))}
+      ${linha('Receita projetada (regras)', fbMoneyText(proj, bloqueado))}
+      ${linha('Sobra projetada', fbMoneyText(proj, bloqueado))}
       <p class="risk-note">Mês não registrado: os números acima são projeção das regras vigentes. Nada de realizado existe aqui.</p>
     </div>`;
   }
@@ -157,21 +166,24 @@ function fbSummaryHTML(key, materializado){
   const r = pfMonthSummary(m);
   const cobTxt = c => (c.total>0 && !c.completa) ? `<span class="fb-partial">PARCIAL · ${c.conhecidas}/${c.total}</span>` : '';
   const sobraReal = (r.realizedSurplus!==null)
-    ? linha('Sobra realizada', formatBRLCents(r.realizedSurplus))
+    ? linha('Sobra realizada', fbMoneyText(r.realizedSurplus, bloqueado))
     : linha('Sobra realizada', '—', '<span class="fb-partial">Dados incompletos</span>')
-      + linha('Saldo conhecido até agora', formatBRLCents(r.knownBalance), '<span class="fb-aux">auxiliar — não é a sobra</span>');
-  const ratio = (r.incomeExpenseRatio!==null)
-    ? linha('Comprometimento (desp./rec.)', (r.incomeExpenseRatio*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')
-    : linha('Comprometimento (desp./rec.)', '—', '<span class="fb-partial">'+(r.completo?'receita zero — N/A':'parcial')+'</span>');
+      + linha('Saldo conhecido até agora', fbMoneyText(r.knownBalance, bloqueado), '<span class="fb-aux">auxiliar — não é a sobra</span>');
+  // razao derivada de grandezas monetarias de unidade desconhecida: recusada
+  const ratio = bloqueado
+    ? linha('Comprometimento (desp./rec.)', '—')
+    : ((r.incomeExpenseRatio!==null)
+        ? linha('Comprometimento (desp./rec.)', (r.incomeExpenseRatio*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')
+        : linha('Comprometimento (desp./rec.)', '—', '<span class="fb-partial">'+(r.completo?'receita zero — N/A':'parcial')+'</span>'));
   return `<div class="card fb-card" id="fbSummary">
     <h2>Resumo do Mês <span class="art">planejado ≠ realizado · soma parcial nunca vira total</span></h2>
     <div class="fb-sumsec">PLANEJADO</div>
-    ${linha('Receita projetada', formatBRLCents(r.projectedIncome))}
-    ${linha('Despesa prevista', formatBRLCents(r.plannedExpenses))}
-    ${linha('Sobra projetada', formatBRLCents(r.projectedSurplus))}
+    ${linha('Receita projetada', fbMoneyText(r.projectedIncome, bloqueado))}
+    ${linha('Despesa prevista', fbMoneyText(r.plannedExpenses, bloqueado))}
+    ${linha('Sobra projetada', fbMoneyText(r.projectedSurplus, bloqueado))}
     <div class="fb-sumsec">REALIZADO</div>
-    ${linha('Receita recebida', formatBRLCents(r.knownReceivedIncome), cobTxt(r.incomeCoverage))}
-    ${linha('Despesa executada', formatBRLCents(r.knownExecutedExpenses), cobTxt(r.expenseCoverage))}
+    ${linha('Receita recebida', fbMoneyText(r.knownReceivedIncome, bloqueado), cobTxt(r.incomeCoverage))}
+    ${linha('Despesa executada', fbMoneyText(r.knownExecutedExpenses, bloqueado), cobTxt(r.expenseCoverage))}
     ${sobraReal}
     ${ratio}
   </div>`;
@@ -179,20 +191,22 @@ function fbSummaryHTML(key, materializado){
 function fbAllocationsHTML(key, materializado, bloqueado){
   const m = materializado ? S.personalFinance.months[key] : null;
   const linhas = m ? (m.allocations||[]).map(a=>`<div class="fb-row fb-alloc" data-alloc="${esc(a.id)}">
-      <span><input type="text" class="fb-text" value="${esc(a.label)}" data-fa-campo="label" data-fa-id="${esc(a.id)}"></span>
-      <span>${fbMoneyInput(a.amount,`data-fa-campo="amount" data-fa-id="${esc(a.id)}"`)}</span>
+      <span><input type="text" class="fb-text" value="${esc(a.label)}" ${bloqueado?'disabled':''} data-fa-campo="label" data-fa-id="${esc(a.id)}"></span>
+      <span>${fbMoneyInput(a.amount,`data-fa-campo="amount" data-fa-id="${esc(a.id)}"`, bloqueado)}</span>
       <span></span>
-      <span class="fb-actions"><button type="button" class="row-del" data-fa-del="${esc(a.id)}" title="Excluir destinação">✕</button></span>
+      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fa-del="${esc(a.id)}" title="Excluir destinação">✕</button></span>
     </div>`).join('') : '';
   const total = m ? pfTotalAllocated(m) : 0;
   const naoAlocada = m ? pfUnallocatedSurplus(m) : null;
   const resumo = m ? pfMonthSummary(m) : null;
-  const excede = !!(resumo && resumo.realizedSurplus!==null && total > resumo.realizedSurplus);
+  // alerta e inferencia sobre grandezas monetarias: sob unidade desconhecida
+  // nao se afirma excedente
+  const excede = !bloqueado && !!(resumo && resumo.realizedSurplus!==null && total > resumo.realizedSurplus);
   return `<div class="card fb-card" id="fbAllocations">
     <h2>Destino do Excedente <span class="art">a sobra é insumo, não resultado</span></h2>
     ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma destinação neste mês.':'Mês não registrado — destinar registra o mês.')+'</p>'}
-    <div class="fb-totals"><span>Total destinado: <b>${formatBRLCents(total)}</b></span>
-      <span>Sobra não alocada: <b>${naoAlocada!==null?formatBRLCents(naoAlocada):'—'}</b>${naoAlocada===null && m ? ' <span class="fb-partial">realizado incompleto — sem saldo restante</span>':''}</span></div>
+    <div class="fb-totals"><span>Total destinado: <b>${fbMoneyText(total, bloqueado)}</b></span>
+      <span>Sobra não alocada: <b>${naoAlocada!==null?fbMoneyText(naoAlocada, bloqueado):'—'}</b>${naoAlocada===null && m ? ' <span class="fb-partial">realizado incompleto — sem saldo restante</span>':''}</span></div>
     ${excede ? '<div class="status-banner sb-warn" id="fbAllocExceeds" style="margin-top:8px"><span class="ico">⚠️</span><span>As destinações excedem a sobra realizada deste mês. Pode ser legítimo (saldo anterior) — confira.</span></div>' : ''}
     <button type="button" class="reset-btn" data-fa-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar destinação</button>
   </div>`;
@@ -200,10 +214,10 @@ function fbAllocationsHTML(key, materializado, bloqueado){
 function fbNotesHTML(key, materializado, bloqueado){
   const m = materializado ? S.personalFinance.months[key] : null;
   const linhas = m ? (m.notes||[]).map(n=>`<div class="fb-noterow ${n.status==='RESOLVIDO'?'fb-note-done':''}" data-note="${esc(n.id)}">
-      <button type="button" class="fb-note-toggle" data-fn-toggle="${esc(n.id)}" title="Alternar status">${n.status==='PENDENTE'?'⚠':'✓'}</button>
+      <button type="button" class="fb-note-toggle" ${bloqueado?'disabled':''} data-fn-toggle="${esc(n.id)}" title="Alternar status">${n.status==='PENDENTE'?'⚠':'✓'}</button>
       <span class="fb-note-text">${esc(n.text)}</span>
       <span class="fb-status">${esc(n.status)}</span>
-      <button type="button" class="row-del" data-fn-del="${esc(n.id)}" title="Excluir nota">✕</button>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fn-del="${esc(n.id)}" title="Excluir nota">✕</button>
     </div>`).join('') : '';
   return `<div class="card fb-card" id="fbNotes">
     <h2>Informações Importantes <span class="art">texto + status, nada mais</span></h2>

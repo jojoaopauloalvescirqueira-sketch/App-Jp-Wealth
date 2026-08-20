@@ -48,11 +48,11 @@ function fdDebtsHTML(key, bloqueado){
     const snap = relevante ? pfDebtSnapshotIn(key, d.id) : null;
     let saldo;
     if(!relevante) saldo = '<span class="fb-aux">fora de vigência</span>';
-    else if(snap) saldo = `<b>${formatBRLCents(snap.balance)}</b>`;
+    else if(snap) saldo = `<b>${fdMoneyText(snap.balance, bloqueado)}</b>`;
     else {
       const ult = pfLastObservation(d.id, key);   // ESTRITAMENTE anterior — nunca futuro
       saldo = '<span class="fb-partial">Sem observação nesta competência</span>'
-        + (ult ? `<br><span class="fb-aux">última: ${formatBRLCents(ult.snapshot.balance)} em ${esc(pfMonthLabel(ult.monthKey))}</span>`
+        + (ult ? `<br><span class="fb-aux">última: ${fdMoneyText(ult.snapshot.balance, bloqueado)} em ${esc(pfMonthLabel(ult.monthKey))}</span>`
                : '<br><span class="fb-aux">Nenhuma observação anterior</span>');
     }
     const pagas = snap && snap.installmentsPaid!=null ? snap.installmentsPaid : '—';
@@ -61,26 +61,26 @@ function fdDebtsHTML(key, bloqueado){
     return `<div class="fd-row ${relevante?'':'fd-irrelevante'}" data-debt="${esc(d.id)}">
       <span>${esc(d.creditor)}${d.description?`<br><span class="fb-aux">${esc(d.description)}</span>`:''}</span>
       <span>${esc(PF_DEBT_TYPE_LABELS[d.type]||d.type)}</span>
-      <span class="fd-money">${formatBRLCents(d.originalAmount)}</span>
-      <span class="fd-money">${formatBRLCents(d.installmentAmount)}</span>
+      <span class="fd-money">${fdMoneyText(d.originalAmount, bloqueado)}</span>
+      <span class="fd-money">${fdMoneyText(d.installmentAmount, bloqueado)}</span>
       <span class="fd-center">${d.installmentsTotal==null?'—':d.installmentsTotal}</span>
       <span>${saldo}</span>
       <span class="fd-center">${pagas}</span>
       <span class="fd-center">${rest==null?'—':rest}</span>
       <span class="fb-aux">${vig}</span>
       <span class="fb-actions">
-        <button type="button" class="row-del" data-fd-edit="${esc(d.id)}" title="Editar contrato">✎</button>
-        ${relevante?`<button type="button" class="row-del" data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">◉</button>`:''}
-        ${snap?`<button type="button" class="row-del" data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">⊘</button>`:''}
-        <button type="button" class="row-del" data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">✕</button>
+        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-edit="${esc(d.id)}" title="Editar contrato">✎</button>
+        ${relevante?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">◉</button>`:''}
+        ${snap?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">⊘</button>`:''}
+        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">✕</button>
       </span>
     </div>`;
   }).join('');
   const cobTxt = cov.relevantes===0
     ? '<span class="fb-aux">Nenhuma dívida relevante nesta competência</span>'
     : (cov.completa
-        ? `<span>Dívida total: <b>${formatBRLCents(total)}</b></span>`
-        : `<span>${formatBRLCents(total)} observados <span class="fb-partial">PARCIAL · ${cov.observadas} de ${cov.relevantes} dívidas observadas</span></span>`);
+        ? `<span>Dívida total: <b>${fdMoneyText(total, bloqueado)}</b></span>`
+        : `<span>${fdMoneyText(total, bloqueado)} observados <span class="fb-partial">PARCIAL · ${cov.observadas} de ${cov.relevantes} dívidas observadas</span></span>`);
   return `<div class="card fb-card" id="fdDebts">
     <h2>Dívidas <span class="art">identidade temporal · saldo é observação da competência</span></h2>
     <div class="fd-row fd-head"><span>Credor</span><span>Tipo</span><span>V. original</span><span>Parcela</span><span>Parc.</span><span>Saldo na competência</span><span>Pagas</span><span>Rest.</span><span>Vigência</span><span></span></div>
@@ -91,47 +91,57 @@ function fdDebtsHTML(key, bloqueado){
 }
 
 // ---- CRÉDITO (Bloco D) ------------------------------------------------------
-function fdMoneyInput(valor, ds){
+// Sentinela de LEITURA (PF-CLOSE-02) — ver 18-finpes-budget.js: credor, tipo,
+// parcelas, vigencia e cobertura continuam legiveis; todo montante vira "—".
+function fdMoneyText(cents, bloqueado){
+  return bloqueado ? '—' : formatBRLCents(cents);
+}
+function fdMoneyInput(valor, ds, bloqueado){
+  if(bloqueado) return '<span class="fd-money" title="Unidade monetária não reconhecida">—</span>';
   const texto = (valor===null||valor===undefined) ? '' : (valor/100).toFixed(2).replace('.',',');
   return `<input type="text" class="fb-money" value="${esc(texto)}" ${ds} inputmode="decimal" placeholder="—">`;
 }
 function fdCreditHTML(bloqueado){
   const linhas = (S.personalFinance.creditLines||[]).filter(Boolean).map(l=>{
     const der = pfCreditLineDerived(l);
-    const disp = der.available===null ? '—' : formatBRLCents(der.available);
-    const util = der.utilization===null ? '<span class="fb-aux">N/A</span>'
-      : (der.utilization*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%';
+    const disp = (bloqueado || der.available===null) ? '—' : formatBRLCents(der.available);
+    // utilizacao deriva de grandezas monetarias de unidade desconhecida: recusada
+    const util = bloqueado ? '—'
+      : (der.utilization===null ? '<span class="fb-aux">N/A</span>'
+        : (der.utilization*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%');
     return `<div class="fc-row ${der.estouro?'fc-estouro':''}" data-credit="${esc(l.id)}">
-      <span><input type="text" class="fb-text" value="${esc(l.institution)}" data-fc-campo="institution" data-fc-id="${esc(l.id)}"></span>
-      <span><input type="text" class="fb-text" value="${esc(l.instrument)}" data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></span>
-      <span><input type="text" class="fb-text" value="${esc(l.type)}" data-fc-campo="type" data-fc-id="${esc(l.id)}"></span>
-      <span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`)}</span>
-      <span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`)}</span>
-      <span class="fd-money">${disp}${der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
+      <span><input type="text" class="fb-text" value="${esc(l.institution)}" ${bloqueado?'disabled':''} data-fc-campo="institution" data-fc-id="${esc(l.id)}"></span>
+      <span><input type="text" class="fb-text" value="${esc(l.instrument)}" ${bloqueado?'disabled':''} data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></span>
+      <span><input type="text" class="fb-text" value="${esc(l.type)}" ${bloqueado?'disabled':''} data-fc-campo="type" data-fc-id="${esc(l.id)}"></span>
+      <span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`, bloqueado)}</span>
+      <span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`, bloqueado)}</span>
+      <span class="fd-money">${disp}${!bloqueado && der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
       <span class="fd-center">${util}</span>
-      <span class="fb-actions"><button type="button" class="row-del" data-fc-del="${esc(l.id)}" title="Excluir linha">✕</button></span>
+      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fc-del="${esc(l.id)}" title="Excluir linha">✕</button></span>
     </div>`;
   }).join('');
   const k = pfCreditKPIs();
   const badge = c => c.total>0 && !c.completa ? ` <span class="fb-partial">PARCIAL · ${c.conhecidas}/${c.total}</span>` : '';
   const kpis = `
-    <span>Limite total: <b>${k.limitCoverage.completa ? formatBRLCents(k.knownTotalLimit) : formatBRLCents(k.knownTotalLimit)+' conhecidos'}</b>${badge(k.limitCoverage)}</span>
-    <span>Total utilizado: <b>${k.usedCoverage.completa ? formatBRLCents(k.knownUsed) : formatBRLCents(k.knownUsed)+' conhecidos'}</b>${badge(k.usedCoverage)}</span>
-    <span>Total livre: <b>${k.totalFree===null ? '—' : formatBRLCents(k.totalFree)}</b>${k.totalFree===null?' <span class="fb-partial">componentes incompletos</span>':''}</span>
-    <span>Utilização consolidada: <b>${k.utilizationConsolidated===null ? 'N/A' : (k.utilizationConsolidated*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%'}</b></span>`;
+    <span>Limite total: <b>${bloqueado ? '—' : (k.limitCoverage.completa ? formatBRLCents(k.knownTotalLimit) : formatBRLCents(k.knownTotalLimit)+' conhecidos')}</b>${badge(k.limitCoverage)}</span>
+    <span>Total utilizado: <b>${bloqueado ? '—' : (k.usedCoverage.completa ? formatBRLCents(k.knownUsed) : formatBRLCents(k.knownUsed)+' conhecidos')}</b>${badge(k.usedCoverage)}</span>
+    <span>Total livre: <b>${(bloqueado || k.totalFree===null) ? '—' : formatBRLCents(k.totalFree)}</b>${!bloqueado && k.totalFree===null?' <span class="fb-partial">componentes incompletos</span>':''}</span>
+    <span>Utilização consolidada: <b>${bloqueado ? '—' : (k.utilizationConsolidated===null ? 'N/A' : (k.utilizationConsolidated*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')}</b></span>`;
   return `<div class="card fb-card" id="fdCredit">
     <h2>Limites de Crédito <span class="art">estado vigente · sem série histórica nesta versão</span></h2>
     <div class="fc-row fc-head"><span>Instituição</span><span>Instrumento</span><span>Tipo</span><span>Limite</span><span>Utilizado</span><span>Disponível</span><span>Utilização</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma linha de crédito.</p>'}
     <div class="fb-totals" id="fdCreditKPIs">${kpis}</div>
-    <div class="fb-totals" id="fdRatio">${fdRatioHTML()}</div>
+    <div class="fb-totals" id="fdRatio">${fdRatioHTML(bloqueado)}</div>
     <button type="button" class="reset-btn" data-fc-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar linha de crédito</button>
   </div>`;
 }
 // Razão dívida/limite — rotulada por extenso para não se confundir com a
 // utilização de crédito (used/limit): métricas diferentes.
-function fdRatioHTML(){
+function fdRatioHTML(bloqueado){
   const key = fdCurrentKey();
+  // razao entre grandezas monetarias de unidade desconhecida: recusada
+  if(bloqueado) return `<span>Dívida observada / limite total: <b>—</b></span>`;
   const ratio = pfDebtToCreditRatio(key);
   if(ratio===null) return `<span>Dívida observada / limite total: <b>N/A</b> <span class="fb-partial">dados parciais ou limite zero</span></span>`;
   return `<span>Dívida observada / limite total (${esc(pfMonthLabel(key))}): <b>${(ratio*100).toLocaleString('pt-BR',{maximumFractionDigits:1})}%</b></span>`;
