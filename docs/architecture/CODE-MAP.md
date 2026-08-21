@@ -2,7 +2,7 @@
 
 Fotografia integrada localmente em `main` em 2026-08-14 (fonte material
 `7a93602`, merge `a188f29`, reconciliação `f1c1f36`):
-`src/js/manifest.json` contém 74 scripts clássicos. O manifest é a fonte única
+`src/js/manifest.json` contém 75 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
 
@@ -84,6 +84,7 @@ a lista material mudar.
 | 72 | `src/js/20-ui/20-finpes-comparison.js` | Comparativo Mensal: M−1 e M−12 com estados COMPLETE/PARTIAL/UNAVAILABLE e série de 12 meses com lacunas honestas |
 | 73 | `src/js/20-ui/21-finpes-scenarios.js` | Cenários: hipóteses independentes agrupadas por horizonte, com cascata e cópia unidirecional de mês registrado |
 | 74 | `src/js/20-ui/22-finpes-overview.js` | Visão Geral: consolidado derivado de quatro cards — mês atual, dívida & crédito, vs mês anterior e pendências |
+| 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema) e modelo cadastral (Instrument, Asset, Account, CashAccount) — nenhum ato econômico |
 
 ## Laboratório de Probabilidade
 

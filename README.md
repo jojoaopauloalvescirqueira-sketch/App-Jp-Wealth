@@ -25,7 +25,7 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 - **Execução** — registro de ordens sob as regras do Estatuto: fases, risco programado, classificação de stops (2 ATR, Raiz-N), alavancagem.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
 - **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
-- **Finanças Pessoais** — orçamento doméstico em centavos (`BRL_CENTS`), com Visão Geral consolidada, Orçamento Mensal (receitas, despesas e destino da sobra), Dívidas & Crédito, Comparativo Mensal e Cenários. Tudo derivado do estado vivo: totais, coberturas, sobras e utilização nunca são persistidos, e mês só nasce por ato de edição — abrir não materializa. Inventário e Patrimônio **não** pertencem a este domínio — são o domínio próprio **Alladin** (roadmap `ALD-*`; fundação técnica `S.alladin` integrada em 2026-08-20, entidades cadastrais e UI ainda não iniciadas).
+- **Finanças Pessoais** — orçamento doméstico em centavos (`BRL_CENTS`), com Visão Geral consolidada, Orçamento Mensal (receitas, despesas e destino da sobra), Dívidas & Crédito, Comparativo Mensal e Cenários. Tudo derivado do estado vivo: totais, coberturas, sobras e utilização nunca são persistidos, e mês só nasce por ato de edição — abrir não materializa. Inventário e Patrimônio **não** pertencem a este domínio — são o domínio próprio **Alladin** (roadmap `ALD-*`; agregado `S.alladin` em schema v2 com as quatro entidades cadastrais — Instrument, Asset, Account, CashAccount —, sem interface e sem camada econômica: transações, posições, valuation e performance não iniciadas. Contrato em `docs/architecture/ALLADIN.md`).
 
 ### Onboarding e período operacional
 
@@ -82,7 +82,7 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 74 scripts do manifest também estejam no precache. Durante uma
+exige que os 75 scripts do manifest também estejam no precache. Durante uma
 atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
 continua usando um build integral, sem combinar HTML novo com scripts cacheados de
 outro build. O ícone tem variantes
