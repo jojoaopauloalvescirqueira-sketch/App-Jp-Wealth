@@ -261,12 +261,19 @@ const DEFAULTS = {
   // (ALD_RUNTIME_CURRENCIES, 10-domain/13-alladin.js), estendível por dado, e
   // moeda fora do suporte deixa o registro VÁLIDO, intacto e ilegível ("—").
   //
+  // schemaVersion 2 (ALD-02 C2): o v1 do C1 declarava apenas o ENVELOPE — versão,
+  // moeda de apresentação e quatro coleções vazias. O v2 acrescenta o CONTRATO DE
+  // CONTEÚDO dos registros cadastrais (Instrument, Asset, Account, CashAccount).
+  // A migração v1→v2 é só o carimbo da versão: o v1 nasceu sem registros porque o
+  // C1 não tinha atos. Um build do C1 lendo v2 entra em fail-closed — correto, ele
+  // não conhece estes registros.
+  //
   // schemaVersion FUTURA ⇒ FAIL-CLOSED integral: o domínio inteiro entra em
   // somente-leitura, a migração não toca um byte do agregado e todo ato é
   // recusado (alladinNormalizeState, 04-persistence.js). Integridade > disponibilidade.
   // Derivados (saldos, posições, patrimônio) JAMAIS persistem.
   alladin:{
-    schemaVersion:1,
+    schemaVersion:2,
     reportingCurrency:'BRL',
     instruments:[],
     assets:[],
