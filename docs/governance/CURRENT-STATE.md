@@ -1,14 +1,14 @@
 # Estado atual do projeto
 
-- Data da fotografia: 2026-08-20
-Source revision representada: `46bb7761dc663e231bafc2146bc4dd4396e3b014`
-- Branch atual: `main` (`main` = `origin/main` = `46bb776`)
+- Data da fotografia: 2026-08-21
+Source revision representada: `4d130faa44187ceb81ed35bce15425a9dc2e78c9`
+- Branch atual: `main` (`main` = `origin/main` = `4d130fa`)
 - **Integração contínua, pela primeira vez** (2026-08-17, merge `91687dc`):
   `.github/workflows/quality-gate.yml` restaurado de `045c264`, preservado na
   tag `archived/governanca-multiagente`. Até aqui `.github/` só tinha
   `pull_request_template.md`. **Atualização de 2026-08-20:** `main` já foi
   publicada com o workflow diversas vezes (pushes `fc29731`, `c6c1aa3`,
-  `46bb776`, verificados read-only desta máquina), logo o gatilho `push: main`
+  `46bb776`, `29aca32` e `4d130fa`, verificados read-only desta máquina), logo o gatilho `push: main`
   ocorreu; **os resultados das execuções no GitHub não são verificáveis deste
   ambiente** (sem credencial para a API — `gh` indisponível). Detalhe na seção
   própria abaixo.
@@ -57,43 +57,73 @@ Source revision representada: `46bb7761dc663e231bafc2146bc4dd4396e3b014`
 - Validade: qualquer mudança posterior em fonte, manifest, worker, testes ou
   gerados invalida as evidências afetadas e exige repetir o gate proporcional.
 
-## Alladin — Fundação C1 (ALD-01) — 2026-08-20
+## Alladin — Fundação C1 e Modelo Cadastral C2 — 2026-08-20 a 2026-08-21
 
 O domínio **Alladin** (Sistema Patrimonial e Consolidador de Investimentos;
 ex-roadmap `INV-*`, renomeado pela spec canônica JPW-ALLADIN-SPEC V1.2.1,
-externa ao repo) existe no produto como **fundação técnica apenas**. Cadeia de
-proveniência integral, cada elo verificado por fingerprint:
+externa ao repo) existe no produto com **duas camadas cadastrais**: a
+infraestrutura (C1) e o modelo cadastral (C2). Contrato do domínio em
+`docs/architecture/ALLADIN.md`. Cadeia de proveniência integral, cada elo
+verificado por fingerprint:
 
 | Etapa | Identificador |
 |---|---|
 | ALD-01 C1 candidate (fingerprint) | `fe616a7caf709faf3d62b9d2bbc93c0669a869bb4e371c02154766998555038a` |
-| Commit da feature | `85d1911` |
-| Merge `--no-ff` em `main` | `c6c1aa3` |
+| ALD-01 C1 — commit / merge | `85d1911` / `c6c1aa3` |
 | Reconciliação documental C4-A (merge) | `46bb776` |
+| ALD-02 C2 candidate (fingerprint) | `66ebf8401b123381a2d71dd3a63eafc5b21db21603f782b8368cf0d550e7bb7d` |
+| ALD-02 C2 — commit / merge | `beea842` / `29aca32` |
+| Reconciliação documental C4-C2-A (merge) | `4d130fa` |
 
-**O que existe:** agregado `S.alladin` v1 (`schemaVersion`, `reportingCurrency`,
-quatro coleções vazias); `alladinNormalizeState()` em `migrate()` com
-fail-closed para `schemaVersion` futura legível (inteiro ou string de dígitos —
-agregado byte-intacto, todo ato recusado, incompatibilidade exposta em
-`JPWAlladin.compat()`); dinheiro `{amount, currency}` em unidade mínima inteira
-(schema ISO 4217 aberto; runtime BRL/USD extensível por dado); `aldId`; write
-gate `aldMutate` com veredito de persistência inviolável; duas suítes no tier
-`standard` (`alladin-unit` em Chromium isolado sem app; `alladin-foundation`
-com migração, round-trip, fail-closed e rollback executável por build antigo
-via `git archive fc29731`). Full 41/41 no candidato e na `main` integrada;
-auditoria independente com zero graves e quatro moderados corrigidos pré-commit.
+**O que existe (C1 — infraestrutura):** agregado `S.alladin`, hoje em
+**`schemaVersion 2`**; `alladinNormalizeState()` em `migrate()` com fail-closed
+para versão futura legível (inteiro ou string de dígitos — agregado
+byte-intacto, todo ato recusado, incompatibilidade exposta em
+`JPWAlladin.compat()`) e cadeia de migração a partir da versão mais baixa;
+dinheiro `{amount, currency}` em unidade mínima inteira (schema ISO 4217
+aberto; runtime BRL/USD extensível por dado); `aldId`; write gate `aldMutate`,
+agora **transacional** — snapshot antes do ato e restauração do agregado e do
+`changeLog` quando `save()` recusa.
 
-**O que NÃO existe** (estado real, não desejado): entidades cadastrais (Asset,
-Instrument, Account, CashAccount), UI, ledger, holdings, valuation, performance,
-allocation, renda, passivos patrimoniais e integrações Trading/PF/FX — **nada
-do domínio econômico foi iniciado**. C2 (modelo cadastral) não autorizado.
+**O que existe (C2 — modelo cadastral):** as quatro entidades — `Instrument`,
+`Asset`, `Account`, `CashAccount` — com atos de criação, edição e ciclo
+cadastral `ACTIVE↔INACTIVE`. Account **é** a custódia financeira (custódia
+física em `Asset.location`; não existe entidade `Custody`);
+`owners[{name, shareBp, isSelf}]` com no máximo um `isSelf`, o que torna o valor
+proporcional do operador computável sem inferência; três regimes de
+classificação (fechado só onde há mandato normativo; `accountType`, `nature`,
+`strategicPurpose` e `assetClass` são starter e aceitam valor novo); **dinheiro
+líquido nunca é Asset** — invariante de runtime, não convenção; duplicidade
+avisa e o registro nasce, com cripto exigindo `network`, que integra a chave de
+identidade; `symbolHistory` append-only, e histórico ilegível recusa a edição
+em vez de ser destruído; integridade referencial **hierárquica** (cash account
+ativa exige conta ativa; a recíproca não vale). Migração v1→v2 é apenas o
+carimbo da versão.
+
+**Verificação:** duas suítes no tier `standard` — `alladin-unit` (U1–U21, em
+Chromium isolado, sem app, sem DOM de produção, sem rede) e
+`alladin-foundation` (migração v1→v2, round-trip com as quatro coleções
+povoadas, fail-closed, **rollback duplo** — build pré-Alladin `fc29731` e build
+do C1 `3f1f9bc` —, reload real, falha parcial em validação e em persistência
+recusada, XSS/privacidade e round-trip de backup). Full 41/41 nos candidatos e
+nas `main` integradas. Auditoria independente: no C1, zero graves e quatro
+moderados; no C2, **três graves e dez menores**, todos corrigidos e re-testados
+antes do commit.
+
+**O que NÃO existe** (estado real, não desejado): transações, eventos, ledger,
+holdings, posições, cost basis, valuation, performance, allocation, renda,
+passivos patrimoniais, benchmark, UI e integrações Trading/PF/FX — **nada do
+domínio econômico foi iniciado**. `ALD-03` (estado derivado) e `C3` (UI) não
+autorizados.
 
 **Resíduos registrados:** `ALD-I26` (Audit Trail) deferred ao ALD-07 por
 decisão HD-6 — `dgLogChange` é log operacional não-canônico; referências
 `INV-*` em comentários de código (`index.html:188/1044`,
 `22-finpes-overview.js:11-12`, `12-personal-finance.js:493`) permanecem —
-deferred, gate dedicado futuro, impacto nenhum; feature branch
-`feature/alladin-foundation-c1` preservada como evidência histórica
+deferred, gate dedicado futuro, impacto nenhum; branches preservadas como
+evidência histórica — `feature/alladin-foundation-c1`,
+`feature/alladin-cadastral-c2`, `docs/alladin-c4-reconciliation`,
+`docs/alladin-c4b-current-state` e `docs/alladin-c4-c2-reconciliation`
 (FEATURE-CLEANUP-GATE futuro decidirá).
 
 ## Finanças Pessoais V1 — 2026-08-18 a 2026-08-19
@@ -532,8 +562,8 @@ precisa de um ambiente com Node e Playwright para fechar o gate proporcional.
   obrigatório. O runtime permanece em scripts clássicos e globais.
 - `src/js/manifest.json` contém 75 scripts. Os 67 da fotografia de 2026-08-17,
   os sete de Finanças Pessoais (`10-domain/12-personal-finance.js` e
-  `20-ui/17..22-finpes-*.js`) e, desde o ALD-01 C1, `10-domain/13-alladin.js`
-  (fundação Alladin). `sw.js`, o HTML e o portátil permanecem reconciliados, e
+  `20-ui/17..22-finpes-*.js`) e `10-domain/13-alladin.js` — o módulo do Alladin,
+  que reúne a infraestrutura do C1 e o modelo cadastral do C2. `sw.js`, o HTML e o portátil permanecem reconciliados, e
   o precache cobre os 75. Tiers: `fast` 4, `standard` 30, `full` 41.
 - As seis telas principais compartilham o shell horizontal do protótipo:
   Dashboard, Execution Board, Contas, Contabilidade, Planejamento FX e
