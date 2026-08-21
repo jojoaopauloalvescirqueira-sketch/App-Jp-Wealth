@@ -2,6 +2,47 @@
 
 ## [Unreleased]
 
+### Alladin — Modelo Cadastral (ALD-02 C2) — 2026-08-21
+
+Branch `feature/alladin-cadastral-c2`. **Integrada** — candidate
+`66ebf8401b123381a2d71dd3a63eafc5b21db21603f782b8368cf0d550e7bb7d`, commit
+`beea842`, merge `--no-ff` `29aca32` em `main`, publicado em `origin/main`
+(2026-08-21).
+
+O Alladin ganha **gramática patrimonial**: as quatro entidades cadastrais
+(Instrument, Asset, Account, CashAccount) com atos de criação, edição e ciclo
+cadastral `ACTIVE↔INACTIVE`. Nenhuma capacidade econômica — sem transação,
+holding, posição, valuation, cost basis, performance, benchmark, UI ou
+integração com Trading/Finanças Pessoais/Planejamento FX.
+
+Decisões humanas materializadas: **Account É a custódia financeira** (custódia
+física em `Asset.location`; não existe entidade `Custody`) · **`owners[{name,
+shareBp, isSelf}]`** com no máximo um `isSelf`, o que torna o valor
+proporcional do operador computável sem inferência · **dinheiro líquido nunca é
+Asset** — invariante de runtime, não convenção: nenhuma `nature` pode
+representar caixa, e Carteira/Cofre nascem como Account `OTHER` · **duplicidade
+avisa e o registro nasce**, com cripto exigindo `network`, que integra a chave
+de identidade (USDT Ethereum ≠ USDT Tron) · **`symbolHistory` append-only**, e
+histórico ilegível recusa a edição em vez de ser destruído · três regimes de
+classificação, com enum fechado só onde há mandato normativo.
+
+Persistência: `schemaVersion` **1 → 2** com migração explícita (carimbo; o v1
+declarava apenas o envelope) e cadeia a partir da versão mais baixa. `aldMutate`
+passa a ser **transacional** — snapshot antes do ato e restauração do agregado e
+do `changeLog` quando `save()` recusa; sem isso, um ato declarado não persistido
+deixaria registro fantasma que a próxima gravação de qualquer origem gravaria.
+Integridade referencial **hierárquica**: cash account ativa exige conta ativa; a
+recíproca não vale.
+
+Testes estendidos nas duas suítes já existentes (tiers seguem 30/41): unidade
+U1–U21 em Chromium isolado e integração com migração v1→v2, round-trip com as
+quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin e
+build do C1), reload real, falha parcial em validação e em persistência
+recusada, XSS/privacidade e round-trip de backup. Full 41/41 no candidato e na
+`main` integrada. Auditoria adversarial independente: três achados graves e dez
+menores, todos corrigidos e re-testados antes do commit. Contrato do domínio em
+`docs/architecture/ALLADIN.md`.
+
 ### Alladin — Fundação C1: Foundation Infrastructure (ALD-01) — 2026-08-20
 
 Branch `feature/alladin-foundation-c1`. **Integrada** — candidate `85d1911`,

@@ -24,7 +24,7 @@
 - Estudos dos Pivots: `docs/architecture/PIVOT-STUDIES.md` — derivação,
   critério de correção, estatística descritiva e o agregado `S.pivotStudies`.
 - Finanças Pessoais: `docs/architecture/PERSONAL-FINANCE.md` — contrato do agregado `S.personalFinance` (schema v1 congelado, BRL_CENTS, materialização de mês, dívida temporal).
-- Alladin (fundação ALD-01 C1): agregado `S.alladin` v1 — infraestrutura em `src/js/10-domain/13-alladin.js`, normalizador fail-closed em `src/js/00-core/04-persistence.js`, suítes `tools/alladin_*_test.py`. Spec canônica: JPW-ALLADIN-SPEC V1.2.1 (vault de arquitetura, externa ao repo). Contrato de arquitetura próprio (`ALLADIN.md`) nasce com o modelo cadastral (C2). Entidades, UI e domínio econômico: não iniciados.
+- Alladin: `docs/architecture/ALLADIN.md` — contrato do agregado `S.alladin` (schema v2, quatro entidades cadastrais, dinheiro em unidade mínima, write gate transacional, fail-closed). Código em `src/js/10-domain/13-alladin.js` e `src/js/00-core/04-persistence.js`; suítes `tools/alladin_*_test.py`. Spec canônica: JPW-ALLADIN-SPEC V1.2.1 (vault de arquitetura, externa ao repo). Transações, posições, valuation, performance, UI e integrações: não iniciados.
 - MEI-JP: fonte normativa aplicavel, implementacao MEI, historico patrimonial e auditoria matematica registrada.
 - Governanca/agentes: `AGENTS.md`, esta pagina, `AI-WORKFLOW.md`, `QUALITY-GATES.md` e skills locais.
 
