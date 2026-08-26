@@ -54,7 +54,7 @@ try:
         facts=page.evaluate('''() => ({
           compute: typeof compute,
           render: typeof render,
-          tabs: document.querySelectorAll('#nav .tab[data-screen]').length,
+          tabs: document.querySelectorAll('#nav .tab[data-route]').length,
           headerActions: document.querySelectorAll('#headerActions .header-action').length,
           state: typeof S === 'object' && !!S.params,
           storageKey: typeof LSKEY !== 'undefined' ? LSKEY : null,
@@ -65,13 +65,9 @@ try:
         })''')
         assert facts['compute']=='function', facts
         assert facts['render']=='function', facts
-        # Contrato atual: cinco telas operacionais na rail (Dashboard, Execution
-        # Board, Contas, Contabilidade e Planejamento FX); as ferramentas
-        # auxiliares vivem na Central. O header possui Configuracoes, Notas e
-        # Finalizar sessao.
-        # 6 desde PF-01: 06 Financas Pessoais entrou na navegacao principal.
-        # Este assert e o guardiao da contagem — atualizacao DELIBERADA.
-        assert facts['tabs']==6, facts
+        # NAV-01: o primeiro nível expõe exatamente cinco rotas semânticas.
+        # Destinos físicos legados continuam na fachada, não como primários.
+        assert facts['tabs']==5, facts
         assert facts['headerActions']==3, facts
         assert facts['state'] is True, facts
         assert facts['storageKey']=='jpwealth_v9_state', facts
@@ -165,15 +161,17 @@ try:
         page.evaluate('openAppIconPicker()')
         assert page.locator('[data-app-icon-option]').count()==2, 'biblioteca de ícones incompleta'
         page.evaluate('closeModal()')
-        screens=page.eval_on_selector_all('#nav .tab[data-screen]', 'els => els.map(e => e.dataset.screen)')
-        for screen in screens:
+        routes=page.eval_on_selector_all('#nav .tab[data-route]', 'els => els.map(e => e.dataset.route)')
+        expected_screens={'dashboard':'dash','forex-overview':'exec','personal-finance':'finpes','research-forex':'research','alladin':'alladin'}
+        assert routes==list(expected_screens), routes
+        for route in routes:
             ok=page.evaluate('''screen => {
-              const b=document.querySelector(`#nav .tab[data-screen="${screen}"]`);
+              const b=document.querySelector(`#nav .tab[data-route="${screen}"]`);
               if(!b) return false;
               b.click();
-              return document.getElementById(screen)?.classList.contains('active') || false;
-            }''', screen)
-            assert ok, f'tela não ativou: {screen}'
+              return document.getElementById(%s[screen])?.classList.contains('active') || false;
+            }''' % repr(expected_screens), route)
+            assert ok, f'rota não ativou: {route}'
         page.locator('#headerConfigBtn').focus()
         page.locator('#headerConfigBtn').press('Enter')
         assert page.locator('#settingsOverlay').evaluate("el => el.classList.contains('show')")
@@ -220,4 +218,4 @@ finally:
 
 if errors:
     raise SystemExit('SMOKE FALHOU\n'+'\n'.join(errors))
-print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 4 telas operacionais e Notas do MVP verificados.')
+print('SMOKE OK — estado vazio, resets, ledger real, onboarding, 5 rotas semânticas e Notas do MVP verificados.')

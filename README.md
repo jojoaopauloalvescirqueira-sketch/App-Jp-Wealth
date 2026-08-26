@@ -18,7 +18,15 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 
 ## Funcionalidades
 
-### Núcleo operacional — seis áreas
+### Estado da migração de navegação
+
+- **TARGET CANÔNICO:** Dashboard, Forex, Finanças Pessoais, Research e Alladin.
+- **CANDIDATO NAV-01:** fundação semântica transitória em branch dedicada;
+  destinos físicos legados continuam acessíveis por compatibilidade.
+- **ESTADO PUBLICÁVEL:** depende do NAV-02 (Forex Consolidation). NAV-01 isolado
+  não substitui a navegação utilizável atual e não pode ser publicado.
+
+### Capacidades funcionais
 
 - **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
@@ -59,7 +67,8 @@ modelo de retorno de Forex, previsão de mercado ou promessa de desempenho**.
 
 ### Planejamento FX
 
-**Tela principal própria** (quinta área da navegação), o Planejamento FX é o
+Na tela física própria `#fxplan`, preservada por compatibilidade no candidato
+NAV-01, o Planejamento FX é o
 motor de planejamento patrimonial temporal para Forex: separa **planejado**
 (premissas do operador),
 **realizado** (fechamentos mensais e ledger cambial de aportes) e **normativo**
@@ -112,9 +121,10 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (30 —
-inclui smoke, Central de Configurações, Galton Board, Planejamento FX, cotação
-USD/BRL, as nove suítes de Finanças Pessoais e as duas do Alladin em Chromium real) e **full** (41 verificações, incluindo segurança de importação/XSS, senha de
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (31 —
+inclui a fundação semântica NAV-01, smoke, Central de Configurações, Galton
+Board, Planejamento FX, cotação USD/BRL, as nove suítes de Finanças Pessoais e
+as duas do Alladin em Chromium real) e **full** (42 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.

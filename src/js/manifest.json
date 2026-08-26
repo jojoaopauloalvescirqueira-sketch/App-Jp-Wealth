@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "5e0313dcb26f97d6eecaf8fcf4ff95e68ea5bc245214434eaaad9769f0700bf6"
+      "sha256": "263192e4c0fedbbcecf26db0e61d5bc06109c8df3abe913b580dd39b266d1ec0"
     },
     {
       "order": 25,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "ace52e15a635890922914ef643a4cc589340daa764da5407f94fe8ff0eb76df7"
+      "sha256": "892d71b59749aad33226fea8d45d7057b708c924ff13e78dfd2783ae7c76d05f"
     },
     {
       "order": 32,
@@ -242,7 +242,7 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada do segundo nivel (N1)",
-      "sha256": "014f650cb96aae9e929055d75d8e13b2965026b5c04147b91d7f1c9e685cb939"
+      "sha256": "8706dbba6c42fa22eb1fcbf7d583051b4fff5fe5219484b581acb322ae7c0ade"
     },
     {
       "order": 41,

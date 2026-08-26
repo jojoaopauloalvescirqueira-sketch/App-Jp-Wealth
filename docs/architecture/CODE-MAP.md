@@ -1,7 +1,6 @@
 # Mapa do código
 
-Fotografia integrada localmente em `main` em 2026-08-14 (fonte material
-`7a93602`, merge `a188f29`, reconciliação `f1c1f36`):
+Fotografia do candidato interno NAV-01 sobre `1eddd29` em 2026-08-25:
 `src/js/manifest.json` contém 75 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
@@ -33,7 +32,7 @@ a lista material mudar.
 | 21 | `src/js/30-accounting/02-accounting-engine.js` | Motor da contabilidade |
 | 22 | `src/js/30-accounting/03-mei-jp.js` | Modelo estatístico MEI-JP |
 | 23 | `src/js/30-accounting/04-patrimonial-simulation.js` | Simulação patrimonial por perfil |
-| 24 | `src/js/40-app/01-navigation.js` | Navegação principal |
+| 24 | `src/js/40-app/01-navigation.js` | Registry/resolver semântico: cinco rotas canônicas e fachada de compatibilidade física |
 | 25 | `src/js/40-app/02-reset.js` | Reset administrativo |
 | 26 | `src/js/40-app/03-theme.js` | Tema claro/escuro |
 | 27 | `src/js/20-ui/09-contextual-help.js` | Ajuda de campo sob demanda |
@@ -95,19 +94,21 @@ tem `N + 1` compartimentos. O detalhe do contrato está em `GALTON-BOARD.md`.
 
 ## Planejamento FX
 
-Tela principal própria `#fxplan` — quinta entrada da rail, mesma mecânica
-`.tab`/`data-screen` das demais — contendo o card `#fxPlanningCard` (fora da
-personalização de layout nesta fase). Os seis módulos publicam
+Tela física própria `#fxplan`, preservada no candidato NAV-01 pela fachada de
+compatibilidade (`JPWNavigation.resolve('fxplan')`) e sem entrada no registry
+canônico — contendo o card `#fxPlanningCard` (fora da personalização de layout
+nesta fase). Os seis módulos publicam
 `window.JPWFx` + `reserveRequirementsCalc`; o módulo de cotação publica
 `window.JPWMarket.usdBrl`, e o agregado do plano persiste em `S.fxPlanning`.
 A extração de `reserveCalc()` do onboarding para a função pura
 compartilhada foi autorizada em 2026-08-11; contrato completo em
 `FX-PLANNING.md`.
 
-Planejamento e Execution Board usam o segundo nível hierárquico: cada acionador
-permanece filho direto de `#nav`, enquanto a faixa única `#navSubShell` vive no
-fluxo entre header e contexto e hospeda o painel de cada módulo. Hover abre
-transitoriamente; clique/Enter/Espaço fixa a faixa até clique externo ou Escape.
+Forex/Execution Board e Finanças Pessoais usam o segundo nível hierárquico:
+cada acionador permanece filho direto de `#nav`, enquanto a faixa única
+`#navSubShell` vive no fluxo entre header e contexto. Planejamento FX não possui
+mais acionador ou painel global no NAV-01; seus quatro modos seguem na API
+`window.JPWFx.ui` até a consolidação NAV-02.
 
 No Execution Board o segundo nível troca workspaces: `#execOverview`,
 `#execWidgetGrid` (o Painel Operacional — o mesmo grid de sempre, sem um nó
@@ -128,7 +129,7 @@ reutilizável completo estão em `NAVIGATION-HIERARCHY.md`.
 
 ## Entrypoints, PWA e artefatos derivados
 
-- `index.html` compõe o DOM e carrega os 65 scripts na ordem do manifest.
+- `index.html` compõe o DOM e carrega os 75 scripts na ordem do manifest.
 - `src/styles/app.css` contém o design system e as regras do laboratório.
 - `sw.js` deve precachear todo caminho declarado no manifest; `validate_project.py`
   trata a equivalência como invariante. Navegações controladas pelo worker

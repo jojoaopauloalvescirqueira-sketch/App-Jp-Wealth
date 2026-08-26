@@ -147,7 +147,15 @@ CashAccount{ cashAccountId, accountId → Account, currency, recordStatus, creat
   `createdAt`, `recordStatus`, `symbolHistory` ou a moeda do instrumento é
   **recusado explicitamente**, nunca descartado em silêncio.
 
-## Superfície pública
+## Placeholder de navegação NAV-01
+
+O candidato interno NAV-01 cria `section#alladin` apenas como destino estático:
+“Módulo patrimonial em desenvolvimento. As funcionalidades ainda não estão
+disponíveis.” A navegação não lê nem chama `S.alladin`/`JPWAlladin`, não executa
+`save()`, não mostra valores, cards, quantidades ou zero econômico. Isso não é
+o C3 e não muda o domínio cadastral existente.
+
+## Superfície pública do domínio
 
 `window.JPWAlladin` = `{compat, writeBlockReason, money{parse,format,supported,
 runtimeCurrencies}, id, catalogos, cadastro{addInstrument, editInstrument,
@@ -162,7 +170,7 @@ testes e a aceitação humana por console exercitam o domínio.
 | `tools/alladin_unit_test.py` | U1–U21 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup |
 
-Ambas no tier `standard` (30; `full` 41).
+Ambas no tier `standard` (31; `full` 42).
 
 ## Entregas
 

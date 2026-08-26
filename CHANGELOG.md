@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+### NAV-01 — fundação semântica de navegação — candidato interno — 2026-08-25
+
+Branch `codex/navigation-ia`, base `1eddd29`. Candidato transitório N1: registry
+público com exatamente cinco rotas (Dashboard, Forex, Finanças Pessoais,
+Research e Alladin), fachada compatível para IDs físicos legados, falha fechada
+antes de mutar classes e zero persistência de navegação. O primeiro nível passa
+a cinco botões; `#research` e o placeholder estático `#alladin` são os únicos
+novos destinos físicos. O placeholder não toca o domínio Alladin nem apresenta
+qualquer zero econômico.
+
+Este changeset **não é publicável isoladamente**: Contas, Contabilidade e
+Planejamento deixam o primeiro nível antes de seus destinos finais em Forex,
+que pertencem ao NAV-02. Commit, push, merge e deploy permanecem não executados.
+
+Verificação do candidato: rebuild oficial `eba48d278c6a5b58`; suíte nova
+`navigation_ia_test.py` e quatro focais aprovadas; `validate_project.py` aprovado
+com 75 scripts e 409 IDs; tier full **42/42 PASS**. A verificação em Chromium
+real cobriu desktop e mobile (390 px), temas claro/escuro, foco/teclado e zero
+overflow horizontal. O teste N1-C reproduziu alvos móveis de 40 px; por isso o
+arquivo condicional `src/styles/app.css` entrou no blast radius e os cinco
+primários passaram a medir 44 px. O candidato ocupa exatamente 26 arquivos.
+
 ### Alladin — Modelo Cadastral (ALD-02 C2) — 2026-08-21
 
 Branch `feature/alladin-cadastral-c2`. **Integrada** — candidate

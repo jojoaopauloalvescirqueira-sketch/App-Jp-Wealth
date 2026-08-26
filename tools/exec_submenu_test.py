@@ -115,7 +115,7 @@ def run_structure(page):
     assert contract["panelOutsideNav"], "painel do segundo nivel entrou dentro de #nav"
     assert contract["structuralOrder"], f"faixa fora da ordem header -> faixa -> contexto: {contract}"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
-    assert contract["panelsInShell"] == ["execNavSubmenu", "fxplanNavSubmenu", "finpesNavSubmenu"], contract["panelsInShell"]
+    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu"], contract["panelsInShell"]
     assert contract["keys"] == EXPECTED_VIEWS, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
     # "Altura efetiva zero" = nenhuma caixa de conteudo. A faixa mantem a
@@ -292,7 +292,7 @@ def run_focus_and_keyboard(page):
     assert not blocked["took"], "workspace oculto continua na ordem de foco (inert nao aplicado)"
 
     other = page.evaluate(
-        """() => [...document.querySelectorAll('#fxplanNavSubmenu [data-nav-sub-view]')]
+        """() => [...document.querySelectorAll('#finpesNavSubmenu [data-nav-sub-view]')]
              .filter(el => el.tabIndex >= 0).length"""
     )
     assert other == 0, "painel do outro modulo continua tabulavel"
@@ -358,8 +358,8 @@ def run_module_switch(page):
     """Trocar de modulo fecha o anterior: nunca dois acionadores expandidos."""
     page.click("#execNavTrigger")
     page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click("#fxplanNavTrigger")
-    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click("#finpesNavTrigger")
+    page.wait_for_function("() => finpesNavTrigger.getAttribute('aria-expanded') === 'true'")
     state = page.evaluate(
         """() => ({
           expanded: [...document.querySelectorAll('.nav-sub-trigger')]
@@ -369,9 +369,9 @@ def run_module_switch(page):
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id)
         })"""
     )
-    assert state["expanded"] == ["fxplanNavTrigger"], f"dois acionadores expandidos: {state['expanded']}"
-    assert state["mounted"] == ["fxplanNavSubmenu"], f"painel do modulo anterior segue montado: {state['mounted']}"
-    assert state["screens"] == ["fxplan"], state["screens"]
+    assert state["expanded"] == ["finpesNavTrigger"], f"dois acionadores expandidos: {state['expanded']}"
+    assert state["mounted"] == ["finpesNavSubmenu"], f"painel do modulo anterior segue montado: {state['mounted']}"
+    assert state["screens"] == ["finpes"], state["screens"]
 
     # Voltar ao Execution Board vindo de outro modulo reabre na Visao Geral.
     page.click("#execNavTrigger")
@@ -556,7 +556,7 @@ def run_motor_migration(page):
           emGrupo: SETTINGS_GROUPS.some(g => (g.children || []).includes('tool-motor')),
           descMenciona: SETTINGS_GROUPS.some(g => /Motor de Lote/i.test(g.desc || '')),
           transporte: Object.keys(SETTINGS_SCREEN_GRIDS),
-          rotaLegada: typeof SCREEN_TO_SETTINGS_LEAF['motor'],
+          rotaLegada: NAV_COMPATIBILITY_TARGETS.motor.action || null,
           painel: document.querySelector('[data-settings-slot="tool-motor"]') !== null
         })"""
     )
@@ -567,7 +567,7 @@ def run_motor_migration(page):
         "transporte de DOM ainda mapeia tool-motor — restoreLegacySettingsNodes() "
         "arrancaria o grid de dentro de #exec ao fechar a Central"
     )
-    assert central["rotaLegada"] == "undefined", "SCREEN_TO_SETTINGS_LEAF ainda desvia motor"
+    assert central["rotaLegada"] is None, "compatibilidade ainda desvia motor para Configurações"
     assert not central["painel"], "painel tool-motor continua no DOM"
 
     # 4. Abrir e FECHAR a Central nao pode mover o grid — era o risco principal.
@@ -583,7 +583,7 @@ def run_motor_migration(page):
     )
 
     # 5. A Acao Rapida do Dashboard leva ao workspace, e nao a lugar nenhum.
-    page.click('#nav .tab[data-screen="dash"]')
+    page.click('#nav .tab[data-route="dashboard"]')
     page.wait_for_function("() => document.querySelector('.screen.active')?.id === 'dash'")
     page.evaluate("() => navigateToScreen('motor')")
     rota = page.evaluate(
@@ -616,13 +616,15 @@ def run_motor_migration(page):
 
 
 def run_no_regression(page):
-    """As cinco abas globais continuam ativando suas proprias telas."""
-    tabs = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-screen]')].map(el => el.dataset.screen)")
-    assert tabs == ["dash", "exec", "contas", "contab", "fxplan", "finpes"], f"abas globais mudaram: {tabs}"
-    for screen in tabs:
-        page.click(f'#nav .tab[data-screen="{screen}"]')
+    """As cinco rotas globais ativam seus destinos físicos declarados."""
+    routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
+    expected = {"dashboard": "dash", "forex-overview": "exec", "personal-finance": "finpes",
+                "research-forex": "research", "alladin": "alladin"}
+    assert routes == list(expected), f"rotas globais mudaram: {routes}"
+    for route, screen in expected.items():
+        page.click(f'#nav .tab[data-route="{route}"]')
         active = page.evaluate("() => document.querySelector('.screen.active')?.id")
-        assert active == screen, f"aba {screen} nao ativou a tela homonima (ativa: {active})"
+        assert active == screen, f"rota {route} nao ativou {screen} (ativa: {active})"
     # Fecha a faixa deixada aberta pelo ultimo clique em acionador.
     page.keyboard.press("Escape")
 

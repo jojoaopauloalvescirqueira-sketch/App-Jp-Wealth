@@ -3,7 +3,7 @@
 ## Visão geral
 
 O JP Wealth Risk Terminal é uma aplicação web cliente, local-first e sem backend
-obrigatório. O navegador carrega `index.html`, `src/styles/app.css` e 65 scripts
+obrigatório. O navegador carrega `index.html`, `src/styles/app.css` e 75 scripts
 clássicos na ordem e com os hashes fixados por `src/js/manifest.json`. O estado
 operacional é persistido localmente; artefatos portáteis e PWA são derivados das
 mesmas fontes rastreadas.
@@ -39,6 +39,12 @@ de simulação não ganha autoridade normativa por coexistir com o terminal.
 - `src/js/40-app/`
 - Navegação, tema, onboarding, Configurações, dashboards, reset, limpeza, boot e
   experiências educacionais isoladas.
+
+`src/js/40-app/01-navigation.js` separa a API canônica da compatibilidade
+física: `JPWNavigation.routes()` expõe somente os cinco destinos do target,
+enquanto `resolve()` e `navigateToScreen()` continuam aceitando IDs legados. O
+candidato NAV-01 é transitório e interno; o primeiro estado potencialmente
+publicável da nova IA depende do NAV-02.
 
 ### 6. PWA e identidade visual
 

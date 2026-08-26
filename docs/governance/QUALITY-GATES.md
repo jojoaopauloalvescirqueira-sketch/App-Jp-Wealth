@@ -25,6 +25,8 @@ Para documentacao, governanca e iteracao curta:
 Para N0-V e N1:
 
 - tudo do fast;
+- `navigation_ia_test.py`: cinco rotas canônicas exatas, compatibilidade física,
+  falha fechada atômica, zero escrita e isolamento do placeholder Alladin;
 - smoke test;
 - Central de Configuracoes;
 - `galton_board_test.py`, incluindo matematica, fisica, persistencia, UI e lifecycle;
@@ -78,8 +80,8 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 | Tier | Quantidade | Verificacoes adicionais |
 |---|---:|---|
 | `fast` | 4 | preflight, estrutura, diff-check e frescor material |
-| `standard` | 30 | smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) cotacao USD/BRL, fases visiveis, tres colunas do Exec, Financas Pessoais (fundacao, preservacao na finalizacao, round-trip de backup e navegacao; Orcamento Mensal, Dividas & Credito, Comparativo Mensal e Visao Geral) e Alladin (unidade em Chromium isolado — moeda, ids, write gate transacional, owners/isSelf, regimes de classificacao, cripto com network, symbolHistory, falha parcial, integridade referencial; integracao de persistencia — migracao v1->v2, round-trip com as quatro colecoes povoadas, fail-closed, rollback no build pre-Alladin e no build C1, reload real, XSS/privacidade e round-trip de backup) |
-| `full` | 41 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
+| `standard` | 31 | fundacao semantica NAV-01, smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) cotacao USD/BRL, fases visiveis, tres colunas do Exec, Financas Pessoais (fundacao, preservacao na finalizacao, round-trip de backup e navegacao; Orcamento Mensal, Dividas & Credito, Comparativo Mensal e Visao Geral) e Alladin (unidade em Chromium isolado — moeda, ids, write gate transacional, owners/isSelf, regimes de classificacao, cripto com network, symbolHistory, falha parcial, integridade referencial; integracao de persistencia — migracao v1->v2, round-trip com as quatro colecoes povoadas, fail-closed, rollback no build pre-Alladin e no build C1, reload real, XSS/privacidade e round-trip de backup) |
+| `full` | 42 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
 
 O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
 `codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa

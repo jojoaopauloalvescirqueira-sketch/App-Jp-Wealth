@@ -1,5 +1,27 @@
 # Estado atual do projeto
 
+## NAV-01 — candidato interno de fundação semântica — 2026-08-25
+
+- **BASE_SHA:** `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`.
+- **Branch/worktree:** `codex/navigation-ia`, worktree dedicado Navigation IA.
+- **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
+  Research e Alladin.
+- **CANDIDATO NAV-01:** registry público estrito, fachada de compatibilidade,
+  cinco botões, `section#research` e placeholder estático `section#alladin`.
+- **ESTADO PUBLICÁVEL:** ainda depende de NAV-02. NAV-01 isolado é auditável,
+  mas não pode substituir o estado utilizável, ser mergeado ou publicado.
+- **Persistência e Alladin:** nenhuma chave/rota persistida; a navegação não
+  chama nem altera `S.alladin`, `JPWAlladin` ou `save()`.
+- **Git/publicação:** commit, push, merge e deploy não autorizados e não
+  executados.
+- **Evidência desta fotografia:** rebuild oficial `eba48d278c6a5b58`; suíte
+  `navigation_ia_test.py` e quatro focais PASS; `validate_project.py` PASS (75
+  scripts, 409 IDs); tier full **42/42 PASS**. Chromium real cobriu desktop e
+  mobile a 390 px, temas claro/escuro, foco/teclado e zero overflow horizontal.
+  O teste N1-C mediu alvos móveis de 40 px e justificou o 26º arquivo
+  condicional, `src/styles/app.css`; depois da correção, os cinco medem 44 px.
+  Blast radius final: exatamente 26 arquivos.
+
 - Data da fotografia: 2026-08-21
 Source revision representada: `4d130faa44187ceb81ed35bce15425a9dc2e78c9`
 - Branch atual: `main` (`main` = `origin/main` = `4d130fa`)

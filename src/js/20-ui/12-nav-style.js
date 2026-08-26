@@ -56,10 +56,9 @@ function positionNavPill(){
   // deixa o destaque em display:none — medir ali devolveria zero e faria o
   // elemento piscar ao voltar para a barra horizontal.
   //
-  // A ausência de aba ativa não é hipótese teórica: navigateToScreen() chamado
-  // com STRING (CTAs, Ações Rápidas) remove .active de todas as abas e não
-  // repõe em nenhuma. Nesse estado o destaque é escondido, em vez de ficar
-  // marcando a aba anterior, que seria informação falsa.
+  // A ausência de aba ativa continua tratada defensivamente para monólitos
+  // reduzidos e DOM incompleto. No contrato NAV-01 o resolver valida o destino
+  // antes de trocar classes e todo destino físico legado herda um primário.
   if(getComputedStyle(pill).display==='none'){
     pill.classList.remove('is-ready');
     if(spec) spec.classList.remove('is-ready');

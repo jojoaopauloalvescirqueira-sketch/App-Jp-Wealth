@@ -414,7 +414,7 @@
     #nav .tab{
       border:1px solid var(--line); border-left-width:1px; border-radius:var(--radius-sm);
       padding:var(--sp-3) var(--sp-2); justify-content:center; gap:var(--sp-2);
-      min-height:40px; letter-spacing:.05em;
+      min-height:44px; letter-spacing:.05em;
     }
     #nav .tab .lbl{display:inline}
     #nav .tab.active{border-color:var(--violet); background:var(--accent-tint)}

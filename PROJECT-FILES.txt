@@ -164,6 +164,7 @@ tools/galton_board_test.py
 tools/import_xss_security_test.py
 tools/investor_password_test.py
 tools/mvp_notes_test.py
+tools/navigation_ia_test.py
 tools/nocoda_test.py
 tools/pivot_studies_test.py
 tools/order_guards_test.py

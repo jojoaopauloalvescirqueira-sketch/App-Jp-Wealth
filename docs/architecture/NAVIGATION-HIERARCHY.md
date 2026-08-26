@@ -5,10 +5,23 @@ a possuir um segundo nível de navegação no JP Wealth. Ele descreve arquitetur
 de interface, não autoriza automaticamente aplicar submenus a outros módulos.
 Cada nova adoção continua exigindo tarefa e aprovação próprias.
 
-Adotam o padrão hoje: **Planejamento** (`fxplan`), **Execution Board** (`exec`) e
-**Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
+## Estado da migração NAV-01
+
+- **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
+  Research e Alladin.
+- **CANDIDATO NAV-01:** fundação semântica transitória e interna. O registry
+  público contém exatamente `dashboard`, `forex-overview`, `personal-finance`,
+  `research-forex` e `alladin`; IDs físicos antigos são apenas compatibilidade.
+- **ESTADO PUBLICÁVEL:** ainda depende do NAV-02, que levará os destinos
+  definitivos de Conta, Operação, Apuração e Planejamento para dentro de Forex.
+  NAV-01 isolado não deve ser mergeado nem publicado.
+
+Adotam o segundo nível no candidato NAV-01: **Forex** (superfície física `exec`)
+e **Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
 Dívidas & Crédito, Comparativo Mensal e Cenários —, superfície `window.JPWFin.ui`,
-teste `tools/finpes_navigation_test.py`), esta desde PF-01 (2026-08-18).
+teste `tools/finpes_navigation_test.py`). O antigo painel global de Planejamento
+foi removido; `#fxplan` e `window.JPWFx.ui` permanecem funcionais por
+`JPWNavigation.resolve('fxplan')` como compatibilidade.
 
 ## Estrutura canônica
 
@@ -50,8 +63,8 @@ Convenção de nomes, lida por derivação e não por registro manual:
 
 | Elemento | Id |
 |---|---|
-| acionador em `#nav` | `<data-screen>NavTrigger`, classe `.tab.nav-sub-trigger` |
-| painel do módulo | `<data-screen>NavSubmenu`, classe `.nav-sub-menu` |
+| acionador em `#nav` | `<data-nav-surface>NavTrigger`, classe `.tab.nav-sub-trigger` |
+| painel do módulo | `<data-nav-surface>NavSubmenu`, classe `.nav-sub-menu` |
 | item de destino | `[data-nav-sub-view="<chave>"]` |
 
 As colunas do painel derivam da contagem de itens
@@ -104,8 +117,7 @@ isolada. A faixa usa divisor discreto, sem borda de card ou sombra pesada.
 
 O segundo nível deve chamar o mecanismo visual já existente do módulo. Não se
 cria estado paralelo para conteúdo ativo. As chaves são encaminhadas para a
-superfície pública do módulo — `window.JPWFx.ui` (`overview`, `planning`,
-`actuals`, `table`) e `window.JPWExec.ui` (`overview`, `panel`, `ecal`,
+superfície pública do módulo — `window.JPWExec.ui` (`overview`, `panel`, `ecal`,
 `nocoda`, `pivots`, `motor`) — que expõe exatamente `selectView(chave)` e
 `getView()`.
 
@@ -184,9 +196,10 @@ o usuário fecha tocando fora ou usando Escape em teclado conectado.
 - `src/js/40-app/11-operational-shell.js`: registro dos módulos, abertura
   transitória/fixada, foco e fechamento — genérico, sem id de módulo;
 - script de UI do módulo: seleção da visão, sem domínio financeiro
-  (`30-accounting/05-fx-planning/05-fx-ui.js` e `20-ui/13-exec-views.js`);
-- teste de navegador focado: contrato estrutural, interação e acessibilidade
-  (`tools/fx_planning_test.py` e `tools/exec_submenu_test.py`).
+  (`20-ui/13-exec-views.js` e `20-ui/17-finpes-views.js`);
+- teste de navegador focado: registry/compatibilidade em
+  `tools/navigation_ia_test.py`; contrato estrutural, interação e acessibilidade
+  em `tools/exec_submenu_test.py` e `tools/finpes_navigation_test.py`.
 
 ## Verificação mínima
 

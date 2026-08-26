@@ -13,8 +13,8 @@
 //
 // Para dar segundo nível a um módulo novo bastam três coisas, nenhuma delas
 // neste arquivo além da última linha:
-//   1. um botão `.tab.nav-sub-trigger` com id `<data-screen>NavTrigger`;
-//   2. um `<nav class="nav-sub-menu">` com id `<data-screen>NavSubmenu` dentro
+//   1. um botão `.tab.nav-sub-trigger` com id `<data-nav-surface>NavTrigger`;
+//   2. um `<nav class="nav-sub-menu">` com id `<data-nav-surface>NavSubmenu` dentro
 //      de #navSubShell, com botões `[data-nav-sub-view]`;
 //   3. uma entrada em NAV_SUBMENU_SURFACES apontando para a superfície de UI.
 
@@ -26,7 +26,6 @@ const NAV_SUB_CLOSE_DELAY = 400;
 // O controlador não conhece as chaves — quem as valida é o próprio módulo.
 const NAV_SUBMENU_SURFACES = {
   exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  fxplan: () => (window.JPWFx && window.JPWFx.ui) || null,
   finpes: () => (window.JPWFin && window.JPWFin.ui) || null
 };
 
@@ -144,9 +143,13 @@ function scheduleNavSubClose() {
 function selectNavSubView(view) {
   const screen = navSubUI.screen;
   if (!screen) return;
-  if (typeof navigateToScreen === 'function') navigateToScreen(screen);
-  const surface = navSubSurface(screen);
-  if (surface && typeof surface.selectView === 'function') surface.selectView(view);
+  if (window.JPWNavigation && typeof window.JPWNavigation.navigateLocal === 'function') {
+    window.JPWNavigation.navigateLocal(screen, view);
+  } else {
+    if (typeof navigateToScreen === 'function') navigateToScreen(screen);
+    const surface = navSubSurface(screen);
+    if (surface && typeof surface.selectView === 'function') surface.selectView(view);
+  }
   syncNavSubCurrent(screen);
   if (shellUI.open) closeShellMenu({ restoreFocus: false });
 }
@@ -203,7 +206,7 @@ function initOperationalShell() {
     const hoverCapable = () => finePointer.matches && !window.matchMedia('(max-width:900px)').matches;
 
     triggers.forEach(trigger => {
-      const screen = trigger.dataset.screen;
+      const screen = trigger.dataset.navSurface;
       const { panel, items } = navSubEls(screen);
       if (!panel) return;
       items.forEach(item => { item.tabIndex = -1; });
@@ -212,7 +215,9 @@ function initOperationalShell() {
         if (event.key === 'ArrowDown') {
           event.preventDefault(); openNavSub(screen, { opener: trigger, focus: true });
         } else if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: true, pin: true });
+          event.preventDefault();
+          if (window.JPWNavigation) window.JPWNavigation.navigate(trigger.dataset.route);
+          openNavSub(screen, { opener: trigger, focus: true, pin: true });
         } else if (event.key === 'ArrowUp') {
           event.preventDefault(); openNavSub(screen, { opener: trigger, focus: 'last' });
         } else if (event.key === 'Escape' && navSubUI.open) {
@@ -243,7 +248,7 @@ function initOperationalShell() {
     if (toggle) { shellUI.open ? closeShellMenu() : openShellMenu(toggle); return; }
     const triggerHit = event.target.closest('.nav-sub-trigger');
     if (triggerHit) {
-      openNavSub(triggerHit.dataset.screen, { opener: triggerHit, focus: shellUI.open, pin: true });
+      openNavSub(triggerHit.dataset.navSurface, { opener: triggerHit, focus: shellUI.open, pin: true });
       if (shellUI.open) closeShellMenu({ restoreFocus: false });
       return;
     }
@@ -252,7 +257,11 @@ function initOperationalShell() {
     if (navSubUI.open && !event.target.closest('#navSubShell')) closeNavSub();
     // Selecionar outro destino global fecha somente a gaveta mobile — sem
     // devolver foco, porque a navegação já levou o usuário para outra tela.
-    if (shellUI.open && event.target.closest('#nav .tab:not(.nav-sub-trigger)')) { closeShellMenu({ restoreFocus: false }); return; }
+    if (shellUI.open && event.target.closest('#nav .tab:not(.nav-sub-trigger)')) {
+      closeShellMenu({ restoreFocus: false });
+      if (window.JPWNavigation) window.JPWNavigation.focusCurrentScreen();
+      return;
+    }
     // Clique fora do painel e fora do botão fecha.
     if (shellUI.open && !event.target.closest('#nav')) closeShellMenu({ restoreFocus: false });
   });
