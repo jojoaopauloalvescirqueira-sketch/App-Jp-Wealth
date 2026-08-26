@@ -12,6 +12,12 @@ O resultado mostra como uma distribuicao empirica pode emergir de colisoes reais
 uma placa de pinos. Ele **nao e um modelo de retorno de Forex, uma previsao de mercado
 ou uma promessa de desempenho**.
 
+No NAV-03, `Research → Others` permanece um empty state neutro. Galton conserva
+exatamente o owner fisico `Configuracoes → Laboratorio de Probabilidade → Galton
+Board`; uma destinacao conceitual futura para Others nao cria CTA, alias, clone ou
+movimentacao neste ciclo. Lifecycle, DOM dinamico, animacao, `ResizeObserver`,
+destruicao, preferencias e storage permanecem inalterados.
+
 ## Dependencia e carregamento
 
 O motor de corpos rigidos e Planck.js `1.5.0`, vendorizado em

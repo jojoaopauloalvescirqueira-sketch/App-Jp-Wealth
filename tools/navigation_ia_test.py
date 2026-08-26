@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NAV-01 — contrato da fundacao semantica de navegacao.
+"""NAV-01..NAV-03 — contrato da navegacao semantica.
 
 Prova que a API publica expoe somente as cinco rotas canonicas, enquanto a
 fachada legada continua resolvendo destinos fisicos sem promovê-los ao contrato
@@ -24,7 +24,7 @@ CANONICAL = [
     ("dashboard", "dash", "dashboard", None),
     ("forex-overview", "exec", "forex", "overview"),
     ("personal-finance", "finpes", "personal-finance", "overview"),
-    ("research-forex", "research", "research", None),
+    ("research-forex", "research", "research", "calendar"),
     ("alladin", "alladin", "alladin", None),
 ]
 FOREX_CHILDREN = [
@@ -34,6 +34,13 @@ FOREX_CHILDREN = [
     ("forex-operation", "exec", "panel"),
     ("forex-reconciliation", "contab", None),
     ("forex-planning", "fxplan", "overview"),
+]
+RESEARCH_CHILDREN = [
+    ("research-forex", "research", "calendar"),
+    ("research-stocks-br", "research", "stocks-br"),
+    ("research-stocks-global", "research", "stocks-global"),
+    ("research-reits", "research", "reits"),
+    ("research-others", "research", "others"),
 ]
 LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
           "motor", "history", "check", "tool-check", "ecal", "nocoda",
@@ -100,7 +107,8 @@ def boot(browser, url, viewport=None):
     page.goto(url, wait_until="load")
     page.wait_for_function("""() => window.JPWNavigation
       && typeof window.JPWNavigation.navigate === 'function'
-      && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWFx?.ui""")
+      && window.JPWExec?.ui && window.JPWFin?.ui && window.JPWFx?.ui
+      && window.JPWResearch?.ui""")
     page.evaluate("() => { window.alert=()=>{}; window.__navStorageOps=[]; closeModal(); }")
     return context, page, observed
 
@@ -117,6 +125,8 @@ def assert_registry(page):
     assert not any(legacy in [route["id"] for route in routes] for legacy in LEGACY), flat
     children = page.evaluate("() => window.JPWNavigation.children('forex')")
     assert [child["id"] for child in children] == [item[0] for item in FOREX_CHILDREN], children
+    research = page.evaluate("() => window.JPWNavigation.children('research')")
+    assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
     assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []
     assert page.evaluate("() => window.JPWNavigation.children('inexistente')") == []
     resolved = page.evaluate("""targets => targets.map(target => ({
@@ -151,6 +161,8 @@ def assert_primary_dom(page):
     assert page.locator("#nav > .tab[data-screen]").count() == 0
     assert page.locator("#fxplanNavSubmenu").count() == 0
     assert page.locator("section#research").count() == 1
+    assert page.locator("#nav > #researchNavTrigger").count() == 1
+    assert page.locator("#researchNavSubmenu").count() == 1
     assert page.locator("section#alladin").count() == 1
     alladin_text = page.locator("section#alladin").inner_text().strip().splitlines()
     assert [line.strip() for line in alladin_text if line.strip()] == [
@@ -185,6 +197,8 @@ def assert_canonical_navigation(page):
             assert page.evaluate("() => window.JPWExec.ui.getView()") == local_view
         if screen == "finpes":
             assert page.evaluate("() => window.JPWFin.ui.getView()") == local_view
+        if screen == "research":
+            assert page.evaluate("() => window.JPWResearch.ui.getView()") == local_view
 
     page.evaluate("() => window.JPWExec.ui.selectView('motor')")
     page.click('#nav > .tab[data-route="forex-overview"]')
@@ -235,15 +249,15 @@ def assert_forex_children_and_compatibility(page):
     assert check_state["current"]["child"] == "forex-preparation", check_state
     assert not page.locator("#settingsOverlay").is_visible()
 
-    # NAV2-J: as ferramentas de Research continuam funcionais, mas nenhum dos
-    # seis filhos Forex pode mentir que as possui nesta etapa interna.
-    for target in ("ecal", "nocoda", "pivots"):
+    # NAV3-D/G: aliases historicos pertencem a Research/Forex e nunca deixam
+    # Exec/Forex falsamente ativos.
+    for target, view in (("ecal", "calendar"), ("nocoda", "nocoda"), ("pivots", "pivots")):
         assert page.evaluate("target => JPWNavigation.navigate(target)", target) is True
         state = active_state(page)
-        assert state["screen"] == "exec" and state["primary"] == "forex", (target, state)
-        assert state["current"]["canonical"] is None, (target, state)
-        assert state["current"]["child"] is None, (target, state)
-        assert state["current"]["localView"]["view"] == target, (target, state)
+        assert state["screen"] == "research" and state["primary"] == "research", (target, state)
+        assert state["current"]["canonical"] == "research-forex", (target, state)
+        assert state["current"]["child"] == "research-forex", (target, state)
+        assert state["current"]["localView"] == {"surface": "research", "view": view}, (target, state)
 
 
 def assert_compatibility_and_atomic_refusal(page):
@@ -298,10 +312,13 @@ def assert_storage_and_alladin_isolation(page):
       window.save = function(){ saves++; return saveOriginal.apply(this, arguments); };
       for (const route of JPWNavigation.routes().map(item => item.id)) JPWNavigation.navigate(route);
       for (const route of JPWNavigation.children('forex').map(item => item.id)) JPWNavigation.navigate(route);
+      for (const route of JPWNavigation.children('research').map(item => item.id)) JPWNavigation.navigate(route);
       navigateToScreen('contas');
       JPWNavigation.navigateLocal('exec', 'motor');
       JPWNavigation.navigate('history');
       JPWNavigation.navigate('check');
+      JPWNavigation.navigateLocal('research', 'nocoda');
+      JPWNavigation.navigate('pivots');
       JPWNavigation.navigate('alladin');
       window.save = saveOriginal;
       return {
@@ -383,7 +400,7 @@ def main():
                 browser.close()
     finally:
         server.shutdown()
-    print("NAVIGATION IA TEST PASS — NAV2-A..J, cinco primários, seis filhos Forex, compatibilidade, storage e Alladin isolados")
+    print("NAVIGATION IA TEST PASS — NAV1..NAV3, primários/filhos, compatibilidade, storage e Alladin isolados")
 
 
 if __name__ == "__main__":

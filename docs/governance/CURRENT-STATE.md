@@ -1,6 +1,32 @@
 # Estado atual do projeto
 
-## NAV-02 — candidato interno de Forex Consolidation — 2026-08-26
+## NAV-03 — candidato interno de Research Consolidation — 2026-08-26
+
+- **BASE_SHA/branch:** `9b5ea298953b3c8bb270864151a88e5c69419e61` em
+  `codex/navigation-ia`, worktree dedicado Navigation IA.
+- **Contrato:** cinco primários preservados; `children('research')` expõe
+  exatamente Forex, Ações, Stocks, REITs e Others. Research/Forex abre
+  Calendário por default e possui somente Calendário, NoCoda e Pivots no N3.
+- **Ownership:** `execEcal`, `execNocoda` e `execPivots` existem uma vez sob
+  `section#research`; aliases históricos ativam Research/Forex/N3 e Exec retém
+  somente overview, panel, motor e history como views canônicas.
+- **Empty states:** Ações abre Brasil/B3 diretamente; Stocks, REITs e Others são
+  neutros e não contêm métricas, números econômicos ou conteúdo funcional.
+- **Galton:** permanece em Configurações, sem mudança de lifecycle, DOM,
+  preferências, storage ou código funcional.
+- **Persistência e Alladin:** nenhuma chave/rota persistida, zero escrita por
+  navegação e nenhum acesso a `S.alladin`/`JPWAlladin`; worktree Alladin isolado.
+- **Evidência corrente:** focais Research, Navigation IA, Exec/Calendário,
+  NoCoda, Pivots e Settings/Galton PASS; `validate_project` PASS (76 scripts,
+  415 IDs); fast **4/4 PASS**, standard **32/32 PASS** e full **43/43 PASS**.
+  Browser pós-full PASS em desktop/mobile, claro/escuro, teclado, foco, N2/N3,
+  hidden/inert, overflow e alvos móveis ≥44 px. PWA PASS em manifesto, hashes,
+  precache, upgrade do service worker e reprodutibilidade do build oficial
+  `aaa2262ae6fb0610`.
+- **Git/publicação:** implementação autorizada, mas commit, push, merge e deploy
+  não autorizados. Publicabilidade potencial não substitui os gates humanos.
+
+## NAV-02 — checkpoint interno commitado de Forex Consolidation — 2026-08-26
 
 - **BASE_SHA:** `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`.
 - **Branch/worktree:** `codex/navigation-ia`, worktree dedicado Navigation IA.
@@ -18,8 +44,8 @@
   `validate_project` PASS (75 scripts, 409 IDs); fast **4/4 PASS**; full
   **42/42 PASS**; browser pós-full PASS em desktop/mobile 390×844,
   claro/escuro, teclado, níveis 2/3, overflow e targets ≥44 px.
-- **Publicabilidade:** NAV-02 não é publicável; NAV-03 é o primeiro candidato
-  potencialmente publicável. Commit, push, merge e deploy não autorizados.
+- **Git/publicabilidade:** commit interno `9b5ea298`; NAV-02 isolado não é
+  publicável. Push, merge e deploy não foram autorizados.
 
 ## NAV-01 — candidato interno de fundação semântica — 2026-08-25
 

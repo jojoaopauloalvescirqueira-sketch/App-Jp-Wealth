@@ -2,6 +2,36 @@
 
 ## [Unreleased]
 
+### NAV-03 — Research Consolidation — candidato interno — 2026-08-26
+
+Sobre a base commitada `9b5ea298`, `JPWNavigation.children('research')` passa
+a expor exatamente Forex, Ações, Stocks, REITs e Others. Research/Forex abre
+Calendário por default e contém somente Calendário, NoCoda e Pivots no terceiro
+nível; Ações abre diretamente Brasil/B3 e os demais destinos usam empty states
+neutros, sem números ou conteúdo funcional inventado.
+
+- `#execEcal`, `#execNocoda` e `#execPivots` foram movidos, sem clone ou rename,
+  de `section#exec` para `section#research`. As fontes, cálculos, persistência e
+  renderizadores funcionais permanecem os mesmos.
+- Os aliases `ecal`, `nocoda` e `pivots` ativam Research/Forex e o N3 correto.
+  `JPWExec.ui` possui quatro views canônicas — overview, panel, motor e history —
+  e os nomes analíticos legados são shims que delegam ao owner Research.
+- A nova superfície efêmera `window.JPWResearch.ui` vive em
+  `20-ui/23-research-views.js`, anexado como script 76 sem reordenar os anteriores.
+  O service worker precacheia o novo script.
+- Galton permanece fisicamente em Configurações, sem alteração de lifecycle,
+  preferências, storage, DOM dinâmico ou código funcional.
+- Zero nova chave de storage, zero escrita causada pela navegação, zero mudança
+  de schema e zero acoplamento ao domínio Alladin.
+
+Focais Research, Navigation IA, Exec/Calendário, NoCoda, Pivots e
+Settings/Galton passaram. `validate_project` aprovou 76 scripts e 415 IDs;
+fast 4/4, standard 32/32 e full 43/43 passaram. Browser pós-full aprovou
+desktop/mobile, temas, teclado/foco, N2/N3, hidden/inert, overflow e alvos
+móveis ≥44 px. Manifesto, hashes, precache, upgrade do service worker e build
+reproduzível `aaa2262ae6fb0610` passaram. Commit, push, merge e deploy não estão
+autorizados.
+
 ### NAV-02 — Forex Consolidation — candidato interno — 2026-08-26
 
 Sobre a base `e2c34bb`, a API mantém cinco primários e passa a expor exatamente

@@ -21,19 +21,21 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 ### Estado da migração de navegação
 
 - **TARGET CANÔNICO:** Dashboard, Forex, Finanças Pessoais, Research e Alladin.
-- **CANDIDATO NAV-02:** Forex possui exatamente seis destinos — Visão Geral,
+- **CHECKPOINTS NAV-01/NAV-02:** Forex possui exatamente seis destinos — Visão Geral,
   Preparação, Conta, Operação, Apuração e Planejamento — sobre as telas físicas
   existentes e sem `section#forex`. Operação, Apuração e Planejamento exibem
   terceiro nível contextual.
-- **ESTADO PUBLICÁVEL:** NAV-01 e NAV-02 são checkpoints internos. Calendário,
-  NoCoda e Pivots recebem a ownership visual definitiva em Research no NAV-03,
-  primeiro candidato potencialmente publicável.
+- **CANDIDATO NAV-03:** Research possui Forex, Ações, Stocks, REITs e Others.
+  Forex reúne Calendário, NoCoda e Pivots; Ações abre Brasil/B3 e os demais
+  destinos permanecem empty states neutros. NAV-03 é o primeiro candidato
+  potencialmente publicável, ainda sujeito a gate humano separado.
 
 ### Capacidades funcionais
 
 - **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
 - **Execução** — registro de ordens sob as regras do Estatuto: fases, risco programado, classificação de stops (2 ATR, Raiz-N), alavancagem.
+- **Research** — ownership visual de Calendário Econômico, Estudos NoCoda e Estudos dos Pivots sob Forex, sem duplicar telas ou domínio.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
 - **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
 - **Finanças Pessoais** — orçamento doméstico em centavos (`BRL_CENTS`), com Visão Geral consolidada, Orçamento Mensal (receitas, despesas e destino da sobra), Dívidas & Crédito, Comparativo Mensal e Cenários. Tudo derivado do estado vivo: totais, coberturas, sobras e utilização nunca são persistidos, e mês só nasce por ato de edição — abrir não materializa. Inventário e Patrimônio **não** pertencem a este domínio — são o domínio próprio **Alladin** (roadmap `ALD-*`; agregado `S.alladin` em schema v2 com as quatro entidades cadastrais — Instrument, Asset, Account, CashAccount —, sem interface e sem camada econômica: transações, posições, valuation e performance não iniciadas. Contrato em `docs/architecture/ALLADIN.md`).
@@ -94,7 +96,7 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 75 scripts do manifest também estejam no precache. Durante uma
+exige que os 76 scripts do manifest também estejam no precache. Durante uma
 atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
 continua usando um build integral, sem combinar HTML novo com scripts cacheados de
 outro build. O ícone tem variantes
@@ -124,10 +126,10 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (31 —
-inclui a fundação semântica NAV-01, smoke, Central de Configurações, Galton
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (32 —
+inclui a navegação NAV-01..NAV-03, smoke, Central de Configurações, Galton
 Board, Planejamento FX, cotação USD/BRL, as nove suítes de Finanças Pessoais e
-as duas do Alladin em Chromium real) e **full** (42 verificações, incluindo segurança de importação/XSS, senha de
+as duas do Alladin em Chromium real) e **full** (43 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.

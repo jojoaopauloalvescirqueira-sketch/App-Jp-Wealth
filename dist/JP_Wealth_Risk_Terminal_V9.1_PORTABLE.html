@@ -5851,6 +5851,9 @@ html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weigh
 /* Financas Pessoais (PF-01): mesma regra estrutural — [hidden] perde para
    regras que declaram display, entao cada section de workspaces precisa da sua. */
 html[data-shell="global-dashboard"] #finpes > [hidden]{display:none}
+/* Research (NAV-03): ownership visual de Calendario, NoCoda e Pivots, mais
+   empty states neutros. A regra de ID preserva hidden contra estilos locais. */
+html[data-shell="global-dashboard"] #research > [hidden]{display:none}
 
 /* ===== Finanças Pessoais · Orçamento Mensal (PF-02) =====
    Leitura simultânea no desktop (3 colunas: receitas+ativos+notas |
@@ -5952,7 +5955,8 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 @media(max-width:900px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:1fr}
 }
-html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
+html[data-shell="global-dashboard"] .exec-view,
+html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
   html[data-shell="global-dashboard"] .nav-sub-trigger .nav-sub-caret{display:none}
@@ -5981,7 +5985,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 }
 
 /* ==========================================================
-   ESTUDOS NOCODA · workspace do Execution Board
+   ESTUDOS NOCODA · workspace Research / Forex
    Sem design system novo: reaproveita .card, .field, .metrics,
    .params-grid, .reset-btn e .fx-status. Só o agrupamento por
    âncora e a mensagem por campo precisaram de regra própria.
@@ -6104,7 +6108,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '3d51c530db465831';
+const JP_WEALTH_BUILD_ID = 'aaa2262ae6fb0610';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6330,6 +6334,50 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
       </button>
     </nav>
+    <!-- Research: cinco filhos N2. Somente Forex possui N3; Ações, Stocks,
+         REITs e Others abrem diretamente seus empty states neutros. -->
+    <nav class="nav-sub-menu nav-sub-menu-contextual" id="researchNavSubmenu" aria-labelledby="researchNavTrigger"
+         aria-hidden="true" hidden inert>
+      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Research">
+        <button type="button" data-nav-item data-nav-child="research-forex">
+          <span class="nav-sub-item-title">Forex</span>
+          <span class="nav-sub-item-desc">Calendário, NoCoda e Pivots</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-stocks-br">
+          <span class="nav-sub-item-title">Ações</span>
+          <span class="nav-sub-item-desc">Brasil e B3</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-stocks-global">
+          <span class="nav-sub-item-title">Stocks</span>
+          <span class="nav-sub-item-desc">Mercado internacional</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-reits">
+          <span class="nav-sub-item-title">REITs</span>
+          <span class="nav-sub-item-desc">Pesquisa imobiliária internacional</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-others">
+          <span class="nav-sub-item-title">Others</span>
+          <span class="nav-sub-item-desc">Outras linhas de pesquisa</span>
+        </button>
+      </div>
+      <div class="nav-sub-contexts" aria-label="Opções do destino Research" hidden inert>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="research-forex" role="group" aria-label="Research Forex" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="calendar">
+            <span class="nav-sub-item-title">Calendário</span>
+            <span class="nav-sub-item-desc">Eventos econômicos da semana</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="nocoda">
+            <span class="nav-sub-item-title">NoCoda</span>
+            <span class="nav-sub-item-desc">Estudos de canal por instrumento</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="pivots">
+            <span class="nav-sub-item-title">Pivots</span>
+            <span class="nav-sub-item-desc">Estudos empíricos por período</span>
+          </button>
+        </div>
+      </div>
+    </nav>
   </div>
 </div>
 
@@ -6363,7 +6411,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           aria-expanded="false" aria-controls="finpesNavSubmenu">
     <span class="n">03</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
-  <button class="tab" data-route="research-forex" data-primary="research" title="Research"><span class="n">04</span><span class="lbl">Research</span></button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"
+          aria-expanded="false" aria-controls="researchNavSubmenu">
+    <span class="n">04</span><span class="lbl">Research</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+  </button>
   <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
@@ -6547,46 +6598,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
-    <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA
-         VISUAL do mesmo domínio — não é um segundo calendário. O overlay
-         #ecalOverlay continua existindo com seus dois pontos de entrada; as duas
-         superfícies leem o MESMO cache (ffNewsReadCache) e a MESMA função de
-         render, parametrizada por raiz.
-         Sem id nos nós internos DE PROPÓSITO: os 9 ids do overlay são globais e
-         fixos, e duplicá-los reprovaria validate_project.py e deixaria o modal
-         sem render, porque #exec precede o overlay no documento e
-         getElementById devolve o primeiro nó. Aqui a identidade é por
-         data-ecal-role, resolvida dentro da própria raiz. -->
-    <div class="exec-view" id="execEcal" role="region" aria-label="Calendário Econômico" hidden>
-      <div class="card ecal-ws">
-        <div class="ecal-ws-head">
-          <h2>Calendário Econômico</h2>
-          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
-        </div>
-        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
-          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
-          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
-          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
-          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
-          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
-        </div>
-        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
-        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
-        <p class="ecal-ws-foot">
-          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
-          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
-        </p>
-      </div>
-    </div>
-    <!-- Estudos NoCoda: memória técnica do canal por instrumento. O conteúdo é
-         renderizado por 20-ui/14-nocoda-studies.js a cada entrada no workspace,
-         porque o seletor deriva do catálogo vivo do Motor de Lote. -->
-    <div class="exec-view" id="execNocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
-    <!-- Estudos dos Pivots: memória empírica dos maiores pivots H1/H4 por
-         instrumento e período. O conteúdo é renderizado por
-         20-ui/15-pivot-studies.js a cada entrada no workspace, porque o seletor
-         deriva do catálogo vivo do Motor de Lote e a tela reflete o estado. -->
-    <div class="exec-view" id="execPivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
     <!-- Histórico: consumidor SOMENTE LEITURA de S.operationHistory. O conteúdo é
          renderizado por 20-ui/16-operation-history.js a cada entrada, porque uma
          finalização feita no Painel Operacional muda a lista. Nenhum caminho
@@ -7192,9 +7203,47 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
   <!-- ================= 04 RESEARCH ================= -->
   <section class="screen" id="research">
-    <div class="card">
-      <h2 data-route-focus>Research</h2>
-      <p class="expl">Área de pesquisa Forex em preparação para a consolidação da navegação.</p>
+    <h1 class="sr-only" data-route-focus>Research</h1>
+    <!-- Calendário Econômico: workspace canônico de Research/Forex. O overlay
+         global continua como segunda instância visual do mesmo domínio; ambos
+         leem o mesmo cache e usam o mesmo renderizador parametrizado por raiz.
+         Os nós internos permanecem sem id para não colidir com o overlay. -->
+    <div class="research-view" id="execEcal" data-research-view="calendar" role="region" aria-label="Calendário Econômico">
+      <div class="card ecal-ws">
+        <div class="ecal-ws-head">
+          <h2>Calendário Econômico</h2>
+          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+        </div>
+        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
+          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+        </div>
+        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
+        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
+        <p class="ecal-ws-foot">
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
+          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+        </p>
+      </div>
+    </div>
+    <!-- NoCoda e Pivots preservam os mesmos IDs e renderizadores. O conteúdo
+         continua montado sob demanda a partir do estado vivo. -->
+    <div class="research-view" id="execNocoda" data-research-view="nocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
+    <div class="research-view" id="execPivots" data-research-view="pivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
+    <div class="research-view" id="researchStocksBr" data-research-view="stocks-br" role="region" aria-label="Ações Brasil e B3" hidden>
+      <div class="card"><h2>Ações · Brasil / B3</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+    <div class="research-view" id="researchStocksGlobal" data-research-view="stocks-global" role="region" aria-label="Stocks internacionais" hidden>
+      <div class="card"><h2>Stocks</h2><p class="expl">Área de pesquisa internacional em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+    <div class="research-view" id="researchReits" data-research-view="reits" role="region" aria-label="REITs" hidden>
+      <div class="card"><h2>REITs</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+    <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
+      <div class="card"><h2>Others</h2><p class="expl">Área reservada para outras linhas de pesquisa. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
     </div>
   </section>
 
@@ -7690,6 +7739,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -13722,9 +13772,9 @@ function bindContab(){
 }
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// seis filhos sem criar uma tela agregadora: owner semântico, filho, section
-// física e visão local são dimensões separadas. Navegação é estado efêmero de
-// UI; este módulo não persiste preferência, tela ou visão local.
+// seis filhos e Research cinco; owner semântico, filho, section física e visão
+// local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
+// não persiste preferência, tela ou visão local.
 
 const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-overview',label:'Visão Geral',primary:'forex',child:'forex-overview',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
@@ -13735,17 +13785,24 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
 ]);
 
+const NAV_RESEARCH_CHILDREN=Object.freeze([
+  Object.freeze({id:'research-forex',label:'Forex',primary:'research',child:'research-forex',screen:'research',localView:Object.freeze({surface:'research',view:'calendar'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-stocks-br',label:'Ações',primary:'research',child:'research-stocks-br',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-br'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-stocks-global',label:'Stocks',primary:'research',child:'research-stocks-global',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-global'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-reits',label:'REITs',primary:'research',child:'research-reits',screen:'research',localView:Object.freeze({surface:'research',view:'reits'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-others',label:'Others',primary:'research',child:'research-others',screen:'research',localView:Object.freeze({surface:'research',view:'others'}),aliases:Object.freeze([])})
+]);
+
 const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'dashboard',primary:'dashboard',screen:'dash',localView:null,aliases:Object.freeze(['dash'])}),
   NAV_FOREX_CHILDREN[0],
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
-  Object.freeze({id:'research-forex',primary:'research',screen:'research',localView:null,aliases:Object.freeze([])}),
+  NAV_RESEARCH_CHILDREN[0],
   Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])})
 ]);
 
-// Destinos transitórios/legados. Saber resolvê-los não os promove a filhos
-// visíveis. Calendário, NoCoda e Pivots permanecem funcionais até o NAV-03,
-// porém child:null impede que a faixa diga que pertencem a um dos seis filhos.
+// Destinos legados. Saber resolvê-los não os promove a rotas primárias: as três
+// ferramentas analíticas pertencem semanticamente a Research / Forex.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   contas:Object.freeze({canonical:'forex-account',child:'forex-account',screen:'contas',primary:'forex'}),
   contab:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'contab',primary:'forex'}),
@@ -13754,21 +13811,22 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   history:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
   check:Object.freeze({canonical:'forex-preparation',child:'forex-preparation',screen:'check',primary:'forex'}),
   'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
-  ecal:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'ecal'})}),
-  nocoda:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'nocoda'})}),
-  pivots:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'pivots'})}),
+  ecal:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'calendar'})}),
+  nocoda:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
+  pivots:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'pivots'})}),
   params:Object.freeze({action:'settings',leaf:'tool-params'}),
   config:Object.freeze({action:'settings',leaf:'about'})
 });
 
 const NAV_LOCAL_SURFACES=Object.freeze({
-  exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','ecal','nocoda','pivots','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
+  exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
-  fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui})
+  fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
+  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['calendar','nocoda','pivots','stocks-br','stocks-global','reits','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
-  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN].map(route=>[route.id,route])));
+  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN,...NAV_RESEARCH_CHILDREN].map(route=>[route.id,route])));
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
 let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
@@ -13886,8 +13944,13 @@ function navNavigateLocal(surfaceId,view){
     (surfaceId==='exec'&&(view==='panel'||view==='motor')?'forex-operation':
     (surfaceId==='exec'&&view==='history'?'forex-reconciliation':
     (surfaceId==='fxplan'?'forex-planning':
-    (surfaceId==='finpes'&&view==='overview'?'personal-finance':null))));
-  const child=canonical&&canonical.startsWith('forex-')?canonical:null;
+    (surfaceId==='finpes'&&view==='overview'?'personal-finance':
+    (surfaceId==='research'&&(view==='calendar'||view==='nocoda'||view==='pivots')?'research-forex':
+    (surfaceId==='research'&&view==='stocks-br'?'research-stocks-br':
+    (surfaceId==='research'&&view==='stocks-global'?'research-stocks-global':
+    (surfaceId==='research'&&view==='reits'?'research-reits':
+    (surfaceId==='research'&&view==='others'?'research-others':null)))))))));
+  const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-'))?canonical:null;
   const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
     canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
   navLastResult={accepted:false,reason:'not-applied'};
@@ -13908,7 +13971,8 @@ function navFocusCurrentScreen(){
 
 window.JPWNavigation=Object.freeze({
   routes:()=>NAV_CANONICAL_ROUTES.map(navPublicRoute),
-  children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):[],
+  children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):
+    (primary==='research'?NAV_RESEARCH_CHILDREN.map(navPublicRoute):[]),
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,
@@ -18073,7 +18137,8 @@ initDashboardImmersive();
 // Camada estritamente de interface: controla a gaveta global no mobile e a
 // faixa compartilhada dos níveis contextuais, com hover transitório, clique
 // fixado, foco, Escape e clique externo. Forex encaminha filhos canônicos e
-// visões locais pelo resolver; Finanças Pessoais mantém sua superfície pública.
+// visões locais pelo resolver; Research e Finanças Pessoais mantêm superfícies
+// públicas próprias.
 // Estado ativo sempre deriva de JPWNavigation/current + UI, nunca de cópia local.
 //
 // A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
@@ -18097,7 +18162,8 @@ const NAV_SUB_CLOSE_DELAY = 400;
 // O controlador não conhece as chaves — quem as valida é o próprio módulo.
 const NAV_SUBMENU_SURFACES = {
   exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  finpes: () => (window.JPWFin && window.JPWFin.ui) || null
+  finpes: () => (window.JPWFin && window.JPWFin.ui) || null,
+  research: () => (window.JPWResearch && window.JPWResearch.ui) || null
 };
 
 function shellEl(sel) { return document.querySelector(sel); }
@@ -18132,16 +18198,18 @@ function mountNavSubPanel(screen) {
 }
 
 function syncNavSubContexts(screen) {
-  if(screen!=='exec'||!window.JPWNavigation) return;
+  if(!screen||!window.JPWNavigation) return;
   const current=window.JPWNavigation.current();
+  const panel=document.getElementById(screen+'NavSubmenu');
+  if(!panel) return;
   let any=false;
-  document.querySelectorAll('#execNavSubmenu [data-nav-context]').forEach(group=>{
+  panel.querySelectorAll('[data-nav-context]').forEach(group=>{
     const active=group.dataset.navContext===current.child;
     if(active) any=true;
     group.hidden=!active;
     group.inert=!active;
   });
-  const host=document.querySelector('#execNavSubmenu .nav-sub-contexts');
+  const host=panel.querySelector('.nav-sub-contexts');
   if(host){host.hidden=!any;host.inert=!any;}
 }
 
@@ -26617,12 +26685,6 @@ document.querySelectorAll('.tab[data-screen="fxplan"]').forEach(t=>t.addEventLis
 const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
-  // Calendario Economico: casa canonica da ferramenta. O overlay #ecalOverlay
-  // continua existindo com seus dois pontos de entrada — sao duas instancias
-  // visuais do mesmo dominio, nao dois calendarios.
-  ['ecal', 'execEcal'],
-  ['nocoda', 'execNocoda'],
-  ['pivots', 'execPivots'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
   // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
@@ -26632,22 +26694,8 @@ const EXEC_VIEWS = [
   // partir das grades vivas.
   ['history', 'execHistory']
 ];
-// Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
-// HTML. NoCoda e Pivots derivam seus seletores do catalogo vivo do Motor de
-// Lote, entao precisam repintar a cada entrada — um instrumento destravado em
-// Configuracoes tem de aparecer sem recarregar a pagina.
-//
-// Repintar NAO descarta rascunho: o estado efemero de cada workspace vive em
-// variaveis de modulo, e o render o reconstitui. Sair do Estudos dos Pivots com
-// um pivot em edicao e voltar devolve o formulario como estava.
+// Workspaces cujo conteúdo depende de estado vivo são montados ao entrar.
 const EXEC_VIEW_RENDERERS = {
-  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); },
-  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); },
-  // Calendario: o cache do widget de Noticias e vivo (poll de 5 min, tique de
-  // 1 min), entao a entrada no workspace repinta a partir do dado corrente. O
-  // dominio nao e consultado pela rede aqui — quem revalida e o ciclo do
-  // proprio widget, em 15-ff-news.js.
-  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); },
   // Repinta a cada entrada porque o conteudo depende de S.operationHistory, que
   // muda quando uma operacao e finalizada noutra parte do app.
   history: () => { if (window.JPWHistoryUI && typeof window.JPWHistoryUI.render === 'function') window.JPWHistoryUI.render(); }
@@ -26679,6 +26727,12 @@ function execSetView(view) {
 }
 
 function execSelectView(view) {
+  // Compatibilidade de API: consumidores legados não recuperam ownership Exec.
+  // O shim delega ao resolver canônico e não altera `execView`.
+  const researchView={ecal:'calendar',nocoda:'nocoda',pivots:'pivots'}[view];
+  if(researchView&&window.JPWNavigation&&typeof window.JPWNavigation.navigateLocal==='function'){
+    return window.JPWNavigation.navigateLocal('research',researchView);
+  }
   if (!EXEC_VIEWS.some(([key]) => key === view)) return false;
   execViewExplicit = true;
   execSetView(view);
@@ -32703,6 +32757,73 @@ if(typeof window!=='undefined'){
       addCashAccount: aldActAddCashAccount, editCashAccount: aldActEditCashAccount,
       setRecordStatus: aldActSetRecordStatus,
     },
+  };
+}
+// ============ RESEARCH · WORKSPACES DO MÓDULO (NAV-03 · N1) ============
+// Superfície estritamente visual. Calendário, NoCoda e Pivots preservam seus
+// IDs e renderizadores; somente o owner DOM/navegação muda. A seleção é
+// efêmera: não toca S, storage, schema, backup ou persistência.
+
+const RESEARCH_VIEWS = [
+  ['calendar', 'execEcal'],
+  ['nocoda', 'execNocoda'],
+  ['pivots', 'execPivots'],
+  ['stocks-br', 'researchStocksBr'],
+  ['stocks-global', 'researchStocksGlobal'],
+  ['reits', 'researchReits'],
+  ['others', 'researchOthers']
+];
+
+const RESEARCH_VIEW_RENDERERS = {
+  calendar: () => {
+    if(window.JPWEcalUI&&typeof window.JPWEcalUI.render==='function') window.JPWEcalUI.render();
+  },
+  nocoda: () => {
+    if(window.JPWNocodaUI&&typeof window.JPWNocodaUI.render==='function') window.JPWNocodaUI.render();
+  },
+  pivots: () => {
+    if(window.JPWPivotsUI&&typeof window.JPWPivotsUI.render==='function') window.JPWPivotsUI.render();
+  }
+};
+
+let researchView='calendar';
+
+function researchApplyView(view){
+  RESEARCH_VIEWS.forEach(([key,id])=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const active=key===view;
+    el.hidden=!active;
+    el.inert=!active;
+  });
+}
+
+function researchSelectView(view){
+  if(!RESEARCH_VIEWS.some(([key])=>key===view)) return false;
+  researchView=view;
+  researchApplyView(view);
+  const render=RESEARCH_VIEW_RENDERERS[view];
+  if(typeof render==='function') render();
+  return true;
+}
+
+function researchGetView(){return researchView;}
+
+researchApplyView(researchView);
+window.JPWResearch={ui:{selectView:researchSelectView,getView:researchGetView}};
+
+// `boot()` substitui S em import/wipe/finalização e historicamente repinta a
+// ferramenta analítica visível. Como o boot carrega antes desta superfície e
+// não pode conhecer Research sem ampliar a allowlist NAV-03, o owner novo
+// preserva aqui o mesmo lifecycle: após o boot original, repinta somente o
+// workspace Research que depende de S vivo. Calendário usa cache próprio.
+const researchBootBase=typeof window.boot==='function'?window.boot:null;
+if(researchBootBase){
+  window.boot=function(){
+    const result=researchBootBase.apply(this,arguments);
+    if(researchView==='nocoda'&&window.JPWNocodaUI&&typeof window.JPWNocodaUI.render==='function') window.JPWNocodaUI.render();
+    if(researchView==='pivots'&&window.JPWPivotsUI&&typeof window.JPWPivotsUI.render==='function') window.JPWPivotsUI.render();
+    return result;
   };
 }
 </script>

@@ -2,7 +2,8 @@
 // Camada estritamente de interface: controla a gaveta global no mobile e a
 // faixa compartilhada dos níveis contextuais, com hover transitório, clique
 // fixado, foco, Escape e clique externo. Forex encaminha filhos canônicos e
-// visões locais pelo resolver; Finanças Pessoais mantém sua superfície pública.
+// visões locais pelo resolver; Research e Finanças Pessoais mantêm superfícies
+// públicas próprias.
 // Estado ativo sempre deriva de JPWNavigation/current + UI, nunca de cópia local.
 //
 // A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
@@ -26,7 +27,8 @@ const NAV_SUB_CLOSE_DELAY = 400;
 // O controlador não conhece as chaves — quem as valida é o próprio módulo.
 const NAV_SUBMENU_SURFACES = {
   exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  finpes: () => (window.JPWFin && window.JPWFin.ui) || null
+  finpes: () => (window.JPWFin && window.JPWFin.ui) || null,
+  research: () => (window.JPWResearch && window.JPWResearch.ui) || null
 };
 
 function shellEl(sel) { return document.querySelector(sel); }
@@ -61,16 +63,18 @@ function mountNavSubPanel(screen) {
 }
 
 function syncNavSubContexts(screen) {
-  if(screen!=='exec'||!window.JPWNavigation) return;
+  if(!screen||!window.JPWNavigation) return;
   const current=window.JPWNavigation.current();
+  const panel=document.getElementById(screen+'NavSubmenu');
+  if(!panel) return;
   let any=false;
-  document.querySelectorAll('#execNavSubmenu [data-nav-context]').forEach(group=>{
+  panel.querySelectorAll('[data-nav-context]').forEach(group=>{
     const active=group.dataset.navContext===current.child;
     if(active) any=true;
     group.hidden=!active;
     group.inert=!active;
   });
-  const host=document.querySelector('#execNavSubmenu .nav-sub-contexts');
+  const host=panel.querySelector('.nav-sub-contexts');
   if(host){host.hidden=!any;host.inert=!any;}
 }
 

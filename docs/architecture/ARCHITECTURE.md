@@ -3,7 +3,7 @@
 ## Visão geral
 
 O JP Wealth Risk Terminal é uma aplicação web cliente, local-first e sem backend
-obrigatório. O navegador carrega `index.html`, `src/styles/app.css` e 75 scripts
+obrigatório. O navegador carrega `index.html`, `src/styles/app.css` e 76 scripts
 clássicos na ordem e com os hashes fixados por `src/js/manifest.json`. O estado
 operacional é persistido localmente; artefatos portáteis e PWA são derivados das
 mesmas fontes rastreadas.
@@ -41,11 +41,11 @@ de simulação não ganha autoridade normativa por coexistir com o terminal.
   experiências educacionais isoladas.
 
 `src/js/40-app/01-navigation.js` separa a API canônica da compatibilidade
-física: `JPWNavigation.routes()` expõe somente os cinco primários e
-`JPWNavigation.children('forex')`, exatamente seis filhos sobre as sections
-existentes. `resolve()` e `navigateToScreen()` continuam aceitando IDs legados
-e registram owner, child, screen e local view separadamente. NAV-02 permanece
-interno; a ownership visual das ferramentas de Research fecha no NAV-03.
+física: `JPWNavigation.routes()` expõe somente os cinco primários;
+`children('forex')`, seis filhos; e `children('research')`, cinco. `resolve()` e
+`navigateToScreen()` continuam aceitando IDs legados e registram owner, child,
+screen e local view separadamente. No NAV-03, Calendário, NoCoda e Pivots têm
+ownership visual em Research/Forex e uma única instância DOM cada.
 
 ### 6. PWA e identidade visual
 
@@ -86,7 +86,8 @@ interno; a ownership visual das ferramentas de Research fecha no NAV-03.
 
 A versão estruturada preserva scripts clássicos, não ES Modules. A ordem registrada
 em `src/js/manifest.json` é parte do contrato de execução. Planck e os seis módulos do
-Galton Board foram anexados ao fim da lista, sem reordenar os 46 scripts de baseline.
+Galton Board e a superfície Research foram anexados ao fim da lista, sem reordenar
+os scripts anteriores.
 A separação reduz o tamanho de cada contexto para IA sem transformar incidentalmente
 o escopo global legado em framework ou bundler.
 

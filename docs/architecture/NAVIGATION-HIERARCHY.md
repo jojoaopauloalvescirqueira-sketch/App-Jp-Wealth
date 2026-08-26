@@ -5,22 +5,27 @@ a possuir níveis contextuais de navegação no JP Wealth. Ele descreve arquitet
 de interface, não autoriza automaticamente aplicar submenus a outros módulos.
 Cada nova adoção continua exigindo tarefa e aprovação próprias.
 
-## Estado da migração NAV-02
+## Estado da migração NAV-03
 
 - **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
   Research e Alladin.
-- **CANDIDATO NAV-02:** `routes()` mantém exatamente os cinco primários e
+- **CHECKPOINT NAV-02:** `routes()` mantém exatamente os cinco primários e
   `children('forex')` contém, nesta ordem, `forex-overview`,
   `forex-preparation`, `forex-account`, `forex-operation`,
   `forex-reconciliation` e `forex-planning`.
-- **ESTADO PUBLICÁVEL:** NAV-02 é interno. Calendário, NoCoda e Pivots seguem
-  compatíveis porém sem filho ativo até o NAV-03, primeiro candidato
-  potencialmente publicável.
+- **CANDIDATO NAV-03:** `children('research')` contém, nesta ordem,
+  `research-forex`, `research-stocks-br`, `research-stocks-global`,
+  `research-reits` e `research-others`. Research/Forex contém somente
+  Calendário, NoCoda e Pivots no N3; os três aliases históricos ativam esse
+  owner. É o primeiro candidato potencialmente publicável, ainda sem gate de
+  integração ou publicação.
 
 Adotam a faixa contextual: **Forex** (seis filhos sobre `exec`, `check`,
 `contas`, `contab` e `fxplan`) e **Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
 Dívidas & Crédito, Comparativo Mensal e Cenários —, superfície `window.JPWFin.ui`,
-teste `tools/finpes_navigation_test.py`). Operação, Apuração e Planejamento
+teste `tools/finpes_navigation_test.py`), além de **Research** (cinco filhos;
+Forex com três destinos contextuais e superfície `window.JPWResearch.ui`).
+Operação, Apuração e Planejamento
 ganham terceiro nível dentro do mesmo `#execNavSubmenu`; `#fxplan` continua
 físico e usa `window.JPWFx.ui`.
 
@@ -121,8 +126,8 @@ isolada. A faixa usa divisor discreto, sem borda de card ou sombra pesada.
 
 Os níveis contextuais chamam os mecanismos visuais existentes. Não se cria
 estado paralelo: primary/child/screen/local view vêm de `JPWNavigation.current()`
-e a visão efetiva das superfícies `window.JPWExec.ui`, `window.JPWFx.ui` e
-`window.JPWFin.ui`. Operação usa `panel`/`motor`; Apuração combina `#contab` e
+e a visão efetiva das superfícies `window.JPWExec.ui`, `window.JPWFx.ui`,
+`window.JPWFin.ui` e `window.JPWResearch.ui`. Operação usa `panel`/`motor`; Apuração combina `#contab` e
 `exec/history`; Planejamento usa `overview`/`planning`/`actuals`/`table`.
 
 Quando a faixa superior substitui tabs equivalentes no conteúdo, essas tabs
@@ -155,10 +160,11 @@ O `[hidden]` precisa de uma regra de especificidade de ID
 `display` e venceriam o estilo de agente de usuário.
 
 **Montagem sob demanda.** Um workspace cujo conteúdo depende de estado vivo —
-Estudos NoCoda e Estudos dos Pivots derivam seus seletores do catálogo de
-instrumentos, e o Histórico lê `operationHistory` — declara um renderizador em
-`EXEC_VIEW_RENDERERS` e é repintado a cada entrada, para que uma mudança feita em outra tela apareça sem recarregar a
-página. A montagem vem **depois** de tirar o `hidden`: renderizar num container
+em Research, Estudos NoCoda e Estudos dos Pivots derivam seus seletores do catálogo de
+instrumentos, e o Histórico lê `operationHistory` — declara um renderizador na
+superfície que o possui (`RESEARCH_VIEW_RENDERERS` ou `EXEC_VIEW_RENDERERS`) e é
+repintado a cada entrada, para que uma mudança feita em outra tela apareça sem
+recarregar a página. A montagem vem **depois** de tirar o `hidden`: renderizar num container
 oculto impediria qualquer medida e deixaria o foco em nó invisível.
 
 **Repintura parcial dentro do workspace.** O renderizador de entrada monta a
@@ -202,10 +208,12 @@ o usuário fecha tocando fora ou usando Escape em teclado conectado.
 - `src/js/40-app/11-operational-shell.js`: abertura transitória/fixada, foco,
   fechamento e projeção dos níveis 2/3 a partir do resolver;
 - script de UI do módulo: seleção da visão, sem domínio financeiro
-  (`20-ui/13-exec-views.js` e `20-ui/17-finpes-views.js`);
+  (`20-ui/13-exec-views.js`, `20-ui/17-finpes-views.js` e
+  `20-ui/23-research-views.js`);
 - teste de navegador focado: registry/compatibilidade em
   `tools/navigation_ia_test.py`; contrato estrutural, interação e acessibilidade
-  em `tools/exec_submenu_test.py` e `tools/finpes_navigation_test.py`.
+  em `tools/exec_submenu_test.py`, `tools/finpes_navigation_test.py` e
+  `tools/research_navigation_test.py`.
 
 ## Verificação mínima
 

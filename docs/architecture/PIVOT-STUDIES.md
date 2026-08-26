@@ -1,8 +1,8 @@
 # Estudos dos Pivots — contrato de implementação
 
 Memória empírica dos maiores pivots H1/H4 que o operador identificou no
-gráfico, por instrumento e por período histórico. É um workspace do Execution
-Board, não um detector automático, scanner, gerador de sinais, ferramenta
+gráfico, por instrumento e por período histórico. É o workspace
+`Research → Forex → Pivots`, não um detector automático, scanner, gerador de sinais, ferramenta
 preditiva ou mecanismo de execução.
 
 **Informação técnica não é autorização operacional.** Nenhum valor derivado
@@ -21,7 +21,7 @@ organiza e preserva.** O software não detecta pivots e não possui dados OHLC.
 | Núcleo | `src/js/10-domain/10-pivot-studies.js` | deriva, valida, resume e ordena — puro |
 | Estado | `src/js/00-core/03-default-state.js` + `04-persistence.js` | guarda os registros |
 | Interface | `src/js/20-ui/15-pivot-studies.js` | apresenta e coleta |
-| Navegação | `src/js/40-app/11-operational-shell.js` + `20-ui/13-exec-views.js` | encaminha |
+| Navegação | `src/js/40-app/11-operational-shell.js` + `20-ui/23-research-views.js` | encaminha |
 
 Essas responsabilidades não se contaminam. O núcleo não conhece DOM, `S`,
 `localStorage` nem rede; a interface não contém fórmula.

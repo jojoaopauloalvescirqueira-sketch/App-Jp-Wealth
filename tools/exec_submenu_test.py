@@ -29,7 +29,7 @@ os.chdir(ROOT)
 EXPECTED_CHILDREN = ["forex-overview", "forex-preparation", "forex-account",
                      "forex-operation", "forex-reconciliation", "forex-planning"]
 EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Operação", "Apuração", "Planejamento"]
-EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor", "history"]
+EXPECTED_VIEWS = ["overview", "panel", "motor", "history"]
 EXPECTED_CONTEXT = {
     "forex-operation": ["panel", "motor"],
     "forex-reconciliation": ["forex-reconciliation", "history"],
@@ -37,8 +37,7 @@ EXPECTED_CONTEXT = {
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
-                       "execPivots", "motorWidgetGrid", "execHistory"]
+EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "motorWidgetGrid", "execHistory"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -86,7 +85,7 @@ def prepare_page(browser, url, viewport=None):
         else route.fulfill(status=200, content_type="application/json", body="{}"),
     )
     page.goto(url)
-    page.wait_for_function("() => window.JPWExec && window.JPWExec.ui")
+    page.wait_for_function("() => window.JPWExec?.ui && window.JPWResearch?.ui")
     return context, page, observed
 
 
@@ -125,7 +124,7 @@ def run_structure(page):
     assert contract["panelOutsideNav"], "painel do segundo nivel entrou dentro de #nav"
     assert contract["structuralOrder"], f"faixa fora da ordem header -> faixa -> contexto: {contract}"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
-    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu"], contract["panelsInShell"]
+    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu", "researchNavSubmenu"], contract["panelsInShell"]
     assert contract["keys"] == EXPECTED_CHILDREN, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
     assert contract["contexts"] == EXPECTED_CONTEXT, f"terceiro nivel divergente: {contract['contexts']}"
@@ -296,7 +295,7 @@ def run_focus_and_keyboard(page):
     # inclusive nos workspaces novos.
     blocked = page.evaluate(
         """() => {
-          const probe = document.querySelector('#execOverview button, #execPivots button');
+          const probe = document.querySelector('#execOverview button, #motorWidgetGrid button');
           if (!probe) return {found: false, took: null};
           probe.focus();
           return {found: true, took: document.activeElement === probe, hidden: !!probe.closest('[hidden]')};
@@ -398,7 +397,7 @@ def run_module_switch(page):
 
 
 def run_economic_calendar(page):
-    """Calendario Economico: UM dominio, DUAS instancias visuais.
+    """Calendario Economico em Research: UM dominio, DUAS instancias visuais.
 
     O overlay #ecalOverlay e o workspace #execEcal leem o MESMO cache e usam a
     MESMA funcao de render, parametrizada por raiz. O que este teste protege e
@@ -423,12 +422,18 @@ def run_economic_calendar(page):
         }"""
     )
     assert page.evaluate("() => JPWNavigation.navigate('ecal')") is True
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+    page.wait_for_function("() => window.JPWResearch.ui.getView() === 'calendar'")
+    page.click("#researchNavTrigger")
+    page.wait_for_function("() => researchNavTrigger.getAttribute('aria-expanded') === 'true'")
     compat = page.evaluate(
-        """() => ({child:JPWNavigation.current().child,
-          current:document.querySelectorAll('#execNavSubmenu [data-nav-child][aria-current="page"]').length})"""
+        """() => ({primary:JPWNavigation.current().primary,
+          child:JPWNavigation.current().child,
+          current:document.querySelectorAll('#researchNavSubmenu [data-nav-child="research-forex"][aria-current="page"]').length,
+          local:document.querySelectorAll('#researchNavSubmenu [data-nav-local-view="calendar"][aria-current="page"]').length,
+          execActive:document.getElementById('exec').classList.contains('active')})"""
     )
-    assert compat == {'child':None,'current':0}, compat
+    assert compat == {'primary':'research','child':'research-forex','current':1,'local':1,'execActive':False}, compat
+    page.keyboard.press("Escape")
 
     fatos = page.evaluate(
         """() => {
@@ -493,10 +498,10 @@ def run_economic_calendar(page):
     # ciclo montar/desmontar do workspace, nao a navegacao — que ja foi
     # exercitada por clique real na entrada deste teste.
     for _ in range(3):
-        page.evaluate("() => window.JPWExec.ui.selectView('panel')")
+        page.evaluate("() => JPWNavigation.navigate('forex-operation')")
         page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
-        page.evaluate("() => window.JPWExec.ui.selectView('ecal')")
-        page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+        page.evaluate("() => JPWNavigation.navigate('ecal')")
+        page.wait_for_function("() => window.JPWResearch.ui.getView() === 'calendar'")
     page.click('#execEcal [data-ecal-cur="all"]')
     estavel = page.evaluate("() => document.querySelectorAll('#execEcal .ecal-item').length")
     assert estavel == 2, f"apos 3 idas e voltas o workspace divergiu: {estavel}"

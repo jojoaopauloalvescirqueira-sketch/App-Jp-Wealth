@@ -1,7 +1,7 @@
 # Estudos NoCoda — contrato de implementação
 
-Memória técnica do canal de Fibonacci do método NoCoda, por instrumento. É um
-workspace do Execution Board, não um scanner, gerador de sinais, ferramenta
+Memória técnica do canal de Fibonacci do método NoCoda, por instrumento. É o
+workspace `Research → Forex → NoCoda`, não um scanner, gerador de sinais, ferramenta
 preditiva ou mecanismo de execução.
 
 **Informação técnica não é autorização operacional.** Nenhum valor derivado
@@ -17,7 +17,7 @@ fase, ordem, LIFO, quarentena, alavancagem ou parâmetro estatutário.
 | Geometria | `src/js/10-domain/09-nocoda-geometry.js` | deriva range e subdivisão — puro |
 | Estado | `src/js/00-core/03-default-state.js` + `04-persistence.js` | guarda as âncoras |
 | Interface | `src/js/20-ui/14-nocoda-studies.js` | apresenta e coleta |
-| Navegação | `src/js/40-app/11-operational-shell.js` + `20-ui/13-exec-views.js` | encaminha |
+| Navegação | `src/js/40-app/11-operational-shell.js` + `20-ui/23-research-views.js` | encaminha |
 
 Essas responsabilidades não se contaminam. A geometria não conhece DOM, `S`,
 `localStorage` nem rede; a interface não contém fórmula.

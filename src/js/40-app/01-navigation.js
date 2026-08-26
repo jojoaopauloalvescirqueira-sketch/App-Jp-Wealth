@@ -1,8 +1,8 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// seis filhos sem criar uma tela agregadora: owner semântico, filho, section
-// física e visão local são dimensões separadas. Navegação é estado efêmero de
-// UI; este módulo não persiste preferência, tela ou visão local.
+// seis filhos e Research cinco; owner semântico, filho, section física e visão
+// local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
+// não persiste preferência, tela ou visão local.
 
 const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-overview',label:'Visão Geral',primary:'forex',child:'forex-overview',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
@@ -13,17 +13,24 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
 ]);
 
+const NAV_RESEARCH_CHILDREN=Object.freeze([
+  Object.freeze({id:'research-forex',label:'Forex',primary:'research',child:'research-forex',screen:'research',localView:Object.freeze({surface:'research',view:'calendar'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-stocks-br',label:'Ações',primary:'research',child:'research-stocks-br',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-br'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-stocks-global',label:'Stocks',primary:'research',child:'research-stocks-global',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-global'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-reits',label:'REITs',primary:'research',child:'research-reits',screen:'research',localView:Object.freeze({surface:'research',view:'reits'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-others',label:'Others',primary:'research',child:'research-others',screen:'research',localView:Object.freeze({surface:'research',view:'others'}),aliases:Object.freeze([])})
+]);
+
 const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'dashboard',primary:'dashboard',screen:'dash',localView:null,aliases:Object.freeze(['dash'])}),
   NAV_FOREX_CHILDREN[0],
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
-  Object.freeze({id:'research-forex',primary:'research',screen:'research',localView:null,aliases:Object.freeze([])}),
+  NAV_RESEARCH_CHILDREN[0],
   Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])})
 ]);
 
-// Destinos transitórios/legados. Saber resolvê-los não os promove a filhos
-// visíveis. Calendário, NoCoda e Pivots permanecem funcionais até o NAV-03,
-// porém child:null impede que a faixa diga que pertencem a um dos seis filhos.
+// Destinos legados. Saber resolvê-los não os promove a rotas primárias: as três
+// ferramentas analíticas pertencem semanticamente a Research / Forex.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   contas:Object.freeze({canonical:'forex-account',child:'forex-account',screen:'contas',primary:'forex'}),
   contab:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'contab',primary:'forex'}),
@@ -32,21 +39,22 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   history:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
   check:Object.freeze({canonical:'forex-preparation',child:'forex-preparation',screen:'check',primary:'forex'}),
   'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
-  ecal:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'ecal'})}),
-  nocoda:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'nocoda'})}),
-  pivots:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'pivots'})}),
+  ecal:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'calendar'})}),
+  nocoda:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
+  pivots:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'pivots'})}),
   params:Object.freeze({action:'settings',leaf:'tool-params'}),
   config:Object.freeze({action:'settings',leaf:'about'})
 });
 
 const NAV_LOCAL_SURFACES=Object.freeze({
-  exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','ecal','nocoda','pivots','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
+  exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
-  fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui})
+  fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
+  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['calendar','nocoda','pivots','stocks-br','stocks-global','reits','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
-  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN].map(route=>[route.id,route])));
+  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN,...NAV_RESEARCH_CHILDREN].map(route=>[route.id,route])));
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
 let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
@@ -164,8 +172,13 @@ function navNavigateLocal(surfaceId,view){
     (surfaceId==='exec'&&(view==='panel'||view==='motor')?'forex-operation':
     (surfaceId==='exec'&&view==='history'?'forex-reconciliation':
     (surfaceId==='fxplan'?'forex-planning':
-    (surfaceId==='finpes'&&view==='overview'?'personal-finance':null))));
-  const child=canonical&&canonical.startsWith('forex-')?canonical:null;
+    (surfaceId==='finpes'&&view==='overview'?'personal-finance':
+    (surfaceId==='research'&&(view==='calendar'||view==='nocoda'||view==='pivots')?'research-forex':
+    (surfaceId==='research'&&view==='stocks-br'?'research-stocks-br':
+    (surfaceId==='research'&&view==='stocks-global'?'research-stocks-global':
+    (surfaceId==='research'&&view==='reits'?'research-reits':
+    (surfaceId==='research'&&view==='others'?'research-others':null)))))))));
+  const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-'))?canonical:null;
   const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
     canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
   navLastResult={accepted:false,reason:'not-applied'};
@@ -186,7 +199,8 @@ function navFocusCurrentScreen(){
 
 window.JPWNavigation=Object.freeze({
   routes:()=>NAV_CANONICAL_ROUTES.map(navPublicRoute),
-  children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):[],
+  children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):
+    (primary==='research'?NAV_RESEARCH_CHILDREN.map(navPublicRoute):[]),
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,

@@ -5841,6 +5841,9 @@ html[data-shell="global-dashboard"] .nav-sub-item-desc{font-size:11px;font-weigh
 /* Financas Pessoais (PF-01): mesma regra estrutural — [hidden] perde para
    regras que declaram display, entao cada section de workspaces precisa da sua. */
 html[data-shell="global-dashboard"] #finpes > [hidden]{display:none}
+/* Research (NAV-03): ownership visual de Calendario, NoCoda e Pivots, mais
+   empty states neutros. A regra de ID preserva hidden contra estilos locais. */
+html[data-shell="global-dashboard"] #research > [hidden]{display:none}
 
 /* ===== Finanças Pessoais · Orçamento Mensal (PF-02) =====
    Leitura simultânea no desktop (3 colunas: receitas+ativos+notas |
@@ -5942,7 +5945,8 @@ html[data-shell="global-dashboard"] .fb-card{margin:0}
 @media(max-width:900px){
   html[data-shell="global-dashboard"] .fb-grid{grid-template-columns:1fr}
 }
-html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
+html[data-shell="global-dashboard"] .exec-view,
+html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 
 @media(max-width:1160px) and (min-width:901px){
   html[data-shell="global-dashboard"] .nav-sub-trigger .nav-sub-caret{display:none}
@@ -5971,7 +5975,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 }
 
 /* ==========================================================
-   ESTUDOS NOCODA · workspace do Execution Board
+   ESTUDOS NOCODA · workspace Research / Forex
    Sem design system novo: reaproveita .card, .field, .metrics,
    .params-grid, .reset-btn e .fx-status. Só o agrupamento por
    âncora e a mensagem por campo precisaram de regra própria.

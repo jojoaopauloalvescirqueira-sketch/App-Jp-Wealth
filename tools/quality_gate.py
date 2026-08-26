@@ -24,6 +24,7 @@ FAST = (
 )
 STANDARD = FAST + (
     ("navigation-ia", [sys.executable, "tools/navigation_ia_test.py"]),
+    ("research-navigation", [sys.executable, "tools/research_navigation_test.py"]),
     ("smoke", [sys.executable, "tools/smoke_test.py"]),
     ("settings", [sys.executable, "tools/settings_modal_test.py"]),
     ("galton-board", [sys.executable, "tools/galton_board_test.py"]),
