@@ -495,19 +495,20 @@ def run_state_cases(browser, url):
 
 
 def run_ui_flow(browser, url):
-    # NAV-01 remove Planejamento do primeiro e do segundo nível globais. A
-    # superfície funcional permanece íntegra e é alcançada pelo alias físico
-    # de compatibilidade `fxplan`, sem promovê-lo ao registry canônico.
+    # NAV2-F/G: Planejamento é filho Forex. A rota canônica sempre entra em
+    # overview; o alias físico `fxplan` preserva a visão corrente.
     context, page, observed = prepare_page(browser, url)
-    assert page.evaluate("() => JPWNavigation.navigate('fxplan')") is True
+    assert page.evaluate("() => JPWNavigation.navigate('forex-planning')") is True
+    assert page.evaluate("() => JPWFx.ui.getView()") == "overview"
     page.wait_for_selector("#fxpCreateBtn")
 
     # No estado vazio trocar visão é intenção visual, não criação de plano.
     assert page.evaluate("() => JPWFx.ui.selectView('table')") is True
+    assert page.evaluate("() => JPWNavigation.navigate('fxplan')") is True
     empty_nav = page.evaluate(
-        "() => ({view: JPWFx.ui.getView(), plan: S.fxPlanning.plan, create: !!document.querySelector('#fxpCreateBtn')})"
+        "() => ({view: JPWFx.ui.getView(), child: JPWNavigation.current().child, plan: S.fxPlanning.plan, create: !!document.querySelector('#fxpCreateBtn')})"
     )
-    assert empty_nav == {"view": "table", "plan": None, "create": True}, empty_nav
+    assert empty_nav == {"view": "table", "child": "forex-planning", "plan": None, "create": True}, empty_nav
     page.evaluate("() => JPWFx.ui.selectView('overview')")
     page.fill("#fxpName", "Plano UI")
     page.fill("#fxpStart", "2026-01")
@@ -528,6 +529,9 @@ def run_ui_flow(browser, url):
           duplicateInternalNav: document.querySelectorAll('#fxPlanningRoot [data-fxp-view]').length,
           api: !!(window.JPWFx.ui && window.JPWFx.ui.selectView && window.JPWFx.ui.getView),
           routes: JPWNavigation.routes().map(route => route.id),
+          children: JPWNavigation.children('forex').map(route => route.id),
+          contextual: [...document.querySelectorAll('[data-nav-context="forex-planning"] [data-nav-local-view]')]
+            .map(button => button.dataset.navLocalView),
           resolved: JPWNavigation.resolve('fxplan'),
           active: [...document.querySelectorAll('#appMain > .screen.active')].map(el => el.id),
           primary: document.querySelector('#nav > .tab.active')?.dataset.primary
@@ -537,7 +541,10 @@ def run_ui_flow(browser, url):
     assert nav_contract["duplicateInternalNav"] == 0, "tabs equivalentes voltaram ao conteúdo"
     assert nav_contract["api"], "superfície visual JPWFx.ui ausente"
     assert nav_contract["routes"] == ["dashboard", "forex-overview", "personal-finance", "research-forex", "alladin"], nav_contract
+    assert nav_contract["children"] == ["forex-overview", "forex-preparation", "forex-account", "forex-operation", "forex-reconciliation", "forex-planning"], nav_contract
+    assert nav_contract["contextual"] == ["overview", "planning", "actuals", "table"], nav_contract
     assert nav_contract["resolved"]["accepted"] and nav_contract["resolved"]["source"] == "compatibility", nav_contract
+    assert nav_contract["resolved"]["child"] == "forex-planning", nav_contract
     assert nav_contract["active"] == ["fxplan"] and nav_contract["primary"] == "forex", nav_contract
 
     # As quatro visões continuam selecionáveis pela API pública do módulo e
@@ -603,9 +610,12 @@ def run_ui_flow(browser, url):
     compat = page.evaluate(
         """() => ({active: document.querySelector('#appMain > .screen.active')?.id,
           primary: document.querySelector('#nav > .tab.active')?.dataset.primary,
-          canonical: JPWNavigation.current().canonical})"""
+          canonical: JPWNavigation.current().canonical,
+          child: JPWNavigation.current().child,
+          view: JPWNavigation.current().localView?.view})"""
     )
-    assert compat == {"active": "fxplan", "primary": "forex", "canonical": None}, compat
+    assert compat == {"active": "fxplan", "primary": "forex", "canonical": "forex-planning",
+                      "child": "forex-planning", "view": "table"}, compat
 
     assert page.evaluate(
         "() => document.querySelector('#contab #fxPlanningCard, #contab [id^=fxp], #contab .fxp-section') === null"

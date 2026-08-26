@@ -26,9 +26,15 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
+EXPECTED_CHILDREN = ["forex-overview", "forex-preparation", "forex-account",
+                     "forex-operation", "forex-reconciliation", "forex-planning"]
+EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Operação", "Apuração", "Planejamento"]
 EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor", "history"]
-EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Calendário Econômico",
-                   "Estudos NoCoda", "Estudos dos Pivots", "Motor de Lote", "Histórico"]
+EXPECTED_CONTEXT = {
+    "forex-operation": ["panel", "motor"],
+    "forex-reconciliation": ["forex-reconciliation", "history"],
+    "forex-planning": ["overview", "planning", "actuals", "table"],
+}
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
 EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
@@ -99,10 +105,14 @@ def run_structure(page):
             && navSubShell.nextElementSibling?.id === 'gdContextRow',
           sharedShell: document.querySelectorAll('.nav-sub-shell').length === 1,
           panelsInShell: [...document.querySelectorAll('#navSubShell .nav-sub-menu')].map(el => el.id),
-          keys: [...document.querySelectorAll('#execNavSubmenu [data-nav-sub-view]')]
-            .map(el => el.dataset.navSubView),
-          labels: [...document.querySelectorAll('#execNavSubmenu .nav-sub-item-title')]
+          keys: [...document.querySelectorAll('#execNavSubmenu [data-nav-child]')]
+            .map(el => el.dataset.navChild),
+          labels: [...document.querySelectorAll('#execNavSubmenu [data-nav-level="2"] .nav-sub-item-title')]
             .map(el => el.textContent.trim()),
+          contexts: Object.fromEntries([...document.querySelectorAll('#execNavSubmenu [data-nav-context]')]
+            .map(group => [group.dataset.navContext,
+              [...group.querySelectorAll('[data-nav-item]')].map(item =>
+                item.dataset.navLocalView || item.dataset.navRoute)])),
           closedHeight: navSubShell.getBoundingClientRect().height,
           closedClipHeight: document.querySelector('#navSubShell .nav-sub-clip')
             .getBoundingClientRect().height,
@@ -116,8 +126,9 @@ def run_structure(page):
     assert contract["structuralOrder"], f"faixa fora da ordem header -> faixa -> contexto: {contract}"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
     assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu"], contract["panelsInShell"]
-    assert contract["keys"] == EXPECTED_VIEWS, f"ordem/chaves dos destinos: {contract['keys']}"
+    assert contract["keys"] == EXPECTED_CHILDREN, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
+    assert contract["contexts"] == EXPECTED_CONTEXT, f"terceiro nivel divergente: {contract['contexts']}"
     # "Altura efetiva zero" = nenhuma caixa de conteudo. A faixa mantem a
     # border-bottom transparente que anima para visivel ao abrir; o que precisa
     # estar realmente colapsado e o clipe interno (grid-template-rows:0fr).
@@ -174,7 +185,7 @@ def run_initial_destination(page):
           nestedScreens: document.querySelectorAll('#exec .screen').length,
           visible: %s.filter(id => !document.getElementById(id).hidden),
           inert: %s.filter(id => document.getElementById(id).inert),
-          current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
+          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-overview"]')
             ?.getAttribute('aria-current')
         })""" % (containers, containers)
     )
@@ -188,8 +199,15 @@ def run_initial_destination(page):
 
 def run_panel_equivalence(page):
     """Painel Operacional e o #execWidgetGrid original — realocado, nao copiado."""
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
+    hierarchy = page.evaluate("""() => ({
+      child:JPWNavigation.current().child,
+      level2:document.querySelector('[data-nav-child="forex-operation"]')?.getAttribute('aria-current'),
+      contextHidden:document.querySelector('[data-nav-context="forex-operation"]')?.hidden,
+      level3:document.querySelector('[data-nav-context="forex-operation"] [data-nav-local-view="panel"]')?.getAttribute('aria-current')
+    })""")
+    assert hierarchy == {'child':'forex-operation','level2':'page','contextHidden':False,'level3':'page'}, hierarchy
     facts = page.evaluate(
         """() => {
           const grid = document.getElementById('execWidgetGrid');
@@ -249,12 +267,9 @@ def run_state_preservation(page):
     committed = page.evaluate("() => document.getElementById('iAtr55').value")
     assert committed == "0.00777", f"pre-condicao falhou: ATR nao aceitou o valor ({committed})"
 
-    page.click('#execNavSubmenu [data-nav-sub-view="overview"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'overview'")
-    page.click('#execNavSubmenu [data-nav-sub-view="pivots"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'pivots'")
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
+    page.evaluate("() => JPWNavigation.navigate('forex-overview')")
+    page.evaluate("() => JPWNavigation.navigate('pivots')")
+    page.evaluate("() => JPWNavigation.navigate('forex-operation')")
 
     kept = page.evaluate(
         """() => ({
@@ -299,21 +314,17 @@ def run_focus_and_keyboard(page):
 
     page.focus("#execNavTrigger")
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "panel", (
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-operation", (
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    # Vizinho seguinte de "panel" na ordem do submenu — deriva de EXPECTED_VIEWS
-    # para nao voltar a travar um destino especifico por literal.
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[
-        EXPECTED_VIEWS.index("panel") + 1
-    ]
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-reconciliation"
     page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0]
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0]
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[-1]
+    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "motor"
     page.keyboard.press("ArrowRight")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0], "setas nao circulam"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0], "setas nao circulam"
     page.keyboard.press("Escape")
     assert page.evaluate("() => document.activeElement.id") == "execNavTrigger", "Escape nao devolveu foco"
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "false"
@@ -346,7 +357,7 @@ def run_hover_and_pin(page):
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "true", "resize fechou faixa fixada"
     page.click("#execNavTrigger")
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "true", "novo clique alternou faixa fixada"
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "true", "clique interno fechou a faixa"
     page.click("#appMain")
     page.wait_for_timeout(120)
@@ -379,7 +390,7 @@ def run_module_switch(page):
     back = page.evaluate(
         """() => ({
           view: window.JPWExec.ui.getView(),
-          current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
+          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-overview"]')
             ?.getAttribute('aria-current')
         })"""
     )
@@ -411,10 +422,13 @@ def run_economic_calendar(page):
           }));
         }"""
     )
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-sub-view="ecal"]')
+    assert page.evaluate("() => JPWNavigation.navigate('ecal')") is True
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+    compat = page.evaluate(
+        """() => ({child:JPWNavigation.current().child,
+          current:document.querySelectorAll('#execNavSubmenu [data-nav-child][aria-current="page"]').length})"""
+    )
+    assert compat == {'child':None,'current':0}, compat
 
     fatos = page.evaluate(
         """() => {
@@ -504,11 +518,18 @@ def run_economic_calendar(page):
 
 def run_motor_migration(page):
     """O Motor de Lote migrou de Configuracoes para ca — uma so implementacao."""
-    # 1. Alcancavel pelo submenu do Execution Board.
+    # 1. Alcançável pelo terceiro nível contextual de Operação.
     page.click("#execNavTrigger")
     page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-sub-view="motor"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
+    page.click('#execNavSubmenu [data-nav-context="forex-operation"] [data-nav-local-view="motor"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'motor'")
+    hierarchy = page.evaluate("""() => ({
+      child:JPWNavigation.current().child,
+      level2:document.querySelector('[data-nav-child="forex-operation"]')?.getAttribute('aria-current'),
+      level3:document.querySelector('[data-nav-context="forex-operation"] [data-nav-local-view="motor"]')?.getAttribute('aria-current')
+    })""")
+    assert hierarchy == {'child':'forex-operation','level2':'page','level3':'page'}, hierarchy
 
     estrutura = page.evaluate(
         """() => {
@@ -668,15 +689,15 @@ def run_mobile(browser, url):
           height: navSubShell.getBoundingClientRect().height,
           docWidth: document.documentElement.scrollWidth,
           winWidth: window.innerWidth,
-          items: [...document.querySelectorAll('#execNavSubmenu [data-nav-sub-view]')]
-            .map(el => Math.round(el.getBoundingClientRect().height))
+          items: [...document.querySelectorAll('#execNavSubmenu [data-nav-item]')]
+            .filter(el => !el.closest('[hidden]')).map(el => Math.round(el.getBoundingClientRect().height))
         })"""
     )
     assert facts["position"] in ("static", "relative"), f"faixa vira overlay no mobile: {facts['position']}"
     assert facts["height"] > 40, f"faixa sem altura no mobile: {facts}"
     assert facts["docWidth"] <= facts["winWidth"] + 2, f"overflow horizontal no mobile: {facts}"
     assert all(h >= 44 for h in facts["items"]), f"alvo de toque abaixo de 44px: {facts['items']}"
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
     assert not observed["pageerror"], f"pageerror no mobile: {observed['pageerror']}"
     context.close()

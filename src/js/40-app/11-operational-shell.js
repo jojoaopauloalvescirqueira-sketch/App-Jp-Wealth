@@ -1,9 +1,9 @@
 // ============ SHELL OPERACIONAL · NAVEGAÇÃO RESPONSIVA (N1) ============
 // Camada estritamente de interface: controla a gaveta global no mobile e a
-// faixa compartilhada do segundo nível, com hover transitório, clique fixado,
-// foco, Escape e clique externo. Os módulos globais continuam usando os
-// listeners de 01-navigation.js; o segundo nível apenas encaminha a chave de
-// visão para a superfície pública de UI do módulo — nunca toca domínio.
+// faixa compartilhada dos níveis contextuais, com hover transitório, clique
+// fixado, foco, Escape e clique externo. Forex encaminha filhos canônicos e
+// visões locais pelo resolver; Finanças Pessoais mantém sua superfície pública.
+// Estado ativo sempre deriva de JPWNavigation/current + UI, nunca de cópia local.
 //
 // A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
 // selecionar outro módulo global é clique externo e fecha o anterior. Por isso
@@ -36,10 +36,9 @@ function navSubEls(screen) {
   const trigger = key ? document.getElementById(key + 'NavTrigger') : null;
   const panel = key ? document.getElementById(key + 'NavSubmenu') : null;
   const shell = document.getElementById('navSubShell');
-  return {
-    screen: key, trigger, panel, shell,
-    items: panel ? [...panel.querySelectorAll('[data-nav-sub-view]')] : []
-  };
+  const allItems=panel?[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')]:[];
+  return {screen:key,trigger,panel,shell,allItems,
+    items:allItems.filter(item=>!item.closest('[data-nav-context][hidden]'))};
 }
 
 function navSubSurface(screen) {
@@ -61,27 +60,61 @@ function mountNavSubPanel(screen) {
   });
 }
 
+function syncNavSubContexts(screen) {
+  if(screen!=='exec'||!window.JPWNavigation) return;
+  const current=window.JPWNavigation.current();
+  let any=false;
+  document.querySelectorAll('#execNavSubmenu [data-nav-context]').forEach(group=>{
+    const active=group.dataset.navContext===current.child;
+    if(active) any=true;
+    group.hidden=!active;
+    group.inert=!active;
+  });
+  const host=document.querySelector('#execNavSubmenu .nav-sub-contexts');
+  if(host){host.hidden=!any;host.inert=!any;}
+}
+
+function navSubRouteIsCurrent(item,current){
+  if(!window.JPWNavigation||!item.dataset.navRoute) return false;
+  const resolved=window.JPWNavigation.resolve(item.dataset.navRoute);
+  if(!resolved.accepted||current.canonical!==resolved.canonical||current.screen!==resolved.screen) return false;
+  if(!resolved.localView) return !current.localView;
+  return !!current.localView&&current.localView.surface===resolved.localView.surface&&
+    current.localView.view===resolved.localView.view;
+}
+
 function syncNavSubCurrent(screen) {
-  const { items } = navSubEls(screen);
-  const surface = navSubSurface(screen);
-  const current = surface && typeof surface.getView === 'function' ? surface.getView() : null;
+  syncNavSubContexts(screen);
+  const {items}=navSubEls(screen);
+  const surface=navSubSurface(screen);
+  const currentNav=window.JPWNavigation?window.JPWNavigation.current():null;
+  const currentView=surface&&typeof surface.getView==='function'?surface.getView():null;
   items.forEach(item => {
-    const active = item.dataset.navSubView === current;
+    const active=item.dataset.navChild?(currentNav&&item.dataset.navChild===currentNav.child):
+      (item.dataset.navRoute?navSubRouteIsCurrent(item,currentNav):
+      (item.dataset.navLocalView?(currentNav&&currentNav.localView&&
+        item.dataset.navLocalSurface===currentNav.localView.surface&&
+        item.dataset.navLocalView===currentNav.localView.view):
+      item.dataset.navSubView===currentView));
     item.classList.toggle('is-current', active);
     if (active) item.setAttribute('aria-current', 'page');
     else item.removeAttribute('aria-current');
     item.tabIndex = active ? 0 : -1;
   });
-  const found = items.find(item => item.dataset.navSubView === current);
+  const found=items.find(item=>item.classList.contains('is-current'));
   // Sem visão correspondente (módulo ainda não carregado) o primeiro item
   // continua alcançável por Tab — a faixa nunca fica sem ponto de entrada.
   if (!found && items[0]) items[0].tabIndex = 0;
   return found || items[0] || null;
 }
 
+function syncNavSubState(){
+  if(navSubUI.screen) syncNavSubCurrent(navSubUI.screen);
+}
+
 function openNavSub(screen, options) {
   const target = screen || navSubUI.screen;
-  const { trigger, panel, shell, items } = navSubEls(target);
+  const {trigger,panel,shell}=navSubEls(target);
   if (!trigger || !panel || !shell) return;
   // Trocar de módulo com a faixa já aberta: o anterior perde estado de aberto
   // antes de o novo assumir, para não restar dois acionadores expandidos.
@@ -92,6 +125,8 @@ function openNavSub(screen, options) {
   if (options && options.pin) navSubUI.pinned = true;
   navSubUI.opener = (options && options.opener) || trigger;
   mountNavSubPanel(target);
+  const current=syncNavSubCurrent(target);
+  const {items}=navSubEls(target);
   document.documentElement.setAttribute('data-nav-sub', 'open');
   if (navSubUI.pinned) document.documentElement.setAttribute('data-nav-sub-pinned', 'true');
   trigger.setAttribute('aria-expanded', 'true');
@@ -99,7 +134,6 @@ function openNavSub(screen, options) {
   panel.setAttribute('aria-hidden', 'false');
   panel.inert = false;
   if (typeof navPillApplyGeometry === 'function') navPillApplyGeometry(trigger);
-  const current = syncNavSubCurrent(target);
   if (options && options.focus === 'last') {
     const last = items[items.length - 1];
     if (last) { items.forEach(item => { item.tabIndex = item === last ? 0 : -1; }); last.focus(); }
@@ -109,10 +143,10 @@ function openNavSub(screen, options) {
 // Retira o estado de aberto de um módulo sem mexer na faixa: usado ao trocar
 // de módulo e como parte do fechamento.
 function collapseNavSubPanel(screen) {
-  const { trigger, panel, items } = navSubEls(screen);
+  const {trigger,panel,allItems}=navSubEls(screen);
   if (trigger) trigger.setAttribute('aria-expanded', 'false');
   if (panel) { panel.setAttribute('aria-hidden', 'true'); panel.inert = true; }
-  items.forEach(item => { item.tabIndex = -1; });
+  allItems.forEach(item => { item.tabIndex = -1; });
 }
 
 function closeNavSub(options) {
@@ -152,6 +186,21 @@ function selectNavSubView(view) {
   }
   syncNavSubCurrent(screen);
   if (shellUI.open) closeShellMenu({ restoreFocus: false });
+}
+
+function selectNavSubItem(item){
+  if(!item) return;
+  if(item.dataset.navChild&&window.JPWNavigation){
+    window.JPWNavigation.navigate(item.dataset.navChild);
+  }else if(item.dataset.navRoute&&window.JPWNavigation){
+    window.JPWNavigation.navigate(item.dataset.navRoute);
+  }else if(item.dataset.navLocalSurface&&item.dataset.navLocalView&&window.JPWNavigation){
+    window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
+  }else if(item.dataset.navSubView){
+    selectNavSubView(item.dataset.navSubView);
+  }
+  syncNavSubState();
+  if(shellUI.open) closeShellMenu({restoreFocus:false});
 }
 
 function moveNavSubFocus(direction) {
@@ -207,9 +256,9 @@ function initOperationalShell() {
 
     triggers.forEach(trigger => {
       const screen = trigger.dataset.navSurface;
-      const { panel, items } = navSubEls(screen);
+      const {panel,allItems}=navSubEls(screen);
       if (!panel) return;
-      items.forEach(item => { item.tabIndex = -1; });
+      allItems.forEach(item => { item.tabIndex = -1; });
       trigger.addEventListener('pointerenter', () => { if (hoverCapable()) openNavSub(screen, { opener: trigger }); });
       trigger.addEventListener('keydown', event => {
         if (event.key === 'ArrowDown') {
@@ -252,8 +301,8 @@ function initOperationalShell() {
       if (shellUI.open) closeShellMenu({ restoreFocus: false });
       return;
     }
-    const item = event.target.closest('[data-nav-sub-view]');
-    if (item) { selectNavSubView(item.dataset.navSubView); return; }
+    const item=event.target.closest('[data-nav-item],[data-nav-sub-view]');
+    if(item){selectNavSubItem(item);return;}
     if (navSubUI.open && !event.target.closest('#navSubShell')) closeNavSub();
     // Selecionar outro destino global fecha somente a gaveta mobile — sem
     // devolver foco, porque a navegação já levou o usuário para outra tela.

@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+### NAV-02 — Forex Consolidation — candidato interno — 2026-08-26
+
+Sobre a base `e2c34bb`, a API mantém cinco primários e passa a expor exatamente
+seis filhos em `JPWNavigation.children('forex')`: Visão Geral, Preparação,
+Conta, Operação, Apuração e Planejamento. Nenhuma `section#forex` foi criada e
+os IDs físicos `execNavTrigger`/`execNavSubmenu` permanecem intactos.
+
+- Operação ganhou terceiro nível contextual Painel/Motor; Apuração,
+  Contabilidade/Histórico; Planejamento, os quatro modos já existentes. O
+  clique canônico aplica defaults determinísticos, enquanto `fxplan` legado
+  preserva a visão corrente.
+- `motor` resolve para Operação, `history` para Apuração e `check` para
+  Preparação. A ação distinta `tool-check` continua abrindo a Central de
+  Configurações e transportando o mesmo `#checkWidgetGrid` sem trocar primary.
+- Calendário, NoCoda e Pivots continuam funcionais por compatibilidade, com
+  `child:null` e nenhum filho Forex falsamente marcado. A ownership visual em
+  Research pertence ao NAV-03; não foi criado atalho provisório.
+- Navegação continua efêmera: zero chave nova, zero escrita em `S`/storage e
+  zero acoplamento ao Alladin. As seis focais NAV-02, `validate_project`, fast,
+  full 42/42 e browser desktop/mobile passaram no candidato final.
+
+NAV-02 não é publicável isoladamente. NAV-03 é o primeiro candidato
+potencialmente publicável da nova árvore.
+
 ### NAV-01 — fundação semântica de navegação — candidato interno — 2026-08-25
 
 Branch `codex/navigation-ia`, base `1eddd29`. Candidato transitório N1: registry

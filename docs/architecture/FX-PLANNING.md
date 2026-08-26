@@ -2,9 +2,10 @@
 
 Motor de planejamento patrimonial temporal para Forex, do domínio
 Contabilidade/Patrimônio, apresentado na tela física própria `#fxplan`. No
-candidato interno NAV-01 ela deixa de ser entrada global e permanece alcançável
-somente pelo target de compatibilidade `fxplan`; os quatro modos continuam na
-superfície `window.JPWFx.ui`. O destino canônico definitivo chega no NAV-02.
+candidato interno NAV-02 ela é o filho canônico `forex-planning`; a rota entra
+sempre em Visão Geral e o target de compatibilidade `fxplan` preserva a visão
+corrente. Os quatro modos continuam na superfície `window.JPWFx.ui`; o destino
+canônico definitivo fica consolidado neste NAV-02.
 Deriva conceitualmente da planilha histórica `Planejamento FX.xlsx` **sem
 reproduzir suas inconsistências** (coluna de reserva "FUNDO (FIIS)" com 10%,
 proxy de despesas como % do patrimônio, taxa única de dólar, coluna de aporte
@@ -173,8 +174,8 @@ qualquer seletor local.
 
 Acessibilidade: estado nunca só por cor (badges/texto, e as três séries do
 gráfico também se separam pelo padrão do traço); os quatro modos não usam o
-padrão ARIA de abas e são selecionados pela API do módulo enquanto o NAV-01
-mantém `#fxplan` como compatibilidade física. O conteúdo usa `role="region"`
+padrão ARIA de abas e são selecionados pela API do módulo e pelo terceiro nível
+contextual de Forex, enquanto `#fxplan` permanece a identidade física. O conteúdo usa `role="region"`
 com `aria-label` próprio, sem `tabpanel` nem `aria-controls` por modo; resumo
 textual dos gráficos, labels reais, controles nativos;
 tabelas largas rolam em `.fxp-tablewrap`.
@@ -187,7 +188,7 @@ contextual e fica reservada à prosa doutrinária).
 Baseline × Forecast × Realizado, custo cambial ponderado, caracterização
 campo a campo das reservas, round-trip de persistência com reload, base legada
 sem o agregado, agregado corrompido, preservação de campos desconhecidos,
-contiguidade de fechamentos, fluxo real de UI, alias de compatibilidade NAV-01 e
+contiguidade de fechamentos, fluxo real de UI, rota canônica/default e alias de compatibilidade NAV-02 e
 contenção em viewport móvel. A fundação global é coberta separadamente por
 `tools/navigation_ia_test.py`.
 

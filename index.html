@@ -134,36 +134,77 @@
      ids, do <nav> e da superfície de UI declarada em NAV_SUBMENU_SURFACES. -->
 <div class="nav-sub-shell" id="navSubShell">
   <div class="nav-sub-clip">
-    <nav class="nav-sub-menu" id="execNavSubmenu" aria-labelledby="execNavTrigger"
+    <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
          aria-hidden="true" hidden inert>
-      <button type="button" data-nav-sub-view="overview">
-        <span class="nav-sub-item-title">Visão Geral</span>
-        <span class="nav-sub-item-desc">Síntese do módulo</span>
-      </button>
-      <button type="button" data-nav-sub-view="panel">
-        <span class="nav-sub-item-title">Painel Operacional</span>
-        <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
-      </button>
-      <button type="button" data-nav-sub-view="ecal">
-        <span class="nav-sub-item-title">Calendário Econômico</span>
-        <span class="nav-sub-item-desc">Semana corrente de alto impacto</span>
-      </button>
-      <button type="button" data-nav-sub-view="nocoda">
-        <span class="nav-sub-item-title">Estudos NoCoda</span>
-        <span class="nav-sub-item-desc">Âncoras do canal por instrumento</span>
-      </button>
-      <button type="button" data-nav-sub-view="pivots">
-        <span class="nav-sub-item-title">Estudos dos Pivots</span>
-        <span class="nav-sub-item-desc">Amostra histórica de pivots H1/H4</span>
-      </button>
-      <button type="button" data-nav-sub-view="motor">
-        <span class="nav-sub-item-title">Motor de Lote</span>
-        <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
-      </button>
-      <button type="button" data-nav-sub-view="history">
-        <span class="nav-sub-item-title">Histórico</span>
-        <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
-      </button>
+      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
+        <button type="button" data-nav-item data-nav-child="forex-overview">
+          <span class="nav-sub-item-title">Visão Geral</span>
+          <span class="nav-sub-item-desc">Síntese do módulo</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-preparation">
+          <span class="nav-sub-item-title">Preparação</span>
+          <span class="nav-sub-item-desc">Checklist Pré-Trade</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-account">
+          <span class="nav-sub-item-title">Conta</span>
+          <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-operation">
+          <span class="nav-sub-item-title">Operação</span>
+          <span class="nav-sub-item-desc">Painel e Motor de Lote</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-reconciliation">
+          <span class="nav-sub-item-title">Apuração</span>
+          <span class="nav-sub-item-desc">Contabilidade e Histórico</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-planning">
+          <span class="nav-sub-item-title">Planejamento</span>
+          <span class="nav-sub-item-desc">Plano, realizado e histórico</span>
+        </button>
+      </div>
+      <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-operation" role="group" aria-label="Operação" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="panel">
+            <span class="nav-sub-item-title">Painel</span>
+            <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
+            <span class="nav-sub-item-title">Motor</span>
+            <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
+          </button>
+        </div>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-reconciliation" role="group" aria-label="Apuração" hidden inert>
+          <button type="button" data-nav-item data-nav-route="forex-reconciliation">
+            <span class="nav-sub-item-title">Contabilidade</span>
+            <span class="nav-sub-item-desc">Ledger, retorno e drawdown</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="history">
+            <span class="nav-sub-item-title">Histórico</span>
+            <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
+          </button>
+        </div>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-planning" role="group" aria-label="Planejamento" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="overview">
+            <span class="nav-sub-item-title">Visão Geral</span>
+            <span class="nav-sub-item-desc">Resumo do plano vigente</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="planning">
+            <span class="nav-sub-item-title">Planejamento</span>
+            <span class="nav-sub-item-desc">Premissas e projeções</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="actuals">
+            <span class="nav-sub-item-title">Realizado</span>
+            <span class="nav-sub-item-desc">Fechamentos e aportes</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="table">
+            <span class="nav-sub-item-title">Histórico/Tabela</span>
+            <span class="nav-sub-item-desc">Baseline, vigente e realizado</span>
+          </button>
+        </div>
+      </div>
     </nav>
     <!-- Finanças Pessoais: cinco destinos. As chaves são contrato da
          superfície window.JPWFin.ui (20-ui/17-finpes-views.js). Inventário

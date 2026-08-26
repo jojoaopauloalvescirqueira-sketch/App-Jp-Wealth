@@ -1,27 +1,28 @@
 # Navegação hierárquica — contrato de implementação
 
 Este documento registra o padrão reutilizável aprovado para módulos que venham
-a possuir um segundo nível de navegação no JP Wealth. Ele descreve arquitetura
+a possuir níveis contextuais de navegação no JP Wealth. Ele descreve arquitetura
 de interface, não autoriza automaticamente aplicar submenus a outros módulos.
 Cada nova adoção continua exigindo tarefa e aprovação próprias.
 
-## Estado da migração NAV-01
+## Estado da migração NAV-02
 
 - **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
   Research e Alladin.
-- **CANDIDATO NAV-01:** fundação semântica transitória e interna. O registry
-  público contém exatamente `dashboard`, `forex-overview`, `personal-finance`,
-  `research-forex` e `alladin`; IDs físicos antigos são apenas compatibilidade.
-- **ESTADO PUBLICÁVEL:** ainda depende do NAV-02, que levará os destinos
-  definitivos de Conta, Operação, Apuração e Planejamento para dentro de Forex.
-  NAV-01 isolado não deve ser mergeado nem publicado.
+- **CANDIDATO NAV-02:** `routes()` mantém exatamente os cinco primários e
+  `children('forex')` contém, nesta ordem, `forex-overview`,
+  `forex-preparation`, `forex-account`, `forex-operation`,
+  `forex-reconciliation` e `forex-planning`.
+- **ESTADO PUBLICÁVEL:** NAV-02 é interno. Calendário, NoCoda e Pivots seguem
+  compatíveis porém sem filho ativo até o NAV-03, primeiro candidato
+  potencialmente publicável.
 
-Adotam o segundo nível no candidato NAV-01: **Forex** (superfície física `exec`)
-e **Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
+Adotam a faixa contextual: **Forex** (seis filhos sobre `exec`, `check`,
+`contas`, `contab` e `fxplan`) e **Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
 Dívidas & Crédito, Comparativo Mensal e Cenários —, superfície `window.JPWFin.ui`,
-teste `tools/finpes_navigation_test.py`). O antigo painel global de Planejamento
-foi removido; `#fxplan` e `window.JPWFx.ui` permanecem funcionais por
-`JPWNavigation.resolve('fxplan')` como compatibilidade.
+teste `tools/finpes_navigation_test.py`). Operação, Apuração e Planejamento
+ganham terceiro nível dentro do mesmo `#execNavSubmenu`; `#fxplan` continua
+físico e usa `window.JPWFx.ui`.
 
 ## Estrutura canônica
 
@@ -65,11 +66,13 @@ Convenção de nomes, lida por derivação e não por registro manual:
 |---|---|
 | acionador em `#nav` | `<data-nav-surface>NavTrigger`, classe `.tab.nav-sub-trigger` |
 | painel do módulo | `<data-nav-surface>NavSubmenu`, classe `.nav-sub-menu` |
-| item de destino | `[data-nav-sub-view="<chave>"]` |
+| filho canônico Forex | `[data-nav-item][data-nav-child="<route>"]` |
+| destino local contextual | `[data-nav-item][data-nav-local-surface][data-nav-local-view]` |
+| item local legado de módulo | `[data-nav-sub-view="<chave>"]` |
 
-As colunas do painel derivam da contagem de itens
-(`grid-auto-flow:column`), então módulos com três e com quatro destinos usam a
-mesma regra sem número mágico.
+As colunas de cada nível derivam da contagem de itens (`grid-auto-flow:column`).
+Grupos de terceiro nível usam `data-nav-context="<child>"` e só o grupo do
+filho corrente fica visível e fora de `inert`.
 
 Um módulo novo precisa de: o par de ids acima, o `<nav>` dentro de
 `#navSubShell`, e uma entrada em `NAV_SUBMENU_SURFACES`
@@ -91,7 +94,8 @@ O estado fixado fecha por:
 - seleção de outro módulo global, que é um clique externo;
 - Escape, preservado como saída acessível com devolução de foco.
 
-Clicar em um item do segundo nível troca a visão e mantém a faixa aberta. O
+Clicar em um filho canônico navega pelo resolver; item local chama
+`JPWNavigation.navigateLocal()`. Ambos mantêm a faixa aberta. O
 estado é efêmero: não entra em `S`, `localStorage`, backup, schema ou migração.
 `aria-expanded`, `aria-hidden`, `inert`, roving `tabindex` e `aria-current`
 devem refletir a realidade visual.
@@ -115,11 +119,11 @@ isolada. A faixa usa divisor discreto, sem borda de card ou sombra pesada.
 
 ## Navegação interna e fonte única
 
-O segundo nível deve chamar o mecanismo visual já existente do módulo. Não se
-cria estado paralelo para conteúdo ativo. As chaves são encaminhadas para a
-superfície pública do módulo — `window.JPWExec.ui` (`overview`, `panel`, `ecal`,
-`nocoda`, `pivots`, `motor`) — que expõe exatamente `selectView(chave)` e
-`getView()`.
+Os níveis contextuais chamam os mecanismos visuais existentes. Não se cria
+estado paralelo: primary/child/screen/local view vêm de `JPWNavigation.current()`
+e a visão efetiva das superfícies `window.JPWExec.ui`, `window.JPWFx.ui` e
+`window.JPWFin.ui`. Operação usa `panel`/`motor`; Apuração combina `#contab` e
+`exec/history`; Planejamento usa `overview`/`planning`/`actuals`/`table`.
 
 Quando a faixa superior substitui tabs equivalentes no conteúdo, essas tabs
 devem ser removidas para existir uma única fonte visível de navegação. Conteúdo,
@@ -193,8 +197,10 @@ o usuário fecha tocando fora ou usando Escape em teclado conectado.
 
 - `index.html`: acionadores globais e estrutura semântica da faixa compartilhada;
 - `src/styles/app.css`: grid estrutural, animação, terceiro tom e responsividade;
-- `src/js/40-app/11-operational-shell.js`: registro dos módulos, abertura
-  transitória/fixada, foco e fechamento — genérico, sem id de módulo;
+- `src/js/40-app/01-navigation.js`: registry de primários/filhos, defaults,
+  compatibilidade e estado semântico corrente;
+- `src/js/40-app/11-operational-shell.js`: abertura transitória/fixada, foco,
+  fechamento e projeção dos níveis 2/3 a partir do resolver;
 - script de UI do módulo: seleção da visão, sem domínio financeiro
   (`20-ui/13-exec-views.js` e `20-ui/17-finpes-views.js`);
 - teste de navegador focado: registry/compatibilidade em

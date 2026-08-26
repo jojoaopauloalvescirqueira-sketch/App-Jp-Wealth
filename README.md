@@ -21,10 +21,13 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 ### Estado da migração de navegação
 
 - **TARGET CANÔNICO:** Dashboard, Forex, Finanças Pessoais, Research e Alladin.
-- **CANDIDATO NAV-01:** fundação semântica transitória em branch dedicada;
-  destinos físicos legados continuam acessíveis por compatibilidade.
-- **ESTADO PUBLICÁVEL:** depende do NAV-02 (Forex Consolidation). NAV-01 isolado
-  não substitui a navegação utilizável atual e não pode ser publicado.
+- **CANDIDATO NAV-02:** Forex possui exatamente seis destinos — Visão Geral,
+  Preparação, Conta, Operação, Apuração e Planejamento — sobre as telas físicas
+  existentes e sem `section#forex`. Operação, Apuração e Planejamento exibem
+  terceiro nível contextual.
+- **ESTADO PUBLICÁVEL:** NAV-01 e NAV-02 são checkpoints internos. Calendário,
+  NoCoda e Pivots recebem a ownership visual definitiva em Research no NAV-03,
+  primeiro candidato potencialmente publicável.
 
 ### Capacidades funcionais
 
@@ -67,8 +70,8 @@ modelo de retorno de Forex, previsão de mercado ou promessa de desempenho**.
 
 ### Planejamento FX
 
-Na tela física própria `#fxplan`, preservada por compatibilidade no candidato
-NAV-01, o Planejamento FX é o
+Na tela física própria `#fxplan`, filha semântica de Forex no candidato NAV-02
+e ainda preservada pelo alias legado `fxplan`, o Planejamento FX é o
 motor de planejamento patrimonial temporal para Forex: separa **planejado**
 (premissas do operador),
 **realizado** (fechamentos mensais e ledger cambial de aportes) e **normativo**

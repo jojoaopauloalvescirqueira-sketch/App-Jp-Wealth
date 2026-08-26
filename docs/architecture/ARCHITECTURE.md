@@ -41,10 +41,11 @@ de simulação não ganha autoridade normativa por coexistir com o terminal.
   experiências educacionais isoladas.
 
 `src/js/40-app/01-navigation.js` separa a API canônica da compatibilidade
-física: `JPWNavigation.routes()` expõe somente os cinco destinos do target,
-enquanto `resolve()` e `navigateToScreen()` continuam aceitando IDs legados. O
-candidato NAV-01 é transitório e interno; o primeiro estado potencialmente
-publicável da nova IA depende do NAV-02.
+física: `JPWNavigation.routes()` expõe somente os cinco primários e
+`JPWNavigation.children('forex')`, exatamente seis filhos sobre as sections
+existentes. `resolve()` e `navigateToScreen()` continuam aceitando IDs legados
+e registram owner, child, screen e local view separadamente. NAV-02 permanece
+interno; a ownership visual das ferramentas de Research fecha no NAV-03.
 
 ### 6. PWA e identidade visual
 

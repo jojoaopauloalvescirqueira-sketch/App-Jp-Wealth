@@ -5802,6 +5802,15 @@ html[data-shell="global-dashboard"] .nav-sub-menu{
   width:min(var(--gd-max-w),100%);margin-inline:auto;padding:18px var(--gd-gutter) 20px;
   display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(12px,2vw,28px);
 }
+html[data-shell="global-dashboard"] .nav-sub-menu.nav-sub-menu-contextual{display:block}
+html[data-shell="global-dashboard"] .nav-sub-menu-contextual .nav-sub-level{
+  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(8px,1.4vw,18px);
+}
+html[data-shell="global-dashboard"] .nav-sub-contexts{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--jp-border);
+}
+html[data-shell="global-dashboard"] .nav-sub-contexts[hidden],
+html[data-shell="global-dashboard"] .nav-sub-level-context[hidden]{display:none}
 /* O <nav> do módulo inativo é `hidden`; sem esta regra o display:grid acima
    venceria o estilo de agente de usuário e ele continuaria visível. */
 html[data-shell="global-dashboard"] .nav-sub-menu[hidden]{display:none}
@@ -5948,6 +5957,10 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
   html[data-shell="global-dashboard"] .nav-sub-menu button{
     min-height:58px;padding:10px 14px;
   }
+  html[data-shell="global-dashboard"] .nav-sub-menu-contextual .nav-sub-level{
+    grid-auto-flow:row;gap:2px;
+  }
+  html[data-shell="global-dashboard"] .nav-sub-contexts{margin-top:8px;padding-top:8px}
 }
 
 @media(prefers-reduced-motion:reduce){

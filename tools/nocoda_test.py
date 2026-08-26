@@ -345,11 +345,16 @@ def run_no_hardcoded_instruments():
 
 
 def open_nocoda(page):
-    """Leva o app ao workspace Estudos NoCoda pela navegacao real."""
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-sub-view="nocoda"]')
+    """NAV2-J: compatibilidade técnica sem promover NoCoda a filho Forex."""
+    assert page.evaluate("() => JPWNavigation.navigate('nocoda')") is True
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'nocoda'")
+    state = page.evaluate("""() => ({
+      primary:JPWNavigation.current().primary,
+      child:JPWNavigation.current().child,
+      canonical:JPWNavigation.current().canonical,
+      visible:[...document.querySelectorAll('#execNavSubmenu [data-nav-child][aria-current="page"]')].length
+    })""")
+    assert state == {'primary':'forex','child':None,'canonical':None,'visible':0}, state
     page.wait_for_selector("#ncInstrument")
 
 

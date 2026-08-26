@@ -27,8 +27,17 @@ CANONICAL = [
     ("research-forex", "research", "research", None),
     ("alladin", "alladin", "alladin", None),
 ]
+FOREX_CHILDREN = [
+    ("forex-overview", "exec", "overview"),
+    ("forex-preparation", "check", None),
+    ("forex-account", "contas", None),
+    ("forex-operation", "exec", "panel"),
+    ("forex-reconciliation", "contab", None),
+    ("forex-planning", "fxplan", "overview"),
+]
 LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
-          "motor", "check", "params", "config"]
+          "motor", "history", "check", "tool-check", "ecal", "nocoda",
+          "pivots", "params", "config"]
 PRIMARY = [
     ("01", "Dashboard", "dashboard", "dashboard"),
     ("02", "Forex", "forex-overview", "forex"),
@@ -106,12 +115,29 @@ def assert_registry(page):
     assert [route["id"] for route in routes] == [item[0] for item in CANONICAL], routes
     flat = json.dumps(routes, ensure_ascii=False)
     assert not any(legacy in [route["id"] for route in routes] for legacy in LEGACY), flat
-    assert "forex-account" not in flat, flat
+    children = page.evaluate("() => window.JPWNavigation.children('forex')")
+    assert [child["id"] for child in children] == [item[0] for item in FOREX_CHILDREN], children
+    assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []
+    assert page.evaluate("() => window.JPWNavigation.children('inexistente')") == []
     resolved = page.evaluate("""targets => targets.map(target => ({
       target, result: window.JPWNavigation.resolve(target)
     }))""", [item[0] for item in CANONICAL] + LEGACY)
     assert all(item["result"] and item["result"].get("accepted") for item in resolved), resolved
     assert page.evaluate("() => window.JPWNavigation.resolve('rota-inexistente').accepted") is False
+
+    # NAV2-H: a superfície e a ação de Settings possuem identidades explícitas.
+    check_contract = page.evaluate("""() => ({
+      surface: JPWNavigation.resolve('check'),
+      settings: JPWNavigation.resolve('tool-check')
+    })""")
+    assert check_contract["surface"]["canonical"] == "forex-preparation", check_contract
+    assert check_contract["surface"]["child"] == "forex-preparation", check_contract
+    assert check_contract["surface"]["screen"] == "check", check_contract
+    assert check_contract["surface"]["action"] is None, check_contract
+    assert check_contract["settings"]["action"] == "settings", check_contract
+    assert check_contract["settings"]["leaf"] == "tool-check", check_contract
+    assert check_contract["settings"]["primary"] is None, check_contract
+    assert check_contract["settings"]["child"] is None, check_contract
 
 
 def assert_primary_dom(page):
@@ -168,13 +194,67 @@ def assert_canonical_navigation(page):
     assert page.evaluate("() => window.JPWFin.ui.getView()") == "overview"
 
 
+def assert_forex_children_and_compatibility(page):
+    """NAV2-A..J: defaults, aliases, parent/child e compatibilidade invisível."""
+    for route, screen, local_view in FOREX_CHILDREN:
+        # A rota canônica deve aplicar o default em toda entrada, inclusive após
+        # uma visão local diferente ter sido escolhida.
+        if route == "forex-operation":
+            page.evaluate("() => JPWExec.ui.selectView('motor')")
+        if route == "forex-planning":
+            page.evaluate("() => JPWFx.ui.selectView('actuals')")
+        assert page.evaluate("route => JPWNavigation.navigate(route)", route) is True
+        state = active_state(page)
+        assert state["screen"] == screen and state["primary"] == "forex", (route, state)
+        assert state["current"]["canonical"] == route, (route, state)
+        assert state["current"]["child"] == route, (route, state)
+        if local_view:
+            surface = "fxplan" if screen == "fxplan" else "exec"
+            actual = page.evaluate("surface => surface === 'fxplan' ? JPWFx.ui.getView() : JPWExec.ui.getView()", surface)
+            assert actual == local_view, (route, actual)
+
+    # NAV2-C/E/G: compatibilidade preserva owner e informa o filho canônico.
+    page.evaluate("() => JPWFx.ui.selectView('table')")
+    aliases = [
+        ("motor", "exec", "forex-operation", "motor"),
+        ("history", "exec", "forex-reconciliation", "history"),
+        ("fxplan", "fxplan", "forex-planning", "table"),
+    ]
+    for target, screen, child, view in aliases:
+        assert page.evaluate("target => JPWNavigation.navigate(target)", target) is True
+        state = active_state(page)
+        assert state["screen"] == screen and state["primary"] == "forex", (target, state)
+        assert state["current"]["child"] == child, (target, state)
+        assert state["current"]["canonical"] == child, (target, state)
+        assert state["current"]["localView"]["view"] == view, (target, state)
+
+    # NAV2-H: `check` abre a superfície de Preparação, nunca Settings.
+    assert page.evaluate("() => JPWNavigation.navigate('check')") is True
+    check_state = active_state(page)
+    assert check_state["screen"] == "check" and check_state["primary"] == "forex", check_state
+    assert check_state["current"]["child"] == "forex-preparation", check_state
+    assert not page.locator("#settingsOverlay").is_visible()
+
+    # NAV2-J: as ferramentas de Research continuam funcionais, mas nenhum dos
+    # seis filhos Forex pode mentir que as possui nesta etapa interna.
+    for target in ("ecal", "nocoda", "pivots"):
+        assert page.evaluate("target => JPWNavigation.navigate(target)", target) is True
+        state = active_state(page)
+        assert state["screen"] == "exec" and state["primary"] == "forex", (target, state)
+        assert state["current"]["canonical"] is None, (target, state)
+        assert state["current"]["child"] is None, (target, state)
+        assert state["current"]["localView"]["view"] == target, (target, state)
+
+
 def assert_compatibility_and_atomic_refusal(page):
-    # N1-B: fachada legada preservada, sem promover a conta a rota canônica.
+    # N1-B/NAV2: fachada legada preservada e ligada ao filho canônico.
     page.evaluate("() => navigateToScreen('contas')")
     state = active_state(page)
     assert state["activeScreens"] == ["contas"], state
     assert state["primary"] == "forex", state
+    assert state["current"]["child"] == "forex-account", state
     assert "forex-account" not in [route["id"] for route in page.evaluate("() => JPWNavigation.routes()")]
+    assert "forex-account" in [route["id"] for route in page.evaluate("() => JPWNavigation.children('forex')")]
 
     # N1-C: a recusa é validada antes de qualquer efeito observável.
     assert page.evaluate("() => JPWNavigation.navigateLocal('finpes', 'cenarios')") is True
@@ -217,8 +297,11 @@ def assert_storage_and_alladin_isolation(page):
       const saveOriginal = window.save;
       window.save = function(){ saves++; return saveOriginal.apply(this, arguments); };
       for (const route of JPWNavigation.routes().map(item => item.id)) JPWNavigation.navigate(route);
+      for (const route of JPWNavigation.children('forex').map(item => item.id)) JPWNavigation.navigate(route);
       navigateToScreen('contas');
       JPWNavigation.navigateLocal('exec', 'motor');
+      JPWNavigation.navigate('history');
+      JPWNavigation.navigate('check');
       JPWNavigation.navigate('alladin');
       window.save = saveOriginal;
       return {
@@ -289,6 +372,7 @@ def main():
                 assert_registry(page)
                 assert_primary_dom(page)
                 assert_canonical_navigation(page)
+                assert_forex_children_and_compatibility(page)
                 assert_compatibility_and_atomic_refusal(page)
                 assert_storage_and_alladin_isolation(page)
                 assert_keyboard_and_mobile(browser, url, page)
@@ -299,7 +383,7 @@ def main():
                 browser.close()
     finally:
         server.shutdown()
-    print("NAVIGATION IA TEST PASS — N1-A/N1-B/N1-C, cinco rotas, compatibilidade, storage e Alladin isolados")
+    print("NAVIGATION IA TEST PASS — NAV2-A..J, cinco primários, seis filhos Forex, compatibilidade, storage e Alladin isolados")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,26 @@
 # Estado atual do projeto
 
+## NAV-02 — candidato interno de Forex Consolidation — 2026-08-26
+
+- **BASE_SHA:** `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`.
+- **Branch/worktree:** `codex/navigation-ia`, worktree dedicado Navigation IA.
+- **Contrato:** `routes()` mantém cinco primários; `children('forex')` expõe
+  exatamente Visão Geral, Preparação, Conta, Operação, Apuração e Planejamento.
+- **Estrutura:** sem `section#forex`, sem rename de `execNavTrigger`/
+  `execNavSubmenu`; terceiro nível contextual reutiliza `JPWExec.ui` e
+  `JPWFx.ui` sem estado paralelo.
+- **Compatibilidade:** `motor`/Operação, `history`/Apuração, `fxplan`/Planejamento
+  com visão corrente; `check`/Preparação e `tool-check`/Settings separados.
+  Calendário, NoCoda e Pivots funcionam com `child:null` até o NAV-03.
+- **Persistência e Alladin:** nenhuma chave/rota persistida; a navegação não
+  chama `save()` nem toca `S.alladin`/`JPWAlladin`.
+- **Evidência corrente:** build `3d51c530db465831`; seis focais NAV-02 PASS;
+  `validate_project` PASS (75 scripts, 409 IDs); fast **4/4 PASS**; full
+  **42/42 PASS**; browser pós-full PASS em desktop/mobile 390×844,
+  claro/escuro, teclado, níveis 2/3, overflow e targets ≥44 px.
+- **Publicabilidade:** NAV-02 não é publicável; NAV-03 é o primeiro candidato
+  potencialmente publicável. Commit, push, merge e deploy não autorizados.
+
 ## NAV-01 — candidato interno de fundação semântica — 2026-08-25
 
 - **BASE_SHA:** `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`.

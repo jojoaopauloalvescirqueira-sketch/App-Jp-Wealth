@@ -33,6 +33,7 @@ try:
     before=page.evaluate('sessionStateFingerprint()')
     checkpoint=page.evaluate("sessionStorage.getItem('jpwealth_session_checkpoint_v1')")
     operational=page.locator('.screen.active').get_attribute('id')
+    primary_before=page.locator('#nav > .tab.active').get_attribute('data-primary')
     page.locator('#headerConfigBtn').click(); assert page.locator('#settingsOverlay').is_visible()
     assert page.locator('.screen.active').get_attribute('id')==operational
     assert page.get_by_role('heading',name='Configurações').count()==1
@@ -90,14 +91,26 @@ try:
     assert page.locator('#pMDD').is_visible()
     assert page.locator('#settingsReviewPeriodBtn').is_visible()
 
-    # Operacao -> as tres ferramentas removidas da rail permanecem acessiveis
-    # com seus mesmos nos DOM e listeners.
+    # NAV2-I: Operacao mantém Parâmetros e a ação explícita `tool-check` dentro
+    # de Settings. O mesmo grid físico é transportado, sem mudar tela/primary.
     page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
     page.locator('#settingsMenu [data-settings-category="operations"]').click()
     assert page.locator('#settingsPageTitle').inner_text()=='Operação'
     page.locator('[data-settings-panel="operations"] [data-nav-to="tool-params"]').click()
     assert page.locator('#settingsPageTitle').inner_text()=='Parâmetros'
     assert page.locator('[data-settings-panel="tool-params"] #paramsWidgetGrid').is_visible()
+    page.locator('#settingsBackBtn').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Operação'
+    page.locator('[data-settings-panel="operations"] [data-nav-to="tool-check"]').click()
+    assert page.locator('#settingsPageTitle').inner_text()=='Checklist'
+    assert page.locator('[data-settings-panel="tool-check"] #checkWidgetGrid').is_visible()
+    check_settings=page.evaluate("""()=>({
+      screen:document.querySelector('.screen.active')?.id,
+      primary:document.querySelector('#nav > .tab.active')?.dataset.primary,
+      grids:document.querySelectorAll('#checkWidgetGrid').length,
+      parent:document.getElementById('checkWidgetGrid').closest('[data-settings-panel]')?.dataset.settingsPanel
+    })""")
+    assert check_settings=={'screen':operational,'primary':primary_before,'grids':1,'parent':'tool-check'}, check_settings
 
     # Conhecimento -> Centro Educacional (rótulo novo; ID interno 'educational' preservado).
     page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()
@@ -208,6 +221,12 @@ try:
 
     page.locator('#settingsCloseBtn').click(); assert page.evaluate('sessionHasChanges()') is False
     assert page.evaluate('sessionStateFingerprint()')==before
+    check_restored=page.evaluate("""()=>({
+      grids:document.querySelectorAll('#checkWidgetGrid').length,
+      parent:document.getElementById('checkWidgetGrid').parentElement?.id,
+      primary:document.querySelector('#nav > .tab.active')?.dataset.primary
+    })""")
+    assert check_restored=={'grids':1,'parent':'check','primary':primary_before}, check_restored
 
     # A-003: após fechar (inclusive depois dos 20 ciclos abre/fecha acima), o estado
     # anterior de inert/aria-hidden é restaurado exatamente — sem resíduo acumulado.

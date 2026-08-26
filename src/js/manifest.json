@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "263192e4c0fedbbcecf26db0e61d5bc06109c8df3abe913b580dd39b266d1ec0"
+      "sha256": "6ef62f8229947597aba0b6702167b0ac700093ee4ae085da5930fafa83988072"
     },
     {
       "order": 25,
@@ -241,8 +241,8 @@
     {
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
-      "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada do segundo nivel (N1)",
-      "sha256": "8706dbba6c42fa22eb1fcbf7d583051b4fff5fe5219484b581acb322ae7c0ade"
+      "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
+      "sha256": "f0f275e86d8833f6b1d36a43a0abace964bf4437a34be61d796020d8911886af"
     },
     {
       "order": 41,

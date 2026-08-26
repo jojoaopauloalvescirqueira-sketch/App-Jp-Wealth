@@ -1,6 +1,6 @@
 # Mapa do código
 
-Fotografia do candidato interno NAV-01 sobre `1eddd29` em 2026-08-25:
+Fotografia do candidato interno NAV-02 sobre `e2c34bb` em 2026-08-26:
 `src/js/manifest.json` contém 75 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
@@ -32,7 +32,7 @@ a lista material mudar.
 | 21 | `src/js/30-accounting/02-accounting-engine.js` | Motor da contabilidade |
 | 22 | `src/js/30-accounting/03-mei-jp.js` | Modelo estatístico MEI-JP |
 | 23 | `src/js/30-accounting/04-patrimonial-simulation.js` | Simulação patrimonial por perfil |
-| 24 | `src/js/40-app/01-navigation.js` | Registry/resolver semântico: cinco rotas canônicas e fachada de compatibilidade física |
+| 24 | `src/js/40-app/01-navigation.js` | Resolver semântico: cinco primários, seis filhos Forex e compatibilidade física com owner/child/local view |
 | 25 | `src/js/40-app/02-reset.js` | Reset administrativo |
 | 26 | `src/js/40-app/03-theme.js` | Tema claro/escuro |
 | 27 | `src/js/20-ui/09-contextual-help.js` | Ajuda de campo sob demanda |
@@ -48,7 +48,7 @@ a lista material mudar.
 | 37 | `src/js/40-app/08-educational-content.js` | Base educacional local |
 | 38 | `src/js/40-app/09-settings-modal.js` | Central modal de Configurações |
 | 39 | `src/js/40-app/10-dashboard-immersive.js` | Dashboard imersivo |
-| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional: gaveta móvel e controlador genérico da faixa do segundo nível |
+| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional: gaveta móvel e faixa compartilhada dos níveis contextuais, derivada do resolver |
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado do Dashboard |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
 | 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
@@ -94,21 +94,21 @@ tem `N + 1` compartimentos. O detalhe do contrato está em `GALTON-BOARD.md`.
 
 ## Planejamento FX
 
-Tela física própria `#fxplan`, preservada no candidato NAV-01 pela fachada de
-compatibilidade (`JPWNavigation.resolve('fxplan')`) e sem entrada no registry
-canônico — contendo o card `#fxPlanningCard` (fora da personalização de layout
-nesta fase). Os seis módulos publicam
+Tela física própria `#fxplan`, filha canônica `forex-planning` no NAV-02 e
+preservada também pela compatibilidade `JPWNavigation.resolve('fxplan')`. A
+rota canônica entra em `overview`; o alias preserva a visão corrente. O card
+`#fxPlanningCard` continua fora da personalização de layout nesta fase. Os seis módulos publicam
 `window.JPWFx` + `reserveRequirementsCalc`; o módulo de cotação publica
 `window.JPWMarket.usdBrl`, e o agregado do plano persiste em `S.fxPlanning`.
 A extração de `reserveCalc()` do onboarding para a função pura
 compartilhada foi autorizada em 2026-08-11; contrato completo em
 `FX-PLANNING.md`.
 
-Forex/Execution Board e Finanças Pessoais usam o segundo nível hierárquico:
+Forex e Finanças Pessoais usam a faixa hierárquica compartilhada:
 cada acionador permanece filho direto de `#nav`, enquanto a faixa única
-`#navSubShell` vive no fluxo entre header e contexto. Planejamento FX não possui
-mais acionador ou painel global no NAV-01; seus quatro modos seguem na API
-`window.JPWFx.ui` até a consolidação NAV-02.
+`#navSubShell` vive no fluxo entre header e contexto. Forex tem seis filhos e
+terceiro nível contextual para Operação, Apuração e Planejamento; os quatro
+modos do último reutilizam `window.JPWFx.ui` sem tabs internas duplicadas.
 
 No Execution Board o segundo nível troca workspaces: `#execOverview`,
 `#execWidgetGrid` (o Painel Operacional — o mesmo grid de sempre, sem um nó

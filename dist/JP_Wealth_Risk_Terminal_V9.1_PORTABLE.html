@@ -5812,6 +5812,15 @@ html[data-shell="global-dashboard"] .nav-sub-menu{
   width:min(var(--gd-max-w),100%);margin-inline:auto;padding:18px var(--gd-gutter) 20px;
   display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(12px,2vw,28px);
 }
+html[data-shell="global-dashboard"] .nav-sub-menu.nav-sub-menu-contextual{display:block}
+html[data-shell="global-dashboard"] .nav-sub-menu-contextual .nav-sub-level{
+  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:clamp(8px,1.4vw,18px);
+}
+html[data-shell="global-dashboard"] .nav-sub-contexts{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--jp-border);
+}
+html[data-shell="global-dashboard"] .nav-sub-contexts[hidden],
+html[data-shell="global-dashboard"] .nav-sub-level-context[hidden]{display:none}
 /* O <nav> do módulo inativo é `hidden`; sem esta regra o display:grid acima
    venceria o estilo de agente de usuário e ele continuaria visível. */
 html[data-shell="global-dashboard"] .nav-sub-menu[hidden]{display:none}
@@ -5958,6 +5967,10 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
   html[data-shell="global-dashboard"] .nav-sub-menu button{
     min-height:58px;padding:10px 14px;
   }
+  html[data-shell="global-dashboard"] .nav-sub-menu-contextual .nav-sub-level{
+    grid-auto-flow:row;gap:2px;
+  }
+  html[data-shell="global-dashboard"] .nav-sub-contexts{margin-top:8px;padding-top:8px}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -6091,7 +6104,7 @@ html[data-shell="global-dashboard"] .exec-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'eba48d278c6a5b58';
+const JP_WEALTH_BUILD_ID = '3d51c530db465831';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6219,36 +6232,77 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
      ids, do <nav> e da superfície de UI declarada em NAV_SUBMENU_SURFACES. -->
 <div class="nav-sub-shell" id="navSubShell">
   <div class="nav-sub-clip">
-    <nav class="nav-sub-menu" id="execNavSubmenu" aria-labelledby="execNavTrigger"
+    <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
          aria-hidden="true" hidden inert>
-      <button type="button" data-nav-sub-view="overview">
-        <span class="nav-sub-item-title">Visão Geral</span>
-        <span class="nav-sub-item-desc">Síntese do módulo</span>
-      </button>
-      <button type="button" data-nav-sub-view="panel">
-        <span class="nav-sub-item-title">Painel Operacional</span>
-        <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
-      </button>
-      <button type="button" data-nav-sub-view="ecal">
-        <span class="nav-sub-item-title">Calendário Econômico</span>
-        <span class="nav-sub-item-desc">Semana corrente de alto impacto</span>
-      </button>
-      <button type="button" data-nav-sub-view="nocoda">
-        <span class="nav-sub-item-title">Estudos NoCoda</span>
-        <span class="nav-sub-item-desc">Âncoras do canal por instrumento</span>
-      </button>
-      <button type="button" data-nav-sub-view="pivots">
-        <span class="nav-sub-item-title">Estudos dos Pivots</span>
-        <span class="nav-sub-item-desc">Amostra histórica de pivots H1/H4</span>
-      </button>
-      <button type="button" data-nav-sub-view="motor">
-        <span class="nav-sub-item-title">Motor de Lote</span>
-        <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
-      </button>
-      <button type="button" data-nav-sub-view="history">
-        <span class="nav-sub-item-title">Histórico</span>
-        <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
-      </button>
+      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
+        <button type="button" data-nav-item data-nav-child="forex-overview">
+          <span class="nav-sub-item-title">Visão Geral</span>
+          <span class="nav-sub-item-desc">Síntese do módulo</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-preparation">
+          <span class="nav-sub-item-title">Preparação</span>
+          <span class="nav-sub-item-desc">Checklist Pré-Trade</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-account">
+          <span class="nav-sub-item-title">Conta</span>
+          <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-operation">
+          <span class="nav-sub-item-title">Operação</span>
+          <span class="nav-sub-item-desc">Painel e Motor de Lote</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-reconciliation">
+          <span class="nav-sub-item-title">Apuração</span>
+          <span class="nav-sub-item-desc">Contabilidade e Histórico</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-planning">
+          <span class="nav-sub-item-title">Planejamento</span>
+          <span class="nav-sub-item-desc">Plano, realizado e histórico</span>
+        </button>
+      </div>
+      <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-operation" role="group" aria-label="Operação" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="panel">
+            <span class="nav-sub-item-title">Painel</span>
+            <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
+            <span class="nav-sub-item-title">Motor</span>
+            <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
+          </button>
+        </div>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-reconciliation" role="group" aria-label="Apuração" hidden inert>
+          <button type="button" data-nav-item data-nav-route="forex-reconciliation">
+            <span class="nav-sub-item-title">Contabilidade</span>
+            <span class="nav-sub-item-desc">Ledger, retorno e drawdown</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="history">
+            <span class="nav-sub-item-title">Histórico</span>
+            <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
+          </button>
+        </div>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-planning" role="group" aria-label="Planejamento" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="overview">
+            <span class="nav-sub-item-title">Visão Geral</span>
+            <span class="nav-sub-item-desc">Resumo do plano vigente</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="planning">
+            <span class="nav-sub-item-title">Planejamento</span>
+            <span class="nav-sub-item-desc">Premissas e projeções</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="actuals">
+            <span class="nav-sub-item-title">Realizado</span>
+            <span class="nav-sub-item-desc">Fechamentos e aportes</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="table">
+            <span class="nav-sub-item-title">Histórico/Tabela</span>
+            <span class="nav-sub-item-desc">Baseline, vigente e realizado</span>
+          </button>
+        </div>
+      </div>
     </nav>
     <!-- Finanças Pessoais: cinco destinos. As chaves são contrato da
          superfície window.JPWFin.ui (20-ui/17-finpes-views.js). Inventário
@@ -13667,29 +13721,43 @@ function bindContab(){
   });
 }
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
-// O contrato público tem exatamente cinco rotas canônicas. IDs físicos e
-// destinos antigos continuam resolvíveis somente pela camada de compatibilidade
-// e nunca aparecem em JPWNavigation.routes(). Navegação é estado efêmero de UI:
-// este módulo não persiste preferência, tela ou visão local.
+// O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
+// seis filhos sem criar uma tela agregadora: owner semântico, filho, section
+// física e visão local são dimensões separadas. Navegação é estado efêmero de
+// UI; este módulo não persiste preferência, tela ou visão local.
+
+const NAV_FOREX_CHILDREN=Object.freeze([
+  Object.freeze({id:'forex-overview',label:'Visão Geral',primary:'forex',child:'forex-overview',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
+  Object.freeze({id:'forex-preparation',label:'Preparação',primary:'forex',child:'forex-preparation',screen:'check',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-account',label:'Conta',primary:'forex',child:'forex-account',screen:'contas',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-reconciliation',label:'Apuração',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
+]);
 
 const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'dashboard',primary:'dashboard',screen:'dash',localView:null,aliases:Object.freeze(['dash'])}),
-  Object.freeze({id:'forex-overview',primary:'forex',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
+  NAV_FOREX_CHILDREN[0],
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
   Object.freeze({id:'research-forex',primary:'research',screen:'research',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])})
 ]);
 
-// Destinos transitórios/legados. Saber resolvê-los não os promove a rotas da
-// nova IA. `contas`, por exemplo, continua sendo a section física #contas e
-// pertence visualmente ao primário Forex, mas `forex-account` ainda não existe.
+// Destinos transitórios/legados. Saber resolvê-los não os promove a filhos
+// visíveis. Calendário, NoCoda e Pivots permanecem funcionais até o NAV-03,
+// porém child:null impede que a faixa diga que pertencem a um dos seis filhos.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
-  contas:Object.freeze({screen:'contas',primary:'forex'}),
-  contab:Object.freeze({screen:'contab',primary:'forex'}),
-  fxplan:Object.freeze({screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
-  motor:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'motor'})}),
+  contas:Object.freeze({canonical:'forex-account',child:'forex-account',screen:'contas',primary:'forex'}),
+  contab:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'contab',primary:'forex'}),
+  fxplan:Object.freeze({canonical:'forex-planning',child:'forex-planning',screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
+  motor:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'motor'})}),
+  history:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
+  check:Object.freeze({canonical:'forex-preparation',child:'forex-preparation',screen:'check',primary:'forex'}),
+  'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
+  ecal:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'ecal'})}),
+  nocoda:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'nocoda'})}),
+  pivots:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'pivots'})}),
   params:Object.freeze({action:'settings',leaf:'tool-params'}),
-  check:Object.freeze({action:'settings',leaf:'tool-check'}),
   config:Object.freeze({action:'settings',leaf:'about'})
 });
 
@@ -13699,13 +13767,14 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui})
 });
 
-const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.map(route=>[route.id,route])));
+const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
+  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN].map(route=>[route.id,route])));
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
-let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',screen:'dash',localView:null};
+let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
 
 function navPublicRoute(route){
-  return {id:route.id,primary:route.primary,screen:route.screen,
+  return {id:route.id,label:route.label||null,primary:route.primary,child:route.child||null,screen:route.screen,
     localView:route.localView?{surface:route.localView.surface,view:route.localView.view}:null,
     aliases:[...route.aliases]};
 }
@@ -13713,7 +13782,7 @@ function navPublicRoute(route){
 function navPublicResolution(plan){
   if(!plan.accepted) return {accepted:false,requested:plan.requested,reason:plan.reason};
   return {accepted:true,requested:plan.requested,source:plan.source,
-    canonical:plan.canonical||null,primary:plan.primary||null,screen:plan.screen||null,
+    canonical:plan.canonical||null,primary:plan.primary||null,child:plan.child||null,screen:plan.screen||null,
     localView:plan.localView?{surface:plan.localView.surface,view:plan.localView.view}:null,
     action:plan.action||null,leaf:plan.leaf||null};
 }
@@ -13724,13 +13793,13 @@ function navResolve(target){
   if(!requested) return {accepted:false,requested:null,reason:'missing-target'};
   const canonical=NAV_ROUTE_BY_ID[requested];
   if(canonical) return {accepted:true,requested,source:'canonical',canonical:canonical.id,
-    primary:canonical.primary,screen:canonical.screen,localView:canonical.localView};
+    primary:canonical.primary,child:canonical.child||null,screen:canonical.screen,localView:canonical.localView};
   const aliased=NAV_ROUTE_BY_ALIAS[requested];
   if(aliased) return {accepted:true,requested,source:'alias',canonical:aliased.id,
-    primary:aliased.primary,screen:aliased.screen,localView:aliased.localView};
+    primary:aliased.primary,child:aliased.child||null,screen:aliased.screen,localView:aliased.localView};
   const compatibility=NAV_COMPATIBILITY_TARGETS[requested];
-  if(compatibility) return {accepted:true,requested,source:'compatibility',canonical:null,
-    primary:compatibility.primary||null,screen:compatibility.screen||null,
+  if(compatibility) return {accepted:true,requested,source:'compatibility',canonical:compatibility.canonical||null,
+    primary:compatibility.primary||null,child:compatibility.child||null,screen:compatibility.screen||null,
     localView:compatibility.localView||null,action:compatibility.action||null,leaf:compatibility.leaf||null};
   return {accepted:false,requested,reason:'unknown-target'};
 }
@@ -13786,11 +13855,12 @@ function navApply(plan,target){
   navSelectPrimary(plan.primary);
   if(localView) navSurface(localView.surface).selectView(localView.view);
   navCurrent={canonical:plan.canonical||null,requested:plan.requested,source:plan.source,
-    primary:plan.primary,screen:plan.screen,localView};
+    primary:plan.primary,child:plan.child||null,screen:plan.screen,localView};
   navLastResult={accepted:true,reason:null};
   if(typeof scheduleNavPill==='function') scheduleNavPill();
   window.scrollTo({top:0,behavior:'smooth'});
   if(typeof maybeShowOnboardingNavReminder==='function') maybeShowOnboardingNavReminder(plan.screen);
+  if(typeof syncNavSubState==='function') syncNavSubState();
   return true;
 }
 
@@ -13813,9 +13883,13 @@ function navNavigateLocal(surfaceId,view){
   const surface=navSurface(surfaceId);
   if(!descriptor||!descriptor.views.includes(view)||!surface||typeof surface.selectView!=='function') return false;
   const canonical=surfaceId==='exec'&&view==='overview'?'forex-overview':
-    (surfaceId==='finpes'&&view==='overview'?'personal-finance':null);
-  const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'canonical':'compatibility',
-    canonical,primary:descriptor.primary,screen:descriptor.screen,localView:{surface:surfaceId,view}};
+    (surfaceId==='exec'&&(view==='panel'||view==='motor')?'forex-operation':
+    (surfaceId==='exec'&&view==='history'?'forex-reconciliation':
+    (surfaceId==='fxplan'?'forex-planning':
+    (surfaceId==='finpes'&&view==='overview'?'personal-finance':null))));
+  const child=canonical&&canonical.startsWith('forex-')?canonical:null;
+  const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
+    canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
   navLastResult={accepted:false,reason:'not-applied'};
   navApply(plan,surfaceId);
   if(typeof syncActiveScreen==='function') syncActiveScreen();
@@ -13834,11 +13908,12 @@ function navFocusCurrentScreen(){
 
 window.JPWNavigation=Object.freeze({
   routes:()=>NAV_CANONICAL_ROUTES.map(navPublicRoute),
+  children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):[],
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,
   current:()=>({canonical:navCurrent.canonical,requested:navCurrent.requested,source:navCurrent.source,
-    primary:navCurrent.primary,screen:navCurrent.screen,
+    primary:navCurrent.primary,child:navCurrent.child,screen:navCurrent.screen,
     localView:navCurrent.localView?{...navCurrent.localView}:null}),
   focusCurrentScreen:navFocusCurrentScreen
 });
@@ -17996,10 +18071,10 @@ function initDashboardImmersive() {
 initDashboardImmersive();
 // ============ SHELL OPERACIONAL · NAVEGAÇÃO RESPONSIVA (N1) ============
 // Camada estritamente de interface: controla a gaveta global no mobile e a
-// faixa compartilhada do segundo nível, com hover transitório, clique fixado,
-// foco, Escape e clique externo. Os módulos globais continuam usando os
-// listeners de 01-navigation.js; o segundo nível apenas encaminha a chave de
-// visão para a superfície pública de UI do módulo — nunca toca domínio.
+// faixa compartilhada dos níveis contextuais, com hover transitório, clique
+// fixado, foco, Escape e clique externo. Forex encaminha filhos canônicos e
+// visões locais pelo resolver; Finanças Pessoais mantém sua superfície pública.
+// Estado ativo sempre deriva de JPWNavigation/current + UI, nunca de cópia local.
 //
 // A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
 // selecionar outro módulo global é clique externo e fecha o anterior. Por isso
@@ -18032,10 +18107,9 @@ function navSubEls(screen) {
   const trigger = key ? document.getElementById(key + 'NavTrigger') : null;
   const panel = key ? document.getElementById(key + 'NavSubmenu') : null;
   const shell = document.getElementById('navSubShell');
-  return {
-    screen: key, trigger, panel, shell,
-    items: panel ? [...panel.querySelectorAll('[data-nav-sub-view]')] : []
-  };
+  const allItems=panel?[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')]:[];
+  return {screen:key,trigger,panel,shell,allItems,
+    items:allItems.filter(item=>!item.closest('[data-nav-context][hidden]'))};
 }
 
 function navSubSurface(screen) {
@@ -18057,27 +18131,61 @@ function mountNavSubPanel(screen) {
   });
 }
 
+function syncNavSubContexts(screen) {
+  if(screen!=='exec'||!window.JPWNavigation) return;
+  const current=window.JPWNavigation.current();
+  let any=false;
+  document.querySelectorAll('#execNavSubmenu [data-nav-context]').forEach(group=>{
+    const active=group.dataset.navContext===current.child;
+    if(active) any=true;
+    group.hidden=!active;
+    group.inert=!active;
+  });
+  const host=document.querySelector('#execNavSubmenu .nav-sub-contexts');
+  if(host){host.hidden=!any;host.inert=!any;}
+}
+
+function navSubRouteIsCurrent(item,current){
+  if(!window.JPWNavigation||!item.dataset.navRoute) return false;
+  const resolved=window.JPWNavigation.resolve(item.dataset.navRoute);
+  if(!resolved.accepted||current.canonical!==resolved.canonical||current.screen!==resolved.screen) return false;
+  if(!resolved.localView) return !current.localView;
+  return !!current.localView&&current.localView.surface===resolved.localView.surface&&
+    current.localView.view===resolved.localView.view;
+}
+
 function syncNavSubCurrent(screen) {
-  const { items } = navSubEls(screen);
-  const surface = navSubSurface(screen);
-  const current = surface && typeof surface.getView === 'function' ? surface.getView() : null;
+  syncNavSubContexts(screen);
+  const {items}=navSubEls(screen);
+  const surface=navSubSurface(screen);
+  const currentNav=window.JPWNavigation?window.JPWNavigation.current():null;
+  const currentView=surface&&typeof surface.getView==='function'?surface.getView():null;
   items.forEach(item => {
-    const active = item.dataset.navSubView === current;
+    const active=item.dataset.navChild?(currentNav&&item.dataset.navChild===currentNav.child):
+      (item.dataset.navRoute?navSubRouteIsCurrent(item,currentNav):
+      (item.dataset.navLocalView?(currentNav&&currentNav.localView&&
+        item.dataset.navLocalSurface===currentNav.localView.surface&&
+        item.dataset.navLocalView===currentNav.localView.view):
+      item.dataset.navSubView===currentView));
     item.classList.toggle('is-current', active);
     if (active) item.setAttribute('aria-current', 'page');
     else item.removeAttribute('aria-current');
     item.tabIndex = active ? 0 : -1;
   });
-  const found = items.find(item => item.dataset.navSubView === current);
+  const found=items.find(item=>item.classList.contains('is-current'));
   // Sem visão correspondente (módulo ainda não carregado) o primeiro item
   // continua alcançável por Tab — a faixa nunca fica sem ponto de entrada.
   if (!found && items[0]) items[0].tabIndex = 0;
   return found || items[0] || null;
 }
 
+function syncNavSubState(){
+  if(navSubUI.screen) syncNavSubCurrent(navSubUI.screen);
+}
+
 function openNavSub(screen, options) {
   const target = screen || navSubUI.screen;
-  const { trigger, panel, shell, items } = navSubEls(target);
+  const {trigger,panel,shell}=navSubEls(target);
   if (!trigger || !panel || !shell) return;
   // Trocar de módulo com a faixa já aberta: o anterior perde estado de aberto
   // antes de o novo assumir, para não restar dois acionadores expandidos.
@@ -18088,6 +18196,8 @@ function openNavSub(screen, options) {
   if (options && options.pin) navSubUI.pinned = true;
   navSubUI.opener = (options && options.opener) || trigger;
   mountNavSubPanel(target);
+  const current=syncNavSubCurrent(target);
+  const {items}=navSubEls(target);
   document.documentElement.setAttribute('data-nav-sub', 'open');
   if (navSubUI.pinned) document.documentElement.setAttribute('data-nav-sub-pinned', 'true');
   trigger.setAttribute('aria-expanded', 'true');
@@ -18095,7 +18205,6 @@ function openNavSub(screen, options) {
   panel.setAttribute('aria-hidden', 'false');
   panel.inert = false;
   if (typeof navPillApplyGeometry === 'function') navPillApplyGeometry(trigger);
-  const current = syncNavSubCurrent(target);
   if (options && options.focus === 'last') {
     const last = items[items.length - 1];
     if (last) { items.forEach(item => { item.tabIndex = item === last ? 0 : -1; }); last.focus(); }
@@ -18105,10 +18214,10 @@ function openNavSub(screen, options) {
 // Retira o estado de aberto de um módulo sem mexer na faixa: usado ao trocar
 // de módulo e como parte do fechamento.
 function collapseNavSubPanel(screen) {
-  const { trigger, panel, items } = navSubEls(screen);
+  const {trigger,panel,allItems}=navSubEls(screen);
   if (trigger) trigger.setAttribute('aria-expanded', 'false');
   if (panel) { panel.setAttribute('aria-hidden', 'true'); panel.inert = true; }
-  items.forEach(item => { item.tabIndex = -1; });
+  allItems.forEach(item => { item.tabIndex = -1; });
 }
 
 function closeNavSub(options) {
@@ -18148,6 +18257,21 @@ function selectNavSubView(view) {
   }
   syncNavSubCurrent(screen);
   if (shellUI.open) closeShellMenu({ restoreFocus: false });
+}
+
+function selectNavSubItem(item){
+  if(!item) return;
+  if(item.dataset.navChild&&window.JPWNavigation){
+    window.JPWNavigation.navigate(item.dataset.navChild);
+  }else if(item.dataset.navRoute&&window.JPWNavigation){
+    window.JPWNavigation.navigate(item.dataset.navRoute);
+  }else if(item.dataset.navLocalSurface&&item.dataset.navLocalView&&window.JPWNavigation){
+    window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
+  }else if(item.dataset.navSubView){
+    selectNavSubView(item.dataset.navSubView);
+  }
+  syncNavSubState();
+  if(shellUI.open) closeShellMenu({restoreFocus:false});
 }
 
 function moveNavSubFocus(direction) {
@@ -18203,9 +18327,9 @@ function initOperationalShell() {
 
     triggers.forEach(trigger => {
       const screen = trigger.dataset.navSurface;
-      const { panel, items } = navSubEls(screen);
+      const {panel,allItems}=navSubEls(screen);
       if (!panel) return;
-      items.forEach(item => { item.tabIndex = -1; });
+      allItems.forEach(item => { item.tabIndex = -1; });
       trigger.addEventListener('pointerenter', () => { if (hoverCapable()) openNavSub(screen, { opener: trigger }); });
       trigger.addEventListener('keydown', event => {
         if (event.key === 'ArrowDown') {
@@ -18248,8 +18372,8 @@ function initOperationalShell() {
       if (shellUI.open) closeShellMenu({ restoreFocus: false });
       return;
     }
-    const item = event.target.closest('[data-nav-sub-view]');
-    if (item) { selectNavSubView(item.dataset.navSubView); return; }
+    const item=event.target.closest('[data-nav-item],[data-nav-sub-view]');
+    if(item){selectNavSubItem(item);return;}
     if (navSubUI.open && !event.target.closest('#navSubShell')) closeNavSub();
     // Selecionar outro destino global fecha somente a gaveta mobile — sem
     // devolver foco, porque a navegação já levou o usuário para outra tela.

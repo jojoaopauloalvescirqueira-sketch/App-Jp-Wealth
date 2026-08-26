@@ -1,27 +1,41 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
-// O contrato público tem exatamente cinco rotas canônicas. IDs físicos e
-// destinos antigos continuam resolvíveis somente pela camada de compatibilidade
-// e nunca aparecem em JPWNavigation.routes(). Navegação é estado efêmero de UI:
-// este módulo não persiste preferência, tela ou visão local.
+// O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
+// seis filhos sem criar uma tela agregadora: owner semântico, filho, section
+// física e visão local são dimensões separadas. Navegação é estado efêmero de
+// UI; este módulo não persiste preferência, tela ou visão local.
+
+const NAV_FOREX_CHILDREN=Object.freeze([
+  Object.freeze({id:'forex-overview',label:'Visão Geral',primary:'forex',child:'forex-overview',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
+  Object.freeze({id:'forex-preparation',label:'Preparação',primary:'forex',child:'forex-preparation',screen:'check',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-account',label:'Conta',primary:'forex',child:'forex-account',screen:'contas',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-reconciliation',label:'Apuração',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
+]);
 
 const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'dashboard',primary:'dashboard',screen:'dash',localView:null,aliases:Object.freeze(['dash'])}),
-  Object.freeze({id:'forex-overview',primary:'forex',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
+  NAV_FOREX_CHILDREN[0],
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
   Object.freeze({id:'research-forex',primary:'research',screen:'research',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])})
 ]);
 
-// Destinos transitórios/legados. Saber resolvê-los não os promove a rotas da
-// nova IA. `contas`, por exemplo, continua sendo a section física #contas e
-// pertence visualmente ao primário Forex, mas `forex-account` ainda não existe.
+// Destinos transitórios/legados. Saber resolvê-los não os promove a filhos
+// visíveis. Calendário, NoCoda e Pivots permanecem funcionais até o NAV-03,
+// porém child:null impede que a faixa diga que pertencem a um dos seis filhos.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
-  contas:Object.freeze({screen:'contas',primary:'forex'}),
-  contab:Object.freeze({screen:'contab',primary:'forex'}),
-  fxplan:Object.freeze({screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
-  motor:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'motor'})}),
+  contas:Object.freeze({canonical:'forex-account',child:'forex-account',screen:'contas',primary:'forex'}),
+  contab:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'contab',primary:'forex'}),
+  fxplan:Object.freeze({canonical:'forex-planning',child:'forex-planning',screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
+  motor:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'motor'})}),
+  history:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
+  check:Object.freeze({canonical:'forex-preparation',child:'forex-preparation',screen:'check',primary:'forex'}),
+  'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
+  ecal:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'ecal'})}),
+  nocoda:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'nocoda'})}),
+  pivots:Object.freeze({screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'pivots'})}),
   params:Object.freeze({action:'settings',leaf:'tool-params'}),
-  check:Object.freeze({action:'settings',leaf:'tool-check'}),
   config:Object.freeze({action:'settings',leaf:'about'})
 });
 
@@ -31,13 +45,14 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui})
 });
 
-const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.map(route=>[route.id,route])));
+const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
+  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN].map(route=>[route.id,route])));
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
-let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',screen:'dash',localView:null};
+let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
 
 function navPublicRoute(route){
-  return {id:route.id,primary:route.primary,screen:route.screen,
+  return {id:route.id,label:route.label||null,primary:route.primary,child:route.child||null,screen:route.screen,
     localView:route.localView?{surface:route.localView.surface,view:route.localView.view}:null,
     aliases:[...route.aliases]};
 }
@@ -45,7 +60,7 @@ function navPublicRoute(route){
 function navPublicResolution(plan){
   if(!plan.accepted) return {accepted:false,requested:plan.requested,reason:plan.reason};
   return {accepted:true,requested:plan.requested,source:plan.source,
-    canonical:plan.canonical||null,primary:plan.primary||null,screen:plan.screen||null,
+    canonical:plan.canonical||null,primary:plan.primary||null,child:plan.child||null,screen:plan.screen||null,
     localView:plan.localView?{surface:plan.localView.surface,view:plan.localView.view}:null,
     action:plan.action||null,leaf:plan.leaf||null};
 }
@@ -56,13 +71,13 @@ function navResolve(target){
   if(!requested) return {accepted:false,requested:null,reason:'missing-target'};
   const canonical=NAV_ROUTE_BY_ID[requested];
   if(canonical) return {accepted:true,requested,source:'canonical',canonical:canonical.id,
-    primary:canonical.primary,screen:canonical.screen,localView:canonical.localView};
+    primary:canonical.primary,child:canonical.child||null,screen:canonical.screen,localView:canonical.localView};
   const aliased=NAV_ROUTE_BY_ALIAS[requested];
   if(aliased) return {accepted:true,requested,source:'alias',canonical:aliased.id,
-    primary:aliased.primary,screen:aliased.screen,localView:aliased.localView};
+    primary:aliased.primary,child:aliased.child||null,screen:aliased.screen,localView:aliased.localView};
   const compatibility=NAV_COMPATIBILITY_TARGETS[requested];
-  if(compatibility) return {accepted:true,requested,source:'compatibility',canonical:null,
-    primary:compatibility.primary||null,screen:compatibility.screen||null,
+  if(compatibility) return {accepted:true,requested,source:'compatibility',canonical:compatibility.canonical||null,
+    primary:compatibility.primary||null,child:compatibility.child||null,screen:compatibility.screen||null,
     localView:compatibility.localView||null,action:compatibility.action||null,leaf:compatibility.leaf||null};
   return {accepted:false,requested,reason:'unknown-target'};
 }
@@ -118,11 +133,12 @@ function navApply(plan,target){
   navSelectPrimary(plan.primary);
   if(localView) navSurface(localView.surface).selectView(localView.view);
   navCurrent={canonical:plan.canonical||null,requested:plan.requested,source:plan.source,
-    primary:plan.primary,screen:plan.screen,localView};
+    primary:plan.primary,child:plan.child||null,screen:plan.screen,localView};
   navLastResult={accepted:true,reason:null};
   if(typeof scheduleNavPill==='function') scheduleNavPill();
   window.scrollTo({top:0,behavior:'smooth'});
   if(typeof maybeShowOnboardingNavReminder==='function') maybeShowOnboardingNavReminder(plan.screen);
+  if(typeof syncNavSubState==='function') syncNavSubState();
   return true;
 }
 
@@ -145,9 +161,13 @@ function navNavigateLocal(surfaceId,view){
   const surface=navSurface(surfaceId);
   if(!descriptor||!descriptor.views.includes(view)||!surface||typeof surface.selectView!=='function') return false;
   const canonical=surfaceId==='exec'&&view==='overview'?'forex-overview':
-    (surfaceId==='finpes'&&view==='overview'?'personal-finance':null);
-  const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'canonical':'compatibility',
-    canonical,primary:descriptor.primary,screen:descriptor.screen,localView:{surface:surfaceId,view}};
+    (surfaceId==='exec'&&(view==='panel'||view==='motor')?'forex-operation':
+    (surfaceId==='exec'&&view==='history'?'forex-reconciliation':
+    (surfaceId==='fxplan'?'forex-planning':
+    (surfaceId==='finpes'&&view==='overview'?'personal-finance':null))));
+  const child=canonical&&canonical.startsWith('forex-')?canonical:null;
+  const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
+    canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
   navLastResult={accepted:false,reason:'not-applied'};
   navApply(plan,surfaceId);
   if(typeof syncActiveScreen==='function') syncActiveScreen();
@@ -166,11 +186,12 @@ function navFocusCurrentScreen(){
 
 window.JPWNavigation=Object.freeze({
   routes:()=>NAV_CANONICAL_ROUTES.map(navPublicRoute),
+  children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):[],
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,
   current:()=>({canonical:navCurrent.canonical,requested:navCurrent.requested,source:navCurrent.source,
-    primary:navCurrent.primary,screen:navCurrent.screen,
+    primary:navCurrent.primary,child:navCurrent.child,screen:navCurrent.screen,
     localView:navCurrent.localView?{...navCurrent.localView}:null}),
   focusCurrentScreen:navFocusCurrentScreen
 });
