@@ -1,20 +1,25 @@
-# Session Handoff — NAV-03 · Research Consolidation
+# Session Handoff — NAV-06A · Documentation Reconciliation
 
 - Data: 2026-08-26
 - Branch: `codex/navigation-ia`
-- `BASE_SHA`: `9b5ea298953b3c8bb270864151a88e5c69419e61`
-- Estado: candidato NAV-03 implementado e tecnicamente validado; aguarda gate humano
-- Publicabilidade: primeiro candidato estruturalmente potencial, ainda sem autorização humana
-- Git: commit/push/merge/deploy não autorizados nem executados
+- `BASE_SHA`/`HEAD`: `2c1e0a441d77e01c8c9acaf0506da333254c8196`
+- Estado: NAV-01, NAV-02 e NAV-03 concluídos e commitados na branch Navigation;
+  candidato NAV-06A reconcilia apenas a documentação operacional
+- Release readiness: runtime aprovado; documentação reconciliada no candidato;
+  merge continua sujeito a autorização humana separada
+- Git/publicação: commit NAV-06A, push, merge e deploy não autorizados nem executados
 
 ## Target, candidato e publicação
 
 - **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
   Research e Alladin.
-- **CHECKPOINT NAV-02:** Forex possui exatamente seis filhos e terceiro nível
+- **CHECKPOINT NAV-01:** commit `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`.
+- **CHECKPOINT NAV-02:** commit `9b5ea298953b3c8bb270864151a88e5c69419e61`;
+  Forex possui exatamente seis filhos e terceiro nível
   contextual em Operação, Apuração e Planejamento, sobre as telas existentes.
-- **CANDIDATO NAV-03:** Research possui cinco filhos; Forex contém Calendário,
-  NoCoda e Pivots, enquanto Ações, Stocks, REITs e Others abrem diretamente.
+- **CHECKPOINT NAV-03:** commit `2c1e0a441d77e01c8c9acaf0506da333254c8196`;
+  Research possui cinco filhos; Forex contém Calendário, NoCoda e Pivots,
+  enquanto Ações, Stocks, REITs e Others abrem diretamente.
 
 ## Implementação presente
 
@@ -29,17 +34,18 @@
   `execEcal`, `execNocoda` e `execPivots` existem uma vez, sob `#research`.
 - Aliases analíticos ativam Research/Forex/N3; Exec mantém quatro views canônicas.
 - `section#alladin` usa exatamente a mensagem
-  aprovada e não acopla ao domínio Alladin.
+  aprovada e não acopla ao domínio Alladin; o desenvolvimento funcional segue
+  pausado no worktree isolado.
 - `tools/research_navigation_test.py` está registrado no tier standard/full;
   o manifest e o precache contêm 76 scripts.
 - Galton segue em Configurações sem alteração funcional ou de lifecycle.
 
 ## Evidência e próxima ação controlada
 
-Focais Research, Navigation IA, Exec/Calendário, NoCoda, Pivots e
-Settings/Galton PASS. `validate_project` PASS com 76 scripts e 415 IDs; fast
-4/4, standard 32/32 e full 43/43 PASS. Browser real desktop/mobile e ciclo PWA
-PASS, incluindo upgrade do service worker e build reproduzível
-`aaa2262ae6fb0610`. Alladin permanece em `1eddd29e`, com os mesmos 12 arquivos
-modificados e três não rastreados. Emitir `NAV-03 — CANDIDATE REPORT` e parar;
-commit, push, merge e deploy não estão autorizados.
+Full final **43/43 PASS** no commit `2c1e0a4`, com browser desktop/mobile e ciclo
+PWA PASS, incluindo upgrade do service worker e build reproduzível
+`aaa2262ae6fb0610`. `main` local e `origin/main` permanecem em
+`1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`; Navigation está três commits à
+frente e zero atrás. Alladin permanece em `1eddd29e`, com os mesmos 12 arquivos
+modificados e três não rastreados. Próximo gate humano: decidir o commit doc-only
+NAV-06A; push, merge e deploy continuam não autorizados.

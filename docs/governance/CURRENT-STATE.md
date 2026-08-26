@@ -1,9 +1,32 @@
 # Estado atual do projeto
 
-## NAV-03 — candidato interno de Research Consolidation — 2026-08-26
+## NAV-06A — candidato de reconciliação documental — 2026-08-26
 
-- **BASE_SHA/branch:** `9b5ea298953b3c8bb270864151a88e5c69419e61` em
-  `codex/navigation-ia`, worktree dedicado Navigation IA.
+- **BASE_SHA/HEAD:** `2c1e0a441d77e01c8c9acaf0506da333254c8196` em
+  `codex/navigation-ia`; worktree Navigation com quatro documentos modificados.
+- **Histórico Navigation:** NAV-01 `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`,
+  NAV-02 `9b5ea298953b3c8bb270864151a88e5c69419e61` e NAV-03
+  `2c1e0a441d77e01c8c9acaf0506da333254c8196`, todos commitados na branch.
+- **Base principal:** `main` local e `origin/main` em
+  `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`; Navigation está três commits à
+  frente e zero atrás.
+- **Produto:** Dashboard estruturado; Forex e Research consolidados; Finanças
+  Pessoais preservado; Alladin é somente placeholder estrutural e seu
+  desenvolvimento funcional continua pausado. Research/Forex contém Calendário,
+  NoCoda e Pivots; Ações, Stocks, REITs e Others mantêm a estrutura NAV-03.
+  Galton permanece em Configurações.
+- **Readiness:** runtime, full **43/43**, browser e PWA PASS. O único blocker do
+  NAV-06 era o drift dos quatro documentos operacionais, reconciliado neste
+  candidato N0-D sem alterar produto, teste, build ou artefato gerado.
+- **Git/publicação:** commit NAV-06A, merge, push e deploy não autorizados nem
+  executados.
+- **Alladin:** worktree `fix/alladin-session-preservation` em `1eddd29e`, com
+  12 arquivos modificados e três não rastreados; zero drift.
+
+## NAV-03 — checkpoint interno commitado de Research Consolidation — 2026-08-26
+
+- **BASE_SHA/commit:** `9b5ea298953b3c8bb270864151a88e5c69419e61` →
+  `2c1e0a441d77e01c8c9acaf0506da333254c8196`, em `codex/navigation-ia`.
 - **Contrato:** cinco primários preservados; `children('research')` expõe
   exatamente Forex, Ações, Stocks, REITs e Others. Research/Forex abre
   Calendário por default e possui somente Calendário, NoCoda e Pivots no N3.
@@ -23,8 +46,8 @@
   hidden/inert, overflow e alvos móveis ≥44 px. PWA PASS em manifesto, hashes,
   precache, upgrade do service worker e reprodutibilidade do build oficial
   `aaa2262ae6fb0610`.
-- **Git/publicação:** implementação autorizada, mas commit, push, merge e deploy
-  não autorizados. Publicabilidade potencial não substitui os gates humanos.
+- **Git/publicação:** commit interno `2c1e0a4`; push, merge e deploy não foram
+  autorizados nem executados.
 
 ## NAV-02 — checkpoint interno commitado de Forex Consolidation — 2026-08-26
 
@@ -47,7 +70,7 @@
 - **Git/publicabilidade:** commit interno `9b5ea298`; NAV-02 isolado não é
   publicável. Push, merge e deploy não foram autorizados.
 
-## NAV-01 — candidato interno de fundação semântica — 2026-08-25
+## NAV-01 — checkpoint interno commitado de fundação semântica — 2026-08-25
 
 - **BASE_SHA:** `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`.
 - **Branch/worktree:** `codex/navigation-ia`, worktree dedicado Navigation IA.
@@ -59,8 +82,9 @@
   mas não pode substituir o estado utilizável, ser mergeado ou publicado.
 - **Persistência e Alladin:** nenhuma chave/rota persistida; a navegação não
   chama nem altera `S.alladin`, `JPWAlladin` ou `save()`.
-- **Git/publicação:** commit, push, merge e deploy não autorizados e não
-  executados.
+- **Git/publicação:** commit interno
+  `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`; push, merge e deploy não foram
+  autorizados nem executados.
 - **Evidência desta fotografia:** rebuild oficial `eba48d278c6a5b58`; suíte
   `navigation_ia_test.py` e quatro focais PASS; `validate_project.py` PASS (75
   scripts, 409 IDs); tier full **42/42 PASS**. Chromium real cobriu desktop e

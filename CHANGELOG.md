@@ -2,9 +2,22 @@
 
 ## [Unreleased]
 
-### NAV-03 — Research Consolidation — candidato interno — 2026-08-26
+### NAV-06A — reconciliação documental de release readiness — candidato — 2026-08-26
 
-Sobre a base commitada `9b5ea298`, `JPWNavigation.children('research')` passa
+Reconciliação N0-D sobre `2c1e0a4`: os contextos operacionais agora registram
+NAV-01 (`e2c34bb`), NAV-02 (`9b5ea29`) e NAV-03 (`2c1e0a4`) como checkpoints
+commitados na branch `codex/navigation-ia`. `main` local e `origin/main`
+permanecem em `1eddd29`; Navigation está três commits à frente e zero atrás.
+
+Nenhum byte de produto, teste, manifest, worker, build ou gerado foi alterado;
+full 43/43, browser e PWA do commit NAV-03 permanecem válidos. Alladin continua
+pausado em seu worktree isolado com 12 modificados e três não rastreados. O
+commit NAV-06A, merge, push e deploy não foram autorizados nem executados.
+
+### NAV-03 — Research Consolidation — checkpoint interno commitado — 2026-08-26
+
+Commit `2c1e0a441d77e01c8c9acaf0506da333254c8196`, sobre a base commitada
+`9b5ea298`: `JPWNavigation.children('research')` passa
 a expor exatamente Forex, Ações, Stocks, REITs e Others. Research/Forex abre
 Calendário por default e contém somente Calendário, NoCoda e Pivots no terceiro
 nível; Ações abre diretamente Brasil/B3 e os demais destinos usam empty states
@@ -29,12 +42,13 @@ Settings/Galton passaram. `validate_project` aprovou 76 scripts e 415 IDs;
 fast 4/4, standard 32/32 e full 43/43 passaram. Browser pós-full aprovou
 desktop/mobile, temas, teclado/foco, N2/N3, hidden/inert, overflow e alvos
 móveis ≥44 px. Manifesto, hashes, precache, upgrade do service worker e build
-reproduzível `aaa2262ae6fb0610` passaram. Commit, push, merge e deploy não estão
-autorizados.
+reproduzível `aaa2262ae6fb0610` passaram. O commit NAV-03 foi executado; push,
+merge e deploy não foram autorizados nem executados.
 
-### NAV-02 — Forex Consolidation — candidato interno — 2026-08-26
+### NAV-02 — Forex Consolidation — checkpoint interno commitado — 2026-08-26
 
-Sobre a base `e2c34bb`, a API mantém cinco primários e passa a expor exatamente
+Commit `9b5ea298953b3c8bb270864151a88e5c69419e61`, sobre a base `e2c34bb`.
+A API mantém cinco primários e passa a expor exatamente
 seis filhos em `JPWNavigation.children('forex')`: Visão Geral, Preparação,
 Conta, Operação, Apuração e Planejamento. Nenhuma `section#forex` foi criada e
 os IDs físicos `execNavTrigger`/`execNavSubmenu` permanecem intactos.
@@ -56,9 +70,10 @@ os IDs físicos `execNavTrigger`/`execNavSubmenu` permanecem intactos.
 NAV-02 não é publicável isoladamente. NAV-03 é o primeiro candidato
 potencialmente publicável da nova árvore.
 
-### NAV-01 — fundação semântica de navegação — candidato interno — 2026-08-25
+### NAV-01 — fundação semântica de navegação — checkpoint interno commitado — 2026-08-25
 
-Branch `codex/navigation-ia`, base `1eddd29`. Candidato transitório N1: registry
+Commit `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`, branch
+`codex/navigation-ia`, base `1eddd29`. Candidato transitório N1: registry
 público com exatamente cinco rotas (Dashboard, Forex, Finanças Pessoais,
 Research e Alladin), fachada compatível para IDs físicos legados, falha fechada
 antes de mutar classes e zero persistência de navegação. O primeiro nível passa
@@ -68,7 +83,8 @@ qualquer zero econômico.
 
 Este changeset **não é publicável isoladamente**: Contas, Contabilidade e
 Planejamento deixam o primeiro nível antes de seus destinos finais em Forex,
-que pertencem ao NAV-02. Commit, push, merge e deploy permanecem não executados.
+que pertencem ao NAV-02. O commit NAV-01 foi executado; push, merge e deploy
+não foram autorizados nem executados.
 
 Verificação do candidato: rebuild oficial `eba48d278c6a5b58`; suíte nova
 `navigation_ia_test.py` e quatro focais aprovadas; `validate_project.py` aprovado
