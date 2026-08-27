@@ -1,0 +1,80 @@
+{
+  "_comment": "Fixture 100% sintetica do agregado Alladin (schema v2) para a suite de preservacao no Finalizar Sessao (ALD-C3-PRE). Nenhum dado real do operador. Cobre deliberadamente: as quatro colecoes povoadas, owners com isSelf, symbolHistory nao vazio, externalIdentifiers, campos null explicitos, arrays vazios e um bem com propriedade compartilhada.",
+  "alladin": {
+    "schemaVersion": 2,
+    "reportingCurrency": "BRL",
+    "instruments": [
+      {
+        "instrumentId": "aldi_fx_petr4",
+        "name": "Petrobras PN",
+        "symbol": "PETR4",
+        "exchange": "B3",
+        "country": null,
+        "currency": "BRL",
+        "assetClass": "RENDA_VARIAVEL",
+        "instrumentFamily": "EQUITY_LIKE",
+        "externalIdentifiers": { "isin": "BRPETRACNPR6" },
+        "symbolHistory": [
+          { "symbol": "PETR4X", "exchange": "B3", "from": null, "to": "2026-01-02T00:00:00.000Z" }
+        ],
+        "recordStatus": "ACTIVE",
+        "createdAt": "2026-01-01T00:00:00.000Z"
+      },
+      {
+        "instrumentId": "aldi_fx_usdt",
+        "name": "Tether",
+        "symbol": "USDT",
+        "exchange": null,
+        "country": null,
+        "currency": "USD",
+        "assetClass": "CRIPTO",
+        "instrumentFamily": "CRYPTO",
+        "externalIdentifiers": { "network": "Ethereum" },
+        "symbolHistory": [],
+        "recordStatus": "INACTIVE",
+        "createdAt": "2026-01-03T00:00:00.000Z"
+      }
+    ],
+    "assets": [
+      {
+        "assetId": "alda_fx_apto",
+        "name": "Apartamento",
+        "nature": "IMOVEL",
+        "category": "Residencial",
+        "subcategory": null,
+        "strategicPurpose": "MORADIA",
+        "strategicGroup": null,
+        "tags": ["moradia", "sp"],
+        "recordMode": "INDIVIDUAL",
+        "owners": [
+          { "name": "Operador Sintetico", "shareBp": 5000, "isSelf": true },
+          { "name": "Coproprietario Sintetico", "shareBp": 5000 }
+        ],
+        "location": "Sao Paulo",
+        "acquisitionDate": "2020-03-15",
+        "recordStatus": "ACTIVE",
+        "lifecycleStatus": "ACTIVE",
+        "createdAt": "2026-01-01T00:00:00.000Z"
+      }
+    ],
+    "accounts": [
+      {
+        "accountId": "aldacc_fx_corretora",
+        "name": "Corretora Sintetica",
+        "institution": "Corretora Sintetica CCTVM",
+        "accountType": "BROKERAGE",
+        "recordStatus": "ACTIVE",
+        "createdAt": "2026-01-01T00:00:00.000Z"
+      }
+    ],
+    "cashAccounts": [
+      {
+        "cashAccountId": "aldc_fx_brl",
+        "accountId": "aldacc_fx_corretora",
+        "currency": "BRL",
+        "recordStatus": "ACTIVE",
+        "createdAt": "2026-01-01T00:00:00.000Z"
+      }
+    ]
+  }
+}

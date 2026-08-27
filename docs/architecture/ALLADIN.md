@@ -147,6 +147,73 @@ CashAccount{ cashAccountId, accountId → Account, currency, recordStatus, creat
   `createdAt`, `recordStatus`, `symbolHistory` ou a moeda do instrumento é
   **recusado explicitamente**, nunca descartado em silêncio.
 
+## Ciclo de vida do agregado — encerrar sessão ≠ apagar tudo
+
+O JP Wealth tem **dois atos destrutivos distintos**, e o Alladin responde de
+forma oposta a cada um. Confundi-los foi o defeito que o ALD-C3-PRE corrigiu.
+
+| Ato | Funções | `S.alladin` |
+|---|---|---|
+| **Encerramento operacional** | `finalizeJPWealthSession()` · `sessionHandleRemoteFinalization()` | **preservado**, inclusive em schema futuro |
+| **Limpeza total** | `wipeAllData()` · `sessionHandleRemoteBaseWipe()` | **apagado**, inclusive em schema futuro |
+
+Encerrar a sessão termina o período de trading — conta, ordens, fases, histórico
+da operação. A limpeza total é exclusão pedida com todas as letras, confirmada
+por frase digitada. Os dois broadcasts são semanticamente distintos
+(`jpwealth-session-finalized` × `jpwealth-base-wiped`) e nenhum atravessa para o
+handler do outro.
+
+O patrimônio é **memória longitudinal**: não pertence a um ciclo operacional.
+Um imóvel não deixa de existir porque a conta de trading foi encerrada. É o
+mesmo contrato já vigente para `mvpNotes` e `personalFinance`.
+
+O **fail-closed nunca protege contra deleção explicitamente pedida**. Um
+agregado em schema futuro é somente-leitura para *atos do domínio* — isso
+impede escrita mal-informada, não impede o operador de apagar o próprio dado.
+Na Finalizar Sessão o agregado ilegível é copiado **como está**, sem leitura,
+sem normalização e sem migração: preservar não exige compreender.
+
+**A preservação é pré-condição do ato destrutivo, não recuperação depois dele.**
+A cópia acontece **antes** de bloquear a persistência, antes de avisar as outras
+abas e antes de `clearJPWealthLocalData` — que apaga o disco antes de o estado
+novo ser construído. Falhando a cópia, o ato é abortado: nada apagado, nenhuma
+outra aba avisada, persistência intacta e erro explícito ao operador. Por isso
+`emptyJPWealthState(preservado)` aplica **só** o que o chamador entregou e nunca
+consulta `S.alladin` por conta própria — um fallback interno clonaria depois do
+disco já apagado, e tornaria o parâmetro indetectável.
+
+**Duas fontes, uma por fluxo.** No fluxo local a fonte é a memória
+(`sessionPreserveLongitudinal`, `structuredClone`). No fluxo remoto a fonte é o
+**estado persistido** (`sessionPreserveLongitudinalPersistido`, `JSON.parse`):
+quando o handler roda, a aba que finalizou já gravou o documento autoritativo, e
+o `S` desta aba pode ser um retrato anterior a exclusões que o operador já
+confirmou. Preservar da memória obsoleta faria a finalização **ressuscitar
+registro apagado** — e como `setRecordStatus` só alterna `ACTIVE`/`INACTIVE`,
+editar o agregado é hoje o único modo de eliminar um registro. Estado persistido
+ilegível **não** cai na memória velha: aborta com a aba bloqueada para gravação.
+
+**A preservação depende da geração da base.** O ato só atua se a geração corrente
+for a mesma lida no início (`jpwealth_base_epoch_v1`, ver `ARCHITECTURE.md`): a
+leitura é um seqlock `epoch → documento → epoch`, e uma rotação no meio invalida o
+snapshot em vez de misturar bases. Sem geração confiável o encerramento é
+**recusado** — antes do export, do broadcast, do clear e de qualquer persistência
+destrutiva. Isso fecha o replay em que uma finalização emitida antes de uma
+limpeza total regravava patrimônio depois dela.
+
+**C6 revisado.** O contrato "nenhuma chave nova de `localStorage`" passa a admitir
+**uma** exceção nominal: `jpwealth_base_epoch_v1`, chave técnica anti-replay, sem
+PII e sem conteúdo patrimonial. Qualquer outra chave nova continua reprovando.
+
+**Limite conhecido desta garantia.** A atomicidade cobre a *cópia*, não a
+*gravação final*. `persistNotesAfterSessionWipe` grava a chave principal dentro
+de um `try/catch` vazio pré-existente: se essa escrita falhar (cota, disco
+cheio), a sessão termina com o agregado apenas em memória e sem aviso ao
+operador. O defeito é anterior a este ciclo e atinge igualmente `mvpNotes` e
+`personalFinance`; está registrado como **bloqueador antes da liberação da UI do
+Alladin**, junto com `sessionStateFingerprint()` sem proteção — que faz
+`structuredClone(S)` e derruba a entrada do fluxo antes da guarda de preservação
+— e com a revisão do texto de consentimento da tela de finalização.
+
 ## Superfície pública
 
 `window.JPWAlladin` = `{compat, writeBlockReason, money{parse,format,supported,
@@ -160,9 +227,10 @@ testes e a aceitação humana por console exercitam o domínio.
 | Suíte | Cobertura |
 |---|---|
 | `tools/alladin_unit_test.py` | U1–U21 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação |
+| `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup |
 
-Ambas no tier `standard` (30; `full` 41).
+As três no tier `standard` (31; `full` 42).
 
 ## Entregas
 

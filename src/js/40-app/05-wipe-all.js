@@ -23,6 +23,16 @@ function wipeAllData(){
   // era o único fluxo destrutivo que não incrementava o epoch, então o guard comparava
   // a MESMA geração, passava, e a continuação regravava a chave recém-apagada.
   // Finalizar Sessão (local e vinda de outra aba) já fazia isto; aqui só se equipara.
+  // ALD-C3-PRE-EPOCH: a nova geração é firmada ANTES de qualquer mutação destrutiva.
+  // Se rotacionar e a limpeza falhar depois, fica uma geração nova sobre a base antiga
+  // — invalida mensagens pendentes e não destrói nada. O inverso seria inaceitável:
+  // base nova protegida pela geração antiga deixaria uma finalização pendente atuar
+  // sobre ela. Falhando a rotação, NADA é apagado.
+  const novaEpoch=(typeof sessionEpochRotate==='function')?sessionEpochRotate():null;
+  if(!novaEpoch){
+    alert('Não foi possível estabelecer uma nova geração da base neste navegador. Nada foi apagado — recarregue a página e tente novamente.');
+    return;
+  }
   blockJPWealthPersistence();
   const cleared=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
   if(!cleared.ok){
@@ -40,7 +50,7 @@ function wipeAllData(){
   // ressuscitaria a base inteira na primeira gravação — a exclusão precisa atravessar
   // as abas para ser exclusão. Mesmo canal da Finalização de Sessão, com semântica
   // própria (auxiliares e cópias de recuperação preservadas).
-  if(typeof sessionNotifyBaseWiped==='function') sessionNotifyBaseWiped();
+  if(typeof sessionNotifyBaseWiped==='function') sessionNotifyBaseWiped(novaEpoch);
   // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
   // junto. Fire-and-forget: sem metadados o handle já seria inerte; limpar evita órfão.
   if(typeof dgFsClearHandle==='function') dgFsClearHandle();

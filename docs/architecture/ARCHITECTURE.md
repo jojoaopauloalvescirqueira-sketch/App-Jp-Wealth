@@ -96,6 +96,27 @@ o escopo global legado em framework ou bundler.
   `removeAuxiliary:false` preserva preferências auxiliares.
 - Falha de parse ou escrita da preferência fica contida no laboratório; não chama
   `save()`, não substitui `S`/`DEFAULTS` e não toca `jpwealth_v9_state`.
+- `jpwealth_base_epoch_v1` é **control plane, não data plane**: identifica a
+  GERAÇÃO da base. Sem PII, sem conteúdo financeiro, compartilhada entre abas.
+  **Não** integra `JP_WEALTH_AUX_STORAGE_KEYS`, **não** entra em backup
+  (`dgBuildBackupBlob` clona apenas `S`) e **não** é restaurada por importação —
+  restaurar uma geração morta reabriria o replay que ela existe para fechar.
+  Sobrevive a `Finalizar Sessão`; `wipeAllData` e a importação integral
+  **rotacionam** seu valor, sempre ANTES da mutação destrutiva.
+- Bootstrap determinístico: ausente ⇒ grava o sentinel reservado `BASE-V0-LEGACY`
+  e relê. Todas as abas gravam o mesmo literal, então não há corrida de
+  identidade. Rotações posteriores usam `crypto.randomUUID()`/`getRandomValues`,
+  nunca `Date.now()` — relógio de parede não é monotônico e empata no mesmo
+  milissegundo.
+- Protocolo cross-tab: `jpwealth-session-finalized-v2` (versionado, **não**
+  atravessa builds — o handler legado zerava `S.alladin`), `jpwealth-base-wiped`
+  e `jpwealth-base-imported` (tipos inalterados, **devem** atravessar: ignorá-los
+  deixaria uma aba operando sobre base que já não existe). Mensagem de geração
+  diferente da corrente é recusada. Deduplicação operacional por `tipo:token`,
+  limitada a 32 entradas em memória — não é mecanismo de segurança.
+- Durante a janela mixed-build, `Finalizar Sessão` **não sincroniza entre
+  protocolos**, por desenho. A garantia causal integral só existe quando todas as
+  abas executam o protocolo novo.
 - A função `migrate()` mantém compatibilidade entre schemas.
 - O arquivo HTML ou o repositório não contém automaticamente o histórico real do navegador.
 

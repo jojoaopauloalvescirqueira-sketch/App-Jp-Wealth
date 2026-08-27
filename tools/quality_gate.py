@@ -49,6 +49,8 @@ STANDARD = FAST + (
     ("usd-brl-quote", [sys.executable, "tools/usd_brl_quote_test.py"]),
     ("alladin-unit", [sys.executable, "tools/alladin_unit_test.py"]),
     ("alladin-foundation", [sys.executable, "tools/alladin_foundation_test.py"]),
+    ("alladin-finalize-preservation", [sys.executable, "tools/alladin_finalize_preservation_test.py"]),
+    ("session-epoch-protocol", [sys.executable, "tools/session_epoch_protocol_test.py"]),
 )
 FULL = STANDARD + (
     ("session-finalization", [sys.executable, "tools/finalize_session_test.py"]),

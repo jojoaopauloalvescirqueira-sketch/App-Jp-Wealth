@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "6724fa813aa4100b15b76bc871a94f4c660227dd5fa3642b9e203b30a99c9067"
+      "sha256": "b5bbbcd524439933d2b1cc63161e5e5391555dbdf6c60280b9948eb57954772a"
     },
     {
       "order": 20,
@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "2f0ced53e437ad3b5d7efedfcfddcc0e3423bc497ee20da9e7f34a0adc78280e"
+      "sha256": "4ec5264a683457e1817ec9f2cdce1960ad0ad582833d1823be68848a8beebdb7"
     },
     {
       "order": 34,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "959a322c712df2f2e5f8d87f9efe4f66fa02946313f9d71ad00e1f70c8805533"
+      "sha256": "a4650e5c8dd55b626281a61d2355824cc5d9ee43b91aaebc042cad7c80a29e59"
     },
     {
       "order": 36,

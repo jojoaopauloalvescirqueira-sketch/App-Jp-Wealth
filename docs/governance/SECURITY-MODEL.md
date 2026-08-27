@@ -57,6 +57,18 @@
   `JP_WEALTH_AUX_STORAGE_KEYS`; um epoch de wipe invalida controllers antigos para
   que outra aba nao ressuscite preferencias removidas. Nenhuma rotina usa
   `localStorage.clear()`.
+- `jpwealth_base_epoch_v1` e a unica chave de CONTROL PLANE: identifica a geracao
+  da base para que uma notificacao emitida antes de uma limpeza total nao possa
+  atuar depois dela. Nao carrega PII nem conteudo patrimonial, nao entra em
+  backup e nao e restaurada por importacao. O valor inicial e o sentinel
+  reservado `BASE-V0-LEGACY`; rotacoes usam aleatoriedade criptografica.
+  Deliberadamente NAO integra `JP_WEALTH_AUX_STORAGE_KEYS`: precisa sobreviver ao
+  `Finalizar sessao` e rotacionar no wipe, o oposto do regime auxiliar.
+- Defeito que motivou o mecanismo, medido antes da correcao: os dois transportes
+  entregam a mesma mensagem duas vezes e o dedup guardava um unico token
+  compartilhado pelos tres tipos de evento. `finalize` -> `wipe` -> reentrega de
+  `finalize` reprocessava a finalizacao DEPOIS da limpeza total. Relogio nao
+  resolve o caso; geracao resolve, porque e causal.
 
 ## Riscos atuais conhecidos
 

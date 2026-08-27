@@ -303,6 +303,15 @@ function importFullBackupFile(file){
     }
     if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
+    // ALD-C3-PRE-EPOCH: o backup já foi lido e validado integralmente acima. A nova
+    // geração é firmada AQUI, antes de a base ser substituída — nunca depois, porque
+    // uma base nova sob geração antiga deixaria uma finalização pendente atuar sobre
+    // ela. Falhando a rotação, a importação é abortada e a base atual fica intacta.
+    const novaEpoch=(typeof sessionEpochRotate==='function')?sessionEpochRotate():null;
+    if(!novaEpoch){
+      alert('Não foi possível estabelecer uma nova geração da base neste navegador. O backup NÃO foi aplicado — recarregue a página e tente novamente.');
+      return;
+    }
     // Só a partir daqui a operação se aplica — candidato validado e confirmado.
     S=imported;
     // Auditoria resumida (JPW-HJFGDE §11): a importação entra no changeLog DA BASE
@@ -322,7 +331,7 @@ function importFullBackupFile(file){
     // cima do backup recém-restaurado, sem aviso nenhum nas duas telas. Só
     // difunde depois da gravação comprovada: avisar sobre uma base que não
     // chegou ao disco faria as outras abas recarregarem o estado errado.
-    if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported();
+    if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported(novaEpoch);
     boot();
     alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
   };
