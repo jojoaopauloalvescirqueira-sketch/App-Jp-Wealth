@@ -182,15 +182,16 @@ outra aba avisada, persistência intacta e erro explícito ao operador. Por isso
 consulta `S.alladin` por conta própria — um fallback interno clonaria depois do
 disco já apagado, e tornaria o parâmetro indetectável.
 
-**Duas fontes, uma por fluxo.** No fluxo local a fonte é a memória
-(`sessionPreserveLongitudinal`, `structuredClone`). No fluxo remoto a fonte é o
-**estado persistido** (`sessionPreserveLongitudinalPersistido`, `JSON.parse`):
-quando o handler roda, a aba que finalizou já gravou o documento autoritativo, e
-o `S` desta aba pode ser um retrato anterior a exclusões que o operador já
-confirmou. Preservar da memória obsoleta faria a finalização **ressuscitar
-registro apagado** — e como `setRecordStatus` só alterna `ACTIVE`/`INACTIVE`,
-editar o agregado é hoje o único modo de eliminar um registro. Estado persistido
-ilegível **não** cai na memória velha: aborta com a aba bloqueada para gravação.
+**A fonte é o estado persistido nos DOIS fluxos** (`sessionPreserveLongitudinal`,
+`JSON.parse` — nunca `S.alladin` da memória). A memória de uma aba pode ser um
+retrato anterior a exclusões que o operador já confirmou em outra aba; preservar
+dela faria a finalização **ressuscitar registro apagado** — e como
+`setRecordStatus` só alterna `ACTIVE`/`INACTIVE`, editar o agregado é hoje o
+único modo de eliminar um registro. No fluxo local a leitura acontece na
+**abertura** do fluxo, antes do export (que grava via `save()` e contaminaria a
+leitura); chave ausente ali é base virgem legítima e prossegue vazio. No fluxo
+remoto chave ausente é disco indeterminado e **aborta**. Estado ilegível aborta
+nos dois, com a aba bloqueada para gravação: nunca há fallback para a memória.
 
 **A preservação depende da geração da base.** O ato só atua se a geração corrente
 for a mesma lida no início (`jpwealth_base_epoch_v1`, ver `ARCHITECTURE.md`): a
@@ -214,7 +215,31 @@ Alladin**, junto com `sessionStateFingerprint()` sem proteção — que faz
 `structuredClone(S)` e derruba a entrada do fluxo antes da guarda de preservação
 — e com a revisão do texto de consentimento da tela de finalização.
 
-## Superfície pública
+## Estado do ciclo — PAUSADO em ALD-C3-PRE-PERSISTENCE
+
+O candidato do C3-PRE + EPOCH está integralmente no commit `1501d46` (nota
+factual: a mensagem desse commit — "docs: reconcile post-merge navigation
+state" — não descreve o conteúdo, que é o candidato Alladin de 15 arquivos).
+O ciclo foi pausado com quatro bloqueadores conhecidos e **não corrigidos**:
+write-before-clear ausente (o clear precede a gravação final);
+`persistNotesAfterSessionWipe` com `catch` vazio capaz de perder o agregado sob
+aviso de sucesso; handler remoto podendo ficar permanentemente somente-leitura
+nos aborts pós-block; e `sessionEpochWriteAndConfirm` sem exigir
+`releitura === valor gravado`. Três decisões humanas pendentes: conduta sem Web
+Locks (DP-1), `wipeAllData` assíncrono (DP-2) e o reconhecimento da janela
+síncrona residual `getItem→setItem` (DP-3). O próximo ciclo funcional é a
+serialização cross-tab dos escritores de `LSKEY` — nenhum mecanismo puramente
+síncrono fecha a janela por completo.
+
+## Placeholder de navegação NAV-01
+
+O candidato interno NAV-01 cria `section#alladin` apenas como destino estático:
+“Módulo patrimonial em desenvolvimento. As funcionalidades ainda não estão
+disponíveis.” A navegação não lê nem chama `S.alladin`/`JPWAlladin`, não executa
+`save()`, não mostra valores, cards, quantidades ou zero econômico. Isso não é
+o C3 e não muda o domínio cadastral existente.
+
+## Superfície pública do domínio
 
 `window.JPWAlladin` = `{compat, writeBlockReason, money{parse,format,supported,
 runtimeCurrencies}, id, catalogos, cadastro{addInstrument, editInstrument,
@@ -230,7 +255,8 @@ testes e a aceitação humana por console exercitam o domínio.
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup |
 
-As três no tier `standard` (31; `full` 42).
+As três acima e o protocolo de geração da base
+(`tools/session_epoch_protocol_test.py`, E1–E16) no tier `standard` (34; `full` 45).
 
 ## Entregas
 

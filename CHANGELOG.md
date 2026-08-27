@@ -2,6 +2,98 @@
 
 ## [Unreleased]
 
+### NAV-06A — reconciliação documental de release readiness — candidato — 2026-08-26
+
+Reconciliação N0-D sobre `2c1e0a4`: os contextos operacionais agora registram
+NAV-01 (`e2c34bb`), NAV-02 (`9b5ea29`) e NAV-03 (`2c1e0a4`) como checkpoints
+commitados na branch `codex/navigation-ia`. `main` local e `origin/main`
+permanecem em `1eddd29`; Navigation está três commits à frente e zero atrás.
+
+Nenhum byte de produto, teste, manifest, worker, build ou gerado foi alterado;
+full 43/43, browser e PWA do commit NAV-03 permanecem válidos. Alladin continua
+pausado em seu worktree isolado com 12 modificados e três não rastreados. O
+commit NAV-06A, merge, push e deploy não foram autorizados nem executados.
+
+### NAV-03 — Research Consolidation — checkpoint interno commitado — 2026-08-26
+
+Commit `2c1e0a441d77e01c8c9acaf0506da333254c8196`, sobre a base commitada
+`9b5ea298`: `JPWNavigation.children('research')` passa
+a expor exatamente Forex, Ações, Stocks, REITs e Others. Research/Forex abre
+Calendário por default e contém somente Calendário, NoCoda e Pivots no terceiro
+nível; Ações abre diretamente Brasil/B3 e os demais destinos usam empty states
+neutros, sem números ou conteúdo funcional inventado.
+
+- `#execEcal`, `#execNocoda` e `#execPivots` foram movidos, sem clone ou rename,
+  de `section#exec` para `section#research`. As fontes, cálculos, persistência e
+  renderizadores funcionais permanecem os mesmos.
+- Os aliases `ecal`, `nocoda` e `pivots` ativam Research/Forex e o N3 correto.
+  `JPWExec.ui` possui quatro views canônicas — overview, panel, motor e history —
+  e os nomes analíticos legados são shims que delegam ao owner Research.
+- A nova superfície efêmera `window.JPWResearch.ui` vive em
+  `20-ui/23-research-views.js`, anexado como script 76 sem reordenar os anteriores.
+  O service worker precacheia o novo script.
+- Galton permanece fisicamente em Configurações, sem alteração de lifecycle,
+  preferências, storage, DOM dinâmico ou código funcional.
+- Zero nova chave de storage, zero escrita causada pela navegação, zero mudança
+  de schema e zero acoplamento ao domínio Alladin.
+
+Focais Research, Navigation IA, Exec/Calendário, NoCoda, Pivots e
+Settings/Galton passaram. `validate_project` aprovou 76 scripts e 415 IDs;
+fast 4/4, standard 32/32 e full 43/43 passaram. Browser pós-full aprovou
+desktop/mobile, temas, teclado/foco, N2/N3, hidden/inert, overflow e alvos
+móveis ≥44 px. Manifesto, hashes, precache, upgrade do service worker e build
+reproduzível `aaa2262ae6fb0610` passaram. O commit NAV-03 foi executado; push,
+merge e deploy não foram autorizados nem executados.
+
+### NAV-02 — Forex Consolidation — checkpoint interno commitado — 2026-08-26
+
+Commit `9b5ea298953b3c8bb270864151a88e5c69419e61`, sobre a base `e2c34bb`.
+A API mantém cinco primários e passa a expor exatamente
+seis filhos em `JPWNavigation.children('forex')`: Visão Geral, Preparação,
+Conta, Operação, Apuração e Planejamento. Nenhuma `section#forex` foi criada e
+os IDs físicos `execNavTrigger`/`execNavSubmenu` permanecem intactos.
+
+- Operação ganhou terceiro nível contextual Painel/Motor; Apuração,
+  Contabilidade/Histórico; Planejamento, os quatro modos já existentes. O
+  clique canônico aplica defaults determinísticos, enquanto `fxplan` legado
+  preserva a visão corrente.
+- `motor` resolve para Operação, `history` para Apuração e `check` para
+  Preparação. A ação distinta `tool-check` continua abrindo a Central de
+  Configurações e transportando o mesmo `#checkWidgetGrid` sem trocar primary.
+- Calendário, NoCoda e Pivots continuam funcionais por compatibilidade, com
+  `child:null` e nenhum filho Forex falsamente marcado. A ownership visual em
+  Research pertence ao NAV-03; não foi criado atalho provisório.
+- Navegação continua efêmera: zero chave nova, zero escrita em `S`/storage e
+  zero acoplamento ao Alladin. As seis focais NAV-02, `validate_project`, fast,
+  full 42/42 e browser desktop/mobile passaram no candidato final.
+
+NAV-02 não é publicável isoladamente. NAV-03 é o primeiro candidato
+potencialmente publicável da nova árvore.
+
+### NAV-01 — fundação semântica de navegação — checkpoint interno commitado — 2026-08-25
+
+Commit `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`, branch
+`codex/navigation-ia`, base `1eddd29`. Candidato transitório N1: registry
+público com exatamente cinco rotas (Dashboard, Forex, Finanças Pessoais,
+Research e Alladin), fachada compatível para IDs físicos legados, falha fechada
+antes de mutar classes e zero persistência de navegação. O primeiro nível passa
+a cinco botões; `#research` e o placeholder estático `#alladin` são os únicos
+novos destinos físicos. O placeholder não toca o domínio Alladin nem apresenta
+qualquer zero econômico.
+
+Este changeset **não é publicável isoladamente**: Contas, Contabilidade e
+Planejamento deixam o primeiro nível antes de seus destinos finais em Forex,
+que pertencem ao NAV-02. O commit NAV-01 foi executado; push, merge e deploy
+não foram autorizados nem executados.
+
+Verificação do candidato: rebuild oficial `eba48d278c6a5b58`; suíte nova
+`navigation_ia_test.py` e quatro focais aprovadas; `validate_project.py` aprovado
+com 75 scripts e 409 IDs; tier full **42/42 PASS**. A verificação em Chromium
+real cobriu desktop e mobile (390 px), temas claro/escuro, foco/teclado e zero
+overflow horizontal. O teste N1-C reproduziu alvos móveis de 40 px; por isso o
+arquivo condicional `src/styles/app.css` entrou no blast radius e os cinco
+primários passaram a medir 44 px. O candidato ocupa exatamente 26 arquivos.
+
 ### Alladin — Modelo Cadastral (ALD-02 C2) — 2026-08-21
 
 Branch `feature/alladin-cadastral-c2`. **Integrada** — candidate

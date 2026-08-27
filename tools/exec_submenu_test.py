@@ -26,13 +26,18 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_VIEWS = ["overview", "panel", "ecal", "nocoda", "pivots", "motor", "history"]
-EXPECTED_LABELS = ["Visão Geral", "Painel Operacional", "Calendário Econômico",
-                   "Estudos NoCoda", "Estudos dos Pivots", "Motor de Lote", "Histórico"]
+EXPECTED_CHILDREN = ["forex-overview", "forex-preparation", "forex-account",
+                     "forex-operation", "forex-reconciliation", "forex-planning"]
+EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Operação", "Apuração", "Planejamento"]
+EXPECTED_VIEWS = ["overview", "panel", "motor", "history"]
+EXPECTED_CONTEXT = {
+    "forex-operation": ["panel", "motor"],
+    "forex-reconciliation": ["forex-reconciliation", "history"],
+    "forex-planning": ["overview", "planning", "actuals", "table"],
+}
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "execEcal", "execNocoda",
-                       "execPivots", "motorWidgetGrid", "execHistory"]
+EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "motorWidgetGrid", "execHistory"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -80,7 +85,7 @@ def prepare_page(browser, url, viewport=None):
         else route.fulfill(status=200, content_type="application/json", body="{}"),
     )
     page.goto(url)
-    page.wait_for_function("() => window.JPWExec && window.JPWExec.ui")
+    page.wait_for_function("() => window.JPWExec?.ui && window.JPWResearch?.ui")
     return context, page, observed
 
 
@@ -99,10 +104,14 @@ def run_structure(page):
             && navSubShell.nextElementSibling?.id === 'gdContextRow',
           sharedShell: document.querySelectorAll('.nav-sub-shell').length === 1,
           panelsInShell: [...document.querySelectorAll('#navSubShell .nav-sub-menu')].map(el => el.id),
-          keys: [...document.querySelectorAll('#execNavSubmenu [data-nav-sub-view]')]
-            .map(el => el.dataset.navSubView),
-          labels: [...document.querySelectorAll('#execNavSubmenu .nav-sub-item-title')]
+          keys: [...document.querySelectorAll('#execNavSubmenu [data-nav-child]')]
+            .map(el => el.dataset.navChild),
+          labels: [...document.querySelectorAll('#execNavSubmenu [data-nav-level="2"] .nav-sub-item-title')]
             .map(el => el.textContent.trim()),
+          contexts: Object.fromEntries([...document.querySelectorAll('#execNavSubmenu [data-nav-context]')]
+            .map(group => [group.dataset.navContext,
+              [...group.querySelectorAll('[data-nav-item]')].map(item =>
+                item.dataset.navLocalView || item.dataset.navRoute)])),
           closedHeight: navSubShell.getBoundingClientRect().height,
           closedClipHeight: document.querySelector('#navSubShell .nav-sub-clip')
             .getBoundingClientRect().height,
@@ -115,9 +124,10 @@ def run_structure(page):
     assert contract["panelOutsideNav"], "painel do segundo nivel entrou dentro de #nav"
     assert contract["structuralOrder"], f"faixa fora da ordem header -> faixa -> contexto: {contract}"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
-    assert contract["panelsInShell"] == ["execNavSubmenu", "fxplanNavSubmenu", "finpesNavSubmenu"], contract["panelsInShell"]
-    assert contract["keys"] == EXPECTED_VIEWS, f"ordem/chaves dos destinos: {contract['keys']}"
+    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu", "researchNavSubmenu"], contract["panelsInShell"]
+    assert contract["keys"] == EXPECTED_CHILDREN, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
+    assert contract["contexts"] == EXPECTED_CONTEXT, f"terceiro nivel divergente: {contract['contexts']}"
     # "Altura efetiva zero" = nenhuma caixa de conteudo. A faixa mantem a
     # border-bottom transparente que anima para visivel ao abrir; o que precisa
     # estar realmente colapsado e o clipe interno (grid-template-rows:0fr).
@@ -174,7 +184,7 @@ def run_initial_destination(page):
           nestedScreens: document.querySelectorAll('#exec .screen').length,
           visible: %s.filter(id => !document.getElementById(id).hidden),
           inert: %s.filter(id => document.getElementById(id).inert),
-          current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
+          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-overview"]')
             ?.getAttribute('aria-current')
         })""" % (containers, containers)
     )
@@ -188,8 +198,15 @@ def run_initial_destination(page):
 
 def run_panel_equivalence(page):
     """Painel Operacional e o #execWidgetGrid original — realocado, nao copiado."""
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
+    hierarchy = page.evaluate("""() => ({
+      child:JPWNavigation.current().child,
+      level2:document.querySelector('[data-nav-child="forex-operation"]')?.getAttribute('aria-current'),
+      contextHidden:document.querySelector('[data-nav-context="forex-operation"]')?.hidden,
+      level3:document.querySelector('[data-nav-context="forex-operation"] [data-nav-local-view="panel"]')?.getAttribute('aria-current')
+    })""")
+    assert hierarchy == {'child':'forex-operation','level2':'page','contextHidden':False,'level3':'page'}, hierarchy
     facts = page.evaluate(
         """() => {
           const grid = document.getElementById('execWidgetGrid');
@@ -249,12 +266,9 @@ def run_state_preservation(page):
     committed = page.evaluate("() => document.getElementById('iAtr55').value")
     assert committed == "0.00777", f"pre-condicao falhou: ATR nao aceitou o valor ({committed})"
 
-    page.click('#execNavSubmenu [data-nav-sub-view="overview"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'overview'")
-    page.click('#execNavSubmenu [data-nav-sub-view="pivots"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'pivots'")
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
+    page.evaluate("() => JPWNavigation.navigate('forex-overview')")
+    page.evaluate("() => JPWNavigation.navigate('pivots')")
+    page.evaluate("() => JPWNavigation.navigate('forex-operation')")
 
     kept = page.evaluate(
         """() => ({
@@ -281,7 +295,7 @@ def run_focus_and_keyboard(page):
     # inclusive nos workspaces novos.
     blocked = page.evaluate(
         """() => {
-          const probe = document.querySelector('#execOverview button, #execPivots button');
+          const probe = document.querySelector('#execOverview button, #motorWidgetGrid button');
           if (!probe) return {found: false, took: null};
           probe.focus();
           return {found: true, took: document.activeElement === probe, hidden: !!probe.closest('[hidden]')};
@@ -292,28 +306,24 @@ def run_focus_and_keyboard(page):
     assert not blocked["took"], "workspace oculto continua na ordem de foco (inert nao aplicado)"
 
     other = page.evaluate(
-        """() => [...document.querySelectorAll('#fxplanNavSubmenu [data-nav-sub-view]')]
+        """() => [...document.querySelectorAll('#finpesNavSubmenu [data-nav-sub-view]')]
              .filter(el => el.tabIndex >= 0).length"""
     )
     assert other == 0, "painel do outro modulo continua tabulavel"
 
     page.focus("#execNavTrigger")
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "panel", (
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-operation", (
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    # Vizinho seguinte de "panel" na ordem do submenu — deriva de EXPECTED_VIEWS
-    # para nao voltar a travar um destino especifico por literal.
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[
-        EXPECTED_VIEWS.index("panel") + 1
-    ]
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-reconciliation"
     page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0]
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0]
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[-1]
+    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "motor"
     page.keyboard.press("ArrowRight")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == EXPECTED_VIEWS[0], "setas nao circulam"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0], "setas nao circulam"
     page.keyboard.press("Escape")
     assert page.evaluate("() => document.activeElement.id") == "execNavTrigger", "Escape nao devolveu foco"
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "false"
@@ -346,7 +356,7 @@ def run_hover_and_pin(page):
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "true", "resize fechou faixa fixada"
     page.click("#execNavTrigger")
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "true", "novo clique alternou faixa fixada"
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
     assert page.get_attribute("#execNavTrigger", "aria-expanded") == "true", "clique interno fechou a faixa"
     page.click("#appMain")
     page.wait_for_timeout(120)
@@ -358,8 +368,8 @@ def run_module_switch(page):
     """Trocar de modulo fecha o anterior: nunca dois acionadores expandidos."""
     page.click("#execNavTrigger")
     page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click("#fxplanNavTrigger")
-    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
+    page.click("#finpesNavTrigger")
+    page.wait_for_function("() => finpesNavTrigger.getAttribute('aria-expanded') === 'true'")
     state = page.evaluate(
         """() => ({
           expanded: [...document.querySelectorAll('.nav-sub-trigger')]
@@ -369,9 +379,9 @@ def run_module_switch(page):
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id)
         })"""
     )
-    assert state["expanded"] == ["fxplanNavTrigger"], f"dois acionadores expandidos: {state['expanded']}"
-    assert state["mounted"] == ["fxplanNavSubmenu"], f"painel do modulo anterior segue montado: {state['mounted']}"
-    assert state["screens"] == ["fxplan"], state["screens"]
+    assert state["expanded"] == ["finpesNavTrigger"], f"dois acionadores expandidos: {state['expanded']}"
+    assert state["mounted"] == ["finpesNavSubmenu"], f"painel do modulo anterior segue montado: {state['mounted']}"
+    assert state["screens"] == ["finpes"], state["screens"]
 
     # Voltar ao Execution Board vindo de outro modulo reabre na Visao Geral.
     page.click("#execNavTrigger")
@@ -379,7 +389,7 @@ def run_module_switch(page):
     back = page.evaluate(
         """() => ({
           view: window.JPWExec.ui.getView(),
-          current: document.querySelector('#execNavSubmenu [data-nav-sub-view="overview"]')
+          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-overview"]')
             ?.getAttribute('aria-current')
         })"""
     )
@@ -387,7 +397,7 @@ def run_module_switch(page):
 
 
 def run_economic_calendar(page):
-    """Calendario Economico: UM dominio, DUAS instancias visuais.
+    """Calendario Economico em Research: UM dominio, DUAS instancias visuais.
 
     O overlay #ecalOverlay e o workspace #execEcal leem o MESMO cache e usam a
     MESMA funcao de render, parametrizada por raiz. O que este teste protege e
@@ -411,10 +421,19 @@ def run_economic_calendar(page):
           }));
         }"""
     )
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-sub-view="ecal"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+    assert page.evaluate("() => JPWNavigation.navigate('ecal')") is True
+    page.wait_for_function("() => window.JPWResearch.ui.getView() === 'calendar'")
+    page.click("#researchNavTrigger")
+    page.wait_for_function("() => researchNavTrigger.getAttribute('aria-expanded') === 'true'")
+    compat = page.evaluate(
+        """() => ({primary:JPWNavigation.current().primary,
+          child:JPWNavigation.current().child,
+          current:document.querySelectorAll('#researchNavSubmenu [data-nav-child="research-forex"][aria-current="page"]').length,
+          local:document.querySelectorAll('#researchNavSubmenu [data-nav-local-view="calendar"][aria-current="page"]').length,
+          execActive:document.getElementById('exec').classList.contains('active')})"""
+    )
+    assert compat == {'primary':'research','child':'research-forex','current':1,'local':1,'execActive':False}, compat
+    page.keyboard.press("Escape")
 
     fatos = page.evaluate(
         """() => {
@@ -479,10 +498,10 @@ def run_economic_calendar(page):
     # ciclo montar/desmontar do workspace, nao a navegacao — que ja foi
     # exercitada por clique real na entrada deste teste.
     for _ in range(3):
-        page.evaluate("() => window.JPWExec.ui.selectView('panel')")
+        page.evaluate("() => JPWNavigation.navigate('forex-operation')")
         page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
-        page.evaluate("() => window.JPWExec.ui.selectView('ecal')")
-        page.wait_for_function("() => window.JPWExec.ui.getView() === 'ecal'")
+        page.evaluate("() => JPWNavigation.navigate('ecal')")
+        page.wait_for_function("() => window.JPWResearch.ui.getView() === 'calendar'")
     page.click('#execEcal [data-ecal-cur="all"]')
     estavel = page.evaluate("() => document.querySelectorAll('#execEcal .ecal-item').length")
     assert estavel == 2, f"apos 3 idas e voltas o workspace divergiu: {estavel}"
@@ -504,11 +523,18 @@ def run_economic_calendar(page):
 
 def run_motor_migration(page):
     """O Motor de Lote migrou de Configuracoes para ca — uma so implementacao."""
-    # 1. Alcancavel pelo submenu do Execution Board.
+    # 1. Alcançável pelo terceiro nível contextual de Operação.
     page.click("#execNavTrigger")
     page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-sub-view="motor"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
+    page.click('#execNavSubmenu [data-nav-context="forex-operation"] [data-nav-local-view="motor"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'motor'")
+    hierarchy = page.evaluate("""() => ({
+      child:JPWNavigation.current().child,
+      level2:document.querySelector('[data-nav-child="forex-operation"]')?.getAttribute('aria-current'),
+      level3:document.querySelector('[data-nav-context="forex-operation"] [data-nav-local-view="motor"]')?.getAttribute('aria-current')
+    })""")
+    assert hierarchy == {'child':'forex-operation','level2':'page','level3':'page'}, hierarchy
 
     estrutura = page.evaluate(
         """() => {
@@ -556,7 +582,7 @@ def run_motor_migration(page):
           emGrupo: SETTINGS_GROUPS.some(g => (g.children || []).includes('tool-motor')),
           descMenciona: SETTINGS_GROUPS.some(g => /Motor de Lote/i.test(g.desc || '')),
           transporte: Object.keys(SETTINGS_SCREEN_GRIDS),
-          rotaLegada: typeof SCREEN_TO_SETTINGS_LEAF['motor'],
+          rotaLegada: NAV_COMPATIBILITY_TARGETS.motor.action || null,
           painel: document.querySelector('[data-settings-slot="tool-motor"]') !== null
         })"""
     )
@@ -567,7 +593,7 @@ def run_motor_migration(page):
         "transporte de DOM ainda mapeia tool-motor — restoreLegacySettingsNodes() "
         "arrancaria o grid de dentro de #exec ao fechar a Central"
     )
-    assert central["rotaLegada"] == "undefined", "SCREEN_TO_SETTINGS_LEAF ainda desvia motor"
+    assert central["rotaLegada"] is None, "compatibilidade ainda desvia motor para Configurações"
     assert not central["painel"], "painel tool-motor continua no DOM"
 
     # 4. Abrir e FECHAR a Central nao pode mover o grid — era o risco principal.
@@ -583,7 +609,7 @@ def run_motor_migration(page):
     )
 
     # 5. A Acao Rapida do Dashboard leva ao workspace, e nao a lugar nenhum.
-    page.click('#nav .tab[data-screen="dash"]')
+    page.click('#nav .tab[data-route="dashboard"]')
     page.wait_for_function("() => document.querySelector('.screen.active')?.id === 'dash'")
     page.evaluate("() => navigateToScreen('motor')")
     rota = page.evaluate(
@@ -616,13 +642,15 @@ def run_motor_migration(page):
 
 
 def run_no_regression(page):
-    """As cinco abas globais continuam ativando suas proprias telas."""
-    tabs = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-screen]')].map(el => el.dataset.screen)")
-    assert tabs == ["dash", "exec", "contas", "contab", "fxplan", "finpes"], f"abas globais mudaram: {tabs}"
-    for screen in tabs:
-        page.click(f'#nav .tab[data-screen="{screen}"]')
+    """As cinco rotas globais ativam seus destinos físicos declarados."""
+    routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
+    expected = {"dashboard": "dash", "forex-overview": "exec", "personal-finance": "finpes",
+                "research-forex": "research", "alladin": "alladin"}
+    assert routes == list(expected), f"rotas globais mudaram: {routes}"
+    for route, screen in expected.items():
+        page.click(f'#nav .tab[data-route="{route}"]')
         active = page.evaluate("() => document.querySelector('.screen.active')?.id")
-        assert active == screen, f"aba {screen} nao ativou a tela homonima (ativa: {active})"
+        assert active == screen, f"rota {route} nao ativou {screen} (ativa: {active})"
     # Fecha a faixa deixada aberta pelo ultimo clique em acionador.
     page.keyboard.press("Escape")
 
@@ -666,15 +694,15 @@ def run_mobile(browser, url):
           height: navSubShell.getBoundingClientRect().height,
           docWidth: document.documentElement.scrollWidth,
           winWidth: window.innerWidth,
-          items: [...document.querySelectorAll('#execNavSubmenu [data-nav-sub-view]')]
-            .map(el => Math.round(el.getBoundingClientRect().height))
+          items: [...document.querySelectorAll('#execNavSubmenu [data-nav-item]')]
+            .filter(el => !el.closest('[hidden]')).map(el => Math.round(el.getBoundingClientRect().height))
         })"""
     )
     assert facts["position"] in ("static", "relative"), f"faixa vira overlay no mobile: {facts['position']}"
     assert facts["height"] > 40, f"faixa sem altura no mobile: {facts}"
     assert facts["docWidth"] <= facts["winWidth"] + 2, f"overflow horizontal no mobile: {facts}"
     assert all(h >= 44 for h in facts["items"]), f"alvo de toque abaixo de 44px: {facts['items']}"
-    page.click('#execNavSubmenu [data-nav-sub-view="panel"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
     assert not observed["pageerror"], f"pageerror no mobile: {observed['pageerror']}"
     context.close()

@@ -1,5 +1,102 @@
 # Estado atual do projeto
 
+## Navigation — pós-merge final reconciliado — 2026-08-26
+
+- **Base desta reconciliação:** `main` em
+  `75d10bcb3dc02c1a62a369df6cc1cd17387488ec`, integração Navigation concluída
+  por fast-forward. O presente checkpoint doc-only é filho direto dessa base e
+  passa a ser a ponta local de `main` após o commit.
+- **Histórico integrado:** NAV-01 `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`,
+  NAV-02 `9b5ea298953b3c8bb270864151a88e5c69419e61`, NAV-03
+  `2c1e0a441d77e01c8c9acaf0506da333254c8196` e NAV-06A
+  `75d10bcb3dc02c1a62a369df6cc1cd17387488ec`.
+- **Produto:** cinco primários — Dashboard, Forex, Finanças Pessoais, Research
+  e Alladin. Forex contém Visão Geral, Preparação, Conta, Operação, Apuração e
+  Planejamento. Research contém Forex, Ações, Stocks, REITs e Others;
+  Research/Forex contém Calendário, NoCoda e Pivots. Alladin permanece como
+  placeholder estrutural e seu desenvolvimento funcional continua pausado.
+  Galton permanece em Configurações.
+- **Readiness:** runtime PASS; `validate_project` PASS com 76 scripts e 415 IDs;
+  full **43/43 PASS**. O commit final desta reconciliação altera somente contexto
+  operacional, sem invalidar as evidências de produto, browser ou PWA.
+- **Git/publicação:** merge local concluído; `origin/main` permanece em
+  `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`. Push e deploy estão pendentes e
+  não foram executados.
+- **Alladin:** worktree `fix/alladin-session-preservation` em `1eddd29e`, com
+  12 arquivos modificados e três não rastreados; zero drift.
+- **Coerência sistêmica:** os contextos operacionais afetados pelo merge foram
+  reconciliados neste checkpoint; `SYSTEM RECONCILED = SIM`.
+
+## NAV-03 — checkpoint interno commitado de Research Consolidation — 2026-08-26
+
+- **BASE_SHA/commit:** `9b5ea298953b3c8bb270864151a88e5c69419e61` →
+  `2c1e0a441d77e01c8c9acaf0506da333254c8196`, em `codex/navigation-ia`.
+- **Contrato:** cinco primários preservados; `children('research')` expõe
+  exatamente Forex, Ações, Stocks, REITs e Others. Research/Forex abre
+  Calendário por default e possui somente Calendário, NoCoda e Pivots no N3.
+- **Ownership:** `execEcal`, `execNocoda` e `execPivots` existem uma vez sob
+  `section#research`; aliases históricos ativam Research/Forex/N3 e Exec retém
+  somente overview, panel, motor e history como views canônicas.
+- **Empty states:** Ações abre Brasil/B3 diretamente; Stocks, REITs e Others são
+  neutros e não contêm métricas, números econômicos ou conteúdo funcional.
+- **Galton:** permanece em Configurações, sem mudança de lifecycle, DOM,
+  preferências, storage ou código funcional.
+- **Persistência e Alladin:** nenhuma chave/rota persistida, zero escrita por
+  navegação e nenhum acesso a `S.alladin`/`JPWAlladin`; worktree Alladin isolado.
+- **Evidência corrente:** focais Research, Navigation IA, Exec/Calendário,
+  NoCoda, Pivots e Settings/Galton PASS; `validate_project` PASS (76 scripts,
+  415 IDs); fast **4/4 PASS**, standard **32/32 PASS** e full **43/43 PASS**.
+  Browser pós-full PASS em desktop/mobile, claro/escuro, teclado, foco, N2/N3,
+  hidden/inert, overflow e alvos móveis ≥44 px. PWA PASS em manifesto, hashes,
+  precache, upgrade do service worker e reprodutibilidade do build oficial
+  `aaa2262ae6fb0610`.
+- **Git/publicação:** commit interno `2c1e0a4`; push, merge e deploy não foram
+  autorizados nem executados.
+
+## NAV-02 — checkpoint interno commitado de Forex Consolidation — 2026-08-26
+
+- **BASE_SHA:** `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`.
+- **Branch/worktree:** `codex/navigation-ia`, worktree dedicado Navigation IA.
+- **Contrato:** `routes()` mantém cinco primários; `children('forex')` expõe
+  exatamente Visão Geral, Preparação, Conta, Operação, Apuração e Planejamento.
+- **Estrutura:** sem `section#forex`, sem rename de `execNavTrigger`/
+  `execNavSubmenu`; terceiro nível contextual reutiliza `JPWExec.ui` e
+  `JPWFx.ui` sem estado paralelo.
+- **Compatibilidade:** `motor`/Operação, `history`/Apuração, `fxplan`/Planejamento
+  com visão corrente; `check`/Preparação e `tool-check`/Settings separados.
+  Calendário, NoCoda e Pivots funcionam com `child:null` até o NAV-03.
+- **Persistência e Alladin:** nenhuma chave/rota persistida; a navegação não
+  chama `save()` nem toca `S.alladin`/`JPWAlladin`.
+- **Evidência corrente:** build `3d51c530db465831`; seis focais NAV-02 PASS;
+  `validate_project` PASS (75 scripts, 409 IDs); fast **4/4 PASS**; full
+  **42/42 PASS**; browser pós-full PASS em desktop/mobile 390×844,
+  claro/escuro, teclado, níveis 2/3, overflow e targets ≥44 px.
+- **Git/publicabilidade:** commit interno `9b5ea298`; NAV-02 isolado não é
+  publicável. Push, merge e deploy não foram autorizados.
+
+## NAV-01 — checkpoint interno commitado de fundação semântica — 2026-08-25
+
+- **BASE_SHA:** `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`.
+- **Branch/worktree:** `codex/navigation-ia`, worktree dedicado Navigation IA.
+- **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
+  Research e Alladin.
+- **CANDIDATO NAV-01:** registry público estrito, fachada de compatibilidade,
+  cinco botões, `section#research` e placeholder estático `section#alladin`.
+- **ESTADO PUBLICÁVEL:** ainda depende de NAV-02. NAV-01 isolado é auditável,
+  mas não pode substituir o estado utilizável, ser mergeado ou publicado.
+- **Persistência e Alladin:** nenhuma chave/rota persistida; a navegação não
+  chama nem altera `S.alladin`, `JPWAlladin` ou `save()`.
+- **Git/publicação:** commit interno
+  `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`; push, merge e deploy não foram
+  autorizados nem executados.
+- **Evidência desta fotografia:** rebuild oficial `eba48d278c6a5b58`; suíte
+  `navigation_ia_test.py` e quatro focais PASS; `validate_project.py` PASS (75
+  scripts, 409 IDs); tier full **42/42 PASS**. Chromium real cobriu desktop e
+  mobile a 390 px, temas claro/escuro, foco/teclado e zero overflow horizontal.
+  O teste N1-C mediu alvos móveis de 40 px e justificou o 26º arquivo
+  condicional, `src/styles/app.css`; depois da correção, os cinco medem 44 px.
+  Blast radius final: exatamente 26 arquivos.
+
 - Data da fotografia: 2026-08-21
 Source revision representada: `4d130faa44187ceb81ed35bce15425a9dc2e78c9`
 - Branch atual: `main` (`main` = `origin/main` = `4d130fa`)

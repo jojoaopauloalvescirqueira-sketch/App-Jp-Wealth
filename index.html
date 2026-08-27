@@ -89,7 +89,7 @@
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
     <!-- Menu de destinos em telas estreitas. Fora do shell horizontal fica oculto;
-         a navegação continua sendo os mesmos botões .tab[data-screen] em #nav. -->
+         a navegação continua sendo os mesmos botões .tab[data-route] em #nav. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="nav" aria-label="Abrir menu de telas">Menu</button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <!-- Desenho idêntico ao slot "Configurações" de Auditoria visual JP Wealth/
@@ -129,60 +129,82 @@
      40-app/11-operational-shell.js exibe apenas o do módulo acionado.
 
      Convenção de ids, lida por derivação e não por registro manual:
-     `<data-screen>NavTrigger` no botão de #nav e `<data-screen>NavSubmenu`
-     aqui. Um módulo novo só precisa do par de ids, do <nav> e da superfície
-     de UI declarada em NAV_SUBMENU_SURFACES. -->
+     `<data-nav-surface>NavTrigger` no botão de #nav e
+     `<data-nav-surface>NavSubmenu` aqui. Um módulo novo só precisa do par de
+     ids, do <nav> e da superfície de UI declarada em NAV_SUBMENU_SURFACES. -->
 <div class="nav-sub-shell" id="navSubShell">
   <div class="nav-sub-clip">
-    <nav class="nav-sub-menu" id="execNavSubmenu" aria-labelledby="execNavTrigger"
+    <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
          aria-hidden="true" hidden inert>
-      <button type="button" data-nav-sub-view="overview">
-        <span class="nav-sub-item-title">Visão Geral</span>
-        <span class="nav-sub-item-desc">Síntese do módulo</span>
-      </button>
-      <button type="button" data-nav-sub-view="panel">
-        <span class="nav-sub-item-title">Painel Operacional</span>
-        <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
-      </button>
-      <button type="button" data-nav-sub-view="ecal">
-        <span class="nav-sub-item-title">Calendário Econômico</span>
-        <span class="nav-sub-item-desc">Semana corrente de alto impacto</span>
-      </button>
-      <button type="button" data-nav-sub-view="nocoda">
-        <span class="nav-sub-item-title">Estudos NoCoda</span>
-        <span class="nav-sub-item-desc">Âncoras do canal por instrumento</span>
-      </button>
-      <button type="button" data-nav-sub-view="pivots">
-        <span class="nav-sub-item-title">Estudos dos Pivots</span>
-        <span class="nav-sub-item-desc">Amostra histórica de pivots H1/H4</span>
-      </button>
-      <button type="button" data-nav-sub-view="motor">
-        <span class="nav-sub-item-title">Motor de Lote</span>
-        <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
-      </button>
-      <button type="button" data-nav-sub-view="history">
-        <span class="nav-sub-item-title">Histórico</span>
-        <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
-      </button>
-    </nav>
-    <nav class="nav-sub-menu" id="fxplanNavSubmenu" aria-labelledby="fxplanNavTrigger"
-         aria-hidden="true" hidden inert>
-      <button type="button" data-nav-sub-view="overview">
-        <span class="nav-sub-item-title">Visão Geral</span>
-        <span class="nav-sub-item-desc">Resumo do planejamento atual</span>
-      </button>
-      <button type="button" data-nav-sub-view="planning">
-        <span class="nav-sub-item-title">Planejamento FX</span>
-        <span class="nav-sub-item-desc">Cenários cambiais e projeções</span>
-      </button>
-      <button type="button" data-nav-sub-view="actuals">
-        <span class="nav-sub-item-title">Realizado</span>
-        <span class="nav-sub-item-desc">Comparação planejado vs executado</span>
-      </button>
-      <button type="button" data-nav-sub-view="table">
-        <span class="nav-sub-item-title">Histórico</span>
-        <span class="nav-sub-item-desc">Evolução temporal</span>
-      </button>
+      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
+        <button type="button" data-nav-item data-nav-child="forex-overview">
+          <span class="nav-sub-item-title">Visão Geral</span>
+          <span class="nav-sub-item-desc">Síntese do módulo</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-preparation">
+          <span class="nav-sub-item-title">Preparação</span>
+          <span class="nav-sub-item-desc">Checklist Pré-Trade</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-account">
+          <span class="nav-sub-item-title">Conta</span>
+          <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-operation">
+          <span class="nav-sub-item-title">Operação</span>
+          <span class="nav-sub-item-desc">Painel e Motor de Lote</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-reconciliation">
+          <span class="nav-sub-item-title">Apuração</span>
+          <span class="nav-sub-item-desc">Contabilidade e Histórico</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="forex-planning">
+          <span class="nav-sub-item-title">Planejamento</span>
+          <span class="nav-sub-item-desc">Plano, realizado e histórico</span>
+        </button>
+      </div>
+      <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-operation" role="group" aria-label="Operação" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="panel">
+            <span class="nav-sub-item-title">Painel</span>
+            <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
+            <span class="nav-sub-item-title">Motor</span>
+            <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
+          </button>
+        </div>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-reconciliation" role="group" aria-label="Apuração" hidden inert>
+          <button type="button" data-nav-item data-nav-route="forex-reconciliation">
+            <span class="nav-sub-item-title">Contabilidade</span>
+            <span class="nav-sub-item-desc">Ledger, retorno e drawdown</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="history">
+            <span class="nav-sub-item-title">Histórico</span>
+            <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
+          </button>
+        </div>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="forex-planning" role="group" aria-label="Planejamento" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="overview">
+            <span class="nav-sub-item-title">Visão Geral</span>
+            <span class="nav-sub-item-desc">Resumo do plano vigente</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="planning">
+            <span class="nav-sub-item-title">Planejamento</span>
+            <span class="nav-sub-item-desc">Premissas e projeções</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="actuals">
+            <span class="nav-sub-item-title">Realizado</span>
+            <span class="nav-sub-item-desc">Fechamentos e aportes</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="fxplan" data-nav-local-view="table">
+            <span class="nav-sub-item-title">Histórico/Tabela</span>
+            <span class="nav-sub-item-desc">Baseline, vigente e realizado</span>
+          </button>
+        </div>
+      </div>
     </nav>
     <!-- Finanças Pessoais: cinco destinos. As chaves são contrato da
          superfície window.JPWFin.ui (20-ui/17-finpes-views.js). Inventário
@@ -210,6 +232,50 @@
         <span class="nav-sub-item-desc">Composições comparadas por horizonte</span>
       </button>
     </nav>
+    <!-- Research: cinco filhos N2. Somente Forex possui N3; Ações, Stocks,
+         REITs e Others abrem diretamente seus empty states neutros. -->
+    <nav class="nav-sub-menu nav-sub-menu-contextual" id="researchNavSubmenu" aria-labelledby="researchNavTrigger"
+         aria-hidden="true" hidden inert>
+      <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Research">
+        <button type="button" data-nav-item data-nav-child="research-forex">
+          <span class="nav-sub-item-title">Forex</span>
+          <span class="nav-sub-item-desc">Calendário, NoCoda e Pivots</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-stocks-br">
+          <span class="nav-sub-item-title">Ações</span>
+          <span class="nav-sub-item-desc">Brasil e B3</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-stocks-global">
+          <span class="nav-sub-item-title">Stocks</span>
+          <span class="nav-sub-item-desc">Mercado internacional</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-reits">
+          <span class="nav-sub-item-title">REITs</span>
+          <span class="nav-sub-item-desc">Pesquisa imobiliária internacional</span>
+        </button>
+        <button type="button" data-nav-item data-nav-child="research-others">
+          <span class="nav-sub-item-title">Others</span>
+          <span class="nav-sub-item-desc">Outras linhas de pesquisa</span>
+        </button>
+      </div>
+      <div class="nav-sub-contexts" aria-label="Opções do destino Research" hidden inert>
+        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
+             data-nav-context="research-forex" role="group" aria-label="Research Forex" hidden inert>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="calendar">
+            <span class="nav-sub-item-title">Calendário</span>
+            <span class="nav-sub-item-desc">Eventos econômicos da semana</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="nocoda">
+            <span class="nav-sub-item-title">NoCoda</span>
+            <span class="nav-sub-item-desc">Estudos de canal por instrumento</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="pivots">
+            <span class="nav-sub-item-title">Pivots</span>
+            <span class="nav-sub-item-desc">Estudos empíricos por período</span>
+          </button>
+        </div>
+      </div>
+    </nav>
   </div>
 </div>
 
@@ -234,21 +300,20 @@
        painel chapado. Como filho ou pseudo-elemento viajaria junto e não
        haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
-  <button class="tab active" data-screen="dash" title="Dashboard"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-screen="exec" title="Execution Board"
+  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><span class="n">01</span><span class="lbl">Dashboard</span></button>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex"
           aria-expanded="false" aria-controls="execNavSubmenu">
-    <span class="n">02</span><span class="lbl">Execution Board</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+    <span class="n">02</span><span class="lbl">Forex</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
-  <button class="tab" data-screen="contas" title="Contas"><span class="n">03</span><span class="lbl">Contas</span></button>
-  <button class="tab" data-screen="contab" title="Contabilidade"><span class="n">04</span><span class="lbl">Contabilidade</span></button>
-  <button class="tab nav-sub-trigger" id="fxplanNavTrigger" data-screen="fxplan" title="Planejamento"
-          aria-expanded="false" aria-controls="fxplanNavSubmenu">
-    <span class="n">05</span><span class="lbl">Planejamento</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
-  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-screen="finpes" title="Finanças Pessoais"
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"
           aria-expanded="false" aria-controls="finpesNavSubmenu">
-    <span class="n">06</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+    <span class="n">03</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
   </button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"
+          aria-expanded="false" aria-controls="researchNavSubmenu">
+    <span class="n">04</span><span class="lbl">Research</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
+  </button>
+  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
   <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
 </nav>
 
@@ -431,46 +496,6 @@
         <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
-    <!-- Calendário Econômico: casa canônica da ferramenta. SEGUNDA INSTÂNCIA
-         VISUAL do mesmo domínio — não é um segundo calendário. O overlay
-         #ecalOverlay continua existindo com seus dois pontos de entrada; as duas
-         superfícies leem o MESMO cache (ffNewsReadCache) e a MESMA função de
-         render, parametrizada por raiz.
-         Sem id nos nós internos DE PROPÓSITO: os 9 ids do overlay são globais e
-         fixos, e duplicá-los reprovaria validate_project.py e deixaria o modal
-         sem render, porque #exec precede o overlay no documento e
-         getElementById devolve o primeiro nó. Aqui a identidade é por
-         data-ecal-role, resolvida dentro da própria raiz. -->
-    <div class="exec-view" id="execEcal" role="region" aria-label="Calendário Econômico" hidden>
-      <div class="card ecal-ws">
-        <div class="ecal-ws-head">
-          <h2>Calendário Econômico</h2>
-          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
-        </div>
-        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
-          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
-          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
-          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
-          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
-          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
-        </div>
-        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
-        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
-        <p class="ecal-ws-foot">
-          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
-          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
-        </p>
-      </div>
-    </div>
-    <!-- Estudos NoCoda: memória técnica do canal por instrumento. O conteúdo é
-         renderizado por 20-ui/14-nocoda-studies.js a cada entrada no workspace,
-         porque o seletor deriva do catálogo vivo do Motor de Lote. -->
-    <div class="exec-view" id="execNocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
-    <!-- Estudos dos Pivots: memória empírica dos maiores pivots H1/H4 por
-         instrumento e período. O conteúdo é renderizado por
-         20-ui/15-pivot-studies.js a cada entrada no workspace, porque o seletor
-         deriva do catálogo vivo do Motor de Lote e a tela reflete o estado. -->
-    <div class="exec-view" id="execPivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
     <!-- Histórico: consumidor SOMENTE LEITURA de S.operationHistory. O conteúdo é
          renderizado por 20-ui/16-operation-history.js a cada entrada, porque uma
          finalização feita no Painel Operacional muda a lista. Nenhum caminho
@@ -836,7 +861,7 @@
                    secundária é sempre o caminho para o Execution Board. -->
               <div class="mc-cockpit-acoes">
                 <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction">—</button>
-                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="exec">Abrir Execution Board</button>
+                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="exec" data-route="forex-overview">Abrir Forex</button>
               </div>
             </div>
             <div class="mc-cockpit-grid" id="mcCockpitFacts" data-dash-scroll="governanca">
@@ -867,7 +892,7 @@
             </div>
           </div>
           <div class="jp-hero-actions">
-            <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec">Abrir Execution Board</button>
+            <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec" data-route="forex-overview">Abrir Forex</button>
             <button type="button" class="jp-btn jp-btn-secondary" data-dash-scroll="governanca">Ver detalhes</button>
           </div>
         </div>
@@ -1071,6 +1096,61 @@
     <div id="finpesCenarios" hidden>
       <!-- PF-05: raiz de Cenários — desenhada por 20-ui/21-finpes-scenarios.js. -->
       <div id="finpesScenariosRoot"></div>
+    </div>
+  </section>
+
+  <!-- ================= 04 RESEARCH ================= -->
+  <section class="screen" id="research">
+    <h1 class="sr-only" data-route-focus>Research</h1>
+    <!-- Calendário Econômico: workspace canônico de Research/Forex. O overlay
+         global continua como segunda instância visual do mesmo domínio; ambos
+         leem o mesmo cache e usam o mesmo renderizador parametrizado por raiz.
+         Os nós internos permanecem sem id para não colidir com o overlay. -->
+    <div class="research-view" id="execEcal" data-research-view="calendar" role="region" aria-label="Calendário Econômico">
+      <div class="card ecal-ws">
+        <div class="ecal-ws-head">
+          <h2>Calendário Econômico</h2>
+          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+        </div>
+        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
+          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+        </div>
+        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
+        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
+        <p class="ecal-ws-foot">
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
+          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+        </p>
+      </div>
+    </div>
+    <!-- NoCoda e Pivots preservam os mesmos IDs e renderizadores. O conteúdo
+         continua montado sob demanda a partir do estado vivo. -->
+    <div class="research-view" id="execNocoda" data-research-view="nocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
+    <div class="research-view" id="execPivots" data-research-view="pivots" role="region" aria-label="Estudos dos Pivots" hidden></div>
+    <div class="research-view" id="researchStocksBr" data-research-view="stocks-br" role="region" aria-label="Ações Brasil e B3" hidden>
+      <div class="card"><h2>Ações · Brasil / B3</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+    <div class="research-view" id="researchStocksGlobal" data-research-view="stocks-global" role="region" aria-label="Stocks internacionais" hidden>
+      <div class="card"><h2>Stocks</h2><p class="expl">Área de pesquisa internacional em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+    <div class="research-view" id="researchReits" data-research-view="reits" role="region" aria-label="REITs" hidden>
+      <div class="card"><h2>REITs</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+    <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
+      <div class="card"><h2>Others</h2><p class="expl">Área reservada para outras linhas de pesquisa. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 05 ALLADIN ================= -->
+  <section class="screen" id="alladin">
+    <div>
+      <h2 data-route-focus>Alladin</h2>
+      <p>Módulo patrimonial em desenvolvimento.</p>
+      <p>As funcionalidades ainda não estão disponíveis.</p>
     </div>
   </section>
 
@@ -1633,5 +1713,6 @@
 <script src="src/js/20-ui/21-finpes-scenarios.js"></script>
 <script src="src/js/20-ui/22-finpes-overview.js"></script>
 <script src="src/js/10-domain/13-alladin.js"></script>
+<script src="src/js/20-ui/23-research-views.js"></script>
 </body>
 </html>

@@ -1,74 +1,57 @@
-# Session Handoff — navegação hierárquica de Planejamento
+# Session Handoff — Navigation · Post-Merge Final Reconciliation
 
-- Data: 2026-08-13
-- Branch atual: `main`
-- `BASE_SHA`: `e835bb5a723f3d0d7d262076cb9020fb4a1c9387`
-- Commit material: `478a55826977f37d2f7b60848454f4f3aa80943a`
-- Commit de integração: `55d22671c3479b43762922ec01cad454d4e90ac0`
-- Estado: implementação validada, commitada e integrada localmente em `main`
-- Manifest: 60 scripts; lista/ordem preservadas, dois hashes de UI alterados
-- Build ID: `4d9b36661c689c26`
-- Publicação: nenhuma; push e deploy não executados
+- Data: 2026-08-26
+- Branch: `main`
+- Base da reconciliação: `75d10bcb3dc02c1a62a369df6cc1cd17387488ec`
+- Estado: Navigation integrada localmente por fast-forward; o presente commit
+  doc-only fecha a reconciliação dos contextos operacionais
+- Release readiness: runtime PASS; `validate_project` PASS com 76 scripts e
+  415 IDs; full **43/43 PASS**
+- Publicação: `origin/main` permanece em
+  `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`; push e deploy estão pendentes e
+  não foram executados
 
-Esta nota representa a árvore material integrada localmente após a aprovação
-visual e o refinamento de persistência por clique. Expira se fonte, manifest,
-teste ou gerado mudar.
+## Histórico integrado e estrutura vigente
 
-## Implementado
+- **NAV-01:** `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d` — Semantic Route Foundation.
+- **NAV-02:** `9b5ea298953b3c8bb270864151a88e5c69419e61` — Forex Consolidation.
+- **NAV-03:** `2c1e0a441d77e01c8c9acaf0506da333254c8196` — Research Consolidation.
+- **NAV-06A:** `75d10bcb3dc02c1a62a369df6cc1cd17387488ec` — Documentation Reconciliation.
+- **Cinco primários:** Dashboard, Forex, Finanças Pessoais, Research e Alladin.
+- **Forex:** Visão Geral, Preparação, Conta, Operação, Apuração e Planejamento.
+- **Research:** Forex, Ações, Stocks, REITs e Others; Research/Forex contém
+  Calendário, NoCoda e Pivots.
+- **Alladin:** placeholder estrutural; desenvolvimento funcional continua pausado.
+- **Galton:** permanece em Configurações.
 
-- Planejamento permanece no primeiro nível global e ganhou uma segunda faixa
-  estrutural com Visão Geral, Planejamento FX, Realizado e Histórico.
-- A faixa vive entre o header e o contexto, desloca o conteúdo em 300 ms e não
-  usa overlay, popup, card flutuante, sidebar ou sombra elevada.
-- Hover fino abre transitoriamente e fecha após 400 ms fora de toda a região.
-- Clique, Enter ou Espaço fixam a faixa. Pointerleave, resize, novo clique no
-  acionador e seleção interna não fecham; clique externo ou Escape fecham.
-- O fundo é um terceiro tom entre header e contexto, derivado dos tokens atuais
-  e validado em claro/escuro.
-- No mobile, o toque fecha a gaveta global e mantém o submenu empilhado no fluxo.
-- As tabs internas equivalentes foram removidas. Os quatro conteúdos e
-  renderizadores permanecem e usam `window.JPWFx.ui.selectView()`.
-- O padrão reutilizável está em
-  `docs/architecture/NAVIGATION-HIERARCHY.md`, descobrível pelo mapa de contexto.
+## Implementação presente
 
-## Invariantes confirmados
+- `window.JPWNavigation` separa cinco primários, seis filhos Forex, cinco filhos
+  Research e aliases.
+- `current()` registra `primary`, `child`, `screen` e `localView`; não persiste.
+- `navigateToScreen()` continua aceitando IDs físicos legados.
+- `execNavTrigger` e `execNavSubmenu` foram preservados; nenhuma `section#forex`.
+- `motor` marca Operação, `history` marca Apuração e `fxplan` marca Planejamento;
+  `check` abre Preparação e `tool-check`, Settings.
+- `window.JPWResearch.ui` seleciona sete workspaces efêmeros. Os IDs físicos
+  `execEcal`, `execNocoda` e `execPivots` existem uma vez, sob `#research`.
+- Aliases analíticos ativam Research/Forex/N3; Exec mantém quatro views canônicas.
+- `section#alladin` usa exatamente a mensagem
+  aprovada e não acopla ao domínio Alladin; o desenvolvimento funcional segue
+  pausado no worktree isolado.
+- `tools/research_navigation_test.py` está registrado no tier standard/full;
+  o manifest e o precache contêm 76 scripts.
+- Galton segue em Configurações sem alteração funcional ou de lifecycle.
 
-- Nenhuma fórmula, constante, perfil, fase, DD/MDD, lote, LIFO, stop,
-  quarentena, contabilidade, MEI-JP ou regra do Planejamento FX mudou.
-- `jpwealth_v9_state`, `S.fxPlanning`, schema, migração, backups e chaves de
-  storage permanecem inalterados.
-- O estado transitório/fixado do submenu é apenas memória de UI e não persiste.
-- Nenhum dado real, token, senha, dependência, endpoint ou integração foi usado.
+## Evidência e próxima ação controlada
 
-## Evidência
+A integração em `main@75d10bc` passou `git diff --check`, `validate_project` e
+full **43/43**, com zero `PRODUCT_FAIL`, `TEST_HARNESS_FAIL`,
+`ENVIRONMENT_ERROR`, `BASELINE_FAIL` ou `NOT_RUN`. O presente checkpoint muda
+somente este handoff, `CURRENT-STATE.md` e `ACTIVE-TASK.md`; nenhum byte de
+produto, teste ou build foi alterado, portanto browser/PWA permanecem válidos
+por identidade de bytes. Alladin segue em `1eddd29e`, com 12 modificados e três
+não rastreados, total 15 e zero drift.
 
-| Verificação | Resultado |
-|---|---|
-| `python3 tools/fx_planning_test.py` | PASS — estrutura, animação, hover, estado fixado, clique externo, teclado, mobile, quatro modos e zero duplicidade |
-| Navegador real | PASS — 1440×900 e 390×844, claro/escuro, três tons distintos, segundo clique preservado, toque externo fecha, sem overflow e console limpo |
-| `python3 tools/validate_project.py` | PASS — 60 scripts, 386 IDs estáticos, hashes/ordem coerentes e portátil reconstruído |
-| `python3 tools/quality_gate.py --tier full` | PASS 19/19 — `quality-20260813T160548-full.json`; zero falha e zero teste omitido |
-| Build reproduzível e `git diff --check` | PASS |
-
-## Impacto agêntico
-
-`AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED`
-
-`BASIS:` foi criado um contrato arquitetural consumido por agentes e alterada a
-responsabilidade do shell no mapa do código. `NAVIGATION-HIERARCHY.md`,
-`CONTEXT-MAP.md`, `CODE-MAP.md`, contexto operacional, changelog, inventário e
-este handoff foram reconciliados. Agentes, skills e routing já consultam essas
-fontes e não exigem edição local. `INDEX NOT REQUIRED`; `SYSTEM RECONCILED` para
-o blast radius estrito.
-
-## Próxima ação humana
-
-Decidir separadamente sobre push e deploy. A integração local em `main` já foi
-concluída; esta tarefa não publicou alterações no remoto.
-
-## Rollback
-
-Reverter somente os arquivos desta tarefa para
-`e835bb5a723f3d0d7d262076cb9020fb4a1c9387` e executar
-`python3 tools/rebuild_monolith.py`. Não há migração ou estado financeiro para
-desfazer. Não usar reset destrutivo.
+`SYSTEM RECONCILED = SIM`. Próximo gate humano: decidir o push de `main`; deploy
+continua separado e não autorizado.

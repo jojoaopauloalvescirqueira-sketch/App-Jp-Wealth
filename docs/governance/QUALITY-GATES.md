@@ -25,13 +25,21 @@ Para documentacao, governanca e iteracao curta:
 Para N0-V e N1:
 
 - tudo do fast;
+- `navigation_ia_test.py`: cinco primários, seis filhos Forex em ordem exata,
+  cinco filhos Research, defaults/aliases, compatibilidade sem falso owner, falha fechada atômica,
+  zero escrita e isolamento do placeholder Alladin;
+- `research_navigation_test.py`: cinco filhos Research na ordem exata,
+  Research/Forex com três destinos, ownership único de Calendário/NoCoda/Pivots,
+  Exec reduzido a quatro views, empty states neutros, Galton intacto, storage
+  isolado e browser desktop/mobile claro/escuro;
 - smoke test;
 - Central de Configuracoes;
 - `galton_board_test.py`, incluindo matematica, fisica, persistencia, UI e lifecycle;
 - `fx_planning_test.py`: motor do Planejamento FX (casos 1-20), reservas FCR/FEO,
   baseline x forecast x realizado, persistencia do agregado e fluxo real de UI;
 - `usd_brl_quote_test.py`: cotacao USD/BRL, cache e integracao com o Planejamento FX;
-- `exec_submenu_test.py`: faixa contextual do Execution Board, destinos, teclado e foco;
+- `exec_submenu_test.py`: faixa Forex N2/N3, defaults, estado ativo, teclado,
+  foco, desktop/mobile, temas, overflow e targets de toque;
 - `nocoda_test.py`: geometria do canal NoCoda, identidade de instrumento e persistencia;
 - `pivot_studies_test.py`: derivacao e estatistica dos Estudos dos Pivots, criterio de
   correcao, ordenacao numerica, CRUD real e compatibilidade de estado;
@@ -78,8 +86,8 @@ O gate grava relatorio local em `tools/.artifacts/`, que e ignorado pelo Git. O 
 | Tier | Quantidade | Verificacoes adicionais |
 |---|---:|---|
 | `fast` | 4 | preflight, estrutura, diff-check e frescor material |
-| `standard` | 32 | smoke, Configuracoes, Galton Board, Planejamento FX, submenu do Execution Board, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) cotacao USD/BRL, fases visiveis, tres colunas do Exec, Financas Pessoais (fundacao, preservacao na finalizacao, round-trip de backup e navegacao; Orcamento Mensal, Dividas & Credito, Comparativo Mensal e Visao Geral) e Alladin (unidade em Chromium isolado — moeda, ids, write gate transacional, owners/isSelf, regimes de classificacao, cripto com network, symbolHistory, falha parcial, integridade referencial; integracao de persistencia — migracao v1->v2, round-trip com as quatro colecoes povoadas, fail-closed, rollback no build pre-Alladin e no build C1, reload real, XSS/privacidade e round-trip de backup; preservacao no Finalizar Sessao — agregado sobrevive ao encerramento operacional inclusive em schema futuro, Zona de Perigo continua apagando, e falha de copia aborta o ato inteiro) e causalidade entre geracoes da base (replay pos-wipe rejeitado, mixed-build nos dois sentidos contra o build baseline servido por `git archive`, seqlock epoch-documento-epoch, bootstrap deterministico e deduplicacao por `tipo:token`) |
-| `full` | 43 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
+| `standard` | 34 | navegacao NAV-01..NAV-03 (cinco primarios, seis filhos Forex, cinco filhos Research e N2/N3), smoke, Configuracoes, Galton Board, Planejamento FX, NoCoda, Pivots, guardas de ordem, Operacao Unica (identidade, finalizacao, historico e fiacao) cotacao USD/BRL, fases visiveis, tres colunas do Exec, Financas Pessoais (fundacao, preservacao na finalizacao, round-trip de backup e navegacao; Orcamento Mensal, Dividas & Credito, Comparativo Mensal e Visao Geral) e Alladin (unidade em Chromium isolado — moeda, ids, write gate transacional, owners/isSelf, regimes de classificacao, cripto com network, symbolHistory, falha parcial, integridade referencial; integracao de persistencia — migracao v1->v2, round-trip com as quatro colecoes povoadas, fail-closed, rollback no build pre-Alladin e no build C1, reload real, XSS/privacidade e round-trip de backup e navegacao; Orcamento Mensal, Dividas & Credito, Comparativo Mensal e Visao Geral) e Alladin (unidade em Chromium isolado — moeda, ids, write gate transacional, owners/isSelf, regimes de classificacao, cripto com network, symbolHistory, falha parcial, integridade referencial; integracao de persistencia — migracao v1->v2, round-trip com as quatro colecoes povoadas, fail-closed, rollback no build pre-Alladin e no build C1, reload real, XSS/privacidade e round-trip de backup; preservacao no Finalizar Sessao — agregado sobrevive ao encerramento operacional inclusive em schema futuro, Zona de Perigo continua apagando, e falha de copia aborta o ato inteiro) e causalidade entre geracoes da base (replay pos-wipe rejeitado, mixed-build nos dois sentidos contra o build baseline servido por `git archive`, seqlock epoch-documento-epoch, bootstrap deterministico e deduplicacao por `tipo:token`) |
+| `full` | 45 | finalizacao, storage, falhas/recuperacao de persistencia, senha, XSS, integridade de estado, corrida assincrona, build, service worker e Notas |
 
 O baseline `d9510dbb55f0` tinha 46 scripts e `standard` 6/6. O candidato
 `codex/galton-board` tem 53 scripts e acrescenta a suite focal ao tier standard. Essa

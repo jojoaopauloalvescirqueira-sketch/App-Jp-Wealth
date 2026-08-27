@@ -495,22 +495,21 @@ def run_state_cases(browser, url):
 
 
 def run_ui_flow(browser, url):
-    # Fluxo real de interface na tela Contabilidade: criar plano, fechar mês,
-    # registrar aporte, conferir KPIs/gráfico/tabela e contenção em viewport móvel.
+    # NAV2-F/G: Planejamento é filho Forex. A rota canônica sempre entra em
+    # overview; o alias físico `fxplan` preserva a visão corrente.
     context, page, observed = prepare_page(browser, url)
-    page.click('.tab[data-screen="fxplan"]')
+    assert page.evaluate("() => JPWNavigation.navigate('forex-planning')") is True
+    assert page.evaluate("() => JPWFx.ui.getView()") == "overview"
     page.wait_for_selector("#fxpCreateBtn")
-    # No estado vazio o submenu pode registrar a intenção visual, mas não cria
-    # plano nem toca em S.fxPlanning. A criação continua sendo ação exclusiva
-    # do formulário e a intenção volta a Visão Geral antes do fluxo principal.
-    page.focus("#fxplanNavTrigger")
-    page.keyboard.press("ArrowDown")
-    page.click('#fxplanNavSubmenu [data-nav-sub-view="table"]')
+
+    # No estado vazio trocar visão é intenção visual, não criação de plano.
+    assert page.evaluate("() => JPWFx.ui.selectView('table')") is True
+    assert page.evaluate("() => JPWNavigation.navigate('fxplan')") is True
     empty_nav = page.evaluate(
-        "() => ({view: window.JPWFx.ui.getView(), plan: S.fxPlanning.plan, create: !!document.querySelector('#fxpCreateBtn')})"
+        "() => ({view: JPWFx.ui.getView(), child: JPWNavigation.current().child, plan: S.fxPlanning.plan, create: !!document.querySelector('#fxpCreateBtn')})"
     )
-    assert empty_nav == {"view": "table", "plan": None, "create": True}, empty_nav
-    page.evaluate("() => window.JPWFx.ui.selectView('overview')")
+    assert empty_nav == {"view": "table", "child": "forex-planning", "plan": None, "create": True}, empty_nav
+    page.evaluate("() => JPWFx.ui.selectView('overview')")
     page.fill("#fxpName", "Plano UI")
     page.fill("#fxpStart", "2026-01")
     page.fill("#fxpHorizon", "24")
@@ -523,165 +522,49 @@ def run_ui_flow(browser, url):
     summary = page.text_content("#fxpMainChartSummary")
     assert summary and "projeção" in summary.lower(), "resumo textual do gráfico ausente"
 
-    # O acionador continua filho direto de #nav para não quebrar Pill/Kinetic,
-    # mas a segunda faixa é irmã estrutural do header, não popover interno.
     nav_contract = page.evaluate(
         """() => ({
-          directTrigger: document.querySelector('#nav > #fxplanNavTrigger') !== null,
-          directPanel: document.querySelector('#nav > #fxplanNavSubmenu') !== null,
-          structuralOrder: document.querySelector('header').nextElementSibling?.id === 'navSubShell'
-            && navSubShell.nextElementSibling?.id === 'gdContextRow',
-          popupTriggers: [...document.querySelectorAll('#nav > .tab[aria-haspopup]')].map(el => el.id),
-          keys: [...document.querySelectorAll('#fxplanNavSubmenu [data-nav-sub-view]')]
-            .map(el => el.dataset.navSubView),
-          descriptions: [...document.querySelectorAll('#fxplanNavSubmenu .nav-sub-item-desc')]
-            .map(el => el.textContent.trim()),
+          noPrimary: document.querySelector('#nav > #fxplanNavTrigger') === null,
+          noSubmenu: document.querySelector('#fxplanNavSubmenu') === null,
           duplicateInternalNav: document.querySelectorAll('#fxPlanningRoot [data-fxp-view]').length,
-          api: !!(window.JPWFx.ui && window.JPWFx.ui.selectView && window.JPWFx.ui.getView)
+          api: !!(window.JPWFx.ui && window.JPWFx.ui.selectView && window.JPWFx.ui.getView),
+          routes: JPWNavigation.routes().map(route => route.id),
+          children: JPWNavigation.children('forex').map(route => route.id),
+          contextual: [...document.querySelectorAll('[data-nav-context="forex-planning"] [data-nav-local-view]')]
+            .map(button => button.dataset.navLocalView),
+          resolved: JPWNavigation.resolve('fxplan'),
+          active: [...document.querySelectorAll('#appMain > .screen.active')].map(el => el.id),
+          primary: document.querySelector('#nav > .tab.active')?.dataset.primary
         })"""
     )
-    assert nav_contract["directTrigger"] and not nav_contract["directPanel"], "faixa continuou presa dentro de #nav"
-    assert nav_contract["structuralOrder"], f"faixa fora da ordem header → submenu → contexto: {nav_contract}"
-    assert nav_contract["popupTriggers"] == [], f"faixa estrutural ainda anuncia popup: {nav_contract}"
-    assert nav_contract["keys"] == ["overview", "planning", "actuals", "table"], nav_contract
-    assert all(nav_contract["descriptions"]), "descrições contextuais ausentes"
-    assert nav_contract["duplicateInternalNav"] == 0, "tabs equivalentes continuam dentro do conteúdo"
-    assert nav_contract["api"], "superfície visual JPWFx.ui do submenu ausente"
+    assert nav_contract["noPrimary"] and nav_contract["noSubmenu"], nav_contract
+    assert nav_contract["duplicateInternalNav"] == 0, "tabs equivalentes voltaram ao conteúdo"
+    assert nav_contract["api"], "superfície visual JPWFx.ui ausente"
+    assert nav_contract["routes"] == ["dashboard", "forex-overview", "personal-finance", "research-forex", "alladin"], nav_contract
+    assert nav_contract["children"] == ["forex-overview", "forex-preparation", "forex-account", "forex-operation", "forex-reconciliation", "forex-planning"], nav_contract
+    assert nav_contract["contextual"] == ["overview", "planning", "actuals", "table"], nav_contract
+    assert nav_contract["resolved"]["accepted"] and nav_contract["resolved"]["source"] == "compatibility", nav_contract
+    assert nav_contract["resolved"]["child"] == "forex-planning", nav_contract
+    assert nav_contract["active"] == ["fxplan"] and nav_contract["primary"] == "forex", nav_contract
 
-    # Fechada ocupa zero; aberta cresce no fluxo, desloca contexto e conteúdo e
-    # nunca sobrepõe a linha seguinte. A travessia por ponteiro preserva o delay.
-    page.keyboard.press("Escape")
-    page.wait_for_timeout(340)
-    before_open = page.evaluate(
-        """() => ({
-          shell: navSubShell.getBoundingClientRect(),
-          context: gdContextRow.getBoundingClientRect(),
-          main: appMain.getBoundingClientRect()
-        })"""
-    )
-    page.hover("#fxplanNavTrigger")
-    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.wait_for_timeout(340)
-    after_open = page.evaluate(
-        """() => ({
-          shell: navSubShell.getBoundingClientRect(),
-          context: gdContextRow.getBoundingClientRect(),
-          main: appMain.getBoundingClientRect(),
-          position: getComputedStyle(navSubShell).position,
-          shadow: getComputedStyle(navSubShell).boxShadow,
-          tones: {
-            header: getComputedStyle(document.querySelector('header')).backgroundColor,
-            submenu: getComputedStyle(navSubShell).backgroundColor,
-            context: getComputedStyle(gdContextRow).backgroundColor
-          }
-        })"""
-    )
-    shift = after_open["shell"]["height"] - before_open["shell"]["height"]
-    assert shift > 70, f"faixa não ganhou altura estrutural: {before_open} -> {after_open}"
-    assert after_open["context"]["y"] - before_open["context"]["y"] > 70, "contexto não foi deslocado"
-    assert after_open["main"]["y"] - before_open["main"]["y"] > 70, "conteúdo não foi deslocado"
-    assert after_open["shell"]["y"] + after_open["shell"]["height"] <= after_open["context"]["y"] + 1, (
-        f"faixa sobrepõe contexto: {after_open}"
-    )
-    assert after_open["position"] == "static" and after_open["shadow"] == "none", after_open
-    assert len(set(after_open["tones"].values())) == 3, f"faixa não tem terceiro tom próprio: {after_open['tones']}"
-    page.hover("#fxplanNavSubmenu")
-    page.wait_for_timeout(450)
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "travessia acionador → faixa fechou cedo"
-    page.mouse.move(12, 420)
-    page.wait_for_timeout(250)
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "delay menor que 300 ms"
-    page.wait_for_timeout(220)
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "false", "submenu não fechou após 400 ms"
-
-    # Teclado com roving tabindex, Home/End e retorno de foco por Escape.
-    page.focus("#fxplanNavTrigger")
-    page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "overview"
-    page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "planning"
-    page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "table"
-    page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.navSubView") == "overview"
-    page.keyboard.press("Escape")
-    assert page.evaluate("() => document.activeElement.id") == "fxplanNavTrigger", "Escape não devolveu foco"
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "false"
-
-    # Clique fixa a faixa: pointerleave, resize e novo clique no acionador não
-    # fecham. Um item interno também mantém aberto; somente clique externo (ou
-    # Escape acessível) encerra o estado fixado.
-    page.click("#fxplanNavTrigger")
-    pinned_open = page.evaluate(
-        "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned})"
-    )
-    assert pinned_open == {"expanded": "true", "pinned": "true"}, pinned_open
-    page.mouse.move(12, 420)
-    page.wait_for_timeout(520)
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "pointerleave fechou faixa fixada"
-    page.set_viewport_size({"width": 1390, "height": 900})
-    page.wait_for_timeout(80)
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "resize fechou faixa fixada"
-    page.click("#fxplanNavTrigger")
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "true", "novo clique alternou faixa fixada"
-    page.click('#fxplanNavSubmenu [data-nav-sub-view="planning"]')
-    assert page.evaluate("() => document.documentElement.dataset.navSubPinned") == "true"
-    page.click("#fxPlanningRoot .fxp-note")
-    outside_close = page.evaluate(
-        "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null})"
-    )
-    assert outside_close == {"expanded": "false", "pinned": None}, f"clique externo não fechou: {outside_close}"
-
-    # ORDEM IMPORTA, e era daqui que vinha a intermitência. O handler de resize
-    # fecha a faixa TRANSITÓRIA (40-app/11-operational-shell.js). A viewport volta
-    # de 1390 para 1440 aqui, e o bloco seguinte abre a faixa por teclado: quando
-    # o evento era processado depois da abertura, fechava o que acabara de abrir
-    # e o teste acusava focus trap onde não havia nenhum. Esperar o evento ser
-    # efetivamente PROCESSADO elimina a janela, sem afrouxar o que se verifica.
-    page.evaluate(
-        "() => { window.__resizeSeen = false;"
-        "        window.addEventListener('resize', () => { window.__resizeSeen = true; }, {once: true}); }")
-    page.set_viewport_size({"width": 1440, "height": 900})
-    page.wait_for_function("() => window.__resizeSeen === true")
-
-    # Tab sai naturalmente da faixa sem criar focus trap; abertura por seta é
-    # transitória e não cria o estado fixado.
-    page.focus("#fxplanNavTrigger")
-    page.keyboard.press("ArrowDown")
-    page.keyboard.press("Tab")
-    page.wait_for_timeout(20)
-    tab_exit = page.evaluate(
-        "() => ({expanded: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null, inside: fxplanNavSubmenu.contains(document.activeElement)})"
-    )
-    assert tab_exit == {"expanded": "true", "pinned": None, "inside": False}, f"Tab ficou preso ou fixou a faixa: {tab_exit}"
-    page.keyboard.press("Escape")
-    assert page.get_attribute("#fxplanNavTrigger", "aria-expanded") == "false"
-
-    # Cada destino usa a mesma chave dos renderizadores existentes, ativa
-    # somente #fxplan e mantém uma única fonte visível de navegação.
+    # As quatro visões continuam selecionáveis pela API pública do módulo e
+    # preservam um único workspace físico ativo.
     for key in ("overview", "planning", "actuals", "table"):
-        page.focus("#fxplanNavTrigger")
-        page.keyboard.press("ArrowDown")
-        page.click(f'#fxplanNavSubmenu [data-nav-sub-view="{key}"]')
         selected = page.evaluate(
             """key => ({
-              view: window.JPWFx.ui.getView(),
-              screens: [...document.querySelectorAll('.screen.active')].map(el => el.id),
-              current: document.querySelector(`#fxplanNavSubmenu [data-nav-sub-view="${key}"]`)?.getAttribute('aria-current'),
-              duplicateInternalNav: document.querySelectorAll('#fxPlanningRoot [data-fxp-view]').length,
-              expanded: fxplanNavTrigger.getAttribute('aria-expanded')
+              accepted: JPWFx.ui.selectView(key),
+              view: JPWFx.ui.getView(),
+              screens: [...document.querySelectorAll('#appMain > .screen.active')].map(el => el.id),
+              visiblePanels: [...document.querySelectorAll('#fxPlanningRoot [id^="fxpPanel-"]')]
+                .filter(el => !el.hidden).map(el => el.id)
             })""",
             key,
         )
-        assert selected == {
-            "view": key,
-            "screens": ["fxplan"],
-            "current": "page",
-            "duplicateInternalNav": 0,
-            "expanded": "true",
-        }, selected
+        assert selected["accepted"] is True and selected["view"] == key, selected
+        assert selected["screens"] == ["fxplan"], selected
+        assert selected["visiblePanels"] == [f"fxpPanel-{key}"], selected
 
-    page.click('#fxplanNavSubmenu [data-nav-sub-view="actuals"]')
+    page.evaluate("() => JPWFx.ui.selectView('actuals')")
     page.wait_for_selector("#fxpActBtn")
     page.fill("#fxpActValue", "-0,70")
     page.click("#fxpActBtn")
@@ -692,117 +575,81 @@ def run_ui_flow(browser, url):
     page.click("#fxpCBtn")
     page.wait_for_selector('button[data-fxp-del]')
 
-    page.evaluate("() => window.scrollTo(0, 0)")
-    page.hover("#fxplanNavTrigger")
-    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#fxplanNavSubmenu [data-nav-sub-view="overview"]')
+    page.evaluate("() => JPWFx.ui.selectView('overview')")
     page.wait_for_selector("#fxpMainChart svg")
     body_text = page.text_content("#fxPlanningRoot")
     # 1000 × (1 − 0,007) + 540/5,40 = 993 + 100 = 1.093,00
     assert "1.093,00" in body_text, "patrimônio do plano não reflete fechamento + aporte"
     assert "R$ 5,4000" in body_text, "câmbio médio de aquisição ausente na visão geral"
 
-    page.evaluate("() => window.scrollTo(0, 0)")
-    page.hover("#fxplanNavTrigger")
-    page.wait_for_function("() => fxplanNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#fxplanNavSubmenu [data-nav-sub-view="table"]')
+    page.evaluate("() => JPWFx.ui.selectView('table')")
     page.wait_for_selector(".fxp-tablewrap .fxp-badge-real")
     table_text = page.text_content("#fxPlanningRoot")
     assert "BASELINE" in table_text and "VIGENTE" in table_text, "tabela sem separação baseline/vigente"
 
-    # Navegação principal: as cinco telas alternam estados ativos exclusivos.
+    # O registry global permanece estritamente canônico; cada primário ativa
+    # exatamente sua section. Em seguida, a compatibilidade volta ao fxplan.
     nav_state = page.evaluate(
-        """() => {
-        const out=[];
-        document.querySelectorAll('#nav .tab[data-screen]').forEach(t=>{
-            t.click();
-            out.push({screen:t.dataset.screen,
-                      active:[...document.querySelectorAll('.screen.active')].map(s=>s.id),
-                      tabActive:t.classList.contains('active')});
-        });
-        return out;
-    }"""
+        """() => JPWNavigation.routes().map(route => {
+          const accepted = JPWNavigation.navigate(route.id);
+          return {route: route.id, accepted,
+            active: [...document.querySelectorAll('#appMain > .screen.active')].map(el => el.id),
+            primary: document.querySelector('#nav > .tab.active')?.dataset.primary};
+        })"""
     )
-    assert [r["screen"] for r in nav_state] == ["dash", "exec", "contas", "contab", "fxplan", "finpes"], (
-        f"rail deveria ter as seis telas na ordem: {nav_state}"
+    expected = [
+        ("dashboard", "dash", "dashboard"),
+        ("forex-overview", "exec", "forex"),
+        ("personal-finance", "finpes", "personal-finance"),
+        ("research-forex", "research", "research"),
+        ("alladin", "alladin", "alladin"),
+    ]
+    assert [(row["route"], row["active"][0], row["primary"]) for row in nav_state] == expected, nav_state
+    assert all(row["accepted"] and len(row["active"]) == 1 for row in nav_state), nav_state
+    assert page.evaluate("() => JPWNavigation.navigate('fxplan')") is True
+    compat = page.evaluate(
+        """() => ({active: document.querySelector('#appMain > .screen.active')?.id,
+          primary: document.querySelector('#nav > .tab.active')?.dataset.primary,
+          canonical: JPWNavigation.current().canonical,
+          child: JPWNavigation.current().child,
+          view: JPWNavigation.current().localView?.view})"""
     )
-    for row in nav_state:
-        assert row["active"] == [row["screen"]], f"telas ativas divergentes: {row}"
-        assert row["tabActive"], f"tab sem estado ativo: {row}"
-    # Contabilidade sem restos da feature.
+    assert compat == {"active": "fxplan", "primary": "forex", "canonical": "forex-planning",
+                      "child": "forex-planning", "view": "table"}, compat
+
     assert page.evaluate(
         "() => document.querySelector('#contab #fxPlanningCard, #contab [id^=fxp], #contab .fxp-section') === null"
     ), "restos do Planejamento FX dentro de #contab"
-    # Ativação hierárquica por teclado: Enter abre o submenu e Enter no item
-    # seleciona o destino, preservando a navegação integral sem mouse.
-    page.click('.tab[data-screen="dash"]')
-    page.focus('.tab[data-screen="fxplan"]')
-    page.keyboard.press("Enter")
-    assert page.evaluate(
-        "() => document.activeElement.dataset.navSubView === window.JPWFx.ui.getView() && document.documentElement.dataset.navSubPinned === 'true'"
-    ), "Enter não focou o modo visual vigente"
-    page.keyboard.press("Enter")
-    page.wait_for_selector("#fxplan.active", state="attached")
-    # Refresh estando em Planejamento FX: comportamento canônico atual (sem rota
-    # persistida, o boot volta ao Dashboard) e o plano segue renderizado ao voltar.
-    page.reload()
-    page.wait_for_function("() => window.JPWFx && window.JPWFx.state")
-    active_after = page.evaluate("() => [...document.querySelectorAll('.screen.active')].map(s=>s.id)")
-    assert active_after == ["dash"], f"refresh deveria voltar ao Dashboard (rota não persistida): {active_after}"
-    page.click('.tab[data-screen="fxplan"]')
+
+    # Sem persistência de rota: refresh volta ao Dashboard; o plano persiste e
+    # volta a renderizar quando a fachada física é chamada novamente.
+    page.reload(wait_until="load")
+    page.wait_for_function("() => window.JPWFx && window.JPWFx.state && window.JPWNavigation")
+    active_after = page.evaluate("() => [...document.querySelectorAll('#appMain > .screen.active')].map(s=>s.id)")
+    assert active_after == ["dash"], f"refresh deveria voltar ao Dashboard: {active_after}"
+    assert page.evaluate("() => JPWNavigation.navigate('fxplan')") is True
     page.wait_for_selector(".fxp-section")
 
+    # Contenção móvel permanece responsabilidade da superfície FX, mesmo sem
+    # um acionador global próprio. Todas as quatro visões são verificadas.
     page.set_viewport_size({"width": 390, "height": 844})
     page.wait_for_timeout(250)
-    page.click("[data-shell-menu-toggle]")
-    page.click("#fxplanNavTrigger")
-    page.wait_for_timeout(340)
-    mobile_menu = page.evaluate(
-        """() => ({
-          shell: document.documentElement.dataset.shellMenu,
-          fx: fxplanNavTrigger.getAttribute('aria-expanded'),
-          shellHeight: navSubShell.getBoundingClientRect().height,
-          contextY: gdContextRow.getBoundingClientRect().y,
-          submenuBottom: navSubShell.getBoundingClientRect().bottom,
-          position: getComputedStyle(navSubShell).position
-        })"""
-    )
-    assert mobile_menu["shell"] is None and mobile_menu["fx"] == "true", mobile_menu
-    assert mobile_menu["position"] == "static" and mobile_menu["shellHeight"] > 200, mobile_menu
-    assert mobile_menu["submenuBottom"] <= mobile_menu["contextY"] + 1, f"submenu mobile sobreposto: {mobile_menu}"
-    page.click('#fxplanNavSubmenu [data-nav-sub-view="actuals"]')
-    mobile_selected = page.evaluate(
-        """() => ({
-          shell: document.documentElement.dataset.shellMenu || null,
-          fx: fxplanNavTrigger.getAttribute('aria-expanded'),
-          pinned: document.documentElement.dataset.navSubPinned,
-          view: window.JPWFx.ui.getView(),
-          active: [...document.querySelectorAll('.screen.active')].map(el => el.id)
-        })"""
-    )
-    assert mobile_selected == {
-        "shell": None, "fx": "true", "pinned": "true", "view": "actuals", "active": ["fxplan"]
-    }, mobile_selected
-    # Segundo toque no acionador mantém o estado fixado; tocar fora encerra.
-    page.click("[data-shell-menu-toggle]")
-    page.click("#fxplanNavTrigger")
-    mobile_toggle = page.evaluate(
-        "() => ({shell: document.documentElement.dataset.shellMenu || null, fx: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned})"
-    )
-    assert mobile_toggle == {"shell": None, "fx": "true", "pinned": "true"}, mobile_toggle
-    page.click("#fxPlanningRoot .fxp-note")
-    assert page.evaluate(
-        "() => ({fx: fxplanNavTrigger.getAttribute('aria-expanded'), pinned: document.documentElement.dataset.navSubPinned || null})"
-    ) == {"fx": "false", "pinned": None}, "toque externo não fechou faixa mobile"
-    scroll = page.evaluate(
-        "() => ({doc: document.documentElement.scrollWidth, win: window.innerWidth})"
-    )
-    assert scroll["doc"] <= scroll["win"] + 2, (
-        f"scroll horizontal da página em viewport móvel: {scroll}"
-    )
+    mobile = []
+    for key in ("overview", "planning", "actuals", "table"):
+        mobile.append(page.evaluate(
+            """key => {
+              JPWFx.ui.selectView(key);
+              return {key, doc: document.documentElement.scrollWidth, win: innerWidth,
+                screen: document.querySelector('#appMain > .screen.active')?.id,
+                panel: [...document.querySelectorAll('#fxPlanningRoot [id^="fxpPanel-"]')]
+                  .find(el => !el.hidden)?.id || null};
+            }""",
+            key,
+        ))
+    assert all(row["doc"] <= row["win"] + 2 for row in mobile), f"overflow móvel: {mobile}"
+    assert all(row["screen"] == "fxplan" and row["panel"] == f"fxpPanel-{row['key']}" for row in mobile), mobile
     assert not observed["pageerror"], f"pageerror no fluxo de UI: {observed['pageerror']}"
     context.close()
-
 
 def run_onboarding_smoke(browser, url):
     # A delegacao de reserveCalc() nao pode quebrar a abertura automatica do

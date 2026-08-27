@@ -18,12 +18,6 @@
 const EXEC_VIEWS = [
   ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
-  // Calendario Economico: casa canonica da ferramenta. O overlay #ecalOverlay
-  // continua existindo com seus dois pontos de entrada — sao duas instancias
-  // visuais do mesmo dominio, nao dois calendarios.
-  ['ecal', 'execEcal'],
-  ['nocoda', 'execNocoda'],
-  ['pivots', 'execPivots'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
   // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
@@ -33,22 +27,8 @@ const EXEC_VIEWS = [
   // partir das grades vivas.
   ['history', 'execHistory']
 ];
-// Workspaces cujo conteudo e montado ao entrar, em vez de viver estatico no
-// HTML. NoCoda e Pivots derivam seus seletores do catalogo vivo do Motor de
-// Lote, entao precisam repintar a cada entrada — um instrumento destravado em
-// Configuracoes tem de aparecer sem recarregar a pagina.
-//
-// Repintar NAO descarta rascunho: o estado efemero de cada workspace vive em
-// variaveis de modulo, e o render o reconstitui. Sair do Estudos dos Pivots com
-// um pivot em edicao e voltar devolve o formulario como estava.
+// Workspaces cujo conteúdo depende de estado vivo são montados ao entrar.
 const EXEC_VIEW_RENDERERS = {
-  nocoda: () => { if (window.JPWNocodaUI && typeof window.JPWNocodaUI.render === 'function') window.JPWNocodaUI.render(); },
-  pivots: () => { if (window.JPWPivotsUI && typeof window.JPWPivotsUI.render === 'function') window.JPWPivotsUI.render(); },
-  // Calendario: o cache do widget de Noticias e vivo (poll de 5 min, tique de
-  // 1 min), entao a entrada no workspace repinta a partir do dado corrente. O
-  // dominio nao e consultado pela rede aqui — quem revalida e o ciclo do
-  // proprio widget, em 15-ff-news.js.
-  ecal: () => { if (window.JPWEcalUI && typeof window.JPWEcalUI.render === 'function') window.JPWEcalUI.render(); },
   // Repinta a cada entrada porque o conteudo depende de S.operationHistory, que
   // muda quando uma operacao e finalizada noutra parte do app.
   history: () => { if (window.JPWHistoryUI && typeof window.JPWHistoryUI.render === 'function') window.JPWHistoryUI.render(); }
@@ -80,6 +60,12 @@ function execSetView(view) {
 }
 
 function execSelectView(view) {
+  // Compatibilidade de API: consumidores legados não recuperam ownership Exec.
+  // O shim delega ao resolver canônico e não altera `execView`.
+  const researchView={ecal:'calendar',nocoda:'nocoda',pivots:'pivots'}[view];
+  if(researchView&&window.JPWNavigation&&typeof window.JPWNavigation.navigateLocal==='function'){
+    return window.JPWNavigation.navigateLocal('research',researchView);
+  }
   if (!EXEC_VIEWS.some(([key]) => key === view)) return false;
   execViewExplicit = true;
   execSetView(view);

@@ -44,6 +44,12 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
 LSKEY = "jpwealth_v9_state"
+# Build PRE-PROTOCOLO canonico para a prova mixed-build (E6/E15). PINADO e imutavel,
+# como o OLD_BUILD_SHA de alladin_foundation_test.py: e o ultimo build que NAO fala
+# jpwealth-session-finalized-v2 nem conhece a geracao da base. Usar HEAD aqui deixou
+# de ser valido no instante em que o candidato virou commit — HEAD passou a conter o
+# protocolo, e o caso comparava NEW BUILD contra NEW BUILD.
+EPOCH_BASELINE_SHA = "1eddd29ee73d3e8fbc1713e073a0c22ce71350ab"
 EPOCH_KEY = "jpwealth_base_epoch_v1"
 SENTINEL = "BASE-V0-LEGACY"
 
@@ -460,9 +466,13 @@ def main() -> int:
             # ---- E6 e E15: mixed-build contra o BASELINE servido por git archive ----
             def e6_e15():
                 nonlocal baseline_dir
-                sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
-                                     capture_output=True, text=True).stdout.strip()
-                tar_bytes = subprocess.run(["git", "archive", sha], cwd=ROOT,
+                tem_sha = subprocess.run(["git", "cat-file", "-e", EPOCH_BASELINE_SHA],
+                                         cwd=ROOT, capture_output=True)
+                if tem_sha.returncode != 0:
+                    falhas.append("E6/E15: ENVIRONMENT_ERROR — o SHA baseline pre-protocolo "
+                                  "nao existe neste clone; caso nao executado")
+                    return
+                tar_bytes = subprocess.run(["git", "archive", EPOCH_BASELINE_SHA], cwd=ROOT,
                                            capture_output=True).stdout
                 baseline_dir = tempfile.mkdtemp(prefix="jpwealth-baseline-")
                 with tarfile.open(fileobj=io.BytesIO(tar_bytes)) as tf:

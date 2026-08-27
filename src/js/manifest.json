@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "5e0313dcb26f97d6eecaf8fcf4ff95e68ea5bc245214434eaaad9769f0700bf6"
+      "sha256": "7e16ab4b8ddab042301789d73a2f31c13b1ddf699f995df2f440c6f23ca723ce"
     },
     {
       "order": 25,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "ace52e15a635890922914ef643a4cc589340daa764da5407f94fe8ff0eb76df7"
+      "sha256": "892d71b59749aad33226fea8d45d7057b708c924ff13e78dfd2783ae7c76d05f"
     },
     {
       "order": 32,
@@ -241,8 +241,8 @@
     {
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
-      "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada do segundo nivel (N1)",
-      "sha256": "014f650cb96aae9e929055d75d8e13b2965026b5c04147b91d7f1c9e685cb939"
+      "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
+      "sha256": "8597e99e6328c84a97544711c100642c030374f343e0eb15a402298c2635ad4d"
     },
     {
       "order": 41,
@@ -368,7 +368,7 @@
       "order": 61,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "49a50ce6e91cdba8a303cf411c6f807567445d1a64f19848b09e35ba6de1fcf0"
+      "sha256": "b5cf74a9c5d251341cf2ca4257fb6f0f947ea7d746513ee37426f5c6d04ae298"
     },
     {
       "order": 62,
@@ -450,6 +450,12 @@
       "path": "src/js/10-domain/13-alladin.js",
       "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
       "sha256": "fb83e7077740f6efcdeff369258f0c439ff14d020a6d72c10ecb5e8b0c92c383"
+    },
+    {
+      "order": 76,
+      "path": "src/js/20-ui/23-research-views.js",
+      "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
+      "sha256": "09da5babc3957e15bf6b4db09263f7b998b28a1094b33dc396ad9ec1ca09473e"
     }
   ]
 }

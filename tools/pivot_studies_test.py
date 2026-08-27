@@ -379,11 +379,18 @@ def run_sorting(page):
 # ---------------------------------------------------------------- interface
 
 def open_pivots(page):
-    """Leva o app ao workspace Estudos dos Pivots pela navegacao real."""
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => execNavTrigger.getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-sub-view="pivots"]')
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'pivots'")
+    """NAV3-D: alias abre Research/Forex/Pivots sem falso owner Exec."""
+    assert page.evaluate("() => JPWNavigation.navigate('pivots')") is True
+    page.wait_for_function("() => window.JPWResearch.ui.getView() === 'pivots'")
+    state = page.evaluate("""() => ({
+      primary:JPWNavigation.current().primary,
+      child:JPWNavigation.current().child,
+      canonical:JPWNavigation.current().canonical,
+      view:JPWNavigation.current().localView,
+      execActive:document.getElementById('exec').classList.contains('active')
+    })""")
+    assert state == {'primary':'research','child':'research-forex','canonical':'research-forex',
+                     'view':{'surface':'research','view':'pivots'},'execActive':False}, state
     page.wait_for_selector("#pvInstrument")
 
 
