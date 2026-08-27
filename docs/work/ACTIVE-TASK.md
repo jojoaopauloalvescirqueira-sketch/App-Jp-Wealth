@@ -1,65 +1,66 @@
-# Tarefa ativa — NAV-06A · Documentation Reconciliation
+# Tarefa ativa — Post-Merge Final Reconciliation
 
-- Data de abertura: 2026-08-26
-- `BASE_SHA`: `2c1e0a441d77e01c8c9acaf0506da333254c8196`
-- Branch: `codex/navigation-ia`
-- Worktree: `JP Wealth OS Navigation IA`
-- Classificação: **N0-D**, documentação e governança sem mudança de runtime
-- Autoridade: **A2**, reconciliação delimitada aprovada
-- Estado: candidato NAV-06A reconciliado; aguarda gate humano de commit
-- Git/publicação: NAV-01/02/03 commitados; commit NAV-06A, push, merge e deploy
-  **não autorizados**
+- Data: 2026-08-26
+- `BASE_SHA`: `75d10bcb3dc02c1a62a369df6cc1cd17387488ec`
+- Branch: `main`
+- Worktree: `/private/tmp/jpw-navigation-main-integration`
+- Classificação: **N0-D**, contexto operacional sem mudança de runtime
+- Autoridade: **A4**, edição e commit doc-only em `main` explicitamente autorizados
+- Estado: reconciliação pós-merge concluída pelo presente checkpoint documental
+- Publicação: push e deploy pendentes; nenhum dos dois foi executado
 
-## Objetivo
+## Objetivo e estado integrado
 
-Reconciliar o contexto operacional com o Git real após os três checkpoints da
-migração de navegação:
+Fechar o drift dos contextos operacionais após a integração fast-forward da
+Navigation em `main`. A sequência integrada é:
 
-1. NAV-01: `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d` — commitado;
-2. NAV-02: `9b5ea298953b3c8bb270864151a88e5c69419e61` — commitado;
-3. NAV-03: `2c1e0a441d77e01c8c9acaf0506da333254c8196` — commitado.
+1. NAV-01: `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d` — Semantic Route Foundation;
+2. NAV-02: `9b5ea298953b3c8bb270864151a88e5c69419e61` — Forex Consolidation;
+3. NAV-03: `2c1e0a441d77e01c8c9acaf0506da333254c8196` — Research Consolidation;
+4. NAV-06A: `75d10bcb3dc02c1a62a369df6cc1cd17387488ec` — Documentation Reconciliation.
 
-`main` local e `origin/main` permanecem em
-`1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`; Navigation está três commits à
-frente e zero atrás. Merge, push e deploy não foram executados nem autorizados.
+`main` recebeu essa sequência por fast-forward. `origin/main` permanece em
+`1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`; portanto, push e deploy continuam
+pendentes e dependem de gates separados.
 
-## Escopo autorizado — exatamente quatro arquivos
+## Estrutura operacional vigente
 
-1. `SESSION_HANDOFF.md`;
+- Dashboard;
+- Forex: Visão Geral, Preparação, Conta, Operação, Apuração e Planejamento;
+- Finanças Pessoais;
+- Research: Forex, Ações, Stocks, REITs e Others; Research/Forex contém
+  Calendário, NoCoda e Pivots;
+- Alladin: placeholder estrutural; desenvolvimento funcional pausado;
+- Galton: permanece em Configurações.
+
+## Escopo autorizado — exatamente três arquivos
+
+1. `docs/governance/CURRENT-STATE.md`;
 2. este `docs/work/ACTIVE-TASK.md`;
-3. `docs/governance/CURRENT-STATE.md`;
-4. `CHANGELOG.md`.
+3. `SESSION_HANDOFF.md`.
 
-Qualquer quinto arquivo exige parada e nova autorização.
+Nenhum quarto arquivo foi alterado.
 
-## Exclusões e invariantes
+## Invariantes e verificação
 
-- nenhum byte de runtime, HTML, CSS, JavaScript, manifest, worker, teste, gate,
-  build ID ou portátil muda;
-- nenhuma regra financeira, schema, storage, persistência ou dado muda;
-- Dashboard, Forex, Finanças Pessoais, Research e o placeholder Alladin mantêm
-  o estado validado no commit `2c1e0a4`;
-- Galton permanece em Configurações;
-- o desenvolvimento funcional Alladin permanece pausado e seu worktree não é tocado;
-- o histórico factual não é reescrito: somente afirmações operacionais presentes
-  são alinhadas ao Git atual.
+- nenhum byte de runtime, HTML, CSS, JavaScript, manifest, service worker,
+  teste, build, portátil, schema, storage ou persistência muda;
+- nenhum merge adicional, rebase, stash, reset ou clean é executado;
+- `git diff --check` e `git diff --cached --check` devem passar;
+- exatamente três arquivos documentais entram no commit;
+- `main` antes do commit permanece em `75d10bc`;
+- `validate_project` PASS com 76 scripts e 415 IDs e full **43/43 PASS** da
+  integração permanecem válidos, sem necessidade de repetição;
+- Alladin permanece em `1eddd29e`, com 12 modificados e três não rastreados,
+  total 15 e zero drift.
 
-## Verificação do candidato documental
+## Coerência, publicação e rollback
 
-- `git diff --check`;
-- exatamente quatro arquivos alterados e nenhum quinto;
-- revisão integral do diff, exclusivamente factual/documental;
-- busca por afirmações obsoletas de commit pendente ou não executado nos
-  checkpoints NAV-01/02/03;
-- nenhuma afirmação de merge, push ou deploy executado;
-- Alladin em `1eddd29e`, com 12 modificados e três não rastreados, sem drift.
+O presente commit fecha a propagação aprovada nos três contextos operacionais;
+`SYSTEM RECONCILED = SIM`. Não existe mecanismo oficial de índice ou vetor a
+reconstruir. Push e deploy permanecem pendentes e não são autorizados por esta
+tarefa.
 
-O full **43/43 PASS**, browser e PWA do commit `2c1e0a4` permanecem válidos:
-nenhum input de produto, teste, manifest, worker, build ou gerado foi alterado.
-
-## Rollback
-
-Antes de commit, rollback é a reversão manual e delimitada somente das edições
-documentais NAV-06A, preservando o commit `2c1e0a4` e qualquer trabalho externo.
-Não usar `reset`, `clean`, `stash` ou reescrita de histórico. Commit, merge,
-push e deploy seguem gates humanos separados.
+Antes do commit, rollback é a reversão manual delimitada destes três arquivos.
+Depois do commit, qualquer reversão exige um novo gate Git; não usar `reset`,
+`clean`, `stash` ou reescrita de histórico.

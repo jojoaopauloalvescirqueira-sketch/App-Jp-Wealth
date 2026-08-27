@@ -1,27 +1,31 @@
 # Estado atual do projeto
 
-## NAV-06A — candidato de reconciliação documental — 2026-08-26
+## Navigation — pós-merge final reconciliado — 2026-08-26
 
-- **BASE_SHA/HEAD:** `2c1e0a441d77e01c8c9acaf0506da333254c8196` em
-  `codex/navigation-ia`; worktree Navigation com quatro documentos modificados.
-- **Histórico Navigation:** NAV-01 `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`,
-  NAV-02 `9b5ea298953b3c8bb270864151a88e5c69419e61` e NAV-03
-  `2c1e0a441d77e01c8c9acaf0506da333254c8196`, todos commitados na branch.
-- **Base principal:** `main` local e `origin/main` em
-  `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`; Navigation está três commits à
-  frente e zero atrás.
-- **Produto:** Dashboard estruturado; Forex e Research consolidados; Finanças
-  Pessoais preservado; Alladin é somente placeholder estrutural e seu
-  desenvolvimento funcional continua pausado. Research/Forex contém Calendário,
-  NoCoda e Pivots; Ações, Stocks, REITs e Others mantêm a estrutura NAV-03.
+- **Base desta reconciliação:** `main` em
+  `75d10bcb3dc02c1a62a369df6cc1cd17387488ec`, integração Navigation concluída
+  por fast-forward. O presente checkpoint doc-only é filho direto dessa base e
+  passa a ser a ponta local de `main` após o commit.
+- **Histórico integrado:** NAV-01 `e2c34bb4c4ac0c0f7a2746ca4687c6a61f64f06d`,
+  NAV-02 `9b5ea298953b3c8bb270864151a88e5c69419e61`, NAV-03
+  `2c1e0a441d77e01c8c9acaf0506da333254c8196` e NAV-06A
+  `75d10bcb3dc02c1a62a369df6cc1cd17387488ec`.
+- **Produto:** cinco primários — Dashboard, Forex, Finanças Pessoais, Research
+  e Alladin. Forex contém Visão Geral, Preparação, Conta, Operação, Apuração e
+  Planejamento. Research contém Forex, Ações, Stocks, REITs e Others;
+  Research/Forex contém Calendário, NoCoda e Pivots. Alladin permanece como
+  placeholder estrutural e seu desenvolvimento funcional continua pausado.
   Galton permanece em Configurações.
-- **Readiness:** runtime, full **43/43**, browser e PWA PASS. O único blocker do
-  NAV-06 era o drift dos quatro documentos operacionais, reconciliado neste
-  candidato N0-D sem alterar produto, teste, build ou artefato gerado.
-- **Git/publicação:** commit NAV-06A, merge, push e deploy não autorizados nem
-  executados.
+- **Readiness:** runtime PASS; `validate_project` PASS com 76 scripts e 415 IDs;
+  full **43/43 PASS**. O commit final desta reconciliação altera somente contexto
+  operacional, sem invalidar as evidências de produto, browser ou PWA.
+- **Git/publicação:** merge local concluído; `origin/main` permanece em
+  `1eddd29ee73d3e8fbc1713e073a0c22ce71350ab`. Push e deploy estão pendentes e
+  não foram executados.
 - **Alladin:** worktree `fix/alladin-session-preservation` em `1eddd29e`, com
   12 arquivos modificados e três não rastreados; zero drift.
+- **Coerência sistêmica:** os contextos operacionais afetados pelo merge foram
+  reconciliados neste checkpoint; `SYSTEM RECONCILED = SIM`.
 
 ## NAV-03 — checkpoint interno commitado de Research Consolidation — 2026-08-26
 
