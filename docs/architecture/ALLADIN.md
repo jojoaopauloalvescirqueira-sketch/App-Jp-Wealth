@@ -215,21 +215,25 @@ Alladin**, junto com `sessionStateFingerprint()` sem proteção — que faz
 `structuredClone(S)` e derruba a entrada do fluxo antes da guarda de preservação
 — e com a revisão do texto de consentimento da tela de finalização.
 
-## Estado do ciclo — PAUSADO em ALD-C3-PRE-PERSISTENCE
+## Estado do ciclo — ALD-C3-PRE-PERSISTENCE implementado
 
-O candidato do C3-PRE + EPOCH está integralmente no commit `1501d46` (nota
-factual: a mensagem desse commit — "docs: reconcile post-merge navigation
-state" — não descreve o conteúdo, que é o candidato Alladin de 15 arquivos).
-O ciclo foi pausado com quatro bloqueadores conhecidos e **não corrigidos**:
-write-before-clear ausente (o clear precede a gravação final);
-`persistNotesAfterSessionWipe` com `catch` vazio capaz de perder o agregado sob
-aviso de sucesso; handler remoto podendo ficar permanentemente somente-leitura
-nos aborts pós-block; e `sessionEpochWriteAndConfirm` sem exigir
-`releitura === valor gravado`. Três decisões humanas pendentes: conduta sem Web
-Locks (DP-1), `wipeAllData` assíncrono (DP-2) e o reconhecimento da janela
-síncrona residual `getItem→setItem` (DP-3). O próximo ciclo funcional é a
-serialização cross-tab dos escritores de `LSKEY` — nenhum mecanismo puramente
-síncrono fecha a janela por completo.
+O candidato do C3-PRE + EPOCH vive em `1501d46` (nota factual: a mensagem desse
+commit não descreve o conteúdo) e foi reconciliado com a main em `dc8a3ec`. O
+ciclo ALD-C3-PRE-PERSISTENCE fechou os quatro bloqueadores: **B1**
+write-before-clear (o documento final é gravado e confirmado por read-back antes
+de qualquer limpeza; a chave principal nunca é removida pela finalização);
+**B2** `sessionCommitFinalizedState` substituiu `persistNotesAfterSessionWipe` —
+falha de gravação vira recusa explícita, jamais sucesso aparente; **B3** o
+handler remoto valida tudo antes de bloquear e roda a mutação em try/finally —
+nenhum caminho deixa a aba permanentemente somente-leitura (a proteção
+anti-ressurreição é a guarda de concorrência do `save()`); **B4** rotação de
+geração exige `releitura === valor` (bootstrap, que é convergência, adota o
+sentinel). Decisões congeladas: DP-1 Web Locks quando disponível, fallback
+DEGRADED explícito e honesto; DP-2 `wipeAllData` assíncrona com a destruição
+inteira dentro do lock; DP-3 a janela síncrona residual `getItem→setItem` é
+limitação formal APENAS do fallback, nunca apresentada como CAS. O backup do
+ramo `changed` é gerado do documento autoritativo capturado, e a revalidação de
+revisão dentro do lock aborta o commit se a base mudou durante a interação.
 
 ## Placeholder de navegação NAV-01
 

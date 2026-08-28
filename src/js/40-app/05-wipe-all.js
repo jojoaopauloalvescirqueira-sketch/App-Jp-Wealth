@@ -1,5 +1,11 @@
 // ============ LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6) ============
-function wipeAllData(){
+// DP-2: wipeAllData é ASSÍNCRONA para participar da serialização cross-tab (o mesmo
+// writer lock da finalização e da importação). Ela NUNCA rejeita — toda falha vira
+// alert e retorno normal — então os chamadores de evento existentes (02-reset.js e o
+// listener abaixo) permanecem corretos: a Promise que eles não aguardam jamais carrega
+// uma rejeição silenciosa. Nenhum caminho destrutivo é fire-and-forget: a destruição
+// inteira acontece DENTRO do lock, antes de a Promise resolver.
+async function wipeAllData(){
   // Guarda de entrada A-005: em modo de recuperação, a limpeza total é interrompida antes
   // do primeiro prompt — "Começar com base vazia" (no aviso do topo) é o equivalente
   // legítimo desta ação enquanto o banco original estiver protegido.
@@ -33,6 +39,7 @@ function wipeAllData(){
     alert('Não foi possível estabelecer uma nova geração da base neste navegador. Nada foi apagado — recarregue a página e tente novamente.');
     return;
   }
+  await sessionAcquireWriteLock(async ()=>{
   blockJPWealthPersistence();
   const cleared=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false});
   if(!cleared.ok){
@@ -42,6 +49,8 @@ function wipeAllData(){
     return;
   }
   S=structuredClone(DEFAULTS);
+  // A guarda de concorrência do save() precisa saber que a chave sumiu de propósito.
+  if(typeof jpWealthAdoptPersistedRaw==='function') jpWealthAdoptPersistedRaw(null);
   // Geração nova: o que for iniciado a partir daqui pode gravar normalmente. O par
   // block+resume deixa o epoch duas casas à frente, então nenhuma continuação da
   // geração anterior volta a casar.
@@ -60,6 +69,7 @@ function wipeAllData(){
   // que o operador por acaso estava quando confirmou a limpeza.
   if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
   alert('A base do JP Wealth foi apagada e o painel voltou ao estado inicial. Preferências locais de interface e cópias de recuperação existentes foram preservadas.');
+  });
 }
 function bindConfig(){
   document.querySelectorAll('#themeSeg button').forEach(b=>b.addEventListener('click',()=>{

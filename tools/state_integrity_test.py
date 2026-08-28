@@ -175,10 +175,17 @@ def run_importacao_atravessa_as_abas(browser, url):
           importFullBackupFile(f);
         }"""
     )
+    # A importacao e assincrona (writer lock, DP-2): o primeiro poll pode chegar
+    # antes da primeira escrita — o predicado tolera a ausencia transitoria e
+    # espera a CONDICAO OBSERVAVEL, sem atraso arbitrario.
     abaA.wait_for_function(
-        "() => JSON.parse(localStorage.getItem('jpwealth_v9_state')).params.saldoIni === 999999")
-    # Deixa a aba remota processar a difusao antes de ela gravar.
-    abaB.wait_for_timeout(800)
+        """() => { const r = localStorage.getItem('jpwealth_v9_state');
+                   if (!r) return false;
+                   try { return JSON.parse(r).params.saldoIni === 999999; }
+                   catch (e) { return false; } }""")
+    # A aba remota adota a base importada (handler de difusao faz load()):
+    # espera o estado observavel em vez de um timeout.
+    abaB.wait_for_function("() => S && S.params && S.params.saldoIni === 999999", timeout=8000)
     abaB.evaluate("() => { save(); }")
     disco = abaB.evaluate("() => JSON.parse(localStorage.getItem('jpwealth_v9_state')).params.saldoIni")
     assert disco == 999999, f"a gravacao da outra aba ressuscitou a base anterior: saldoIni={disco}"

@@ -125,6 +125,20 @@ o escopo global legado em framework ou bundler.
 - Durante a janela mixed-build, `Finalizar Sessão` **não sincroniza entre
   protocolos**, por desenho. A garantia causal integral só existe quando todas as
   abas executam o protocolo novo.
+- **Escrita concorrente (ALD-C3-PRE-PERSISTENCE)**: `save()` carrega uma guarda
+  síncrona de concorrência — retém a última forma do documento que a aba leu ou
+  gravou e RECUSA a escrita quando o disco divergiu (outra aba gravou depois),
+  com aviso explícito de conflito. É um detector best-effort, não CAS: a janela
+  `getItem→setItem` da mesma tarefa permanece (limitação formal DP-3). A
+  serialização FORTE fica na Web Locks API (`jpwealth_state_writer_v1`), que
+  envolve o critical section completo de Finalizar Sessão, `wipeAllData` (agora
+  assíncrona) e importação integral. Sem Web Locks o modo é **degraded**,
+  reportado por `sessionSerializationMode()` e nunca anunciado como atomicidade.
+- **Write-before-clear**: a finalização constrói o documento final, o grava POR
+  CIMA da chave principal, confirma por read-back exato, e só então limpa
+  auxiliares e emite o broadcast — a chave principal nunca é removida por esse
+  fluxo, e falha de gravação recusa o ato com a base anterior intacta
+  (`sessionCommitFinalizedState`, que substituiu `persistNotesAfterSessionWipe`).
 - A função `migrate()` mantém compatibilidade entre schemas.
 - O arquivo HTML ou o repositório não contém automaticamente o histórico real do navegador.
 

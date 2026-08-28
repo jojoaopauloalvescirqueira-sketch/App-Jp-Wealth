@@ -168,7 +168,14 @@ def run_suite(browser, url, rotulo):
     try:
         page.evaluate("() => { window.confirm = () => true; }")
         page.locator('#importFullBackupInput').set_input_files(valido)
-        page.wait_for_timeout(700)
+        # A importacao roda sob o writer lock (DP-2): espera a CONDICAO OBSERVAVEL
+        # de conclusao (o documento restaurado no disco), tolerando o instante em
+        # que a chave ainda contem o JSON invalido semeado.
+        page.wait_for_function(
+            """() => { const r = localStorage.getItem('jpwealth_v9_state');
+                       if (!r) return false;
+                       try { return JSON.parse(r).params.saldoIni === 77777; }
+                       catch (e) { return false; } }""", timeout=8000)
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")
     finally:
         Path(valido).unlink(missing_ok=True)
@@ -365,7 +372,13 @@ def audit_main_key_writers():
     # os pontos conhecidos fora de save() precisam da guarda de recuperação por perto
     finalize = (ROOT / 'src/js/40-app/07-finalize-session.js').read_text(encoding='utf-8')
     assert finalize.count('jpWealthLoadRecoveryActive') >= 3, \
-        'guardas de recuperação ausentes em finalize-session (clearJPWealthLocalData, persistNotesAfterSessionWipe, openFinalizeSessionFlow)'
+        'guardas de recuperação ausentes em finalize-session (clearJPWealthLocalData, sessionCommitFinalizedState, openFinalizeSessionFlow)'
+    # contrato ALD-C3-PRE-PERSISTENCE: o mecanismo ativo de gravação final é o commit
+    # com read-back; o helper antigo de regravação cega não pode voltar como mecanismo.
+    assert 'function sessionCommitFinalizedState(' in finalize, \
+        'sessionCommitFinalizedState ausente — o commit durável da finalização sumiu'
+    assert 'function persistNotesAfterSessionWipe(' not in finalize, \
+        'persistNotesAfterSessionWipe voltou como mecanismo ativo — contrato write-before-clear violado'
     wipe = (ROOT / 'src/js/40-app/05-wipe-all.js').read_text(encoding='utf-8')
     assert 'jpWealthLoadRecoveryActive' in wipe, 'guarda de recuperação ausente na Zona de Perigo'
 

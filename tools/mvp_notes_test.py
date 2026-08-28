@@ -286,10 +286,10 @@ try:
         page.wait_for_function("S.dataGovernance && S.dataGovernance.export && S.dataGovernance.export.lastExportAt !== ''")
 
         # zera via mecanismo real de reset (mesma função usada pelo botão real)
-        page.evaluate("""() => {
+        page.evaluate("""async () => {
           window.prompt = () => 'APAGAR';
           window.alert = () => {};
-          wipeAllData();
+          await wipeAllData();   // DP-2: a destruição inteira conclui dentro do lock
         }""")
         assert page.evaluate("S.mvpNotes.items.length") == 0
         assert page.evaluate("S.mvpNotes.showHeaderIcon") is True
@@ -359,6 +359,8 @@ try:
         page.evaluate("settingsNavigateToLeaf('backup')")
         assert page.locator('#wipeAllBtn').is_visible(), 'Zona de Perigo deve estar acessível em Configurações'
         click_id(page, 'wipeAllBtn')
+        # wipeAllData é assíncrona (DP-2): espera a CONDIÇÃO OBSERVÁVEL da limpeza.
+        page.wait_for_function("() => S && S.mvpNotes && S.mvpNotes.items.length === 0", timeout=8000)
         assert len(notes_state(page)) == 0, 'Zona de Perigo/reset deveria remover as notas'
 
         assert_no_errors(page.jpwealth_observed)
@@ -486,7 +488,7 @@ try:
         exported_folders = page.evaluate("window.__foldersBlob.text()")
         payload_folders = json.loads(exported_folders)
         assert payload_folders['state']['mvpNotes']['folders'], 'backup deveria incluir as pastas'
-        page.evaluate("""() => { window.prompt = () => 'APAGAR'; window.alert = () => {}; wipeAllData(); }""")
+        page.evaluate("""async () => { window.prompt = () => 'APAGAR'; window.alert = () => {}; await wipeAllData(); }""")
         assert page.evaluate('S.mvpNotes.folders.length') == 0, 'reset deveria apagar as pastas'
         page.wait_for_timeout(500)
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")

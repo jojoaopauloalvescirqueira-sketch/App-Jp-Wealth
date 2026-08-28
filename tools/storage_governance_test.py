@@ -342,8 +342,12 @@ def main():
           r.missing = (await dgFsStatus()).state;   // nome diverge → missing (§6.5)
           navigateToScreen('contab');
           window.prompt = () => 'APAGAR'; window.confirm = () => true;
-          wipeAllData();
-          await new Promise(res => setTimeout(res, 120));
+          await wipeAllData();   // DP-2: a Promise real cobre a destruicao e o boot
+          // dgFsClearHandle e fire-and-forget dentro do wipe: espera a CONDICAO
+          // OBSERVAVEL (handle removido do IndexedDB), nunca um atraso fixo.
+          for (let i = 0; i < 100 && (await dgFsLoadHandle()) !== null; i++) {
+            await new Promise(res => setTimeout(res, 20));
+          }
           r.tela = document.querySelector('.screen.active').id;
           r.dgZerado = S.dataGovernance.export.lastSequence === 0
             && S.dataGovernance.responsibility.accepted === false;
@@ -408,9 +412,9 @@ def main():
         aba2 = prepare_page(contexto, url)
         assert aba2.evaluate("() => S.params.saldoIni") == 123456, 'pré-condição: aba2 não leu a base'
 
-        aba1.evaluate("""() => {
+        aba1.evaluate("""async () => {
           window.prompt = () => 'APAGAR'; window.confirm = () => true;
-          wipeAllData();
+          await wipeAllData();   // DP-2
           window.prompt = () => null; window.confirm = () => false;
         }""")
         aba2.wait_for_function(
@@ -418,19 +422,32 @@ def main():
 
         # A aba remota reagiu: estado zerado E a chave segue apagada depois que ela grava.
         remoto = aba2.evaluate("""() => {
-          save();                                  // a gravação que antes ressuscitava tudo
+          const gravou = save();                   // a gravação que antes ressuscitava tudo
           const bruto = localStorage.getItem('jpwealth_v9_state');
           return {
+            gravou,
             saldo: S.params.saldoIni,
             ressuscitou: !!(bruto && bruto.includes('123456')),
           };
         }""")
+        # CONTRATO NOVO (camada 1): a gravação da aba remota sobre um disco que ela
+        # não reconhece é RECUSADA — proteção adicional ao epoch, provada aqui.
+        assert remoto['gravou'] is False, f'save() da aba remota deveria ser recusado pela guarda: {remoto}'
         assert remoto['saldo'] != 123456, f'aba remota manteve o estado apagado: {remoto}'
         assert not remoto['ressuscitou'], (
             'a gravação da aba remota ressuscitou a base apagada — a exclusão não se propagou'
         )
         assert_no_errors(aba1.jpwealth_observed)
-        assert_no_errors(aba2.jpwealth_observed)
+        # A recusa da guarda emite console.error ESPERADO neste cenário — allowlist
+        # NOMINAL da mensagem de conflito na ABA2 (é ela que grava sobre o disco que
+        # não reconhece), provando que a mensagem ocorreu; qualquer outro erro de
+        # console continua reprovando.
+        obs2 = aba2.jpwealth_observed
+        conflitos = [x for x in obs2['console'] if x[0] == 'error'
+                     and 'conflito de concorrência entre abas detectado no save()' in x[1]]
+        assert conflitos, 'a guarda deveria ter emitido a mensagem de conflito neste cenário'
+        assert_no_errors({'console': [x for x in obs2['console'] if x not in conflitos],
+                          'pageerror': obs2['pageerror']})
         aba1.close(); aba2.close()
         contexto.close()
 

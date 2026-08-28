@@ -150,7 +150,10 @@ def run_suite(browser, url, rotulo):
       S.mvpNotes.items=[{id:'n1', ticket:'JPW-TESTE', content:'nota', folderId:'', createdAt:'2026-01-01', updatedAt:'2026-01-01'}];
       save(); markSessionCheckpoint();
       S=emptyJPWealthState();
-      persistNotesAfterSessionWipe();
+      // API atual: o commit durável grava o estado passado com read-back (mesma
+      // transição: estado vazio preservando as Notas vai ao disco).
+      const commit=sessionCommitFinalizedState(S);
+      if(!commit.ok) throw new Error('commit do estado finalizado falhou: '+(commit.erro&&commit.erro.message));
     }""")
     estado = json.loads(chave(page))
     assert estado is not None, f'[{rotulo}] E: Finalizar Sessão regrava o estado vazio POR DESENHO'

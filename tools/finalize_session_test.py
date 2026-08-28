@@ -122,6 +122,12 @@ def finish_with_phrase(page, phrase='APAGAR TUDO'):
     assert button.is_enabled() == (phrase.strip() == 'APAGAR TUDO')
     if phrase.strip() == 'APAGAR TUDO':
         button.click()
+        # A finalização é assíncrona (transação sob writer lock). Aguarda a
+        # CONCLUSÃO SEMÂNTICA — o aviso de sucesso só aparece depois do commit
+        # confirmado e do boot — nunca um atraso arbitrário.
+        page.wait_for_function(
+            "() => (document.querySelector('#sessionNotice')?.textContent || '').includes('finalizada')",
+            timeout=15000)
 
 def assert_empty_after_finalize(page):
     page.wait_for_timeout(500)
@@ -138,7 +144,7 @@ def assert_empty_after_finalize(page):
       sessionCheckpoint: sessionStorage.getItem('jpwealth_session_checkpoint_v1'),
       body: document.body.innerText
     })''')
-    assert 'Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador.' in facts['notice'], facts
+    assert 'Sessão finalizada. Os dados operacionais do JP Wealth foram removidos deste navegador.' in facts['notice'], facts
     assert facts['modalOpen'] is False, facts
     # Mesma correção da suíte dist: a chave NÃO fica ausente — persistNotesAfterSessionWipe()
     # regrava POR DESENHO o estado vazio com as Notas do MVP preservadas (A-002/A-005).
@@ -416,7 +422,10 @@ def run_dist_suite(browser, url):
     estado_b = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
     assert estado_b is not None and estado_b['ledger'] == [] and estado_b.get('mvpNotes') is not None
     assert page_b.evaluate("S.onboarding.operador") == ''
-    assert page_b.evaluate("save()") is False
+    # CONTRATO B3 (ALD-C3-PRE-PERSISTENCE): a aba remota ADOTA o documento final e
+    # permanece UTILIZÁVEL — o save() dela grava o próprio documento adotado, e o
+    # assert seguinte prova que nada da sessão antiga ressuscita no disco.
+    assert page_b.evaluate("save()") is True
     estado_b2 = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
     assert estado_b2 is not None and estado_b2['ledger'] == []
     galton_after = page_b.evaluate('''() => {

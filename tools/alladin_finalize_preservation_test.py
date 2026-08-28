@@ -188,6 +188,14 @@ def igual(bruto, esperado):
         return False
 
 
+# O emissor v2 so difunde DEPOIS de o documento final estar duravel no disco
+# (write-before-clear + broadcast pos-commit). Semear o disco com o documento
+# FINALIZADO reproduz exatamente o que o receptor encontra no produto real.
+SEMEAR_DOC_FINALIZADO = """(a) => {
+    const fin = emptyJPWealthState(a===null ? {} : {alladin:a});
+    localStorage.setItem('jpwealth_v9_state', JSON.stringify(fin));
+}"""
+
 REMOTO = """(payload) => {
     // Protocolo v2 com a geracao CORRENTE: estes casos provam PRESERVACAO.
     // A causalidade entre geracoes tem suite propria (session_epoch_protocol_test.py).
@@ -281,10 +289,10 @@ def main() -> int:
                 for rotulo, agregado in (("v2", FIXTURE), ("v3 (future-schema)", FUTURO)):
                     ctx, page, erros = abrir(browser, url)
                     page.evaluate("(a) => { S.alladin = a; save(); }", agregado)
-                    apagou = page.evaluate("""() => {
+                    apagou = page.evaluate("""async () => {
                         window.prompt = () => 'APAGAR';
                         window.confirm = () => true;
-                        wipeAllData();
+                        await wipeAllData();   // DP-2: a destruicao inteira roda no lock
                         return JSON.stringify(S.alladin);
                     }""")
                     vazio = {"schemaVersion": 2, "reportingCurrency": "BRL",
@@ -407,8 +415,15 @@ def main() -> int:
                     falhas.append("C8: a sessao foi PARCIALMENTE finalizada — accounts foi zerado")
                 if r["instrumentos"] != len(FIXTURE["instruments"]):
                     falhas.append(f"C8: S.alladin foi alterado apesar da recusa ({r['instrumentos']})")
-                if page.evaluate("() => save()") is not True:
-                    falhas.append("C8: apos a recusa o save() normal nao volta a funcionar")
+                # CONTRATO NOVO (Camada 1): o disco contem uma escrita que esta aba nao
+                # reconhece (o lixo plantado). save() DEVE ser recusado — gravar S por
+                # cima seria o lost update que a guarda existe para impedir. E a recusa
+                # nao pode bloquear a aba (B3): persistencia segue desbloqueada.
+                pos = page.evaluate("() => ({ gravou: save(), bloqueada: jpWealthPersistenceIsBlocked() })")
+                if pos["gravou"] is not False:
+                    falhas.append("C8: save() gravou por cima de um disco que a aba nao reconhece")
+                if pos["bloqueada"] is not False:
+                    falhas.append("C8: a recusa da guarda deixou a persistencia BLOQUEADA")
                 if erros:
                     falhas.append(f"C8 pageerror: {erros}")
             executar(falhas, "C8", c8)
@@ -418,7 +433,8 @@ def main() -> int:
                     ctx, page, erros = abrir(browser, url)
                     # A fonte do fluxo remoto e o DISCO: e ele que precisa carregar o
                     # agregado, inclusive quando o build nao sabe ler a versao.
-                    page.evaluate("(a) => { S.alladin = a; localStorage.setItem('%s', JSON.stringify(S)); }" % LSKEY, agregado)
+                    page.evaluate("(a) => { S.alladin = a; save(); }", agregado)
+                    page.evaluate(SEMEAR_DOC_FINALIZADO, agregado)
                     r = page.evaluate(REMOTO, "aba-remota-c9-" + rotulo)
                     if not igual(r["memoria"], agregado):
                         falhas.append(f"C9 [{rotulo}] MEMORIA: finalizacao vinda de outra aba alterou o Alladin")
@@ -442,11 +458,7 @@ def main() -> int:
                 # ja apagou. Disco: documento autoritativo escrito pela aba que
                 # finalizou, ja sem esses registros.
                 page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
-                page.evaluate("""(r) => {
-                    const doc = JSON.parse(localStorage.getItem('%s'));
-                    doc.alladin = r;
-                    localStorage.setItem('%s', JSON.stringify(doc));
-                }""" % (LSKEY, LSKEY), REDUZIDO)
+                page.evaluate(SEMEAR_DOC_FINALIZADO, REDUZIDO)
                 r = page.evaluate(REMOTO, "aba-remota-c10")
                 if igual(r["memoria"], FIXTURE):
                     falhas.append("C10: a finalizacao remota RESSUSCITOU registros que o operador apagou "
@@ -470,20 +482,25 @@ def main() -> int:
                     falhas.append(f"C11: o disco ilegivel foi sobrescrito em vez de o ato abortar ({str(bruto)[:60]})")
                 if r["contas"] == 0:
                     falhas.append("C11: a sessao foi finalizada mesmo sem conseguir ler o estado persistido")
-                if r["bloqueada"] is not True:
-                    falhas.append("C11: o abort remoto deixou a persistencia ABERTA — a primeira gravacao "
-                                  "desta aba ressuscitaria a base inteira ja finalizada em outra aba")
+                # CONTRATO B3: o abort nao pode deixar a aba permanentemente read-only.
+                # A protecao anti-ressurreicao mudou de dono: e a guarda de concorrencia
+                # do save() (o disco nao e o que esta aba conhece => escrita recusada).
+                if r["bloqueada"] is not False:
+                    falhas.append("C11: o abort remoto deixou a aba PERMANENTEMENTE bloqueada (viola B3)")
+                pos = page.evaluate("() => save()")
+                if pos is not False:
+                    falhas.append("C11: save() sobrescreveu um disco que a aba nao reconhece — ressurreicao possivel")
                 if erros:
                     falhas.append(f"C11 pageerror: {erros}")
             executar(falhas, "C11", c11)
 
             # ---- C14: cross-tab na JANELA em que a chave principal nao existe ----
             def c14():
-                # A aba de origem emite o sinal ANTES de clearJPWealthLocalData (que
-                # remove LSKEY primeiro) e so regrava no fim. Este e o estado do disco
-                # dentro dessa janela — e tambem o estado definitivo quando a origem
-                # aborta a limpeza depois de remover a chave. Tratar ausencia como
-                # "nada a preservar" gravaria DEFAULTS por cima do patrimonio.
+                # Com write-before-clear + broadcast pos-commit, o emissor NUNCA remove
+                # a chave principal: ausencia aqui e anomalia real (limpeza externa,
+                # wipe legado). O handler recusa sem tocar nada e — contrato B3 — sem
+                # deixar a aba permanentemente read-only; a guarda do save() e quem
+                # impede a regravacao de memoria velha sobre o disco indeterminado.
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
                 page.evaluate("() => localStorage.removeItem('%s')" % LSKEY)
@@ -500,8 +517,11 @@ def main() -> int:
                                   f"({str(do_disco(page))[:80]})")
                 if r["contas"] == 0:
                     falhas.append("C14: a sessao foi finalizada sem conseguir garantir a preservacao")
-                if r["bloqueada"] is not True:
-                    falhas.append("C14: o abort deixou a persistencia ABERTA nesta aba")
+                if r["bloqueada"] is not False:
+                    falhas.append("C14: o abort deixou a aba PERMANENTEMENTE bloqueada (viola B3)")
+                pos = page.evaluate("() => save()")
+                if pos is not False:
+                    falhas.append("C14: save() gravou sobre um disco sem chave que a aba nao reconhece")
                 if erros:
                     falhas.append(f"C14 pageerror: {erros}")
             executar(falhas, "C14", c14)

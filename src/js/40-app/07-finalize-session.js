@@ -58,10 +58,21 @@ function sessionEpochRead(){
   try{ return localStorage.getItem(BASE_EPOCH_STORAGE_KEY); }
   catch(e){ return undefined; }
 }
-// Grava e ADOTA o que ficou de fato persistido: se outra aba rotacionou no intervalo,
-// o valor dela é o autoritativo. Devolve null quando a geração não pôde ser firmada.
+// CONFIRMAÇÃO ESTRITA (B4): só há sucesso quando a releitura devolve EXATAMENTE o
+// valor tentado. Um setItem transformado em no-op, sobrescrito no intervalo ou
+// truncado NÃO é rotação concluída — devolver "o que ficou lá" fingia uma
+// propriedade que a função não provava.
 function sessionEpochWriteAndConfirm(valor){
   try{ localStorage.setItem(BASE_EPOCH_STORAGE_KEY,valor); }
+  catch(e){ return null; }
+  const lido=sessionEpochRead();
+  return (lido===valor) ? valor : null;
+}
+// BOOTSTRAP é convergência, não autoridade: todas as abas gravam o MESMO sentinel;
+// se a releitura mostrar outra coisa, é uma geração que outra aba acabou de firmar —
+// ADOTAR é correto aqui, e SÓ aqui. Rotação (autoridade) usa a confirmação estrita.
+function sessionEpochBootstrap(){
+  try{ localStorage.setItem(BASE_EPOCH_STORAGE_KEY,BASE_EPOCH_SENTINEL); }
   catch(e){ return null; }
   const lido=sessionEpochRead();
   return (lido===undefined || lido===null || lido==='') ? null : lido;
@@ -70,7 +81,7 @@ function sessionEpochCurrent(){
   const lido=sessionEpochRead();
   if(lido===undefined) return null;
   if(lido!==null && lido!=='') return lido;
-  return sessionEpochWriteAndConfirm(BASE_EPOCH_SENTINEL);
+  return sessionEpochBootstrap();
 }
 function sessionEpochRotate(){
   const nova=sessionEpochGenerate();
@@ -84,6 +95,26 @@ function sessionEpochEstablish(message){
   if(message && message.baseEpoch) return sessionEpochCurrent();
   return sessionEpochRotate();
 }
+// ---- Serialização cross-tab dos escritores do documento (DP-1) --------------
+// Com Web Locks, o critical section da finalização/limpeza/importação roda
+// SERIALIZADO entre abas cooperantes da mesma origem — é isso que fecha o TOCTOU
+// identificado na pausa. Sem Web Locks o modo é DEGRADED: o corpo roda direto,
+// protegido apenas pela guarda síncrona best-effort do save() (Camada 1) e pelo
+// protocolo de geração; a race residual getItem→setItem permanece possível e NUNCA
+// é anunciada como atomicidade (DP-3).
+const JPW_STATE_WRITER_LOCK='jpwealth_state_writer_v1';
+function sessionSerializationMode(){
+  try{
+    return (typeof navigator!=='undefined' && navigator.locks &&
+            typeof navigator.locks.request==='function') ? 'weblocks' : 'degraded';
+  }catch(e){ return 'degraded'; }
+}
+function sessionAcquireWriteLock(fn){
+  if(sessionSerializationMode()==='weblocks'){
+    return navigator.locks.request(JPW_STATE_WRITER_LOCK, ()=>fn({degraded:false}));
+  }
+  return Promise.resolve().then(()=>fn({degraded:true}));
+}
 // SEQLOCK LÓGICO sobre o documento principal: epoch → documento → epoch. Uma rotação
 // entre as duas leituras produziria um snapshot pertencente a outra geração, e usá-lo
 // seria misturar bases. Retry limitado; esgotado, aborta.
@@ -94,7 +125,7 @@ function sessionReadStable(opcoes){
     const doc=sessionPreserveLongitudinal(opcoes);
     if(!doc.ok) return doc;
     const e2=sessionEpochCurrent();
-    if(e1===e2) return { ok:true, epoch:e1, valor:doc.valor };
+    if(e1===e2) return { ok:true, epoch:e1, valor:doc.valor, raw:(doc.raw===undefined?null:doc.raw) };
   }
   return { ok:false, erro:new Error('a geração da base mudou durante a leitura') };
 }
@@ -107,6 +138,10 @@ let sessionPreservedAlladin=null;
 // corrente na confirmação — um wipe entre a abertura e o "APAGAR TUDO" mudaria a base
 // sob o fluxo.
 let sessionPreservedEpoch=null;
+// Forma BRUTA do documento no instante da captura — é a revisão R da transação: o
+// commit só prossegue se o disco ainda for byte-idêntico a ela (revalidação dentro
+// do lock). null = chave ausente na captura (base virgem).
+let sessionPreservedRaw=null;
 let sessionFinalizeBackStep='safe';
 let sessionFinalizeExportMeta=null;
 let sessionFinalizeExportFingerprint=null;
@@ -195,43 +230,76 @@ function sessionNotifyFinalized(epoch){
     localStorage.removeItem(SESSION_WIPE_STORAGE_KEY);
   }catch(e){}
 }
+// FINALIZAÇÃO VINDA DE OUTRA ABA — contrato B3 do gate: nenhum caminho pode deixar
+// esta aba PERMANENTEMENTE somente-leitura. Por isso:
+//   1) toda validação capaz de abortar roda ANTES do bloqueio — descartar um replay
+//      ou recusar um disco ilegível não exige tocar a aba;
+//   2) a parte que muta roda em try/finally: qualquer saída sem conclusão devolve a
+//      persistência ao operador (resume).
+// A proteção contra "aba antiga ressuscita a base" deixou de depender do bloqueio
+// permanente: o broadcast agora só é emitido DEPOIS de o documento final estar
+// durável no disco, então qualquer save() desta aba com memória velha diverge do
+// disco e é RECUSADO pela guarda de concorrência do save() (Camada 1). Em modo
+// degraded (sem Web Locks) essa guarda é best-effort — limite declarado (DP-3).
 function sessionHandleRemoteFinalization(message){
   if(!message || message.type!=='jpwealth-session-finalized-v2') return;
   if(sessionMessageSeen(message)) return;
-  // ASSIMETRIA DELIBERADA em relação ao fluxo local: quando este handler roda, a OUTRA
-  // aba já destruiu o disco. Aqui não existe "nada foi tocado". Abortar sem bloquear
-  // deixaria esta aba com o S antigo INTEIRO em memória e a persistência aberta — a
-  // primeira gravação ressuscitaria a base toda (contas, ledger, contabilidade), que é
-  // exatamente o defeito descrito em 05-wipe-all.js §JPW-FX-WIPE-RACE. Por isso o
-  // bloqueio vem ANTES da preservação e NÃO é revertido no ramo de falha.
-  blockJPWealthPersistence();
   // CAUSALIDADE: só atua quem pertence à geração corrente. Uma finalização emitida
   // antes de um wipe carrega a geração antiga e é recusada, mesmo chegando depois.
   const geracao=sessionEpochCurrent();
   if(!geracao || !message.baseEpoch || message.baseEpoch!==geracao){
-    showSessionNotice('Outra aba finalizou a sessão, mas o aviso pertence a uma geração anterior da base e foi descartado. Esta aba foi bloqueada para gravação — recarregue a página.');
+    showSessionNotice('Outra aba finalizou a sessão, mas o aviso pertence a uma geração anterior da base e foi descartado.');
     return;
   }
-  const preservado=sessionReadStable({ausenteAborta:true});
-  if(!preservado.ok){
-    showSessionNotice('Outra aba finalizou a sessão. Esta aba foi bloqueada para gravação porque o estado persistido não pôde ser lido com segurança e o patrimônio não seria preservado — recarregue a página para seguir com a base já finalizada.');
+  // O emissor só difunde depois do commit confirmado, então o documento final JÁ É o
+  // disco. Este handler não escreve a chave principal: ele ADOTA o documento via
+  // load(). Disco ausente/ilegível aqui é anomalia real (ex.: limpeza externa) — a
+  // aba segue utilizável e a guarda do save() impede que ela regrave memória velha.
+  let bruto=null;
+  try{ bruto=localStorage.getItem(LSKEY); }
+  catch(e){
+    showSessionNotice('Outra aba finalizou a sessão, mas o estado persistido não pôde ser lido nesta aba — recarregue a página para adotar a base finalizada.');
     return;
   }
-  const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true});
-  if(!report.ok){
-    showSessionNotice('Outra aba finalizou a sessão, mas algumas chaves não puderam ser removidas: '+report.failures.join(', '));
+  if(bruto===null || bruto===undefined || bruto===''){
+    showSessionNotice('Outra aba finalizou a sessão, mas o documento final ainda não está visível nesta aba — recarregue a página para adotar a base finalizada.');
     return;
   }
-  sessionResetAuxiliarySurfaces();
-  S=emptyJPWealthState(preservado.valor);
-  persistNotesAfterSessionWipe();
-  window.__onbShown=true;
-  clearSessionCheckpoint();
-  closeModal();
-  boot();
-  window.__onbShown=false;
-  initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada em outra aba. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
+  // Validação do documento AINDA antes do block (§9): um disco ilegível aqui não
+  // pode empurrar esta aba para o modo de recuperação via load() — a aba segue
+  // utilizável com o S atual, a guarda do save() impede regravar por cima do lixo,
+  // e um reload posterior decide pelo caminho canônico.
+  try{
+    const doc=JSON.parse(bruto);
+    if(!doc || typeof doc!=='object' || Array.isArray(doc)) throw new Error('documento inválido');
+  }catch(e){
+    showSessionNotice('Outra aba finalizou a sessão, mas o estado persistido não pôde ser lido com segurança nesta aba — recarregue a página para adotar a base finalizada.');
+    return;
+  }
+  let bloqueou=false, concluiu=false;
+  try{
+    // block+resume: invalida a geração de persistência (JPW-FX-WIPE-RACE) para que
+    // continuações assíncronas iniciadas com o S antigo desistam ao conferir o epoch.
+    blockJPWealthPersistence(); bloqueou=true;
+    sessionResetAuxiliarySurfaces();
+    const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true,preserveMain:true});
+    resumeJPWealthPersistence(); bloqueou=false;
+    load();
+    concluiu=true;
+    window.__onbShown=true;
+    clearSessionCheckpoint();
+    closeModal();
+    boot();
+    window.__onbShown=false;
+    initSessionCheckpoint();
+    const aviso='Sessão finalizada em outra aba. Os dados operacionais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.';
+    showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
+  }finally{
+    if(bloqueou && !concluiu){
+      resumeJPWealthPersistence();
+      showSessionNotice('Outra aba finalizou a sessão, mas esta aba não conseguiu aplicar a finalização — recarregue a página para adotar a base finalizada.');
+    }
+  }
 }
 // ---- Difusão da Zona de Perigo entre abas ----
 // A limpeza total era o único fluxo destrutivo que não avisava as outras abas: a base
@@ -376,7 +444,11 @@ function clearJPWealthLocalData(options={}){
   }
   const removeAuxiliary=options.removeAuxiliary===true;
   const removeCorrupted=options.removeCorrupted===true;
-  const keys=[LSKEY];
+  // preserveMain (write-before-clear, B1): a finalização passou a GRAVAR o documento
+  // final por cima da chave principal ANTES de qualquer limpeza — a chave nunca mais
+  // é removida por este fluxo. Só a Zona de Perigo (que não passa preserveMain)
+  // continua removendo LSKEY, porque lá a exclusão é o que o operador pediu.
+  const keys=(options.preserveMain===true)?[]:[LSKEY];
   if(removeCorrupted) localStorageKeys().filter(k=>k.startsWith(LSKEY+'_corrompido_')).forEach(k=>keys.push(k));
   if(removeAuxiliary) JP_WEALTH_AUX_STORAGE_KEYS.forEach(k=>keys.push(k));
   const failures=[];
@@ -419,12 +491,11 @@ function clearJPWealthLocalData(options={}){
 //            Como todo save() bem-sucedido cria a chave, e aldMutate faz
 //            rollback quando save() recusa, chave ausente ⇒ não existe
 //            patrimônio comprometido ⇒ preservar nada não perde nada.
-//   remoto — a aba de origem emite sessionNotifyFinalized() ANTES de
-//            clearJPWealthLocalData() (que remove LSKEY primeiro) e só regrava
-//            em persistNotesAfterSessionWipe(). Ausência aqui é a janela da
-//            destruição em curso, ou uma limpeza que abortou depois de remover
-//            a chave. Tratar como "nada a preservar" gravaria DEFAULTS por cima
-//            do patrimônio, em silêncio e com aviso de sucesso.
+//   remoto — com write-before-clear o emissor nunca remove LSKEY e só difunde
+//            depois do commit confirmado, então ausência aqui é ANOMALIA real
+//            (limpeza externa, wipe legado em curso). Tratar como "nada a
+//            preservar" gravaria DEFAULTS por cima do patrimônio, em silêncio
+//            e com aviso de sucesso — por isso aborta.
 //
 // Em nenhum dos dois fluxos disco indisponível ou inválido autoriza fallback
 // para S.alladin: abortar é preferível a ressuscitar ou a zerar.
@@ -436,7 +507,7 @@ function sessionPreserveLongitudinal(opcoes){
   if(bruto===null || bruto===undefined){
     return ausenteAborta
       ? { ok:false, erro:new Error('estado persistido ausente durante finalização em outra aba') }
-      : { ok:true, valor:{} };
+      : { ok:true, valor:{}, raw:null };
   }
   let documento=null;
   try{ documento=JSON.parse(bruto); }
@@ -444,8 +515,8 @@ function sessionPreserveLongitudinal(opcoes){
   if(!documento || typeof documento!=='object' || Array.isArray(documento)){
     return { ok:false, erro:new Error('estado persistido ilegível') };
   }
-  if(documento.alladin===undefined) return { ok:true, valor:{} };
-  return { ok:true, valor:{ alladin:documento.alladin } };
+  if(documento.alladin===undefined) return { ok:true, valor:{}, raw:bruto };
+  return { ok:true, valor:{ alladin:documento.alladin }, raw:bruto };
 }
 function renderSessionPreservationError(error){
   sessionModal('<h3>Não foi possível finalizar a sessão</h3>'+
@@ -513,19 +584,33 @@ function emptyJPWealthState(preservado){
   if(alladinPreservado!==undefined) empty.alladin=alladinPreservado;
   return empty;
 }
-// clearJPWealthLocalData() acima de cada chamador já apagou a chave inteira, e save()
-// normal fica bloqueado (jpWealthPersistenceBlocked) até o operador reengajar o
-// onboarding ou importar backup — de propósito, para não ressuscitar dado limpo à toa.
-// Sem isto, as notas ficariam só em memória e sumiriam se a aba fosse fechada antes
-// desse reengajamento. Escrita direta, única e deliberada — não reabre o portão geral
-// de save(); os demais campos gravados aqui já estão zerados, então persisti-los agora
-// ou só depois produz o mesmo resultado observável.
-function persistNotesAfterSessionWipe(){
+// COMMIT DURÁVEL do estado finalizado (B1+B2, substitui persistNotesAfterSessionWipe).
+// Write-before-clear: o documento final SUBSTITUI a chave principal — nada foi
+// removido antes, então uma falha aqui deixa o documento ANTERIOR intacto no disco.
+// A escrita é verificada por read-back EXATO da string gravada; falha silenciosa
+// (quota, setItem no-op, eviction) vira {ok:false} explícito — jamais um catch vazio
+// seguido de aviso de sucesso. Aplica a MESMA política de segredo do save(): a senha
+// de investidor nunca vai ao armazenamento. Sucesso declara a forma nova à guarda de
+// concorrência (jpWealthAdoptPersistedRaw) para os fluxos seguintes desta aba.
+function sessionCommitFinalizedState(estado){
   // Guarda A-005: escrita direta na chave principal jamais pode rodar em modo de
-  // recuperação — regravaria o banco problemático com o estado provisório. Protege os
-  // dois chamadores (fluxo local e finalização vinda de outra aba) num ponto só.
-  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()) return;
-  try{ localStorage.setItem(LSKEY,JSON.stringify(S)); }catch(e){}
+  // recuperação — regravaria o banco problemático com o estado provisório.
+  if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive()){
+    return { ok:false, erro:new Error('banco em modo de recuperação — gravação direta recusada') };
+  }
+  let payload;
+  try{ payload=JSON.stringify(estado,(k,v)=>k==='investorPassword'?'':v); }
+  catch(e){ return { ok:false, erro:e }; }
+  try{ localStorage.setItem(LSKEY,payload); }
+  catch(e){ return { ok:false, erro:e }; }
+  let lido=null;
+  try{ lido=localStorage.getItem(LSKEY); }
+  catch(e){ return { ok:false, erro:e }; }
+  if(lido!==payload){
+    return { ok:false, erro:new Error('a releitura do documento gravado divergiu da escrita') };
+  }
+  if(typeof jpWealthAdoptPersistedRaw==='function') jpWealthAdoptPersistedRaw(payload);
+  return { ok:true, payload };
 }
 function showSessionNotice(message){
   const el=$('sessionNotice'); if(!el) return;
@@ -536,6 +621,7 @@ function showSessionNotice(message){
 function resetSessionFinalizeEphemeralState(){
   sessionPreservedAlladin=null;
   sessionPreservedEpoch=null;
+  sessionPreservedRaw=null;
   sessionFinalizeEntry='safe';
   sessionFinalizeBackStep='safe';
   sessionFinalizeExportMeta=null;
@@ -589,7 +675,16 @@ async function beginSessionExport(){
     // exportFullBackup é async (JPW-HJFGDE): resolve o destino (pasta padrão autorizada
     // ou Downloads), aplica a nomenclatura progressiva e nunca lança nem faz fallback
     // silencioso. quiet: a confirmação visual deste fluxo é o próprio modal de sessão.
-    const meta=await exportFullBackup({quiet:true});
+    // BACKUP AUTORITATIVO (decisão do gate): a cópia oferecida antes do ato destrutivo
+    // representa o DOCUMENTO PERSISTIDO capturado na abertura (revisão R), não o S
+    // desta aba — que pode ser um retrato anterior ao trabalho de outra aba. Se a base
+    // mudar enquanto o operador está no seletor, a revalidação de R dentro do lock
+    // aborta o commit e exige novo export: o arquivo nunca fica órfão da base final.
+    let estadoAutoritativo=null;
+    if(sessionPreservedRaw!==null){
+      try{ estadoAutoritativo=JSON.parse(sessionPreservedRaw); }catch(e){ estadoAutoritativo=null; }
+    }
+    const meta=await exportFullBackup({quiet:true, estadoFonte:estadoAutoritativo});
     if(!meta) throw new Error('A exportação não foi concluída — nenhum arquivo foi gerado. Resolva o acesso à pasta padrão da base (ou exporte excepcionalmente para Downloads) e tente novamente.');
     if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
     sessionFinalizeExportMeta=meta;
@@ -665,6 +760,7 @@ function openFinalizeSessionFlow(){
   if(!preservado.ok){ renderSessionPreservationError(preservado.erro); return; }
   sessionPreservedAlladin=preservado.valor;
   sessionPreservedEpoch=preservado.epoch;
+  sessionPreservedRaw=(preservado.raw===undefined)?null:preservado.raw;
   window.__onbShown=true;
   sessionFinalizeEntry=sessionHasChanges()?'changed':'safe';
   sessionFinalizeExportMeta=null;
@@ -681,46 +777,100 @@ function renderSessionCleanupError(report){
   sessionCancelBinding();
   $('sessionRetryCleanup').addEventListener('click',renderSessionPhraseConfirmation);
 }
-function finalizeJPWealthSession(){
-  // A preservação vem antes de TUDO: antes de bloquear a persistência, antes de
-  // avisar as outras abas e antes de apagar o disco. Se ela falhar, o ato
-  // inteiro é abortado com o estado e o disco intactos.
-  // Consome o snapshot tomado na abertura. Sem ele, o ato é recusado: reler o disco
-  // agora seria ler o que o export desta aba pode ter acabado de gravar. Fail-closed,
-  // nunca uma segunda leitura "de recuperação".
+// TRANSAÇÃO DE FINALIZAÇÃO (Change Proposal V2 + DP-1/2/3).
+// Fora do lock ficou só o que já aconteceu: captura na abertura (documento D e
+// revisão R = raw) e a interação humana. TUDO que decide e muta roda dentro do
+// critical section, serializado entre abas quando Web Locks existe:
+//   reler o disco → ainda byte-idêntico a R? não → aborta (a base mudou; novo export)
+//   geração ainda a da captura? não → aborta
+//   bloquear persistência (invalida continuações assíncronas desta aba)
+//   construir o documento final em memória
+//   COMMIT write-before-clear: setItem + read-back exato — nada foi removido antes,
+//     então falha aqui deixa o documento anterior INTACTO e o ato recusa sem sucesso
+//   só então: limpeza de auxiliares (nunca a chave principal), broadcast, boot.
+// Qualquer abort pós-block passa pelo finally e devolve a aba ao operador (resume):
+// fail-closed não pode virar fail-permanently-read-only. No sucesso o bloqueio fica,
+// como sempre ficou: reengajar onboarding/import é o que reabre a persistência.
+// A função NUNCA rejeita — todo erro vira modal — então os chamadores de evento
+// podem ignorar a Promise sem risco de rejeição silenciosa (DP-2).
+async function finalizeJPWealthSession(){
   if(!sessionPreservedAlladin || !sessionPreservedEpoch){
     renderSessionPreservationError(new Error('a preservação não foi capturada na abertura do fluxo'));
     return;
   }
-  // A base não pode ter mudado entre a abertura e a confirmação: um wipe no intervalo
-  // rotacionou a geração, e finalizar agora gravaria sobre uma base que já não é a
-  // mesma que foi lida.
-  if(sessionEpochCurrent()!==sessionPreservedEpoch){
-    renderSessionPreservationError(new Error('a geração da base mudou durante o fluxo'));
-    return;
+  let bloqueou=false, concluiu=false;
+  try{
+    await sessionAcquireWriteLock(async ()=>{
+      // REVALIDAÇÃO DA REVISÃO dentro do lock — é isto que mata o TOCTOU: se outra
+      // aba gravou depois da captura (inclusive o próprio save() do export desta aba
+      // por cima de uma escrita alheia), o raw diverge e o ato recusa sem destruir.
+      let atualRaw=null;
+      try{ atualRaw=localStorage.getItem(LSKEY); }
+      catch(e){ renderSessionPreservationError(e); return; }
+      // O disco é aceito em exatamente dois casos: (a) continua byte-idêntico à
+      // revisão R da captura; (b) é a ÚLTIMA ESCRITA LEGÍTIMA DESTA PRÓPRIA ABA —
+      // o save() do export do ramo 'changed' grava depois da captura, e a guarda
+      // de concorrência (Camada 1) só o deixa gravar sobre uma base que esta aba
+      // conhecia. Qualquer outra forma é escrita de OUTRA aba: abortar, porque
+      // finalizar agora gravaria uma versão antiga por cima do trabalho dela. No
+      // caso perigoso (esta aba obsoleta), o save() do export é RECUSADO pela
+      // Camada 1, o disco permanece na revisão R, e o ramo (a) preserva o
+      // documento autoritativo capturado.
+      const ultimaEscritaLocal=(typeof jpWealthLastPersistedRawGet==='function')?jpWealthLastPersistedRawGet():null;
+      if(atualRaw!==sessionPreservedRaw && atualRaw!==ultimaEscritaLocal){
+        renderSessionBaseChangedError();
+        return;
+      }
+      if(sessionEpochCurrent()!==sessionPreservedEpoch){
+        renderSessionPreservationError(new Error('a geração da base mudou durante o fluxo'));
+        return;
+      }
+      blockJPWealthPersistence(); bloqueou=true;
+      sessionResetAuxiliarySurfaces();
+      const novoEstado=emptyJPWealthState(sessionPreservedAlladin);
+      const commit=sessionCommitFinalizedState(novoEstado);
+      if(!commit.ok){ renderSessionCommitError(commit.erro); return; }
+      S=novoEstado;
+      const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true,preserveMain:true});
+      concluiu=true;
+      // Broadcast SÓ depois de o documento final estar durável e confirmado: nenhuma
+      // outra aba recebe "finalized" antes de existir estado a adotar (contrato §9 do
+      // gate; alinha com sessionNotifyBaseWiped/Imported, que sempre emitiram depois).
+      sessionNotifyFinalized(sessionPreservedEpoch);
+      // JPW-HJFGDE §17: a base operacional morreu — a autorização local da pasta de
+      // exportação morre junto. Fire-and-forget: sem metadados o handle é inerte.
+      if(typeof dgFsClearHandle==='function') dgFsClearHandle();
+      window.__onbShown=true;
+      clearSessionCheckpoint();
+      resetSessionFinalizeEphemeralState();
+      closeModal();
+      boot();
+      // §12: aplicação sem base válida volta para a tela inicial canônica.
+      if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
+      window.__onbShown=false;
+      initSessionCheckpoint();
+      const aviso='Sessão finalizada. Os dados operacionais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.';
+      showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
+    });
+  }catch(error){
+    renderSessionCommitError(error);
+  }finally{
+    if(bloqueou && !concluiu) resumeJPWealthPersistence();
   }
-  const preservado={ ok:true, valor:sessionPreservedAlladin };
-  blockJPWealthPersistence();
-  sessionNotifyFinalized(sessionPreservedEpoch);
-  const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true});
-  if(!report.ok){ renderSessionCleanupError(report); return; }
-  sessionResetAuxiliarySurfaces();
-  S=emptyJPWealthState(preservado.valor);
-  persistNotesAfterSessionWipe();
-  // JPW-HJFGDE §17: a base morreu — a autorização local da pasta de exportação morre
-  // junto (um handle órfão nunca deve reassociar sozinho uma base futura). Fire-and-
-  // forget: falha aqui não pode travar a finalização, e sem metadados o handle é inerte.
-  if(typeof dgFsClearHandle==='function') dgFsClearHandle();
-  window.__onbShown=true;
-  clearSessionCheckpoint();
-  resetSessionFinalizeEphemeralState();
-  closeModal();
-  boot();
-  // §12: aplicação sem base válida volta para a tela inicial canônica.
-  if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
-  window.__onbShown=false;
-  initSessionCheckpoint();
-  showSessionNotice('Sessão finalizada. Os dados locais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.');
+}
+function renderSessionBaseChangedError(){
+  sessionModal('<h3>Não foi possível finalizar a sessão</h3>'+
+    '<p class="modal-sub">Nada foi apagado. Outra aba atualizou a base do JP Wealth depois que este fluxo foi aberto — finalizar agora gravaria uma versão antiga por cima do trabalho dela.</p>'+
+    '<div class="session-error" role="alert">Feche este aviso e reabra o Finalizar Sessão: a base mais recente será lida de novo e uma nova exportação será exigida.</div>'+
+    '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Entendi</button></div>');
+  sessionCancelBinding();
+}
+function renderSessionCommitError(error){
+  sessionModal('<h3>Não foi possível finalizar a sessão</h3>'+
+    '<p class="modal-sub">Nada foi apagado. O estado final não pôde ser gravado com confirmação neste navegador, então o encerramento foi interrompido com a base anterior intacta.</p>'+
+    '<div class="session-error" role="alert">Falha ao gravar o estado final: '+esc((error&&error.message)||'erro não identificado')+'</div>'+
+    '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
+  sessionCancelBinding();
 }
 function bindFinalizeSession(){
   const b=$('finalizeSessionBtn');

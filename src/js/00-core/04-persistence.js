@@ -3,6 +3,23 @@ const LSKEY='jpwealth_v9_state';
 let S;
 let jpWealthPersistenceBlocked=false;
 let jpWealthSessionEpoch=0;
+// ---- ALD-C3-PRE-PERSISTENCE · guarda síncrona de concorrência (Camada 1) ----
+// Última forma do documento que ESTA aba leu ou gravou com sucesso. save() compara o
+// disco com este valor antes de escrever: divergência significa que OUTRA aba gravou
+// depois de nós, e um full-state save daqui sobrescreveria o trabalho dela (lost
+// update — o TOCTOU medido na auditoria do C3-PRE). Neste caso a escrita é RECUSADA.
+//
+// LIMITE DECLARADO (DP-3): isto é um DETECTOR best-effort, não CAS. Entre o getItem
+// da comparação e o setItem da gravação existe uma janela síncrona que nenhum
+// mecanismo puramente síncrono fecha. A serialização FORTE entre abas cooperantes é a
+// Web Locks API no critical section da finalização/wipe/import; sem ela o modo é
+// DEGRADED e esta guarda é o que resta — nunca anunciada como atomicidade.
+let jpWealthLastPersistedRaw=null;
+// Fluxos que mudam o disco por fora de save() (commit da finalização, wipe, load
+// remoto) declaram aqui a forma nova, para a guarda não recusar as gravações
+// legítimas seguintes desta aba. null = chave ausente.
+function jpWealthAdoptPersistedRaw(valor){ jpWealthLastPersistedRaw=(valor==null)?null:String(valor); }
+function jpWealthLastPersistedRawGet(){ return jpWealthLastPersistedRaw; }
 function jpWealthPersistenceIsBlocked(){ return jpWealthPersistenceBlocked; }
 function jpWealthPersistenceEpoch(){ return jpWealthSessionEpoch; }
 function blockJPWealthPersistence(){
@@ -98,7 +115,7 @@ function load(){
       // o caminho mais destrutivo de todos: o primeiro save() apagava o original.
       enterLoadRecoveryMode('json-invalido', raw, parseError||new Error('conteúdo não é um objeto JSON'));
     } else {
-      try{ S=parsed; migrate(); return; }
+      try{ S=parsed; migrate(); jpWealthLastPersistedRaw=raw; return; }
       catch(e){ enterLoadRecoveryMode('migracao', raw, e); }
     }
   }
@@ -1361,6 +1378,12 @@ function persistenceRecoveryImport(){
 function jpWealthResolveRecoveryAndSave(){
   if(!jpWealthLoadRecovery.active) return save();
   jpWealthLoadRecovery.active=false;
+  // Resolver a recuperação é uma decisão EXPLÍCITA de substituir o que estiver na
+  // chave (importação validada ou base vazia aceita). Em recovery o load() nunca
+  // adotou o conteúdo problemático, então a guarda de concorrência recusaria esta
+  // gravação legítima como se fosse escrita alheia. A adoção aqui declara: o que o
+  // disco contém agora é conhecido e será sobrescrito por decisão do operador.
+  try{ jpWealthAdoptPersistedRaw(localStorage.getItem(LSKEY)); }catch(e){}
   const ok=save();
   if(ok) clearLoadRecoveryWarning();
   else jpWealthLoadRecovery.active=true;
@@ -1438,6 +1461,21 @@ function renderPersistenceFailureWarning(){
   clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
   el.className='persistence-alert is-failure';
   const serialize=jpWealthPersistenceFailure.kind==='serialize';
+  const conflict=jpWealthPersistenceFailure.kind==='conflict';
+  if(conflict){
+    // Aviso HONESTO da guarda de concorrência (Camada 1): a gravação foi recusada
+    // porque outra aba escreveu a base depois desta. Recarregar adota o documento
+    // mais novo; continuar digitando aqui não grava nada.
+    el.innerHTML='<p class="persistence-alert-title">Outra aba atualizou a base</p>'+
+      '<p class="persistence-alert-text">Esta aba está com uma versão antiga dos dados e as gravações dela foram '+
+      'suspensas para não sobrescrever o que a outra aba salvou. Recarregue a página para continuar desta aba '+
+      'com a base mais recente.</p>'+
+      '<div class="persistence-alert-actions"><button type="button" class="reset-btn persistence-alert-btn" id="persistenceAlertReloadBtn">Recarregar agora</button></div>';
+    const rbtn=document.getElementById('persistenceAlertReloadBtn');
+    if(rbtn) rbtn.addEventListener('click',()=>{ location.reload(); });
+    layoutPersistenceBanners();
+    return;
+  }
   // innerHTML substitui o nó do botão inteiro a cada render, então o listener antigo
   // morre junto — não há como acumular listeners duplicados.
   el.innerHTML=serialize
@@ -1455,7 +1493,7 @@ function renderPersistenceFailureWarning(){
   layoutPersistenceBanners();
 }
 function setPersistenceFailureState(error,kind){
-  kind=kind==='serialize'?'serialize':'storage';
+  kind=(kind==='serialize'||kind==='conflict')?kind:'storage';
   jpWealthPersistenceFailure.count++;
   jpWealthPersistenceFailure.lastError=error||null;
   // Repinta na transição saudável→falha E quando o TIPO muda (storage⇄serialize) — o
@@ -1529,6 +1567,25 @@ function save(){
     setPersistenceFailureState(e,'serialize');
     return false;
   }
+  // GUARDA DE CONCORRÊNCIA (Camada 1): se o disco não é mais o que esta aba conhece,
+  // outra aba gravou depois de nós. Gravar S inteiro agora apagaria o trabalho dela.
+  // Recusa com sinalização — perder UMA gravação visivelmente é estritamente melhor
+  // que perder o documento da outra aba em silêncio.
+  try{
+    const atual=localStorage.getItem(LSKEY);
+    if(atual!==jpWealthLastPersistedRaw){
+      const err=new Error('outra aba gravou a base depois desta; gravação recusada para não sobrescrever');
+      console.error('JP Wealth: conflito de concorrência entre abas detectado no save().', err);
+      hideStaleSavedTag();
+      setPersistenceFailureState(err,'conflict');
+      return false;
+    }
+  }catch(e){
+    console.error('JP Wealth: falha ao ler o armazenamento na guarda de concorrência.', e);
+    hideStaleSavedTag();
+    setPersistenceFailureState(e,'storage');
+    return false;
+  }
   // try estreito, cobrindo só a gravação: qualquer exceção posterior (ex.: #savedTag
   // ausente) não deve ser relatada como falha de armazenamento.
   try{
@@ -1539,6 +1596,7 @@ function save(){
     setPersistenceFailureState(e,'storage');
     return false;
   }
+  jpWealthLastPersistedRaw=payload;
   clearPersistenceFailureState();
   const t=document.getElementById('savedTag');
   if(t){

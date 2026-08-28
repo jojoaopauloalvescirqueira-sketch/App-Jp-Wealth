@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "9c7ec1fbf40b5feb4c800d69b2f87908cb44c4313eff90dcf16e8825fd241494"
+      "sha256": "6b4db2ba0695e21864bc7fb4b0cf20f9dabe9f5ae87d33cd04029b82cd8d8926"
     },
     {
       "order": 5,
@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "b5bbbcd524439933d2b1cc63161e5e5391555dbdf6c60280b9948eb57954772a"
+      "sha256": "da1ea4d0c744833883b4568201bcd2af870f8d46f4689c092e059cb0a807df2e"
     },
     {
       "order": 20,
@@ -200,7 +200,7 @@
       "order": 33,
       "path": "src/js/40-app/05-wipe-all.js",
       "section": "LIMPEZA TOTAL — dupla confirmação digitando APAGAR (SET 6)",
-      "sha256": "4ec5264a683457e1817ec9f2cdce1960ad0ad582833d1823be68848a8beebdb7"
+      "sha256": "7170be0c22d433cae0c21fa992668a7e2c434d9ce1695e1d5bad62b921eee6bf"
     },
     {
       "order": 34,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "a4650e5c8dd55b626281a61d2355824cc5d9ee43b91aaebc042cad7c80a29e59"
+      "sha256": "5505f5e69a2584656ca5a4a8fb63a0597381c13955a6b8cac1cbdb3e80313832"
     },
     {
       "order": 36,

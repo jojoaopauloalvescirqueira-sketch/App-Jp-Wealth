@@ -105,8 +105,12 @@ function exportAudit(){
 //
 // A identidade é escrita numa CÓPIA (structuredClone), nunca no objeto vivo: se a
 // gravação falhar, não há o que reverter — o estado em memória jamais foi tocado.
-function dgBuildBackupBlob(seq, filename, exportadoEm){
-  const stateExport=structuredClone(S);
+// `estadoFonte` (opcional) — ALD-C3-PRE-PERSISTENCE: o backup oferecido como rede de
+// segurança de um ato destrutivo deve representar o DOCUMENTO AUTORITATIVO persistido,
+// não o S potencialmente obsoleto desta aba. O fluxo Finalizar Sessão passa o documento
+// lido do disco na abertura; todos os outros usos mantêm o comportamento de sempre (S).
+function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
+  const stateExport=structuredClone(estadoFonte||S);
   // Incondicional (política de segredo): não existe mais variante de backup com senha.
   if(Array.isArray(stateExport.accounts)) stateExport.accounts.forEach(a=>{ a.investorPassword=''; });
   if(stateExport.onboarding) stateExport.onboarding.investorPassword='';
@@ -165,18 +169,19 @@ function dgRegisterExportSuccess(seq,filename,exportadoEm,destino){
 let dgExportEmAndamento=false;
 async function exportFullBackup(opts){
   const quiet=!!(opts&&opts.quiet);
+  const estadoFonte=(opts&&opts.estadoFonte)||null;
   if(dgExportEmAndamento){
     alert('Já existe uma exportação da base em andamento — aguarde ela terminar antes de iniciar outra.');
     return null;
   }
   dgExportEmAndamento=true;
   try{
-    return await dgExportFullBackupInner(quiet);
+    return await dgExportFullBackupInner(quiet,estadoFonte);
   }finally{
     dgExportEmAndamento=false;
   }
 }
-async function dgExportFullBackupInner(quiet){
+async function dgExportFullBackupInner(quiet,estadoFonte){
   try{
     // A pergunta sobre segredos vem primeiro e vale para toda a operação; o ARQUIVO só
     // é montado quando sequência e nome forem definitivos (autoidentificação, FAIL-04).
@@ -192,7 +197,7 @@ async function dgExportFullBackupInner(quiet){
     if(!supported || !configured){
       const seq=baseSeq+1;
       const filename=dgExportFileName(seq,new Date());
-      dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm));
+      dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
       dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
       if(!quiet) alert('Base exportada via download do navegador:\n\n'+filename+(supported?'':'\n\nEste navegador não suporta pasta persistente (File System Access API) — as exportações usam o mecanismo padrão de download.'));
       return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'};
@@ -213,7 +218,7 @@ async function dgExportFullBackupInner(quiet){
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
-          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(seq,filename,exportadoEm));
+          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
           dgRegisterExportSuccess(seq,filename,exportadoEm,'folder');
           if(!quiet) alert('Base exportada para a pasta padrão "'+(S.dataGovernance.storage.folderDisplayPath||handle.name)+'":\n\n'+filename);
           return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'};
@@ -234,7 +239,7 @@ async function dgExportFullBackupInner(quiet){
       if(decision==='downloads'){
         const seq=baseSeq+1;
         const filename=dgExportFileName(seq,new Date());
-        dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm));
+        dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
         dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
         if(!quiet) alert('Base exportada excepcionalmente via download do navegador:\n\n'+filename+'\n\nA pasta padrão continua configurada e precisando de atenção.');
         return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'};
@@ -303,6 +308,12 @@ function importFullBackupFile(file){
     }
     if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
+    // ALD-C3-PRE-PERSISTENCE: a substituição da base inteira roda dentro do writer
+    // lock cross-tab (mesma serialização da finalização e do wipe). O corpo nunca
+    // rejeita: falhas viram alert e a Promise resolve — nenhum fire-and-forget
+    // destrutivo. Em modo degraded (sem Web Locks) roda direto, best-effort (DP-3).
+    const aplicar=async ()=>{
+    if(requestEpoch!==jpWealthPersistenceEpoch()) return;
     // ALD-C3-PRE-EPOCH: o backup já foi lido e validado integralmente acima. A nova
     // geração é firmada AQUI, antes de a base ser substituída — nunca depois, porque
     // uma base nova sob geração antiga deixaria uma finalização pendente atuar sobre
@@ -334,6 +345,9 @@ function importFullBackupFile(file){
     if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported(novaEpoch);
     boot();
     alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
+    };
+    if(typeof sessionAcquireWriteLock==='function'){ sessionAcquireWriteLock(aplicar); }
+    else{ aplicar(); }
   };
   reader.onerror=()=>alert('Não foi possível ler o arquivo de backup.');
   reader.readAsText(file);

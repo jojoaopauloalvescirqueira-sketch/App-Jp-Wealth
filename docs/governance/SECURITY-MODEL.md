@@ -64,6 +64,15 @@
   reservado `BASE-V0-LEGACY`; rotacoes usam aleatoriedade criptografica.
   Deliberadamente NAO integra `JP_WEALTH_AUX_STORAGE_KEYS`: precisa sobreviver ao
   `Finalizar sessao` e rotacionar no wipe, o oposto do regime auxiliar.
+- Escritores do documento principal sao serializados entre abas pela Web Locks
+  API quando disponivel (lock `jpwealth_state_writer_v1` no critical section de
+  finalizacao/wipe/importacao). Sem a API o modo e DEGRADED: resta a guarda
+  sincrona do save() (recusa quando o disco divergiu do que a aba conhece) e o
+  protocolo de geracao — a race residual getItem->setItem e limitacao formal
+  declarada (DP-3), nunca apresentada como atomicidade. A finalizacao grava o
+  documento final ANTES de limpar qualquer coisa (write-before-clear) e so
+  difunde o evento apos read-back confirmado; a rotacao de geracao exige
+  releitura identica ao valor tentado.
 - Defeito que motivou o mecanismo, medido antes da correcao: os dois transportes
   entregam a mesma mensagem duas vezes e o dedup guardava um unico token
   compartilhado pelos tres tipos de evento. `finalize` -> `wipe` -> reentrega de

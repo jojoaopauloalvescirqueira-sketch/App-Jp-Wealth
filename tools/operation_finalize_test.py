@@ -357,8 +357,10 @@ def run_save_exception_after_write_keeps_result(page):
           const bak = window.save;
           // Grava DE VERDADE e so entao lanca.
           window.save = () => {
-            localStorage.setItem('jpwealth_v9_state',
-              JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+            const __rawGravado = JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+            localStorage.setItem('jpwealth_v9_state', __rawGravado);
+            // harness-owned: declara a guarda o raw que ELE acabou de persistir
+            if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawGravado);
             throw new Error('pos-processamento de save lancou');
           };
           let res, erro = null;
@@ -427,6 +429,8 @@ def run_persisted_probe_cannot_be_fooled(page):
           localStorage.setItem(chave, JSON.stringify({operationHistory:{records:[nosso]}}));
           casos['record nulo'] = operationPersistedHas(null);
           if (bak === null) localStorage.removeItem(chave); else localStorage.setItem(chave, bak);
+          // harness-owned: o cenario segue como autor do estado restaurado
+          if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(bak === null ? null : bak);
           return casos;
         }"""
     )
@@ -961,8 +965,10 @@ def run_audit_survives_exception_after_write(page):
           save();
           const bak = window.save;
           window.save = () => {
-            localStorage.setItem('jpwealth_v9_state',
-              JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+            const __rawGravado = JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+            localStorage.setItem('jpwealth_v9_state', __rawGravado);
+            // harness-owned: declara a guarda o raw que ELE acabou de persistir
+            if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawGravado);
             throw new Error('pos-processamento lancou');
           };
           let res, erro = null;
@@ -2053,8 +2059,10 @@ def run_outcome_confirmed_after_write(page):
           const cicloAntes = S.cycleRealizado, net = netOpAtual();
           const bak = window.save;
           window.save = () => {
-            localStorage.setItem('jpwealth_v9_state',
-              JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+            const __rawGravado = JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+            localStorage.setItem('jpwealth_v9_state', __rawGravado);
+            // harness-owned: declara a guarda o raw que ELE acabou de persistir
+            if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawGravado);
             throw new Error('pos-processamento lancou');
           };
           let res;
@@ -2093,8 +2101,10 @@ def run_outcome_unknown_when_readback_throws(page):
             const anteriorMem = JSON.stringify(S);
             const cicloAntes = S.cycleRealizado;
             window.save = () => {
-              localStorage.setItem('jpwealth_v9_state',
-                JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+              const __rawGravado = JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+              localStorage.setItem('jpwealth_v9_state', __rawGravado);
+              // harness-owned: declara a guarda o raw que ELE acabou de persistir
+              if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawGravado);
               throw new Error('excecao pos-escrita');
             };
             localStorage.getItem = () => { throw new Error('leitura indisponivel'); };
@@ -2150,6 +2160,7 @@ def run_outcome_unknown_when_document_is_unreadable(page):
             save();
             window.save = () => {
               localStorage.setItem('jpwealth_v9_state', '{ isto nao e json');
+              if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw('{ isto nao e json');
               throw new Error('excecao pos-escrita');
             };
             const res = JPWOperation.finalize({defenseCount:0});
@@ -2160,7 +2171,9 @@ def run_outcome_unknown_when_document_is_unreadable(page):
           } finally {
             localStorage.getItem = bakGet; window.save = bakSave;
             jpWealthPersistenceOutcomeUnknown = false;
-            localStorage.setItem('jpwealth_v9_state', JSON.stringify(S));
+            const __rawRestaurado = JSON.stringify(S);
+            localStorage.setItem('jpwealth_v9_state', __rawRestaurado);
+            if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawRestaurado);
           }
           return out;
         }"""
@@ -2258,8 +2271,10 @@ def run_review_offers_no_retry_when_outcome_is_unknown(page):
             __digitar('#finalDefenses','0');
             __digitar('#finalConfirm','FECHADO');
             window.save = () => {
-              localStorage.setItem('jpwealth_v9_state',
-                JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+              const __rawGravado = JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+              localStorage.setItem('jpwealth_v9_state', __rawGravado);
+              // harness-owned: declara a guarda o raw que ELE acabou de persistir
+              if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawGravado);
               throw new Error('excecao pos-escrita');
             };
             localStorage.getItem = () => { throw new Error('leitura indisponivel'); };
@@ -2279,7 +2294,9 @@ def run_review_offers_no_retry_when_outcome_is_unknown(page):
             localStorage.getItem = bakGet; window.save = bakSave;
             jpWealthPersistenceOutcomeUnknown = false;
             closeModal();
-            localStorage.setItem('jpwealth_v9_state', JSON.stringify(S));
+            const __rawRestaurado = JSON.stringify(S);
+            localStorage.setItem('jpwealth_v9_state', __rawRestaurado);
+            if (typeof jpWealthAdoptPersistedRaw === 'function') jpWealthAdoptPersistedRaw(__rawRestaurado);
           }
           return out;
         }"""

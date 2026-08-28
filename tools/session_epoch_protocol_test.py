@@ -135,11 +135,11 @@ def main() -> int:
             def e1():
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate(SEMEAR)
-                r = page.evaluate("""() => {
+                r = page.evaluate("""async () => {
                     const G1 = sessionEpochCurrent();
                     const F  = {type:'jpwealth-session-finalized-v2', token:'TOK_F', baseEpoch:G1};
                     // limpeza total real: rotaciona a geracao para G2
-                    wipeAllData();
+                    await wipeAllData();
                     const G2 = sessionEpochCurrent();
                     // a aba volta a ter estado; o replay de F nao pode reintroduzir patrimonio
                     resumeJPWealthPersistence();
@@ -160,10 +160,10 @@ def main() -> int:
             def e2():
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate(SEMEAR)
-                r = page.evaluate("""() => {
+                r = page.evaluate("""async () => {
                     const G1 = sessionEpochCurrent();
                     const F  = {type:'jpwealth-session-finalized-v2', token:'TOK_F2', baseEpoch:G1};
-                    wipeAllData();
+                    await wipeAllData();
                     resumeJPWealthPersistence();
                     S.accounts=[{id:'POS_WIPE'}]; save();
                     sessionHandleRemoteMessage(F);   // PRIMEIRA entrega, ja atrasada
@@ -179,13 +179,17 @@ def main() -> int:
             def e3():
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate(SEMEAR)
-                r = page.evaluate("""() => {
-                    wipeAllData();
+                r = page.evaluate("""async () => {
+                    await wipeAllData();
                     resumeJPWealthPersistence();
                     S.accounts=[{id:'POS_WIPE'}];
                     S.alladin={schemaVersion:2, reportingCurrency:'BRL',
                                instruments:[{instrumentId:'aldi_marcador'}], assets:[], accounts:[], cashAccounts:[]};
                     save();
+                    // O emissor v2 so difunde APOS gravar o documento FINAL: o que o
+                    // receptor encontra no disco ja e o doc finalizado com o Alladin.
+                    const fin=emptyJPWealthState({alladin:S.alladin});
+                    localStorage.setItem('jpwealth_v9_state', JSON.stringify(fin));
                     const G2 = sessionEpochCurrent();
                     sessionHandleRemoteMessage({type:'jpwealth-session-finalized-v2', token:'TOK_OK', baseEpoch:G2});
                     return { contas:S.accounts.length,
@@ -203,6 +207,10 @@ def main() -> int:
             def e4():
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate(SEMEAR)
+                page.evaluate("""() => {
+                    const fin=emptyJPWealthState({alladin:S.alladin});
+                    localStorage.setItem('jpwealth_v9_state', JSON.stringify(fin));
+                }""")
                 r = page.evaluate("""() => {
                     let execucoes=0;
                     const real = sessionHandleRemoteFinalization;
@@ -285,12 +293,12 @@ def main() -> int:
                 # dele NAO e anterior ao do wipe. A geracao rejeita, porque a base mudou.
                 ctx, page, erros = abrir(browser, url)
                 page.evaluate(SEMEAR)
-                r = page.evaluate("""() => {
+                r = page.evaluate("""async () => {
                     const G1 = sessionEpochCurrent();
                     // token com carimbo DEPOIS do wipe, mas pertencente a geracao ANTERIOR
                     const futuro = (Date.now()+600000).toString(36)+'_relogioadiantado';
                     const F = {type:'jpwealth-session-finalized-v2', token:futuro, baseEpoch:G1};
-                    wipeAllData();
+                    await wipeAllData();
                     resumeJPWealthPersistence();
                     S.accounts=[{id:'POS_WIPE'}]; save();
                     sessionHandleRemoteMessage(F);
@@ -484,7 +492,7 @@ def main() -> int:
                     # emissor, que e exatamente o que separa os dois protocolos.
                     ctx_novo, page_novo, err_novo = abrir(browser, url)
                     page_novo.evaluate(SEMEAR)
-                    emitida = page_novo.evaluate("""() => {
+                    emitida = page_novo.evaluate("""async () => {
                         let capturada=null;
                         const orig = localStorage.setItem.bind(localStorage);
                         localStorage.setItem = (k,v) => {
@@ -492,7 +500,7 @@ def main() -> int:
                             return orig(k,v);
                         };
                         openFinalizeSessionFlow();
-                        finalizeJPWealthSession();
+                        await finalizeJPWealthSession();
                         localStorage.setItem = orig;
                         return capturada;
                     }""")
