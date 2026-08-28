@@ -1416,6 +1416,14 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box" id="modalBox"></div>
 </div>
+<!-- C3-S2: modal PRÓPRIO do Alladin. Reproduz o padrão aprovado (focus trap,
+     Escape, retorno de foco, ARIA, scroll interno) reutilizando apenas as
+     classes CSS genéricas — zero acoplamento ao código de Settings. Vive fora
+     de section#alladin por desenho: a section permanece sem <form>/<input>. -->
+<div class="modal-overlay" id="alladinModalOverlay">
+  <div class="modal-box" id="alladinModalBox" role="dialog" aria-modal="true" aria-labelledby="alladinModalTitle"></div>
+</div>
+<datalist id="alladinAccountTypes"></datalist>
 <div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
   <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <!-- Cabeçalho em 3 regiões (título | busca central | fechar), fiel à

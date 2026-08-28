@@ -275,7 +275,26 @@ SESSÃO`) remove os dados operacionais e preserva a memória de longo prazo;
 *Zona de Perigo* (frase `APAGAR`) é a limpeza total. Nenhum texto futuro pode
 tratá-las como equivalentes.
 
-**C3-S2 (CRUD via modal/drawer, UI-C)**: destravado — pré-condições cumpridas.
+**C3-S2-A — manutenção cadastral (Account · CashAccount · status ×4), implementado.**
+Escrita via UI exclusivamente por `JPWAlladin.cadastro`/`setRecordStatus`, num
+modal próprio do Alladin (padrão de acessibilidade de Settings sem acoplamento:
+focus trap, Escape, retorno de foco re-resolvido por seletor, ARIA). Máquina de
+estados IDLE→EDITING→SUBMITTING→{ERROR·SUCCESS·COMMITTED_WARNING}. **DC-4 é
+pós-criação, fiel ao C2**: o registro nasce e persiste; o aviso exige o gesto
+explícito *Manter* ou *Inativar este registro* (via `setRecordStatus`), com
+Salvar/Enter/Escape/backdrop suspensos até a decisão — e o foco vai ao título
+para um Enter residual não escolher por ninguém. Status é ação separada na
+linha, com confirmação explícita e sem optimistic update: recusa referencial do
+domínio nunca produz status falso no DOM. Referência de caixa a conta inativa é
+exibida honesta ("Nome — INATIVA"), jamais trocada em silêncio. Sem conta
+ativa, "Novo caixa" dá lugar à instrução de cadastrar/reativar uma conta —
+criação implícita é impossível. Cancelamentos, validação e write gate: zero
+write provado; a trilha de auditoria (`changeLog`) é assertada como prova de
+que toda mutação atravessou o domínio. Suíte `tools/alladin_ui_crud_test.py`
+(W1–W15 / S2A-1..12) + 10 mutantes mortos.
+
+**C3-S2-B (Instrument · Asset com owners), próximo**: formulários ricos sobre o
+esqueleto provado; mutantes de `symbolHistory`/`owners` reservados para lá.
 
 ## Superfície pública do domínio
 
