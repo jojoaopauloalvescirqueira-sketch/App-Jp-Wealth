@@ -1149,8 +1149,22 @@
   <section class="screen" id="alladin">
     <div>
       <h2 data-route-focus>Alladin</h2>
-      <p>Módulo patrimonial em desenvolvimento.</p>
-      <p>As funcionalidades ainda não estão disponíveis.</p>
+      <!-- C3-S1: superfície cadastral SOMENTE LEITURA sobre o domínio C2.
+           Nenhum campo econômico existe aqui — saldo, quantidade, preço,
+           valuation e patrimônio só nascerão com ALD-03/ALD-04. A UI observa
+           via JPWAlladin.leitura: abrir, trocar de view e recarregar jamais
+           gravam nem materializam estado. -->
+      <div class="session-warning" id="alladinReadOnlyBanner" role="status" hidden></div>
+      <div class="seg" id="alladinTabs" role="group" aria-label="Cadastro patrimonial">
+        <button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
+        <button type="button" data-alladin-view="assets" aria-pressed="false">Bens</button>
+        <button type="button" data-alladin-view="accounts" aria-pressed="false">Contas</button>
+        <button type="button" data-alladin-view="cashAccounts" aria-pressed="false">Caixa</button>
+      </div>
+      <div class="card alladin-view" id="alladinInstruments" data-alladin-panel="instruments" role="region" aria-label="Instrumentos"></div>
+      <div class="card alladin-view" id="alladinAssets" data-alladin-panel="assets" role="region" aria-label="Bens" hidden></div>
+      <div class="card alladin-view" id="alladinAccounts" data-alladin-panel="accounts" role="region" aria-label="Contas" hidden></div>
+      <div class="card alladin-view" id="alladinCash" data-alladin-panel="cashAccounts" role="region" aria-label="Caixa" hidden></div>
     </div>
   </section>
 
@@ -1714,5 +1728,6 @@
 <script src="src/js/20-ui/22-finpes-overview.js"></script>
 <script src="src/js/10-domain/13-alladin.js"></script>
 <script src="src/js/20-ui/23-research-views.js"></script>
+<script src="src/js/20-ui/24-alladin-views.js"></script>
 </body>
 </html>

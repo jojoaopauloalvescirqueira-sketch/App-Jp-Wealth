@@ -164,15 +164,19 @@ def assert_primary_dom(page):
     assert page.locator("#nav > #researchNavTrigger").count() == 1
     assert page.locator("#researchNavSubmenu").count() == 1
     assert page.locator("section#alladin").count() == 1
-    alladin_text = page.locator("section#alladin").inner_text().strip().splitlines()
-    assert [line.strip() for line in alladin_text if line.strip()] == [
-        "Alladin",
-        "Módulo patrimonial em desenvolvimento.",
-        "As funcionalidades ainda não estão disponíveis.",
-    ], alladin_text
+    # C3-S1: o placeholder NAV-01 evoluiu para a superficie cadastral READ-ONLY.
+    # Contrato novo (mais forte, nao mais fraco): a section tem exatamente os
+    # quatro destinos locais congelados, continua SEM qualquer conteudo economico
+    # e SEM formularios — a cobertura do placeholder foi substituida, nao apagada.
+    tabs = page.locator("section#alladin #alladinTabs button[data-alladin-view]")
+    assert tabs.count() == 4
+    assert [tabs.nth(i).inner_text().strip() for i in range(4)] == [
+        "Instrumentos", "Bens", "Contas", "Caixa"], "destinos locais divergem do congelado"
     forbidden = page.locator("section#alladin").inner_text()
-    assert "R$" not in forbidden and "0,00" not in forbidden
-    assert page.locator("section#alladin input, section#alladin form, section#alladin [data-layout-card]").count() == 0
+    for economico in ("R$", "US$", "0,00", "%", "saldo", "patrimônio", "quantidade"):
+        assert economico not in forbidden, f"conteudo economico proibido no Alladin: {economico}"
+    assert page.locator("section#alladin input, section#alladin form").count() == 0, \
+        "C3-S1 e somente leitura: nenhum formulario"
 
 
 def active_state(page):

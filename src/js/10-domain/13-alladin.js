@@ -593,8 +593,56 @@ function aldCatalogos(){
 // exposição explícita do estado de incompatibilidade exigida pelo fail-closed;
 // o aviso visual chega com a UI do C3.
 if(typeof window!=='undefined'){
+// ---- C3-S1 · read-model cadastral (fronteira de LEITURA da UI) ----------------
+// A UI não recebe referência viva de S.alladin: cada chamada devolve um snapshot
+// PROFUNDAMENTE desacoplado (clone por JSON + congelamento recursivo) contendo
+// APENAS os campos cadastrais que ESTE build conhece — um agregado em schema
+// futuro é projetado, nunca normalizado, e campos desconhecidos são ignorados
+// (o agregado original permanece byte-idêntico). NADA aqui materializa estado:
+// S.alladin ausente ou ilegível devolve coleção vazia sem criar coisa alguma.
+// Nenhum campo econômico existe neste contrato — saldo, quantidade, preço,
+// valuation e afins só nascerão com ALD-03/ALD-04, em superfícies próprias.
+const ALD_LEITURA_CAMPOS = Object.freeze({
+  instruments: Object.freeze(['instrumentId','name','symbol','instrumentFamily','assetClass',
+    'currency','exchange','country','externalIdentifiers','symbolHistory','recordStatus','createdAt']),
+  assets: Object.freeze(['assetId','name','nature','category','subcategory','strategicPurpose',
+    'strategicGroup','tags','recordMode','owners','location','acquisitionDate',
+    'recordStatus','lifecycleStatus','createdAt']),
+  accounts: Object.freeze(['accountId','name','institution','accountType','recordStatus','createdAt']),
+  cashAccounts: Object.freeze(['cashAccountId','accountId','currency','recordStatus','createdAt']),
+});
+function aldFreezeDeep(v){
+  if(v && typeof v==='object'){
+    Object.keys(v).forEach(k=>aldFreezeDeep(v[k]));
+    Object.freeze(v);
+  }
+  return v;
+}
+function aldVistaCadastral(colecao){
+  const campos=ALD_LEITURA_CAMPOS[colecao];
+  if(!campos) return Object.freeze([]);
+  const a=(typeof S==='object' && S) ? S.alladin : undefined;   // leitura pura
+  const lista=(a && Array.isArray(a[colecao])) ? a[colecao] : [];
+  const out=lista.filter(aldRegistroLegivel).map(function(r){
+    const dto={};
+    campos.forEach(function(k){
+      if(!Object.prototype.hasOwnProperty.call(r,k)) return;
+      try{ dto[k]=JSON.parse(JSON.stringify(r[k])); }catch(e){ /* campo não-serializável: omitido */ }
+    });
+    return aldFreezeDeep(dto);
+  });
+  return Object.freeze(out);
+}
+
   window.JPWAlladin = {
     compat: aldCompat,
+    // Leitura cadastral para a UI (C3-S1): snapshots desacoplados e congelados.
+    leitura: Object.freeze({
+      instruments: function(){ return aldVistaCadastral('instruments'); },
+      assets: function(){ return aldVistaCadastral('assets'); },
+      accounts: function(){ return aldVistaCadastral('accounts'); },
+      cashAccounts: function(){ return aldVistaCadastral('cashAccounts'); },
+    }),
     writeBlockReason: aldWriteBlockReason,
     money: {
       parse: aldParseMoney,

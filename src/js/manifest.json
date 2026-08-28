@@ -449,13 +449,19 @@
     {
       "path": "src/js/10-domain/13-alladin.js",
       "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
-      "sha256": "fb83e7077740f6efcdeff369258f0c439ff14d020a6d72c10ecb5e8b0c92c383"
+      "sha256": "8427280323687e4e103e72372cce6afa852ebe370c68cc0778968035c01610aa"
     },
     {
       "order": 76,
       "path": "src/js/20-ui/23-research-views.js",
       "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
       "sha256": "09da5babc3957e15bf6b4db09263f7b998b28a1094b33dc396ad9ec1ca09473e"
+    },
+    {
+      "order": 77,
+      "path": "src/js/20-ui/24-alladin-views.js",
+      "section": "ALLADIN · superficie cadastral read-only (C3-S1)",
+      "sha256": "3ab03e22a514c2f64201536e8cbcd36c5a77615251cd45521229f82744e944e1"
     }
   ]
 }

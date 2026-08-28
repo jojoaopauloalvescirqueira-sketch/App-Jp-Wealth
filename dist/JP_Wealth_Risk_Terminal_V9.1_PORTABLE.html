@@ -6108,7 +6108,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '04e6acffe7526cdd';
+const JP_WEALTH_BUILD_ID = 'c6c30332ae2dadb0';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7251,8 +7251,22 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <section class="screen" id="alladin">
     <div>
       <h2 data-route-focus>Alladin</h2>
-      <p>Módulo patrimonial em desenvolvimento.</p>
-      <p>As funcionalidades ainda não estão disponíveis.</p>
+      <!-- C3-S1: superfície cadastral SOMENTE LEITURA sobre o domínio C2.
+           Nenhum campo econômico existe aqui — saldo, quantidade, preço,
+           valuation e patrimônio só nascerão com ALD-03/ALD-04. A UI observa
+           via JPWAlladin.leitura: abrir, trocar de view e recarregar jamais
+           gravam nem materializam estado. -->
+      <div class="session-warning" id="alladinReadOnlyBanner" role="status" hidden></div>
+      <div class="seg" id="alladinTabs" role="group" aria-label="Cadastro patrimonial">
+        <button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
+        <button type="button" data-alladin-view="assets" aria-pressed="false">Bens</button>
+        <button type="button" data-alladin-view="accounts" aria-pressed="false">Contas</button>
+        <button type="button" data-alladin-view="cashAccounts" aria-pressed="false">Caixa</button>
+      </div>
+      <div class="card alladin-view" id="alladinInstruments" data-alladin-panel="instruments" role="region" aria-label="Instrumentos"></div>
+      <div class="card alladin-view" id="alladinAssets" data-alladin-panel="assets" role="region" aria-label="Bens" hidden></div>
+      <div class="card alladin-view" id="alladinAccounts" data-alladin-panel="accounts" role="region" aria-label="Contas" hidden></div>
+      <div class="card alladin-view" id="alladinCash" data-alladin-panel="cashAccounts" role="region" aria-label="Caixa" hidden></div>
     </div>
   </section>
 
@@ -7739,6 +7753,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -33253,8 +33268,56 @@ function aldCatalogos(){
 // exposição explícita do estado de incompatibilidade exigida pelo fail-closed;
 // o aviso visual chega com a UI do C3.
 if(typeof window!=='undefined'){
+// ---- C3-S1 · read-model cadastral (fronteira de LEITURA da UI) ----------------
+// A UI não recebe referência viva de S.alladin: cada chamada devolve um snapshot
+// PROFUNDAMENTE desacoplado (clone por JSON + congelamento recursivo) contendo
+// APENAS os campos cadastrais que ESTE build conhece — um agregado em schema
+// futuro é projetado, nunca normalizado, e campos desconhecidos são ignorados
+// (o agregado original permanece byte-idêntico). NADA aqui materializa estado:
+// S.alladin ausente ou ilegível devolve coleção vazia sem criar coisa alguma.
+// Nenhum campo econômico existe neste contrato — saldo, quantidade, preço,
+// valuation e afins só nascerão com ALD-03/ALD-04, em superfícies próprias.
+const ALD_LEITURA_CAMPOS = Object.freeze({
+  instruments: Object.freeze(['instrumentId','name','symbol','instrumentFamily','assetClass',
+    'currency','exchange','country','externalIdentifiers','symbolHistory','recordStatus','createdAt']),
+  assets: Object.freeze(['assetId','name','nature','category','subcategory','strategicPurpose',
+    'strategicGroup','tags','recordMode','owners','location','acquisitionDate',
+    'recordStatus','lifecycleStatus','createdAt']),
+  accounts: Object.freeze(['accountId','name','institution','accountType','recordStatus','createdAt']),
+  cashAccounts: Object.freeze(['cashAccountId','accountId','currency','recordStatus','createdAt']),
+});
+function aldFreezeDeep(v){
+  if(v && typeof v==='object'){
+    Object.keys(v).forEach(k=>aldFreezeDeep(v[k]));
+    Object.freeze(v);
+  }
+  return v;
+}
+function aldVistaCadastral(colecao){
+  const campos=ALD_LEITURA_CAMPOS[colecao];
+  if(!campos) return Object.freeze([]);
+  const a=(typeof S==='object' && S) ? S.alladin : undefined;   // leitura pura
+  const lista=(a && Array.isArray(a[colecao])) ? a[colecao] : [];
+  const out=lista.filter(aldRegistroLegivel).map(function(r){
+    const dto={};
+    campos.forEach(function(k){
+      if(!Object.prototype.hasOwnProperty.call(r,k)) return;
+      try{ dto[k]=JSON.parse(JSON.stringify(r[k])); }catch(e){ /* campo não-serializável: omitido */ }
+    });
+    return aldFreezeDeep(dto);
+  });
+  return Object.freeze(out);
+}
+
   window.JPWAlladin = {
     compat: aldCompat,
+    // Leitura cadastral para a UI (C3-S1): snapshots desacoplados e congelados.
+    leitura: Object.freeze({
+      instruments: function(){ return aldVistaCadastral('instruments'); },
+      assets: function(){ return aldVistaCadastral('assets'); },
+      accounts: function(){ return aldVistaCadastral('accounts'); },
+      cashAccounts: function(){ return aldVistaCadastral('cashAccounts'); },
+    }),
     writeBlockReason: aldWriteBlockReason,
     money: {
       parse: aldParseMoney,
@@ -33342,6 +33405,179 @@ if(researchBootBase){
     return result;
   };
 }
+// ============ ALLADIN · SUPERFÍCIE CADASTRAL READ-ONLY (C3-S1 · N1) ============
+// Primeira superfície funcional do Alladin: apresenta o cadastro C2 REAL, e só
+// ele. A UI é OBSERVADORA — invariante de segurança do slice:
+//   abrir · trocar view · renderizar · refresh · READ_ONLY · empty state
+//   ⇒ zero save(), zero aldMutate, zero cadastro.*, zero materialização de
+//     S.alladin, zero chave de storage, S e disco byte-idênticos.
+// A leitura passa EXCLUSIVAMENTE por JPWAlladin.leitura (snapshots profundos e
+// congelados) — esta superfície nunca toca S.alladin, nem para checar ausência.
+// PROIBIÇÃO ECONÔMICA (UI-A/UI-B do gate C3): nenhum saldo, quantidade, preço,
+// valor, custo, patrimônio, P&L, rentabilidade ou performance — nem como zero.
+// "Caixa" é o CADASTRO de CashAccount (DC-3), jamais dinheiro disponível.
+// A seleção de view é EFÊMERA (padrão Research/NAV-03): não toca S nem storage.
+
+const ALLADIN_VIEWS=[
+  ['instruments','alladinInstruments'],
+  ['assets','alladinAssets'],
+  ['accounts','alladinAccounts'],
+  ['cashAccounts','alladinCash']
+];
+const ALLADIN_EMPTY={
+  instruments:'Nenhum instrumento cadastrado.',
+  assets:'Nenhum bem cadastrado.',
+  accounts:'Nenhuma conta cadastrada.',
+  cashAccounts:'Nenhuma conta de caixa cadastrada.'
+};
+// Rótulos de status legíveis; valor fora do vocabulário deste build (schema
+// futuro) é exibido como veio — projetar não é normalizar.
+const ALLADIN_STATUS_LABEL={ACTIVE:'Ativo',INACTIVE:'Inativo'};
+const ALLADIN_LIFECYCLE_LABEL={ACTIVE:'Em uso',SOLD:'Vendido',DISPOSED:'Baixado',TRANSFERRED:'Transferido'};
+
+let alladinView='instruments';
+
+function alladinStatus(v,mapa){
+  if(v===undefined||v===null||v==='') return '—';
+  return (mapa && mapa[v]) || String(v);
+}
+function alladinTexto(v){
+  return (v===undefined||v===null||v==='') ? '—' : String(v);
+}
+function alladinTabela(colunas,linhas){
+  const head='<tr>'+colunas.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>';
+  const corpo=linhas.map(cels=>'<tr>'+cels.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
+  return '<div class="jp-table-scroll"><table class="dtable">'+head+corpo+'</table></div>';
+}
+function alladinVazio(view){
+  // NÃO usar class="expl": essa classe pertence ao sistema global de Explicações,
+  // que a colapsa atrás do botão "i". Empty state é informação primária e fica
+  // sempre visível.
+  return '<p class="alladin-empty">'+esc(ALLADIN_EMPTY[view])+'</p>';
+}
+// Apresentação congelada no gate (teto = read-model; tabela = colunas abaixo):
+//   Instrumentos  Nome | Símbolo | Família/Classe | Moeda | Status
+//   Bens          Nome | Natureza/Categoria | Finalidade | Status
+//   Contas        Nome | Instituição | Tipo | Status
+//   Caixa         Moeda | Conta-mãe | Status
+function alladinRenderInstruments(el){
+  const lista=JPWAlladin.leitura.instruments();
+  if(!lista.length){ el.innerHTML='<h2>Instrumentos</h2>'+alladinVazio('instruments'); return; }
+  el.innerHTML='<h2>Instrumentos</h2>'+alladinTabela(
+    ['Nome','Símbolo','Família / Classe','Moeda','Status'],
+    lista.map(r=>[
+      esc(alladinTexto(r.name)),
+      esc(alladinTexto(r.symbol)),
+      esc([r.instrumentFamily,r.assetClass].filter(Boolean).join(' · ')||'—'),
+      esc(alladinTexto(r.currency)),
+      esc(alladinStatus(r.recordStatus,ALLADIN_STATUS_LABEL))
+    ]));
+}
+function alladinRenderAssets(el){
+  const lista=JPWAlladin.leitura.assets();
+  if(!lista.length){ el.innerHTML='<h2>Bens</h2>'+alladinVazio('assets'); return; }
+  el.innerHTML='<h2>Bens</h2>'+alladinTabela(
+    ['Nome','Natureza / Categoria','Finalidade','Status'],
+    lista.map(r=>[
+      esc(alladinTexto(r.name)),
+      esc([r.nature,r.category].filter(Boolean).join(' · ')||'—'),
+      esc(alladinTexto(r.strategicPurpose)),
+      // Dois eixos do C2: recordStatus (registro) × lifecycleStatus (vida do bem).
+      esc(alladinStatus(r.recordStatus,ALLADIN_STATUS_LABEL))+
+        (r.lifecycleStatus?' · '+esc(alladinStatus(r.lifecycleStatus,ALLADIN_LIFECYCLE_LABEL)):'')
+    ]));
+}
+function alladinRenderAccounts(el){
+  const lista=JPWAlladin.leitura.accounts();
+  if(!lista.length){ el.innerHTML='<h2>Contas</h2>'+alladinVazio('accounts'); return; }
+  el.innerHTML='<h2>Contas</h2>'+alladinTabela(
+    ['Nome','Instituição','Tipo','Status'],
+    lista.map(r=>[
+      esc(alladinTexto(r.name)),
+      esc(alladinTexto(r.institution)),
+      esc(alladinTexto(r.accountType)),
+      esc(alladinStatus(r.recordStatus,ALLADIN_STATUS_LABEL))
+    ]));
+}
+function alladinRenderCash(el){
+  const lista=JPWAlladin.leitura.cashAccounts();
+  if(!lista.length){ el.innerHTML='<h2>Caixa</h2>'+alladinVazio('cashAccounts'); return; }
+  // Conta-mãe resolvida DENTRO do snapshot de leitura — nunca no agregado vivo.
+  const contas={};
+  JPWAlladin.leitura.accounts().forEach(a=>{ if(a.accountId) contas[a.accountId]=a.name; });
+  el.innerHTML='<h2>Caixa</h2>'+
+    '<p class="expl">Cadastro das contas de caixa por moeda — dinheiro disponível não pertence a este ciclo.</p>'+
+    alladinTabela(
+    ['Moeda','Conta-mãe','Status'],
+    lista.map(r=>[
+      esc(alladinTexto(r.currency)),
+      esc(alladinTexto(contas[r.accountId]||r.accountId)),
+      esc(alladinStatus(r.recordStatus,ALLADIN_STATUS_LABEL))
+    ]));
+}
+const ALLADIN_RENDERERS={
+  instruments:alladinRenderInstruments,
+  assets:alladinRenderAssets,
+  accounts:alladinRenderAccounts,
+  cashAccounts:alladinRenderCash
+};
+
+function alladinRenderBanner(){
+  const banner=document.getElementById('alladinReadOnlyBanner');
+  if(!banner) return;
+  const compat=JPWAlladin.compat();
+  if(compat.readOnly){
+    banner.hidden=false;
+    banner.textContent='Cadastro em modo somente-leitura. Este agregado foi gravado por uma versão mais nova do JP Wealth. Os dados compatíveis podem ser consultados, mas não alterados neste build.';
+  }else{
+    banner.hidden=true;
+    banner.textContent='';
+  }
+}
+function alladinApplyView(view){
+  ALLADIN_VIEWS.forEach(([key,id])=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const active=key===view;
+    el.hidden=!active;
+    el.inert=!active;
+    if(active && ALLADIN_RENDERERS[key]) ALLADIN_RENDERERS[key](el);
+  });
+  const tabs=document.getElementById('alladinTabs');
+  if(tabs) tabs.querySelectorAll('button[data-alladin-view]').forEach(b=>{
+    const on=b.dataset.alladinView===view;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',on?'true':'false');
+  });
+}
+function alladinRender(){
+  alladinRenderBanner();
+  alladinApplyView(alladinView);
+}
+function alladinSelectView(view){
+  if(!ALLADIN_RENDERERS[view]) return;
+  alladinView=view;              // efêmero: nunca persiste
+  alladinRender();
+}
+function initAlladinViews(){
+  const section=document.getElementById('alladin');
+  const tabs=document.getElementById('alladinTabs');
+  if(!section||!tabs) return;
+  // Delegação: UM listener para as quatro tabs — trocar view jamais acumula nós
+  // nem listeners (as tabelas são substituídas por innerHTML no mesmo container).
+  tabs.addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-alladin-view]');
+    if(btn) alladinSelectView(btn.dataset.alladinView);
+  });
+  // Render ao ENTRAR na tela: observa a própria section (hook local; a navegação
+  // global não é tocada — os quatro destinos são estado efêmero do Alladin).
+  new MutationObserver(()=>{
+    if(section.classList.contains('active')) alladinRender();
+  }).observe(section,{attributes:true,attributeFilter:['class']});
+  alladinRender();
+}
+window.JPWAlladinUI=Object.freeze({render:alladinRender,selectView:alladinSelectView});
+initAlladinViews();
 </script>
 </body>
 </html>

@@ -126,10 +126,10 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (35 —
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (36 —
 inclui a navegação NAV-01..NAV-03, smoke, Central de Configurações, Galton
 Board, Planejamento FX, cotação USD/BRL, as nove suítes de Finanças Pessoais,
-as três do Alladin e o protocolo de geração da base e a serialização cross-tab de escrita em Chromium real) e **full** (46 verificações, incluindo segurança de importação/XSS, senha de
+as três do Alladin e o protocolo de geração da base e a serialização cross-tab de escrita e a superfície cadastral read-only do Alladin em Chromium real) e **full** (47 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.

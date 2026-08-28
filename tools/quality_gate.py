@@ -54,6 +54,7 @@ STANDARD = FAST + (
     ("alladin-finalize-preservation", [sys.executable, "tools/alladin_finalize_preservation_test.py"]),
     ("session-epoch-protocol", [sys.executable, "tools/session_epoch_protocol_test.py"]),
     ("session-write-serialization", [sys.executable, "tools/session_write_serialization_test.py"]),
+    ("alladin-ui-readonly", [sys.executable, "tools/alladin_ui_readonly_test.py"]),
 )
 FULL = STANDARD + (
     ("session-finalization", [sys.executable, "tools/finalize_session_test.py"]),

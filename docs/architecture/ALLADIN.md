@@ -235,13 +235,37 @@ limitação formal APENAS do fallback, nunca apresentada como CAS. O backup do
 ramo `changed` é gerado do documento autoritativo capturado, e a revalidação de
 revisão dentro do lock aborta o commit se a base mudou durante a interação.
 
-## Placeholder de navegação NAV-01
+## C3-S1 — superfície cadastral somente-leitura
 
-O candidato interno NAV-01 cria `section#alladin` apenas como destino estático:
-“Módulo patrimonial em desenvolvimento. As funcionalidades ainda não estão
-disponíveis.” A navegação não lê nem chama `S.alladin`/`JPWAlladin`, não executa
-`save()`, não mostra valores, cards, quantidades ou zero econômico. Isso não é
-o C3 e não muda o domínio cadastral existente.
+O placeholder NAV-01 evoluiu para a primeira superfície funcional do Alladin
+(decisões UI-A..UI-F congeladas no gate de 2026-08-28). A tela tem **quatro
+destinos locais efêmeros** — Instrumentos, Bens (`Asset`), Contas e Caixa
+(`CashAccount`) — com default em Instrumentos; a seleção nunca toca `S` nem
+storage, e os destinos **não** são rotas globais.
+
+A leitura passa exclusivamente por **`JPWAlladin.leitura`**: snapshots
+profundamente desacoplados (clone estrutural + congelamento recursivo) contendo
+apenas os campos cadastrais que este build conhece. Ler jamais congela ou
+altera o agregado real; agregado ausente devolve coleções vazias **sem
+materializar nada**; schema futuro é **projetado, nunca normalizado** — campos
+desconhecidos são ignorados e o agregado permanece byte-idêntico, com banner
+persistente: os dados compatíveis podem ser consultados, mas não alterados
+neste build.
+
+**Proibição econômica**: nenhum saldo, quantidade, preço, valor, custo,
+patrimônio, P&L, rentabilidade ou performance — nem como zero. Estados vazios
+são textuais ("Nenhum instrumento cadastrado."). "Caixa" é o cadastro de
+`CashAccount` (DC-3), jamais dinheiro disponível. Superfícies econômicas só
+nascerão com `ALD-03`/`ALD-04`, como destinos novos.
+
+**Zero-write como invariante**: abrir, trocar de view, renderizar e recarregar
+produzem zero `save()`, zero `aldMutate`, zero materialização e `S`/disco
+byte-idênticos (provado por `tools/alladin_ui_readonly_test.py` + 6 mutantes).
+
+**C3-S2 (CRUD via modal/drawer, UI-C)**: o Implementation Gate **não abre**
+enquanto os dois bloqueadores pré-escrita não forem resolvidos —
+`sessionStateFingerprint()` sem proteção e o texto de consentimento da
+finalização (re-sequenciação UI-F).
 
 ## Superfície pública do domínio
 
