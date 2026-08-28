@@ -106,21 +106,115 @@ def complete_export_step(page):
     click_id(page, 'sessionExportContinue')
     assert 'confirmar encerramento' in modal_text(page)
 
-def finish_with_phrase(page, phrase='APAGAR TUDO'):
+def run_fingerprint_resilience(browser, base_url):
+    """FP-1..FP-6: o fingerprint mede o estado persistivel e nunca derruba o fluxo."""
+    page = prepare_page(browser, base_url + 'index.html')
+    page.wait_for_timeout(700)
+    page.evaluate("() => { window.__onbShown = true; closeModal(); }")
+    r = page.evaluate("""() => {
+      const out={};
+      markSessionCheckpoint();
+      const base=sessionStateFingerprint();
+      // FP-3: funcao em S e invisivel ao estado persistivel
+      S.__fnInjetada=function(){};
+      out.fp3_igual=(sessionStateFingerprint()===base);
+      out.fp3_changes=sessionHasChanges();
+      delete S.__fnInjetada;
+      // FP-4: investorPassword nao altera o fingerprint por si so
+      const antesPwd=sessionStateFingerprint();
+      if(S.onboarding) S.onboarding.investorPassword='SEGREDO-DIGITADO';
+      out.fp4_igual=(sessionStateFingerprint()===antesPwd);
+      if(S.onboarding) S.onboarding.investorPassword='';
+      // FP-1: BigInt => null => conservador
+      S.__big=BigInt(7);
+      out.fp1_null=(sessionStateFingerprint()===null);
+      out.fp1_changes=sessionHasChanges();
+      // FP-6: checkpoint nao e regravado com fingerprint impossivel
+      const cpAntes=sessionStorage.getItem('jpwealth_session_checkpoint_v1');
+      markSessionCheckpoint();
+      out.fp6_intacto=(sessionStorage.getItem('jpwealth_session_checkpoint_v1')===cpAntes);
+      delete S.__big;
+      // FP-2: ciclo => mesmo contrato
+      S.__ciclo={}; S.__ciclo.eu=S.__ciclo;
+      out.fp2_null=(sessionStateFingerprint()===null);
+      out.fp2_changes=sessionHasChanges();
+      delete S.__ciclo;
+      // FP-5: estado normal volta ao comportamento anterior
+      out.fp5_normal=(typeof sessionStateFingerprint()==='string');
+      return out;
+    }""")
+    assert r['fp3_igual'] and r['fp3_changes'] is False, f'FP-3: {r}'
+    assert r['fp4_igual'], f'FP-4: {r}'
+    assert r['fp1_null'] and r['fp1_changes'] is True, f'FP-1: {r}'
+    assert r['fp6_intacto'], f'FP-6: {r}'
+    assert r['fp2_null'] and r['fp2_changes'] is True, f'FP-2: {r}'
+    assert r['fp5_normal'], f'FP-5: {r}'
+    # FP-1/FP-2 via UI REAL: com estado nao-serializavel, o clique ABRE o fluxo
+    # (rota conservadora changed) e nada lanca.
+    errs = []
+    page.on('pageerror', lambda e: errs.append(str(e)))
+    page.evaluate("() => { S.__big=BigInt(7); }")
+    click_id(page, 'finalizeSessionBtn')
+    page.wait_for_timeout(400)
+    assert page.locator('#sessionExport').count() == 1, \
+        'estado nao-serializavel deveria rotear para changed (export exigido)'
+    assert not errs, f'clique com estado nao-serializavel lancou: {errs}'
+    page.evaluate("() => { delete S.__big; closeModal(); }")
+    close_checked(page)
+
+
+def run_consent_texts(browser, base_url):
+    """CT-1..CT-7: a politica de retencao e declarada e a frase e a nova."""
+    page = prepare_page(browser, base_url + 'index.html')
+    page.wait_for_timeout(700)
+    page.evaluate("() => { window.__onbShown = true; closeModal(); }")
+    # Determinismo: congela o FX assincrono e marca o checkpoint IMEDIATAMENTE
+    # antes do clique, garantindo a rota safe (padrao do proprio arquivo).
+    page.evaluate("() => { fxAutoFetchedThisSession = true; markSessionCheckpoint(); }")
+    # CT-2: rota safe declara a retencao
+    click_id(page, 'finalizeSessionBtn')
+    page.wait_for_timeout(300)
+    safe = modal_text(page)   # modal_text normaliza para minusculas
+    for termo in ('dados operacionais', 'alladin', 'finanças pessoais', 'tickets', 'zona de perigo'):
+        assert termo in safe, f'CT-2: rota safe sem o termo {termo!r}'
+    # CT-1: o consentimento (tela da acao) declara integralmente a retencao,
+    # ANTES da frase digitada
+    click_id(page, 'sessionHasCopy')
+    page.wait_for_timeout(200)
+    consent = modal_text(page)
+    for termo in ('encerrará a sessão', 'contas operacionais', 'cadastro patrimonial do alladin',
+                  'finanças pessoais', 'tickets', 'memória de longo prazo', 'zona de perigo'):
+        assert termo in consent, f'CT-1: consentimento sem o termo {termo!r}'
+    # CT-3/CT-7: a tela da frase pede ENCERRAR SESSÃO (o CT-4 vive em
+    # finish_with_phrase, executado pelos fluxos reais)
+    click_id(page, 'sessionProceed')
+    page.wait_for_timeout(200)
+    frase = modal_text(page)
+    assert 'encerrar sessão' in frase, 'CT-3: frase nova ausente'
+    assert 'apagar tudo' not in frase, 'CT-7: frase da Zona de Perigo vazou para a finalizacao'
+    page.evaluate('() => closeModal()')
+    close_checked(page)
+
+
+def finish_with_phrase(page, phrase='ENCERRAR SESSÃO'):
     click_id(page, 'sessionProceed')
     assert page.locator('#sessionDeletePhrase').count() == 1
     button = page.locator('#sessionDeleteConfirm')
     page.locator('#sessionDeletePhrase').fill('APAGAR')
     assert not button.is_enabled()
-    page.locator('#sessionDeletePhrase').fill('apagar tudo')
+    # CT-4: a frase ANTIGA nao confirma mais a finalizacao — ela era objetivamente
+    # falsa (o ato nao apaga tudo) e agora pertence apenas a Zona de Perigo.
+    page.locator('#sessionDeletePhrase').fill('APAGAR TUDO')
+    assert not button.is_enabled(), 'APAGAR TUDO nao pode mais confirmar a finalizacao'
+    page.locator('#sessionDeletePhrase').fill('encerrar sessão')
     assert not button.is_enabled()
     page.locator('#sessionDeletePhrase').fill('')
     assert not button.is_enabled()
-    page.locator('#sessionDeletePhrase').fill('APAGAR TUDO ;')
+    page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO ;')
     assert not button.is_enabled()
     page.locator('#sessionDeletePhrase').fill(phrase)
-    assert button.is_enabled() == (phrase.strip() == 'APAGAR TUDO')
-    if phrase.strip() == 'APAGAR TUDO':
+    assert button.is_enabled() == (phrase.strip() == 'ENCERRAR SESSÃO')
+    if phrase.strip() == 'ENCERRAR SESSÃO':
         button.click()
         # A finalização é assíncrona (transação sob writer lock). Aguarda a
         # CONCLUSÃO SEMÂNTICA — o aviso de sucesso só aparece depois do commit
@@ -144,7 +238,7 @@ def assert_empty_after_finalize(page):
       sessionCheckpoint: sessionStorage.getItem('jpwealth_session_checkpoint_v1'),
       body: document.body.innerText
     })''')
-    assert 'Sessão finalizada. Os dados operacionais do JP Wealth foram removidos deste navegador.' in facts['notice'], facts
+    assert 'Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador.' in facts['notice'], facts
     assert facts['modalOpen'] is False, facts
     # Mesma correção da suíte dist: a chave NÃO fica ausente — persistNotesAfterSessionWipe()
     # regrava POR DESENHO o estado vazio com as Notas do MVP preservadas (A-002/A-005).
@@ -280,7 +374,7 @@ def run_dist_suite(browser, url):
     complete_export_step(page)
     local_keys = page.evaluate("Object.keys(localStorage)")
     assert 'outra_aplicacao' in local_keys and 'jpwealth_v9_state_corrompido_teste' in local_keys
-    finish_with_phrase(page, 'APAGAR TUDO ')
+    finish_with_phrase(page, 'ENCERRAR SESSÃO ')
     assert page.evaluate("localStorage.getItem('outra_aplicacao')") == 'preservar'
     # A chave principal NÃO fica ausente após o Finalizar: persistNotesAfterSessionWipe()
     # (A-002 + guarda A-005, 07-finalize-session.js) regrava POR DESENHO o estado vazio
@@ -331,7 +425,7 @@ def run_dist_suite(browser, url):
     click_id(page, 'finalizeSessionBtn')
     click_id(page, 'sessionHasCopy')
     click_id(page, 'sessionProceed')
-    page.locator('#sessionDeletePhrase').fill('APAGAR TUDO')
+    page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO')
     click_id(page, 'sessionCancel')
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state')") is not None
     close_checked(page)
@@ -499,7 +593,10 @@ def run_mvp_notes_survival(browser, url):
     assert page.evaluate('S.mvpNotes.items.length') == 1, 'Finalizar Sessão não deveria apagar as notas'
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'Finalizar Sessão não deveria apagar as pastas'
     notice = page.locator('#sessionNotice').inner_text()
-    assert 'Tickets' in notice and 'pastas' in notice, notice
+    # Notice CURTO congelado no gate pre-write: confirma o resultado e nomeia os
+    # tres sobreviventes; o detalhe (pastas, historico, preferencias) vive no
+    # texto de consentimento, provado por CT-1.
+    assert 'Tickets' in notice and 'Alladin' in notice and 'Finanças Pessoais' in notice, notice
 
     page.reload(wait_until='load')
     page.wait_for_timeout(700)
@@ -563,6 +660,8 @@ def main():
                 options['executable_path'] = executable
             browser = playwright.chromium.launch(**options)
             app_context = browser.new_context(service_workers='block')
+            run_fingerprint_resilience(app_context, base_url)
+            run_consent_texts(app_context, base_url)
             run_source_surface(app_context, base_url)
             run_dist_suite(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             run_mvp_notes_survival(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')

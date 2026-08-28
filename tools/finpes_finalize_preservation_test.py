@@ -103,7 +103,7 @@ def main():
             page.locator("#sessionExportAcknowledged").check()
             click_id(page, "sessionExportContinue")
             click_id(page, "sessionProceed")
-            page.locator("#sessionDeletePhrase").fill("APAGAR TUDO")
+            page.locator("#sessionDeletePhrase").fill("ENCERRAR SESSÃO")
             page.locator("#sessionDeleteConfirm").click()
             page.wait_for_timeout(600)
 

@@ -135,7 +135,7 @@ let sessionFinalizeEntry='safe';
 // qualquer efeito colateral capaz de chamar save(). null = ainda não capturado.
 let sessionPreservedAlladin=null;
 // Geração da base no instante da captura. O ato só se completa se ela ainda for a
-// corrente na confirmação — um wipe entre a abertura e o "APAGAR TUDO" mudaria a base
+// corrente na confirmação — um wipe entre a abertura e o "ENCERRAR SESSÃO" mudaria a base
 // sob o fluxo.
 let sessionPreservedEpoch=null;
 // Forma BRUTA do documento no instante da captura — é a revisão R da transação: o
@@ -168,14 +168,24 @@ function sessionStableValue(value){
   }
   return value;
 }
+// O fingerprint mede o ESTADO PERSISTÍVEL — exatamente a mesma semântica JSON e a
+// mesma política de segredo do save() (replacer de investorPassword), nunca uma
+// segunda política de serialização que possa divergir da persistência. Por isso o
+// clone é JSON, não structuredClone: o antigo clone estrutural era mais forte que o
+// necessário (preservava o que o disco jamais veria) e mais frágil (LANÇAVA na
+// entrada do fluxo com um valor não-clonável em S, derrubando o botão antes de
+// qualquer guarda — bloqueador pré-write do C3-S2). Funções e outros valores que o
+// JSON ignora não pertencem ao estado persistível e não mudam o fingerprint.
+// Preço e data entram deliberadamente: falso positivo de FX é preferível à perda
+// silenciosa. Estado IMPOSSÍVEL de serializar (BigInt, ciclo) devolve null — e null
+// significa tratamento CONSERVADOR: sessionHasChanges() responde true (rota
+// 'changed', que exige export; se nem o export serializar, ele falha com a mensagem
+// honesta própria e NADA é destruído). Exceção escapando para a UI é proibida.
 function sessionStateFingerprint(){
-  const snapshot=structuredClone(S);
-  // Preço e data entram deliberadamente: falso positivo de FX é preferível à perda silenciosa.
-  // A senha de investidor sai do fingerprint pela mesma política que a tira do save():
-  // ela é de sessão, nunca persiste — digitá-la não pode acusar "alterações não salvas"
-  // de algo que, por desenho, jamais será salvo.
-  if(Array.isArray(snapshot.accounts)) snapshot.accounts.forEach(a=>{ if(a) a.investorPassword=''; });
-  if(snapshot.onboarding) snapshot.onboarding.investorPassword='';
+  let snapshot;
+  try{
+    snapshot=JSON.parse(JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
+  }catch(e){ return null; }
   return JSON.stringify(sessionStableValue(snapshot));
 }
 function sessionCheckpointStorageGet(){
@@ -192,10 +202,14 @@ function initSessionCheckpoint(){
   const current=sessionStateFingerprint();
   const saved=sessionCheckpointStorageGet();
   sessionCheckpointValue=saved || current;
-  if(!saved) sessionCheckpointStorageSet(current);
+  if(!saved && current!==null) sessionCheckpointStorageSet(current);
 }
 function markSessionCheckpoint(){
-  setSessionCheckpointValue(sessionStateFingerprint());
+  const fp=sessionStateFingerprint();
+  // fingerprint impossível ⇒ NÃO grava checkpoint novo: um marco ilegível viraria
+  // "ponto seguro" falso e mascararia alterações reais na próxima comparação.
+  if(fp===null) return;
+  setSessionCheckpointValue(fp);
 }
 function setSessionCheckpointValue(value){
   sessionCheckpointValue=value;
@@ -203,7 +217,9 @@ function setSessionCheckpointValue(value){
 }
 function sessionHasChanges(){
   if(sessionCheckpointValue===null) initSessionCheckpoint();
-  return sessionCheckpointValue!==sessionStateFingerprint();
+  const fp=sessionStateFingerprint();
+  if(fp===null) return true;   // conservador: sem fingerprint confiável ⇒ 'changed'
+  return sessionCheckpointValue!==fp;
 }
 function clearSessionCheckpoint(){
   sessionCheckpointValue=null;
@@ -292,7 +308,7 @@ function sessionHandleRemoteFinalization(message){
     boot();
     window.__onbShown=false;
     initSessionCheckpoint();
-    const aviso='Sessão finalizada em outra aba. Os dados operacionais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.';
+    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets.';
     showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
   }finally{
     if(bloqueou && !concluiu){
@@ -696,8 +712,8 @@ async function beginSessionExport(){
 function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
-    '<p class="modal-sub">A próxima ação removerá deste navegador a base local do JP Wealth, os registros operacionais, a contabilidade, as configurações e os dados de acesso armazenados.</p>'+
-    '<p class="session-warning">Exceção: os Tickets (tarefas, bugs, funcionalidades e melhorias registradas no painel de Tickets), as pastas em que estão organizados, o histórico de concluídos e as preferências do painel não são apagados por esta ação — permanecem armazenados neste navegador.</p>'+
+    '<p class="modal-sub">A próxima ação encerrará a sessão e removerá deste navegador os dados operacionais da sessão: contas operacionais, ordens, fases, contabilidade, histórico operacional, configurações da sessão e dados de acesso.</p>'+
+    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -706,14 +722,14 @@ function renderSessionDeleteConfirmation(previousStep){
 }
 function renderSessionPhraseConfirmation(){
   sessionModal('<h3>Confirmação irreversível</h3>'+
-    '<p class="modal-sub">Para apagar a base local e finalizar a sessão, escreva exatamente:</p>'+
-    '<div class="session-delete-phrase">APAGAR TUDO</div>'+
+    '<p class="modal-sub">Para encerrar a sessão e remover os dados operacionais deste navegador, escreva exatamente:</p>'+
+    '<div class="session-delete-phrase">ENCERRAR SESSÃO</div>'+
     '<label class="field session-phrase-field"><span>Frase de confirmação</span><input type="text" id="sessionDeletePhrase" value="" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>'+
-    '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionDeleteConfirm" disabled>Finalizar e apagar dados</button></div>');
+    '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionDeleteConfirm" disabled>Encerrar sessão</button></div>');
   sessionCancelBinding();
   const input=$('sessionDeletePhrase'), button=$('sessionDeleteConfirm');
-  input.addEventListener('input',()=>{ button.disabled=input.value.trim()!=='APAGAR TUDO'; });
-  button.addEventListener('click',()=>{ if(input.value.trim()==='APAGAR TUDO') finalizeJPWealthSession(); });
+  input.addEventListener('input',()=>{ button.disabled=input.value.trim()!=='ENCERRAR SESSÃO'; });
+  button.addEventListener('click',()=>{ if(input.value.trim()==='ENCERRAR SESSÃO') finalizeJPWealthSession(); });
   input.focus();
 }
 function renderSessionChanged(){
@@ -726,7 +742,7 @@ function renderSessionChanged(){
 }
 function renderSessionSafeChoice(){
   sessionModal('<h3>Finalizar sessão neste computador</h3>'+
-    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Finalizar a sessão removerá a base local do JP Wealth deste navegador.</p>'+
+    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Você possui uma cópia atual e acessível desta base de dados?</div></div>'+
     '<div class="modal-actions session-choice-actions"><button type="button" class="modal-btn confirm" id="sessionHasCopy">Sim, tenho uma cópia</button><button type="button" class="modal-btn cancel" id="sessionExportNow">Não tenho certeza — exportar agora</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
   sessionCancelBinding();
@@ -849,7 +865,7 @@ async function finalizeJPWealthSession(){
       if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
       window.__onbShown=false;
       initSessionCheckpoint();
-      const aviso='Sessão finalizada. Os dados operacionais do JP Wealth foram removidos deste navegador. Os Tickets — incluindo pastas, histórico de concluídos e preferências do painel — não foram apagados e continuam salvos.';
+      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets.';
       showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
     });
   }catch(error){

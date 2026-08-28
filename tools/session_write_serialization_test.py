@@ -128,7 +128,7 @@ def main() -> int:
                     a.locator("#sessionExportAcknowledged").check()
                     a.locator("#sessionExportContinue").click(); a.wait_for_timeout(200)
                 a.locator("#sessionProceed").click()
-                a.locator("#sessionDeletePhrase").fill("APAGAR TUDO")
+                a.locator("#sessionDeletePhrase").fill("ENCERRAR SESSÃO")
                 a.locator("#sessionDeleteConfirm").click()
                 a.wait_for_timeout(800)
                 r = a.evaluate("""() => ({
@@ -190,7 +190,7 @@ def main() -> int:
                     page.locator("#sessionExportAcknowledged").check()
                     page.locator("#sessionExportContinue").click(); page.wait_for_timeout(200)
                 page.locator("#sessionProceed").click()
-                page.locator("#sessionDeletePhrase").fill("APAGAR TUDO")
+                page.locator("#sessionDeletePhrase").fill("ENCERRAR SESSÃO")
                 page.locator("#sessionDeleteConfirm").click()
                 page.wait_for_timeout(700)
                 r = page.evaluate("""() => ({ contas:S.accounts.length,
@@ -242,7 +242,7 @@ def main() -> int:
                     };
                 }""" % LSKEY)
                 page.locator("#sessionProceed").click()
-                page.locator("#sessionDeletePhrase").fill("APAGAR TUDO")
+                page.locator("#sessionDeletePhrase").fill("ENCERRAR SESSÃO")
                 page.locator("#sessionDeleteConfirm").click()
                 page.wait_for_timeout(700)
                 r = page.evaluate("""() => {
@@ -281,7 +281,7 @@ def main() -> int:
                     localStorage.setItem = (k,v) => { if(k==='%s') return; return orig(k,v); };
                 }""" % LSKEY)
                 page.locator("#sessionProceed").click()
-                page.locator("#sessionDeletePhrase").fill("APAGAR TUDO")
+                page.locator("#sessionDeletePhrase").fill("ENCERRAR SESSÃO")
                 page.locator("#sessionDeleteConfirm").click()
                 page.wait_for_timeout(700)
                 r = page.evaluate("""() => ({

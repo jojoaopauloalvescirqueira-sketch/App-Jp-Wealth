@@ -249,7 +249,7 @@ def run_suite(browser, url, rotulo):
     modal = page.evaluate("document.getElementById('modalBox').innerText")
     assert 'modo de recuperação' in modal, modal
     assert 'não pode ser executado' in modal, 'o fluxo normal não pode prosseguir em recuperação'
-    assert 'APAGAR TUDO' not in modal and page.locator('#sessionProceed').count() == 0, \
+    assert 'ENCERRAR SESSÃO' not in modal and page.locator('#sessionProceed').count() == 0, \
         'nenhuma etapa do fluxo destrutivo normal pode ser oferecida'
     page.locator('#sessionCancel').click()
     # finalização vinda de OUTRA ABA: o cinto em clearJPWealthLocalData interrompe

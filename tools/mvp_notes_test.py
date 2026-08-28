@@ -338,7 +338,7 @@ try:
         click_id(page, 'sessionHasCopy')
         assert 'tickets' in page.locator('#modalBox').inner_text().lower(), 'aviso de persistência de tickets ausente na tela de confirmação'
         click_id(page, 'sessionProceed')
-        page.locator('#sessionDeletePhrase').fill('APAGAR TUDO')
+        page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO')
         click_id(page, 'sessionDeleteConfirm')
         page.wait_for_timeout(500)
         assert page.evaluate("S.params.saldoIni") == 0, 'dado operacional deveria ser zerado'

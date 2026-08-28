@@ -162,7 +162,7 @@ def finalizar_fluxo_real(page, falhas, rotulo):
         falhas.append(f"{rotulo}: a tela de confirmacao (#sessionProceed) nao apareceu (entrada={entrada})")
         return entrada
     page.locator("#sessionProceed").click()
-    page.locator("#sessionDeletePhrase").fill("APAGAR TUDO")
+    page.locator("#sessionDeletePhrase").fill("ENCERRAR SESSÃO")
     page.locator("#sessionDeleteConfirm").click()
     page.wait_for_timeout(700)
     return entrada

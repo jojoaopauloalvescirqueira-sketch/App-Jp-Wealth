@@ -262,10 +262,20 @@ nascerão com `ALD-03`/`ALD-04`, como destinos novos.
 produzem zero `save()`, zero `aldMutate`, zero materialização e `S`/disco
 byte-idênticos (provado por `tools/alladin_ui_readonly_test.py` + 6 mutantes).
 
-**C3-S2 (CRUD via modal/drawer, UI-C)**: o Implementation Gate **não abre**
-enquanto os dois bloqueadores pré-escrita não forem resolvidos —
-`sessionStateFingerprint()` sem proteção e o texto de consentimento da
-finalização (re-sequenciação UI-F).
+**Bloqueadores pré-escrita: RESOLVIDOS (gate C3-S2 PRE-WRITE, 2026-08-28).**
+`sessionStateFingerprint()` passou a medir o estado persistível (clone JSON com
+a mesma política de segredo do `save()`; estado não-serializável ⇒ `null` ⇒
+tratamento conservador como *changed* — nenhuma exceção alcança a UI). O
+consentimento da finalização declara integralmente a política de retenção
+(Alladin, Finanças Pessoais e Tickets permanecem; a Zona de Perigo é o caminho
+para apagar tudo) e a frase digitada passou a ser **ENCERRAR SESSÃO** — a
+antiga `APAGAR TUDO` era objetivamente falsa para este ato e pertence apenas à
+Zona de Perigo. Semântica congelada: *Finalizar Sessão* (frase `ENCERRAR
+SESSÃO`) remove os dados operacionais e preserva a memória de longo prazo;
+*Zona de Perigo* (frase `APAGAR`) é a limpeza total. Nenhum texto futuro pode
+tratá-las como equivalentes.
+
+**C3-S2 (CRUD via modal/drawer, UI-C)**: destravado — pré-condições cumpridas.
 
 ## Superfície pública do domínio
 
