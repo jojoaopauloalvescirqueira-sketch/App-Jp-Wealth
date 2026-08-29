@@ -303,6 +303,16 @@
     padding:0 var(--sp-3); display:flex; align-items:center; gap:var(--sp-4);
   }
   .brand{display:flex; align-items:center; gap:var(--sp-3); min-width:0}
+  /* A marca virou <button> por acessibilidade, mas NAO deve parecer um botao:
+     o user-agent traz fundo, borda, fonte e alinhamento proprios, e todos sao
+     devolvidos ao que a marca ja era. O que se acrescenta e so o que o gesto
+     exige — cursor de acao e alvo de toque de 44px. O foco visivel continua
+     vindo do sistema de estilos; nenhuma regra nova o redefine. */
+  .brand-home{
+    min-height:44px; padding:0; border:0; border-radius:var(--radius-sm);
+    background:none; color:inherit; font:inherit; text-align:left;
+    text-transform:none; letter-spacing:0; cursor:pointer; appearance:none;
+  }
   /* Wordmark próprio: JP —•— WEALTH (linha orbital em CSS puro, sem imagem).
      Ajustado para a densidade do terminal: órbita curta, ponto no acento, sem glow. */
   .wordmark{display:flex; align-items:center; line-height:1; white-space:nowrap}

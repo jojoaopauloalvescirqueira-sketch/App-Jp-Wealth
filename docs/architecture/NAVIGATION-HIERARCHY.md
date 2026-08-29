@@ -84,6 +84,35 @@ Um módulo novo precisa de: o par de ids acima, o `<nav>` dentro de
 (`40-app/11-operational-shell.js`) apontando para sua superfície de UI. Nenhum
 id, classe ou atributo do controlador é específico de módulo.
 
+## A marca como acesso ao Dashboard
+
+A logo do cabeçalho é o caminho de volta ao Dashboard — a convenção que todo
+usuário de aplicação web já traz de fora. É um `<button type="button">` de
+verdade, `#brandHomeBtn`, com `data-route="dashboard"`, e **entra no mesmo
+seletor de fiação dos primários**:
+
+```js
+document.querySelectorAll('#nav > .tab[data-route], .brand-home[data-route]')
+```
+
+Não há segunda implementação de navegação. Uma segunda seria uma segunda
+verdade sobre o que "ir para o dashboard" significa, e as duas divergiriam na
+primeira mudança de rota.
+
+Ser um `<button>` real dá Enter e Espaço de graça, sem nenhum listener de
+teclado próprio. O nome acessível descreve o **destino** — `aria-label="Ir para
+o Dashboard"` —, não a imagem: por isso a logo é decorativa (`alt=""`) e o
+wordmark sai da árvore de acessibilidade, evitando que o leitor de tela anuncie
+"JP Wealth JP WEALTH V9.1" antes de dizer para onde o controle leva.
+
+Visualmente nada muda: `.brand-home` devolve ao user-agent o fundo, a borda, a
+fonte e o alinhamento que ele impõe a botões, acrescentando apenas o que o gesto
+exige — `cursor:pointer` e alvo de toque de 44 px. O foco visível continua vindo
+do sistema de estilos existente.
+
+Como toda navegação, o gesto é **UI pura**: não escreve em `S`, não persiste
+rota e não toca storage.
+
 ## Modelo de interação
 
 Há dois estados de abertura, mantidos somente na camada de UI:

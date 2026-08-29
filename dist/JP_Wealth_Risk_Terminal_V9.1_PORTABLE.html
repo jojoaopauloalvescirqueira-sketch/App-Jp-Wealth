@@ -313,6 +313,16 @@
     padding:0 var(--sp-3); display:flex; align-items:center; gap:var(--sp-4);
   }
   .brand{display:flex; align-items:center; gap:var(--sp-3); min-width:0}
+  /* A marca virou <button> por acessibilidade, mas NAO deve parecer um botao:
+     o user-agent traz fundo, borda, fonte e alinhamento proprios, e todos sao
+     devolvidos ao que a marca ja era. O que se acrescenta e so o que o gesto
+     exige — cursor de acao e alvo de toque de 44px. O foco visivel continua
+     vindo do sistema de estilos; nenhuma regra nova o redefine. */
+  .brand-home{
+    min-height:44px; padding:0; border:0; border-radius:var(--radius-sm);
+    background:none; color:inherit; font:inherit; text-align:left;
+    text-transform:none; letter-spacing:0; cursor:pointer; appearance:none;
+  }
   /* Wordmark próprio: JP —•— WEALTH (linha orbital em CSS puro, sem imagem).
      Ajustado para a densidade do terminal: órbita curta, ponto no acento, sem glow. */
   .wordmark{display:flex; align-items:center; line-height:1; white-space:nowrap}
@@ -6108,7 +6118,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'cace9b5ff658096e';
+const JP_WEALTH_BUILD_ID = '6f83a2de8aeeb686';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6164,14 +6174,22 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
 </defs></svg>
 <header>
-  <div class="brand">
-    <img class="gd-logo" src="assets/jp-wealth-logo.png" alt="JP Wealth" width="120" height="11">
-    <span class="wordmark" aria-label="JP Wealth">
+  <!-- A marca e o caminho de volta ao Dashboard: o gesto que todo usuario de
+       aplicacao web espera do canto superior esquerdo. E um <button> de verdade —
+       nao uma <div> com onclick — para herdar foco, Enter e Espaco do navegador
+       em vez de reimplementa-los. O nome acessivel descreve o DESTINO ("Ir para o
+       Dashboard"), nao a imagem: por isso a logo vira decorativa (alt="") e o
+       wordmark sai da arvore de acessibilidade, evitando que o leitor de tela
+       anuncie "JP Wealth JP WEALTH V9.1". -->
+  <button type="button" class="brand brand-home" id="brandHomeBtn" data-route="dashboard"
+          title="Ir para o Dashboard" aria-label="Ir para o Dashboard">
+    <img class="gd-logo" src="assets/jp-wealth-logo.png" alt="" width="120" height="11">
+    <span class="wordmark" aria-hidden="true">
       <span class="wm-jp">JP</span><span class="wm-orbit"><i></i></span><span class="wm-wealth">WEALTH</span>
       <span class="ver">V9.1</span>
     </span>
     <span class="tag">Risk Terminal</span>
-  </div>
+  </button>
   <!-- Alvo de realocação da navegação sob a flag data-shell="global-dashboard"
        (gdRelocateShell, 12-global-dashboard.js) — vazio e inerte sem a flag. -->
   <div class="gd-topbar-nav-slot" id="gdTopbarNavSlot"></div>
@@ -14103,8 +14121,12 @@ window.JPWNavigation=Object.freeze({
   focusCurrentScreen:navFocusCurrentScreen
 });
 
-document.querySelectorAll('#nav > .tab[data-route]').forEach(tab=>
-  tab.addEventListener('click',()=>navigateToScreen(tab)));
+// A marca entra no MESMO seletor dos primarios: um segundo caminho de navegacao
+// seria uma segunda verdade sobre o que "ir para o dashboard" significa, e as
+// duas divergiriam na primeira mudanca de rota. Enter e Espaco vem de graca
+// porque o elemento e um <button>.
+document.querySelectorAll('#nav > .tab[data-route], .brand-home[data-route]').forEach(control=>
+  control.addEventListener('click',()=>navigateToScreen(control)));
 navSelectPrimary('dashboard');
 const fxUpdateButton=document.getElementById('fxUpdateBtn');
 if(fxUpdateButton) fxUpdateButton.addEventListener('click',()=>updateFxRates());

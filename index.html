@@ -62,14 +62,22 @@
   <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
 </defs></svg>
 <header>
-  <div class="brand">
-    <img class="gd-logo" src="assets/jp-wealth-logo.png" alt="JP Wealth" width="120" height="11">
-    <span class="wordmark" aria-label="JP Wealth">
+  <!-- A marca e o caminho de volta ao Dashboard: o gesto que todo usuario de
+       aplicacao web espera do canto superior esquerdo. E um <button> de verdade —
+       nao uma <div> com onclick — para herdar foco, Enter e Espaco do navegador
+       em vez de reimplementa-los. O nome acessivel descreve o DESTINO ("Ir para o
+       Dashboard"), nao a imagem: por isso a logo vira decorativa (alt="") e o
+       wordmark sai da arvore de acessibilidade, evitando que o leitor de tela
+       anuncie "JP Wealth JP WEALTH V9.1". -->
+  <button type="button" class="brand brand-home" id="brandHomeBtn" data-route="dashboard"
+          title="Ir para o Dashboard" aria-label="Ir para o Dashboard">
+    <img class="gd-logo" src="assets/jp-wealth-logo.png" alt="" width="120" height="11">
+    <span class="wordmark" aria-hidden="true">
       <span class="wm-jp">JP</span><span class="wm-orbit"><i></i></span><span class="wm-wealth">WEALTH</span>
       <span class="ver">V9.1</span>
     </span>
     <span class="tag">Risk Terminal</span>
-  </div>
+  </button>
   <!-- Alvo de realocação da navegação sob a flag data-shell="global-dashboard"
        (gdRelocateShell, 12-global-dashboard.js) — vazio e inerte sem a flag. -->
   <div class="gd-topbar-nav-slot" id="gdTopbarNavSlot"></div>

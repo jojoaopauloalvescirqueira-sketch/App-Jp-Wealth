@@ -210,8 +210,12 @@ window.JPWNavigation=Object.freeze({
   focusCurrentScreen:navFocusCurrentScreen
 });
 
-document.querySelectorAll('#nav > .tab[data-route]').forEach(tab=>
-  tab.addEventListener('click',()=>navigateToScreen(tab)));
+// A marca entra no MESMO seletor dos primarios: um segundo caminho de navegacao
+// seria uma segunda verdade sobre o que "ir para o dashboard" significa, e as
+// duas divergiriam na primeira mudanca de rota. Enter e Espaco vem de graca
+// porque o elemento e um <button>.
+document.querySelectorAll('#nav > .tab[data-route], .brand-home[data-route]').forEach(control=>
+  control.addEventListener('click',()=>navigateToScreen(control)));
 navSelectPrimary('dashboard');
 const fxUpdateButton=document.getElementById('fxUpdateBtn');
 if(fxUpdateButton) fxUpdateButton.addEventListener('click',()=>updateFxRates());

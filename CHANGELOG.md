@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+### Navegação — a marca abre o Dashboard — 2026-08-29
+
+A logo do cabeçalho passou a ser o caminho de volta ao Dashboard, atendendo à
+convenção que o usuário já traz de qualquer aplicação web. `.brand` virou
+`<button type="button" id="brandHomeBtn" data-route="dashboard">`, fiado no
+**mesmo** `navigateToScreen()` dos primários — o seletor ganhou
+`.brand-home[data-route]` em vez de uma segunda implementação de navegação.
+
+Ser um botão de verdade traz Enter e Espaço sem nenhum listener próprio. O nome
+acessível descreve o destino (`aria-label="Ir para o Dashboard"`), a logo passa
+a decorativa (`alt=""`) e o wordmark sai da árvore de acessibilidade, para o
+leitor de tela não anunciar a marca duas vezes antes de dizer aonde se vai.
+
+A aparência não muda: `.brand-home` devolve ao user-agent fundo, borda, fonte e
+alinhamento de botão, acrescentando só `cursor:pointer` e o alvo de toque de
+44 px; o foco visível continua vindo do sistema de estilos. Nenhuma escrita em
+estado, storage ou persistência — navegação segue sendo UI pura.
+
+`tools/navigation_ia_test.py` ganhou caracterização do contrato inteiro:
+semântica do controle, rota canônica, nome acessível, altura e cursor, e as três
+formas de acionamento — clique, Enter e Espaço — sempre partindo de
+`research-others` para provar a saída até a tela física `dash`, com `aria-current`
+correto e storage intacto. Verificado em navegador real, desktop e mobile, temas
+claro e escuro, com console e `pageerror` limpos.
+
+`validate_project` PASS (77 scripts, 429 IDs); `standard` 37/37.
+
+
 ### Alladin C3 — integração na main — 2026-08-29
 
 O ciclo do C3 deixou a branch e passou a valer para quem usa o sistema. A `main`

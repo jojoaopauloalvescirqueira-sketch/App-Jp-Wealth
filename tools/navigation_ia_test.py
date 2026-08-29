@@ -179,6 +179,59 @@ def assert_primary_dom(page):
         "C3-S1 e somente leitura: nenhum formulario"
 
 
+def assert_brand_home_navigation(page):
+    """A marca do cabecalho e o caminho de volta ao Dashboard.
+
+    Caracterizacao do contrato inteiro: semantica do controle, nome acessivel
+    que descreve o DESTINO, alvo de toque, e as tres formas de acionamento —
+    clique, Enter e Espaco. As duas ultimas so sao gratuitas porque o elemento e
+    um <button> de verdade; se alguem devolve-lo a <div>, elas param de existir
+    sem que nenhum estilo mude, e este teste e quem percebe.
+    """
+    brand = page.locator("#brandHomeBtn")
+    assert brand.count() == 1, "a marca do cabecalho nao e um controle unico"
+    semantica = brand.evaluate("""el => ({
+      tag: el.tagName, type: el.getAttribute('type'),
+      route: el.dataset.route, rotulo: el.getAttribute('aria-label'),
+      titulo: el.getAttribute('title'),
+      altura: Math.round(el.getBoundingClientRect().height),
+      cursor: getComputedStyle(el).cursor,
+      imgDecorativa: el.querySelector('img.gd-logo')?.getAttribute('alt') === '',
+      wordmarkOculto: el.querySelector('.wordmark')?.getAttribute('aria-hidden') === 'true',
+    })""")
+    assert semantica["tag"] == "BUTTON", f"a marca precisa ser <button>: {semantica}"
+    assert semantica["type"] == "button", f"sem type=button o controle pode submeter: {semantica}"
+    assert semantica["route"] == "dashboard", f"rota canonica errada: {semantica}"
+    assert semantica["rotulo"] == "Ir para o Dashboard", f"nome acessivel: {semantica}"
+    assert semantica["titulo"] == "Ir para o Dashboard", f"title: {semantica}"
+    assert semantica["altura"] >= 44, f"alvo de toque menor que 44px: {semantica}"
+    assert semantica["cursor"] == "pointer", f"cursor nao indica acao: {semantica}"
+    # o nome acessivel descreve o destino; a imagem e o wordmark nao repetem a marca
+    assert semantica["imgDecorativa"], f"a logo deveria ser decorativa (alt=''): {semantica}"
+    assert semantica["wordmarkOculto"], f"o wordmark deveria sair da arvore a11y: {semantica}"
+
+    # as tres formas de acionamento, sempre partindo de LONGE do dashboard
+    for rotulo, acionar in (
+        ("clique", lambda: page.locator("#brandHomeBtn").click()),
+        ("Enter",  lambda: (page.locator("#brandHomeBtn").focus(), page.keyboard.press("Enter"))),
+        ("Espaco", lambda: (page.locator("#brandHomeBtn").focus(), page.keyboard.press(" "))),
+    ):
+        page.evaluate("() => JPWNavigation.navigate('research-others')")
+        antes = active_state(page)
+        assert antes["screen"] != "dash", f"[{rotulo}] o caso nao prova nada: ja estava no dashboard"
+        storage_antes = storage_snapshot(page)
+        acionar()
+        page.wait_for_timeout(120)
+        depois = active_state(page)
+        assert depois["screen"] == "dash", f"[{rotulo}] nao chegou a tela fisica dash: {depois}"
+        assert depois["activeScreens"] == ["dash"], f"[{rotulo}] mais de uma tela ativa: {depois}"
+        assert depois["primary"] == "dashboard", f"[{rotulo}] primario errado: {depois}"
+        assert depois["ariaCurrent"] == "dashboard", f"[{rotulo}] aria-current errado: {depois}"
+        assert depois["current"]["canonical"] == "dashboard", f"[{rotulo}] rota canonica: {depois}"
+        # navegacao e UI pura: nem a marca escapa dessa regra
+        assert storage_snapshot(page) == storage_antes, f"[{rotulo}] a navegacao escreveu no storage"
+
+
 def active_state(page):
     return page.evaluate("""() => ({
       screen: document.querySelector('#appMain > .screen.active')?.id || null,
@@ -392,6 +445,7 @@ def main():
             try:
                 assert_registry(page)
                 assert_primary_dom(page)
+                assert_brand_home_navigation(page)
                 assert_canonical_navigation(page)
                 assert_forex_children_and_compatibility(page)
                 assert_compatibility_and_atomic_refusal(page)
