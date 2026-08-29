@@ -2,6 +2,42 @@
 
 ## [Unreleased]
 
+### Alladin C3 — integração na main — 2026-08-29
+
+O ciclo do C3 deixou a branch e passou a valer para quem usa o sistema. A `main`
+avançou de `1fbeb00` para `39acdc6` por **fast-forward** — nove commits, nenhum
+merge commit criado, zero conflitos por construção, já que `main` era ancestral
+direto da ponta. A branch `fix/alladin-session-preservation` permanece
+convergida, sem commits exclusivos.
+
+O que a integração corrigiu para o usuário real: até aqui, **encerrar a sessão
+na `main` zerava o agregado patrimonial** — `07-finalize-session.js` não tinha
+uma única menção ao Alladin. Agora tem oito, e a preservação é provada em
+memória e em disco, atravessando reload e schema futuro. A `main` também passou
+a ter a superfície cadastral (77 scripts, contra 76).
+
+Verificação antes da publicação, executada na própria `main`: árvores
+byte-idênticas às da branch (o diff entre as duas refs tem zero linhas),
+`validate_project` PASS, `fast` 4/4, `standard` 37/37 e `full` **48/48 PASS**
+com `dirty:false`, mais as duas provas funcionais que dão sentido ao ciclo —
+finalizar sessão preserva o Alladin, e o CRUD cadastral opera na `main`.
+
+**CI do push (Run #28, tier `standard`): vermelho por erro de ambiente.**
+`PASS=36 · PRODUCT_FAIL=0 · TEST_HARNESS_FAIL=0 · ENVIRONMENT_ERROR=1 ·
+BASELINE_FAIL=0 · NOT_RUN=0`. A única falha foi `session-epoch-protocol`,
+classificada pelo próprio quality gate como `ENVIRONMENT_ERROR`, depois de
+dezenas de suítes verdes e com o runner correto (checkout `39acdc6`, Python
+3.12.14, Playwright 1.60.0, Chromium instalado). As quatro suítes do Alladin
+passaram e o QA-D1 não disparou. O erro **não** é regressão de produto, **não**
+é QA-D1 nem QA-D2, **não** é atribuível ao Alladin — e permanece **aberto**.
+
+Este changeset é documental: `PRODUCT`, `DOMAIN`, `BUILD`, `DERIVED` e `TEST`
+com zero diff. Ele apenas faz o repositório descrever o estado que já está
+publicado. Entradas datadas anteriores — inclusive as que registram a `main` em
+`1fbeb00` e a integração como pendente — são preservadas: eram verdadeiras
+quando escritas.
+
+
 ### Alladin C3 — cadastro patrimonial concluído — checkpoints internos commitados — 2026-08-26 a 2026-08-29
 
 Branch `fix/alladin-session-preservation`. O Alladin deixou de ser um destino

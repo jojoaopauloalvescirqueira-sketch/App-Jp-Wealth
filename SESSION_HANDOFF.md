@@ -1,12 +1,12 @@
-# Session Handoff — Alladin · C3 Closure
+# Session Handoff — Alladin · C3 concluído e integrado
 
 - Data: 2026-08-29
-- Branch de trabalho: `fix/alladin-session-preservation`
-- Checkpoint funcional: `f5124f4804ad7780cae4947e3d8f7435de7cd804`
-  (local == `origin/fix/alladin-session-preservation`)
-- `main` == `origin/main` == `1fbeb00c3a0a0e53656b41d736e08c72d330eda7`,
-  **intocada** — integrar o C3 na `main` é gate próprio, não autorizado
-- Estado: **C3 CONCLUÍDO**; último trabalho funcional foi o C3-S2-C
+- **`main` == `origin/main` == `39acdc68b40bcae7d81ac3b702fd20dd77cdff57`** — o
+  C3 foi integrado por **fast-forward** (sem merge commit) e publicado
+- Branch `fix/alladin-session-preservation`: local == `origin` == `39acdc6`,
+  **convergida — zero commits exclusivos**; não é mais a linha ativa
+- Estado: **C3 CONCLUÍDO E INTEGRADO**; último trabalho funcional foi o C3-S2-C
+  (`f5124f4`), e o Closure documental foi `39acdc6`
 - Próximo ciclo: **ALD-03 — Ledger Patrimonial**, ainda não autorizado
 
 ## O que está entregue
@@ -63,5 +63,19 @@ LEITURA", texto do C3-S1. `index.html` é arquivo de produto e o Closure é
 `PRODUCT = 0`, então **não foi tocado** — registrado para o próximo slice que
 legitimamente abrir esse arquivo.
 
-`SYSTEM RECONCILED = SIM`. Próximo gate humano: commit e push deste Closure;
-depois, a abertura do ALD-03.
+## CI do push da `main` — vermelho por ambiente, registrado e aberto
+
+Run #28 (`Quality Gate`, tier `standard`, commit `39acdc6`):
+`PASS=36 · PRODUCT_FAIL=0 · TEST_HARNESS_FAIL=0 · ENVIRONMENT_ERROR=1 ·
+BASELINE_FAIL=0 · NOT_RUN=0`. A única falha foi **`session-epoch-protocol`**,
+que o próprio quality gate classificou como **ENVIRONMENT_ERROR**. O runner
+estava correto (checkout `39acdc6`, Python 3.12.14, Playwright 1.60.0, Chromium
+instalado) e a falha surgiu após dezenas de suítes verdes. As quatro suítes do
+Alladin passaram e **QA-D1 não disparou**.
+
+Não chamar esse CI de verde, não tratar o erro como resolvido e não atribuí-lo
+ao Alladin. Ele permanece **aberto**, ao lado de QA-D1 e QA-D2.
+
+`SYSTEM RECONCILED = SIM`. Não há gate humano pendente deste ciclo: commit,
+push e integração foram executados. A próxima fronteira é a abertura do
+**ALD-03**, ainda não autorizada.

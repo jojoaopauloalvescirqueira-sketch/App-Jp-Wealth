@@ -434,20 +434,26 @@ As cinco acima e o protocolo de geração da base
 |---|---|---|
 | ALD-01 C1 — Foundation Infrastructure | `fe616a7c…` | `c6c1aa3` |
 | ALD-02 C2 — Modelo Cadastral | `66ebf840…` | `29aca32` |
-| C3-PRE — preservação na finalização e protocolo de geração | `1501d46` | — |
-| — reconciliação com a main da Navigation | `dc8a3ec` | — |
-| C3-PRE-PERSISTENCE — serialização cross-tab da escrita | `c2819af` | — |
-| C3-S1 — superfície cadastral somente-leitura | `94c383e` | — |
-| C3-S2 PRE-WRITE — salvaguardas de escrita da sessão | `d9bd71b` | — |
-| C3-S2-A — Account e CashAccount | `e5d6f36` | — |
-| C3-S2-B — Instrument e Asset | `a725302` | — |
-| C3-S2-C — integridade da edição cadastral | `f5124f4` | — |
+| C3-PRE — preservação na finalização e protocolo de geração | `1501d46` | `39acdc6` (ff) |
+| — reconciliação com a main da Navigation | `dc8a3ec` | `39acdc6` (ff) |
+| C3-PRE-PERSISTENCE — serialização cross-tab da escrita | `c2819af` | `39acdc6` (ff) |
+| C3-S1 — superfície cadastral somente-leitura | `94c383e` | `39acdc6` (ff) |
+| C3-S2 PRE-WRITE — salvaguardas de escrita da sessão | `d9bd71b` | `39acdc6` (ff) |
+| C3-S2-A — Account e CashAccount | `e5d6f36` | `39acdc6` (ff) |
+| C3-S2-B — Instrument e Asset | `a725302` | `39acdc6` (ff) |
+| C3-S2-C — integridade da edição cadastral | `f5124f4` | `39acdc6` (ff) |
 
 O commit `1501d46` traz o C3-PRE e o protocolo de geração da base, apesar de a
 mensagem dizer outra coisa — nota factual registrada para que a cadeia não se
-perca por causa do rótulo. Os checkpoints do C3 vivem na branch
-`fix/alladin-session-preservation`; a integração com a `main` é gate próprio,
-ainda não autorizado.
+perca por causa do rótulo.
+
+> [!note] Como ler a coluna de integração
+> A integração do C3 na `main` ocorreu por **fast-forward**; **não foi criado
+> merge commit**. A `main` passou a apontar diretamente para `39acdc6`, e por
+> isso os oito checkpoints do ciclo trazem `39acdc6 (ff)` — não existe um SHA
+> de merge análogo aos de ALD-01 e ALD-02. A branch
+> `fix/alladin-session-preservation` está convergida com a `main`, sem commits
+> exclusivos.
 
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 

@@ -1,12 +1,14 @@
 # Estado atual do projeto
 
-## Alladin C3 — cadastro patrimonial CONCLUÍDO — 2026-08-29
+## Alladin C3 — cadastro patrimonial CONCLUÍDO E INTEGRADO — 2026-08-29
 
 - Data da fotografia: 2026-08-29
-Source revision representada: `f5124f4804ad7780cae4947e3d8f7435de7cd804`
-- Branch do trabalho: `fix/alladin-session-preservation` (local == `origin`);
-  `main` == `origin/main` == `1fbeb00c3a0a0e53656b41d736e08c72d330eda7`,
-  **intocada** — a integração do C3 na `main` é gate próprio, não autorizado.
+Source revision representada: `39acdc68b40bcae7d81ac3b702fd20dd77cdff57`
+- **`main` == `origin/main` == `39acdc68b40bcae7d81ac3b702fd20dd77cdff57`**: o C3
+  foi integrado por **fast-forward** (sem merge commit) e publicado.
+- Branch `fix/alladin-session-preservation`: local == `origin` == `39acdc6`,
+  **convergida com a `main` — zero commits exclusivos**. Deixou de ser a linha
+  ativa do ciclo; o worktree dedicado continua nela por conveniência operacional.
 - **O C3 está CONCLUÍDO.** O Alladin deixou de ser destino sem função: as quatro
   entidades cadastrais têm leitura, criação, edição e ciclo `recordStatus` pela
   interface real, e toda mutação atravessa `JPWAlladin.cadastro` — a UI nunca
@@ -43,6 +45,17 @@ Source revision representada: `f5124f4804ad7780cae4947e3d8f7435de7cd804`
   **QA-D2** — `finalize_session_test.py` falha sob carga do tier num assert do
   Galton (`currentSpeed`); passa isolado e na baseline, causa não fechada.
   Corrigi-las é slice de harness próprio, jamais oportunismo dentro de outro.
+- **CI do push da `main` (Run #28, tier `standard`, commit `39acdc6`): VERMELHO
+  por erro de ambiente.** `PASS=36 · PRODUCT_FAIL=0 · TEST_HARNESS_FAIL=0 ·
+  ENVIRONMENT_ERROR=1 · BASELINE_FAIL=0 · NOT_RUN=0`; a única falha foi
+  `session-epoch-protocol`, classificada pelo próprio quality gate como
+  **ENVIRONMENT_ERROR**. O runner conferiu: checkout `39acdc6`, Python 3.12.14,
+  Playwright 1.60.0, Chromium instalado, e a falha veio depois de dezenas de
+  suítes verdes. As suítes do Alladin passaram — `alladin-ui-readonly`,
+  `alladin-ui-crud`, `alladin-finalize-preservation` e
+  `session-write-serialization` todas PASS, e **QA-D1 não disparou**. O erro
+  **permanece aberto**: não é regressão de produto, não é QA-D1 nem QA-D2, não
+  é atribuível ao Alladin, e não está resolvido.
 
 ## Navigation — pós-merge final reconciliado — 2026-08-26
 

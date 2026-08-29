@@ -1,41 +1,31 @@
-# Tarefa ativa — Alladin C3 Closure (documental)
+# Tarefa ativa
+
+**Nenhuma.**
 
 - Data: 2026-08-29
-- `BASE_SHA` funcional: `f5124f4804ad7780cae4947e3d8f7435de7cd804`
-- Branch: `fix/alladin-session-preservation`
-- Worktree: `…/JP Wealth OS Alladin`
-- Classificação: **N0-D** — reconciliação documental, sem mudança de runtime
-- Estado: reconciliação concluída pelo presente checkpoint documental
-- Publicação: commit e push deste Closure dependem de gate humano
+- `main` == `origin/main` == `39acdc68b40bcae7d81ac3b702fd20dd77cdff57`
+- Worktree limpo; nenhum ciclo em execução
 
-## Objetivo
+## Último ciclo
 
-Alinhar o repositório ao produto que já existe e declarar formalmente o
-encerramento do C3. Nenhuma capacidade nova entra aqui: `PRODUCT`, `DOMAIN`,
-`BUILD` e `DERIVED` ficam em **zero diff**.
+**Alladin C3 — cadastro patrimonial: concluído e integrado na `main`.** As
+quatro entidades cadastrais têm leitura, criação, edição e ciclo `recordStatus`
+pela interface, com o domínio C2 como única autoridade. A integração ocorreu por
+fast-forward, sem merge commit. O detalhe do ciclo está em
+`docs/architecture/ALLADIN.md`; a fotografia do estado, em
+`docs/governance/CURRENT-STATE.md`.
 
-## Escopo
+## Próxima fronteira
 
-Documentos de estado vivo que ainda descreviam o Alladin como destino sem
-função: `docs/architecture/ALLADIN.md`, `docs/governance/CURRENT-STATE.md`,
-`docs/governance/CONTEXT-MAP.md`, `docs/architecture/CODE-MAP.md`,
-`docs/architecture/ARCHITECTURE.md`, `README.md`,
-`docs/governance/QUALITY-GATES.md`, `CHANGELOG.md`, `SESSION_HANDOFF.md`, este
-arquivo e a docstring de `tools/navigation_ia_test.py` — descritiva apenas,
-sem tocar no comportamento do teste.
+**ALD-03 — Ledger Patrimonial: NÃO AUTORIZADO.** Será a primeira fase do núcleo
+econômico — transações e eventos. Nada dele existe hoje, nem como zero.
 
-## Invariantes
+## Pendências abertas (nenhuma com ação autorizada)
 
-- nenhum byte de runtime, HTML, CSS, JavaScript, manifest, service worker,
-  build, portátil, schema ou persistência muda;
-- registros históricos datados são **preservados**; onde uma afirmação antiga
-  foi superada, entra nota de superação em vez de reescrita da história;
-- contagens antigas (`76 scripts`, `43/43`) só são atualizadas onde
-  representam o estado atual, nunca dentro do relato de um changeset passado;
-- `git diff --check` deve passar.
-
-## Estado após esta tarefa
-
-**C3 = CONCLUÍDO.** O próximo ciclo estrutural é o **ALD-03 — Ledger
-Patrimonial**, que não está iniciado nem autorizado. Não existe implementação
-ativa do C3 depois deste Closure.
+- **QA-D1** — `alladin_ui_readonly_test.py`, caso N: compara o documento inteiro
+  enquanto `updateFxRates` escreve nele por conta própria.
+- **QA-D2** — `finalize_session_test.py`: assert do Galton sob carga do tier.
+- **CI Run #28** — `session-epoch-protocol` classificado como `ENVIRONMENT_ERROR`
+  no push da `main`; sem falha de produto, e **não resolvido**.
+- **Dívida textual** — o comentário que apresenta `section#alladin` em
+  `index.html` ainda diz "SOMENTE LEITURA", texto do C3-S1.
