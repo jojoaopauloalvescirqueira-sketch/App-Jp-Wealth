@@ -21,8 +21,9 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 2, reportingCurrency: 'BRL',
-                     instruments: [], assets: [], accounts: [], cashAccounts: [] },
+var S = { alladin: { schemaVersion: 3, reportingCurrency: 'BRL',
+                     instruments: [], assets: [], accounts: [], cashAccounts: [],
+                     transactions: [] },
           dataGovernance: { changeLog: [] } };
 function save(){ window.__stub.saves += 1; return window.__stub.saveResult; }
 // Espelha o dgLogChange REAL de 00-core/04-persistence.js, INCLUSIVE a poda no
@@ -188,7 +189,7 @@ def main() -> int:
         # executar fn, sem log e sem save (integridade > disponibilidade)
         def u8():
             r = ev("""() => {
-              S.alladin.schemaVersion = 3;
+              S.alladin.schemaVersion = 4;
               window.__stub.saves = 0; window.__stub.logs = [];
               let fnRodou = false;
               const res = aldMutate('teste_ato', () => { fnRodou = true; return {recordId: 'x'}; });
@@ -202,19 +203,19 @@ def main() -> int:
             if r["fnRodou"] or r["saves"] != 0 or r["logs"] != 0:
                 falhas.append(f"U8 vazamento sob bloqueio: fn={r['fnRodou']} saves={r['saves']} logs={r['logs']}")
             c = r["compat"]
-            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 3
-                    and c["supportedSchemaVersion"] == 2 and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
+            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 4
+                    and c["supportedSchemaVersion"] == 3 and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"U8 compat: {c!r}")
             # versao futura como STRING de digitos ('2') tambem e fail-closed
             r2 = ev("""() => {
-              S.alladin.schemaVersion = '3';
+              S.alladin.schemaVersion = '4';
               const compat = JPWAlladin.compat();
               const ato = aldMutate('probe', () => ({recordId: 'x'}));
-              S.alladin.schemaVersion = 2;
+              S.alladin.schemaVersion = 3;
               return { readOnly: compat.readOnly, stored: compat.storedSchemaVersion,
                        erro: ato.erro };
             }""")
-            if not (r2["readOnly"] is True and r2["stored"] == 3
+            if not (r2["readOnly"] is True and r2["stored"] == 4
                     and r2["erro"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"U8 versao futura em string nao bloqueou: {r2!r}")
         executar(falhas, "U8", u8)
@@ -264,8 +265,8 @@ def main() -> int:
         # ---- C2 · MODELO CADASTRAL -----------------------------------------
 
         def reset_agregado():
-            ev("""() => { S.alladin = { schemaVersion: 2, reportingCurrency: 'BRL',
-                 instruments: [], assets: [], accounts: [], cashAccounts: [] };
+            ev("""() => { S.alladin = { schemaVersion: 3, reportingCurrency: 'BRL',
+                 instruments: [], assets: [], accounts: [], cashAccounts: [], transactions: [] };
                  window.__stub.logs = []; window.__stub.saves = 0; }""")
 
         # U11 — owners[] com isSelf (DC-2 + OP-1)

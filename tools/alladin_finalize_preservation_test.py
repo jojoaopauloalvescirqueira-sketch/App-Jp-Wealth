@@ -52,6 +52,13 @@ LSKEY = "jpwealth_v9_state"
 SINAL = "jpwealth_session_wipe_signal_v1"
 FIXTURE = json.loads((ROOT / "tools/fixtures/alladin_v2.json").read_text(encoding="utf-8"))["alladin"]
 
+# A fixture no disco e um agregado v2 AUTENTICO — injeta-la prova, de quebra, que
+# o boot o migra. O que a suite compara e o estado DEPOIS da migracao conhecida
+# (ALD-03 S1): carimbo v3 e a colecao do ledger criada vazia. Derivar isso aqui,
+# explicitamente, evita a alternativa tautologica de comparar o resultado consigo
+# mesmo — e faz a suite falhar se a migracao mudar sem que ninguem diga.
+FIXTURE = {**FIXTURE, "schemaVersion": 3, "transactions": []}
+
 # O mesmo agregado DEPOIS de o operador agir NOUTRA aba: status alterado, campo
 # textual alterado e PII de terceiro alterada. E o retrato AUTORITATIVO — o que
 # esta no disco. A aba que finaliza pode ter uma memoria anterior a isso, e o
@@ -79,7 +86,7 @@ REDUZIDO = {**FIXTURE, "assets": [], "accounts": [], "cashAccounts": []}
 # dominio; C3 exige que Finalizar Sessao tambem o preserve, e C4 que a Zona de
 # Perigo o apague assim mesmo.
 FUTURO = {
-    "schemaVersion": 3,
+    "schemaVersion": 4,
     "reportingCurrency": "BRL",
     "instruments": [{"instrumentId": "aldi_v3", "campoDoFuturo": {"x": [1, 2]}}],
     "assets": [], "accounts": [], "cashAccounts": [],
@@ -268,7 +275,7 @@ def main() -> int:
                 if not igual(page.evaluate("() => JSON.stringify(S.alladin)"), FUTURO):
                     falhas.append("C3 RELOAD: agregado v3 foi normalizado/rebaixado ao voltar do disco")
                 compat = page.evaluate("() => JPWAlladin.compat()")
-                if not (compat["readOnly"] is True and compat["storedSchemaVersion"] == 3):
+                if not (compat["readOnly"] is True and compat["storedSchemaVersion"] == 4):
                     falhas.append(f"C3: fail-closed nao continua valendo apos o ciclo: {compat}")
                 # Recusa REAL de escrita — nao a aritmetica de readOnly, que a
                 # igualdade acima ja implica.
@@ -295,8 +302,9 @@ def main() -> int:
                         await wipeAllData();   // DP-2: a destruicao inteira roda no lock
                         return JSON.stringify(S.alladin);
                     }""")
-                    vazio = {"schemaVersion": 2, "reportingCurrency": "BRL",
-                             "instruments": [], "assets": [], "accounts": [], "cashAccounts": []}
+                    vazio = {"schemaVersion": 3, "reportingCurrency": "BRL",
+                             "instruments": [], "assets": [], "accounts": [], "cashAccounts": [],
+                             "transactions": []}
                     if igual(apagou, agregado):
                         falhas.append(f"C4 [{rotulo}]: Zona de Perigo PRESERVOU o Alladin — over-preservation")
                     elif not igual(apagou, vazio):
@@ -445,7 +453,7 @@ def main() -> int:
                         falhas.append(f"C9 [{rotulo}]: a finalizacao remota nao encerrou a sessao: {r}")
                     if agregado is FUTURO:
                         compat = page.evaluate("() => JPWAlladin.compat()")
-                        if not (compat["readOnly"] is True and compat["storedSchemaVersion"] == 3):
+                        if not (compat["readOnly"] is True and compat["storedSchemaVersion"] == 4):
                             falhas.append(f"C9 [{rotulo}]: a preservacao remota REBAIXOU a versao do agregado: {compat}")
                     if erros:
                         falhas.append(f"C9 [{rotulo}] pageerror: {erros}")
@@ -505,9 +513,9 @@ def main() -> int:
                 page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
                 page.evaluate("() => localStorage.removeItem('%s')" % LSKEY)
                 r = page.evaluate(REMOTO, "aba-remota-c14")
-                if igual(r["memoria"], {"schemaVersion": 2, "reportingCurrency": "BRL",
+                if igual(r["memoria"], {"schemaVersion": 3, "reportingCurrency": "BRL",
                                         "instruments": [], "assets": [], "accounts": [],
-                                        "cashAccounts": []}):
+                                        "cashAccounts": [], "transactions": []}):
                     falhas.append("C14: com a chave principal ausente o handler ZEROU o Alladin "
                                   "(tratou disco indeterminado como estado legado)")
                 elif not igual(r["memoria"], FIXTURE):
@@ -606,7 +614,7 @@ def main() -> int:
                 if not igual(page.evaluate("() => JSON.stringify(S.alladin)"), FUTURO):
                     falhas.append("C16 MEMORIA: o agregado v3 vindo do disco foi transformado")
                 compat = page.evaluate("() => JPWAlladin.compat()")
-                if not (compat["readOnly"] is True and compat["storedSchemaVersion"] == 3):
+                if not (compat["readOnly"] is True and compat["storedSchemaVersion"] == 4):
                     falhas.append(f"C16: a preservacao local REBAIXOU a versao do agregado: {compat}")
                 if erros:
                     falhas.append(f"C16 pageerror: {erros}")

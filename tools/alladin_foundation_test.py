@@ -117,9 +117,10 @@ def main() -> int:
                 pf: !!(S.personalFinance && S.personalFinance.moneyUnit === 'BRL_CENTS'),
                 saldo: S.params && typeof S.params.saldoIni === 'number',
             })""")
-            esperado = json.dumps({"schemaVersion": 2, "reportingCurrency": "BRL",
+            esperado = json.dumps({"schemaVersion": 3, "reportingCurrency": "BRL",
                                    "instruments": [], "assets": [], "accounts": [],
-                                   "cashAccounts": []}, separators=(",", ":"))
+                                   "cashAccounts": [], "transactions": []},
+                                  separators=(",", ":"))
             if r["forma"] != esperado:
                 falhas.append(f"A: agregado legado nao nasceu de DEFAULTS: {r['forma']}")
             if not (r["pf"] and r["saldo"]):
@@ -130,7 +131,7 @@ def main() -> int:
         executar(falhas, "A", caso_a)
 
         # ---- B: round-trip com registro e campos desconhecidos -------------
-        FIXTURE_B = ("{schemaVersion:2, reportingCurrency:'BRL',"
+        FIXTURE_B = ("{schemaVersion:3, reportingCurrency:'BRL', transactions:[],"
                      "instruments:[{instrumentId:'aldi_fx_1', name:'Petrobras PN', symbol:'PETR4',"
                      " exchange:'B3', country:null, currency:'BRL', assetClass:'RENDA_VARIAVEL',"
                      " instrumentFamily:'EQUITY_LIKE', externalIdentifiers:{isin:'BRPETRACNPR6'},"
@@ -171,7 +172,7 @@ def main() -> int:
         executar(falhas, "B", caso_b)
 
         # ---- C: fail-closed de schema futuro -------------------------------
-        FIXTURE_C = ("{schemaVersion:3, reportingCurrency:42,"
+        FIXTURE_C = ("{schemaVersion:4, reportingCurrency:42,"
                      "instruments:'nem-lista', novaColecao:[{id:1}]}")
 
         def caso_c():
@@ -188,7 +189,7 @@ def main() -> int:
             if not (r["intacto"] and r["aindaIntacto"]):
                 falhas.append("C: fail-closed violado — a migracao ou o ato tocou o agregado futuro")
             c = r["compat"]
-            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 3
+            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 4
                     and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"C: incompatibilidade nao exposta: {c!r}")
             if r["fnRodou"] or r["ato"].get("erro") != "READ_ONLY_FUTURE_SCHEMA":
@@ -199,7 +200,7 @@ def main() -> int:
         executar(falhas, "C", caso_c)
 
         # ---- C2: versao futura como STRING de digitos ('2') tambem fail-closed
-        FIXTURE_C2 = "{schemaVersion:'3', reportingCurrency:'BRL', dadoFuturo:[1,2]}"
+        FIXTURE_C2 = "{schemaVersion:'4', reportingCurrency:'BRL', dadoFuturo:[1,2]}"
 
         def caso_c_string():
             ctx, page, erros = boot(browser, url, PRONTO_NOVO, f"S.alladin = {FIXTURE_C2};")
@@ -212,7 +213,7 @@ def main() -> int:
             }}""")
             if not r["intacto"]:
                 falhas.append("C2: versao futura em string foi coagida — fail-closed furado")
-            if not (r["compat"]["readOnly"] is True and r["compat"]["storedSchemaVersion"] == 3
+            if not (r["compat"]["readOnly"] is True and r["compat"]["storedSchemaVersion"] == 4
                     and r["erro"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"C2: bloqueio/exposicao incoerente: {r!r}")
             if erros:
@@ -232,7 +233,7 @@ def main() -> int:
                 assets: JSON.stringify(S.alladin.assets),
                 extra: S.alladin.extra,
             })""")
-            if r["v"] != 2 or r["rc"] != "BRL" or r["inst"] != "[]":
+            if r["v"] != 3 or r["rc"] != "BRL" or r["inst"] != "[]":
                 falhas.append(f"D: envelope nao coagido como contrato: {r!r}")
             if r["assets"] != '[{"assetId":"alda_1","name":"Bem"}]' or r["extra"] != "fica":
                 falhas.append(f"D: conteudo/extras nao preservados: {r!r}")
@@ -245,7 +246,7 @@ def main() -> int:
         def caso_e():
             ctx, page, erros = boot(browser, url, PRONTO_NOVO, "S.alladin = 'corrompido';")
             r = page.evaluate("() => JSON.stringify(S.alladin)")
-            if json.loads(r).get("schemaVersion") != 2 or json.loads(r).get("instruments") != []:
+            if json.loads(r).get("schemaVersion") != 3 or json.loads(r).get("instruments") != []:
                 falhas.append(f"E: contêiner escalar nao renasceu de DEFAULTS: {r}")
             if erros:
                 falhas.append(f"E: pageerror {erros}")
@@ -368,7 +369,7 @@ def main() -> int:
                 pf: !!(S.personalFinance && S.personalFinance.moneyUnit === 'BRL_CENTS'),
                 saldo: !!(S.params && typeof S.params.saldoIni === 'number'),
             })""")
-            if r["versao"] != 2:
+            if r["versao"] != 3:
                 falhas.append(f"M: v1 nao migrou para v2: {r['versao']!r}")
             if r["registro"] != '[{"assetId":"alda_legado","name":"Bem legado"}]':
                 falhas.append(f"M: a migracao TRANSFORMOU o registro: {r['registro']}")
@@ -408,7 +409,7 @@ def main() -> int:
                 if not (depois["nome"] == "Apartamento" and depois["nature"] == "IMOVEL"
                         and depois["life"] == "ACTIVE" and depois["rec"] == "ACTIVE"
                         and depois["aq"] == "2020-03-15" and depois["tags"] == '["moradia"]'
-                        and depois["versao"] == 2):
+                        and depois["versao"] == 3):
                     falhas.append(f"P: campos divergiram apos reload: {depois!r}")
             if erros:
                 falhas.append(f"P: pageerror {erros}")
@@ -518,7 +519,7 @@ def main() -> int:
                     if r["temCadastro"]:
                         falhas.append("F2: o build extraido NAO e o C1 (ja tem atos cadastrais)")
                     c = r["compat"]
-                    if not (c["readOnly"] is True and c["storedSchemaVersion"] == 2
+                    if not (c["readOnly"] is True and c["storedSchemaVersion"] == 3
                             and c["supportedSchemaVersion"] == 1):
                         falhas.append(f"F2: C1 nao entrou em fail-closed sobre agregado v2: {c!r}")
                     if r["erro"] != "READ_ONLY_FUTURE_SCHEMA":
@@ -555,7 +556,7 @@ def main() -> int:
                 falhas.append("S: exportacao alterou o agregado")
             if not r["aposImport"]:
                 falhas.append("S: round-trip export->import NAO preservou o agregado byte a byte")
-            if r["versao"] != 2:
+            if r["versao"] != 3:
                 falhas.append(f"S: versao apos importacao divergiu: {r['versao']!r}")
             if r["owners"] != ('[{"name":"Joao","shareBp":5000,"isSelf":true},'
                                '{"name":"Maria","shareBp":5000}]'):
@@ -631,6 +632,55 @@ def main() -> int:
                 falhas.append(f"T: pageerror {erros}")
             ctx.close()
         executar(falhas, "T", caso_t)
+
+        # ---- U: migracao v2 -> v3 e o ledger (ALD-03 S1) --------------------
+        # O bump nao transforma dado: ele so garante a colecao e fecha a escrita
+        # para builds anteriores. Os tres regimes precisam ser provados, porque a
+        # diferenca entre eles e a diferenca entre criar, preservar e DESTRUIR
+        # historia economica. O caso do array preexistente e o que impede uma
+        # migracao "que garante []" de esvaziar um ledger que ja existia.
+        def caso_u():
+            TX = ("{transactionId:'aldtx_legado', eventType:'DEPOSIT', status:'POSTED',"
+                  " flowScope:'EXTERNAL', amount:12345, currency:'BRL',"
+                  " effectiveAt:'2026-01-10', recordedAt:'2026-01-10T00:00:00.000Z',"
+                  " cashAccountId:'aldc_legado'}")
+            for rotulo, fixture, esperado in (
+                ("ausente",
+                 "{schemaVersion:2, reportingCurrency:'BRL', instruments:[], assets:[],"
+                 " accounts:[], cashAccounts:[]}",
+                 {"versao": 3, "tx": "[]"}),
+                ("array preexistente",
+                 "{schemaVersion:2, reportingCurrency:'BRL', instruments:[], assets:[],"
+                 " accounts:[], cashAccounts:[], transactions:[" + TX + "]}",
+                 {"versao": 3, "tx": "PRESERVADO"}),
+                ("forma invalida",
+                 "{schemaVersion:2, reportingCurrency:'BRL', instruments:[], assets:[],"
+                 " accounts:[], cashAccounts:[], transactions:'lixo'}",
+                 {"versao": 2, "tx": '"lixo"'}),
+            ):
+                ctx, page, erros = boot(browser, url, PRONTO_NOVO, f"S.alladin = {fixture};")
+                r = page.evaluate("""() => ({
+                    versao: S.alladin.schemaVersion,
+                    tx: JSON.stringify(S.alladin.transactions),
+                    bloqueio: JPWAlladin.writeBlockReason(),
+                })""")
+                if r["versao"] != esperado["versao"]:
+                    falhas.append(f"U [{rotulo}]: versao apos migracao {r['versao']!r}, "
+                                  f"esperado {esperado['versao']}")
+                if esperado["tx"] == "PRESERVADO":
+                    if "aldtx_legado" not in r["tx"] or "12345" not in r["tx"]:
+                        falhas.append(f"U [{rotulo}]: a migracao DESTRUIU o ledger preexistente "
+                                      f"({r['tx'][:80]})")
+                elif r["tx"] != esperado["tx"]:
+                    falhas.append(f"U [{rotulo}]: transactions {r['tx'][:60]!r}, "
+                                  f"esperado {esperado['tx']}")
+                if rotulo == "forma invalida" and r["versao"] == 3:
+                    falhas.append("U: forma invalida foi carimbada como migrada — o fail-closed "
+                                  "deixaria de ver o problema")
+                if erros:
+                    falhas.append(f"U [{rotulo}]: pageerror {erros}")
+                ctx.close()
+        executar(falhas, "U", caso_u)
 
         browser.close()
     server.shutdown()

@@ -383,7 +383,7 @@ def main() -> int:
                 ctx, page, erros = abrir(browser, url)
                 criar_conta(page)
                 # W10: READ_ONLY na abertura -> botoes desabilitados
-                page.evaluate("""() => { S.alladin.schemaVersion=3;
+                page.evaluate("""() => { S.alladin.schemaVersion=4;
                     localStorage.setItem('%s', JSON.stringify(S)); JPWAlladinUI.render(); }""" % LSKEY)
                 page.evaluate("() => JPWAlladinUI.selectView('accounts')")
                 habilitados = page.evaluate("""() => [...document.querySelectorAll('#alladin button[data-ald-new],#alladin button[data-ald-edit],#alladin button[data-ald-status]')]
@@ -397,7 +397,7 @@ def main() -> int:
                 page.locator("#alladinFldName").fill("Tardia")
                 page.locator("#alladinFldInstitution").fill("T")
                 page.locator("#alladinFldAccountType").fill("BANK")
-                page.evaluate("() => { S.alladin.schemaVersion=3; document.getElementById('sessionNotice').textContent=''; }")   # bloqueia agora
+                page.evaluate("() => { S.alladin.schemaVersion=4; document.getElementById('sessionNotice').textContent=''; }")   # bloqueia agora
                 page.locator("button[data-ald-act=salvar]").click()
                 page.wait_for_timeout(120)
                 modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
@@ -1100,7 +1100,7 @@ def main() -> int:
                 if foco != "asset":
                     falhas.append(f"R5: foco nao retornou ao botao de origem ({foco!r})")
                 # R1: READ_ONLY desabilita TODOS os botoes de mutacao dos 4 tipos
-                page.evaluate("""() => { S.alladin.schemaVersion=3;
+                page.evaluate("""() => { S.alladin.schemaVersion=4;
                     localStorage.setItem('%s', JSON.stringify(S)); JPWAlladinUI.render(); }""" % LSKEY)
                 for view in ("instruments", "assets"):
                     page.evaluate("(v) => JPWAlladinUI.selectView(v)", view)
@@ -1116,7 +1116,7 @@ def main() -> int:
                 page.locator("#alladinFldName").fill("Tardio")
                 page.locator("#alladinFldNature").fill("BEM_DURAVEL")
                 page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
-                page.evaluate("() => { S.alladin.schemaVersion=3; }")
+                page.evaluate("() => { S.alladin.schemaVersion=4; }")
                 salvar(page)
                 modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
                 if "READ_ONLY_FUTURE_SCHEMA" not in modal or "Nada foi gravado" not in modal:
@@ -1318,7 +1318,7 @@ def main() -> int:
                     erro: !!document.querySelector('#alladinModalBox .session-error'),
                     notice: document.getElementById('sessionNotice').innerText })""")))
                 # (3) Account CREATE — write gate tardio
-                page.evaluate("() => { window.save=window.__so; S.alladin.schemaVersion=3; }")
+                page.evaluate("() => { window.save=window.__so; S.alladin.schemaVersion=4; }")
                 salvar(page)
                 casos.append(("Account create/write gate tardio", page.evaluate("""() => ({
                     aberto: document.getElementById('alladinModalOverlay').classList.contains('show'),

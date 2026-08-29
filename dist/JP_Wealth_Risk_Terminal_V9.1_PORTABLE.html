@@ -6118,7 +6118,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '6f83a2de8aeeb686';
+const JP_WEALTH_BUILD_ID = 'e8b38f63e5ece849';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -8264,17 +8264,28 @@ const DEFAULTS = {
   // C1 não tinha atos. Um build do C1 lendo v2 entra em fail-closed — correto, ele
   // não conhece estes registros.
   //
+  // schemaVersion 3 (ALD-03 S1 · Cash Ledger): `transactions[]` passa a integrar o
+  // agregado canônico — o primeiro fato ECONÔMICO do Alladin. O carimbo aqui não é
+  // registro de mudança de dado (a migração v2→v3 apenas cria a coleção quando ela
+  // não existe): é BARREIRA DE ESCRITA. Um build v2 preserva `transactions` que não
+  // conhece, mas continuaria escrevendo sobre o agregado e violando amarras do
+  // ledger que ignora; com v3 ele fica fail-closed, que é a razão de o mecanismo
+  // existir. O default nasce JÁ em v3 e com a coleção presente — depender de
+  // migrate/repair para uma base recém-criada ficar íntegra seria nascer torto e
+  // endireitar depois.
+  //
   // schemaVersion FUTURA ⇒ FAIL-CLOSED integral: o domínio inteiro entra em
   // somente-leitura, a migração não toca um byte do agregado e todo ato é
   // recusado (alladinNormalizeState, 04-persistence.js). Integridade > disponibilidade.
   // Derivados (saldos, posições, patrimônio) JAMAIS persistem.
   alladin:{
-    schemaVersion:2,
+    schemaVersion:3,
     reportingCurrency:'BRL',
     instruments:[],
     assets:[],
     accounts:[],
     cashAccounts:[],
+    transactions:[],
   },
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de
@@ -9323,7 +9334,7 @@ function personalFinanceNormalizeState(){
 // ALD_SUPPORTED_SCHEMA_VERSION em 10-domain/13-alladin.js (o módulo de domínio
 // roda isolado no harness unitário). As duas DEVEM permanecer iguais — o teste
 // de integração afirma a igualdade. Idem aldSchemaVersionLegivel.
-const ALLADIN_SCHEMA_VERSION=2;
+const ALLADIN_SCHEMA_VERSION=3;
 function alladinSchemaVersionLegivel(v){
   if(Number.isInteger(v)) return v;
   if(typeof v==='string' && /^[0-9]+$/.test(v.trim())) return parseInt(v.trim(),10);
@@ -9358,12 +9369,32 @@ function alladinNormalizeState(){
   // interrompe a cadeia: não se inventa transformação.
   while(a.schemaVersion<ALLADIN_SCHEMA_VERSION){
     if(a.schemaVersion===1){ a.schemaVersion=2; continue; }
+    // v2 → v3 (ALD-03 S1): nasce o Cash Ledger. O carimbo não é enfeite — é a
+    // BARREIRA DE ESCRITA: um build v2 preserva `transactions` que não conhece,
+    // mas continua escrevendo sobre o agregado e pode violar amarras do ledger
+    // que ele ignora. Com v3, esse build cai em READ_ONLY_FUTURE_SCHEMA, que é
+    // exatamente para isso que o fail-closed existe.
+    // A coleção AUSENTE nasce vazia; uma já existente é PRESERVADA intacta; e
+    // uma presente com forma errada NÃO é substituída por [] — apagar história
+    // econômica para "consertar" a forma seria a pior troca possível. Nesse
+    // caso a versão não avança e o envelope permanece incoerente, de modo que
+    // o fail-closed e a recuperação tratem o caso em vez de mascará-lo.
+    if(a.schemaVersion===2){
+      if(a.transactions===undefined){ a.transactions=[]; a.schemaVersion=3; continue; }
+      if(Array.isArray(a.transactions)){ a.schemaVersion=3; continue; }
+      break;
+    }
     break;
   }
   if(typeof a.reportingCurrency!=='string' || !a.reportingCurrency) a.reportingCurrency=def.reportingCurrency;
   for(const k of ['instruments','assets','accounts','cashAccounts']){
     if(!Array.isArray(a[k])) a[k]=[];
   }
+  // `transactions` NÃO entra no laço acima: aquele conserta forma criando lista
+  // vazia, e para o ledger isso significaria descartar história econômica em
+  // silêncio. Só se cria quando AUSENTE; forma errada é deixada como está para
+  // o fail-closed enxergar.
+  if(a.transactions===undefined) a.transactions=[];
 }
 // ---- S.params: o denominador de tudo ----------------------------------------
 // O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
@@ -32759,7 +32790,7 @@ window.JPWFinOverview = { render: finpesOverviewRender };
 // como PF_MONTH_RE duplica o FX: o módulo de domínio precisa funcionar isolado
 // no harness unitário. As duas constantes DEVEM permanecer iguais — o teste de
 // integração prova o comportamento conjunto (fail-closed).
-const ALD_SUPPORTED_SCHEMA_VERSION = 2;
+const ALD_SUPPORTED_SCHEMA_VERSION = 3;
 
 // ---- moedas: schema extensível ≠ runtime universal --------------------------
 // O SCHEMA aceita qualquer código ISO 4217 (nenhuma lista de moedas é contrato
@@ -33288,6 +33319,21 @@ function aldActEditCashAccount(cashAccountId, mudancas){
     const m = mudancas || {};
     const novoAccountId = ('accountId' in m) ? m.accountId : alvo.accountId;
     const novaMoeda = ('currency' in m) ? m.currency : alvo.currency;
+    // ALD-03 S1: uma vez que a conta tenha sido referenciada por um lançamento,
+    // `currency` e `accountId` viram imutáveis. Não é rigor formal — trocar a
+    // moeda REINTERPRETA todo o passado: os lançamentos continuam na moeda
+    // antiga e o saldo inteiro passa a MOEDA_DIVERGENTE, isto é, história
+    // ilegível. Corrigir um erro de cadastro depois de haver movimento exige
+    // outra conta, não a reescrita do significado da que existe.
+    if(('currency' in m && novaMoeda!==alvo.currency) ||
+       ('accountId' in m && novoAccountId!==alvo.accountId)){
+      for(const t of (Array.isArray(a.transactions)?a.transactions:[])){
+        if(!aldRegistroLegivel(t)) continue;
+        if(t.cashAccountId===cashAccountId || t.sourceCashAccountId===cashAccountId
+           || t.destinationCashAccountId===cashAccountId)
+          return { ok:false, erro:'ALD_CASHACCOUNT_COM_LANCAMENTOS' };
+      }
+    }
     const conta = aldFindIn(a,'accounts','accountId',novoAccountId);
     if(!conta) return { ok:false, erro:'ALD_ACCOUNT_NAO_ENCONTRADA' };
     if(conta.recordStatus!=='ACTIVE') return { ok:false, erro:'ALD_ACCOUNT_INATIVA' };
@@ -33328,6 +33374,188 @@ function aldActSetRecordStatus(tipo, id, status){
     return { recordId:id };
   }, { label:String(tipo)+'_set_record_status' });
 }
+// ============ ALLADIN · ALD-03 S1 — CASH LEDGER ==============================
+// O primeiro fato ECONÔMICO do Alladin. O cadastro responde "o que existe"; a
+// partir daqui o domínio começa a responder "o que aconteceu" — e só isso: nada
+// de posição, custo, valuation, performance ou câmbio, que pertencem a fases
+// próprias. Saldo NUNCA é campo: é sempre derivado dos eventos (ALD-I27).
+//
+// Um fato econômico, múltiplos efeitos (decisão DH-03-2): a transferência é UM
+// registro com origem e destino, não dois lançamentos correlacionados. Assim o
+// cenário "debitou a origem e o destino não recebeu" não é evitado por controle
+// de fluxo — ele é IRREPRESENTÁVEL no schema.
+const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','REVERSAL']; // FECHADO
+const ALD_TX_STATUS    = ['POSTED','REVERSED'];                          // FECHADO (DRAFT: fase própria)
+const ALD_FLOW_SCOPES  = ['INTERNAL','EXTERNAL'];                        // FECHADO
+// flowScope é RELAÇÃO COM O PERÍMETRO, não direção (DH-03-1): EXTERNAL cruza a
+// fronteira do patrimônio consolidado, INTERNAL move entre custódias que já são
+// nossas. Por isso a transferência não é aporte — e é persistido, não inferido:
+// registro que divergir desta tabela é DADO INVÁLIDO, jamais corrigido em silêncio.
+const ALD_FLOW_POR_EVENTO = { DEPOSIT:'EXTERNAL', WITHDRAWAL:'EXTERNAL', TRANSFER:'INTERNAL' };
+// Direção do efeito por evento, na perspectiva de cada conta referenciada.
+const ALD_EFEITO = {
+  DEPOSIT:    (tx, id) => (tx.cashAccountId===id ? +1 : 0),
+  WITHDRAWAL: (tx, id) => (tx.cashAccountId===id ? -1 : 0),
+  TRANSFER:   (tx, id) => (tx.sourceCashAccountId===id ? -1 : (tx.destinationCashAccountId===id ? +1 : 0)),
+};
+
+function aldTxRefsDoEvento(tipo){
+  return tipo==='TRANSFER' ? ['sourceCashAccountId','destinationCashAccountId'] : ['cashAccountId'];
+}
+// Forma de UM registro do ledger, sem olhar o resto do agregado. Devolve o
+// diagnóstico em vez de lançar: quem calcula saldo precisa distinguir "não é
+// desta conta" de "não dá para saber de quem é".
+function aldTxLegivel(tx){
+  if(!aldRegistroLegivel(tx)) return false;
+  if(!aldInEnum(tx.eventType, ALD_EVENT_TYPES)) return false;
+  if(!aldInEnum(tx.status, ALD_TX_STATUS)) return false;
+  if(!aldInEnum(tx.flowScope, ALD_FLOW_SCOPES)) return false;
+  if(typeof tx.amount!=='number' || !Number.isSafeInteger(tx.amount) || tx.amount<=0) return false;
+  if(typeof tx.currency!=='string' || !ALD_CURRENCY_RE.test(tx.currency)) return false;
+  if(typeof tx.effectiveAt!=='string' || !ALD_DATE_RE.test(tx.effectiveAt)) return false;
+  if(typeof tx.transactionId!=='string' || !tx.transactionId) return false;
+  const tipoEfetivo = tx.eventType==='REVERSAL' ? null : tx.eventType;
+  if(tipoEfetivo && ALD_FLOW_POR_EVENTO[tipoEfetivo]!==tx.flowScope) return false;
+  if(tx.eventType==='REVERSAL'){
+    if(typeof tx.reversalOf!=='string' || !tx.reversalOf) return false;
+  }else if(tx.reversalOf!==undefined) return false;
+  const refs = aldTxRefsDoEvento(tx.eventType==='REVERSAL' ? (tx.reversedEventType||'') : tx.eventType);
+  if(tx.eventType!=='REVERSAL'){
+    for(const r of refs){ if(typeof tx[r]!=='string' || !tx[r]) return false; }
+    if(tx.eventType==='TRANSFER' && tx.sourceCashAccountId===tx.destinationCashAccountId) return false;
+  }
+  return true;
+}
+// Efeito de um registro sobre UMA conta. O REVERSAL espelha as referências do
+// original e inverte o sinal — o original permanece contando, e a soma dos dois
+// dá zero. "REVERSED" diz que o fato foi revertido depois, não que ele nunca
+// aconteceu: apagar o passado seria reescrever a história, não corrigi-la.
+function aldTxEfeito(tx, cashAccountId, porId){
+  if(tx.eventType!=='REVERSAL'){
+    const f = ALD_EFEITO[tx.eventType];
+    return f ? f(tx, cashAccountId)*tx.amount : 0;
+  }
+  const orig = porId[tx.reversalOf];
+  if(!orig) return null;                       // reversal órfão: não classificável
+  const f = ALD_EFEITO[orig.eventType];
+  if(!f) return null;
+  return -f(orig, cashAccountId)*tx.amount;
+}
+function aldTxOrdenar(lista){
+  return lista.slice().sort((a,b)=>
+    (a.effectiveAt<b.effectiveAt?-1:a.effectiveAt>b.effectiveAt?1:
+    (a.recordedAt<b.recordedAt?-1:a.recordedAt>b.recordedAt?1:
+    (a.transactionId<b.transactionId?-1:a.transactionId>b.transactionId?1:0))));
+}
+function aldTxDedupeExiste(a, chave, ignorarId){
+  for(const t of (Array.isArray(a.transactions)?a.transactions:[])){
+    if(!aldRegistroLegivel(t)) continue;
+    if(ignorarId && t.transactionId===ignorarId) continue;
+    if(typeof t.dedupeKey==='string' && t.dedupeKey===chave) return true;
+  }
+  return false;
+}
+// Conta de caixa apta a RECEBER lançamento novo: existe e está ativa. Fato já
+// registrado nunca deixa de valer porque a conta foi encerrada depois — o
+// passado não depende do status presente.
+function aldCashAptaParaLancamento(a, id){
+  const c = aldFindIn(a,'cashAccounts','cashAccountId',id);
+  if(!c) return { ok:false, erro:'ALD_CASHACCOUNT_NAO_ENCONTRADA' };
+  if(c.recordStatus!=='ACTIVE') return { ok:false, erro:'ALD_CASHACCOUNT_INATIVA' };
+  return { ok:true, valor:c };
+}
+function aldNormalizeTransactionFields(a, d){
+  d = d || {};
+  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
+  if(typeof d.amount!=='number' || !Number.isSafeInteger(d.amount) || d.amount<=0) return { ok:false, erro:'ALD_AMOUNT_INVALIDO' };
+  if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+  const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
+  let dedupe = null;
+  if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
+    if(!aldTextInDomain(d.dedupeKey,{max:120})) return { ok:false, erro:'ALD_DEDUPE_KEY_INVALIDA' };
+    dedupe = String(d.dedupeKey).trim();
+    // Duplicidade de CADASTRO avisa; duplicidade de LANÇAMENTO fabrica dinheiro.
+    // Por isso aqui é recusa, não aviso — a única divergência deliberada do DC-4.
+    if(aldTxDedupeExiste(a, dedupe, null)) return { ok:false, erro:'ALD_DEDUPE_KEY_DUPLICADA' };
+  }
+  const refs = aldTxRefsDoEvento(d.eventType);
+  const contas = {};
+  for(const r of refs){
+    if(typeof d[r]!=='string' || !d[r]) return { ok:false, erro:'ALD_REFERENCIA_AUSENTE:'+r };
+    const apta = aldCashAptaParaLancamento(a, d[r]);
+    if(!apta.ok) return { ok:false, erro:apta.erro };
+    contas[r] = apta.valor;
+  }
+  if(d.eventType==='TRANSFER'){
+    if(d.sourceCashAccountId===d.destinationCashAccountId) return { ok:false, erro:'ALD_TRANSFER_MESMA_CONTA' };
+    // Sem câmbio neste ciclo: converter exigiria taxa, e taxa é fato econômico
+    // que ninguém registrou. Transferir entre moedas distintas é RECUSA, não
+    // conversão implícita.
+    if(contas.sourceCashAccountId.currency!==contas.destinationCashAccountId.currency)
+      return { ok:false, erro:'ALD_TRANSFER_MOEDAS_DIFERENTES' };
+  }
+  const moeda = contas[refs[0]].currency;
+  if(d.currency!==undefined && d.currency!==moeda) return { ok:false, erro:'ALD_CURRENCY_DIVERGE_DA_CONTA' };
+  const valor = { eventType:d.eventType, status:'POSTED', flowScope:ALD_FLOW_POR_EVENTO[d.eventType],
+    amount:d.amount, currency:moeda, effectiveAt:d.effectiveAt };
+  for(const r of refs) valor[r]=d[r];
+  if(dedupe) valor.dedupeKey=dedupe;
+  if(nota.valor) valor.note=nota.valor;
+  return { ok:true, valor };
+}
+function aldActAddTransaction(dados){
+  return aldMutate('transaction_add', (a)=>{
+    if(!Array.isArray(a.transactions)) return { ok:false, erro:'ALD_COLECAO_ILEGIVEL' };
+    const r = aldNormalizeTransactionFields(a, dados);
+    if(!r.ok) return { ok:false, erro:r.erro };
+    const rec = { transactionId:aldId('aldtx'), ...r.valor, recordedAt:aldNowISO() };
+    a.transactions.push(rec);
+    return { recordId:rec.transactionId, avisos:[] };
+  }, { label:'transaction_add' });
+}
+// A reversão é um fato econômico NOVO, com data própria: `effectiveAt` é do
+// chamador. Tudo o que é econômico — valor, moeda, escopo e as referências —
+// é COPIADO do original, de modo que divergir seja impossível.
+function aldActReverseTransaction(originalId, dados){
+  return aldMutate('transaction_reverse', (a)=>{
+    if(!Array.isArray(a.transactions)) return { ok:false, erro:'ALD_COLECAO_ILEGIVEL' };
+    const orig = aldFindIn(a,'transactions','transactionId',originalId);
+    if(!orig) return { ok:false, erro:'ALD_REGISTRO_NAO_ENCONTRADO' };
+    if(!aldTxLegivel(orig)) return { ok:false, erro:'ALD_TRANSACAO_ILEGIVEL' };
+    if(orig.eventType==='REVERSAL') return { ok:false, erro:'ALD_REVERSAL_DE_REVERSAL' };
+    // A busca pelo reversal existente vem ANTES da checagem de status: reverter
+    // duas vezes falha pelas duas razões, e a mais informativa é a que diz o que
+    // de fato aconteceu — "já existe uma reversão", não "não está POSTED".
+    for(const t of a.transactions){
+      if(aldRegistroLegivel(t) && t.eventType==='REVERSAL' && t.reversalOf===originalId)
+        return { ok:false, erro:'ALD_REVERSAL_JA_EXISTE' };
+    }
+    if(orig.status!=='POSTED') return { ok:false, erro:'ALD_TRANSACAO_NAO_ESTA_POSTED' };
+    const d = dados || {};
+    if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+    const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
+    let dedupe = null;
+    if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
+      if(!aldTextInDomain(d.dedupeKey,{max:120})) return { ok:false, erro:'ALD_DEDUPE_KEY_INVALIDA' };
+      dedupe = String(d.dedupeKey).trim();
+      if(aldTxDedupeExiste(a, dedupe, null)) return { ok:false, erro:'ALD_DEDUPE_KEY_DUPLICADA' };
+    }
+    for(const k of ['amount','currency','flowScope','eventType','cashAccountId',
+                    'sourceCashAccountId','destinationCashAccountId']){
+      if(Object.prototype.hasOwnProperty.call(d,k)) return { ok:false, erro:'ALD_CAMPO_ECONOMICO_NAO_INFORMAVEL:'+k };
+    }
+    const rec = { transactionId:aldId('aldtx'), eventType:'REVERSAL', status:'POSTED',
+      flowScope:orig.flowScope, amount:orig.amount, currency:orig.currency,
+      effectiveAt:d.effectiveAt, recordedAt:aldNowISO(), reversalOf:originalId,
+      reversedEventType:orig.eventType };
+    for(const r of aldTxRefsDoEvento(orig.eventType)) rec[r]=orig[r];
+    if(dedupe) rec.dedupeKey=dedupe;
+    if(nota.valor) rec.note=nota.valor;
+    a.transactions.push(rec);
+    orig.status='REVERSED';   // lifecycle do original; campos econômicos intactos
+    return { recordId:rec.transactionId, avisos:[] };
+  }, { label:'transaction_reverse' });
+}
 function aldCatalogos(){
   return {
     fechados:{ instrumentFamily:ALD_INSTRUMENT_FAMILIES.slice(), recordMode:ALD_RECORD_MODES.slice(),
@@ -33359,6 +33587,9 @@ const ALD_LEITURA_CAMPOS = Object.freeze({
     'recordStatus','lifecycleStatus','createdAt']),
   accounts: Object.freeze(['accountId','name','institution','accountType','recordStatus','createdAt']),
   cashAccounts: Object.freeze(['cashAccountId','accountId','currency','recordStatus','createdAt']),
+  transactions: Object.freeze(['transactionId','eventType','status','flowScope','amount','currency',
+    'effectiveAt','recordedAt','cashAccountId','sourceCashAccountId','destinationCashAccountId',
+    'reversalOf','reversedEventType','dedupeKey','note']),
 });
 function aldFreezeDeep(v){
   if(v && typeof v==='object'){
@@ -33383,6 +33614,42 @@ function aldVistaCadastral(colecao){
   return Object.freeze(out);
 }
 
+// ---- saldo de caixa: DERIVADO, e fail-closed por qualidade de dado ----------
+// Nunca existe `CashAccount.balance`. O saldo é a soma dos efeitos econômicos, e
+// participam TODOS os registros efetivos: o original REVERSED continua contando
+// e o REVERSAL contra-lança, somando zero. Filtrar o revertido apagaria metade
+// do par e devolveria um número errado com cara de certo.
+//
+// Qualidade BLOQUEANTE não vira saldo parcial: um único registro que este build
+// não consiga classificar com segurança torna a métrica INDISPONÍVEL — porque
+// não há como afirmar que ele não pertencia a esta conta. Meio saldo apresentado
+// como saldo é pior que a ausência dele.
+function aldSaldoDeCaixa(cashAccountId){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  const conta = a ? aldFindIn(a,'cashAccounts','cashAccountId',cashAccountId) : null;
+  const issues = [];
+  if(!conta) return Object.freeze({ available:false, amount:null, currency:null,
+    quality:'BLOCKING', issues:Object.freeze(['ALD_CASHACCOUNT_NAO_ENCONTRADA']), consideradas:0 });
+  const lista = Array.isArray(a.transactions) ? a.transactions : [];
+  const porId = {};
+  for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
+  let total = 0, consideradas = 0;
+  for(const t of lista){
+    if(!aldTxLegivel(t)){ issues.push('ALD_TRANSACAO_ILEGIVEL'); continue; }
+    const efeito = aldTxEfeito(t, cashAccountId, porId);
+    if(efeito===null){ issues.push('ALD_REVERSAL_ORFAO:'+t.transactionId); continue; }
+    if(efeito===0) continue;
+    if(t.currency!==conta.currency){ issues.push('ALD_MOEDA_DIVERGENTE:'+t.transactionId); continue; }
+    total += efeito; consideradas++;
+  }
+  if(issues.length) return Object.freeze({ available:false, amount:null, currency:conta.currency,
+    quality:'BLOCKING', issues:Object.freeze(issues.slice(0,20)), consideradas:0 });
+  if(!Number.isSafeInteger(total)) return Object.freeze({ available:false, amount:null,
+    currency:conta.currency, quality:'BLOCKING', issues:Object.freeze(['ALD_SOMA_FORA_DO_INTEIRO_SEGURO']), consideradas:0 });
+  return Object.freeze({ available:true, amount:total, currency:conta.currency,
+    quality:'OK', issues:Object.freeze([]), consideradas });
+}
+
   window.JPWAlladin = {
     compat: aldCompat,
     // Leitura cadastral para a UI (C3-S1): snapshots desacoplados e congelados.
@@ -33391,6 +33658,10 @@ function aldVistaCadastral(colecao){
       assets: function(){ return aldVistaCadastral('assets'); },
       accounts: function(){ return aldVistaCadastral('accounts'); },
       cashAccounts: function(){ return aldVistaCadastral('cashAccounts'); },
+      // Ledger em ordem ECONÔMICA — (effectiveAt, recordedAt, transactionId) —
+      // nunca a ordem do array, que é acidente de inserção e não fato temporal.
+      transactions: function(){ return Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))); },
+      saldoDeCaixa: aldSaldoDeCaixa,
     }),
     writeBlockReason: aldWriteBlockReason,
     money: {
@@ -33409,6 +33680,13 @@ function aldVistaCadastral(colecao){
       addAccount: aldActAddAccount,         editAccount: aldActEditAccount,
       addCashAccount: aldActAddCashAccount, editCashAccount: aldActEditCashAccount,
       setRecordStatus: aldActSetRecordStatus,
+    },
+    // ALD-03 S1 — superfície econômica, separada do cadastro de propósito: o
+    // Alladin passa a responder duas perguntas distintas, e a fronteira entre
+    // elas é visível também na API.
+    ledger: {
+      addTransaction: aldActAddTransaction,
+      reverseTransaction: aldActReverseTransaction,
     },
   };
 }

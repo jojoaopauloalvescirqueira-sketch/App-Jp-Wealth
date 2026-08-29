@@ -268,17 +268,28 @@ const DEFAULTS = {
   // C1 não tinha atos. Um build do C1 lendo v2 entra em fail-closed — correto, ele
   // não conhece estes registros.
   //
+  // schemaVersion 3 (ALD-03 S1 · Cash Ledger): `transactions[]` passa a integrar o
+  // agregado canônico — o primeiro fato ECONÔMICO do Alladin. O carimbo aqui não é
+  // registro de mudança de dado (a migração v2→v3 apenas cria a coleção quando ela
+  // não existe): é BARREIRA DE ESCRITA. Um build v2 preserva `transactions` que não
+  // conhece, mas continuaria escrevendo sobre o agregado e violando amarras do
+  // ledger que ignora; com v3 ele fica fail-closed, que é a razão de o mecanismo
+  // existir. O default nasce JÁ em v3 e com a coleção presente — depender de
+  // migrate/repair para uma base recém-criada ficar íntegra seria nascer torto e
+  // endireitar depois.
+  //
   // schemaVersion FUTURA ⇒ FAIL-CLOSED integral: o domínio inteiro entra em
   // somente-leitura, a migração não toca um byte do agregado e todo ato é
   // recusado (alladinNormalizeState, 04-persistence.js). Integridade > disponibilidade.
   // Derivados (saldos, posições, patrimônio) JAMAIS persistem.
   alladin:{
-    schemaVersion:2,
+    schemaVersion:3,
     reportingCurrency:'BRL',
     instruments:[],
     assets:[],
     accounts:[],
     cashAccounts:[],
+    transactions:[],
   },
 };
 // REPRESENTAÇÃO CANÔNICA de reserveMasterCapital: o campo é DERIVADO de

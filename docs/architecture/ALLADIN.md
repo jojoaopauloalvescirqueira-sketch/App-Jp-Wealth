@@ -466,6 +466,82 @@ perca por causa do rótulo.
 > `fix/alladin-session-preservation` está convergida com a `main`, sem commits
 > exclusivos.
 
+## ALD-03 S1 — Cash Ledger (o primeiro fato econômico)
+
+O Alladin passa a responder, além de "o que existe", **um pedaço** de "o que
+aconteceu": entrada, saída e movimentação de dinheiro entre custódias. Nada além
+disso — sem papel, sem custo, sem valor de mercado, sem performance.
+
+```text
+Transaction { transactionId 'aldtx_…' · eventType DEPOSIT|WITHDRAWAL|TRANSFER|REVERSAL
+              status POSTED|REVERSED · flowScope INTERNAL|EXTERNAL
+              amount > 0 (magnitude) · currency · effectiveAt · recordedAt
+              cashAccountId? · sourceCashAccountId? · destinationCashAccountId?
+              reversalOf? · reversedEventType? · dedupeKey? · note? }
+```
+
+*Um fato, múltiplos efeitos.* A transferência é **um registro** com origem e
+destino, não dois lançamentos correlacionados. Com isso, "debitou a origem e o
+destino não recebeu" deixa de ser um risco a controlar e passa a ser
+**irrepresentável**. E a transferência interna **não é aporte**: move dinheiro
+entre custódias que já são nossas, então o patrimônio global não muda — o caso
+canônico que a suíte prova somando os dois saldos antes e depois.
+
+*`amount` é magnitude, nunca sinal.* A direção vem do `eventType`, o que torna
+"um DEPOSIT de −100" impossível de escrever. Se o sinal morasse no valor, todo
+leitor teria de reinterpretar a combinação sinal × tipo.
+
+*`flowScope` é perímetro, não direção.* `EXTERNAL` cruza a fronteira do
+patrimônio consolidado; `INTERNAL` fica dentro dela. É **persistido** e validado
+contra o `eventType`: um registro que divergir da tabela é **dado inválido**,
+jamais corrigido em silêncio na leitura.
+
+*Correção é reversão, não edição.* `POSTED` é economicamente imutável. Reverter
+cria um fato NOVO, com data própria, que copia e inverte o que é econômico —
+valor, moeda, escopo e referências vêm do original, e o chamador **não pode
+informá-los**. O original recebe `status: REVERSED`, e apenas isso muda nele.
+Proibidos: reverter uma reversão, reverter duas vezes, reverter sem data válida.
+
+*O saldo é sempre derivado — e fail-closed.* Não existe `CashAccount.balance`
+(ALD-I27). `saldoDeCaixa` soma os efeitos e devolve
+`{available, amount, currency, quality, issues}`. O original `REVERSED`
+**continua contando** e o `REVERSAL` contra-lança: a soma dá zero. Filtrar o
+revertido apagaria metade do par e devolveria um número errado com cara de
+certo. E **qualidade bloqueante não vira saldo parcial**: um único registro que
+este build não consiga classificar torna a métrica indisponível — porque não há
+como afirmar que ele não pertencia àquela conta.
+
+*Duplicidade econômica é fail-closed.* `dedupeKey` é opcional; quando presente,
+é único em todo o ledger e a repetição é **recusada**. Aqui o domínio se afasta
+deliberadamente do DC-4: dois cadastros parecidos são problema de curadoria;
+dois lançamentos iguais **fabricam dinheiro**.
+
+*Conta encerrada não invalida o passado — mas o passado trava o cadastro.* A
+assimetria é deliberada. Lançamento novo exige `CashAccount` ativa; inativar uma
+conta **com histórico continua permitido**, o histórico segue valendo e um fato
+antigo continua reversível — encerrar uma conta é ato administrativo legítimo.
+Já `currency` e `accountId` tornam-se **imutáveis** assim que a conta é
+referenciada por qualquer lançamento, inclusive como destino de transferência.
+Não é rigor formal: trocar a moeda reinterpreta o passado, porque os registros
+permanecem na moeda antiga e o saldo inteiro passa a `MOEDA_DIVERGENTE` — isto
+é, história ilegível. Corrigir cadastro depois de haver movimento exige outra
+conta, nunca a reescrita do significado da que existe (`ALD_CASHACCOUNT_COM_LANCAMENTOS`).
+
+*Ordem é econômica.* A leitura ordena por `(effectiveAt, recordedAt,
+transactionId)` — nunca pela ordem do array, que é acidente de inserção.
+
+### `schemaVersion` 2 → 3: uma barreira de escrita, não uma migração de dados
+
+A migração v2→v3 só cria a coleção quando ela não existe. O carimbo serve para
+outra coisa: sondado empiricamente, um build v2 **preserva** `transactions` que
+não conhece — mas **continua escrevendo** no agregado, podendo violar amarras do
+ledger que ignora. Com v3, esse build cai em `READ_ONLY_FUTURE_SCHEMA`. As três
+portas passam a concordar: o **DEFAULTS nasce em v3** (base nova é íntegra sem
+depender de migração), a **migração** leva o legado até v3, e o **write gate**
+fecha para qualquer versão acima. Coleção ausente nasce vazia; coleção existente
+é preservada; forma inválida **não** é substituída por `[]` — apagar história
+econômica para consertar a forma seria a pior troca possível.
+
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 
 **C3 — Cadastro Patrimonial** responde **"o que existe?"**: Instrument, Asset,

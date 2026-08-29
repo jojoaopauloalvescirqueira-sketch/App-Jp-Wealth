@@ -1034,7 +1034,7 @@ function personalFinanceNormalizeState(){
 // ALD_SUPPORTED_SCHEMA_VERSION em 10-domain/13-alladin.js (o módulo de domínio
 // roda isolado no harness unitário). As duas DEVEM permanecer iguais — o teste
 // de integração afirma a igualdade. Idem aldSchemaVersionLegivel.
-const ALLADIN_SCHEMA_VERSION=2;
+const ALLADIN_SCHEMA_VERSION=3;
 function alladinSchemaVersionLegivel(v){
   if(Number.isInteger(v)) return v;
   if(typeof v==='string' && /^[0-9]+$/.test(v.trim())) return parseInt(v.trim(),10);
@@ -1069,12 +1069,32 @@ function alladinNormalizeState(){
   // interrompe a cadeia: não se inventa transformação.
   while(a.schemaVersion<ALLADIN_SCHEMA_VERSION){
     if(a.schemaVersion===1){ a.schemaVersion=2; continue; }
+    // v2 → v3 (ALD-03 S1): nasce o Cash Ledger. O carimbo não é enfeite — é a
+    // BARREIRA DE ESCRITA: um build v2 preserva `transactions` que não conhece,
+    // mas continua escrevendo sobre o agregado e pode violar amarras do ledger
+    // que ele ignora. Com v3, esse build cai em READ_ONLY_FUTURE_SCHEMA, que é
+    // exatamente para isso que o fail-closed existe.
+    // A coleção AUSENTE nasce vazia; uma já existente é PRESERVADA intacta; e
+    // uma presente com forma errada NÃO é substituída por [] — apagar história
+    // econômica para "consertar" a forma seria a pior troca possível. Nesse
+    // caso a versão não avança e o envelope permanece incoerente, de modo que
+    // o fail-closed e a recuperação tratem o caso em vez de mascará-lo.
+    if(a.schemaVersion===2){
+      if(a.transactions===undefined){ a.transactions=[]; a.schemaVersion=3; continue; }
+      if(Array.isArray(a.transactions)){ a.schemaVersion=3; continue; }
+      break;
+    }
     break;
   }
   if(typeof a.reportingCurrency!=='string' || !a.reportingCurrency) a.reportingCurrency=def.reportingCurrency;
   for(const k of ['instruments','assets','accounts','cashAccounts']){
     if(!Array.isArray(a[k])) a[k]=[];
   }
+  // `transactions` NÃO entra no laço acima: aquele conserta forma criando lista
+  // vazia, e para o ledger isso significaria descartar história econômica em
+  // silêncio. Só se cria quando AUSENTE; forma errada é deixada como está para
+  // o fail-closed enxergar.
+  if(a.transactions===undefined) a.transactions=[];
 }
 // ---- S.params: o denominador de tudo ----------------------------------------
 // O laço genérico de migrate() só repõe chaves de PRIMEIRO nível. Com `params`
