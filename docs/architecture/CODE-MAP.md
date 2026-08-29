@@ -1,7 +1,7 @@
 # Mapa do código
 
 Fotografia do candidato interno NAV-03 sobre `9b5ea298` em 2026-08-26:
-`src/js/manifest.json` contém 76 scripts clássicos. O manifest é a fonte única
+`src/js/manifest.json` contém 77 scripts clássicos. O manifest é a fonte única
 para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
 a lista material mudar.
 
@@ -85,6 +85,7 @@ a lista material mudar.
 | 74 | `src/js/20-ui/22-finpes-overview.js` | Visão Geral: consolidado derivado de quatro cards — mês atual, dívida & crédito, vs mês anterior e pendências |
 | 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema) e modelo cadastral (Instrument, Asset, Account, CashAccount) — nenhum ato econômico |
 | 76 | `src/js/20-ui/23-research-views.js` | Research: ownership e troca efêmera de Calendário, NoCoda, Pivots e quatro empty states |
+| 77 | `src/js/20-ui/24-alladin-views.js` | **Alladin C3**: superfície cadastral — leitura desacoplada pelo read-model, CRUD das quatro entidades no modal próprio, `recordStatus`, write gate, DC-4 e integridade da edição; nenhum conteúdo econômico |
 
 ## Laboratório de Probabilidade
 
@@ -130,7 +131,7 @@ reutilizável completo estão em `NAVIGATION-HIERARCHY.md`.
 
 ## Entrypoints, PWA e artefatos derivados
 
-- `index.html` compõe o DOM e carrega os 76 scripts na ordem do manifest.
+- `index.html` compõe o DOM e carrega os 77 scripts na ordem do manifest.
 - `src/styles/app.css` contém o design system e as regras do laboratório.
 - `sw.js` deve precachear todo caminho declarado no manifest; `validate_project.py`
   trata a equivalência como invariante. Navegações controladas pelo worker

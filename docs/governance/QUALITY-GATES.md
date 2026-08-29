@@ -27,7 +27,7 @@ Para N0-V e N1:
 - tudo do fast;
 - `navigation_ia_test.py`: cinco primários, seis filhos Forex em ordem exata,
   cinco filhos Research, defaults/aliases, compatibilidade sem falso owner, falha fechada atômica,
-  zero escrita e isolamento do placeholder Alladin;
+  zero escrita e isolamento do Alladin (a navegacao nao le nem altera o dominio patrimonial);
 - `research_navigation_test.py`: cinco filhos Research na ordem exata,
   Research/Forex com três destinos, ownership único de Calendário/NoCoda/Pivots,
   Exec reduzido a quatro views, empty states neutros, Galton intacto, storage

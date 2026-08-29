@@ -3,7 +3,7 @@
 ## Visão geral
 
 O JP Wealth Risk Terminal é uma aplicação web cliente, local-first e sem backend
-obrigatório. O navegador carrega `index.html`, `src/styles/app.css` e 76 scripts
+obrigatório. O navegador carrega `index.html`, `src/styles/app.css` e 77 scripts
 clássicos na ordem e com os hashes fixados por `src/js/manifest.json`. O estado
 operacional é persistido localmente; artefatos portáteis e PWA são derivados das
 mesmas fontes rastreadas.

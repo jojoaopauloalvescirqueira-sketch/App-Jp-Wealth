@@ -7,12 +7,13 @@ repositório. Este documento é o contrato do que EXISTE no código — não do 
 a spec planeja.
 
 > [!important] O que o Alladin ainda NÃO é
-> Duas camadas estão entregues: infraestrutura (ALD-01 C1) e modelo cadastral
-> (ALD-02 C2). O domínio sabe **o que existe**; ainda não sabe **o que
-> aconteceu** nem **quanto vale**. Não há transação, holding, posição,
-> valuation, cost basis, performance, benchmark, UI nem integração com Trading,
-> Finanças Pessoais ou Planejamento FX. Nenhum número patrimonial é calculado
-> em lugar algum.
+> Três camadas estão entregues: infraestrutura (ALD-01 C1), modelo cadastral
+> (ALD-02 C2) e a **superfície de cadastro** (C3, concluída — leitura, CRUD das
+> quatro entidades, `recordStatus`, write gate, DC-4 e integridade da edição).
+> O domínio sabe **o que existe**; ainda não sabe **o que aconteceu** nem
+> **quanto vale**. Não há transação, holding, posição, valuation, cost basis,
+> performance, benchmark nem integração com Trading, Finanças Pessoais ou
+> Planejamento FX. Nenhum número patrimonial é calculado em lugar algum.
 
 ## Fronteiras
 
@@ -420,20 +421,66 @@ testes e a aceitação humana por console exercitam o domínio.
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup |
 
-As três acima e o protocolo de geração da base
-(`tools/session_epoch_protocol_test.py`, E1–E16) no tier `standard` (34; `full` 45).
+| `tools/alladin_ui_readonly_test.py` | C3-S1 no app real — quatro destinos locais, cadastro C2 verdadeiro, **zero escrita** e zero materialização do agregado, snapshots desacoplados do read-model, `READ_ONLY` de schema futuro sem normalizar, ausência de conteúdo econômico |
+| `tools/alladin_ui_crud_test.py` | C3-S2 no app real — Account, CashAccount, Instrument e Asset criados e editados pelo modal verdadeiro, com persistência provada em memória **e** em disco; DC-4 pós-criação e a decisão explícita; status ×4 por `setRecordStatus`; write gate na abertura e no submit; patch-diff; taxonomia de avisos; e as quatro preservações do S2-C (rede, vocabulário desconhecido, rascunho e rótulos de lifecycle) |
+
+As cinco acima e o protocolo de geração da base
+(`tools/session_epoch_protocol_test.py`, E1–E16) nos tiers `standard` (37) e
+`full` (48); `fast` tem 4.
 
 ## Entregas
 
-| Entrega | Candidate | Merge |
+| Entrega | Checkpoint | Merge |
 |---|---|---|
 | ALD-01 C1 — Foundation Infrastructure | `fe616a7c…` | `c6c1aa3` |
 | ALD-02 C2 — Modelo Cadastral | `66ebf840…` | `29aca32` |
+| C3-PRE — preservação na finalização e protocolo de geração | `1501d46` | — |
+| — reconciliação com a main da Navigation | `dc8a3ec` | — |
+| C3-PRE-PERSISTENCE — serialização cross-tab da escrita | `c2819af` | — |
+| C3-S1 — superfície cadastral somente-leitura | `94c383e` | — |
+| C3-S2 PRE-WRITE — salvaguardas de escrita da sessão | `d9bd71b` | — |
+| C3-S2-A — Account e CashAccount | `e5d6f36` | — |
+| C3-S2-B — Instrument e Asset | `a725302` | — |
+| C3-S2-C — integridade da edição cadastral | `f5124f4` | — |
+
+O commit `1501d46` traz o C3-PRE e o protocolo de geração da base, apesar de a
+mensagem dizer outra coisa — nota factual registrada para que a cadeia não se
+perca por causa do rótulo. Os checkpoints do C3 vivem na branch
+`fix/alladin-session-preservation`; a integração com a `main` é gate próprio,
+ainda não autorizado.
+
+## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
+
+**C3 — Cadastro Patrimonial** responde **"o que existe?"**: Instrument, Asset,
+Account, CashAccount, ownership cadastral (`owners/shareBp`), estado cadastral
+(`recordStatus`) e a integridade da edição.
+
+**ALD-03 — Ledger Patrimonial** responderá **"o que aconteceu economicamente?"**:
+transações e eventos — aportes, retiradas, compras, vendas, transferências,
+rendimentos, taxas, impostos, reversões e correções.
+
+```text
+CADASTRO + EVENTOS + VALUATIONS = ESTADO PATRIMONIAL DERIVADO
+```
+
+Cadastro é identidade e estrutura; eventos são a história econômica; valuations
+são valor no tempo. **Posições, saldos, patrimônio e performance são derivados**
+— nenhum deles é respondido pelo C3, e nenhum é persistido (ALD-I27).
 
 ## Próximas fases (nenhuma iniciada)
 
 `ALD-03` transações, eventos, holdings e posições — onde nascem cost basis,
 `flowScope INTERNAL|EXTERNAL` e o par atômico papel↔caixa · `ALD-04` valuation
-e performance · `C3` UI mínima, sob a navegação primária aprovada
-(`01 Dashboard · 02 Forex · 03 Finanças Pessoais · 04 Research · 05 Alladin`) ·
-`ALD-07` Data Quality e Audit Trail canônico.
+e performance · `ALD-07` Data Quality e Audit Trail canônico.
+
+### Amarras que o ledger vai reabrir (registradas, não implementadas)
+
+- `CashAccount.accountId` e `currency` são editáveis **porque nada depende
+  deles ainda**; com lançamentos, a restrição nasce junto com o ledger.
+- `Asset.lifecycleStatus` é somente-leitura; as transições virarão **eventos
+  patrimoniais**, não atos cadastrais.
+- **DELETE não existe** — a política nasce com o ledger, que é quem saberá se
+  um registro é referenciado.
+- `symbolHistory` permanece cadastral e independente do ledger.
+- `owners/shareBp` é cadastral: registra **título**, não valor. Nenhum valor
+  proporcional é computado enquanto não houver valuation.

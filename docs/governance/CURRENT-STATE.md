@@ -1,5 +1,49 @@
 # Estado atual do projeto
 
+## Alladin C3 — cadastro patrimonial CONCLUÍDO — 2026-08-29
+
+- Data da fotografia: 2026-08-29
+Source revision representada: `f5124f4804ad7780cae4947e3d8f7435de7cd804`
+- Branch do trabalho: `fix/alladin-session-preservation` (local == `origin`);
+  `main` == `origin/main` == `1fbeb00c3a0a0e53656b41d736e08c72d330eda7`,
+  **intocada** — a integração do C3 na `main` é gate próprio, não autorizado.
+- **O C3 está CONCLUÍDO.** O Alladin deixou de ser destino sem função: as quatro
+  entidades cadastrais têm leitura, criação, edição e ciclo `recordStatus` pela
+  interface real, e toda mutação atravessa `JPWAlladin.cadastro` — a UI nunca
+  escreve em `S`, nunca chama `save()` e nunca toca `localStorage`.
+
+| Entidade | leitura | create | edit | recordStatus |
+|---|---|---|---|---|
+| Instrument | ✅ | ✅ | ✅ | ✅ |
+| Asset | ✅ | ✅ | ✅ | ✅ (+ `lifecycleStatus` somente-leitura) |
+| Account | ✅ | ✅ | ✅ | ✅ |
+| CashAccount | ✅ | ✅ | ✅ | ✅ |
+
+- **Cadeia do ciclo:** `1501d46` (C3-PRE + protocolo de geração; a mensagem do
+  commit não descreve o conteúdo) → `dc8a3ec` (reconciliação com a Navigation)
+  → `c2819af` (serialização cross-tab da escrita) → `94c383e` (C3-S1, leitura)
+  → `d9bd71b` (salvaguardas pré-escrita) → `e5d6f36` (C3-S2-A) → `a725302`
+  (C3-S2-B) → `f5124f4` (C3-S2-C, integridade da edição).
+- **Blockers do primeiro Closure, todos fechados no S2-C:** `B-1` a rede de
+  cripto não desaparece mais ao trocar de família; `B-2` valor de vocabulário
+  fechado que este build não conhece é preservado e nunca normalizado em
+  silêncio; `B-3` a recusa não apaga mais o rascunho de Account/CashAccount;
+  `F-1` os rótulos de `lifecycleStatus` são exatamente o catálogo do domínio.
+- **Fronteira congelada:** o C3 responde *"o que existe?"*. `ALD-03` responderá
+  *"o que aconteceu economicamente?"* — ledger, transações, posições, saldos,
+  valuations, patrimônio e performance. **Nada disso existe hoje**, nem como
+  zero, e o ALD-03 **não está iniciado nem autorizado**.
+- **Readiness:** `validate_project` PASS com 77 scripts e 428 IDs; `fast` 4/4,
+  `standard` 37/37 e `full` **48/48 PASS**.
+- **Dívidas de harness abertas** (caracterizadas, não corrigidas, e sem relação
+  com o produto): **QA-D1** — o caso N de `alladin_ui_readonly_test.py` observa
+  o documento inteiro enquanto `updateFxRates` escreve nele por conta própria;
+  com o relógio de cotação ativo 1 em 6 execuções acusa, com ele neutralizado
+  nenhuma acusa, e a escrita aparece também no controle que não toca no Alladin.
+  **QA-D2** — `finalize_session_test.py` falha sob carga do tier num assert do
+  Galton (`currentSpeed`); passa isolado e na baseline, causa não fechada.
+  Corrigi-las é slice de harness próprio, jamais oportunismo dentro de outro.
+
 ## Navigation — pós-merge final reconciliado — 2026-08-26
 
 - **Base desta reconciliação:** `main` em
@@ -212,6 +256,13 @@ holdings, posições, cost basis, valuation, performance, allocation, renda,
 passivos patrimoniais, benchmark, UI e integrações Trading/PF/FX — **nada do
 domínio econômico foi iniciado**. `ALD-03` (estado derivado) e `C3` (UI) não
 autorizados.
+
+> [!note] Superado em 2026-08-29 quanto à UI
+> O parágrafo acima descreve o estado de 2026-08-21 e fica preservado como
+> registro daquele momento. O **C3 foi autorizado, implementado e concluído**
+> — ver a seção do topo. O que permanece verdadeiro é a metade econômica:
+> transações, ledger, posições, valuation e performance continuam inexistentes,
+> e o `ALD-03` segue não iniciado.
 
 **Resíduos registrados:** `ALD-I26` (Audit Trail) deferred ao ALD-07 por
 decisão HD-6 — `dgLogChange` é log operacional não-canônico; referências

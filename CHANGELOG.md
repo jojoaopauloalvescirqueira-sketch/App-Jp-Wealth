@@ -2,6 +2,72 @@
 
 ## [Unreleased]
 
+### Alladin C3 — cadastro patrimonial concluído — checkpoints internos commitados — 2026-08-26 a 2026-08-29
+
+Branch `fix/alladin-session-preservation`. O Alladin deixou de ser um destino
+sem função: as quatro entidades cadastrais passaram a ter leitura, criação,
+edição e ciclo de status pela interface real, com o domínio C2 como única
+autoridade — a UI não escreve em `S`, não chama `save()` e não toca
+`localStorage` em nenhum caminho.
+
+A progressão, checkpoint a checkpoint:
+
+- **`1501d46` — C3-PRE + protocolo de geração da base.** `Finalizar Sessão`
+  passou a preservar `S.alladin`, sempre a partir do estado persistido e nunca
+  da memória da aba; chave de geração `jpwealth_base_epoch_v1`, tipo versionado
+  `jpwealth-session-finalized-v2`, seqlock e deduplicação por `tipo:token`.
+  *Nota factual: a mensagem deste commit — "docs: reconcile post-merge
+  navigation state" — não descreve o conteúdo; o registro fica aqui para que a
+  cadeia não se perca pelo rótulo.*
+- **`dc8a3ec`** — reconciliação com a `main` da Navigation.
+- **`c2819af` — serialização cross-tab da escrita.** `save()` ganhou guarda de
+  concorrência (recusa quando o disco divergiu), Web Locks no commit curto da
+  finalização com modo degradado honesto, transação write-before-clear com
+  read-back exato e rotação de geração exigindo `releitura === valor`.
+- **`94c383e` — C3-S1, superfície cadastral somente-leitura.** Quatro destinos
+  locais efêmeros sobre um read-model de snapshots profundamente desacoplados e
+  congelados; zero escrita provada, `READ_ONLY` para schema futuro sem
+  normalizar, e proibição econômica absoluta — nem como zero.
+- **`d9bd71b` — salvaguardas de escrita da sessão.** Fingerprint de estado com
+  a mesma política de serialização da persistência; a frase de confirmação
+  passou a ser **ENCERRAR SESSÃO**, distinta do APAGAR da Zona de Perigo, e o
+  consentimento passou a declarar o que de fato sobrevive.
+- **`e5d6f36` — C3-S2-A, Account e CashAccount.** Primeira escrita cadastral
+  pela UI, em modal próprio com foco preso, Escape, retorno de foco e ARIA.
+  DC-4 é pós-criação, fiel ao C2: o registro nasce e o operador decide, com
+  Salvar extinto e Escape suspenso até a decisão. Status ×4 como ação de linha
+  com confirmação explícita e sem optimistic update.
+- **`a725302` — C3-S2-B, Instrument e Asset.** Formulários ricos com patch-diff
+  (só o campo alterado viaja), moeda imutável, `symbolHistory` mantido apenas
+  pelo domínio, cripto exigindo rede de fonte única, identificadores externos,
+  proprietários em basis points por aritmética inteira — `66,67 + 33,33` fecha
+  exatamente 10000 — e a taxonomia de avisos, em que só duplicidade pede
+  decisão.
+- **`f5124f4` — C3-S2-C, integridade da edição.** Slice corretivo aberto pelo
+  primeiro Closure, que recusou declarar o ciclo concluído ao encontrar
+  caminhos em que a UI destruía dado já persistido em silêncio: a rede de
+  cripto some ao trocar de família; um valor de vocabulário fechado que o build
+  não conhece era reescrito por uma edição de nome; e uma recusa apagava o
+  rascunho de Account/CashAccount. Os três foram fechados sem tocar o domínio,
+  e os rótulos de `lifecycleStatus` passaram a ser exatamente o catálogo do C2.
+
+Nenhuma linha de `src/js/10-domain/13-alladin.js` mudou nas fatias S2-A, S2-B e
+S2-C. `validate_project` PASS com 77 scripts e 428 IDs; `fast` 4/4, `standard`
+37/37 e `full` **48/48 PASS**.
+
+Fica congelada a fronteira: o **C3** responde *"o que existe?"*; o **ALD-03**
+responderá *"o que aconteceu economicamente?"*. Transações, ledger, posições,
+saldos, valuation, patrimônio e performance não existem — o ALD-03 não está
+iniciado nem autorizado.
+
+Dívidas de harness abertas, sem relação com o produto: **QA-D1**
+(`alladin_ui_readonly_test.py` compara o documento inteiro enquanto
+`updateFxRates` escreve nele) e **QA-D2** (`finalize_session_test.py`, assert do
+Galton sob carga). Ambas passam isoladas e na baseline.
+
+`main` permanece em `1fbeb00`; a integração do C3 é gate próprio, não
+autorizado. Push, merge e deploy não foram executados.
+
 ### NAV-06A — reconciliação documental de release readiness — candidato — 2026-08-26
 
 Reconciliação N0-D sobre `2c1e0a4`: os contextos operacionais agora registram

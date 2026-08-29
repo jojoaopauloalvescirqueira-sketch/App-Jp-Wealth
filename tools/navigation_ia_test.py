@@ -4,7 +4,7 @@
 Prova que a API publica expoe somente as cinco rotas canonicas, enquanto a
 fachada legada continua resolvendo destinos fisicos sem promovê-los ao contrato
 canônico. Navegação é UI pura: não grava storage, não salva estado financeiro e
-o placeholder Alladin não lê nem altera o domínio patrimonial.
+a navegacao nao le nem altera o dominio patrimonial do Alladin.
 """
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer

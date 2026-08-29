@@ -38,7 +38,7 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 - **Research** — ownership visual de Calendário Econômico, Estudos NoCoda e Estudos dos Pivots sob Forex, sem duplicar telas ou domínio.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
 - **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
-- **Finanças Pessoais** — orçamento doméstico em centavos (`BRL_CENTS`), com Visão Geral consolidada, Orçamento Mensal (receitas, despesas e destino da sobra), Dívidas & Crédito, Comparativo Mensal e Cenários. Tudo derivado do estado vivo: totais, coberturas, sobras e utilização nunca são persistidos, e mês só nasce por ato de edição — abrir não materializa. Inventário e Patrimônio **não** pertencem a este domínio — são o domínio próprio **Alladin** (roadmap `ALD-*`; agregado `S.alladin` em schema v2 com as quatro entidades cadastrais — Instrument, Asset, Account, CashAccount —, sem interface e sem camada econômica: transações, posições, valuation e performance não iniciadas. Contrato em `docs/architecture/ALLADIN.md`).
+- **Finanças Pessoais** — orçamento doméstico em centavos (`BRL_CENTS`), com Visão Geral consolidada, Orçamento Mensal (receitas, despesas e destino da sobra), Dívidas & Crédito, Comparativo Mensal e Cenários. Tudo derivado do estado vivo: totais, coberturas, sobras e utilização nunca são persistidos, e mês só nasce por ato de edição — abrir não materializa. Inventário e Patrimônio **não** pertencem a este domínio — são o domínio próprio **Alladin** (roadmap `ALD-*`; agregado `S.alladin` em schema v2 com as quatro entidades cadastrais — Instrument, Asset, Account, CashAccount. O **cadastro (C3) está concluído**: leitura, criação, edição e ciclo de status pela interface, sem nenhuma camada econômica — transações, posições, valuation e performance não iniciadas. Contrato em `docs/architecture/ALLADIN.md`).
 
 ### Onboarding e período operacional
 
@@ -96,7 +96,7 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 76 scripts do manifest também estejam no precache. Durante uma
+exige que os 77 scripts do manifest também estejam no precache. Durante uma
 atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
 continua usando um build integral, sem combinar HTML novo com scripts cacheados de
 outro build. O ícone tem variantes
