@@ -1,13 +1,68 @@
-# Session Handoff — Alladin · C3 concluído e integrado
+# Session Handoff — Alladin · Cash Ledger publicado
 
 - Data: 2026-08-29
-- **`main` == `origin/main` == `39acdc68b40bcae7d81ac3b702fd20dd77cdff57`** — o
-  C3 foi integrado por **fast-forward** (sem merge commit) e publicado
-- Branch `fix/alladin-session-preservation`: local == `origin` == `39acdc6`,
-  **convergida — zero commits exclusivos**; não é mais a linha ativa
-- Estado: **C3 CONCLUÍDO E INTEGRADO**; último trabalho funcional foi o C3-S2-C
-  (`f5124f4`), e o Closure documental foi `39acdc6`
-- Próximo ciclo: **ALD-03 — Ledger Patrimonial**, ainda não autorizado
+- **`main` == `origin/main` == `5a6f7c3af23cc4e901d3c49236d98184c6b570ea`**
+- Worktree em `main`, sem trabalho pendente de nenhuma frente
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| Alladin C3 — cadastro patrimonial | `39acdc6` | concluído e integrado |
+| Endurecimento pré-ledger (D-1, D-2) | `c8c3190` | publicado |
+| Marca do cabeçalho abre o Dashboard | `982fb7e` | publicado |
+| **ALD-03 S1 — Cash Ledger** | `5a6f7c3` | **publicado** |
+
+O Alladin deixou de responder apenas *"o que existe"* e passou a registrar *"o
+que aconteceu"* com o dinheiro: `DEPOSIT`, `WITHDRAWAL`, `TRANSFER` e `REVERSAL`,
+com saldo **sempre derivado** — nunca campo — e `schemaVersion 3` como barreira
+de escrita para builds anteriores. O contrato completo está em
+`docs/architecture/ALLADIN.md`; a fotografia do estado, em
+`docs/governance/CURRENT-STATE.md`.
+
+## Dívidas abertas — nenhuma resolvida
+
+- **QA-D1** — `alladin_ui_readonly_test.py`, caso N: compara o documento inteiro
+  enquanto `updateFxRates` escreve nele por conta própria. Causa raiz provada
+  (relógio ativo: 1 em 6 acusa; neutralizado: nenhuma), correção não feita.
+- **QA-D2** — `finalize_session_test.py`: assert do Galton sob carga do tier;
+  passa isolado e na baseline; causa não fechada.
+- **`session-epoch-protocol` / `ENVIRONMENT_ERROR`** — recorrente nos runs #28 a
+  #32 do CI, sempre a mesma suíte, sempre no runner, nunca localmente. É o único
+  motivo de a `main` estar vermelha há cinco publicações seguidas; **nenhuma
+  delas teve `PRODUCT_FAIL` ou `TEST_HARNESS_FAIL`**.
+- **Dívida textual** — o comentário que apresenta `section#alladin` em
+  `index.html` ainda diz "SOMENTE LEITURA", texto do C3-S1.
+
+## Próxima fronteira
+
+**ALD-03-S2** — `BUY`/`SELL`, `FEE`, `ADJUSTMENT` e o par atômico papel↔caixa,
+deliberadamente fora do S1. Não autorizado. As seis decisões `DH-03-*` já estão
+congeladas como contrato e não se reabrem.
+
+---
+
+# Histórico
+
+## Sessão N1 da logo — candidato SUPERSEDIDO, não publicado
+
+Uma sessão anterior implementou a marca-como-link em worktree que continha, ao
+mesmo tempo, trabalho não commitado do Alladin. **Aquele candidato nunca foi
+publicado**: a implementação definitiva foi refeita do zero sobre base limpa e
+entrou em `982fb7e`. O registro fica porque duas coisas nele foram corretas e
+continuam valendo — o agente identificou a contaminação do worktree e **se
+recusou a atribuir a si alterações alheias**, e a QA daquela sessão produziu o
+achado sobre cache de service worker que hoje vive em
+`docs/governance/QUALITY-GATES.md`.
+
+Uma correção necessária àquele registro: ele reportava `standard 38/38` a partir
+de `tools/.artifacts/quality-20260829T163558-standard.json`. **Essa medição não
+é evidência isolada da logo** — foi feita sobre árvore que continha as suítes do
+Alladin ainda não commitadas. A evidência válida da implementação publicada foi
+obtida depois, em worktree limpo: `standard` **37/37**. O número `38` só passou a
+valer para a árvore atual quando o Cash Ledger foi publicado, por outra razão.
+
+## Contexto anterior — Alladin C3 concluído e integrado
 
 ## O que está entregue
 

@@ -1,5 +1,71 @@
 # Estado atual do projeto
 
+## Alladin — Cash Ledger publicado — 2026-08-29
+
+- Data da fotografia: 2026-08-29
+Source revision representada: `5a6f7c3af23cc4e901d3c49236d98184c6b570ea`
+- **`main` == `origin/main` == `5a6f7c3af23cc4e901d3c49236d98184c6b570ea`**;
+  worktree em `main`, sem trabalho pendente.
+- **O Alladin passou a registrar fato econômico.** `S.alladin.transactions[]`
+  com `DEPOSIT`, `WITHDRAWAL`, `TRANSFER` e `REVERSAL`; `POSTED` economicamente
+  imutável e correção por reversão; saldo **sempre derivado** e fail-closed —
+  não existe `CashAccount.balance` (ALD-I27). `schemaVersion` **3**: barreira de
+  escrita, não migração de dados — um build v2 preserva a coleção que não
+  conhece, mas entra em `READ_ONLY_FUTURE_SCHEMA` em vez de escrever sobre ela.
+- **Cadeia publicada:** `39acdc6` (C3 concluído e integrado) → `c8c3190`
+  (endurecimento pré-ledger: rollback do changeLog por conteúdo e import
+  fail-closed) → `982fb7e` (marca do cabeçalho abre o Dashboard) → `5a6f7c3`
+  (Cash Ledger).
+- **Readiness:** `validate_project` PASS com 77 scripts e 429 IDs; `fast` 4/4,
+  `standard` 38/38 e `full` **49/49**.
+- **CI Run #32** (`5a6f7c3`): vermelho por `ENVIRONMENT_ERROR` em
+  `session-epoch-protocol`, com `PASS=37`, `PRODUCT_FAIL=0` e
+  `TEST_HARNESS_FAIL=0`. A suíte nova `alladin-ledger` **passou no runner
+  Ubuntu**, assim como foundation, preservação, CRUD e leitura. Não é verde, não
+  está resolvido, não é regressão de produto e não é atribuível ao Alladin.
+- **Dívidas abertas:** QA-D1 · QA-D2 · `session-epoch-protocol` ·
+  comentário "SOMENTE LEITURA" em `index.html`. QA local: orientação sobre
+  cache de service worker registrada em `QUALITY-GATES.md`.
+- **Próxima fronteira:** `ALD-03-S2` — `BUY`/`SELL`, `FEE`, `ADJUSTMENT` e o par
+  atômico papel↔caixa. **Não autorizado.**
+
+
+## Navegação — marca JP Wealth abre o Dashboard — candidato SUPERSEDIDO — 2026-08-29
+
+> [!note] Este candidato não foi publicado
+> O que segue descreve um candidato produzido em worktree que continha, ao mesmo
+> tempo, trabalho não commitado do Alladin. **Ele nunca foi commitado.** A
+> implementação definitiva da marca foi refeita sobre base limpa e publicada em
+> `982fb7e`. O registro permanece por dois motivos: o agente identificou a
+> contaminação e recusou-se a atribuir a si alterações alheias, e a QA daquela
+> sessão produziu o achado sobre cache de service worker, hoje registrado em
+> `QUALITY-GATES.md`. O `standard 38/38` citado abaixo **não é evidência isolada
+> da logo** — foi medido com as suítes do Alladin presentes na árvore; a
+> evidência válida da implementação publicada foi `standard` **37/37**, obtida
+> depois em worktree limpo.
+
+- Branch `codex/logo-link-dashboard`, `BASE_SHA`/`HEAD`
+  `c8c31908e2bccbdb3a62e45c1b0ec4f6384cad9b`; candidato ainda sem commit.
+- A marca do header agora é `button#brandHomeBtn`, com nome acessível, foco
+  visível e alvo mínimo de 44 px. Clique, Enter e Espaço atravessam a rota
+  canônica `dashboard`; a marca não cria nova rota nem escreve em estado ou
+  storage.
+- Build portátil regenerado pelo mecanismo oficial, ID
+  `52a00fcfbd362f24`; manifest preserva 77 scripts e atualiza somente o hash do
+  controlador de navegação alterado. `validate_project` PASS com 429 IDs.
+- Teste focado PASS com Python 3.12.13/Playwright 1.60.0. Tier `standard`
+  final: **38/38 PASS**, relatório
+  `tools/.artifacts/quality-20260829T163558-standard.json`.
+- Browser real PASS em 1440×900 e 390×844, temas escuro/claro: clique leva de
+  Research/Alladin ao Dashboard, foco visível, zero overflow e zero erro de
+  console. A primeira origem `127.0.0.1` expôs cache antigo do service worker;
+  a QA do candidato foi confirmada em origem local limpa `localhost:8000`.
+- As 13 alterações Alladin/ledger que já existiam antes desta tarefa foram
+  confirmadas pelo gestor como suas, preservadas e mantidas fora do escopo
+  lógico do logo. Elas ainda divergem das representações C3 abaixo e não foram
+  reconciliadas, reinterpretadas nem autorizadas por esta mudança N1.
+- Commit, push, merge e deploy não foram executados nem autorizados.
+
 ## Alladin C3 — cadastro patrimonial CONCLUÍDO E INTEGRADO — 2026-08-29
 
 - Data da fotografia: 2026-08-29

@@ -146,6 +146,26 @@ cliente de descoberta permanecem integralmente no build/controller antigo, sem
 clientes, a próxima abertura recebe o build novo coerente online e offline. O teste
 também confirma que caches externos não são removidos.
 
+## Prove que esta testando os bytes do candidato
+
+Durante QA local foi observado que uma origem em `127.0.0.1` servia bytes
+antigos associados ao cache/service worker, enquanto `localhost:8000` servia o
+candidato atual. As duas origens sao distintas para o navegador, e cada uma tem
+o seu proprio registro de service worker e o seu proprio armazenamento.
+
+A licao nao e "use sempre localhost" — e que **a origem pode mentir sobre qual
+build esta em teste**. Antes de classificar divergencia visual ou funcional como
+regressao:
+
+- confirmar que a origem esta servindo o build esperado;
+- conferir `build-id`/artefato esperado quando aplicavel;
+- suspeitar de cache/service worker quando uma origem local divergir de outra;
+- repetir a verificacao em origem local limpa antes de atribuir o problema ao
+  produto.
+
+Um candidato julgado sobre bytes que nao sao os dele produz as duas falhas
+possiveis: aprova o que deveria reprovar e reprova o que deveria aprovar.
+
 ## Validade da evidencia
 
 - Mudanca em runtime, teste, manifest, fixture ou configuracao invalida os gates afetados.
