@@ -25,10 +25,19 @@ var S = { alladin: { schemaVersion: 2, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [] },
           dataGovernance: { changeLog: [] } };
 function save(){ window.__stub.saves += 1; return window.__stub.saveResult; }
+// Espelha o dgLogChange REAL de 00-core/04-persistence.js, INCLUSIVE a poda no
+// teto — que reatribui o array em vez de muta-lo. A versao anterior deste stub
+// omitia a poda e, com isso, tornava INVISIVEL toda uma classe de defeito: no
+// teto, um rollback por comprimento parece correto porque o comprimento nao muda.
+// Um stub que simplifica o mecanismo sob teste nao e simplificacao, e cegueira.
+const DG_CHANGELOG_MAX = 400;
 function dgLogChange(entity, action, recordId, label){
   const e = { entity: entity, action: action, recordId: recordId, label: label };
   window.__stub.logs.push(e);
   S.dataGovernance.changeLog.push(e);   // espelha o app: e daqui que a restauracao trunca
+  if(S.dataGovernance.changeLog.length > DG_CHANGELOG_MAX){
+    S.dataGovernance.changeLog = S.dataGovernance.changeLog.slice(-DG_CHANGELOG_MAX);
+  }
 }
 """
 
@@ -604,7 +613,7 @@ def main() -> int:
             r = ev("""() => {
               const conta = JPWAlladin.cadastro.addAccount({name:'XP', institution:'XP', accountType:'BROKERAGE'});
               const antes = JSON.stringify(S.alladin);
-              const logAntes = S.dataGovernance.changeLog.length;
+              const logAntes = JSON.stringify(S.dataGovernance.changeLog);
               window.__stub.saveResult = false;
               const asset = JPWAlladin.cadastro.addAsset({name:'Fantasma', nature:'IMOVEL', recordMode:'INDIVIDUAL'});
               const edit = JPWAlladin.cadastro.editAccount(conta.recordId, {name:'XP Editada'});
@@ -612,7 +621,7 @@ def main() -> int:
               window.__stub.saveResult = true;
               return { contaOk:conta.ok && antes.indexOf(conta.recordId) >= 0,
                        igual: JSON.stringify(S.alladin) === antes,
-                       logRestaurado: S.dataGovernance.changeLog.length === logAntes,
+                       logRestaurado: JSON.stringify(S.dataGovernance.changeLog) === logAntes,
                        assets: S.alladin.assets.length,
                        nome: S.alladin.accounts[0].name,
                        status: S.alladin.accounts[0].recordStatus,
@@ -630,6 +639,52 @@ def main() -> int:
             if any(r["vereditos"]) or r["erros"] != ["persistencia recusada"] * 3:
                 falhas.append(f"U20 veredito de persistencia incorreto: {r!r}")
         executar(falhas, "U20", u20)
+
+        # U23 — rollback do changeLog NO TETO (ALD-03-H0 · D-1). O invariante e a
+        # SEQUENCIA anterior, nao o comprimento: dgLogChange reatribui o array ao
+        # podar, e no teto 401->slice->400 devolve o mesmo comprimento de antes.
+        # Restaurar por comprimento passaria neste ponto exato com o log corrompido.
+        # O caso de controle abaixo do teto existe para que a falha, se vier, acuse
+        # o teto e nao o mecanismo inteiro.
+        def u23():
+            for rotulo, quantas in (("controle abaixo do teto", 10), ("NO TETO", 400)):
+                reset_agregado()
+                r = ev("""(quantas) => {
+                  S.dataGovernance.changeLog.length = 0;
+                  for(let i=0;i<quantas;i++) dgLogChange('seed','pre'+i,'r'+i,'L'+i);
+                  const antes = JSON.stringify(S.dataGovernance.changeLog);
+                  const primeiroAntes = S.dataGovernance.changeLog[0].action;
+                  const qtdAntes = S.dataGovernance.changeLog.length;
+                  window.__stub.saveResult = false;
+                  const r = JPWAlladin.cadastro.addAccount({name:'Fantasma', institution:'F', accountType:'BANK'});
+                  window.__stub.saveResult = true;
+                  const log = S.dataGovernance.changeLog;
+                  return { verdicto:[r.ok, r.persistido],
+                           identico: JSON.stringify(log) === antes,
+                           qtd: log.length, qtdAntes: qtdAntes,
+                           primeiro: log[0] ? log[0].action : null, primeiroAntes: primeiroAntes,
+                           ghost: log.some(e => e.action === 'account_add'),
+                           ordem: log.every((e,i) => e.action === 'pre'+i),
+                           agregadoLimpo: S.alladin.accounts.length === 0 };
+                }""", quantas)
+                if r["verdicto"] != [False, False]:
+                    falhas.append(f"U23 [{rotulo}]: o ato deveria ser recusado ({r['verdicto']})")
+                if not r["identico"]:
+                    falhas.append(f"U23 [{rotulo}]: o changeLog NAO voltou ao conteudo anterior "
+                                  f"(antes {r['qtdAntes']}, depois {r['qtd']}, ghost={r['ghost']}, "
+                                  f"primeiro {r['primeiroAntes']!r}->{r['primeiro']!r})")
+                if r["ghost"]:
+                    falhas.append(f"U23 [{rotulo}]: entrada FANTASMA de ato nao persistido sobreviveu no log")
+                if r["primeiro"] != r["primeiroAntes"]:
+                    falhas.append(f"U23 [{rotulo}]: a entrada legitima mais antiga foi evicta "
+                                  f"({r['primeiroAntes']!r} -> {r['primeiro']!r})")
+                if not r["ordem"]:
+                    falhas.append(f"U23 [{rotulo}]: a ordem do log nao foi preservada")
+                if r["qtd"] != r["qtdAntes"]:
+                    falhas.append(f"U23 [{rotulo}]: quantidade divergente ({r['qtdAntes']} -> {r['qtd']})")
+                if not r["agregadoLimpo"]:
+                    falhas.append(f"U23 [{rotulo}]: o agregado nao foi restaurado")
+        executar(falhas, "U23", u23)
 
         # U21 — cobertura dos edits: identidade e metadados sobrevivem
         def u21():

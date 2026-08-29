@@ -567,6 +567,71 @@ def main() -> int:
             ctx.close()
         executar(falhas, "S", caso_s)
 
+        # ---- T: import fail-closed para conteiner `alladin` invalido ----------
+        # ALD-03-H0 · D-2. `alladin` era a UNICA chave cuja forma nao era recusada
+        # na porta: array, escalar ou null EXPLICITO atravessavam a validacao e so
+        # eram normalizados depois, trocando o agregado pelo default — perda
+        # silenciosa do cadastro, e amanha da historia economica. Chave AUSENTE
+        # continua legitima (backup legado). Toda recusa tem de acontecer ANTES de
+        # o estado ser tocado: mesmo estado vivo, nenhum save, nenhum changeLog.
+        def caso_t():
+            ctx, page, erros = boot(browser, url, PRONTO_NOVO, f"S.alladin = {FIXTURE_B};")
+            r = page.evaluate("""() => {
+                // O payload base e o BACKUP REAL do produto: assim a unica coisa
+                // sob teste e a chave `alladin`, e nao um envelope sintetico que
+                // tropecaria noutra validacao qualquer.
+                const blob = dgBuildBackupBlob(1, 'teste.json', new Date().toISOString());
+                return blob.text().then(txt => {
+                  const envelope = JSON.parse(txt);
+                  const base = JSON.stringify(envelope.state);
+                  const comAlladin = (valor) => {
+                    const st = JSON.parse(base);
+                    if(valor === undefined) delete st.alladin; else st.alladin = valor;
+                    return st;
+                  };
+                  const vivoAntes = JSON.stringify(S.alladin);
+                  const logAntes  = JSON.stringify((S.dataGovernance||{}).changeLog||[]);
+                  let saves = 0; const saveOrig = window.save;
+                  window.save = function(){ saves++; return saveOrig.apply(this, arguments); };
+                  const tentar = (st) => {
+                    try { const out = normalizeImportedState(st);
+                          return { aceitou:true, temAlladin: !!out.alladin && typeof out.alladin==='object' }; }
+                    catch(e){ return { aceitou:false, msg:String(e.message||e) }; }
+                  };
+                  const casos = {
+                    ausente: tentar(comAlladin(undefined)),
+                    objeto:  tentar(comAlladin(JSON.parse(base).alladin)),
+                    lista:   tentar(comAlladin([])),
+                    escalar: tentar(comAlladin('x')),
+                    nulo:    tentar(comAlladin(null)),
+                  };
+                  window.save = saveOrig;
+                  return { casos, saves,
+                           vivoIntacto: JSON.stringify(S.alladin) === vivoAntes,
+                           logIntacto: JSON.stringify((S.dataGovernance||{}).changeLog||[]) === logAntes };
+                });
+            }""")
+            c = r["casos"]
+            if not c["ausente"]["aceitou"]:
+                falhas.append(f"T: backup LEGADO sem alladin deveria ser aceito ({c['ausente']})")
+            if not c["objeto"]["aceitou"] or not c["objeto"].get("temAlladin"):
+                falhas.append(f"T: backup com alladin valido deveria ser aceito ({c['objeto']})")
+            for chave in ("lista", "escalar", "nulo"):
+                if c[chave]["aceitou"]:
+                    falhas.append(f"T: alladin invalido ({chave}) ATRAVESSOU a validacao de import")
+                elif "alladin" not in c[chave].get("msg", ""):
+                    falhas.append(f"T: recusa de {chave} sem mensagem honesta ({c[chave].get('msg')!r})")
+            if not r["vivoIntacto"]:
+                falhas.append("T: uma recusa de import alterou o estado VIVO")
+            if not r["logIntacto"]:
+                falhas.append("T: uma recusa de import deixou entrada no changeLog")
+            if r["saves"] != 0:
+                falhas.append(f"T: a validacao de import chamou save() {r['saves']}x")
+            if erros:
+                falhas.append(f"T: pageerror {erros}")
+            ctx.close()
+        executar(falhas, "T", caso_t)
+
         browser.close()
     server.shutdown()
 

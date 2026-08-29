@@ -273,6 +273,17 @@ function normalizeImportedState(raw){
     if(chave in candidate && candidate[chave]!=null && !Array.isArray(candidate[chave]))
       throw new Error('Backup com '+chave+' inválido: esperava lista.');
   }
+  // `alladin` e CONTEINER (objeto), nao lista — e era a unica chave cujo formato
+  // nao era recusado na porta. Um array, um escalar ou um null EXPLICITO
+  // atravessavam a validacao inteira e so eram normalizados depois, trocando o
+  // agregado patrimonial pelo default: perda silenciosa do cadastro, e amanha da
+  // historia economica. Chave AUSENTE continua legitima (backup legado, anterior
+  // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
+  // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
+  // por isso o null e testado a parte (ALD-03-H0 · D-2).
+  if(Object.prototype.hasOwnProperty.call(candidate,'alladin') &&
+     (candidate.alladin===null || typeof candidate.alladin!=='object' || Array.isArray(candidate.alladin)))
+    throw new Error('Backup com alladin inválido: esperava objeto.');
   const current=S;
   let imported;
   try{

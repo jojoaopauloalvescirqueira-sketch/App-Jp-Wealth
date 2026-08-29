@@ -171,7 +171,13 @@ function aldMutate(acao, fn, meta){
   // que o sistema declarou não ter criado. O snapshot é a serialização do
   // agregado, que é exatamente o que seria persistido.
   const snapshot = JSON.stringify(S.alladin);
-  const logAntes = (S.dataGovernance && Array.isArray(S.dataGovernance.changeLog)) ? S.dataGovernance.changeLog.length : null;
+  // SEQUENCIA anterior, nao comprimento (ALD-03-H0 · D-1): dgLogChange REATRIBUI
+  // o array ao podar no teto DG_CHANGELOG_MAX, e nesse caso 401→slice→400 devolve
+  // o mesmo comprimento de antes. Restaurar por comprimento seria, exatamente no
+  // teto, uma restauracao que nao restaura: a entrada do ato recusado sobreviveria
+  // e a mais antiga legitima seria evicta. Um ledger vive NO teto — la o ramo
+  // defeituoso seria o unico.
+  const logAntes = (S.dataGovernance && Array.isArray(S.dataGovernance.changeLog)) ? S.dataGovernance.changeLog.slice() : null;
   const r = fn(S.alladin) || {};
   if(r.ok===false){
     // Recusa por validação: por contrato fn não mutou. Restaurar aqui é cinto
@@ -183,7 +189,12 @@ function aldMutate(acao, fn, meta){
   const gravou = save();
   if(gravou!==true){
     S.alladin = JSON.parse(snapshot);
-    if(logAntes!==null && S.dataGovernance.changeLog.length>logAntes) S.dataGovernance.changeLog.length = logAntes;
+    if(logAntes!==null){
+      // Restauracao IN-PLACE: preserva a identidade do array, que a poda troca.
+      const log = S.dataGovernance.changeLog;
+      if(Array.isArray(log)){ log.length = 0; for(const e of logAntes) log.push(e); }
+      else S.dataGovernance.changeLog = logAntes;
+    }
     return { ...r, ok:false, persistido:false, erro:'persistencia recusada' };
   }
   // Extras de fn ANTES, veredito DEPOIS: fn jamais sobrescreve ok/persistido/erro.

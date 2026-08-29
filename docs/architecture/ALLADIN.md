@@ -82,6 +82,17 @@ Sem a restauração, um ato declarado não persistido (modo de recuperação A-0
 quota estourada, portão fechado) deixaria registro fantasma que o próximo
 `save()` de qualquer origem gravaria. `save()===false` é prova de não-escrita.
 
+O `changeLog` é restaurado **por conteúdo**, não por comprimento (`ALD-03-H0`).
+`dgLogChange` **reatribui** o array ao podá-lo no teto de 400 entradas, e nesse
+ponto exato `401 → slice → 400` devolve o mesmo comprimento de antes: restaurar
+pelo tamanho seria uma restauração que não restaura — a entrada do ato recusado
+sobreviveria e a mais antiga legítima seria evicta. Enquanto o Alladin foi só
+cadastral o teto era inalcançável; um ledger vive **no** teto, onde esse seria o
+único caminho. A suíte unitária prova o invariante nos dois regimes, abaixo e
+exatamente no teto, comparando a sequência inteira — e o stub de `dgLogChange`
+do harness replica a poda real, porque um stub que simplifica o mecanismo sob
+teste não simplifica: cega.
+
 `dgLogChange` recebe os atos como **log operacional NÃO-canônico** (HD-6):
 não é o Audit Trail do Alladin e não satisfaz `ALD-I26`, que fica para o
 ALD-07. Rótulo genérico por privacidade — ação e recordId, nunca nome ou valor.

@@ -6108,7 +6108,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '1a69570b20f86174';
+const JP_WEALTH_BUILD_ID = 'cace9b5ff658096e';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -13141,6 +13141,17 @@ function normalizeImportedState(raw){
     if(chave in candidate && candidate[chave]!=null && !Array.isArray(candidate[chave]))
       throw new Error('Backup com '+chave+' inválido: esperava lista.');
   }
+  // `alladin` e CONTEINER (objeto), nao lista — e era a unica chave cujo formato
+  // nao era recusado na porta. Um array, um escalar ou um null EXPLICITO
+  // atravessavam a validacao inteira e so eram normalizados depois, trocando o
+  // agregado patrimonial pelo default: perda silenciosa do cadastro, e amanha da
+  // historia economica. Chave AUSENTE continua legitima (backup legado, anterior
+  // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
+  // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
+  // por isso o null e testado a parte (ALD-03-H0 · D-2).
+  if(Object.prototype.hasOwnProperty.call(candidate,'alladin') &&
+     (candidate.alladin===null || typeof candidate.alladin!=='object' || Array.isArray(candidate.alladin)))
+    throw new Error('Backup com alladin inválido: esperava objeto.');
   const current=S;
   let imported;
   try{
@@ -32876,7 +32887,13 @@ function aldMutate(acao, fn, meta){
   // que o sistema declarou não ter criado. O snapshot é a serialização do
   // agregado, que é exatamente o que seria persistido.
   const snapshot = JSON.stringify(S.alladin);
-  const logAntes = (S.dataGovernance && Array.isArray(S.dataGovernance.changeLog)) ? S.dataGovernance.changeLog.length : null;
+  // SEQUENCIA anterior, nao comprimento (ALD-03-H0 · D-1): dgLogChange REATRIBUI
+  // o array ao podar no teto DG_CHANGELOG_MAX, e nesse caso 401→slice→400 devolve
+  // o mesmo comprimento de antes. Restaurar por comprimento seria, exatamente no
+  // teto, uma restauracao que nao restaura: a entrada do ato recusado sobreviveria
+  // e a mais antiga legitima seria evicta. Um ledger vive NO teto — la o ramo
+  // defeituoso seria o unico.
+  const logAntes = (S.dataGovernance && Array.isArray(S.dataGovernance.changeLog)) ? S.dataGovernance.changeLog.slice() : null;
   const r = fn(S.alladin) || {};
   if(r.ok===false){
     // Recusa por validação: por contrato fn não mutou. Restaurar aqui é cinto
@@ -32888,7 +32905,12 @@ function aldMutate(acao, fn, meta){
   const gravou = save();
   if(gravou!==true){
     S.alladin = JSON.parse(snapshot);
-    if(logAntes!==null && S.dataGovernance.changeLog.length>logAntes) S.dataGovernance.changeLog.length = logAntes;
+    if(logAntes!==null){
+      // Restauracao IN-PLACE: preserva a identidade do array, que a poda troca.
+      const log = S.dataGovernance.changeLog;
+      if(Array.isArray(log)){ log.length = 0; for(const e of logAntes) log.push(e); }
+      else S.dataGovernance.changeLog = logAntes;
+    }
     return { ...r, ok:false, persistido:false, erro:'persistencia recusada' };
   }
   // Extras de fn ANTES, veredito DEPOIS: fn jamais sobrescreve ok/persistido/erro.

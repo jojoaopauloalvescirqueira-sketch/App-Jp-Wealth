@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "da1ea4d0c744833883b4568201bcd2af870f8d46f4689c092e059cb0a807df2e"
+      "sha256": "7003842f1dbf3ceb43480e154fee078b801d874c390a36b885446994f1f5d923"
     },
     {
       "order": 20,
@@ -449,7 +449,7 @@
     {
       "path": "src/js/10-domain/13-alladin.js",
       "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
-      "sha256": "8427280323687e4e103e72372cce6afa852ebe370c68cc0778968035c01610aa"
+      "sha256": "3f94155f175ffd94fbc24e993fbbc51d734c0e2a4705e09a95a992959a35af04"
     },
     {
       "order": 76,
