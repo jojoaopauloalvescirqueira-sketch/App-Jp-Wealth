@@ -460,8 +460,8 @@
     {
       "order": 77,
       "path": "src/js/20-ui/24-alladin-views.js",
-      "section": "ALLADIN · superficie cadastral read-only (C3-S1)",
-      "sha256": "61960965ebda888e070cbbab10932c1047e0d18ab2d2482bd3cfd8ef6d756c12"
+      "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
+      "sha256": "52ccbb1ca2dbe0b999a98dbf77cd236a8f2228d9d371007ddbec465f09d3e846"
     }
   ]
 }

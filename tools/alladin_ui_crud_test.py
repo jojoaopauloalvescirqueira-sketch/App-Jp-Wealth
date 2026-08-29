@@ -84,6 +84,20 @@ def disco(page):
     return page.evaluate("() => JSON.parse(localStorage.getItem('%s')||'{}').alladin || null" % LSKEY)
 
 
+def colecao(page, nome):
+    """Colecao do disco tolerante ao estado ainda NAO persistido: antes do
+    primeiro save() o agregado nem existe, e ausencia e' o mesmo que vazio para
+    quem pergunta 'o registro recusado chegou ao disco?'."""
+    d = disco(page)
+    return (d or {}).get(nome) or []
+
+
+# Participacao de owners e' cadastral por decisao humana do gate S2-B ("nao se
+# refere a performance nem a rentabilidade"), entao o '%' DESTE contexto sai da
+# varredura antes dela rodar — qualquer outro '%' continua proibido.
+PARTICIPACAO = re.compile(r"Participação (?:\(%\)|atribuída: (?:[\d.,]+%|—))")
+
+
 def executar(falhas, nome, fn):
     try:
         fn()
@@ -473,6 +487,673 @@ def main() -> int:
                     falhas.append(f"W15 pageerror: {erros}")
             executar(falhas, "W15", w15)
 
+            # ================= C3-S2-B — INSTRUMENT =========================
+            def abrir_form_instrument(page, **campos):
+                page.evaluate("() => JPWAlladinUI.selectView('instruments')")
+                page.locator("button[data-ald-new=instrument]").click()
+                preencher_instrument(page, **campos)
+
+            def preencher_instrument(page, name=None, symbol=None, family=None, asset_class=None,
+                                     currency=None, exchange=None, country=None, network=None):
+                if name is not None:
+                    page.locator("#alladinFldName").fill(name)
+                if symbol is not None:
+                    page.locator("#alladinFldSymbol").fill(symbol)
+                if family is not None:
+                    page.locator("#alladinFldFamily").select_option(family)
+                if asset_class is not None:
+                    page.locator("#alladinFldAssetClass").fill(asset_class)
+                if currency is not None and page.locator("#alladinFldCurrency:not([disabled])").count():
+                    page.locator("#alladinFldCurrency").fill(currency)
+                if exchange is not None:
+                    page.locator("#alladinFldExchange").fill(exchange)
+                if country is not None:
+                    page.locator("#alladinFldCountry").fill(country)
+                if network is not None:
+                    page.locator("#alladinFldNetwork").fill(network)
+
+            def salvar(page, espera=180):
+                page.locator("#alladinModalBox button[data-ald-act=salvar]").click()
+                page.wait_for_timeout(espera)
+
+            # ---- I1/I2/I3: create, edit e moeda imutavel -------------------
+            def i1_i3():
+                ctx, page, erros = abrir(browser, url)
+                abrir_form_instrument(page, name="Petrobras PN", symbol="PETR4", family="EQUITY_LIKE",
+                                      asset_class="RENDA_VARIAVEL", currency="BRL", exchange="B3", country="Brasil")
+                salvar(page)
+                d = disco(page)
+                if len(d["instruments"]) != 1:
+                    falhas.append(f"I1: instrumento nao chegou ao disco ({d['instruments']})")
+                else:
+                    r = d["instruments"][0]
+                    if (r["name"], r["symbol"], r["currency"], r["instrumentFamily"], r["exchange"]) != \
+                       ("Petrobras PN", "PETR4", "BRL", "EQUITY_LIKE", "B3"):
+                        falhas.append(f"I1: campos divergem no disco ({r})")
+                    if r["symbolHistory"] != [] or r["recordStatus"] != "ACTIVE":
+                        falhas.append(f"I1: shape inicial errado ({r.get('symbolHistory')}, {r.get('recordStatus')})")
+                trilha = page.evaluate("""() => (S.dataGovernance.changeLog||[])
+                    .filter(e => e.entity==='alladin').map(e => e.action)""")
+                if "instrument_add" not in trilha:
+                    falhas.append(f"I1: mutacao nao passou pelo dominio ({trilha})")
+                # I3: moeda desabilitada no edit e AUSENTE do patch
+                page.locator("button[data-ald-edit=instrument]").click()
+                if not page.evaluate("() => document.getElementById('alladinFldCurrency').disabled"):
+                    falhas.append("I3: campo de moeda editavel na edicao")
+                nota = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "não pode ser alterada neste cadastro" not in nota:
+                    falhas.append("I3: texto da moeda imutavel ausente")
+                page.evaluate("""() => { window.__patches=[]; const o=JPWAlladin.cadastro.editInstrument;
+                    JPWAlladin.cadastro.editInstrument=(i,p)=>{ window.__patches.push(p); return o(i,p); }; }""")
+                page.locator("#alladinFldName").fill("Petrobras Preferencial")
+                salvar(page)
+                patches = page.evaluate("() => window.__patches")
+                if len(patches) != 1 or set(patches[0]) != {"name"}:
+                    falhas.append(f"I2/I3: patch deveria conter SO name ({patches})")
+                d2 = disco(page)
+                if d2["instruments"][0]["name"] != "Petrobras Preferencial":
+                    falhas.append("I2: edicao nao persistiu")
+                if d2["instruments"][0]["currency"] != "BRL" or d2["instruments"][0]["exchange"] != "B3":
+                    falhas.append("I2: campos nao tocados foram alterados")
+                if erros:
+                    falhas.append(f"I1/I3 pageerror: {erros}")
+            executar(falhas, "I1/I2/I3", i1_i3)
+
+            # ---- I4/I5: symbolHistory pelo dominio; historico ilegivel -----
+            def i4_i5():
+                ctx, page, erros = abrir(browser, url)
+                abrir_form_instrument(page, name="Magazine", symbol="MGLU3", family="EQUITY_LIKE",
+                                      asset_class="RENDA_VARIAVEL", currency="BRL", exchange="B3")
+                salvar(page)
+                # nenhum input de historico existe em NENHUM estado (assert estrutural)
+                page.locator("button[data-ald-edit=instrument]").click()
+                estrut = page.evaluate("""() => {
+                    const box=document.getElementById('alladinModalBox');
+                    return { campos:[...box.querySelectorAll('input,select,textarea')].map(i=>i.id||i.name||'').join(','),
+                             hidden:box.querySelectorAll('input[type=hidden]').length };
+                }""")
+                for proibido in ("History", "historico", "recordStatus", "createdAt", "instrumentId"):
+                    if proibido.lower() in estrut["campos"].lower():
+                        falhas.append(f"I4: campo proibido virou input ({proibido})")
+                if estrut["hidden"]:
+                    falhas.append("I4: existe input hidden no formulario")
+                page.evaluate("""() => { window.__patches=[]; const o=JPWAlladin.cadastro.editInstrument;
+                    JPWAlladin.cadastro.editInstrument=(i,p)=>{ window.__patches.push(p); return o(i,p); }; }""")
+                page.locator("#alladinFldSymbol").fill("MGLU4")
+                salvar(page)
+                p1 = page.evaluate("() => window.__patches")
+                if len(p1) != 1 or "symbolHistory" in p1[0]:
+                    falhas.append(f"I4: a UI enviou symbolHistory no patch ({p1})")
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.locator("#alladinFldSymbol").fill("MGLU3")
+                salvar(page)
+                hist = page.evaluate("() => JPWAlladin.leitura.instruments()[0].symbolHistory.map(h=>h.symbol)")
+                if hist != ["MGLU3", "MGLU4"]:
+                    falhas.append(f"I4: historico A->B->A deveria ser [MGLU3, MGLU4] ({hist})")
+                exibido = page.evaluate("""() => { document.querySelector('button[data-ald-edit=instrument]').click();
+                    const el=document.querySelector('[data-ald-symbol-history]'); return el?el.innerText:''; }""")
+                if "MGLU3" not in exibido or "MGLU4" not in exibido:
+                    falhas.append(f"I4: historico nao exibido como leitura no edit ({exibido!r})")
+                page.keyboard.press("Escape")
+                # I5: historico ilegivel -> recusa honesta; status continua funcionando
+                page.evaluate("""() => { S.alladin.instruments[0].symbolHistory='lixo'; save(); JPWAlladinUI.render(); }""")
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.locator("#alladinFldName").fill("Outro nome")
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "ALD_SYMBOL_HISTORY_ILEGIVEL" not in modal or "Nada foi gravado" not in modal:
+                    falhas.append(f"I5: recusa por historico ilegivel nao exibida ({modal[:100]!r})")
+                if page.evaluate("() => JPWAlladin.leitura.instruments()[0].name") == "Outro nome":
+                    falhas.append("I5: edicao persistiu apesar da recusa")
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(100)
+                page.locator("button[data-ald-status=INACTIVE][data-ald-tipo=instrument]").click()
+                page.locator("button[data-ald-act=status-confirmado]").click()
+                page.wait_for_timeout(150)
+                if disco(page)["instruments"][0]["recordStatus"] != "INACTIVE":
+                    falhas.append("I5: rota de status bloqueada junto com o edit")
+                if erros:
+                    falhas.append(f"I4/I5 pageerror: {erros}")
+            executar(falhas, "I4/I5", i4_i5)
+
+            # ---- I6/I7/I8: CRYPTO/network + externalIdentifiers ------------
+            def i6_i8():
+                ctx, page, erros = abrir(browser, url)
+                abrir_form_instrument(page, name="Tether", symbol="USDT", family="CRYPTO",
+                                      asset_class="CRIPTO", currency="USD")
+                if page.evaluate("() => document.getElementById('alladinFldNetworkWrap').hidden"):
+                    falhas.append("I6: campo Rede nao apareceu para CRYPTO")
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "rede (network)" not in modal.lower():
+                    falhas.append(f"I6: pre-check de rede ausente ({modal[:90]!r})")
+                if colecao(page, "instruments"):
+                    falhas.append("I6: instrumento nasceu sem rede")
+                # bypass do pre-check: o DOMINIO tem de recusar sozinho
+                r = page.evaluate("""() => JPWAlladin.cadastro.addInstrument({name:'T', symbol:'USDT',
+                    currency:'USD', instrumentFamily:'CRYPTO', assetClass:'CRIPTO'})""")
+                if r.get("ok") is not False or r.get("erro") != "ALD_CRYPTO_SEM_NETWORK":
+                    falhas.append(f"I6: dominio nao recusou cripto sem rede ({r})")
+                # I7: com rede persiste, e a rede vai para externalIdentifiers.network
+                page.locator("#alladinFldNetwork").fill("ethereum")
+                page.locator("button[data-ald-act=ext-add]").click()
+                page.locator("[data-ald-ext-k]").last.fill("isin")
+                page.locator("[data-ald-ext-v]").last.fill("BRUSDT000001")
+                salvar(page)
+                d = disco(page)
+                if len(d["instruments"]) != 1:
+                    falhas.append(f"I7: cripto com rede nao persistiu ({d['instruments']})")
+                else:
+                    ext = d["instruments"][0]["externalIdentifiers"]
+                    if ext != {"isin": "BRUSDT000001", "network": "ethereum"}:
+                        falhas.append(f"I7/I8: identificadores divergem ({ext})")
+                # I8: linha vazia e' omitida; linha meio-preenchida recusa local
+                page.locator("button[data-ald-edit=instrument]").click()
+                if page.evaluate("""() => [...document.querySelectorAll('[data-ald-ext-k]')].map(i=>i.value).includes('network')"""):
+                    falhas.append("I8: network duplicou como linha generica no editor")
+                page.locator("button[data-ald-act=ext-add]").click()
+                salvar(page)   # linha totalmente vazia: deve ser OMITIDA, nao erro
+                if page.evaluate("() => document.getElementById('alladinModalOverlay').classList.contains('show')"):
+                    modal2 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                    falhas.append(f"I8: linha vazia deveria ser omitida ({modal2[:80]!r})")
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.locator("button[data-ald-act=ext-add]").click()
+                page.locator("[data-ald-ext-k]").last.fill("cnpj")
+                salvar(page)
+                modal3 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "chave e conteúdo" not in modal3:
+                    falhas.append(f"I8: linha meio-preenchida deveria recusar ({modal3[:90]!r})")
+                rascunho = page.evaluate("() => document.querySelectorAll('[data-ald-ext-row]').length")
+                if rascunho != 2:
+                    falhas.append(f"I8: rascunho perdido no erro inline ({rascunho} linhas)")
+                if colecao(page, "instruments")[0]["externalIdentifiers"].get("cnpj"):
+                    falhas.append("I8: linha invalida foi gravada")
+                page.evaluate("() => { alladinForm.estado='EDITING'; alladinModalDismiss(); }")
+                if erros:
+                    falhas.append(f"I6/I8 pageerror: {erros}")
+            executar(falhas, "I6/I7/I8", i6_i8)
+
+            # ---- I9 + WT4: moeda fora do runtime = informativo, nunca decisao
+            def i9():
+                ctx, page, erros = abrir(browser, url)
+                abrir_form_instrument(page, name="ETF Europa", symbol="EEUR", family="FUND_LIKE",
+                                      asset_class="FUNDO", currency="EUR")
+                salvar(page)
+                if page.evaluate("() => document.getElementById('alladinModalOverlay').classList.contains('show')"):
+                    falhas.append("I9/WT4: aviso informativo abriu estado de decisao")
+                notice = page.evaluate("() => document.getElementById('sessionNotice').innerText")
+                if "MOEDA_FORA_DO_SUPORTE_DE_RUNTIME" not in notice:
+                    falhas.append(f"I9: codigo do aviso informativo perdido ({notice!r})")
+                if "fora do suporte" not in notice:
+                    falhas.append(f"I9: aviso nao humanizado ({notice!r})")
+                if "Inativar" in notice:
+                    falhas.append("I9/WT4: aviso informativo ofereceu inativacao")
+                if len(disco(page)["instruments"]) != 1:
+                    falhas.append("I9: instrumento com moeda valida nao persistiu")
+                if erros:
+                    falhas.append(f"I9 pageerror: {erros}")
+            executar(falhas, "I9", i9)
+
+            # ---- I10/I11/I12: cancel, double submit, persistencia recusada --
+            def i10_i12():
+                ctx, page, erros = abrir(browser, url)
+                page.evaluate("() => JPWAlladinUI.selectView('instruments')")
+                antes = page.evaluate("() => localStorage.getItem('%s')" % LSKEY)
+                page.evaluate("""() => { window.__saves=0; const o=window.save;
+                    window.save=function(){ window.__saves++; return o.apply(this,arguments); }; }""")
+                abrir_form_instrument(page, name="Descartado", symbol="XXXX3", family="EQUITY_LIKE",
+                                      asset_class="y", currency="BRL")
+                page.locator("button[data-ald-act=cancelar]").click()
+                page.wait_for_timeout(120)
+                if page.evaluate("() => window.__saves") != 0:
+                    falhas.append("I10: cancelar chamou save()")
+                if page.evaluate("() => localStorage.getItem('%s')" % LSKEY) != antes:
+                    falhas.append("I10: disco mudou com cancelamento")
+                # I11: double submit + reentrada programatica
+                abrir_form_instrument(page, name="Unico", symbol="UNIC3", family="EQUITY_LIKE",
+                                      asset_class="y", currency="BRL")
+                page.evaluate("""() => { const b=document.querySelector('#alladinModalBox button[data-ald-act=salvar]');
+                    b.click(); b.click(); b.click(); }""")
+                page.wait_for_timeout(200)
+                abrir_form_instrument(page, name="Reentrante", symbol="REEN3", family="EQUITY_LIKE",
+                                      asset_class="y", currency="BRL")
+                page.evaluate("() => { alladinSubmit(); alladinSubmit(); }")
+                page.wait_for_timeout(200)
+                nomes = [i["name"] for i in colecao(page, "instruments")]
+                if nomes.count("Unico") != 1 or nomes.count("Reentrante") != 1:
+                    falhas.append(f"I11: submits duplicaram registros ({nomes})")
+                # I12: persistencia recusada -> sem falso sucesso, rascunho vivo
+                page.evaluate("""() => { document.getElementById('sessionNotice').textContent='';
+                    window.__saveOrig=window.save; window.save=()=>false; }""")
+                abrir_form_instrument(page, name="Recusado", symbol="RECU3", family="EQUITY_LIKE",
+                                      asset_class="y", currency="BRL")
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "persistencia recusada" not in modal:
+                    falhas.append(f"I12: recusa de persistencia nao exibida ({modal[:90]!r})")
+                if page.evaluate("() => document.getElementById('alladinFldName').value") != "Recusado":
+                    falhas.append("I12: rascunho perdido apos recusa de persistencia")
+                notice = page.evaluate("() => document.getElementById('sessionNotice').innerText")
+                if "Cadastro salvo" in notice:
+                    falhas.append("I12: falso sucesso apos persistencia recusada")
+                page.evaluate("() => { window.save=window.__saveOrig; alladinForm.estado='EDITING'; alladinModalDismiss(); }")
+                if any(i["name"] == "Recusado" for i in colecao(page, "instruments")):
+                    falhas.append("I12: registro recusado chegou ao disco")
+                if erros:
+                    falhas.append(f"I10/I12 pageerror: {erros}")
+            executar(falhas, "I10/I11/I12", i10_i12)
+
+            # ================= C3-S2-B — ASSET ==============================
+            def abrir_form_asset(page):
+                page.evaluate("() => JPWAlladinUI.selectView('assets')")
+                page.locator("button[data-ald-new=asset]").click()
+
+            def add_owner(page, nome, pct, self_=False):
+                page.locator("button[data-ald-act=owner-add]").click()
+                page.locator("[data-ald-owner-nome]").last.fill(nome)
+                page.locator("[data-ald-owner-pct]").last.fill(pct)
+                if self_:
+                    page.locator("[data-ald-owner-self]").last.check()
+
+            # ---- A1/A2/A3: create, edit patch-diff, lifecycle read-only ----
+            def a1_a3():
+                ctx, page, erros = abrir(browser, url)
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Apartamento")
+                page.locator("#alladinFldNature").fill("IMOVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                page.locator("#alladinFldLocation").fill("Sao Paulo")
+                page.locator("#alladinFldAcqDate").fill("2020-01-15")
+                page.locator("#alladinFldTags").fill("moradia, Moradia , litoral, moradia")
+                salvar(page)
+                d = disco(page)
+                if len(d["assets"]) != 1:
+                    falhas.append(f"A1: bem nao persistiu ({d['assets']})")
+                else:
+                    a = d["assets"][0]
+                    if a["lifecycleStatus"] != "ACTIVE" or a["recordStatus"] != "ACTIVE":
+                        falhas.append(f"A1: shape inicial errado ({a})")
+                    if a["category"] is not None or a["owners"] != []:
+                        falhas.append(f"A1: defaults divergem ({a['category']}, {a['owners']})")
+                    if a["acquisitionDate"] != "2020-01-15":
+                        falhas.append(f"A11: data nao persistiu ({a['acquisitionDate']})")
+                    if a["tags"] != ["moradia", "Moradia", "litoral"]:
+                        falhas.append(f"A10: tags divergem apos higiene de UI ({a['tags']})")
+                # A3: lifecycle nunca e input; A2: patch so do campo alterado
+                page.locator("button[data-ald-edit=asset]").click()
+                campos = page.evaluate("""() => [...document.querySelectorAll('#alladinModalBox input,#alladinModalBox select')]
+                    .map(i=>i.id).join(',')""")
+                if "ifecycle" in campos or "recordStatus" in campos:
+                    falhas.append(f"A3: lifecycle/recordStatus viraram input ({campos})")
+                txt = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "movimentações patrimoniais" not in txt:
+                    falhas.append("A3: texto do estado patrimonial ausente")
+                if "ALD-03" in txt:
+                    falhas.append("A3: nome interno ALD-03 exposto ao usuario")
+                page.evaluate("""() => { window.__patches=[]; const o=JPWAlladin.cadastro.editAsset;
+                    JPWAlladin.cadastro.editAsset=(i,p)=>{ window.__patches.push(p); return o(i,p); }; }""")
+                page.locator("#alladinFldCategory").fill("Residencial")
+                salvar(page)
+                p = page.evaluate("() => window.__patches")
+                if len(p) != 1 or set(p[0]) != {"category"}:
+                    falhas.append(f"A2: patch deveria conter SO category ({p})")
+                d2 = disco(page)
+                a2 = d2["assets"][0]
+                if a2["category"] != "Residencial" or a2["tags"] != ["moradia", "Moradia", "litoral"] \
+                   or a2["location"] != "Sao Paulo" or a2["acquisitionDate"] != "2020-01-15":
+                    falhas.append(f"A2: campos nao tocados mudaram ({a2})")
+                if erros:
+                    falhas.append(f"A1/A3 pageerror: {erros}")
+            executar(falhas, "A1/A2/A3", a1_a3)
+
+            # ---- A4..A9: owners, shareBp e conversao ------------------------
+            def a4_a9():
+                ctx, page, erros = abrir(browser, url)
+                # A5: soma exata 10000 sem aviso; isSelf:false omitido
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Casa")
+                page.locator("#alladinFldNature").fill("IMOVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                add_owner(page, "JP", "66,67", self_=True)
+                add_owner(page, "Ana", "33,33")
+                total = page.evaluate("() => document.querySelector('[data-ald-owner-total]').innerText")
+                if "100%" not in total:
+                    falhas.append(f"A5: total cadastral ao vivo incorreto ({total!r})")
+                salvar(page)
+                d = disco(page)
+                owners = d["assets"][0]["owners"]
+                if owners != [{"name": "JP", "shareBp": 6667, "isSelf": True}, {"name": "Ana", "shareBp": 3333}]:
+                    falhas.append(f"A4/A5: owners divergem (conversao ou isSelf) ({owners})")
+                notice = page.evaluate("() => document.getElementById('sessionNotice').innerText")
+                if "OWNERSHIP_PARCIAL" in notice:
+                    falhas.append("A5: soma exata gerou aviso de parcial")
+                # A7: soma < 100% -> sucesso + aviso, modal FECHA (nao e decisao)
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Sitio")
+                page.locator("#alladinFldNature").fill("IMOVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                add_owner(page, "JP", "70", self_=True)
+                salvar(page)
+                if page.evaluate("() => document.getElementById('alladinModalOverlay').classList.contains('show')"):
+                    falhas.append("A7: ownership parcial abriu estado de decisao")
+                notice = page.evaluate("() => document.getElementById('sessionNotice').innerText")
+                if "OWNERSHIP_PARCIAL_NAO_ATRIBUIDA" not in notice or "não soma o total" not in notice:
+                    falhas.append(f"A7: aviso de parcial ausente ou nao humanizado ({notice!r})")
+                if [o["shareBp"] for o in disco(page)["assets"][1]["owners"]] != [7000]:
+                    falhas.append("A7: conversao 70% -> 7000bp falhou")
+                # A6: soma > 100% recusada, zero write
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Excesso")
+                page.locator("#alladinFldNature").fill("IMOVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                add_owner(page, "JP", "60", self_=True)
+                add_owner(page, "Ana", "40,01")
+                antes = page.evaluate("() => localStorage.getItem('%s')" % LSKEY)
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "ALD_OWNERSHIP_ACIMA_DE_100" not in modal:
+                    falhas.append(f"A6: recusa de soma>100 nao exibida ({modal[:90]!r})")
+                if page.evaluate("() => localStorage.getItem('%s')" % LSKEY) != antes:
+                    falhas.append("A6: disco mudou apesar da recusa")
+                # A8: dois "Sou eu" -> recusa do dominio
+                page.locator("[data-ald-owner-pct]").last.fill("30")
+                page.locator("[data-ald-owner-self]").last.check()
+                salvar(page)
+                modal2 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "ALD_MULTIPLOS_ISSELF" not in modal2:
+                    falhas.append(f"A8: dois isSelf nao recusados ({modal2[:90]!r})")
+                # terceira casa decimal: erro inline, zero submit
+                page.evaluate("""() => { window.__chamou=0; const o=JPWAlladin.cadastro.addAsset;
+                    JPWAlladin.cadastro.addAsset=(d)=>{ window.__chamou++; return o(d); }; }""")
+                # o caso da terceira casa fica ISOLADO: sem isSelf duplicado e com
+                # soma valida, so a precisao pode reprovar — mutante que arredonde
+                # 3 casas em silencio e' acusado por ISSO, nao por outro erro.
+                page.locator("[data-ald-owner-self]").last.uncheck()
+                page.locator("[data-ald-owner-pct]").first.fill("10")
+                page.locator("[data-ald-owner-pct]").last.fill("33,333")
+                salvar(page)
+                modal3 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "duas casas decimais" not in modal3:
+                    falhas.append(f"shareBp: terceira casa nao recusada inline ({modal3[:90]!r})")
+                if page.evaluate("() => window.__chamou") != 0:
+                    falhas.append("shareBp: terceira casa chegou a submeter ao dominio")
+                # A9: nome duplicado -> sucesso + aviso (nao decisao)
+                page.locator("[data-ald-owner-self]").last.uncheck()
+                page.locator("[data-ald-owner-nome]").last.fill("jp ")
+                page.locator("[data-ald-owner-pct]").last.fill("40")
+                salvar(page)
+                if page.evaluate("() => document.getElementById('alladinModalOverlay').classList.contains('show')"):
+                    falhas.append("A9: nome duplicado abriu estado de decisao")
+                notice = page.evaluate("() => document.getElementById('sessionNotice').innerText")
+                if "OWNER_NOME_DUPLICADO" not in notice:
+                    falhas.append(f"A9: aviso de nome duplicado ausente ({notice!r})")
+                if erros:
+                    falhas.append(f"A4/A9 pageerror: {erros}")
+            executar(falhas, "A4..A9", a4_a9)
+
+            # ---- A12..A15 + patch-diff de owners/tags nao alterados ---------
+            def a12_a15():
+                ctx, page, erros = abrir(browser, url)
+                # A12: DC-3 — natureza de caixa recusada pelo dominio
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Cofre")
+                page.locator("#alladinFldNature").fill("Dinheiro em casa")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "ALD_NATURE_DE_CAIXA_PROIBIDA" not in modal:
+                    falhas.append(f"A12: DC-3 nao recusou natureza de caixa ({modal[:90]!r})")
+                if colecao(page, "assets"):
+                    falhas.append("A12: bem de natureza-caixa nasceu")
+                page.locator("#alladinFldNature").fill("IMOVEL")
+                add_owner(page, "JP", "50", self_=True)
+                page.locator("#alladinFldTags").fill("praia")
+                salvar(page)
+                # patch-diff: editar SO o nome nao envia owners nem tags
+                page.evaluate("""() => { window.__patches=[]; const o=JPWAlladin.cadastro.editAsset;
+                    JPWAlladin.cadastro.editAsset=(i,p)=>{ window.__patches.push(p); return o(i,p); }; }""")
+                page.locator("button[data-ald-edit=asset]").click()
+                page.locator("#alladinFldName").fill("Cofre Renomeado")
+                salvar(page)
+                p = page.evaluate("() => window.__patches")
+                if len(p) != 1 or set(p[0]) != {"name"}:
+                    falhas.append(f"patch-diff: owners/tags nao alterados viajaram no patch ({p})")
+                d = colecao(page, "assets")[0]
+                if [o["shareBp"] for o in d["owners"]] != [5000] or d["tags"] != ["praia"]:
+                    falhas.append(f"patch-diff: owners/tags sofreram alteracao ({d['owners']}, {d['tags']})")
+                # A13: cancelar zero-write
+                antes = page.evaluate("() => localStorage.getItem('%s')" % LSKEY)
+                page.locator("button[data-ald-edit=asset]").click()
+                page.locator("#alladinFldName").fill("Nao salvo")
+                add_owner(page, "Fantasma", "10")
+                page.locator("button[data-ald-act=cancelar]").click()
+                page.wait_for_timeout(120)
+                if page.evaluate("() => localStorage.getItem('%s')" % LSKEY) != antes:
+                    falhas.append("A13: cancelar alterou o disco")
+                # A14: double submit em Asset
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Duplo")
+                page.locator("#alladinFldNature").fill("BEM_DURAVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                page.evaluate("""() => { const b=document.querySelector('#alladinModalBox button[data-ald-act=salvar]');
+                    b.click(); b.click(); }""")
+                page.wait_for_timeout(200)
+                if [a["name"] for a in colecao(page, "assets")].count("Duplo") != 1:
+                    falhas.append("A14: double submit duplicou o bem")
+                # A15: persistencia recusada
+                page.evaluate("""() => { document.getElementById('sessionNotice').textContent='';
+                    window.__saveOrig=window.save; window.save=()=>false; }""")
+                abrir_form_asset(page)
+                page.locator("#alladinFldName").fill("Recusado")
+                page.locator("#alladinFldNature").fill("BEM_DURAVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                salvar(page)
+                modal2 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "persistencia recusada" not in modal2:
+                    falhas.append(f"A15: recusa de persistencia nao exibida ({modal2[:90]!r})")
+                if "Cadastro salvo" in page.evaluate("() => document.getElementById('sessionNotice').innerText"):
+                    falhas.append("A15: falso sucesso apos recusa")
+                page.evaluate("() => { window.save=window.__saveOrig; alladinForm.estado='EDITING'; alladinModalDismiss(); }")
+                if erros:
+                    falhas.append(f"A12/A15 pageerror: {erros}")
+            executar(falhas, "A12..A15", a12_a15)
+
+            # ================= WARNINGS (WT1..WT5) ==========================
+            def wt():
+                ctx, page, erros = abrir(browser, url)
+                # WT1: DUPLICADO em CREATE -> COMMITTED_WARNING com copia de criacao
+                for nome in ("Vale", "Vale de novo"):
+                    abrir_form_instrument(page, name=nome, symbol="VALE3", family="EQUITY_LIKE",
+                                          asset_class="RENDA_VARIAVEL", currency="BRL", exchange="B3")
+                    salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "foi criado" not in modal:
+                    falhas.append(f"WT1: copia de CRIACAO ausente no estado de decisao ({modal[:110]!r})")
+                if "mesmo símbolo" not in modal or "DUPLICADO_SYMBOL_EXCHANGE_CURRENCY" not in modal:
+                    falhas.append(f"WT1: aviso nao humanizado ou codigo perdido ({modal[:110]!r})")
+                page.locator("button[data-ald-act=manter]").click()
+                page.wait_for_timeout(150)
+                # WT2: DUPLICADO em EDIT -> copia de ALTERACAO (DH-S2B-2)
+                abrir_form_instrument(page, name="Livre", symbol="LIVR3", family="EQUITY_LIKE",
+                                      asset_class="RENDA_VARIAVEL", currency="BRL", exchange="B3")
+                salvar(page)
+                page.evaluate("""() => { const bs=[...document.querySelectorAll('button[data-ald-edit=instrument]')];
+                    bs[bs.length-1].click(); }""")
+                page.locator("#alladinFldSymbol").fill("VALE3")
+                salvar(page)
+                modal2 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "alteração foi salva" not in modal2.lower():
+                    falhas.append(f"WT2: copia de EDICAO ausente — 'foi criado' seria falso ({modal2[:110]!r})")
+                if "foi criado" in modal2:
+                    falhas.append("WT2: copia de criacao exibida numa edicao")
+                if page.evaluate("() => document.querySelectorAll('#alladinModalBox button[data-ald-act=salvar]').length"):
+                    falhas.append("WT2: Salvar continua disponivel no estado de decisao")
+                # a inativacao age sobre o registro EDITADO
+                page.locator("button[data-ald-act=inativar-novo]").click()
+                page.wait_for_timeout(200)
+                d = disco(page)
+                editado = [i for i in d["instruments"] if i["symbol"] == "VALE3" and i["name"] == "Livre"]
+                if not editado or editado[0]["recordStatus"] != "INACTIVE":
+                    falhas.append(f"WT2: inativacao nao atingiu o registro editado ({[(i['name'],i['recordStatus']) for i in d['instruments']]})")
+                # WT3/WT5: DUPLICADO + informativo no MESMO ato -> ambos visiveis
+                for nome in ("Euro A", "Euro B"):
+                    abrir_form_instrument(page, name=nome, symbol="EEUR", family="FUND_LIKE",
+                                          asset_class="FUNDO", currency="EUR")
+                    salvar(page)
+                modal3 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "DUPLICADO_SYMBOL_EXCHANGE_CURRENCY" not in modal3:
+                    falhas.append(f"WT5: duplicidade ausente no estado de decisao ({modal3[:110]!r})")
+                if "MOEDA_FORA_DO_SUPORTE_DE_RUNTIME" not in modal3:
+                    falhas.append(f"WT3/WT5: aviso informativo SUMIU no estado de decisao ({modal3[:140]!r})")
+                outros = page.evaluate("""() => { const el=document.querySelector('[data-ald-outros-avisos]'); return el?el.innerText:''; }""")
+                if "MOEDA_FORA_DO_SUPORTE_DE_RUNTIME" not in outros or "não pedem decisão" not in outros:
+                    falhas.append(f"WT5: informativo nao separado da razao da decisao ({outros!r})")
+                # prova estrutural: 3 avisos entram, 3 codigos permanecem
+                preservados = page.evaluate("""() => {
+                    const box=document.getElementById('alladinModalBox');
+                    alladinForm.avisos=['DUPLICADO_SYMBOL_EXCHANGE_CURRENCY','MOEDA_FORA_DO_SUPORTE_DE_RUNTIME','CODIGO_FUTURO_DESCONHECIDO'];
+                    const t=alladinAvisosResumo(alladinForm.avisos);
+                    return ['DUPLICADO_SYMBOL_EXCHANGE_CURRENCY','MOEDA_FORA_DO_SUPORTE_DE_RUNTIME','CODIGO_FUTURO_DESCONHECIDO']
+                        .filter(c => t.indexOf(c)>=0).length;
+                }""")
+                if preservados != 3:
+                    falhas.append(f"WT3: {3-preservados} codigo(s) perdido(s) na humanizacao (desconhecido deve sair cru)")
+                # Guarda de reentrada no estado de DECISAO: um submit programatico
+                # (Enter enfileirado, macro, extensao) nao pode reabrir o formulario
+                # por cima da decisao pendente nem ressubmeter. Sem a guarda, o
+                # submit releria o box sem inputs, cairia na validacao vazia e
+                # RE-RENDERIZARIA o formulario — destruindo a decisao.
+                antes_disco = page.evaluate("() => localStorage.getItem('%s')" % LSKEY)
+                page.evaluate("() => { alladinSubmit(); alladinSubmit(); }")
+                page.wait_for_timeout(150)
+                estado = page.evaluate("""() => ({
+                    decisao: document.querySelectorAll('#alladinModalBox button[data-ald-act=manter]').length,
+                    salvar: document.querySelectorAll('#alladinModalBox button[data-ald-act=salvar]').length,
+                    estado: alladinForm.estado })""")
+                if estado["decisao"] != 1 or estado["salvar"] != 0 or estado["estado"] != "COMMITTED_WARNING":
+                    falhas.append(f"WT: submit reentrante corrompeu o estado de decisao ({estado})")
+                if page.evaluate("() => localStorage.getItem('%s')" % LSKEY) != antes_disco:
+                    falhas.append("WT: submit reentrante no estado de decisao escreveu no disco")
+                page.locator("button[data-ald-act=manter]").click()
+                page.wait_for_timeout(120)
+                # Guarda de reentrada na CONFIRMACAO DE STATUS: aqui ela e' a UNICA
+                # protecao. Sem ela, um submit programatico leria o formulario
+                # inexistente, cairia na validacao vazia e ABRIRIA UM FORMULARIO DE
+                # CRIACAO por cima da confirmacao — o operador pediu "Inativar" e
+                # receberia "Novo instrumento", com o estado voltando a EDITING.
+                criar_conta(page, nome="Conta Guarda")
+                page.locator("button[data-ald-status=INACTIVE][data-ald-tipo=account]").first.click()
+                antes_disco2 = page.evaluate("() => localStorage.getItem('%s')" % LSKEY)
+                page.evaluate("() => { alladinSubmit(); alladinSubmit(); }")
+                page.wait_for_timeout(150)
+                st = page.evaluate("""() => ({
+                    confirmacao: document.querySelectorAll('#alladinModalBox button[data-ald-act=status-confirmado]').length,
+                    salvar: document.querySelectorAll('#alladinModalBox button[data-ald-act=salvar]').length,
+                    campos: document.querySelectorAll('#alladinModalBox input,#alladinModalBox select').length,
+                    estado: alladinForm.estado })""")
+                if st["confirmacao"] != 1 or st["salvar"] or st["campos"] or st["estado"] != "CONFIRM_STATUS":
+                    falhas.append(f"WT: submit reentrante trocou a confirmacao de status por um formulario ({st})")
+                if page.evaluate("() => localStorage.getItem('%s')" % LSKEY) != antes_disco2:
+                    falhas.append("WT: submit reentrante na confirmacao de status escreveu no disco")
+                page.locator("button[data-ald-act=cancelar]").click()
+                page.wait_for_timeout(100)
+                if erros:
+                    falhas.append(f"WT pageerror: {erros}")
+            executar(falhas, "WT1..WT5", wt)
+
+            # ---- R1/R2/R8: write gate e varredura economica nos forms ricos --
+            def r_infra():
+                ctx, page, erros = abrir(browser, url, viewport={"width": 390, "height": 844})
+                page.evaluate("""() => {
+                    JPWAlladin.cadastro.addInstrument({name:'Petro',symbol:'PETR4',currency:'BRL',
+                        instrumentFamily:'EQUITY_LIKE',assetClass:'RENDA_VARIAVEL'});
+                    JPWAlladin.cadastro.addAsset({name:'Apto',nature:'IMOVEL',recordMode:'INDIVIDUAL',
+                        owners:[{name:'JP',shareBp:5000,isSelf:true}]});
+                    JPWAlladinUI.render();
+                }""")
+                # R8: varredura economica com os DOIS formularios ricos abertos
+                for view, tipo in (("instruments", "instrument"), ("assets", "asset")):
+                    page.evaluate("(v) => JPWAlladinUI.selectView(v)", view)
+                    page.locator(f"button[data-ald-edit={tipo}]").click()
+                    texto = page.evaluate("""() => document.getElementById('alladin').innerText + ' ' +
+                        document.getElementById('alladinModalBox').innerText""")
+                    m = PROIBIDO.search(PARTICIPACAO.sub(" ", texto))
+                    if m:
+                        falhas.append(f"R8: conteudo economico proibido no form de {tipo}: {m.group(0)!r}")
+                    largura = page.evaluate("() => document.getElementById('alladinModalBox').scrollWidth <= window.innerWidth + 2")
+                    if not largura:
+                        falhas.append(f"R6: form de {tipo} estoura o viewport mobile")
+                    # R3/R5: trap + retorno de foco por seletor
+                    if tipo == "asset":
+                        preso = page.evaluate("""() => {
+                            const f=[...document.querySelectorAll('#alladinModalBox button:not([disabled]),#alladinModalBox input,#alladinModalBox select')];
+                            f[f.length-1].focus();
+                            const ev=new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true});
+                            document.getElementById('alladinModalBox').dispatchEvent(ev);
+                            return ev.defaultPrevented;
+                        }""")
+                        if not preso:
+                            falhas.append("R3: focus trap ausente no formulario rico")
+                    page.keyboard.press("Escape")
+                    page.wait_for_timeout(120)
+                foco = page.evaluate("() => document.activeElement && document.activeElement.dataset && document.activeElement.dataset.aldEdit")
+                if foco != "asset":
+                    falhas.append(f"R5: foco nao retornou ao botao de origem ({foco!r})")
+                # R1: READ_ONLY desabilita TODOS os botoes de mutacao dos 4 tipos
+                page.evaluate("""() => { S.alladin.schemaVersion=3;
+                    localStorage.setItem('%s', JSON.stringify(S)); JPWAlladinUI.render(); }""" % LSKEY)
+                for view in ("instruments", "assets"):
+                    page.evaluate("(v) => JPWAlladinUI.selectView(v)", view)
+                    hab = page.evaluate("""() => [...document.querySelectorAll('#alladin button[data-ald-new],#alladin button[data-ald-edit],#alladin button[data-ald-status]')]
+                        .filter(b => !b.disabled).length""")
+                    if hab:
+                        falhas.append(f"R1: {hab} botoes habilitados em READ_ONLY ({view})")
+                # R2: write gate tardio no submit do form rico
+                page.evaluate("""() => { S.alladin.schemaVersion=2; JPWAlladinUI.render();
+                    document.getElementById('sessionNotice').textContent=''; }""")
+                page.evaluate("() => JPWAlladinUI.selectView('assets')")
+                page.locator("button[data-ald-new=asset]").click()
+                page.locator("#alladinFldName").fill("Tardio")
+                page.locator("#alladinFldNature").fill("BEM_DURAVEL")
+                page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
+                page.evaluate("() => { S.alladin.schemaVersion=3; }")
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "READ_ONLY_FUTURE_SCHEMA" not in modal or "Nada foi gravado" not in modal:
+                    falhas.append(f"R2: bloqueio tardio sem mensagem honesta ({modal[:90]!r})")
+                if "Cadastro salvo" in page.evaluate("() => document.getElementById('sessionNotice').innerText"):
+                    falhas.append("R2: falso sucesso com write gate fechado")
+                page.evaluate("() => { S.alladin.schemaVersion=2; }")
+                if any(a["name"] == "Tardio" for a in colecao(page, "assets")):
+                    falhas.append("R2: registro bloqueado chegou ao disco")
+                if erros:
+                    falhas.append(f"R-infra pageerror: {erros}")
+            executar(falhas, "R1/R2/R8", r_infra)
+
+            # ---- R7: teclado nos formularios ricos --------------------------
+            def r7_teclado():
+                # Pagina propria: o bloco R1/R2 escreve direto no localStorage, e a
+                # guarda de concorrencia do save() passa a recusar — recusa legitima
+                # do sistema que nada tem a ver com o caminho de teclado.
+                ctx, page, erros = abrir(browser, url)
+                page.evaluate("() => JPWAlladinUI.selectView('instruments')")
+                page.locator("button[data-ald-new=instrument]").click()
+                page.locator("#alladinFldName").fill("Por Teclado")
+                page.locator("#alladinFldSymbol").fill("TECL3")
+                page.locator("#alladinFldFamily").select_option("EQUITY_LIKE")
+                page.locator("#alladinFldAssetClass").fill("RENDA_VARIAVEL")
+                page.locator("#alladinFldCurrency").fill("BRL")
+                page.locator("#alladinFldName").press("Enter")
+                page.wait_for_timeout(200)
+                criados = [i for i in colecao(page, "instruments") if i["name"] == "Por Teclado"]
+                if len(criados) != 1:
+                    falhas.append(f"R7: Enter no formulario rico nao criou exatamente um registro ({len(criados)})")
+                if page.evaluate("() => document.getElementById('alladinModalOverlay').classList.contains('show')"):
+                    falhas.append("R7: modal permaneceu aberto apos submissao por teclado")
+                if erros:
+                    falhas.append(f"R7 pageerror: {erros}")
+            executar(falhas, "R7", r7_teclado)
+
             browser.close()
     finally:
         for ctx in CONTEXTOS:
@@ -487,7 +1168,15 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("ALLADIN UI CRUD TEST PASS (W1-W15 / S2A-1..12: Account e CashAccount criados e editados pelo "
+    print("ALLADIN UI CRUD TEST PASS (S2-B I1-I12/A1-A15/WT1-WT5/R1-R8: Instrument e Asset criados e "
+          "editados pelo modal real; moeda imutavel fora do patch; symbolHistory mantido SO pelo dominio "
+          "e historico ilegivel recusado com honestidade; CRYPTO exige rede com fonte unica; "
+          "identificadores externos com linha vazia omitida e meio-preenchida recusada; owners em basis "
+          "points por aritmetica inteira (66,67+33,33=100%), soma>100 recusada, parcial e nome duplicado "
+          "como aviso pos-sucesso; tags e data round-trip; lifecycleStatus jamais editavel; patch-diff "
+          "envia so o alterado; taxonomia de avisos com duplicidade em decisao, informativos preservados "
+          "e codigo desconhecido exibido cru; copia distinta para criacao e edicao) + ")
+    print("(W1-W15 / S2A-1..12: Account e CashAccount criados e editados pelo "
           "modal real com persistencia provada em memoria e disco; DC-4 pos-criacao com registro ja "
           "persistido, decisao explicita obrigatoria, Escape/backdrop suspensos e inativacao via "
           "setRecordStatus; referencia inativa exibida honesta sem troca silenciosa; recusas "

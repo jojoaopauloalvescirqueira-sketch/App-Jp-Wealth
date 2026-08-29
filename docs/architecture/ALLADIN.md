@@ -293,8 +293,70 @@ write provado; a trilha de auditoria (`changeLog`) é assertada como prova de
 que toda mutação atravessou o domínio. Suíte `tools/alladin_ui_crud_test.py`
 (W1–W15 / S2A-1..12) + 10 mutantes mortos.
 
-**C3-S2-B (Instrument · Asset com owners), próximo**: formulários ricos sobre o
-esqueleto provado; mutantes de `symbolHistory`/`owners` reservados para lá.
+**C3-S2-B — Instrument · Asset (formulários ricos), implementado.** Fecha o CRUD
+cadastral das quatro entidades sobre o esqueleto do S2-A, sem reabrir modal,
+write gate, máquina de submissão ou DC-4.
+
+*Patch-diff.* Todo `edit` compara com o snapshot de abertura e envia **apenas os
+campos alterados**. Campo não tocado não viaja, e o domínio funde o patch com o
+registro **atual** — edição concorrente de outro campo sobrevive, que é a defesa
+real contra modal envelhecido (nenhum merge de conflito novo foi criado). A
+comparação normaliza o snapshot com a mesma higiene da leitura do formulário
+(trim, dedup de tags, `isSelf` só quando verdadeiro), senão uma fixture com
+espaço viraria "mudança" fantasma.
+
+*Moeda e symbolHistory.* `currency` aparece desabilitada no edit com a razão
+escrita e **nunca entra no patch**. `symbolHistory` não tem input, hidden field
+nem entrada no patch: a UI envia o novo símbolo, o domínio decide se houve
+mudança e mantém o histórico (DC-5), e a UI apenas relê a projeção canônica para
+exibi-lo como leitura. Histórico ilegível faz o domínio recusar o edit inteiro —
+a recusa é exibida honesta e o formulário permanece aberto; a rota de saída é
+inativar e recadastrar, jamais "consertar" o histórico pelo formulário.
+
+*Cripto e identificadores.* Família `CRYPTO` revela o campo **Rede (network)**,
+que é a **fonte única** da chave `network` — o editor genérico recusa criar uma
+segunda. Linhas de identificador totalmente vazias são omitidas (o domínio
+recusa valor vazio, e omitir é a única leitura honesta de uma linha em branco);
+linha meio-preenchida é ambiguidade e recusa local, com o rascunho intacto.
+Chaves reservadas recebem aviso antecipado, mas o domínio segue sendo a
+autoridade. O datalist sugere `isin`/`cnpj`/`ticker_provedor` sem fechar o
+schema, que é aberto por contrato.
+
+*Proprietários.* Participação é digitada em porcentagem e persistida em **basis
+points por aritmética inteira de string** — `parseFloat` jamais entra no caminho:
+`66,67 + 33,33` fecha exatamente 10000. Terceira casa decimal é recusada inline,
+antes de qualquer submissão. `isSelf` aparece como **"Sou eu"** e só é enviado
+quando verdadeiro (espelho do que o domínio persiste). O total cadastral
+("Participação atribuída: N%") é exibido ao vivo — é `owners/shareBp`, nunca
+valor, e o restante não atribuído jamais é representado como dinheiro.
+`lifecycleStatus` é texto puro com a razão declarada: sem input, sem hidden,
+fora do patch.
+
+*Taxonomia de avisos (contrato central do slice).* Só o prefixo `DUPLICADO`
+abre `COMMITTED_WARNING` com decisão *Manter*/*Inativar este registro*.
+`MOEDA_FORA_DO_SUPORTE_DE_RUNTIME`, `OWNERSHIP_PARCIAL_NAO_ATRIBUIDA` e
+`OWNER_NOME_DUPLICADO` são avisos **pós-sucesso**: registro válido, modal fecha,
+e inativar jamais é oferecido como resposta artificial. Quando duplicidade e
+informativo ocorrem no mesmo ato, a duplicidade governa a decisão e os demais
+aparecem em bloco próprio ("outros avisos… que não pedem decisão"), para que
+nenhum deles pareça a razão da inativação. Os códigos são humanizados **sem
+perder identidade** (o código acompanha o texto) e um código desconhecido é
+exibido cru — humanizar nunca descarta.
+
+*Correção autorizada (DH-S2B-2).* O estado de decisão distingue **criação de
+alteração**: dizer "o registro foi criado" numa edição era falsidade objetiva,
+alcançável já no S2-A via edição de conta de caixa. Máquina, gatilho, ações e
+foco no título permanecem intactos.
+
+*Efeito colateral corrigido no caminho.* A view inativa deixou de reter DOM: um
+painel renderizado antes de o write gate fechar guardava botões de mutação sem
+`disabled` — obsoletos, escondidos pelo `inert` mas não corrigidos por ele.
+
+Suíte `tools/alladin_ui_crud_test.py` (S2-B: I1–I12, A1–A15, WT1–WT5, R1–R8 —
+somada a W1–W15/S2A-1..12) + 11 mutantes reais executados e mortos, além dos
+invariantes cobertos por asserts estruturais permanentes (nenhum id,
+`recordStatus`, `createdAt`, `symbolHistory` ou `lifecycleStatus` vira input em
+qualquer estado; varredura econômica em todos os formulários).
 
 ## Superfície pública do domínio
 
