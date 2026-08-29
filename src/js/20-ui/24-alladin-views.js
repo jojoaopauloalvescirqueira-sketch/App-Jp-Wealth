@@ -26,7 +26,12 @@ const ALLADIN_EMPTY={
 // Rótulos de status legíveis; valor fora do vocabulário deste build (schema
 // futuro) é exibido como veio — projetar não é normalizar.
 const ALLADIN_STATUS_LABEL={ACTIVE:'Ativo',INACTIVE:'Inativo'};
-const ALLADIN_LIFECYCLE_LABEL={ACTIVE:'Em uso',SOLD:'Vendido',DISPOSED:'Baixado',TRANSFERRED:'Transferido'};
+// C3-S2-C · F-1: as chaves são EXATAMENTE o catálogo fechado do domínio
+// (ALD_LIFECYCLE_STATUS). Rótulo inventado seria vocabulário que o domínio não
+// tem, e ausência faria um estado real aparecer como código cru sem necessidade.
+// Um assert estrutural da suíte compara este mapa com o catálogo a cada rodada.
+const ALLADIN_LIFECYCLE_LABEL={ACTIVE:'Em uso',SOLD:'Vendido',DISPOSED:'Descartado',
+  DONATED:'Doado',LOST:'Perdido',WRITTEN_OFF:'Baixado'};
 
 let alladinView='instruments';
 
@@ -251,25 +256,21 @@ function alladinCampo(id,rotulo,valor,extra){
   return '<label class="field"><span>'+esc(rotulo)+'</span>'+
     '<input type="text" id="'+id+'" value="'+esc(valor==null?'':valor)+'" autocomplete="off" '+(extra||'')+'></label>';
 }
-function alladinErroBox(msg){
-  return msg?'<div class="session-error" role="alert">'+esc(msg)+'</div>':'';
-}
 
 // ---- formulários (Account / CashAccount) -----------------------------------
-function alladinFormAccountHTML(reg,erro){
+function alladinFormAccountHTML(reg){
   const tipos=JPWAlladin.catalogos().starter.accountType;
   const dl=document.getElementById('alladinAccountTypes');
   if(dl) dl.innerHTML=tipos.map(t=>'<option value="'+esc(t)+'"></option>').join('');
   return '<h3 id="alladinModalTitle">'+(reg?'Editar conta':'Nova conta')+'</h3>'+
     '<p class="modal-sub">Cadastro de conta de custódia ou instituição — dinheiro e movimentos não pertencem a este ciclo.</p>'+
-    alladinErroBox(erro)+
     alladinCampo('alladinFldName','Nome',reg&&reg.name)+
     alladinCampo('alladinFldInstitution','Instituição',reg&&reg.institution)+
     alladinCampo('alladinFldAccountType','Tipo',reg&&reg.accountType,'list="alladinAccountTypes"')+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" data-ald-act="cancelar">Cancelar</button>'+
     '<button type="button" class="modal-btn confirm" data-ald-act="salvar">Salvar</button></div>';
 }
-function alladinFormCashHTML(reg,erro){
+function alladinFormCashHTML(reg){
   const contas=JPWAlladin.leitura.accounts();
   const ativas=contas.filter(c=>c.recordStatus==='ACTIVE');
   let atualInativa='';
@@ -287,7 +288,6 @@ function alladinFormCashHTML(reg,erro){
   const opts=ativas.map(c=>'<option value="'+esc(c.accountId)+'"'+(reg&&reg.accountId===c.accountId?' selected':'')+'>'+esc(c.name)+'</option>').join('');
   return '<h3 id="alladinModalTitle">'+(reg?'Editar conta de caixa':'Nova conta de caixa')+'</h3>'+
     '<p class="modal-sub">Cadastro da conta de caixa por moeda — dinheiro disponível não pertence a este ciclo.</p>'+
-    alladinErroBox(erro)+
     '<label class="field"><span>Conta-mãe</span><select id="alladinFldAccountId">'+atualInativa+opts+'</select></label>'+
     alladinCampo('alladinFldCurrency','Moeda (código de 3 letras)',reg&&reg.currency,'maxlength="3" autocapitalize="characters"')+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" data-ald-act="cancelar">Cancelar</button>'+
@@ -391,30 +391,48 @@ function alladinHistoricoHTML(reg){
   }).filter(Boolean);
   return itens.length?'<p class="modal-sub" data-ald-symbol-history>Símbolos anteriores: '+itens.join(' · ')+'</p>':'';
 }
-function alladinFormInstrumentHTML(reg,erro){
+// C3-S2-C · B-2: valor de vocabulário fechado que ESTE build não conhece ganha
+// opção própria, selecionada e rotulada com honestidade. Sem ela o navegador
+// escolheria a primeira opção e o patch-diff reescreveria, em silêncio, um valor
+// que o operador nunca tocou — exatamente o que o read-model promete não fazer
+// ("projetar não é normalizar"). Preservar não é legitimar: o domínio segue
+// recusando o ato, e a saída é o operador escolher deliberadamente um valor vivo.
+function alladinValorForaDoVocabulario(reg,valor,catalogo){
+  return !!reg && !!valor && catalogo.indexOf(valor)<0;
+}
+function alladinOpcaoDesconhecida(reg,valor,catalogo){
+  if(!alladinValorForaDoVocabulario(reg,valor,catalogo)) return '';
+  return '<option value="'+esc(valor)+'" selected>'+esc(valor)+' — valor não reconhecido por esta versão</option>';
+}
+function alladinFormInstrumentHTML(reg){
   const cat=JPWAlladin.catalogos();
   alladinDatalist('alladinAssetClasses',cat.starter.assetClass);
   const fam=(reg&&reg.instrumentFamily)||'';
   const famOpts=(reg?'':'<option value="" selected disabled>Selecione…</option>')+
+    alladinOpcaoDesconhecida(reg,fam,cat.fechados.instrumentFamily)+
     cat.fechados.instrumentFamily.map(f=>'<option value="'+esc(f)+'"'+(f===fam?' selected':'')+'>'+esc(f)+'</option>').join('');
   const ext=(reg&&reg.externalIdentifiers&&typeof reg.externalIdentifiers==='object'&&!Array.isArray(reg.externalIdentifiers))?reg.externalIdentifiers:{};
   const cripto=fam==='CRYPTO';
-  // DH-S2B-1 (opção C): quando family=CRYPTO, `network` tem campo explícito e é
-  // a ÚNICA fonte da chave; fora de CRYPTO, network (se existir) é linha comum —
-  // nada é descartado em silêncio.
-  const network=(cripto&&typeof ext.network==='string')?ext.network:'';
-  const genericas=Object.keys(ext).filter(k=>!(cripto&&k==='network'));
+  // DH-S2B-1 (opção C) + DH-S2C-1: `network` tem campo explícito e é a ÚNICA
+  // fonte da chave — nunca vira linha genérica. O campo PERMANECE visível fora
+  // de CRYPTO enquanto tiver valor: sair de cripto preserva a rede, e removê-la
+  // exige o gesto explícito de limpar o campo (C3-S2-C · B-1).
+  const network=(typeof ext.network==='string')?ext.network:'';
+  const mostrarRede=cripto||!!network;
+  const genericas=Object.keys(ext).filter(k=>k!=='network');
   const moeda=reg
     ?'<label class="field"><span>Moeda</span><input type="text" id="alladinFldCurrency" value="'+esc(reg.currency||'')+'" disabled>'+
      '<span class="note">A moeda é definida na criação e não pode ser alterada neste cadastro.</span></label>'
     :alladinCampo('alladinFldCurrency','Moeda (código de 3 letras)','','maxlength="3" autocapitalize="characters"');
   return '<h3 id="alladinModalTitle">'+(reg?'Editar instrumento':'Novo instrumento')+'</h3>'+
     '<p class="modal-sub">Cadastro de identidade do instrumento — dinheiro e movimentos não pertencem a este ciclo.</p>'+
-    alladinErroBox(erro)+
     alladinCampo('alladinFldName','Nome',reg&&reg.name)+
     alladinCampo('alladinFldSymbol','Símbolo',reg&&reg.symbol,'maxlength="32"')+
     '<label class="field"><span>Família</span><select id="alladinFldFamily">'+famOpts+'</select></label>'+
-    '<div id="alladinFldNetworkWrap"'+(cripto?'':' hidden')+'>'+alladinCampo('alladinFldNetwork','Rede (network)',network)+'</div>'+
+    '<div id="alladinFldNetworkWrap"'+(mostrarRede?'':' hidden')+'>'+
+      '<label class="field"><span>Rede (network)</span>'+
+      '<input type="text" id="alladinFldNetwork" value="'+esc(network)+'" autocomplete="off">'+
+      '<span class="note">Obrigatória para cripto. Se preenchida, é preservada mesmo fora de cripto — limpe o campo para removê-la.</span></label></div>'+
     alladinCampo('alladinFldAssetClass','Classe',reg&&reg.assetClass,'list="alladinAssetClasses"')+
     moeda+
     alladinCampo('alladinFldExchange','Bolsa / mercado (opcional)',reg&&reg.exchange)+
@@ -426,12 +444,13 @@ function alladinFormInstrumentHTML(reg,erro){
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" data-ald-act="cancelar">Cancelar</button>'+
     '<button type="button" class="modal-btn confirm" data-ald-act="salvar">Salvar</button></div>';
 }
-function alladinFormAssetHTML(reg,erro){
+function alladinFormAssetHTML(reg){
   const cat=JPWAlladin.catalogos();
   alladinDatalist('alladinNatures',cat.starter.nature);
   alladinDatalist('alladinPurposes',cat.starter.strategicPurpose);
   const rm=(reg&&reg.recordMode)||'';
   const modos=(reg?'':'<option value="" selected disabled>Selecione…</option>')+
+    alladinOpcaoDesconhecida(reg,rm,cat.fechados.recordMode)+
     [['INDIVIDUAL','Individual'],['GROUPED','Agrupado']]
       .map(([v,l])=>'<option value="'+v+'"'+(v===rm?' selected':'')+'>'+l+'</option>').join('');
   const owners=(reg&&Array.isArray(reg.owners))?reg.owners:[];
@@ -447,7 +466,6 @@ function alladinFormAssetHTML(reg,erro){
   }
   return '<h3 id="alladinModalTitle">'+(reg?'Editar bem':'Novo bem')+'</h3>'+
     '<p class="modal-sub">Cadastro de identidade do bem — dinheiro e movimentos não pertencem a este ciclo.</p>'+
-    alladinErroBox(erro)+
     alladinCampo('alladinFldName','Nome',reg&&reg.name)+
     alladinCampo('alladinFldNature','Natureza',reg&&reg.nature,'list="alladinNatures"')+
     '<label class="field"><span>Modo de registro</span><select id="alladinFldRecordMode">'+modos+'</select></label>'+
@@ -488,15 +506,16 @@ function alladinLerFormRico(tipo){
       if(!k&&!val) continue;
       if(!k||!val) return { erro:'Preencha chave e conteúdo do identificador (ou remova a linha).' };
       if(k==='__proto__'||k==='constructor'||k==='prototype') return { erro:'Esta chave de identificador é reservada e não pode ser usada.' };
-      if(fam==='CRYPTO'&&k==='network') return { erro:'Use o campo Rede para informar a rede da cripto.' };
+      if(k==='network') return { erro:'A rede é informada no campo Rede deste formulário.' };
       if(Object.prototype.hasOwnProperty.call(ext,k)) return { erro:'Há identificadores com a mesma chave.' };
       ext[k]=val;
     }
-    if(fam==='CRYPTO'){
-      const net=v('alladinFldNetwork');
-      if(!net) return { erro:'Informe a rede (network) da cripto antes de salvar.' };
-      ext.network=net;
-    }
+    // B-1: a rede é lida SEMPRE, não só sob CRYPTO. Sair de cripto preserva o
+    // que já existia; esvaziar o campo é o gesto explícito de remoção. Em CRYPTO
+    // ela continua obrigatória — quem esvazia recebe a recusa, nada some.
+    const net=v('alladinFldNetwork');
+    if(fam==='CRYPTO'&&!net) return { erro:'Informe a rede (network) da cripto antes de salvar.' };
+    if(net) ext.network=net;
     dados.externalIdentifiers=ext;
     return { dados };
   }
@@ -552,12 +571,12 @@ function alladinPatch(tipo,dados){
   return patch;
 }
 const ALLADIN_FORM_META={
-  account:     { lista:()=>JPWAlladin.leitura.accounts(),     campoId:'accountId',     html:(r,e)=>alladinFormAccountHTML(r,e) },
-  cashaccount: { lista:()=>JPWAlladin.leitura.cashAccounts(), campoId:'cashAccountId', html:(r,e)=>alladinFormCashHTML(r,e) },
-  instrument:  { lista:()=>JPWAlladin.leitura.instruments(),  campoId:'instrumentId',  html:(r,e)=>alladinFormInstrumentHTML(r,e) },
-  asset:       { lista:()=>JPWAlladin.leitura.assets(),       campoId:'assetId',       html:(r,e)=>alladinFormAssetHTML(r,e) },
+  account:     { lista:()=>JPWAlladin.leitura.accounts(),     campoId:'accountId',     html:(r)=>alladinFormAccountHTML(r) },
+  cashaccount: { lista:()=>JPWAlladin.leitura.cashAccounts(), campoId:'cashAccountId', html:(r)=>alladinFormCashHTML(r) },
+  instrument:  { lista:()=>JPWAlladin.leitura.instruments(),  campoId:'instrumentId',  html:(r)=>alladinFormInstrumentHTML(r) },
+  asset:       { lista:()=>JPWAlladin.leitura.assets(),       campoId:'assetId',       html:(r)=>alladinFormAssetHTML(r) },
 };
-function alladinAbrirForm(tipo,modo,alvoId,erro){
+function alladinAbrirForm(tipo,modo,alvoId){
   const meta=ALLADIN_FORM_META[tipo];
   if(!meta) return;
   alladinForm.estado='EDITING'; alladinForm.tipo=tipo; alladinForm.modo=modo; alladinForm.alvoId=alvoId||null;
@@ -570,7 +589,7 @@ function alladinAbrirForm(tipo,modo,alvoId,erro){
     // edit — só campos efetivamente alterados viajam ao domínio.
     alladinForm.snapshot=reg;
   }
-  const html=meta.html(reg,erro);
+  const html=meta.html(reg);
   if(alladinModalAberto()){ document.getElementById('alladinModalBox').innerHTML=html; const f=alladinFocusables(); if(f.length) f[0].focus(); }
   else alladinModalOpen(html);
 }
@@ -587,6 +606,18 @@ const ALLADIN_ATOS={
   instrument:  { add:(d)=>JPWAlladin.cadastro.addInstrument(d),  edit:(i,d)=>JPWAlladin.cadastro.editInstrument(i,d) },
   asset:       { add:(d)=>JPWAlladin.cadastro.addAsset(d),       edit:(i,d)=>JPWAlladin.cadastro.editAsset(i,d) },
 };
+// B-2: a recusa por vocabulário fechado desconhecido ganha texto humano. NÃO
+// afirma que o dado está corrompido — ele é legítimo, apenas mais novo que este
+// build — e NÃO altera coisa alguma: a saída é o operador escolher, ele mesmo,
+// um valor que esta versão suporte.
+const ALLADIN_ERRO_VOCABULARIO=['ALD_INSTRUMENT_FAMILY_INVALIDA','ALD_RECORD_MODE_INVALIDO'];
+function alladinTextoDeRecusa(codigo){
+  if(alladinForm.modo==='edit' && ALLADIN_ERRO_VOCABULARIO.indexOf(String(codigo))>=0){
+    return 'Este cadastro utiliza um valor que esta versão do Alladin não reconhece. '+
+           'Para salvar alterações, selecione um valor atualmente suportado. Nada foi gravado.';
+  }
+  return 'O cadastro foi recusado: '+codigo+'. Nada foi gravado.';
+}
 function alladinSubmit(){
   if(alladinForm.estado!=='EDITING') return;      // SUBMITTING/COMMITTED: nunca resubmete
   const {tipo,modo,alvoId}=alladinForm;
@@ -601,7 +632,7 @@ function alladinSubmit(){
   }else{
     dados=alladinLerFormulario(tipo);
     for(const k of Object.keys(dados)){
-      if(dados[k]===''){ alladinAbrirForm(tipo,modo,alvoId,'Preencha todos os campos antes de salvar.'); return; }
+      if(dados[k]===''){ alladinErroInline('Preencha todos os campos antes de salvar.'); return; }
     }
   }
   if(modo==='edit'){
@@ -613,10 +644,11 @@ function alladinSubmit(){
   const ato=ALLADIN_ATOS[tipo];
   const r=(modo==='edit')?ato.edit(alvoId,dados):ato.add(dados);
   if(!r || r.ok!==true){
+    // B-3: o erro é SEMPRE injetado in-place, nas quatro entidades. Re-renderizar
+    // o formulário apagaria o que o operador digitou — perder o trabalho dele numa
+    // recusa é a segunda punição por um erro que muitas vezes nem foi dele.
     alladinForm.estado='EDITING';
-    const msg='O cadastro foi recusado: '+((r&&r.erro)||'erro não identificado')+'. Nada foi gravado.';
-    if(rico) alladinErroInline(msg);
-    else alladinAbrirForm(tipo,modo,alvoId,msg);
+    alladinErroInline(alladinTextoDeRecusa((r&&r.erro)||'erro não identificado'));
     return;
   }
   // persistido:true daqui em diante — o registro EXISTE no disco.
@@ -771,7 +803,10 @@ function initAlladinCrud(){
   box.addEventListener('change',e=>{
     if(e.target.id!=='alladinFldFamily') return;
     const wrap=document.getElementById('alladinFldNetworkWrap');
-    if(wrap) wrap.hidden=(e.target.value!=='CRYPTO');
+    const campo=document.getElementById('alladinFldNetwork');
+    // Sair de CRYPTO não esconde uma rede preenchida: escondê-la seria removê-la
+    // sem que o operador visse o que perdeu.
+    if(wrap) wrap.hidden=(e.target.value!=='CRYPTO' && !(campo&&campo.value.trim()));
   });
   ov.addEventListener('click',e=>{ if(e.target===ov) alladinModalDismiss(); });
   box.addEventListener('keydown',e=>{

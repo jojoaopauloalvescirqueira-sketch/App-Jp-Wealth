@@ -315,7 +315,7 @@ inativar e recadastrar, jamais "consertar" o histórico pelo formulário.
 
 *Cripto e identificadores.* Família `CRYPTO` revela o campo **Rede (network)**,
 que é a **fonte única** da chave `network` — o editor genérico recusa criar uma
-segunda. Linhas de identificador totalmente vazias são omitidas (o domínio
+segunda, em qualquer família (corrigido no S2-C; ver abaixo). Linhas de identificador totalmente vazias são omitidas (o domínio
 recusa valor vazio, e omitir é a única leitura honesta de uma linha em branco);
 linha meio-preenchida é ambiguidade e recusa local, com o rascunho intacto.
 Chaves reservadas recebem aviso antecipado, mas o domínio segue sendo a
@@ -351,6 +351,52 @@ foco no título permanecem intactos.
 *Efeito colateral corrigido no caminho.* A view inativa deixou de reter DOM: um
 painel renderizado antes de o write gate fechar guardava botões de mutação sem
 `disabled` — obsoletos, escondidos pelo `inert` mas não corrigidos por ele.
+
+**C3-S2-C — correções de preservação, implementado.** Slice corretivo aberto
+pelo C3 Closure Gate, que recusou declarar o ciclo concluído: a auditoria
+encontrou dois caminhos onde a UI **destruía dado cadastral já persistido, em
+silêncio, reportando sucesso** — e neste projeto preservação vale mais que
+funcionalidade. Nenhuma correção tocou o domínio.
+
+*B-1 · a rede sobrevive à troca de família.* O campo **Rede** deixa de ser lido
+apenas sob `CRYPTO`: ele permanece visível fora de cripto **enquanto tiver
+valor**, a leitura é incondicional, e a chave `network` nunca vira linha
+genérica em família alguma. Sair de `CRYPTO` preserva a rede; **removê-la exige
+o gesto explícito de limpar o campo**, com o valor à vista. Em `CRYPTO` ela
+segue obrigatória — quem esvazia recebe recusa, e nada some. Como o objeto não
+mudou, `externalIdentifiers` sequer entra no patch.
+
+*B-2 · vocabulário fechado desconhecido é preservado, não normalizado.* Um valor
+de `instrumentFamily` ou `recordMode` que este build não conhece — legítimo, só
+mais novo — não tinha `option` no `<select>` em modo edição, então o navegador
+selecionava a primeira e o patch-diff reescrevia, em silêncio, um campo que o
+operador nunca tocou; o read-model promete exatamente o contrário ("projetar não
+é normalizar"). Agora o valor ganha opção própria, selecionada e rotulada com
+honestidade — *"valor não reconhecido por esta versão"* —, e **não entra no
+patch**. O domínio então recusa o ato, e a recusa é dita em linguagem humana:
+o cadastro usa um valor que esta versão não reconhece, e para salvar é preciso
+escolher um valor suportado. A mensagem **não afirma corrupção** (o dado é
+legítimo) e **nada é alterado automaticamente**; o valor cru permanece à vista
+enquanto o modal estiver aberto. A auditoria dos vocabulários fechados fixou o
+alcance: apenas esses dois campos são editáveis por `<select>`; `recordStatus` e
+`lifecycleStatus` não são editáveis, e os regimes STARTER são texto livre, que
+preserva por natureza.
+
+*B-3 · a recusa não custa o trabalho do operador.* O erro passa a ser injetado
+**in-place nas quatro entidades**: Account e CashAccount re-renderizavam o
+formulário e apagavam o que havia sido digitado — segunda punição por um erro
+que muitas vezes nem era do operador. Vale para validação local, recusa do
+domínio, write gate tardio e persistência recusada; em todos, o modal permanece
+aberto, o rascunho intacto, o erro visível e nenhum aviso de sucesso.
+
+*F-1 · rótulos fiéis ao catálogo.* O mapa de `lifecycleStatus` inventava
+`TRANSFERRED`, que o domínio não define, e omitia `DONATED`, `LOST` e
+`WRITTEN_OFF`, que ele define. Agora as chaves são exatamente o catálogo —
+`Em uso · Vendido · Descartado · Doado · Perdido · Baixado` — e um assert
+estrutural compara mapa e catálogo a cada rodada, de modo que a divergência não
+volta sem quebrar teste. Valor fora do catálogo continua exibido cru.
+
+Suíte estendida (S2-C: C1–C8 e as propriedades P1–P9) + 6 mutantes reais mortos.
 
 Suíte `tools/alladin_ui_crud_test.py` (S2-B: I1–I12, A1–A15, WT1–WT5, R1–R8 —
 somada a W1–W15/S2A-1..12) + 11 mutantes reais executados e mortos, além dos

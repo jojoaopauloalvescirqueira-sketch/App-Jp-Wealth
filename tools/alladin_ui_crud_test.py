@@ -1154,6 +1154,242 @@ def main() -> int:
                     falhas.append(f"R7 pageerror: {erros}")
             executar(falhas, "R7", r7_teclado)
 
+            # ============ C3-S2-C — CORREÇÕES DE PRESERVAÇÃO ================
+            # C1/C2/C3 + P1/P2/P3: `network` sobrevive por padrão e sai só por gesto.
+            def c1_c3():
+                ctx, page, erros = abrir(browser, url)
+                page.evaluate("""() => { JPWAlladin.cadastro.addInstrument({name:'Tether', symbol:'USDT',
+                    currency:'USD', instrumentFamily:'CRYPTO', assetClass:'CRIPTO',
+                    externalIdentifiers:{network:'ethereum', isin:'AAA111'}}); JPWAlladinUI.render(); }""")
+                espiao = """() => { window.__p=[];
+                    if(!window.__origEditInstrument) window.__origEditInstrument=JPWAlladin.cadastro.editInstrument;
+                    JPWAlladin.cadastro.editInstrument=(i,p)=>{ window.__p.push(JSON.parse(JSON.stringify(p)));
+                        return window.__origEditInstrument(i,p); }; }"""
+                # C1/P1: troca de familia NAO toca a rede -> externalIdentifiers AUSENTE do patch
+                page.evaluate("() => JPWAlladinUI.selectView('instruments')")
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.evaluate(espiao)
+                page.locator("#alladinFldFamily").select_option("EQUITY_LIKE")
+                if page.evaluate("() => document.getElementById('alladinFldNetworkWrap').hidden"):
+                    falhas.append("C1: o campo Rede sumiu ao sair de CRYPTO, escondendo o dado do operador")
+                page.locator("#alladinFldAssetClass").fill("RENDA_VARIAVEL")
+                salvar(page)
+                patch = page.evaluate("() => window.__p")
+                if len(patch) != 1 or "externalIdentifiers" in patch[0]:
+                    falhas.append(f"P1: externalIdentifiers viajou no patch sem ter mudado ({patch})")
+                ext = page.evaluate("() => JPWAlladin.leitura.instruments()[0].externalIdentifiers")
+                if ext != {"network": "ethereum", "isin": "AAA111"}:
+                    falhas.append(f"C1/B-1: a rede foi perdida na troca de familia ({ext})")
+                d = colecao(page, "instruments")[0]["externalIdentifiers"]
+                if d.get("network") != "ethereum":
+                    falhas.append(f"C1: a rede nao sobreviveu no DISCO ({d})")
+                # P2: alterar a rede -> externalIdentifiers PRESENTE, demais preservados
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.evaluate(espiao)
+                page.locator("#alladinFldNetwork").fill("polygon")
+                salvar(page)
+                patch2 = page.evaluate("() => window.__p")
+                if len(patch2) != 1 or patch2[0].get("externalIdentifiers", {}) != {"network": "polygon", "isin": "AAA111"}:
+                    falhas.append(f"P2: patch da rede alterada divergente ({patch2})")
+                # C2/P3: limpar o campo em instrumento NAO-cripto remove de fato
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.evaluate(espiao)
+                page.locator("#alladinFldNetwork").fill("")
+                salvar(page)
+                patch3 = page.evaluate("() => window.__p")
+                if len(patch3) != 1 or "network" in patch3[0].get("externalIdentifiers", {}):
+                    falhas.append(f"P3: remocao explicita nao chegou ao patch ({patch3})")
+                if colecao(page, "instruments")[0]["externalIdentifiers"] != {"isin": "AAA111"}:
+                    falhas.append("P3: a remocao explicita nao persistiu")
+                # C3: em CRYPTO a rede continua obrigatoria; esvaziar recusa, nada some
+                page.locator("button[data-ald-edit=instrument]").click()
+                page.locator("#alladinFldFamily").select_option("CRYPTO")
+                page.locator("#alladinFldAssetClass").fill("CRIPTO")
+                salvar(page)
+                modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "rede (network)" not in modal.lower():
+                    falhas.append(f"C3: CRYPTO sem rede deveria recusar ({modal[:80]!r})")
+                # a chave `network` nunca vira linha generica
+                page.locator("button[data-ald-act=ext-add]").click()
+                page.locator("[data-ald-ext-k]").last.fill("network")
+                page.locator("[data-ald-ext-v]").last.fill("solana")
+                page.locator("#alladinFldNetwork").fill("solana")
+                salvar(page)
+                modal2 = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                if "campo Rede" not in modal2:
+                    falhas.append(f"C3: linha generica 'network' deveria ser recusada ({modal2[:90]!r})")
+                page.evaluate("() => { alladinForm.estado='EDITING'; alladinModalDismiss(); }")
+                if erros:
+                    falhas.append(f"C1/C3 pageerror: {erros}")
+            executar(falhas, "C1/C2/C3 + P1/P2/P3", c1_c3)
+
+            # C4/C5/C6 + P4/P5/P6: vocabulario fechado desconhecido e' preservado.
+            def c4_c6():
+                ctx, page, erros = abrir(browser, url)
+                page.evaluate("""() => {
+                    JPWAlladin.cadastro.addInstrument({name:'Estranho', symbol:'EST3', currency:'BRL',
+                        instrumentFamily:'EQUITY_LIKE', assetClass:'y'});
+                    S.alladin.instruments[0].instrumentFamily='FAMILIA_FUTURA';
+                    JPWAlladin.cadastro.addAsset({name:'Bem', nature:'IMOVEL', recordMode:'INDIVIDUAL'});
+                    S.alladin.assets[0].recordMode='MODO_FUTURO';
+                    save(); JPWAlladinUI.render(); }""")
+                for view, tipo, campo, cru, valido in (
+                        ("instruments", "instrument", "alladinFldFamily", "FAMILIA_FUTURA", "COMMODITY"),
+                        ("assets", "asset", "alladinFldRecordMode", "MODO_FUTURO", "GROUPED")):
+                    page.evaluate("(v) => JPWAlladinUI.selectView(v)", view)
+                    page.locator(f"button[data-ald-edit={tipo}]").click()
+                    # P4: abre selecionado no valor CRU, rotulado com honestidade
+                    estado = page.evaluate("""(c) => { const el=document.getElementById(c);
+                        const sel=el.options[el.selectedIndex];
+                        return { valor:el.value, rotulo:sel?sel.textContent:'' }; }""", campo)
+                    if estado["valor"] != cru:
+                        falhas.append(f"P4: {campo} nao abriu no valor cru ({estado})")
+                    if "não reconhecido" not in estado["rotulo"]:
+                        falhas.append(f"P4: rotulo do valor desconhecido nao e honesto ({estado['rotulo']!r})")
+                    if "corromp" in estado["rotulo"].lower():
+                        falhas.append("P4: o rotulo afirma corrupcao do dado")
+                    # P5: editar OUTRO campo nao normaliza; dominio recusa honestamente
+                    espiao = ("() => { window.__p=[]; document.getElementById('sessionNotice').textContent='';"
+                              " if(!window.__orig%s) window.__orig%s=JPWAlladin.cadastro.edit%s;"
+                              " JPWAlladin.cadastro.edit%s=(i,p)=>{ window.__p.push(JSON.parse(JSON.stringify(p)));"
+                              " return window.__orig%s(i,p); }; }")
+                    alvo = "Instrument" if tipo == "instrument" else "Asset"
+                    page.evaluate(espiao % (alvo, alvo, alvo, alvo, alvo))
+                    page.locator("#alladinFldName").fill("Renomeado")
+                    salvar(page)
+                    patch = page.evaluate("() => window.__p")
+                    chave = "instrumentFamily" if tipo == "instrument" else "recordMode"
+                    if len(patch) != 1 or chave in patch[0]:
+                        falhas.append(f"P5: {chave} entrou no patch sem o operador ter tocado ({patch})")
+                    lido = page.evaluate("(t) => (t==='instrument'?JPWAlladin.leitura.instruments():JPWAlladin.leitura.assets())[0]", tipo)
+                    if lido[chave] != cru:
+                        falhas.append(f"P5/B-2: o valor desconhecido foi NORMALIZADO em silencio ({lido[chave]})")
+                    modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
+                    if "não reconhece" not in modal or "selecione um valor" not in modal.lower():
+                        falhas.append(f"P5: recusa sem texto humano de vocabulario ({modal[:120]!r})")
+                    if "corromp" in modal.lower():
+                        falhas.append("P5: a mensagem afirma corrupcao do dado")
+                    if page.evaluate("(c) => document.getElementById(c).value", campo) != cru:
+                        falhas.append("P5: o valor cru sumiu do formulario apos a recusa")
+                    if page.evaluate("() => document.getElementById('alladinFldName').value") != "Renomeado":
+                        falhas.append("P5: o rascunho foi perdido na recusa do formulario rico")
+                    if "Cadastro salvo" in page.evaluate("() => document.getElementById('sessionNotice').innerText"):
+                        falhas.append("P8: recusa de vocabulario disparou notice de sucesso")
+                    # P6: escolher valor conhecido destrava e persiste
+                    page.locator(f"#{campo}").select_option(valido)
+                    page.evaluate(espiao % (alvo, alvo, alvo, alvo, alvo))
+                    salvar(page)
+                    patch2 = page.evaluate("() => window.__p")
+                    if len(patch2) != 1 or patch2[0].get(chave) != valido:
+                        falhas.append(f"P6: o valor escolhido nao entrou no patch ({patch2})")
+                    lido2 = page.evaluate("(t) => (t==='instrument'?JPWAlladin.leitura.instruments():JPWAlladin.leitura.assets())[0]", tipo)
+                    if lido2[chave] != valido:
+                        falhas.append(f"P6: escolha deliberada nao persistiu ({lido2[chave]})")
+                if erros:
+                    falhas.append(f"C4/C6 pageerror: {erros}")
+            executar(falhas, "C4/C5/C6 + P4/P5/P6", c4_c6)
+
+            # C7 + P7/P8: Account e CashAccount preservam o rascunho em TODA recusa.
+            def c7():
+                ctx, page, erros = abrir(browser, url)
+                # classes de erro por entidade. CashAccount CREATE nao tem validacao
+                # local possivel (moeda vazia e' o unico campo livre) -> coberto em EDIT.
+                casos = []
+                # (1) Account CREATE — validacao local
+                page.evaluate("() => JPWAlladinUI.selectView('accounts')")
+                page.locator("button[data-ald-new=account]").click()
+                page.locator("#alladinFldName").fill("Conta Digitada")
+                page.locator("#alladinFldInstitution").fill("Instituicao Digitada")
+                salvar(page)   # accountType vazio
+                casos.append(("Account create/validacao local", page.evaluate("""() => ({
+                    aberto: document.getElementById('alladinModalOverlay').classList.contains('show'),
+                    nome: (document.getElementById('alladinFldName')||{}).value,
+                    inst: (document.getElementById('alladinFldInstitution')||{}).value,
+                    erro: !!document.querySelector('#alladinModalBox .session-error'),
+                    notice: document.getElementById('sessionNotice').innerText })""")))
+                # (2) Account CREATE — persistencia recusada
+                page.locator("#alladinFldAccountType").fill("BANK")
+                page.evaluate("() => { window.__so=window.save; window.save=()=>false; }")
+                salvar(page)
+                casos.append(("Account create/persistencia recusada", page.evaluate("""() => ({
+                    aberto: document.getElementById('alladinModalOverlay').classList.contains('show'),
+                    nome: (document.getElementById('alladinFldName')||{}).value,
+                    inst: (document.getElementById('alladinFldInstitution')||{}).value,
+                    erro: !!document.querySelector('#alladinModalBox .session-error'),
+                    notice: document.getElementById('sessionNotice').innerText })""")))
+                # (3) Account CREATE — write gate tardio
+                page.evaluate("() => { window.save=window.__so; S.alladin.schemaVersion=3; }")
+                salvar(page)
+                casos.append(("Account create/write gate tardio", page.evaluate("""() => ({
+                    aberto: document.getElementById('alladinModalOverlay').classList.contains('show'),
+                    nome: (document.getElementById('alladinFldName')||{}).value,
+                    inst: (document.getElementById('alladinFldInstitution')||{}).value,
+                    erro: !!document.querySelector('#alladinModalBox .session-error'),
+                    notice: document.getElementById('sessionNotice').innerText })""")))
+                page.evaluate("() => { S.alladin.schemaVersion=2; alladinForm.estado='EDITING'; alladinModalDismiss(); }")
+                # (4) CashAccount EDIT — recusa do dominio (conta-mae inativa)
+                page.evaluate("""() => {
+                    const a=JPWAlladin.cadastro.addAccount({name:'Banco A',institution:'A',accountType:'BANK'});
+                    const c=JPWAlladin.cadastro.addCashAccount({accountId:a.recordId,currency:'BRL'});
+                    JPWAlladinUI.render(); window.__contaA=a.recordId; }""")
+                page.evaluate("() => JPWAlladinUI.selectView('cashAccounts')")
+                page.locator("button[data-ald-edit=cashaccount]").click()
+                page.locator("#alladinFldCurrency").fill("USD")
+                # a conta-mae e inativada ENTRE a abertura e o submit
+                page.evaluate("""() => { JPWAlladin.cadastro.setRecordStatus('cashaccount',
+                        JPWAlladin.leitura.cashAccounts()[0].cashAccountId,'INACTIVE');
+                    JPWAlladin.cadastro.setRecordStatus('account', window.__contaA,'INACTIVE');
+                    document.getElementById('sessionNotice').textContent=''; }""")
+                salvar(page)
+                casos.append(("CashAccount edit/recusa do dominio", page.evaluate("""() => ({
+                    aberto: document.getElementById('alladinModalOverlay').classList.contains('show'),
+                    nome: (document.getElementById('alladinFldCurrency')||{}).value,
+                    inst: 'N/A',
+                    erro: !!document.querySelector('#alladinModalBox .session-error'),
+                    notice: document.getElementById('sessionNotice').innerText })""")))
+                for nome, r in casos:
+                    if not r["aberto"]:
+                        falhas.append(f"C7 [{nome}]: o modal fechou na recusa")
+                    if not r["erro"]:
+                        falhas.append(f"C7 [{nome}]: nenhum erro visivel")
+                    if "Cadastro salvo" in r["notice"]:
+                        falhas.append(f"P8 [{nome}]: recusa disparou notice de sucesso")
+                    if not r["nome"]:
+                        falhas.append(f"P7 [{nome}]: o rascunho foi apagado ({r})")
+                if casos[0][1]["nome"] != "Conta Digitada" or casos[0][1]["inst"] != "Instituicao Digitada":
+                    falhas.append(f"P7: valores digitados nao sobreviveram identicos ({casos[0][1]})")
+                if casos[3][1]["nome"] != "USD":
+                    falhas.append(f"P7: a moeda digitada na cash nao sobreviveu ({casos[3][1]})")
+                if erros:
+                    falhas.append(f"C7 pageerror: {erros}")
+            executar(falhas, "C7 + P7/P8", c7)
+
+            # C8 + P9: rotulos de lifecycle sao exatamente o catalogo do dominio.
+            def c8():
+                ctx, page, erros = abrir(browser, url)
+                r = page.evaluate("""() => ({
+                    catalogo: JPWAlladin.catalogos().fechados.lifecycleStatus.slice().sort(),
+                    mapa: Object.keys(ALLADIN_LIFECYCLE_LABEL).sort(),
+                    status_catalogo: JPWAlladin.catalogos().fechados.recordStatus.slice().sort(),
+                    status_mapa: Object.keys(ALLADIN_STATUS_LABEL).sort() })""")
+                if r["catalogo"] != r["mapa"]:
+                    falhas.append(f"P9/F-1: mapa de lifecycle diverge do catalogo do dominio "
+                                  f"(so no mapa: {sorted(set(r['mapa'])-set(r['catalogo']))}; "
+                                  f"so no catalogo: {sorted(set(r['catalogo'])-set(r['mapa']))})")
+                if r["status_catalogo"] != r["status_mapa"]:
+                    falhas.append(f"P9: mapa de recordStatus diverge do catalogo ({r})")
+                # valor fora do catalogo continua exibido CRU
+                page.evaluate("""() => { JPWAlladin.cadastro.addAsset({name:'Futuro', nature:'IMOVEL',
+                        recordMode:'INDIVIDUAL'});
+                    S.alladin.assets[0].lifecycleStatus='ESTADO_FUTURO'; save(); JPWAlladinUI.render(); }""")
+                page.evaluate("() => JPWAlladinUI.selectView('assets')")
+                txt = page.evaluate("() => document.getElementById('alladinAssets').innerText")
+                if "ESTADO_FUTURO" not in txt:
+                    falhas.append(f"C8: valor fora do catalogo deveria aparecer cru ({txt[:100]!r})")
+                if erros:
+                    falhas.append(f"C8 pageerror: {erros}")
+            executar(falhas, "C8 + P9", c8)
+
             browser.close()
     finally:
         for ctx in CONTEXTOS:
@@ -1168,7 +1404,8 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("ALLADIN UI CRUD TEST PASS (S2-B I1-I12/A1-A15/WT1-WT5/R1-R8: Instrument e Asset criados e "
+    print("ALLADIN UI CRUD TEST PASS (S2-C C1-C8/P1-P9: a rede sobrevive a troca de familia e sai so por gesto explicito, sem viajar no patch quando nao mudou; vocabulario fechado desconhecido abre no valor cru com rotulo honesto, nunca e normalizado em silencio, e a recusa do dominio vem com rota de correcao; Account e CashAccount preservam o rascunho em validacao local, recusa do dominio, write gate tardio e persistencia recusada, sem notice de sucesso; rotulos de lifecycle iguais ao catalogo do dominio e valor fora dele exibido cru) + ")
+    print("(S2-B I1-I12/A1-A15/WT1-WT5/R1-R8: Instrument e Asset criados e "
           "editados pelo modal real; moeda imutavel fora do patch; symbolHistory mantido SO pelo dominio "
           "e historico ilegivel recusado com honestidade; CRYPTO exige rede com fonte unica; "
           "identificadores externos com linha vazia omitida e meio-preenchida recusada; owners em basis "
