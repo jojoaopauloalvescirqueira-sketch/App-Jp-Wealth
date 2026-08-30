@@ -24,7 +24,10 @@ Assimetria deliberada de versionamento:
                  DEVEM atravessar: ignora-los deixaria uma aba operando sobre
                  uma base que ja nao existe
 
-E1..E16. E6 e E15 servem o build BASELINE por `git archive`.
+E1..E16. E6 e E15 servem o build BASELINE por `git archive` do SHA pinado.
+Em clone raso, onde esse objeto nao existe, os dois casos NAO sao executados e a
+suite termina em NOT_RUN — nunca em PASS, porque nao provou, e nunca em
+ENVIRONMENT_ERROR, porque o ambiente nao esta quebrado: falta historico.
 """
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -126,6 +129,9 @@ def executar(falhas, nome, fn):
 def main() -> int:
     servidor, url = serve()
     falhas: list[str] = []
+    # Casos que nao rodaram por falta de historico. Ficam separados de `falhas`:
+    # nao executar nao e reprovar, mas tambem nao e aprovar.
+    nao_executados: list[str] = []
     baseline_dir = None
     try:
         with sync_playwright() as pw:
@@ -477,8 +483,9 @@ def main() -> int:
                 tem_sha = subprocess.run(["git", "cat-file", "-e", EPOCH_BASELINE_SHA],
                                          cwd=ROOT, capture_output=True)
                 if tem_sha.returncode != 0:
-                    falhas.append("E6/E15: ENVIRONMENT_ERROR — o SHA baseline pre-protocolo "
-                                  "nao existe neste clone; caso nao executado")
+                    nao_executados.append(
+                        "E6/E15 (mixed-build contra o baseline pre-protocolo): o SHA "
+                        f"{EPOCH_BASELINE_SHA[:7]} nao existe neste clone — historico raso")
                     return
                 tar_bytes = subprocess.run(["git", "archive", EPOCH_BASELINE_SHA], cwd=ROOT,
                                            capture_output=True).stdout
@@ -547,6 +554,16 @@ def main() -> int:
         print("SESSION EPOCH PROTOCOL TEST FALHOU")
         for f in falhas:
             print("  - " + f)
+        # Sem o marcador literal aqui: o quality_gate casa o PRIMEIRO marcador que
+        # encontra, e NOT_RUN vem antes de PRODUCT_FAIL na ordem dele. Emiti-lo
+        # junto de uma falha real mascararia a falha.
+        for n in nao_executados:
+            print("  - caso nao executado por ambiente: " + n)
+        return 1
+    if nao_executados:
+        print("SESSION EPOCH PROTOCOL TEST — COBERTURA INCOMPLETA")
+        for n in nao_executados:
+            print("  - NOT_RUN: " + n)
         return 1
     print("SESSION EPOCH PROTOCOL TEST PASS (E1-E16: replay pos-wipe rejeitado, entrega tardia rejeitada, "
           "finalize legitimo aceito, efeito unico nos dois transportes, import invalida geracao anterior, "

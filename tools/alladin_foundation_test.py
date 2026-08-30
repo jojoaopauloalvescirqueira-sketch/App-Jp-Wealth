@@ -24,9 +24,10 @@ Prova as propriedades de persistencia do agregado S.alladin no navegador:
   R  XSS e privacidade: texto livre e owners[].name atravessam como TEXTO; o log
      operacional nao carrega nome de proprietario
 
-Caso F e condicionado ao historico local: em clone raso sem o SHA base, o caso
-e reportado como nao executado por ambiente (sem marcador de classificacao) e
-os demais seguem valendo.
+Casos F e F2 dependem do historico local: em clone raso, sem os SHAs pinados,
+eles NAO sao executados e a suite termina em NOT_RUN — nunca em PASS. Ausencia
+de historico e ausencia de prova, e o resumo do gate precisa dizer isso; antes
+dizia PASS com dois casos cegos.
 """
 import io
 import json
@@ -105,6 +106,9 @@ def executar(falhas, nome, fn):
 
 def main() -> int:
     falhas: list[str] = []
+    # Casos que nao rodaram por falta de historico. Nao executar nao e reprovar,
+    # mas tambem nao e aprovar — por isso nunca somam como PASS.
+    nao_executados: list[str] = []
     server, url = serve()
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
@@ -258,7 +262,9 @@ def main() -> int:
             tem_sha = subprocess.run(["git", "cat-file", "-e", OLD_BUILD_SHA],
                                      cwd=ROOT, capture_output=True).returncode == 0
             if not tem_sha:
-                print("F: caso de rollback nao executado por ambiente (SHA base ausente do clone)")
+                nao_executados.append(
+                    "F (rollback por build pre-Alladin): o SHA "
+                    f"{OLD_BUILD_SHA[:7]} nao existe neste clone — historico raso")
                 return
             with tempfile.TemporaryDirectory() as tmp:
                 tar_bytes = subprocess.run(["git", "archive", OLD_BUILD_SHA], cwd=ROOT,
@@ -493,7 +499,9 @@ def main() -> int:
             tem = subprocess.run(["git", "cat-file", "-e", C1_BUILD_SHA],
                                  cwd=ROOT, capture_output=True).returncode == 0
             if not tem:
-                print("F2: nao executado por ambiente (SHA do C1 ausente do clone)")
+                nao_executados.append(
+                    "F2 (rollback para o build do C1): o SHA "
+                    f"{C1_BUILD_SHA[:7]} nao existe neste clone — historico raso")
                 return
             with tempfile.TemporaryDirectory() as tmp:
                 tar = subprocess.run(["git", "archive", C1_BUILD_SHA], cwd=ROOT,
@@ -689,6 +697,16 @@ def main() -> int:
         print("alladin_foundation_test FALHOU")
         for f in falhas:
             print(" -", f)
+        # Sem o marcador literal aqui: o quality_gate casa o PRIMEIRO marcador que
+        # encontra, e NOT_RUN vem antes de PRODUCT_FAIL na ordem dele. Emiti-lo
+        # junto de uma falha real mascararia a falha.
+        for n in nao_executados:
+            print(" - caso nao executado por ambiente:", n)
+        return 1
+    if nao_executados:
+        print("alladin_foundation_test — COBERTURA INCOMPLETA")
+        for n in nao_executados:
+            print(" - NOT_RUN:", n)
         return 1
     print("alladin_foundation_test PASS (A-J + M,P,Q,R,F2,S: migracao v1->v2, round-trip completo, fail-closed, rollback pre-Alladin e no C1, reload, falha parcial, XSS/privacidade, backup)")
     return 0

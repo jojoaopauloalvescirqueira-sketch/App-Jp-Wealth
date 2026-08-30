@@ -32,6 +32,16 @@ jobs:
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          # Sem isto o runner recebe um clone RASO (o padrao da action e
+          # fetch-depth: 1, so o commit do evento). Duas suites servem builds
+          # historicos por `git archive` de SHAs pinados — alladin_foundation
+          # (F, F2) e session_epoch_protocol (E6, E15) — e num clone raso esses
+          # objetos simplesmente nao existem. O efeito nao e teorico: E6/E15
+          # reprovavam o gate inteiro e F/F2 eram pulados em silencio, contados
+          # como PASS. Historico completo e o que torna essas quatro provas
+          # executaveis no Linux do CI.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065

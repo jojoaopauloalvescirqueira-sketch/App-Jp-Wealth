@@ -146,6 +146,42 @@ cliente de descoberta permanecem integralmente no build/controller antigo, sem
 clientes, a próxima abertura recebe o build novo coerente online e offline. O teste
 também confirma que caches externos não são removidos.
 
+## Caso que depende de historico nao pode terminar em PASS
+
+Algumas suites servem builds antigos por `git archive` de um SHA pinado, para
+provar que uma versao anterior do aplicativo nao corrompe dados gravados pela
+atual: `alladin_foundation_test` (casos F e F2) e `session_epoch_protocol_test`
+(casos E6 e E15). Esses casos so existem se o objeto pinado estiver no clone.
+
+O CI clonava raso. `actions/checkout` traz por padrao apenas o commit do evento
+(`fetch-depth: 1`), e nenhum dos SHAs pinados sobrevive a isso. As duas suites
+reagiram de maneiras opostas a exatamente a mesma condicao:
+
+- `session_epoch_protocol` reprovava o gate inteiro com `ENVIRONMENT_ERROR`;
+- `alladin_foundation` imprimia uma linha e retornava zero — **contada como
+  `PASS` com dois casos que nunca rodaram**.
+
+O segundo comportamento e o perigoso. Um vermelho recorrente ao menos se faz
+notar; um verde que omite os casos de rollback afirma uma prova que ninguem fez.
+Por quatro execucoes seguidas o resumo disse `PASS` para uma verificacao
+parcialmente cega, e nenhum numero do relatorio revelava a diferenca.
+
+**Regra.** Caso que nao rodou nunca soma como aprovado. Quando a condicao de
+execucao falta, a suite registra o caso, termina em `NOT_RUN` e sai diferente de
+zero. `NOT_RUN` ja existe na taxonomia justamente para isso: e a diferenca entre
+*"verifiquei e esta certo"* e *"nao verifiquei"*.
+
+**Consequencia pratica.** O ambiente e que deve ser corrigido, nao a expectativa:
+o workflow agora clona com `fetch-depth: 0`, e as quatro provas historicas passam
+a ser efetivamente executadas no Linux do CI. O caminho de `NOT_RUN` continua
+existindo para clones rasos legitimos — nunca como forma de silenciar ausencia.
+
+**Cuidado na emissao.** O classificador casa o primeiro marcador que encontra na
+saida, e `NOT_RUN` precede `PRODUCT_FAIL` na ordem dele. Uma suite que tenha
+falhas reais **nao** deve imprimir o marcador literal, ou uma falha de produto
+seria reclassificada como caso nao executado. Havendo falha real, ela manda; os
+casos nao executados sao relatados em prosa, sem marcador.
+
 ## Prove que esta testando os bytes do candidato
 
 Durante QA local foi observado que uma origem em `127.0.0.1` servia bytes
