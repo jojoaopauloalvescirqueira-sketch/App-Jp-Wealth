@@ -23,6 +23,22 @@ O que esta suite prova (L1-L14):
   L13 DRAFT nao existe neste ciclo
   L14 nenhum saldo persistido — ALD-I27
   L15 conta referenciada: moeda/conta-mae imutaveis, mas encerrar e reverter seguem
+
+ALD-03 S2 (L16-L29): a dupla atomica papel<->caixa.
+  L16 BUY: UM registro, duas pernas; cashDelta = -(amount+fees+taxes); SEM flowScope
+  L17 exemplo canonico da spec: DEPOSIT 10000 -> BUY 3000/10 -> saldo 6990
+  L18 SELL: liquido positivo, zero e NEGATIVO todos representaveis
+  L19 reversal de trade: par soma zero, quantity byte-igual, proibidos completos
+  L20 recusas: instrumento, moeda, dedupe, overflow na escrita (MC-S2-2)
+  L21 quantity: forma canonica estrita — uma grafia por valor
+  L22 flowScope declarado em trade: RECUSA por presenca (undefined incluso); adulterado: ilegivel
+  L23 instrumentFamily congela na primeira referencia economica
+  L24 reversal com amount adulterado pos-escrita -> BLOCKING (MC-S2-1)
+  L25 reversedEventType adulterado -> BLOCKING
+  L26 trade-reversal com quantity/fees/taxes/instrumentId divergentes -> BLOCKING
+  L27 flowScope do par divergente (presenca E valor, nos dois sentidos) -> BLOCKING
+  L28 refs de caixa do par divergentes -> BLOCKING
+  L29 acumulador do saldo nao atravessa regiao insegura (guarda POR PASSO)
 """
 from pathlib import Path
 import sys
@@ -34,7 +50,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 3, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 4, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -50,7 +66,7 @@ function dgLogChange(entity, action, recordId, label){
 }
 // Fixture: duas corretoras, tres contas de caixa (duas BRL, uma USD).
 function fixture(){
-  S.alladin = { schemaVersion: 3, reportingCurrency: 'BRL', instruments: [], assets: [],
+  S.alladin = { schemaVersion: 4, reportingCurrency: 'BRL', instruments: [], assets: [],
                 accounts: [], cashAccounts: [], transactions: [] };
   S.dataGovernance.changeLog = [];
   window.__stub.saves = 0; window.__stub.saveResult = true;
@@ -62,6 +78,10 @@ function fixture(){
     caixaXP:  c.addCashAccount({ accountId: xp,  currency:'BRL' }).recordId,
     caixaBTG: c.addCashAccount({ accountId: btg, currency:'BRL' }).recordId,
     caixaUSD: c.addCashAccount({ accountId: xp,  currency:'USD' }).recordId,
+    petr4:   c.addInstrument({ name:'Petrobras PN', symbol:'PETR4', currency:'BRL',
+                               instrumentFamily:'EQUITY_LIKE', assetClass:'RENDA_VARIAVEL' }).recordId,
+    aaplUsd: c.addInstrument({ name:'Apple', symbol:'AAPL', currency:'USD',
+                               instrumentFamily:'EQUITY_LIKE', assetClass:'RENDA_VARIAVEL' }).recordId,
   };
 }
 """
@@ -266,7 +286,7 @@ def main() -> int:
               const out = {
                 semConta:    L.addTransaction({eventType:'DEPOSIT', amount:100, effectiveAt:'2026-01-10'}).erro,
                 contaFalsa:  L.addTransaction({eventType:'DEPOSIT', cashAccountId:'aldc_x', amount:100, effectiveAt:'2026-01-10'}).erro,
-                eventoFalso: L.addTransaction({eventType:'BUY', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-01-10'}).erro,
+                eventoFalso: L.addTransaction({eventType:'SHORT_SELL', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-01-10'}).erro,
                 amountZero:  L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:0, effectiveAt:'2026-01-10'}).erro,
                 amountNeg:   L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:-5, effectiveAt:'2026-01-10'}).erro,
                 amountFloat: L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:10.5, effectiveAt:'2026-01-10'}).erro,
@@ -400,6 +420,352 @@ def main() -> int:
                 falhas.append(f"L15: o saldo ficou indisponivel apos as recusas ({r['saldo']})")
         executar(falhas, "L15", l15)
 
+        # ================= ALD-03 S2 — a dupla atomica papel<->caixa =========
+
+        # ---- L16: BUY e UM registro com duas pernas; sem flowScope ----------
+        def l16():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const b = L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'100', amount:300000, fees:1000,
+                taxes:500, effectiveAt:'2026-02-01'});
+              const rec = R.transactions().find(t => t.transactionId === b.recordId);
+              const cru = S.alladin.transactions[0];
+              return { ok:b.ok && b.persistido, registros:S.alladin.transactions.length,
+                       saldo:R.saldoDeCaixa(f.caixaXP),
+                       temFsCru:Object.prototype.hasOwnProperty.call(cru,'flowScope'),
+                       temFsDto:Object.prototype.hasOwnProperty.call(rec,'flowScope'),
+                       quantity:rec.quantity, fees:rec.fees, taxes:rec.taxes,
+                       amount:rec.amount, instrumentId:rec.instrumentId,
+                       status:rec.status, moeda:rec.currency };
+            }""")
+            if not r["ok"] or r["registros"] != 1:
+                falhas.append(f"L16: um fato economico deveria ser UM registro ({r})")
+            if not r["saldo"]["available"] or r["saldo"]["amount"] != -301500:
+                falhas.append(f"L16: cashDelta divergente de -(amount+fees+taxes) ({r['saldo']})")
+            if r["temFsCru"] or r["temFsDto"]:
+                falhas.append("L16: trade nasceu com flowScope — a AUSENCIA e contratual")
+            if r["quantity"] != "100" or not isinstance(r["quantity"], str):
+                falhas.append(f"L16: perna de papel nao persistiu quantity canonica ({r['quantity']!r})")
+            if r["fees"] != 1000 or r["taxes"] != 500 or r["amount"] != 300000:
+                falhas.append(f"L16: componentes divergentes ({r})")
+            if r["instrumentId"] == "" or r["status"] != "POSTED" or r["moeda"] != "BRL":
+                falhas.append(f"L16: forma do registro fora do contrato ({r})")
+        executar(falhas, "L16", l16)
+
+        # ---- L17: exemplo canonico da spec — DEPOSIT 10000, BUY 3000/10 -----
+        def l17():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:10000, effectiveAt:'2026-02-01'});
+              const b = L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'100', amount:3000, fees:10,
+                effectiveAt:'2026-02-02'});   // taxes AUSENTE na entrada
+              const rec = S.alladin.transactions.find(t => t.transactionId === b.recordId);
+              return { saldo:R.saldoDeCaixa(f.caixaXP).amount,
+                       fees:rec.fees, taxes:rec.taxes,
+                       temFees:Object.prototype.hasOwnProperty.call(rec,'fees'),
+                       temTaxes:Object.prototype.hasOwnProperty.call(rec,'taxes') };
+            }""")
+            if r["saldo"] != 6990:
+                falhas.append(f"L17 CANONICO: 10000 - (3000+10) deveria dar 6990, veio {r['saldo']}")
+            if not r["temFees"] or not r["temTaxes"] or r["fees"] != 10 or r["taxes"] != 0:
+                falhas.append(f"L17: taxes ausente na entrada deveria PERSISTIR 0 explicito ({r})")
+        executar(falhas, "L17", l17)
+
+        # ---- L18: SELL com liquido positivo, zero e negativo ---------------
+        def l18():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const pos  = L.addTransaction({eventType:'SELL', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'10', amount:5000, fees:100, effectiveAt:'2026-02-01'});
+              const s1 = R.saldoDeCaixa(f.caixaXP).amount;
+              const zero = L.addTransaction({eventType:'SELL', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'1', amount:100, fees:100, effectiveAt:'2026-02-02'});
+              const s2 = R.saldoDeCaixa(f.caixaXP).amount;
+              const neg  = L.addTransaction({eventType:'SELL', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'0.5', amount:50, fees:100, taxes:10, effectiveAt:'2026-02-03'});
+              const s3 = R.saldoDeCaixa(f.caixaXP);
+              return { pos:pos.ok, zero:zero.ok, neg:neg.ok, s1, s2, s3:s3.amount,
+                       ok3:s3.available, registros:S.alladin.transactions.length };
+            }""")
+            if not (r["pos"] and r["zero"] and r["neg"]):
+                falhas.append(f"L18: SELL liquido zero/negativo deveria ser REPRESENTAVEL ({r})")
+            if r["s1"] != 4900 or r["s2"] != 4900 or r["s3"] != 4840 or not r["ok3"]:
+                falhas.append(f"L18: deltas divergentes (+4900, +0, -60) ({r})")
+            if r["registros"] != 3:
+                falhas.append(f"L18: registros divergentes ({r['registros']})")
+        executar(falhas, "L18", l18)
+
+        # ---- L19: reversal de trade — par soma zero, proibidos completos ----
+        def l19():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const b = L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'2.5', amount:1000, fees:10, taxes:5,
+                effectiveAt:'2026-02-01'});
+              const antes = R.saldoDeCaixa(f.caixaXP).amount;
+              const rv = L.reverseTransaction(b.recordId, {effectiveAt:'2026-02-10'});
+              const depois = R.saldoDeCaixa(f.caixaXP);
+              const rev = S.alladin.transactions.find(t => t.transactionId === rv.recordId);
+              const orig = S.alladin.transactions.find(t => t.transactionId === b.recordId);
+              // proibidos: cada campo economico de trade recusa no reversal
+              const s = L.addTransaction({eventType:'SELL', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'1', amount:100, effectiveAt:'2026-02-01'});
+              const proibidos = ['quantity','fees','taxes','instrumentId','amount'].map(k => {
+                const d = {effectiveAt:'2026-02-11'}; d[k] = k==='quantity' ? '9' : 9;
+                return L.reverseTransaction(s.recordId, d).erro;
+              });
+              return { antes, depois:depois.amount, ok:depois.available,
+                       revTipo:rev.reversedEventType, revQ:rev.quantity,
+                       revFees:rev.fees, revTaxes:rev.taxes, revInst:rev.instrumentId===orig.instrumentId,
+                       temFs:Object.prototype.hasOwnProperty.call(rev,'flowScope'),
+                       origStatus:orig.status, proibidos,
+                       registros:S.alladin.transactions.length };
+            }""")
+            if r["antes"] != -1015 or r["depois"] != 0 or not r["ok"]:
+                falhas.append(f"L19: par nao somou zero no caixa ({r['antes']} -> {r['depois']})")
+            if r["revTipo"] != "BUY" or r["revQ"] != "2.5" or r["revFees"] != 10 or r["revTaxes"] != 5 or not r["revInst"]:
+                falhas.append(f"L19: reversal nao copiou a economia byte-igual ({r})")
+            if r["temFs"]:
+                falhas.append("L19: reversal de trade nasceu com flowScope")
+            if r["origStatus"] != "REVERSED":
+                falhas.append(f"L19: original nao marcou REVERSED ({r['origStatus']})")
+            esperados = ["ALD_CAMPO_ECONOMICO_NAO_INFORMAVEL:" + k for k in
+                         ["quantity","fees","taxes","instrumentId","amount"]]
+            if r["proibidos"] != esperados:
+                falhas.append(f"L19: proibidos divergentes ({r['proibidos']})")
+            if r["registros"] != 3:
+                falhas.append(f"L19: recusa de proibido deixou vestigio ({r['registros']})")
+        executar(falhas, "L19", l19)
+
+        # ---- L20: recusas de instrumento, moeda, dedupe e overflow ----------
+        def l20():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, c = JPWAlladin.cadastro;
+              const MAX = Number.MAX_SAFE_INTEGER;
+              c.setRecordStatus('instrument', f.aaplUsd, 'INACTIVE');
+              const base = {eventType:'BUY', cashAccountId:f.caixaXP, quantity:'1', amount:100, effectiveAt:'2026-02-01'};
+              L.addTransaction({...base, instrumentId:f.petr4, dedupeKey:'trade-1'});
+              return {
+                semInstrumento: L.addTransaction({...base}).erro,
+                inexistente:    L.addTransaction({...base, instrumentId:'aldi_fantasma'}).erro,
+                inativo:        L.addTransaction({...base, instrumentId:f.aaplUsd}).erro,
+                moedaDiverge:   L.addTransaction({eventType:'SELL', instrumentId:f.petr4,
+                                  cashAccountId:f.caixaUSD, quantity:'1', amount:100,
+                                  effectiveAt:'2026-02-01'}).erro,
+                dedupe:         L.addTransaction({...base, instrumentId:f.petr4, dedupeKey:'trade-1'}).erro,
+                overflowBuy:    L.addTransaction({...base, instrumentId:f.petr4, amount:MAX, fees:1}).erro,
+                overflowSell:   L.addTransaction({eventType:'SELL', instrumentId:f.petr4,
+                                  cashAccountId:f.caixaXP, quantity:'1', amount:1,
+                                  fees:MAX, taxes:MAX, effectiveAt:'2026-02-01'}).erro,
+                feesInvalida:   L.addTransaction({...base, instrumentId:f.petr4, fees:-1}).erro,
+                taxesInvalido:  L.addTransaction({...base, instrumentId:f.petr4, taxes:1.5}).erro,
+                registros: S.alladin.transactions.length };
+            }""")
+            esperado = { "semInstrumento":"ALD_REFERENCIA_AUSENTE:instrumentId",
+                         "inexistente":"ALD_INSTRUMENT_NAO_ENCONTRADO",
+                         "inativo":"ALD_INSTRUMENT_INATIVO",
+                         "moedaDiverge":"ALD_INSTRUMENT_MOEDA_DIVERGE_DA_CONTA",
+                         "dedupe":"ALD_DEDUPE_KEY_DUPLICADA",
+                         "overflowBuy":"ALD_EFEITO_MONETARIO_FORA_DO_INTEIRO_SEGURO",
+                         "overflowSell":"ALD_EFEITO_MONETARIO_FORA_DO_INTEIRO_SEGURO",
+                         "feesInvalida":"ALD_FEES_INVALIDAS",
+                         "taxesInvalido":"ALD_TAXES_INVALIDOS" }
+            for k, v in esperado.items():
+                if r[k] != v:
+                    falhas.append(f"L20 {k}: esperado {v}, veio {r[k]!r}")
+            if r["registros"] != 1:
+                falhas.append(f"L20: recusa deixou vestigio ({r['registros']})")
+        executar(falhas, "L20", l20)
+
+        # ---- L21: quantity — uma grafia por valor ---------------------------
+        def l21():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const probe = q => L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:q, amount:100, effectiveAt:'2026-02-01'});
+              const validas   = ['1','1.5','0.005','100.01','123456789.000000001'].map(q => probe(q).ok);
+              const invalidas = ['0','01','1.0','1.50','.5','1.','1e5','-1','+1','1,5','abc','',
+                                 '1'.repeat(65)].map(q => probe(q).erro);
+              const naoString = probe(1.5).erro;
+              return { validas, invalidas, naoString };
+            }""")
+            if r["validas"] != [True]*5:
+                falhas.append(f"L21: forma canonica valida recusada ({r['validas']})")
+            if r["invalidas"] != ["ALD_QUANTITY_INVALIDA"]*13 or r["naoString"] != "ALD_QUANTITY_INVALIDA":
+                falhas.append(f"L21: grafia nao-canonica aceita ({r['invalidas']}, {r['naoString']!r})")
+        executar(falhas, "L21", l21)
+
+        # ---- L22: flowScope em trade — declarar semantica impossivel RECUSA -
+        # A-B: o chamador que informa flowScope num trade declarou algo que nao
+        # existe; apagar em silencio mascararia o erro do produtor. A regra e de
+        # PRESENCA: {flowScope: undefined} tambem recusa. C: adulterar o dado
+        # persistido continua ilegivel -> BLOCKING.
+        def l22():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const base = {instrumentId:f.petr4, cashAccountId:f.caixaXP,
+                            quantity:'1', amount:100, effectiveAt:'2026-02-01'};
+              const buyValor  = L.addTransaction({eventType:'BUY',  ...base, flowScope:'EXTERNAL'});
+              const sellValor = L.addTransaction({eventType:'SELL', ...base, flowScope:'INTERNAL'});
+              const buyUndef  = L.addTransaction({eventType:'BUY',  ...base, flowScope:undefined});
+              const aposRecusas = S.alladin.transactions.length;
+              const b = L.addTransaction({eventType:'BUY', ...base});
+              S.alladin.transactions.find(t => t.transactionId === b.recordId).flowScope = 'INTERNAL';
+              const saldo = R.saldoDeCaixa(f.caixaXP);
+              return { erros:[buyValor.erro, sellValor.erro, buyUndef.erro], aposRecusas,
+                       disponivel:saldo.available, issues:saldo.issues.slice() };
+            }""")
+            if r["erros"] != ["ALD_FLOW_SCOPE_NAO_PERMITIDO_EM_TRADE"]*3:
+                falhas.append(f"L22-A/B: flowScope declarado em trade deveria RECUSAR ({r['erros']})")
+            if r["aposRecusas"] != 0:
+                falhas.append(f"L22-A/B: recusa deixou Transaction no ledger ({r['aposRecusas']})")
+            if r["disponivel"] or "ALD_TRANSACAO_ILEGIVEL" not in r["issues"]:
+                falhas.append(f"L22-C: trade adulterado com flowScope deveria ser ILEGIVEL ({r})")
+        executar(falhas, "L22", l22)
+
+        # ---- L23: instrumentFamily congela na primeira referencia -----------
+        def l23():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, c = JPWAlladin.cadastro;
+              const antes = c.editInstrument(f.petr4, {instrumentFamily:'FUND_LIKE'});
+              L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'1', amount:100, effectiveAt:'2026-02-01'});
+              const depois = c.editInstrument(f.petr4, {instrumentFamily:'EQUITY_LIKE'});
+              const igual  = c.editInstrument(f.petr4, {instrumentFamily:'FUND_LIKE'});
+              const symbol = c.editInstrument(f.petr4, {symbol:'PETR4X'});
+              return { antes:antes.ok, depoisErro:depois.erro, igual:igual.ok, symbol:symbol.ok,
+                       familia:S.alladin.instruments.find(i=>i.instrumentId===f.petr4).instrumentFamily };
+            }""")
+            if not r["antes"]:
+                falhas.append("L23: curadoria ANTES do primeiro trade deveria ser livre")
+            if r["depoisErro"] != "ALD_INSTRUMENT_COM_LANCAMENTOS":
+                falhas.append(f"L23: familia nao congelou apos referencia ({r['depoisErro']!r})")
+            if not r["igual"] or not r["symbol"]:
+                falhas.append(f"L23: edicao sem troca de familia (ou de symbol) deveria seguir livre ({r})")
+            if r["familia"] != "FUND_LIKE":
+                falhas.append(f"L23: familia final divergente ({r['familia']})")
+        executar(falhas, "L23", l23)
+
+        # ---- L24-L28: MC-S2-1 — o par e julgado na LEITURA ------------------
+        # A escrita constroi o reversal correto; estes casos adulteram o dado
+        # PERSISTIDO e provam que o saldo vira INDISPONIVEL, nunca um numero
+        # plausivel. O vetor do blocker: +10000 -9000 = +1000 "valido".
+        def l24():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:10000, effectiveAt:'2026-02-01'});
+              const rv = L.reverseTransaction(d.recordId, {effectiveAt:'2026-02-02'});
+              const antes = R.saldoDeCaixa(f.caixaXP);
+              const rev = S.alladin.transactions.find(t => t.transactionId === rv.recordId);
+              rev.amount = 9000;   // adulteracao pos-escrita
+              const depois = R.saldoDeCaixa(f.caixaXP);
+              return { antes:antes.amount, okAntes:antes.available,
+                       disponivel:depois.available, amount:depois.amount,
+                       issues:depois.issues.slice(), id:rv.recordId };
+            }""")
+            if r["antes"] != 0 or not r["okAntes"]:
+                falhas.append(f"L24: par legitimo deveria somar zero ({r})")
+            if r["disponivel"] or r["amount"] is not None:
+                falhas.append(f"L24 BLOCKER: reversal adulterado devolveu saldo com cara de valido ({r})")
+            if ("ALD_REVERSAL_INCONSISTENTE:" + r["id"]) not in r["issues"]:
+                falhas.append(f"L24: issue de inconsistencia ausente ({r['issues']})")
+        executar(falhas, "L24", l24)
+
+        def l25():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:5000, effectiveAt:'2026-02-01'});
+              const rv = L.reverseTransaction(d.recordId, {effectiveAt:'2026-02-02'});
+              const rev = S.alladin.transactions.find(t => t.transactionId === rv.recordId);
+              rev.reversedEventType = 'WITHDRAWAL';   // mesmo flowScope EXTERNAL: registro segue legivel
+              const s = R.saldoDeCaixa(f.caixaXP);
+              return { disponivel:s.available, issues:s.issues.slice(), id:rv.recordId };
+            }""")
+            if r["disponivel"] or ("ALD_REVERSAL_INCONSISTENTE:" + r["id"]) not in r["issues"]:
+                falhas.append(f"L25: reversedEventType adulterado nao virou BLOCKING ({r})")
+        executar(falhas, "L25", l25)
+
+        def l26():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const out = {};
+              for(const [campo, valor] of [['quantity','999'],['fees',11],['taxes',6],['instrumentId','aldi_outro']]){
+                S.alladin.transactions.length = 0;
+                const b = L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                  cashAccountId:f.caixaXP, quantity:'2.5', amount:1000, fees:10, taxes:5,
+                  effectiveAt:'2026-02-01'});
+                const rv = L.reverseTransaction(b.recordId, {effectiveAt:'2026-02-02'});
+                const rev = S.alladin.transactions.find(t => t.transactionId === rv.recordId);
+                rev[campo] = valor;
+                const s = R.saldoDeCaixa(f.caixaXP);
+                out[campo] = { disponivel:s.available,
+                               marcado:s.issues.indexOf('ALD_REVERSAL_INCONSISTENTE:'+rv.recordId)>=0 };
+              }
+              return out;
+            }""")
+            for campo, res in r.items():
+                if res["disponivel"] or not res["marcado"]:
+                    falhas.append(f"L26 {campo}: divergencia no par de trade nao virou BLOCKING ({res})")
+        executar(falhas, "L26", l26)
+
+        def l27():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              // (a) reversal de DEPOSIT perde o flowScope -> registro ILEGIVEL
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-02-01'});
+              const rv1 = L.reverseTransaction(d.recordId, {effectiveAt:'2026-02-02'});
+              delete S.alladin.transactions.find(t => t.transactionId === rv1.recordId).flowScope;
+              const sA = R.saldoDeCaixa(f.caixaXP);
+              // (b) reversal de BUY ganha um flowScope -> registro ILEGIVEL
+              S.alladin.transactions.length = 0;
+              const b = L.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'1', amount:100, effectiveAt:'2026-02-01'});
+              const rv2 = L.reverseTransaction(b.recordId, {effectiveAt:'2026-02-02'});
+              S.alladin.transactions.find(t => t.transactionId === rv2.recordId).flowScope = 'INTERNAL';
+              const sB = R.saldoDeCaixa(f.caixaXP);
+              return { a:{disponivel:sA.available, ilegivel:sA.issues.indexOf('ALD_TRANSACAO_ILEGIVEL')>=0},
+                       b:{disponivel:sB.available, ilegivel:sB.issues.indexOf('ALD_TRANSACAO_ILEGIVEL')>=0} };
+            }""")
+            if r["a"]["disponivel"] or not r["a"]["ilegivel"]:
+                falhas.append(f"L27a: reversal de fluxo SEM flowScope deveria ser ilegivel ({r['a']})")
+            if r["b"]["disponivel"] or not r["b"]["ilegivel"]:
+                falhas.append(f"L27b: reversal de trade COM flowScope deveria ser ilegivel ({r['b']})")
+        executar(falhas, "L27", l27)
+
+        def l28():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-02-01'});
+              const rv = L.reverseTransaction(d.recordId, {effectiveAt:'2026-02-02'});
+              const rev = S.alladin.transactions.find(t => t.transactionId === rv.recordId);
+              rev.cashAccountId = f.caixaBTG;   // mentira: o efeito continua vindo do original
+              const xp = R.saldoDeCaixa(f.caixaXP), btg = R.saldoDeCaixa(f.caixaBTG);
+              return { xp:{disponivel:xp.available, marcado:xp.issues.indexOf('ALD_REVERSAL_INCONSISTENTE:'+rv.recordId)>=0},
+                       btg:{disponivel:btg.available, marcado:btg.issues.indexOf('ALD_REVERSAL_INCONSISTENTE:'+rv.recordId)>=0} };
+            }""")
+            for conta in ("xp","btg"):
+                if r[conta]["disponivel"] or not r[conta]["marcado"]:
+                    falhas.append(f"L28 {conta}: refs adulteradas do par nao viraram BLOCKING ({r[conta]})")
+        executar(falhas, "L28", l28)
+
+        # ---- L29: MC-S2-2 — o acumulador nunca atravessa regiao insegura ----
+        def l29():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const MAX = Number.MAX_SAFE_INTEGER;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:MAX-10, effectiveAt:'2026-01-01'});
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:20, effectiveAt:'2026-01-02'});
+              L.addTransaction({eventType:'WITHDRAWAL', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-01-03'});
+              // final "voltaria" a MAX-90 (seguro) — mas o caminho passou por MAX+10
+              const s = R.saldoDeCaixa(f.caixaXP);
+              return { disponivel:s.available, amount:s.amount, marcado:s.issues.indexOf('ALD_SOMA_FORA_DO_INTEIRO_SEGURO')>=0 };
+            }""")
+            if r["disponivel"] or r["amount"] is not None or not r["marcado"]:
+                falhas.append(f"L29: acumulador atravessou 2^53 e devolveu numero com cara de sao ({r})")
+        executar(falhas, "L29", l29)
+
         # ---- L10: qualidade bloqueante, jamais saldo parcial ------------------
         def l10():
             r = ev("""() => {
@@ -473,13 +839,13 @@ def main() -> int:
                              logIntacto: JSON.stringify(S.dataGovernance.changeLog) === logAntes };
               window.__stub.saveResult = true;
               // schema futuro: nenhum ato economico passa
-              S.alladin.schemaVersion = 4;
+              S.alladin.schemaVersion = 5;
               const bloqueado = {
                 add: L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:1, effectiveAt:'2026-01-10'}).erro,
                 rev: L.reverseTransaction('aldtx_x', {effectiveAt:'2026-01-10'}).erro,
                 gate: JPWAlladin.writeBlockReason(),
               };
-              S.alladin.schemaVersion = 3;
+              S.alladin.schemaVersion = 4;
               return { meio, bloqueado, trilha: S.dataGovernance.changeLog.map(e => e.action) };
             }""")
             m = r["meio"]
@@ -548,13 +914,18 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_ledger_test PASS (L1-L14: deposito/saque e saldo derivado; transferencia interna "
+    print("alladin_ledger_test PASS (L1-L29: deposito/saque e saldo derivado; transferencia interna "
           "como UM registro que nao altera o patrimonio global — o caso canonico; flowScope como "
           "perimetro, persistido e validado; reversal preservando o original e somando zero, com suas "
           "cinco proibicoes e sem campo economico do chamador; recusas de referencia, moeda e valor; "
           "dedupe fail-closed; conta inativa recusa lancamento novo mas mantem historico e reversao; "
           "qualidade bloqueante nunca vira saldo parcial; ordem economica em vez da ordem do array; "
-          "write gate transacional e schema futuro fechado; DRAFT ausente; zero derivado persistido)")
+          "write gate transacional e schema futuro fechado; DRAFT ausente; zero derivado persistido; "
+          "S2: BUY/SELL como UM registro de duas pernas sem flowScope, exemplo canonico 6990, "
+          "SELL liquido negativo representavel, reversal copiando a economia byte-igual, "
+          "consistencia cruzada do par na leitura (amount/tipo/campos/refs/flowScope adulterados "
+          "viram BLOCKING), overflow recusado na escrita e acumulador com guarda por passo, "
+          "quantity canonica de grafia unica, instrumentFamily congelada apos referencia)")
     return 0
 
 

@@ -31,11 +31,11 @@ a spec planeja.
   Planejamento FX (`PLANNED ≠ EXECUTED ≠ OWNED`) · **cost basis** (pendência #1
   da spec, decisão N3 do ALD-04).
 
-## Persistência — agregado `S.alladin` (schema v2)
+## Persistência — agregado `S.alladin` (schema v4)
 
 ```json
-{"schemaVersion":2, "reportingCurrency":"BRL",
- "instruments":[], "assets":[], "accounts":[], "cashAccounts":[]}
+{"schemaVersion":4, "reportingCurrency":"BRL",
+ "instruments":[], "assets":[], "accounts":[], "cashAccounts":[], "transactions":[]}
 ```
 
 - `reportingCurrency` é **configuração de apresentação** (ALD-I18): mudá-la
@@ -428,16 +428,17 @@ testes e a aceitação humana por console exercitam o domínio.
 
 | Suíte | Cobertura |
 |---|---|
-| `tools/alladin_unit_test.py` | U1–U21 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação |
+| `tools/alladin_unit_test.py` | U1–U25 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto |
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
-| `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup |
+| `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup; carimbo v3→v4 com ledger **povoado**; mixed-build do build v3 real sobre agregado v4 |
 
 | `tools/alladin_ui_readonly_test.py` | C3-S1 no app real — quatro destinos locais, cadastro C2 verdadeiro, **zero escrita** e zero materialização do agregado, snapshots desacoplados do read-model, `READ_ONLY` de schema futuro sem normalizar, ausência de conteúdo econômico |
 | `tools/alladin_ui_crud_test.py` | C3-S2 no app real — Account, CashAccount, Instrument e Asset criados e editados pelo modal verdadeiro, com persistência provada em memória **e** em disco; DC-4 pós-criação e a decisão explícita; status ×4 por `setRecordStatus`; write gate na abertura e no submit; patch-diff; taxonomia de avisos; e as quatro preservações do S2-C (rede, vocabulário desconhecido, rascunho e rótulos de lifecycle) |
 
-As cinco acima e o protocolo de geração da base
-(`tools/session_epoch_protocol_test.py`, E1–E16) nos tiers `standard` (37) e
-`full` (48); `fast` tem 4.
+As cinco acima, `tools/alladin_ledger_test.py` (L1–L29: Cash Ledger do S1 e a
+dupla atômica BUY/SELL do S2, com a consistência do par e as guardas de inteiro
+seguro) e o protocolo de geração da base (`tools/session_epoch_protocol_test.py`,
+E1–E16) nos tiers `standard` (38) e `full` (49); `fast` tem 4.
 
 ## Entregas
 
@@ -473,10 +474,11 @@ aconteceu": entrada, saída e movimentação de dinheiro entre custódias. Nada 
 disso — sem papel, sem custo, sem valor de mercado, sem performance.
 
 ```text
-Transaction { transactionId 'aldtx_…' · eventType DEPOSIT|WITHDRAWAL|TRANSFER|REVERSAL
-              status POSTED|REVERSED · flowScope INTERNAL|EXTERNAL
-              amount > 0 (magnitude) · currency · effectiveAt · recordedAt
+Transaction { transactionId 'aldtx_…' · eventType DEPOSIT|WITHDRAWAL|TRANSFER|BUY|SELL|REVERSAL
+              status POSTED|REVERSED · flowScope? INTERNAL|EXTERNAL (só eventos de fluxo)
+              amount > 0 · currency · effectiveAt · recordedAt
               cashAccountId? · sourceCashAccountId? · destinationCashAccountId?
+              instrumentId? · quantity? (string decimal canônica) · fees? · taxes? (trade)
               reversalOf? · reversedEventType? · dedupeKey? · note? }
 ```
 
@@ -491,10 +493,14 @@ canônico que a suíte prova somando os dois saldos antes e depois.
 "um DEPOSIT de −100" impossível de escrever. Se o sinal morasse no valor, todo
 leitor teria de reinterpretar a combinação sinal × tipo.
 
-*`flowScope` é perímetro, não direção.* `EXTERNAL` cruza a fronteira do
-patrimônio consolidado; `INTERNAL` fica dentro dela. É **persistido** e validado
-contra o `eventType`: um registro que divergir da tabela é **dado inválido**,
-jamais corrigido em silêncio na leitura.
+*`flowScope` é perímetro, não direção — e é condicional por família (S2).*
+`EXTERNAL` cruza a fronteira do patrimônio consolidado; `INTERNAL` fica dentro
+dela. É **persistido** e validado contra o `eventType`: um registro que divergir
+da tabela é **dado inválido**, jamais corrigido em silêncio na leitura. BUY/SELL
+**não possuem** flowScope: trocar caixa por papel é mudança de composição dentro
+da mesma custódia, não fluxo de capital pelo perímetro — a **ausência** é tão
+contratual quanto a presença, e um trade carimbado de fluxo é dado adulterado.
+O reversal espelha a presença/ausência do original.
 
 *Correção é reversão, não edição.* `POSTED` é economicamente imutável. Reverter
 cria um fato NOVO, com data própria, que copia e inverte o que é econômico —
@@ -530,17 +536,69 @@ conta, nunca a reescrita do significado da que existe (`ALD_CASHACCOUNT_COM_LANC
 *Ordem é econômica.* A leitura ordena por `(effectiveAt, recordedAt,
 transactionId)` — nunca pela ordem do array, que é acidente de inserção.
 
-### `schemaVersion` 2 → 3: uma barreira de escrita, não uma migração de dados
+## ALD-03 S2 — BUY/SELL: a dupla atômica papel↔caixa
 
-A migração v2→v3 só cria a coleção quando ela não existe. O carimbo serve para
-outra coisa: sondado empiricamente, um build v2 **preserva** `transactions` que
-não conhece — mas **continua escrevendo** no agregado, podendo violar amarras do
-ledger que ignora. Com v3, esse build cai em `READ_ONLY_FUTURE_SCHEMA`. As três
-portas passam a concordar: o **DEFAULTS nasce em v3** (base nova é íntegra sem
-depender de migração), a **migração** leva o legado até v3, e o **write gate**
-fecha para qualquer versão acima. Coleção ausente nasce vazia; coleção existente
-é preservada; forma inválida **não** é substituída por `[]` — apagar história
-econômica para consertar a forma seria a pior troca possível.
+Um trade é **um registro com duas pernas**, no mesmo desenho do TRANSFER:
+
+```text
+BUY   papel = +quantity   caixa = −(amount + fees + taxes)
+SELL  papel = −quantity   caixa = +(amount − fees − taxes)   ← pode ser 0 ou negativo
+```
+
+"Debitou o caixa e o papel não entrou" é **irrepresentável**. `amount` é o valor
+bruto do trade; `fees`/`taxes` são componentes opcionais na entrada e **sempre
+presentes** na forma persistida (default 0) — o impacto de caixa é derivado por
+fórmula fixa, e um `FEE` avulso do mesmo fato não existe (ALD-I36: fee associado
+jamais vira segundo impacto standalone). SELL com líquido negativo é legítimo:
+fail-closed recusa dado **inconsistente**, não fato incomum. O exemplo canônico
+da spec fecha: DEPOSIT 10000 → BUY 3000/fee 10 → saldo **6990**.
+
+*`quantity` é string decimal canônica* — positiva, sem sinal, expoente, zeros à
+esquerda ou zeros finais na fração: **uma grafia por valor**, de modo que
+igualdade de valor seja igualdade de string, sem aritmética decimal neste ciclo.
+O teto de 64 caracteres é proteção técnica de representação, não política de
+precisão (rounding por classe segue pendente na spec §29). Nenhuma posição,
+holding ou soma de quantidade nasce aqui — isso é o Position Engine (ALD-04).
+
+*Vínculos e moeda.* BUY/SELL exigem `Instrument` existente e `ACTIVE`, e
+`instrument.currency == cashAccount.currency == tx.currency` — câmbio implícito
+é recusa, como no TRANSFER. A custódia do papel deriva de
+`cashAccount.accountId`; não há campo próprio neste ciclo. `instrumentFamily`
+**congela** na primeira referência econômica (`ALD_INSTRUMENT_COM_LANCAMENTOS`):
+trocar CRYPTO→EQUITY_LIKE reinterpretaria a quantidade de todos os trades.
+`currency` do instrumento já era imutável desde o C2; `symbol` segue editável
+com `symbolHistory`.
+
+*O par reversal↔original é julgado na LEITURA (MC-S2-1).* A escrita constrói o
+reversal copiando a economia byte-igual — mas escrita correta não prova leitura
+íntegra: um reversal adulterado depois de persistido (amount 10000→9000)
+continuaria formalmente legível e o saldo sairia errado com cara de válido.
+`aldReversalConsistente` confere tipo, valor, moeda, refs (presença E valor),
+campos de trade e o espelho de flowScope; qualquer divergência é
+`ALD_REVERSAL_INCONSISTENTE` → qualidade BLOCKING → saldo indisponível.
+
+*Inteiro seguro nos dois sentidos (MC-S2-2).* A escrita recusa componentes cujo
+delta composto saia de 2⁵³ (`ALD_EFEITO_MONETARIO_FORA_DO_INTEIRO_SEGURO`), e o
+acumulador do saldo guarda **a cada soma** — um total que atravessa a região
+insegura e "volta" é número corrompido com cara de são; a checagem só no fim
+aprovaria exatamente esse caso.
+
+### `schemaVersion`: barreiras de escrita, não migrações de dados
+
+A cadeia é v1→v2→v3→v4, um passo por versão, e os dois últimos carimbos têm a
+mesma natureza. **v2→v3** (S1) cria a coleção `transactions` quando ausente;
+sondado empiricamente, um build v2 **preserva** o que não conhece mas **continua
+escrevendo**, podendo violar amarras do ledger que ignora. **v3→v4** (S2) é
+carimbo **puro** — nenhum fato transformado: o build v3 lê BUY/SELL como
+ilegíveis (saldo BLOCKING, reversão recusada — fail-closed correto), mas suas
+portas cadastrais ignoram o congelamento de `instrumentFamily`. Com o carimbo,
+esse build cai em `READ_ONLY_FUTURE_SCHEMA`. As três portas concordam: o
+**DEFAULTS nasce em v4**, a **migração** leva o legado até v4, e o **write
+gate** fecha acima disso. Coleção ausente nasce vazia; existente é preservada
+(provado com ledger **povoado** — a lição do M11); forma inválida **não** é
+substituída por `[]` — apagar história econômica para consertar a forma seria a
+pior troca possível. O mixed-build é provado contra o código **real** do build
+v3 (`git archive` de `4057a39`).
 
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 

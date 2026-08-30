@@ -21,7 +21,7 @@
 // como PF_MONTH_RE duplica o FX: o módulo de domínio precisa funcionar isolado
 // no harness unitário. As duas constantes DEVEM permanecer iguais — o teste de
 // integração prova o comportamento conjunto (fail-closed).
-const ALD_SUPPORTED_SCHEMA_VERSION = 3;
+const ALD_SUPPORTED_SCHEMA_VERSION = 4;
 
 // ---- moedas: schema extensível ≠ runtime universal --------------------------
 // O SCHEMA aceita qualquer código ISO 4217 (nenhuma lista de moedas é contrato
@@ -449,6 +449,17 @@ function aldActEditInstrument(instrumentId, mudancas){
     // Moeda é identidade econômica do instrumento: trocá-la reinterpretaria todo
     // montante futuro. Correção exige novo cadastro, não edição silenciosa.
     if('currency' in m && m.currency!==alvo.currency) return { ok:false, erro:'ALD_CURRENCY_IMUTAVEL' };
+    // ALD-03 S2: a família congela na primeira referência econômica. Trocar
+    // CRYPTO→EQUITY_LIKE com trades registrados reinterpretaria a semântica da
+    // quantidade de TODOS eles. Antes do primeiro trade, curadoria é livre —
+    // depois, correção exige novo cadastro. (currency já é imutável sempre;
+    // symbol continua editável, com symbolHistory preservando o passado.)
+    if('instrumentFamily' in m && m.instrumentFamily!==alvo.instrumentFamily){
+      for(const tx of (Array.isArray(a.transactions)?a.transactions:[])){
+        if(aldRegistroLegivel(tx) && tx.instrumentId===instrumentId)
+          return { ok:false, erro:'ALD_INSTRUMENT_COM_LANCAMENTOS' };
+      }
+    }
     const cand = { ...alvo, ...m, currency:alvo.currency };
     const r = aldNormalizeInstrumentFields(cand);
     if(!r.ok) return { ok:false, erro:r.erro };
@@ -615,20 +626,47 @@ function aldActSetRecordStatus(tipo, id, status){
 // registro com origem e destino, não dois lançamentos correlacionados. Assim o
 // cenário "debitou a origem e o destino não recebeu" não é evitado por controle
 // de fluxo — ele é IRREPRESENTÁVEL no schema.
-const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','REVERSAL']; // FECHADO
+const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','REVERSAL']; // FECHADO
 const ALD_TX_STATUS    = ['POSTED','REVERSED'];                          // FECHADO (DRAFT: fase própria)
 const ALD_FLOW_SCOPES  = ['INTERNAL','EXTERNAL'];                        // FECHADO
 // flowScope é RELAÇÃO COM O PERÍMETRO, não direção (DH-03-1): EXTERNAL cruza a
 // fronteira do patrimônio consolidado, INTERNAL move entre custódias que já são
 // nossas. Por isso a transferência não é aporte — e é persistido, não inferido:
 // registro que divergir desta tabela é DADO INVÁLIDO, jamais corrigido em silêncio.
+//
+// BUY/SELL NÃO estão na tabela de propósito (DH-S2-9): trocar caixa por papel é
+// mudança de COMPOSIÇÃO dentro da mesma custódia, não fluxo de capital pelo
+// perímetro. Um trade não possui flowScope — a AUSÊNCIA é contratual, e um
+// trade carimbado de fluxo é dado adulterado, tão ilegível quanto um TRANSFER
+// dizendo EXTERNAL.
 const ALD_FLOW_POR_EVENTO = { DEPOSIT:'EXTERNAL', WITHDRAWAL:'EXTERNAL', TRANSFER:'INTERNAL' };
-// Direção do efeito por evento, na perspectiva de cada conta referenciada.
-const ALD_EFEITO = {
-  DEPOSIT:    (tx, id) => (tx.cashAccountId===id ? +1 : 0),
-  WITHDRAWAL: (tx, id) => (tx.cashAccountId===id ? -1 : 0),
-  TRANSFER:   (tx, id) => (tx.sourceCashAccountId===id ? -1 : (tx.destinationCashAccountId===id ? +1 : 0)),
+// Delta de caixa por evento, na perspectiva de cada conta referenciada.
+// ALD-03 S2: deixou de ser multiplicador ±1 porque o delta de um trade é
+// COMPOSTO — BUY drena amount+fees+taxes; SELL entrega amount−fees−taxes, que
+// pode legitimamente ser zero ou negativo (venda pequena com custo maior que o
+// produto). Recusar isso seria recusar um fato real por ser incomum.
+const ALD_CASH_DELTA = {
+  DEPOSIT:    (tx, id) => (tx.cashAccountId===id ? +tx.amount : 0),
+  WITHDRAWAL: (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),
+  TRANSFER:   (tx, id) => (tx.sourceCashAccountId===id ? -tx.amount : (tx.destinationCashAccountId===id ? +tx.amount : 0)),
+  BUY:        (tx, id) => (tx.cashAccountId===id ? -(tx.amount+tx.fees+tx.taxes) : 0),
+  SELL:       (tx, id) => (tx.cashAccountId===id ? +(tx.amount-tx.fees-tx.taxes) : 0),
 };
+// A perna de papel de BUY/SELL (+quantity/−quantity) NÃO tem engine neste
+// ciclo: quantity é fato persistido e verificável, e quem o agregará é o
+// Position Engine (ALD-04). Somar aqui exigiria aritmética decimal que este
+// slice deliberadamente não tem.
+
+// Forma canônica de quantity: string decimal positiva, uma grafia por valor —
+// sem sinal, expoente, zeros à esquerda ou zeros finais na fração. A igualdade
+// de VALOR vira igualdade de STRING, e é disso que a consistência do reversal
+// depende sem precisar de aritmética. O teto de 64 chars é proteção TÉCNICA de
+// representação, não política econômica de precisão (rounding por classe é
+// decisão pendente da spec §29).
+const ALD_QUANTITY_RE = /^(0|[1-9][0-9]*)(\.[0-9]*[1-9])?$/;
+function aldQuantityValida(q){
+  return typeof q==='string' && q!=='0' && q.length<=64 && ALD_QUANTITY_RE.test(q);
+}
 
 function aldTxRefsDoEvento(tipo){
   return tipo==='TRANSFER' ? ['sourceCashAccountId','destinationCashAccountId'] : ['cashAccountId'];
@@ -640,19 +678,40 @@ function aldTxLegivel(tx){
   if(!aldRegistroLegivel(tx)) return false;
   if(!aldInEnum(tx.eventType, ALD_EVENT_TYPES)) return false;
   if(!aldInEnum(tx.status, ALD_TX_STATUS)) return false;
-  if(!aldInEnum(tx.flowScope, ALD_FLOW_SCOPES)) return false;
   if(typeof tx.amount!=='number' || !Number.isSafeInteger(tx.amount) || tx.amount<=0) return false;
   if(typeof tx.currency!=='string' || !ALD_CURRENCY_RE.test(tx.currency)) return false;
   if(typeof tx.effectiveAt!=='string' || !ALD_DATE_RE.test(tx.effectiveAt)) return false;
   if(typeof tx.transactionId!=='string' || !tx.transactionId) return false;
-  const tipoEfetivo = tx.eventType==='REVERSAL' ? null : tx.eventType;
-  if(tipoEfetivo && ALD_FLOW_POR_EVENTO[tipoEfetivo]!==tx.flowScope) return false;
   if(tx.eventType==='REVERSAL'){
     if(typeof tx.reversalOf!=='string' || !tx.reversalOf) return false;
+    // reversedEventType é obrigatório e nunca aponta para outro REVERSAL: sem
+    // ele não há como saber qual contrato de flowScope o espelho deve seguir.
+    if(!aldInEnum(tx.reversedEventType, ALD_EVENT_TYPES) || tx.reversedEventType==='REVERSAL') return false;
   }else if(tx.reversalOf!==undefined) return false;
-  const refs = aldTxRefsDoEvento(tx.eventType==='REVERSAL' ? (tx.reversedEventType||'') : tx.eventType);
+  // flowScope é condicional por FAMÍLIA (DH-S2-9): evento de fluxo exige o
+  // valor exato da tabela; trade exige AUSÊNCIA — presença é adulteração. O
+  // reversal segue o contrato do tipo que reverte.
+  const tipoBase = tx.eventType==='REVERSAL' ? tx.reversedEventType : tx.eventType;
+  const fsEsperado = ALD_FLOW_POR_EVENTO[tipoBase];
+  if(fsEsperado!==undefined){
+    if(tx.flowScope!==fsEsperado) return false;
+  }else if(Object.prototype.hasOwnProperty.call(tx,'flowScope')) return false;
+  if((tipoBase==='BUY'||tipoBase==='SELL') && tx.eventType!=='REVERSAL'){
+    if(typeof tx.instrumentId!=='string' || !tx.instrumentId) return false;
+    if(!aldQuantityValida(tx.quantity)) return false;
+    if(!Number.isSafeInteger(tx.fees) || tx.fees<0) return false;
+    if(!Number.isSafeInteger(tx.taxes) || tx.taxes<0) return false;
+    // MC-S2-2 vale também na LEITURA: componentes individualmente válidos podem
+    // compor um delta fora do inteiro seguro — registro assim é ilegível, nunca
+    // um número plausível.
+    const delta = tipoBase==='BUY' ? tx.amount+tx.fees+tx.taxes : tx.amount-tx.fees-tx.taxes;
+    if(!Number.isSafeInteger(delta)) return false;
+  }
+  // Os campos econômicos de um REVERSAL (inclusive os de trade) são julgados
+  // pela consistência cruzada com o original (aldReversalConsistente): a
+  // legibilidade de UM registro não enxerga o par.
   if(tx.eventType!=='REVERSAL'){
-    for(const r of refs){ if(typeof tx[r]!=='string' || !tx[r]) return false; }
+    for(const r of aldTxRefsDoEvento(tx.eventType)){ if(typeof tx[r]!=='string' || !tx[r]) return false; }
     if(tx.eventType==='TRANSFER' && tx.sourceCashAccountId===tx.destinationCashAccountId) return false;
   }
   return true;
@@ -661,16 +720,48 @@ function aldTxLegivel(tx){
 // original e inverte o sinal — o original permanece contando, e a soma dos dois
 // dá zero. "REVERSED" diz que o fato foi revertido depois, não que ele nunca
 // aconteceu: apagar o passado seria reescrever a história, não corrigi-la.
+// MC-S2-1 — consistência cruzada do par original ↔ reversal, na INTERPRETAÇÃO
+// do agregado. A porta de escrita constrói o reversal correto, mas escrita
+// correta não prova leitura íntegra: um reversal adulterado depois de persistido
+// (amount 10000→9000) continuaria formalmente legível e o saldo sairia errado
+// com cara de válido. Aqui, qualquer divergência econômica entre o par torna o
+// saldo INDISPONÍVEL — nunca corrigido em silêncio.
+// Próprios do reversal, fora da igualdade: transactionId, effectiveAt,
+// recordedAt, dedupeKey, note, status.
+function aldReversalConsistente(rev, orig){
+  if(rev.reversedEventType!==orig.eventType) return false;
+  if(rev.amount!==orig.amount) return false;
+  if(rev.currency!==orig.currency) return false;
+  for(const r of ['cashAccountId','sourceCashAccountId','destinationCashAccountId']){
+    const temRev = Object.prototype.hasOwnProperty.call(rev, r);
+    if(temRev!==Object.prototype.hasOwnProperty.call(orig, r)) return false;
+    if(temRev && rev[r]!==orig[r]) return false;
+  }
+  if(orig.eventType==='BUY'||orig.eventType==='SELL'){
+    if(rev.instrumentId!==orig.instrumentId) return false;
+    if(rev.quantity!==orig.quantity) return false;   // igualdade de STRING (forma canônica)
+    if(rev.fees!==orig.fees) return false;
+    if(rev.taxes!==orig.taxes) return false;
+  }
+  const fsRev = Object.prototype.hasOwnProperty.call(rev,'flowScope');
+  if(fsRev!==Object.prototype.hasOwnProperty.call(orig,'flowScope')) return false;
+  if(fsRev && rev.flowScope!==orig.flowScope) return false;
+  return true;
+}
+// Delta de caixa de um registro sobre UMA conta. Para o REVERSAL, o delta é o
+// NEGATIVO do delta do original — depois que a consistência do par foi provada,
+// o original é a única fonte necessária, e divergência já virou BLOCKING antes
+// de chegar aqui.
 function aldTxEfeito(tx, cashAccountId, porId){
   if(tx.eventType!=='REVERSAL'){
-    const f = ALD_EFEITO[tx.eventType];
-    return f ? f(tx, cashAccountId)*tx.amount : 0;
+    const f = ALD_CASH_DELTA[tx.eventType];
+    return f ? f(tx, cashAccountId) : 0;
   }
   const orig = porId[tx.reversalOf];
   if(!orig) return null;                       // reversal órfão: não classificável
-  const f = ALD_EFEITO[orig.eventType];
+  const f = ALD_CASH_DELTA[orig.eventType];
   if(!f) return null;
-  return -f(orig, cashAccountId)*tx.amount;
+  return -f(orig, cashAccountId);
 }
 function aldTxOrdenar(lista){
   return lista.slice().sort((a,b)=>
@@ -697,7 +788,15 @@ function aldCashAptaParaLancamento(a, id){
 }
 function aldNormalizeTransactionFields(a, d){
   d = d || {};
-  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
+  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
+  // Trade nao possui flowScope valido NENHUM — o chamador que o declara esta
+  // afirmando uma semantica economica impossivel, e apagar a declaracao em
+  // silencio mascararia o erro do produtor. Nos eventos de fluxo o dominio tem
+  // resposta propria e sempre deriva; aqui nao ha o que derivar: RECUSA. A
+  // regra e de PRESENCA ({flowScope: undefined} tambem recusa).
+  if((d.eventType==='BUY'||d.eventType==='SELL') &&
+     Object.prototype.hasOwnProperty.call(d,'flowScope'))
+    return { ok:false, erro:'ALD_FLOW_SCOPE_NAO_PERMITIDO_EM_TRADE' };
   if(typeof d.amount!=='number' || !Number.isSafeInteger(d.amount) || d.amount<=0) return { ok:false, erro:'ALD_AMOUNT_INVALIDO' };
   if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
   const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
@@ -727,8 +826,46 @@ function aldNormalizeTransactionFields(a, d){
   }
   const moeda = contas[refs[0]].currency;
   if(d.currency!==undefined && d.currency!==moeda) return { ok:false, erro:'ALD_CURRENCY_DIVERGE_DA_CONTA' };
-  const valor = { eventType:d.eventType, status:'POSTED', flowScope:ALD_FLOW_POR_EVENTO[d.eventType],
+  const valor = { eventType:d.eventType, status:'POSTED',
     amount:d.amount, currency:moeda, effectiveAt:d.effectiveAt };
+  // flowScope só existe para evento de FLUXO (DH-S2-9): a tabela não conhece
+  // BUY/SELL e a propriedade nem sequer é criada — presença/ausência é contrato.
+  const fs = ALD_FLOW_POR_EVENTO[d.eventType];
+  if(fs!==undefined) valor.flowScope = fs;
+  if(d.eventType==='BUY'||d.eventType==='SELL'){
+    // A dupla atômica papel↔caixa: UM registro, duas pernas. O instrumento
+    // precisa existir e estar apto — fato antigo nunca depende do status
+    // presente, mas lançamento NOVO exige cadastro vivo (espelho da regra de
+    // CashAccount do S1).
+    if(typeof d.instrumentId!=='string' || !d.instrumentId) return { ok:false, erro:'ALD_REFERENCIA_AUSENTE:instrumentId' };
+    const inst = aldFindIn(a,'instruments','instrumentId',d.instrumentId);
+    if(!inst) return { ok:false, erro:'ALD_INSTRUMENT_NAO_ENCONTRADO' };
+    if(inst.recordStatus!=='ACTIVE') return { ok:false, erro:'ALD_INSTRUMENT_INATIVO' };
+    // Sem câmbio implícito: liquidar um instrumento numa conta de outra moeda
+    // exigiria taxa que ninguém registrou — RECUSA, como no TRANSFER do S1.
+    if(inst.currency!==moeda) return { ok:false, erro:'ALD_INSTRUMENT_MOEDA_DIVERGE_DA_CONTA' };
+    if(!aldQuantityValida(d.quantity)) return { ok:false, erro:'ALD_QUANTITY_INVALIDA' };
+    // fees/taxes: opcionais na ENTRADA, obrigatórios na forma PERSISTIDA
+    // (DH-S2-10) — uma única grafia, sem que consumidor futuro distinga
+    // "sem taxa" de "taxa zero".
+    let fees = 0, taxes = 0;
+    if(d.fees!==undefined){
+      if(typeof d.fees!=='number' || !Number.isSafeInteger(d.fees) || d.fees<0) return { ok:false, erro:'ALD_FEES_INVALIDAS' };
+      fees = d.fees;
+    }
+    if(d.taxes!==undefined){
+      if(typeof d.taxes!=='number' || !Number.isSafeInteger(d.taxes) || d.taxes<0) return { ok:false, erro:'ALD_TAXES_INVALIDOS' };
+      taxes = d.taxes;
+    }
+    // MC-S2-2: componentes individualmente válidos podem compor delta fora do
+    // inteiro seguro (amount=1, fees=MAX) — recusa na porta, nos DOIS sentidos.
+    const delta = d.eventType==='BUY' ? d.amount+fees+taxes : d.amount-fees-taxes;
+    if(!Number.isSafeInteger(delta)) return { ok:false, erro:'ALD_EFEITO_MONETARIO_FORA_DO_INTEIRO_SEGURO' };
+    valor.instrumentId = d.instrumentId;
+    valor.quantity = d.quantity;
+    valor.fees = fees;
+    valor.taxes = taxes;
+  }
   for(const r of refs) valor[r]=d[r];
   if(dedupe) valor.dedupeKey=dedupe;
   if(nota.valor) valor.note=nota.valor;
@@ -772,13 +909,25 @@ function aldActReverseTransaction(originalId, dados){
       if(aldTxDedupeExiste(a, dedupe, null)) return { ok:false, erro:'ALD_DEDUPE_KEY_DUPLICADA' };
     }
     for(const k of ['amount','currency','flowScope','eventType','cashAccountId',
-                    'sourceCashAccountId','destinationCashAccountId']){
+                    'sourceCashAccountId','destinationCashAccountId',
+                    'instrumentId','quantity','fees','taxes']){
       if(Object.prototype.hasOwnProperty.call(d,k)) return { ok:false, erro:'ALD_CAMPO_ECONOMICO_NAO_INFORMAVEL:'+k };
     }
     const rec = { transactionId:aldId('aldtx'), eventType:'REVERSAL', status:'POSTED',
-      flowScope:orig.flowScope, amount:orig.amount, currency:orig.currency,
+      amount:orig.amount, currency:orig.currency,
       effectiveAt:d.effectiveAt, recordedAt:aldNowISO(), reversalOf:originalId,
       reversedEventType:orig.eventType };
+    // flowScope espelha PRESENÇA, não só valor (DH-S2-9): original de fluxo →
+    // copia; original de trade → a propriedade nem é criada. `{flowScope:
+    // orig.flowScope}` com original sem o campo fabricaria uma propriedade
+    // presente com undefined — presença/ausência é contrato, não detalhe.
+    if(Object.prototype.hasOwnProperty.call(orig,'flowScope')) rec.flowScope = orig.flowScope;
+    if(orig.eventType==='BUY'||orig.eventType==='SELL'){
+      rec.instrumentId = orig.instrumentId;
+      rec.quantity = orig.quantity;       // string copiada byte-idêntica
+      rec.fees = orig.fees;
+      rec.taxes = orig.taxes;
+    }
     for(const r of aldTxRefsDoEvento(orig.eventType)) rec[r]=orig[r];
     if(dedupe) rec.dedupeKey=dedupe;
     if(nota.valor) rec.note=nota.valor;
@@ -820,6 +969,7 @@ const ALD_LEITURA_CAMPOS = Object.freeze({
   cashAccounts: Object.freeze(['cashAccountId','accountId','currency','recordStatus','createdAt']),
   transactions: Object.freeze(['transactionId','eventType','status','flowScope','amount','currency',
     'effectiveAt','recordedAt','cashAccountId','sourceCashAccountId','destinationCashAccountId',
+    'instrumentId','quantity','fees','taxes',
     'reversalOf','reversedEventType','dedupeKey','note']),
 });
 function aldFreezeDeep(v){
@@ -867,16 +1017,28 @@ function aldSaldoDeCaixa(cashAccountId){
   let total = 0, consideradas = 0;
   for(const t of lista){
     if(!aldTxLegivel(t)){ issues.push('ALD_TRANSACAO_ILEGIVEL'); continue; }
+    // MC-S2-1: a consistência do par vem ANTES do efeito. A escrita constrói o
+    // reversal correto, mas o saldo é calculado sobre o que está PERSISTIDO —
+    // e um par divergente é mentira no ledger, jamais um número.
+    if(t.eventType==='REVERSAL'){
+      const orig = porId[t.reversalOf];
+      if(orig && !aldReversalConsistente(t, orig)){
+        issues.push('ALD_REVERSAL_INCONSISTENTE:'+t.transactionId); continue;
+      }
+    }
     const efeito = aldTxEfeito(t, cashAccountId, porId);
     if(efeito===null){ issues.push('ALD_REVERSAL_ORFAO:'+t.transactionId); continue; }
     if(efeito===0) continue;
     if(t.currency!==conta.currency){ issues.push('ALD_MOEDA_DIVERGENTE:'+t.transactionId); continue; }
-    total += efeito; consideradas++;
+    // MC-S2-2: a guarda é POR PASSO. Um acumulador que atravessa 2^53 já perdeu
+    // precisão, e um total que "volta" à faixa segura é número corrompido com
+    // cara de são — a checagem só no fim aprovaria exatamente esse caso.
+    const proximo = total + efeito;
+    if(!Number.isSafeInteger(proximo)){ issues.push('ALD_SOMA_FORA_DO_INTEIRO_SEGURO'); continue; }
+    total = proximo; consideradas++;
   }
   if(issues.length) return Object.freeze({ available:false, amount:null, currency:conta.currency,
     quality:'BLOCKING', issues:Object.freeze(issues.slice(0,20)), consideradas:0 });
-  if(!Number.isSafeInteger(total)) return Object.freeze({ available:false, amount:null,
-    currency:conta.currency, quality:'BLOCKING', issues:Object.freeze(['ALD_SOMA_FORA_DO_INTEIRO_SEGURO']), consideradas:0 });
   return Object.freeze({ available:true, amount:total, currency:conta.currency,
     quality:'OK', issues:Object.freeze([]), consideradas });
 }

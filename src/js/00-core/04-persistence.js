@@ -1034,7 +1034,7 @@ function personalFinanceNormalizeState(){
 // ALD_SUPPORTED_SCHEMA_VERSION em 10-domain/13-alladin.js (o módulo de domínio
 // roda isolado no harness unitário). As duas DEVEM permanecer iguais — o teste
 // de integração afirma a igualdade. Idem aldSchemaVersionLegivel.
-const ALLADIN_SCHEMA_VERSION=3;
+const ALLADIN_SCHEMA_VERSION=4;
 function alladinSchemaVersionLegivel(v){
   if(Number.isInteger(v)) return v;
   if(typeof v==='string' && /^[0-9]+$/.test(v.trim())) return parseInt(v.trim(),10);
@@ -1084,6 +1084,14 @@ function alladinNormalizeState(){
       if(Array.isArray(a.transactions)){ a.schemaVersion=3; continue; }
       break;
     }
+    // v3 → v4 (ALD-03 S2): CARIMBO PURO. Nenhum fato econômico é transformado —
+    // BUY/SELL não exigem estrutura nova, só vocabulário que o build v3 não tem.
+    // O carimbo é a mesma barreira de escrita do salto anterior: um build v3
+    // preserva o que não conhece e falha fechado na LEITURA econômica, mas
+    // continua ESCREVENDO — e as portas cadastrais dele ignoram o congelamento
+    // de instrumentFamily que o S2 institui. Com v4, esse build cai em
+    // READ_ONLY_FUTURE_SCHEMA.
+    if(a.schemaVersion===3){ a.schemaVersion=4; continue; }
     break;
   }
   if(typeof a.reportingCurrency!=='string' || !a.reportingCurrency) a.reportingCurrency=def.reportingCurrency;

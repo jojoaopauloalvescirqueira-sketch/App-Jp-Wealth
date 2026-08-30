@@ -21,7 +21,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 3, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 4, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -189,12 +189,12 @@ def main() -> int:
         # executar fn, sem log e sem save (integridade > disponibilidade)
         def u8():
             r = ev("""() => {
-              S.alladin.schemaVersion = 4;
+              S.alladin.schemaVersion = 5;
               window.__stub.saves = 0; window.__stub.logs = [];
               let fnRodou = false;
               const res = aldMutate('teste_ato', () => { fnRodou = true; return {recordId: 'x'}; });
               const compat = JPWAlladin.compat();
-              S.alladin.schemaVersion = 2;
+              S.alladin.schemaVersion = 4;
               return { res, fnRodou, saves: window.__stub.saves,
                        logs: window.__stub.logs.length, compat };
             }""")
@@ -203,19 +203,19 @@ def main() -> int:
             if r["fnRodou"] or r["saves"] != 0 or r["logs"] != 0:
                 falhas.append(f"U8 vazamento sob bloqueio: fn={r['fnRodou']} saves={r['saves']} logs={r['logs']}")
             c = r["compat"]
-            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 4
-                    and c["supportedSchemaVersion"] == 3 and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
+            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 5
+                    and c["supportedSchemaVersion"] == 4 and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"U8 compat: {c!r}")
             # versao futura como STRING de digitos ('2') tambem e fail-closed
             r2 = ev("""() => {
-              S.alladin.schemaVersion = '4';
+              S.alladin.schemaVersion = '5';
               const compat = JPWAlladin.compat();
               const ato = aldMutate('probe', () => ({recordId: 'x'}));
-              S.alladin.schemaVersion = 3;
+              S.alladin.schemaVersion = 4;
               return { readOnly: compat.readOnly, stored: compat.storedSchemaVersion,
                        erro: ato.erro };
             }""")
-            if not (r2["readOnly"] is True and r2["stored"] == 4
+            if not (r2["readOnly"] is True and r2["stored"] == 5
                     and r2["erro"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"U8 versao futura em string nao bloqueou: {r2!r}")
         executar(falhas, "U8", u8)
@@ -265,7 +265,7 @@ def main() -> int:
         # ---- C2 · MODELO CADASTRAL -----------------------------------------
 
         def reset_agregado():
-            ev("""() => { S.alladin = { schemaVersion: 3, reportingCurrency: 'BRL',
+            ev("""() => { S.alladin = { schemaVersion: 4, reportingCurrency: 'BRL',
                  instruments: [], assets: [], accounts: [], cashAccounts: [], transactions: [] };
                  window.__stub.logs = []; window.__stub.saves = 0; }""")
 
@@ -552,7 +552,7 @@ def main() -> int:
                 JPWAlladin.cadastro.setRecordStatus('account', 'qualquer', 'INACTIVE'),
               ];
               const igual = JSON.stringify(S.alladin) === antes;
-              S.alladin.schemaVersion = 2;
+              S.alladin.schemaVersion = 4;
               return { erros:res.map(x => x.erro), saves:window.__stub.saves, igual };
             }""")
             if r["erros"] != ["READ_ONLY_FUTURE_SCHEMA"] * 4:
@@ -687,6 +687,64 @@ def main() -> int:
                     falhas.append(f"U23 [{rotulo}]: o agregado nao foi restaurado")
         executar(falhas, "U23", u23)
 
+        # ---- ALD-03 S2 · U24/U25: as duas funcoes novas, sondadas DIRETO ----
+        # No caminho do saldo, o pinning por tabela do aldTxLegivel mascara o
+        # espelho do par (registro divergente ja cai como ILEGIVEL). So a sonda
+        # unitaria de aldReversalConsistente prova a logica do espelho em si.
+
+        # U24 — aldQuantityValida: uma grafia por valor, teto tecnico de 64
+        def u24():
+            r = ev("""() => ({
+              validas:   ['1','1.5','0.005','100.01','9'.repeat(64)].map(aldQuantityValida),
+              invalidas: ['0','01','1.0','1.50','.5','1.','1e5','-1','+1','1,5','abc','',
+                          '1'.repeat(65)].map(aldQuantityValida),
+              naoString: [1.5, null, undefined, {}].map(aldQuantityValida),
+            })""")
+            if r["validas"] != [True]*5:
+                falhas.append(f"U24 validas: {r['validas']}")
+            if r["invalidas"] != [False]*13 or r["naoString"] != [False]*4:
+                falhas.append(f"U24 invalidas: {r['invalidas']} {r['naoString']}")
+        executar(falhas, "U24", u24)
+
+        # U25 — aldReversalConsistente: espelho campo a campo, presenca inclusa
+        def u25():
+            r = ev("""() => {
+              const origCash = { eventType:'DEPOSIT', amount:100, currency:'BRL',
+                cashAccountId:'c1', flowScope:'EXTERNAL' };
+              const revCash  = { reversedEventType:'DEPOSIT', amount:100, currency:'BRL',
+                cashAccountId:'c1', flowScope:'EXTERNAL' };
+              const origTrade = { eventType:'BUY', amount:1000, currency:'BRL',
+                cashAccountId:'c1', instrumentId:'i1', quantity:'2.5', fees:10, taxes:5 };
+              const revTrade  = { reversedEventType:'BUY', amount:1000, currency:'BRL',
+                cashAccountId:'c1', instrumentId:'i1', quantity:'2.5', fees:10, taxes:5 };
+              const f = aldReversalConsistente;
+              const muta = (base, k, v) => { const c = {...base}; if(v===undefined) delete c[k]; else c[k]=v; return c; };
+              return {
+                cashOk:  f(revCash, origCash),
+                tradeOk: f(revTrade, origTrade),
+                // divergencias unitarias — cada uma deve reprovar sozinha
+                tipo:    f(muta(revCash,'reversedEventType','WITHDRAWAL'), origCash),
+                amount:  f(muta(revCash,'amount',99), origCash),
+                moeda:   f(muta(revCash,'currency','USD'), origCash),
+                ref:     f(muta(revCash,'cashAccountId','c2'), origCash),
+                refSome: f(muta(revCash,'cashAccountId',undefined), origCash),
+                refExtra:f(muta(revCash,'sourceCashAccountId','c9'), origCash),
+                fsValor: f(muta(revCash,'flowScope','INTERNAL'), origCash),
+                fsSome:  f(muta(revCash,'flowScope',undefined), origCash),
+                fsSurge: f(muta(revTrade,'flowScope','INTERNAL'), origTrade),
+                inst:    f(muta(revTrade,'instrumentId','i2'), origTrade),
+                qtd:     f(muta(revTrade,'quantity','2.50'), origTrade),  // STRING: 2.50 != 2.5
+                fees:    f(muta(revTrade,'fees',11), origTrade),
+                taxes:   f(muta(revTrade,'taxes',4), origTrade),
+              };
+            }""")
+            if not (r["cashOk"] and r["tradeOk"]):
+                falhas.append(f"U25: par legitimo reprovado ({r})")
+            ruins = {k: v for k, v in r.items() if k not in ("cashOk","tradeOk") and v is not False}
+            if ruins:
+                falhas.append(f"U25: divergencias aceitas pelo espelho: {sorted(ruins)}")
+        executar(falhas, "U25", u25)
+
         # U21 — cobertura dos edits: identidade e metadados sobrevivem
         def u21():
             reset_agregado()
@@ -730,7 +788,7 @@ def main() -> int:
         for f in falhas:
             print(" -", f)
         return 1
-    print("alladin_unit_test PASS (U1-U21: moeda, ids, gate, owners/isSelf, regimes, cripto, symbolHistory, falha parcial, integridade; Chromium isolado, zero rede, zero DOM)")
+    print("alladin_unit_test PASS (U1-U25: moeda, ids, gate, owners/isSelf, regimes, cripto, symbolHistory, falha parcial, integridade; S2: quantity canonica e espelho do par reversal<->original sondados direto; Chromium isolado, zero rede, zero DOM)")
     return 0
 
 
