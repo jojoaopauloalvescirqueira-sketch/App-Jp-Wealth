@@ -182,6 +182,28 @@ falhas reais **nao** deve imprimir o marcador literal, ou uma falha de produto
 seria reclassificada como caso nao executado. Havendo falha real, ela manda; os
 casos nao executados sao relatados em prosa, sem marcador.
 
+## page.route nao e lacre quando ha Service Worker ativo
+
+O `page.route` do Playwright intercepta as requisicoes da pagina — mas
+requisicoes servidas por um Service Worker passam POR FORA da interceptacao.
+Num app que registra SW (esta PWA registra), o lacre de rede de um harness e
+ilusorio a partir do momento em que o SW controla a pagina — tipicamente apos
+o primeiro reload. Foi exatamente o QA-D1: o stub devolvia `{}` e mesmo assim
+o `updateFxRates` do boot recebia cotacao real, salvava, e o teste acusava a
+superficie errada — 1 em 6 sob carga, porque a corrida era contra a latencia
+da rede verdadeira.
+
+**Regra.** Suite que precisa de rede controlada deve criar o contexto com
+`service_workers="block"` — QUANDO o Service Worker nao e objeto da suite.
+Isso nao e regra universal: a suite que testa o proprio ciclo do SW
+(`service-worker-upgrade`) obviamente nao o bloqueia. O criterio e o de
+sempre: bloquear o que nao esta sob teste, nunca o que esta.
+
+**Alcance.** Outras suites deste repositorio que bootam o app real e fazem
+reload carregam a mesma exposicao TEORICA. Nenhuma falha foi observada nelas —
+e exposicao nao e divida confirmada; fica registrada como conhecimento para o
+dia em que um flake com essa assinatura aparecer.
+
 ## Prove que esta testando os bytes do candidato
 
 Durante QA local foi observado que uma origem em `127.0.0.1` servia bytes

@@ -1,4 +1,37 @@
-# Session Handoff — Alladin · Position Engine publicado
+# Session Handoff — QA-D1 resolvido, CI verde
+
+- Data: 2026-08-31
+- **`main` == `origin/main` == `b7ada805f95ec44501804546ea8389d567bc80bb`**
+- Worktree em `main`, sem trabalho pendente · CI #39 verde (sexto consecutivo)
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| ALD-04 S1 — Position Quantity Engine | `29bb6ff` | publicado · CI #37 verde |
+| Reconciliação pós-ALD-04-S1 | `ad5a696` | publicado · CI #38 verde |
+| **QA-D1 — isolamento do harness × Service Worker** | `b7ada80` | **publicado · CI #39 verde** |
+
+**QA-D1 está RESOLVIDA — era HARNESS BUG.** O `page.route` não intercepta
+fetches servidos por Service Worker; pós-reload, o `updateFxRates` do boot
+buscava cotação real por fora do stub e salvava dentro da janela do caso N. O
+harness agora bloqueia SW no contexto (`service_workers="block"`); o produto
+ficou intacto e a sensibilidade do caso N foi provada por mutação real.
+
+## Dívidas vivas
+
+- **QA-D2** — assert do Galton sob carga do tier; causa não fechada.
+- **Dívida textual** — comentário de `section#alladin` em `index.html` ainda
+  diz "SOMENTE LEITURA".
+
+## Próxima decisão — gate humano
+
+Continuidade do **ALD-04**, **ALD-03-S3** ou **QA-D2**.
+**Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — Position Engine publicado (2026-08-31)
 
 - Data: 2026-08-31
 - **`main` == `origin/main` == `29bb6ff722964dfd283558fc5bd73590a5a5b69b`**
@@ -37,8 +70,6 @@ posições. Contrato em `docs/architecture/ALLADIN.md`.
 - ou dívida técnica como **QA-D1**.
 
 **Nenhuma autorizada por este documento.**
-
-# Histórico
 
 ## Fotografia anterior — BUY/SELL publicado (2026-08-30)
 

@@ -1,6 +1,27 @@
 # Estado atual do projeto
 
-## Alladin — Position Quantity Engine publicado — 2026-08-31
+## QA-D1 resolvido pela causa — 2026-08-31
+
+- Data da fotografia: 2026-08-31
+Source revision representada: `b7ada805f95ec44501804546ea8389d567bc80bb`
+- **`main` == `origin/main` == `b7ada805f95ec44501804546ea8389d567bc80bb`**;
+  worktree em `main`, sem trabalho pendente. CI Run #39 SUCCESS — sexto verde
+  consecutivo (#34–#39).
+- **QA-D1: RESOLVIDA — HARNESS BUG.** Causa raiz provada com sonda positiva e
+  negativa: o `page.route` do Playwright não intercepta fetches servidos por
+  Service Worker; após o reload do caso N, a PWA controlava a página e o
+  `updateFxRates` do boot recebia cotação **real** por fora do stub — `ok>0`,
+  `save()`, e o disco mudava na janela de comparação, acusando falsamente a
+  superfície do Alladin. Correção em `b7ada805`: o harness de
+  `alladin_ui_readonly_test.py` nasce com `service_workers="block"`. O produto
+  não foi tocado — atualizar cotações no boot é comportamento legítimo.
+  Sensibilidade preservada e provada por mutação real (MQ-1); suíte isolada
+  6/6; `full` 50/50 na primeira execução.
+- **Dívidas vivas:** QA-D2 · comentário "SOMENTE LEITURA" em `index.html`.
+- **Próxima decisão — gate humano:** continuidade do ALD-04, `ALD-03-S3` ou
+  QA-D2. **Nenhuma autorizada por este documento.**
+
+## Alladin — Position Quantity Engine publicado — 2026-08-31 (fotografia histórica)
 
 - Data da fotografia: 2026-08-31
 Source revision representada: `29bb6ff722964dfd283558fc5bd73590a5a5b69b`

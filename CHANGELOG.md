@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Harness — isolamento do read-only contra o Service Worker (QA-D1) — 2026-08-31
+
+O flake mais antigo do quality gate morreu pela causa (`b7ada80`). O caso N de
+`alladin_ui_readonly_test.py` acreditava lacrar a rede com `page.route`, mas
+após o reload o Service Worker da PWA controlava a página — e fetches servidos
+por SW **não passam pela interceptação do Playwright**. O `updateFxRates` do
+boot recebia cotação real por fora do stub, salvava, e o disco mudava dentro
+da janela de comparação: falso positivo contra a superfície do Alladin, 1 em 6
+sob carga. Provado com sonda positiva e negativa. A correção é uma linha no
+harness — o contexto nasce com `service_workers="block"` — e o produto ficou
+intacto: atualizar cotações no boot é comportamento legítimo. A sensibilidade
+do caso N foi provada por mutação real (um `save()` transitório na troca de
+view é acusado deterministicamente) e a suíte fechou 6/6 isolada e 50/50 no
+`full`. QA-D1: resolvida como HARNESS BUG.
+
 ### Alladin — posição por quantidade derivada do ledger — 2026-08-31
 
 O Alladin passou a responder "quanto papel há" (`29bb6ff`):
