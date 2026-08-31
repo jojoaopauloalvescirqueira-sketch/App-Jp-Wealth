@@ -6118,7 +6118,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '0e29d2a9dba7f21c';
+const JP_WEALTH_BUILD_ID = '8228420dded9056b';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -32779,13 +32779,17 @@ window.JPWFinOverview = { render: finpesOverviewRender };
 // Sistema Patrimonial e Consolidador de Investimentos do JP Wealth.
 // Contrato: JPW-ALLADIN-SPEC V1.2.1 + ALD-01 Proposal Rev.2 (aprovado 2026-08-20).
 //
-// Duas camadas, ambas cadastrais:
+// Camadas deste módulo:
 //   C1 — INFRAESTRUTURA: dinheiro, moedas, identidade, write gate, validações
 //        base, fail-closed de schema.
 //   C2 — MODELO CADASTRAL: Instrument, Asset, Account, CashAccount — identidade
-//        e ciclo cadastral. UI fica no C3.
-// NENHUM ato econômico: sem transação, valuation, preço, holding, posição,
-// cost basis, performance; nenhuma integração com Trading, Finanças Pessoais ou
+//        e ciclo cadastral. UI cadastral no C3.
+//   ALD-03 — LEDGER ECONÔMICO: DEPOSIT/WITHDRAWAL/TRANSFER (S1) e BUY/SELL
+//        (S2), com REVERSAL e saldo de caixa derivado fail-closed.
+//   ALD-04 S1 — POSITION QUANTITY ENGINE: posição por quantidade DERIVADA do
+//        ledger (nunca persistida), aritmética decimal exata em BigInt.
+// AINDA NÃO EXISTEM: cost basis, valuation, preço, patrimônio monetário, P&L,
+// performance, benchmark; nenhuma integração com Trading, Finanças Pessoais ou
 // Planejamento FX (fronteiras HD-1/HD-2/HD-3 pendentes de decisão humana).
 //
 // DOM-free por contrato (HD-5): este módulo não toca document/window além da
@@ -33820,6 +33824,125 @@ function aldSaldoDeCaixa(cashAccountId){
     quality:'OK', issues:Object.freeze([]), consideradas });
 }
 
+// ============ ALLADIN · ALD-04 S1 — POSITION QUANTITY ENGINE =================
+// Posição por QUANTIDADE, derivada do ledger a cada leitura — nunca persistida
+// (ALD-I27). Identidade: instrumentId + accountId (DH-04-1); a custódia vem
+// EXCLUSIVAMENTE de cashAccount.accountId — o papel vive na corretora, não na
+// conta de caixa, e duas cash accounts do mesmo Account somam UMA posição.
+//
+// Aritmética decimal EXATA por inteiro escalado em BigInt: adição/subtração
+// decimal é fechada — não existe arredondamento possível, então nenhuma
+// política de rounding é criada aqui (spec §29 segue pendente). Number/float
+// jamais tocam valor econômico. BigInt nunca sai destas funções: o DTO carrega
+// apenas a string canônica.
+function aldDecParse(q){
+  const ponto = q.indexOf('.');
+  if(ponto < 0) return { v: BigInt(q), e: 0 };
+  const frac = q.slice(ponto + 1);
+  return { v: BigInt(q.slice(0, ponto) + frac), e: frac.length };
+}
+function aldDecSoma(a, b){
+  const e = a.e > b.e ? a.e : b.e;
+  const va = a.v * (10n ** BigInt(e - a.e));
+  const vb = b.v * (10n ** BigInt(e - b.e));
+  return { v: va + vb, e };
+}
+function aldDecNeg(a){ return { v: -a.v, e: a.e }; }
+function aldDecZero(a){ return a.v === 0n; }
+// Render canônico ASSINADO: fração sem zeros finais, inteiro sem zeros à
+// esquerda (BigInt garante), '-' só quando o valor é negativo. O derivado pode
+// exceder os 64 chars do teto de ENTRADA — o teto é de payload de input, não
+// de verdade econômica: truncar aqui seria inventar um número.
+function aldDecRender(a){
+  let v = a.v;
+  const neg = v < 0n;
+  if(neg) v = -v;
+  let s = v.toString();
+  if(a.e > 0){
+    if(s.length <= a.e) s = '0'.repeat(a.e - s.length + 1) + s;
+    const int = s.slice(0, s.length - a.e);
+    const frac = s.slice(s.length - a.e).replace(/0+$/, '');
+    s = frac ? int + '.' + frac : int;
+  }
+  return (neg && s !== '0') ? '-' + s : s;
+}
+
+// Direção da perna de papel por evento. Eventos só-caixa não estão na tabela.
+const ALD_PAPEL_DELTA = { BUY: 1, SELL: -1 };
+
+function aldPosicoes(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  const issues = [];
+  const bloqueado = (iss) => Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(iss.slice(0,20)), positions:Object.freeze([]) });
+  // FUTURE SCHEMA primeiro, mesmo que todos os registros presentes sejam de
+  // tipos conhecidos: um agregado de versão futura pode carregar semântica que
+  // este build ignora, e afirmar posição sobre ele seria afirmar o que não se
+  // pode provar.
+  if(aldCompat().readOnly) return bloqueado([ALD_READ_ONLY_FUTURE_SCHEMA]);
+  const lista = (a && Array.isArray(a.transactions)) ? a.transactions : [];
+  const porId = {};
+  for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
+  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
+  const porInstrumento = new Map();
+  // A custódia do trade: cashAccountId → CashAccount → accountId → Account.
+  // Cadastro ausente ou moeda divergente entre trade/caixa/instrumento é
+  // classificação insegura ⇒ fail-closed GLOBAL, nunca posição parcial.
+  const custodiaDoTrade = (tx) => {
+    const caixa = aldFindIn(a,'cashAccounts','cashAccountId',tx.cashAccountId);
+    if(!caixa){ issues.push('ALD_CASHACCOUNT_NAO_ENCONTRADA:'+tx.transactionId); return null; }
+    const conta = aldFindIn(a,'accounts','accountId',caixa.accountId);
+    if(!conta){ issues.push('ALD_ACCOUNT_NAO_ENCONTRADA:'+tx.transactionId); return null; }
+    const inst = aldFindIn(a,'instruments','instrumentId',tx.instrumentId);
+    if(!inst){ issues.push('ALD_INSTRUMENT_NAO_ENCONTRADO:'+tx.transactionId); return null; }
+    if(tx.currency!==caixa.currency || inst.currency!==caixa.currency){
+      issues.push('ALD_MOEDA_DIVERGENTE:'+tx.transactionId); return null;
+    }
+    return caixa.accountId;
+  };
+  for(const t of lista){
+    if(!aldTxLegivel(t)){ issues.push('ALD_TRANSACAO_ILEGIVEL'); continue; }
+    let alvo = null, sinal = 0;
+    if(t.eventType==='REVERSAL'){
+      const orig = porId[t.reversalOf];
+      if(!orig || !aldTxLegivel(orig)){ issues.push('ALD_REVERSAL_ORFAO:'+t.transactionId); continue; }
+      // MC-S2-1 antes de qualquer efeito — par divergente é mentira no ledger.
+      if(!aldReversalConsistente(t, orig)){ issues.push('ALD_REVERSAL_INCONSISTENTE:'+t.transactionId); continue; }
+      const d = ALD_PAPEL_DELTA[orig.eventType];
+      if(d===undefined) continue;          // reversal de evento só-caixa: papel zero
+      alvo = orig; sinal = -d;             // neutralização EXATA: quantity byte-igual + soma exata
+    }else{
+      const d = ALD_PAPEL_DELTA[t.eventType];
+      if(d===undefined) continue;          // evento só-caixa: papel zero
+      alvo = t; sinal = d;
+    }
+    const accountId = custodiaDoTrade(alvo);
+    if(accountId===null) continue;         // issue registrada — bloqueio no fim
+    let porConta = porInstrumento.get(alvo.instrumentId);
+    if(!porConta){ porConta = new Map(); porInstrumento.set(alvo.instrumentId, porConta); }
+    let pos = porConta.get(accountId);
+    if(!pos){ pos = { acc:{ v:0n, e:0 }, consideradas:0 }; porConta.set(accountId, pos); }
+    const q = aldDecParse(alvo.quantity);
+    pos.acc = aldDecSoma(pos.acc, sinal < 0 ? aldDecNeg(q) : q);
+    pos.consideradas++;
+  }
+  if(issues.length) return bloqueado(issues);
+  // Ordem DETERMINÍSTICA — instrumentId ASC, depois accountId ASC. A ordem
+  // física do array é acidente de inserção e não pode vazar para o resultado.
+  const positions = [];
+  for(const iid of [...porInstrumento.keys()].sort()){
+    const porConta = porInstrumento.get(iid);
+    for(const aid of [...porConta.keys()].sort()){
+      const pos = porConta.get(aid);
+      if(aldDecZero(pos.acc)) continue;    // DH-04-2: posição zerada sai da coleção
+      positions.push(Object.freeze({ instrumentId:iid, accountId:aid,
+        quantity: aldDecRender(pos.acc), consideradas: pos.consideradas }));
+    }
+  }
+  return Object.freeze({ available:true, quality:'OK', issues:Object.freeze([]),
+    positions:Object.freeze(positions) });
+}
+
   window.JPWAlladin = {
     compat: aldCompat,
     // Leitura cadastral para a UI (C3-S1): snapshots desacoplados e congelados.
@@ -33832,6 +33955,9 @@ function aldSaldoDeCaixa(cashAccountId){
       // nunca a ordem do array, que é acidente de inserção e não fato temporal.
       transactions: function(){ return Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))); },
       saldoDeCaixa: aldSaldoDeCaixa,
+      // ALD-04 S1 — posição por quantidade, derivada e fail-closed (DH-04-5:
+      // única API nova do slice; posicaoDe() não existe neste ciclo).
+      posicoes: aldPosicoes,
     }),
     writeBlockReason: aldWriteBlockReason,
     money: {

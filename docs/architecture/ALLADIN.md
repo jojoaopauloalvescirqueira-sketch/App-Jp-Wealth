@@ -428,7 +428,7 @@ testes e a aceitação humana por console exercitam o domínio.
 
 | Suíte | Cobertura |
 |---|---|
-| `tools/alladin_unit_test.py` | U1–U25 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto |
+| `tools/alladin_unit_test.py` | U1–U26 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto; ALD-04: aritmética decimal BigInt (parse/alinhamento/soma/render) sondada direto |
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup; carimbo v3→v4 com ledger **povoado**; mixed-build do build v3 real sobre agregado v4 |
 
@@ -437,8 +437,11 @@ testes e a aceitação humana por console exercitam o domínio.
 
 As cinco acima, `tools/alladin_ledger_test.py` (L1–L29: Cash Ledger do S1 e a
 dupla atômica BUY/SELL do S2, com a consistência do par e as guardas de inteiro
-seguro) e o protocolo de geração da base (`tools/session_epoch_protocol_test.py`,
-E1–E16) nos tiers `standard` (38) e `full` (49); `fast` tem 4.
+seguro), `tools/alladin_position_test.py` (P1–P17: posição derivada do ALD-04
+S1 — identidade, aritmética exata, zero/negativo, adulteração e schema futuro
+BLOCKING, determinismo) e o protocolo de geração da base
+(`tools/session_epoch_protocol_test.py`, E1–E16) nos tiers `standard` (39) e
+`full` (50); `fast` tem 4.
 
 ## Entregas
 
@@ -599,6 +602,40 @@ gate** fecha acima disso. Coleção ausente nasce vazia; existente é preservada
 substituída por `[]` — apagar história econômica para consertar a forma seria a
 pior troca possível. O mixed-build é provado contra o código **real** do build
 v3 (`git archive` de `4057a39`).
+
+## ALD-04 S1 — Position Quantity Engine (derivado, nunca persistido)
+
+`leitura.posicoes()` deriva a posição por **quantidade** a cada leitura —
+nenhum holding é persistido (ALD-I27), e reconstruir do ledger é a prova de
+ALD-I13. Identidade: **`instrumentId + accountId`** — a custódia vem
+exclusivamente de `cashAccount.accountId`, porque o papel vive na corretora:
+duas cash accounts do mesmo Account somam UMA posição; o mesmo instrumento em
+Accounts distintos são posições distintas.
+
+```text
+BUY  → +quantity      SELL → −quantity      REVERSAL → −efeito(original)
+DEPOSIT/WITHDRAWAL/TRANSFER (e seus reversals) → papel zero
+```
+
+*Aritmética exata, sem float.* Inteiro escalado em `BigInt`: parse da string
+canônica, alinhamento de escala, soma/subtração fechadas — não existe
+arredondamento possível, então nenhuma política de rounding nasce aqui (spec
+§29 segue pendente). O derivado pode ser `0` (a posição **sai** da coleção),
+negativo (string assinada fiel — `'-5'` — **sem** semântica de short: bloquear
+venda além da posição é decisão humana futura, não regra deste engine) e pode
+exceder os 64 chars do teto de entrada — o teto é de payload, não de verdade
+econômica; truncar seria inventar um número. `BigInt` jamais sai no DTO.
+
+*Fail-closed global, espelho do saldo.* Registro ilegível, reversal
+órfão/inconsistente (MC-S2-1 reusado), cadastro órfão
+(caixa/conta/instrumento), moeda divergente entre trade/caixa/instrumento e
+**schema futuro** (guarda explícita por `aldCompat().readOnly`, mesmo que todos
+os eventos presentes sejam conhecidos) ⇒ `available:false`, `positions:[]` —
+nunca posição parcial. Saída determinística: `instrumentId` ASC, depois
+`accountId` ASC; a ordem física do array não vaza para o resultado.
+
+`schemaVersion` permanece **4**: zero estado persistido novo, zero invariante
+de escrita — não há o que uma barreira trancaria.
 
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 

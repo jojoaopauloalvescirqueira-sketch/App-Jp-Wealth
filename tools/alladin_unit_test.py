@@ -745,6 +745,41 @@ def main() -> int:
                 falhas.append(f"U25: divergencias aceitas pelo espelho: {sorted(ruins)}")
         executar(falhas, "U25", u25)
 
+        # ---- ALD-04 S1 · U26: aritmetica decimal do Position Engine, DIRETO -
+        # parse/alinhamento/soma/negacao/render como funcoes puras. E o alicerce
+        # numerico de tudo que deriva do ledger — float vazando aqui mentiria em
+        # toda posicao futura.
+        def u26():
+            r = ev("""() => {
+              const via = (a, b, neg) => {
+                const x = aldDecParse(a), y = aldDecParse(b);
+                return aldDecRender(aldDecSoma(x, neg ? aldDecNeg(y) : y));
+              };
+              return {
+                somaSimples:  via('1.5', '0.25', false),        // alinhamento
+                floatTrap:    via('0.1', '0.2', false),          // 0.30000000000000004 se float
+                canonico:     via('0.5', '0.5', false),          // '1', nunca '1.0'
+                zero:         via('2.5', '2.5', true),           // '0' exato
+                negativo:     via('1', '1.25', true),            // '-0.25' assinado
+                negInteiro:   via('0', '5', true),               // '-5'
+                fracLonga:    via('1.000000001', '0.999999999', false),   // '2'
+                alem64:       via('9'.repeat(64), '9'.repeat(64), false), // 65 digitos exatos
+                alem64len:    via('9'.repeat(64), '9'.repeat(64), false).length,
+                zeroDetect:   aldDecZero(aldDecSoma(aldDecParse('0.1'), aldDecNeg(aldDecParse('0.1')))),
+                semBigIntNoDto: typeof via('1', '1', false) === 'string',
+              };
+            }""")
+            esperado = { "somaSimples":"1.75", "floatTrap":"0.3", "canonico":"1",
+                         "zero":"0", "negativo":"-0.25", "negInteiro":"-5", "fracLonga":"2" }
+            for k, v in esperado.items():
+                if r[k] != v:
+                    falhas.append(f"U26 {k}: esperado {v!r}, veio {r[k]!r}")
+            if r["alem64"] != "1" + "9"*63 + "8" or r["alem64len"] != 65:
+                falhas.append(f"U26 alem64: derivado longo nao saiu exato ({r['alem64len']})")
+            if r["zeroDetect"] is not True or r["semBigIntNoDto"] is not True:
+                falhas.append(f"U26: zeroDetect/tipo do render divergentes ({r})")
+        executar(falhas, "U26", u26)
+
         # U21 — cobertura dos edits: identidade e metadados sobrevivem
         def u21():
             reset_agregado()
@@ -788,7 +823,7 @@ def main() -> int:
         for f in falhas:
             print(" -", f)
         return 1
-    print("alladin_unit_test PASS (U1-U25: moeda, ids, gate, owners/isSelf, regimes, cripto, symbolHistory, falha parcial, integridade; S2: quantity canonica e espelho do par reversal<->original sondados direto; Chromium isolado, zero rede, zero DOM)")
+    print("alladin_unit_test PASS (U1-U26: moeda, ids, gate, owners/isSelf, regimes, cripto, symbolHistory, falha parcial, integridade; S2: quantity canonica e espelho do par reversal<->original sondados direto; Chromium isolado, zero rede, zero DOM)")
     return 0
 
 
