@@ -28,6 +28,7 @@ O que esta suite prova (P1-P17):
   P19 container transactions nao-array -> BLOCKING ('vazio confiante' e falso)
   P20 (H2) instrumentId duplicado -> posicao BLOCKING + BUY RECUSADO (write gate)
   P21 (H3) accountId duplicado    -> posicao BLOCKING + escrita RECUSADA (write gate)
+  P22 (S3) FEE/TAX standalone NAO movem posicao; BUY mantem fees/taxes embutidos
 """
 from pathlib import Path
 import sys
@@ -39,7 +40,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 4, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 5, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -56,7 +57,7 @@ function dgLogChange(entity, action, recordId, label){
 // Fixture: duas corretoras; XP com DUAS caixas BRL e uma USD; BTG com uma BRL.
 // Instrumentos: PETR4 (BRL) e AAPL (USD).
 function fixture(){
-  S.alladin = { schemaVersion: 4, reportingCurrency: 'BRL', instruments: [], assets: [],
+  S.alladin = { schemaVersion: 5, reportingCurrency: 'BRL', instruments: [], assets: [],
                 accounts: [], cashAccounts: [], transactions: [] };
   S.dataGovernance.changeLog = [];
   window.__stub.saves = 0; window.__stub.saveResult = true;
@@ -302,9 +303,9 @@ def main() -> int:
             r = ev("""() => {
               const f = fixture();
               trade('BUY', f.petr4, f.caixaXP, '1');
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               const p = JPWAlladin.leitura.posicoes();
-              S.alladin.schemaVersion = 4;
+              S.alladin.schemaVersion = 5;
               const depois = JPWAlladin.leitura.posicoes();
               return { ok:p.available, n:p.positions.length,
                        marcado:p.issues.indexOf('READ_ONLY_FUTURE_SCHEMA')>=0,
@@ -436,6 +437,37 @@ def main() -> int:
                 falhas.append(f"P21: escrita sobre accountId duplicado nao foi recusada ({r})")
         executar(falhas, "P21", p21)
 
+        # ---- P22: FEE/TAX standalone NAO movem posicao (so-caixa) -----------
+        # E a prova de que a despesa e economicamente separada do papel: o BUY
+        # continua com seus fees/taxes EMBUTIDOS, e a despesa standalone nao
+        # existe como perna de papel nem se mistura ao trade.
+        def p22():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              trade('BUY', f.petr4, f.caixaXP, '100', 300000);
+              const buy = S.alladin.transactions[0];
+              L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500, effectiveAt:'2026-03-02'});
+              L.addTransaction({eventType:'TAX', cashAccountId:f.caixaXP, amount:500, effectiveAt:'2026-03-02'});
+              const p = JPWAlladin.leitura.posicoes();
+              const fee = S.alladin.transactions.find(t => t.eventType==='FEE');
+              return { av:p.available, n:p.positions.length, q:(p.positions[0]||{}).quantity,
+                       consideradas:(p.positions[0]||{}).consideradas,
+                       buyTemFees:Object.prototype.hasOwnProperty.call(buy,'fees') &&
+                                  Object.prototype.hasOwnProperty.call(buy,'taxes'),
+                       feeTemInstrumento:Object.prototype.hasOwnProperty.call(fee,'instrumentId'),
+                       feeTemRef:Object.prototype.hasOwnProperty.call(fee,'transactionRef') ||
+                                 Object.prototype.hasOwnProperty.call(fee,'reversalOf') };
+            }""")
+            if not r["av"] or r["n"] != 1 or r["q"] != "100":
+                falhas.append(f"P22: FEE/TAX moveram a posicao ({r})")
+            if r["consideradas"] != 1:
+                falhas.append(f"P22: despesa entrou na contagem da posicao ({r['consideradas']})")
+            if not r["buyTemFees"]:
+                falhas.append("P22: BUY perdeu os fees/taxes embutidos — trade NAO pode ser decomposto")
+            if r["feeTemInstrumento"] or r["feeTemRef"]:
+                falhas.append(f"P22: despesa standalone ganhou instrumento ou vinculo ({r})")
+        executar(falhas, "P22", p22)
+
         browser.close()
 
     if bloqueadas["n"]:
@@ -445,13 +477,14 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_position_test PASS (P1-P19: posicao derivada por instrumentId+accountId; "
+    print("alladin_position_test PASS (P1-P22: posicao derivada por instrumentId+accountId; "
           "soma/subtracao decimal exata em BigInt com canonicalizacao; zero sai da colecao; "
           "reversal neutraliza exatamente apos consistencia do par; duas caixas do mesmo Account "
           "somam UMA posicao e custodias distintas separam; negativo fiel sem semantica de short; "
           "adulteracao, orfandade cadastral, moeda divergente e schema futuro viram BLOCKING; "
           "saida deterministica; derivado alem de 64 chars sai exato; HARDENING: id duplicado e "
-          "container nao-array bloqueiam; AMENDMENT: id canonico duplicado bloqueia posicao E recusa escrita)")
+          "container nao-array bloqueiam; AMENDMENT: id canonico duplicado bloqueia posicao E recusa escrita; "
+          "S3: FEE/TAX standalone nao movem posicao e o BUY mantem fees/taxes embutidos)")
     return 0
 
 

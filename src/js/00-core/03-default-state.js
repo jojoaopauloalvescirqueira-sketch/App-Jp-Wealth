@@ -283,7 +283,7 @@ const DEFAULTS = {
   // recusado (alladinNormalizeState, 04-persistence.js). Integridade > disponibilidade.
   // Derivados (saldos, posições, patrimônio) JAMAIS persistem.
   alladin:{
-    schemaVersion:4,
+    schemaVersion:5,
     reportingCurrency:'BRL',
     instruments:[],
     assets:[],

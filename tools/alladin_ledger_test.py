@@ -54,6 +54,17 @@ AMENDMENT (id canonico duplicado = ambiguidade de IDENTIDADE, aldFindIn first-ma
   L37 (H1) cashAccountId duplicado -> saldo BLOCKING + lancamento novo RECUSADO
   L38 (H4) transactionId duplicado -> reverseTransaction RECUSADO (write gate)
   L39 (H5) assetId duplicado -> escrita cadastral RECUSADA (write gate)
+
+ALD-03 S3 — FEE/TAX standalone (despesa sem contraparte de trade):
+  L40 FEE debita exato; forma persistida so-caixa (sem flowScope nem trade)
+  L41 TAX debita exato
+  L42 reversal de FEE e de TAX soma zero; reversal sem flowScope
+  L43 campos proibidos recusados (instrumentId/quantity/fees/taxes/flowScope/
+      transactionRef/refs de transferencia) — sem vinculo a trade
+  L44 conta inativa recusa despesa nova; historico e reversao seguem valendo
+  L45 moeda derivada da conta; divergente recusada
+  L46 dedupe fail-closed; duas despesas iguais SEM dedupe sao dois fatos
+  L47 despesa PERSISTIDA adulterada com campo de trade -> ILEGIVEL (BLOCKING)
 """
 from pathlib import Path
 import sys
@@ -65,7 +76,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 4, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 5, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -81,7 +92,7 @@ function dgLogChange(entity, action, recordId, label){
 }
 // Fixture: duas corretoras, tres contas de caixa (duas BRL, uma USD).
 function fixture(){
-  S.alladin = { schemaVersion: 4, reportingCurrency: 'BRL', instruments: [], assets: [],
+  S.alladin = { schemaVersion: 5, reportingCurrency: 'BRL', instruments: [], assets: [],
                 accounts: [], cashAccounts: [], transactions: [] };
   S.dataGovernance.changeLog = [];
   window.__stub.saves = 0; window.__stub.saveResult = true;
@@ -856,9 +867,9 @@ def main() -> int:
             r = ev("""() => {
               const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
               L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:5000, effectiveAt:'2026-01-10'});
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               const s = R.saldoDeCaixa(f.caixaXP);
-              S.alladin.schemaVersion = 4;
+              S.alladin.schemaVersion = 5;
               const volta = R.saldoDeCaixa(f.caixaXP);
               return { av:s.available, m:s.issues.indexOf('READ_ONLY_FUTURE_SCHEMA')>=0, voltou:volta.available && volta.amount===5000 };
             }""")
@@ -945,6 +956,177 @@ def main() -> int:
                 falhas.append(f"L39: escrita sobre assetId duplicado nao foi recusada ({r})")
         executar(falhas, "L39", l39)
 
+        # ===== ALD-03 S3 — FEE/TAX STANDALONE (despesa sem contraparte) =======
+        # Despesa economica que NAO pertence a transacao alguma: custodia,
+        # manutencao, imposto de periodo. So-caixa, sempre saida, sem flowScope
+        # e SEM vinculo a trade — e a ausencia de vinculo que torna a dupla
+        # contagem do ALD-I36 irrepresentavel, sem heuristica alguma.
+
+        # ---- L40/L41: FEE e TAX debitam exato --------------------------------
+        def l40_l41():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const fee = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500,
+                effectiveAt:'2026-01-31', note:'custodia mensal'});
+              const s1 = R.saldoDeCaixa(f.caixaXP);
+              const tax = L.addTransaction({eventType:'TAX', cashAccountId:f.caixaXP, amount:500, effectiveAt:'2026-01-31'});
+              const s2 = R.saldoDeCaixa(f.caixaXP);
+              const rec = S.alladin.transactions.find(t => t.transactionId === fee.recordId);
+              return { feeOk:fee.ok && fee.persistido, taxOk:tax.ok, s1:s1.amount, s2:s2.amount,
+                       av:s2.available, status:rec.status, moeda:rec.currency,
+                       campos:Object.keys(rec).sort() };
+            }""")
+            if not r["feeOk"] or not r["taxOk"]:
+                falhas.append(f"L40/L41: FEE/TAX recusados ({r})")
+            if r["s1"] != 98500:
+                falhas.append(f"L40: FEE deveria debitar exato (100000-1500=98500), veio {r['s1']}")
+            if r["s2"] != 98000 or not r["av"]:
+                falhas.append(f"L41: TAX deveria debitar exato (98500-500=98000), veio {r['s2']}")
+            if r["status"] != "POSTED" or r["moeda"] != "BRL":
+                falhas.append(f"L40: forma do registro fora do contrato ({r})")
+            # forma persistida: so-caixa, sem flowScope nem campos de trade
+            esperado = ['amount','cashAccountId','currency','effectiveAt','eventType',
+                        'note','recordedAt','status','transactionId']
+            if r["campos"] != esperado:
+                falhas.append(f"L40: forma persistida do FEE divergente ({r['campos']})")
+        executar(falhas, "L40/L41", l40_l41)
+
+        # ---- L42: reversal de FEE/TAX soma zero ------------------------------
+        def l42():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const fee = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500, effectiveAt:'2026-01-31'});
+              const antes = R.saldoDeCaixa(f.caixaXP).amount;
+              const rv = L.reverseTransaction(fee.recordId, {effectiveAt:'2026-02-01'});
+              const depois = R.saldoDeCaixa(f.caixaXP);
+              const rev = S.alladin.transactions.find(t => t.transactionId === rv.recordId);
+              const orig = S.alladin.transactions.find(t => t.transactionId === fee.recordId);
+              const tax = L.addTransaction({eventType:'TAX', cashAccountId:f.caixaXP, amount:700, effectiveAt:'2026-02-02'});
+              const rvT = L.reverseTransaction(tax.recordId, {effectiveAt:'2026-02-03'});
+              const fim = R.saldoDeCaixa(f.caixaXP);
+              return { antes, depois:depois.amount, av:depois.available,
+                       revTipo:rev.reversedEventType, origStatus:orig.status,
+                       revFs:Object.prototype.hasOwnProperty.call(rev,'flowScope'),
+                       taxRev:rvT.ok, fim:fim.amount };
+            }""")
+            if r["antes"] != 98500 or r["depois"] != 100000 or not r["av"]:
+                falhas.append(f"L42: par FEE+reversal nao somou zero ({r})")
+            if r["revTipo"] != "FEE" or r["origStatus"] != "REVERSED" or r["revFs"]:
+                falhas.append(f"L42: reversal de FEE fora do contrato ({r})")
+            if not r["taxRev"] or r["fim"] != 100000:
+                falhas.append(f"L42: par TAX+reversal nao somou zero ({r})")
+        executar(falhas, "L42", l42)
+
+        # ---- L43: campos proibidos recusados (sem vinculo, sem trade) --------
+        def l43():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const base = {eventType:'FEE', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-03-01'};
+              const out = {};
+              for(const [k,v] of [['instrumentId',f.petr4],['quantity','1'],['fees',10],['taxes',5],
+                                  ['flowScope','EXTERNAL'],['transactionRef','aldtx_x'],
+                                  ['sourceCashAccountId',f.caixaBTG],['destinationCashAccountId',f.caixaBTG]]){
+                const d = {...base}; d[k]=v;
+                out[k] = L.addTransaction(d).erro;
+              }
+              const outTax = L.addTransaction({eventType:'TAX', cashAccountId:f.caixaXP, amount:100,
+                effectiveAt:'2026-03-01', instrumentId:f.petr4}).erro;
+              return { out, outTax, n:S.alladin.transactions.length };
+            }""")
+            for campo, erro in r["out"].items():
+                if erro != 'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:'+campo:
+                    falhas.append(f"L43 {campo}: despesa aceitou campo proibido ({erro!r})")
+            if r["outTax"] != 'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:instrumentId':
+                falhas.append(f"L43 TAX: proibicao nao vale para TAX ({r['outTax']!r})")
+            if r["n"] != 0:
+                falhas.append(f"L43: recusa deixou vestigio ({r['n']})")
+        executar(falhas, "L43", l43)
+
+        # ---- L44: conta inativa recusa novo; historico e reversao seguem -----
+        def l44():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura, c = JPWAlladin.cadastro;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const fee = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500, effectiveAt:'2026-01-31'});
+              c.setRecordStatus('cashaccount', f.caixaXP, 'INACTIVE');
+              const novo = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-02-01'});
+              const saldo = R.saldoDeCaixa(f.caixaXP);
+              const rv = L.reverseTransaction(fee.recordId, {effectiveAt:'2026-02-02'});
+              return { novoErro:novo.erro, saldoAv:saldo.available, saldo:saldo.amount, revOk:rv.ok };
+            }""")
+            if r["novoErro"] != "ALD_CASHACCOUNT_INATIVA":
+                falhas.append(f"L44: conta inativa deveria recusar FEE novo ({r['novoErro']!r})")
+            if not r["saldoAv"] or r["saldo"] != 98500:
+                falhas.append(f"L44: historico deixou de valer apos inativar ({r})")
+            if not r["revOk"]:
+                falhas.append(f"L44: reversao de despesa antiga deveria seguir permitida ({r})")
+        executar(falhas, "L44", l44)
+
+        # ---- L45: moeda derivada da conta; divergente recusada ---------------
+        def l45():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const ok = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaUSD, amount:100, effectiveAt:'2026-03-01'});
+              const rec = S.alladin.transactions.find(t => t.transactionId === ok.recordId);
+              const diverge = L.addTransaction({eventType:'TAX', cashAccountId:f.caixaXP, amount:100,
+                effectiveAt:'2026-03-01', currency:'USD'}).erro;
+              return { moeda:rec.currency, diverge };
+            }""")
+            if r["moeda"] != "USD":
+                falhas.append(f"L45: moeda nao foi derivada da conta ({r['moeda']!r})")
+            if r["diverge"] != "ALD_CURRENCY_DIVERGE_DA_CONTA":
+                falhas.append(f"L45: moeda divergente deveria ser recusada ({r['diverge']!r})")
+        executar(falhas, "L45", l45)
+
+        # ---- L46: dedupe fail-closed tambem para despesa ---------------------
+        def l46():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const a = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500,
+                effectiveAt:'2026-01-31', dedupeKey:'custodia-jan'});
+              const b = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500,
+                effectiveAt:'2026-01-31', dedupeKey:'custodia-jan'});
+              // sem dedupe, duas despesas iguais sao DOIS fatos legitimos
+              const c1 = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:200, effectiveAt:'2026-02-01'});
+              const c2 = L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:200, effectiveAt:'2026-02-01'});
+              return { aOk:a.ok, bErro:b.erro, c1:c1.ok, c2:c2.ok,
+                       saldo:JPWAlladin.leitura.saldoDeCaixa(f.caixaXP).amount };
+            }""")
+            if not r["aOk"] or r["bErro"] != "ALD_DEDUPE_KEY_DUPLICADA":
+                falhas.append(f"L46: dedupe de despesa nao e fail-closed ({r})")
+            if not (r["c1"] and r["c2"]) or r["saldo"] != -1900:
+                falhas.append(f"L46: duas despesas iguais SEM dedupe deveriam ser dois fatos ({r})")
+        executar(falhas, "L46", l46)
+
+        # ---- L47: despesa ADULTERADA com campo de trade -> ILEGIVEL ---------
+        # A proibicao vale na escrita E na leitura. Um FEE persistido que ganhe
+        # instrumentId/quantity/fees/taxes depois (import forjado, edicao manual)
+        # nao pode virar numero: a ausencia desses campos e contratual, como a do
+        # flowScope num trade. Sem este caso, remover a guarda de LEITURA
+        # sobrevive a mutacao (MF-5b) — o sobrevivente denuncia o teste.
+        def l47():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const out = {};
+              for(const [campo, valor] of [['instrumentId','aldi_x'],['quantity','5'],
+                                           ['fees',10],['taxes',5]]){
+                S.alladin.transactions.length = 0;
+                L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+                L.addTransaction({eventType:'FEE', cashAccountId:f.caixaXP, amount:1500, effectiveAt:'2026-01-31'});
+                const fee = S.alladin.transactions.find(t => t.eventType==='FEE');
+                fee[campo] = valor;                       // adulteracao pos-escrita
+                const s = R.saldoDeCaixa(f.caixaXP);
+                out[campo] = { av:s.available, m:s.issues.indexOf('ALD_TRANSACAO_ILEGIVEL')>=0 };
+              }
+              return out;
+            }""")
+            for campo, res in r.items():
+                if res["av"] or not res["m"]:
+                    falhas.append(f"L47 {campo}: despesa adulterada com campo de trade deveria ser ILEGIVEL ({res})")
+        executar(falhas, "L47", l47)
+
         # ---- L10: qualidade bloqueante, jamais saldo parcial ------------------
         def l10():
             r = ev("""() => {
@@ -1018,13 +1200,13 @@ def main() -> int:
                              logIntacto: JSON.stringify(S.dataGovernance.changeLog) === logAntes };
               window.__stub.saveResult = true;
               // schema futuro: nenhum ato economico passa
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               const bloqueado = {
                 add: L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:1, effectiveAt:'2026-01-10'}).erro,
                 rev: L.reverseTransaction('aldtx_x', {effectiveAt:'2026-01-10'}).erro,
                 gate: JPWAlladin.writeBlockReason(),
               };
-              S.alladin.schemaVersion = 4;
+              S.alladin.schemaVersion = 5;
               return { meio, bloqueado, trilha: S.dataGovernance.changeLog.map(e => e.action) };
             }""")
             m = r["meio"]
@@ -1092,7 +1274,7 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_ledger_test PASS (L1-L36: deposito/saque e saldo derivado; transferencia interna"
+    print("alladin_ledger_test PASS (L1-L47: deposito/saque e saldo derivado; transferencia interna"
           "como UM registro que nao altera o patrimonio global — o caso canonico; flowScope como "
           "perimetro, persistido e validado; reversal preservando o original e somando zero, com suas "
           "cinco proibicoes e sem campo economico do chamador; recusas de referencia, moeda e valor; "
@@ -1107,7 +1289,9 @@ def main() -> int:
           "HARDENING read-side: id/dedupe duplicados, dois reversals do mesmo original, "
           "pareamento status<->reversal, saldo sob schema futuro e container nao-array viram "
           "BLOCKING, enquanto fato legitimo duplicado sem dedupe segue somando; AMENDMENT: id "
-          "canonico duplicado (cash/instrument/account/asset/tx) bloqueia leitura E recusa escrita)")
+          "canonico duplicado (cash/instrument/account/asset/tx) bloqueia leitura E recusa escrita; "
+          "S3: FEE/TAX standalone debitam exato, revertem para zero, nao tem flowScope nem "
+          "vinculo a trade, e recusam todo campo de trade — dupla contagem irrepresentavel)")
     return 0
 
 

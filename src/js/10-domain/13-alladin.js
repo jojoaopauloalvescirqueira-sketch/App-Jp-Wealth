@@ -25,7 +25,7 @@
 // como PF_MONTH_RE duplica o FX: o módulo de domínio precisa funcionar isolado
 // no harness unitário. As duas constantes DEVEM permanecer iguais — o teste de
 // integração prova o comportamento conjunto (fail-closed).
-const ALD_SUPPORTED_SCHEMA_VERSION = 4;
+const ALD_SUPPORTED_SCHEMA_VERSION = 5;
 
 // ---- moedas: schema extensível ≠ runtime universal --------------------------
 // O SCHEMA aceita qualquer código ISO 4217 (nenhuma lista de moedas é contrato
@@ -637,7 +637,7 @@ function aldActSetRecordStatus(tipo, id, status){
 // registro com origem e destino, não dois lançamentos correlacionados. Assim o
 // cenário "debitou a origem e o destino não recebeu" não é evitado por controle
 // de fluxo — ele é IRREPRESENTÁVEL no schema.
-const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','REVERSAL']; // FECHADO
+const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','FEE','TAX','REVERSAL']; // FECHADO
 const ALD_TX_STATUS    = ['POSTED','REVERSED'];                          // FECHADO (DRAFT: fase própria)
 const ALD_FLOW_SCOPES  = ['INTERNAL','EXTERNAL'];                        // FECHADO
 // flowScope é RELAÇÃO COM O PERÍMETRO, não direção (DH-03-1): EXTERNAL cruza a
@@ -662,7 +662,20 @@ const ALD_CASH_DELTA = {
   TRANSFER:   (tx, id) => (tx.sourceCashAccountId===id ? -tx.amount : (tx.destinationCashAccountId===id ? +tx.amount : 0)),
   BUY:        (tx, id) => (tx.cashAccountId===id ? -(tx.amount+tx.fees+tx.taxes) : 0),
   SELL:       (tx, id) => (tx.cashAccountId===id ? +(tx.amount-tx.fees-tx.taxes) : 0),
+  // ALD-03 S3 — FEE/TAX STANDALONE: despesa economica sem contraparte de trade
+  // (custodia, manutencao, imposto de periodo). Sempre SAIDA: a direcao vem do
+  // eventType, como em todo o ledger. NAO confundir com os campos fees/taxes de
+  // BUY/SELL — aqueles sao componentes do proprio trade e continuam intocados.
+  FEE:        (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),
+  TAX:        (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),
 };
+// Eventos so-caixa cuja unica referencia e a conta: sem papel, sem instrumento,
+// sem vinculo a transacao. A ausencia de vinculo e o que torna a dupla
+// contagem do ALD-I36 IRREPRESENTAVEL — "a taxa do trade X" nao existe como
+// evento; ela vive nos campos do trade. Nenhuma heuristica de igualdade
+// economica e criada: o dominio nao tenta adivinhar se duas despesas parecidas
+// sao o mesmo fato.
+const ALD_DESPESAS_STANDALONE = ['FEE','TAX'];
 // A perna de papel de BUY/SELL (+quantity/−quantity) NÃO tem engine neste
 // ciclo: quantity é fato persistido e verificável, e quem o agregará é o
 // Position Engine (ALD-04). Somar aqui exigiria aritmética decimal que este
@@ -707,6 +720,14 @@ function aldTxLegivel(tx){
   if(fsEsperado!==undefined){
     if(tx.flowScope!==fsEsperado) return false;
   }else if(Object.prototype.hasOwnProperty.call(tx,'flowScope')) return false;
+  // FEE/TAX standalone: a AUSENCIA dos campos de trade e contratual — presenca
+  // e adulteracao, do mesmo modo que flowScope num trade. Vale tambem para o
+  // REVERSAL de uma despesa (tipoBase), que nao pode ganhar economia de trade.
+  if(tipoBase==='FEE' || tipoBase==='TAX'){
+    for(const proibido of ['instrumentId','quantity','fees','taxes']){
+      if(Object.prototype.hasOwnProperty.call(tx, proibido)) return false;
+    }
+  }
   if((tipoBase==='BUY'||tipoBase==='SELL') && tx.eventType!=='REVERSAL'){
     if(typeof tx.instrumentId!=='string' || !tx.instrumentId) return false;
     if(!aldQuantityValida(tx.quantity)) return false;
@@ -799,7 +820,19 @@ function aldCashAptaParaLancamento(a, id){
 }
 function aldNormalizeTransactionFields(a, d){
   d = d || {};
-  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
+  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','FEE','TAX'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
+  // FEE/TAX standalone: despesa pura. Recusa por PRESENCA de qualquer campo de
+  // trade ou de vinculo — o chamador que os informa esta afirmando uma
+  // semantica que este evento nao tem, e apagar em silencio mascararia o erro
+  // do produtor (mesma doutrina do flowScope em trade, DH-S2-9).
+  if(d.eventType==='FEE' || d.eventType==='TAX'){
+    for(const proibido of ['instrumentId','quantity','fees','taxes','flowScope',
+                           'transactionRef','transactionId','reversalOf',
+                           'sourceCashAccountId','destinationCashAccountId']){
+      if(Object.prototype.hasOwnProperty.call(d, proibido))
+        return { ok:false, erro:'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:'+proibido };
+    }
+  }
   // Trade nao possui flowScope valido NENHUM — o chamador que o declara esta
   // afirmando uma semantica economica impossivel, e apagar a declaracao em
   // silencio mascararia o erro do produtor. Nos eventos de fluxo o dominio tem

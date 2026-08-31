@@ -1034,7 +1034,7 @@ function personalFinanceNormalizeState(){
 // ALD_SUPPORTED_SCHEMA_VERSION em 10-domain/13-alladin.js (o módulo de domínio
 // roda isolado no harness unitário). As duas DEVEM permanecer iguais — o teste
 // de integração afirma a igualdade. Idem aldSchemaVersionLegivel.
-const ALLADIN_SCHEMA_VERSION=4;
+const ALLADIN_SCHEMA_VERSION=5;
 function alladinSchemaVersionLegivel(v){
   if(Number.isInteger(v)) return v;
   if(typeof v==='string' && /^[0-9]+$/.test(v.trim())) return parseInt(v.trim(),10);
@@ -1092,6 +1092,14 @@ function alladinNormalizeState(){
     // de instrumentFamily que o S2 institui. Com v4, esse build cai em
     // READ_ONLY_FUTURE_SCHEMA.
     if(a.schemaVersion===3){ a.schemaVersion=4; continue; }
+    // v4 → v5 (ALD-03 S3): IDENTITY MIGRATION. Nenhum campo criado, alterado ou
+    // removido; nenhum trade tocado. O carimbo existe porque `eventType` e
+    // VOCABULARIO PERSISTIDO FECHADO: um agregado com FEE/TAX e semanticamente
+    // mais novo que um build v4, e sem a versao esse build reportaria
+    // ALD_TRANSACAO_ILEGIVEL — chamaria de CORRUPCAO um dado VALIDO produzido
+    // por versao futura. Com v5 ele cai em READ_ONLY_FUTURE_SCHEMA e diz a
+    // verdade: o build e que esta velho.
+    if(a.schemaVersion===4){ a.schemaVersion=5; continue; }
     break;
   }
   if(typeof a.reportingCurrency!=='string' || !a.reportingCurrency) a.reportingCurrency=def.reportingCurrency;

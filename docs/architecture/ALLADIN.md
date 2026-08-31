@@ -15,6 +15,14 @@ a spec planeja.
 > performance, benchmark nem integração com Trading, Finanças Pessoais ou
 > Planejamento FX. Nenhum número patrimonial é calculado em lugar algum.
 
+> [!note] Superado em 2026-08-31 — o parágrafo acima descreve o estado do C3
+> O texto acima ficou como registro daquele momento. **O domínio já sabe "o que
+> aconteceu"**: o Cash Ledger (ALD-03 S1), os trades BUY/SELL (S2), as despesas
+> FEE/TAX standalone (S3) e a **posição por quantidade derivada** (ALD-04 S1)
+> estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
+> holding persistido/consolidado, cost basis, valuation/current value, P&L,
+> performance, benchmark e as integrações Trading/PF/FX.
+
 ## Fronteiras
 
 - **Finanças Pessoais** responde "como o dinheiro entrou e saiu da vida
@@ -31,10 +39,10 @@ a spec planeja.
   Planejamento FX (`PLANNED ≠ EXECUTED ≠ OWNED`) · **cost basis** (pendência #1
   da spec, decisão N3 do ALD-04).
 
-## Persistência — agregado `S.alladin` (schema v4)
+## Persistência — agregado `S.alladin` (schema v5)
 
 ```json
-{"schemaVersion":4, "reportingCurrency":"BRL",
+{"schemaVersion":5, "reportingCurrency":"BRL",
  "instruments":[], "assets":[], "accounts":[], "cashAccounts":[], "transactions":[]}
 ```
 
@@ -435,9 +443,9 @@ testes e a aceitação humana por console exercitam o domínio.
 | `tools/alladin_ui_readonly_test.py` | C3-S1 no app real — quatro destinos locais, cadastro C2 verdadeiro, **zero escrita** e zero materialização do agregado, snapshots desacoplados do read-model, `READ_ONLY` de schema futuro sem normalizar, ausência de conteúdo econômico |
 | `tools/alladin_ui_crud_test.py` | C3-S2 no app real — Account, CashAccount, Instrument e Asset criados e editados pelo modal verdadeiro, com persistência provada em memória **e** em disco; DC-4 pós-criação e a decisão explícita; status ×4 por `setRecordStatus`; write gate na abertura e no submit; patch-diff; taxonomia de avisos; e as quatro preservações do S2-C (rede, vocabulário desconhecido, rascunho e rótulos de lifecycle) |
 
-As cinco acima, `tools/alladin_ledger_test.py` (L1–L29: Cash Ledger do S1 e a
+As cinco acima, `tools/alladin_ledger_test.py` (L1–L46: Cash Ledger do S1 e a
 dupla atômica BUY/SELL do S2, com a consistência do par e as guardas de inteiro
-seguro), `tools/alladin_position_test.py` (P1–P17: posição derivada do ALD-04
+seguro), `tools/alladin_position_test.py` (P1–P22: posição derivada do ALD-04
 S1 — identidade, aritmética exata, zero/negativo, adulteração e schema futuro
 BLOCKING, determinismo) e o protocolo de geração da base
 (`tools/session_epoch_protocol_test.py`, E1–E16) nos tiers `standard` (39) e
@@ -670,6 +678,58 @@ distintos, sem `dedupeKey`) **continuam somando** — só a corrupção prováve
 e na escrita. Provado por `alladin_ledger_test` L30–L39 e
 `alladin_position_test` P18–P21; sensibilidade por mutação (10/10, incluindo a
 remoção da integração no write gate).
+
+## ALD-03 S3 — FEE/TAX standalone (despesa sem contraparte)
+
+Uma taxa de custódia, uma manutenção de conta ou um imposto de período **não
+pertencem a transação alguma** — e até aqui não tinham como ser registrados sem
+distorcer um `WITHDRAWAL`, perdendo a natureza econômica que o Performance Book
+(spec §31.3) precisa separar em `fees` e `taxesRecorded`.
+
+```text
+FEE   cash = −amount    papel = nenhum    flowScope AUSENTE
+TAX   cash = −amount    papel = nenhum    flowScope AUSENTE
+```
+
+*Só-caixa, sempre saída.* A direção vem do `eventType`, como em todo o ledger;
+`amount` segue magnitude positiva. A moeda é derivada da `CashAccount`,
+divergência é recusa, e a mecânica de reversal é a existente — sem uma linha de
+exceção: o par soma zero.
+
+*`flowScope` ausente (DH-S3-2).* Uma taxa **não é retirada de capital** — é
+custo que reduz o retorno. Marcá-la `EXTERNAL` a contaria como saída de
+patrimônio e distorceria Net Contributions e TWR. Mesmo argumento que excluiu
+BUY/SELL: `flowScope` classifica fluxo de capital pelo perímetro, não consumo
+econômico.
+
+*Sem vínculo a trade (DH-S3-3) — e é isso que fecha o ALD-I36.* A taxa de um
+trade vive nos campos `fees`/`taxes` **do próprio trade**, embutida, e continua
+lá: nenhum trade persistido é decomposto, migrado ou reinterpretado. Uma despesa
+standalone **não aceita** `instrumentId`, `quantity`, `fees`, `taxes`,
+`flowScope`, `transactionRef` ou referências de transferência — a presença de
+qualquer um é recusa na escrita (`ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA`) e
+ilegibilidade na leitura. Assim *"a taxa do trade X"* **não existe** como
+evento: a dupla contagem fica **irrepresentável**, sem nenhuma heurística de
+igualdade econômica — o domínio não tenta adivinhar se duas despesas parecidas
+são o mesmo fato.
+
+### `schemaVersion` 4 → 5: identity migration, para não chamar de corrupção o que é versão
+
+```js
+if(a.schemaVersion===4){ a.schemaVersion=5; continue; }   // um elo, carimbo puro
+```
+
+Nenhum campo criado, alterado ou removido; nenhum trade tocado. O carimbo existe
+porque **`eventType` é vocabulário persistido fechado**: um agregado com FEE/TAX
+é semanticamente mais novo que um build v4. Sem a versão, esse build reportaria
+`ALD_TRANSACAO_ILEGIVEL` — chamaria de **corrupção** um dado **válido produzido
+por versão futura**. Com v5 ele cai em `READ_ONLY_FUTURE_SCHEMA` e diz a
+verdade: quem está velho é o build. Provado pelo mixed-build W2 contra o código
+**real** de `eb3fd6f`, e pelo caso W, que carimba um ledger **povoado**
+preservando `quantity`, `fees`, `taxes`, `amount` e `flowScope` byte a byte.
+
+**ADJUSTMENT permanece fora** — bidirecional, cria/destrói caixa e exige
+`reason`: slice própria, com decisão de direção em aberto.
 
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 

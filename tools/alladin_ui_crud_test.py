@@ -387,7 +387,7 @@ def main() -> int:
                 ctx, page, erros = abrir(browser, url)
                 criar_conta(page)
                 # W10: READ_ONLY na abertura -> botoes desabilitados
-                page.evaluate("""() => { S.alladin.schemaVersion=5;
+                page.evaluate("""() => { S.alladin.schemaVersion=6;
                     localStorage.setItem('%s', JSON.stringify(S)); JPWAlladinUI.render(); }""" % LSKEY)
                 page.evaluate("() => JPWAlladinUI.selectView('accounts')")
                 habilitados = page.evaluate("""() => [...document.querySelectorAll('#alladin button[data-ald-new],#alladin button[data-ald-edit],#alladin button[data-ald-status]')]
@@ -395,13 +395,13 @@ def main() -> int:
                 if habilitados != 0:
                     falhas.append(f"W10: {habilitados} botoes de mutacao habilitados em READ_ONLY")
                 # S2A-12: writeBlockReason muda ENTRE abertura e submit
-                page.evaluate("""() => { S.alladin.schemaVersion=4; JPWAlladinUI.render(); }""")
+                page.evaluate("""() => { S.alladin.schemaVersion=5; JPWAlladinUI.render(); }""")
                 page.evaluate("() => JPWAlladinUI.selectView('accounts')")
                 page.locator("button[data-ald-new=account]").click()
                 page.locator("#alladinFldName").fill("Tardia")
                 page.locator("#alladinFldInstitution").fill("T")
                 page.locator("#alladinFldAccountType").fill("BANK")
-                page.evaluate("() => { S.alladin.schemaVersion=5; document.getElementById('sessionNotice').textContent=''; }")   # bloqueia agora
+                page.evaluate("() => { S.alladin.schemaVersion=6; document.getElementById('sessionNotice').textContent=''; }")   # bloqueia agora
                 page.locator("button[data-ald-act=salvar]").click()
                 page.wait_for_timeout(120)
                 modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
@@ -410,7 +410,7 @@ def main() -> int:
                 notice = page.evaluate("() => document.getElementById('sessionNotice').textContent")
                 if "Cadastro salvo" in notice:
                     falhas.append("W9/S2A-12: falso sucesso apos recusa")
-                page.evaluate("() => { S.alladin.schemaVersion=4; }")
+                page.evaluate("() => { S.alladin.schemaVersion=5; }")
                 d = disco(page)
                 if any(a["name"] == "Tardia" for a in d["accounts"]):
                     falhas.append("W9: o registro recusado chegou ao disco")
@@ -1104,7 +1104,7 @@ def main() -> int:
                 if foco != "asset":
                     falhas.append(f"R5: foco nao retornou ao botao de origem ({foco!r})")
                 # R1: READ_ONLY desabilita TODOS os botoes de mutacao dos 4 tipos
-                page.evaluate("""() => { S.alladin.schemaVersion=5;
+                page.evaluate("""() => { S.alladin.schemaVersion=6;
                     localStorage.setItem('%s', JSON.stringify(S)); JPWAlladinUI.render(); }""" % LSKEY)
                 for view in ("instruments", "assets"):
                     page.evaluate("(v) => JPWAlladinUI.selectView(v)", view)
@@ -1113,21 +1113,21 @@ def main() -> int:
                     if hab:
                         falhas.append(f"R1: {hab} botoes habilitados em READ_ONLY ({view})")
                 # R2: write gate tardio no submit do form rico
-                page.evaluate("""() => { S.alladin.schemaVersion=4; JPWAlladinUI.render();
+                page.evaluate("""() => { S.alladin.schemaVersion=5; JPWAlladinUI.render();
                     document.getElementById('sessionNotice').textContent=''; }""")
                 page.evaluate("() => JPWAlladinUI.selectView('assets')")
                 page.locator("button[data-ald-new=asset]").click()
                 page.locator("#alladinFldName").fill("Tardio")
                 page.locator("#alladinFldNature").fill("BEM_DURAVEL")
                 page.locator("#alladinFldRecordMode").select_option("INDIVIDUAL")
-                page.evaluate("() => { S.alladin.schemaVersion=5; }")
+                page.evaluate("() => { S.alladin.schemaVersion=6; }")
                 salvar(page)
                 modal = page.evaluate("() => document.getElementById('alladinModalBox').innerText")
                 if "READ_ONLY_FUTURE_SCHEMA" not in modal or "Nada foi gravado" not in modal:
                     falhas.append(f"R2: bloqueio tardio sem mensagem honesta ({modal[:90]!r})")
                 if "Cadastro salvo" in page.evaluate("() => document.getElementById('sessionNotice').innerText"):
                     falhas.append("R2: falso sucesso com write gate fechado")
-                page.evaluate("() => { S.alladin.schemaVersion=4; }")
+                page.evaluate("() => { S.alladin.schemaVersion=5; }")
                 if any(a["name"] == "Tardio" for a in colecao(page, "assets")):
                     falhas.append("R2: registro bloqueado chegou ao disco")
                 if erros:
@@ -1322,7 +1322,7 @@ def main() -> int:
                     erro: !!document.querySelector('#alladinModalBox .session-error'),
                     notice: document.getElementById('sessionNotice').innerText })""")))
                 # (3) Account CREATE — write gate tardio
-                page.evaluate("() => { window.save=window.__so; S.alladin.schemaVersion=5; }")
+                page.evaluate("() => { window.save=window.__so; S.alladin.schemaVersion=6; }")
                 salvar(page)
                 casos.append(("Account create/write gate tardio", page.evaluate("""() => ({
                     aberto: document.getElementById('alladinModalOverlay').classList.contains('show'),
@@ -1330,7 +1330,7 @@ def main() -> int:
                     inst: (document.getElementById('alladinFldInstitution')||{}).value,
                     erro: !!document.querySelector('#alladinModalBox .session-error'),
                     notice: document.getElementById('sessionNotice').innerText })""")))
-                page.evaluate("() => { S.alladin.schemaVersion=4; alladinForm.estado='EDITING'; alladinModalDismiss(); }")
+                page.evaluate("() => { S.alladin.schemaVersion=5; alladinForm.estado='EDITING'; alladinModalDismiss(); }")
                 # (4) CashAccount EDIT — recusa do dominio (conta-mae inativa)
                 page.evaluate("""() => {
                     const a=JPWAlladin.cadastro.addAccount({name:'Banco A',institution:'A',accountType:'BANK'});
