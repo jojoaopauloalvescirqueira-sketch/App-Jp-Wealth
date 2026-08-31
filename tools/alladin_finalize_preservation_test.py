@@ -122,7 +122,11 @@ CONTEXTOS = []
 
 
 def abrir(browser, url):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
+    # QA-D1: Service Worker BLOQUEADO. Boota o app real e recarrega; sem bloquear
+    # o SW, o updateFxRates do boot escapa do page.route e escreve no disco,
+    # contaminando as comparacoes de preservacao. O SW tem suite propria.
+    context = browser.new_context(viewport={"width": 1440, "height": 900},
+                                  service_workers="block")
     CONTEXTOS.append(context)
     context.add_init_script("window.__onbShown=true;")
     page = context.new_page()

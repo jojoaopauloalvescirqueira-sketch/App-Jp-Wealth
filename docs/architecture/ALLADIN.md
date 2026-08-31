@@ -637,6 +637,40 @@ nunca posição parcial. Saída determinística: `instrumentId` ASC, depois
 `schemaVersion` permanece **4**: zero estado persistido novo, zero invariante
 de escrita — não há o que uma barreira trancaria.
 
+## Integridade estrutural — na LEITURA e na ESCRITA, dado inválido nunca vira número
+
+A doutrina do MC-S2-1 — *"escrita correta não prova leitura íntegra"* — vale
+para toda invariante que só a porta de escrita impunha. Saldo e posição são
+calculados sobre o que está **persistido**, e um agregado adulterado (import
+forjado, edição manual, corrupção parcial) podia produzir um **número plausível
+e falso** sem que `aldTxLegivel`, que só olha **um** registro, percebesse.
+
+**Identidade ambígua — o eixo `aldFindIn`.** `aldFindIn` resolve todo id por
+**first-match**, na leitura **e** na escrita. Um id canônico duplicado
+(`instrumentId`, `assetId`, `accountId`, `cashAccountId`, `transactionId`) torna
+a identidade ambígua: o número sai atribuído a uma referência **arbitrária**, e
+um ato novo (`addTransaction`, `reverseTransaction`, edição cadastral) operaria
+sobre o **registro errado**. Não é apenas leitura — é write-safety.
+
+`aldIntegridadeEstrutural(a)` é o juiz único, sobre o **agregado inteiro**:
+
+- **unicidade de todo id canônico** nas cinco coleções;
+- **container `transactions`** deve ser array (*"0 confiante"* é falso);
+- **`transactionId`/`dedupeKey`** únicos; **≤1 REVERSAL** por original;
+- **par status⟺reversal** (REVERSED exige 1 reversal; POSTED, nenhum).
+
+Três consumidores o chamam: `saldoDeCaixa` e `posicoes` **antes de agregar**
+(⇒ `BLOCKING`), e o **write gate `aldMutate` antes de qualquer mutação** (⇒
+`ALD_INTEGRIDADE_ESTRUTURAL`, `fn` nem roda). Assim **nenhuma escrita nova
+ocorre sobre um agregado cuja identidade esteja ambígua** — e o saldo ganhou
+também a guarda de **schema futuro** que só `posicoes` tinha. A discriminação
+decisiva: **dois fatos econômicos legítimos idênticos** (mesmo valor, ids
+distintos, sem `dedupeKey`) **continuam somando** — só a corrupção provável
+(id/dedupeKey compartilhados, que a escrita nunca gera) é bloqueada, na leitura
+e na escrita. Provado por `alladin_ledger_test` L30–L39 e
+`alladin_position_test` P18–P21; sensibilidade por mutação (10/10, incluindo a
+remoção da integração no write gate).
+
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 
 **C3 — Cadastro Patrimonial** responde **"o que existe?"**: Instrument, Asset,

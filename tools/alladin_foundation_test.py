@@ -77,7 +77,12 @@ def serve(directory=None):
 
 
 def boot(browser, url, pronto, mutacao_js=None):
-    context = browser.new_context(viewport={"width": 1440, "height": 950})
+    # QA-D1: Service Worker BLOQUEADO. Esta suite boota o app real e recarrega;
+    # sem bloquear o SW, os fetches do boot (updateFxRates) escapam do page.route
+    # e salvam por conta propria, contaminando as comparacoes byte-a-byte de disco.
+    # O SW tem suite propria (service-worker-upgrade).
+    context = browser.new_context(viewport={"width": 1440, "height": 950},
+                                  service_workers="block")
     context.add_init_script("window.__onbShown=true;")
     page = context.new_page()
     erros = []

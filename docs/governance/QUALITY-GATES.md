@@ -199,10 +199,15 @@ Isso nao e regra universal: a suite que testa o proprio ciclo do SW
 (`service-worker-upgrade`) obviamente nao o bloqueia. O criterio e o de
 sempre: bloquear o que nao esta sob teste, nunca o que esta.
 
-**Alcance.** Outras suites deste repositorio que bootam o app real e fazem
-reload carregam a mesma exposicao TEORICA. Nenhuma falha foi observada nelas —
-e exposicao nao e divida confirmada; fica registrada como conhecimento para o
-dia em que um flake com essa assinatura aparecer.
+**Alcance — propagado.** A exposicao teorica das outras suites de app real foi
+fechada preventivamente: `alladin_foundation`, `alladin_finalize_preservation`,
+`alladin_ui_crud` e `session_write_serialization` passaram a criar o contexto
+com `service_workers="block"` (as duas primeiras recarregam a pagina, onde o
+risco e agudo; as outras comparam disco byte-a-byte). Nenhuma delas testa o SW,
+entao bloquea-lo e isolamento legitimo — e todas seguem PASS apos a mudanca. A
+suite do proprio SW (`service-worker-upgrade`) permanece sem bloqueio. Regra
+geral: harness que depende de `page.route` para isolar rede deve bloquear o SW,
+a menos que o SW seja o objeto do teste.
 
 ## Prove que esta testando os bytes do candidato
 

@@ -39,6 +39,21 @@ ALD-03 S2 (L16-L29): a dupla atomica papel<->caixa.
   L27 flowScope do par divergente (presenca E valor, nos dois sentidos) -> BLOCKING
   L28 refs de caixa do par divergentes -> BLOCKING
   L29 acumulador do saldo nao atravessa regiao insegura (guarda POR PASSO)
+
+HARDENING read-side (L30-L36): invariantes de UNICIDADE/CARDINALIDADE que eram
+write-only, revalidadas na leitura sobre agregado PERSISTIDO adulterado.
+  L30 transactionId duplicado -> BLOCKING (saldo dobraria)
+  L31 dois REVERSALs do mesmo original -> BLOCKING (contra em dobro)
+  L32 dedupeKey duplicado com ids distintos -> BLOCKING (dinheiro fabricado)
+  L33 pareamento status<->reversal (REVERSED sem par; POSTED com par) -> BLOCKING
+  L34 saldo sob schema futuro -> BLOCKING (simetria com posicoes)
+  L35 container transactions nao-array -> BLOCKING ('0 confiante' e falso)
+  L36 SENSIBILIDADE: fato legitimo duplicado (sem dedupe) NAO e corrupcao -> soma
+
+AMENDMENT (id canonico duplicado = ambiguidade de IDENTIDADE, aldFindIn first-match):
+  L37 (H1) cashAccountId duplicado -> saldo BLOCKING + lancamento novo RECUSADO
+  L38 (H4) transactionId duplicado -> reverseTransaction RECUSADO (write gate)
+  L39 (H5) assetId duplicado -> escrita cadastral RECUSADA (write gate)
 """
 from pathlib import Path
 import sys
@@ -766,6 +781,170 @@ def main() -> int:
                 falhas.append(f"L29: acumulador atravessou 2^53 e devolveu numero com cara de sao ({r})")
         executar(falhas, "L29", l29)
 
+        # ===== HARDENING (read-side): DADO INVÁLIDO -> BLOCKING, nunca número ==
+        # As invariantes de UNICIDADE/CARDINALIDADE eram write-only; um agregado
+        # PERSISTIDO adulterado produzia número plausível e falso. L30-L35 provam
+        # que a leitura agora revalida; L36 prova que fato legítimo duplicado
+        # (mesmo valor, id distinto, sem dedupe) NÃO é confundido com corrupção.
+
+        # ---- L30: transactionId duplicado -> saldo BLOCKING ------------------
+        def l30():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              S.alladin.transactions.push(JSON.parse(JSON.stringify(S.alladin.transactions[0])));
+              const s = R.saldoDeCaixa(f.caixaXP);
+              return { av:s.available, amount:s.amount, m:s.issues.some(i=>i.indexOf('ALD_TRANSACTION_ID_DUPLICADO')===0) };
+            }""")
+            if r["av"] or r["amount"] is not None or not r["m"]:
+                falhas.append(f"L30: id duplicado nao virou BLOCKING (saldo dobraria) ({r})")
+        executar(falhas, "L30", l30)
+
+        # ---- L31: dois REVERSALs do mesmo original -> BLOCKING ----------------
+        def l31():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const rv = L.reverseTransaction(d.recordId, {effectiveAt:'2026-01-11'});
+              const rev = S.alladin.transactions.find(t=>t.transactionId===rv.recordId);
+              const r2 = JSON.parse(JSON.stringify(rev)); r2.transactionId='aldtx_dup'; S.alladin.transactions.push(r2);
+              const s = R.saldoDeCaixa(f.caixaXP);
+              return { av:s.available, m:s.issues.some(i=>i.indexOf('ALD_REVERSAL_DUPLICADO')===0) };
+            }""")
+            if r["av"] or not r["m"]:
+                falhas.append(f"L31: dois reversals do mesmo original nao bloquearam (saldo -100000 falso) ({r})")
+        executar(falhas, "L31", l31)
+
+        # ---- L32: dedupeKey duplicado com ids distintos -> BLOCKING ----------
+        def l32():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10', dedupeKey:'sal'});
+              const c = JSON.parse(JSON.stringify(S.alladin.transactions[0])); c.transactionId='outro'; S.alladin.transactions.push(c);
+              const s = R.saldoDeCaixa(f.caixaXP);
+              return { av:s.available, m:s.issues.some(i=>i.indexOf('ALD_DEDUPE_KEY_DUPLICADA')===0) };
+            }""")
+            if r["av"] or not r["m"]:
+                falhas.append(f"L32: dedupeKey duplicado nao bloqueou (dinheiro fabricado) ({r})")
+        executar(falhas, "L32", l32)
+
+        # ---- L33: pareamento status<->reversal (REVERSED sem par; POSTED com par)
+        def l33():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const rv = L.reverseTransaction(d.recordId, {effectiveAt:'2026-01-11'});
+              // (a) apaga o reversal, original fica REVERSED sozinho
+              S.alladin.transactions = S.alladin.transactions.filter(t=>t.transactionId!==rv.recordId);
+              const semPar = R.saldoDeCaixa(f.caixaXP);
+              // (b) recria par e mente o status do original para POSTED
+              S.alladin.transactions.length=0;
+              const d2 = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              L.reverseTransaction(d2.recordId, {effectiveAt:'2026-01-11'});
+              S.alladin.transactions.find(t=>t.transactionId===d2.recordId).status='POSTED';
+              const mente = R.saldoDeCaixa(f.caixaXP);
+              return { a:{av:semPar.available, m:semPar.issues.some(i=>i.indexOf('ALD_REVERSAL_STATUS_INCONSISTENTE')===0)},
+                       b:{av:mente.available, m:mente.issues.some(i=>i.indexOf('ALD_REVERSAL_STATUS_INCONSISTENTE')===0)} };
+            }""")
+            for nome, res in r.items():
+                if res["av"] or not res["m"]:
+                    falhas.append(f"L33 {nome}: pareamento status<->reversal nao bloqueou ({res})")
+        executar(falhas, "L33", l33)
+
+        # ---- L34: saldo sob SCHEMA FUTURO -> BLOCKING (simetria com posicoes) -
+        def l34():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:5000, effectiveAt:'2026-01-10'});
+              S.alladin.schemaVersion = 5;
+              const s = R.saldoDeCaixa(f.caixaXP);
+              S.alladin.schemaVersion = 4;
+              const volta = R.saldoDeCaixa(f.caixaXP);
+              return { av:s.available, m:s.issues.indexOf('READ_ONLY_FUTURE_SCHEMA')>=0, voltou:volta.available && volta.amount===5000 };
+            }""")
+            if r["av"] or not r["m"]:
+                falhas.append(f"L34: saldo sob schema futuro deveria BLOQUEAR (numero nao confiavel) ({r})")
+            if not r["voltou"]:
+                falhas.append(f"L34: saldo nao voltou ao normal na versao corrente ({r})")
+        executar(falhas, "L34", l34)
+
+        # ---- L35: container transactions NAO-array -> BLOCKING ----------------
+        def l35():
+            r = ev("""() => {
+              const f = fixture(), R = JPWAlladin.leitura;
+              S.alladin.transactions = {bad:1};
+              const s = R.saldoDeCaixa(f.caixaXP);
+              S.alladin.transactions = [];
+              return { av:s.available, m:s.issues.indexOf('ALD_TRANSACOES_ILEGIVEIS')>=0 };
+            }""")
+            if r["av"] or not r["m"]:
+                falhas.append(f"L35: container nao-array deveria BLOQUEAR ('0 confiante' e falso) ({r})")
+        executar(falhas, "L35", l35)
+
+        # ---- L36: SENSIBILIDADE — fato legítimo duplicado NAO e corrupção -----
+        def l36():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              // dois depositos IDENTICOS, ids distintos, SEM dedupe: dois fatos reais
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const s = R.saldoDeCaixa(f.caixaXP);
+              return { av:s.available, amount:s.amount };
+            }""")
+            if not r["av"] or r["amount"] != 200000:
+                falhas.append(f"L36: a guarda de integridade confundiu fato legitimo duplicado com corrupcao ({r})")
+        executar(falhas, "L36", l36)
+
+        # ===== AMENDMENT: id canonico DUPLICADO e ambiguidade de IDENTIDADE ====
+        # aldFindIn resolve por first-match — na leitura E na escrita. Id canonico
+        # duplicado => saldo/posicao atribuidos a referencia arbitraria (RT-H1) e
+        # ato novo operaria sobre o registro errado (RT-H2). O write gate recusa
+        # ANTES de qualquer aldMutate produzir mudanca.
+
+        # ---- L37 (H1): cashAccountId duplicado -> saldo BLOCKING + lanc. recusado
+        def l37():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const dup = JSON.parse(JSON.stringify(S.alladin.cashAccounts.find(c=>c.cashAccountId===f.caixaXP)));
+              dup.accountId = f.btg; S.alladin.cashAccounts.push(dup);
+              const s = R.saldoDeCaixa(f.caixaXP);
+              const w = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:1, effectiveAt:'2026-01-11'});
+              return { sAv:s.available, sM:s.issues.some(i=>i.indexOf('ALD_ID_DUPLICADO:cashAccounts')===0),
+                       wErr:w.erro, wPers:w.persistido, n:S.alladin.transactions.length };
+            }""")
+            if r["sAv"] or not r["sM"]:
+                falhas.append(f"L37: cashAccountId duplicado nao bloqueou o saldo ({r})")
+            if not (r["wErr"] or '').startswith('ALD_INTEGRIDADE_ESTRUTURAL') or r["wPers"] or r["n"] != 1:
+                falhas.append(f"L37: lancamento novo sobre identidade ambigua nao foi recusado ({r})")
+        executar(falhas, "L37", l37)
+
+        # ---- L38 (H4): transactionId duplicado -> reverseTransaction recusado -
+        def l38():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const d = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              S.alladin.transactions.push(JSON.parse(JSON.stringify(S.alladin.transactions[0])));
+              const rv = L.reverseTransaction(d.recordId, {effectiveAt:'2026-01-11'});
+              return { err:rv.erro, pers:rv.persistido, n:S.alladin.transactions.length };
+            }""")
+            if not (r["err"] or '').startswith('ALD_INTEGRIDADE_ESTRUTURAL') or r["pers"] or r["n"] != 2:
+                falhas.append(f"L38: reverseTransaction sobre id ambiguo nao foi recusado ({r})")
+        executar(falhas, "L38", l38)
+
+        # ---- L39 (H5): assetId duplicado -> write gate recusado --------------
+        def l39():
+            r = ev("""() => {
+              const f = fixture(), c = JPWAlladin.cadastro;
+              const asset = c.addAsset({name:'Casa', nature:'IMOVEL', recordMode:'INDIVIDUAL'}).recordId;
+              S.alladin.assets.push(JSON.parse(JSON.stringify(S.alladin.assets.find(x=>x.assetId===asset))));
+              const w = c.addAccount({name:'Novo', institution:'N', accountType:'BANK'});
+              return { err:w.erro, pers:w.persistido };
+            }""")
+            if not (r["err"] or '').startswith('ALD_INTEGRIDADE_ESTRUTURAL') or r["pers"]:
+                falhas.append(f"L39: escrita sobre assetId duplicado nao foi recusada ({r})")
+        executar(falhas, "L39", l39)
+
         # ---- L10: qualidade bloqueante, jamais saldo parcial ------------------
         def l10():
             r = ev("""() => {
@@ -868,7 +1047,6 @@ def main() -> int:
               const t = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:1,
                 effectiveAt:'2026-01-10', status:'DRAFT'});
               return { status: S.alladin.transactions[0].status,
-                       vocabulario: JPWAlladin.catalogos().fechados.txStatus || null,
                        apis: Object.keys(JPWAlladin.ledger).sort() };
             }""")
             if r["status"] != "POSTED":
@@ -914,7 +1092,7 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_ledger_test PASS (L1-L29: deposito/saque e saldo derivado; transferencia interna "
+    print("alladin_ledger_test PASS (L1-L36: deposito/saque e saldo derivado; transferencia interna"
           "como UM registro que nao altera o patrimonio global — o caso canonico; flowScope como "
           "perimetro, persistido e validado; reversal preservando o original e somando zero, com suas "
           "cinco proibicoes e sem campo economico do chamador; recusas de referencia, moeda e valor; "
@@ -925,7 +1103,11 @@ def main() -> int:
           "SELL liquido negativo representavel, reversal copiando a economia byte-igual, "
           "consistencia cruzada do par na leitura (amount/tipo/campos/refs/flowScope adulterados "
           "viram BLOCKING), overflow recusado na escrita e acumulador com guarda por passo, "
-          "quantity canonica de grafia unica, instrumentFamily congelada apos referencia)")
+          "quantity canonica de grafia unica, instrumentFamily congelada apos referencia; "
+          "HARDENING read-side: id/dedupe duplicados, dois reversals do mesmo original, "
+          "pareamento status<->reversal, saldo sob schema futuro e container nao-array viram "
+          "BLOCKING, enquanto fato legitimo duplicado sem dedupe segue somando; AMENDMENT: id "
+          "canonico duplicado (cash/instrument/account/asset/tx) bloqueia leitura E recusa escrita)")
     return 0
 
 

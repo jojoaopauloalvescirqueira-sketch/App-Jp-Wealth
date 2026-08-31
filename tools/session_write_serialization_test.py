@@ -57,7 +57,12 @@ CONTEXTOS = []
 
 
 def abrir(browser, url, sem_weblocks=False):
-    ctx = browser.new_context(viewport={"width": 1440, "height": 900})
+    # QA-D1: Service Worker BLOQUEADO. Boota o app real com duas abas; sem
+    # bloquear o SW, o updateFxRates do boot escapa do page.route e escreve no
+    # disco, contaminando as comparacoes de documento inteiro. A serializacao
+    # cross-tab usa Web Locks, nao SW — bloquear o SW nao a afeta.
+    ctx = browser.new_context(viewport={"width": 1440, "height": 900},
+                              service_workers="block")
     CONTEXTOS.append(ctx)
     ctx.add_init_script("window.__onbShown=true;")
     if sem_weblocks:

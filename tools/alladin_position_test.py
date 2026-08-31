@@ -24,6 +24,10 @@ O que esta suite prova (P1-P17):
   P15 mesma economia em ordem fisica diferente -> saida identica (determinismo)
   P16 derivado que ultrapassa 64 chars sai EXATO — sem truncar, sem recusar
   P17 moeda trade/caixa/instrumento divergente -> BLOCKING
+  P18 BUY id duplicado -> BLOCKING (posicao dobraria)            [hardening read-side]
+  P19 container transactions nao-array -> BLOCKING ('vazio confiante' e falso)
+  P20 (H2) instrumentId duplicado -> posicao BLOCKING + BUY RECUSADO (write gate)
+  P21 (H3) accountId duplicado    -> posicao BLOCKING + escrita RECUSADA (write gate)
 """
 from pathlib import Path
 import sys
@@ -357,14 +361,80 @@ def main() -> int:
               trade('BUY', f2.petr4, f2.caixaXP, '1');
               S.alladin.instruments.find(i => i.instrumentId === f2.petr4).currency = 'USD'; // instrumento != caixa
               const inst = JPWAlladin.leitura.posicoes();
-              return { tx:{ok:tx.available, m:tx.issues.some(i=>i.indexOf('ALD_MOEDA_DIVERGENTE')===0
-                                                               || i==='ALD_TRANSACAO_ILEGIVEL')},
+              return { tx:{ok:tx.available, m:tx.issues.some(i=>i.indexOf('ALD_MOEDA_DIVERGENTE')===0)},
                        inst:{ok:inst.available, m:inst.issues.some(i=>i.indexOf('ALD_MOEDA_DIVERGENTE')===0)} };
             }""")
             for nome, res in r.items():
                 if res["ok"] or not res["m"]:
                     falhas.append(f"P17 {nome}: divergencia de moeda nao virou BLOCKING ({res})")
         executar(falhas, "P17", p17)
+
+        # ---- P18: BUY id duplicado -> posicao BLOCKING (nao dobra) -----------
+        # Integridade estrutural na leitura: um BUY clonado (mesmo id) dobraria a
+        # quantidade sem que aldTxLegivel, que so olha um registro, percebesse.
+        def p18():
+            r = ev("""() => {
+              const f = fixture();
+              trade('BUY', f.petr4, f.caixaXP, '100');
+              S.alladin.transactions.push(JSON.parse(JSON.stringify(S.alladin.transactions[0])));
+              const p = JPWAlladin.leitura.posicoes();
+              return { av:p.available, n:p.positions.length,
+                       m:p.issues.some(i=>i.indexOf('ALD_TRANSACTION_ID_DUPLICADO')===0) };
+            }""")
+            if r["av"] or r["n"] != 0 or not r["m"]:
+                falhas.append(f"P18: BUY id duplicado deveria BLOQUEAR (posicao 200 falsa) ({r})")
+        executar(falhas, "P18", p18)
+
+        # ---- P19: container transactions NAO-array -> BLOCKING ---------------
+        def p19():
+            r = ev("""() => {
+              const f = fixture();
+              trade('BUY', f.petr4, f.caixaXP, '10');
+              S.alladin.transactions = {corrompido:true};
+              const p = JPWAlladin.leitura.posicoes();
+              S.alladin.transactions = [];
+              return { av:p.available, n:p.positions.length,
+                       m:p.issues.indexOf('ALD_TRANSACOES_ILEGIVEIS')>=0 };
+            }""")
+            if r["av"] or r["n"] != 0 or not r["m"]:
+                falhas.append(f"P19: container nao-array deveria BLOQUEAR ('vazio confiante' e falso) ({r})")
+        executar(falhas, "P19", p19)
+
+        # ---- P20 (H2): instrumentId duplicado -> posicao BLOCKING + BUY recusado
+        def p20():
+            r = ev("""() => {
+              const f = fixture();
+              trade('BUY', f.petr4, f.caixaXP, '10');
+              S.alladin.instruments.push(JSON.parse(JSON.stringify(S.alladin.instruments.find(i=>i.instrumentId===f.petr4))));
+              const p = JPWAlladin.leitura.posicoes();
+              const w = JPWAlladin.ledger.addTransaction({eventType:'BUY', instrumentId:f.petr4,
+                cashAccountId:f.caixaXP, quantity:'1', amount:100, effectiveAt:'2026-02-02'});
+              return { av:p.available, m:p.issues.some(i=>i.indexOf('ALD_ID_DUPLICADO:instruments')===0),
+                       wErr:w.erro, wPers:w.persistido };
+            }""")
+            if r["av"] or not r["m"]:
+                falhas.append(f"P20: instrumentId duplicado nao bloqueou a posicao ({r})")
+            if not (r["wErr"] or '').startswith('ALD_INTEGRIDADE_ESTRUTURAL') or r["wPers"]:
+                falhas.append(f"P20: BUY sobre instrumento de identidade ambigua nao foi recusado ({r})")
+        executar(falhas, "P20", p20)
+
+        # ---- P21 (H3): accountId duplicado -> posicao BLOCKING + write recusado
+        def p21():
+            r = ev("""() => {
+              const f = fixture();
+              trade('BUY', f.petr4, f.caixaXP, '10');
+              S.alladin.accounts.push(JSON.parse(JSON.stringify(S.alladin.accounts.find(x=>x.accountId===f.xp))));
+              const p = JPWAlladin.leitura.posicoes();
+              const w = JPWAlladin.cadastro.addInstrument({name:'Q', symbol:'VALE3', currency:'BRL',
+                instrumentFamily:'EQUITY_LIKE', assetClass:'RENDA_VARIAVEL'});
+              return { av:p.available, m:p.issues.some(i=>i.indexOf('ALD_ID_DUPLICADO:accounts')===0),
+                       wErr:w.erro };
+            }""")
+            if r["av"] or not r["m"]:
+                falhas.append(f"P21: accountId duplicado nao bloqueou a posicao ({r})")
+            if not (r["wErr"] or '').startswith('ALD_INTEGRIDADE_ESTRUTURAL'):
+                falhas.append(f"P21: escrita sobre accountId duplicado nao foi recusada ({r})")
+        executar(falhas, "P21", p21)
 
         browser.close()
 
@@ -375,12 +445,13 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_position_test PASS (P1-P17: posicao derivada por instrumentId+accountId; "
+    print("alladin_position_test PASS (P1-P19: posicao derivada por instrumentId+accountId; "
           "soma/subtracao decimal exata em BigInt com canonicalizacao; zero sai da colecao; "
           "reversal neutraliza exatamente apos consistencia do par; duas caixas do mesmo Account "
           "somam UMA posicao e custodias distintas separam; negativo fiel sem semantica de short; "
           "adulteracao, orfandade cadastral, moeda divergente e schema futuro viram BLOCKING; "
-          "saida deterministica; derivado alem de 64 chars sai exato)")
+          "saida deterministica; derivado alem de 64 chars sai exato; HARDENING: id duplicado e "
+          "container nao-array bloqueiam; AMENDMENT: id canonico duplicado bloqueia posicao E recusa escrita)")
     return 0
 
 

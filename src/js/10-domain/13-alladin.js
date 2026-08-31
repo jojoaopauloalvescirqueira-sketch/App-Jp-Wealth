@@ -168,6 +168,13 @@ function aldWriteBlockReason(){
 function aldMutate(acao, fn, meta){
   const bloqueio = aldWriteBlockReason();
   if(bloqueio) return { ok:false, persistido:false, erro:bloqueio };
+  // INTEGRIDADE ESTRUTURAL antes de QUALQUER mutação (RT-H1/RT-H2). aldFindIn
+  // resolve por first-match: sobre um agregado cuja identidade esteja ambígua
+  // (id canônico duplicado), o ato operaria sobre um registro ARBITRÁRIO — e
+  // um saldo/posição já sairiam atribuídos a referência ambígua. Nenhuma escrita
+  // nova sobre agregado estruturalmente corrompido; fn nem chega a rodar.
+  const estrutural = aldIntegridadeEstrutural((typeof S==='object' && S) ? S.alladin : undefined);
+  if(estrutural.length) return { ok:false, persistido:false, erro:'ALD_INTEGRIDADE_ESTRUTURAL:'+estrutural[0] };
   // SNAPSHOT antes de fn (correção da auditoria C2). Sem ele, `persistido:false`
   // conviveria com o registro VIVO em memória: em modo de recuperação A-005, sob
   // quota estourada ou com o portão de persistência fechado, save() devolve
@@ -999,6 +1006,71 @@ function aldVistaCadastral(colecao){
   return Object.freeze(out);
 }
 
+// ---- integridade ESTRUTURAL do ledger: revalidação de leitura das invariantes
+// de UNICIDADE e CARDINALIDADE que hoje só a porta de escrita impõe. A escrita
+// garante transactionId único, dedupeKey único e no máximo um REVERSAL por
+// original — mas saldo/posição são calculados sobre o que está PERSISTIDO, e um
+// agregado adulterado que duplique um id ou um reversal produz um NÚMERO
+// PLAUSÍVEL E FALSO (contado duas vezes) sem que aldTxLegivel, que só olha UM
+// registro, perceba. É a mesma doutrina do MC-S2-1 ("escrita correta não prova
+// leitura íntegra"), agora aplicada à unicidade/cardinalidade e ao pareamento
+// status⟺reversal: qualquer violação torna a métrica INDISPONÍVEL, nunca um número.
+function aldIntegridadeEstrutural(a){
+  const issues = [];
+  if(!a || typeof a!=='object') return issues;   // sem agregado, outras guardas cuidam
+  // (1) UNICIDADE de TODO id canônico. aldFindIn resolve por FIRST MATCH — tanto
+  // na leitura quanto na escrita —, então um id duplicado torna a IDENTIDADE
+  // ambígua: o número sai atribuído a uma referência arbitrária (RT-H1) e um ato
+  // novo operaria sobre o registro errado (RT-H2). Cada coleção, seu campo de id.
+  const COLECOES = [['instruments','instrumentId'],['assets','assetId'],
+                    ['accounts','accountId'],['cashAccounts','cashAccountId']];
+  for(let i=0;i<COLECOES.length;i++){
+    const col = COLECOES[i][0], campo = COLECOES[i][1];
+    const lista = Array.isArray(a[col]) ? a[col] : [];
+    const idsVistos = Object.create(null);
+    for(const r of lista){
+      if(!aldRegistroLegivel(r) || typeof r[campo]!=='string' || !r[campo]) continue;
+      if(idsVistos[r[campo]]) issues.push('ALD_ID_DUPLICADO:'+col+':'+r[campo]);
+      idsVistos[r[campo]] = true;
+    }
+  }
+  // (2) Container do ledger não-array: não dá para percorrer — bloqueio próprio.
+  if(a.transactions!==undefined && !Array.isArray(a.transactions)){
+    issues.push('ALD_TRANSACOES_ILEGIVEIS');
+    return issues;
+  }
+  const tx = Array.isArray(a.transactions) ? a.transactions : [];
+  // (3) transactionId único, dedupeKey único, ≤1 REVERSAL por original.
+  const txVistos = Object.create(null), dedupe = Object.create(null), revPorAlvo = Object.create(null);
+  for(const t of tx){
+    if(!aldRegistroLegivel(t) || typeof t.transactionId!=='string' || !t.transactionId) continue;
+    if(txVistos[t.transactionId]) issues.push('ALD_TRANSACTION_ID_DUPLICADO:'+t.transactionId);
+    txVistos[t.transactionId] = true;
+    if(typeof t.dedupeKey==='string' && t.dedupeKey){
+      if(dedupe[t.dedupeKey]) issues.push('ALD_DEDUPE_KEY_DUPLICADA:'+t.transactionId);
+      dedupe[t.dedupeKey] = true;
+    }
+    if(t.eventType==='REVERSAL' && typeof t.reversalOf==='string' && t.reversalOf){
+      revPorAlvo[t.reversalOf] = (revPorAlvo[t.reversalOf]||0) + 1;
+    }
+  }
+  for(const alvo in revPorAlvo){
+    if(revPorAlvo[alvo] > 1) issues.push('ALD_REVERSAL_DUPLICADO:'+alvo);
+  }
+  // (4) Pareamento status⟺reversal: um original REVERSED exige EXATAMENTE um
+  // reversal apontando para ele; um POSTED, nenhum. Assim status adulterado ou
+  // reversal apagado — que a escrita nunca produz, pois flipa o status e cria o
+  // par no mesmo ato — deixam de passar por íntegros. (Reversais não se revertem.)
+  for(const t of tx){
+    if(!aldRegistroLegivel(t) || typeof t.transactionId!=='string' || !t.transactionId) continue;
+    if(t.eventType==='REVERSAL') continue;
+    const n = revPorAlvo[t.transactionId] || 0;
+    if(t.status==='REVERSED' && n!==1) issues.push('ALD_REVERSAL_STATUS_INCONSISTENTE:'+t.transactionId);
+    if(t.status==='POSTED' && n!==0) issues.push('ALD_REVERSAL_STATUS_INCONSISTENTE:'+t.transactionId);
+  }
+  return issues;
+}
+
 // ---- saldo de caixa: DERIVADO, e fail-closed por qualidade de dado ----------
 // Nunca existe `CashAccount.balance`. O saldo é a soma dos efeitos econômicos, e
 // participam TODOS os registros efetivos: o original REVERSED continua contando
@@ -1011,10 +1083,22 @@ function aldVistaCadastral(colecao){
 // como saldo é pior que a ausência dele.
 function aldSaldoDeCaixa(cashAccountId){
   const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  // FUTURE SCHEMA: um build que não entende o agregado não pode afirmar saldo.
+  // Um campo futuro num tipo conhecido seria ignorado pela matemática v4 e o
+  // número sairia com cara de válido. Espelha aldPosicoes (ALD-04) e o próprio
+  // READ_ONLY_FUTURE_SCHEMA — o saldo (ALD-03-S1) não tinha essa guarda.
+  if(aldCompat().readOnly) return Object.freeze({ available:false, amount:null, currency:null,
+    quality:'BLOCKING', issues:Object.freeze([ALD_READ_ONLY_FUTURE_SCHEMA]), consideradas:0 });
   const conta = a ? aldFindIn(a,'cashAccounts','cashAccountId',cashAccountId) : null;
   const issues = [];
   if(!conta) return Object.freeze({ available:false, amount:null, currency:null,
     quality:'BLOCKING', issues:Object.freeze(['ALD_CASHACCOUNT_NAO_ENCONTRADA']), consideradas:0 });
+  // Integridade estrutural (unicidade de TODO id canônico, container do ledger,
+  // dedupeKey, cardinalidade e pareamento de reversal). "0 confiante" ou número
+  // atribuído a referência ambígua são FALSOS — fail-closed antes de agregar.
+  const estrutural = aldIntegridadeEstrutural(a);
+  if(estrutural.length) return Object.freeze({ available:false, amount:null, currency:conta.currency,
+    quality:'BLOCKING', issues:Object.freeze(estrutural.slice(0,20)), consideradas:0 });
   const lista = Array.isArray(a.transactions) ? a.transactions : [];
   const porId = {};
   for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
@@ -1103,6 +1187,12 @@ function aldPosicoes(){
   // este build ignora, e afirmar posição sobre ele seria afirmar o que não se
   // pode provar.
   if(aldCompat().readOnly) return bloqueado([ALD_READ_ONLY_FUTURE_SCHEMA]);
+  // Integridade estrutural (unicidade de TODO id canônico, container do ledger,
+  // dedupeKey, cardinalidade e pareamento de reversal) ANTES de agregar — mesma
+  // guarda do saldo e do write gate. Identidade ambígua ⇒ posição atribuída a
+  // referência arbitrária, jamais um número.
+  const estrutural = aldIntegridadeEstrutural(a);
+  if(estrutural.length) return bloqueado(estrutural);
   const lista = (a && Array.isArray(a.transactions)) ? a.transactions : [];
   const porId = {};
   for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
