@@ -37,7 +37,7 @@ os.chdir(ROOT)
 LSKEY = "jpwealth_v9_state"
 FIXTURE = json.loads((ROOT / "tools/fixtures/alladin_v2.json").read_text(encoding="utf-8"))["alladin"]
 FUTURO = {
-    "schemaVersion": 6,
+    "schemaVersion": 7,
     "reportingCurrency": "BRL",
     "instruments": [{"instrumentId": "aldi_v3", "name": "Do Futuro", "campoDesconhecido": {"x": 1},
                      "recordStatus": "ACTIVE"}],

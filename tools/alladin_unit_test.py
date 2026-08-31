@@ -21,7 +21,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 5, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 6, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -189,12 +189,12 @@ def main() -> int:
         # executar fn, sem log e sem save (integridade > disponibilidade)
         def u8():
             r = ev("""() => {
-              S.alladin.schemaVersion = 6;
+              S.alladin.schemaVersion = 7;
               window.__stub.saves = 0; window.__stub.logs = [];
               let fnRodou = false;
               const res = aldMutate('teste_ato', () => { fnRodou = true; return {recordId: 'x'}; });
               const compat = JPWAlladin.compat();
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               return { res, fnRodou, saves: window.__stub.saves,
                        logs: window.__stub.logs.length, compat };
             }""")
@@ -203,19 +203,19 @@ def main() -> int:
             if r["fnRodou"] or r["saves"] != 0 or r["logs"] != 0:
                 falhas.append(f"U8 vazamento sob bloqueio: fn={r['fnRodou']} saves={r['saves']} logs={r['logs']}")
             c = r["compat"]
-            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 6
-                    and c["supportedSchemaVersion"] == 5 and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
+            if not (c["readOnly"] is True and c["storedSchemaVersion"] == 7
+                    and c["supportedSchemaVersion"] == 6 and c["reason"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"U8 compat: {c!r}")
             # versao futura como STRING de digitos ('2') tambem e fail-closed
             r2 = ev("""() => {
-              S.alladin.schemaVersion = '6';
+              S.alladin.schemaVersion = '7';
               const compat = JPWAlladin.compat();
               const ato = aldMutate('probe', () => ({recordId: 'x'}));
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               return { readOnly: compat.readOnly, stored: compat.storedSchemaVersion,
                        erro: ato.erro };
             }""")
-            if not (r2["readOnly"] is True and r2["stored"] == 6
+            if not (r2["readOnly"] is True and r2["stored"] == 7
                     and r2["erro"] == "READ_ONLY_FUTURE_SCHEMA"):
                 falhas.append(f"U8 versao futura em string nao bloqueou: {r2!r}")
         executar(falhas, "U8", u8)
@@ -265,7 +265,7 @@ def main() -> int:
         # ---- C2 · MODELO CADASTRAL -----------------------------------------
 
         def reset_agregado():
-            ev("""() => { S.alladin = { schemaVersion: 5, reportingCurrency: 'BRL',
+            ev("""() => { S.alladin = { schemaVersion: 6, reportingCurrency: 'BRL',
                  instruments: [], assets: [], accounts: [], cashAccounts: [], transactions: [] };
                  window.__stub.logs = []; window.__stub.saves = 0; }""")
 
@@ -541,7 +541,7 @@ def main() -> int:
         def u18():
             reset_agregado()
             r = ev("""() => {
-              S.alladin.schemaVersion = 6;
+              S.alladin.schemaVersion = 7;
               const antes = JSON.stringify(S.alladin);
               window.__stub.saves = 0;
               const res = [
@@ -552,7 +552,7 @@ def main() -> int:
                 JPWAlladin.cadastro.setRecordStatus('account', 'qualquer', 'INACTIVE'),
               ];
               const igual = JSON.stringify(S.alladin) === antes;
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               return { erros:res.map(x => x.erro), saves:window.__stub.saves, igual };
             }""")
             if r["erros"] != ["READ_ONLY_FUTURE_SCHEMA"] * 4:

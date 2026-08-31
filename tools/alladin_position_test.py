@@ -29,6 +29,8 @@ O que esta suite prova (P1-P17):
   P20 (H2) instrumentId duplicado -> posicao BLOCKING + BUY RECUSADO (write gate)
   P21 (H3) accountId duplicado    -> posicao BLOCKING + escrita RECUSADA (write gate)
   P22 (S3) FEE/TAX standalone NAO movem posicao; BUY mantem fees/taxes embutidos
+  P23 (S4) ADJUSTMENT nao move posicao — nem o ajuste, nem o reversal dele;
+      adulteracao com campo de papel vira ILEGIVEL em vez de quantidade
 """
 from pathlib import Path
 import sys
@@ -40,7 +42,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 5, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 6, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -57,7 +59,7 @@ function dgLogChange(entity, action, recordId, label){
 // Fixture: duas corretoras; XP com DUAS caixas BRL e uma USD; BTG com uma BRL.
 // Instrumentos: PETR4 (BRL) e AAPL (USD).
 function fixture(){
-  S.alladin = { schemaVersion: 5, reportingCurrency: 'BRL', instruments: [], assets: [],
+  S.alladin = { schemaVersion: 6, reportingCurrency: 'BRL', instruments: [], assets: [],
                 accounts: [], cashAccounts: [], transactions: [] };
   S.dataGovernance.changeLog = [];
   window.__stub.saves = 0; window.__stub.saveResult = true;
@@ -303,9 +305,9 @@ def main() -> int:
             r = ev("""() => {
               const f = fixture();
               trade('BUY', f.petr4, f.caixaXP, '1');
-              S.alladin.schemaVersion = 6;
+              S.alladin.schemaVersion = 7;
               const p = JPWAlladin.leitura.posicoes();
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               const depois = JPWAlladin.leitura.posicoes();
               return { ok:p.available, n:p.positions.length,
                        marcado:p.issues.indexOf('READ_ONLY_FUTURE_SCHEMA')>=0,
@@ -468,6 +470,49 @@ def main() -> int:
                 falhas.append(f"P22: despesa standalone ganhou instrumento ou vinculo ({r})")
         executar(falhas, "P22", p22)
 
+        # ---- P23 (S4): ADJUSTMENT nao move posicao ---------------------------
+        # O ajuste e so-caixa por construcao: ele nao esta em ALD_PAPEL_DELTA e
+        # nao pode carregar instrumentId nem quantity. Nao ha, portanto, forma de
+        # escrever um ajuste que altere quantidade de papel — nem por engano do
+        # chamador, nem por adulteracao posterior, que cai em ILEGIVEL.
+        def p23():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              trade('BUY', f.petr4, f.caixaXP, '100', 300000);
+              L.addTransaction({eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                amount:2500, effectiveAt:'2026-03-02', reason:'diferenca de extrato'});
+              L.addTransaction({eventType:'ADJUSTMENT_DEBIT', cashAccountId:f.caixaXP,
+                amount:700, effectiveAt:'2026-03-03', reason:'estorno de credito indevido'});
+              const p = JPWAlladin.leitura.posicoes();
+              const aj = S.alladin.transactions.find(t => t.eventType==='ADJUSTMENT_CREDIT');
+              // reversal de ajuste tambem nao pode mover papel
+              const rv = L.reverseTransaction(aj.transactionId, {effectiveAt:'2026-03-04', reason:'refeita'});
+              const p2 = JPWAlladin.leitura.posicoes();
+              // adulteracao pos-escrita com campo de papel -> ILEGIVEL, jamais posicao
+              const dbt = S.alladin.transactions.find(t => t.eventType==='ADJUSTMENT_DEBIT');
+              dbt.instrumentId = f.petr4; dbt.quantity = '999';
+              const p3 = JPWAlladin.leitura.posicoes();
+              return { av:p.available, n:p.positions.length, q:(p.positions[0]||{}).quantity,
+                       consideradas:(p.positions[0]||{}).consideradas,
+                       ajTemInstrumento:Object.prototype.hasOwnProperty.call(aj,'instrumentId'),
+                       ajTemQuantidade:Object.prototype.hasOwnProperty.call(aj,'quantity'),
+                       ajTemRef:Object.prototype.hasOwnProperty.call(aj,'transactionRef'),
+                       revOk:rv.ok, q2:(p2.positions[0]||{}).quantity, av2:p2.available,
+                       av3:p3.available,
+                       m3:p3.issues.indexOf('ALD_TRANSACAO_ILEGIVEL')>=0 };
+            }""")
+            if not r["av"] or r["n"] != 1 or r["q"] != "100":
+                falhas.append(f"P23: ajuste moveu a posicao ({r})")
+            if r["consideradas"] != 1:
+                falhas.append(f"P23: ajuste entrou na contagem da posicao ({r['consideradas']})")
+            if r["ajTemInstrumento"] or r["ajTemQuantidade"] or r["ajTemRef"]:
+                falhas.append(f"P23: ajuste persistiu campo de papel ou vinculo ({r})")
+            if not r["revOk"] or not r["av2"] or r["q2"] != "100":
+                falhas.append(f"P23: reversal de ajuste moveu a posicao ({r})")
+            if r["av3"] or not r["m3"]:
+                falhas.append(f"P23: ajuste adulterado com campo de papel deveria ser ILEGIVEL ({r})")
+        executar(falhas, "P23", p23)
+
         browser.close()
 
     if bloqueadas["n"]:
@@ -477,14 +522,16 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_position_test PASS (P1-P22: posicao derivada por instrumentId+accountId; "
+    print("alladin_position_test PASS (P1-P23: posicao derivada por instrumentId+accountId; "
           "soma/subtracao decimal exata em BigInt com canonicalizacao; zero sai da colecao; "
           "reversal neutraliza exatamente apos consistencia do par; duas caixas do mesmo Account "
           "somam UMA posicao e custodias distintas separam; negativo fiel sem semantica de short; "
           "adulteracao, orfandade cadastral, moeda divergente e schema futuro viram BLOCKING; "
           "saida deterministica; derivado alem de 64 chars sai exato; HARDENING: id duplicado e "
           "container nao-array bloqueiam; AMENDMENT: id canonico duplicado bloqueia posicao E recusa escrita; "
-          "S3: FEE/TAX standalone nao movem posicao e o BUY mantem fees/taxes embutidos)")
+          "S3: FEE/TAX standalone nao movem posicao e o BUY mantem fees/taxes embutidos; "
+          "S4: ADJUSTMENT tampouco move posicao — nao esta em ALD_PAPEL_DELTA e nao pode "
+          "carregar instrumento nem quantidade, nem por escrita nem por adulteracao)")
     return 0
 
 

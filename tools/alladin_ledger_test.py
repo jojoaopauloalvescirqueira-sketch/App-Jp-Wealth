@@ -65,6 +65,21 @@ ALD-03 S3 — FEE/TAX standalone (despesa sem contraparte de trade):
   L45 moeda derivada da conta; divergente recusada
   L46 dedupe fail-closed; duas despesas iguais SEM dedupe sao dois fatos
   L47 despesa PERSISTIDA adulterada com campo de trade -> ILEGIVEL (BLOCKING)
+
+ALD-03 S4 — ajuste de reconciliacao (diferenca de caixa sem contraparte):
+  L48 ADJUSTMENT_CREDIT soma exato
+  L49 ADJUSTMENT_DEBIT subtrai exato
+  L50 reason obrigatorio (ausente/null/vazio/espacos/nao-texto), campo proprio
+      e distinto de note; reason fora do ajuste e recusado
+  L51 campos proibidos recusados por presenca (papel, vinculo, flowScope)
+  L52 reversal de CREDIT e de DEBIT somam zero; reason do reversal e PROPRIO
+  L53 conta inativa recusa ajuste novo; historico e reversao seguem valendo
+  L54 dedupe fail-closed; dois ajustes iguais SEM dedupe sao dois fatos
+  L55 forma persistida limpa; adulteracao pos-escrita -> ILEGIVEL
+  L56 completude do ALD_CASH_DELTA: (a) todo tipo cash-affecting move o saldo;
+      (b) tipo legivel SEM entrada na tabela vira BLOCKING com
+      ALD_CASH_DELTA_AUSENTE — nunca delta 0 implicito — e o reversal orfao
+      mantem o diagnostico proprio
 """
 from pathlib import Path
 import sys
@@ -76,7 +91,7 @@ MODULO = ROOT / "src/js/10-domain/13-alladin.js"
 
 PRELUDE = """
 window.__stub = { saves: 0, saveResult: true, logs: [] };
-var S = { alladin: { schemaVersion: 5, reportingCurrency: 'BRL',
+var S = { alladin: { schemaVersion: 6, reportingCurrency: 'BRL',
                      instruments: [], assets: [], accounts: [], cashAccounts: [],
                      transactions: [] },
           dataGovernance: { changeLog: [] } };
@@ -92,7 +107,7 @@ function dgLogChange(entity, action, recordId, label){
 }
 // Fixture: duas corretoras, tres contas de caixa (duas BRL, uma USD).
 function fixture(){
-  S.alladin = { schemaVersion: 5, reportingCurrency: 'BRL', instruments: [], assets: [],
+  S.alladin = { schemaVersion: 6, reportingCurrency: 'BRL', instruments: [], assets: [],
                 accounts: [], cashAccounts: [], transactions: [] };
   S.dataGovernance.changeLog = [];
   window.__stub.saves = 0; window.__stub.saveResult = true;
@@ -867,9 +882,9 @@ def main() -> int:
             r = ev("""() => {
               const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
               L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:5000, effectiveAt:'2026-01-10'});
-              S.alladin.schemaVersion = 6;
+              S.alladin.schemaVersion = 7;
               const s = R.saldoDeCaixa(f.caixaXP);
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               const volta = R.saldoDeCaixa(f.caixaXP);
               return { av:s.available, m:s.issues.indexOf('READ_ONLY_FUTURE_SCHEMA')>=0, voltou:volta.available && volta.amount===5000 };
             }""")
@@ -1127,6 +1142,338 @@ def main() -> int:
                     falhas.append(f"L47 {campo}: despesa adulterada com campo de trade deveria ser ILEGIVEL ({res})")
         executar(falhas, "L47", l47)
 
+        # ===== ALD-03 S4: ADJUSTMENT_CREDIT / ADJUSTMENT_DEBIT ===============
+        # Ajuste de reconciliacao: diferenca de caixa SEM contraparte economica
+        # identificavel. Nao e fluxo externo e nao e ganho/perda — e o unico
+        # evento cujo valor nao pode ser conferido contra nada, e por isso o
+        # `reason` faz parte da FORMA do registro, nao da conveniencia do autor.
+        # Se existe lancamento errado IDENTIFICAVEL, o caminho e REVERSAL.
+
+        # ---- L48/L49: CREDIT soma exato, DEBIT subtrai exato -----------------
+        def l48_l49():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const cr = L.addTransaction({eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                amount:2500, effectiveAt:'2026-01-31', reason:'diferenca de extrato conciliada em 31/01'});
+              const s1 = R.saldoDeCaixa(f.caixaXP);
+              const db = L.addTransaction({eventType:'ADJUSTMENT_DEBIT', cashAccountId:f.caixaXP,
+                amount:700, effectiveAt:'2026-02-01', reason:'estorno de credito indevido do banco'});
+              const s2 = R.saldoDeCaixa(f.caixaXP);
+              const rec = S.alladin.transactions.find(t => t.transactionId === cr.recordId);
+              // o ajuste NAO contamina outra conta de caixa
+              const outra = R.saldoDeCaixa(f.caixaBTG);
+              return { crOk:cr.ok && cr.persistido, dbOk:db.ok, s1:s1.amount, s2:s2.amount,
+                       av:s2.available, status:rec.status, moeda:rec.currency,
+                       motivo:rec.reason, outra:outra.amount, outraAv:outra.available };
+            }""")
+            if not r["crOk"] or not r["dbOk"]:
+                falhas.append(f"L48/L49: ajuste recusado ({r})")
+            if r["s1"] != 102500:
+                falhas.append(f"L48: CREDIT deveria somar exato (100000+2500), veio {r['s1']}")
+            if r["s2"] != 101800 or not r["av"]:
+                falhas.append(f"L49: DEBIT deveria subtrair exato (102500-700), veio {r['s2']}")
+            if r["status"] != "POSTED" or r["moeda"] != "BRL":
+                falhas.append(f"L48: forma do registro fora do contrato ({r})")
+            if r["motivo"] != "diferenca de extrato conciliada em 31/01":
+                falhas.append(f"L48: reason nao foi persistido integro ({r['motivo']!r})")
+            if r["outra"] != 0 or not r["outraAv"]:
+                falhas.append(f"L48: ajuste vazou para outra conta de caixa ({r})")
+        executar(falhas, "L48/L49", l48_l49)
+
+        # ---- L50: reason OBRIGATORIO, campo proprio, distinto de note --------
+        # `note` e comentario livre e opcional desde o S1; `reason` e a unica
+        # coisa que torna auditavel um numero que ninguem pode conferir. Um nao
+        # cobre o outro: note preenchida NAO satisfaz reason.
+        def l50():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const base = {eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                            amount:100, effectiveAt:'2026-03-01'};
+              const semReason  = L.addTransaction({...base}).erro;
+              const nulo       = L.addTransaction({...base, reason:null}).erro;
+              const vazio      = L.addTransaction({...base, reason:''}).erro;
+              const espacos    = L.addTransaction({...base, reason:'   '}).erro;
+              const tabNl      = L.addTransaction({...base,
+                reason:String.fromCharCode(9,10)+' '}).erro;   // tab + newline + espaco
+              const naoTexto   = L.addTransaction({...base, reason:42}).erro;
+              const soNote     = L.addTransaction({...base, note:'era uma nota'}).erro;
+              const debitoSem  = L.addTransaction({...base, eventType:'ADJUSTMENT_DEBIT'}).erro;
+              // ambos presentes: campos DISTINTOS, persistidos separadamente
+              const ok = L.addTransaction({...base, reason:'ajuste de conciliacao',
+                                                    note:'ver extrato pagina 3'});
+              const rec = S.alladin.transactions.find(t => t.transactionId === ok.recordId);
+              // `reason` so existe no ajuste: declara-lo noutro tipo e recusado
+              const emDeposito = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP,
+                amount:100, effectiveAt:'2026-03-02', reason:'porque sim'}).erro;
+              return { semReason, nulo, vazio, espacos, tabNl, naoTexto, soNote, debitoSem,
+                       okOk:ok.ok, motivo:rec.reason, nota:rec.note, emDeposito,
+                       n:S.alladin.transactions.length };
+            }""")
+            for rotulo in ["semReason","nulo","vazio","espacos","tabNl","naoTexto","soNote","debitoSem"]:
+                if r[rotulo] != "ALD_REASON_OBRIGATORIO":
+                    falhas.append(f"L50 {rotulo}: ajuste sem reason legivel foi aceito ({r[rotulo]!r})")
+            if not r["okOk"] or r["motivo"] != "ajuste de conciliacao" or r["nota"] != "ver extrato pagina 3":
+                falhas.append(f"L50: reason e note deveriam ser campos distintos e independentes ({r})")
+            if r["emDeposito"] != "ALD_REASON_NAO_PERMITIDO:DEPOSIT":
+                falhas.append(f"L50: reason fora do ajuste deveria ser recusado ({r['emDeposito']!r})")
+            if r["n"] != 1:
+                falhas.append(f"L50: recusa deixou vestigio ({r['n']})")
+        executar(falhas, "L50", l50)
+
+        # ---- L51: campos proibidos recusados por PRESENCA --------------------
+        # Mesma familia so-caixa da despesa: nada de papel, nada de vinculo. O
+        # ajuste NAO aponta para transacao original — se ha lancamento errado
+        # identificavel, o caminho e REVERSAL, e a confusao entre os dois e
+        # exatamente o que a proibicao de `transactionRef` torna irrepresentavel.
+        def l51():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const base = {eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP, amount:100,
+                            effectiveAt:'2026-03-01', reason:'conciliacao'};
+              const out = {};
+              for(const [k,v] of [['instrumentId',f.petr4],['quantity','1'],['fees',10],['taxes',5],
+                                  ['flowScope','EXTERNAL'],['transactionRef','aldtx_x'],
+                                  ['reversalOf','aldtx_y'],['transactionId','aldtx_z'],
+                                  ['sourceCashAccountId',f.caixaBTG],['destinationCashAccountId',f.caixaBTG]]){
+                const d = {...base}; d[k]=v;
+                out[k] = L.addTransaction(d).erro;
+              }
+              // presenca com valor undefined tambem e declaracao (S2/flowScope)
+              const undef = L.addTransaction({...base, flowScope:undefined}).erro;
+              const noDebito = L.addTransaction({...base, eventType:'ADJUSTMENT_DEBIT',
+                                                 instrumentId:f.petr4}).erro;
+              return { out, undef, noDebito, n:S.alladin.transactions.length };
+            }""")
+            for campo, erro in r["out"].items():
+                if erro != 'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:'+campo:
+                    falhas.append(f"L51 {campo}: ajuste aceitou campo proibido ({erro!r})")
+            if r["undef"] != 'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:flowScope':
+                falhas.append(f"L51: flowScope:undefined tambem e presenca ({r['undef']!r})")
+            if r["noDebito"] != 'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:instrumentId':
+                falhas.append(f"L51: proibicao nao vale para ADJUSTMENT_DEBIT ({r['noDebito']!r})")
+            if r["n"] != 0:
+                falhas.append(f"L51: recusa deixou vestigio ({r['n']})")
+        executar(falhas, "L51", l51)
+
+        # ---- L52: reversal de ajuste soma zero; reason do reversal e PROPRIO -
+        # Reverter um ajuste e OUTRO ato sem contraparte. Copiar o reason do
+        # original seria fabricar justificativa para um fato novo — por isso ele
+        # vem do chamador, como effectiveAt e note, e nao entra na comparacao
+        # cruzada do par (aldReversalConsistente).
+        def l52():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const cr = L.addTransaction({eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                amount:2500, effectiveAt:'2026-01-31', reason:'diferenca de extrato'});
+              const antesCr = R.saldoDeCaixa(f.caixaXP).amount;
+              const rvCr = L.reverseTransaction(cr.recordId, {effectiveAt:'2026-02-01',
+                reason:'conciliacao refeita: a diferenca era do banco'});
+              const posCr = R.saldoDeCaixa(f.caixaXP);
+              const rev = S.alladin.transactions.find(t => t.transactionId === rvCr.recordId);
+              const orig = S.alladin.transactions.find(t => t.transactionId === cr.recordId);
+              const db = L.addTransaction({eventType:'ADJUSTMENT_DEBIT', cashAccountId:f.caixaXP,
+                amount:700, effectiveAt:'2026-02-02', reason:'estorno'});
+              const antesDb = R.saldoDeCaixa(f.caixaXP).amount;
+              const rvDb = L.reverseTransaction(db.recordId, {effectiveAt:'2026-02-03'});
+              const posDb = R.saldoDeCaixa(f.caixaXP);
+              return { antesCr, posCr:posCr.amount, avCr:posCr.available,
+                       revTipo:rev.reversedEventType, origStatus:orig.status,
+                       revFs:Object.prototype.hasOwnProperty.call(rev,'flowScope'),
+                       revMotivo:rev.reason, origMotivo:orig.reason,
+                       dbRevOk:rvDb.ok, antesDb, posDb:posDb.amount, avDb:posDb.available,
+                       revDbTemMotivo:Object.prototype.hasOwnProperty.call(
+                         S.alladin.transactions.find(t => t.transactionId === rvDb.recordId),'reason') };
+            }""")
+            if r["antesCr"] != 102500 or r["posCr"] != 100000 or not r["avCr"]:
+                falhas.append(f"L52: par CREDIT+reversal nao somou zero ({r})")
+            if r["revTipo"] != "ADJUSTMENT_CREDIT" or r["origStatus"] != "REVERSED" or r["revFs"]:
+                falhas.append(f"L52: reversal de ajuste fora do contrato ({r})")
+            if r["revMotivo"] != "conciliacao refeita: a diferenca era do banco":
+                falhas.append(f"L52: reason do reversal deveria ser PROPRIO ({r['revMotivo']!r})")
+            if r["revMotivo"] == r["origMotivo"]:
+                falhas.append("L52: reason do reversal foi copiado do original")
+            if not r["dbRevOk"] or r["antesDb"] != 99300 or r["posDb"] != 100000 or not r["avDb"]:
+                falhas.append(f"L52: par DEBIT+reversal nao somou zero ({r})")
+            if r["revDbTemMotivo"]:
+                falhas.append("L52: reversal sem reason do chamador nao deveria carimbar reason")
+        executar(falhas, "L52", l52)
+
+        # ---- L53: conta inativa recusa ajuste novo; historico e reversao valem
+        def l53():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura, c = JPWAlladin.cadastro;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const cr = L.addTransaction({eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                amount:2500, effectiveAt:'2026-01-31', reason:'diferenca de extrato'});
+              c.setRecordStatus('cashaccount', f.caixaXP, 'INACTIVE');
+              const novo = L.addTransaction({eventType:'ADJUSTMENT_DEBIT', cashAccountId:f.caixaXP,
+                amount:100, effectiveAt:'2026-02-01', reason:'tentativa'}).erro;
+              const saldo = R.saldoDeCaixa(f.caixaXP);
+              const rv = L.reverseTransaction(cr.recordId, {effectiveAt:'2026-02-02', reason:'refeita'});
+              return { novo, saldoAv:saldo.available, saldo:saldo.amount, revOk:rv.ok,
+                       fim:R.saldoDeCaixa(f.caixaXP).amount };
+            }""")
+            if r["novo"] != "ALD_CASHACCOUNT_INATIVA":
+                falhas.append(f"L53: conta inativa deveria recusar ajuste novo ({r['novo']!r})")
+            if not r["saldoAv"] or r["saldo"] != 102500:
+                falhas.append(f"L53: historico deixou de valer apos inativar ({r})")
+            if not r["revOk"] or r["fim"] != 100000:
+                falhas.append(f"L53: reversao de ajuste antigo deveria seguir permitida ({r})")
+        executar(falhas, "L53", l53)
+
+        # ---- L54: dedupe fail-closed tambem para ajuste ----------------------
+        def l54():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger;
+              const base = {eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP, amount:2500,
+                            effectiveAt:'2026-01-31', reason:'diferenca de extrato'};
+              const a = L.addTransaction({...base, dedupeKey:'concil-jan'});
+              const b = L.addTransaction({...base, dedupeKey:'concil-jan'});
+              // sem dedupe, dois ajustes iguais sao DOIS fatos legitimos
+              const c1 = L.addTransaction({...base, amount:200, effectiveAt:'2026-02-01'});
+              const c2 = L.addTransaction({...base, amount:200, effectiveAt:'2026-02-01'});
+              return { aOk:a.ok, bErro:b.erro, c1:c1.ok, c2:c2.ok,
+                       saldo:JPWAlladin.leitura.saldoDeCaixa(f.caixaXP).amount };
+            }""")
+            if not r["aOk"] or r["bErro"] != "ALD_DEDUPE_KEY_DUPLICADA":
+                falhas.append(f"L54: dedupe de ajuste nao e fail-closed ({r})")
+            if not (r["c1"] and r["c2"]) or r["saldo"] != 2900:
+                falhas.append(f"L54: dois ajustes iguais SEM dedupe deveriam ser dois fatos ({r})")
+        executar(falhas, "L54", l54)
+
+        # ---- L55: forma persistida limpa; adulteracao pos-escrita e ILEGIVEL -
+        def l55():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const cr = L.addTransaction({eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                amount:2500, effectiveAt:'2026-01-31', reason:'diferenca de extrato'});
+              const rec = S.alladin.transactions.find(t => t.transactionId === cr.recordId);
+              const forma = Object.keys(rec).sort();
+              const bruto = JSON.stringify(S.alladin);
+              // adulteracao pos-escrita: campo de trade, flowScope ou reason removido
+              const out = {};
+              for(const passo of [['instrumentId','aldi_x'],['quantity','5'],['fees',10],
+                                  ['taxes',5],['flowScope','EXTERNAL'],['reason',null],
+                                  ['reason',''],['reason','   ']]){
+                S.alladin.transactions.length = 0;
+                const t2 = L.addTransaction({eventType:'ADJUSTMENT_DEBIT', cashAccountId:f.caixaXP,
+                  amount:700, effectiveAt:'2026-02-01', reason:'estorno'});
+                const alvo = S.alladin.transactions.find(t => t.transactionId === t2.recordId);
+                if(passo[1]===null && passo[0]==='reason') delete alvo.reason; else alvo[passo[0]] = passo[1];
+                const s = R.saldoDeCaixa(f.caixaXP);
+                out[passo[0]+':'+String(passo[1])] = { av:s.available,
+                  m:s.issues.indexOf('ALD_TRANSACAO_ILEGIVEL')>=0, amount:s.amount };
+              }
+              return { forma, out, vinculo: bruto.indexOf('transactionRef')>=0 };
+            }""")
+            esperado = ['amount','cashAccountId','currency','effectiveAt','eventType',
+                        'reason','recordedAt','status','transactionId']
+            if r["forma"] != esperado:
+                falhas.append(f"L55: forma persistida do ajuste divergente ({r['forma']})")
+            if r["vinculo"]:
+                falhas.append("L55: ajuste persistiu vinculo economico a transacao")
+            for caso, res in r["out"].items():
+                if res["av"] or not res["m"]:
+                    falhas.append(f"L55 {caso}: ajuste adulterado deveria ser ILEGIVEL ({res})")
+        executar(falhas, "L55", l55)
+
+        # ---- L56: COMPLETUDE do ALD_CASH_DELTA -------------------------------
+        # Metade A — propriedade: todo eventType legivel e cash-affecting move o
+        # saldo. Nenhum deles pode passar pelo acumulador valendo zero.
+        def l56a():
+            r = ev("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              const casos = {
+                DEPOSIT:    {eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:1000, effectiveAt:'2026-01-10'},
+                WITHDRAWAL: {eventType:'WITHDRAWAL', cashAccountId:f.caixaXP, amount:1000, effectiveAt:'2026-01-10'},
+                TRANSFER:   {eventType:'TRANSFER', sourceCashAccountId:f.caixaXP,
+                             destinationCashAccountId:f.caixaBTG, amount:1000, effectiveAt:'2026-01-10',
+                             flowScope:'INTERNAL'},
+                BUY:        {eventType:'BUY', cashAccountId:f.caixaXP, instrumentId:f.petr4,
+                             quantity:'10', amount:1000, effectiveAt:'2026-01-10'},
+                SELL:       {eventType:'SELL', cashAccountId:f.caixaXP, instrumentId:f.petr4,
+                             quantity:'10', amount:1000, effectiveAt:'2026-01-11'},
+                FEE:        {eventType:'FEE', cashAccountId:f.caixaXP, amount:1000, effectiveAt:'2026-01-10'},
+                TAX:        {eventType:'TAX', cashAccountId:f.caixaXP, amount:1000, effectiveAt:'2026-01-10'},
+                ADJUSTMENT_CREDIT: {eventType:'ADJUSTMENT_CREDIT', cashAccountId:f.caixaXP,
+                             amount:1000, effectiveAt:'2026-01-10', reason:'conciliacao'},
+                ADJUSTMENT_DEBIT:  {eventType:'ADJUSTMENT_DEBIT', cashAccountId:f.caixaXP,
+                             amount:1000, effectiveAt:'2026-01-10', reason:'conciliacao'},
+              };
+              const out = {};
+              for(const [tipo, d] of Object.entries(casos)){
+                S.alladin.transactions.length = 0;
+                L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:500000, effectiveAt:'2026-01-01'});
+                if(tipo==='SELL') L.addTransaction({eventType:'BUY', cashAccountId:f.caixaXP,
+                  instrumentId:f.petr4, quantity:'10', amount:1000, effectiveAt:'2026-01-05'});
+                const base = JPWAlladin.leitura.saldoDeCaixa(f.caixaXP);
+                const res = L.addTransaction(d);
+                const s = JPWAlladin.leitura.saldoDeCaixa(f.caixaXP);
+                out[tipo] = { ok:res.ok, erro:res.erro, av:s.available,
+                              delta:s.amount - base.amount,
+                              ausente:s.issues.some(i => i.indexOf('ALD_CASH_DELTA_AUSENTE')===0) };
+              }
+              return out;
+            }""")
+            for tipo, res in r.items():
+                if not res["ok"]:
+                    falhas.append(f"L56a {tipo}: lancamento legitimo recusado ({res['erro']!r})")
+                elif not res["av"] or res["ausente"]:
+                    falhas.append(f"L56a {tipo}: saldo bloqueado por delta ausente ({res})")
+                elif res["delta"] == 0:
+                    falhas.append(f"L56a {tipo}: evento cash-affecting nao moveu o saldo (delta 0 implicito)")
+        executar(falhas, "L56a", l56a)
+
+        # Metade B — a guarda: tipo LEGIVEL sem entrada em ALD_CASH_DELTA vira
+        # BLOCKING com diagnostico proprio, NUNCA saldo `available` com delta 0.
+        # Esta e a unica falha do modulo capaz de produzir NUMERO PLAUSIVEL E
+        # FALSO em vez de recusa, entao ela precisa de prova direta. A tabela nao
+        # e exportada; a sonda injeta o modulo com UMA entrada removida numa
+        # pagina isolada. Sem este caso, MA-7 (volta do `: 0`) sobrevive.
+        def l56b():
+            fonte = MODULO.read_text(encoding="utf-8")
+            alvo = "  TAX:        (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),\n"
+            if fonte.count(alvo) != 1:
+                falhas.append("L56b: ancora da entrada TAX em ALD_CASH_DELTA nao encontrada")
+                return
+            p2 = browser.new_page()
+            p2.on("pageerror", lambda e: falhas.append(f"L56b pageerror: {e}"))
+            p2.route("**/*", abortar)
+            p2.goto("about:blank")
+            p2.add_script_tag(content=PRELUDE)
+            p2.add_script_tag(content=fonte.replace(alvo, "", 1))
+            r = p2.evaluate("""() => {
+              const f = fixture(), L = JPWAlladin.ledger, R = JPWAlladin.leitura;
+              L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100000, effectiveAt:'2026-01-10'});
+              const tax = L.addTransaction({eventType:'TAX', cashAccountId:f.caixaXP, amount:500, effectiveAt:'2026-01-31'});
+              const s = R.saldoDeCaixa(f.caixaXP);
+              // reversal orfao segue com o SEU proprio diagnostico
+              S.alladin.transactions.length = 0;
+              const dep = L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:100, effectiveAt:'2026-01-10'});
+              const rv  = L.reverseTransaction(dep.recordId, {effectiveAt:'2026-01-11'});
+              S.alladin.transactions = S.alladin.transactions.filter(x => x.transactionId !== dep.recordId);
+              const o = R.saldoDeCaixa(f.caixaXP);
+              return { escreveu:tax.ok, av:s.available, amount:s.amount, issues:s.issues,
+                       ausente:s.issues.indexOf('ALD_CASH_DELTA_AUSENTE:'+tax.recordId)>=0,
+                       orfaoAv:o.available,
+                       orfao:o.issues.indexOf('ALD_REVERSAL_ORFAO:'+rv.recordId)>=0,
+                       orfaoNaoAusente:!o.issues.some(i => i.indexOf('ALD_CASH_DELTA_AUSENTE')===0) };
+            }""")
+            p2.close()
+            if not r["escreveu"]:
+                falhas.append("L56b: a sonda nao conseguiu persistir o TAX legivel")
+            if r["av"]:
+                falhas.append(f"L56b: tipo legivel SEM cash delta produziu saldo disponivel ({r})")
+            if r["amount"] is not None and r["amount"] == 100000:
+                falhas.append("L56b: delta ausente virou zero implicito — saldo plausivel e FALSO")
+            if not r["ausente"]:
+                falhas.append(f"L56b: faltou ALD_CASH_DELTA_AUSENTE no diagnostico ({r['issues']})")
+            if r["orfaoAv"] or not r["orfao"] or not r["orfaoNaoAusente"]:
+                falhas.append(f"L56b: reversal orfao perdeu o diagnostico proprio ({r})")
+        executar(falhas, "L56b", l56b)
+
         # ---- L10: qualidade bloqueante, jamais saldo parcial ------------------
         def l10():
             r = ev("""() => {
@@ -1200,13 +1547,13 @@ def main() -> int:
                              logIntacto: JSON.stringify(S.dataGovernance.changeLog) === logAntes };
               window.__stub.saveResult = true;
               // schema futuro: nenhum ato economico passa
-              S.alladin.schemaVersion = 6;
+              S.alladin.schemaVersion = 7;
               const bloqueado = {
                 add: L.addTransaction({eventType:'DEPOSIT', cashAccountId:f.caixaXP, amount:1, effectiveAt:'2026-01-10'}).erro,
                 rev: L.reverseTransaction('aldtx_x', {effectiveAt:'2026-01-10'}).erro,
                 gate: JPWAlladin.writeBlockReason(),
               };
-              S.alladin.schemaVersion = 5;
+              S.alladin.schemaVersion = 6;
               return { meio, bloqueado, trilha: S.dataGovernance.changeLog.map(e => e.action) };
             }""")
             m = r["meio"]
@@ -1274,7 +1621,7 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("alladin_ledger_test PASS (L1-L47: deposito/saque e saldo derivado; transferencia interna"
+    print("alladin_ledger_test PASS (L1-L56: deposito/saque e saldo derivado; transferencia interna"
           "como UM registro que nao altera o patrimonio global — o caso canonico; flowScope como "
           "perimetro, persistido e validado; reversal preservando o original e somando zero, com suas "
           "cinco proibicoes e sem campo economico do chamador; recusas de referencia, moeda e valor; "
@@ -1291,7 +1638,11 @@ def main() -> int:
           "BLOCKING, enquanto fato legitimo duplicado sem dedupe segue somando; AMENDMENT: id "
           "canonico duplicado (cash/instrument/account/asset/tx) bloqueia leitura E recusa escrita; "
           "S3: FEE/TAX standalone debitam exato, revertem para zero, nao tem flowScope nem "
-          "vinculo a trade, e recusam todo campo de trade — dupla contagem irrepresentavel)")
+          "vinculo a trade, e recusam todo campo de trade — dupla contagem irrepresentavel; "
+          "S4: ADJUSTMENT_CREDIT/DEBIT como diferenca de caixa sem contraparte, com reason "
+          "obrigatorio e proprio, zero vinculo e zero campo de trade, revertendo para zero; "
+          "e a COMPLETUDE do cash delta — tipo legivel sem entrada na tabela vira BLOCKING "
+          "com ALD_CASH_DELTA_AUSENTE em vez de zero implicito)")
     return 0
 
 

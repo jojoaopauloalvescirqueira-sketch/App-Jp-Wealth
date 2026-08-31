@@ -25,7 +25,7 @@
 // como PF_MONTH_RE duplica o FX: o módulo de domínio precisa funcionar isolado
 // no harness unitário. As duas constantes DEVEM permanecer iguais — o teste de
 // integração prova o comportamento conjunto (fail-closed).
-const ALD_SUPPORTED_SCHEMA_VERSION = 5;
+const ALD_SUPPORTED_SCHEMA_VERSION = 6;
 
 // ---- moedas: schema extensível ≠ runtime universal --------------------------
 // O SCHEMA aceita qualquer código ISO 4217 (nenhuma lista de moedas é contrato
@@ -637,7 +637,7 @@ function aldActSetRecordStatus(tipo, id, status){
 // registro com origem e destino, não dois lançamentos correlacionados. Assim o
 // cenário "debitou a origem e o destino não recebeu" não é evitado por controle
 // de fluxo — ele é IRREPRESENTÁVEL no schema.
-const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','FEE','TAX','REVERSAL']; // FECHADO
+const ALD_EVENT_TYPES  = ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','FEE','TAX','ADJUSTMENT_CREDIT','ADJUSTMENT_DEBIT','REVERSAL']; // FECHADO
 const ALD_TX_STATUS    = ['POSTED','REVERSED'];                          // FECHADO (DRAFT: fase própria)
 const ALD_FLOW_SCOPES  = ['INTERNAL','EXTERNAL'];                        // FECHADO
 // flowScope é RELAÇÃO COM O PERÍMETRO, não direção (DH-03-1): EXTERNAL cruza a
@@ -668,6 +668,14 @@ const ALD_CASH_DELTA = {
   // BUY/SELL — aqueles sao componentes do proprio trade e continuam intocados.
   FEE:        (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),
   TAX:        (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),
+  // ALD-03 S4 — AJUSTE DE RECONCILIACAO: diferenca de caixa SEM contraparte
+  // economica identificada. Dois tipos em vez de um campo de direcao ou de um
+  // amount assinado (DH-S4-2): a direcao vem do eventType, como em todo o
+  // ledger, e assim ela ja fica protegida contra adulteracao pelo mesmo codigo
+  // que protege o resto — o espelho do par compara reversedEventType, e o
+  // efeito do reversal e resolvido a partir do tipo do ORIGINAL.
+  ADJUSTMENT_CREDIT: (tx, id) => (tx.cashAccountId===id ? +tx.amount : 0),
+  ADJUSTMENT_DEBIT:  (tx, id) => (tx.cashAccountId===id ? -tx.amount : 0),
 };
 // Eventos so-caixa cuja unica referencia e a conta: sem papel, sem instrumento,
 // sem vinculo a transacao. A ausencia de vinculo e o que torna a dupla
@@ -676,6 +684,20 @@ const ALD_CASH_DELTA = {
 // economica e criada: o dominio nao tenta adivinhar se duas despesas parecidas
 // sao o mesmo fato.
 const ALD_DESPESAS_STANDALONE = ['FEE','TAX'];
+// Ajuste de reconciliacao: so-caixa como a despesa, mas BIDIRECIONAL e — ao
+// contrario dela — pode nao ser fato economico algum. Por isso NAO recebe
+// flowScope e NAO e classificado automaticamente:
+//   ADJUSTMENT != EXTERNAL FLOW   e   ADJUSTMENT != ECONOMIC GAIN/LOSS
+// Ele altera o saldo OBSERVADO do Cash Ledger sem afirmar que houve aporte,
+// retirada ou rendimento. FRONTEIRA PARA O PERFORMANCE BOOK FUTURO: um
+// ADJUSTMENT nao pode ser absorvido em silencio pelo residual
+// EconomicGain = Closing - Opening - NetExternalFlow; a implementacao futura
+// DEVE segrega-lo explicitamente por eventType (ou equivalente aprovado). Ate
+// existir essa politica, nenhuma matematica de performance e inventada aqui.
+const ALD_AJUSTES_RECONCILIACAO = ['ADJUSTMENT_CREDIT','ADJUSTMENT_DEBIT'];
+// Eventos so-caixa sem vinculo: despesa e ajuste compartilham as MESMAS
+// proibicoes estruturais de campo (nada de papel, nada de vinculo).
+const ALD_SO_CAIXA_SEM_VINCULO = ALD_DESPESAS_STANDALONE.concat(ALD_AJUSTES_RECONCILIACAO);
 // A perna de papel de BUY/SELL (+quantity/−quantity) NÃO tem engine neste
 // ciclo: quantity é fato persistido e verificável, e quem o agregará é o
 // Position Engine (ALD-04). Somar aqui exigiria aritmética decimal que este
@@ -723,10 +745,17 @@ function aldTxLegivel(tx){
   // FEE/TAX standalone: a AUSENCIA dos campos de trade e contratual — presenca
   // e adulteracao, do mesmo modo que flowScope num trade. Vale tambem para o
   // REVERSAL de uma despesa (tipoBase), que nao pode ganhar economia de trade.
-  if(tipoBase==='FEE' || tipoBase==='TAX'){
+  if(ALD_SO_CAIXA_SEM_VINCULO.indexOf(tipoBase)>=0){
     for(const proibido of ['instrumentId','quantity','fees','taxes']){
       if(Object.prototype.hasOwnProperty.call(tx, proibido)) return false;
     }
+  }
+  // O ajuste e o unico evento cujo valor NAO pode ser copiado de lugar nenhum:
+  // nao ha original de onde herdar, nem contraparte com que comparar. A
+  // justificativa e a unica coisa que o torna auditavel, entao ela e parte da
+  // FORMA do registro — um ajuste sem reason legivel e dado invalido.
+  if(ALD_AJUSTES_RECONCILIACAO.indexOf(tipoBase)>=0 && tx.eventType!=='REVERSAL'){
+    if(!aldTextInDomain(tx.reason, {max:240})) return false;
   }
   if((tipoBase==='BUY'||tipoBase==='SELL') && tx.eventType!=='REVERSAL'){
     if(typeof tx.instrumentId!=='string' || !tx.instrumentId) return false;
@@ -786,8 +815,14 @@ function aldReversalConsistente(rev, orig){
 // de chegar aqui.
 function aldTxEfeito(tx, cashAccountId, porId){
   if(tx.eventType!=='REVERSAL'){
+    // COMPLETUDE DO CASH DELTA: ausencia de entrada na tabela NAO pode virar
+    // zero implicito. Um tipo legivel sem semantica de caixa produziria saldo
+    // com `quality:'OK'` ignorando o evento — a unica combinacao do modulo que
+    // gera NUMERO PLAUSIVEL E FALSO em vez de BLOCKING. `null` e o sentinel de
+    // "nao classificavel" que esta funcao ja usa para o reversal orfao.
     const f = ALD_CASH_DELTA[tx.eventType];
-    return f ? f(tx, cashAccountId) : 0;
+    if(!f) return null;
+    return f(tx, cashAccountId);
   }
   const orig = porId[tx.reversalOf];
   if(!orig) return null;                       // reversal órfão: não classificável
@@ -820,18 +855,32 @@ function aldCashAptaParaLancamento(a, id){
 }
 function aldNormalizeTransactionFields(a, d){
   d = d || {};
-  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','FEE','TAX'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
+  if(!aldInEnum(d.eventType, ['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL','FEE','TAX',
+                             'ADJUSTMENT_CREDIT','ADJUSTMENT_DEBIT'])) return { ok:false, erro:'ALD_EVENT_TYPE_INVALIDO' };
   // FEE/TAX standalone: despesa pura. Recusa por PRESENCA de qualquer campo de
   // trade ou de vinculo — o chamador que os informa esta afirmando uma
   // semantica que este evento nao tem, e apagar em silencio mascararia o erro
   // do produtor (mesma doutrina do flowScope em trade, DH-S2-9).
-  if(d.eventType==='FEE' || d.eventType==='TAX'){
+  if(ALD_SO_CAIXA_SEM_VINCULO.indexOf(d.eventType)>=0){
     for(const proibido of ['instrumentId','quantity','fees','taxes','flowScope',
                            'transactionRef','transactionId','reversalOf',
                            'sourceCashAccountId','destinationCashAccountId']){
       if(Object.prototype.hasOwnProperty.call(d, proibido))
         return { ok:false, erro:'ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA:'+proibido };
     }
+  }
+  // reason: OBRIGATORIO e campo PROPRIO no ajuste (DH-S4-3). Nao e `note`, que
+  // segue opcional e livre: `note` e comentario, `reason` e a justificativa que
+  // torna auditavel um fato que ninguem mais pode conferir. Vazio ou so-espacos
+  // e recusa (aldTextInDomain exige trim().length>0).
+  let motivo = null;
+  if(ALD_AJUSTES_RECONCILIACAO.indexOf(d.eventType)>=0){
+    if(!aldTextInDomain(d.reason, {max:240})) return { ok:false, erro:'ALD_REASON_OBRIGATORIO' };
+    motivo = String(d.reason);
+  }else if(Object.prototype.hasOwnProperty.call(d,'reason')){
+    // reason so existe no ajuste: informa-lo noutro tipo e afirmar semantica
+    // que aquele evento nao tem.
+    return { ok:false, erro:'ALD_REASON_NAO_PERMITIDO:'+d.eventType };
   }
   // Trade nao possui flowScope valido NENHUM — o chamador que o declara esta
   // afirmando uma semantica economica impossivel, e apagar a declaracao em
@@ -913,6 +962,7 @@ function aldNormalizeTransactionFields(a, d){
   for(const r of refs) valor[r]=d[r];
   if(dedupe) valor.dedupeKey=dedupe;
   if(nota.valor) valor.note=nota.valor;
+  if(motivo!==null) valor.reason=motivo;
   return { ok:true, valor };
 }
 function aldActAddTransaction(dados){
@@ -946,6 +996,12 @@ function aldActReverseTransaction(originalId, dados){
     const d = dados || {};
     if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
     const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
+    // `reason` da reversao e PROPRIO — como effectiveAt e note. Reverter um
+    // ajuste e outro ato sem contraparte, e o motivo dele nao e o motivo do
+    // original: copiar seria fabricar justificativa. Por isso `reason` NAO
+    // entra na lista de campos economicos nao-informaveis nem na comparacao
+    // do par (aldReversalConsistente).
+    const motivoRev = aldOptionalText(d.reason, 240); if(!motivoRev.ok) return { ok:false, erro:'ALD_REASON_INVALIDO' };
     let dedupe = null;
     if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
       if(!aldTextInDomain(d.dedupeKey,{max:120})) return { ok:false, erro:'ALD_DEDUPE_KEY_INVALIDA' };
@@ -975,6 +1031,7 @@ function aldActReverseTransaction(originalId, dados){
     for(const r of aldTxRefsDoEvento(orig.eventType)) rec[r]=orig[r];
     if(dedupe) rec.dedupeKey=dedupe;
     if(nota.valor) rec.note=nota.valor;
+    if(motivoRev.valor) rec.reason=motivoRev.valor;
     a.transactions.push(rec);
     orig.status='REVERSED';   // lifecycle do original; campos econômicos intactos
     return { recordId:rec.transactionId, avisos:[] };
@@ -1013,7 +1070,7 @@ const ALD_LEITURA_CAMPOS = Object.freeze({
   cashAccounts: Object.freeze(['cashAccountId','accountId','currency','recordStatus','createdAt']),
   transactions: Object.freeze(['transactionId','eventType','status','flowScope','amount','currency',
     'effectiveAt','recordedAt','cashAccountId','sourceCashAccountId','destinationCashAccountId',
-    'instrumentId','quantity','fees','taxes',
+    'instrumentId','quantity','fees','taxes','reason',
     'reversalOf','reversedEventType','dedupeKey','note']),
 });
 function aldFreezeDeep(v){
@@ -1148,7 +1205,13 @@ function aldSaldoDeCaixa(cashAccountId){
       }
     }
     const efeito = aldTxEfeito(t, cashAccountId, porId);
-    if(efeito===null){ issues.push('ALD_REVERSAL_ORFAO:'+t.transactionId); continue; }
+    if(efeito===null){
+      // O diagnostico distingue as duas causas de "nao classificavel": reversal
+      // sem original vs tipo sem semantica de caixa. Mensagem errada e pista falsa.
+      const orfao = t.eventType==='REVERSAL' && !porId[t.reversalOf];
+      issues.push((orfao ? 'ALD_REVERSAL_ORFAO:' : 'ALD_CASH_DELTA_AUSENTE:')+t.transactionId);
+      continue;
+    }
     if(efeito===0) continue;
     if(t.currency!==conta.currency){ issues.push('ALD_MOEDA_DIVERGENTE:'+t.transactionId); continue; }
     // MC-S2-2: a guarda é POR PASSO. Um acumulador que atravessa 2^53 já perdeu

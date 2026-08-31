@@ -18,8 +18,8 @@ a spec planeja.
 > [!note] Superado em 2026-08-31 — o parágrafo acima descreve o estado do C3
 > O texto acima ficou como registro daquele momento. **O domínio já sabe "o que
 > aconteceu"**: o Cash Ledger (ALD-03 S1), os trades BUY/SELL (S2), as despesas
-> FEE/TAX standalone (S3) e a **posição por quantidade derivada** (ALD-04 S1)
-> estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
+> FEE/TAX standalone (S3), os ajustes de reconciliação (S4) e a **posição por
+> quantidade derivada** (ALD-04 S1) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
 > holding persistido/consolidado, cost basis, valuation/current value, P&L,
 > performance, benchmark e as integrações Trading/PF/FX.
 
@@ -39,10 +39,10 @@ a spec planeja.
   Planejamento FX (`PLANNED ≠ EXECUTED ≠ OWNED`) · **cost basis** (pendência #1
   da spec, decisão N3 do ALD-04).
 
-## Persistência — agregado `S.alladin` (schema v5)
+## Persistência — agregado `S.alladin` (schema v6)
 
 ```json
-{"schemaVersion":5, "reportingCurrency":"BRL",
+{"schemaVersion":6, "reportingCurrency":"BRL",
  "instruments":[], "assets":[], "accounts":[], "cashAccounts":[], "transactions":[]}
 ```
 
@@ -485,11 +485,13 @@ aconteceu": entrada, saída e movimentação de dinheiro entre custódias. Nada 
 disso — sem papel, sem custo, sem valor de mercado, sem performance.
 
 ```text
-Transaction { transactionId 'aldtx_…' · eventType DEPOSIT|WITHDRAWAL|TRANSFER|BUY|SELL|REVERSAL
+Transaction { transactionId 'aldtx_…' · eventType DEPOSIT|WITHDRAWAL|TRANSFER|BUY|SELL
+                                                 |FEE|TAX|ADJUSTMENT_CREDIT|ADJUSTMENT_DEBIT|REVERSAL
               status POSTED|REVERSED · flowScope? INTERNAL|EXTERNAL (só eventos de fluxo)
               amount > 0 · currency · effectiveAt · recordedAt
               cashAccountId? · sourceCashAccountId? · destinationCashAccountId?
               instrumentId? · quantity? (string decimal canônica) · fees? · taxes? (trade)
+              reason? (obrigatório no ajuste, proibido nos demais)
               reversalOf? · reversedEventType? · dedupeKey? · note? }
 ```
 
@@ -728,8 +730,86 @@ verdade: quem está velho é o build. Provado pelo mixed-build W2 contra o códi
 **real** de `eb3fd6f`, e pelo caso W, que carimba um ledger **povoado**
 preservando `quantity`, `fees`, `taxes`, `amount` e `flowScope` byte a byte.
 
-**ADJUSTMENT permanece fora** — bidirecional, cria/destrói caixa e exige
-`reason`: slice própria, com decisão de direção em aberto.
+## ALD-03 S4 — ADJUSTMENT (ajuste de reconciliação)
+
+Um extrato que não fecha por dois centavos, um crédito que o banco lançou e não
+explica, um arredondamento de custódia. São diferenças de caixa **reais** e
+**sem contraparte econômica identificável** — e é exatamente essa ausência que
+as distingue de tudo o que veio antes.
+
+```text
+ADJUSTMENT_CREDIT   cash = +amount   papel = nenhum   flowScope AUSENTE   reason OBRIGATÓRIO
+ADJUSTMENT_DEBIT    cash = −amount   papel = nenhum   flowScope AUSENTE   reason OBRIGATÓRIO
+```
+
+*Dois tipos, não um campo de direção nem um `amount` assinado (DH-S4-2).* A
+direção vem do `eventType`, como em todo o ledger — e assim ela já nasce
+protegida pelo mesmo código que protege o resto: o espelho do par compara
+`reversedEventType`, e o efeito da reversão é resolvido a partir do tipo do
+**original**. Um `direction` avulso seria um segundo lugar onde a direção mora,
+e o único protegido por nada.
+
+*`reason` é obrigatório e é campo próprio (DH-S4-3).* O ajuste é o único evento
+cujo valor **não pode ser conferido contra nada**: não há original de onde
+herdar, nem contraparte com que comparar. A justificativa é a única coisa que o
+torna auditável, então ela é parte da **forma** do registro — ausente, `null`,
+`""` ou só espaços é recusa na escrita (`ALD_REASON_OBRIGATORIO`) e
+ilegibilidade na leitura. `note` continua opcional e livre: nota é comentário,
+`reason` é justificativa, e uma não cobre a outra. Nos demais tipos `reason` é
+**proibido por presença** (`ALD_REASON_NAO_PERMITIDO:<tipo>`) — declará-lo num
+DEPOSIT afirmaria uma semântica que aquele evento não tem, e ignorá-lo em
+silêncio perderia o que o autor escreveu.
+
+*Zero efeito em posição.* `ADJUSTMENT` não entra em `ALD_PAPEL_DELTA` e não
+aceita `instrumentId` nem `quantity` — não existe forma de escrever um ajuste
+que mova papel. As demais proibições são as da despesa: `fees`, `taxes`,
+`flowScope`, `transactionRef` e referências de transferência.
+
+*`ADJUSTMENT` não aponta para transação original.* Se existe lançamento errado
+**identificável**, o caminho correto é `REVERSAL` — e a proibição de
+`transactionRef` mantém os dois caminhos impossíveis de confundir. Reverter um
+ajuste é permitido pela mecânica existente, e o `reason` da reversão é
+**próprio**: copiá-lo do original fabricaria justificativa para um fato novo.
+
+> [!warning] Fronteira para o Performance Book
+> `ADJUSTMENT` **não é fluxo externo** e **não é ganho/perda econômico**. Ele
+> altera o saldo *observado* sem afirmar que houve aporte, retirada ou
+> rendimento. Quando o Performance Book existir, ele **não pode** ser absorvido
+> em silêncio pelo residual `EconomicGain = Closing − Opening − NetExternalFlow`
+> — a implementação **deve** segregá-lo explicitamente. Até existir política
+> aprovada para isso, nenhuma matemática de performance é inventada aqui.
+
+### Completude do `ALD_CASH_DELTA` — o fim do zero implícito
+
+O fallback de `aldTxEfeito` devolvia `0` para qualquer `eventType` sem entrada
+na tabela de deltas. Era a única falha do módulo capaz de produzir **número
+plausível e falso** em vez de recusa: um tipo legível sem semântica de caixa
+geraria saldo com `quality:'OK'` simplesmente **ignorando o evento**.
+
+```js
+const f = ALD_CASH_DELTA[tx.eventType];
+if(!f) return null;          // não classificável — nunca zero implícito
+```
+
+`null` é o sentinela que a função já usava para o reversal órfão, e o saldo
+distingue as duas causas: `ALD_REVERSAL_ORFAO:<id>` quando falta o original,
+`ALD_CASH_DELTA_AUSENTE:<id>` quando falta a semântica. Mensagem errada é pista
+falsa. **Não há guarda equivalente para `ALD_PAPEL_DELTA`**: ali a ausência é
+legítima — eventos só-caixa não movem papel por definição.
+
+### `schemaVersion` 5 → 6: identity migration, pelo mesmo motivo do elo anterior
+
+```js
+if(a.schemaVersion===5){ a.schemaVersion=6; continue; }   // um elo, carimbo puro
+```
+
+Nenhum campo criado, alterado ou removido; nenhum trade tocado. Verificado
+empiricamente contra o build **real** de `451b01b`: diante de um agregado v6 com
+`ADJUSTMENT`, um build v5 sem o carimbo reportava `ALD_TRANSACAO_ILEGIVEL` — e
+seguia **escrevendo por cima**, porque seu `writeBlockReason()` era `null`. Com
+v6 ele cai em `READ_ONLY_FUTURE_SCHEMA`, fecha a escrita e diz a verdade. Provado
+pelo mixed-build X2, e pelo caso X, que carimba um ledger **povoado** com trade,
+fluxo e despesa preservando tudo byte a byte.
 
 ## Fronteira normativa — C3 encerra aqui, ALD-03 começa depois
 
