@@ -1,4 +1,46 @@
-# Session Handoff — Alladin · BUY/SELL publicado, CI verde
+# Session Handoff — Alladin · Position Engine publicado
+
+- Data: 2026-08-31
+- **`main` == `origin/main` == `29bb6ff722964dfd283558fc5bd73590a5a5b69b`**
+- Worktree em `main`, sem trabalho pendente de nenhuma frente
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| ALD-03 S2 — BUY/SELL | `cc4714e` | publicado · CI #35 verde |
+| Reconciliação pós-S2 | `31399ca` | publicado · CI #36 verde |
+| **ALD-04 S1 — Position Quantity Engine** | `29bb6ff` | **publicado · CI #37 verde** |
+
+O Alladin responde três perguntas — o que existe (cadastro), o que aconteceu
+(ledger de caixa e trades) e **quanto papel há**: `leitura.posicoes()` deriva a
+posição por quantidade do ledger a cada leitura, com identidade
+`instrumentId + accountId`, aritmética decimal exata em BigInt, zero fora da
+coleção, negativa fiel sem semântica de short, fail-closed global e
+`schemaVersion` ainda **4** (nada novo persistido). Não existem: holding
+persistido/consolidado, cost basis, valuation, P&L, performance, UI de
+posições. Contrato em `docs/architecture/ALLADIN.md`.
+
+## Dívidas abertas
+
+- **QA-D1** — disparou uma vez no primeiro `full` local do ALD-04-S1; passou
+  isolada; `full` seguinte 50/50; não reproduziu no CI #37. **Continua
+  aberta**, sem classificação definitiva.
+- **QA-D2** — assert do Galton sob carga do tier; causa não fechada.
+- **Dívida textual** — comentário de `section#alladin` em `index.html` ainda
+  diz "SOMENTE LEITURA".
+
+## Próxima decisão — gate humano
+
+- continuidade do **ALD-04**;
+- **ALD-03-S3** (FEE/TAX/ADJUSTMENT standalone);
+- ou dívida técnica como **QA-D1**.
+
+**Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — BUY/SELL publicado (2026-08-30)
 
 - Data: 2026-08-30
 - **`main` == `origin/main` == `cc4714e4513016af636b17ca7948c2755f50ef03`**
@@ -43,8 +85,6 @@ Gate humano, em aberto — **nenhuma das duas autorizada**:
   não decididos (direção do ADJUSTMENT; flowScope de FEE); ou
 - **progressão para ALD-04** (Position Engine) conforme planejamento aprovado —
   que exigirá fechar o contrato de aritmética decimal de `quantity`.
-
-# Histórico
 
 ## Fotografia anterior — Cash Ledger publicado (2026-08-29)
 

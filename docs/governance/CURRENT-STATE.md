@@ -1,6 +1,39 @@
 # Estado atual do projeto
 
-## Alladin — BUY/SELL publicado, CI verde — 2026-08-30
+## Alladin — Position Quantity Engine publicado — 2026-08-31
+
+- Data da fotografia: 2026-08-31
+Source revision representada: `29bb6ff722964dfd283558fc5bd73590a5a5b69b`
+- **`main` == `origin/main` == `29bb6ff722964dfd283558fc5bd73590a5a5b69b`**;
+  worktree em `main`, sem trabalho pendente.
+- **ALD-04-S1 CONCLUÍDO.** Existe posição por quantidade **derivada** do
+  ledger: `JPWAlladin.leitura.posicoes()`, identidade
+  `instrumentId + accountId` (a custódia vem exclusivamente de
+  `cashAccount.accountId`), BUY/SELL/REVERSAL agregados em `quantity` por
+  aritmética decimal **exata** em BigInt, posição zerada fora da coleção,
+  negativa como string assinada fiel (sem semântica de short), fail-closed
+  global (adulteração, orfandade cadastral, moeda divergente e schema futuro
+  ⇒ indisponível) e saída determinística. `schemaVersion` permanece **4** —
+  zero estado persistido novo.
+- **Não existe** (fronteira que não se antecipa): holding persistido ou
+  consolidado, cost basis, valuation/current value, patrimônio consolidado,
+  P&L, performance, benchmark, FX patrimonial e UI de posições.
+- **CI vigente: Run #37 (`29bb6ff`) SUCCESS** — `standard` 39/39 no Ubuntu:
+  `PASS=39, PRODUCT_FAIL=0, TEST_HARNESS_FAIL=0, ENVIRONMENT_ERROR=0,
+  BASELINE_FAIL=0, NOT_RUN=0`. Quarto verde consecutivo (#34–#37).
+- **Readiness local do candidato:** `fast` 4/4, `standard` 39/39, `full`
+  **50/50**; suítes `alladin_position` P1–P17 e `alladin_unit` U1–U26;
+  mutation MP-1..MP-11 = 11/11 DEAD.
+- **Dívidas abertas:** **QA-D1** — disparou uma vez no primeiro `full` local
+  do ALD-04-S1 (`alladin-ui-readonly`, caso N), passou isoladamente, o `full`
+  subsequente fechou 50/50 e não reproduziu no CI #37; **continua ABERTA**,
+  sem classificação definitiva. **QA-D2**. Comentário "SOMENTE LEITURA" em
+  `index.html`.
+- **Próxima decisão — gate humano:** continuidade do ALD-04, `ALD-03-S3`
+  (FEE/TAX/ADJUSTMENT standalone) ou dívida técnica como QA-D1. **Nenhuma
+  autorizada por este documento.**
+
+## Alladin — BUY/SELL publicado, CI verde — 2026-08-30 (fotografia histórica)
 
 - Data da fotografia: 2026-08-30
 Source revision representada: `cc4714e4513016af636b17ca7948c2755f50ef03`
@@ -389,6 +422,12 @@ autorizados.
 > deixou de ser: o **ALD-03 S1/S2 está publicado** — transações de caixa e
 > trades `BUY`/`SELL` existem, com saldo derivado. O que continua inexistente
 > são posições, cost basis, valuation e performance — ver a seção do topo.
+
+> [!note] Superado quanto às posições — ALD-04-S1 (2026-08-31)
+> Posição por quantidade agora **existe** como read-model derivado
+> (`JPWAlladin.leitura.posicoes()`), sem persistência. Continuam inexistentes:
+> holding persistido/consolidado, cost basis, valuation/current value, P&L e
+> performance.
 
 **Resíduos registrados:** `ALD-I26` (Audit Trail) deferred ao ALD-07 por
 decisão HD-6 — `dgLogChange` é log operacional não-canônico; referências

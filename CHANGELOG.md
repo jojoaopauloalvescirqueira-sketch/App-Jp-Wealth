@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+### Alladin — posição por quantidade derivada do ledger — 2026-08-31
+
+O Alladin passou a responder "quanto papel há" (`29bb6ff`):
+`leitura.posicoes()` deriva a posição por quantidade a cada leitura — nada é
+persistido. A identidade é `instrumentId + accountId`: o papel vive na
+corretora, e a custódia vem exclusivamente de `cashAccount.accountId` — duas
+caixas do mesmo Account somam UMA posição. BUY soma, SELL subtrai e o REVERSAL
+neutraliza exatamente o original, depois que a consistência do par é provada.
+A aritmética é decimal exata por inteiro escalado em BigInt — sem float em
+caminho algum, sem arredondamento possível; o derivado pode ser zero (a
+posição sai da coleção), negativo (string assinada fiel, sem semântica de
+short) ou maior que o teto de entrada de 64 chars, sempre exato. Fail-closed
+global: adulteração, orfandade cadastral, moeda divergente e schema futuro
+tornam a métrica indisponível, nunca parcial. Saída determinística.
+`schemaVersion` permanece 4 — nenhum estado novo.
+
+Suíte dedicada `alladin_position_test` (P1–P17) entrou no `standard` (39;
+`full` 50); a aritmética é sondada direto no harness unitário (U26). Durante a
+validação, o flake conhecido QA-D1 disparou uma vez no primeiro `full` local
+(passa isolado; rerun 50/50; não reproduziu no CI) — registrado como
+evidência; a dívida segue aberta.
+
 ### Alladin — BUY/SELL: a dupla atômica papel↔caixa — 2026-08-30
 
 O ledger passou a registrar trades (`cc4714e`). Um trade é UM registro com duas
