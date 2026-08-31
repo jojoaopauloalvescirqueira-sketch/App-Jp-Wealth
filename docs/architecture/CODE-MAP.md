@@ -83,7 +83,7 @@ a lista material mudar.
 | 72 | `src/js/20-ui/20-finpes-comparison.js` | Comparativo Mensal: M−1 e M−12 com estados COMPLETE/PARTIAL/UNAVAILABLE e série de 12 meses com lacunas honestas |
 | 73 | `src/js/20-ui/21-finpes-scenarios.js` | Cenários: hipóteses independentes agrupadas por horizonte, com cascata e cópia unidirecional de mês registrado |
 | 74 | `src/js/20-ui/22-finpes-overview.js` | Visão Geral: consolidado derivado de quatro cards — mês atual, dívida & crédito, vs mês anterior e pendências |
-| 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema) e modelo cadastral (Instrument, Asset, Account, CashAccount) — nenhum ato econômico |
+| 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema v4), modelo cadastral (Instrument, Asset, Account, CashAccount) e **ledger econômico** — `DEPOSIT`/`WITHDRAWAL`/`TRANSFER`/`REVERSAL`/`BUY`/`SELL`, saldo de caixa derivado e fail-closed, consistência do par reversal↔original na leitura; sem holdings/positions/cost basis/valuation/P&L |
 | 76 | `src/js/20-ui/23-research-views.js` | Research: ownership e troca efêmera de Calendário, NoCoda, Pivots e quatro empty states |
 | 77 | `src/js/20-ui/24-alladin-views.js` | **Alladin C3**: superfície cadastral — leitura desacoplada pelo read-model, CRUD das quatro entidades no modal próprio, `recordStatus`, write gate, DC-4 e integridade da edição; nenhum conteúdo econômico |
 

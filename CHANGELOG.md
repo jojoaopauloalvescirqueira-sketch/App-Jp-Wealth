@@ -2,6 +2,47 @@
 
 ## [Unreleased]
 
+### Alladin — BUY/SELL: a dupla atômica papel↔caixa — 2026-08-30
+
+O ledger passou a registrar trades (`cc4714e`). Um trade é UM registro com duas
+pernas — BUY move `−(amount+fees+taxes)` no caixa e `+quantity` no papel; SELL,
+o inverso, com líquido legitimamente zero ou negativo — de modo que "debitou o
+caixa e o papel não entrou" é irrepresentável. `fees`/`taxes` são opcionais na
+entrada e sempre presentes na forma persistida; o impacto de caixa deriva de
+fórmula fixa e um `FEE` avulso do mesmo fato não existe (ALD-I36). `flowScope`
+não existe em trades — declará-lo é recusa por presença. `quantity` é string
+decimal canônica de grafia única, sem aritmética neste ciclo. A consistência do
+par reversal↔original passou a ser julgada também na leitura: par divergente
+torna o saldo indisponível, nunca um número plausível. Guardas de inteiro
+seguro na escrita (dois sentidos) e a cada soma do saldo. `schemaVersion` 3→4
+como barreira de escrita pura, provada por mixed-build contra o build v3 real.
+Suítes: ledger L1–L29, unit U1–U25, foundation até V/V2; `standard` 38/38,
+`full` 49/49; CI Run #35 verde.
+
+### CI — histórico completo e NOT_RUN explícito — 2026-08-29
+
+O vermelho estrutural do CI (#30–#33) tinha causa única (`4057a39`): o checkout
+do runner clonava raso e os SHAs históricos pinados pelas suítes não existiam
+no clone. `session-epoch-protocol` reprovava com `ENVIRONMENT_ERROR`; pior,
+`alladin-foundation` pulava os casos de rollback em silêncio e contava como
+PASS. Correção dupla: `fetch-depth: 0` no workflow (os casos históricos passam
+a executar de fato no Ubuntu) e política de `NOT_RUN` — caso sem condição de
+execução termina em `NOT_RUN` com saída não-zero, nunca em PASS silencioso.
+Desde então o verde autocertifica a cobertura: Runs #34 e #35 verdes com
+`NOT_RUN=0`. Dívida `session-epoch-protocol` encerrada com causa raiz.
+
+### Alladin — Cash Ledger: o primeiro fato econômico — 2026-08-29
+
+`S.alladin.transactions[]` nasceu (`5a6f7c3`) com `DEPOSIT`, `WITHDRAWAL`,
+`TRANSFER` e `REVERSAL`. A transferência é UM registro com origem e destino —
+não dois lançamentos — e não é aporte: o patrimônio global não muda. `amount` é
+magnitude positiva (direção vem do tipo); `flowScope` é relação com o perímetro,
+persistido e validado; correção é reversão com o original preservado e o par
+somando zero; saldo é sempre derivado e fail-closed — qualidade bloqueante
+nunca vira saldo parcial; duplicidade de lançamento é recusa (`dedupeKey`).
+`schemaVersion` 2→3 como barreira de escrita. Conta com histórico trava
+`currency`/`accountId`; inativar continua permitido.
+
 ### Navegação — a marca abre o Dashboard — 2026-08-29
 
 A logo do cabeçalho passou a ser o caminho de volta ao Dashboard, atendendo à

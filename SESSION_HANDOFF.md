@@ -1,4 +1,52 @@
-# Session Handoff — Alladin · Cash Ledger publicado
+# Session Handoff — Alladin · BUY/SELL publicado, CI verde
+
+- Data: 2026-08-30
+- **`main` == `origin/main` == `cc4714e4513016af636b17ca7948c2755f50ef03`**
+- Worktree em `main`, sem trabalho pendente de nenhuma frente
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| ALD-03 S1 — Cash Ledger | `5a6f7c3` | publicado |
+| Reconciliação de governança | `93f6e78` | publicado |
+| CI-ENV-01-FIX — fetch-depth + NOT_RUN | `4057a39` | publicado · CI #34 verde |
+| **ALD-03 S2 — BUY/SELL** | `cc4714e` | **publicado · CI #35 verde** |
+
+O ledger registra dinheiro **e** papel: um trade é UM registro de duas pernas
+(caixa e `±quantity`), `fees`/`taxes` embutidos com impacto único (ALD-I36),
+`flowScope` ausente em trades por contrato, consistência do par
+reversal↔original julgada também na leitura, e guardas de inteiro seguro nos
+dois sentidos e a cada soma do saldo. `schemaVersion` **4** tranca o build v3
+(barreira provada por mixed-build contra o código real de `4057a39`). O
+contrato completo vive em `docs/architecture/ALLADIN.md`; a fotografia, em
+`docs/governance/CURRENT-STATE.md`.
+
+O CI deixou de ser vermelho estrutural: a causa (clone raso engolindo os SHAs
+históricos das suítes) foi reproduzida, corrigida na raiz e convertida em
+política — caso sem histórico termina em `NOT_RUN`, nunca em PASS silencioso.
+Runs #34 e #35 verdes com `NOT_RUN=0`.
+
+## Dívidas abertas
+
+- **QA-D1** — `alladin_ui_readonly_test.py` caso N × `updateFxRates` (causa
+  provada, correção não feita).
+- **QA-D2** — assert do Galton sob carga do tier (causa não fechada).
+- **Dívida textual** — comentário de `section#alladin` em `index.html` ainda
+  diz "SOMENTE LEITURA" (texto do C3-S1).
+
+## Próxima decisão de arquitetura
+
+Gate humano, em aberto — **nenhuma das duas autorizada**:
+
+- **ALD-03-S3** — `FEE`/`TAX`/`ADJUSTMENT` standalone, com DHs próprios ainda
+  não decididos (direção do ADJUSTMENT; flowScope de FEE); ou
+- **progressão para ALD-04** (Position Engine) conforme planejamento aprovado —
+  que exigirá fechar o contrato de aritmética decimal de `quantity`.
+
+# Histórico
+
+## Fotografia anterior — Cash Ledger publicado (2026-08-29)
 
 - Data: 2026-08-29
 - **`main` == `origin/main` == `5a6f7c3af23cc4e901d3c49236d98184c6b570ea`**
@@ -41,8 +89,6 @@ deliberadamente fora do S1. Não autorizado. As seis decisões `DH-03-*` já est
 congeladas como contrato e não se reabrem.
 
 ---
-
-# Histórico
 
 ## Sessão N1 da logo — candidato SUPERSEDIDO, não publicado
 

@@ -1,6 +1,47 @@
 # Estado atual do projeto
 
-## Alladin — Cash Ledger publicado — 2026-08-29
+## Alladin — BUY/SELL publicado, CI verde — 2026-08-30
+
+- Data da fotografia: 2026-08-30
+Source revision representada: `cc4714e4513016af636b17ca7948c2755f50ef03`
+- **`main` == `origin/main` == `cc4714e4513016af636b17ca7948c2755f50ef03`**;
+  worktree em `main`, sem trabalho pendente.
+- **O ledger registra dinheiro E papel.** `S.alladin.transactions[]` com
+  `DEPOSIT`, `WITHDRAWAL`, `TRANSFER`, `REVERSAL` (Cash Ledger, ALD-03 S1) e
+  `BUY`/`SELL` (ALD-03 S2): um trade é UM registro de duas pernas — caixa
+  `−(amount+fees+taxes)` / `+(amount−fees−taxes)` e papel `±quantity` —, com
+  `fees`/`taxes` sempre presentes na forma persistida, `flowScope` **ausente**
+  em trades (declará-lo é recusa por presença), consistência do par
+  reversal↔original julgada também na leitura (`ALD_REVERSAL_INCONSISTENTE` ⇒
+  BLOCKING) e guardas de inteiro seguro na escrita e a cada soma do saldo.
+  `schemaVersion` **4** — carimbo puro de barreira de escrita; o build v3 lê
+  fail-closed e é trancado (`READ_ONLY_FUTURE_SCHEMA`), provado por mixed-build
+  contra o código real de `4057a39`.
+- **Cadeia publicada desde a última fotografia:** `5a6f7c3` (ALD-03 S1 — Cash
+  Ledger) → `93f6e78` (reconciliação de governança) → `4057a39` (CI-ENV-01-FIX)
+  → `cc4714e` (ALD-03 S2 — BUY/SELL).
+- **CI-ENV-01-FIX ✅ e a dívida `session-epoch-protocol` ENCERRADA** — causa
+  raiz: o checkout do runner clonava raso (`fetch-depth: 1`) e os SHAs
+  históricos pinados pelas suítes não existiam no clone; `E6/E15` reprovavam
+  como `ENVIRONMENT_ERROR` e `F/F2` eram pulados em silêncio contando como
+  PASS. Correção: `fetch-depth: 0` + política de `NOT_RUN` explícito (caso sem
+  histórico nunca soma como aprovado). Registrada em `QUALITY-GATES.md`.
+- **CI vigente: Run #35 (`cc4714e`) VERDE** — `standard` no Ubuntu com
+  `PASS=38, PRODUCT_FAIL=0, TEST_HARNESS_FAIL=0, ENVIRONMENT_ERROR=0,
+  BASELINE_FAIL=0, NOT_RUN=0`; segundo verde consecutivo (Run #34 idem). Com a
+  política NOT_RUN, o verde autocertifica que os casos históricos
+  (mixed-build/rollback) executaram de fato no runner.
+- **Readiness local:** `fast` 4/4, `standard` 38/38, `full` **49/49**; suítes
+  `alladin_ledger` L1–L29, `alladin_unit` U1–U25, `alladin_foundation` até
+  V/V2; mutation do candidate S2: MS-1..MS-16 16/16.
+- **Dívidas abertas:** QA-D1 · QA-D2 · comentário "SOMENTE LEITURA" em
+  `index.html`.
+- **Próxima decisão de arquitetura (gate humano, nenhuma autorizada):**
+  `ALD-03-S3` — `FEE`/`TAX`/`ADJUSTMENT` standalone (DHs próprios em aberto:
+  direção do ADJUSTMENT, flowScope de FEE) — **ou** progressão para `ALD-04`
+  (Position Engine) conforme planejamento aprovado.
+
+## Alladin — Cash Ledger publicado — 2026-08-29 (fotografia histórica)
 
 - Data da fotografia: 2026-08-29
 Source revision representada: `5a6f7c3af23cc4e901d3c49236d98184c6b570ea`
@@ -342,6 +383,12 @@ autorizados.
 > — ver a seção do topo. O que permanece verdadeiro é a metade econômica:
 > transações, ledger, posições, valuation e performance continuam inexistentes,
 > e o `ALD-03` segue não iniciado.
+
+> [!note] Superado novamente em 2026-08-30 quanto ao ledger
+> A afirmação acima sobre a "metade econômica" era verdadeira em 2026-08-29 e
+> deixou de ser: o **ALD-03 S1/S2 está publicado** — transações de caixa e
+> trades `BUY`/`SELL` existem, com saldo derivado. O que continua inexistente
+> são posições, cost basis, valuation e performance — ver a seção do topo.
 
 **Resíduos registrados:** `ALD-I26` (Audit Trail) deferred ao ALD-07 por
 decisão HD-6 — `dgLogChange` é log operacional não-canônico; referências
