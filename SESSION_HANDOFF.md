@@ -1,4 +1,81 @@
-# Session Handoff — Alladin · FEE/TAX publicado (ALD-03-S3)
+# Session Handoff — Alladin · ADJUSTMENT publicado (ALD-03-S4)
+
+- Data: 2026-08-31
+- **`main` == `origin/main` == `a88b4509ee1651dc9a9b1676ea20d55f1872f131`**
+- Worktree em `main`, sem trabalho pendente · CI #45 verde
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| Registro do hardening | `eb3fd6f` | publicado · CI #42 verde |
+| ALD-03 S3 — FEE/TAX standalone | `9287889` | publicado · CI #43 verde |
+| Reconciliação documental do S3 | `451b01b` | publicado · CI #44 verde |
+| **ALD-03 S4 — ADJUSTMENT** | `a88b450` | **publicado · CI #45 verde** |
+
+**ALD-03-S4 publicado e CI-confirmado.** O ledger registra **diferença de caixa
+sem contraparte econômica identificável**. `ADJUSTMENT_CREDIT` soma `+amount` e
+`ADJUSTMENT_DEBIT` subtrai `−amount`; `amount` é **magnitude positiva**, nunca
+assinado, e a **direção vem exclusivamente do `eventType`** — não existe campo
+`direction`. São **dois tipos** justamente para que a direção fique protegida
+pelo mesmo código que protege o resto: o espelho do par compara
+`reversedEventType` e a reversão resolve o efeito pelo tipo do **original**.
+
+**`reason` é obrigatório e é campo próprio**; **`note` segue opcional e
+distinto**. O ajuste é o único evento cujo valor não pode ser conferido contra
+nada — sem original de onde herdar, sem contraparte com que comparar — então a
+justificativa é parte da **forma** do registro, não da conveniência do autor.
+
+**`flowScope` ausente**, **zero efeito em posição**, **sem vínculo a
+transação**, **reversal pela mecânica existente**. `ADJUSTMENT` **não é external
+flow** e **não é economic gain/loss**; **nenhuma matemática de performance** e
+**nenhum Reconciliation Engine** foram implementados — a fronteira ficou
+documentada para que o Performance Book futuro **segregue** o ajuste em vez de
+absorvê-lo em silêncio no residual.
+
+**Hardening — completude do cash delta.** `aldTxEfeito` não pode mais assumir
+delta 0 silenciosamente: `eventType` cash-affecting sem semântica explícita em
+`ALD_CASH_DELTA` vira **BLOCKING** com `ALD_CASH_DELTA_AUSENTE`, diagnóstico
+distinto do reversal órfão. Isso **elimina a classe "saldo plausível e falso por
+evento ignorado"** — a única falha do módulo que produzia número confiável e
+errado em vez de recusa.
+
+**`schemaVersion` 5 → 6 é identity migration**: carimbo puro, zero transformação
+econômica, ledger povoado preservado. **v6 lendo v5 migra**; **v5 lendo v6
+responde `READ_ONLY_FUTURE_SCHEMA`** e **para de escrever** — antes do carimbo o
+build antigo tratava um `ADJUSTMENT` válido como corrupção **e continuava
+escrevendo por cima**.
+
+Fingerprint `f14c43c7…` · mutations **MA-1..MA-7 DEAD** · `fast` 4/4,
+`standard` 39/39, `full` 50/50 locais, **non-PASS 0**. **CI #45**: job `quality`
+**SUCCESS**. O 39/39 é consistente com o contrato de saída do gate (exit 0 exige
+**todas** as verificações PASS); **o log bruto não foi obtido (HTTP 403)** e
+isso fica registrado como dedução, não como leitura.
+
+## Dívidas e decisões futuras
+
+- **Cost-basis N3** — necessário antes do ALD-04-S2 se *specific identification*
+  entrar em escopo; se for custo médio, nada muda.
+- **Escala decimal por moeda** — antes de JPY/BTC ou valuation.
+- **Transferência in-kind** e **corporate actions** — exigirão `accountId`
+  first-class; trades já persistidos não migram.
+- **QA-D2** — assert do Galton sob carga do tier; causa não fechada.
+- **Dívida textual** — comentário "SOMENTE LEITURA" em `index.html`.
+- **Dívida de nome** — `ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA` é usado **também**
+  pela família só-caixa: o código diz "DESPESA" para um ajuste.
+- **`ALD_REASON_NAO_PERMITIDO`** — aceito como *tightening* do write contract:
+  `reason` em tipo não-ADJUSTMENT é **recusado** em vez de descartado em
+  silêncio. Não há regressão de leitura — v5 e v6 leem registros históricos com
+  `reason` extra normalmente.
+
+## Próxima decisão — gate humano
+
+`ALD-04-S2` ou `QA-D2`.
+**Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — FEE/TAX publicado (ALD-03-S3) (2026-08-31)
 
 - Data: 2026-08-31
 - **`main` == `origin/main` == `928788966f05ecc50f294a1c4b936eb68f43e6b2`**
@@ -52,7 +129,6 @@ não por iniciativa da implementação.
 `ALD-03-S4` (ADJUSTMENT), `ALD-04-S2` ou `QA-D2`.
 **Nenhuma autorizada por este documento.**
 
-# Histórico
 
 ## Fotografia anterior — FULL HARDENING concluído (2026-08-31)
 

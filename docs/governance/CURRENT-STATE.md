@@ -1,6 +1,70 @@
 # Estado atual do projeto
 
-## Alladin ALD-03-S3 — FEE/TAX publicado — 2026-08-31
+## Alladin ALD-03-S4 — ADJUSTMENT publicado — 2026-08-31
+
+- Data da fotografia: 2026-08-31
+Source revision representada: `a88b4509ee1651dc9a9b1676ea20d55f1872f131`
+- **`main` == `origin/main` == `a88b4509ee1651dc9a9b1676ea20d55f1872f131`**;
+  worktree em `main`, sem trabalho pendente.
+- **ALD-03-S4 = PUBLICADO E CI-CONFIRMADO** (commit `a88b450`). O ledger passou
+  a registrar **diferença de caixa sem contraparte econômica identificável**:
+  um extrato que não fecha por dois centavos, um crédito que o banco lançou e
+  não explica, um arredondamento de custódia.
+- **Contrato**: `ADJUSTMENT_CREDIT` = `cash delta = +amount` ·
+  `ADJUSTMENT_DEBIT` = `cash delta = −amount` · `amount` **magnitude positiva**,
+  nunca assinado · **direção exclusivamente pelo `eventType`** (sem campo
+  `direction`) · **efeito em posição = zero** · **`flowScope` ausente** ·
+  **sem vínculo a transação** · reversal pela **mecânica existente**.
+- **Dois tipos em vez de um campo de direção**: a direção passa a ser protegida
+  pelo mesmo código que já protege o resto do ledger — o espelho do par compara
+  `reversedEventType` e o efeito da reversão é resolvido a partir do tipo do
+  **original**. Um `direction` avulso seria um segundo lugar onde a direção
+  mora, e o único protegido por nada.
+- **`reason` OBRIGATÓRIO, campo próprio**: o ajuste é o único evento cujo valor
+  **não pode ser conferido contra nada** — não há original de onde herdar nem
+  contraparte com que comparar. A justificativa é parte da **forma** do
+  registro. **`note` continua opcional e distinto**: nota é comentário, `reason`
+  é justificativa, e uma não cobre a outra.
+- **Fronteira normativa registrada, não implementada**: `ADJUSTMENT` **não é
+  external flow** e **não é economic gain/loss**. **Nenhuma matemática de
+  performance** e **nenhum Reconciliation Engine** foram implementados. Quando
+  o Performance Book existir, ele **deve** segregar `ADJUSTMENT` explicitamente,
+  jamais absorvê-lo no residual `Closing − Opening − NetExternalFlow`.
+- **HARDENING — completude do cash delta**: `aldTxEfeito` **não pode mais
+  assumir delta 0 silenciosamente**. `eventType` cash-affecting sem semântica
+  explícita em `ALD_CASH_DELTA` agora é **BLOCKING** com diagnóstico próprio
+  (`ALD_CASH_DELTA_AUSENTE`), distinto do reversal órfão. Isso **elimina a
+  classe de falha "saldo plausível e falso por evento ignorado"** — a única do
+  módulo capaz de produzir número confiável e errado em vez de recusa. **Sem
+  guarda equivalente para `ALD_PAPEL_DELTA`**: ali a ausência é legítima.
+- **`schemaVersion` 5 → 6 — identity migration** (um elo, carimbo puro): zero
+  campo criado, alterado ou removido; **zero transformação econômica**; ledger
+  **povoado preservado** byte a byte. **Mixed-build**: v6 lendo v5 **migra e
+  preserva**; v5 lendo v6 responde **`READ_ONLY_FUTURE_SCHEMA`** e **para de
+  escrever** — antes do carimbo o build antigo chamava um `ADJUSTMENT` válido
+  de corrupção **e seguia escrevendo por cima**.
+- **Evidência local**: candidate fingerprint
+  `f14c43c7d27b8e74c116a573915d1f62a630d26c6458904f4492753970678e2e` ·
+  mutations **MA-1..MA-7 = DEAD** (zero sobreviventes) · `fast` **4/4** ·
+  `standard` **39/39** · `full` **50/50** · **non-PASS = 0**.
+- **Evidência CI**: **Run #45** sobre `a88b450` — **completed / success**, job
+  `quality` = **success**. O `standard` 39/39 é **consistente com o contrato de
+  saída do quality gate** (`return 0 if all(check["result"] == "PASS" ...)`, ou
+  seja, exit 0 exige que **toda** verificação seja PASS). **O log bruto não foi
+  obtido nesta observação (HTTP 403)** — a afirmação é dedução do contrato, não
+  leitura do artefato.
+- **Dívidas e decisões futuras:** cost-basis N3 (necessário antes do ALD-04-S2
+  se *specific identification* entrar em escopo) · escala decimal por moeda ·
+  transferência in-kind · corporate actions · **QA-D2** · comentário "SOMENTE
+  LEITURA" em `index.html` · **dívida de nome**:
+  `ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA` é usado **também** pela família só-caixa
+  (o código diz "DESPESA" para um ajuste) · **`ALD_REASON_NAO_PERMITIDO`
+  aceito como *tightening* do write contract** — recusar `reason` em tipo
+  não-ADJUSTMENT em vez de descartá-lo em silêncio.
+- **Próxima decisão — gate humano:** `ALD-04-S2` ou `QA-D2`.
+  **Nenhuma autorizada por este documento.**
+
+## Alladin ALD-03-S3 — FEE/TAX publicado — 2026-08-31 (fotografia histórica)
 
 - Data da fotografia: 2026-08-31
 Source revision representada: `928788966f05ecc50f294a1c4b936eb68f43e6b2`

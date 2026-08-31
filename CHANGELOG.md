@@ -2,6 +2,67 @@
 
 ## [Unreleased]
 
+### Alladin — ADJUSTMENT de reconciliação; schema 5 → 6 — 2026-08-31
+
+O ledger passou a registrar **diferença de caixa sem contraparte econômica
+identificável** (`a88b450`): um extrato que não fecha por dois centavos, um
+crédito que o banco lançou e não explica, um arredondamento de custódia. São
+diferenças **reais**, e é a ausência de contraparte que as distingue de tudo o
+que veio antes — inclusive do `REVERSAL`.
+
+`ADJUSTMENT_CREDIT` soma `+amount`, `ADJUSTMENT_DEBIT` subtrai `−amount`. O
+`amount` é **magnitude positiva**, nunca assinado, e a **direção vem
+exclusivamente do `eventType`** — não há campo `direction`. São **dois tipos** e
+não um campo de direção justamente para que a direção fique protegida pelo mesmo
+código que já protege o resto do ledger: o espelho do par compara
+`reversedEventType` e o efeito da reversão é resolvido a partir do tipo do
+**original**. Um `direction` avulso seria um segundo lugar onde a direção mora,
+e o único protegido por nada.
+
+**`reason` é obrigatório e é campo próprio**; **`note` continua opcional e
+distinto**. O ajuste é o único evento cujo valor **não pode ser conferido contra
+nada** — não existe original de onde herdar nem contraparte com que comparar —
+então a justificativa é parte da **forma** do registro. Nota é comentário,
+`reason` é justificativa, e uma não cobre a outra.
+
+**Sem `flowScope`**, **efeito zero em posição**, **sem vínculo a transação** e
+**reversal pela mecânica existente**. Se existe lançamento errado
+**identificável**, o caminho continua sendo `REVERSAL` — a proibição de
+`transactionRef` mantém os dois impossíveis de confundir. `ADJUSTMENT` **não é
+external flow** e **não é economic gain/loss**: ele altera o saldo *observado*
+sem afirmar que houve aporte, retirada ou rendimento. **Nenhuma matemática de
+performance** e **nenhum Reconciliation Engine** foram implementados; ficou
+documentada apenas a fronteira — o Performance Book futuro **deve** segregar o
+ajuste explicitamente, jamais absorvê-lo no residual
+`Closing − Opening − NetExternalFlow`.
+
+**Completude do cash delta.** O fallback de `aldTxEfeito` devolvia `0` para
+qualquer `eventType` sem entrada na tabela de deltas. Era a única falha do módulo
+capaz de produzir **número plausível e falso** em vez de recusa: um tipo legível
+sem semântica de caixa geraria saldo com qualidade `OK` simplesmente **ignorando
+o evento**. Agora a ausência de função devolve `null` — o sentinela que a função
+já usava para o reversal órfão — e o saldo vira **BLOCKING** distinguindo as duas
+causas: `ALD_REVERSAL_ORFAO` quando falta o original,
+`ALD_CASH_DELTA_AUSENTE` quando falta a semântica. **A classe de falha "saldo
+plausível e falso por evento ignorado" deixa de existir.** Não há guarda
+equivalente para `ALD_PAPEL_DELTA`: ali a ausência é legítima, eventos só-caixa
+não movem papel por definição.
+
+`schemaVersion` **5 → 6** é **identity migration** — um elo, carimbo puro, zero
+transformação econômica, ledger povoado preservado byte a byte. **v6 lendo v5
+migra e preserva**; **v5 lendo v6 responde `READ_ONLY_FUTURE_SCHEMA`** e **para
+de escrever**. Verificado contra o build **real** de `451b01b`: sem o carimbo ele
+reportava `ALD_TRANSACAO_ILEGIVEL` para um `ADJUSTMENT` válido — chamava de
+corrupção um dado de versão futura — **e continuava escrevendo por cima**, porque
+seu `writeBlockReason` era nulo.
+
+Mutations **MA-1..MA-7 todas DEAD** (zero sobreviventes), `fast` 4/4, `standard`
+39/39 e `full` 50/50 locais com todos os contadores não-PASS zerados. **CI Run
+#45** sobre `a88b450`: **completed / success**, job `quality` **success** — o
+39/39 é consistente com o contrato de saída do gate (exit 0 exige que **toda**
+verificação seja PASS), embora **o log bruto não tenha sido obtido nesta
+observação (HTTP 403)**.
+
 ### Alladin — FEE e TAX standalone; schema 4 → 5 — 2026-08-31
 
 O ledger passou a registrar **despesa sem contraparte de trade** (`9287889`):
