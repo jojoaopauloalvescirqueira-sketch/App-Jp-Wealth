@@ -1,4 +1,53 @@
-# Session Handoff — QA-D1 resolvido, CI verde
+# Session Handoff — Alladin FULL HARDENING concluído
+
+- Data: 2026-08-31
+- **`main` == `origin/main` == `3f2716da80f2d7367e61e535b3651426b8631e01`**
+- Worktree em `main`, sem trabalho pendente · CI #41 verde (oitavo consecutivo)
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| QA-D1 — isolamento do harness × Service Worker | `b7ada80` | publicado · CI #39 verde |
+| Registro documental do QA-D1 | `5a4bd68` | publicado · CI #40 verde |
+| **ALLADIN FULL HARDENING** | `3f2716d` | **publicado · CI #41 verde** |
+
+**Hardening concluído.** A auditoria adversarial fechou um cluster P0/P1: read
+models e write gate confiavam em invariantes write-only, e um agregado
+persistido adulterado produzia número plausível e falso — porque `aldFindIn`
+resolve id por **first-match** na leitura *e* na escrita.
+`aldIntegridadeEstrutural` agora protege `saldoDeCaixa`, `posicoes` e
+**`aldMutate`** (recusa antes de mutar), validando unicidade dos cinco IDs
+canônicos, `dedupeKey` única, ≤1 reversal por original, pareamento
+status⟺reversal, container `transactions` fail-closed e future-schema no saldo.
+Fatos legítimos idênticos seguem somando. Isolamento de SW propagado às suítes
+de app real. Mutation 10/10, `full` 50/50, CI `PASS=39` com os demais
+contadores zerados.
+
+**Nenhum P0/P1 conhecido restante dentro dos vetores auditados** — fronteira do
+que foi exercitado, não prova de ausência.
+
+## Dívidas e decisões futuras
+
+- **Escala decimal por moeda** — antes de JPY/BTC ou valuation.
+- **Transferência in-kind / corporate actions** — exigirão `accountId`
+  first-class; os trades já persistidos não migram.
+- **Cost-basis N3** — só *specific identification* exigiria lot-ref no `SELL`,
+  e a decisão precisa vir antes que vendas acumulem.
+- **QA-D2** — assert do Galton sob carga do tier; causa não fechada.
+- **Dívida textual** — comentário "SOMENTE LEITURA" em `index.html`.
+
+## Próxima decisão — gate humano
+
+1. **ALD-03-S3** — recomendado (aditivo, desbloqueado);
+2. **ALD-04-S2** — depende da decisão N3 de cost basis;
+3. **QA-D2**.
+
+**Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — QA-D1 resolvido (2026-08-31)
 
 - Data: 2026-08-31
 - **`main` == `origin/main` == `b7ada805f95ec44501804546ea8389d567bc80bb`**
@@ -28,8 +77,6 @@ ficou intacto e a sensibilidade do caso N foi provada por mutação real.
 
 Continuidade do **ALD-04**, **ALD-03-S3** ou **QA-D2**.
 **Nenhuma autorizada por este documento.**
-
-# Histórico
 
 ## Fotografia anterior — Position Engine publicado (2026-08-31)
 

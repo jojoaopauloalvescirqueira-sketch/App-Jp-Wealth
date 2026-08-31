@@ -1,6 +1,52 @@
 # Estado atual do projeto
 
-## QA-D1 resolvido pela causa — 2026-08-31
+## Alladin FULL HARDENING concluído — 2026-08-31
+
+- Data da fotografia: 2026-08-31
+Source revision representada: `3f2716da80f2d7367e61e535b3651426b8631e01`
+- **`main` == `origin/main` == `3f2716da80f2d7367e61e535b3651426b8631e01`**;
+  worktree em `main`, sem trabalho pendente.
+- **ALLADIN FULL HARDENING = CONCLUÍDO** (commit `3f2716d`). Auditoria
+  arquitetural adversarial encontrou e fechou um **cluster P0/P1 de integridade
+  estrutural**: os read-models e o write gate confiavam em invariantes que só a
+  porta de escrita impunha, e um agregado **persistido** adulterado produzia
+  número financeiramente plausível e **falso**. O eixo é `aldFindIn`, que
+  resolve todo id por **first-match** na leitura *e* na escrita — id canônico
+  duplicado torna a identidade ambígua.
+- **`aldIntegridadeEstrutural` protege os três pontos**: `saldoDeCaixa`,
+  `posicoes` (⇒ `BLOCKING`) e **`aldMutate`** (⇒ recusa antes de `fn` rodar —
+  nenhuma escrita nova sobre agregado de identidade ambígua). Valida:
+  unicidade dos IDs canônicos `instrumentId`, `assetId`, `accountId`,
+  `cashAccountId`, `transactionId`; `dedupeKey` única; **≤1 reversal por
+  original**; pareamento **status⟺reversal** consistente; container
+  `transactions` **fail-closed**; e o **saldo passou a bloquear future-schema**
+  (guarda que só `posicoes` tinha).
+- **Discriminação preservada:** dois fatos econômicos legítimos idênticos (ids
+  distintos, sem `dedupeKey`) **continuam somando** — só a corrupção provável
+  bloqueia.
+- **Isolamento de Service Worker propagado** às suítes de app real apropriadas
+  (`foundation`, `finalize_preservation`, `ui_crud`,
+  `session_write_serialization`); a suíte do próprio SW segue sem bloqueio.
+- **CI vigente: Run #41 (`3f2716d`) SUCCESS** — `PASS=39`, `PRODUCT_FAIL=0`,
+  `TEST_HARNESS_FAIL=0`, `ENVIRONMENT_ERROR=0`, `BASELINE_FAIL=0`, `NOT_RUN=0`.
+  Oitavo verde consecutivo (#34–#41).
+- **Readiness local do candidato:** mutation **10/10**, `full` **50/50**,
+  `standard` 39/39, `fast` 4/4.
+- **Nenhum P0/P1 CONHECIDO restante dentro dos vetores auditados** — é a
+  fronteira do que a auditoria exercitou, não prova universal de ausência.
+- **Dívidas e decisões futuras:** escala decimal por moeda (antes de JPY/BTC ou
+  valuation) · transferência in-kind e corporate actions (exigirão `accountId`
+  first-class; trades atuais não migram) · cost-basis N3 / *specific
+  identification* (só ela exigiria lot-ref no `SELL`, antes que vendas
+  acumulem) · **QA-D2** · comentário "SOMENTE LEITURA" em `index.html`. Sobre o
+  agregado v2 com `transactions` estruturalmente inválido: a escrita normal
+  agora é **bloqueada** — o que resta é questão de *routing/recovery*, não de
+  gravabilidade.
+- **Próxima decisão — gate humano:** (1) `ALD-03-S3` — recomendado, aditivo e
+  desbloqueado; (2) `ALD-04-S2` — depende da decisão N3 de cost basis;
+  (3) `QA-D2`. **Nenhuma em implementação neste gate.**
+
+## QA-D1 resolvido pela causa — 2026-08-31 (fotografia histórica)
 
 - Data da fotografia: 2026-08-31
 Source revision representada: `b7ada805f95ec44501804546ea8389d567bc80bb`

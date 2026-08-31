@@ -2,6 +2,36 @@
 
 ## [Unreleased]
 
+### Alladin — integridade estrutural na leitura e na escrita — 2026-08-31
+
+Auditoria arquitetural adversarial antes da próxima fase encontrou e fechou um
+cluster P0/P1 (`3f2716d`): os read-models e o write gate confiavam em
+invariantes que **só a porta de escrita** impunha, e um agregado **persistido**
+adulterado — import forjado, edição manual, corrupção parcial — produzia número
+financeiramente plausível e **falso**. O eixo é `aldFindIn`, que resolve todo id
+por **first-match** tanto na leitura quanto na escrita: um id canônico duplicado
+torna a identidade ambígua, o número sai atribuído a uma referência arbitrária e
+um ato novo operaria sobre o registro errado.
+
+`aldIntegridadeEstrutural` passou a julgar o agregado inteiro e é chamado em
+três pontos — `saldoDeCaixa` e `posicoes` antes de agregar, e **`aldMutate`
+antes de qualquer mutação**, de modo que nenhuma escrita nova ocorre sobre um
+agregado de identidade ambígua. Valida unicidade de `instrumentId`, `assetId`,
+`accountId`, `cashAccountId` e `transactionId`; `dedupeKey` única; no máximo um
+REVERSAL por original; pareamento status⟺reversal; e o container `transactions`
+como array. O saldo ganhou ainda a guarda de schema futuro que só as posições
+tinham. A discriminação decisiva foi preservada: dois fatos econômicos legítimos
+idênticos (ids distintos, sem `dedupeKey`) continuam somando — apenas a
+corrupção que a escrita nunca gera é bloqueada.
+
+Fecha também a propagação da lição QA-D1: as suítes de app real
+(`foundation`, `finalize_preservation`, `ui_crud`,
+`session_write_serialization`) passaram a bloquear o Service Worker no contexto
+do harness. Nada de schema, contrato econômico ou feature nova. Provas H1–H6 em
+`alladin_ledger_test` L30–L39 e `alladin_position_test` P18–P21; mutation
+MI-1..MI-10 10/10, incluindo a remoção da integração no write gate; `full`
+50/50 e CI #41 verde.
+
 ### Harness — isolamento do read-only contra o Service Worker (QA-D1) — 2026-08-31
 
 O flake mais antigo do quality gate morreu pela causa (`b7ada80`). O caso N de
