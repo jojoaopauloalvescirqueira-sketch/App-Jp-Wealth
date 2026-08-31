@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+### Alladin — FEE e TAX standalone; schema 4 → 5 — 2026-08-31
+
+O ledger passou a registrar **despesa sem contraparte de trade** (`9287889`):
+uma taxa de custódia, uma manutenção de conta ou um imposto de período não
+pertencem a transação alguma e, até aqui, não tinham como ser registrados sem
+distorcer um `WITHDRAWAL`. `FEE` e `TAX` são só-caixa — `cash = −amount`, efeito
+**zero** em posição, `amount` como magnitude positiva com a direção vindo do
+tipo, moeda derivada da CashAccount e reversal pela mecânica existente.
+
+**Sem `flowScope`**: uma taxa não é retirada de capital, é custo que reduz o
+retorno — marcá-la `EXTERNAL` distorceria Net Contributions e TWR. **Sem vínculo
+a trade**: os `fees`/`taxes` de BUY/SELL seguem **embutidos** e economicamente
+inalterados, e nenhum trade persistido foi decomposto, migrado ou
+reinterpretado. Assim *"a taxa do trade X"* não existe como evento e a dupla
+contagem fica **irrepresentável** — sem nenhuma heurística de igualdade
+econômica. A proibição vale na escrita e na leitura: um registro adulterado com
+campo de trade torna-se ilegível.
+
+`schemaVersion` **4 → 5** é **identity migration** — um elo, carimbo puro, zero
+transformação econômica, ledger povoado preservado byte a byte. Existe porque
+`eventType` é vocabulário persistido fechado: sem a versão, um build v4 diante
+de um `FEE` reportaria "transação ilegível", chamando de **corrupção** um dado
+**válido produzido por versão futura**; com v5 ele responde
+`READ_ONLY_FUTURE_SCHEMA` e diz a verdade. Provado por mixed-build contra o
+build v4 real.
+
+**ADJUSTMENT permanece fora** (slice própria). Mutation 8/8, `full` local 50/50,
+CI #43 verde com `PASS=39` e os demais contadores zerados.
+
 ### Alladin — integridade estrutural na leitura e na escrita — 2026-08-31
 
 Auditoria arquitetural adversarial antes da próxima fase encontrou e fechou um

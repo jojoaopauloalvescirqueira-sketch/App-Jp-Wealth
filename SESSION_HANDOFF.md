@@ -1,4 +1,60 @@
-# Session Handoff — Alladin FULL HARDENING concluído
+# Session Handoff — Alladin · FEE/TAX publicado (ALD-03-S3)
+
+- Data: 2026-08-31
+- **`main` == `origin/main` == `928788966f05ecc50f294a1c4b936eb68f43e6b2`**
+- Worktree em `main`, sem trabalho pendente · CI #43 verde (décimo consecutivo)
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| ALLADIN FULL HARDENING | `3f2716d` | publicado · CI #41 verde |
+| Registro do hardening | `eb3fd6f` | publicado · CI #42 verde |
+| **ALD-03 S3 — FEE/TAX standalone** | `9287889` | **publicado · CI #43 verde** |
+
+**ALD-03-S3 publicado e CI-confirmado.** O ledger registra despesa sem
+contraparte de trade: `FEE` e `TAX` são só-caixa (`−amount`), **não movem
+posição**, **não têm `flowScope`** (taxa reduz retorno; não é retirada de
+capital), derivam a moeda da CashAccount, revertem pela mecânica existente e
+**não têm vínculo a trade**. Os `fees`/`taxes` de BUY/SELL seguem **embutidos e
+economicamente inalterados** — a ausência de vínculo torna a dupla contagem
+irrepresentável, sem nenhuma heurística econômica.
+
+`schemaVersion` **4 → 5** é **identity migration**: carimbo puro, zero
+transformação econômica, ledger povoado preservado. Serve para que um build v4
+diante de dado v5 responda `READ_ONLY_FUTURE_SCHEMA` em vez de tratar um `FEE`
+válido como corrupção. Mutation 8/8, `full` local 50/50, CI `PASS=39` com os
+demais contadores zerados.
+
+**ADJUSTMENT continua fora** — S4 própria, com direção e semântica ainda por
+decidir.
+
+## Dívidas e decisões futuras
+
+- **Cost-basis N3** — necessário antes do ALD-04-S2 se *specific identification*
+  entrar em escopo; se for custo médio, nada muda.
+- **Escala decimal por moeda** — antes de JPY/BTC ou valuation.
+- **Transferência in-kind / corporate actions** — exigirão `accountId`
+  first-class; trades já persistidos não migram.
+- **QA-D2** — assert do Galton sob carga do tier; causa não fechada.
+- **Dívida textual** — comentário "SOMENTE LEITURA" em `index.html`.
+
+## Nota de processo
+
+Classificar uma descoberta como **MATERIAL DISCOVERY implica PARAR antes de
+editar e solicitar amendment** — mesmo quando o arquivo está dentro do blast
+autorizado. Foi o que se aplicou nesta closure: o bump de schema alcançou
+`CONTEXT-MAP`, `CODE-MAP` e `README`, e o blast foi ampliado por decisão humana,
+não por iniciativa da implementação.
+
+## Próxima decisão — gate humano
+
+`ALD-03-S4` (ADJUSTMENT), `ALD-04-S2` ou `QA-D2`.
+**Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — FULL HARDENING concluído (2026-08-31)
 
 - Data: 2026-08-31
 - **`main` == `origin/main` == `3f2716da80f2d7367e61e535b3651426b8631e01`**
@@ -44,8 +100,6 @@ que foi exercitado, não prova de ausência.
 3. **QA-D2**.
 
 **Nenhuma autorizada por este documento.**
-
-# Histórico
 
 ## Fotografia anterior — QA-D1 resolvido (2026-08-31)
 

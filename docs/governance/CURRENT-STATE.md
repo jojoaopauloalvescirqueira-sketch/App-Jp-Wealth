@@ -1,6 +1,42 @@
 # Estado atual do projeto
 
-## Alladin FULL HARDENING concluído — 2026-08-31
+## Alladin ALD-03-S3 — FEE/TAX publicado — 2026-08-31
+
+- Data da fotografia: 2026-08-31
+Source revision representada: `928788966f05ecc50f294a1c4b936eb68f43e6b2`
+- **`main` == `origin/main` == `928788966f05ecc50f294a1c4b936eb68f43e6b2`**;
+  worktree em `main`, sem trabalho pendente.
+- **ALD-03-S3 = PUBLICADO E CI-CONFIRMADO** (commit `9287889`). O ledger passou
+  a registrar **despesa sem contraparte de trade**: `FEE` e `TAX` standalone
+  (custódia, manutenção, imposto de período), que antes não tinham como ser
+  registrados sem distorcer um `WITHDRAWAL`.
+- **Contrato**: `cash delta = −amount` · **efeito em posição = zero** ·
+  **`flowScope` ausente** (taxa não é retirada de capital; é custo que reduz o
+  retorno) · moeda **derivada da CashAccount** · reversal pela **mecânica
+  existente** · **sem vínculo a trade**.
+- **BUY/SELL preservados**: `fees`/`taxes` de trade continuam **embutidos** no
+  próprio trade, economicamente inalterados — nenhum trade foi decomposto,
+  migrado ou reinterpretado. A ausência de vínculo torna a dupla contagem
+  **irrepresentável**, **sem nenhuma heurística econômica** de double-count.
+- **`schemaVersion` 4 → 5 — identity migration** (um elo, carimbo puro): zero
+  campo criado, alterado ou removido; **zero transformação econômica**; ledger
+  **povoado preservado** byte a byte na migração. O carimbo existe para que
+  **mixed-build v4 lendo v5** responda `READ_ONLY_FUTURE_SCHEMA` — dado válido
+  de versão futura deixa de ser confundido com corrupção.
+- **Evidência**: mutation **8/8 DEAD** · `full` local **50/50** · **CI Run #43
+  SUCCESS** com `PASS=39`, `PRODUCT_FAIL=0`, `TEST_HARNESS_FAIL=0`,
+  `ENVIRONMENT_ERROR=0`, `BASELINE_FAIL=0`, `NOT_RUN=0`. Décimo verde
+  consecutivo (#34–#43).
+- **ADJUSTMENT continua FORA** — slice própria (S4); direção e semântica ainda
+  **precisam de decisão humana**.
+- **Dívidas e decisões futuras:** cost-basis N3 (necessário antes do ALD-04-S2
+  se *specific identification* entrar em escopo) · escala decimal por moeda ·
+  transferência in-kind e corporate actions · **QA-D2** · comentário "SOMENTE
+  LEITURA" em `index.html`.
+- **Próxima decisão — gate humano:** `ALD-03-S4` (ADJUSTMENT), `ALD-04-S2` ou
+  `QA-D2`. **Nenhuma autorizada por este documento.**
+
+## Alladin FULL HARDENING concluído — 2026-08-31 (fotografia histórica)
 
 - Data da fotografia: 2026-08-31
 Source revision representada: `3f2716da80f2d7367e61e535b3651426b8631e01`
