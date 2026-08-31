@@ -70,7 +70,16 @@ CONTEXTOS = []
 
 
 def abrir(browser, url, viewport=None):
-    ctx = browser.new_context(viewport=viewport or {"width": 1440, "height": 900})
+    # QA-D1: Service Worker BLOQUEADO no contexto. Esta suite testa a superficie
+    # read-only do Alladin, e o SW (que tem suite propria: service-worker-upgrade)
+    # abria um tunel por baixo do page.route apos reload — fetches do boot
+    # (updateFxRates) escapavam do stub, recebiam cotacao REAL, salvavam, e o
+    # caso N acusava a superficie por uma escrita que nao era dela. Bloquear o
+    # SW garante que TODA rede passe pelo stub do harness; nao esconde write
+    # nenhum originado pelo Alladin — o caso N continua comparando o documento
+    # inteiro byte a byte.
+    ctx = browser.new_context(viewport=viewport or {"width": 1440, "height": 900},
+                              service_workers="block")
     CONTEXTOS.append(ctx)
     ctx.add_init_script("window.__onbShown=true;")
     page = ctx.new_page()
