@@ -58,6 +58,7 @@ STANDARD = FAST + (
     ("session-write-serialization", [sys.executable, "tools/session_write_serialization_test.py"]),
     ("alladin-ui-readonly", [sys.executable, "tools/alladin_ui_readonly_test.py"]),
     ("alladin-ui-crud", [sys.executable, "tools/alladin_ui_crud_test.py"]),
+    ("alladin-ui-ledger", [sys.executable, "tools/alladin_ui_ledger_test.py"]),
 )
 FULL = STANDARD + (
     ("session-finalization", [sys.executable, "tools/finalize_session_test.py"]),

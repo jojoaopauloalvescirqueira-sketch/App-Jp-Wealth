@@ -6118,7 +6118,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'dd511d532e830ed4';
+const JP_WEALTH_BUILD_ID = 'd0376ea94d4874cc';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7269,22 +7269,31 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <section class="screen" id="alladin">
     <div>
       <h2 data-route-focus>Alladin</h2>
-      <!-- C3-S1: superfície cadastral SOMENTE LEITURA sobre o domínio C2.
-           Nenhum campo econômico existe aqui — saldo, quantidade, preço,
-           valuation e patrimônio só nascerão com ALD-03/ALD-04. A UI observa
+      <!-- Superfície do Alladin: cadastro (C3, com manutenção) + projeção
+           econômica READ-ONLY (ALD-05-S1). Os quatro destinos cadastrais
+           seguem sem conteúdo econômico; saldo, lançamentos e posições vivem
+           nos três destinos econômicos e são DERIVADOS — projetados dos
+           read-models, nunca persistidos, nunca recalculados aqui. Valuation,
+           cost basis, P&L e performance continuam inexistentes. A UI observa
            via JPWAlladin.leitura: abrir, trocar de view e recarregar jamais
            gravam nem materializam estado. -->
       <div class="session-warning" id="alladinReadOnlyBanner" role="status" hidden></div>
-      <div class="seg" id="alladinTabs" role="group" aria-label="Cadastro patrimonial">
+      <div class="seg" id="alladinTabs" role="group" aria-label="Destinos do Alladin">
         <button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
         <button type="button" data-alladin-view="assets" aria-pressed="false">Bens</button>
         <button type="button" data-alladin-view="accounts" aria-pressed="false">Contas</button>
         <button type="button" data-alladin-view="cashAccounts" aria-pressed="false">Caixa</button>
+        <button type="button" data-alladin-view="ledger" aria-pressed="false">Lançamentos</button>
+        <button type="button" data-alladin-view="balances" aria-pressed="false">Saldos</button>
+        <button type="button" data-alladin-view="positions" aria-pressed="false">Posições</button>
       </div>
       <div class="card alladin-view" id="alladinInstruments" data-alladin-panel="instruments" role="region" aria-label="Instrumentos"></div>
       <div class="card alladin-view" id="alladinAssets" data-alladin-panel="assets" role="region" aria-label="Bens" hidden></div>
       <div class="card alladin-view" id="alladinAccounts" data-alladin-panel="accounts" role="region" aria-label="Contas" hidden></div>
       <div class="card alladin-view" id="alladinCash" data-alladin-panel="cashAccounts" role="region" aria-label="Caixa" hidden></div>
+      <div class="card alladin-view" id="alladinLedger" data-alladin-panel="ledger" role="region" aria-label="Lançamentos" hidden></div>
+      <div class="card alladin-view" id="alladinBalances" data-alladin-panel="balances" role="region" aria-label="Saldos" hidden></div>
+      <div class="card alladin-view" id="alladinPositions" data-alladin-panel="positions" role="region" aria-label="Posições" hidden></div>
     </div>
   </section>
 
@@ -34272,13 +34281,22 @@ const ALLADIN_VIEWS=[
   ['instruments','alladinInstruments'],
   ['assets','alladinAssets'],
   ['accounts','alladinAccounts'],
-  ['cashAccounts','alladinCash']
+  ['cashAccounts','alladinCash'],
+  // ALD-05 S1 — destinos ECONÔMICOS, read-only. Os quatro acima continuam
+  // cadastrais e sem conteúdo econômico; a fronteira é visível na navegação.
+  ['ledger','alladinLedger'],
+  ['balances','alladinBalances'],
+  ['positions','alladinPositions']
 ];
 const ALLADIN_EMPTY={
   instruments:'Nenhum instrumento cadastrado.',
   assets:'Nenhum bem cadastrado.',
   accounts:'Nenhuma conta cadastrada.',
-  cashAccounts:'Nenhuma conta de caixa cadastrada.'
+  cashAccounts:'Nenhuma conta de caixa cadastrada.',
+  // Empty ECONÔMICO só existe sob qualidade válida — ver alladinIndisponivel().
+  ledger:'Nenhum lançamento registrado.',
+  balances:'Nenhuma conta de caixa cadastrada.',
+  positions:'Nenhuma posição em aberto.'
 };
 // Rótulos de status legíveis; valor fora do vocabulário deste build (schema
 // futuro) é exibido como veio — projetar não é normalizar.
@@ -34375,11 +34393,220 @@ function alladinRenderCash(el){
       alladinAcaoDeLinha('cashaccount',r)
     ]));
 }
+// ============ ALLADIN · ALD-05 S1 — PROJEÇÃO ECONÔMICA (READ-ONLY) ==========
+// A primeira superfície econômica VISÍVEL do Alladin. Ela PROJETA read-models
+// já publicados — não cria regra, não soma, não ordena, não formata dinheiro e
+// não deriva direção. Todo número exibido chega pronto; a única lógica nova é
+// escolher rótulo e distinguir OK / BLOCKING / EMPTY.
+//
+// INVARIANTE CENTRAL: read-model indisponível JAMAIS pode virar zero, lista
+// vazia, "sem dados" ou tela de aparência normal. Um saldo que some errado é
+// pior do que um saldo ausente — o domínio já fecha essa porta na leitura
+// (ALD_CASH_DELTA_AUSENTE, integridade estrutural), e a UI seria o último lugar
+// onde a mesma falha poderia renascer, agora como pixel.
+const ALLADIN_EVENTO_LABEL={
+  DEPOSIT:'Aporte', WITHDRAWAL:'Retirada', TRANSFER:'Transferência',
+  BUY:'Compra', SELL:'Venda', FEE:'Taxa', TAX:'Imposto',
+  ADJUSTMENT_CREDIT:'Ajuste (crédito)', ADJUSTMENT_DEBIT:'Ajuste (débito)'
+};
+const ALLADIN_TX_STATUS_LABEL={POSTED:'Efetivado', REVERSED:'Estornado'};
+
+// Aviso de indisponibilidade. Reusa .session-warning (mesmo componente do banner
+// de schema futuro) — sem CSS novo. É TEXTO, nunca só cor: quem não distingue
+// cor precisa ler a mesma informação.
+function alladinIndisponivel(titulo, issues){
+  const lista=(issues&&issues.length)
+    ? '<ul class="alladin-issues">'+issues.map(i=>'<li>'+esc(String(i))+'</li>').join('')+'</ul>'
+    : '<p>Nenhum diagnóstico específico foi devolvido pelo domínio.</p>';
+  return '<div class="session-warning" role="status"><strong>'+esc(titulo)+'</strong>'+lista+'</div>';
+}
+// Sentinela de integridade para os Lançamentos (MD-2/A).
+// `leitura.transactions()` NÃO tem envelope de qualidade: ele filtra registros
+// ilegíveis EM SILÊNCIO e não checa integridade estrutural nem schema futuro.
+// Projetar essa lista direto exibiria um ledger silenciosamente filtrado como
+// se fosse normal — exatamente o que o invariante proíbe. Enquanto o envelope
+// próprio não existe (dívida registrada, slice futura), a confiabilidade vem de
+// `posicoes()`, que é global e fail-closed pelos MESMOS motivos (integridade
+// estrutural, registro ilegível, cadastro órfão, moeda divergente, schema
+// futuro), somada a `compat()`.
+//
+// Isto é guarda de APRESENTAÇÃO, não regra econômica: a UI não interpreta o
+// veredito, apenas se recusa a desenhar quando o domínio não garante o dado.
+// Conservador de propósito — bloquear a mais é seguro, a menos não é.
+function alladinSentinelaLedger(){
+  const compat=JPWAlladin.compat();
+  if(compat && compat.readOnly){
+    return { ok:false, issues:[compat.reason||'READ_ONLY_FUTURE_SCHEMA'] };
+  }
+  const pos=JPWAlladin.leitura.posicoes();
+  if(!pos.available) return { ok:false, issues:(pos.issues||[]).slice() };
+  return { ok:true, issues:[] };
+}
+// Rótulos cadastrais resolvidos DENTRO dos snapshots de leitura — nunca no
+// agregado vivo, como já faz o painel de Caixa.
+function alladinCatalogoLabels(){
+  const contas={}, caixas={}, instrumentos={};
+  JPWAlladin.leitura.accounts().forEach(a=>{ if(a.accountId) contas[a.accountId]=a.name; });
+  JPWAlladin.leitura.instruments().forEach(i=>{ if(i.instrumentId) instrumentos[i.instrumentId]=i.symbol||i.name; });
+  // CashAccount não tem nome próprio no cadastro: o rótulo legível é
+  // moeda + conta-mãe. Duas caixas da MESMA moeda sob a MESMA conta colidem —
+  // e duas linhas idênticas com saldos diferentes, ou uma transferência que se
+  // lê "BRL · XP → BRL · XP", descrevem um fato falso. Onde o rótulo colide, o
+  // identificador canônico entra para desambiguar; onde não colide, o rótulo
+  // fica limpo. Isto é resolução de LABEL, não regra econômica.
+  const legivel={}, quantos={};
+  JPWAlladin.leitura.cashAccounts().forEach(c=>{
+    if(!c.cashAccountId) return;
+    const mae=contas[c.accountId]||c.accountId;
+    const rotulo=(c.currency?c.currency+' · ':'')+alladinTexto(mae);
+    legivel[c.cashAccountId]=rotulo;
+    quantos[rotulo]=(quantos[rotulo]||0)+1;
+  });
+  Object.keys(legivel).forEach(id=>{
+    const rotulo=legivel[id];
+    caixas[id]=quantos[rotulo]>1 ? rotulo+' · '+id : rotulo;
+  });
+  return { contas, caixas, instrumentos };
+}
+function alladinCaixaLabel(cat,id){ return id ? (cat.caixas[id]||String(id)) : '—'; }
+// Rótulo de evento: tipo fora do vocabulário DESTE build aparece CRU. Traduzir
+// o desconhecido seria inventar interpretação; omitir seria esconder um fato.
+function alladinEventoLabel(tipo){
+  if(tipo===undefined||tipo===null||tipo==='') return '—';
+  return ALLADIN_EVENTO_LABEL[tipo] || String(tipo);
+}
+function alladinEventoCelula(tx){
+  if(tx.eventType==='REVERSAL'){
+    const orig=tx.reversedEventType;
+    const rotulo=ALLADIN_EVENTO_LABEL[orig]||(orig===undefined||orig===null?'—':String(orig));
+    return esc('Estorno de '+rotulo);
+  }
+  return esc(alladinEventoLabel(tx.eventType));
+}
+// Detalhe por família. NENHUMA direção é calculada aqui: `amount` é magnitude e
+// a direção mora no eventType, que já está na coluna Evento. Derivar sinal por
+// linha seria reimplementar ALD_CASH_DELTA na UI — e sairia ERRADO no TRANSFER
+// (∓ conforme a conta observada) e enganoso em BUY/SELL (o efeito líquido
+// embute fees/taxes). O efeito em caixa pertence a saldoDeCaixa, e é a tela
+// Saldos que o mostra.
+function alladinTxDetalhe(tx,cat){
+  const partes=[];
+  if(tx.eventType==='TRANSFER'){
+    partes.push(esc(alladinCaixaLabel(cat,tx.sourceCashAccountId))+' &rarr; '+
+                esc(alladinCaixaLabel(cat,tx.destinationCashAccountId)));
+  }
+  if(tx.eventType==='BUY'||tx.eventType==='SELL'){
+    const papel=[tx.quantity,cat.instrumentos[tx.instrumentId]||tx.instrumentId]
+      .filter(v=>v!==undefined&&v!==null&&v!=='').map(String).join(' ');
+    if(papel) partes.push(esc(papel));
+    // fees/taxes seguem EMBUTIDOS no trade — exibidos como detalhe, jamais
+    // recombinados num líquido calculado pela UI.
+    const custos=[];
+    if(tx.fees!==undefined) custos.push('taxas '+JPWAlladin.money.format({amount:tx.fees,currency:tx.currency}));
+    if(tx.taxes!==undefined) custos.push('impostos '+JPWAlladin.money.format({amount:tx.taxes,currency:tx.currency}));
+    if(custos.length) partes.push(esc(custos.join(' · ')));
+  }
+  // O reason é o que torna o ajuste AUDITÁVEL: ele é o único evento cujo valor
+  // não pode ser conferido contra nada. Escondê-lo esvaziaria a decisão do S4.
+  if(tx.reason!==undefined&&tx.reason!==null&&tx.reason!=='') partes.push(esc(String(tx.reason)));
+  if(tx.eventType==='REVERSAL'&&tx.reversalOf) partes.push(esc(String(tx.reversalOf)));
+  if(tx.flowScope!==undefined&&tx.flowScope!==null&&tx.flowScope!=='') partes.push(esc(String(tx.flowScope)));
+  if(tx.note!==undefined&&tx.note!==null&&tx.note!=='') partes.push(esc(String(tx.note)));
+  return partes.length?partes.join('<br>'):'&mdash;';
+}
+// effectiveAt é o fato ECONÔMICO (e a chave de ordenação); recordedAt é o fato
+// de AUDITORIA. Divergir é informação, não ruído — por isso os dois ficam
+// sempre visíveis, e recordedAt nunca vai para title/tooltip: informação de
+// auditoria não pode depender de mouse nem sumir para quem usa teclado.
+function alladinDataCelula(tx){
+  return esc(alladinTexto(tx.effectiveAt))+
+    '<br><span class="alladin-sub">registrado em '+esc(alladinTexto(tx.recordedAt))+'</span>';
+}
+function alladinRenderLedger(el){
+  const cab='<h2>Lançamentos</h2>';
+  const sentinela=alladinSentinelaLedger();
+  if(!sentinela.ok){
+    // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty.
+    el.innerHTML=cab+alladinIndisponivel(
+      'Lançamentos indisponíveis — o agregado não passou na verificação de integridade.',
+      sentinela.issues);
+    return;
+  }
+  const lista=JPWAlladin.leitura.transactions();
+  if(!lista.length){ el.innerHTML=cab+alladinVazio('ledger'); return; }
+  const cat=alladinCatalogoLabels();
+  // ORDEM: exatamente a entregue pelo read-model (ordem econômica
+  // effectiveAt, recordedAt, transactionId). A UI não reordena — reordenar
+  // seria a UI decidindo o que é ordem econômica.
+  el.innerHTML=cab+alladinTabela(
+    ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status'],
+    lista.map(tx=>[
+      alladinDataCelula(tx),
+      alladinEventoCelula(tx),
+      alladinTxDetalhe(tx,cat),
+      esc(JPWAlladin.money.format({amount:tx.amount,currency:tx.currency})),
+      esc(alladinCaixaLabel(cat,tx.cashAccountId||tx.sourceCashAccountId)),
+      esc(alladinStatus(tx.status,ALLADIN_TX_STATUS_LABEL))
+    ]));
+}
+function alladinRenderBalances(el){
+  const cab='<h2>Saldos</h2>';
+  const contas=JPWAlladin.leitura.cashAccounts();
+  // Empty CADASTRAL — ausência de conta não é saldo zero, e os dois não podem
+  // compartilhar a mesma tela.
+  if(!contas.length){ el.innerHTML=cab+alladinVazio('balances'); return; }
+  const cat=alladinCatalogoLabels();
+  el.innerHTML=cab+alladinTabela(
+    ['Conta de caixa','Saldo','Lançamentos considerados','Qualidade'],
+    contas.map(c=>{
+      // UM saldoDeCaixa por conta. A UI não soma transação nenhuma.
+      const s=JPWAlladin.leitura.saldoDeCaixa(c.cashAccountId);
+      const nome=esc(alladinCaixaLabel(cat,c.cashAccountId));
+      if(!s.available){
+        // BLOCKING por linha: jamais R$ 0,00 por fallback, jamais célula vazia.
+        return [nome,'<strong>Indisponível</strong>','&mdash;',
+                esc((s.issues||[]).join(' · ')||'BLOCKING')];
+      }
+      return [nome,
+        esc(JPWAlladin.money.format({amount:s.amount,currency:s.currency})),
+        esc(String(s.consideradas)),
+        esc(alladinTexto(s.quality))];
+    }));
+}
+function alladinRenderPositions(el){
+  const cab='<h2>Posições</h2>';
+  const p=JPWAlladin.leitura.posicoes();
+  if(!p.available){
+    // positions:[] sob BLOCKING NUNCA pode virar "Nenhuma posição".
+    el.innerHTML=cab+alladinIndisponivel(
+      'Posições indisponíveis — o agregado não passou na verificação de integridade.',
+      (p.issues||[]).slice());
+    return;
+  }
+  if(!p.positions.length){ el.innerHTML=cab+alladinVazio('positions'); return; }
+  const cat=alladinCatalogoLabels();
+  el.innerHTML=cab+alladinTabela(
+    ['Instrumento','Conta','Quantidade','Lançamentos considerados'],
+    p.positions.map(pos=>[
+      esc(alladinTexto(cat.instrumentos[pos.instrumentId]||pos.instrumentId)),
+      esc(alladinTexto(cat.contas[pos.accountId]||pos.accountId)),
+      // VERBATIM: a string canônica do read-model, apenas escapada. Sem
+      // Number(), parseFloat, toFixed, separador de milhar ou truncamento.
+      // Negativa aparece fiel — sem rótulo de short, sem cor de alerta: o
+      // domínio é explícito em que negativo NÃO tem semântica de short. Valor
+      // longo rola dentro da célula; cortar seria inventar outro número.
+      esc(String(pos.quantity)),
+      esc(String(pos.consideradas))
+    ]));
+}
 const ALLADIN_RENDERERS={
   instruments:alladinRenderInstruments,
   assets:alladinRenderAssets,
   accounts:alladinRenderAccounts,
-  cashAccounts:alladinRenderCash
+  cashAccounts:alladinRenderCash,
+  ledger:alladinRenderLedger,
+  balances:alladinRenderBalances,
+  positions:alladinRenderPositions
 };
 
 function alladinRenderBanner(){

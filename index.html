@@ -1157,22 +1157,31 @@
   <section class="screen" id="alladin">
     <div>
       <h2 data-route-focus>Alladin</h2>
-      <!-- C3-S1: superfície cadastral SOMENTE LEITURA sobre o domínio C2.
-           Nenhum campo econômico existe aqui — saldo, quantidade, preço,
-           valuation e patrimônio só nascerão com ALD-03/ALD-04. A UI observa
+      <!-- Superfície do Alladin: cadastro (C3, com manutenção) + projeção
+           econômica READ-ONLY (ALD-05-S1). Os quatro destinos cadastrais
+           seguem sem conteúdo econômico; saldo, lançamentos e posições vivem
+           nos três destinos econômicos e são DERIVADOS — projetados dos
+           read-models, nunca persistidos, nunca recalculados aqui. Valuation,
+           cost basis, P&L e performance continuam inexistentes. A UI observa
            via JPWAlladin.leitura: abrir, trocar de view e recarregar jamais
            gravam nem materializam estado. -->
       <div class="session-warning" id="alladinReadOnlyBanner" role="status" hidden></div>
-      <div class="seg" id="alladinTabs" role="group" aria-label="Cadastro patrimonial">
+      <div class="seg" id="alladinTabs" role="group" aria-label="Destinos do Alladin">
         <button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
         <button type="button" data-alladin-view="assets" aria-pressed="false">Bens</button>
         <button type="button" data-alladin-view="accounts" aria-pressed="false">Contas</button>
         <button type="button" data-alladin-view="cashAccounts" aria-pressed="false">Caixa</button>
+        <button type="button" data-alladin-view="ledger" aria-pressed="false">Lançamentos</button>
+        <button type="button" data-alladin-view="balances" aria-pressed="false">Saldos</button>
+        <button type="button" data-alladin-view="positions" aria-pressed="false">Posições</button>
       </div>
       <div class="card alladin-view" id="alladinInstruments" data-alladin-panel="instruments" role="region" aria-label="Instrumentos"></div>
       <div class="card alladin-view" id="alladinAssets" data-alladin-panel="assets" role="region" aria-label="Bens" hidden></div>
       <div class="card alladin-view" id="alladinAccounts" data-alladin-panel="accounts" role="region" aria-label="Contas" hidden></div>
       <div class="card alladin-view" id="alladinCash" data-alladin-panel="cashAccounts" role="region" aria-label="Caixa" hidden></div>
+      <div class="card alladin-view" id="alladinLedger" data-alladin-panel="ledger" role="region" aria-label="Lançamentos" hidden></div>
+      <div class="card alladin-view" id="alladinBalances" data-alladin-panel="balances" role="region" aria-label="Saldos" hidden></div>
+      <div class="card alladin-view" id="alladinPositions" data-alladin-panel="positions" role="region" aria-label="Posições" hidden></div>
     </div>
   </section>
 

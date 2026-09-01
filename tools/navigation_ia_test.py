@@ -164,19 +164,40 @@ def assert_primary_dom(page):
     assert page.locator("#nav > #researchNavTrigger").count() == 1
     assert page.locator("#researchNavSubmenu").count() == 1
     assert page.locator("section#alladin").count() == 1
-    # C3-S1: o placeholder NAV-01 evoluiu para a superficie cadastral READ-ONLY.
-    # Contrato novo (mais forte, nao mais fraco): a section tem exatamente os
-    # quatro destinos locais congelados, continua SEM qualquer conteudo economico
-    # e SEM formularios — a cobertura do placeholder foi substituida, nao apagada.
+    # ALD-05-S1: SUBSTITUICAO DE CONTRATO, nao remocao de cobertura.
+    #
+    # Ate aqui o contrato era "a section Alladin nao exibe conteudo economico" —
+    # correto enquanto o ledger nao tinha superficie. A slice ALD-05-S1 encerra
+    # isso DELIBERADAMENTE: os read-models publicados (transactions, saldo,
+    # posicoes) passam a ser projetados em tres destinos proprios.
+    #
+    # O contrato novo e mais forte, nao mais fraco:
+    #   (1) os QUATRO destinos cadastrais continuam congelados em rotulo e ordem;
+    #   (2) a proibicao economica continua valendo INTEGRALMENTE neles — agora
+    #       com risco real de vazamento, porque existe conteudo economico no
+    #       MESMO section;
+    #   (3) os tres destinos economicos sao nomeados e verificados aqui, e o
+    #       comportamento fail-closed deles tem suite propria
+    #       (tools/alladin_ui_ledger_test.py, E11/E12/E13).
     tabs = page.locator("section#alladin #alladinTabs button[data-alladin-view]")
-    assert tabs.count() == 4
-    assert [tabs.nth(i).inner_text().strip() for i in range(4)] == [
-        "Instrumentos", "Bens", "Contas", "Caixa"], "destinos locais divergem do congelado"
-    forbidden = page.locator("section#alladin").inner_text()
-    for economico in ("R$", "US$", "0,00", "%", "saldo", "patrimônio", "quantidade"):
-        assert economico not in forbidden, f"conteudo economico proibido no Alladin: {economico}"
+    assert tabs.count() == 7
+    rotulos = [tabs.nth(i).inner_text().strip() for i in range(7)]
+    assert rotulos[:4] == ["Instrumentos", "Bens", "Contas", "Caixa"], \
+        f"destinos CADASTRAIS divergem do congelado: {rotulos[:4]}"
+    assert rotulos[4:] == ["Lançamentos", "Saldos", "Posições"], \
+        f"destinos ECONOMICOS divergem do contrato ALD-05-S1: {rotulos[4:]}"
+    # A varredura economica passa a ser POR PAINEL CADASTRAL: varrer a section
+    # inteira proibiria exatamente o que a slice entrega, e afrouxar globalmente
+    # deixaria o cadastro sem guarda nenhuma.
+    for painel in ("instruments", "assets", "accounts", "cashAccounts"):
+        page.evaluate("(v) => JPWAlladinUI.selectView(v)", painel)
+        texto = page.locator(f"section#alladin [data-alladin-panel='{painel}']").inner_text()
+        for economico in ("R$", "US$", "0,00", "%", "saldo", "patrimônio", "quantidade"):
+            assert economico not in texto, \
+                f"conteudo economico vazou para o painel cadastral {painel}: {economico}"
+    page.evaluate("() => JPWAlladinUI.selectView('instruments')")
     assert page.locator("section#alladin input, section#alladin form").count() == 0, \
-        "C3-S1 e somente leitura: nenhum formulario"
+        "a superficie ALD-05-S1 e read-only: nenhum formulario na section"
 
 
 def assert_brand_home_navigation(page):

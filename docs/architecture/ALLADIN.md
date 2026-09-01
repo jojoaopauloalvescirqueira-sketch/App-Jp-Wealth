@@ -19,7 +19,8 @@ a spec planeja.
 > O texto acima ficou como registro daquele momento. **O domínio já sabe "o que
 > aconteceu"**: o Cash Ledger (ALD-03 S1), os trades BUY/SELL (S2), as despesas
 > FEE/TAX standalone (S3), os ajustes de reconciliação (S4) e a **posição por
-> quantidade derivada** (ALD-04 S1) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
+> quantidade derivada** (ALD-04 S1) e a **superfície econômica read-only**
+> (ALD-05 S1) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
 > holding persistido/consolidado, cost basis, valuation/current value, P&L,
 > performance, benchmark e as integrações Trading/PF/FX.
 
@@ -436,6 +437,7 @@ testes e a aceitação humana por console exercitam o domínio.
 
 | Suíte | Cobertura |
 |---|---|
+| `tools/alladin_ui_ledger_test.py` | E1–E16 + E12b — superfície econômica read-only: sete destinos com os quatro cadastrais intactos, ordem do read-model preservada, dez `eventType` rotulados, `reason` visível, transferência com as duas pernas e caixas homônimas desambiguadas, `quantity` byte-idêntica (negativa fiel, >64 chars íntegra), **BLOCKING × EMPTY nos dois sentidos**, seis vetores de corrupção, a sentinela barrando ledger filtrado, zero `save()` |
 | `tools/alladin_unit_test.py` | U1–U26 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto; ALD-04: aritmética decimal BigInt (parse/alinhamento/soma/render) sondada direto |
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup; carimbo v3→v4 com ledger **povoado**; mixed-build do build v3 real sobre agregado v4 |
@@ -646,6 +648,79 @@ nunca posição parcial. Saída determinística: `instrumentId` ASC, depois
 
 `schemaVersion` permanece **4**: zero estado persistido novo, zero invariante
 de escrita — não há o que uma barreira trancaria.
+
+## ALD-05 S1 — superfície econômica read-only (a UI projeta, não normaliza)
+
+Cinco slices de domínio — Cash Ledger, trades, despesas, ajustes e Position
+Engine — existiam sem nenhuma forma de alcançá-las pela aplicação. `ALD-05 S1`
+abre três destinos no mesmo `section#alladin`, **depois** dos quatro cadastrais:
+
+```text
+Instrumentos · Bens · Contas · Caixa │ Lançamentos · Saldos · Posições
+        cadastral (sem economia)     │   econômico (read-only)
+```
+
+*A UI não tem aritmética.* Ela não soma, não subtrai, não reordena, não formata
+dinheiro, não deriva direção e não recalcula quantidade. Todo número chega
+pronto de um read-model congelado; dinheiro passa por `money.format` (inteiro em
+unidade mínima, sem float); `quantity` é a **string canônica verbatim**. A única
+lógica nova é escolher rótulo e distinguir **OK / BLOCKING / EMPTY**.
+
+*Nenhuma direção é calculada por linha.* `amount` é magnitude e a direção mora
+no `eventType`, que já está na coluna Evento. Derivar sinal por lançamento seria
+reimplementar `ALD_CASH_DELTA` na apresentação — e sairia **errado** no
+`TRANSFER` (∓ conforme a conta observada) e enganoso em `BUY`/`SELL` (o efeito
+líquido embute `fees`/`taxes`). O efeito em caixa pertence a `saldoDeCaixa`, e é
+a tela Saldos que o mostra.
+
+*`effectiveAt` e `recordedAt` ficam ambos visíveis*, o segundo rotulado
+"registrado em" — nunca em `title`/tooltip: informação de auditoria não pode
+depender de mouse. Divergir entre os dois é sinal, não ruído.
+
+*Rótulos que colidem são desambiguados.* `CashAccount` não tem nome próprio, e
+duas caixas da mesma moeda sob a mesma conta produzem o mesmo rótulo — duas
+linhas idênticas com saldos diferentes, e uma transferência que se lê
+"BRL · XP → BRL · XP". Onde o rótulo colide, o id canônico entra.
+
+### BLOCKING nunca vira zero — a última porta
+
+O domínio já recusa dado inválido na leitura. A UI seria o último lugar onde a
+mesma falha poderia renascer, agora como pixel: `positions:[]` sob BLOCKING e
+`positions:[]` sob agregado legitimamente vazio são a **mesma estrutura de
+dados**. Sem olhar `available` antes, as duas viram a mesma tela — e
+*"Nenhuma posição em aberto"* sobre agregado corrompido é mentira tranquilizadora.
+
+Sob indisponibilidade: **nenhuma tabela, nenhum número, nenhum texto de empty** —
+só o aviso textual e os `issues` do domínio. Em Saldos o bloqueio é **por linha**:
+conta indisponível mostra "Indisponível", jamais `R$ 0,00` por fallback. E o
+inverso também é contratual: um saldo **legitimamente zero** continua exibível —
+proibir todo zero apagaria um fato verdadeiro.
+
+### Sentinela de integridade dos Lançamentos (MD-2/A)
+
+`leitura.transactions()` **não tem envelope de qualidade**: `aldVistaCadastral`
+filtra por `aldRegistroLegivel` — checagem de **forma** (objeto não-array) — e
+descarta em silêncio, sem `available`, sem integridade estrutural e sem guarda de
+schema futuro. Projetar essa lista direto exibiria um ledger silenciosamente
+**menor** como se fosse o ledger inteiro.
+
+Enquanto o envelope próprio não existe, a confiabilidade vem de **`posicoes()`**
+— global e fail-closed pelos mesmos motivos (integridade estrutural, registro
+ilegível, cadastro órfão, moeda divergente, schema futuro) — somada a
+`compat()`. É guarda de **apresentação**, não regra econômica: a UI não
+interpreta o veredito, apenas se recusa a desenhar.
+
+> [!note] Fronteira conhecida do sentinela, provada em E12b
+> A guarda de moeda de `aldPosicoes` compara trade × caixa × instrumento — ela
+> existe onde há **papel**. Num registro **só-caixa** com moeda divergente o
+> sentinela não vê, e Lançamentos segue projetando. Isso não produz número
+> falso: Lançamentos exibe **fatos** (tipo, magnitude, contas); quem fica
+> indigno de confiança é o **saldo**, e a tela de Saldos marca aquela linha
+> Indisponível. Se um dia Lançamentos passar a exibir número derivado, esta
+> fronteira deixa de bastar.
+
+**Dívida registrada:** `transactions()` deve ganhar envelope próprio de
+qualidade em slice específica. Até lá, o acoplamento acima é a guarda.
 
 ## Integridade estrutural — na LEITURA e na ESCRITA, dado inválido nunca vira número
 

@@ -456,8 +456,14 @@ def main() -> int:
                 ctx, page, erros = abrir(browser, url)
                 criar_conta(page)
                 page.locator("button[data-ald-new=account]").click()
-                texto = page.evaluate("""() => document.getElementById('alladin').innerText + ' ' +
-                    document.getElementById('alladinModalBox').innerText""")
+                texto = page.evaluate("""() => {
+                    const cadastrais=['instruments','assets','accounts','cashAccounts'];
+                    const ativo=cadastrais
+                        .map(v=>document.querySelector('[data-alladin-panel="'+v+'"]'))
+                        .find(el=>el && !el.hidden);
+                    return (ativo?ativo.innerText:'') + ' ' +
+                        document.getElementById('alladinModalBox').innerText;
+                }""")
                 m = PROIBIDO.search(texto)
                 if m:
                     falhas.append(f"W13: conteudo economico proibido: {m.group(0)!r}")
@@ -1079,8 +1085,14 @@ def main() -> int:
                 for view, tipo in (("instruments", "instrument"), ("assets", "asset")):
                     page.evaluate("(v) => JPWAlladinUI.selectView(v)", view)
                     page.locator(f"button[data-ald-edit={tipo}]").click()
-                    texto = page.evaluate("""() => document.getElementById('alladin').innerText + ' ' +
-                        document.getElementById('alladinModalBox').innerText""")
+                    texto = page.evaluate("""() => {
+                        const cadastrais=['instruments','assets','accounts','cashAccounts'];
+                        const ativo=cadastrais
+                            .map(v=>document.querySelector('[data-alladin-panel="'+v+'"]'))
+                            .find(el=>el && !el.hidden);
+                        return (ativo?ativo.innerText:'') + ' ' +
+                            document.getElementById('alladinModalBox').innerText;
+                    }""")
                     m = PROIBIDO.search(PARTICIPACAO.sub(" ", texto))
                     if m:
                         falhas.append(f"R8: conteudo economico proibido no form de {tipo}: {m.group(0)!r}")

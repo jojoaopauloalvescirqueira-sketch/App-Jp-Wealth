@@ -2,7 +2,7 @@
 """Alladin C3-S1 — superficie cadastral READ-ONLY (UI-A..UI-F congelados).
 
 Contratos provados:
-  A rota; B exatamente 4 destinos locais; C default Instrumentos; D cadastro C2
+  A rota; B destinos locais — 4 cadastrais congelados + 3 economicos (ALD-05-S1); C default Instrumentos; D cadastro C2
   real renderizado; E empty states TEXTUAIS; F varredura economica (nenhum
   montante, zero, %, saldo, patrimonio...); G zero save(); H S byte-identico;
   I storage byte-identico; J READ_ONLY (banner + projecao sem normalizar);
@@ -14,7 +14,12 @@ Contratos provados:
   S1-S "Caixa" e cadastro, nunca dinheiro.
 
 Proibicao economica (UI): nada de R$, $, 0,00, %, saldo, quantidade, preco,
-custo, patrimonio, rentabilidade, posicao, P&L — nem como zero. Excecao
+custo, patrimonio, rentabilidade, posicao, P&L — nem como zero. Desde o
+ALD-05-S1 ela vale POR PAINEL CADASTRAL, nao pela section inteira: os tres
+destinos economicos novos exibem esse conteudo por contrato, e a guarda ficou
+mais forte, nao mais fraca — o cadastro agora e vizinho de numero economico no
+mesmo section, entao vazamento deixou de ser hipotese. O fail-closed dos
+paineis economicos tem suite propria: tools/alladin_ui_ledger_test.py. Excecao
 DOCUMENTADA: percentual cadastral de ownership (owners.shareBp) seria legitimo
 se exibido; a apresentacao S1 nao o exibe, entao a varredura proibe % sem
 excecao ativa. Se o S2 exibir ownership, marcar a celula com
@@ -101,6 +106,33 @@ def texto_section(page):
     return page.evaluate("() => document.getElementById('alladin').innerText")
 
 
+# ALD-05-S1: a varredura economica passa a ser POR PAINEL CADASTRAL.
+# Varrer a section inteira acusaria os ROTULOS das abas novas ("Saldos",
+# "Lancamentos", "Posicoes"), que sao navegacao, nao conteudo — e proibiria
+# exatamente o que a slice entrega. Escopar aos quatro paineis mantem a guarda
+# onde ela protege alguma coisa: o cadastro, agora vizinho de conteudo
+# economico no MESMO section e por isso sob risco REAL de vazamento.
+def texto_paineis_cadastrais(page):
+    return page.evaluate("""() => {
+        const out = {};
+        ['instruments','assets','accounts','cashAccounts'].forEach(v => {
+            JPWAlladinUI.selectView(v);
+            const el = document.querySelector('[data-alladin-panel="'+v+'"]');
+            out[v] = el ? el.innerText : '';
+        });
+        JPWAlladinUI.selectView('instruments');
+        return out;
+    }""")
+
+
+def varrer_cadastro(falhas, page, rotulo):
+    for painel, texto in texto_paineis_cadastrais(page).items():
+        m = PROIBIDO_ECONOMICO.search(texto)
+        if m:
+            falhas.append(f"F ({rotulo}): conteudo economico vazou para o painel "
+                          f"cadastral {painel}: {m.group(0)!r}")
+
+
 def executar(falhas, nome, fn):
     try:
         fn()
@@ -151,8 +183,13 @@ def main() -> int:
                 }""")
                 if r["ativo"] != "alladin":
                     falhas.append(f"A: rota alladin nao ativou a section ({r['ativo']})")
-                if r["destinos"] != ["Instrumentos", "Bens", "Contas", "Caixa"]:
-                    falhas.append(f"B: destinos locais divergem do congelado: {r['destinos']}")
+                # ALD-05-S1 — SUBSTITUICAO DE CONTRATO: os quatro cadastrais
+                # continuam congelados em rotulo e ordem; os tres economicos
+                # entram DEPOIS deles. Cobertura substituida, nao apagada.
+                if r["destinos"][:4] != ["Instrumentos", "Bens", "Contas", "Caixa"]:
+                    falhas.append(f"B: destinos CADASTRAIS divergem do congelado: {r['destinos'][:4]}")
+                if r["destinos"][4:] != ["Lançamentos", "Saldos", "Posições"]:
+                    falhas.append(f"B: destinos ECONOMICOS divergem do ALD-05-S1: {r['destinos'][4:]}")
                 if not (r["defaultVisivel"] and r["outrosOcultos"]):
                     falhas.append("C: default nao e Instrumentos com os demais ocultos")
                 t = r["texto"]
@@ -178,10 +215,7 @@ def main() -> int:
                     falhas.append("I: storage mudou apos uso da superficie")
                 if r["nosMax"] != r["nosMin"]:
                     falhas.append(f"M: DOM instavel entre voltas repetidas (v2={r['nosMin']} v3={r['nosMax']})")
-                secao = texto_section(page)
-                m = PROIBIDO_ECONOMICO.search(secao)
-                if m:
-                    falhas.append(f"F (povoada): conteudo economico proibido no DOM: {m.group(0)!r}")
+                varrer_cadastro(falhas, page, "povoada")
                 if erros:
                     falhas.append(f"povoada pageerror: {erros}")
             executar(falhas, "povoada", povoada)
@@ -204,9 +238,7 @@ def main() -> int:
                     tem = page.evaluate("(arg) => { JPWAlladinUI.selectView(arg); return document.getElementById('alladin').innerText; }", v)
                     if frase not in tem:
                         falhas.append(f"E: empty state de {v} ausente")
-                m = PROIBIDO_ECONOMICO.search(texto_section(page))
-                if m:
-                    falhas.append(f"F (vazia): conteudo economico proibido: {m.group(0)!r}")
+                varrer_cadastro(falhas, page, "vazia")
                 if erros:
                     falhas.append(f"vazia pageerror: {erros}")
             executar(falhas, "vazia", vazia)
@@ -366,8 +398,8 @@ def main() -> int:
         for f in falhas:
             print("  - " + f)
         return 1
-    print("ALLADIN UI READONLY TEST PASS (A-O + S1-P..S1-T: rota, 4 destinos, default Instrumentos, "
-          "cadastro C2 real, empty states textuais, zero conteudo economico, zero save(), S e storage "
+    print("ALLADIN UI READONLY TEST PASS (A-O + S1-P..S1-T: rota, 4 destinos cadastrais congelados + 3 economicos (ALD-05-S1), default Instrumentos, "
+          "cadastro C2 real, empty states textuais, zero conteudo economico NOS PAINEIS CADASTRAIS, zero save(), S e storage "
           "byte-identicos, READ_ONLY com projecao sem normalizar, snapshots desacoplados, ausencia nao "
           "materializa, refresh nao escreve, Caixa cadastral, teclado/mobile, DOM estavel)")
     return 0
