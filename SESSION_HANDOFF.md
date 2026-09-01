@@ -1,4 +1,51 @@
-# Session Handoff — Alladin · superfície econômica publicada (ALD-05-S1)
+# Session Handoff — Alladin · criação de lançamento pela UI (ALD-05-S2)
+
+- Data: 2026-09-01
+- **`main` == `origin/main` == `964c38b724d8d048f8e7899637ef86e2ccda1cf9`**
+- Worktree em `main`, sem trabalho pendente · CI #50 verde (16º consecutivo)
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| Repair temporal do finpes-budget | `c3ad00d` | publicado · CI #47 verde |
+| ALD-05 S1 — superfície econômica read-only | `212297a` | publicado · CI #48 verde |
+| Docs closure do S1 | `0edb071` | publicado · CI #49 verde |
+| **ALD-05 S2 — criação de lançamento pela UI** | `964c38b` | **publicado · CI #50 verde** |
+
+**ALD-05-S2 publicado e CI-confirmado.** O painel Lançamentos tem o CTA "Novo
+lançamento": modal único para os **nove** tipos criáveis, campos específicos
+por evento, moeda derivada da conta exibida read-only. **Uma chamada a
+`ledger.addTransaction` por submit** — o payload nunca carrega campos do
+domínio; dinheiro só por `money.parse`; `quantity` verbatim; recusa in-place
+com rascunho intacto; double-submit inerte; cancelar zero-write; sob sentinela
+BLOCKING o CTA não é renderizado, e o write gate vale na abertura e no submit.
+O ciclo **registrar → persistir → visualizar** está completo pela aplicação.
+
+**Tiers reais: `standard` 41 · `full` 52.** Domínio, schema, persistência,
+`index.html` e CSS intocados; as quatro suítes de UI pré-existentes passam sem
+edição.
+
+## Dívidas e decisões futuras
+
+- **REVERSAL pela UI** — slice própria (ação por linha + confirmação; outra UX,
+  outra API).
+- **ALD-04-S2 / cost basis** — após as três decisões normativas: cost basis N3,
+  arredondamento (spec §29), escala decimal por moeda.
+- **Valuation** — após a fundação de cost basis.
+- **MD-2** — envelope de qualidade para `transactions()`, slice separada.
+- Varredura das 7 suítes com fixtures `'2026-08'` · **QA-D2** · dívida de nome
+  `ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA` · `ALD_REASON_NAO_PERMITIDO` como
+  *tightening* aceito · in-kind/corporate actions.
+
+## Próxima decisão — gate humano
+
+REVERSAL pela UI · ALD-04-S2 (após decisões normativas) · valuation (após cost
+basis) · MD-2. **Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — superfície econômica publicada (ALD-05-S1) (2026-09-01)
 
 - Data: 2026-09-01
 - **`main` == `origin/main` == `212297accef9d81d28322147a1420bbd06eb2c95`**
@@ -60,7 +107,6 @@ confirmou o `standard` de 40 com a primeira execução remota de
 pela UI, ou as três decisões normativas do ALD-04-S2.
 **Nenhuma autorizada por este documento.**
 
-# Histórico
 
 ## Fotografia anterior — ADJUSTMENT publicado (ALD-03-S4) (2026-08-31)
 

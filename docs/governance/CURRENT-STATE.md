@@ -1,6 +1,47 @@
 # Estado atual do projeto
 
-## Alladin ALD-05-S1 — superfície econômica publicada — 2026-09-01
+## Alladin ALD-05-S2 — criação de lançamento pela UI publicada — 2026-09-01
+
+- Data da fotografia: 2026-09-01
+Source revision representada: `964c38b724d8d048f8e7899637ef86e2ccda1cf9`
+- **`main` == `origin/main` == `964c38b724d8d048f8e7899637ef86e2ccda1cf9`**;
+  worktree em `main`, sem trabalho pendente.
+- **ALD-05-S2 = PUBLICADO E CI-CONFIRMADO** (commit `964c38b`, CI **Run #50
+  success**). A interface agora **cria lançamentos**: `DEPOSIT`, `WITHDRAWAL`,
+  `TRANSFER`, `BUY`, `SELL`, `FEE`, `TAX`, `ADJUSTMENT_CREDIT` e
+  `ADJUSTMENT_DEBIT` — um **modal único** no painel Lançamentos, com seletor de
+  tipo e campos específicos por evento.
+- **Ciclo completo disponível pela aplicação**: registrar → persistir →
+  visualizar, em Lançamentos / Saldos / Posições — o dado econômico exibido
+  volta **exclusivamente dos read-models**, nunca do formulário.
+- **O domínio é a única autoridade**: uma chamada a
+  `JPWAlladin.ledger.addTransaction` por submit; o payload jamais carrega
+  `transactionId`, `recordedAt`, `status`, `currency`, `flowScope` ou
+  `unitPrice`; dinheiro só por `money.parse` (minor units); `quantity`
+  **verbatim** (grafia não-canônica é recusada pelo domínio, nunca corrigida
+  pela UI); moeda derivada da conta, exibida read-only. Recusa nunca vira
+  sucesso; rascunho sobrevive à recusa; double-submit inerte; cancelar é
+  zero-write. Sob sentinela BLOCKING o CTA **não é renderizado** — e o write
+  gate vale na abertura E no submit (estado que piora entre abrir e salvar é
+  recusado pelo domínio).
+- **REVERSAL permanece FORA** (slice própria) · **`dedupeKey` não exposta** ·
+  **MD-2 permanece dívida** (envelope de `transactions()`, slice própria) ·
+  **domínio/schema/persistência NÃO mudaram** (`13-alladin.js`, `index.html` e
+  CSS intocados).
+- **Tiers reais: `standard` 41 · `full` 52** — 41/41 e 52/52 locais; CI #50
+  com a primeira execução remota de `tools/alladin_ui_tx_write_test.py`
+  (TX-A..TX-N, datas fixas com varredura estrutural contra dependência de data
+  corrente).
+- **Dívidas e decisões futuras:** REVERSAL pela UI · envelope de
+  `transactions()` (MD-2) · cost-basis N3 + arredondamento §29 + escala
+  decimal por moeda (três pré-requisitos do ALD-04-S2) · varredura das 7
+  suítes que fixam `'2026-08'` · **QA-D2** · dívida de nome
+  `ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA` · `ALD_REASON_NAO_PERMITIDO` como
+  *tightening* aceito · in-kind/corporate actions.
+- **Próxima decisão — gate humano:** REVERSAL pela UI, MD-2, ou destravar
+  ALD-04-S2 pelas decisões normativas. **Nenhuma autorizada por este documento.**
+
+## Alladin ALD-05-S1 — superfície econômica publicada — 2026-09-01 (fotografia histórica)
 
 - Data da fotografia: 2026-09-01
 Source revision representada: `212297accef9d81d28322147a1420bbd06eb2c95`

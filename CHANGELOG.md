@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+### Alladin — criação de lançamento pela UI (ALD-05 S2) — 2026-09-01
+
+O painel Lançamentos ganhou o CTA **"Novo lançamento"** (`964c38b`): um modal
+único para os nove tipos criáveis — `DEPOSIT`, `WITHDRAWAL`, `TRANSFER`, `BUY`,
+`SELL`, `FEE`, `TAX`, `ADJUSTMENT_CREDIT`, `ADJUSTMENT_DEBIT` — fechando o
+ciclo **registrar → persistir → visualizar** inteiramente pela aplicação.
+
+**O domínio é a única autoridade.** Uma chamada a `ledger.addTransaction` por
+submit; o payload jamais carrega `transactionId`, `recordedAt`, `status`,
+`currency`, `flowScope` ou `unitPrice`. Dinheiro entra exclusivamente por
+`money.parse` em minor units (`"1.234,56"` → `123456` — `parseFloat` morreria
+no separador de milhar, e há teste que discrimina a implementação); `quantity`
+vai **verbatim** — `"1.50"` é recusada pelo domínio com texto que explica a
+grafia canônica e o rascunho fica intacto. A moeda aparece derivada da conta,
+somente-leitura, e nunca é enviada. No ajuste, `reason` é campo próprio e
+obrigatório. No `TRANSFER` o destino não é pré-filtrado por moeda — a recusa é
+do domínio e não foi duplicada.
+
+Recusa nunca vira sucesso: máquina de estados do C3-S2 reusada, erro in-place
+com rascunho preservado, double-submit inerte, cancelar zero-write byte a byte.
+Sob a sentinela BLOCKING do ALD-05-S1 o CTA **não é renderizado**, e o write
+gate vale na abertura E no submit — agregado que vira schema futuro entre abrir
+o modal e salvar é recusado sem falso sucesso. **`REVERSAL` fica fora** (slice
+própria) e **`dedupeKey` não é exposta**. Suíte nova
+`alladin_ui_tx_write_test.py` (TX-A..TX-N) com datas fixas e varredura contra
+dependência de data corrente; **tiers reais: `standard` 41 · `full` 52**.
+CI Run #50 verde. Domínio, schema, persistência, `index.html` e CSS intocados.
+
 ### Alladin — superfície econômica read-only (ALD-05 S1) — 2026-09-01
 
 Pela primeira vez o Alladin é **visível na aplicação** (`212297a`): Lançamentos,
