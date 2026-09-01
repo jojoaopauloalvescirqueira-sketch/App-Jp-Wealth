@@ -19,8 +19,8 @@ a spec planeja.
 > O texto acima ficou como registro daquele momento. **O domínio já sabe "o que
 > aconteceu"**: o Cash Ledger (ALD-03 S1), os trades BUY/SELL (S2), as despesas
 > FEE/TAX standalone (S3), os ajustes de reconciliação (S4) e a **posição por
-> quantidade derivada** (ALD-04 S1) e a **superfície econômica read-only**
-> (ALD-05 S1) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
+> quantidade derivada** (ALD-04 S1), a **superfície econômica read-only**
+> (ALD-05 S1) e a **criação de lançamento pela UI** (ALD-05 S2) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
 > holding persistido/consolidado, cost basis, valuation/current value, P&L,
 > performance, benchmark e as integrações Trading/PF/FX.
 
@@ -437,6 +437,7 @@ testes e a aceitação humana por console exercitam o domínio.
 
 | Suíte | Cobertura |
 |---|---|
+| `tools/alladin_ui_tx_write_test.py` | TX-A..TX-N — criação pela UI: porta única (um `addTransaction`, um `save` por submit), payload sem campos do domínio, dinheiro só por `money.parse`, `quantity` verbatim com recusa sem correção, os nove tipos pelo modal real, ajuste com `reason` próprio, transfer sem pré-filtro, double-submit inerte, cancelar zero-write, write gate na abertura e no submit tardio, BLOCKING não convida escrita, pós-sucesso comparado aos read-models |
 | `tools/alladin_ui_ledger_test.py` | E1–E16 + E12b — superfície econômica read-only: sete destinos com os quatro cadastrais intactos, ordem do read-model preservada, dez `eventType` rotulados, `reason` visível, transferência com as duas pernas e caixas homônimas desambiguadas, `quantity` byte-idêntica (negativa fiel, >64 chars íntegra), **BLOCKING × EMPTY nos dois sentidos**, seis vetores de corrupção, a sentinela barrando ledger filtrado, zero `save()` |
 | `tools/alladin_unit_test.py` | U1–U26 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto; ALD-04: aritmética decimal BigInt (parse/alinhamento/soma/render) sondada direto |
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
@@ -721,6 +722,44 @@ interpreta o veredito, apenas se recusa a desenhar.
 
 **Dívida registrada:** `transactions()` deve ganhar envelope próprio de
 qualidade em slice específica. Até lá, o acoplamento acima é a guarda.
+
+## ALD-05 S2 — criação de lançamento pela UI (a UI coleta; o domínio decide)
+
+O painel Lançamentos ganhou o CTA **"Novo lançamento"**: um modal único para os
+**nove** tipos criáveis, com seletor de tipo e campos específicos por evento —
+trocar o tipo re-renderiza só o bloco específico, e o rascunho comum sobrevive.
+**`REVERSAL` fica fora** (slice própria: é ação por linha, outra UX e outra
+API), e **`dedupeKey` não é exposta** (decisão de gate: double-submit já é
+bloqueado pela máquina de estados, e dois fatos idênticos sem dedupe são
+legítimos por contrato).
+
+*Uma chamada por submit.* `JPWAlladin.ledger.addTransaction(dados)` é a única
+porta; o payload **nunca** carrega `transactionId`, `recordedAt`, `status`,
+`currency`, `flowScope` ou `unitPrice` — tudo isso é do domínio. Dinheiro entra
+**exclusivamente** por `money.parse` (minor units — `"1.234,56"` → `123456`;
+`parseFloat` morreria no separador de milhar); `quantity` vai **verbatim** do
+input, e `"1.50"` é recusada pelo domínio com texto que explica a grafia
+canônica, **sem** a UI corrigir o que o operador digitou. A moeda aparece
+**derivada** da conta selecionada, somente-leitura, e jamais é enviada.
+
+*Recusa nunca vira sucesso.* Máquina de estados do C3-S2 reusada
+(`EDITING→SUBMITTING→{ERROR→EDITING · SUCCESS→CLOSED}`): erro é injetado
+in-place e o rascunho sobrevive; `persistido:false` continua visualmente erro;
+double-submit é inerte; cancelar é zero-write byte a byte. No sucesso o modal
+fecha e `alladinRender()` re-projeta — **todo dado econômico exibido volta dos
+read-models**, nunca do formulário.
+
+*O convite respeita a sentinela.* Sob BLOCKING da sentinela do ALD-05-S1 o CTA
+**não é renderizado** — a UX não convida a escrever sobre agregado que a
+leitura recusou. Mas a autoridade continua sendo o domínio: write gate na
+abertura E no submit (um agregado que vira schema futuro **entre** abrir o
+modal e salvar é recusado por `aldMutate`, sem falso sucesso). Os seletores
+listam só cadastro `ACTIVE` — filtro cadastral de UX; corrida entre render e
+submit é decidida pelo domínio. TRANSFER **não** pré-filtra destino por moeda:
+a recusa `ALD_TRANSFER_MOEDAS_DIFERENTES` é do domínio e não é duplicada.
+
+**MD-2 continua dívida separada**: a escrita tem guarda própria e completa em
+`aldMutate`; o envelope de `transactions()` segue pendente para slice própria.
 
 ## Integridade estrutural — na LEITURA e na ESCRITA, dado inválido nunca vira número
 

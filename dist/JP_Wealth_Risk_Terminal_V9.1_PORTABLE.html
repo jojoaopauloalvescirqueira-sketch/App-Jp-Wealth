@@ -6118,7 +6118,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'd0376ea94d4874cc';
+const JP_WEALTH_BUILD_ID = '84a03505d8c10fa6';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -34526,19 +34526,24 @@ function alladinRenderLedger(el){
   const cab='<h2>Lançamentos</h2>';
   const sentinela=alladinSentinelaLedger();
   if(!sentinela.ok){
-    // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty.
+    // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty — e
+    // NENHUM convite à escrita (ALD-05 S2): o CTA não é renderizado. Escrever
+    // sobre agregado que a leitura recusa só produziria a recusa estrutural do
+    // domínio; a UX não convida, mas a autoridade continua sendo aldMutate —
+    // se o estado mudar entre render e submit, é o domínio que decide.
     el.innerHTML=cab+alladinIndisponivel(
       'Lançamentos indisponíveis — o agregado não passou na verificação de integridade.',
       sentinela.issues);
     return;
   }
+  const cta=alladinTxBotaoNovo();
   const lista=JPWAlladin.leitura.transactions();
-  if(!lista.length){ el.innerHTML=cab+alladinVazio('ledger'); return; }
+  if(!lista.length){ el.innerHTML=cab+cta+alladinVazio('ledger'); return; }
   const cat=alladinCatalogoLabels();
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
   // effectiveAt, recordedAt, transactionId). A UI não reordena — reordenar
   // seria a UI decidindo o que é ordem econômica.
-  el.innerHTML=cab+alladinTabela(
+  el.innerHTML=cab+cta+alladinTabela(
     ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status'],
     lista.map(tx=>[
       alladinDataCelula(tx),
@@ -35104,6 +35109,9 @@ function alladinTextoDeRecusa(codigo){
 }
 function alladinSubmit(){
   if(alladinForm.estado!=='EDITING') return;      // SUBMITTING/COMMITTED: nunca resubmete
+  // ALD-05 S2: o modal de lançamento reusa a MESMA máquina de estados e os
+  // mesmos atos 'salvar'/'cancelar' — só o leitor/ator muda de rota aqui.
+  if(alladinForm.tipo==='transaction'){ alladinTxSubmit(); return; }
   const {tipo,modo,alvoId}=alladinForm;
   const rico=(tipo==='instrument'||tipo==='asset');
   let dados;
@@ -35239,6 +35247,207 @@ function alladinBotaoNovo(view){
   }
   return '';
 }
+// ============ ALLADIN · ALD-05 S2 — CRIAÇÃO DE LANÇAMENTO PELA UI ===========
+// A UI coleta campos, resolve rótulos cadastrais e faz UMA chamada a
+// JPWAlladin.ledger.addTransaction por submit. Toda validação, derivação
+// (moeda, flowScope, defaults de fees/taxes) e recusa é do domínio — a UI não
+// tem aritmética financeira, não determina flowScope, não cria unitPrice e não
+// normaliza quantity. dedupeKey não é exposta nesta slice (decisão do gate:
+// double-submit já é bloqueado pela máquina de estados, e dois fatos idênticos
+// sem dedupe são legítimos por contrato). REVERSAL fica fora — slice própria.
+const ALLADIN_TX_TIPOS=['DEPOSIT','WITHDRAWAL','TRANSFER','BUY','SELL',
+                        'FEE','TAX','ADJUSTMENT_CREDIT','ADJUSTMENT_DEBIT'];
+// Texto humano para as recusas do addTransaction. Código desconhecido aparece
+// CRU (padrão da casa) — e recusa jamais vira sucesso.
+const ALLADIN_TX_ERRO_TEXTO={
+  ALD_AMOUNT_INVALIDO:'Valor inválido. Informe um valor monetário positivo, ex.: 1.234,56.',
+  ALD_EFFECTIVE_AT_INVALIDA:'Data inválida. Use o formato AAAA-MM-DD.',
+  ALD_REASON_OBRIGATORIO:'O ajuste exige uma justificativa (motivo) não vazia.',
+  ALD_TRANSFER_MESMA_CONTA:'Origem e destino são a mesma conta de caixa.',
+  ALD_TRANSFER_MOEDAS_DIFERENTES:'Origem e destino têm moedas diferentes — não há câmbio implícito.',
+  ALD_CASHACCOUNT_NAO_ENCONTRADA:'Conta de caixa não encontrada.',
+  ALD_CASHACCOUNT_INATIVA:'A conta de caixa está inativa — lançamento novo exige cadastro ativo.',
+  ALD_INSTRUMENT_NAO_ENCONTRADO:'Instrumento não encontrado.',
+  ALD_INSTRUMENT_INATIVO:'O instrumento está inativo — lançamento novo exige cadastro ativo.',
+  ALD_INSTRUMENT_MOEDA_DIVERGE_DA_CONTA:'A moeda do instrumento difere da moeda da conta — não há câmbio implícito.',
+  ALD_QUANTITY_INVALIDA:'Quantidade inválida. Use decimal com ponto, sem sinal, sem zeros à esquerda e sem zeros finais na fração (ex.: 1.5, não 1.50).',
+  ALD_FEES_INVALIDAS:'Taxas inválidas. Informe um valor monetário não negativo.',
+  ALD_TAXES_INVALIDOS:'Impostos inválidos. Informe um valor monetário não negativo.',
+  ALD_EFEITO_MONETARIO_FORA_DO_INTEIRO_SEGURO:'O efeito monetário combinado excede o limite representável.',
+  ALD_NOTE_INVALIDA:'Nota inválida (máximo 240 caracteres).',
+  ALD_DEDUPE_KEY_DUPLICADA:'Já existe um lançamento com esta chave de deduplicação.',
+  ALD_CURRENCY_DIVERGE_DA_CONTA:'A moeda informada diverge da moeda da conta.',
+  ALD_EVENT_TYPE_INVALIDO:'Tipo de lançamento não suportado por este build.',
+  ALD_COLECAO_ILEGIVEL:'O ledger persistido está ilegível — nada foi gravado.',
+  READ_ONLY_FUTURE_SCHEMA:'Este agregado foi gravado por uma versão mais nova do JP Wealth. Escrita bloqueada; nada foi gravado.'
+};
+function alladinTxTextoDeRecusa(codigo){
+  const c=String(codigo||'erro não identificado');
+  if(ALLADIN_TX_ERRO_TEXTO[c]) return ALLADIN_TX_ERRO_TEXTO[c]+' Nada foi gravado.';
+  if(c.indexOf('ALD_INTEGRIDADE_ESTRUTURAL:')===0)
+    return 'O agregado não passou na verificação de integridade ('+c+'). Nada foi gravado.';
+  if(c.indexOf('ALD_REFERENCIA_AUSENTE:')===0)
+    return 'Referência obrigatória ausente ('+c.slice('ALD_REFERENCIA_AUSENTE:'.length)+'). Nada foi gravado.';
+  return 'O lançamento foi recusado: '+c+'. Nada foi gravado.';
+}
+function alladinTxBotaoNovo(){
+  const bloqueado=!!alladinWriteBloqueado();
+  return '<p><button type="button" class="modal-btn confirm" data-ald-tx-new="1"'+
+         (bloqueado?' disabled':'')+'>Novo lançamento</button></p>';
+}
+// Snapshots cadastrais para os seletores — SÓ registros ACTIVE: filtro
+// cadastral de UX (lançamento novo exige cadastro vivo), nunca autoridade.
+// Corrida entre render e submit é decidida pelo domínio.
+function alladinTxOpcoesConta(){
+  const cat=alladinCatalogoLabels();
+  return JPWAlladin.leitura.cashAccounts()
+    .filter(c=>c.recordStatus==='ACTIVE')
+    .map(c=>({id:c.cashAccountId, rotulo:cat.caixas[c.cashAccountId]||c.cashAccountId,
+              currency:c.currency}));
+}
+function alladinTxOpcoesInstrumento(){
+  return JPWAlladin.leitura.instruments()
+    .filter(i=>i.recordStatus==='ACTIVE')
+    .map(i=>({id:i.instrumentId, rotulo:(i.symbol?i.symbol+' · ':'')+(i.name||i.instrumentId)}));
+}
+function alladinTxSelect(id,rotulo,opcoes,valor){
+  return '<label class="field"><span>'+esc(rotulo)+'</span>'+
+    '<select id="'+id+'"><option value="">—</option>'+
+    opcoes.map(o=>'<option value="'+esc(o.id)+'"'+(o.id===valor?' selected':'')+'>'+esc(o.rotulo)+'</option>').join('')+
+    '</select></label>';
+}
+function alladinTxTipoAtual(){
+  const el=document.getElementById('alladinTxTipo');
+  return el?el.value:'DEPOSIT';
+}
+// Campos ESPECÍFICOS do evento — re-renderizados na troca de tipo. Os comuns
+// (valor, data, nota) vivem fora deste bloco e o rascunho deles sobrevive.
+function alladinTxCamposHTML(tipo){
+  const contas=alladinTxOpcoesConta();
+  if(tipo==='TRANSFER'){
+    return alladinTxSelect('alladinTxOrigem','Conta de origem',contas,'')+
+           alladinTxSelect('alladinTxDestino','Conta de destino',contas,'');
+  }
+  let html=alladinTxSelect('alladinTxConta','Conta de caixa',contas,'');
+  if(tipo==='BUY'||tipo==='SELL'){
+    html+=alladinTxSelect('alladinTxInstrumento','Instrumento',alladinTxOpcoesInstrumento(),'')+
+      alladinCampo('alladinTxQuantidade','Quantidade (decimal, ex.: 1.5)','')+
+      alladinCampo('alladinTxFees','Taxas (opcional)','')+
+      alladinCampo('alladinTxTaxes','Impostos (opcional)','');
+  }
+  if(tipo==='ADJUSTMENT_CREDIT'||tipo==='ADJUSTMENT_DEBIT'){
+    // reason é campo PRÓPRIO e obrigatório do ajuste — visível só aqui.
+    html+=alladinCampo('alladinTxReason','Motivo (obrigatório)','');
+  }
+  return html;
+}
+function alladinTxRenderCampos(){
+  const wrap=document.getElementById('alladinTxCampos');
+  if(wrap){ wrap.innerHTML=alladinTxCamposHTML(alladinTxTipoAtual()); alladinTxAtualizarMoeda(); }
+}
+// Moeda DERIVADA da conta selecionada — informação read-only; jamais enviada.
+// No TRANSFER a referência primária é a origem (aldTxRefsDoEvento).
+function alladinTxContaSelecionada(){
+  const el=document.getElementById('alladinTxConta')||document.getElementById('alladinTxOrigem');
+  return el?el.value:'';
+}
+function alladinTxMoedaDerivada(){
+  const id=alladinTxContaSelecionada();
+  if(!id) return null;
+  const c=JPWAlladin.leitura.cashAccounts().find(x=>x.cashAccountId===id);
+  return c?c.currency:null;
+}
+function alladinTxAtualizarMoeda(){
+  const span=document.getElementById('alladinTxMoeda');
+  if(span) span.textContent=alladinTxMoedaDerivada()||'—';
+}
+function alladinTxAbrirForm(){
+  // Write gate na ABERTURA (padrão W-series) — e de novo no domínio, no submit.
+  const bloqueio=alladinWriteBloqueado();
+  if(bloqueio){ showSessionNotice('Escrita indisponível: '+bloqueio); return; }
+  alladinForm.estado='EDITING'; alladinForm.tipo='transaction'; alladinForm.modo='create';
+  alladinForm.alvoId=null; alladinForm.recordId=null; alladinForm.avisos=[]; alladinForm.snapshot=null;
+  const opcoesTipo=ALLADIN_TX_TIPOS
+    .map(tp=>'<option value="'+tp+'">'+esc(ALLADIN_EVENTO_LABEL[tp]||tp)+'</option>').join('');
+  alladinModalOpen(
+    '<h3 id="alladinModalTitle">Novo lançamento</h3>'+
+    '<p class="modal-sub">O lançamento é validado e gravado pelo domínio — a moeda é derivada da conta.</p>'+
+    '<label class="field"><span>Tipo</span><select id="alladinTxTipo">'+opcoesTipo+'</select></label>'+
+    '<div id="alladinTxCampos">'+alladinTxCamposHTML('DEPOSIT')+'</div>'+
+    '<label class="field"><span>Valor (<span id="alladinTxMoeda">—</span>)</span>'+
+      '<input type="text" id="alladinTxValor" value="" autocomplete="off" inputmode="decimal"></label>'+
+    alladinCampo('alladinTxData','Data de efetivação (AAAA-MM-DD)','')+
+    alladinCampo('alladinTxNota','Nota (opcional)','')+
+    '<div class="modal-actions"><button type="button" class="modal-btn cancel" data-ald-act="cancelar">Cancelar</button>'+
+    '<button type="button" class="modal-btn confirm" data-ald-act="salvar">Registrar</button></div>');
+}
+// Leitura do formulário → payload. NUNCA enviados: transactionId, recordedAt,
+// status, currency, flowScope, unitPrice, dedupeKey. amount/fees/taxes passam
+// EXCLUSIVAMENTE por money.parse (minor units); quantity vai VERBATIM.
+// money.parse devolve {amount, currency} para texto válido, NaN para inválido
+// e null para vazio. O payload do domínio quer o INTEIRO em unidade mínima —
+// extraí-lo de um objeto não é aritmética, é desembrulho. Entrada inválida
+// segue como veio (NaN): quem a recusa, com o SEU código, é o domínio.
+function alladinTxMinor(txt,moeda){
+  const par=JPWAlladin.money.parse(txt,moeda);
+  return (par && typeof par==='object') ? par.amount : par;
+}
+function alladinTxLerFormulario(){
+  const v=(id)=>{ const el=document.getElementById(id); return el?el.value:''; };
+  const tipo=alladinTxTipoAtual();
+  const moeda=alladinTxMoedaDerivada();
+  const obrigatorios=[];
+  const d={ eventType:tipo, effectiveAt:v('alladinTxData').trim() };
+  if(tipo==='TRANSFER'){
+    d.sourceCashAccountId=v('alladinTxOrigem');
+    d.destinationCashAccountId=v('alladinTxDestino');
+    obrigatorios.push(d.sourceCashAccountId,d.destinationCashAccountId);
+  }else{
+    d.cashAccountId=v('alladinTxConta');
+    obrigatorios.push(d.cashAccountId);
+  }
+  const valorTxt=v('alladinTxValor').trim();
+  obrigatorios.push(valorTxt,d.effectiveAt);
+  if(tipo==='BUY'||tipo==='SELL'){
+    d.instrumentId=v('alladinTxInstrumento');
+    d.quantity=v('alladinTxQuantidade');           // VERBATIM — sem trim, sem correção
+    obrigatorios.push(d.instrumentId,d.quantity);
+    const fees=v('alladinTxFees').trim(), taxes=v('alladinTxTaxes').trim();
+    if(fees!=='') d.fees=alladinTxMinor(fees,moeda);
+    if(taxes!=='') d.taxes=alladinTxMinor(taxes,moeda);
+  }
+  if(tipo==='ADJUSTMENT_CREDIT'||tipo==='ADJUSTMENT_DEBIT'){
+    d.reason=v('alladinTxReason');                 // o domínio julga vazio/espaços
+    obrigatorios.push(d.reason);
+  }
+  const nota=v('alladinTxNota').trim();
+  if(nota!=='') d.note=nota;
+  if(obrigatorios.some(x=>x==='' || x===null || x===undefined))
+    return { erro:'Preencha todos os campos obrigatórios antes de registrar.' };
+  // Sem moeda derivável não há como interpretar o texto do valor — e a UI não
+  // adivinha moeda: é recusa de UX, antes de inventar um número.
+  if(!moeda) return { erro:'Selecione uma conta de caixa para derivar a moeda do valor.' };
+  d.amount=alladinTxMinor(valorTxt,moeda);
+  return { dados:d };
+}
+function alladinTxSubmit(){
+  if(alladinForm.estado!=='EDITING') return;
+  const lido=alladinTxLerFormulario();
+  if(lido.erro){ alladinErroInline(lido.erro); return; }
+  alladinForm.estado='SUBMITTING';
+  // UMA chamada por submit; o retorno do domínio é o único veredito.
+  const r=JPWAlladin.ledger.addTransaction(lido.dados);
+  if(!r || r.ok!==true){
+    // Recusa: o rascunho sobrevive (erro in-place, sem re-render) e
+    // persistido:false continua VISUALMENTE erro — jamais falso sucesso.
+    alladinForm.estado='EDITING';
+    alladinErroInline(alladinTxTextoDeRecusa(r&&r.erro));
+    return;
+  }
+  alladinModalClose();
+  showSessionNotice('Lançamento registrado.');
+}
+
 function initAlladinCrud(){
   const ov=document.getElementById('alladinModalOverlay');
   const box=document.getElementById('alladinModalBox');
@@ -35246,6 +35455,8 @@ function initAlladinCrud(){
   if(!ov||!box||!section) return;
   // Delegação: UM listener por superfície — nenhum bind por abertura.
   section.addEventListener('click',e=>{
+    const txn=e.target.closest('button[data-ald-tx-new]');
+    if(txn && !txn.disabled){ alladinTxAbrirForm(); return; }
     const novo=e.target.closest('button[data-ald-new]');
     if(novo && !novo.disabled){ alladinAbrirForm(novo.dataset.aldNew,'create',null); return; }
     const ed=e.target.closest('button[data-ald-edit]');
@@ -35285,6 +35496,11 @@ function initAlladinCrud(){
   box.addEventListener('input',e=>{ if(e.target.matches('[data-ald-owner-pct]')) alladinOwnersAtualizarTotal(); });
   // Família CRYPTO revela o campo Rede: a chave `network` tem fonte única.
   box.addEventListener('change',e=>{
+    // ALD-05 S2: trocar o TIPO re-renderiza só o bloco de campos específicos —
+    // os campos comuns (valor, data, nota) vivem fora dele e o rascunho
+    // sobrevive. Trocar a CONTA atualiza a moeda derivada exibida.
+    if(e.target.id==='alladinTxTipo'){ alladinTxRenderCampos(); return; }
+    if(e.target.id==='alladinTxConta'||e.target.id==='alladinTxOrigem'){ alladinTxAtualizarMoeda(); return; }
     if(e.target.id!=='alladinFldFamily') return;
     const wrap=document.getElementById('alladinFldNetworkWrap');
     const campo=document.getElementById('alladinFldNetwork');
