@@ -93,7 +93,8 @@ def run_a_chave_e_rotulo(page, falhas):
         atual: (typeof pfCurrentMonthKey==='function') ? pfCurrentMonthKey() : null,
         addamos: pfMonthAdd('2026-01',-1), viramos: pfMonthAdd('2026-12',1),
         rotulo: pfMonthLabel('2026-08'),
-        rotuloVisivel: document.querySelector('.fb-month-label') && document.querySelector('.fb-month-label').textContent })""")
+        rotuloVisivel: document.querySelector('.fb-month-label') && document.querySelector('.fb-month-label').textContent,
+        rotuloEsperado: pfMonthLabel(fbCurrentKey()) })""")
     if not r["atual"] or len(r["atual"]) != 7:
         falhas.append(f"A: chave do mes corrente invalida: {r['atual']}")
     if r["addamos"] != "2025-12" or r["viramos"] != "2027-01":
@@ -102,6 +103,12 @@ def run_a_chave_e_rotulo(page, falhas):
         falhas.append(f"A: rotulo localizado errado: {r['rotulo']}")
     if not r["rotuloVisivel"]:
         falhas.append("A: cabecalho sem rotulo do mes")
+    # O cabecalho tem de nomear o mes que a tela esta REALMENTE exibindo.
+    # Comparar com fbCurrentKey() e verdadeiro em qualquer data — nao depende
+    # de o calendario coincidir com fixture alguma.
+    elif r["rotuloVisivel"].strip() != r["rotuloEsperado"]:
+        falhas.append(f"A: cabecalho nomeia mes diferente do exibido: "
+                      f"{r['rotuloVisivel']!r} != {r['rotuloEsperado']!r}")
 
 
 def run_a_selo_virtual(page, falhas):
@@ -360,7 +367,10 @@ def run_b_modal_cancelar_zero_mutacao(browser, url, falhas):
     r = page.evaluate("""() => {
         const key='2026-08';
         pfActAddIncome(key, { name:'Salario', projectedAmount: 1200000 });
-        window.JPWFinBudget.render();
+        // A tela abre no mes CORRENTE por desenho (fbCurrentKey). Sem navegar
+        // para o mes da fixture, o teste leria outro mes — e passava so enquanto
+        // o calendario coincidisse com '2026-08'.
+        fbGoTo(key);
         const antes = JSON.stringify(S.personalFinance);
         let saves = 0; const orig = window.save;
         window.save = function(){ saves++; return orig.apply(this, arguments); };
@@ -370,12 +380,17 @@ def run_b_modal_cancelar_zero_mutacao(browser, url, falhas):
         document.getElementById('modalCancel').click();            // cancela
         window.save = orig;
         return { igual: antes === JSON.stringify(S.personalFinance), saves,
-                 fechou: !document.getElementById('modalOverlay').classList.contains('show') };
+                 fechou: !document.getElementById('modalOverlay').classList.contains('show'),
+                 mesRenderizado: document.querySelector('.fb-month-label').textContent.trim(),
+                 mesEsperado: pfMonthLabel(key) };
     }""")
     if not r["igual"] or r["saves"] != 0:
         falhas.append(f"B: cancelar o modal MUTOU estado ou gravou ({r['saves']} saves)")
     if not r["fechou"]:
         falhas.append("B: modal nao fechou no cancelar")
+    if r["mesRenderizado"] != r["mesEsperado"]:
+        falhas.append(f"B: a tela renderizou {r['mesRenderizado']!r}, nao o mes da "
+                      f"fixture {r['mesEsperado']!r}")
     ctx.close()
 
 
@@ -495,14 +510,19 @@ def run_d_parcial_nao_vira_total(browser, url, falhas):
         pfActUpdateIncomeField(key, m0.incomes[1].id, 'receivedAmount', 280000);
         // FX permanece null — cobertura 2/3
         const r1 = pfMonthSummary(S.personalFinance.months[key]);
-        window.JPWFinBudget.render();
+        // A tela abre no mes CORRENTE por desenho (fbCurrentKey); a fixture vive
+        // num mes FIXO. Navegar explicitamente e o que torna o caso independente
+        // do calendario — antes ele so passava enquanto os dois coincidiam.
+        fbGoTo(key);
         const texto = document.getElementById('fbSummary').innerText;
         return { conhecido: r1.knownReceivedIncome, sobra: r1.realizedSurplus,
                  saldoAux: r1.knownBalance, ratio: r1.incomeExpenseRatio,
                  cobertura: r1.incomeCoverage,
                  mostraIncompleto: texto.includes('Dados incompletos'),
                  mostraAux: texto.includes('Saldo conhecido'),
-                 naoRotulaComoSobra: !/Sobra realizada\s*R\$/.test(texto) };
+                 naoRotulaComoSobra: !/Sobra realizada\s*R\$/.test(texto),
+                 mesRenderizado: document.querySelector('.fb-month-label').textContent.trim(),
+                 mesEsperado: pfMonthLabel(key) };
     }""")
     if r["conhecido"] != 1480000:
         falhas.append(f"D: conhecido deveria ser 1.480000 (R$ 14.800,00); veio {r['conhecido']}")
@@ -510,6 +530,9 @@ def run_d_parcial_nao_vira_total(browser, url, falhas):
         falhas.append(f"D: SOBRA/RATIO NAO EXISTEM com cobertura 2/3: sobra={r['sobra']} ratio={r['ratio']}")
     if r["cobertura"] != {"conhecidas":2,"total":3,"completa":False}:
         falhas.append(f"D: cobertura errada: {r['cobertura']}")
+    if r["mesRenderizado"] != r["mesEsperado"]:
+        falhas.append(f"D: a tela renderizou {r['mesRenderizado']!r}, nao o mes da "
+                      f"fixture {r['mesEsperado']!r}")
     if not (r["mostraIncompleto"] and r["mostraAux"] and r["naoRotulaComoSobra"]):
         falhas.append(f"D: UI apresentou parcial como total: {r}")
     ctx.close()
@@ -530,15 +553,23 @@ def run_d_completo_e_deficitario(browser, url, falhas):
         pfActUpdateExpenseField(key, idE, 'executedCard', 0);
         pfActSetExpenseStatus(key, idE, 'PAGO');
         const r1 = pfMonthSummary(S.personalFinance.months[key]);
-        window.JPWFinBudget.render();
+        // A tela abre no mes CORRENTE por desenho (fbCurrentKey); a fixture vive
+        // num mes FIXO. Navegar explicitamente e o que torna o caso independente
+        // do calendario — antes ele so passava enquanto os dois coincidiam.
+        fbGoTo(key);
         const texto = document.getElementById('fbSummary').innerText;
         return { completo: r1.completo, sobra: r1.realizedSurplus, ratio: r1.incomeExpenseRatio,
-                 exibeNegativa: texto.includes('-R$ 1.000,00') };
+                 exibeNegativa: texto.includes('-R$ 1.000,00'),
+                 mesRenderizado: document.querySelector('.fb-month-label').textContent.trim(),
+                 mesEsperado: pfMonthLabel(key) };
     }""")
     if not r["completo"] or r["sobra"] != -100000:
         falhas.append(f"D: mes completo deficitario deveria dar sobra -100000 exatos; veio {r['sobra']}")
     if abs(r["ratio"] - 1.2) > 1e-9:
         falhas.append(f"D: ratio deveria ser 1,2 (120%); veio {r['ratio']}")
+    if r["mesRenderizado"] != r["mesEsperado"]:
+        falhas.append(f"D: a tela renderizou {r['mesRenderizado']!r}, nao o mes da "
+                      f"fixture {r['mesEsperado']!r}")
     if not r["exibeNegativa"]:
         falhas.append("D: sobra negativa deveria exibir -R$ 1.000,00 — deficit e legitimo, sem clamp")
     ctx.close()
@@ -594,22 +625,30 @@ def run_e_excedente_sem_fabricacao(browser, url, falhas):
         pfActAddAllocation(key, { label:'Reserva', amount: 100000 });
         const m = S.personalFinance.months[key];
         const naoAlocadaIncompleto = pfUnallocatedSurplus(m);
-        window.JPWFinBudget.render();
+        // A tela abre no mes CORRENTE por desenho (fbCurrentKey); a fixture vive
+        // num mes FIXO. Navegar explicitamente e o que torna o caso independente
+        // do calendario — antes ele so passava enquanto os dois coincidiam.
+        fbGoTo(key);
         const textoIncompleto = document.getElementById('fbAllocations').innerText;
         // completa o realizado: recebe 500, destina 600 -> excede (legitimo, alerta)
         pfActUpdateIncomeField(key, m.incomes[0].id, 'receivedAmount', 500000);
         pfActUpdateAllocationField(key, m.allocations[0].id, 'amount', 600000);
         const naoAlocadaCompleta = pfUnallocatedSurplus(S.personalFinance.months[key]);
-        window.JPWFinBudget.render();
+        fbGoTo(key);
         const temAlerta = !!document.getElementById('fbAllocExceeds');
         const textoCompleto = document.getElementById('fbAllocations').innerText;
         return { naoAlocadaIncompleto, mostraSemSaldo: textoIncompleto.includes('realizado incompleto'),
                  destinouMesmoAssim: S.personalFinance.months[key].allocations.length===1,
                  naoAlocadaCompleta, temAlerta,
-                 exibeNegativa: textoCompleto.includes('-R$ 1.000,00') };
+                 exibeNegativa: textoCompleto.includes('-R$ 1.000,00'),
+                 mesRenderizado: document.querySelector('.fb-month-label').textContent.trim(),
+                 mesEsperado: pfMonthLabel(key) };
     }""")
     if r["naoAlocadaIncompleto"] is not None:
         falhas.append(f"E: com realizado incompleto o saldo restante NAO existe; veio {r['naoAlocadaIncompleto']}")
+    if r["mesRenderizado"] != r["mesEsperado"]:
+        falhas.append(f"E: a tela renderizou {r['mesRenderizado']!r}, nao o mes da "
+                      f"fixture {r['mesEsperado']!r}")
     if not r["mostraSemSaldo"] or not r["destinouMesmoAssim"]:
         falhas.append(f"E: destinar deve continuar permitido sem fabricar saldo: {r}")
     if r["naoAlocadaCompleta"] != -100000:
