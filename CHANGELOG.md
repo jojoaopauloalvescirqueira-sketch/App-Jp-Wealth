@@ -2,6 +2,52 @@
 
 ## [Unreleased]
 
+### Alladin — superfície econômica read-only (ALD-05 S1) — 2026-09-01
+
+Pela primeira vez o Alladin é **visível na aplicação** (`212297a`): Lançamentos,
+Saldos e Posições viraram destinos read-only no `section#alladin`, depois dos
+quatro cadastrais. Cinco slices de domínio — Cash Ledger, trades, despesas,
+ajustes e Position Engine — estavam publicadas e só alcançáveis por console; a
+superfície as projeta **sem nenhuma aritmética na UI**: dinheiro exclusivamente
+por `money.format`, `quantity` como string canônica verbatim (negativa fiel,
+longa íntegra), e **nenhuma coluna de sinal** — derivar direção por linha
+reimplementaria `ALD_CASH_DELTA` na apresentação e sairia errado no `TRANSFER`.
+
+**BLOCKING nunca vira zero.** `positions:[]` sob BLOCKING e sob agregado
+legitimamente vazio são a mesma estrutura de dados; sem olhar `available`, as
+duas virariam a mesma tela — e *"Nenhuma posição em aberto"* sobre agregado
+corrompido é mentira tranquilizadora. Sob indisponibilidade não há tabela,
+número nem texto de empty; em Saldos o bloqueio é **por linha**, e o zero
+legítimo continua exibível. Lançamentos usa **sentinela de integridade**
+(`posicoes()` + `compat()`) porque `leitura.transactions()` não tem envelope de
+qualidade e descarta registro não-objeto **em silêncio** — dívida registrada
+para slice própria; a fronteira do sentinela está provada em teste (E12b).
+
+O contrato de UI do C3-S1 — quatro destinos, zero economia na section — foi
+**re-escopado por decisão humana**, não removido: os quatro cadastrais seguem
+congelados em rótulo/ordem e a varredura econômica passou a ser **por painel**
+em três suítes (o rótulo da aba "Saldos" é navegação, não vazamento). Suíte nova
+`alladin_ui_ledger_test.py` (E1–E16 + E12b) no tier `standard`; **tiers reais:
+`standard` 40 · `full` 51**. CI Run #48 verde com a primeira execução remota da
+suíte. Zero CSS novo; `13-alladin.js`, persistência e schema intocados.
+
+### Harness — fixtures de mês determinísticas no finpes-budget — 2026-09-01
+
+Cinco casos de `finpes_budget_test.py` gravavam a fixture em `'2026-08'` e liam
+a tela renderizada — mas a tela abre no mês **corrente** por desenho
+(`fbCurrentKey()`). Enquanto agosto durou os dois coincidiram; em 2026-09-01
+cinco asserções caíram de uma vez, no mesmo SHA que o CI #46 havia aprovado na
+véspera. **Test bug, produto intocado** (`c3ad00d`): todas as asserções de
+domínio já passavam — só as leituras de texto renderizado falhavam, porque o
+texto era de outro mês. Os casos agora **navegam** para o mês que populam
+(`fbGoTo(key)`) e provam por rótulo (`.fb-month-label` × `pfMonthLabel(key)`)
+que renderizam o mês da fixture — guarda validada por mutação, e acusando por
+nome (*"a tela renderizou 'SETEMBRO 2026', não o mês da fixture 'AGOSTO
+2026'"*) em vez de falhar opaco em cinco pontos. O CI #47 rodou **em setembro**
+e passou — a prova real. Classe registrada: outras 7 suítes fixam `'2026-08'`
+sem auditoria de leitura de DOM, e o runner UTC diverge da máquina local UTC−3
+por até 3h na virada de mês.
+
 ### Alladin — ADJUSTMENT de reconciliação; schema 5 → 6 — 2026-08-31
 
 O ledger passou a registrar **diferença de caixa sem contraparte econômica

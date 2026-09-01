@@ -1,4 +1,68 @@
-# Session Handoff — Alladin · ADJUSTMENT publicado (ALD-03-S4)
+# Session Handoff — Alladin · superfície econômica publicada (ALD-05-S1)
+
+- Data: 2026-09-01
+- **`main` == `origin/main` == `212297accef9d81d28322147a1420bbd06eb2c95`**
+- Worktree em `main`, sem trabalho pendente · CI #48 verde (14º consecutivo)
+
+## Onde o projeto está
+
+| Entrega | Commit | Estado |
+|---|---|---|
+| ALD-03 S4 — ADJUSTMENT + cash-delta hardening | `a88b450` | publicado · CI #45 verde |
+| Docs closure do S4 | `ea31a88` | publicado · CI #46 verde |
+| Repair temporal do finpes-budget | `c3ad00d` | publicado · CI #47 verde |
+| **ALD-05 S1 — superfície econômica read-only** | `212297a` | **publicado · CI #48 verde** |
+
+**ALD-05-S1 publicado e CI-confirmado.** Lançamentos, Saldos e Posições são
+destinos read-only na aplicação, depois dos quatro cadastrais. A UI **projeta**
+os read-models e não tem aritmética: dinheiro por `money.format`, `quantity`
+verbatim (negativa fiel, >64 chars íntegra), nenhuma coluna de sinal — derivar
+direção por linha reimplementaria `ALD_CASH_DELTA` e sairia errado no
+`TRANSFER`. `effectiveAt` e `recordedAt` ambos visíveis, `reason` do ajuste
+visível, tipo desconhecido exibido cru.
+
+**BLOCKING nunca vira zero** — provado nos dois sentidos (E11) e sob seis
+vetores de corrupção (E12). Lançamentos usa **sentinela** `posicoes()` +
+`compat()` porque `transactions()` não tem envelope de qualidade e filtra em
+silêncio (E13); a fronteira do sentinela está provada em E12b. Em Saldos o
+bloqueio é por linha, e zero legítimo continua exibível.
+
+O caminho até aqui teve dois desvios resolvidos sob gate: o contrato de UI que
+congelava 4 destinos e proibia economia na section inteira foi **re-escopado
+por decisão humana** (MD-1 — substituição, não remoção: a varredura econômica
+agora é por painel cadastral, em três suítes); e o `finpes-budget` caiu na
+virada do mês por fixtures presas a `'2026-08'` lendo a tela do mês corrente —
+**test bug** reparado com `fbGoTo(key)` + prova de rótulo, produto intocado,
+validado por mutação e pelo CI #47 rodando em setembro.
+
+Tiers reais: **`standard` 40 · `full` 51** (40/40 e 51/51 locais; CI #48
+confirmou o `standard` de 40 com a primeira execução remota de
+`alladin_ui_ledger_test.py`).
+
+## Dívidas e decisões futuras
+
+- **MD-2** — `transactions()` sem envelope próprio de qualidade; slice
+  específica. Até lá, a sentinela é a guarda.
+- **ALD-04-S2** — três pré-requisitos normativos: cost basis N3, arredondamento
+  (spec §29) e escala decimal por moeda. Decidir cost basis sozinho **não**
+  desbloqueia.
+- **Escrita transacional pela UI** — par natural do S1 (precedente C3-S1→S2).
+- **Fixtures temporais** — 7 suítes fixam `'2026-08'` sem auditoria de leitura
+  de DOM; CI (UTC) × máquina local (UTC−3) divergem por até 3h na virada de mês.
+- **QA-D2** · comentário "SOMENTE LEITURA" já corrigido no `index.html` pelo
+  ALD-05 · dívida de nome `ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA` ·
+  `ALD_REASON_NAO_PERMITIDO` como *tightening* aceito · in-kind/corporate
+  actions.
+
+## Próxima decisão — gate humano
+
+**Produto**, não governança: envelope de `transactions()`, escrita transacional
+pela UI, ou as três decisões normativas do ALD-04-S2.
+**Nenhuma autorizada por este documento.**
+
+# Histórico
+
+## Fotografia anterior — ADJUSTMENT publicado (ALD-03-S4) (2026-08-31)
 
 - Data: 2026-08-31
 - **`main` == `origin/main` == `a88b4509ee1651dc9a9b1676ea20d55f1872f131`**
@@ -73,7 +137,6 @@ isso fica registrado como dedução, não como leitura.
 `ALD-04-S2` ou `QA-D2`.
 **Nenhuma autorizada por este documento.**
 
-# Histórico
 
 ## Fotografia anterior — FEE/TAX publicado (ALD-03-S3) (2026-08-31)
 

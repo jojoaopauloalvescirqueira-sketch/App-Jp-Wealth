@@ -1,6 +1,54 @@
 # Estado atual do projeto
 
-## Alladin ALD-03-S4 — ADJUSTMENT publicado — 2026-08-31
+## Alladin ALD-05-S1 — superfície econômica publicada — 2026-09-01
+
+- Data da fotografia: 2026-09-01
+Source revision representada: `212297accef9d81d28322147a1420bbd06eb2c95`
+- **`main` == `origin/main` == `212297accef9d81d28322147a1420bbd06eb2c95`**;
+  worktree em `main`, sem trabalho pendente.
+- **ALD-05-S1 = PUBLICADO E CI-CONFIRMADO** (commit `212297a`, CI **Run #48
+  success**). Pela primeira vez o Alladin é **visível na aplicação**:
+  **Lançamentos, Saldos e Posições** existem como destinos read-only no
+  `section#alladin`, depois dos quatro cadastrais — projetando
+  `leitura.transactions()`, `leitura.saldoDeCaixa()` e `leitura.posicoes()`
+  **sem nenhuma aritmética na UI** (dinheiro só por `money.format`, `quantity`
+  como string canônica verbatim, nenhuma coluna de sinal/direção).
+- **Invariante central provado nos dois sentidos**: read-model indisponível
+  **jamais** vira zero, lista vazia ou tela normal — sob BLOCKING não há tabela,
+  número nem texto de empty, só o aviso textual com os `issues` do domínio; e o
+  inverso também vale: agregado legítimo vazio mostra EMPTY sem alarme falso, e
+  saldo legitimamente zero continua exibível. Em Saldos o bloqueio é por linha.
+- **Sentinela de integridade dos Lançamentos (MD-2/A)**: `transactions()` não
+  tem envelope de qualidade e filtra registro não-objeto em silêncio; a
+  confiabilidade vem de `posicoes()` + `compat()`. Guarda de apresentação, não
+  regra econômica. **Dívida viva**: envelope próprio em slice específica.
+  Fronteira do sentinela provada em E12b (moeda divergente só-caixa é acusada
+  pela linha de Saldos, não por ele).
+- **Repair temporal do finpes-budget** (`c3ad00d`, CI **Run #47 success**):
+  cinco casos fixavam fixture em `'2026-08'` e liam a tela do mês **corrente**
+  — passavam por coincidência de calendário e caíram juntos na virada para
+  setembro. Test bug, produto intocado: os casos agora navegam com
+  `fbGoTo(key)` e provam por rótulo (`.fb-month-label`) que renderizam o mês da
+  fixture. O CI #47 rodou **em setembro** e passou — a prova real da correção.
+- **Contrato de UI re-escopado (MD-1, decisão humana)**: os 4 destinos
+  cadastrais seguem congelados em rótulo/ordem e **sem conteúdo econômico**
+  (varredura agora POR PAINEL, não pela section — o rótulo da aba "Saldos" é
+  navegação); suíte nova `tools/alladin_ui_ledger_test.py` (E1–E16 + E12b) no
+  tier `standard`. **Tiers reais: `standard` 40 · `full` 51** — verificados
+  40/40 e 51/51 locais e `standard` 40/40 no CI #48.
+- **Dívidas e decisões futuras:** envelope de `transactions()` (MD-2) ·
+  cost-basis N3 + arredondamento §29 + escala decimal por moeda (**três**
+  pré-requisitos do ALD-04-S2) · escrita transacional pela UI (par natural do
+  S1) · varredura das 7 suítes que fixam `'2026-08'` (mesma classe do repair;
+  CI é UTC e a máquina local UTC−3 — divergência de mês por até 3h na virada) ·
+  transferência in-kind e corporate actions · **QA-D2** · dívida de nome
+  `ALD_CAMPO_NAO_PERMITIDO_EM_DESPESA` · `ALD_REASON_NAO_PERMITIDO` como
+  *tightening* aceito.
+- **Próxima decisão — gate humano:** produto (envelope de `transactions()`,
+  escrita transacional pela UI, ou destravar ALD-04-S2 pelas três decisões
+  normativas). **Nenhuma autorizada por este documento.**
+
+## Alladin ALD-03-S4 — ADJUSTMENT publicado — 2026-08-31 (fotografia histórica)
 
 - Data da fotografia: 2026-08-31
 Source revision representada: `a88b4509ee1651dc9a9b1676ea20d55f1872f131`
