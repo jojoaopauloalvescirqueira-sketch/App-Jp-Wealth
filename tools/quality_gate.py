@@ -60,6 +60,7 @@ STANDARD = FAST + (
     ("alladin-ui-crud", [sys.executable, "tools/alladin_ui_crud_test.py"]),
     ("alladin-ui-ledger", [sys.executable, "tools/alladin_ui_ledger_test.py"]),
     ("alladin-ui-tx-write", [sys.executable, "tools/alladin_ui_tx_write_test.py"]),
+    ("alladin-ui-tx-reverse", [sys.executable, "tools/alladin_ui_tx_reverse_test.py"]),
 )
 FULL = STANDARD + (
     ("session-finalization", [sys.executable, "tools/finalize_session_test.py"]),

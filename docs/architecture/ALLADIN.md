@@ -20,7 +20,8 @@ a spec planeja.
 > aconteceu"**: o Cash Ledger (ALD-03 S1), os trades BUY/SELL (S2), as despesas
 > FEE/TAX standalone (S3), os ajustes de reconciliação (S4) e a **posição por
 > quantidade derivada** (ALD-04 S1), a **superfície econômica read-only**
-> (ALD-05 S1) e a **criação de lançamento pela UI** (ALD-05 S2) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
+> (ALD-05 S1), a **criação de lançamento pela UI** (ALD-05 S2) e o **estorno pela
+> UI** (ALD-05 S3) estão publicados — ver as seções próprias abaixo. **Continuam inexistentes**:
 > holding persistido/consolidado, cost basis, valuation/current value, P&L,
 > performance, benchmark e as integrações Trading/PF/FX.
 
@@ -437,6 +438,7 @@ testes e a aceitação humana por console exercitam o domínio.
 
 | Suíte | Cobertura |
 |---|---|
+| `tools/alladin_ui_tx_reverse_test.py` | RV-A..RV-H — estorno pela UI: elegibilidade por linha (`—` em REVERSED/REVERSAL, `disabled` sob write gate, sem ação sob BLOCKING), modal com o original read-only e só três campos editáveis, porta única (1 `reverseTransaction`, 0 `addTransaction`), sucesso conferido contra os read-models, corrida com estorno duplicado, cancelar zero-write, double-submit inerte, submit tardio recusado, original byte-idêntico |
 | `tools/alladin_ui_tx_write_test.py` | TX-A..TX-N — criação pela UI: porta única (um `addTransaction`, um `save` por submit), payload sem campos do domínio, dinheiro só por `money.parse`, `quantity` verbatim com recusa sem correção, os nove tipos pelo modal real, ajuste com `reason` próprio, transfer sem pré-filtro, double-submit inerte, cancelar zero-write, write gate na abertura e no submit tardio, BLOCKING não convida escrita, pós-sucesso comparado aos read-models |
 | `tools/alladin_ui_ledger_test.py` | E1–E16 + E12b — superfície econômica read-only: sete destinos com os quatro cadastrais intactos, ordem do read-model preservada, dez `eventType` rotulados, `reason` visível, transferência com as duas pernas e caixas homônimas desambiguadas, `quantity` byte-idêntica (negativa fiel, >64 chars íntegra), **BLOCKING × EMPTY nos dois sentidos**, seis vetores de corrupção, a sentinela barrando ledger filtrado, zero `save()` |
 | `tools/alladin_unit_test.py` | U1–U26 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto; ALD-04: aritmética decimal BigInt (parse/alinhamento/soma/render) sondada direto |
@@ -760,6 +762,47 @@ a recusa `ALD_TRANSFER_MOEDAS_DIFERENTES` é do domínio e não é duplicada.
 
 **MD-2 continua dívida separada**: a escrita tem guarda própria e completa em
 `aldMutate`; o envelope de `transactions()` segue pendente para slice própria.
+
+## ALD-05 S3 — estorno pela UI (a UI oferece o ato; o domínio copia a economia)
+
+A tabela de Lançamentos ganhou a coluna **Ações**, no final, com o botão
+**"Estornar"** por linha. É a única mecânica de correção que um ledger
+append-only reconhece — e todo o efeito econômico do estorno é **copiado do
+original pelo domínio**.
+
+*Elegibilidade visual, não autoridade.* O botão aparece para registro legível,
+`eventType !== 'REVERSAL'`, `status === 'POSTED'` e **sem estorno existente**.
+Linha já estornada ou linha `REVERSAL` mostram `—`, sem botão: a coluna Status
+da mesma linha já explica, e um `disabled` ali exigiria justificativa que a
+linha já dá. Sob write gate o botão vem `disabled`; sob sentinela BLOCKING não
+há tabela, logo não há ação. **A decisão final é sempre de
+`reverseTransaction`**, que re-resolve o id e revalida tudo dentro do
+`aldMutate` — corrida entre render e clique termina em recusa honesta, nunca em
+ato errado.
+
+*O modal confirma o FATO, não simula a consequência.* Ele mostra o original em
+**somente leitura** — evento, `effectiveAt`, valor por `money.format`,
+conta/caixa, instrumento e `quantity` fiel do read-model, `reason` original
+quando houver — e **não existe input algum para campo econômico**. Deliberadamente
+**não** exibe "saldo previsto", "posição prevista" ou efeito líquido: calcular
+isso seria reimplementar `−ALD_CASH_DELTA[original]` na apresentação. O efeito
+aparece **depois**, pelos read-models.
+
+*Editáveis apenas os três campos que a API aceita*: `effectiveAt` do estorno
+(obrigatório — a reversão é fato novo com data própria), `reason` (opcional e
+**próprio**: copiá-lo do original fabricaria justificativa) e `note`.
+`dedupeKey` não é exposta, como no S2.
+
+*Uma chamada por confirmação*: `reverseTransaction(originalId, {effectiveAt,
+reason?, note?})`. A UI **nunca** usa `addTransaction` para estornar, nunca
+inverte `amount` ou `quantity`, nunca toca o original — quem marca
+`status: 'REVERSED'` é o domínio, dentro da transação. A recusa de estorno
+duplicado é inequívoca sobre o estado persistido: *"Este lançamento já possui
+um estorno. Nenhum novo estorno foi criado."*
+
+**MD-2 continua fora**: a linha fornece apenas o `transactionId`, e o domínio
+re-resolve e revalida tudo — `transactions()` sem envelope não é requisito
+material para esta ação.
 
 ## Integridade estrutural — na LEITURA e na ESCRITA, dado inválido nunca vira número
 

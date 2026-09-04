@@ -6118,7 +6118,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '84a03505d8c10fa6';
+const JP_WEALTH_BUILD_ID = '8666cd490b1302f0';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -34543,15 +34543,22 @@ function alladinRenderLedger(el){
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
   // effectiveAt, recordedAt, transactionId). A UI não reordena — reordenar
   // seria a UI decidindo o que é ordem econômica.
+  // ALD-05 S3 — elegibilidade VISUAL do estorno: legivel, nao-REVERSAL,
+  // POSTED e sem estorno ja existente. Isto e UX, nao autoridade — a decisao
+  // final e sempre de reverseTransaction, que re-resolve e revalida tudo.
+  const revertidos=new Set();
+  lista.forEach(tx=>{ if(tx.eventType==='REVERSAL'&&tx.reversalOf) revertidos.add(tx.reversalOf); });
+  const bloqueado=!!alladinWriteBloqueado();
   el.innerHTML=cab+cta+alladinTabela(
-    ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status'],
+    ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status','Ações'],
     lista.map(tx=>[
       alladinDataCelula(tx),
       alladinEventoCelula(tx),
       alladinTxDetalhe(tx,cat),
       esc(JPWAlladin.money.format({amount:tx.amount,currency:tx.currency})),
       esc(alladinCaixaLabel(cat,tx.cashAccountId||tx.sourceCashAccountId)),
-      esc(alladinStatus(tx.status,ALLADIN_TX_STATUS_LABEL))
+      esc(alladinStatus(tx.status,ALLADIN_TX_STATUS_LABEL)),
+      alladinTxReverseAcao(tx,revertidos,bloqueado)
     ]));
 }
 function alladinRenderBalances(el){
@@ -35112,6 +35119,7 @@ function alladinSubmit(){
   // ALD-05 S2: o modal de lançamento reusa a MESMA máquina de estados e os
   // mesmos atos 'salvar'/'cancelar' — só o leitor/ator muda de rota aqui.
   if(alladinForm.tipo==='transaction'){ alladinTxSubmit(); return; }
+  if(alladinForm.tipo==='transaction-reverse'){ alladinTxReverseSubmit(); return; }
   const {tipo,modo,alvoId}=alladinForm;
   const rico=(tipo==='instrument'||tipo==='asset');
   let dados;
@@ -35279,7 +35287,16 @@ const ALLADIN_TX_ERRO_TEXTO={
   ALD_CURRENCY_DIVERGE_DA_CONTA:'A moeda informada diverge da moeda da conta.',
   ALD_EVENT_TYPE_INVALIDO:'Tipo de lançamento não suportado por este build.',
   ALD_COLECAO_ILEGIVEL:'O ledger persistido está ilegível — nada foi gravado.',
-  READ_ONLY_FUTURE_SCHEMA:'Este agregado foi gravado por uma versão mais nova do JP Wealth. Escrita bloqueada; nada foi gravado.'
+  READ_ONLY_FUTURE_SCHEMA:'Este agregado foi gravado por uma versão mais nova do JP Wealth. Escrita bloqueada; nada foi gravado.',
+  // ALD-05 S3 — recusas do estorno. A do estorno duplicado precisa ser
+  // inequívoca sobre o estado persistido: o estorno EXISTIA, e nada novo nasceu.
+  ALD_REGISTRO_NAO_ENCONTRADO:'O lançamento original não foi encontrado.',
+  ALD_TRANSACAO_ILEGIVEL:'O lançamento original está ilegível — nada pode ser estornado a partir dele.',
+  ALD_REVERSAL_DE_REVERSAL:'Um estorno não pode ser estornado.',
+  ALD_REVERSAL_JA_EXISTE:'Este lançamento já possui um estorno. Nenhum novo estorno foi criado.',
+  ALD_TRANSACAO_NAO_ESTA_POSTED:'O lançamento original não está mais efetivado.',
+  ALD_REASON_INVALIDO:'Motivo inválido (máximo 240 caracteres).',
+  ALD_DEDUPE_KEY_INVALIDA:'Chave de deduplicação inválida.'
 };
 function alladinTxTextoDeRecusa(codigo){
   const c=String(codigo||'erro não identificado');
@@ -35448,6 +35465,85 @@ function alladinTxSubmit(){
   showSessionNotice('Lançamento registrado.');
 }
 
+// ============ ALLADIN · ALD-05 S3 — ESTORNO PELA UI =========================
+// A UI oferece a acao, mostra O FATO que sera estornado e faz UMA chamada a
+// reverseTransaction. Todo efeito economico — valor, moeda, escopo, papel — e
+// copiado do original PELO DOMINIO; a UI nao inverte sinal, nao monta delta e
+// nao simula consequencia ("saldo apos estorno" e reimplementar -ALD_CASH_DELTA
+// na apresentacao: vetado). dedupeKey nao e exposta, como no S2.
+function alladinTxReverseAcao(tx,revertidos,bloqueado){
+  // Inelegivel pelo ESTADO do proprio registro (estorno, ja estornado, com
+  // estorno existente): sem botao — a coluna Status da MESMA linha ja explica.
+  // Um disabled aqui exigiria justificativa que a linha ja da.
+  if(tx.eventType==='REVERSAL' || tx.status!=='POSTED' || revertidos.has(tx.transactionId))
+    return '&mdash;';
+  return '<button type="button" class="modal-btn cancel" data-ald-tx-reverse="'+
+    esc(tx.transactionId)+'"'+(bloqueado?' disabled':'')+'>Estornar</button>';
+}
+function alladinTxReverseResumo(tx,cat){
+  const linhas=[];
+  const linha=(rotulo,valor)=>linhas.push('<p class="modal-sub"><strong>'+esc(rotulo)+
+    ':</strong> '+valor+'</p>');
+  linha('Evento', alladinEventoCelula(tx));
+  linha('Efetivação', esc(alladinTexto(tx.effectiveAt)));
+  linha('Valor', esc(JPWAlladin.money.format({amount:tx.amount,currency:tx.currency})));
+  if(tx.eventType==='TRANSFER'){
+    linha('Origem &rarr; destino', esc(alladinCaixaLabel(cat,tx.sourceCashAccountId))+' &rarr; '+
+      esc(alladinCaixaLabel(cat,tx.destinationCashAccountId)));
+  }else{
+    linha('Conta de caixa', esc(alladinCaixaLabel(cat,tx.cashAccountId)));
+  }
+  if(tx.instrumentId!==undefined||tx.quantity!==undefined){
+    // quantity FIEL do read-model — sem Number/parseFloat/toFixed
+    linha('Instrumento', esc(alladinTexto(cat.instrumentos[tx.instrumentId]||tx.instrumentId))+
+      (tx.quantity!==undefined?' · '+esc(String(tx.quantity)):''));
+  }
+  if(tx.reason!==undefined&&tx.reason!==null&&tx.reason!=='')
+    linha('Motivo original', esc(String(tx.reason)));
+  return linhas.join('');
+}
+function alladinTxReverseAbrir(originalId){
+  // Write gate na ABERTURA — e de novo no dominio, no submit.
+  const bloqueio=alladinWriteBloqueado();
+  if(bloqueio){ showSessionNotice('Escrita indisponível: '+bloqueio); return; }
+  const tx=JPWAlladin.leitura.transactions().find(t=>t.transactionId===originalId);
+  if(!tx){ showSessionNotice('O lançamento não foi encontrado.'); return; }
+  const cat=alladinCatalogoLabels();
+  alladinForm.estado='EDITING'; alladinForm.tipo='transaction-reverse'; alladinForm.modo='create';
+  alladinForm.alvoId=originalId; alladinForm.recordId=null; alladinForm.avisos=[]; alladinForm.snapshot=null;
+  alladinModalOpen(
+    '<h3 id="alladinModalTitle">Estornar lançamento</h3>'+
+    '<p class="modal-sub">O estorno é um fato novo que neutraliza o original — o original é preservado e marcado como estornado. Os valores abaixo são somente leitura.</p>'+
+    '<div data-ald-rev-original>'+alladinTxReverseResumo(tx,cat)+'</div>'+
+    alladinCampo('alladinTxRevData','Data do estorno (AAAA-MM-DD)','')+
+    alladinCampo('alladinTxRevReason','Motivo do estorno (opcional)','')+
+    alladinCampo('alladinTxRevNota','Nota (opcional)','')+
+    '<div class="modal-actions"><button type="button" class="modal-btn cancel" data-ald-act="cancelar">Cancelar</button>'+
+    '<button type="button" class="modal-btn confirm" data-ald-act="salvar">Estornar</button></div>');
+}
+function alladinTxReverseSubmit(){
+  if(alladinForm.estado!=='EDITING') return;
+  const v=(id)=>{ const el=document.getElementById(id); return el?el.value:''; };
+  const effectiveAt=v('alladinTxRevData').trim();
+  if(!effectiveAt){ alladinErroInline('Informe a data do estorno.'); return; }
+  const dados={ effectiveAt };
+  const motivo=v('alladinTxRevReason'), nota=v('alladinTxRevNota').trim();
+  // reason do ESTORNO e proprio — nunca copiado do original (copiar seria
+  // fabricar justificativa para um fato novo); opcional por contrato.
+  if(motivo.trim()!=='') dados.reason=motivo;
+  if(nota!=='') dados.note=nota;
+  alladinForm.estado='SUBMITTING';
+  // UMA chamada; o retorno do dominio e o unico veredito.
+  const r=JPWAlladin.ledger.reverseTransaction(alladinForm.alvoId,dados);
+  if(!r || r.ok!==true){
+    alladinForm.estado='EDITING';
+    alladinErroInline(alladinTxTextoDeRecusa(r&&r.erro));
+    return;
+  }
+  alladinModalClose();
+  showSessionNotice('Estorno registrado.');
+}
+
 function initAlladinCrud(){
   const ov=document.getElementById('alladinModalOverlay');
   const box=document.getElementById('alladinModalBox');
@@ -35457,6 +35553,8 @@ function initAlladinCrud(){
   section.addEventListener('click',e=>{
     const txn=e.target.closest('button[data-ald-tx-new]');
     if(txn && !txn.disabled){ alladinTxAbrirForm(); return; }
+    const rev=e.target.closest('button[data-ald-tx-reverse]');
+    if(rev && !rev.disabled){ alladinTxReverseAbrir(rev.dataset.aldTxReverse); return; }
     const novo=e.target.closest('button[data-ald-new]');
     if(novo && !novo.disabled){ alladinAbrirForm(novo.dataset.aldNew,'create',null); return; }
     const ed=e.target.closest('button[data-ald-edit]');
