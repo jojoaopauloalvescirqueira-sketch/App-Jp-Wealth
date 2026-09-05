@@ -1,4 +1,36 @@
-# Session Handoff — Alladin · criação de lançamento pela UI (ALD-05-S2)
+# Session Handoff — candidato de integração do Dashboard Macro
+
+- Data: 2026-09-05
+- Branch: `codex/integrate-pending-branches`
+- Base: `c9104b167944e52bb9b71a7439f1573a053704bb`
+- Estado: candidato local validado; **não mesclado em `main`, não publicado**
+
+## Onde o projeto está
+
+Os commits do Dashboard Macro `3502331` e `03eda18` foram reaplicados sobre a
+`main` vigente como `ce225c4` e `f752776`. A camada Visão Executiva resume
+Forex, Finanças Pessoais, Research e Alladin; os gráficos, metodologia e atalhos
+operacionais foram movidos para `Forex > Visão Geral`. O artefato portátil foi
+regenerado pelo gerador oficial.
+
+A PR #1 (`045c264`) não gerou commit novo: a comparação mostrou que o workflow
+atual é um superconjunto corrigido daquele commit. `b2e43e8` (norma V11) e
+`feature/personal-finance-overview` (implementação antiga, substituída pela v2)
+permanecem fora do candidato.
+
+Verificação: teste focal `PASS`; gate `full` em Python 3.12.14 com **54 PASS** e
+zero `PRODUCT_FAIL`, `TEST_HARNESS_FAIL`, `ENVIRONMENT_ERROR`, `BASELINE_FAIL`
+ou `NOT_RUN`; navegador real em desktop escuro e mobile `390×844` claro/escuro,
+incluindo Dashboard → Forex Visão Geral. A tentativa inicial em Python 3.9 foi
+reclassificada como `ENVIRONMENT_ERROR` por incompatibilidade de
+`tarfile.extractall(filter=...)`; a repetição no runtime 3.12 do CI passou.
+
+## Próximo gate humano
+
+Autorizar separadamente o merge local da branch em `main`. `Push`, deploy,
+exclusão de branches e integração da norma V11 continuam não autorizados.
+
+# Histórico — Alladin · criação de lançamento pela UI (ALD-05-S2)
 
 - Data: 2026-09-01
 - **`main` == `origin/main` == `964c38b724d8d048f8e7899637ef86e2ccda1cf9`**

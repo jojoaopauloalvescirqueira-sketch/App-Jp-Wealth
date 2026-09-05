@@ -1,5 +1,26 @@
 # Estado atual do projeto
 
+## Candidato de integração — Dashboard Macro — 2026-09-05
+
+- Branch candidata: `codex/integrate-pending-branches`; base
+  `c9104b167944e52bb9b71a7439f1573a053704bb`; **ainda não integrada à `main` e
+  não publicada**.
+- Dashboard Macro (`3502331` + `03eda18`) reconciliado sobre a `main` atual nos
+  commits locais `ce225c4` e `f752776`: panorama dos quatro domínios, grade 2×2
+  em desktop e coluna única em mobile; profundidade operacional, gráficos,
+  metodologia e atalhos Forex passam a viver em `Forex > Visão Geral`.
+- A PR #1 (`045c264`, workflow inicial) foi auditada e não reaplicada: o
+  workflow vigente contém todo o seu contrato e acrescenta `push` em `main`,
+  histórico completo e caminho explícito de dependências.
+- A norma V11 (`b2e43e8`) e a implementação antiga de Finanças Pessoais
+  (`feature/personal-finance-overview`) ficaram deliberadamente fora.
+- Verificação final do candidato: `full` em Python 3.12.14 com **54 PASS**, zero
+  nas demais categorias; navegador real em desktop e mobile `390×844`, temas
+  claro/escuro, com navegação Dashboard → Forex confirmada.
+- Impacto agêntico detectado e reconciliado em contexto operacional, gate,
+  changelog, handoff e auditoria; nenhuma regra financeira ou contrato de dados
+  foi alterado.
+
 ## Alladin ALD-05-S2 — criação de lançamento pela UI publicada — 2026-09-01
 
 - Data da fotografia: 2026-09-01

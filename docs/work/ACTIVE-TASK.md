@@ -9,7 +9,8 @@
 ## Objetivo
 
 Integrar seletivamente os commits pendentes `3502331` e `03eda18` do Dashboard
-Macro e `045c264` do workflow de qualidade, reconciliando-os com a `main` atual.
+Macro, reconciliando-os com a `main` atual. A PR #1 (`045c264`) foi auditada e
+não reaplicada: seu workflow é um subconjunto estrito da versão vigente.
 
 ## Exclusões
 
@@ -37,6 +38,18 @@ gerador oficial e a documentação operacional necessária para reconciliar o es
 - `python3 tools/quality_gate.py --tier full`.
 - Revisão integral do diff, `git diff --check`, manifest e artefatos gerados.
 - Auditoria pós-mudança e reconciliação do impacto agêntico/contextual.
+
+## Resultado
+
+- Dashboard Macro integrado nos commits `ce225c4` e `f752776`.
+- PR #1 não reaplicada por já estar integralmente superada pelo workflow atual.
+- Artefato portátil regenerado pelo gerador oficial e reproduzível.
+- Teste focal: `PASS`.
+- Gate `full` em Python 3.12.14: `PASS=54`, demais categorias `0`.
+- Navegador real: desktop escuro e mobile `390×844` em claro/escuro; navegação
+  Dashboard → Forex Visão Geral, relocação dos blocos e ausência de overflow
+  visual confirmadas.
+- `main`, `origin/main`, branches excluídas e publicação permanecem intocados.
 
 ## Rollback
 

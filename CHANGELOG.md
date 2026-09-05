@@ -4,9 +4,10 @@
 
 ### Dashboard — Visão Executiva 2×2 e migração da profundidade Forex (DASH-MACRO-02A) — 2026-09-05
 
-Branch `feature/dashboard-macro-overview`, commit `3502331` sobre `c9104b1`. Em
-desenvolvimento — não integrada. Revisão do candidate DASH-MACRO-01 após Human
-Acceptance = CHANGES_REQUESTED (o Dashboard continuava dominado por Forex).
+Integrado no candidato local `codex/integrate-pending-branches` pelos commits
+`ce225c4` e `f752776`, sobre `c9104b1`; ainda não mesclado em `main` nem
+publicado. Revisão do candidate DASH-MACRO-01 após Human Acceptance =
+CHANGES_REQUESTED (o Dashboard continuava dominado por Forex).
 
 Fatias 1–4, classificação **N0-V + N1**:
 
@@ -44,7 +45,8 @@ pré-existentes — TEST_HARNESS_FAIL, não falha de produto. Passou a nominal
 
 ### Dashboard — Visão Executiva Macro (DASH-MACRO-01) — 2026-09-04
 
-Branch `feature/dashboard-macro-overview`. Em desenvolvimento — não integrada.
+Integrado no candidato local `codex/integrate-pending-branches`; ainda não
+mesclado em `main` nem publicado.
 
 O Dashboard deixa de ser um resumo de Forex e passa a ser o panorama dos quatro
 módulos globais. Nova camada fixa `#dashMacro`, com um card por domínio — Forex,
