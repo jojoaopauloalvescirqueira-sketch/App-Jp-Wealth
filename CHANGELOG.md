@@ -2,6 +2,46 @@
 
 ## [Unreleased]
 
+### Dashboard — Visão Executiva 2×2 e migração da profundidade Forex (DASH-MACRO-02A) — 2026-09-05
+
+Branch `feature/dashboard-macro-overview`, commit `3502331` sobre `c9104b1`. Em
+desenvolvimento — não integrada. Revisão do candidate DASH-MACRO-01 após Human
+Acceptance = CHANGES_REQUESTED (o Dashboard continuava dominado por Forex).
+
+Fatias 1–4, classificação **N0-V + N1**:
+
+- **Fatia 1** — `#dashMacroGrid` vira grade **2×2** em desktop (>1100px) e
+  empilha em uma coluna abaixo disso; cards com fatos e barras de teto.
+- **Fatia 2** — `.gd-analysis-grid` (Evolução do período / Ritmo do ciclo) e
+  `#dashMethodology` saem de `#dash` e passam a viver em `#execOverview`
+  (Forex › Visão Geral). Sem duplicação: cada bloco existe em um lugar só, e
+  nenhum `[data-layout-card]` migrou.
+- **Fatia 3** — painéis ampliados por domínio: Forex (fase, drawdown, risco
+  aberto, alavancagem — cada um contra o próprio teto); Finanças Pessoais
+  (competência corrente, pendências anteriores); Research (estudos NoCoda,
+  pivôs, calendário do dia); Alladin (posições, contas, instrumentos, schema).
+- **Fatia 4** — `quick-actions` decomposto: os três atalhos operacionais de
+  Forex (Motor de Lote, Checklist Pré-Trade, Parâmetros) foram para
+  `#execOverviewQuickNav`, dentro de `#execOverview`; o card do Dashboard
+  conserva apenas os atalhos globais (backup, armazenamento, Estatuto). O
+  widget permanece em `#gdDashMain` com o mesmo id.
+
+Motor de layout **intocado**: `13-dashboard-layout.js`, `JP_WIDGET_DEFAULTS`,
+schema `v6` e migrações não mudaram; `#gdDashMain` conserva exatamente os
+mesmos seis `[data-layout-card]`. Regra absoluta do gate cumprida: nada de N2.
+
+**Fatia 5 (DASH-MACRO-02B) não executada** — mover `operational-clearance`,
+`vrm` e `news-high-impact` para Forex toca `JP_WIDGET_DEFAULTS.dash`, é N2 e
+exige RISK GATE próprio. Por isso os dois CTAs "Abrir Forex" pré-existentes
+(hero e `operational-clearance`) seguem no Dashboard.
+
+`tools/dashboard_macro_test.py` estendido (fatia 2 e responsividade 2×2 /
+empilhada). Correção pós-commit: a asserção da fatia 2 usava o seletor
+genérico `#dash [data-dash-go]` e acusava justamente os dois CTAs
+pré-existentes — TEST_HARNESS_FAIL, não falha de produto. Passou a nominal
+(`motor`/`check`/`params`), com guarda de escopo que pina os dois CTAs.
+
+
 ### Dashboard — Visão Executiva Macro (DASH-MACRO-01) — 2026-09-04
 
 Branch `feature/dashboard-macro-overview`. Em desenvolvimento — não integrada.
