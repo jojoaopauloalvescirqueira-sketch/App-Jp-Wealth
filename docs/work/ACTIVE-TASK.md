@@ -1,51 +1,44 @@
-# Tarefa ativa — Logo JP Wealth como acesso ao Dashboard
+# Tarefa ativa — Integração seletiva de branches pendentes
 
-- Data: 2026-08-29
-- Branch: `codex/logo-link-dashboard-merge`
-- Worktree: `/private/tmp/jpw-logo-merge.Y5Ip0p/repo` (temporário, limpo)
-- `BASE_SHA`: `c8c31908e2bccbdb3a62e45c1b0ec4f6384cad9b`
-- Classificação: **N1** — navegação de interface, sem regra financeira nem persistência
-- Autoridade: **A2** — implementação delimitada, autorizada pelo gestor;
-  commit e merge por fast-forward autorizados. **Push e deploy NÃO autorizados.**
+- Data: 2026-09-05
+- Branch: `codex/integrate-pending-branches`
+- `BASE_SHA`: `c9104b167944e52bb9b71a7439f1573a053704bb`
+- Classificação: **N1 + N0-D** — Dashboard Macro e workflow de qualidade
+- Autoridade: **A4 delimitada** — integração e commits locais autorizados pelo gestor; `push`, merge em `main`, deploy e exclusão de branches não autorizados.
 
 ## Objetivo
 
-A logo do cabeçalho passa a ser o caminho de volta ao Dashboard — o gesto que
-todo usuário de aplicação web já espera do canto superior esquerdo. Deve
-funcionar por clique e por teclado, com nome acessível explícito.
+Integrar seletivamente os commits pendentes `3502331` e `03eda18` do Dashboard
+Macro e `045c264` do workflow de qualidade, reconciliando-os com a `main` atual.
 
 ## Exclusões
 
-Nenhuma alteração de estado, storage ou persistência. Nenhuma segunda
-implementação de navegação: o mesmo `navigateToScreen()` dos primários. Nenhuma
-mudança visual na aparência atual da marca. Nada do domínio Alladin/ledger.
+- Não integrar `b2e43e8` (`chore/norma-vigente-v11`), pois altera o acervo normativo N3.
+- Não integrar `feature/personal-finance-overview`, pois foi substituída pela implementação v2 já incorporada.
+- Não alterar domínio financeiro, persistência, schema, credenciais ou dados reais.
+- Não executar `push`, merge em `main`, deploy ou exclusão de branches/worktrees.
 
 ## Arquivos permitidos
 
-`index.html` · `src/styles/app.css` · `src/js/40-app/01-navigation.js` ·
-`tools/navigation_ia_test.py` · `src/js/manifest.json` ·
-`docs/architecture/NAVIGATION-HIERARCHY.md` · `docs/work/ACTIVE-TASK.md` ·
-`CHANGELOG.md` · `docs/audit/` · artefatos regenerados pelo gerador oficial
-(`build-id.js`, `dist/…PORTABLE.html`).
+Arquivos tocados pelos três commits autorizados, mais os artefatos gerados pelo
+gerador oficial e a documentação operacional necessária para reconciliar o estado.
 
 ## Invariantes
 
-- a rota canônica é `dashboard`; a tela física de destino é `dash`;
-- navegação continua sendo UI pura: zero escrita em storage, zero `save()`;
-- a aparência da marca não muda — o botão não pode parecer um botão;
-- alvo de toque com no mínimo 44 px de altura;
-- o foco visível vem do sistema de estilos existente, não de regra nova;
-- a ordem dos scripts clássicos não muda.
+- Nenhuma regra financeira, percentual, fórmula ou limite muda.
+- Alladin e Finanças Pessoais permanecem funcional e estruturalmente intactos.
+- A ordem de scripts clássicos só muda conforme o módulo Dashboard Macro autorizado.
+- `dist/` e `build-id.js` são atualizados apenas pelo gerador oficial.
+- O workflow não pode classificar caso omitido como `PASS`.
 
-## Testes
+## Verificação
 
-`tools/navigation_ia_test.py` ganha caracterização do novo controle; tier
-`standard` no candidato isolado; `validate_project`; verificação real em
-navegador (desktop e mobile, tema claro e escuro, foco, overflow, console);
-`fast` no candidato final.
+- Teste focal do Dashboard Macro.
+- `python3 tools/quality_gate.py --tier full`.
+- Revisão integral do diff, `git diff --check`, manifest e artefatos gerados.
+- Auditoria pós-mudança e reconciliação do impacto agêntico/contextual.
 
 ## Rollback
 
-Um único commit funcional; reverter é `git revert` dele. O worktree temporário
-é descartável e o checkout original, com trabalho não commitado de terceiros,
-não é tocado.
+Reverter os commits de integração na ordem inversa. A `main` permanece intocada
+até autorização humana separada para o merge.
