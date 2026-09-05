@@ -1,19 +1,6 @@
----
-tipo_nota: norma
-dominio: jp_wealth
-documento: JPW-GOV-001
-versao: "10.0"
-status: vigente
-livro: "V"
-titulos: "23–29"
-aliases:
-  - "Livro V — Alocação Patrimonial, Tesouraria e Distribuição"
-  - "Livro V"
----
+# LIVRO VII
 
-# Livro V — Alocação Patrimonial, Tesouraria e Distribuição
-
-> Títulos 23 a 29 · Artigos 24.1 a 29.3
+**Alocação Patrimonial, Tesouraria e Distribuição**
 
 ## Título 23 — Missão Patrimonial
 
@@ -23,38 +10,38 @@ A JP Wealth Holding existe como estrutura patrimonial antifrágil de longo prazo
 
 ### Artigo 24.1 — Alocação Macro
 
-| **Segmento** | **Proporção do Patrimônio** |
-| --- | --- |
-| Contas de Operação JP Wealth | 65% |
-| Investimentos Externos | 20% |
-| Caixa e Fundo de Resgate (FCR + FEO + liquidez) | 15% |
+|Segmento|Proporção do Patrimônio|
+|---|---|
+|Contas de Operação JP Wealth|65%|
+|Investimentos Externos|20%|
+|Caixa e Fundo de Resgate (FCR + FEO + liquidez)|15%|
 
 ### Artigo 24.2 — Contas de Operação (65%)
 
-| **Linha** | **Proporção** |
-| --- | --- |
-| JP Wealth Base | 60% |
-| JP Wealth Longevity | 20% |
-| JP Wealth High Yield | 20% |
+|Linha|Proporção|
+|---|---|
+|JP Wealth Base|60%|
+|JP Wealth Longevity|20%|
+|JP Wealth High Yield|20%|
 
 As contas Base e Longevity constituem o núcleo de estabilidade e repetição estatística; a High Yield é a camada de convexidade — menor alocação absoluta, exposta a ganhos assimétricos com risco limitado.
 
 ### Artigo 24.3 — Investimentos Externos (20%)
 
-| **Veículo** | **Proporção** | **Status** |
-| --- | --- | --- |
-| Oracullus | 34% | Homologado |
-| Sollitus | 33% | Homologado |
-| FIIs | 33% | Homologado |
-| "Recovery", Real Estate, Value Investing, ETFs, ouro patrimonial, Bitcoin | — | Candidatos NÃO homologados — sujeitos a deliberação do Compliance Board antes de qualquer aporte |
+|Veículo|Proporção|Status|
+|---|---|---|
+|Oracullus|34%|Homologado|
+|Sollitus|33%|Homologado|
+|FIIs|33%|Homologado|
+|“Recovery”, Real Estate, Value Investing, ETFs, ouro patrimonial, Bitcoin|—|Candidatos NÃO homologados — sujeitos a deliberação do Compliance Board antes de qualquer aporte|
 
-**§1º** — Ouro como reserva patrimonial de longo prazo é matéria distinta da vedação de trading do Art. 22.2 e somente poderá ser considerado mediante homologação expressa, com esta distinção lavrada em ata.
+**§1º —** Ouro como reserva patrimonial de longo prazo é matéria distinta da vedação de trading do Art. 22.2 e somente poderá ser considerado mediante homologação expressa, com esta distinção lavrada em ata.
 
 ## Título 25 — Rebalanceamento e Registros
 
 ### Artigo 25.1 — Período de Gestão
 
-O rebalanceamento obedece à maturação dos ciclos técnicos: nenhum rebalanceamento será executado durante Período de Gestão ativo. O Período de Gestão corresponde ao ciclo anual de 12 meses do Art. 5.3; contas com ciclos dessincronizados são avaliadas individualmente ao fechamento de cada ciclo, e realocações entre blocos macro ocorrem no fechamento anual consolidado da Holding.
+O rebalanceamento obedece à maturação dos ciclos técnicos: nenhum rebalanceamento será executado durante Período de Gestão ativo. O Período de Gestão corresponde ao ciclo anual de 12 meses do Art. 3.19; contas com ciclos dessincronizados são avaliadas individualmente ao fechamento de cada ciclo, e realocações entre blocos macro ocorrem no fechamento anual consolidado da Holding.
 
 ### Artigo 25.2 — Autoridade e Registro
 
@@ -64,15 +51,19 @@ A execução de qualquer ajuste patrimonial é competência exclusiva do Complia
 
 ### Artigo 26.1 — Composição do Bloco de 15%
 
-O bloco macro "Caixa e Fundo de Resgate" (15% do patrimônio total) comporta, em seu interior, o FCR e o FEO definidos no Título 13 do Livro II, além da liquidez operacional excedente.
+O bloco macro “Caixa e Fundo de Resgate” (15% do patrimônio total) comporta, em seu interior, o FCR e o FEO definidos no Título 13 do Livro IV, além da liquidez operacional excedente.
 
 ### Artigo 26.2 — Prevalência dos Mínimos Absolutos
 
-Os mínimos absolutos — FCR ≥ 15% do capital nominal da Conta Mestre e FEO ≥ 6 meses de despesas — prevalecem sobre o percentual macro. Se a soma dos mínimos exceder 15% do patrimônio total, os mínimos serão integralmente constituídos e o excedente deduzido proporcionalmente dos blocos de Operação e Investimentos Externos até regularização orgânica.
+Os mínimos absolutos — FCR ≥ limite máximo de drawdown vigente × Saldo Inicial de Referência (Livro IV, Art. 13.2) e FEO ≥ seis meses de despesas operacionais reais (Livro IV, Art. 13.3) — prevalecem sobre o percentual macro. Se a soma dos mínimos exceder 15% do
+
+patrimônio total, os mínimos serão integralmente constituídos e o excedente deduzido
+
+proporcionalmente dos blocos de Operação e Investimentos Externos até regularização orgânica.
 
 ### Artigo 26.3 — Liquidez
 
-FCR: liquidez imediata (D+0/D+1). FEO e demais recursos do bloco: liquidez de até D+2. Fica sanada a divergência entre as redações anteriores ("liquidez imediata" vs. "+2 dias").
+A liquidez do FCR e a do FEO observam os níveis estabelecidos no Livro IV, Artigos 13.2, §7º, e 13.3, §11, e constantes do anexo paramétrico. Este artigo não fixa nível de liquidez e não constitui fonte concorrente àquela delegação. Fica sanada a divergência entre as redações anteriores (“liquidez imediata” vs. “+2 dias”).
 
 ## Título 27 — Caixa Institucional (Caixa Central)
 
@@ -82,10 +73,35 @@ Nenhuma movimentação patrimonial poderá ocorrer fora do Caixa Central. Fluxos
 
 ### Artigo 27.2 — Segmentação
 
-| **Camada** | **Proporção** | **Descrição** |
-| --- | --- | --- |
-| Caixa Patrimonial Principal — Interactive Brokers (IBKR) | 50% | Custódia bancária institucional em USD; movimentação internacional via SWIFT entre contas de mesma titularidade; inicialmente sob titularidade pessoal do fundador até formalização jurídica da Holding. |
-| Caixa Operacional Ágil — USDT custodial | 50% | Liquidez operacional imediata (paridade nominal 1:1 USD) para fluxo técnico entre prop firms, corretoras e plataformas; custódia em carteiras privadas controladas internamente, registrada em planilha de caixa. |
+**Camada** **Proporção** **Descrição**
+
+Custódia bancária institucional em USD;
+
+movimentação internacional via SWIFT entre
+
+Caixa Patrimonial Principal —
+
+Interactive Brokers (IBKR) 50%
+
+contas de mesma titularidade; inicialmente sob
+
+titularidade pessoal do fundador até formalização
+
+jurídica da Holding.
+
+Liquidez operacional imediata (paridade nominal
+
+Caixa Operacional Ágil — USDT
+
+custodial 1:1 USD) para fluxo técnico entre prop firms,
+
+50%
+
+corretoras e plataformas; custódia em carteiras
+
+privadas controladas internamente, registrada em
+
+planilha de caixa.
 
 ### Artigo 27.3 — Custódia de Chaves Privadas
 
@@ -101,13 +117,37 @@ Toda movimentação será registrada na Planilha de Caixa Institucional (data, v
 
 A cada encerramento de Período de Gestão, o Compliance Board deliberará o regime do ciclo subsequente:
 
-| **Regime** | **Distribuição** | **Critério** |
-| --- | --- | --- |
-| I — Crescimento | 0% ordinária; 100% do lucro líquido reinvestido. Exceções extraordinárias: até 20% do excedente, com aprovação formal. | Fase de construção estrutural; prioridade ao efeito composto. |
-| II — Híbrido | 30% a 50% do lucro líquido consolidado; saldo reinvestido. | Transição patrimonial com robustez acumulada. |
-| III — Dividendos | Até 70% do lucro líquido; mínimo de 30% de reinvestimento contínuo. | Maturação plena e reservas estratégicas consolidadas. |
+**Regime** **Distribuição** **Critério**
 
-**§1º** — Vedada qualquer distribuição enquanto FCR e FEO não estiverem integralmente constituídos (Art. 13.3).
+0% ordinária; 100% do lucro líquido
+
+Fase de construção estrutural;
+
+I — Crescimento
+
+reinvestido. Exceções extraordinárias: até
+
+prioridade ao efeito composto.
+
+20% do excedente, com aprovação formal.
+
+II — Híbrido 30% a 50% do lucro líquido consolidado;
+
+saldo reinvestido.
+
+Transição patrimonial com robustez
+
+acumulada.
+
+III — Dividendos Até 70% do lucro líquido; mínimo de 30%
+
+de reinvestimento contínuo.
+
+Maturação plena e reservas
+
+estratégicas consolidadas.
+
+**§1º —** Vedada qualquer distribuição enquanto FCR e FEO não estiverem integralmente constituídos (Arts. 13.2 e 13.3).
 
 ## Título 29 — Corretoras e Diversificação
 
@@ -128,11 +168,3 @@ A operação concentra-se em corretoras ECN/híbridas institucionais reguladas e
 ### Artigo 29.3 — Contas Modelo (Track Record Puro)
 
 Mantêm-se contas modelo nas corretoras Vantage (Cent) e Hantec (Cent), sem aportes ou saques, sob capital fixo, com a única finalidade de gerar histórico técnico puro de performance para validação documental contínua do modelo.
-
----
-
-## Navegação
-
-- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]
-- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/07 - Livro VI — Método e Execução Técnica (Nocuda)]]
