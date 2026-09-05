@@ -135,6 +135,7 @@ def assert_migracao_forex_fatia2(page):
     """
     r = page.evaluate("""() => {
       const q = s => document.querySelectorAll(s).length;
+      const OPERACIONAIS = ['motor', 'check', 'params'];
       return {
         analiseNoDash: q('#dash .gd-analysis-grid'),
         metodologiaNoDash: q('#dash #dashMethodology'),
@@ -144,9 +145,17 @@ def assert_migracao_forex_fatia2(page):
         layoutCardsNoExecOverview: q('#execOverview [data-layout-card]'),
         // #dStatus e lido SEM guard em 03-main-render.js:293 — remove-lo derruba render()
         dStatus: q('#dStatus'),
-        // os tres atalhos operacionais acompanharam o dominio
-        atalhosForexNoExec: q('#execOverview [data-dash-go]'),
-        atalhosForexNoDash: q('#dash [data-dash-go]'),
+        // os TRES atalhos operacionais (motor/check/params) acompanharam o
+        // dominio. Seletor nominal, nao generico: operational-clearance ja
+        // carregava dois CTAs "Abrir Forex" (data-dash-go="exec") na baseline
+        // c9104b1 — sao Dashboard->Forex, nao profundidade de Forex, e o widget
+        // e persistido: move-lo e a fatia 5 (02B, N2), fora deste candidate.
+        atalhosForexNoExec: q(OPERACIONAIS.map(k => `#execOverview [data-dash-go="${k}"]`).join(',')),
+        atalhosForexNoDash: q(OPERACIONAIS.map(k => `#dash [data-dash-go="${k}"]`).join(',')),
+        // guarda de escopo: os dois CTAs "Abrir Forex" pre-existentes seguem no
+        // #dash — um em operational-clearance (#mcClearanceCard), outro em
+        // .jp-hero-actions do hero (decisao fechada: hero nao se toca).
+        ctaAbrirForexNoDash: q('#dash [data-dash-go="exec"][data-route="forex-overview"]'),
       };
     }""")
     assert r["analiseNoDash"] == 0, f"Evolucao/Ritmo ainda no Dashboard: {r}"
@@ -156,7 +165,8 @@ def assert_migracao_forex_fatia2(page):
     assert r["layoutCardsNoExecOverview"] == 0, f"widget persistido migrado — isso seria N2: {r}"
     assert r["dStatus"] == 1, f"#dStatus perdido — render() quebraria: {r}"
     assert r["atalhosForexNoExec"] == 3, f"atalhos operacionais nao migraram: {r}"
-    assert r["atalhosForexNoDash"] == 0, f"atalho de Forex remanescente no Dashboard: {r}"
+    assert r["atalhosForexNoDash"] == 0, f"atalho operacional remanescente no Dashboard: {r}"
+    assert r["ctaAbrirForexNoDash"] == 2, f"CTAs 'Abrir Forex' pre-existentes alterados — fora do escopo 02A: {r}"
 
 
 def assert_gddashmain_intacto(page):
