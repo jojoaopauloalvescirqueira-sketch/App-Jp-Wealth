@@ -351,10 +351,71 @@
          segundo nível é efêmero por contrato). O Painel Operacional é o
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
+      <!-- DASH-MACRO-02A · Fatia 2 — a Visão Geral do Forex deixa de ser
+           superfície reservada e passa a concentrar a profundidade operacional
+           que vivia no Dashboard geral. Os dois blocos abaixo vieram INTEIROS
+           de #dash (index.html, antes na linha 966): mesmos ids, mesmos
+           renderizadores, nenhuma lógica alterada.
+
+           POR QUE NÃO É N2: nenhum dos dois carrega [data-layout-card] — o
+           motor de layout (13-dashboard-layout.js) só enumera
+           `:scope > [data-layout-card]` dos containers de JP_WIDGET_SCREENS, e
+           #execOverview não é container registrado (a tela exec usa
+           #execWidgetGrid). Portanto a preferência salva de dash E de exec
+           permanece byte-válida; nenhum default, versão ou migração é tocado.
+
+           O CSS acompanha sem mudança: as regras destes blocos são escopadas
+           por html[data-shell="global-dashboard"] (app.css:5428, 5439), não
+           por #dash. -->
       <div class="card">
         <h2 id="execOverviewTitle">Visão Geral</h2>
-        <p class="expl">Superfície reservada para a síntese do Execution Board. O conteúdo funcional será especificado em tarefa própria — nenhum indicador, cálculo, score ou resumo financeiro é derivado aqui.</p>
+        <p class="expl">Profundidade operacional do domínio Forex. O Dashboard resume; aqui está o detalhe.</p>
+        <!-- Os três atalhos operacionais que viviam em "Ações Rápidas" do
+             Dashboard. Mesmos destinos, mesmos data-dash-go — a delegação global
+             de 10-dashboard-immersive.js:137 continua atendendo-os. -->
+        <nav class="gd-quick-nav" id="execOverviewQuickNav">
+          <button type="button" data-dash-go="motor">Motor de Lote <span aria-hidden="true">›</span></button>
+          <button type="button" data-dash-go="check">Checklist Pré-Trade <span aria-hidden="true">›</span></button>
+          <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
+        </nav>
       </div>
+    <div class="gd-analysis-grid" data-dash-section="evolucao">
+      <section class="card gd-analysis-card" id="dashChartPanel">
+        <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
+        <div id="dashCharts"></div>
+      </section>
+      <section class="card gd-pace-card" id="dashPacePanel">
+        <h2>Ritmo do ciclo <span class="art">K8</span></h2>
+        <div id="dashCyclePace"></div>
+      </section>
+    </div>
+
+    <details class="gd-methodology" id="dashMethodology" data-dash-section="governanca">
+      <summary><span class="t">Detalhes e metodologia</span><span class="art">motivos · métricas do ciclo · acompanhamento mensal</span><span class="chev">▾</span></summary>
+      <div class="gd-methodology-body">
+        <section class="gd-method-section">
+          <h3>Por que este é o estado?</h3>
+          <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+        </section>
+        <section class="gd-method-section" id="dashCyclePanel">
+          <h3>Métricas do ciclo</h3>
+          <div class="metrics">
+            <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
+            <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
+            <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
+            <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
+          </div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashMonthlyPanel">
+          <h3>Acompanhamento mensal <span>derivado do fechamento diário</span></h3>
+          <div id="mqlMonthly" class="jp-table-scroll"></div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashRiskPanel">
+          <h3>Drawdown e comparação mensal <span>limites estatutários · expectativa vs real</span></h3>
+          <div id="dashRiskDetail" class="jp-table-scroll"></div>
+        </section>
+      </div>
+    </details>
     </div>
     <!-- Grade modular do Execution Board (motor compartilhado, 13-dashboard-layout.js).
          .eb-top e .coherence (grids fixos de 2 colunas) foram desfeitos — cada
@@ -651,6 +712,30 @@
       </div>
     </div>
 
+    <!-- ===== VISÃO EXECUTIVA MACRO (DASH-MACRO-01) =====
+         Panorama transversal dos quatro módulos globais. Renderizada por
+         20-ui/25-dash-macro.js, que consome a superfície pública de cada
+         domínio e não reproduz nenhuma fórmula financeira.
+
+         POSIÇÃO DELIBERADA: irmã de #gdDashGrid e FORA dele. O motor de layout
+         (13-dashboard-layout.js) enumera exclusivamente
+         `:scope > [data-layout-card]` dentro de #gdDashMain — esta seção está
+         fora daquele container e não carrega [data-layout-card], portanto é
+         invisível ao motor. Consequência pretendida: a preferência de layout
+         já salva pelo operador continua válida, nenhum id persistido muda e
+         nenhuma migração é necessária.
+
+         data-route-focus dá ao Dashboard um destino de foco DETERMINÍSTICO ao
+         navegar para cá — inclusive pela marca do cabeçalho. Sem ele,
+         navFocusCurrentScreen (01-navigation.js) elegeria o primeiro h1/h2 em
+         ordem de documento, e o foco mudaria de lugar a cada card novo. Mesmo
+         padrão já usado em #research e #alladin. -->
+    <section class="dm-shell" id="dashMacro" aria-labelledby="dashMacroTitle">
+      <h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Visão Executiva</h2>
+      <p class="dm-shell-sub">Panorama consolidado — cada área resume a si mesma e leva ao seu módulo.</p>
+      <div class="dm-grid" id="dashMacroGrid"></div>
+    </section>
+
     <!-- Grid executivo 2fr/1fr (fidelidade ao Claude Design — Dashboard Claro).
          gdDashMain recebe #mcClearanceCard e #mcMetricStrip via relocação JS
          (12-global-dashboard.js) — mesmo padrão de moveLegacySettingsNodes.
@@ -808,12 +893,24 @@
              data-shell="global-dashboard". Sem a flag continua no topo de
              <main>, comportamento legado intocado. -->
         <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
+          <!-- DASH-MACRO-02A · Fatia 4 — os atalhos foram classificados um a um,
+               não movidos em bloco. 'motor' e 'check' resolvem para primary
+               'forex' (01-navigation.js:37,42) e 'params' abre a folha
+               tool-params da Central, cujos parâmetros são normativos de Forex
+               (matriz quadrifásica, MDD, tetos). Os três eram um cockpit de
+               Forex disfarçado de card global, e migraram para a Visão Geral do
+               Forex. Ficam aqui apenas atalhos verdadeiramente transversais.
+
+               O CARD PERMANECE REGISTRADO: 'quick-actions' segue em
+               JP_WIDGET_DEFAULTS.dash com o mesmo id, zone e size. Só o CONTEÚDO
+               mudou — nenhuma preferência de layout é tocada, e por isso esta
+               fatia continua N1. Esvaziar o card seria mudança de defaults (N2)
+               e está fora desta autorização. -->
           <div class="gd-card-label">Ações Rápidas</div>
           <nav class="gd-quick-nav">
-            <button type="button" data-dash-go="motor">Motor de Lote <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="check">Checklist Pré-Trade <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
             <button type="button" data-dash-settings="backup">Base de Dados · Backup <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-settings="storage">Armazenamento Local <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-settings="statute">Estatuto Operacional <span aria-hidden="true">›</span></button>
           </nav>
         </div>
       </aside>
@@ -939,43 +1036,6 @@
       <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
 
-    <div class="gd-analysis-grid" data-dash-section="evolucao">
-      <section class="card gd-analysis-card" id="dashChartPanel">
-        <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
-        <div id="dashCharts"></div>
-      </section>
-      <section class="card gd-pace-card" id="dashPacePanel">
-        <h2>Ritmo do ciclo <span class="art">K8</span></h2>
-        <div id="dashCyclePace"></div>
-      </section>
-    </div>
-
-    <details class="gd-methodology" id="dashMethodology" data-dash-section="governanca">
-      <summary><span class="t">Detalhes e metodologia</span><span class="art">motivos · métricas do ciclo · acompanhamento mensal</span><span class="chev">▾</span></summary>
-      <div class="gd-methodology-body">
-        <section class="gd-method-section">
-          <h3>Por que este é o estado?</h3>
-          <ul class="mc-reasons" id="mcClearanceReasons"></ul>
-        </section>
-        <section class="gd-method-section" id="dashCyclePanel">
-          <h3>Métricas do ciclo</h3>
-          <div class="metrics">
-            <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
-            <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
-            <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
-            <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
-          </div>
-        </section>
-        <section class="gd-method-section gd-method-section-wide" id="dashMonthlyPanel">
-          <h3>Acompanhamento mensal <span>derivado do fechamento diário</span></h3>
-          <div id="mqlMonthly" class="jp-table-scroll"></div>
-        </section>
-        <section class="gd-method-section gd-method-section-wide" id="dashRiskPanel">
-          <h3>Drawdown e comparação mensal <span>limites estatutários · expectativa vs real</span></h3>
-          <div id="dashRiskDetail" class="jp-table-scroll"></div>
-        </section>
-      </div>
-    </details>
   </section>
 
   <!-- ================= 06 CHECKLIST ================= -->
@@ -1760,5 +1820,6 @@
 <script src="src/js/10-domain/13-alladin.js"></script>
 <script src="src/js/20-ui/23-research-views.js"></script>
 <script src="src/js/20-ui/24-alladin-views.js"></script>
+<script src="src/js/20-ui/25-dash-macro.js"></script>
 </body>
 </html>

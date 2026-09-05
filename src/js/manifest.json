@@ -462,6 +462,12 @@
       "path": "src/js/20-ui/24-alladin-views.js",
       "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
       "sha256": "e5020166f5414ee9da96768e81889a32589f9b3e1d2ec0d6b157b7cca1939c8d"
+    },
+    {
+      "order": 78,
+      "path": "src/js/20-ui/25-dash-macro.js",
+      "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
+      "sha256": "60f9b0b81cf590a4fccb1ff91fb29e908b4d3ffafc5f27cbb43a756e0460c3f8"
     }
   ]
 }
