@@ -52,6 +52,7 @@ const PRECACHE_URLS = [
   './src/js/10-domain/13-alladin.js',
   './src/js/20-ui/23-research-views.js',
   './src/js/20-ui/24-alladin-views.js',
+  './src/js/20-ui/25-dash-macro.js',
   './src/js/20-ui/16-operation-history.js',
   './manifests/jp-wealth.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'

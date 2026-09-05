@@ -2,6 +2,38 @@
 
 ## [Unreleased]
 
+### Dashboard — Visão Executiva Macro (DASH-MACRO-01) — 2026-09-04
+
+Branch `feature/dashboard-macro-overview`. Em desenvolvimento — não integrada.
+
+O Dashboard deixa de ser um resumo de Forex e passa a ser o panorama dos quatro
+módulos globais. Nova camada fixa `#dashMacro`, com um card por domínio — Forex,
+Finanças Pessoais, Research e Alladin —, cada um consumindo exclusivamente a
+fronteira canônica do seu domínio (`compute()` → `getOperationalClearance(c)`;
+`pfCompMetrics`/`pfPendingBefore`; `S.nocoda`/`S.pivotStudies`/`ecalEvents()`;
+`JPWAlladin.compat()` → `leitura.posicoes()`) e levando à sua rota canônica pela
+API pública `JPWNavigation.navigate`. Nenhuma fórmula financeira é reproduzida.
+
+A camada vive **fora** de `#gdDashMain` e não carrega `[data-layout-card]`: o
+motor de layout enumera apenas `:scope > [data-layout-card]` dentro do container
+governado, então a preferência de layout já salva permanece válida, nenhum id
+persistido muda e não há migração — a mudança fica em N1 em vez de escalar a N2.
+
+Semântica preservada em todos os cards: `PARTIAL` nunca vira total conhecido,
+`UNAVAILABLE` nunca vira R$ 0, `BLOCKING` do Alladin nunca vira "0 posições" e
+cache nulo do calendário nunca vira "0 eventos". Cada card tem `try/catch`
+próprio — a falha de um domínio não derruba os outros. `#dash` ganhou
+`[data-route-focus]`, dando destino de foco determinístico ao chegar no
+Dashboard, no mesmo padrão já usado em `#research` e `#alladin`.
+
+A marca do cabeçalho **não foi tocada**: acrescentou-se apenas a cobertura CA-12
+(acionar o logo já estando no Dashboard), como regressão da navegação existente.
+
+Fora de escopo por decisão de gate: ADR-0001 / rótulo "Equity", reespecificação
+de `#execOverview`, `saldoDeCaixa()` por conta e qualquer agregado de
+Planejamento FX.
+
+
 ### Alladin — criação de lançamento pela UI (ALD-05 S2) — 2026-09-01
 
 O painel Lançamentos ganhou o CTA **"Novo lançamento"** (`964c38b`): um modal

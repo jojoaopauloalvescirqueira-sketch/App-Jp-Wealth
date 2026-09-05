@@ -6115,10 +6115,90 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
   .pv-form input, .pv-form select{min-height:40px}
   .pv-mini{min-height:32px}
 }
+
+/* ==========================================================
+   DASH-MACRO-01 · VISÃO EXECUTIVA MACRO (dm-*)
+   Camada fixa do Dashboard, fora de #gdDashMain e fora do motor de layout.
+   Reusa os tokens já existentes — nenhuma cor isolada, nenhum token novo.
+   ========================================================== */
+.dm-shell{display:grid; gap:6px; margin:0 0 18px}
+.dm-shell-title{margin:0; font:700 15px var(--sans); letter-spacing:.01em; color:var(--ink)}
+.dm-shell-sub{margin:0 0 8px; color:var(--ink-dim); font-size:12px; line-height:1.5}
+/* DASH-MACRO-02A · Fatia 1 — grade 2x2 fixa. auto-fit com minmax(250px)
+   produzia 1x4 em desktop largo, o que fazia os quatro painéis lerem como
+   atalhos numa faixa estreita. Duas colunas dão a cada painel largura para ser
+   um mini-dashboard de domínio. minmax(0,1fr) — e não 1fr — impede que conteúdo
+   largo (tabela, número comprido) estoure a coluna. */
+.dm-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:stretch}
+.dm-card{
+  display:flex; flex-direction:column; gap:9px; min-width:0;
+  padding:16px 18px 15px; border:1px solid var(--line); border-left:3px solid var(--line);
+  border-radius:10px; background:var(--panel);
+}
+/* Faixa de destaque: os fatos que respondem "como está esta área?" antes de
+   qualquer detalhe. Duas colunas em desktop, uma quando o painel aperta. */
+.dm-facts{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:2px 0 4px}
+.dm-fact{
+  display:flex; flex-direction:column; gap:2px; min-width:0;
+  padding:8px 10px; border-radius:7px; background:var(--panel-2);
+}
+.dm-fact .k{color:var(--ink-dim); font-size:10px; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dm-fact .v{font:700 15px var(--sans); color:var(--ink); overflow-wrap:anywhere}
+.dm-fact .s{color:var(--ink-faint); font-size:10.5px; overflow-wrap:anywhere}
+.dm-fact.neg .v{color:var(--f4)}
+/* Barra de proporção — só quando existe teto canônico para comparar. */
+.dm-bar{height:3px; border-radius:2px; background:var(--line); overflow:hidden; margin-top:3px}
+.dm-bar>i{display:block; height:100%; background:var(--f1); border-radius:2px}
+.dm-bar.warn>i{background:var(--f2)}
+.dm-bar.bad>i{background:var(--f4)}
+.dm-note{
+  margin:0; padding:7px 9px; border-radius:6px; background:var(--panel-2);
+  color:var(--ink-dim); font-size:11px; line-height:1.45; overflow-wrap:anywhere;
+}
+/* Tom semântico do card — herda os tokens de severidade já usados no Exec. */
+.dm-card.dm-ok{border-left-color:var(--f1)}
+.dm-card.dm-warn{border-left-color:var(--f2)}
+.dm-card.dm-bad{border-left-color:var(--f4)}
+.dm-title{margin:0; font:700 13px var(--sans); letter-spacing:.02em; color:var(--ink)}
+.dm-body{display:grid; gap:2px; min-width:0}
+.dm-sub{color:var(--ink-faint); font:600 10px var(--mono); letter-spacing:.09em; text-transform:uppercase; padding-bottom:4px}
+.dm-row{
+  display:flex; justify-content:space-between; align-items:baseline; gap:8px;
+  padding:4px 0; border-bottom:1px solid var(--line); font-size:12px;
+}
+.dm-row:last-child{border-bottom:0}
+.dm-k{color:var(--ink-dim); white-space:nowrap}
+.dm-v{text-align:right; min-width:0; overflow-wrap:anywhere; color:var(--ink)}
+.dm-aux{color:var(--ink-faint); font-size:11px}
+.dm-partial{color:var(--f2); font:600 10px var(--mono); letter-spacing:.04em}
+.dm-status{font-weight:700}
+.dm-status-clear{color:var(--f1)}
+.dm-status-caution,.dm-status-pending{color:var(--f2)}
+.dm-status-reduce,.dm-status-blocked{color:var(--f4)}
+/* Indisponibilidade é ESTADO, não ausência: recebe superfície própria para
+   nunca ser lida como zero ou lista vazia. */
+.dm-blocked{
+  margin:0; padding:9px 10px; border-radius:7px;
+  background:var(--f4-bg); color:var(--f4); font-size:11.5px; line-height:1.5;
+}
+.dm-issues{display:block; margin-top:4px; font:11px var(--mono); opacity:.85; overflow-wrap:anywhere}
+.dm-empty{margin:0; padding:8px 0; color:var(--ink-faint); font-size:11.5px; line-height:1.5}
+.dm-cta{
+  margin-top:auto; align-self:flex-start; min-height:32px; padding:0 11px;
+  border:1px solid var(--line); border-radius:7px; background:var(--panel-2);
+  color:var(--ink); font:600 11.5px var(--sans); cursor:pointer;
+}
+.dm-cta:hover{border-color:var(--violet); color:var(--violet)}
+@media(max-width:1100px){ .dm-grid{grid-template-columns:1fr} }
+@media(max-width:760px){
+  .dm-grid{grid-template-columns:1fr}
+  .dm-facts{grid-template-columns:1fr}
+  .dm-row{font-size:11px}
+}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '8666cd490b1302f0';
+const JP_WEALTH_BUILD_ID = '123d401f9819fa05';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6463,10 +6543,71 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          segundo nível é efêmero por contrato). O Painel Operacional é o
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
+      <!-- DASH-MACRO-02A · Fatia 2 — a Visão Geral do Forex deixa de ser
+           superfície reservada e passa a concentrar a profundidade operacional
+           que vivia no Dashboard geral. Os dois blocos abaixo vieram INTEIROS
+           de #dash (index.html, antes na linha 966): mesmos ids, mesmos
+           renderizadores, nenhuma lógica alterada.
+
+           POR QUE NÃO É N2: nenhum dos dois carrega [data-layout-card] — o
+           motor de layout (13-dashboard-layout.js) só enumera
+           `:scope > [data-layout-card]` dos containers de JP_WIDGET_SCREENS, e
+           #execOverview não é container registrado (a tela exec usa
+           #execWidgetGrid). Portanto a preferência salva de dash E de exec
+           permanece byte-válida; nenhum default, versão ou migração é tocado.
+
+           O CSS acompanha sem mudança: as regras destes blocos são escopadas
+           por html[data-shell="global-dashboard"] (app.css:5428, 5439), não
+           por #dash. -->
       <div class="card">
         <h2 id="execOverviewTitle">Visão Geral</h2>
-        <p class="expl">Superfície reservada para a síntese do Execution Board. O conteúdo funcional será especificado em tarefa própria — nenhum indicador, cálculo, score ou resumo financeiro é derivado aqui.</p>
+        <p class="expl">Profundidade operacional do domínio Forex. O Dashboard resume; aqui está o detalhe.</p>
+        <!-- Os três atalhos operacionais que viviam em "Ações Rápidas" do
+             Dashboard. Mesmos destinos, mesmos data-dash-go — a delegação global
+             de 10-dashboard-immersive.js:137 continua atendendo-os. -->
+        <nav class="gd-quick-nav" id="execOverviewQuickNav">
+          <button type="button" data-dash-go="motor">Motor de Lote <span aria-hidden="true">›</span></button>
+          <button type="button" data-dash-go="check">Checklist Pré-Trade <span aria-hidden="true">›</span></button>
+          <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
+        </nav>
       </div>
+    <div class="gd-analysis-grid" data-dash-section="evolucao">
+      <section class="card gd-analysis-card" id="dashChartPanel">
+        <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
+        <div id="dashCharts"></div>
+      </section>
+      <section class="card gd-pace-card" id="dashPacePanel">
+        <h2>Ritmo do ciclo <span class="art">K8</span></h2>
+        <div id="dashCyclePace"></div>
+      </section>
+    </div>
+
+    <details class="gd-methodology" id="dashMethodology" data-dash-section="governanca">
+      <summary><span class="t">Detalhes e metodologia</span><span class="art">motivos · métricas do ciclo · acompanhamento mensal</span><span class="chev">▾</span></summary>
+      <div class="gd-methodology-body">
+        <section class="gd-method-section">
+          <h3>Por que este é o estado?</h3>
+          <ul class="mc-reasons" id="mcClearanceReasons"></ul>
+        </section>
+        <section class="gd-method-section" id="dashCyclePanel">
+          <h3>Métricas do ciclo</h3>
+          <div class="metrics">
+            <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
+            <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
+            <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
+            <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
+          </div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashMonthlyPanel">
+          <h3>Acompanhamento mensal <span>derivado do fechamento diário</span></h3>
+          <div id="mqlMonthly" class="jp-table-scroll"></div>
+        </section>
+        <section class="gd-method-section gd-method-section-wide" id="dashRiskPanel">
+          <h3>Drawdown e comparação mensal <span>limites estatutários · expectativa vs real</span></h3>
+          <div id="dashRiskDetail" class="jp-table-scroll"></div>
+        </section>
+      </div>
+    </details>
     </div>
     <!-- Grade modular do Execution Board (motor compartilhado, 13-dashboard-layout.js).
          .eb-top e .coherence (grids fixos de 2 colunas) foram desfeitos — cada
@@ -6763,6 +6904,30 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       </div>
     </div>
 
+    <!-- ===== VISÃO EXECUTIVA MACRO (DASH-MACRO-01) =====
+         Panorama transversal dos quatro módulos globais. Renderizada por
+         20-ui/25-dash-macro.js, que consome a superfície pública de cada
+         domínio e não reproduz nenhuma fórmula financeira.
+
+         POSIÇÃO DELIBERADA: irmã de #gdDashGrid e FORA dele. O motor de layout
+         (13-dashboard-layout.js) enumera exclusivamente
+         `:scope > [data-layout-card]` dentro de #gdDashMain — esta seção está
+         fora daquele container e não carrega [data-layout-card], portanto é
+         invisível ao motor. Consequência pretendida: a preferência de layout
+         já salva pelo operador continua válida, nenhum id persistido muda e
+         nenhuma migração é necessária.
+
+         data-route-focus dá ao Dashboard um destino de foco DETERMINÍSTICO ao
+         navegar para cá — inclusive pela marca do cabeçalho. Sem ele,
+         navFocusCurrentScreen (01-navigation.js) elegeria o primeiro h1/h2 em
+         ordem de documento, e o foco mudaria de lugar a cada card novo. Mesmo
+         padrão já usado em #research e #alladin. -->
+    <section class="dm-shell" id="dashMacro" aria-labelledby="dashMacroTitle">
+      <h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Visão Executiva</h2>
+      <p class="dm-shell-sub">Panorama consolidado — cada área resume a si mesma e leva ao seu módulo.</p>
+      <div class="dm-grid" id="dashMacroGrid"></div>
+    </section>
+
     <!-- Grid executivo 2fr/1fr (fidelidade ao Claude Design — Dashboard Claro).
          gdDashMain recebe #mcClearanceCard e #mcMetricStrip via relocação JS
          (12-global-dashboard.js) — mesmo padrão de moveLegacySettingsNodes.
@@ -6920,12 +7085,24 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              data-shell="global-dashboard". Sem a flag continua no topo de
              <main>, comportamento legado intocado. -->
         <div class="card gd-quick-card" id="gdQuickCard" data-layout-card="quick-actions" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact">
+          <!-- DASH-MACRO-02A · Fatia 4 — os atalhos foram classificados um a um,
+               não movidos em bloco. 'motor' e 'check' resolvem para primary
+               'forex' (01-navigation.js:37,42) e 'params' abre a folha
+               tool-params da Central, cujos parâmetros são normativos de Forex
+               (matriz quadrifásica, MDD, tetos). Os três eram um cockpit de
+               Forex disfarçado de card global, e migraram para a Visão Geral do
+               Forex. Ficam aqui apenas atalhos verdadeiramente transversais.
+
+               O CARD PERMANECE REGISTRADO: 'quick-actions' segue em
+               JP_WIDGET_DEFAULTS.dash com o mesmo id, zone e size. Só o CONTEÚDO
+               mudou — nenhuma preferência de layout é tocada, e por isso esta
+               fatia continua N1. Esvaziar o card seria mudança de defaults (N2)
+               e está fora desta autorização. -->
           <div class="gd-card-label">Ações Rápidas</div>
           <nav class="gd-quick-nav">
-            <button type="button" data-dash-go="motor">Motor de Lote <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="check">Checklist Pré-Trade <span aria-hidden="true">›</span></button>
-            <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
             <button type="button" data-dash-settings="backup">Base de Dados · Backup <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-settings="storage">Armazenamento Local <span aria-hidden="true">›</span></button>
+            <button type="button" data-dash-settings="statute">Estatuto Operacional <span aria-hidden="true">›</span></button>
           </nav>
         </div>
       </aside>
@@ -7051,43 +7228,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
 
-    <div class="gd-analysis-grid" data-dash-section="evolucao">
-      <section class="card gd-analysis-card" id="dashChartPanel">
-        <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
-        <div id="dashCharts"></div>
-      </section>
-      <section class="card gd-pace-card" id="dashPacePanel">
-        <h2>Ritmo do ciclo <span class="art">K8</span></h2>
-        <div id="dashCyclePace"></div>
-      </section>
-    </div>
-
-    <details class="gd-methodology" id="dashMethodology" data-dash-section="governanca">
-      <summary><span class="t">Detalhes e metodologia</span><span class="art">motivos · métricas do ciclo · acompanhamento mensal</span><span class="chev">▾</span></summary>
-      <div class="gd-methodology-body">
-        <section class="gd-method-section">
-          <h3>Por que este é o estado?</h3>
-          <ul class="mc-reasons" id="mcClearanceReasons"></ul>
-        </section>
-        <section class="gd-method-section" id="dashCyclePanel">
-          <h3>Métricas do ciclo</h3>
-          <div class="metrics">
-            <div class="metric"><div class="k">Retorno Acumulado</div><div class="v sm" id="dRetAcum">—</div></div>
-            <div class="metric"><div class="k">DD Máx Ciclo</div><div class="v sm" id="dDDmax">—</div></div>
-            <div class="metric accent"><div class="k">Mar Ratio</div><div class="v sm" id="dMar">—</div></div>
-            <div class="metric"><div class="k">Meta Mensal</div><div class="v sm" id="dMeta">3,5%</div></div>
-          </div>
-        </section>
-        <section class="gd-method-section gd-method-section-wide" id="dashMonthlyPanel">
-          <h3>Acompanhamento mensal <span>derivado do fechamento diário</span></h3>
-          <div id="mqlMonthly" class="jp-table-scroll"></div>
-        </section>
-        <section class="gd-method-section gd-method-section-wide" id="dashRiskPanel">
-          <h3>Drawdown e comparação mensal <span>limites estatutários · expectativa vs real</span></h3>
-          <div id="dashRiskDetail" class="jp-table-scroll"></div>
-        </section>
-      </div>
-    </details>
   </section>
 
   <!-- ================= 06 CHECKLIST ================= -->
@@ -7794,6 +7934,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 <div class="foot-note">
   <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
+
 
 
 
@@ -35624,6 +35765,290 @@ function initAlladinCrud(){
   });
 }
 initAlladinCrud();
+// ============ DASHBOARD · VISÃO EXECUTIVA MACRO (DASH-MACRO-01 · N1) ============
+// Panorama transversal dos quatro módulos globais — Forex, Finanças Pessoais,
+// Research e Alladin. READ → CONSUME CANONICAL → PRESENT.
+//
+// FRONTEIRA: este arquivo não contém uma única fórmula financeira. Cada card
+// consome a superfície pública do seu domínio e apresenta. Nenhum cálculo é
+// reproduzido aqui, nenhum estado é escrito, nenhum mês é materializado.
+//
+// POR QUE FORA DE #gdDashMain: o motor de layout (13-dashboard-layout.js) governa
+// exclusivamente `:scope > [data-layout-card]` dentro de #gdDashMain. Esta seção
+// vive FORA daquele container e não carrega [data-layout-card] — é estruturalmente
+// invisível ao motor. Assim a preferência de layout salva do operador permanece
+// válida, nenhum id persistido muda e nenhuma migração é necessária.
+//
+// POR QUE AUTO-DISPARO: o hook natural seria o fim de render() em
+// 20-ui/03-main-render.js, mas aquele arquivo está fora do escopo autorizado
+// desta mudança. O idioma usado aqui é o mesmo do Alladin (24-alladin-views.js):
+// MutationObserver na própria section + primeira pintura no load.
+//
+// SEMÂNTICA INVARIANTE — o que este arquivo jamais faz:
+//   PARTIAL      nunca vira total conhecido
+//   UNAVAILABLE  nunca vira R$ 0
+//   BLOCKING     nunca vira "0 posições"
+//   cache nulo   nunca vira "0 eventos"
+// Um domínio que recusa responder é exibido como indisponível, com o motivo.
+
+// Faixa de fatos: os números que respondem "como está esta área?" antes do
+// detalhe. Cada fato aceita um subtítulo e, quando existe TETO CANÔNICO para
+// comparar, uma barra de proporção. Sem teto, nada de barra — proporção sem
+// denominador seria número inventado.
+function dmFact(k, v, sub, barPct, tom, neg){
+  let bar = '';
+  if(typeof barPct === 'number' && isFinite(barPct)){
+    const w = Math.max(0, Math.min(100, barPct * 100));
+    bar = '<span class="dm-bar' + (tom ? ' ' + tom : '') + '"><i style="width:' + w.toFixed(1) + '%"></i></span>';
+  }
+  return '<div class="dm-fact' + (neg ? ' neg' : '') + '">'
+    + '<span class="k">' + esc(k) + '</span>'
+    + '<span class="v">' + v + '</span>'
+    + (sub ? '<span class="s">' + esc(sub) + '</span>' : '')
+    + bar + '</div>';
+}
+function dmFacts(html){ return '<div class="dm-facts">' + html + '</div>'; }
+function dmNote(texto){ return '<p class="dm-note">' + esc(texto) + '</p>'; }
+
+function dmRow(nome, valorHTML){
+  return '<div class="dm-row"><span class="dm-k">'+esc(nome)+'</span><span class="dm-v">'+valorHTML+'</span></div>';
+}
+function dmAux(texto){ return '<span class="dm-aux">'+esc(texto)+'</span>'; }
+function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
+  return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'">'
+    + '<h3 class="dm-title">'+esc(titulo)+'</h3>'
+    + '<div class="dm-body">'+corpoHTML+'</div>'
+    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button>'
+    + '</article>';
+}
+// Falha de leitura de um domínio não pode derrubar os outros três nem ser
+// confundida com ausência de dado: é estado próprio, rotulado.
+function dmErro(motivo){
+  return '<p class="dm-blocked">Resumo indisponível — falha ao ler o domínio.'
+    + (motivo ? ' '+esc(motivo) : '') + '</p>';
+}
+
+// ---- FOREX ------------------------------------------------------------------
+// compute() UMA vez por render; o resultado `c` é repassado a
+// getOperationalClearance(c) — o mesmo padrão de renderOperationalClearance(c).
+// Nenhum rótulo de "Equity": ADR-0001 está pendente e esta mudança não decide norma.
+function dmForexHTML(c){
+  const cl = getOperationalClearance(c);
+  const TOM = {clear:'ok', caution:'warn', pending:'warn', reduce:'bad', blocked:'bad'};
+  const tom = TOM[cl.status] || null;
+  const barTom = tom === 'ok' ? '' : tom;
+  // Razões só existem quando o teto é positivo. Denominador zero não vira barra.
+  const ddPct = c.mddScaled > 0 ? c.dd / c.mddScaled : null;
+  const riscoPct = c.tetoRisco > 0 ? c.riscoTotal / c.tetoRisco : null;
+  const alavPct = c.tetoAlav > 0 ? c.alavCar / c.tetoAlav : null;
+  let corpo = dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
+  corpo += dmFacts(
+      dmFact('Fase vigente', esc(c.fase && c.fase.nome ? c.fase.nome : '—'))
+    + dmFact('Drawdown', fmtPct(c.dd), 'teto ' + fmtPct(c.mddScaled), ddPct, barTom)
+    + dmFact('Risco aberto', fmtMoney(c.riscoTotal), 'teto ' + fmtMoney(c.tetoRisco), riscoPct, barTom)
+    // Alavancagem carregada vs teto da fase: grandeza canônica de compute(),
+    // inequívoca. Nenhum rótulo de Equity — ADR-0001 segue pendente.
+    + dmFact('Alavancagem', fmtX(c.alavCar), 'teto ' + fmtX(c.tetoAlav), alavPct, barTom)
+  );
+  // O primeiro motivo do veredito já vem quantificado e com remédio pelo
+  // domínio — exibi-lo é projetar, não interpretar.
+  if(cl.reasons && cl.reasons.length){
+    corpo += dmNote(cl.reasons[0] + (cl.reasons.length > 1 ? '  (+' + (cl.reasons.length - 1) + ')' : ''));
+  }
+  return {html: corpo, tom};
+}
+
+// ---- FINANÇAS PESSOAIS ------------------------------------------------------
+// Fronteira canônica única: pfCompMetrics(M). Ela já gateia mês virtual,
+// parcialidade e receita zero — este card apenas projeta os três status.
+function dmMoneyMetric(nome, m){
+  if(!m) return dmRow(nome, dmAux('—'));
+  if(m.status === PF_METRIC_COMPLETE) return dmRow(nome, '<b>'+formatBRLCents(m.value)+'</b>');
+  if(m.status === PF_METRIC_PARTIAL){
+    // O known do helper, com a moldura de cobertura. Jamais apresentado como total.
+    const cov = m.cov && m.cov.conhecidas!==undefined
+      ? ' <span class="dm-partial">PARCIAL '+esc(m.cov.conhecidas)+'/'+esc(m.cov.total)+'</span>' : '';
+    return dmRow(nome, (m.known!==undefined ? formatBRLCents(m.known)+' conhecidos' : dmAux('cobertura incompleta'))+cov);
+  }
+  return dmRow(nome, dmAux(m.motivo || 'indisponível'));
+}
+function dmFinpesHTML(){
+  // Guarda de LEITURA antes de qualquer "R$": sob unidade desconhecida o painel
+  // recusa montantes em vez de presumir moeda padrão.
+  if(typeof pfMoneyUnitSupported === 'function' && !pfMoneyUnitSupported()){
+    return {html:'<p class="dm-blocked">Unidade monetária não reconhecida — consolidados indisponíveis. Nenhum dado foi alterado.</p>', tom:'warn'};
+  }
+  const M = pfCurrentMonthKey();
+  const met = pfCompMetrics(M);          // 1 chamada — traz receita, despesa, sobra, DÍVIDA e COMPROMETIMENTO
+  if(!met) return {html: dmErro('competência inválida'), tom:'warn'};
+  let corpo = '<div class="dm-sub">' + esc(pfMonthLabel(M)) + '</div>';
+  if(!met.materializado){
+    // Completude vácua é armadilha conhecida: mês virtual declara-se não
+    // registrado em vez de exibir sobra R$ 0 fabricada.
+    corpo += '<p class="dm-empty">Mês ainda não registrado — nenhum realizado nesta competência.</p>';
+  } else {
+    corpo += dmFacts(
+        dmFactMoney('Receita', met.receita)
+      + dmFactMoney('Despesa', met.despesa)
+      + dmFactMoney('Sobra', met.sobra, true)
+      // Dívida e comprometimento vêm DE GRAÇA na mesma pfCompMetrics — zero
+      // custo adicional, e são exatamente o que faltava para o painel
+      // responder "como estão minhas finanças".
+      + dmFactMoney('Dívida', met.divida)
+    );
+    corpo += dmPctMetric('Comprometimento', met.comprometimento);
+  }
+  // Crédito é POSIÇÃO VIGENTE, não dado da competência — rotulado como tal.
+  const k = pfCreditKPIs();              // 1 chamada
+  if(k && k.limitCoverage && k.limitCoverage.total > 0){
+    corpo += dmRow('Utilização de crédito', k.utilizationConsolidated !== null
+      ? '<b>' + foPctDm(k.utilizationConsolidated) + '</b> ' + dmAux('posição vigente')
+      : dmAux('N/A — cobertura incompleta'));
+  }
+  // Pendências independem de unidade monetária — é contagem, não montante.
+  const pend = (typeof pfPendingBefore === 'function') ? pfPendingBefore(M) : [];
+  corpo += dmRow('Pendências anteriores', pend.length
+    ? '<span class="dm-partial">' + pend.length + ' mês(es) em aberto</span>'
+    : dmAux('nenhuma'));
+  return {html: corpo, tom: pend.length ? 'warn' : null};
+}
+
+// Fato monetário no contrato COMPLETE/PARTIAL/UNAVAILABLE. PARTIAL mostra o
+// known DO HELPER com a moldura de cobertura — nunca recomputa subtotal, nunca
+// o apresenta como total. UNAVAILABLE mostra o motivo, jamais R$ 0.
+function dmFactMoney(nome, m, marcaNegativo){
+  if(!m) return dmFact(nome, '<span class="dm-aux">—</span>');
+  if(m.status === PF_METRIC_COMPLETE)
+    return dmFact(nome, formatBRLCents(m.value), null, null, null, !!marcaNegativo && m.value < 0);
+  if(m.status === PF_METRIC_PARTIAL){
+    const cov = m.cov && m.cov.conhecidas !== undefined
+      ? m.cov.conhecidas + '/' + m.cov.total + ' conhecidas' : 'cobertura incompleta';
+    return dmFact(nome, m.known !== undefined ? formatBRLCents(m.known) : '—', 'PARCIAL · ' + cov);
+  }
+  return dmFact(nome, '<span class="dm-aux">indisponível</span>', m.motivo || null);
+}
+function foPctDm(x){ return (x * 100).toLocaleString('pt-BR', {maximumFractionDigits:1}) + '%'; }
+function dmPctMetric(nome, m){
+  if(!m) return '';
+  if(m.status === PF_METRIC_COMPLETE) return dmRow(nome, '<b>' + foPctDm(m.value) + '</b>');
+  if(m.status === PF_METRIC_UNAVAILABLE) return dmRow(nome, dmAux(m.motivo || 'indisponível'));
+  return dmRow(nome, dmAux('N/A — cobertura incompleta'));
+}
+
+// ---- RESEARCH ---------------------------------------------------------------
+// Resumo informacional: não se força métrica financeira onde ela não existe.
+function dmResearchHTML(){
+  const nc = (S.nocoda && S.nocoda.studies && typeof S.nocoda.studies === 'object') ? Object.keys(S.nocoda.studies) : [];
+  const pv = (S.pivotStudies && Array.isArray(S.pivotStudies.studies)) ? S.pivotStudies.studies : [];
+  // Cobertura: quantos instrumentos operáveis já têm estudo NoCoda vigente.
+  // instrumentCatalog() é a fonte canônica dos seletores das duas telas de
+  // estudo — nenhuma delas tem catálogo próprio.
+  let cobertura = null;
+  if(typeof instrumentCatalog === 'function'){
+    const cat = instrumentCatalog();
+    if(Array.isArray(cat) && cat.length) cobertura = {com: cat.filter(i => nc.indexOf(i.id) >= 0).length, total: cat.length};
+  }
+  let corpo = dmFacts(
+      dmFact('Estudos NoCoda', nc.length ? String(nc.length) : '<span class="dm-aux">nenhum</span>',
+             cobertura ? cobertura.com + ' de ' + cobertura.total + ' instrumentos' : null,
+             cobertura && cobertura.total ? cobertura.com / cobertura.total : null)
+    + dmFact('Estudos dos Pivots', pv.length ? String(pv.length) : '<span class="dm-aux">nenhum</span>',
+             pv.length ? 'amostras registradas' : null)
+  );
+  // Cache nulo = "sem cache válido", NUNCA "zero eventos": zero não pode ser
+  // afirmado sem prova. O calendário permanece de Research por rota canônica
+  // (NAV_COMPATIBILITY_TARGETS.ecal -> research-forex); esta revisão apenas o
+  // CONSOME, sem redefinir a ownership do widget.
+  const cal = (typeof ecalEvents === 'function') ? ecalEvents() : null;
+  if(!cal){
+    corpo += dmRow('Calendário de hoje', dmAux('dados ainda não carregados'));
+  } else {
+    const hoje = cal.events.filter(e => typeof ffNewsIsToday === 'function' && ffNewsIsToday(e.when));
+    corpo += dmRow('Calendário de hoje', hoje.length
+      ? '<b>' + hoje.length + '</b> ' + dmAux('evento(s) de alto impacto')
+      : dmAux('nenhum evento de alto impacto'));
+    const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
+    if(prox) corpo += dmRow('Próximo evento', esc(String(prox.title || '—')).slice(0, 48) + ' ' + dmAux(String(prox.country || '')));
+    if(typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
+      corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
+  }
+  return {html: corpo, tom: null};
+}
+
+// ---- ALLADIN ----------------------------------------------------------------
+// Fail-closed é invariante. compat() primeiro: sob schema futuro nenhum número
+// econômico pode ser afirmado, e posicoes() sequer é chamada (evita a varredura
+// de integridade estrutural). Teto: 1 chamada de posicoes() por render.
+function dmAlladinHTML(){
+  const compat = JPWAlladin.compat();
+  if(compat.readOnly){
+    return {html:'<p class="dm-blocked">Base em schema mais novo que este build ('
+      + esc(String(compat.storedSchemaVersion)) + ' &gt; ' + esc(String(compat.supportedSchemaVersion))
+      + ') — dados econômicos indisponíveis.</p>', tom:'bad'};
+  }
+  const pos = JPWAlladin.leitura.posicoes();   // 1 chamada — 1 varredura de integridade
+  if(!pos.available){
+    // positions:[] sob available:false é IDÊNTICO a uma coleção legitimamente
+    // vazia — por isso available vem antes de qualquer contagem.
+    const issues = (pos.issues || []).slice(0, 3).map(i => esc(i)).join(' · ');
+    return {html:'<p class="dm-blocked">Posições indisponíveis — integridade do agregado bloqueada.'
+      + (issues ? '<span class="dm-issues">' + issues + '</span>' : '') + '</p>', tom:'bad'};
+  }
+  const n = pos.positions.length;
+  // Contagens CADASTRAIS, atrás do mesmo portão de compat. São estrutura, não
+  // afirmação econômica — e por isso rotuladas como cadastro.
+  const L = JPWAlladin.leitura;
+  const nInstr = L.instruments().length, nContas = L.accounts().length, nCaixas = L.cashAccounts().length;
+  let corpo = dmFacts(
+      dmFact('Posições abertas', n ? String(n) : '<span class="dm-aux">nenhuma</span>', n ? 'instrumento × conta' : 'nenhuma posição em aberto')
+    + dmFact('Contas', String(nContas), nCaixas + ' caixa(s)')
+  );
+  corpo += dmRow('Instrumentos cadastrados', nInstr ? '<b>' + nInstr + '</b>' : dmAux('nenhum'));
+  corpo += dmRow('Schema', dmAux('v' + String(compat.supportedSchemaVersion) + ' · íntegro'));
+  return {html: corpo, tom: null};
+}
+
+// ---- render -----------------------------------------------------------------
+// Cada card em try/catch próprio: falha de um domínio não derruba os demais.
+function dmSafe(fn, fallbackTom){
+  try { return fn(); }
+  catch(e){ return {html: dmErro(e && e.message), tom: fallbackTom || 'warn'}; }
+}
+function dashMacroRender(){
+  const root = document.getElementById('dashMacroGrid');
+  if(!root) return;
+  const forex = dmSafe(() => dmForexHTML(compute()));
+  const finpes = dmSafe(dmFinpesHTML);
+  const research = dmSafe(dmResearchHTML);
+  const alladin = dmSafe(dmAlladinHTML);
+  root.innerHTML =
+      dmCard('forex', 'Forex', forex.html, 'forex-overview', 'Abrir Forex', forex.tom)
+    + dmCard('personal-finance', 'Finanças Pessoais', finpes.html, 'personal-finance', 'Abrir Finanças Pessoais', finpes.tom)
+    + dmCard('research', 'Research', research.html, 'research-forex', 'Abrir Research', research.tom)
+    + dmCard('alladin', 'Alladin', alladin.html, 'alladin', 'Abrir Alladin', alladin.tom);
+}
+
+function initDashMacro(){
+  const section = document.getElementById('dash');
+  const root = document.getElementById('dashMacroGrid');
+  if(!section || !root) return;
+  // Delegação: os CTAs não são filhos de #nav, então o listener global de
+  // [data-route] não os alcança. A navegação passa pela API pública — nenhuma
+  // segunda implementação de roteamento.
+  root.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-dm-route]');
+    if(btn && window.JPWNavigation) window.JPWNavigation.navigate(btn.dataset.dmRoute);
+  });
+  // Repinta ao ENTRAR no Dashboard: um valor editado em outro módulo aparece
+  // aqui sem recarregar a página. Render jamais escreve.
+  new MutationObserver(() => {
+    if(section.classList.contains('active')) dashMacroRender();
+  }).observe(section, {attributes:true, attributeFilter:['class']});
+  dashMacroRender();
+}
+initDashMacro();
+
+window.JPWDashMacro = Object.freeze({render: dashMacroRender});
 </script>
 </body>
 </html>
