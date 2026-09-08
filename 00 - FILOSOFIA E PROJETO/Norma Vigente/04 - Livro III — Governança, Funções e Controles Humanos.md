@@ -129,6 +129,6 @@ As contas reais operam sob Equity Protector e Daily Drawdown do Traders Connect,
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical]]
-- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]
+- Índice: [[00 - Estatuto V10]]
+- Anterior: [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical]]
+- Próximo: [[05 - Livro IV — Regime de Mesas Proprietárias (Prop Firms)]]

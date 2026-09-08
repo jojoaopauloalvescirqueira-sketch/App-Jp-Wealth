@@ -144,6 +144,6 @@ Calculada sobre o valor nocional bruto, sem compensação entre posições, tend
 
 ## Navegação
 
-- Índice: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/00 - Estatuto V10]]
-- Anterior: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/01 - Preâmbulo Institucional]]
-- Próximo: [[JP Wealth OS/00 - FILOSOFIA E PROJETO/Norma Vigente/03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical]]
+- Índice: [[00 - Estatuto V10]]
+- Anterior: [[01 - Preâmbulo Institucional]]
+- Próximo: [[03 - Livro II — Estatuto Operacional — Arquitetura Quadrifásica de Risco Vertical]]
