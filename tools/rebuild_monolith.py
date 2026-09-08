@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import base64
 import hashlib
 import json
 import re
@@ -20,7 +21,15 @@ build_id_path = ROOT / 'build-id.js'
 # src/js/manifest.json. Nada de varredura de diretório — é o glob que deixa lixo
 # entrar. Input declarado e ausente é ERRO, nunca omissão silenciosa: sem isso, um
 # arquivo removido mudaria o identificador sem ninguém perceber.
-FINGERPRINT_FIXED_INPUTS = ('index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js')
+NORMATIVE_DOCUMENTS = (
+    ('docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf', 'application/pdf', 'Estatuto_JP_Wealth_V11.pdf'),
+    ('docs/normative/ANEXO_PARAMETRICO_CANONICO.md', 'text/markdown;charset=utf-8', 'Anexo_Parametrico_Canonico.md'),
+)
+FINGERPRINT_FIXED_INPUTS = (
+    'index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js',
+    'tools/rebuild_monolith.py',
+    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS),
+)
 FINGERPRINT_TAIL_INPUTS = ('manifests/jp-wealth.webmanifest',)
 
 def build_id():
@@ -52,6 +61,15 @@ for item in manifest['files']:
     tag = f'<script src="{item["path"]}"></script>'
     html = html.replace(tag, '', 1)
 html = html.replace('\n</body>', '<script>\n' + js + '\n</script>\n</body>', 1)
+
+# O portátil precisa entregar os originais sem depender de pastas externas.
+# Base64 mantém os bytes e não introduz conteúdo normativo como HTML executável.
+for relative, mime, filename in NORMATIVE_DOCUMENTS:
+    encoded = base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')
+    html = html.replace(
+        f'href="{relative}"',
+        f'href="data:{mime};base64,{encoded}" download="{filename}"',
+    )
 
 out = ROOT / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
 out.parent.mkdir(parents=True, exist_ok=True)

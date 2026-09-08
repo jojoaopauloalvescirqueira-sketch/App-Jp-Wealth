@@ -6,7 +6,7 @@ Tratar o JP Wealth Risk Terminal como software financeiro critico. Preservacao d
 
 ## Ordem de autoridade
 
-1. `docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf` e demais normas aprovadas.
+1. `docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf` (V11, indicado pelo proprietário em 2026-09-08) e `docs/normative/ANEXO_PARAMETRICO_CANONICO.md`, no alcance dos elementos delegados. O Anexo permanece subordinado ao Estatuto; divergências documentais identificadas em `docs/normative/README.md` não são resolvidas por inferência.
 2. Decisoes formais aprovadas em `docs/decisions/`.
 3. `docs/governance/PROJECT-CONTEXT.md`, arquitetura e contratos documentados.
 4. `docs/governance/CURRENT-STATE.md` e a tarefa ativa.

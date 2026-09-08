@@ -601,7 +601,7 @@
       </table></div>
     </div>
     <div class="card" data-widget-size="full">
-      <h2>Perfis de Risco <span class="art">Estatuto V10.0 · Art. 10.3</span></h2>
+      <h2>Perfis de Risco <span class="art">motor legado V10.0 · Art. 10.3</span></h2>
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
         <tbody id="profileBody"></tbody>
@@ -1357,14 +1357,12 @@
       <h2>Modelo Estatístico Institucional — MEI-JP <span class="art">calibração da curva patrimonial</span></h2>
       <div id="meiConfig"></div>
     </div>
-    <details class="mc-disclosure" data-settings-category="statute" data-settings-search="estatuto diretrizes regras artigos PDF governança">
-      <summary><span class="t">Estatuto · Diretrizes &amp; Regras</span><span class="art">o modelo que este painel executa · resumo normativo</span><span class="chev">▾</span></summary>
+    <details class="mc-disclosure" data-settings-category="statute" data-settings-search="estatuto V11 anexo paramétrico cânonico diretrizes documentos vigentes PDF governança">
+      <summary><span class="t">Estatuto V11 e Anexo Paramétrico Canônico</span><span class="art">documentos vigentes</span><span class="chev">▾</span></summary>
       <div class="mc-disclosure-body" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.7">
-        <p style="margin-bottom:10px"><b style="color:var(--ink)">Modelo:</b> Arquitetura Quadrifásica de Risco Vertical (Estatuto JP Wealth). Toda a exposição vive em uma <b style="color:var(--ink)">Operação Única Exclusiva</b> (mesmo ativo, mesma direção — Art. 3.5/3.6), iniciada pela Ordem Gênese (risco ≤ 1% do saldo inicial — Art. 8.6) e gerida por redução progressiva de exposição.</p>
-        <p style="margin-bottom:10px"><b style="color:var(--ink)">Matriz Quadrifásica Base (Art. 3.7):</b> FASE 1 · 0–4% DD · teto 4,0x (postura ofensiva) → FASE 2 · 4–8% · 2,0x (cautela/breakeven) → FASE 3 · 8–12% · 1,0x (defesa, só reduzir) → FASE 4 · 12–15% · 0,4x (salvaguarda). O perfil escolhido no período escala esses limites proporcionalmente. Transições exigem questionário formal e espelhamento da estrutura (Art. 3.8, método LIFO). <b style="color:var(--ink)">O MDD ativo do perfil = encerramento compulsório + quarentena de 90 dias</b> (Art. 3.10).</p>
-        <p style="margin-bottom:10px"><b style="color:var(--ink)">Stop Loss (§9):</b> o Stop Técnico Quantitativo (price action + validação objetiva) é validado por dois indicadores — <b style="color:var(--ink)">Múltiplo de ATR</b> (stop% ÷ ATR%, estratificado de Frágil &lt;1x a Zona Segura &gt;7x) e <b style="color:var(--ink)">Stop Estatístico Raiz-N</b> (ATR% × √N × F; √30 ≈ 1 semana, √55 ≈ 2 semanas; F 1,5–2,0). Stop abaixo do Raiz-N = zona de ruído estatístico — permitido, mas com plena consciência.</p>
-        <p style="margin-bottom:10px"><b style="color:var(--ink)">Proteções:</b> replicação por saldo × fator de perfil (Art. 10.1) · lucro realizado nunca amplia limites (Art. 12.2, DDC) · prejuízo realizado permanece no drawdown do ciclo (Art. 3.4§2) · perfis do período (Base 100%, Longevity 66%, High Longevity 50%, High Longevity Plus 33%) definem exposição, DDR-alvo e projeções.</p>
-        <p><b style="color:var(--ink)">Hierarquia permanente (Art. 11.1):</b> Preservação do capital → Sobrevivência da conta → Protocolos de risco → Qualidade de execução → Consistência → Rentabilidade. <i>Lucro é consequência do processo; sobrevivência é requisito.</i></p>
+        <p style="margin-bottom:10px">As fontes normativas vigentes são o <a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto JP Wealth V11.0</a> e o <a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico · JPW-ANNEX-T03</a>.</p>
+        <p style="margin-bottom:10px">O Anexo permanece subordinado ao Estatuto, conforme o modo de autoridade indicado em cada item. Documento vigente e parâmetro canônico não equivalem a homologação.</p>
+        <p><b style="color:var(--ink)">Motor financeiro legado:</b> os cálculos e controles deste build ainda não foram adaptados à V11. A atualização dos documentos não homologa o software nem autoriza operação com parâmetros pendentes.</p>
       </div>
     </details>
     <div class="card" data-settings-category="backup" data-settings-search="backup exportar importar recuperar compatibilidade base">
@@ -1413,7 +1411,7 @@
 <footer class="gd-footer" id="gdFooter" hidden>
   <div class="gd-footer-notes">
     <p><sup>1</sup> Meta mensal e anual são referência estatística do perfil de risco ativo, calculada pelo motor de projeção — não constituem promessa de retorno.</p>
-    <p><sup>2</sup> Tetos de risco e alavancagem seguem a Matriz Quadrifásica do Estatuto V10.0 vigente. Qualquer alteração de perfil exige aprovação formal e é registrada no Log de Auditoria.</p>
+    <p><sup>2</sup> O Estatuto V11.0 e o Anexo JPW-ANNEX-T03 são as referências vigentes. O motor financeiro legado ainda não foi adaptado; esta atualização documental não homologa seus cálculos nem autoriza operação.</p>
   </div>
   <div class="gd-footer-links">
     <span class="gd-footer-brand">JP Wealth © 2026</span>
@@ -1740,7 +1738,7 @@
 <div class="persistence-alert" id="persistenceAlert" role="alert" aria-live="assertive"></div>
 
 <div class="foot-note">
-  <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico enquanto estiver suspenso pelo Estatuto V10.0, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
+  <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico mantido suspenso no motor legado, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
 
 <script src="src/js/00-core/01-risk-profiles.js"></script>

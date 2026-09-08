@@ -194,7 +194,7 @@
       "order": 32,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "50f1c7fa0904c9dcbd803193ed9be8b5fd7986b8f4beb3994f876c5b77f1459f"
+      "sha256": "39cc4b4ae1056980a8ad522e13c2b29511e6dd10329cd70334dc77bb8339b02d"
     },
     {
       "order": 33,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "839707d808507ae30fb65eec5f3cbef547a51a42bb947b3efa25cc487ad529d1"
+      "sha256": "6ae404af63d50f3ed23888595a56fd4009d842b3defeed330dfdad9e98ef73fc"
     },
     {
       "order": 39,

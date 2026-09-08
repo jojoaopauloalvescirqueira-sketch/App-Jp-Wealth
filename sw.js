@@ -2,7 +2,14 @@ importScripts('./build-id.js');
 const CACHE_PREFIX = 'jp-wealth-';
 const CACHE_NAME = `${CACHE_PREFIX}${JP_WEALTH_BUILD_ID}`;
 const ICON_CACHE_VERSION = '20260806';
+// Os dois originais normativos pertencem ao mesmo build e ficam disponíveis
+// offline. Navegar para eles deve entregar o arquivo, nunca o app shell.
+const NORMATIVE_DOCUMENT_URLS = [
+  './docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
+  './docs/normative/ANEXO_PARAMETRICO_CANONICO.md'
+].map(path => new URL(path, self.location.href).href);
 const PRECACHE_URLS = [
+  ...NORMATIVE_DOCUMENT_URLS,
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './assets/jp-wealth-logo.png',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
@@ -73,6 +80,11 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
   const url=new URL(event.request.url);
+  const documentURL = url.origin + url.pathname;
+  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)){
+    event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(documentURL).then(cached=>cached||fetch(event.request))));
+    return;
+  }
   if(event.request.mode === 'navigate'){
     // Uma navegacao controlada precisa permanecer no MESMO build do controller.
     // Se buscasse o HTML novo na rede enquanto scripts/CSS continuam cache-first

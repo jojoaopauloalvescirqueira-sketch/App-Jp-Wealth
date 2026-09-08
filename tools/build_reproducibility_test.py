@@ -13,10 +13,15 @@ arquivos rastreados pelo Git e de qualquer input oficial já declarado no manife
 é tocada.
 """
 from pathlib import Path
-import json, os, shutil, subprocess, sys, tempfile
+import base64, json, os, re, shutil, subprocess, sys, tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
+
+DOCUMENTOS = (
+    'docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
+    'docs/normative/ANEXO_PARAMETRICO_CANONICO.md',
+)
 
 LIXO = {
     'icons/.DS_Store': b'\x00\x01Finder junk' + b'\xff' * 64,   # o caso real que quebrou
@@ -33,6 +38,7 @@ def arquivos_do_candidato():
     arquivos = {p for p in saida.decode('utf-8').split('\0') if p}
     manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
     arquivos.update(item['path'] for item in manifest['files'])
+    arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
     return sorted(arquivos)
 
 def montar(destino: Path, arquivos):
@@ -96,7 +102,24 @@ def main():
         assert a['build_id'] != c['build_id'], (
             'mudanca real de fonte NAO alterou o Build ID — fingerprint cego')
 
-        # ---- 4. o input declarado e ausente precisa falhar alto ----
+        # ---- 4. originais incorporados byte-idênticos e identificados pelo build ----
+        html = a['monolito'].decode('utf-8')
+        embedded = re.findall(r'href="data:([^" ]+);base64,([A-Za-z0-9+/=]+)" download="([^"]+)"', html)
+        for relative in DOCUMENTOS:
+            original = (limpo / relative).read_bytes()
+            assert any(base64.b64decode(data) == original for _mime, data, _name in embedded), relative
+            assert f'href="{relative}"' not in html, f'link externo ainda presente: {relative}'
+            destino = raiz / ('documento-' + Path(relative).suffix.lstrip('.'))
+            montar(destino, arquivos)
+            alvo_doc = destino / relative
+            alvo_doc.write_bytes(original + b'\n')
+            rebuild(destino)
+            assert fatos(destino)['build_id'] != a['build_id'], f'fingerprint cego ao documento: {relative}'
+            alvo_doc.unlink()
+            erro = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'], cwd=destino, capture_output=True, text=True)
+            assert erro.returncode != 0 and 'input oficial do build ausente' in (erro.stdout + erro.stderr), relative
+
+        # ---- 5. o input declarado e ausente precisa falhar alto ----
         (alterado / 'manifests/jp-wealth.webmanifest').unlink()
         r = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'],
                            cwd=alterado, capture_output=True, text=True)
@@ -107,7 +130,7 @@ def main():
         print(f'BUILD REPRODUCIBILITY OK — Build ID canonico {canonico}; '
               f'{len(LIXO)} artefatos locais ignorados (.DS_Store na raiz/icons/src, swap e undo '
               f'de editor, diretorio ignorado) nao alteram Build ID, monolito nem manifest; '
-              f'mudanca real de fonte altera; input oficial ausente interrompe o build.')
+              f'mudanca real de fonte/documento altera; originais incorporados identicos; input oficial ausente interrompe o build.')
 
 if __name__ == '__main__':
     main()

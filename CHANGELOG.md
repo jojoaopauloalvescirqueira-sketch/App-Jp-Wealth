@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-08 — Adoção documental V11 isolada (Draft PR)
+
+- PDF V11 e Anexo Paramétrico incorporados byte-idênticos;20 documentos anteriores
+  removidos com rastreabilidade por hash e Git blob.
+- Referências e leitor atualizados; novo aceite explícito por versão, sem promover
+  consentimentos históricos. Motor financeiro identificado como legado.
+- Originais disponíveis online/offline no PWA e incorporados no portátil;
+  fingerprint e reprodutibilidade incluem esses documentos.
+- Novo teste documental no gate, sem alterar regras financeiras, schema,
+  Finalizar Sessão, Galton Board ou as melhorias locais anteriores do Dashboard.
+- FCR/FEO e demais conflitos norma/runtime permanecem abertos. A falha intermitente
+  anterior de finalização/Galton não foi corrigida nem ocultada.
+- Somente Draft PR autorizado, após validação e auditoria; merge e deploy proibidos.
+  Evidências em `docs/audit/STATUTE-V11-ISOLATION-2026-09-08.md`.
+
 ## [Unreleased]
 
 ### Dashboard — Visão Executiva 2×2 e migração da profundidade Forex (DASH-MACRO-02A) — 2026-09-05

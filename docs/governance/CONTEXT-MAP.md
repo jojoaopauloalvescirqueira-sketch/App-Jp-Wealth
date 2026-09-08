@@ -13,7 +13,7 @@
 
 ## Rotas por area
 
-- Risco, fases, MDD, LIFO, lote: M0 + M2 + `docs/architecture/CODE-MAP.md`.
+- Risco, fases, MDD, LIFO, lote: M0 + M2 + `docs/architecture/CODE-MAP.md`. A V11 e o Anexo Paramétrico fornecidos pelo proprietário são identificados em `docs/normative/README.md`; ler suas divergências antes de implementar. Os ADRs V10 são propostas históricas a reavaliar, não parâmetros vigentes.
 - Persistencia/importacao/reset: `STATE-SCHEMA.md`, `DB-STORAGE-GOVERNANCE.md`, `DATA-RECOVERY.md`.
 - PWA/cache: `PWA-UPDATE-LIFECYCLE.md`, `sw.js`, manifest e teste de upgrade.
 - Interface: contratos DOM em `index.html`, CSS, script da tela e teste real no
