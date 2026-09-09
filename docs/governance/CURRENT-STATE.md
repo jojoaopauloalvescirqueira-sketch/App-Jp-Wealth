@@ -1,52 +1,33 @@
-# Estado atual — candidate documental V11 isolado
+# Estado atual — Dashboard oficial — checkpoint validado
 
-Classe M1. Data da fotografia: 2026-09-08
-last_verified: 2026-09-08
-Source revision representada: `02d3a6991fe82569c1fe232722d9b8566fc62ecd`
+Classe M1. Data da fotografia: 2026-09-09
+last_verified: 2026-09-09
+Source revision representada: `1e7911d9b3620e24eeb66961dd3a337e34fad7ac`
 
-A revisão acima identifica a base desta branch; o diff documental será identificado
-por build/fingerprint na auditoria. Esta fotografia descreve o checkpoint local
-da mudança, sem declarar publicação ou conformidade financeira. IDs posteriores
-de commit/PR são verificáveis no histórico da branch e no relatório de entrega.
+A revisão identifica a main com a adoção documental V11 já integrada pelo PR #3.
+Esta fotografia descreve o novo diff Dashboard sobre essa base; publicação e
+SHA final são verificáveis no PR/histórico, sem antecipar resultados.
 
-## Identidade e escopo
+## Dashboard
+Branch codex/dashboard-official. N1, integração autorizada pelo proprietário.
+Transposição seletiva de sete arquivos de UI/testes da worktree Dashboard;
+a origem permanece intacta. Quatro resumos: Forex/apuração/planejamento,
+Finanças Pessoais/comparação, Research/agenda/estudos e Alladin/saldos/lançamentos.
+Atalhos usam navegação canônica; ferramentas existentes ficam em details.
+Render/feed/visibilidade/storage atualizam o resumo, sem gravar estado.
+Dados ausentes, parciais e recusados não viram totais. Moedas não são somadas.
+A nova apresentação não implementa valuation nem conteúdo Research ausente.
 
-- Branch: `codex/statute-v11-documental`, criada da revisão exata acima.
-- Origem `codex/dashboard-complete` preservada integralmente, somente leitura.
-- Incluídos somente V11/Anexo, consulta/cache/download, consentimento por versão,
-  referências e testes documentais. Os cálculos e a interface Dashboard da base
-  permanecem; as melhorias locais anteriores do Dashboard foram excluídas.
-- Pipeline: 78 scripts clássicos na ordem original; teste documental adicional,
-  resultando em 44 verificações standard e 55 full, além de 4 fast.
-- Build `1ee88bab37539798`: full 55/55 PASS, focal documental PASS e fast final 4/4.
-  Identidade, evidências próprias e limites do checkpoint pré-freeze na
-  [auditoria](../audit/STATUTE-V11-ISOLATION-2026-09-08.md).
+## Invariantes e autoridade
+PDF, Anexo, leitor, consentimento V11, SW documental e testes V11 preservados.
+Motor financeiro permanece legado; FCR/FEO e PENDING não foram resolvidos.
+Fórmulas, schema, migração, persistência e Galton/finalização permanecem na base.
+78 scripts, mesma ordem; somente três hashes de UI atualizados no manifest.
 
-## Normas
-
-[Estatuto V11 e Anexo](../normative/README.md) foram copiados byte-idênticos às
-fontes fornecidas. Vinte documentos anteriores foram removidos somente nesta
-worktree e são recuperáveis pelos blobs/hash registrados na auditoria.
-O leitor e os originais funcionam por mecanismos de consulta, sem alterar regras.
-O aceite antigo conserva sua identificação: uma versão nova exige ato explícito.
-
-FCR/FEO divergem entre PDF e Anexo; a operação de cópia não resolve a precedência
-material desses trechos. CANONICAL não significa HOMOLOGATED e PENDING não admite
-fallback zero. O motor financeiro permanece legado: fases/DD, admissão/TRA,
-satélites, VRM, stop, quarentena e reservas não foram adaptados. Os ADRs anteriores
-são propostas históricas a reavaliar, sem aprovação inferida.
-
-## Git, topologia e limites
-
-O proprietário confirmou que Netlify ainda não está em uso. O repositório contém
-configuração declarativa; a única automação versionada é de qualidade. Site,
-ambiente e SHA publicada não foram identificados; default branch não prova produção.
-Está autorizado um único commit, push somente desta branch e Draft PR para main
-apenas após os critérios e auditoria. Merge, marcar pronto e deploy são proibidos.
-
-Falha intermitente anterior de Finalizar Sessão/Galton permanece documentada.
-Não foi corrigida neste escopo e os resultados anteriores não validam esta branch.
-Histórico anterior de estado permanece no Git da base, sem copiar contexto do
-Dashboard para esta entrega. O próximo gate humano é revisão do Draft PR documental;
-adequação financeira, resolução normativa, merge e deploy exigem trabalhos/atos próprios.
-**Não READY_FOR_NEXT_DEVELOPMENT_CYCLE.**
+## Validação
+Focal Dashboard e full 55/55 PASS na combinação atual; build 9cf89998aa453da4.
+Visual desktop/mobile claro/escuro e 23 atalhos por teclado aprovados.
+CI e integração devem ser verificados no PR/histórico desta branch.
+Auditoria desta entrega: docs/audit/DASHBOARD-OFFICIAL-2026-09-09.md.
+A intermitência histórica Galton continua registrada na auditoria V11; um PASS
+isolado não encerra a dívida. Nenhum deploy autorizado. Netlify informado inativo.

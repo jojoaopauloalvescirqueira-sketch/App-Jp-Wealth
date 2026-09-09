@@ -192,3 +192,13 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 A consulta V11 inclui PDF e Anexo no cache da versão do PWA e incorpora seus
 originais no HTML portátil. O teste `tools/statute_documentary_test.py` verifica
 leitor, consentimento por versão e entrega online/offline com dados sintéticos.
+
+## Dashboard executivo
+
+A visão executiva reúne Forex (risco, apuração e planejamento), Finanças Pessoais
+(orçamento, dívida e comparação mensal), Research (estudos e agenda) e Alladin
+(contas, saldos por moeda e último lançamento). Atalhos abrem as vistas dos
+módulos. Os resumos se atualizam com o render geral e a agenda, sem persistir
+dados. Ferramentas existentes ficam na seção expansível “Operação e ferramentas”;
+suas identidades e preferências são preservadas. Áreas ainda não implementadas
+são identificadas como tais. A apresentação não homologa o motor financeiro V11.

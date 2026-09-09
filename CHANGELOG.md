@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-09 — Dashboard oficial
+
+Transposição seletiva sobre a V11 integrada: resumos ampliados, atalhos profundos,
+atualização por render/feed e ferramentas expansíveis. Mantidos documentos,
+consentimento, parâmetros, schema, persistência e preferências de widgets.
+Validação e limites em docs/audit/DASHBOARD-OFFICIAL-2026-09-09.md.
+
 ## 2026-09-08 — Adoção documental V11 isolada (Draft PR)
 
 - PDF V11 e Anexo Paramétrico incorporados byte-idênticos;20 documentos anteriores

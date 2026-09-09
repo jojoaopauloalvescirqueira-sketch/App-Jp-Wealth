@@ -731,8 +731,7 @@
          ordem de documento, e o foco mudaria de lugar a cada card novo. Mesmo
          padrão já usado em #research e #alladin. -->
     <section class="dm-shell" id="dashMacro" aria-labelledby="dashMacroTitle">
-      <h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Visão Executiva</h2>
-      <p class="dm-shell-sub">Panorama consolidado — cada área resume a si mesma e leva ao seu módulo.</p>
+      <div class="dm-page-head"><div><span class="dm-eyebrow">JP WEALTH · VISÃO EXECUTIVA</span><h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Seu panorama financeiro</h2><p class="dm-shell-sub">Risco, orçamento, pesquisa e patrimônio em um só lugar.</p></div><div class="dm-date"><span class="dm-live-dot" aria-hidden="true"></span><span id="dmToday"></span></div></div>
       <div class="dm-grid" id="dashMacroGrid"></div>
     </section>
 
@@ -748,6 +747,7 @@
          grids fixos de posição: cada card é filho direto, com largura própria
          via CSS (ver [data-layout-card] em app.css) — é o que permite mover
          qualquer card entre coluna principal e lateral sem quebrar layout. -->
+    <details id="dmTools" class="dm-tools"><summary><span><strong>Operação e ferramentas</strong><span class="dm-tools-caption">Controles de Forex, segurança da base e atalhos do sistema</span></span><span class="dm-tools-toggle" aria-hidden="true">+</span></summary>
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main jp-widget-grid" id="gdDashMain">
         <!-- Via relocação JS entram aqui, nesta ordem, imediatamente antes do
@@ -1035,6 +1035,8 @@
       </div>
       <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
+
+    </details>
 
   </section>
 

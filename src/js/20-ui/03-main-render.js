@@ -305,4 +305,5 @@ function render(){
   // disparado por boot() a função ainda não existe. Aquele arquivo faz a
   // primeira pintura por conta própria assim que todos os scripts carregam.
   if(typeof renderSystemStatus==='function') renderSystemStatus();
+  if(window.JPWDashMacro) window.JPWDashMacro.schedule();
 }
