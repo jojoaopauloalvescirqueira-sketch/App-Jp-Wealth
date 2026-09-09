@@ -1902,9 +1902,9 @@ function mvpNotesTrapFocus(event){
   if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
-// Isolamento acessível: os quatro irmãos de nível superior que ficam FORA do drawer/overlay
+// Isolamento acessível: os recipientes de navegação e os irmãos de nível superior que ficam FORA do drawer/overlay
 // — <header> (todas as ações do topo, inclusive o próprio botão que abre o drawer), #nav
-// (abas de tela), #appMain (todo o conteúdo operacional da tela ativa) e .foot-note. Nunca
+// (abas de tela), #navSubShell (faixa contextual reparenteável), #appMain e .foot-note. Nunca
 // um clear cego: captura o valor real de .inert/aria-hidden de cada um ANTES de tocar
 // (outro mecanismo — a própria Central, quando já aberta por baixo — pode já os ter assim
 // por razão própria) e restaura exatamente esse valor ao fechar, nunca um "false"/remoção
@@ -1912,7 +1912,7 @@ function mvpNotesTrapFocus(event){
 // que a suspensão da Central (suspendSettingsForSubdialog, abaixo) não cobre sozinha —
 // aquela função só torna #settingsModal inert, nunca tocou <header>/#appMain.
 function mvpNotesInertTargets(){
-  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
 }
 function mvpNotesApplyInert(){
   mvpNotesUI.inertSnapshot=mvpNotesInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
@@ -1925,6 +1925,8 @@ function mvpNotesRestoreInert(){
     if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
   });
   mvpNotesUI.inertSnapshot=null;
+  // A composição/viewport pode ter mudado com o fundo bloqueado.
+  if(typeof syncShellViewport==='function')syncShellViewport();
 }
 // Consultado ao vivo em cada chamada (nunca guardado em flag) — se guardássemos "a Central
 // estava aberta quando abri" num booleano capturado na abertura, um fechamento da Central

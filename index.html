@@ -1247,8 +1247,17 @@
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
-    <div class="card" data-settings-category="editor" data-settings-search="navegação barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+    <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
       <div class="field" style="max-width:560px">
+        <label id="navLayoutLabel">Layout da navegação</label>
+        <div class="seg" id="navLayoutSeg" role="group" aria-labelledby="navLayoutLabel">
+          <button type="button" data-nav-layout="sidebar" aria-pressed="true">Menu lateral (padrão)</button>
+          <button type="button" data-nav-layout="topbar" aria-pressed="false">Barra superior (anterior)</button>
+        </div>
+        <span class="note note-live">A escolha fica salva neste navegador. Você pode alternar a qualquer momento.</span>
+        <span class="note note-live" id="navLayoutStatus" role="status" aria-live="polite"></span>
+      </div>
+      <div class="field" style="max-width:560px; margin-top:18px">
         <label>Estilo da Navegação</label>
         <div class="seg" id="navStyleSeg" style="width:fit-content">
           <button type="button" data-nav-val="kinetic">KineticNav</button>
@@ -1261,7 +1270,7 @@
              comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
         <span class="note note-live" id="navStyleDefaultNote"></span>
         <span class="note note-live" id="navStyleStatus" role="status" aria-live="polite"></span>
-        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos se aplicam à lateral e à gaveta do celular, respeitando redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
+        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos acompanham o layout escolhido e respeitam redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
       </div>
     </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets

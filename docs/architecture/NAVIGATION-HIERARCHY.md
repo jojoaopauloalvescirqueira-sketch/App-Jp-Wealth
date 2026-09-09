@@ -2,7 +2,8 @@
 
 Contrato de apresentação do primeiro incremento da lateral contextual,
 CHG-CONTEXTUAL-SIDEBAR-20260909, autorizado pelo proprietário. Substitui neste
-escopo a faixa horizontal e sua abertura por hover. Não altera o resolver,
+escopo a abertura por hover. A lateral é padrão; o complemento
+CHG-NAVIGATION-LAYOUT-CHOICE-20260909 oferece a barra superior anterior no Editor. Não altera o resolver,
 as regras de domínio nem autoriza adoções futuras ou integração.
 
 ## Destinos preservados
@@ -27,7 +28,7 @@ distintas. Os aliases legados, defaults e a recusa atômica de destino inválido
 permanecem responsabilidade de `01-navigation.js`. Não há router novo, URL
 persistida ou restauração inédita de rota ao recarregar.
 
-## Estrutura canônica
+## Estrutura canônica da lateral padrão
 
 `#appSidebar` contém a única navegação global `#nav`. Os cinco botões reais
 continuam filhos diretos de `#nav`, preservando seletores e medições dos estilos.
@@ -68,6 +69,39 @@ em Forex; este incremento não altera essa projeção.
 | contexto N3 | `<surface>NavContexts` em `#navLocalSlot` |
 | destino local | `[data-nav-item][data-nav-local-surface][data-nav-local-view]` |
 | visão local legada | `[data-nav-sub-view="<chave>"]` |
+
+## Alternativa de apresentação no Editor
+
+`#navLayoutSeg` oferece Menu lateral (padrão) e Barra superior (anterior).
+A chave aditiva `jpw_nav_layout` aceita apenas `sidebar` ou `topbar`, fora de S,
+schemas e backups financeiros. Ausência, valor inválido ou leitura indisponível
+exibem lateral sem gravar, normalizar ou remover a preferência; erro/valor
+inválido são informados no Editor. Somente a escolha explícita grava essa chave. Leitura/gravação e controles
+pertencem a `20-ui/12-nav-style.js`; o controlador do shell apenas monta a
+composição validada, sem acesso direto a armazenamento.
+Falha de gravação preserva a composição vigente e anuncia erro dentro da Central.
+`jpw_nav`, `jpw_rail`, o envelope v6 e chaves desconhecidas permanecem intactos.
+A largura compacta continua guardada e volta a se aplicar ao escolher a lateral.
+
+No superior, o mesmo `#nav` é movido para `#gdTopbarNavSlot`, e o mesmo
+`#navSubShell` fica no fluxo entre header e contexto. Os mesmos hosts N3 voltam
+aos respectivos painéis N2. A localização continua no cabeçalho do conteúdo.
+Os expansores laterais ficam indisponíveis; o primário indica `aria-expanded`,
+seleciona o módulo e reabre os filhos, com setas para entrar no grupo.
+Nomes acessíveis derivam dos rótulos, inclusive quando a barra mostra números
+na largura intermediária.
+A composição anterior é reaproveitada com seleção explícita e teclado, sem
+restaurar o controlador de hover histórico nem duplicar listeners/resolver.
+Escape fecha o grupo; os níveis continuam com navegação por setas separada.
+
+No mobile superior, `#nav` é a gaveta modal, com o mesmo botão de fechar,
+backdrop, trap e isolamento. Escolher módulo fecha a gaveta e deixa N2/N3 no
+fluxo abaixo do header. Na lateral, o contrato mobile abaixo permanece válido.
+Trocar composição fecha a gaveta, move nós sem clonagem e não chama boot,
+navegação ou renderizadores de domínio. O isolamento da Central e de Notas inclui o
+recipiente N2 reparenteável e restaura o estado de foco/inert conforme a
+composição vigente. A troca de apresentação não altera as telas ou a
+realocação Dashboard→Forex.
 
 ## A marca como acesso ao Dashboard
 
@@ -255,6 +289,8 @@ scroll, sem persistir a abertura da gaveta nem a adaptação de viewport.
 As evidências focais estão em `tools/navigation_ia_test.py`,
 `tools/exec_submenu_test.py`, `tools/finpes_navigation_test.py`,
 `tools/research_navigation_test.py` e `tools/contextual_sidebar_test.py`.
+`tools/navigation_layout_choice_test.py` verifica a escolha, recarga, erros,
+compatibilidade e alternância dos mesmos nós entre as duas composições.
 `tools/dashboard_forex_relocation_test.py` mantém a regressão específica v6.
 Os gates existentes permanecem inalterados; execução e auditoria são
 registradas no candidate efetivamente testado, sem presumir aprovação pelo

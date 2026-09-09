@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "ac7cfa22dd6dbce835f3ab06bf165cf0a07b59c71e1ea8c9b08cbd0cc5cc21d5"
+      "sha256": "ccc28b369abed0769497cba8a6f36ffce1b313d84a3cb8b43d7821cee263307c"
     },
     {
       "order": 32,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "6ae404af63d50f3ed23888595a56fd4009d842b3defeed330dfdad9e98ef73fc"
+      "sha256": "c71feb3dfd5242cd82ad43b238a3bb71828ab74556282ad685be988254ab42ee"
     },
     {
       "order": 39,
@@ -242,13 +242,13 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "939ac77b00550c3473f0e51177ee40c5ac942e0e7878095054710a8e4c77dc61"
+      "sha256": "c568d6e981cb50d0b1ad6004ed4a8fd902ae3450d3b93ab3b0bfa2d49a62838e"
     },
     {
       "order": 41,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "4e88103111e6388cb8e6771d57dffbdcd9f597fe32483f22b176b8fa697c5b3c"
+      "sha256": "f8761c336b419ecf3beca9677914cf781d66059a9781cae7be5b6fd1cd0d4754"
     },
     {
       "order": 42,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "ea98f0b5b17bd203daaa1569d44e4b5623a65bdcf6c0ff7ac8f854d53f18805b"
+      "sha256": "df2a555f85457aa9884d4298ea74d03da0960ad0c48bed3f05d9b7d006e092eb"
     },
     {
       "order": 44,

@@ -6431,10 +6431,39 @@ html[data-navigation="sidebar"][data-nav-style="kinetic"] #navPillIndicator.is-r
   html[data-navigation="sidebar"] #navLocalSlot button{min-height:44px;max-width:100%;overflow-wrap:anywhere}
 }
 @media(prefers-reduced-motion:reduce){html[data-navigation="sidebar"] #navPillIndicator{transition:none!important}}
+
+/* Escolha de composição no Editor. A barra superior reutiliza o shell
+   anterior; nós, rotas e estilos continuam compartilhados com a lateral. */
+#navLayoutSeg{width:fit-content;max-width:100%;flex-wrap:wrap}
+#navLayoutSeg button{min-height:44px;white-space:normal;flex:1}
+html[data-navigation="topbar"] #appSidebar,
+html[data-navigation="topbar"] .nav-group-toggle,
+html[data-navigation="topbar"] #sidebarClose{display:none}
+html[data-navigation="topbar"][data-shell="global-dashboard"][data-ui-version="tesla-inspired"] body{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto 1fr auto;
+  grid-template-areas:"hdr" "navsub" "context" "main" "footer";
+}
+html[data-navigation="topbar"] #gdFooter{grid-area:footer;grid-column:1;min-width:0}
+html[data-navigation="topbar"] #navSubShell[hidden]{display:none}
+html[data-navigation="topbar"] .shell-page-header{margin:0 0 24px;padding:0 0 16px;border-bottom:1px solid var(--jp-border)}
+html[data-navigation="topbar"] .shell-location{margin:0;color:var(--jp-ink);font:500 13px/1.6 var(--jp-font-ui);overflow-wrap:anywhere}
+html[data-navigation="topbar"] #navLocalSlot{display:none}
+html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(--jp-action);outline-offset:3px}
+@media(max-width:900px){
+  html[data-navigation="topbar"] body > header{padding-inline:16px;gap:8px}
+  html[data-navigation="topbar"] .brand{width:auto;max-width:112px}
+  html[data-navigation="topbar"] .gd-logo{max-width:100%;height:auto}
+  html[data-navigation="topbar"] .header-actions{width:auto;gap:8px}
+  html[data-navigation="topbar"][data-shell-menu="open"] body > header{z-index:8100}
+  html[data-navigation="topbar"] #sidebarBackdrop{position:fixed;inset:0;background:#0008;z-index:8099}
+  html[data-navigation="topbar"] #sidebarBackdrop[hidden]{display:none}
+  html[data-navigation="topbar"] #sidebarClose{display:block;align-self:flex-end;min-width:44px;min-height:44px;background:transparent;border:1px solid var(--jp-border);border-radius:6px;color:var(--jp-ink);font-size:22px}
+  html[data-navigation="topbar"] #navSubShell button{min-height:44px;overflow-wrap:anywhere}
+}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'b941e391df46b651';
+const JP_WEALTH_BUILD_ID = '88c0cb1ce5520311';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7675,8 +7704,17 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
-    <div class="card" data-settings-category="editor" data-settings-search="navegação barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+    <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
       <div class="field" style="max-width:560px">
+        <label id="navLayoutLabel">Layout da navegação</label>
+        <div class="seg" id="navLayoutSeg" role="group" aria-labelledby="navLayoutLabel">
+          <button type="button" data-nav-layout="sidebar" aria-pressed="true">Menu lateral (padrão)</button>
+          <button type="button" data-nav-layout="topbar" aria-pressed="false">Barra superior (anterior)</button>
+        </div>
+        <span class="note note-live">A escolha fica salva neste navegador. Você pode alternar a qualquer momento.</span>
+        <span class="note note-live" id="navLayoutStatus" role="status" aria-live="polite"></span>
+      </div>
+      <div class="field" style="max-width:560px; margin-top:18px">
         <label>Estilo da Navegação</label>
         <div class="seg" id="navStyleSeg" style="width:fit-content">
           <button type="button" data-nav-val="kinetic">KineticNav</button>
@@ -7689,7 +7727,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
         <span class="note note-live" id="navStyleDefaultNote"></span>
         <span class="note note-live" id="navStyleStatus" role="status" aria-live="polite"></span>
-        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos se aplicam à lateral e à gaveta do celular, respeitando redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
+        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos acompanham o layout escolhido e respeitam redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
       </div>
     </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets
@@ -14918,6 +14956,34 @@ if(typeof ResizeObserver==='function'){
 window.addEventListener('load', ()=>positionNavPill());
 setTimeout(positionNavPill, 0);
 setTimeout(positionNavPill, 300);
+
+// Composição por navegador. A persistência pertence aos controles de
+// apresentação; o shell recebe apenas a escolha validada para montar o DOM.
+const NAV_LAYOUT_KEY='jpw_nav_layout';
+const NAV_LAYOUTS=['sidebar','topbar'];
+function renderNavLayoutChoice(){
+  document.querySelectorAll('#navLayoutSeg [data-nav-layout]').forEach(btn=>{
+    const on=btn.dataset.navLayout===document.documentElement.getAttribute('data-navigation');
+    btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on));
+  });
+}
+function initNavLayoutChoice(){
+  let value=null,message='';
+  try{value=localStorage.getItem(NAV_LAYOUT_KEY);
+    if(value!==null&&!NAV_LAYOUTS.includes(value))message='Preferência não reconhecida. Menu lateral exibido; a escolha salva foi preservada.';
+  }catch(e){message='Não foi possível ler a preferência. Menu lateral exibido sem alterar a escolha salva.';}
+  mountNavigationLayout(NAV_LAYOUTS.includes(value)?value:'sidebar');
+  const status=document.getElementById('navLayoutStatus');if(status)status.textContent=message;
+  const seg=document.getElementById('navLayoutSeg');if(!seg)return;
+  seg.addEventListener('click',event=>{
+    const btn=event.target.closest('[data-nav-layout]');if(!btn)return;
+    const value=btn.dataset.navLayout;if(!NAV_LAYOUTS.includes(value))return;
+    try{localStorage.setItem(NAV_LAYOUT_KEY,value);}
+    catch(e){if(status)status.textContent='Não foi possível salvar a escolha. A interface anterior foi mantida.';return;}
+    mountNavigationLayout(value);
+    if(status)status.textContent=(value==='sidebar'?'Menu lateral':'Barra superior')+' salvo neste navegador.';
+  });
+}
 // ============ QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b) ============
 function onboardingEP(saldo, prKey){
   const pr=getActiveRiskProfile(prKey);
@@ -18926,7 +18992,7 @@ function settingsRevealElement(selector){
 // ordem do documento); os <header> internos de modais/drawers vêm todos depois.
 let settingsInertSnapshot=null;
 function settingsInertTargets(){
-  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
 }
 function settingsSetAppInert(on){
   if(on){
@@ -18940,6 +19006,8 @@ function settingsSetAppInert(on){
       if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
     });
     settingsInertSnapshot=null;
+    // O Editor pode ter movido a navegação entre o header e a lateral.
+    if(typeof syncShellViewport==='function'&&document.getElementById('appSidebar')?.dataset.ready)syncShellViewport();
   }
 }
 function openSettingsModal(category='general', opener){
@@ -19151,8 +19219,8 @@ function initDashboardImmersive() {
   renderDashSlides(false);
 }
 initDashboardImmersive();
-// Shell lateral: apresentação sobre o resolver existente. Nenhuma rota,
-// preferência de navegação ou informação financeira é criada aqui.
+// Shell de apresentação sobre o resolver existente. A composição é uma
+// preferência por navegador; não participa do estado ou do backup financeiro.
 const shellUI = { open:false, opener:null, inerted:[], overflow:'' };
 const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener:null };
 const NAV_SUBMENU_SURFACES = {
@@ -19162,14 +19230,37 @@ const NAV_SUBMENU_SURFACES = {
 };
 function shellEl(sel){return document.querySelector(sel);}
 function shellMobile(){return window.matchMedia('(max-width:900px)').matches;}
+function shellTopbar(){return document.documentElement.getAttribute('data-navigation')==='topbar';}
+function shellMenuRoot(){return document.getElementById(shellTopbar()?'nav':'appSidebar');}
+function shellModalOpen(){return !!document.querySelector('#settingsOverlay.show,#mvpNotesOverlay.show');}
+function mountNavigationLayout(value){
+  if(!NAV_LAYOUTS.includes(value))return;
+  closeShellMenu({restoreFocus:false});
+  document.documentElement.setAttribute('data-navigation',value);
+  const topbar=shellTopbar(),nav=document.getElementById('nav');
+  if(topbar)document.getElementById('gdTopbarNavSlot').append(nav);
+  else document.querySelector('.sidebar-heading').after(nav);
+  const shell=document.getElementById('navSubShell');
+  if(topbar)document.getElementById('gdContextRow').before(shell);
+  else nav.append(shell);
+  document.querySelectorAll('.nav-sub-contexts').forEach(host=>{
+    const key=host.id.replace('NavContexts','');
+    document.getElementById(topbar?key+'NavSubmenu':'navLocalSlot').append(host);
+  });
+  // O botão é o mesmo nos dois menus. Não mover o rail: a Central pode tê-lo emprestado.
+  nav.querySelectorAll(':scope > .tab').forEach(btn=>btn.setAttribute('aria-label',btn.querySelector('.lbl').textContent.trim()));
+  const close=document.getElementById('sidebarClose');
+  if(topbar)nav.prepend(close);else document.querySelector('.sidebar-heading').append(close);
+  renderNavLayoutChoice();syncNavSubState();syncShellViewport();
+}
 function navSubSurface(screen){const f=NAV_SUBMENU_SURFACES[screen||navSubUI.screen];return f?f():null;}
 function navSubEls(screen){
   const key=screen||navSubUI.screen;
   const panel=document.getElementById(key+'NavSubmenu');
-  const trigger=shellEl('[data-nav-expand="'+key+'"]');
+  const trigger=shellTopbar()?document.getElementById(key+'NavTrigger'):shellEl('[data-nav-expand="'+key+'"]');
   const local=document.getElementById(key+'NavContexts');
-  const allItems=[...(panel?panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]'):[]),
-    ...(local?local.querySelectorAll('[data-nav-item]'):[])];
+  const allItems=[...new Set([...(panel?panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]'):[]),
+    ...(local?local.querySelectorAll('[data-nav-item]'):[])])];
   return {screen:key,trigger,panel,shell:document.getElementById('navSubShell'),allItems,
     items:allItems.filter(i=>!i.closest('[hidden]'))};
 }
@@ -19181,7 +19272,7 @@ function navSubRouteIsCurrent(item,current){
 }
 function syncNavSubContexts(screen){
   const current=window.JPWNavigation.current();
-  document.querySelectorAll('#navLocalSlot .nav-sub-contexts').forEach(host=>{
+  document.querySelectorAll('.nav-sub-contexts').forEach(host=>{
     let any=false;
     host.querySelectorAll('[data-nav-context]').forEach(group=>{
       const on=host.id===screen+'NavContexts'&&group.dataset.navContext===current.child;
@@ -19207,7 +19298,8 @@ function syncNavSubCurrent(screen){
   });
   // Um ponto de Tab por nível, sem misturar N2 e N3 nas setas.
   const panel=document.getElementById(screen+'NavSubmenu');
-  const groups=[panel,...document.querySelectorAll('#navLocalSlot [data-nav-context]:not([hidden])')].filter(Boolean);
+  const groups=[panel&&panel.querySelector('.nav-sub-level-primary')||panel,
+    ...document.querySelectorAll('.nav-sub-contexts [data-nav-context]:not([hidden])')].filter(Boolean);
   groups.forEach(group=>{
     const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
     if(!items.some(i=>i.tabIndex===0)&&items[0])items[0].tabIndex=0;
@@ -19224,7 +19316,7 @@ function syncShellLocation(){
   let local=null;
   if(c.primary==='personal-finance')local=document.querySelector('#finpesNavSubmenu [aria-current="page"] .nav-sub-item-title');
   else if(c.primary==='alladin')local=document.querySelector('#alladinTabs [aria-pressed="true"]');
-  else local=document.querySelector('#navLocalSlot [data-nav-context]:not([hidden]) [aria-current="page"] .nav-sub-item-title');
+  else local=document.querySelector('.nav-sub-contexts [data-nav-context]:not([hidden]) [aria-current="page"] .nav-sub-item-title');
   if(local&&parts[parts.length-1]!==local.textContent.trim())parts.push(local.textContent.trim());
   const el=document.getElementById('shellLocation'),text=parts.join(' / ');
   if(el&&el.textContent!==text)el.textContent=text;
@@ -19238,11 +19330,13 @@ function syncNavSubState(){
   const shell=document.getElementById('navSubShell');
   document.querySelectorAll('[data-nav-expand]').forEach(btn=>{
     const active=btn.dataset.navExpand===key;
-    btn.hidden=!active;btn.setAttribute('aria-expanded',String(active&&navSubUI.open));
+    btn.hidden=shellTopbar()||!active;btn.setAttribute('aria-expanded',String(active&&navSubUI.open));
     const primary=document.getElementById(btn.dataset.navExpand+'NavTrigger');
     const label=primary.querySelector('.lbl').textContent.trim();
     btn.setAttribute('aria-label',(active&&navSubUI.open?'Recolher':'Expandir')+' destinos de '+label);
-    if(active&&shell&&btn.nextElementSibling!==shell)btn.after(shell);
+    if(shellTopbar()){primary.setAttribute('aria-expanded',String(active&&navSubUI.open));primary.setAttribute('aria-controls',btn.dataset.navExpand+'NavSubmenu');}
+    else {primary.removeAttribute('aria-expanded');primary.removeAttribute('aria-controls');}
+    if(!shellTopbar()&&active&&shell&&btn.nextElementSibling!==shell)btn.after(shell);
   });
   document.querySelectorAll('.nav-sub-menu').forEach(panel=>{
     const on=panel.id===key+'NavSubmenu'&&navSubUI.open;
@@ -19260,17 +19354,30 @@ function openNavSub(screen,options){
   navSubUI.collapsed=null;syncNavSubState();
   const {trigger,panel}=navSubEls(screen);navSubUI.opener=trigger;
   if(options&&options.focus&&panel){
-    const items=[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
-    const target=options.focus==='last'?items[items.length-1]:panel.querySelector('[aria-current="page"]')||items[0];
+    const level=panel.querySelector('.nav-sub-level-primary')||panel;
+    const items=[...level.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
+    const target=options.focus==='last'?items[items.length-1]:level.querySelector('[aria-current="page"]')||items[0];
     if(target){items.forEach(i=>i.tabIndex=i===target?0:-1);target.focus();}
   }
 }
 function closeNavSub(options){
   const {trigger}=navSubEls();navSubUI.collapsed=navSubUI.screen;syncNavSubState();
-  if(options&&options.restoreFocus&&trigger)trigger.focus();
+  if(options&&options.restoreFocus&&trigger){
+    const target=shellTopbar()&&shellMobile()&&!shellUI.open?shellEl('[data-shell-menu-toggle]'):trigger;
+    target.focus();
+  }
 }
 function selectNavSubView(view){
   if(navSubUI.screen&&window.JPWNavigation)window.JPWNavigation.navigateLocal(navSubUI.screen,view);
+}
+function shellFocusCurrentScreen(){
+  if(!window.JPWNavigation)return;
+  window.JPWNavigation.focusCurrentScreen();
+  // A faixa superior mobile pode ocupar mais de uma tela antes do conteúdo.
+  if(shellTopbar()&&shellMobile()){
+    const el=document.activeElement,r=el.getBoundingClientRect();
+    if(r.bottom>innerHeight||r.top<0)el.scrollIntoView({block:'nearest'});
+  }
 }
 function selectNavSubItem(item){
   if(!item||!window.JPWNavigation)return;
@@ -19280,28 +19387,40 @@ function selectNavSubItem(item){
   else if(item.dataset.navSubView)selectNavSubView(item.dataset.navSubView);
   syncNavSubState();
   if(shellUI.open)closeShellMenu({restoreFocus:false});
-  window.JPWNavigation.focusCurrentScreen();
+  shellFocusCurrentScreen();
 }
 function syncShellViewport(){
-  const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
-  const modal=shellMobile();sidebar.inert=modal&&!shellUI.open;
-  if(modal){sidebar.setAttribute('role','dialog');sidebar.setAttribute('aria-modal','true');sidebar.setAttribute('aria-hidden',String(!shellUI.open));}
-  else {sidebar.removeAttribute('role');sidebar.removeAttribute('aria-modal');sidebar.removeAttribute('aria-hidden');}
+  const sidebar=document.getElementById('appSidebar'),nav=document.getElementById('nav');if(!sidebar||!nav)return;
+  const mobile=shellMobile(),topbar=shellTopbar(),blocked=shellModalOpen();
+  sidebar.inert=topbar||(mobile&&!shellUI.open);
+  nav.inert=blocked||(topbar&&mobile&&!shellUI.open);
+  [sidebar,nav].forEach(el=>{
+    const modal=mobile&&el===shellMenuRoot();
+    if(modal){el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');}
+    else {el.removeAttribute('role');el.removeAttribute('aria-modal');}
+    if(el===nav&&blocked)el.setAttribute('aria-hidden','true');
+    else if(modal)el.setAttribute('aria-hidden',String(!shellUI.open));
+    else el.removeAttribute('aria-hidden');
+  });
+  const toggle=shellEl('[data-shell-menu-toggle]');if(toggle)toggle.setAttribute('aria-controls',topbar?'nav':'appSidebar');
   if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
 function openShellMenu(opener){
-  if(shellUI.open||!shellMobile())return;
-  const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
+  if(shellUI.open||!shellMobile()||shellModalOpen())return;
+  const root=shellMenuRoot();if(!root)return;
   shellUI.open=true;shellUI.opener=opener||shellEl('[data-shell-menu-toggle]');
   document.documentElement.setAttribute('data-shell-menu','open');
   shellEl('[data-shell-menu-toggle]').setAttribute('aria-expanded','true');
   shellEl('[data-shell-menu-toggle]').setAttribute('aria-label','Fechar menu de telas');
   document.getElementById('sidebarBackdrop').hidden=false;
   shellUI.overflow=document.body.style.overflow;document.body.style.overflow='hidden';
-  shellUI.inerted=[...document.body.children].filter(el=>el!==sidebar&&el.id!=='sidebarBackdrop'&&!['SCRIPT','STYLE'].includes(el.tagName)).map(el=>[el,el.inert]);
-  shellUI.inerted.forEach(([el])=>el.inert=true);
+  const header=document.querySelector('body > header');
+  let targets=[...document.body.children].filter(el=>el!==(shellTopbar()?header:root)&&el.id!=='sidebarBackdrop'&&!['SCRIPT','STYLE'].includes(el.tagName));
+  // No superior a gaveta está no header: isolar seus irmãos, nunca o ancestral do diálogo.
+  if(shellTopbar())targets.push(...[...header.children].filter(el=>el.id!=='gdTopbarNavSlot'));
+  shellUI.inerted=targets.map(el=>[el,el.inert]);shellUI.inerted.forEach(([el])=>el.inert=true);
   syncShellViewport();
-  const active=sidebar.querySelector('#nav > .tab.active');(active||document.getElementById('sidebarClose')).focus();
+  const active=document.querySelector('#nav > .tab.active');(active||document.getElementById('sidebarClose')).focus();
 }
 function closeShellMenu(options){
   if(!shellUI.open)return;
@@ -19314,7 +19433,7 @@ function closeShellMenu(options){
   if((!options||options.restoreFocus!==false)&&opener&&opener.isConnected)opener.focus();
 }
 function shellMoveFocus(event){
-  const group=event.target.closest('[data-nav-context],.nav-sub-menu');if(!group)return;
+  const group=event.target.closest('[data-nav-context],.nav-sub-level-primary,.nav-sub-menu');if(!group)return;
   const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(i=>!i.closest('[hidden]'));
   if(!items.length)return;
   let index=items.indexOf(document.activeElement);
@@ -19329,9 +19448,9 @@ function initOperationalShell(){
   sidebar.dataset.ready='true';
   document.querySelectorAll('#navSubShell .nav-sub-contexts').forEach(host=>{
     host.id=host.closest('.nav-sub-menu').id.replace('NavSubmenu','NavContexts');
-    document.getElementById('navLocalSlot').append(host);
+
   });
-  const shell=document.getElementById('navSubShell');document.getElementById('nav').append(shell);
+  initNavLayoutChoice();
   const alladinTabs=document.getElementById('alladinTabs');
   if(alladinTabs)new MutationObserver(syncShellLocation).observe(alladinTabs,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
   document.addEventListener('click',event=>{
@@ -19346,20 +19465,25 @@ function initOperationalShell(){
       navSubUI.collapsed=null;
       syncNavSubState();
       if(shellUI.open)closeShellMenu({restoreFocus:false});
-      if(window.JPWNavigation)window.JPWNavigation.focusCurrentScreen();
+      shellFocusCurrentScreen();
     }
   });
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'&&shellUI.open){event.preventDefault();closeShellMenu();return;}
     if(shellUI.open&&event.key==='Tab'){
-      const focusable=[...sidebar.querySelectorAll('button,[tabindex="0"]')].filter(el=>!el.disabled&&!el.closest('[hidden],[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'&&el.tabIndex>=0);
+      const focusable=[...shellMenuRoot().querySelectorAll('button,[tabindex="0"]')].filter(el=>!el.disabled&&!el.closest('[hidden],[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'&&el.tabIndex>=0);
       const first=focusable[0],last=focusable[focusable.length-1];
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     }
-    const expander=event.target.closest('[data-nav-expand]');
+    const expander=event.target.closest(shellTopbar()?'.nav-sub-trigger':'[data-nav-expand]');
     if(expander&&['ArrowDown','ArrowUp'].includes(event.key)){
-      event.preventDefault();openNavSub(expander.dataset.navExpand,{focus:event.key==='ArrowUp'?'last':true});return;
+      event.preventDefault();
+      // Em mobile superior o N2 fica no fluxo, fora da gaveta.
+      if(shellTopbar()&&shellUI.open)closeShellMenu({restoreFocus:false});
+      const key=expander.dataset.navExpand||expander.id.replace('NavTrigger','');
+      if(shellTopbar()&&key!==navSubUI.screen)expander.click();
+      openNavSub(key,{focus:event.key==='ArrowUp'?'last':true});return;
     }
     if(event.key==='Escape'&&navSubUI.open&&event.target.closest('#navSubShell')){event.preventDefault();closeNavSub({restoreFocus:true});return;}
     shellMoveFocus(event);
@@ -19386,9 +19510,8 @@ function gdEl(id) { return document.getElementById(id); }
 function relocateGlobalDashboardShell() {
   if (document.documentElement.dataset.shell !== 'global-dashboard') return;
 
-  // Navegação: o shell lateral mantém o mesmo #nav e seus primários;
-  // a montagem não o devolve ao slot do topo.
-  const nav = gdEl('nav'), navSlot = gdEl('appSidebar') || gdEl('gdTopbarNavSlot');
+  // Navegação: respeitar a composição escolhida, usando o mesmo #nav.
+  const nav = gdEl('nav'), navSlot = gdEl(document.documentElement.dataset.navigation === 'topbar' ? 'gdTopbarNavSlot' : 'appSidebar');
   if (nav && navSlot && nav.parentElement !== navSlot) navSlot.append(nav);
 
   // Leituras de contexto (Perfil/Período/Equity/DD + salvo/relógio/fase):
@@ -22831,9 +22954,9 @@ function mvpNotesTrapFocus(event){
   if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
-// Isolamento acessível: os quatro irmãos de nível superior que ficam FORA do drawer/overlay
+// Isolamento acessível: os recipientes de navegação e os irmãos de nível superior que ficam FORA do drawer/overlay
 // — <header> (todas as ações do topo, inclusive o próprio botão que abre o drawer), #nav
-// (abas de tela), #appMain (todo o conteúdo operacional da tela ativa) e .foot-note. Nunca
+// (abas de tela), #navSubShell (faixa contextual reparenteável), #appMain e .foot-note. Nunca
 // um clear cego: captura o valor real de .inert/aria-hidden de cada um ANTES de tocar
 // (outro mecanismo — a própria Central, quando já aberta por baixo — pode já os ter assim
 // por razão própria) e restaura exatamente esse valor ao fechar, nunca um "false"/remoção
@@ -22841,7 +22964,7 @@ function mvpNotesTrapFocus(event){
 // que a suspensão da Central (suspendSettingsForSubdialog, abaixo) não cobre sozinha —
 // aquela função só torna #settingsModal inert, nunca tocou <header>/#appMain.
 function mvpNotesInertTargets(){
-  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
 }
 function mvpNotesApplyInert(){
   mvpNotesUI.inertSnapshot=mvpNotesInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
@@ -22854,6 +22977,8 @@ function mvpNotesRestoreInert(){
     if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
   });
   mvpNotesUI.inertSnapshot=null;
+  // A composição/viewport pode ter mudado com o fundo bloqueado.
+  if(typeof syncShellViewport==='function')syncShellViewport();
 }
 // Consultado ao vivo em cada chamada (nunca guardado em flag) — se guardássemos "a Central
 // estava aberta quando abri" num booleano capturado na abertura, um fechamento da Central

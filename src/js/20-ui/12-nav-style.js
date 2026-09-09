@@ -166,3 +166,31 @@ if(typeof ResizeObserver==='function'){
 window.addEventListener('load', ()=>positionNavPill());
 setTimeout(positionNavPill, 0);
 setTimeout(positionNavPill, 300);
+
+// Composição por navegador. A persistência pertence aos controles de
+// apresentação; o shell recebe apenas a escolha validada para montar o DOM.
+const NAV_LAYOUT_KEY='jpw_nav_layout';
+const NAV_LAYOUTS=['sidebar','topbar'];
+function renderNavLayoutChoice(){
+  document.querySelectorAll('#navLayoutSeg [data-nav-layout]').forEach(btn=>{
+    const on=btn.dataset.navLayout===document.documentElement.getAttribute('data-navigation');
+    btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on));
+  });
+}
+function initNavLayoutChoice(){
+  let value=null,message='';
+  try{value=localStorage.getItem(NAV_LAYOUT_KEY);
+    if(value!==null&&!NAV_LAYOUTS.includes(value))message='Preferência não reconhecida. Menu lateral exibido; a escolha salva foi preservada.';
+  }catch(e){message='Não foi possível ler a preferência. Menu lateral exibido sem alterar a escolha salva.';}
+  mountNavigationLayout(NAV_LAYOUTS.includes(value)?value:'sidebar');
+  const status=document.getElementById('navLayoutStatus');if(status)status.textContent=message;
+  const seg=document.getElementById('navLayoutSeg');if(!seg)return;
+  seg.addEventListener('click',event=>{
+    const btn=event.target.closest('[data-nav-layout]');if(!btn)return;
+    const value=btn.dataset.navLayout;if(!NAV_LAYOUTS.includes(value))return;
+    try{localStorage.setItem(NAV_LAYOUT_KEY,value);}
+    catch(e){if(status)status.textContent='Não foi possível salvar a escolha. A interface anterior foi mantida.';return;}
+    mountNavigationLayout(value);
+    if(status)status.textContent=(value==='sidebar'?'Menu lateral':'Barra superior')+' salvo neste navegador.';
+  });
+}

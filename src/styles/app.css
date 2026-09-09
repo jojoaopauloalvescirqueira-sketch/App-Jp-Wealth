@@ -6421,3 +6421,32 @@ html[data-navigation="sidebar"][data-nav-style="kinetic"] #navPillIndicator.is-r
   html[data-navigation="sidebar"] #navLocalSlot button{min-height:44px;max-width:100%;overflow-wrap:anywhere}
 }
 @media(prefers-reduced-motion:reduce){html[data-navigation="sidebar"] #navPillIndicator{transition:none!important}}
+
+/* Escolha de composição no Editor. A barra superior reutiliza o shell
+   anterior; nós, rotas e estilos continuam compartilhados com a lateral. */
+#navLayoutSeg{width:fit-content;max-width:100%;flex-wrap:wrap}
+#navLayoutSeg button{min-height:44px;white-space:normal;flex:1}
+html[data-navigation="topbar"] #appSidebar,
+html[data-navigation="topbar"] .nav-group-toggle,
+html[data-navigation="topbar"] #sidebarClose{display:none}
+html[data-navigation="topbar"][data-shell="global-dashboard"][data-ui-version="tesla-inspired"] body{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto 1fr auto;
+  grid-template-areas:"hdr" "navsub" "context" "main" "footer";
+}
+html[data-navigation="topbar"] #gdFooter{grid-area:footer;grid-column:1;min-width:0}
+html[data-navigation="topbar"] #navSubShell[hidden]{display:none}
+html[data-navigation="topbar"] .shell-page-header{margin:0 0 24px;padding:0 0 16px;border-bottom:1px solid var(--jp-border)}
+html[data-navigation="topbar"] .shell-location{margin:0;color:var(--jp-ink);font:500 13px/1.6 var(--jp-font-ui);overflow-wrap:anywhere}
+html[data-navigation="topbar"] #navLocalSlot{display:none}
+html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(--jp-action);outline-offset:3px}
+@media(max-width:900px){
+  html[data-navigation="topbar"] body > header{padding-inline:16px;gap:8px}
+  html[data-navigation="topbar"] .brand{width:auto;max-width:112px}
+  html[data-navigation="topbar"] .gd-logo{max-width:100%;height:auto}
+  html[data-navigation="topbar"] .header-actions{width:auto;gap:8px}
+  html[data-navigation="topbar"][data-shell-menu="open"] body > header{z-index:8100}
+  html[data-navigation="topbar"] #sidebarBackdrop{position:fixed;inset:0;background:#0008;z-index:8099}
+  html[data-navigation="topbar"] #sidebarBackdrop[hidden]{display:none}
+  html[data-navigation="topbar"] #sidebarClose{display:block;align-self:flex-end;min-width:44px;min-height:44px;background:transparent;border:1px solid var(--jp-border);border-radius:6px;color:var(--jp-ink);font-size:22px}
+  html[data-navigation="topbar"] #navSubShell button{min-height:44px;overflow-wrap:anywhere}
+}
