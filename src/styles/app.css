@@ -5378,13 +5378,13 @@ html[data-shell="global-dashboard"] .jp-btn:hover{filter:brightness(.97)}
 html[data-shell="global-dashboard"] #dash.screen.active{display:block}
 html[data-shell="global-dashboard"] #dash .gd-dash-grid{display:block;margin-top:0}
 html[data-shell="global-dashboard"] #gdDashMain{
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
   grid-auto-rows:auto; gap:16px; align-items:stretch;
 }
 html[data-shell="global-dashboard"] #gdDashSide{display:none}
 html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
 html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
   grid-column:span 1!important; width:auto; max-width:none; min-height:205px;
 }
 html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{
@@ -5402,9 +5402,9 @@ html[data-shell="global-dashboard"] #mcClearanceCard{
 }
 html[data-shell="global-dashboard"] #mcClearanceCard::before{display:none}
 html[data-shell="global-dashboard"] #mcClearanceCard .mc-cockpit-acoes{margin-top:22px}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){padding:18px 20px}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-vrm-card,.gd-news-card) h2{font-size:13px;margin-bottom:14px}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card) h2 .art{display:none}
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){padding:18px 20px}
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-vrm-card,.gd-news-card) h2{font-size:13px;margin-bottom:14px}
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card) h2 .art{display:none}
 html[data-shell="global-dashboard"] .jpwss-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 html[data-shell="global-dashboard"] .jpwss-head h2{margin:0;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--jp-ink-muted)}
 html[data-shell="global-dashboard"] .jpwss-head img{display:block;width:auto;height:6px;filter:var(--lgf);opacity:.5}
@@ -5709,7 +5709,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   }
   html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
   html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important;width:100%}
-  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+  html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
     grid-column:span 1!important; width:100%; align-self:stretch;
   }
   html[data-shell="global-dashboard"] .gd-analysis-grid,
@@ -5724,7 +5724,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
 @media(max-width:680px){
   html[data-shell="global-dashboard"]{--gd-gutter:16px}
   html[data-shell="global-dashboard"] #gdDashMain{grid-template-columns:1fr}
-  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){grid-column:1!important;min-height:0}
+  html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){grid-column:1!important;min-height:0}
   html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{grid-template-columns:auto 1fr}
   html[data-shell="global-dashboard"] #onboardingIncompleteBanner .reset-btn{grid-column:1/-1;width:100%}
   html[data-shell="global-dashboard"] #mcClearanceCard{padding:22px 20px;min-height:0}
@@ -6235,15 +6235,15 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 #dashMacro .dm-blocked{font:400 14px/1.6 var(--sans);padding:16px;border-radius:10px}
 #dashMacro .dm-partial{font:500 12px/1.5 var(--sans);letter-spacing:0}
 /* O cockpit continua utilizável e personalizável, em escala secundária. */
-html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:20px 24px;min-height:0;gap:24px;border:1px solid var(--line);border-radius:12px}
-html[data-shell="global-dashboard"] #dash #mcClearanceTitle{font-size:20px;line-height:1.3;letter-spacing:-.02em}
-html[data-shell="global-dashboard"] #dash #mcClearanceSub{font-size:12px;line-height:1.5}
-html[data-shell="global-dashboard"] #dash #mcClearanceCard .mc-cockpit-acoes{margin-top:14px;gap:10px}
-html[data-shell="global-dashboard"] #dash #mcClearanceCard .jp-btn{min-height:40px;padding:9px 12px;font-size:12px}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts{gap:8px}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact{padding:10px 12px;min-height:0}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-v{font-size:20px;line-height:1.3}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-meta{font-size:10px;line-height:1.5}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:20px 24px;min-height:0;gap:24px;border:1px solid var(--line);border-radius:12px}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceTitle{font-size:20px;line-height:1.3;letter-spacing:-.02em}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceSub{font-size:12px;line-height:1.5}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard .mc-cockpit-acoes{margin-top:14px;gap:10px}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard .jp-btn{min-height:40px;padding:9px 12px;font-size:12px}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts{gap:8px}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts .mc-fact{padding:10px 12px;min-height:0}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts .mc-fact-v{font-size:20px;line-height:1.3}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts .mc-fact-meta{font-size:10px;line-height:1.5}
 html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
 @media(max-width:1100px){#dashMacro .dm-grid{grid-template-columns:1fr}}
 @media(max-width:600px){
@@ -6259,7 +6259,7 @@ html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
   #dashMacro .dm-row{font-size:13px;gap:12px}
   #dashMacro .dm-link{min-height:44px;font-size:13px}
   #dashMacro .dm-cta{font-size:14px;min-height:48px}
-  html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:18px}
+  html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:18px}
 }
 @media(prefers-reduced-motion:reduce){#dashMacro *{animation:none!important;transition:none!important}}
 
@@ -6275,3 +6275,12 @@ html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
 #dash .dm-tools[open] .dm-tools-toggle{transform:rotate(45deg)}
 #dash .dm-tools>summary:focus-visible{outline:2px solid var(--violet);outline-offset:4px;border-radius:6px}
 #dash .dm-tools[open]{padding-bottom:20px}
+
+/* Projeção dos widgets v6 em Forex, sem coluna vazia no Dashboard. */
+html[data-shell="global-dashboard"] #fxOverviewWidgets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch;margin-top:16px}
+html[data-shell="global-dashboard"] #fxOverviewWidgets > [data-layout-card]{min-width:0;margin:0}
+html[data-shell="global-dashboard"] #fxOverviewWidgets > :is(#onboardingIncompleteBanner,#mcClearanceCard){grid-column:1/-1!important}
+@media(max-width:720px){
+  html[data-shell="global-dashboard"] #fxOverviewWidgets{grid-template-columns:minmax(0,1fr)}
+  html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:16px;gap:16px;grid-template-columns:minmax(0,1fr)}
+}

@@ -34,22 +34,19 @@ function relocateGlobalDashboardShell() {
   const footer = gdEl('gdFooter');
   if (footer) footer.hidden = false;
 
-  // Sequência estrutural do protótipo: aviso P1 → cockpit P1 → quatro cards P2.
+  // Forex reúne aviso, cockpit, VRM e agenda; Dashboard mantém sistema e atalhos.
   // Os mesmos nós são movidos, nunca clonados, para preservar IDs e listeners.
   const dashMain = gdEl('gdDashMain');
-  const instPanel = dashMain && dashMain.querySelector(':scope > [data-layout-card="institutional-panel"]');
-  if (dashMain && instPanel) {
-    const clearanceCard = gdEl('mcClearanceCard');
-    if (clearanceCard && clearanceCard.parentElement !== dashMain) instPanel.before(clearanceCard);
+  const forexOverview = gdEl('fxOverviewWidgets');
+  if (forexOverview) {
+    ['onboardingIncompleteBanner', 'mcClearanceCard'].forEach(id => {
+      const card = gdEl(id);
+      if (card && card.parentElement !== forexOverview) forexOverview.append(card);
+    });
+    if (dashMain) dashMain.querySelectorAll(':scope > .gd-vrm-card, :scope > .gd-news-card').forEach(card => forexOverview.append(card));
   }
 
-  const onbBanner = gdEl('onboardingIncompleteBanner');
-  if (dashMain && onbBanner && onbBanner.parentElement !== dashMain) dashMain.prepend(onbBanner);
-
-  // O protótipo encerra a faixa P2 com Ações Rápidas, na mesma grade de
-  // Status, VRM e Notícias. A personalização reafirma essa posição depois,
-  // mas a relocação inicial garante a composição correta mesmo antes de uma
-  // preferência de layout ser normalizada.
+  // Ações rápidas compartilham a grade com Status do Sistema.
   const quickCard = gdEl('gdQuickCard');
   if (dashMain && quickCard && quickCard.parentElement !== dashMain) dashMain.append(quickCard);
 

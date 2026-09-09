@@ -11,8 +11,8 @@ Invariantes centrais:
   UNAVAILABLE != R$ 0
   BLOCKING    != 0 posicoes
   cache nulo  != 0 eventos
-E o motor de layout permanece intocado: #gdDashMain conserva exatamente os
-mesmos [data-layout-card], e a preferencia salva do operador sobrevive.
+O resumo macro continua fora do layout: dois cartões ficam em #gdDashMain
+e quatro em Forex, preservando os seis registros da preferência v6.
 """
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -117,21 +117,14 @@ def assert_estrutura_e_isolamento_do_layout(page):
     assert dados["focoDeterministico"], "#dash sem destino de foco deterministico"
 
 
-# O conjunto EM RUNTIME, nao o do HTML estatico: 12-global-dashboard.js realoca
-# operational-clearance, quick-actions e onboarding-alert para dentro do grid no
-# boot. Congelar os seis aqui e o que denuncia se DASH-MACRO-01 acrescentar,
-# remover ou renomear qualquer widget governado pelo motor de layout.
-GDDASHMAIN_RUNTIME = sorted([
-    "institutional-panel", "news-high-impact", "onboarding-alert",
-    "operational-clearance", "quick-actions", "vrm",
-])
+# Projeção física do Dashboard após realocação; compatibilidade v6 tem teste focal.
+GDDASHMAIN_RUNTIME = sorted(["institutional-panel", "quick-actions"])
 
 
 def assert_migracao_forex_fatia2(page):
     """Fatia 2: a profundidade de Forex saiu do Dashboard e vive em execOverview.
 
-    Sem duplicacao: cada bloco existe em UM lugar so. E a migracao nao pode ter
-    arrastado widget persistido nenhum — se tivesse, seria N2 disfarcada de N1.
+    Sem duplicação: quatro widgets operacionais na Visão Geral, dois no Dashboard.
     """
     r = page.evaluate("""() => {
       const q = s => document.querySelectorAll(s).length;
@@ -141,20 +134,14 @@ def assert_migracao_forex_fatia2(page):
         metodologiaNoDash: q('#dash #dashMethodology'),
         analiseNoExec: q('#execOverview .gd-analysis-grid'),
         metodologiaNoExec: q('#execOverview #dashMethodology'),
-        // nada migrado pode carregar o atributo que o motor de layout enumera
+        // quatro cartões operacionais únicos na projeção Forex
         layoutCardsNoExecOverview: q('#execOverview [data-layout-card]'),
         // #dStatus e lido SEM guard em 03-main-render.js:293 — remove-lo derruba render()
         dStatus: q('#dStatus'),
-        // os TRES atalhos operacionais (motor/check/params) acompanharam o
-        // dominio. Seletor nominal, nao generico: operational-clearance ja
-        // carregava dois CTAs "Abrir Forex" (data-dash-go="exec") na baseline
-        // c9104b1 — sao Dashboard->Forex, nao profundidade de Forex, e o widget
-        // e persistido: move-lo e a fatia 5 (02B, N2), fora deste candidate.
+        // Os três atalhos locais permanecem na Visão Geral.
         atalhosForexNoExec: q(OPERACIONAIS.map(k => `#execOverview [data-dash-go="${k}"]`).join(',')),
         atalhosForexNoDash: q(OPERACIONAIS.map(k => `#dash [data-dash-go="${k}"]`).join(',')),
-        // guarda de escopo: os dois CTAs "Abrir Forex" pre-existentes seguem no
-        // #dash — um em operational-clearance (#mcClearanceCard), outro em
-        // .jp-hero-actions do hero (decisao fechada: hero nao se toca).
+        // O CTA legado do hero permanece; cockpit abre a operação em Forex.
         ctaAbrirForexNoDash: q('#dash [data-dash-go="exec"][data-route="forex-overview"]'),
       };
     }""")
@@ -162,15 +149,15 @@ def assert_migracao_forex_fatia2(page):
     assert r["metodologiaNoDash"] == 0, f"Metodologia ainda no Dashboard: {r}"
     assert r["analiseNoExec"] == 1, f"Evolucao/Ritmo nao chegou a Visao Geral: {r}"
     assert r["metodologiaNoExec"] == 1, f"Metodologia nao chegou a Visao Geral: {r}"
-    assert r["layoutCardsNoExecOverview"] == 0, f"widget persistido migrado — isso seria N2: {r}"
+    assert r["layoutCardsNoExecOverview"] == 4, f"projeção Forex incorreta: {r}"
     assert r["dStatus"] == 1, f"#dStatus perdido — render() quebraria: {r}"
     assert r["atalhosForexNoExec"] == 3, f"atalhos operacionais nao migraram: {r}"
     assert r["atalhosForexNoDash"] == 0, f"atalho operacional remanescente no Dashboard: {r}"
-    assert r["ctaAbrirForexNoDash"] == 2, f"CTAs 'Abrir Forex' pre-existentes alterados — fora do escopo 02A: {r}"
+    assert r["ctaAbrirForexNoDash"] == 1, f"CTA legado incorreto: {r}"
 
 
 def assert_gddashmain_intacto(page):
-    """O conjunto de widgets personalizaveis nao muda por causa desta feature."""
+    """Somente os dois cartões remanescentes ficam no container físico Dashboard."""
     ids = page.evaluate(
         "() => [...document.querySelectorAll('#gdDashMain > [data-layout-card]')]"
         ".map(el => el.dataset.layoutCard).sort()"
@@ -509,7 +496,8 @@ def main():
                 assert_links_profundos(page)
                 before=storage_snapshot(page)
                 page.locator('#dmTools > summary').click()
-                assert page.locator('#mcClearanceCard').is_visible()
+                assert page.locator('#gdQuickCard').is_visible()
+                assert not page.locator('#mcClearanceCard').is_visible()
                 assert storage_snapshot(page)==before, 'abrir ferramentas escreveu em storage'
                 page.locator('#dmTools > summary').click()
 
