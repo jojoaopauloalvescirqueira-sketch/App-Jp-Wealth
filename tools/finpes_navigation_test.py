@@ -93,6 +93,9 @@ def run_estrutura(page, falhas):
           dataRoute: tab && tab.dataset.route,
           dataPrimary: tab && tab.dataset.primary,
           dataNavSurface: tab && tab.dataset.navSurface,
+          sidebar: !!sub && !!sub.closest('#appSidebar #nav'),
+          separateExpander: !!document.querySelector('#nav > [data-nav-expand="finpes"]')
+            && !tab.hasAttribute('aria-expanded'),
           temSub: !!sub, itens, temSection: !!section, filhos,
           registrado: typeof NAV_SUBMENU_SURFACES === 'object' ? 'indireto' : 'n/a',
         }};
@@ -104,6 +107,8 @@ def run_estrutura(page, falhas):
         falhas.append(f"rotulo/numero errados: {r['numero']} {r['rotulo']}")
     if r["itens"] != VIEWS:
         falhas.append(f"submenu deveria ter exatamente {VIEWS}; veio {r['itens']}")
+    if not r["sidebar"] or not r["separateExpander"]:
+        falhas.append(f"N2 de Financas Pessoais nao respeita lateral/expansor separado: {r}")
     if not r["temSection"] or not all(r["filhos"]):
         falhas.append(f"section/workspaces ausentes: {r['filhos']}")
     reg = page.evaluate(
@@ -225,6 +230,22 @@ def run_destino_inicial(page, falhas):
         falhas.append(f"entrada nova no modulo deveria abrir 'overview'; ficou em {r}")
 
 
+def run_expansao_preserva_destino(page, falhas):
+    """Abrir/recolher filhos nao e uma nova entrada no modulo nem uma escrita."""
+    page.click("#finpesNavTrigger")
+    page.click('#finpesNavSubmenu [data-nav-sub-view="cenarios"]')
+    before = page.evaluate("() => ({view:JPWFin.ui.getView(),current:JPWNavigation.current(),state:JSON.stringify(S),storage:Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])})")
+    page.click('[data-nav-expand="finpes"]')
+    if page.get_attribute('[data-nav-expand="finpes"]', "aria-expanded") != "false":
+        falhas.append("expansor nao recolheu Financas Pessoais")
+    page.click('[data-nav-expand="finpes"]')
+    after = page.evaluate("() => ({view:JPWFin.ui.getView(),current:JPWNavigation.current(),state:JSON.stringify(S),storage:Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])})")
+    if before != after or after["view"] != "cenarios":
+        falhas.append(f"expandir alterou destino/dados/preferencias: {before} -> {after}")
+    if page.get_attribute('#finpesNavSubmenu [data-nav-sub-view="cenarios"]', "aria-current") != "page":
+        falhas.append("expansao perdeu indicacao do destino Cenarios")
+
+
 def run_sentinela_visual(browser, url, falhas):
     mut = """
       S.personalFinance = { schemaVersion:1, moneyUnit:'USD_CENTS', months:{},
@@ -258,6 +279,7 @@ def main():
             run_troca_de_views(page, falhas)
             run_navegacao_nao_escreve(page, falhas)
             run_destino_inicial(page, falhas)
+            run_expansao_preserva_destino(page, falhas)
             r = page.evaluate("() => ({ banner: document.getElementById('finpesUnitNotice').hidden })")
             if r["banner"] is not True:
                 falhas.append("BRL_CENTS nao deveria mostrar o banner de modo leitura")

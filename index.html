@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled">
+<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -96,9 +96,8 @@
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
-    <!-- Menu de destinos em telas estreitas. Fora do shell horizontal fica oculto;
-         a navegação continua sendo os mesmos botões .tab[data-route] em #nav. -->
-    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="nav" aria-label="Abrir menu de telas">Menu</button>
+    <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
+    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <!-- Desenho idêntico ao slot "Configurações" de Auditoria visual JP Wealth/
            JP Wealth - Dashboard Claro (preview cheia).dc.html, linha 36. -->
@@ -124,22 +123,8 @@
   </div>
 </header>
 
-<!-- Segundo nível estrutural da navegação — contrato em
-     docs/architecture/NAVIGATION-HIERARCHY.md. Diferente de um dropdown, esta
-     faixa permanece fora de #nav e participa do fluxo normal da página: ao
-     expandir, desloca a faixa de contexto e o conteúdo sem sobreposição.
-
-     A faixa é COMPARTILHADA por todos os módulos com segundo nível. Só um pode
-     estar aberto por vez (selecionar outro módulo é clique externo e fecha o
-     anterior), então um único slot no grid do body basta — e evita que dois
-     acionadores acendam juntos, que era o risco de duplicar o mecanismo.
-     Cada módulo traz seu próprio <nav>; o controlador em
-     40-app/11-operational-shell.js exibe apenas o do módulo acionado.
-
-     Convenção de ids, lida por derivação e não por registro manual:
-     `<data-nav-surface>NavTrigger` no botão de #nav e
-     `<data-nav-surface>NavSubmenu` aqui. Um módulo novo só precisa do par de
-     ids, do <nav> e da superfície de UI declarada em NAV_SUBMENU_SURFACES. -->
+<!-- Painéis existentes: o shell move N2 para a lateral e N3 para o conteúdo,
+     sem clonar nós. Contrato em docs/architecture/NAVIGATION-HIERARCHY.md. -->
 <div class="nav-sub-shell" id="navSubShell">
   <div class="nav-sub-clip">
     <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
@@ -292,40 +277,36 @@
      sem a flag; os elementos reais continuam filhos de <header>. -->
 <div class="gd-context-row" id="gdContextRow"></div>
 
-<nav id="nav">
-  <!-- Parâmetros, Motor de Lote e Checklist saíram da navegação superior:
-       vivem na Central de Configurações (grupo "Operação"). As <section>
-       deles permanecem abaixo como hospedeiras do conteúdo transportado —
-       mesmo padrão do #config (ver 09-settings-modal.js). -->
-  <!-- Destaque deslizante do estilo "pílula flutuante" (12-nav-style.js). Fica
-       display:none em qualquer outro contexto — modo clássico, rail vertical do
-       Dashboard e gaveta mobile. É decorativo: aria-hidden, sem foco, e a aba
-       ativa continua sendo comunicada pela classe .active nos próprios botões. -->
+<aside id="appSidebar" aria-label="Navegação do JP Wealth">
+  <div class="sidebar-heading"><span class="sidebar-caption">Áreas de trabalho</span><button type="button" id="sidebarClose" aria-label="Fechar menu de telas">×</button></div>
+<nav id="nav" aria-label="Módulos">
+  <!-- Indicador decorativo dos estilos pill/kinetic. O estado acessível
+       permanece nos botões; o brilho legado fica inativo neste shell. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
-  <!-- Brilho especular do KineticNav. É irmão do destaque, e não filho: como
-       elemento separado ele pode ter a própria duração de transição e chegar
-       DEPOIS: é essa defasagem que faz a superfície ler como vidro em vez de
-       painel chapado. Como filho ou pseudo-elemento viajaria junto e não
-       haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex"
-          aria-expanded="false" aria-controls="execNavSubmenu">
-    <span class="n">02</span><span class="lbl">Forex</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
-  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"
-          aria-expanded="false" aria-controls="finpesNavSubmenu">
-    <span class="n">03</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"
-          aria-expanded="false" aria-controls="researchNavSubmenu">
-    <span class="n">04</span><span class="lbl">Research</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex">
+    <span class="n">02</span><span class="lbl">Forex</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais">
+    <span class="n">03</span><span class="lbl">Finanças Pessoais</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research">
+    <span class="n">04</span><span class="lbl">Research</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
-  <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
-</nav>
+  </nav>
+  <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
+  <span class="sidebar-footer">JP Wealth</span>
+</aside>
+<div id="sidebarBackdrop" hidden></div>
 
 <main id="appMain">
+  <div id="shellPageHeader" class="shell-page-header">
+    <p id="shellLocation" class="shell-location" aria-label="Localização atual">Dashboard</p>
+    <div id="navLocalSlot" aria-label="Visões da página"></div>
+  </div>
+  <div id="shellAnnouncement" class="sr-only" role="status" aria-live="polite"></div>
   <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
@@ -1266,8 +1247,17 @@
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
-    <div class="card" data-settings-category="editor" data-settings-search="navegação barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+    <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
       <div class="field" style="max-width:560px">
+        <label id="navLayoutLabel">Layout da navegação</label>
+        <div class="seg" id="navLayoutSeg" role="group" aria-labelledby="navLayoutLabel">
+          <button type="button" data-nav-layout="sidebar" aria-pressed="true">Menu lateral (padrão)</button>
+          <button type="button" data-nav-layout="topbar" aria-pressed="false">Barra superior (anterior)</button>
+        </div>
+        <span class="note note-live">A escolha fica salva neste navegador. Você pode alternar a qualquer momento.</span>
+        <span class="note note-live" id="navLayoutStatus" role="status" aria-live="polite"></span>
+      </div>
+      <div class="field" style="max-width:560px; margin-top:18px">
         <label>Estilo da Navegação</label>
         <div class="seg" id="navStyleSeg" style="width:fit-content">
           <button type="button" data-nav-val="kinetic">KineticNav</button>
@@ -1279,7 +1269,8 @@
              ficar escondido atrás de um ícone. A classe existe para isso — ver o
              comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
         <span class="note note-live" id="navStyleDefaultNote"></span>
-        <span class="note"><b>KineticNav</b>: invólucro fosco e destaque com assentamento de mola, que acompanha a aba sob o cursor e volta para a ativa ao sair; o brilho especular chega com atraso, e é essa defasagem que faz a superfície ler como vidro. <b>Floating Pill Nav</b>: invólucro sólido e destaque que desliza direto, sem magnetismo. <b>Clássica</b>: a barra original, com a aba ativa sublinhada. Os dois primeiros nomes são os que seus autores deram aos componentes de referência; as aparências foram reescritas aqui, sem código de terceiros. Vale para a barra horizontal do topo — a lateral do Dashboard e o menu do celular não mudam em nenhuma das três. Preferência deste navegador: não entra no backup.</span>
+        <span class="note note-live" id="navStyleStatus" role="status" aria-live="polite"></span>
+        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos acompanham o layout escolhido e respeitam redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
       </div>
     </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets

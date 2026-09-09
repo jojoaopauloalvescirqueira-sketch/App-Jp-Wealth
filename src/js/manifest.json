@@ -62,7 +62,7 @@
       "order": 10,
       "path": "src/js/20-ui/02-sidebar.js",
       "section": "SIDEBAR · COLAPSO",
-      "sha256": "be786717eb144b93680d1911e6066903558fe9e6d63ee8124dea28cc62209994"
+      "sha256": "af0ca7fef43b1b89d222c0a6c2675a054f0f2381ed8ac2663034cf4b3c0aac71"
     },
     {
       "order": 11,
@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "d38c695590cee44f81bcb62b4e0bdf796dc5bed48f95c97e2b2a5b751f34b4f0"
+      "sha256": "f6ce6f28e2bc51c1a1b1fb0690d87aad4b81f875c18f0bcf27b51d16f6cb6258"
     },
     {
       "order": 25,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "892d71b59749aad33226fea8d45d7057b708c924ff13e78dfd2783ae7c76d05f"
+      "sha256": "ccc28b369abed0769497cba8a6f36ffce1b313d84a3cb8b43d7821cee263307c"
     },
     {
       "order": 32,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "6ae404af63d50f3ed23888595a56fd4009d842b3defeed330dfdad9e98ef73fc"
+      "sha256": "c71feb3dfd5242cd82ad43b238a3bb71828ab74556282ad685be988254ab42ee"
     },
     {
       "order": 39,
@@ -242,13 +242,13 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "8597e99e6328c84a97544711c100642c030374f343e0eb15a402298c2635ad4d"
+      "sha256": "c568d6e981cb50d0b1ad6004ed4a8fd902ae3450d3b93ab3b0bfa2d49a62838e"
     },
     {
       "order": 41,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "5bdd422cdcac366cd02afda1b117b3701bd5bf090c93e9c303f231e86b81e53c"
+      "sha256": "f8761c336b419ecf3beca9677914cf781d66059a9781cae7be5b6fd1cd0d4754"
     },
     {
       "order": 42,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "ea98f0b5b17bd203daaa1569d44e4b5623a65bdcf6c0ff7ac8f854d53f18805b"
+      "sha256": "df2a555f85457aa9884d4298ea74d03da0960ad0c48bed3f05d9b7d006e092eb"
     },
     {
       "order": 44,

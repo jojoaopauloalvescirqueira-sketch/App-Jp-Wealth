@@ -190,8 +190,10 @@ function navNavigateLocal(surfaceId,view){
 function navFocusCurrentScreen(){
   const screen=document.querySelector('#appMain > .screen.active');
   if(!screen) return false;
-  const target=screen.querySelector('[data-route-focus],h1,h2');
-  if(!target) return false;
+  // Workspaces inativos permanecem montados. Nunca devolver foco ao título
+  // oculto da Visão Geral quando outra visão do mesmo módulo está aberta.
+  const target=[...screen.querySelectorAll('[data-route-focus],h1,h2')].find(el=>
+    !el.closest('[hidden],[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden')||screen;
   if(!target.hasAttribute('tabindex')) target.setAttribute('tabindex','-1');
   target.focus({preventScroll:true});
   return document.activeElement===target;

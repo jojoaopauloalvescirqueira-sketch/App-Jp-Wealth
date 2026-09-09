@@ -360,7 +360,7 @@ function settingsRevealElement(selector){
 // ordem do documento); os <header> internos de modais/drawers vêm todos depois.
 let settingsInertSnapshot=null;
 function settingsInertTargets(){
-  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
 }
 function settingsSetAppInert(on){
   if(on){
@@ -374,6 +374,8 @@ function settingsSetAppInert(on){
       if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
     });
     settingsInertSnapshot=null;
+    // O Editor pode ter movido a navegação entre o header e a lateral.
+    if(typeof syncShellViewport==='function'&&document.getElementById('appSidebar')?.dataset.ready)syncShellViewport();
   }
 }
 function openSettingsModal(category='general', opener){
