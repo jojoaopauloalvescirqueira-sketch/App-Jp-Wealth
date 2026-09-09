@@ -365,6 +365,128 @@ def assert_responsividade(browser, url):
             context.close()
 
 
+def assert_atualizacao_agenda_e_foco(page):
+    """Regressão real: cache muda, hook do feed deve atualizar o macro aberto."""
+    page.evaluate("""() => {
+      JPWNavigation.navigate('dashboard');
+      const btn=document.querySelector('[data-dm-card="research"] .dm-cta');
+      btn.focus();
+      ffNewsWriteCache({version:1,generated_at:new Date().toISOString(),events:[
+        {title:'Agenda <img src=x onerror="window.__dmXss=1">',country:'USD',
+         date:new Date(Date.now()+60000).toISOString(),impact:'High'}]});
+      ffNewsRenderAll();
+    }""")
+    page.wait_for_function("() => document.querySelector('[data-dm-card=research]').textContent.includes('Agenda <img')")
+    r=page.evaluate("""() => ({
+      foco:document.activeElement.matches('[data-dm-card="research"] .dm-cta'),
+      xss:!!window.__dmXss, imgs:document.querySelectorAll('[data-dm-card="research"] img').length
+    })""")
+    assert r=={'foco':True,'xss':False,'imgs':0},r
+    # Render geral também atualiza a macro, sem saída e reentrada.
+    page.evaluate("() => { S.ledger.push({data:'2026-01-02',saldo:12345,resultado:345}); render(); }")
+    page.wait_for_function("() => document.querySelector('[data-dm-card=forex]').textContent.includes('02/01/2026')")
+    page.evaluate("() => { S.ledger.pop(); render(); }")
+
+
+def assert_fuso_agenda(browser,url):
+    ctx=browser.new_context(viewport={'width':1440,'height':900},timezone_id='America/Sao_Paulo',service_workers='block')
+    try:
+        page=ctx.new_page()
+        page.add_init_script('window.__onbShown=true;')
+        page.route('**/*',lambda route: route.continue_() if '127.0.0.1' in route.request.url else route.fulfill(status=200,content_type='application/json',body='{}'))
+        page.goto(url,wait_until='load')
+        page.wait_for_function('() => !!window.JPWDashMacro')
+        r=page.evaluate("""() => {
+          const now=Date.now;Date.now=()=>Date.parse('2026-09-08T12:00:00Z');
+          ffNewsWriteCache({version:1,events:[{title:'Evento UTC',country:'USD',impact:'High',date:'2026-09-09T01:00:00Z'}]});
+          JPWDashMacro.render();
+          const text=document.querySelector('[data-dm-card=research]').textContent;
+          Date.now=now;
+          return text.includes('08/09/2026 · 22:00')&&!text.includes('09/09/2026');
+        }""")
+        assert r, 'data e horário divergiram no fuso local'
+    finally:
+        ctx.close()
+
+
+def assert_links_profundos(page):
+    routes=[('finpes','mensal','finpes'),('finpes','dividas','finpes'),
+            ('finpes','comparativo','finpes'),('finpes','cenarios','finpes'),
+            ('research','calendar','research'),('research','nocoda','research'),
+            ('research','pivots','research'),('alladin','balances','alladin'),
+            ('alladin','ledger','alladin'),('alladin','positions','alladin')]
+    for surface,view,screen in routes:
+        page.evaluate("() => JPWNavigation.navigate('dashboard')")
+        page.locator(f'#dashMacro [data-dm-surface="{surface}"][data-dm-view="{view}"]').click()
+        assert page.locator(f'#{screen}').evaluate("el=>el.classList.contains('active')")
+        if surface=='alladin':
+            assert page.locator(f'[data-alladin-panel="{view}"]').is_visible()
+        else:
+            actual=page.evaluate("s=>s==='finpes'?JPWFin.ui.getView():JPWResearch.ui.getView()",surface)
+            assert actual==view,(surface,view,actual)
+            current=page.evaluate("() => JPWNavigation.current().localView")
+            assert current=={'surface':surface,'view':view}, current
+
+    page.evaluate("() => JPWNavigation.navigate('dashboard')")
+
+
+def assert_resumos_preenchidos(browser,url):
+    from alladin_ui_tx_reverse_test import SEMEAR
+    from finpes_comparison_test import seed_completo
+    ctx,page,observed=boot(browser,url)
+    try:
+        # Relógio do DOMÍNIO fixo: meses corrente/anterior e fixtures correspondem.
+        page.evaluate("() => { window.__dmMonth=pfCurrentMonthKey; pfCurrentMonthKey=()=> '2026-08'; }")
+        page.evaluate("() => {"+seed_completo('2026-07',1400000,1000000)+seed_completo('2026-08',1500000,900000)+"}")
+        page.evaluate(SEMEAR)
+        page.evaluate("() => JPWNavigation.navigate('dashboard')")
+        r=page.evaluate("""() => {
+          JPWDashMacro.render();
+          const text=id=>document.querySelector('[data-dm-card="'+id+'"]').textContent;
+          const balance=JPWAlladin.leitura.saldoDeCaixa(__ids.cx);
+          const state=JSON.stringify(S), storage=JSON.stringify({...localStorage});
+          JPWDashMacro.render();
+          return {balance:text('alladin').includes(JPWAlladin.money.format({amount:balance.amount,currency:balance.currency})),
+            last:text('alladin').includes('13/01/2026'),
+            compare:text('personal-finance').includes(foSignedMoney(pfCompCompare('2026-08','2026-07').metrics.sobra.delta)),
+            unchanged:state===JSON.stringify(S)&&storage===JSON.stringify({...localStorage})};
+        }""")
+        assert all(r.values()),r
+        r=page.evaluate("""() => {
+          const st=JPWFx.state;
+          const created=st.fxPlanCreate({name:'Plano de teste',assumptions:{startMonth:'2026-01',horizonMonths:24,initialBalanceUsd:1000,defaultMonthlyReturn:0.01,projectedFxRate:5.4}});
+          const closed=st.fxPlanRecordActual('2026-01',{inputType:'rate',returnRate:0.02});
+          const expected=st.fxOverviewLive();
+          const before=JSON.stringify(S);
+          JPWDashMacro.render();
+          const text=document.querySelector('[data-dm-card=forex]').textContent;
+          const valid=created.ok&&closed.ok&&text.includes(fmtMoney2(expected.realizedProfitUsd))&&text.includes(fmtMoney2(expected.deviationUsd));
+          const stable=before===JSON.stringify(S);
+          const old=S.fxPlanning.plan.current;delete S.fxPlanning.plan.current;
+          const corrupt=JSON.stringify(S);
+          JPWDashMacro.render();
+          const refused=document.querySelector('[data-dm-card=forex]').textContent.includes('Planejamento indisponível')&&corrupt===JSON.stringify(S);
+          S.fxPlanning.plan.current=old;
+          return {valid,stable,refused};
+        }""")
+        assert all(r.values()),r
+        # O retorno parcial de um saldo deve ser mostrado como indisponível.
+        # Corrupção real só-caixa, fronteira já caracterizada por E12b.
+        r=page.evaluate("""() => {
+          const dep=S.alladin.transactions.find(t=>t.transactionId===__ids.dep);
+          const original=dep.currency;dep.currency='USD';
+          JPWDashMacro.render();
+          const text=document.querySelector('[data-dm-card=alladin]').textContent;
+          dep.currency=original;
+          JPWDashMacro.render();
+          return text.includes('Saldo indisponível')&&!text.includes('9.999,99');
+        }""")
+        assert r,'saldo bloqueado foi apresentado como valor'
+        assert not observed['pageerror'],observed
+    finally:
+        ctx.close()
+
+
 def main():
     server, url = serve()
     try:
@@ -383,11 +505,21 @@ def main():
                 assert_alladin_blocking_nao_vira_zero(page)
                 assert_isolamento_de_falha(page)
                 assert_marca_estando_no_dashboard(page)
+                assert_atualizacao_agenda_e_foco(page)
+                assert_links_profundos(page)
+                before=storage_snapshot(page)
+                page.locator('#dmTools > summary').click()
+                assert page.locator('#mcClearanceCard').is_visible()
+                assert storage_snapshot(page)==before, 'abrir ferramentas escreveu em storage'
+                page.locator('#dmTools > summary').click()
+
                 assert not observed["pageerror"], observed
                 assert not observed["console"], observed
             finally:
                 context.close()
             assert_responsividade(browser, url)
+            assert_resumos_preenchidos(browser,url)
+            assert_fuso_agenda(browser,url)
             browser.close()
     finally:
         server.shutdown()

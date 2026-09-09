@@ -6195,10 +6195,100 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
   .dm-facts{grid-template-columns:1fr}
   .dm-row{font-size:11px}
 }
+
+/* Dashboard executivo — apresentação apenas; identidades do layout preservadas. */
+#dashMacro{--dm-blue:#4299f5;margin:12px 0 36px}
+#dashMacro .dm-page-head{display:flex;justify-content:space-between;align-items:center;gap:24px;margin:8px 0 28px}
+#dashMacro .dm-eyebrow{display:block;font:600 11px var(--mono);letter-spacing:.12em;color:var(--ink-dim);text-transform:uppercase}
+#dashMacro .dm-shell-title{font:600 clamp(24px,2.4vw,34px)/1.2 var(--sans);letter-spacing:-.035em;margin:10px 0 8px;color:var(--ink)}
+#dashMacro .dm-shell-sub{font:400 14px/1.6 var(--sans);color:var(--ink-dim);margin:0}
+#dashMacro .dm-date{display:flex;align-items:center;gap:9px;font:400 12px/1.5 var(--sans);color:var(--ink-dim);white-space:nowrap}
+#dashMacro .dm-live-dot{width:6px;height:6px;flex:none;border-radius:50%;background:var(--dm-blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--dm-blue) 10%,transparent)}
+#dashMacro .dm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch}
+#dashMacro .dm-card{display:flex;flex-direction:column;gap:0;min-width:0;border:1px solid var(--line);border-left:1px solid var(--line);border-radius:16px;padding:24px;background:var(--panel);box-shadow:0 5px 18px #00000008;overflow:hidden}
+#dashMacro .dm-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+#dashMacro .dm-title{font:600 22px/1.25 var(--sans);letter-spacing:-.025em;margin:6px 0 0}
+#dashMacro .dm-index{font:400 30px var(--mono);color:var(--ink-faint);opacity:.35}
+#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--dm-blue)}
+#dashMacro [data-dm-card="personal-finance"] .dm-eyebrow{color:var(--f1)}
+#dashMacro [data-dm-card="research"] .dm-eyebrow{color:var(--violet)}
+#dashMacro [data-dm-card="alladin"] .dm-eyebrow{color:var(--f2)}
+#dashMacro .dm-body{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+#dashMacro .dm-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:2px 0}
+#dashMacro .dm-fact{display:flex;flex-direction:column;gap:8px;padding:14px 16px;background:var(--panel-2);border-radius:10px;min-width:0}
+#dashMacro .dm-fact .k{font:500 12px/1.4 var(--sans);text-transform:none;letter-spacing:0;color:var(--ink-dim)}
+#dashMacro .dm-fact .v{font:600 clamp(19px,2vw,27px)/1.2 var(--sans);letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#dashMacro .dm-fact .s{font:400 12px/1.5 var(--sans);color:var(--ink-dim)}
+#dashMacro .dm-bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+#dashMacro .dm-bar i{background:var(--dm-blue)}
+#dashMacro .dm-bar.warn i{background:var(--f2)}
+#dashMacro .dm-bar.bad i{background:var(--f4)}
+#dashMacro .dm-sub{font:500 12px/1.5 var(--sans);letter-spacing:.04em;margin-top:-5px;color:var(--ink-dim)}
+#dashMacro .dm-row{display:flex;align-items:baseline;justify-content:space-between;gap:18px;padding:7px 0;border-bottom:0;font:400 13px/1.5 var(--sans);min-width:0}
+#dashMacro .dm-k{color:var(--ink-dim);white-space:normal;overflow-wrap:anywhere;flex:1}
+#dashMacro .dm-v{max-width:64%;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#dashMacro .dm-row b{font-weight:600}
+#dashMacro .dm-section{border-top:1px solid var(--line);padding-top:15px;margin-top:6px}
+#dashMacro .dm-section h4{font:600 12px/1.5 var(--sans);letter-spacing:.025em;color:var(--ink);margin:0 0 5px}
+#dashMacro .dm-note,#dashMacro .dm-empty{font:400 13px/1.6 var(--sans);color:var(--ink-dim);padding:0;background:none;border:0;margin:0}
+#dashMacro .dm-empty{padding:14px 16px;border:1px dashed var(--line);border-radius:10px;min-height:85px;display:flex;align-items:center}
+#dashMacro .dm-aux{font:400 12px/1.5 var(--sans);color:var(--ink-dim)}
+#dashMacro .dm-event{font:600 16px/1.5 var(--sans);color:var(--ink);margin:8px 0 2px;overflow-wrap:anywhere}
+#dashMacro .dm-links{display:flex;gap:4px 14px;flex-wrap:wrap;padding-top:10px;margin-top:auto}
+#dashMacro .dm-link{display:inline-flex;align-items:center;justify-content:space-between;gap:9px;min-height:36px;padding:4px 0;border:0;background:transparent;color:var(--ink-dim);font:500 12px/1.4 var(--sans);cursor:pointer;text-align:left}
+#dashMacro .dm-link:hover{color:var(--dm-blue)}
+#dashMacro .dm-link span{color:var(--ink-faint);font-size:15px}
+#dashMacro .dm-research-areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}
+#dashMacro .dm-cta{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;margin:16px 0 0;padding:12px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;color:var(--ink);font:600 13px/1.5 var(--sans);cursor:pointer;text-align:left}
+#dashMacro .dm-cta:hover{color:var(--dm-blue)}
+#dashMacro button:focus-visible{outline:2px solid var(--dm-blue);outline-offset:4px;border-radius:4px}
+#dashMacro .dm-blocked{font:400 14px/1.6 var(--sans);padding:16px;border-radius:10px}
+#dashMacro .dm-partial{font:500 12px/1.5 var(--sans);letter-spacing:0}
+/* O cockpit continua utilizável e personalizável, em escala secundária. */
+html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:20px 24px;min-height:0;gap:24px;border:1px solid var(--line);border-radius:12px}
+html[data-shell="global-dashboard"] #dash #mcClearanceTitle{font-size:20px;line-height:1.3;letter-spacing:-.02em}
+html[data-shell="global-dashboard"] #dash #mcClearanceSub{font-size:12px;line-height:1.5}
+html[data-shell="global-dashboard"] #dash #mcClearanceCard .mc-cockpit-acoes{margin-top:14px;gap:10px}
+html[data-shell="global-dashboard"] #dash #mcClearanceCard .jp-btn{min-height:40px;padding:9px 12px;font-size:12px}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts{gap:8px}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact{padding:10px 12px;min-height:0}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-v{font-size:20px;line-height:1.3}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-meta{font-size:10px;line-height:1.5}
+html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
+@media(max-width:1100px){#dashMacro .dm-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+  #dashMacro{margin-top:8px}
+  #dashMacro .dm-page-head{display:block;margin-bottom:22px}
+  #dashMacro .dm-date{margin-top:14px}
+  #dashMacro .dm-shell-title{font-size:27px}
+  #dashMacro .dm-card{padding:18px;border-radius:12px}
+  #dashMacro .dm-title{font-size:21px}
+  #dashMacro .dm-facts{gap:8px}
+  #dashMacro .dm-fact{padding:12px;gap:6px}
+  #dashMacro .dm-fact .v{font-size:22px}
+  #dashMacro .dm-row{font-size:13px;gap:12px}
+  #dashMacro .dm-link{min-height:44px;font-size:13px}
+  #dashMacro .dm-cta{font-size:14px;min-height:48px}
+  html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:18px}
+}
+@media(prefers-reduced-motion:reduce){#dashMacro *{animation:none!important;transition:none!important}}
+
+#dashMacro .dm-card-head{position:static;height:auto;min-height:0;padding:0 0 16px;background:transparent;box-shadow:none;z-index:auto;flex-wrap:nowrap}
+#dashMacro .dm-fact .k{white-space:normal;overflow:visible;text-overflow:clip}
+
+#dash .dm-tools{margin:0 0 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#dash .dm-tools>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;padding:22px 2px;cursor:pointer;color:var(--ink)}
+#dash .dm-tools>summary::-webkit-details-marker{display:none}
+#dash .dm-tools>summary strong{display:block;font:600 16px/1.5 var(--sans)}
+#dash .dm-tools-caption{display:block;font:400 12px/1.6 var(--sans);color:var(--ink-dim);margin-top:4px}
+#dash .dm-tools-toggle{font:400 24px var(--sans);transition:transform .2s}
+#dash .dm-tools[open] .dm-tools-toggle{transform:rotate(45deg)}
+#dash .dm-tools>summary:focus-visible{outline:2px solid var(--violet);outline-offset:4px;border-radius:6px}
+#dash .dm-tools[open]{padding-bottom:20px}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '1ee88bab37539798';
+const JP_WEALTH_BUILD_ID = '9cf89998aa453da4';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6923,8 +7013,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          ordem de documento, e o foco mudaria de lugar a cada card novo. Mesmo
          padrão já usado em #research e #alladin. -->
     <section class="dm-shell" id="dashMacro" aria-labelledby="dashMacroTitle">
-      <h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Visão Executiva</h2>
-      <p class="dm-shell-sub">Panorama consolidado — cada área resume a si mesma e leva ao seu módulo.</p>
+      <div class="dm-page-head"><div><span class="dm-eyebrow">JP WEALTH · VISÃO EXECUTIVA</span><h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Seu panorama financeiro</h2><p class="dm-shell-sub">Risco, orçamento, pesquisa e patrimônio em um só lugar.</p></div><div class="dm-date"><span class="dm-live-dot" aria-hidden="true"></span><span id="dmToday"></span></div></div>
       <div class="dm-grid" id="dashMacroGrid"></div>
     </section>
 
@@ -6940,6 +7029,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          grids fixos de posição: cada card é filho direto, com largura própria
          via CSS (ver [data-layout-card] em app.css) — é o que permite mover
          qualquer card entre coluna principal e lateral sem quebrar layout. -->
+    <details id="dmTools" class="dm-tools"><summary><span><strong>Operação e ferramentas</strong><span class="dm-tools-caption">Controles de Forex, segurança da base e atalhos do sistema</span></span><span class="dm-tools-toggle" aria-hidden="true">+</span></summary>
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main jp-widget-grid" id="gdDashMain">
         <!-- Via relocação JS entram aqui, nesta ordem, imediatamente antes do
@@ -7227,6 +7317,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       </div>
       <p class="sr-only" data-dash-carousel-status aria-live="polite">Slide 1 de 3</p>
     </div>
+
+    </details>
 
   </section>
 
@@ -10906,6 +10998,7 @@ function render(){
   // disparado por boot() a função ainda não existe. Aquele arquivo faz a
   // primeira pintura por conta própria assim que todos os scripts carregam.
   if(typeof renderSystemStatus==='function') renderSystemStatus();
+  if(window.JPWDashMacro) window.JPWDashMacro.schedule();
 }
 // ============ OPERATIONAL CLEARANCE — veredito executivo (N1) ============
 // "Posso operar agora?" — derivado exclusivamente de compute() + estado salvo (S.onboarding).
@@ -23037,6 +23130,7 @@ function ffNewsRender(){
 function ffNewsRenderAll(){
   ffNewsRender();
   if(typeof ecalRenderIfOpen==='function') ecalRenderIfOpen();
+  if(window.JPWDashMacro) window.JPWDashMacro.schedule();
 }
 
 function ffNewsCacheStale(){
@@ -35771,10 +35865,9 @@ initAlladinCrud();
 // invisível ao motor. Assim a preferência de layout salva do operador permanece
 // válida, nenhum id persistido muda e nenhuma migração é necessária.
 //
-// POR QUE AUTO-DISPARO: o hook natural seria o fim de render() em
-// 20-ui/03-main-render.js, mas aquele arquivo está fora do escopo autorizado
-// desta mudança. O idioma usado aqui é o mesmo do Alladin (24-alladin-views.js):
-// MutationObserver na própria section + primeira pintura no load.
+// Atualização por entrada na tela, render geral, feed, storage e visibilidade.
+// Hooks assíncronos são agrupados por frame; o relógio só age na tela visível.
+// Preferências de widgets continuam exclusivamente no motor de layout.
 //
 // SEMÂNTICA INVARIANTE — o que este arquivo jamais faz:
 //   PARTIAL      nunca vira total conhecido
@@ -35806,9 +35899,23 @@ function dmRow(nome, valorHTML){
   return '<div class="dm-row"><span class="dm-k">'+esc(nome)+'</span><span class="dm-v">'+valorHTML+'</span></div>';
 }
 function dmAux(texto){ return '<span class="dm-aux">'+esc(texto)+'</span>'; }
+const DM_AREAS = {
+  forex: ['01', 'Risco e operação'],
+  'personal-finance': ['02', 'Orçamento e crédito'],
+  research: ['03', 'Estudos e agenda'],
+  alladin: ['04', 'Contas e patrimônio']
+};
+function dmLink(label, route, surface, view){
+  return '<button type="button" class="dm-link" data-dm-route="'+esc(route)+'"'
+    +(surface?' data-dm-surface="'+esc(surface)+'" data-dm-view="'+esc(view)+'"':'')
+    +'>'+esc(label)+'<span aria-hidden="true">↗</span></button>';
+}
+function dmLinks(html){ return '<nav class="dm-links" aria-label="Detalhes da área">'+html+'</nav>'; }
+function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label)+'</h4>'+html+'</div>'; }
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
-  return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'">'
-    + '<h3 class="dm-title">'+esc(titulo)+'</h3>'
+  const meta=DM_AREAS[id];
+  return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
+    + '<header class="dm-card-head"><div><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div><span class="dm-index" aria-hidden="true">'+meta[0]+'</span></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button>'
     + '</article>';
@@ -35818,6 +35925,12 @@ function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
 function dmErro(motivo){
   return '<p class="dm-blocked">Resumo indisponível — falha ao ler o domínio.'
     + (motivo ? ' '+esc(motivo) : '') + '</p>';
+}
+
+function dmDate(value){
+  const text=String(value||'');
+  const match=/^(\d{4})-(\d{2})-(\d{2})/.exec(text);
+  return match ? match[3]+'/'+match[2]+'/'+match[1] : text || '—';
 }
 
 // ---- FOREX ------------------------------------------------------------------
@@ -35847,7 +35960,35 @@ function dmForexHTML(c){
   if(cl.reasons && cl.reasons.length){
     corpo += dmNote(cl.reasons[0] + (cl.reasons.length > 1 ? '  (+' + (cl.reasons.length - 1) + ')' : ''));
   }
+  const led = ledgerSorted();
+  const last = led.length ? led[led.length-1] : null;
+  corpo += dmSection('Apuração', last
+    ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtMoney2(last.saldo)+'</b>')
+      + dmRow('Resultado do dia', '<b>'+fmtMoney2(last.resultado)+'</b>')
+    : dmNote('Nenhum fechamento registrado neste período.'));
+  corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
+  corpo += dmLinks(dmLink('Conta', 'forex-account')+dmLink('Preparação', 'forex-preparation')
+    +dmLink('Apuração', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
   return {html: corpo, tom};
+}
+
+// A ponte de estado do Planejamento normaliza S; esta projeção usa o motor
+// puro e recusa formas incompletas, sem reparar nem gravar a base ao consultar.
+function dmPlanningHTML(){
+  const state=S.fxPlanning;
+  if(!state || state.schemaVersion!==1) return {html:dmNote('Planejamento indisponível nesta versão da base.')};
+  const raw=state.plan;
+  if(!raw) return {html:dmNote('Planejamento ainda não aprovado.')};
+  const model=window.JPWFx.model;
+  if(!raw.baseline || !raw.current || !raw.actuals || !Array.isArray(raw.contributions)
+    || model.fxValidateAssumptions(raw.baseline).length || model.fxValidateAssumptions(raw.current).length)
+    return {html:dmNote('Planejamento indisponível — revise os dados no módulo.')};
+  const plan=window.JPWFx.engine.fxOverview(raw);
+  return {html:plan.lastClosedMonth
+    ? dmRow('Resultado realizado', '<b>'+fmtMoney2(plan.realizedProfitUsd)+'</b>')
+      +dmRow('Desvio vs baseline', '<b>'+fmtMoney2(plan.deviationUsd)+'</b>')
+      +dmNote('Até '+pfMonthLabel(plan.lastClosedMonth)+' · valores em USD')
+    : dmNote('Plano aprovado · aguardando o primeiro fechamento mensal.')};
 }
 
 // ---- FINANÇAS PESSOAIS ------------------------------------------------------
@@ -35902,6 +36043,15 @@ function dmFinpesHTML(){
   corpo += dmRow('Pendências anteriores', pend.length
     ? '<span class="dm-partial">' + pend.length + ' mês(es) em aberto</span>'
     : dmAux('nenhuma'));
+  const baseKey=pfCompBaselines(M).previousMonth;
+  const comp=pfCompCompare(M,baseKey).metrics.sobra;
+  corpo += dmSection('Comparação mensal', comp.available
+    ? dmRow('Sobra vs '+pfMonthLabel(baseKey), '<b>'+foSignedMoney(comp.delta)+'</b>')
+    : dmNote('A comparação da sobra precisa de dois meses com valores completos.'));
+  corpo += dmLinks(dmLink('Orçamento', 'personal-finance','finpes','mensal')
+    +dmLink('Dívidas e crédito', 'personal-finance','finpes','dividas')
+    +dmLink('Comparativo', 'personal-finance','finpes','comparativo')
+    +dmLink('Cenários', 'personal-finance','finpes','cenarios'));
   return {html: corpo, tom: pend.length ? 'warn' : null};
 }
 
@@ -35960,10 +36110,17 @@ function dmResearchHTML(){
       ? '<b>' + hoje.length + '</b> ' + dmAux('evento(s) de alto impacto')
       : dmAux('nenhum evento de alto impacto'));
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
-    if(prox) corpo += dmRow('Próximo evento', esc(String(prox.title || '—')).slice(0, 48) + ' ' + dmAux(String(prox.country || '')));
+    if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
     if(typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
       corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   }
+  corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
+    +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
+    +dmLink('REITs','research-reits')+dmLink('Others','research-others')
+    +'</div>'+dmNote('Áreas em preparação · sem conteúdo publicado.'));
+  corpo += dmLinks(dmLink('Calendário','research-forex','research','calendar')
+    +dmLink('NoCoda','research-forex','research','nocoda')
+    +dmLink('Pivots','research-forex','research','pivots'));
   return {html: corpo, tom: null};
 }
 
@@ -35996,7 +36153,29 @@ function dmAlladinHTML(){
     + dmFact('Contas', String(nContas), nCaixas + ' caixa(s)')
   );
   corpo += dmRow('Instrumentos cadastrados', nInstr ? '<b>' + nInstr + '</b>' : dmAux('nenhum'));
-  corpo += dmRow('Schema', dmAux('v' + String(compat.supportedSchemaVersion) + ' · íntegro'));
+  corpo += dmRow('Bens cadastrados', '<b>'+L.assets().length+'</b>');
+  const labels=alladinCatalogoLabels();
+  const cash=L.cashAccounts();
+
+  // Conta por conta: moedas nunca são somadas e recusa nunca vira saldo zero.
+  const balances=cash.slice(0,3).map(account=>{
+    const balance=L.saldoDeCaixa(account.cashAccountId);
+
+    return dmRow(alladinCaixaLabel(labels,account.cashAccountId), balance.available
+      ? '<b>'+esc(JPWAlladin.money.format({amount:balance.amount,currency:balance.currency}))+'</b>'
+      : '<span class="dm-partial">Saldo indisponível</span>');
+  }).join('');
+  corpo += dmSection('Saldos por conta', balances || dmNote('Cadastre uma conta de caixa para acompanhar os saldos.'));
+  if(cash.length>3) corpo+=dmNote('Exibindo 3 de '+cash.length+' contas. Todos os saldos estão no módulo.');
+  const txs=L.transactions();
+  const last=txs.length?txs[txs.length-1]:null;
+  // Mesma ordem econômica do leitor; correção por estorno permanece visível.
+  corpo += dmSection('Último lançamento', last
+    ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
+      +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
+    : dmNote('Nenhum lançamento registrado.'));
+  corpo += dmLinks(dmLink('Saldos','alladin','alladin','balances')+dmLink('Lançamentos','alladin','alladin','ledger')
+    +dmLink('Posições','alladin','alladin','positions')+dmLink('Cadastros','alladin','alladin','instruments'));
   return {html: corpo, tom: null};
 }
 
@@ -36013,11 +36192,23 @@ function dashMacroRender(){
   const finpes = dmSafe(dmFinpesHTML);
   const research = dmSafe(dmResearchHTML);
   const alladin = dmSafe(dmAlladinHTML);
-  root.innerHTML =
+  const html =
       dmCard('forex', 'Forex', forex.html, 'forex-overview', 'Abrir Forex', forex.tom)
     + dmCard('personal-finance', 'Finanças Pessoais', finpes.html, 'personal-finance', 'Abrir Finanças Pessoais', finpes.tom)
     + dmCard('research', 'Research', research.html, 'research-forex', 'Abrir Research', research.tom)
     + dmCard('alladin', 'Alladin', alladin.html, 'alladin', 'Abrir Alladin', alladin.tom);
+  if(root.innerHTML!==html){
+    const active=root.contains(document.activeElement)?document.activeElement:null;
+    const key=active?{route:active.dataset.dmRoute,surface:active.dataset.dmSurface,view:active.dataset.dmView}:null;
+    root.innerHTML=html;
+    if(key){
+      const target=[...root.querySelectorAll('[data-dm-route]')].find(b=>b.dataset.dmRoute===key.route&&b.dataset.dmSurface===key.surface&&b.dataset.dmView===key.view);
+      if(target) target.focus({preventScroll:true});
+    }
+  }
+  const date=document.getElementById('dmToday');
+  if(date) date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+
 }
 
 function initDashMacro(){
@@ -36029,18 +36220,48 @@ function initDashMacro(){
   // segunda implementação de roteamento.
   root.addEventListener('click', e => {
     const btn = e.target.closest('button[data-dm-route]');
-    if(btn && window.JPWNavigation) window.JPWNavigation.navigate(btn.dataset.dmRoute);
+    if(btn && window.JPWNavigation){
+      const surfaceId=btn.dataset.dmSurface, view=btn.dataset.dmView;
+      const local=surfaceId==='finpes'||surfaceId==='research';
+      const result=local
+        ? window.JPWNavigation.navigateLocal(surfaceId,view)
+        : window.JPWNavigation.navigate(btn.dataset.dmRoute);
+      if(result===false) return;
+      // Alladin mantém vistas efêmeras próprias, fora de NAV_LOCAL_SURFACES.
+      if(surfaceId==='alladin' && window.JPWAlladinUI) window.JPWAlladinUI.selectView(view);
+      if(btn.dataset.dmView){
+        const screen=document.querySelector('#appMain > .screen.active');
+        const heading=screen&&[...screen.querySelectorAll('h2,h3')].find(h=>h.getClientRects().length);
+        if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+      }
+    }
   });
   // Repinta ao ENTRAR no Dashboard: um valor editado em outro módulo aparece
   // aqui sem recarregar a página. Render jamais escreve.
   new MutationObserver(() => {
     if(section.classList.contains('active')) dashMacroRender();
   }).observe(section, {attributes:true, attributeFilter:['class']});
+  // A edição de widgets revela a seção, preservando o motor e seu estado.
+  new MutationObserver(()=>{
+    if(document.documentElement.dataset.layoutEditing==='true'){
+      const tools=document.getElementById('dmTools');if(tools) tools.open=true;
+    }
+  }).observe(document.documentElement,{attributes:true,attributeFilter:['data-layout-editing']});
   dashMacroRender();
 }
 initDashMacro();
 
-window.JPWDashMacro = Object.freeze({render: dashMacroRender});
+// Agrupa os hooks no próximo frame, sem escrita nem requisição de rede.
+let dmRenderQueued=false;
+function dashMacroSchedule(){
+  if(dmRenderQueued || document.hidden || !document.querySelector('#dash.active')) return;
+  dmRenderQueued=true;
+  requestAnimationFrame(()=>{dmRenderQueued=false;if(document.querySelector('#dash.active')) dashMacroRender();});
+}
+window.addEventListener('storage',dashMacroSchedule);
+document.addEventListener('visibilitychange',dashMacroSchedule);
+setInterval(dashMacroSchedule,60000);
+window.JPWDashMacro = Object.freeze({render: dashMacroRender, schedule: dashMacroSchedule});
 </script>
 </body>
 </html>

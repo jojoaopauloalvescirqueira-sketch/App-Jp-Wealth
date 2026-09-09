@@ -68,7 +68,7 @@
       "order": 11,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "ec1ae853405ac685896ec1087626c0b0f0d1fa383a02d033f4250fe368a0be8d"
+      "sha256": "45ff313f7b5b5557391df814a66b18f0e8e80f4ee179ab00083a8171e9afd1f0"
     },
     {
       "order": 12,
@@ -266,7 +266,7 @@
       "order": 44,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
-      "sha256": "76c27c415a0deea53e3be47dc59e7e32357219debc57652738f76fff451fa60b"
+      "sha256": "d2abc27527f5ee4145aa7f31152c8b54adb24e016e3e0c8628530f20971254a3"
     },
     {
       "order": 45,
@@ -467,7 +467,7 @@
       "order": 78,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "60f9b0b81cf590a4fccb1ff91fb29e908b4d3ffafc5f27cbb43a756e0460c3f8"
+      "sha256": "4c4ea201d8beeb2f3149c2cdb98c75e3ffc41be4a62b73fa9856503e5ba7baea"
     }
   ]
 }

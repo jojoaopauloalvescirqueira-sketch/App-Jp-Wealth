@@ -6185,3 +6185,93 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
   .dm-facts{grid-template-columns:1fr}
   .dm-row{font-size:11px}
 }
+
+/* Dashboard executivo — apresentação apenas; identidades do layout preservadas. */
+#dashMacro{--dm-blue:#4299f5;margin:12px 0 36px}
+#dashMacro .dm-page-head{display:flex;justify-content:space-between;align-items:center;gap:24px;margin:8px 0 28px}
+#dashMacro .dm-eyebrow{display:block;font:600 11px var(--mono);letter-spacing:.12em;color:var(--ink-dim);text-transform:uppercase}
+#dashMacro .dm-shell-title{font:600 clamp(24px,2.4vw,34px)/1.2 var(--sans);letter-spacing:-.035em;margin:10px 0 8px;color:var(--ink)}
+#dashMacro .dm-shell-sub{font:400 14px/1.6 var(--sans);color:var(--ink-dim);margin:0}
+#dashMacro .dm-date{display:flex;align-items:center;gap:9px;font:400 12px/1.5 var(--sans);color:var(--ink-dim);white-space:nowrap}
+#dashMacro .dm-live-dot{width:6px;height:6px;flex:none;border-radius:50%;background:var(--dm-blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--dm-blue) 10%,transparent)}
+#dashMacro .dm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch}
+#dashMacro .dm-card{display:flex;flex-direction:column;gap:0;min-width:0;border:1px solid var(--line);border-left:1px solid var(--line);border-radius:16px;padding:24px;background:var(--panel);box-shadow:0 5px 18px #00000008;overflow:hidden}
+#dashMacro .dm-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+#dashMacro .dm-title{font:600 22px/1.25 var(--sans);letter-spacing:-.025em;margin:6px 0 0}
+#dashMacro .dm-index{font:400 30px var(--mono);color:var(--ink-faint);opacity:.35}
+#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--dm-blue)}
+#dashMacro [data-dm-card="personal-finance"] .dm-eyebrow{color:var(--f1)}
+#dashMacro [data-dm-card="research"] .dm-eyebrow{color:var(--violet)}
+#dashMacro [data-dm-card="alladin"] .dm-eyebrow{color:var(--f2)}
+#dashMacro .dm-body{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+#dashMacro .dm-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:2px 0}
+#dashMacro .dm-fact{display:flex;flex-direction:column;gap:8px;padding:14px 16px;background:var(--panel-2);border-radius:10px;min-width:0}
+#dashMacro .dm-fact .k{font:500 12px/1.4 var(--sans);text-transform:none;letter-spacing:0;color:var(--ink-dim)}
+#dashMacro .dm-fact .v{font:600 clamp(19px,2vw,27px)/1.2 var(--sans);letter-spacing:-.035em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#dashMacro .dm-fact .s{font:400 12px/1.5 var(--sans);color:var(--ink-dim)}
+#dashMacro .dm-bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+#dashMacro .dm-bar i{background:var(--dm-blue)}
+#dashMacro .dm-bar.warn i{background:var(--f2)}
+#dashMacro .dm-bar.bad i{background:var(--f4)}
+#dashMacro .dm-sub{font:500 12px/1.5 var(--sans);letter-spacing:.04em;margin-top:-5px;color:var(--ink-dim)}
+#dashMacro .dm-row{display:flex;align-items:baseline;justify-content:space-between;gap:18px;padding:7px 0;border-bottom:0;font:400 13px/1.5 var(--sans);min-width:0}
+#dashMacro .dm-k{color:var(--ink-dim);white-space:normal;overflow-wrap:anywhere;flex:1}
+#dashMacro .dm-v{max-width:64%;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#dashMacro .dm-row b{font-weight:600}
+#dashMacro .dm-section{border-top:1px solid var(--line);padding-top:15px;margin-top:6px}
+#dashMacro .dm-section h4{font:600 12px/1.5 var(--sans);letter-spacing:.025em;color:var(--ink);margin:0 0 5px}
+#dashMacro .dm-note,#dashMacro .dm-empty{font:400 13px/1.6 var(--sans);color:var(--ink-dim);padding:0;background:none;border:0;margin:0}
+#dashMacro .dm-empty{padding:14px 16px;border:1px dashed var(--line);border-radius:10px;min-height:85px;display:flex;align-items:center}
+#dashMacro .dm-aux{font:400 12px/1.5 var(--sans);color:var(--ink-dim)}
+#dashMacro .dm-event{font:600 16px/1.5 var(--sans);color:var(--ink);margin:8px 0 2px;overflow-wrap:anywhere}
+#dashMacro .dm-links{display:flex;gap:4px 14px;flex-wrap:wrap;padding-top:10px;margin-top:auto}
+#dashMacro .dm-link{display:inline-flex;align-items:center;justify-content:space-between;gap:9px;min-height:36px;padding:4px 0;border:0;background:transparent;color:var(--ink-dim);font:500 12px/1.4 var(--sans);cursor:pointer;text-align:left}
+#dashMacro .dm-link:hover{color:var(--dm-blue)}
+#dashMacro .dm-link span{color:var(--ink-faint);font-size:15px}
+#dashMacro .dm-research-areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}
+#dashMacro .dm-cta{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;margin:16px 0 0;padding:12px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;color:var(--ink);font:600 13px/1.5 var(--sans);cursor:pointer;text-align:left}
+#dashMacro .dm-cta:hover{color:var(--dm-blue)}
+#dashMacro button:focus-visible{outline:2px solid var(--dm-blue);outline-offset:4px;border-radius:4px}
+#dashMacro .dm-blocked{font:400 14px/1.6 var(--sans);padding:16px;border-radius:10px}
+#dashMacro .dm-partial{font:500 12px/1.5 var(--sans);letter-spacing:0}
+/* O cockpit continua utilizável e personalizável, em escala secundária. */
+html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:20px 24px;min-height:0;gap:24px;border:1px solid var(--line);border-radius:12px}
+html[data-shell="global-dashboard"] #dash #mcClearanceTitle{font-size:20px;line-height:1.3;letter-spacing:-.02em}
+html[data-shell="global-dashboard"] #dash #mcClearanceSub{font-size:12px;line-height:1.5}
+html[data-shell="global-dashboard"] #dash #mcClearanceCard .mc-cockpit-acoes{margin-top:14px;gap:10px}
+html[data-shell="global-dashboard"] #dash #mcClearanceCard .jp-btn{min-height:40px;padding:9px 12px;font-size:12px}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts{gap:8px}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact{padding:10px 12px;min-height:0}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-v{font-size:20px;line-height:1.3}
+html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-meta{font-size:10px;line-height:1.5}
+html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
+@media(max-width:1100px){#dashMacro .dm-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+  #dashMacro{margin-top:8px}
+  #dashMacro .dm-page-head{display:block;margin-bottom:22px}
+  #dashMacro .dm-date{margin-top:14px}
+  #dashMacro .dm-shell-title{font-size:27px}
+  #dashMacro .dm-card{padding:18px;border-radius:12px}
+  #dashMacro .dm-title{font-size:21px}
+  #dashMacro .dm-facts{gap:8px}
+  #dashMacro .dm-fact{padding:12px;gap:6px}
+  #dashMacro .dm-fact .v{font-size:22px}
+  #dashMacro .dm-row{font-size:13px;gap:12px}
+  #dashMacro .dm-link{min-height:44px;font-size:13px}
+  #dashMacro .dm-cta{font-size:14px;min-height:48px}
+  html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:18px}
+}
+@media(prefers-reduced-motion:reduce){#dashMacro *{animation:none!important;transition:none!important}}
+
+#dashMacro .dm-card-head{position:static;height:auto;min-height:0;padding:0 0 16px;background:transparent;box-shadow:none;z-index:auto;flex-wrap:nowrap}
+#dashMacro .dm-fact .k{white-space:normal;overflow:visible;text-overflow:clip}
+
+#dash .dm-tools{margin:0 0 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#dash .dm-tools>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;padding:22px 2px;cursor:pointer;color:var(--ink)}
+#dash .dm-tools>summary::-webkit-details-marker{display:none}
+#dash .dm-tools>summary strong{display:block;font:600 16px/1.5 var(--sans)}
+#dash .dm-tools-caption{display:block;font:400 12px/1.6 var(--sans);color:var(--ink-dim);margin-top:4px}
+#dash .dm-tools-toggle{font:400 24px var(--sans);transition:transform .2s}
+#dash .dm-tools[open] .dm-tools-toggle{transform:rotate(45deg)}
+#dash .dm-tools>summary:focus-visible{outline:2px solid var(--violet);outline-offset:4px;border-radius:6px}
+#dash .dm-tools[open]{padding-bottom:20px}

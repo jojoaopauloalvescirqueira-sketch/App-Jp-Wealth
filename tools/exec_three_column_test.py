@@ -99,7 +99,7 @@ def ir_para_o_painel(page):
     O grid nasce `hidden` e quem o revela e o controlador de sub-view. Forcar
     display na mao mediria uma geometria que o app nunca produz.
     """
-    page.click('[data-dash-go="exec"]')
+    page.click('#dashMacro [data-dm-card="forex"] .dm-cta')
     page.wait_for_selector("#exec.active", state="attached")
     # A mesma porta que o submenu usa: JPWExec.ui.selectView. Os botoes de
     # sub-view vivem num menu recolhido e nao sao clicaveis de cara — o teste do

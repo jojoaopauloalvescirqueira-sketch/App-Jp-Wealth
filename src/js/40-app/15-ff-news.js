@@ -188,6 +188,7 @@ function ffNewsRender(){
 function ffNewsRenderAll(){
   ffNewsRender();
   if(typeof ecalRenderIfOpen==='function') ecalRenderIfOpen();
+  if(window.JPWDashMacro) window.JPWDashMacro.schedule();
 }
 
 function ffNewsCacheStale(){

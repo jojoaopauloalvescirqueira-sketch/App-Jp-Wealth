@@ -12,10 +12,9 @@
 // invisível ao motor. Assim a preferência de layout salva do operador permanece
 // válida, nenhum id persistido muda e nenhuma migração é necessária.
 //
-// POR QUE AUTO-DISPARO: o hook natural seria o fim de render() em
-// 20-ui/03-main-render.js, mas aquele arquivo está fora do escopo autorizado
-// desta mudança. O idioma usado aqui é o mesmo do Alladin (24-alladin-views.js):
-// MutationObserver na própria section + primeira pintura no load.
+// Atualização por entrada na tela, render geral, feed, storage e visibilidade.
+// Hooks assíncronos são agrupados por frame; o relógio só age na tela visível.
+// Preferências de widgets continuam exclusivamente no motor de layout.
 //
 // SEMÂNTICA INVARIANTE — o que este arquivo jamais faz:
 //   PARTIAL      nunca vira total conhecido
@@ -47,9 +46,23 @@ function dmRow(nome, valorHTML){
   return '<div class="dm-row"><span class="dm-k">'+esc(nome)+'</span><span class="dm-v">'+valorHTML+'</span></div>';
 }
 function dmAux(texto){ return '<span class="dm-aux">'+esc(texto)+'</span>'; }
+const DM_AREAS = {
+  forex: ['01', 'Risco e operação'],
+  'personal-finance': ['02', 'Orçamento e crédito'],
+  research: ['03', 'Estudos e agenda'],
+  alladin: ['04', 'Contas e patrimônio']
+};
+function dmLink(label, route, surface, view){
+  return '<button type="button" class="dm-link" data-dm-route="'+esc(route)+'"'
+    +(surface?' data-dm-surface="'+esc(surface)+'" data-dm-view="'+esc(view)+'"':'')
+    +'>'+esc(label)+'<span aria-hidden="true">↗</span></button>';
+}
+function dmLinks(html){ return '<nav class="dm-links" aria-label="Detalhes da área">'+html+'</nav>'; }
+function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label)+'</h4>'+html+'</div>'; }
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
-  return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'">'
-    + '<h3 class="dm-title">'+esc(titulo)+'</h3>'
+  const meta=DM_AREAS[id];
+  return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
+    + '<header class="dm-card-head"><div><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div><span class="dm-index" aria-hidden="true">'+meta[0]+'</span></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button>'
     + '</article>';
@@ -59,6 +72,12 @@ function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
 function dmErro(motivo){
   return '<p class="dm-blocked">Resumo indisponível — falha ao ler o domínio.'
     + (motivo ? ' '+esc(motivo) : '') + '</p>';
+}
+
+function dmDate(value){
+  const text=String(value||'');
+  const match=/^(\d{4})-(\d{2})-(\d{2})/.exec(text);
+  return match ? match[3]+'/'+match[2]+'/'+match[1] : text || '—';
 }
 
 // ---- FOREX ------------------------------------------------------------------
@@ -88,7 +107,35 @@ function dmForexHTML(c){
   if(cl.reasons && cl.reasons.length){
     corpo += dmNote(cl.reasons[0] + (cl.reasons.length > 1 ? '  (+' + (cl.reasons.length - 1) + ')' : ''));
   }
+  const led = ledgerSorted();
+  const last = led.length ? led[led.length-1] : null;
+  corpo += dmSection('Apuração', last
+    ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtMoney2(last.saldo)+'</b>')
+      + dmRow('Resultado do dia', '<b>'+fmtMoney2(last.resultado)+'</b>')
+    : dmNote('Nenhum fechamento registrado neste período.'));
+  corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
+  corpo += dmLinks(dmLink('Conta', 'forex-account')+dmLink('Preparação', 'forex-preparation')
+    +dmLink('Apuração', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
   return {html: corpo, tom};
+}
+
+// A ponte de estado do Planejamento normaliza S; esta projeção usa o motor
+// puro e recusa formas incompletas, sem reparar nem gravar a base ao consultar.
+function dmPlanningHTML(){
+  const state=S.fxPlanning;
+  if(!state || state.schemaVersion!==1) return {html:dmNote('Planejamento indisponível nesta versão da base.')};
+  const raw=state.plan;
+  if(!raw) return {html:dmNote('Planejamento ainda não aprovado.')};
+  const model=window.JPWFx.model;
+  if(!raw.baseline || !raw.current || !raw.actuals || !Array.isArray(raw.contributions)
+    || model.fxValidateAssumptions(raw.baseline).length || model.fxValidateAssumptions(raw.current).length)
+    return {html:dmNote('Planejamento indisponível — revise os dados no módulo.')};
+  const plan=window.JPWFx.engine.fxOverview(raw);
+  return {html:plan.lastClosedMonth
+    ? dmRow('Resultado realizado', '<b>'+fmtMoney2(plan.realizedProfitUsd)+'</b>')
+      +dmRow('Desvio vs baseline', '<b>'+fmtMoney2(plan.deviationUsd)+'</b>')
+      +dmNote('Até '+pfMonthLabel(plan.lastClosedMonth)+' · valores em USD')
+    : dmNote('Plano aprovado · aguardando o primeiro fechamento mensal.')};
 }
 
 // ---- FINANÇAS PESSOAIS ------------------------------------------------------
@@ -143,6 +190,15 @@ function dmFinpesHTML(){
   corpo += dmRow('Pendências anteriores', pend.length
     ? '<span class="dm-partial">' + pend.length + ' mês(es) em aberto</span>'
     : dmAux('nenhuma'));
+  const baseKey=pfCompBaselines(M).previousMonth;
+  const comp=pfCompCompare(M,baseKey).metrics.sobra;
+  corpo += dmSection('Comparação mensal', comp.available
+    ? dmRow('Sobra vs '+pfMonthLabel(baseKey), '<b>'+foSignedMoney(comp.delta)+'</b>')
+    : dmNote('A comparação da sobra precisa de dois meses com valores completos.'));
+  corpo += dmLinks(dmLink('Orçamento', 'personal-finance','finpes','mensal')
+    +dmLink('Dívidas e crédito', 'personal-finance','finpes','dividas')
+    +dmLink('Comparativo', 'personal-finance','finpes','comparativo')
+    +dmLink('Cenários', 'personal-finance','finpes','cenarios'));
   return {html: corpo, tom: pend.length ? 'warn' : null};
 }
 
@@ -201,10 +257,17 @@ function dmResearchHTML(){
       ? '<b>' + hoje.length + '</b> ' + dmAux('evento(s) de alto impacto')
       : dmAux('nenhum evento de alto impacto'));
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
-    if(prox) corpo += dmRow('Próximo evento', esc(String(prox.title || '—')).slice(0, 48) + ' ' + dmAux(String(prox.country || '')));
+    if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
     if(typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
       corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   }
+  corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
+    +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
+    +dmLink('REITs','research-reits')+dmLink('Others','research-others')
+    +'</div>'+dmNote('Áreas em preparação · sem conteúdo publicado.'));
+  corpo += dmLinks(dmLink('Calendário','research-forex','research','calendar')
+    +dmLink('NoCoda','research-forex','research','nocoda')
+    +dmLink('Pivots','research-forex','research','pivots'));
   return {html: corpo, tom: null};
 }
 
@@ -237,7 +300,29 @@ function dmAlladinHTML(){
     + dmFact('Contas', String(nContas), nCaixas + ' caixa(s)')
   );
   corpo += dmRow('Instrumentos cadastrados', nInstr ? '<b>' + nInstr + '</b>' : dmAux('nenhum'));
-  corpo += dmRow('Schema', dmAux('v' + String(compat.supportedSchemaVersion) + ' · íntegro'));
+  corpo += dmRow('Bens cadastrados', '<b>'+L.assets().length+'</b>');
+  const labels=alladinCatalogoLabels();
+  const cash=L.cashAccounts();
+
+  // Conta por conta: moedas nunca são somadas e recusa nunca vira saldo zero.
+  const balances=cash.slice(0,3).map(account=>{
+    const balance=L.saldoDeCaixa(account.cashAccountId);
+
+    return dmRow(alladinCaixaLabel(labels,account.cashAccountId), balance.available
+      ? '<b>'+esc(JPWAlladin.money.format({amount:balance.amount,currency:balance.currency}))+'</b>'
+      : '<span class="dm-partial">Saldo indisponível</span>');
+  }).join('');
+  corpo += dmSection('Saldos por conta', balances || dmNote('Cadastre uma conta de caixa para acompanhar os saldos.'));
+  if(cash.length>3) corpo+=dmNote('Exibindo 3 de '+cash.length+' contas. Todos os saldos estão no módulo.');
+  const txs=L.transactions();
+  const last=txs.length?txs[txs.length-1]:null;
+  // Mesma ordem econômica do leitor; correção por estorno permanece visível.
+  corpo += dmSection('Último lançamento', last
+    ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
+      +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
+    : dmNote('Nenhum lançamento registrado.'));
+  corpo += dmLinks(dmLink('Saldos','alladin','alladin','balances')+dmLink('Lançamentos','alladin','alladin','ledger')
+    +dmLink('Posições','alladin','alladin','positions')+dmLink('Cadastros','alladin','alladin','instruments'));
   return {html: corpo, tom: null};
 }
 
@@ -254,11 +339,23 @@ function dashMacroRender(){
   const finpes = dmSafe(dmFinpesHTML);
   const research = dmSafe(dmResearchHTML);
   const alladin = dmSafe(dmAlladinHTML);
-  root.innerHTML =
+  const html =
       dmCard('forex', 'Forex', forex.html, 'forex-overview', 'Abrir Forex', forex.tom)
     + dmCard('personal-finance', 'Finanças Pessoais', finpes.html, 'personal-finance', 'Abrir Finanças Pessoais', finpes.tom)
     + dmCard('research', 'Research', research.html, 'research-forex', 'Abrir Research', research.tom)
     + dmCard('alladin', 'Alladin', alladin.html, 'alladin', 'Abrir Alladin', alladin.tom);
+  if(root.innerHTML!==html){
+    const active=root.contains(document.activeElement)?document.activeElement:null;
+    const key=active?{route:active.dataset.dmRoute,surface:active.dataset.dmSurface,view:active.dataset.dmView}:null;
+    root.innerHTML=html;
+    if(key){
+      const target=[...root.querySelectorAll('[data-dm-route]')].find(b=>b.dataset.dmRoute===key.route&&b.dataset.dmSurface===key.surface&&b.dataset.dmView===key.view);
+      if(target) target.focus({preventScroll:true});
+    }
+  }
+  const date=document.getElementById('dmToday');
+  if(date) date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+
 }
 
 function initDashMacro(){
@@ -270,15 +367,45 @@ function initDashMacro(){
   // segunda implementação de roteamento.
   root.addEventListener('click', e => {
     const btn = e.target.closest('button[data-dm-route]');
-    if(btn && window.JPWNavigation) window.JPWNavigation.navigate(btn.dataset.dmRoute);
+    if(btn && window.JPWNavigation){
+      const surfaceId=btn.dataset.dmSurface, view=btn.dataset.dmView;
+      const local=surfaceId==='finpes'||surfaceId==='research';
+      const result=local
+        ? window.JPWNavigation.navigateLocal(surfaceId,view)
+        : window.JPWNavigation.navigate(btn.dataset.dmRoute);
+      if(result===false) return;
+      // Alladin mantém vistas efêmeras próprias, fora de NAV_LOCAL_SURFACES.
+      if(surfaceId==='alladin' && window.JPWAlladinUI) window.JPWAlladinUI.selectView(view);
+      if(btn.dataset.dmView){
+        const screen=document.querySelector('#appMain > .screen.active');
+        const heading=screen&&[...screen.querySelectorAll('h2,h3')].find(h=>h.getClientRects().length);
+        if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+      }
+    }
   });
   // Repinta ao ENTRAR no Dashboard: um valor editado em outro módulo aparece
   // aqui sem recarregar a página. Render jamais escreve.
   new MutationObserver(() => {
     if(section.classList.contains('active')) dashMacroRender();
   }).observe(section, {attributes:true, attributeFilter:['class']});
+  // A edição de widgets revela a seção, preservando o motor e seu estado.
+  new MutationObserver(()=>{
+    if(document.documentElement.dataset.layoutEditing==='true'){
+      const tools=document.getElementById('dmTools');if(tools) tools.open=true;
+    }
+  }).observe(document.documentElement,{attributes:true,attributeFilter:['data-layout-editing']});
   dashMacroRender();
 }
 initDashMacro();
 
-window.JPWDashMacro = Object.freeze({render: dashMacroRender});
+// Agrupa os hooks no próximo frame, sem escrita nem requisição de rede.
+let dmRenderQueued=false;
+function dashMacroSchedule(){
+  if(dmRenderQueued || document.hidden || !document.querySelector('#dash.active')) return;
+  dmRenderQueued=true;
+  requestAnimationFrame(()=>{dmRenderQueued=false;if(document.querySelector('#dash.active')) dashMacroRender();});
+}
+window.addEventListener('storage',dashMacroSchedule);
+document.addEventListener('visibilitychange',dashMacroSchedule);
+setInterval(dashMacroSchedule,60000);
+window.JPWDashMacro = Object.freeze({render: dashMacroRender, schedule: dashMacroSchedule});
