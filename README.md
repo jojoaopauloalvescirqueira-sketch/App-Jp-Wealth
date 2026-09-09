@@ -1,12 +1,21 @@
 # JP Wealth Risk Terminal V9.1
 
-Aplicação web **local-first** (PWA, sem backend obrigatório) para governança de risco e gestão operacional de capital. O terminal aplica o **Estatuto JP Wealth** — fases operacionais, perfis de risco, limites de drawdown, stops, poda e quarentena — como regra executável no navegador, mantendo os dados do operador exclusivamente na máquina dele.
+Aplicação web **local-first** (PWA, sem backend obrigatório) para governança de risco e gestão operacional de capital. O motor financeiro ainda executa regras legadas; a documentação normativa foi atualizada para o **Estatuto JP Wealth V11** e o Anexo Paramétrico. A adaptação dos cálculos permanece pendente e esta versão não é declarada conforme à V11. Os dados do operador permanecem na máquina dele.
 
 O repositório foi estruturado a partir do HTML portátil preservado do JP Wealth: HTML, CSS e JavaScript foram separados **sem reescrever as regras financeiras nem alterar a ordem de execução** do código original.
 
 ## Propósito
 
 O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, três riscos são tratados como de primeira ordem: **perda silenciosa de dados**, **cálculo divergente da norma** e **falsa evidência de teste**. Tudo no projeto — arquitetura, testes, governança de agentes — existe para conter esses três riscos. O código não se torna normativo por estar em produção: a autoridade vive no Estatuto (`docs/normative/`) e nas decisões formais (`docs/decisions/`).
+
+## Fontes normativas atuais
+
+- [Estatuto V11 — PDF integral](docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf).
+- [Anexo Paramétrico Canônico — JPW-ANNEX-T03](docs/normative/ANEXO_PARAMETRICO_CANONICO.md).
+- [Identificação, precedência e divergências documentais](docs/normative/README.md).
+
+Os arquivos foram incorporados sem reescrever valores, preencher PENDING ou homologar
+parâmetros. Os documentos antigos foram removidos do worktree; o histórico Git os preserva.
 
 ## Prioridade do projeto
 
@@ -34,7 +43,7 @@ O sistema opera sobre dados financeiros e credenciais de leitura. Por isso, trê
 
 - **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
-- **Execução** — registro de ordens sob as regras do Estatuto: fases, risco programado, classificação de stops (2 ATR, Raiz-N), alavancagem.
+- **Execução** — registro de ordens com fases, risco programado, classificação de stops e alavancagem do motor legado; a adequação ao V11 está pendente.
 - **Research** — ownership visual de Calendário Econômico, Estudos NoCoda e Estudos dos Pivots sob Forex, sem duplicar telas ou domínio.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
 - **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
@@ -77,7 +86,7 @@ e ainda preservada pelo alias legado `fxplan`, o Planejamento FX é o
 motor de planejamento patrimonial temporal para Forex: separa **planejado**
 (premissas do operador),
 **realizado** (fechamentos mensais e ledger cambial de aportes) e **normativo**
-(FCR/FEO do Estatuto, pela mesma função usada no onboarding). O baseline
+(FCR/FEO calculados pela função legada usada no onboarding, ainda divergente do V11). O baseline
 aprovado é congelado; o forecast vigente recalcula o futuro a partir do último
 fechamento real (rolling forecast) e as três séries são comparáveis. O custo
 médio do dólar usa média ponderada (`Σ BRL ÷ Σ USD`) e créditos USD-nativos não
@@ -107,7 +116,7 @@ editado diretamente.
 
 ## Em desenvolvimento e decisões pendentes
 
-- **Dez pendências normativas N3** aguardam decisão formal humana — cada uma tem um ADR aberto em `docs/decisions/` (fatores dos perfis conservadores, fonte canônica de equity do drawdown, gate combinado da Ordem Gênese, bloqueio de stop < 2 ATR, histerese de fase, poda LIFO compulsória, rito da Fase 4, gatilho de quarentena, fator Raiz-N, projeções MEI). **Nenhuma é corrigida silenciosamente**: exigem decisão N3 e branch própria.
+- **Dez propostas N3 legadas**, anteriores à adoção documental da V11, aguardam reavaliação formal humana — cada uma tem um ADR aberto em `docs/decisions/` (fatores dos perfis conservadores, fonte canônica de equity do drawdown, gate combinado da Ordem Gênese, bloqueio de stop < 2 ATR, histerese de fase, poda LIFO compulsória, rito da Fase 4, gatilho de quarentena, fator Raiz-N, projeções MEI). **Nenhuma é corrigida silenciosamente**: exigem decisão N3 e branch própria.
 - **Dívida estrutural conhecida**: `openOnboardingModal()` concentra ~2 mil linhas; escopo global legado compartilhado; CSP não documentada; cobertura automatizada mais forte nos fluxos recentes que no núcleo financeiro. Detalhes e estado vigente em `docs/governance/CURRENT-STATE.md`.
 - Explorações de interface (redesign de telas, consolidações de UI) ocorrem em branches dedicadas e só entram na `main` por integração autorizada.
 - Hipóteses guiadas de experimento e áudio do Galton Board ficam deliberadamente para
@@ -126,10 +135,10 @@ Acesse `http://127.0.0.1:8000`. O PWA precisa ser servido por HTTP/HTTPS; abrir 
 ## Qualidade e verificação
 
 Três tiers cumulativos de gate (`tools/quality_gate.py`): **fast** (4 verificações —
-preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (42 —
-inclui a navegação NAV-01..NAV-03, smoke, Central de Configurações, Galton
+preflight, estrutura, diff-check, teste do frescor de contexto), **standard** (44 —
+inclui a adoção documental V11, navegação NAV-01..NAV-03, smoke, Central de Configurações, Galton
 Board, Planejamento FX, cotação USD/BRL, as nove suítes de Finanças Pessoais,
-as suítes do Alladin — incluindo o ledger econômico (ALD-03 S1/S2/S3/S4), a posição derivada (ALD-04 S1) e a superfície econômica com criação e estorno de lançamento (ALD-05 S1/S2/S3) — e o protocolo de geração da base e a serialização cross-tab de escrita e a superfície cadastral do Alladin (leitura e manutenção) em Chromium real) e **full** (53 verificações, incluindo segurança de importação/XSS, senha de
+as suítes do Alladin — incluindo o ledger econômico (ALD-03 S1/S2/S3/S4), a posição derivada (ALD-04 S1) e a superfície econômica com criação e estorno de lançamento (ALD-05 S1/S2/S3) — e o protocolo de geração da base e a serialização cross-tab de escrita e a superfície cadastral do Alladin (leitura e manutenção) em Chromium real) e **full** (55 verificações, incluindo segurança de importação/XSS, senha de
 investidor, recuperação transacional, reprodutibilidade de build e ciclo do service
 worker). O cenário longo
 de 10.000 bolas fica em `tools/galton_board_benchmark.py`, fora do tier cumulativo.
@@ -169,7 +178,7 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 - `src/vendor/planck/` — Planck.js 1.5.0 pinado, licença e proveniência.
 - `assets/`, `manifests/`, `sw.js` — superfície PWA (ícones, manifesto único, service worker com precache).
 - `infra/ff-news-feed/` — documentação do alimentador do widget de notícias (repositório auxiliar, só dados públicos).
-- `docs/normative/` — Estatuto e organograma, fontes de autoridade.
+- `docs/normative/` — Estatuto V11, Anexo Paramétrico e índice de autoridade; organograma auxiliar.
 - `docs/decisions/` — ADRs: decisões formais e pendências N3.
 - `docs/architecture/` — arquitetura, schema de estado e mapa do código.
 - `docs/governance/` — regras para trabalho humano e por IA, estado atual, gates.
@@ -178,3 +187,8 @@ O fingerprint de alterações inclui `instruments[].preco` e `instruments[].upda
 - `archive/original/` — original imutável para comparação e recuperação.
 - `data/backups/` — backups JSON locais; não versionar dados reais.
 - `dist/` — HTML portátil reconstruído (derivado).
+
+
+A consulta V11 inclui PDF e Anexo no cache da versão do PWA e incorpora seus
+originais no HTML portátil. O teste `tools/statute_documentary_test.py` verifica
+leitor, consentimento por versão e entrega online/offline com dados sintéticos.

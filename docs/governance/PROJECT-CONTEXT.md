@@ -1,6 +1,6 @@
 # Contexto canonico do projeto
 
-Atualizado em: 2026-08-09
+Atualizado em: 2026-09-08
 Natureza: contexto estavel (M1). Mudancas frequentes pertencem a `CURRENT-STATE.md`.
 
 ## Produto
@@ -9,11 +9,15 @@ O JP Wealth Risk Terminal V9.1 e uma aplicacao web local/PWA para governanca de 
 
 ## Fontes de autoridade
 
-- Norma vigente versionada: `docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf`.
+- Norma vigente indicada pelo proprietário: `docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf` (V11).
+- Anexo recebido: `docs/normative/ANEXO_PARAMETRICO_CANONICO.md` (JPW-ANNEX-T03), limitado aos elementos delegados; estados PENDING não são valores. Identidade e divergências entre as fontes em `docs/normative/README.md`.
 - Decisoes humanas aprovadas: `docs/decisions/`.
 - Regras de agentes: `AGENTS.md`.
 - Arquitetura: `docs/architecture/`.
 - Estado atual e divida conhecida: `docs/governance/CURRENT-STATE.md`.
+
+A adoção documental da V11 não adapta o motor legado quadrifásico. As diferenças
+financeiras e de fontes permanecem em `CURRENT-STATE.md`, sem migração automática.
 
 O codigo nao se torna normativo por estar em producao. Um teste nao torna correta uma regra que conflita com o Estatuto.
 

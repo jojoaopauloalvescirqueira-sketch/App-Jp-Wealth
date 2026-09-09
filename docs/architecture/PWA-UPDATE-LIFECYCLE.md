@@ -16,7 +16,7 @@ O registro usa `updateViaCache: 'none'`, para que as buscas do script e de seus 
 
 `index.html` contém um bootstrap inline mínimo que, no evento `load`, obtém o registro pronto e chama `registration.update()`. Ele fica no documento para que a própria navegação coerente entregue pelo cache antigo descubra a publicação, mesmo quando o script externo de registro também vem desse cache. `src/js/40-app/06-app-icons.js` chama `registration.update()` depois de registrar o worker, cobrindo a instalação corrente e carregamentos futuros. Essas chamadas somente descobrem o worker publicado: nenhuma delas força ativação, recarga ou troca de controller.
 
-`tools/rebuild_monolith.py` gera `build-id.js` a partir de hash reproduzível do HTML (sem a linha gerada), CSS, manifest JavaScript, worker, scripts e manifesto PWA declarados. Os ícones usam a versão explícita `ICON_CACHE_VERSION` de `sw.js`, que deve ser incrementada quando seus bytes mudarem. A página carrega o Build ID antes dos scripts do terminal e o worker usa `importScripts`. O identificador não pertence a `S` nem a qualquer backup.
+`tools/rebuild_monolith.py` gera `build-id.js` a partir de hash reproduzível do HTML (sem a linha gerada), CSS, manifest JavaScript, worker, scripts, manifesto PWA, documentos normativos e próprio gerador declarados. Os ícones usam a versão explícita `ICON_CACHE_VERSION` de `sw.js`, que deve ser incrementada quando seus bytes mudarem. A página carrega o Build ID antes dos scripts do terminal e o worker usa `importScripts`. O identificador não pertence a `S` nem a qualquer backup.
 
 ## Cache e offline
 
@@ -48,3 +48,13 @@ O teste muda o servidor de uma raiz antiga para uma nova, abre uma navegação d
 - Uma publicação parcialmente distribuída pelo provedor ainda pode falhar o precache; nesse caso o worker anterior permanece ativo, que é o comportamento seguro.
 - A política não oferece atualização imediata por decisão: uma aba antiga só muda quando o usuário a fecha.
 - Alterar um ícone sem também incrementar `ICON_CACHE_VERSION` não muda o Build ID; esse pareamento manual deve ser preservado até que os ícones integrem o fingerprint oficial.
+
+
+## Consulta normativa — adoção V11 (2026-09-08)
+
+O PDF canônico e o Anexo Paramétrico pertencem ao fingerprint e ao cache do build.
+Esses dois recursos recebem tratamento próprio antes do fallback de navegação do
+shell, preservando seus bytes e a consulta offline. A regra não altera o ciclo de
+instalação/ativação/atualização nem as demais rotas. No HTML portátil, o gerador
+incorpora os originais em links de download com data URLs; não depende de /dist/docs
+ou de uma pasta externa. O texto derivado também continua no leitor do onboarding.
