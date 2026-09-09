@@ -72,14 +72,8 @@ function dashLayoutDeepFreeze(obj) {
 // index.html — restaurar padrão é voltar a esta constante, não reler o HTML.
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
-    // JPW-789ABC-B2, Fase 2B — o Dashboard fica com SEIS widgets.
-    // P1: o cockpit, `full`, dono dos quatro fatos operacionais.
-    // P2: Status do Sistema + VRM dividindo a linha seguinte; Notícias abaixo.
-    // Sidebar: pendências de governança e atalhos.
-    // Saíram por absorção: a faixa de métricas e a Coerência (viraram os fatos
-    // e suas escalas), os Termômetros (a escala É a representação), a Postura
-    // (o veredito + os motivos dizem o mesmo com número e remédio) e o Perfil e
-    // Contexto (duplicava a faixa do header item a item).
+    // Identidade lógica v6 preservada: dois cartões no Dashboard e quatro
+    // projetados na Visão Geral do Forex, sem novo envelope ou migração.
     { id: 'onboarding-alert', zone: 'main', size: 'full', order: 0 },
     { id: 'operational-clearance', zone: 'main', size: 'full', order: 1 },
     { id: 'institutional-panel', zone: 'main', size: 'compact', order: 2 },
@@ -132,12 +126,17 @@ function dashLayoutCardEl(screenId, widgetId) {
   const sel = '[data-layout-card="' + widgetId + '"]';
   const mainEl = document.getElementById(cfg.main);
   if (mainEl) { const found = mainEl.querySelector(sel); if (found) return found; }
+  if (screenId === 'dash') {
+    const overview = document.getElementById('fxOverviewWidgets');
+    if (overview) { const found = overview.querySelector(sel); if (found) return found; }
+  }
   if (cfg.sidebar) { const sideEl = document.getElementById(cfg.sidebar); if (sideEl) { const found = sideEl.querySelector(sel); if (found) return found; } }
   return null;
 }
 function dashLayoutActiveScreenId() {
   const active = document.querySelector('.screen.active');
   if (!active) return null;
+  if (active.id === 'exec' && !document.getElementById('execOverview').hidden) return 'dash';
   return JP_WIDGET_SCREENS[active.id] ? active.id : null; // 'config' não está no registro
 }
 function dashLayoutAllowedWidgetIds(screenId) {
@@ -474,12 +473,22 @@ function dashLayoutLoadFullState() {
   return dashLayoutNormalizeV6(null); // tudo padrão
 }
 
+// O grupo persistido v6 continua único; seus cartões são projetados em duas
+// superfícies. Os slots mantêm a ordem relativa da superfície não editada.
+let dashLayoutLogicalSlots = [];
+function dashLayoutCardContainer(screenId, widget) {
+  if (screenId === 'dash' && !['institutional-panel', 'quick-actions'].includes(widget.id)) {
+    return document.getElementById('fxOverviewWidgets');
+  }
+  return dashLayoutZoneEl(screenId, widget.zone);
+}
 function dashLayoutApplyScreen(screenId, widgets) {
+  if (screenId === 'dash') dashLayoutLogicalSlots = widgets.map(w => ({ ...w }));
   widgets.forEach(w => {
     const el = dashLayoutCardEl(screenId, w.id);
     if (!el) return;
     el.dataset.widgetSize = w.size;
-    const zoneEl = dashLayoutZoneEl(screenId, w.zone);
+    const zoneEl = dashLayoutCardContainer(screenId, w);
     if (zoneEl) zoneEl.appendChild(el);
   });
 }
@@ -487,6 +496,18 @@ function dashLayoutApplyAllScreens(full) {
   JP_WIDGET_SCREEN_IDS.forEach(screenId => dashLayoutApplyScreen(screenId, full.screens[screenId].widgets));
 }
 function dashLayoutCurrentScreenState(screenId) {
+  if (screenId === 'dash') {
+    const queues = new Map();
+    dashLayoutLogicalSlots.forEach(w => {
+      const root = dashLayoutCardContainer(screenId, w);
+      if (!queues.has(root)) queues.set(root, root ? [...root.querySelectorAll(':scope > [data-layout-card]')] : []);
+    });
+    const widgets = dashLayoutLogicalSlots.map((w, order) => {
+      const el = queues.get(dashLayoutCardContainer(screenId, w)).shift();
+      return el ? { id: el.dataset.layoutCard, zone: w.zone, size: el.dataset.widgetSize, order } : null;
+    });
+    return [...queues.values()].some(queue => queue.length) ? [] : widgets;
+  }
   const cfg = JP_WIDGET_SCREENS[screenId];
   const widgets = [];
   let order = 0;
@@ -638,6 +659,10 @@ function dashLayoutAllCardEls(screenId) {
     const root = dashLayoutZoneEl(screenId, zone);
     if (root) out.push(...root.querySelectorAll(':scope > [data-layout-card]'));
   });
+  if (screenId === 'dash') {
+    const overview = document.getElementById('fxOverviewWidgets');
+    if (overview) out.push(...overview.querySelectorAll(':scope > [data-layout-card]'));
+  }
   return out;
 }
 
@@ -785,7 +810,8 @@ function dashLayoutUpdateBarInfo() {
   const screenId = dashLayoutState.activeScreenId;
   const label = document.getElementById('dashLayoutBarLabel');
   if (label) {
-    label.textContent = 'Tela atual: ' + (screenId ? JP_WIDGET_SCREENS[screenId].label : '—');
+    const overview = screenId === 'dash' && document.querySelector('#exec.active');
+    label.textContent = 'Tela atual: ' + (overview ? 'Forex · Visão Geral' : screenId ? JP_WIDGET_SCREENS[screenId].label : '—');
     label.classList.remove('dash-layout-bar-error');
   }
   const countEl = document.getElementById('dashLayoutBarCount');
@@ -825,7 +851,7 @@ function dashLayoutRecomputeDirty(screenId) {
 // intocados: vivem no próprio DOM de cada *WidgetGrid, que nunca é
 // destruído ao trocar de `.screen.active` (ver 01-navigation.js).
 function dashLayoutSetActiveScreen(screenId) {
-  if (!screenId || dashLayoutState.activeScreenId === screenId) return;
+  if (!screenId) return;
   dashLayoutClosePopover({ returnFocus: false });
   dashLayoutUndecorateScreen(dashLayoutState.activeScreenId);
   dashLayoutState.activeScreenId = screenId;
@@ -916,9 +942,54 @@ function dashLayoutFinish() {
     }
     validatedByScreen[screenId] = validated;
   }
-  const full = dashLayoutLoadFullState();
-  dirty.forEach(screenId => { full.screens[screenId] = { widgets: validatedByScreen[screenId] }; });
-  dashLayoutSaveV6(full); // uma única escrita, com todas as telas alteradas já validadas
+  // Altera somente os campos editados, preservando o envelope e os cartões
+  // da outra superfície. Uma preferência inválida nunca vira defaults salvos.
+  let full;
+  try {
+    const raw = localStorage.getItem(JP_WIDGET_STORAGE_KEY_V6);
+    full = raw === null ? { version: 6, screens: {} } : JSON.parse(raw);
+    if (!full || full.version !== 6 || !full.screens || typeof full.screens !== 'object' || Array.isArray(full.screens)) throw new Error();
+    dirty.forEach(screenId => {
+      const saved = full.screens[screenId];
+      if (!Object.prototype.hasOwnProperty.call(full.screens, screenId)) {
+        full.screens[screenId] = { widgets: validatedByScreen[screenId] };
+        return;
+      }
+      if (!saved || typeof saved !== 'object' || !dashLayoutValidateScreenWidgets(screenId, saved.widgets)) throw new Error();
+      // A compatibilidade desta realocação pertence ao grupo dash. As demais
+      // telas mantêm a normalização de salvamento que já existia na base,
+      // inclusive suas representações históricas; não criar outra migração.
+      if (screenId !== 'dash') {
+        full.screens[screenId] = { ...saved, widgets: validatedByScreen[screenId] };
+        return;
+      }
+      const ordered = saved.widgets.slice().sort((a, b) => a.order - b.order);
+      const before = dashLayoutState.snapshots[screenId];
+      const after = validatedByScreen[screenId];
+      saved.widgets = saved.widgets.map(widget => {
+        const old = before.find(w => w.id === widget.id);
+        const next = after.find(w => w.id === widget.id);
+        if (!old || !next) throw new Error();
+        const updated = { ...widget };
+        if (old.zone !== next.zone) updated.zone = next.zone;
+        if (old.size !== next.size) updated.size = next.size;
+        if (old.order !== next.order) updated.order = ordered[next.order].order;
+        return updated;
+      });
+      // Ordens empatadas eram válidas em v6. A posição no array desempata
+      // sem renumerar os registros que pertencem à outra superfície.
+      saved.widgets.sort((a, b) => after.findIndex(w => w.id === a.id) - after.findIndex(w => w.id === b.id));
+      if (!dashLayoutValidateScreenWidgets(screenId, saved.widgets)) throw new Error();
+    });
+  } catch (_) {
+    dashLayoutShowBarError('Preferência de layout indisponível ou inválida — nada foi gravado. Cancele para preservar o original.');
+    return;
+  }
+  if (!dashLayoutSaveV6(full)) {
+    dashLayoutShowBarError('Não foi possível salvar o layout — seus ajustes continuam nesta sessão.');
+    return;
+  }
+  if (dirty.includes('dash')) dashLayoutLogicalSlots = validatedByScreen.dash.map(w => ({ ...w }));
   const labels = dirty.map(id => JP_WIDGET_SCREENS[id].label).join(', ');
   dashLayoutEndSession();
   dashLayoutAnnounce((dirty.length === 1 ? '1 tela salva: ' : dirty.length + ' telas salvas: ') + labels + '.');
@@ -930,11 +1001,22 @@ function dashLayoutFinish() {
 function dashLayoutRestoreDefaultConfirm() {
   const screenId = dashLayoutState.editing ? dashLayoutState.activeScreenId : dashLayoutActiveScreenId();
   if (!screenId) return;
-  const label = JP_WIDGET_SCREENS[screenId].label;
+  const overview = screenId === 'dash' && document.querySelector('#exec.active');
+  const label = overview ? 'Forex · Visão Geral' : JP_WIDGET_SCREENS[screenId].label;
   if (!confirm('Restaurar o layout padrão de ' + label + '? Isso apaga só a preferência de posição e tamanho desta tela — nenhum dado financeiro é afetado.')) return;
-  dashLayoutApplyScreen(screenId, JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w })));
+  const finishImmediately = screenId === 'dash' && !dashLayoutState.editing;
+  if (finishImmediately) dashLayoutEnterEdit();
+  let defaults = JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w }));
+  if (screenId === 'dash') {
+    const root = document.getElementById(overview ? 'fxOverviewWidgets' : 'gdDashMain');
+    const projected = defaults.filter(w => dashLayoutCardContainer(screenId, w) === root);
+    defaults = dashLayoutCurrentScreenState(screenId).map(w =>
+      dashLayoutCardContainer(screenId, w) === root ? { ...projected.shift(), order: w.order } : w);
+  }
+  dashLayoutApplyScreen(screenId, defaults);
   if (dashLayoutState.editing) {
     dashLayoutRecomputeDirty(screenId);
+    if (finishImmediately) { dashLayoutFinish(); return; }
     if (screenId === dashLayoutState.activeScreenId) dashLayoutRefreshAllLabels(screenId);
     dashLayoutAnnounce('Layout padrão de ' + label + ' aplicado nesta sessão — clique em Concluir para salvar.');
     return;
@@ -983,7 +1065,7 @@ function dashLayoutStartDrag(event, screenId, card, handle) {
   Object.assign(card.style, { left: rect.left + 'px', top: rect.top + 'px', width: rect.width + 'px', height: rect.height + 'px' });
 
   dashLayoutState.drag = {
-    screenId, card, placeholder, originMarker,
+    screenId, card, placeholder, originMarker, originContainer: originMarker.parentNode,
     pointerId: event.pointerId,
     startX: event.clientX, startY: event.clientY,
     originLeft: rect.left, originTop: rect.top,
@@ -1009,7 +1091,7 @@ function dashLayoutOnDragMove(event) {
 function dashLayoutUpdatePlaceholderPosition(x, y) {
   const d = dashLayoutState.drag; if (!d) return;
   const cfg = JP_WIDGET_SCREENS[d.screenId];
-  const main = dashLayoutZoneEl(d.screenId, 'main');
+  const main = d.screenId === 'dash' ? d.originContainer : dashLayoutZoneEl(d.screenId, 'main');
   const side = cfg.sidebar ? dashLayoutZoneEl(d.screenId, 'sidebar') : null;
   let hoverContainer = main, hoverZone = 'main';
   if (side) {
@@ -1061,7 +1143,7 @@ function dashLayoutEndDragCleanupListeners() {
   document.removeEventListener('keydown', dashLayoutOnDragKeydown, true);
   const d = dashLayoutState.drag; if (!d) return;
   const cfg = JP_WIDGET_SCREENS[d.screenId];
-  const main = dashLayoutZoneEl(d.screenId, 'main'), side = cfg.sidebar ? dashLayoutZoneEl(d.screenId, 'sidebar') : null;
+  const main = d.screenId === 'dash' ? d.originContainer : dashLayoutZoneEl(d.screenId, 'main'), side = cfg.sidebar ? dashLayoutZoneEl(d.screenId, 'sidebar') : null;
   if (main) main.classList.remove('dash-layout-dropzone-active', 'dash-layout-dropzone-denied');
   if (side) side.classList.remove('dash-layout-dropzone-active', 'dash-layout-dropzone-denied');
 }
@@ -1153,7 +1235,7 @@ function dashLayoutOnCardPointerDown(event) {
   // alça e menu já têm caminhos próprios de arraste/opções.
   if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"], .dash-layout-handle, .dash-layout-menu-btn, .jp-popover')) return;
   const screenEl = card.closest('.screen');
-  const screenId = screenEl ? screenEl.id : null;
+  const screenId = card.closest('#fxOverviewWidgets') ? 'dash' : screenEl ? screenEl.id : null;
   if (!screenId || !JP_WIDGET_SCREENS[screenId] || screenId !== dashLayoutActiveScreenId()) return;
   if (!dashLayoutIsMovable(card)) return;
   dashLayoutPress = {
@@ -1223,6 +1305,12 @@ function dashLayoutOnBackdropClick(event) {
 
 function initDashboardLayout() {
   dashLayoutBoot();
+  // A navegação local do Forex também muda a superfície de edição, sem salvar.
+  const overview = document.getElementById('execOverview');
+  if (overview) new MutationObserver(() => {
+    const active = dashLayoutActiveScreenId();
+    if (dashLayoutState.editing && active !== dashLayoutState.activeScreenId) dashLayoutSetActiveScreen(active);
+  }).observe(overview, { attributes: true, attributeFilter: ['hidden'] });
 
   const customizeBtn = document.getElementById('dashLayoutCustomizeBtn');
   if (customizeBtn) customizeBtn.addEventListener('click', () => {

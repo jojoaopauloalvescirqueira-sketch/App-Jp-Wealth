@@ -5388,13 +5388,13 @@ html[data-shell="global-dashboard"] .jp-btn:hover{filter:brightness(.97)}
 html[data-shell="global-dashboard"] #dash.screen.active{display:block}
 html[data-shell="global-dashboard"] #dash .gd-dash-grid{display:block;margin-top:0}
 html[data-shell="global-dashboard"] #gdDashMain{
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
   grid-auto-rows:auto; gap:16px; align-items:stretch;
 }
 html[data-shell="global-dashboard"] #gdDashSide{display:none}
 html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
 html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
   grid-column:span 1!important; width:auto; max-width:none; min-height:205px;
 }
 html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{
@@ -5412,9 +5412,9 @@ html[data-shell="global-dashboard"] #mcClearanceCard{
 }
 html[data-shell="global-dashboard"] #mcClearanceCard::before{display:none}
 html[data-shell="global-dashboard"] #mcClearanceCard .mc-cockpit-acoes{margin-top:22px}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){padding:18px 20px}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-vrm-card,.gd-news-card) h2{font-size:13px;margin-bottom:14px}
-html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card) h2 .art{display:none}
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){padding:18px 20px}
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-vrm-card,.gd-news-card) h2{font-size:13px;margin-bottom:14px}
+html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card) h2 .art{display:none}
 html[data-shell="global-dashboard"] .jpwss-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 html[data-shell="global-dashboard"] .jpwss-head h2{margin:0;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--jp-ink-muted)}
 html[data-shell="global-dashboard"] .jpwss-head img{display:block;width:auto;height:6px;filter:var(--lgf);opacity:.5}
@@ -5719,7 +5719,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
   }
   html[data-shell="global-dashboard"] #gdDashMain > #onboardingIncompleteBanner,
   html[data-shell="global-dashboard"] #gdDashMain > #mcClearanceCard{grid-column:1/-1!important;width:100%}
-  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
+  html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){
     grid-column:span 1!important; width:100%; align-self:stretch;
   }
   html[data-shell="global-dashboard"] .gd-analysis-grid,
@@ -5734,7 +5734,7 @@ html[data-shell="global-dashboard"] .fxp-empty-actions .unlock-phase-btn{min-wid
 @media(max-width:680px){
   html[data-shell="global-dashboard"]{--gd-gutter:16px}
   html[data-shell="global-dashboard"] #gdDashMain{grid-template-columns:1fr}
-  html[data-shell="global-dashboard"] #gdDashMain > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){grid-column:1!important;min-height:0}
+  html[data-shell="global-dashboard"] :is(#gdDashMain,#fxOverviewWidgets) > :is(.gd-system-status,.gd-vrm-card,.gd-news-card,.gd-quick-card){grid-column:1!important;min-height:0}
   html[data-shell="global-dashboard"] #onboardingIncompleteBanner.show{grid-template-columns:auto 1fr}
   html[data-shell="global-dashboard"] #onboardingIncompleteBanner .reset-btn{grid-column:1/-1;width:100%}
   html[data-shell="global-dashboard"] #mcClearanceCard{padding:22px 20px;min-height:0}
@@ -6245,15 +6245,15 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 #dashMacro .dm-blocked{font:400 14px/1.6 var(--sans);padding:16px;border-radius:10px}
 #dashMacro .dm-partial{font:500 12px/1.5 var(--sans);letter-spacing:0}
 /* O cockpit continua utilizável e personalizável, em escala secundária. */
-html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:20px 24px;min-height:0;gap:24px;border:1px solid var(--line);border-radius:12px}
-html[data-shell="global-dashboard"] #dash #mcClearanceTitle{font-size:20px;line-height:1.3;letter-spacing:-.02em}
-html[data-shell="global-dashboard"] #dash #mcClearanceSub{font-size:12px;line-height:1.5}
-html[data-shell="global-dashboard"] #dash #mcClearanceCard .mc-cockpit-acoes{margin-top:14px;gap:10px}
-html[data-shell="global-dashboard"] #dash #mcClearanceCard .jp-btn{min-height:40px;padding:9px 12px;font-size:12px}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts{gap:8px}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact{padding:10px 12px;min-height:0}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-v{font-size:20px;line-height:1.3}
-html[data-shell="global-dashboard"] #dash #mcCockpitFacts .mc-fact-meta{font-size:10px;line-height:1.5}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:20px 24px;min-height:0;gap:24px;border:1px solid var(--line);border-radius:12px}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceTitle{font-size:20px;line-height:1.3;letter-spacing:-.02em}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceSub{font-size:12px;line-height:1.5}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard .mc-cockpit-acoes{margin-top:14px;gap:10px}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard .jp-btn{min-height:40px;padding:9px 12px;font-size:12px}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts{gap:8px}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts .mc-fact{padding:10px 12px;min-height:0}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts .mc-fact-v{font-size:20px;line-height:1.3}
+html[data-shell="global-dashboard"] #execOverview #mcCockpitFacts .mc-fact-meta{font-size:10px;line-height:1.5}
 html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
 @media(max-width:1100px){#dashMacro .dm-grid{grid-template-columns:1fr}}
 @media(max-width:600px){
@@ -6269,7 +6269,7 @@ html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
   #dashMacro .dm-row{font-size:13px;gap:12px}
   #dashMacro .dm-link{min-height:44px;font-size:13px}
   #dashMacro .dm-cta{font-size:14px;min-height:48px}
-  html[data-shell="global-dashboard"] #dash #mcClearanceCard{padding:18px}
+  html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:18px}
 }
 @media(prefers-reduced-motion:reduce){#dashMacro *{animation:none!important;transition:none!important}}
 
@@ -6285,10 +6285,19 @@ html[data-shell="global-dashboard"] #dash #gdDashMain .card{box-shadow:none}
 #dash .dm-tools[open] .dm-tools-toggle{transform:rotate(45deg)}
 #dash .dm-tools>summary:focus-visible{outline:2px solid var(--violet);outline-offset:4px;border-radius:6px}
 #dash .dm-tools[open]{padding-bottom:20px}
+
+/* Projeção dos widgets v6 em Forex, sem coluna vazia no Dashboard. */
+html[data-shell="global-dashboard"] #fxOverviewWidgets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch;margin-top:16px}
+html[data-shell="global-dashboard"] #fxOverviewWidgets > [data-layout-card]{min-width:0;margin:0}
+html[data-shell="global-dashboard"] #fxOverviewWidgets > :is(#onboardingIncompleteBanner,#mcClearanceCard){grid-column:1/-1!important}
+@media(max-width:720px){
+  html[data-shell="global-dashboard"] #fxOverviewWidgets{grid-template-columns:minmax(0,1fr)}
+  html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:16px;gap:16px;grid-template-columns:minmax(0,1fr)}
+}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '9cf89998aa453da4';
+const JP_WEALTH_BUILD_ID = '5c936be86b5420d8';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6633,22 +6642,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          segundo nível é efêmero por contrato). O Painel Operacional é o
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
-      <!-- DASH-MACRO-02A · Fatia 2 — a Visão Geral do Forex deixa de ser
-           superfície reservada e passa a concentrar a profundidade operacional
-           que vivia no Dashboard geral. Os dois blocos abaixo vieram INTEIROS
-           de #dash (index.html, antes na linha 966): mesmos ids, mesmos
-           renderizadores, nenhuma lógica alterada.
-
-           POR QUE NÃO É N2: nenhum dos dois carrega [data-layout-card] — o
-           motor de layout (13-dashboard-layout.js) só enumera
-           `:scope > [data-layout-card]` dos containers de JP_WIDGET_SCREENS, e
-           #execOverview não é container registrado (a tela exec usa
-           #execWidgetGrid). Portanto a preferência salva de dash E de exec
-           permanece byte-válida; nenhum default, versão ou migração é tocado.
-
-           O CSS acompanha sem mudança: as regras destes blocos são escopadas
-           por html[data-shell="global-dashboard"] (app.css:5428, 5439), não
-           por #dash. -->
+      <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
       <div class="card">
         <h2 id="execOverviewTitle">Visão Geral</h2>
         <p class="expl">Profundidade operacional do domínio Forex. O Dashboard resume; aqui está o detalhe.</p>
@@ -6661,6 +6655,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
         </nav>
       </div>
+      <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
     <div class="gd-analysis-grid" data-dash-section="evolucao">
       <section class="card gd-analysis-card" id="dashChartPanel">
         <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
@@ -7029,7 +7024,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          grids fixos de posição: cada card é filho direto, com largura própria
          via CSS (ver [data-layout-card] em app.css) — é o que permite mover
          qualquer card entre coluna principal e lateral sem quebrar layout. -->
-    <details id="dmTools" class="dm-tools"><summary><span><strong>Operação e ferramentas</strong><span class="dm-tools-caption">Controles de Forex, segurança da base e atalhos do sistema</span></span><span class="dm-tools-toggle" aria-hidden="true">+</span></summary>
+    <details id="dmTools" class="dm-tools"><summary><span><strong>Sistema e atalhos</strong><span class="dm-tools-caption">Segurança da base e atalhos do sistema</span></span><span class="dm-tools-toggle" aria-hidden="true">+</span></summary>
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main jp-widget-grid" id="gdDashMain">
         <!-- Via relocação JS entram aqui, nesta ordem, imediatamente antes do
@@ -7247,8 +7242,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
               <!-- DUAS ações, como o protótipo: a primária muda com o veredito, a
                    secundária é sempre o caminho para o Execution Board. -->
               <div class="mc-cockpit-acoes">
-                <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction">—</button>
-                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="exec" data-route="forex-overview">Abrir Forex</button>
+                <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction" data-dash-scroll="governanca">—</button>
+                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="forex-operation" data-route="forex-operation">Abrir operação</button>
               </div>
             </div>
             <div class="mc-cockpit-grid" id="mcCockpitFacts" data-dash-scroll="governanca">
@@ -18933,6 +18928,11 @@ function scrollToDashSection(name) {
   const slide = DASH_SLIDE_TARGETS[name];
   const target = dashEl(`[data-dash-section="${name}"]`) || (slide !== undefined ? dashEl('[data-dash-hero]') : null);
   if (!target) return;
+  if (target.tagName === 'DETAILS') {
+    target.open = true;
+    const summary = target.querySelector(':scope > summary');
+    if (summary) summary.focus({ preventScroll: true });
+  }
   if (slide !== undefined) goToDashSlide(slide);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
@@ -19387,22 +19387,19 @@ function relocateGlobalDashboardShell() {
   const footer = gdEl('gdFooter');
   if (footer) footer.hidden = false;
 
-  // Sequência estrutural do protótipo: aviso P1 → cockpit P1 → quatro cards P2.
+  // Forex reúne aviso, cockpit, VRM e agenda; Dashboard mantém sistema e atalhos.
   // Os mesmos nós são movidos, nunca clonados, para preservar IDs e listeners.
   const dashMain = gdEl('gdDashMain');
-  const instPanel = dashMain && dashMain.querySelector(':scope > [data-layout-card="institutional-panel"]');
-  if (dashMain && instPanel) {
-    const clearanceCard = gdEl('mcClearanceCard');
-    if (clearanceCard && clearanceCard.parentElement !== dashMain) instPanel.before(clearanceCard);
+  const forexOverview = gdEl('fxOverviewWidgets');
+  if (forexOverview) {
+    ['onboardingIncompleteBanner', 'mcClearanceCard'].forEach(id => {
+      const card = gdEl(id);
+      if (card && card.parentElement !== forexOverview) forexOverview.append(card);
+    });
+    if (dashMain) dashMain.querySelectorAll(':scope > .gd-vrm-card, :scope > .gd-news-card').forEach(card => forexOverview.append(card));
   }
 
-  const onbBanner = gdEl('onboardingIncompleteBanner');
-  if (dashMain && onbBanner && onbBanner.parentElement !== dashMain) dashMain.prepend(onbBanner);
-
-  // O protótipo encerra a faixa P2 com Ações Rápidas, na mesma grade de
-  // Status, VRM e Notícias. A personalização reafirma essa posição depois,
-  // mas a relocação inicial garante a composição correta mesmo antes de uma
-  // preferência de layout ser normalizada.
+  // Ações rápidas compartilham a grade com Status do Sistema.
   const quickCard = gdEl('gdQuickCard');
   if (dashMain && quickCard && quickCard.parentElement !== dashMain) dashMain.append(quickCard);
 
@@ -19597,14 +19594,8 @@ function dashLayoutDeepFreeze(obj) {
 // index.html — restaurar padrão é voltar a esta constante, não reler o HTML.
 const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
   dash: [
-    // JPW-789ABC-B2, Fase 2B — o Dashboard fica com SEIS widgets.
-    // P1: o cockpit, `full`, dono dos quatro fatos operacionais.
-    // P2: Status do Sistema + VRM dividindo a linha seguinte; Notícias abaixo.
-    // Sidebar: pendências de governança e atalhos.
-    // Saíram por absorção: a faixa de métricas e a Coerência (viraram os fatos
-    // e suas escalas), os Termômetros (a escala É a representação), a Postura
-    // (o veredito + os motivos dizem o mesmo com número e remédio) e o Perfil e
-    // Contexto (duplicava a faixa do header item a item).
+    // Identidade lógica v6 preservada: dois cartões no Dashboard e quatro
+    // projetados na Visão Geral do Forex, sem novo envelope ou migração.
     { id: 'onboarding-alert', zone: 'main', size: 'full', order: 0 },
     { id: 'operational-clearance', zone: 'main', size: 'full', order: 1 },
     { id: 'institutional-panel', zone: 'main', size: 'compact', order: 2 },
@@ -19657,12 +19648,17 @@ function dashLayoutCardEl(screenId, widgetId) {
   const sel = '[data-layout-card="' + widgetId + '"]';
   const mainEl = document.getElementById(cfg.main);
   if (mainEl) { const found = mainEl.querySelector(sel); if (found) return found; }
+  if (screenId === 'dash') {
+    const overview = document.getElementById('fxOverviewWidgets');
+    if (overview) { const found = overview.querySelector(sel); if (found) return found; }
+  }
   if (cfg.sidebar) { const sideEl = document.getElementById(cfg.sidebar); if (sideEl) { const found = sideEl.querySelector(sel); if (found) return found; } }
   return null;
 }
 function dashLayoutActiveScreenId() {
   const active = document.querySelector('.screen.active');
   if (!active) return null;
+  if (active.id === 'exec' && !document.getElementById('execOverview').hidden) return 'dash';
   return JP_WIDGET_SCREENS[active.id] ? active.id : null; // 'config' não está no registro
 }
 function dashLayoutAllowedWidgetIds(screenId) {
@@ -19999,12 +19995,22 @@ function dashLayoutLoadFullState() {
   return dashLayoutNormalizeV6(null); // tudo padrão
 }
 
+// O grupo persistido v6 continua único; seus cartões são projetados em duas
+// superfícies. Os slots mantêm a ordem relativa da superfície não editada.
+let dashLayoutLogicalSlots = [];
+function dashLayoutCardContainer(screenId, widget) {
+  if (screenId === 'dash' && !['institutional-panel', 'quick-actions'].includes(widget.id)) {
+    return document.getElementById('fxOverviewWidgets');
+  }
+  return dashLayoutZoneEl(screenId, widget.zone);
+}
 function dashLayoutApplyScreen(screenId, widgets) {
+  if (screenId === 'dash') dashLayoutLogicalSlots = widgets.map(w => ({ ...w }));
   widgets.forEach(w => {
     const el = dashLayoutCardEl(screenId, w.id);
     if (!el) return;
     el.dataset.widgetSize = w.size;
-    const zoneEl = dashLayoutZoneEl(screenId, w.zone);
+    const zoneEl = dashLayoutCardContainer(screenId, w);
     if (zoneEl) zoneEl.appendChild(el);
   });
 }
@@ -20012,6 +20018,18 @@ function dashLayoutApplyAllScreens(full) {
   JP_WIDGET_SCREEN_IDS.forEach(screenId => dashLayoutApplyScreen(screenId, full.screens[screenId].widgets));
 }
 function dashLayoutCurrentScreenState(screenId) {
+  if (screenId === 'dash') {
+    const queues = new Map();
+    dashLayoutLogicalSlots.forEach(w => {
+      const root = dashLayoutCardContainer(screenId, w);
+      if (!queues.has(root)) queues.set(root, root ? [...root.querySelectorAll(':scope > [data-layout-card]')] : []);
+    });
+    const widgets = dashLayoutLogicalSlots.map((w, order) => {
+      const el = queues.get(dashLayoutCardContainer(screenId, w)).shift();
+      return el ? { id: el.dataset.layoutCard, zone: w.zone, size: el.dataset.widgetSize, order } : null;
+    });
+    return [...queues.values()].some(queue => queue.length) ? [] : widgets;
+  }
   const cfg = JP_WIDGET_SCREENS[screenId];
   const widgets = [];
   let order = 0;
@@ -20163,6 +20181,10 @@ function dashLayoutAllCardEls(screenId) {
     const root = dashLayoutZoneEl(screenId, zone);
     if (root) out.push(...root.querySelectorAll(':scope > [data-layout-card]'));
   });
+  if (screenId === 'dash') {
+    const overview = document.getElementById('fxOverviewWidgets');
+    if (overview) out.push(...overview.querySelectorAll(':scope > [data-layout-card]'));
+  }
   return out;
 }
 
@@ -20310,7 +20332,8 @@ function dashLayoutUpdateBarInfo() {
   const screenId = dashLayoutState.activeScreenId;
   const label = document.getElementById('dashLayoutBarLabel');
   if (label) {
-    label.textContent = 'Tela atual: ' + (screenId ? JP_WIDGET_SCREENS[screenId].label : '—');
+    const overview = screenId === 'dash' && document.querySelector('#exec.active');
+    label.textContent = 'Tela atual: ' + (overview ? 'Forex · Visão Geral' : screenId ? JP_WIDGET_SCREENS[screenId].label : '—');
     label.classList.remove('dash-layout-bar-error');
   }
   const countEl = document.getElementById('dashLayoutBarCount');
@@ -20350,7 +20373,7 @@ function dashLayoutRecomputeDirty(screenId) {
 // intocados: vivem no próprio DOM de cada *WidgetGrid, que nunca é
 // destruído ao trocar de `.screen.active` (ver 01-navigation.js).
 function dashLayoutSetActiveScreen(screenId) {
-  if (!screenId || dashLayoutState.activeScreenId === screenId) return;
+  if (!screenId) return;
   dashLayoutClosePopover({ returnFocus: false });
   dashLayoutUndecorateScreen(dashLayoutState.activeScreenId);
   dashLayoutState.activeScreenId = screenId;
@@ -20441,9 +20464,54 @@ function dashLayoutFinish() {
     }
     validatedByScreen[screenId] = validated;
   }
-  const full = dashLayoutLoadFullState();
-  dirty.forEach(screenId => { full.screens[screenId] = { widgets: validatedByScreen[screenId] }; });
-  dashLayoutSaveV6(full); // uma única escrita, com todas as telas alteradas já validadas
+  // Altera somente os campos editados, preservando o envelope e os cartões
+  // da outra superfície. Uma preferência inválida nunca vira defaults salvos.
+  let full;
+  try {
+    const raw = localStorage.getItem(JP_WIDGET_STORAGE_KEY_V6);
+    full = raw === null ? { version: 6, screens: {} } : JSON.parse(raw);
+    if (!full || full.version !== 6 || !full.screens || typeof full.screens !== 'object' || Array.isArray(full.screens)) throw new Error();
+    dirty.forEach(screenId => {
+      const saved = full.screens[screenId];
+      if (!Object.prototype.hasOwnProperty.call(full.screens, screenId)) {
+        full.screens[screenId] = { widgets: validatedByScreen[screenId] };
+        return;
+      }
+      if (!saved || typeof saved !== 'object' || !dashLayoutValidateScreenWidgets(screenId, saved.widgets)) throw new Error();
+      // A compatibilidade desta realocação pertence ao grupo dash. As demais
+      // telas mantêm a normalização de salvamento que já existia na base,
+      // inclusive suas representações históricas; não criar outra migração.
+      if (screenId !== 'dash') {
+        full.screens[screenId] = { ...saved, widgets: validatedByScreen[screenId] };
+        return;
+      }
+      const ordered = saved.widgets.slice().sort((a, b) => a.order - b.order);
+      const before = dashLayoutState.snapshots[screenId];
+      const after = validatedByScreen[screenId];
+      saved.widgets = saved.widgets.map(widget => {
+        const old = before.find(w => w.id === widget.id);
+        const next = after.find(w => w.id === widget.id);
+        if (!old || !next) throw new Error();
+        const updated = { ...widget };
+        if (old.zone !== next.zone) updated.zone = next.zone;
+        if (old.size !== next.size) updated.size = next.size;
+        if (old.order !== next.order) updated.order = ordered[next.order].order;
+        return updated;
+      });
+      // Ordens empatadas eram válidas em v6. A posição no array desempata
+      // sem renumerar os registros que pertencem à outra superfície.
+      saved.widgets.sort((a, b) => after.findIndex(w => w.id === a.id) - after.findIndex(w => w.id === b.id));
+      if (!dashLayoutValidateScreenWidgets(screenId, saved.widgets)) throw new Error();
+    });
+  } catch (_) {
+    dashLayoutShowBarError('Preferência de layout indisponível ou inválida — nada foi gravado. Cancele para preservar o original.');
+    return;
+  }
+  if (!dashLayoutSaveV6(full)) {
+    dashLayoutShowBarError('Não foi possível salvar o layout — seus ajustes continuam nesta sessão.');
+    return;
+  }
+  if (dirty.includes('dash')) dashLayoutLogicalSlots = validatedByScreen.dash.map(w => ({ ...w }));
   const labels = dirty.map(id => JP_WIDGET_SCREENS[id].label).join(', ');
   dashLayoutEndSession();
   dashLayoutAnnounce((dirty.length === 1 ? '1 tela salva: ' : dirty.length + ' telas salvas: ') + labels + '.');
@@ -20455,11 +20523,22 @@ function dashLayoutFinish() {
 function dashLayoutRestoreDefaultConfirm() {
   const screenId = dashLayoutState.editing ? dashLayoutState.activeScreenId : dashLayoutActiveScreenId();
   if (!screenId) return;
-  const label = JP_WIDGET_SCREENS[screenId].label;
+  const overview = screenId === 'dash' && document.querySelector('#exec.active');
+  const label = overview ? 'Forex · Visão Geral' : JP_WIDGET_SCREENS[screenId].label;
   if (!confirm('Restaurar o layout padrão de ' + label + '? Isso apaga só a preferência de posição e tamanho desta tela — nenhum dado financeiro é afetado.')) return;
-  dashLayoutApplyScreen(screenId, JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w })));
+  const finishImmediately = screenId === 'dash' && !dashLayoutState.editing;
+  if (finishImmediately) dashLayoutEnterEdit();
+  let defaults = JP_WIDGET_DEFAULTS[screenId].map(w => ({ ...w }));
+  if (screenId === 'dash') {
+    const root = document.getElementById(overview ? 'fxOverviewWidgets' : 'gdDashMain');
+    const projected = defaults.filter(w => dashLayoutCardContainer(screenId, w) === root);
+    defaults = dashLayoutCurrentScreenState(screenId).map(w =>
+      dashLayoutCardContainer(screenId, w) === root ? { ...projected.shift(), order: w.order } : w);
+  }
+  dashLayoutApplyScreen(screenId, defaults);
   if (dashLayoutState.editing) {
     dashLayoutRecomputeDirty(screenId);
+    if (finishImmediately) { dashLayoutFinish(); return; }
     if (screenId === dashLayoutState.activeScreenId) dashLayoutRefreshAllLabels(screenId);
     dashLayoutAnnounce('Layout padrão de ' + label + ' aplicado nesta sessão — clique em Concluir para salvar.');
     return;
@@ -20508,7 +20587,7 @@ function dashLayoutStartDrag(event, screenId, card, handle) {
   Object.assign(card.style, { left: rect.left + 'px', top: rect.top + 'px', width: rect.width + 'px', height: rect.height + 'px' });
 
   dashLayoutState.drag = {
-    screenId, card, placeholder, originMarker,
+    screenId, card, placeholder, originMarker, originContainer: originMarker.parentNode,
     pointerId: event.pointerId,
     startX: event.clientX, startY: event.clientY,
     originLeft: rect.left, originTop: rect.top,
@@ -20534,7 +20613,7 @@ function dashLayoutOnDragMove(event) {
 function dashLayoutUpdatePlaceholderPosition(x, y) {
   const d = dashLayoutState.drag; if (!d) return;
   const cfg = JP_WIDGET_SCREENS[d.screenId];
-  const main = dashLayoutZoneEl(d.screenId, 'main');
+  const main = d.screenId === 'dash' ? d.originContainer : dashLayoutZoneEl(d.screenId, 'main');
   const side = cfg.sidebar ? dashLayoutZoneEl(d.screenId, 'sidebar') : null;
   let hoverContainer = main, hoverZone = 'main';
   if (side) {
@@ -20586,7 +20665,7 @@ function dashLayoutEndDragCleanupListeners() {
   document.removeEventListener('keydown', dashLayoutOnDragKeydown, true);
   const d = dashLayoutState.drag; if (!d) return;
   const cfg = JP_WIDGET_SCREENS[d.screenId];
-  const main = dashLayoutZoneEl(d.screenId, 'main'), side = cfg.sidebar ? dashLayoutZoneEl(d.screenId, 'sidebar') : null;
+  const main = d.screenId === 'dash' ? d.originContainer : dashLayoutZoneEl(d.screenId, 'main'), side = cfg.sidebar ? dashLayoutZoneEl(d.screenId, 'sidebar') : null;
   if (main) main.classList.remove('dash-layout-dropzone-active', 'dash-layout-dropzone-denied');
   if (side) side.classList.remove('dash-layout-dropzone-active', 'dash-layout-dropzone-denied');
 }
@@ -20678,7 +20757,7 @@ function dashLayoutOnCardPointerDown(event) {
   // alça e menu já têm caminhos próprios de arraste/opções.
   if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"], .dash-layout-handle, .dash-layout-menu-btn, .jp-popover')) return;
   const screenEl = card.closest('.screen');
-  const screenId = screenEl ? screenEl.id : null;
+  const screenId = card.closest('#fxOverviewWidgets') ? 'dash' : screenEl ? screenEl.id : null;
   if (!screenId || !JP_WIDGET_SCREENS[screenId] || screenId !== dashLayoutActiveScreenId()) return;
   if (!dashLayoutIsMovable(card)) return;
   dashLayoutPress = {
@@ -20748,6 +20827,12 @@ function dashLayoutOnBackdropClick(event) {
 
 function initDashboardLayout() {
   dashLayoutBoot();
+  // A navegação local do Forex também muda a superfície de edição, sem salvar.
+  const overview = document.getElementById('execOverview');
+  if (overview) new MutationObserver(() => {
+    const active = dashLayoutActiveScreenId();
+    if (dashLayoutState.editing && active !== dashLayoutState.activeScreenId) dashLayoutSetActiveScreen(active);
+  }).observe(overview, { attributes: true, attributeFilter: ['hidden'] });
 
   const customizeBtn = document.getElementById('dashLayoutCustomizeBtn');
   if (customizeBtn) customizeBtn.addEventListener('click', () => {

@@ -351,22 +351,7 @@
          segundo nível é efêmero por contrato). O Painel Operacional é o
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
-      <!-- DASH-MACRO-02A · Fatia 2 — a Visão Geral do Forex deixa de ser
-           superfície reservada e passa a concentrar a profundidade operacional
-           que vivia no Dashboard geral. Os dois blocos abaixo vieram INTEIROS
-           de #dash (index.html, antes na linha 966): mesmos ids, mesmos
-           renderizadores, nenhuma lógica alterada.
-
-           POR QUE NÃO É N2: nenhum dos dois carrega [data-layout-card] — o
-           motor de layout (13-dashboard-layout.js) só enumera
-           `:scope > [data-layout-card]` dos containers de JP_WIDGET_SCREENS, e
-           #execOverview não é container registrado (a tela exec usa
-           #execWidgetGrid). Portanto a preferência salva de dash E de exec
-           permanece byte-válida; nenhum default, versão ou migração é tocado.
-
-           O CSS acompanha sem mudança: as regras destes blocos são escopadas
-           por html[data-shell="global-dashboard"] (app.css:5428, 5439), não
-           por #dash. -->
+      <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
       <div class="card">
         <h2 id="execOverviewTitle">Visão Geral</h2>
         <p class="expl">Profundidade operacional do domínio Forex. O Dashboard resume; aqui está o detalhe.</p>
@@ -379,6 +364,7 @@
           <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
         </nav>
       </div>
+      <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
     <div class="gd-analysis-grid" data-dash-section="evolucao">
       <section class="card gd-analysis-card" id="dashChartPanel">
         <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
@@ -747,7 +733,7 @@
          grids fixos de posição: cada card é filho direto, com largura própria
          via CSS (ver [data-layout-card] em app.css) — é o que permite mover
          qualquer card entre coluna principal e lateral sem quebrar layout. -->
-    <details id="dmTools" class="dm-tools"><summary><span><strong>Operação e ferramentas</strong><span class="dm-tools-caption">Controles de Forex, segurança da base e atalhos do sistema</span></span><span class="dm-tools-toggle" aria-hidden="true">+</span></summary>
+    <details id="dmTools" class="dm-tools"><summary><span><strong>Sistema e atalhos</strong><span class="dm-tools-caption">Segurança da base e atalhos do sistema</span></span><span class="dm-tools-toggle" aria-hidden="true">+</span></summary>
     <div class="gd-dash-grid" id="gdDashGrid">
       <div class="gd-dash-main jp-widget-grid" id="gdDashMain">
         <!-- Via relocação JS entram aqui, nesta ordem, imediatamente antes do
@@ -965,8 +951,8 @@
               <!-- DUAS ações, como o protótipo: a primária muda com o veredito, a
                    secundária é sempre o caminho para o Execution Board. -->
               <div class="mc-cockpit-acoes">
-                <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction">—</button>
-                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="exec" data-route="forex-overview">Abrir Forex</button>
+                <button type="button" class="jp-btn jp-btn-primary" id="mcClearanceAction" data-dash-scroll="governanca">—</button>
+                <button type="button" class="jp-btn jp-btn-secondary" data-dash-go="forex-operation" data-route="forex-operation">Abrir operação</button>
               </div>
             </div>
             <div class="mc-cockpit-grid" id="mcCockpitFacts" data-dash-scroll="governanca">

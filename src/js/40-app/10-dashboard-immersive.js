@@ -67,6 +67,11 @@ function scrollToDashSection(name) {
   const slide = DASH_SLIDE_TARGETS[name];
   const target = dashEl(`[data-dash-section="${name}"]`) || (slide !== undefined ? dashEl('[data-dash-hero]') : null);
   if (!target) return;
+  if (target.tagName === 'DETAILS') {
+    target.open = true;
+    const summary = target.querySelector(':scope > summary');
+    if (summary) summary.focus({ preventScroll: true });
+  }
   if (slide !== undefined) goToDashSlide(slide);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
