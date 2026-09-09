@@ -62,7 +62,7 @@
       "order": 10,
       "path": "src/js/20-ui/02-sidebar.js",
       "section": "SIDEBAR · COLAPSO",
-      "sha256": "be786717eb144b93680d1911e6066903558fe9e6d63ee8124dea28cc62209994"
+      "sha256": "af0ca7fef43b1b89d222c0a6c2675a054f0f2381ed8ac2663034cf4b3c0aac71"
     },
     {
       "order": 11,
@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "d38c695590cee44f81bcb62b4e0bdf796dc5bed48f95c97e2b2a5b751f34b4f0"
+      "sha256": "f6ce6f28e2bc51c1a1b1fb0690d87aad4b81f875c18f0bcf27b51d16f6cb6258"
     },
     {
       "order": 25,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "892d71b59749aad33226fea8d45d7057b708c924ff13e78dfd2783ae7c76d05f"
+      "sha256": "ac7cfa22dd6dbce835f3ab06bf165cf0a07b59c71e1ea8c9b08cbd0cc5cc21d5"
     },
     {
       "order": 32,
@@ -242,13 +242,13 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "8597e99e6328c84a97544711c100642c030374f343e0eb15a402298c2635ad4d"
+      "sha256": "939ac77b00550c3473f0e51177ee40c5ac942e0e7878095054710a8e4c77dc61"
     },
     {
       "order": 41,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "5bdd422cdcac366cd02afda1b117b3701bd5bf090c93e9c303f231e86b81e53c"
+      "sha256": "4e88103111e6388cb8e6771d57dffbdcd9f597fe32483f22b176b8fa697c5b3c"
     },
     {
       "order": 42,

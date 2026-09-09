@@ -118,13 +118,14 @@ def assert_registry_and_dom(page):
       }))""")
     assert [(item["id"], item["label"]) for item in n2] == [item[:2] for item in RESEARCH_CHILDREN]
     n3 = page.evaluate("""() => [...document.querySelectorAll(
-      '#researchNavSubmenu [data-nav-context="research-forex"] [data-nav-local-view]')]
+      '#navLocalSlot [data-nav-context="research-forex"] [data-nav-local-view]')]
       .map(el => el.dataset.navLocalView)""")
     assert n3 == RESEARCH_FOREX_VIEWS
-    assert page.locator('#researchNavSubmenu [data-nav-context]:not([data-nav-context="research-forex"])').count() == 0
+    assert page.locator('#appSidebar [data-nav-context]').count() == 0
+    assert page.locator('#navLocalSlot [data-nav-context^="research-"]:not([data-nav-context="research-forex"])').count() == 0
 
     assert page.locator("#nav > #researchNavTrigger").count() == 1
-    assert page.locator("#nav #researchNavSubmenu").count() == 0
+    assert page.locator("#appSidebar #nav #researchNavSubmenu").count() == 1
     for workspace in WORKSPACES:
         assert page.locator(f"#{workspace}").count() == 1, workspace
         assert page.locator(f"#research > #{workspace}").count() == 1, workspace
@@ -178,7 +179,7 @@ def assert_routes_aliases_and_empty_states(page):
 def assert_atomic_and_storage(page):
     assert page.evaluate("() => JPWNavigation.navigateLocal('research', 'nocoda')") is True
     page.click("#researchNavTrigger")
-    page.locator('#researchNavSubmenu [data-nav-local-view="nocoda"]').focus()
+    page.locator('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="nocoda"]').focus()
     page.evaluate("() => { window.__navStorageOps=[]; }")
     before = snapshot(page)
     assert page.evaluate("() => JPWNavigation.navigate('research-inexistente')") is False
@@ -216,52 +217,72 @@ def assert_shell_and_accessibility(page, viewport, theme):
     if mobile:
         page.click("[data-shell-menu-toggle]")
     page.click("#researchNavTrigger")
-    page.wait_for_function("() => researchNavTrigger.getAttribute('aria-expanded') === 'true'")
+    expander = '[data-nav-expand="research"]'
+    page.wait_for_function("() => document.querySelector('[data-nav-expand=research]').getAttribute('aria-expanded') === 'true'")
     page.wait_for_function("() => JPWResearch.ui.getView() === 'calendar'")
     assert page.locator('#researchNavSubmenu [data-nav-child="research-forex"]').get_attribute("aria-current") == "page"
-    assert page.locator('#researchNavSubmenu [data-nav-local-view="calendar"]').get_attribute("aria-current") == "page"
+    assert page.locator('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="calendar"]').get_attribute("aria-current") == "page"
 
+    if mobile:
+        assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
+        assert page.evaluate("() => research.contains(document.activeElement)")
+        page.click("[data-shell-menu-toggle]")
     page.click('#researchNavSubmenu [data-nav-child="research-stocks-br"]')
     assert page.evaluate("() => JPWResearch.ui.getView()") == "stocks-br"
-    context = page.locator('#researchNavSubmenu [data-nav-context="research-forex"]')
+    context = page.locator('#navLocalSlot [data-nav-context="research-forex"]')
     assert context.is_hidden()
     assert context.evaluate("el => el.inert") is True
 
+    if mobile:
+        page.click("[data-shell-menu-toggle]")
     page.click('#researchNavSubmenu [data-nav-child="research-forex"]')
     assert page.evaluate("() => JPWResearch.ui.getView()") == "calendar"
     assert not context.is_hidden()
     assert context.evaluate("el => el.inert") is False
-    page.click('#researchNavSubmenu [data-nav-local-view="pivots"]')
+    page.click('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="pivots"]')
     assert page.evaluate("() => JPWResearch.ui.getView()") == "pivots"
 
     if mobile:
         page.click("[data-shell-menu-toggle]")
-    page.focus("#researchNavTrigger")
+    page.focus(expander)
     page.keyboard.press("ArrowDown")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "pivots"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-others"
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
+    # Medir enquanto N2 esta aberto: alvos ocultos nao tornariam a prova util.
+    targets = page.locator('#researchNavSubmenu [data-nav-child]').evaluate_all(
+        "els => els.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}))")
+    assert len(targets) == len(RESEARCH_CHILDREN), targets
+    assert all(item["width"] >= 44 and item["height"] >= 44 for item in targets), targets
     page.keyboard.press("Escape")
     focus = page.evaluate("""() => ({
-      id:document.activeElement.id,
+      expander:document.activeElement.dataset.navExpand,
+      toggle:document.activeElement.matches('[data-shell-menu-toggle]'),
       insideHiddenSubmenu:!!document.activeElement.closest?.('#researchNavSubmenu')
     })""")
     if mobile:
-        assert not focus["insideHiddenSubmenu"], ("mobile focus trapped", focus)
+        assert not focus["insideHiddenSubmenu"] and focus["toggle"], ("mobile focus return", focus)
+        assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
     else:
-        assert focus["id"] == "researchNavTrigger", ("focus return", focus)
-    assert page.get_attribute("#researchNavTrigger", "aria-expanded") == "false"
+        assert focus["expander"] == "research", ("focus return", focus)
+        assert page.get_attribute(expander, "aria-expanded") == "false"
+
+    # N3 tem alcance proprio e continua disponivel com a lateral recolhida.
+    assert context.is_visible()
+    context.locator('[data-nav-local-view="calendar"]').focus()
+    page.keyboard.press("End")
+    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "pivots"
+    page.keyboard.press("Home")
+    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "calendar"
 
     layout = page.evaluate("""mobile => ({
       activeScreens:[...document.querySelectorAll('#appMain > .screen.active')].map(el=>el.id),
       overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
       visibleResearch:[...document.querySelectorAll('#research > [data-research-view]')]
         .filter(el=>!el.hidden).map(el=>el.id),
-      targets:[...document.querySelectorAll(mobile
-        ? '#nav > .tab, #researchNavSubmenu button'
-        : '#researchNavSubmenu button')]
+      targets:[...document.querySelectorAll('#navLocalSlot [data-nav-context="research-forex"] button')]
         .filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0})
         .map(el=>({label:el.textContent.trim(),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}))
     })""", mobile)

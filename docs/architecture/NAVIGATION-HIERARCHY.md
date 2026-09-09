@@ -1,88 +1,73 @@
 # Navegação hierárquica — contrato de implementação
 
-Este documento registra o padrão reutilizável aprovado para módulos que venham
-a possuir níveis contextuais de navegação no JP Wealth. Ele descreve arquitetura
-de interface, não autoriza automaticamente aplicar submenus a outros módulos.
-Cada nova adoção continua exigindo tarefa e aprovação próprias.
+Contrato de apresentação do primeiro incremento da lateral contextual,
+CHG-CONTEXTUAL-SIDEBAR-20260909, autorizado pelo proprietário. Substitui neste
+escopo a faixa horizontal e sua abertura por hover. Não altera o resolver,
+as regras de domínio nem autoriza adoções futuras ou integração.
 
-## Estado da migração NAV-03
+## Destinos preservados
 
-- **TARGET CANÔNICO:** cinco primários — Dashboard, Forex, Finanças Pessoais,
-  Research e Alladin.
-- **CHECKPOINT NAV-02:** `routes()` mantém exatamente os cinco primários e
-  `children('forex')` contém, nesta ordem, `forex-overview`,
-  `forex-preparation`, `forex-account`, `forex-operation`,
-  `forex-reconciliation` e `forex-planning`.
-- **CANDIDATO NAV-03:** `children('research')` contém, nesta ordem,
-  `research-forex`, `research-stocks-br`, `research-stocks-global`,
-  `research-reits` e `research-others`. Research/Forex contém somente
-  Calendário, NoCoda e Pivots no N3; os três aliases históricos ativam esse
-  owner. É o primeiro candidato potencialmente publicável, ainda sem gate de
-  integração ou publicação.
+Há cinco primários, nesta ordem: Dashboard, Forex, Finanças Pessoais, Research
+e Alladin. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
+`forex-overview`, `personal-finance`, `research-forex` e `alladin`.
 
-Adotam a faixa contextual: **Forex** (seis filhos sobre `exec`, `check`,
-`contas`, `contab` e `fxplan`) e **Finanças Pessoais** (`finpes`, cinco destinos — Visão Geral, Orçamento Mensal,
-Dívidas & Crédito, Comparativo Mensal e Cenários —, superfície `window.JPWFin.ui`,
-teste `tools/finpes_navigation_test.py`), além de **Research** (cinco filhos;
-Forex com três destinos contextuais e superfície `window.JPWResearch.ui`).
-Operação, Apuração e Planejamento
-ganham terceiro nível dentro do mesmo `#execNavSubmenu`; `#fxplan` continua
-físico e usa `window.JPWFx.ui`.
+- Forex mantém seis filhos: `forex-overview`, `forex-preparation`,
+  `forex-account`, `forex-operation`, `forex-reconciliation`, `forex-planning`.
+- Finanças Pessoais mantém Visão Geral, Orçamento Mensal, Dívidas & Crédito,
+  Comparativo Mensal e Cenários, pela superfície `window.JPWFin.ui`.
+- Research mantém `research-forex`, `research-stocks-br`,
+  `research-stocks-global`, `research-reits` e `research-others`.
+- Os níveis locais de Operação, Apuração, Planejamento e Research/Forex
+  continuam nas superfícies existentes. Calendário, NoCoda e Pivots mantêm
+  seus aliases e owner Research/Forex.
+- Alladin preserva suas abas internas e o próprio ciclo de renderização.
+
+Preparação operacional e a ação `tool-check` da Central continuam identidades
+distintas. Os aliases legados, defaults e a recusa atômica de destino inválido
+permanecem responsabilidade de `01-navigation.js`. Não há router novo, URL
+persistida ou restauração inédita de rota ao recarregar.
 
 ## Estrutura canônica
 
-O primeiro nível representa módulos globais e permanece em `#nav`. Seu botão
-real continua filho direto de `#nav`, sem wrapper, porque os estilos Classic,
-Pill e Kinetic medem a geometria desses botões.
+`#appSidebar` contém a única navegação global `#nav`. Os cinco botões reais
+continuam filhos diretos de `#nav`, preservando seletores e medições dos estilos.
+A seleção de módulo e a expansão de seus subdestinos são botões separados.
+Apenas o módulo ativo expõe um expansor; escolher um primário abre seus filhos,
+inclusive quando esse primário já estava ativo e recolhido.
 
-O segundo nível não é dropdown, popup, modal nem card flutuante. Ele deve:
+Há um único `#navSubShell`, movido dentro de `#nav` para depois do expansor
+ativo. Contém os painéis N2 existentes, sem clonagem. No desktop, sua expansão
+ocupa espaço na lateral, sem deslocar verticalmente o conteúdo principal.
+Apenas um painel N2 pode estar visível e fora de `inert`.
 
-1. existir fora de `#nav`, em uma faixa estrutural própria;
-2. ficar imediatamente abaixo do header global;
-3. participar do fluxo normal da página;
-4. deslocar a faixa de contexto e `#appMain` ao expandir;
-5. não usar posicionamento absoluto, overlay ou sombra elevada.
-
-A ordem DOM é:
+Os grupos `.nav-sub-contexts` N3 são movidos uma vez para `#navLocalSlot`,
+na área de trabalho. A lateral tem no máximo dois níveis. Recolher o N2 não
+esconde o contexto local do destino atual. Alladin mantém suas abas no conteúdo.
 
 ```text
-header
-#navSubShell
-#gdContextRow
-#appMain
+body > header: marca, menu mobile e ações globais
+#appSidebar: #nav (primários + expansores + #navSubShell), #railToggle
+#gdContextRow: avisos e informações globais existentes
+#appMain:
+  #shellPageHeader: #shellLocation + #navLocalSlot
+  telas físicas existentes (sem .screen nova ou aninhada)
+#gdFooter
 ```
 
-## Faixa única compartilhada
+O cabeçalho de localização deriva módulo, filho e visão das superfícies
+existentes; não cria uma segunda fonte de estado. Dashboard mantém os resumos
+superiores e Sistema/Atalhos abaixo. As peças operacionais realocadas continuam
+em Forex; este incremento não altera essa projeção.
 
-Existe **uma só** faixa (`#navSubShell`), e ela hospeda o `<nav>` de cada
-módulo. Só um módulo fica aberto por vez — selecionar outro módulo global é
-clique externo e fecha o anterior —, então um único slot `navsub` no grid do
-`<body>` é suficiente.
-
-Duplicar o mecanismo por módulo foi avaliado e rejeitado: exigiria um segundo
-slot no grid e um segundo par de atributos de raiz, e o estado de "aberto"
-gravado no `<html>` acendia todos os acionadores de uma vez. O módulo aberto é
-distinguido por `aria-expanded="true"` no próprio acionador, que já é a
-verdade acessível.
-
-Convenção de nomes, lida por derivação e não por registro manual:
-
-| Elemento | Id |
+| Elemento | Contrato |
 |---|---|
-| acionador em `#nav` | `<data-nav-surface>NavTrigger`, classe `.tab.nav-sub-trigger` |
-| painel do módulo | `<data-nav-surface>NavSubmenu`, classe `.nav-sub-menu` |
-| filho canônico Forex | `[data-nav-item][data-nav-child="<route>"]` |
-| destino local contextual | `[data-nav-item][data-nav-local-surface][data-nav-local-view]` |
-| item local legado de módulo | `[data-nav-sub-view="<chave>"]` |
-
-As colunas de cada nível derivam da contagem de itens (`grid-auto-flow:column`).
-Grupos de terceiro nível usam `data-nav-context="<child>"` e só o grupo do
-filho corrente fica visível e fora de `inert`.
-
-Um módulo novo precisa de: o par de ids acima, o `<nav>` dentro de
-`#navSubShell`, e uma entrada em `NAV_SUBMENU_SURFACES`
-(`40-app/11-operational-shell.js`) apontando para sua superfície de UI. Nenhum
-id, classe ou atributo do controlador é específico de módulo.
+| primário | `.tab[data-route]`, filho direto de `#nav` |
+| expansor | `[data-nav-expand="<surface>"]`, único dono de `aria-expanded` |
+| painel N2 | `<surface>NavSubmenu`, `.nav-sub-menu` |
+| filho canônico | `[data-nav-item][data-nav-child="<route>"]` |
+| contexto N3 | `<surface>NavContexts` em `#navLocalSlot` |
+| destino local | `[data-nav-item][data-nav-local-surface][data-nav-local-view]` |
+| visão local legada | `[data-nav-sub-view="<chave>"]` |
 
 ## A marca como acesso ao Dashboard
 
@@ -113,55 +98,59 @@ do sistema de estilos existente.
 Como toda navegação, o gesto é **UI pura**: não escreve em `S`, não persiste
 rota e não toca storage.
 
-## Modelo de interação
+## Interação e acessibilidade
 
-Há dois estados de abertura, mantidos somente na camada de UI:
+Os estados de abertura são efêmeros e exclusivos da UI; não entram em `S`,
+backup ou storage. O expansor alterna apenas o grupo do módulo atual, sem
+navegar, salvar ou inicializar outro módulo. Hover nunca abre ou fecha grupo.
+Um clique fora não recolhe a navegação lateral. Selecionar outro módulo muda o
+grupo; escolher Dashboard ou Alladin remove o N2 lateral.
 
-- **transitório:** hover com ponteiro fino abre; sair completamente de `#nav` e
-  da faixa agenda fechamento com tolerância de 400 ms;
-- **fixado:** clique, Enter ou Espaço no acionador abre e fixa a faixa. Enquanto
-  fixada, `pointerleave`, resize e novo clique no acionador não fecham.
+Filhos canônicos chamam o resolver; destinos locais chamam
+`JPWNavigation.navigateLocal()`. `aria-current`, `hidden`, `inert` e foco
+acompanham o destino efetivo. N2 e N3 têm pontos de Tab e navegação por
+setas/Home/End separados. No expansor, seta para baixo abre e foca o item
+atual; seta para cima abre e foca o último. Escape no N2 desktop recolhe o
+grupo e devolve foco ao expansor. Selecionar destino leva o foco ao conteúdo
+usando `JPWNavigation.focusCurrentScreen()`.
 
-O estado fixado fecha por:
+## Compatibilidade das preferências de apresentação
 
-- clique fora do acionador e da faixa;
-- seleção de outro módulo global, que é um clique externo;
-- Escape, preservado como saída acessível com devolução de foco.
+Valores, chaves e controles existentes são preservados, sem schema novo.
+Leitura, navegação e recarga não regravam nem removem preferências. Somente
+os controles explícitos salvam a chave correspondente. Falha de gravação
+mantém a escolha anterior e anuncia a indisponibilidade.
 
-Clicar em um filho canônico navega pelo resolver; item local chama
-`JPWNavigation.navigateLocal()`. Ambos mantêm a faixa aberta. O
-estado é efêmero: não entra em `S`, `localStorage`, backup, schema ou migração.
-`aria-expanded`, `aria-hidden`, `inert`, roving `tabindex` e `aria-current`
-devem refletir a realidade visual.
+| Preferência | Apresentação |
+|---|---|
+| `jpw_rail=expanded` ou ausente | lateral desktop com rótulos e grupo contextual |
+| `jpw_rail=collapsed` | lateral compacta desktop e controle para expandir |
+| `jpw_nav=classic` | seleção com borda e realce discreto |
+| `jpw_nav=pill` | destaque arredondado estável |
+| `jpw_nav=kinetic` | indicador com transição e resposta ao ponteiro fino |
 
-## Animação e composição visual
+Valores desconhecidos mantêm o comportamento defensivo de leitura existente,
+sem normalizar a chave gravada ou aceitá-la como valor válido. A preferência
+compacta não elimina rotas: o usuário pode selecionar os primários e expandir
+explicitamente a lateral para acessar filhos. Os botões compactos preservam
+nomes acessíveis e títulos. Mobile mostra todos os rótulos independentemente
+de `jpw_rail`, sem gravar por mudança de viewport. Os três estilos usam os
+tokens claro/escuro existentes; reduced motion desativa transições.
 
-A faixa abre com `grid-template-rows: 0fr → 1fr`, conteúdo interno recortado e
-transições leves de opacidade/posição. A duração de referência é 300 ms, usando
-`--jp-ease`; `prefers-reduced-motion` remove as transições.
-
-O fundo deve constituir um terceiro tom do sistema, distinto tanto do header
-quanto da faixa de contexto. A fórmula aprovada combina tokens existentes:
-
-```css
---nav-sub-surface:
-  color-mix(in srgb, var(--jp-surface) 30%, var(--gd-surface-subtle));
-```
-
-Assim o contraste acompanha os temas claro e escuro sem introduzir uma cor
-isolada. A faixa usa divisor discreto, sem borda de card ou sombra pesada.
+O envelope v6 de layout e as identidades lógicas Dashboard/Forex permanecem
+intactos. Esta camada não lê, projeta nem regrava personalizações dos widgets.
 
 ## Navegação interna e fonte única
 
-Os níveis contextuais chamam os mecanismos visuais existentes. Não se cria
-estado paralelo: primary/child/screen/local view vêm de `JPWNavigation.current()`
-e a visão efetiva das superfícies `window.JPWExec.ui`, `window.JPWFx.ui`,
-`window.JPWFin.ui` e `window.JPWResearch.ui`. Operação usa `panel`/`motor`; Apuração combina `#contab` e
-`exec/history`; Planejamento usa `overview`/`planning`/`actuals`/`table`.
+O shell usa `JPWNavigation.current()` e as superfícies `window.JPWExec.ui`,
+`window.JPWFx.ui`, `window.JPWFin.ui` e `window.JPWResearch.ui`. Operação usa
+`panel`/`motor`; Apuração combina `#contab` e `exec/history`; Planejamento usa
+`overview`/`planning`/`actuals`/`table`. Seleção de aba Alladin é observada para
+a localização, sem leitura financeira ou alteração de seu renderizador.
 
-Quando a faixa superior substitui tabs equivalentes no conteúdo, essas tabs
-devem ser removidas para existir uma única fonte visível de navegação. Conteúdo,
-renderizadores e lógica de domínio permanecem intactos.
+N2/N3 são nós existentes realocados, sem tabs equivalentes duplicadas. Nenhum
+interior de módulo é redesenhado. A política de DOM, rascunhos e renderização
+continua pertencendo a cada módulo; não se impõe uma política universal.
 
 ## Workspaces dentro do módulo
 
@@ -180,7 +169,7 @@ estilísticas — cada uma corresponde a uma quebra real observada no código:
    `:scope > [data-layout-card]`. Um wrapper ali é desfeito em silêncio e
    invalida a preferência de layout gravada daquela tela — o que transforma uma
    mudança visual em mudança N2.
-3. **Nunca desmontar.** A troca é de visibilidade, não de DOM. Isso preserva
+3. **Preservar o ciclo de vida do workspace.** Nos workspaces Forex e Research aqui descritos, a troca é de visibilidade, não de DOM. Isso preserva
    valores digitados e ainda não confirmados, foco, disclosures abertos e o
    conteúdo que renderizadores injetam por `innerHTML`.
 
@@ -217,55 +206,56 @@ acontece por ação que troque o objeto em foco, e aí é confirmado.
 **Destino inicial.** Quando o módulo define uma área de entrada, ela é aplicada
 ao entrar no módulo vindo de outra tela. A detecção observa a classe `.active`
 da própria `section` por `MutationObserver` — não embrulha `navigateToScreen`,
-que já carrega duas camadas de wrapper. Reabrir a faixa estando já no módulo
+que já carrega duas camadas de wrapper. Reabrir os subdestinos estando já no módulo
 não conta como entrada nova, porque a remoção e a recolocação de `.active`
 ocorrem no mesmo bloco síncrono e chegam juntas em um único callback.
 
+Alladin conserva o descarte de conteúdo inativo e a seleção de aba em sessão
+já implementados. Preservação de rascunho e foco deve ser comparada ao ciclo
+real da baseline, sem aplicar por analogia a política de outro módulo.
+
 ## Mobile
 
-Hover nunca é requisito. O toque no módulo fecha a gaveta global e abre a faixa
-contextual no fluxo vertical. Os itens podem empilhar, mas a faixa continua sem
-overlay e sem sidebar. Um segundo toque no acionador não fecha a faixa fixada;
-o usuário fecha tocando fora ou usando Escape em teclado conectado.
+Até 900 px, a lateral vira gaveta modal, aberta pelo botão do cabeçalho.
+Mantém rótulos completos e os mesmos destinos. N3 continua no conteúdo.
+A gaveta usa nome acessível, `aria-modal`, foco inicial no módulo ativo,
+contenção de Tab e fundo `inert`. Fechar por Escape, botão ou backdrop
+restaura o foco ao acionador. Selecionar um destino fecha a gaveta e foca
+conteúdo. Ao voltar ao desktop, restaura o estado anterior de `inert` e
+scroll, sem persistir a abertura da gaveta nem a adaptação de viewport.
 
 ## Responsabilidades por arquivo
 
-- `index.html`: acionadores globais e estrutura semântica da faixa compartilhada;
-- `src/styles/app.css`: grid estrutural, animação, terceiro tom e responsividade;
-- `src/js/40-app/01-navigation.js`: registry de primários/filhos, defaults,
-  compatibilidade e estado semântico corrente;
-- `src/js/40-app/11-operational-shell.js`: abertura transitória/fixada, foco,
-  fechamento e projeção dos níveis 2/3 a partir do resolver;
-- script de UI do módulo: seleção da visão, sem domínio financeiro
-  (`20-ui/13-exec-views.js`, `20-ui/17-finpes-views.js` e
-  `20-ui/23-research-views.js`);
-- teste de navegador focado: registry/compatibilidade em
-  `tools/navigation_ia_test.py`; contrato estrutural, interação e acessibilidade
-  em `tools/exec_submenu_test.py`, `tools/finpes_navigation_test.py` e
-  `tools/research_navigation_test.py`.
+- `index.html`: primários, expansores, lateral e localização semântica.
+- `src/styles/app.css`: grade, estilos existentes adaptados e responsividade.
+- `src/js/40-app/01-navigation.js`: registry, aliases e estado corrente, preservados.
+- `src/js/40-app/11-operational-shell.js`: projeção N2/N3, expansão, gaveta e foco.
+- `src/js/40-app/12-global-dashboard.js`: montagem de `#nav` no slot lateral.
+- `src/js/20-ui/02-sidebar.js` e `12-nav-style.js`: controles de apresentação.
+- Adaptadores de módulo: seleção e ciclo de vida existentes, preservados.
 
 ## Verificação mínima
 
-Um submenu hierárquico só está validado quando o teste comprova:
+- Cinco primários, filhos, visões locais e aliases acessíveis; destino inválido
+  recusado sem mudança de estado ou storage.
+- Expansão e seleção separadas, ausência de hover obrigatório e de nav duplicada.
+- N2 lateral sem deslocamento vertical do conteúdo; N3 local sem duplicação.
+- Teclado, foco visível, Escape, contenção mobile e retorno de foco.
+- Painéis ocultos `hidden/inert`, com tentativa real de foco recusada.
+- Módulo corrente, localização e ausência de inicialização duplicada.
+- Preferências antigas, ausentes e inválidas; bytes preservados em navegação
+  repetida e recarga; controles explícitos, quota e leitura indisponível.
+- Rascunhos, alertas e comportamento operacional comparados à baseline com
+  dados sintéticos; regressão v6 e Dashboard → Forex integrada.
+- Desktop/mobile, claro/escuro, reflow, texto longo e reduced motion; sem
+  overflow do shell ou foco encoberto.
+- Zero `pageerror` e erro de console nos cenários isolados. Origens externas
+  recebem stubs inertes para que o isolamento não fabrique falhas de rede.
 
-- faixa fechada com conteúdo colapsado — o clipe interno com altura zero; a
-  faixa em si conserva a `border-bottom` transparente que anima ao abrir;
-- expansão deslocando fisicamente contexto e conteúdo;
-- ausência de overlay, sombra flutuante e overflow horizontal;
-- hover transitório com travessia segura e delay;
-- clique/Enter/Espaço fixando a faixa após `pointerleave` e resize;
-- clique no acionador já fixado mantendo-a aberta;
-- clique interno mantendo-a aberta e clique externo fechando;
-- Escape e navegação por setas/Home/End;
-- `inert` e destinos ocultos fora da ordem de foco — verificado por
-  comportamento (tentar focar e o foco não assentar), nunca por `tabIndex`:
-  `inert` não altera essa propriedade e a medição estrutural dá falso negativo;
-- estado ativo e ausência de tabs internas duplicadas;
-- troca de módulo com a faixa aberta deixando um único acionador expandido;
-- desktop/mobile e temas claro/escuro;
-- zero `pageerror` e zero erro de console — o teste deve servir stub inerte às
-  origens externas em vez de abortá-las, senão o próprio isolamento produz
-  `ERR_FAILED` e esvazia a asserção;
-- quando há workspaces: destino inicial ao entrar no módulo, preservação de
-  estado operacional na ida e volta, e ausência de duplicação do conteúdo
-  realocado.
+As evidências focais estão em `tools/navigation_ia_test.py`,
+`tools/exec_submenu_test.py`, `tools/finpes_navigation_test.py`,
+`tools/research_navigation_test.py` e `tools/contextual_sidebar_test.py`.
+`tools/dashboard_forex_relocation_test.py` mantém a regressão específica v6.
+Os gates existentes permanecem inalterados; execução e auditoria são
+registradas no candidate efetivamente testado, sem presumir aprovação pelo
+contrato. Este documento não autoriza commit, integração ou publicação.

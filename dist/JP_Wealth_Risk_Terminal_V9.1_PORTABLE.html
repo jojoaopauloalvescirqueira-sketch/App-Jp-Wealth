@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled">
+<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -6294,10 +6294,147 @@ html[data-shell="global-dashboard"] #fxOverviewWidgets > :is(#onboardingIncomple
   html[data-shell="global-dashboard"] #fxOverviewWidgets{grid-template-columns:minmax(0,1fr)}
   html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{padding:16px;gap:16px;grid-template-columns:minmax(0,1fr)}
 }
+
+/* CHG-CONTEXTUAL-SIDEBAR: somente shell, conteúdo dos módulos preservado. */
+html[data-navigation="sidebar"]{--shell-rail:252px}
+html[data-navigation="sidebar"][data-rail="collapsed"]{--shell-rail:76px}
+html[data-navigation="sidebar"][data-shell="global-dashboard"] body{
+  grid-template-columns:var(--shell-rail) minmax(0,1fr);
+  grid-template-rows:auto auto 1fr auto;
+  grid-template-areas:"hdr hdr" "sidebar context" "sidebar main" "sidebar footer";
+}
+html[data-navigation="sidebar"] body > header{grid-area:hdr;position:relative;top:auto;z-index:30}
+html[data-navigation="sidebar"] #gdTopbarNavSlot{display:none}
+html[data-navigation="sidebar"] .header-actions{margin-left:auto}
+html[data-navigation="sidebar"] #gdContextRow{grid-area:context;min-width:0}
+html[data-navigation="sidebar"] #appMain{grid-area:main;min-width:0;width:100%;box-sizing:border-box}
+html[data-navigation="sidebar"] #gdFooter{grid-area:footer;grid-column:2;min-width:0}
+html[data-navigation="sidebar"] #appSidebar{
+  grid-area:sidebar;position:sticky;top:0;align-self:start;box-sizing:border-box;
+  height:calc(100dvh - 60px);overflow-y:auto;overscroll-behavior:contain;min-width:0;
+  display:flex;flex-direction:column;padding:22px 14px;background:var(--jp-surface);
+  border-right:1px solid var(--jp-border);z-index:20;
+}
+.sidebar-heading{display:flex;justify-content:space-between;align-items:center;min-height:28px;margin:0 10px 18px}
+.sidebar-caption,.sidebar-footer{font:500 10px var(--jp-font-ui);letter-spacing:.07em;color:var(--jp-ink-muted)}
+.sidebar-footer{margin:18px 10px 0;letter-spacing:0}
+html[data-navigation="sidebar"] #sidebarClose{display:none}
+html[data-navigation="sidebar"] #appSidebar #nav{
+  position:relative;inset:auto;display:grid;grid-template-columns:minmax(0,1fr) 32px;
+  grid-auto-rows:min-content;gap:4px 0;width:100%;height:auto;padding:0;
+  margin:0;overflow:visible;background:transparent;border:0;box-shadow:none;
+  --fs-scale:1;isolation:isolate;
+}
+html[data-navigation="sidebar"] #nav > .tab{
+  grid-column:1/-1;position:relative;display:flex;align-items:center;justify-content:flex-start;gap:12px;
+  min-height:46px;min-width:0;width:100%;padding:10px 12px;box-sizing:border-box;
+  font:500 13px/1.35 var(--jp-font-ui);text-transform:none;letter-spacing:0;
+  color:var(--jp-ink-muted);border:0;border-left:3px solid transparent;
+  border-radius:7px;background:transparent;text-align:left;white-space:normal;
+  z-index:1;transform:none;box-shadow:none;
+}
+html[data-navigation="sidebar"] #nav > .tab.nav-sub-trigger{grid-column:1;}
+html[data-navigation="sidebar"] #nav > .tab .n{display:none}
+html[data-navigation="sidebar"] #nav > .tab .lbl{display:inline;line-height:1.4;min-width:0}
+html[data-navigation="sidebar"] #nav > .tab::before{
+  content:'';width:17px;height:17px;flex:none;display:block;border:1.5px solid currentColor;border-radius:4px;box-sizing:border-box;
+}
+html[data-navigation="sidebar"] #nav > [data-primary="dashboard"]::before{background:linear-gradient(90deg,transparent 42%,currentColor 42%,currentColor 52%,transparent 52%),linear-gradient(transparent 42%,currentColor 42%,currentColor 52%,transparent 52%)}
+html[data-navigation="sidebar"] #nav > [data-primary="forex"]::before{border-width:0 0 2px 2px;transform:skewY(-20deg);border-radius:0}
+html[data-navigation="sidebar"] #nav > [data-primary="personal-finance"]::before{border-radius:4px 4px 7px 7px;border-top-width:5px}
+html[data-navigation="sidebar"] #nav > [data-primary="research"]::before{border-radius:50%;box-shadow:5px 5px 0 -4px currentColor}
+html[data-navigation="sidebar"] #nav > [data-primary="alladin"]::before{border-radius:50%;background:conic-gradient(transparent 0 65%,currentColor 65% 75%,transparent 75%)}
+html[data-navigation="sidebar"] #nav > .tab:hover{color:var(--jp-ink);background:var(--accent-tint)}
+html[data-navigation="sidebar"] #nav > .tab.active{color:var(--jp-action);font-weight:650;background:var(--accent-tint);border-left-color:var(--jp-action)}
+html[data-navigation="sidebar"] .nav-group-toggle{
+  grid-column:2;display:flex;align-items:center;justify-content:center;width:32px;min-height:46px;
+  border:0;background:transparent;color:var(--jp-ink-muted);border-radius:6px;cursor:pointer;font:20px var(--jp-font-ui);
+}
+html[data-navigation="sidebar"] .nav-group-toggle[hidden]{display:block;visibility:hidden;pointer-events:none}
+html[data-navigation="sidebar"] .nav-group-toggle[aria-expanded="true"]{color:var(--jp-action);transform:rotate(180deg)}
+html[data-navigation="sidebar"] :is(.nav-group-toggle,.rail-toggle):hover{background:var(--accent-tint)}
+html[data-navigation="sidebar"] #appSidebar #navSubShell{
+  grid-column:1/-1;grid-area:auto;display:block;grid-template-rows:none;margin:0 0 12px;
+  padding:0 0 0 21px;background:transparent;border:0;overflow:visible;transition:none;
+}
+html[data-navigation="sidebar"] #appSidebar #navSubShell[hidden]{display:none}
+html[data-navigation="sidebar"] #navSubShell .nav-sub-clip{opacity:1;transform:none;overflow:visible}
+html[data-navigation="sidebar"] #navSubShell .nav-sub-menu{display:block;padding:0;width:100%;margin:0;}
+html[data-navigation="sidebar"] #navSubShell .nav-sub-menu[hidden]{display:none}
+html[data-navigation="sidebar"] #navSubShell .nav-sub-level-primary{display:block}
+html[data-navigation="sidebar"] #navSubShell button{
+  display:block;min-height:44px;padding:9px 12px;border-left:1px solid var(--jp-border);border-radius:0;
+  font:400 12px/1.4 var(--jp-font-ui);color:var(--jp-ink-muted);background:transparent;
+}
+html[data-navigation="sidebar"] #navSubShell button.is-current{border-left:2px solid var(--jp-action);color:var(--jp-action);background:var(--accent-tint);font-weight:600}
+html[data-navigation="sidebar"] #navSubShell button:hover{background:var(--accent-tint);color:var(--jp-ink)}
+html[data-navigation="sidebar"] #navSubShell .nav-sub-item-desc{display:none}
+html[data-navigation="sidebar"] #navSubShell .nav-sub-item-title{font:inherit}
+html[data-navigation="sidebar"] #railToggle{
+  display:flex;gap:12px;align-items:center;margin-top:auto;padding:12px;min-height:44px;
+  width:100%;box-sizing:border-box;border:1px solid var(--jp-border);border-radius:7px;
+  background:transparent;color:var(--jp-ink-muted);font:500 12px var(--jp-font-ui);cursor:pointer;
+}
+html[data-navigation="sidebar"] .shell-page-header{margin:0 0 24px;padding:0 0 16px;border-bottom:1px solid var(--jp-border)}
+html[data-navigation="sidebar"] .shell-location{margin:0;color:var(--jp-ink);font:500 13px/1.6 var(--jp-font-ui);overflow-wrap:anywhere}
+html[data-navigation="sidebar"] #navLocalSlot .nav-sub-contexts{margin:14px 0 0;padding:0;border:0}
+html[data-navigation="sidebar"] #navLocalSlot .nav-sub-level-context{display:flex;flex-wrap:wrap;gap:6px;}
+html[data-navigation="sidebar"] #navLocalSlot [hidden]{display:none}
+html[data-navigation="sidebar"] #navLocalSlot button{
+  border:1px solid var(--jp-border);border-radius:6px;padding:9px 12px;min-height:44px;
+  font:500 12px/1.4 var(--jp-font-ui);background:var(--jp-surface);color:var(--jp-ink-muted);cursor:pointer;text-align:left;
+}
+html[data-navigation="sidebar"] #navLocalSlot .nav-sub-item-desc{display:none}
+html[data-navigation="sidebar"] #navLocalSlot .nav-sub-item-title{font:inherit}
+html[data-navigation="sidebar"] #navLocalSlot button.is-current{color:var(--jp-action);border-color:var(--jp-action);background:var(--accent-tint)}
+html[data-navigation="sidebar"] :is(#appSidebar,#navLocalSlot) button:focus-visible{outline:2px solid var(--jp-action);outline-offset:2px;position:relative;z-index:3}
+/* Preferências antigas mantêm significado em ambas as orientações. */
+html[data-navigation="sidebar"][data-nav-style="classic"] #navPillIndicator,
+html[data-navigation="sidebar"] #navPillSpecular{display:none}
+html[data-navigation="sidebar"]:is([data-nav-style="pill"],[data-nav-style="kinetic"]) #navPillIndicator{
+  display:block;position:absolute;left:0;top:0;border-radius:10px;background:var(--accent-tint);
+  border:1px solid var(--jp-border);box-shadow:none;pointer-events:none;z-index:0;
+}
+html[data-navigation="sidebar"]:is([data-nav-style="pill"],[data-nav-style="kinetic"]) #nav > .tab.active{border-left-color:transparent;background:transparent}
+html[data-navigation="sidebar"][data-nav-style="pill"] #navPillIndicator{transition:none}
+html[data-navigation="sidebar"][data-nav-style="kinetic"] #navPillIndicator.is-ready{transition:transform 180ms ease,width 180ms ease,height 180ms ease}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+@media(min-width:901px){
+  html[data-navigation="sidebar"][data-rail="collapsed"] #appSidebar{padding-inline:10px}
+  html[data-navigation="sidebar"][data-rail="collapsed"] :is(.sidebar-heading,.sidebar-footer,#nav .lbl,#railToggle .lbl){display:none}
+  html[data-navigation="sidebar"][data-rail="collapsed"] #appSidebar #nav{display:flex;flex-direction:column;gap:8px}
+  html[data-navigation="sidebar"][data-rail="collapsed"] #nav > .tab{justify-content:center;padding:12px 8px;border-left-width:2px}
+  html[data-navigation="sidebar"][data-rail="collapsed"] :is(#navSubShell,.nav-group-toggle){display:none!important}
+  html[data-navigation="sidebar"][data-rail="collapsed"] #railToggle{justify-content:center;font-size:24px;padding:6px}
+}
+@media(max-width:900px){
+  html[data-navigation="sidebar"][data-shell="global-dashboard"] body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto;grid-template-areas:"hdr" "context" "main" "footer";}
+  html[data-navigation="sidebar"] #gdFooter{grid-column:1}
+  html[data-navigation="sidebar"] body > header{padding-inline:16px;gap:8px}
+  html[data-navigation="sidebar"] .brand{width:auto;max-width:112px}
+  html[data-navigation="sidebar"] .gd-logo{max-width:100%;height:auto}
+  html[data-navigation="sidebar"] .header-actions{width:auto;gap:8px}
+  html[data-navigation="sidebar"] #appSidebar{
+    position:fixed;inset:0 auto 0 0;grid-area:auto;width:min(310px,calc(100vw - 40px));height:100dvh;
+    z-index:8100;visibility:hidden;transform:translateX(-105%);box-shadow:8px 0 36px #0003;
+  }
+  html[data-navigation="sidebar"][data-shell-menu="open"] #appSidebar{visibility:visible;transform:none}
+  html[data-navigation="sidebar"] #sidebarBackdrop{position:fixed;inset:0;background:#0008;z-index:8099}
+  html[data-navigation="sidebar"] #sidebarBackdrop[hidden]{display:none}
+  html[data-navigation="sidebar"] #sidebarClose{display:block;min-width:44px;min-height:44px;background:transparent;border:1px solid var(--jp-border);border-radius:6px;color:var(--jp-ink);font-size:22px}
+  html[data-navigation="sidebar"] #railToggle{display:none}
+  html[data-navigation="sidebar"] #appSidebar #nav{display:grid;grid-template-columns:minmax(0,1fr) 44px;position:relative;inset:auto;transform:none;visibility:visible;max-height:none}
+  html[data-navigation="sidebar"] #nav > .tab{min-height:48px;font-size:14px}
+  html[data-navigation="sidebar"] #navSubShell button{min-height:44px;font-size:13px}
+  html[data-navigation="sidebar"] .nav-group-toggle{width:44px;min-height:48px}
+  html[data-navigation="sidebar"] #appMain{padding-top:20px}
+  html[data-navigation="sidebar"] #navLocalSlot button{min-height:44px;max-width:100%;overflow-wrap:anywhere}
+}
+@media(prefers-reduced-motion:reduce){html[data-navigation="sidebar"] #navPillIndicator{transition:none!important}}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '5c936be86b5420d8';
+const JP_WEALTH_BUILD_ID = 'b941e391df46b651';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6387,9 +6524,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     <span class="pill" id="hPhase"><span class="dot"></span><span id="hPhaseLbl">FASE 1</span></span>
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
-    <!-- Menu de destinos em telas estreitas. Fora do shell horizontal fica oculto;
-         a navegação continua sendo os mesmos botões .tab[data-route] em #nav. -->
-    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="nav" aria-label="Abrir menu de telas">Menu</button>
+    <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
+    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <!-- Desenho idêntico ao slot "Configurações" de Auditoria visual JP Wealth/
            JP Wealth - Dashboard Claro (preview cheia).dc.html, linha 36. -->
@@ -6415,22 +6551,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   </div>
 </header>
 
-<!-- Segundo nível estrutural da navegação — contrato em
-     docs/architecture/NAVIGATION-HIERARCHY.md. Diferente de um dropdown, esta
-     faixa permanece fora de #nav e participa do fluxo normal da página: ao
-     expandir, desloca a faixa de contexto e o conteúdo sem sobreposição.
-
-     A faixa é COMPARTILHADA por todos os módulos com segundo nível. Só um pode
-     estar aberto por vez (selecionar outro módulo é clique externo e fecha o
-     anterior), então um único slot no grid do body basta — e evita que dois
-     acionadores acendam juntos, que era o risco de duplicar o mecanismo.
-     Cada módulo traz seu próprio <nav>; o controlador em
-     40-app/11-operational-shell.js exibe apenas o do módulo acionado.
-
-     Convenção de ids, lida por derivação e não por registro manual:
-     `<data-nav-surface>NavTrigger` no botão de #nav e
-     `<data-nav-surface>NavSubmenu` aqui. Um módulo novo só precisa do par de
-     ids, do <nav> e da superfície de UI declarada em NAV_SUBMENU_SURFACES. -->
+<!-- Painéis existentes: o shell move N2 para a lateral e N3 para o conteúdo,
+     sem clonar nós. Contrato em docs/architecture/NAVIGATION-HIERARCHY.md. -->
 <div class="nav-sub-shell" id="navSubShell">
   <div class="nav-sub-clip">
     <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
@@ -6583,40 +6705,36 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
      sem a flag; os elementos reais continuam filhos de <header>. -->
 <div class="gd-context-row" id="gdContextRow"></div>
 
-<nav id="nav">
-  <!-- Parâmetros, Motor de Lote e Checklist saíram da navegação superior:
-       vivem na Central de Configurações (grupo "Operação"). As <section>
-       deles permanecem abaixo como hospedeiras do conteúdo transportado —
-       mesmo padrão do #config (ver 09-settings-modal.js). -->
-  <!-- Destaque deslizante do estilo "pílula flutuante" (12-nav-style.js). Fica
-       display:none em qualquer outro contexto — modo clássico, rail vertical do
-       Dashboard e gaveta mobile. É decorativo: aria-hidden, sem foco, e a aba
-       ativa continua sendo comunicada pela classe .active nos próprios botões. -->
+<aside id="appSidebar" aria-label="Navegação do JP Wealth">
+  <div class="sidebar-heading"><span class="sidebar-caption">Áreas de trabalho</span><button type="button" id="sidebarClose" aria-label="Fechar menu de telas">×</button></div>
+<nav id="nav" aria-label="Módulos">
+  <!-- Indicador decorativo dos estilos pill/kinetic. O estado acessível
+       permanece nos botões; o brilho legado fica inativo neste shell. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
-  <!-- Brilho especular do KineticNav. É irmão do destaque, e não filho: como
-       elemento separado ele pode ter a própria duração de transição e chegar
-       DEPOIS: é essa defasagem que faz a superfície ler como vidro em vez de
-       painel chapado. Como filho ou pseudo-elemento viajaria junto e não
-       haveria atraso nenhum. Só existe no estilo kinetic (ver app.css). -->
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex"
-          aria-expanded="false" aria-controls="execNavSubmenu">
-    <span class="n">02</span><span class="lbl">Forex</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
-  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"
-          aria-expanded="false" aria-controls="finpesNavSubmenu">
-    <span class="n">03</span><span class="lbl">Finanças Pessoais</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"
-          aria-expanded="false" aria-controls="researchNavSubmenu">
-    <span class="n">04</span><span class="lbl">Research</span><span class="nav-sub-caret" aria-hidden="true">⌄</span>
-  </button>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex">
+    <span class="n">02</span><span class="lbl">Forex</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais">
+    <span class="n">03</span><span class="lbl">Finanças Pessoais</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research">
+    <span class="n">04</span><span class="lbl">Research</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
-  <button class="rail-toggle" id="railToggle" title="Recolher / expandir a barra lateral">‹ <span class="lbl">Recolher</span></button>
-</nav>
+  </nav>
+  <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
+  <span class="sidebar-footer">JP Wealth</span>
+</aside>
+<div id="sidebarBackdrop" hidden></div>
 
 <main id="appMain">
+  <div id="shellPageHeader" class="shell-page-header">
+    <p id="shellLocation" class="shell-location" aria-label="Localização atual">Dashboard</p>
+    <div id="navLocalSlot" aria-label="Visões da página"></div>
+  </div>
+  <div id="shellAnnouncement" class="sr-only" role="status" aria-live="polite"></div>
   <div class="onb-global-banner" id="onboardingIncompleteBanner" data-layout-card="onboarding-alert" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full" role="status" aria-live="polite">
     <svg class="jp-icon jp-icon-lg" aria-hidden="true"><use href="#i-info"/></svg>
     <div><div class="t" id="onbBannerTitle">Formulário de Início incompleto</div><div class="s" id="onbBannerText">—</div></div>
@@ -7570,7 +7688,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
              ficar escondido atrás de um ícone. A classe existe para isso — ver o
              comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
         <span class="note note-live" id="navStyleDefaultNote"></span>
-        <span class="note"><b>KineticNav</b>: invólucro fosco e destaque com assentamento de mola, que acompanha a aba sob o cursor e volta para a ativa ao sair; o brilho especular chega com atraso, e é essa defasagem que faz a superfície ler como vidro. <b>Floating Pill Nav</b>: invólucro sólido e destaque que desliza direto, sem magnetismo. <b>Clássica</b>: a barra original, com a aba ativa sublinhada. Os dois primeiros nomes são os que seus autores deram aos componentes de referência; as aparências foram reescritas aqui, sem código de terceiros. Vale para a barra horizontal do topo — a lateral do Dashboard e o menu do celular não mudam em nenhuma das três. Preferência deste navegador: não entra no backup.</span>
+        <span class="note note-live" id="navStyleStatus" role="status" aria-live="polite"></span>
+        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos se aplicam à lateral e à gaveta do celular, respeitando redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
       </div>
     </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets
@@ -10671,19 +10790,29 @@ function startHeaderClock(){
   const tick=()=>{ el.textContent=new Date().toLocaleTimeString('pt-BR',{hour12:false}); };
   tick(); setInterval(tick,1000);
 }
-// ============ SIDEBAR · COLAPSO ============
+// A preferência existente controla a largura desktop; breakpoint não grava.
 function applyRailState(){
-  const on=localStorage.getItem('jpw_rail')==='collapsed';
-  document.documentElement.setAttribute('data-rail', on?'collapsed':'expanded');
+  let value=null;try{value=localStorage.getItem('jpw_rail');}catch(_){}
+  const collapsed=value==='collapsed';
+  document.documentElement.setAttribute('data-rail',collapsed?'collapsed':'expanded');
   const t=$('railToggle');
-  if(t){ t.innerHTML=(on?'›':'‹')+' <span class="lbl">'+(on?'Expandir':'Recolher')+'</span>'; }
+  if(t){
+    const label=collapsed?'Expandir barra lateral':'Recolher barra lateral';
+    t.innerHTML=(collapsed?'›':'‹')+' <span class="lbl">'+(collapsed?'Expandir':'Recolher')+'</span>';
+    t.setAttribute('aria-label',label);t.title=label;t.setAttribute('aria-expanded',String(!collapsed));
+  }
+  if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
 function bindRailToggle(){
-  const t=$('railToggle'); if(!t) return;
+  const t=$('railToggle');if(!t||t.dataset.bound)return;t.dataset.bound='true';
   t.addEventListener('click',()=>{
-    const on=localStorage.getItem('jpw_rail')==='collapsed';
-    localStorage.setItem('jpw_rail', on?'expanded':'collapsed');
-    applyRailState();
+    try{
+      const collapsed=localStorage.getItem('jpw_rail')==='collapsed';
+      localStorage.setItem('jpw_rail',collapsed?'expanded':'collapsed');
+      applyRailState();
+    }catch(_){
+      const message=$('shellAnnouncement');if(message)message.textContent='Não foi possível salvar a largura da lateral neste navegador.';
+    }
   });
 }
 // ============ RENDER ============
@@ -14392,8 +14521,10 @@ function navNavigateLocal(surfaceId,view){
 function navFocusCurrentScreen(){
   const screen=document.querySelector('#appMain > .screen.active');
   if(!screen) return false;
-  const target=screen.querySelector('[data-route-focus],h1,h2');
-  if(!target) return false;
+  // Workspaces inativos permanecem montados. Nunca devolver foco ao título
+  // oculto da Visão Geral quando outra visão do mesmo módulo está aberta.
+  const target=[...screen.querySelectorAll('[data-route-focus],h1,h2')].find(el=>
+    !el.closest('[hidden],[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden')||screen;
   if(!target.hasAttribute('tabindex')) target.setAttribute('tabindex','-1');
   target.focus({preventScroll:true});
   return document.activeElement===target;
@@ -14649,9 +14780,8 @@ function applyNavStyle(){
 }
 // O destaque é um elemento único que se desloca até a aba ativa. Medimos por
 // offsetLeft/offsetWidth, e não por getBoundingClientRect, justamente porque o
-// #nav horizontal é um contêiner com overflow-x:auto: offsetLeft é posição de
-// layout dentro do padding box e não muda quando a barra é rolada, que é o que
-// mantém o destaque colado na aba certa em qualquer posição de rolagem.
+// offsetLeft/offsetTop são posições no padding box de #nav; a geometria
+// permanece relativa ao mesmo contêiner na lateral aberta, compacta e mobile.
 // Aplica a MESMA geometria ao destaque e ao brilho especular. Quem produz o
 // atraso entre os dois é a folha de estilo (durações e delay diferentes), não
 // este código: aqui os dois recebem o mesmo alvo no mesmo instante.
@@ -14673,9 +14803,8 @@ function positionNavPill(){
   if(!nav||!pill) return;
   const spec=document.getElementById('navPillSpecular');
   const active=nav.querySelector('.tab.active');
-  // Em modo clássico, no rail vertical do Dashboard e na gaveta mobile o CSS
-  // deixa o destaque em display:none — medir ali devolveria zero e faria o
-  // elemento piscar ao voltar para a barra horizontal.
+  // Em modo clássico o CSS deixa o destaque em display:none. Não medir
+  // esse estado evita geometria vazia ao selecionar outro estilo.
   //
   // A ausência de aba ativa continua tratada defensivamente para monólitos
   // reduzidos e DOM incompleto. No contrato NAV-01 o resolver valida o destino
@@ -14725,11 +14854,16 @@ function renderNavStyleSeg(){
   }
 }
 function bindNavStyleSeg(){
-  document.querySelectorAll('#navStyleSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#navStyleSeg button').forEach(b=>{if(b.dataset.navBound)return;b.dataset.navBound='true';b.addEventListener('click',()=>{
     const v=NAV_STYLES.includes(b.dataset.navVal)?b.dataset.navVal:'kinetic';
-    try{ localStorage.setItem(NAV_STYLE_KEY, v); }catch(e){}
+    const message=document.getElementById('navStyleStatus');
+    try{ localStorage.setItem(NAV_STYLE_KEY, v); }catch(e){
+      if(message)message.textContent='Não foi possível salvar o estilo de navegação neste navegador.';
+      return;
+    }
+    if(message)message.textContent='';
     applyNavStyle(); renderNavStyleSeg(); scheduleNavPill();
-  }));
+  });});
 }
 // ---- Magnetismo do KineticNav ----
 // No componente de referência o destaque acompanha o item sob o cursor e volta
@@ -14768,7 +14902,7 @@ new MutationObserver(scheduleNavPill).observe(document.documentElement, {
   attributeFilter:['data-shell','data-active-screen','data-nav-style','data-rail','data-ui-version'],
 });
 // Sinal decisivo para a primeira medição: a GEOMETRIA da barra. No boot as abas
-// ainda medem zero — o shell só realoca o #nav para dentro da topbar depois —, e
+// podem mudar de tamanho enquanto o shell monta os slots contextuais, e
 // essa realocação não mexe em nenhum atributo de <html>, então o observador
 // acima não a enxerga. O ResizeObserver enxerga, e de quebra cobre pelo mesmo
 // mecanismo tudo que altera a largura das abas: escala de fonte, rail e
@@ -19017,338 +19151,221 @@ function initDashboardImmersive() {
   renderDashSlides(false);
 }
 initDashboardImmersive();
-// ============ SHELL OPERACIONAL · NAVEGAÇÃO RESPONSIVA (N1) ============
-// Camada estritamente de interface: controla a gaveta global no mobile e a
-// faixa compartilhada dos níveis contextuais, com hover transitório, clique
-// fixado, foco, Escape e clique externo. Forex encaminha filhos canônicos e
-// visões locais pelo resolver; Research e Finanças Pessoais mantêm superfícies
-// públicas próprias.
-// Estado ativo sempre deriva de JPWNavigation/current + UI, nunca de cópia local.
-//
-// A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
-// selecionar outro módulo global é clique externo e fecha o anterior. Por isso
-// basta um slot no grid do body, e o módulo aberto é distinguido por
-// `aria-expanded="true"` no próprio acionador — não por atributo global na
-// raiz, que acenderia todos os acionadores de uma vez.
-//
-// Para dar segundo nível a um módulo novo bastam três coisas, nenhuma delas
-// neste arquivo além da última linha:
-//   1. um botão `.tab.nav-sub-trigger` com id `<data-nav-surface>NavTrigger`;
-//   2. um `<nav class="nav-sub-menu">` com id `<data-nav-surface>NavSubmenu` dentro
-//      de #navSubShell, com botões `[data-nav-sub-view]`;
-//   3. uma entrada em NAV_SUBMENU_SURFACES apontando para a superfície de UI.
-
-const shellUI = { open: false, opener: null };
-const navSubUI = { open: false, pinned: false, closeTimer: null, opener: null, screen: null };
-const NAV_SUB_CLOSE_DELAY = 400;
-
-// Contrato da superfície de módulo: `selectView(chave)` e `getView()`.
-// O controlador não conhece as chaves — quem as valida é o próprio módulo.
+// Shell lateral: apresentação sobre o resolver existente. Nenhuma rota,
+// preferência de navegação ou informação financeira é criada aqui.
+const shellUI = { open:false, opener:null, inerted:[], overflow:'' };
+const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener:null };
 const NAV_SUBMENU_SURFACES = {
-  exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  finpes: () => (window.JPWFin && window.JPWFin.ui) || null,
-  research: () => (window.JPWResearch && window.JPWResearch.ui) || null
+  exec:()=>window.JPWExec&&window.JPWExec.ui,
+  finpes:()=>window.JPWFin&&window.JPWFin.ui,
+  research:()=>window.JPWResearch&&window.JPWResearch.ui
 };
-
-function shellEl(sel) { return document.querySelector(sel); }
-
-function navSubEls(screen) {
-  const key = screen || navSubUI.screen;
-  const trigger = key ? document.getElementById(key + 'NavTrigger') : null;
-  const panel = key ? document.getElementById(key + 'NavSubmenu') : null;
-  const shell = document.getElementById('navSubShell');
-  const allItems=panel?[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')]:[];
-  return {screen:key,trigger,panel,shell,allItems,
-    items:allItems.filter(item=>!item.closest('[data-nav-context][hidden]'))};
+function shellEl(sel){return document.querySelector(sel);}
+function shellMobile(){return window.matchMedia('(max-width:900px)').matches;}
+function navSubSurface(screen){const f=NAV_SUBMENU_SURFACES[screen||navSubUI.screen];return f?f():null;}
+function navSubEls(screen){
+  const key=screen||navSubUI.screen;
+  const panel=document.getElementById(key+'NavSubmenu');
+  const trigger=shellEl('[data-nav-expand="'+key+'"]');
+  const local=document.getElementById(key+'NavContexts');
+  const allItems=[...(panel?panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]'):[]),
+    ...(local?local.querySelectorAll('[data-nav-item]'):[])];
+  return {screen:key,trigger,panel,shell:document.getElementById('navSubShell'),allItems,
+    items:allItems.filter(i=>!i.closest('[hidden]'))};
 }
-
-function navSubSurface(screen) {
-  const resolve = NAV_SUBMENU_SURFACES[screen || navSubUI.screen];
-  return typeof resolve === 'function' ? resolve() : null;
-}
-
-function cancelNavSubClose() {
-  if (navSubUI.closeTimer) clearTimeout(navSubUI.closeTimer);
-  navSubUI.closeTimer = null;
-}
-
-// Monta o painel do módulo alvo e desmonta os demais. `hidden` só muda aqui:
-// abrir e fechar a faixa não esconde o painel, senão a animação de recolher
-// mostraria uma faixa vazia encolhendo.
-function mountNavSubPanel(screen) {
-  document.querySelectorAll('#navSubShell .nav-sub-menu').forEach(panel => {
-    panel.hidden = panel.id !== screen + 'NavSubmenu';
-  });
-}
-
-function syncNavSubContexts(screen) {
-  if(!screen||!window.JPWNavigation) return;
-  const current=window.JPWNavigation.current();
-  const panel=document.getElementById(screen+'NavSubmenu');
-  if(!panel) return;
-  let any=false;
-  panel.querySelectorAll('[data-nav-context]').forEach(group=>{
-    const active=group.dataset.navContext===current.child;
-    if(active) any=true;
-    group.hidden=!active;
-    group.inert=!active;
-  });
-  const host=panel.querySelector('.nav-sub-contexts');
-  if(host){host.hidden=!any;host.inert=!any;}
-}
-
 function navSubRouteIsCurrent(item,current){
-  if(!window.JPWNavigation||!item.dataset.navRoute) return false;
-  const resolved=window.JPWNavigation.resolve(item.dataset.navRoute);
-  if(!resolved.accepted||current.canonical!==resolved.canonical||current.screen!==resolved.screen) return false;
-  if(!resolved.localView) return !current.localView;
-  return !!current.localView&&current.localView.surface===resolved.localView.surface&&
-    current.localView.view===resolved.localView.view;
+  if(!item.dataset.navRoute||!window.JPWNavigation)return false;
+  const r=window.JPWNavigation.resolve(item.dataset.navRoute);
+  return r.accepted&&current.canonical===r.canonical&&current.screen===r.screen&&
+    (!r.localView?!current.localView:!!current.localView&&r.localView.surface===current.localView.surface&&r.localView.view===current.localView.view);
 }
-
-function syncNavSubCurrent(screen) {
-  syncNavSubContexts(screen);
-  const {items}=navSubEls(screen);
-  const surface=navSubSurface(screen);
-  const currentNav=window.JPWNavigation?window.JPWNavigation.current():null;
-  const currentView=surface&&typeof surface.getView==='function'?surface.getView():null;
-  items.forEach(item => {
-    const active=item.dataset.navChild?(currentNav&&item.dataset.navChild===currentNav.child):
-      (item.dataset.navRoute?navSubRouteIsCurrent(item,currentNav):
-      (item.dataset.navLocalView?(currentNav&&currentNav.localView&&
-        item.dataset.navLocalSurface===currentNav.localView.surface&&
-        item.dataset.navLocalView===currentNav.localView.view):
-      item.dataset.navSubView===currentView));
-    item.classList.toggle('is-current', active);
-    if (active) item.setAttribute('aria-current', 'page');
-    else item.removeAttribute('aria-current');
-    item.tabIndex = active ? 0 : -1;
+function syncNavSubContexts(screen){
+  const current=window.JPWNavigation.current();
+  document.querySelectorAll('#navLocalSlot .nav-sub-contexts').forEach(host=>{
+    let any=false;
+    host.querySelectorAll('[data-nav-context]').forEach(group=>{
+      const on=host.id===screen+'NavContexts'&&group.dataset.navContext===current.child;
+      group.hidden=!on;group.inert=!on;any=any||on;
+    });
+    host.hidden=!any;host.inert=!any;
   });
-  const found=items.find(item=>item.classList.contains('is-current'));
-  // Sem visão correspondente (módulo ainda não carregado) o primeiro item
-  // continua alcançável por Tab — a faixa nunca fica sem ponto de entrada.
-  if (!found && items[0]) items[0].tabIndex = 0;
-  return found || items[0] || null;
 }
-
+function syncNavSubCurrent(screen){
+  if(!window.JPWNavigation)return null;
+  syncNavSubContexts(screen);
+  const current=window.JPWNavigation.current(),surface=navSubSurface(screen);
+  const view=surface&&surface.getView();
+  const {allItems}=navSubEls(screen);
+  allItems.forEach(item=>{
+    const on=item.dataset.navChild?item.dataset.navChild===current.child:
+      item.dataset.navRoute?navSubRouteIsCurrent(item,current):
+      item.dataset.navLocalView?!!current.localView&&item.dataset.navLocalSurface===current.localView.surface&&item.dataset.navLocalView===current.localView.view:
+      item.dataset.navSubView===view;
+    item.classList.toggle('is-current',on);
+    if(on)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');
+    item.tabIndex=on?0:-1;
+  });
+  // Um ponto de Tab por nível, sem misturar N2 e N3 nas setas.
+  const panel=document.getElementById(screen+'NavSubmenu');
+  const groups=[panel,...document.querySelectorAll('#navLocalSlot [data-nav-context]:not([hidden])')].filter(Boolean);
+  groups.forEach(group=>{
+    const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
+    if(!items.some(i=>i.tabIndex===0)&&items[0])items[0].tabIndex=0;
+  });
+  return panel&&panel.querySelector('[aria-current="page"]');
+}
+function syncShellLocation(){
+  if(!window.JPWNavigation)return;
+  const c=window.JPWNavigation.current();
+  const primary=document.querySelector('#nav > .tab[data-primary="'+c.primary+'"]');
+  const parts=[primary?primary.querySelector('.lbl').textContent.trim():'Dashboard'];
+  const child=c.child&&document.querySelector('[data-nav-child="'+c.child+'"] .nav-sub-item-title');
+  if(child)parts.push(child.textContent.trim());
+  let local=null;
+  if(c.primary==='personal-finance')local=document.querySelector('#finpesNavSubmenu [aria-current="page"] .nav-sub-item-title');
+  else if(c.primary==='alladin')local=document.querySelector('#alladinTabs [aria-pressed="true"]');
+  else local=document.querySelector('#navLocalSlot [data-nav-context]:not([hidden]) [aria-current="page"] .nav-sub-item-title');
+  if(local&&parts[parts.length-1]!==local.textContent.trim())parts.push(local.textContent.trim());
+  const el=document.getElementById('shellLocation'),text=parts.join(' / ');
+  if(el&&el.textContent!==text)el.textContent=text;
+}
 function syncNavSubState(){
-  if(navSubUI.screen) syncNavSubCurrent(navSubUI.screen);
+  if(!window.JPWNavigation)return;
+  const c=window.JPWNavigation.current();
+  const key=({forex:'exec','personal-finance':'finpes',research:'research'})[c.primary]||null;
+  if(key!==navSubUI.screen){navSubUI.collapsed=null;navSubUI.screen=key;}
+  navSubUI.open=!!key&&navSubUI.collapsed!==key;
+  const shell=document.getElementById('navSubShell');
+  document.querySelectorAll('[data-nav-expand]').forEach(btn=>{
+    const active=btn.dataset.navExpand===key;
+    btn.hidden=!active;btn.setAttribute('aria-expanded',String(active&&navSubUI.open));
+    const primary=document.getElementById(btn.dataset.navExpand+'NavTrigger');
+    const label=primary.querySelector('.lbl').textContent.trim();
+    btn.setAttribute('aria-label',(active&&navSubUI.open?'Recolher':'Expandir')+' destinos de '+label);
+    if(active&&shell&&btn.nextElementSibling!==shell)btn.after(shell);
+  });
+  document.querySelectorAll('.nav-sub-menu').forEach(panel=>{
+    const on=panel.id===key+'NavSubmenu'&&navSubUI.open;
+    panel.hidden=!on;panel.inert=!on;panel.setAttribute('aria-hidden',String(!on));
+  });
+  if(shell){shell.hidden=!navSubUI.open;shell.classList.toggle('is-open',navSubUI.open);}
+  if(navSubUI.open)document.documentElement.setAttribute('data-nav-sub','open');
+  else document.documentElement.removeAttribute('data-nav-sub');
+  if(key)syncNavSubCurrent(key);else syncNavSubContexts(null);
+  syncShellLocation();
+  if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
-
-function openNavSub(screen, options) {
-  const target = screen || navSubUI.screen;
-  const {trigger,panel,shell}=navSubEls(target);
-  if (!trigger || !panel || !shell) return;
-  // Trocar de módulo com a faixa já aberta: o anterior perde estado de aberto
-  // antes de o novo assumir, para não restar dois acionadores expandidos.
-  if (navSubUI.screen && navSubUI.screen !== target) collapseNavSubPanel(navSubUI.screen);
-  cancelNavSubClose();
-  navSubUI.open = true;
-  navSubUI.screen = target;
-  if (options && options.pin) navSubUI.pinned = true;
-  navSubUI.opener = (options && options.opener) || trigger;
-  mountNavSubPanel(target);
-  const current=syncNavSubCurrent(target);
-  const {items}=navSubEls(target);
-  document.documentElement.setAttribute('data-nav-sub', 'open');
-  if (navSubUI.pinned) document.documentElement.setAttribute('data-nav-sub-pinned', 'true');
-  trigger.setAttribute('aria-expanded', 'true');
-  shell.classList.add('is-open');
-  panel.setAttribute('aria-hidden', 'false');
-  panel.inert = false;
-  if (typeof navPillApplyGeometry === 'function') navPillApplyGeometry(trigger);
-  if (options && options.focus === 'last') {
-    const last = items[items.length - 1];
-    if (last) { items.forEach(item => { item.tabIndex = item === last ? 0 : -1; }); last.focus(); }
-  } else if (options && options.focus && current) current.focus();
-}
-
-// Retira o estado de aberto de um módulo sem mexer na faixa: usado ao trocar
-// de módulo e como parte do fechamento.
-function collapseNavSubPanel(screen) {
-  const {trigger,panel,allItems}=navSubEls(screen);
-  if (trigger) trigger.setAttribute('aria-expanded', 'false');
-  if (panel) { panel.setAttribute('aria-hidden', 'true'); panel.inert = true; }
-  allItems.forEach(item => { item.tabIndex = -1; });
-}
-
-function closeNavSub(options) {
-  cancelNavSubClose();
-  const shell = document.getElementById('navSubShell');
-  const screen = navSubUI.screen;
-  if (!shell || !screen) return;
-  const wasOpen = navSubUI.open;
-  navSubUI.open = false;
-  navSubUI.pinned = false;
-  document.documentElement.removeAttribute('data-nav-sub');
-  document.documentElement.removeAttribute('data-nav-sub-pinned');
-  shell.classList.remove('is-open');
-  collapseNavSubPanel(screen);
-  if (typeof scheduleNavPill === 'function') scheduleNavPill();
-  const opener = navSubUI.opener || navSubEls(screen).trigger;
-  navSubUI.opener = null;
-  navSubUI.screen = null;
-  if (wasOpen && options && options.restoreFocus && opener && document.contains(opener)) opener.focus();
-}
-
-function scheduleNavSubClose() {
-  cancelNavSubClose();
-  if (navSubUI.pinned) return;
-  navSubUI.closeTimer = setTimeout(() => closeNavSub(), NAV_SUB_CLOSE_DELAY);
-}
-
-function selectNavSubView(view) {
-  const screen = navSubUI.screen;
-  if (!screen) return;
-  if (window.JPWNavigation && typeof window.JPWNavigation.navigateLocal === 'function') {
-    window.JPWNavigation.navigateLocal(screen, view);
-  } else {
-    if (typeof navigateToScreen === 'function') navigateToScreen(screen);
-    const surface = navSubSurface(screen);
-    if (surface && typeof surface.selectView === 'function') surface.selectView(view);
+function openNavSub(screen,options){
+  if(screen!==navSubUI.screen)return;
+  navSubUI.collapsed=null;syncNavSubState();
+  const {trigger,panel}=navSubEls(screen);navSubUI.opener=trigger;
+  if(options&&options.focus&&panel){
+    const items=[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
+    const target=options.focus==='last'?items[items.length-1]:panel.querySelector('[aria-current="page"]')||items[0];
+    if(target){items.forEach(i=>i.tabIndex=i===target?0:-1);target.focus();}
   }
-  syncNavSubCurrent(screen);
-  if (shellUI.open) closeShellMenu({ restoreFocus: false });
 }
-
+function closeNavSub(options){
+  const {trigger}=navSubEls();navSubUI.collapsed=navSubUI.screen;syncNavSubState();
+  if(options&&options.restoreFocus&&trigger)trigger.focus();
+}
+function selectNavSubView(view){
+  if(navSubUI.screen&&window.JPWNavigation)window.JPWNavigation.navigateLocal(navSubUI.screen,view);
+}
 function selectNavSubItem(item){
-  if(!item) return;
-  if(item.dataset.navChild&&window.JPWNavigation){
-    window.JPWNavigation.navigate(item.dataset.navChild);
-  }else if(item.dataset.navRoute&&window.JPWNavigation){
-    window.JPWNavigation.navigate(item.dataset.navRoute);
-  }else if(item.dataset.navLocalSurface&&item.dataset.navLocalView&&window.JPWNavigation){
-    window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
-  }else if(item.dataset.navSubView){
-    selectNavSubView(item.dataset.navSubView);
-  }
+  if(!item||!window.JPWNavigation)return;
+  if(item.dataset.navChild)window.JPWNavigation.navigate(item.dataset.navChild);
+  else if(item.dataset.navRoute)window.JPWNavigation.navigate(item.dataset.navRoute);
+  else if(item.dataset.navLocalSurface)window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
+  else if(item.dataset.navSubView)selectNavSubView(item.dataset.navSubView);
   syncNavSubState();
-  if(shellUI.open) closeShellMenu({restoreFocus:false});
+  if(shellUI.open)closeShellMenu({restoreFocus:false});
+  window.JPWNavigation.focusCurrentScreen();
 }
-
-function moveNavSubFocus(direction) {
-  const { items } = navSubEls();
-  if (!items.length) return;
-  const current = Math.max(0, items.indexOf(document.activeElement));
-  const next = direction === 'first' ? 0
-    : direction === 'last' ? items.length - 1
-    : (current + direction + items.length) % items.length;
-  items.forEach((item, index) => { item.tabIndex = index === next ? 0 : -1; });
-  items[next].focus();
+function syncShellViewport(){
+  const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
+  const modal=shellMobile();sidebar.inert=modal&&!shellUI.open;
+  if(modal){sidebar.setAttribute('role','dialog');sidebar.setAttribute('aria-modal','true');sidebar.setAttribute('aria-hidden',String(!shellUI.open));}
+  else {sidebar.removeAttribute('role');sidebar.removeAttribute('aria-modal');sidebar.removeAttribute('aria-hidden');}
+  if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
-
-function openShellMenu(opener) {
-  const nav = document.getElementById('nav');
-  const toggle = shellEl('[data-shell-menu-toggle]');
-  if (!nav || shellUI.open) return;
-  shellUI.open = true;
-  shellUI.opener = opener || toggle;
-  document.documentElement.setAttribute('data-shell-menu', 'open');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.setAttribute('aria-label', 'Fechar menu de telas');
-  }
-  const first = nav.querySelector('.tab');
-  if (first) first.focus();
+function openShellMenu(opener){
+  if(shellUI.open||!shellMobile())return;
+  const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
+  shellUI.open=true;shellUI.opener=opener||shellEl('[data-shell-menu-toggle]');
+  document.documentElement.setAttribute('data-shell-menu','open');
+  shellEl('[data-shell-menu-toggle]').setAttribute('aria-expanded','true');
+  shellEl('[data-shell-menu-toggle]').setAttribute('aria-label','Fechar menu de telas');
+  document.getElementById('sidebarBackdrop').hidden=false;
+  shellUI.overflow=document.body.style.overflow;document.body.style.overflow='hidden';
+  shellUI.inerted=[...document.body.children].filter(el=>el!==sidebar&&el.id!=='sidebarBackdrop'&&!['SCRIPT','STYLE'].includes(el.tagName)).map(el=>[el,el.inert]);
+  shellUI.inerted.forEach(([el])=>el.inert=true);
+  syncShellViewport();
+  const active=sidebar.querySelector('#nav > .tab.active');(active||document.getElementById('sidebarClose')).focus();
 }
-
-function closeShellMenu(options) {
-  if (!shellUI.open) return;
-  shellUI.open = false;
-  document.documentElement.removeAttribute('data-shell-menu');
-  const toggle = shellEl('[data-shell-menu-toggle]');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Abrir menu de telas');
-  }
-  const opener = shellUI.opener;
-  shellUI.opener = null;
-  if (!options || options.restoreFocus !== false) {
-    if (opener && document.contains(opener)) opener.focus();
-  }
+function closeShellMenu(options){
+  if(!shellUI.open)return;
+  shellUI.open=false;document.documentElement.removeAttribute('data-shell-menu');
+  const btn=shellEl('[data-shell-menu-toggle]');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Abrir menu de telas');
+  document.getElementById('sidebarBackdrop').hidden=true;
+  shellUI.inerted.forEach(([el,was])=>el.inert=was);shellUI.inerted=[];
+  document.body.style.overflow=shellUI.overflow;syncShellViewport();
+  const opener=shellUI.opener;shellUI.opener=null;
+  if((!options||options.restoreFocus!==false)&&opener&&opener.isConnected)opener.focus();
 }
-
-function initOperationalShell() {
-  const navSubShell = document.getElementById('navSubShell');
-  const globalNav = document.getElementById('nav');
-  const triggers = globalNav ? [...globalNav.querySelectorAll('.nav-sub-trigger')] : [];
-
-  if (navSubShell && triggers.length) {
-    const finePointer = window.matchMedia('(hover:hover) and (pointer:fine)');
-    const hoverCapable = () => finePointer.matches && !window.matchMedia('(max-width:900px)').matches;
-
-    triggers.forEach(trigger => {
-      const screen = trigger.dataset.navSurface;
-      const {panel,allItems}=navSubEls(screen);
-      if (!panel) return;
-      allItems.forEach(item => { item.tabIndex = -1; });
-      trigger.addEventListener('pointerenter', () => { if (hoverCapable()) openNavSub(screen, { opener: trigger }); });
-      trigger.addEventListener('keydown', event => {
-        if (event.key === 'ArrowDown') {
-          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: true });
-        } else if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          if (window.JPWNavigation) window.JPWNavigation.navigate(trigger.dataset.route);
-          openNavSub(screen, { opener: trigger, focus: true, pin: true });
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: 'last' });
-        } else if (event.key === 'Escape' && navSubUI.open) {
-          event.preventDefault(); closeNavSub({ restoreFocus: true });
-        }
-      });
-    });
-
-    globalNav.addEventListener('pointerenter', () => { if (navSubUI.open) cancelNavSubClose(); });
-    globalNav.addEventListener('pointerleave', event => {
-      if (hoverCapable() && !navSubShell.contains(event.relatedTarget)) scheduleNavSubClose();
-    });
-    navSubShell.addEventListener('pointerenter', cancelNavSubClose);
-    navSubShell.addEventListener('pointerleave', event => {
-      if (hoverCapable() && !globalNav.contains(event.relatedTarget)) scheduleNavSubClose();
-    });
-    navSubShell.addEventListener('keydown', event => {
-      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') { event.preventDefault(); moveNavSubFocus(1); }
-      else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') { event.preventDefault(); moveNavSubFocus(-1); }
-      else if (event.key === 'Home') { event.preventDefault(); moveNavSubFocus('first'); }
-      else if (event.key === 'End') { event.preventDefault(); moveNavSubFocus('last'); }
-      else if (event.key === 'Escape') { event.preventDefault(); closeNavSub({ restoreFocus: true }); }
-    });
-  }
-
-  document.addEventListener('click', event => {
-    const toggle = event.target.closest('[data-shell-menu-toggle]');
-    if (toggle) { shellUI.open ? closeShellMenu() : openShellMenu(toggle); return; }
-    const triggerHit = event.target.closest('.nav-sub-trigger');
-    if (triggerHit) {
-      openNavSub(triggerHit.dataset.navSurface, { opener: triggerHit, focus: shellUI.open, pin: true });
-      if (shellUI.open) closeShellMenu({ restoreFocus: false });
-      return;
-    }
+function shellMoveFocus(event){
+  const group=event.target.closest('[data-nav-context],.nav-sub-menu');if(!group)return;
+  const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(i=>!i.closest('[hidden]'));
+  if(!items.length)return;
+  let index=items.indexOf(document.activeElement);
+  if(event.key==='Home')index=0;else if(event.key==='End')index=items.length-1;
+  else if(['ArrowDown','ArrowRight'].includes(event.key))index=(index+1)%items.length;
+  else if(['ArrowUp','ArrowLeft'].includes(event.key))index=(index-1+items.length)%items.length;
+  else return;
+  event.preventDefault();items.forEach((i,n)=>i.tabIndex=n===index?0:-1);items[index].focus();
+}
+function initOperationalShell(){
+  const sidebar=document.getElementById('appSidebar');if(!sidebar||sidebar.dataset.ready)return;
+  sidebar.dataset.ready='true';
+  document.querySelectorAll('#navSubShell .nav-sub-contexts').forEach(host=>{
+    host.id=host.closest('.nav-sub-menu').id.replace('NavSubmenu','NavContexts');
+    document.getElementById('navLocalSlot').append(host);
+  });
+  const shell=document.getElementById('navSubShell');document.getElementById('nav').append(shell);
+  const alladinTabs=document.getElementById('alladinTabs');
+  if(alladinTabs)new MutationObserver(syncShellLocation).observe(alladinTabs,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+  document.addEventListener('click',event=>{
+    const toggle=event.target.closest('[data-shell-menu-toggle]');
+    if(toggle){shellUI.open?closeShellMenu():openShellMenu(toggle);return;}
+    if(event.target.closest('#sidebarClose,#sidebarBackdrop')){closeShellMenu();return;}
+    const expander=event.target.closest('[data-nav-expand]');
+    if(expander){navSubUI.open?closeNavSub():openNavSub(expander.dataset.navExpand);return;}
     const item=event.target.closest('[data-nav-item],[data-nav-sub-view]');
     if(item){selectNavSubItem(item);return;}
-    if (navSubUI.open && !event.target.closest('#navSubShell')) closeNavSub();
-    // Selecionar outro destino global fecha somente a gaveta mobile — sem
-    // devolver foco, porque a navegação já levou o usuário para outra tela.
-    if (shellUI.open && event.target.closest('#nav .tab:not(.nav-sub-trigger)')) {
-      closeShellMenu({ restoreFocus: false });
-      if (window.JPWNavigation) window.JPWNavigation.focusCurrentScreen();
-      return;
+    if(event.target.closest('#nav > .tab')){
+      navSubUI.collapsed=null;
+      syncNavSubState();
+      if(shellUI.open)closeShellMenu({restoreFocus:false});
+      if(window.JPWNavigation)window.JPWNavigation.focusCurrentScreen();
     }
-    // Clique fora do painel e fora do botão fecha.
-    if (shellUI.open && !event.target.closest('#nav')) closeShellMenu({ restoreFocus: false });
   });
-
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && navSubUI.open) { event.preventDefault(); closeNavSub({ restoreFocus: true }); return; }
-    if (event.key === 'Escape' && shellUI.open) { event.preventDefault(); closeShellMenu(); }
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&shellUI.open){event.preventDefault();closeShellMenu();return;}
+    if(shellUI.open&&event.key==='Tab'){
+      const focusable=[...sidebar.querySelectorAll('button,[tabindex="0"]')].filter(el=>!el.disabled&&!el.closest('[hidden],[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'&&el.tabIndex>=0);
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+    const expander=event.target.closest('[data-nav-expand]');
+    if(expander&&['ArrowDown','ArrowUp'].includes(event.key)){
+      event.preventDefault();openNavSub(expander.dataset.navExpand,{focus:event.key==='ArrowUp'?'last':true});return;
+    }
+    if(event.key==='Escape'&&navSubUI.open&&event.target.closest('#navSubShell')){event.preventDefault();closeNavSub({restoreFocus:true});return;}
+    shellMoveFocus(event);
   });
-
-  // Abertura transitória não atravessa mudança de breakpoint; a abertura
-  // fixada sobrevive ao resize e apenas adapta sua composição responsiva.
-  window.addEventListener('resize', () => {
-    if (navSubUI.open && !navSubUI.pinned) closeNavSub();
-    if (shellUI.open) closeShellMenu({ restoreFocus: false });
-  });
+  window.addEventListener('resize',()=>{if(shellUI.open&&!shellMobile())closeShellMenu({restoreFocus:false});syncShellViewport();});
+  syncNavSubState();syncShellViewport();
 }
 initOperationalShell();
 // ============ GLOBAL DASHBOARD — SHELL COMPARTILHADO (N1) ============
@@ -19369,9 +19386,9 @@ function gdEl(id) { return document.getElementById(id); }
 function relocateGlobalDashboardShell() {
   if (document.documentElement.dataset.shell !== 'global-dashboard') return;
 
-  // Navegação: #nav nasce como irmão de <header> (compatibilidade legada) e
-  // é transportado para dentro da barra de marca sob a flag nova.
-  const nav = gdEl('nav'), navSlot = gdEl('gdTopbarNavSlot');
+  // Navegação: o shell lateral mantém o mesmo #nav e seus primários;
+  // a montagem não o devolve ao slot do topo.
+  const nav = gdEl('nav'), navSlot = gdEl('appSidebar') || gdEl('gdTopbarNavSlot');
   if (nav && navSlot && nav.parentElement !== navSlot) navSlot.append(nav);
 
   // Leituras de contexto (Perfil/Período/Equity/DD + salvo/relógio/fase):

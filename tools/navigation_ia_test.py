@@ -164,6 +164,13 @@ def assert_primary_dom(page):
     assert page.locator("#nav > #researchNavTrigger").count() == 1
     assert page.locator("#researchNavSubmenu").count() == 1
     assert page.locator("section#alladin").count() == 1
+    assert page.locator("#appSidebar #nav").count() == 1
+    assert page.locator("#gdTopbarNavSlot #nav").count() == 0
+    assert page.locator("#nav > .tab[aria-expanded]").count() == 0
+    assert page.locator("#nav > [data-nav-expand]").evaluate_all(
+        "els => els.map(el=>el.dataset.navExpand)") == ["exec", "finpes", "research"]
+    assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
+    assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 4
     # ALD-05-S1: SUBSTITUICAO DE CONTRATO, nao remocao de cobertura.
     #
     # Ate aqui o contrato era "a section Alladin nao exibe conteudo economico" —
@@ -427,6 +434,9 @@ def assert_keyboard_and_mobile(browser, url, desktop_page):
     try:
         page.evaluate("() => JPWNavigation.navigate('research-forex')")
         page.click('[data-shell-menu-toggle]')
+        assert page.locator("#appSidebar").get_attribute("role") == "dialog"
+        assert page.locator("#appSidebar").get_attribute("aria-modal") == "true"
+        assert page.evaluate("() => appSidebar.contains(document.activeElement)")
         sizes = page.evaluate("""() => [...document.querySelectorAll('#nav > .tab[data-route]')]
           .map(el => el.getBoundingClientRect().height)""")
         assert len(sizes) == 5 and min(sizes) >= 44, sizes
@@ -440,6 +450,9 @@ def assert_keyboard_and_mobile(browser, url, desktop_page):
         })""")
         assert geometry["doc"] <= geometry["win"] + 2, geometry
         assert geometry["focusInside"], geometry
+        assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
+        assert page.locator("#shellLocation").is_visible()
+        assert "Alladin" in page.locator("#shellLocation").inner_text()
         assert not observed["pageerror"], observed
         assert not observed["console"], observed
     finally:

@@ -1,334 +1,217 @@
-// ============ SHELL OPERACIONAL · NAVEGAÇÃO RESPONSIVA (N1) ============
-// Camada estritamente de interface: controla a gaveta global no mobile e a
-// faixa compartilhada dos níveis contextuais, com hover transitório, clique
-// fixado, foco, Escape e clique externo. Forex encaminha filhos canônicos e
-// visões locais pelo resolver; Research e Finanças Pessoais mantêm superfícies
-// públicas próprias.
-// Estado ativo sempre deriva de JPWNavigation/current + UI, nunca de cópia local.
-//
-// A faixa é UMA só (#navSubShell) e apenas um módulo fica aberto por vez:
-// selecionar outro módulo global é clique externo e fecha o anterior. Por isso
-// basta um slot no grid do body, e o módulo aberto é distinguido por
-// `aria-expanded="true"` no próprio acionador — não por atributo global na
-// raiz, que acenderia todos os acionadores de uma vez.
-//
-// Para dar segundo nível a um módulo novo bastam três coisas, nenhuma delas
-// neste arquivo além da última linha:
-//   1. um botão `.tab.nav-sub-trigger` com id `<data-nav-surface>NavTrigger`;
-//   2. um `<nav class="nav-sub-menu">` com id `<data-nav-surface>NavSubmenu` dentro
-//      de #navSubShell, com botões `[data-nav-sub-view]`;
-//   3. uma entrada em NAV_SUBMENU_SURFACES apontando para a superfície de UI.
-
-const shellUI = { open: false, opener: null };
-const navSubUI = { open: false, pinned: false, closeTimer: null, opener: null, screen: null };
-const NAV_SUB_CLOSE_DELAY = 400;
-
-// Contrato da superfície de módulo: `selectView(chave)` e `getView()`.
-// O controlador não conhece as chaves — quem as valida é o próprio módulo.
+// Shell lateral: apresentação sobre o resolver existente. Nenhuma rota,
+// preferência de navegação ou informação financeira é criada aqui.
+const shellUI = { open:false, opener:null, inerted:[], overflow:'' };
+const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener:null };
 const NAV_SUBMENU_SURFACES = {
-  exec: () => (window.JPWExec && window.JPWExec.ui) || null,
-  finpes: () => (window.JPWFin && window.JPWFin.ui) || null,
-  research: () => (window.JPWResearch && window.JPWResearch.ui) || null
+  exec:()=>window.JPWExec&&window.JPWExec.ui,
+  finpes:()=>window.JPWFin&&window.JPWFin.ui,
+  research:()=>window.JPWResearch&&window.JPWResearch.ui
 };
-
-function shellEl(sel) { return document.querySelector(sel); }
-
-function navSubEls(screen) {
-  const key = screen || navSubUI.screen;
-  const trigger = key ? document.getElementById(key + 'NavTrigger') : null;
-  const panel = key ? document.getElementById(key + 'NavSubmenu') : null;
-  const shell = document.getElementById('navSubShell');
-  const allItems=panel?[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')]:[];
-  return {screen:key,trigger,panel,shell,allItems,
-    items:allItems.filter(item=>!item.closest('[data-nav-context][hidden]'))};
+function shellEl(sel){return document.querySelector(sel);}
+function shellMobile(){return window.matchMedia('(max-width:900px)').matches;}
+function navSubSurface(screen){const f=NAV_SUBMENU_SURFACES[screen||navSubUI.screen];return f?f():null;}
+function navSubEls(screen){
+  const key=screen||navSubUI.screen;
+  const panel=document.getElementById(key+'NavSubmenu');
+  const trigger=shellEl('[data-nav-expand="'+key+'"]');
+  const local=document.getElementById(key+'NavContexts');
+  const allItems=[...(panel?panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]'):[]),
+    ...(local?local.querySelectorAll('[data-nav-item]'):[])];
+  return {screen:key,trigger,panel,shell:document.getElementById('navSubShell'),allItems,
+    items:allItems.filter(i=>!i.closest('[hidden]'))};
 }
-
-function navSubSurface(screen) {
-  const resolve = NAV_SUBMENU_SURFACES[screen || navSubUI.screen];
-  return typeof resolve === 'function' ? resolve() : null;
-}
-
-function cancelNavSubClose() {
-  if (navSubUI.closeTimer) clearTimeout(navSubUI.closeTimer);
-  navSubUI.closeTimer = null;
-}
-
-// Monta o painel do módulo alvo e desmonta os demais. `hidden` só muda aqui:
-// abrir e fechar a faixa não esconde o painel, senão a animação de recolher
-// mostraria uma faixa vazia encolhendo.
-function mountNavSubPanel(screen) {
-  document.querySelectorAll('#navSubShell .nav-sub-menu').forEach(panel => {
-    panel.hidden = panel.id !== screen + 'NavSubmenu';
-  });
-}
-
-function syncNavSubContexts(screen) {
-  if(!screen||!window.JPWNavigation) return;
-  const current=window.JPWNavigation.current();
-  const panel=document.getElementById(screen+'NavSubmenu');
-  if(!panel) return;
-  let any=false;
-  panel.querySelectorAll('[data-nav-context]').forEach(group=>{
-    const active=group.dataset.navContext===current.child;
-    if(active) any=true;
-    group.hidden=!active;
-    group.inert=!active;
-  });
-  const host=panel.querySelector('.nav-sub-contexts');
-  if(host){host.hidden=!any;host.inert=!any;}
-}
-
 function navSubRouteIsCurrent(item,current){
-  if(!window.JPWNavigation||!item.dataset.navRoute) return false;
-  const resolved=window.JPWNavigation.resolve(item.dataset.navRoute);
-  if(!resolved.accepted||current.canonical!==resolved.canonical||current.screen!==resolved.screen) return false;
-  if(!resolved.localView) return !current.localView;
-  return !!current.localView&&current.localView.surface===resolved.localView.surface&&
-    current.localView.view===resolved.localView.view;
+  if(!item.dataset.navRoute||!window.JPWNavigation)return false;
+  const r=window.JPWNavigation.resolve(item.dataset.navRoute);
+  return r.accepted&&current.canonical===r.canonical&&current.screen===r.screen&&
+    (!r.localView?!current.localView:!!current.localView&&r.localView.surface===current.localView.surface&&r.localView.view===current.localView.view);
 }
-
-function syncNavSubCurrent(screen) {
-  syncNavSubContexts(screen);
-  const {items}=navSubEls(screen);
-  const surface=navSubSurface(screen);
-  const currentNav=window.JPWNavigation?window.JPWNavigation.current():null;
-  const currentView=surface&&typeof surface.getView==='function'?surface.getView():null;
-  items.forEach(item => {
-    const active=item.dataset.navChild?(currentNav&&item.dataset.navChild===currentNav.child):
-      (item.dataset.navRoute?navSubRouteIsCurrent(item,currentNav):
-      (item.dataset.navLocalView?(currentNav&&currentNav.localView&&
-        item.dataset.navLocalSurface===currentNav.localView.surface&&
-        item.dataset.navLocalView===currentNav.localView.view):
-      item.dataset.navSubView===currentView));
-    item.classList.toggle('is-current', active);
-    if (active) item.setAttribute('aria-current', 'page');
-    else item.removeAttribute('aria-current');
-    item.tabIndex = active ? 0 : -1;
+function syncNavSubContexts(screen){
+  const current=window.JPWNavigation.current();
+  document.querySelectorAll('#navLocalSlot .nav-sub-contexts').forEach(host=>{
+    let any=false;
+    host.querySelectorAll('[data-nav-context]').forEach(group=>{
+      const on=host.id===screen+'NavContexts'&&group.dataset.navContext===current.child;
+      group.hidden=!on;group.inert=!on;any=any||on;
+    });
+    host.hidden=!any;host.inert=!any;
   });
-  const found=items.find(item=>item.classList.contains('is-current'));
-  // Sem visão correspondente (módulo ainda não carregado) o primeiro item
-  // continua alcançável por Tab — a faixa nunca fica sem ponto de entrada.
-  if (!found && items[0]) items[0].tabIndex = 0;
-  return found || items[0] || null;
 }
-
+function syncNavSubCurrent(screen){
+  if(!window.JPWNavigation)return null;
+  syncNavSubContexts(screen);
+  const current=window.JPWNavigation.current(),surface=navSubSurface(screen);
+  const view=surface&&surface.getView();
+  const {allItems}=navSubEls(screen);
+  allItems.forEach(item=>{
+    const on=item.dataset.navChild?item.dataset.navChild===current.child:
+      item.dataset.navRoute?navSubRouteIsCurrent(item,current):
+      item.dataset.navLocalView?!!current.localView&&item.dataset.navLocalSurface===current.localView.surface&&item.dataset.navLocalView===current.localView.view:
+      item.dataset.navSubView===view;
+    item.classList.toggle('is-current',on);
+    if(on)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');
+    item.tabIndex=on?0:-1;
+  });
+  // Um ponto de Tab por nível, sem misturar N2 e N3 nas setas.
+  const panel=document.getElementById(screen+'NavSubmenu');
+  const groups=[panel,...document.querySelectorAll('#navLocalSlot [data-nav-context]:not([hidden])')].filter(Boolean);
+  groups.forEach(group=>{
+    const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
+    if(!items.some(i=>i.tabIndex===0)&&items[0])items[0].tabIndex=0;
+  });
+  return panel&&panel.querySelector('[aria-current="page"]');
+}
+function syncShellLocation(){
+  if(!window.JPWNavigation)return;
+  const c=window.JPWNavigation.current();
+  const primary=document.querySelector('#nav > .tab[data-primary="'+c.primary+'"]');
+  const parts=[primary?primary.querySelector('.lbl').textContent.trim():'Dashboard'];
+  const child=c.child&&document.querySelector('[data-nav-child="'+c.child+'"] .nav-sub-item-title');
+  if(child)parts.push(child.textContent.trim());
+  let local=null;
+  if(c.primary==='personal-finance')local=document.querySelector('#finpesNavSubmenu [aria-current="page"] .nav-sub-item-title');
+  else if(c.primary==='alladin')local=document.querySelector('#alladinTabs [aria-pressed="true"]');
+  else local=document.querySelector('#navLocalSlot [data-nav-context]:not([hidden]) [aria-current="page"] .nav-sub-item-title');
+  if(local&&parts[parts.length-1]!==local.textContent.trim())parts.push(local.textContent.trim());
+  const el=document.getElementById('shellLocation'),text=parts.join(' / ');
+  if(el&&el.textContent!==text)el.textContent=text;
+}
 function syncNavSubState(){
-  if(navSubUI.screen) syncNavSubCurrent(navSubUI.screen);
+  if(!window.JPWNavigation)return;
+  const c=window.JPWNavigation.current();
+  const key=({forex:'exec','personal-finance':'finpes',research:'research'})[c.primary]||null;
+  if(key!==navSubUI.screen){navSubUI.collapsed=null;navSubUI.screen=key;}
+  navSubUI.open=!!key&&navSubUI.collapsed!==key;
+  const shell=document.getElementById('navSubShell');
+  document.querySelectorAll('[data-nav-expand]').forEach(btn=>{
+    const active=btn.dataset.navExpand===key;
+    btn.hidden=!active;btn.setAttribute('aria-expanded',String(active&&navSubUI.open));
+    const primary=document.getElementById(btn.dataset.navExpand+'NavTrigger');
+    const label=primary.querySelector('.lbl').textContent.trim();
+    btn.setAttribute('aria-label',(active&&navSubUI.open?'Recolher':'Expandir')+' destinos de '+label);
+    if(active&&shell&&btn.nextElementSibling!==shell)btn.after(shell);
+  });
+  document.querySelectorAll('.nav-sub-menu').forEach(panel=>{
+    const on=panel.id===key+'NavSubmenu'&&navSubUI.open;
+    panel.hidden=!on;panel.inert=!on;panel.setAttribute('aria-hidden',String(!on));
+  });
+  if(shell){shell.hidden=!navSubUI.open;shell.classList.toggle('is-open',navSubUI.open);}
+  if(navSubUI.open)document.documentElement.setAttribute('data-nav-sub','open');
+  else document.documentElement.removeAttribute('data-nav-sub');
+  if(key)syncNavSubCurrent(key);else syncNavSubContexts(null);
+  syncShellLocation();
+  if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
-
-function openNavSub(screen, options) {
-  const target = screen || navSubUI.screen;
-  const {trigger,panel,shell}=navSubEls(target);
-  if (!trigger || !panel || !shell) return;
-  // Trocar de módulo com a faixa já aberta: o anterior perde estado de aberto
-  // antes de o novo assumir, para não restar dois acionadores expandidos.
-  if (navSubUI.screen && navSubUI.screen !== target) collapseNavSubPanel(navSubUI.screen);
-  cancelNavSubClose();
-  navSubUI.open = true;
-  navSubUI.screen = target;
-  if (options && options.pin) navSubUI.pinned = true;
-  navSubUI.opener = (options && options.opener) || trigger;
-  mountNavSubPanel(target);
-  const current=syncNavSubCurrent(target);
-  const {items}=navSubEls(target);
-  document.documentElement.setAttribute('data-nav-sub', 'open');
-  if (navSubUI.pinned) document.documentElement.setAttribute('data-nav-sub-pinned', 'true');
-  trigger.setAttribute('aria-expanded', 'true');
-  shell.classList.add('is-open');
-  panel.setAttribute('aria-hidden', 'false');
-  panel.inert = false;
-  if (typeof navPillApplyGeometry === 'function') navPillApplyGeometry(trigger);
-  if (options && options.focus === 'last') {
-    const last = items[items.length - 1];
-    if (last) { items.forEach(item => { item.tabIndex = item === last ? 0 : -1; }); last.focus(); }
-  } else if (options && options.focus && current) current.focus();
-}
-
-// Retira o estado de aberto de um módulo sem mexer na faixa: usado ao trocar
-// de módulo e como parte do fechamento.
-function collapseNavSubPanel(screen) {
-  const {trigger,panel,allItems}=navSubEls(screen);
-  if (trigger) trigger.setAttribute('aria-expanded', 'false');
-  if (panel) { panel.setAttribute('aria-hidden', 'true'); panel.inert = true; }
-  allItems.forEach(item => { item.tabIndex = -1; });
-}
-
-function closeNavSub(options) {
-  cancelNavSubClose();
-  const shell = document.getElementById('navSubShell');
-  const screen = navSubUI.screen;
-  if (!shell || !screen) return;
-  const wasOpen = navSubUI.open;
-  navSubUI.open = false;
-  navSubUI.pinned = false;
-  document.documentElement.removeAttribute('data-nav-sub');
-  document.documentElement.removeAttribute('data-nav-sub-pinned');
-  shell.classList.remove('is-open');
-  collapseNavSubPanel(screen);
-  if (typeof scheduleNavPill === 'function') scheduleNavPill();
-  const opener = navSubUI.opener || navSubEls(screen).trigger;
-  navSubUI.opener = null;
-  navSubUI.screen = null;
-  if (wasOpen && options && options.restoreFocus && opener && document.contains(opener)) opener.focus();
-}
-
-function scheduleNavSubClose() {
-  cancelNavSubClose();
-  if (navSubUI.pinned) return;
-  navSubUI.closeTimer = setTimeout(() => closeNavSub(), NAV_SUB_CLOSE_DELAY);
-}
-
-function selectNavSubView(view) {
-  const screen = navSubUI.screen;
-  if (!screen) return;
-  if (window.JPWNavigation && typeof window.JPWNavigation.navigateLocal === 'function') {
-    window.JPWNavigation.navigateLocal(screen, view);
-  } else {
-    if (typeof navigateToScreen === 'function') navigateToScreen(screen);
-    const surface = navSubSurface(screen);
-    if (surface && typeof surface.selectView === 'function') surface.selectView(view);
+function openNavSub(screen,options){
+  if(screen!==navSubUI.screen)return;
+  navSubUI.collapsed=null;syncNavSubState();
+  const {trigger,panel}=navSubEls(screen);navSubUI.opener=trigger;
+  if(options&&options.focus&&panel){
+    const items=[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
+    const target=options.focus==='last'?items[items.length-1]:panel.querySelector('[aria-current="page"]')||items[0];
+    if(target){items.forEach(i=>i.tabIndex=i===target?0:-1);target.focus();}
   }
-  syncNavSubCurrent(screen);
-  if (shellUI.open) closeShellMenu({ restoreFocus: false });
 }
-
+function closeNavSub(options){
+  const {trigger}=navSubEls();navSubUI.collapsed=navSubUI.screen;syncNavSubState();
+  if(options&&options.restoreFocus&&trigger)trigger.focus();
+}
+function selectNavSubView(view){
+  if(navSubUI.screen&&window.JPWNavigation)window.JPWNavigation.navigateLocal(navSubUI.screen,view);
+}
 function selectNavSubItem(item){
-  if(!item) return;
-  if(item.dataset.navChild&&window.JPWNavigation){
-    window.JPWNavigation.navigate(item.dataset.navChild);
-  }else if(item.dataset.navRoute&&window.JPWNavigation){
-    window.JPWNavigation.navigate(item.dataset.navRoute);
-  }else if(item.dataset.navLocalSurface&&item.dataset.navLocalView&&window.JPWNavigation){
-    window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
-  }else if(item.dataset.navSubView){
-    selectNavSubView(item.dataset.navSubView);
-  }
+  if(!item||!window.JPWNavigation)return;
+  if(item.dataset.navChild)window.JPWNavigation.navigate(item.dataset.navChild);
+  else if(item.dataset.navRoute)window.JPWNavigation.navigate(item.dataset.navRoute);
+  else if(item.dataset.navLocalSurface)window.JPWNavigation.navigateLocal(item.dataset.navLocalSurface,item.dataset.navLocalView);
+  else if(item.dataset.navSubView)selectNavSubView(item.dataset.navSubView);
   syncNavSubState();
-  if(shellUI.open) closeShellMenu({restoreFocus:false});
+  if(shellUI.open)closeShellMenu({restoreFocus:false});
+  window.JPWNavigation.focusCurrentScreen();
 }
-
-function moveNavSubFocus(direction) {
-  const { items } = navSubEls();
-  if (!items.length) return;
-  const current = Math.max(0, items.indexOf(document.activeElement));
-  const next = direction === 'first' ? 0
-    : direction === 'last' ? items.length - 1
-    : (current + direction + items.length) % items.length;
-  items.forEach((item, index) => { item.tabIndex = index === next ? 0 : -1; });
-  items[next].focus();
+function syncShellViewport(){
+  const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
+  const modal=shellMobile();sidebar.inert=modal&&!shellUI.open;
+  if(modal){sidebar.setAttribute('role','dialog');sidebar.setAttribute('aria-modal','true');sidebar.setAttribute('aria-hidden',String(!shellUI.open));}
+  else {sidebar.removeAttribute('role');sidebar.removeAttribute('aria-modal');sidebar.removeAttribute('aria-hidden');}
+  if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
-
-function openShellMenu(opener) {
-  const nav = document.getElementById('nav');
-  const toggle = shellEl('[data-shell-menu-toggle]');
-  if (!nav || shellUI.open) return;
-  shellUI.open = true;
-  shellUI.opener = opener || toggle;
-  document.documentElement.setAttribute('data-shell-menu', 'open');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.setAttribute('aria-label', 'Fechar menu de telas');
-  }
-  const first = nav.querySelector('.tab');
-  if (first) first.focus();
+function openShellMenu(opener){
+  if(shellUI.open||!shellMobile())return;
+  const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
+  shellUI.open=true;shellUI.opener=opener||shellEl('[data-shell-menu-toggle]');
+  document.documentElement.setAttribute('data-shell-menu','open');
+  shellEl('[data-shell-menu-toggle]').setAttribute('aria-expanded','true');
+  shellEl('[data-shell-menu-toggle]').setAttribute('aria-label','Fechar menu de telas');
+  document.getElementById('sidebarBackdrop').hidden=false;
+  shellUI.overflow=document.body.style.overflow;document.body.style.overflow='hidden';
+  shellUI.inerted=[...document.body.children].filter(el=>el!==sidebar&&el.id!=='sidebarBackdrop'&&!['SCRIPT','STYLE'].includes(el.tagName)).map(el=>[el,el.inert]);
+  shellUI.inerted.forEach(([el])=>el.inert=true);
+  syncShellViewport();
+  const active=sidebar.querySelector('#nav > .tab.active');(active||document.getElementById('sidebarClose')).focus();
 }
-
-function closeShellMenu(options) {
-  if (!shellUI.open) return;
-  shellUI.open = false;
-  document.documentElement.removeAttribute('data-shell-menu');
-  const toggle = shellEl('[data-shell-menu-toggle]');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Abrir menu de telas');
-  }
-  const opener = shellUI.opener;
-  shellUI.opener = null;
-  if (!options || options.restoreFocus !== false) {
-    if (opener && document.contains(opener)) opener.focus();
-  }
+function closeShellMenu(options){
+  if(!shellUI.open)return;
+  shellUI.open=false;document.documentElement.removeAttribute('data-shell-menu');
+  const btn=shellEl('[data-shell-menu-toggle]');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','Abrir menu de telas');
+  document.getElementById('sidebarBackdrop').hidden=true;
+  shellUI.inerted.forEach(([el,was])=>el.inert=was);shellUI.inerted=[];
+  document.body.style.overflow=shellUI.overflow;syncShellViewport();
+  const opener=shellUI.opener;shellUI.opener=null;
+  if((!options||options.restoreFocus!==false)&&opener&&opener.isConnected)opener.focus();
 }
-
-function initOperationalShell() {
-  const navSubShell = document.getElementById('navSubShell');
-  const globalNav = document.getElementById('nav');
-  const triggers = globalNav ? [...globalNav.querySelectorAll('.nav-sub-trigger')] : [];
-
-  if (navSubShell && triggers.length) {
-    const finePointer = window.matchMedia('(hover:hover) and (pointer:fine)');
-    const hoverCapable = () => finePointer.matches && !window.matchMedia('(max-width:900px)').matches;
-
-    triggers.forEach(trigger => {
-      const screen = trigger.dataset.navSurface;
-      const {panel,allItems}=navSubEls(screen);
-      if (!panel) return;
-      allItems.forEach(item => { item.tabIndex = -1; });
-      trigger.addEventListener('pointerenter', () => { if (hoverCapable()) openNavSub(screen, { opener: trigger }); });
-      trigger.addEventListener('keydown', event => {
-        if (event.key === 'ArrowDown') {
-          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: true });
-        } else if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          if (window.JPWNavigation) window.JPWNavigation.navigate(trigger.dataset.route);
-          openNavSub(screen, { opener: trigger, focus: true, pin: true });
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault(); openNavSub(screen, { opener: trigger, focus: 'last' });
-        } else if (event.key === 'Escape' && navSubUI.open) {
-          event.preventDefault(); closeNavSub({ restoreFocus: true });
-        }
-      });
-    });
-
-    globalNav.addEventListener('pointerenter', () => { if (navSubUI.open) cancelNavSubClose(); });
-    globalNav.addEventListener('pointerleave', event => {
-      if (hoverCapable() && !navSubShell.contains(event.relatedTarget)) scheduleNavSubClose();
-    });
-    navSubShell.addEventListener('pointerenter', cancelNavSubClose);
-    navSubShell.addEventListener('pointerleave', event => {
-      if (hoverCapable() && !globalNav.contains(event.relatedTarget)) scheduleNavSubClose();
-    });
-    navSubShell.addEventListener('keydown', event => {
-      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') { event.preventDefault(); moveNavSubFocus(1); }
-      else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') { event.preventDefault(); moveNavSubFocus(-1); }
-      else if (event.key === 'Home') { event.preventDefault(); moveNavSubFocus('first'); }
-      else if (event.key === 'End') { event.preventDefault(); moveNavSubFocus('last'); }
-      else if (event.key === 'Escape') { event.preventDefault(); closeNavSub({ restoreFocus: true }); }
-    });
-  }
-
-  document.addEventListener('click', event => {
-    const toggle = event.target.closest('[data-shell-menu-toggle]');
-    if (toggle) { shellUI.open ? closeShellMenu() : openShellMenu(toggle); return; }
-    const triggerHit = event.target.closest('.nav-sub-trigger');
-    if (triggerHit) {
-      openNavSub(triggerHit.dataset.navSurface, { opener: triggerHit, focus: shellUI.open, pin: true });
-      if (shellUI.open) closeShellMenu({ restoreFocus: false });
-      return;
-    }
+function shellMoveFocus(event){
+  const group=event.target.closest('[data-nav-context],.nav-sub-menu');if(!group)return;
+  const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(i=>!i.closest('[hidden]'));
+  if(!items.length)return;
+  let index=items.indexOf(document.activeElement);
+  if(event.key==='Home')index=0;else if(event.key==='End')index=items.length-1;
+  else if(['ArrowDown','ArrowRight'].includes(event.key))index=(index+1)%items.length;
+  else if(['ArrowUp','ArrowLeft'].includes(event.key))index=(index-1+items.length)%items.length;
+  else return;
+  event.preventDefault();items.forEach((i,n)=>i.tabIndex=n===index?0:-1);items[index].focus();
+}
+function initOperationalShell(){
+  const sidebar=document.getElementById('appSidebar');if(!sidebar||sidebar.dataset.ready)return;
+  sidebar.dataset.ready='true';
+  document.querySelectorAll('#navSubShell .nav-sub-contexts').forEach(host=>{
+    host.id=host.closest('.nav-sub-menu').id.replace('NavSubmenu','NavContexts');
+    document.getElementById('navLocalSlot').append(host);
+  });
+  const shell=document.getElementById('navSubShell');document.getElementById('nav').append(shell);
+  const alladinTabs=document.getElementById('alladinTabs');
+  if(alladinTabs)new MutationObserver(syncShellLocation).observe(alladinTabs,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+  document.addEventListener('click',event=>{
+    const toggle=event.target.closest('[data-shell-menu-toggle]');
+    if(toggle){shellUI.open?closeShellMenu():openShellMenu(toggle);return;}
+    if(event.target.closest('#sidebarClose,#sidebarBackdrop')){closeShellMenu();return;}
+    const expander=event.target.closest('[data-nav-expand]');
+    if(expander){navSubUI.open?closeNavSub():openNavSub(expander.dataset.navExpand);return;}
     const item=event.target.closest('[data-nav-item],[data-nav-sub-view]');
     if(item){selectNavSubItem(item);return;}
-    if (navSubUI.open && !event.target.closest('#navSubShell')) closeNavSub();
-    // Selecionar outro destino global fecha somente a gaveta mobile — sem
-    // devolver foco, porque a navegação já levou o usuário para outra tela.
-    if (shellUI.open && event.target.closest('#nav .tab:not(.nav-sub-trigger)')) {
-      closeShellMenu({ restoreFocus: false });
-      if (window.JPWNavigation) window.JPWNavigation.focusCurrentScreen();
-      return;
+    if(event.target.closest('#nav > .tab')){
+      navSubUI.collapsed=null;
+      syncNavSubState();
+      if(shellUI.open)closeShellMenu({restoreFocus:false});
+      if(window.JPWNavigation)window.JPWNavigation.focusCurrentScreen();
     }
-    // Clique fora do painel e fora do botão fecha.
-    if (shellUI.open && !event.target.closest('#nav')) closeShellMenu({ restoreFocus: false });
   });
-
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && navSubUI.open) { event.preventDefault(); closeNavSub({ restoreFocus: true }); return; }
-    if (event.key === 'Escape' && shellUI.open) { event.preventDefault(); closeShellMenu(); }
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&shellUI.open){event.preventDefault();closeShellMenu();return;}
+    if(shellUI.open&&event.key==='Tab'){
+      const focusable=[...sidebar.querySelectorAll('button,[tabindex="0"]')].filter(el=>!el.disabled&&!el.closest('[hidden],[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'&&el.tabIndex>=0);
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+    const expander=event.target.closest('[data-nav-expand]');
+    if(expander&&['ArrowDown','ArrowUp'].includes(event.key)){
+      event.preventDefault();openNavSub(expander.dataset.navExpand,{focus:event.key==='ArrowUp'?'last':true});return;
+    }
+    if(event.key==='Escape'&&navSubUI.open&&event.target.closest('#navSubShell')){event.preventDefault();closeNavSub({restoreFocus:true});return;}
+    shellMoveFocus(event);
   });
-
-  // Abertura transitória não atravessa mudança de breakpoint; a abertura
-  // fixada sobrevive ao resize e apenas adapta sua composição responsiva.
-  window.addEventListener('resize', () => {
-    if (navSubUI.open && !navSubUI.pinned) closeNavSub();
-    if (shellUI.open) closeShellMenu({ restoreFocus: false });
-  });
+  window.addEventListener('resize',()=>{if(shellUI.open&&!shellMobile())closeShellMenu({restoreFocus:false});syncShellViewport();});
+  syncNavSubState();syncShellViewport();
 }
 initOperationalShell();

@@ -16,9 +16,9 @@ function gdEl(id) { return document.getElementById(id); }
 function relocateGlobalDashboardShell() {
   if (document.documentElement.dataset.shell !== 'global-dashboard') return;
 
-  // Navegação: #nav nasce como irmão de <header> (compatibilidade legada) e
-  // é transportado para dentro da barra de marca sob a flag nova.
-  const nav = gdEl('nav'), navSlot = gdEl('gdTopbarNavSlot');
+  // Navegação: o shell lateral mantém o mesmo #nav e seus primários;
+  // a montagem não o devolve ao slot do topo.
+  const nav = gdEl('nav'), navSlot = gdEl('appSidebar') || gdEl('gdTopbarNavSlot');
   if (nav && navSlot && nav.parentElement !== navSlot) navSlot.append(nav);
 
   // Leituras de contexto (Perfil/Período/Equity/DD + salvo/relógio/fase):

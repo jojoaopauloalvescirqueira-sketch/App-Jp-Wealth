@@ -28,9 +28,8 @@ function applyNavStyle(){
 }
 // O destaque é um elemento único que se desloca até a aba ativa. Medimos por
 // offsetLeft/offsetWidth, e não por getBoundingClientRect, justamente porque o
-// #nav horizontal é um contêiner com overflow-x:auto: offsetLeft é posição de
-// layout dentro do padding box e não muda quando a barra é rolada, que é o que
-// mantém o destaque colado na aba certa em qualquer posição de rolagem.
+// offsetLeft/offsetTop são posições no padding box de #nav; a geometria
+// permanece relativa ao mesmo contêiner na lateral aberta, compacta e mobile.
 // Aplica a MESMA geometria ao destaque e ao brilho especular. Quem produz o
 // atraso entre os dois é a folha de estilo (durações e delay diferentes), não
 // este código: aqui os dois recebem o mesmo alvo no mesmo instante.
@@ -52,9 +51,8 @@ function positionNavPill(){
   if(!nav||!pill) return;
   const spec=document.getElementById('navPillSpecular');
   const active=nav.querySelector('.tab.active');
-  // Em modo clássico, no rail vertical do Dashboard e na gaveta mobile o CSS
-  // deixa o destaque em display:none — medir ali devolveria zero e faria o
-  // elemento piscar ao voltar para a barra horizontal.
+  // Em modo clássico o CSS deixa o destaque em display:none. Não medir
+  // esse estado evita geometria vazia ao selecionar outro estilo.
   //
   // A ausência de aba ativa continua tratada defensivamente para monólitos
   // reduzidos e DOM incompleto. No contrato NAV-01 o resolver valida o destino
@@ -104,11 +102,16 @@ function renderNavStyleSeg(){
   }
 }
 function bindNavStyleSeg(){
-  document.querySelectorAll('#navStyleSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#navStyleSeg button').forEach(b=>{if(b.dataset.navBound)return;b.dataset.navBound='true';b.addEventListener('click',()=>{
     const v=NAV_STYLES.includes(b.dataset.navVal)?b.dataset.navVal:'kinetic';
-    try{ localStorage.setItem(NAV_STYLE_KEY, v); }catch(e){}
+    const message=document.getElementById('navStyleStatus');
+    try{ localStorage.setItem(NAV_STYLE_KEY, v); }catch(e){
+      if(message)message.textContent='Não foi possível salvar o estilo de navegação neste navegador.';
+      return;
+    }
+    if(message)message.textContent='';
     applyNavStyle(); renderNavStyleSeg(); scheduleNavPill();
-  }));
+  });});
 }
 // ---- Magnetismo do KineticNav ----
 // No componente de referência o destaque acompanha o item sob o cursor e volta
@@ -147,7 +150,7 @@ new MutationObserver(scheduleNavPill).observe(document.documentElement, {
   attributeFilter:['data-shell','data-active-screen','data-nav-style','data-rail','data-ui-version'],
 });
 // Sinal decisivo para a primeira medição: a GEOMETRIA da barra. No boot as abas
-// ainda medem zero — o shell só realoca o #nav para dentro da topbar depois —, e
+// podem mudar de tamanho enquanto o shell monta os slots contextuais, e
 // essa realocação não mexe em nenhum atributo de <html>, então o observador
 // acima não a enxerga. O ResizeObserver enxerga, e de quebra cobre pelo mesmo
 // mecanismo tudo que altera a largura das abas: escala de fonte, rail e
