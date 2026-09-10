@@ -1,3 +1,9 @@
+# Tarefa vigente — instalação X2 e revisão somente leitura
+
+Contrato: [X2-CRITICAL-REVIEW-20260910](X2-CRITICAL-REVIEW-20260910.md). Proprietário autorizou instalar skill e revisar todo software na branch codex/critical-review-skill. Sem commit/push/merge/deploy ou correções. O material abaixo permanece histórico de tarefas anteriores; não concede autoridade a esta execução.
+
+---
+
 # Tarefa vigente — integração Atlas + V4 com pendências
 
 Autorização humana de commit, push e merge recebida em 2026-09-10; sem deploy. O [registro de integração com pendências](ATLAS-V4-INTEGRATION-20260910.md) governa este complemento. A seção abaixo preserva integralmente os contratos/matriz da V4 como histórico; suas proibições daquela rodada não anulam a autorização humana posterior delimitada. Não promove falhas a PASS.
