@@ -15,6 +15,7 @@ import socket
 import threading
 
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,22 +47,19 @@ def prepare_page(browser, url):
         viewport={"width": 1440, "height": 900},
         device_scale_factor=2,
         reduced_motion="reduce",
+        service_workers="block",
     )
     context.add_init_script("window.__onbShown=true;")
+    install_bootstrap(context)
     page = context.new_page()
     observed = {"console": [], "pageerror": [], "failed": []}
     page.on("console", lambda message: observed["console"].append((message.type, message.text)))
     page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
     page.on("requestfailed", lambda request: observed["failed"].append((request.url, request.failure)))
-    page.route(
-        "**/api.frankfurter.dev/**",
-        lambda route: route.fulfill(
-            status=200, content_type="application/json", body='{"rate":1}'
-        ),
-    )
     # O contador de lifecycle e deliberadamente exposto apenas em origem local
     # com o opt-in de desenvolvimento; producao continua sem essa superficie.
     page.goto(url + "?galtonDebug=1", wait_until="load")
+    wait_bootstrap(page)
     page.wait_for_function(
         """() => window.JPWGalton && JPWGalton.config && JPWGalton.rng &&
           JPWGalton.statistics && JPWGalton.physics && JPWGalton.persistence &&
@@ -1017,6 +1015,7 @@ def main():
             test_persistence_contract(page)
             test_controller_recovery_guard(page)
             test_real_ui(page)
+            assert_fixture_requests(page.jpwealth_context)
             page.jpwealth_context.close()
             browser.close()
     finally:

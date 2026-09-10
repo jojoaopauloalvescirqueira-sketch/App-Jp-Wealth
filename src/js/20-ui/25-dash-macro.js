@@ -380,6 +380,8 @@ function initDashMacro(){
         const screen=document.querySelector('#appMain > .screen.active');
         const heading=screen&&[...screen.querySelectorAll('h2,h3')].find(h=>h.getClientRects().length);
         if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+      }else{
+        window.JPWNavigation.focusCurrentScreen();
       }
     }
   });

@@ -343,12 +343,15 @@ def main() -> int:
             page.wait_for_timeout(100)
             r = page.evaluate("""() => ({ rev: window.__port.rev, add: window.__port.add,
                 saves: window.__port.saves,
+                foco: document.activeElement.dataset.aldTxReverse===window.__ids.dep && !!document.activeElement.getClientRects().length,
                 sIgual: JSON.stringify(S)===window.__S,
                 lsIgual: localStorage.getItem('%s')===window.__LS })""" % LSKEY)
             if r["rev"] or r["add"] or r["saves"]:
                 falhas.append(f"RV-F: cancelar chamou porta/save ({r})")
             if not r["sIgual"] or not r["lsIgual"]:
                 falhas.append(f"RV-F: cancelar nao foi zero-write ({r})")
+            if not r["foco"]:
+                falhas.append(f"RV-F: foco perdido após cancelar estorno ({r})")
             # double submit no MESMO tick
             page.locator(f"button[data-ald-tx-reverse='{ids['dep']}']").click()
             page.wait_for_timeout(120)
@@ -357,12 +360,15 @@ def main() -> int:
               const b=document.querySelector('button[data-ald-act=salvar]');
               b.click(); b.click();
               return { rev: window.__port.rev,
+                       foco: document.activeElement.matches('button[data-ald-tx-new]') && !!document.activeElement.getClientRects().length,
                        nRev: S.alladin.transactions.filter(t=>t.eventType==='REVERSAL'
                               && t.reversalOf===window.__ids.dep).length };
             }""")
             page.evaluate(RESTAURAR)
             if r2["rev"] != 1 or r2["nRev"] != 1:
                 falhas.append(f"RV-F: double submit duplicou ({r2})")
+            if not r2["foco"]:
+                falhas.append(f"RV-F: foco perdido após estorno remover a ação original ({r2})")
             if erros:
                 falhas.append(f"RV-F: pageerror {erros}")
             ctx.close()

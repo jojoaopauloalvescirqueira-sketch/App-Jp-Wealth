@@ -69,7 +69,7 @@ function ecalRenderRoot(root, filter){
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico do Dashboard.';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }

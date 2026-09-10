@@ -110,23 +110,62 @@ function pfWriteBlockReason(){
 // por aqui. Nenhum botão, modal ou fluxo decide "opcionalmente" se consulta a
 // sentinela — a fronteira de escrita é uma só.
 //
-// fn recebe S.personalFinance e aplica a mudança COERENTE do ato (o ato inteiro,
-// nunca campo a campo de um formulário atômico). Pode devolver {ok:false, erro}
-// para recusar por validação — nesse caso NADA foi mutado por contrato do
-// chamador (valide antes de tocar; o gate não tem como desfazer o que fn fizer).
-// Retorno: {ok, persistido, erro?, ...extras de fn}. save()===false é prova de
-// não-escrita (portões retornam antes do storage) — o chamador decide como
-// avisar; o padrão de falha de persistência da casa segue valendo.
+// fn recebe S.personalFinance e aplica o ato síncrono, validando antes de tocar.
+// Sucesso preserva as referências vivas usadas pelos consumidores. Na recusa
+// comprovada restaura-se SOMENTE PF e a sequência do log, nunca S inteiro.
+// save()===false prova não-escrita; exceção não prova. UNKNOWN mantém a tentativa
+// e usa a barreira global existente até conferência humana, sem retry cego.
 function pfMutate(acao, fn, meta){
+  const indeterminado = { ok:false, persistido:null, bloqueado:true,
+    erro:'Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.' };
+  if(jpWealthPersistenceOutcomeIsUnknown()) return indeterminado;
   const bloqueio = pfWriteBlockReason();
   if(bloqueio) return { ok:false, persistido:false, erro:bloqueio };
-  const r = fn(S.personalFinance) || {};
-  if(r.ok===false) return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
-  // Rótulo GENÉRICO por contrato de privacidade: ação + recordId, nunca nome
-  // ou valor financeiro — o changeLog persiste e viaja no backup.
-  dgLogChange('personalFinance', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
-  const gravou = save();
-  return { ok: gravou===true, persistido: gravou===true, erro: gravou===true?undefined:'persistencia recusada', ...r };
+
+  let anterior;
+  try { anterior = structuredClone(S.personalFinance); }
+  catch(e){ return { ok:false, persistido:false, erro:'Não foi possível preparar a alteração. Nada foi aplicado.' }; }
+  const logOriginal = S.dataGovernance && S.dataGovernance.changeLog;
+  const logAntes = Array.isArray(logOriginal) ? logOriginal.slice() : null;
+  function restaurar(){
+    S.personalFinance = anterior;
+    if(logAntes){
+      // A poda de dgLogChange troca o array no teto400: comprimento não basta.
+      // Restaura conteúdo E identidade anteriores, sem tocar outros metadados.
+      logOriginal.splice(0, logOriginal.length, ...logAntes);
+      S.dataGovernance.changeLog = logOriginal;
+    }
+  }
+  let r;
+  try {
+    r = fn(S.personalFinance) || {};
+    if(r.ok===false){
+      restaurar();
+      return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
+    }
+    // Log genérico: ação + recordId, sem nome nem valor financeiro.
+    dgLogChange('personalFinance', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
+  } catch(e){
+    // save ainda não foi chamado: não há ambiguidade sobre esta tentativa.
+    restaurar();
+    return { ok:false, persistido:false, erro:'Não foi possível aplicar a alteração. Nada foi gravado.' };
+  }
+  let gravou;
+  try { gravou = save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('ato de Finanças Pessoais');
+    return { ...r, ...indeterminado };
+  }
+  if(gravou===false){
+    restaurar();
+    return { ...r, ok:false, persistido:false, erro:'persistencia recusada' };
+  }
+  if(gravou!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado ao gravar Finanças Pessoais');
+    return { ...r, ...indeterminado };
+  }
+  // O callback nunca pode sobrescrever o resultado da gravação.
+  return { ...r, ok:true, persistido:true, erro:undefined };
 }
 
 // ---- competência mensal -----------------------------------------------------

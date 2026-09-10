@@ -62,7 +62,7 @@ def launch_browser(playwright):
 
 
 def boot(browser, url, viewport):
-    context = browser.new_context(viewport=viewport)
+    context = browser.new_context(viewport=viewport, service_workers="block")
     context.add_init_script("""
       window.__onbShown = true;
       window.__navStorageOps = [];
@@ -292,6 +292,46 @@ def assert_shell_and_accessibility(page, viewport, theme):
     assert layout["targets"] and all(item["width"] >= 44 and item["height"] >= 44 for item in layout["targets"]), layout
 
 
+def assert_calendar_refresh_guidance(page):
+    # A mesma agenda atende workspace/modal; sua orientação deve alcançar o
+    # único botão real de atualização, sem criar outra consulta ou dado em S.
+    page.wait_for_function("() => !ffNewsInFlight")
+    page.evaluate("() => { localStorage.removeItem(FF_NEWS_CACHE_KEY); JPWNavigation.navigate('ecal'); }")
+    before = page.evaluate("JSON.stringify(S)")
+    expected = "Forex → Visão Geral"
+    workspace = page.locator('#execEcal [data-ecal-role="empty"]')
+    assert workspace.is_visible()
+    assert expected in workspace.inner_text(), workspace.inner_text()
+    page.evaluate("() => JPWEcal.open()")
+    overlay = page.locator('#ecalOverlay [data-ecal-role="empty"]')
+    assert overlay.is_visible() and expected in overlay.inner_text(), overlay.inner_text()
+    page.locator('#ecalCloseBtn').press('Escape')
+    assert not page.locator('#ecalOverlay').is_visible()
+    page.wait_for_function("() => !ffNewsInFlight")
+    calls = []
+    feed = {"version":1,"generated_at":"2026-09-10T00:00:00Z","events":[{
+        "title":"Synthetic calendar event","country":"USD","date":"2026-09-10T15:00:00Z",
+        "impact":"High","forecast":"1","previous":"0"}]}
+    def reply(route):
+        calls.append(route.request.url)
+        route.fulfill(status=200, content_type='application/json', body=json.dumps(feed))
+    page.route('**/ff-high-impact.json*', reply)
+    page.evaluate("() => JPWNavigation.navigate('forex-overview')")
+    button = page.locator('#gdNewsRefreshBtn')
+    assert button.is_visible() and page.locator('#fxOverviewWidgets #gdNewsRefreshBtn').count()==1
+    button.focus()
+    button.press('Enter')
+    page.wait_for_function("() => !ffNewsInFlight && ffNewsReadCache()?.events.length===1")
+    assert len(calls)==1, calls
+    for _ in range(3):
+        page.evaluate("() => JPWNavigation.navigate('ecal')")
+        assert 'Synthetic calendar event' in page.locator('#execEcal').inner_text()
+        page.evaluate("() => JPWNavigation.navigate('dashboard')")
+        page.evaluate("() => JPWNavigation.navigate('forex-overview')")
+    assert len(calls)==1, 'navegação duplicou consulta'
+    assert page.evaluate('JSON.stringify(S)')==before, 'agenda alterou estado financeiro'
+
+
 def run():
     server, url = serve()
     try:
@@ -303,6 +343,7 @@ def run():
                 # e nos dois temas exigidos.
                 context, page, observed = boot(browser, url, {"width": 1440, "height": 900})
                 try:
+                    assert_calendar_refresh_guidance(page)
                     assert_registry_and_dom(page)
                     assert_routes_aliases_and_empty_states(page)
                     assert_atomic_and_storage(page)

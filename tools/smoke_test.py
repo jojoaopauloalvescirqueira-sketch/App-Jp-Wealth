@@ -7,6 +7,7 @@ import socket
 import threading
 import time
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -32,7 +33,8 @@ try:
         launch_options={'headless':True,'args':['--no-sandbox']}
         if executable: launch_options['executable_path']=executable
         browser=p.chromium.launch(**launch_options)
-        page=browser.new_page()
+        page=browser.new_page(service_workers="block")
+        install_bootstrap(page.context)
         page.on('pageerror', lambda exc: errors.append('pageerror: '+str(exc)))
         page.on('console', lambda msg: errors.append('console error: '+msg.text) if msg.type=='error' else None)
         portable=ROOT/'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
@@ -50,6 +52,7 @@ try:
         storage_polyfill='<script>(()=>{const store={};Object.defineProperty(window,"localStorage",{configurable:true,value:{getItem:k=>Object.prototype.hasOwnProperty.call(store,k)?store[k]:null,setItem:(k,v)=>store[k]=String(v),removeItem:k=>delete store[k],clear:()=>Object.keys(store).forEach(k=>delete store[k]),key:i=>Object.keys(store)[i]??null,get length(){return Object.keys(store).length}}});})();</script>' 
         html=html.replace('<head>','<head>'+storage_polyfill,1)
         page.set_content(html, wait_until='load')
+        wait_bootstrap(page)
         page.wait_for_timeout(500)
         facts=page.evaluate('''() => ({
           compute: typeof compute,
@@ -212,6 +215,7 @@ try:
         page.locator('#mvpNotesCloseBtn').click()
         page.locator('[data-mvp-notes-visibility="show"]').click()
         page.locator('#settingsCloseBtn').click()
+        assert_fixture_requests(page.context)
         browser.close()
 finally:
     server.shutdown(); server.server_close()

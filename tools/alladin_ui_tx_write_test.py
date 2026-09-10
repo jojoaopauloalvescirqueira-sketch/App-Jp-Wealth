@@ -380,10 +380,13 @@ def main() -> int:
             r = page.evaluate("""() => {
               const b=document.querySelector('button[data-ald-act=salvar]');
               b.click(); b.click();
-              return { calls: window.__port.calls, n: S.alladin.transactions.length };
+              return { calls: window.__port.calls, n: S.alladin.transactions.length,
+                foco: document.activeElement.matches('button[data-ald-tx-new]') && !!document.activeElement.getClientRects().length };
             }""")
             if r["calls"] != 1 or r["n"] != 1:
                 falhas.append(f"TX-I: double submit duplicou ({r})")
+            if not r["foco"]:
+                falhas.append(f"TX-I: foco perdido após confirmar lançamento ({r})")
             # cancelamento zero-write
             page.evaluate("""() => { window.__S=JSON.stringify(S);
                                      window.__LS=localStorage.getItem('%s');
@@ -399,12 +402,15 @@ def main() -> int:
             r2 = page.evaluate("""() => ({ calls: window.__port.calls, saves: window.__port.saves,
                 sIgual: JSON.stringify(S)===window.__S,
                 lsIgual: localStorage.getItem('%s')===window.__LS,
-                fechou: !document.getElementById('alladinModalOverlay').classList.contains('show') })""" % LSKEY)
+                fechou: !document.getElementById('alladinModalOverlay').classList.contains('show'),
+                foco: document.activeElement.matches('button[data-ald-tx-new]') && !!document.activeElement.getClientRects().length })""" % LSKEY)
             page.evaluate(RESTAURAR)
             if r2["calls"] or r2["saves"]:
                 falhas.append(f"TX-J: cancelar chamou porta/save ({r2})")
             if not r2["sIgual"] or not r2["lsIgual"] or not r2["fechou"]:
                 falhas.append(f"TX-J: cancelar nao foi zero-write ({r2})")
+            if not r2["foco"]:
+                falhas.append(f"TX-J: foco perdido após cancelar lançamento ({r2})")
             if erros:
                 falhas.append(f"TX-I/J: pageerror {erros}")
             ctx.close()

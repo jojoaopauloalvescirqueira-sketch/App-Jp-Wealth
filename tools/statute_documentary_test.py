@@ -13,7 +13,14 @@ import sys
 
 sys.dont_write_bytecode = True
 from playwright.sync_api import Error, sync_playwright
-from dashboard_macro_test import boot, launch_browser, serve
+from dashboard_macro_test import boot as dashboard_boot, launch_browser, serve
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
+
+def boot(browser, url):
+    context, page, observed = dashboard_boot(browser, url, prepare_context=install_bootstrap)
+    wait_bootstrap(page)
+    return context, page, observed
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'tools/.artifacts/statute_documentary_test.json'
@@ -200,7 +207,10 @@ def consent_case(browser, url, version, accepted, mode):
         assert not errors['pageerror'] and not errors['console'], errors
         return {'build': build, 'version': version, 'accepted': accepted, 'case': mode, 'status': 'PASS'}
     finally:
-        context.close()
+        try:
+            assert_fixture_requests(context)
+        finally:
+            context.close()
 
 
 def document_checks(browser, url, result):
@@ -269,20 +279,23 @@ def document_checks(browser, url, result):
             routepage.close()
         assert not errors['pageerror'] and not errors['console'], errors
     finally:
-        context.close()
+        try:
+            assert_fixture_requests(context)
+        finally:
+            context.close()
 
     portable = ROOT / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
     context = browser.new_context(service_workers='block', viewport={'width': 390, 'height': 844}, accept_downloads=True)
+    install_bootstrap(context)
     try:
         context.add_init_script('window.__onbShown=true;')
         context.set_offline(True)
         page = context.new_page()
         errors = []
         page.on('pageerror', lambda e: errors.append(str(e)))
-        # Recursos externos inertes; o arquivo, seu JS/CSS e os documentos são reais.
-        page.route('**/*', lambda r: r.continue_() if r.request.url.startswith('file:')
-                   else r.fulfill(status=200, content_type='application/json', body='{}'))
+        # Fixtures nominais externas; arquivo, JS/CSS e documentos permanecem reais.
         page.goto(portable.as_uri(), wait_until='load')
+        wait_bootstrap(page)
         page.wait_for_function('() => typeof openOnboardingModal==="function" && !!window.JPWDashMacro')
         assert page.evaluate('() => JP_WEALTH_BUILD_ID') == result['build']
         page.evaluate("() => {closeModal();openOnboardingModal('new','consent');}")
@@ -305,7 +318,10 @@ def document_checks(browser, url, result):
             result['standalone']['downloads'].append({'path': path, 'sha256': expected, 'filename': download.suggested_filename, 'status': 'PASS'})
         assert not errors, errors
     finally:
-        context.close()
+        try:
+            assert_fixture_requests(context)
+        finally:
+            context.close()
 
 
 def main():

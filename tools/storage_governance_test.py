@@ -12,6 +12,7 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 import os, socket, threading
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -40,11 +41,13 @@ def prepare_page(origem, url, mute_dialogs=True):
     # viewport é propriedade do contexto: Browser.new_page() aceita o argumento (cria o
     # contexto na hora), BrowserContext.new_page() não — lá ele foi definido em new_context().
     ehBrowser = hasattr(origem, 'new_context')
-    page = origem.new_page(viewport=VIEWPORT) if ehBrowser else origem.new_page()
+    page = origem.new_page(viewport=VIEWPORT, service_workers='block') if ehBrowser else origem.new_page()
+    install_bootstrap(page.context)
     observed = {'console': [], 'pageerror': []}
     page.on('console', lambda m: observed['console'].append((m.type, m.text)))
     page.on('pageerror', lambda e: observed['pageerror'].append(str(e)))
     page.goto(url, wait_until='load')
+    wait_bootstrap(page)
     page.wait_for_timeout(700)
     if mute_dialogs:
         page.evaluate("() => { window.alert = () => {}; window.confirm = () => false; window.prompt = () => null; }")
@@ -359,6 +362,7 @@ def main():
         assert wipe['tela'] == 'dash' and wipe['dgZerado'] and wipe['handle'] is None
 
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 8. persistência entre sessões ------------------------------------------
@@ -367,13 +371,14 @@ def main():
         # anterior era incapaz, por construção, de provar persistência. Aqui as duas
         # páginas nascem do MESMO contexto: fechar a primeira e abrir a segunda simula a
         # sessão seguinte com o mesmo perfil de navegador.
-        contexto = browser.new_context(viewport=VIEWPORT)
+        contexto = browser.new_context(viewport=VIEWPORT, service_workers='block')
         page = prepare_page(contexto, url)
         page.evaluate("async () => { window.__onbShown = true; closeModal(); await exportFullBackup(); }")
         gravado = page.evaluate("""() => ({seq: S.dataGovernance.export.lastSequence,
           arq: S.dataGovernance.export.lastExportFile,
           log: S.dataGovernance.changeLog.length})""")
         assert gravado['seq'] == 1 and gravado['arq'].startswith('JP_WEALTH_DB_000001_'), gravado
+        assert_fixture_requests(page.context)
         page.close()
 
         page = prepare_page(contexto, url)   # MESMO contexto: o estado tem de atravessar
@@ -384,6 +389,7 @@ def main():
         assert persist['arq'] == gravado['arq'], persist        # mesmo arquivo registrado
         assert 'database/exported' in persist['log'], persist
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
         contexto.close()
 
@@ -392,7 +398,7 @@ def main():
         # em memória e a PRIMEIRA gravação dela ressuscitava o documento na chave recém
         # apagada. As duas páginas nascem do MESMO contexto — sem isso compartilhariam
         # nada e o teste não provaria coisa alguma.
-        contexto = browser.new_context(viewport=VIEWPORT)
+        contexto = browser.new_context(viewport=VIEWPORT, service_workers='block')
         aba1 = prepare_page(contexto, url)
 
         # Marca de operador, para distinguir "base apagada" de "base virgem".
@@ -448,6 +454,7 @@ def main():
         assert conflitos, 'a guarda deveria ter emitido a mensagem de conflito neste cenário'
         assert_no_errors({'console': [x for x in obs2['console'] if x not in conflitos],
                           'pageerror': obs2['pageerror']})
+        assert_fixture_requests(contexto)
         aba1.close(); aba2.close()
         contexto.close()
 
