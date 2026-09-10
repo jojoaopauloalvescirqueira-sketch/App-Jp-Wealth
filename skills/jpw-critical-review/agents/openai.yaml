@@ -1,0 +1,4 @@
+interface:
+  display_name: "X2 · Revisor crítico JP Wealth"
+  short_description: "Revise fluxos, código e experiência com evidências"
+  default_prompt: "Use $jpw-critical-review para revisar a jornada indicada em modo somente leitura."

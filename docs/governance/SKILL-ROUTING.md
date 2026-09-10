@@ -45,3 +45,7 @@ Se uma skill sugerir acao contraria ao Estatuto, a uma decisao aprovada, a `AGEN
 ## Feature Atlas parcial, com pendências
 
 Para explicar finalidade/fluxo de uma feature ou investigar consumidores e impacto, usar `skills/jpw-feature-atlas/SKILL.md`, consultando somente a ficha pertinente em `docs/architecture/FEATURE-ATLAS.md` e depois os originais. Descoberta local usa links em `.agents/skills/` e `.claude/skills/` para a mesma skill dentro da raiz Git em consulta; disponibilidade efetiva depende de validação do ambiente. O Atlas não é agente autônomo nem fonte de autorização. Nenhuma restrição acima é substituída. Contrato histórico do piloto em `docs/work/FEATURE-ATLAS-PILOT.md`; transferência conjunta V4/Atlas autorizada com pendências em `docs/work/ATLAS-V4-INTEGRATION-20260910.md`; AUD-05/P2 aberto.
+
+## X2 — revisão crítica de jornadas
+
+Ao solicitar revisão de finalidade, integração funcional, código ou experiência, abrir `skills/jpw-critical-review/SKILL.md`. A0/A1: diagnóstico e recomendação, sem corrigir produto ou atualizar contexto. O modo lógico usa referência própria. Escopo integral somente se solicitado; reportar cobertura/lacunas. Links `.agents/skills/jpw-critical-review` e `.claude/skills/jpw-critical-review` apontam à fonte única local; não são prova de acionamento automático. Instalação regida por `docs/work/X2-CRITICAL-REVIEW-20260910.md`.

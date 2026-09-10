@@ -179,3 +179,7 @@ Usar [TASK-BRIEF](../templates/TASK-BRIEF.md) para a síntese específica, fonte
 ## Consulta funcional — Atlas parcial
 
 `docs/architecture/FEATURE-ATLAS.md` contém inventário parcial e três fichas com IDs, finalidade, fluxo, estados, limites, fontes e relações. Leia o recorte pertinente, confira revisão/hash e abra o código/contrato original. Uma relação também permite partir do componente para seus consumidores; falta de registro não prova ausência de dependência. Antes de alterar uma feature, identifique propósito, consumidores e frescor; após um delta autorizado, proponha somente a revisão documental afetada, sem escrita automática. Não carregar o Atlas inteiro por padrão. A transferência do pacote à árvore real foi autorizada com pendências em `docs/work/ATLAS-V4-INTEGRATION-20260910.md`; o contrato anterior do piloto é histórico. Integração não comprova eficácia nem encerra AUD-05/P2.
+
+## Revisão crítica X2
+
+Para avaliar uma jornada, consultar `skills/jpw-critical-review/SKILL.md` e os contratos/fontes dos módulos pertinentes nas rotas acima. Atlas é localizador parcial; reconstruir esperado versus encontrado com fontes identificadas. Revisão não autoriza correção nem atualização automática de contexto. Instalação e primeira revisão em `docs/work/X2-CRITICAL-REVIEW-20260910.md`.
