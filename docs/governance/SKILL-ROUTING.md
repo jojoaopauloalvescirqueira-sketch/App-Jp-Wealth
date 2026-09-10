@@ -49,3 +49,21 @@ Para explicar finalidade/fluxo de uma feature ou investigar consumidores e impac
 ## X2 — revisão crítica de jornadas
 
 Ao solicitar revisão de finalidade, integração funcional, código ou experiência, abrir `skills/jpw-critical-review/SKILL.md`. A0/A1: diagnóstico e recomendação, sem corrigir produto ou atualizar contexto. O modo lógico usa referência própria. Escopo integral somente se solicitado; reportar cobertura/lacunas. Links `.agents/skills/jpw-critical-review` e `.claude/skills/jpw-critical-review` apontam à fonte única local; não são prova de acionamento automático. Instalação regida por `docs/work/X2-CRITICAL-REVIEW-20260910.md`.
+
+
+## X1 — filosofia, experiência e integridade visual
+
+Para aplicar a X1 a um recorte de design ou adotar sua filosofia, usar
+[skills/jpw-design/SKILL.md](../../skills/jpw-design/SKILL.md). O modo explícito
+prevalece, inclusive quando expresso em linguagem natural. Sem modo definido,
+use AUDITAR; intenção inequívoca dispensa formulário, não concede autorização.
+A filosofia v1.0 tem fonte única na referência da skill, carregada por seção.
+X1 trata experiência e integridade visual; Atlas localiza features/fontes e
+X2 mantém sua revisão crítica. Nenhuma dessas funções substitui o Harness
+ou concede edição/publicação. Os gatilhos anteriores permanecem aplicáveis.
+
+Descoberta local: `.agents/skills/jpw-design` e `.claude/skills/jpw-design`
+resolvem para a mesma skill dentro desta raiz. Uso explícito: `$jpw-design`
+quando oferecido pelo cliente, ou leitura do caminho acima. Arquivo/link não
+prova carregamento automático nem compatibilidade entre clientes. Contrato:
+[X1-DESIGN-INSTALL-20260910](../work/X1-DESIGN-INSTALL-20260910.md).

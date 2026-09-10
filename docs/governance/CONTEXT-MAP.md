@@ -183,3 +183,18 @@ Usar [TASK-BRIEF](../templates/TASK-BRIEF.md) para a síntese específica, fonte
 ## Revisão crítica X2
 
 Para avaliar uma jornada, consultar `skills/jpw-critical-review/SKILL.md` e os contratos/fontes dos módulos pertinentes nas rotas acima. Atlas é localizador parcial; reconstruir esperado versus encontrado com fontes identificadas. Revisão não autoriza correção nem atualização automática de contexto. Instalação e primeira revisão em `docs/work/X2-CRITICAL-REVIEW-20260910.md`.
+
+
+## X1 — contexto de design sob demanda
+
+Para filosofia, experiência, interação e integridade visual, partir da
+[X1 local](../../skills/jpw-design/SKILL.md), que seleciona seções da sua
+[fonte v1.0](../../skills/jpw-design/references/design-philosophy.md) conforme
+a tarefa. A fonte é autoral, subordinada a AGENTS/Harness e aos contratos
+do projeto; não substitui norma financeira nem prova correção da interface.
+
+As rotas por área acima continuam selecionando fontes do produto. Atlas
+ajuda a localizar funcionalidades/consumidores; X2 mantém diagnóstico crítico;
+X1 acrescenta critérios de design sem redefinir essas responsabilidades.
+Instalação e validação: [contrato X1](../work/X1-DESIGN-INSTALL-20260910.md).
+Este acréscimo não atualiza a revisão material histórica do mapa nem os índices.

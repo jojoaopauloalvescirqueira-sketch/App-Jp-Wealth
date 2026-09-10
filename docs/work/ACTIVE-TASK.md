@@ -1,3 +1,15 @@
+# Tarefa delimitada — adoção permanente da X1
+
+Contrato: [X1-DESIGN-INSTALL-20260910](X1-DESIGN-INSTALL-20260910.md).
+Modo ADOTAR_FILOSOFIA, N3/A4 de control plane: instalar a skill e conectar
+somente descoberta/roteamento/contexto previstos. Sem corrigir X1-01 a X1-04,
+sem produto/build, commit, push, PR, merge ou deploy. Estado de autorização
+e evidências devem ser conferidos no contrato e na conversa, não inferidos
+deste cabeçalho. O conteúdo abaixo permanece histórico e não concede
+autoridade adicional nem descreve automaticamente a revisão atual.
+
+---
+
 # Tarefa vigente — instalação X2 e revisão somente leitura
 
 Contrato: [X2-CRITICAL-REVIEW-20260910](X2-CRITICAL-REVIEW-20260910.md). Proprietário autorizou instalar skill e revisar todo software na branch codex/critical-review-skill. Sem commit/push/merge/deploy ou correções. O material abaixo permanece histórico de tarefas anteriores; não concede autoridade a esta execução.
