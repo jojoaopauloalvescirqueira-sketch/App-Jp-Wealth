@@ -1,3 +1,13 @@
+# Tarefa delimitada — CUR-VIG-01: referências e vigência
+
+Contrato: [CONTEXT-CURATION-20260910](CONTEXT-CURATION-20260910.md), CHG/CTX N3/A4. O proprietário escolheu A para o lote delimitado: AGENTS.md, README.md, este cabeçalho e o contrato próprio, na branch `codex/context-curation`, a partir de `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`.
+
+Implementação e validações focais/FULL/auditoria autorizadas; resultados e fingerprint devem ser conferidos nas evidências em `tools/.artifacts/context-curation-20260910/`. Isso não concede aceite nem commit, push, PR, merge ou deploy. Sem produto, novas skills, atualização geral de contexto, reindexação ou alteração de permissões.
+
+A instalação X1 abaixo já foi integrada pelo PR #9 na base indicada; o texto original é preservado como registro da sua etapa de instalação. Todos os cabeçalhos e contratos abaixo são históricos, com autoridade limitada às respectivas decisões: não representam automaticamente a tarefa corrente. AUD-05/P2, limitações anteriores e a dívida estrutural V4 permanecem registradas, sem promoção de falha a PASS.
+
+---
+
 # Tarefa delimitada — adoção permanente da X1
 
 Contrato: [X1-DESIGN-INSTALL-20260910](X1-DESIGN-INSTALL-20260910.md).
