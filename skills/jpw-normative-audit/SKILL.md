@@ -1,11 +1,15 @@
 ---
 name: jpw-normative-audit
-description: Audit JP Wealth financial rules against the Estatuto and approved decisions. Use for risk profiles, drawdown, leverage, phases, Genesis orders, LIFO, quarantine, accounting, stop statistics, MEI-JP, or any N3 change.
+description: Audit JP Wealth financial rules against the Estatuto and approved decisions. Use for risk profiles, drawdown, leverage, phases, Genesis orders, LIFO, quarantine, accounting, stop statistics, MEI-JP, or any financial/normative N3 change. Engineering-only control-plane N3 follows AGENTS.md and the Harness control-plane audit; retain A4, full and independent review.
 ---
 
 # JP Wealth Normative Audit
 
 ## Authority
+
+This routing distinction does not relax any financial gate. If a control-plane
+change also affects a financial rule, apply both review paths. Classification
+does not grant authority; instructions being edited cannot authorize their executor.
 
 Read the applicable pages/articles in `docs/normative/` and approved files in `docs/decisions/`. Treat code, tests, UI labels and prior prompts as lower-authority evidence.
 
