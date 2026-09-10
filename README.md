@@ -27,7 +27,11 @@ parâmetros. Os documentos antigos foram removidos do worktree; o histórico Git
 
 ## Funcionalidades
 
-### Estado da migração de navegação
+### Navegação integrada e histórico da migração
+
+Na revisão integrada `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`, a navegação lateral é padrão e a barra superior anterior permanece como opção no Editor. Destinos, aliases e limites estão no [contrato de navegação](docs/architecture/NAVIGATION-HIERARCHY.md). Integração não comprova deploy.
+
+**Registro histórico NAV-01/NAV-02/NAV-03:** os checkpoints abaixo preservam o estado e os gates daquela etapa. A expressão “candidato potencialmente publicável” pertence a esse histórico; não descreve uma pendência atual nem autoriza publicação.
 
 - **TARGET CANÔNICO:** Dashboard, Forex, Finanças Pessoais, Research e Alladin.
 - **CHECKPOINTS NAV-01/NAV-02:** Forex possui exatamente seis destinos — Visão Geral,
@@ -41,7 +45,7 @@ parâmetros. Os documentos antigos foram removidos do worktree; o histórico Git
 
 ### Capacidades funcionais
 
-- **Dashboard** — visão consolidada com grade de widgets personalizável (layout persistido separadamente do estado financeiro) e o widget **Notícias de alto impacto · hoje**, alimentado por calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina).
+- **Dashboard** — visão consolidada dos módulos, inclusive o resumo de Forex; a seção inferior **Sistema e atalhos** reúne somente **Status do Sistema** e **Ações rápidas**, com personalização aplicável e layout persistido separadamente do estado financeiro. O calendário operacional fica em **Forex → Visão Geral**, junto dos demais componentes operacionais realocados; a agenda completa permanece em **Research → Forex → Calendário**. O feed de notícias de alto impacto usa calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina). A distribuição dos componentes e suas fontes está no [mapa de contexto](docs/governance/CONTEXT-MAP.md).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
 - **Execução** — registro de ordens com fases, risco programado, classificação de stops e alavancagem do motor legado; a adequação ao V11 está pendente.
 - **Research** — ownership visual de Calendário Econômico, Estudos NoCoda e Estudos dos Pivots sob Forex, sem duplicar telas ou domínio.
@@ -105,7 +109,7 @@ Exportação com nomenclatura sequencial `JP_WEALTH_DB_NNNNNN_AAAA-MM-DD_HHmm.js
 ### PWA e distribuição
 
 Instalável como PWA com service worker e precache versionado (`sw.js`); o validador
-exige que os 77 scripts do manifest também estejam no precache. Durante uma
+exige que todos os scripts do [manifest](src/js/manifest.json) também estejam no precache. Durante uma
 atualização, o worker novo aguarda o fechamento dos clientes antigos; cada aba
 continua usando um build integral, sem combinar HTML novo com scripts cacheados de
 outro build. O ícone tem variantes
@@ -152,7 +156,7 @@ Nenhuma IA deve alterar constantes financeiras, fórmulas normativas, migraçõe
 
 ## Trabalho com agentes
 
-Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/governance/CONTEXT-MAP.md`. O estado confirmado e as pendências vigentes ficam em `docs/governance/CURRENT-STATE.md`; conversas e handoffs nunca substituem esses arquivos. O roteamento de skills está em `docs/governance/SKILL-ROUTING.md` — oito skills `jpw-*` de procedimento local e duas skills genéricas instaladas project-scoped (`repository-architecture`, `agentic-evolution-governance`). O fechamento de toda mudança material exige veredito explícito de impacto agêntico, conforme `skills/jpw-post-change-audit/SKILL.md`.
+Todo agente começa por `AGENTS.md`, executa o preflight e usa o mapa em `docs/governance/CONTEXT-MAP.md`. O estado e as pendências registrados em `docs/governance/CURRENT-STATE.md` correspondem à fotografia e à `Source revision` declaradas ali; confronte-as com a revisão examinada antes de tratá-las como atuais. Conversas e handoffs nunca substituem essas fontes. Consulte o inventário e o roteamento em [SKILL-ROUTING](docs/governance/SKILL-ROUTING.md): procedimentos locais `jpw-*` e skills genéricas instaladas no projeto (`repository-architecture`, `agentic-evolution-governance`), com seus limites e fontes preservados. O fechamento de toda mudança material exige veredito explícito de impacto agêntico, conforme `skills/jpw-post-change-audit/SKILL.md`.
 
 ## Persistência
 
