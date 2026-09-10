@@ -77,4 +77,4 @@ Quando a branch está pronta e aprovada, ela é incorporada a `main` — isso se
 
 ## O que o Claude nunca faz sozinho
 
-O Claude nunca cria, troca ou apaga branch, nunca faz commit, push, pull, merge ou qualquer operação que grave ou envie alterações — isso sempre depende de você pedir explicitamente, na conversa. Ver `CLAUDE.md` para a lista completa.
+O Claude nunca cria, troca ou apaga branch, nunca faz commit, push, pull, merge ou qualquer operação que grave ou envie alterações — isso sempre depende de você pedir explicitamente, na conversa. A mesma restrição vale para Codex e subagentes. Ver [AGENTS.md](../AGENTS.md), seção **Política Git comum**, para a lista completa. `CLAUDE.md` importa esse núcleo; a consolidação não concede autorização adicional nem substitui o teste manual do proprietário.

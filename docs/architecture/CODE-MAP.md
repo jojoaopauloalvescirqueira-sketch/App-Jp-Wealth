@@ -1,9 +1,16 @@
 # Mapa do código
 
-Fotografia do candidato interno NAV-03 sobre `9b5ea298` em 2026-08-26:
-`src/js/manifest.json` contém 77 scripts clássicos. O manifest é a fonte única
-para ordem e hashes; esta página é um mapa humano e deve ser reconciliada quando
-a lista material mudar.
+Reconciliação em 2026-09-09 sobre `484228189cc3f5f4c297f29f88f2b2ed541a3afd`,
+build `88c0cb1ce5520311`: `src/js/manifest.json` contém 78 scripts clássicos.
+O manifest é a fonte única para ordem e hashes; a coluna abaixo representa a
+posição na lista de carga, inclusive onde a entrada não possui campo `order`.
+Este mapa humano deve ser reconciliado quando a lista ou seus contratos mudarem.
+A revisão documental não é evidência de teste nem homologação financeira.
+
+Para finalidade dos cinco módulos, capacidade atual e limites, leia
+`../governance/PROJECT-CONTEXT.md`. Para instruções funcionais, fontes seletivas,
+consumidores, riscos e testes pertinentes, use `../governance/CONTEXT-MAP.md`.
+Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.md`.
 
 ## Ordem de execução
 
@@ -48,11 +55,11 @@ a lista material mudar.
 | 37 | `src/js/40-app/08-educational-content.js` | Base educacional local |
 | 38 | `src/js/40-app/09-settings-modal.js` | Central modal de Configurações |
 | 39 | `src/js/40-app/10-dashboard-immersive.js` | Dashboard imersivo |
-| 40 | `src/js/40-app/11-operational-shell.js` | Shell operacional: gaveta móvel e faixa compartilhada dos níveis contextuais, derivada do resolver |
-| 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado do Dashboard |
+| 40 | `src/js/40-app/11-operational-shell.js` | Shell derivado do resolver: lateral contextual padrão, composição superior opcional no Editor, mesmos nós N1/N2/N3, diálogos mobile e foco |
+| 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado: contexto global, Status do Sistema e realocação dos componentes operacionais para Forex > Visão Geral |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
 | 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
-| 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget do Dashboard, inicializados em separado |
+| 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget em Forex > Visão Geral, inicializados em separado; calendário e resumo Dashboard compartilham o pipeline |
 | 45 | `src/js/40-app/16-storage-governance.js` | UI da governança de armazenamento |
 | 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal: render parametrizado por raiz (`data-ecal-role`), servindo o overlay `#ecalOverlay` e o workspace `#execEcal` — duas instâncias visuais, um domínio |
 | 47 | `src/vendor/planck/planck-1.5.0.min.js` | Planck.js 1.5.0 vendorizado, MIT |
@@ -86,6 +93,7 @@ a lista material mudar.
 | 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema v6), modelo cadastral (Instrument, Asset, Account, CashAccount), **ledger econômico** — `DEPOSIT`/`WITHDRAWAL`/`TRANSFER`/`REVERSAL`/`BUY`/`SELL`/`FEE`/`TAX`/`ADJUSTMENT_CREDIT`/`ADJUSTMENT_DEBIT`, saldo de caixa derivado e fail-closed, consistência do par reversal↔original na leitura, completude do `ALD_CASH_DELTA` (ausência de delta é BLOCKING, nunca zero implícito) — e **Position Quantity Engine** (ALD-04 S1): `leitura.posicoes()` derivada por instrumentId+accountId, aritmética decimal exata em BigInt; sem holding persistido/consolidado, cost basis, valuation, P&L/performance |
 | 76 | `src/js/20-ui/23-research-views.js` | Research: ownership e troca efêmera de Calendário, NoCoda, Pivots e quatro empty states |
 | 77 | `src/js/20-ui/24-alladin-views.js` | **Alladin C3 + ALD-05 S1**: superfície cadastral — leitura desacoplada pelo read-model, CRUD das quatro entidades no modal próprio, `recordStatus`, write gate, DC-4 e integridade da edição — **e a superfície econômica**: Lançamentos (leitura, **criação** — modal único dos nove tipos, uma chamada a `ledger.addTransaction` por submit, dinheiro só por `money.parse`, `quantity` verbatim, CTA ausente sob BLOCKING — **e estorno**: coluna Ações com elegibilidade visual por linha e uma chamada a `ledger.reverseTransaction`, com o original em read-only e a economia copiada pelo domínio), Saldos e Posições projetando `transactions()`/`saldoDeCaixa()`/`posicoes()` sem aritmética própria (dinheiro por `money.format`, `quantity` verbatim), com BLOCKING que nunca vira zero, vazio ou tela normal, e sentinela de integridade para o ledger (`posicoes()` + `compat()`, já que `transactions()` não tem envelope) |
+| 78 | `src/js/20-ui/25-dash-macro.js` | Dashboard: síntese de Forex, Finanças Pessoais, Research e Alladin consumindo contratos canônicos, com estados de disponibilidade/cobertura, atualização agrupada e atalhos pelo resolver; sem escrita financeira ou materialização de mês |
 
 ## Laboratório de Probabilidade
 
@@ -106,11 +114,26 @@ A extração de `reserveCalc()` do onboarding para a função pura
 compartilhada foi autorizada em 2026-08-11; contrato completo em
 `FX-PLANNING.md`.
 
-Forex, Finanças Pessoais e Research usam a faixa hierárquica compartilhada:
-cada acionador permanece filho direto de `#nav`, enquanto a faixa única
-`#navSubShell` vive no fluxo entre header e contexto. Forex tem seis filhos e
-terceiro nível contextual para Operação, Apuração e Planejamento; os quatro
-modos do último reutilizam `window.JPWFx.ui` sem tabs internas duplicadas.
+## Navegação compartilhada e contexto local
+
+A lateral contextual é o padrão; o Editor oferece a composição superior
+opcional (`jpw_nav_layout=sidebar|topbar`). O mesmo `#nav` vive em `#appSidebar`
+ou `#gdTopbarNavSlot`. Os cinco acionadores primários continuam filhos diretos
+de `#nav`; não há router, IDs ou listeners duplicados para a alternativa.
+
+Forex, Finanças Pessoais e Research compartilham um único `#navSubShell`. Na
+lateral, ele fica dentro de `#nav`, após o expansor ativo. Na composição
+superior, volta ao fluxo antes de `#gdContextRow`. Os contextos N3 de Forex e
+Research ficam em `#navLocalSlot` no modo lateral e retornam aos painéis de
+navegação correspondentes no superior. Alladin mantém suas abas no conteúdo.
+Forex tem seis filhos; Operação, Apuração e Planejamento conservam contextos
+locais. Os quatro modos de Planejamento reutilizam `window.JPWFx.ui`.
+
+`JPWNavigation.current()` e as superfícies de módulo determinam a localização
+exibida. `jpw_nav` (estilo), `jpw_rail` (compactação) e a escolha de composição
+são preferências distintas. Trocar composição não deve navegar, reinicializar
+módulos ou alterar preferências v6 dos widgets; contratos completos em
+`NAVIGATION-HIERARCHY.md`.
 
 No Execution Board restam `#execOverview`, `#execWidgetGrid`,
 `#motorWidgetGrid` e `#execHistory`. Research contém os mesmos nós
@@ -125,13 +148,54 @@ O Motor de Lote migrou de `Configurações → Operação` para o módulo em
 juntos — `restoreLegacySettingsNodes()` reanexava o grid a ela a cada
 fechamento e o arrancaria de dentro de `#exec`. Os dois cards perderam
 `data-layout-card`, que era vestigial e faria a regra de edição de layout
-escopada por tela congelar seus controles. As restrições estruturais dessa realocação — nunca `.screen`
-aninhada, nunca dentro da `.jp-widget-grid`, nunca desmontar — e o contrato
-reutilizável completo estão em `NAVIGATION-HIERARCHY.md`.
+escopada por tela congelar seus controles. As restrições estruturais dessa
+realocação — nunca `.screen` aninhada, nunca dentro da `.jp-widget-grid`,
+preservar os nós operacionais — e o contrato completo estão em
+`NAVIGATION-HIERARCHY.md`. Isso não impõe o mesmo lifecycle a todos os módulos:
+Alladin limpa o DOM de vistas inativas e revalida os controles ao renderizar.
+
+## Dashboard, Forex e agenda compartilhada
+
+`dashMacroRender()` compõe os quatro resumos superiores fora de `#gdDashMain`.
+Forex lê `compute()`/`getOperationalClearance()`, apuração e planejamento;
+Finanças Pessoais fornece suas métricas canônicas; Research fornece estudos e
+calendário; Alladin fornece compatibilidade/read-models. Ausência, parcialidade
+e bloqueio são resultados a apresentar, não números a completar.
+
+`relocateGlobalDashboardShell()` mantém os mesmos nós de onboarding,
+`#mcClearanceCard`, VRM e notícias em `#fxOverviewWidgets`. O Dashboard conserva
+Status do Sistema e Ações rápidas em “Sistema e atalhos”. O motor de layout
+continua usando um envelope v6 e projeta os cartões entre as duas telas, sem
+descartar preferências dos realocados. `renderSystemStatus()` consome estado de
+persistência, backup, `staleInfo()` e conclusão do onboarding; não os recalcula.
+
+Jornada representativa, reconstruída por leitura do código nesta revisão:
+
+1. **Dashboard → Abrir Forex:** `initDashMacro()` delega o clique a
+   `JPWNavigation.navigate('forex-overview')`.
+2. **Resolver → Visão Geral:** `01-navigation.js` resolve tela `exec`, superfície
+   `exec`, visão `overview`; `execSelectView()` usa os nós existentes.
+3. **Widget Forex → agenda:** `initFfNewsWidget()` liga `#gdNewsMoreBtn` a
+   `JPWEcal.openMenu()`; o item Calendário Econômico abre `openEconomicCalendar()`.
+4. **Fonte compartilhada:** `ecalEvents()` lê `ffNewsReadCache()`;
+   `ecalRenderRoot()` atende o diálogo e `#execEcal`, agora em Research.
+   Abrir pode pedir revalidação por `ffNewsFetch(false)`, sem escrita financeira
+   em `S`; cache técnico/rede seguem o pipeline próprio.
+5. **Atualização e retorno:** `ffNewsRenderAll()` atualiza widget, agenda visível
+   e resumo Dashboard. Fechar o diálogo devolve foco ao acionador; o filtro do
+   workspace Research é efêmero e separado do filtro do diálogo.
+
+O owner da rota Research, a localização do widget Forex e a fonte do cache são
+responsabilidades diferentes. Alterar uma delas requer examinar os consumidores
+indicados, não criar uma segunda implementação. Essa leitura não prova
+interação executada: selecione os testes focais no `../governance/CONTEXT-MAP.md` e registre
+seu resultado somente quando executados no candidate declarado. A orientação
+de estado vazio em `17-economic-calendar.js` ainda menciona Dashboard; é dívida
+de texto fora desta reconciliação documental, não destino vigente do widget.
 
 ## Entrypoints, PWA e artefatos derivados
 
-- `index.html` compõe o DOM e carrega os 77 scripts na ordem do manifest.
+- `index.html` compõe o DOM e carrega os 78 scripts na ordem do manifest.
 - `src/styles/app.css` contém o design system e as regras do laboratório.
 - `sw.js` deve precachear todo caminho declarado no manifest; `validate_project.py`
   trata a equivalência como invariante. Navegações controladas pelo worker

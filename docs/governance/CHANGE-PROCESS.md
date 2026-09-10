@@ -8,13 +8,30 @@ Registrar branch, `BASE_SHA`, arvore de trabalho, objetivo e arquivos permitidos
 
 | Nivel | Superficie | Minimo exigido |
 |---|---|---|
-| N0-D | documentos, governanca, harness | A2, diff e gate fast |
+| N0-D | documentos informativos sem alterar obrigações, norma ou controles | A2, diff e gate fast |
 | N0-V | CSS, texto, layout | A2, desktop/mobile e temas aplicaveis |
 | N1 | comportamento nao normativo | A2, teste focado e standard |
 | N2 | estado, backup, credencial, seguranca | A3, backup/fixture, ida e volta, full |
-| N3 | regra financeira/normativa | A4, decisao citavel, exemplos, full e aceite humano |
+| N3 | regra financeira/normativa, segurança crítica ou control plane | A4, CHG dedicado, full, auditoria independente e aceite humano; evidências próprias do domínio |
 
-Mudanca documental que altera obrigacoes dos agentes e N0-D; mudanca em um teste pode ser N1 se reduzir ou ampliar contrato funcional. Alterar expectativa apenas para acompanhar o produto exige evidencia de que o novo comportamento foi deliberadamente aprovado.
+Classificação e autoridade canônicas: [AGENTS.md](../../AGENTS.md), seções
+"Classificação e autoridade" e "Política Git comum". Alterar instruções, políticas,
+gates, validadores, CI/proteções, schemas de contrato, templates ou testes do Harness
+é mudança de **control plane N3**, mesmo sem alterar runtime. Harness §28 exige
+A3 no mínimo; a exigência local de **A4 para N3 permanece**. O rótulo A4 não
+autoriza Git/publicação nem amplia o escopo recebido. O candidate de instruções
+não pode autorizar seu próprio executor.
+
+N3 financeiro mantém decisão normativa citável, exemplos calculados e testes de
+caracterização. N3 de control plane exige matriz antes/depois, testes estruturais,
+carregamento/comportamento observável e auditoria independente focal; o full do
+produto não substitui esses testes. Distinguir indisponibilidade de ambiente de
+aprovação. Uma mudança de produto não pode enfraquecer seu próprio juiz.
+
+Mudança de teste funcional pode ser N1 conforme efeito, exceto quando alcança
+control plane ou contrato N2/N3. Alterar expectativa apenas para acompanhar o
+produto exige evidência de comportamento deliberadamente aprovado; não ajustar
+gates para obter aprovação.
 
 ## 3. Definir o contrato
 
