@@ -5,6 +5,7 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 import json, os, re, socket, tempfile, threading
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -29,13 +30,14 @@ def assert_no_errors(observed):
     assert not errors and not observed['pageerror'], {'console': errors, 'pageerror': observed['pageerror']}
 
 def prepare_page(browser, url):
-    page = browser.new_page(viewport={'width': 1440, 'height': 900})
+    page = browser.new_page(viewport={'width': 1440, 'height': 900}, service_workers='block')
+    install_bootstrap(page.context)
     observed = {'console': [], 'pageerror': []}
     page.on('console', lambda m: observed['console'].append((m.type, m.text)))
     page.on('pageerror', lambda e: observed['pageerror'].append(str(e)))
     page.route('**/dist/assets/**', lambda route: route.continue_(url=route.request.url.replace('/dist/assets/', '/assets/')))
-    page.route('**/api.frankfurter.dev/**', lambda route: route.fulfill(status=200, content_type='application/json', body='{"rate":1}'))
     page.goto(url, wait_until='load')
+    wait_bootstrap(page)
     page.wait_for_timeout(700)
     page.evaluate("""() => {
       window.__onbShown = true; closeModal();
@@ -323,6 +325,7 @@ try:
         assert len(page.evaluate("S.mvpNotes.items")) == len(exported_notes['items']), 'importação deveria sobreviver ao reload'
 
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 11. Finalizar Sessão preserva notas; Zona de Perigo remove ----
@@ -364,6 +367,7 @@ try:
         assert len(notes_state(page)) == 0, 'Zona de Perigo/reset deveria remover as notas'
 
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 12. estado legado sem mvpNotes migra para estrutura padrão vazia ----
@@ -379,6 +383,7 @@ try:
         }""")
         assert legacy_ok, 'estado legado sem mvpNotes deveria migrar para estrutura padrão vazia'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 12b. pastas (introduzidas no schema v2): CRUD, visões, vínculo, busca,
@@ -581,6 +586,7 @@ try:
         }""")
         assert idempotency == {'legacyV1': True, 'messyV2': True, 'wellFormedV2': True}, idempotency
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 12c. A-002: badge/visibilidade sincronizados após importação e Zona de Perigo ----
@@ -641,6 +647,7 @@ try:
             'após a Zona de Perigo o badge deve sumir sem interação manual'
         assert page.locator('#headerNotesBtn').is_visible(), 'visibilidade volta ao padrão (mostrar)'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14. evolução v3: Concluído (visão virtual), completedAt, resize e mobile ----
@@ -705,6 +712,7 @@ try:
         page.wait_for_timeout(700)
         page.evaluate("() => { window.__onbShown = true; closeModal(); window.confirm = () => false; window.prompt = () => null; }")
         assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 1100, 'largura sobrevive à recarga'
+        assert_fixture_requests(page.context)
         page.close()
         # mobile: navegação em camadas Pastas → Lista → Editor → voltar + folha de filtros
         page = prepare_page(browser, base_url + 'index.html')
@@ -729,6 +737,7 @@ try:
         click_id(page, 'mvpNotesFiltersApplyBtn')
         assert page.locator('#mvpNotesFiltersWrap').evaluate("el => el.classList.contains('open')") is False
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14b. Fase D: separadores internos das três colunas -------------------
@@ -868,6 +877,7 @@ try:
         page.evaluate('mvpNotesApplyDrawerWidth(1100); mvpNotesPersistDrawerWidth(1100)')
         assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 190, 'list': 300}, 'após reload, ampliar restaura'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14c. Fase E: ordem MANUAL das pastas (position) -----------------------
@@ -970,6 +980,7 @@ try:
         for k, v in casos.items():
             assert v['idempotente'], k
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14d. Fase F: experiência mobile em três estágios ----------------------
@@ -1061,6 +1072,7 @@ try:
         assert page.locator('.mvpn-group-sep').count() == 1
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), 'sem overflow horizontal'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14e. JPW-RQPNMK: ação única "Limpar todos os filtros" -----------------
@@ -1132,6 +1144,7 @@ try:
           .map(id => Math.round(document.getElementById(id).getBoundingClientRect().height))""")
         assert all(h >= 44 for h in alturas), ('alvo de toque', alturas)
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14f. JPW-9A78DE: exportar a nota em Markdown --------------------------
@@ -1282,6 +1295,7 @@ try:
         assert notes_state(page)[0]['updatedAt'] == antes_upd, 'exportar não move updatedAt'
         assert notes_state(page)[0]['ticket'] == antes_ticket, 'exportar não toca o ticket'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14g. JPW-YX2Z43: menu "⋯" da pasta com semântica de menu contextual ----
@@ -1335,6 +1349,7 @@ try:
             assert externo['externo'] is True, 'details fora das Notas não pode ser fechado'
             assert externo['pasta'] is False, 'menu de pasta fecha'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 14h. "Todas as Notas" mostra só o backlog ATIVO ----------------------
@@ -1380,6 +1395,7 @@ try:
         assert titulos() == ['Ativa na pasta'], titulos()
         assert page.locator("[data-mvp-folder='all'] .mvpn-folder-count").inner_text() == '1'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 15. Trace ID (v4): geração, imutabilidade, cópia, busca e backup ----
@@ -1426,6 +1442,7 @@ try:
           return {aPreservado: A.ticket === derivado, distintos: A.ticket !== B.ticket};
         }""")
         assert colisao['aPreservado'] and colisao['distintos'], colisao
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 16. Trace Reference: conteúdo, cópia pelo card/editor e busca ----
@@ -1468,6 +1485,7 @@ try:
         page.wait_for_timeout(120)
         assert page.locator('.mvpn-card').count() == 1
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 17. JPW-CBA987: modal de configuração inicial da nota ----------------
@@ -1547,6 +1565,7 @@ try:
         assert page.locator('#mvpNotePriority').input_value() == 'critical', \
             'o inspector continua sendo a superfície de edição pós-criação'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 18. JPW-436587: exportar e copiar o recorte visível em massa ----------
@@ -1695,6 +1714,7 @@ try:
         page.wait_for_timeout(150)
         assert not pedidos, ('exportar/copiar não podem fazer rede', pedidos)
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 19. Tickets MVP: menu ⋯ moderno, Concluir e criticidade no topo ----------
@@ -1839,6 +1859,7 @@ try:
         assert page.evaluate("S.mvpNotes.schemaVersion") == 5, 'sem migração de schema'
         assert page.evaluate(f"!!S.mvpNotes.items.find(i => i.id === '{alvo_id}')"), 'nenhum ID mudou'
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         # ---- 13. monólito portátil (dist) ----
@@ -1846,6 +1867,7 @@ try:
         create_note(page, 'bug', 'Bug no monólito', '', 'high', 'open')
         assert len(notes_state(page)) == 1
         assert_no_errors(page.jpwealth_observed)
+        assert_fixture_requests(page.context)
         page.close()
 
         browser.close()

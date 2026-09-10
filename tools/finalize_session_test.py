@@ -7,6 +7,7 @@ import socket
 import tempfile
 import threading
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -42,6 +43,7 @@ def modal_text(page):
 
 def prepare_page(browser, url):
     page = browser.new_page()
+    install_bootstrap(page.context, TEST_FX_RATES)
     observed={'console':[],'pageerror':[],'requestfailed':[]}
     page.jpwealth_observed=observed
     page.on('console',lambda message: observed['console'].append((message.type,message.text,message.location.get('url',''))))
@@ -55,16 +57,8 @@ def prepare_page(browser, url):
     page.route('**/dist/assets/**',lambda route: route.continue_(
         url=route.request.url.replace('/dist/assets/','/assets/'),
     ))
-    def fulfill_fx(route):
-        parts=route.request.url.rstrip('/').split('/')
-        pair=parts[-2]+parts[-1].split('?')[0]
-        route.fulfill(
-            status=200,
-            content_type='application/json',
-            body=json.dumps({'rate':TEST_FX_RATES.get(pair,1.0)}),
-        )
-    page.route('**/api.frankfurter.dev/**',fulfill_fx)
     page.goto(url, wait_until='load')
+    wait_bootstrap(page)
     page.wait_for_timeout(700)
     page.evaluate('''() => {
       window.alert=()=>{};
@@ -85,6 +79,7 @@ def assert_no_browser_errors(page):
 
 def close_checked(page):
     assert_no_browser_errors(page)
+    assert_fixture_requests(page.context)
     page.close()
 
 def assert_safe_copy_checkpoint(page):
@@ -619,13 +614,14 @@ def run_mvp_notes_survival(browser, url):
 
 def run_cache_test(browser, base_url):
     page = browser.new_page()
+    install_bootstrap(page.context)
     page.add_init_script('''(() => {
       const nativeRegister=navigator.serviceWorker.register.bind(navigator.serviceWorker);
       navigator.serviceWorker.register=()=>Promise.resolve({});
       window.__restoreJPWServiceWorkerRegister=()=>{navigator.serviceWorker.register=nativeRegister;};
     })()''')
-    page.route('**/api.frankfurter.dev/**',lambda route: route.fulfill(status=200,content_type='application/json',body='{"rate":1}'))
     page.goto(base_url + 'index.html',wait_until='load')
+    wait_bootstrap(page)
     page.wait_for_timeout(300)
     keys=page.evaluate('''async () => {
       window.__restoreJPWServiceWorkerRegister();
@@ -643,6 +639,7 @@ def run_cache_test(browser, base_url):
     assert 'jp-wealth-old-audit' not in keys, keys
     assert 'outra-aplicacao-cache-audit' in keys, keys
     assert any(key.startswith('jp-wealth-') for key in keys), keys
+    assert_fixture_requests(page.context)
     page.close()
 
 def main():

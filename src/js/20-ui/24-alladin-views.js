@@ -448,6 +448,8 @@ function alladinModalAberto(){
 // origem não basta — ele morre com o render. Guarda-se um seletor re-resolvível.
 function alladinSeletorDeFoco(el){
   if(!el||!el.dataset) return null;
+  if(el.dataset.aldTxNew) return 'button[data-ald-tx-new]';
+  if(el.dataset.aldTxReverse) return 'button[data-ald-tx-reverse="'+CSS.escape(el.dataset.aldTxReverse)+'"]';
   if(el.dataset.aldNew) return 'button[data-ald-new="'+el.dataset.aldNew+'"]';
   if(el.dataset.aldEdit) return 'button[data-ald-edit="'+el.dataset.aldEdit+'"][data-ald-id="'+el.dataset.aldId+'"]';
   if(el.dataset.aldStatus) return 'button[data-ald-tipo="'+el.dataset.aldTipo+'"][data-ald-id="'+el.dataset.aldId+'"]';
@@ -469,8 +471,19 @@ function alladinModalClose(){
   const foco=alladinForm.foco;
   alladinForm={estado:'IDLE', tipo:null, modo:null, alvoId:null, recordId:null, foco:null, avisos:[], snapshot:null};
   alladinRender();
-  const alvo=(typeof foco==='string')?document.querySelector(foco):foco;
-  if(alvo && typeof alvo.focus==='function') alvo.focus();
+  let alvo=(typeof foco==='string')?document.querySelector(foco):foco;
+  const disponivel=el=>el && el.isConnected && !el.disabled &&
+    !el.closest('[hidden],[inert]') && el.getClientRects().length && getComputedStyle(el).visibility!=='hidden';
+  // O estorno concluído remove sua própria ação. Retornar a um controle vivo
+  // da lista; se a escrita estiver bloqueada, usar o título do contexto atual.
+  if(!disponivel(alvo) && typeof foco==='string' && foco.startsWith('button[data-ald-tx-')){
+    alvo=document.querySelector('#alladin.active button[data-ald-tx-new]');
+    if(!disponivel(alvo)){
+      if(window.JPWNavigation) window.JPWNavigation.focusCurrentScreen();
+      return;
+    }
+  }
+  if(disponivel(alvo) && typeof alvo.focus==='function') alvo.focus();
 }
 // Escape/backdrop: cancelam SOMENTE fora dos estados protegidos. Em
 // COMMITTED_WARNING e SUBMITTING a saída silenciosa é proibida por contrato.

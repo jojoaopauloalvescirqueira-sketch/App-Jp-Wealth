@@ -278,7 +278,7 @@
       "order": 46,
       "path": "src/js/40-app/17-economic-calendar.js",
       "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
-      "sha256": "79c88d7506e23a947a343cacb92e8bd0ee554f6e0b607915e63a2594c4432336"
+      "sha256": "2b4b978b7e1f1baca7c92877cc40054533ceb9ccd9f14621bddbaa35b0e707a6"
     },
     {
       "order": 47,
@@ -410,7 +410,7 @@
       "order": 68,
       "path": "src/js/10-domain/12-personal-finance.js",
       "section": "FINANCAS PESSOAIS · nucleo do dominio: politica monetaria BRL_CENTS e sentinela (dominio puro)",
-      "sha256": "30bd5fcdc94cca5b4546a27d7ae54676a8e7f5efde343293edecae411103763b"
+      "sha256": "4d56f313fc7ebbf8c45cb87b8b0416f18bbc8a94b82ea036887de1d58a9e9032"
     },
     {
       "order": 69,
@@ -461,13 +461,13 @@
       "order": 77,
       "path": "src/js/20-ui/24-alladin-views.js",
       "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
-      "sha256": "e5020166f5414ee9da96768e81889a32589f9b3e1d2ec0d6b157b7cca1939c8d"
+      "sha256": "aa75d564091bc92859f2edbc0595814acdd7b246de3946497c4e34de29e43b09"
     },
     {
       "order": 78,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "4c4ea201d8beeb2f3149c2cdb98c75e3ffc41be4a62b73fa9856503e5ba7baea"
+      "sha256": "2f413e80e10d5d970ce7060ac0902207a2b86f80e1739a6f24b219c50d80b5b8"
     }
   ]
 }

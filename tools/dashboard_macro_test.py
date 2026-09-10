@@ -62,8 +62,10 @@ def launch_browser(playwright):
     return playwright.chromium.launch(**options)
 
 
-def boot(browser, url, viewport=None):
-    context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900})
+def boot(browser, url, viewport=None, *, service_workers="allow", prepare_context=None):
+    context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900}, service_workers=service_workers)
+    if prepare_context is not None:
+        prepare_context(context)
     context.add_init_script("window.__onbShown = true;")
     page = context.new_page()
     observed = {"pageerror": [], "console": []}
@@ -71,11 +73,12 @@ def boot(browser, url, viewport=None):
     page.on("console", lambda msg: observed["console"].append(msg.text) if msg.type == "error" else None)
     # Origens externas sao servidas inertes: abortar produziria ERR_FAILED e
     # esvaziaria a assercao de "zero erro de console".
-    page.route(
-        "**/*",
-        lambda route: route.continue_() if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
+    if prepare_context is None:
+        page.route(
+            "**/*",
+            lambda route: route.continue_() if "127.0.0.1" in route.request.url
+            else route.fulfill(status=200, content_type="application/json", body="{}"),
+        )
     page.goto(url, wait_until="load")
     page.wait_for_function(
         "() => window.JPWDashMacro && window.JPWNavigation "
@@ -197,14 +200,19 @@ def assert_navegacao_dos_ctas(page):
         page.evaluate("() => window.JPWNavigation.navigate('dashboard')")
         page.wait_for_timeout(80)
         antes = storage_snapshot(page)
-        page.locator(f"#dashMacroGrid [data-dm-card='{card}'] .dm-cta").click()
+        cta = page.locator(f"#dashMacroGrid [data-dm-card='{card}'] .dm-cta")
+        cta.focus()
+        cta.press("Enter")
         page.wait_for_timeout(120)
         estado = page.evaluate("""() => ({
           screen: document.querySelector('#appMain > .screen.active')?.id || null,
           canonical: window.JPWNavigation.current().canonical,
+          focusInScreen: !!document.querySelector('#appMain > .screen.active')?.contains(document.activeElement),
+          focusVisible: !!document.activeElement?.getClientRects().length,
         })""")
         assert estado["screen"] == tela, f"[{card}] tela errada: {estado}"
         assert estado["canonical"] == rota, f"[{card}] rota canonica errada: {estado}"
+        assert estado["focusInScreen"] and estado["focusVisible"], f"[{card}] foco perdido ao navegar por teclado: {estado}"
         assert storage_snapshot(page) == antes, f"[{card}] a navegacao escreveu em storage"
     page.evaluate("() => window.JPWNavigation.navigate('dashboard')")
 
@@ -328,7 +336,7 @@ def assert_responsividade(browser, url):
         ("tablet", {"width": 900, "height": 1000}, True),
         ("mobile", {"width": 390, "height": 844}, True),
     ):
-        context, page, observed = boot(browser, url, viewport=viewport)
+        context, page, observed = boot(browser, url, viewport=viewport, service_workers="block")
         try:
             r = page.evaluate("""() => {
               const cards = [...document.querySelectorAll('#dashMacroGrid [data-dm-card]')];
@@ -420,7 +428,7 @@ def assert_links_profundos(page):
 def assert_resumos_preenchidos(browser,url):
     from alladin_ui_tx_reverse_test import SEMEAR
     from finpes_comparison_test import seed_completo
-    ctx,page,observed=boot(browser,url)
+    ctx,page,observed=boot(browser,url,service_workers="block")
     try:
         # Relógio do DOMÍNIO fixo: meses corrente/anterior e fixtures correspondem.
         page.evaluate("() => { window.__dmMonth=pfCurrentMonthKey; pfCurrentMonthKey=()=> '2026-08'; }")
@@ -479,7 +487,7 @@ def main():
     try:
         with sync_playwright() as playwright:
             browser = launch_browser(playwright)
-            context, page, observed = boot(browser, url)
+            context, page, observed = boot(browser, url, service_workers="block")
             try:
                 assert_estrutura_e_isolamento_do_layout(page)
                 assert_migracao_forex_fatia2(page)

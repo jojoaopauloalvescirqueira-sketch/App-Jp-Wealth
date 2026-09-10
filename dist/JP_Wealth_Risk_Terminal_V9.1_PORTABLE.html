@@ -6463,7 +6463,7 @@ html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(-
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '88c0cb1ce5520311';
+const JP_WEALTH_BUILD_ID = '60463a994a0068f8';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -23783,7 +23783,7 @@ function ecalRenderRoot(root, filter){
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico do Dashboard.';
+    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }
@@ -30771,23 +30771,62 @@ function pfWriteBlockReason(){
 // por aqui. Nenhum botão, modal ou fluxo decide "opcionalmente" se consulta a
 // sentinela — a fronteira de escrita é uma só.
 //
-// fn recebe S.personalFinance e aplica a mudança COERENTE do ato (o ato inteiro,
-// nunca campo a campo de um formulário atômico). Pode devolver {ok:false, erro}
-// para recusar por validação — nesse caso NADA foi mutado por contrato do
-// chamador (valide antes de tocar; o gate não tem como desfazer o que fn fizer).
-// Retorno: {ok, persistido, erro?, ...extras de fn}. save()===false é prova de
-// não-escrita (portões retornam antes do storage) — o chamador decide como
-// avisar; o padrão de falha de persistência da casa segue valendo.
+// fn recebe S.personalFinance e aplica o ato síncrono, validando antes de tocar.
+// Sucesso preserva as referências vivas usadas pelos consumidores. Na recusa
+// comprovada restaura-se SOMENTE PF e a sequência do log, nunca S inteiro.
+// save()===false prova não-escrita; exceção não prova. UNKNOWN mantém a tentativa
+// e usa a barreira global existente até conferência humana, sem retry cego.
 function pfMutate(acao, fn, meta){
+  const indeterminado = { ok:false, persistido:null, bloqueado:true,
+    erro:'Não foi possível confirmar a gravação. Não repita a ação; confira a base salva antes de continuar.' };
+  if(jpWealthPersistenceOutcomeIsUnknown()) return indeterminado;
   const bloqueio = pfWriteBlockReason();
   if(bloqueio) return { ok:false, persistido:false, erro:bloqueio };
-  const r = fn(S.personalFinance) || {};
-  if(r.ok===false) return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
-  // Rótulo GENÉRICO por contrato de privacidade: ação + recordId, nunca nome
-  // ou valor financeiro — o changeLog persiste e viaja no backup.
-  dgLogChange('personalFinance', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
-  const gravou = save();
-  return { ok: gravou===true, persistido: gravou===true, erro: gravou===true?undefined:'persistencia recusada', ...r };
+
+  let anterior;
+  try { anterior = structuredClone(S.personalFinance); }
+  catch(e){ return { ok:false, persistido:false, erro:'Não foi possível preparar a alteração. Nada foi aplicado.' }; }
+  const logOriginal = S.dataGovernance && S.dataGovernance.changeLog;
+  const logAntes = Array.isArray(logOriginal) ? logOriginal.slice() : null;
+  function restaurar(){
+    S.personalFinance = anterior;
+    if(logAntes){
+      // A poda de dgLogChange troca o array no teto400: comprimento não basta.
+      // Restaura conteúdo E identidade anteriores, sem tocar outros metadados.
+      logOriginal.splice(0, logOriginal.length, ...logAntes);
+      S.dataGovernance.changeLog = logOriginal;
+    }
+  }
+  let r;
+  try {
+    r = fn(S.personalFinance) || {};
+    if(r.ok===false){
+      restaurar();
+      return { ok:false, persistido:false, erro:r.erro||'ato recusado' };
+    }
+    // Log genérico: ação + recordId, sem nome nem valor financeiro.
+    dgLogChange('personalFinance', String(acao||'ato'), String(r.recordId||''), String((meta&&meta.label)||acao||''));
+  } catch(e){
+    // save ainda não foi chamado: não há ambiguidade sobre esta tentativa.
+    restaurar();
+    return { ok:false, persistido:false, erro:'Não foi possível aplicar a alteração. Nada foi gravado.' };
+  }
+  let gravou;
+  try { gravou = save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('ato de Finanças Pessoais');
+    return { ...r, ...indeterminado };
+  }
+  if(gravou===false){
+    restaurar();
+    return { ...r, ok:false, persistido:false, erro:'persistencia recusada' };
+  }
+  if(gravou!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado ao gravar Finanças Pessoais');
+    return { ...r, ...indeterminado };
+  }
+  // O callback nunca pode sobrescrever o resultado da gravação.
+  return { ...r, ok:true, persistido:true, erro:undefined };
 }
 
 // ---- competência mensal -----------------------------------------------------
@@ -35168,6 +35207,8 @@ function alladinModalAberto(){
 // origem não basta — ele morre com o render. Guarda-se um seletor re-resolvível.
 function alladinSeletorDeFoco(el){
   if(!el||!el.dataset) return null;
+  if(el.dataset.aldTxNew) return 'button[data-ald-tx-new]';
+  if(el.dataset.aldTxReverse) return 'button[data-ald-tx-reverse="'+CSS.escape(el.dataset.aldTxReverse)+'"]';
   if(el.dataset.aldNew) return 'button[data-ald-new="'+el.dataset.aldNew+'"]';
   if(el.dataset.aldEdit) return 'button[data-ald-edit="'+el.dataset.aldEdit+'"][data-ald-id="'+el.dataset.aldId+'"]';
   if(el.dataset.aldStatus) return 'button[data-ald-tipo="'+el.dataset.aldTipo+'"][data-ald-id="'+el.dataset.aldId+'"]';
@@ -35189,8 +35230,19 @@ function alladinModalClose(){
   const foco=alladinForm.foco;
   alladinForm={estado:'IDLE', tipo:null, modo:null, alvoId:null, recordId:null, foco:null, avisos:[], snapshot:null};
   alladinRender();
-  const alvo=(typeof foco==='string')?document.querySelector(foco):foco;
-  if(alvo && typeof alvo.focus==='function') alvo.focus();
+  let alvo=(typeof foco==='string')?document.querySelector(foco):foco;
+  const disponivel=el=>el && el.isConnected && !el.disabled &&
+    !el.closest('[hidden],[inert]') && el.getClientRects().length && getComputedStyle(el).visibility!=='hidden';
+  // O estorno concluído remove sua própria ação. Retornar a um controle vivo
+  // da lista; se a escrita estiver bloqueada, usar o título do contexto atual.
+  if(!disponivel(alvo) && typeof foco==='string' && foco.startsWith('button[data-ald-tx-')){
+    alvo=document.querySelector('#alladin.active button[data-ald-tx-new]');
+    if(!disponivel(alvo)){
+      if(window.JPWNavigation) window.JPWNavigation.focusCurrentScreen();
+      return;
+    }
+  }
+  if(disponivel(alvo) && typeof alvo.focus==='function') alvo.focus();
 }
 // Escape/backdrop: cancelam SOMENTE fora dos estados protegidos. Em
 // COMMITTED_WARNING e SUBMITTING a saída silenciosa é proibida por contrato.
@@ -36460,6 +36512,8 @@ function initDashMacro(){
         const screen=document.querySelector('#appMain > .screen.active');
         const heading=screen&&[...screen.querySelectorAll('h2,h3')].find(h=>h.getClientRects().length);
         if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+      }else{
+        window.JPWNavigation.focusCurrentScreen();
       }
     }
   });

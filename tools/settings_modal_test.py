@@ -4,6 +4,7 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 import os, socket, threading
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT=Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -21,13 +22,14 @@ server,url=serve()
 try:
   with sync_playwright() as pw:
     browser=pw.chromium.launch(headless=True)
-    page=browser.new_page(viewport={'width':1440,'height':900})
+    page=browser.new_page(viewport={'width':1440,'height':900}, service_workers='block')
+    install_bootstrap(page.context)
     observed={'console':[],'pageerror':[],'failed':[]}
     page.on('console',lambda m:observed['console'].append((m.type,m.text)))
     page.on('pageerror',lambda e:observed['pageerror'].append(str(e)))
     page.on('requestfailed',lambda r:observed['failed'].append((r.url,r.failure)))
-    page.route('**/api.frankfurter.dev/**',lambda route:route.fulfill(status=200,content_type='application/json',body='{"rate":1}'))
     page.goto(url,wait_until='load'); page.wait_for_timeout(700)
+    wait_bootstrap(page)
     page.evaluate("""()=>{window.__onbShown=true;closeModal();window.alert=()=>{};window.confirm=()=>false;window.prompt=()=>null;
       S.onboarding={...S.onboarding,done:true,operador:'Nome Privado',supervisor:'Pessoa Privada'};save();markSessionCheckpoint();}""")
     before=page.evaluate('sessionStateFingerprint()')
@@ -246,7 +248,9 @@ try:
     assert page.evaluate("document.querySelector('header').inert") is False
     assert page.evaluate("document.querySelector('#appMain').inert") is False
 
-    assert_no_errors(observed); browser.close()
+    assert_no_errors(observed)
+    assert_fixture_requests(page.context)
+    browser.close()
 finally:
   server.shutdown();server.server_close()
 print('SETTINGS MODAL OK — abertura, navegação, busca declarativa, subdiálogos, foco, responsividade e invariância de estado verificados.')
