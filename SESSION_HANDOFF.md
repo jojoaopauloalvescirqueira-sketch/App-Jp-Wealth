@@ -1,22 +1,16 @@
-## Recorte local — campanha de refatoração 20260910
+## Recorte conferido — campanha integrada pelo PR #12
 
-Esta seção representa somente a branch `codex/refactor-campaign-20260910`,
-base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`, build local `e5caefeada66ab35`.
-Quatro lotes N1 foram implementados: protocolo inline de PF, rótulos cadastrais
-Alladin, seleção da busca de Configurações e ativação visual do overview FX.
-A caracterização fixada na baseline e reaplicada produziu 93 observações idênticas
-(PF58, Alladin7, Configurações10, FX18); não é prova de integração dos consumidores.
-O registro [da campanha](docs/work/REFACTOR-CAMPAIGN-20260910.md) define escopo, fontes, limites e recuperação.
-Gates finais, auditoria do conjunto e recuperação serão registrados fora dos inputs
-congelados em `/Users/joaopauloalves/.codex/refactor-campaigns/20260910/evidence`; consulte seus recibos, não antecipe aprovação por este texto.
+Em 2026-09-11, a campanha de quatro lotes (PF, Alladin, Configurações e Forex)
+está integrada em `56a8e46f2ff07f88af6726cadd4c8d611eb242f3`, build `e5caefeada66ab35`.
+Main local e remota foram conferidas nesse merge. [Fechamento e evidências](docs/work/REFACTOR-CAMPAIGN-CONTEXT-CLOSE.md)
+reúnem commit, FULL remoto, CI pré/pós-merge, aceite, checkpoint e recuperação.
 
-NAV-REF-01 já integra a base via PR #11; não foi refeito. O candidate documental
-`8bd6d028…85e098c` permanece separado em `codex/nav-ref-context`; seu fast foi
-verificado em cópia fiel (4/4 PASS), sem aceite ou integração. Main, stash e outras
-worktrees são alvos protegidos. Nenhum commit/publicação autorizado nesta campanha.
-AUD-05/P2, estrutural V4, Galton, FCR/FEO e demais dívidas anteriores continuam abertas.
-Este recorte não avança a revisão global/last_verified abaixo, não atualiza índices,
-não homologou fórmulas, nem registra teste manual, aceite ou integração.
+A branch `codex/refactor-campaign-context`, baseada nesse merge, contém somente
+esta preparação documental local, ainda sem aceite ou integração próprios.
+A campanha de código terminou; nenhum novo lote está autorizado. O candidate
+`codex/nav-ref-context` permanece independente e preservado. Dívidas anteriores
+continuam abertas. Este recorte não avança Source revision/last_verified globais,
+não atualiza índices nem declara revisão integral ou homologação financeira.
 
 ---
 
