@@ -1,3 +1,28 @@
+## Recorte local — campanha de refatoração 20260910
+
+Esta seção representa somente a branch `codex/refactor-campaign-20260910`,
+base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`, build local `e5caefeada66ab35`.
+Quatro lotes N1 foram implementados: protocolo inline de PF, rótulos cadastrais
+Alladin, seleção da busca de Configurações e ativação visual do overview FX.
+A caracterização fixada na baseline e reaplicada produziu 93 observações idênticas
+(PF58, Alladin7, Configurações10, FX18); não é prova de integração dos consumidores.
+O registro [da campanha](../work/REFACTOR-CAMPAIGN-20260910.md) define escopo, fontes, limites e recuperação.
+Gates finais, auditoria do conjunto e recuperação serão registrados fora dos inputs
+congelados em `/Users/joaopauloalves/.codex/refactor-campaigns/20260910/evidence`; consulte seus recibos, não antecipe aprovação por este texto.
+
+NAV-REF-01 já integra a base via PR #11; não foi refeito. O candidate documental
+`8bd6d028…85e098c` permanece separado em `codex/nav-ref-context`; seu fast foi
+verificado em cópia fiel (4/4 PASS), sem aceite ou integração. Main, stash e outras
+worktrees são alvos protegidos. Nenhum commit/publicação autorizado nesta campanha.
+AUD-05/P2, estrutural V4, Galton, FCR/FEO e demais dívidas anteriores continuam abertas.
+Este recorte não avança a revisão global/last_verified abaixo, não atualiza índices,
+não homologou fórmulas, nem registra teste manual, aceite ou integração.
+
+---
+
+Fotografia anterior preservada integralmente; suas branches, permissões e resultados
+pertencem ao período indicado, não à autorização desta campanha.
+
 > Atualização delimitada de 2026-09-10: proprietário autorizou transferência e integração conjunta Atlas + V4, com pendências abertas no [registro](../work/ATLAS-V4-INTEGRATION-20260910.md). Não é aprovação técnica do piloto. Commit/merge devem ser conferidos no Git; a fotografia histórica abaixo não é prova de integração.
 
 # Estado atual — produto integrado e candidate de instruções

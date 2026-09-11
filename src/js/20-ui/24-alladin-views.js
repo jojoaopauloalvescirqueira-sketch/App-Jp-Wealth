@@ -179,17 +179,21 @@ function alladinSentinelaLedger(){
 // Rótulos cadastrais resolvidos DENTRO dos snapshots de leitura — nunca no
 // agregado vivo, como já faz o painel de Caixa.
 function alladinCatalogoLabels(){
-  const contas={}, caixas={}, instrumentos={};
+  const contas={}, instrumentos={};
   JPWAlladin.leitura.accounts().forEach(a=>{ if(a.accountId) contas[a.accountId]=a.name; });
   JPWAlladin.leitura.instruments().forEach(i=>{ if(i.instrumentId) instrumentos[i.instrumentId]=i.symbol||i.name; });
+  const caixas=alladinCashLabels(JPWAlladin.leitura.cashAccounts(),contas);
+  return { contas, caixas, instrumentos };
+}
+function alladinCashLabels(lista,contas){
   // CashAccount não tem nome próprio no cadastro: o rótulo legível é
   // moeda + conta-mãe. Duas caixas da MESMA moeda sob a MESMA conta colidem —
   // e duas linhas idênticas com saldos diferentes, ou uma transferência que se
   // lê "BRL · XP → BRL · XP", descrevem um fato falso. Onde o rótulo colide, o
   // identificador canônico entra para desambiguar; onde não colide, o rótulo
   // fica limpo. Isto é resolução de LABEL, não regra econômica.
-  const legivel={}, quantos={};
-  JPWAlladin.leitura.cashAccounts().forEach(c=>{
+  const caixas={}, legivel={}, quantos={};
+  lista.forEach(c=>{
     if(!c.cashAccountId) return;
     const mae=contas[c.accountId]||c.accountId;
     const rotulo=(c.currency?c.currency+' · ':'')+alladinTexto(mae);
@@ -200,7 +204,7 @@ function alladinCatalogoLabels(){
     const rotulo=legivel[id];
     caixas[id]=quantos[rotulo]>1 ? rotulo+' · '+id : rotulo;
   });
-  return { contas, caixas, instrumentos };
+  return caixas;
 }
 function alladinCaixaLabel(cat,id){ return id ? (cat.caixas[id]||String(id)) : '—'; }
 // Rótulo de evento: tipo fora do vocabulário DESTE build aparece CRU. Traduzir

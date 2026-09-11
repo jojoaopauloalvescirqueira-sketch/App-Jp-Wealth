@@ -1,3 +1,24 @@
+## Recorte de responsabilidades — candidate local da campanha 20260910
+
+Base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`; build `e5caefeada66ab35`.
+A lista/ordem dos 78 scripts não muda; o manifest muda somente quatro hashes.
+Esta tabela acrescenta as responsabilidades internas examinadas; não atualiza
+as revisões nem certifica as demais descrições históricas abaixo.
+
+| Fonte | Separação local | Contrato preservado |
+|---|---|---|
+| `src/js/20-ui/18-finpes-budget.js` | `fbBindItemField` concentra protocolo dos dois bindings fi/fe | IDs/campos/atos resolvidos no evento; recusa do ato: restauração antes de `fbAtoUI`; parsing inválido: alerta antes da restauração; demais binds separados |
+| `src/js/20-ui/24-alladin-views.js` | `alladinCashLabels` projeta rótulos; wrapper conserva leituras | Accounts/processamento → instruments/processamento → cashAccounts; sem filtro/status/cálculo novo |
+| `src/js/40-app/09-settings-modal.js` | `settingsSelectSearchResults` seleciona entradas já contextualizadas | Filtro → dedupe título/caminho → prioridade estável → limite18; DOM/click no render |
+| `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | `fxpActivateOverview` concentra ativação visual | Wire/bind/refresh/controles/charts na ordem original; demais ifs independentes |
+
+[Contrato, consumidores e plano de provas](../work/REFACTOR-CAMPAIGN-20260910.md).
+Helpers internos a scripts clássicos; nenhuma nova API de domínio ou roteamento.
+Equivalência focal registrada; validação final/auditoria/aceite são gates distintos.
+O histórico seguinte permanece como fotografia anterior, sem reindexação.
+
+---
+
 # Mapa do código
 
 Reconciliação em 2026-09-09 sobre `484228189cc3f5f4c297f29f88f2b2ed541a3afd`,
