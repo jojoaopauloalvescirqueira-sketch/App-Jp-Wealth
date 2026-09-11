@@ -121,7 +121,7 @@ editado diretamente.
 ## Em desenvolvimento e decisões pendentes
 
 - **Dez propostas N3 legadas**, anteriores à adoção documental da V11, aguardam reavaliação formal humana — cada uma tem um ADR aberto em `docs/decisions/` (fatores dos perfis conservadores, fonte canônica de equity do drawdown, gate combinado da Ordem Gênese, bloqueio de stop < 2 ATR, histerese de fase, poda LIFO compulsória, rito da Fase 4, gatilho de quarentena, fator Raiz-N, projeções MEI). **Nenhuma é corrigida silenciosamente**: exigem decisão N3 e branch própria.
-- **Dívida estrutural conhecida**: `openOnboardingModal()` concentra ~2 mil linhas; escopo global legado compartilhado; CSP não documentada; cobertura automatizada mais forte nos fluxos recentes que no núcleo financeiro. Detalhes e estado vigente em `docs/governance/CURRENT-STATE.md`.
+- **Dívida estrutural conhecida**: `openOnboardingModal()` concentra ~2 mil linhas; escopo global legado compartilhado; endurecimento CSP ainda pendente de projeto compatível com scripts/PWA; cobertura automatizada mais forte nos fluxos recentes que no núcleo financeiro. Detalhes e estado vigente em `docs/governance/CURRENT-STATE.md`.
 - Explorações de interface (redesign de telas, consolidações de UI) ocorrem em branches dedicadas e só entram na `main` por integração autorizada.
 - Hipóteses guiadas de experimento e áudio do Galton Board ficam deliberadamente para
   uma Fase 2; não fazem parte do candidato atual.
@@ -203,6 +203,7 @@ A visão executiva reúne Forex (risco, apuração e planejamento), Finanças Pe
 (orçamento, dívida e comparação mensal), Research (estudos e agenda) e Alladin
 (contas, saldos por moeda e último lançamento). Atalhos abrem as vistas dos
 módulos. Os resumos se atualizam com o render geral e a agenda, sem persistir
-dados. Ferramentas existentes ficam na seção expansível “Operação e ferramentas”;
-suas identidades e preferências são preservadas. Áreas ainda não implementadas
+dados. A seção inferior “Sistema e atalhos” contém Status do Sistema e Ações rápidas;
+onboarding, Estado Operacional, VRM e calendário ficam em Forex > Visão Geral.
+Identidades e preferências v6 são preservadas. Áreas ainda não implementadas
 são identificadas como tais. A apresentação não homologa o motor financeiro V11.

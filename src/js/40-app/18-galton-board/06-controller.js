@@ -154,9 +154,19 @@
       this.abortController=new AbortController();
       this.resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(()=>{ this.renderer.resize(); this.redraw(); }):null;
       this.resizeObserverActive=false;
-      if(this.resizeObserver){ this.resizeObserver.observe(this.canvas); this.resizeObserverActive=true; }
-      this.bind(); this.syncControls(); this.createEngine(); this.render(true);
-      if(this.storageReadError) this.showStorageStatus('Preferências salvas incompatíveis, ilegíveis ou indisponíveis foram preservadas sem sobrescrita. O laboratório usa valores seguros apenas em memória; use Restaurar padrões para substituí-las explicitamente.',true);
+      try{
+        if(this.resizeObserver){ this.resizeObserver.observe(this.canvas); this.resizeObserverActive=true; }
+        this.bind(); this.syncControls(); this.createEngine(); this.render(true);
+        if(this.storageReadError) this.showStorageStatus('Preferências salvas incompatíveis, ilegíveis ou indisponíveis foram preservadas sem sobrescrita. O laboratório usa valores seguros apenas em memória; use Restaurar padrões para substituí-las explicitamente.',true);
+      }catch(error){
+        // Construção incompleta ainda não pertence ao root nem aos contadores de mounts.
+        this.abortController.abort();
+        if(this.resizeObserver) this.resizeObserver.disconnect();
+        this.resizeObserverActive=false;
+        if(this.engine) this.engine.destroy();
+        this.engine=null; this.renderer.destroy(); this.destroyed=true;
+        throw error;
+      }
       if(this.debug){ global.__galtonDebug=global.__galtonDebug||{mounts:0,destroys:0,activeRaf:0,resizeObservers:0}; global.__galtonDebug.mounts++; if(this.resizeObserverActive) global.__galtonDebug.resizeObservers++; }
     }
     bind(){
@@ -396,16 +406,25 @@
   function mount(root=document.querySelector('[data-galton-root]')){
     if(!root) return null;
     if(root.__galtonController&&!root.__galtonController.destroyed) return root.__galtonController;
-    root.dataset.galtonMounted='true'; root.__galtonController=new GaltonController(root); return root.__galtonController;
+    const controller=new GaltonController(root);
+    root.__galtonController=controller; root.dataset.galtonMounted='true'; return controller;
   }
   function activate(){ const controller=mount(); if(controller) controller.activate(); return controller; }
   function deactivate(options={}){ const root=document.querySelector('[data-galton-root]'); if(root&&root.__galtonController) root.__galtonController.deactivate(options); }
-  function handleSessionWipe(){
+  function handleSessionWipe(options={}){
     const root=document.querySelector('[data-galton-root]'); if(!root) return null;
     const current=root.__galtonController, remount=Boolean(current&&current.active&&root.isConnected&&root.getClientRects().length);
     if(current) current.destroy();
     if(!remount) return null;
-    const controller=mount(root); controller.activate(); return controller;
+    const remountController=()=>{
+      if(!root.isConnected||!root.getClientRects().length) return;
+      const controller=mount(root); controller.activate();
+      return controller;
+    };
+    // A finalização invalida antes de limpar as chaves e pede o adiamento.
+    // A chamada direta conserva o retorno síncrono do contrato do laboratório.
+    if(options.deferRemount){ queueMicrotask(remountController); return null; }
+    return remountController();
   }
 
   ns.persistence={STORAGE_KEY,SCHEMA_VERSION,PERSISTED_CONFIG_FIELDS:PERSISTED_CONFIG_FIELDS.slice(),normalize:normalizePreferences,read:readPreferences,write:writePreferences};

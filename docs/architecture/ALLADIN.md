@@ -6,7 +6,7 @@ próprio, sucessor do roadmap `INV-*` e renomeado pela spec canônica
 repositório. Este documento é o contrato do que EXISTE no código — não do que
 a spec planeja.
 
-> [!important] O que o Alladin ainda NÃO é
+> [!important] Fotografia histórica C3 — superada pela nota imediatamente abaixo
 > Três camadas estão entregues: infraestrutura (ALD-01 C1), modelo cadastral
 > (ALD-02 C2) e a **superfície de cadastro** (C3, concluída — leitura, CRUD das
 > quatro entidades, `recordStatus`, write gate, DC-4 e integridade da edição).
@@ -441,6 +441,7 @@ testes e a aceitação humana por console exercitam o domínio.
 | `tools/alladin_ui_tx_reverse_test.py` | RV-A..RV-H — estorno pela UI: elegibilidade por linha (`—` em REVERSED/REVERSAL, `disabled` sob write gate, sem ação sob BLOCKING), modal com o original read-only e só três campos editáveis, porta única (1 `reverseTransaction`, 0 `addTransaction`), sucesso conferido contra os read-models, corrida com estorno duplicado, cancelar zero-write, double-submit inerte, submit tardio recusado, original byte-idêntico |
 | `tools/alladin_ui_tx_write_test.py` | TX-A..TX-N — criação pela UI: porta única (um `addTransaction`, um `save` por submit), payload sem campos do domínio, dinheiro só por `money.parse`, `quantity` verbatim com recusa sem correção, os nove tipos pelo modal real, ajuste com `reason` próprio, transfer sem pré-filtro, double-submit inerte, cancelar zero-write, write gate na abertura e no submit tardio, BLOCKING não convida escrita, pós-sucesso comparado aos read-models |
 | `tools/alladin_ui_ledger_test.py` | E1–E16 + E12b — superfície econômica read-only: sete destinos com os quatro cadastrais intactos, ordem do read-model preservada, dez `eventType` rotulados, `reason` visível, transferência com as duas pernas e caixas homônimas desambiguadas, `quantity` byte-idêntica (negativa fiel, >64 chars íntegra), **BLOCKING × EMPTY nos dois sentidos**, seis vetores de corrupção, a sentinela barrando ledger filtrado, zero `save()` |
+| `tools/alladin_ledger_read_model_test.py` | Envelope aditivo `leitura.ledger()`: qualidade explícita, snapshots congelados/desacoplados, lista bruta legada preservada, BLOCKING × EMPTY, data impossível, schema futuro, duplicatas, reversal, custódia e fronteira E12b. `--root` permite contraprova V2; `--baseline-results` compara fatos, posições, saldos e HTML com a caracterização anterior. Focal externo ao tier existente. |
 | `tools/alladin_unit_test.py` | U1–U26 em **Chromium isolado** — sem app, sem DOM de produção, sem estado real, sem rede (contada e assertada). Moeda, IDs, gate, owners/`isSelf`, regimes, cripto, `symbolHistory`, falha parcial em validação e em persistência recusada, integridade referencial, varredura tabular dos ramos de validação; S2: `quantity` canônica e o espelho do par reversal↔original sondados direto; ALD-04: aritmética decimal BigInt (parse/alinhamento/soma/render) sondada direto |
 | `tools/alladin_finalize_preservation_test.py` | C1–C13 no app real — agregado idêntico em memória **e em disco**; sessão de fato encerrada; schema futuro intacto atravessando `reload` e ainda recusando escrita; Zona de Perigo continua apagando (v2 e v3); nenhuma chave nova **nem contaminação de auxiliar**; dois ciclos pelos dois ramos de entrada; falha forçada de cópia sem apagar nada, **com ordem e persistência assertadas**; **fluxo cross-tab** preserva do estado persistido (v2 e v3), não ressuscita registro apagado e aborta bloqueado quando o disco é ilegível; cópia profunda; legado sem agregado |
 | `tools/alladin_foundation_test.py` | Integração no app real — migração v1→v2, round-trip byte-idêntico com as quatro coleções povoadas, fail-closed, **rollback duplo** (build pré-Alladin, que preserva por ignorância; e build do C1, que preserva por fail-closed), reload real, falha parcial, XSS e privacidade do log, round-trip de backup; carimbo v3→v4 com ledger **povoado**; mixed-build do build v3 real sobre agregado v4 |
@@ -699,7 +700,45 @@ conta indisponível mostra "Indisponível", jamais `R$ 0,00` por fallback. E o
 inverso também é contratual: um saldo **legitimamente zero** continua exibível —
 proibir todo zero apagaria um fato verdadeiro.
 
-### Sentinela de integridade dos Lançamentos (MD-2/A)
+### Envelope de leitura dos Lançamentos — atualização de 2026-09-11
+
+O candidate da campanha `CHG-TECHNICAL-DEBT-CLOSURE-20260911` acrescenta
+`JPWAlladin.leitura.ledger()`, com o contrato:
+
+```text
+{ available: boolean, quality: 'OK' | 'BLOCKING', issues: string[], transactions: DTO[] }
+```
+
+O envelope e suas coleções/DTOs são snapshots profundos congelados, sem escrita.
+Em `OK`, `transactions` conserva exatamente os campos e a ordem econômica da
+lista bruta legada. Em `BLOCKING`, `transactions` é vazio e `issues` conserva os
+diagnósticos e o teto de 20 itens da guarda anterior. Vazio legítimo permanece
+`available:true, quality:'OK'`; container ilegível nunca se torna vazio legítimo.
+
+`leitura.transactions()` permanece inalterada: array filtrado por forma, sem
+envelope próprio, inclusive para consumidores legados e inspeção de fatos
+históricos inválidos. A API nova compartilha as validações já usadas por
+`posicoes()` — schema futuro, integridade estrutural, legibilidade dos fatos,
+consistência de reversals e custódia/moeda dos trades — sem chamar o Position
+Engine nem calcular quantidade/saldo. Os valores e guardas econômicos dessas
+projeções permanecem iguais.
+
+Lançamentos e o preview de estorno passam a consumir esse envelope. O Dashboard
+usa o envelope para o último lançamento e continua consumindo posições e saldos
+de suas APIs próprias. A fronteira E12b abaixo é preservada: divergência de moeda
+num fato só-caixa não bloqueia sua apresentação; o saldo afetado é indisponível.
+Há uma mudança explícita de apresentação: uma chamada direta de abertura de
+estorno sobre ledger com leitura indisponível agora mostra aviso e não abre o
+preview. O CTA já ficava ausente nessa condição; a porta de escrita permanece
+responsável pela decisão final.
+
+> [!note] Histórico preservado
+> A sentinela por `compat() + posicoes()` e as referências a envelope pendente
+> nos registros ALD-05 S1/S2/S3 abaixo descrevem a implementação anterior.
+> Esta atualização encerra aquele acoplamento no candidate local; não declara
+> aceite humano, integração, publicação nem patrimônio consolidado.
+
+### Histórico — sentinela de integridade dos Lançamentos (MD-2/A)
 
 `leitura.transactions()` **não tem envelope de qualidade**: `aldVistaCadastral`
 filtra por `aldRegistroLegivel` — checagem de **forma** (objeto não-array) — e

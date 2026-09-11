@@ -258,9 +258,11 @@ function dmResearchHTML(){
       : dmAux('nenhum evento de alto impacto'));
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
     if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
-    if(typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
-      corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   }
+  const cacheIssue = typeof ffNewsCacheIssue === 'function' ? ffNewsCacheIssue() : '';
+  if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
+  else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
+    corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
     +dmLink('REITs','research-reits')+dmLink('Others','research-others')
@@ -314,10 +316,13 @@ function dmAlladinHTML(){
   }).join('');
   corpo += dmSection('Saldos por conta', balances || dmNote('Cadastre uma conta de caixa para acompanhar os saldos.'));
   if(cash.length>3) corpo+=dmNote('Exibindo 3 de '+cash.length+' contas. Todos os saldos estão no módulo.');
-  const txs=L.transactions();
+  const ledger=L.ledger();
+  const txs=ledger.transactions;
   const last=txs.length?txs[txs.length-1]:null;
   // Mesma ordem econômica do leitor; correção por estorno permanece visível.
-  corpo += dmSection('Último lançamento', last
+  corpo += dmSection('Último lançamento', !ledger.available
+    ? '<span class="dm-partial">Lançamentos indisponíveis</span>'
+    : last
     ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
       +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
     : dmNote('Nenhum lançamento registrado.'));

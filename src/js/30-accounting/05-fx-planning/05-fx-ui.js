@@ -24,6 +24,50 @@ const fxpBadge=(kind)=>kind==='REAL'
   ?'<span class="fxp-badge fxp-badge-real">REAL</span>'
   :(kind==='PROJ'?'<span class="fxp-badge fxp-badge-proj">PREMISSA</span>':'<span class="fxp-badge">'+esc(kind)+'</span>');
 
+// Somente entradas recusadas são retidas durante esta sessão, fora de S e do
+// armazenamento. Reentrada não apaga o rascunho; recarga não promete recuperá-lo.
+// Cada formulário é independente: salvar um aporte não descarta um mês recusado.
+const fxpRejectedDrafts={};
+const FXP_DRAFT_FIELDS={
+  create:['fxpName','fxpStart','fxpHorizon','fxpInitial','fxpDefaultRate','fxpProjFx','fxpRecPersonal','fxpRecProp'],
+  planning:['fxpEditRate','fxpEditProjFx','fxpEditYearOvr','fxpEditMonthOvr','fxpEditRecPersonal','fxpEditRecProp','fxpEditNote'],
+  actual:['fxpActMonth','fxpActType','fxpActValue','fxpActFx','fxpActNotes'],
+  contribution:['fxpCMonth','fxpCSource','fxpCCurrency','fxpCAmount','fxpCRate'],
+  deletion:['fxpDeleteConfirm'],
+  removal:[]
+};
+function fxpRememberDraft(root,group,errorId,res){
+  const fields={};
+  for(const id of FXP_DRAFT_FIELDS[group]){const el=root.querySelector('#'+id);if(el)fields[id]=el.value;}
+  fxpRejectedDrafts[group]={planId:fxActivePlanRaw()?.id||null,fields,errorId,errors:res.errors};
+  root.querySelector('#'+errorId).innerHTML=fxpErrHTML(res.errors);
+}
+function fxpCaptureRejectedDrafts(root){
+  const planId=fxActivePlanRaw()?.id||null;
+  for(const group of Object.keys(fxpRejectedDrafts)){
+    const draft=fxpRejectedDrafts[group];
+    if(draft.planId!==planId){delete fxpRejectedDrafts[group];continue;}
+    for(const id of Object.keys(draft.fields)){const el=root.querySelector('#'+id);if(el)draft.fields[id]=el.value;}
+  }
+}
+function fxpRestoreRejectedDrafts(root){
+  for(const draft of Object.values(fxpRejectedDrafts)){
+    for(const [id,value] of Object.entries(draft.fields)){
+      const el=root.querySelector('#'+id);if(!el)continue;
+      el.value=value;
+      // Mês vem antes dos demais campos: seu prefill roda primeiro. Depois,
+      // as prévias recebem os valores originais, sem fórmulas ou gravações novas.
+      el.dispatchEvent(new Event(el.tagName==='SELECT'?'change':'input',{bubbles:true}));
+    }
+    const err=root.querySelector('#'+draft.errorId);if(err)err.innerHTML=fxpErrHTML(draft.errors);
+  }
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    const notice=document.createElement('div');
+    notice.innerHTML=fxpErrHTML(['Gravação indeterminada. Não repita ações; confira a base salva antes de continuar.']);
+    root.prepend(notice);
+  }
+}
+
 function fxpCurrentMonthKey(){ return new Date().toISOString().slice(0,7); }
 
 // ---- Referência USD/BRL corrente (JPW-FGDEKM) -------------------------------
@@ -130,7 +174,8 @@ function fxpBindCreate(root){
     };
     if(assumptions.defaultMonthlyReturn==null){ root.querySelector('#fxpCreateErr').innerHTML=fxpErrHTML(['Informe a rentabilidade planejada em % ao mês.']); return; }
     const res=window.JPWFx.state.fxPlanCreate({name:g('fxpName'),assumptions});
-    if(!res.ok){ root.querySelector('#fxpCreateErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'create','fxpCreateErr',res); return; }
+    delete fxpRejectedDrafts.create;
     renderFxPlanning();
   });
 }
@@ -441,13 +486,15 @@ function fxpBindPlanning(root,live){
       projectedFxRate:fxpParseNum(q('fxpEditProjFx').value),
       plannedContributions:planned
     },q('fxpEditNote').value);
-    if(!res.ok){ q('fxpPlanningErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'planning','fxpPlanningErr',res); return; }
+    delete fxpRejectedDrafts.planning;
     renderFxPlanning();
   });
   q('fxpDeleteBtn').addEventListener('click',()=>{
     if(q('fxpDeleteConfirm').value.trim()!=='EXCLUIR'){ q('fxpDeleteErr').innerHTML=fxpErrHTML(['Digite EXCLUIR para confirmar.']); return; }
     const res=window.JPWFx.state.fxPlanDelete();
-    if(!res.ok){ q('fxpDeleteErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'deletion','fxpDeleteErr',res); return; }
+    for(const group of Object.keys(fxpRejectedDrafts))delete fxpRejectedDrafts[group];
     renderFxPlanning();
   });
 }
@@ -582,7 +629,8 @@ function fxpBindActuals(root,live){
     const res=window.JPWFx.state.fxPlanRecordActual(monthSel.value,{
       inputType:type, returnRate:type==='rate'?val:null, profitUsd:type==='usd'?val:null,
       valuationFxRate:fxpParseNum(q('fxpActFx').value), notes:q('fxpActNotes').value});
-    if(!res.ok){ q('fxpActErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'actual','fxpActErr',res); return; }
+    delete fxpRejectedDrafts.actual;
     renderFxPlanning();
   });
   const curSel=q('fxpCCurrency');
@@ -593,12 +641,15 @@ function fxpBindActuals(root,live){
       month:fxMonthKey(q('fxpCMonth').value), source:q('fxpCSource').value,
       originalCurrency:curSel.value, originalAmount:fxpParseNum(q('fxpCAmount').value)||0,
       acquisitionFxRate:curSel.value==='BRL'?fxpParseNum(q('fxpCRate').value):null});
-    if(!res.ok){ q('fxpCErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'contribution','fxpCErr',res); return; }
+    delete fxpRejectedDrafts.contribution;
     renderFxPlanning();
   });
   root.querySelectorAll('[data-fxp-del]').forEach(b=>b.addEventListener('click',()=>{
     const res=window.JPWFx.state.fxPlanRemoveContribution(b.dataset.fxpDel);
-    if(res.ok) renderFxPlanning();
+    if(!res.ok){ fxpRememberDraft(root,'removal','fxpCErr',res); return; }
+    delete fxpRejectedDrafts.removal;
+    renderFxPlanning();
   }));
 }
 
@@ -697,10 +748,11 @@ function fxpActivateOverview(root,live){
 // ---- Render principal -------------------------------------------------------
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
+  fxpCaptureRejectedDrafts(root);
   const live=window.JPWFx.state.fxOverviewLive();
   const card=document.getElementById('fxPlanningCard');
   if(card) card.dataset.fxpState=live?'active':'empty';
-  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); return; }
+  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); fxpRestoreRejectedDrafts(root); return; }
   const body=fxpView==='overview'?fxpOverviewHTML(live)
     :fxpView==='planning'?fxpPlanningHTML(live)
     :fxpView==='actuals'?fxpActualsHTML(live)
@@ -714,6 +766,7 @@ function renderFxPlanning(){
     root.querySelectorAll('[data-fxp-hist]').forEach(b=>b.addEventListener('click',()=>{ fxpHistFilter=b.dataset.fxpHist; renderFxPlanning(); }));
   if(fxpView==='planning') fxpBindPlanning(root,live);
   if(fxpView==='actuals') fxpBindActuals(root,live);
+  fxpRestoreRejectedDrafts(root);
 }
 // Superfície estritamente visual para o submenu hierárquico do shell. As
 // chaves são os quatro modos já existentes; não persiste estado, não chama o

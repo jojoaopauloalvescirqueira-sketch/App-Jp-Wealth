@@ -1004,12 +1004,125 @@ def test_real_ui(page):
     assert not errors, {"console": errors, "failed": page.jpwealth_observed["failed"]}
 
 
+def test_controller_initialization_failure(page):
+    """Fault injection: partial construction must release resources and rethrow."""
+    result = page.evaluate(
+        """async () => {
+          const ns=JPWGalton, results=[];
+          const original={physics:ns.physics,render:ns.controller.GaltonController.prototype.render,
+            renderer:ns.renderer.CanvasRenderer,observer:window.ResizeObserver};
+          const financial=JSON.stringify(S), stored=JSON.stringify({...localStorage});
+          for(const failure of ['engine','render']){
+            for(const deferred of [false,true]){
+              const host=document.createElement('div'); host.innerHTML=ns.controller.panelHTML();
+              document.body.append(host); const root=host.firstElementChild;
+              // handleSessionWipe selects the first root; this fixture has no Settings root.
+              const resources={observers:[],signals:[],engines:[],renderers:[]};
+              let injected=false,error=null;
+              window.ResizeObserver=class extends original.observer{
+                constructor(callback){super(callback);this.watching=false;resources.observers.push(this);}
+                observe(target){this.watching=true;super.observe(target);}
+                disconnect(){this.watching=false;super.disconnect();}
+              };
+              ns.renderer.CanvasRenderer=class extends original.renderer{
+                constructor(...args){super(...args);this.disposed=false;resources.renderers.push(this);}
+                destroy(){this.disposed=true;super.destroy();}
+              };
+              const oldAdd=root.addEventListener;
+              root.addEventListener=function(type,callback,options){
+                if(options&&options.signal)resources.signals.push(options.signal);
+                return oldAdd.call(this,type,callback,options);
+              };
+              ns.physics={...original.physics,createEngine:function(...args){
+                if(failure==='engine'&&!injected){injected=true;throw new Error('JPW synthetic engine failure');}
+                const actual=original.physics.createEngine(...args);
+                const engine={...actual,__disposed:false,destroy(){this.__disposed=true;actual.destroy();}};
+                resources.engines.push(engine);return engine;
+              }};
+              ns.controller.GaltonController.prototype.render=function(...args){
+                if(failure==='render'&&!injected){injected=true;throw new Error('JPW synthetic render failure');}
+                return original.render.apply(this,args);
+              };
+              const errors=[];
+              const onError=event=>{if(String(event.message).includes('JPW synthetic')){errors.push(event.message);event.preventDefault();}};
+              window.addEventListener('error',onError);
+              try{
+                if(deferred){
+                  // Establish one valid active controller, then inject only the remount.
+                  injected=true;const existing=ns.controller.mount(root);existing.activate();injected=false;
+                  handleGaltonSessionWipe({deferRemount:true});
+                  await new Promise(resolve=>setTimeout(resolve,0));error=errors.join('|');
+                }else{try{ns.controller.mount(root);}catch(e){error=e.message;}}
+                const failed={failure,deferred,error,injected,errorCount:errors.length,
+                  published:Boolean(root.__galtonController&&!root.__galtonController.destroyed),
+                  mounted:root.hasAttribute('data-galton-mounted'),
+                  observers:resources.observers.filter(x=>x.watching).length,
+                  liveSignals:resources.signals.filter(x=>!x.aborted).length,
+                  liveEngines:resources.engines.filter(x=>!x.__disposed).length,
+                  liveRenderers:resources.renderers.filter(x=>!x.disposed).length,
+                  stateUnchanged:JSON.stringify(S)===financial,
+                  storageUnchanged:JSON.stringify({...localStorage})===stored};
+                const retry=ns.controller.mount(root);retry.activate();
+                root.querySelector('[data-galton-add="1"]').click();
+                failed.retrySingle=retry.staged===1&&root.__galtonController===retry;
+                retry.destroy();results.push(failed);
+              }finally{
+                window.removeEventListener('error',onError);
+                resources.observers.forEach(x=>x.disconnect());
+                resources.engines.filter(x=>!x.__disposed).forEach(x=>x.destroy());
+                resources.renderers.filter(x=>!x.disposed).forEach(x=>x.destroy());
+                host.remove();window.ResizeObserver=original.observer;
+                ns.physics=original.physics;ns.renderer.CanvasRenderer=original.renderer;
+                ns.controller.GaltonController.prototype.render=original.render;
+              }
+            }
+          }
+          return results;
+        }"""
+    )
+    print("GALTON_PARTIAL_INIT " + json.dumps(result, ensure_ascii=False), flush=True)
+    for case in result:
+        assert case["injected"] and ("JPW synthetic " + case["failure"] + " failure") in case["error"], case
+        assert case["errorCount"] == (1 if case["deferred"] else 0), case
+        assert not case["published"] and not case["mounted"], case
+        assert all(case[key] == 0 for key in ("observers", "liveSignals", "liveEngines", "liveRenderers")), case
+        assert case["stateUnchanged"] and case["storageUnchanged"] and case["retrySingle"], case
+
+    lifecycle = page.evaluate(
+        """async () => {
+          const result=[];
+          for(const action of ['removed','hidden','repeat']){
+            const host=document.createElement('div');host.innerHTML=JPWGalton.controller.panelHTML();document.body.append(host);
+            const root=host.firstElementChild,c=JPWGalton.controller.mount(root);c.activate();
+            const before=window.__galtonDebug.mounts,state=JSON.stringify(S),stored=JSON.stringify({...localStorage});
+            const first=handleGaltonSessionWipe({deferRemount:true});
+            if(action==='removed')host.remove();
+            if(action==='hidden')host.style.display='none';
+            const second=action==='repeat'?handleGaltonSessionWipe({deferRemount:true}):null;
+            await new Promise(resolve=>setTimeout(resolve,0));
+            const current=root.__galtonController;
+            result.push({action,firstNull:first===null,secondNull:second===null,
+              mounts:window.__galtonDebug.mounts-before,active:Boolean(current&&current.active),
+              stateUnchanged:JSON.stringify(S)===state,storageUnchanged:JSON.stringify({...localStorage})===stored});
+            if(current)current.destroy();host.remove();
+          }
+          return result;
+        }"""
+    )
+    print("GALTON_DEFERRED_LIFECYCLE " + json.dumps(lifecycle), flush=True)
+    for case in lifecycle:
+        assert case["firstNull"] and case["secondNull"] and case["stateUnchanged"] and case["storageUnchanged"], case
+        assert case["mounts"] == (1 if case["action"] == "repeat" else 0), case
+        assert case["active"] == (case["action"] == "repeat"), case
+
+
 def main():
     server, url = serve()
     try:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             page = prepare_page(browser, url)
+            test_controller_initialization_failure(page)
             test_math_contract(page)
             test_physics_contract(page)
             test_persistence_contract(page)

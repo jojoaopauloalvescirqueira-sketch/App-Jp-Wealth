@@ -1,3 +1,23 @@
+# Retomada — estabilização local 20260911
+
+Leia [CURRENT-STATE](docs/governance/CURRENT-STATE.md), [ACTIVE-TASK](docs/work/ACTIVE-TASK.md)
+e os contratos correntes indicados. Branch `codex/debt-resolution-20260911`,
+HEAD/base `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe` mais delta local. A V2 de partida foi preservada;
+o [manifesto final](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json),
+[relatório](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-REPORT.md) e
+[recuperação](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-RECOVERY.md) identificam a entrega final,
+sem confundir fingerprint de arquivos com commit. Revalidar identidade no disco.
+
+Nenhuma integração nesta campanha. Main local09c1427 e outras worktrees não
+foram sincronizadas. OPEN-05, homologação financeira, AUD-05/P2 e lacunas nativas
+permanecem nos respectivos limites. O próximo gate depende da avaliação humana;
+este texto não a concede nem autoriza Git/publicação. Não iniciar outro lote
+com base em autorizações recuperadas abaixo.
+
+---
+
+## Histórico de handoff — sem autoridade corrente
+
 ## Recorte conferido — campanha integrada pelo PR #12
 
 Em 2026-09-11, a campanha de quatro lotes (PF, Alladin, Configurações e Forex)

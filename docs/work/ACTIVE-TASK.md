@@ -1,3 +1,56 @@
+# Tarefa corrente — TECHNICAL DEBT CLOSURE & PROJECT STABILIZATION
+
+Pedido explícito de 2026-09-11; campanha finita de dívidas conhecidas, sem integração.
+Produto: [CHG N2](CHG-TECHNICAL-DEBT-CLOSURE-20260911.md).
+Contexto: [CHG/CTX N3 dedicado](CHG-TECHNICAL-DEBT-CONTEXT-20260911.md).
+Raiz `/Users/joaopauloalves/.codex/reliability-campaigns/20260911/product`,
+branch `codex/debt-resolution-20260911`, HEAD/base `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe`.
+A base experimental inclui V2 não commitada, fingerprint e7060778…; não copiar
+somente HEAD e apresentar como V2. Inputs finais e provas em
+[relatório](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-REPORT.md) e [manifesto](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json).
+
+Oráculos fixados antes dos patches. Focais distinguem baseline/candidate e
+retorno real; FULL final inclui os checks FAST/standard sem mudar gates.
+O seletor estrutural deve receber explicitamente o CHG/CTX corrente acima;
+modo histórico e seus resultados originais continuam disponíveis abaixo.
+
+Autoridade limita produto técnico/contexto afetado, testes sintéticos, geração
+oficial e evidência externa. Não inclui norma financeira nova, dados reais,
+cliente/infraestrutura agêntica nova, commit/push/PR/merge/deploy, reset/stash,
+reindexação ou alteração de Harness/CI. Preservar V1/V2, checkpoint, main e outras
+worktrees. Esta entrega não recebe aceite por autodeclaração e não inicia outra.
+
+---
+
+## Histórico integral de tarefas anteriores — não é autorização vigente
+
+# Dívidas técnicas identificadas — 2026-09-11
+
+Pedido atual: “resolva todas as dívidas abertas”. Escopo e critérios em
+[CHG-DEBT-REMEDIATION-20260911](CHG-DEBT-REMEDIATION-20260911.md).
+Branch `codex/debt-resolution-20260911`, base `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe`.
+Checkpoint anterior preservado. Correções técnicas com testes sintéticos;
+reservas e decisões financeiras não serão escolhidas por inferência.
+Controle estrutural vigente: [CHG-DEBT-CONTROLS-20260911](CHG-DEBT-CONTROLS-20260911.md).
+Invocação explícita: `python3 -B tools/agent_instruction_structure_test.py --contract docs/work/CHG-DEBT-CONTROLS-20260911.md`.
+O modo sem argumento conserva a validação histórica, inclusive sua falha registrada.
+
+Os registros abaixo permanecem históricos e não concedem autoridade atual.
+
+---
+
+# Campanha finita de confiabilidade funcional — 2026-09-11
+
+Contrato: [CHG-FUNCTIONAL-RELIABILITY-20260911](CHG-FUNCTIONAL-RELIABILITY-20260911.md).
+Branch codex/functional-reliability-20260911; base 09c1427f4880ef7684b1a6fc4d2bc310e706380f.
+Investigar seis achados; corrigir somente N1/N2 demonstrados em Forex, estudos, Notas e
+validação civil de novos fatos Alladin. Reservas/clearance N3 sem alteração de regra.
+Testes sintéticos, artefatos oficiais, auditoria e checkpoint; sem commit/publicação.
+Evidências: /Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/.
+Todo conteúdo abaixo permanece histórico; não concede autoridade nesta campanha.
+
+---
+
 # Tarefa delimitada — fechamento documental da campanha integrada
 
 A campanha de quatro lotes (PF, Alladin, Configurações e Forex) terminou e foi

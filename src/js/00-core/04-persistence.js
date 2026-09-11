@@ -1389,11 +1389,45 @@ function persistenceRecoveryEl(){ return document.getElementById('persistenceRec
 // logo abaixo dele. Nós e timers separados de propósito: o "Gravação restabelecida" do
 // A-001 limpa APENAS #persistenceAlert; nenhum timer jamais toca o aviso de recuperação,
 // que só sai por decisão do operador (precedência do estado de recuperação).
+let persistenceBannerSizeObserver=null, persistenceBannerNotesObserver=null;
+let persistenceBannerViewportObserved=false;
 function layoutPersistenceBanners(){
   const alertEl=persistenceAlertEl(); if(!alertEl) return;
   const rec=persistenceRecoveryEl();
-  if(rec && rec.innerHTML.trim()!==''){ alertEl.style.top=(72+rec.offsetHeight+10)+'px'; }
-  else{ alertEl.style.top=''; }
+  const notes=document.getElementById('mvpNotesOverlay');
+  // Uma inscrição por nó: texto, tema e viewport podem mudar a altura depois do
+  // render. Abertura/fechamento de Notas também recompõe avisos já existentes.
+  if(!persistenceBannerSizeObserver && typeof ResizeObserver==='function'){
+    persistenceBannerSizeObserver=new ResizeObserver(layoutPersistenceBanners);
+    persistenceBannerSizeObserver.observe(alertEl);
+    if(rec) persistenceBannerSizeObserver.observe(rec);
+  }
+  if(notes && !persistenceBannerNotesObserver && typeof MutationObserver==='function'){
+    persistenceBannerNotesObserver=new MutationObserver(layoutPersistenceBanners);
+    persistenceBannerNotesObserver.observe(notes,{attributes:true,attributeFilter:['class']});
+  }
+  if(!persistenceBannerViewportObserved){
+    window.addEventListener('resize',layoutPersistenceBanners);
+    if(window.visualViewport) window.visualViewport.addEventListener('resize',layoutPersistenceBanners);
+    persistenceBannerViewportObserved=true;
+  }
+  const visible=[rec,alertEl].filter(el=>el && el.innerHTML.trim()!=='');
+  const docked=!!(notes && notes.classList.contains('show') && visible.length);
+  const root=document.documentElement;
+  root.toggleAttribute('data-notes-persistence-docked',docked);
+  if(docked){
+    // Em janelas curtas os avisos têm rolagem própria. O espaço restante continua
+    // disponível às pastas e ao editor; 68px comportam uma ação e o padding.
+    const height=Math.min(window.innerHeight,window.visualViewport?.height||window.innerHeight);
+    const limit=Math.max(68,Math.floor((height*.4-(visible.length-1)*10)/visible.length));
+    root.style.setProperty('--jp-persistence-banner-max-height',limit+'px');
+  }else root.style.removeProperty('--jp-persistence-banner-max-height');
+  const top=docked?12:72;
+  if(rec) rec.style.top=docked?top+'px':'';
+  alertEl.style.top=visible.includes(rec)?(top+rec.offsetHeight+10)+'px':(docked?top+'px':'');
+  // Medir depois de limitar a altura reserva somente o espaço efetivamente usado.
+  const inset=docked?Math.ceil(Math.max(...visible.map(el=>el.getBoundingClientRect().bottom)))+10:0;
+  root.style.setProperty('--jp-persistence-notes-inset',inset+'px');
 }
 // ---- ações do modo de recuperação (A-005) ----
 function persistenceRecoveryDownload(){

@@ -115,6 +115,7 @@ function bindContab(){
     const data=$('ldDate').value;
     const res=parseFloat($('ldResult').value);
     const stEl=$('ldStatus');
+    clearTimeout(ledgerStatusTimer);
     if(!data){ stEl.textContent='✗ informe a data'; stEl.className='fx-status err'; return; }
     if(isNaN(res)){ stEl.textContent='✗ informe o resultado do dia (0 é válido)'; stEl.className='fx-status err'; return; }
     const led=ledgerSorted();
@@ -124,19 +125,21 @@ function bindContab(){
     let saldo=parseFloat($('ldSaldo').value);
     if(isNaN(saldo)) saldo=(anterior?anterior.saldo:S.params.saldoIni)+res;
     const exist=S.ledger.find(e=>e.data===data);
-    if(exist){
-      if(!confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
-      exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
-      if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
-    } else {
-      S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
-      if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
-    }
-    syncSaldoAtuFromLedger();
+    if(exist && !confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
+    const result=ledgerMutate(()=>{
+      if(exist){
+        exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
+        if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
+      } else {
+        S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
+        if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
+      }
+      syncSaldoAtuFromLedger();
+    });
+    if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';
-    stEl.textContent='✓ fechamento registrado'; stEl.className='fx-status ok';
-    setTimeout(()=>{ stEl.textContent=''; },2500);
-    save(); renderLedger(); renderDash(); renderParams(); render();
+    ledgerFeedback('✓ fechamento registrado',true);
+    renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
   // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida

@@ -27,14 +27,14 @@ const MVP_NOTES_POLICY_HINT={
 
 const mvpNotesUI={
   open:false, selectedId:null,              // nota aberta no painel do editor
-  draft:null, draftOriginal:null, draftDirty:false,
+  draft:null, draftOriginal:null, draftDirty:false, folderNameDrafts:{},
   query:'', filterType:'all', filterStatus:'all', filterPriority:'all',
   filterFolder:'all', filterPeriod:'all', filterPolicy:'all',
   activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
   filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
-  opener:null, optionsReady:false, inertSnapshot:null,
+  opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
 };
@@ -561,19 +561,22 @@ function mvpNotesFolderIndex(id){ return mvpNotesFoldersOrdered().findIndex(f=>f
 // Move a pasta `folderId` para `newIndex` (0-based, entre as pastas REAIS). Devolve true se
 // algo mudou. Não toca em nota alguma, não muda a pasta ativa nem o rascunho.
 function mvpNotesMoveFolder(folderId,newIndex){
-  const lista=mvpNotesRenumberFolders();          // parte de um estado canônico
+  const lista=mvpNotesFoldersOrdered();
   const atual=lista.findIndex(f=>f.id===folderId);
   if(atual<0) return false;                        // pasta inexistente: ignora em silêncio
   const alvo=Math.min(Math.max(Math.round(Number(newIndex)),0),lista.length-1);
   if(!Number.isFinite(alvo) || alvo===atual) return false; // nada a fazer: nem save, nem anúncio
-  const [movida]=lista.splice(atual,1);
-  lista.splice(alvo,0,movida);
-  lista.forEach((f,i)=>{ f.position=i; });
-  S.mvpNotes.folders=lista;
+  const movida=lista[atual];
+  if(!mvpNotesMutate(()=>{
+    lista.splice(atual,1);
+    lista.splice(alvo,0,movida);
+    lista.forEach((f,i)=>{ f.position=i; });
+    S.mvpNotes.folders=lista;
+    return true;
+  })) return false;
   // folder.updatedAt NÃO se move aqui. Neste módulo esse carimbo significa "o conteúdo da
   // pasta mudou" — mvpNotesRenameFolder só o toca quando o nome realmente muda. Reordenar
   // é organização visual, não alteração da pasta. Nenhum timestamp de NOTA é tocado.
-  save();
   mvpNotesRefreshFolderOrderViews();
   mvpNotesAnnounceFolderOrder(movida,alvo,lista.length);
   return true;
@@ -605,26 +608,39 @@ function mvpNotesCreateFolder(name){
   const now=new Date().toISOString();
   // Nova pasta entra no FIM da lista — nunca reordena as existentes nem ordena alfabeticamente.
   const folder={id:mvpNotesFolderId(), name, position:mvpNotesFolders().length, createdAt:now, updatedAt:now};
-  S.mvpNotes.folders.push(folder);
-  mvpNotesRenumberFolders(); // garante contiguidade mesmo se o estado vier de backup antigo
-  save(); renderMvpNotesHeader();
-  return folder;
+  return mvpNotesMutate(()=>{
+    S.mvpNotes.folders.push(folder);
+    mvpNotesRenumberFolders(); // garante contiguidade mesmo se o estado vier de backup antigo
+    return folder;
+  });
 }
 function mvpNotesRenameFolder(id,name){
   const folder=mvpNotesFolderById(id); if(!folder) return null;
   if(folder.name===name) return folder; // nada mudou -> updatedAt não se move
-  folder.name=name; folder.updatedAt=new Date().toISOString();
-  save(); renderMvpNotesHeader();
-  return folder;
+  return mvpNotesMutate(()=>{
+    folder.name=name; folder.updatedAt=new Date().toISOString();
+    return folder;
+  });
 }
 // Exclui só a pasta; as notas associadas são preservadas integralmente e realocadas para
 // "Sem pasta" (folderId=null) — nunca há opção de excluir pasta+notas juntas nesta versão.
 function mvpNotesDeleteFolder(id){
-  S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
-  mvpNotesRenumberFolders(); // sobrou buraco na sequência: renumera as restantes (0..n-1)
-  mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+  if(!mvpNotesMutate(()=>{
+    S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
+    mvpNotesRenumberFolders(); // sobrou buraco na sequência: renumera as restantes (0..n-1)
+    mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+    return true;
+  })) return false;
   if(mvpNotesUI.activeFolder===id) mvpNotesUI.activeFolder='unfiled';
-  save(); renderMvpNotesHeader();
+  // A nota aberta não pode reintroduzir a pasta excluída no próximo Salvar.
+  // Alinha somente a referência, depois da confirmação; texto e outras edições
+  // do rascunho permanecem intactos. A recusa retorna antes deste ponto.
+  [mvpNotesUI.draft,mvpNotesUI.draftOriginal].forEach(draft=>{
+    if(draft && draft.folderId===id) draft.folderId=null;
+  });
+  if(mvpNotesUI.draft) mvpNotesRecomputeDirty();
+  mvpNotesSyncInspectorFolderOptions();
+  return true;
 }
 function mvpNotesEnsureActiveFolderValid(){
   const af=mvpNotesUI.activeFolder;
@@ -640,7 +656,43 @@ function mvpNotesViewLabel(){
 }
 
 // ---- persistência (CRUD) ----
-function mvpNotesPersist(){ save(); renderMvpNotesHeader(); }
+function mvpNotesPersistenceMessage(unknown){
+  hideStaleSavedTag();
+  if(unknown){
+    const banner=mvpn('persistenceAlert');
+    if(banner && banner.classList.contains('is-recovered')){ banner.className='persistence-alert'; banner.innerHTML=''; layoutPersistenceBanners(); }
+  }
+  const message=unknown
+    ? 'Gravação não confirmada. Não repita a ação; confira a base salva antes de continuar.'
+    : 'Não salvo. O rascunho aberto permanece nesta sessão; resolva a falha antes de tentar novamente.';
+  const live=mvpn('mvpNotesCopyLive');
+  if(live) live.textContent=message;
+  alert(message); // a região viva é sr-only; a recusa também precisa ser visível
+}
+// Notas e pastas compartilham referências folderId. A recusa restaura só este
+// agregado, preservando o rascunho efêmero e os demais módulos do documento.
+function mvpNotesMutate(change){
+  if(jpWealthPersistenceOutcomeIsUnknown()){ mvpNotesPersistenceMessage(true); return null; }
+  let before;
+  try { before=structuredClone(S.mvpNotes); }
+  catch(e){ mvpNotesPersistenceMessage(false); return null; }
+  let value;
+  try { value=change(); }
+  catch(e){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
+  let persisted;
+  try { persisted=save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('notas e pastas');
+    mvpNotesPersistenceMessage(true); return null;
+  }
+  if(persisted===false){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
+  if(persisted!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado de notas e pastas');
+    mvpNotesPersistenceMessage(true); return null;
+  }
+  renderMvpNotesHeader();
+  return value;
+}
 function mvpNotesCreate(draft){
   const now=new Date().toISOString();
   const id=mvpNotesId();
@@ -661,13 +713,17 @@ function mvpNotesCreate(draft){
     createdAt:now, updatedAt:now,
     completedAt:draft.status==='done'?now:null // nota já criada concluída (raro, mas possível no editor)
   };
-  S.mvpNotes.items.push(item);
-  mvpNotesPersist();
-  return item;
+  return mvpNotesMutate(()=>{ S.mvpNotes.items.push(item); return item; });
 }
 function mvpNotesUpdate(id,draft){
   const item=mvpNotesItems().find(it=>it.id===id);
-  if(!item) return null;
+  if(!item){
+    const message='Este ticket não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
+    const live=mvpn('mvpNotesCopyLive');
+    if(live) live.textContent=message;
+    alert(message);
+    return null;
+  }
   const folderId=draft.folderId||null;
   const content=String(draft.content||'').slice(0,20000);
   const policy=MVP_NOTES_AI_POLICIES.includes(draft.aiImplementationPolicy)?draft.aiImplementationPolicy:item.aiImplementationPolicy;
@@ -678,19 +734,22 @@ function mvpNotesUpdate(id,draft){
   // histórico; concluir de novo gera carimbo novo); permanece em 'done' → intocado.
   // folderId NUNCA é alterado por transição de status — a visão Concluído é derivada,
   // e reabrir devolve a nota à pasta original automaticamente porque ela nunca saiu de lá.
-  if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
-  else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
-  item.type=draft.type;
-  item.content=content; item.title=mvpNotesDeriveTitle(content); // título rederivado a cada gravação
-  item.aiImplementationPolicy=policy;
-  item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
-  if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
-  mvpNotesPersist();
-  return item;
+  return mvpNotesMutate(()=>{
+    if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
+    else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
+    item.type=draft.type;
+    item.content=content; item.title=mvpNotesDeriveTitle(content); // título rederivado a cada gravação
+    item.aiImplementationPolicy=policy;
+    item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
+    if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
+    return item;
+  });
 }
 function mvpNotesDelete(id){
-  S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
-  mvpNotesPersist();
+  return mvpNotesMutate(()=>{
+    S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
+    return true;
+  });
 }
 
 // ---- botão do header + card de Configurações ----
@@ -931,6 +990,7 @@ function mvpNotesSetCardMenuOpen(open,id,origem){
       if(podeDevolverFoco && document.contains(anterior)) anterior.focus();
     }
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Abrir nunca abre duas instâncias: o mesmo overlay é reaproveitado e o estado guarda um
 // único cardMenuId. Clicar no ⋯ de outro ticket apenas repinta o conteúdo.
@@ -991,7 +1051,7 @@ function mvpNotesRunCardMenuAction(acao){
     mvpNotesCloseCardMenu();
     if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
     const eraSelecionado=mvpNotesUI.selectedId===id;
-    mvpNotesDelete(id);
+    if(!mvpNotesDelete(id)) return null;
     if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
     else renderMvpNotesList();
     return 'excluir';
@@ -1206,18 +1266,22 @@ function mvpNotesSwitchFolder(target){
     renderMvpNotesList();
   });
 }
-function mvpNotesPromptFolderName(defaultValue){
-  const raw=prompt('Nome da pasta', defaultValue||'');
-  if(raw===null) return null; // cancelado
+function mvpNotesPromptFolderName(defaultValue,draftKey){
+  const previous=mvpNotesUI.folderNameDrafts[draftKey];
+  const raw=prompt('Nome da pasta', previous===undefined?(defaultValue||''):previous);
+  if(raw===null){ delete mvpNotesUI.folderNameDrafts[draftKey]; return null; } // descarte explícito
   return raw.trim().slice(0,80);
 }
 function mvpNotesHandleNewFolder(){
   mvpNotesConfirmDiscardIfDirty(()=>{
-    const name=mvpNotesPromptFolderName('');
+    const name=mvpNotesPromptFolderName('','new');
     if(name===null) return;
     if(!name){ alert('Informe um nome para a pasta.'); return; }
     if(mvpNotesFolderNameExists(name,null) && !confirm(`Já existe uma pasta chamada "${name}". Deseja criar outra pasta com o mesmo nome?`)) return;
+    mvpNotesUI.folderNameDrafts.new=name;
     const folder=mvpNotesCreateFolder(name);
+    if(!folder) return;
+    delete mvpNotesUI.folderNameDrafts.new;
     mvpNotesUI.activeFolder=folder.id;
     renderMvpNotesList();
   });
@@ -1225,11 +1289,14 @@ function mvpNotesHandleNewFolder(){
 function mvpNotesHandleRenameFolder(id){
   mvpNotesConfirmDiscardIfDirty(()=>{
     const folder=mvpNotesFolderById(id); if(!folder) return;
-    const name=mvpNotesPromptFolderName(folder.name);
+    const draftKey='rename:'+id;
+    const name=mvpNotesPromptFolderName(folder.name,draftKey);
     if(name===null) return;
     if(!name){ alert('Informe um nome para a pasta.'); return; }
     if(name!==folder.name && mvpNotesFolderNameExists(name,id) && !confirm(`Já existe uma pasta chamada "${name}". Deseja renomear mesmo assim?`)) return;
-    mvpNotesRenameFolder(id,name);
+    mvpNotesUI.folderNameDrafts[draftKey]=name;
+    if(!mvpNotesRenameFolder(id,name)) return;
+    delete mvpNotesUI.folderNameDrafts[draftKey];
     renderMvpNotesList();
   });
 }
@@ -1241,7 +1308,7 @@ function mvpNotesHandleDeleteFolder(id){
       ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
-    mvpNotesDeleteFolder(id);
+    if(!mvpNotesDeleteFolder(id)) return;
     renderMvpNotesList();
   });
 }
@@ -1439,7 +1506,7 @@ function bindMvpNotesInspector(){
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
     if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
-    mvpNotesDelete(item.id);
+    if(!mvpNotesDelete(item.id)) return;
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
     mvpNotesCloseEditor();
@@ -1542,6 +1609,7 @@ function mvpNotesSetNewNoteModalOpen(open){
     const btn=mvpn('mvpNotesNewBtn');
     if(btn && tinhaFoco) btn.focus(); // Cancelar/Escape devolvem o foco à origem
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Entrada do botão "+": respeita rascunho sujo ANTES de abrir o formulário, para não
 // descobrir a pendência só depois de o operador ter preenchido tudo.
@@ -1575,6 +1643,7 @@ function mvpNotesSaveDraft(){
   const salvo=mvpNotesUI.selectedId
     ? mvpNotesUpdate(mvpNotesUI.selectedId,mvpNotesUI.draft)
     : mvpNotesCreate(mvpNotesUI.draft);
+  if(!salvo) return false;
   if(salvo){
     mvpNotesUI.selectedId=salvo.id;
     mvpNotesUI.draft=mvpNotesDraftFromItem(salvo);
@@ -1879,6 +1948,41 @@ function bindMvpNotesResize(){
 }
 
 // ---- abertura/fechamento do drawer (foco, trap, inert — mesmo padrão da Central) ----
+// Avisos globais fazem parte do MESMO diálogo enquanto Notas estiverem abertas.
+// Mover os nós preserva listeners, timers, identidade e conteúdo vivo; os marcadores
+// devolvem cada um à posição original ao fechar. Não há cópia de aviso nem escrita.
+// O host é o overlay, sem a animação/transform da gaveta que alteraria position:fixed.
+function mvpNotesDockPersistence(open){
+  if(open){
+    if(mvpNotesUI.persistenceHosts) return;
+    const host=mvpn('mvpNotesOverlay');
+    mvpNotesUI.persistenceHosts=['persistenceRecovery','persistenceAlert'].map(id=>{
+      const el=mvpn(id); if(!el) return null;
+      const marker=document.createComment('posição do aviso '+id);
+      el.before(marker);
+      const saved={el,marker,inert:el.inert,ariaHidden:el.getAttribute('aria-hidden')};
+      host.appendChild(el);
+      return saved;
+    }).filter(Boolean);
+    mvpNotesSyncPersistenceModal();
+  }else{
+    (mvpNotesUI.persistenceHosts||[]).forEach(({el,marker,inert,ariaHidden})=>{
+      el.inert=inert;
+      if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+      marker.replaceWith(el);
+    });
+    mvpNotesUI.persistenceHosts=null;
+  }
+}
+function mvpNotesSyncPersistenceModal(){
+  const nested=!!(mvpNotesUI.cardMenuId||mvpNotesUI.newNoteOpen);
+  (mvpNotesUI.persistenceHosts||[]).forEach(({el,inert,ariaHidden})=>{
+    el.inert=nested||inert;
+    if(nested) el.setAttribute('aria-hidden','true');
+    else if(ariaHidden===null) el.removeAttribute('aria-hidden');
+    else el.setAttribute('aria-hidden',ariaHidden);
+  });
+}
 function mvpNotesFocusables(root){
   // offsetParent!==null exclui o conteúdo de <details> fechados (menu "⋯" de cada pasta,
   // painel "Gerenciar pastas" em mobile) — sem isto o wrap do Tab poderia pular para um
@@ -1888,6 +1992,7 @@ function mvpNotesFocusables(root){
   // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
   return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
     .filter(el=>!el.closest('[hidden]'))
+    .filter(el=>!el.closest('[inert]'))
     .filter(el=>el.offsetParent!==null || el===document.activeElement);
 }
 function mvpNotesTrapFocus(event){
@@ -1896,10 +2001,13 @@ function mvpNotesTrapFocus(event){
   // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
   const raiz=mvpNotesUI.cardMenuId ? (mvpn('mvpNotesCardMenuBox')||mvpn('mvpNotesDrawer'))
     : mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer'))
-    : mvpn('mvpNotesDrawer');
+    : mvpn('mvpNotesOverlay');
   const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
-  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  // Um aviso pode trocar seus botões por texto enquanto tinha foco. Nesse caso
+  // o navegador o devolve ao body; o próximo Tab retoma o diálogo corrente.
+  if(!list.includes(document.activeElement)){ event.preventDefault(); (event.shiftKey?last:first).focus(); }
+  else if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
 // Isolamento acessível: os recipientes de navegação e os irmãos de nível superior que ficam FORA do drawer/overlay
@@ -1955,6 +2063,7 @@ function openMvpNotesDrawer(opener){
   // próprio, então o MutationObserver dela nunca vê esta abertura — sem isto, os dois
   // focus traps disputariam Tab ao mesmo tempo quando aberto via "Abrir Notas".
   if(mvpNotesSettingsOpen() && typeof suspendSettingsForSubdialog==='function') suspendSettingsForSubdialog();
+  mvpNotesDockPersistence(true);
   mvpn('mvpNotesOverlay').classList.add('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','false');
   mvpNotesApplyInert();
@@ -1973,6 +2082,7 @@ function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
+  mvpNotesDockPersistence(false);
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();

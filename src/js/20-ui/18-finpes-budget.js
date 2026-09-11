@@ -444,40 +444,76 @@ function fbOpenRecurrenceModal(key, incomeId){
   const regra = rec.ruleId ? (S.personalFinance.recurringIncome||[]).find(r=>r.id===rec.ruleId) : null;
   const ativa = !!(regra && regra.active!==false);
   const valorIni = regra ? regra.amount : (rec.projectedAmount!==null ? rec.projectedAmount : null);
-  const box=$('modalBox'); $('modalOverlay').classList.add('show');
+  const box=$('modalBox'), overlay=$('modalOverlay'), origem=document.activeElement;
+  overlay.classList.add('show');
   box.innerHTML = `
-    <h3>⚙ Recorrência — ${esc(rec.name)}</h3>
+    <div role="dialog" aria-modal="true" aria-labelledby="fbRecTitle">
+    <h3 id="fbRecTitle">⚙ Recorrência — ${esc(rec.name)}</h3>
     <div class="modal-q" data-qid="rec">
       <div class="ql"><label><input type="checkbox" id="fbRecOn" ${ativa?'checked':''}> Receita recorrente (gera projeção nos meses futuros)</label></div>
     </div>
     <div class="modal-q" data-qid="valor">
-      <div class="ql">Valor mensal da regra (R$)</div>
+      <div class="ql"><label for="fbRecAmount">Valor mensal da regra (R$)</label></div>
       <input type="text" id="fbRecAmount" inputmode="decimal" value="${valorIni===null?'':esc((valorIni/100).toFixed(2).replace('.',','))}">
-      <div class="modal-err">Informe o valor da regra — ≥ 0, ponto ou vírgula decimal. Em branco não é zero.</div>
+      <div class="modal-err" id="fbRecAmountError" role="alert">Informe o valor da regra — ≥ 0, ponto ou vírgula decimal. Em branco não é zero.</div>
     </div>
     <div class="modal-q" data-qid="inicio">
-      <div class="ql">Início (YYYY-MM)</div>
+      <div class="ql"><label for="fbRecStart">Início (YYYY-MM)</label></div>
       <input type="month" id="fbRecStart" value="${esc(regra?regra.startMonth:key)}">
-      <div class="modal-err">Início inválido.</div>
+      <div class="modal-err" id="fbRecStartError" role="alert">Início inválido.</div>
     </div>
     <div class="modal-q" data-qid="fim">
-      <div class="ql">Fim (opcional)</div>
+      <div class="ql"><label for="fbRecEnd">Fim (opcional)</label></div>
       <input type="month" id="fbRecEnd" value="${esc(regra&&regra.endMonth?regra.endMonth:'')}">
-      <div class="modal-err">Fim deve ser vazio ou ≥ início.</div>
+      <div class="modal-err" id="fbRecEndError" role="alert">Fim deve ser vazio ou ≥ início.</div>
     </div>
     <p class="risk-note">Regra vigente alcança apenas meses ainda não registrados. Meses já registrados nunca são reescritos; desligar a regra não apaga receitas históricas.</p>
     <div class="modal-actions">
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
-    </div>`;
-  box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
-  $('modalCancel').addEventListener('click', closeModal);   // cancelar = zero mutação
+    </div></div>`;
+  // O modal global também atende questionários financeiros. O ciclo abaixo é
+  // exclusivo desta instância e se desfaz mesmo quando outro fluxo a fecha.
+  const dialog=box.firstElementChild, eventos=new AbortController();
+  const observar=new MutationObserver(()=>{
+    if(!dialog.isConnected || !overlay.classList.contains('show')) limpar();
+  });
+  function limpar(){ eventos.abort(); observar.disconnect(); }
+  function fechar(render=false){
+    limpar(); closeModal();
+    if(render) finpesBudgetRender();
+    const alvo=document.querySelector('[data-fi-cfg="'+CSS.escape(incomeId)+'"]')||origem;
+    if(alvo && alvo.isConnected && !alvo.closest('[hidden],[inert]') && alvo.getClientRects().length) alvo.focus();
+  }
+  function focaveis(){ return [...dialog.querySelectorAll('input:not([disabled]),button:not([disabled])')]; }
+  overlay.addEventListener('click',e=>{
+    if(e.target===overlay){ e.stopImmediatePropagation(); fechar(); }
+  },{capture:true,signal:eventos.signal});
+  dialog.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); fechar(); return; }
+    if(e.key!=='Tab') return;
+    const itens=focaveis(), primeiro=itens[0], ultimo=itens[itens.length-1];
+    if(e.shiftKey && document.activeElement===primeiro){ e.preventDefault(); ultimo.focus(); }
+    else if(!e.shiftKey && document.activeElement===ultimo){ e.preventDefault(); primeiro.focus(); }
+  },{signal:eventos.signal});
+  document.addEventListener('focusin',e=>{
+    if(dialog.isConnected && overlay.classList.contains('show') && !dialog.contains(e.target)) focaveis()[0].focus();
+  },{signal:eventos.signal});
+  observar.observe(box,{childList:true});
+  observar.observe(overlay,{attributes:true,attributeFilter:['class']});
+  $('fbRecOn').focus();
+  $('modalCancel').addEventListener('click', ()=>fechar()); // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
     const ligar = $('fbRecOn').checked;
     let cfg = { recorrente: ligar };
-    let falhou = false;
-    const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou = true; };
+    let primeiroErro = null;
+    const marcar = qid => {
+      const grupo=box.querySelector(`[data-qid="${qid}"]`), campo=grupo.querySelector('input'), erro=grupo.querySelector('.modal-err');
+      erro.classList.add('show'); campo.setAttribute('aria-invalid','true'); campo.setAttribute('aria-describedby',erro.id);
+      if(!primeiroErro) primeiroErro=campo;
+    };
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
+    box.querySelectorAll('[aria-invalid]').forEach(e=>{ e.removeAttribute('aria-invalid'); e.removeAttribute('aria-describedby'); });
     if(ligar){
       const c = parseBRLCents($('fbRecAmount').value);
       if(c===null || Number.isNaN(c) || c<0) marcar('valor');
@@ -487,11 +523,10 @@ function fbOpenRecurrenceModal(key, incomeId){
       if(fim!==null && (!pfMonthKeyValid(fim) || fim<ini)) marcar('fim');
       cfg = { recorrente:true, amount:c, startMonth:ini, endMonth:fim };
     }
-    if(falhou) return;                                      // nada aplicado
+    if(primeiroErro){ primeiroErro.focus(); return; }        // nada aplicado
     const r = pfActConfigureRecurrence(key, incomeId, cfg);
     if(r.ok===false && r.erro){ alert('⛔ '+r.erro); return; }
-    closeModal();
-    finpesBudgetRender();
+    fechar(true);
   });
 }
 

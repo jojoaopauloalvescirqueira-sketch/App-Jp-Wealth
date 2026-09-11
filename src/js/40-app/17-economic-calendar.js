@@ -66,15 +66,18 @@ function ecalRenderRoot(root, filter){
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
+  const cacheIssue=typeof ffNewsCacheIssue==='function'?ffNewsCacheIssue():'';
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
+    empty.textContent=cacheIssue
+      ? 'Sem dados · '+cacheIssue+' Use ↻ no Calendário Econômico em Forex → Visão Geral.'
+      : 'Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }
   const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
-  fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  fresh.textContent=(cacheIssue?cacheIssue+' · Dados anteriores de ':'Dados de ')+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
   // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
   // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
   // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o

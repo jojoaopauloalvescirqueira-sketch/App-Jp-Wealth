@@ -1,3 +1,60 @@
+# Estado corrente — candidate local de estabilização
+
+Classe M1. Data da fotografia: 2026-09-11
+last_verified: 2026-09-11
+Source revision representada: `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe`
+
+Essa revisão é o **HEAD/base Git**, acrescido dos deltas locais V2 e desta campanha;
+não é o commit dos arquivos ainda não integrados. Raiz conferida:
+`/Users/joaopauloalves/.codex/reliability-campaigns/20260911/product`, branch
+`codex/debt-resolution-20260911`. Identidade final, build, inputs e resultados:
+[manifesto final](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json) e
+[relatório da campanha](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-REPORT.md). Até o freeze esses recibos
+podem ainda não existir; não inferir aprovação pela referência.
+
+O HEAD contém o checkpoint funcional Forex/NoCoda/Pivots/Notas/datas Alladin,
+com aceite humano anterior próprio. A V2 técnica de partida é
+`e706077826091e353dee686f0cdc79554402080870941bafbf55aea23b2a1f56`, build
+`a48cf004f5ea5dc0`: FULL local55/55, interface129/129, Estudos/Notas71/71 e
+AUDIT_PASS_WITH_DEBT pertencem a essa V2, **não são novas execuções** deste delta.
+As correções adicionais e suas contraprovas constam do inventário/relatório final.
+
+A main local foi conferida em `09c1427f4880ef7684b1a6fc4d2bc310e706380f`;
+HEAD e main são commits distintos. Esta campanha não consulta nem altera sua
+integração remota. O PR14/FULL remoto antigo54/55 é evidência histórica, não
+resultado remoto do novo candidate. `codex/nav-ref-context` e as demais worktrees
+permanecem separados. Sem staging, commit do produto, push, PR, merge ou deploy.
+
+## Contrato corrente e limites
+
+[Campanha de produto N2](../work/CHG-TECHNICAL-DEBT-CLOSURE-20260911.md) e
+[contexto N3/A4 dedicado](../work/CHG-TECHNICAL-DEBT-CONTEXT-20260911.md)
+registram o pedido humano delimitado. Para a validação estrutural corrente:
+`python -B tools/agent_instruction_structure_test.py --root . --contract docs/work/CHG-TECHNICAL-DEBT-CONTEXT-20260911.md`.
+O modo sem `--contract` continua examinando V4 histórico: seu PRODUCT_FAIL por
+root mismatch não foi apagado nem convertido em PASS. Documento preenchido
+não comprova autoridade; a autorização vem da conversa, e o candidate não a amplia.
+
+Atlas, X1 e X2 tiveram uso **explícito consultivo** no caso Calendário com comandos
+capturados; formato válido é outra prova. Descoberta automática, sessão nativa
+nova, Claude e comparação A/B continuam NOT_RUN. AUD-05/P2 conserva seus
+contraexemplos históricos. O grafo não está disponível nesta worktree; a fotografia
+antiga STALE não é índice atual e não houve reindexação.
+
+OPEN-05 continua NEEDS_HUMAN_RULE: reservas correntes e snapshot/clearance divergem.
+V11 é adoção documental; motor legado, conflitos FCR/FEO e demais decisões
+normativas permanecem separados das correções técnicas. Não preencher PENDING,
+escolher regra ou homologar pelo FULL. Limites e recuperação estão no relatório
+externo; aceite e integração deste novo pacote ainda não ocorreram.
+
+AGENTIC IMPACT CHECK: AGENTIC IMPACT DETECTED. Reconciliação limitada às fontes
+atingidas; AGENTS/CLAUDE/skills/Harness/CI/validador permanecem inalterados.
+Não declarar compreensão universal, segurança integral ou zero bugs.
+
+---
+
+## Histórico preservado — recortes anteriores, não estado vigente
+
 ## Recorte conferido — campanha integrada pelo PR #12
 
 Em 2026-09-11, a campanha de quatro lotes (PF, Alladin, Configurações e Forex)
@@ -23,7 +80,7 @@ pertencem ao período indicado, não à autorização desta campanha.
 
 Classe M1. Data da fotografia: 2026-09-09
 last_verified: 2026-09-09
-Source revision representada: `484228189cc3f5f4c297f29f88f2b2ed541a3afd`
+Revisão histórica: `484228189cc3f5f4c297f29f88f2b2ed541a3afd`
 
 A revisão acima identifica o **produto integrado examinado**, não um commit novo.
 O delta de instruções/contexto está sem commit em `codex/agent-context-coherence`,

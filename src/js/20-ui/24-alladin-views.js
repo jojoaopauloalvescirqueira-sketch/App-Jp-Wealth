@@ -154,28 +154,6 @@ function alladinIndisponivel(titulo, issues){
     : '<p>Nenhum diagnóstico específico foi devolvido pelo domínio.</p>';
   return '<div class="session-warning" role="status"><strong>'+esc(titulo)+'</strong>'+lista+'</div>';
 }
-// Sentinela de integridade para os Lançamentos (MD-2/A).
-// `leitura.transactions()` NÃO tem envelope de qualidade: ele filtra registros
-// ilegíveis EM SILÊNCIO e não checa integridade estrutural nem schema futuro.
-// Projetar essa lista direto exibiria um ledger silenciosamente filtrado como
-// se fosse normal — exatamente o que o invariante proíbe. Enquanto o envelope
-// próprio não existe (dívida registrada, slice futura), a confiabilidade vem de
-// `posicoes()`, que é global e fail-closed pelos MESMOS motivos (integridade
-// estrutural, registro ilegível, cadastro órfão, moeda divergente, schema
-// futuro), somada a `compat()`.
-//
-// Isto é guarda de APRESENTAÇÃO, não regra econômica: a UI não interpreta o
-// veredito, apenas se recusa a desenhar quando o domínio não garante o dado.
-// Conservador de propósito — bloquear a mais é seguro, a menos não é.
-function alladinSentinelaLedger(){
-  const compat=JPWAlladin.compat();
-  if(compat && compat.readOnly){
-    return { ok:false, issues:[compat.reason||'READ_ONLY_FUTURE_SCHEMA'] };
-  }
-  const pos=JPWAlladin.leitura.posicoes();
-  if(!pos.available) return { ok:false, issues:(pos.issues||[]).slice() };
-  return { ok:true, issues:[] };
-}
 // Rótulos cadastrais resolvidos DENTRO dos snapshots de leitura — nunca no
 // agregado vivo, como já faz o painel de Caixa.
 function alladinCatalogoLabels(){
@@ -262,8 +240,8 @@ function alladinDataCelula(tx){
 }
 function alladinRenderLedger(el){
   const cab='<h2>Lançamentos</h2>';
-  const sentinela=alladinSentinelaLedger();
-  if(!sentinela.ok){
+  const ledger=JPWAlladin.leitura.ledger();
+  if(!ledger.available){
     // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty — e
     // NENHUM convite à escrita (ALD-05 S2): o CTA não é renderizado. Escrever
     // sobre agregado que a leitura recusa só produziria a recusa estrutural do
@@ -271,11 +249,11 @@ function alladinRenderLedger(el){
     // se o estado mudar entre render e submit, é o domínio que decide.
     el.innerHTML=cab+alladinIndisponivel(
       'Lançamentos indisponíveis — o agregado não passou na verificação de integridade.',
-      sentinela.issues);
+      ledger.issues);
     return;
   }
   const cta=alladinTxBotaoNovo();
-  const lista=JPWAlladin.leitura.transactions();
+  const lista=ledger.transactions;
   if(!lista.length){ el.innerHTML=cab+cta+alladinVazio('ledger'); return; }
   const cat=alladinCatalogoLabels();
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
@@ -1257,7 +1235,9 @@ function alladinTxReverseAbrir(originalId){
   // Write gate na ABERTURA — e de novo no dominio, no submit.
   const bloqueio=alladinWriteBloqueado();
   if(bloqueio){ showSessionNotice('Escrita indisponível: '+bloqueio); return; }
-  const tx=JPWAlladin.leitura.transactions().find(t=>t.transactionId===originalId);
+  const ledger=JPWAlladin.leitura.ledger();
+  if(!ledger.available){ showSessionNotice('Lançamentos indisponíveis: '+ledger.issues.join(' · ')); return; }
+  const tx=ledger.transactions.find(t=>t.transactionId===originalId);
   if(!tx){ showSessionNotice('O lançamento não foi encontrado.'); return; }
   const cat=alladinCatalogoLabels();
   alladinForm.estado='EDITING'; alladinForm.tipo='transaction-reverse'; alladinForm.modo='create';

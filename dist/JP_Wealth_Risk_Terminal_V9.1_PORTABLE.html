@@ -446,7 +446,7 @@
   }
   /* ============ LAYOUT ============ */
   /* Escopado por ID (#appMain), não pela tag <main> — a Central de
-     Configurações também usa um <main id="settingsContent"> interno (dentro
+     Configurações historicamente usava um <main id="settingsContent"> interno (dentro
      de .settings-modal-body, um grid sem grid-template-areas); um seletor de
      tag puro vazava grid-area:main para ele, criando uma linha de grid
      nomeada inexistente e faixas implícitas fantasmas na largura da coluna
@@ -899,6 +899,11 @@
      role="alert" vivo no DOM, que é o que torna o anúncio confiável quando o
      conteúdo aparece. */
   .persistence-alert:empty{display:none}
+  html[data-notes-persistence-docked] .persistence-alert{
+    max-height:var(--jp-persistence-banner-max-height); overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  html[data-notes-persistence-docked] .persistence-alert>*{flex-shrink:0}
   .persistence-alert.is-recovered{border-color:var(--f1); border-left-color:var(--f1)}
   .persistence-alert-title{margin:0; font-family:var(--mono); font-size:var(--fs-md); font-weight:700; color:var(--f4)}
   .persistence-alert.is-recovered .persistence-alert-title{color:var(--f1)}
@@ -1465,7 +1470,8 @@
   .ecal-close{width:34px; height:34px; flex:0 0 34px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer}
   .ecal-close:hover{color:var(--ink); background:var(--panel-2)}
   .ecal-close svg{width:16px; height:16px}
-  .ecal-filters{margin:12px 20px 0; width:fit-content; flex:none}
+  .ecal-filters{margin:12px 20px 0; width:fit-content; max-width:calc(100% - 40px); flex:none; flex-wrap:wrap}
+  .ecal-filters button{flex:1 0 56px}
   .ecal-body{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:12px 20px 16px}
   .ecal-day{margin-bottom:14px}
   .ecal-day-title{margin:0 0 6px; font-family:var(--mono); font-size:var(--fs-xs); font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.11em}
@@ -1499,7 +1505,7 @@
      dia/item/hora/números são compartilhadas e não precisam de nada. */
   .ecal-ws{display:flex; flex-direction:column}
   .ecal-ws-head h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
-  .ecal-ws .ecal-filters{margin:12px 0 0}
+  .ecal-ws .ecal-filters{margin:12px 0 0; max-width:100%}
   .ecal-ws-body{flex:none; overflow:visible; padding:14px 0 4px}
   .ecal-ws .ecal-empty{padding:16px 0}
   .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
@@ -1798,7 +1804,8 @@
        abaixo do próprio padrão v5 (980): o ARIA anunciava um máximo que o render nunca
        entregava. Corrigido para o máximo canônico — as três colunas da Fase D dependem
        dessa largura para caber com folga. */
-    position:fixed; top:0; right:0; height:100vh;
+    position:fixed; top:var(--jp-persistence-notes-inset,0px); right:0;
+    height:calc(100vh - var(--jp-persistence-notes-inset,0px));
     width:min(var(--mvpn-drawer-w,980px), 80vw, 1600px, calc(100vw - 32px));
     display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
     box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
@@ -2299,7 +2306,8 @@
   @media(max-width:920px){
     .mvp-notes-drawer{
       width:100vw; left:0;
-      height:100vh; height:100dvh; /* dvh: teclado virtual não deixa área morta */
+      height:calc(100vh - var(--jp-persistence-notes-inset,0px));
+      height:calc(100dvh - var(--jp-persistence-notes-inset,0px)); /* dvh: teclado virtual não deixa área morta */
       /* Tela cheia não tem "lado de fora": a borda esquerda vira um fio de 1px na beirada
          do aparelho e ainda encolhe em 1px as folhas inferiores, que são position:fixed
          contidas pelo drawer (ele tem animation-name, o que o torna bloco contentor). */
@@ -6209,7 +6217,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 #dashMacro .dm-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
 #dashMacro .dm-title{font:600 22px/1.25 var(--sans);letter-spacing:-.025em;margin:6px 0 0}
 #dashMacro .dm-index{font:400 30px var(--mono);color:var(--ink-faint);opacity:.35}
-#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--dm-blue)}
+#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--violet)}
 #dashMacro [data-dm-card="personal-finance"] .dm-eyebrow{color:var(--f1)}
 #dashMacro [data-dm-card="research"] .dm-eyebrow{color:var(--violet)}
 #dashMacro [data-dm-card="alladin"] .dm-eyebrow{color:var(--f2)}
@@ -6463,7 +6471,7 @@ html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(-
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'e5caefeada66ab35';
+const JP_WEALTH_BUILD_ID = 'd65a9d2184ebf263';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7951,15 +7959,17 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          09-settings-modal.js) — o nó, o listener e os resultados são os
          mesmos; nada é clonado. -->
     <header class="settings-modal-head"><div><h2 id="settingsTitle">Central de Configurações</h2><p class="sr-only">Preferências, governança, dados e material de referência.</p></div><div class="settings-header-search" id="settingsHeaderSearchSlot"><svg class="settings-header-search-icon" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.6-3.6"/></svg></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
-    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
+    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><section id="settingsContent" class="settings-content" tabindex="-1" aria-labelledby="settingsPageTitle"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></section></div>
   </section>
 </div>
 <!-- Painel de Notas do MVP — drawer lateral direito (14-mvp-notes.js). Backlog interno
      de tarefas/bugs/funcionalidades/melhorias do período de testes; não é notificação,
      não é log de auditoria financeira, não guarda dado de trading. Construído de forma
      preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
-<div class="mvp-notes-overlay" id="mvpNotesOverlay" aria-hidden="true">
-  <section class="mvp-notes-drawer" id="mvpNotesDrawer" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" data-mobile-stage="folders">
+<!-- O diálogo inclui a gaveta e, enquanto aberto, os mesmos avisos globais de
+     persistência. Assim suas ações continuam disponíveis sem descartar o rascunho. -->
+<div class="mvp-notes-overlay" id="mvpNotesOverlay" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" aria-hidden="true">
+  <section class="mvp-notes-drawer" id="mvpNotesDrawer" data-mobile-stage="folders">
     <!-- Alça de redimensionamento (desktop): borda esquerda arrastável; a área clicável
          (12px) é maior que a linha visual. role=separator + setas ←/→ (±20px; Shift ±60)
          + aria-value* — ver bindMvpNotesResize(). Invisível/inerte em mobile (CSS). -->
@@ -10081,11 +10091,45 @@ function persistenceRecoveryEl(){ return document.getElementById('persistenceRec
 // logo abaixo dele. Nós e timers separados de propósito: o "Gravação restabelecida" do
 // A-001 limpa APENAS #persistenceAlert; nenhum timer jamais toca o aviso de recuperação,
 // que só sai por decisão do operador (precedência do estado de recuperação).
+let persistenceBannerSizeObserver=null, persistenceBannerNotesObserver=null;
+let persistenceBannerViewportObserved=false;
 function layoutPersistenceBanners(){
   const alertEl=persistenceAlertEl(); if(!alertEl) return;
   const rec=persistenceRecoveryEl();
-  if(rec && rec.innerHTML.trim()!==''){ alertEl.style.top=(72+rec.offsetHeight+10)+'px'; }
-  else{ alertEl.style.top=''; }
+  const notes=document.getElementById('mvpNotesOverlay');
+  // Uma inscrição por nó: texto, tema e viewport podem mudar a altura depois do
+  // render. Abertura/fechamento de Notas também recompõe avisos já existentes.
+  if(!persistenceBannerSizeObserver && typeof ResizeObserver==='function'){
+    persistenceBannerSizeObserver=new ResizeObserver(layoutPersistenceBanners);
+    persistenceBannerSizeObserver.observe(alertEl);
+    if(rec) persistenceBannerSizeObserver.observe(rec);
+  }
+  if(notes && !persistenceBannerNotesObserver && typeof MutationObserver==='function'){
+    persistenceBannerNotesObserver=new MutationObserver(layoutPersistenceBanners);
+    persistenceBannerNotesObserver.observe(notes,{attributes:true,attributeFilter:['class']});
+  }
+  if(!persistenceBannerViewportObserved){
+    window.addEventListener('resize',layoutPersistenceBanners);
+    if(window.visualViewport) window.visualViewport.addEventListener('resize',layoutPersistenceBanners);
+    persistenceBannerViewportObserved=true;
+  }
+  const visible=[rec,alertEl].filter(el=>el && el.innerHTML.trim()!=='');
+  const docked=!!(notes && notes.classList.contains('show') && visible.length);
+  const root=document.documentElement;
+  root.toggleAttribute('data-notes-persistence-docked',docked);
+  if(docked){
+    // Em janelas curtas os avisos têm rolagem própria. O espaço restante continua
+    // disponível às pastas e ao editor; 68px comportam uma ação e o padding.
+    const height=Math.min(window.innerHeight,window.visualViewport?.height||window.innerHeight);
+    const limit=Math.max(68,Math.floor((height*.4-(visible.length-1)*10)/visible.length));
+    root.style.setProperty('--jp-persistence-banner-max-height',limit+'px');
+  }else root.style.removeProperty('--jp-persistence-banner-max-height');
+  const top=docked?12:72;
+  if(rec) rec.style.top=docked?top+'px':'';
+  alertEl.style.top=visible.includes(rec)?(top+rec.offsetHeight+10)+'px':(docked?top+'px':'');
+  // Medir depois de limitar a altura reserva somente o espaço efetivamente usado.
+  const inset=docked?Math.ceil(Math.max(...visible.map(el=>el.getBoundingClientRect().bottom)))+10:0;
+  root.style.setProperty('--jp-persistence-notes-inset',inset+'px');
 }
 // ---- ações do modo de recuperação (A-005) ----
 function persistenceRecoveryDownload(){
@@ -13376,6 +13420,52 @@ function syncSaldoAtuFromLedger(){
   S.params.saldoAtu = led.length ? (+led[led.length-1].saldo||0) : (+S.params.saldoIni||0);
   return S.params.saldoAtu;
 }
+// Ledger e saldo corrente formam um único ato local. Recusa comprovada restaura
+// somente esses campos e o log DG; uma exceção do save não prova não-escrita.
+function ledgerMutate(fn){
+  const unknown=()=>{
+    hideStaleSavedTag();
+    // Uma exceção posterior ao save pode suceder o aviso verde de recuperação.
+    // Só esse aviso transitório é retirado; alertas de falha ficam preservados.
+    const banner=persistenceAlertEl();
+    if(banner && banner.classList.contains('is-recovered')){
+      clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+      banner.className='persistence-alert';banner.textContent='';
+      layoutPersistenceBanners();
+    }
+    return ({ok:false,persistido:null,bloqueado:true,
+    error:'Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.'});
+  };
+  if(jpWealthPersistenceOutcomeIsUnknown()){hideStaleSavedTag();return unknown();}
+  let before;
+  try{before=structuredClone(S.ledger);}
+  catch(e){return {ok:false,persistido:false,error:'Não foi possível preparar o fechamento. Nada foi aplicado.'};}
+  const balance=S.params.saldoAtu;
+  const log=S.dataGovernance&&S.dataGovernance.changeLog;
+  const logBefore=Array.isArray(log)?log.slice():null;
+  const restore=()=>{
+    S.ledger=before;S.params.saldoAtu=balance;
+    if(logBefore){log.splice(0,log.length,...logBefore);S.dataGovernance.changeLog=log;}
+  };
+  try{fn();}
+  catch(e){restore();hideStaleSavedTag();return {ok:false,persistido:false,error:'Não foi possível aplicar o fechamento. Nada foi gravado.'};}
+  let written;
+  try{written=save();}
+  catch(e){markJPWealthPersistenceOutcomeUnknown('fechamento diário');hideStaleSavedTag();return unknown();}
+  if(written===false){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,error:'Gravação recusada. O fechamento não foi alterado; resolva a falha antes de tentar novamente.'};
+  }
+  if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do fechamento diário');hideStaleSavedTag();return unknown();}
+  return {ok:true,persistido:true};
+}
+let ledgerStatusTimer=null;
+function ledgerFeedback(message,ok){
+  clearTimeout(ledgerStatusTimer);
+  const status=$('ldStatus');if(!status)return;
+  status.textContent=message;status.className='fx-status '+(ok?'ok':'err');
+  if(ok)ledgerStatusTimer=setTimeout(()=>{status.textContent='';},2500);
+}
 function renderLedger(){
   const dEl=$('ldDate'); if(dEl && !dEl.value) dEl.value=todayISO();
   const tb=$('ledgerBody'); if(!tb) return;
@@ -13393,12 +13483,25 @@ function renderLedger(){
     </tr>`;
   }).join('');
   tb.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',()=>{
+    // No UNKNOWN a tentativa fica em memória, mas a linha anterior continua no
+    // DOM. Recusar antes de consultar seu índice evita repetir o ato ou lançar.
+    if(jpWealthPersistenceOutcomeIsUnknown()){
+      hideStaleSavedTag();
+      ledgerFeedback('✗ Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.',false);
+      return;
+    }
     const i=+b.dataset.ldel;
-    if(confirm('Remover o lançamento de '+S.ledger[i].data+'?')){
-      const dataRemovida=S.ledger[i].data;
-      S.ledger.splice(i,1); syncSaldoAtuFromLedger();
-      if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
-      save(); renderLedger(); renderDash(); renderParams(); render();
+    const entry=S.ledger[i];
+    if(!entry){ledgerFeedback('✗ Lançamento indisponível. Atualize a visão antes de continuar.',false);return;}
+    if(confirm('Remover o lançamento de '+entry.data+'?')){
+      const dataRemovida=entry.data;
+      const result=ledgerMutate(()=>{
+        S.ledger.splice(i,1); syncSaldoAtuFromLedger();
+        if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
+      });
+      if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
+      ledgerFeedback('✓ fechamento removido',true);
+      renderLedger(); renderDash(); renderParams(); render();
     }
   }));
   renderAcct();
@@ -14318,6 +14421,7 @@ function bindContab(){
     const data=$('ldDate').value;
     const res=parseFloat($('ldResult').value);
     const stEl=$('ldStatus');
+    clearTimeout(ledgerStatusTimer);
     if(!data){ stEl.textContent='✗ informe a data'; stEl.className='fx-status err'; return; }
     if(isNaN(res)){ stEl.textContent='✗ informe o resultado do dia (0 é válido)'; stEl.className='fx-status err'; return; }
     const led=ledgerSorted();
@@ -14327,19 +14431,21 @@ function bindContab(){
     let saldo=parseFloat($('ldSaldo').value);
     if(isNaN(saldo)) saldo=(anterior?anterior.saldo:S.params.saldoIni)+res;
     const exist=S.ledger.find(e=>e.data===data);
-    if(exist){
-      if(!confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
-      exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
-      if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
-    } else {
-      S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
-      if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
-    }
-    syncSaldoAtuFromLedger();
+    if(exist && !confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
+    const result=ledgerMutate(()=>{
+      if(exist){
+        exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
+        if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
+      } else {
+        S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
+        if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
+      }
+      syncSaldoAtuFromLedger();
+    });
+    if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';
-    stEl.textContent='✓ fechamento registrado'; stEl.className='fx-status ok';
-    setTimeout(()=>{ stEl.textContent=''; },2500);
-    save(); renderLedger(); renderDash(); renderParams(); render();
+    ledgerFeedback('✓ fechamento registrado',true);
+    renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
   // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
@@ -17810,7 +17916,7 @@ function sessionResetAuxiliarySurfaces(){
   // O epoch impede regravação mesmo se um hook visual falhar durante o wipe.
   window.JP_WEALTH_SESSION_WIPE_EPOCH+=1;
   if(typeof handleGaltonSessionWipe==='function'){
-    try{ handleGaltonSessionWipe(); }catch(error){}
+    try{ handleGaltonSessionWipe({deferRemount:true}); }catch(error){}
   }
 }
 
@@ -21105,14 +21211,14 @@ const MVP_NOTES_POLICY_HINT={
 
 const mvpNotesUI={
   open:false, selectedId:null,              // nota aberta no painel do editor
-  draft:null, draftOriginal:null, draftDirty:false,
+  draft:null, draftOriginal:null, draftDirty:false, folderNameDrafts:{},
   query:'', filterType:'all', filterStatus:'all', filterPriority:'all',
   filterFolder:'all', filterPeriod:'all', filterPolicy:'all',
   activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
   filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
-  opener:null, optionsReady:false, inertSnapshot:null,
+  opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
 };
@@ -21639,19 +21745,22 @@ function mvpNotesFolderIndex(id){ return mvpNotesFoldersOrdered().findIndex(f=>f
 // Move a pasta `folderId` para `newIndex` (0-based, entre as pastas REAIS). Devolve true se
 // algo mudou. Não toca em nota alguma, não muda a pasta ativa nem o rascunho.
 function mvpNotesMoveFolder(folderId,newIndex){
-  const lista=mvpNotesRenumberFolders();          // parte de um estado canônico
+  const lista=mvpNotesFoldersOrdered();
   const atual=lista.findIndex(f=>f.id===folderId);
   if(atual<0) return false;                        // pasta inexistente: ignora em silêncio
   const alvo=Math.min(Math.max(Math.round(Number(newIndex)),0),lista.length-1);
   if(!Number.isFinite(alvo) || alvo===atual) return false; // nada a fazer: nem save, nem anúncio
-  const [movida]=lista.splice(atual,1);
-  lista.splice(alvo,0,movida);
-  lista.forEach((f,i)=>{ f.position=i; });
-  S.mvpNotes.folders=lista;
+  const movida=lista[atual];
+  if(!mvpNotesMutate(()=>{
+    lista.splice(atual,1);
+    lista.splice(alvo,0,movida);
+    lista.forEach((f,i)=>{ f.position=i; });
+    S.mvpNotes.folders=lista;
+    return true;
+  })) return false;
   // folder.updatedAt NÃO se move aqui. Neste módulo esse carimbo significa "o conteúdo da
   // pasta mudou" — mvpNotesRenameFolder só o toca quando o nome realmente muda. Reordenar
   // é organização visual, não alteração da pasta. Nenhum timestamp de NOTA é tocado.
-  save();
   mvpNotesRefreshFolderOrderViews();
   mvpNotesAnnounceFolderOrder(movida,alvo,lista.length);
   return true;
@@ -21683,26 +21792,39 @@ function mvpNotesCreateFolder(name){
   const now=new Date().toISOString();
   // Nova pasta entra no FIM da lista — nunca reordena as existentes nem ordena alfabeticamente.
   const folder={id:mvpNotesFolderId(), name, position:mvpNotesFolders().length, createdAt:now, updatedAt:now};
-  S.mvpNotes.folders.push(folder);
-  mvpNotesRenumberFolders(); // garante contiguidade mesmo se o estado vier de backup antigo
-  save(); renderMvpNotesHeader();
-  return folder;
+  return mvpNotesMutate(()=>{
+    S.mvpNotes.folders.push(folder);
+    mvpNotesRenumberFolders(); // garante contiguidade mesmo se o estado vier de backup antigo
+    return folder;
+  });
 }
 function mvpNotesRenameFolder(id,name){
   const folder=mvpNotesFolderById(id); if(!folder) return null;
   if(folder.name===name) return folder; // nada mudou -> updatedAt não se move
-  folder.name=name; folder.updatedAt=new Date().toISOString();
-  save(); renderMvpNotesHeader();
-  return folder;
+  return mvpNotesMutate(()=>{
+    folder.name=name; folder.updatedAt=new Date().toISOString();
+    return folder;
+  });
 }
 // Exclui só a pasta; as notas associadas são preservadas integralmente e realocadas para
 // "Sem pasta" (folderId=null) — nunca há opção de excluir pasta+notas juntas nesta versão.
 function mvpNotesDeleteFolder(id){
-  S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
-  mvpNotesRenumberFolders(); // sobrou buraco na sequência: renumera as restantes (0..n-1)
-  mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+  if(!mvpNotesMutate(()=>{
+    S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
+    mvpNotesRenumberFolders(); // sobrou buraco na sequência: renumera as restantes (0..n-1)
+    mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+    return true;
+  })) return false;
   if(mvpNotesUI.activeFolder===id) mvpNotesUI.activeFolder='unfiled';
-  save(); renderMvpNotesHeader();
+  // A nota aberta não pode reintroduzir a pasta excluída no próximo Salvar.
+  // Alinha somente a referência, depois da confirmação; texto e outras edições
+  // do rascunho permanecem intactos. A recusa retorna antes deste ponto.
+  [mvpNotesUI.draft,mvpNotesUI.draftOriginal].forEach(draft=>{
+    if(draft && draft.folderId===id) draft.folderId=null;
+  });
+  if(mvpNotesUI.draft) mvpNotesRecomputeDirty();
+  mvpNotesSyncInspectorFolderOptions();
+  return true;
 }
 function mvpNotesEnsureActiveFolderValid(){
   const af=mvpNotesUI.activeFolder;
@@ -21718,7 +21840,43 @@ function mvpNotesViewLabel(){
 }
 
 // ---- persistência (CRUD) ----
-function mvpNotesPersist(){ save(); renderMvpNotesHeader(); }
+function mvpNotesPersistenceMessage(unknown){
+  hideStaleSavedTag();
+  if(unknown){
+    const banner=mvpn('persistenceAlert');
+    if(banner && banner.classList.contains('is-recovered')){ banner.className='persistence-alert'; banner.innerHTML=''; layoutPersistenceBanners(); }
+  }
+  const message=unknown
+    ? 'Gravação não confirmada. Não repita a ação; confira a base salva antes de continuar.'
+    : 'Não salvo. O rascunho aberto permanece nesta sessão; resolva a falha antes de tentar novamente.';
+  const live=mvpn('mvpNotesCopyLive');
+  if(live) live.textContent=message;
+  alert(message); // a região viva é sr-only; a recusa também precisa ser visível
+}
+// Notas e pastas compartilham referências folderId. A recusa restaura só este
+// agregado, preservando o rascunho efêmero e os demais módulos do documento.
+function mvpNotesMutate(change){
+  if(jpWealthPersistenceOutcomeIsUnknown()){ mvpNotesPersistenceMessage(true); return null; }
+  let before;
+  try { before=structuredClone(S.mvpNotes); }
+  catch(e){ mvpNotesPersistenceMessage(false); return null; }
+  let value;
+  try { value=change(); }
+  catch(e){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
+  let persisted;
+  try { persisted=save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('notas e pastas');
+    mvpNotesPersistenceMessage(true); return null;
+  }
+  if(persisted===false){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
+  if(persisted!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado de notas e pastas');
+    mvpNotesPersistenceMessage(true); return null;
+  }
+  renderMvpNotesHeader();
+  return value;
+}
 function mvpNotesCreate(draft){
   const now=new Date().toISOString();
   const id=mvpNotesId();
@@ -21739,13 +21897,17 @@ function mvpNotesCreate(draft){
     createdAt:now, updatedAt:now,
     completedAt:draft.status==='done'?now:null // nota já criada concluída (raro, mas possível no editor)
   };
-  S.mvpNotes.items.push(item);
-  mvpNotesPersist();
-  return item;
+  return mvpNotesMutate(()=>{ S.mvpNotes.items.push(item); return item; });
 }
 function mvpNotesUpdate(id,draft){
   const item=mvpNotesItems().find(it=>it.id===id);
-  if(!item) return null;
+  if(!item){
+    const message='Este ticket não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
+    const live=mvpn('mvpNotesCopyLive');
+    if(live) live.textContent=message;
+    alert(message);
+    return null;
+  }
   const folderId=draft.folderId||null;
   const content=String(draft.content||'').slice(0,20000);
   const policy=MVP_NOTES_AI_POLICIES.includes(draft.aiImplementationPolicy)?draft.aiImplementationPolicy:item.aiImplementationPolicy;
@@ -21756,19 +21918,22 @@ function mvpNotesUpdate(id,draft){
   // histórico; concluir de novo gera carimbo novo); permanece em 'done' → intocado.
   // folderId NUNCA é alterado por transição de status — a visão Concluído é derivada,
   // e reabrir devolve a nota à pasta original automaticamente porque ela nunca saiu de lá.
-  if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
-  else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
-  item.type=draft.type;
-  item.content=content; item.title=mvpNotesDeriveTitle(content); // título rederivado a cada gravação
-  item.aiImplementationPolicy=policy;
-  item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
-  if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
-  mvpNotesPersist();
-  return item;
+  return mvpNotesMutate(()=>{
+    if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
+    else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
+    item.type=draft.type;
+    item.content=content; item.title=mvpNotesDeriveTitle(content); // título rederivado a cada gravação
+    item.aiImplementationPolicy=policy;
+    item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
+    if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
+    return item;
+  });
 }
 function mvpNotesDelete(id){
-  S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
-  mvpNotesPersist();
+  return mvpNotesMutate(()=>{
+    S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
+    return true;
+  });
 }
 
 // ---- botão do header + card de Configurações ----
@@ -22009,6 +22174,7 @@ function mvpNotesSetCardMenuOpen(open,id,origem){
       if(podeDevolverFoco && document.contains(anterior)) anterior.focus();
     }
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Abrir nunca abre duas instâncias: o mesmo overlay é reaproveitado e o estado guarda um
 // único cardMenuId. Clicar no ⋯ de outro ticket apenas repinta o conteúdo.
@@ -22069,7 +22235,7 @@ function mvpNotesRunCardMenuAction(acao){
     mvpNotesCloseCardMenu();
     if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
     const eraSelecionado=mvpNotesUI.selectedId===id;
-    mvpNotesDelete(id);
+    if(!mvpNotesDelete(id)) return null;
     if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
     else renderMvpNotesList();
     return 'excluir';
@@ -22284,18 +22450,22 @@ function mvpNotesSwitchFolder(target){
     renderMvpNotesList();
   });
 }
-function mvpNotesPromptFolderName(defaultValue){
-  const raw=prompt('Nome da pasta', defaultValue||'');
-  if(raw===null) return null; // cancelado
+function mvpNotesPromptFolderName(defaultValue,draftKey){
+  const previous=mvpNotesUI.folderNameDrafts[draftKey];
+  const raw=prompt('Nome da pasta', previous===undefined?(defaultValue||''):previous);
+  if(raw===null){ delete mvpNotesUI.folderNameDrafts[draftKey]; return null; } // descarte explícito
   return raw.trim().slice(0,80);
 }
 function mvpNotesHandleNewFolder(){
   mvpNotesConfirmDiscardIfDirty(()=>{
-    const name=mvpNotesPromptFolderName('');
+    const name=mvpNotesPromptFolderName('','new');
     if(name===null) return;
     if(!name){ alert('Informe um nome para a pasta.'); return; }
     if(mvpNotesFolderNameExists(name,null) && !confirm(`Já existe uma pasta chamada "${name}". Deseja criar outra pasta com o mesmo nome?`)) return;
+    mvpNotesUI.folderNameDrafts.new=name;
     const folder=mvpNotesCreateFolder(name);
+    if(!folder) return;
+    delete mvpNotesUI.folderNameDrafts.new;
     mvpNotesUI.activeFolder=folder.id;
     renderMvpNotesList();
   });
@@ -22303,11 +22473,14 @@ function mvpNotesHandleNewFolder(){
 function mvpNotesHandleRenameFolder(id){
   mvpNotesConfirmDiscardIfDirty(()=>{
     const folder=mvpNotesFolderById(id); if(!folder) return;
-    const name=mvpNotesPromptFolderName(folder.name);
+    const draftKey='rename:'+id;
+    const name=mvpNotesPromptFolderName(folder.name,draftKey);
     if(name===null) return;
     if(!name){ alert('Informe um nome para a pasta.'); return; }
     if(name!==folder.name && mvpNotesFolderNameExists(name,id) && !confirm(`Já existe uma pasta chamada "${name}". Deseja renomear mesmo assim?`)) return;
-    mvpNotesRenameFolder(id,name);
+    mvpNotesUI.folderNameDrafts[draftKey]=name;
+    if(!mvpNotesRenameFolder(id,name)) return;
+    delete mvpNotesUI.folderNameDrafts[draftKey];
     renderMvpNotesList();
   });
 }
@@ -22319,7 +22492,7 @@ function mvpNotesHandleDeleteFolder(id){
       ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
-    mvpNotesDeleteFolder(id);
+    if(!mvpNotesDeleteFolder(id)) return;
     renderMvpNotesList();
   });
 }
@@ -22517,7 +22690,7 @@ function bindMvpNotesInspector(){
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
     if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
-    mvpNotesDelete(item.id);
+    if(!mvpNotesDelete(item.id)) return;
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
     mvpNotesCloseEditor();
@@ -22620,6 +22793,7 @@ function mvpNotesSetNewNoteModalOpen(open){
     const btn=mvpn('mvpNotesNewBtn');
     if(btn && tinhaFoco) btn.focus(); // Cancelar/Escape devolvem o foco à origem
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Entrada do botão "+": respeita rascunho sujo ANTES de abrir o formulário, para não
 // descobrir a pendência só depois de o operador ter preenchido tudo.
@@ -22653,6 +22827,7 @@ function mvpNotesSaveDraft(){
   const salvo=mvpNotesUI.selectedId
     ? mvpNotesUpdate(mvpNotesUI.selectedId,mvpNotesUI.draft)
     : mvpNotesCreate(mvpNotesUI.draft);
+  if(!salvo) return false;
   if(salvo){
     mvpNotesUI.selectedId=salvo.id;
     mvpNotesUI.draft=mvpNotesDraftFromItem(salvo);
@@ -22957,6 +23132,41 @@ function bindMvpNotesResize(){
 }
 
 // ---- abertura/fechamento do drawer (foco, trap, inert — mesmo padrão da Central) ----
+// Avisos globais fazem parte do MESMO diálogo enquanto Notas estiverem abertas.
+// Mover os nós preserva listeners, timers, identidade e conteúdo vivo; os marcadores
+// devolvem cada um à posição original ao fechar. Não há cópia de aviso nem escrita.
+// O host é o overlay, sem a animação/transform da gaveta que alteraria position:fixed.
+function mvpNotesDockPersistence(open){
+  if(open){
+    if(mvpNotesUI.persistenceHosts) return;
+    const host=mvpn('mvpNotesOverlay');
+    mvpNotesUI.persistenceHosts=['persistenceRecovery','persistenceAlert'].map(id=>{
+      const el=mvpn(id); if(!el) return null;
+      const marker=document.createComment('posição do aviso '+id);
+      el.before(marker);
+      const saved={el,marker,inert:el.inert,ariaHidden:el.getAttribute('aria-hidden')};
+      host.appendChild(el);
+      return saved;
+    }).filter(Boolean);
+    mvpNotesSyncPersistenceModal();
+  }else{
+    (mvpNotesUI.persistenceHosts||[]).forEach(({el,marker,inert,ariaHidden})=>{
+      el.inert=inert;
+      if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+      marker.replaceWith(el);
+    });
+    mvpNotesUI.persistenceHosts=null;
+  }
+}
+function mvpNotesSyncPersistenceModal(){
+  const nested=!!(mvpNotesUI.cardMenuId||mvpNotesUI.newNoteOpen);
+  (mvpNotesUI.persistenceHosts||[]).forEach(({el,inert,ariaHidden})=>{
+    el.inert=nested||inert;
+    if(nested) el.setAttribute('aria-hidden','true');
+    else if(ariaHidden===null) el.removeAttribute('aria-hidden');
+    else el.setAttribute('aria-hidden',ariaHidden);
+  });
+}
 function mvpNotesFocusables(root){
   // offsetParent!==null exclui o conteúdo de <details> fechados (menu "⋯" de cada pasta,
   // painel "Gerenciar pastas" em mobile) — sem isto o wrap do Tab poderia pular para um
@@ -22966,6 +23176,7 @@ function mvpNotesFocusables(root){
   // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
   return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
     .filter(el=>!el.closest('[hidden]'))
+    .filter(el=>!el.closest('[inert]'))
     .filter(el=>el.offsetParent!==null || el===document.activeElement);
 }
 function mvpNotesTrapFocus(event){
@@ -22974,10 +23185,13 @@ function mvpNotesTrapFocus(event){
   // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
   const raiz=mvpNotesUI.cardMenuId ? (mvpn('mvpNotesCardMenuBox')||mvpn('mvpNotesDrawer'))
     : mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer'))
-    : mvpn('mvpNotesDrawer');
+    : mvpn('mvpNotesOverlay');
   const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
-  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  // Um aviso pode trocar seus botões por texto enquanto tinha foco. Nesse caso
+  // o navegador o devolve ao body; o próximo Tab retoma o diálogo corrente.
+  if(!list.includes(document.activeElement)){ event.preventDefault(); (event.shiftKey?last:first).focus(); }
+  else if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
 // Isolamento acessível: os recipientes de navegação e os irmãos de nível superior que ficam FORA do drawer/overlay
@@ -23033,6 +23247,7 @@ function openMvpNotesDrawer(opener){
   // próprio, então o MutationObserver dela nunca vê esta abertura — sem isto, os dois
   // focus traps disputariam Tab ao mesmo tempo quando aberto via "Abrir Notas".
   if(mvpNotesSettingsOpen() && typeof suspendSettingsForSubdialog==='function') suspendSettingsForSubdialog();
+  mvpNotesDockPersistence(true);
   mvpn('mvpNotesOverlay').classList.add('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','false');
   mvpNotesApplyInert();
@@ -23051,6 +23266,7 @@ function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
+  mvpNotesDockPersistence(false);
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();
@@ -23217,6 +23433,8 @@ const FF_NEWS_IMMINENT_MS=15*60*1000;
 const FF_NEWS_CURRENCIES=['USD','EUR','JPY','GBP'];
 let ffNewsInFlight=false;
 let ffNewsLastError=false;
+let ffNewsCacheWriteFailed=false;
+let ffNewsCacheReadFailed=false;
 
 function ffNewsSourceUrl(){
   try{ return localStorage.getItem(FF_NEWS_URL_OVERRIDE_KEY) || FF_NEWS_DEFAULT_URL; }
@@ -23242,8 +23460,12 @@ function ffNewsSanitizeEvents(payload){
 }
 
 function ffNewsReadCache(){
+  let raw;
   try{
-    const raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    ffNewsCacheReadFailed=false;
+  }catch(_){ ffNewsCacheReadFailed=true; return null; }
+  try{
     if(!raw) return null;
     const parsed=JSON.parse(raw);
     if(!parsed || typeof parsed!=='object' || typeof parsed.fetchedAt!=='number') return null;
@@ -23253,8 +23475,17 @@ function ffNewsReadCache(){
   }catch(_){ return null; }
 }
 function ffNewsWriteCache(payload){
-  try{ localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload})); }
-  catch(_){ /* cota cheia: segue só em memória até o próximo render */ }
+  try{
+    localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload}));
+    return true;
+  }catch(_){ return false; }
+}
+
+// Estado técnico da tentativa, sem payload paralelo nem alteração do cache antigo.
+function ffNewsCacheIssue(){
+  if(ffNewsCacheReadFailed) return 'Cache indisponível — não foi possível ler o armazenamento.';
+  if(ffNewsCacheWriteFailed) return 'Cache não atualizado — não foi possível gravar no armazenamento.';
+  return '';
 }
 
 function ffNewsIsToday(date){
@@ -23263,12 +23494,13 @@ function ffNewsIsToday(date){
 }
 
 function ffNewsStatusText(cache){
-  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
+  const issue=ffNewsCacheIssue();
+  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
     : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  return (ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
+  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
 }
 
 // Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,
@@ -23403,7 +23635,7 @@ function ffNewsFetch(force){
     .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(payload=>{
       if(!ffNewsSanitizeEvents(payload)) throw new Error('carga inválida');
-      ffNewsWriteCache(payload);
+      ffNewsCacheWriteFailed=!ffNewsWriteCache(payload);
       ffNewsLastError=false;
     })
     .catch(()=>{ ffNewsLastError=true; })
@@ -23806,15 +24038,18 @@ function ecalRenderRoot(root, filter){
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
+  const cacheIssue=typeof ffNewsCacheIssue==='function'?ffNewsCacheIssue():'';
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
+    empty.textContent=cacheIssue
+      ? 'Sem dados · '+cacheIssue+' Use ↻ no Calendário Econômico em Forex → Visão Geral.'
+      : 'Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }
   const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
-  fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  fresh.textContent=(cacheIssue?cacheIssue+' · Dados anteriores de ':'Dados de ')+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
   // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
   // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
   // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o
@@ -25797,9 +26032,19 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
       this.abortController=new AbortController();
       this.resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(()=>{ this.renderer.resize(); this.redraw(); }):null;
       this.resizeObserverActive=false;
-      if(this.resizeObserver){ this.resizeObserver.observe(this.canvas); this.resizeObserverActive=true; }
-      this.bind(); this.syncControls(); this.createEngine(); this.render(true);
-      if(this.storageReadError) this.showStorageStatus('Preferências salvas incompatíveis, ilegíveis ou indisponíveis foram preservadas sem sobrescrita. O laboratório usa valores seguros apenas em memória; use Restaurar padrões para substituí-las explicitamente.',true);
+      try{
+        if(this.resizeObserver){ this.resizeObserver.observe(this.canvas); this.resizeObserverActive=true; }
+        this.bind(); this.syncControls(); this.createEngine(); this.render(true);
+        if(this.storageReadError) this.showStorageStatus('Preferências salvas incompatíveis, ilegíveis ou indisponíveis foram preservadas sem sobrescrita. O laboratório usa valores seguros apenas em memória; use Restaurar padrões para substituí-las explicitamente.',true);
+      }catch(error){
+        // Construção incompleta ainda não pertence ao root nem aos contadores de mounts.
+        this.abortController.abort();
+        if(this.resizeObserver) this.resizeObserver.disconnect();
+        this.resizeObserverActive=false;
+        if(this.engine) this.engine.destroy();
+        this.engine=null; this.renderer.destroy(); this.destroyed=true;
+        throw error;
+      }
       if(this.debug){ global.__galtonDebug=global.__galtonDebug||{mounts:0,destroys:0,activeRaf:0,resizeObservers:0}; global.__galtonDebug.mounts++; if(this.resizeObserverActive) global.__galtonDebug.resizeObservers++; }
     }
     bind(){
@@ -26039,16 +26284,25 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
   function mount(root=document.querySelector('[data-galton-root]')){
     if(!root) return null;
     if(root.__galtonController&&!root.__galtonController.destroyed) return root.__galtonController;
-    root.dataset.galtonMounted='true'; root.__galtonController=new GaltonController(root); return root.__galtonController;
+    const controller=new GaltonController(root);
+    root.__galtonController=controller; root.dataset.galtonMounted='true'; return controller;
   }
   function activate(){ const controller=mount(); if(controller) controller.activate(); return controller; }
   function deactivate(options={}){ const root=document.querySelector('[data-galton-root]'); if(root&&root.__galtonController) root.__galtonController.deactivate(options); }
-  function handleSessionWipe(){
+  function handleSessionWipe(options={}){
     const root=document.querySelector('[data-galton-root]'); if(!root) return null;
     const current=root.__galtonController, remount=Boolean(current&&current.active&&root.isConnected&&root.getClientRects().length);
     if(current) current.destroy();
     if(!remount) return null;
-    const controller=mount(root); controller.activate(); return controller;
+    const remountController=()=>{
+      if(!root.isConnected||!root.getClientRects().length) return;
+      const controller=mount(root); controller.activate();
+      return controller;
+    };
+    // A finalização invalida antes de limpar as chaves e pede o adiamento.
+    // A chamada direta conserva o retorno síncrono do contrato do laboratório.
+    if(options.deferRemount){ queueMicrotask(remountController); return null; }
+    return remountController();
   }
 
   ns.persistence={STORAGE_KEY,SCHEMA_VERSION,PERSISTED_CONFIG_FIELDS:PERSISTED_CONFIG_FIELDS.slice(),normalize:normalizePreferences,read:readPreferences,write:writePreferences};
@@ -26760,100 +27014,161 @@ function fxAudit(type,month,detail){
   if(fx.auditLog.length>400) fx.auditLog=fx.auditLog.slice(-400);
   if(typeof dgLogChange==='function') dgLogChange('fxPlanning',type,month||'',String(detail||''));
 }
-function fxSaveState(){ if(typeof save==='function') save(); }
+// Confirma somente a mutação deste agregado e seu evento DG. O save global
+// continua responsável por concorrência, recuperação e gravação física.
+function fxMutateState(fn){
+  const unknown=()=>{
+    hideStaleSavedTag();
+    // Uma exceção posterior ao save pode suceder o aviso verde de recuperação.
+    // Só esse aviso transitório é retirado; alertas de falha ficam preservados.
+    const banner=persistenceAlertEl();
+    if(banner && banner.classList.contains('is-recovered')){
+      clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+      banner.className='persistence-alert';banner.textContent='';
+      layoutPersistenceBanners();
+    }
+    return ({ok:false,persistido:null,bloqueado:true,
+    errors:['Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.']});
+  };
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    hideStaleSavedTag();
+    return unknown();
+  }
+  let before;
+  try{ before=structuredClone(fxState()); }
+  catch(e){ return {ok:false,persistido:false,errors:['Não foi possível preparar a alteração. Nada foi aplicado.']}; }
+  const log=S.dataGovernance&&S.dataGovernance.changeLog;
+  const logBefore=Array.isArray(log)?log.slice():null;
+  const restore=()=>{
+    S.fxPlanning=before;
+    // dgLogChange pode substituir o array quando poda o limite de 400.
+    if(logBefore){log.splice(0,log.length,...logBefore);S.dataGovernance.changeLog=log;}
+  };
+  let result;
+  try{
+    result=fn()||{};
+    if(result.ok===false){restore();return {...result,persistido:false};}
+  }catch(e){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,errors:['Não foi possível aplicar a alteração. Nada foi gravado.']};
+  }
+  let written;
+  try{ written=save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('Planejamento FX');
+    hideStaleSavedTag();
+    return unknown();
+  }
+  if(written===false){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,errors:['Gravação recusada. A alteração não foi aplicada; preserve os campos e resolva a falha antes de tentar novamente.']};
+  }
+  if(written!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do Planejamento FX');
+    hideStaleSavedTag();
+    return unknown();
+  }
+  return {...result,ok:true,persistido:true};
+}
 
 // ---- Mutações ---------------------------------------------------------------
 // MVP: um planejamento ativo por vez (seção 31 da especificação).
 function fxPlanCreate({name,assumptions}={}){
-  const norm=fxNormalizeAssumptions(assumptions);
-  const errors=fxValidateAssumptions(norm);
-  if(errors.length) return {ok:false,errors};
-  const fx=fxState();
-  if(fx.plan) return {ok:false,errors:['Já existe um planejamento ativo — o MVP mantém um plano por vez.']};
-  fx.plan=fxCreatePlan({name,assumptions:norm});
-  fxAudit('FX_PLAN_CREATED',norm.startMonth,`${fx.plan.name} · ${norm.horizonMonths} meses · saldo inicial ${norm.initialBalanceUsd} USD`);
-  fxSaveState();
-  return {ok:true,plan:fx.plan};
+  return fxMutateState(()=>{
+    const norm=fxNormalizeAssumptions(assumptions);
+    const errors=fxValidateAssumptions(norm);
+    if(errors.length) return {ok:false,errors};
+    const fx=fxState();
+    if(fx.plan) return {ok:false,errors:['Já existe um planejamento ativo — o MVP mantém um plano por vez.']};
+    fx.plan=fxCreatePlan({name,assumptions:norm});
+    fxAudit('FX_PLAN_CREATED',norm.startMonth,`${fx.plan.name} · ${norm.horizonMonths} meses · saldo inicial ${norm.initialBalanceUsd} USD`);
+    return {ok:true,plan:fx.plan};
+  });
 }
 // A exclusão apaga plano E trilha do plano; a confirmação explícita é
 // responsabilidade da interface (mesmo padrão dos fluxos destrutivos do app).
 function fxPlanDelete(){
-  const fx=fxState();
-  if(!fx.plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const label=fx.plan.name;
-  fx.plan=null;
-  fxAudit('FX_PLAN_DELETED',null,label);
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const fx=fxState();
+    if(!fx.plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const label=fx.plan.name;
+    fx.plan=null;
+    fxAudit('FX_PLAN_DELETED',null,label);
+    return {ok:true};
+  });
 }
 // Revisão de premissas de FUTURO. Estruturais (mês inicial, horizonte, saldo
 // inicial) permanecem os do baseline — fxReviseAssumptions preserva o snapshot
 // anterior em revisions[] e nunca toca o baseline.
 function fxPlanReviseAssumptions(next,note){
-  const raw=fxActivePlanRaw();
-  if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const merged=fxNormalizeAssumptions({...next,
-    startMonth:raw.baseline.startMonth,
-    horizonMonths:raw.baseline.horizonMonths,
-    initialBalanceUsd:raw.baseline.initialBalanceUsd});
-  const errors=fxValidateAssumptions(merged);
-  if(errors.length) return {ok:false,errors};
-  fxState().plan=fxReviseAssumptions(raw,merged,{note});
-  fxAudit('FX_PLAN_ASSUMPTION_CHANGED',null,String(note||'premissas revisadas'));
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();
+    if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const merged=fxNormalizeAssumptions({...next,
+      startMonth:raw.baseline.startMonth,
+      horizonMonths:raw.baseline.horizonMonths,
+      initialBalanceUsd:raw.baseline.initialBalanceUsd});
+    const errors=fxValidateAssumptions(merged);
+    if(errors.length) return {ok:false,errors};
+    fxState().plan=fxReviseAssumptions(raw,merged,{note});
+    fxAudit('FX_PLAN_ASSUMPTION_CHANGED',null,String(note||'premissas revisadas'));
+    return {ok:true};
+  });
 }
 // Fechamento mensal: contíguo desde o início do plano (fxNextOpenMonth). Editar
 // mês já fechado é permitido, auditado como FX_MONTH_ACTUAL_EDITED e preserva o
 // closedAt original — carimbo usado na reconstrução de forecasts anteriores.
 function fxPlanRecordActual(month,input){
-  const plan=fxActivePlan();
-  if(!plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const key=fxMonthKey(month);
-  const rec=fxNormalizeActual(input);
-  const errors=fxValidateActualInput(rec);
-  const existing=key?!!plan.actuals[key]:false;
-  if(!key) errors.push('Mês inválido (use AAAA-MM).');
-  else if(!existing){
-    const next=fxNextOpenMonth(plan);
-    if(!next) errors.push('O horizonte do plano já está completamente fechado.');
-    else if(key!==next) errors.push(`Fechamentos são contíguos — o próximo mês aberto é ${next}.`);
-  }
-  if(errors.length) return {ok:false,errors};
-  const raw=fxActivePlanRaw(), now=new Date().toISOString();
-  const prev=(raw.actuals=raw.actuals||{})[key];
-  raw.actuals[key]={...(prev||{}), ...rec,
-    closedAt:(prev&&prev.closedAt)?prev.closedAt:now, updatedAt:now};
-  raw.updatedAt=now;
-  fxAudit(existing?'FX_MONTH_ACTUAL_EDITED':'FX_MONTH_ACTUAL_RECORDED',key,
-    rec.inputType==='usd'?`resultado ${rec.profitUsd} USD`:`taxa ${rec.returnRate}`);
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const plan=fxActivePlan();
+    if(!plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const key=fxMonthKey(month);
+    const rec=fxNormalizeActual(input);
+    const errors=fxValidateActualInput(rec);
+    const existing=key?!!plan.actuals[key]:false;
+    if(!key) errors.push('Mês inválido (use AAAA-MM).');
+    else if(!existing){
+      const next=fxNextOpenMonth(plan);
+      if(!next) errors.push('O horizonte do plano já está completamente fechado.');
+      else if(key!==next) errors.push(`Fechamentos são contíguos — o próximo mês aberto é ${next}.`);
+    }
+    if(errors.length) return {ok:false,errors};
+    const raw=fxActivePlanRaw(), now=new Date().toISOString();
+    const prev=(raw.actuals=raw.actuals||{})[key];
+    raw.actuals[key]={...(prev||{}), ...rec,
+      closedAt:(prev&&prev.closedAt)?prev.closedAt:now, updatedAt:now};
+    raw.updatedAt=now;
+    fxAudit(existing?'FX_MONTH_ACTUAL_EDITED':'FX_MONTH_ACTUAL_RECORDED',key,
+      rec.inputType==='usd'?`resultado ${rec.profitUsd} USD`:`taxa ${rec.returnRate}`);
+    return {ok:true};
+  });
 }
 function fxPlanAddContribution(input){
-  const raw=fxActivePlanRaw();
-  if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const rec=fxNormalizeContribution({...input, id:'', createdAt:new Date().toISOString()});
-  const errors=fxValidateContribution(rec);
-  if(errors.length) return {ok:false,errors};
-  (raw.contributions=raw.contributions||[]).push(rec);
-  raw.updatedAt=new Date().toISOString();
-  fxAudit('FX_CONTRIBUTION_RECORDED',rec.month,
-    `${rec.source==='prop'?'Prop Firm':'Pessoal'} · ${rec.usdAmount} USD${rec.affectsFxCostBasis?` @ R$ ${rec.acquisitionFxRate}`:' (USD nativo — fora do custo médio)'}`);
-  fxSaveState();
-  return {ok:true,contribution:rec};
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();
+    if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const rec=fxNormalizeContribution({...input, id:'', createdAt:new Date().toISOString()});
+    const errors=fxValidateContribution(rec);
+    if(errors.length) return {ok:false,errors};
+    (raw.contributions=raw.contributions||[]).push(rec);
+    raw.updatedAt=new Date().toISOString();
+    fxAudit('FX_CONTRIBUTION_RECORDED',rec.month,
+      `${rec.source==='prop'?'Prop Firm':'Pessoal'} · ${rec.usdAmount} USD${rec.affectsFxCostBasis?` @ R$ ${rec.acquisitionFxRate}`:' (USD nativo — fora do custo médio)'}`);
+    return {ok:true,contribution:rec};
+  });
 }
 function fxPlanRemoveContribution(id){
-  const raw=fxActivePlanRaw();
-  if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const idx=(raw.contributions||[]).findIndex(c=>c&&c.id===id);
-  if(idx<0) return {ok:false,errors:['Aporte não encontrado.']};
-  const [gone]=raw.contributions.splice(idx,1);
-  raw.updatedAt=new Date().toISOString();
-  fxAudit('FX_CONTRIBUTION_REMOVED',fxMonthKey(gone&&gone.month)||null,
-    `${gone&&gone.source==='prop'?'Prop Firm':'Pessoal'} · ${gone?gone.usdAmount:''} USD`);
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();
+    if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const idx=(raw.contributions||[]).findIndex(c=>c&&c.id===id);
+    if(idx<0) return {ok:false,errors:['Aporte não encontrado.']};
+    const [gone]=raw.contributions.splice(idx,1);
+    raw.updatedAt=new Date().toISOString();
+    fxAudit('FX_CONTRIBUTION_REMOVED',fxMonthKey(gone&&gone.month)||null,
+      `${gone&&gone.source==='prop'?'Prop Firm':'Pessoal'} · ${gone?gone.usdAmount:''} USD`);
+    return {ok:true};
+  });
 }
 
 // ---- Leitura consolidada ----------------------------------------------------
@@ -27106,6 +27421,50 @@ const fxpBadge=(kind)=>kind==='REAL'
   ?'<span class="fxp-badge fxp-badge-real">REAL</span>'
   :(kind==='PROJ'?'<span class="fxp-badge fxp-badge-proj">PREMISSA</span>':'<span class="fxp-badge">'+esc(kind)+'</span>');
 
+// Somente entradas recusadas são retidas durante esta sessão, fora de S e do
+// armazenamento. Reentrada não apaga o rascunho; recarga não promete recuperá-lo.
+// Cada formulário é independente: salvar um aporte não descarta um mês recusado.
+const fxpRejectedDrafts={};
+const FXP_DRAFT_FIELDS={
+  create:['fxpName','fxpStart','fxpHorizon','fxpInitial','fxpDefaultRate','fxpProjFx','fxpRecPersonal','fxpRecProp'],
+  planning:['fxpEditRate','fxpEditProjFx','fxpEditYearOvr','fxpEditMonthOvr','fxpEditRecPersonal','fxpEditRecProp','fxpEditNote'],
+  actual:['fxpActMonth','fxpActType','fxpActValue','fxpActFx','fxpActNotes'],
+  contribution:['fxpCMonth','fxpCSource','fxpCCurrency','fxpCAmount','fxpCRate'],
+  deletion:['fxpDeleteConfirm'],
+  removal:[]
+};
+function fxpRememberDraft(root,group,errorId,res){
+  const fields={};
+  for(const id of FXP_DRAFT_FIELDS[group]){const el=root.querySelector('#'+id);if(el)fields[id]=el.value;}
+  fxpRejectedDrafts[group]={planId:fxActivePlanRaw()?.id||null,fields,errorId,errors:res.errors};
+  root.querySelector('#'+errorId).innerHTML=fxpErrHTML(res.errors);
+}
+function fxpCaptureRejectedDrafts(root){
+  const planId=fxActivePlanRaw()?.id||null;
+  for(const group of Object.keys(fxpRejectedDrafts)){
+    const draft=fxpRejectedDrafts[group];
+    if(draft.planId!==planId){delete fxpRejectedDrafts[group];continue;}
+    for(const id of Object.keys(draft.fields)){const el=root.querySelector('#'+id);if(el)draft.fields[id]=el.value;}
+  }
+}
+function fxpRestoreRejectedDrafts(root){
+  for(const draft of Object.values(fxpRejectedDrafts)){
+    for(const [id,value] of Object.entries(draft.fields)){
+      const el=root.querySelector('#'+id);if(!el)continue;
+      el.value=value;
+      // Mês vem antes dos demais campos: seu prefill roda primeiro. Depois,
+      // as prévias recebem os valores originais, sem fórmulas ou gravações novas.
+      el.dispatchEvent(new Event(el.tagName==='SELECT'?'change':'input',{bubbles:true}));
+    }
+    const err=root.querySelector('#'+draft.errorId);if(err)err.innerHTML=fxpErrHTML(draft.errors);
+  }
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    const notice=document.createElement('div');
+    notice.innerHTML=fxpErrHTML(['Gravação indeterminada. Não repita ações; confira a base salva antes de continuar.']);
+    root.prepend(notice);
+  }
+}
+
 function fxpCurrentMonthKey(){ return new Date().toISOString().slice(0,7); }
 
 // ---- Referência USD/BRL corrente (JPW-FGDEKM) -------------------------------
@@ -27212,7 +27571,8 @@ function fxpBindCreate(root){
     };
     if(assumptions.defaultMonthlyReturn==null){ root.querySelector('#fxpCreateErr').innerHTML=fxpErrHTML(['Informe a rentabilidade planejada em % ao mês.']); return; }
     const res=window.JPWFx.state.fxPlanCreate({name:g('fxpName'),assumptions});
-    if(!res.ok){ root.querySelector('#fxpCreateErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'create','fxpCreateErr',res); return; }
+    delete fxpRejectedDrafts.create;
     renderFxPlanning();
   });
 }
@@ -27523,13 +27883,15 @@ function fxpBindPlanning(root,live){
       projectedFxRate:fxpParseNum(q('fxpEditProjFx').value),
       plannedContributions:planned
     },q('fxpEditNote').value);
-    if(!res.ok){ q('fxpPlanningErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'planning','fxpPlanningErr',res); return; }
+    delete fxpRejectedDrafts.planning;
     renderFxPlanning();
   });
   q('fxpDeleteBtn').addEventListener('click',()=>{
     if(q('fxpDeleteConfirm').value.trim()!=='EXCLUIR'){ q('fxpDeleteErr').innerHTML=fxpErrHTML(['Digite EXCLUIR para confirmar.']); return; }
     const res=window.JPWFx.state.fxPlanDelete();
-    if(!res.ok){ q('fxpDeleteErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'deletion','fxpDeleteErr',res); return; }
+    for(const group of Object.keys(fxpRejectedDrafts))delete fxpRejectedDrafts[group];
     renderFxPlanning();
   });
 }
@@ -27664,7 +28026,8 @@ function fxpBindActuals(root,live){
     const res=window.JPWFx.state.fxPlanRecordActual(monthSel.value,{
       inputType:type, returnRate:type==='rate'?val:null, profitUsd:type==='usd'?val:null,
       valuationFxRate:fxpParseNum(q('fxpActFx').value), notes:q('fxpActNotes').value});
-    if(!res.ok){ q('fxpActErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'actual','fxpActErr',res); return; }
+    delete fxpRejectedDrafts.actual;
     renderFxPlanning();
   });
   const curSel=q('fxpCCurrency');
@@ -27675,12 +28038,15 @@ function fxpBindActuals(root,live){
       month:fxMonthKey(q('fxpCMonth').value), source:q('fxpCSource').value,
       originalCurrency:curSel.value, originalAmount:fxpParseNum(q('fxpCAmount').value)||0,
       acquisitionFxRate:curSel.value==='BRL'?fxpParseNum(q('fxpCRate').value):null});
-    if(!res.ok){ q('fxpCErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'contribution','fxpCErr',res); return; }
+    delete fxpRejectedDrafts.contribution;
     renderFxPlanning();
   });
   root.querySelectorAll('[data-fxp-del]').forEach(b=>b.addEventListener('click',()=>{
     const res=window.JPWFx.state.fxPlanRemoveContribution(b.dataset.fxpDel);
-    if(res.ok) renderFxPlanning();
+    if(!res.ok){ fxpRememberDraft(root,'removal','fxpCErr',res); return; }
+    delete fxpRejectedDrafts.removal;
+    renderFxPlanning();
   }));
 }
 
@@ -27779,10 +28145,11 @@ function fxpActivateOverview(root,live){
 // ---- Render principal -------------------------------------------------------
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
+  fxpCaptureRejectedDrafts(root);
   const live=window.JPWFx.state.fxOverviewLive();
   const card=document.getElementById('fxPlanningCard');
   if(card) card.dataset.fxpState=live?'active':'empty';
-  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); return; }
+  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); fxpRestoreRejectedDrafts(root); return; }
   const body=fxpView==='overview'?fxpOverviewHTML(live)
     :fxpView==='planning'?fxpPlanningHTML(live)
     :fxpView==='actuals'?fxpActualsHTML(live)
@@ -27796,6 +28163,7 @@ function renderFxPlanning(){
     root.querySelectorAll('[data-fxp-hist]').forEach(b=>b.addEventListener('click',()=>{ fxpHistFilter=b.dataset.fxpHist; renderFxPlanning(); }));
   if(fxpView==='planning') fxpBindPlanning(root,live);
   if(fxpView==='actuals') fxpBindActuals(root,live);
+  fxpRestoreRejectedDrafts(root);
 }
 // Superfície estritamente visual para o submenu hierárquico do shell. As
 // chaves são os quatro modos já existentes; não persiste estado, não chama o
@@ -28202,7 +28570,10 @@ function renderNocodaStudies() {
       <div id="ncFormErr"></div>
       <div class="nc-actions">
         <button class="reset-btn" id="ncSaveBtn">Salvar parâmetros</button>
-        <span class="fx-status" id="ncStatus">${saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
+        <span class="fx-status" id="ncStatus">${jpWealthPersistenceOutcomeIsUnknown()
+          ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
+          : ncDirty ? 'alterações não salvas — rascunho nesta sessão'
+          : saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
       </div>
     </div>`;
 
@@ -28287,6 +28658,21 @@ function ncSaveStudy() {
   const validation = geometry.validate(ncDraft);
   ncShowErrors(validation.errors || []);
   const status = document.getElementById('ncStatus');
+  function failed(unknown) {
+    hideStaleSavedTag();
+    if (unknown) {
+      const banner = document.getElementById('persistenceAlert');
+      if (banner && banner.classList.contains('is-recovered')) { banner.className = 'persistence-alert'; banner.innerHTML = ''; layoutPersistenceBanners(); }
+    }
+    if (status) {
+      status.className = 'fx-status err';
+      status.textContent = unknown
+        ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
+        : 'não salvo — rascunho mantido nesta sessão; resolva a falha antes de tentar novamente';
+    }
+    return false;
+  }
+  if (jpWealthPersistenceOutcomeIsUnknown()) return failed(true);
   if (!validation.ok) {
     if (status) { status.className = 'fx-status err'; status.textContent = 'não salvo — corrija os campos indicados'; }
     return;
@@ -28294,6 +28680,9 @@ function ncSaveStudy() {
 
   // Persiste somente as CAUSAS, já normalizadas. Nenhum derivado é gravado:
   // range, subdivisão e níveis são recalculados a partir das âncoras.
+  let before;
+  try { before = structuredClone(S.nocoda); }
+  catch (e) { return failed(false); }
   const values = validation.values;
   if (!S.nocoda || typeof S.nocoda !== 'object') S.nocoda = structuredClone(DEFAULTS.nocoda);
   if (!S.nocoda.studies || typeof S.nocoda.studies !== 'object') S.nocoda.studies = {};
@@ -28304,12 +28693,26 @@ function ncSaveStudy() {
     anchor3: { datetime: ncDraft.anchor3.datetime, price: values.p3 },
     updatedAt: new Date().toISOString()
   });
-  save();
+  let persisted;
+  try { persisted = save(); }
+  catch (e) {
+    markJPWealthPersistenceOutcomeUnknown('estudo NoCoda');
+    return failed(true);
+  }
+  if (persisted === false) {
+    S.nocoda = before;
+    return failed(false);
+  }
+  if (persisted !== true) {
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do estudo NoCoda');
+    return failed(true);
+  }
 
   ncDraft = ncDraftFrom(ncSelectedId);
   ncDirty = false;
   if (status) { status.className = 'fx-status ok'; status.textContent = 'parâmetros salvos'; }
   ncUpdateDerived();
+  return true;
 }
 
 // Superfície pública consumida pelo controlador de views do Execution Board.
@@ -28792,6 +29195,39 @@ function pvStudies() {
   return (S.pivotStudies && Array.isArray(S.pivotStudies.studies)) ? S.pivotStudies.studies : [];
 }
 function pvStudyById(id) { return pvStudies().find(st => st.id === id) || null; }
+// A confirmação pertence às quatro mutações deste agregado. Uma recusa
+// comprovada restaura apenas estudos; uma exceção de save não prova não escrita.
+function pvMutateStudies(change) {
+  function failed(unknown) {
+    hideStaleSavedTag();
+    if (unknown) {
+      const banner = document.getElementById('persistenceAlert');
+      if (banner && banner.classList.contains('is-recovered')) { banner.className = 'persistence-alert'; banner.innerHTML = ''; layoutPersistenceBanners(); }
+    }
+    alert(unknown
+      ? 'Gravação não confirmada. Não repita a ação; confira a base salva antes de continuar.'
+      : 'Não foi possível salvar. A alteração foi recusada; os campos abertos permanecem nesta sessão. Resolva a falha antes de tentar novamente.');
+    return false;
+  }
+  if (jpWealthPersistenceOutcomeIsUnknown()) return failed(true);
+  let before;
+  try { before = structuredClone(S.pivotStudies); }
+  catch (e) { return failed(false); }
+  try { change(); }
+  catch (e) { S.pivotStudies = before; return failed(false); }
+  let persisted;
+  try { persisted = save(); }
+  catch (e) {
+    markJPWealthPersistenceOutcomeUnknown('estudos dos Pivots');
+    return failed(true);
+  }
+  if (persisted === false) { S.pivotStudies = before; return failed(false); }
+  if (persisted !== true) {
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado dos estudos dos Pivots');
+    return failed(true);
+  }
+  return true;
+}
 function pvStudiesFor(instrumentId) {
   return pvStudies().filter(st => st.instrumentId === instrumentId);
 }
@@ -29293,16 +29729,18 @@ function pvCreateStudy() {
   // pivot podiam estar abertos ao mesmo tempo e o rascunho completo do operador
   // era apagado sem uma palavra. O confirm vem ANTES de criar: cancelar deixa
   // tudo como estava, e o operador pode salvar o pivot primeiro.
-  if (!pvConfirmDiscard()) return;
+  // Confirmar descarte não destrói o formulário antes de conhecer a gravação.
+  if (pvDirty && !confirm('Há um pivot em edição com alterações não salvas. Continuar descarta essas alterações.')) return;
   const now = new Date().toISOString();
   const study = {
     id: pivotStudyId(), instrumentId: pvInstrumentId,
     periodStart, periodEnd, createdAt: now, updatedAt: now, pivots: []
   };
-  if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
-  if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
-  S.pivotStudies.studies.push(study);
-  save();
+  if (!pvMutateStudies(() => {
+    if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
+    if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
+    S.pivotStudies.studies.push(study);
+  })) return false;
 
   pvStudyId = study.id;
   pvNewStudyOpen = false;
@@ -29316,8 +29754,7 @@ function pvDeleteStudy() {
   if (!study) return;
   const count = study.pivots.length;
   if (!confirm(`Excluir o estudo ${pvFmtDate(study.periodStart)} → ${pvFmtDate(study.periodEnd)} de ${study.instrumentId}?\n\n${count} pivot(s) registrado(s) serão apagados junto. A ação é irreversível.`)) return;
-  S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id);
-  save();
+  if (!pvMutateStudies(() => { S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id); })) return false;
   pvStudyId = null;
   pvCloseForm();
   renderPivotStudies();
@@ -29372,12 +29809,16 @@ function pvSavePivot() {
     }
     // Editar ATUALIZA o registro; nunca cria um segundo. Campos desconhecidos
     // que tenham vindo de backup atravessam intactos.
-    Object.assign(pivot, values, { updatedAt: now });
+    if (!pvMutateStudies(() => {
+      Object.assign(pivot, values, { updatedAt: now });
+      pvTouchStudy(study);
+    })) return false;
   } else {
-    study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+    if (!pvMutateStudies(() => {
+      study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+      pvTouchStudy(study);
+    })) return false;
   }
-  pvTouchStudy(study);
-  save();
   pvCloseForm();
   renderPivotStudies();
 }
@@ -29388,9 +29829,10 @@ function pvDeletePivot(pivotId) {
   const pivot = study.pivots.find(p => p.id === pivotId);
   if (!pivot) return;
   if (!confirm(`Excluir este pivot ${pivot.timeframe} (${pvFmtDatetime(pivot.startDatetime)} → ${pvFmtDatetime(pivot.endDatetime)})?\n\nA ação é irreversível.`)) return;
-  study.pivots = study.pivots.filter(p => p.id !== pivotId);
-  pvTouchStudy(study);
-  save();
+  if (!pvMutateStudies(() => {
+    study.pivots = study.pivots.filter(p => p.id !== pivotId);
+    pvTouchStudy(study);
+  })) return false;
   if (pvEditingId === pivotId) pvCloseForm();
   renderPivotStudies();
 }
@@ -32439,40 +32881,76 @@ function fbOpenRecurrenceModal(key, incomeId){
   const regra = rec.ruleId ? (S.personalFinance.recurringIncome||[]).find(r=>r.id===rec.ruleId) : null;
   const ativa = !!(regra && regra.active!==false);
   const valorIni = regra ? regra.amount : (rec.projectedAmount!==null ? rec.projectedAmount : null);
-  const box=$('modalBox'); $('modalOverlay').classList.add('show');
+  const box=$('modalBox'), overlay=$('modalOverlay'), origem=document.activeElement;
+  overlay.classList.add('show');
   box.innerHTML = `
-    <h3>⚙ Recorrência — ${esc(rec.name)}</h3>
+    <div role="dialog" aria-modal="true" aria-labelledby="fbRecTitle">
+    <h3 id="fbRecTitle">⚙ Recorrência — ${esc(rec.name)}</h3>
     <div class="modal-q" data-qid="rec">
       <div class="ql"><label><input type="checkbox" id="fbRecOn" ${ativa?'checked':''}> Receita recorrente (gera projeção nos meses futuros)</label></div>
     </div>
     <div class="modal-q" data-qid="valor">
-      <div class="ql">Valor mensal da regra (R$)</div>
+      <div class="ql"><label for="fbRecAmount">Valor mensal da regra (R$)</label></div>
       <input type="text" id="fbRecAmount" inputmode="decimal" value="${valorIni===null?'':esc((valorIni/100).toFixed(2).replace('.',','))}">
-      <div class="modal-err">Informe o valor da regra — ≥ 0, ponto ou vírgula decimal. Em branco não é zero.</div>
+      <div class="modal-err" id="fbRecAmountError" role="alert">Informe o valor da regra — ≥ 0, ponto ou vírgula decimal. Em branco não é zero.</div>
     </div>
     <div class="modal-q" data-qid="inicio">
-      <div class="ql">Início (YYYY-MM)</div>
+      <div class="ql"><label for="fbRecStart">Início (YYYY-MM)</label></div>
       <input type="month" id="fbRecStart" value="${esc(regra?regra.startMonth:key)}">
-      <div class="modal-err">Início inválido.</div>
+      <div class="modal-err" id="fbRecStartError" role="alert">Início inválido.</div>
     </div>
     <div class="modal-q" data-qid="fim">
-      <div class="ql">Fim (opcional)</div>
+      <div class="ql"><label for="fbRecEnd">Fim (opcional)</label></div>
       <input type="month" id="fbRecEnd" value="${esc(regra&&regra.endMonth?regra.endMonth:'')}">
-      <div class="modal-err">Fim deve ser vazio ou ≥ início.</div>
+      <div class="modal-err" id="fbRecEndError" role="alert">Fim deve ser vazio ou ≥ início.</div>
     </div>
     <p class="risk-note">Regra vigente alcança apenas meses ainda não registrados. Meses já registrados nunca são reescritos; desligar a regra não apaga receitas históricas.</p>
     <div class="modal-actions">
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
-    </div>`;
-  box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
-  $('modalCancel').addEventListener('click', closeModal);   // cancelar = zero mutação
+    </div></div>`;
+  // O modal global também atende questionários financeiros. O ciclo abaixo é
+  // exclusivo desta instância e se desfaz mesmo quando outro fluxo a fecha.
+  const dialog=box.firstElementChild, eventos=new AbortController();
+  const observar=new MutationObserver(()=>{
+    if(!dialog.isConnected || !overlay.classList.contains('show')) limpar();
+  });
+  function limpar(){ eventos.abort(); observar.disconnect(); }
+  function fechar(render=false){
+    limpar(); closeModal();
+    if(render) finpesBudgetRender();
+    const alvo=document.querySelector('[data-fi-cfg="'+CSS.escape(incomeId)+'"]')||origem;
+    if(alvo && alvo.isConnected && !alvo.closest('[hidden],[inert]') && alvo.getClientRects().length) alvo.focus();
+  }
+  function focaveis(){ return [...dialog.querySelectorAll('input:not([disabled]),button:not([disabled])')]; }
+  overlay.addEventListener('click',e=>{
+    if(e.target===overlay){ e.stopImmediatePropagation(); fechar(); }
+  },{capture:true,signal:eventos.signal});
+  dialog.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); fechar(); return; }
+    if(e.key!=='Tab') return;
+    const itens=focaveis(), primeiro=itens[0], ultimo=itens[itens.length-1];
+    if(e.shiftKey && document.activeElement===primeiro){ e.preventDefault(); ultimo.focus(); }
+    else if(!e.shiftKey && document.activeElement===ultimo){ e.preventDefault(); primeiro.focus(); }
+  },{signal:eventos.signal});
+  document.addEventListener('focusin',e=>{
+    if(dialog.isConnected && overlay.classList.contains('show') && !dialog.contains(e.target)) focaveis()[0].focus();
+  },{signal:eventos.signal});
+  observar.observe(box,{childList:true});
+  observar.observe(overlay,{attributes:true,attributeFilter:['class']});
+  $('fbRecOn').focus();
+  $('modalCancel').addEventListener('click', ()=>fechar()); // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
     const ligar = $('fbRecOn').checked;
     let cfg = { recorrente: ligar };
-    let falhou = false;
-    const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou = true; };
+    let primeiroErro = null;
+    const marcar = qid => {
+      const grupo=box.querySelector(`[data-qid="${qid}"]`), campo=grupo.querySelector('input'), erro=grupo.querySelector('.modal-err');
+      erro.classList.add('show'); campo.setAttribute('aria-invalid','true'); campo.setAttribute('aria-describedby',erro.id);
+      if(!primeiroErro) primeiroErro=campo;
+    };
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
+    box.querySelectorAll('[aria-invalid]').forEach(e=>{ e.removeAttribute('aria-invalid'); e.removeAttribute('aria-describedby'); });
     if(ligar){
       const c = parseBRLCents($('fbRecAmount').value);
       if(c===null || Number.isNaN(c) || c<0) marcar('valor');
@@ -32482,11 +32960,10 @@ function fbOpenRecurrenceModal(key, incomeId){
       if(fim!==null && (!pfMonthKeyValid(fim) || fim<ini)) marcar('fim');
       cfg = { recorrente:true, amount:c, startMonth:ini, endMonth:fim };
     }
-    if(falhou) return;                                      // nada aplicado
+    if(primeiroErro){ primeiroErro.focus(); return; }        // nada aplicado
     const r = pfActConfigureRecurrence(key, incomeId, cfg);
     if(r.ok===false && r.erro){ alert('⛔ '+r.erro); return; }
-    closeModal();
-    finpesBudgetRender();
+    fechar(true);
   });
 }
 
@@ -33569,6 +34046,16 @@ const ALD_STARTER_ASSET_CLASSES = ['RENDA_VARIAVEL','IMOBILIARIO_FINANCEIRO','RE
 
 const ALD_CURRENCY_RE = /^[A-Z]{3}$/; // forma ISO 4217 — schema aberto (o runtime é que é limitado)
 const ALD_DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
+// Fatos exigem um dia existente, sem normalizar a entrada nem limitar
+// retroatividade/futuro. Histórico inválido fica ilegível, sem reescrever dados.
+function aldCivilDateValida(value){
+  if(typeof value!=='string' || !ALD_DATE_RE.test(value)) return false;
+  const year=Number(value.slice(0,4)), month=Number(value.slice(5,7)), day=Number(value.slice(8,10));
+  if(month<1 || month>12 || day<1) return false;
+  const leap=year%4===0 && (year%100!==0 || year%400===0);
+  const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+  return day<=days[month-1];
+}
 
 const ALD_COLECOES = {
   instrument:  { colecao:'instruments',  campoId:'instrumentId'  },
@@ -34045,7 +34532,7 @@ function aldTxLegivel(tx){
   if(!aldInEnum(tx.status, ALD_TX_STATUS)) return false;
   if(typeof tx.amount!=='number' || !Number.isSafeInteger(tx.amount) || tx.amount<=0) return false;
   if(typeof tx.currency!=='string' || !ALD_CURRENCY_RE.test(tx.currency)) return false;
-  if(typeof tx.effectiveAt!=='string' || !ALD_DATE_RE.test(tx.effectiveAt)) return false;
+  if(!aldCivilDateValida(tx.effectiveAt)) return false;
   if(typeof tx.transactionId!=='string' || !tx.transactionId) return false;
   if(tx.eventType==='REVERSAL'){
     if(typeof tx.reversalOf!=='string' || !tx.reversalOf) return false;
@@ -34210,7 +34697,7 @@ function aldNormalizeTransactionFields(a, d){
      Object.prototype.hasOwnProperty.call(d,'flowScope'))
     return { ok:false, erro:'ALD_FLOW_SCOPE_NAO_PERMITIDO_EM_TRADE' };
   if(typeof d.amount!=='number' || !Number.isSafeInteger(d.amount) || d.amount<=0) return { ok:false, erro:'ALD_AMOUNT_INVALIDO' };
-  if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+  if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
   const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
   let dedupe = null;
   if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
@@ -34313,7 +34800,7 @@ function aldActReverseTransaction(originalId, dados){
     }
     if(orig.status!=='POSTED') return { ok:false, erro:'ALD_TRANSACAO_NAO_ESTA_POSTED' };
     const d = dados || {};
-    if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+    if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
     const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
     // `reason` da reversao e PROPRIO — como effectiveAt e note. Reverter um
     // ajuste e outro ato sem contraparte, e o motivo dele nao e o motivo do
@@ -34592,27 +35079,25 @@ function aldDecRender(a){
 // Direção da perna de papel por evento. Eventos só-caixa não estão na tabela.
 const ALD_PAPEL_DELTA = { BUY: 1, SELL: -1 };
 
-function aldPosicoes(){
-  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+// Qualidade compartilhada de ledger/posições, sem derivar quantidade ou saldo.
+// onTrade é interno: o Position Engine recebe apenas pernas já classificadas.
+// Mantém a fronteira E12b: moeda/custódia de trade, não saldo de evento só-caixa.
+function aldLedgerReadIssues(a, onTrade){
   const issues = [];
-  const bloqueado = (iss) => Object.freeze({ available:false, quality:'BLOCKING',
-    issues:Object.freeze(iss.slice(0,20)), positions:Object.freeze([]) });
   // FUTURE SCHEMA primeiro, mesmo que todos os registros presentes sejam de
   // tipos conhecidos: um agregado de versão futura pode carregar semântica que
   // este build ignora, e afirmar posição sobre ele seria afirmar o que não se
   // pode provar.
-  if(aldCompat().readOnly) return bloqueado([ALD_READ_ONLY_FUTURE_SCHEMA]);
+  if(aldCompat().readOnly) return [ALD_READ_ONLY_FUTURE_SCHEMA];
   // Integridade estrutural (unicidade de TODO id canônico, container do ledger,
   // dedupeKey, cardinalidade e pareamento de reversal) ANTES de agregar — mesma
   // guarda do saldo e do write gate. Identidade ambígua ⇒ posição atribuída a
   // referência arbitrária, jamais um número.
   const estrutural = aldIntegridadeEstrutural(a);
-  if(estrutural.length) return bloqueado(estrutural);
+  if(estrutural.length) return estrutural;
   const lista = (a && Array.isArray(a.transactions)) ? a.transactions : [];
   const porId = {};
   for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
-  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
-  const porInstrumento = new Map();
   // A custódia do trade: cashAccountId → CashAccount → accountId → Account.
   // Cadastro ausente ou moeda divergente entre trade/caixa/instrumento é
   // classificação insegura ⇒ fail-closed GLOBAL, nunca posição parcial.
@@ -34646,6 +35131,27 @@ function aldPosicoes(){
     }
     const accountId = custodiaDoTrade(alvo);
     if(accountId===null) continue;         // issue registrada — bloqueio no fim
+    if(onTrade) onTrade(alvo, sinal, accountId);
+  }
+  return issues;
+}
+
+// API aditiva: transactions() continua sendo a lista bruta legada. O envelope
+// nunca apresenta coleção parcial como íntegra e não calcula posições/saldos.
+function aldLedgerLeitura(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  const issues = aldLedgerReadIssues(a);
+  if(issues.length) return Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(issues.slice(0,20)), transactions:Object.freeze([]) });
+  return Object.freeze({ available:true, quality:'OK', issues:Object.freeze([]),
+    transactions:Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))) });
+}
+
+function aldPosicoes(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
+  const porInstrumento = new Map();
+  const issues = aldLedgerReadIssues(a, (alvo, sinal, accountId) => {
     let porConta = porInstrumento.get(alvo.instrumentId);
     if(!porConta){ porConta = new Map(); porInstrumento.set(alvo.instrumentId, porConta); }
     let pos = porConta.get(accountId);
@@ -34653,8 +35159,9 @@ function aldPosicoes(){
     const q = aldDecParse(alvo.quantity);
     pos.acc = aldDecSoma(pos.acc, sinal < 0 ? aldDecNeg(q) : q);
     pos.consideradas++;
-  }
-  if(issues.length) return bloqueado(issues);
+  });
+  if(issues.length) return Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(issues.slice(0,20)), positions:Object.freeze([]) });
   // Ordem DETERMINÍSTICA — instrumentId ASC, depois accountId ASC. A ordem
   // física do array é acidente de inserção e não pode vazar para o resultado.
   const positions = [];
@@ -34682,6 +35189,8 @@ function aldPosicoes(){
       // Ledger em ordem ECONÔMICA — (effectiveAt, recordedAt, transactionId) —
       // nunca a ordem do array, que é acidente de inserção e não fato temporal.
       transactions: function(){ return Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))); },
+      // Ledger completo com qualidade explícita; a API bruta acima é compatível.
+      ledger: aldLedgerLeitura,
       saldoDeCaixa: aldSaldoDeCaixa,
       // ALD-04 S1 — posição por quantidade, derivada e fail-closed (DH-04-5:
       // única API nova do slice; posicaoDe() não existe neste ciclo).
@@ -34937,28 +35446,6 @@ function alladinIndisponivel(titulo, issues){
     : '<p>Nenhum diagnóstico específico foi devolvido pelo domínio.</p>';
   return '<div class="session-warning" role="status"><strong>'+esc(titulo)+'</strong>'+lista+'</div>';
 }
-// Sentinela de integridade para os Lançamentos (MD-2/A).
-// `leitura.transactions()` NÃO tem envelope de qualidade: ele filtra registros
-// ilegíveis EM SILÊNCIO e não checa integridade estrutural nem schema futuro.
-// Projetar essa lista direto exibiria um ledger silenciosamente filtrado como
-// se fosse normal — exatamente o que o invariante proíbe. Enquanto o envelope
-// próprio não existe (dívida registrada, slice futura), a confiabilidade vem de
-// `posicoes()`, que é global e fail-closed pelos MESMOS motivos (integridade
-// estrutural, registro ilegível, cadastro órfão, moeda divergente, schema
-// futuro), somada a `compat()`.
-//
-// Isto é guarda de APRESENTAÇÃO, não regra econômica: a UI não interpreta o
-// veredito, apenas se recusa a desenhar quando o domínio não garante o dado.
-// Conservador de propósito — bloquear a mais é seguro, a menos não é.
-function alladinSentinelaLedger(){
-  const compat=JPWAlladin.compat();
-  if(compat && compat.readOnly){
-    return { ok:false, issues:[compat.reason||'READ_ONLY_FUTURE_SCHEMA'] };
-  }
-  const pos=JPWAlladin.leitura.posicoes();
-  if(!pos.available) return { ok:false, issues:(pos.issues||[]).slice() };
-  return { ok:true, issues:[] };
-}
 // Rótulos cadastrais resolvidos DENTRO dos snapshots de leitura — nunca no
 // agregado vivo, como já faz o painel de Caixa.
 function alladinCatalogoLabels(){
@@ -35045,8 +35532,8 @@ function alladinDataCelula(tx){
 }
 function alladinRenderLedger(el){
   const cab='<h2>Lançamentos</h2>';
-  const sentinela=alladinSentinelaLedger();
-  if(!sentinela.ok){
+  const ledger=JPWAlladin.leitura.ledger();
+  if(!ledger.available){
     // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty — e
     // NENHUM convite à escrita (ALD-05 S2): o CTA não é renderizado. Escrever
     // sobre agregado que a leitura recusa só produziria a recusa estrutural do
@@ -35054,11 +35541,11 @@ function alladinRenderLedger(el){
     // se o estado mudar entre render e submit, é o domínio que decide.
     el.innerHTML=cab+alladinIndisponivel(
       'Lançamentos indisponíveis — o agregado não passou na verificação de integridade.',
-      sentinela.issues);
+      ledger.issues);
     return;
   }
   const cta=alladinTxBotaoNovo();
-  const lista=JPWAlladin.leitura.transactions();
+  const lista=ledger.transactions;
   if(!lista.length){ el.innerHTML=cab+cta+alladinVazio('ledger'); return; }
   const cat=alladinCatalogoLabels();
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
@@ -36040,7 +36527,9 @@ function alladinTxReverseAbrir(originalId){
   // Write gate na ABERTURA — e de novo no dominio, no submit.
   const bloqueio=alladinWriteBloqueado();
   if(bloqueio){ showSessionNotice('Escrita indisponível: '+bloqueio); return; }
-  const tx=JPWAlladin.leitura.transactions().find(t=>t.transactionId===originalId);
+  const ledger=JPWAlladin.leitura.ledger();
+  if(!ledger.available){ showSessionNotice('Lançamentos indisponíveis: '+ledger.issues.join(' · ')); return; }
+  const tx=ledger.transactions.find(t=>t.transactionId===originalId);
   if(!tx){ showSessionNotice('O lançamento não foi encontrado.'); return; }
   const cat=alladinCatalogoLabels();
   alladinForm.estado='EDITING'; alladinForm.tipo='transaction-reverse'; alladinForm.modo='create';
@@ -36418,9 +36907,11 @@ function dmResearchHTML(){
       : dmAux('nenhum evento de alto impacto'));
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
     if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
-    if(typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
-      corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   }
+  const cacheIssue = typeof ffNewsCacheIssue === 'function' ? ffNewsCacheIssue() : '';
+  if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
+  else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
+    corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
     +dmLink('REITs','research-reits')+dmLink('Others','research-others')
@@ -36474,10 +36965,13 @@ function dmAlladinHTML(){
   }).join('');
   corpo += dmSection('Saldos por conta', balances || dmNote('Cadastre uma conta de caixa para acompanhar os saldos.'));
   if(cash.length>3) corpo+=dmNote('Exibindo 3 de '+cash.length+' contas. Todos os saldos estão no módulo.');
-  const txs=L.transactions();
+  const ledger=L.ledger();
+  const txs=ledger.transactions;
   const last=txs.length?txs[txs.length-1]:null;
   // Mesma ordem econômica do leitor; correção por estorno permanece visível.
-  corpo += dmSection('Último lançamento', last
+  corpo += dmSection('Último lançamento', !ledger.available
+    ? '<span class="dm-partial">Lançamentos indisponíveis</span>'
+    : last
     ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
       +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
     : dmNote('Nenhum lançamento registrado.'));

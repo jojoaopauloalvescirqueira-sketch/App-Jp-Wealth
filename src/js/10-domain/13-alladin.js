@@ -250,6 +250,16 @@ const ALD_STARTER_ASSET_CLASSES = ['RENDA_VARIAVEL','IMOBILIARIO_FINANCEIRO','RE
 
 const ALD_CURRENCY_RE = /^[A-Z]{3}$/; // forma ISO 4217 — schema aberto (o runtime é que é limitado)
 const ALD_DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
+// Fatos exigem um dia existente, sem normalizar a entrada nem limitar
+// retroatividade/futuro. Histórico inválido fica ilegível, sem reescrever dados.
+function aldCivilDateValida(value){
+  if(typeof value!=='string' || !ALD_DATE_RE.test(value)) return false;
+  const year=Number(value.slice(0,4)), month=Number(value.slice(5,7)), day=Number(value.slice(8,10));
+  if(month<1 || month>12 || day<1) return false;
+  const leap=year%4===0 && (year%100!==0 || year%400===0);
+  const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+  return day<=days[month-1];
+}
 
 const ALD_COLECOES = {
   instrument:  { colecao:'instruments',  campoId:'instrumentId'  },
@@ -726,7 +736,7 @@ function aldTxLegivel(tx){
   if(!aldInEnum(tx.status, ALD_TX_STATUS)) return false;
   if(typeof tx.amount!=='number' || !Number.isSafeInteger(tx.amount) || tx.amount<=0) return false;
   if(typeof tx.currency!=='string' || !ALD_CURRENCY_RE.test(tx.currency)) return false;
-  if(typeof tx.effectiveAt!=='string' || !ALD_DATE_RE.test(tx.effectiveAt)) return false;
+  if(!aldCivilDateValida(tx.effectiveAt)) return false;
   if(typeof tx.transactionId!=='string' || !tx.transactionId) return false;
   if(tx.eventType==='REVERSAL'){
     if(typeof tx.reversalOf!=='string' || !tx.reversalOf) return false;
@@ -891,7 +901,7 @@ function aldNormalizeTransactionFields(a, d){
      Object.prototype.hasOwnProperty.call(d,'flowScope'))
     return { ok:false, erro:'ALD_FLOW_SCOPE_NAO_PERMITIDO_EM_TRADE' };
   if(typeof d.amount!=='number' || !Number.isSafeInteger(d.amount) || d.amount<=0) return { ok:false, erro:'ALD_AMOUNT_INVALIDO' };
-  if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+  if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
   const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
   let dedupe = null;
   if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
@@ -994,7 +1004,7 @@ function aldActReverseTransaction(originalId, dados){
     }
     if(orig.status!=='POSTED') return { ok:false, erro:'ALD_TRANSACAO_NAO_ESTA_POSTED' };
     const d = dados || {};
-    if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+    if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
     const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
     // `reason` da reversao e PROPRIO — como effectiveAt e note. Reverter um
     // ajuste e outro ato sem contraparte, e o motivo dele nao e o motivo do
@@ -1273,27 +1283,25 @@ function aldDecRender(a){
 // Direção da perna de papel por evento. Eventos só-caixa não estão na tabela.
 const ALD_PAPEL_DELTA = { BUY: 1, SELL: -1 };
 
-function aldPosicoes(){
-  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+// Qualidade compartilhada de ledger/posições, sem derivar quantidade ou saldo.
+// onTrade é interno: o Position Engine recebe apenas pernas já classificadas.
+// Mantém a fronteira E12b: moeda/custódia de trade, não saldo de evento só-caixa.
+function aldLedgerReadIssues(a, onTrade){
   const issues = [];
-  const bloqueado = (iss) => Object.freeze({ available:false, quality:'BLOCKING',
-    issues:Object.freeze(iss.slice(0,20)), positions:Object.freeze([]) });
   // FUTURE SCHEMA primeiro, mesmo que todos os registros presentes sejam de
   // tipos conhecidos: um agregado de versão futura pode carregar semântica que
   // este build ignora, e afirmar posição sobre ele seria afirmar o que não se
   // pode provar.
-  if(aldCompat().readOnly) return bloqueado([ALD_READ_ONLY_FUTURE_SCHEMA]);
+  if(aldCompat().readOnly) return [ALD_READ_ONLY_FUTURE_SCHEMA];
   // Integridade estrutural (unicidade de TODO id canônico, container do ledger,
   // dedupeKey, cardinalidade e pareamento de reversal) ANTES de agregar — mesma
   // guarda do saldo e do write gate. Identidade ambígua ⇒ posição atribuída a
   // referência arbitrária, jamais um número.
   const estrutural = aldIntegridadeEstrutural(a);
-  if(estrutural.length) return bloqueado(estrutural);
+  if(estrutural.length) return estrutural;
   const lista = (a && Array.isArray(a.transactions)) ? a.transactions : [];
   const porId = {};
   for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
-  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
-  const porInstrumento = new Map();
   // A custódia do trade: cashAccountId → CashAccount → accountId → Account.
   // Cadastro ausente ou moeda divergente entre trade/caixa/instrumento é
   // classificação insegura ⇒ fail-closed GLOBAL, nunca posição parcial.
@@ -1327,6 +1335,27 @@ function aldPosicoes(){
     }
     const accountId = custodiaDoTrade(alvo);
     if(accountId===null) continue;         // issue registrada — bloqueio no fim
+    if(onTrade) onTrade(alvo, sinal, accountId);
+  }
+  return issues;
+}
+
+// API aditiva: transactions() continua sendo a lista bruta legada. O envelope
+// nunca apresenta coleção parcial como íntegra e não calcula posições/saldos.
+function aldLedgerLeitura(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  const issues = aldLedgerReadIssues(a);
+  if(issues.length) return Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(issues.slice(0,20)), transactions:Object.freeze([]) });
+  return Object.freeze({ available:true, quality:'OK', issues:Object.freeze([]),
+    transactions:Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))) });
+}
+
+function aldPosicoes(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
+  const porInstrumento = new Map();
+  const issues = aldLedgerReadIssues(a, (alvo, sinal, accountId) => {
     let porConta = porInstrumento.get(alvo.instrumentId);
     if(!porConta){ porConta = new Map(); porInstrumento.set(alvo.instrumentId, porConta); }
     let pos = porConta.get(accountId);
@@ -1334,8 +1363,9 @@ function aldPosicoes(){
     const q = aldDecParse(alvo.quantity);
     pos.acc = aldDecSoma(pos.acc, sinal < 0 ? aldDecNeg(q) : q);
     pos.consideradas++;
-  }
-  if(issues.length) return bloqueado(issues);
+  });
+  if(issues.length) return Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(issues.slice(0,20)), positions:Object.freeze([]) });
   // Ordem DETERMINÍSTICA — instrumentId ASC, depois accountId ASC. A ordem
   // física do array é acidente de inserção e não pode vazar para o resultado.
   const positions = [];
@@ -1363,6 +1393,8 @@ function aldPosicoes(){
       // Ledger em ordem ECONÔMICA — (effectiveAt, recordedAt, transactionId) —
       // nunca a ordem do array, que é acidente de inserção e não fato temporal.
       transactions: function(){ return Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))); },
+      // Ledger completo com qualidade explícita; a API bruta acima é compatível.
+      ledger: aldLedgerLeitura,
       saldoDeCaixa: aldSaldoDeCaixa,
       // ALD-04 S1 — posição por quantidade, derivada e fail-closed (DH-04-5:
       // única API nova do slice; posicaoDe() não existe neste ciclo).

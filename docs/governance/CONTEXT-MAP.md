@@ -1,6 +1,8 @@
 # Mapa de contexto para agentes
 
-Revisão material: `484228189cc3f5f4c297f29f88f2b2ed541a3afd`, em 2026-09-09.
+Revisão focal em 2026-09-11: base Git `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe` mais delta
+local da estabilização. Identidade e limites em `CURRENT-STATE.md`; fotografia de
+2026-09-09 preservada no histórico Git/V2, não prova de estado atual.
 Este mapa seleciona fontes; a política comum de autoridade, compreensão,
 programação e segurança permanece em `AGENTS.md`. Suas rotas não concedem
 permissão de escrita, execução ou publicação.
@@ -141,7 +143,7 @@ ou agente executável. Restrições obrigatórias são lidas diretamente em
 | Fonte/representação | Revisão ou proveniência | Estado e uso permitido nesta reconciliação |
 |---|---|---|
 | Código, manifest e contratos originais | Baseline `484228189cc3f5f4c297f29f88f2b2ed541a3afd`; `src/js/manifest.json` define ordem/hashes | Cotejados para os fatos delimitados neste mapa. Revalidar os arquivos pertinentes antes de usar em outra revisão; isto não é auditoria geral nem PASS de teste. |
-| `graphify-out/GRAPH_REPORT.md`, `graphify-out/manifest.json`, `graphify-out/graph.json` | Relatório de 2026-08-17 declara origem `a3052d23`; representação anterior às alterações de navegação, módulos e adoção V11 | **STALE**. Pode indicar caminhos históricos a conferir diretamente; não prova estado atual. Nenhuma reindexação ou consulta Graphify que grave cache/estatísticas está autorizada por este CHG. |
+| `graphify-out/GRAPH_REPORT.md`, `graphify-out/manifest.json`, `graphify-out/graph.json` | Relatório de 2026-08-17 declara origem `a3052d23`; representação anterior às alterações de navegação, módulos e adoção V11 | **STALE e ausente nesta worktree**. Referência histórica; pode indicar caminhos a conferir diretamente; não prova estado atual. Nenhuma reindexação ou consulta Graphify que grave cache/estatísticas está autorizada por este CHG. |
 | Auditorias, commits e trechos marcados como superados | Revisão/data próprias, preservadas | Histórico válido para seu escopo. Inclua o aviso e a fonte sucessora no recorte; por exemplo, a atualização de 2026-08-31 em `ALLADIN.md` acompanha o parágrafo antigo do C3. Aceite/teste antigo não aprova outro candidate. |
 
 Comece pelo contrato ativo e pela cláusula funcional afetada; busque símbolos e
@@ -198,3 +200,25 @@ ajuda a localizar funcionalidades/consumidores; X2 mantém diagnóstico crítico
 X1 acrescenta critérios de design sem redefinir essas responsabilidades.
 Instalação e validação: [contrato X1](../work/X1-DESIGN-INSTALL-20260910.md).
 Este acréscimo não atualiza a revisão material histórica do mapa nem os índices.
+
+## Consulta corrente de estabilização
+
+- Contrato estrutural explícito: `docs/work/CHG-TECHNICAL-DEBT-CONTEXT-20260911.md`;
+  `tools/agent_instruction_structure_test.py --contract` seleciona fonte corrente.
+  O fallback V4 permanece histórico e falho por raiz; não editar história para PASS.
+- Notas/recuperação: `14-mvp-notes.js`, `04-persistence.js`, seção Notas do README e
+  `tools/studies_notes_persistence_contract_test.py`; examinar avisos globais e diálogo.
+- Alladin: `leitura.ledger()` explicita qualidade; `transactions()` é compatibilidade
+  bruta. Não usar lista filtrada como prova de integridade. Ver `ALLADIN.md` e
+  `tools/alladin_ledger_read_model_test.py`.
+- Calendário: produtor `15-ff-news.js`, agenda `17-economic-calendar.js` e resumo
+  Dashboard compartilham resultado de cache; `tools/ff_news_cache_test.py`.
+- Galton: falha na construção exige descarte de recursos parciais e propagação do
+  erro; montagem diferida preserva retorno/epoch. `tools/galton_board_test.py`.
+
+Os nomes sem diretório neste bloco são localizados pelo CODE-MAP/manifest, não
+novas fontes. FULL vigente contém 55 checks, incluindo FAST4 e standard44;
+contagens descritivas antigas em QUALITY-GATES não alteram o script nem substituem
+a evidência executada. Não foi alterada a política ou composição dos gates.
+Uso explícito das skills no caso Calendário não prova descoberta automática,
+compreensão em outras sessões, compatibilidade Claude ou índice atualizado.

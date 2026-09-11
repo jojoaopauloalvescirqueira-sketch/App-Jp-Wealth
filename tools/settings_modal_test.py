@@ -2,7 +2,7 @@
 """Caracterização da Central de Configurações sem alterar dados operacionais."""
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-import os, socket, threading
+import json, os, socket, threading
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
@@ -17,6 +17,19 @@ def serve():
 def assert_no_errors(observed):
     errors=[x for x in observed['console'] if x[0]=='error']
     assert not errors and not observed['pageerror'], {'console':errors,'pageerror':observed['pageerror'],'failed':observed['failed']}
+
+def assert_content_landmark(page,title):
+    # M-02: the application owns the sole main; a dialog's current page is a
+    # named region, labelled by its existing changing heading, not another main.
+    facts=page.evaluate("""()=>({
+      mainIds:[...document.querySelectorAll('main')].map(el=>el.id),
+      label:document.getElementById('settingsContent').getAttribute('aria-labelledby'),
+      tabIndex:document.getElementById('settingsContent').tabIndex,
+      hasClass:document.getElementById('settingsContent').classList.contains('settings-content'),
+      inDialog:document.getElementById('settingsModal').contains(document.getElementById('settingsContent'))})""")
+    print('SETTINGS LANDMARK '+json.dumps(facts,ensure_ascii=False),flush=True)
+    assert facts=={'mainIds':['appMain'],'label':'settingsPageTitle','tabIndex':-1,'hasClass':True,'inDialog':True}, facts
+    assert page.get_by_role('region',name=title,exact=True).get_attribute('id')=='settingsContent'
 
 server,url=serve()
 try:
@@ -40,6 +53,7 @@ try:
     assert page.locator('.screen.active').get_attribute('id')==operational
     assert page.get_by_role('heading',name='Configurações').count()==1
     assert page.evaluate('sessionHasChanges()') is False
+    assert_content_landmark(page,'Geral')
 
     # A-003: isolamento acessível usa os alvos REAIS (header, #appMain, #nav, .foot-note)
     # — os seletores antigos .topbar/#main não existiam e deixavam cabeçalho e conteúdo
@@ -69,6 +83,7 @@ try:
     assert page.locator('#settingsPageTitle').inner_text()=='Aparência e Interface'
     page.locator('[data-settings-panel="appearance-interface"] [data-nav-to="appearance"]').click()
     assert page.locator('#settingsPageTitle').inner_text()=='Aparência'
+    assert_content_landmark(page,'Aparência')
     assert page.locator('#themeSeg').is_visible()
     assert page.locator('[data-settings-panel]:not([hidden])').count()==1
     page.locator('#settingsBackBtn').click()
@@ -214,6 +229,7 @@ try:
     page.locator('#settingsMenu [data-settings-category="data-security"]').click()
     assert modal.evaluate('el=>el.classList.contains("settings-mobile-detail")') is True
     assert page.locator('#settingsContent').is_visible()
+    assert_content_landmark(page,'Dados e Segurança')
     assert not page.locator('.settings-sidebar').is_visible()
     page.locator('#settingsBackBtn').click()
     assert modal.evaluate('el=>el.classList.contains("settings-mobile-detail")') is False
