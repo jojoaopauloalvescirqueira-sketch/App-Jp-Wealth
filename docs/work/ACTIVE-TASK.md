@@ -1,3 +1,13 @@
+# Tarefa delimitada — fechamento de contexto após NAV-REF-01
+
+Contrato e rastreabilidade: [NAV-REF-01-CONTEXT-CLOSE](NAV-REF-01-CONTEXT-CLOSE.md), CHG/CTX N0-D/A2. A autorização vigente cobre somente os três cabeçalhos operacionais e esse registro, na branch `codex/nav-ref-context`, worktree `/Users/joaopauloalves/.codex/night-reviews/20260910/product`, base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`. Criação da branch especificamente autorizada e executada; nenhum fetch/FF necessário, pois a main principal já estava limpa no merge.
+
+NAV-REF-01 está encerrado no [PR #11](https://github.com/jojoaopauloalvescirqueira-sketch/App-Jp-Wealth/pull/11), build `f4adcd1cc131c623`. Testes, aceite e auditoria anteriores são reaproveitados com sua origem no registro, sem novo teste de navegação. Este delta é apenas documental, local e sem staging/commit/integração; seu resultado ainda exige revisão e aceite. Sem novo lote de produto, reconstrução, publicação ou atualização de índices.
+
+**Todos os cabeçalhos e contratos abaixo são históricos**, preservados integralmente com seus limites e evidências. A autorização desta rodada não renova permissões de outras tarefas nem fecha AUD-05/P2, dívida estrutural V4 ou demais pendências. Checkpoint anterior permanece na branch `codex/nav-local-projection` e nas evidências referenciadas pelo registro.
+
+---
+
 # Tarefa delimitada — NAV-REF-01: projeção da navegação local
 
 Contrato: [CHG-NAV-LOCAL-PROJECTION-20260910](CHG-NAV-LOCAL-PROJECTION-20260910.md), CHG/CTX N1/A2. Escolha A do proprietário autoriza somente os sete caminhos e verificações delimitados, na branch `codex/nav-local-projection`, base `b3054e1da1a4a2f2a5ddefd8d715432d7719e636`. Criação/uso desta branch recebeu autorização específica; sem commit, tag, push, PR, merge ou deploy.

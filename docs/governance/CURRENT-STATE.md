@@ -1,3 +1,13 @@
+# Recorte conferido — fechamento do NAV-REF-01
+
+Registro delimitado em: 2026-09-10. NAV-REF-01 encerrado e integrado pelo [PR #11](https://github.com/jojoaopauloalvescirqueira-sketch/App-Jp-Wealth/pull/11): commit `ca5cb962b85385468ab9703a346960c1819435a5`, merge `e770e1b66a87e93f52f40eab83479d7a26be2cd4`, build `f4adcd1cc131c623`. A decisão dos destinos foi separada dos efeitos da navegação, dentro dos cenários examinados.
+
+Main remota e pasta principal cadastrada no Git conferidas nesse merge; a pasta principal já estava atualizada e limpa. A documentação desta rodada está somente local, sem commit, em `codex/nav-ref-context`, na worktree da tarefa. [Registro delimitado e fontes](../work/NAV-REF-01-CONTEXT-CLOSE.md): FULL remoto 55/55 e standard pré/pós-merge 44/44 são evidências existentes, com seus SHAs e execuções; inclui checkpoint e recuperação.
+
+Somente este recorte foi atualizado. **Todo o conteúdo abaixo é fotografia histórica preservada**, inclusive datas e Source revision globais; não descreve automaticamente a tarefa corrente. AUD-05/P2, falha estrutural V4 e demais dívidas permanecem abertas. Não há novo lote de produto autorizado, reconciliação global ou índice atualizado. O delta documental aguarda revisão e aceite próprios.
+
+---
+
 > Atualização delimitada de 2026-09-10: proprietário autorizou transferência e integração conjunta Atlas + V4, com pendências abertas no [registro](../work/ATLAS-V4-INTEGRATION-20260910.md). Não é aprovação técnica do piloto. Commit/merge devem ser conferidos no Git; a fotografia histórica abaixo não é prova de integração.
 
 # Estado atual — produto integrado e candidate de instruções
