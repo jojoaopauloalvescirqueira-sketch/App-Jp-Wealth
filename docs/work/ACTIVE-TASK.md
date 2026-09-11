@@ -1,3 +1,15 @@
+# Campanha finita de confiabilidade funcional — 2026-09-11
+
+Contrato: [CHG-FUNCTIONAL-RELIABILITY-20260911](CHG-FUNCTIONAL-RELIABILITY-20260911.md).
+Branch codex/functional-reliability-20260911; base 09c1427f4880ef7684b1a6fc4d2bc310e706380f.
+Investigar seis achados; corrigir somente N1/N2 demonstrados em Forex, estudos, Notas e
+validação civil de novos fatos Alladin. Reservas/clearance N3 sem alteração de regra.
+Testes sintéticos, artefatos oficiais, auditoria e checkpoint; sem commit/publicação.
+Evidências: /Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/.
+Todo conteúdo abaixo permanece histórico; não concede autoridade nesta campanha.
+
+---
+
 # Tarefa delimitada — fechamento documental da campanha integrada
 
 A campanha de quatro lotes (PF, Alladin, Configurações e Forex) terminou e foi

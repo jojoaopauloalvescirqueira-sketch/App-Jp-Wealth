@@ -47,6 +47,39 @@ function pvStudies() {
   return (S.pivotStudies && Array.isArray(S.pivotStudies.studies)) ? S.pivotStudies.studies : [];
 }
 function pvStudyById(id) { return pvStudies().find(st => st.id === id) || null; }
+// A confirmação pertence às quatro mutações deste agregado. Uma recusa
+// comprovada restaura apenas estudos; uma exceção de save não prova não escrita.
+function pvMutateStudies(change) {
+  function failed(unknown) {
+    hideStaleSavedTag();
+    if (unknown) {
+      const banner = document.getElementById('persistenceAlert');
+      if (banner && banner.classList.contains('is-recovered')) { banner.className = 'persistence-alert'; banner.innerHTML = ''; layoutPersistenceBanners(); }
+    }
+    alert(unknown
+      ? 'Gravação não confirmada. Não repita a ação; confira a base salva antes de continuar.'
+      : 'Não foi possível salvar. A alteração foi recusada; os campos abertos permanecem nesta sessão. Resolva a falha antes de tentar novamente.');
+    return false;
+  }
+  if (jpWealthPersistenceOutcomeIsUnknown()) return failed(true);
+  let before;
+  try { before = structuredClone(S.pivotStudies); }
+  catch (e) { return failed(false); }
+  try { change(); }
+  catch (e) { S.pivotStudies = before; return failed(false); }
+  let persisted;
+  try { persisted = save(); }
+  catch (e) {
+    markJPWealthPersistenceOutcomeUnknown('estudos dos Pivots');
+    return failed(true);
+  }
+  if (persisted === false) { S.pivotStudies = before; return failed(false); }
+  if (persisted !== true) {
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado dos estudos dos Pivots');
+    return failed(true);
+  }
+  return true;
+}
 function pvStudiesFor(instrumentId) {
   return pvStudies().filter(st => st.instrumentId === instrumentId);
 }
@@ -548,16 +581,18 @@ function pvCreateStudy() {
   // pivot podiam estar abertos ao mesmo tempo e o rascunho completo do operador
   // era apagado sem uma palavra. O confirm vem ANTES de criar: cancelar deixa
   // tudo como estava, e o operador pode salvar o pivot primeiro.
-  if (!pvConfirmDiscard()) return;
+  // Confirmar descarte não destrói o formulário antes de conhecer a gravação.
+  if (pvDirty && !confirm('Há um pivot em edição com alterações não salvas. Continuar descarta essas alterações.')) return;
   const now = new Date().toISOString();
   const study = {
     id: pivotStudyId(), instrumentId: pvInstrumentId,
     periodStart, periodEnd, createdAt: now, updatedAt: now, pivots: []
   };
-  if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
-  if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
-  S.pivotStudies.studies.push(study);
-  save();
+  if (!pvMutateStudies(() => {
+    if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
+    if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
+    S.pivotStudies.studies.push(study);
+  })) return false;
 
   pvStudyId = study.id;
   pvNewStudyOpen = false;
@@ -571,8 +606,7 @@ function pvDeleteStudy() {
   if (!study) return;
   const count = study.pivots.length;
   if (!confirm(`Excluir o estudo ${pvFmtDate(study.periodStart)} → ${pvFmtDate(study.periodEnd)} de ${study.instrumentId}?\n\n${count} pivot(s) registrado(s) serão apagados junto. A ação é irreversível.`)) return;
-  S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id);
-  save();
+  if (!pvMutateStudies(() => { S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id); })) return false;
   pvStudyId = null;
   pvCloseForm();
   renderPivotStudies();
@@ -627,12 +661,16 @@ function pvSavePivot() {
     }
     // Editar ATUALIZA o registro; nunca cria um segundo. Campos desconhecidos
     // que tenham vindo de backup atravessam intactos.
-    Object.assign(pivot, values, { updatedAt: now });
+    if (!pvMutateStudies(() => {
+      Object.assign(pivot, values, { updatedAt: now });
+      pvTouchStudy(study);
+    })) return false;
   } else {
-    study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+    if (!pvMutateStudies(() => {
+      study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+      pvTouchStudy(study);
+    })) return false;
   }
-  pvTouchStudy(study);
-  save();
   pvCloseForm();
   renderPivotStudies();
 }
@@ -643,9 +681,10 @@ function pvDeletePivot(pivotId) {
   const pivot = study.pivots.find(p => p.id === pivotId);
   if (!pivot) return;
   if (!confirm(`Excluir este pivot ${pivot.timeframe} (${pvFmtDatetime(pivot.startDatetime)} → ${pvFmtDatetime(pivot.endDatetime)})?\n\nA ação é irreversível.`)) return;
-  study.pivots = study.pivots.filter(p => p.id !== pivotId);
-  pvTouchStudy(study);
-  save();
+  if (!pvMutateStudies(() => {
+    study.pivots = study.pivots.filter(p => p.id !== pivotId);
+    pvTouchStudy(study);
+  })) return false;
   if (pvEditingId === pivotId) pvCloseForm();
   renderPivotStudies();
 }

@@ -250,6 +250,16 @@ const ALD_STARTER_ASSET_CLASSES = ['RENDA_VARIAVEL','IMOBILIARIO_FINANCEIRO','RE
 
 const ALD_CURRENCY_RE = /^[A-Z]{3}$/; // forma ISO 4217 — schema aberto (o runtime é que é limitado)
 const ALD_DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
+// Novos fatos exigem um dia existente, sem normalizar a entrada nem limitar
+// retroatividade/futuro. A leitura histórica conserva seu contrato de forma.
+function aldCivilDateValida(value){
+  if(typeof value!=='string' || !ALD_DATE_RE.test(value)) return false;
+  const year=Number(value.slice(0,4)), month=Number(value.slice(5,7)), day=Number(value.slice(8,10));
+  if(month<1 || month>12 || day<1) return false;
+  const leap=year%4===0 && (year%100!==0 || year%400===0);
+  const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+  return day<=days[month-1];
+}
 
 const ALD_COLECOES = {
   instrument:  { colecao:'instruments',  campoId:'instrumentId'  },
@@ -891,7 +901,7 @@ function aldNormalizeTransactionFields(a, d){
      Object.prototype.hasOwnProperty.call(d,'flowScope'))
     return { ok:false, erro:'ALD_FLOW_SCOPE_NAO_PERMITIDO_EM_TRADE' };
   if(typeof d.amount!=='number' || !Number.isSafeInteger(d.amount) || d.amount<=0) return { ok:false, erro:'ALD_AMOUNT_INVALIDO' };
-  if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+  if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
   const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
   let dedupe = null;
   if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
@@ -994,7 +1004,7 @@ function aldActReverseTransaction(originalId, dados){
     }
     if(orig.status!=='POSTED') return { ok:false, erro:'ALD_TRANSACAO_NAO_ESTA_POSTED' };
     const d = dados || {};
-    if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+    if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
     const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
     // `reason` da reversao e PROPRIO — como effectiveAt e note. Reverter um
     // ajuste e outro ato sem contraparte, e o motivo dele nao e o motivo do

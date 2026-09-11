@@ -126,7 +126,10 @@ function renderNocodaStudies() {
       <div id="ncFormErr"></div>
       <div class="nc-actions">
         <button class="reset-btn" id="ncSaveBtn">Salvar parâmetros</button>
-        <span class="fx-status" id="ncStatus">${saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
+        <span class="fx-status" id="ncStatus">${jpWealthPersistenceOutcomeIsUnknown()
+          ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
+          : ncDirty ? 'alterações não salvas — rascunho nesta sessão'
+          : saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
       </div>
     </div>`;
 
@@ -211,6 +214,21 @@ function ncSaveStudy() {
   const validation = geometry.validate(ncDraft);
   ncShowErrors(validation.errors || []);
   const status = document.getElementById('ncStatus');
+  function failed(unknown) {
+    hideStaleSavedTag();
+    if (unknown) {
+      const banner = document.getElementById('persistenceAlert');
+      if (banner && banner.classList.contains('is-recovered')) { banner.className = 'persistence-alert'; banner.innerHTML = ''; layoutPersistenceBanners(); }
+    }
+    if (status) {
+      status.className = 'fx-status err';
+      status.textContent = unknown
+        ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
+        : 'não salvo — rascunho mantido nesta sessão; resolva a falha antes de tentar novamente';
+    }
+    return false;
+  }
+  if (jpWealthPersistenceOutcomeIsUnknown()) return failed(true);
   if (!validation.ok) {
     if (status) { status.className = 'fx-status err'; status.textContent = 'não salvo — corrija os campos indicados'; }
     return;
@@ -218,6 +236,9 @@ function ncSaveStudy() {
 
   // Persiste somente as CAUSAS, já normalizadas. Nenhum derivado é gravado:
   // range, subdivisão e níveis são recalculados a partir das âncoras.
+  let before;
+  try { before = structuredClone(S.nocoda); }
+  catch (e) { return failed(false); }
   const values = validation.values;
   if (!S.nocoda || typeof S.nocoda !== 'object') S.nocoda = structuredClone(DEFAULTS.nocoda);
   if (!S.nocoda.studies || typeof S.nocoda.studies !== 'object') S.nocoda.studies = {};
@@ -228,12 +249,26 @@ function ncSaveStudy() {
     anchor3: { datetime: ncDraft.anchor3.datetime, price: values.p3 },
     updatedAt: new Date().toISOString()
   });
-  save();
+  let persisted;
+  try { persisted = save(); }
+  catch (e) {
+    markJPWealthPersistenceOutcomeUnknown('estudo NoCoda');
+    return failed(true);
+  }
+  if (persisted === false) {
+    S.nocoda = before;
+    return failed(false);
+  }
+  if (persisted !== true) {
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do estudo NoCoda');
+    return failed(true);
+  }
 
   ncDraft = ncDraftFrom(ncSelectedId);
   ncDirty = false;
   if (status) { status.className = 'fx-status ok'; status.textContent = 'parâmetros salvos'; }
   ncUpdateDerived();
+  return true;
 }
 
 // Superfície pública consumida pelo controlador de views do Execution Board.

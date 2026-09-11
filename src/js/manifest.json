@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "7003842f1dbf3ceb43480e154fee078b801d874c390a36b885446994f1f5d923"
+      "sha256": "8f9db44a549192c844cddcf1706fa339f8cc7f5457ac9b248adeee0e7392d7bf"
     },
     {
       "order": 20,
@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "1d49e6fad08b3a6593cd2441e233e25070c3fec656962db9a50fba6be929ed06"
+      "sha256": "d80c55d0bb29253cebbb95d9a7b7b0a383c90f0e92b40ea9577d357aa4173fe5"
     },
     {
       "order": 24,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "df2a555f85457aa9884d4298ea74d03da0960ad0c48bed3f05d9b7d006e092eb"
+      "sha256": "7de76874b9340cc5d67a9844ef81fbb5ab85ae6ce1cacf2877e8f1428cbcb969"
     },
     {
       "order": 44,
@@ -350,7 +350,7 @@
       "order": 58,
       "path": "src/js/30-accounting/05-fx-planning/03-fx-state.js",
       "section": "PLANEJAMENTO FX · ESTADO E MUTAÇÕES",
-      "sha256": "35be4542b0b188fb799268ee9f2e02e15b71c20c49c786d77a1e48e1ab53b986"
+      "sha256": "75ee6546f004d9a300950a4fdf83aceb56078d151770838ccad2a60bdbf55392"
     },
     {
       "order": 59,
@@ -362,7 +362,7 @@
       "order": 60,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "52e8a8b982e874de1f3d4f5f569bb41536edeb82c1ceb99f19cd50b473341b25"
+      "sha256": "61723a203e7b02075e61044431f20c2fa235dcb22230d1c299b2190917b54b9e"
     },
     {
       "order": 61,
@@ -380,7 +380,7 @@
       "order": 63,
       "path": "src/js/20-ui/14-nocoda-studies.js",
       "section": "ESTUDOS NOCODA · interface do workspace",
-      "sha256": "7dda7e700186309cf41d99da92b69c93140c268d06f6082b8f3586c13018e603"
+      "sha256": "84fe93663de458bb843ecb0bc491e11af2a2a9ccacd42688f33804df766096b0"
     },
     {
       "order": 64,
@@ -392,7 +392,7 @@
       "order": 65,
       "path": "src/js/20-ui/15-pivot-studies.js",
       "section": "ESTUDOS DOS PIVOTS · interface do workspace",
-      "sha256": "2230065776716f26420ac5b90852f1703d7fb139a23144e864e96511d25279df"
+      "sha256": "25b25a39bd39eb721eb4d411a255d0756271eaffbc78a656b3768b59bc7176a9"
     },
     {
       "order": 66,
@@ -449,7 +449,7 @@
     {
       "path": "src/js/10-domain/13-alladin.js",
       "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
-      "sha256": "8ef16b541c80347a61b51a3724d7bc8ac027696004896c90dcc844dc6163f35b"
+      "sha256": "6a9607abb85316f33834718e59f43dc2bd428d31d12c44aa0ca70d8c4063c7b9"
     },
     {
       "order": 76,

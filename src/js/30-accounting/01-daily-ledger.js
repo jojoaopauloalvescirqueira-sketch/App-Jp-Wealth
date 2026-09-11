@@ -32,6 +32,52 @@ function syncSaldoAtuFromLedger(){
   S.params.saldoAtu = led.length ? (+led[led.length-1].saldo||0) : (+S.params.saldoIni||0);
   return S.params.saldoAtu;
 }
+// Ledger e saldo corrente formam um único ato local. Recusa comprovada restaura
+// somente esses campos e o log DG; uma exceção do save não prova não-escrita.
+function ledgerMutate(fn){
+  const unknown=()=>{
+    hideStaleSavedTag();
+    // Uma exceção posterior ao save pode suceder o aviso verde de recuperação.
+    // Só esse aviso transitório é retirado; alertas de falha ficam preservados.
+    const banner=persistenceAlertEl();
+    if(banner && banner.classList.contains('is-recovered')){
+      clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+      banner.className='persistence-alert';banner.textContent='';
+      layoutPersistenceBanners();
+    }
+    return ({ok:false,persistido:null,bloqueado:true,
+    error:'Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.'});
+  };
+  if(jpWealthPersistenceOutcomeIsUnknown()){hideStaleSavedTag();return unknown();}
+  let before;
+  try{before=structuredClone(S.ledger);}
+  catch(e){return {ok:false,persistido:false,error:'Não foi possível preparar o fechamento. Nada foi aplicado.'};}
+  const balance=S.params.saldoAtu;
+  const log=S.dataGovernance&&S.dataGovernance.changeLog;
+  const logBefore=Array.isArray(log)?log.slice():null;
+  const restore=()=>{
+    S.ledger=before;S.params.saldoAtu=balance;
+    if(logBefore){log.splice(0,log.length,...logBefore);S.dataGovernance.changeLog=log;}
+  };
+  try{fn();}
+  catch(e){restore();hideStaleSavedTag();return {ok:false,persistido:false,error:'Não foi possível aplicar o fechamento. Nada foi gravado.'};}
+  let written;
+  try{written=save();}
+  catch(e){markJPWealthPersistenceOutcomeUnknown('fechamento diário');hideStaleSavedTag();return unknown();}
+  if(written===false){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,error:'Gravação recusada. O fechamento não foi alterado; resolva a falha antes de tentar novamente.'};
+  }
+  if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do fechamento diário');hideStaleSavedTag();return unknown();}
+  return {ok:true,persistido:true};
+}
+let ledgerStatusTimer=null;
+function ledgerFeedback(message,ok){
+  clearTimeout(ledgerStatusTimer);
+  const status=$('ldStatus');if(!status)return;
+  status.textContent=message;status.className='fx-status '+(ok?'ok':'err');
+  if(ok)ledgerStatusTimer=setTimeout(()=>{status.textContent='';},2500);
+}
 function renderLedger(){
   const dEl=$('ldDate'); if(dEl && !dEl.value) dEl.value=todayISO();
   const tb=$('ledgerBody'); if(!tb) return;
@@ -49,12 +95,25 @@ function renderLedger(){
     </tr>`;
   }).join('');
   tb.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',()=>{
+    // No UNKNOWN a tentativa fica em memória, mas a linha anterior continua no
+    // DOM. Recusar antes de consultar seu índice evita repetir o ato ou lançar.
+    if(jpWealthPersistenceOutcomeIsUnknown()){
+      hideStaleSavedTag();
+      ledgerFeedback('✗ Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.',false);
+      return;
+    }
     const i=+b.dataset.ldel;
-    if(confirm('Remover o lançamento de '+S.ledger[i].data+'?')){
-      const dataRemovida=S.ledger[i].data;
-      S.ledger.splice(i,1); syncSaldoAtuFromLedger();
-      if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
-      save(); renderLedger(); renderDash(); renderParams(); render();
+    const entry=S.ledger[i];
+    if(!entry){ledgerFeedback('✗ Lançamento indisponível. Atualize a visão antes de continuar.',false);return;}
+    if(confirm('Remover o lançamento de '+entry.data+'?')){
+      const dataRemovida=entry.data;
+      const result=ledgerMutate(()=>{
+        S.ledger.splice(i,1); syncSaldoAtuFromLedger();
+        if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
+      });
+      if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
+      ledgerFeedback('✓ fechamento removido',true);
+      renderLedger(); renderDash(); renderParams(); render();
     }
   }));
   renderAcct();

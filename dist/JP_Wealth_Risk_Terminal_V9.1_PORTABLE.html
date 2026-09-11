@@ -6463,7 +6463,7 @@ html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(-
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = 'e5caefeada66ab35';
+const JP_WEALTH_BUILD_ID = '01947ca576fa8048';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -13376,6 +13376,52 @@ function syncSaldoAtuFromLedger(){
   S.params.saldoAtu = led.length ? (+led[led.length-1].saldo||0) : (+S.params.saldoIni||0);
   return S.params.saldoAtu;
 }
+// Ledger e saldo corrente formam um único ato local. Recusa comprovada restaura
+// somente esses campos e o log DG; uma exceção do save não prova não-escrita.
+function ledgerMutate(fn){
+  const unknown=()=>{
+    hideStaleSavedTag();
+    // Uma exceção posterior ao save pode suceder o aviso verde de recuperação.
+    // Só esse aviso transitório é retirado; alertas de falha ficam preservados.
+    const banner=persistenceAlertEl();
+    if(banner && banner.classList.contains('is-recovered')){
+      clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+      banner.className='persistence-alert';banner.textContent='';
+      layoutPersistenceBanners();
+    }
+    return ({ok:false,persistido:null,bloqueado:true,
+    error:'Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.'});
+  };
+  if(jpWealthPersistenceOutcomeIsUnknown()){hideStaleSavedTag();return unknown();}
+  let before;
+  try{before=structuredClone(S.ledger);}
+  catch(e){return {ok:false,persistido:false,error:'Não foi possível preparar o fechamento. Nada foi aplicado.'};}
+  const balance=S.params.saldoAtu;
+  const log=S.dataGovernance&&S.dataGovernance.changeLog;
+  const logBefore=Array.isArray(log)?log.slice():null;
+  const restore=()=>{
+    S.ledger=before;S.params.saldoAtu=balance;
+    if(logBefore){log.splice(0,log.length,...logBefore);S.dataGovernance.changeLog=log;}
+  };
+  try{fn();}
+  catch(e){restore();hideStaleSavedTag();return {ok:false,persistido:false,error:'Não foi possível aplicar o fechamento. Nada foi gravado.'};}
+  let written;
+  try{written=save();}
+  catch(e){markJPWealthPersistenceOutcomeUnknown('fechamento diário');hideStaleSavedTag();return unknown();}
+  if(written===false){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,error:'Gravação recusada. O fechamento não foi alterado; resolva a falha antes de tentar novamente.'};
+  }
+  if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do fechamento diário');hideStaleSavedTag();return unknown();}
+  return {ok:true,persistido:true};
+}
+let ledgerStatusTimer=null;
+function ledgerFeedback(message,ok){
+  clearTimeout(ledgerStatusTimer);
+  const status=$('ldStatus');if(!status)return;
+  status.textContent=message;status.className='fx-status '+(ok?'ok':'err');
+  if(ok)ledgerStatusTimer=setTimeout(()=>{status.textContent='';},2500);
+}
 function renderLedger(){
   const dEl=$('ldDate'); if(dEl && !dEl.value) dEl.value=todayISO();
   const tb=$('ledgerBody'); if(!tb) return;
@@ -13393,12 +13439,25 @@ function renderLedger(){
     </tr>`;
   }).join('');
   tb.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',()=>{
+    // No UNKNOWN a tentativa fica em memória, mas a linha anterior continua no
+    // DOM. Recusar antes de consultar seu índice evita repetir o ato ou lançar.
+    if(jpWealthPersistenceOutcomeIsUnknown()){
+      hideStaleSavedTag();
+      ledgerFeedback('✗ Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.',false);
+      return;
+    }
     const i=+b.dataset.ldel;
-    if(confirm('Remover o lançamento de '+S.ledger[i].data+'?')){
-      const dataRemovida=S.ledger[i].data;
-      S.ledger.splice(i,1); syncSaldoAtuFromLedger();
-      if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
-      save(); renderLedger(); renderDash(); renderParams(); render();
+    const entry=S.ledger[i];
+    if(!entry){ledgerFeedback('✗ Lançamento indisponível. Atualize a visão antes de continuar.',false);return;}
+    if(confirm('Remover o lançamento de '+entry.data+'?')){
+      const dataRemovida=entry.data;
+      const result=ledgerMutate(()=>{
+        S.ledger.splice(i,1); syncSaldoAtuFromLedger();
+        if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
+      });
+      if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
+      ledgerFeedback('✓ fechamento removido',true);
+      renderLedger(); renderDash(); renderParams(); render();
     }
   }));
   renderAcct();
@@ -14318,6 +14377,7 @@ function bindContab(){
     const data=$('ldDate').value;
     const res=parseFloat($('ldResult').value);
     const stEl=$('ldStatus');
+    clearTimeout(ledgerStatusTimer);
     if(!data){ stEl.textContent='✗ informe a data'; stEl.className='fx-status err'; return; }
     if(isNaN(res)){ stEl.textContent='✗ informe o resultado do dia (0 é válido)'; stEl.className='fx-status err'; return; }
     const led=ledgerSorted();
@@ -14327,19 +14387,21 @@ function bindContab(){
     let saldo=parseFloat($('ldSaldo').value);
     if(isNaN(saldo)) saldo=(anterior?anterior.saldo:S.params.saldoIni)+res;
     const exist=S.ledger.find(e=>e.data===data);
-    if(exist){
-      if(!confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
-      exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
-      if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
-    } else {
-      S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
-      if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
-    }
-    syncSaldoAtuFromLedger();
+    if(exist && !confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
+    const result=ledgerMutate(()=>{
+      if(exist){
+        exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
+        if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
+      } else {
+        S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
+        if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
+      }
+      syncSaldoAtuFromLedger();
+    });
+    if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';
-    stEl.textContent='✓ fechamento registrado'; stEl.className='fx-status ok';
-    setTimeout(()=>{ stEl.textContent=''; },2500);
-    save(); renderLedger(); renderDash(); renderParams(); render();
+    ledgerFeedback('✓ fechamento registrado',true);
+    renderLedger(); renderDash(); renderParams(); render();
   });
   $('exportAuditBtn').addEventListener('click',exportAudit);
   // Finalização da Operação Única (Art. 4.4). Este handler NÃO consolida
@@ -21105,7 +21167,7 @@ const MVP_NOTES_POLICY_HINT={
 
 const mvpNotesUI={
   open:false, selectedId:null,              // nota aberta no painel do editor
-  draft:null, draftOriginal:null, draftDirty:false,
+  draft:null, draftOriginal:null, draftDirty:false, folderNameDrafts:{},
   query:'', filterType:'all', filterStatus:'all', filterPriority:'all',
   filterFolder:'all', filterPeriod:'all', filterPolicy:'all',
   activeFolder:'all', // 'all' | 'unfiled' | 'done' | id de pasta — visões virtuais nunca persistidas
@@ -21639,19 +21701,22 @@ function mvpNotesFolderIndex(id){ return mvpNotesFoldersOrdered().findIndex(f=>f
 // Move a pasta `folderId` para `newIndex` (0-based, entre as pastas REAIS). Devolve true se
 // algo mudou. Não toca em nota alguma, não muda a pasta ativa nem o rascunho.
 function mvpNotesMoveFolder(folderId,newIndex){
-  const lista=mvpNotesRenumberFolders();          // parte de um estado canônico
+  const lista=mvpNotesFoldersOrdered();
   const atual=lista.findIndex(f=>f.id===folderId);
   if(atual<0) return false;                        // pasta inexistente: ignora em silêncio
   const alvo=Math.min(Math.max(Math.round(Number(newIndex)),0),lista.length-1);
   if(!Number.isFinite(alvo) || alvo===atual) return false; // nada a fazer: nem save, nem anúncio
-  const [movida]=lista.splice(atual,1);
-  lista.splice(alvo,0,movida);
-  lista.forEach((f,i)=>{ f.position=i; });
-  S.mvpNotes.folders=lista;
+  const movida=lista[atual];
+  if(!mvpNotesMutate(()=>{
+    lista.splice(atual,1);
+    lista.splice(alvo,0,movida);
+    lista.forEach((f,i)=>{ f.position=i; });
+    S.mvpNotes.folders=lista;
+    return true;
+  })) return false;
   // folder.updatedAt NÃO se move aqui. Neste módulo esse carimbo significa "o conteúdo da
   // pasta mudou" — mvpNotesRenameFolder só o toca quando o nome realmente muda. Reordenar
   // é organização visual, não alteração da pasta. Nenhum timestamp de NOTA é tocado.
-  save();
   mvpNotesRefreshFolderOrderViews();
   mvpNotesAnnounceFolderOrder(movida,alvo,lista.length);
   return true;
@@ -21683,26 +21748,39 @@ function mvpNotesCreateFolder(name){
   const now=new Date().toISOString();
   // Nova pasta entra no FIM da lista — nunca reordena as existentes nem ordena alfabeticamente.
   const folder={id:mvpNotesFolderId(), name, position:mvpNotesFolders().length, createdAt:now, updatedAt:now};
-  S.mvpNotes.folders.push(folder);
-  mvpNotesRenumberFolders(); // garante contiguidade mesmo se o estado vier de backup antigo
-  save(); renderMvpNotesHeader();
-  return folder;
+  return mvpNotesMutate(()=>{
+    S.mvpNotes.folders.push(folder);
+    mvpNotesRenumberFolders(); // garante contiguidade mesmo se o estado vier de backup antigo
+    return folder;
+  });
 }
 function mvpNotesRenameFolder(id,name){
   const folder=mvpNotesFolderById(id); if(!folder) return null;
   if(folder.name===name) return folder; // nada mudou -> updatedAt não se move
-  folder.name=name; folder.updatedAt=new Date().toISOString();
-  save(); renderMvpNotesHeader();
-  return folder;
+  return mvpNotesMutate(()=>{
+    folder.name=name; folder.updatedAt=new Date().toISOString();
+    return folder;
+  });
 }
 // Exclui só a pasta; as notas associadas são preservadas integralmente e realocadas para
 // "Sem pasta" (folderId=null) — nunca há opção de excluir pasta+notas juntas nesta versão.
 function mvpNotesDeleteFolder(id){
-  S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
-  mvpNotesRenumberFolders(); // sobrou buraco na sequência: renumera as restantes (0..n-1)
-  mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+  if(!mvpNotesMutate(()=>{
+    S.mvpNotes.folders=mvpNotesFolders().filter(f=>f.id!==id);
+    mvpNotesRenumberFolders(); // sobrou buraco na sequência: renumera as restantes (0..n-1)
+    mvpNotesItems().forEach(it=>{ if(it.folderId===id) it.folderId=null; });
+    return true;
+  })) return false;
   if(mvpNotesUI.activeFolder===id) mvpNotesUI.activeFolder='unfiled';
-  save(); renderMvpNotesHeader();
+  // A nota aberta não pode reintroduzir a pasta excluída no próximo Salvar.
+  // Alinha somente a referência, depois da confirmação; texto e outras edições
+  // do rascunho permanecem intactos. A recusa retorna antes deste ponto.
+  [mvpNotesUI.draft,mvpNotesUI.draftOriginal].forEach(draft=>{
+    if(draft && draft.folderId===id) draft.folderId=null;
+  });
+  if(mvpNotesUI.draft) mvpNotesRecomputeDirty();
+  mvpNotesSyncInspectorFolderOptions();
+  return true;
 }
 function mvpNotesEnsureActiveFolderValid(){
   const af=mvpNotesUI.activeFolder;
@@ -21718,7 +21796,43 @@ function mvpNotesViewLabel(){
 }
 
 // ---- persistência (CRUD) ----
-function mvpNotesPersist(){ save(); renderMvpNotesHeader(); }
+function mvpNotesPersistenceMessage(unknown){
+  hideStaleSavedTag();
+  if(unknown){
+    const banner=mvpn('persistenceAlert');
+    if(banner && banner.classList.contains('is-recovered')){ banner.className='persistence-alert'; banner.innerHTML=''; layoutPersistenceBanners(); }
+  }
+  const message=unknown
+    ? 'Gravação não confirmada. Não repita a ação; confira a base salva antes de continuar.'
+    : 'Não salvo. O rascunho aberto permanece nesta sessão; resolva a falha antes de tentar novamente.';
+  const live=mvpn('mvpNotesCopyLive');
+  if(live) live.textContent=message;
+  alert(message); // a região viva é sr-only; a recusa também precisa ser visível
+}
+// Notas e pastas compartilham referências folderId. A recusa restaura só este
+// agregado, preservando o rascunho efêmero e os demais módulos do documento.
+function mvpNotesMutate(change){
+  if(jpWealthPersistenceOutcomeIsUnknown()){ mvpNotesPersistenceMessage(true); return null; }
+  let before;
+  try { before=structuredClone(S.mvpNotes); }
+  catch(e){ mvpNotesPersistenceMessage(false); return null; }
+  let value;
+  try { value=change(); }
+  catch(e){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
+  let persisted;
+  try { persisted=save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('notas e pastas');
+    mvpNotesPersistenceMessage(true); return null;
+  }
+  if(persisted===false){ S.mvpNotes=before; mvpNotesPersistenceMessage(false); return null; }
+  if(persisted!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado de notas e pastas');
+    mvpNotesPersistenceMessage(true); return null;
+  }
+  renderMvpNotesHeader();
+  return value;
+}
 function mvpNotesCreate(draft){
   const now=new Date().toISOString();
   const id=mvpNotesId();
@@ -21739,13 +21853,17 @@ function mvpNotesCreate(draft){
     createdAt:now, updatedAt:now,
     completedAt:draft.status==='done'?now:null // nota já criada concluída (raro, mas possível no editor)
   };
-  S.mvpNotes.items.push(item);
-  mvpNotesPersist();
-  return item;
+  return mvpNotesMutate(()=>{ S.mvpNotes.items.push(item); return item; });
 }
 function mvpNotesUpdate(id,draft){
   const item=mvpNotesItems().find(it=>it.id===id);
-  if(!item) return null;
+  if(!item){
+    const message='Este ticket não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
+    const live=mvpn('mvpNotesCopyLive');
+    if(live) live.textContent=message;
+    alert(message);
+    return null;
+  }
   const folderId=draft.folderId||null;
   const content=String(draft.content||'').slice(0,20000);
   const policy=MVP_NOTES_AI_POLICIES.includes(draft.aiImplementationPolicy)?draft.aiImplementationPolicy:item.aiImplementationPolicy;
@@ -21756,19 +21874,22 @@ function mvpNotesUpdate(id,draft){
   // histórico; concluir de novo gera carimbo novo); permanece em 'done' → intocado.
   // folderId NUNCA é alterado por transição de status — a visão Concluído é derivada,
   // e reabrir devolve a nota à pasta original automaticamente porque ela nunca saiu de lá.
-  if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
-  else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
-  item.type=draft.type;
-  item.content=content; item.title=mvpNotesDeriveTitle(content); // título rederivado a cada gravação
-  item.aiImplementationPolicy=policy;
-  item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
-  if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
-  mvpNotesPersist();
-  return item;
+  return mvpNotesMutate(()=>{
+    if(item.status!=='done' && draft.status==='done') item.completedAt=new Date().toISOString();
+    else if(item.status==='done' && draft.status!=='done') item.completedAt=null;
+    item.type=draft.type;
+    item.content=content; item.title=mvpNotesDeriveTitle(content); // título rederivado a cada gravação
+    item.aiImplementationPolicy=policy;
+    item.priority=draft.priority; item.status=draft.status; item.folderId=folderId;
+    if(changed) item.updatedAt=new Date().toISOString(); // nada mudou → updatedAt não se move
+    return item;
+  });
 }
 function mvpNotesDelete(id){
-  S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
-  mvpNotesPersist();
+  return mvpNotesMutate(()=>{
+    S.mvpNotes.items=mvpNotesItems().filter(it=>it.id!==id);
+    return true;
+  });
 }
 
 // ---- botão do header + card de Configurações ----
@@ -22069,7 +22190,7 @@ function mvpNotesRunCardMenuAction(acao){
     mvpNotesCloseCardMenu();
     if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
     const eraSelecionado=mvpNotesUI.selectedId===id;
-    mvpNotesDelete(id);
+    if(!mvpNotesDelete(id)) return null;
     if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
     else renderMvpNotesList();
     return 'excluir';
@@ -22284,18 +22405,22 @@ function mvpNotesSwitchFolder(target){
     renderMvpNotesList();
   });
 }
-function mvpNotesPromptFolderName(defaultValue){
-  const raw=prompt('Nome da pasta', defaultValue||'');
-  if(raw===null) return null; // cancelado
+function mvpNotesPromptFolderName(defaultValue,draftKey){
+  const previous=mvpNotesUI.folderNameDrafts[draftKey];
+  const raw=prompt('Nome da pasta', previous===undefined?(defaultValue||''):previous);
+  if(raw===null){ delete mvpNotesUI.folderNameDrafts[draftKey]; return null; } // descarte explícito
   return raw.trim().slice(0,80);
 }
 function mvpNotesHandleNewFolder(){
   mvpNotesConfirmDiscardIfDirty(()=>{
-    const name=mvpNotesPromptFolderName('');
+    const name=mvpNotesPromptFolderName('','new');
     if(name===null) return;
     if(!name){ alert('Informe um nome para a pasta.'); return; }
     if(mvpNotesFolderNameExists(name,null) && !confirm(`Já existe uma pasta chamada "${name}". Deseja criar outra pasta com o mesmo nome?`)) return;
+    mvpNotesUI.folderNameDrafts.new=name;
     const folder=mvpNotesCreateFolder(name);
+    if(!folder) return;
+    delete mvpNotesUI.folderNameDrafts.new;
     mvpNotesUI.activeFolder=folder.id;
     renderMvpNotesList();
   });
@@ -22303,11 +22428,14 @@ function mvpNotesHandleNewFolder(){
 function mvpNotesHandleRenameFolder(id){
   mvpNotesConfirmDiscardIfDirty(()=>{
     const folder=mvpNotesFolderById(id); if(!folder) return;
-    const name=mvpNotesPromptFolderName(folder.name);
+    const draftKey='rename:'+id;
+    const name=mvpNotesPromptFolderName(folder.name,draftKey);
     if(name===null) return;
     if(!name){ alert('Informe um nome para a pasta.'); return; }
     if(name!==folder.name && mvpNotesFolderNameExists(name,id) && !confirm(`Já existe uma pasta chamada "${name}". Deseja renomear mesmo assim?`)) return;
-    mvpNotesRenameFolder(id,name);
+    mvpNotesUI.folderNameDrafts[draftKey]=name;
+    if(!mvpNotesRenameFolder(id,name)) return;
+    delete mvpNotesUI.folderNameDrafts[draftKey];
     renderMvpNotesList();
   });
 }
@@ -22319,7 +22447,7 @@ function mvpNotesHandleDeleteFolder(id){
       ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
-    mvpNotesDeleteFolder(id);
+    if(!mvpNotesDeleteFolder(id)) return;
     renderMvpNotesList();
   });
 }
@@ -22517,7 +22645,7 @@ function bindMvpNotesInspector(){
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
     if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
-    mvpNotesDelete(item.id);
+    if(!mvpNotesDelete(item.id)) return;
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
     mvpNotesCloseEditor();
@@ -22653,6 +22781,7 @@ function mvpNotesSaveDraft(){
   const salvo=mvpNotesUI.selectedId
     ? mvpNotesUpdate(mvpNotesUI.selectedId,mvpNotesUI.draft)
     : mvpNotesCreate(mvpNotesUI.draft);
+  if(!salvo) return false;
   if(salvo){
     mvpNotesUI.selectedId=salvo.id;
     mvpNotesUI.draft=mvpNotesDraftFromItem(salvo);
@@ -26760,100 +26889,161 @@ function fxAudit(type,month,detail){
   if(fx.auditLog.length>400) fx.auditLog=fx.auditLog.slice(-400);
   if(typeof dgLogChange==='function') dgLogChange('fxPlanning',type,month||'',String(detail||''));
 }
-function fxSaveState(){ if(typeof save==='function') save(); }
+// Confirma somente a mutação deste agregado e seu evento DG. O save global
+// continua responsável por concorrência, recuperação e gravação física.
+function fxMutateState(fn){
+  const unknown=()=>{
+    hideStaleSavedTag();
+    // Uma exceção posterior ao save pode suceder o aviso verde de recuperação.
+    // Só esse aviso transitório é retirado; alertas de falha ficam preservados.
+    const banner=persistenceAlertEl();
+    if(banner && banner.classList.contains('is-recovered')){
+      clearTimeout(jpWealthPersistenceFailure.recoveryTimer);
+      banner.className='persistence-alert';banner.textContent='';
+      layoutPersistenceBanners();
+    }
+    return ({ok:false,persistido:null,bloqueado:true,
+    errors:['Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.']});
+  };
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    hideStaleSavedTag();
+    return unknown();
+  }
+  let before;
+  try{ before=structuredClone(fxState()); }
+  catch(e){ return {ok:false,persistido:false,errors:['Não foi possível preparar a alteração. Nada foi aplicado.']}; }
+  const log=S.dataGovernance&&S.dataGovernance.changeLog;
+  const logBefore=Array.isArray(log)?log.slice():null;
+  const restore=()=>{
+    S.fxPlanning=before;
+    // dgLogChange pode substituir o array quando poda o limite de 400.
+    if(logBefore){log.splice(0,log.length,...logBefore);S.dataGovernance.changeLog=log;}
+  };
+  let result;
+  try{
+    result=fn()||{};
+    if(result.ok===false){restore();return {...result,persistido:false};}
+  }catch(e){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,errors:['Não foi possível aplicar a alteração. Nada foi gravado.']};
+  }
+  let written;
+  try{ written=save(); }
+  catch(e){
+    markJPWealthPersistenceOutcomeUnknown('Planejamento FX');
+    hideStaleSavedTag();
+    return unknown();
+  }
+  if(written===false){
+    restore();hideStaleSavedTag();
+    return {ok:false,persistido:false,errors:['Gravação recusada. A alteração não foi aplicada; preserve os campos e resolva a falha antes de tentar novamente.']};
+  }
+  if(written!==true){
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do Planejamento FX');
+    hideStaleSavedTag();
+    return unknown();
+  }
+  return {...result,ok:true,persistido:true};
+}
 
 // ---- Mutações ---------------------------------------------------------------
 // MVP: um planejamento ativo por vez (seção 31 da especificação).
 function fxPlanCreate({name,assumptions}={}){
-  const norm=fxNormalizeAssumptions(assumptions);
-  const errors=fxValidateAssumptions(norm);
-  if(errors.length) return {ok:false,errors};
-  const fx=fxState();
-  if(fx.plan) return {ok:false,errors:['Já existe um planejamento ativo — o MVP mantém um plano por vez.']};
-  fx.plan=fxCreatePlan({name,assumptions:norm});
-  fxAudit('FX_PLAN_CREATED',norm.startMonth,`${fx.plan.name} · ${norm.horizonMonths} meses · saldo inicial ${norm.initialBalanceUsd} USD`);
-  fxSaveState();
-  return {ok:true,plan:fx.plan};
+  return fxMutateState(()=>{
+    const norm=fxNormalizeAssumptions(assumptions);
+    const errors=fxValidateAssumptions(norm);
+    if(errors.length) return {ok:false,errors};
+    const fx=fxState();
+    if(fx.plan) return {ok:false,errors:['Já existe um planejamento ativo — o MVP mantém um plano por vez.']};
+    fx.plan=fxCreatePlan({name,assumptions:norm});
+    fxAudit('FX_PLAN_CREATED',norm.startMonth,`${fx.plan.name} · ${norm.horizonMonths} meses · saldo inicial ${norm.initialBalanceUsd} USD`);
+    return {ok:true,plan:fx.plan};
+  });
 }
 // A exclusão apaga plano E trilha do plano; a confirmação explícita é
 // responsabilidade da interface (mesmo padrão dos fluxos destrutivos do app).
 function fxPlanDelete(){
-  const fx=fxState();
-  if(!fx.plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const label=fx.plan.name;
-  fx.plan=null;
-  fxAudit('FX_PLAN_DELETED',null,label);
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const fx=fxState();
+    if(!fx.plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const label=fx.plan.name;
+    fx.plan=null;
+    fxAudit('FX_PLAN_DELETED',null,label);
+    return {ok:true};
+  });
 }
 // Revisão de premissas de FUTURO. Estruturais (mês inicial, horizonte, saldo
 // inicial) permanecem os do baseline — fxReviseAssumptions preserva o snapshot
 // anterior em revisions[] e nunca toca o baseline.
 function fxPlanReviseAssumptions(next,note){
-  const raw=fxActivePlanRaw();
-  if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const merged=fxNormalizeAssumptions({...next,
-    startMonth:raw.baseline.startMonth,
-    horizonMonths:raw.baseline.horizonMonths,
-    initialBalanceUsd:raw.baseline.initialBalanceUsd});
-  const errors=fxValidateAssumptions(merged);
-  if(errors.length) return {ok:false,errors};
-  fxState().plan=fxReviseAssumptions(raw,merged,{note});
-  fxAudit('FX_PLAN_ASSUMPTION_CHANGED',null,String(note||'premissas revisadas'));
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();
+    if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const merged=fxNormalizeAssumptions({...next,
+      startMonth:raw.baseline.startMonth,
+      horizonMonths:raw.baseline.horizonMonths,
+      initialBalanceUsd:raw.baseline.initialBalanceUsd});
+    const errors=fxValidateAssumptions(merged);
+    if(errors.length) return {ok:false,errors};
+    fxState().plan=fxReviseAssumptions(raw,merged,{note});
+    fxAudit('FX_PLAN_ASSUMPTION_CHANGED',null,String(note||'premissas revisadas'));
+    return {ok:true};
+  });
 }
 // Fechamento mensal: contíguo desde o início do plano (fxNextOpenMonth). Editar
 // mês já fechado é permitido, auditado como FX_MONTH_ACTUAL_EDITED e preserva o
 // closedAt original — carimbo usado na reconstrução de forecasts anteriores.
 function fxPlanRecordActual(month,input){
-  const plan=fxActivePlan();
-  if(!plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const key=fxMonthKey(month);
-  const rec=fxNormalizeActual(input);
-  const errors=fxValidateActualInput(rec);
-  const existing=key?!!plan.actuals[key]:false;
-  if(!key) errors.push('Mês inválido (use AAAA-MM).');
-  else if(!existing){
-    const next=fxNextOpenMonth(plan);
-    if(!next) errors.push('O horizonte do plano já está completamente fechado.');
-    else if(key!==next) errors.push(`Fechamentos são contíguos — o próximo mês aberto é ${next}.`);
-  }
-  if(errors.length) return {ok:false,errors};
-  const raw=fxActivePlanRaw(), now=new Date().toISOString();
-  const prev=(raw.actuals=raw.actuals||{})[key];
-  raw.actuals[key]={...(prev||{}), ...rec,
-    closedAt:(prev&&prev.closedAt)?prev.closedAt:now, updatedAt:now};
-  raw.updatedAt=now;
-  fxAudit(existing?'FX_MONTH_ACTUAL_EDITED':'FX_MONTH_ACTUAL_RECORDED',key,
-    rec.inputType==='usd'?`resultado ${rec.profitUsd} USD`:`taxa ${rec.returnRate}`);
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const plan=fxActivePlan();
+    if(!plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const key=fxMonthKey(month);
+    const rec=fxNormalizeActual(input);
+    const errors=fxValidateActualInput(rec);
+    const existing=key?!!plan.actuals[key]:false;
+    if(!key) errors.push('Mês inválido (use AAAA-MM).');
+    else if(!existing){
+      const next=fxNextOpenMonth(plan);
+      if(!next) errors.push('O horizonte do plano já está completamente fechado.');
+      else if(key!==next) errors.push(`Fechamentos são contíguos — o próximo mês aberto é ${next}.`);
+    }
+    if(errors.length) return {ok:false,errors};
+    const raw=fxActivePlanRaw(), now=new Date().toISOString();
+    const prev=(raw.actuals=raw.actuals||{})[key];
+    raw.actuals[key]={...(prev||{}), ...rec,
+      closedAt:(prev&&prev.closedAt)?prev.closedAt:now, updatedAt:now};
+    raw.updatedAt=now;
+    fxAudit(existing?'FX_MONTH_ACTUAL_EDITED':'FX_MONTH_ACTUAL_RECORDED',key,
+      rec.inputType==='usd'?`resultado ${rec.profitUsd} USD`:`taxa ${rec.returnRate}`);
+    return {ok:true};
+  });
 }
 function fxPlanAddContribution(input){
-  const raw=fxActivePlanRaw();
-  if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const rec=fxNormalizeContribution({...input, id:'', createdAt:new Date().toISOString()});
-  const errors=fxValidateContribution(rec);
-  if(errors.length) return {ok:false,errors};
-  (raw.contributions=raw.contributions||[]).push(rec);
-  raw.updatedAt=new Date().toISOString();
-  fxAudit('FX_CONTRIBUTION_RECORDED',rec.month,
-    `${rec.source==='prop'?'Prop Firm':'Pessoal'} · ${rec.usdAmount} USD${rec.affectsFxCostBasis?` @ R$ ${rec.acquisitionFxRate}`:' (USD nativo — fora do custo médio)'}`);
-  fxSaveState();
-  return {ok:true,contribution:rec};
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();
+    if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const rec=fxNormalizeContribution({...input, id:'', createdAt:new Date().toISOString()});
+    const errors=fxValidateContribution(rec);
+    if(errors.length) return {ok:false,errors};
+    (raw.contributions=raw.contributions||[]).push(rec);
+    raw.updatedAt=new Date().toISOString();
+    fxAudit('FX_CONTRIBUTION_RECORDED',rec.month,
+      `${rec.source==='prop'?'Prop Firm':'Pessoal'} · ${rec.usdAmount} USD${rec.affectsFxCostBasis?` @ R$ ${rec.acquisitionFxRate}`:' (USD nativo — fora do custo médio)'}`);
+    return {ok:true,contribution:rec};
+  });
 }
 function fxPlanRemoveContribution(id){
-  const raw=fxActivePlanRaw();
-  if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
-  const idx=(raw.contributions||[]).findIndex(c=>c&&c.id===id);
-  if(idx<0) return {ok:false,errors:['Aporte não encontrado.']};
-  const [gone]=raw.contributions.splice(idx,1);
-  raw.updatedAt=new Date().toISOString();
-  fxAudit('FX_CONTRIBUTION_REMOVED',fxMonthKey(gone&&gone.month)||null,
-    `${gone&&gone.source==='prop'?'Prop Firm':'Pessoal'} · ${gone?gone.usdAmount:''} USD`);
-  fxSaveState();
-  return {ok:true};
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();
+    if(!raw) return {ok:false,errors:['Nenhum planejamento ativo.']};
+    const idx=(raw.contributions||[]).findIndex(c=>c&&c.id===id);
+    if(idx<0) return {ok:false,errors:['Aporte não encontrado.']};
+    const [gone]=raw.contributions.splice(idx,1);
+    raw.updatedAt=new Date().toISOString();
+    fxAudit('FX_CONTRIBUTION_REMOVED',fxMonthKey(gone&&gone.month)||null,
+      `${gone&&gone.source==='prop'?'Prop Firm':'Pessoal'} · ${gone?gone.usdAmount:''} USD`);
+    return {ok:true};
+  });
 }
 
 // ---- Leitura consolidada ----------------------------------------------------
@@ -27106,6 +27296,50 @@ const fxpBadge=(kind)=>kind==='REAL'
   ?'<span class="fxp-badge fxp-badge-real">REAL</span>'
   :(kind==='PROJ'?'<span class="fxp-badge fxp-badge-proj">PREMISSA</span>':'<span class="fxp-badge">'+esc(kind)+'</span>');
 
+// Somente entradas recusadas são retidas durante esta sessão, fora de S e do
+// armazenamento. Reentrada não apaga o rascunho; recarga não promete recuperá-lo.
+// Cada formulário é independente: salvar um aporte não descarta um mês recusado.
+const fxpRejectedDrafts={};
+const FXP_DRAFT_FIELDS={
+  create:['fxpName','fxpStart','fxpHorizon','fxpInitial','fxpDefaultRate','fxpProjFx','fxpRecPersonal','fxpRecProp'],
+  planning:['fxpEditRate','fxpEditProjFx','fxpEditYearOvr','fxpEditMonthOvr','fxpEditRecPersonal','fxpEditRecProp','fxpEditNote'],
+  actual:['fxpActMonth','fxpActType','fxpActValue','fxpActFx','fxpActNotes'],
+  contribution:['fxpCMonth','fxpCSource','fxpCCurrency','fxpCAmount','fxpCRate'],
+  deletion:['fxpDeleteConfirm'],
+  removal:[]
+};
+function fxpRememberDraft(root,group,errorId,res){
+  const fields={};
+  for(const id of FXP_DRAFT_FIELDS[group]){const el=root.querySelector('#'+id);if(el)fields[id]=el.value;}
+  fxpRejectedDrafts[group]={planId:fxActivePlanRaw()?.id||null,fields,errorId,errors:res.errors};
+  root.querySelector('#'+errorId).innerHTML=fxpErrHTML(res.errors);
+}
+function fxpCaptureRejectedDrafts(root){
+  const planId=fxActivePlanRaw()?.id||null;
+  for(const group of Object.keys(fxpRejectedDrafts)){
+    const draft=fxpRejectedDrafts[group];
+    if(draft.planId!==planId){delete fxpRejectedDrafts[group];continue;}
+    for(const id of Object.keys(draft.fields)){const el=root.querySelector('#'+id);if(el)draft.fields[id]=el.value;}
+  }
+}
+function fxpRestoreRejectedDrafts(root){
+  for(const draft of Object.values(fxpRejectedDrafts)){
+    for(const [id,value] of Object.entries(draft.fields)){
+      const el=root.querySelector('#'+id);if(!el)continue;
+      el.value=value;
+      // Mês vem antes dos demais campos: seu prefill roda primeiro. Depois,
+      // as prévias recebem os valores originais, sem fórmulas ou gravações novas.
+      el.dispatchEvent(new Event(el.tagName==='SELECT'?'change':'input',{bubbles:true}));
+    }
+    const err=root.querySelector('#'+draft.errorId);if(err)err.innerHTML=fxpErrHTML(draft.errors);
+  }
+  if(jpWealthPersistenceOutcomeIsUnknown()){
+    const notice=document.createElement('div');
+    notice.innerHTML=fxpErrHTML(['Gravação indeterminada. Não repita ações; confira a base salva antes de continuar.']);
+    root.prepend(notice);
+  }
+}
+
 function fxpCurrentMonthKey(){ return new Date().toISOString().slice(0,7); }
 
 // ---- Referência USD/BRL corrente (JPW-FGDEKM) -------------------------------
@@ -27212,7 +27446,8 @@ function fxpBindCreate(root){
     };
     if(assumptions.defaultMonthlyReturn==null){ root.querySelector('#fxpCreateErr').innerHTML=fxpErrHTML(['Informe a rentabilidade planejada em % ao mês.']); return; }
     const res=window.JPWFx.state.fxPlanCreate({name:g('fxpName'),assumptions});
-    if(!res.ok){ root.querySelector('#fxpCreateErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'create','fxpCreateErr',res); return; }
+    delete fxpRejectedDrafts.create;
     renderFxPlanning();
   });
 }
@@ -27523,13 +27758,15 @@ function fxpBindPlanning(root,live){
       projectedFxRate:fxpParseNum(q('fxpEditProjFx').value),
       plannedContributions:planned
     },q('fxpEditNote').value);
-    if(!res.ok){ q('fxpPlanningErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'planning','fxpPlanningErr',res); return; }
+    delete fxpRejectedDrafts.planning;
     renderFxPlanning();
   });
   q('fxpDeleteBtn').addEventListener('click',()=>{
     if(q('fxpDeleteConfirm').value.trim()!=='EXCLUIR'){ q('fxpDeleteErr').innerHTML=fxpErrHTML(['Digite EXCLUIR para confirmar.']); return; }
     const res=window.JPWFx.state.fxPlanDelete();
-    if(!res.ok){ q('fxpDeleteErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'deletion','fxpDeleteErr',res); return; }
+    for(const group of Object.keys(fxpRejectedDrafts))delete fxpRejectedDrafts[group];
     renderFxPlanning();
   });
 }
@@ -27664,7 +27901,8 @@ function fxpBindActuals(root,live){
     const res=window.JPWFx.state.fxPlanRecordActual(monthSel.value,{
       inputType:type, returnRate:type==='rate'?val:null, profitUsd:type==='usd'?val:null,
       valuationFxRate:fxpParseNum(q('fxpActFx').value), notes:q('fxpActNotes').value});
-    if(!res.ok){ q('fxpActErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'actual','fxpActErr',res); return; }
+    delete fxpRejectedDrafts.actual;
     renderFxPlanning();
   });
   const curSel=q('fxpCCurrency');
@@ -27675,12 +27913,15 @@ function fxpBindActuals(root,live){
       month:fxMonthKey(q('fxpCMonth').value), source:q('fxpCSource').value,
       originalCurrency:curSel.value, originalAmount:fxpParseNum(q('fxpCAmount').value)||0,
       acquisitionFxRate:curSel.value==='BRL'?fxpParseNum(q('fxpCRate').value):null});
-    if(!res.ok){ q('fxpCErr').innerHTML=fxpErrHTML(res.errors); return; }
+    if(!res.ok){ fxpRememberDraft(root,'contribution','fxpCErr',res); return; }
+    delete fxpRejectedDrafts.contribution;
     renderFxPlanning();
   });
   root.querySelectorAll('[data-fxp-del]').forEach(b=>b.addEventListener('click',()=>{
     const res=window.JPWFx.state.fxPlanRemoveContribution(b.dataset.fxpDel);
-    if(res.ok) renderFxPlanning();
+    if(!res.ok){ fxpRememberDraft(root,'removal','fxpCErr',res); return; }
+    delete fxpRejectedDrafts.removal;
+    renderFxPlanning();
   }));
 }
 
@@ -27779,10 +28020,11 @@ function fxpActivateOverview(root,live){
 // ---- Render principal -------------------------------------------------------
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
+  fxpCaptureRejectedDrafts(root);
   const live=window.JPWFx.state.fxOverviewLive();
   const card=document.getElementById('fxPlanningCard');
   if(card) card.dataset.fxpState=live?'active':'empty';
-  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); return; }
+  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); fxpRestoreRejectedDrafts(root); return; }
   const body=fxpView==='overview'?fxpOverviewHTML(live)
     :fxpView==='planning'?fxpPlanningHTML(live)
     :fxpView==='actuals'?fxpActualsHTML(live)
@@ -27796,6 +28038,7 @@ function renderFxPlanning(){
     root.querySelectorAll('[data-fxp-hist]').forEach(b=>b.addEventListener('click',()=>{ fxpHistFilter=b.dataset.fxpHist; renderFxPlanning(); }));
   if(fxpView==='planning') fxpBindPlanning(root,live);
   if(fxpView==='actuals') fxpBindActuals(root,live);
+  fxpRestoreRejectedDrafts(root);
 }
 // Superfície estritamente visual para o submenu hierárquico do shell. As
 // chaves são os quatro modos já existentes; não persiste estado, não chama o
@@ -28202,7 +28445,10 @@ function renderNocodaStudies() {
       <div id="ncFormErr"></div>
       <div class="nc-actions">
         <button class="reset-btn" id="ncSaveBtn">Salvar parâmetros</button>
-        <span class="fx-status" id="ncStatus">${saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
+        <span class="fx-status" id="ncStatus">${jpWealthPersistenceOutcomeIsUnknown()
+          ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
+          : ncDirty ? 'alterações não salvas — rascunho nesta sessão'
+          : saved && saved.updatedAt ? 'salvo em ' + esc(String(saved.updatedAt).slice(0, 16).replace('T', ' ')) : 'nenhum estudo salvo para este instrumento'}</span>
       </div>
     </div>`;
 
@@ -28287,6 +28533,21 @@ function ncSaveStudy() {
   const validation = geometry.validate(ncDraft);
   ncShowErrors(validation.errors || []);
   const status = document.getElementById('ncStatus');
+  function failed(unknown) {
+    hideStaleSavedTag();
+    if (unknown) {
+      const banner = document.getElementById('persistenceAlert');
+      if (banner && banner.classList.contains('is-recovered')) { banner.className = 'persistence-alert'; banner.innerHTML = ''; layoutPersistenceBanners(); }
+    }
+    if (status) {
+      status.className = 'fx-status err';
+      status.textContent = unknown
+        ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
+        : 'não salvo — rascunho mantido nesta sessão; resolva a falha antes de tentar novamente';
+    }
+    return false;
+  }
+  if (jpWealthPersistenceOutcomeIsUnknown()) return failed(true);
   if (!validation.ok) {
     if (status) { status.className = 'fx-status err'; status.textContent = 'não salvo — corrija os campos indicados'; }
     return;
@@ -28294,6 +28555,9 @@ function ncSaveStudy() {
 
   // Persiste somente as CAUSAS, já normalizadas. Nenhum derivado é gravado:
   // range, subdivisão e níveis são recalculados a partir das âncoras.
+  let before;
+  try { before = structuredClone(S.nocoda); }
+  catch (e) { return failed(false); }
   const values = validation.values;
   if (!S.nocoda || typeof S.nocoda !== 'object') S.nocoda = structuredClone(DEFAULTS.nocoda);
   if (!S.nocoda.studies || typeof S.nocoda.studies !== 'object') S.nocoda.studies = {};
@@ -28304,12 +28568,26 @@ function ncSaveStudy() {
     anchor3: { datetime: ncDraft.anchor3.datetime, price: values.p3 },
     updatedAt: new Date().toISOString()
   });
-  save();
+  let persisted;
+  try { persisted = save(); }
+  catch (e) {
+    markJPWealthPersistenceOutcomeUnknown('estudo NoCoda');
+    return failed(true);
+  }
+  if (persisted === false) {
+    S.nocoda = before;
+    return failed(false);
+  }
+  if (persisted !== true) {
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do estudo NoCoda');
+    return failed(true);
+  }
 
   ncDraft = ncDraftFrom(ncSelectedId);
   ncDirty = false;
   if (status) { status.className = 'fx-status ok'; status.textContent = 'parâmetros salvos'; }
   ncUpdateDerived();
+  return true;
 }
 
 // Superfície pública consumida pelo controlador de views do Execution Board.
@@ -28792,6 +29070,39 @@ function pvStudies() {
   return (S.pivotStudies && Array.isArray(S.pivotStudies.studies)) ? S.pivotStudies.studies : [];
 }
 function pvStudyById(id) { return pvStudies().find(st => st.id === id) || null; }
+// A confirmação pertence às quatro mutações deste agregado. Uma recusa
+// comprovada restaura apenas estudos; uma exceção de save não prova não escrita.
+function pvMutateStudies(change) {
+  function failed(unknown) {
+    hideStaleSavedTag();
+    if (unknown) {
+      const banner = document.getElementById('persistenceAlert');
+      if (banner && banner.classList.contains('is-recovered')) { banner.className = 'persistence-alert'; banner.innerHTML = ''; layoutPersistenceBanners(); }
+    }
+    alert(unknown
+      ? 'Gravação não confirmada. Não repita a ação; confira a base salva antes de continuar.'
+      : 'Não foi possível salvar. A alteração foi recusada; os campos abertos permanecem nesta sessão. Resolva a falha antes de tentar novamente.');
+    return false;
+  }
+  if (jpWealthPersistenceOutcomeIsUnknown()) return failed(true);
+  let before;
+  try { before = structuredClone(S.pivotStudies); }
+  catch (e) { return failed(false); }
+  try { change(); }
+  catch (e) { S.pivotStudies = before; return failed(false); }
+  let persisted;
+  try { persisted = save(); }
+  catch (e) {
+    markJPWealthPersistenceOutcomeUnknown('estudos dos Pivots');
+    return failed(true);
+  }
+  if (persisted === false) { S.pivotStudies = before; return failed(false); }
+  if (persisted !== true) {
+    markJPWealthPersistenceOutcomeUnknown('retorno indeterminado dos estudos dos Pivots');
+    return failed(true);
+  }
+  return true;
+}
 function pvStudiesFor(instrumentId) {
   return pvStudies().filter(st => st.instrumentId === instrumentId);
 }
@@ -29293,16 +29604,18 @@ function pvCreateStudy() {
   // pivot podiam estar abertos ao mesmo tempo e o rascunho completo do operador
   // era apagado sem uma palavra. O confirm vem ANTES de criar: cancelar deixa
   // tudo como estava, e o operador pode salvar o pivot primeiro.
-  if (!pvConfirmDiscard()) return;
+  // Confirmar descarte não destrói o formulário antes de conhecer a gravação.
+  if (pvDirty && !confirm('Há um pivot em edição com alterações não salvas. Continuar descarta essas alterações.')) return;
   const now = new Date().toISOString();
   const study = {
     id: pivotStudyId(), instrumentId: pvInstrumentId,
     periodStart, periodEnd, createdAt: now, updatedAt: now, pivots: []
   };
-  if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
-  if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
-  S.pivotStudies.studies.push(study);
-  save();
+  if (!pvMutateStudies(() => {
+    if (!S.pivotStudies || typeof S.pivotStudies !== 'object') S.pivotStudies = structuredClone(DEFAULTS.pivotStudies);
+    if (!Array.isArray(S.pivotStudies.studies)) S.pivotStudies.studies = [];
+    S.pivotStudies.studies.push(study);
+  })) return false;
 
   pvStudyId = study.id;
   pvNewStudyOpen = false;
@@ -29316,8 +29629,7 @@ function pvDeleteStudy() {
   if (!study) return;
   const count = study.pivots.length;
   if (!confirm(`Excluir o estudo ${pvFmtDate(study.periodStart)} → ${pvFmtDate(study.periodEnd)} de ${study.instrumentId}?\n\n${count} pivot(s) registrado(s) serão apagados junto. A ação é irreversível.`)) return;
-  S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id);
-  save();
+  if (!pvMutateStudies(() => { S.pivotStudies.studies = pvStudies().filter(st => st.id !== study.id); })) return false;
   pvStudyId = null;
   pvCloseForm();
   renderPivotStudies();
@@ -29372,12 +29684,16 @@ function pvSavePivot() {
     }
     // Editar ATUALIZA o registro; nunca cria um segundo. Campos desconhecidos
     // que tenham vindo de backup atravessam intactos.
-    Object.assign(pivot, values, { updatedAt: now });
+    if (!pvMutateStudies(() => {
+      Object.assign(pivot, values, { updatedAt: now });
+      pvTouchStudy(study);
+    })) return false;
   } else {
-    study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+    if (!pvMutateStudies(() => {
+      study.pivots.push(Object.assign({ id: pivotRecordId() }, values, { createdAt: now, updatedAt: now }));
+      pvTouchStudy(study);
+    })) return false;
   }
-  pvTouchStudy(study);
-  save();
   pvCloseForm();
   renderPivotStudies();
 }
@@ -29388,9 +29704,10 @@ function pvDeletePivot(pivotId) {
   const pivot = study.pivots.find(p => p.id === pivotId);
   if (!pivot) return;
   if (!confirm(`Excluir este pivot ${pivot.timeframe} (${pvFmtDatetime(pivot.startDatetime)} → ${pvFmtDatetime(pivot.endDatetime)})?\n\nA ação é irreversível.`)) return;
-  study.pivots = study.pivots.filter(p => p.id !== pivotId);
-  pvTouchStudy(study);
-  save();
+  if (!pvMutateStudies(() => {
+    study.pivots = study.pivots.filter(p => p.id !== pivotId);
+    pvTouchStudy(study);
+  })) return false;
   if (pvEditingId === pivotId) pvCloseForm();
   renderPivotStudies();
 }
@@ -33569,6 +33886,16 @@ const ALD_STARTER_ASSET_CLASSES = ['RENDA_VARIAVEL','IMOBILIARIO_FINANCEIRO','RE
 
 const ALD_CURRENCY_RE = /^[A-Z]{3}$/; // forma ISO 4217 — schema aberto (o runtime é que é limitado)
 const ALD_DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
+// Novos fatos exigem um dia existente, sem normalizar a entrada nem limitar
+// retroatividade/futuro. A leitura histórica conserva seu contrato de forma.
+function aldCivilDateValida(value){
+  if(typeof value!=='string' || !ALD_DATE_RE.test(value)) return false;
+  const year=Number(value.slice(0,4)), month=Number(value.slice(5,7)), day=Number(value.slice(8,10));
+  if(month<1 || month>12 || day<1) return false;
+  const leap=year%4===0 && (year%100!==0 || year%400===0);
+  const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+  return day<=days[month-1];
+}
 
 const ALD_COLECOES = {
   instrument:  { colecao:'instruments',  campoId:'instrumentId'  },
@@ -34210,7 +34537,7 @@ function aldNormalizeTransactionFields(a, d){
      Object.prototype.hasOwnProperty.call(d,'flowScope'))
     return { ok:false, erro:'ALD_FLOW_SCOPE_NAO_PERMITIDO_EM_TRADE' };
   if(typeof d.amount!=='number' || !Number.isSafeInteger(d.amount) || d.amount<=0) return { ok:false, erro:'ALD_AMOUNT_INVALIDO' };
-  if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+  if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
   const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
   let dedupe = null;
   if(d.dedupeKey!==undefined && d.dedupeKey!==null && d.dedupeKey!==''){
@@ -34313,7 +34640,7 @@ function aldActReverseTransaction(originalId, dados){
     }
     if(orig.status!=='POSTED') return { ok:false, erro:'ALD_TRANSACAO_NAO_ESTA_POSTED' };
     const d = dados || {};
-    if(typeof d.effectiveAt!=='string' || !ALD_DATE_RE.test(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
+    if(!aldCivilDateValida(d.effectiveAt)) return { ok:false, erro:'ALD_EFFECTIVE_AT_INVALIDA' };
     const nota = aldOptionalText(d.note, 240); if(!nota.ok) return { ok:false, erro:'ALD_NOTE_INVALIDA' };
     // `reason` da reversao e PROPRIO — como effectiveAt e note. Reverter um
     // ajuste e outro ato sem contraparte, e o motivo dele nao e o motivo do
