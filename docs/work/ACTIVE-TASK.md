@@ -1,3 +1,13 @@
+# Tarefa delimitada — NAV-REF-01: projeção da navegação local
+
+Contrato: [CHG-NAV-LOCAL-PROJECTION-20260910](CHG-NAV-LOCAL-PROJECTION-20260910.md), CHG/CTX N1/A2. Escolha A do proprietário autoriza somente os sete caminhos e verificações delimitados, na branch `codex/nav-local-projection`, base `b3054e1da1a4a2f2a5ddefd8d715432d7719e636`. Criação/uso desta branch recebeu autorização específica; sem commit, tag, push, PR, merge ou deploy.
+
+Objetivo: separar decisão local dos efeitos, preservando os contratos examinados, inclusive histórico Exec e visões PF sem canonical. Sem regras financeiras, persistência, layout ou contexto geral. Teste de contrato primeiro na baseline e depois no candidate; consumidores, standard, reprodutibilidade, PWA e auditoria focal. Resultados e recuperação em `tools/.artifacts/nav-local-projection-20260910/`; nenhuma aprovação é antecipada por este cabeçalho. Rollback somente do próprio delta após conferência, sem reset/stash/limpeza.
+
+Todo o conteúdo abaixo é histórico preservado integralmente, não autorização para outras tarefas. Dívidas anteriores permanecem abertas.
+
+---
+
 # Tarefa delimitada — CUR-VIG-01: referências e vigência
 
 Contrato: [CONTEXT-CURATION-20260910](CONTEXT-CURATION-20260910.md), CHG/CTX N3/A4. O proprietário escolheu A para o lote delimitado: AGENTS.md, README.md, este cabeçalho e o contrato próprio, na branch `codex/context-curation`, a partir de `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`.

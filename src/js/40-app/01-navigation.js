@@ -164,23 +164,35 @@ function navNavigate(target){
   return navLastResult.accepted===true;
 }
 
+// Projeta somente pares locais já validados; identidade semântica não escolhe
+// a tela física (histórico de Exec e Apuração canônica são destinos distintos).
+function navLocalPlan(surfaceId,view,descriptor){
+  let canonical=null;
+  if(surfaceId==='exec'){
+    if(view==='overview') canonical='forex-overview';
+    else if(view==='panel'||view==='motor') canonical='forex-operation';
+    else if(view==='history') canonical='forex-reconciliation';
+  }else if(surfaceId==='fxplan'){
+    canonical='forex-planning';
+  }else if(surfaceId==='finpes'){
+    if(view==='overview') canonical='personal-finance';
+  }else if(surfaceId==='research'){
+    if(view==='calendar'||view==='nocoda'||view==='pivots') canonical='research-forex';
+    else if(view==='stocks-br') canonical='research-stocks-br';
+    else if(view==='stocks-global') canonical='research-stocks-global';
+    else if(view==='reits') canonical='research-reits';
+    else if(view==='others') canonical='research-others';
+  }
+  const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-'))?canonical:null;
+  return {accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
+    canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
+}
+
 function navNavigateLocal(surfaceId,view){
   const descriptor=NAV_LOCAL_SURFACES[surfaceId];
   const surface=navSurface(surfaceId);
   if(!descriptor||!descriptor.views.includes(view)||!surface||typeof surface.selectView!=='function') return false;
-  const canonical=surfaceId==='exec'&&view==='overview'?'forex-overview':
-    (surfaceId==='exec'&&(view==='panel'||view==='motor')?'forex-operation':
-    (surfaceId==='exec'&&view==='history'?'forex-reconciliation':
-    (surfaceId==='fxplan'?'forex-planning':
-    (surfaceId==='finpes'&&view==='overview'?'personal-finance':
-    (surfaceId==='research'&&(view==='calendar'||view==='nocoda'||view==='pivots')?'research-forex':
-    (surfaceId==='research'&&view==='stocks-br'?'research-stocks-br':
-    (surfaceId==='research'&&view==='stocks-global'?'research-stocks-global':
-    (surfaceId==='research'&&view==='reits'?'research-reits':
-    (surfaceId==='research'&&view==='others'?'research-others':null)))))))));
-  const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-'))?canonical:null;
-  const plan={accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
-    canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
+  const plan=navLocalPlan(surfaceId,view,descriptor);
   navLastResult={accepted:false,reason:'not-applied'};
   navApply(plan,surfaceId);
   if(typeof syncActiveScreen==='function') syncActiveScreen();
