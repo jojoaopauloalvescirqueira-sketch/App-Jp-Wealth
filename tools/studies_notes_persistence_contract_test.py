@@ -15,7 +15,7 @@ import sys
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -299,6 +299,121 @@ def run_folder_prompt(browser,url,rename=False):
     return {'case':case,'mode':'native-prompt','classification':'PRODUCT_FAIL' if failures else 'PASS','violations':failures,'prompts':prompts}
 
 
+BANNER_GEOMETRY = r"""() => {
+  const rect=el=>el.getBoundingClientRect().toJSON();
+  const banners=['persistenceRecovery','persistenceAlert'].map(id=>document.getElementById(id))
+    .filter(el=>el.textContent.trim()).map(el=>({id:el.id,rect:rect(el),scrollHeight:el.scrollHeight,
+      clientHeight:el.clientHeight,overflowY:getComputedStyle(el).overflowY,zIndex:getComputedStyle(el).zIndex,
+      role:el.getAttribute('role'),live:el.getAttribute('aria-live'),text:el.textContent,
+      buttons:[...el.querySelectorAll('button')].map(b=>b.id)}));
+  return {banners,drawer:rect(document.getElementById('mvpNotesDrawer')),
+    body:rect(document.getElementById('mvpNotesBody')),viewport:{width:innerWidth,height:innerHeight},
+    documentWidth:document.documentElement.scrollWidth};
+}"""
+
+
+def run_banner_retry(browser,url,theme,width,height,artifact):
+    """Same refused native rename, with pointer access to both notices and Notes.
+
+    Recovery is rendered from synthetic recovery metadata to exercise the two
+    independent banners. The fixture never resolves or replaces a real database.
+    """
+    context=browser.new_context(viewport={'width':width,'height':height},service_workers='block')
+    install_bootstrap(context);context.add_init_script('window.__onbShown=true;')
+    page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
+    page.goto(url,wait_until='load');wait_bootstrap(page)
+    page.evaluate('(theme)=>document.documentElement.dataset.theme=theme',theme)
+    page.evaluate(PREPARE,{'caseName':'folder-rename','nc':NC,'pv':PV})
+    page.evaluate('mvpNotesUI.draftDirty=false;window.__mode="quota"')
+    if width<=920:
+        page.locator('#mvpNotesBackBtn').click();page.locator('#mvpNotesBackBtn').click()
+    prompts=[];accept_retry=False
+    def dialog(d):
+        prompts.append({'type':d.type,'default':d.default_value})
+        if len(prompts)==1 or accept_retry:d.accept('Recoverable folder')
+        else:d.dismiss()
+    page.on('dialog',dialog)
+    summary=page.locator('[data-mvp-folder-row="folder-existing"] summary')
+    rename=page.locator('[data-mvp-folder-rename="folder-existing"]')
+    before=page.evaluate(SNAPSHOT)
+    summary.click();rename.click();refused=page.evaluate(SNAPSHOT)
+    failures=[];phases=[]
+    check(refused['aggregate']==before['aggregate'] and refused['raw']==before['raw'],
+          'refused rename changed confirmed state',failures)
+    check(refused['calls']==[False],'refused rename did not save exactly once',failures)
+
+    def phase(label,count):
+        # Let native ResizeObserver and responsive layout settle; never invoke the
+        # production layout helper from the test after changing viewport/content.
+        page.evaluate('() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+        facts=page.evaluate(BANNER_GEOMETRY);phases.append({'phase':label,'geometry':facts})
+        check(len(facts['banners'])==count,label+': missing notice',failures)
+        bottom=max(b['rect']['bottom'] for b in facts['banners'])
+        check(facts['drawer']['top']>=bottom+8,label+': notice overlaps Notes',failures)
+        check(facts['drawer']['bottom']<=facts['viewport']['height']+1 and facts['body']['height']>=44,
+              label+': Notes body is not usable within viewport',failures)
+        check(facts['documentWidth']<=facts['viewport']['width'],label+': horizontal document overflow',failures)
+        if count==2:
+            check(facts['banners'][1]['rect']['top']>=facts['banners'][0]['rect']['bottom']+8,
+                  label+': notices overlap each other',failures)
+        for banner in facts['banners']:
+            check(banner['role']=='alert' and banner['live']=='assertive',label+': announcement semantics changed',failures)
+            check(banner['rect']['height']>0 and banner['rect']['bottom']<=facts['viewport']['height'],
+                  label+': notice outside viewport',failures)
+            for button in banner['buttons']:
+                try:page.locator('#'+button).click(trial=True,timeout=1200)
+                except PlaywrightTimeout:failures.append(label+': inaccessible notice action '+button)
+        count_before=len(prompts)
+        try:
+            summary.click(timeout=1200);rename.click(timeout=1200)
+            # The first retry retains the refused draft. Cancelling that prompt
+            # explicitly discards it; later menu probes start from saved state.
+            expected_name='Recoverable folder' if count_before==1 else 'Original'
+            check(len(prompts)==count_before+1 and prompts[-1]['default']==expected_name,
+                  label+': pointer retry has incorrect draft/confirmed name',failures)
+        except PlaywrightTimeout:
+            failures.append(label+': pointer rename retry intercepted or unreachable')
+        finally:
+            if summary.evaluate('el=>el.parentElement.open'):
+                summary.focus();page.keyboard.press('Enter')
+        state=page.evaluate(SNAPSHOT)
+        check(all(state[k]==refused[k] for k in ('aggregate','raw','log','other','calls')),
+              label+': layout or cancelled retry wrote state',failures)
+        image=artifact.with_name(artifact.stem+f'-{theme}-{width}x{height}-{label}.png')
+        page.screenshot(path=str(image));phases[-1]['screenshot']=str(image)
+
+    phase('single',1)
+    page.evaluate("jpWealthLoadRecovery.active=true;jpWealthLoadRecovery.raw='{\"synthetic\":true}';renderLoadRecoveryWarning()")
+    phase('dual',2)
+    alternate=(1280,700) if width>920 else ((320,480) if width<500 else (800,400))
+    page.set_viewport_size({'width':alternate[0],'height':alternate[1]});phase('resized',2)
+    page.set_viewport_size({'width':width,'height':height});phase('restored',2)
+    # A renderer content change, then drawer close/reopen, must release/reapply
+    # the reserve without changing either notice's lifetime or persistence state.
+    page.evaluate('jpWealthLoadRecovery.active=false;clearLoadRecoveryWarning()')
+    phase('single-again',1)
+    page.locator('#mvpNotesCloseBtn').click()
+    page.evaluate('() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+    check(abs(page.locator('#persistenceAlert').bounding_box()['y']-72)<1,'closed Notes changed normal notice anchor',failures)
+    page.evaluate('openMvpNotesDrawer()')
+    if width<=920 and page.locator('#mvpNotesBackBtn').is_visible():
+        page.locator('#mvpNotesBackBtn').click()
+    phase('reopened',1)
+    accept_retry=True;page.evaluate('window.__mode="normal"')
+    try:
+        summary.click(timeout=1200);rename.click(timeout=1200)
+        retried=page.evaluate(SNAPSHOT)
+        check(retried['calls']==[False,True],'explicit successful retry was not one write',failures)
+        check(retried['aggregate']['folders'][0]['name']=='Recoverable folder','successful retry lost name',failures)
+        check(json.loads(retried['raw'])['mvpNotes']==retried['aggregate'],'successful retry not durably saved',failures)
+    except PlaywrightTimeout:
+        failures.append('successful pointer retry intercepted or unreachable')
+    check(not errors,'browser runtime errors: '+str(errors),failures)
+    assert_fixture_requests(context);context.close()
+    return {'case':'folder-rename','mode':f'banner-{theme}-{width}x{height}',
+            'classification':'PRODUCT_FAIL' if failures else 'PASS','violations':failures,'prompts':prompts,'phases':phases}
+
+
 def run_missing_note(browser,url):
     context=browser.new_context(service_workers='block');install_bootstrap(context)
     page=context.new_page();page.add_init_script('window.__onbShown=true;')
@@ -312,6 +427,145 @@ def run_missing_note(browser,url):
     check('não existe' in (after['ui']['live'] or ''),'missing target lacks explanation',failures)
     context.close()
     return {'case':'note-missing','mode':'api','classification':'PRODUCT_FAIL' if failures else 'PASS','violations':failures,'before':before,'after':after}
+
+
+def run_banner_keyboard(browser,url,theme,width,height,artifact):
+    """Keyboard recovery remains inside the Notes modal without discarding a ticket.
+
+    Fixed before the closure patch: live notices must belong to the same modal
+    as the editor; both keyboard directions reach their real actions. Export
+    contains confirmed state, never the transient draft. Nested dialogs keep
+    their own boundary. Only synthetic storage/downloads are used.
+    """
+    context=browser.new_context(viewport={'width':width,'height':height},service_workers='block')
+    install_bootstrap(context);context.add_init_script('window.__onbShown=true;')
+    page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
+    page.goto(url,wait_until='load');wait_bootstrap(page)
+    page.evaluate("""theme=>{
+      document.documentElement.dataset.theme=theme;
+      window.__noticeNodes=['persistenceRecovery','persistenceAlert'].map(id=>{
+        const el=document.getElementById(id);
+        return {el,parent:el.parentNode,next:el.nextSibling,inert:el.inert,hidden:el.getAttribute('aria-hidden')};
+      });
+    }""",theme)
+    page.evaluate(PREPARE,{'caseName':'note-edit','nc':NC,'pv':PV})
+    before=page.evaluate(SNAPSHOT);failures=[];routes=[]
+    page.evaluate("""()=>{
+      window.__confirms=[];window.confirm=m=>{window.__confirms.push(m);return false;};
+      window.__blob=null;window.__downloadName=null;
+      URL.createObjectURL=b=>{window.__blob=b;return 'blob:notes-keyboard-fixture';};
+      URL.revokeObjectURL=()=>{};
+      HTMLAnchorElement.prototype.click=function(){window.__downloadName=this.download;};
+    }""")
+    active="""()=>({id:document.activeElement.id,tag:document.activeElement.tagName,
+      order:[...document.querySelectorAll('*')].indexOf(document.activeElement),
+      inNotes:document.getElementById('mvpNotesOverlay').contains(document.activeElement),
+      inNew:document.getElementById('mvpNotesNewBox').contains(document.activeElement)})"""
+
+    def route(target,key,label):
+        steps=[];seen=set();reached=False
+        for _ in range(100):
+            page.keyboard.press(key);state=page.evaluate(active);steps.append(state)
+            if state['id']==target:reached=True;break
+            identity=state['order']
+            if identity in seen:break
+            seen.add(identity)
+        routes.append({'phase':label,'key':key,'target':target,'reached':reached,'steps':steps})
+        check(reached,label+': keyboard did not reach '+target,failures)
+        return reached
+
+    def preserved(label):
+        state=page.evaluate(SNAPSHOT)
+        check(state['raw']==before['raw'] and state['aggregate']==before['aggregate'],label+': confirmed state changed',failures)
+        check(state['ui']['dirty'] and state['ui']['draft']==before['ui']['draft'],label+': dirty draft changed',failures)
+        check(page.evaluate('mvpNotesUI.open') and page.locator('#mvpNoteContent').input_value()==before['ui']['draft']['content'],
+              label+': drawer/editor was closed or draft text lost',failures)
+        check(state['other']==before['other'],label+': unrelated financial aggregate changed',failures)
+        return state
+
+    def semantics(label):
+        facts=page.evaluate("""()=>{
+          const dialog=document.getElementById('mvpNoteContent').closest('[role="dialog"][aria-modal="true"]');
+          return window.__noticeNodes.map(({el})=>({id:el.id,sameNode:document.getElementById(el.id)===el,
+            sameModal:!!dialog&&dialog.contains(el),role:el.getAttribute('role'),live:el.getAttribute('aria-live')}));
+        }""")
+        check(all(f['sameNode'] and f['sameModal'] and f['role']=='alert' and f['live']=='assertive' for f in facts),
+              label+': live notices do not belong to the editor modal',failures)
+
+    page.locator('#mvpNoteContent').click()
+    for _ in range(35):
+        page.keyboard.press('Tab')
+        check(page.evaluate(active)['inNotes'],'empty notices: focus escaped Notes',failures)
+    page.evaluate('window.__mode="quota"');page.locator('#mvpNotesSaveBtn').click()
+    refused=preserved('save refused')
+    check(refused['calls']==[False],'ticket refusal was not exactly one save',failures)
+    semantics('single notice')
+    forward=route('persistenceAlertBackupBtn','Tab','single forward')
+    reverse=route('persistenceAlertBackupBtn','Shift+Tab','single reverse')
+    if reverse or forward:
+        # Reach it again if the second route failed and moved focus elsewhere.
+        if page.evaluate('document.activeElement.id')!='persistenceAlertBackupBtn':
+            forward=route('persistenceAlertBackupBtn','Tab','export destination')
+        if page.evaluate('document.activeElement.id')=='persistenceAlertBackupBtn':
+            page.keyboard.press('Enter')
+            page.wait_for_function('window.__blob!==null && !dgExportEmAndamento')
+            backup=json.loads(page.evaluate('window.__blob.text()'))
+            check(backup['state']['mvpNotes']==before['aggregate'],'backup exported transient or altered Notes',failures)
+            after_export=preserved('backup')
+            check(after_export['calls']==[False,False],'backup bookkeeping did not make exactly one refused save',failures)
+    page.keyboard.press('Escape');preserved('cancel discard')
+    check(page.evaluate('window.__confirms.length')==1,'Escape did not retain explicit dirty-discard protection',failures)
+    page.evaluate("jpWealthLoadRecovery.active=true;jpWealthLoadRecovery.raw='{\"synthetic\":true}';renderLoadRecoveryWarning()")
+    semantics('two notices')
+    for target in ('persistenceRecoveryDownloadBtn','persistenceRecoveryImportBtn','persistenceRecoveryResetBtn','persistenceAlertBackupBtn'):
+        route(target,'Tab','dual '+target)
+    if route('persistenceRecoveryDownloadBtn','Shift+Tab','recovery download reverse'):
+        calls=page.evaluate('window.__saveCalls.length');page.evaluate('window.__blob=null')
+        page.keyboard.press('Enter');page.wait_for_function('window.__blob!==null')
+        check(page.evaluate('window.__blob.text()')=='{"synthetic":true}','recovery download did not preserve original raw bytes',failures)
+        check(page.evaluate('window.__saveCalls.length')==calls,'raw recovery download attempted save',failures)
+    preserved('two notices keyboard')
+    # Remove the focused action through the real renderer, then recover focus
+    # with Tab. Empty notices must not create a route into the inert background.
+    route('persistenceRecoveryDownloadBtn','Tab','before disappearance')
+    page.evaluate('jpWealthLoadRecovery.active=false;clearLoadRecoveryWarning();clearPersistenceFailureState()')
+    page.keyboard.press('Tab')
+    check(page.evaluate(active)['inNotes'],'removed notice action lost focus outside Notes',failures)
+    page.evaluate("jpWealthPersistenceFailure.active=true;jpWealthPersistenceFailure.kind='storage';renderPersistenceFailureWarning()")
+    semantics('notice reappeared');route('persistenceAlertBackupBtn','Tab','reappeared')
+    preserved('visibility transitions')
+    check(page.evaluate('window.__confirms.length')==1,'keyboard recovery requested another discard',failures)
+    # Resolve the storage fixture and save the same draft with the actual UI.
+    page.evaluate('window.__mode="normal"');page.locator('#mvpNotesSaveBtn').click()
+    saved=page.evaluate(SNAPSHOT)
+    check(not saved['ui']['dirty'] and saved['aggregate']['items'][0]['content']==before['ui']['draft']['content'],
+          'explicit retry did not save retained ticket',failures)
+    check(json.loads(saved['raw'])['mvpNotes']==saved['aggregate'],'retry was not durable',failures)
+    page.evaluate("jpWealthLoadRecovery.active=true;jpWealthLoadRecovery.raw='{\"synthetic\":true}';renderLoadRecoveryWarning()")
+    page.locator('#mvpNotesNewBtn').click()
+    nested=[]
+    for key in ('Tab','Shift+Tab'):
+        for _ in range(18):
+            page.keyboard.press(key);state=page.evaluate(active);nested.append(state)
+            check(state['inNew'],'nested dialog leaked keyboard focus',failures)
+    check(page.evaluate("window.__noticeNodes.every(({el})=>el.inert&&el.getAttribute('aria-hidden')==='true')"),
+          'nested modal leaves global notice actions active/accessible underneath',failures)
+    page.keyboard.press('Escape')
+    check(page.evaluate('mvpNotesUI.open && !mvpNotesUI.newNoteOpen'),'Escape closed Notes with nested dialog',failures)
+    check(page.evaluate("window.__noticeNodes.every(({el,inert,hidden})=>el.inert===inert&&el.getAttribute('aria-hidden')===hidden)"),
+          'nested close did not restore notice accessibility',failures)
+    route('persistenceRecoveryDownloadBtn','Tab','after nested close')
+    page.screenshot(path=str(artifact.with_name(artifact.stem+f'-keyboard-{theme}-{width}x{height}.png')))
+    page.locator('#mvpNotesCloseBtn').click()
+    check(page.evaluate("window.__noticeNodes.every(({el,parent,next})=>document.getElementById(el.id)===el&&el.parentNode===parent&&el.nextSibling===next)"),
+          'closing Notes did not restore original live notice nodes/order',failures)
+    check(page.locator('#persistenceRecoveryDownloadBtn').is_visible(),'closing Notes hid the global recovery action',failures)
+    check(page.evaluate('!mvpNotesUI.open'),'clean drawer did not close',failures)
+    check(not errors,'browser runtime errors: '+str(errors),failures)
+    assert_fixture_requests(context);context.close()
+    return {'case':'note-dirty-keyboard','mode':f'keyboard-{theme}-{width}x{height}',
+            'classification':'PRODUCT_FAIL' if failures else 'PASS','violations':failures,
+            'routes':routes,'nested':nested,'before':before,'refused':refused,'saved':saved}
 
 
 def run_folder_reference(browser,url,mode):
@@ -350,7 +604,7 @@ def main():
     parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1])
     parser.add_argument('--artifact',type=Path,required=True)
     parser.add_argument('--mode',choices=['baseline','full'],default='full')
-    parser.add_argument('--only',choices=['conflict','ui','missing','folders','recovered-unknown','folder-reference'])
+    parser.add_argument('--only',choices=['conflict','ui','missing','folders','recovered-unknown','folder-reference','banner','keyboard'])
     args=parser.parse_args();root=args.root.resolve();os.chdir(root)
     class Quiet(SimpleHTTPRequestHandler):
         def log_message(self,*args):pass
@@ -391,6 +645,20 @@ def main():
                     except Exception as error:record={'case':'folder-reference','mode':mode,'classification':'TEST_HARNESS_FAIL','error':str(error)}
                     results.append(record)
                     print(json.dumps({k:v for k,v in record.items() if k not in ('before','after')},ensure_ascii=False),flush=True)
+            if args.mode=='full' and args.only in (None,'banner'):
+                for theme in ('dark','light'):
+                    for width,height in ((1440,1000),(390,568),(640,360)):
+                        try:record=run_banner_retry(browser,f'http://127.0.0.1:{server.server_port}/index.html',theme,width,height,args.artifact)
+                        except Exception as error:record={'case':'folder-rename','mode':f'banner-{theme}-{width}x{height}','classification':'TEST_HARNESS_FAIL','error':str(error)}
+                        results.append(record)
+                        print(json.dumps({k:v for k,v in record.items() if k!='phases'},ensure_ascii=False),flush=True)
+            if args.mode=='full' and args.only in (None,'keyboard'):
+                for theme in ('dark','light'):
+                    for width,height in ((1440,1000),(390,568),(640,360)):
+                        try:record=run_banner_keyboard(browser,f'http://127.0.0.1:{server.server_port}/index.html',theme,width,height,args.artifact)
+                        except Exception as error:record={'case':'note-dirty-keyboard','mode':f'keyboard-{theme}-{width}x{height}','classification':'TEST_HARNESS_FAIL','error':str(error)}
+                        results.append(record)
+                        print(json.dumps({k:v for k,v in record.items() if k in ('case','mode','classification','violations','error')},ensure_ascii=False),flush=True)
             args.artifact.write_text(json.dumps({'root':str(root),'suite_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'results':results},ensure_ascii=False,indent=2))
             browser.close()
     finally:server.shutdown()

@@ -543,6 +543,65 @@ def run_dist_suite(browser, url):
     close_checked(page_a)
     close_checked(page_b)
 
+def run_galton_reset_order(browser, url):
+    """Recepção com preferência ainda presente: limpar antes de remontar.
+
+    O emissor já confirmou o documento principal. Uma preferência auxiliar pode
+    continuar presente no receptor (por exemplo, alteração concorrente do painel).
+    O handler real precisa removê-la e não reter sua projeção em memória. Não
+    simula retorno de storage nem muda o resultado esperado do fluxo existente.
+    """
+    page = prepare_page(browser, url)
+    page.locator('#headerConfigBtn').click()
+    page.evaluate("activateSettingsCategory('galton-board')")
+    page.wait_for_function("document.querySelector('[data-galton-root]')?.__galtonController?.active")
+    before = page.evaluate('''() => {
+      const controller=document.querySelector('[data-galton-root]').__galtonController;
+      window.__orderStaleGalton=controller;
+      controller.preferences.speed=4;
+      const saved=controller.persist();
+      const finalState=emptyJPWealthState({alladin:S.alladin});
+      localStorage.setItem(LSKEY,JSON.stringify(finalState));
+      localStorage.setItem('other-app-galton-order','preserve');
+      return {saved,speed:controller.preferences.speed,
+        present:localStorage.getItem('jpwealth_galton_preferences_v1')!==null};
+    }''')
+    assert before == {'saved': True, 'speed': 4, 'present': True}, before
+    page.evaluate('''() => sessionHandleRemoteFinalization({
+      type:'jpwealth-session-finalized-v2',
+      token:'synthetic-galton-order-'+crypto.randomUUID(),
+      baseEpoch:sessionEpochCurrent()
+    })''')
+    after = page.evaluate('''() => {
+      const old=window.__orderStaleGalton;
+      const current=document.querySelector('[data-galton-root]').__galtonController;
+      return {absent:localStorage.getItem('jpwealth_galton_preferences_v1')===null,
+        oldDestroyed:old.destroyed,oldWrite:old.persist(),replaced:current!==old,
+        active:current?.active,speed:current?.preferences.speed,
+        other:localStorage.getItem('other-app-galton-order'),
+        saveAccepted:save(),ledger:S.ledger.length};
+    }''')
+    assert after == {'absent': True, 'oldDestroyed': True, 'oldWrite': False,
+                     'replaced': True, 'active': True, 'speed': 1,
+                     'other': 'preserve', 'saveAccepted': True, 'ledger': 0}, after
+    # Se o fluxo recusar entre invalidar o controlador e limpar auxiliares,
+    # recriar a superfície não pode apagar ou substituir a preferência salva.
+    preserved = page.evaluate('''() => {
+      const controller=document.querySelector('[data-galton-root]').__galtonController;
+      controller.preferences.speed=2;
+      if(!controller.persist()) throw new Error('fixture: preference save refused');
+      const raw=localStorage.getItem('jpwealth_galton_preferences_v1');
+      sessionResetAuxiliarySurfaces();
+      return raw;
+    }''')
+    no_cleanup = page.evaluate('''() => ({
+      raw:localStorage.getItem('jpwealth_galton_preferences_v1'),
+      speed:document.querySelector('[data-galton-root]').__galtonController?.preferences.speed
+    })''')
+    assert no_cleanup == {'raw': preserved, 'speed': 2}, no_cleanup
+    close_checked(page)
+
+
 def run_mvp_notes_survival(browser, url):
     """Notas do MVP (schema v2, com pastas): notas E pastas sobrevivem a Finalizar Sessão
     (com aviso na confirmação) e a um reload real; a Zona de Perigo (mesmo mecanismo de
@@ -660,7 +719,9 @@ def main():
             run_fingerprint_resilience(app_context, base_url)
             run_consent_texts(app_context, base_url)
             run_source_surface(app_context, base_url)
+            run_galton_reset_order(app_context, base_url + 'index.html')
             run_dist_suite(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
+            run_galton_reset_order(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             run_mvp_notes_survival(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             app_context.close()
             run_cache_test(browser, base_url)

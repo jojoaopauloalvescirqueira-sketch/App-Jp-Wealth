@@ -22,6 +22,8 @@ const FF_NEWS_IMMINENT_MS=15*60*1000;
 const FF_NEWS_CURRENCIES=['USD','EUR','JPY','GBP'];
 let ffNewsInFlight=false;
 let ffNewsLastError=false;
+let ffNewsCacheWriteFailed=false;
+let ffNewsCacheReadFailed=false;
 
 function ffNewsSourceUrl(){
   try{ return localStorage.getItem(FF_NEWS_URL_OVERRIDE_KEY) || FF_NEWS_DEFAULT_URL; }
@@ -47,8 +49,12 @@ function ffNewsSanitizeEvents(payload){
 }
 
 function ffNewsReadCache(){
+  let raw;
   try{
-    const raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    ffNewsCacheReadFailed=false;
+  }catch(_){ ffNewsCacheReadFailed=true; return null; }
+  try{
     if(!raw) return null;
     const parsed=JSON.parse(raw);
     if(!parsed || typeof parsed!=='object' || typeof parsed.fetchedAt!=='number') return null;
@@ -58,8 +64,17 @@ function ffNewsReadCache(){
   }catch(_){ return null; }
 }
 function ffNewsWriteCache(payload){
-  try{ localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload})); }
-  catch(_){ /* cota cheia: segue só em memória até o próximo render */ }
+  try{
+    localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload}));
+    return true;
+  }catch(_){ return false; }
+}
+
+// Estado técnico da tentativa, sem payload paralelo nem alteração do cache antigo.
+function ffNewsCacheIssue(){
+  if(ffNewsCacheReadFailed) return 'Cache indisponível — não foi possível ler o armazenamento.';
+  if(ffNewsCacheWriteFailed) return 'Cache não atualizado — não foi possível gravar no armazenamento.';
+  return '';
 }
 
 function ffNewsIsToday(date){
@@ -68,12 +83,13 @@ function ffNewsIsToday(date){
 }
 
 function ffNewsStatusText(cache){
-  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
+  const issue=ffNewsCacheIssue();
+  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
     : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  return (ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
+  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
 }
 
 // Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,
@@ -208,7 +224,7 @@ function ffNewsFetch(force){
     .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(payload=>{
       if(!ffNewsSanitizeEvents(payload)) throw new Error('carga inválida');
-      ffNewsWriteCache(payload);
+      ffNewsCacheWriteFailed=!ffNewsWriteCache(payload);
       ffNewsLastError=false;
     })
     .catch(()=>{ ffNewsLastError=true; })

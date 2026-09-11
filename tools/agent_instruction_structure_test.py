@@ -6,6 +6,9 @@ that a client loaded instructions, that an agent understood them, or that a
 written restriction is technically enforced. Populated approved_by/approved_at
 fields establish structure only, not actual human authorization. Negative controls run only in
 temporary synthetic repositories; the supplied --root is never modified.
+Without --contract, the inline historical contracts remain the validation source.
+An explicit source must be a canonical, nonsymlink docs/work/*.md file and its
+contracts must be approved on the current branch. No referenced files are followed.
 """
 import argparse
 import copy
@@ -87,7 +90,7 @@ def reference_paths(text):
     return refs + imports(text)
 
 
-def contracts(text):
+def contracts(text, source="ACTIVE-TASK"):
     found = {}
     for block in re.findall(r"(?ms)^```ya?ml\s*\n(.*?)^```\s*$", text):
         try:
@@ -101,8 +104,23 @@ def contracts(text):
             raise ValueError("duplicate contract schema")
         found[value["schema"]] = value
     if set(found) != {"jp-harness/chg/v1", "jp-harness/ctx/v1"}:
-        raise ValueError("ACTIVE-TASK must contain one CHG and one CTX")
+        raise ValueError(source + " must contain one CHG and one CTX")
     return found["jp-harness/chg/v1"], found["jp-harness/ctx/v1"]
+
+
+def explicit_contract_text(root, source):
+    """Read only one canonical contract file, never a link or arbitrary path."""
+    if not isinstance(source, str) or not re.fullmatch(
+            r"docs/work/[A-Za-z0-9][A-Za-z0-9_.-]*\.md", source):
+        raise ValueError("explicit contract must be a canonical docs/work/*.md file")
+    path = root
+    for part in PurePosixPath(source).parts:
+        path = path / part
+        if path.is_symlink():
+            raise ValueError("explicit contract path contains symlink: " + source)
+    if not path.resolve().is_relative_to(root) or not path.is_file():
+        raise ValueError("explicit contract missing/escaped source: " + source)
+    return path.read_text(encoding="utf-8")
 
 
 def safe_target(root, value):
@@ -124,7 +142,7 @@ def safe_target(root, value):
     return (root / value).resolve().is_relative_to(root)
 
 
-def validate(root):
+def validate(root, contract_file=None):
     root = Path(root).resolve()
     errors, notices = [], []
 
@@ -184,10 +202,20 @@ def validate(root):
             require(target in resolved, source + " must reference " + target)
 
     try:
-        chg, ctx = contracts(texts[ACTIVE])
+        source = ACTIVE if contract_file is None else contract_file
+        contract_text = (texts[ACTIVE] if contract_file is None else
+                         explicit_contract_text(root, contract_file))
+        chg, ctx = contracts(contract_text, "ACTIVE-TASK" if contract_file is None else source)
     except ValueError as exc:
         return errors + [str(exc)], notices
+    notices.append("contract selection: " + json.dumps({
+        "mode": "historical-inline" if contract_file is None else "explicit-current",
+        "source": source, "change_id": chg.get("change_id"),
+        "context_change_id": ctx.get("context_change_id"),
+    }, ensure_ascii=True, sort_keys=True))
     for obj, fields, label in [(chg, CHG_FIELDS, "CHG"), (ctx, CTX_FIELDS, "CTX")]:
+        if contract_file is not None:
+            require(obj.get("status") == "approved", label + " explicit contract must be approved")
         for field, kind in fields.items():
             empty_allowed = label == "CTX" and field in {
                 "create", "modify", "merge", "archive_requires_confirmation"}
@@ -291,7 +319,9 @@ def validate(root):
                 "CHG baseline not ancestor of checkout")
     # Historical contracts keep the feature branch name after legitimate merge.
     current = git(root, "branch", "--show-current").stdout.strip()
-    if current != branch:
+    if contract_file is not None:
+        require(current == branch, "explicit contract branch differs from checkout")
+    elif current != branch:
         notices.append("checkout differs from historical contract branch; no edit authority inferred")
     revisions = re.findall(r"(?im)^.*Source revision[^\n]*?`([0-9a-f]{40})`", texts[STATE])
     require(len(revisions) == 1, "CURRENT-STATE requires one full Source revision")
@@ -357,9 +387,114 @@ def synthetic_fixture(root):
     return chg, ctx
 
 
-def write_contracts(root, chg, ctx):
-    (root / ACTIVE).write_text("\n\n".join("```yaml\n" + json.dumps(c) + "\n```"
-                                             for c in [chg, ctx]), encoding="utf-8")
+def write_contracts(root, chg, ctx, source=ACTIVE):
+    (root / source).write_text("\n\n".join("```yaml\n" + json.dumps(c) + "\n```"
+                                            for c in [chg, ctx]), encoding="utf-8")
+
+
+def explicit_controls(folder, base, chg, ctx):
+    """Exercise source selection separately from the unchanged inline history."""
+    source = "docs/work/CHG-SYNTHETIC.md"
+    count = 0
+
+    def fresh(name):
+        root = folder / ("explicit-" + name)
+        shutil.copytree(base, root)
+        c, x = copy.deepcopy(chg), copy.deepcopy(ctx)
+        c["target"]["root"] = x["root"] = str(root)
+        write_contracts(root, c, x, source)
+        return root, c, x
+
+    def rejected(root, selected, cause, name):
+        nonlocal count
+        errors, _ = validate(root, selected)
+        if not any(cause in error for error in errors):
+            raise RuntimeError("explicit negative lacked expected cause: " + name +
+                               "; observed: " + repr(errors))
+        count += 1
+
+    root, _, _ = fresh("valid")
+    # The copy retains the old root in its inline contracts. Only the explicitly
+    # selected pair describes this checkout; do not silently repair the history.
+    errors, notices = validate(root, source)
+    if errors or not any('"source": "' + source + '"' in notice for notice in notices):
+        raise RuntimeError("explicit positive failed: " + repr(errors))
+    rejected(root, None, "CHG/CTX root mismatch", "historical source still fails")
+
+    for selected in [str(root / source), "../" + source, "./" + source,
+                     "docs//work/CHG-SYNTHETIC.md", "docs/work/../CHG-SYNTHETIC.md",
+                     "docs\\work\\CHG-SYNTHETIC.md", "docs/work/*.md",
+                     "docs/work/nested/CHG-SYNTHETIC.md", "docs/governance/contract.md",
+                     "docs/work/CHG-SYNTHETIC.txt", "docs/work/CHG-SYNTHETIC.md/", ""]:
+        rejected(root, selected, "explicit contract must be a canonical", repr(selected))
+    rejected(root, "docs/work/MISSING.md", "explicit contract missing/escaped source", "missing file")
+
+    for field in ["chg", "ctx"]:
+        for status in ["proposed", "expired", "completed", "rejected"]:
+            root, c, x = fresh(field + "-" + status)
+            (c if field == "chg" else x)["status"] = status
+            write_contracts(root, c, x, source)
+            rejected(root, source, field.upper() + " explicit contract must be approved", status)
+
+    root, c, x = fresh("wrong-checkout-root")
+    c["target"]["root"] = x["root"] = str(root.parent)
+    write_contracts(root, c, x, source)
+    rejected(root, source, "CHG/CTX root mismatch", "matching roots outside checkout")
+
+    root, c, x = fresh("wrong-checkout-branch")
+    c["target"]["branch"] = x["approved_branch"] = "synthetic-other"
+    write_contracts(root, c, x, source)
+    rejected(root, source, "explicit contract branch differs from checkout", "matching branches outside checkout")
+
+    root, c, x = fresh("missing-baseline")
+    c["target"]["baseline_sha"] = "0" * 40
+    write_contracts(root, c, x, source)
+    rejected(root, source, "CHG baseline commit unavailable", "missing baseline")
+
+    root, c, x = fresh("unrelated-baseline")
+    tree = git(root, "rev-parse", "HEAD^{tree}")
+    orphan = git(root, "-c", "user.name=Synthetic Fixture", "-c", "user.email=fixture@example.invalid",
+                 "-c", "core.hooksPath=/dev/null", "commit-tree", tree.stdout.strip(),
+                 "-m", "Unrelated synthetic baseline")
+    if tree.returncode or orphan.returncode:
+        raise RuntimeError("unable to create unrelated synthetic baseline")
+    c["target"]["baseline_sha"] = orphan.stdout.strip()
+    write_contracts(root, c, x, source)
+    rejected(root, source, "CHG baseline not ancestor of checkout", "unrelated baseline")
+
+    bad_contents = {
+        "missing-pair": ("# No contracts\n", source + " must contain one CHG and one CTX"),
+        "duplicate-schema": ("```yaml\n" + json.dumps(chg) + "\n```\n" +
+                             "```yaml\n" + json.dumps(chg) + "\n```\n", "duplicate contract schema"),
+        "unknown-schema": ('```yaml\n{"schema":"unknown"}\n```\n', "unknown/missing contract schema"),
+        "invalid-json": ("```yaml\nnot json\n```\n", "contract fence must contain JSON"),
+    }
+    for name, (content, cause) in bad_contents.items():
+        root, _, _ = fresh(name)
+        (root / source).write_text(content, encoding="utf-8")
+        rejected(root, source, cause, name)
+
+    for name in ["internal-link", "external-link", "work-link", "docs-link", "directory"]:
+        root, _, _ = fresh(name)
+        path = root / source
+        if name == "directory":
+            path.unlink()
+            path.mkdir()
+            cause = "explicit contract missing/escaped source"
+        elif name in {"internal-link", "external-link"}:
+            target = (root / "docs/work/original.md" if name == "internal-link" else
+                      folder / "external-contract.md")
+            path.rename(target)
+            path.symlink_to(target)
+            cause = "explicit contract path contains symlink"
+        else:
+            directory = root / ("docs/work" if name == "work-link" else "docs")
+            target = root / ("original-work" if name == "work-link" else "original-docs")
+            directory.rename(target)
+            directory.symlink_to(target, target_is_directory=True)
+            cause = "explicit contract path contains symlink"
+        rejected(root, source, cause, name)
+    return count
 
 
 def negative_controls():
@@ -451,23 +586,29 @@ def negative_controls():
             c["target"]["root"] = x["root"] = str(root)
             mutate(root, c, x)
             write_contracts(root, c, x)
-            errors, _ = validate(root)
-            if not any(expected_causes[name] in error for error in errors):
-                raise RuntimeError("negative control lacked expected cause: " + name + "; observed: " + repr(errors))
-    return len(mutations)
+            source = "docs/work/CHG-SYNTHETIC.md"
+            write_contracts(root, c, x, source)
+            for selected in [None, source]:
+                errors, _ = validate(root, selected)
+                if not any(expected_causes[name] in error for error in errors):
+                    raise RuntimeError("negative control lacked expected cause: " + name +
+                                       "; source: " + repr(selected) + "; observed: " + repr(errors))
+        count = 2 * len(mutations) + explicit_controls(folder, base, chg, ctx)
+    return count
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--contract", help="Explicit current contract: canonical docs/work/*.md file")
     args = parser.parse_args()
     try:
         count = negative_controls()
-        errors, notices = validate(args.root)
+        errors, notices = validate(args.root, args.contract)
     except (OSError, ValueError, RuntimeError) as exc:
         print("ENVIRONMENT_ERROR: " + str(exc))
         return 2
-    print("SYNTHETIC CONTROLS PASS: positive fixture + " + str(count) + " rejected negatives")
+    print("SYNTHETIC CONTROLS PASS: positive fixtures + " + str(count) + " rejected negatives")
     for notice in notices:
         print("NOTICE: " + notice)
     for error in errors:

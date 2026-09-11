@@ -155,7 +155,7 @@ function sessionResetAuxiliarySurfaces(){
   // O epoch impede regravação mesmo se um hook visual falhar durante o wipe.
   window.JP_WEALTH_SESSION_WIPE_EPOCH+=1;
   if(typeof handleGaltonSessionWipe==='function'){
-    try{ handleGaltonSessionWipe(); }catch(error){}
+    try{ handleGaltonSessionWipe({deferRemount:true}); }catch(error){}
   }
 }
 

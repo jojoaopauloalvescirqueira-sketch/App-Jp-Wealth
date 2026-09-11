@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""OPEN-06: civil dates on new ledger acts; historical bytes remain untouched.
+"""Civil dates on ledger acts and historical read quality; stored bytes are untouched.
 
 The fixed table is the oracle, not the implementation's private validator.
 --root allows the exact same test to falsify the preserved baseline first.
@@ -136,24 +136,42 @@ def main():
             return observed
         check("all-nine-event-types", all_event_types)
 
-        def legacy():
-            observed = page.evaluate("""() => {
-              const f=fixture();
-              JPWAlladin.ledger.addTransaction({eventType:'DEPOSIT',cashAccountId:f.caixaXP,
-                amount:100,effectiveAt:'2026-01-01'});
-              S.alladin.transactions[0].effectiveAt='2026-99-99';save();
-              const before=JSON.stringify(S),disk=window.__disk,saves=window.__stub.saves;
+        def legacy(value, valid, reverse=False):
+            observed = page.evaluate("""({value,reverse}) => {
+              const f=fixture(),L=JPWAlladin.ledger;
+              L.addTransaction({eventType:'DEPOSIT',cashAccountId:f.caixaXP,
+                amount:1000,effectiveAt:'2026-01-01'});
+              const buy=L.addTransaction({eventType:'BUY',cashAccountId:f.caixaXP,
+                instrumentId:f.petr4,quantity:'1',amount:100,effectiveAt:'2026-01-02'});
+              if(reverse)L.reverseTransaction(buy.recordId,{effectiveAt:'2026-01-03'});
+              const target=S.alladin.transactions.at(-1);
+              target.effectiveAt=value;save();
+              const before=JSON.stringify(S),disk=window.__disk,saves=window.__stub.saves,ids=window.__idCalls;
               const tx=JPWAlladin.leitura.transactions(),cash=JPWAlladin.leitura.saldoDeCaixa(f.caixaXP),
                     positions=JPWAlladin.leitura.posicoes();
-              return {tx,cash,positions,unchanged:before===JSON.stringify(S),diskUnchanged:disk===window.__disk,
-                saveDelta:window.__stub.saves-saves};
-            }""")
+              return {tx,cash,positions,stored:tx.find(t=>t.transactionId===target.transactionId).effectiveAt,
+                unchanged:before===JSON.stringify(S),diskUnchanged:disk===window.__disk,
+                saveDelta:window.__stub.saves-saves,idDelta:window.__idCalls-ids};
+            }""", {"value": value, "reverse": reverse})
             require(observed["unchanged"] and observed["diskUnchanged"] and observed["saveDelta"] == 0, str(observed))
-            require(observed["tx"][0]["effectiveAt"] == "2026-99-99", str(observed))
-            require(observed["cash"]["amount"] == 100 and observed["cash"]["quality"] == "OK"
-                    and observed["positions"]["quality"] == "OK", str(observed))
+            require(observed["stored"] == value and observed["idDelta"] == 0
+                    and len(observed["tx"]) == (3 if reverse else 2), str(observed))
+            cash, positions = observed["cash"], observed["positions"]
+            if valid:
+                require(cash["available"] and cash["quality"] == "OK" and cash["amount"] == (1000 if reverse else 900), str(observed))
+                require(positions["available"] and positions["quality"] == "OK", str(observed))
+                require([p["quantity"] for p in positions["positions"]] == ([] if reverse else ["1"]), str(observed))
+            else:
+                require(not cash["available"] and cash["quality"] == "BLOCKING" and cash["amount"] is None, str(observed))
+                require(not positions["available"] and positions["quality"] == "BLOCKING" and not positions["positions"], str(observed))
+                require("ALD_TRANSACAO_ILEGIVEL" in cash["issues"] and "ALD_TRANSACAO_ILEGIVEL" in positions["issues"], str(observed))
             return observed
-        check("legacy-read-side-preserved-not-remediated", legacy)
+        for index, value in enumerate(INVALID):
+            check(f"legacy-invalid-{index}-blocking-preserved", lambda v=value: legacy(v, False))
+        for index, value in enumerate(VALID):
+            check(f"legacy-valid-{index}-readable-preserved", lambda v=value: legacy(v, True))
+        check("legacy-reversal-invalid-blocking-preserved", lambda: legacy("2026-02-30", False, True))
+        check("legacy-reversal-leap-day-readable-preserved", lambda: legacy("2024-02-29", True, True))
         domain.close()
 
         server, url = ui.serve()
@@ -227,9 +245,72 @@ def main():
             finally:
                 ctx.close()
 
+        def browser_legacy():
+            ctx = browser.new_context(viewport={"width": 1440, "height": 950}, service_workers="block")
+            errors = []
+            try:
+                bootstrap.install_bootstrap(ctx)
+                ctx.add_init_script("window.__onbShown=true;")
+                p = ctx.new_page()
+                p.on("pageerror", lambda error: errors.append(str(error)))
+                p.goto(url, wait_until="load")
+                p.wait_for_function(ui.PRONTO)
+                bootstrap.wait_bootstrap(p)
+                p.evaluate("() => {window.alert=()=>{};closeModal();}")
+                ids = p.evaluate(ui.SEMEAR)
+                original = p.evaluate("""ids => {
+                  const L=JPWAlladin.ledger;
+                  L.addTransaction({eventType:'DEPOSIT',cashAccountId:ids.cx,amount:1000,effectiveAt:'2026-01-01'});
+                  L.addTransaction({eventType:'BUY',cashAccountId:ids.cx,instrumentId:ids.pe,
+                    quantity:'1',amount:100,effectiveAt:'2026-01-02'});
+                  S.alladin.transactions.at(-1).effectiveAt='2026-02-30';
+                  if(save()!==true)throw new Error('synthetic historical fixture not saved');
+                  return JSON.stringify(S.alladin);
+                }""", ids)
+                observations = []
+                for reloaded in (False, True):
+                    if reloaded:
+                        p.reload(wait_until="load")
+                        p.wait_for_function(ui.PRONTO)
+                        bootstrap.wait_bootstrap(p)
+                    observed = p.evaluate("""() => {
+                      const before=JSON.stringify(S),disk=localStorage.getItem('jpwealth_v9_state');
+                      let saves=0;const prior=save;
+                      save=function(){saves++;return prior.apply(this,arguments);};
+                      const views={};
+                      try{
+                        for(const [key,id] of [['ledger','alladinLedger'],['balances','alladinBalances'],['positions','alladinPositions']]){
+                          JPWAlladinUI.selectView(key);
+                          const el=document.getElementById(id);
+                          views[key]={text:el.textContent,tables:el.querySelectorAll('table').length,
+                            newActions:el.querySelectorAll('[data-ald-tx-new]').length};
+                        }
+                      }finally{save=prior;}
+                      return {views,saves,unchanged:before===JSON.stringify(S),
+                        diskUnchanged:disk===localStorage.getItem('jpwealth_v9_state'),
+                        aggregate:JSON.stringify(S.alladin),
+                        stored:JSON.stringify(JSON.parse(localStorage.getItem('jpwealth_v9_state')).alladin)};
+                    }""")
+                    require(observed["unchanged"] and observed["diskUnchanged"] and observed["saves"] == 0, str(observed))
+                    require(observed["aggregate"] == observed["stored"] == original, str(observed))
+                    for view in ("ledger", "positions"):
+                        rendered = observed["views"][view]
+                        require("indisponíveis" in rendered["text"] and "ALD_TRANSACAO_ILEGIVEL" in rendered["text"], str(observed))
+                        require(rendered["tables"] == rendered["newActions"] == 0 and "Nenhum" not in rendered["text"], str(observed))
+                    balances = observed["views"]["balances"]["text"]
+                    require("Indisponível" in balances and "ALD_TRANSACAO_ILEGIVEL" in balances
+                            and "R$" not in balances and "US$" not in balances, str(observed))
+                    observations.append({"reloaded": reloaded, **observed})
+                bootstrap.assert_fixture_requests(ctx)
+                require(not errors, str(errors))
+                return observations
+            finally:
+                ctx.close()
+
         try:
             check("ui-create-reject-correct-reload", browser_case)
             check("ui-reverse-posted-reject-correct-reload", lambda: browser_case(True))
+            check("ui-legacy-invalid-blocking-preserved-reload", browser_legacy)
         finally:
             server.shutdown()
             server.server_close()

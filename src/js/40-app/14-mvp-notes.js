@@ -34,7 +34,7 @@ const mvpNotesUI={
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
   filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
-  opener:null, optionsReady:false, inertSnapshot:null,
+  opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
 };
@@ -990,6 +990,7 @@ function mvpNotesSetCardMenuOpen(open,id,origem){
       if(podeDevolverFoco && document.contains(anterior)) anterior.focus();
     }
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Abrir nunca abre duas instâncias: o mesmo overlay é reaproveitado e o estado guarda um
 // único cardMenuId. Clicar no ⋯ de outro ticket apenas repinta o conteúdo.
@@ -1608,6 +1609,7 @@ function mvpNotesSetNewNoteModalOpen(open){
     const btn=mvpn('mvpNotesNewBtn');
     if(btn && tinhaFoco) btn.focus(); // Cancelar/Escape devolvem o foco à origem
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Entrada do botão "+": respeita rascunho sujo ANTES de abrir o formulário, para não
 // descobrir a pendência só depois de o operador ter preenchido tudo.
@@ -1946,6 +1948,41 @@ function bindMvpNotesResize(){
 }
 
 // ---- abertura/fechamento do drawer (foco, trap, inert — mesmo padrão da Central) ----
+// Avisos globais fazem parte do MESMO diálogo enquanto Notas estiverem abertas.
+// Mover os nós preserva listeners, timers, identidade e conteúdo vivo; os marcadores
+// devolvem cada um à posição original ao fechar. Não há cópia de aviso nem escrita.
+// O host é o overlay, sem a animação/transform da gaveta que alteraria position:fixed.
+function mvpNotesDockPersistence(open){
+  if(open){
+    if(mvpNotesUI.persistenceHosts) return;
+    const host=mvpn('mvpNotesOverlay');
+    mvpNotesUI.persistenceHosts=['persistenceRecovery','persistenceAlert'].map(id=>{
+      const el=mvpn(id); if(!el) return null;
+      const marker=document.createComment('posição do aviso '+id);
+      el.before(marker);
+      const saved={el,marker,inert:el.inert,ariaHidden:el.getAttribute('aria-hidden')};
+      host.appendChild(el);
+      return saved;
+    }).filter(Boolean);
+    mvpNotesSyncPersistenceModal();
+  }else{
+    (mvpNotesUI.persistenceHosts||[]).forEach(({el,marker,inert,ariaHidden})=>{
+      el.inert=inert;
+      if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+      marker.replaceWith(el);
+    });
+    mvpNotesUI.persistenceHosts=null;
+  }
+}
+function mvpNotesSyncPersistenceModal(){
+  const nested=!!(mvpNotesUI.cardMenuId||mvpNotesUI.newNoteOpen);
+  (mvpNotesUI.persistenceHosts||[]).forEach(({el,inert,ariaHidden})=>{
+    el.inert=nested||inert;
+    if(nested) el.setAttribute('aria-hidden','true');
+    else if(ariaHidden===null) el.removeAttribute('aria-hidden');
+    else el.setAttribute('aria-hidden',ariaHidden);
+  });
+}
 function mvpNotesFocusables(root){
   // offsetParent!==null exclui o conteúdo de <details> fechados (menu "⋯" de cada pasta,
   // painel "Gerenciar pastas" em mobile) — sem isto o wrap do Tab poderia pular para um
@@ -1955,6 +1992,7 @@ function mvpNotesFocusables(root){
   // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
   return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
     .filter(el=>!el.closest('[hidden]'))
+    .filter(el=>!el.closest('[inert]'))
     .filter(el=>el.offsetParent!==null || el===document.activeElement);
 }
 function mvpNotesTrapFocus(event){
@@ -1963,10 +2001,13 @@ function mvpNotesTrapFocus(event){
   // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
   const raiz=mvpNotesUI.cardMenuId ? (mvpn('mvpNotesCardMenuBox')||mvpn('mvpNotesDrawer'))
     : mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer'))
-    : mvpn('mvpNotesDrawer');
+    : mvpn('mvpNotesOverlay');
   const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
-  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  // Um aviso pode trocar seus botões por texto enquanto tinha foco. Nesse caso
+  // o navegador o devolve ao body; o próximo Tab retoma o diálogo corrente.
+  if(!list.includes(document.activeElement)){ event.preventDefault(); (event.shiftKey?last:first).focus(); }
+  else if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
 // Isolamento acessível: os recipientes de navegação e os irmãos de nível superior que ficam FORA do drawer/overlay
@@ -2022,6 +2063,7 @@ function openMvpNotesDrawer(opener){
   // próprio, então o MutationObserver dela nunca vê esta abertura — sem isto, os dois
   // focus traps disputariam Tab ao mesmo tempo quando aberto via "Abrir Notas".
   if(mvpNotesSettingsOpen() && typeof suspendSettingsForSubdialog==='function') suspendSettingsForSubdialog();
+  mvpNotesDockPersistence(true);
   mvpn('mvpNotesOverlay').classList.add('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','false');
   mvpNotesApplyInert();
@@ -2040,6 +2082,7 @@ function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
+  mvpNotesDockPersistence(false);
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();

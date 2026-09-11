@@ -1,3 +1,24 @@
+# Recorte corrente — estabilização técnica local 20260911
+
+Base Git fcbb25767073a4ab08a9f0ac2ac16069a3008bfe mais V2 e delta não commitado;
+identidade final e resultados em CURRENT-STATE/manifesto externo. Mesmos78 scripts
+na ordem original. Nenhuma fórmula, norma ou schema alterado.
+
+| Fonte | Responsabilidade atual adicional | Evidência focal |
+|---|---|---|
+| `14-mvp-notes.js` / `index.html` | Avisos globais integram o diálogo aberto; mesmos nós restaurados; Tab/ShiftTab alcançam recuperação sem fechar rascunho; diálogos internos isolam foco | `studies_notes_persistence_contract_test.py` |
+| `13-alladin.js` / `24-alladin-views.js` / `25-dash-macro.js` | `leitura.ledger()` expõe disponibilidade/qualidade/issues/fatos sem derivar posições; API bruta mantida; preview direto inválido recusado explicitamente | `alladin_ledger_read_model_test.py` |
+| `18-galton-board/06-controller.js` | Construção que falha aborta listeners, desconecta observer e descarta engine/renderer antes de propagar exceção; mount só publica instância completa | `galton_board_test.py` |
+| `15-ff-news.js` / `17-economic-calendar.js` / `25-dash-macro.js` | Falha de gravação/leitura do cache técnico é explícita; nenhum cache paralelo ou escrita financeira | `ff_news_cache_test.py` |
+| `index.html` | Um landmark main; conteúdo de Configurações é seção rotulada no diálogo | `settings_modal_test.py` |
+
+Caminhos abreviados acima seguem a tabela completa/manifest abaixo. As provas de
+execução são externas e identificadas; descrição do código não as substitui.
+
+---
+
+## Histórico e mapa de localização preservados
+
 ## Recorte de responsabilidades — candidate local da campanha 20260910
 
 Base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`; build `e5caefeada66ab35`.
@@ -113,7 +134,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 74 | `src/js/20-ui/22-finpes-overview.js` | Visão Geral: consolidado derivado de quatro cards — mês atual, dívida & crédito, vs mês anterior e pendências |
 | 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema v6), modelo cadastral (Instrument, Asset, Account, CashAccount), **ledger econômico** — `DEPOSIT`/`WITHDRAWAL`/`TRANSFER`/`REVERSAL`/`BUY`/`SELL`/`FEE`/`TAX`/`ADJUSTMENT_CREDIT`/`ADJUSTMENT_DEBIT`, saldo de caixa derivado e fail-closed, consistência do par reversal↔original na leitura, completude do `ALD_CASH_DELTA` (ausência de delta é BLOCKING, nunca zero implícito) — e **Position Quantity Engine** (ALD-04 S1): `leitura.posicoes()` derivada por instrumentId+accountId, aritmética decimal exata em BigInt; sem holding persistido/consolidado, cost basis, valuation, P&L/performance |
 | 76 | `src/js/20-ui/23-research-views.js` | Research: ownership e troca efêmera de Calendário, NoCoda, Pivots e quatro empty states |
-| 77 | `src/js/20-ui/24-alladin-views.js` | **Alladin C3 + ALD-05 S1**: superfície cadastral — leitura desacoplada pelo read-model, CRUD das quatro entidades no modal próprio, `recordStatus`, write gate, DC-4 e integridade da edição — **e a superfície econômica**: Lançamentos (leitura, **criação** — modal único dos nove tipos, uma chamada a `ledger.addTransaction` por submit, dinheiro só por `money.parse`, `quantity` verbatim, CTA ausente sob BLOCKING — **e estorno**: coluna Ações com elegibilidade visual por linha e uma chamada a `ledger.reverseTransaction`, com o original em read-only e a economia copiada pelo domínio), Saldos e Posições projetando `transactions()`/`saldoDeCaixa()`/`posicoes()` sem aritmética própria (dinheiro por `money.format`, `quantity` verbatim), com BLOCKING que nunca vira zero, vazio ou tela normal, e sentinela de integridade para o ledger (`posicoes()` + `compat()`, já que `transactions()` não tem envelope) |
+| 77 | `src/js/20-ui/24-alladin-views.js` | **Alladin C3 + ALD-05 S1**: superfície cadastral — leitura desacoplada pelo read-model, CRUD das quatro entidades no modal próprio, `recordStatus`, write gate, DC-4 e integridade da edição — **e a superfície econômica**: Lançamentos (leitura, **criação** — modal único dos nove tipos, uma chamada a `ledger.addTransaction` por submit, dinheiro só por `money.parse`, `quantity` verbatim, CTA ausente sob BLOCKING — **e estorno**: coluna Ações com elegibilidade visual por linha e uma chamada a `ledger.reverseTransaction`, com o original em read-only e a economia copiada pelo domínio), Saldos e Posições projetando `ledger()`/`saldoDeCaixa()`/`posicoes()` sem aritmética própria (dinheiro por `money.format`, `quantity` verbatim), com BLOCKING que nunca vira zero, vazio ou tela normal, e qualidade explícita de `leitura.ledger()`; `transactions()` continua compatibilidade bruta, sem garantia de integridade |
 | 78 | `src/js/20-ui/25-dash-macro.js` | Dashboard: síntese de Forex, Finanças Pessoais, Research e Alladin consumindo contratos canônicos, com estados de disponibilidade/cobertura, atualização agrupada e atalhos pelo resolver; sem escrita financeira ou materialização de mês |
 
 ## Laboratório de Probabilidade
@@ -211,8 +232,8 @@ responsabilidades diferentes. Alterar uma delas requer examinar os consumidores
 indicados, não criar uma segunda implementação. Essa leitura não prova
 interação executada: selecione os testes focais no `../governance/CONTEXT-MAP.md` e registre
 seu resultado somente quando executados no candidate declarado. A orientação
-de estado vazio em `17-economic-calendar.js` ainda menciona Dashboard; é dívida
-de texto fora desta reconciliação documental, não destino vigente do widget.
+de estado vazio em `17-economic-calendar.js` já aponta Forex e atualização pela agenda;
+a dívida textual citada no recorte antigo foi corrigida antes desta campanha.
 
 ## Entrypoints, PWA e artefatos derivados
 

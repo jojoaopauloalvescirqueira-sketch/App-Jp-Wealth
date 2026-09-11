@@ -446,7 +446,7 @@
   }
   /* ============ LAYOUT ============ */
   /* Escopado por ID (#appMain), não pela tag <main> — a Central de
-     Configurações também usa um <main id="settingsContent"> interno (dentro
+     Configurações historicamente usava um <main id="settingsContent"> interno (dentro
      de .settings-modal-body, um grid sem grid-template-areas); um seletor de
      tag puro vazava grid-area:main para ele, criando uma linha de grid
      nomeada inexistente e faixas implícitas fantasmas na largura da coluna
@@ -899,6 +899,11 @@
      role="alert" vivo no DOM, que é o que torna o anúncio confiável quando o
      conteúdo aparece. */
   .persistence-alert:empty{display:none}
+  html[data-notes-persistence-docked] .persistence-alert{
+    max-height:var(--jp-persistence-banner-max-height); overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  html[data-notes-persistence-docked] .persistence-alert>*{flex-shrink:0}
   .persistence-alert.is-recovered{border-color:var(--f1); border-left-color:var(--f1)}
   .persistence-alert-title{margin:0; font-family:var(--mono); font-size:var(--fs-md); font-weight:700; color:var(--f4)}
   .persistence-alert.is-recovered .persistence-alert-title{color:var(--f1)}
@@ -1465,7 +1470,8 @@
   .ecal-close{width:34px; height:34px; flex:0 0 34px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer}
   .ecal-close:hover{color:var(--ink); background:var(--panel-2)}
   .ecal-close svg{width:16px; height:16px}
-  .ecal-filters{margin:12px 20px 0; width:fit-content; flex:none}
+  .ecal-filters{margin:12px 20px 0; width:fit-content; max-width:calc(100% - 40px); flex:none; flex-wrap:wrap}
+  .ecal-filters button{flex:1 0 56px}
   .ecal-body{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:12px 20px 16px}
   .ecal-day{margin-bottom:14px}
   .ecal-day-title{margin:0 0 6px; font-family:var(--mono); font-size:var(--fs-xs); font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.11em}
@@ -1499,7 +1505,7 @@
      dia/item/hora/números são compartilhadas e não precisam de nada. */
   .ecal-ws{display:flex; flex-direction:column}
   .ecal-ws-head h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
-  .ecal-ws .ecal-filters{margin:12px 0 0}
+  .ecal-ws .ecal-filters{margin:12px 0 0; max-width:100%}
   .ecal-ws-body{flex:none; overflow:visible; padding:14px 0 4px}
   .ecal-ws .ecal-empty{padding:16px 0}
   .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
@@ -1798,7 +1804,8 @@
        abaixo do próprio padrão v5 (980): o ARIA anunciava um máximo que o render nunca
        entregava. Corrigido para o máximo canônico — as três colunas da Fase D dependem
        dessa largura para caber com folga. */
-    position:fixed; top:0; right:0; height:100vh;
+    position:fixed; top:var(--jp-persistence-notes-inset,0px); right:0;
+    height:calc(100vh - var(--jp-persistence-notes-inset,0px));
     width:min(var(--mvpn-drawer-w,980px), 80vw, 1600px, calc(100vw - 32px));
     display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
     box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
@@ -2299,7 +2306,8 @@
   @media(max-width:920px){
     .mvp-notes-drawer{
       width:100vw; left:0;
-      height:100vh; height:100dvh; /* dvh: teclado virtual não deixa área morta */
+      height:calc(100vh - var(--jp-persistence-notes-inset,0px));
+      height:calc(100dvh - var(--jp-persistence-notes-inset,0px)); /* dvh: teclado virtual não deixa área morta */
       /* Tela cheia não tem "lado de fora": a borda esquerda vira um fio de 1px na beirada
          do aparelho e ainda encolhe em 1px as folhas inferiores, que são position:fixed
          contidas pelo drawer (ele tem animation-name, o que o torna bloco contentor). */
@@ -6209,7 +6217,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 #dashMacro .dm-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
 #dashMacro .dm-title{font:600 22px/1.25 var(--sans);letter-spacing:-.025em;margin:6px 0 0}
 #dashMacro .dm-index{font:400 30px var(--mono);color:var(--ink-faint);opacity:.35}
-#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--dm-blue)}
+#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--violet)}
 #dashMacro [data-dm-card="personal-finance"] .dm-eyebrow{color:var(--f1)}
 #dashMacro [data-dm-card="research"] .dm-eyebrow{color:var(--violet)}
 #dashMacro [data-dm-card="alladin"] .dm-eyebrow{color:var(--f2)}
@@ -6463,7 +6471,7 @@ html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(-
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '01947ca576fa8048';
+const JP_WEALTH_BUILD_ID = 'd65a9d2184ebf263';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7951,15 +7959,17 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          09-settings-modal.js) — o nó, o listener e os resultados são os
          mesmos; nada é clonado. -->
     <header class="settings-modal-head"><div><h2 id="settingsTitle">Central de Configurações</h2><p class="sr-only">Preferências, governança, dados e material de referência.</p></div><div class="settings-header-search" id="settingsHeaderSearchSlot"><svg class="settings-header-search-icon" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.6-3.6"/></svg></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
-    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><main id="settingsContent" class="settings-content" tabindex="-1"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></main></div>
+    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><section id="settingsContent" class="settings-content" tabindex="-1" aria-labelledby="settingsPageTitle"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></section></div>
   </section>
 </div>
 <!-- Painel de Notas do MVP — drawer lateral direito (14-mvp-notes.js). Backlog interno
      de tarefas/bugs/funcionalidades/melhorias do período de testes; não é notificação,
      não é log de auditoria financeira, não guarda dado de trading. Construído de forma
      preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
-<div class="mvp-notes-overlay" id="mvpNotesOverlay" aria-hidden="true">
-  <section class="mvp-notes-drawer" id="mvpNotesDrawer" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" data-mobile-stage="folders">
+<!-- O diálogo inclui a gaveta e, enquanto aberto, os mesmos avisos globais de
+     persistência. Assim suas ações continuam disponíveis sem descartar o rascunho. -->
+<div class="mvp-notes-overlay" id="mvpNotesOverlay" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" aria-hidden="true">
+  <section class="mvp-notes-drawer" id="mvpNotesDrawer" data-mobile-stage="folders">
     <!-- Alça de redimensionamento (desktop): borda esquerda arrastável; a área clicável
          (12px) é maior que a linha visual. role=separator + setas ←/→ (±20px; Shift ±60)
          + aria-value* — ver bindMvpNotesResize(). Invisível/inerte em mobile (CSS). -->
@@ -10081,11 +10091,45 @@ function persistenceRecoveryEl(){ return document.getElementById('persistenceRec
 // logo abaixo dele. Nós e timers separados de propósito: o "Gravação restabelecida" do
 // A-001 limpa APENAS #persistenceAlert; nenhum timer jamais toca o aviso de recuperação,
 // que só sai por decisão do operador (precedência do estado de recuperação).
+let persistenceBannerSizeObserver=null, persistenceBannerNotesObserver=null;
+let persistenceBannerViewportObserved=false;
 function layoutPersistenceBanners(){
   const alertEl=persistenceAlertEl(); if(!alertEl) return;
   const rec=persistenceRecoveryEl();
-  if(rec && rec.innerHTML.trim()!==''){ alertEl.style.top=(72+rec.offsetHeight+10)+'px'; }
-  else{ alertEl.style.top=''; }
+  const notes=document.getElementById('mvpNotesOverlay');
+  // Uma inscrição por nó: texto, tema e viewport podem mudar a altura depois do
+  // render. Abertura/fechamento de Notas também recompõe avisos já existentes.
+  if(!persistenceBannerSizeObserver && typeof ResizeObserver==='function'){
+    persistenceBannerSizeObserver=new ResizeObserver(layoutPersistenceBanners);
+    persistenceBannerSizeObserver.observe(alertEl);
+    if(rec) persistenceBannerSizeObserver.observe(rec);
+  }
+  if(notes && !persistenceBannerNotesObserver && typeof MutationObserver==='function'){
+    persistenceBannerNotesObserver=new MutationObserver(layoutPersistenceBanners);
+    persistenceBannerNotesObserver.observe(notes,{attributes:true,attributeFilter:['class']});
+  }
+  if(!persistenceBannerViewportObserved){
+    window.addEventListener('resize',layoutPersistenceBanners);
+    if(window.visualViewport) window.visualViewport.addEventListener('resize',layoutPersistenceBanners);
+    persistenceBannerViewportObserved=true;
+  }
+  const visible=[rec,alertEl].filter(el=>el && el.innerHTML.trim()!=='');
+  const docked=!!(notes && notes.classList.contains('show') && visible.length);
+  const root=document.documentElement;
+  root.toggleAttribute('data-notes-persistence-docked',docked);
+  if(docked){
+    // Em janelas curtas os avisos têm rolagem própria. O espaço restante continua
+    // disponível às pastas e ao editor; 68px comportam uma ação e o padding.
+    const height=Math.min(window.innerHeight,window.visualViewport?.height||window.innerHeight);
+    const limit=Math.max(68,Math.floor((height*.4-(visible.length-1)*10)/visible.length));
+    root.style.setProperty('--jp-persistence-banner-max-height',limit+'px');
+  }else root.style.removeProperty('--jp-persistence-banner-max-height');
+  const top=docked?12:72;
+  if(rec) rec.style.top=docked?top+'px':'';
+  alertEl.style.top=visible.includes(rec)?(top+rec.offsetHeight+10)+'px':(docked?top+'px':'');
+  // Medir depois de limitar a altura reserva somente o espaço efetivamente usado.
+  const inset=docked?Math.ceil(Math.max(...visible.map(el=>el.getBoundingClientRect().bottom)))+10:0;
+  root.style.setProperty('--jp-persistence-notes-inset',inset+'px');
 }
 // ---- ações do modo de recuperação (A-005) ----
 function persistenceRecoveryDownload(){
@@ -17872,7 +17916,7 @@ function sessionResetAuxiliarySurfaces(){
   // O epoch impede regravação mesmo se um hook visual falhar durante o wipe.
   window.JP_WEALTH_SESSION_WIPE_EPOCH+=1;
   if(typeof handleGaltonSessionWipe==='function'){
-    try{ handleGaltonSessionWipe(); }catch(error){}
+    try{ handleGaltonSessionWipe({deferRemount:true}); }catch(error){}
   }
 }
 
@@ -21174,7 +21218,7 @@ const mvpNotesUI={
   stage:'folders',    // navegação mobile em camadas: 'folders' | 'list' | 'editor' (desktop ignora)
   filtersOpen:false, inspectorOpen:false, newNoteOpen:false,
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
-  opener:null, optionsReady:false, inertSnapshot:null,
+  opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
   dragFolderId:null   // pasta sendo arrastada na reordenação manual
 };
@@ -22130,6 +22174,7 @@ function mvpNotesSetCardMenuOpen(open,id,origem){
       if(podeDevolverFoco && document.contains(anterior)) anterior.focus();
     }
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Abrir nunca abre duas instâncias: o mesmo overlay é reaproveitado e o estado guarda um
 // único cardMenuId. Clicar no ⋯ de outro ticket apenas repinta o conteúdo.
@@ -22748,6 +22793,7 @@ function mvpNotesSetNewNoteModalOpen(open){
     const btn=mvpn('mvpNotesNewBtn');
     if(btn && tinhaFoco) btn.focus(); // Cancelar/Escape devolvem o foco à origem
   }
+  mvpNotesSyncPersistenceModal();
 }
 // Entrada do botão "+": respeita rascunho sujo ANTES de abrir o formulário, para não
 // descobrir a pendência só depois de o operador ter preenchido tudo.
@@ -23086,6 +23132,41 @@ function bindMvpNotesResize(){
 }
 
 // ---- abertura/fechamento do drawer (foco, trap, inert — mesmo padrão da Central) ----
+// Avisos globais fazem parte do MESMO diálogo enquanto Notas estiverem abertas.
+// Mover os nós preserva listeners, timers, identidade e conteúdo vivo; os marcadores
+// devolvem cada um à posição original ao fechar. Não há cópia de aviso nem escrita.
+// O host é o overlay, sem a animação/transform da gaveta que alteraria position:fixed.
+function mvpNotesDockPersistence(open){
+  if(open){
+    if(mvpNotesUI.persistenceHosts) return;
+    const host=mvpn('mvpNotesOverlay');
+    mvpNotesUI.persistenceHosts=['persistenceRecovery','persistenceAlert'].map(id=>{
+      const el=mvpn(id); if(!el) return null;
+      const marker=document.createComment('posição do aviso '+id);
+      el.before(marker);
+      const saved={el,marker,inert:el.inert,ariaHidden:el.getAttribute('aria-hidden')};
+      host.appendChild(el);
+      return saved;
+    }).filter(Boolean);
+    mvpNotesSyncPersistenceModal();
+  }else{
+    (mvpNotesUI.persistenceHosts||[]).forEach(({el,marker,inert,ariaHidden})=>{
+      el.inert=inert;
+      if(ariaHidden===null) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden',ariaHidden);
+      marker.replaceWith(el);
+    });
+    mvpNotesUI.persistenceHosts=null;
+  }
+}
+function mvpNotesSyncPersistenceModal(){
+  const nested=!!(mvpNotesUI.cardMenuId||mvpNotesUI.newNoteOpen);
+  (mvpNotesUI.persistenceHosts||[]).forEach(({el,inert,ariaHidden})=>{
+    el.inert=nested||inert;
+    if(nested) el.setAttribute('aria-hidden','true');
+    else if(ariaHidden===null) el.removeAttribute('aria-hidden');
+    else el.setAttribute('aria-hidden',ariaHidden);
+  });
+}
 function mvpNotesFocusables(root){
   // offsetParent!==null exclui o conteúdo de <details> fechados (menu "⋯" de cada pasta,
   // painel "Gerenciar pastas" em mobile) — sem isto o wrap do Tab poderia pular para um
@@ -23095,6 +23176,7 @@ function mvpNotesFocusables(root){
   // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
   return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
     .filter(el=>!el.closest('[hidden]'))
+    .filter(el=>!el.closest('[inert]'))
     .filter(el=>el.offsetParent!==null || el===document.activeElement);
 }
 function mvpNotesTrapFocus(event){
@@ -23103,10 +23185,13 @@ function mvpNotesTrapFocus(event){
   // Tab não pode vazar para a gaveta por baixo, que está visualmente coberta e inativa.
   const raiz=mvpNotesUI.cardMenuId ? (mvpn('mvpNotesCardMenuBox')||mvpn('mvpNotesDrawer'))
     : mvpNotesUI.newNoteOpen ? (mvpn('mvpNotesNewBox')||mvpn('mvpNotesDrawer'))
-    : mvpn('mvpNotesDrawer');
+    : mvpn('mvpNotesOverlay');
   const list=mvpNotesFocusables(raiz); if(!list.length) return;
   const first=list[0], last=list[list.length-1];
-  if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+  // Um aviso pode trocar seus botões por texto enquanto tinha foco. Nesse caso
+  // o navegador o devolve ao body; o próximo Tab retoma o diálogo corrente.
+  if(!list.includes(document.activeElement)){ event.preventDefault(); (event.shiftKey?last:first).focus(); }
+  else if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
   else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
 // Isolamento acessível: os recipientes de navegação e os irmãos de nível superior que ficam FORA do drawer/overlay
@@ -23162,6 +23247,7 @@ function openMvpNotesDrawer(opener){
   // próprio, então o MutationObserver dela nunca vê esta abertura — sem isto, os dois
   // focus traps disputariam Tab ao mesmo tempo quando aberto via "Abrir Notas".
   if(mvpNotesSettingsOpen() && typeof suspendSettingsForSubdialog==='function') suspendSettingsForSubdialog();
+  mvpNotesDockPersistence(true);
   mvpn('mvpNotesOverlay').classList.add('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','false');
   mvpNotesApplyInert();
@@ -23180,6 +23266,7 @@ function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
+  mvpNotesDockPersistence(false);
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();
@@ -23346,6 +23433,8 @@ const FF_NEWS_IMMINENT_MS=15*60*1000;
 const FF_NEWS_CURRENCIES=['USD','EUR','JPY','GBP'];
 let ffNewsInFlight=false;
 let ffNewsLastError=false;
+let ffNewsCacheWriteFailed=false;
+let ffNewsCacheReadFailed=false;
 
 function ffNewsSourceUrl(){
   try{ return localStorage.getItem(FF_NEWS_URL_OVERRIDE_KEY) || FF_NEWS_DEFAULT_URL; }
@@ -23371,8 +23460,12 @@ function ffNewsSanitizeEvents(payload){
 }
 
 function ffNewsReadCache(){
+  let raw;
   try{
-    const raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    raw=localStorage.getItem(FF_NEWS_CACHE_KEY);
+    ffNewsCacheReadFailed=false;
+  }catch(_){ ffNewsCacheReadFailed=true; return null; }
+  try{
     if(!raw) return null;
     const parsed=JSON.parse(raw);
     if(!parsed || typeof parsed!=='object' || typeof parsed.fetchedAt!=='number') return null;
@@ -23382,8 +23475,17 @@ function ffNewsReadCache(){
   }catch(_){ return null; }
 }
 function ffNewsWriteCache(payload){
-  try{ localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload})); }
-  catch(_){ /* cota cheia: segue só em memória até o próximo render */ }
+  try{
+    localStorage.setItem(FF_NEWS_CACHE_KEY, JSON.stringify({fetchedAt:Date.now(), payload}));
+    return true;
+  }catch(_){ return false; }
+}
+
+// Estado técnico da tentativa, sem payload paralelo nem alteração do cache antigo.
+function ffNewsCacheIssue(){
+  if(ffNewsCacheReadFailed) return 'Cache indisponível — não foi possível ler o armazenamento.';
+  if(ffNewsCacheWriteFailed) return 'Cache não atualizado — não foi possível gravar no armazenamento.';
+  return '';
 }
 
 function ffNewsIsToday(date){
@@ -23392,12 +23494,13 @@ function ffNewsIsToday(date){
 }
 
 function ffNewsStatusText(cache){
-  if(!cache) return ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
+  const issue=ffNewsCacheIssue();
+  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
     : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  return (ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
+  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
 }
 
 // Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,
@@ -23532,7 +23635,7 @@ function ffNewsFetch(force){
     .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(payload=>{
       if(!ffNewsSanitizeEvents(payload)) throw new Error('carga inválida');
-      ffNewsWriteCache(payload);
+      ffNewsCacheWriteFailed=!ffNewsWriteCache(payload);
       ffNewsLastError=false;
     })
     .catch(()=>{ ffNewsLastError=true; })
@@ -23935,15 +24038,18 @@ function ecalRenderRoot(root, filter){
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
+  const cacheIssue=typeof ffNewsCacheIssue==='function'?ffNewsCacheIssue():'';
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent='Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
+    empty.textContent=cacheIssue
+      ? 'Sem dados · '+cacheIssue+' Use ↻ no Calendário Econômico em Forex → Visão Geral.'
+      : 'Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }
   const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
-  fresh.textContent='Dados de '+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  fresh.textContent=(cacheIssue?cacheIssue+' · Dados anteriores de ':'Dados de ')+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
   // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
   // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
   // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o
@@ -25926,9 +26032,19 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
       this.abortController=new AbortController();
       this.resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(()=>{ this.renderer.resize(); this.redraw(); }):null;
       this.resizeObserverActive=false;
-      if(this.resizeObserver){ this.resizeObserver.observe(this.canvas); this.resizeObserverActive=true; }
-      this.bind(); this.syncControls(); this.createEngine(); this.render(true);
-      if(this.storageReadError) this.showStorageStatus('Preferências salvas incompatíveis, ilegíveis ou indisponíveis foram preservadas sem sobrescrita. O laboratório usa valores seguros apenas em memória; use Restaurar padrões para substituí-las explicitamente.',true);
+      try{
+        if(this.resizeObserver){ this.resizeObserver.observe(this.canvas); this.resizeObserverActive=true; }
+        this.bind(); this.syncControls(); this.createEngine(); this.render(true);
+        if(this.storageReadError) this.showStorageStatus('Preferências salvas incompatíveis, ilegíveis ou indisponíveis foram preservadas sem sobrescrita. O laboratório usa valores seguros apenas em memória; use Restaurar padrões para substituí-las explicitamente.',true);
+      }catch(error){
+        // Construção incompleta ainda não pertence ao root nem aos contadores de mounts.
+        this.abortController.abort();
+        if(this.resizeObserver) this.resizeObserver.disconnect();
+        this.resizeObserverActive=false;
+        if(this.engine) this.engine.destroy();
+        this.engine=null; this.renderer.destroy(); this.destroyed=true;
+        throw error;
+      }
       if(this.debug){ global.__galtonDebug=global.__galtonDebug||{mounts:0,destroys:0,activeRaf:0,resizeObservers:0}; global.__galtonDebug.mounts++; if(this.resizeObserverActive) global.__galtonDebug.resizeObservers++; }
     }
     bind(){
@@ -26168,16 +26284,25 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
   function mount(root=document.querySelector('[data-galton-root]')){
     if(!root) return null;
     if(root.__galtonController&&!root.__galtonController.destroyed) return root.__galtonController;
-    root.dataset.galtonMounted='true'; root.__galtonController=new GaltonController(root); return root.__galtonController;
+    const controller=new GaltonController(root);
+    root.__galtonController=controller; root.dataset.galtonMounted='true'; return controller;
   }
   function activate(){ const controller=mount(); if(controller) controller.activate(); return controller; }
   function deactivate(options={}){ const root=document.querySelector('[data-galton-root]'); if(root&&root.__galtonController) root.__galtonController.deactivate(options); }
-  function handleSessionWipe(){
+  function handleSessionWipe(options={}){
     const root=document.querySelector('[data-galton-root]'); if(!root) return null;
     const current=root.__galtonController, remount=Boolean(current&&current.active&&root.isConnected&&root.getClientRects().length);
     if(current) current.destroy();
     if(!remount) return null;
-    const controller=mount(root); controller.activate(); return controller;
+    const remountController=()=>{
+      if(!root.isConnected||!root.getClientRects().length) return;
+      const controller=mount(root); controller.activate();
+      return controller;
+    };
+    // A finalização invalida antes de limpar as chaves e pede o adiamento.
+    // A chamada direta conserva o retorno síncrono do contrato do laboratório.
+    if(options.deferRemount){ queueMicrotask(remountController); return null; }
+    return remountController();
   }
 
   ns.persistence={STORAGE_KEY,SCHEMA_VERSION,PERSISTED_CONFIG_FIELDS:PERSISTED_CONFIG_FIELDS.slice(),normalize:normalizePreferences,read:readPreferences,write:writePreferences};
@@ -32756,40 +32881,76 @@ function fbOpenRecurrenceModal(key, incomeId){
   const regra = rec.ruleId ? (S.personalFinance.recurringIncome||[]).find(r=>r.id===rec.ruleId) : null;
   const ativa = !!(regra && regra.active!==false);
   const valorIni = regra ? regra.amount : (rec.projectedAmount!==null ? rec.projectedAmount : null);
-  const box=$('modalBox'); $('modalOverlay').classList.add('show');
+  const box=$('modalBox'), overlay=$('modalOverlay'), origem=document.activeElement;
+  overlay.classList.add('show');
   box.innerHTML = `
-    <h3>⚙ Recorrência — ${esc(rec.name)}</h3>
+    <div role="dialog" aria-modal="true" aria-labelledby="fbRecTitle">
+    <h3 id="fbRecTitle">⚙ Recorrência — ${esc(rec.name)}</h3>
     <div class="modal-q" data-qid="rec">
       <div class="ql"><label><input type="checkbox" id="fbRecOn" ${ativa?'checked':''}> Receita recorrente (gera projeção nos meses futuros)</label></div>
     </div>
     <div class="modal-q" data-qid="valor">
-      <div class="ql">Valor mensal da regra (R$)</div>
+      <div class="ql"><label for="fbRecAmount">Valor mensal da regra (R$)</label></div>
       <input type="text" id="fbRecAmount" inputmode="decimal" value="${valorIni===null?'':esc((valorIni/100).toFixed(2).replace('.',','))}">
-      <div class="modal-err">Informe o valor da regra — ≥ 0, ponto ou vírgula decimal. Em branco não é zero.</div>
+      <div class="modal-err" id="fbRecAmountError" role="alert">Informe o valor da regra — ≥ 0, ponto ou vírgula decimal. Em branco não é zero.</div>
     </div>
     <div class="modal-q" data-qid="inicio">
-      <div class="ql">Início (YYYY-MM)</div>
+      <div class="ql"><label for="fbRecStart">Início (YYYY-MM)</label></div>
       <input type="month" id="fbRecStart" value="${esc(regra?regra.startMonth:key)}">
-      <div class="modal-err">Início inválido.</div>
+      <div class="modal-err" id="fbRecStartError" role="alert">Início inválido.</div>
     </div>
     <div class="modal-q" data-qid="fim">
-      <div class="ql">Fim (opcional)</div>
+      <div class="ql"><label for="fbRecEnd">Fim (opcional)</label></div>
       <input type="month" id="fbRecEnd" value="${esc(regra&&regra.endMonth?regra.endMonth:'')}">
-      <div class="modal-err">Fim deve ser vazio ou ≥ início.</div>
+      <div class="modal-err" id="fbRecEndError" role="alert">Fim deve ser vazio ou ≥ início.</div>
     </div>
     <p class="risk-note">Regra vigente alcança apenas meses ainda não registrados. Meses já registrados nunca são reescritos; desligar a regra não apaga receitas históricas.</p>
     <div class="modal-actions">
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
-    </div>`;
-  box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
-  $('modalCancel').addEventListener('click', closeModal);   // cancelar = zero mutação
+    </div></div>`;
+  // O modal global também atende questionários financeiros. O ciclo abaixo é
+  // exclusivo desta instância e se desfaz mesmo quando outro fluxo a fecha.
+  const dialog=box.firstElementChild, eventos=new AbortController();
+  const observar=new MutationObserver(()=>{
+    if(!dialog.isConnected || !overlay.classList.contains('show')) limpar();
+  });
+  function limpar(){ eventos.abort(); observar.disconnect(); }
+  function fechar(render=false){
+    limpar(); closeModal();
+    if(render) finpesBudgetRender();
+    const alvo=document.querySelector('[data-fi-cfg="'+CSS.escape(incomeId)+'"]')||origem;
+    if(alvo && alvo.isConnected && !alvo.closest('[hidden],[inert]') && alvo.getClientRects().length) alvo.focus();
+  }
+  function focaveis(){ return [...dialog.querySelectorAll('input:not([disabled]),button:not([disabled])')]; }
+  overlay.addEventListener('click',e=>{
+    if(e.target===overlay){ e.stopImmediatePropagation(); fechar(); }
+  },{capture:true,signal:eventos.signal});
+  dialog.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); fechar(); return; }
+    if(e.key!=='Tab') return;
+    const itens=focaveis(), primeiro=itens[0], ultimo=itens[itens.length-1];
+    if(e.shiftKey && document.activeElement===primeiro){ e.preventDefault(); ultimo.focus(); }
+    else if(!e.shiftKey && document.activeElement===ultimo){ e.preventDefault(); primeiro.focus(); }
+  },{signal:eventos.signal});
+  document.addEventListener('focusin',e=>{
+    if(dialog.isConnected && overlay.classList.contains('show') && !dialog.contains(e.target)) focaveis()[0].focus();
+  },{signal:eventos.signal});
+  observar.observe(box,{childList:true});
+  observar.observe(overlay,{attributes:true,attributeFilter:['class']});
+  $('fbRecOn').focus();
+  $('modalCancel').addEventListener('click', ()=>fechar()); // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
     const ligar = $('fbRecOn').checked;
     let cfg = { recorrente: ligar };
-    let falhou = false;
-    const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou = true; };
+    let primeiroErro = null;
+    const marcar = qid => {
+      const grupo=box.querySelector(`[data-qid="${qid}"]`), campo=grupo.querySelector('input'), erro=grupo.querySelector('.modal-err');
+      erro.classList.add('show'); campo.setAttribute('aria-invalid','true'); campo.setAttribute('aria-describedby',erro.id);
+      if(!primeiroErro) primeiroErro=campo;
+    };
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
+    box.querySelectorAll('[aria-invalid]').forEach(e=>{ e.removeAttribute('aria-invalid'); e.removeAttribute('aria-describedby'); });
     if(ligar){
       const c = parseBRLCents($('fbRecAmount').value);
       if(c===null || Number.isNaN(c) || c<0) marcar('valor');
@@ -32799,11 +32960,10 @@ function fbOpenRecurrenceModal(key, incomeId){
       if(fim!==null && (!pfMonthKeyValid(fim) || fim<ini)) marcar('fim');
       cfg = { recorrente:true, amount:c, startMonth:ini, endMonth:fim };
     }
-    if(falhou) return;                                      // nada aplicado
+    if(primeiroErro){ primeiroErro.focus(); return; }        // nada aplicado
     const r = pfActConfigureRecurrence(key, incomeId, cfg);
     if(r.ok===false && r.erro){ alert('⛔ '+r.erro); return; }
-    closeModal();
-    finpesBudgetRender();
+    fechar(true);
   });
 }
 
@@ -33886,8 +34046,8 @@ const ALD_STARTER_ASSET_CLASSES = ['RENDA_VARIAVEL','IMOBILIARIO_FINANCEIRO','RE
 
 const ALD_CURRENCY_RE = /^[A-Z]{3}$/; // forma ISO 4217 — schema aberto (o runtime é que é limitado)
 const ALD_DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
-// Novos fatos exigem um dia existente, sem normalizar a entrada nem limitar
-// retroatividade/futuro. A leitura histórica conserva seu contrato de forma.
+// Fatos exigem um dia existente, sem normalizar a entrada nem limitar
+// retroatividade/futuro. Histórico inválido fica ilegível, sem reescrever dados.
 function aldCivilDateValida(value){
   if(typeof value!=='string' || !ALD_DATE_RE.test(value)) return false;
   const year=Number(value.slice(0,4)), month=Number(value.slice(5,7)), day=Number(value.slice(8,10));
@@ -34372,7 +34532,7 @@ function aldTxLegivel(tx){
   if(!aldInEnum(tx.status, ALD_TX_STATUS)) return false;
   if(typeof tx.amount!=='number' || !Number.isSafeInteger(tx.amount) || tx.amount<=0) return false;
   if(typeof tx.currency!=='string' || !ALD_CURRENCY_RE.test(tx.currency)) return false;
-  if(typeof tx.effectiveAt!=='string' || !ALD_DATE_RE.test(tx.effectiveAt)) return false;
+  if(!aldCivilDateValida(tx.effectiveAt)) return false;
   if(typeof tx.transactionId!=='string' || !tx.transactionId) return false;
   if(tx.eventType==='REVERSAL'){
     if(typeof tx.reversalOf!=='string' || !tx.reversalOf) return false;
@@ -34919,27 +35079,25 @@ function aldDecRender(a){
 // Direção da perna de papel por evento. Eventos só-caixa não estão na tabela.
 const ALD_PAPEL_DELTA = { BUY: 1, SELL: -1 };
 
-function aldPosicoes(){
-  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+// Qualidade compartilhada de ledger/posições, sem derivar quantidade ou saldo.
+// onTrade é interno: o Position Engine recebe apenas pernas já classificadas.
+// Mantém a fronteira E12b: moeda/custódia de trade, não saldo de evento só-caixa.
+function aldLedgerReadIssues(a, onTrade){
   const issues = [];
-  const bloqueado = (iss) => Object.freeze({ available:false, quality:'BLOCKING',
-    issues:Object.freeze(iss.slice(0,20)), positions:Object.freeze([]) });
   // FUTURE SCHEMA primeiro, mesmo que todos os registros presentes sejam de
   // tipos conhecidos: um agregado de versão futura pode carregar semântica que
   // este build ignora, e afirmar posição sobre ele seria afirmar o que não se
   // pode provar.
-  if(aldCompat().readOnly) return bloqueado([ALD_READ_ONLY_FUTURE_SCHEMA]);
+  if(aldCompat().readOnly) return [ALD_READ_ONLY_FUTURE_SCHEMA];
   // Integridade estrutural (unicidade de TODO id canônico, container do ledger,
   // dedupeKey, cardinalidade e pareamento de reversal) ANTES de agregar — mesma
   // guarda do saldo e do write gate. Identidade ambígua ⇒ posição atribuída a
   // referência arbitrária, jamais um número.
   const estrutural = aldIntegridadeEstrutural(a);
-  if(estrutural.length) return bloqueado(estrutural);
+  if(estrutural.length) return estrutural;
   const lista = (a && Array.isArray(a.transactions)) ? a.transactions : [];
   const porId = {};
   for(const t of lista){ if(aldRegistroLegivel(t) && typeof t.transactionId==='string') porId[t.transactionId]=t; }
-  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
-  const porInstrumento = new Map();
   // A custódia do trade: cashAccountId → CashAccount → accountId → Account.
   // Cadastro ausente ou moeda divergente entre trade/caixa/instrumento é
   // classificação insegura ⇒ fail-closed GLOBAL, nunca posição parcial.
@@ -34973,6 +35131,27 @@ function aldPosicoes(){
     }
     const accountId = custodiaDoTrade(alvo);
     if(accountId===null) continue;         // issue registrada — bloqueio no fim
+    if(onTrade) onTrade(alvo, sinal, accountId);
+  }
+  return issues;
+}
+
+// API aditiva: transactions() continua sendo a lista bruta legada. O envelope
+// nunca apresenta coleção parcial como íntegra e não calcula posições/saldos.
+function aldLedgerLeitura(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  const issues = aldLedgerReadIssues(a);
+  if(issues.length) return Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(issues.slice(0,20)), transactions:Object.freeze([]) });
+  return Object.freeze({ available:true, quality:'OK', issues:Object.freeze([]),
+    transactions:Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))) });
+}
+
+function aldPosicoes(){
+  const a = (typeof S==='object' && S) ? S.alladin : undefined;
+  // Map aninhado como identidade — nunca concatenação de IDs, que colide.
+  const porInstrumento = new Map();
+  const issues = aldLedgerReadIssues(a, (alvo, sinal, accountId) => {
     let porConta = porInstrumento.get(alvo.instrumentId);
     if(!porConta){ porConta = new Map(); porInstrumento.set(alvo.instrumentId, porConta); }
     let pos = porConta.get(accountId);
@@ -34980,8 +35159,9 @@ function aldPosicoes(){
     const q = aldDecParse(alvo.quantity);
     pos.acc = aldDecSoma(pos.acc, sinal < 0 ? aldDecNeg(q) : q);
     pos.consideradas++;
-  }
-  if(issues.length) return bloqueado(issues);
+  });
+  if(issues.length) return Object.freeze({ available:false, quality:'BLOCKING',
+    issues:Object.freeze(issues.slice(0,20)), positions:Object.freeze([]) });
   // Ordem DETERMINÍSTICA — instrumentId ASC, depois accountId ASC. A ordem
   // física do array é acidente de inserção e não pode vazar para o resultado.
   const positions = [];
@@ -35009,6 +35189,8 @@ function aldPosicoes(){
       // Ledger em ordem ECONÔMICA — (effectiveAt, recordedAt, transactionId) —
       // nunca a ordem do array, que é acidente de inserção e não fato temporal.
       transactions: function(){ return Object.freeze(aldTxOrdenar(aldVistaCadastral('transactions'))); },
+      // Ledger completo com qualidade explícita; a API bruta acima é compatível.
+      ledger: aldLedgerLeitura,
       saldoDeCaixa: aldSaldoDeCaixa,
       // ALD-04 S1 — posição por quantidade, derivada e fail-closed (DH-04-5:
       // única API nova do slice; posicaoDe() não existe neste ciclo).
@@ -35264,28 +35446,6 @@ function alladinIndisponivel(titulo, issues){
     : '<p>Nenhum diagnóstico específico foi devolvido pelo domínio.</p>';
   return '<div class="session-warning" role="status"><strong>'+esc(titulo)+'</strong>'+lista+'</div>';
 }
-// Sentinela de integridade para os Lançamentos (MD-2/A).
-// `leitura.transactions()` NÃO tem envelope de qualidade: ele filtra registros
-// ilegíveis EM SILÊNCIO e não checa integridade estrutural nem schema futuro.
-// Projetar essa lista direto exibiria um ledger silenciosamente filtrado como
-// se fosse normal — exatamente o que o invariante proíbe. Enquanto o envelope
-// próprio não existe (dívida registrada, slice futura), a confiabilidade vem de
-// `posicoes()`, que é global e fail-closed pelos MESMOS motivos (integridade
-// estrutural, registro ilegível, cadastro órfão, moeda divergente, schema
-// futuro), somada a `compat()`.
-//
-// Isto é guarda de APRESENTAÇÃO, não regra econômica: a UI não interpreta o
-// veredito, apenas se recusa a desenhar quando o domínio não garante o dado.
-// Conservador de propósito — bloquear a mais é seguro, a menos não é.
-function alladinSentinelaLedger(){
-  const compat=JPWAlladin.compat();
-  if(compat && compat.readOnly){
-    return { ok:false, issues:[compat.reason||'READ_ONLY_FUTURE_SCHEMA'] };
-  }
-  const pos=JPWAlladin.leitura.posicoes();
-  if(!pos.available) return { ok:false, issues:(pos.issues||[]).slice() };
-  return { ok:true, issues:[] };
-}
 // Rótulos cadastrais resolvidos DENTRO dos snapshots de leitura — nunca no
 // agregado vivo, como já faz o painel de Caixa.
 function alladinCatalogoLabels(){
@@ -35372,8 +35532,8 @@ function alladinDataCelula(tx){
 }
 function alladinRenderLedger(el){
   const cab='<h2>Lançamentos</h2>';
-  const sentinela=alladinSentinelaLedger();
-  if(!sentinela.ok){
+  const ledger=JPWAlladin.leitura.ledger();
+  if(!ledger.available){
     // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty — e
     // NENHUM convite à escrita (ALD-05 S2): o CTA não é renderizado. Escrever
     // sobre agregado que a leitura recusa só produziria a recusa estrutural do
@@ -35381,11 +35541,11 @@ function alladinRenderLedger(el){
     // se o estado mudar entre render e submit, é o domínio que decide.
     el.innerHTML=cab+alladinIndisponivel(
       'Lançamentos indisponíveis — o agregado não passou na verificação de integridade.',
-      sentinela.issues);
+      ledger.issues);
     return;
   }
   const cta=alladinTxBotaoNovo();
-  const lista=JPWAlladin.leitura.transactions();
+  const lista=ledger.transactions;
   if(!lista.length){ el.innerHTML=cab+cta+alladinVazio('ledger'); return; }
   const cat=alladinCatalogoLabels();
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
@@ -36367,7 +36527,9 @@ function alladinTxReverseAbrir(originalId){
   // Write gate na ABERTURA — e de novo no dominio, no submit.
   const bloqueio=alladinWriteBloqueado();
   if(bloqueio){ showSessionNotice('Escrita indisponível: '+bloqueio); return; }
-  const tx=JPWAlladin.leitura.transactions().find(t=>t.transactionId===originalId);
+  const ledger=JPWAlladin.leitura.ledger();
+  if(!ledger.available){ showSessionNotice('Lançamentos indisponíveis: '+ledger.issues.join(' · ')); return; }
+  const tx=ledger.transactions.find(t=>t.transactionId===originalId);
   if(!tx){ showSessionNotice('O lançamento não foi encontrado.'); return; }
   const cat=alladinCatalogoLabels();
   alladinForm.estado='EDITING'; alladinForm.tipo='transaction-reverse'; alladinForm.modo='create';
@@ -36745,9 +36907,11 @@ function dmResearchHTML(){
       : dmAux('nenhum evento de alto impacto'));
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
     if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
-    if(typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
-      corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   }
+  const cacheIssue = typeof ffNewsCacheIssue === 'function' ? ffNewsCacheIssue() : '';
+  if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
+  else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
+    corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
     +dmLink('REITs','research-reits')+dmLink('Others','research-others')
@@ -36801,10 +36965,13 @@ function dmAlladinHTML(){
   }).join('');
   corpo += dmSection('Saldos por conta', balances || dmNote('Cadastre uma conta de caixa para acompanhar os saldos.'));
   if(cash.length>3) corpo+=dmNote('Exibindo 3 de '+cash.length+' contas. Todos os saldos estão no módulo.');
-  const txs=L.transactions();
+  const ledger=L.ledger();
+  const txs=ledger.transactions;
   const last=txs.length?txs[txs.length-1]:null;
   // Mesma ordem econômica do leitor; correção por estorno permanece visível.
-  corpo += dmSection('Último lançamento', last
+  corpo += dmSection('Último lançamento', !ledger.available
+    ? '<span class="dm-partial">Lançamentos indisponíveis</span>'
+    : last
     ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
       +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
     : dmNote('Nenhum lançamento registrado.'));

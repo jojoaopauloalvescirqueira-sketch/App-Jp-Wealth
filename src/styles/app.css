@@ -436,7 +436,7 @@
   }
   /* ============ LAYOUT ============ */
   /* Escopado por ID (#appMain), não pela tag <main> — a Central de
-     Configurações também usa um <main id="settingsContent"> interno (dentro
+     Configurações historicamente usava um <main id="settingsContent"> interno (dentro
      de .settings-modal-body, um grid sem grid-template-areas); um seletor de
      tag puro vazava grid-area:main para ele, criando uma linha de grid
      nomeada inexistente e faixas implícitas fantasmas na largura da coluna
@@ -889,6 +889,11 @@
      role="alert" vivo no DOM, que é o que torna o anúncio confiável quando o
      conteúdo aparece. */
   .persistence-alert:empty{display:none}
+  html[data-notes-persistence-docked] .persistence-alert{
+    max-height:var(--jp-persistence-banner-max-height); overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  html[data-notes-persistence-docked] .persistence-alert>*{flex-shrink:0}
   .persistence-alert.is-recovered{border-color:var(--f1); border-left-color:var(--f1)}
   .persistence-alert-title{margin:0; font-family:var(--mono); font-size:var(--fs-md); font-weight:700; color:var(--f4)}
   .persistence-alert.is-recovered .persistence-alert-title{color:var(--f1)}
@@ -1455,7 +1460,8 @@
   .ecal-close{width:34px; height:34px; flex:0 0 34px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:8px; background:transparent; color:var(--ink-dim); cursor:pointer}
   .ecal-close:hover{color:var(--ink); background:var(--panel-2)}
   .ecal-close svg{width:16px; height:16px}
-  .ecal-filters{margin:12px 20px 0; width:fit-content; flex:none}
+  .ecal-filters{margin:12px 20px 0; width:fit-content; max-width:calc(100% - 40px); flex:none; flex-wrap:wrap}
+  .ecal-filters button{flex:1 0 56px}
   .ecal-body{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:12px 20px 16px}
   .ecal-day{margin-bottom:14px}
   .ecal-day-title{margin:0 0 6px; font-family:var(--mono); font-size:var(--fs-xs); font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.11em}
@@ -1489,7 +1495,7 @@
      dia/item/hora/números são compartilhadas e não precisam de nada. */
   .ecal-ws{display:flex; flex-direction:column}
   .ecal-ws-head h2{margin:0; font-size:var(--fs-xl); color:var(--ink)}
-  .ecal-ws .ecal-filters{margin:12px 0 0}
+  .ecal-ws .ecal-filters{margin:12px 0 0; max-width:100%}
   .ecal-ws-body{flex:none; overflow:visible; padding:14px 0 4px}
   .ecal-ws .ecal-empty{padding:16px 0}
   .ecal-ws-foot{display:flex; flex-direction:column; gap:3px; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--line); font-size:var(--fs-xs); color:var(--ink-faint)}
@@ -1788,7 +1794,8 @@
        abaixo do próprio padrão v5 (980): o ARIA anunciava um máximo que o render nunca
        entregava. Corrigido para o máximo canônico — as três colunas da Fase D dependem
        dessa largura para caber com folga. */
-    position:fixed; top:0; right:0; height:100vh;
+    position:fixed; top:var(--jp-persistence-notes-inset,0px); right:0;
+    height:calc(100vh - var(--jp-persistence-notes-inset,0px));
     width:min(var(--mvpn-drawer-w,980px), 80vw, 1600px, calc(100vw - 32px));
     display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
     box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
@@ -2289,7 +2296,8 @@
   @media(max-width:920px){
     .mvp-notes-drawer{
       width:100vw; left:0;
-      height:100vh; height:100dvh; /* dvh: teclado virtual não deixa área morta */
+      height:calc(100vh - var(--jp-persistence-notes-inset,0px));
+      height:calc(100dvh - var(--jp-persistence-notes-inset,0px)); /* dvh: teclado virtual não deixa área morta */
       /* Tela cheia não tem "lado de fora": a borda esquerda vira um fio de 1px na beirada
          do aparelho e ainda encolhe em 1px as folhas inferiores, que são position:fixed
          contidas pelo drawer (ele tem animation-name, o que o torna bloco contentor). */
@@ -6199,7 +6207,7 @@ html[data-shell="global-dashboard"] .research-view{margin-top:16px;min-width:0}
 #dashMacro .dm-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--line)}
 #dashMacro .dm-title{font:600 22px/1.25 var(--sans);letter-spacing:-.025em;margin:6px 0 0}
 #dashMacro .dm-index{font:400 30px var(--mono);color:var(--ink-faint);opacity:.35}
-#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--dm-blue)}
+#dashMacro [data-dm-card="forex"] .dm-eyebrow{color:var(--violet)}
 #dashMacro [data-dm-card="personal-finance"] .dm-eyebrow{color:var(--f1)}
 #dashMacro [data-dm-card="research"] .dm-eyebrow{color:var(--violet)}
 #dashMacro [data-dm-card="alladin"] .dm-eyebrow{color:var(--f2)}

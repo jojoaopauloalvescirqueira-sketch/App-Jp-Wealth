@@ -1,12 +1,30 @@
-# JP Feature Atlas — piloto descritivo
+# JP Feature Atlas — catálogo parcial descritivo
 
 > Integração do catálogo parcial autorizada com pendências: [registro](../work/ATLAS-V4-INTEGRATION-20260910.md). A proveniência/autoria histórica abaixo é preservada; não representa estado novo de validação ou fechamento de AUD-05/P2.
 
 Este catálogo descreve capacidades e relações; não é fonte normativa, autorização, instalação aceita ou homologação financeira. Fonte editável única: este Markdown. Os blocos atlas-json são os metadados/arestas de cada ficha; tabelas e fluxos em prosa apenas os explicam, sem cadastro paralelo. Não há índice vetorial, grafo derivado ou consulta Graphify nesta autoria.
 
-Base de produto: **484228189cc3f5f4c297f29f88f2b2ed541a3afd**, build **88c0cb1ce5520311**. Instruções de base: V4 experimental **5ca9e046a4c75a5bfe3da9b5d1f11b259d88cdd33ee4a56372601c99e2035642**, ainda não aceita; **AUD-05/P2 continua aberto**. Os hashes por fonte abaixo identificam os bytes inspecionados na cópia. Data da leitura: 2026-09-10 UTC (2026-09-09 local). Contrato do piloto: [FEATURE-ATLAS-PILOT](../work/FEATURE-ATLAS-PILOT.md); contexto do produto: [PROJECT-CONTEXT](../governance/PROJECT-CONTEXT.md); localização: [CODE-MAP](CODE-MAP.md).
+Base de produto: **484228189cc3f5f4c297f29f88f2b2ed541a3afd**, build **88c0cb1ce5520311**. Instruções de base: V4 experimental **5ca9e046a4c75a5bfe3da9b5d1f11b259d88cdd33ee4a56372601c99e2035642**, ainda não aceita; **AUD-05/P2 continua aberto**. Os hashes históricos por fonte foram preservados na V2; os blocos atuais foram reconciliados no recorte explicitado abaixo. Data da leitura: 2026-09-10 UTC (2026-09-09 local). Contrato do piloto: [FEATURE-ATLAS-PILOT](../work/FEATURE-ATLAS-PILOT.md); contexto do produto: [PROJECT-CONTEXT](../governance/PROJECT-CONTEXT.md); localização: [CODE-MAP](CODE-MAP.md).
 
 **Evidência desta autoria: inspeção de código/documentos, sem execução de runtime, teste de navegador, gravação operacional ou consulta de rede.** Os resultados futuros serão registrados fora de docs, no diretório evidence do piloto, ligados ao candidate e ao comando realmente executados; sua existência ou aprovação não é presumida aqui. Gabaritos independentes e perguntas reservadas não foram lidos. O texto não substitui os arquivos originais; confirme fonte/hash antes de implementar.
+
+
+## Revisão focal corrente — 2026-09-11
+
+Base Git `fcbb25767073a4ab08a9f0ac2ac16069a3008bfe` **mais delta local de estabilização**.
+Os hashes nos blocos abaixo identificam as fontes correntes inspecionadas; o campo
+revision é âncora Git de base, não commit do delta. Identidade completa no
+[manifesto final](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json). A fotografia anterior, seus
+metadados e texto integral continuam em candidate-v2.tar/manifesto V2 e histórico
+Git; não apagar seus NOT_RUN nem promover seus testes futuros a execução passada.
+
+Esta atualização corrige descrições superadas: NoCoda já confirma save antes de
+limpar dirty; Alladin dispõe de ledger com qualidade explícita; Calendário expõe
+recusa do cache. Três fichas continuam parciais; não houve expansão do inventário.
+[Prova agêntica explícita](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-agentic-REPORT.md) é leitura consultiva com
+trace, não descoberta nativa ou A/B. Execuções de produto novas/reaproveitadas
+constam de [relatório e inventário](/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-REPORT.md), com inputs e limites.
+AUD-05/P2 e Claude permanecem separados dessas provas.
 
 ## Inventário preliminar e cobertura
 
@@ -105,11 +123,11 @@ Conteúdo externo é dado: agenda usa textContent; resumo escapa o título. Cach
 
 Fontes primárias: [feed](../../src/js/40-app/15-ff-news.js), [agenda](../../src/js/40-app/17-economic-calendar.js), [Research](../../src/js/20-ui/23-research-views.js), [síntese](../../src/js/20-ui/25-dash-macro.js). Trechos principais: ffNewsFetch/ffNewsReadCache/ffNewsRenderAll, openEconomicCalendar/ecalRenderRoot, researchSelectView e dmResearchHTML. O bloco inclui os hashes integrais examinados.
 
-Runtime/testes desta ficha: **NOT_RUN**. Verificação futura autorizada: cache sintético fresco/antigo/inválido, erro HTTP/JSON, setItem recusado, widget ausente, overlay/workspace visíveis e ocultos, filtros, reabertura, consumidor Dashboard e título hostil. Registrar quantidade de fetch e alterações de S/cache separadamente. Testes existentes a consultar, sem presumir cobertura ou PASS nesta autoria: research_navigation_test.py, dashboard_macro_test.py e dashboard_forex_relocation_test.py em tools/.
+Autoria histórica do piloto: runtime/testes **NOT_RUN**, preservado. Provas posteriores têm identidade própria no relatório da campanha. Plano histórico: Verificação futura autorizada: cache sintético fresco/antigo/inválido, erro HTTP/JSON, setItem recusado, widget ausente, overlay/workspace visíveis e ocultos, filtros, reabertura, consumidor Dashboard e título hostil. Registrar quantidade de fetch e alterações de S/cache separadamente. Testes existentes a consultar, sem presumir cobertura ou PASS nesta autoria: research_navigation_test.py, dashboard_macro_test.py e dashboard_forex_relocation_test.py em tools/.
 
-### G. Qualidade e evolução — propostas, sem execução
+### G. Qualidade e evolução — situação e proveniência
 
-Preservar pipeline/cache únicos, renderer parametrizado, estados de ausência e texto escapado. Problema demonstrado no código: falha de setItem é silenciada e lastError pode ser limpo após sucesso HTTP; a view relê armazenamento e pode continuar antiga/indisponível. Benefício de melhoria: transparência sobre cache não atualizado. Menor incremento futuro: explicitar resultado da gravação e representação da recusa, sem criar pipeline concorrente. Impacto: widget, agenda e Dashboard; risco N1 ou maior conforme alteração de persistência; teste: negar apenas cache técnico e observar mensagens/dados antigos sem falso sucesso. Não corrigido pelo Atlas.
+Preservar pipeline/cache únicos, renderer parametrizado, estados de ausência e texto escapado. Defeito histórico do piloto: setItem era silenciado e HTTP válido ocultava a falha. A campanha técnica atual faz ffNewsWriteCache retornar resultado e ffNewsCacheIssue distinguir leitura recusada de escrita recusada; widget, agenda e Dashboard apresentam a causa, preservando cache anterior ou ausência. Retry explícito após resolver a recusa usa o mesmo pipeline. Não existe fallback de payload em memória nem gravação financeira. Evidência em closure-cache-REPORT.md e tools/ff_news_cache_test.py; não é correção feita pelo Atlas histórico.
 
 ### H. Manutenção
 
@@ -122,11 +140,11 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
   "implementation": "available",
   "evidence_level": "code-inspected",
   "freshness": "verified-for-revision",
-  "revision": "484228189cc3f5f4c297f29f88f2b2ed541a3afd",
+  "revision": "fcbb25767073a4ab08a9f0ac2ac16069a3008bfe",
   "sources": [
     {
       "path": "src/js/40-app/15-ff-news.js",
-      "sha256": "d2abc27527f5ee4145aa7f31152c8b54adb24e016e3e0c8628530f20971254a3",
+      "sha256": "621e7617626ba6c0f5f1ae30156576770bc6bf79a6fb195321748ab90543e9fe",
       "symbols": [
         "ffNewsSourceUrl",
         "ffNewsSanitizeEvents",
@@ -141,7 +159,7 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
     },
     {
       "path": "src/js/40-app/17-economic-calendar.js",
-      "sha256": "79c88d7506e23a947a343cacb92e8bd0ee554f6e0b607915e63a2594c4432336",
+      "sha256": "c2bb4b881b67eda573820eacf8304f8db93df88316d893eed82d0e9c1911da74",
       "symbols": [
         "ecalEvents",
         "ecalRenderRoot",
@@ -161,7 +179,7 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
     },
     {
       "path": "src/js/20-ui/25-dash-macro.js",
-      "sha256": "4c4ea201d8beeb2f3149c2cdb98c75e3ffc41be4a62b73fa9856503e5ba7baea",
+      "sha256": "294a052b592c9310c308d8f9d3cad0c488322f8b4a809da9ce86cd0ac3947076",
       "symbols": [
         "dmResearchHTML"
       ]
@@ -238,7 +256,9 @@ Responsabilidade funcional compartilhada entre informação operacional Forex, c
       "condition": "Resumo Research no Dashboard; cache nulo não autoriza zero eventos.",
       "evidence": "src/js/20-ui/25-dash-macro.js#dmResearchHTML"
     }
-  ]
+  ],
+  "revision_scope": "Git baseline plus uncommitted closure candidate; exact source hashes below, not a commit of the delta",
+  "candidate_manifest": "/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json"
 }
 ```
 
@@ -282,15 +302,15 @@ História: o começo de ALLADIN.md preserva o estado C3 “não há transação/
 
 ### E. Integrações e implementação
 
-24-alladin-views coleta e apresenta; aliases JPWAlladin.ledger/money/leitura apontam a 13-alladin; aldMutate chama save na persistência comum. Saldos e posições são consumidores indiretos dos fatos, não alterações persistidas por navegar. Ald/Forex podem compartilhar infraestrutura global sem integração econômica entre domínios; nenhuma API/cotação externa é chamada pelos caminhos descritos. Uma sugestão recuperada de valuation continua proposta, sem permissão de implementação ou de leitura de arquivos externos.
+24-alladin-views coleta e apresenta; leitura.ledger() fornece available/quality/issues/transactions sem aritmética de posições; a lista bruta transactions() permanece compatível e não prova integridade. Preview direto de fato indisponível recusa com aviso; CTA normal já era protegido. Aliases JPWAlladin.ledger/money/leitura apontam a 13-alladin; aldMutate chama save na persistência comum. Saldos e posições são consumidores indiretos dos fatos, não alterações persistidas por navegar. Ald/Forex podem compartilhar infraestrutura global sem integração econômica entre domínios; nenhuma API/cotação externa é chamada pelos caminhos descritos. Uma sugestão recuperada de valuation continua proposta, sem permissão de implementação ou de leitura de arquivos externos.
 
 ### F. Evidências e verificação pendente
 
 [Contrato](ALLADIN.md), [domínio](../../src/js/10-domain/13-alladin.js), [UI](../../src/js/20-ui/24-alladin-views.js), [persistência](../../src/js/00-core/04-persistence.js). Trechos: aldNormalizeTransactionFields/aldActAddTransaction/aldActReverseTransaction/aldMutate, alladinTxSubmit/alladinTxReverseSubmit, alladinRenderPositions e save; hashes no bloco.
 
-Runtime/testes desta ficha: **NOT_RUN**. Futuro piloto: criar/estornar dados sintéticos por UI e observar memória/disco/contagem de chamadas; negar gravação, provocar conflito, cancelar, repetir submit/estorno, testar schema futuro e conferir consumidores. Consultar focais existentes alladin_unit_test.py e alladin_ui_tx_write_test.py em tools/ quando aplicáveis, sem promover sua existência a PASS. A evidência precisa identificar execução/candidate e virá do registro externo, não da narrativa da ficha.
+Autoria histórica do piloto: runtime/testes **NOT_RUN**, preservado. Provas posteriores têm identidade própria no relatório da campanha. Plano histórico: Futuro piloto: criar/estornar dados sintéticos por UI e observar memória/disco/contagem de chamadas; negar gravação, provocar conflito, cancelar, repetir submit/estorno, testar schema futuro e conferir consumidores. Consultar focais existentes alladin_unit_test.py e alladin_ui_tx_write_test.py em tools/ quando aplicáveis, sem promover sua existência a PASS. A evidência precisa identificar execução/candidate e virá do registro externo, não da narrativa da ficha.
 
-### G. Qualidade e evolução — propostas, sem execução
+### G. Qualidade e evolução — situação e proveniência
 
 Preservar fronteira transacional, rascunho na recusa, identidade/append-only econômico e projeções sem cálculo na UI. Oportunidade documental demonstrada: o trecho C3 histórico pode ser recuperado sem seu aviso sucessor. Benefício: evitar falsa afirmação de capacidade ausente. Menor incremento: manter aviso e fonte sucessora juntos na unidade consultada, sem apagar história. Impacto: Atlas, recuperação e agentes; risco de promoção indevida, tratado pelo control plane; teste: pergunta histórica deve voltar à nota vigente e ao código. Valuation é oportunidade futura que exige contrato e decisão próprios; não é defeito a corrigir neste piloto nem entrega atual.
 
@@ -305,11 +325,11 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
   "implementation": "available",
   "evidence_level": "code-inspected",
   "freshness": "verified-for-revision",
-  "revision": "484228189cc3f5f4c297f29f88f2b2ed541a3afd",
+  "revision": "fcbb25767073a4ab08a9f0ac2ac16069a3008bfe",
   "sources": [
     {
       "path": "src/js/20-ui/24-alladin-views.js",
-      "sha256": "e5020166f5414ee9da96768e81889a32589f9b3e1d2ec0d6b157b7cca1939c8d",
+      "sha256": "75c7ed72b542ef47e8b398c086957ca9cf2b52e26ca214823874ae1405944cc6",
       "symbols": [
         "initAlladinCrud",
         "alladinSubmit",
@@ -323,7 +343,7 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
     },
     {
       "path": "src/js/10-domain/13-alladin.js",
-      "sha256": "8ef16b541c80347a61b51a3724d7bc8ac027696004896c90dcc844dc6163f35b",
+      "sha256": "d7a677e5bc4875406aa809b7094ded0fa93b8a5844a2cf1f748325f5e5af079a",
       "symbols": [
         "aldParseMoney",
         "aldNormalizeTransactionFields",
@@ -339,14 +359,14 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
     },
     {
       "path": "src/js/00-core/04-persistence.js",
-      "sha256": "94ff842770930cef4466e51d34ffab189f7badff4abf5331c5c4c0224c3599bc",
+      "sha256": "8edc9517a426cdd9ef48354116e16447fbab5cb8ac30d4d19d1c979fee6cda0c",
       "symbols": [
         "save"
       ]
     },
     {
       "path": "docs/architecture/ALLADIN.md",
-      "sha256": "3964ef8bc128d883cec9fe041f45a9a6c93d5e0136c832e3bbc6abc0dd9a309a",
+      "sha256": "6dc70be6918a58693e5d42142c0f9ed2b96fc2e380bf3db6c68aa91b9122426f",
       "symbols": [
         "Superado em 2026-08-31",
         "ALD-05 S2",
@@ -439,7 +459,9 @@ Responsabilidade funcional Alladin/ledger, com consumidores UI, saldos, posiçõ
       "condition": "Via leitura.posicoes; BLOCKING não vira coleção vazia normal.",
       "evidence": "src/js/20-ui/24-alladin-views.js#alladinRenderPositions"
     }
-  ]
+  ],
+  "revision_scope": "Git baseline plus uncommitted closure candidate; exact source hashes below, not a commit of the delta",
+  "candidate_manifest": "/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json"
 }
 ```
 
@@ -454,7 +476,7 @@ Guardar manualmente a memória técnica de três âncoras do canal NoCoda por in
 
 Fluxo: objetivo de estudar um instrumento → seletor derivado de instrumentCatalog → rascunho das três âncoras → digitação/prévia → validação explícita no Salvar → alteração das causas em memória → save → mensagem/novo cálculo. Trocar instrumento com ncDirty pede confirmação; cancelar mantém seleção/rascunho, aceitar carrega outro estudo. Essa guarda específica não é prova de preservação em toda saída de módulo.
 
-renderNocodaStudies consome a lista operável. Sem itens mostra indisponibilidade; seleção inválida é substituída pelo primeiro item atual. ncBind atualiza ncDraft e prévia a cada input, sem persistir antes de Salvar. ncUpdateDerived usa JPWNocoda.geometry.compute, sem reconstruir o formulário a cada tecla. ncSaveStudy valida, exibe erros por campo e só então atualiza âncoras/updatedAt. A implementação chama save, mas **não examina seu retorno**: limpa ncDirty e mostra “parâmetros salvos” mesmo se save retornar false. Esse desvio é demonstrável por leitura; comportamento visível/disco sob falha requer teste sintético, não foi executado aqui.
+renderNocodaStudies consome a lista operável. Sem itens mostra indisponibilidade; seleção inválida é substituída pelo primeiro item atual. ncBind atualiza ncDraft e prévia a cada input, sem persistir antes de Salvar. ncUpdateDerived usa JPWNocoda.geometry.compute, sem reconstruir o formulário a cada tecla. ncSaveStudy valida, exibe erros por campo e só então atualiza âncoras/updatedAt. A implementação corrente examina save: true confirma/limpa ncDirty; false restaura somente S.nocoda anterior e mantém rascunho na sessão. Exceção ou retorno indeterminado registra desfecho desconhecido e orienta não repetir cegamente. Ao sair/retornar, a seleção/rascunho em memória são preservados nas condições do teste. O falso sucesso relatado no piloto é histórico; a correção integra o checkpoint funcional base desta campanha, não foi refeita pelo Atlas.
 
 ### C. Dados e estados
 
@@ -466,7 +488,7 @@ Geometria pura: âncoras 1/2 definem linha zero; projeta essa linha no tempo T3 
 
 ### D. Limites e proteções
 
-O contrato declara que estudar/salvar não libera fase, clearance, ordens, alavancagem, LIFO ou quarentena. A matemática não usa DOM/S/rede; a UI consulta o motor. Dados de entrada e erros são tratados como texto/HTML escapado nos pontos examinados. save pode recusar por recuperação/concorrência/armazenamento, mas a UI NoCoda não propaga essa recusa nem restaura seu agregado nesse caminho. **Não afirmar que NoCoda tem o rollback de aldMutate.** O estado vivo pode conservar a alteração apesar de o disco não tê-la recebido; é risco derivado do fluxo estático, sujeito à caracterização controlada.
+O contrato declara que estudar/salvar não libera fase, clearance, ordens, alavancagem, LIFO ou quarentena. A matemática não usa DOM/S/rede; a UI consulta o motor. Dados de entrada e erros são tratados como texto/HTML escapado nos pontos examinados. save pode recusar por recuperação/concorrência/armazenamento. A UI distingue recusa comprovada de desfecho desconhecido: restaura o agregado NoCoda na primeira; no segundo, conserva o tratamento próprio e impede retry cego. Não generalizar esse contrato a todos os módulos nem alegar persistência nova do rascunho após reload.
 
 Fora do MVP conforme contrato: importação automática de âncoras, integração MT5, histórico versionado, comparação de estudos, desenho das 65 linhas, pips/ATR/equivalência monetária/sinais. A função levelPrice existir não prova desenho dessas linhas na interface.
 
@@ -480,11 +502,11 @@ NoCoda chama geometria pura de 09-nocoda-geometry e save comum; não há evidên
 
 [Contrato NoCoda](NOCODA-STUDIES.md), [UI](../../src/js/20-ui/14-nocoda-studies.js), [geometria](../../src/js/10-domain/09-nocoda-geometry.js), [catálogo](../../src/js/10-domain/01-risk-instruments.js), [Pivots](../../src/js/20-ui/15-pivot-studies.js), [Dashboard](../../src/js/20-ui/25-dash-macro.js), [veredito de ordem](../../src/js/10-domain/03-phase-transitions.js), [persistência](../../src/js/00-core/04-persistence.js). Trechos e hashes no bloco; consumidores representam somente relações materiais inspecionadas, não todo uso possível de S.instruments.
 
-Runtime/testes desta ficha: **NOT_RUN**. Futuro piloto autorizado: prévia sem save; estudo válido e reabertura; erro por campo; troca/cancelamento com rascunho; remoção/banimento do instrumento preservando estudo; consumidores Pivots/Dashboard; save recusado comparando S, disco, mensagem e ncDirty. Ferramentas existentes a consultar sem presumir resultados: tools/nocoda_test.py, tools/pivot_studies_test.py e tools/dashboard_macro_test.py. Relacionar comportamento observado ao trace, não à autodeclaração.
+Autoria histórica do piloto: runtime/testes **NOT_RUN**, preservado. Provas posteriores têm identidade própria no relatório da campanha. Plano histórico: Futuro piloto autorizado: prévia sem save; estudo válido e reabertura; erro por campo; troca/cancelamento com rascunho; remoção/banimento do instrumento preservando estudo; consumidores Pivots/Dashboard; save recusado comparando S, disco, mensagem e ncDirty. Ferramentas existentes a consultar sem presumir resultados: tools/nocoda_test.py, tools/pivot_studies_test.py e tools/dashboard_macro_test.py. Relacionar comportamento observado ao trace, não à autodeclaração.
 
-### G. Qualidade e evolução — propostas, sem execução
+### G. Qualidade e evolução — situação e proveniência
 
-Preservar separação catálogo/geometria/UI, cálculo por causas e ausência de autorização operacional. Defeito estático identificado: ncSaveStudy não usa o veredito de save e anuncia sucesso após chamada. Benefício de correção futura: mensagem fiel, rascunho preservado e integridade memória/disco. Menor incremento a propor: tratar explicitamente recusa/resultado da gravação e recuperação do estado do próprio estudo, sem alterar motor/catálogo. Consumidores afetados: NoCoda, resumo de estudos e backup; risco ao menos N2 se modificar persistência/recuperação; teste focal deve negar save e provar que não há sucesso falso/perda de estudo antigo. **Nenhuma correção está autorizada ou implementada pelo Atlas.**
+Preservar separação catálogo/geometria/UI, cálculo por causas e ausência de autorização operacional. O falso sucesso ncSaveStudy identificado no piloto foi corrigido no checkpoint funcional: ver descrição corrente B/D e tools/studies_notes_persistence_contract_test.py. O relatório histórico e seus NOT_RUN permanecem na V2. A atualização documental não concede autorização nem reexecuta aquele piloto. Novas mudanças de persistência continuam N2, com domínio/consumidores e desfecho desconhecido considerados.
 
 ### H. Manutenção
 
@@ -497,11 +519,11 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
   "implementation": "available",
   "evidence_level": "code-inspected",
   "freshness": "verified-for-revision",
-  "revision": "484228189cc3f5f4c297f29f88f2b2ed541a3afd",
+  "revision": "fcbb25767073a4ab08a9f0ac2ac16069a3008bfe",
   "sources": [
     {
       "path": "src/js/20-ui/14-nocoda-studies.js",
-      "sha256": "7dda7e700186309cf41d99da92b69c93140c268d06f6082b8f3586c13018e603",
+      "sha256": "84fe93663de458bb843ecb0bc491e11af2a2a9ccacd42688f33804df766096b0",
       "symbols": [
         "renderNocodaStudies",
         "ncDraftFrom",
@@ -534,14 +556,14 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
     },
     {
       "path": "src/js/20-ui/15-pivot-studies.js",
-      "sha256": "2230065776716f26420ac5b90852f1703d7fb139a23144e864e96511d25279df",
+      "sha256": "25b25a39bd39eb721eb4d411a255d0756271eaffbc78a656b3768b59bc7176a9",
       "symbols": [
         "pvInstrumentOptions"
       ]
     },
     {
       "path": "src/js/20-ui/25-dash-macro.js",
-      "sha256": "4c4ea201d8beeb2f3149c2cdb98c75e3ffc41be4a62b73fa9856503e5ba7baea",
+      "sha256": "294a052b592c9310c308d8f9d3cad0c488322f8b4a809da9ce86cd0ac3947076",
       "symbols": [
         "dmResearchHTML"
       ]
@@ -555,7 +577,7 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
     },
     {
       "path": "src/js/00-core/04-persistence.js",
-      "sha256": "94ff842770930cef4466e51d34ffab189f7badff4abf5331c5c4c0224c3599bc",
+      "sha256": "8edc9517a426cdd9ef48354116e16447fbab5cb8ac30d4d19d1c979fee6cda0c",
       "symbols": [
         "save",
         "nocodaNormalizeState"
@@ -656,6 +678,8 @@ Responsabilidade Research/estudos com coordenação do catálogo operacional com
       "condition": "Projeta linha zero no tempo da terceira âncora antes de derivar range.",
       "evidence": "src/js/10-domain/09-nocoda-geometry.js#nocodaGeometry"
     }
-  ]
+  ],
+  "revision_scope": "Git baseline plus uncommitted closure candidate; exact source hashes below, not a commit of the delta",
+  "candidate_manifest": "/Users/joaopauloalves/.codex/reliability-campaigns/20260911/evidence/debt-resolution-20260911/closure-candidate-final.json"
 }
 ```

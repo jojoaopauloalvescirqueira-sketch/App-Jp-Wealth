@@ -26,7 +26,7 @@
       "order": 4,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "94ff842770930cef4466e51d34ffab189f7badff4abf5331c5c4c0224c3599bc"
+      "sha256": "8edc9517a426cdd9ef48354116e16447fbab5cb8ac30d4d19d1c979fee6cda0c"
     },
     {
       "order": 5,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "fe67433c762da6c85d33f2ab2121b8f8132544a96f995734a1f53af7d2674651"
+      "sha256": "894294cef189429629f32bad2eb584a83bdd991d3ea080b2d8584808d94f8ce0"
     },
     {
       "order": 36,
@@ -260,13 +260,13 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "7de76874b9340cc5d67a9844ef81fbb5ab85ae6ce1cacf2877e8f1428cbcb969"
+      "sha256": "98220b4ba0009e8fbe9a63c89ace374afe4194eabfd6d55b69cbbb769a0466ed"
     },
     {
       "order": 44,
       "path": "src/js/40-app/15-ff-news.js",
       "section": "NOTÍCIAS DE ALTO IMPACTO (FOREX FACTORY)",
-      "sha256": "d2abc27527f5ee4145aa7f31152c8b54adb24e016e3e0c8628530f20971254a3"
+      "sha256": "621e7617626ba6c0f5f1ae30156576770bc6bf79a6fb195321748ab90543e9fe"
     },
     {
       "order": 45,
@@ -278,7 +278,7 @@
       "order": 46,
       "path": "src/js/40-app/17-economic-calendar.js",
       "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
-      "sha256": "2b4b978b7e1f1baca7c92877cc40054533ceb9ccd9f14621bddbaa35b0e707a6"
+      "sha256": "c2bb4b881b67eda573820eacf8304f8db93df88316d893eed82d0e9c1911da74"
     },
     {
       "order": 47,
@@ -320,7 +320,7 @@
       "order": 53,
       "path": "src/js/40-app/18-galton-board/06-controller.js",
       "section": "GALTON BOARD · UI, LIFECYCLE E PREFERENCIAS ISOLADAS",
-      "sha256": "de59083e2ca61474a6b76fa19af71fb2d9173f9524cbb210ed8cccd801c1869a"
+      "sha256": "9e29e243029c2111a85c4303d6cd482ec451a0f059e68ae950a0e5ca3c58b4f4"
     },
     {
       "order": 54,
@@ -422,7 +422,7 @@
       "order": 70,
       "path": "src/js/20-ui/18-finpes-budget.js",
       "section": "FINANCAS PESSOAIS · Orcamento Mensal (PF-02): renderizador do workspace mensal",
-      "sha256": "546e4dd662474c9bdd8162d2501ac1dc07f5318ae0a1a804e2a0aa8b103e42ac"
+      "sha256": "af6cd86e0a204569933b46d953c5a65667d6a07c02c8436f17f80ccd19957103"
     },
     {
       "order": 71,
@@ -449,7 +449,7 @@
     {
       "path": "src/js/10-domain/13-alladin.js",
       "section": "ALLADIN · Foundation Infrastructure (ALD-01 C1): moeda, IDs, write gate",
-      "sha256": "6a9607abb85316f33834718e59f43dc2bd428d31d12c44aa0ca70d8c4063c7b9"
+      "sha256": "d7a677e5bc4875406aa809b7094ded0fa93b8a5844a2cf1f748325f5e5af079a"
     },
     {
       "order": 76,
@@ -461,13 +461,13 @@
       "order": 77,
       "path": "src/js/20-ui/24-alladin-views.js",
       "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
-      "sha256": "7e108667bf561d390baf33d595497bd648477882b4d9a6403237c46a135dafb4"
+      "sha256": "75c7ed72b542ef47e8b398c086957ca9cf2b52e26ca214823874ae1405944cc6"
     },
     {
       "order": 78,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "2f413e80e10d5d970ce7060ac0902207a2b86f80e1739a6f24b219c50d80b5b8"
+      "sha256": "294a052b592c9310c308d8f9d3cad0c488322f8b4a809da9ce86cd0ac3947076"
     }
   ]
 }
