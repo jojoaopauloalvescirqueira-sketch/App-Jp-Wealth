@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "c71feb3dfd5242cd82ad43b238a3bb71828ab74556282ad685be988254ab42ee"
+      "sha256": "25f33e4d4a761adb9befb5ed265e92f74cf0f1940dd52fd33e1953f8a4c54459"
     },
     {
       "order": 39,
@@ -362,7 +362,7 @@
       "order": 60,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "c01ac178754fd54c38a5b495e7fa974418b451072ad2ada2f19fef988fb2e424"
+      "sha256": "52e8a8b982e874de1f3d4f5f569bb41536edeb82c1ceb99f19cd50b473341b25"
     },
     {
       "order": 61,
@@ -422,7 +422,7 @@
       "order": 70,
       "path": "src/js/20-ui/18-finpes-budget.js",
       "section": "FINANCAS PESSOAIS · Orcamento Mensal (PF-02): renderizador do workspace mensal",
-      "sha256": "03480d0823c7dc7ddc81690cfb93bcc5ec061acd6113d01ab9b87820e35aa687"
+      "sha256": "546e4dd662474c9bdd8162d2501ac1dc07f5318ae0a1a804e2a0aa8b103e42ac"
     },
     {
       "order": 71,
@@ -461,7 +461,7 @@
       "order": 77,
       "path": "src/js/20-ui/24-alladin-views.js",
       "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
-      "sha256": "aa75d564091bc92859f2edbc0595814acdd7b246de3946497c4e34de29e43b09"
+      "sha256": "7e108667bf561d390baf33d595497bd648477882b4d9a6403237c46a135dafb4"
     },
     {
       "order": 78,

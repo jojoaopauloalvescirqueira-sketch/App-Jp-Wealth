@@ -660,6 +660,40 @@ function fxpTableHTML(live){
   </details>`;
 }
 
+function fxpActivateOverview(root,live){
+  // Cadência: entrada na tela + volta à visibilidade + TTL + botão manual.
+  // Sem polling — refresh(false) respeita o TTL e o cooldown de falha.
+  fxpWireQuoteOnce();
+  fxpBindQuote(root);
+  const m=fxpQuote(); if(m) m.refresh(false);
+  root.querySelectorAll('[data-fxp-cur]').forEach(b=>b.addEventListener('click',()=>{ fxpChartMode=b.dataset.fxpCur; renderFxPlanning(); }));
+  root.querySelectorAll('[data-fxp-win]').forEach(b=>b.addEventListener('click',()=>{ fxpHorizonWin=+b.dataset.fxpWin; renderFxPlanning(); }));
+  // Atalhos da lateral: levam para onde o dado é editado, sem duplicar formulário.
+  const ob=root.querySelector('#fxpGoOnboarding');
+  if(ob) ob.addEventListener('click',()=>{
+    // Guarda por typeof: no monólito reduzido o módulo de Configurações pode
+    // não estar presente, e o botão não pode quebrar a tela.
+    if(typeof openSettingsModal==='function') openSettingsModal('general',ob);
+  });
+  const led=root.querySelector('#fxpGoLedger');
+  if(led) led.addEventListener('click',()=>{ fxpView='actuals'; renderFxPlanning(); });
+  // Recorte visual da janela: fatia as séries JÁ calculadas. O motor não é
+  // consultado de novo e nada persistido muda.
+  const nWin=Math.min(fxpHorizonWin||live.forecast.length,live.forecast.length);
+  const janela=nWin<live.forecast.length
+    ? {...live, forecast:live.forecast.slice(0,nWin), baseline:live.baseline.slice(0,nWin)}
+    : live;
+  window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,janela,fxpChartMode);
+  const summary=root.querySelector('#fxpMainChartSummary');
+  if(summary) summary.textContent=window.JPWFx.charts.fxMainChartSummaryText(live.plan,janela,fxpChartMode);
+  // Estado máximo (≥1120) abre o segundo gráfico; abaixo disso ele nasce
+  // recolhido. Medido no container real, não na janela — é o painel que sabe
+  // quanto espaço tem. O usuário pode abrir a qualquer largura.
+  const caixa=root.querySelector('#fxpReturnsBox');
+  if(caixa) caixa.open=root.clientWidth>=1120;
+  window.JPWFx.charts.fxDrawReturnsChart(root.querySelector('#fxpReturnsChart'),live);
+}
+
 // ---- Render principal -------------------------------------------------------
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
@@ -675,39 +709,7 @@ function renderFxPlanning(){
     <p class="fxp-note" style="margin-bottom:10px"><b>${esc(live.plan.name)}</b> · ${esc(live.plan.baseline.startMonth)} + ${live.plan.baseline.horizonMonths} meses ·
     ${live.lastClosedMonth?`fechado até <b>${live.lastClosedMonth}</b> · próximo aberto <b>${live.nextOpenMonth||'—'}</b>`:'nenhum mês fechado ainda'}</p>
     <div class="fxp-section" role="region" id="fxpPanel-${fxpView}" aria-label="${esc(FXP_MODES.find(([key])=>key===fxpView)[1])}" tabindex="0">${body}</div>`;
-  if(fxpView==='overview'){
-    // Cadência: entrada na tela + volta à visibilidade + TTL + botão manual.
-    // Sem polling — refresh(false) respeita o TTL e o cooldown de falha.
-    fxpWireQuoteOnce();
-    fxpBindQuote(root);
-    const m=fxpQuote(); if(m) m.refresh(false);
-    root.querySelectorAll('[data-fxp-cur]').forEach(b=>b.addEventListener('click',()=>{ fxpChartMode=b.dataset.fxpCur; renderFxPlanning(); }));
-    root.querySelectorAll('[data-fxp-win]').forEach(b=>b.addEventListener('click',()=>{ fxpHorizonWin=+b.dataset.fxpWin; renderFxPlanning(); }));
-    // Atalhos da lateral: levam para onde o dado é editado, sem duplicar formulário.
-    const ob=root.querySelector('#fxpGoOnboarding');
-    if(ob) ob.addEventListener('click',()=>{
-      // Guarda por typeof: no monólito reduzido o módulo de Configurações pode
-      // não estar presente, e o botão não pode quebrar a tela.
-      if(typeof openSettingsModal==='function') openSettingsModal('general',ob);
-    });
-    const led=root.querySelector('#fxpGoLedger');
-    if(led) led.addEventListener('click',()=>{ fxpView='actuals'; renderFxPlanning(); });
-    // Recorte visual da janela: fatia as séries JÁ calculadas. O motor não é
-    // consultado de novo e nada persistido muda.
-    const nWin=Math.min(fxpHorizonWin||live.forecast.length,live.forecast.length);
-    const janela=nWin<live.forecast.length
-      ? {...live, forecast:live.forecast.slice(0,nWin), baseline:live.baseline.slice(0,nWin)}
-      : live;
-    window.JPWFx.charts.fxDrawMainChart(root.querySelector('#fxpMainChart'),live.plan,janela,fxpChartMode);
-    const summary=root.querySelector('#fxpMainChartSummary');
-    if(summary) summary.textContent=window.JPWFx.charts.fxMainChartSummaryText(live.plan,janela,fxpChartMode);
-    // Estado máximo (≥1120) abre o segundo gráfico; abaixo disso ele nasce
-    // recolhido. Medido no container real, não na janela — é o painel que sabe
-    // quanto espaço tem. O usuário pode abrir a qualquer largura.
-    const caixa=root.querySelector('#fxpReturnsBox');
-    if(caixa) caixa.open=root.clientWidth>=1120;
-    window.JPWFx.charts.fxDrawReturnsChart(root.querySelector('#fxpReturnsChart'),live);
-  }
+  if(fxpView==='overview') fxpActivateOverview(root,live);
   if(fxpView==='table')
     root.querySelectorAll('[data-fxp-hist]').forEach(b=>b.addEventListener('click',()=>{ fxpHistFilter=b.dataset.fxpHist; renderFxPlanning(); }));
   if(fxpView==='planning') fxpBindPlanning(root,live);

@@ -281,6 +281,20 @@ function fbParseMoneyOr(inp){
   if(c<0) { alert('⛔ Valor negativo não é aceito: a direção já é do campo.'); return undefined; }
   return c;
 }
+// Receitas e despesas materializadas compartilham este protocolo de edição.
+// Ghosts, status e destinações têm contratos diferentes e mantêm seus binds.
+function fbBindItemField(inp, campoKey, idKey, updateField){
+  inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
+  inp.addEventListener('change',()=>{
+    const campo = inp.dataset[campoKey], id = inp.dataset[idKey];
+    let valor;
+    if(campo==='name') valor = inp.value;
+    else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
+    const r = updateField(id, campo, valor);
+    if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
+    fbAtoUI(r);
+  });
+}
 function fbBind(root, key){
   root.querySelectorAll('[data-fb-nav]').forEach(b=>b.addEventListener('click',()=>{
     fbGoTo(pfMonthAdd(fbCurrentKey(), +b.dataset.fbNav));
@@ -296,16 +310,7 @@ function fbBind(root, key){
     fbAtoUI(pfActAddIncome(key, { name: nome, projectedAmount: null }));
   });
   root.querySelectorAll('[data-fi-campo]').forEach(inp=>{
-    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
-    inp.addEventListener('change',()=>{
-      const campo = inp.dataset.fiCampo, id = inp.dataset.fiId;
-      let valor;
-      if(campo==='name') valor = inp.value;
-      else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
-      const r = pfActUpdateIncomeField(key, id, campo, valor);
-      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
-      fbAtoUI(r);
-    });
+    fbBindItemField(inp, 'fiCampo', 'fiId', (id, campo, valor)=>pfActUpdateIncomeField(key, id, campo, valor));
   });
   root.querySelectorAll('[data-fg-campo]').forEach(inp=>{
     inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
@@ -344,16 +349,7 @@ function fbBind(root, key){
     fbAtoUI(pfActAddExpense(key, { name: nome }));
   });
   root.querySelectorAll('[data-fe-campo]').forEach(inp=>{
-    inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });
-    inp.addEventListener('change',()=>{
-      const campo = inp.dataset.feCampo, id = inp.dataset.feId;
-      let valor;
-      if(campo==='name') valor = inp.value;
-      else { valor = fbParseMoneyOr(inp); if(valor===undefined){ inp.value = inp.dataset.prevval ?? ''; return; } }
-      const r = pfActUpdateExpenseField(key, id, campo, valor);
-      if(r.ok===false){ inp.value = inp.dataset.prevval ?? ''; }
-      fbAtoUI(r);
-    });
+    fbBindItemField(inp, 'feCampo', 'feId', (id, campo, valor)=>pfActUpdateExpenseField(key, id, campo, valor));
   });
   root.querySelectorAll('[data-fe-parc]').forEach(inp=>{
     inp.addEventListener('focus',()=>{ inp.dataset.prevval = inp.value; });

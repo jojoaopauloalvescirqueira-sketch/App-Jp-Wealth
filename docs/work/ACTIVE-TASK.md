@@ -1,3 +1,11 @@
+# Campanha local vigente — refatoração finita 20260910
+
+Contrato: [REFACTOR-CAMPAIGN-20260910](REFACTOR-CAMPAIGN-20260910.md). Quatro lotes N1 autorizados pelo objetivo ativo: PF inline, rótulos Alladin, seleção da busca e ativação overview FX. Branch `codex/refactor-campaign-20260910`, base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`. Um escritor; fontes/testes/derivados e CTX delimitados no contrato. NAV-REF-01 integrado não é refeito. Sem staging/commit/publicação ou novo lote além dos quatro fixados.
+
+Evidências externas: `/Users/joaopauloalves/.codex/refactor-campaigns/20260910/evidence`. Resultado para revisão humana após caracterização, gates, auditoria e recuperação; execução não concede aceite. Candidate documental de codex/nav-ref-context, main, stash e outras tarefas preservados. Todos os cabeçalhos/contratos abaixo são históricos, não autorização vigente desta campanha. Dívidas anteriores permanecem.
+
+---
+
 # Tarefa delimitada — NAV-REF-01: projeção da navegação local
 
 Contrato: [CHG-NAV-LOCAL-PROJECTION-20260910](CHG-NAV-LOCAL-PROJECTION-20260910.md), CHG/CTX N1/A2. Escolha A do proprietário autoriza somente os sete caminhos e verificações delimitados, na branch `codex/nav-local-projection`, base `b3054e1da1a4a2f2a5ddefd8d715432d7719e636`. Criação/uso desta branch recebeu autorização específica; sem commit, tag, push, PR, merge ou deploy.

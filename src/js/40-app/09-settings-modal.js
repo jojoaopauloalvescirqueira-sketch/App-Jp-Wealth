@@ -338,10 +338,24 @@ function settingsResultPath(category){
   const group=leaf.group?SETTINGS_GROUP_BY_ID[leaf.group]:null;
   return group?`${group.label} › ${leaf.label}`:leaf.label;
 }
+function settingsSelectSearchResults(entries,query){
+  const seen=new Set();
+  return entries
+    .filter(item=>`${item.title} ${item.path}`.toLocaleLowerCase('pt-BR').includes(query))
+    .filter(item=>{
+      const key=`${item.title}|${item.path}`;
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a,b)=>(b.selector?1:0)-(a.selector?1:0))
+    .slice(0,18);
+}
 function renderSettingsSearch(){
   const root=settingsEl('settingsSearchResults'), query=settingsState.query.trim().toLocaleLowerCase('pt-BR'); if(!root) return;
   if(!query){ root.replaceChildren(); return; }
-  const seen=new Set(), results=settingsSearchEntries().map(item=>({...item,path:settingsResultPath(item.category)})).filter(item=>`${item.title} ${item.path}`.toLocaleLowerCase('pt-BR').includes(query)).filter(item=>{ const key=`${item.title}|${item.path}`; if(seen.has(key)) return false; seen.add(key); return true; }).sort((a,b)=>(b.selector?1:0)-(a.selector?1:0)).slice(0,18);
+  const entries=settingsSearchEntries().map(item=>({...item,path:settingsResultPath(item.category)}));
+  const results=settingsSelectSearchResults(entries,query);
   root.innerHTML=results.length?results.map((item,i)=>`<button type="button" data-settings-result="${i}"><b>${settingsEsc(item.title)}</b><span>${settingsEsc(item.path)}</span></button>`).join(''):'<p class="settings-no-results">Nenhuma configuração ou ajuda encontrada.</p>';
   root.querySelectorAll('[data-settings-result]').forEach((button,i)=>button.addEventListener('click',()=>{ const item=results[i]; settingsNavigateToLeaf(item.category,{focus:false,reveal:item.selector}); }));
 }
