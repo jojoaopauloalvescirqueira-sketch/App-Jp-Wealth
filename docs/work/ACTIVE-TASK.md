@@ -1,8 +1,17 @@
-# Campanha local vigente — refatoração finita 20260910
+# Tarefa delimitada — fechamento documental da campanha integrada
 
-Contrato: [REFACTOR-CAMPAIGN-20260910](REFACTOR-CAMPAIGN-20260910.md). Quatro lotes N1 autorizados pelo objetivo ativo: PF inline, rótulos Alladin, seleção da busca e ativação overview FX. Branch `codex/refactor-campaign-20260910`, base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`. Um escritor; fontes/testes/derivados e CTX delimitados no contrato. NAV-REF-01 integrado não é refeito. Sem staging/commit/publicação ou novo lote além dos quatro fixados.
+A campanha de quatro lotes (PF, Alladin, Configurações e Forex) terminou e foi
+integrada pelo PR #12, em `56a8e46f2ff07f88af6726cadd4c8d611eb242f3`, build
+`e5caefeada66ab35`. Contrato, escopo N0-D/A2, fontes, critérios, fast, revisão e
+rollback estão no [registro compacto](REFACTOR-CAMPAIGN-CONTEXT-CLOSE.md).
 
-Evidências externas: `/Users/joaopauloalves/.codex/refactor-campaigns/20260910/evidence`. Resultado para revisão humana após caracterização, gates, auditoria e recuperação; execução não concede aceite. Candidate documental de codex/nav-ref-context, main, stash e outras tarefas preservados. Todos os cabeçalhos/contratos abaixo são históricos, não autorização vigente desta campanha. Dívidas anteriores permanecem.
+Branch atual deste delta: `codex/refactor-campaign-context`, baseada nesse merge.
+Preparação documental local para revisão humana; sem aceite, staging, commit ou
+publicação próprios. Nenhum novo lote de produto está autorizado. Evidências
+`context-close-*` no diretório externo já existente da campanha. O candidate
+`codex/nav-ref-context`, checkpoint, stash e outras worktrees ficam preservados.
+Dívidas e âncoras globais continuam explícitas no registro e no estado atual.
+Todos os cabeçalhos e contratos abaixo são históricos, sem autoridade vigente.
 
 ---
 
