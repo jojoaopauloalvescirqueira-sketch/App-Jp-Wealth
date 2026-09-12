@@ -68,7 +68,7 @@
       "order": 11,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "45ff313f7b5b5557391df814a66b18f0e8e80f4ee179ab00083a8171e9afd1f0"
+      "sha256": "af6d7638572f805503335ae30a4b3da7963ee93985d36b6c1758b05091dbdebc"
     },
     {
       "order": 12,
@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "2c184766e9225973a2110a188ad4f85131aaf7b8121c8309a81e21a90bbc9473"
+      "sha256": "c6f1eb78b92a269da231525045f693940225217d04c01d8f83e48c4ea18be540"
     },
     {
       "order": 25,
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "ccc28b369abed0769497cba8a6f36ffce1b313d84a3cb8b43d7821cee263307c"
+      "sha256": "3f8ce6d3e9058fad623dd49b03df119b965d45cb92c5354f39a55bee5fead7fa"
     },
     {
       "order": 32,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "25f33e4d4a761adb9befb5ed265e92f74cf0f1940dd52fd33e1953f8a4c54459"
+      "sha256": "efe62450e5c49f8c73eb81aebfec8d47dc4e976d537b8571120acab14cc94661"
     },
     {
       "order": 39,
@@ -242,7 +242,7 @@
       "order": 40,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "c568d6e981cb50d0b1ad6004ed4a8fd902ae3450d3b93ab3b0bfa2d49a62838e"
+      "sha256": "bc8c7e67faccb4fb2e921c33cd478552c86f4f3442d79b725eda3f3b41ba2888"
     },
     {
       "order": 41,
@@ -320,7 +320,7 @@
       "order": 53,
       "path": "src/js/40-app/18-galton-board/06-controller.js",
       "section": "GALTON BOARD · UI, LIFECYCLE E PREFERENCIAS ISOLADAS",
-      "sha256": "9e29e243029c2111a85c4303d6cd482ec451a0f059e68ae950a0e5ca3c58b4f4"
+      "sha256": "e62a00ba3e62ff025ea80e2598da7b34d8a9509539c09a76b78dd8a3483b8de6"
     },
     {
       "order": 54,
@@ -404,7 +404,7 @@
       "order": 67,
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
-      "sha256": "a93b5d9cd1650b4791c5a8856ea4d3b4a251c1ea62097c618e738fbbd87c2de4"
+      "sha256": "2be818f55a71be266423775540098849ae7e3c73e281e2428404ff161c50fb92"
     },
     {
       "order": 68,
@@ -455,7 +455,7 @@
       "order": 76,
       "path": "src/js/20-ui/23-research-views.js",
       "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
-      "sha256": "09da5babc3957e15bf6b4db09263f7b998b28a1094b33dc396ad9ec1ca09473e"
+      "sha256": "04f3bfe03cb975946688653c7ed3cfa1edec9b1412a76243b382b552a1b197d1"
     },
     {
       "order": 77,

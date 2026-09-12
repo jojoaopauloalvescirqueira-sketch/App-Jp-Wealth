@@ -3,7 +3,7 @@
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 import json, os, socket, threading
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -73,8 +73,9 @@ try:
     assert page.locator('#settingsPageTitle').inner_text()=='Geral'
     assert page.locator('[data-settings-panel="general"]').is_visible()
     assert page.locator('[data-settings-panel]:not([hidden])').count()==1
-    top_categories=['general','appearance-interface','method-governance','operations','knowledge','probability-lab','data-security','about']
+    top_categories=['general','appearance-interface','method-governance','operations','knowledge','data-security','about']
     assert page.locator('#settingsMenu [data-settings-category]').count()==len(top_categories)
+    assert page.locator('#settingsModal [data-settings-category="probability-lab"], #settingsModal [data-nav-to="galton-board"], #settingsModal [data-galton-root]').count()==0
     for cat in top_categories:
       assert page.locator(f'#settingsMenu [data-settings-category="{cat}"]').count()==1
 
@@ -198,6 +199,9 @@ try:
     assert page.locator('[data-settings-panel="interface"] #chooseAppIconBtn').count()==0
     page.keyboard.press('Escape'); page.locator('#modalOverlay').wait_for(state='hidden')
     assert page.locator('#settingsOverlay').is_visible()
+    # A restauração existente é assíncrona (requestAnimationFrame).
+    # Esperar o foco correto sem aceitar um destino diferente ou ausente.
+    expect(page.locator('#chooseAppIconBtn')).to_be_focused()
     assert page.evaluate('document.activeElement.id')=='chooseAppIconBtn'
     page.locator('#settingsSearch').fill('ícone'); page.locator('#settingsSearchResults button').filter(has_text='Ícone do app').click()
     assert page.locator('[data-settings-panel="appearance"] #chooseAppIconBtn').is_visible()

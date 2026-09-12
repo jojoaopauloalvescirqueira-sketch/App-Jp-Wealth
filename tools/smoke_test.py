@@ -165,7 +165,8 @@ try:
         assert page.locator('[data-app-icon-option]').count()==2, 'biblioteca de ícones incompleta'
         page.evaluate('closeModal()')
         routes=page.eval_on_selector_all('#nav .tab[data-route]', 'els => els.map(e => e.dataset.route)')
-        expected_screens={'dashboard':'dash','forex-overview':'exec','personal-finance':'finpes','research-forex':'research','alladin':'alladin'}
+        # A10 changes visual default order, preserving the five route/screen identities.
+        expected_screens={'dashboard':'dash','research-forex':'research','forex-overview':'exec','personal-finance':'finpes','alladin':'alladin'}
         assert routes==list(expected_screens), routes
         for route in routes:
             ok=page.evaluate('''screen => {

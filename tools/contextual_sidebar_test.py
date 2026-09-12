@@ -24,7 +24,7 @@ LAYOUT_RAW = json.dumps(PREF, ensure_ascii=False, indent=1)
 ROUTES = ["dashboard", "forex-overview", "forex-preparation", "forex-account",
           "forex-operation", "forex-reconciliation", "forex-planning",
           "personal-finance", "research-forex", "research-stocks-br",
-          "research-stocks-global", "research-reits", "research-others", "alladin"]
+          "research-stocks-global", "research-reits", "research-probability-lab", "research-others", "alladin"]
 
 
 def settle(page):

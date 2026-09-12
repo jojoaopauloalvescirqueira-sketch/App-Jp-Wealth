@@ -246,6 +246,10 @@
           <span class="nav-sub-item-title">REITs</span>
           <span class="nav-sub-item-desc">Pesquisa imobiliária internacional</span>
         </button>
+        <button type="button" data-nav-item data-nav-child="research-probability-lab">
+          <span class="nav-sub-item-title">Laboratório de Probabilidade</span>
+          <span class="nav-sub-item-desc">Galton Board</span>
+        </button>
         <button type="button" data-nav-item data-nav-child="research-others">
           <span class="nav-sub-item-title">Others</span>
           <span class="nav-sub-item-desc">Outras linhas de pesquisa</span>
@@ -275,7 +279,7 @@
 <!-- Alvo de realocação da faixa de contexto (Perfil/Período/Equity/DD/salvo/
      relógio/fase) sob a flag data-shell="global-dashboard" — vazio e inerte
      sem a flag; os elementos reais continuam filhos de <header>. -->
-<div class="gd-context-row" id="gdContextRow"></div>
+<div class="gd-context-row" id="gdContextRow" aria-label="Contexto operacional Forex" hidden inert></div>
 
 <aside id="appSidebar" aria-label="Navegação do JP Wealth">
   <div class="sidebar-heading"><span class="sidebar-caption">Áreas de trabalho</span><button type="button" id="sidebarClose" aria-label="Fechar menu de telas">×</button></div>
@@ -285,15 +289,15 @@
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
   <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><span class="n">01</span><span class="lbl">Dashboard</span></button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research">
+    <span class="n">02</span><span class="lbl">Research</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex">
-    <span class="n">02</span><span class="lbl">Forex</span></button>
+    <span class="n">03</span><span class="lbl">Forex</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais">
-    <span class="n">03</span><span class="lbl">Finanças Pessoais</span></button>
+    <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research">
-    <span class="n">04</span><span class="lbl">Research</span></button>
-  <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
@@ -501,6 +505,8 @@
           <div class="metric"><div class="k">Excesso a Podar</div><div class="v sm" id="lExcesso">—</div></div>
         </div>
         <div class="lifo-actions">
+          <button type="button" class="reset-btn" id="copyOperationBtn" hidden>Copiar operação</button>
+          <span class="note note-live" id="operationCopyFeedback" role="status" aria-live="polite"></span>
           <button class="reset-btn" id="archiveOpBtn" style="display:none; color:var(--violet); border-color:var(--violet)" title="Consolida o resultado da Operação Única e registra seu encerramento no Histórico — Art. 4.4."><span class="jp-legacy-glyph" aria-hidden="true">📦</span><svg class="jp-icon" aria-hidden="true"><use href="#i-archive"/></svg>Finalizar Operação</button>
         </div>
 
@@ -1177,6 +1183,11 @@
     <div class="research-view" id="researchReits" data-research-view="reits" role="region" aria-label="REITs" hidden>
       <div class="card"><h2>REITs</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
     </div>
+    <div class="research-view" id="researchProbabilityLab" data-research-view="probability-lab" role="region" aria-labelledby="researchProbabilityTitle" hidden>
+      <h2 id="researchProbabilityTitle" data-route-focus>Laboratório de Probabilidade</h2>
+      <h3>Galton Board</h3>
+      <div id="researchGaltonSlot"></div>
+    </div>
     <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
       <div class="card"><h2>Others</h2><p class="expl">Área reservada para outras linhas de pesquisa. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
     </div>
@@ -1248,6 +1259,17 @@
       </div>
     </div>
     <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+      <div class="nav-order-editor" id="navOrderEditor">
+        <h3>Ordem dos módulos</h3>
+        <p class="note note-live">Use Subir e Descer para pré-visualizar. A ordem vale para os menus lateral e superior, incluindo o celular. Sua tela atual e a página inicial não mudam.</p>
+        <ol id="navOrderList" aria-label="Ordem dos módulos principais"></ol>
+        <div class="nav-order-actions">
+          <button type="button" class="reset-btn" id="navOrderSave">Salvar ordem</button>
+          <button type="button" class="reset-btn" id="navOrderCancel">Cancelar</button>
+          <button type="button" class="reset-btn" id="navOrderReset">Restaurar ordem padrão</button>
+        </div>
+        <p class="note note-live" id="navOrderStatus" role="status" aria-live="polite"></p>
+      </div>
       <div class="field" style="max-width:560px">
         <label id="navLayoutLabel">Layout da navegação</label>
         <div class="seg" id="navLayoutSeg" role="group" aria-labelledby="navLayoutLabel">

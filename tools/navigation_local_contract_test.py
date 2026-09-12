@@ -37,6 +37,7 @@ CASES = [
     ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
     ("research", "stocks-global", "research-stocks-global", "research", "research-stocks-global"),
     ("research", "reits", "research-reits", "research", "research-reits"),
+    ("research", "probability-lab", "research-probability-lab", "research", "research-probability-lab"),
     ("research", "others", "research-others", "research", "research-others"),
 ]
 

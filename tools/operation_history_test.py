@@ -284,16 +284,22 @@ def run_zero_financial_mutation(page):
 
 
 def run_detail_is_read_only(page):
-    """Detalhe nao oferece editar, excluir ou corrigir."""
+    """A12 permite uma cópia; nenhum campo mutável ou outro botão é autorizado."""
+    # Legacy unit setup only selected the local view; a real click needs its active screen.
+    assert page.evaluate("() => JPWNavigation.navigateLocal('exec', 'history')") is True
     r = page.evaluate(
         """() => {
           __semearHist();
           JPWHistoryUI.render();
-          document.querySelector('#execHistory .hist-row').click();
+          const row = document.querySelector('#execHistory .hist-row');
+          row.click();
           const det = document.querySelector('#execHistory .hist-detail');
           return {
-            inputs: det.querySelectorAll('input,select,textarea,button').length,
-            txt: det.textContent
+            inputs: det.querySelectorAll('input,select,textarea,button:not([data-operation-copy])').length,
+            copies: [...det.querySelectorAll('[data-operation-copy]')].map(b => ({
+              tag:b.tagName, type:b.type, id:b.dataset.operationCopy, label:b.textContent.trim()
+            })),
+            selected:row.dataset.histId, txt:det.textContent
           };
         }"""
     )
@@ -301,7 +307,26 @@ def run_detail_is_read_only(page):
         f"o detalhe oferece {r['inputs']} controle(s) editaveis — historico "
         "institucional nao e planilha livre"
     )
+    assert r["copies"] == [{"tag":"BUTTON", "type":"button", "id":r["selected"], "label":"Copiar operação"}], r
     assert "somente leitura" in r["txt"], "o detalhe nao declara ser somente leitura"
+    # Exercise the sole allowed action, while keeping OS clipboard synthetic.
+    before = page.evaluate("""() => {
+      window.__historyCopyOriginal=mvpNotesCopyText;
+      window.__historySaveOriginal=save; window.__historyCopyCalls=0; window.__historySaveCalls=0;
+      mvpNotesCopyText=async text=>{__historyCopyCalls++;window.__historyCopied=text;return true;};
+      save=function(...args){__historySaveCalls++;return __historySaveOriginal.apply(this,args);};
+      return JSON.stringify({state:S,storage:{...localStorage}});
+    }""")
+    try:
+        page.locator('#execHistory .hist-detail [data-operation-copy]').click()
+        page.wait_for_function("document.querySelector('#execHistory [data-operation-copy-feedback]').textContent.includes('Operação copiada')")
+        after = page.evaluate("() => JSON.stringify({state:S,storage:{...localStorage}})")
+        assert after == before, 'copiar alterou S ou armazenamento'
+        observed = page.evaluate("() => ({calls:__historyCopyCalls,saves:__historySaveCalls,text:__historyCopied})")
+        assert observed['calls'] == 1 and observed['saves'] == 0, observed
+        assert r['selected'] in observed['text'] and 'FINALIZADA' in observed['text'], observed
+    finally:
+        page.evaluate("() => {mvpNotesCopyText=__historyCopyOriginal;save=__historySaveOriginal;}")
 
 
 def run_keyboard_and_semantics(page):

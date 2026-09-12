@@ -11,7 +11,6 @@ const SETTINGS_GROUPS=[
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
   {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational']},
-  {id:'probability-lab', label:'Laboratório de Probabilidade', desc:'Experimentos locais de física e estatística, isolados do motor financeiro.', icon:'probability', children:['galton-board']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
 ];
@@ -21,7 +20,6 @@ const SETTINGS_LEAVES={
   interface:{label:'Interface', group:'appearance-interface', desc:'Tamanho do texto e instruções do sistema.', terms:['interface','fonte','tamanho','tipografia','sidebar','barra lateral','ajuda','instruções']},
   editor:{label:'Editor', group:'appearance-interface', desc:'Preferências de edição.', terms:['editor']},
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
-  'galton-board':{label:'Galton Board', group:'probability-lab', desc:'Simulador físico de probabilidade e convergência estatística.', terms:['galton','probabilidade','binomial','normal','histograma','estatística','física','seed','convergência','simulação']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Estatuto V11.0 e Anexo Paramétrico Canônico vigentes.', terms:['estatuto','V11','anexo','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
@@ -154,7 +152,6 @@ function buildSettingsContent(){
   createSettingsPanel('interface','<p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
   createSettingsPanel('editor','<p class="settings-lead">Preferências de edição e de apresentação da interface neste navegador.</p><div data-settings-slot="editor"></div>');
   createSettingsPanel('educational',educationPanel());
-  createSettingsPanel('galton-board',typeof galtonBoardPanelHTML==='function'?galtonBoardPanelHTML():'<p class="settings-empty" role="alert">O laboratório de probabilidade não pôde ser carregado.</p>');
   createSettingsPanel('statute','<p class="settings-lead">Consulte o Estatuto V11.0 e o Anexo JPW-ANNEX-T03. O motor financeiro legado ainda não foi adaptado; esta referência documental não homologa seus cálculos.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
   createSettingsPanel('tool-params','<p class="settings-lead">A tela de Parâmetros completa — leituras analíticas com os valores, unidades e persistência originais.</p><div data-settings-slot="tool-params"></div>');
@@ -231,15 +228,16 @@ function restoreLegacySettingsNodes(){
 // Primitiva de baixo nível preservada: torna o painel 'id' visível, esconde os demais.
 // Mantida com este nome e assinatura para compatibilidade com chamadas diretas existentes.
 function activateSettingsCategory(id,options={}){
+  if(settingsRedirectResearchLab(id)) return;
   const exists=document.querySelector(`[data-settings-panel="${id}"]`);
   const targetId=exists?id:'general';
-  if(settingsState.active==='galton-board'&&targetId!=='galton-board'&&typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({destroy:false});
+  if(settingsState.active==='editor'&&targetId!=='editor'&&typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
+  if(targetId==='editor'&&typeof beginNavOrderPreview==='function') beginNavOrderPreview();
   settingsState.active=targetId;
   document.querySelectorAll('[data-settings-panel]').forEach(panel=>panel.hidden=panel.dataset.settingsPanel!==targetId);
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
   settingsUpdateSidebarActive(targetId);
   settingsUpdatePageHeader(targetId);
-  if(targetId==='galton-board'&&typeof activateGaltonBoard==='function') activateGaltonBoard();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
 
@@ -265,6 +263,7 @@ function settingsRenderCurrent(options={}){
   if(modal) modal.classList.toggle('settings-mobile-detail',!settingsState.mobileListVisible);
 }
 function settingsNavigate(id,options={}){
+  if(settingsRedirectResearchLab(id)) return;
   const push=options.push!==false;
   if(push){
     if(settingsState.navStack[settingsState.navIndex]!==id){
@@ -303,6 +302,7 @@ function settingsGoForward(){
   if(settingsState.navIndex<settingsState.navStack.length-1){ settingsState.navIndex++; settingsState.mobileListVisible=false; settingsRenderCurrent({focus:true}); }
 }
 function settingsNavigateToLeaf(leafId,options={}){
+  if(settingsRedirectResearchLab(leafId)) return;
   const leaf=SETTINGS_LEAVES[leafId];
   settingsState.navStack=['general'];
   if(leaf&&leaf.group) settingsState.navStack.push(leaf.group);
@@ -392,7 +392,18 @@ function settingsSetAppInert(on){
     if(typeof syncShellViewport==='function'&&document.getElementById('appSidebar')?.dataset.ready)syncShellViewport();
   }
 }
+// Compatibilidade de chamadas antigas: o destino passa a Research, sem painel
+// oculto de Configurações nem restauração assíncrona do foco para o modal fechado.
+function settingsRedirectResearchLab(id){
+  if(id!=='probability-lab'&&id!=='galton-board') return false;
+  if(!window.JPWNavigation) return true;
+  if(settingsState.open) closeSettingsModal({restoreFocus:false});
+  if(window.JPWNavigation.navigate('research-probability-lab')) window.JPWNavigation.focusCurrentScreen();
+  return true;
+}
 function openSettingsModal(category='general', opener){
+  if(settingsRedirectResearchLab(category)) return;
+  if(typeof researchSetCovered==='function') researchSetCovered(true);
   buildSettingsMenu(); buildSettingsContent(); settingsState.opener=opener||document.activeElement||settingsEl('headerConfigBtn'); settingsState.open=true; settingsState.suspended=false;
   settingsState.navStack=['general']; settingsState.navIndex=0; settingsState.mobileListVisible=true;
   moveLegacySettingsNodes(); settingsEl('settingsOverlay').classList.add('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','false'); settingsSetAppInert(true);
@@ -401,11 +412,12 @@ function openSettingsModal(category='general', opener){
   window.__settingsModalDebug.opens++;
   requestAnimationFrame(()=>settingsEl('settingsSearch').focus());
 }
-function closeSettingsModal(){
+function closeSettingsModal(options={}){
   if(!settingsState.open||settingsState.suspended) return;
-  if(typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({destroy:true});
+  if(typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
-  const opener=settingsState.opener; settingsState.opener=null; if(opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
+  if(typeof researchSetCovered==='function') researchSetCovered(false);
+  const opener=settingsState.opener; settingsState.opener=null; if(options.restoreFocus!==false&&opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
 }
 function settingsMarkSubdialogLauncher(element){ settingsState.subdialogLauncher=element; }
 function suspendSettingsForSubdialog(){
@@ -420,8 +432,16 @@ function settingsTrapFocus(event){
 }
 function initSettingsSubdialogObserver(){
   const overlay=settingsEl('modalOverlay'); if(!overlay||settingsState.observer) return;
-  settingsState.observer=new MutationObserver(()=>{ if(!settingsState.open) return; if(overlay.classList.contains('show')) suspendSettingsForSubdialog(); else restoreSettingsAfterSubdialog(); });
-  settingsState.observer.observe(overlay,{attributes:true,attributeFilter:['class']}); window.__settingsModalDebug.observerInstances++;
+  settingsState.observer=new MutationObserver(records=>{
+    // A mesma instância também coordena o jogo coberto por Notas/gaveta móvel.
+    // O focus trap legado continua reagindo apenas ao overlay que já observava.
+    if(typeof researchSetCovered==='function') researchSetCovered(false);
+    if(!settingsState.open||!records.some(record=>record.target===overlay)) return;
+    if(overlay.classList.contains('show')) suspendSettingsForSubdialog(); else restoreSettingsAfterSubdialog();
+  });
+  settingsState.observer.observe(overlay,{attributes:true,attributeFilter:['class']});
+  const appMain=settingsEl('appMain'); if(appMain) settingsState.observer.observe(appMain,{attributes:true,attributeFilter:['inert']});
+  window.__settingsModalDebug.observerInstances++;
 }
 
 function initSettingsModal(){

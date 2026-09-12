@@ -156,7 +156,9 @@ function histRenderDetail(r){
     '<th scope="col">Status</th><th scope="col">Abertura</th><th scope="col">Fechamento</th>' +
     '</tr></thead><tbody>' + (ordens || '<tr><td colspan="12">Sem ordens registradas.</td></tr>') +
     '</tbody></table></div>' +
-    '<p class="hist-ro">Registro histórico — somente leitura.</p></div>';
+    '<p class="hist-ro">Registro histórico — somente leitura.</p>' +
+    '<button type="button" class="reset-btn" data-operation-copy="' + esc(r.operationId) + '">Copiar operação</button>' +
+    '<p class="expl" data-operation-copy-feedback role="status" aria-live="polite"></p></div>';
 }
 
 // Estatisticas e tabela sao a parte que RESPONDE a filtro, busca e selecao.
@@ -211,6 +213,12 @@ function histTableHTML(filtrados){
 // Os controles NAO passam por aqui: eles sobrevivem a repintura e receberiam
 // ouvinte duplicado a cada tecla.
 function histBindRows(root){
+  root.querySelectorAll('[data-operation-copy]').forEach(btn => {
+    btn.onclick = () => {
+      const record = histRecords().find(r => r.operationId === btn.dataset.operationCopy);
+      operationCopyToClipboard(btn, record, btn.closest('.hist-detail').querySelector('[data-operation-copy-feedback]'));
+    };
+  });
   root.querySelectorAll('.hist-row').forEach(tr => {
     const abrir = () => {
       const id = tr.dataset.histId;
@@ -294,3 +302,145 @@ function renderOperationHistory(){
 
 // Contrato dos workspaces montados sob demanda (20-ui/13-exec-views.js).
 window.JPWHistoryUI = { render: renderOperationHistory };
+
+// A12: projeção textual de fatos, sem passar por render(), normalização ou
+// operationBuildSnapshot(). Esses caminhos têm efeitos; copiar não confirma,
+// finaliza ou registra nada. Whitelist deliberada: objetos de conta/onboarding,
+// logs, notas livres e credenciais nunca são serializados para o clipboard.
+function operationCopyScalar(value){
+  if (typeof value === 'number') return Number.isFinite(value) ? String(value).replace('.', ',') : '';
+  if (typeof value !== 'string') return '';
+  return value.replace(/[\u0000-\u001f\u007f]+/g, ' ').trim();
+}
+function operationCopyNumber(value){
+  if (typeof value === 'number') return operationCopyScalar(value);
+  if (typeof value !== 'string') return '';
+  const text = value.trim();
+  if (text.toUpperCase() === 'PENDING') return 'PENDING';
+  return /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text) && Number.isFinite(Number(text))
+    ? text.replace('.', ',') : '';
+}
+function operationCopyMoney(value){
+  const text = operationCopyNumber(value);
+  if (!text || text === 'PENDING') return text;
+  return fmtMoney2(Number(typeof value === 'string' ? value.trim() : value));
+}
+function operationCopyOrderLines(o, position, historical){
+  const lines = [];
+  const row = (label, value) => { if (value !== '') lines.push(label + ': ' + value); };
+  const label = operationCopyScalar(historical ? o.label : o.id);
+  lines.push('Ordem ' + position + (label ? ' — ' + label : ''));
+  row('Instrumento', operationCopyScalar(o.par));
+  row('Direção', operationCopyScalar(o.tipo));
+  row('Status registrado', operationCopyScalar(o.status));
+  row('Lote', operationCopyNumber(o.lote));
+  row('Entrada', operationCopyNumber(o.entry));
+  row('Stop loss', operationCopyNumber(o.sl));
+  row('Take profit', operationCopyNumber(o.tp));
+  // result é preenchimento de fechamento; zero na ordem aberta é default,
+  // não resultado realizado. Não o promover a lucro/prejuízo nessa situação.
+  if (o.status === 'Fechada') row('Resultado registrado ($)', operationCopyMoney(o.result));
+  row('Abertura registrada', operationCopyScalar(o.openedAt));
+  row('Fechamento registrado', operationCopyScalar(o.closedAt));
+  return lines;
+}
+function operationCopyProjection(record){
+  const historical = !!record;
+  const orders = historical
+    ? (Array.isArray(record.ordersSnapshot) ? record.ordersSnapshot.map(o => ({o, position:'F' + o.phase + '/' + (o.gridIndex + 1)})) : [])
+    : operationLiveOrders().map(({o, pi, oi}) => ({o, position:'F' + (pi + 1) + '/' + (oi + 1)}));
+  if (!historical && !orders.length) return null;
+  const op = historical ? record : (S.activeOperation || {});
+  const openCount = orders.filter(x => x.o.status === 'Aberta').length;
+  const status = historical ? 'FINALIZADA — registro histórico'
+    : !openCount ? 'SEM ORDENS ABERTAS — aguarda finalização formal'
+    : orders.length === 1 ? 'ABERTA — entrada registrada' : 'EM ANDAMENTO';
+  const lines = ['JP Wealth · Operação', status];
+  const row = (label, value) => { if (value !== '') lines.push(label + ': ' + value); };
+  row('Operação ID', operationCopyScalar(op.operationId));
+  if (!op.operationId) lines.push('Identidade da operação não registrada.');
+  if (historical) {
+    row('Instrumento', operationCopyScalar(record.instrument));
+    row('Direção', operationCopyScalar(record.direction));
+  } else {
+    const thesis = operationResolveThesis(orders);
+    if (thesis.ok) {
+      row('Instrumento', operationCopyScalar(thesis.instrument));
+      row('Direção', operationCopyScalar(thesis.direction));
+    } else lines.push('Tese divergente entre as ordens registradas; confira instrumento e direção.');
+  }
+  row('Abertura registrada', operationCopyScalar(op.openedAt));
+  row('Origem da abertura', operationCopyScalar(op.openedAtSource));
+  if (historical) {
+    row('Encerramento formal', operationCopyScalar(record.closedAt));
+    row('Finalização registrada', operationCopyScalar(record.finalizedAt));
+  }
+  lines.push('Ordens registradas nas grades: ' + orders.length);
+  orders.forEach(({o, position}) => lines.push('', ...operationCopyOrderLines(o, position, historical)));
+  if (historical) {
+    lines.push('', 'Resultado da operação finalizada');
+    row('Resultado líquido registrado ($)', operationCopyMoney(record.netResult));
+    row('Base do retorno registrada ($)', operationCopyMoney(record.referenceBalance));
+    row('Defesas informadas', operationCopyNumber(record.defenseCount));
+    row('Origem das defesas', operationCopyScalar(record.defenseCountSource));
+    lines.push('Conta, perfil, período e métricas finais não foram capturados neste registro.');
+  } else {
+    const closed = orders.filter(x => x.o.status === 'Fechada');
+    if (closed.length) {
+      lines.push('', 'Resultado fechado até agora');
+      // O agregado existente aplica coerção a ausentes. Só consumi-lo quando
+      // todos os resultados envolvidos são números informados, sem PENDING.
+      const known = closed.every(({o}) => operationCopyNumber(o.result) && operationCopyNumber(o.result) !== 'PENDING');
+      if (known) row('Resultado líquido das ordens fechadas ($)', operationCopyMoney(netOpAtual()));
+      else lines.push('Resultado líquido indisponível: há resultado fechado não informado ou PENDING.');
+    }
+    lines.push('', 'Contexto atual do cadastro — não é snapshot da entrada');
+    const master = typeof getMaster === 'function' ? getMaster() : null;
+    if (master) row(master.tipo === 'MESTRE' ? 'Conta mestre cadastrada' : 'Conta cadastrada de referência', operationCopyScalar(master.nome));
+    const key = S.period && S.period.profile;
+    if (key === 'PENDING') row('Perfil cadastrado', 'PENDING');
+    else if (typeof key === 'string' && RISK_PROFILES.some(p => p.key === key || p.name === key)) {
+      row('Perfil cadastrado', operationCopyScalar(getActiveRiskProfile(key).name));
+    }
+    row('Período cadastrado', operationCopyScalar(S.period && S.period.nome));
+    row('Início do período', operationCopyScalar(S.params && S.params.inicio));
+    row('Saldo contábil atual (book, $)', operationCopyMoney(S.params && S.params.saldoAtu));
+    lines.push('Equity flutuante e veredito normativo não compõem esta cópia.');
+  }
+  return lines.join('\n');
+}
+function operationCopyToClipboard(btn, record, feedback){
+  const notify = message => { if (feedback) feedback.textContent = message; };
+  if (typeof jpWealthPersistenceOutcomeIsUnknown === 'function' && jpWealthPersistenceOutcomeIsUnknown()) {
+    notify('Persistência indeterminada: confira o estado gravado antes de copiar a operação como confirmada.');
+    return Promise.resolve(false);
+  }
+  const text = operationCopyProjection(record);
+  if (!text) { notify('Não há operação registrada para copiar.'); return Promise.resolve(false); }
+  if (btn && btn.__operationCopyInFlight) return Promise.resolve(false);
+  if (btn) btn.__operationCopyInFlight = true;
+  notify('Copiando operação…');
+  // Reutiliza a API + fallback já suportados pelo portátil. Nenhum envio ou
+  // abertura de aplicativo externo; a pessoa decide onde colar o texto.
+  return Promise.resolve().then(() => mvpNotesCopyText(text)).then(() => {
+    notify('Operação copiada. Cole o texto onde desejar.');
+    return true;
+  }, () => {
+    notify('Não foi possível copiar a operação. O registro permanece preservado.');
+    return false;
+  }).finally(() => {
+    if (btn) {
+      btn.__operationCopyInFlight = false;
+      // execCommand pode mover o foco para a textarea temporária. Só o devolver
+      // se nenhum outro controle tiver recebido foco durante a cópia assíncrona.
+      if (btn.isConnected && document.activeElement === document.body) btn.focus({preventScroll:true});
+    }
+  });
+}
+function renderOperationCopyAction(){
+  const btn = document.getElementById('copyOperationBtn');
+  if (!btn) return;
+  btn.hidden = operationLiveOrders().length === 0;
+  btn.disabled = btn.hidden;
+  btn.onclick = () => operationCopyToClipboard(btn, null, document.getElementById('operationCopyFeedback'));
+}

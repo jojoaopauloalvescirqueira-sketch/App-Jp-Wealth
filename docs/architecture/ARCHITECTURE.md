@@ -66,9 +66,11 @@ ownership visual em Research/Forex e uma única instância DOM cada.
 - `src/vendor/planck/planck-1.5.0.min.js` é o build UMD oficial vendorizado do motor
   Planck.js, versão 1.5.0, licença MIT e SHA-256
   `69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974`.
-- `src/js/40-app/09-settings-modal.js` oferece o caminho
-  `Configurações > Laboratório de Probabilidade > Galton Board` e apenas coordena a
-  montagem/pausa do controller.
+- `src/js/20-ui/23-research-views.js` oferece o caminho
+  `Research > Laboratório de Probabilidade > Galton Board` e apenas coordena a
+  montagem/pausa do controller. Na decisão A13-A, navegar ou cobrir o laboratório
+  conserva a mesma simulação em memória, pausada até `Continuar`; não persiste
+  bolas/resultados. Reset e finalização conservam seus contratos de limpeza.
 - O mundo usa unidades normalizadas e passo fixo de `1/120 s`, separado do render.
   O default tem 10 linhas, espaçamento horizontal `1`, vertical `0.82`, raio de pino
   `0.09`, raio de bola `0.14`, densidade `1`, restituição `0.28`, atrito `0.22`,
