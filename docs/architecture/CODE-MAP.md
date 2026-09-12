@@ -81,14 +81,14 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 21 | `src/js/30-accounting/02-accounting-engine.js` | Motor da contabilidade |
 | 22 | `src/js/30-accounting/03-mei-jp.js` | Modelo estatístico MEI-JP |
 | 23 | `src/js/30-accounting/04-patrimonial-simulation.js` | Simulação patrimonial por perfil |
-| 24 | `src/js/40-app/01-navigation.js` | Resolver semântico: cinco primários, seis filhos Forex, cinco filhos Research e compatibilidade física com owner/child/local view |
+| 24 | `src/js/40-app/01-navigation.js` | Resolver semântico: cinco primários, seis filhos Forex, seis filhos Research e compatibilidade física com owner/child/local view |
 | 25 | `src/js/40-app/02-reset.js` | Reset administrativo |
 | 26 | `src/js/40-app/03-theme.js` | Tema claro/escuro |
 | 27 | `src/js/20-ui/09-contextual-help.js` | Ajuda de campo sob demanda |
 | 28 | `src/js/20-ui/10-font-scale.js` | Escala tipográfica |
 | 29 | `src/js/10-domain/06-quarantine.js` | Quarentena reversível |
 | 30 | `src/js/20-ui/11-phase-posture.js` | Postura ofensiva/defensiva por fase |
-| 31 | `src/js/20-ui/12-nav-style.js` | Preferência visual da navegação |
+| 31 | `src/js/20-ui/12-nav-style.js` | Preferências visuais da navegação, incluindo ordem dos cinco primários no Editor |
 | 32 | `src/js/40-app/04-onboarding.js` | Questionário de início de período |
 | 33 | `src/js/40-app/05-wipe-all.js` | Limpeza total com confirmação |
 | 34 | `src/js/40-app/06-app-icons.js` | Preferência de ícone PWA |
@@ -124,7 +124,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 64 | `src/js/10-domain/10-pivot-studies.js` | Pivots: derivação, validação, estatística descritiva e ordenação — núcleo puro |
 | 65 | `src/js/20-ui/15-pivot-studies.js` | Pivots: workspace de estudos (estudos por período, CRUD de pivots, resumo, filtros) |
 | 66 | `src/js/10-domain/11-operation-lifecycle.js` | Operação Única: ciclo de vida, snapshot histórico, finalização transacional e superfície de revisão |
-| 67 | `src/js/20-ui/16-operation-history.js` | Histórico: workspace somente leitura das operações finalizadas |
+| 67 | `src/js/20-ui/16-operation-history.js` | Histórico e cópia textual por whitelist de operações atuais/finalizadas; sem gravação financeira |
 | 68 | `src/js/10-domain/12-personal-finance.js` | Finanças Pessoais: núcleo do agregado `S.personalFinance` — schema v1 congelado, BRL_CENTS, write gate, materialização de mês, dívida temporal, comparativo e cenários |
 | 69 | `src/js/20-ui/17-finpes-views.js` | Finanças Pessoais: troca dos cinco workspaces por hidden+inert e face do sentinela de unidade monetária |
 | 70 | `src/js/20-ui/18-finpes-budget.js` | Orçamento Mensal: receitas, despesas, resumo do mês, destino do excedente e informações importantes |
@@ -133,13 +133,13 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 73 | `src/js/20-ui/21-finpes-scenarios.js` | Cenários: hipóteses independentes agrupadas por horizonte, com cascata e cópia unidirecional de mês registrado |
 | 74 | `src/js/20-ui/22-finpes-overview.js` | Visão Geral: consolidado derivado de quatro cards — mês atual, dívida & crédito, vs mês anterior e pendências |
 | 75 | `src/js/10-domain/13-alladin.js` | **Alladin**: infraestrutura (moeda em unidade mínima, IDs, write gate transacional, fail-closed de schema v6), modelo cadastral (Instrument, Asset, Account, CashAccount), **ledger econômico** — `DEPOSIT`/`WITHDRAWAL`/`TRANSFER`/`REVERSAL`/`BUY`/`SELL`/`FEE`/`TAX`/`ADJUSTMENT_CREDIT`/`ADJUSTMENT_DEBIT`, saldo de caixa derivado e fail-closed, consistência do par reversal↔original na leitura, completude do `ALD_CASH_DELTA` (ausência de delta é BLOCKING, nunca zero implícito) — e **Position Quantity Engine** (ALD-04 S1): `leitura.posicoes()` derivada por instrumentId+accountId, aritmética decimal exata em BigInt; sem holding persistido/consolidado, cost basis, valuation, P&L/performance |
-| 76 | `src/js/20-ui/23-research-views.js` | Research: ownership e troca efêmera de Calendário, NoCoda, Pivots e quatro empty states |
+| 76 | `src/js/20-ui/23-research-views.js` | Research: Calendário, NoCoda, Pivots, Laboratório/Galton e quatro empty states |
 | 77 | `src/js/20-ui/24-alladin-views.js` | **Alladin C3 + ALD-05 S1**: superfície cadastral — leitura desacoplada pelo read-model, CRUD das quatro entidades no modal próprio, `recordStatus`, write gate, DC-4 e integridade da edição — **e a superfície econômica**: Lançamentos (leitura, **criação** — modal único dos nove tipos, uma chamada a `ledger.addTransaction` por submit, dinheiro só por `money.parse`, `quantity` verbatim, CTA ausente sob BLOCKING — **e estorno**: coluna Ações com elegibilidade visual por linha e uma chamada a `ledger.reverseTransaction`, com o original em read-only e a economia copiada pelo domínio), Saldos e Posições projetando `ledger()`/`saldoDeCaixa()`/`posicoes()` sem aritmética própria (dinheiro por `money.format`, `quantity` verbatim), com BLOCKING que nunca vira zero, vazio ou tela normal, e qualidade explícita de `leitura.ledger()`; `transactions()` continua compatibilidade bruta, sem garantia de integridade |
 | 78 | `src/js/20-ui/25-dash-macro.js` | Dashboard: síntese de Forex, Finanças Pessoais, Research e Alladin consumindo contratos canônicos, com estados de disponibilidade/cobertura, atualização agrupada e atalhos pelo resolver; sem escrita financeira ou materialização de mês |
 
 ## Laboratório de Probabilidade
 
-O caminho de interface é `Configurações > Laboratório de Probabilidade > Galton
+O caminho de interface é `Research > Laboratório de Probabilidade > Galton
 Board`. Os seis módulos publicam apenas `window.JPWGalton` e permanecem separados do
 estado financeiro `S`. A física usa passo fixo de `1/120 s`; uma placa com `N` linhas
 tem `N + 1` compartimentos. O detalhe do contrato está em `GALTON-BOARD.md`.
@@ -248,3 +248,30 @@ a dívida textual citada no recorte antigo foi corrigida antes desta campanha.
   manualmente.
 - `tools/galton_board_test.py` cobre a feature em navegador real e
   `tools/galton_board_benchmark.py` executa o cenário longo de 10.000 bolas.
+
+
+## Projeções A10–A13
+
+- `12-nav-style.js`: `jpw_nav_order` validada por identidade estável, prévia e
+  confirmação explícita no Editor; mesmas tabs na lateral/superior/mobile.
+- `11-operational-shell.js`: `syncForexContext()` apresenta a única faixa
+  `gdContextRow` apenas quando o owner ativo é Forex, usando métricas existentes.
+- `16-operation-history.js`: `operationCopyProjection()` lê ordens da operação
+  vigente ou snapshot histórico, usando whitelist; `operationCopyToClipboard()`
+  reutiliza o mecanismo de clipboard de Notas. O botão do Consolidado é ligado
+  por `renderOperationCopyAction()`; o histórico possui ação por registro.
+- `23-research-views.js` e resolver: entrada própria do Laboratório, saída
+  coordenada com pausa e conservação em memória da mesma instância Galton.
+  `18-galton-board/06-controller.js` impede retomada automática após navegação
+  ou sobreposição; `Continuar` retoma pelo mecanismo existente. Reset/finalização
+  conservam sua limpeza. Configurações não é mais o destino do Laboratório.
+
+A12 é entrega parcial. A cópia distingue entrada, andamento, posição zerada aguardando finalização e
+registro formalmente finalizado. Não cria timestamps, dados finais ausentes,
+resultado flutuante ou vínculo de conta com ordem. Conta mestre e saldo book
+são contexto cadastral **atual**, não snapshot de entrada. Histórico usa somente
+seu snapshot; não recebe perfil/conta/equity atual como dado final.
+DD/fase, alavancagem, Lucro Técnico e clearance normativos permanecem
+NEEDS_HUMAN_RULE diante das divergências legadas e de OPEN-05; não são
+reinterpretados nem homologados por essa exportação. Copiar não chama save,
+finalização, render de grades com cura, nem qualquer ação financeira.

@@ -197,7 +197,9 @@
     }
     deactivate(options={}){
       if(this.destroyed) return;
-      const snap=this.snapshot(); this.resumeAfterLifecycle=Boolean(snap.running&&!this.manualPaused);
+      const snap=this.snapshot();
+      if(options.resume===false) this.manualPaused=true;
+      this.resumeAfterLifecycle=Boolean(snap.running&&!this.manualPaused);
       this.active=false; this.cancelFrame(); if(this.engine) this.engine.pause();
       if(this.resizeObserver&&this.resizeObserverActive){ this.resizeObserver.disconnect(); this.resizeObserverActive=false; if(this.debug&&global.__galtonDebug) global.__galtonDebug.resizeObservers=Math.max(0,global.__galtonDebug.resizeObservers-1); }
       if(options.destroy) this.destroy();

@@ -167,6 +167,7 @@ function render(){
   //
   // O bloqueio passou a viver no preflight, que nomeia a ordem que impede a
   // finalização e não muta nada.
+  if(typeof renderOperationCopyAction==='function')renderOperationCopyAction();
   const abtn=$('archiveOpBtn');
   if(abtn){
     const temOperacao = (typeof operationLiveOrders==='function')

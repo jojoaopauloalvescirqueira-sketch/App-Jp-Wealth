@@ -66,12 +66,12 @@ Painel de notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, 
 Modal aberta pela engrenagem do cabeçalho, preservando a tela operacional ao fundo:
 Aparência, Interface, Editor, base **educacional local pesquisável** (Forex,
 glossário, FAQ — sem sinais nem recomendações), Estatuto Operacional, Parâmetros,
-Laboratório de Probabilidade e Backup. A pesquisa é declarativa e **não indexa dados
+e Backup. A pesquisa é declarativa e **não indexa dados
 operacionais** do usuário.
 
 ### Laboratório de Probabilidade — Galton Board
 
-Em `Configurações → Laboratório de Probabilidade → Galton Board`, uma placa física
+Em `Research → Laboratório de Probabilidade → Galton Board`, uma placa física
 2D permite observar como um histograma empírico emerge de colisões reais. O motor
 Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,
 seed determinística, pinos triangulares, `linhas + 1` compartimentos, controles de
@@ -207,3 +207,27 @@ dados. A seção inferior “Sistema e atalhos” contém Status do Sistema e A�
 onboarding, Estado Operacional, VRM e calendário ficam em Forex > Visão Geral.
 Identidades e preferências v6 são preservadas. Áreas ainda não implementadas
 são identificadas como tais. A apresentação não homologa o motor financeiro V11.
+
+
+### Candidate local A10–A13
+
+O default visual dos cinco módulos passa a Dashboard → Research → Forex →
+Finanças Pessoais → Alladin. Aparência e Interface → Editor permite qualquer
+ordem por Subir/Descer, com prévia, Salvar ordem, Cancelar e restauração só dessa
+preferência. Os modos lateral/superior/mobile compartilham a escolha.
+A faixa de metadados operacionais aparece exclusivamente no Forex.
+
+O Consolidado e o detalhe do Histórico oferecem **Copiar operação** em texto
+puro, como **entrega parcial A12**. A operação pode reunir várias ordens. A cópia distingue entrada/andamento
+e finalização e apresenta somente fatos disponíveis; não envia mensagens,
+não executa ordens e não muda o estado financeiro. Campos normativos conflitantes
+e contexto final não capturado ficam fora da projeção, sem preenchimento fictício.
+Lucro Técnico, alavancagem, DD/fase e risco/clearance permanecem pendentes nos
+conflitos registrados; saldo book não é equity flutuante, base de retorno não é
+saldo final, e cadastro atual não preenche histórico ausente.
+Research possui destino próprio para o Laboratório de Probabilidade, cujo jogo
+atual é Galton Board. Ao trocar subdestino/módulo ou cobrir o Lab com Configurações,
+a mesma simulação fica pausada em memória; voltar exige **Continuar**. Recarregar
+não recupera a simulação, somente as preferências persistidas. Contrato e limites em
+[CHG-PRODUCT-IMPROVEMENTS-20260911](docs/work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).
+Essas mudanças são candidate local, sem aceite humano nem integração nesta etapa.

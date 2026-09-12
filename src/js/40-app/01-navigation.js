@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// seis filhos e Research cinco; owner semântico, filho, section física e visão
+// seis filhos e Research seis; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -18,6 +18,7 @@ const NAV_RESEARCH_CHILDREN=Object.freeze([
   Object.freeze({id:'research-stocks-br',label:'Ações',primary:'research',child:'research-stocks-br',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-br'}),aliases:Object.freeze([])}),
   Object.freeze({id:'research-stocks-global',label:'Stocks',primary:'research',child:'research-stocks-global',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-global'}),aliases:Object.freeze([])}),
   Object.freeze({id:'research-reits',label:'REITs',primary:'research',child:'research-reits',screen:'research',localView:Object.freeze({surface:'research',view:'reits'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-probability-lab',label:'Laboratório de Probabilidade',primary:'research',child:'research-probability-lab',screen:'research',localView:Object.freeze({surface:'research',view:'probability-lab'}),aliases:Object.freeze([])}),
   Object.freeze({id:'research-others',label:'Others',primary:'research',child:'research-others',screen:'research',localView:Object.freeze({surface:'research',view:'others'}),aliases:Object.freeze([])})
 ]);
 
@@ -42,6 +43,8 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   ecal:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'calendar'})}),
   nocoda:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
   pivots:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'pivots'})}),
+  'probability-lab':Object.freeze({canonical:'research-probability-lab',child:'research-probability-lab',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'probability-lab'})}),
+  'galton-board':Object.freeze({canonical:'research-probability-lab',child:'research-probability-lab',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'probability-lab'})}),
   params:Object.freeze({action:'settings',leaf:'tool-params'}),
   config:Object.freeze({action:'settings',leaf:'about'})
 });
@@ -50,7 +53,7 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
   fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
-  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['calendar','nocoda','pivots','stocks-br','stocks-global','reits','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui})
+  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['calendar','nocoda','pivots','stocks-br','stocks-global','reits','probability-lab','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
@@ -136,6 +139,7 @@ function navApply(plan,target){
     const surface=navSurface(localView.surface);
     localView.view=surface.getView();
   }
+  if(navCurrent.primary==='research'&&plan.primary!=='research'&&typeof researchLeaveModule==='function') researchLeaveModule();
   document.querySelectorAll('#appMain > .screen').forEach(screen=>screen.classList.remove('active'));
   document.getElementById(plan.screen).classList.add('active');
   navSelectPrimary(plan.primary);
@@ -181,6 +185,7 @@ function navLocalPlan(surfaceId,view,descriptor){
     else if(view==='stocks-br') canonical='research-stocks-br';
     else if(view==='stocks-global') canonical='research-stocks-global';
     else if(view==='reits') canonical='research-reits';
+    else if(view==='probability-lab') canonical='research-probability-lab';
     else if(view==='others') canonical='research-others';
   }
   const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-'))?canonical:null;

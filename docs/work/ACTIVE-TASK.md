@@ -1,3 +1,19 @@
+# Tarefa corrente — aprimoramentos de produto A10–A13
+
+Candidate local em `codex/product-improvements-a10-a13`, base main conferida
+`d68a86fc046b82dddd4bfd6c9c9254f39d91dc2e`. Contrato N2/A3 e CTX delimitado:
+[CHG-PRODUCT-IMPROVEMENTS-20260911](CHG-PRODUCT-IMPROVEMENTS-20260911.md).
+Ordem no Editor, faixa Forex contextual, cópia factual de operação e Laboratório
+em Research. Complemento A12-A + A13-A autorizado: A12 permanece entrega parcial,
+com campos financeiros/contexto final pendentes; A13 passa a preservar a simulação
+em memória nas saídas, pausada até retomada explícita. V4 congelada preservada;
+nova revisão candidata local, sem aceite; resultados vinculados nas evidências em
+`/Users/joaopauloalves/.codex/product-improvements/20260911/evidence/`.
+Sem integração, norma financeira, mudança de controles ou aceite presumido.
+Os registros abaixo conservam seus estados e autorizações históricos.
+
+---
+
 # Tarefa corrente — TECHNICAL DEBT CLOSURE & PROJECT STABILIZATION
 
 Pedido explícito de 2026-09-11; campanha finita de dívidas conhecidas, sem integração.

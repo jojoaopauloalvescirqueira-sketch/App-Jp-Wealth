@@ -639,8 +639,9 @@ def run_motor_migration(page):
 def run_no_regression(page):
     """As cinco rotas globais ativam seus destinos físicos declarados."""
     routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
-    expected = {"dashboard": "dash", "forex-overview": "exec", "personal-finance": "finpes",
-                "research-forex": "research", "alladin": "alladin"}
+    # A10 changes only the default visual order; exact route/activation checks remain.
+    expected = {"dashboard": "dash", "research-forex": "research", "forex-overview": "exec",
+                "personal-finance": "finpes", "alladin": "alladin"}
     assert routes == list(expected), f"rotas globais mudaram: {routes}"
     for route, screen in expected.items():
         page.click(f'#nav .tab[data-route="{route}"]')

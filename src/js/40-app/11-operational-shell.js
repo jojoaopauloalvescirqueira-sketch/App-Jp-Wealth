@@ -100,6 +100,15 @@ function syncShellLocation(){
   const el=document.getElementById('shellLocation'),text=parts.join(' / ');
   if(el&&el.textContent!==text)el.textContent=text;
 }
+// The existing readout belongs to Forex. Navigation only changes its
+// presentation; the normal render still owns phase and calculated metrics.
+function syncForexContext(){
+  const row=document.getElementById('gdContextRow');
+  if(!row||!window.JPWNavigation)return;
+  const active=window.JPWNavigation.current().primary==='forex';
+  row.hidden=!active;row.inert=!active;
+  if(active&&typeof renderHeaderReadout==='function')renderHeaderReadout();
+}
 function syncNavSubState(){
   if(!window.JPWNavigation)return;
   const c=window.JPWNavigation.current();
@@ -126,6 +135,7 @@ function syncNavSubState(){
   else document.documentElement.removeAttribute('data-nav-sub');
   if(key)syncNavSubCurrent(key);else syncNavSubContexts(null);
   syncShellLocation();
+  syncForexContext();
   if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
 function openNavSub(screen,options){
@@ -230,6 +240,7 @@ function initOperationalShell(){
 
   });
   initNavLayoutChoice();
+  if(typeof initNavOrderChoice==='function')initNavOrderChoice();
   const alladinTabs=document.getElementById('alladinTabs');
   if(alladinTabs)new MutationObserver(syncShellLocation).observe(alladinTabs,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
   document.addEventListener('click',event=>{

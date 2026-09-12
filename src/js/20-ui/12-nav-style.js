@@ -194,3 +194,141 @@ function initNavLayoutChoice(){
     if(status)status.textContent=(value==='sidebar'?'Menu lateral':'Barra superior')+' salvo neste navegador.';
   });
 }
+
+// Ordem visual dos mesmos primários: preferência por navegador, fora de S e
+// do envelope de widgets. A lista usa identidades, nunca rótulos ou rotas novas.
+const NAV_ORDER_KEY='jpw_nav_order';
+const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','forex','personal-finance','alladin']);
+const navOrderState={confirmed:[],draft:[],raw:null,editing:false,blocked:null,note:'',restoreRequested:false};
+function navOrderValid(value){
+  return Array.isArray(value)&&value.length===NAV_ORDER_DEFAULT.length&&
+    new Set(value).size===value.length&&value.every(id=>NAV_ORDER_DEFAULT.includes(id));
+}
+function navOrderDirty(){return navOrderState.draft.join('|')!==navOrderState.confirmed.join('|')||
+  navOrderState.restoreRequested&&navOrderState.raw!==JSON.stringify(navOrderState.draft);}
+function navOrderRead(){
+  let raw;
+  try{raw=localStorage.getItem(NAV_ORDER_KEY);}
+  catch(e){return {raw:null,order:[...NAV_ORDER_DEFAULT],blocked:'read',note:'Não foi possível ler a ordem salva. O padrão é exibido sem alterar a preferência; recarregue para tentar a leitura novamente.'};}
+  let order=null;
+  if(raw!==null){try{order=JSON.parse(raw);}catch(e){}}
+  const valid=navOrderValid(order);
+  return {raw,order:valid?order:[...NAV_ORDER_DEFAULT],blocked:null,
+    note:raw!==null&&!valid?'Ordem salva não reconhecida. O padrão é exibido; a preferência original permanece intacta até você salvar uma nova ordem.':''};
+}
+function applyNavOrder(order){
+  if(!navOrderValid(order))return;
+  const nav=document.getElementById('nav');if(!nav)return;
+  // Mantém nós, listeners, foco e identidades. O shell recoloca seu único N2
+  // junto do expansor ativo; não resolve rota nem renderiza domínio.
+  const focused=document.activeElement;
+  const buttons=new Map([...nav.querySelectorAll(':scope > .tab[data-primary]')].map(btn=>[btn.dataset.primary,btn]));
+  if(order.some(id=>!buttons.has(id)))return;
+  order.forEach((id,index)=>{
+    const btn=buttons.get(id),surface=btn.id.replace('NavTrigger','');
+    const number=btn.querySelector('.n');if(number)number.textContent=String(index+1).padStart(2,'0');
+    nav.append(btn);
+    const expander=nav.querySelector('[data-nav-expand="'+surface+'"]');
+    if(expander)nav.append(expander);
+  });
+  if(typeof syncNavSubState==='function')syncNavSubState();
+  if(focused&&nav.contains(focused)&&document.activeElement!==focused)focused.focus({preventScroll:true});
+  scheduleNavPill();
+}
+function renderNavOrderEditor(message){
+  const list=document.getElementById('navOrderList');if(!list)return;
+  const focused=document.activeElement;
+  const focusId=focused?.closest('[data-nav-order-id]')?.dataset.navOrderId;
+  const focusDirection=focused?.dataset.navOrderMove;
+  const rows=navOrderState.draft.map((id,index)=>{
+    const label=document.querySelector('#nav > .tab[data-primary="'+id+'"] .lbl')?.textContent.trim()||id;
+    const row=document.createElement('li');row.dataset.navOrderId=id;
+    const text=document.createElement('span');text.textContent=label;row.append(text);
+    [['up','Subir'],['down','Descer']].forEach(([direction,verb])=>{
+      const button=document.createElement('button');button.type='button';button.className='reset-btn';button.dataset.navOrderMove=direction;
+      button.textContent=direction==='up'?'↑':'↓';button.setAttribute('aria-label',verb+' '+label);
+      button.disabled=!!navOrderState.blocked||(direction==='up'?index===0:index===navOrderState.draft.length-1);
+      row.append(button);
+    });
+    return row;
+  });
+  list.replaceChildren(...rows);
+  const dirty=navOrderDirty();
+  document.getElementById('navOrderSave').disabled=!!navOrderState.blocked||!dirty;
+  document.getElementById('navOrderReset').disabled=!!navOrderState.blocked;
+  document.getElementById('navOrderCancel').disabled=navOrderState.blocked==='unknown'||(!dirty&&navOrderState.blocked!=='conflict');
+  const status=document.getElementById('navOrderStatus');
+  if(status)status.textContent=message===undefined?navOrderState.note:message;
+  if(focusId&&focusDirection){
+    const row=list.querySelector('[data-nav-order-id="'+focusId+'"]');
+    const same=row?.querySelector('[data-nav-order-move="'+focusDirection+'"]');
+    (same&&!same.disabled?same:row?.querySelector('button:not([disabled])'))?.focus({preventScroll:true});
+  }
+}
+function beginNavOrderPreview(){
+  if(navOrderState.editing||navOrderState.blocked==='unknown')return;
+  const read=navOrderRead();
+  Object.assign(navOrderState,{confirmed:[...read.order],draft:[...read.order],raw:read.raw,
+    blocked:read.blocked,note:read.note,editing:true,restoreRequested:false});
+  applyNavOrder(read.order);renderNavOrderEditor();
+}
+function cancelNavOrderPreview(){
+  if(navOrderState.blocked==='unknown')return;
+  if(navOrderState.blocked==='conflict'){
+    navOrderState.editing=false;beginNavOrderPreview();
+    // A releitura resolve a prévia anterior; não mantém uma sessão aberta
+    // quando Cancelar é chamado pelo fechamento da Central.
+    navOrderState.editing=false;
+    return;
+  }
+  navOrderState.draft=[...navOrderState.confirmed];navOrderState.editing=false;navOrderState.restoreRequested=false;
+  applyNavOrder(navOrderState.confirmed);renderNavOrderEditor(navOrderState.note||'Prévia cancelada. A ordem salva foi preservada.');
+}
+function saveNavOrderPreview(){
+  if(navOrderState.blocked||!navOrderDirty()||!navOrderValid(navOrderState.draft))return;
+  // Guarda da própria preferência; nunca usa save() ou desbloqueia a base.
+  let before;
+  try{before=localStorage.getItem(NAV_ORDER_KEY);}
+  catch(e){navOrderState.blocked='read';renderNavOrderEditor('Não foi possível conferir a ordem salva. Nenhuma gravação foi tentada; recarregue antes de salvar.');return;}
+  if(before!==navOrderState.raw){
+    navOrderState.blocked='conflict';
+    renderNavOrderEditor('A ordem salva mudou em outra ação ou aba. Nada foi gravado. Cancele a prévia para conferir a preferência atual.');return;
+  }
+  const payload=JSON.stringify(navOrderState.draft);
+  try{localStorage.setItem(NAV_ORDER_KEY,payload);}catch(e){/* O read-back distingue recusa de desfecho desconhecido. */}
+  let after;
+  try{after=localStorage.getItem(NAV_ORDER_KEY);}catch(e){}
+  if(after===payload){
+    navOrderState.raw=payload;navOrderState.confirmed=[...navOrderState.draft];navOrderState.editing=false;navOrderState.note='';navOrderState.restoreRequested=false;
+    renderNavOrderEditor('Ordem salva neste navegador.');return;
+  }
+  if(after===before){
+    renderNavOrderEditor('Não foi possível salvar. Esta é uma prévia não salva; seus ajustes continuam nesta sessão para cancelar ou tentar novamente.');return;
+  }
+  navOrderState.blocked='unknown';
+  renderNavOrderEditor('Não foi possível determinar o resultado da gravação. A prévia foi preservada e novas alterações estão bloqueadas. Recarregue para conferir a ordem armazenada antes de continuar.');
+}
+function initNavOrderChoice(){
+  const editor=document.getElementById('navOrderEditor');if(!editor||editor.dataset.bound)return;
+  editor.dataset.bound='true';beginNavOrderPreview();navOrderState.editing=false;
+  editor.addEventListener('click',event=>{
+    const move=event.target.closest('[data-nav-order-move]');
+    if(move&&!move.disabled&&!navOrderState.blocked){
+      if(!navOrderState.editing)beginNavOrderPreview();
+      if(navOrderState.blocked)return;
+      const id=move.closest('[data-nav-order-id]').dataset.navOrderId,index=navOrderState.draft.indexOf(id);
+      const next=index+(move.dataset.navOrderMove==='up'?-1:1);
+      if(index<0||next<0||next>=navOrderState.draft.length)return;
+      [navOrderState.draft[index],navOrderState.draft[next]]=[navOrderState.draft[next],navOrderState.draft[index]];
+      applyNavOrder(navOrderState.draft);renderNavOrderEditor('Prévia não salva. Salve a ordem ou cancele para manter a anterior.');return;
+    }
+    if(event.target.closest('#navOrderSave'))saveNavOrderPreview();
+    else if(event.target.closest('#navOrderCancel'))cancelNavOrderPreview();
+    else if(event.target.closest('#navOrderReset')&&!navOrderState.blocked){
+      if(!navOrderState.editing)beginNavOrderPreview();
+      if(navOrderState.blocked)return;
+      navOrderState.draft=[...NAV_ORDER_DEFAULT];navOrderState.restoreRequested=true;applyNavOrder(navOrderState.draft);
+      renderNavOrderEditor('Ordem padrão em prévia. Somente a ordem será alterada ao salvar.');
+    }
+  });
+}

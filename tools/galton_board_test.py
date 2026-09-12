@@ -607,16 +607,21 @@ def test_persistence_contract(page):
 
 
 def enter_galton(page):
-    page.locator('#settingsMenu [data-settings-category="probability-lab"]').click()
-    page.locator(
-        '[data-settings-panel="probability-lab"] [data-nav-to="galton-board"]'
-    ).click()
-    page.locator('[data-settings-panel="galton-board"] [data-galton-root]').wait_for(
-        state="visible"
-    )
+    assert page.evaluate("JPWNavigation.navigate('research-forex')") is True
+    target = page.locator('[data-nav-child="research-probability-lab"]')
+    if page.viewport_size['width']<=900 and page.locator('html').get_attribute('data-shell-menu')!='open':
+        page.locator('[data-shell-menu-toggle]').click()
+    if not target.is_visible():
+        page.locator('[data-nav-expand="research"]').click()
+    target.click()
+    page.locator('#researchProbabilityLab [data-galton-root]').wait_for(state="visible")
     page.wait_for_function(
         """() => document.querySelector('[data-galton-root]')?.__galtonController?.active === true"""
     )
+
+
+def leave_galton(page):
+    assert page.evaluate("JPWNavigation.navigate('dashboard')") is True
 
 
 def test_controller_recovery_guard(page):
@@ -625,7 +630,6 @@ def test_controller_recovery_guard(page):
         """value => localStorage.setItem(JPWGalton.persistence.STORAGE_KEY, value)""",
         malformed,
     )
-    page.locator("#headerConfigBtn").click()
     enter_galton(page)
     page.locator('[data-galton-speed="2"]').click()
     assert page.evaluate(
@@ -637,7 +641,7 @@ def test_controller_recovery_guard(page):
         "JSON.parse(localStorage.getItem(JPWGalton.persistence.STORAGE_KEY))"
     )
     assert recovered["schemaVersion"] == 1 and recovered["preset"] == "realistic"
-    page.locator("#settingsCloseBtn").click()
+    leave_galton(page)
 
 
 def canvas_evidence(page):
@@ -664,11 +668,200 @@ def canvas_evidence(page):
     )
 
 
-def test_real_ui(page):
-    page.locator("#headerConfigBtn").click()
-    assert page.locator("#settingsOverlay").is_visible()
+def test_navigation_continuity(page):
+    """A13-A: navigation preserves a paused experiment, not only its preferences."""
     enter_galton(page)
-    assert page.locator("#settingsPageTitle").inner_text() == "Galton Board"
+    page.locator('[data-galton-action="reset"]').click()
+    prepared = page.evaluate("""() => {
+      const c=document.querySelector('[data-galton-root]').__galtonController;
+      c.root.querySelector('[data-galton-add="100"]').click();
+      c.root.querySelector('[data-galton-action="execute"]').click();
+      c.cancelFrame();
+      // Advance the real deterministic engine only to prepare a nonempty fixture.
+      for(let step=0;step<6000&&!c.snapshot().settledCount;step++) c.engine.tickFixed(1);
+      // Prior UI scenarios may use slower trajectories; replenish through real controls.
+      if(!c.snapshot().queuedCount){
+        c.root.querySelector('[data-galton-add="100"]').click();
+        c.root.querySelector('[data-galton-action="execute"]').click();
+      }
+      c.root.querySelector('[data-galton-add="10"]').click();
+      window.__continuityController=c;window.__continuityEngine=c.engine;
+      window.__continuitySignal=c.abortController.signal;
+      window.__continuityState=JSON.stringify(S);
+      window.__continuityStorage=JSON.stringify({...localStorage});
+      window.__continuityDebug={...window.__galtonDebug};
+      c.ensureFrame();
+      return {settled:c.snapshot().settledCount,active:c.snapshot().activeCount,
+        queued:c.snapshot().queuedCount,staged:c.staged,running:c.snapshot().running};
+    }""")
+    assert all(prepared[key] > 0 for key in ('settled', 'active', 'queued', 'staged')), prepared
+    assert prepared['running'], prepared
+    rows=[]
+    routes=['dashboard','forex-overview','personal-finance','alladin','research-others','research-forex']
+    for route in routes * 2:
+        row=page.evaluate("""async route => {
+          const c=window.__continuityController;
+          if(!c.snapshot().running)c.root.querySelector('[data-galton-action="pause"]').click();
+          const project=()=>{const s=c.engine.snapshot();delete s.running;delete s.paused;return JSON.stringify(s);};
+          const before=project(),prefs=JSON.stringify(c.preferences),staged=c.staged;
+          const navigated=JPWNavigation.navigate(route);
+          const same=document.querySelector('[data-galton-root]').__galtonController===c;
+          const out={same,destroyed:c.destroyed,active:c.active,raf:c.raf,
+            observers:window.__galtonDebug.resizeObservers,debugRaf:window.__galtonDebug.activeRaf,
+            engineSame:c.engine===window.__continuityEngine,
+            signalSame:c.abortController.signal===window.__continuitySignal,
+            signalAborted:c.abortController.signal.aborted,
+            preserved:!c.destroyed&&project()===before,
+            prefsPreserved:JSON.stringify(c.preferences)===prefs,stagedPreserved:c.staged===staged,
+            running:!c.destroyed&&c.snapshot().running,paused:!c.destroyed&&c.snapshot().paused};
+          await new Promise(resolve=>setTimeout(resolve,100));
+          out.stayedPreserved=!c.destroyed&&project()===before;
+          const returned=JPWNavigation.navigate('research-probability-lab');
+          const current=document.querySelector('[data-galton-root]').__galtonController;
+          window.__continuityPaused=JSON.stringify(current.engine.snapshot());
+          return {route,navigated,returned,out,back:{same:current===c,active:current.active,
+            running:current.snapshot().running,paused:current.snapshot().paused,raf:current.raf,
+            lastAt:current.lastAt,preserved:current===c&&project()===before,
+            label:current.root.querySelector('[data-galton-action="pause"]').textContent,
+            observers:window.__galtonDebug.resizeObservers,mounts:window.__galtonDebug.mounts,
+            roots:document.querySelectorAll('[data-galton-root]').length,
+            forexVisible:!!document.getElementById('gdContextRow').getClientRects().length},
+            stateUnchanged:JSON.stringify(S)===window.__continuityState,
+            storageUnchanged:JSON.stringify({...localStorage})===window.__continuityStorage};
+        }""",route)
+        print('A13_CONTINUITY_NAV '+json.dumps(row,ensure_ascii=False),flush=True)
+        assert row['navigated'] and row['returned'],row
+        out=row['out'];back=row['back']
+        assert out['same'] and out['engineSame'] and out['signalSame'] and not out['signalAborted'],row
+        assert not out['destroyed'] and not out['active'] and not out['running'] and out['paused'],row
+        assert out['raf']==out['debugRaf']==out['observers']==0,row
+        assert out['preserved'] and out['stayedPreserved'] and out['prefsPreserved'] and out['stagedPreserved'],row
+        assert back['same'] and back['active'] and back['paused'] and not back['running'],row
+        assert back['preserved'] and back['label']=='Continuar' and back['lastAt']==back['raf']==0,row
+        assert back['observers']==back['roots']==1 and not back['forexVisible'],row
+        assert row['stateUnchanged'] and row['storageUnchanged'],row
+        page.wait_for_timeout(100)
+        assert page.evaluate("JSON.stringify(window.__continuityController.engine.snapshot())===window.__continuityPaused"),route
+        rows.append(row)
+
+    # The first resumed frame must not consume the time spent outside Research.
+    resumed=page.evaluate("""() => {
+      const c=window.__continuityController,before=c.engine.snapshot();
+      c.root.querySelector('[data-galton-action="pause"]').click();
+      const running=c.snapshot().running;
+      // Drive the callbacks on a known clock; no wall-time threshold or physics mock.
+      cancelAnimationFrame(c.raf);c.raf=0;c.frame(performance.now()+60000);
+      const first=c.engine.snapshot(),firstAt=c.lastAt;
+      cancelAnimationFrame(c.raf);c.raf=0;c.frame(firstAt+1000/120+.001);
+      const second=c.engine.snapshot();
+      c.root.querySelector('[data-galton-action="pause"]').click();
+      const preserved=s=>{const copy={...s};delete copy.running;delete copy.paused;return JSON.stringify(copy);};
+      return {running,same:c.engine===window.__continuityEngine,
+        firstUnchanged:preserved(first)===preserved(before),
+        progressed:second.stepCount>first.stepCount,
+        boundedSteps:second.stepCount-first.stepCount,
+        expectedMax:Math.ceil(second.speed)+1,
+        noDroppedTime:second.droppedTime===first.droppedTime,
+        paused:c.snapshot().paused,raf:c.raf};
+    }""")
+    print('A13_CONTINUITY_RESUME '+json.dumps(resumed),flush=True)
+    assert resumed['running'] and resumed['same'] and resumed['firstUnchanged'] and resumed['progressed'],resumed
+    assert resumed['boundedSteps']<=resumed['expectedMax'] and resumed['noDroppedTime'],resumed
+    assert resumed['paused'] and resumed['raf']==0,resumed
+
+    # Settings covers the same experiment; returning never resumes it implicitly.
+    for running in [False,True,False,True]:
+        before=page.evaluate("""running => {
+          const c=window.__continuityController;
+          if(c.snapshot().running!==running)c.root.querySelector('[data-galton-action="pause"]').click();
+          openSettingsModal('general');
+          return {snapshot:JSON.stringify(c.engine.snapshot()),active:c.active,raf:c.raf,
+            observers:window.__galtonDebug.resizeObservers};
+        }""",running)
+        assert before['active'] is False and before['raf']==before['observers']==0,before
+        page.wait_for_timeout(100)
+        assert page.evaluate('JSON.stringify(window.__continuityController.engine.snapshot())')==before['snapshot']
+        after=page.evaluate("""() => {
+          const c=window.__continuityController;closeSettingsModal();
+          const result={same:document.querySelector('[data-galton-root]').__galtonController===c,
+            active:c.active,running:c.snapshot().running,paused:c.snapshot().paused,
+            mounts:window.__galtonDebug.mounts,observers:window.__galtonDebug.resizeObservers};
+          if(c.snapshot().running)c.root.querySelector('[data-galton-action="pause"]').click();
+          return result;
+        }""")
+        assert after['same'] and after['active'] and after['running'] is False and after['paused'],after
+        assert after['observers']==1,after
+
+    resources=page.evaluate("""() => {
+      const c=window.__continuityController,before=c.staged;
+      c.root.querySelector('[data-galton-add="1"]').click();
+      return {oneHandler:c.staged===before+1,
+        mountsUnchanged:window.__galtonDebug.mounts===window.__continuityDebug.mounts,
+        destroysUnchanged:window.__galtonDebug.destroys===window.__continuityDebug.destroys,
+        sameSignal:c.abortController.signal===window.__continuitySignal&&!c.abortController.signal.aborted,
+        stateUnchanged:JSON.stringify(S)===window.__continuityState,
+        storageUnchanged:JSON.stringify({...localStorage})===window.__continuityStorage};
+    }""")
+    assert all(resources.values()),resources
+
+    # Reset releases the former physics engine while retaining the UI controller.
+    reset=page.evaluate("""() => {
+      const c=window.__continuityController,engine=c.engine;
+      c.root.querySelector('[data-galton-action="reset"]').click();
+      let oldReleased=false;try{engine.enqueue(1);}catch(error){oldReleased=error.message==='O motor Galton foi destruido';}
+      const s=c.snapshot();return {same:document.querySelector('[data-galton-root]').__galtonController===c,
+        engineReplaced:c.engine!==engine,oldReleased,empty:s.activeCount===0&&s.queuedCount===0&&s.settledCount===0,
+        staged:c.staged,raf:c.raf,manualPaused:c.manualPaused};
+    }""")
+    assert reset['same'] and reset['engineReplaced'] and reset['oldReleased'] and reset['empty'],reset
+    assert reset['staged']==reset['raf']==0 and reset['manualPaused'],reset
+
+    # The existing finalization hook must release a retained, currently hidden board.
+    wiped=page.evaluate("""() => {
+      const c=window.__continuityController;c.root.querySelector('[data-galton-add="10"]').click();
+      c.root.querySelector('[data-galton-action="execute"]').click();JPWNavigation.navigate('dashboard');
+      const prefs=localStorage.getItem(JPWGalton.persistence.STORAGE_KEY);
+      sessionResetAuxiliarySurfaces();
+      return {destroyed:c.destroyed,aborted:c.abortController.signal.aborted,engineNull:c.engine===null,
+        unpublished:document.querySelector('[data-galton-root]').__galtonController===null,
+        raf:window.__galtonDebug.activeRaf,observers:window.__galtonDebug.resizeObservers,
+        noLive:window.__galtonDebug.mounts===window.__galtonDebug.destroys,
+        staleWriteBlocked:c.persist()===false,preferenceUnchanged:localStorage.getItem(JPWGalton.persistence.STORAGE_KEY)===prefs};
+    }""")
+    assert all(wiped[key] for key in ('destroyed','aborted','engineNull','unpublished','noLive','staleWriteBlocked','preferenceUnchanged')),wiped
+    assert wiped['raf']==wiped['observers']==0,wiped
+    enter_galton(page)
+    rebuilt=page.evaluate("""() => {
+      const c=document.querySelector('[data-galton-root]').__galtonController;
+      c.root.querySelector('[data-galton-add="1"]').click();c.root.querySelector('[data-galton-action="execute"]').click();
+      return {newController:c!==window.__continuityController,running:c.snapshot().running,queued:c.snapshot().queuedCount};
+    }""")
+    assert rebuilt['newController'] and rebuilt['running'] and rebuilt['queued']==1,rebuilt
+    raw_preference=page.evaluate('localStorage.getItem(JPWGalton.persistence.STORAGE_KEY)')
+    page.reload(wait_until='load')
+    wait_bootstrap(page)
+    enter_galton(page)
+    reloaded=page.evaluate("""() => {
+      const c=document.querySelector('[data-galton-root]').__galtonController,s=c.snapshot();
+      return {empty:s.activeCount===0&&s.queuedCount===0&&s.settledCount===0&&c.staged===0,
+        manualPaused:c.manualPaused,running:s.running,raf:c.raf};
+    }""")
+    assert reloaded=={'empty':True,'manualPaused':True,'running':False,'raf':0},reloaded
+    assert page.evaluate('localStorage.getItem(JPWGalton.persistence.STORAGE_KEY)')==raw_preference
+    leave_galton(page)
+    page.evaluate('sessionResetAuxiliarySurfaces()')
+    assert page.evaluate('window.__galtonDebug.mounts===window.__galtonDebug.destroys')
+    assert not page.jpwealth_observed['pageerror'],page.jpwealth_observed
+    assert not [item for item in page.jpwealth_observed['console'] if item[0]=='error'],page.jpwealth_observed
+    print('A13_CONTINUITY_PASS '+json.dumps({'routes':len(rows),'settingsCycles':4,
+      'resources':resources,'reset':reset,'finalizationHook':wiped,'recreated':rebuilt,'reload':reloaded}),flush=True)
+
+
+def test_real_ui(page):
+    enter_galton(page)
+    assert page.locator("#settingsOverlay").is_hidden()
+    assert page.locator("#researchProbabilityTitle").inner_text() == "Laboratório de Probabilidade"
+    assert page.locator("#researchProbabilityLab h3").inner_text() == "Galton Board"
     assert page.locator("[data-galton-add]").count() == 4
     assert page.locator("[data-galton-speed]").count() == 4
     assert page.locator("[data-galton-canvas]").get_attribute("role") == "img"
@@ -888,13 +1081,13 @@ def test_real_ui(page):
     assert themes["light"] != themes["dark"], themes
     assert canvas_evidence(page)["opaqueSamples"] > 20
 
-    # Painel oculto pausa RAF; retorno reutiliza a instancia; fechar destroi tudo.
+    # Outro subdestino e saída do módulo pausam RAF; retorno reutiliza sem autoplay.
     before_lifecycle = page.evaluate(
         """() => ({
           mounts: window.__galtonDebug.mounts,
         })"""
     )
-    page.evaluate("activateSettingsCategory('general')")
+    page.evaluate("JPWNavigation.navigate('research-others')")
     lifecycle_hidden = page.evaluate(
         """() => {
           const controller = document.querySelector('[data-galton-root]').__galtonController;
@@ -904,7 +1097,7 @@ def test_real_ui(page):
         }"""
     )
     assert lifecycle_hidden == {"active": False, "raf": 0, "debugRaf": 0, "observers": 0}, lifecycle_hidden
-    page.evaluate("activateSettingsCategory('galton-board')")
+    page.evaluate("JPWNavigation.navigate('research-probability-lab')")
     reused = page.evaluate(
         """() => ({
           active: document.querySelector('[data-galton-root]').__galtonController.active,
@@ -912,6 +1105,40 @@ def test_real_ui(page):
         })"""
     )
     assert reused["active"] and reused["mounts"] == before_lifecycle["mounts"], reused
+
+    # Configurações sobreposta pausa o mesmo jogo, sem trocar seu owner nem estado.
+    page.evaluate("window.__a13CoveredController=document.querySelector('[data-galton-root]').__galtonController")
+    page.locator("#headerConfigBtn").click()
+    covered = page.evaluate("""() => ({
+      same:document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController,
+      active:window.__a13CoveredController.active,
+      raf:window.__a13CoveredController.raf,
+      observers:window.__galtonDebug.resizeObservers,
+      owner:JPWNavigation.current().primary,
+      rootInSettings:!!document.querySelector('#settingsModal [data-galton-root]')
+    })""")
+    assert covered == {"same":True,"active":False,"raf":0,"observers":0,"owner":"research","rootInSettings":False}, covered
+    page.locator("#settingsCloseBtn").click()
+    assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController && window.__a13CoveredController.active")
+
+    # Notas e Finalização também cobrem o jogo; cancelar não altera seus dados.
+    projection_before=page.evaluate("JSON.stringify(S)")
+    preference_before=page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")
+    observer_count=page.evaluate("window.__settingsModalDebug.observerInstances")
+    for opener,closer,overlay in [('#headerNotesBtn','#mvpNotesCloseBtn','#mvpNotesOverlay'),
+                                   ('#finalizeSessionBtn','#sessionCancel','#modalOverlay')]:
+        page.locator(opener).click()
+        page.locator(overlay).wait_for(state='visible')
+        page.wait_for_function("window.__a13CoveredController.active===false")
+        assert page.evaluate("window.__a13CoveredController.raf===0 && window.__galtonDebug.resizeObservers===0")
+        if overlay=='#mvpNotesOverlay':
+            assert page.evaluate("document.getElementById('mvpNotesOverlay').contains(document.activeElement)")
+        page.locator(closer).click()
+        page.wait_for_function("window.__a13CoveredController.active===true")
+        assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController")
+        assert page.evaluate("JSON.stringify(S)")==projection_before
+        assert page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")==preference_before
+        assert page.evaluate("window.__settingsModalDebug.observerInstances")==observer_count
 
     page.locator('[data-galton-pref="releasePoint"]').fill("0.25")
     page.locator('[data-galton-pref="tiltDegrees"]').fill("0.5")
@@ -922,21 +1149,23 @@ def test_real_ui(page):
           return {releasePoint:c.preferences.releasePoint,tiltDegrees:c.preferences.tiltDegrees,speed:c.preferences.speed};
         }"""
     )
-    page.locator("#settingsCloseBtn").click()
+    leave_galton(page)
     closed = page.evaluate(
         """() => ({
-          controller: document.querySelector('[data-galton-root]').__galtonController,
+          retained: document.querySelector('[data-galton-root]').__galtonController===window.__a13CoveredController,
+          active: window.__a13CoveredController.active,
+          manualPaused: window.__a13CoveredController.manualPaused,
           raf: window.__galtonDebug.activeRaf,
           observers: window.__galtonDebug.resizeObservers,
           mounts: window.__galtonDebug.mounts,
           destroys: window.__galtonDebug.destroys,
         })"""
     )
-    assert closed["controller"] is None and closed["raf"] == 0 and closed["observers"] == 0, closed
-    assert closed["mounts"] == closed["destroys"], closed
+    assert closed["retained"] and not closed["active"] and closed["manualPaused"], closed
+    assert closed["raf"] == closed["observers"] == 0, closed
+    assert closed["mounts"] == closed["destroys"] + 1, closed
 
-    # Reabrir nunca restaura bolas/resultados; preferencias continuam independentes.
-    page.locator("#headerConfigBtn").click()
+    # Os controles anteriores reiniciaram o motor; a navegação conserva esse estado.
     enter_galton(page)
     reopened = page.evaluate(
         """() => document.querySelector('[data-galton-root]').__galtonController.snapshot()"""
@@ -945,15 +1174,14 @@ def test_real_ui(page):
     assert reopened["releasePoint"] == expected_preferences["releasePoint"]
     assert reopened["tiltDegrees"] == expected_preferences["tiltDegrees"]
     assert reopened["speed"] == expected_preferences["speed"]
-    page.locator("#settingsCloseBtn").click()
+    leave_galton(page)
 
-    # Geometria mobile: modal contido no viewport, sem overflow horizontal.
+    # Geometria mobile: superfície Research rolável, canvas contido horizontalmente.
     page.set_viewport_size({"width": 390, "height": 844})
-    page.locator("#headerConfigBtn").click()
     enter_galton(page)
     mobile = page.evaluate(
         """() => {
-          const modal = document.getElementById('settingsModal').getBoundingClientRect();
+          const modal = document.getElementById('researchProbabilityLab').getBoundingClientRect();
           const canvas = document.querySelector('[data-galton-canvas]').getBoundingClientRect();
           return {
             modal: {left: modal.left, top: modal.top, right: modal.right, bottom: modal.bottom},
@@ -963,9 +1191,8 @@ def test_real_ui(page):
           };
         }"""
     )
-    assert mobile["modal"]["left"] >= -1 and mobile["modal"]["top"] >= -1, mobile
+    assert mobile["modal"]["left"] >= -1 and mobile["modal"]["bottom"] > mobile["modal"]["top"], mobile
     assert mobile["modal"]["right"] <= mobile["viewport"]["width"] + 1, mobile
-    assert mobile["modal"]["bottom"] <= mobile["viewport"]["height"] + 1, mobile
     assert mobile["canvas"]["left"] >= -1 and mobile["canvas"]["right"] <= 391, mobile
     assert mobile["scrollWidth"] <= mobile["viewport"]["width"] + 1, mobile
 
@@ -992,11 +1219,13 @@ def test_real_ui(page):
     )
     assert mobile_tooltip["hidden"] is False and mobile_tooltip["contained"], mobile_tooltip
     assert "Teórico —" in mobile_tooltip["text"] and "Δ —" in mobile_tooltip["text"]
-    page.locator("#settingsCloseBtn").click()
+    leave_galton(page)
 
     final_debug = page.evaluate("window.__galtonDebug")
     assert final_debug["activeRaf"] == 0 and final_debug["resizeObservers"] == 0, final_debug
-    assert final_debug["mounts"] == final_debug["destroys"], final_debug
+    assert final_debug["mounts"] == final_debug["destroys"] + 1, final_debug
+    page.evaluate("sessionResetAuxiliarySurfaces()")
+    assert page.evaluate("window.__galtonDebug.mounts===window.__galtonDebug.destroys")
 
     # Nao tolera excecoes JS nem erros de console; requests externos foram mockados.
     errors = [item for item in page.jpwealth_observed["console"] if item[0] == "error"]
@@ -1016,7 +1245,7 @@ def test_controller_initialization_failure(page):
             for(const deferred of [false,true]){
               const host=document.createElement('div'); host.innerHTML=ns.controller.panelHTML();
               document.body.append(host); const root=host.firstElementChild;
-              // handleSessionWipe selects the first root; this fixture has no Settings root.
+              // handleSessionWipe selects the first root; this fixture has no mounted Research root.
               const resources={observers:[],signals:[],engines:[],renderers:[]};
               let injected=false,error=null;
               window.ResizeObserver=class extends original.observer{
@@ -1128,6 +1357,7 @@ def main():
             test_persistence_contract(page)
             test_controller_recovery_guard(page)
             test_real_ui(page)
+            test_navigation_continuity(page)
             assert_fixture_requests(page.jpwealth_context)
             page.jpwealth_context.close()
             browser.close()

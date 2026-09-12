@@ -8,8 +8,9 @@ as regras de domínio nem autoriza adoções futuras ou integração.
 
 ## Destinos preservados
 
-Há cinco primários, nesta ordem: Dashboard, Forex, Finanças Pessoais, Research
-e Alladin. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
+Há cinco primários. O default visual A10 é Dashboard, Research, Forex,
+Finanças Pessoais e Alladin; uma preferência válida do Editor pode permutá-los.
+A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
 `forex-overview`, `personal-finance`, `research-forex` e `alladin`.
 
 - Forex mantém seis filhos: `forex-overview`, `forex-preparation`,
@@ -17,7 +18,7 @@ e Alladin. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
 - Finanças Pessoais mantém Visão Geral, Orçamento Mensal, Dívidas & Crédito,
   Comparativo Mensal e Cenários, pela superfície `window.JPWFin.ui`.
 - Research mantém `research-forex`, `research-stocks-br`,
-  `research-stocks-global`, `research-reits` e `research-others`.
+  `research-stocks-global`, `research-reits`, `research-probability-lab` e `research-others`.
 - Os níveis locais de Operação, Apuração, Planejamento e Research/Forex
   continuam nas superfícies existentes. Calendário, NoCoda e Pivots mantêm
   seus aliases e owner Research/Forex.
@@ -48,7 +49,7 @@ esconde o contexto local do destino atual. Alladin mantém suas abas no conteúd
 ```text
 body > header: marca, menu mobile e ações globais
 #appSidebar: #nav (primários + expansores + #navSubShell), #railToggle
-#gdContextRow: avisos e informações globais existentes
+#gdContextRow: metadados operacionais, ativa somente em Forex
 #appMain:
   #shellPageHeader: #shellLocation + #navLocalSlot
   telas físicas existentes (sem .screen nova ou aninhada)
@@ -295,3 +296,36 @@ compatibilidade e alternância dos mesmos nós entre as duas composições.
 Os gates existentes permanecem inalterados; execução e auditoria são
 registradas no candidate efetivamente testado, sem presumir aprovação pelo
 contrato. Este documento não autoriza commit, integração ou publicação.
+
+
+## Incremento A10–A13 (candidate local)
+
+Contrato [CHG-PRODUCT-IMPROVEMENTS-20260911](../work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).
+Em Aparência e Interface → Editor, Ordem dos módulos permite Subir/Descer,
+Salvar ordem, Cancelar e Restaurar ordem padrão. A chave `jpw_nav_order` contém
+apenas os cinco IDs primários, numa permutação completa. É preferência por
+navegador fora de S, dos schemas financeiros e do envelope de widgets v6.
+Sem valor válido, o default é Dashboard → Research → Forex → Finanças Pessoais
+→ Alladin. Valor inválido permanece armazenado até decisão explícita.
+
+A edição oferece prévia não confirmada; salvar é explícito. Cancelar, sair do
+Editor ou fechar a Central desfaz a prévia conhecida. A restauração altera
+somente o rascunho dessa ordem. Recusa de gravação não anuncia sucesso e mantém
+rascunho recuperável; resultado indeterminado bloqueia novas tentativas durante
+a sessão. As mesmas tabs e expansores são movidos, sem trocar rota ativa,
+página inicial ou identidade de destinos. Dashboard pode ocupar qualquer posição.
+
+`syncForexContext()` deriva visibilidade e inert de `JPWNavigation.current().primary`.
+A faixa não ocupa espaço fora de Forex e reutiliza o renderizador e os valores
+originais. Avisos globais de persistência não são filhos dessa faixa e permanecem.
+Não há nova fonte de métricas, cálculo ou timer por navegação.
+
+Research recebe o filho próprio Laboratório de Probabilidade, visão local
+`probability-lab`. Seu único jogo atual é Galton Board. Os aliases legados
+`galton-board`/`probability-lab` e entradas programáticas de Configurações encaminham
+a Research; não conservam uma folha oculta concorrente. Os demais destinos e
+placeholders de Research permanecem. Matemática/física e preferências do Galton
+não mudam. Na decisão A13-A, sair do Lab ou do módulo pausa e conserva a simulação
+em memória; retornar mantém a pausa até `Continuar`. Sobreposições não descartam
+a instância nem retomam sua execução automaticamente. Reload não recupera o
+experimento transitório; ciclo de vida em [GALTON-BOARD](GALTON-BOARD.md).

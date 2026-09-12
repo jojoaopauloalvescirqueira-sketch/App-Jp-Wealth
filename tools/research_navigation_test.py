@@ -26,6 +26,7 @@ RESEARCH_CHILDREN = [
     ("research-stocks-br", "Ações", "stocks-br"),
     ("research-stocks-global", "Stocks", "stocks-global"),
     ("research-reits", "REITs", "reits"),
+    ("research-probability-lab", "Laboratório de Probabilidade", "probability-lab"),
     ("research-others", "Others", "others"),
 ]
 RESEARCH_FOREX_VIEWS = ["calendar", "nocoda", "pivots"]
@@ -173,7 +174,8 @@ def assert_routes_aliases_and_empty_states(page):
         assert root.locator("input, form, table, canvas, [data-layout-card], .metric").count() == 0
     assert "Brasil" in page.locator("#researchStocksBr").inner_text()
     assert "B3" in page.locator("#researchStocksBr").inner_text()
-    assert page.locator("#research #galtonBoardRoot, #research [data-settings-child='galton-board']").count() == 0
+    assert page.locator("#researchProbabilityLab #galtonBoardRoot").count() == 1
+    assert page.locator("#settingsModal [data-galton-root]").count() == 0
 
 
 def assert_atomic_and_storage(page):
@@ -332,6 +334,80 @@ def assert_calendar_refresh_guidance(page):
     assert page.evaluate('JSON.stringify(S)')==before, 'agenda alterou estado financeiro'
 
 
+
+def assert_lab_relocation(page):
+    # A13: a preferência antiga, inclusive extensões, permanece byte-idêntica.
+    old_pref=json.loads((ROOT/'data/samples/galton-preferences-v1.json').read_text())
+    old_pref['a13SyntheticExtension']={'preserve':True}
+    raw=json.dumps(old_pref,separators=(',',':'))
+    page.evaluate("JPWNavigation.navigate('dashboard')")
+    page.evaluate("raw=>localStorage.setItem('jpwealth_galton_preferences_v1',raw)",raw)
+    before=page.evaluate("JSON.stringify(S)")
+    rows=[]
+    for mode in ['sidebar','topbar']:
+        for width in [1440,390]:
+            order=(['research','alladin','personal-finance','forex','dashboard'] if width==1440
+                   else ['alladin','forex','dashboard','personal-finance','research'])
+            page.evaluate('order=>applyNavOrder(order)',order)
+            page.set_viewport_size({'width':width,'height':900 if width==1440 else 844})
+            page.evaluate("mode=>mountNavigationLayout(mode)",mode)
+            page.evaluate("JPWNavigation.navigate('research-forex')")
+            if width<=900 and mode=='sidebar':
+                page.locator('[data-shell-menu-toggle]').click()
+            target=page.locator('[data-nav-child="research-probability-lab"]')
+            target.focus();target.press('Enter')
+            row=page.evaluate("""() => ({
+              primary:JPWNavigation.current().primary,child:JPWNavigation.current().child,
+              view:JPWResearch.ui.getView(),roots:document.querySelectorAll('[data-galton-root]').length,
+              inResearch:!!document.querySelector('#researchGaltonSlot [data-galton-root]'),
+              inSettings:!!document.querySelector('#settingsModal [data-galton-root]'),
+              active:!!document.querySelector('[data-galton-root]')?.__galtonController?.active,
+              focusInResearch:document.getElementById('research').contains(document.activeElement),
+              title:document.getElementById('shellLocation').textContent,
+              order:[...document.querySelectorAll('#nav > .tab[data-primary]')].map(el=>el.dataset.primary),
+              forexVisible:!!document.getElementById('gdContextRow').getClientRects().length,
+              overflow:document.documentElement.scrollWidth-innerWidth
+            })""")
+            print('A13_MODE_OBSERVATION '+json.dumps({'mode':mode,'width':width,**row},ensure_ascii=False),flush=True)
+            assert row['primary']=='research' and row['child']=='research-probability-lab' and row['view']=='probability-lab',row
+            assert row['roots']==1 and row['inResearch'] and not row['inSettings'] and row['active'] and row['focusInResearch'],row
+            assert 'Laboratório de Probabilidade' in row['title'] and row['overflow']<=1,row
+            assert row['order']==order and not row['forexVisible'],row
+            rows.append({'mode':mode,'width':width,**row})
+            left=page.evaluate("""() => {
+              const c=document.querySelector('[data-galton-root]').__galtonController;
+              JPWNavigation.navigate('dashboard');
+              return {same:document.querySelector('[data-galton-root]').__galtonController===c,
+                active:c.active,destroyed:c.destroyed,manualPaused:c.manualPaused,
+                running:c.snapshot().running,raf:c.raf,observerActive:c.resizeObserverActive};
+            }""")
+            assert left=={'same':True,'active':False,'destroyed':False,'manualPaused':True,
+                          'running':False,'raf':0,'observerActive':False},left
+            assert page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")==raw
+
+    page.set_viewport_size({'width':1440,'height':900})
+    page.evaluate("mountNavigationLayout('sidebar')")
+    for alias in ['probability-lab','galton-board']:
+        assert page.evaluate("id=>JPWNavigation.navigate(id)",alias) is True
+        assert page.evaluate("JPWNavigation.current().child")=='research-probability-lab'
+    # As entradas antigas redirecionam; não deixam um laboratório oculto no modal.
+    for entry in ["activateSettingsCategory('galton-board')", "openSettingsModal('probability-lab')",
+                  "settingsNavigate('galton-board')", "settingsNavigateToLeaf('galton-board')"]:
+        page.evaluate("JPWNavigation.navigate('dashboard');openSettingsModal('general')")
+        assert page.locator('#settingsOverlay').is_visible()
+        page.evaluate(entry)
+        page.evaluate("() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))")
+        assert page.locator('#settingsOverlay').is_hidden(),entry
+        assert page.evaluate("JPWNavigation.current().child")=='research-probability-lab',entry
+        assert page.evaluate("document.getElementById('research').contains(document.activeElement)"),entry
+        assert page.locator('#settingsModal [data-settings-panel="galton-board"], #settingsMenu [data-settings-category="probability-lab"]').count()==0
+    assert page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")==raw
+    assert page.evaluate("JSON.stringify(S)")==before
+    page.evaluate("JPWNavigation.navigate('dashboard')")
+    page.evaluate('applyNavOrder(NAV_ORDER_DEFAULT)')
+    print('A13_RESEARCH_RELOCATION '+json.dumps(rows,ensure_ascii=False),flush=True)
+
+
 def run():
     server, url = serve()
     try:
@@ -347,6 +423,7 @@ def run():
                     assert_registry_and_dom(page)
                     assert_routes_aliases_and_empty_states(page)
                     assert_atomic_and_storage(page)
+                    assert_lab_relocation(page)
                     assert_shell_and_accessibility(page, {"width": 1440, "height": 900}, "light")
                     assert not observed["pageerror"], observed
                     assert not observed["console"], observed

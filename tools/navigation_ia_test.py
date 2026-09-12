@@ -40,6 +40,7 @@ RESEARCH_CHILDREN = [
     ("research-stocks-br", "research", "stocks-br"),
     ("research-stocks-global", "research", "stocks-global"),
     ("research-reits", "research", "reits"),
+    ("research-probability-lab", "research", "probability-lab"),
     ("research-others", "research", "others"),
 ]
 LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
@@ -47,9 +48,9 @@ LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
           "pivots", "params", "config"]
 PRIMARY = [
     ("01", "Dashboard", "dashboard", "dashboard"),
-    ("02", "Forex", "forex-overview", "forex"),
-    ("03", "Finanças Pessoais", "personal-finance", "personal-finance"),
-    ("04", "Research", "research-forex", "research"),
+    ("02", "Research", "research-forex", "research"),
+    ("03", "Forex", "forex-overview", "forex"),
+    ("04", "Finanças Pessoais", "personal-finance", "personal-finance"),
     ("05", "Alladin", "alladin", "alladin"),
 ]
 
@@ -168,7 +169,7 @@ def assert_primary_dom(page):
     assert page.locator("#gdTopbarNavSlot #nav").count() == 0
     assert page.locator("#nav > .tab[aria-expanded]").count() == 0
     assert page.locator("#nav > [data-nav-expand]").evaluate_all(
-        "els => els.map(el=>el.dataset.navExpand)") == ["exec", "finpes", "research"]
+        "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes"]
     assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
     assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 4
     # ALD-05-S1: SUBSTITUICAO DE CONTRATO, nao remocao de cobertura.

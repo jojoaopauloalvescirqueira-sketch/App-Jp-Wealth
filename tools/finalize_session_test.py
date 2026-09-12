@@ -489,8 +489,7 @@ def run_dist_suite(browser, url):
       save();
       markSessionCheckpoint();
     }''')
-    page_b.locator('#headerConfigBtn').click()
-    page_b.evaluate("activateSettingsCategory('galton-board')")
+    page_b.evaluate("JPWNavigation.navigate('research-probability-lab')")
     page_b.wait_for_function("document.querySelector('[data-galton-root]')?.__galtonController?.active")
     galton_before = page_b.evaluate('''() => {
       const controller=document.querySelector('[data-galton-root]').__galtonController;
@@ -552,8 +551,7 @@ def run_galton_reset_order(browser, url):
     simula retorno de storage nem muda o resultado esperado do fluxo existente.
     """
     page = prepare_page(browser, url)
-    page.locator('#headerConfigBtn').click()
-    page.evaluate("activateSettingsCategory('galton-board')")
+    page.evaluate("JPWNavigation.navigate('research-probability-lab')")
     page.wait_for_function("document.querySelector('[data-galton-root]')?.__galtonController?.active")
     before = page.evaluate('''() => {
       const controller=document.querySelector('[data-galton-root]').__galtonController;
