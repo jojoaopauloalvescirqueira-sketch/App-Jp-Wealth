@@ -77,6 +77,13 @@
       <p class="galton-kicker">Probabilidade em movimento</p>
       <p class="settings-lead">Experimento interativo de probabilidade com corpos rígidos reais. Observe como trajetórias individuais imprevisíveis formam padrões agregados.</p>
       <p class="galton-disclaimer">O Galton Board demonstra princípios de probabilidade, agregação e distribuição. Ele não representa diretamente a distribuição dos retornos do mercado Forex.</p>
+      <section class="galton-controls" aria-label="Controles do experimento">
+        <div class="galton-control-group"><span class="galton-control-label">Adicionar à fila</span><div class="galton-button-row">
+          <button type="button" data-galton-add="1">+1</button><button type="button" data-galton-add="10">+10</button><button type="button" data-galton-add="100">+100</button><button type="button" data-galton-add="500">+500</button>
+          <button type="button" class="galton-primary" data-galton-action="execute">Executar <span data-galton-staged>0</span></button>
+        </div></div>
+        <div class="galton-button-row"><button type="button" data-galton-action="pause" aria-pressed="false">Pausar</button><button type="button" data-galton-action="reset">Resetar</button><button type="button" data-galton-action="center">Centralizar</button><button type="button" data-galton-action="restore-defaults">Restaurar padrões</button><button type="button" data-galton-action="new-seed">Nova seed</button><span class="galton-seed">Seed <output data-galton-seed>18473</output></span></div>
+      </section>
       <div class="galton-metrics" aria-label="Estatísticas da simulação">
         <div><span>Amostra <button type="button" class="galton-info" title="Número de bolas já contabilizadas nos compartimentos." aria-label="Amostra: número de bolas já contabilizadas nos compartimentos">i</button></span><strong data-galton-metric="n">0</strong></div>
         <div><span>Média <button type="button" class="galton-info" title="Posição média ponderada dos compartimentos observados." aria-label="Média: posição média ponderada dos compartimentos observados">i</button></span><strong data-galton-metric="mean">—</strong></div>
@@ -92,12 +99,7 @@
       <p id="galtonCanvasDescription" class="sr-only" data-galton-canvas-description>Tabuleiro vazio, sem bolas contabilizadas.</p>
       <div class="galton-status-row"><p data-galton-convergence role="status" aria-live="polite">Tabuleiro vazio. Adicione bolas à fila para iniciar.</p><span data-galton-live class="sr-only" aria-live="polite"></span></div>
       <p class="galton-storage-status is-error" data-galton-integrity role="status" aria-live="polite" hidden></p>
-      <section class="galton-controls" aria-label="Controles do experimento">
-        <div class="galton-control-group"><span class="galton-control-label">Adicionar à fila</span><div class="galton-button-row">
-          <button type="button" data-galton-add="1">+1</button><button type="button" data-galton-add="10">+10</button><button type="button" data-galton-add="100">+100</button><button type="button" data-galton-add="500">+500</button>
-          <button type="button" class="galton-primary" data-galton-action="execute">Executar <span data-galton-staged>0</span></button>
-        </div></div>
-        <div class="galton-button-row"><button type="button" data-galton-action="pause" aria-pressed="false">Pausar</button><button type="button" data-galton-action="reset">Resetar</button><button type="button" data-galton-action="center">Centralizar</button><button type="button" data-galton-action="restore-defaults">Restaurar padrões</button><button type="button" data-galton-action="new-seed">Nova seed</button><span class="galton-seed">Seed <output data-galton-seed>18473</output></span></div>
+      <section class="galton-adjustments" aria-label="Ajustes do experimento">
         <div class="galton-control-grid">
           <fieldset class="galton-speed"><legend>Velocidade</legend><div class="galton-segmented">${SPEEDS.map(speed=>`<button type="button" data-galton-speed="${speed}" aria-pressed="${speed===1?'true':'false'}">${speed}x</button>`).join('')}</div></fieldset>
           <label>Ponto de lançamento <output data-galton-output="releasePoint">centro</output><input type="range" min="-1" max="1" step="0.05" value="0" data-galton-pref="releasePoint" aria-label="Ponto de lançamento"></label>

@@ -104,7 +104,7 @@
       "order": 17,
       "path": "src/js/20-ui/07-chart-crosshair-tooltip.js",
       "section": "GRÁFICOS · CROSSHAIR + TOOLTIP",
-      "sha256": "36ec51dbecf5edd149340c9c2e4f250d97202b7af627a581d53a54658aa0edc5"
+      "sha256": "0fe0b97221c25b57799ffb4f1dfc80537c638e151053ae493edff9269f8ea6c4"
     },
     {
       "order": 18,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "efe62450e5c49f8c73eb81aebfec8d47dc4e976d537b8571120acab14cc94661"
+      "sha256": "bb515ab37927b23faa6b7e338dae096c513c93522f2641e8702d9c52c6157a73"
     },
     {
       "order": 39,
@@ -320,7 +320,7 @@
       "order": 53,
       "path": "src/js/40-app/18-galton-board/06-controller.js",
       "section": "GALTON BOARD · UI, LIFECYCLE E PREFERENCIAS ISOLADAS",
-      "sha256": "e62a00ba3e62ff025ea80e2598da7b34d8a9509539c09a76b78dd8a3483b8de6"
+      "sha256": "dc157413ce39cf950ffc97c654f380e42678dddde414c838c1b49aa02ca48fdc"
     },
     {
       "order": 54,
@@ -434,7 +434,7 @@
       "order": 72,
       "path": "src/js/20-ui/20-finpes-comparison.js",
       "section": "FINANCAS PESSOAIS · Comparativo Mensal (PF-04): renderizador read-only",
-      "sha256": "ec7498ce97e097125e23a314c34b635042fdec0e60ba4bfee5da5dacf861bd56"
+      "sha256": "25c4da65de9b7f52cce67b9dc88effe14849d2405f59f2dbc06bb87a68870ecf"
     },
     {
       "order": 73,
@@ -461,13 +461,13 @@
       "order": 77,
       "path": "src/js/20-ui/24-alladin-views.js",
       "section": "ALLADIN · superficie cadastral e manutencao (C3-S1 + C3-S2)",
-      "sha256": "75c7ed72b542ef47e8b398c086957ca9cf2b52e26ca214823874ae1405944cc6"
+      "sha256": "f81b1ffcfdea2b01174d762240a92e1e164832edd4e9554521a0d1ced437a065"
     },
     {
       "order": 78,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "294a052b592c9310c308d8f9d3cad0c488322f8b4a809da9ce86cd0ac3947076"
+      "sha256": "38e35c495a2544fd9f467bc14d7c284d21146974f503e07311d58df382a39858"
     }
   ]
 }

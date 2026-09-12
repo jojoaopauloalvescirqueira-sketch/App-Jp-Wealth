@@ -231,3 +231,25 @@ a mesma simulação fica pausada em memória; voltar exige **Continuar**. Recarr
 não recupera a simulação, somente as preferências persistidas. Contrato e limites em
 [CHG-PRODUCT-IMPROVEMENTS-20260911](docs/work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).
 Essas mudanças são candidate local, sem aceite humano nem integração nesta etapa.
+
+### Candidate local DESIGN & EXPERIENCE 01
+
+O Comparativo Mensal de Finanças Pessoais apresenta uma curva de 12 meses,
+seletores de métrica/mês e leitura textual, preservando a tabela completa.
+Meses não registrados ou incompletos permanecem lacunas; zero declarado e
+valores negativos permanecem fatos. Alladin permite buscar Lançamentos após
+validar o ledger integral, com contagem de resultados e sem mudar a ordem ou
+a elegibilidade de estorno. As curvas ligadas ao inspetor do Forex oferecem
+seletor de observação, setas no gráfico e toque; cada série informa a data
+do ponto consultado, distinguindo expectativa de realizado.
+
+Os acessos dos cards do Dashboard ficam junto aos títulos. Em Forex > Visão
+Geral, a prontidão aparece antes das ferramentas de preparação. A busca de
+Configurações dispõe de espaço responsivo e, ao abrir um resultado, conserva
+a consulta e leva o foco ao conteúdo. No Lab, os comandos principais precedem
+o Canvas; os ajustes permanecem abaixo. Essas mudanças de apresentação
+preservam A10–A13, incluindo a cópia parcial A12 e a pausa em memória A13.
+Não acrescentam métricas financeiras, persistência de domínio ou 3D e não
+homologam o motor V11. O estado é candidate local, sem declarar aceite humano,
+integração ou publicação; escopo e gates em
+[CHG-DESIGN-EXPERIENCE-01-20260912](docs/work/CHG-DESIGN-EXPERIENCE-01-20260912.md).

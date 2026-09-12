@@ -337,9 +337,10 @@
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
       <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
-      <div class="card">
-        <h2 id="execOverviewTitle">Visão Geral</h2>
-        <p class="expl">Profundidade operacional do domínio Forex. O Dashboard resume; aqui está o detalhe.</p>
+      <h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2>
+      <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
+      <div class="card fx-overview-tools">
+        <h3>Ferramentas de preparação</h3>
         <!-- Os três atalhos operacionais que viviam em "Ações Rápidas" do
              Dashboard. Mesmos destinos, mesmos data-dash-go — a delegação global
              de 10-dashboard-immersive.js:137 continua atendendo-os. -->
@@ -349,7 +350,6 @@
           <button type="button" data-dash-go="params">Parâmetros <span aria-hidden="true">›</span></button>
         </nav>
       </div>
-      <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
     <div class="gd-analysis-grid" data-dash-section="evolucao">
       <section class="card gd-analysis-card" id="dashChartPanel">
         <h2>Evolução do período <span class="art">expectativa vs real · derivado do fechamento diário</span></h2>
