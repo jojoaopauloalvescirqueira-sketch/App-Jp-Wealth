@@ -275,3 +275,24 @@ DD/fase, alavancagem, Lucro Técnico e clearance normativos permanecem
 NEEDS_HUMAN_RULE diante das divergências legadas e de OPEN-05; não são
 reinterpretados nem homologados por essa exportação. Copiar não chama save,
 finalização, render de grades com cura, nem qualquer ação financeira.
+
+## Projeções DESIGN & EXPERIENCE 01
+
+Este recorte descreve o candidate local da campanha de apresentação, sem
+declarar aceite humano, integração ou publicação. Fontes e responsabilidades:
+
+| Fonte | Apresentação e fronteira preservada |
+|---|---|
+| `src/js/20-ui/20-finpes-comparison.js` | Curva de 12 meses, métrica/mês efêmeros e tabela completa compartilham uma leitura de `pfCompSeries`; lacunas, zeros e unidade monetária seguem o contrato PF. |
+| `src/js/20-ui/25-dash-macro.js` | Acesso de cada card junto ao título, com os mesmos destinos e read-models. |
+| `index.html` | `fxOverviewWidgets` precede as ferramentas de preparação em Forex > Visão Geral; IDs e ações existentes são mantidos. |
+| `src/js/40-app/09-settings-modal.js` e `src/styles/app.css` | Busca responsiva; abrir resultado conserva a consulta, retira a lista de resultados e foca o conteúdo. A revelação respeita reduced-motion. |
+| `src/js/20-ui/24-alladin-views.js` | Busca efêmera oculta linhas somente após o envelope integral e as relações de estorno; preserva ordem, datas, valores e distinção entre busca sem resultados, vazio e indisponibilidade. |
+| `src/js/20-ui/07-chart-crosshair-tooltip.js` | `bindChartCrosshair()` acrescenta seletor nativo, setas/Home/End e toque com leitura textual; cada série usa a data do seu ponto mais próximo, sem alterar os dados fornecidos. |
+| `src/js/40-app/18-galton-board/06-controller.js` | Comandos principais antes do Canvas e ajustes depois; mesmos IDs, ações, física 2D e ciclo de pausa em memória A13. |
+
+Os focais da campanha estão em `tools/design_pf_comparison_test.py` e
+`tools/design_experience_test.py`; a presença dos arquivos não declara resultado
+de execução. Escopo e gates permanecem em
+`docs/work/CHG-DESIGN-EXPERIENCE-01-20260912.md`. Não há nova métrica financeira,
+schema, autoridade de escrita ou alteração da cópia parcial A12.

@@ -238,6 +238,8 @@ function alladinDataCelula(tx){
   return esc(alladinTexto(tx.effectiveAt))+
     '<br><span class="alladin-sub">registrado em '+esc(alladinTexto(tx.recordedAt))+'</span>';
 }
+// Busca somente de apresentação; permanece em memória e não entra em S/backup.
+let alladinLedgerQuery='';
 function alladinRenderLedger(el){
   const cab='<h2>Lançamentos</h2>';
   const ledger=JPWAlladin.leitura.ledger();
@@ -265,7 +267,10 @@ function alladinRenderLedger(el){
   const revertidos=new Set();
   lista.forEach(tx=>{ if(tx.eventType==='REVERSAL'&&tx.reversalOf) revertidos.add(tx.reversalOf); });
   const bloqueado=!!alladinWriteBloqueado();
-  el.innerHTML=cab+cta+alladinTabela(
+  const busca='<label class="alladin-ledger-search" for="alladinLedgerSearch">Buscar lançamentos'+
+    '<input id="alladinLedgerSearch" type="search" autocomplete="off" placeholder="Data, evento, conta ou detalhe" value="'+esc(alladinLedgerQuery)+'"></label>'+
+    '<p class="alladin-ledger-filter-status" role="status" aria-live="polite"></p>';
+  el.innerHTML=cab+cta+busca+alladinTabela(
     ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status','Ações'],
     lista.map(tx=>[
       alladinDataCelula(tx),
@@ -276,6 +281,27 @@ function alladinRenderLedger(el){
       esc(alladinStatus(tx.status,ALLADIN_TX_STATUS_LABEL)),
       alladinTxReverseAcao(tx,revertidos,bloqueado)
     ]));
+  // O envelope, a ordem e TODAS as relações de estorno já foram resolvidos.
+  // Ocultar uma linha não pode tornar seu original elegível nem esconder
+  // corrupção do agregado: nenhuma transação é filtrada antes da validação.
+  const input=el.querySelector('#alladinLedgerSearch');
+  const linhas=[...el.querySelectorAll('table tr')].filter(row=>row.querySelector('td'));
+  const texto=value=>String(value).replace(/\s+/g,' ').trim().toLocaleLowerCase('pt-BR');
+  const filtraveis=linhas.map(row=>({row,text:texto([...row.cells].slice(0,-1).map(cell=>cell.textContent).join(' '))}));
+  const aplicarBusca=()=>{
+    alladinLedgerQuery=input.value;
+    const query=texto(alladinLedgerQuery);
+    let exibidas=0;
+    filtraveis.forEach(item=>{
+      item.row.hidden=Boolean(query&&!item.text.includes(query));
+      if(!item.row.hidden) exibidas++;
+    });
+    el.querySelector('.alladin-ledger-filter-status').textContent=exibidas
+      ? `${exibidas} de ${linhas.length} lançamentos exibidos.`
+      : `Nenhum lançamento corresponde à busca. ${linhas.length} registros preservados; limpe a busca para exibir todos.`;
+  };
+  input.addEventListener('input',aplicarBusca);
+  aplicarBusca();
 }
 function alladinRenderBalances(el){
   const cab='<h2>Saldos</h2>';

@@ -95,6 +95,26 @@ utilização, rótulo ATIVA/QUITADA, relevância de dívida, patrimônio.
 - **Cenários não alteram meses reais.** `baselineFrom` copia deliberadamente;
   a escrita é unidirecional.
 
+## Comparativo Mensal — apresentação D1
+
+O candidate local DESIGN & EXPERIENCE 01 apresenta a evolução antes das
+comparações M−1/M−12 e da tabela completa de 12 meses. Uma chamada a
+`pfCompSeries(key, 12)` por render abastece curva, seletor de mês e tabela.
+O seletor de métrica oferece receita recebida, despesa executada (default),
+sobra realizada, dívida observada e comprometimento. Métrica e mês em foco
+são efêmeros: consultar e navegar não gravam `S`, storage ou backup nem
+materializam competências.
+
+A curva inclui apenas métricas `COMPLETE` com valor finito, mantendo zero
+declarado e valores negativos. Meses virtuais, `PARTIAL`, `UNAVAILABLE` ou
+status desconhecido interrompem a linha; a leitura textual explicita a
+indisponibilidade. Valores monetários usam `formatBRLCents`; comprometimento
+usa percentual, com unidade visível. Unidade monetária desconhecida mantém
+o bloqueio dos comparativos. A tabela conserva valores parciais identificados,
+coberturas e os cinco indicadores, em HTML semântico com rolagem horizontal
+local e região focalizável. Os seletores nativos e os botões de navegação
+recuperam o foco após render. Não há nova fórmula financeira ou API pública.
+
 ## Persistência e sobrevivência
 
 - Guarda estrutural de boot: `personalFinanceNormalizeState()`

@@ -62,9 +62,9 @@ function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
-    + '<header class="dm-card-head"><div><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div><span class="dm-index" aria-hidden="true">'+meta[0]+'</span></header>'
+    + '<header class="dm-card-head"><div><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
+    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
-    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button>'
     + '</article>';
 }
 // Falha de leitura de um domínio não pode derrubar os outros três nem ser

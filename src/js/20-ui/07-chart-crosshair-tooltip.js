@@ -5,6 +5,7 @@
 //          series:[{name,color,pts:[{x,y}],fmt(y)->string}]}
 function bindChartCrosshair(svg, cfg){
   if(!svg || !svg.parentNode) return;
+  if(typeof svg.__jpwChartCleanup==='function') svg.__jpwChartCleanup();
   const host=svg.parentNode;
   if(getComputedStyle(host).position==='static') host.style.position='relative';
 
@@ -29,17 +30,44 @@ function bindChartCrosshair(svg, cfg){
   tip.className='chart-tip'; tip.style.display='none';
   host.appendChild(tip);
 
+  // Datas já presentes nas séries, sem interpolar um novo fato econômico.
+  const observations=[...new Set(cfg.series.flatMap(s=>(s.pts||[]).map(p=>p.x)).filter(Number.isFinite))].sort((a,b)=>a-b);
+  const inspector=document.createElement('div'); inspector.className='chart-inspector';
+  const label=document.createElement('label'); label.textContent='Observação do gráfico';
+  const select=document.createElement('select'); select.setAttribute('aria-label','Observação do gráfico');
+  observations.forEach(x=>{const option=document.createElement('option');option.value=String(x);option.textContent=cfg.xLabel(x);select.appendChild(option);});
+  select.disabled=!observations.length;
+  label.appendChild(select);inspector.appendChild(label);
+  const help=document.createElement('p');help.className='chart-inspector-help';
+  help.textContent='Selecione uma observação, use as setas no gráfico ou toque na curva. Cada série informa a data do seu ponto mais próximo; projeção não é fechamento realizado.';
+  inspector.appendChild(help);
+  const reading=document.createElement('p');reading.className='chart-reading';reading.setAttribute('role','status');reading.setAttribute('aria-live','polite');
+  inspector.appendChild(reading);host.appendChild(inspector);
+  svg.dataset.chartBound='true';
+  svg.setAttribute('tabindex','0');
+  svg.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight Home End');
+  if(!svg.hasAttribute('aria-label')) svg.setAttribute('aria-label','Gráfico: '+cfg.series.map(s=>s.name).join(' e ')+'. Use as setas para inspecionar observações.');
+
   const near=(pts,xv)=>{
     if(!pts||!pts.length) return null;
     let best=pts[0], bd=Math.abs(pts[0].x-xv);
     for(let i=1;i<pts.length;i++){ const d=Math.abs(pts[i].x-xv); if(d<bd){bd=d;best=pts[i];} }
     return best;
   };
-  const move=e=>{
+  const describe=xv=>{
+    const lines=cfg.series.map(s=>{
+      const p=near(s.pts,xv);
+      return p ? `${s.name} · ${cfg.xLabel(p.x)}: ${s.fmt(p.y)}` : `${s.name}: sem observações disponíveis.`;
+    });
+    reading.textContent=lines.join('\n')||'Sem observações disponíveis.';
+  };
+  const show=xv=>{
     const r=svg.getBoundingClientRect(); if(!r.width) return;
-    const vx=(e.clientX-r.left)/r.width*cfg.W;
-    if(vx<cfg.L || vx>cfg.W-cfg.R){ leave(); return; }
-    const xv=(vx-cfg.L)/(cfg.W-cfg.L-cfg.R)*cfg.span;
+    const vx=cfg.L+(xv/cfg.span)*(cfg.W-cfg.L-cfg.R);
+    let selected=0;
+    observations.forEach((x,i)=>{if(Math.abs(x-xv)<Math.abs(observations[selected]-xv)) selected=i;});
+    if(observations.length) select.selectedIndex=selected;
+    describe(xv);
     g.style.display=''; tip.style.display='block';
     vline.setAttribute('x1',vx.toFixed(1)); vline.setAttribute('x2',vx.toFixed(1));
     let rows='';
@@ -49,7 +77,7 @@ function bindChartCrosshair(svg, cfg){
       dots[i].style.display='';
       dots[i].setAttribute('cx',(cfg.L+(p.x/cfg.span)*(cfg.W-cfg.L-cfg.R)).toFixed(1));
       dots[i].setAttribute('cy',s.yPx(p.y).toFixed(1));
-      rows+=`<div class="r"><i style="background:${s.color}"></i><span>${esc(s.name)}</span><b>${esc(s.fmt(p.y))}</b></div>`;
+      rows+=`<div class="r"><i style="background:${s.color}"></i><span>${esc(s.name)} · ${esc(cfg.xLabel(p.x))}</span><b>${esc(s.fmt(p.y))}</b></div>`;
     });
     tip.innerHTML=`<div class="h">${esc(cfg.xLabel(xv))}</div>${rows}`;
     // mantém o tooltip dentro do host
@@ -57,8 +85,35 @@ function bindChartCrosshair(svg, cfg){
     tip.style.left=Math.max(half+2, Math.min(r.width-half-2, px))+'px';
   };
   const leave=()=>{ g.style.display='none'; tip.style.display='none'; };
+  const move=e=>{
+    const r=svg.getBoundingClientRect(); if(!r.width) return;
+    const vx=(e.clientX-r.left)/r.width*cfg.W;
+    if(vx<cfg.L || vx>cfg.W-cfg.R){leave();return;}
+    show((vx-cfg.L)/(cfg.W-cfg.L-cfg.R)*cfg.span);
+  };
+  const change=()=>{if(observations.length) show(Number(select.value));};
+  const key=e=>{
+    if(!observations.length||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+    e.preventDefault();
+    const current=Math.max(0,select.selectedIndex);
+    const index=e.key==='Home'?0:e.key==='End'?observations.length-1:Math.max(0,Math.min(observations.length-1,current+(e.key==='ArrowRight'?1:-1)));
+    show(observations[index]);
+  };
+  const pointer=e=>{if(e.pointerType==='touch'||e.pointerType==='pen') move(e);};
   svg.addEventListener('mousemove',move);
   svg.addEventListener('mouseleave',leave);
+  svg.addEventListener('keydown',key);
+  svg.addEventListener('focus',change);
+  svg.addEventListener('pointerup',pointer);
+  select.addEventListener('change',change);
+  describe(observations.length?observations[0]:0);
+  svg.__jpwChartCleanup=()=>{
+    svg.removeEventListener('mousemove',move);svg.removeEventListener('mouseleave',leave);
+    svg.removeEventListener('keydown',key);svg.removeEventListener('focus',change);svg.removeEventListener('pointerup',pointer);
+    select.removeEventListener('change',change);g.remove();tip.remove();inspector.remove();
+    delete svg.dataset.chartBound;
+    delete svg.__jpwChartCleanup;
+  };
 }
 
 function renderDashCharts(){

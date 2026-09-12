@@ -738,6 +738,22 @@ responsável pela decisão final.
 > Esta atualização encerra aquele acoplamento no candidate local; não declara
 > aceite humano, integração, publicação nem patrimônio consolidado.
 
+### Consulta de Lançamentos — apresentação D3
+
+O candidate local DESIGN & EXPERIENCE 01 acrescenta busca textual efêmera
+em Lançamentos. `alladinRenderLedger()` consulta o envelope integral de
+`leitura.ledger()` e resolve as relações de estorno sobre toda a lista antes
+de ocultar linhas no DOM. A busca compara o texto das colunas, exceto Ações,
+sem reordenar transações, alterar valores ou tornar um original já estornado
+elegível por ocultar seu estorno. `effectiveAt` e `recordedAt` continuam
+visíveis nas linhas exibidas; a autoridade final segue no domínio.
+
+A contagem informa quantos lançamentos estão exibidos. Uma busca sem
+correspondências tem aviso próprio, distinto de ledger legitimamente vazio
+e de `BLOCKING`. Sob indisponibilidade, continuam ausentes tabela e convite de
+escrita. O texto da busca fica somente em memória, fora de `S`, storage e backup;
+não altera os read-models de saldos ou posições nem o fluxo de rascunho/estorno.
+
 ### Histórico — sentinela de integridade dos Lançamentos (MD-2/A)
 
 `leitura.transactions()` **não tem envelope de qualidade**: `aldVistaCadastral`

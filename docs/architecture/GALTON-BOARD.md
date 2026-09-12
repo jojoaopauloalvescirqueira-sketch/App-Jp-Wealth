@@ -271,6 +271,14 @@ semantico. Todo comando e alcançavel por teclado, tem nome acessivel, foco visi
 estado de pausa/execucao anunciado. O detalhe oferecido por hover tambem e apresentado
 por foco e em uma regiao textual. Cor nunca e o unico portador de informacao.
 
+No candidate local DESIGN & EXPERIENCE 01, adicionar bolas, Executar,
+Pausar/Continuar e os demais comandos principais aparecem antes das estatisticas
+e do Canvas. Velocidade, ponto de lancamento e parametros permanecem depois do
+Canvas, na secao de ajustes. A reorganizacao conserva IDs e acoes, a simulacao
+2D e o ciclo A13: sair ou cobrir o Lab pausa a mesma instancia em memoria;
+voltar exige Continuar. Nao acrescenta persistencia da simulacao nem altera
+reset, finalizacao, fisica ou estatisticas.
+
 `prefers-reduced-motion: reduce` reduz interpolacoes e animacoes decorativas sem
 alterar a simulacao ou seus resultados. O layout privilegia desktop, mas a superfície e os
 controles permanecem contidos e rolaveis em viewport movel. Os temas claro e escuro

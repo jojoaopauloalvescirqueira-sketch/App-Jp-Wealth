@@ -148,7 +148,7 @@ function buildSettingsContent(){
   createSettingsPanel('general',generalPanel());
   SETTINGS_GROUPS.filter(g=>g.children).forEach(g=>createSettingsPanel(g.id,groupPanel(g)));
   createSettingsPanel('about',aboutPanel());
-  createSettingsPanel('appearance','<p class="settings-lead">Estética e identidade visual. O tema atual continua usando a persistência já existente em <code>S.theme</code>.</p><div data-settings-slot="appearance"></div>');
+  createSettingsPanel('appearance','<p class="settings-lead">Escolha o tema e a aparência de leitura para este navegador.</p><div data-settings-slot="appearance"></div>');
   createSettingsPanel('interface','<p class="settings-lead">Organização, legibilidade e ajuda contextual. Preferências existentes são preservadas.</p><div class="settings-rail-row"><div><h4>Barra lateral</h4><p class="note">Escolha se a barra de navegação permanece expandida ou recolhida neste navegador.</p></div><div id="settingsRailSlot"></div></div><div data-settings-slot="interface"></div>');
   createSettingsPanel('editor','<p class="settings-lead">Preferências de edição e de apresentação da interface neste navegador.</p><div data-settings-slot="editor"></div>');
   createSettingsPanel('educational',educationPanel());
@@ -357,11 +357,17 @@ function renderSettingsSearch(){
   const entries=settingsSearchEntries().map(item=>({...item,path:settingsResultPath(item.category)}));
   const results=settingsSelectSearchResults(entries,query);
   root.innerHTML=results.length?results.map((item,i)=>`<button type="button" data-settings-result="${i}"><b>${settingsEsc(item.title)}</b><span>${settingsEsc(item.path)}</span></button>`).join(''):'<p class="settings-no-results">Nenhuma configuração ou ajuda encontrada.</p>';
-  root.querySelectorAll('[data-settings-result]').forEach((button,i)=>button.addEventListener('click',()=>{ const item=results[i]; settingsNavigateToLeaf(item.category,{focus:false,reveal:item.selector}); }));
+  root.querySelectorAll('[data-settings-result]').forEach((button,i)=>button.addEventListener('click',()=>{
+    const item=results[i];
+    settingsNavigateToLeaf(item.category,{focus:false,reveal:item.selector});
+    root.replaceChildren();
+    // A folha já está visível, inclusive no celular; a busca conserva o texto.
+    if(settingsState.open&&!settingsState.suspended) settingsEl('settingsContent').focus({preventScroll:true});
+  }));
 }
 function settingsRevealElement(selector){
   if(!selector) return;
-  requestAnimationFrame(()=>{ const target=document.querySelector(selector); if(!target) return; target.scrollIntoView({block:'center',behavior:'smooth'}); target.classList.add('settings-search-hit'); clearTimeout(settingsState.highlightTimer); settingsState.highlightTimer=setTimeout(()=>target.classList.remove('settings-search-hit'),2200); if(target.matches('details')) target.open=true; });
+  requestAnimationFrame(()=>{ const target=document.querySelector(selector); if(!target) return; target.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); target.classList.add('settings-search-hit'); clearTimeout(settingsState.highlightTimer); settingsState.highlightTimer=setTimeout(()=>target.classList.remove('settings-search-hit'),2200); if(target.matches('details')) target.open=true; });
 }
 
 // A-003: os seletores antigos .topbar e #main não existem no DOM (os elementos reais são

@@ -1,3 +1,30 @@
+# Retomada — DESIGN & EXPERIENCE 01
+
+Candidate local na raiz `/Users/joaopauloalves/.codex/design-campaigns/20260912/product`, branch `codex/design-experience-01`.
+HEAD/base `689e8a8f6cc09db9109b52d505c4dcb66fc16be3` identifica a base Git,
+não o pacote não commitado. Ler [CHG/brief](docs/work/CHG-DESIGN-EXPERIENCE-01-20260912.md).
+
+Quatro lotes implementados: evolução PF com tabela canônica; ações Dashboard e
+prontidão Forex; busca e leitura acessível Alladin/curvas/Configurações; comandos
+do Lab antes do Canvas. Piloto D1 revisado antes da propagação. Fontes financeiras,
+persistência e A10–A13 preservados; A12 parcial e A13 pausado em memória.
+
+Identidade do pacote e resultados: [candidate-final.json](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/candidate-final.json),
+[REPORT.md](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/REPORT.md), [auditoria](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/audit-final.md) e
+[recuperação](/Users/joaopauloalves/.codex/design-campaigns/20260912/evidence/RECOVERY.md). Esses registros externos vinculam os hashes
+congelados às execuções, inclusive falhas anteriores e limitações; não inferir
+PASS apenas pela existência de uma referência. Build oficial `52a1c11fcb3939d7`.
+A etapa seguinte é conferência e aceite humanos, ainda não concedidos.
+Sem staging, commit, push, PR, merge ou deploy nesta campanha.
+
+Main, stash e outras worktrees permanecem separados. OPEN-05/V11/FCR/FEO,
+AUD-05/P2 e demais dívidas não são encerrados. Não sincronizar ou iniciar
+outra campanha a partir do histórico abaixo.
+
+---
+
+## Histórico preservado — sem autoridade para esta campanha
+
 # Retomada — estabilização local 20260911
 
 Leia [CURRENT-STATE](docs/governance/CURRENT-STATE.md), [ACTIVE-TASK](docs/work/ACTIVE-TASK.md)
