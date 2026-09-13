@@ -32,6 +32,20 @@ const ALLADIN_EMPTY={
   balances:'Nenhuma conta de caixa cadastrada.',
   positions:'Nenhuma posição em aberto.'
 };
+// Contexto de apresentação por objeto; não infere estado econômico ou qualidade.
+const ALLADIN_VIEW_CONTEXT={
+  instruments:['Instrumentos','Cadastro','Identidade, símbolo e moeda dos instrumentos. Esta coleção reúne somente registros cadastrais.','Use Novo instrumento para cadastrar uma identidade financeira.'],
+  assets:['Bens','Cadastro','Identidade e finalidade dos bens. Esta coleção reúne somente registros cadastrais.','Use Novo bem para registrar a identidade e a finalidade do bem.'],
+  accounts:['Contas','Cadastro','Instituições e contas que organizam seus registros. Esta coleção reúne somente identidades cadastrais.','Cadastre uma conta para organizar seus registros por instituição.'],
+  cashAccounts:['Caixa','Cadastro','Identidade das contas de caixa por moeda, vinculadas à conta-mãe.','Cadastre uma conta de caixa vinculada à conta-mãe, com sua moeda.'],
+  ledger:['Lançamentos','Fatos registrados','Eventos econômicos em ordem de efetivação. Uma correção é um estorno; o histórico original permanece.','O primeiro lançamento registra um fato econômico. Cadastros, por si só, não geram lançamentos.'],
+  balances:['Saldos','Leitura de caixa','Saldo derivado dos lançamentos de cada caixa, em sua própria moeda. Não é patrimônio consolidado.','Sem contas de caixa cadastradas, não há saldo a apresentar. Consulte o cadastro Caixa.'],
+  positions:['Posições','Leitura de quantidade','Quantidade por instrumento e conta. Não representa preço, valor de mercado ou rentabilidade.','As posições são derivadas dos lançamentos. Quantidade não equivale a valor de mercado.']
+};
+function alladinHeading(view,actionHTML=''){
+  const context=ALLADIN_VIEW_CONTEXT[view];
+  return '<header class="cp-object-toolbar cp-alladin-heading"><div><span class="cp-eyebrow">'+esc(context[1])+'</span><h2>'+esc(context[0])+'</h2><p class="cp-object-context">'+esc(context[2])+'</p></div>'+actionHTML+'</header>';
+}
 // Rótulos de status legíveis; valor fora do vocabulário deste build (schema
 // futuro) é exibido como veio — projetar não é normalizar.
 const ALLADIN_STATUS_LABEL={ACTIVE:'Ativo',INACTIVE:'Inativo'};
@@ -52,15 +66,15 @@ function alladinTexto(v){
   return (v===undefined||v===null||v==='') ? '—' : String(v);
 }
 function alladinTabela(colunas,linhas){
-  const head='<tr>'+colunas.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>';
-  const corpo=linhas.map(cels=>'<tr>'+cels.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
-  return '<div class="jp-table-scroll"><table class="dtable">'+head+corpo+'</table></div>';
+  const head='<tr>'+colunas.map(c=>'<th scope="col">'+esc(c)+'</th>').join('')+'</tr>';
+  const corpo=linhas.map(cels=>'<tr>'+cels.map((c,i)=>'<td data-cp-label="'+esc(colunas[i])+'">'+c+'</td>').join('')+'</tr>').join('');
+  return '<div class="jp-table-scroll cp-collection-table"><table class="dtable"><thead>'+head+'</thead><tbody>'+corpo+'</tbody></table></div>';
 }
 function alladinVazio(view){
   // NÃO usar class="expl": essa classe pertence ao sistema global de Explicações,
   // que a colapsa atrás do botão "i". Empty state é informação primária e fica
   // sempre visível.
-  return '<p class="alladin-empty">'+esc(ALLADIN_EMPTY[view])+'</p>';
+  return '<div class="cp-collection-empty"><p class="alladin-empty">'+esc(ALLADIN_EMPTY[view])+'</p><p class="cp-empty-next">'+esc(ALLADIN_VIEW_CONTEXT[view][3])+'</p></div>';
 }
 // Apresentação congelada no gate (teto = read-model; tabela = colunas abaixo):
 //   Instrumentos  Nome | Símbolo | Família/Classe | Moeda | Status
@@ -69,8 +83,8 @@ function alladinVazio(view){
 //   Caixa         Moeda | Conta-mãe | Status
 function alladinRenderInstruments(el){
   const lista=JPWAlladin.leitura.instruments();
-  if(!lista.length){ el.innerHTML='<h2>Instrumentos</h2>'+alladinBotaoNovo('instruments')+alladinVazio('instruments'); return; }
-  el.innerHTML='<h2>Instrumentos</h2>'+alladinBotaoNovo('instruments')+alladinTabela(
+  if(!lista.length){ el.innerHTML=alladinHeading('instruments',alladinBotaoNovo('instruments'))+alladinVazio('instruments'); return; }
+  el.innerHTML=alladinHeading('instruments',alladinBotaoNovo('instruments'))+alladinTabela(
     ['Nome','Símbolo','Família / Classe','Moeda','Status','Ações'],
     lista.map(r=>[
       esc(alladinTexto(r.name)),
@@ -83,8 +97,8 @@ function alladinRenderInstruments(el){
 }
 function alladinRenderAssets(el){
   const lista=JPWAlladin.leitura.assets();
-  if(!lista.length){ el.innerHTML='<h2>Bens</h2>'+alladinBotaoNovo('assets')+alladinVazio('assets'); return; }
-  el.innerHTML='<h2>Bens</h2>'+alladinBotaoNovo('assets')+alladinTabela(
+  if(!lista.length){ el.innerHTML=alladinHeading('assets',alladinBotaoNovo('assets'))+alladinVazio('assets'); return; }
+  el.innerHTML=alladinHeading('assets',alladinBotaoNovo('assets'))+alladinTabela(
     ['Nome','Natureza / Categoria','Finalidade','Status','Ações'],
     lista.map(r=>[
       esc(alladinTexto(r.name)),
@@ -98,8 +112,8 @@ function alladinRenderAssets(el){
 }
 function alladinRenderAccounts(el){
   const lista=JPWAlladin.leitura.accounts();
-  if(!lista.length){ el.innerHTML='<h2>Contas</h2>'+alladinBotaoNovo('accounts')+alladinVazio('accounts'); return; }
-  el.innerHTML='<h2>Contas</h2>'+alladinBotaoNovo('accounts')+alladinTabela(
+  if(!lista.length){ el.innerHTML=alladinHeading('accounts',alladinBotaoNovo('accounts'))+alladinVazio('accounts'); return; }
+  el.innerHTML=alladinHeading('accounts',alladinBotaoNovo('accounts'))+alladinTabela(
     ['Nome','Instituição','Tipo','Status','Ações'],
     lista.map(r=>[
       esc(alladinTexto(r.name)),
@@ -111,13 +125,12 @@ function alladinRenderAccounts(el){
 }
 function alladinRenderCash(el){
   const lista=JPWAlladin.leitura.cashAccounts();
-  if(!lista.length){ el.innerHTML='<h2>Caixa</h2>'+alladinBotaoNovo('cashAccounts')+alladinVazio('cashAccounts'); return; }
+  if(!lista.length){ el.innerHTML=alladinHeading('cashAccounts',alladinBotaoNovo('cashAccounts'))+alladinVazio('cashAccounts'); return; }
   // Conta-mãe resolvida DENTRO do snapshot de leitura — nunca no agregado vivo.
   const contas={};
   JPWAlladin.leitura.accounts().forEach(a=>{ if(a.accountId) contas[a.accountId]=a.name; });
-  el.innerHTML='<h2>Caixa</h2>'+
+  el.innerHTML=alladinHeading('cashAccounts',alladinBotaoNovo('cashAccounts'))+
     '<p class="expl">Cadastro das contas de caixa por moeda — dinheiro disponível não pertence a este ciclo.</p>'+
-    alladinBotaoNovo('cashAccounts')+
     alladinTabela(
     ['Moeda','Conta-mãe','Status','Ações'],
     lista.map(r=>[
@@ -241,7 +254,7 @@ function alladinDataCelula(tx){
 // Busca somente de apresentação; permanece em memória e não entra em S/backup.
 let alladinLedgerQuery='';
 function alladinRenderLedger(el){
-  const cab='<h2>Lançamentos</h2>';
+  const cab=alladinHeading('ledger');
   const ledger=JPWAlladin.leitura.ledger();
   if(!ledger.available){
     // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty — e
@@ -255,8 +268,9 @@ function alladinRenderLedger(el){
     return;
   }
   const cta=alladinTxBotaoNovo();
+  const toolbar=alladinHeading('ledger',cta);
   const lista=ledger.transactions;
-  if(!lista.length){ el.innerHTML=cab+cta+alladinVazio('ledger'); return; }
+  if(!lista.length){ el.innerHTML=toolbar+alladinVazio('ledger'); return; }
   const cat=alladinCatalogoLabels();
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
   // effectiveAt, recordedAt, transactionId). A UI não reordena — reordenar
@@ -270,7 +284,7 @@ function alladinRenderLedger(el){
   const busca='<label class="alladin-ledger-search" for="alladinLedgerSearch">Buscar lançamentos'+
     '<input id="alladinLedgerSearch" type="search" autocomplete="off" placeholder="Data, evento, conta ou detalhe" value="'+esc(alladinLedgerQuery)+'"></label>'+
     '<p class="alladin-ledger-filter-status" role="status" aria-live="polite"></p>';
-  el.innerHTML=cab+cta+busca+alladinTabela(
+  el.innerHTML=toolbar+busca+alladinTabela(
     ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status','Ações'],
     lista.map(tx=>[
       alladinDataCelula(tx),
@@ -304,7 +318,7 @@ function alladinRenderLedger(el){
   aplicarBusca();
 }
 function alladinRenderBalances(el){
-  const cab='<h2>Saldos</h2>';
+  const cab=alladinHeading('balances');
   const contas=JPWAlladin.leitura.cashAccounts();
   // Empty CADASTRAL — ausência de conta não é saldo zero, e os dois não podem
   // compartilhar a mesma tela.
@@ -328,7 +342,7 @@ function alladinRenderBalances(el){
     }));
 }
 function alladinRenderPositions(el){
-  const cab='<h2>Posições</h2>';
+  const cab=alladinHeading('positions');
   const p=JPWAlladin.leitura.posicoes();
   if(!p.available){
     // positions:[] sob BLOCKING NUNCA pode virar "Nenhuma posição".

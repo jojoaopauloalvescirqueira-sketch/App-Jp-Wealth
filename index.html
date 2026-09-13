@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar">
+<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar" data-experience="completion">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,7 +60,7 @@
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
   <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
-</defs></svg>
+<symbol id="i-area-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol><symbol id="i-area-research" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M7 11h7M10.5 7.5v7"/></symbol><symbol id="i-area-forex" viewBox="0 0 24 24"><path d="M4 3v18h17M8 15l4-5 4 3 5-7"/></symbol><symbol id="i-area-personal-finance" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8"/></symbol><symbol id="i-area-alladin" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V4h8v4M3 13h18M10 13v3h4v-3"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></symbol></defs></svg>
 <header>
   <!-- A marca e o caminho de volta ao Dashboard: o gesto que todo usuario de
        aplicacao web espera do canto superior esquerdo. E um <button> de verdade —
@@ -99,27 +99,20 @@
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
-      <!-- Desenho idêntico ao slot "Configurações" de Auditoria visual JP Wealth/
-           JP Wealth - Dashboard Claro (preview cheia).dc.html, linha 36. -->
+      <!-- Engrenagem identifica as configurações existentes. -->
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="3.2"></circle>
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
-    </button>
+    <span class="header-action-label">Configurações</span></button>
     <button type="button" class="header-action" id="headerNotesBtn" title="Tickets" aria-label="Abrir tickets">
       <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
       <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
-    </button>
+    <span class="header-action-label">Tickets</span></button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
-      <!-- Desenho idêntico ao slot "Perfil" da mesma referência, linha 38 —
-           dos 3 ícones do design (engrenagem/sino/perfil), é o único sem
-           relação com um sistema de notificações inexistente nesta app.
-           Função e aria-label continuam "Finalizar sessão", inalterados. -->
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="8.4" r="3.6"></circle>
-        <path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"></path>
-      </svg>
-    </button>
+      <!-- Ícone de saída acompanha a ação existente de finalizar sessão. -->
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4v16h6M9 12h12m-4-4 4 4-4 4"/></svg>
+    <span class="header-action-label">Finalizar sessão</span></button>
   </div>
 </header>
 
@@ -288,17 +281,17 @@
        permanece nos botões; o brilho legado fica inativo neste shell. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
-  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research">
+  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-dashboard"/></svg><span class="n">01</span><span class="lbl">Dashboard</span></button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-research"/></svg>
     <span class="n">02</span><span class="lbl">Research</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex">
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-forex"/></svg>
     <span class="n">03</span><span class="lbl">Forex</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais">
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-personal-finance"/></svg>
     <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
+  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-alladin"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
   <span class="sidebar-footer">JP Wealth</span>
@@ -337,7 +330,7 @@
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
       <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
-      <h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2>
+      <div class="cp-workspace-heading"><span class="cp-kicker">FOREX · CONTEXTO OPERACIONAL</span><h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2><p>Prepare o período, confira os limites e acompanhe os registros.</p></div>
       <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
       <div class="card fx-overview-tools">
         <h3>Ferramentas de preparação</h3>
@@ -705,7 +698,7 @@
          padrão já usado em #research e #alladin. -->
     <section class="dm-shell" id="dashMacro" aria-labelledby="dashMacroTitle">
       <div class="dm-page-head"><div><span class="dm-eyebrow">JP WEALTH · VISÃO EXECUTIVA</span><h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Seu panorama financeiro</h2><p class="dm-shell-sub">Risco, orçamento, pesquisa e patrimônio em um só lugar.</p></div><div class="dm-date"><span class="dm-live-dot" aria-hidden="true"></span><span id="dmToday"></span></div></div>
-      <div class="dm-grid" id="dashMacroGrid"></div>
+      <nav class="cp-panorama-index" aria-label="Áreas do panorama"><a href="#dm-title-forex">Risco e operação</a><a href="#dm-title-personal-finance">Orçamento e crédito</a><a href="#dm-title-research">Estudos e agenda</a><a href="#dm-title-alladin">Contas e patrimônio</a></nav><div class="dm-grid" id="dashMacroGrid"></div>
     </section>
 
     <!-- Grid executivo 2fr/1fr (fidelidade ao Claude Design — Dashboard Claro).
@@ -831,11 +824,11 @@
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando calendário econômico…</span>
             <span class="gd-news-actions">
-              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico">↻</button>
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico"><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
               <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
                    semântica, é o que o guardrail do arrasto já ignora — segurar
                    aqui nunca inicia reorganização do card. -->
-              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false">⋯</button>
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false"><svg class="jp-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
@@ -1152,8 +1145,8 @@
     <div class="research-view" id="execEcal" data-research-view="calendar" role="region" aria-label="Calendário Econômico">
       <div class="card ecal-ws">
         <div class="ecal-ws-head">
-          <h2>Calendário Econômico</h2>
-          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+          <span class="cp-kicker">AGENDA · SEMANA CORRENTE</span><h2>Calendário Econômico</h2>
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span><p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
         </div>
         <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
           <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
@@ -1165,7 +1158,6 @@
         <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
         <p class="ecal-empty" data-ecal-role="empty" hidden></p>
         <p class="ecal-ws-foot">
-          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
           <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
         </p>
       </div>
@@ -1184,8 +1176,7 @@
       <div class="card"><h2>REITs</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
     </div>
     <div class="research-view" id="researchProbabilityLab" data-research-view="probability-lab" role="region" aria-labelledby="researchProbabilityTitle" hidden>
-      <h2 id="researchProbabilityTitle" data-route-focus>Laboratório de Probabilidade</h2>
-      <h3>Galton Board</h3>
+      <div class="cp-workspace-heading cp-lab-heading"><span class="cp-kicker">RESEARCH · EXPERIMENTO INTERATIVO</span><h2 id="researchProbabilityTitle" data-route-focus>Laboratório de Probabilidade</h2><h3>Galton Board</h3><p>Da trajetória individual à distribuição.</p></div>
       <div id="researchGaltonSlot"></div>
     </div>
     <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
@@ -1207,13 +1198,13 @@
            gravam nem materializam estado. -->
       <div class="session-warning" id="alladinReadOnlyBanner" role="status" hidden></div>
       <div class="seg" id="alladinTabs" role="group" aria-label="Destinos do Alladin">
-        <button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
+        <div class="alladin-destination-group" role="group" aria-label="Cadastros"><span class="alladin-destination-label">Cadastros</span><button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
         <button type="button" data-alladin-view="assets" aria-pressed="false">Bens</button>
         <button type="button" data-alladin-view="accounts" aria-pressed="false">Contas</button>
         <button type="button" data-alladin-view="cashAccounts" aria-pressed="false">Caixa</button>
-        <button type="button" data-alladin-view="ledger" aria-pressed="false">Lançamentos</button>
+        </div><div class="alladin-destination-group" role="group" aria-label="Movimentação e leitura"><span class="alladin-destination-label">Movimentação e leitura</span><button type="button" data-alladin-view="ledger" aria-pressed="false">Lançamentos</button>
         <button type="button" data-alladin-view="balances" aria-pressed="false">Saldos</button>
-        <button type="button" data-alladin-view="positions" aria-pressed="false">Posições</button>
+        <button type="button" data-alladin-view="positions" aria-pressed="false">Posições</button></div>
       </div>
       <div class="card alladin-view" id="alladinInstruments" data-alladin-panel="instruments" role="region" aria-label="Instrumentos"></div>
       <div class="card alladin-view" id="alladinAssets" data-alladin-panel="assets" role="region" aria-label="Bens" hidden></div>
@@ -1606,7 +1597,7 @@
       <!-- PAINEL 1 — Pastas e visões do sistema. Em desktop convive com os outros dois;
            em mobile é o Estado A da navegação em etapas (data-mobile-stage no drawer). -->
       <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de tickets">
-        <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
+        <div class="cp-notes-intro"><h3>Coleções</h3><p>Seus tickets, por assunto.</p></div><div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
         </div>
@@ -1667,7 +1658,7 @@
         </div>
         <label class="sr-only" for="mvpNoteContent">Conteúdo do ticket — a primeira linha vira o título</label>
         <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva o ticket. A primeira linha vira o título." hidden></textarea>
-        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione um ticket à esquerda ou crie um novo.</p>
+        <div class="mvpn-editor-empty cp-writing-empty" id="mvpNotesEditorEmpty"><svg class="cp-empty-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-notes"/></svg><h3>Espaço para escrever.</h3><p>Selecione um ticket para ler e editar seu conteúdo.</p></div>
         <!-- Inspector: todo o metadado técnico vive aqui, fora do editor. Popover no
              desktop, folha inferior no mobile. -->
         <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes do ticket"></div>

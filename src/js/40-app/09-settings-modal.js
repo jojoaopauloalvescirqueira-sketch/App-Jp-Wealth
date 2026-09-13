@@ -132,11 +132,11 @@ function storagePanel(){
 }
 
 function settingsNavCard(id,label,desc){
-  return `<button type="button" class="settings-nav-card" data-nav-to="${settingsEsc(id)}"><span class="settings-nav-card-text"><span class="settings-nav-card-title">${settingsEsc(label)}</span>${desc?`<span class="settings-nav-card-desc">${settingsEsc(desc)}</span>`:''}</span><span class="settings-nav-card-chev" aria-hidden="true">${settingsIconSvg('chevron')}</span></button>`;
+  return `<button type="button" class="settings-nav-card" data-nav-to="${settingsEsc(id)}"><span class="cp-settings-symbol" aria-hidden="true">${settingsIconSvg((SETTINGS_GROUP_BY_ID[id]||SETTINGS_GROUP_BY_ID[settingsTopLevelFor(id)]||{}).icon||'general')}</span><span class="settings-nav-card-text"><span class="settings-nav-card-title">${settingsEsc(label)}</span>${desc?`<span class="settings-nav-card-desc">${settingsEsc(desc)}</span>`:''}</span><span class="settings-nav-card-chev" aria-hidden="true">${settingsIconSvg('chevron')}</span></button>`;
 }
 function generalPanel(){
-  const cards=SETTINGS_GROUPS.filter(g=>g.id!=='general'&&g.id!=='about').map(g=>settingsNavCard(g.id,g.label,g.desc)).join('');
-  return `<p class="settings-lead">Gerencie as preferências, o método, os dados e a identidade do JP Wealth.</p><div class="settings-nav-list">${cards}</div>`;
+  const card=id=>{const g=SETTINGS_GROUP_BY_ID[id];return settingsNavCard(g.id,g.label,g.desc);};
+  return `<div class="cp-settings-intro"><span class="cp-kicker">SEU JP WEALTH</span><h4>Um espaço que funciona do seu jeito.</h4><p class="settings-lead">Personalize a leitura, cuide dos dados e encontre as referências do método.</p></div><div class="cp-settings-collections"><section><h4>Preferências e dados</h4><div class="settings-nav-list">${card('appearance-interface')}${card('data-security')}</div></section><section><h4>Método e apoio</h4><div class="settings-nav-list">${card('method-governance')}${card('operations')}${card('knowledge')}</div></section></div>`;
 }
 function groupPanel(group){
   const cards=group.children.map(leafId=>settingsNavCard(leafId,SETTINGS_LEAVES[leafId].label,SETTINGS_LEAVES[leafId].desc)).join('');

@@ -21,7 +21,7 @@ function finpesScenariosRender(){
     grupos.get(k).push(sc);
   }
   const chaves = [...grupos.keys()].sort();
-  let html = `<div class="fb-header">
+  let html = `<div class="fb-header cp-period-toolbar">
     <span class="fb-month-label">Cenários</span>
     <button type="button" class="reset-btn" data-fs-new ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Novo cenário</button>
     <button type="button" class="reset-btn" data-fs-from ${bloqueado?'disabled title="Módulo em modo leitura"':''}>Criar a partir de mês</button>
@@ -58,14 +58,14 @@ function fsCardHTML(sc, bloqueado){
       <input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fs-campo="name" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}">
       ${fsMoneyInput(i.amount,`data-fs-campo="amount" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}"`, bloqueado)}
       <span></span>
-      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}" title="Excluir item">✕</button>
+      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}" title="Excluir item">Excluir</button>
     </div>`).join('');
   const cascata = pfScenarioCascade(sc);
   const despesas = cascata.map(c=>`<div class="fs-item" data-fs-item>
       <input type="text" class="fb-text" value="${esc(c.item.name)}" ${bloqueado?'disabled':''} data-fs-campo="name" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}">
       ${fsMoneyInput(c.item.amount,`data-fs-campo="amount" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}"`, bloqueado)}
       <span class="fs-saldo ${!bloqueado&&c.saldo<0?'fs-neg':''}" title="Saldo após esta despesa (cascata)">${fsMoneyText(c.saldo, bloqueado)}</span>
-      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}" title="Excluir item">✕</button>
+      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}" title="Excluir item">Excluir</button>
     </div>`).join('');
   const sobra = pfScenarioSurplus(sc);
   return `<div class="card fb-card fs-card" data-fs-card="${esc(sc.id)}">
@@ -82,8 +82,8 @@ function fsCardHTML(sc, bloqueado){
     ${despesas || '<p class="fb-empty">Nenhuma despesa.</p>'}
     <button type="button" class="reset-btn fs-add" data-fs-add-item data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" ${bloqueado?'disabled':''}>+ despesa</button>
     <div class="fs-foot">
-      <button type="button" class="row-del" data-fs-edit="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Editar nome/tipo/horizonte">✎</button>
-      <button type="button" class="row-del" data-fs-del="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Excluir cenário">✕</button>
+      <button type="button" class="row-del" data-fs-edit="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Editar nome/tipo/horizonte">Editar cenário</button>
+      <button type="button" class="row-del" data-fs-del="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Excluir cenário">Excluir cenário</button>
     </div>
   </div>`;
 }
@@ -156,7 +156,7 @@ function fsReadScenarioForm(box, marcar){
 function fsOpenScenarioModal(scenarioId){
   const sc = scenarioId ? pfFindScenario(S.personalFinance, scenarioId) : null;
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
-  box.innerHTML = `<h3>${sc?'✎ Editar cenário':'+ Novo cenário'}</h3>${fsScenarioFormHTML(sc)}
+  box.innerHTML = `<h3>${sc?'Editar cenário':'Novo cenário'}</h3>${fsScenarioFormHTML(sc)}
     <div class="modal-actions">
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>

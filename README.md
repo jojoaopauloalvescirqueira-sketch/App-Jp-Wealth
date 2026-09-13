@@ -1,5 +1,10 @@
 # JP Wealth Risk Terminal V9.1
 
+Completion pass local em avaliação: Dashboard de orientação, bancadas NoCoda/Pivots, orçamento com resumo e registros, Laboratório com palco e análise, coleções Alladin e escrita focada. Rotas e dados preservados. Evidências e limites: [direção Apple→JP Wealth](docs/architecture/APPLE-EXPERIENCE-DIRECTION.md).
+Preserva módulos, contratos financeiros, preferências e a navegação superior
+opcional. Estado e limites em [CURRENT-STATE](docs/governance/CURRENT-STATE.md);
+a presença destes arquivos não demonstra integração ou aceite humano.
+
 Aplicação web **local-first** (PWA, sem backend obrigatório) para governança de risco e gestão operacional de capital. O motor financeiro ainda executa regras legadas; a documentação normativa foi atualizada para o **Estatuto JP Wealth V11** e o Anexo Paramétrico. A adaptação dos cálculos permanece pendente e esta versão não é declarada conforme à V11. Os dados do operador permanecem na máquina dele.
 
 O repositório foi estruturado a partir do HTML portátil preservado do JP Wealth: HTML, CSS e JavaScript foram separados **sem reescrever as regras financeiras nem alterar a ordem de execução** do código original.

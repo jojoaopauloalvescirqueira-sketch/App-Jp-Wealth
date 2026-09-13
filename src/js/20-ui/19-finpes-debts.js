@@ -26,7 +26,7 @@ function finpesDebtsRender(){
   if(!root) return;
   const key = fdCurrentKey();
   const bloqueado = (typeof pfWriteBlockReason==='function') ? pfWriteBlockReason() : null;
-  let html = `<div class="fb-header">
+  let html = `<div class="fb-header cp-period-toolbar">
     <button type="button" class="reset-btn fb-nav" data-fd-nav="-1" title="Mês anterior">←</button>
     <span class="fb-month-label">${esc(pfMonthLabel(key))}</span>
     <button type="button" class="reset-btn fb-nav" data-fd-nav="1" title="Mês seguinte">→</button>
@@ -59,20 +59,20 @@ function fdDebtsHTML(key, bloqueado){
     const rest = pfRemainingInstallments(d, snap);
     const vig = esc(d.startMonth)+' → '+(d.closedMonth ? esc(d.closedMonth) : 'em aberto');
     return `<div class="fd-row ${relevante?'':'fd-irrelevante'}" data-debt="${esc(d.id)}">
-      <span>${esc(d.creditor)}${d.description?`<br><span class="fb-aux">${esc(d.description)}</span>`:''}</span>
-      <span>${esc(PF_DEBT_TYPE_LABELS[d.type]||d.type)}</span>
-      <span class="fd-money">${fdMoneyText(d.originalAmount, bloqueado)}</span>
-      <span class="fd-money">${fdMoneyText(d.installmentAmount, bloqueado)}</span>
-      <span class="fd-center">${d.installmentsTotal==null?'—':d.installmentsTotal}</span>
-      <span>${saldo}</span>
-      <span class="fd-center">${pagas}</span>
-      <span class="fd-center">${rest==null?'—':rest}</span>
-      <span class="fb-aux">${vig}</span>
+      <span data-cp-label="Credor">${esc(d.creditor)}${d.description?`<br><span class="fb-aux">${esc(d.description)}</span>`:''}</span>
+      <span data-cp-label="Tipo">${esc(PF_DEBT_TYPE_LABELS[d.type]||d.type)}</span>
+      <span class="fd-money" data-cp-label="Valor original">${fdMoneyText(d.originalAmount, bloqueado)}</span>
+      <span class="fd-money" data-cp-label="Parcela">${fdMoneyText(d.installmentAmount, bloqueado)}</span>
+      <span class="fd-center" data-cp-label="Total de parcelas">${d.installmentsTotal==null?'—':d.installmentsTotal}</span>
+      <span data-cp-label="Saldo na competência">${saldo}</span>
+      <span class="fd-center" data-cp-label="Parcelas pagas">${pagas}</span>
+      <span class="fd-center" data-cp-label="Parcelas restantes">${rest==null?'—':rest}</span>
+      <span class="fb-aux" data-cp-label="Vigência">${vig}</span>
       <span class="fb-actions">
-        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-edit="${esc(d.id)}" title="Editar contrato">✎</button>
-        ${relevante?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">◉</button>`:''}
-        ${snap?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">⊘</button>`:''}
-        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">✕</button>
+        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-edit="${esc(d.id)}" title="Editar contrato">Editar</button>
+        ${relevante?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">Observar</button>`:''}
+        ${snap?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">Remover observação</button>`:''}
+        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">Excluir</button>
       </span>
     </div>`;
   }).join('');
@@ -82,11 +82,11 @@ function fdDebtsHTML(key, bloqueado){
         ? `<span>Dívida total: <b>${fdMoneyText(total, bloqueado)}</b></span>`
         : `<span>${fdMoneyText(total, bloqueado)} observados <span class="fb-partial">PARCIAL · ${cov.observadas} de ${cov.relevantes} dívidas observadas</span></span>`);
   return `<div class="card fb-card" id="fdDebts">
-    <h2>Dívidas <span class="art">identidade temporal · saldo é observação da competência</span></h2>
+    <div class="cp-object-toolbar"><h2>Dívidas <span class="art">identidade temporal · saldo é observação da competência</span></h2>
+      <button type="button" class="reset-btn" data-fd-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Nova dívida</button></div>
     <div class="fd-row fd-head"><span>Credor</span><span>Tipo</span><span>V. original</span><span>Parcela</span><span>Parc.</span><span>Saldo na competência</span><span>Pagas</span><span>Rest.</span><span>Vigência</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma dívida cadastrada.</p>'}
     <div class="fb-totals" id="fdDebtTotals">${cobTxt}</div>
-    <button type="button" class="reset-btn" data-fd-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Nova dívida</button>
   </div>`;
 }
 
@@ -110,14 +110,14 @@ function fdCreditHTML(bloqueado){
       : (der.utilization===null ? '<span class="fb-aux">N/A</span>'
         : (der.utilization*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%');
     return `<div class="fc-row ${der.estouro?'fc-estouro':''}" data-credit="${esc(l.id)}">
-      <span><input type="text" class="fb-text" value="${esc(l.institution)}" ${bloqueado?'disabled':''} data-fc-campo="institution" data-fc-id="${esc(l.id)}"></span>
-      <span><input type="text" class="fb-text" value="${esc(l.instrument)}" ${bloqueado?'disabled':''} data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></span>
-      <span><input type="text" class="fb-text" value="${esc(l.type)}" ${bloqueado?'disabled':''} data-fc-campo="type" data-fc-id="${esc(l.id)}"></span>
-      <span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`, bloqueado)}</span>
-      <span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`, bloqueado)}</span>
-      <span class="fd-money">${disp}${!bloqueado && der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
-      <span class="fd-center">${util}</span>
-      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fc-del="${esc(l.id)}" title="Excluir linha">✕</button></span>
+      <label class="cp-field"><span class="cp-field-label">Instituição</span><input type="text" class="fb-text" value="${esc(l.institution)}" ${bloqueado?'disabled':''} data-fc-campo="institution" data-fc-id="${esc(l.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Instrumento</span><input type="text" class="fb-text" value="${esc(l.instrument)}" ${bloqueado?'disabled':''} data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Tipo</span><input type="text" class="fb-text" value="${esc(l.type)}" ${bloqueado?'disabled':''} data-fc-campo="type" data-fc-id="${esc(l.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Limite</span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Utilizado</span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`, bloqueado)}</label>
+      <span class="fd-money" data-cp-label="Disponível">${disp}${!bloqueado && der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
+      <span class="fd-center" data-cp-label="Utilização">${util}</span>
+      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fc-del="${esc(l.id)}" title="Excluir linha">Excluir</button></span>
     </div>`;
   }).join('');
   const k = pfCreditKPIs();
@@ -128,12 +128,12 @@ function fdCreditHTML(bloqueado){
     <span>Total livre: <b>${(bloqueado || k.totalFree===null) ? '—' : formatBRLCents(k.totalFree)}</b>${!bloqueado && k.totalFree===null?' <span class="fb-partial">componentes incompletos</span>':''}</span>
     <span>Utilização consolidada: <b>${bloqueado ? '—' : (k.utilizationConsolidated===null ? 'N/A' : (k.utilizationConsolidated*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')}</b></span>`;
   return `<div class="card fb-card" id="fdCredit">
-    <h2>Limites de Crédito <span class="art">estado vigente · sem série histórica nesta versão</span></h2>
+    <div class="cp-object-toolbar"><h2>Limites de Crédito <span class="art">estado vigente · sem série histórica nesta versão</span></h2>
+      <button type="button" class="reset-btn" data-fc-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar linha de crédito</button></div>
     <div class="fc-row fc-head"><span>Instituição</span><span>Instrumento</span><span>Tipo</span><span>Limite</span><span>Utilizado</span><span>Disponível</span><span>Utilização</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma linha de crédito.</p>'}
     <div class="fb-totals" id="fdCreditKPIs">${kpis}</div>
     <div class="fb-totals" id="fdRatio">${fdRatioHTML(bloqueado)}</div>
-    <button type="button" class="reset-btn" data-fc-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar linha de crédito</button>
   </div>`;
 }
 // Razão dívida/limite — rotulada por extenso para não se confundir com a
@@ -210,7 +210,7 @@ function fdOpenDebtModal(debtId){
   const money = v => (v===null||v===undefined) ? '' : (v/100).toFixed(2).replace('.',',');
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
   box.innerHTML = `
-    <h3>${d?'✎ Editar dívida':'+ Nova dívida'}</h3>
+    <h3>${d?'Editar dívida':'Nova dívida'}</h3>
     <div class="modal-q" data-qid="creditor"><div class="ql">Credor / instituição</div>
       <input type="text" id="fdCreditor" value="${esc(d?d.creditor:'')}">
       <div class="modal-err">Credor obrigatório.</div></div>
@@ -272,7 +272,7 @@ function fdOpenSnapshotModal(key, debtId){
   const encerrandoAqui = d.closedMonth===key;
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
   box.innerHTML = `
-    <h3>◉ Observação — ${esc(d.creditor)} · ${esc(pfMonthLabel(key))}</h3>
+    <h3>Observação — ${esc(d.creditor)} · ${esc(pfMonthLabel(key))}</h3>
     ${snap?'<p class="risk-note">Já existe observação nesta competência — confirmar SUBSTITUI (correção deliberada).</p>':''}
     ${encerrandoAqui?'<p class="risk-note">Esta é a competência de encerramento — considere registrar o saldo final. Saldo diferente de zero é legítimo (acordo, perdão, baixa).</p>':''}
     <div class="modal-q" data-qid="balance"><div class="ql">Saldo devedor observado (R$)</div>

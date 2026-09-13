@@ -184,7 +184,7 @@ function finpesOverviewRender(){
   const met = pfCompMetrics(M);
   let html = `<div class="fb-header"><span class="fo-title">Visão Geral</span>
     <span class="fb-aux">consolidado derivado — nunca segunda fonte de verdade</span></div>`;
-  html += `<div class="fo-grid">`;
+  html += `<div class="fo-grid cp-pf-overview">`;
   html += foMonthCardHTML(M, met);
   html += foDebtCreditCardHTML(M, met);
   html += foCompareCardHTML(M);

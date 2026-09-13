@@ -1,3 +1,51 @@
+# Completion pass local — APPLE01, 2026-09-12
+
+last_verified: 2026-09-12
+Source revision representada: `fafb228316cbcad8091ebc4632443a51687ace43`
+Raiz `/Users/joaopauloalves/.codex/apple-redesign/20260912/product`, branch
+`codex/apple-experience-redesign-20260912`. Base Git mais delta não commitado.
+V2 (`79dc7dba…`, build `ecb3a3c493cc95e7`) permanece checkpoint histórico recuperável.
+A revisão local seguinte compõe Dashboard em capítulos de orientação, PF em resumo
+planejado/realizado e registros, Research em bancadas de estudo, Lab com o canvas
+antes das métricas, Alladin em coleções rotuladas, Tickets em escrita/coleções e
+Settings em duas intenções de configuração. NoCoda projeta linhas 0/−1 canônicas;
+Pivots projeta medianas H1/H4 e n já calculados. Ausência não vira zero.
+São visualizações de dados existentes; fórmulas, persistência, A10–A13 e lifecycle
+não recebem mudança. 3D foi comparado como conceito externo e rejeitado.
+Identidade, diff, gates, revisão, comparadores e recuperação desta fase estão em
+`/Users/joaopauloalves/.codex/apple-redesign/20260912/evidence/completion/`.
+O manifesto externo identifica o pacote; seu SHA-256 não é commit. Este texto
+registra implementação local em validação, não antecipa resultado de gate/auditoria,
+aceite humano ou integração. Main, outras worktrees e stash permanecem separados.
+A12 parcial, OPEN-05/V11, AUD-05/P2 e demais dívidas continuam abertas; nenhuma
+homologação financeira ou indexação é declarada. Sem staging, commit, push, PR,
+merge ou deploy nesta campanha.
+
+## Histórico anterior preservado
+
+# Candidate local — Apple-guided experience redesign
+
+Fotografia: 2026-09-12.
+last_verified: 2026-09-12
+Source revision representada: `fafb228316cbcad8091ebc4632443a51687ace43`
+Branch `codex/apple-experience-redesign-20260912`, raiz `/Users/joaopauloalves/.codex/apple-redesign/20260912/product`.
+A base é commit Git; o pacote local inclui delta não commitado. A identidade final,
+resultados, auditoria e recuperação ficam em `/Users/joaopauloalves/.codex/apple-redesign/20260912/evidence/`.
+A campanha está em validação; este documento não concede aceite nem integração.
+
+Apresentação compartilhada: neutros e superfícies legíveis, ícones originais dos
+cinco módulos, rótulos Configurações/Tickets/Finalizar sessão, organização dos atalhos,
+grupos do Alladin e acabamento de formulários, calendário, estudos e Laboratório.
+Rotas, ordem personalizável e alternativa superior são preservadas. Não foram
+acrescentados gráficos, 3D, cálculos ou persistência. A12 parcial, OPEN-05/V11,
+AUD-05/P2 e demais dívidas continuam separadas.
+
+DESIGN01 foi integrado por PR17 em `fafb228316cbcad8091ebc4632443a51687ace43`; sua fotografia
+anterior abaixo é histórica. A main da pasta principal não foi sincronizada nesta
+campanha. Nenhum staging, commit, push, PR, merge ou deploy desta entrega.
+
+## Histórico preservado
+
 # Estado corrente — candidate local DESIGN & EXPERIENCE 01
 
 Classe M1. Data da fotografia: 2026-09-12

@@ -1,3 +1,41 @@
+# Completion pass — representação de apresentação local
+
+Base Git `fafb228316cbcad8091ebc4632443a51687ace43` mais delta local; fingerprint externo.
+
+| Fonte | Papel alterado | Contrato preservado |
+|---|---|---|
+| `index.html` / `src/styles/app.css` | Composição, cabeçalhos, símbolos, ordem visual/DOM, reflow e estados | IDs, consumidores e preferências; risco mantém semântica |
+| `20-ui/25-dash-macro.js` | Capítulos, primário/registro e atalhos | Mesmos read-models, chamadas e ausência/erro |
+| `20-ui/18` a `22` | Resumo, registros, rótulos e ações PF | Binds, parsers, pfMutate, cálculos e ordem de leitura |
+| `20-ui/14-nocoda-studies.js` | Bancada, detalhes e ncUpdatePreview | geometry.compute/validate/levelPrice canônicos; binds/save/rascunho |
+| `20-ui/15-pivot-studies.js` | Biblioteca e barras H1/H4 | stats().timeframes, median/n; atos e filtros originais |
+| `20-ui/24-alladin-views.js` | alladinHeading/contexto, tabela com rótulos móveis | Leitura, qualidade, ações e mutações originais |
+| `40-app/09-settings-modal.js` | generalPanel e símbolos por intenção | Busca, grupos, histórico, slots e proteções |
+| `40-app/14-mvp-notes.js` | Texto vazio; área de escrita por CSS | Rascunho, recusa/retry, salvamento e ciclo intactos |
+| `40-app/17-economic-calendar.js` | Classes de lista temporal | Fonte, cache, filtros e atualização |
+| `40-app/18-galton-board/06-controller.js:panelHTML` | Comandos, palco e análise | Código fora de panelHTML idêntico à V2; física/lifecycle A13 |
+| `tools/apple_experience_test.py` | Focal de layout, contraste, navegação e gráficos | Fixtures existentes, falhas reais; não altera quality_gate |
+
+Manifest mantém 78 scripts na ordem original, apenas hashes atualizados.
+Build/portátil são gerados por `tools/rebuild_monolith.py`.
+[Decisões e oportunidades](APPLE-EXPERIENCE-DIRECTION.md).
+
+## Histórico V2 preservado
+
+# Recorte local — APPLE01, 2026-09-12
+
+Base `fafb228316cbcad8091ebc4632443a51687ace43` mais delta de apresentação.
+`index.html` contém símbolos originais, labels e agrupamento dos destinos Alladin;
+`src/styles/app.css` compõe superfícies e controles responsivos;
+`src/js/20-ui/25-dash-macro.js:dmLink` conserva destino/handler e remove somente
+seta diagonal decorativa. Manifest mantém ordem e atualiza hash dessa fonte;
+build/portátil são gerados oficialmente. `tools/apple_experience_test.py` verifica
+rótulos, geometria, contraste focal, navegação e foco com fixtures sintéticas.
+Funções financeiras, lifecycle do Lab e persistência não recebem alterações.
+[Direção e decisões](APPLE-EXPERIENCE-DIRECTION.md).
+
+## Histórico preservado
+
 # Recorte corrente — estabilização técnica local 20260911
 
 Base Git fcbb25767073a4ab08a9f0ac2ac16069a3008bfe mais V2 e delta não commitado;
