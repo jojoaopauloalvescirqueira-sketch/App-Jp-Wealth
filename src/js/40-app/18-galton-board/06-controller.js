@@ -73,17 +73,25 @@
   }
 
   function panelHTML(){
-    return `<div class="galton-board" id="galtonBoardRoot" data-galton-root>
+    return `<div class="galton-board cp-lab" id="galtonBoardRoot" data-galton-root>
       <p class="galton-kicker">Probabilidade em movimento</p>
-      <p class="settings-lead">Experimento interativo de probabilidade com corpos rígidos reais. Observe como trajetórias individuais imprevisíveis formam padrões agregados.</p>
       <p class="galton-disclaimer">O Galton Board demonstra princípios de probabilidade, agregação e distribuição. Ele não representa diretamente a distribuição dos retornos do mercado Forex.</p>
-      <section class="galton-controls" aria-label="Controles do experimento">
+      <section class="galton-controls cp-lab-controls" aria-label="Controles do experimento">
         <div class="galton-control-group"><span class="galton-control-label">Adicionar à fila</span><div class="galton-button-row">
           <button type="button" data-galton-add="1">+1</button><button type="button" data-galton-add="10">+10</button><button type="button" data-galton-add="100">+100</button><button type="button" data-galton-add="500">+500</button>
           <button type="button" class="galton-primary" data-galton-action="execute">Executar <span data-galton-staged>0</span></button>
         </div></div>
         <div class="galton-button-row"><button type="button" data-galton-action="pause" aria-pressed="false">Pausar</button><button type="button" data-galton-action="reset">Resetar</button><button type="button" data-galton-action="center">Centralizar</button><button type="button" data-galton-action="restore-defaults">Restaurar padrões</button><button type="button" data-galton-action="new-seed">Nova seed</button><span class="galton-seed">Seed <output data-galton-seed>18473</output></span></div>
       </section>
+      <div class="cp-lab-workspace">
+      <div class="galton-stage cp-lab-stage">
+        <canvas data-galton-canvas role="img" aria-label="Galton Board vazio" aria-describedby="galtonCanvasDescription"></canvas>
+        <div class="galton-bin-tooltip" data-galton-tooltip hidden></div>
+      </div>
+      <p id="galtonCanvasDescription" class="sr-only" data-galton-canvas-description>Tabuleiro vazio, sem bolas contabilizadas.</p>
+      <div class="galton-status-row"><p data-galton-convergence role="status" aria-live="polite">Tabuleiro vazio. Adicione bolas à fila para iniciar.</p><span data-galton-live class="sr-only" aria-live="polite"></span></div>
+      <p class="galton-storage-status is-error" data-galton-integrity role="status" aria-live="polite" hidden></p>
+      <div class="cp-lab-analysis">
       <div class="galton-metrics" aria-label="Estatísticas da simulação">
         <div><span>Amostra <button type="button" class="galton-info" title="Número de bolas já contabilizadas nos compartimentos." aria-label="Amostra: número de bolas já contabilizadas nos compartimentos">i</button></span><strong data-galton-metric="n">0</strong></div>
         <div><span>Média <button type="button" class="galton-info" title="Posição média ponderada dos compartimentos observados." aria-label="Média: posição média ponderada dos compartimentos observados">i</button></span><strong data-galton-metric="mean">—</strong></div>
@@ -92,13 +100,6 @@
         <div><span>Assimetria <button type="button" class="galton-info" title="Indica o deslocamento da distribuição para um dos lados." aria-label="Assimetria: indica o deslocamento da distribuição para um dos lados">i</button></span><strong data-galton-metric="skewness">—</strong></div>
         <div><span>Curtose</span><strong data-galton-metric="kurtosis">—</strong></div>
       </div>
-      <div class="galton-stage">
-        <canvas data-galton-canvas role="img" aria-label="Galton Board vazio" aria-describedby="galtonCanvasDescription"></canvas>
-        <div class="galton-bin-tooltip" data-galton-tooltip hidden></div>
-      </div>
-      <p id="galtonCanvasDescription" class="sr-only" data-galton-canvas-description>Tabuleiro vazio, sem bolas contabilizadas.</p>
-      <div class="galton-status-row"><p data-galton-convergence role="status" aria-live="polite">Tabuleiro vazio. Adicione bolas à fila para iniciar.</p><span data-galton-live class="sr-only" aria-live="polite"></span></div>
-      <p class="galton-storage-status is-error" data-galton-integrity role="status" aria-live="polite" hidden></p>
       <section class="galton-adjustments" aria-label="Ajustes do experimento">
         <div class="galton-control-grid">
           <fieldset class="galton-speed"><legend>Velocidade</legend><div class="galton-segmented">${SPEEDS.map(speed=>`<button type="button" data-galton-speed="${speed}" aria-pressed="${speed===1?'true':'false'}">${speed}x</button>`).join('')}</div></fieldset>
@@ -109,6 +110,7 @@
         </div>
         <p class="galton-theory-status"><button type="button" class="galton-info" title="Compara percentuais observados com Binomial(n, 0,5), sem ajustar a física." aria-label="Distribuição teórica: comparação binomial sem ajuste da física">i</button> <span data-galton-theory-status></span></p>
       </section>
+      </div></div>
       <details class="galton-details" data-galton-advanced><summary>Parâmetros físicos</summary>
         <p>Alterar um parâmetro reinicia o tabuleiro e mantém apenas as preferências.</p>
         <div class="galton-parameter-grid">
@@ -127,7 +129,7 @@
         </div>
         <p><button type="button" class="reset-btn" data-galton-action="restore-physics">Restaurar valores físicos padrão</button></p>
       </details>
-      <details class="galton-details"><summary>O que observar</summary><ol><li>Uma única bola é difícil de prever.</li><li>Muitas observações revelam padrões agregados.</li><li>Pequenas assimetrias podem deslocar toda a distribuição.</li><li>Amostras pequenas apresentam maior ruído estatístico.</li><li>Regularidade estatística não significa previsibilidade individual.</li></ol><p>Esta experiência ilustra princípios gerais de probabilidade e não constitui um modelo dos retornos do Forex.</p></details>
+      <details class="galton-details"><summary>O que observar</summary><p>Experimento interativo de probabilidade com corpos rígidos reais. Observe como trajetórias individuais imprevisíveis formam padrões agregados.</p><ol><li>Uma única bola é difícil de prever.</li><li>Muitas observações revelam padrões agregados.</li><li>Pequenas assimetrias podem deslocar toda a distribuição.</li><li>Amostras pequenas apresentam maior ruído estatístico.</li><li>Regularidade estatística não significa previsibilidade individual.</li></ol><p>Esta experiência ilustra princípios gerais de probabilidade e não constitui um modelo dos retornos do Forex.</p></details>
       <details class="galton-details"><summary>Detalhes acessíveis dos compartimentos</summary><div class="galton-table-wrap"><table><caption>Distribuição empírica e referência teórica por compartimento</caption><thead><tr><th scope="col">Bin</th><th scope="col">Quantidade</th><th scope="col">Percentual</th><th scope="col">Teoria esperada</th><th scope="col">Diferença</th></tr></thead><tbody data-galton-bins></tbody></table></div></details>
       <p class="galton-storage-status" data-galton-storage role="status"></p>
     </div>`;

@@ -55,15 +55,15 @@ const DM_AREAS = {
 function dmLink(label, route, surface, view){
   return '<button type="button" class="dm-link" data-dm-route="'+esc(route)+'"'
     +(surface?' data-dm-surface="'+esc(surface)+'" data-dm-view="'+esc(view)+'"':'')
-    +'>'+esc(label)+'<span aria-hidden="true">↗</span></button>';
+    +'>'+esc(label)+'</button>';
 }
 function dmLinks(html){ return '<nav class="dm-links" aria-label="Detalhes da área">'+html+'</nav>'; }
 function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label)+'</h4>'+html+'</div>'; }
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
-    + '<header class="dm-card-head"><div><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
-    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button></header>'
+    + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+id+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
+    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+'</button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '</article>';
 }
@@ -93,7 +93,7 @@ function dmForexHTML(c){
   const ddPct = c.mddScaled > 0 ? c.dd / c.mddScaled : null;
   const riscoPct = c.tetoRisco > 0 ? c.riscoTotal / c.tetoRisco : null;
   const alavPct = c.tetoAlav > 0 ? c.alavCar / c.tetoAlav : null;
-  let corpo = dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
+  let corpo = '<div class="dm-primary">'+dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
   corpo += dmFacts(
       dmFact('Fase vigente', esc(c.fase && c.fase.nome ? c.fase.nome : '—'))
     + dmFact('Drawdown', fmtPct(c.dd), 'teto ' + fmtPct(c.mddScaled), ddPct, barTom)
@@ -107,6 +107,7 @@ function dmForexHTML(c){
   if(cl.reasons && cl.reasons.length){
     corpo += dmNote(cl.reasons[0] + (cl.reasons.length > 1 ? '  (+' + (cl.reasons.length - 1) + ')' : ''));
   }
+  corpo += '</div><div class="dm-record">';
   const led = ledgerSorted();
   const last = led.length ? led[led.length-1] : null;
   corpo += dmSection('Apuração', last
@@ -114,6 +115,7 @@ function dmForexHTML(c){
       + dmRow('Resultado do dia', '<b>'+fmtMoney2(last.resultado)+'</b>')
     : dmNote('Nenhum fechamento registrado neste período.'));
   corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Conta', 'forex-account')+dmLink('Preparação', 'forex-preparation')
     +dmLink('Apuração', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
   return {html: corpo, tom};
@@ -161,7 +163,7 @@ function dmFinpesHTML(){
   const M = pfCurrentMonthKey();
   const met = pfCompMetrics(M);          // 1 chamada — traz receita, despesa, sobra, DÍVIDA e COMPROMETIMENTO
   if(!met) return {html: dmErro('competência inválida'), tom:'warn'};
-  let corpo = '<div class="dm-sub">' + esc(pfMonthLabel(M)) + '</div>';
+  let corpo = '<div class="dm-primary"><div class="dm-sub">' + esc(pfMonthLabel(M)) + '</div>';
   if(!met.materializado){
     // Completude vácua é armadilha conhecida: mês virtual declara-se não
     // registrado em vez de exibir sobra R$ 0 fabricada.
@@ -190,11 +192,13 @@ function dmFinpesHTML(){
   corpo += dmRow('Pendências anteriores', pend.length
     ? '<span class="dm-partial">' + pend.length + ' mês(es) em aberto</span>'
     : dmAux('nenhuma'));
+  corpo += '</div><div class="dm-record">';
   const baseKey=pfCompBaselines(M).previousMonth;
   const comp=pfCompCompare(M,baseKey).metrics.sobra;
   corpo += dmSection('Comparação mensal', comp.available
     ? dmRow('Sobra vs '+pfMonthLabel(baseKey), '<b>'+foSignedMoney(comp.delta)+'</b>')
     : dmNote('A comparação da sobra precisa de dois meses com valores completos.'));
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Orçamento', 'personal-finance','finpes','mensal')
     +dmLink('Dívidas e crédito', 'personal-finance','finpes','dividas')
     +dmLink('Comparativo', 'personal-finance','finpes','comparativo')
@@ -237,7 +241,7 @@ function dmResearchHTML(){
     const cat = instrumentCatalog();
     if(Array.isArray(cat) && cat.length) cobertura = {com: cat.filter(i => nc.indexOf(i.id) >= 0).length, total: cat.length};
   }
-  let corpo = dmFacts(
+  let corpo = '<div class="dm-primary">'+dmFacts(
       dmFact('Estudos NoCoda', nc.length ? String(nc.length) : '<span class="dm-aux">nenhum</span>',
              cobertura ? cobertura.com + ' de ' + cobertura.total + ' instrumentos' : null,
              cobertura && cobertura.total ? cobertura.com / cobertura.total : null)
@@ -263,10 +267,12 @@ function dmResearchHTML(){
   if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
   else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
     corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
+  corpo += '</div><div class="dm-record">';
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
     +dmLink('REITs','research-reits')+dmLink('Others','research-others')
     +'</div>'+dmNote('Áreas em preparação · sem conteúdo publicado.'));
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Calendário','research-forex','research','calendar')
     +dmLink('NoCoda','research-forex','research','nocoda')
     +dmLink('Pivots','research-forex','research','pivots'));
@@ -297,12 +303,13 @@ function dmAlladinHTML(){
   // afirmação econômica — e por isso rotuladas como cadastro.
   const L = JPWAlladin.leitura;
   const nInstr = L.instruments().length, nContas = L.accounts().length, nCaixas = L.cashAccounts().length;
-  let corpo = dmFacts(
+  let corpo = '<div class="dm-primary">'+dmFacts(
       dmFact('Posições abertas', n ? String(n) : '<span class="dm-aux">nenhuma</span>', n ? 'instrumento × conta' : 'nenhuma posição em aberto')
     + dmFact('Contas', String(nContas), nCaixas + ' caixa(s)')
   );
   corpo += dmRow('Instrumentos cadastrados', nInstr ? '<b>' + nInstr + '</b>' : dmAux('nenhum'));
   corpo += dmRow('Bens cadastrados', '<b>'+L.assets().length+'</b>');
+  corpo += '</div><div class="dm-record">';
   const labels=alladinCatalogoLabels();
   const cash=L.cashAccounts();
 
@@ -326,6 +333,7 @@ function dmAlladinHTML(){
     ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
       +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
     : dmNote('Nenhum lançamento registrado.'));
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Saldos','alladin','alladin','balances')+dmLink('Lançamentos','alladin','alladin','ledger')
     +dmLink('Posições','alladin','alladin','positions')+dmLink('Cadastros','alladin','alladin','instruments'));
   return {html: corpo, tom: null};

@@ -35,7 +35,7 @@ function finpesComparisonRender(){
     if(control && root.contains(control)) control.focus({preventScroll:true});
   };
   const key = fcCurrentKey();
-  let html = `<div class="fb-header">
+  let html = `<div class="fb-header cp-period-toolbar">
     <button type="button" id="fcPrevious" class="reset-btn fb-nav" data-fc-nav="-1" title="Mês anterior" aria-label="Mês anterior">←</button>
     <span class="fb-month-label">${esc(pfMonthLabel(key))}</span>
     <button type="button" id="fcNext" class="reset-btn fb-nav" data-fc-nav="1" title="Mês seguinte" aria-label="Mês seguinte">→</button>

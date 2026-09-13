@@ -198,7 +198,7 @@ function renderPivotStudies() {
   if (!math) return;
 
   const options = pvEnsureSelection();
-  const head = `<h2>Estudos dos Pivots <span class="art">memória empírica — não autoriza operação</span></h2>`;
+  const head = `<header class="cp-study-head"><div><p class="cp-eyebrow">Research · caderno de observações</p><h2>Estudos dos Pivots</h2></div><span class="cp-study-limit">Memória empírica · não autoriza operação</span></header>`;
 
   if (!options.length) {
     root.innerHTML = `<div class="card">${head}
@@ -208,9 +208,9 @@ function renderPivotStudies() {
 
   const study = pvStudyById(pvStudyId);
   root.innerHTML = `
-    <div class="card">
+    <div class="card cp-study cp-pivots">
       ${head}
-      <p class="expl">Registra os maiores pivots H1 e H4 que você identificou no gráfico e organiza a amostra: amplitude, duração, direção e a maior correção interna informada. O software não detecta pivots — ele estrutura, calcula, ordena e preserva o que você observou.</p>
+      <details class="cp-study-details"><summary>O que este estudo registra</summary><p class="expl">Registra os maiores pivots H1 e H4 que você identificou no gráfico e organiza a amostra: amplitude, duração, direção e a maior correção interna informada. O software não detecta pivots — ele estrutura, calcula, ordena e preserva o que você observou.</p></details>
       ${pvPickerHTML(options)}
       ${pvNewStudyOpen ? pvNewStudyHTML() : ''}
       ${study ? pvStudyHTML(study, math) : pvEmptyStudyHTML()}
@@ -230,7 +230,7 @@ function pvPickerHTML(options) {
     ? mine.map(st => `<option value="${esc(st.id)}"${st.id === pvStudyId ? ' selected' : ''}>${esc(pvFmtDate(st.periodStart))} → ${esc(pvFmtDate(st.periodEnd))} (${st.pivots.length})</option>`).join('')
     : '<option value="">nenhum estudo neste instrumento</option>';
   return `
-    <div class="pv-picker">
+    <div class="pv-picker cp-pv-library" aria-label="Biblioteca de estudos">
       <div class="field">
         <label for="pvInstrument">Instrumento</label>
         <select id="pvInstrument">${instrumentOptions}</select>
@@ -271,7 +271,7 @@ function pvNewStudyHTML() {
 }
 
 function pvEmptyStudyHTML() {
-  return `<p class="expl pv-empty">Nenhum estudo selecionado para este instrumento. Crie um estudo informando o período histórico analisado.</p>`;
+  return `<section class="cp-study-empty"><span class="cp-empty-index" aria-hidden="true">H1 / H4</span><h3>Uma memória para cada período.</h3><p>Nenhum estudo selecionado para este instrumento. Crie um estudo informando o período histórico analisado.</p><p class="cp-empty-detail">Use Novo Estudo acima. Depois, registre os pivots que você identificou para consultar amplitude, duração e correção informada.</p></section>`;
 }
 
 function pvStudyHTML(study, math) {
@@ -288,8 +288,8 @@ function pvStudyHTML(study, math) {
   // estavam, mas alcançáveis.
   const quebrados = study.pivots.filter(p => !math.derive(p));
   return `
-    <div class="pv-study">
-      <p class="pv-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
+    <div class="pv-study cp-pv-study">
+      <p class="pv-period cp-study-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
       ${pvStatsHTML(stats)}
       ${pvFiltersHTML()}
       ${pvTableHTML(records, stats, quebrados, math)}
@@ -345,6 +345,7 @@ function pvComparisonHTML(stats) {
   return `
     <div class="pv-compare">
       <h4>H1 × H4</h4>
+      ${pvAmplitudeComparisonHTML(stats)}
       <div class="jp-table-scroll">
         <table class="dtable pv-compare-table">
           <thead><tr><th scope="col">Medida</th><th scope="col">H1</th><th scope="col">H4</th></tr></thead>
@@ -358,6 +359,17 @@ function pvComparisonHTML(stats) {
       </div>
       <p class="note">Diferenças observadas entre os dois timeframes desta amostra. Nenhuma conclusão automática é derivada daqui.</p>
     </div>`;
+}
+
+// Comprimentos representam as medianas já calculadas pelo domínio, sem nova estatística.
+function pvAmplitudeComparisonHTML(stats) {
+  const groups = ['H1', 'H4'].map(tf => ({tf, ...stats.timeframes[tf]}));
+  const largest = Math.max(0, ...groups.map(group => Number.isFinite(group.median) ? group.median : 0));
+  return `<div class="cp-pv-comparison" role="group" aria-label="Mediana da amplitude por timeframe, mesma amostra do resumo">` + groups.map(group => {
+    const available = group.n > 0 && Number.isFinite(group.median);
+    const width = available && largest > 0 ? group.median / largest * 100 : 0;
+    return `<div class="cp-pv-bar-row"><span>${group.tf} <small>n = ${group.n}</small></span><div class="cp-pv-track" aria-hidden="true"><span style="width:${width}%"></span></div><strong>${available ? pvFmtPct(group.median) : 'Sem dados'}</strong></div>`;
+  }).join('') + '<p>Mediana da amplitude · comparação descritiva desta amostra.</p></div>';
 }
 
 function pvTopHTML(stats) {

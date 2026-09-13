@@ -96,9 +96,9 @@ function renderNocodaStudies() {
   ).join('');
 
   root.innerHTML = `
-    <div class="card">
-      <h2>Estudos NoCoda <span class="art">memória técnica do canal — não autoriza operação</span></h2>
-      <p class="expl">Guarda as três âncoras do Fibo Channel de cada instrumento e deriva o range entre os níveis −1 e 0 e o de cada subdivisão de 0,125. Os instrumentos vêm do Motor de Lote; esta tela não tem catálogo próprio.</p>
+    <div class="card cp-study cp-nocoda">
+      <header class="cp-study-head"><div><p class="cp-eyebrow">Research · memória técnica</p><h2>Estudos NoCoda</h2></div><span class="cp-study-limit">Estudo técnico · não autoriza operação</span></header>
+      <details class="cp-study-details"><summary>Sobre o canal e suas fontes</summary><p class="expl">Guarda as três âncoras do Fibo Channel de cada instrumento e deriva o range entre os níveis −1 e 0 e o de cada subdivisão de 0,125. Os instrumentos vêm do Motor de Lote; esta tela não tem catálogo próprio.</p></details>
 
       <div class="field nc-picker">
         <label for="ncInstrument">Instrumento</label>
@@ -106,10 +106,10 @@ function renderNocodaStudies() {
         <span class="note">O ponto marca instrumentos que já possuem estudo salvo.</span>
       </div>
 
-      <div class="params-grid nc-anchors">
-        ${ncAnchorFieldsHTML(0)}${ncAnchorFieldsHTML(1)}${ncAnchorFieldsHTML(2)}
-      </div>
-
+      <div class="cp-nc-workbench">
+      <section class="cp-nc-reading" aria-label="Leitura do canal">
+        <div class="cp-section-heading"><h3>Geometria do canal</h3><span>Prévia do rascunho</span></div>
+        <figure class="cp-nc-figure"><div id="ncPreview"></div><figcaption id="ncPreviewCaption">Preencha as três âncoras para visualizar o canal.</figcaption></figure>
       <div class="metrics nc-results">
         <div class="metric">
           <div class="k">Range −1 → 0</div>
@@ -123,8 +123,12 @@ function renderNocodaStudies() {
         </div>
       </div>
 
+      </section>
+      <section class="cp-nc-inputs" aria-label="Parâmetros das três âncoras"><div class="cp-section-heading"><h3>Âncoras</h3><span>Data, hora e preço</span></div><div class="params-grid nc-anchors">
+        ${ncAnchorFieldsHTML(0)}${ncAnchorFieldsHTML(1)}${ncAnchorFieldsHTML(2)}
+      </div></section></div>
       <div id="ncFormErr"></div>
-      <div class="nc-actions">
+      <div class="nc-actions cp-study-save">
         <button class="reset-btn" id="ncSaveBtn">Salvar parâmetros</button>
         <span class="fx-status" id="ncStatus">${jpWealthPersistenceOutcomeIsUnknown()
           ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
@@ -181,7 +185,45 @@ function ncUpdateDerived() {
   const result = geometry.compute(ncDraft);
   if (rangeEl) rangeEl.textContent = result ? ncFormat(result.channelRange) : '—';
   if (subEl) subEl.textContent = result ? ncFormat(result.subdivisionRange) : '—';
+  ncUpdatePreview(geometry, result);
   return result;
+}
+
+// Projeção visual: o domínio fornece preços e tempo. Só a escala do SVG vive aqui.
+// Atualiza uma figura independente, preservando os inputs, o cursor e o rascunho.
+function ncUpdatePreview(geometry, result) {
+  const box = document.getElementById('ncPreview');
+  const caption = document.getElementById('ncPreviewCaption');
+  if (!box || !caption) return;
+  const validation = geometry.validate(ncDraft);
+  if (!result || !validation.ok) {
+    box.innerHTML = '<div class="cp-graph-empty"><span class="cp-graph-mark" aria-hidden="true">1 · 2 · 3</span><p>Seu canal começa com três âncoras.</p><span>Informe os pontos para comparar a linha 0 com a linha −1.</span></div>';
+    caption.textContent = 'Prévia indisponível enquanto as âncoras estiverem incompletas ou inválidas.';
+    return;
+  }
+  const v = validation.values;
+  const times = [v.t1, v.t2, v.t3], prices = [v.p1, v.p2, v.p3];
+  const minT = Math.min(...times), maxT = Math.max(...times);
+  const lines = [0, -1].map(level => ({level, a: geometry.levelPrice(level, minT, ncDraft), b: geometry.levelPrice(level, maxT, ncDraft)}));
+  const allPrices = prices.concat(lines.flatMap(line => [line.a, line.b]));
+  if (!allPrices.every(Number.isFinite)) {
+    box.textContent = 'A geometria não pode ser representada nesta escala.';
+    caption.textContent = 'Os valores de entrada permanecem preservados.';
+    return;
+  }
+  const minP = Math.min(...allPrices), maxP = Math.max(...allPrices);
+  const spanP = maxP - minP || Math.max(Math.abs(maxP) * .01, .00001);
+  if (!Number.isFinite(spanP)) {
+    box.textContent = 'A geometria não pode ser representada nesta escala.';
+    caption.textContent = 'Os valores de entrada permanecem preservados.';
+    return;
+  }
+  const x = t => 42 + ((t - minT) / (maxT - minT)) * 356;
+  const y = price => 192 - ((price - minP) / spanP) * 148;
+  const segments = lines.map(line => `<path class="cp-channel-line cp-channel-${line.level === 0 ? 'base' : 'offset'}" d="M42 ${y(line.a)} L398 ${y(line.b)}"/><text x="407" y="${y(line.b) + 4}">${line.level === 0 ? '0' : '−1'}</text>`).join('');
+  const points = times.map((t, i) => `<circle cx="${x(t)}" cy="${y(prices[i])}" r="5"/><text class="cp-anchor-label" x="${x(t)}" y="${y(prices[i]) - 12}" text-anchor="middle">${i + 1}</text>`).join('');
+  box.innerHTML = `<svg viewBox="0 0 460 238" role="img" aria-label="Canal NoCoda: âncoras 1 e 2 na linha 0; âncora 3 na linha menos 1"><path class="cp-graph-axis" d="M42 24 V210 H422"/>${segments}${points}<text x="42" y="230">Tempo das âncoras</text></svg>`;
+  caption.textContent = 'Âncoras 1 e 2: linha 0. Âncora 3: linha −1. Range ' + ncFormat(result.channelRange) + '; subdivisão ' + ncFormat(result.subdivisionRange) + '. Prévia técnica, não cotação de mercado.';
 }
 
 // Mensagens por campo (aria-invalid + parágrafo role="alert" associado) e

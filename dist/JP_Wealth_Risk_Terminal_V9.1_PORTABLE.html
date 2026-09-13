@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar">
+<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar" data-experience="completion">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,8 +32,8 @@
      calibrada e não se mexe por estética. */
   :root{
     /* ---- Tema claro: papel institucional, cinza neutro, acento azul de sistema. ---- */
-    --bg:#EDEDED; --panel:#FFFFFF; --panel-2:#F4F4F4; --line:#D4D4D4;
-    --ink:#141414; --ink-dim:#585858; --ink-faint:#8A8A8A;
+    --bg:#F2F4F7; --panel:#FFFFFF; --panel-2:#F6F7F9; --line:#CED4DE;
+    --ink:#182333; --ink-dim:#526071; --ink-faint:#657184;
     --indigo:#007AFF; --violet:#0068D6; --indigo-deep:#E5F1FF;
     --f1:#16743F; --f1-bg:#E8F3EB;
     --f2:#7A6410; --f2-bg:#F7F2DA;
@@ -90,8 +90,8 @@
      branco, acento saturado nos números, verde/vermelho brilhantes no sinal.
      Paleta amostrada das referências de terminal institucional enviadas. */
   :root[data-theme="dark"]{
-    --bg:#000000; --panel:#0A0A0A; --panel-2:#141414; --line:#333333;
-    --ink:#FFFFFF; --ink-dim:#B4B4B4; --ink-faint:#7C7C7C;
+    --bg:#10151D; --panel:#18212D; --panel-2:#202C3B; --line:#465468;
+    --ink:#F2F5FA; --ink-dim:#C0CAD8; --ink-faint:#A2AFC2;
     --indigo:#0A84FF; --violet:#409CFF; --indigo-deep:#132F4F;
     --f1:#00C853; --f1-bg:#062012;
     --f2:#FFD400; --f2-bg:#231D00;
@@ -4067,14 +4067,7 @@
   }
   html[data-shell="global-dashboard"] .header-action svg{width:15px; height:15px; stroke-width:2}
   html[data-shell="global-dashboard"] .header-action:hover{background:var(--gd-surface-subtle)}
-  /* "Finalizar sessão" reaproveita o glifo de perfil da referência (Claude
-     Design só define 3 ícones: engrenagem/sino/perfil; a app tem só 2
-     controles reais — Configurações e Finalizar sessão — sem sistema de
-     notificações nem conceito de perfil de usuário separado. Perfil é o
-     mais próximo semanticamente de "sessão" entre os 2 restantes; o sino
-     seria só sobre notificações, que não existem aqui). Cor/fundo cinza
-     claro batem com o slot de perfil da referência; texto/aria-label/função
-     do botão continuam "Finalizar sessão", inalterados. */
+  /* Tratamento discreto da ação de finalizar sessão; confirmação preservada. */
   html[data-shell="global-dashboard"] .header-action-finalize{
     color:var(--jp-ink-muted); background:var(--gd-surface-subtle); border-color:transparent;
   }
@@ -6539,10 +6532,462 @@ html[data-shell="global-dashboard"] .gd-context-row[hidden]{display:none}
 #settingsModal #navOrderList button{min-width:44px;min-height:44px;flex-shrink:0}
 #settingsModal .nav-order-actions button{min-height:44px}
 #copyOperationBtn[hidden]{display:none!important}
+
+/* APPLE01 · shared presentation. Native-inspired principles, original web UI.
+   Existing semantic tokens, preferences and all financial colors retain roles. */
+:root{--jp-control-radius:9px;--jp-content-radius:16px;--jp-shell-material:rgba(255,255,255,.96);--jp-shadow-soft:0 4px 18px #18233308;--jp-motion-fast:120ms}
+:root[data-theme="dark"]{--jp-shell-material:rgba(24,33,45,.97);--jp-shadow-soft:0 4px 18px #0002}
+html body{background:var(--bg);color:var(--ink)}
+html :is(button,input,select,textarea){accent-color:var(--violet)}
+html :is(button,input,select,textarea):focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+html button{touch-action:manipulation}
+html button:not(:disabled):active{filter:brightness(.94)}
+html :is(input,select,textarea){border-radius:var(--jp-control-radius)}
+html :is(.reset-btn,.jp-btn,.modal-btn){border-radius:var(--jp-control-radius)}
+html :is(.card,.alladin-view){border-radius:var(--jp-content-radius);box-shadow:var(--jp-shadow-soft)}
+html :is(.dtable,.otable){font-variant-numeric:tabular-nums}
+html :is(.dtable,.otable) th{color:var(--ink-dim);line-height:1.45}
+html :is(.dtable,.otable) td{line-height:1.55}
+html :is(.field,.modal-field) label{color:var(--ink);line-height:1.5}
+html [aria-invalid="true"]{border-color:var(--danger)}
+html :is(.modal-box,#settingsModal){border-radius:20px}
+html #mvpNotesDrawer{background:var(--panel)}
+@media(prefers-contrast:more){:root{--line:#526071;--jp-shell-material:var(--panel)}:root[data-theme="dark"]{--line:#C0CAD8}html :is(button,input,select,textarea){border-color:var(--ink-dim)}}
+@media(prefers-reduced-transparency:reduce){:root{--jp-shell-material:var(--panel)}}
+@media(prefers-reduced-motion:reduce){html :is(button,.card,.modal-box){transition:none;animation:none}}
+
+/* APPLE01 · shell: explicit actions and original, semantic area symbols. */
+html[data-shell="global-dashboard"] body>header{height:auto;min-height:64px;background:var(--jp-shell-material);border-bottom:1px solid var(--line)}
+html[data-shell="global-dashboard"] .header-actions .header-action{width:auto;min-width:44px;min-height:44px;padding:8px 10px;gap:7px;border-radius:9px;color:var(--ink-dim)}
+.header-action-label{font:500 12px/1.3 var(--sans)}
+html[data-shell="global-dashboard"] .header-action-finalize{border:1px solid var(--line);background:transparent}
+.nav-area-icon{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+html[data-navigation="sidebar"] #nav>.tab::before{display:none}
+html[data-navigation="sidebar"] #nav>.tab{border-left:0;border-radius:10px;padding:11px 13px}
+html[data-navigation="sidebar"] #appSidebar{background:var(--jp-shell-material)}
+html[data-navigation="sidebar"] #nav>.tab.active{background:var(--accent-tint);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--violet) 18%,transparent)}
+html[data-navigation="topbar"] .nav-area-icon{display:none}
+html .shell-page-header{color:var(--ink-dim)}
+@media(max-width:600px){
+ html[data-shell="global-dashboard"] body>header{flex-wrap:wrap;padding-block:10px;gap:8px}
+ html[data-shell="global-dashboard"] .header-actions{flex:1 1 100%;justify-content:space-between;margin:0;gap:4px}
+ html[data-shell="global-dashboard"] .header-actions .header-action{padding:6px;gap:4px}
+ .header-action-label{font-size:11px}
+ .nav-area-icon{width:19px;height:19px}
+}
+@media(max-width:600px){
+ html[data-shell="global-dashboard"] #headerActions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;min-width:0;flex-basis:100%;gap:4px}
+ html[data-shell="global-dashboard"] #headerActions>button{min-width:0;width:100%;padding:5px 2px;min-height:48px;display:flex;flex-direction:column;justify-content:center;gap:3px}
+ html[data-shell="global-dashboard"] #headerActions .header-action-label{font-size:10px;white-space:normal;overflow-wrap:anywhere}
+}
+
+/* APPLE01 W4 · orientation and operations: content has its own hierarchy. */
+#dashMacro .dm-grid{align-items:start;gap:20px}
+#dashMacro .dm-card{padding:24px;border-radius:18px;box-shadow:var(--jp-shadow-soft)}
+#dashMacro .dm-card-head{align-items:flex-start;border-bottom:0;margin-bottom:12px;padding-bottom:4px}
+#dashMacro .dm-title{font-size:24px}
+#dashMacro .dm-eyebrow{font-family:var(--sans);letter-spacing:.06em;font-size:11px}
+#dashMacro .dm-facts{gap:8px}
+#dashMacro .dm-fact{padding:14px;border:1px solid var(--line);background:var(--panel);border-radius:12px}
+#dashMacro .dm-fact .v{font-size:24px;letter-spacing:-.025em}
+#dashMacro .dm-links{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);gap:6px}
+#dashMacro .dm-link{padding:6px 10px;min-height:40px;background:var(--panel-2);border-radius:8px;color:var(--ink-dim)}
+#dashMacro .dm-cta{background:var(--accent-tint);border-color:transparent;color:var(--violet)}
+#dashMacro .dm-date{white-space:normal}
+#dashMacro .dm-live-dot{box-shadow:none}
+html[data-shell="global-dashboard"] #execOverview #mcClearanceCard{border-radius:18px;gap:18px}
+html[data-shell="global-dashboard"] #execOverview .mc-mini-card{min-width:0}
+html[data-shell="global-dashboard"] #execOverview .mc-mini-card .k{white-space:normal;overflow:visible;text-overflow:clip}
+html[data-shell="global-dashboard"] #gdContextRow{border-bottom:1px solid var(--line);background:var(--panel);font-variant-numeric:tabular-nums}
+html[data-shell="global-dashboard"] #gdFooter{font-size:12px;line-height:1.65;text-align:left;border-top:1px solid var(--line);background:var(--panel-2)}
+@media(max-width:600px){#dashMacro .dm-card{padding:18px}#dashMacro .dm-title{font-size:21px}#dashMacro .dm-page-head{gap:12px}#dashMacro .dm-card-head{flex-wrap:wrap}#dashMacro .dm-fact .v{font-size:22px}}
+
+/* APPLE01 W5/W6 · reading, input and analysis share a consistent composition. */
+html[data-shell="global-dashboard"] .fb-header{padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+html[data-shell="global-dashboard"] .fb-month-label{font-size:18px;letter-spacing:.02em}
+html[data-shell="global-dashboard"] .fb-grid{gap:20px;align-items:start}
+html[data-shell="global-dashboard"] .fb-card h2{line-height:1.5;display:flex;flex-wrap:wrap;gap:4px 10px}
+html[data-shell="global-dashboard"] .fb-card .art{display:block;line-height:1.5}
+html :is(#execNocoda,#execPivots) .dtable td{padding-block:12px}
+html .ecal-filters{gap:4px;flex-wrap:wrap;padding:4px;border-radius:10px;background:var(--panel-2)}
+html .ecal-filters button{border-radius:7px;min-height:40px}
+html :is(.galton-controls,.galton-metrics){border-radius:12px;background:var(--panel)}
+html .galton-controls{border:1px solid var(--line);padding:18px}
+html .galton-metrics>div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+html .galton-metrics strong{font-family:var(--sans);font-variant-numeric:tabular-nums;font-size:19px}
+html #alladinTabs{display:flex;flex-wrap:wrap;gap:20px;padding:0;margin-bottom:20px;border:0;background:transparent;overflow:visible}
+.alladin-destination-group{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:0}
+.alladin-destination-label{flex-basis:100%;font:600 11px/1.5 var(--sans);letter-spacing:.04em;color:var(--ink-dim);margin-bottom:4px}
+html #alladinTabs button{min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink-dim)}
+html #alladinTabs button.on{border-color:var(--violet);background:var(--accent-tint);color:var(--violet)}
+html #alladinReadOnlyBanner[hidden]{display:none}
+html .alladin-empty{padding:24px 0;line-height:1.65;color:var(--ink-dim);max-width:60ch}
+html[data-shell="global-dashboard"] #mvpNotesDrawer{background:var(--panel);border-radius:18px 0 0 18px}
+html .mvp-notes-head{border-bottom:1px solid var(--line);background:var(--panel)}
+html .mvpn-empty{color:var(--ink-dim);text-align:left;line-height:1.65;padding:16px}
+html #settingsModal .settings-main{background:var(--panel)}
+html #settingsModal .settings-nav{background:var(--panel-2)}
+html #settingsModal button{border-radius:8px}
+@media(max-width:600px){
+ html[data-shell="global-dashboard"] .fb-header{padding:12px;gap:8px}
+ html[data-shell="global-dashboard"] .fb-month-label{min-width:0;font-size:16px}
+ html #alladinTabs{gap:12px}
+ html #alladinTabs button{min-height:44px}
+ html .ecal-filters button{min-height:44px}
+ html[data-shell="global-dashboard"] #mvpNotesDrawer{border-radius:0}
+}
+/* Bound icon geometry independently of the legacy fluid chart SVG rule. */
+html #nav .nav-area-icon{width:20px;height:20px;max-width:20px;flex:0 0 20px}
+html[data-shell="global-dashboard"] #headerActions .header-action svg{width:16px;height:16px;min-width:16px;max-width:16px;flex:0 0 16px}
+
+@media(min-width:601px){
+ html[data-shell="global-dashboard"] #headerActions{width:auto;gap:8px;flex-shrink:0}
+ html[data-shell="global-dashboard"] #headerActions .header-action{flex-shrink:0}
+}
+
+/* Keep usable search width when the mobile dialog reserves a scrollbar gutter. */
+@media(max-width:360px){#settingsModal .settings-modal-head{padding-inline:8px}}
+
+@media(max-width:600px){html[data-shell="global-dashboard"] #headerActions>button{height:auto}}
+
+/* APPLE-COMPLETION-01 · composed workspaces; presentation only.
+   Existing semantic tokens, route nodes, widgets and saved preferences survive. */
+html[data-experience="completion"]{--cp-reading:72ch}
+.cp-kicker{display:block;color:var(--ink-dim);font:650 10px/1.5 var(--sans);letter-spacing:.12em;text-transform:uppercase}
+.cp-workspace-heading{display:grid;gap:6px;margin-bottom:20px}
+.cp-workspace-heading p{margin:0;max-width:var(--cp-reading);color:var(--ink-dim);font:14px/1.5 var(--sans)}
+html[data-experience="completion"] #exec .cp-workspace-heading h2,html[data-experience="completion"] #researchProbabilityLab .cp-workspace-heading h2{margin:0;font:650 30px/1.15 var(--sans);letter-spacing:-.04em}
+.cp-area-mark,.cp-empty-mark{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+/* Panorama: a reading surface with four chapters, not four independent dashboards. */
+html[data-experience="completion"] #dashMacro .dm-page-head{padding:10px 0 24px;margin:0}
+html[data-experience="completion"] #dashMacro .dm-shell-title{font-size:clamp(26px,3vw,38px);letter-spacing:-.055em;line-height:1.12}
+.cp-panorama-index{display:flex;gap:8px 24px;flex-wrap:wrap;padding:0 0 18px;border-bottom:1px solid var(--line)}
+.cp-panorama-index a{display:inline-flex;align-items:center;min-height:36px;color:var(--ink-dim);font-size:12px;text-decoration:none}
+.cp-panorama-index a:hover{color:var(--jp-action);text-decoration:underline;text-underline-offset:5px}
+html[data-experience="completion"] #dashMacro .dm-grid{display:block}
+html[data-experience="completion"] #dashMacro .dm-card{display:grid;grid-template-columns:190px minmax(0,1fr);gap:24px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;padding:28px 0;margin:0;min-height:0}
+html[data-experience="completion"] #dashMacro .dm-card-head{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:16px;margin:0}
+html[data-experience="completion"] #dashMacro .dm-card-head>div{display:grid;gap:8px}
+html[data-experience="completion"] #dashMacro .cp-area-mark{width:28px;height:28px;max-width:28px;color:var(--jp-action);margin-bottom:4px}
+html[data-experience="completion"] #dashMacro .dm-title{font:650 23px/1.15 var(--sans);letter-spacing:-.035em;scroll-margin-top:100px}
+html[data-experience="completion"] #dashMacro .dm-eyebrow{font-size:10px;line-height:1.4;letter-spacing:.08em}
+html[data-experience="completion"] #dashMacro .dm-cta{font-size:12px;padding:9px 12px;min-height:40px;text-align:left;white-space:normal}
+html[data-experience="completion"] #dashMacro .dm-body{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px 24px;align-items:start}
+.dm-primary,.dm-record{min-width:0}
+html[data-experience="completion"] #dashMacro .dm-facts{gap:16px 20px;margin:10px 0 12px}
+html[data-experience="completion"] #dashMacro .dm-fact{padding:0;background:none;border:0;border-radius:0;min-height:0;gap:4px}
+html[data-experience="completion"] #dashMacro .dm-fact .k{white-space:normal;overflow:visible;text-overflow:clip;font:500 11px/1.4 var(--sans);letter-spacing:0;text-transform:none}
+html[data-experience="completion"] #dashMacro .dm-fact .v{font:650 24px/1.2 var(--sans);letter-spacing:-.025em}
+html[data-experience="completion"] #dashMacro .dm-fact .s{font-size:11px;line-height:1.45;color:var(--ink-dim)}
+html[data-experience="completion"] #dashMacro .dm-record{border-left:1px solid var(--line);padding-left:22px}
+html[data-experience="completion"] #dashMacro .dm-section{padding:0 0 12px;margin:0 0 10px;border:0}
+html[data-experience="completion"] #dashMacro .dm-section:last-child{padding:0;margin:0}
+html[data-experience="completion"] #dashMacro .dm-section h4{font:650 11px/1.5 var(--sans);margin:0 0 8px;color:var(--ink)}
+html[data-experience="completion"] #dashMacro .dm-row{padding:5px 0;gap:12px;font-size:12px;line-height:1.5;align-items:start}
+html[data-experience="completion"] #dashMacro .dm-k{white-space:normal}
+html[data-experience="completion"] #dashMacro .dm-note{font-size:12px;line-height:1.55;margin:8px 0 0;padding:0;background:none;border:0}
+html[data-experience="completion"] #dashMacro .dm-empty{border:0;border-left:2px solid var(--line);border-radius:0;background:none;padding:8px 12px;font-size:13px}
+html[data-experience="completion"] #dashMacro .dm-links{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 12px;padding:12px 0 0;border-top:1px solid var(--line);margin:0}
+html[data-experience="completion"] #dashMacro .dm-link{background:none;border:0;border-radius:6px;color:var(--jp-action);padding:6px 0;min-height:32px;font-size:12px;text-align:left}
+html[data-experience="completion"] #dashMacro .dm-link:hover{background:var(--accent-tint);text-decoration:underline}
+html[data-experience="completion"] #dashMacro .dm-tools{margin-top:24px}
+/* Forex: current readiness and controls above a continuous fact strip. */
+html[data-experience="completion"] #fxOverviewWidgets{gap:16px 24px;align-items:start}
+html[data-experience="completion"] #fxOverviewWidgets #mcClearanceCard{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding:24px;border:1px solid var(--line);border-top:3px solid var(--mc);box-shadow:none}
+html[data-experience="completion"] #mcClearanceCard .mc-cockpit-col{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;align-items:start}
+html[data-experience="completion"] #mcClearanceCard .dh-kicker{grid-column:1;font-size:10px}
+html[data-experience="completion"] #mcClearanceCard .mc-clearance-title{grid-column:1;font:650 23px/1.2 var(--sans);letter-spacing:-.035em;max-width:38ch}
+html[data-experience="completion"] #mcClearanceCard .mc-clearance-sub{grid-column:1;font:12px/1.5 var(--sans)}
+html[data-experience="completion"] #mcClearanceCard .mc-cockpit-acoes{grid-column:2;grid-row:1/4;margin:0;align-self:center;display:flex;gap:8px}
+html[data-experience="completion"] #mcCockpitFacts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;padding-top:20px;border-top:1px solid var(--line)}
+html[data-experience="completion"] #mcCockpitFacts .mc-fact{border:0;background:none;border-radius:0;padding:0;min-width:0}
+html[data-experience="completion"] #mcCockpitFacts :is(.mc-fact-k,.mc-fact-meta){white-space:normal;text-overflow:clip;overflow:visible;line-height:1.5}
+html[data-experience="completion"] #mcCockpitFacts .mc-fact-v{font:650 26px/1.2 var(--sans);letter-spacing:-.03em}
+html[data-experience="completion"] #fxOverviewWidgets #onboardingIncompleteBanner{margin:0;padding:14px 18px;border-radius:10px;box-shadow:none}
+html[data-experience="completion"] #fxOverviewWidgets :is(.gd-vrm-card,.gd-news-card){border-radius:0;box-shadow:none;border:0;border-bottom:1px solid var(--line);background:none;padding:18px 4px;min-height:0}
+html[data-experience="completion"] #fxOverviewWidgets .gd-vrm-atr-disc{margin-top:18px}
+html[data-experience="completion"] #fxOverviewWidgets .gd-news-agenda{margin-top:18px}
+html[data-experience="completion"] .fx-overview-tools{padding:18px 0;background:none;box-shadow:none;border:0;border-bottom:1px solid var(--line);border-radius:0}
+html[data-experience="completion"] .fx-overview-tools .gd-quick-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+html[data-experience="completion"] .fx-overview-tools .gd-quick-nav button{padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+/* Preference collections: user's environment, then reference and method. */
+.cp-settings-intro{margin:0 0 24px}
+html[data-experience="completion"] #settingsModal .cp-settings-intro h4{font:650 26px/1.18 var(--sans);letter-spacing:-.035em;margin:8px 0 12px;max-width:24ch}
+.cp-settings-collections{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+html[data-experience="completion"] #settingsModal .cp-settings-collections section>h4{font:600 11px/1.4 var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);margin:0 0 10px}
+html[data-experience="completion"] .settings-nav-card{gap:12px;min-height:74px}
+.cp-settings-symbol{display:flex;align-items:center;justify-content:center;flex:0 0 30px;color:var(--jp-action)}
+.cp-settings-symbol svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+html[data-experience="completion"] .cp-settings-collections .settings-nav-list{background:none;border:0}
+html[data-experience="completion"] .cp-settings-collections .settings-nav-card{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;align-items:flex-start;padding:16px}
+html[data-experience="completion"] .cp-settings-collections .settings-nav-card-chev{display:none}
+html[data-experience="completion"] :is([data-settings-panel="appearance"],[data-settings-panel="interface"],[data-settings-panel="editor"],[data-settings-panel="backup"]) .card{box-shadow:none;border-radius:12px}
+html[data-experience="completion"] .settings-content{padding-top:24px}
+html[data-experience="completion"] .settings-panel .settings-facts{background:var(--panel-2);padding:20px;border-radius:12px;row-gap:16px}
+/* Notes: collections are navigation; writing stays on a calm page. */
+.cp-notes-intro{padding:16px 10px 22px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.cp-notes-intro h3{font:650 20px/1.2 var(--sans);letter-spacing:-.025em;margin:10px 0}
+.cp-notes-intro p{font:12px/1.55 var(--sans);color:var(--ink-dim);margin:0}
+html[data-experience="completion"] .mvpn-editor-pane{background:var(--panel-2)}
+html[data-experience="completion"] .mvpn-content-area{max-width:80ch;margin:0 auto;padding:32px clamp(18px,3vw,48px);font:16px/1.8 var(--sans);background:var(--panel);color:var(--ink);box-shadow:none}
+html[data-experience="completion"] .mvpn-editor-bar{background:var(--panel);border-bottom:1px solid var(--line);min-height:60px;padding:12px 18px}
+html[data-experience="completion"] .cp-writing-empty{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;max-width:420px;padding:clamp(24px,4vw,60px);margin:auto;text-align:left}
+html[data-experience="completion"] .cp-writing-empty[hidden]{display:none}
+.cp-writing-empty .cp-empty-mark{width:44px;height:44px;color:var(--ink-dim);margin-bottom:20px}
+.cp-writing-empty h3{font:650 26px/1.2 var(--sans);letter-spacing:-.04em;margin:0 0 16px;color:var(--ink)}
+.cp-writing-empty p{font:14px/1.65 var(--sans);margin:0 0 16px;color:var(--ink-dim)}
+.cp-writing-empty>span{font:11px/1.5 var(--sans);color:var(--ink-dim)}
+html[data-experience="completion"] .mvpn-empty{margin:16px 4px;padding:12px;line-height:1.65}
+html[data-experience="completion"] .mvpn-empty strong{display:block;font:600 16px/1.4 var(--sans);margin-bottom:10px;color:var(--ink)}
+html[data-experience="completion"] .mvpn-empty p{font-size:13px;margin:0}
+/* Content navigation has a quieter, coherent selected state. */
+html[data-experience="completion"] #navLocalSlot button{border-color:transparent;border-radius:8px;background:none;padding:8px 14px}
+html[data-experience="completion"] #navLocalSlot button.is-current{background:var(--panel);border-color:var(--line);box-shadow:0 1px 2px rgb(0 0 0 / .04)}
+@media(max-width:1200px){
+ html[data-experience="completion"] #dashMacro .dm-card{grid-template-columns:150px minmax(0,1fr);gap:20px}
+ html[data-experience="completion"] #dashMacro .dm-body{grid-template-columns:minmax(0,1fr)}
+ html[data-experience="completion"] #dashMacro .dm-record{border:0;border-top:1px solid var(--line);padding:14px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+ html[data-experience="completion"] #mcClearanceCard .mc-cockpit-acoes{grid-column:1;grid-row:auto;justify-content:flex-start;margin-top:8px}
+}
+@media(max-width:760px){
+ html[data-experience="completion"] #dashMacro .dm-page-head{padding:0 0 16px;gap:12px}
+ html[data-experience="completion"] #dashMacro .dm-card{display:block;padding:24px 0}
+ html[data-experience="completion"] #dashMacro .dm-card-head{flex-direction:row;justify-content:space-between;align-items:start;margin-bottom:18px}
+ html[data-experience="completion"] #dashMacro .dm-card-head>div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 10px}
+ html[data-experience="completion"] #dashMacro .cp-area-mark{grid-column:1;grid-row:1/3;align-self:center;margin:0;width:24px;height:24px}
+ html[data-experience="completion"] #dashMacro .dm-card-head .dm-eyebrow{grid-column:2;font-size:8px}
+ html[data-experience="completion"] #dashMacro .dm-title{grid-column:2;font-size:20px}
+ html[data-experience="completion"] #dashMacro .dm-cta{max-width:116px;font-size:11px;min-height:44px;padding:8px 10px}
+ html[data-experience="completion"] #dashMacro .dm-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ html[data-experience="completion"] #dashMacro .dm-fact .v{font-size:23px}
+ html[data-experience="completion"] #dashMacro .dm-record{gap:12px}
+ .cp-panorama-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+ .cp-panorama-index a{min-height:44px;font-size:11px}
+ html[data-experience="completion"] #fxOverviewWidgets #mcClearanceCard{padding:18px;gap:16px}
+ html[data-experience="completion"] #mcClearanceCard .mc-clearance-title{font-size:21px}
+ html[data-experience="completion"] #mcCockpitFacts{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px;padding-top:16px}
+ html[data-experience="completion"] #mcCockpitFacts .mc-fact-v{font-size:23px}
+ html[data-experience="completion"] #mcCockpitFacts .mc-fact-meta{font-size:11px}
+ html[data-experience="completion"] .fx-overview-tools .gd-quick-nav{grid-template-columns:1fr;gap:8px}
+ html[data-experience="completion"] #fxOverviewWidgets #onboardingIncompleteBanner{padding:12px;gap:10px;flex-wrap:wrap}
+ html[data-experience="completion"] #fxOverviewWidgets #onboardingIncompleteBanner button{margin-left:0;min-height:44px}
+ .cp-settings-collections{grid-template-columns:1fr;gap:18px}
+ html[data-experience="completion"] #settingsModal .cp-settings-intro h4{font-size:24px}
+ .cp-notes-intro{padding:24px 16px}
+ .cp-notes-intro h3{font-size:30px}
+ html[data-experience="completion"] .mvpn-folder-sidebar{background:var(--panel)}
+ html[data-experience="completion"] .mvpn-folder-nav-list{padding:0 14px}
+ html[data-experience="completion"] .mvpn-folder-item{min-height:56px}
+ html[data-experience="completion"] .mvpn-content-area{padding:24px 20px;max-width:100%;font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){html[data-experience="completion"] :is(.cp-area-mark,.settings-nav-card,.dm-card){animation:none;transition:none}}
+
+/* Research completion. Scoped proposal for the single design lead. Existing tokens only. */
+.cp-study{overflow:visible}
+.cp-study-head{position:static;height:auto;min-height:0;padding:0;background:none;border:0;box-shadow:none;z-index:auto;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px}
+html[data-experience="completion"] .card .cp-study-head h2{display:block;margin:0;font:650 28px/1.2 var(--sans);letter-spacing:-.035em}
+.cp-eyebrow{font:600 11px/1.5 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);margin:0 0 8px}
+.cp-study-limit{font-size:12px;line-height:1.5;color:var(--ink-dim);padding:7px 10px;background:var(--panel-2);border-radius:7px;max-width:240px}
+.cp-section-heading{display:flex;align-items:baseline;gap:12px;justify-content:space-between;margin-bottom:14px}
+.cp-section-heading h3{font:650 15px/1.4 var(--sans);margin:0;color:var(--ink)}
+.cp-section-heading>span{font:12px/1.4 var(--sans);color:var(--ink-dim)}
+.cp-nocoda .nc-picker{max-width:360px;margin-bottom:24px}
+.cp-nc-workbench{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:30px;align-items:start}
+.cp-nc-reading,.cp-nc-inputs{min-width:0}
+.cp-nc-figure{margin:0;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.cp-nc-figure figcaption{font:12px/1.55 var(--sans);color:var(--ink-dim);margin-top:10px}
+.cp-nc-figure svg{display:block;width:100%;height:auto;color:var(--jp-action);overflow:visible}
+.cp-nc-figure svg text{font:12px var(--sans);fill:var(--ink-dim)}
+.cp-nc-figure svg circle{fill:var(--jp-action);stroke:var(--panel);stroke-width:2}
+.cp-nc-figure .cp-anchor-label{fill:var(--ink);font-weight:700}
+.cp-graph-axis{stroke:var(--line);fill:none;stroke-width:1}
+.cp-channel-line{stroke:var(--jp-action);stroke-width:2;fill:none}
+.cp-channel-offset{stroke-dasharray:6 4}
+.cp-graph-empty{min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;color:var(--ink-dim);font:13px/1.6 var(--sans);max-width:34ch;margin:auto}
+.cp-graph-empty p{font-size:17px;font-weight:600;color:var(--ink);margin:0}
+.cp-graph-mark{font:600 24px/1.4 var(--mono);color:var(--jp-action);letter-spacing:.1em}
+.cp-nocoda .nc-anchors{display:grid;grid-template-columns:1fr;gap:12px}
+.cp-nocoda .nc-anchor{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:10px 0;margin:0}
+.cp-nocoda .nc-anchor legend{font:650 13px/1.4 var(--sans);color:var(--ink)}
+.cp-nocoda .nc-anchor .field{margin:0}
+.cp-nocoda .nc-anchor .nc-field-err{grid-column:1/-1}
+.cp-nocoda .nc-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.cp-nocoda .nc-results .metric{background:transparent;border:0;border-radius:0;padding:4px 0}
+.cp-nocoda .nc-results .v{font-size:24px}
+.cp-study-save{border-top:1px solid var(--line);padding-top:18px;margin-top:24px}
+.cp-study-save #ncSaveBtn,.cp-pv-library #pvNewStudyBtn{border-color:var(--jp-action);color:var(--jp-action);background:var(--accent-tint)}
+.cp-pv-library{padding:18px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;gap:14px 20px}
+.cp-pv-library .pv-picker-note{font-size:12px;color:var(--ink-dim);line-height:1.5}
+.cp-study-empty{max-width:640px;margin:42px auto;padding:24px 16px;text-align:center}
+.cp-empty-index{display:inline-block;color:var(--jp-action);font:600 12px/1.4 var(--mono);letter-spacing:.12em;margin-bottom:16px}
+.cp-study-empty h3{font:650 25px/1.2 var(--sans);letter-spacing:-.025em;margin:0 0 14px;color:var(--ink)}
+.cp-study-empty p{color:var(--ink-dim);font-size:15px;line-height:1.65;margin:8px 0}
+.cp-study-empty .cp-empty-detail{font-size:12px;max-width:52ch;margin:14px auto}
+.cp-study-period{font:14px/1.5 var(--sans);padding:20px 0 4px}
+.cp-pivots .pv-split{padding:20px 0;border-block:1px solid var(--line)}
+.cp-pv-comparison{margin:16px 0}
+.cp-pv-bar-row{display:grid;grid-template-columns:70px minmax(40px,1fr) 74px;gap:12px;align-items:center;margin-bottom:12px;font:13px var(--sans)}
+.cp-pv-bar-row>span{font-weight:650}
+.cp-pv-bar-row small{display:block;font-size:11px;color:var(--ink-dim);font-weight:400;margin-top:3px}
+.cp-pv-bar-row strong{font-weight:600;font-variant-numeric:tabular-nums;text-align:right;font-size:12px}
+.cp-pv-track{height:8px;background:var(--panel-2);border-radius:5px;overflow:hidden}
+.cp-pv-track>span{display:block;height:100%;background:var(--jp-action);border-radius:5px}
+.cp-pv-comparison>p{font-size:11px;color:var(--ink-dim);line-height:1.5}
+.ecal-ws-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
+.ecal-ws-head h2{font:650 28px/1.25 var(--sans);letter-spacing:-.03em;margin:0}
+.ecal-ws-head .ecal-ws-fresh{color:var(--ink-dim);font:12px/1.5 var(--sans);max-width:32ch}
+#execEcal .ecal-filters{margin:22px 0;background:var(--panel-2)}
+#execEcal .ecal-empty{padding:28px 24px;border-left:3px solid var(--jp-action);background:var(--panel-2);border-radius:0 10px 10px 0;line-height:1.65}
+.cp-calendar-day{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;border-top:1px solid var(--line);padding:20px 0}
+.cp-calendar-day .ecal-day-title{font:650 15px/1.5 var(--sans);color:var(--ink);margin:0;padding:0}
+.cp-calendar-day .ecal-day-list{min-width:0}
+.cp-calendar-event{padding:14px 0!important;background:transparent!important;border-bottom:1px solid var(--line)}
+.ecal-ws-foot{margin-top:24px;font:12px/1.6 var(--sans);color:var(--ink-dim)}
+.cp-lab .galton-kicker{font-family:var(--sans);font-size:11px;letter-spacing:.04em}
+.cp-lab .galton-disclaimer{padding:10px 14px;font-size:12px;line-height:1.5}
+html .cp-lab-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px 24px;padding:14px 16px}
+.cp-lab-workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;grid-template-areas:"stage analysis" "status analysis" "integrity analysis";gap:12px 24px;align-items:start}
+.cp-lab-workspace>.galton-stage{grid-area:stage;height:clamp(440px,60vh,600px)}
+.cp-lab-workspace>.galton-status-row{grid-area:status}
+.cp-lab-workspace>[data-galton-integrity]{grid-area:integrity}
+.cp-lab-analysis{grid-area:analysis;display:grid;gap:20px;min-width:0}
+html .cp-lab-analysis .galton-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;background:transparent}
+html .cp-lab-analysis .galton-metrics>div{border:0;border-radius:0;padding:6px 0 12px;border-bottom:1px solid var(--line);background:transparent}
+.cp-lab-analysis .galton-control-grid{grid-template-columns:1fr}
+.cp-lab-analysis .galton-adjustments{padding:16px;background:var(--panel-2)}
+@media(max-width:1100px){.cp-lab-workspace{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "status" "integrity" "analysis"}.cp-lab-analysis{grid-template-columns:1fr 1fr}.cp-lab-workspace>.galton-stage{height:460px}}
+@media(max-width:760px){.cp-study-head{display:block;margin-bottom:20px}html[data-experience="completion"] .card .cp-study-head h2{font-size:25px}.cp-study-limit{display:inline-block;margin-top:12px;max-width:none}.cp-nc-workbench{grid-template-columns:1fr;gap:22px}.cp-nc-figure{padding:10px}.cp-graph-empty{min-height:150px}.cp-nocoda .nc-anchor{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}.cp-pv-library .field{min-width:0;flex:1 1 100%}.cp-pv-library .field select{width:100%}.cp-study-empty{margin:24px auto;padding:16px 4px}.cp-study-empty h3{font-size:23px}.cp-calendar-day{grid-template-columns:1fr;gap:10px;padding:18px 0}.cp-lab-analysis{grid-template-columns:1fr}.cp-lab-workspace>.galton-stage{height:400px;min-height:320px}.cp-lab .galton-button-row{gap:6px}.cp-lab .galton-seed{margin-left:0}.cp-section-heading{flex-wrap:wrap;gap:4px}.cp-pivots .pv-split{grid-template-columns:1fr}}
+@media(max-width:390px){.cp-nocoda .nc-anchor{grid-template-columns:minmax(0,1fr)}.cp-nocoda .nc-anchor .field{margin-bottom:4px}html[data-experience="completion"] .card .cp-study-head h2{font-size:23px}.cp-pv-bar-row{grid-template-columns:58px minmax(32px,1fr) 64px;gap:8px}}
+
+/* PF / Alladin — proposta para consolidação pelo design lead.
+   Apenas tokens existentes; nenhuma alteração de cálculo, estado ou handlers. */
+.cp-object-toolbar{position:static;height:auto;min-height:0;padding:0;background:none;border:0;box-shadow:none;z-index:auto;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:20px}
+.cp-object-toolbar>h2,.cp-object-toolbar>div{min-width:0}
+.cp-object-toolbar h2{margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.cp-object-toolbar>button,.cp-object-toolbar>p{flex-shrink:0;margin:0}
+.cp-object-toolbar .art{font-weight:400;line-height:1.55;letter-spacing:0}
+.cp-budget-summary,.cp-budget-records,.cp-budget-support{margin-bottom:24px;min-width:0}
+.cp-budget-records{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}
+.cp-budget-support{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.cp-summary-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:20px}
+.cp-summary-columns>section{min-width:0}
+.cp-summary-columns>section+section{border-left:1px solid var(--line);padding-left:24px}
+.cp-summary-columns .fb-sumsec{margin:0 0 12px;font-weight:600;color:var(--ink-dim)}
+.cp-summary-columns .risk-note{margin:0;line-height:1.65}
+.cp-budget-summary .fb-sumrow{font-size:14px;padding:10px 0}
+.cp-budget-summary .fb-sumrow b{font-size:20px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cp-field{display:block;position:relative;min-width:0;margin:0;color:var(--ink);font:inherit}
+.cp-field-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.cp-budget-records .fb-row{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr) minmax(0,1fr) minmax(180px,1.4fr);gap:16px;padding:14px 0}
+.cp-budget-records .fb-erow{grid-template-columns:minmax(0,1.8fr) minmax(50px,.6fr) repeat(4,minmax(0,1fr)) minmax(140px,1.1fr);gap:12px;padding:14px 0}
+.cp-budget-records .fb-head{font-size:11px;letter-spacing:.03em;line-height:1.5}
+.cp-budget-records .fb-ghost{opacity:1;font-style:normal}
+.cp-budget-records .fb-ghost .fb-rule-mark{display:block;margin:4px 0 0;color:var(--ink-dim)}
+.cp-budget-records :is(.fb-text,.fb-money),#finpesDebtsRoot :is(.fb-text,.fb-money){min-height:40px;border-radius:var(--jp-radius-sm);padding:8px;color:var(--ink);font-size:13px}
+.cp-budget-records .fb-actions,#finpesDebtsRoot .fb-actions{flex-wrap:wrap;gap:6px;justify-content:flex-start}
+html #finpes :is(.row-del){width:auto;min-width:44px;min-height:36px;padding:6px 10px;font-size:12px;white-space:normal;line-height:1.4}
+html #finpes .fb-status-sel{max-width:100%;min-height:36px;padding:6px;font:12px var(--jp-font-ui)}
+.cp-budget-records .fb-totals{flex-direction:row;gap:12px 24px;flex-wrap:wrap;margin-top:10px;padding-top:12px}
+.cp-budget-support .fb-totals{gap:6px}
+#finpesDebtsRoot>.fb-card{margin-bottom:24px}
+#finpesDebtsRoot .fd-row{grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,.45fr) minmax(0,1.25fr) minmax(0,.45fr) minmax(0,.5fr) minmax(0,.8fr) minmax(130px,1.1fr);gap:10px;padding:14px 0}
+#finpesDebtsRoot .fc-row{padding:14px 0;gap:12px}
+#finpesScenariosRoot .fs-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px}
+#finpesScenariosRoot .fs-item{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) auto;gap:10px;padding:10px 0}
+#finpesScenariosRoot :is(.fb-text,.fb-money){min-height:40px;padding:8px}
+#finpesScenariosRoot .fs-sec{font-weight:600;margin-top:20px}
+#finpesScenariosRoot .fs-foot{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}
+.cp-pf-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.cp-pf-overview .fo-row{padding:12px 0;gap:20px;font-size:14px}
+.cp-pf-overview .fo-name{white-space:normal}
+.cp-pf-overview .fo-card h2{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:16px}
+.cp-alladin-heading{align-items:center;border-bottom:1px solid var(--line);padding-bottom:24px}
+html[data-experience="completion"] #alladin .cp-alladin-heading h2{font-size:24px;line-height:1.25;letter-spacing:-.035em;margin-top:6px}
+.cp-alladin-heading .cp-eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim);font-weight:600}
+.cp-object-context{max-width:66ch;line-height:1.65;color:var(--ink-dim);margin:10px 0 0;font-size:14px}
+.cp-alladin-heading>p{max-width:30ch}
+.cp-alladin-heading .alladin-empty{padding:0}
+.cp-collection-empty{padding:28px 0 36px;max-width:58ch}
+html .cp-collection-empty .alladin-empty{font-size:20px;line-height:1.4;font-weight:600;letter-spacing:-.025em;padding:0;margin:0 0 12px;color:var(--ink)}
+.cp-empty-next{font-size:14px;line-height:1.65;color:var(--ink-dim);margin:0}
+.cp-collection-table{margin-top:16px}
+.cp-collection-table .dtable{width:100%;font-variant-numeric:tabular-nums}
+.cp-collection-table :is(th,td){padding:16px 14px;vertical-align:top;line-height:1.5}
+.cp-collection-table th{color:var(--ink-dim);font-size:12px;font-weight:600;background:var(--panel-2)}
+.cp-collection-table td:first-child{font-weight:600}
+.cp-collection-table tbody tr:hover{background:var(--panel-2)}
+html .cp-collection-table tbody tr[hidden]{display:none!important}
+@media(max-width:1100px){
+  .cp-budget-records :is(.fb-row,.fb-erow):not(.fb-head),#finpesDebtsRoot :is(.fd-row,.fc-row):not(.fd-head):not(.fc-head){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px;padding:20px 0}
+  .cp-budget-records :is(.fb-head),#finpesDebtsRoot :is(.fd-head,.fc-head){display:none}
+  .cp-budget-records .cp-field-label,#finpesDebtsRoot .cp-field-label{position:static;width:auto;height:auto;clip-path:none;overflow:visible;white-space:normal;display:block;margin:0 0 6px;color:var(--ink-dim);font:12px var(--jp-font-ui)}
+  .cp-budget-records :is(.fb-row,.fb-erow):not(.fb-head)>:first-child,.cp-budget-records :is(.fb-row,.fb-erow):not(.fb-head)>.fb-actions{grid-column:1/-1}
+  #finpesDebtsRoot :is(.fd-row,.fc-row)>*{display:block!important;min-width:0;overflow-wrap:anywhere;text-align:left}
+  #finpesDebtsRoot :is(.fd-row,.fc-row)>.fb-actions{display:flex!important;grid-column:1/-1}
+  #finpesDebtsRoot [data-cp-label]::before{content:attr(data-cp-label);display:block;margin-bottom:6px;color:var(--ink-dim);font:12px var(--jp-font-ui)}
+  #finpesDebtsRoot .fd-row>:first-child,#finpesDebtsRoot .fd-row>:nth-child(6){grid-column:1/-1}
+  .cp-budget-records .fb-actions{padding-top:4px}
+}
+@media(max-width:760px){
+  .cp-budget-support,.cp-summary-columns,.cp-pf-overview{grid-template-columns:minmax(0,1fr)}
+  .cp-summary-columns>section+section{border-left:0;border-top:1px solid var(--line);padding:20px 0 0}
+  .cp-object-toolbar{flex-direction:column;gap:14px}
+  .cp-alladin-heading{align-items:flex-start}
+  html[data-experience="completion"] #alladin .cp-alladin-heading h2{font-size:24px}
+  .cp-budget-summary .fb-sumrow b{font-size:19px}
+  html #finpes .row-del{min-height:44px}
+  #finpesScenariosRoot .fs-item{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+  #finpesScenariosRoot .fs-item>input:first-child{grid-column:1/-1}
+  .cp-collection-table{overflow:visible}
+  .cp-collection-table .dtable{min-width:0;display:table;table-layout:fixed}
+  .cp-collection-table thead{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
+  .cp-collection-table tbody{display:block}
+  .cp-collection-table tbody tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:16px 0;border-bottom:1px solid var(--line)}
+  .cp-collection-table tbody td{display:block;min-width:0;padding:10px 8px;border:0;text-align:left;white-space:normal;overflow-wrap:anywhere}
+  .cp-collection-table tbody td:first-child,.cp-collection-table tbody td:last-child{grid-column:1/-1}
+  .cp-collection-table tbody td::before{content:attr(data-cp-label);display:block;font:11px var(--jp-font-ui);color:var(--ink-dim);margin-bottom:6px}
+}
+
+html[data-experience="completion"] .cp-study-details{margin:0 0 20px;color:var(--ink-dim);font:13px/1.6 var(--sans)}
+.cp-study-details summary{cursor:pointer;min-height:32px}
+@media(max-width:760px){.cp-nc-inputs{grid-row:1}.cp-nc-reading{grid-row:2}}
+
+@media(max-width:760px){html[data-experience="completion"] .cp-workspace-heading{gap:4px;margin-bottom:14px}html[data-experience="completion"] .cp-workspace-heading p{font-size:12px;line-height:1.4}html[data-experience="completion"] #mcClearanceCard .mc-cockpit-col{gap:8px}html[data-experience="completion"] #mcClearanceCard .mc-cockpit-acoes{margin-top:0}html[data-experience="completion"] #mcClearanceCard .mc-cockpit-acoes button{min-height:44px;padding:10px 12px}}
+
+/* Internal workspace headers must not inherit the app-shell grid area. */
+html[data-experience="completion"] :is(#dashMacro,#alladin,#execNocoda,#execPivots) header:is(.dm-card-head,.cp-study-head,.cp-alladin-heading){grid-area:auto;position:static;top:auto;height:auto;min-height:0;padding:0;background:transparent;box-shadow:none;z-index:auto}
+html[data-experience="completion"] #dashMacro .dm-card-head{grid-column:1}
+html[data-experience="completion"] #dashMacro .dm-body{grid-column:2}
+
+/* Read-only collections use neutral ink; blue identifies actionable controls. */
+html[data-experience="completion"] #alladin .cp-collection-table :is(th,td){font-family:var(--sans);font-size:13px;color:var(--ink);line-height:1.55}
+html[data-experience="completion"] #alladin .cp-collection-table th{color:var(--ink-dim)}
+html[data-experience="completion"] #alladin .alladin-sub{color:var(--ink-dim);font-size:11px;overflow-wrap:anywhere}
+html[data-experience="completion"] .cp-notes-intro{padding:10px 10px 16px}
+html[data-experience="completion"] .cp-notes-intro h3{font-size:16px;margin:0 0 6px}
+html[data-experience="completion"] .cp-notes-intro p{font-size:12px}
+html[data-experience="completion"][data-theme="dark"] :is(.jp-btn-primary,.seg button.on){color:#07192A}
+
+/* Desktop overview preserves the existing two-row contract while removing card chrome. */
+@media(min-width:1101px){
+ html[data-experience="completion"] #dashMacro .dm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px;align-items:start}
+ html[data-experience="completion"] #dashMacro .dm-card{display:block;padding:24px 0;min-width:0}
+ html[data-experience="completion"] #dashMacro .dm-card-head{flex-direction:row;justify-content:space-between;gap:16px;margin-bottom:20px}
+ html[data-experience="completion"] #dashMacro .dm-card-head>div{grid-template-columns:28px minmax(0,1fr);gap:4px 10px}
+ html[data-experience="completion"] #dashMacro .cp-area-mark{grid-column:1;grid-row:1/3;margin:0;align-self:center}
+ html[data-experience="completion"] #dashMacro .dm-card-head :is(.dm-eyebrow,.dm-title){grid-column:2}
+ html[data-experience="completion"] #dashMacro .dm-title{font-size:21px}
+ html[data-experience="completion"] #dashMacro .dm-body{grid-template-columns:minmax(0,1fr);gap:12px}
+ html[data-experience="completion"] #dashMacro .dm-record{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;border:0;border-top:1px solid var(--line);padding:14px 0 0}
+ html[data-experience="completion"] #dashMacro .dm-empty{min-height:0}
+}
+html[data-experience="completion"] #finpes .row-del:is([data-fi-cfg],[data-fd-edit],[data-fd-obs],[data-fs-edit]):hover{color:var(--jp-action);border-color:var(--jp-action);background:var(--accent-tint)}
+html[data-experience="completion"][data-theme="dark"] #alladin [data-ald-new]{color:#07192A}
+html[data-experience="completion"] #researchProbabilityLab .cp-lab-heading h3{font:600 16px/1.3 var(--sans);margin:2px 0 0}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '52a1c11fcb3939d7';
+const JP_WEALTH_BUILD_ID = '3caa2057e0f10f69';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -6596,7 +7041,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
   <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
-</defs></svg>
+<symbol id="i-area-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol><symbol id="i-area-research" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M7 11h7M10.5 7.5v7"/></symbol><symbol id="i-area-forex" viewBox="0 0 24 24"><path d="M4 3v18h17M8 15l4-5 4 3 5-7"/></symbol><symbol id="i-area-personal-finance" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8"/></symbol><symbol id="i-area-alladin" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V4h8v4M3 13h18M10 13v3h4v-3"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></symbol></defs></svg>
 <header>
   <!-- A marca e o caminho de volta ao Dashboard: o gesto que todo usuario de
        aplicacao web espera do canto superior esquerdo. E um <button> de verdade —
@@ -6635,27 +7080,20 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
-      <!-- Desenho idêntico ao slot "Configurações" de Auditoria visual JP Wealth/
-           JP Wealth - Dashboard Claro (preview cheia).dc.html, linha 36. -->
+      <!-- Engrenagem identifica as configurações existentes. -->
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="3.2"></circle>
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
-    </button>
+    <span class="header-action-label">Configurações</span></button>
     <button type="button" class="header-action" id="headerNotesBtn" title="Tickets" aria-label="Abrir tickets">
       <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
       <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
-    </button>
+    <span class="header-action-label">Tickets</span></button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
-      <!-- Desenho idêntico ao slot "Perfil" da mesma referência, linha 38 —
-           dos 3 ícones do design (engrenagem/sino/perfil), é o único sem
-           relação com um sistema de notificações inexistente nesta app.
-           Função e aria-label continuam "Finalizar sessão", inalterados. -->
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="8.4" r="3.6"></circle>
-        <path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"></path>
-      </svg>
-    </button>
+      <!-- Ícone de saída acompanha a ação existente de finalizar sessão. -->
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4v16h6M9 12h12m-4-4 4 4-4 4"/></svg>
+    <span class="header-action-label">Finalizar sessão</span></button>
   </div>
 </header>
 
@@ -6824,17 +7262,17 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
        permanece nos botões; o brilho legado fica inativo neste shell. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
-  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research">
+  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-dashboard"/></svg><span class="n">01</span><span class="lbl">Dashboard</span></button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-research"/></svg>
     <span class="n">02</span><span class="lbl">Research</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex">
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-forex"/></svg>
     <span class="n">03</span><span class="lbl">Forex</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais">
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-personal-finance"/></svg>
     <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><span class="n">05</span><span class="lbl">Alladin</span></button>
+  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-alladin"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
   <span class="sidebar-footer">JP Wealth</span>
@@ -6873,7 +7311,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
       <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
-      <h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2>
+      <div class="cp-workspace-heading"><span class="cp-kicker">FOREX · CONTEXTO OPERACIONAL</span><h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2><p>Prepare o período, confira os limites e acompanhe os registros.</p></div>
       <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
       <div class="card fx-overview-tools">
         <h3>Ferramentas de preparação</h3>
@@ -7241,7 +7679,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          padrão já usado em #research e #alladin. -->
     <section class="dm-shell" id="dashMacro" aria-labelledby="dashMacroTitle">
       <div class="dm-page-head"><div><span class="dm-eyebrow">JP WEALTH · VISÃO EXECUTIVA</span><h2 class="dm-shell-title" id="dashMacroTitle" data-route-focus>Seu panorama financeiro</h2><p class="dm-shell-sub">Risco, orçamento, pesquisa e patrimônio em um só lugar.</p></div><div class="dm-date"><span class="dm-live-dot" aria-hidden="true"></span><span id="dmToday"></span></div></div>
-      <div class="dm-grid" id="dashMacroGrid"></div>
+      <nav class="cp-panorama-index" aria-label="Áreas do panorama"><a href="#dm-title-forex">Risco e operação</a><a href="#dm-title-personal-finance">Orçamento e crédito</a><a href="#dm-title-research">Estudos e agenda</a><a href="#dm-title-alladin">Contas e patrimônio</a></nav><div class="dm-grid" id="dashMacroGrid"></div>
     </section>
 
     <!-- Grid executivo 2fr/1fr (fidelidade ao Claude Design — Dashboard Claro).
@@ -7367,11 +7805,11 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <div class="gd-news-status">
             <span id="gdNewsStatus" aria-live="polite">Carregando calendário econômico…</span>
             <span class="gd-news-actions">
-              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico">↻</button>
+              <button type="button" id="gdNewsRefreshBtn" class="gd-news-refresh" title="Atualizar agora" aria-label="Atualizar Calendário Econômico"><svg class="jp-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
               <!-- Menu do widget (17-economic-calendar.js). <button> real: além da
                    semântica, é o que o guardrail do arrasto já ignora — segurar
                    aqui nunca inicia reorganização do card. -->
-              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false">⋯</button>
+              <button type="button" id="gdNewsMoreBtn" class="gd-news-refresh gd-news-more" title="Mais opções" aria-label="Mais opções do Calendário Econômico" aria-haspopup="menu" aria-expanded="false"><svg class="jp-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             </span>
           </div>
           <!-- Próximo evento do dia com contagem regressiva (15-ff-news.js);
@@ -7688,8 +8126,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     <div class="research-view" id="execEcal" data-research-view="calendar" role="region" aria-label="Calendário Econômico">
       <div class="card ecal-ws">
         <div class="ecal-ws-head">
-          <h2>Calendário Econômico</h2>
-          <p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+          <span class="cp-kicker">AGENDA · SEMANA CORRENTE</span><h2>Calendário Econômico</h2>
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span><p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
         </div>
         <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
           <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
@@ -7701,7 +8139,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
         <p class="ecal-empty" data-ecal-role="empty" hidden></p>
         <p class="ecal-ws-foot">
-          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span>
           <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
         </p>
       </div>
@@ -7720,8 +8157,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <div class="card"><h2>REITs</h2><p class="expl">Área de pesquisa em preparação. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
     </div>
     <div class="research-view" id="researchProbabilityLab" data-research-view="probability-lab" role="region" aria-labelledby="researchProbabilityTitle" hidden>
-      <h2 id="researchProbabilityTitle" data-route-focus>Laboratório de Probabilidade</h2>
-      <h3>Galton Board</h3>
+      <div class="cp-workspace-heading cp-lab-heading"><span class="cp-kicker">RESEARCH · EXPERIMENTO INTERATIVO</span><h2 id="researchProbabilityTitle" data-route-focus>Laboratório de Probabilidade</h2><h3>Galton Board</h3><p>Da trajetória individual à distribuição.</p></div>
       <div id="researchGaltonSlot"></div>
     </div>
     <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
@@ -7743,13 +8179,13 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            gravam nem materializam estado. -->
       <div class="session-warning" id="alladinReadOnlyBanner" role="status" hidden></div>
       <div class="seg" id="alladinTabs" role="group" aria-label="Destinos do Alladin">
-        <button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
+        <div class="alladin-destination-group" role="group" aria-label="Cadastros"><span class="alladin-destination-label">Cadastros</span><button type="button" data-alladin-view="instruments" class="on" aria-pressed="true">Instrumentos</button>
         <button type="button" data-alladin-view="assets" aria-pressed="false">Bens</button>
         <button type="button" data-alladin-view="accounts" aria-pressed="false">Contas</button>
         <button type="button" data-alladin-view="cashAccounts" aria-pressed="false">Caixa</button>
-        <button type="button" data-alladin-view="ledger" aria-pressed="false">Lançamentos</button>
+        </div><div class="alladin-destination-group" role="group" aria-label="Movimentação e leitura"><span class="alladin-destination-label">Movimentação e leitura</span><button type="button" data-alladin-view="ledger" aria-pressed="false">Lançamentos</button>
         <button type="button" data-alladin-view="balances" aria-pressed="false">Saldos</button>
-        <button type="button" data-alladin-view="positions" aria-pressed="false">Posições</button>
+        <button type="button" data-alladin-view="positions" aria-pressed="false">Posições</button></div>
       </div>
       <div class="card alladin-view" id="alladinInstruments" data-alladin-panel="instruments" role="region" aria-label="Instrumentos"></div>
       <div class="card alladin-view" id="alladinAssets" data-alladin-panel="assets" role="region" aria-label="Bens" hidden></div>
@@ -8142,7 +8578,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
       <!-- PAINEL 1 — Pastas e visões do sistema. Em desktop convive com os outros dois;
            em mobile é o Estado A da navegação em etapas (data-mobile-stage no drawer). -->
       <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de tickets">
-        <div class="mvpn-folder-manage" id="mvpNotesFolderManage">
+        <div class="cp-notes-intro"><h3>Coleções</h3><p>Seus tickets, por assunto.</p></div><div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
         </div>
@@ -8203,7 +8639,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         </div>
         <label class="sr-only" for="mvpNoteContent">Conteúdo do ticket — a primeira linha vira o título</label>
         <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva o ticket. A primeira linha vira o título." hidden></textarea>
-        <p class="mvpn-editor-empty" id="mvpNotesEditorEmpty">Selecione um ticket à esquerda ou crie um novo.</p>
+        <div class="mvpn-editor-empty cp-writing-empty" id="mvpNotesEditorEmpty"><svg class="cp-empty-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-notes"/></svg><h3>Espaço para escrever.</h3><p>Selecione um ticket para ler e editar seu conteúdo.</p></div>
         <!-- Inspector: todo o metadado técnico vive aqui, fora do editor. Popover no
              desktop, folha inferior no mobile. -->
         <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes do ticket"></div>
@@ -19174,11 +19610,11 @@ function storagePanel(){
 }
 
 function settingsNavCard(id,label,desc){
-  return `<button type="button" class="settings-nav-card" data-nav-to="${settingsEsc(id)}"><span class="settings-nav-card-text"><span class="settings-nav-card-title">${settingsEsc(label)}</span>${desc?`<span class="settings-nav-card-desc">${settingsEsc(desc)}</span>`:''}</span><span class="settings-nav-card-chev" aria-hidden="true">${settingsIconSvg('chevron')}</span></button>`;
+  return `<button type="button" class="settings-nav-card" data-nav-to="${settingsEsc(id)}"><span class="cp-settings-symbol" aria-hidden="true">${settingsIconSvg((SETTINGS_GROUP_BY_ID[id]||SETTINGS_GROUP_BY_ID[settingsTopLevelFor(id)]||{}).icon||'general')}</span><span class="settings-nav-card-text"><span class="settings-nav-card-title">${settingsEsc(label)}</span>${desc?`<span class="settings-nav-card-desc">${settingsEsc(desc)}</span>`:''}</span><span class="settings-nav-card-chev" aria-hidden="true">${settingsIconSvg('chevron')}</span></button>`;
 }
 function generalPanel(){
-  const cards=SETTINGS_GROUPS.filter(g=>g.id!=='general'&&g.id!=='about').map(g=>settingsNavCard(g.id,g.label,g.desc)).join('');
-  return `<p class="settings-lead">Gerencie as preferências, o método, os dados e a identidade do JP Wealth.</p><div class="settings-nav-list">${cards}</div>`;
+  const card=id=>{const g=SETTINGS_GROUP_BY_ID[id];return settingsNavCard(g.id,g.label,g.desc);};
+  return `<div class="cp-settings-intro"><span class="cp-kicker">SEU JP WEALTH</span><h4>Um espaço que funciona do seu jeito.</h4><p class="settings-lead">Personalize a leitura, cuide dos dados e encontre as referências do método.</p></div><div class="cp-settings-collections"><section><h4>Preferências e dados</h4><div class="settings-nav-list">${card('appearance-interface')}${card('data-security')}</div></section><section><h4>Método e apoio</h4><div class="settings-nav-list">${card('method-governance')}${card('operations')}${card('knowledge')}</div></section></div>`;
 }
 function groupPanel(group){
   const cards=group.children.map(leafId=>settingsNavCard(leafId,SETTINGS_LEAVES[leafId].label,SETTINGS_LEAVES[leafId].desc)).join('');
@@ -22417,7 +22853,7 @@ function renderMvpNotesList(){
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, {ativas,concluidas}=mvpNotesGrouped();
   if(total===0){
-    host.innerHTML=`<p class="mvpn-empty">Nenhum ticket registrado. Use "+" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
+    host.innerHTML=`<div class="mvpn-empty"><strong>Nenhum ticket nesta coleção.</strong><p>Use “Novo ticket” para registrar uma tarefa, um problema ou uma melhoria.</p></div>`;
   }else if(!ativas.length && !concluidas.length){
     const temBusca=!!mvpNotesUI.query.trim(), temFiltro=mvpNotesActiveFilterCount()>0;
     const msg=(temBusca&&temFiltro)?'Nenhum ticket corresponde à busca e aos filtros atuais.':'Nenhum ticket encontrado.';
@@ -24403,7 +24839,7 @@ function ecalRenderRoot(root, filter){
     if(key!==currentKey){
       currentKey=key;
       dayWrap=document.createElement('section');
-      dayWrap.className='ecal-day'+(key===todayKey?' ecal-day-today':'');
+      dayWrap.className='ecal-day cp-calendar-day'+(key===todayKey?' ecal-day-today':'');
       const h=document.createElement('h3');
       h.className='ecal-day-title';
       h.textContent=ecalDayLabel(e.when)+(key===todayKey?' · hoje':'');
@@ -24413,7 +24849,7 @@ function ecalRenderRoot(root, filter){
       body.append(dayWrap);
     }
     const row=document.createElement('div');
-    row.className='ecal-item'+(e.when.getTime()<now?' ecal-item-past':'');
+    row.className='ecal-item cp-calendar-event'+(e.when.getTime()<now?' ecal-item-past':'');
     const time=document.createElement('time');
     time.className='ecal-time';
     time.dateTime=e.date;
@@ -26280,17 +26716,25 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
   }
 
   function panelHTML(){
-    return `<div class="galton-board" id="galtonBoardRoot" data-galton-root>
+    return `<div class="galton-board cp-lab" id="galtonBoardRoot" data-galton-root>
       <p class="galton-kicker">Probabilidade em movimento</p>
-      <p class="settings-lead">Experimento interativo de probabilidade com corpos rígidos reais. Observe como trajetórias individuais imprevisíveis formam padrões agregados.</p>
       <p class="galton-disclaimer">O Galton Board demonstra princípios de probabilidade, agregação e distribuição. Ele não representa diretamente a distribuição dos retornos do mercado Forex.</p>
-      <section class="galton-controls" aria-label="Controles do experimento">
+      <section class="galton-controls cp-lab-controls" aria-label="Controles do experimento">
         <div class="galton-control-group"><span class="galton-control-label">Adicionar à fila</span><div class="galton-button-row">
           <button type="button" data-galton-add="1">+1</button><button type="button" data-galton-add="10">+10</button><button type="button" data-galton-add="100">+100</button><button type="button" data-galton-add="500">+500</button>
           <button type="button" class="galton-primary" data-galton-action="execute">Executar <span data-galton-staged>0</span></button>
         </div></div>
         <div class="galton-button-row"><button type="button" data-galton-action="pause" aria-pressed="false">Pausar</button><button type="button" data-galton-action="reset">Resetar</button><button type="button" data-galton-action="center">Centralizar</button><button type="button" data-galton-action="restore-defaults">Restaurar padrões</button><button type="button" data-galton-action="new-seed">Nova seed</button><span class="galton-seed">Seed <output data-galton-seed>18473</output></span></div>
       </section>
+      <div class="cp-lab-workspace">
+      <div class="galton-stage cp-lab-stage">
+        <canvas data-galton-canvas role="img" aria-label="Galton Board vazio" aria-describedby="galtonCanvasDescription"></canvas>
+        <div class="galton-bin-tooltip" data-galton-tooltip hidden></div>
+      </div>
+      <p id="galtonCanvasDescription" class="sr-only" data-galton-canvas-description>Tabuleiro vazio, sem bolas contabilizadas.</p>
+      <div class="galton-status-row"><p data-galton-convergence role="status" aria-live="polite">Tabuleiro vazio. Adicione bolas à fila para iniciar.</p><span data-galton-live class="sr-only" aria-live="polite"></span></div>
+      <p class="galton-storage-status is-error" data-galton-integrity role="status" aria-live="polite" hidden></p>
+      <div class="cp-lab-analysis">
       <div class="galton-metrics" aria-label="Estatísticas da simulação">
         <div><span>Amostra <button type="button" class="galton-info" title="Número de bolas já contabilizadas nos compartimentos." aria-label="Amostra: número de bolas já contabilizadas nos compartimentos">i</button></span><strong data-galton-metric="n">0</strong></div>
         <div><span>Média <button type="button" class="galton-info" title="Posição média ponderada dos compartimentos observados." aria-label="Média: posição média ponderada dos compartimentos observados">i</button></span><strong data-galton-metric="mean">—</strong></div>
@@ -26299,13 +26743,6 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
         <div><span>Assimetria <button type="button" class="galton-info" title="Indica o deslocamento da distribuição para um dos lados." aria-label="Assimetria: indica o deslocamento da distribuição para um dos lados">i</button></span><strong data-galton-metric="skewness">—</strong></div>
         <div><span>Curtose</span><strong data-galton-metric="kurtosis">—</strong></div>
       </div>
-      <div class="galton-stage">
-        <canvas data-galton-canvas role="img" aria-label="Galton Board vazio" aria-describedby="galtonCanvasDescription"></canvas>
-        <div class="galton-bin-tooltip" data-galton-tooltip hidden></div>
-      </div>
-      <p id="galtonCanvasDescription" class="sr-only" data-galton-canvas-description>Tabuleiro vazio, sem bolas contabilizadas.</p>
-      <div class="galton-status-row"><p data-galton-convergence role="status" aria-live="polite">Tabuleiro vazio. Adicione bolas à fila para iniciar.</p><span data-galton-live class="sr-only" aria-live="polite"></span></div>
-      <p class="galton-storage-status is-error" data-galton-integrity role="status" aria-live="polite" hidden></p>
       <section class="galton-adjustments" aria-label="Ajustes do experimento">
         <div class="galton-control-grid">
           <fieldset class="galton-speed"><legend>Velocidade</legend><div class="galton-segmented">${SPEEDS.map(speed=>`<button type="button" data-galton-speed="${speed}" aria-pressed="${speed===1?'true':'false'}">${speed}x</button>`).join('')}</div></fieldset>
@@ -26316,6 +26753,7 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
         </div>
         <p class="galton-theory-status"><button type="button" class="galton-info" title="Compara percentuais observados com Binomial(n, 0,5), sem ajustar a física." aria-label="Distribuição teórica: comparação binomial sem ajuste da física">i</button> <span data-galton-theory-status></span></p>
       </section>
+      </div></div>
       <details class="galton-details" data-galton-advanced><summary>Parâmetros físicos</summary>
         <p>Alterar um parâmetro reinicia o tabuleiro e mantém apenas as preferências.</p>
         <div class="galton-parameter-grid">
@@ -26334,7 +26772,7 @@ window.JPWEcalUI={render:ecalRenderWorkspace};
         </div>
         <p><button type="button" class="reset-btn" data-galton-action="restore-physics">Restaurar valores físicos padrão</button></p>
       </details>
-      <details class="galton-details"><summary>O que observar</summary><ol><li>Uma única bola é difícil de prever.</li><li>Muitas observações revelam padrões agregados.</li><li>Pequenas assimetrias podem deslocar toda a distribuição.</li><li>Amostras pequenas apresentam maior ruído estatístico.</li><li>Regularidade estatística não significa previsibilidade individual.</li></ol><p>Esta experiência ilustra princípios gerais de probabilidade e não constitui um modelo dos retornos do Forex.</p></details>
+      <details class="galton-details"><summary>O que observar</summary><p>Experimento interativo de probabilidade com corpos rígidos reais. Observe como trajetórias individuais imprevisíveis formam padrões agregados.</p><ol><li>Uma única bola é difícil de prever.</li><li>Muitas observações revelam padrões agregados.</li><li>Pequenas assimetrias podem deslocar toda a distribuição.</li><li>Amostras pequenas apresentam maior ruído estatístico.</li><li>Regularidade estatística não significa previsibilidade individual.</li></ol><p>Esta experiência ilustra princípios gerais de probabilidade e não constitui um modelo dos retornos do Forex.</p></details>
       <details class="galton-details"><summary>Detalhes acessíveis dos compartimentos</summary><div class="galton-table-wrap"><table><caption>Distribuição empírica e referência teórica por compartimento</caption><thead><tr><th scope="col">Bin</th><th scope="col">Quantidade</th><th scope="col">Percentual</th><th scope="col">Teoria esperada</th><th scope="col">Diferença</th></tr></thead><tbody data-galton-bins></tbody></table></div></details>
       <p class="galton-storage-status" data-galton-storage role="status"></p>
     </div>`;
@@ -28873,9 +29311,9 @@ function renderNocodaStudies() {
   ).join('');
 
   root.innerHTML = `
-    <div class="card">
-      <h2>Estudos NoCoda <span class="art">memória técnica do canal — não autoriza operação</span></h2>
-      <p class="expl">Guarda as três âncoras do Fibo Channel de cada instrumento e deriva o range entre os níveis −1 e 0 e o de cada subdivisão de 0,125. Os instrumentos vêm do Motor de Lote; esta tela não tem catálogo próprio.</p>
+    <div class="card cp-study cp-nocoda">
+      <header class="cp-study-head"><div><p class="cp-eyebrow">Research · memória técnica</p><h2>Estudos NoCoda</h2></div><span class="cp-study-limit">Estudo técnico · não autoriza operação</span></header>
+      <details class="cp-study-details"><summary>Sobre o canal e suas fontes</summary><p class="expl">Guarda as três âncoras do Fibo Channel de cada instrumento e deriva o range entre os níveis −1 e 0 e o de cada subdivisão de 0,125. Os instrumentos vêm do Motor de Lote; esta tela não tem catálogo próprio.</p></details>
 
       <div class="field nc-picker">
         <label for="ncInstrument">Instrumento</label>
@@ -28883,10 +29321,10 @@ function renderNocodaStudies() {
         <span class="note">O ponto marca instrumentos que já possuem estudo salvo.</span>
       </div>
 
-      <div class="params-grid nc-anchors">
-        ${ncAnchorFieldsHTML(0)}${ncAnchorFieldsHTML(1)}${ncAnchorFieldsHTML(2)}
-      </div>
-
+      <div class="cp-nc-workbench">
+      <section class="cp-nc-reading" aria-label="Leitura do canal">
+        <div class="cp-section-heading"><h3>Geometria do canal</h3><span>Prévia do rascunho</span></div>
+        <figure class="cp-nc-figure"><div id="ncPreview"></div><figcaption id="ncPreviewCaption">Preencha as três âncoras para visualizar o canal.</figcaption></figure>
       <div class="metrics nc-results">
         <div class="metric">
           <div class="k">Range −1 → 0</div>
@@ -28900,8 +29338,12 @@ function renderNocodaStudies() {
         </div>
       </div>
 
+      </section>
+      <section class="cp-nc-inputs" aria-label="Parâmetros das três âncoras"><div class="cp-section-heading"><h3>Âncoras</h3><span>Data, hora e preço</span></div><div class="params-grid nc-anchors">
+        ${ncAnchorFieldsHTML(0)}${ncAnchorFieldsHTML(1)}${ncAnchorFieldsHTML(2)}
+      </div></section></div>
       <div id="ncFormErr"></div>
-      <div class="nc-actions">
+      <div class="nc-actions cp-study-save">
         <button class="reset-btn" id="ncSaveBtn">Salvar parâmetros</button>
         <span class="fx-status" id="ncStatus">${jpWealthPersistenceOutcomeIsUnknown()
           ? 'gravação não confirmada — não repita; confira a base salva antes de continuar'
@@ -28958,7 +29400,45 @@ function ncUpdateDerived() {
   const result = geometry.compute(ncDraft);
   if (rangeEl) rangeEl.textContent = result ? ncFormat(result.channelRange) : '—';
   if (subEl) subEl.textContent = result ? ncFormat(result.subdivisionRange) : '—';
+  ncUpdatePreview(geometry, result);
   return result;
+}
+
+// Projeção visual: o domínio fornece preços e tempo. Só a escala do SVG vive aqui.
+// Atualiza uma figura independente, preservando os inputs, o cursor e o rascunho.
+function ncUpdatePreview(geometry, result) {
+  const box = document.getElementById('ncPreview');
+  const caption = document.getElementById('ncPreviewCaption');
+  if (!box || !caption) return;
+  const validation = geometry.validate(ncDraft);
+  if (!result || !validation.ok) {
+    box.innerHTML = '<div class="cp-graph-empty"><span class="cp-graph-mark" aria-hidden="true">1 · 2 · 3</span><p>Seu canal começa com três âncoras.</p><span>Informe os pontos para comparar a linha 0 com a linha −1.</span></div>';
+    caption.textContent = 'Prévia indisponível enquanto as âncoras estiverem incompletas ou inválidas.';
+    return;
+  }
+  const v = validation.values;
+  const times = [v.t1, v.t2, v.t3], prices = [v.p1, v.p2, v.p3];
+  const minT = Math.min(...times), maxT = Math.max(...times);
+  const lines = [0, -1].map(level => ({level, a: geometry.levelPrice(level, minT, ncDraft), b: geometry.levelPrice(level, maxT, ncDraft)}));
+  const allPrices = prices.concat(lines.flatMap(line => [line.a, line.b]));
+  if (!allPrices.every(Number.isFinite)) {
+    box.textContent = 'A geometria não pode ser representada nesta escala.';
+    caption.textContent = 'Os valores de entrada permanecem preservados.';
+    return;
+  }
+  const minP = Math.min(...allPrices), maxP = Math.max(...allPrices);
+  const spanP = maxP - minP || Math.max(Math.abs(maxP) * .01, .00001);
+  if (!Number.isFinite(spanP)) {
+    box.textContent = 'A geometria não pode ser representada nesta escala.';
+    caption.textContent = 'Os valores de entrada permanecem preservados.';
+    return;
+  }
+  const x = t => 42 + ((t - minT) / (maxT - minT)) * 356;
+  const y = price => 192 - ((price - minP) / spanP) * 148;
+  const segments = lines.map(line => `<path class="cp-channel-line cp-channel-${line.level === 0 ? 'base' : 'offset'}" d="M42 ${y(line.a)} L398 ${y(line.b)}"/><text x="407" y="${y(line.b) + 4}">${line.level === 0 ? '0' : '−1'}</text>`).join('');
+  const points = times.map((t, i) => `<circle cx="${x(t)}" cy="${y(prices[i])}" r="5"/><text class="cp-anchor-label" x="${x(t)}" y="${y(prices[i]) - 12}" text-anchor="middle">${i + 1}</text>`).join('');
+  box.innerHTML = `<svg viewBox="0 0 460 238" role="img" aria-label="Canal NoCoda: âncoras 1 e 2 na linha 0; âncora 3 na linha menos 1"><path class="cp-graph-axis" d="M42 24 V210 H422"/>${segments}${points}<text x="42" y="230">Tempo das âncoras</text></svg>`;
+  caption.textContent = 'Âncoras 1 e 2: linha 0. Âncora 3: linha −1. Range ' + ncFormat(result.channelRange) + '; subdivisão ' + ncFormat(result.subdivisionRange) + '. Prévia técnica, não cotação de mercado.';
 }
 
 // Mensagens por campo (aria-invalid + parágrafo role="alert" associado) e
@@ -29679,7 +30159,7 @@ function renderPivotStudies() {
   if (!math) return;
 
   const options = pvEnsureSelection();
-  const head = `<h2>Estudos dos Pivots <span class="art">memória empírica — não autoriza operação</span></h2>`;
+  const head = `<header class="cp-study-head"><div><p class="cp-eyebrow">Research · caderno de observações</p><h2>Estudos dos Pivots</h2></div><span class="cp-study-limit">Memória empírica · não autoriza operação</span></header>`;
 
   if (!options.length) {
     root.innerHTML = `<div class="card">${head}
@@ -29689,9 +30169,9 @@ function renderPivotStudies() {
 
   const study = pvStudyById(pvStudyId);
   root.innerHTML = `
-    <div class="card">
+    <div class="card cp-study cp-pivots">
       ${head}
-      <p class="expl">Registra os maiores pivots H1 e H4 que você identificou no gráfico e organiza a amostra: amplitude, duração, direção e a maior correção interna informada. O software não detecta pivots — ele estrutura, calcula, ordena e preserva o que você observou.</p>
+      <details class="cp-study-details"><summary>O que este estudo registra</summary><p class="expl">Registra os maiores pivots H1 e H4 que você identificou no gráfico e organiza a amostra: amplitude, duração, direção e a maior correção interna informada. O software não detecta pivots — ele estrutura, calcula, ordena e preserva o que você observou.</p></details>
       ${pvPickerHTML(options)}
       ${pvNewStudyOpen ? pvNewStudyHTML() : ''}
       ${study ? pvStudyHTML(study, math) : pvEmptyStudyHTML()}
@@ -29711,7 +30191,7 @@ function pvPickerHTML(options) {
     ? mine.map(st => `<option value="${esc(st.id)}"${st.id === pvStudyId ? ' selected' : ''}>${esc(pvFmtDate(st.periodStart))} → ${esc(pvFmtDate(st.periodEnd))} (${st.pivots.length})</option>`).join('')
     : '<option value="">nenhum estudo neste instrumento</option>';
   return `
-    <div class="pv-picker">
+    <div class="pv-picker cp-pv-library" aria-label="Biblioteca de estudos">
       <div class="field">
         <label for="pvInstrument">Instrumento</label>
         <select id="pvInstrument">${instrumentOptions}</select>
@@ -29752,7 +30232,7 @@ function pvNewStudyHTML() {
 }
 
 function pvEmptyStudyHTML() {
-  return `<p class="expl pv-empty">Nenhum estudo selecionado para este instrumento. Crie um estudo informando o período histórico analisado.</p>`;
+  return `<section class="cp-study-empty"><span class="cp-empty-index" aria-hidden="true">H1 / H4</span><h3>Uma memória para cada período.</h3><p>Nenhum estudo selecionado para este instrumento. Crie um estudo informando o período histórico analisado.</p><p class="cp-empty-detail">Use Novo Estudo acima. Depois, registre os pivots que você identificou para consultar amplitude, duração e correção informada.</p></section>`;
 }
 
 function pvStudyHTML(study, math) {
@@ -29769,8 +30249,8 @@ function pvStudyHTML(study, math) {
   // estavam, mas alcançáveis.
   const quebrados = study.pivots.filter(p => !math.derive(p));
   return `
-    <div class="pv-study">
-      <p class="pv-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
+    <div class="pv-study cp-pv-study">
+      <p class="pv-period cp-study-period">Período analisado <b>${esc(pvFmtDate(study.periodStart))} → ${esc(pvFmtDate(study.periodEnd))}</b></p>
       ${pvStatsHTML(stats)}
       ${pvFiltersHTML()}
       ${pvTableHTML(records, stats, quebrados, math)}
@@ -29826,6 +30306,7 @@ function pvComparisonHTML(stats) {
   return `
     <div class="pv-compare">
       <h4>H1 × H4</h4>
+      ${pvAmplitudeComparisonHTML(stats)}
       <div class="jp-table-scroll">
         <table class="dtable pv-compare-table">
           <thead><tr><th scope="col">Medida</th><th scope="col">H1</th><th scope="col">H4</th></tr></thead>
@@ -29839,6 +30320,17 @@ function pvComparisonHTML(stats) {
       </div>
       <p class="note">Diferenças observadas entre os dois timeframes desta amostra. Nenhuma conclusão automática é derivada daqui.</p>
     </div>`;
+}
+
+// Comprimentos representam as medianas já calculadas pelo domínio, sem nova estatística.
+function pvAmplitudeComparisonHTML(stats) {
+  const groups = ['H1', 'H4'].map(tf => ({tf, ...stats.timeframes[tf]}));
+  const largest = Math.max(0, ...groups.map(group => Number.isFinite(group.median) ? group.median : 0));
+  return `<div class="cp-pv-comparison" role="group" aria-label="Mediana da amplitude por timeframe, mesma amostra do resumo">` + groups.map(group => {
+    const available = group.n > 0 && Number.isFinite(group.median);
+    const width = available && largest > 0 ? group.median / largest * 100 : 0;
+    return `<div class="cp-pv-bar-row"><span>${group.tf} <small>n = ${group.n}</small></span><div class="cp-pv-track" aria-hidden="true"><span style="width:${width}%"></span></div><strong>${available ? pvFmtPct(group.median) : 'Sem dados'}</strong></div>`;
+  }).join('') + '<p>Mediana da amplitude · comparação descritiva desta amostra.</p></div>';
 }
 
 function pvTopHTML(stats) {
@@ -32951,19 +33443,16 @@ function finpesBudgetRender(){
 
   let html = fbHeaderHTML(key, materializado);
   html += fbPendingBannerHTML(key);
-  html += '<div class="fb-grid">';
-  html += '<div class="fb-col">';
-  html += fbIncomesHTML(key, materializado, bloqueado);
-  html += fbNotesHTML(key, materializado, bloqueado);
-  html += '</div>';
-  html += '<div class="fb-col fb-col-wide">';
-  html += fbExpensesHTML(key, materializado, bloqueado);
-  html += '</div>';
-  html += '<div class="fb-col">';
-  html += fbSummaryHTML(key, materializado, bloqueado);
-  html += fbAllocationsHTML(key, materializado, bloqueado);
-  html += '</div>';
-  html += '</div>';
+  // Mesmas leituras e mesma ordem; a composição prioriza a competência e
+  // mantém Receitas/Despesas juntas também na ordem de leitura do celular.
+  const incomes = fbIncomesHTML(key, materializado, bloqueado);
+  const notes = fbNotesHTML(key, materializado, bloqueado);
+  const expenses = fbExpensesHTML(key, materializado, bloqueado);
+  const summary = fbSummaryHTML(key, materializado, bloqueado);
+  const allocations = fbAllocationsHTML(key, materializado, bloqueado);
+  html += '<div class="cp-budget-summary">'+summary+'</div>';
+  html += '<div class="cp-budget-records">'+incomes+expenses+'</div>';
+  html += '<div class="cp-budget-support">'+allocations+notes+'</div>';
   root.innerHTML = html;
   fbBind(root, key, materializado, bloqueado);
 }
@@ -32973,7 +33462,7 @@ function fbHeaderHTML(key, materializado){
   const selo = materializado
     ? ''
     : '<span class="fb-virtual-badge" title="Mês virtual: projeção derivada das regras recorrentes vigentes. Nada foi registrado; o mês nasce no primeiro ato de edição.">◌ PROJEÇÃO — mês não registrado</span>';
-  return `<div class="fb-header">
+  return `<div class="fb-header cp-period-toolbar">
     <button type="button" class="reset-btn fb-nav" data-fb-nav="-1" title="Mês anterior">←</button>
     <span class="fb-month-label">${esc(pfMonthLabel(key))}</span>
     <button type="button" class="reset-btn fb-nav" data-fb-nav="1" title="Mês seguinte">→</button>
@@ -33007,20 +33496,20 @@ function fbIncomesHTML(key, materializado, bloqueado){
   if(materializado){
     const m = S.personalFinance.months[key];
     linhas = (m.incomes||[]).map(i=>`<div class="fb-row" data-income="${esc(i.id)}">
-      <span><input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fi-campo="name" data-fi-id="${esc(i.id)}">${i.ruleId?'<span class="fb-rule-mark" title="Receita recorrente (regra vigente)">↻</span>':''}</span>
-      <span>${fbMoneyInput(i.projectedAmount,`data-fi-campo="projectedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</span>
-      <span>${fbMoneyInput(i.receivedAmount,`data-fi-campo="receivedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</span>
-      <span class="fb-actions"><select class="fb-status-sel" ${bloqueado?'disabled':''} data-fi-status="${esc(i.id)}">
+      <label class="cp-field"><span class="cp-field-label">Descrição</span><input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fi-campo="name" data-fi-id="${esc(i.id)}">${i.ruleId?'<span class="fb-rule-mark" title="Receita recorrente (regra vigente)">Recorrente</span>':''}</label>
+      <label class="cp-field"><span class="cp-field-label">Projetado</span>${fbMoneyInput(i.projectedAmount,`data-fi-campo="projectedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Recebido</span>${fbMoneyInput(i.receivedAmount,`data-fi-campo="receivedAmount" data-fi-id="${esc(i.id)}"`, bloqueado)}</label>
+      <span class="fb-actions"><select class="fb-status-sel" aria-label="Estado da receita" ${bloqueado?'disabled':''} data-fi-status="${esc(i.id)}">
         ${['PROJETADA','RECEBIDA','CANCELADA'].map(st=>`<option value="${st}" ${st===i.status?'selected':''}>${st}</option>`).join('')}
       </select>
-      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fi-cfg="${esc(i.id)}" title="Configurar recorrência">⚙</button>
-      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fi-del="${esc(i.id)}" title="Excluir receita">✕</button></span>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fi-cfg="${esc(i.id)}" title="Configurar recorrência">Recorrência</button>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fi-del="${esc(i.id)}" title="Excluir receita">Excluir</button></span>
     </div>`).join('');
   } else {
     linhas = pfVirtualIncomes(key).map(v=>`<div class="fb-row fb-ghost" title="Projeção da regra recorrente — editar registra o mês">
-      <span>◌ ${esc(v.name)} <span class="fb-rule-mark">↻</span></span>
-      <span>${fbMoneyInput(v.projectedAmount,`data-fg-campo="projectedAmount" data-fg-rule="${esc(v.ruleId)}"`, bloqueado)}</span>
-      <span>${fbMoneyInput(null,`data-fg-campo="receivedAmount" data-fg-rule="${esc(v.ruleId)}"`, bloqueado)}</span>
+      <span>${esc(v.name)} <span class="fb-rule-mark">Recorrente</span></span>
+      <label class="cp-field"><span class="cp-field-label">Projetado</span>${fbMoneyInput(v.projectedAmount,`data-fg-campo="projectedAmount" data-fg-rule="${esc(v.ruleId)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Recebido</span>${fbMoneyInput(null,`data-fg-campo="receivedAmount" data-fg-rule="${esc(v.ruleId)}"`, bloqueado)}</label>
       <span class="fb-status">PROJEÇÃO</span>
     </div>`).join('');
   }
@@ -33030,12 +33519,12 @@ function fbIncomesHTML(key, materializado, bloqueado){
   const cob     = m ? pfIncomeCoverage(m) : null;
   const cobTxt  = (cob && cob.total>0 && !cob.completa) ? ` <span class="fb-partial">PARCIAL · ${cob.conhecidas} de ${cob.total} informadas</span>` : '';
   return `<div class="card fb-card" id="fbIncomes">
-    <h2>Receitas <span class="art">projetado ≠ recebido · ausência ≠ zero</span></h2>
+    <div class="cp-object-toolbar"><h2>Receitas <span class="art">projetado ≠ recebido · ausência ≠ zero</span></h2>
+      <button type="button" class="reset-btn" data-fi-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar receita</button></div>
     <div class="fb-row fb-head"><span>Descrição</span><span>Projetado</span><span>Recebido</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma receita neste mês.</p>'}
     <div class="fb-totals"><span>Receita projetada: <b>${fbMoneyText(totProj, bloqueado)}</b></span>
       <span>Receita recebida: <b>${m ? fbMoneyText(totRec, bloqueado) : '—'}</b>${cobTxt}</span></div>
-    <button type="button" class="reset-btn" data-fi-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar receita</button>
   </div>`;
 }
 function fbExpensesHTML(key, materializado, bloqueado){
@@ -33045,16 +33534,16 @@ function fbExpensesHTML(key, materializado, bloqueado){
     linhas = (m.expenses||[]).map(e=>{
       const parc = e.installments ? `${e.installments.paid}/${e.installments.total}` : '';
       return `<div class="fb-erow" data-expense="${esc(e.id)}">
-      <span><input type="text" class="fb-text" value="${esc(e.name)}" ${bloqueado?'disabled':''} data-fe-campo="name" data-fe-id="${esc(e.id)}"></span>
-      <span><input type="text" class="fb-money fb-parc" value="${esc(parc)}" ${bloqueado?'disabled':''} placeholder="—" title="Parcelas pagas/total, ex.: 16/24; vazio limpa" data-fe-parc="${esc(e.id)}"></span>
-      <span>${fbMoneyInput(e.targetAmount,`data-fe-campo="targetAmount" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
-      <span>${fbMoneyInput(e.expectedAmount,`data-fe-campo="expectedAmount" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
-      <span>${fbMoneyInput(e.executedCash,`data-fe-campo="executedCash" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
-      <span>${fbMoneyInput(e.executedCard,`data-fe-campo="executedCard" data-fe-id="${esc(e.id)}"`, bloqueado)}</span>
-      <span class="fb-actions"><select class="fb-status-sel" ${bloqueado?'disabled':''} data-fe-status="${esc(e.id)}">
+      <label class="cp-field"><span class="cp-field-label">Despesa</span><input type="text" class="fb-text" value="${esc(e.name)}" ${bloqueado?'disabled':''} data-fe-campo="name" data-fe-id="${esc(e.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Parcelas</span><input type="text" class="fb-money fb-parc" value="${esc(parc)}" ${bloqueado?'disabled':''} placeholder="—" title="Parcelas pagas/total, ex.: 16/24; vazio limpa" data-fe-parc="${esc(e.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Meta</span>${fbMoneyInput(e.targetAmount,`data-fe-campo="targetAmount" data-fe-id="${esc(e.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Previsto</span>${fbMoneyInput(e.expectedAmount,`data-fe-campo="expectedAmount" data-fe-id="${esc(e.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Fora cartão</span>${fbMoneyInput(e.executedCash,`data-fe-campo="executedCash" data-fe-id="${esc(e.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Cartão</span>${fbMoneyInput(e.executedCard,`data-fe-campo="executedCard" data-fe-id="${esc(e.id)}"`, bloqueado)}</label>
+      <span class="fb-actions"><select class="fb-status-sel" aria-label="Estado da despesa" ${bloqueado?'disabled':''} data-fe-status="${esc(e.id)}">
         ${['PENDENTE','PAGO','CANCELADO'].map(st=>`<option value="${st}" ${st===e.status?'selected':''}>${st}</option>`).join('')}
       </select>
-      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fe-del="${esc(e.id)}" title="Excluir despesa">✕</button></span>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fe-del="${esc(e.id)}" title="Excluir despesa">Excluir</button></span>
     </div>`;}).join('');
   }
   const m = materializado ? S.personalFinance.months[key] : null;
@@ -33063,12 +33552,12 @@ function fbExpensesHTML(key, materializado, bloqueado){
   const cob  = m ? pfExpenseCoverage(m) : null;
   const cobTxt = (cob && cob.total>0 && !cob.completa) ? ` <span class="fb-partial">PARCIAL · ${cob.conhecidas} de ${cob.total} com os dois canais</span>` : '';
   return `<div class="card fb-card" id="fbExpenses">
-    <h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado (fora do cartão + cartão)</span></h2>
+    <div class="cp-object-toolbar"><h2>Despesas <span class="art">Meta ≠ Previsto ≠ Executado (fora do cartão + cartão)</span></h2>
+      <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button></div>
     <div class="fb-erow fb-head"><span>Despesa</span><span>Parc.</span><span>Meta</span><span>Previsto</span><span>Fora cartão</span><span>Cartão</span><span></span></div>
     ${linhas || '<p class="fb-empty">'+(materializado?'Nenhuma despesa neste mês.':'Mês não registrado — adicionar despesa registra o mês.')+'</p>'}
     <div class="fb-totals"><span>Despesa prevista: <b>${fbMoneyText(prev, bloqueado)}</b></span>
       <span>Despesa executada (conhecida): <b>${m ? fbMoneyText(exec, bloqueado) : '—'}</b>${cobTxt}</span></div>
-    <button type="button" class="reset-btn" data-fe-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar despesa</button>
   </div>`;
 }
 function fbSummaryHTML(key, materializado, bloqueado){
@@ -33077,9 +33566,11 @@ function fbSummaryHTML(key, materializado, bloqueado){
     const proj = pfVirtualIncomes(key).reduce((a,v)=>a+(typeof v.projectedAmount==='number'?v.projectedAmount:0),0);
     return `<div class="card fb-card" id="fbSummary">
       <h2>Resumo do Mês <span class="art">soma parcial nunca vira total</span></h2>
+      <div class="cp-summary-columns"><section aria-label="Planejado"><div class="fb-sumsec">PLANEJADO</div>
       ${linha('Receita projetada (regras)', fbMoneyText(proj, bloqueado))}
       ${linha('Sobra projetada', fbMoneyText(proj, bloqueado))}
-      <p class="risk-note">Mês não registrado: os números acima são projeção das regras vigentes. Nada de realizado existe aqui.</p>
+      </section><section aria-label="Realizado"><div class="fb-sumsec">REALIZADO</div>
+      <p class="risk-note">Mês não registrado: os números acima são projeção das regras vigentes. Nada de realizado existe aqui.</p></section></div>
     </div>`;
   }
   const m = S.personalFinance.months[key];
@@ -33097,15 +33588,15 @@ function fbSummaryHTML(key, materializado, bloqueado){
         : linha('Comprometimento (desp./rec.)', '—', '<span class="fb-partial">'+(r.completo?'receita zero — N/A':'parcial')+'</span>'));
   return `<div class="card fb-card" id="fbSummary">
     <h2>Resumo do Mês <span class="art">planejado ≠ realizado · soma parcial nunca vira total</span></h2>
-    <div class="fb-sumsec">PLANEJADO</div>
+    <div class="cp-summary-columns"><section aria-label="Planejado"><div class="fb-sumsec">PLANEJADO</div>
     ${linha('Receita projetada', fbMoneyText(r.projectedIncome, bloqueado))}
     ${linha('Despesa prevista', fbMoneyText(r.plannedExpenses, bloqueado))}
     ${linha('Sobra projetada', fbMoneyText(r.projectedSurplus, bloqueado))}
-    <div class="fb-sumsec">REALIZADO</div>
+    </section><section aria-label="Realizado"><div class="fb-sumsec">REALIZADO</div>
     ${linha('Receita recebida', fbMoneyText(r.knownReceivedIncome, bloqueado), cobTxt(r.incomeCoverage))}
     ${linha('Despesa executada', fbMoneyText(r.knownExecutedExpenses, bloqueado), cobTxt(r.expenseCoverage))}
     ${sobraReal}
-    ${ratio}
+    ${ratio}</section></div>
   </div>`;
 }
 function fbAllocationsHTML(key, materializado, bloqueado){
@@ -33114,7 +33605,7 @@ function fbAllocationsHTML(key, materializado, bloqueado){
       <span><input type="text" class="fb-text" value="${esc(a.label)}" ${bloqueado?'disabled':''} data-fa-campo="label" data-fa-id="${esc(a.id)}"></span>
       <span>${fbMoneyInput(a.amount,`data-fa-campo="amount" data-fa-id="${esc(a.id)}"`, bloqueado)}</span>
       <span></span>
-      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fa-del="${esc(a.id)}" title="Excluir destinação">✕</button></span>
+      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fa-del="${esc(a.id)}" title="Excluir destinação">Excluir</button></span>
     </div>`).join('') : '';
   const total = m ? pfTotalAllocated(m) : 0;
   const naoAlocada = m ? pfUnallocatedSurplus(m) : null;
@@ -33137,7 +33628,7 @@ function fbNotesHTML(key, materializado, bloqueado){
       <button type="button" class="fb-note-toggle" ${bloqueado?'disabled':''} data-fn-toggle="${esc(n.id)}" title="Alternar status">${n.status==='PENDENTE'?'⚠':'✓'}</button>
       <span class="fb-note-text">${esc(n.text)}</span>
       <span class="fb-status">${esc(n.status)}</span>
-      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fn-del="${esc(n.id)}" title="Excluir nota">✕</button>
+      <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fn-del="${esc(n.id)}" title="Excluir nota">Excluir</button>
     </div>`).join('') : '';
   return `<div class="card fb-card" id="fbNotes">
     <h2>Informações Importantes <span class="art">texto + status, nada mais</span></h2>
@@ -33368,7 +33859,7 @@ function fbOpenRecurrenceModal(key, incomeId){
   overlay.classList.add('show');
   box.innerHTML = `
     <div role="dialog" aria-modal="true" aria-labelledby="fbRecTitle">
-    <h3 id="fbRecTitle">⚙ Recorrência — ${esc(rec.name)}</h3>
+    <h3 id="fbRecTitle">Recorrência — ${esc(rec.name)}</h3>
     <div class="modal-q" data-qid="rec">
       <div class="ql"><label><input type="checkbox" id="fbRecOn" ${ativa?'checked':''}> Receita recorrente (gera projeção nos meses futuros)</label></div>
     </div>
@@ -33479,7 +33970,7 @@ function finpesDebtsRender(){
   if(!root) return;
   const key = fdCurrentKey();
   const bloqueado = (typeof pfWriteBlockReason==='function') ? pfWriteBlockReason() : null;
-  let html = `<div class="fb-header">
+  let html = `<div class="fb-header cp-period-toolbar">
     <button type="button" class="reset-btn fb-nav" data-fd-nav="-1" title="Mês anterior">←</button>
     <span class="fb-month-label">${esc(pfMonthLabel(key))}</span>
     <button type="button" class="reset-btn fb-nav" data-fd-nav="1" title="Mês seguinte">→</button>
@@ -33512,20 +34003,20 @@ function fdDebtsHTML(key, bloqueado){
     const rest = pfRemainingInstallments(d, snap);
     const vig = esc(d.startMonth)+' → '+(d.closedMonth ? esc(d.closedMonth) : 'em aberto');
     return `<div class="fd-row ${relevante?'':'fd-irrelevante'}" data-debt="${esc(d.id)}">
-      <span>${esc(d.creditor)}${d.description?`<br><span class="fb-aux">${esc(d.description)}</span>`:''}</span>
-      <span>${esc(PF_DEBT_TYPE_LABELS[d.type]||d.type)}</span>
-      <span class="fd-money">${fdMoneyText(d.originalAmount, bloqueado)}</span>
-      <span class="fd-money">${fdMoneyText(d.installmentAmount, bloqueado)}</span>
-      <span class="fd-center">${d.installmentsTotal==null?'—':d.installmentsTotal}</span>
-      <span>${saldo}</span>
-      <span class="fd-center">${pagas}</span>
-      <span class="fd-center">${rest==null?'—':rest}</span>
-      <span class="fb-aux">${vig}</span>
+      <span data-cp-label="Credor">${esc(d.creditor)}${d.description?`<br><span class="fb-aux">${esc(d.description)}</span>`:''}</span>
+      <span data-cp-label="Tipo">${esc(PF_DEBT_TYPE_LABELS[d.type]||d.type)}</span>
+      <span class="fd-money" data-cp-label="Valor original">${fdMoneyText(d.originalAmount, bloqueado)}</span>
+      <span class="fd-money" data-cp-label="Parcela">${fdMoneyText(d.installmentAmount, bloqueado)}</span>
+      <span class="fd-center" data-cp-label="Total de parcelas">${d.installmentsTotal==null?'—':d.installmentsTotal}</span>
+      <span data-cp-label="Saldo na competência">${saldo}</span>
+      <span class="fd-center" data-cp-label="Parcelas pagas">${pagas}</span>
+      <span class="fd-center" data-cp-label="Parcelas restantes">${rest==null?'—':rest}</span>
+      <span class="fb-aux" data-cp-label="Vigência">${vig}</span>
       <span class="fb-actions">
-        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-edit="${esc(d.id)}" title="Editar contrato">✎</button>
-        ${relevante?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">◉</button>`:''}
-        ${snap?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">⊘</button>`:''}
-        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">✕</button>
+        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-edit="${esc(d.id)}" title="Editar contrato">Editar</button>
+        ${relevante?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-obs="${esc(d.id)}" title="Registrar/corrigir observação desta competência">Observar</button>`:''}
+        ${snap?`<button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-rmobs="${esc(d.id)}" title="Remover a observação desta competência">Remover observação</button>`:''}
+        <button type="button" class="row-del" ${bloqueado?'disabled':''} data-fd-del="${esc(d.id)}" title="Excluir (só sem história)">Excluir</button>
       </span>
     </div>`;
   }).join('');
@@ -33535,11 +34026,11 @@ function fdDebtsHTML(key, bloqueado){
         ? `<span>Dívida total: <b>${fdMoneyText(total, bloqueado)}</b></span>`
         : `<span>${fdMoneyText(total, bloqueado)} observados <span class="fb-partial">PARCIAL · ${cov.observadas} de ${cov.relevantes} dívidas observadas</span></span>`);
   return `<div class="card fb-card" id="fdDebts">
-    <h2>Dívidas <span class="art">identidade temporal · saldo é observação da competência</span></h2>
+    <div class="cp-object-toolbar"><h2>Dívidas <span class="art">identidade temporal · saldo é observação da competência</span></h2>
+      <button type="button" class="reset-btn" data-fd-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Nova dívida</button></div>
     <div class="fd-row fd-head"><span>Credor</span><span>Tipo</span><span>V. original</span><span>Parcela</span><span>Parc.</span><span>Saldo na competência</span><span>Pagas</span><span>Rest.</span><span>Vigência</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma dívida cadastrada.</p>'}
     <div class="fb-totals" id="fdDebtTotals">${cobTxt}</div>
-    <button type="button" class="reset-btn" data-fd-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Nova dívida</button>
   </div>`;
 }
 
@@ -33563,14 +34054,14 @@ function fdCreditHTML(bloqueado){
       : (der.utilization===null ? '<span class="fb-aux">N/A</span>'
         : (der.utilization*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%');
     return `<div class="fc-row ${der.estouro?'fc-estouro':''}" data-credit="${esc(l.id)}">
-      <span><input type="text" class="fb-text" value="${esc(l.institution)}" ${bloqueado?'disabled':''} data-fc-campo="institution" data-fc-id="${esc(l.id)}"></span>
-      <span><input type="text" class="fb-text" value="${esc(l.instrument)}" ${bloqueado?'disabled':''} data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></span>
-      <span><input type="text" class="fb-text" value="${esc(l.type)}" ${bloqueado?'disabled':''} data-fc-campo="type" data-fc-id="${esc(l.id)}"></span>
-      <span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`, bloqueado)}</span>
-      <span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`, bloqueado)}</span>
-      <span class="fd-money">${disp}${!bloqueado && der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
-      <span class="fd-center">${util}</span>
-      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fc-del="${esc(l.id)}" title="Excluir linha">✕</button></span>
+      <label class="cp-field"><span class="cp-field-label">Instituição</span><input type="text" class="fb-text" value="${esc(l.institution)}" ${bloqueado?'disabled':''} data-fc-campo="institution" data-fc-id="${esc(l.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Instrumento</span><input type="text" class="fb-text" value="${esc(l.instrument)}" ${bloqueado?'disabled':''} data-fc-campo="instrument" data-fc-id="${esc(l.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Tipo</span><input type="text" class="fb-text" value="${esc(l.type)}" ${bloqueado?'disabled':''} data-fc-campo="type" data-fc-id="${esc(l.id)}"></label>
+      <label class="cp-field"><span class="cp-field-label">Limite</span>${fdMoneyInput(l.totalLimit,`data-fc-campo="totalLimit" data-fc-id="${esc(l.id)}"`, bloqueado)}</label>
+      <label class="cp-field"><span class="cp-field-label">Utilizado</span>${fdMoneyInput(l.used,`data-fc-campo="used" data-fc-id="${esc(l.id)}"`, bloqueado)}</label>
+      <span class="fd-money" data-cp-label="Disponível">${disp}${!bloqueado && der.estouro?' <span class="fb-partial" title="Utilizado acima do limite — legítimo, sem truncar">⚠ estouro</span>':''}</span>
+      <span class="fd-center" data-cp-label="Utilização">${util}</span>
+      <span class="fb-actions"><button type="button" class="row-del" ${bloqueado?'disabled':''} data-fc-del="${esc(l.id)}" title="Excluir linha">Excluir</button></span>
     </div>`;
   }).join('');
   const k = pfCreditKPIs();
@@ -33581,12 +34072,12 @@ function fdCreditHTML(bloqueado){
     <span>Total livre: <b>${(bloqueado || k.totalFree===null) ? '—' : formatBRLCents(k.totalFree)}</b>${!bloqueado && k.totalFree===null?' <span class="fb-partial">componentes incompletos</span>':''}</span>
     <span>Utilização consolidada: <b>${bloqueado ? '—' : (k.utilizationConsolidated===null ? 'N/A' : (k.utilizationConsolidated*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%')}</b></span>`;
   return `<div class="card fb-card" id="fdCredit">
-    <h2>Limites de Crédito <span class="art">estado vigente · sem série histórica nesta versão</span></h2>
+    <div class="cp-object-toolbar"><h2>Limites de Crédito <span class="art">estado vigente · sem série histórica nesta versão</span></h2>
+      <button type="button" class="reset-btn" data-fc-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar linha de crédito</button></div>
     <div class="fc-row fc-head"><span>Instituição</span><span>Instrumento</span><span>Tipo</span><span>Limite</span><span>Utilizado</span><span>Disponível</span><span>Utilização</span><span></span></div>
     ${linhas || '<p class="fb-empty">Nenhuma linha de crédito.</p>'}
     <div class="fb-totals" id="fdCreditKPIs">${kpis}</div>
     <div class="fb-totals" id="fdRatio">${fdRatioHTML(bloqueado)}</div>
-    <button type="button" class="reset-btn" data-fc-add ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Adicionar linha de crédito</button>
   </div>`;
 }
 // Razão dívida/limite — rotulada por extenso para não se confundir com a
@@ -33663,7 +34154,7 @@ function fdOpenDebtModal(debtId){
   const money = v => (v===null||v===undefined) ? '' : (v/100).toFixed(2).replace('.',',');
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
   box.innerHTML = `
-    <h3>${d?'✎ Editar dívida':'+ Nova dívida'}</h3>
+    <h3>${d?'Editar dívida':'Nova dívida'}</h3>
     <div class="modal-q" data-qid="creditor"><div class="ql">Credor / instituição</div>
       <input type="text" id="fdCreditor" value="${esc(d?d.creditor:'')}">
       <div class="modal-err">Credor obrigatório.</div></div>
@@ -33725,7 +34216,7 @@ function fdOpenSnapshotModal(key, debtId){
   const encerrandoAqui = d.closedMonth===key;
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
   box.innerHTML = `
-    <h3>◉ Observação — ${esc(d.creditor)} · ${esc(pfMonthLabel(key))}</h3>
+    <h3>Observação — ${esc(d.creditor)} · ${esc(pfMonthLabel(key))}</h3>
     ${snap?'<p class="risk-note">Já existe observação nesta competência — confirmar SUBSTITUI (correção deliberada).</p>':''}
     ${encerrandoAqui?'<p class="risk-note">Esta é a competência de encerramento — considere registrar o saldo final. Saldo diferente de zero é legítimo (acordo, perdão, baixa).</p>':''}
     <div class="modal-q" data-qid="balance"><div class="ql">Saldo devedor observado (R$)</div>
@@ -33794,7 +34285,7 @@ function finpesComparisonRender(){
     if(control && root.contains(control)) control.focus({preventScroll:true});
   };
   const key = fcCurrentKey();
-  let html = `<div class="fb-header">
+  let html = `<div class="fb-header cp-period-toolbar">
     <button type="button" id="fcPrevious" class="reset-btn fb-nav" data-fc-nav="-1" title="Mês anterior" aria-label="Mês anterior">←</button>
     <span class="fb-month-label">${esc(pfMonthLabel(key))}</span>
     <button type="button" id="fcNext" class="reset-btn fb-nav" data-fc-nav="1" title="Mês seguinte" aria-label="Mês seguinte">→</button>
@@ -33975,7 +34466,7 @@ function finpesScenariosRender(){
     grupos.get(k).push(sc);
   }
   const chaves = [...grupos.keys()].sort();
-  let html = `<div class="fb-header">
+  let html = `<div class="fb-header cp-period-toolbar">
     <span class="fb-month-label">Cenários</span>
     <button type="button" class="reset-btn" data-fs-new ${bloqueado?'disabled title="Módulo em modo leitura"':''}>+ Novo cenário</button>
     <button type="button" class="reset-btn" data-fs-from ${bloqueado?'disabled title="Módulo em modo leitura"':''}>Criar a partir de mês</button>
@@ -34012,14 +34503,14 @@ function fsCardHTML(sc, bloqueado){
       <input type="text" class="fb-text" value="${esc(i.name)}" ${bloqueado?'disabled':''} data-fs-campo="name" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}">
       ${fsMoneyInput(i.amount,`data-fs-campo="amount" data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}"`, bloqueado)}
       <span></span>
-      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}" title="Excluir item">✕</button>
+      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="incomes" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(i.id)}" title="Excluir item">Excluir</button>
     </div>`).join('');
   const cascata = pfScenarioCascade(sc);
   const despesas = cascata.map(c=>`<div class="fs-item" data-fs-item>
       <input type="text" class="fb-text" value="${esc(c.item.name)}" ${bloqueado?'disabled':''} data-fs-campo="name" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}">
       ${fsMoneyInput(c.item.amount,`data-fs-campo="amount" data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}"`, bloqueado)}
       <span class="fs-saldo ${!bloqueado&&c.saldo<0?'fs-neg':''}" title="Saldo após esta despesa (cascata)">${fsMoneyText(c.saldo, bloqueado)}</span>
-      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}" title="Excluir item">✕</button>
+      <button type="button" class="row-del" data-fs-del-item ${bloqueado?'disabled':''} data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" data-fs-id="${esc(c.item.id)}" title="Excluir item">Excluir</button>
     </div>`).join('');
   const sobra = pfScenarioSurplus(sc);
   return `<div class="card fb-card fs-card" data-fs-card="${esc(sc.id)}">
@@ -34036,8 +34527,8 @@ function fsCardHTML(sc, bloqueado){
     ${despesas || '<p class="fb-empty">Nenhuma despesa.</p>'}
     <button type="button" class="reset-btn fs-add" data-fs-add-item data-fs-lista="expenses" data-fs-sc="${esc(sc.id)}" ${bloqueado?'disabled':''}>+ despesa</button>
     <div class="fs-foot">
-      <button type="button" class="row-del" data-fs-edit="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Editar nome/tipo/horizonte">✎</button>
-      <button type="button" class="row-del" data-fs-del="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Excluir cenário">✕</button>
+      <button type="button" class="row-del" data-fs-edit="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Editar nome/tipo/horizonte">Editar cenário</button>
+      <button type="button" class="row-del" data-fs-del="${esc(sc.id)}" ${bloqueado?'disabled':''} title="Excluir cenário">Excluir cenário</button>
     </div>
   </div>`;
 }
@@ -34110,7 +34601,7 @@ function fsReadScenarioForm(box, marcar){
 function fsOpenScenarioModal(scenarioId){
   const sc = scenarioId ? pfFindScenario(S.personalFinance, scenarioId) : null;
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
-  box.innerHTML = `<h3>${sc?'✎ Editar cenário':'+ Novo cenário'}</h3>${fsScenarioFormHTML(sc)}
+  box.innerHTML = `<h3>${sc?'Editar cenário':'Novo cenário'}</h3>${fsScenarioFormHTML(sc)}
     <div class="modal-actions">
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
@@ -34345,7 +34836,7 @@ function finpesOverviewRender(){
   const met = pfCompMetrics(M);
   let html = `<div class="fb-header"><span class="fo-title">Visão Geral</span>
     <span class="fb-aux">consolidado derivado — nunca segunda fonte de verdade</span></div>`;
-  html += `<div class="fo-grid">`;
+  html += `<div class="fo-grid cp-pf-overview">`;
   html += foMonthCardHTML(M, met);
   html += foDebtCreditCardHTML(M, met);
   html += foCompareCardHTML(M);
@@ -35909,6 +36400,20 @@ const ALLADIN_EMPTY={
   balances:'Nenhuma conta de caixa cadastrada.',
   positions:'Nenhuma posição em aberto.'
 };
+// Contexto de apresentação por objeto; não infere estado econômico ou qualidade.
+const ALLADIN_VIEW_CONTEXT={
+  instruments:['Instrumentos','Cadastro','Identidade, símbolo e moeda dos instrumentos. Esta coleção reúne somente registros cadastrais.','Use Novo instrumento para cadastrar uma identidade financeira.'],
+  assets:['Bens','Cadastro','Identidade e finalidade dos bens. Esta coleção reúne somente registros cadastrais.','Use Novo bem para registrar a identidade e a finalidade do bem.'],
+  accounts:['Contas','Cadastro','Instituições e contas que organizam seus registros. Esta coleção reúne somente identidades cadastrais.','Cadastre uma conta para organizar seus registros por instituição.'],
+  cashAccounts:['Caixa','Cadastro','Identidade das contas de caixa por moeda, vinculadas à conta-mãe.','Cadastre uma conta de caixa vinculada à conta-mãe, com sua moeda.'],
+  ledger:['Lançamentos','Fatos registrados','Eventos econômicos em ordem de efetivação. Uma correção é um estorno; o histórico original permanece.','O primeiro lançamento registra um fato econômico. Cadastros, por si só, não geram lançamentos.'],
+  balances:['Saldos','Leitura de caixa','Saldo derivado dos lançamentos de cada caixa, em sua própria moeda. Não é patrimônio consolidado.','Sem contas de caixa cadastradas, não há saldo a apresentar. Consulte o cadastro Caixa.'],
+  positions:['Posições','Leitura de quantidade','Quantidade por instrumento e conta. Não representa preço, valor de mercado ou rentabilidade.','As posições são derivadas dos lançamentos. Quantidade não equivale a valor de mercado.']
+};
+function alladinHeading(view,actionHTML=''){
+  const context=ALLADIN_VIEW_CONTEXT[view];
+  return '<header class="cp-object-toolbar cp-alladin-heading"><div><span class="cp-eyebrow">'+esc(context[1])+'</span><h2>'+esc(context[0])+'</h2><p class="cp-object-context">'+esc(context[2])+'</p></div>'+actionHTML+'</header>';
+}
 // Rótulos de status legíveis; valor fora do vocabulário deste build (schema
 // futuro) é exibido como veio — projetar não é normalizar.
 const ALLADIN_STATUS_LABEL={ACTIVE:'Ativo',INACTIVE:'Inativo'};
@@ -35929,15 +36434,15 @@ function alladinTexto(v){
   return (v===undefined||v===null||v==='') ? '—' : String(v);
 }
 function alladinTabela(colunas,linhas){
-  const head='<tr>'+colunas.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>';
-  const corpo=linhas.map(cels=>'<tr>'+cels.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
-  return '<div class="jp-table-scroll"><table class="dtable">'+head+corpo+'</table></div>';
+  const head='<tr>'+colunas.map(c=>'<th scope="col">'+esc(c)+'</th>').join('')+'</tr>';
+  const corpo=linhas.map(cels=>'<tr>'+cels.map((c,i)=>'<td data-cp-label="'+esc(colunas[i])+'">'+c+'</td>').join('')+'</tr>').join('');
+  return '<div class="jp-table-scroll cp-collection-table"><table class="dtable"><thead>'+head+'</thead><tbody>'+corpo+'</tbody></table></div>';
 }
 function alladinVazio(view){
   // NÃO usar class="expl": essa classe pertence ao sistema global de Explicações,
   // que a colapsa atrás do botão "i". Empty state é informação primária e fica
   // sempre visível.
-  return '<p class="alladin-empty">'+esc(ALLADIN_EMPTY[view])+'</p>';
+  return '<div class="cp-collection-empty"><p class="alladin-empty">'+esc(ALLADIN_EMPTY[view])+'</p><p class="cp-empty-next">'+esc(ALLADIN_VIEW_CONTEXT[view][3])+'</p></div>';
 }
 // Apresentação congelada no gate (teto = read-model; tabela = colunas abaixo):
 //   Instrumentos  Nome | Símbolo | Família/Classe | Moeda | Status
@@ -35946,8 +36451,8 @@ function alladinVazio(view){
 //   Caixa         Moeda | Conta-mãe | Status
 function alladinRenderInstruments(el){
   const lista=JPWAlladin.leitura.instruments();
-  if(!lista.length){ el.innerHTML='<h2>Instrumentos</h2>'+alladinBotaoNovo('instruments')+alladinVazio('instruments'); return; }
-  el.innerHTML='<h2>Instrumentos</h2>'+alladinBotaoNovo('instruments')+alladinTabela(
+  if(!lista.length){ el.innerHTML=alladinHeading('instruments',alladinBotaoNovo('instruments'))+alladinVazio('instruments'); return; }
+  el.innerHTML=alladinHeading('instruments',alladinBotaoNovo('instruments'))+alladinTabela(
     ['Nome','Símbolo','Família / Classe','Moeda','Status','Ações'],
     lista.map(r=>[
       esc(alladinTexto(r.name)),
@@ -35960,8 +36465,8 @@ function alladinRenderInstruments(el){
 }
 function alladinRenderAssets(el){
   const lista=JPWAlladin.leitura.assets();
-  if(!lista.length){ el.innerHTML='<h2>Bens</h2>'+alladinBotaoNovo('assets')+alladinVazio('assets'); return; }
-  el.innerHTML='<h2>Bens</h2>'+alladinBotaoNovo('assets')+alladinTabela(
+  if(!lista.length){ el.innerHTML=alladinHeading('assets',alladinBotaoNovo('assets'))+alladinVazio('assets'); return; }
+  el.innerHTML=alladinHeading('assets',alladinBotaoNovo('assets'))+alladinTabela(
     ['Nome','Natureza / Categoria','Finalidade','Status','Ações'],
     lista.map(r=>[
       esc(alladinTexto(r.name)),
@@ -35975,8 +36480,8 @@ function alladinRenderAssets(el){
 }
 function alladinRenderAccounts(el){
   const lista=JPWAlladin.leitura.accounts();
-  if(!lista.length){ el.innerHTML='<h2>Contas</h2>'+alladinBotaoNovo('accounts')+alladinVazio('accounts'); return; }
-  el.innerHTML='<h2>Contas</h2>'+alladinBotaoNovo('accounts')+alladinTabela(
+  if(!lista.length){ el.innerHTML=alladinHeading('accounts',alladinBotaoNovo('accounts'))+alladinVazio('accounts'); return; }
+  el.innerHTML=alladinHeading('accounts',alladinBotaoNovo('accounts'))+alladinTabela(
     ['Nome','Instituição','Tipo','Status','Ações'],
     lista.map(r=>[
       esc(alladinTexto(r.name)),
@@ -35988,13 +36493,12 @@ function alladinRenderAccounts(el){
 }
 function alladinRenderCash(el){
   const lista=JPWAlladin.leitura.cashAccounts();
-  if(!lista.length){ el.innerHTML='<h2>Caixa</h2>'+alladinBotaoNovo('cashAccounts')+alladinVazio('cashAccounts'); return; }
+  if(!lista.length){ el.innerHTML=alladinHeading('cashAccounts',alladinBotaoNovo('cashAccounts'))+alladinVazio('cashAccounts'); return; }
   // Conta-mãe resolvida DENTRO do snapshot de leitura — nunca no agregado vivo.
   const contas={};
   JPWAlladin.leitura.accounts().forEach(a=>{ if(a.accountId) contas[a.accountId]=a.name; });
-  el.innerHTML='<h2>Caixa</h2>'+
+  el.innerHTML=alladinHeading('cashAccounts',alladinBotaoNovo('cashAccounts'))+
     '<p class="expl">Cadastro das contas de caixa por moeda — dinheiro disponível não pertence a este ciclo.</p>'+
-    alladinBotaoNovo('cashAccounts')+
     alladinTabela(
     ['Moeda','Conta-mãe','Status','Ações'],
     lista.map(r=>[
@@ -36118,7 +36622,7 @@ function alladinDataCelula(tx){
 // Busca somente de apresentação; permanece em memória e não entra em S/backup.
 let alladinLedgerQuery='';
 function alladinRenderLedger(el){
-  const cab='<h2>Lançamentos</h2>';
+  const cab=alladinHeading('ledger');
   const ledger=JPWAlladin.leitura.ledger();
   if(!ledger.available){
     // Sob BLOCKING: nenhuma tabela, nenhum número, nenhum texto de empty — e
@@ -36132,8 +36636,9 @@ function alladinRenderLedger(el){
     return;
   }
   const cta=alladinTxBotaoNovo();
+  const toolbar=alladinHeading('ledger',cta);
   const lista=ledger.transactions;
-  if(!lista.length){ el.innerHTML=cab+cta+alladinVazio('ledger'); return; }
+  if(!lista.length){ el.innerHTML=toolbar+alladinVazio('ledger'); return; }
   const cat=alladinCatalogoLabels();
   // ORDEM: exatamente a entregue pelo read-model (ordem econômica
   // effectiveAt, recordedAt, transactionId). A UI não reordena — reordenar
@@ -36147,7 +36652,7 @@ function alladinRenderLedger(el){
   const busca='<label class="alladin-ledger-search" for="alladinLedgerSearch">Buscar lançamentos'+
     '<input id="alladinLedgerSearch" type="search" autocomplete="off" placeholder="Data, evento, conta ou detalhe" value="'+esc(alladinLedgerQuery)+'"></label>'+
     '<p class="alladin-ledger-filter-status" role="status" aria-live="polite"></p>';
-  el.innerHTML=cab+cta+busca+alladinTabela(
+  el.innerHTML=toolbar+busca+alladinTabela(
     ['Efetivação','Evento','Detalhe','Valor','Conta / Caixa','Status','Ações'],
     lista.map(tx=>[
       alladinDataCelula(tx),
@@ -36181,7 +36686,7 @@ function alladinRenderLedger(el){
   aplicarBusca();
 }
 function alladinRenderBalances(el){
-  const cab='<h2>Saldos</h2>';
+  const cab=alladinHeading('balances');
   const contas=JPWAlladin.leitura.cashAccounts();
   // Empty CADASTRAL — ausência de conta não é saldo zero, e os dois não podem
   // compartilhar a mesma tela.
@@ -36205,7 +36710,7 @@ function alladinRenderBalances(el){
     }));
 }
 function alladinRenderPositions(el){
-  const cab='<h2>Posições</h2>';
+  const cab=alladinHeading('positions');
   const p=JPWAlladin.leitura.posicoes();
   if(!p.available){
     // positions:[] sob BLOCKING NUNCA pode virar "Nenhuma posição".
@@ -37315,15 +37820,15 @@ const DM_AREAS = {
 function dmLink(label, route, surface, view){
   return '<button type="button" class="dm-link" data-dm-route="'+esc(route)+'"'
     +(surface?' data-dm-surface="'+esc(surface)+'" data-dm-view="'+esc(view)+'"':'')
-    +'>'+esc(label)+'<span aria-hidden="true">↗</span></button>';
+    +'>'+esc(label)+'</button>';
 }
 function dmLinks(html){ return '<nav class="dm-links" aria-label="Detalhes da área">'+html+'</nav>'; }
 function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label)+'</h4>'+html+'</div>'; }
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
-    + '<header class="dm-card-head"><div><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
-    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+' <span aria-hidden="true">→</span></button></header>'
+    + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+id+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
+    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+'</button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '</article>';
 }
@@ -37353,7 +37858,7 @@ function dmForexHTML(c){
   const ddPct = c.mddScaled > 0 ? c.dd / c.mddScaled : null;
   const riscoPct = c.tetoRisco > 0 ? c.riscoTotal / c.tetoRisco : null;
   const alavPct = c.tetoAlav > 0 ? c.alavCar / c.tetoAlav : null;
-  let corpo = dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
+  let corpo = '<div class="dm-primary">'+dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
   corpo += dmFacts(
       dmFact('Fase vigente', esc(c.fase && c.fase.nome ? c.fase.nome : '—'))
     + dmFact('Drawdown', fmtPct(c.dd), 'teto ' + fmtPct(c.mddScaled), ddPct, barTom)
@@ -37367,6 +37872,7 @@ function dmForexHTML(c){
   if(cl.reasons && cl.reasons.length){
     corpo += dmNote(cl.reasons[0] + (cl.reasons.length > 1 ? '  (+' + (cl.reasons.length - 1) + ')' : ''));
   }
+  corpo += '</div><div class="dm-record">';
   const led = ledgerSorted();
   const last = led.length ? led[led.length-1] : null;
   corpo += dmSection('Apuração', last
@@ -37374,6 +37880,7 @@ function dmForexHTML(c){
       + dmRow('Resultado do dia', '<b>'+fmtMoney2(last.resultado)+'</b>')
     : dmNote('Nenhum fechamento registrado neste período.'));
   corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Conta', 'forex-account')+dmLink('Preparação', 'forex-preparation')
     +dmLink('Apuração', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
   return {html: corpo, tom};
@@ -37421,7 +37928,7 @@ function dmFinpesHTML(){
   const M = pfCurrentMonthKey();
   const met = pfCompMetrics(M);          // 1 chamada — traz receita, despesa, sobra, DÍVIDA e COMPROMETIMENTO
   if(!met) return {html: dmErro('competência inválida'), tom:'warn'};
-  let corpo = '<div class="dm-sub">' + esc(pfMonthLabel(M)) + '</div>';
+  let corpo = '<div class="dm-primary"><div class="dm-sub">' + esc(pfMonthLabel(M)) + '</div>';
   if(!met.materializado){
     // Completude vácua é armadilha conhecida: mês virtual declara-se não
     // registrado em vez de exibir sobra R$ 0 fabricada.
@@ -37450,11 +37957,13 @@ function dmFinpesHTML(){
   corpo += dmRow('Pendências anteriores', pend.length
     ? '<span class="dm-partial">' + pend.length + ' mês(es) em aberto</span>'
     : dmAux('nenhuma'));
+  corpo += '</div><div class="dm-record">';
   const baseKey=pfCompBaselines(M).previousMonth;
   const comp=pfCompCompare(M,baseKey).metrics.sobra;
   corpo += dmSection('Comparação mensal', comp.available
     ? dmRow('Sobra vs '+pfMonthLabel(baseKey), '<b>'+foSignedMoney(comp.delta)+'</b>')
     : dmNote('A comparação da sobra precisa de dois meses com valores completos.'));
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Orçamento', 'personal-finance','finpes','mensal')
     +dmLink('Dívidas e crédito', 'personal-finance','finpes','dividas')
     +dmLink('Comparativo', 'personal-finance','finpes','comparativo')
@@ -37497,7 +38006,7 @@ function dmResearchHTML(){
     const cat = instrumentCatalog();
     if(Array.isArray(cat) && cat.length) cobertura = {com: cat.filter(i => nc.indexOf(i.id) >= 0).length, total: cat.length};
   }
-  let corpo = dmFacts(
+  let corpo = '<div class="dm-primary">'+dmFacts(
       dmFact('Estudos NoCoda', nc.length ? String(nc.length) : '<span class="dm-aux">nenhum</span>',
              cobertura ? cobertura.com + ' de ' + cobertura.total + ' instrumentos' : null,
              cobertura && cobertura.total ? cobertura.com / cobertura.total : null)
@@ -37523,10 +38032,12 @@ function dmResearchHTML(){
   if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
   else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
     corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
+  corpo += '</div><div class="dm-record">';
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
     +dmLink('REITs','research-reits')+dmLink('Others','research-others')
     +'</div>'+dmNote('Áreas em preparação · sem conteúdo publicado.'));
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Calendário','research-forex','research','calendar')
     +dmLink('NoCoda','research-forex','research','nocoda')
     +dmLink('Pivots','research-forex','research','pivots'));
@@ -37557,12 +38068,13 @@ function dmAlladinHTML(){
   // afirmação econômica — e por isso rotuladas como cadastro.
   const L = JPWAlladin.leitura;
   const nInstr = L.instruments().length, nContas = L.accounts().length, nCaixas = L.cashAccounts().length;
-  let corpo = dmFacts(
+  let corpo = '<div class="dm-primary">'+dmFacts(
       dmFact('Posições abertas', n ? String(n) : '<span class="dm-aux">nenhuma</span>', n ? 'instrumento × conta' : 'nenhuma posição em aberto')
     + dmFact('Contas', String(nContas), nCaixas + ' caixa(s)')
   );
   corpo += dmRow('Instrumentos cadastrados', nInstr ? '<b>' + nInstr + '</b>' : dmAux('nenhum'));
   corpo += dmRow('Bens cadastrados', '<b>'+L.assets().length+'</b>');
+  corpo += '</div><div class="dm-record">';
   const labels=alladinCatalogoLabels();
   const cash=L.cashAccounts();
 
@@ -37586,6 +38098,7 @@ function dmAlladinHTML(){
     ? dmRow(last.eventType==='REVERSAL'?'Estorno':alladinEventoLabel(last.eventType), '<b>'+esc(JPWAlladin.money.format({amount:last.amount,currency:last.currency}))+'</b>')
       +dmRow(dmDate(last.effectiveAt),dmAux(ALLADIN_TX_STATUS_LABEL[last.status]||last.status||'—'))
     : dmNote('Nenhum lançamento registrado.'));
+  corpo += '</div>';
   corpo += dmLinks(dmLink('Saldos','alladin','alladin','balances')+dmLink('Lançamentos','alladin','alladin','ledger')
     +dmLink('Posições','alladin','alladin','positions')+dmLink('Cadastros','alladin','alladin','instruments'));
   return {html: corpo, tom: null};

@@ -102,7 +102,7 @@ function ecalRenderRoot(root, filter){
     if(key!==currentKey){
       currentKey=key;
       dayWrap=document.createElement('section');
-      dayWrap.className='ecal-day'+(key===todayKey?' ecal-day-today':'');
+      dayWrap.className='ecal-day cp-calendar-day'+(key===todayKey?' ecal-day-today':'');
       const h=document.createElement('h3');
       h.className='ecal-day-title';
       h.textContent=ecalDayLabel(e.when)+(key===todayKey?' · hoje':'');
@@ -112,7 +112,7 @@ function ecalRenderRoot(root, filter){
       body.append(dayWrap);
     }
     const row=document.createElement('div');
-    row.className='ecal-item'+(e.when.getTime()<now?' ecal-item-past':'');
+    row.className='ecal-item cp-calendar-event'+(e.when.getTime()<now?' ecal-item-past':'');
     const time=document.createElement('time');
     time.className='ecal-time';
     time.dateTime=e.date;

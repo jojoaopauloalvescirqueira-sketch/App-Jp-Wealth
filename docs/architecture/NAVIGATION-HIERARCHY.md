@@ -1,5 +1,13 @@
 # Navegação hierárquica — contrato de implementação
 
+Completion pass: Dashboard acrescenta âncoras de página para os quatro capítulos, sem novo destino no resolver. NoCoda e Pivots usam disclosure nativo para explicação técnica; o aviso de limite permanece visível. No celular, âncoras editáveis precedem a prévia. Laboratório conserva Executar/Continuar e ciclo A13; configurações conservam busca, pilha, Editor e slots.
+
+Complemento local APPLE01: cinco ícones originais acompanham os labels existentes
+na lateral; a barra superior mantém sua apresentação compatível. Ações globais
+recebem texto visível, preservando os nomes acessíveis Configurações, Tickets e
+Finalizar sessão. Alladin agrupa os sete destinos em Cadastros / Movimentação e
+leitura, sem novo nível no resolver. [Direção](APPLE-EXPERIENCE-DIRECTION.md).
+
 Contrato de apresentação do primeiro incremento da lateral contextual,
 CHG-CONTEXTUAL-SIDEBAR-20260909, autorizado pelo proprietário. Substitui neste
 escopo a abertura por hover. A lateral é padrão; o complemento

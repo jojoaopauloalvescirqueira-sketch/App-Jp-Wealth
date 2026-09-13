@@ -904,7 +904,7 @@ function renderMvpNotesList(){
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, {ativas,concluidas}=mvpNotesGrouped();
   if(total===0){
-    host.innerHTML=`<p class="mvpn-empty">Nenhum ticket registrado. Use "+" para registrar tarefas, bugs, funcionalidades ou melhorias do MVP.</p>`;
+    host.innerHTML=`<div class="mvpn-empty"><strong>Nenhum ticket nesta coleção.</strong><p>Use “Novo ticket” para registrar uma tarefa, um problema ou uma melhoria.</p></div>`;
   }else if(!ativas.length && !concluidas.length){
     const temBusca=!!mvpNotesUI.query.trim(), temFiltro=mvpNotesActiveFilterCount()>0;
     const msg=(temBusca&&temFiltro)?'Nenhum ticket corresponde à busca e aos filtros atuais.':'Nenhum ticket encontrado.';
