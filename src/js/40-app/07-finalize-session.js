@@ -2,7 +2,7 @@
 const SESSION_CHECKPOINT_KEY='jpwealth_session_checkpoint_v1';
 const SESSION_WIPE_CHANNEL='jpwealth_session_events_v1';
 const SESSION_WIPE_STORAGE_KEY='jpwealth_session_wipe_signal_v1';
-const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1','jpwealth_notes_launcher_position_v1',SESSION_WIPE_STORAGE_KEY];
+const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1','jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1',SESSION_WIPE_STORAGE_KEY];
 // ---- ALD-C3-PRE-EPOCH · geração causal da base -----------------------------
 // CONTROL PLANE, não data plane. Metadado compartilhado entre abas, sem PII e sem
 // conteúdo financeiro. NÃO integra JP_WEALTH_AUX_STORAGE_KEYS, não entra em backup
@@ -159,6 +159,9 @@ function sessionResetAuxiliarySurfaces(){
   }
   if(typeof handleSettingsProfileSessionWipe==='function'){
     try{ handleSettingsProfileSessionWipe(); }catch(error){}
+  }
+  if(typeof handleMvpNotesAppearanceSessionWipe==='function'){
+    try{ handleMvpNotesAppearanceSessionWipe(); }catch(error){}
   }
   if(typeof handleMvpNotesLauncherSessionWipe==='function'){
     try{ handleMvpNotesLauncherSessionWipe(); }catch(error){}

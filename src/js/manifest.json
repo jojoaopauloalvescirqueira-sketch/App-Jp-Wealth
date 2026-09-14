@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "6391da6f928cb940391b5749a0b98e822e3c0bd3997058f2897ec1236e6fb3be"
+      "sha256": "54eeeffd9924ccecbd34d03c46b42cba360e80addc05feccd5e75ad998851501"
     },
     {
       "order": 36,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "f4ae7c049e9078bb96d76ded872d1963afec0d0320ade3b30749edda12a4d02f"
+      "sha256": "3a993db5670125b0d90c1afc7e6b1370b8dfc8e36b14acc22d5ec1f165e327e0"
     },
     {
       "order": 39,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "0413e67cb9b348cfdc97fc6a01321db53734e47ae807cde80b9cbdf0cb87379b"
+      "sha256": "36a9eae3b38fb9b999382522126be6708f968068795924799fc1fe010fa8355b"
     },
     {
       "order": 44,

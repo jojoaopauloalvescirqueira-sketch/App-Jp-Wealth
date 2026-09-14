@@ -1,3 +1,9 @@
+# Notas — APPLE NOTES EXPERIENCE MATCH, 2026-09-14
+
+Base integrada conferida: `9ca32073e1fa032318b7e6e6eb50b5f693efe2d9`. Revisão local na branch `codex/apple-notes-match-20260914`, sem integração. `index.html` e `src/styles/app.css` reorganizam os controles existentes em três zonas de toolbar/painéis. `14-mvp-notes.js` preserva CRUD/dirty/ordem/exportação/larguras e projeta aparência por atributos; preferência auxiliar `jpwealth_notes_appearance_v1` com confirmed/draft, read-back, recusa/retry e bloqueio UNKNOWN/conflito. `09-settings-modal.js` conecta prévia/cancelamento ao cartão Notas existente; `07-finalize-session.js` inclui somente a chave nova na limpeza auxiliar. Conteúdo, schemas, matemática e políticas dos tickets permanecem. Fonte e validação focal: [CHG/CTX](../work/CHG-APPLE-NOTES-MATCH-20260914.md), `tools/apple_notes_match_test.py`. As seções seguintes são registros anteriores; suas afirmações de integração/contexto não substituem a base Git agora conferida.
+
+---
+
 # Revisão cumulativa — unificação 2026-09-14
 
 O candidate de unificação preserva Notas/Backup posteriores e incorpora `src/js/40-app/18-notification-center.js` como 79º script, após os 78 herdados, conforme o contrato de [Notifications](NOTIFICATION-CENTER.md). O sino usa `dgBackupStatus()` da mesma fonte de Dashboard/Settings, sem persistir inbox ou recalcular domínio. Registros abaixo mantêm contagens e decisões históricas de suas revisões. Build/identidade do pacote novo em manifesto externo; integração ainda não demonstrada.

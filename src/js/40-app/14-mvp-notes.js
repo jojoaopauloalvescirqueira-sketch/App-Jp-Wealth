@@ -446,11 +446,11 @@ function renderMvpNotesBulkActions(){
   const copiar=mvpn('mvpNotesBulkCopyBtn'), exportar=mvpn('mvpNotesBulkExportBtn');
   const qualifica=sel.soAtivas?'ativa':'concluída';
   if(copiar){
-    copiar.textContent=`Copiar ${n}`;
+    mvpn('mvpNotesBulkCopyLabel').textContent=`Copiar ${n}`;
     copiar.setAttribute('aria-label',`Copiar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
   }
   if(exportar){
-    exportar.textContent=`Exportar ${n}`;
+    mvpn('mvpNotesBulkExportLabel').textContent=`Exportar ${n}`;
     exportar.setAttribute('aria-label',`Exportar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
   }
 }
@@ -756,6 +756,138 @@ function mvpNotesDelete(id){
 
 // ---- acionador flutuante + card de Configurações ----
 // Preferência auxiliar de apresentação. Não integra S, save() ou backup financeiro.
+// ---- Aparência auxiliar de Notas: preview em RAM, confirmação por read-back. ----
+// Não usa S, save() nem o envelope da posição. O protocolo de lock/epoch existente
+// protege esta preferência sem criar outro armazenamento de conteúdo.
+const MVP_NOTES_APPEARANCE_KEY='jpwealth_notes_appearance_v1';
+const MVP_NOTES_APPEARANCE_DEFAULTS={theme:'app',density:'comfortable',preview:'show',sidebar:'show',reading:'full',text:'standard'};
+const MVP_NOTES_APPEARANCE_VALUES={theme:['app','light','dark'],density:['comfortable','compact'],preview:['show','hide'],sidebar:['show','hide'],reading:['full','comfortable'],text:['standard','large','larger']};
+const mvpNotesAppearanceState={confirmed:{...MVP_NOTES_APPEARANCE_DEFAULTS},draft:{...MVP_NOTES_APPEARANCE_DEFAULTS},
+  raw:null,blocked:false,reason:'',saving:false,editing:false,ready:false,reset:false,serial:0,epoch:0,baseEpoch:null,viewSidebar:null};
+function mvpNotesAppearancePreference(raw){
+  if(raw===null)return {schemaVersion:1,...MVP_NOTES_APPEARANCE_DEFAULTS};
+  try{
+    const p=JSON.parse(raw);
+    return p && !Array.isArray(p) && p.schemaVersion===1 &&
+      Object.keys(MVP_NOTES_APPEARANCE_VALUES).every(k=>MVP_NOTES_APPEARANCE_VALUES[k].includes(p[k])) ? p : null;
+  }catch(error){return null;}
+}
+function mvpNotesAppearanceStatus(text,error=false){
+  const el=mvpn('mvpNotesAppearanceStatus');
+  if(el){el.textContent=text;el.dataset.error=String(error);}
+}
+function mvpNotesAppearanceControls(){
+  const state=mvpNotesAppearanceState;
+  Object.keys(MVP_NOTES_APPEARANCE_VALUES).forEach(k=>{
+    const el=mvpn('mvpNotesAppearance'+k[0].toUpperCase()+k.slice(1));
+    if(el){el.value=state.draft[k];el.disabled=state.saving;}
+  });
+  ['Save','Reset','Reload'].forEach(k=>{const el=mvpn('mvpNotesAppearance'+k);if(el)el.disabled=state.saving||(k==='Save'&&state.blocked&&!(state.reset&&state.reason==='invalid'));});
+}
+function mvpNotesApplyAppearance(){
+  const state=mvpNotesAppearanceState,drawer=mvpn('mvpNotesDrawer');if(!drawer)return;
+  const p=state.editing?state.draft:state.confirmed;
+  Object.keys(MVP_NOTES_APPEARANCE_VALUES).forEach(k=>drawer.dataset['notes'+k[0].toUpperCase()+k.slice(1)]=p[k]);
+  drawer.dataset.notesTheme=p.theme==='app'?(document.documentElement.dataset.theme==='dark'?'dark':'light'):p.theme;
+  if(state.viewSidebar!==null)drawer.dataset.notesSidebar=state.viewSidebar;
+  const show=drawer.dataset.notesSidebar!=='hide',btn=mvpn('mvpNotesSidebarToggleBtn');
+  if(btn){btn.setAttribute('aria-expanded',String(show));btn.setAttribute('aria-label',(show?'Ocultar':'Mostrar')+' pastas nesta abertura');}
+}
+function mvpNotesReadAppearance(){
+  const state=mvpNotesAppearanceState;++state.serial;state.saving=false;state.reset=false;state.viewSidebar=null;
+  state.epoch=Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0;state.baseEpoch=sessionEpochRead();state.ready=true;
+  let raw;
+  try{raw=localStorage.getItem(MVP_NOTES_APPEARANCE_KEY);}
+  catch(error){state.blocked=true;state.reason='read';mvpNotesAppearanceStatus('Não foi possível ler a aparência guardada. Nada foi substituído. Use Reler preferência guardada.',true);mvpNotesAppearanceControls();return false;}
+  const pref=mvpNotesAppearancePreference(raw);state.raw=raw;state.blocked=!pref;state.reason=pref?'':'invalid';
+  if(pref)state.confirmed=Object.fromEntries(Object.keys(MVP_NOTES_APPEARANCE_VALUES).map(k=>[k,pref[k]]));
+  state.draft={...state.confirmed};mvpNotesAppearanceControls();mvpNotesApplyAppearance();
+  mvpNotesAppearanceStatus(pref?'Preferência conferida neste navegador.':'A aparência guardada é incompatível. Nada foi apagado; a apresentação provisória usa a última preferência disponível. Restaurar aparência padrão e Salvar permitem substituí-la explicitamente.',!pref);
+  return !!pref;
+}
+function mvpNotesBeginAppearance(){
+  const state=mvpNotesAppearanceState;if(state.editing)return;
+  if(!state.ready||!state.blocked)mvpNotesReadAppearance();
+  state.editing=true;mvpNotesApplyAppearance();
+}
+function mvpNotesCancelAppearance(){
+  const state=mvpNotesAppearanceState;++state.serial;state.saving=false;state.editing=false;state.reset=false;
+  state.draft={...state.confirmed};state.viewSidebar=null;mvpNotesApplyAppearance();mvpNotesAppearanceControls();
+  if(!state.blocked)mvpNotesAppearanceStatus('Prévia descartada. A preferência guardada permanece igual.');
+}
+async function mvpNotesSaveAppearance(){
+  const state=mvpNotesAppearanceState;if(state.saving)return false;
+  const candidate={...state.draft},epoch=state.epoch,baseEpoch=state.baseEpoch,serial=++state.serial,reset=state.reset;
+  const status=(message,error=false)=>{if(serial===state.serial)mvpNotesAppearanceStatus(message,error);};
+  if(!mvpNotesAppearancePreference(JSON.stringify({schemaVersion:1,...candidate}))){status('Escolha opções válidas antes de salvar.',true);return false;}
+  if(state.blocked && !(reset&&state.reason==='invalid')){status('A gravação está bloqueada. Use Reler preferência guardada antes de tentar novamente.',true);return false;}
+  let mainBefore;
+  try{mainBefore=localStorage.getItem(LSKEY);}catch(error){status('Não foi possível conferir a sessão. Nenhuma preferência foi gravada.',true);return false;}
+  state.saving=true;mvpNotesAppearanceControls();
+  const write=()=>{
+    if(serial!==state.serial)return false; // Cancelar/sair invalida callback que ainda aguarda lock.
+    if(epoch!==(Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0)||!baseEpoch||baseEpoch!==sessionEpochRead()){
+      state.blocked=true;state.reason='epoch';status('A sessão mudou. Recarregue o aplicativo antes de salvar a aparência.',true);return false;
+    }
+    let before;
+    try{
+      if(localStorage.getItem(LSKEY)!==mainBefore){state.blocked=true;state.reason='base';status('A base mudou enquanto a aparência aguardava. Recarregue antes de salvar.',true);return false;}
+      before=localStorage.getItem(MVP_NOTES_APPEARANCE_KEY);
+    }catch(error){state.blocked=true;state.reason='read';status('Não foi possível conferir a preferência. Nenhuma gravação foi tentada.',true);return false;}
+    if(before!==state.raw){state.blocked=true;state.reason='conflict';status('A aparência mudou em outra aba. Use Reler preferência guardada para conferir; sua tentativa não foi gravada.',true);return false;}
+    const envelope=mvpNotesAppearancePreference(before);
+    if(!envelope&&!reset){state.blocked=true;state.reason='invalid';status('A preferência guardada é incompatível. Confira antes de substituir.',true);return false;}
+    const payload=JSON.stringify({...envelope,schemaVersion:1,...candidate});
+    if(payload!==before){try{localStorage.setItem(MVP_NOTES_APPEARANCE_KEY,payload);}catch(error){/* Releitura distingue recusa e UNKNOWN. */}}
+    let after;try{after=localStorage.getItem(MVP_NOTES_APPEARANCE_KEY);}catch(error){}
+    if(after===payload){
+      state.raw=after;state.confirmed={...candidate};state.draft={...candidate};state.blocked=false;state.reason='';state.reset=false;state.uncertainAttempt=null;
+      mvpNotesApplyAppearance();status('Aparência salva neste navegador.');return true;
+    }
+    if(after===before){status('A gravação foi recusada. Sua prévia permanece nesta sessão; tente Salvar aparência novamente.',true);return false;}
+    state.uncertainAttempt={...candidate};state.blocked=true;state.reason='unknown';status('Não foi possível confirmar a gravação. Não tente novamente às cegas: use Reler preferência guardada para conferir o resultado.',true);return false;
+  };
+  try{return await sessionAcquireWriteLock(write);}
+  catch(error){if(serial===state.serial){state.blocked=true;state.reason='unknown';status('Não foi possível confirmar a aparência. Use Reler preferência guardada.',true);}return false;}
+  finally{if(serial===state.serial){state.saving=false;mvpNotesAppearanceControls();}}
+}
+function mvpNotesResetWidths(){
+  const ok=mvpNotesMutate(()=>{const ui=S.mvpNotes.ui;ui.drawerWidth=MVP_NOTES_DRAWER_DEFAULT;ui.foldersPaneWidth=MVP_NOTES_FOLDERS_DEFAULT;ui.notesPaneWidth=MVP_NOTES_LIST_DEFAULT;return true;});
+  if(ok){mvpNotesApplyDrawerWidth(MVP_NOTES_DRAWER_DEFAULT);mvpNotesAppearanceStatus('Larguras padrão restauradas. Notas e demais preferências preservadas.');}
+  else mvpNotesAppearanceStatus('Não foi possível confirmar as larguras. Confira o aviso de persistência; nenhuma restauração foi anunciada como concluída.',true);
+  return !!ok;
+}
+function handleMvpNotesAppearanceSessionWipe(){
+  const state=mvpNotesAppearanceState;++state.serial;state.saving=false;state.editing=false;
+  state.confirmed={...MVP_NOTES_APPEARANCE_DEFAULTS};state.draft={...state.confirmed};state.viewSidebar=null;
+  state.reset=false;state.blocked=true;state.reason='epoch';
+  mvpNotesAppearanceControls();mvpNotesApplyAppearance();
+  mvpNotesAppearanceStatus('A sessão mudou. A prévia anterior foi suspensa; releia a preferência após a finalização.',true);
+}
+function bindMvpNotesAppearance(){
+  mvpNotesReadAppearance();
+  Object.keys(MVP_NOTES_APPEARANCE_VALUES).forEach(k=>{
+    const el=mvpn('mvpNotesAppearance'+k[0].toUpperCase()+k.slice(1));
+    if(el)el.addEventListener('change',()=>{
+      const state=mvpNotesAppearanceState;if(state.saving||!MVP_NOTES_APPEARANCE_VALUES[k].includes(el.value))return;
+      state.editing=true;state.viewSidebar=null;state.draft[k]=el.value;mvpNotesApplyAppearance();
+      mvpNotesAppearanceStatus('Prévia nesta sessão. Use Abrir Notas para conferir e Salvar aparência para guardar.');
+    });
+  });
+  mvpn('mvpNotesAppearanceSave').addEventListener('click',mvpNotesSaveAppearance);
+  mvpn('mvpNotesAppearanceCancel').addEventListener('click',mvpNotesCancelAppearance);
+  mvpn('mvpNotesAppearanceReload').addEventListener('click',()=>{mvpNotesReadAppearance();mvpNotesAppearanceState.editing=true;});
+  mvpn('mvpNotesAppearanceReset').addEventListener('click',()=>{
+    const state=mvpNotesAppearanceState;state.draft={...MVP_NOTES_APPEARANCE_DEFAULTS};state.editing=true;state.reset=true;state.viewSidebar=null;
+    mvpNotesAppearanceControls();mvpNotesApplyAppearance();mvpNotesAppearanceStatus('Padrão em prévia. Salvar aparência confirma; Cancelar preserva sua escolha anterior.');
+  });
+  mvpn('mvpNotesWidthsReset').addEventListener('click',mvpNotesResetWidths);
+  mvpn('mvpNotesSidebarToggleBtn').addEventListener('click',()=>{
+    const drawer=mvpn('mvpNotesDrawer');mvpNotesAppearanceState.viewSidebar=drawer.dataset.notesSidebar==='hide'?'show':'hide';mvpNotesApplyAppearance();
+  });
+  new MutationObserver(mvpNotesApplyAppearance).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+}
+
 const MVP_NOTES_LAUNCHER_KEY='jpwealth_notes_launcher_position_v1';
 function mvpNotesLauncherPreference(raw){
   if(raw===null)return {schemaVersion:1,x:1,y:1};
@@ -987,6 +1119,7 @@ function renderMvpNotesSettingsCard(){
   }
 }
 function bindMvpNotesSettingsCard(){
+  bindMvpNotesAppearance();
   const seg=mvpn('mvpNotesVisibilitySeg');
   if(seg) seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
     S.mvpNotes.showHeaderIcon=b.dataset.mvpNotesVisibility==='show';
@@ -1034,11 +1167,9 @@ function mvpNotesCardHTML(item){
       data-status="${esc(item.status)}" data-priority="${esc(item.priority)}" data-type="${esc(item.type)}"
       ${selecionada?'aria-current="true"':''}>
       <div class="mvpn-card-title">${esc(item.title)}</div>
-      ${preview?`<div class="mvpn-card-preview">${preview}</div>`:''}
-      <div class="mvpn-card-meta">
-        <span>${esc(mvpNotesFormatDate(item.status==='done'&&item.completedAt?item.completedAt:item.updatedAt))}</span>
-        ${mostraPasta?`<span aria-hidden="true">·</span><span class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</span>`:''}
-      </div>
+      <div class="mvpn-card-excerpt"><span class="mvpn-card-date">${esc(mvpNotesFormatDate(item.status==='done'&&item.completedAt?item.completedAt:item.updatedAt))}</span>
+        ${preview?`<span class="mvpn-card-preview">${preview}</span>`:''}</div>
+      ${mostraPasta?`<div class="mvpn-card-meta"><span class="mvpn-card-folder">${esc(mvpNotesFolderLabel(item.folderId))}</span></div>`:''}
     </button>
     <button type="button" class="mvpn-card-menu" data-mvp-menu-id="${esc(item.id)}"
       aria-haspopup="menu" aria-expanded="false"
@@ -1107,6 +1238,8 @@ function renderMvpNotesList(){
   // qualquer mudança de recorte (pasta, filtro, busca, salvar, excluir), não só os
   // caminhos que chegam a repintar a lista.
   renderMvpNotesBulkActions();
+  const viewCount=mvpn('mvpNotesViewCount');
+  if(viewCount){const g=mvpNotesGrouped(),n=g.ativas.length+g.concluidas.length;viewCount.textContent=n+' nota'+(n===1?'':'s');}
   // O cabeçalho mobile é função do estágio + da visão ativa, e AMBOS podem ter acabado de
   // mudar (entrar numa pasta, renomeá-la, reordenar, excluir). Reaplicar aqui — a operação
   // é só atributo e texto — garante que nenhum título antigo fique preso no topo. Antes
@@ -1291,6 +1424,7 @@ function mvpNotesFolderRowHTML(id,name,count,manageable,ordem){
   return `<div class="mvpn-folder-row${id==='done'?' mvpn-folder-row-done':''}"${manageable?` data-mvp-folder-row="${esc(id)}"`:''}>
     ${alca}
     <button type="button" class="mvpn-folder-btn" data-mvp-folder="${esc(id)}"${systemAttr} ${active?'aria-current="page"':''}>
+      <svg class="mvpn-folder-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5h6l2 2h10v13H3V7Zm0 3h18"/>${id==='done'?'<path d="m8 15 3 3 5-5"/>':''}</svg>
       <span class="mvpn-folder-name" title="${esc(name)}">${esc(name)}</span>
       <span class="mvpn-folder-count">${count}</span>
     </button>
@@ -1644,9 +1778,11 @@ function renderMvpNotesEditor(){
   if(bar) bar.hidden=!temRascunho;
   if(area) area.hidden=!temRascunho;
   if(vazio) vazio.hidden=temRascunho;
+  const dateEl=mvpn('mvpNotesEditorDate');if(dateEl)dateEl.hidden=!temRascunho;
   if(!temRascunho) return;
   if(area && area.value!==mvpNotesUI.draft.content) area.value=mvpNotesUI.draft.content;
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
+  if(dateEl)dateEl.textContent=item?'Atualizada em '+mvpNotesFormatDate(item.updatedAt):'Rascunho · ainda não salvo';
   const ticketEl=mvpn('mvpNotesEditorTicket');
   if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'nova nota';
   const copyBtn=mvpn('mvpNotesCopyRefBtn');
@@ -2288,6 +2424,8 @@ function mvpNotesRestoreInert(){
 // por qualquer outro caminho enquanto o drawer segue aberto deixaria esse booleano obsoleto.
 function mvpNotesSettingsOpen(){ return typeof settingsIsOpen==='function' && settingsIsOpen(); }
 function openMvpNotesDrawer(opener){
+  if(mvpNotesAppearanceState.epoch!==(Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0))mvpNotesReadAppearance();
+  mvpNotesApplyAppearance();
   if(mvpNotesUI.open){
     const layer=mvpNotesUI.cardMenuId?mvpn('mvpNotesCardMenuBox')
       :mvpNotesUI.newNoteOpen?mvpn('mvpNotesNewBox'):mvpn('mvpNotesOverlay');
@@ -2339,6 +2477,7 @@ function closeMvpNotesDrawerNow(){
   mvpNotesSetNewNoteModalOpen(false); // nunca deixar o modal armado para a próxima abertura
   mvpNotesCloseCardMenu();
   mvpNotesUI.open=false;
+  mvpNotesAppearanceState.viewSidebar=null;mvpNotesApplyAppearance();
   mvpNotesDockPersistence(false);
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
