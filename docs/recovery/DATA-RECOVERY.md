@@ -28,7 +28,45 @@ Para encerrar o uso em computador de terceiros, utilize `Finalizar sessão`. A f
 
 Após a exclusão, a persistência fica bloqueada para a geração anterior da sessão. Atualizações assíncronas, importações iniciadas antes do encerramento e outras abas não podem recriar o estado antigo; uma nova sessão pode ser iniciada por novo carregamento, onboarding ou importação explícita. O service worker remove somente caches com prefixo `jp-wealth-`.
 
-As chaves auxiliares auditadas sao `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth_v9_icon_choice`, a chave legada `jpwealth_v9_icon_theme`, as preferencias isoladas do laboratorio em `jpwealth_galton_preferences_v1`, o perfil local em `jpwealth_local_profile_v1` e o sinal temporario `jpwealth_session_wipe_signal_v1`; o checkpoint fica em `sessionStorage` como `jpwealth_session_checkpoint_v1`. A limpeza nao usa `localStorage.clear()`.
+As chaves da allowlist auxiliar são `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth_v9_icon_choice`, a chave legada `jpwealth_v9_icon_theme`, as preferências isoladas do laboratório em `jpwealth_galton_preferences_v1`, o perfil local em `jpwealth_local_profile_v1`, a posição do botão de Notas em `jpwealth_notes_launcher_position_v1` e o sinal temporário `jpwealth_session_wipe_signal_v1`; o checkpoint fica em `sessionStorage` como `jpwealth_session_checkpoint_v1`. A limpeza não usa `localStorage.clear()`.
+
+## Notas — posição local e rascunho
+
+A posição do botão flutuante pertence somente a este navegador/origem. A chave
+`jpwealth_notes_launcher_position_v1` contém `schemaVersion: 1` e coordenadas
+numéricas finitas `x` e `y` entre 0 e 1. Essa preferência fica fora de `S`, do
+schema de dados e do backup financeiro; notas, pastas e as três larguras já
+persistidas continuam no agregado existente. A apresentação central adapta as
+regiões de Pastas, Lista e Editor ao espaço disponível, sem regravar larguras
+por resize.
+
+Concluir um movimento ou ajuste pode gravar a posição uma vez, confirmada por
+releitura exata. Cancelar, abrir, navegar, redimensionar e recarregar não gravam
+essa preferência. Reload restaura a última posição confirmada; a projeção usa
+as coordenadas proporcionais e os limites disponíveis. **Restaurar posição**
+remove somente essa chave e volta ao canto inferior direito. JSON incompatível
+é preservado, com posição padrão em memória e novas gravações bloqueadas até
+conferência ou restauração explícita. Falha comprovada conserva o valor anterior
+e o movimento vale apenas na sessão; desfecho desconhecido exige recarregar e
+conferir. Campos desconhecidos de um envelope v1 compatível são preservados.
+
+**Finalizar sessão remove essa preferência**, invalida movimentos e gravações
+pendentes pela geração auxiliar da sessão e preserva notas, pastas e larguras.
+A nova configuração da posição exige recarregar após finalizar. Importação e
+a limpeza de dados da Zona de Perigo preservam a preferência local. As gravações
+utilizam o lock existente quando há Web Locks, além da comparação do valor
+anterior e do epoch; sem Web Locks, permanece a limitação de concorrência entre
+abas do armazenamento local, sem promessa de transação entre abas.
+
+O rascunho de Notas permanece apenas em memória. Salvar continua explícito, com
+os mesmos contratos de recusa, rollback e nova tentativa. Fechar ou trocar a
+seleção com alterações mantém a confirmação de descarte; o aviso nativo ao sair
+da página não salva o rascunho nem promete recuperá-lo após reload.
+
+Contrato em [CHG-NIGHT-PENDING-RECONCILIATION-20260914](../work/CHG-NIGHT-PENDING-RECONCILIATION-20260914.md).
+Os focais `notes_experience_test.py`, `notes_launcher_test.py`,
+`mvp_notes_test.py` e `finalize_session_test.py`, em `tools/`, cobrem esses
+limites com dados sintéticos; este texto não substitui os resultados de execução.
 
 ## Perfil local — JP Wealth Account
 
@@ -63,3 +101,13 @@ Locks, permanece a limitação de concorrência entre abas do armazenamento loca
 uma releitura isolada não é apresentada como transação entre abas. Imagens de
 teste e evidência devem ser sintéticas; fotos pessoais não entram em Git,
 screenshots automatizadas ou relatórios sem autorização específica.
+
+## Backup: interpretar o resultado
+
+A pasta escolhida é destino de exportação; a base ativa permanece no perfil/origem do navegador. Em `file://`, não se promete portabilidade entre caminhos/navegadores. Mantenha a origem em que os dados foram usados.
+
+“Download iniciado” exige conferir o arquivo no navegador. Um arquivo entregue e um registro local recusado são resultados distintos: preserve o arquivo antes de repetir. Resultado desconhecido não prova ausência de arquivo e não libera Finalizar. Confirmação de backup é declaração explícita do operador, distinta da exportação; não se consolida após recusa comprovada.
+
+Importar substitui os dados da base, preservando preferências locais deliberadamente excluídas. A porta recusa contêiner presente incompatível; ausência legítima em backup antigo segue o contrato legado. Em recusa de gravação, o estado anterior é preservado. Em desfecho desconhecido, pare novas gravações e examine a recuperação; não repita às cegas.
+
+Perfil/foto, layouts/navegação, posição do launcher, caches, permissões de pasta e rascunhos não salvos não acompanham a cópia financeira. Não prometa recuperação desses itens a partir do JSON de dados.

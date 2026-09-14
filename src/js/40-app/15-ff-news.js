@@ -84,12 +84,13 @@ function ffNewsIsToday(date){
 
 function ffNewsStatusText(cache){
   const issue=ffNewsCacheIssue();
-  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
+  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : ffNewsInFlight?'Sem dados — carregando calendário econômico…':'Sem dados — atualize o calendário econômico.';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
     : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
+  const stale=Date.now()-cache.fetchedAt>FF_NEWS_MAX_AGE_MS;
+  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : stale?'Dados desatualizados de ':'Dados de ')+stamp;
 }
 
 // Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,

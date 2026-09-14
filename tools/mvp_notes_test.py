@@ -84,6 +84,48 @@ def create_note(page, type_, title, description, priority, status):
 def notes_state(page):
     return page.evaluate("S.mvpNotes.items.map(it => ({...it}))")
 
+
+def assert_editor_columns(page, desktop=True):
+    """Measure the visible writing layout, independently of stored width helpers."""
+    panes = ('mvpNotesFolderSidebar', 'mvpNotesListPane', 'mvpNotesEditorPane')
+    visible = [page.locator('#' + ident).is_visible() for ident in panes]
+    assert visible == ([True, True, True] if desktop else [False, True, True]), visible
+    measured = page.evaluate("""() => {
+      const width=id=>document.getElementById(id).getBoundingClientRect().width;
+      const body=document.getElementById('mvpNotesBody');
+      const handles=['mvpNotesFoldersHandle','mvpNotesListHandle'].reduce((sum,id)=>{
+        const el=document.getElementById(id),r=el.getBoundingClientRect(),s=getComputedStyle(el);
+        return sum+(r.width?r.width+parseFloat(s.marginLeft)+parseFloat(s.marginRight):0);
+      },0);
+      return {folders:width('mvpNotesFolderSidebar'),list:width('mvpNotesListPane'),
+        editor:width('mvpNotesEditorPane'),body:width('mvpNotesBody'),handles,
+        overflow:body.scrollWidth>body.clientWidth+1 || document.documentElement.scrollWidth>innerWidth+1};
+    }""")
+    assert measured['list'] >= 240 and measured['editor'] >= 320, measured
+    assert measured['editor'] > measured['list'], ('editor deve ser a maior região', measured)
+    if desktop:
+        assert 150 <= measured['folders'] < measured['list'], measured
+    assert sum(measured[k] for k in ('folders', 'list', 'editor', 'handles')) <= measured['body'] + 1, measured
+    assert not measured['overflow'], measured
+
+
+def assert_sheet_in_notes_window(page, ident):
+    measured = page.locator('#' + ident).evaluate("""sheet => {
+      const windowEl=document.getElementById('mvpNotesDrawer'),w=windowEl.getBoundingClientRect();
+      const r=sheet.getBoundingClientRect(),style=getComputedStyle(sheet);
+      return {pos:style.position,left:r.left,right:r.right,top:r.top,bottom:r.bottom,height:r.height,
+        availableLeft:w.left+windowEl.clientLeft,availableRight:w.left+windowEl.clientLeft+windowEl.clientWidth,
+        availableTop:w.top+windowEl.clientTop,availableBottom:w.top+windowEl.clientTop+windowEl.clientHeight,
+        overflow:sheet.scrollWidth>sheet.clientWidth+1 || document.documentElement.scrollWidth>innerWidth+1};
+    }""")
+    assert measured['pos'] == 'fixed', measured
+    assert abs(measured['left']-measured['availableLeft']) <= 1, measured
+    assert abs(measured['right']-measured['availableRight']) <= 1, measured
+    assert abs(measured['bottom']-measured['availableBottom']) <= 1, measured
+    assert measured['top'] >= measured['availableTop'] - 1 and measured['height'] >= 44, measured
+    assert not measured['overflow'], measured
+
+
 server, base_url = serve()
 try:
     with sync_playwright() as pw:
@@ -102,8 +144,10 @@ try:
         # ---- 1. botão por padrão, CRUD dos 4 tipos, contador, captura de tela/build ----
         page = prepare_page(browser, url)
         assert page.locator('#headerNotesBtn').is_visible()
-        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
-        assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir tickets'
+        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas'
+        assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas'
+        assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count() == 1
+        assert page.locator('#headerActions #headerNotesBtn').count() == 0
         assert page.locator('#headerNotesBadge').is_hidden()
 
         create_note(page, 'task', 'Tarefa de teste', 'descrição da tarefa', 'medium', 'open')
@@ -180,7 +224,7 @@ try:
         assert page.locator('.mvpn-card').count() == 1  # bug agora está in_progress
         page.locator('#mvpNotesFilterPriority').select_option('low')
         assert page.locator('.mvpn-card').count() == 0
-        assert 'Nenhum ticket encontrado' in page.locator('.mvpn-empty').inner_text()
+        assert 'Nenhuma nota encontrada' in page.locator('.mvpn-empty').inner_text()
         assert page.locator('#mvpNotesFiltersCount').inner_text() == '3', 'contador de filtros ativos'
         # busca + filtro combinam (interseção, nunca sobrescrita)
         page.locator('#mvpNotesSearch').fill('Bug de teste')
@@ -214,6 +258,7 @@ try:
         page.evaluate("settingsNavigateToLeaf('interface')")
         page.locator('[data-mvp-notes-visibility="hide"]').click()
         assert page.locator('#headerNotesBtn').is_hidden()
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is False
         assert len(notes_state(page)) == 3, 'ocultar ícone não pode apagar registros'
         click_id(page, 'mvpNotesOpenFromSettingsBtn')
         assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')") is True
@@ -232,8 +277,10 @@ try:
         page.wait_for_function("document.querySelector('#mvpNotesSettingsCard')?.classList.contains('settings-search-hit')")
         page.locator('#settingsSearch').fill('')
         page.locator('[data-mvp-notes-visibility="show"]').click()
-        assert page.locator('#headerNotesBtn').is_visible()
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is True
+        assert page.locator('#mvpNotesLauncher').is_hidden(), 'o atalho continua coberto pela Central'
         click_id(page, 'settingsCloseBtn')
+        assert page.locator('#headerNotesBtn').is_visible()
 
         # ---- 7b. log de auditoria financeira (tela Contabilidade) não deve carregar notas ----
         page.evaluate("navigateToScreen('contab')")
@@ -339,7 +386,7 @@ try:
         }""")
         click_id(page, 'finalizeSessionBtn')
         click_id(page, 'sessionHasCopy')
-        assert 'tickets' in page.locator('#modalBox').inner_text().lower(), 'aviso de persistência de tickets ausente na tela de confirmação'
+        assert 'notas' in page.locator('#modalBox').inner_text().lower(), 'aviso de preservação de notas ausente na tela de confirmação'
         click_id(page, 'sessionProceed')
         page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO')
         click_id(page, 'sessionDeleteConfirm')
@@ -348,7 +395,7 @@ try:
         assert page.evaluate("S.onboarding.operador") == ''
         assert len(notes_state(page)) == 1, 'Finalizar Sessão não deveria apagar notas'
         notice = page.locator('#sessionNotice').inner_text()
-        assert 'Tickets' in notice, notice
+        assert 'Notas' in notice, notice
         assert json.loads(page.evaluate("localStorage.getItem('jpwealth_v9_state')"))['mvpNotes']['items'], \
             'notas deveriam ter sido regravadas no localStorage mesmo com persistência bloqueada'
 
@@ -645,7 +692,10 @@ try:
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")
         assert page.evaluate("document.getElementById('headerNotesBadge').hidden") is True, \
             'após a Zona de Perigo o badge deve sumir sem interação manual'
-        assert page.locator('#headerNotesBtn').is_visible(), 'visibilidade volta ao padrão (mostrar)'
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is True, 'visibilidade volta ao padrão (mostrar)'
+        assert page.locator('#mvpNotesLauncher').is_hidden(), 'a Central continua cobrindo o atalho após limpar a base'
+        click_id(page, 'settingsCloseBtn')
+        assert page.locator('#headerNotesBtn').is_visible()
         assert_no_errors(page.jpwealth_observed)
         assert_fixture_requests(page.context)
         page.close()
@@ -705,6 +755,12 @@ try:
         largura = page.evaluate("() => Math.round(document.getElementById('mvpNotesDrawer').getBoundingClientRect().width)")
         esperada = page.evaluate("() => Math.min(1100, Math.round(innerWidth*0.8), 1600, innerWidth-32)")
         assert largura == esperada, (largura, esperada)
+        janela = page.locator('#mvpNotesDrawer').evaluate("""el => {
+          const r=el.getBoundingClientRect();
+          return {left:r.left,right:innerWidth-r.right,top:r.top,bottom:innerHeight-r.bottom};
+        }""")
+        assert abs(janela['left']-janela['right']) <= 1, ('janela centralizada', janela)
+        assert min(janela.values()) >= 16, ('espaço ao redor da janela desktop', janela)
         assert page.evaluate('mvpNotesClampWidth(100)') == 721, 'mínimo canônico derivado'
         assert page.evaluate('mvpNotesClampPersistable(99999)') == 1600, 'máximo canônico v5'
         click_id(page, 'mvpNotesCloseBtn')
@@ -746,8 +802,10 @@ try:
         # teclado, duplo clique, persistência e ausência de efeito colateral no estado.
         page = prepare_page(browser, base_url + 'index.html')
         create_note(page, 'bug', 'Nota para geometria', 'corpo', 'high', 'open')
-        page.set_viewport_size({'width': 1440, 'height': 900})
+        # Space for the full canonical keyboard increments before testing clamps.
+        page.set_viewport_size({'width': 2000, 'height': 900})
         click_id(page, 'headerNotesBtn')
+        page.evaluate('mvpNotesApplyDrawerWidth(1600); mvpNotesPersistDrawerWidth(1600)')
         # contrato dos dois separadores
         for hid, rotulo in (('mvpNotesFoldersHandle', 'pastas'), ('mvpNotesListHandle', 'lista')):
             h = page.locator('#' + hid)
@@ -764,6 +822,7 @@ try:
                  <= w('mvpNotesBody') + 1;
         }"""
         assert page.evaluate(invariante), 'colunas não cabem no corpo do drawer'
+        assert_editor_columns(page)
         # teclado: passo 20, Shift 60, e a seta representa o movimento físico do separador
         base = page.evaluate("mvpNotesRenderedPanes().folders")
         page.locator('#mvpNotesFoldersHandle').press('ArrowRight')
@@ -806,24 +865,17 @@ try:
         click_id(page, 'mvpNotesCloseBtn')
         click_id(page, 'headerNotesBtn')
         assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 260, 'list': 380}
-        # drawer no MÍNIMO: renderização se ajusta, preferência NÃO é reescrita, e nenhuma
-        # das três colunas fica abaixo do seu piso — a invariante que define o mínimo.
+        # At the legacy minimum, the central window uses two panes. All three
+        # persisted preferences remain valid; narrow presentation never rewrites them.
         page.evaluate('mvpNotesApplyDrawerWidth(MVP_NOTES_DRAWER_MIN); mvpNotesPersistDrawerWidth(MVP_NOTES_DRAWER_MIN)')
-        estreito = page.evaluate('mvpNotesRenderedPanes()')
-        assert estreito['list'] == 240 and estreito['folders'] == 150, estreito
-        pisos = page.evaluate("""() => {
-          const w = id => Math.round(document.getElementById(id).getBoundingClientRect().width);
-          return {pastas: w('mvpNotesFolderSidebar'), lista: w('mvpNotesListPane'),
-                  editor: w('mvpNotesEditorPane'), drawer: w('mvpNotesDrawer')};
-        }""")
-        assert pisos['pastas'] >= 150 and pisos['lista'] >= 240 and pisos['editor'] >= 320, pisos
+        assert_editor_columns(page, desktop=False)
         assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 260, 'preferência preservada'
         assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 380, 'preferência preservada'
-        assert page.evaluate(invariante)
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), 'sem overflow horizontal'
         # drawer largo de novo: as preferências originais voltam a valer
         page.evaluate('mvpNotesApplyDrawerWidth(1200); mvpNotesPersistDrawerWidth(1200)')
         assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 260, 'list': 380}
+        assert_editor_columns(page)
         # ---- PREFERÊNCIA PERSISTIDA  vs  LARGURA RENDERIZADA ----------------------
         # A normalização valida cada preferência ISOLADAMENTE e nada mais. Uma combinação
         # que não caiba no drawer atual é resolvida no DESENHO (mvpNotesFitPanes), nunca
@@ -838,6 +890,11 @@ try:
         # espaco(980) = 980 - 1 (borda) - 10 (dois separadores) = 969; excesso = 320+520+320-969 = 191,
         # cortado primeiro da Lista: 520-191 = 329. Só no desenho — o estado acima segue 320/520.
         assert page.evaluate('mvpNotesFitPanes(320, 520, 980)') == {'folders': 320, 'list': 329}, 'o ajuste é do render'
+        # The new window may project these valid preferences more narrowly to
+        # keep the editor largest, without modifying the canonical stored values.
+        page.evaluate('mvpNotesApplyDrawerWidth(980)')
+        assert_editor_columns(page)
+        assert page.evaluate('S.mvpNotes.ui') == combinacao, 'adaptação visual não regrava larguras'
         # valores impossíveis ISOLADAMENTE continuam normalizados
         invalidos = page.evaluate("""() => {
           S.mvpNotes.ui = {drawerWidth: -5, foldersPaneWidth: -100, notesPaneWidth: 99999};
@@ -850,15 +907,10 @@ try:
           mvpNotesNormalizeState(); return S.mvpNotes.ui;
         }""")
         assert antigo == {'drawerWidth': 721, 'foldersPaneWidth': 190, 'notesPaneWidth': 300}, antigo
-        # …e no drawer mínimo o DESENHO cai para os pisos, sem tocar na preferência
+        # The central window adapts the same legacy width with two visible panes.
         page.evaluate('save(); mvpNotesApplyDrawerWidth(MVP_NOTES_DRAWER_MIN)')
-        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 150, 'list': 240}
+        assert_editor_columns(page, desktop=False)
         assert page.evaluate('mvpNotesPanePrefs()') == {'folders': 190, 'list': 300}, 'preferência preservada'
-        pisos_min = page.evaluate("""() => {
-          const w = id => Math.round(document.getElementById(id).getBoundingClientRect().width);
-          return {pastas: w('mvpNotesFolderSidebar'), lista: w('mvpNotesListPane'), editor: w('mvpNotesEditorPane')};
-        }""")
-        assert pisos_min == {'pastas': 150, 'lista': 240, 'editor': 320}, pisos_min
         # ampliar o drawer restaura o desenho às preferências, SEM reload
         page.evaluate('mvpNotesApplyDrawerWidth(1100); mvpNotesPersistDrawerWidth(1100)')
         assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 190, 'list': 300}
@@ -873,9 +925,10 @@ try:
         assert page.evaluate('S.mvpNotes.ui.foldersPaneWidth') == 190, 'reload não pode apagar a preferência'
         assert page.evaluate('S.mvpNotes.ui.notesPaneWidth') == 300, 'reload não pode apagar a preferência'
         click_id(page, 'headerNotesBtn')
-        assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 150, 'list': 240}, 'no mínimo, desenho nos pisos'
+        assert_editor_columns(page, desktop=False)
         page.evaluate('mvpNotesApplyDrawerWidth(1100); mvpNotesPersistDrawerWidth(1100)')
         assert page.evaluate('mvpNotesRenderedPanes()') == {'folders': 190, 'list': 300}, 'após reload, ampliar restaura'
+        assert_editor_columns(page)
         assert_no_errors(page.jpwealth_observed)
         assert_fixture_requests(page.context)
         page.close()
@@ -1022,15 +1075,9 @@ try:
         assert page.locator('#mvpNotesBackLabel').inner_text() == 'Pastas'
         assert visivel('#mvpNotesSearch'), 'busca permanente também no celular'
         assert not visivel('#mvpNotesFolderSidebar')
-        # filtros em folha inferior de largura cheia
+        # Filtros ocupam a largura interna da janela, com suas margens preservadas.
         click_id(page, 'mvpNotesFiltersBtn')
-        folha = page.evaluate("""() => {
-          const w = document.getElementById('mvpNotesFiltersWrap'); const c = getComputedStyle(w);
-          return {pos: c.position, bottom: c.bottom, largura: Math.round(w.getBoundingClientRect().width),
-                  viewport: window.innerWidth};
-        }""")
-        assert folha['pos'] == 'fixed' and folha['bottom'] == '0px', folha
-        assert folha['largura'] == folha['viewport'], folha
+        assert_sheet_in_notes_window(page, 'mvpNotesFiltersWrap')
         page.keyboard.press('Escape')
         # Estágio C — Nota: volta para a VISÃO DE ORIGEM, não para uma pasta inferida
         page.locator('.mvpn-card').first.click()
@@ -1041,13 +1088,11 @@ try:
             'abrir nota existente não rouba o foco (evita abrir o teclado sem pedir)'
         # inspector em folha inferior, com alvos de toque de 44px
         open_inspector(page)
+        assert_sheet_in_notes_window(page, 'mvpNotesInspector')
         insp = page.evaluate("""() => {
-          const i = document.getElementById('mvpNotesInspector'); const c = getComputedStyle(i);
           const alt = id => Math.round(document.getElementById(id).getBoundingClientRect().height);
-          return {pos: c.position, largura: Math.round(i.getBoundingClientRect().width),
-                  viewport: window.innerWidth, tipo: alt('mvpNoteType'), excluir: alt('mvpNoteDeleteBtn')};
+          return {tipo: alt('mvpNoteType'), excluir: alt('mvpNoteDeleteBtn')};
         }""")
-        assert insp['pos'] == 'fixed' and insp['largura'] == insp['viewport'], insp
         assert insp['tipo'] >= 44 and insp['excluir'] >= 44, ('alvos de toque', insp)
         page.keyboard.press('Escape')
         # dirty bloqueia a volta; cancelar mantém a nota aberta
@@ -1617,7 +1662,7 @@ try:
         nome = page.evaluate('mvpNotesBulkExport()')
         assert nome and nome.startswith('tickets-interface-') and nome.endswith('.md'), nome
         pergunta = page.evaluate('window.__perguntas[0]')
-        assert 'mostra 4 tickets' in pergunta and 'os 2 ativos' in pergunta, pergunta
+        assert 'mostra 4 notas' in pergunta and 'as 2 ativas' in pergunta, pergunta
         assert page.evaluate('JSON.stringify(S.mvpNotes)') == estado_antes, \
             'exportar é leitura pura — não pode alterar o estado'
 
@@ -1659,14 +1704,14 @@ try:
         page.evaluate(f"() => {{ mvpNotesSwitchFolder('{seed['pastaB']}'); }}")
         assert acoes.is_hidden(), 'sem notas no recorte, as ações somem'
         assert page.evaluate('mvpNotesBulkExport()') is None
-        assert page.locator('#mvpNotesExportLive').inner_text() == 'Nenhum ticket exportável encontrado.'
+        assert page.locator('#mvpNotesExportLive').inner_text() == 'Nenhuma nota exportável encontrada.'
 
         # 18.7 recorte só com concluídas/descartadas → mensagem própria
         page.evaluate(f"""() => {{ mvpNotesSwitchFolder('{seed['pastaA']}');
           mvpNotesUI.filterStatus = 'done'; renderMvpNotesList(); }}""")
         assert acoes.is_hidden(), 'recorte inteiramente excluído esconde as ações'
         assert page.evaluate('mvpNotesBulkExport()') is None
-        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Todos os tickets desta visão')
+        assert page.locator('#mvpNotesExportLive').inner_text().startswith('Todas as notas desta visão')
         page.evaluate("() => { mvpNotesUI.filterStatus = 'all'; renderMvpNotesList(); }")
 
         # 18.8 visão "Concluído": exceção declarada — ali o recorte É o histórico concluído
@@ -1789,7 +1834,7 @@ try:
         acoes = page.evaluate("[...document.querySelectorAll('[data-mvp-menu-acao]')].map(b => b.dataset.mvpMenuAcao)")
         assert acoes == ['copiar', 'concluir', 'exportar', 'excluir'], acoes
         rotulos = page.evaluate("[...document.querySelectorAll('[data-mvp-menu-acao]')].map(b => b.textContent)")
-        assert rotulos[0] == 'Copiar referência' and rotulos[1] == 'Concluir ticket', rotulos
+        assert rotulos[0] == 'Copiar referência' and rotulos[1] == 'Concluir nota', rotulos
 
         # 19.8 uma instância só: abrir o ⋯ de outro ticket não empilha overlays
         page.keyboard.press('Escape')
@@ -1825,7 +1870,7 @@ try:
         page.locator('.mvpn-card-menu').first.click()
         page.locator('[data-mvp-menu-acao="concluir"]').click()
         page.wait_for_timeout(120)
-        assert 'Concluir o ticket' in page.evaluate('window.__q'), page.evaluate('window.__q')
+        assert 'Concluir a nota' in page.evaluate('window.__q'), page.evaluate('window.__q')
         depois = page.evaluate(f"({{...S.mvpNotes.items.find(i => i.id === '{alvo_id}')}})")
         assert depois['status'] == 'done' and depois['completedAt'], depois
         for campo in ['id', 'ticket', 'content', 'title', 'type', 'priority', 'folderId',
@@ -1845,14 +1890,14 @@ try:
         page.keyboard.press('Escape')
 
         # --- JPW-785634: nomenclatura visível ---
-        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
-        assert page.locator('#mvpNotesTitle').inner_text() == 'Tickets'
-        assert page.locator('#mvpNotesNewBtn').get_attribute('title') == 'Novo ticket'
-        assert page.locator('#mvpNotesSearch').get_attribute('placeholder') == 'Buscar em todos os tickets'
+        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas'
+        assert page.locator('#mvpNotesTitle').inner_text() == 'Notas'
+        assert page.locator('#mvpNotesNewBtn').get_attribute('title') == 'Nova nota'
+        assert page.locator('#mvpNotesSearch').get_attribute('placeholder') == 'Buscar em todas as notas'
         page.evaluate("() => { mvpNotesSwitchFolder('all'); }")
         # text_content e não inner_text: .mvpn-view-title tem text-transform:uppercase e o
         # inner_text devolveria o texto já transformado pelo CSS.
-        assert page.locator('#mvpNotesViewTitle').text_content() == 'Todos os Tickets'
+        assert page.locator('#mvpNotesViewTitle').text_content() == 'Todas as Notas'
         # o dado NÃO mudou de forma: mesma chave, mesmo agregado, mesmos IDs
         assert page.evaluate("Object.keys(JSON.parse(localStorage.getItem('jpwealth_v9_state'))).includes('mvpNotes')"), \
             'renomear a UI não pode migrar o storage'
@@ -1874,4 +1919,4 @@ try:
 finally:
     server.shutdown()
     server.server_close()
-print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos), ações em massa sobre o recorte visível (JPW-436587: contagem, exclusão de concluídas/descartadas, Markdown único, preâmbulo de governança do lote, leitura pura, casos vazios, visão Concluído, rascunho sujo, nota legada, nome de pasta hostil e ausência de rede), Tickets MVP (JPW-NPQRST menu ⋯ moderno com Copiar/Concluir/Exportar/Excluir, foco, Escape, clique fora e instância única; JPW-QRNPKM críticos no topo com critério secundário preservado e sem gravar posição; JPW-785634 nomenclatura Tickets sem migração de storage) e monólito verificados.')
+print('MVP NOTES OK — CRUD, filtros, contador, visibilidade, isolamento sobre a Central, Finalizar Sessão, Zona de Perigo, backup/importação real, migração, pastas, concluídas na pasta, resize externo e dos dois separadores internos (três colunas), ordem manual das pastas (position, arraste e menu), navegação mobile em três estágios (Pastas/Lista/Nota), limpeza única de filtros (JPW-RQPNMK), exportação individual em Markdown (JPW-9A78DE), Trace ID, política IA no Trace Reference e inspector (schema v5), modal de configuração inicial da nota (JPW-CBA987: abertura, cancelamento, Escape, clique fora, metadados na criação e campos planos), ações em massa sobre o recorte visível (JPW-436587: contagem, exclusão de concluídas/descartadas, Markdown único, preâmbulo de governança do lote, leitura pura, casos vazios, visão Concluído, rascunho sujo, nota legada, nome de pasta hostil e ausência de rede), Notas (JPW-NPQRST menu ⋯ moderno com Copiar/Concluir/Exportar/Excluir, foco, Escape, clique fora e instância única; JPW-QRNPKM críticos no topo com critério secundário preservado e sem gravar posição; JPW-785634 nomenclatura Notas sem migração de storage) e monólito verificados.')

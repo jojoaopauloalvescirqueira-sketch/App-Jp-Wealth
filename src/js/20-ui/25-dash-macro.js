@@ -263,10 +263,7 @@ function dmResearchHTML(){
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
     if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
   }
-  const cacheIssue = typeof ffNewsCacheIssue === 'function' ? ffNewsCacheIssue() : '';
-  if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
-  else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
-    corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
+  if(typeof ffNewsStatusText==='function') corpo += dmRow('Cache',dmAux(ffNewsStatusText(cal)));
   corpo += '</div><div class="dm-record">';
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')

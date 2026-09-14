@@ -147,7 +147,7 @@ def main():
                                 check(label+' unavailable distinct from empty',not after['dataAvailable'] and 'Sem dados' in after['modal'] and 'dados ainda não carregados' in after['dashboard'])
                             elif case.startswith('http'):
                                 check(label+' old bytes survive provider failure',after['raw']==before['raw'])
-                                check(label+' provider failure shown','Sem conexão' in after['widget'],after['widget'])
+                                check(label+' provider failure shown in all consumers',all('Sem conexão' in after[key] for key in ['widget','modal','workspace','dashboard']),{key:after[key] for key in ['widget','modal','workspace','dashboard']})
                             else:
                                 check(label+' duplicate inflight calls coalesced',mode['calls']==1,mode['calls'])
                             check(label+' filter state preserved',after['filters']==['USD','EUR'],after['filters'])

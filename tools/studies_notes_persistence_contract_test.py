@@ -325,8 +325,13 @@ def run_banner_retry(browser,url,theme,width,height,artifact):
     page.evaluate('(theme)=>document.documentElement.dataset.theme=theme',theme)
     page.evaluate(PREPARE,{'caseName':'folder-rename','nc':NC,'pv':PV})
     page.evaluate('mvpNotesUI.draftDirty=false;window.__mode="quota"')
-    if width<=920:
-        page.locator('#mvpNotesBackBtn').click();page.locator('#mvpNotesBackBtn').click()
+    def show_folders():
+        # Phone has two back steps; tablet has one disclosure. Use actual visibility.
+        for _ in range(2):
+            if page.locator('#mvpNotesFolderSidebar').is_visible(): break
+            page.locator('#mvpNotesBackBtn').click()
+        assert page.locator('#mvpNotesFolderSidebar').is_visible(), 'folder navigation did not expose folders'
+    show_folders()
     prompts=[];accept_retry=False
     def dialog(d):
         prompts.append({'type':d.type,'default':d.default_value})
@@ -396,8 +401,7 @@ def run_banner_retry(browser,url,theme,width,height,artifact):
     page.evaluate('() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
     check(abs(page.locator('#persistenceAlert').bounding_box()['y']-72)<1,'closed Notes changed normal notice anchor',failures)
     page.evaluate('openMvpNotesDrawer()')
-    if width<=920 and page.locator('#mvpNotesBackBtn').is_visible():
-        page.locator('#mvpNotesBackBtn').click()
+    show_folders()
     phase('reopened',1)
     accept_retry=True;page.evaluate('window.__mode="normal"')
     try:

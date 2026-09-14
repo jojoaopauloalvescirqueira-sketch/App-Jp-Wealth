@@ -103,3 +103,9 @@ gravá-la exigiria a gravação que ela veta. Contrato completo na regra 7 de
    registros antigos como estão; corrigir rótulo em massa é pior que o rótulo
    antigo, porque destrói a distinção entre o que foi observado e o que foi
    inferido depois.
+
+## Cobertura de exportação e preferências locais
+
+O backup completo clona `S`; a lista deste inventário não filtra campos. `personalFinance`, `alladin`, `nocoda`, `pivotStudies`, `mvpNotes` e `fxPlanning`, além do núcleo operacional, são agregados de dados cobertos. `build` e `cobertura` são metadados descritivos adicionais do envelope de backup, sem mudança nos schemas dos domínios.
+
+Perfil/foto (`jpwealth_local_profile_v1`), posição de Notas (`jpwealth_notes_launcher_position_v1`), navegação/layouts e preferências Galton são locais e excluídos. Cache público e handles não constituem dados portáteis. Contrato de fonte, limites e confirmação: [DB-STORAGE-GOVERNANCE](DB-STORAGE-GOVERNANCE.md).

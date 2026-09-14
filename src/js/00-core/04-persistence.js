@@ -501,12 +501,61 @@ function dgBackupDue(){
 }
 // Confirmação explícita de backup em dia (§9/§10): SÓ por gesto do operador, nunca como
 // efeito colateral de exportar. Registra o momento e a sequência coberta.
+// Estado de apresentação: disponibilidade não prova que todo rascunho está salvo.
+function dgPersistenceStatus(){
+  if(jpWealthPersistenceOutcomeIsUnknown()) return {state:'unknown',tone:'bad',text:'Gravação com desfecho desconhecido — verifique a recuperação'};
+  if(jpWealthLoadRecoveryActive()) return {state:'recovery',tone:'warn',text:'Recuperação pendente — gravação suspensa'};
+  if(jpWealthPersistenceIsBlocked()) return {state:'blocked',tone:'warn',text:'Gravação suspensa — recuperação pendente'};
+  if(jpWealthPersistenceFailure.active) return {state:'failed',tone:'bad',text:'Falha ao gravar neste navegador'};
+  return {state:'available',tone:'ok',text:'Gravação disponível neste navegador'};
+}
+function dgBackupStatus(){
+  if(jpWealthPersistenceOutcomeIsUnknown()) return {state:'unknown',tone:'warn',text:'Confirmação de backup precisa de verificação',at:'',due:true};
+  const backup=(S.dataGovernance&&S.dataGovernance.backup)||{};
+  const at=backup.lastConfirmedAt||'';
+  const age=dgBackupAgeDays();
+  if(!at) return {state:'unconfirmed',tone:'warn',text:'Backup não confirmado',at:'',due:dgBackupDue()};
+  if(age===null || age<0) return {state:'unknown',tone:'warn',text:'Data de confirmação precisa de verificação',at,due:dgBackupDue()};
+  const due=dgBackupDue();
+  return {state:due?'overdue':'current',tone:due?'warn':'ok',text:due?'Backup vencido — atualização recomendada':'Backup confirmado',at,due};
+}
+// Transação síncrona delimitada à seção de governança e ao seu log. Não restaura
+// S inteiro nem toca nos outros fluxos. UNKNOWN mantém a barreira própria.
+function dgCommitGovernance(section,mutate){
+  if(!S.dataGovernance || jpWealthPersistenceOutcomeIsUnknown() || jpWealthLoadRecoveryActive() || jpWealthPersistenceIsBlocked()) return false;
+  const dg=S.dataGovernance, previous=structuredClone(dg[section]), log=structuredClone(dg.changeLog);
+  let before;
+  try{ before=localStorage.getItem(LSKEY); }
+  catch(e){ hideStaleSavedTag(); setPersistenceFailureState(e,'storage'); return false; }
+  let expected;
+  try{ mutate(); expected=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v); }
+  catch(e){ dg[section]=previous; dg.changeLog=log; hideStaleSavedTag(); setPersistenceFailureState(e,'serialize'); return false; }
+  let ok;
+  try{ ok=save(); }
+  catch(e){ hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Confirmação local não pôde ser verificada.'); return false; }
+  if(ok===false && !jpWealthPersistenceOutcomeIsUnknown()){
+    dg[section]=previous; dg.changeLog=log; return false;
+  }
+  try{
+    const actual=localStorage.getItem(LSKEY);
+    if(ok===true && actual===expected) return true;
+    if(actual===before && !jpWealthPersistenceOutcomeIsUnknown()){
+      dg[section]=previous; dg.changeLog=log;
+      jpWealthAdoptPersistedRaw(before);
+      hideStaleSavedTag(); setPersistenceFailureState(new Error('A confirmação não foi gravada.'),'storage');
+      return false;
+    }
+  }catch(e){}
+  hideStaleSavedTag();
+  markJPWealthPersistenceOutcomeUnknown('Leitura de volta da confirmação divergente ou indisponível.');
+  return false;
+}
 function dgConfirmBackup(){
-  if(!S.dataGovernance) return;
-  S.dataGovernance.backup.lastConfirmedAt=new Date().toISOString();
-  S.dataGovernance.backup.lastConfirmedExportSequence=S.dataGovernance.export.lastSequence||0;
-  dgLogChange('backup','confirmed','','Backup confirmado pelo operador');
-  save();
+  return dgCommitGovernance('backup',()=>{
+    S.dataGovernance.backup.lastConfirmedAt=new Date().toISOString();
+    S.dataGovernance.backup.lastConfirmedExportSequence=S.dataGovernance.export.lastSequence||0;
+    dgLogChange('backup','confirmed','','Backup confirmado pelo operador');
+  });
 }
 // Normalização do agregado — mesma disciplina do resto do migrate(): base antiga sem o
 // agregado já recebeu DEFAULTS acima; aqui valida forma campo a campo, sem perda e sem

@@ -66,18 +66,15 @@ function ecalRenderRoot(root, filter){
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
-  const cacheIssue=typeof ffNewsCacheIssue==='function'?ffNewsCacheIssue():'';
+  const status=typeof ffNewsStatusText==='function'?ffNewsStatusText(data):'Sem dados — verifique a conexão.';
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent=cacheIssue
-      ? 'Sem dados · '+cacheIssue+' Use ↻ no Calendário Econômico em Forex → Visão Geral.'
-      : 'Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
+    empty.textContent=status+' Use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }
-  const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
-  fresh.textContent=(cacheIssue?cacheIssue+' · Dados anteriores de ':'Dados de ')+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  if(fresh.textContent!==status) fresh.textContent=status;
   // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
   // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
   // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o

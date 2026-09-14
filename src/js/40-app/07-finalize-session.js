@@ -2,7 +2,7 @@
 const SESSION_CHECKPOINT_KEY='jpwealth_session_checkpoint_v1';
 const SESSION_WIPE_CHANNEL='jpwealth_session_events_v1';
 const SESSION_WIPE_STORAGE_KEY='jpwealth_session_wipe_signal_v1';
-const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1',SESSION_WIPE_STORAGE_KEY];
+const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1','jpwealth_notes_launcher_position_v1',SESSION_WIPE_STORAGE_KEY];
 // ---- ALD-C3-PRE-EPOCH · geração causal da base -----------------------------
 // CONTROL PLANE, não data plane. Metadado compartilhado entre abas, sem PII e sem
 // conteúdo financeiro. NÃO integra JP_WEALTH_AUX_STORAGE_KEYS, não entra em backup
@@ -160,6 +160,9 @@ function sessionResetAuxiliarySurfaces(){
   if(typeof handleSettingsProfileSessionWipe==='function'){
     try{ handleSettingsProfileSessionWipe(); }catch(error){}
   }
+  if(typeof handleMvpNotesLauncherSessionWipe==='function'){
+    try{ handleMvpNotesLauncherSessionWipe(); }catch(error){}
+  }
 }
 
 function sessionStableValue(value){
@@ -311,7 +314,7 @@ function sessionHandleRemoteFinalization(message){
     boot();
     window.__onbShown=false;
     initSessionCheckpoint();
-    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets.';
+    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas.';
     showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
   }finally{
     if(bloqueou && !concluiu){
@@ -704,8 +707,9 @@ async function beginSessionExport(){
       try{ estadoAutoritativo=JSON.parse(sessionPreservedRaw); }catch(e){ estadoAutoritativo=null; }
     }
     const meta=await exportFullBackup({quiet:true, estadoFonte:estadoAutoritativo});
-    if(!meta) throw new Error('A exportação não foi concluída — nenhum arquivo foi gerado. Resolva o acesso à pasta padrão da base (ou exporte excepcionalmente para Downloads) e tente novamente.');
+    if(!meta) throw new Error('A exportação não foi confirmada. Verifique o aviso e o destino antes de tentar novamente. O encerramento não foi autorizado por esta tentativa.');
     if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
+    if(jpWealthPersistenceOutcomeIsUnknown()) throw new Error('A gravação local tem resultado desconhecido. Preserve o arquivo e verifique a recuperação antes de encerrar.');
     sessionFinalizeExportMeta=meta;
     sessionFinalizeExportFingerprint=sessionStateFingerprint();
     sessionFinalizeExportAcknowledged=false;
@@ -716,7 +720,7 @@ function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
     '<p class="modal-sub">A próxima ação encerrará a sessão e removerá deste navegador os dados operacionais da sessão: contas operacionais, ordens, fases, contabilidade, histórico operacional, configurações da sessão e dados de acesso.</p>'+
-    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -745,7 +749,7 @@ function renderSessionChanged(){
 }
 function renderSessionSafeChoice(){
   sessionModal('<h3>Finalizar sessão neste computador</h3>'+
-    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Você possui uma cópia atual e acessível desta base de dados?</div></div>'+
     '<div class="modal-actions session-choice-actions"><button type="button" class="modal-btn confirm" id="sessionHasCopy">Sim, tenho uma cópia</button><button type="button" class="modal-btn cancel" id="sessionExportNow">Não tenho certeza — exportar agora</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
   sessionCancelBinding();
@@ -868,7 +872,7 @@ async function finalizeJPWealthSession(){
       if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
       window.__onbShown=false;
       initSessionCheckpoint();
-      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets.';
+      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas.';
       showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
     });
   }catch(error){

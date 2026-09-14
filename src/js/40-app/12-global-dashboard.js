@@ -93,26 +93,13 @@ function renderSystemStatus() {
   // escrever dentro de save() — mudança N2, fora deste escopo e não autorizada.
   // A spec trata a meta da direita como o PRIMEIRO item comprimível; o que ela
   // proíbe suprimir é a linha e seu rótulo, que estão aqui.
-  const falha = (typeof jpWealthPersistenceFailure === 'object' && jpWealthPersistenceFailure)
-    ? jpWealthPersistenceFailure.active : false;
-  const travado = (typeof jpWealthPersistenceIsBlocked === 'function') && jpWealthPersistenceIsBlocked();
-  if (falha) {
-    gdSsRow('jpwSsPersist', 'bad', 'Falha ao gravar neste navegador',
-      jpWealthPersistenceFailure.kind === 'serialize' ? 'serialização' : 'armazenamento');
-  } else if (travado) {
-    gdSsRow('jpwSsPersist', 'warn', 'Gravação suspensa — recuperação pendente', '');
-  } else {
-    gdSsRow('jpwSsPersist', 'ok', 'Dados salvos neste navegador', '');
-  }
+  const persistence=dgPersistenceStatus();
+  gdSsRow('jpwSsPersist',persistence.tone,persistence.text,'');
 
-  // 2 · BACKUP
-  const bk = (S.dataGovernance && S.dataGovernance.backup) || {};
-  if (bk.lastConfirmedAt) {
-    const quando = (typeof dgFmtDateTime === 'function') ? dgFmtDateTime(bk.lastConfirmedAt) : '';
-    gdSsRow('jpwSsBackup', 'ok', 'Backup confirmado', quando);
-  } else {
-    gdSsRow('jpwSsBackup', 'warn', 'Backup não confirmado', 'nunca');
-  }
+  // 2 · BACKUP: a mesma origem de estado usada pelo cartão e pelo reminder.
+  const backup=dgBackupStatus();
+  const quando=backup.at && typeof dgFmtDateTime==='function'?dgFmtDateTime(backup.at):(backup.state==='unknown'?'verificação pendente':'nunca');
+  gdSsRow('jpwSsBackup',backup.tone,backup.text,quando);
 
   // 3 · FRESCOR DAS COTAÇÕES — vale a PIOR das cotações, não a média nem a
   // melhor: o semáforo responde "posso confiar na grade agora?", e um único

@@ -172,7 +172,7 @@ def run_consent_texts(browser, base_url):
     click_id(page, 'finalizeSessionBtn')
     page.wait_for_timeout(300)
     safe = modal_text(page)   # modal_text normaliza para minusculas
-    for termo in ('dados operacionais', 'alladin', 'finanças pessoais', 'tickets', 'zona de perigo'):
+    for termo in ('dados operacionais', 'alladin', 'finanças pessoais', 'notas', 'zona de perigo'):
         assert termo in safe, f'CT-2: rota safe sem o termo {termo!r}'
     # CT-1: o consentimento (tela da acao) declara integralmente a retencao,
     # ANTES da frase digitada
@@ -180,7 +180,7 @@ def run_consent_texts(browser, base_url):
     page.wait_for_timeout(200)
     consent = modal_text(page)
     for termo in ('encerrará a sessão', 'contas operacionais', 'cadastro patrimonial do alladin',
-                  'finanças pessoais', 'tickets', 'memória de longo prazo', 'zona de perigo'):
+                  'finanças pessoais', 'notas', 'memória de longo prazo', 'zona de perigo'):
         assert termo in consent, f'CT-1: consentimento sem o termo {termo!r}'
     # CT-3/CT-7: a tela da frase pede ENCERRAR SESSÃO (o CT-4 vive em
     # finish_with_phrase, executado pelos fluxos reais)
@@ -257,13 +257,16 @@ def assert_header_actions(page):
     assert page.locator('#nav button[data-screen="config"]').count() == 0
     assert page.locator('#headerActions').count() == 1
     assert page.locator('#headerActions .header-action').count() == 3
+    assert page.locator('#headerActions #headerNotesBtn').count() == 0
+    assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count() == 1
     assert page.locator('#headerConfigBtn').get_attribute('title') == 'Configurações'
     assert page.locator('#headerConfigBtn').get_attribute('aria-label') == 'Abrir configurações'
-    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
-    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir tickets'
+    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas'
+    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas'
     assert page.locator('#finalizeSessionBtn').get_attribute('title') == 'Finalizar sessão'
     assert page.locator('#finalizeSessionBtn').get_attribute('aria-label') == 'Finalizar sessão neste computador'
     assert page.locator('#headerActions svg[aria-hidden="true"]').count() == 3
+    assert page.locator('#mvpNotesLauncher svg[aria-hidden="true"]').count() == 1
     page.locator('#headerConfigBtn').focus()
     assert page.evaluate('document.activeElement.id') == 'headerConfigBtn'
     page.locator('#headerConfigBtn').press('Enter')
@@ -337,6 +340,7 @@ def run_dist_suite(browser, url):
       localStorage.setItem('jpwealth_v9_icon_theme','marble-knight');
       localStorage.setItem('jpwealth_v9_icon_choice','secondary');
       localStorage.setItem('jpwealth_galton_preferences_v1',JSON.stringify({schemaVersion:1,preset:'realistic'}));
+      localStorage.setItem('jpwealth_notes_launcher_position_v1',JSON.stringify({schemaVersion:1,x:0.35,y:0.45}));
       markSessionCheckpoint();
       S.instruments[0].preco += 1;
       save();
@@ -384,7 +388,7 @@ def run_dist_suite(browser, url):
     assert estado_pos_wipe['onboarding']['done'] is False
     assert estado_pos_wipe.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") is None
-    for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice', 'jpwealth_galton_preferences_v1'):
+    for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice', 'jpwealth_galton_preferences_v1', 'jpwealth_notes_launcher_position_v1'):
         assert page.evaluate(f"localStorage.getItem('{key}')") is None, key
     checkpoint_ops=page.evaluate('window.__checkpointOps')
     assert ['remove','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
@@ -478,7 +482,7 @@ def run_dist_suite(browser, url):
 
     page_a = prepare_page(browser, url)
     page_a.evaluate('''() => {
-      ['jpwealth_v9_state','jpwealth_v9_state_corrompido_teste','jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1'].forEach(k=>localStorage.removeItem(k));
+      ['jpwealth_v9_state','jpwealth_v9_state_corrompido_teste','jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_notes_launcher_position_v1'].forEach(k=>localStorage.removeItem(k));
       sessionStorage.clear();
     }''')
     page_a.reload(wait_until='load')
@@ -500,6 +504,12 @@ def run_dist_suite(browser, url):
       return {saved:controller.persist(),keyPresent:localStorage.getItem('jpwealth_galton_preferences_v1')!==null};
     }''')
     assert galton_before == {'saved': True, 'keyPresent': True}, galton_before
+    notes_launcher_epoch = page_b.evaluate('mvpNotesUI.launcherEpoch')
+    assert page_b.evaluate('''async () => {
+      mvpNotesUI.launcherPosition={x:0.35,y:0.45};
+      return await mvpNotesPersistLauncherPosition();
+    }''') is True
+    assert page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_notes_launcher_position_v1'))") == {'schemaVersion': 1, 'x': 0.35, 'y': 0.45}
     page_a.reload(wait_until='load')
     page_a.wait_for_timeout(700)
     page_a.evaluate('''() => { window.__onbShown=true; closeModal(); }''')
@@ -540,6 +550,14 @@ def run_dist_suite(browser, url):
         'currentActive': True,
         'currentSpeed': 1,
     }, galton_after
+    notes_launcher_after = page_b.evaluate('''async () => {
+      mvpNotesUI.launcherPosition={x:0.65,y:0.55};
+      return {epoch:window.JP_WEALTH_SESSION_WIPE_EPOCH,
+        staleWrite:await mvpNotesPersistLauncherPosition(),
+        raw:localStorage.getItem('jpwealth_notes_launcher_position_v1')};
+    }''')
+    assert notes_launcher_after['epoch'] > notes_launcher_epoch, notes_launcher_after
+    assert notes_launcher_after['staleWrite'] is False and notes_launcher_after['raw'] is None, notes_launcher_after
     assert 'Operador Aba B' not in page_b.locator('body').inner_text()
     close_checked(page_a)
     close_checked(page_b)
@@ -603,9 +621,8 @@ def run_galton_reset_order(browser, url):
 
 
 def run_mvp_notes_survival(browser, url):
-    """Notas do MVP (schema v2, com pastas): notas E pastas sobrevivem a Finalizar Sessão
-    (com aviso na confirmação) e a um reload real; a Zona de Perigo (mesmo mecanismo de
-    wipeAllData()) remove ambas."""
+    """Notas/pastas/larguras sobrevivem ao Finalizar e reload; posição auxiliar é
+    removida. A Zona de Perigo remove notas/pastas e preserva a preferência local."""
     page = prepare_page(browser, url)
     page.locator('#headerNotesBtn').click()
     page.evaluate('''() => { window.prompt = () => 'Pasta que sobrevive'; }''')
@@ -629,28 +646,55 @@ def run_mvp_notes_survival(browser, url):
       mvpNotesUpdate(it.id, {type: it.type, content: it.content, priority: it.priority,
         status: 'done', folderId: it.folderId, aiImplementationPolicy: it.aiImplementationPolicy});
       mvpNotesPersistDrawerWidth(620); // v5 apara para o mínimo derivado (721)
+      mvpNotesPersistPaneWidth('foldersPaneWidth',260);
+      mvpNotesPersistPaneWidth('notesPaneWidth',380);
     }''')
     assert page.evaluate('S.mvpNotes.items[0].completedAt'), 'concluir deveria carimbar completedAt'
     ticket_antes = page.evaluate('S.mvpNotes.items[0].ticket')
     assert ticket_antes and ticket_antes.startswith('JPW-'), 'nota deveria ter Trace ID'
     assert page.evaluate('S.mvpNotes.items[0].folderId'), 'concluir não pode alterar folderId'
     assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 721  # v5: 620 é aparado ao mínimo derivado
+    notes_before = page.evaluate('S.mvpNotes')
+    assert page.evaluate('''async () => {
+      mvpNotesUI.launcherPosition={x:0.3,y:0.4};
+      return await mvpNotesPersistLauncherPosition();
+    }''') is True
+    assert page.evaluate('S.mvpNotes') == notes_before, 'posição não integra o agregado de Notas'
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_notes_launcher_position_v1'))") == {'schemaVersion': 1, 'x': 0.3, 'y': 0.4}
 
     assert_safe_copy_checkpoint(page)
     click_id(page, 'finalizeSessionBtn')
     assert 'finalizar sessão neste computador' in modal_text(page)
     click_id(page, 'sessionHasCopy')
-    assert 'tickets' in modal_text(page), 'aviso de persistência de tickets ausente na confirmação'
+    assert 'notas' in modal_text(page), 'aviso de preservação de notas ausente na confirmação'
     assert 'pastas' in modal_text(page), 'aviso deveria mencionar as pastas das notas'
+    # Hold one preference callback at the existing lock acquisition boundary.
+    # The actual finalization lock is restored immediately and runs unchanged.
+    page.evaluate('''() => {
+      const acquire=sessionAcquireWriteLock;
+      sessionAcquireWriteLock=work=>new Promise((resolve,reject)=>{
+        window.__releaseNotesLauncherWrite=()=>acquire(work).then(resolve,reject);
+      });
+      mvpNotesUI.launcherPosition={x:0.6,y:0.7};
+      window.__notesLauncherPendingWrite=mvpNotesPersistLauncherPosition();
+      sessionAcquireWriteLock=acquire;
+    }''')
     finish_with_phrase(page)
     page.wait_for_timeout(500)
     assert page.evaluate('S.mvpNotes.items.length') == 1, 'Finalizar Sessão não deveria apagar as notas'
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'Finalizar Sessão não deveria apagar as pastas'
+    assert page.evaluate('S.mvpNotes') == notes_before, 'Finalizar preserva notas, pastas e as três larguras'
     notice = page.locator('#sessionNotice').inner_text()
+    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") is None
+    assert page.evaluate('''async () => {
+      await window.__releaseNotesLauncherWrite();
+      return await window.__notesLauncherPendingWrite;
+    }''') is False, 'escrita aguardando lock deve ser recusada pela geração encerrada'
+    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") is None, 'continuação antiga não recria posição removida'
     # Notice CURTO congelado no gate pre-write: confirma o resultado e nomeia os
     # tres sobreviventes; o detalhe (pastas, historico, preferencias) vive no
     # texto de consentimento, provado por CT-1.
-    assert 'Tickets' in notice and 'Alladin' in notice and 'Finanças Pessoais' in notice, notice
+    assert 'Notas' in notice and 'Alladin' in notice and 'Finanças Pessoais' in notice, notice
 
     page.reload(wait_until='load')
     page.wait_for_timeout(700)
@@ -664,10 +708,20 @@ def run_mvp_notes_survival(browser, url):
     assert page.evaluate('S.mvpNotes.ui.drawerWidth') == 721, 'a largura do painel deveria sobreviver (aparada à faixa v5)'
     assert page.evaluate('S.mvpNotes.items[0].ticket') == ticket_antes, \
         'o Trace ID deveria sobreviver a Finalizar Sessão e ao reload'
+    assert page.evaluate('S.mvpNotes') == notes_before
+    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") is None, 'reload não recria preferência removida'
+    assert page.evaluate('mvpNotesUI.launcherPosition') == {'x': 1, 'y': 1}
+
+    assert page.evaluate('''async () => {
+      mvpNotesUI.launcherPosition={x:0.25,y:0.75};
+      return await mvpNotesPersistLauncherPosition();
+    }''') is True
+    launcher_before_wipe = page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')")
 
     page.evaluate('''() => { window.prompt = () => 'APAGAR'; window.alert = () => {}; wipeAllData(); }''')
     assert page.evaluate('S.mvpNotes.items.length') == 0, 'Zona de Perigo deveria remover as notas'
     assert page.evaluate('S.mvpNotes.folders.length') == 0, 'Zona de Perigo deveria remover as pastas'
+    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") == launcher_before_wipe, 'Zona de Perigo preserva preferência auxiliar local'
 
     close_checked(page)
 

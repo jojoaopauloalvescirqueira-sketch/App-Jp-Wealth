@@ -148,12 +148,20 @@ async function renderDgStorageCard(){
   const breakdown=dgChangesBreakdown(changes);
   const detalhe=changes.slice(-30).reverse().map(e=>'<li><span>'+esc(dgFmtDateTime(e.ts))+'</span> — '+esc(e.label||e.entity+' '+e.action)+'</li>').join('');
   box.innerHTML=
-    '<h4>Local de armazenamento da base</h4>'+statusHtml+
+    '<h4>Base local neste navegador</h4>'+
+    '<p class="dg-status-note">Seus dados ficam neste perfil do navegador, no endereço em que o JP Wealth foi aberto. A pasta abaixo recebe cópias exportadas; ela não é a base ativa.</p>'+
+    '<p id="dgPersistenceStatus" class="dg-status-line dg-status-'+(dgPersistenceStatus().tone==='ok'?'ok':'warn')+'">'+esc(dgPersistenceStatus().text)+'</p>'+
+    '<details class="dg-detail"><summary>Local e cobertura do backup</summary><p>'+esc(location.protocol==='file:'?'Arquivo local — a separação do armazenamento depende do navegador.':'Endereço: '+location.origin)+'</p>'+
+    '<p>Base: localStorage · '+esc(LSKEY)+'. O navegador não informa um caminho físico estável para esse banco.</p>'+
+    '<p>Inclui os dados registrados de Forex, Finanças Pessoais, Alladin, NoCoda, Pivots e Notas, com pastas, históricos e configurações pertencentes à base.</p>'+
+    '<p>Não inclui perfil/foto, posição de Notas, personalizações locais de navegação/layout, caches, permissões de pasta ou rascunhos ainda não salvos. Senhas são removidas.</p></details>'+
+    '<h4>Pasta de exportação</h4>'+statusHtml+
     '<h4>Exportação e backup</h4>'+
     '<dl class="dg-facts">'+
     '<dt>Última exportação</dt><dd>'+(exp.lastExportFile?'<code>'+esc(exp.lastExportFile)+'</code> — '+esc(dgFmtDateTime(exp.lastExportAt)):'nenhuma exportação registrada')+'</dd>'+
     '<dt>Próxima sequência</dt><dd>'+String((exp.lastSequence||0)+1).padStart(6,'0')+'</dd>'+
-    '<dt>Último backup confirmado</dt><dd>'+(bk.lastConfirmedAt?esc(dgFmtDateTime(bk.lastConfirmedAt))+' ('+age+' dia'+(age===1?'':'s')+' atrás)':'nunca confirmado')+'</dd>'+
+    '<dt>Estado do backup</dt><dd id="dgBackupFreshness">'+esc(dgBackupStatus().text)+'</dd>'+
+    '<dt>Último backup confirmado</dt><dd>'+(jpWealthPersistenceOutcomeIsUnknown()?'Data não verificada enquanto o resultado da gravação é desconhecido':bk.lastConfirmedAt?esc(dgFmtDateTime(bk.lastConfirmedAt))+' ('+age+' dia'+(age===1?'':'s')+' atrás)':'nunca confirmado')+'</dd>'+
     '<dt>Alterações desde o último backup</dt><dd>'+(changes.length
       ? changes.length+' alteração(ões) registrada(s)'+(breakdown.length?'<ul class="dg-breakdown"><li>'+breakdown.map(esc).join('</li><li>')+'</li></ul>':'')+
         '<details class="dg-detail"><summary>Detalhamento cronológico (últimas '+Math.min(changes.length,30)+')</summary><ul class="dg-chrono">'+detalhe+'</ul></details>'
@@ -183,7 +191,7 @@ async function renderDgStorageCard(){
   if(confirmBtn) confirmBtn.addEventListener('click',()=>{
     // §10: a confirmação de backup exige gesto explícito e consciente — nunca automática.
     if(!confirm('Confirmar que você possui um backup ATUALIZADO e acessível da base JP Wealth?\n\nIsto registra a data de hoje como último backup confirmado e zera a contagem de 30 dias. Confirme apenas se a cópia realmente existe fora deste navegador.')) return;
-    dgConfirmBackup();
+    if(!dgConfirmBackup()) alert(jpWealthPersistenceOutcomeIsUnknown()?'A confirmação tem resultado desconhecido. Verifique a recuperação antes de tentar novamente.':'A confirmação não foi gravada. O lembrete permanece conforme a última confirmação válida.');
     renderDgStorageCard();
     renderDgBackupBanner();
   });
@@ -241,7 +249,8 @@ async function renderDgFolderPanel(box){
 // abertura se continuar devida. Não bloqueia nada — governança sem intrusão (§18).
 function renderDgBackupBanner(){
   let el=document.getElementById('dgBackupBanner');
-  const due=typeof dgBackupDue==='function' && dgBackupDue();
+  const status=dgBackupStatus();
+  const due=status.due;
   if(!due || window.__dgBannerDismissed){ if(el) el.remove(); return; }
   const age=dgBackupAgeDays();
   const changes=dgChangesSinceLastBackup().length;
@@ -251,7 +260,11 @@ function renderDgBackupBanner(){
     el.className='dg-backup-banner';
     document.body.appendChild(el);
   }
+  const signature=JSON.stringify([status.state,age,changes]);
+  if(el.dataset.statusSignature===signature) return;
+  el.dataset.statusSignature=signature;
   el.innerHTML='<b>Backup recomendado</b><span>'+
+    (status.state==='unknown'?'Confirmação precisa de verificação — ':'')+
     (age===null?'Nenhum backup confirmado até agora':age+' dia'+(age===1?'':'s')+' desde o último backup confirmado')+
     (changes?' — '+changes+' alteração(ões) acumulada(s) desde então':'')+'.</span>'+
     '<button type="button" class="reset-btn" id="dgBannerExport">Exportar backup agora</button>'+
@@ -264,7 +277,7 @@ function renderDgBackupBanner(){
   });
   el.querySelector('#dgBannerHave').addEventListener('click',()=>{
     if(!confirm('Confirmar que você possui um backup ATUALIZADO e acessível da base JP Wealth?\n\nConfirme apenas se a cópia realmente existe fora deste navegador.')) return;
-    dgConfirmBackup();
+    if(!dgConfirmBackup()) alert(jpWealthPersistenceOutcomeIsUnknown()?'A confirmação tem resultado desconhecido. Verifique a recuperação antes de tentar novamente.':'A confirmação não foi gravada. O lembrete permanece conforme a última confirmação válida.');
     renderDgStorageCard();
     renderDgBackupBanner();
   });
@@ -277,3 +290,21 @@ function renderDgBackupBanner(){
 // os guards em 06-boot.js, no mesmo padrão de renderMvpNotesHeader()
 renderDgStorageCard();
 renderDgBackupBanner();
+
+// Apenas atualização de apresentação. Sem gravação, novo prazo ou consultas externas.
+// Um listener por script carregado; preserva o foco dos controles já exibidos.
+function dgRefreshStatusPresentation(){
+  if(document.hidden) return;
+  renderDgBackupBanner();
+  if(typeof renderSystemStatus==='function') renderSystemStatus();
+  const persistence=document.getElementById('dgPersistenceStatus'), backup=document.getElementById('dgBackupFreshness');
+  const state=dgPersistenceStatus(), freshness=dgBackupStatus();
+  if(persistence){
+    if(persistence.textContent!==state.text) persistence.textContent=state.text;
+    persistence.className='dg-status-line dg-status-'+(state.tone==='ok'?'ok':'warn');
+  }
+  if(backup && backup.textContent!==freshness.text) backup.textContent=freshness.text;
+}
+document.addEventListener('visibilitychange',dgRefreshStatusPresentation);
+window.addEventListener('pageshow',dgRefreshStatusPresentation);
+setInterval(dgRefreshStatusPresentation,60000);

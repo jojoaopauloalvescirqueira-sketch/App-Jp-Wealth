@@ -1801,28 +1801,37 @@
   /* [hidden] (0,1,0) empata com .header-notes-badge{display:flex} (0,1,0); sem este
      reforço (0,2,0) a contagem zerada continuaria visível apesar do atributo. */
   .header-notes-badge[hidden]{display:none}
-  #headerNotesBtn{position:relative}
+  #mvpNotesLauncher{position:fixed;inset:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));z-index:45;pointer-events:none}
+  #mvpNotesLauncher[hidden]{display:none}
+  #mvpNotesLauncher[inert]{visibility:hidden}
+  #headerNotesBtn.mvpn-launcher-button{position:absolute;left:calc(100% - 56px);top:calc(100% - 56px);width:56px;height:56px;min-width:56px;min-height:56px;border-radius:50%;border:1px solid color-mix(in srgb,var(--violet) 80%,var(--ink));background:var(--indigo);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.18);display:grid;place-items:center;padding:12px;pointer-events:auto;touch-action:none;user-select:none;cursor:grab}
+  #headerNotesBtn.mvpn-launcher-button:hover{filter:brightness(1.08)}
+  #headerNotesBtn.mvpn-launcher-button:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+  #headerNotesBtn.mvpn-launcher-button.is-dragging{cursor:grabbing;box-shadow:0 6px 20px rgba(0,0,0,.24)}
+  #headerNotesBtn.mvpn-launcher-button>svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+  #headerNotesBtn .header-notes-badge{top:-3px;right:-3px;min-width:20px;height:20px;background:var(--panel);color:var(--ink);border:1px solid var(--line);font-size:10px}
+  .mvpn-position-controls{min-width:0;border:0;border-top:1px solid var(--line);margin:20px 0 0;padding:16px 0 0;display:grid;gap:8px}
+  .mvpn-position-controls legend{font-weight:600;padding:0 8px 0 0;font-size:var(--jp-fs-body)}
+  .mvpn-position-controls label{display:flex;justify-content:space-between;gap:12px}
+  .mvpn-position-controls output{color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .mvpn-position-controls input[type="range"]{width:100%;min-height:44px;accent-color:var(--violet);padding:0}
+  .mvpn-position-controls button{justify-self:start;white-space:normal;min-height:44px;margin-top:8px}
   #headerNotesBtn[hidden]{display:none!important}
   .mvp-notes-overlay{position:fixed; inset:0; z-index:var(--jp-layer-modal); display:none; background:rgba(4,7,12,.5)}
   .mvp-notes-overlay.show{display:block}
   .mvp-notes-drawer{
-    /* Largura = min(valor persistido, 80vw, 1600px máximo canônico, viewport - 32px).
-       O valor persistido já chega aparado à faixa canônica 721–1600 pela normalização
-       (721 = 150 pastas + 240 lista + 320 editor + 10 separadores + 1 borda, derivado em
-       04-persistence.js a partir dos pisos das colunas)
-       (04-persistence.js); este min() é o cinto de segurança de renderização — o drawer
-       nunca toma a tela inteira, nunca escapa da viewport e nunca impede o fechamento,
-       inclusive antes de o JS aplicar a variável.
-       O teto de 900px daqui era resquício da faixa antiga (420–900) e travava o drawer
-       abaixo do próprio padrão v5 (980): o ARIA anunciava um máximo que o render nunca
-       entregava. Corrigido para o máximo canônico — as três colunas da Fase D dependem
-       dessa largura para caber com folga. */
-    position:fixed; top:var(--jp-persistence-notes-inset,0px); right:0;
-    height:calc(100vh - var(--jp-persistence-notes-inset,0px));
-    width:min(var(--mvpn-drawer-w,980px), 80vw, 1600px, calc(100vw - 32px));
-    display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line);
-    box-shadow:-18px 0 48px rgba(0,0,0,.38); font-family:var(--sans);
-    animation:mvpNotesSlideIn .18s ease-out;
+    /* Preferências canônicas em pixels permanecem intactas; esta projeção adapta
+       a janela à viewport e reserva margens para contexto e avisos globais. */
+    position:fixed; left:50%; right:auto;
+    top:calc(var(--jp-persistence-notes-inset,0px) + (100vh - var(--jp-persistence-notes-inset,0px))/2);
+    top:calc(var(--jp-persistence-notes-inset,0px) + (100dvh - var(--jp-persistence-notes-inset,0px))/2);
+    transform:translate(-50%,-50%);
+    height:min(820px,calc(100vh - var(--jp-persistence-notes-inset,0px) - 48px));
+    height:min(820px,calc(100dvh - var(--jp-persistence-notes-inset,0px) - 48px));
+    width:min(var(--mvpn-drawer-w,980px),80vw,1600px,calc(100vw - 48px));
+    display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--line);
+    border-radius:18px; box-shadow:0 24px 80px rgba(0,0,0,.28); font-family:var(--sans);
+    animation:mvpNotesWindowIn .16s ease-out;
   }
   /* Alça de redimensionamento: 12px clicáveis sobre a borda esquerda (bem mais que a
      linha visual de 2px), cursor ew-resize, linha visível em hover/foco. */
@@ -1832,7 +1841,7 @@
   .mvpn-resize-handle:focus-visible{outline:2px solid var(--violet); outline-offset:-2px}
   /* Botão voltar da navegação mobile em camadas — inexistente em desktop. */
   .mvpn-back-btn{display:none}
-  @keyframes mvpNotesSlideIn{from{transform:translateX(12px); opacity:.6} to{transform:translateX(0); opacity:1}}
+  @keyframes mvpNotesWindowIn{from{opacity:.6} to{opacity:1}}
   @media (prefers-reduced-motion:reduce){ .mvp-notes-drawer{animation:none} }
   /* ===== Barra unificada (design 1c) =====================================
      Cabeçalho e toolbar viraram UMA barra: identidade à esquerda, busca ao centro,
@@ -1841,7 +1850,7 @@
      position:relative ancora o popover de filtros, que antes pendia da toolbar. */
   .mvp-notes-head{
     display:flex; align-items:center; gap:14px; padding:11px 20px;
-    border-bottom:1px solid var(--line); flex:none; position:relative;
+    border-bottom:1px solid var(--line); border-radius:18px 18px 0 0; flex:none; position:relative;
   }
   .mvp-notes-head-text{display:flex; align-items:center; gap:9px; min-width:0; flex:1 1 0}
   /* Especificidade necessária: a regra global svg[viewbox]{width:100%} (0,1,1) vence
@@ -1933,7 +1942,7 @@
   /* Corpo do drawer (v5) — TRÊS colunas no desktop, dinâmica do Apple Notes:
      pastas | separador | lista | separador | editor. As três convivem: abrir uma nota
      nunca esconde a lista nem a sidebar. Cada coluna rola por conta própria. */
-  .mvp-notes-body{flex:1; min-height:0; display:flex; flex-direction:row; overflow:hidden}
+  .mvp-notes-body{flex:1; min-height:0; display:flex; flex-direction:row; overflow:hidden; border-radius:0 0 18px 18px}
   .mvpn-list-pane{
     flex:0 0 var(--mvpn-list-w,300px); width:var(--mvpn-list-w,300px);
     min-width:0; min-height:0; display:flex; flex-direction:column;
@@ -2301,30 +2310,34 @@
   html[data-ui-version="tesla-inspired"] .mvpn-editor-bar #mvpNotesSaveBtn[hidden],
   .mvpn-editor-bar #mvpNotesSaveBtn[hidden]{display:none!important}
   .mvpn-editor-bar #mvpNotesSaveBtn:hover{opacity:.88}
-  /* ===== MOBILE (≤920px): experiência própria em camadas, estilo Apple Notes =====
-     Breakpoint elevado de 760 para 920 na Fase D, por aritmética e não por gosto: as três
-     colunas só cabem com seus mínimos MEDIDOS, e essa soma é exatamente MVP_NOTES_DRAWER_MIN
-     (150 pastas + 240 lista + 320 editor + 10 separadores + 1 borda = 721px de drawer,
-     derivado em 04-persistence.js). O cinto de segurança de 80vw exige, para 721px, uma
-     janela de ceil(721/0,8) = 902px. Entre 761 e 920 as três colunas apareciam sem caber —
-     exatamente o cenário que a navegação em camadas já resolve bem. Abaixo de 920 vale a
-     experiência em estágios; acima, as três colunas com folga (em 921px o drawer alcança
-     737px, 16px acima do mínimo).
-     Tela inteira (100dvh + safe-area, sem bordas laterais inúteis) e três estágios
-     exclusivos governados por data-mobile-stage no drawer (14-mvp-notes.js):
-       folders → só a navegação de pastas/visões;
-       list    → só a lista (busca + botão Filtros + cards);
-       editor  → só o editor.
-     Desktop ignora o atributo por completo — nada aqui vaza para cima do breakpoint. */
-  @media(max-width:920px){
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-pane-handle{display:none}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-back-btn:not([hidden]){display:inline-flex;align-items:center;gap:4px;min-height:44px;max-width:100px;padding:0 8px;border:0;border-radius:8px;background:var(--panel-2);color:var(--ink);flex:none}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-back-btn svg{width:18px;height:18px;flex:none}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-back-label{overflow:hidden;text-overflow:ellipsis}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvp-notes-head{gap:8px;padding:12px}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvp-notes-head-text{flex:0 1 auto}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-head-icon{display:none}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-head-actions{flex:0 0 auto}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-search-row{flex:1;min-width:100px}
+  .mvp-notes-drawer[data-notes-layout="tablet"] .mvpn-list-pane{flex-basis:var(--mvpn-list-w);width:var(--mvpn-list-w)}
+  .mvp-notes-drawer[data-notes-layout="tablet"][data-mobile-stage="folders"] .mvpn-list-pane{flex:1;width:auto}
+  .mvp-notes-drawer[data-notes-layout="tablet"][data-mobile-stage="folders"] .mvpn-editor-pane,
+  .mvp-notes-drawer[data-notes-layout="tablet"]:not([data-mobile-stage="folders"]) .mvpn-folder-sidebar{display:none}
+  #mvpNotesSettingsCard h2 .jp-icon{width:22px;height:22px;vertical-align:middle;margin-right:6px}
+  #mvpNotesPositionStatus[data-error="true"]{color:var(--f4)}
+  @media(max-width:600px){
+    .mvp-notes-drawer .mvpn-new-note-label{display:none}
+    .mvp-notes-drawer .mvp-notes-head-text{min-width:0}
+    .mvp-notes-drawer .mvpn-back-btn:not([hidden]){max-width:32%}
+  }
+  /* No celular, navegação progressiva: pastas → lista → editor. A preferência
+     de largura não é regravada pela adaptação. Painéis inativos saem do foco. */
+  @media(max-width:600px){
     .mvp-notes-drawer{
-      width:100vw; left:0;
-      height:calc(100vh - var(--jp-persistence-notes-inset,0px));
-      height:calc(100dvh - var(--jp-persistence-notes-inset,0px)); /* dvh: teclado virtual não deixa área morta */
-      /* Tela cheia não tem "lado de fora": a borda esquerda vira um fio de 1px na beirada
-         do aparelho e ainda encolhe em 1px as folhas inferiores, que são position:fixed
-         contidas pelo drawer (ele tem animation-name, o que o torna bloco contentor). */
-      border-left:0;
+      width:calc(100vw - 16px);
+      height:calc(100vh - var(--jp-persistence-notes-inset,0px) - 16px);
+      height:calc(100dvh - var(--jp-persistence-notes-inset,0px) - 16px);
+      border-radius:12px;
     }
     .mvpn-resize-handle{display:none} /* drawerWidth não governa a geometria mobile */
     /* 1c mobile: a barra quebra em duas linhas — [voltar · título · Nova] na primeira,
@@ -4015,7 +4028,7 @@
      .gd-logo nasce display:none incondicional (harmless sem a flag); o
      wordmark correspondente some só sob a flag, preservando o rollback. */
   .gd-logo{display:none}
-  html[data-shell="global-dashboard"] .gd-logo{display:block; height:11px; width:auto}
+  html[data-shell="global-dashboard"] .gd-logo{display:block; height:17px; width:auto; max-width:100%}
   /* O PNG exportado só existe em tinta escura, desenhado para o fundo branco
      do header claro do design. Sem tratamento, fica quase invisível sobre o
      header escuro do tema dark deste app (que o design nunca previu). Um
@@ -6470,7 +6483,7 @@ html[data-navigation="sidebar"][data-nav-style="kinetic"] #navPillIndicator.is-r
   html[data-navigation="sidebar"][data-shell="global-dashboard"] body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto;grid-template-areas:"hdr" "context" "main" "footer";}
   html[data-navigation="sidebar"] #gdFooter{grid-column:1}
   html[data-navigation="sidebar"] body > header{padding-inline:16px;gap:8px}
-  html[data-navigation="sidebar"] .brand{width:auto;max-width:112px}
+  html[data-navigation="sidebar"] .brand{width:auto;max-width:144px}
   html[data-navigation="sidebar"] .gd-logo{max-width:100%;height:auto}
   html[data-navigation="sidebar"] .header-actions{width:auto;gap:8px}
   html[data-navigation="sidebar"] #appSidebar{
@@ -6510,7 +6523,7 @@ html[data-navigation="topbar"] #navLocalSlot{display:none}
 html[data-navigation="topbar"] #nav > .tab:focus-visible{outline:2px solid var(--jp-action);outline-offset:3px}
 @media(max-width:900px){
   html[data-navigation="topbar"] body > header{padding-inline:16px;gap:8px}
-  html[data-navigation="topbar"] .brand{width:auto;max-width:112px}
+  html[data-navigation="topbar"] .brand{width:auto;max-width:144px}
   html[data-navigation="topbar"] .gd-logo{max-width:100%;height:auto}
   html[data-navigation="topbar"] .header-actions{width:auto;gap:8px}
   html[data-navigation="topbar"][data-shell-menu="open"] body > header{z-index:8100}
@@ -6561,14 +6574,14 @@ html #mvpNotesDrawer{background:var(--panel)}
 @media(prefers-reduced-motion:reduce){html :is(button,.card,.modal-box){transition:none;animation:none}}
 
 /* APPLE01 · shell: explicit actions and original, semantic area symbols. */
-html[data-shell="global-dashboard"] body>header{height:auto;min-height:64px;background:var(--jp-shell-material);border-bottom:1px solid var(--line)}
+html[data-shell="global-dashboard"][data-navigation] body>header{height:auto;min-height:64px;background:var(--panel);border-bottom:1px solid color-mix(in srgb,var(--line) 85%,var(--ink));}
 html[data-shell="global-dashboard"] .header-actions .header-action{width:auto;min-width:44px;min-height:44px;padding:var(--jp-space-2) var(--jp-space-2);gap:var(--jp-space-2);border-radius:9px;color:var(--ink-dim)}
 .header-action-label{font:500 var(--jp-fs-caption)/1.3 var(--sans)}
 html[data-shell="global-dashboard"] .header-action-finalize{border:1px solid var(--line);background:transparent}
 .nav-area-icon{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 html[data-navigation="sidebar"] #nav>.tab::before{display:none}
 html[data-navigation="sidebar"] #nav>.tab{border-left:0;border-radius:10px;padding:11px 13px}
-html[data-navigation="sidebar"] #appSidebar{background:var(--jp-shell-material)}
+html[data-navigation="sidebar"] #appSidebar{background:var(--panel);border-right-color:color-mix(in srgb,var(--line) 85%,var(--ink))}
 html[data-navigation="sidebar"] #nav>.tab.active{background:var(--accent-tint);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--violet) 18%,transparent)}
 html[data-navigation="topbar"] .nav-area-icon{display:none}
 html .shell-page-header{color:var(--ink-dim)}
@@ -6580,7 +6593,7 @@ html .shell-page-header{color:var(--ink-dim)}
  .nav-area-icon{width:19px;height:19px}
 }
 @media(max-width:600px){
- html[data-shell="global-dashboard"] #headerActions{display:grid;grid-template-columns:minmax(44px,.7fr) minmax(max-content,1.4fr) minmax(48px,.8fr) minmax(64px,1fr);width:100%;min-width:0;flex-basis:100%;gap:var(--jp-space-1)}
+ html[data-shell="global-dashboard"] #headerActions{display:grid;grid-template-columns:minmax(44px,.7fr) minmax(max-content,1.4fr) minmax(64px,1fr);width:100%;min-width:0;flex-basis:100%;gap:var(--jp-space-1)}
  html[data-shell="global-dashboard"] #headerActions>button{min-width:0;width:100%;padding:5px 2px;min-height:48px;display:flex;flex-direction:column;justify-content:center;gap:3px}
  html[data-shell="global-dashboard"] #headerActions .header-action-label{font-size:var(--jp-fs-caption);white-space:normal;overflow-wrap:normal}
 }
@@ -6626,7 +6639,7 @@ html #alladinTabs button{min-height:40px;border:1px solid var(--line);border-rad
 html #alladinTabs button.on{border-color:var(--violet);background:var(--accent-tint);color:var(--violet)}
 html #alladinReadOnlyBanner[hidden]{display:none}
 html .alladin-empty{padding:var(--jp-space-6) 0;line-height:1.65;color:var(--ink-dim);max-width:60ch}
-html[data-shell="global-dashboard"] #mvpNotesDrawer{background:var(--panel);border-radius:18px 0 0 18px}
+html[data-shell="global-dashboard"] #mvpNotesDrawer{background:var(--panel);border-radius:18px}
 html .mvp-notes-head{border-bottom:1px solid var(--line);background:var(--panel)}
 html .mvpn-empty{color:var(--ink-dim);text-align:left;line-height:1.65;padding:var(--jp-space-4)}
 html #settingsModal .settings-main{background:var(--panel)}
@@ -6638,7 +6651,7 @@ html #settingsModal button{border-radius:8px}
  html #alladinTabs{gap:var(--jp-space-3)}
  html #alladinTabs button{min-height:44px}
  html .ecal-filters button{min-height:44px}
- html[data-shell="global-dashboard"] #mvpNotesDrawer{border-radius:0}
+ html[data-shell="global-dashboard"] #mvpNotesDrawer{border-radius:12px}
 }
 /* Bound icon geometry independently of the legacy fluid chart SVG rule. */
 html #nav .nav-area-icon{width:20px;height:20px;max-width:20px;flex:0 0 20px}
@@ -6662,16 +6675,18 @@ html[data-experience="completion"]{--cp-reading:72ch}
 .cp-workspace-heading p{margin:0;max-width:var(--cp-reading);color:var(--ink-dim);font:var(--jp-fs-body)/1.5 var(--sans)}
 html[data-experience="completion"] #exec .cp-workspace-heading h2,html[data-experience="completion"] #researchProbabilityLab .cp-workspace-heading h2{margin:0;font:600 var(--jp-fs-section)/1.15 var(--sans);letter-spacing:-.04em}
 .cp-area-mark,.cp-empty-mark{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
-/* Panorama: a reading surface with four chapters, not four independent dashboards. */
+/* DASHBOARD-SURFACES-01: four summary panels; domain content and routes unchanged. */
 html[data-experience="completion"] #dashMacro .dm-page-head{padding:var(--jp-space-2) 0 var(--jp-space-6);margin:0}
 html[data-experience="completion"] #dashMacro .dm-shell-title{font-size:var(--jp-fs-page);letter-spacing:-.035em;line-height:var(--jp-leading-title)}
 .cp-panorama-index{display:flex;gap:var(--jp-space-2) var(--jp-space-6);flex-wrap:wrap;padding:0 0 var(--jp-space-4);border-bottom:1px solid var(--line)}
 .cp-panorama-index a{display:inline-flex;align-items:center;min-height:36px;color:var(--ink-dim);font-size:var(--jp-fs-caption);text-decoration:none}
 .cp-panorama-index a:hover{color:var(--jp-action);text-decoration:underline;text-underline-offset:5px}
-html[data-experience="completion"] #dashMacro .dm-grid{display:block}
-html[data-experience="completion"] #dashMacro .dm-card{display:grid;grid-template-columns:190px minmax(0,1fr);gap:var(--jp-space-6);background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;padding:var(--jp-space-6) 0;margin:0;min-height:0}
-html[data-experience="completion"] #dashMacro .dm-card-head{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:var(--jp-space-4);margin:0}
-html[data-experience="completion"] #dashMacro .dm-card-head>div{display:grid;gap:var(--jp-space-2)}
+html[data-experience="completion"] #dashMacro .dm-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--jp-space-6);padding-top:var(--jp-space-6)}
+html[data-experience="completion"] #dashMacro .dm-card{display:block;background:var(--panel);border:1px solid color-mix(in srgb,var(--line) 55%,var(--panel));border-radius:var(--jp-radius-lg);box-shadow:none;padding:var(--jp-space-6);margin:0;min-height:0;min-width:0}
+html[data-experience="completion"] #dashMacro .dm-card-head{display:flex;flex-direction:row;justify-content:space-between;align-items:center;gap:var(--jp-space-4);margin:0 0 var(--jp-space-5)}
+html[data-experience="completion"] #dashMacro .dm-card-head>div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--jp-space-1) var(--jp-space-2);min-width:0}
+html[data-experience="completion"] #dashMacro .dm-card-head .cp-area-mark{grid-column:1;grid-row:1/3;align-self:center;margin:0}
+html[data-experience="completion"] #dashMacro .dm-card-head :is(.dm-eyebrow,.dm-title){grid-column:2}
 html[data-experience="completion"] #dashMacro .cp-area-mark{width:28px;height:28px;max-width:28px;color:var(--jp-action);margin-bottom:var(--jp-space-1)}
 html[data-experience="completion"] #dashMacro .dm-title{font:600 var(--jp-fs-data-md)/1.15 var(--sans);letter-spacing:-.035em;scroll-margin-top:100px}
 html[data-experience="completion"] #dashMacro .dm-eyebrow{font-size:var(--jp-fs-caption);line-height:1.4;letter-spacing:.08em}
@@ -6732,8 +6747,8 @@ html[data-experience="completion"] .settings-panel .settings-facts{background:va
 .cp-notes-intro{padding:var(--jp-space-4) var(--jp-space-2) var(--jp-space-6);border-bottom:1px solid var(--line);margin-bottom:var(--jp-space-3)}
 .cp-notes-intro h3{font:600 var(--jp-fs-data-md)/1.2 var(--sans);letter-spacing:-.025em;margin:var(--jp-space-2) 0}
 .cp-notes-intro p{font:var(--jp-fs-caption)/1.55 var(--sans);color:var(--ink-dim);margin:0}
-html[data-experience="completion"] .mvpn-editor-pane{background:var(--panel-2)}
-html[data-experience="completion"] .mvpn-content-area{max-width:80ch;margin:0 auto;padding:32px clamp(18px,3vw,48px);font:var(--jp-fs-panel)/1.8 var(--sans);background:var(--panel);color:var(--ink);box-shadow:none}
+html[data-experience="completion"] .mvpn-editor-pane{background:var(--panel)}
+html[data-experience="completion"] .mvpn-content-area{max-width:none;margin:0;padding:24px clamp(16px,2vw,32px);font:var(--jp-fs-panel)/1.8 var(--sans);background:var(--panel);color:var(--ink);box-shadow:none}
 html[data-experience="completion"] .mvpn-editor-bar{background:var(--panel);border-bottom:1px solid var(--line);min-height:60px;padding:var(--jp-space-3) var(--jp-space-4)}
 html[data-experience="completion"] .cp-writing-empty{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;max-width:420px;padding:clamp(24px,4vw,60px);margin:auto;text-align:left}
 html[data-experience="completion"] .cp-writing-empty[hidden]{display:none}
@@ -6748,14 +6763,14 @@ html[data-experience="completion"] .mvpn-empty p{font-size:var(--jp-fs-supportin
 html[data-experience="completion"] #navLocalSlot button{border-color:transparent;border-radius:8px;background:none;padding:var(--jp-space-2) var(--jp-space-3)}
 html[data-experience="completion"] #navLocalSlot button.is-current{background:var(--panel);border-color:var(--line);box-shadow:0 1px 2px rgb(0 0 0 / .04)}
 @media(max-width:1200px){
- html[data-experience="completion"] #dashMacro .dm-card{grid-template-columns:150px minmax(0,1fr);gap:var(--jp-space-5)}
  html[data-experience="completion"] #dashMacro .dm-body{grid-template-columns:minmax(0,1fr)}
  html[data-experience="completion"] #dashMacro .dm-record{border:0;border-top:1px solid var(--line);padding:var(--jp-space-3) 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--jp-space-4)}
  html[data-experience="completion"] #mcClearanceCard .mc-cockpit-acoes{grid-column:1;grid-row:auto;justify-content:flex-start;margin-top:var(--jp-space-2)}
 }
 @media(max-width:760px){
  html[data-experience="completion"] #dashMacro .dm-page-head{padding:0 0 var(--jp-space-4);gap:var(--jp-space-3)}
- html[data-experience="completion"] #dashMacro .dm-card{display:block;padding:var(--jp-space-6) 0}
+ html[data-experience="completion"] #dashMacro .dm-grid{gap:var(--jp-space-4);padding-top:var(--jp-space-4)}
+ html[data-experience="completion"] #dashMacro .dm-card{padding:var(--jp-space-4)}
  html[data-experience="completion"] #dashMacro .dm-card-head{flex-direction:row;justify-content:space-between;align-items:start;margin-bottom:var(--jp-space-4)}
  html[data-experience="completion"] #dashMacro .dm-card-head>div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:var(--jp-space-1) var(--jp-space-2)}
  html[data-experience="completion"] #dashMacro .cp-area-mark{grid-column:1;grid-row:1/3;align-self:center;margin:0;width:24px;height:24px}
@@ -6764,7 +6779,7 @@ html[data-experience="completion"] #navLocalSlot button.is-current{background:va
  html[data-experience="completion"] #dashMacro .dm-cta{max-width:116px;font-size:var(--jp-fs-caption);min-height:44px;padding:var(--jp-space-2) var(--jp-space-2)}
  html[data-experience="completion"] #dashMacro .dm-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
  html[data-experience="completion"] #dashMacro .dm-fact .v{font-size:var(--jp-fs-data-md)}
- html[data-experience="completion"] #dashMacro .dm-record{gap:var(--jp-space-3)}
+ html[data-experience="completion"] #dashMacro .dm-record{grid-template-columns:minmax(0,1fr);gap:var(--jp-space-3)}
  .cp-panorama-index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--jp-space-3)}
  .cp-panorama-index a{min-height:44px;font-size:var(--jp-fs-caption)}
  html[data-experience="completion"] #fxOverviewWidgets #mcClearanceCard{padding:var(--jp-space-4);gap:var(--jp-space-4)}
@@ -6972,18 +6987,9 @@ html[data-experience="completion"] .cp-notes-intro h3{font-size:var(--jp-fs-pane
 html[data-experience="completion"] .cp-notes-intro p{font-size:var(--jp-fs-caption)}
 html[data-experience="completion"][data-theme="dark"] :is(.jp-btn-primary,.seg button.on){color:#07192A}
 
-/* Desktop overview preserves the existing two-row contract while removing card chrome. */
-@media(min-width:1101px){
- html[data-experience="completion"] #dashMacro .dm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--jp-space-8);align-items:start}
- html[data-experience="completion"] #dashMacro .dm-card{display:block;padding:var(--jp-space-6) 0;min-width:0}
- html[data-experience="completion"] #dashMacro .dm-card-head{flex-direction:row;justify-content:space-between;gap:var(--jp-space-4);margin-bottom:var(--jp-space-5)}
- html[data-experience="completion"] #dashMacro .dm-card-head>div{grid-template-columns:28px minmax(0,1fr);gap:var(--jp-space-1) var(--jp-space-2)}
- html[data-experience="completion"] #dashMacro .cp-area-mark{grid-column:1;grid-row:1/3;margin:0;align-self:center}
- html[data-experience="completion"] #dashMacro .dm-card-head :is(.dm-eyebrow,.dm-title){grid-column:2}
- html[data-experience="completion"] #dashMacro .dm-title{font-size:var(--jp-fs-data-md)}
- html[data-experience="completion"] #dashMacro .dm-body{grid-template-columns:minmax(0,1fr);gap:var(--jp-space-3)}
- html[data-experience="completion"] #dashMacro .dm-record{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--jp-space-4);border:0;border-top:1px solid var(--line);padding:var(--jp-space-3) 0 0}
- html[data-experience="completion"] #dashMacro .dm-empty{min-height:0}
+/* Wide panels distribute existing summary and records horizontally. */
+@media(min-width:1201px){
+ html[data-experience="completion"] #dashMacro .dm-body{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
 }
 html[data-experience="completion"] #finpes .row-del:is([data-fi-cfg],[data-fd-edit],[data-fd-obs],[data-fs-edit]):hover{color:var(--jp-action);border-color:var(--jp-action);background:var(--accent-tint)}
 html[data-experience="completion"][data-theme="dark"] #alladin [data-ald-new]{color:#07192A}
@@ -7266,10 +7272,55 @@ html[data-ui-version="tesla-inspired"] .cp-pv-library .field{margin:0}
  #settingsOverlay #settingsModal .settings-facts dd{padding:3px 0 12px}
 }
 @media(prefers-reduced-motion:reduce){#settingsOverlay #settingsModal *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* NOTIFICATIONS-CENTER-01 — shared tokens; one accessible app dialog. */
+html[data-shell="global-dashboard"] #headerActions{width:auto;flex-shrink:0;gap:8px}
+#headerNotificationsBtn{position:relative}
+.notification-symbol{position:relative;display:grid;place-items:center;width:20px;height:20px;flex:0 0 20px}
+#notificationBadge{position:absolute;right:-9px;top:-9px;min-width:18px;height:18px;padding:0 4px;display:grid;place-items:center;border-radius:12px;background:#c53335;color:white;font:700 10px/1 var(--sans);border:2px solid var(--panel)}
+#notificationBadge[hidden]{display:none}
+#notificationCenter{box-sizing:border-box;position:fixed;inset:calc(var(--jp-persistence-banner-offset,0px) + 82px) 20px auto auto;margin:0;width:min(480px,calc(100vw - 32px));max-height:calc(100dvh - 110px);padding:0;border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--ink);box-shadow:0 18px 60px #0003;overflow:hidden}
+#notificationCenter[open]{display:flex;flex-direction:column}
+#notificationCenter::backdrop{background:rgb(12 20 34 / 24%)}
+.notification-heading{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 10px;gap:12px}
+.notification-heading h2{font:650 24px/1.2 var(--sans);letter-spacing:-.5px;margin:0}
+.notification-eyebrow{font:650 10px/1.2 var(--sans);letter-spacing:1.6px;color:var(--ink-dim);margin:0 0 8px}
+#notificationClose{flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--panel-2);color:var(--ink);font:500 18px/1 var(--sans)}
+#notificationSummary{margin:0;padding:0 22px 16px;font:400 13px/1.5 var(--sans);color:var(--ink-dim)}
+.notification-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:0 22px 16px;border-bottom:1px solid var(--line)}
+.notification-toolbar label{display:grid;gap:5px;min-width:0;font:500 11px/1.3 var(--sans);color:var(--ink-dim)}
+#notificationArea{min-height:42px;max-width:190px;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--panel-2);color:var(--ink);font:500 12px/1.3 var(--sans)}
+#notificationReadAll{max-width:135px;min-height:44px;border:0;background:transparent;color:var(--blue);font:600 12px/1.4 var(--sans);text-align:right}
+.notification-scroll{overflow:auto;overscroll-behavior:contain;min-height:80px}
+#notificationList{list-style:none;margin:0;padding:0}
+#notificationList>li{position:relative;padding:18px 22px;border-bottom:1px solid var(--line)}
+#notificationList>li[data-unread="true"]{background:color-mix(in srgb,var(--blue) 4%,var(--panel))}
+#notificationList>li[data-unread="true"]::before{content:"";position:absolute;left:9px;top:22px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+#notificationList>li[data-severity="critical"] h3{color:var(--red)}
+.notification-meta{margin:0 0 6px;font:500 10px/1.4 var(--sans);color:var(--ink-dim)}
+#notificationList h3{margin:0 0 7px;font:600 15px/1.4 var(--sans);overflow-wrap:anywhere}
+.notification-body{margin:0;font:400 13px/1.6 var(--sans);color:var(--ink-dim);white-space:pre-line;overflow-wrap:anywhere}
+.notification-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.notification-actions button{border:0;background:transparent;color:var(--blue);padding:8px 0;min-height:40px;font:600 12px/1.4 var(--sans)}
+#notificationList [data-unread="false"] [data-notification-read]{color:var(--ink-dim)}
+#notificationEmpty{padding:32px 22px;color:var(--ink-dim);font:400 14px/1.5 var(--sans)}
+#notificationPrivacy{flex:none;padding:14px 22px;margin:0;border-top:1px solid var(--line);font:400 11px/1.5 var(--sans);color:var(--ink-dim);background:var(--panel-2)}
+#notificationCenter button:focus-visible,#notificationCenter select:focus-visible,#headerNotificationsBtn:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+@media(max-width:600px){
+ html[data-shell="global-dashboard"] #headerActions{grid-template-columns:minmax(44px,.75fr) 44px minmax(84px,1.35fr) minmax(72px,1fr)}
+ html[data-shell="global-dashboard"] #headerActions #headerNotificationsBtn{width:44px;min-width:44px;padding:8px;justify-content:center;justify-self:center}
+ #headerNotificationsBtn .header-action-label{position:absolute!important;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap!important}
+ #notificationCenter{inset:16px auto auto 16px;width:calc(100vw - 32px);max-height:calc(100dvh - 32px);border-radius:18px}
+ .notification-heading{padding:18px 18px 10px}
+ .notification-toolbar{padding:0 18px 14px;gap:8px}
+ #notificationArea{max-width:160px}
+ #notificationReadAll{max-width:110px}
+}
+@media(prefers-reduced-motion:reduce){#notificationCenter{scroll-behavior:auto}}
 </style>
 <script>
 // Gerado por tools/rebuild_monolith.py. Não editar manualmente.
-const JP_WEALTH_BUILD_ID = '3d363e1cf0d07f06';
+const JP_WEALTH_BUILD_ID = 'a11ca5650f6a4e98';
 window.JP_WEALTH_PORTABLE_BUILD = true;
 </script>
 <script>
@@ -7322,7 +7373,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.4" y="4.6" width="17.2" height="4.2" rx="1.2"/><path d="M5.2 8.8v9.4a1.6 1.6 0 0 0 1.6 1.6h10.4a1.6 1.6 0 0 0 1.6-1.6V8.8"/><path d="M10 12.6h4"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
-  <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/><path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/></symbol>
+  <symbol id="i-notes" viewBox="0 0 24 24"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></symbol>
 <symbol id="i-area-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol><symbol id="i-area-research" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M7 11h7M10.5 7.5v7"/></symbol><symbol id="i-area-forex" viewBox="0 0 24 24"><path d="M4 3v18h17M8 15l4-5 4 3 5-7"/></symbol><symbol id="i-area-personal-finance" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8"/></symbol><symbol id="i-area-alladin" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V4h8v4M3 13h18M10 13v3h4v-3"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></symbol></defs></svg>
 <header>
   <!-- A marca e o caminho de volta ao Dashboard: o gesto que todo usuario de
@@ -7361,6 +7412,10 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
+    <button type="button" class="header-action notification-trigger" id="headerNotificationsBtn" title="Notificações" aria-label="Notificações" aria-controls="notificationCenter" aria-haspopup="dialog" aria-expanded="false">
+      <span class="notification-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4M12 1v1"/></svg><span id="notificationBadge" aria-hidden="true" hidden></span></span>
+      <span class="header-action-label">Notificações</span>
+    </button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <!-- Engrenagem identifica as configurações existentes. -->
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -7368,10 +7423,6 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
     <span class="header-action-label">Configurações</span></button>
-    <button type="button" class="header-action" id="headerNotesBtn" title="Tickets" aria-label="Abrir tickets">
-      <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
-      <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
-    <span class="header-action-label">Tickets</span></button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
       <!-- Ícone de saída acompanha a ação existente de finalizar sessão. -->
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4v16h6M9 12h12m-4-4 4 4-4 4"/></svg>
@@ -8571,21 +8622,31 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
          moveLegacySettingsNodes/restoreLegacySettingsNodes (data-settings-category), sem
          nenhuma alteração em 09-settings-modal.js além dos termos de busca. -->
     <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
-      <h2>Tickets <span class="art">backlog interno de testes</span></h2>
+      <h2><svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>Notas <span class="art">tarefas e observações</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
       <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
       <div class="field" style="max-width:360px">
-        <label>Mostrar ícone Notas no menu superior</label>
+        <label>Botão flutuante de Notas</label>
         <div class="seg" id="mvpNotesVisibilitySeg" style="width:fit-content">
           <button type="button" data-mvp-notes-visibility="show">Mostrar</button>
           <button type="button" data-mvp-notes-visibility="hide">Ocultar</button>
         </div>
-        <span class="note">Ocultar remove apenas o botão do menu superior. Os registros continuam salvos e podem ser reabertos por aqui.</span>
+        <span class="note">Ocultar remove apenas o botão flutuante. As notas permanecem salvas e podem ser abertas por aqui.</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px">
-        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Tickets</button>
+        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Notas</button>
         <span class="note" id="mvpNotesSettingsCount" style="margin:0"></span>
       </div>
+      <fieldset class="mvpn-position-controls">
+        <legend>Posição do botão neste navegador</legend>
+        <p class="note" id="mvpNotesPositionHelp">Arraste o bloco de notas pela tela ou use estes controles. Com o botão em foco, Alt + setas move; Alt + Home retorna ao canto. A posição confirmada fica guardada neste navegador e se adapta ao tamanho da tela.</p>
+        <label for="mvpNotesPositionX">Horizontal <output id="mvpNotesPositionXValue">100%</output></label>
+        <input id="mvpNotesPositionX" type="range" min="0" max="100" step="1" value="100" aria-describedby="mvpNotesPositionHelp">
+        <label for="mvpNotesPositionY">Vertical <output id="mvpNotesPositionYValue">100%</output></label>
+        <input id="mvpNotesPositionY" type="range" min="0" max="100" step="1" value="100" aria-describedby="mvpNotesPositionHelp">
+        <button type="button" class="reset-btn" id="mvpNotesPositionReset">Restaurar posição no canto inferior direito</button>
+        <p class="note" id="mvpNotesPositionStatus" role="status" aria-live="polite"></p>
+      </fieldset>
     </div>
     <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
@@ -8646,7 +8707,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            removeCorrupted:false): apaga a base do JP Wealth inteira, preserva preferências
            locais de interface (escala da fonte, estado da navegação, ícone do app) e não
            toca em cópias de recuperação existentes. -->
-      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e tickets. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
+      <p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Remove toda a base do JP Wealth: ordens, fases, fechamentos, log de auditoria, configurações e notas. Preferências locais de interface (escala da fonte, estado da navegação, ícone do app) são preservadas, e cópias de recuperação existentes não são apagadas por esta ação. Exige digitar <b style="color:var(--f4)">APAGAR</b> duas vezes. Irreversível.</p>
       <button class="reset-btn" id="wipeAllBtn" style="color:var(--f4); border-color:var(--f4)"><span class="jp-legacy-glyph" aria-hidden="true">🗑</span><svg class="jp-icon" aria-hidden="true"><use href="#i-delete"/></svg>Limpar todos os dados</button>
     </div>
   </section>
@@ -8804,6 +8865,14 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
      preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
 <!-- O diálogo inclui a gaveta e, enquanto aberto, os mesmos avisos globais de
      persistência. Assim suas ações continuam disponíveis sem descartar o rascunho. -->
+<div id="mvpNotesLauncher" hidden>
+  <!-- ID legado preservado para os consumidores; este botão não pertence mais ao header. -->
+  <button type="button" id="headerNotesBtn" class="mvpn-launcher-button" title="Notas" aria-label="Abrir notas" aria-controls="mvpNotesOverlay" aria-haspopup="dialog" aria-describedby="mvpNotesLauncherHelp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-notes"/></svg>
+    <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
+  </button>
+  <span class="sr-only" id="mvpNotesLauncherHelp">Arraste para mover. Alt + setas também move; Alt + Home repõe o canto. Controles de posição disponíveis em Configurações, Interface, Notas.</span>
+</div>
 <div class="mvp-notes-overlay" id="mvpNotesOverlay" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" aria-hidden="true">
   <section class="mvp-notes-drawer" id="mvpNotesDrawer" data-mobile-stage="folders">
     <!-- Alça de redimensionamento (desktop): borda esquerda arrastável; a área clicável
@@ -8820,36 +8889,32 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <span class="mvpn-back-label" id="mvpNotesBackLabel" aria-hidden="true"></span>
       </button>
       <div class="mvp-notes-head-text">
-        <svg class="mvpn-head-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/>
-          <path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/>
-        </svg>
-        <h2 id="mvpNotesTitle">Tickets</h2>
+        <svg class="mvpn-head-icon jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
+        <h2 id="mvpNotesTitle">Notas</h2>
       </div>
       <!-- Busca ao centro da barra (1c). Vive no cabeçalho, não mais na coluna da lista:
            é busca de TODAS as notas, não da coluna. Mesmos IDs de sempre. -->
       <div class="mvpn-search-row">
-        <label class="sr-only" for="mvpNotesSearch">Buscar tickets</label>
-        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todos os tickets" autocomplete="off">
+        <label class="sr-only" for="mvpNotesSearch">Buscar notas</label>
+        <input type="search" id="mvpNotesSearch" placeholder="Buscar em todas as notas" autocomplete="off">
         <button type="button" class="mvpn-filters-btn" id="mvpNotesFiltersBtn" aria-expanded="false" aria-haspopup="true"
-                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar tickets" title="Filtrar tickets">
+                aria-controls="mvpNotesFiltersWrap" aria-label="Filtrar notas" title="Filtrar notas">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>
           <span class="mvpn-filters-count" id="mvpNotesFiltersCount" hidden></span>
         </button>
       </div>
       <div class="mvpn-head-actions">
-        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Novo ticket">
+        <button type="button" class="mvpn-new-note-btn" id="mvpNotesNewBtn" title="Nova nota">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          <span class="mvpn-new-note-label">Novo ticket</span>
+          <span class="mvpn-new-note-label">Nova nota</span>
         </button>
         <span class="mvpn-head-divider" aria-hidden="true"></span>
-        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar tickets" title="Fechar tickets">
+        <button type="button" class="mvp-notes-close" id="mvpNotesCloseBtn" aria-label="Fechar notas" title="Fechar notas">
           <svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg>
         </button>
       </div>
       <!-- Popover de filtros ancorado na barra (desktop) / folha inferior (mobile). -->
-      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de tickets">
+      <div class="mvpn-filters-wrap" id="mvpNotesFiltersWrap" role="group" aria-label="Filtros de notas">
         <div class="mvpn-filters-sheet-head">Filtros</div>
         <div class="mvp-notes-filters">
           <label class="sr-only" for="mvpNotesFilterType">Filtrar por tipo</label>
@@ -8884,8 +8949,8 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
            navegação (um único #mvpNotesFolderNavList para os dois mundos). -->
       <!-- PAINEL 1 — Pastas e visões do sistema. Em desktop convive com os outros dois;
            em mobile é o Estado A da navegação em etapas (data-mobile-stage no drawer). -->
-      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de tickets">
-        <div class="cp-notes-intro"><h3>Coleções</h3><p>Seus tickets, por assunto.</p></div><div class="mvpn-folder-manage" id="mvpNotesFolderManage">
+      <nav class="mvpn-folder-sidebar" id="mvpNotesFolderSidebar" aria-label="Pastas e visões de notas">
+        <div class="cp-notes-intro"><h3>Coleções</h3><p>Suas notas, por assunto.</p></div><div class="mvpn-folder-manage" id="mvpNotesFolderManage">
           <div class="mvpn-folder-nav-list" id="mvpNotesFolderNavList"></div>
           <button type="button" class="mvpn-folder-new-btn" id="mvpNotesNewFolderBtn">+ Nova pasta</button>
         </div>
@@ -8905,7 +8970,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
         <div class="mvp-notes-toolbar" id="mvpNotesToolbar">
           <!-- Só o rótulo da visão (1c): busca e ações vivem na barra unificada do topo.
                Vira "eyebrow" — mono, caixa alta — anunciando o recorte que a lista mostra. -->
-          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todos os Tickets</h3>
+          <h3 class="mvpn-view-title" id="mvpNotesViewTitle" aria-live="polite">Todas as Notas</h3>
           <!-- Ações em massa (JPW-436587). Ficam AQUI, e não no menu "⋯" da pasta, porque
                operam sobre o RECORTE VISÍVEL (pasta ativa + filtros + busca), que é
                exatamente o que esta barra anuncia. No menu da pasta cobririam só pastas
@@ -8935,21 +9000,21 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
           <span class="mvpn-editor-title" id="mvpNotesEditorTitle"></span>
           <span class="mvpn-editor-ticket" id="mvpNotesEditorTicket"></span>
           <button type="button" class="reset-btn mvpn-primary mvpn-save-btn" id="mvpNotesSaveBtn" hidden>Salvar</button>
-          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência do ticket" title="Copiar referência para um agente de IA">
+          <button type="button" class="mvpn-icon-btn" id="mvpNotesCopyRefBtn" aria-label="Copiar referência da nota" title="Copiar referência para um agente de IA">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
             <span class="mvpn-copy-check" aria-hidden="true">✓</span>
           </button>
           <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorBtn" aria-expanded="false"
-                  aria-controls="mvpNotesInspector" aria-label="Detalhes do ticket" title="Detalhes do ticket">
+                  aria-controls="mvpNotesInspector" aria-label="Detalhes da nota" title="Detalhes da nota">
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
         </div>
-        <label class="sr-only" for="mvpNoteContent">Conteúdo do ticket — a primeira linha vira o título</label>
-        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva o ticket. A primeira linha vira o título." hidden></textarea>
-        <div class="mvpn-editor-empty cp-writing-empty" id="mvpNotesEditorEmpty"><svg class="cp-empty-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-notes"/></svg><h3>Espaço para escrever.</h3><p>Selecione um ticket para ler e editar seu conteúdo.</p></div>
+        <label class="sr-only" for="mvpNoteContent">Conteúdo da nota — a primeira linha vira o título</label>
+        <textarea id="mvpNoteContent" class="mvpn-content-area" placeholder="Escreva a nota. A primeira linha vira o título." hidden></textarea>
+        <div class="mvpn-editor-empty cp-writing-empty" id="mvpNotesEditorEmpty"><svg class="cp-empty-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-notes"/></svg><h3>Espaço para escrever.</h3><p>Selecione uma nota para ler e editar seu conteúdo.</p></div>
         <!-- Inspector: todo o metadado técnico vive aqui, fora do editor. Popover no
              desktop, folha inferior no mobile. -->
-        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes do ticket"></div>
+        <div class="mvpn-inspector" id="mvpNotesInspector" role="group" aria-label="Detalhes da nota"></div>
       </div>
       <!-- Confirmação da cópia do Trace Reference: anunciada por leitor de tela, sem
            depender da mudança visual do ícone (ver mvpNotesFlashCopyFeedback). -->
@@ -8986,7 +9051,7 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
     <div class="mvpn-new-overlay mvpn-sheet-overlay" id="mvpNotesNewOverlay" hidden>
       <div class="mvpn-new-box mvpn-sheet-box" id="mvpNotesNewBox" role="dialog" aria-modal="true" aria-labelledby="mvpNotesNewTitle" aria-describedby="mvpNotesNewSub">
         <h3 id="mvpNotesNewTitle">Novo Ticket</h3>
-        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como este ticket nasce. Tudo continua editável depois em “Detalhes do ticket”.</p>
+        <p class="mvpn-new-sub" id="mvpNotesNewSub">Defina como esta nota começa. Tudo continua editável depois em “Detalhes da nota”.</p>
         <div class="mvpn-new-grid">
           <div class="field"><label for="mvpNotesNewType">Tipo</label><select id="mvpNotesNewType"></select></div>
           <div class="field"><label for="mvpNotesNewPriority">Prioridade</label><select id="mvpNotesNewPriority"></select></div>
@@ -9100,6 +9165,14 @@ window.JP_WEALTH_PORTABLE_BUILD = true;
 
 
 
+
+<dialog id="notificationCenter" aria-labelledby="notificationTitle" aria-describedby="notificationPrivacy">
+  <div class="notification-heading"><div><p class="notification-eyebrow">JP WEALTH</p><h2 id="notificationTitle">Notificações</h2></div><button type="button" id="notificationClose" aria-label="Fechar notificações">✕</button></div>
+  <p id="notificationSummary" role="status" aria-live="polite"></p>
+  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label><button type="button" id="notificationReadAll">Marcar todas como lidas</button></div>
+  <div class="notification-scroll"><p id="notificationEmpty" hidden>Nenhuma notificação nesta área.</p><ul id="notificationList"></ul></div>
+  <p id="notificationPrivacy">Avisos ativos e mensagens desta sessão. Ler não resolve a condição. O histórico é local, temporário e não permanece após recarregar; não há alertas com o aplicativo fechado.</p>
+</dialog>
 <script>
 // ============ PERFIS DE RISCO V10.0 (fonte única) ============
 const BASE_TARGET_MONTHLY=0.0275;
@@ -10039,12 +10112,61 @@ function dgBackupDue(){
 }
 // Confirmação explícita de backup em dia (§9/§10): SÓ por gesto do operador, nunca como
 // efeito colateral de exportar. Registra o momento e a sequência coberta.
+// Estado de apresentação: disponibilidade não prova que todo rascunho está salvo.
+function dgPersistenceStatus(){
+  if(jpWealthPersistenceOutcomeIsUnknown()) return {state:'unknown',tone:'bad',text:'Gravação com desfecho desconhecido — verifique a recuperação'};
+  if(jpWealthLoadRecoveryActive()) return {state:'recovery',tone:'warn',text:'Recuperação pendente — gravação suspensa'};
+  if(jpWealthPersistenceIsBlocked()) return {state:'blocked',tone:'warn',text:'Gravação suspensa — recuperação pendente'};
+  if(jpWealthPersistenceFailure.active) return {state:'failed',tone:'bad',text:'Falha ao gravar neste navegador'};
+  return {state:'available',tone:'ok',text:'Gravação disponível neste navegador'};
+}
+function dgBackupStatus(){
+  if(jpWealthPersistenceOutcomeIsUnknown()) return {state:'unknown',tone:'warn',text:'Confirmação de backup precisa de verificação',at:'',due:true};
+  const backup=(S.dataGovernance&&S.dataGovernance.backup)||{};
+  const at=backup.lastConfirmedAt||'';
+  const age=dgBackupAgeDays();
+  if(!at) return {state:'unconfirmed',tone:'warn',text:'Backup não confirmado',at:'',due:dgBackupDue()};
+  if(age===null || age<0) return {state:'unknown',tone:'warn',text:'Data de confirmação precisa de verificação',at,due:dgBackupDue()};
+  const due=dgBackupDue();
+  return {state:due?'overdue':'current',tone:due?'warn':'ok',text:due?'Backup vencido — atualização recomendada':'Backup confirmado',at,due};
+}
+// Transação síncrona delimitada à seção de governança e ao seu log. Não restaura
+// S inteiro nem toca nos outros fluxos. UNKNOWN mantém a barreira própria.
+function dgCommitGovernance(section,mutate){
+  if(!S.dataGovernance || jpWealthPersistenceOutcomeIsUnknown() || jpWealthLoadRecoveryActive() || jpWealthPersistenceIsBlocked()) return false;
+  const dg=S.dataGovernance, previous=structuredClone(dg[section]), log=structuredClone(dg.changeLog);
+  let before;
+  try{ before=localStorage.getItem(LSKEY); }
+  catch(e){ hideStaleSavedTag(); setPersistenceFailureState(e,'storage'); return false; }
+  let expected;
+  try{ mutate(); expected=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v); }
+  catch(e){ dg[section]=previous; dg.changeLog=log; hideStaleSavedTag(); setPersistenceFailureState(e,'serialize'); return false; }
+  let ok;
+  try{ ok=save(); }
+  catch(e){ hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Confirmação local não pôde ser verificada.'); return false; }
+  if(ok===false && !jpWealthPersistenceOutcomeIsUnknown()){
+    dg[section]=previous; dg.changeLog=log; return false;
+  }
+  try{
+    const actual=localStorage.getItem(LSKEY);
+    if(ok===true && actual===expected) return true;
+    if(actual===before && !jpWealthPersistenceOutcomeIsUnknown()){
+      dg[section]=previous; dg.changeLog=log;
+      jpWealthAdoptPersistedRaw(before);
+      hideStaleSavedTag(); setPersistenceFailureState(new Error('A confirmação não foi gravada.'),'storage');
+      return false;
+    }
+  }catch(e){}
+  hideStaleSavedTag();
+  markJPWealthPersistenceOutcomeUnknown('Leitura de volta da confirmação divergente ou indisponível.');
+  return false;
+}
 function dgConfirmBackup(){
-  if(!S.dataGovernance) return;
-  S.dataGovernance.backup.lastConfirmedAt=new Date().toISOString();
-  S.dataGovernance.backup.lastConfirmedExportSequence=S.dataGovernance.export.lastSequence||0;
-  dgLogChange('backup','confirmed','','Backup confirmado pelo operador');
-  save();
+  return dgCommitGovernance('backup',()=>{
+    S.dataGovernance.backup.lastConfirmedAt=new Date().toISOString();
+    S.dataGovernance.backup.lastConfirmedExportSequence=S.dataGovernance.export.lastSequence||0;
+    dgLogChange('backup','confirmed','','Backup confirmado pelo operador');
+  });
 }
 // Normalização do agregado — mesma disciplina do resto do migrate(): base antiga sem o
 // agregado já recebeu DEFAULTS acima; aqui valida forma campo a campo, sem perda e sem
@@ -14421,7 +14543,7 @@ function exportAudit(){
     protocolBreaches:S.protocolBreaches, transitionLog:S.transitionLog,
     ledger:ledgerSorted(), fases:S.phases, contas:contasSemSegredo,
   };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify(payload,(k,v)=>k==='investorPassword'?'':v,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='jpwealth_auditoria_'+todayISO()+'.json';
@@ -14448,6 +14570,18 @@ function exportAudit(){
 // segurança de um ato destrutivo deve representar o DOCUMENTO AUTORITATIVO persistido,
 // não o S potencialmente obsoleto desta aba. O fluxo Finalizar Sessão passa o documento
 // lido do disco na abertura; todos os outros usos mantêm o comportamento de sempre (S).
+// Mapa descritivo do contrato local. O documento inteiro continua sendo exportado;
+// a lista não limita módulos futuros nem transporta preferências/capacidades locais.
+function dgBackupCoverage(state){
+  return {
+    storage:'localStorage', key:LSKEY,
+    sections:Object.keys(state).sort(),
+    excluded:['investorPassword','perfil e foto locais','layouts e navegação locais',
+      'posição do launcher de Notas','preferências do Laboratório','caches públicos',
+      'permissão/handle da pasta','controles de sessão entre abas','cópias brutas de recuperação',
+      'rascunhos ainda não salvos e simulação em memória'],
+  };
+}
 function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
   const stateExport=structuredClone(estadoFonte||S);
   // Incondicional (política de segredo): não existe mais variante de backup com senha.
@@ -14465,6 +14599,8 @@ function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
     exportadoEm,
     dataLocal:todayISO(),
     segredosIncluidos:false, // política de segredo: sempre sem senha
+    build:typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:null,
+    cobertura:dgBackupCoverage(stateExport),
     state:stateExport,
   };
   return new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -14483,18 +14619,30 @@ function dgDownloadViaAnchor(filename,blob){
 // Sucesso confirmado → e SÓ então o estado avança (§8.2): sequência, carimbo, arquivo,
 // changeLog e gravação. Uma exportação que falhou não deixa rastro de sucesso.
 function dgRegisterExportSuccess(seq,filename,exportadoEm,destino){
-  S.dataGovernance.export.lastSequence=seq;
-  S.dataGovernance.export.lastExportAt=exportadoEm;
-  S.dataGovernance.export.lastExportFile=filename;
-  if(typeof dgLogChange==='function') dgLogChange('database','exported',filename,
-    destino==='folder'?'Base exportada para a pasta padrão':'Base exportada via download do navegador');
-  save();
-  // mantém o cartão da Central em dia (guardas: a UI carrega depois deste script)
-  if(typeof renderDgStorageCard==='function') renderDgStorageCard();
+  return dgCommitGovernance('export',()=>{
+    S.dataGovernance.export.lastSequence=seq;
+    S.dataGovernance.export.lastExportAt=exportadoEm;
+    S.dataGovernance.export.lastExportFile=filename;
+    dgLogChange('database','exported',filename,
+      destino==='folder'?'Base exportada para a pasta padrão':'Download da base iniciado pelo navegador');
+  });
+}
+// UI e registro local são posteriores à entrega: falhar aqui não desfaz o arquivo.
+function dgFinishExport(meta,quiet){
+  let registered=false;
+  try{ registered=dgRegisterExportSuccess(meta.sequence,meta.filename,meta.exportedAt,meta.destination==='folder'?'folder':'downloads'); }
+  catch(e){}
+  meta.localRecordConfirmed=registered===true;
+  const delivery=meta.destination==='folder'?'Arquivo gravado na pasta de exportação':'Download iniciado — confira se o navegador salvou o arquivo';
+  const warning=registered?'':'\n\nO registro local desta exportação não foi confirmado. Preserve o arquivo e verifique o armazenamento antes de tentar novamente.';
+  if(!quiet || !registered) alert(delivery+':\n\n'+meta.filename+warning);
+  // Renderizadores async também podem rejeitar; nunca viram erro de entrega.
+  try{ if(typeof renderDgStorageCard==='function') Promise.resolve(renderDgStorageCard()).catch(()=>{}); }catch(e){}
+  return jpWealthPersistenceOutcomeIsUnknown()?null:meta;
 }
 // Exportação completa da base — agora async e orquestrada (JPW-HJFGDE §14).
 // Retorna meta {filename, exportedAt, segredosIncluidos, destination} em sucesso;
-// null quando nada foi exportado (cancelamento ou falha já explicada ao operador).
+// null quando não há confirmação segura para continuar (cancelamento/falha/UNKNOWN).
 // NUNCA lança e NUNCA faz fallback silencioso para Downloads (§7): se a pasta
 // configurada está inacessível, o operador decide — reautorizar, trocar de pasta ou
 // exportar excepcionalmente para Downloads, por escolha explícita.
@@ -14537,9 +14685,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
       const seq=baseSeq+1;
       const filename=dgExportFileName(seq,new Date());
       dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-      dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
-      if(!quiet) alert('Base exportada via download do navegador:\n\n'+filename+(supported?'':'\n\nEste navegador não suporta pasta persistente (File System Access API) — as exportações usam o mecanismo padrão de download.'));
-      return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'};
+      return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'},quiet);
     }
     // Pasta configurada: resolver acesso. Enquanto o operador não resolver (ou optar por
     // Downloads explicitamente), NENHUM arquivo é gerado.
@@ -14549,6 +14695,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
         // nome progressivo com proteção física de colisão (§8.3): nunca sobrescrever;
         // em colisão a sequência avança até nome livre (teto de 1000 é rede de segurança)
         let seq=baseSeq+1, filename=dgExportFileName(seq,new Date());
+        let writeAttempted=false;
         try{
           let guard=0;
           while(await dgFsFileExists(handle,filename)){
@@ -14557,14 +14704,18 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
-          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-          dgRegisterExportSuccess(seq,filename,exportadoEm,'folder');
-          if(!quiet) alert('Base exportada para a pasta padrão "'+(S.dataGovernance.storage.folderDisplayPath||handle.name)+'":\n\n'+filename);
-          return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'};
+          const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+          writeAttempted=true;
+          await dgFsWriteFile(handle,filename,blob);
         }catch(e){
-          state='invalid'; // pasta removida/ilegível no meio do caminho — cai no diálogo abaixo
+          if(writeAttempted){
+            alert('Não foi possível confirmar a conclusão do arquivo '+filename+'. O resultado da escrita é desconhecido. Confira a pasta antes de uma nova tentativa; nenhum download alternativo foi iniciado.');
+            return null;
+          }
+          state='invalid';
+          continue;
         }
-        continue;
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'},quiet);
       }
       // prompt | denied | missing | invalid → decisão explícita do operador (§7).
       // O diálogo vive em 40-app/16-storage-governance.js; sem ele (geometria degenerada
@@ -14579,21 +14730,25 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
         const seq=baseSeq+1;
         const filename=dgExportFileName(seq,new Date());
         dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-        dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
-        if(!quiet) alert('Base exportada excepcionalmente via download do navegador:\n\n'+filename+'\n\nA pasta padrão continua configurada e precisando de atenção.');
-        return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'};
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'},quiet);
       }
       if(decision==='retry'){ ({state,handle}=await dgFsStatus()); continue; }
       return null; // cancelado — nada foi exportado e nada mudou
     }
   }catch(e){
-    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nNenhum estado de exportação foi alterado. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos e notas).');
+    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nVerifique o destino e os avisos antes de repetir. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos e notas).');
     return null;
   }
 }
 function normalizeImportedState(raw){
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) throw new Error('JSON inválido: raiz precisa ser um objeto.');
-  const candidate = raw.state && typeof raw.state==='object' ? raw.state : raw;
+  const envelope=Object.prototype.hasOwnProperty.call(raw,'state') || Object.prototype.hasOwnProperty.call(raw,'tipo');
+  if(envelope){
+    if(raw.tipo!==undefined && raw.tipo!=='jpwealth_full_backup') throw new Error('Formato de backup não reconhecido.');
+    if(raw.versao!==undefined && raw.versao!=='V9.1') throw new Error('Versão de backup não suportada.');
+    if(raw.localStorageKey!==undefined && raw.localStorageKey!==LSKEY) throw new Error('Backup de outra base de dados.');
+  }
+  const candidate=envelope?raw.state:raw;
   if(!candidate || typeof candidate!=='object' || Array.isArray(candidate)) throw new Error('Backup sem objeto de estado.');
   if(!candidate.params || typeof candidate.params!=='object' || Array.isArray(candidate.params)) throw new Error('Backup com params inválido.');
   if(candidate.ledger && !Array.isArray(candidate.ledger)) throw new Error('Backup com ledger inválido.');
@@ -14620,9 +14775,11 @@ function normalizeImportedState(raw){
   // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
   // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
   // por isso o null e testado a parte (ALD-03-H0 · D-2).
-  if(Object.prototype.hasOwnProperty.call(candidate,'alladin') &&
-     (candidate.alladin===null || typeof candidate.alladin!=='object' || Array.isArray(candidate.alladin)))
-    throw new Error('Backup com alladin inválido: esperava objeto.');
+  for(const key of ['alladin','personalFinance','fxPlanning','nocoda','pivotStudies','mvpNotes','dataGovernance']){
+    if(Object.prototype.hasOwnProperty.call(candidate,key) &&
+       (candidate[key]===null || typeof candidate[key]!=='object' || Array.isArray(candidate[key])))
+      throw new Error('Backup com '+key+' inválido: esperava objeto.');
+  }
   const current=S;
   let imported;
   try{
@@ -14664,6 +14821,21 @@ function importFullBackupFile(file){
     // destrutivo. Em modo degraded (sem Web Locks) roda direto, best-effort (DP-3).
     const aplicar=async ()=>{
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
+    if(jpWealthPersistenceOutcomeIsUnknown()){
+      alert('A importação não pode substituir uma base com desfecho de gravação desconhecido. Verifique a recuperação antes de continuar.');
+      return;
+    }
+    const previous=S, wasBlocked=jpWealthPersistenceIsBlocked();
+    const previousRecovery={...jpWealthLoadRecovery};
+    const restoreRefusedImport=()=>{
+      S=previous;
+      Object.assign(jpWealthLoadRecovery,previousRecovery);
+      if(wasBlocked) blockJPWealthPersistence();
+      if(previousRecovery.active) renderLoadRecoveryWarning();
+    };
+    let before;
+    try{ before=localStorage.getItem(LSKEY); }
+    catch(e){ alert('Não foi possível ler a base atual. O backup não foi aplicado.'); return; }
     // ALD-C3-PRE-EPOCH: o backup já foi lido e validado integralmente acima. A nova
     // geração é firmada AQUI, antes de a base ser substituída — nunca depois, porque
     // uma base nova sob geração antiga deixaria uma finalização pendente atuar sobre
@@ -14684,8 +14856,27 @@ function importFullBackupFile(file){
     // falhar, jpWealthResolveRecoveryAndSave() restaura a flag de recuperação e a
     // chave principal fica intacta.
     if(jpWealthPersistenceIsBlocked()) resumeJPWealthPersistence();
-    const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
-    if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
+    let gravou=false;
+    try{
+      const expected=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+      const result=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
+      if(result===false && !jpWealthPersistenceOutcomeIsUnknown()){
+        restoreRefusedImport();
+      }else{
+        const actual=localStorage.getItem(LSKEY);
+        if(result===true && actual===expected) gravou=true;
+        else if(actual===before && !jpWealthPersistenceOutcomeIsUnknown()){
+          restoreRefusedImport();
+          jpWealthAdoptPersistedRaw(before);
+          hideStaleSavedTag(); setPersistenceFailureState(new Error('Importação não gravada.'),'storage');
+        }else{
+          hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Importação com leitura de volta divergente.');
+        }
+      }
+    }catch(e){
+      hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Não foi possível determinar o resultado da importação.');
+    }
+    if(gravou && typeof markSessionCheckpoint==='function') markSessionCheckpoint();
     // A base foi SUBSTITUÍDA — atravessa as abas pelo mesmo canal da Zona de
     // Perigo e da Finalização. Sem isto, outra aba mantinha o S anterior em
     // memória e a primeira gravação dela ressuscitava o documento antigo por
@@ -14693,8 +14884,8 @@ function importFullBackupFile(file){
     // difunde depois da gravação comprovada: avisar sobre uma base que não
     // chegou ao disco faria as outras abas recarregarem o estado errado.
     if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported(novaEpoch);
-    boot();
-    alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
+    if(gravou) boot();
+    alert(gravou?'Backup importado com sucesso.':jpWealthPersistenceOutcomeIsUnknown()?'Importação com resultado desconhecido — novas gravações bloqueadas. Preserve o arquivo e verifique a recuperação; não repita às cegas.':'A gravação do backup foi recusada. O estado anterior foi preservado; verifique o armazenamento antes de tentar novamente.');
     };
     if(typeof sessionAcquireWriteLock==='function'){ sessionAcquireWriteLock(aplicar); }
     else{ aplicar(); }
@@ -18798,7 +18989,7 @@ registerAppServiceWorker();
 const SESSION_CHECKPOINT_KEY='jpwealth_session_checkpoint_v1';
 const SESSION_WIPE_CHANNEL='jpwealth_session_events_v1';
 const SESSION_WIPE_STORAGE_KEY='jpwealth_session_wipe_signal_v1';
-const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1',SESSION_WIPE_STORAGE_KEY];
+const JP_WEALTH_AUX_STORAGE_KEYS=['jpw_rail','jpw_expl','jpw_fs','jpwealth_v9_icon_theme','jpwealth_v9_icon_choice','jpwealth_galton_preferences_v1','jpwealth_local_profile_v1','jpwealth_notes_launcher_position_v1',SESSION_WIPE_STORAGE_KEY];
 // ---- ALD-C3-PRE-EPOCH · geração causal da base -----------------------------
 // CONTROL PLANE, não data plane. Metadado compartilhado entre abas, sem PII e sem
 // conteúdo financeiro. NÃO integra JP_WEALTH_AUX_STORAGE_KEYS, não entra em backup
@@ -18956,6 +19147,9 @@ function sessionResetAuxiliarySurfaces(){
   if(typeof handleSettingsProfileSessionWipe==='function'){
     try{ handleSettingsProfileSessionWipe(); }catch(error){}
   }
+  if(typeof handleMvpNotesLauncherSessionWipe==='function'){
+    try{ handleMvpNotesLauncherSessionWipe(); }catch(error){}
+  }
 }
 
 function sessionStableValue(value){
@@ -19107,7 +19301,7 @@ function sessionHandleRemoteFinalization(message){
     boot();
     window.__onbShown=false;
     initSessionCheckpoint();
-    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets.';
+    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas.';
     showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
   }finally{
     if(bloqueou && !concluiu){
@@ -19500,8 +19694,9 @@ async function beginSessionExport(){
       try{ estadoAutoritativo=JSON.parse(sessionPreservedRaw); }catch(e){ estadoAutoritativo=null; }
     }
     const meta=await exportFullBackup({quiet:true, estadoFonte:estadoAutoritativo});
-    if(!meta) throw new Error('A exportação não foi concluída — nenhum arquivo foi gerado. Resolva o acesso à pasta padrão da base (ou exporte excepcionalmente para Downloads) e tente novamente.');
+    if(!meta) throw new Error('A exportação não foi confirmada. Verifique o aviso e o destino antes de tentar novamente. O encerramento não foi autorizado por esta tentativa.');
     if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
+    if(jpWealthPersistenceOutcomeIsUnknown()) throw new Error('A gravação local tem resultado desconhecido. Preserve o arquivo e verifique a recuperação antes de encerrar.');
     sessionFinalizeExportMeta=meta;
     sessionFinalizeExportFingerprint=sessionStateFingerprint();
     sessionFinalizeExportAcknowledged=false;
@@ -19512,7 +19707,7 @@ function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
     '<p class="modal-sub">A próxima ação encerrará a sessão e removerá deste navegador os dados operacionais da sessão: contas operacionais, ordens, fases, contabilidade, histórico operacional, configurações da sessão e dados de acesso.</p>'+
-    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -19541,7 +19736,7 @@ function renderSessionChanged(){
 }
 function renderSessionSafeChoice(){
   sessionModal('<h3>Finalizar sessão neste computador</h3>'+
-    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Você possui uma cópia atual e acessível desta base de dados?</div></div>'+
     '<div class="modal-actions session-choice-actions"><button type="button" class="modal-btn confirm" id="sessionHasCopy">Sim, tenho uma cópia</button><button type="button" class="modal-btn cancel" id="sessionExportNow">Não tenho certeza — exportar agora</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
   sessionCancelBinding();
@@ -19664,7 +19859,7 @@ async function finalizeJPWealthSession(){
       if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
       window.__onbShown=false;
       initSessionCheckpoint();
-      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e os Tickets.';
+      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas.';
       showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
     });
   }catch(error){
@@ -20349,6 +20544,7 @@ function activateSettingsCategory(id,options={}){
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
   settingsUpdateSidebarActive(targetId);
   settingsUpdatePageHeader(targetId);
+  if(targetId==='backup' && typeof renderDgStorageCard==='function') renderDgStorageCard();
   if(options.focus) settingsEl('settingsContent').focus({preventScroll:true});
 }
 
@@ -20437,6 +20633,7 @@ function settingsSearchEntries(){
     // casa com o próprio título.
     ['Tickets','interface','#mvpNotesSettingsCard'],['tickets','interface','#mvpNotesSettingsCard'],
     ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
+    ['Bloco de notas','interface','#mvpNotesSettingsCard'],['Botão flutuante','interface','#mvpNotesSettingsCard'],['Mover notas','interface','#mvpNotesSettingsCard'],['Posição das notas','interface','#mvpNotesSettingsCard'],['Restaurar posição','interface','#mvpNotesSettingsCard'],
     ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
     ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
     ['MVP','interface','#mvpNotesSettingsCard'],['ícone menu superior','interface','#mvpNotesSettingsCard'],
@@ -20493,7 +20690,7 @@ function settingsRevealElement(selector){
 // ordem do documento); os <header> internos de modais/drawers vêm todos depois.
 let settingsInertSnapshot=null;
 function settingsInertTargets(){
-  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note'),document.querySelector('#mvpNotesLauncher')].filter(Boolean);
 }
 function settingsSetAppInert(on){
   if(on){
@@ -21127,26 +21324,13 @@ function renderSystemStatus() {
   // escrever dentro de save() — mudança N2, fora deste escopo e não autorizada.
   // A spec trata a meta da direita como o PRIMEIRO item comprimível; o que ela
   // proíbe suprimir é a linha e seu rótulo, que estão aqui.
-  const falha = (typeof jpWealthPersistenceFailure === 'object' && jpWealthPersistenceFailure)
-    ? jpWealthPersistenceFailure.active : false;
-  const travado = (typeof jpWealthPersistenceIsBlocked === 'function') && jpWealthPersistenceIsBlocked();
-  if (falha) {
-    gdSsRow('jpwSsPersist', 'bad', 'Falha ao gravar neste navegador',
-      jpWealthPersistenceFailure.kind === 'serialize' ? 'serialização' : 'armazenamento');
-  } else if (travado) {
-    gdSsRow('jpwSsPersist', 'warn', 'Gravação suspensa — recuperação pendente', '');
-  } else {
-    gdSsRow('jpwSsPersist', 'ok', 'Dados salvos neste navegador', '');
-  }
+  const persistence=dgPersistenceStatus();
+  gdSsRow('jpwSsPersist',persistence.tone,persistence.text,'');
 
-  // 2 · BACKUP
-  const bk = (S.dataGovernance && S.dataGovernance.backup) || {};
-  if (bk.lastConfirmedAt) {
-    const quando = (typeof dgFmtDateTime === 'function') ? dgFmtDateTime(bk.lastConfirmedAt) : '';
-    gdSsRow('jpwSsBackup', 'ok', 'Backup confirmado', quando);
-  } else {
-    gdSsRow('jpwSsBackup', 'warn', 'Backup não confirmado', 'nunca');
-  }
+  // 2 · BACKUP: a mesma origem de estado usada pelo cartão e pelo reminder.
+  const backup=dgBackupStatus();
+  const quando=backup.at && typeof dgFmtDateTime==='function'?dgFmtDateTime(backup.at):(backup.state==='unknown'?'verificação pendente':'nunca');
+  gdSsRow('jpwSsBackup',backup.tone,backup.text,quando);
 
   // 3 · FRESCOR DAS COTAÇÕES — vale a PIOR das cotações, não a média nem a
   // melhor: o semáforo responde "posso confiar na grade agora?", e um único
@@ -22628,7 +22812,9 @@ const mvpNotesUI={
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
   opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
-  dragFolderId:null   // pasta sendo arrastada na reordenação manual
+  dragFolderId:null,   // pasta sendo arrastada na reordenação manual
+  launcherPosition:{x:1,y:1}, launcherDrag:null, launcherSuppressClick:false, launcherBound:false,
+  launcherRaw:null, launcherBlocked:false, launcherEpoch:0, launcherBaseEpoch:null, launcherWriteSerial:0
 };
 
 function mvpn(id){ return document.getElementById(id); }
@@ -22779,7 +22965,7 @@ function mvpNotesMarkdown(item){
 function mvpNotesExportMarkdown(){
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const live=mvpn('mvpNotesExportLive');
-  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
   return mvpNotesExportItemMarkdown(item);
 }
 // Exportação de UM ticket, identificado por parâmetro. Extraída de mvpNotesExportMarkdown()
@@ -22788,10 +22974,10 @@ function mvpNotesExportMarkdown(){
 // exportar outro ticket enquanto há edição pendente em um terceiro não tem ambiguidade.
 function mvpNotesExportItemMarkdown(item){
   const live=mvpn('mvpNotesExportLive');
-  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
   if(mvpNotesUI.draftDirty && mvpNotesUI.selectedId===item.id){
-    alert('Existem alterações não salvas. Salve o ticket antes de exportar.');
-    if(live) live.textContent='Existem alterações não salvas. Salve o ticket antes de exportar.';
+    alert('Existem alterações não salvas. Salve a nota antes de exportar.');
+    if(live) live.textContent='Existem alterações não salvas. Salve a nota antes de exportar.';
     return null;
   }
   const nome=mvpNotesMarkdownFilename(item);
@@ -22808,7 +22994,7 @@ function mvpNotesExportItemMarkdown(item){
   // navegadores ainda não leram o Blob nesse instante e o download sairia vazio.
   // A âncora temporária sai do DOM junto — não fica lixo pendurado no documento.
   setTimeout(()=>{ URL.revokeObjectURL(url); if(a.parentNode) a.remove(); },0);
-  if(live) live.textContent='Ticket exportado como Markdown.';
+  if(live) live.textContent='Nota exportada como Markdown.';
   return nome;
 }
 function mvpNotesReferenceBlock(item){
@@ -22879,7 +23065,7 @@ function mvpNotesHandleCopy(id,btn){
   const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
   mvpNotesCopyText(mvpNotesReferenceBlock(item))
     .then(()=>mvpNotesFlashCopyFeedback(btn,`Referência ${item.ticket} copiada.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra o ticket e copie o texto manualmente.',true));
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra a nota e copie o texto manualmente.',true));
 }
 function mvpNotesCompletedWithinPeriod(item,period){
   if(period==='all') return true;
@@ -23034,14 +23220,14 @@ function renderMvpNotesBulkActions(){
   host.hidden=n===0;
   if(n===0) return;
   const copiar=mvpn('mvpNotesBulkCopyBtn'), exportar=mvpn('mvpNotesBulkExportBtn');
-  const qualifica=sel.soAtivas?'ativo':'concluído';
+  const qualifica=sel.soAtivas?'ativa':'concluída';
   if(copiar){
     copiar.textContent=`Copiar ${n}`;
-    copiar.setAttribute('aria-label',`Copiar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
+    copiar.setAttribute('aria-label',`Copiar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
   }
   if(exportar){
     exportar.textContent=`Exportar ${n}`;
-    exportar.setAttribute('aria-label',`Exportar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
+    exportar.setAttribute('aria-label',`Exportar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
   }
 }
 // Rascunho sujo bloqueia as duas ações, pela mesma razão que já bloqueia a exportação
@@ -23049,7 +23235,7 @@ function renderMvpNotesBulkActions(){
 // pendente é ambíguo, e rastreabilidade não admite ambiguidade.
 function mvpNotesBulkGuard(live){
   if(!mvpNotesUI.draftDirty) return null;
-  const msg='Existem alterações não salvas. Salve o ticket antes de exportar ou copiar em lote.';
+  const msg='Existem alterações não salvas. Salve a nota antes de exportar ou copiar em lote.';
   const el=mvpn(live); if(el) el.textContent=msg;
   alert(msg);
   return msg;
@@ -23057,8 +23243,8 @@ function mvpNotesBulkGuard(live){
 // Mensagens dos casos especiais, distinguindo "não há nota" de "todas foram excluídas
 // pelo critério" — são situações diferentes e merecem texto diferente.
 function mvpNotesBulkVazioMsg(sel){
-  if(sel.visiveis===0) return 'Nenhum ticket exportável encontrado.';
-  return 'Todos os tickets desta visão estão concluídos ou descartados. Nada para exportar.';
+  if(sel.visiveis===0) return 'Nenhuma nota exportável encontrada.';
+  return 'Todas as notas desta visão estão concluídas ou descartadas. Nada para exportar.';
 }
 function mvpNotesBulkCopy(btn){
   if(mvpNotesBulkGuard('mvpNotesCopyLive')) return null;
@@ -23070,8 +23256,8 @@ function mvpNotesBulkCopy(btn){
   const texto=mvpNotesBulkReferenceBlock(sel);
   const n=sel.itens.length;
   mvpNotesCopyText(texto)
-    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} ticket${n===1?'':'s'} de ${sel.escopo} copiado${n===1?'':'s'}.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie um ticket por vez.',true));
+    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} nota${n===1?'':'s'} de ${sel.escopo} copiada${n===1?'':'s'}.`,false))
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie uma nota por vez.',true));
   return texto;
 }
 function mvpNotesBulkExport(){
@@ -23089,8 +23275,8 @@ function mvpNotesBulkExport(){
   // sim/não dentro da gaveta (excluir pasta, descartar rascunho). A pergunta declara os
   // dois números — visíveis e levados — para que a diferença nunca surpreenda.
   const pergunta=sel.visiveis!==n
-    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} tickets.\n\nExportar os ${n} ${sel.soAtivas?'ativos':'concluídos'} (concluídos e descartados ficam de fora)?`
-    : `Exportar ${n} ticket${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
+    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} notas.\n\nExportar as ${n} ${sel.soAtivas?'ativas':'concluídas'} (concluídos e descartados ficam de fora)?`
+    : `Exportar ${n} nota${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
   if(!confirm(pergunta)){
     if(live) live.textContent='Exportação em lote cancelada.';
     return null;
@@ -23100,7 +23286,7 @@ function mvpNotesBulkExport(){
   // adiada). Reuso do helper canônico — a exportação individual ainda tem a sua cópia
   // inline, anterior a ele.
   dgDownloadViaAnchor(nome,new Blob([mvpNotesBulkMarkdown(sel)],{type:'text/markdown;charset=utf-8'}));
-  if(live) live.textContent=`${n} ticket${n===1?'':'s'} exportado${n===1?'':'s'} como ${nome}.`;
+  if(live) live.textContent=`${n} nota${n===1?'':'s'} exportada${n===1?'':'s'} como ${nome}.`;
   return nome;
 }
 
@@ -23240,11 +23426,11 @@ function mvpNotesEnsureActiveFolderValid(){
   if(!mvpNotesFolderById(af)) mvpNotesUI.activeFolder='unfiled';
 }
 function mvpNotesViewLabel(){
-  if(mvpNotesUI.activeFolder==='all') return 'Todos os Tickets';
+  if(mvpNotesUI.activeFolder==='all') return 'Todas as Notas';
   if(mvpNotesUI.activeFolder==='unfiled') return 'Sem pasta';
   if(mvpNotesUI.activeFolder==='done') return 'Concluído';
   const f=mvpNotesFolderById(mvpNotesUI.activeFolder);
-  return f ? f.name : 'Todos os Tickets';
+  return f ? f.name : 'Todas as Notas';
 }
 
 // ---- persistência (CRUD) ----
@@ -23310,7 +23496,7 @@ function mvpNotesCreate(draft){
 function mvpNotesUpdate(id,draft){
   const item=mvpNotesItems().find(it=>it.id===id);
   if(!item){
-    const message='Este ticket não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
+    const message='Esta nota não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
     const live=mvpn('mvpNotesCopyLive');
     if(live) live.textContent=message;
     alert(message);
@@ -23344,7 +23530,213 @@ function mvpNotesDelete(id){
   });
 }
 
-// ---- botão do header + card de Configurações ----
+// ---- acionador flutuante + card de Configurações ----
+// Preferência auxiliar de apresentação. Não integra S, save() ou backup financeiro.
+const MVP_NOTES_LAUNCHER_KEY='jpwealth_notes_launcher_position_v1';
+function mvpNotesLauncherPreference(raw){
+  if(raw===null)return {schemaVersion:1,x:1,y:1};
+  try{
+    const p=JSON.parse(raw);
+    return p && !Array.isArray(p) && p.schemaVersion===1 &&
+      ['x','y'].every(k=>typeof p[k]==='number' && Number.isFinite(p[k]) && p[k]>=0 && p[k]<=1) ? p : null;
+  }catch(error){return null;}
+}
+function mvpNotesLauncherStatus(text,error=false){
+  const status=mvpn('mvpNotesPositionStatus');
+  if(status){status.textContent=text;status.dataset.error=String(error);}
+  if(error && !mvpNotesSettingsOpen() && typeof showSessionNotice==='function')showSessionNotice(text);
+}
+function mvpNotesReadLauncherPosition(){
+  let raw;
+  try{raw=localStorage.getItem(MVP_NOTES_LAUNCHER_KEY);}
+  catch(error){
+    mvpNotesUI.launcherBlocked=true;
+    mvpNotesLauncherStatus('Não foi possível ler a posição. O botão pode ser movido nesta sessão; recarregue para conferir a preferência.',true);
+    return;
+  }
+  const p=mvpNotesLauncherPreference(raw);
+  mvpNotesUI.launcherRaw=raw;
+  mvpNotesUI.launcherBlocked=!p;
+  mvpNotesUI.launcherPosition=p?{x:p.x,y:p.y}:{x:1,y:1};
+  if(!p)mvpNotesLauncherStatus('A posição guardada é incompatível. Nada foi apagado; use Restaurar posição para substituí-la.',true);
+  mvpNotesPlaceLauncher();
+}
+async function mvpNotesPersistLauncherPosition(reset=false){
+  const state=mvpNotesUI,position={...state.launcherPosition},epoch=state.launcherEpoch;
+  const serial=++state.launcherWriteSerial;
+  const current=()=>epoch===(Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0) &&
+    !!state.launcherBaseEpoch && state.launcherBaseEpoch===sessionEpochRead();
+  const status=(message,error)=>{if(serial===state.launcherWriteSerial)mvpNotesLauncherStatus(message,error);};
+  // O raw permanece apenas em RAM: detecta troca da base enquanto o gesto espera
+  // o lock, sem interpretar dados financeiros nem alterar o protocolo existente.
+  let mainBefore;
+  try{mainBefore=localStorage.getItem(LSKEY);}
+  catch(error){status('Não foi possível conferir a sessão. A posição não foi gravada.',true);return false;}
+  const write=()=>{
+    if(!current()){status('A sessão mudou. Recarregue antes de guardar outra posição.',true);return false;}
+    try{
+      if(localStorage.getItem(LSKEY)!==mainBefore){state.launcherBlocked=true;status('A base mudou enquanto o movimento aguardava. Recarregue antes de guardar outra posição.',true);return false;}
+    }catch(error){state.launcherBlocked=true;status('Não foi possível conferir a sessão. Nenhuma posição foi gravada.',true);return false;}
+    if(state.launcherBlocked && !reset){status('A preferência não pode ser alterada agora. Confira-a recarregando ou use Restaurar posição.',true);return false;}
+    let before;
+    try{before=localStorage.getItem(MVP_NOTES_LAUNCHER_KEY);}
+    catch(error){state.launcherBlocked=true;status('Não foi possível conferir a posição guardada. Nenhuma gravação foi tentada.',true);return false;}
+    if(before!==state.launcherRaw){
+      state.launcherBlocked=true;
+      status('A posição mudou em outra aba. Recarregue para conferir; esta tentativa não foi gravada.',true);
+      return false;
+    }
+    const envelope=mvpNotesLauncherPreference(before);
+    if(!envelope && !reset){state.launcherBlocked=true;status('A posição guardada é incompatível. Use Restaurar posição.',true);return false;}
+    const payload=reset?null:JSON.stringify({...envelope,schemaVersion:1,...position});
+    if(payload===before){status('Posição já guardada neste navegador.',false);return true;}
+    try{
+      if(reset)localStorage.removeItem(MVP_NOTES_LAUNCHER_KEY);
+      else localStorage.setItem(MVP_NOTES_LAUNCHER_KEY,payload);
+    }catch(error){/* A releitura distingue recusa de desfecho desconhecido. */}
+    let after;
+    try{after=localStorage.getItem(MVP_NOTES_LAUNCHER_KEY);}catch(error){}
+    if(after===payload){
+      state.launcherRaw=after;state.launcherBlocked=false;
+      status(reset?'Posição padrão restaurada.':'Posição guardada neste navegador.',false);
+      return true;
+    }
+    if(after===before){status('Não foi possível guardar a posição. O movimento vale apenas nesta sessão; tente novamente.',true);return false;}
+    state.launcherBlocked=true;
+    status('Não foi possível confirmar a gravação da posição. Recarregue para conferir; novas gravações estão bloqueadas.',true);
+    return false;
+  };
+  try{return await sessionAcquireWriteLock(write);}
+  catch(error){state.launcherBlocked=true;status('Não foi possível confirmar a posição. Recarregue para conferir a preferência.',true);return false;}
+}
+function mvpNotesResetLauncherPosition(){
+  mvpNotesFinishLauncherDrag(true);
+  mvpNotesUI.launcherPosition={x:1,y:1};
+  mvpNotesPlaceLauncher();
+  return mvpNotesPersistLauncherPosition(true);
+}
+function handleMvpNotesLauncherSessionWipe(){
+  mvpNotesFinishLauncherDrag(true);
+  mvpNotesUI.launcherWriteSerial+=1;
+  mvpNotesUI.launcherBlocked=true;
+  mvpNotesUI.launcherPosition={x:1,y:1};
+  mvpNotesPlaceLauncher();
+}
+function mvpNotesLauncherBounds(){
+  const host=mvpn('mvpNotesLauncher'),btn=mvpn('headerNotesBtn');
+  if(!host || host.hidden || !btn) return null;
+  const area=host.getBoundingClientRect(),rect=btn.getBoundingClientRect(),v=window.visualViewport;
+  const header=document.querySelector('body>header')?.getBoundingClientRect();
+  const rail=document.querySelector('#appSidebar');
+  const railRect=rail && getComputedStyle(rail).display!=='none'?rail.getBoundingClientRect():null;
+  const left=Math.max(area.left,v?v.offsetLeft+20:area.left,railRect?.right>0?railRect.right+16:0);
+  const top=Math.max(area.top,v?v.offsetTop+20:area.top,header?.bottom>0?header.bottom+16:0);
+  return {left,top,width:Math.max(0,Math.min(area.right,v?v.offsetLeft+v.width-20:area.right)-rect.width-left),
+    height:Math.max(0,Math.min(area.bottom,v?v.offsetTop+v.height-20:area.bottom)-rect.height-top),
+    originX:area.left,originY:area.top,scale:host.clientWidth?area.width/host.clientWidth:1};
+}
+function mvpNotesPlaceLauncher(){
+  const p=mvpNotesUI.launcherPosition,b=mvpNotesLauncherBounds();
+  if(b){
+    const btn=mvpn('headerNotesBtn');
+    btn.style.left=((b.left-b.originX+p.x*b.width)/b.scale)+'px';
+    btn.style.top=((b.top-b.originY+p.y*b.height)/b.scale)+'px';
+  }
+  ['X','Y'].forEach(axis=>{
+    const input=mvpn('mvpNotesPosition'+axis),value=Math.round(p[axis.toLowerCase()]*100);
+    if(input) input.value=String(value);
+    const output=mvpn('mvpNotesPosition'+axis+'Value'); if(output) output.textContent=value+'%';
+  });
+}
+function mvpNotesFinishLauncherDrag(cancel){
+  const drag=mvpNotesUI.launcherDrag;if(!drag)return;
+  mvpNotesUI.launcherDrag=null;
+  mvpNotesUI.launcherSuppressClick=cancel || drag.moved;
+  if(cancel) mvpNotesUI.launcherPosition=drag.origin;
+  const btn=mvpn('headerNotesBtn');btn.classList.remove('is-dragging');
+  if(btn.hasPointerCapture(drag.id))btn.releasePointerCapture(drag.id);
+  mvpNotesPlaceLauncher();
+  if(!cancel && drag.moved)mvpNotesPersistLauncherPosition();
+}
+function mvpNotesSyncLauncher(){
+  const host=mvpn('mvpNotesLauncher');if(!host)return;
+  const covered=['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay']
+    .some(id=>mvpn(id)?.classList.contains('show'));
+  if(covered || host.inert || S.mvpNotes?.showHeaderIcon===false)mvpNotesFinishLauncherDrag(true);
+  host.hidden=covered || !(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
+  mvpNotesPlaceLauncher();
+}
+function bindMvpNotesLauncher(){
+  if(mvpNotesUI.launcherBound)return;
+  mvpNotesUI.launcherBound=true;
+  mvpNotesUI.launcherEpoch=Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0;
+  const startupEpoch=sessionEpochRead();
+  // Antes do bootstrap normal, uma origem virgem converge para o sentinel existente.
+  // Não adotar uma geração rotacionada posteriormente nem inicializá-la pela UI.
+  mvpNotesUI.launcherBaseEpoch=(startupEpoch===null || startupEpoch==='')?BASE_EPOCH_SENTINEL:startupEpoch;
+  mvpNotesReadLauncherPosition();
+  const btn=mvpn('headerNotesBtn');
+  btn.dataset.notesLauncherReady='true';
+  btn.addEventListener('click',event=>{
+    if(event.detail>0 && mvpNotesUI.launcherSuppressClick){mvpNotesUI.launcherSuppressClick=false;return;}
+    openMvpNotesDrawer(btn);
+  });
+  btn.addEventListener('pointerdown',event=>{
+    if(event.button!==0 || !event.isPrimary || mvpNotesUI.launcherDrag)return;
+    mvpNotesUI.launcherSuppressClick=false;
+    mvpNotesUI.launcherDrag={id:event.pointerId,x:event.clientX,y:event.clientY,origin:{...mvpNotesUI.launcherPosition},moved:false};
+    btn.setPointerCapture(event.pointerId);
+  });
+  btn.addEventListener('pointermove',event=>{
+    const d=mvpNotesUI.launcherDrag;if(!d || d.id!==event.pointerId)return;
+    const dx=event.clientX-d.x,dy=event.clientY-d.y;
+    if(!d.moved && Math.hypot(dx,dy)<6)return;
+    const b=mvpNotesLauncherBounds();if(!b)return;
+    d.moved=true;btn.classList.add('is-dragging');
+    mvpNotesUI.launcherPosition={x:Math.max(0,Math.min(1,d.origin.x+dx/(b.width||1))),y:Math.max(0,Math.min(1,d.origin.y+dy/(b.height||1)))};
+    mvpNotesPlaceLauncher();
+  });
+  btn.addEventListener('pointerup',event=>{if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(false);});
+  ['pointercancel','lostpointercapture'].forEach(type=>btn.addEventListener(type,event=>{
+    if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(true);
+  }));
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape' && mvpNotesUI.launcherDrag){event.preventDefault();mvpNotesFinishLauncherDrag(true);}
+  });
+  btn.addEventListener('keydown',event=>{
+    if(!event.altKey)return;
+    const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];
+    if(event.key==='Home'){event.preventDefault();mvpNotesResetLauncherPosition();}
+    else if(delta){
+      event.preventDefault();const b=mvpNotesLauncherBounds();if(!b)return;
+      const p=mvpNotesUI.launcherPosition,step=event.shiftKey?8:24;
+      mvpNotesUI.launcherPosition={x:Math.max(0,Math.min(1,p.x+delta[0]*step/(b.width||1))),y:Math.max(0,Math.min(1,p.y+delta[1]*step/(b.height||1)))};
+      mvpNotesPlaceLauncher();
+      mvpNotesPersistLauncherPosition();
+    }
+  });
+  ['X','Y'].forEach(axis=>mvpn('mvpNotesPosition'+axis)?.addEventListener('input',event=>{
+    const value=event.target.valueAsNumber;if(!Number.isFinite(value))return;
+    mvpNotesUI.launcherPosition[axis.toLowerCase()]=Math.max(0,Math.min(1,value/100));mvpNotesPlaceLauncher();
+  }));
+  ['X','Y'].forEach(axis=>mvpn('mvpNotesPosition'+axis)?.addEventListener('change',()=>mvpNotesPersistLauncherPosition()));
+  mvpn('mvpNotesPositionReset')?.addEventListener('click',mvpNotesResetLauncherPosition);
+  window.addEventListener('storage',event=>{
+    if(event.storageArea!==localStorage || event.key!==MVP_NOTES_LAUNCHER_KEY)return;
+    if(mvpNotesUI.launcherDrag)return; // o escritor detectará conflito ao confirmar.
+    mvpNotesReadLauncherPosition();
+  });
+  const resize=()=>{mvpNotesFinishLauncherDrag(true);mvpNotesPlaceLauncher();};
+  window.addEventListener('resize',resize);
+  window.visualViewport?.addEventListener('resize',resize);
+  window.visualViewport?.addEventListener('scroll',resize);
+  const observer=new MutationObserver(mvpNotesSyncLauncher);
+  ['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay'].forEach(id=>{
+    const el=mvpn(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['class']});
+  });
+  observer.observe(mvpn('mvpNotesLauncher'),{attributes:true,attributeFilter:['inert']});
+  mvpNotesSyncLauncher();
+}
 function renderMvpNotesHeader(){
   const btn=mvpn('headerNotesBtn');
   if(btn) btn.hidden=!(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
@@ -23354,7 +23746,10 @@ function renderMvpNotesHeader(){
     badge.hidden=count<=0;
     badge.textContent=count>99?'99+':String(count);
   }
-  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir tickets — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir tickets');
+  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas');
+  // No portátil, boot pode chamar esta função içada antes do estado da UI.
+  // A inicialização do acionador faz o primeiro posicionamento no momento seguro.
+  if(btn?.dataset.notesLauncherReady==='true')mvpNotesSyncLauncher();
   renderMvpNotesSettingsCard();
 }
 function renderMvpNotesSettingsCard(){
@@ -23364,7 +23759,7 @@ function renderMvpNotesSettingsCard(){
   const countEl=mvpn('mvpNotesSettingsCount');
   if(countEl){
     const total=mvpNotesItems().length, active=mvpNotesActiveCount();
-    countEl.textContent=total===0 ? 'Nenhum ticket registrado ainda.' : `${total} ticket${total===1?'':'s'} registrado${total===1?'':'s'} · ${active} ativo${active===1?'':'s'}.`;
+    countEl.textContent=total===0 ? 'Nenhuma nota registrada ainda.' : `${total} nota${total===1?'':'s'} registrada${total===1?'':'s'} · ${active} ativa${active===1?'':'s'}.`;
   }
 }
 function bindMvpNotesSettingsCard(){
@@ -23423,8 +23818,8 @@ function mvpNotesCardHTML(item){
     </button>
     <button type="button" class="mvpn-card-menu" data-mvp-menu-id="${esc(item.id)}"
       aria-haspopup="menu" aria-expanded="false"
-      title="Ações do ticket ${esc(item.ticket||'')}"
-      aria-label="Ações do ticket ${esc(item.ticket||'')}: ${esc(item.title)}">
+      title="Ações da nota ${esc(item.ticket||'')}"
+      aria-label="Ações da nota ${esc(item.ticket||'')}: ${esc(item.title)}">
       <span aria-hidden="true">⋯</span>
       <span class="mvpn-copy-check" aria-hidden="true">✓</span>
     </button>
@@ -23460,7 +23855,7 @@ function mvpNotesSyncFilterControls(){
       : `Limpar todos os filtros — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`);
   }
   const fbtn=mvpn('mvpNotesFiltersBtn');
-  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar tickets — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar tickets');
+  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar notas — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar notas');
 }
 // Limpeza dos filtros — ação ÚNICA do módulo (JPW-RQPNMK). Zera todos os critérios
 // estruturais e NADA mais: busca, visão/pasta ativa, nota aberta, rascunho e dados
@@ -23496,10 +23891,10 @@ function renderMvpNotesList(){
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, {ativas,concluidas}=mvpNotesGrouped();
   if(total===0){
-    host.innerHTML=`<div class="mvpn-empty"><strong>Nenhum ticket nesta coleção.</strong><p>Use “Novo ticket” para registrar uma tarefa, um problema ou uma melhoria.</p></div>`;
+    host.innerHTML=`<div class="mvpn-empty"><strong>Nenhuma nota nesta coleção.</strong><p>Use “Nova nota” para registrar uma tarefa, um problema ou uma melhoria.</p></div>`;
   }else if(!ativas.length && !concluidas.length){
     const temBusca=!!mvpNotesUI.query.trim(), temFiltro=mvpNotesActiveFilterCount()>0;
-    const msg=(temBusca&&temFiltro)?'Nenhum ticket corresponde à busca e aos filtros atuais.':'Nenhum ticket encontrado.';
+    const msg=(temBusca&&temFiltro)?'Nenhuma nota corresponde à busca e aos filtros atuais.':'Nenhuma nota encontrada.';
     host.innerHTML=`<p class="mvpn-empty">${msg}</p>`;
   }else{
     // O separador só existe quando há concluídas na visão atual, com contador discreto.
@@ -23533,14 +23928,14 @@ function renderMvpNotesList(){
 // (o status continua editável pelo inspector, que é onde ele sempre viveu).
 function mvpNotesCardMenuActions(item){
   const acoes=[{chave:'copiar', rotulo:'Copiar referência'}];
-  if(item.status!=='done') acoes.push({chave:'concluir', rotulo:'Concluir ticket'});
+  if(item.status!=='done') acoes.push({chave:'concluir', rotulo:'Concluir nota'});
   acoes.push({chave:'exportar', rotulo:'Exportar como Markdown'});
-  acoes.push({chave:'excluir', rotulo:'Excluir ticket', perigo:true});
+  acoes.push({chave:'excluir', rotulo:'Excluir nota', perigo:true});
   return acoes;
 }
 function mvpNotesRenderCardMenu(item){
   const titulo=mvpn('mvpNotesCardMenuTitle');
-  if(titulo) titulo.textContent=`${item.ticket||'Ticket'} · ${item.title||'sem título'}`;
+  if(titulo) titulo.textContent=`${item.ticket||'Nota'} · ${item.title||'sem título'}`;
   const host=mvpn('mvpNotesCardMenuItems'); if(!host) return;
   host.innerHTML=mvpNotesCardMenuActions(item).map(a=>
     `<button type="button" class="reset-btn mvpn-card-menu-item${a.perigo?' mvpn-card-menu-danger':''}" data-mvp-menu-acao="${a.chave}">${esc(a.rotulo)}</button>`
@@ -23598,10 +23993,10 @@ function mvpNotesConcluirTicket(id){
   // Rascunho sujo do MESMO ticket: concluir gravaria o conteúdo salvo por cima da edição
   // em curso na tela. Recusar é a saída honesta — mesma regra da exportação.
   if(mvpNotesUI.selectedId===id && mvpNotesUI.draftDirty){
-    alert('Existem alterações não salvas neste ticket. Salve antes de concluir.');
+    alert('Existem alterações não salvas nesta nota. Salve antes de concluir.');
     return null;
   }
-  if(!confirm(`Concluir o ticket "${item.title}"?\n\nEle passa a Concluída e sai do backlog ativo, permanecendo na pasta atual.`)) return null;
+  if(!confirm(`Concluir a nota "${item.title}"?\n\nEle passa a Concluída e sai do backlog ativo, permanecendo na pasta atual.`)) return null;
   const draft=mvpNotesDraftFromItem(item);
   draft.status='done';
   const salvo=mvpNotesUpdate(id,draft);
@@ -23616,7 +24011,7 @@ function mvpNotesConcluirTicket(id){
   }
   renderMvpNotesList();
   const live=mvpn('mvpNotesCopyLive');
-  if(live && salvo) live.textContent=`Ticket ${salvo.ticket||''} concluído.`;
+  if(live && salvo) live.textContent=`Nota ${salvo.ticket||''} concluída.`;
   return salvo;
 }
 function mvpNotesRunCardMenuAction(acao){
@@ -23641,7 +24036,7 @@ function mvpNotesRunCardMenuAction(acao){
   }
   if(acao==='excluir'){
     mvpNotesCloseCardMenu();
-    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
+    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
     const eraSelecionado=mvpNotesUI.selectedId===id;
     if(!mvpNotesDelete(id)) return null;
     if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
@@ -23691,7 +24086,7 @@ function renderMvpNotesFolderNav(){
   // "Concluído" é visão do sistema (derivada de status==='done'): não renomeável, não
   // excluível, nunca persistida em folders[] — mesma família de "Todas as Notas"/"Sem pasta".
   const rows=[
-    {id:'all', name:'Todos os Tickets', count:mvpNotesAllCount()},
+    {id:'all', name:'Todas as Notas', count:mvpNotesAllCount()},
     {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()},
     {id:'done', name:'Concluído', count:mvpNotesDoneCount()}
   ];
@@ -23897,7 +24292,7 @@ function mvpNotesHandleDeleteFolder(id){
     const folder=mvpNotesFolderById(id); if(!folder) return;
     const count=mvpNotesFolderItemCount(id);
     const msg=count>0
-      ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
+      ? `A pasta "${folder.name}" contém ${count} nota${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'essa nota será movida':'essas notas serão movidas'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
     if(!mvpNotesDeleteFolder(id)) return;
@@ -23912,14 +24307,20 @@ function mvpNotesHandleDeleteFolder(id){
 // JS e o CSS discordam sobre qual mundo está na tela. Subiu de 760 para 920 na Fase D:
 // abaixo disso as três colunas não cabem com seus mínimos medidos (ver o comentário do
 // bloco mobile no CSS) e a navegação em camadas é a resposta honesta.
-function mvpNotesIsMobile(){ return window.matchMedia('(max-width:920px)').matches; }
+function mvpNotesIsMobile(){ return window.matchMedia('(max-width:600px)').matches; }
+function mvpNotesLayout(){
+  if(mvpNotesIsMobile())return 'mobile';
+  const width=mvpn('mvpNotesDrawer')?.getBoundingClientRect().width||mvpNotesClampWidth(mvpNotesDrawerWidth());
+  return window.innerWidth<=1100 || width<920?'tablet':'desktop';
+}
 function mvpNotesApplyStage(){
   const drawer=mvpn('mvpNotesDrawer'); if(!drawer) return;
   drawer.dataset.mobileStage=mvpNotesUI.stage;
+  drawer.dataset.notesLayout=mvpNotesLayout();
   const backBtn=mvpn('mvpNotesBackBtn'), title=mvpn('mvpNotesTitle');
   if(mvpNotesIsMobile()){
-    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Tickets'
-      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar ticket':'Novo ticket'));
+    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Notas'
+      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar nota':'Nova nota'));
     if(backBtn){
       backBtn.hidden=mvpNotesUI.stage==='folders';
       // O destino do Voltar é dito por extenso, não só pela seta: da nota volta-se para a
@@ -23932,14 +24333,30 @@ function mvpNotesApplyStage(){
       const rotulo=mvpn('mvpNotesBackLabel');
       if(rotulo) rotulo.textContent=destino;
     }
+  }else if(mvpNotesLayout()==='tablet'){
+    if(title)title.textContent='Notas';
+    if(backBtn){
+      backBtn.hidden=false;
+      const label=mvpNotesUI.stage==='folders'?'Notas':'Pastas';
+      backBtn.setAttribute('aria-label','Mostrar '+label.toLowerCase());
+      backBtn.setAttribute('title','Mostrar '+label.toLowerCase());
+      if(mvpn('mvpNotesBackLabel'))mvpn('mvpNotesBackLabel').textContent=label;
+    }
   }else{
-    if(title) title.textContent='Tickets';
+    if(title) title.textContent='Notas';
     if(backBtn) backBtn.hidden=true;
   }
 }
 // Voltar contextual: Editor → Lista (com proteção de rascunho sujo), Lista → Pastas.
 // No estágio Pastas o botão não existe (fechar é o X, como em desktop).
 function mvpNotesGoBack(){
+  if(mvpNotesLayout()==='tablet'){
+    mvpNotesUI.stage=mvpNotesUI.stage==='folders'?(mvpNotesUI.selectedId?'editor':'list'):'folders';
+    mvpNotesApplyStage();
+    const target=mvpNotesUI.stage==='folders'?mvpn('mvpNotesFolderNavList')?.querySelector('button'):mvpn('mvpNotesSearch');
+    if(target)target.focus();
+    return;
+  }
   if(mvpNotesUI.stage==='editor'){ mvpNotesConfirmDiscardIfDirty(mvpNotesCloseEditor); return; }
   if(mvpNotesUI.stage==='list'){
     mvpNotesUI.stage='folders';
@@ -24007,7 +24424,7 @@ function renderMvpNotesEditor(){
   if(area && area.value!==mvpNotesUI.draft.content) area.value=mvpNotesUI.draft.content;
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const ticketEl=mvpn('mvpNotesEditorTicket');
-  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'novo ticket';
+  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'nova nota';
   const copyBtn=mvpn('mvpNotesCopyRefBtn');
   if(copyBtn){ copyBtn.hidden=!item; if(item) copyBtn.dataset.mvpCopyId=item.id; }
   mvpNotesUpdateLiveTitle();
@@ -24026,8 +24443,8 @@ function mvpNotesInspectorHTML(){
   const fato=(k,v)=>`<dt>${k}</dt><dd>${v}</dd>`;
   return `
     <div class="mvpn-inspector-head">
-      <h4 id="mvpNotesInspectorTitle">Detalhes do ticket</h4>
-      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes do ticket" title="Fechar detalhes">✕</button>
+      <h4 id="mvpNotesInspectorTitle">Detalhes da nota</h4>
+      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes da nota" title="Fechar detalhes">✕</button>
     </div>
     <div class="field"><label for="mvpNoteType">Tipo</label><select id="mvpNoteType">${opt(MVP_NOTES_TYPE_LABELS,d.type)}</select></div>
     <div class="field"><label for="mvpNotePriority">Prioridade</label><select id="mvpNotePriority">${opt(MVP_NOTES_PRIORITY_LABELS,d.priority)}</select></div>
@@ -24051,9 +24468,9 @@ function mvpNotesInspectorHTML(){
         <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
       </div>
       <div class="mvpn-inspector-danger">
-        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir ticket</button>
+        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
       </div>
-    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar o ticket.</p>`}`;
+    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar a nota.</p>`}`;
 }
 function mvpNotesSetInspectorOpen(open){
   const insp=mvpn('mvpNotesInspector'), btn=mvpn('mvpNotesInspectorBtn');
@@ -24097,7 +24514,7 @@ function bindMvpNotesInspector(){
   const del=mvpn('mvpNoteDeleteBtn');
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
-    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
+    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return;
     if(!mvpNotesDelete(item.id)) return;
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
@@ -24176,7 +24593,7 @@ function mvpNotesReadNewNoteModal(){
 // valida aqui é que cada campo carrega um valor CANÔNICO, nunca um valor arbitrário
 // vindo de um select adulterado.
 function mvpNotesValidateNewNote(meta){
-  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo deste ticket.';
+  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo desta nota.';
   if(!MVP_NOTES_PRIORITIES.includes(meta.priority)) return 'Escolha a prioridade.';
   if(!MVP_NOTES_STATUSES.includes(meta.status)) return 'Escolha o status inicial.';
   if(meta.folderId!==null && !mvpNotesFolderById(meta.folderId)) return 'Escolha uma pasta válida.';
@@ -24259,7 +24676,7 @@ function mvpNotesCloseEditor(){
 }
 function mvpNotesConfirmDiscardIfDirty(proceed){
   if(mvpNotesUI.draftDirty){
-    if(!confirm('Existem alterações não salvas neste ticket. Deseja descartá-las?')) return;
+    if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
   }
   proceed();
 }
@@ -24294,6 +24711,7 @@ function mvpNotesApplyDrawerWidth(w){
   // O drawer mudou de tamanho: as três colunas precisam caber de novo AGORA. Só reescreve
   // as duas variáveis CSS (sem render, sem save) — as preferências continuam intactas.
   if(d && mvpNotesUI.open) mvpNotesApplyPaneWidths();
+  if(d && mvpNotesUI.open) mvpNotesApplyStage();
   const h=mvpn('mvpNotesResizeHandle');
   if(h){
     h.setAttribute('aria-valuemin',String(MVP_NOTES_DRAWER_MIN));
@@ -24331,20 +24749,32 @@ function mvpNotesRenderedDrawerWidth(){
 // Larguras efetivamente renderizadas neste instante (preferências passadas pelo ajuste).
 function mvpNotesRenderedPanes(){
   const prefs=mvpNotesPanePrefs();
-  return mvpNotesFitPanes(prefs.folders,prefs.list,mvpNotesRenderedDrawerWidth());
+  return mvpNotesWindowPanes(prefs.folders,prefs.list);
+}
+// Projeção para a janela: conserva as preferências, deixando o editor maior.
+// A borda completa usa um pixel adicional ao chrome canônico legado.
+function mvpNotesWindowPanes(folders,list){
+  const width=mvpNotesRenderedDrawerWidth(),space=mvpNotesPaneSpace(width-1);
+  if(mvpNotesLayout()==='tablet'){
+    return {folders:Math.min(folders,Math.max(150,Math.floor(width*.3))),
+      list:Math.min(list,Math.max(240,Math.floor(width*.4)))};
+  }
+  const f=Math.min(folders,Math.max(MVP_NOTES_FOLDERS_MIN,Math.floor(space/4)));
+  const l=Math.min(list,Math.max(MVP_NOTES_LIST_MIN,Math.floor((space-f-1)/2)));
+  return mvpNotesFitPanes(Math.min(f,l-1),l,width-1);
 }
 // Limites VIVOS de cada separador: o máximo de uma coluna depende do que a outra está
 // ocupando e do piso do editor. Garante a invariante pastas + lista + editor + separadores
 // <= largura interna disponível, sempre.
 function mvpNotesPaneLimits(){
-  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth());
+  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth()-1);
   const atual=mvpNotesRenderedPanes();
   return {
     espaco,
     foldersMin:MVP_NOTES_FOLDERS_MIN,
-    foldersMax:Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,espaco-atual.list-MVP_NOTES_EDITOR_MIN)),
+    foldersMax:Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,Math.floor(espaco/4),atual.list-1)),
     listMin:MVP_NOTES_LIST_MIN,
-    listMax:Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,espaco-atual.folders-MVP_NOTES_EDITOR_MIN))
+    listMax:Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,Math.floor((espaco-atual.folders-1)/2)))
   };
 }
 // Escreve a geometria: só duas custom properties no drawer. Nenhum render de lista, editor
@@ -24357,9 +24787,9 @@ function mvpNotesWritePaneVars(folders,list){
 }
 // ARIA dos dois separadores acompanha a coluna ao vivo — valor e limites nunca congelam.
 function mvpNotesSyncPaneHandleAria(folders,list){
-  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth());
-  const fMax=Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,espaco-Math.round(list)-MVP_NOTES_EDITOR_MIN));
-  const lMax=Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,espaco-Math.round(folders)-MVP_NOTES_EDITOR_MIN));
+  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth()-1);
+  const fMax=Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,Math.floor(espaco/4),Math.round(list)-1));
+  const lMax=Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,Math.floor((espaco-Math.round(folders)-1)/2)));
   const escreve=(el,min,max,valor,rotulo)=>{
     if(!el) return;
     el.setAttribute('aria-valuemin',String(min));
@@ -24368,7 +24798,7 @@ function mvpNotesSyncPaneHandleAria(folders,list){
     el.setAttribute('aria-valuetext',`${rotulo}: ${Math.round(valor)} pixels`);
   };
   escreve(mvpn('mvpNotesFoldersHandle'),MVP_NOTES_FOLDERS_MIN,fMax,folders,'Largura da coluna de pastas');
-  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de tickets');
+  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de notas');
 }
 // Aplica a geometria a partir das preferências (opcionalmente com um valor em teste durante
 // o arraste). Chamada na abertura, ao mudar o drawer e ao redimensionar a janela.
@@ -24376,7 +24806,7 @@ function mvpNotesApplyPaneWidths(candidato){
   const prefs=mvpNotesPanePrefs();
   const f=(candidato&&candidato.folders!=null)?candidato.folders:prefs.folders;
   const l=(candidato&&candidato.list!=null)?candidato.list:prefs.list;
-  const fit=mvpNotesFitPanes(f,l,mvpNotesRenderedDrawerWidth());
+  const fit=mvpNotesWindowPanes(f,l);
   mvpNotesWritePaneVars(fit.folders,fit.list);
   return fit;
 }
@@ -24498,11 +24928,11 @@ function bindMvpNotesResize(){
   });
   h.addEventListener('pointermove',e=>{
     if(!mvpNotesUI.resize) return;
-    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesUI.resize.startW+(mvpNotesUI.resize.startX-e.clientX)));
+    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesUI.resize.startW+2*(mvpNotesUI.resize.startX-e.clientX)));
   });
   h.addEventListener('pointerup',e=>{
     if(!mvpNotesUI.resize) return;
-    const w=mvpNotesClampWidth(mvpNotesUI.resize.startW+(mvpNotesUI.resize.startX-e.clientX));
+    const w=mvpNotesClampWidth(mvpNotesUI.resize.startW+2*(mvpNotesUI.resize.startX-e.clientX));
     mvpNotesUI.resize=null;
     mvpNotesSetResizingCursor(false);
     mvpNotesApplyDrawerWidth(w);
@@ -24583,6 +25013,7 @@ function mvpNotesFocusables(root){
   // então o seletor [tabindex] não o alcança — sem ele o trap calcularia primeiro/último
   // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
   return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
+    .filter(el=>el.tabIndex>=0) // exclui SVG <use href> e links retirados da tabulação
     .filter(el=>!el.closest('[hidden]'))
     .filter(el=>!el.closest('[inert]'))
     .filter(el=>el.offsetParent!==null || el===document.activeElement);
@@ -24612,7 +25043,7 @@ function mvpNotesTrapFocus(event){
 // que a suspensão da Central (suspendSettingsForSubdialog, abaixo) não cobre sozinha —
 // aquela função só torna #settingsModal inert, nunca tocou <header>/#appMain.
 function mvpNotesInertTargets(){
-  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note'), mvpn('mvpNotesLauncher')].filter(Boolean);
 }
 function mvpNotesApplyInert(){
   mvpNotesUI.inertSnapshot=mvpNotesInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
@@ -24633,6 +25064,16 @@ function mvpNotesRestoreInert(){
 // por qualquer outro caminho enquanto o drawer segue aberto deixaria esse booleano obsoleto.
 function mvpNotesSettingsOpen(){ return typeof settingsIsOpen==='function' && settingsIsOpen(); }
 function openMvpNotesDrawer(opener){
+  if(mvpNotesUI.open){
+    const layer=mvpNotesUI.cardMenuId?mvpn('mvpNotesCardMenuBox')
+      :mvpNotesUI.newNoteOpen?mvpn('mvpNotesNewBox'):mvpn('mvpNotesOverlay');
+    if(layer?.contains(document.activeElement) && document.activeElement.getClientRects().length)return;
+    const content=mvpn('mvpNoteContent');
+    const target=!mvpNotesUI.cardMenuId && !mvpNotesUI.newNoteOpen && content?.getClientRects().length
+      ?content:mvpNotesFocusables(layer)[0];
+    target?.focus({preventScroll:true});
+    return;
+  }
   mvpNotesBuildOptions();
   mvpNotesUI.open=true;
   mvpNotesUI.opener=opener||document.activeElement||mvpn('headerNotesBtn');
@@ -24678,6 +25119,7 @@ function closeMvpNotesDrawerNow(){
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();
+  mvpNotesSyncLauncher();
   const opener=mvpNotesUI.opener; mvpNotesUI.opener=null;
   if(typeof restoreSettingsAfterSubdialog==='function') restoreSettingsAfterSubdialog();
   if(opener && document.contains(opener) && !mvpNotesSettingsOpen()) opener.focus();
@@ -24688,7 +25130,7 @@ function closeMvpNotesDrawer(){
 
 // ---- inicialização ----
 function bindMvpNotesDrawer(){
-  mvpn('headerNotesBtn').addEventListener('click',()=>openMvpNotesDrawer(mvpn('headerNotesBtn')));
+  bindMvpNotesLauncher();
   mvpn('mvpNotesCloseBtn').addEventListener('click',closeMvpNotesDrawer);
   mvpn('mvpNotesOverlay').addEventListener('click',e=>{
     if(e.target.id!=='mvpNotesOverlay') return;
@@ -24772,8 +25214,18 @@ function bindMvpNotesDrawer(){
   // Janela redimensionada: recalcular o que cabe, sem tocar nas preferências. Estreitar e
   // voltar a alargar devolve exatamente a geometria escolhida pelo operador.
   window.addEventListener('resize',()=>{
-    if(!mvpNotesUI.open || mvpNotesIsMobile()) return;
-    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth()));
+    if(!mvpNotesUI.open)return;
+    if(!mvpNotesIsMobile())mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth()));
+    mvpNotesApplyStage();
+    const focused=document.activeElement;
+    if(mvpn('mvpNotesOverlay').contains(focused) && !focused.getClientRects().length){
+      const content=mvpn('mvpNoteContent');
+      (content?.getClientRects().length?content:mvpn('mvpNotesBackBtn').hidden?mvpn('mvpNotesCloseBtn'):mvpn('mvpNotesBackBtn')).focus({preventScroll:true});
+    }
+  });
+  window.addEventListener('beforeunload',event=>{
+    if(!mvpNotesUI.open || !mvpNotesUI.draftDirty)return;
+    event.preventDefault();event.returnValue='';
   });
   // Clique fora fecha o popover de filtros (desktop) — o botão e o próprio painel são
   // as únicas áreas "dentro". Sem devolução de foco: o usuário já clicou noutro lugar.
@@ -24903,12 +25355,13 @@ function ffNewsIsToday(date){
 
 function ffNewsStatusText(cache){
   const issue=ffNewsCacheIssue();
-  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : 'Carregando calendário econômico…';
+  if(!cache) return issue ? 'Sem dados · '+issue : ffNewsLastError ? 'Sem dados — verifique a conexão.' : ffNewsInFlight?'Sem dados — carregando calendário econômico…':'Sem dados — atualize o calendário econômico.';
   const gen=cache.generatedAt ? new Date(cache.generatedAt) : null;
   const stamp=(gen && !isNaN(gen.getTime()))
     ? gen.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
     : new Date(cache.fetchedAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : 'Dados de ')+stamp;
+  const stale=Date.now()-cache.fetchedAt>FF_NEWS_MAX_AGE_MS;
+  return (issue ? issue+' · dados anteriores de ' : ffNewsLastError ? 'Sem conexão · dados de ' : stale?'Dados desatualizados de ':'Dados de ')+stamp;
 }
 
 // Rótulo curto da contagem: "agora" no minuto do evento, minutos até 1h,
@@ -25249,12 +25702,20 @@ async function renderDgStorageCard(){
   const breakdown=dgChangesBreakdown(changes);
   const detalhe=changes.slice(-30).reverse().map(e=>'<li><span>'+esc(dgFmtDateTime(e.ts))+'</span> — '+esc(e.label||e.entity+' '+e.action)+'</li>').join('');
   box.innerHTML=
-    '<h4>Local de armazenamento da base</h4>'+statusHtml+
+    '<h4>Base local neste navegador</h4>'+
+    '<p class="dg-status-note">Seus dados ficam neste perfil do navegador, no endereço em que o JP Wealth foi aberto. A pasta abaixo recebe cópias exportadas; ela não é a base ativa.</p>'+
+    '<p id="dgPersistenceStatus" class="dg-status-line dg-status-'+(dgPersistenceStatus().tone==='ok'?'ok':'warn')+'">'+esc(dgPersistenceStatus().text)+'</p>'+
+    '<details class="dg-detail"><summary>Local e cobertura do backup</summary><p>'+esc(location.protocol==='file:'?'Arquivo local — a separação do armazenamento depende do navegador.':'Endereço: '+location.origin)+'</p>'+
+    '<p>Base: localStorage · '+esc(LSKEY)+'. O navegador não informa um caminho físico estável para esse banco.</p>'+
+    '<p>Inclui os dados registrados de Forex, Finanças Pessoais, Alladin, NoCoda, Pivots e Notas, com pastas, históricos e configurações pertencentes à base.</p>'+
+    '<p>Não inclui perfil/foto, posição de Notas, personalizações locais de navegação/layout, caches, permissões de pasta ou rascunhos ainda não salvos. Senhas são removidas.</p></details>'+
+    '<h4>Pasta de exportação</h4>'+statusHtml+
     '<h4>Exportação e backup</h4>'+
     '<dl class="dg-facts">'+
     '<dt>Última exportação</dt><dd>'+(exp.lastExportFile?'<code>'+esc(exp.lastExportFile)+'</code> — '+esc(dgFmtDateTime(exp.lastExportAt)):'nenhuma exportação registrada')+'</dd>'+
     '<dt>Próxima sequência</dt><dd>'+String((exp.lastSequence||0)+1).padStart(6,'0')+'</dd>'+
-    '<dt>Último backup confirmado</dt><dd>'+(bk.lastConfirmedAt?esc(dgFmtDateTime(bk.lastConfirmedAt))+' ('+age+' dia'+(age===1?'':'s')+' atrás)':'nunca confirmado')+'</dd>'+
+    '<dt>Estado do backup</dt><dd id="dgBackupFreshness">'+esc(dgBackupStatus().text)+'</dd>'+
+    '<dt>Último backup confirmado</dt><dd>'+(jpWealthPersistenceOutcomeIsUnknown()?'Data não verificada enquanto o resultado da gravação é desconhecido':bk.lastConfirmedAt?esc(dgFmtDateTime(bk.lastConfirmedAt))+' ('+age+' dia'+(age===1?'':'s')+' atrás)':'nunca confirmado')+'</dd>'+
     '<dt>Alterações desde o último backup</dt><dd>'+(changes.length
       ? changes.length+' alteração(ões) registrada(s)'+(breakdown.length?'<ul class="dg-breakdown"><li>'+breakdown.map(esc).join('</li><li>')+'</li></ul>':'')+
         '<details class="dg-detail"><summary>Detalhamento cronológico (últimas '+Math.min(changes.length,30)+')</summary><ul class="dg-chrono">'+detalhe+'</ul></details>'
@@ -25284,7 +25745,7 @@ async function renderDgStorageCard(){
   if(confirmBtn) confirmBtn.addEventListener('click',()=>{
     // §10: a confirmação de backup exige gesto explícito e consciente — nunca automática.
     if(!confirm('Confirmar que você possui um backup ATUALIZADO e acessível da base JP Wealth?\n\nIsto registra a data de hoje como último backup confirmado e zera a contagem de 30 dias. Confirme apenas se a cópia realmente existe fora deste navegador.')) return;
-    dgConfirmBackup();
+    if(!dgConfirmBackup()) alert(jpWealthPersistenceOutcomeIsUnknown()?'A confirmação tem resultado desconhecido. Verifique a recuperação antes de tentar novamente.':'A confirmação não foi gravada. O lembrete permanece conforme a última confirmação válida.');
     renderDgStorageCard();
     renderDgBackupBanner();
   });
@@ -25342,7 +25803,8 @@ async function renderDgFolderPanel(box){
 // abertura se continuar devida. Não bloqueia nada — governança sem intrusão (§18).
 function renderDgBackupBanner(){
   let el=document.getElementById('dgBackupBanner');
-  const due=typeof dgBackupDue==='function' && dgBackupDue();
+  const status=dgBackupStatus();
+  const due=status.due;
   if(!due || window.__dgBannerDismissed){ if(el) el.remove(); return; }
   const age=dgBackupAgeDays();
   const changes=dgChangesSinceLastBackup().length;
@@ -25352,7 +25814,11 @@ function renderDgBackupBanner(){
     el.className='dg-backup-banner';
     document.body.appendChild(el);
   }
+  const signature=JSON.stringify([status.state,age,changes]);
+  if(el.dataset.statusSignature===signature) return;
+  el.dataset.statusSignature=signature;
   el.innerHTML='<b>Backup recomendado</b><span>'+
+    (status.state==='unknown'?'Confirmação precisa de verificação — ':'')+
     (age===null?'Nenhum backup confirmado até agora':age+' dia'+(age===1?'':'s')+' desde o último backup confirmado')+
     (changes?' — '+changes+' alteração(ões) acumulada(s) desde então':'')+'.</span>'+
     '<button type="button" class="reset-btn" id="dgBannerExport">Exportar backup agora</button>'+
@@ -25365,7 +25831,7 @@ function renderDgBackupBanner(){
   });
   el.querySelector('#dgBannerHave').addEventListener('click',()=>{
     if(!confirm('Confirmar que você possui um backup ATUALIZADO e acessível da base JP Wealth?\n\nConfirme apenas se a cópia realmente existe fora deste navegador.')) return;
-    dgConfirmBackup();
+    if(!dgConfirmBackup()) alert(jpWealthPersistenceOutcomeIsUnknown()?'A confirmação tem resultado desconhecido. Verifique a recuperação antes de tentar novamente.':'A confirmação não foi gravada. O lembrete permanece conforme a última confirmação válida.');
     renderDgStorageCard();
     renderDgBackupBanner();
   });
@@ -25378,6 +25844,24 @@ function renderDgBackupBanner(){
 // os guards em 06-boot.js, no mesmo padrão de renderMvpNotesHeader()
 renderDgStorageCard();
 renderDgBackupBanner();
+
+// Apenas atualização de apresentação. Sem gravação, novo prazo ou consultas externas.
+// Um listener por script carregado; preserva o foco dos controles já exibidos.
+function dgRefreshStatusPresentation(){
+  if(document.hidden) return;
+  renderDgBackupBanner();
+  if(typeof renderSystemStatus==='function') renderSystemStatus();
+  const persistence=document.getElementById('dgPersistenceStatus'), backup=document.getElementById('dgBackupFreshness');
+  const state=dgPersistenceStatus(), freshness=dgBackupStatus();
+  if(persistence){
+    if(persistence.textContent!==state.text) persistence.textContent=state.text;
+    persistence.className='dg-status-line dg-status-'+(state.tone==='ok'?'ok':'warn');
+  }
+  if(backup && backup.textContent!==freshness.text) backup.textContent=freshness.text;
+}
+document.addEventListener('visibilitychange',dgRefreshStatusPresentation);
+window.addEventListener('pageshow',dgRefreshStatusPresentation);
+setInterval(dgRefreshStatusPresentation,60000);
 // ============ CALENDÁRIO ECONÔMICO — SEMANA CORRENTE (N1) ============
 // UMA implementação, DOIS pontos de entrada (menu ⋯ do widget de Notícias e a
 // folha do grupo Operação na Central). Consome exclusivamente o cache já
@@ -25446,18 +25930,15 @@ function ecalRenderRoot(root, filter){
   if(!body||!empty||!fresh||!range) return;
   body.textContent='';
   const data=ecalEvents();
-  const cacheIssue=typeof ffNewsCacheIssue==='function'?ffNewsCacheIssue():'';
+  const status=typeof ffNewsStatusText==='function'?ffNewsStatusText(data):'Sem dados — verifique a conexão.';
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent=cacheIssue
-      ? 'Sem dados · '+cacheIssue+' Use ↻ no Calendário Econômico em Forex → Visão Geral.'
-      : 'Sem dados — verifique a conexão e use ↻ no Calendário Econômico em Forex → Visão Geral.';
+    empty.textContent=status+' Use ↻ no Calendário Econômico em Forex → Visão Geral.';
     empty.hidden=false;
     return;
   }
-  const stampSrc=data.generatedAt?new Date(data.generatedAt):new Date(data.fetchedAt);
-  fresh.textContent=(cacheIssue?cacheIssue+' · Dados anteriores de ':'Dados de ')+(isNaN(stampSrc.getTime())?'—':stampSrc.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  if(fresh.textContent!==status) fresh.textContent=status;
   // Escrita CONDICIONAL: este nó é aria-live="polite" nas duas instâncias, e o
   // setter de textContent troca o nó de texto mesmo quando a string é idêntica.
   // Como o tique de 1 min repinta a superfície visível, escrever sempre faria o
@@ -38671,10 +39152,7 @@ function dmResearchHTML(){
     const prox = cal.events.find(e => e.when && e.when.getTime() >= Date.now());
     if(prox) corpo += dmSection('Próximo evento', '<p class="dm-event">'+esc(String(prox.title || '—'))+'</p>'+dmRow(String(prox.country || ''), dmAux(prox.when.toLocaleDateString('pt-BR')+' · '+prox.when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))));
   }
-  const cacheIssue = typeof ffNewsCacheIssue === 'function' ? ffNewsCacheIssue() : '';
-  if(cacheIssue) corpo += dmRow('Cache', dmAux(cacheIssue));
-  else if(cal && typeof ffNewsCacheStale === 'function' && ffNewsCacheStale())
-    corpo += dmRow('Cache', dmAux('desatualizado — atualize no módulo'));
+  if(typeof ffNewsStatusText==='function') corpo += dmRow('Cache',dmAux(ffNewsStatusText(cal)));
   corpo += '</div><div class="dm-record">';
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
@@ -38832,6 +39310,375 @@ window.addEventListener('storage',dashMacroSchedule);
 document.addEventListener('visibilitychange',dashMacroSchedule);
 setInterval(dashMacroSchedule,60000);
 window.JPWDashMacro = Object.freeze({render: dashMacroRender, schedule: dashMacroSchedule});
+// NOTIFICATIONS-CENTER-01: presentation only. No persisted inbox, domain writer,
+// permission request, economic fetch or replacement of confirm/prompt.
+// The native alert bridge preserves its original synchronous call/return and
+// adds an unclassified session message; it never interprets success from words.
+(function initNotificationCenter(){
+  if(window.JPWNotifications) return;
+  const el=id=>document.getElementById(id);
+  const names={system:'Sistema',forex:'Forex',pf:'Finanças Pessoais',alladin:'Alladin',research:'Research',notes:'Notas'};
+  const rank={critical:0,warning:1,info:2};
+  const live=new Map(), history=[], seen=new Map();
+  let stateRef=S, serial=0, scheduled=false, rendering=false, paused=false, lastView='', returnFocus=true;
+  const text=value=>typeof value==='string'?value:'';
+  const visible=node=>!!node && !node.hidden && node.getClientRects().length>0;
+  const modelArea=node=>{
+    if(node?.closest('#mvpNotesOverlay,#mvpNotesLauncher')) return 'notes';
+    if(node?.closest('#settingsModal,#settingsOverlay')) return 'system';
+    if(node?.closest('#alladinModalBox')) return 'alladin';
+    const primary=node?.closest('.screen')?.id;
+    return primary==='finpes'?'pf':primary==='alladin'?'alladin':primary==='research'?'research':
+      ['exec','op','contab','fxplan','contas','check','onboarding'].includes(primary)?'forex':'system';
+  };
+  function currentArea(){
+    if(el('mvpNotesOverlay')?.getAttribute('aria-hidden')==='false') return 'notes';
+    if(el('settingsOverlay')?.getAttribute('aria-hidden')==='false') return 'system';
+    if(visible(el('alladinModalBox'))) return 'alladin';
+    const primary=window.JPWNavigation?.current().primary;
+    return primary==='personal-finance'?'pf':names[primary]?primary:'system';
+  }
+  function currentGeneration(){
+    if(stateRef===S) return;
+    stateRef=S; live.clear(); history.length=0; seen.clear(); lastView='';
+  }
+  function record(message,contextArea='system'){
+    currentGeneration();
+    const body=text(message).trim().slice(0,1200);
+    if(!body) return;
+    // Identical immediate repaint is not another action. Actual subsequent
+    // alerts still have their own timestamp. Nothing leaves this browser tab.
+    const prior=history[0], now=Date.now();
+    if(prior && prior.body===body && prior.contextArea===contextArea && now-prior.at<500) return;
+    // The shared producer has no domain metadata. Screen context is not proof
+    // of the origin of an async operation or cross-tab system message.
+    history.unshift({id:'activity:'+ ++serial,area:'system',contextArea,kind:'event',severity:'info',
+      title:'Mensagem do aplicativo',body,at:now,revision:String(serial),go:null});
+    if(history.length>80){ const old=history.pop(); seen.delete(old.id); }
+    schedule();
+  }
+  function add(next,id,area,severity,title,body,go,revision){
+    next.set(id,{id,area,kind:'live',severity,title,body,go,revision:revision||severity+'|'+title+'|'+body});
+  }
+  function collectSystem(next){
+    const failure=typeof jpWealthPersistenceFailure==='object' && jpWealthPersistenceFailure;
+    if(jpWealthPersistenceOutcomeIsUnknown())
+      add(next,'system:persistence','system','critical','Gravação não confirmada',
+        'O resultado da gravação é desconhecido. Novas gravações permanecem bloqueadas; confira a recuperação antes de tentar novamente.','backup');
+    else if(typeof jpWealthLoadRecoveryActive==='function' && jpWealthLoadRecoveryActive())
+      add(next,'system:persistence','system','critical','Recuperação da base necessária',
+        'A base não pôde ser carregada com segurança. O aviso de recuperação e as proteções continuam ativos.','backup');
+    else if(failure?.active)
+      add(next,'system:persistence','system','critical',failure.kind==='conflict'?'Outra aba atualizou a base':'Falha ao gravar neste navegador',
+        'Confira o aviso de armazenamento. Esta mensagem não confirma o salvamento das alterações pendentes.','backup',failure.kind);
+    else if(jpWealthPersistenceIsBlocked())
+      add(next,'system:persistence','system','warning','Gravação suspensa',
+        'O bloqueio do aplicativo permanece ativo. Ler a notificação não libera gravações.','backup');
+    const backup=dgBackupStatus();
+    if(backup.due || backup.state==='unknown'){
+      const days=dgBackupAgeDays();
+      add(next,'system:backup','system',backup.tone==='bad'?'critical':'warning',backup.text,
+        backup.state==='unknown'?'Confira a gravação e a data antes de considerar o backup confirmado.':
+          days===null?'Ainda não há confirmação de backup.':days+' dias desde a última confirmação de backup.',
+        'backup',backup.state+'|'+backup.at);
+    }
+    if(typeof settingsProfileState==='object' && ['error','blocked'].includes(settingsProfileState.status))
+      add(next,'system:profile','system','warning','Perfil local precisa de atenção',
+        'Confira a mensagem de Configurações → JP Wealth Account. O perfil e o rascunho não são alterados pela central.','profile',settingsProfileState.status+'|'+settingsProfileState.note);
+  }
+  function collectForex(next){
+    const c=compute(), clearance=getOperationalClearance(c), onboarding=getOnboardingCompletionState();
+    if(clearance.status!=='clear' || !onboarding.complete)
+      add(next,'forex:clearance','forex',['blocked','reduce'].includes(clearance.status)||onboarding.severity==='critical'?'critical':'warning',
+        clearance.status==='clear'?'Formulário de Início possui pendências':clearance.title,
+        [...(clearance.status==='clear'?[]:[clearance.subtitle,...clearance.reasons]),
+          ...(!onboarding.complete?[onboardingCompletionText(onboarding)]:[])].join('\n'),'forex-overview');
+    // The detailed completion model can disagree with the summary's done flag.
+    // Preserve both producers in one card; never change their financial rules.
+    const orders=(S.phases||[]).flatMap(phase=>Array.isArray(phase.orders)?phase.orders:[]);
+    const review=orders.filter(o=>o && (o.needsReview || o.stopPhaseWarning));
+    if(review.length) add(next,'forex:order-review','forex','warning','Ordens aguardam revisão',
+      review.length+' ordem(ns) marcada(s) pelo mecanismo existente.','forex-operation');
+    if(S.protocolBreaches>0) add(next,'forex:protocol','forex','warning','Registros de quebra de protocolo',
+      S.protocolBreaches+' registro(s) no ciclo. Este total não indica novos eventos nesta sessão.','forex-operation');
+    if(typeof staleInfo==='function' && typeof daysStale==='function' && Array.isArray(S.instruments) && S.instruments.length){
+      const worst=S.instruments.reduce((a,b)=>daysStale(a.updated)>=daysStale(b.updated)?a:b);
+      const status=staleInfo(worst.updated);
+      if(status.cls!=='fresh') add(next,'forex:quotes','forex','warning','Cotações de referência',status.label,'forex-preparation');
+    }
+    if(window.JPWMarket?.usdBrl){
+      const q=JPWMarket.usdBrl.get();
+      if(q.status==='unavailable'||q.status==='stale') add(next,'forex:usdbrl','forex','warning','Referência USD/BRL',
+        q.status==='unavailable'?'Cotação indisponível. Confira o Planejamento.':'A referência está desatualizada. Confira as datas no Planejamento.',
+        'forex-planning',q.status);
+    }
+  }
+  function collectPersonalFinance(next){
+    const reason=pfWriteBlockReason();
+    if(reason){ add(next,'pf:compatibility','pf','critical','Finanças Pessoais em modo de leitura',
+      'A unidade armazenada não é suportada. O módulo mantém seus bloqueios de edição.','pf'); return; }
+    const pending=pfPendingBefore(pfCurrentMonthKey());
+    if(pending.length) add(next,'pf:pending','pf','warning','Pendências de meses anteriores',
+      pending.map(p=>p.key+': '+p.despesas+' despesa(s) e '+p.notas+' nota(s) pendente(s).').join('\n'),'pf-monthly');
+    const lines=(S.personalFinance?.creditLines||[]).filter(Boolean);
+    const excess=lines.filter(line=>pfCreditLineDerived(line).estouro);
+    if(excess.length) add(next,'pf:credit','pf','warning','Crédito acima do limite informado',
+      excess.length+' linha(s) sinalizada(s) pelo módulo. Isso não classifica inadimplência.','pf-debts');
+  }
+  function collectAlladin(next){
+    const compat=JPWAlladin.compat();
+    if(compat.readOnly){
+      add(next,'alladin:compatibility','alladin','critical','Alladin em modo de leitura',
+        'A versão dos dados é posterior à suportada. Nenhuma edição será liberada pela central.','alladin');
+      return; // The ledger refusal is the same compatibility condition.
+    }
+    const ledger=JPWAlladin.leitura.ledger();
+    // Transaction readability alone does not prove that balances/positions can
+    // be derived. Ask the same readers as Alladin, without summing here.
+    let issue=!ledger.available || ledger.quality==='BLOCKING'?{source:'ledger',issues:ledger.issues}:null;
+    if(!issue){
+      const positions=JPWAlladin.leitura.posicoes();
+      if(!positions.available)issue={source:'positions',issues:positions.issues};
+    }
+    if(!issue)for(const account of JPWAlladin.leitura.cashAccounts()){
+      const balance=JPWAlladin.leitura.saldoDeCaixa(account.cashAccountId);
+      if(!balance.available){issue={source:'balance',id:account.cashAccountId,issues:balance.issues};break;}
+    }
+    if(issue)
+      add(next,'alladin:quality','alladin','critical','Integridade do Alladin precisa de atenção',
+        'Uma leitura de lançamentos, posições ou saldos foi recusada. Confira os problemas no próprio módulo; ausência de leitura não significa saldo zero.','alladin',JSON.stringify(issue));
+  }
+  function collectCalendar(next){
+    const cache=ffNewsReadCache(), issue=ffNewsCacheIssue(), now=Date.now();
+    const outdated=cache && now-cache.fetchedAt>FF_NEWS_MAX_AGE_MS;
+    if(!cache || issue || ffNewsLastError || outdated)
+      add(next,'calendar:status','research',!cache && !ffNewsLastError && !issue?'info':'warning',
+        !cache?'Calendário sem dados disponíveis':'Calendário precisa de atualização',
+        ffNewsStatusText(cache)+(outdated?' · O cache excedeu o prazo de atualização.':''),
+        'calendar',[!!cache,issue,ffNewsLastError,!!outdated].join('|'));
+    if(!cache) return;
+    for(const event of cache.events){
+      const when=new Date(event.date), ms=when.getTime()-now;
+      if(ms<0 || !ffNewsIsToday(when)) continue;
+      const id='calendar:event:'+event.country+'|'+event.date+'|'+event.title;
+      const imminent=ms<=FF_NEWS_IMMINENT_MS;
+      add(next,id,'research',imminent?'warning':'info',
+        (imminent?'Em breve · ':'Hoje · ')+event.title,
+        event.country+' · '+when.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+
+        ' · '+ffNewsCountdownLabel(ms)+(outdated?' · fonte pendente de atualização':''),
+        'calendar',id+'|'+imminent+'|'+!!outdated);
+      next.get(id).when=when.getTime();
+    }
+  }
+  const localSources=[
+    ['#ncFormErr,#ncStatus.err','research','NoCoda','nocoda'],
+    ['#pvNewStudyErr,#pvFormErr','research','Pivots','pivots'],
+    ['#mvpNotesNewError','notes','Notas','notes'],
+    ['#mvpNotesCopyLive,#mvpNotesExportLive','notes','Cópia e exportação de Notas','notes','info'],
+    ['#fxFetchStatus.err,#fxFetchStatus.warn','forex','Cotações','forex-preparation'],
+    ['#fxpCreateErr,#fxpPlanningErr,#fxpActErr,#fxpCErr','forex','Planejamento','forex-planning'],
+    ['#alladinModalBox .session-error,#alladinModalBox .session-warning','alladin','Formulário Alladin',null],
+    ['#fbAllocExceeds','pf','Destinações do mês','pf-monthly'],
+    ['#dgStorageCard .dg-status-warn,#dgActNote','system','Pasta de exportação','backup'],
+    ['[data-galton-storage].is-error,[data-galton-integrity]:not([hidden])','research','Laboratório','probability-lab']
+  ];
+  function collectLocal(next){
+    const localErrors=new Set();
+    for(const [selector,area,title,go,severity='warning'] of localSources){
+      for(const node of document.querySelectorAll(selector)){
+        // These are current messages of an open surface, not newly occurring
+        // actions. Remounting a status never manufactures a historical event.
+        if(!visible(node)) continue;
+        const body=node.textContent.trim();
+        if(!body || body==='—') continue;
+        add(next,'feedback:'+title,area,severity,title+' · mensagem atual',body,go);
+        if(severity==='warning')localErrors.add(area);
+        break; // Summary takes priority over a second message of the same form.
+      }
+    }
+    const invalid=new Map();
+    document.querySelectorAll('[aria-invalid="true"]').forEach(node=>{
+      if(!visible(node) || node.closest('#notificationCenter')) return;
+      const area=modelArea(node);
+      invalid.set(area,(invalid.get(area)||0)+1);
+    });
+    invalid.forEach((count,area)=>{if(!localErrors.has(area))add(next,'fields:'+area,area,'warning','Campos precisam de revisão',
+      count+' campo(s) com erro no formulário aberto. A mensagem detalhada permanece junto do campo.',
+      null,String(count));});
+    if(typeof ncDirty!=='undefined' && ncDirty)
+      add(next,'research:nocoda-draft','research','info','NoCoda com alterações não salvas','Rascunho mantido nesta sessão.','nocoda');
+    if(typeof pvDirty!=='undefined' && pvDirty)
+      add(next,'research:pivots-draft','research','info','Pivots com alterações não salvas','Conclua ou cancele a edição no próprio estudo.','pivots');
+    if(typeof mvpNotesUI==='object' && mvpNotesUI.draftDirty)
+      add(next,'notes:draft','notes','info','Nota com alterações não salvas','O conteúdo permanece no editor desta sessão.','notes');
+  }
+  function refresh(){
+    if(rendering) return;
+    currentGeneration();
+    const next=new Map();
+    // Separate adapters: failure never causes an empty healthy area nor stops
+    // the other producers. No exception text containing domain data is copied.
+    for(const [area,collect] of [['system',collectSystem],['forex',collectForex],['pf',collectPersonalFinance],
+      ['alladin',collectAlladin],['research',collectCalendar],['system',collectLocal]]){
+      try{ collect(next); }
+      catch(_){ add(next,'unavailable:'+collect.name,area,'warning','Avisos desta área indisponíveis',
+        'Não foi possível consultar esta fonte. Abra a área para conferir o estado.','area:'+area); }
+    }
+    for(const key of live.keys()) if(!next.has(key)) seen.delete(key);
+    live.clear(); next.forEach((item,key)=>live.set(key,item));
+    paint();
+  }
+  function entries(){ return [...live.values(),...history].sort((a,b)=>
+    rank[a.severity]-rank[b.severity] || (a.kind===b.kind?0:a.kind==='live'?-1:1) ||
+    (a.when&&b.when?a.when-b.when:0) || (b.at||0)-(a.at||0)); }
+  function unread(item){ return seen.get(item.id)!==item.revision; }
+  function button(label,attr,id){
+    const b=document.createElement('button'); b.type='button'; b.textContent=label; b.dataset[attr]=id; return b;
+  }
+  function paint(){
+    const trigger=el('headerNotificationsBtn'), badge=el('notificationBadge'), list=el('notificationList');
+    if(!trigger || !badge || !list) return;
+    rendering=true;
+    try{
+      const all=entries(), count=all.filter(unread).length;
+      badge.hidden=!count; badge.textContent=count>99?'99+':String(count);
+      trigger.setAttribute('aria-label','Notificações'+(count?' · '+count+' não lida(s)':' · nenhuma não lida'));
+      el('notificationSummary').textContent=count?'Você tem '+count+' notificação(ões) não lida(s).':'Todas as notificações foram lidas.';
+      if(!el('notificationCenter').open) return;
+      const area=el('notificationArea').value, shown=all.filter(item=>area==='all'||item.area===area||item.contextArea===area);
+      const view=JSON.stringify(shown.map(item=>[item.id,item.title,item.body,unread(item),item.at]));
+      if(view===lastView) return; lastView=view;
+      const focus=document.activeElement, focusId=focus?.closest('[data-notification-id]')?.dataset.notificationId;
+      const focusAction=focus?.dataset.notificationGo!==undefined?'notificationGo':'notificationRead';
+      const fragment=document.createDocumentFragment();
+      for(const item of shown){
+        const li=document.createElement('li'); li.dataset.notificationId=item.id;
+        li.dataset.kind=item.kind;li.dataset.severity=item.severity;li.dataset.unread=String(unread(item));
+        const meta=document.createElement('p'); meta.className='notification-meta';
+        meta.textContent=names[item.area]+' · '+(item.kind==='event'?'Mensagem desta sessão · '+
+          new Date(item.at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+
+          (item.contextArea!=='system'?' · Exibida em '+names[item.contextArea]:''):'Situação atual');
+        const title=document.createElement('h3');title.textContent=item.title;
+        const body=document.createElement('p');body.className='notification-body';body.textContent=item.body;
+        const actions=document.createElement('div');actions.className='notification-actions';
+        if(item.go) actions.append(button('Ver detalhes','notificationGo',item.id));
+        actions.append(button(unread(item)?'Marcar como lida':'Lida','notificationRead',item.id));
+        li.append(meta,title,body,actions);fragment.append(li);
+      }
+      list.replaceChildren(fragment);
+      el('notificationEmpty').hidden=shown.length>0;
+      if(focusId){
+        const row=[...list.children].find(node=>node.dataset.notificationId===focusId);
+        const target=row?.querySelector(focusAction==='notificationGo'?'[data-notification-go]':'[data-notification-read]');
+        (target||el('notificationReadAll')).focus({preventScroll:true});
+      }
+    }finally{ rendering=false; }
+  }
+  function schedule(){
+    if(paused || scheduled) return;
+    scheduled=true;
+    queueMicrotask(()=>{scheduled=false;refresh();});
+  }
+  function open(){
+    const dialog=el('notificationCenter');
+    if(!dialog || dialog.open) return;
+    refresh(); dialog.showModal();lastView='';paint();
+    el('headerNotificationsBtn').setAttribute('aria-expanded','true');
+    el('notificationClose').focus();
+  }
+  function close(restore=true){const d=el('notificationCenter');if(d?.open){returnFocus=restore;d.close();}}
+  function go(item){
+    close(false);
+    const opener=el('headerNotificationsBtn'), target=item.go;
+    if(target==='backup'||target==='profile'){ openSettingsModal(target==='profile'?'account':'backup',opener); return; }
+    if(target==='notes'){openMvpNotesDrawer(opener);return;}
+    if(target==='calendar'){JPWEcal.open(opener);return;}
+    if(target==='pf'||target==='pf-monthly'||target==='pf-debts'){
+      JPWNavigation.navigate('finpes');
+      if(target!=='pf') JPWNavigation.navigateLocal('finpes',target==='pf-monthly'?'mensal':'dividas');
+      JPWNavigation.focusCurrentScreen();
+      return;
+    }
+    if(target?.startsWith('area:')){
+      const area=target.slice(5);
+      if(area==='system')openSettingsModal('general',opener);
+      else {JPWNavigation.navigate(area==='pf'?'finpes':area==='notes'?'dash':area);JPWNavigation.focusCurrentScreen();}
+      return;
+    }
+    JPWNavigation.navigate(target);
+    JPWNavigation.focusCurrentScreen();
+  }
+  window.JPWNotifications=Object.freeze({open,close,refresh});
+  // Bridges are installed once and keep original behavior even if the optional
+  // centre cannot render. They do not replace blocking decisions.
+  const nativeAlert=window.alert;
+  window.alert=function(...args){
+    try{record(args[0],currentArea());}catch(_){}
+    return nativeAlert.apply(this,args);
+  };
+  for(const name of ['render','ffNewsRender','showSessionNotice']){
+    const original=window[name];if(typeof original!=='function')continue;
+    window[name]=function(...args){
+      const result=original.apply(this,args);
+      try{if(name==='showSessionNotice')record(args[0],currentArea());schedule();}catch(_){}
+      return result;
+    };
+  }
+  el('headerNotificationsBtn')?.addEventListener('click',open);
+  el('notificationClose')?.addEventListener('click',()=>close());
+  el('notificationCenter')?.addEventListener('close',()=>{
+    el('headerNotificationsBtn').setAttribute('aria-expanded','false');lastView='';
+    if(returnFocus)el('headerNotificationsBtn').focus({preventScroll:true});
+    returnFocus=true;
+  });
+  el('notificationCenter')?.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const controls=[...event.currentTarget.querySelectorAll('button:not(:disabled),select:not(:disabled),[tabindex="0"]')].filter(visible);
+    const first=controls[0],last=controls[controls.length-1],active=document.activeElement;
+    if(event.shiftKey && (active===first||!controls.includes(active))){event.preventDefault();last?.focus();}
+    else if(!event.shiftKey && (active===last||!controls.includes(active))){event.preventDefault();first?.focus();}
+  });
+  el('notificationCenter')?.addEventListener('click',event=>{
+    if(event.target===el('notificationCenter')){
+      const r=event.target.getBoundingClientRect();
+      if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)close();
+    }
+    const mark=event.target.closest('[data-notification-read]'), action=event.target.closest('[data-notification-go]');
+    const id=mark?.dataset.notificationRead||action?.dataset.notificationGo;
+    if(!id)return;
+    const item=live.get(id)||history.find(row=>row.id===id);if(!item)return;
+    seen.set(item.id,item.revision);
+    if(action)go(item);
+    paint();
+  });
+  el('notificationReadAll')?.addEventListener('click',()=>{entries().forEach(item=>seen.set(item.id,item.revision));paint();});
+  el('notificationArea')?.addEventListener('change',()=>{lastView='';paint();});
+  // Observe only known feedback roots/field validity, never editor contents or
+  // the notification list itself. Replacement of a form reconnects by selector.
+  const selector=localSources.map(row=>row[0]).join(',')+',#persistenceAlert,#persistenceRecovery,#settingsProfileStatus,#mvpNotesEditorBar';
+  const observer=new MutationObserver(records=>{
+    if(rendering)return;
+    if(records.some(record=>{
+      const node=record.target.nodeType===1?record.target:record.target.parentElement;
+      if(!node||node.closest('#notificationCenter,#headerNotificationsBtn'))return false;
+      if(record.attributeName==='aria-invalid')return true;
+      return !!node.closest(selector) || [...record.addedNodes].some(n=>n.nodeType===1 && (n.matches(selector)||n.querySelector(selector)));
+    }))schedule();
+  });
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,
+    attributeFilter:['aria-invalid','data-state','data-dirty','hidden','class']});
+  document.addEventListener('input',schedule);
+  document.addEventListener('change',schedule);
+  document.addEventListener('click',schedule);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
+  window.addEventListener('storage',schedule);
+  window.addEventListener('pagehide',()=>{paused=true;history.length=0;live.clear();seen.clear();});
+  window.addEventListener('pageshow',()=>{paused=false;schedule();});
+  // Existing quote provider, read only subscription. The existing calendar tick
+  // reaches us through ffNewsRender called by ffNewsRenderAll; no second economic poll/timer is created.
+  if(window.JPWMarket?.usdBrl?.onChange) JPWMarket.usdBrl.onChange(schedule);
+  schedule();
+})();
 </script>
 </body>
 </html>

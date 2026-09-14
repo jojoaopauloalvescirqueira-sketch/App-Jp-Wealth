@@ -62,3 +62,40 @@ jobs:
         env:
           QUALITY_TIER: ${{ inputs.tier || 'standard' }}
         run: python tools/quality_gate.py --tier "$QUALITY_TIER"
+
+      - name: Explain failed session finalization
+        if: failure()
+        env:
+          QUALITY_TIER: ${{ inputs.tier || 'standard' }}
+        run: |
+          python - <<'PY_DIAGNOSTIC'
+          import json
+          import os
+          from pathlib import Path
+
+          def emit(value):
+              for line in str(value).splitlines():
+                  print('| ' + line, flush=True)
+
+          matches = []
+          for path in sorted(Path('tools/.artifacts').glob('quality-*.json')):
+              report = json.loads(path.read_text(encoding='utf-8'))
+              if (report.get('tier') == os.environ['QUALITY_TIER']
+                      and report.get('git', {}).get('head') == os.environ['GITHUB_SHA']):
+                  matches.append((path, report))
+          if len(matches) != 1:
+              emit('DIAGNOSTIC_UNAVAILABLE: expected one report for this tier and SHA; found ' + str(len(matches)))
+              raise SystemExit(1)
+          path, report = matches[0]
+          emit(json.dumps({'report': str(path), 'tier': report['tier'],
+                           'head': report['git']['head'], 'summary': report['summary']}))
+          checks = [check for check in report['checks'] if check['name'] == 'session-finalization']
+          if len(checks) != 1:
+              emit('DIAGNOSTIC_UNAVAILABLE: session-finalization not uniquely recorded')
+              raise SystemExit(1)
+          check = checks[0]
+          emit(json.dumps({key: check[key] for key in
+                           ('name', 'result', 'returncode', 'duration_seconds')}))
+          if check['result'] != 'PASS':
+              emit(check['output_tail'][-12000:])
+          PY_DIAGNOSTIC

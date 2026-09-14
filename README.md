@@ -64,7 +64,9 @@ Questionário de início em etapas — parâmetros, calibração e a etapa **Bas
 
 ### Notas operacionais
 
-Painel de notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, funcionando em desktop, mobile e no HTML portátil; incluídas no backup.
+Janela central de Notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastreável, acessível pelo botão flutuante e pelas Configurações, inclusive no HTML portátil. O mesmo controlador apresenta três regiões no desktop, duas progressivas no tablet e uma etapa por vez no celular; uma janela estreita no desktop também usa duas regiões. Notas, pastas e larguras existentes continuam incluídas no backup. O salvamento permanece explícito, com os mesmos contratos de recusa e nova tentativa; rascunhos ficam apenas em memória, com confirmação ao descartá-los e aviso ao sair da página, sem recuperação prometida após recarregar.
+
+A posição proporcional do botão fica em uma preferência local separada, `jpwealth_notes_launcher_position_v1`, com `schemaVersion: 1` e coordenadas `x`/`y` entre 0 e 1. Movimentos e ajustes concluídos confirmam a gravação por releitura; recarregar restaura a posição, e redimensionar apenas a projeta na área disponível. **Restaurar posição** remove somente essa preferência. **Finalizar sessão** também a remove, preservando notas, pastas e larguras; ela não integra o backup financeiro. Contrato local em [NIGHT PENDING RECONCILIATION](docs/work/CHG-NIGHT-PENDING-RECONCILIATION-20260914.md), com cobertura focal em [notes_experience_test.py](tools/notes_experience_test.py).
 
 ### Central de Configurações
 
@@ -258,3 +260,11 @@ Não acrescentam métricas financeiras, persistência de domínio ou 3D e não
 homologam o motor V11. O estado é candidate local, sem declarar aceite humano,
 integração ou publicação; escopo e gates em
 [CHG-DESIGN-EXPERIENCE-01-20260912](docs/work/CHG-DESIGN-EXPERIENCE-01-20260912.md).
+
+### Backup local e avisos
+
+Configurações → Dados e Segurança → Backup e Recuperação explica a base local e a pasta de exportação. O JSON completo preserva os dados dos módulos, com cobertura e exclusões descritas; ele não transporta perfil/foto nem todas as personalizações do navegador. Exportação, confirmação humana de backup e gravação local têm estados separados. Falhas do calendário permanecem visíveis nas superfícies que consomem seu cache. A aplicação não promete notificações quando estiver fechada. [Contrato](docs/architecture/DB-STORAGE-GOVERNANCE.md).
+
+### Comunicação in-app reconciliada
+
+O sino reúne as condições existentes dos módulos sem substituir seus avisos ou bloqueios. Backup usa o mesmo estado canônico do Dashboard/Configurações, inclusive data inválida e UNKNOWN. Leitura/histórico da central são transitórios; ler um item não resolve sua causa. Notas mantém posição auxiliar persistente e janela própria. [Contrato da central](docs/architecture/NOTIFICATION-CENTER.md).

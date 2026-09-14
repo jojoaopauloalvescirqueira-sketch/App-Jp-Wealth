@@ -72,6 +72,8 @@ try:
         # Destinos físicos legados continuam na fachada, não como primários.
         assert facts['tabs']==5, facts
         assert facts['headerActions']==3, facts
+        assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count()==1
+        assert page.locator('#headerActions #headerNotesBtn').count()==0
         assert facts['state'] is True, facts
         assert facts['storageKey']=='jpwealth_v9_state', facts
         assert facts['iconPicker'] is True, facts
@@ -208,7 +210,8 @@ try:
         page.locator('#headerConfigBtn').click()
         page.evaluate("settingsNavigateToLeaf('interface')")
         page.locator('[data-mvp-notes-visibility="hide"]').click()
-        assert page.locator('#headerNotesBtn').is_hidden(), 'ocultar deveria esconder o botão do header'
+        assert page.locator('#headerNotesBtn').is_hidden(), 'ocultar deveria esconder o botão flutuante'
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is False
         assert page.evaluate('S.mvpNotes.items.length')==1, 'ocultar o ícone não pode apagar a nota'
         assert page.evaluate('S.mvpNotes.folders.length')==1, 'ocultar o ícone não pode apagar a pasta'
         page.locator('#mvpNotesOpenFromSettingsBtn').click()

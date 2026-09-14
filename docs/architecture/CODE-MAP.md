@@ -1,3 +1,11 @@
+# Revisão cumulativa — unificação 2026-09-14
+
+O candidate de unificação preserva Notas/Backup posteriores e incorpora `src/js/40-app/18-notification-center.js` como 79º script, após os 78 herdados, conforme o contrato de [Notifications](NOTIFICATION-CENTER.md). O sino usa `dgBackupStatus()` da mesma fonte de Dashboard/Settings, sem persistir inbox ou recalcular domínio. Registros abaixo mantêm contagens e decisões históricas de suas revisões. Build/identidade do pacote novo em manifesto externo; integração ainda não demonstrada.
+
+# Notas — reconciliação local em implementação
+
+A janela de Notas centralizada reutiliza `14-mvp-notes.js`, com launcher de posição auxiliar normalizada, mesma instância e larguras canônicas preservadas. Layout desktop/tablet/celular 3/2/1. Contrato vigente desta composição: [CHG-NIGHT-PENDING-RECONCILIATION](../work/CHG-NIGHT-PENDING-RECONCILIATION-20260914.md). Não representa integração. A Central de Notificações posterior não foi incorporada à origem309.
+
 # Completion pass — representação de apresentação local
 
 Base Git `fafb228316cbcad8091ebc4632443a51687ace43` mais delta local; fingerprint externo.
@@ -138,7 +146,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 40 | `src/js/40-app/11-operational-shell.js` | Shell derivado do resolver: lateral contextual padrão, composição superior opcional no Editor, mesmos nós N1/N2/N3, diálogos mobile e foco |
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado: contexto global, Status do Sistema e realocação dos componentes operacionais para Forex > Visão Geral |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
-| 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
+| 43 | `src/js/40-app/14-mvp-notes.js` | Notas: acesso flutuante móvel e pelas Configurações; posição em memória, tickets/dados e identificadores internos preservados |
 | 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget em Forex > Visão Geral, inicializados em separado; calendário e resumo Dashboard compartilham o pipeline |
 | 45 | `src/js/40-app/16-storage-governance.js` | UI da governança de armazenamento |
 | 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal: render parametrizado por raiz (`data-ecal-role`), servindo o overlay `#ecalOverlay` e o workspace `#execEcal` — duas instâncias visuais, um domínio |
@@ -334,3 +342,11 @@ Os focais da campanha estão em `tools/design_pf_comparison_test.py` e
 de execução. Escopo e gates permanecem em
 `docs/work/CHG-DESIGN-EXPERIENCE-01-20260912.md`. Não há nova métrica financeira,
 schema, autoridade de escrita ou alteração da cópia parcial A12.
+
+## Backup e avisos — reconciliação local
+
+- `00-core/04-persistence.js`: `dgCommitGovernance` delimita confirmação/export metadata; `dgPersistenceStatus` e `dgBackupStatus` são projeções comuns, sem novo motor financeiro.
+- `30-accounting/01-daily-ledger.js`: cobertura do clone, fases de entrega/registro local, validação proporcional de importação e preservação em recusa.
+- `40-app/16-storage-governance.js` e `12-global-dashboard.js`: base ativa versus destino, freshness e estados de gravação.
+- `40-app/15-ff-news.js`: `ffNewsStatusText` é compartilhado pelo widget, modal/workspace em `17-economic-calendar.js` e resumo em `20-ui/25-dash-macro.js`. Nenhuma nova consulta econômica; erro não vira “zero eventos”.
+- `tools/backup_reliability_test.py`: dados sintéticos, contraprovas sobre a origem309 e round-trip real em contexto descartável. FULL do produto continua obrigatório e separado.

@@ -141,7 +141,7 @@ function exportAudit(){
     protocolBreaches:S.protocolBreaches, transitionLog:S.transitionLog,
     ledger:ledgerSorted(), fases:S.phases, contas:contasSemSegredo,
   };
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify(payload,(k,v)=>k==='investorPassword'?'':v,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='jpwealth_auditoria_'+todayISO()+'.json';
@@ -168,6 +168,18 @@ function exportAudit(){
 // segurança de um ato destrutivo deve representar o DOCUMENTO AUTORITATIVO persistido,
 // não o S potencialmente obsoleto desta aba. O fluxo Finalizar Sessão passa o documento
 // lido do disco na abertura; todos os outros usos mantêm o comportamento de sempre (S).
+// Mapa descritivo do contrato local. O documento inteiro continua sendo exportado;
+// a lista não limita módulos futuros nem transporta preferências/capacidades locais.
+function dgBackupCoverage(state){
+  return {
+    storage:'localStorage', key:LSKEY,
+    sections:Object.keys(state).sort(),
+    excluded:['investorPassword','perfil e foto locais','layouts e navegação locais',
+      'posição do launcher de Notas','preferências do Laboratório','caches públicos',
+      'permissão/handle da pasta','controles de sessão entre abas','cópias brutas de recuperação',
+      'rascunhos ainda não salvos e simulação em memória'],
+  };
+}
 function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
   const stateExport=structuredClone(estadoFonte||S);
   // Incondicional (política de segredo): não existe mais variante de backup com senha.
@@ -185,6 +197,8 @@ function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
     exportadoEm,
     dataLocal:todayISO(),
     segredosIncluidos:false, // política de segredo: sempre sem senha
+    build:typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:null,
+    cobertura:dgBackupCoverage(stateExport),
     state:stateExport,
   };
   return new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -203,18 +217,30 @@ function dgDownloadViaAnchor(filename,blob){
 // Sucesso confirmado → e SÓ então o estado avança (§8.2): sequência, carimbo, arquivo,
 // changeLog e gravação. Uma exportação que falhou não deixa rastro de sucesso.
 function dgRegisterExportSuccess(seq,filename,exportadoEm,destino){
-  S.dataGovernance.export.lastSequence=seq;
-  S.dataGovernance.export.lastExportAt=exportadoEm;
-  S.dataGovernance.export.lastExportFile=filename;
-  if(typeof dgLogChange==='function') dgLogChange('database','exported',filename,
-    destino==='folder'?'Base exportada para a pasta padrão':'Base exportada via download do navegador');
-  save();
-  // mantém o cartão da Central em dia (guardas: a UI carrega depois deste script)
-  if(typeof renderDgStorageCard==='function') renderDgStorageCard();
+  return dgCommitGovernance('export',()=>{
+    S.dataGovernance.export.lastSequence=seq;
+    S.dataGovernance.export.lastExportAt=exportadoEm;
+    S.dataGovernance.export.lastExportFile=filename;
+    dgLogChange('database','exported',filename,
+      destino==='folder'?'Base exportada para a pasta padrão':'Download da base iniciado pelo navegador');
+  });
+}
+// UI e registro local são posteriores à entrega: falhar aqui não desfaz o arquivo.
+function dgFinishExport(meta,quiet){
+  let registered=false;
+  try{ registered=dgRegisterExportSuccess(meta.sequence,meta.filename,meta.exportedAt,meta.destination==='folder'?'folder':'downloads'); }
+  catch(e){}
+  meta.localRecordConfirmed=registered===true;
+  const delivery=meta.destination==='folder'?'Arquivo gravado na pasta de exportação':'Download iniciado — confira se o navegador salvou o arquivo';
+  const warning=registered?'':'\n\nO registro local desta exportação não foi confirmado. Preserve o arquivo e verifique o armazenamento antes de tentar novamente.';
+  if(!quiet || !registered) alert(delivery+':\n\n'+meta.filename+warning);
+  // Renderizadores async também podem rejeitar; nunca viram erro de entrega.
+  try{ if(typeof renderDgStorageCard==='function') Promise.resolve(renderDgStorageCard()).catch(()=>{}); }catch(e){}
+  return jpWealthPersistenceOutcomeIsUnknown()?null:meta;
 }
 // Exportação completa da base — agora async e orquestrada (JPW-HJFGDE §14).
 // Retorna meta {filename, exportedAt, segredosIncluidos, destination} em sucesso;
-// null quando nada foi exportado (cancelamento ou falha já explicada ao operador).
+// null quando não há confirmação segura para continuar (cancelamento/falha/UNKNOWN).
 // NUNCA lança e NUNCA faz fallback silencioso para Downloads (§7): se a pasta
 // configurada está inacessível, o operador decide — reautorizar, trocar de pasta ou
 // exportar excepcionalmente para Downloads, por escolha explícita.
@@ -257,9 +283,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
       const seq=baseSeq+1;
       const filename=dgExportFileName(seq,new Date());
       dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-      dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
-      if(!quiet) alert('Base exportada via download do navegador:\n\n'+filename+(supported?'':'\n\nEste navegador não suporta pasta persistente (File System Access API) — as exportações usam o mecanismo padrão de download.'));
-      return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'};
+      return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'},quiet);
     }
     // Pasta configurada: resolver acesso. Enquanto o operador não resolver (ou optar por
     // Downloads explicitamente), NENHUM arquivo é gerado.
@@ -269,6 +293,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
         // nome progressivo com proteção física de colisão (§8.3): nunca sobrescrever;
         // em colisão a sequência avança até nome livre (teto de 1000 é rede de segurança)
         let seq=baseSeq+1, filename=dgExportFileName(seq,new Date());
+        let writeAttempted=false;
         try{
           let guard=0;
           while(await dgFsFileExists(handle,filename)){
@@ -277,14 +302,18 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
           }
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
-          await dgFsWriteFile(handle,filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-          dgRegisterExportSuccess(seq,filename,exportadoEm,'folder');
-          if(!quiet) alert('Base exportada para a pasta padrão "'+(S.dataGovernance.storage.folderDisplayPath||handle.name)+'":\n\n'+filename);
-          return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'};
+          const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+          writeAttempted=true;
+          await dgFsWriteFile(handle,filename,blob);
         }catch(e){
-          state='invalid'; // pasta removida/ilegível no meio do caminho — cai no diálogo abaixo
+          if(writeAttempted){
+            alert('Não foi possível confirmar a conclusão do arquivo '+filename+'. O resultado da escrita é desconhecido. Confira a pasta antes de uma nova tentativa; nenhum download alternativo foi iniciado.');
+            return null;
+          }
+          state='invalid';
+          continue;
         }
-        continue;
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'},quiet);
       }
       // prompt | denied | missing | invalid → decisão explícita do operador (§7).
       // O diálogo vive em 40-app/16-storage-governance.js; sem ele (geometria degenerada
@@ -299,21 +328,25 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
         const seq=baseSeq+1;
         const filename=dgExportFileName(seq,new Date());
         dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-        dgRegisterExportSuccess(seq,filename,exportadoEm,'downloads');
-        if(!quiet) alert('Base exportada excepcionalmente via download do navegador:\n\n'+filename+'\n\nA pasta padrão continua configurada e precisando de atenção.');
-        return {filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'};
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'},quiet);
       }
       if(decision==='retry'){ ({state,handle}=await dgFsStatus()); continue; }
       return null; // cancelado — nada foi exportado e nada mudou
     }
   }catch(e){
-    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nNenhum estado de exportação foi alterado. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos e notas).');
+    alert('A exportação não foi concluída: '+(e&&e.message?e.message:'erro inesperado.')+'\n\nVerifique o destino e os avisos antes de repetir. Antes de fechar a página, anote manualmente os registros mais recentes (ordens, fechamentos e notas).');
     return null;
   }
 }
 function normalizeImportedState(raw){
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) throw new Error('JSON inválido: raiz precisa ser um objeto.');
-  const candidate = raw.state && typeof raw.state==='object' ? raw.state : raw;
+  const envelope=Object.prototype.hasOwnProperty.call(raw,'state') || Object.prototype.hasOwnProperty.call(raw,'tipo');
+  if(envelope){
+    if(raw.tipo!==undefined && raw.tipo!=='jpwealth_full_backup') throw new Error('Formato de backup não reconhecido.');
+    if(raw.versao!==undefined && raw.versao!=='V9.1') throw new Error('Versão de backup não suportada.');
+    if(raw.localStorageKey!==undefined && raw.localStorageKey!==LSKEY) throw new Error('Backup de outra base de dados.');
+  }
+  const candidate=envelope?raw.state:raw;
   if(!candidate || typeof candidate!=='object' || Array.isArray(candidate)) throw new Error('Backup sem objeto de estado.');
   if(!candidate.params || typeof candidate.params!=='object' || Array.isArray(candidate.params)) throw new Error('Backup com params inválido.');
   if(candidate.ledger && !Array.isArray(candidate.ledger)) throw new Error('Backup com ledger inválido.');
@@ -340,9 +373,11 @@ function normalizeImportedState(raw){
   // ao agregado); presente e invalida recusa ANTES de tocar em coisa alguma, que
   // e o mesmo contrato transacional das linhas acima. `typeof null` e 'object',
   // por isso o null e testado a parte (ALD-03-H0 · D-2).
-  if(Object.prototype.hasOwnProperty.call(candidate,'alladin') &&
-     (candidate.alladin===null || typeof candidate.alladin!=='object' || Array.isArray(candidate.alladin)))
-    throw new Error('Backup com alladin inválido: esperava objeto.');
+  for(const key of ['alladin','personalFinance','fxPlanning','nocoda','pivotStudies','mvpNotes','dataGovernance']){
+    if(Object.prototype.hasOwnProperty.call(candidate,key) &&
+       (candidate[key]===null || typeof candidate[key]!=='object' || Array.isArray(candidate[key])))
+      throw new Error('Backup com '+key+' inválido: esperava objeto.');
+  }
   const current=S;
   let imported;
   try{
@@ -384,6 +419,21 @@ function importFullBackupFile(file){
     // destrutivo. Em modo degraded (sem Web Locks) roda direto, best-effort (DP-3).
     const aplicar=async ()=>{
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
+    if(jpWealthPersistenceOutcomeIsUnknown()){
+      alert('A importação não pode substituir uma base com desfecho de gravação desconhecido. Verifique a recuperação antes de continuar.');
+      return;
+    }
+    const previous=S, wasBlocked=jpWealthPersistenceIsBlocked();
+    const previousRecovery={...jpWealthLoadRecovery};
+    const restoreRefusedImport=()=>{
+      S=previous;
+      Object.assign(jpWealthLoadRecovery,previousRecovery);
+      if(wasBlocked) blockJPWealthPersistence();
+      if(previousRecovery.active) renderLoadRecoveryWarning();
+    };
+    let before;
+    try{ before=localStorage.getItem(LSKEY); }
+    catch(e){ alert('Não foi possível ler a base atual. O backup não foi aplicado.'); return; }
     // ALD-C3-PRE-EPOCH: o backup já foi lido e validado integralmente acima. A nova
     // geração é firmada AQUI, antes de a base ser substituída — nunca depois, porque
     // uma base nova sob geração antiga deixaria uma finalização pendente atuar sobre
@@ -404,8 +454,27 @@ function importFullBackupFile(file){
     // falhar, jpWealthResolveRecoveryAndSave() restaura a flag de recuperação e a
     // chave principal fica intacta.
     if(jpWealthPersistenceIsBlocked()) resumeJPWealthPersistence();
-    const gravou=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
-    if(typeof markSessionCheckpoint==='function') markSessionCheckpoint();
+    let gravou=false;
+    try{
+      const expected=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
+      const result=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
+      if(result===false && !jpWealthPersistenceOutcomeIsUnknown()){
+        restoreRefusedImport();
+      }else{
+        const actual=localStorage.getItem(LSKEY);
+        if(result===true && actual===expected) gravou=true;
+        else if(actual===before && !jpWealthPersistenceOutcomeIsUnknown()){
+          restoreRefusedImport();
+          jpWealthAdoptPersistedRaw(before);
+          hideStaleSavedTag(); setPersistenceFailureState(new Error('Importação não gravada.'),'storage');
+        }else{
+          hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Importação com leitura de volta divergente.');
+        }
+      }
+    }catch(e){
+      hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Não foi possível determinar o resultado da importação.');
+    }
+    if(gravou && typeof markSessionCheckpoint==='function') markSessionCheckpoint();
     // A base foi SUBSTITUÍDA — atravessa as abas pelo mesmo canal da Zona de
     // Perigo e da Finalização. Sem isto, outra aba mantinha o S anterior em
     // memória e a primeira gravação dela ressuscitava o documento antigo por
@@ -413,8 +482,8 @@ function importFullBackupFile(file){
     // difunde depois da gravação comprovada: avisar sobre uma base que não
     // chegou ao disco faria as outras abas recarregarem o estado errado.
     if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported(novaEpoch);
-    boot();
-    alert(gravou?'Backup importado com sucesso.':'O backup foi lido e aplicado em memória, mas a gravação no armazenamento local falhou — exporte um backup e verifique o navegador antes de continuar.');
+    if(gravou) boot();
+    alert(gravou?'Backup importado com sucesso.':jpWealthPersistenceOutcomeIsUnknown()?'Importação com resultado desconhecido — novas gravações bloqueadas. Preserve o arquivo e verifique a recuperação; não repita às cegas.':'A gravação do backup foi recusada. O estado anterior foi preservado; verifique o armazenamento antes de tentar novamente.');
     };
     if(typeof sessionAcquireWriteLock==='function'){ sessionAcquireWriteLock(aplicar); }
     else{ aplicar(); }

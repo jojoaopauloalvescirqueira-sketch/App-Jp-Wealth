@@ -1,3 +1,27 @@
+# Unificação final — Notas, Backup e Notifications
+
+Branch `codex/night-pending-reconciliation-20260914`; base Git `5f0c9680bdd9a93e9d184ca751999c70193a72aa`. Revisão final-r5 preservada; novo candidate em validação. Autorização 6883fa39: diagnóstico CI N3/A4 e correções causais/reconciliação N2, Git após gates, sem deploy. [Contrato e complemento](CHG-NIGHT-PENDING-RECONCILIATION-20260914.md). Evidências externas `../evidence/unification-ci`. Falha remota e launcher200% ainda em diagnóstico; nenhum aceite manual novo atribuído.
+
+## Histórico preservado
+
+# Campanha local — NIGHT PENDING RECONCILIATION
+
+Branch `codex/night-pending-reconciliation-20260914`, base Git `5f0c9680bdd9a93e9d184ca751999c70193a72aa`, snapshot309/build7432 reproduzido. N2/A3 autorizado: Notas + backup/storage/avisos, sem publicação. [CHG/CTX](CHG-NIGHT-PENDING-RECONCILIATION-20260914.md). Evidências externas em `/Users/joaopauloalves/.codex/night-pending-reconciliation/20260914/evidence`. Estado: implementação, aceite pendente.
+
+## Histórico anterior preservado
+
+# Complemento local em implementação — NOTES-LAUNCHER-01
+
+Mesma branch `codex/dashboard-surfaces-20260914`, HEAD `5f0c9680bdd9a93e9d184ca751999c70193a72aa`. Pedido explícito do proprietário: Notas flutuante e móvel, acesso nas Configurações e retirada do topo. N1/A2; [CHG/CTX](CHG-NOTES-LAUNCHER-20260914.md). Posição apenas em memória, editor/dados/preferência preservados. Revisão anterior `4589fd77…` preservada em recovery externo; esta revisão exige novo fingerprint, testes e auditoria. Sem aceite ou integração. Evidências novas em `../evidence/notes/`, externas ao produto.
+
+## Histórico anterior preservado
+
+# Candidate local em validação — DASHBOARD-SURFACES-01
+
+Branch `codex/dashboard-surfaces-20260914`, base `5f0c9680bdd9a93e9d184ca751999c70193a72aa` (Settings publicado; não é main integrada). Divisórias da shell, proporção da marca e quatro painéis largos do Dashboard, preservando dados/rotas/preferências. N0-V/A2 e branch/worktree autorizadas pelo proprietário; [CHG/CTX](CHG-DASHBOARD-SURFACES-20260914.md). Evidências externas em `/Users/joaopauloalves/.codex/dashboard-surfaces/20260914/evidence/`. Sem aceite, staging, commit, push, PR, merge ou deploy. A falha FULL remota de Settings e as dívidas anteriores continuam registradas.
+
+## Histórico anterior preservado
+
 # Tarefa corrente — SETTINGS-MACOS-01
 
 Base Git011e275; base experimental305/build73d7be267ac8e267 reproduzida. Branch `codex/settings-macos-match-20260913`; N2 de perfil local e apresentação Settings autorizados. [CHG/CTX](CHG-SETTINGS-MACOS-MATCH-20260913.md). Evidências em `/Users/joaopauloalves/.codex/settings-macos/20260913/evidence`. Novo candidate em implementação, sem aceite ou integração. Histórico abaixo preservado.

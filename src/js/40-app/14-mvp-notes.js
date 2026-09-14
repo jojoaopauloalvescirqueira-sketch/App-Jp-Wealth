@@ -36,7 +36,9 @@ const mvpNotesUI={
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
   opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
-  dragFolderId:null   // pasta sendo arrastada na reordenação manual
+  dragFolderId:null,   // pasta sendo arrastada na reordenação manual
+  launcherPosition:{x:1,y:1}, launcherDrag:null, launcherSuppressClick:false, launcherBound:false,
+  launcherRaw:null, launcherBlocked:false, launcherEpoch:0, launcherBaseEpoch:null, launcherWriteSerial:0
 };
 
 function mvpn(id){ return document.getElementById(id); }
@@ -187,7 +189,7 @@ function mvpNotesMarkdown(item){
 function mvpNotesExportMarkdown(){
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const live=mvpn('mvpNotesExportLive');
-  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
   return mvpNotesExportItemMarkdown(item);
 }
 // Exportação de UM ticket, identificado por parâmetro. Extraída de mvpNotesExportMarkdown()
@@ -196,10 +198,10 @@ function mvpNotesExportMarkdown(){
 // exportar outro ticket enquanto há edição pendente em um terceiro não tem ambiguidade.
 function mvpNotesExportItemMarkdown(item){
   const live=mvpn('mvpNotesExportLive');
-  if(!item){ if(live) live.textContent='Nenhum ticket selecionado para exportar.'; return null; }
+  if(!item){ if(live) live.textContent='Nenhuma nota selecionada para exportar.'; return null; }
   if(mvpNotesUI.draftDirty && mvpNotesUI.selectedId===item.id){
-    alert('Existem alterações não salvas. Salve o ticket antes de exportar.');
-    if(live) live.textContent='Existem alterações não salvas. Salve o ticket antes de exportar.';
+    alert('Existem alterações não salvas. Salve a nota antes de exportar.');
+    if(live) live.textContent='Existem alterações não salvas. Salve a nota antes de exportar.';
     return null;
   }
   const nome=mvpNotesMarkdownFilename(item);
@@ -216,7 +218,7 @@ function mvpNotesExportItemMarkdown(item){
   // navegadores ainda não leram o Blob nesse instante e o download sairia vazio.
   // A âncora temporária sai do DOM junto — não fica lixo pendurado no documento.
   setTimeout(()=>{ URL.revokeObjectURL(url); if(a.parentNode) a.remove(); },0);
-  if(live) live.textContent='Ticket exportado como Markdown.';
+  if(live) live.textContent='Nota exportada como Markdown.';
   return nome;
 }
 function mvpNotesReferenceBlock(item){
@@ -287,7 +289,7 @@ function mvpNotesHandleCopy(id,btn){
   const item=mvpNotesItems().find(it=>it.id===id); if(!item) return;
   mvpNotesCopyText(mvpNotesReferenceBlock(item))
     .then(()=>mvpNotesFlashCopyFeedback(btn,`Referência ${item.ticket} copiada.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra o ticket e copie o texto manualmente.',true));
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Abra a nota e copie o texto manualmente.',true));
 }
 function mvpNotesCompletedWithinPeriod(item,period){
   if(period==='all') return true;
@@ -442,14 +444,14 @@ function renderMvpNotesBulkActions(){
   host.hidden=n===0;
   if(n===0) return;
   const copiar=mvpn('mvpNotesBulkCopyBtn'), exportar=mvpn('mvpNotesBulkExportBtn');
-  const qualifica=sel.soAtivas?'ativo':'concluído';
+  const qualifica=sel.soAtivas?'ativa':'concluída';
   if(copiar){
     copiar.textContent=`Copiar ${n}`;
-    copiar.setAttribute('aria-label',`Copiar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
+    copiar.setAttribute('aria-label',`Copiar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} como referência para IA`);
   }
   if(exportar){
     exportar.textContent=`Exportar ${n}`;
-    exportar.setAttribute('aria-label',`Exportar ${n} ticket${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
+    exportar.setAttribute('aria-label',`Exportar ${n} nota${n===1?'':'s'} ${qualifica}${n===1?'':'s'} de ${sel.escopo} em Markdown`);
   }
 }
 // Rascunho sujo bloqueia as duas ações, pela mesma razão que já bloqueia a exportação
@@ -457,7 +459,7 @@ function renderMvpNotesBulkActions(){
 // pendente é ambíguo, e rastreabilidade não admite ambiguidade.
 function mvpNotesBulkGuard(live){
   if(!mvpNotesUI.draftDirty) return null;
-  const msg='Existem alterações não salvas. Salve o ticket antes de exportar ou copiar em lote.';
+  const msg='Existem alterações não salvas. Salve a nota antes de exportar ou copiar em lote.';
   const el=mvpn(live); if(el) el.textContent=msg;
   alert(msg);
   return msg;
@@ -465,8 +467,8 @@ function mvpNotesBulkGuard(live){
 // Mensagens dos casos especiais, distinguindo "não há nota" de "todas foram excluídas
 // pelo critério" — são situações diferentes e merecem texto diferente.
 function mvpNotesBulkVazioMsg(sel){
-  if(sel.visiveis===0) return 'Nenhum ticket exportável encontrado.';
-  return 'Todos os tickets desta visão estão concluídos ou descartados. Nada para exportar.';
+  if(sel.visiveis===0) return 'Nenhuma nota exportável encontrada.';
+  return 'Todas as notas desta visão estão concluídas ou descartadas. Nada para exportar.';
 }
 function mvpNotesBulkCopy(btn){
   if(mvpNotesBulkGuard('mvpNotesCopyLive')) return null;
@@ -478,8 +480,8 @@ function mvpNotesBulkCopy(btn){
   const texto=mvpNotesBulkReferenceBlock(sel);
   const n=sel.itens.length;
   mvpNotesCopyText(texto)
-    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} ticket${n===1?'':'s'} de ${sel.escopo} copiado${n===1?'':'s'}.`,false))
-    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie um ticket por vez.',true));
+    .then(()=>mvpNotesFlashCopyFeedback(btn,`${n} nota${n===1?'':'s'} de ${sel.escopo} copiada${n===1?'':'s'}.`,false))
+    .catch(()=>mvpNotesFlashCopyFeedback(btn,'Não foi possível copiar automaticamente. Exporte em Markdown ou copie uma nota por vez.',true));
   return texto;
 }
 function mvpNotesBulkExport(){
@@ -497,8 +499,8 @@ function mvpNotesBulkExport(){
   // sim/não dentro da gaveta (excluir pasta, descartar rascunho). A pergunta declara os
   // dois números — visíveis e levados — para que a diferença nunca surpreenda.
   const pergunta=sel.visiveis!==n
-    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} tickets.\n\nExportar os ${n} ${sel.soAtivas?'ativos':'concluídos'} (concluídos e descartados ficam de fora)?`
-    : `Exportar ${n} ticket${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
+    ? `A visão "${sel.escopo}" mostra ${sel.visiveis} notas.\n\nExportar as ${n} ${sel.soAtivas?'ativas':'concluídas'} (concluídos e descartados ficam de fora)?`
+    : `Exportar ${n} nota${n===1?'':'s'} de "${sel.escopo}" em Markdown?`;
   if(!confirm(pergunta)){
     if(live) live.textContent='Exportação em lote cancelada.';
     return null;
@@ -508,7 +510,7 @@ function mvpNotesBulkExport(){
   // adiada). Reuso do helper canônico — a exportação individual ainda tem a sua cópia
   // inline, anterior a ele.
   dgDownloadViaAnchor(nome,new Blob([mvpNotesBulkMarkdown(sel)],{type:'text/markdown;charset=utf-8'}));
-  if(live) live.textContent=`${n} ticket${n===1?'':'s'} exportado${n===1?'':'s'} como ${nome}.`;
+  if(live) live.textContent=`${n} nota${n===1?'':'s'} exportada${n===1?'':'s'} como ${nome}.`;
   return nome;
 }
 
@@ -648,11 +650,11 @@ function mvpNotesEnsureActiveFolderValid(){
   if(!mvpNotesFolderById(af)) mvpNotesUI.activeFolder='unfiled';
 }
 function mvpNotesViewLabel(){
-  if(mvpNotesUI.activeFolder==='all') return 'Todos os Tickets';
+  if(mvpNotesUI.activeFolder==='all') return 'Todas as Notas';
   if(mvpNotesUI.activeFolder==='unfiled') return 'Sem pasta';
   if(mvpNotesUI.activeFolder==='done') return 'Concluído';
   const f=mvpNotesFolderById(mvpNotesUI.activeFolder);
-  return f ? f.name : 'Todos os Tickets';
+  return f ? f.name : 'Todas as Notas';
 }
 
 // ---- persistência (CRUD) ----
@@ -718,7 +720,7 @@ function mvpNotesCreate(draft){
 function mvpNotesUpdate(id,draft){
   const item=mvpNotesItems().find(it=>it.id===id);
   if(!item){
-    const message='Este ticket não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
+    const message='Esta nota não existe mais na base atual. O rascunho permanece nesta sessão; confira a base antes de continuar.';
     const live=mvpn('mvpNotesCopyLive');
     if(live) live.textContent=message;
     alert(message);
@@ -752,7 +754,213 @@ function mvpNotesDelete(id){
   });
 }
 
-// ---- botão do header + card de Configurações ----
+// ---- acionador flutuante + card de Configurações ----
+// Preferência auxiliar de apresentação. Não integra S, save() ou backup financeiro.
+const MVP_NOTES_LAUNCHER_KEY='jpwealth_notes_launcher_position_v1';
+function mvpNotesLauncherPreference(raw){
+  if(raw===null)return {schemaVersion:1,x:1,y:1};
+  try{
+    const p=JSON.parse(raw);
+    return p && !Array.isArray(p) && p.schemaVersion===1 &&
+      ['x','y'].every(k=>typeof p[k]==='number' && Number.isFinite(p[k]) && p[k]>=0 && p[k]<=1) ? p : null;
+  }catch(error){return null;}
+}
+function mvpNotesLauncherStatus(text,error=false){
+  const status=mvpn('mvpNotesPositionStatus');
+  if(status){status.textContent=text;status.dataset.error=String(error);}
+  if(error && !mvpNotesSettingsOpen() && typeof showSessionNotice==='function')showSessionNotice(text);
+}
+function mvpNotesReadLauncherPosition(){
+  let raw;
+  try{raw=localStorage.getItem(MVP_NOTES_LAUNCHER_KEY);}
+  catch(error){
+    mvpNotesUI.launcherBlocked=true;
+    mvpNotesLauncherStatus('Não foi possível ler a posição. O botão pode ser movido nesta sessão; recarregue para conferir a preferência.',true);
+    return;
+  }
+  const p=mvpNotesLauncherPreference(raw);
+  mvpNotesUI.launcherRaw=raw;
+  mvpNotesUI.launcherBlocked=!p;
+  mvpNotesUI.launcherPosition=p?{x:p.x,y:p.y}:{x:1,y:1};
+  if(!p)mvpNotesLauncherStatus('A posição guardada é incompatível. Nada foi apagado; use Restaurar posição para substituí-la.',true);
+  mvpNotesPlaceLauncher();
+}
+async function mvpNotesPersistLauncherPosition(reset=false){
+  const state=mvpNotesUI,position={...state.launcherPosition},epoch=state.launcherEpoch;
+  const serial=++state.launcherWriteSerial;
+  const current=()=>epoch===(Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0) &&
+    !!state.launcherBaseEpoch && state.launcherBaseEpoch===sessionEpochRead();
+  const status=(message,error)=>{if(serial===state.launcherWriteSerial)mvpNotesLauncherStatus(message,error);};
+  // O raw permanece apenas em RAM: detecta troca da base enquanto o gesto espera
+  // o lock, sem interpretar dados financeiros nem alterar o protocolo existente.
+  let mainBefore;
+  try{mainBefore=localStorage.getItem(LSKEY);}
+  catch(error){status('Não foi possível conferir a sessão. A posição não foi gravada.',true);return false;}
+  const write=()=>{
+    if(!current()){status('A sessão mudou. Recarregue antes de guardar outra posição.',true);return false;}
+    try{
+      if(localStorage.getItem(LSKEY)!==mainBefore){state.launcherBlocked=true;status('A base mudou enquanto o movimento aguardava. Recarregue antes de guardar outra posição.',true);return false;}
+    }catch(error){state.launcherBlocked=true;status('Não foi possível conferir a sessão. Nenhuma posição foi gravada.',true);return false;}
+    if(state.launcherBlocked && !reset){status('A preferência não pode ser alterada agora. Confira-a recarregando ou use Restaurar posição.',true);return false;}
+    let before;
+    try{before=localStorage.getItem(MVP_NOTES_LAUNCHER_KEY);}
+    catch(error){state.launcherBlocked=true;status('Não foi possível conferir a posição guardada. Nenhuma gravação foi tentada.',true);return false;}
+    if(before!==state.launcherRaw){
+      state.launcherBlocked=true;
+      status('A posição mudou em outra aba. Recarregue para conferir; esta tentativa não foi gravada.',true);
+      return false;
+    }
+    const envelope=mvpNotesLauncherPreference(before);
+    if(!envelope && !reset){state.launcherBlocked=true;status('A posição guardada é incompatível. Use Restaurar posição.',true);return false;}
+    const payload=reset?null:JSON.stringify({...envelope,schemaVersion:1,...position});
+    if(payload===before){status('Posição já guardada neste navegador.',false);return true;}
+    try{
+      if(reset)localStorage.removeItem(MVP_NOTES_LAUNCHER_KEY);
+      else localStorage.setItem(MVP_NOTES_LAUNCHER_KEY,payload);
+    }catch(error){/* A releitura distingue recusa de desfecho desconhecido. */}
+    let after;
+    try{after=localStorage.getItem(MVP_NOTES_LAUNCHER_KEY);}catch(error){}
+    if(after===payload){
+      state.launcherRaw=after;state.launcherBlocked=false;
+      status(reset?'Posição padrão restaurada.':'Posição guardada neste navegador.',false);
+      return true;
+    }
+    if(after===before){status('Não foi possível guardar a posição. O movimento vale apenas nesta sessão; tente novamente.',true);return false;}
+    state.launcherBlocked=true;
+    status('Não foi possível confirmar a gravação da posição. Recarregue para conferir; novas gravações estão bloqueadas.',true);
+    return false;
+  };
+  try{return await sessionAcquireWriteLock(write);}
+  catch(error){state.launcherBlocked=true;status('Não foi possível confirmar a posição. Recarregue para conferir a preferência.',true);return false;}
+}
+function mvpNotesResetLauncherPosition(){
+  mvpNotesFinishLauncherDrag(true);
+  mvpNotesUI.launcherPosition={x:1,y:1};
+  mvpNotesPlaceLauncher();
+  return mvpNotesPersistLauncherPosition(true);
+}
+function handleMvpNotesLauncherSessionWipe(){
+  mvpNotesFinishLauncherDrag(true);
+  mvpNotesUI.launcherWriteSerial+=1;
+  mvpNotesUI.launcherBlocked=true;
+  mvpNotesUI.launcherPosition={x:1,y:1};
+  mvpNotesPlaceLauncher();
+}
+function mvpNotesLauncherBounds(){
+  const host=mvpn('mvpNotesLauncher'),btn=mvpn('headerNotesBtn');
+  if(!host || host.hidden || !btn) return null;
+  const area=host.getBoundingClientRect(),rect=btn.getBoundingClientRect(),v=window.visualViewport;
+  const header=document.querySelector('body>header')?.getBoundingClientRect();
+  const rail=document.querySelector('#appSidebar');
+  const railRect=rail && getComputedStyle(rail).display!=='none'?rail.getBoundingClientRect():null;
+  const left=Math.max(area.left,v?v.offsetLeft+20:area.left,railRect?.right>0?railRect.right+16:0);
+  const top=Math.max(area.top,v?v.offsetTop+20:area.top,header?.bottom>0?header.bottom+16:0);
+  return {left,top,width:Math.max(0,Math.min(area.right,v?v.offsetLeft+v.width-20:area.right)-rect.width-left),
+    height:Math.max(0,Math.min(area.bottom,v?v.offsetTop+v.height-20:area.bottom)-rect.height-top),
+    originX:area.left,originY:area.top,scale:host.clientWidth?area.width/host.clientWidth:1};
+}
+function mvpNotesPlaceLauncher(){
+  const p=mvpNotesUI.launcherPosition,b=mvpNotesLauncherBounds();
+  if(b){
+    const btn=mvpn('headerNotesBtn');
+    btn.style.left=((b.left-b.originX+p.x*b.width)/b.scale)+'px';
+    btn.style.top=((b.top-b.originY+p.y*b.height)/b.scale)+'px';
+  }
+  ['X','Y'].forEach(axis=>{
+    const input=mvpn('mvpNotesPosition'+axis),value=Math.round(p[axis.toLowerCase()]*100);
+    if(input) input.value=String(value);
+    const output=mvpn('mvpNotesPosition'+axis+'Value'); if(output) output.textContent=value+'%';
+  });
+}
+function mvpNotesFinishLauncherDrag(cancel){
+  const drag=mvpNotesUI.launcherDrag;if(!drag)return;
+  mvpNotesUI.launcherDrag=null;
+  mvpNotesUI.launcherSuppressClick=cancel || drag.moved;
+  if(cancel) mvpNotesUI.launcherPosition=drag.origin;
+  const btn=mvpn('headerNotesBtn');btn.classList.remove('is-dragging');
+  if(btn.hasPointerCapture(drag.id))btn.releasePointerCapture(drag.id);
+  mvpNotesPlaceLauncher();
+  if(!cancel && drag.moved)mvpNotesPersistLauncherPosition();
+}
+function mvpNotesSyncLauncher(){
+  const host=mvpn('mvpNotesLauncher');if(!host)return;
+  const covered=['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay']
+    .some(id=>mvpn(id)?.classList.contains('show'));
+  if(covered || host.inert || S.mvpNotes?.showHeaderIcon===false)mvpNotesFinishLauncherDrag(true);
+  host.hidden=covered || !(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
+  mvpNotesPlaceLauncher();
+}
+function bindMvpNotesLauncher(){
+  if(mvpNotesUI.launcherBound)return;
+  mvpNotesUI.launcherBound=true;
+  mvpNotesUI.launcherEpoch=Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0;
+  const startupEpoch=sessionEpochRead();
+  // Antes do bootstrap normal, uma origem virgem converge para o sentinel existente.
+  // Não adotar uma geração rotacionada posteriormente nem inicializá-la pela UI.
+  mvpNotesUI.launcherBaseEpoch=(startupEpoch===null || startupEpoch==='')?BASE_EPOCH_SENTINEL:startupEpoch;
+  mvpNotesReadLauncherPosition();
+  const btn=mvpn('headerNotesBtn');
+  btn.dataset.notesLauncherReady='true';
+  btn.addEventListener('click',event=>{
+    if(event.detail>0 && mvpNotesUI.launcherSuppressClick){mvpNotesUI.launcherSuppressClick=false;return;}
+    openMvpNotesDrawer(btn);
+  });
+  btn.addEventListener('pointerdown',event=>{
+    if(event.button!==0 || !event.isPrimary || mvpNotesUI.launcherDrag)return;
+    mvpNotesUI.launcherSuppressClick=false;
+    mvpNotesUI.launcherDrag={id:event.pointerId,x:event.clientX,y:event.clientY,origin:{...mvpNotesUI.launcherPosition},moved:false};
+    btn.setPointerCapture(event.pointerId);
+  });
+  btn.addEventListener('pointermove',event=>{
+    const d=mvpNotesUI.launcherDrag;if(!d || d.id!==event.pointerId)return;
+    const dx=event.clientX-d.x,dy=event.clientY-d.y;
+    if(!d.moved && Math.hypot(dx,dy)<6)return;
+    const b=mvpNotesLauncherBounds();if(!b)return;
+    d.moved=true;btn.classList.add('is-dragging');
+    mvpNotesUI.launcherPosition={x:Math.max(0,Math.min(1,d.origin.x+dx/(b.width||1))),y:Math.max(0,Math.min(1,d.origin.y+dy/(b.height||1)))};
+    mvpNotesPlaceLauncher();
+  });
+  btn.addEventListener('pointerup',event=>{if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(false);});
+  ['pointercancel','lostpointercapture'].forEach(type=>btn.addEventListener(type,event=>{
+    if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(true);
+  }));
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape' && mvpNotesUI.launcherDrag){event.preventDefault();mvpNotesFinishLauncherDrag(true);}
+  });
+  btn.addEventListener('keydown',event=>{
+    if(!event.altKey)return;
+    const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];
+    if(event.key==='Home'){event.preventDefault();mvpNotesResetLauncherPosition();}
+    else if(delta){
+      event.preventDefault();const b=mvpNotesLauncherBounds();if(!b)return;
+      const p=mvpNotesUI.launcherPosition,step=event.shiftKey?8:24;
+      mvpNotesUI.launcherPosition={x:Math.max(0,Math.min(1,p.x+delta[0]*step/(b.width||1))),y:Math.max(0,Math.min(1,p.y+delta[1]*step/(b.height||1)))};
+      mvpNotesPlaceLauncher();
+      mvpNotesPersistLauncherPosition();
+    }
+  });
+  ['X','Y'].forEach(axis=>mvpn('mvpNotesPosition'+axis)?.addEventListener('input',event=>{
+    const value=event.target.valueAsNumber;if(!Number.isFinite(value))return;
+    mvpNotesUI.launcherPosition[axis.toLowerCase()]=Math.max(0,Math.min(1,value/100));mvpNotesPlaceLauncher();
+  }));
+  ['X','Y'].forEach(axis=>mvpn('mvpNotesPosition'+axis)?.addEventListener('change',()=>mvpNotesPersistLauncherPosition()));
+  mvpn('mvpNotesPositionReset')?.addEventListener('click',mvpNotesResetLauncherPosition);
+  window.addEventListener('storage',event=>{
+    if(event.storageArea!==localStorage || event.key!==MVP_NOTES_LAUNCHER_KEY)return;
+    if(mvpNotesUI.launcherDrag)return; // o escritor detectará conflito ao confirmar.
+    mvpNotesReadLauncherPosition();
+  });
+  const resize=()=>{mvpNotesFinishLauncherDrag(true);mvpNotesPlaceLauncher();};
+  window.addEventListener('resize',resize);
+  window.visualViewport?.addEventListener('resize',resize);
+  window.visualViewport?.addEventListener('scroll',resize);
+  const observer=new MutationObserver(mvpNotesSyncLauncher);
+  ['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay'].forEach(id=>{
+    const el=mvpn(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['class']});
+  });
+  observer.observe(mvpn('mvpNotesLauncher'),{attributes:true,attributeFilter:['inert']});
+  mvpNotesSyncLauncher();
+}
 function renderMvpNotesHeader(){
   const btn=mvpn('headerNotesBtn');
   if(btn) btn.hidden=!(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
@@ -762,7 +970,10 @@ function renderMvpNotesHeader(){
     badge.hidden=count<=0;
     badge.textContent=count>99?'99+':String(count);
   }
-  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir tickets — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir tickets');
+  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas');
+  // No portátil, boot pode chamar esta função içada antes do estado da UI.
+  // A inicialização do acionador faz o primeiro posicionamento no momento seguro.
+  if(btn?.dataset.notesLauncherReady==='true')mvpNotesSyncLauncher();
   renderMvpNotesSettingsCard();
 }
 function renderMvpNotesSettingsCard(){
@@ -772,7 +983,7 @@ function renderMvpNotesSettingsCard(){
   const countEl=mvpn('mvpNotesSettingsCount');
   if(countEl){
     const total=mvpNotesItems().length, active=mvpNotesActiveCount();
-    countEl.textContent=total===0 ? 'Nenhum ticket registrado ainda.' : `${total} ticket${total===1?'':'s'} registrado${total===1?'':'s'} · ${active} ativo${active===1?'':'s'}.`;
+    countEl.textContent=total===0 ? 'Nenhuma nota registrada ainda.' : `${total} nota${total===1?'':'s'} registrada${total===1?'':'s'} · ${active} ativa${active===1?'':'s'}.`;
   }
 }
 function bindMvpNotesSettingsCard(){
@@ -831,8 +1042,8 @@ function mvpNotesCardHTML(item){
     </button>
     <button type="button" class="mvpn-card-menu" data-mvp-menu-id="${esc(item.id)}"
       aria-haspopup="menu" aria-expanded="false"
-      title="Ações do ticket ${esc(item.ticket||'')}"
-      aria-label="Ações do ticket ${esc(item.ticket||'')}: ${esc(item.title)}">
+      title="Ações da nota ${esc(item.ticket||'')}"
+      aria-label="Ações da nota ${esc(item.ticket||'')}: ${esc(item.title)}">
       <span aria-hidden="true">⋯</span>
       <span class="mvpn-copy-check" aria-hidden="true">✓</span>
     </button>
@@ -868,7 +1079,7 @@ function mvpNotesSyncFilterControls(){
       : `Limpar todos os filtros — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`);
   }
   const fbtn=mvpn('mvpNotesFiltersBtn');
-  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar tickets — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar tickets');
+  if(fbtn) fbtn.setAttribute('aria-label',n>0?`Filtrar notas — ${n} filtro${n===1?'':'s'} ativo${n===1?'':'s'}`:'Filtrar notas');
 }
 // Limpeza dos filtros — ação ÚNICA do módulo (JPW-RQPNMK). Zera todos os critérios
 // estruturais e NADA mais: busca, visão/pasta ativa, nota aberta, rascunho e dados
@@ -904,10 +1115,10 @@ function renderMvpNotesList(){
   const host=mvpn('mvpNotesList'); if(!host) return;
   const total=mvpNotesItems().length, {ativas,concluidas}=mvpNotesGrouped();
   if(total===0){
-    host.innerHTML=`<div class="mvpn-empty"><strong>Nenhum ticket nesta coleção.</strong><p>Use “Novo ticket” para registrar uma tarefa, um problema ou uma melhoria.</p></div>`;
+    host.innerHTML=`<div class="mvpn-empty"><strong>Nenhuma nota nesta coleção.</strong><p>Use “Nova nota” para registrar uma tarefa, um problema ou uma melhoria.</p></div>`;
   }else if(!ativas.length && !concluidas.length){
     const temBusca=!!mvpNotesUI.query.trim(), temFiltro=mvpNotesActiveFilterCount()>0;
-    const msg=(temBusca&&temFiltro)?'Nenhum ticket corresponde à busca e aos filtros atuais.':'Nenhum ticket encontrado.';
+    const msg=(temBusca&&temFiltro)?'Nenhuma nota corresponde à busca e aos filtros atuais.':'Nenhuma nota encontrada.';
     host.innerHTML=`<p class="mvpn-empty">${msg}</p>`;
   }else{
     // O separador só existe quando há concluídas na visão atual, com contador discreto.
@@ -941,14 +1152,14 @@ function renderMvpNotesList(){
 // (o status continua editável pelo inspector, que é onde ele sempre viveu).
 function mvpNotesCardMenuActions(item){
   const acoes=[{chave:'copiar', rotulo:'Copiar referência'}];
-  if(item.status!=='done') acoes.push({chave:'concluir', rotulo:'Concluir ticket'});
+  if(item.status!=='done') acoes.push({chave:'concluir', rotulo:'Concluir nota'});
   acoes.push({chave:'exportar', rotulo:'Exportar como Markdown'});
-  acoes.push({chave:'excluir', rotulo:'Excluir ticket', perigo:true});
+  acoes.push({chave:'excluir', rotulo:'Excluir nota', perigo:true});
   return acoes;
 }
 function mvpNotesRenderCardMenu(item){
   const titulo=mvpn('mvpNotesCardMenuTitle');
-  if(titulo) titulo.textContent=`${item.ticket||'Ticket'} · ${item.title||'sem título'}`;
+  if(titulo) titulo.textContent=`${item.ticket||'Nota'} · ${item.title||'sem título'}`;
   const host=mvpn('mvpNotesCardMenuItems'); if(!host) return;
   host.innerHTML=mvpNotesCardMenuActions(item).map(a=>
     `<button type="button" class="reset-btn mvpn-card-menu-item${a.perigo?' mvpn-card-menu-danger':''}" data-mvp-menu-acao="${a.chave}">${esc(a.rotulo)}</button>`
@@ -1006,10 +1217,10 @@ function mvpNotesConcluirTicket(id){
   // Rascunho sujo do MESMO ticket: concluir gravaria o conteúdo salvo por cima da edição
   // em curso na tela. Recusar é a saída honesta — mesma regra da exportação.
   if(mvpNotesUI.selectedId===id && mvpNotesUI.draftDirty){
-    alert('Existem alterações não salvas neste ticket. Salve antes de concluir.');
+    alert('Existem alterações não salvas nesta nota. Salve antes de concluir.');
     return null;
   }
-  if(!confirm(`Concluir o ticket "${item.title}"?\n\nEle passa a Concluída e sai do backlog ativo, permanecendo na pasta atual.`)) return null;
+  if(!confirm(`Concluir a nota "${item.title}"?\n\nEle passa a Concluída e sai do backlog ativo, permanecendo na pasta atual.`)) return null;
   const draft=mvpNotesDraftFromItem(item);
   draft.status='done';
   const salvo=mvpNotesUpdate(id,draft);
@@ -1024,7 +1235,7 @@ function mvpNotesConcluirTicket(id){
   }
   renderMvpNotesList();
   const live=mvpn('mvpNotesCopyLive');
-  if(live && salvo) live.textContent=`Ticket ${salvo.ticket||''} concluído.`;
+  if(live && salvo) live.textContent=`Nota ${salvo.ticket||''} concluída.`;
   return salvo;
 }
 function mvpNotesRunCardMenuAction(acao){
@@ -1049,7 +1260,7 @@ function mvpNotesRunCardMenuAction(acao){
   }
   if(acao==='excluir'){
     mvpNotesCloseCardMenu();
-    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
+    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return null;
     const eraSelecionado=mvpNotesUI.selectedId===id;
     if(!mvpNotesDelete(id)) return null;
     if(eraSelecionado){ mvpNotesUI.draftDirty=false; mvpNotesCloseEditor(); }
@@ -1099,7 +1310,7 @@ function renderMvpNotesFolderNav(){
   // "Concluído" é visão do sistema (derivada de status==='done'): não renomeável, não
   // excluível, nunca persistida em folders[] — mesma família de "Todas as Notas"/"Sem pasta".
   const rows=[
-    {id:'all', name:'Todos os Tickets', count:mvpNotesAllCount()},
+    {id:'all', name:'Todas as Notas', count:mvpNotesAllCount()},
     {id:'unfiled', name:'Sem pasta', count:mvpNotesUnfiledCount()},
     {id:'done', name:'Concluído', count:mvpNotesDoneCount()}
   ];
@@ -1305,7 +1516,7 @@ function mvpNotesHandleDeleteFolder(id){
     const folder=mvpNotesFolderById(id); if(!folder) return;
     const count=mvpNotesFolderItemCount(id);
     const msg=count>0
-      ? `A pasta "${folder.name}" contém ${count} ticket${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'esse ticket será movido':'esses tickets serão movidos'} para "Sem pasta". Deseja continuar?`
+      ? `A pasta "${folder.name}" contém ${count} nota${count===1?'':'s'}. Ao excluir a pasta, ${count===1?'essa nota será movida':'essas notas serão movidas'} para "Sem pasta". Deseja continuar?`
       : `Deseja excluir a pasta "${folder.name}"?`;
     if(!confirm(msg)) return;
     if(!mvpNotesDeleteFolder(id)) return;
@@ -1320,14 +1531,20 @@ function mvpNotesHandleDeleteFolder(id){
 // JS e o CSS discordam sobre qual mundo está na tela. Subiu de 760 para 920 na Fase D:
 // abaixo disso as três colunas não cabem com seus mínimos medidos (ver o comentário do
 // bloco mobile no CSS) e a navegação em camadas é a resposta honesta.
-function mvpNotesIsMobile(){ return window.matchMedia('(max-width:920px)').matches; }
+function mvpNotesIsMobile(){ return window.matchMedia('(max-width:600px)').matches; }
+function mvpNotesLayout(){
+  if(mvpNotesIsMobile())return 'mobile';
+  const width=mvpn('mvpNotesDrawer')?.getBoundingClientRect().width||mvpNotesClampWidth(mvpNotesDrawerWidth());
+  return window.innerWidth<=1100 || width<920?'tablet':'desktop';
+}
 function mvpNotesApplyStage(){
   const drawer=mvpn('mvpNotesDrawer'); if(!drawer) return;
   drawer.dataset.mobileStage=mvpNotesUI.stage;
+  drawer.dataset.notesLayout=mvpNotesLayout();
   const backBtn=mvpn('mvpNotesBackBtn'), title=mvpn('mvpNotesTitle');
   if(mvpNotesIsMobile()){
-    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Tickets'
-      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar ticket':'Novo ticket'));
+    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Notas'
+      :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar nota':'Nova nota'));
     if(backBtn){
       backBtn.hidden=mvpNotesUI.stage==='folders';
       // O destino do Voltar é dito por extenso, não só pela seta: da nota volta-se para a
@@ -1340,14 +1557,30 @@ function mvpNotesApplyStage(){
       const rotulo=mvpn('mvpNotesBackLabel');
       if(rotulo) rotulo.textContent=destino;
     }
+  }else if(mvpNotesLayout()==='tablet'){
+    if(title)title.textContent='Notas';
+    if(backBtn){
+      backBtn.hidden=false;
+      const label=mvpNotesUI.stage==='folders'?'Notas':'Pastas';
+      backBtn.setAttribute('aria-label','Mostrar '+label.toLowerCase());
+      backBtn.setAttribute('title','Mostrar '+label.toLowerCase());
+      if(mvpn('mvpNotesBackLabel'))mvpn('mvpNotesBackLabel').textContent=label;
+    }
   }else{
-    if(title) title.textContent='Tickets';
+    if(title) title.textContent='Notas';
     if(backBtn) backBtn.hidden=true;
   }
 }
 // Voltar contextual: Editor → Lista (com proteção de rascunho sujo), Lista → Pastas.
 // No estágio Pastas o botão não existe (fechar é o X, como em desktop).
 function mvpNotesGoBack(){
+  if(mvpNotesLayout()==='tablet'){
+    mvpNotesUI.stage=mvpNotesUI.stage==='folders'?(mvpNotesUI.selectedId?'editor':'list'):'folders';
+    mvpNotesApplyStage();
+    const target=mvpNotesUI.stage==='folders'?mvpn('mvpNotesFolderNavList')?.querySelector('button'):mvpn('mvpNotesSearch');
+    if(target)target.focus();
+    return;
+  }
   if(mvpNotesUI.stage==='editor'){ mvpNotesConfirmDiscardIfDirty(mvpNotesCloseEditor); return; }
   if(mvpNotesUI.stage==='list'){
     mvpNotesUI.stage='folders';
@@ -1415,7 +1648,7 @@ function renderMvpNotesEditor(){
   if(area && area.value!==mvpNotesUI.draft.content) area.value=mvpNotesUI.draft.content;
   const item=mvpNotesUI.selectedId?mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId):null;
   const ticketEl=mvpn('mvpNotesEditorTicket');
-  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'novo ticket';
+  if(ticketEl) ticketEl.textContent=item?(item.ticket||''):'nova nota';
   const copyBtn=mvpn('mvpNotesCopyRefBtn');
   if(copyBtn){ copyBtn.hidden=!item; if(item) copyBtn.dataset.mvpCopyId=item.id; }
   mvpNotesUpdateLiveTitle();
@@ -1434,8 +1667,8 @@ function mvpNotesInspectorHTML(){
   const fato=(k,v)=>`<dt>${k}</dt><dd>${v}</dd>`;
   return `
     <div class="mvpn-inspector-head">
-      <h4 id="mvpNotesInspectorTitle">Detalhes do ticket</h4>
-      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes do ticket" title="Fechar detalhes">✕</button>
+      <h4 id="mvpNotesInspectorTitle">Detalhes da nota</h4>
+      <button type="button" class="mvpn-icon-btn" id="mvpNotesInspectorCloseBtn" aria-label="Fechar detalhes da nota" title="Fechar detalhes">✕</button>
     </div>
     <div class="field"><label for="mvpNoteType">Tipo</label><select id="mvpNoteType">${opt(MVP_NOTES_TYPE_LABELS,d.type)}</select></div>
     <div class="field"><label for="mvpNotePriority">Prioridade</label><select id="mvpNotePriority">${opt(MVP_NOTES_PRIORITY_LABELS,d.priority)}</select></div>
@@ -1459,9 +1692,9 @@ function mvpNotesInspectorHTML(){
         <button type="button" class="reset-btn" id="mvpNoteExportMdBtn">Exportar como Markdown</button>
       </div>
       <div class="mvpn-inspector-danger">
-        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir ticket</button>
+        <button type="button" class="reset-btn mvpn-danger" id="mvpNoteDeleteBtn">Excluir nota</button>
       </div>
-    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar o ticket.</p>`}`;
+    </div>`:`<p class="mvpn-hint">Os dados técnicos (Trace ID, build, datas) aparecem depois de salvar a nota.</p>`}`;
 }
 function mvpNotesSetInspectorOpen(open){
   const insp=mvpn('mvpNotesInspector'), btn=mvpn('mvpNotesInspectorBtn');
@@ -1505,7 +1738,7 @@ function bindMvpNotesInspector(){
   const del=mvpn('mvpNoteDeleteBtn');
   if(del) del.addEventListener('click',()=>{
     const item=mvpNotesItems().find(i=>i.id===mvpNotesUI.selectedId); if(!item) return;
-    if(!confirm(`Excluir o ticket "${item.title}"? Esta ação não pode ser desfeita.`)) return;
+    if(!confirm(`Excluir a nota "${item.title}"? Esta ação não pode ser desfeita.`)) return;
     if(!mvpNotesDelete(item.id)) return;
     mvpNotesUI.draftDirty=false;
     mvpNotesSetInspectorOpen(false);
@@ -1584,7 +1817,7 @@ function mvpNotesReadNewNoteModal(){
 // valida aqui é que cada campo carrega um valor CANÔNICO, nunca um valor arbitrário
 // vindo de um select adulterado.
 function mvpNotesValidateNewNote(meta){
-  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo deste ticket.';
+  if(!MVP_NOTES_TYPES.includes(meta.type)) return 'Escolha o tipo desta nota.';
   if(!MVP_NOTES_PRIORITIES.includes(meta.priority)) return 'Escolha a prioridade.';
   if(!MVP_NOTES_STATUSES.includes(meta.status)) return 'Escolha o status inicial.';
   if(meta.folderId!==null && !mvpNotesFolderById(meta.folderId)) return 'Escolha uma pasta válida.';
@@ -1667,7 +1900,7 @@ function mvpNotesCloseEditor(){
 }
 function mvpNotesConfirmDiscardIfDirty(proceed){
   if(mvpNotesUI.draftDirty){
-    if(!confirm('Existem alterações não salvas neste ticket. Deseja descartá-las?')) return;
+    if(!confirm('Existem alterações não salvas nesta nota. Deseja descartá-las?')) return;
   }
   proceed();
 }
@@ -1702,6 +1935,7 @@ function mvpNotesApplyDrawerWidth(w){
   // O drawer mudou de tamanho: as três colunas precisam caber de novo AGORA. Só reescreve
   // as duas variáveis CSS (sem render, sem save) — as preferências continuam intactas.
   if(d && mvpNotesUI.open) mvpNotesApplyPaneWidths();
+  if(d && mvpNotesUI.open) mvpNotesApplyStage();
   const h=mvpn('mvpNotesResizeHandle');
   if(h){
     h.setAttribute('aria-valuemin',String(MVP_NOTES_DRAWER_MIN));
@@ -1739,20 +1973,32 @@ function mvpNotesRenderedDrawerWidth(){
 // Larguras efetivamente renderizadas neste instante (preferências passadas pelo ajuste).
 function mvpNotesRenderedPanes(){
   const prefs=mvpNotesPanePrefs();
-  return mvpNotesFitPanes(prefs.folders,prefs.list,mvpNotesRenderedDrawerWidth());
+  return mvpNotesWindowPanes(prefs.folders,prefs.list);
+}
+// Projeção para a janela: conserva as preferências, deixando o editor maior.
+// A borda completa usa um pixel adicional ao chrome canônico legado.
+function mvpNotesWindowPanes(folders,list){
+  const width=mvpNotesRenderedDrawerWidth(),space=mvpNotesPaneSpace(width-1);
+  if(mvpNotesLayout()==='tablet'){
+    return {folders:Math.min(folders,Math.max(150,Math.floor(width*.3))),
+      list:Math.min(list,Math.max(240,Math.floor(width*.4)))};
+  }
+  const f=Math.min(folders,Math.max(MVP_NOTES_FOLDERS_MIN,Math.floor(space/4)));
+  const l=Math.min(list,Math.max(MVP_NOTES_LIST_MIN,Math.floor((space-f-1)/2)));
+  return mvpNotesFitPanes(Math.min(f,l-1),l,width-1);
 }
 // Limites VIVOS de cada separador: o máximo de uma coluna depende do que a outra está
 // ocupando e do piso do editor. Garante a invariante pastas + lista + editor + separadores
 // <= largura interna disponível, sempre.
 function mvpNotesPaneLimits(){
-  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth());
+  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth()-1);
   const atual=mvpNotesRenderedPanes();
   return {
     espaco,
     foldersMin:MVP_NOTES_FOLDERS_MIN,
-    foldersMax:Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,espaco-atual.list-MVP_NOTES_EDITOR_MIN)),
+    foldersMax:Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,Math.floor(espaco/4),atual.list-1)),
     listMin:MVP_NOTES_LIST_MIN,
-    listMax:Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,espaco-atual.folders-MVP_NOTES_EDITOR_MIN))
+    listMax:Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,Math.floor((espaco-atual.folders-1)/2)))
   };
 }
 // Escreve a geometria: só duas custom properties no drawer. Nenhum render de lista, editor
@@ -1765,9 +2011,9 @@ function mvpNotesWritePaneVars(folders,list){
 }
 // ARIA dos dois separadores acompanha a coluna ao vivo — valor e limites nunca congelam.
 function mvpNotesSyncPaneHandleAria(folders,list){
-  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth());
-  const fMax=Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,espaco-Math.round(list)-MVP_NOTES_EDITOR_MIN));
-  const lMax=Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,espaco-Math.round(folders)-MVP_NOTES_EDITOR_MIN));
+  const espaco=mvpNotesPaneSpace(mvpNotesRenderedDrawerWidth()-1);
+  const fMax=Math.max(MVP_NOTES_FOLDERS_MIN,Math.min(MVP_NOTES_FOLDERS_MAX,Math.floor(espaco/4),Math.round(list)-1));
+  const lMax=Math.max(MVP_NOTES_LIST_MIN,Math.min(MVP_NOTES_LIST_MAX,Math.floor((espaco-Math.round(folders)-1)/2)));
   const escreve=(el,min,max,valor,rotulo)=>{
     if(!el) return;
     el.setAttribute('aria-valuemin',String(min));
@@ -1776,7 +2022,7 @@ function mvpNotesSyncPaneHandleAria(folders,list){
     el.setAttribute('aria-valuetext',`${rotulo}: ${Math.round(valor)} pixels`);
   };
   escreve(mvpn('mvpNotesFoldersHandle'),MVP_NOTES_FOLDERS_MIN,fMax,folders,'Largura da coluna de pastas');
-  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de tickets');
+  escreve(mvpn('mvpNotesListHandle'),MVP_NOTES_LIST_MIN,lMax,list,'Largura da lista de notas');
 }
 // Aplica a geometria a partir das preferências (opcionalmente com um valor em teste durante
 // o arraste). Chamada na abertura, ao mudar o drawer e ao redimensionar a janela.
@@ -1784,7 +2030,7 @@ function mvpNotesApplyPaneWidths(candidato){
   const prefs=mvpNotesPanePrefs();
   const f=(candidato&&candidato.folders!=null)?candidato.folders:prefs.folders;
   const l=(candidato&&candidato.list!=null)?candidato.list:prefs.list;
-  const fit=mvpNotesFitPanes(f,l,mvpNotesRenderedDrawerWidth());
+  const fit=mvpNotesWindowPanes(f,l);
   mvpNotesWritePaneVars(fit.folders,fit.list);
   return fit;
 }
@@ -1906,11 +2152,11 @@ function bindMvpNotesResize(){
   });
   h.addEventListener('pointermove',e=>{
     if(!mvpNotesUI.resize) return;
-    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesUI.resize.startW+(mvpNotesUI.resize.startX-e.clientX)));
+    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesUI.resize.startW+2*(mvpNotesUI.resize.startX-e.clientX)));
   });
   h.addEventListener('pointerup',e=>{
     if(!mvpNotesUI.resize) return;
-    const w=mvpNotesClampWidth(mvpNotesUI.resize.startW+(mvpNotesUI.resize.startX-e.clientX));
+    const w=mvpNotesClampWidth(mvpNotesUI.resize.startW+2*(mvpNotesUI.resize.startX-e.clientX));
     mvpNotesUI.resize=null;
     mvpNotesSetResizingCursor(false);
     mvpNotesApplyDrawerWidth(w);
@@ -1991,6 +2237,7 @@ function mvpNotesFocusables(root){
   // então o seletor [tabindex] não o alcança — sem ele o trap calcularia primeiro/último
   // ignorando os menus "⋯" das pastas, que estão na ordem natural do Tab.
   return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])')]
+    .filter(el=>el.tabIndex>=0) // exclui SVG <use href> e links retirados da tabulação
     .filter(el=>!el.closest('[hidden]'))
     .filter(el=>!el.closest('[inert]'))
     .filter(el=>el.offsetParent!==null || el===document.activeElement);
@@ -2020,7 +2267,7 @@ function mvpNotesTrapFocus(event){
 // que a suspensão da Central (suspendSettingsForSubdialog, abaixo) não cobre sozinha —
 // aquela função só torna #settingsModal inert, nunca tocou <header>/#appMain.
 function mvpNotesInertTargets(){
-  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note'), mvpn('mvpNotesLauncher')].filter(Boolean);
 }
 function mvpNotesApplyInert(){
   mvpNotesUI.inertSnapshot=mvpNotesInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
@@ -2041,6 +2288,16 @@ function mvpNotesRestoreInert(){
 // por qualquer outro caminho enquanto o drawer segue aberto deixaria esse booleano obsoleto.
 function mvpNotesSettingsOpen(){ return typeof settingsIsOpen==='function' && settingsIsOpen(); }
 function openMvpNotesDrawer(opener){
+  if(mvpNotesUI.open){
+    const layer=mvpNotesUI.cardMenuId?mvpn('mvpNotesCardMenuBox')
+      :mvpNotesUI.newNoteOpen?mvpn('mvpNotesNewBox'):mvpn('mvpNotesOverlay');
+    if(layer?.contains(document.activeElement) && document.activeElement.getClientRects().length)return;
+    const content=mvpn('mvpNoteContent');
+    const target=!mvpNotesUI.cardMenuId && !mvpNotesUI.newNoteOpen && content?.getClientRects().length
+      ?content:mvpNotesFocusables(layer)[0];
+    target?.focus({preventScroll:true});
+    return;
+  }
   mvpNotesBuildOptions();
   mvpNotesUI.open=true;
   mvpNotesUI.opener=opener||document.activeElement||mvpn('headerNotesBtn');
@@ -2086,6 +2343,7 @@ function closeMvpNotesDrawerNow(){
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();
+  mvpNotesSyncLauncher();
   const opener=mvpNotesUI.opener; mvpNotesUI.opener=null;
   if(typeof restoreSettingsAfterSubdialog==='function') restoreSettingsAfterSubdialog();
   if(opener && document.contains(opener) && !mvpNotesSettingsOpen()) opener.focus();
@@ -2096,7 +2354,7 @@ function closeMvpNotesDrawer(){
 
 // ---- inicialização ----
 function bindMvpNotesDrawer(){
-  mvpn('headerNotesBtn').addEventListener('click',()=>openMvpNotesDrawer(mvpn('headerNotesBtn')));
+  bindMvpNotesLauncher();
   mvpn('mvpNotesCloseBtn').addEventListener('click',closeMvpNotesDrawer);
   mvpn('mvpNotesOverlay').addEventListener('click',e=>{
     if(e.target.id!=='mvpNotesOverlay') return;
@@ -2180,8 +2438,18 @@ function bindMvpNotesDrawer(){
   // Janela redimensionada: recalcular o que cabe, sem tocar nas preferências. Estreitar e
   // voltar a alargar devolve exatamente a geometria escolhida pelo operador.
   window.addEventListener('resize',()=>{
-    if(!mvpNotesUI.open || mvpNotesIsMobile()) return;
-    mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth()));
+    if(!mvpNotesUI.open)return;
+    if(!mvpNotesIsMobile())mvpNotesApplyDrawerWidth(mvpNotesClampWidth(mvpNotesDrawerWidth()));
+    mvpNotesApplyStage();
+    const focused=document.activeElement;
+    if(mvpn('mvpNotesOverlay').contains(focused) && !focused.getClientRects().length){
+      const content=mvpn('mvpNoteContent');
+      (content?.getClientRects().length?content:mvpn('mvpNotesBackBtn').hidden?mvpn('mvpNotesCloseBtn'):mvpn('mvpNotesBackBtn')).focus({preventScroll:true});
+    }
+  });
+  window.addEventListener('beforeunload',event=>{
+    if(!mvpNotesUI.open || !mvpNotesUI.draftDirty)return;
+    event.preventDefault();event.returnValue='';
   });
   // Clique fora fecha o popover de filtros (desktop) — o botão e o próprio painel são
   // as únicas áreas "dentro". Sem devolução de foco: o usuário já clicou noutro lugar.
