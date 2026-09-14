@@ -1,3 +1,9 @@
+# Campanha corrente — calibração de proporção visual
+
+Base011e275; branch `codex/visual-proportion-calibration-20260913`. Execução local autorizada, sem integração. [CHG/CTX](CHG-VISUAL-PROPORTION-CALIBRATION-20260913.md). Evidências externas em `/Users/joaopauloalves/.codex/visual-calibration/20260913/evidence`. Candidate e aceite ainda pendentes.
+
+---
+
 # Tarefa atual — APPLE01 completion pass
 
 last_verified: 2026-09-12
