@@ -68,6 +68,9 @@ Janela central de Notas com CRUD, pastas, filtros, Markdown e **Trace ID** rastr
 
 A posição proporcional do botão fica em uma preferência local separada, `jpwealth_notes_launcher_position_v1`, com `schemaVersion: 1` e coordenadas `x`/`y` entre 0 e 1. Movimentos e ajustes concluídos confirmam a gravação por releitura; recarregar restaura a posição, e redimensionar apenas a projeta na área disponível. **Restaurar posição** remove somente essa preferência. **Finalizar sessão** também a remove, preservando notas, pastas e larguras; ela não integra o backup financeiro. Contrato local em [NIGHT PENDING RECONCILIATION](docs/work/CHG-NIGHT-PENDING-RECONCILIATION-20260914.md), com cobertura focal em [notes_experience_test.py](tools/notes_experience_test.py).
 
+A apresentação local **APPLE NOTES EXPERIENCE MATCH** mantém o editor único, com toolbars por coluna, lista contínua e área de escrita sem card. Em Configurações → Interface → Notas, Aparência oferece tema próprio ou seguir app, densidade, prévia, sidebar desktop, área de leitura e presets de texto. A prévia é temporária: Salvar aparência confirma por releitura; Cancelar/sair retorna à preferência confirmada. Recusa preserva a prévia para retry, e resultado desconhecido/conflito exige releitura explícita. A chave auxiliar `jpwealth_notes_appearance_v1` não altera `S.mvpNotes` nem o backup, e segue a limpeza auxiliar de Finalizar sessão; notas/pastas/larguras permanecem. Restaurar aparência prepara uma prévia; Restaurar larguras é uma ação separada sobre os três valores canônicos. A sidebar pode ser alternada só nesta abertura pelo botão do cabeçalho. Contrato e limites: [APPLE NOTES MATCH](docs/work/CHG-APPLE-NOTES-MATCH-20260914.md). Esta descrição registra a revisão local em validação, sem antecipar aceite ou integração.
+
+
 ### Central de Configurações
 
 Modal aberta pela engrenagem do cabeçalho, preservando a tela operacional ao fundo:

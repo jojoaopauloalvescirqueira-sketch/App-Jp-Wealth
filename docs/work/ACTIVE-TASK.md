@@ -1,3 +1,9 @@
+# Tarefa atual — APPLE NOTES EXPERIENCE MATCH
+
+2026-09-14. Branch `codex/apple-notes-match-20260914`, base integrada `9ca32073e1fa032318b7e6e6eb50b5f693efe2d9`. Implementação local N2/A3 explicitamente autorizada; sem aceite ou integração. Objetivo, arquivos, invariantes, testes e rollback em [CHG/CTX](CHG-APPLE-NOTES-MATCH-20260914.md). Escopo: apresentação de Notas e preferências visuais; fonte financeira, dados, controles e outras entregas preservados. Evidências externas: `/Users/joaopauloalves/.codex/apple-notes-match/20260914/evidence/`.
+
+---
+
 # Unificação final — Notas, Backup e Notifications
 
 Branch `codex/night-pending-reconciliation-20260914`; base Git `5f0c9680bdd9a93e9d184ca751999c70193a72aa`. Revisão final-r5 preservada; novo candidate em validação. Autorização 6883fa39: diagnóstico CI N3/A4 e correções causais/reconciliação N2, Git após gates, sem deploy. [Contrato e complemento](CHG-NIGHT-PENDING-RECONCILIATION-20260914.md). Evidências externas `../evidence/unification-ci`. Falha remota e launcher200% ainda em diagnóstico; nenhum aceite manual novo atribuído.

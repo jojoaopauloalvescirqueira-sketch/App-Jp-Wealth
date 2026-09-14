@@ -556,6 +556,8 @@ function activateSettingsCategory(id,options={}){
   if(targetId==='account'&&settingsState.active!=='account') beginSettingsProfileDraft();
   if(settingsState.active==='editor'&&targetId!=='editor'&&typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
   if(targetId==='editor'&&typeof beginNavOrderPreview==='function') beginNavOrderPreview();
+  if(settingsState.active==='interface'&&targetId!=='interface'&&typeof mvpNotesCancelAppearance==='function')mvpNotesCancelAppearance();
+  if(targetId==='interface'&&typeof mvpNotesBeginAppearance==='function')mvpNotesBeginAppearance();
   settingsState.active=targetId;
   document.querySelectorAll('[data-settings-panel]').forEach(panel=>panel.hidden=panel.dataset.settingsPanel!==targetId);
   const select=settingsEl('settingsMobileCategory'); if(select) select.value=settingsTopLevelFor(targetId);
@@ -650,6 +652,7 @@ function settingsSearchEntries(){
     // casa com o próprio título.
     ['Tickets','interface','#mvpNotesSettingsCard'],['tickets','interface','#mvpNotesSettingsCard'],
     ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
+    ['Aparência de Notas','interface','#mvpNotesSettingsCard'],['Densidade das notas','interface','#mvpNotesSettingsCard'],['Texto do editor de Notas','interface','#mvpNotesSettingsCard'],['Largura das notas','interface','#mvpNotesSettingsCard'],
     ['Bloco de notas','interface','#mvpNotesSettingsCard'],['Botão flutuante','interface','#mvpNotesSettingsCard'],['Mover notas','interface','#mvpNotesSettingsCard'],['Posição das notas','interface','#mvpNotesSettingsCard'],['Restaurar posição','interface','#mvpNotesSettingsCard'],
     ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
     ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
@@ -753,6 +756,7 @@ function closeSettingsModal(options={}){
   if(!settingsState.open||settingsState.suspended) return;
   if(typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
   cancelSettingsProfileDraft();
+  if(typeof mvpNotesCancelAppearance==='function')mvpNotesCancelAppearance();
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
   if(typeof researchSetCovered==='function') researchSetCovered(false);
   const opener=settingsState.opener; settingsState.opener=null; if(options.restoreFocus!==false&&opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
