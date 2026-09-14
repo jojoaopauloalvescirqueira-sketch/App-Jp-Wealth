@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "c127a73ef06760f3df0d94b2ffe4868bf58f64affd68ffcde26b0f9e8fa82e63"
+      "sha256": "a03548c10b4da9ea7cd2173ae2a6e3c0fa08b82bbd8ec8b26db039eb6e89ca36"
     },
     {
       "order": 39,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/14-mvp-notes.js",
       "section": "NOTAS DO MVP — backlog interno de testes (N1)",
-      "sha256": "610a372535d7a81f5467672f225d181e68e2d05ba01e450aafe339e4aaaa563c"
+      "sha256": "79c102ee0624f7dd5b7bbb8a098703529a4724f7233aacc2ca8054eb633ba19f"
     },
     {
       "order": 44,
@@ -468,6 +468,12 @@
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
       "sha256": "e831e0f97ce7942bc1afff414013e3a247b9b70c199b3b96f3eeb208fdd6e7ea"
+    },
+    {
+      "order": 79,
+      "path": "src/js/40-app/18-notification-center.js",
+      "section": "NOTIFICATIONS · central local de avisos e mensagens de sessao",
+      "sha256": "5b52162893ec7b58d32be8a8846e8e0bf724a6a4a6a3222a5e135ca729eeb9bb"
     }
   ]
 }

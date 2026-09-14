@@ -17,6 +17,7 @@ e quatro em Forex, preservando os seis registros da preferência v6.
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import json
 import os
 import socket
 import threading
@@ -328,35 +329,146 @@ def assert_marca_estando_no_dashboard(page):
 
 # ------------------------------------------------------------ RESPONSIVIDADE --
 
+SURFACE_GEOMETRY = """() => {
+  const $=s=>document.querySelector(s),style=e=>getComputedStyle(e);
+  const visible=e=>!!e&&!!e.getClientRects().length&&style(e).visibility!=='hidden';
+  const box=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}};
+  const ctx=document.createElement('canvas').getContext('2d',{willReadFrequently:true});
+  const rgba=value=>{ctx.clearRect(0,0,1,1);ctx.fillStyle=value;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data]};
+  const background=e=>{for(let n=e;n;n=n.parentElement){const c=rgba(style(n).backgroundColor);if(c[3]===255)return c}return [255,255,255,255]};
+  const border=(e,side)=>({width:parseFloat(style(e)['border'+side+'Width']),style:style(e)['border'+side+'Style'],color:rgba(style(e)['border'+side+'Color'])});
+  const logo=$('.gd-logo'),header=$('body > header'),sidebar=$('#appSidebar');
+  return {
+    viewport:innerWidth,client:document.documentElement.clientWidth,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+    zoom:parseFloat(style(document.documentElement).zoom)||1,theme:document.documentElement.dataset.theme,
+    navigation:document.documentElement.dataset.navigation,rail:document.documentElement.dataset.rail,
+    grid:box($('#dashMacroGrid')),canvas:background($('#appMain')),panel:rgba(style(document.documentElement).getPropertyValue('--panel')),
+    header:box(header),headerBorder:border(header,'Bottom'),sidebar:visible(sidebar)?box(sidebar):null,sidebarBorder:visible(sidebar)?border(sidebar,'Right'):null,
+    logo:{...box(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight},brand:box($('#brandHomeBtn')),
+    actions:[...header.querySelectorAll('.header-actions button,[data-shell-menu-toggle]')].filter(visible).map(e=>({id:e.id||e.getAttribute('aria-label'),...box(e)})),
+    cards:[...document.querySelectorAll('#dashMacroGrid [data-dm-card]')].map(card=>({id:card.dataset.dmCard,...box(card),background:rgba(style(card).backgroundColor),border:['Top','Right','Bottom','Left'].map(s=>border(card,s)),
+      radius:parseFloat(style(card).borderTopLeftRadius),padding:['Top','Right','Bottom','Left'].map(s=>parseFloat(style(card)['padding'+s])),
+      scroll:card.scrollWidth,client:card.clientWidth,head:box(card.querySelector('.dm-card-head')),body:box(card.querySelector('.dm-body')),
+      bodyColumns:style(card.querySelector('.dm-body')).gridTemplateColumns.split(' ').length,
+      elements:[...card.querySelectorAll('.dm-title,.dm-eyebrow,.dm-cta,.dm-note,.dm-empty,.dm-row,.dm-fact,.dm-event,.dm-link,.dm-partial,.dm-blocked')].filter(visible).map(e=>({tag:e.className,...box(e),scroll:e.scrollWidth,client:e.clientWidth}))}))
+  };
+}"""
+
+
+def assert_superficies_dashboard(page, rotulo):
+    """Limites de composição aprovados; texto multilinha não tem teto de altura."""
+    r = page.evaluate(SURFACE_GEOMETRY)
+    z = r['zoom']
+    def inside(child, parent):
+        return child['x'] >= parent['x']-1 and child['right'] <= parent['right']+1 and child['y'] >= parent['y']-1 and child['bottom'] <= parent['bottom']+1
+    assert r['overflow'] <= 1, f'[{rotulo}] overflow horizontal da página: {r["overflow"]}'
+    assert len(r['cards']) == 4, f'[{rotulo}] quatro painéis obrigatórios'
+    previous = None
+    for card in r['cards']:
+        assert card['w'] >= r['grid']['w']*.98 and abs(card['x']-r['grid']['x']) <= 1, f'[{rotulo}] painel não ocupa a grade: {card}'
+        assert card['right'] <= r['client']+1 and card['scroll'] <= card['client']+1, f'[{rotulo}] painel excede a área útil: {card}'
+        if previous:
+            gap = (card['y']-previous['bottom'])/z
+            assert 12 <= gap <= (32 if r['viewport'] <= 900 else 40), f'[{rotulo}] empilhamento/gap incoerente: {gap}'
+        previous = card
+        assert 8 <= card['radius'] <= 20 and all(12 <= p <= 32 for p in card['padding']), f'[{rotulo}] raio/padding desproporcionais: {card}'
+        assert all(.5 <= b['width'] <= 1.5 and b['style']=='solid' for b in card['border']), f'[{rotulo}] contorno do painel perdido: {card}'
+        assert card['background'][3] == 255 and max(abs(a-b) for a,b in zip(card['background'],r['panel'])) <= 2, f'[{rotulo}] superfície difere do token panel: {card["background"]}, {r["panel"]}'
+        assert sum(abs(a-b) for a,b in zip(card['background'][:3],r['canvas'][:3])) >= 8, f'[{rotulo}] painel indistinto do canvas'
+        assert inside(card['head'],card) and inside(card['body'],card), f'[{rotulo}] cabeçalho/corpo escapam do painel: {card}'
+        for element in card['elements']:
+            assert inside(element,card) and element['scroll'] <= element['client']+1, f'[{rotulo}] texto/controle cortado: {element}'
+        if r['viewport'] >= 1201 and z == 1:
+            assert card['bodyColumns'] >= 2, f'[{rotulo}] resumo largo perdeu distribuição horizontal: {card["id"]}'
+    line = r['headerBorder']
+    assert .5 <= line['width'] <= 1.5 and line['style']=='solid' and line['color'][3] > 0, f'[{rotulo}] divisória horizontal ausente: {line}'
+    if r['sidebar'] and r['viewport'] > 900 and r['navigation']=='sidebar':
+        side = r['sidebarBorder']
+        assert side['width'] == line['width'] and side['style']==line['style'] and side['color']==line['color'], f'[{rotulo}] divisórias não são coerentes: {line}, {side}'
+        expected = 76 if r['rail']=='collapsed' else 252
+        assert abs(r['sidebar']['w']/z-expected) <= 1, f'[{rotulo}] largura lateral alterada: {r["sidebar"]}'
+    logo = r['logo']
+    assert logo['naturalWidth'] > 0 and logo['naturalHeight'] > 0, f'[{rotulo}] ativo da marca não carregou'
+    assert abs((logo['w']/logo['h'])/(logo['naturalWidth']/logo['naturalHeight'])-1) <= .02, f'[{rotulo}] marca distorcida: {logo}'
+    assert (16 if r['viewport'] > 900 else 11) <= logo['h']/z <= 20, f'[{rotulo}] escala da marca fora da proposta: {logo}'
+    assert inside(logo,r['brand']) and inside(r['brand'],r['header']), f'[{rotulo}] marca cortada: {logo}'
+    for action in r['actions']:
+        assert inside(action,r['header']) and action['right'] <= r['client']+1, f'[{rotulo}] ação global cortada: {action}'
+        overlap = min(logo['right'],action['right'])-max(logo['x'],action['x'])
+        assert overlap <= 1 or min(logo['bottom'],action['bottom']) <= max(logo['y'],action['y']), f'[{rotulo}] marca colide com ação global: {action}'
+    return r
+
+
 def assert_responsividade(browser, url):
-    # DASH-MACRO-02A Fatia 1: desktop e 2x2 (2 colunas x 2 linhas), nao 1x4.
-    # tablet e mobile colapsam para uma coluna — o breakpoint e 1100px.
-    for rotulo, viewport, empilhado in (
-        ("desktop", {"width": 1440, "height": 900}, False),
-        ("tablet", {"width": 900, "height": 1000}, True),
-        ("mobile", {"width": 390, "height": 844}, True),
-    ):
-        context, page, observed = boot(browser, url, viewport=viewport, service_workers="block")
+    # DASHBOARD-SURFACES-01 substitui apenas o contrato 2x2 por quatro painéis.
+    from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
+    cases = [(w,t,'sidebar','expanded',1,False) for w in (320,390,601,768,900,1024,1440) for t in ('light','dark')]
+    cases += [(w,t,'topbar','expanded',1,False) for w in (320,901,1024,1100,1440) for t in ('light','dark')]
+    cases += [(1440,t,'sidebar','collapsed',1,False) for t in ('light','dark')]
+    cases += [(w,t,'sidebar','expanded',1.25,True) for w in (390,1440) for t in ('light','dark')]
+    evidence = Path(os.environ['JPW_DASHBOARD_EVIDENCE']).resolve() if os.environ.get('JPW_DASHBOARD_EVIDENCE') else None
+    if evidence:
+        assert not evidence.is_relative_to(ROOT), 'Evidência deve ficar fora do produto'
+        evidence.mkdir(parents=True,exist_ok=False)
+    results = []
+    for width, theme, navigation, rail, zoom, long in cases:
+        rotulo = f'{width}-{theme}-{navigation}-{rail}-csszoom{zoom}-long{int(long)}'
+        def prepare(context):
+            install_bootstrap(context)
+            context.add_init_script('localStorage.setItem("jpw_nav_layout",'+json.dumps(navigation)+');localStorage.setItem("jpw_rail",'+json.dumps(rail)+');')
+        context, page, observed = boot(browser, url, viewport={'width':width,'height':1000}, service_workers='block',prepare_context=prepare)
+        result = {'case':rotulo,'result':'NOT_RUN','zoom_limit':'CSS zoom stress; not browser-native zoom proof'}
+        results.append(result)
         try:
-            r = page.evaluate("""() => {
-              const cards = [...document.querySelectorAll('#dashMacroGrid [data-dm-card]')];
-              const tops = new Set(cards.map(c => Math.round(c.getBoundingClientRect().top)));
-              return {
-                overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-                colunas: tops.size,
-                total: cards.length,
-                cabem: cards.every(c => c.getBoundingClientRect().width <= document.documentElement.clientWidth),
-              };
-            }""")
-            assert r["overflowX"] == 0, f"[{rotulo}] overflow horizontal: {r}"
-            assert r["cabem"], f"[{rotulo}] card mais largo que a viewport: {r}"
-            if empilhado:
-                assert r["colunas"] == r["total"], f"[{rotulo}] cards nao empilharam: {r}"
-            else:
-                # 2x2: quatro cards em exatamente DUAS linhas distintas
-                assert r["colunas"] == 2, f"[{rotulo}] esperado 2x2, veio {r['colunas']} linha(s): {r}"
-            assert not observed["pageerror"], f"[{rotulo}] {observed}"
+            wait_bootstrap(page)
+            page.evaluate("theme=>{S.theme=theme;applyTheme();renderThemeSeg();JPWNavigation.navigate('dashboard');}",theme)
+            page.wait_for_function("document.querySelector('.gd-logo').complete&&document.querySelector('.gd-logo').naturalWidth>0")
+            assert page.evaluate('document.documentElement.dataset.navigation') == navigation
+            assert page.locator('#themeSeg button.on').get_attribute('data-theme-val') == theme
+            if zoom != 1:
+                page.evaluate('z=>document.documentElement.style.zoom=String(z)',zoom)
+            if long:
+                page.evaluate("""() => {
+                  for(const e of document.querySelectorAll('#dashMacro .dm-title'))e.textContent+=' — resumo sintético com identificação extensa';
+                  for(const e of document.querySelectorAll('#dashMacro .dm-cta'))e.textContent+=' · consultar detalhes do módulo';
+                }""")
+            before = page.evaluate('JSON.stringify({state:S,storage:Object.entries(localStorage).sort()})')
+            result['geometry'] = assert_superficies_dashboard(page,rotulo)
+            if evidence:
+                page.screenshot(path=str(evidence/(rotulo+'.png')),full_page=True)
+            brand = page.locator('#brandHomeBtn')
+            brand.focus()
+            page.keyboard.press('Tab');page.keyboard.press('Shift+Tab')
+            focus = brand.evaluate("e=>({active:e===document.activeElement,visible:e.matches(':focus-visible'),width:parseFloat(getComputedStyle(e).outlineWidth),style:getComputedStyle(e).outlineStyle})")
+            # Chromium quantiza outlineWidth em CSS zoom; comparar pixels renderizados.
+            assert focus['active'] and focus['visible'] and focus['width']*zoom >= 2 and focus['style'] != 'none', f'[{rotulo}] marca perdeu foco visível: {focus}'
+            brand.press('Enter')
+            assert page.evaluate('JPWNavigation.current().canonical') == 'dashboard'
+            if width <= 900 and zoom == 1:
+                toggle = page.locator('[data-shell-menu-toggle]')
+                toggle.click()
+                drawer = page.locator('#nav' if navigation=='topbar' else '#appSidebar')
+                drawer_box = drawer.bounding_box()
+                assert drawer.get_attribute('aria-modal') == 'true' and drawer_box and drawer_box['x'] >= -1 and drawer_box['x']+drawer_box['width'] <= width+1, f'[{rotulo}] gaveta não cabe na viewport'
+                page.keyboard.press('Escape')
+                assert toggle.get_attribute('aria-expanded') == 'false'
+                page.wait_for_function("document.activeElement.matches('[data-shell-menu-toggle]')")
+            assert page.evaluate('JSON.stringify({state:S,storage:Object.entries(localStorage).sort()})') == before, f'[{rotulo}] navegação da marca escreveu estado/preferências'
+            assert not observed['pageerror'], f'[{rotulo}] {observed}'
+            assert not observed['console'], f'[{rotulo}] {observed}'
+            assert_fixture_requests(context)
+            result['result'] = 'PASS'
+            print('DASHBOARD SURFACES PASS '+rotulo,flush=True)
+        except Exception as error:
+            result['result'] = 'PRODUCT_FAIL' if isinstance(error,AssertionError) else 'TEST_HARNESS_FAIL'
+            result['error'] = str(error)
+            raise
         finally:
+            if evidence:
+                result['geometry_at_exit'] = page.evaluate(SURFACE_GEOMETRY)
+                if not (evidence/(rotulo+'.png')).exists():
+                    page.screenshot(path=str(evidence/(rotulo+'.png')),full_page=True)
+                (evidence/'results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\n')
             context.close()
 
 

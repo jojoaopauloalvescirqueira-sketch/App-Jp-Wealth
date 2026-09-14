@@ -98,6 +98,10 @@
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
+    <button type="button" class="header-action notification-trigger" id="headerNotificationsBtn" title="Notificações" aria-label="Notificações" aria-controls="notificationCenter" aria-haspopup="dialog" aria-expanded="false">
+      <span class="notification-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4M12 1v1"/></svg><span id="notificationBadge" aria-hidden="true" hidden></span></span>
+      <span class="header-action-label">Notificações</span>
+    </button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <!-- Engrenagem identifica as configurações existentes. -->
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -105,10 +109,6 @@
         <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
       </svg>
     <span class="header-action-label">Configurações</span></button>
-    <button type="button" class="header-action" id="headerNotesBtn" title="Tickets" aria-label="Abrir tickets">
-      <svg class="jp-icon" aria-hidden="true"><use href="#i-notes"/></svg>
-      <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
-    <span class="header-action-label">Tickets</span></button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
       <!-- Ícone de saída acompanha a ação existente de finalizar sessão. -->
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4v16h6M9 12h12m-4-4 4 4-4 4"/></svg>
@@ -1308,21 +1308,30 @@
          moveLegacySettingsNodes/restoreLegacySettingsNodes (data-settings-category), sem
          nenhuma alteração em 09-settings-modal.js além dos termos de busca. -->
     <div class="card" id="mvpNotesSettingsCard" data-settings-category="interface">
-      <h2>Tickets <span class="art">backlog interno de testes</span></h2>
+      <h2>Notas <span class="art">tarefas e observações</span></h2>
       <p class="expl" style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); margin-bottom:12px">Registro interno de tarefas, bugs, funcionalidades e melhorias identificados durante o período de testes e amadurecimento do MVP. Não é um log de auditoria financeira nem um sistema de notificações.</p>
       <p class="session-warning" style="margin:0 0 12px">As notas e as pastas em que estão organizadas permanecem armazenadas neste navegador mesmo após "Finalizar sessão". Para removê-las, exclua cada nota/pasta individualmente ou utilize "Limpar todos os dados" na Zona de Perigo.</p>
       <div class="field" style="max-width:360px">
-        <label>Mostrar ícone Notas no menu superior</label>
+        <label>Botão flutuante de Notas</label>
         <div class="seg" id="mvpNotesVisibilitySeg" style="width:fit-content">
           <button type="button" data-mvp-notes-visibility="show">Mostrar</button>
           <button type="button" data-mvp-notes-visibility="hide">Ocultar</button>
         </div>
-        <span class="note">Ocultar remove apenas o botão do menu superior. Os registros continuam salvos e podem ser reabertos por aqui.</span>
+        <span class="note">Ocultar remove apenas o botão flutuante. As notas permanecem salvas e podem ser abertas por aqui.</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px">
-        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Tickets</button>
+        <button class="reset-btn" id="mvpNotesOpenFromSettingsBtn">Abrir Notas</button>
         <span class="note" id="mvpNotesSettingsCount" style="margin:0"></span>
       </div>
+      <fieldset class="mvpn-position-controls">
+        <legend>Posição do botão nesta sessão</legend>
+        <p class="note" id="mvpNotesPositionHelp">Arraste o bloco de notas pela tela ou use estes controles. Com o botão em foco, Alt + setas move; Alt + Home retorna ao canto. Ao recarregar, ele volta ao canto inferior direito.</p>
+        <label for="mvpNotesPositionX">Horizontal <output id="mvpNotesPositionXValue">100%</output></label>
+        <input id="mvpNotesPositionX" type="range" min="0" max="100" step="1" value="100" aria-describedby="mvpNotesPositionHelp">
+        <label for="mvpNotesPositionY">Vertical <output id="mvpNotesPositionYValue">100%</output></label>
+        <input id="mvpNotesPositionY" type="range" min="0" max="100" step="1" value="100" aria-describedby="mvpNotesPositionHelp">
+        <button type="button" class="reset-btn" id="mvpNotesPositionReset">Voltar ao canto inferior direito</button>
+      </fieldset>
     </div>
     <div class="card" data-settings-category="parameters" data-settings-search="parâmetros calibração saldo MDD drawdown alavancagem gênese VRM referência">
       <h2>Parâmetros Editáveis <span class="art">valores percentuais gravam decimal internamente</span></h2>
@@ -1541,6 +1550,14 @@
      preguiçosa (mvpNotesEnsureBuilt) no primeiro uso, mesmo padrão do settings-overlay. -->
 <!-- O diálogo inclui a gaveta e, enquanto aberto, os mesmos avisos globais de
      persistência. Assim suas ações continuam disponíveis sem descartar o rascunho. -->
+<div id="mvpNotesLauncher" hidden>
+  <!-- ID legado preservado para os consumidores; este botão não pertence mais ao header. -->
+  <button type="button" id="headerNotesBtn" class="mvpn-launcher-button" title="Notas" aria-label="Abrir notas" aria-controls="mvpNotesOverlay" aria-haspopup="dialog" aria-describedby="mvpNotesLauncherHelp">
+    <svg viewBox="0 0 28 28" aria-hidden="true"><rect x="6" y="4" width="17" height="21" rx="3"/><path d="M10 2v5M18 2v5M3.5 10H8M3.5 16H8M3.5 22H8M12 12h7M12 16h7M12 20h4"/></svg>
+    <span class="header-notes-badge" id="headerNotesBadge" aria-hidden="true" hidden></span>
+  </button>
+  <span class="sr-only" id="mvpNotesLauncherHelp">Arraste para mover. Alt + setas também move; Alt + Home repõe o canto. Controles de posição disponíveis em Configurações, Interface, Notas.</span>
+</div>
 <div class="mvp-notes-overlay" id="mvpNotesOverlay" role="dialog" aria-modal="true" aria-labelledby="mvpNotesTitle" aria-hidden="true">
   <section class="mvp-notes-drawer" id="mvpNotesDrawer" data-mobile-stage="folders">
     <!-- Alça de redimensionamento (desktop): borda esquerda arrastável; a área clicável
@@ -1562,7 +1579,7 @@
           <path d="M6 3.6h9.4L19 7.2V19.4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1Z"/>
           <path d="M15 3.6V7h4"/><path d="M8.2 11.4h7.2M8.2 14.6h7.2M8.2 17.8h4.4"/>
         </svg>
-        <h2 id="mvpNotesTitle">Tickets</h2>
+        <h2 id="mvpNotesTitle">Notas</h2>
       </div>
       <!-- Busca ao centro da barra (1c). Vive no cabeçalho, não mais na coluna da lista:
            é busca de TODAS as notas, não da coluna. Mesmos IDs de sempre. -->
@@ -1838,5 +1855,13 @@
 <script src="src/js/20-ui/23-research-views.js"></script>
 <script src="src/js/20-ui/24-alladin-views.js"></script>
 <script src="src/js/20-ui/25-dash-macro.js"></script>
+<dialog id="notificationCenter" aria-labelledby="notificationTitle" aria-describedby="notificationPrivacy">
+  <div class="notification-heading"><div><p class="notification-eyebrow">JP WEALTH</p><h2 id="notificationTitle">Notificações</h2></div><button type="button" id="notificationClose" aria-label="Fechar notificações">✕</button></div>
+  <p id="notificationSummary" role="status" aria-live="polite"></p>
+  <div class="notification-toolbar"><label for="notificationArea">Área<select id="notificationArea"><option value="all">Todas as áreas</option><option value="system">Sistema</option><option value="forex">Forex</option><option value="pf">Finanças Pessoais</option><option value="alladin">Alladin</option><option value="research">Research</option><option value="notes">Notas</option></select></label><button type="button" id="notificationReadAll">Marcar todas como lidas</button></div>
+  <div class="notification-scroll"><p id="notificationEmpty" hidden>Nenhuma notificação nesta área.</p><ul id="notificationList"></ul></div>
+  <p id="notificationPrivacy">Avisos ativos e mensagens desta sessão. Ler não resolve a condição. O histórico é local, temporário e não permanece após recarregar; não há alertas com o aplicativo fechado.</p>
+</dialog>
+<script src="src/js/40-app/18-notification-center.js"></script>
 </body>
 </html>

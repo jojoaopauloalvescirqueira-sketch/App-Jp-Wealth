@@ -649,6 +649,7 @@ function settingsSearchEntries(){
     // casa com o próprio título.
     ['Tickets','interface','#mvpNotesSettingsCard'],['tickets','interface','#mvpNotesSettingsCard'],
     ['Notas do MVP','interface','#mvpNotesSettingsCard'],['notas','interface','#mvpNotesSettingsCard'],
+    ['Bloco de notas','interface','#mvpNotesSettingsCard'],['Botão flutuante','interface','#mvpNotesSettingsCard'],['Mover notas','interface','#mvpNotesSettingsCard'],
     ['tarefas','interface','#mvpNotesSettingsCard'],['bugs','interface','#mvpNotesSettingsCard'],
     ['funcionalidades','interface','#mvpNotesSettingsCard'],['melhorias','interface','#mvpNotesSettingsCard'],
     ['MVP','interface','#mvpNotesSettingsCard'],['ícone menu superior','interface','#mvpNotesSettingsCard'],
@@ -705,7 +706,7 @@ function settingsRevealElement(selector){
 // ordem do documento); os <header> internos de modais/drawers vêm todos depois.
 let settingsInertSnapshot=null;
 function settingsInertTargets(){
-  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note'),document.querySelector('#mvpNotesLauncher')].filter(Boolean);
 }
 function settingsSetAppInert(on){
   if(on){

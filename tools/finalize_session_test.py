@@ -257,13 +257,16 @@ def assert_header_actions(page):
     assert page.locator('#nav button[data-screen="config"]').count() == 0
     assert page.locator('#headerActions').count() == 1
     assert page.locator('#headerActions .header-action').count() == 3
+    assert page.locator('#headerActions #headerNotesBtn').count() == 0
+    assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count() == 1
     assert page.locator('#headerConfigBtn').get_attribute('title') == 'Configurações'
     assert page.locator('#headerConfigBtn').get_attribute('aria-label') == 'Abrir configurações'
-    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
-    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir tickets'
+    assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas'
+    assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas'
     assert page.locator('#finalizeSessionBtn').get_attribute('title') == 'Finalizar sessão'
     assert page.locator('#finalizeSessionBtn').get_attribute('aria-label') == 'Finalizar sessão neste computador'
     assert page.locator('#headerActions svg[aria-hidden="true"]').count() == 3
+    assert page.locator('#mvpNotesLauncher svg[aria-hidden="true"]').count() == 1
     page.locator('#headerConfigBtn').focus()
     assert page.evaluate('document.activeElement.id') == 'headerConfigBtn'
     page.locator('#headerConfigBtn').press('Enter')

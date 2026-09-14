@@ -1,3 +1,16 @@
+# Central de notificações — complemento local 20260914
+
+`src/js/40-app/18-notification-center.js` é a entrada 79 do manifest, após as
+78 fontes existentes, cuja ordem foi preservada. Projeta avisos das áreas e
+calendário no sino do header e em diálogo próprio; histórico e leitura apenas
+em memória. Os produtores, limites e destinos estão no
+[inventário da central](NOTIFICATION-CENTER.md); o contrato fica em
+[CHG-NOTIFICATIONS-CENTER-20260914](../work/CHG-NOTIFICATIONS-CENTER-20260914.md).
+`tools/notification_center_test.py` cobre interação, fontes e isolamento;
+resultados e identidade são externos. Não altera regras nem persistência.
+
+## Histórico de apresentação preservado
+
 # Completion pass — representação de apresentação local
 
 Base Git `fafb228316cbcad8091ebc4632443a51687ace43` mais delta local; fingerprint externo.
@@ -138,7 +151,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 40 | `src/js/40-app/11-operational-shell.js` | Shell derivado do resolver: lateral contextual padrão, composição superior opcional no Editor, mesmos nós N1/N2/N3, diálogos mobile e foco |
 | 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado: contexto global, Status do Sistema e realocação dos componentes operacionais para Forex > Visão Geral |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
-| 43 | `src/js/40-app/14-mvp-notes.js` | Tickets (apresentado como "Tickets"; arquivo e identificadores internos preservados) |
+| 43 | `src/js/40-app/14-mvp-notes.js` | Notas: acesso flutuante móvel e pelas Configurações; posição em memória, tickets/dados e identificadores internos preservados |
 | 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget em Forex > Visão Geral, inicializados em separado; calendário e resumo Dashboard compartilham o pipeline |
 | 45 | `src/js/40-app/16-storage-governance.js` | UI da governança de armazenamento |
 | 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal: render parametrizado por raiz (`data-ecal-role`), servindo o overlay `#ecalOverlay` e o workspace `#execEcal` — duas instâncias visuais, um domínio |

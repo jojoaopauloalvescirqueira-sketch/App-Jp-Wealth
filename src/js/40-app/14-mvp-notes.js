@@ -36,7 +36,8 @@ const mvpNotesUI={
   cardMenuId:null, cardMenuOrigem:null,   // menu de ações do ticket: um único aberto por vez
   opener:null, optionsReady:false, inertSnapshot:null, persistenceHosts:null,
   resize:null, paneResize:null, folderDrag:null,        // gesto em andamento {kind,startX,startW} — só persiste no pointerup
-  dragFolderId:null   // pasta sendo arrastada na reordenação manual
+  dragFolderId:null,   // pasta sendo arrastada na reordenação manual
+  launcherPosition:{x:1,y:1}, launcherDrag:null, launcherSuppressClick:false, launcherBound:false
 };
 
 function mvpn(id){ return document.getElementById(id); }
@@ -752,7 +753,106 @@ function mvpNotesDelete(id){
   });
 }
 
-// ---- botão do header + card de Configurações ----
+// ---- acionador flutuante + card de Configurações ----
+// Nomes/IDs legados permanecem compatíveis; coordenadas só vivem nesta sessão.
+function mvpNotesLauncherBounds(){
+  const host=mvpn('mvpNotesLauncher'),btn=mvpn('headerNotesBtn');
+  if(!host || host.hidden || !btn) return null;
+  const area=host.getBoundingClientRect(),rect=btn.getBoundingClientRect(),v=window.visualViewport;
+  const left=Math.max(area.left,v?v.offsetLeft+20:area.left);
+  const top=Math.max(area.top,v?v.offsetTop+20:area.top);
+  return {left,top,width:Math.max(0,Math.min(area.right,v?v.offsetLeft+v.width-20:area.right)-rect.width-left),
+    height:Math.max(0,Math.min(area.bottom,v?v.offsetTop+v.height-20:area.bottom)-rect.height-top),
+    originX:area.left,originY:area.top,scale:host.clientWidth?area.width/host.clientWidth:1};
+}
+function mvpNotesPlaceLauncher(){
+  const p=mvpNotesUI.launcherPosition,b=mvpNotesLauncherBounds();
+  if(b){
+    const btn=mvpn('headerNotesBtn');
+    btn.style.left=((b.left-b.originX+p.x*b.width)/b.scale)+'px';
+    btn.style.top=((b.top-b.originY+p.y*b.height)/b.scale)+'px';
+  }
+  ['X','Y'].forEach(axis=>{
+    const input=mvpn('mvpNotesPosition'+axis),value=Math.round(p[axis.toLowerCase()]*100);
+    if(input) input.value=String(value);
+    const output=mvpn('mvpNotesPosition'+axis+'Value'); if(output) output.textContent=value+'%';
+  });
+}
+function mvpNotesFinishLauncherDrag(cancel){
+  const drag=mvpNotesUI.launcherDrag;if(!drag)return;
+  mvpNotesUI.launcherDrag=null;
+  mvpNotesUI.launcherSuppressClick=cancel || drag.moved;
+  if(cancel) mvpNotesUI.launcherPosition=drag.origin;
+  const btn=mvpn('headerNotesBtn');btn.classList.remove('is-dragging');
+  if(btn.hasPointerCapture(drag.id))btn.releasePointerCapture(drag.id);
+  mvpNotesPlaceLauncher();
+}
+function mvpNotesSyncLauncher(){
+  const host=mvpn('mvpNotesLauncher');if(!host)return;
+  const covered=['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay']
+    .some(id=>mvpn(id)?.classList.contains('show'));
+  if(covered || host.inert || S.mvpNotes?.showHeaderIcon===false)mvpNotesFinishLauncherDrag(true);
+  host.hidden=covered || !(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
+  mvpNotesPlaceLauncher();
+}
+function bindMvpNotesLauncher(){
+  if(mvpNotesUI.launcherBound)return;
+  mvpNotesUI.launcherBound=true;
+  const btn=mvpn('headerNotesBtn');
+  btn.dataset.notesLauncherReady='true';
+  btn.addEventListener('click',event=>{
+    if(event.detail>0 && mvpNotesUI.launcherSuppressClick){mvpNotesUI.launcherSuppressClick=false;return;}
+    openMvpNotesDrawer(btn);
+  });
+  btn.addEventListener('pointerdown',event=>{
+    if(event.button!==0 || !event.isPrimary || mvpNotesUI.launcherDrag)return;
+    mvpNotesUI.launcherSuppressClick=false;
+    mvpNotesUI.launcherDrag={id:event.pointerId,x:event.clientX,y:event.clientY,origin:{...mvpNotesUI.launcherPosition},moved:false};
+    btn.setPointerCapture(event.pointerId);
+  });
+  btn.addEventListener('pointermove',event=>{
+    const d=mvpNotesUI.launcherDrag;if(!d || d.id!==event.pointerId)return;
+    const dx=event.clientX-d.x,dy=event.clientY-d.y;
+    if(!d.moved && Math.hypot(dx,dy)<6)return;
+    const b=mvpNotesLauncherBounds();if(!b)return;
+    d.moved=true;btn.classList.add('is-dragging');
+    mvpNotesUI.launcherPosition={x:Math.max(0,Math.min(1,d.origin.x+dx/(b.width||1))),y:Math.max(0,Math.min(1,d.origin.y+dy/(b.height||1)))};
+    mvpNotesPlaceLauncher();
+  });
+  btn.addEventListener('pointerup',event=>{if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(false);});
+  ['pointercancel','lostpointercapture'].forEach(type=>btn.addEventListener(type,event=>{
+    if(mvpNotesUI.launcherDrag?.id===event.pointerId)mvpNotesFinishLauncherDrag(true);
+  }));
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape' && mvpNotesUI.launcherDrag){event.preventDefault();mvpNotesFinishLauncherDrag(true);}
+  });
+  btn.addEventListener('keydown',event=>{
+    if(!event.altKey)return;
+    const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];
+    if(event.key==='Home'){event.preventDefault();mvpNotesUI.launcherPosition={x:1,y:1};mvpNotesPlaceLauncher();}
+    else if(delta){
+      event.preventDefault();const b=mvpNotesLauncherBounds();if(!b)return;
+      const p=mvpNotesUI.launcherPosition,step=event.shiftKey?8:24;
+      mvpNotesUI.launcherPosition={x:Math.max(0,Math.min(1,p.x+delta[0]*step/(b.width||1))),y:Math.max(0,Math.min(1,p.y+delta[1]*step/(b.height||1)))};
+      mvpNotesPlaceLauncher();
+    }
+  });
+  ['X','Y'].forEach(axis=>mvpn('mvpNotesPosition'+axis)?.addEventListener('input',event=>{
+    const value=event.target.valueAsNumber;if(!Number.isFinite(value))return;
+    mvpNotesUI.launcherPosition[axis.toLowerCase()]=Math.max(0,Math.min(1,value/100));mvpNotesPlaceLauncher();
+  }));
+  mvpn('mvpNotesPositionReset')?.addEventListener('click',()=>{mvpNotesUI.launcherPosition={x:1,y:1};mvpNotesPlaceLauncher();});
+  const resize=()=>{mvpNotesFinishLauncherDrag(true);mvpNotesPlaceLauncher();};
+  window.addEventListener('resize',resize);
+  window.visualViewport?.addEventListener('resize',resize);
+  window.visualViewport?.addEventListener('scroll',resize);
+  const observer=new MutationObserver(mvpNotesSyncLauncher);
+  ['modalOverlay','alladinModalOverlay','ecalOverlay','settingsOverlay','mvpNotesOverlay'].forEach(id=>{
+    const el=mvpn(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['class']});
+  });
+  observer.observe(mvpn('mvpNotesLauncher'),{attributes:true,attributeFilter:['inert']});
+  mvpNotesSyncLauncher();
+}
 function renderMvpNotesHeader(){
   const btn=mvpn('headerNotesBtn');
   if(btn) btn.hidden=!(S.mvpNotes && S.mvpNotes.showHeaderIcon!==false);
@@ -762,7 +862,10 @@ function renderMvpNotesHeader(){
     badge.hidden=count<=0;
     badge.textContent=count>99?'99+':String(count);
   }
-  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir tickets — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir tickets');
+  if(btn) btn.setAttribute('aria-label', count>0 ? `Abrir notas — ${count} ${count===1?'item ativo':'itens ativos'}` : 'Abrir notas');
+  // No portátil, boot pode chamar esta função içada antes do estado da UI.
+  // A inicialização do acionador faz o primeiro posicionamento no momento seguro.
+  if(btn?.dataset.notesLauncherReady==='true')mvpNotesSyncLauncher();
   renderMvpNotesSettingsCard();
 }
 function renderMvpNotesSettingsCard(){
@@ -1326,7 +1429,7 @@ function mvpNotesApplyStage(){
   drawer.dataset.mobileStage=mvpNotesUI.stage;
   const backBtn=mvpn('mvpNotesBackBtn'), title=mvpn('mvpNotesTitle');
   if(mvpNotesIsMobile()){
-    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Tickets'
+    if(title) title.textContent=mvpNotesUI.stage==='folders'?'Notas'
       :(mvpNotesUI.stage==='list'?mvpNotesViewLabel():(mvpNotesUI.selectedId?'Editar ticket':'Novo ticket'));
     if(backBtn){
       backBtn.hidden=mvpNotesUI.stage==='folders';
@@ -1341,7 +1444,7 @@ function mvpNotesApplyStage(){
       if(rotulo) rotulo.textContent=destino;
     }
   }else{
-    if(title) title.textContent='Tickets';
+    if(title) title.textContent='Notas';
     if(backBtn) backBtn.hidden=true;
   }
 }
@@ -2020,7 +2123,7 @@ function mvpNotesTrapFocus(event){
 // que a suspensão da Central (suspendSettingsForSubdialog, abaixo) não cobre sozinha —
 // aquela função só torna #settingsModal inert, nunca tocou <header>/#appMain.
 function mvpNotesInertTargets(){
-  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note')].filter(Boolean);
+  return [document.querySelector('header'), document.querySelector('#nav'), document.querySelector('#navSubShell'), document.querySelector('#appMain'), document.querySelector('.foot-note'), mvpn('mvpNotesLauncher')].filter(Boolean);
 }
 function mvpNotesApplyInert(){
   mvpNotesUI.inertSnapshot=mvpNotesInertTargets().map(el=>({el, inert:el.inert, ariaHidden:el.getAttribute('aria-hidden')}));
@@ -2086,6 +2189,7 @@ function closeMvpNotesDrawerNow(){
   mvpn('mvpNotesOverlay').classList.remove('show');
   mvpn('mvpNotesOverlay').setAttribute('aria-hidden','true');
   mvpNotesRestoreInert();
+  mvpNotesSyncLauncher();
   const opener=mvpNotesUI.opener; mvpNotesUI.opener=null;
   if(typeof restoreSettingsAfterSubdialog==='function') restoreSettingsAfterSubdialog();
   if(opener && document.contains(opener) && !mvpNotesSettingsOpen()) opener.focus();
@@ -2096,7 +2200,7 @@ function closeMvpNotesDrawer(){
 
 // ---- inicialização ----
 function bindMvpNotesDrawer(){
-  mvpn('headerNotesBtn').addEventListener('click',()=>openMvpNotesDrawer(mvpn('headerNotesBtn')));
+  bindMvpNotesLauncher();
   mvpn('mvpNotesCloseBtn').addEventListener('click',closeMvpNotesDrawer);
   mvpn('mvpNotesOverlay').addEventListener('click',e=>{
     if(e.target.id!=='mvpNotesOverlay') return;

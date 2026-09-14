@@ -102,8 +102,10 @@ try:
         # ---- 1. botão por padrão, CRUD dos 4 tipos, contador, captura de tela/build ----
         page = prepare_page(browser, url)
         assert page.locator('#headerNotesBtn').is_visible()
-        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
-        assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir tickets'
+        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas'
+        assert page.locator('#headerNotesBtn').get_attribute('aria-label') == 'Abrir notas'
+        assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count() == 1
+        assert page.locator('#headerActions #headerNotesBtn').count() == 0
         assert page.locator('#headerNotesBadge').is_hidden()
 
         create_note(page, 'task', 'Tarefa de teste', 'descrição da tarefa', 'medium', 'open')
@@ -214,6 +216,7 @@ try:
         page.evaluate("settingsNavigateToLeaf('interface')")
         page.locator('[data-mvp-notes-visibility="hide"]').click()
         assert page.locator('#headerNotesBtn').is_hidden()
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is False
         assert len(notes_state(page)) == 3, 'ocultar ícone não pode apagar registros'
         click_id(page, 'mvpNotesOpenFromSettingsBtn')
         assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')") is True
@@ -232,8 +235,10 @@ try:
         page.wait_for_function("document.querySelector('#mvpNotesSettingsCard')?.classList.contains('settings-search-hit')")
         page.locator('#settingsSearch').fill('')
         page.locator('[data-mvp-notes-visibility="show"]').click()
-        assert page.locator('#headerNotesBtn').is_visible()
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is True
+        assert page.locator('#mvpNotesLauncher').is_hidden(), 'o atalho continua coberto pela Central'
         click_id(page, 'settingsCloseBtn')
+        assert page.locator('#headerNotesBtn').is_visible()
 
         # ---- 7b. log de auditoria financeira (tela Contabilidade) não deve carregar notas ----
         page.evaluate("navigateToScreen('contab')")
@@ -645,7 +650,10 @@ try:
         page.evaluate("() => { window.__onbShown = true; closeModal(); }")
         assert page.evaluate("document.getElementById('headerNotesBadge').hidden") is True, \
             'após a Zona de Perigo o badge deve sumir sem interação manual'
-        assert page.locator('#headerNotesBtn').is_visible(), 'visibilidade volta ao padrão (mostrar)'
+        assert page.evaluate('S.mvpNotes.showHeaderIcon') is True, 'visibilidade volta ao padrão (mostrar)'
+        assert page.locator('#mvpNotesLauncher').is_hidden(), 'a Central continua cobrindo o atalho após limpar a base'
+        click_id(page, 'settingsCloseBtn')
+        assert page.locator('#headerNotesBtn').is_visible()
         assert_no_errors(page.jpwealth_observed)
         assert_fixture_requests(page.context)
         page.close()
@@ -1845,8 +1853,8 @@ try:
         page.keyboard.press('Escape')
 
         # --- JPW-785634: nomenclatura visível ---
-        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Tickets'
-        assert page.locator('#mvpNotesTitle').inner_text() == 'Tickets'
+        assert page.locator('#headerNotesBtn').get_attribute('title') == 'Notas'
+        assert page.locator('#mvpNotesTitle').inner_text() == 'Notas'
         assert page.locator('#mvpNotesNewBtn').get_attribute('title') == 'Novo ticket'
         assert page.locator('#mvpNotesSearch').get_attribute('placeholder') == 'Buscar em todos os tickets'
         page.evaluate("() => { mvpNotesSwitchFolder('all'); }")

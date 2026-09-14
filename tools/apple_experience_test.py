@@ -181,13 +181,17 @@ def run(a):
      c=b.new_context(viewport={'width':w,'height':1000},service_workers='block',reduced_motion='reduce');install_bootstrap(c);c.add_init_script('window.__onbShown=true');page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
      page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page);page.evaluate(SETUP,theme);page.evaluate(ALLADIN_SEED)
      prefix=f'{w}/{theme}'
-     for id,label in [('headerConfigBtn','Configurações'),('headerNotesBtn','Tickets'),('finalizeSessionBtn','Finalizar sessão')]:
+     for id,label in [('headerConfigBtn','Configurações'),('finalizeSessionBtn','Finalizar sessão')]:
       check(prefix+' explicit global action '+id,label in page.locator('#'+id).inner_text())
       button=page.locator('#'+id)
       visible=button.locator('.header-action-label').inner_text().strip()
       check(prefix+' accessible name includes visible label '+id,visible.casefold() in (button.get_attribute('aria-label') or '').casefold())
       fits=button.evaluate("""e=>{const b=e.getBoundingClientRect(),l=e.querySelector('.header-action-label'),r=l.getBoundingClientRect();return r.left>=b.left-1&&r.right<=b.right+1&&r.top>=b.top-1&&r.bottom<=b.bottom+1&&l.scrollWidth<=l.clientWidth+1}""")
       check(prefix+' visible label fits action '+id,fits)
+     check(prefix+' notes leaves header',page.locator('#headerActions #headerNotesBtn').count()==0 and page.locator('#headerActions .header-action').count()==3)
+     notes=page.locator('body > #mvpNotesLauncher #headerNotesBtn')
+     check(prefix+' floating notes remains named',notes.count()==1 and notes.get_attribute('title')=='Notas' and (notes.get_attribute('aria-label') or '').startswith('Abrir notas'))
+     check(prefix+' floating notes icon and touch target',notes.evaluate("e=>{const r=e.getBoundingClientRect();return !!e.querySelector('svg[aria-hidden=\"true\"]')&&r.width>=44&&r.height>=44}"))
      check(prefix+' sidebar icons do not displace labels',page.evaluate("() => [...document.querySelectorAll('#nav .nav-area-icon')].every(e=>e.getBoundingClientRect().width<=24)"))
      for selector in ['.dm-title','.dm-shell-sub','.dm-date','#headerConfigBtn']:
       contrast=page.evaluate(CONTRAST,selector)
