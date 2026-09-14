@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
+import argparse
+import hashlib
 import json
 import os
 import socket
@@ -699,7 +701,142 @@ def run_cache_test(browser, base_url):
     assert_fixture_requests(page.context)
     page.close()
 
+
+def hold_profile_reader(page):
+    # Browser API fault control: the product still receives a real File, reader
+    # and eventual native callback. There is no new test-only product API.
+    page.evaluate("""() => {
+      const read=FileReader.prototype.readAsArrayBuffer;
+      window.__profileHeldReads=[];window.__profileReadersFinished=0;
+      FileReader.prototype.readAsArrayBuffer=function(blob){
+        const reader=this;
+        reader.addEventListener('loadend',()=>window.__profileReadersFinished++,{once:true});
+        window.__profileHeldReads.push(()=>read.call(reader,blob));
+      };
+      window.__profileReleaseReads=()=>{
+        FileReader.prototype.readAsArrayBuffer=read;
+        const pending=window.__profileHeldReads.splice(0);
+        pending.forEach(start=>start());return pending.length;
+      };
+    }""")
+
+
+def release_profile_reader(page):
+    count=page.evaluate('window.__profileReleaseReads()')
+    assert count>0,'The asynchronous FileReader path must actually be held'
+    page.wait_for_function('(count)=>window.__profileReadersFinished>=count',arg=count)
+    # Negative property after native completion; allow any decode continuation
+    # a bounded opportunity to run instead of asserting before the callback.
+    page.wait_for_timeout(250)
+
+
+def run_profile_finalize_contract(browser,url):
+    from settings_modal_test import (PROFILE_KEY, profile_boot, open_profile,
+        profile_raw, save_profile, synthetic_png, upload_profile, profile_close)
+
+    def seed_ui(page):
+        open_profile(page)
+        page.locator('#settingsProfileNameInput').fill('Perfil sintético para finalizar')
+        upload_profile(page,synthetic_png())
+        save_profile(page)
+        assert json.loads(profile_raw(page))['avatarDataUrl'].startswith('data:image/jpeg;base64,')
+        page.locator('#settingsCloseBtn').click()
+        assert_safe_copy_checkpoint(page)
+
+    def finalize(page):
+        click_id(page,'finalizeSessionBtn')
+        assert page.locator('#sessionHasCopy').is_visible(),'Synthetic fixture must enter the safe-copy flow'
+        click_id(page,'sessionHasCopy')
+        finish_with_phrase(page)
+
+    # Local finalization while a previously selected image is still pending.
+    context,page=profile_boot(browser,url)
+    seed_ui(page)
+    open_profile(page)
+    page.locator('#settingsProfileNameInput').fill('Rascunho que não pode ressuscitar')
+    hold_profile_reader(page)
+    page.locator('#settingsProfilePhotoInput').set_input_files({'name':'synthetic-late.png','mimeType':'image/png','buffer':synthetic_png(80,40)})
+    page.wait_for_function('window.__profileHeldReads.length>0')
+    assert not page.locator('#settingsProfileSaveBtn').is_enabled()
+    page.locator('#settingsCloseBtn').click()
+    finalize(page)
+    assert profile_raw(page) is None
+    release_profile_reader(page)
+    assert profile_raw(page) is None,'A late local image callback must not recreate a removed profile'
+    open_profile(page)
+    assert page.locator('#settingsProfileNameInput').input_value()==''
+    assert page.locator('#settingsProfileAvatar img').count()==0
+    assert not page.locator('#settingsProfileSaveBtn').is_enabled()
+    assert page.evaluate("localStorage.getItem('settings_profile_unrelated')")=='synthetic-preserved'
+    profile_close(context,page,allow_operational_change=True)
+    print('PROFILE FINALIZE PASS — local draft/image callback invalidated, unrelated key preserved',flush=True)
+
+    # Same-origin second tab retains a draft/reader through finalization in A.
+    context,a=profile_boot(browser,url)
+    seed_ui(a)
+    b=context.new_page();b.goto(url,wait_until='load');wait_bootstrap(b);b.evaluate('closeModal()')
+    open_profile(b)
+    expect_name='Perfil sintético para finalizar'
+    assert b.locator('#settingsProfileNameInput').input_value()==expect_name
+    b.locator('#settingsProfileNameInput').fill('Rascunho privado da outra aba')
+    hold_profile_reader(b)
+    b.locator('#settingsProfilePhotoInput').set_input_files({'name':'synthetic-other-tab.png','mimeType':'image/png','buffer':synthetic_png(84,42)})
+    b.wait_for_function('window.__profileHeldReads.length>0')
+    finalize(a)
+    b.wait_for_function("() => document.getElementById('sessionNotice')?.textContent.includes('outra aba')")
+    assert profile_raw(a) is None and b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY) is None
+    release_profile_reader(b)
+    open_profile(b)
+    assert b.locator('#settingsProfileNameInput').input_value()==''
+    assert b.locator('#settingsProfileAvatar img').count()==0
+    assert not b.locator('#settingsProfileSaveBtn').is_enabled()
+    assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY) is None
+    b.reload(wait_until='load');wait_bootstrap(b);b.evaluate('closeModal()');open_profile(b)
+    assert b.locator('#settingsProfileNameInput').input_value()==''
+    assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY) is None,'Reload cannot reseed a finalized profile'
+    assert_fixture_requests(context)
+    profile_close(context,a,allow_operational_change=True)
+    print('PROFILE FINALIZE PASS — real second-tab event, pending callback and reload cannot resurrect identity',flush=True)
+
+    # Existing protocol commits the operational document before auxiliary
+    # cleanup. Preserve it: a failed profile removal must remain visible as an
+    # explicit partial-cleanup warning, never masquerade as complete deletion.
+    context,page=profile_boot(browser,url)
+    seed_ui(page)
+    original=profile_raw(page)
+    page.evaluate("""key=>{
+      const remove=Storage.prototype.removeItem;
+      window.__profileCleanupAttempts=0;
+      Storage.prototype.removeItem=function(k){
+        if(this===localStorage&&k===key){window.__profileCleanupAttempts++;throw new DOMException('Synthetic profile removal refusal','SecurityError');}
+        return remove.call(this,k);
+      };
+    }""",PROFILE_KEY)
+    finalize(page)
+    notice=page.locator('#sessionNotice').inner_text()
+    assert 'algumas chaves auxiliares não puderam ser removidas' in notice and PROFILE_KEY in notice,notice
+    assert page.evaluate('window.__profileCleanupAttempts')>0
+    assert profile_raw(page)==original
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')).accounts.length")==0
+    assert page.evaluate("localStorage.getItem('settings_profile_unrelated')")=='synthetic-preserved'
+    profile_close(context,page,allow_operational_change=True)
+    print('PROFILE FINALIZE PASS — removal refusal explicitly reported; operational protocol unchanged',flush=True)
+
 def main():
+    global ROOT
+    parser=argparse.ArgumentParser(description='Finalization contracts, including local profile privacy')
+    parser.add_argument('--root',type=Path,default=ROOT)
+    parser.add_argument('--only',choices=['all','profile'],default='all')
+    args=parser.parse_args();ROOT=args.root.resolve();os.chdir(ROOT)
+    inputs=['index.html','src/styles/app.css','src/js/40-app/07-finalize-session.js','src/js/40-app/09-settings-modal.js','build-id.js','dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html']
+    source_before={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in inputs}
+    print('FINALIZE IDENTITY '+json.dumps({'root':str(ROOT),'test_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'settings_helper_sha256':hashlib.sha256(Path(__file__).with_name('settings_modal_test.py').read_bytes()).hexdigest(),
+        'source_sha256':source_before},ensure_ascii=False),flush=True)
+    def identity_after():
+        current={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in inputs}
+        print('FINALIZE IDENTITY AFTER '+json.dumps(current),flush=True)
+        if current!=source_before:raise RuntimeError('ENVIRONMENT_ERROR: candidate inputs changed during finalization validation')
     server, base_url = start_server()
     try:
         with sync_playwright() as playwright:
@@ -713,6 +850,11 @@ def main():
             if executable:
                 options['executable_path'] = executable
             browser = playwright.chromium.launch(**options)
+            if args.only=='profile':
+                run_profile_finalize_contract(browser,base_url+'index.html')
+                browser.close()
+                identity_after()
+                return
             app_context = browser.new_context(service_workers='block')
             run_fingerprint_resilience(app_context, base_url)
             run_consent_texts(app_context, base_url)
@@ -722,11 +864,14 @@ def main():
             run_galton_reset_order(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             run_mvp_notes_survival(app_context, base_url + 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             app_context.close()
+            run_profile_finalize_contract(browser,base_url+'index.html')
+            run_profile_finalize_contract(browser,base_url+'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html')
             run_cache_test(browser, base_url)
             browser.close()
     finally:
         server.shutdown()
         server.server_close()
+    identity_after()
     print('FINALIZE SESSION OK — fingerprint, gate assíncrono, reload, duas abas, caches externos, fonte/monólito, Notas do MVP e console/pageerror verificados.')
 
 if __name__ == '__main__':

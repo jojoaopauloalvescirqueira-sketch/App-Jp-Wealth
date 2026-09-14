@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "894294cef189429629f32bad2eb584a83bdd991d3ea080b2d8584808d94f8ce0"
+      "sha256": "12c3e320e659fdc0a93558900117ec1ea00d0b7ce8e22ff35bf538748ee3c73a"
     },
     {
       "order": 36,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "093e0954315934b568cf18eaaa66ab0e5de7293aadcf72f00cda6e4ec487c192"
+      "sha256": "c127a73ef06760f3df0d94b2ffe4868bf58f64affd68ffcde26b0f9e8fa82e63"
     },
     {
       "order": 39,

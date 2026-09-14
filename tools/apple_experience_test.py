@@ -5,7 +5,7 @@ from functools import partial
 from http.server import ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap,wait_bootstrap,assert_fixture_requests
-from design_experience_test import Quiet,SETUP,ALLADIN_SEED
+from design_experience_test import Quiet,SETUP,ALLADIN_SEED,settings_geometry_checks
 ROOT=Path(__file__).resolve().parents[1]
 CONTRAST = r"""selector => {
  const e=document.querySelector(selector); if(!e || !e.getBoundingClientRect().width)return null;
@@ -150,8 +150,19 @@ def completion_checks(page, check, prefix):
  check(prefix+' study library and creation remain accessible',page.locator('#pvNewStudyBtn').is_visible())
  page.evaluate("JPWNavigation.navigate('dashboard')")
  page.locator('#headerConfigBtn').click()
- check(prefix+' settings has two task collections',page.locator('.cp-settings-collections>section').count()==2)
+ check(prefix+' settings has two semantic grouped lists',page.locator('.cp-settings-collections>section').count()==2)
  check(prefix+' settings preserves five destinations',page.locator('[data-settings-panel=general] [data-nav-to]').count()==5)
+ settings_geometry_checks(page,check,prefix+' Settings')
+ if page.evaluate('innerWidth')<=760:
+  page.locator('#settingsMenu [data-settings-category=general]').click()
+  settings_geometry_checks(page,check,prefix+' Settings mobile detail')
+ selection=page.evaluate(CONTRAST,'#settingsMenu [aria-current=page]')
+ if page.evaluate('innerWidth')>760:
+  check(prefix+' settings selected navigation text contrast',selection is not None and selection['ratio']>=4.5,selection)
+ check(prefix+' settings grouped destinations share one column',page.evaluate("""() => {
+  const groups=[...document.querySelectorAll('[data-settings-panel=general] .settings-nav-list')].map(e=>e.getBoundingClientRect());
+  return groups.length===2&&Math.abs(groups[0].x-groups[1].x)<2&&groups[1].y>=groups[0].bottom;
+ }"""))
  page.keyboard.press('Escape')
  page.locator('#headerNotesBtn').click()
  check(prefix+' notes keeps collection and writing context',page.locator('.cp-notes-intro').is_visible() and page.locator('#mvpNotesEditorEmpty').count()==1)

@@ -1,4 +1,4 @@
-// ============ CENTRAL DE CONFIGURAÇÕES (N1) ============
+// ============ CENTRAL DE CONFIGURAÇÕES (N1 / PERFIL LOCAL N2) ============
 // Mantém os controles legados no mesmo DOM: apenas os transporta enquanto a central está aberta.
 // Arquitetura de navegação: categorias declarativas na sidebar (algumas são grupos com subpáginas,
 // 'general' e 'about' são páginas diretas). Todas as páginas — grupo ou folha — são registradas
@@ -15,6 +15,7 @@ const SETTINGS_GROUPS=[
   {id:'about', label:'Sobre', icon:'about'}
 ];
 const SETTINGS_LEAVES={
+  account:{label:'JP Wealth Account', group:null, desc:'Sua identidade local neste navegador.', terms:['perfil','conta local','nome de exibição','foto','avatar','JP Wealth Account']},
   about:{label:'Sobre', group:null, terms:['sobre','versão','build','offline','armazenamento','documentação','changelog']},
   appearance:{label:'Aparência', group:'appearance-interface', desc:'Tema e ícone do aplicativo.', terms:['tema','aparência','ícone','paleta','contraste']},
   interface:{label:'Interface', group:'appearance-interface', desc:'Tamanho do texto e instruções do sistema.', terms:['interface','fonte','tamanho','tipografia','sidebar','barra lateral','ajuda','instruções']},
@@ -30,6 +31,7 @@ const SETTINGS_LEAVES={
 const SETTINGS_GROUP_BY_ID=Object.fromEntries(SETTINGS_GROUPS.map(g=>[g.id,g]));
 
 const SETTINGS_ICONS={
+  account:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
   general:'<path d="M4 7h11M19 7h1M4 12h6M14 12h6M4 17h13M21 17h-1"/><circle cx="17" cy="7" r="2"/><circle cx="11" cy="12" r="2"/><circle cx="18" cy="17" r="2"/>',
   appearance:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
   governance:'<path d="M4 19h16"/><path d="M6 19V9l6-4 6 4v10"/><path d="M10 19v-6h4v6"/>',
@@ -53,6 +55,315 @@ const settingsState={
 window.__settingsModalDebug={opens:0,observerInstances:0,focusTrapActive:false};
 
 function settingsEl(id){ return document.getElementById(id); }
+
+// Preferência por navegador, fora de S, exportações, credenciais e schemas
+// financeiros. Uma escrita explícita contém nome e foto juntos; leitura é pura.
+const SETTINGS_PROFILE_KEY='jpwealth_local_profile_v1';
+const SETTINGS_PROFILE_MAX_FILE=5*1024*1024;
+const SETTINGS_PROFILE_MAX_PIXELS=16*1000*1000;
+const SETTINGS_PROFILE_MAX_AVATAR=200*1024;
+const settingsProfileState={
+  confirmed:{displayName:'',avatarDataUrl:null},draft:{displayName:'',avatarDataUrl:null},
+  raw:null,envelope:{},blocked:null,note:'',status:'info',editing:false,
+  token:0,epoch:0,busy:false,saving:false,reader:null
+};
+function settingsProfileEpoch(){ return Number(window.JP_WEALTH_SESSION_WIPE_EPOCH)||0; }
+function settingsProfileNameValid(value){
+  return typeof value==='string'&&Array.from(value).length<=120&&!/[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/.test(value);
+}
+function settingsProfileImageHeader(bytes){
+  const bad=()=>{ throw new Error('Escolha uma imagem PNG, JPEG ou WebP válida.'); };
+  if(!(bytes instanceof Uint8Array)||bytes.length<12) return bad();
+  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+  const text=(start,count)=>String.fromCharCode(...bytes.subarray(start,start+count));
+  let type,width,height;
+  if(bytes[0]===137&&text(1,3)==='PNG'&&bytes[4]===13&&bytes[5]===10&&bytes[6]===26&&bytes[7]===10){
+    if(bytes.length<33||text(12,4)!=='IHDR'||view.getUint32(8)!==13) return bad();
+    type='image/png';width=view.getUint32(16);height=view.getUint32(20);
+    // APNG é recusado: o perfil aceita uma imagem estática, sem quadros ocultos.
+    for(let offset=8;offset+12<=bytes.length;){
+      const size=view.getUint32(offset); if(size>bytes.length-offset-12) return bad();
+      if(text(offset+4,4)==='acTL') throw new Error('Escolha uma imagem estática, sem animação.');
+      if(text(offset+4,4)==='IEND') break;
+      offset+=12+size;
+    }
+  }else if(bytes[0]===255&&bytes[1]===216){
+    type='image/jpeg';
+    let offset=2;
+    while(offset+3<bytes.length){
+      if(bytes[offset++]!==255) return bad();
+      while(offset<bytes.length&&bytes[offset]===255) offset++;
+      const marker=bytes[offset++];
+      if(marker===217||marker===218) break;
+      if(marker===1||(marker>=208&&marker<=215)) continue;
+      if(offset+2>bytes.length) return bad();
+      const size=view.getUint16(offset); if(size<2||offset+size>bytes.length) return bad();
+      if([192,193,194,195,197,198,199,201,202,203,205,206,207].includes(marker)){
+        if(size<8) return bad();
+        height=view.getUint16(offset+3);width=view.getUint16(offset+5);break;
+      }
+      offset+=size;
+    }
+  }else if(text(0,4)==='RIFF'&&text(8,4)==='WEBP'){
+    type='image/webp';
+    if(view.getUint32(4,true)+8!==bytes.length) return bad();
+    let frameWidth=0,frameHeight=0;
+    for(let offset=12;offset+8<=bytes.length;){
+      const size=view.getUint32(offset+4,true),start=offset+8,kind=text(offset,4);
+      if(size>bytes.length-start) return bad();
+      if(kind==='ANIM'||kind==='ANMF') throw new Error('Escolha uma imagem estática, sem animação.');
+      if(kind==='VP8X'){
+        if(size<10) return bad();
+        if(bytes[start]&2) throw new Error('Escolha uma imagem estática, sem animação.');
+        width=1+bytes[start+4]+(bytes[start+5]<<8)+(bytes[start+6]<<16);
+        height=1+bytes[start+7]+(bytes[start+8]<<8)+(bytes[start+9]<<16);
+      }else if(kind==='VP8 '){
+        if(size<10||bytes[start+3]!==157||bytes[start+4]!==1||bytes[start+5]!==42) return bad();
+        frameWidth=view.getUint16(start+6,true)&16383;frameHeight=view.getUint16(start+8,true)&16383;
+      }else if(kind==='VP8L'){
+        if(size<5||bytes[start]!==47) return bad();
+        frameWidth=1+bytes[start+1]+((bytes[start+2]&63)<<8);
+        frameHeight=1+(bytes[start+2]>>6)+(bytes[start+3]<<2)+((bytes[start+4]&15)<<10);
+      }
+      offset=start+size+(size&1);
+    }
+    // O canvas VP8X não pode encobrir um frame de outras dimensões. Confira
+    // ambos antes da decodificação, para que o limite de pixels seja real.
+    if(!frameWidth||!frameHeight||(width&&(width!==frameWidth||height!==frameHeight))) return bad();
+    width=frameWidth;height=frameHeight;
+  }else return bad();
+  if(!width||!height) return bad();
+  if(width*height>SETTINGS_PROFILE_MAX_PIXELS) throw new Error('A imagem deve ter até 16 megapixels.');
+  return {type,width,height};
+}
+function settingsProfileAvatarValid(value){
+  if(value===null) return true;
+  if(typeof value!=='string'||value.length>SETTINGS_PROFILE_MAX_AVATAR||!/^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(value)) return false;
+  try{
+    const binary=atob(value.slice(value.indexOf(',')+1));
+    const header=settingsProfileImageHeader(Uint8Array.from(binary,char=>char.charCodeAt(0)));
+    return header.type==='image/jpeg'&&header.width<=256&&header.height<=256;
+  }catch(error){ return false; }
+}
+function settingsProfileRead(){
+  const empty={displayName:'',avatarDataUrl:null};
+  let raw=null;
+  try{ raw=localStorage.getItem(SETTINGS_PROFILE_KEY); }
+  catch(error){ return {raw,value:empty,envelope:{},blocked:'read',note:'Não foi possível ler o perfil. O conteúdo salvo foi preservado; recarregue a página para tentar novamente.'}; }
+  if(raw===null) return {raw,value:empty,envelope:{},blocked:null,note:''};
+  try{
+    const parsed=JSON.parse(raw);
+    if(!parsed||typeof parsed!=='object'||Array.isArray(parsed)||parsed.schemaVersion!==1||
+       !settingsProfileNameValid(parsed.displayName)||(parsed.avatarDataUrl!==null&&typeof parsed.avatarDataUrl!=='string')) throw new Error('incompatible');
+    return {raw,value:{displayName:parsed.displayName,avatarDataUrl:parsed.avatarDataUrl},envelope:parsed,blocked:null,
+      note:settingsProfileAvatarValid(parsed.avatarDataUrl)?'':'A foto salva está indisponível. Escolha outra foto ou remova-a antes de salvar; o conteúdo original permanece intacto.'};
+  }catch(error){ return {raw,value:empty,envelope:{},blocked:'invalid',note:'O perfil salvo não pôde ser reconhecido. Nada foi sobrescrito; recarregue após recuperar o conteúdo local.'}; }
+}
+function settingsProfileCancelAsync(){
+  settingsProfileState.token++;settingsProfileState.busy=false;settingsProfileState.saving=false;
+  const reader=settingsProfileState.reader;settingsProfileState.reader=null;
+  if(reader&&reader.readyState===1){ try{reader.abort();}catch(error){} }
+}
+function settingsProfileReload(){
+  if(settingsProfileState.blocked==='session'){renderSettingsProfile();return;}
+  settingsProfileCancelAsync();
+  const read=settingsProfileRead();
+  Object.assign(settingsProfileState,{confirmed:{...read.value},draft:{...read.value},raw:read.raw,envelope:read.envelope,
+    blocked:read.blocked,note:read.note,status:read.blocked?'blocked':read.note?'error':'info',epoch:settingsProfileEpoch(),editing:false,saving:false});
+  renderSettingsProfile();
+}
+function settingsProfileDirty(){
+  const {confirmed,draft}=settingsProfileState;
+  return confirmed.displayName!==draft.displayName||confirmed.avatarDataUrl!==draft.avatarDataUrl;
+}
+function settingsProfileSetStatus(message,state){
+  settingsProfileState.note=message;settingsProfileState.status=state;
+  const status=settingsEl('settingsProfileStatus');
+  if(status){status.textContent=message;status.dataset.state=state;}
+}
+function settingsProfileInitials(name){
+  const parts=name.trim().split(/\s+/u).filter(Boolean);
+  if(!parts.length) return 'JP';
+  return (Array.from(parts[0])[0]+(parts.length>1?Array.from(parts[parts.length-1])[0]:'')).toLocaleUpperCase('pt-BR');
+}
+function renderSettingsProfileAvatar(element,profile){
+  if(!element) return;
+  const initials=settingsProfileInitials(profile.displayName);
+  element.replaceChildren(document.createTextNode(initials));
+  if(!profile.avatarDataUrl||!settingsProfileAvatarValid(profile.avatarDataUrl)) return;
+  const picture=document.createElement('img');picture.alt='';picture.draggable=false;
+  picture.addEventListener('error',()=>{
+    if(picture.parentNode!==element) return;
+    element.replaceChildren(document.createTextNode(initials));
+    if(element.id==='settingsAccountAvatar'&&settingsState.active==='account') settingsProfileSetStatus('A foto está indisponível. Escolha outra foto ou remova-a; o conteúdo salvo foi preservado.','error');
+  },{once:true});
+  picture.src=profile.avatarDataUrl;element.replaceChildren(picture);
+}
+function renderSettingsProfile(){
+  const state=settingsProfileState,name=state.confirmed.displayName.trim()||'Seu perfil';
+  const rowName=settingsEl('settingsProfileName');if(rowName) rowName.textContent=name;
+  const row=settingsEl('settingsProfileBtn');if(row) row.setAttribute('aria-label','JP Wealth Account — '+name);
+  renderSettingsProfileAvatar(settingsEl('settingsProfileAvatar'),state.confirmed);
+  renderSettingsProfileAvatar(settingsEl('settingsAccountAvatar'),state.draft);
+  const heading=settingsEl('settingsAccountHeading');if(heading) heading.textContent=state.draft.displayName.trim()||'Seu perfil';
+  const input=settingsEl('settingsProfileNameInput');
+  if(input){ if(input.value!==state.draft.displayName) input.value=state.draft.displayName;input.disabled=!!state.blocked||state.saving; }
+  const disabled=!!state.blocked||state.saving;
+  const save=settingsEl('settingsProfileSaveBtn');if(save) save.disabled=disabled||state.busy||!settingsProfileDirty();
+  const choose=settingsEl('settingsProfileChoosePhotoBtn');if(choose) choose.disabled=disabled;
+  const remove=settingsEl('settingsProfileRemovePhotoBtn');if(remove) remove.disabled=disabled||(!state.draft.avatarDataUrl&&!state.busy);
+  const cancel=settingsEl('settingsProfileCancelBtn');if(cancel) cancel.disabled=state.blocked==='unknown'||state.saving||(!settingsProfileDirty()&&!state.busy&&state.blocked!=='conflict');
+  settingsProfileSetStatus(state.note,state.status);
+}
+function beginSettingsProfileDraft(){
+  if(settingsProfileState.blocked==='unknown') {renderSettingsProfile();return;}
+  settingsProfileReload();settingsProfileState.editing=true;
+}
+function cancelSettingsProfileDraft(){
+  settingsProfileCancelAsync();
+  if(settingsProfileState.blocked==='unknown'){renderSettingsProfile();return;}
+  settingsProfileReload();
+}
+function settingsAccountPanel(){
+  return `<form id="settingsProfileForm" class="settings-account-form" novalidate>
+    <section class="settings-account-group" aria-label="Identidade local">
+      <div class="settings-account-row"><label for="settingsProfileNameInput">Nome de exibição</label><input id="settingsProfileNameInput" type="text" autocomplete="off" spellcheck="false" aria-describedby="settingsProfileNameHelp"><p class="note" id="settingsProfileNameHelp">Até 120 caracteres. Deixe vazio para usar Seu perfil.</p></div>
+      <div class="settings-account-row"><span>Foto do perfil</span><div class="settings-account-photo-actions"><input id="settingsProfilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><button type="button" class="reset-btn" id="settingsProfileChoosePhotoBtn">Escolher foto</button><button type="button" class="reset-btn" id="settingsProfileRemovePhotoBtn">Remover foto</button></div><p class="note">PNG, JPEG ou WebP estático. Até 5 MiB e 16 megapixels.</p></div>
+    </section>
+    <p class="settings-account-privacy">Seu nome e sua foto ficam somente neste navegador. A foto não é enviada a servidores. O backup financeiro não inclui este perfil; Finalizar sessão remove-o deste computador.</p>
+    <p id="settingsProfileStatus" role="status" aria-live="polite" data-state="info"></p>
+    <div class="settings-account-actions"><button type="button" class="reset-btn" id="settingsProfileCancelBtn">Cancelar</button><button type="submit" class="reset-btn settings-account-save" id="settingsProfileSaveBtn">Salvar perfil</button></div>
+  </form>`;
+}
+function settingsProfileReadFile(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();settingsProfileState.reader=reader;
+    reader.onload=()=>resolve(new Uint8Array(reader.result));
+    reader.onerror=()=>reject(new Error('Não foi possível ler a imagem. A foto anterior foi mantida.'));
+    reader.onabort=()=>reject(new Error('Leitura cancelada.'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+async function settingsProfileRaster(bytes,header){
+  const url=URL.createObjectURL(new Blob([bytes],{type:header.type}));
+  const picture=new Image();
+  try{
+    await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error('Não foi possível abrir a imagem.')),10000);
+      picture.onload=()=>{clearTimeout(timer);resolve();};
+      picture.onerror=()=>{clearTimeout(timer);reject(new Error('Não foi possível abrir a imagem. A foto anterior foi mantida.'));};
+      picture.src=url;
+    });
+    const width=picture.naturalWidth,height=picture.naturalHeight;
+    if(!width||!height||width*height>SETTINGS_PROFILE_MAX_PIXELS) throw new Error('A imagem deve ter até 16 megapixels.');
+    const edge=Math.min(width,height),size=Math.min(256,edge),canvas=document.createElement('canvas');
+    canvas.width=size;canvas.height=size;
+    const context=canvas.getContext('2d');if(!context) throw new Error('Não foi possível preparar a foto neste navegador.');
+    context.fillStyle='#ffffff';context.fillRect(0,0,size,size);
+    context.drawImage(picture,(width-edge)/2,(height-edge)/2,edge,edge,0,0,size,size);
+    // Canvas gera um novo raster: nenhum EXIF, nome de arquivo ou URL original
+    // integra a preferência. O limite inclui o prefixo/base64 persistido.
+    const raster=canvas.toDataURL('image/jpeg',0.86);
+    if(!settingsProfileAvatarValid(raster)) throw new Error('Não foi possível preparar uma foto compacta. Escolha outra imagem.');
+    return raster;
+  }finally{ picture.onload=null;picture.onerror=null;picture.src='';URL.revokeObjectURL(url); }
+}
+async function selectSettingsProfilePhoto(file){
+  if(!file||settingsProfileState.blocked||settingsProfileState.saving) return;
+  settingsProfileCancelAsync();
+  settingsProfileState.editing=true;
+  const token=settingsProfileState.token,epoch=settingsProfileState.epoch;
+  const current=()=>token===settingsProfileState.token&&epoch===settingsProfileEpoch()&&settingsProfileState.editing;
+  try{
+    if(file.size<=0||file.size>SETTINGS_PROFILE_MAX_FILE) throw new Error('Escolha uma imagem de até 5 MiB.');
+    if(!['image/png','image/jpeg','image/webp'].includes(file.type)) throw new Error('Escolha uma imagem PNG, JPEG ou WebP.');
+    settingsProfileState.busy=true;settingsProfileSetStatus('Preparando a foto…','busy');renderSettingsProfile();
+    const bytes=await settingsProfileReadFile(file);if(!current()) return;
+    const header=settingsProfileImageHeader(bytes);
+    if(header.type!==file.type) throw new Error('O conteúdo não corresponde ao formato da imagem.');
+    const raster=await settingsProfileRaster(bytes,header);if(!current()) return;
+    settingsProfileState.draft.avatarDataUrl=raster;
+    settingsProfileSetStatus('Prévia não salva. Salve o perfil para confirmar a foto.','dirty');
+  }catch(error){
+    if(current()) settingsProfileSetStatus(error&&error.message||'Não foi possível preparar a foto. A anterior foi mantida.','error');
+  }finally{
+    if(current()){settingsProfileState.busy=false;settingsProfileState.reader=null;renderSettingsProfile();}
+  }
+}
+async function saveSettingsProfile(){
+  const state=settingsProfileState;
+  if(state.blocked||state.busy||state.saving||!settingsProfileDirty()) return;
+  if(!settingsProfileNameValid(state.draft.displayName)) {settingsProfileSetStatus('Use até 120 caracteres no nome, sem caracteres de controle.','error');return;}
+  if(!settingsProfileAvatarValid(state.draft.avatarDataUrl)) {settingsProfileSetStatus('A foto está indisponível. Substitua ou remova a foto antes de salvar.','error');return;}
+  const token=state.token,epoch=state.epoch;
+  const candidate={displayName:state.draft.displayName.trim(),avatarDataUrl:state.draft.avatarDataUrl};
+  const payload=JSON.stringify({...state.envelope,schemaVersion:1,...candidate});
+  const current=()=>token===state.token&&epoch===settingsProfileEpoch();
+  state.saving=true;renderSettingsProfile();
+  const write=()=>{
+    if(!current()) return;
+    let before;
+    try{before=localStorage.getItem(SETTINGS_PROFILE_KEY);}
+    catch(error){state.blocked='read';settingsProfileSetStatus('Não foi possível conferir o perfil salvo. Nenhuma gravação foi tentada; recarregue a página.','blocked');return;}
+    if(before!==state.raw){state.blocked='conflict';settingsProfileSetStatus('O perfil mudou em outra aba. Nada foi gravado; cancele para conferir o perfil atual.','blocked');return;}
+    try{localStorage.setItem(SETTINGS_PROFILE_KEY,payload);}catch(error){/* A releitura determina o desfecho desta tentativa. */}
+    let after;
+    try{after=localStorage.getItem(SETTINGS_PROFILE_KEY);}catch(error){}
+    if(after===payload){
+      state.raw=payload;state.envelope=JSON.parse(payload);state.confirmed={...candidate};state.draft={...candidate};
+      settingsProfileSetStatus('Perfil salvo neste navegador.','success');return;
+    }
+    if(after===before){settingsProfileSetStatus('Não foi possível salvar. O perfil anterior foi mantido e a prévia continua disponível para tentar novamente ou cancelar.','error');return;}
+    state.blocked='unknown';
+    settingsProfileSetStatus('Não foi possível confirmar a gravação. A prévia foi preservada; novas alterações estão bloqueadas. Recarregue para conferir o perfil armazenado.','blocked');
+  };
+  try{
+    // Compartilha o lock existente com a limpeza, sem mudar seu protocolo.
+    // Sem Web Locks, permanece a guarda síncrona e a limitação de concorrência
+    // documentada do navegador; não se promete transação entre abas.
+    if(typeof sessionAcquireWriteLock==='function') await sessionAcquireWriteLock(write);else write();
+  }catch(error){if(current()) settingsProfileSetStatus('Não foi possível iniciar a gravação. A prévia foi mantida.','error');}
+  finally{if(current()){state.saving=false;renderSettingsProfile();}}
+}
+function settingsProfileStorageChanged(event){
+  if(event.key!==SETTINGS_PROFILE_KEY) return;
+  const state=settingsProfileState;
+  settingsProfileCancelAsync();
+  if(event.newValue===null){
+    // Outra aba removeu o perfil: descartar a cópia pessoal em memória também.
+    settingsProfileReload();return;
+  }
+  if(state.blocked==='unknown') return;
+  if(settingsProfileDirty()){
+    state.blocked='conflict';settingsProfileSetStatus('O perfil mudou em outra aba. Cancele a prévia para conferir o perfil atual.','blocked');renderSettingsProfile();
+  }else settingsProfileReload();
+}
+function handleSettingsProfileSessionWipe(){
+  settingsProfileCancelAsync();
+  Object.assign(settingsProfileState,{confirmed:{displayName:'',avatarDataUrl:null},draft:{displayName:'',avatarDataUrl:null},raw:null,envelope:{},
+    blocked:'session',note:'O encerramento invalidou a edição do perfil nesta sessão. Recarregue para conferir o perfil salvo antes de continuar.',status:'blocked',editing:false,saving:false,epoch:settingsProfileEpoch()});
+  const file=settingsEl('settingsProfilePhotoInput');if(file) file.value='';
+  renderSettingsProfile();
+}
+function bindSettingsProfileEditor(){
+  const form=settingsEl('settingsProfileForm');if(!form||form.dataset.bound) return;
+  form.dataset.bound='true';
+  form.addEventListener('submit',event=>{event.preventDefault();saveSettingsProfile();});
+  settingsEl('settingsProfileNameInput').addEventListener('input',event=>{
+    settingsProfileState.draft.displayName=event.target.value;settingsProfileState.editing=true;
+    settingsProfileSetStatus(settingsProfileNameValid(event.target.value)?'Prévia não salva. Salve o perfil para confirmar o nome.':'Use até 120 caracteres no nome, sem caracteres de controle.',settingsProfileNameValid(event.target.value)?'dirty':'error');renderSettingsProfile();
+  });
+  settingsEl('settingsProfileChoosePhotoBtn').addEventListener('click',()=>settingsEl('settingsProfilePhotoInput').click());
+  settingsEl('settingsProfilePhotoInput').addEventListener('change',event=>{
+    const file=event.target.files&&event.target.files[0];event.target.value='';selectSettingsProfilePhoto(file);
+  });
+  settingsEl('settingsProfileRemovePhotoBtn').addEventListener('click',()=>{
+    settingsProfileCancelAsync();settingsProfileState.draft.avatarDataUrl=null;settingsProfileState.editing=true;
+    settingsProfileSetStatus('Prévia sem foto. Salve o perfil para confirmar a remoção.','dirty');renderSettingsProfile();
+  });
+  settingsEl('settingsProfileCancelBtn').addEventListener('click',()=>{cancelSettingsProfileDraft();settingsProfileState.editing=true;});
+  renderSettingsProfile();
+}
 function settingsIsOpen(){ return settingsState.open; }
 function settingsEsc(v){ return esc(String(v||'')); }
 function settingsLeafLabel(id){ return (SETTINGS_LEAVES[id]&&SETTINGS_LEAVES[id].label) || (SETTINGS_GROUP_BY_ID[id]&&SETTINGS_GROUP_BY_ID[id].label) || id; }
@@ -62,6 +373,7 @@ function settingsPageTitleFor(id){
   return settingsLeafLabel(id);
 }
 function settingsTopLevelFor(id){
+  if(id==='account') return 'account';
   if(id==='general'||id==='about'||SETTINGS_GROUP_BY_ID[id]) return id;
   const leaf=SETTINGS_LEAVES[id];
   return leaf?leaf.group:'general';
@@ -74,7 +386,7 @@ function buildSettingsMenu(){
     const button=document.createElement('button');
     button.type='button'; button.className='settings-menu-item'; button.dataset.settingsCategory=item.id;
     button.setAttribute('aria-current','false');
-    button.innerHTML=`${settingsIconSvg(item.icon)}<span>${settingsEsc(item.label)}</span>`;
+    button.innerHTML=`<span class="settings-menu-symbol" data-settings-color="${item.icon}">${settingsIconSvg(item.icon)}</span><span>${settingsEsc(item.label)}</span>`;
     button.addEventListener('click',()=>settingsNavigateTopLevel(item.id));
     menu.append(button);
     const option=document.createElement('option'); option.value=item.id; option.textContent=item.label; select.append(option);
@@ -92,18 +404,31 @@ function buildSettingsMenu(){
   launch.type='button'; launch.id='ecalOpenFromSettingsBtn';
   launch.className='settings-menu-item settings-menu-launch';
   launch.setAttribute('aria-haspopup','dialog');
-  launch.innerHTML=`${settingsIconSvg('calendar')}<span>Calendário Econômico</span>${settingsIconSvg('chevron')}`;
+  launch.innerHTML=`<span class="settings-menu-symbol" data-settings-color="calendar">${settingsIconSvg('calendar')}</span><span>Calendário Econômico</span>`;
   menu.append(launch);
   menu.dataset.ready='true';
 }
 
+function settingsCategoryHero(id,description){
+  const item=SETTINGS_GROUP_BY_ID[id]||SETTINGS_LEAVES[id]||{};
+  const icon=item.icon||(SETTINGS_GROUP_BY_ID[item.group]||{}).icon||(id==='account'?'account':'general');
+  const desc=description||item.desc||(id==='general'?'Escolha como o JP Wealth funciona, protege seus dados e organiza suas preferências.':'Informações sobre o aplicativo e suas referências.');
+  if(id==='account') return '<div class="settings-category-hero settings-account-hero" data-settings-hero="account"><span class="settings-profile-avatar settings-account-avatar" id="settingsAccountAvatar" aria-hidden="true">JP</span><h4 class="settings-hero-title" id="settingsAccountHeading">Seu perfil</h4><p class="settings-account-label">JP Wealth Account</p><p class="settings-hero-description">Personalize sua identidade neste navegador.</p></div>';
+  return `<div class="settings-category-hero" data-settings-hero="${settingsEsc(id)}"><span class="settings-hero-icon" data-settings-color="${settingsEsc(icon)}" aria-hidden="true">${settingsIconSvg(icon)}</span><h4 class="settings-hero-title">${settingsEsc(settingsPageTitleFor(id))}</h4><p class="settings-hero-description">${settingsEsc(desc)}</p></div>`;
+}
 function createSettingsPanel(id,html){
-  const panel=document.createElement('section'); panel.className='settings-panel'; panel.dataset.settingsPanel=id; panel.hidden=true; panel.innerHTML=html; settingsEl('settingsContent').append(panel); return panel;
+  const panel=document.createElement('section'); panel.className='settings-panel'; panel.dataset.settingsPanel=id; panel.hidden=true; panel.innerHTML=html;
+  // O texto introdutório original passa ao hero; os controles e avisos restantes
+  // conservam os mesmos nós, IDs, listeners e semântica.
+  const lead=panel.firstElementChild?.matches('p.settings-lead')?panel.firstElementChild:null;
+  const description=lead?.textContent; if(lead) lead.remove();
+  panel.insertAdjacentHTML('afterbegin',settingsCategoryHero(id,description));
+  settingsEl('settingsContent').append(panel); return panel;
 }
 
 function aboutPanel(){
   const build=typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:'não informado';
-  return `<div class="settings-about-head"><div class="settings-about-mark" aria-hidden="true">JP</div><h3>JP Wealth Risk Terminal</h3><p class="settings-lead">Ferramenta de gestão, registro e controle de risco. O sistema não fornece sinais, não prevê resultados e não transforma expectativas estatísticas em garantias.</p></div><dl class="settings-facts"><dt>Aplicativo</dt><dd>JP Wealth Risk Terminal</dd><dt>Versão</dt><dd>1 beta</dd><dt>Build</dt><dd><code>${settingsEsc(build)}</code></dd><dt>Armazenamento</dt><dd>Local neste navegador.</dd><dt>Funcionamento</dt><dd>Disponível offline após a instalação completa da aplicação.</dd></dl><div class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a><a href="CHANGELOG.md" target="_blank" rel="noopener">Changelog</a><a href="README.md" target="_blank" rel="noopener">Documentação do projeto</a></div><p class="note">Dados técnicos não disponíveis no código vigente não são inferidos nesta tela.</p>`;
+  return `<p class="settings-lead">Ferramenta de gestão, registro e controle de risco. O sistema não fornece sinais, não prevê resultados e não transforma expectativas estatísticas em garantias.</p><dl class="settings-facts"><dt>Aplicativo</dt><dd>JP Wealth Risk Terminal</dd><dt>Versão</dt><dd>1 beta</dd><dt>Build</dt><dd><code>${settingsEsc(build)}</code></dd><dt>Armazenamento</dt><dd>Local neste navegador.</dd><dt>Funcionamento</dt><dd>Disponível offline após a instalação completa da aplicação.</dd></dl><div class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a><a href="CHANGELOG.md" target="_blank" rel="noopener">Changelog</a><a href="README.md" target="_blank" rel="noopener">Documentação do projeto</a></div><p class="note">Dados técnicos não disponíveis no código vigente não são inferidos nesta tela.</p>`;
 }
 
 function educationPanel(){
@@ -135,8 +460,8 @@ function settingsNavCard(id,label,desc){
   return `<button type="button" class="settings-nav-card" data-nav-to="${settingsEsc(id)}"><span class="cp-settings-symbol" aria-hidden="true">${settingsIconSvg((SETTINGS_GROUP_BY_ID[id]||SETTINGS_GROUP_BY_ID[settingsTopLevelFor(id)]||{}).icon||'general')}</span><span class="settings-nav-card-text"><span class="settings-nav-card-title">${settingsEsc(label)}</span>${desc?`<span class="settings-nav-card-desc">${settingsEsc(desc)}</span>`:''}</span><span class="settings-nav-card-chev" aria-hidden="true">${settingsIconSvg('chevron')}</span></button>`;
 }
 function generalPanel(){
-  const card=id=>{const g=SETTINGS_GROUP_BY_ID[id];return settingsNavCard(g.id,g.label,g.desc);};
-  return `<div class="cp-settings-intro"><span class="cp-kicker">SEU JP WEALTH</span><h4>Um espaço que funciona do seu jeito.</h4><p class="settings-lead">Personalize a leitura, cuide dos dados e encontre as referências do método.</p></div><div class="cp-settings-collections"><section><h4>Preferências e dados</h4><div class="settings-nav-list">${card('appearance-interface')}${card('data-security')}</div></section><section><h4>Método e apoio</h4><div class="settings-nav-list">${card('method-governance')}${card('operations')}${card('knowledge')}</div></section></div>`;
+  const card=id=>{const g=SETTINGS_GROUP_BY_ID[id];return settingsNavCard(g.id,g.label,'');};
+  return `<div class="cp-settings-collections"><section><h4>Preferências e dados</h4><div class="settings-nav-list">${card('appearance-interface')}${card('data-security')}</div></section><section><h4>Método e apoio</h4><div class="settings-nav-list">${card('method-governance')}${card('operations')}${card('knowledge')}</div></section></div>`;
 }
 function groupPanel(group){
   const cards=group.children.map(leafId=>settingsNavCard(leafId,SETTINGS_LEAVES[leafId].label,SETTINGS_LEAVES[leafId].desc)).join('');
@@ -146,6 +471,7 @@ function groupPanel(group){
 function buildSettingsContent(){
   const content=settingsEl('settingsContent'); if(!content||content.dataset.ready) return;
   createSettingsPanel('general',generalPanel());
+  createSettingsPanel('account',settingsAccountPanel());
   SETTINGS_GROUPS.filter(g=>g.children).forEach(g=>createSettingsPanel(g.id,groupPanel(g)));
   createSettingsPanel('about',aboutPanel());
   createSettingsPanel('appearance','<p class="settings-lead">Escolha o tema e a aparência de leitura para este navegador.</p><div data-settings-slot="appearance"></div>');
@@ -160,6 +486,7 @@ function buildSettingsContent(){
   createSettingsPanel('storage',storagePanel());
   content.addEventListener('click',settingsContentClick,true);
   content.dataset.ready='true';
+  bindSettingsProfileEditor();
 }
 
 function settingsContentClick(event){
@@ -173,16 +500,10 @@ function settingsContentClick(event){
   if(term){ const item=EDUCATIONAL_CONTENT.find(x=>x.title.toLowerCase()===term.dataset.educationTerm.toLowerCase()||x.keywords.some(k=>k.toLowerCase()===term.dataset.educationTerm.toLowerCase())); if(item) settingsRevealElement(`education-${item.id}`); }
 }
 
-// Reposiciona a busca real para o cabeçalho (Fase 4 — fiel à referência:
-// título | busca central | fechar). Move o input, o label e o container de
-// resultados de verdade — nenhum clone, nenhum ID novo, nenhum listener
-// perdido (addEventListener em initSettingsModal aponta para o mesmo nó,
-// relocação de DOM não desliga listeners). Roda uma única vez no boot: ao
-// contrário dos nós legados (moveLegacySettingsNodes), a busca não precisa
-// voltar para lugar nenhum quando o modal fecha — o cabeçalho onde ela vive
-// agora é permanente, não é recriado por abertura.
-function moveSettingsSearchToHeader(){
-  const slot=settingsEl('settingsHeaderSearchSlot'), input=settingsEl('settingsSearch');
+// A busca permanece na sidebar. Transportar os nós reais também preserva
+// sessões cujo shell ainda contenha o slot anterior; não cria cópia nem listener.
+function moveSettingsSearchToSidebar(){
+  const slot=settingsEl('settingsSidebarSearchSlot'), input=settingsEl('settingsSearch');
   if(!slot||!input||input.parentElement===slot) return;
   const label=document.querySelector('label.settings-search-label[for="settingsSearch"]');
   if(label){ label.classList.add('sr-only'); slot.append(label); }
@@ -231,6 +552,8 @@ function activateSettingsCategory(id,options={}){
   if(settingsRedirectResearchLab(id)) return;
   const exists=document.querySelector(`[data-settings-panel="${id}"]`);
   const targetId=exists?id:'general';
+  if(settingsState.active==='account'&&targetId!=='account') cancelSettingsProfileDraft();
+  if(targetId==='account'&&settingsState.active!=='account') beginSettingsProfileDraft();
   if(settingsState.active==='editor'&&targetId!=='editor'&&typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
   if(targetId==='editor'&&typeof beginNavOrderPreview==='function') beginNavOrderPreview();
   settingsState.active=targetId;
@@ -246,6 +569,8 @@ function settingsUpdateSidebarActive(id){
   document.querySelectorAll('#settingsMenu [data-settings-category]').forEach(button=>{
     const on=button.dataset.settingsCategory===topId; button.classList.toggle('active',on); button.setAttribute('aria-current',on?'page':'false');
   });
+  const profile=settingsEl('settingsProfileBtn');
+  if(profile){ profile.classList.toggle('active',id==='account'); profile.setAttribute('aria-current',id==='account'?'page':'false'); }
 }
 function settingsUpdatePageHeader(id){
   const titleEl=settingsEl('settingsPageTitle'); if(titleEl) titleEl.textContent=settingsPageTitleFor(id);
@@ -258,9 +583,9 @@ function settingsUpdatePageHeader(id){
 // Não usa history.pushState nem altera a URL — todo o estado é interno ao modal.
 function settingsRenderCurrent(options={}){
   const id=settingsState.navStack[settingsState.navIndex];
-  activateSettingsCategory(id,{focus:options.focus});
   const modal=settingsEl('settingsModal');
   if(modal) modal.classList.toggle('settings-mobile-detail',!settingsState.mobileListVisible);
+  activateSettingsCategory(id,{focus:options.focus});
 }
 function settingsNavigate(id,options={}){
   if(settingsRedirectResearchLab(id)) return;
@@ -416,11 +741,16 @@ function openSettingsModal(category='general', opener){
   if(category&&category!=='general') settingsNavigate(category,{push:true,focus:false});
   else settingsRenderCurrent({focus:false});
   window.__settingsModalDebug.opens++;
-  requestAnimationFrame(()=>settingsEl('settingsSearch').focus());
+  requestAnimationFrame(()=>{
+    if(!settingsState.open) return;
+    const search=settingsEl('settingsSearch');
+    (search&&search.getClientRects().length?search:settingsEl('settingsContent')).focus({preventScroll:true});
+  });
 }
 function closeSettingsModal(options={}){
   if(!settingsState.open||settingsState.suspended) return;
   if(typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
+  cancelSettingsProfileDraft();
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
   if(typeof researchSetCovered==='function') researchSetCovered(false);
   const opener=settingsState.opener; settingsState.opener=null; if(options.restoreFocus!==false&&opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
@@ -432,7 +762,7 @@ function suspendSettingsForSubdialog(){
 function restoreSettingsAfterSubdialog(){
   if(!settingsState.open||!settingsState.suspended) return; settingsState.suspended=false; settingsEl('settingsModal').inert=false; settingsEl('settingsModal').removeAttribute('aria-hidden'); const target=settingsState.subdialogLauncher; settingsState.subdialogLauncher=null; if(target&&document.contains(target)) requestAnimationFrame(()=>target.focus());
 }
-function settingsFocusables(root){ return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&!el.closest('[inert]')); }
+function settingsFocusables(root){ return [...root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&!el.closest('[inert]')&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'); }
 function settingsTrapFocus(event){
   if(!settingsState.open||settingsState.suspended||settingsEl('modalOverlay').classList.contains('show')||event.key!=='Tab') return; const list=settingsFocusables(settingsEl('settingsModal')); if(!list.length) return; window.__settingsModalDebug.focusTrapActive=true; const first=list[0],last=list[list.length-1]; if(event.shiftKey&&document.activeElement===first){ event.preventDefault(); last.focus(); } else if(!event.shiftKey&&document.activeElement===last){ event.preventDefault(); first.focus(); }
 }
@@ -452,7 +782,10 @@ function initSettingsSubdialogObserver(){
 
 function initSettingsModal(){
   const gear=settingsEl('headerConfigBtn'); if(!gear) return;
-  moveSettingsSearchToHeader();
+  moveSettingsSearchToSidebar();
+  settingsProfileReload();
+  settingsEl('settingsProfileBtn')?.addEventListener('click',()=>settingsNavigate('account',{push:true,focus:true}));
+  window.addEventListener('storage',settingsProfileStorageChanged);
   gear.addEventListener('click',()=>openSettingsModal('general',gear));
   settingsEl('settingsCloseBtn').addEventListener('click',closeSettingsModal);
   settingsEl('settingsBackBtn').addEventListener('click',settingsGoBack);

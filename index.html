@@ -1499,15 +1499,40 @@
 <datalist id="alladinIdKeys"><option value="isin"></option><option value="cnpj"></option><option value="ticker_provedor"></option></datalist>
 <div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
   <section class="settings-modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <!-- Cabeçalho em 3 regiões (título | busca central | fechar), fiel à
-         referência. O subtítulo é preservado no DOM (valor semântico) mas
-         sai do fluxo visual via .sr-only — deixa de contar para a altura
-         fixa de 64px do cabeçalho (ver app.css). A busca real (#settingsSearch)
-         é só REPOSICIONADA aqui por JS (moveSettingsSearchToHeader, em
-         09-settings-modal.js) — o nó, o listener e os resultados são os
-         mesmos; nada é clonado. -->
-    <header class="settings-modal-head"><div><h2 id="settingsTitle">Central de Configurações</h2><p class="sr-only">Preferências, governança, dados e material de referência.</p></div><div class="settings-header-search" id="settingsHeaderSearchSlot"><svg class="settings-header-search-icon" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.6-3.6"/></svg></div><button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="jp-legacy-glyph" aria-hidden="true">×</span><svg class="jp-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
-    <div class="settings-modal-body"><aside class="settings-sidebar"><label class="settings-search-label" for="settingsSearch">Pesquisar configurações e ajuda</label><input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar configurações e ajuda"><label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select><div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div><nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav></aside><section id="settingsContent" class="settings-content" tabindex="-1" aria-labelledby="settingsPageTitle"><div class="settings-page-nav"><button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button><button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button><h3 class="settings-page-title" id="settingsPageTitle">Geral</h3></div></section></div>
+    <header class="settings-modal-head">
+      <h2 id="settingsTitle" class="sr-only">Configurações</h2>
+      <div class="settings-window-controls">
+        <button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Fechar configurações" title="Fechar configurações"><span class="settings-close-dot" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5 5 6 6M11 5l-6 6"/></svg></span></button>
+        <!-- Adaptação visual: estes dois círculos não são controles do navegador. -->
+        <span class="settings-window-dot settings-window-yellow" aria-hidden="true"></span>
+        <span class="settings-window-dot settings-window-green" aria-hidden="true"></span>
+      </div>
+    </header>
+    <div class="settings-modal-body">
+      <aside class="settings-sidebar">
+        <div class="settings-sidebar-search" id="settingsSidebarSearchSlot">
+          <svg class="settings-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <label class="settings-search-label sr-only" for="settingsSearch">Pesquisar configurações e ajuda</label>
+          <input id="settingsSearch" type="search" autocomplete="off" placeholder="Pesquisar">
+          <div id="settingsSearchResults" class="settings-search-results" aria-live="polite"></div>
+        </div>
+        <button type="button" id="settingsProfileBtn" class="settings-profile" aria-label="JP Wealth Account — Seu perfil">
+          <span id="settingsProfileAvatar" class="settings-profile-avatar" aria-hidden="true">JP</span>
+          <span class="settings-profile-identity"><strong id="settingsProfileName">Seu perfil</strong><span>JP Wealth Account</span></span>
+        </button>
+        <label class="sr-only" for="settingsMobileCategory">Categoria de Configurações</label><select id="settingsMobileCategory" class="settings-mobile-category"></select>
+        <nav id="settingsMenu" class="settings-menu" aria-label="Categorias de Configurações"></nav>
+      </aside>
+      <section id="settingsContent" class="settings-content" tabindex="-1" aria-labelledby="settingsPageTitle">
+        <div class="settings-page-nav">
+          <div class="settings-history">
+            <button type="button" class="settings-page-nav-btn" id="settingsBackBtn" aria-label="Página anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7 12l7.5 7"/></svg></button>
+            <button type="button" class="settings-page-nav-btn" id="settingsForwardBtn" aria-label="Próxima página" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 17 12l-7.5 7"/></svg></button>
+          </div>
+          <h3 class="settings-page-title sr-only" id="settingsPageTitle">Geral</h3>
+        </div>
+      </section>
+    </div>
   </section>
 </div>
 <!-- Painel de Notas do MVP — drawer lateral direito (14-mvp-notes.js). Backlog interno

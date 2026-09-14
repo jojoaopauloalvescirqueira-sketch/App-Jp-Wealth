@@ -1,3 +1,15 @@
+# Tarefa corrente — SETTINGS-MACOS-01
+
+Base Git011e275; base experimental305/build73d7be267ac8e267 reproduzida. Branch `codex/settings-macos-match-20260913`; N2 de perfil local e apresentação Settings autorizados. [CHG/CTX](CHG-SETTINGS-MACOS-MATCH-20260913.md). Evidências em `/Users/joaopauloalves/.codex/settings-macos/20260913/evidence`. Novo candidate em implementação, sem aceite ou integração. Histórico abaixo preservado.
+
+---
+
+# Campanha corrente — calibração de proporção visual
+
+Base011e275; branch `codex/visual-proportion-calibration-20260913`. Execução local autorizada, sem integração. [CHG/CTX](CHG-VISUAL-PROPORTION-CALIBRATION-20260913.md). Evidências externas em `/Users/joaopauloalves/.codex/visual-calibration/20260913/evidence`. Candidate e aceite ainda pendentes.
+
+---
+
 # Tarefa atual — APPLE01 completion pass
 
 last_verified: 2026-09-12

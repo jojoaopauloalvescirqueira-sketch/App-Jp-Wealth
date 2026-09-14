@@ -46,7 +46,9 @@ ALLADIN_SEED = """() => {
 
 SETUP = """theme => {
   window.__onbShown=true;closeModal();
-  S.theme=theme;applyTheme();S.params.saldoIni=10000;S.params.saldoAtu=10200;
+  S.theme=theme;applyTheme();renderThemeSeg();
+  if(document.querySelector('#themeSeg button.on')?.dataset.themeVal!==document.documentElement.dataset.theme)throw Error('Synthetic theme fixture and selected control disagree');
+  S.params.saldoIni=10000;S.params.saldoAtu=10200;
   S.params.inicio='2026-01-01';
   S.ledger=[{data:'2026-01-03',saldo:10123,resultado:123,nota:'fixture'},
             {data:'2026-01-17',saldo:10200,resultado:77,nota:'fixture'}];
@@ -115,12 +117,139 @@ def forex(page,c):
         c.check('Forex context absent '+route,not page.locator('#gdContextRow').is_visible())
 
 
+SETTINGS_PAGES = ['general','appearance-interface','method-governance','operations',
+                  'knowledge','data-security','about','appearance','interface','editor',
+                  'educational','statute','parameters','tool-params','tool-check','backup','storage','account']
+
+# Geometric oracle from the supplied 1490x1362 reference, normalized to CSS.
+# The reference sidebar is 29.7% of its shell; rows form continuous single-column
+# surfaces. Tolerances allow responsive reflow and larger accessible targets.
+SETTINGS_GEOMETRY = r"""() => {
+ const rect=e=>{if(!e)return null;const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom,font:parseFloat(s.fontSize),radius:parseFloat(s.borderRadius),bg:s.backgroundColor,color:s.color,scroll:e.scrollWidth,client:e.clientWidth,display:s.display}};
+ const el=s=>document.querySelector(s), visible=e=>!!e&&!!e.getBoundingClientRect().width&&!!e.getBoundingClientRect().height;
+ const inside=(a,b)=>a&&b&&a.x>=b.x-1&&a.right<=b.right+1&&a.y>=b.y-1&&a.bottom<=b.bottom+1;
+ const panel=el('[data-settings-panel]:not([hidden])'),hero=panel?.querySelector('.settings-category-hero');
+ const groups=[...panel?.querySelectorAll('.settings-nav-list')||[]].map(g=>({box:rect(g),rows:[...g.querySelectorAll('.settings-nav-card')].map(r=>{
+  const b=rect(r),text=rect(r.querySelector('.settings-nav-card-text')),icon=rect(r.querySelector('.cp-settings-symbol')),chevron=rect(r.querySelector('.settings-nav-card-chev'));
+  return {box:b,text,title:rect(r.querySelector('.settings-nav-card-title')),icon,chevron,contained:inside(text,b)&&inside(icon,b)&&inside(chevron,b),destination:r.dataset.navTo};
+ })}));
+ const search=el('#settingsSearch'),sidebar=el('.settings-sidebar'),close=el('#settingsCloseBtn');
+ const searchBox=search?.closest('.settings-header-search')||search?.parentElement;
+ const profile=el('#settingsAccountBtn')||el('#settingsProfileBtn')||el('.settings-sidebar [data-nav-to="account"]');
+ const nav=[...document.querySelectorAll('#settingsMenu [data-settings-category]')].filter(visible).map(rect);
+ return {width:innerWidth,height:innerHeight,cssZoom:parseFloat(getComputedStyle(document.documentElement).zoom)||1,fontScale:document.documentElement.dataset.fs,
+  modal:rect(el('#settingsModal')),sidebar:rect(sidebar),search:rect(search),searchBox:rect(searchBox),searchInSidebar:!!sidebar?.contains(search),profile:rect(profile),
+  close:rect(close),closeName:close?.getAttribute('aria-label'),profileAvatar:rect(el('#settingsProfileAvatar')),content:rect(el('#settingsContent')),history:rect(el('.settings-page-nav')),
+  historyButtons:[el('#settingsBackBtn'),el('#settingsForwardBtn')].map(rect),
+  hero:rect(hero),heroTitle:rect(hero?.querySelector('.settings-hero-title')),heroIcon:rect(hero?.querySelector('.settings-hero-icon,.settings-account-avatar')),
+  panel:panel?.dataset.settingsPanel,groups,nav,navIcons:[...document.querySelectorAll('#settingsMenu [data-settings-category]')].filter(visible).map(e=>rect(e.querySelector('.settings-menu-symbol'))),active:document.querySelectorAll('#settingsMenu [aria-current="page"]').length,
+  controls:[...document.querySelectorAll('.settings-window-controls > *')].map(e=>({tag:e.tagName,hidden:e.getAttribute('aria-hidden'),tabIndex:e.tabIndex})),
+  contentVisible:visible(el('#settingsContent')),documentOverflow:document.documentElement.scrollWidth>innerWidth+1,
+  calendarChevron:!!el('#ecalOpenFromSettingsBtn .settings-nav-card-chev')||!!el('#ecalOpenFromSettingsBtn svg:last-child:not(:first-child)'),
+  long:!!panel?.querySelector('[data-visual-long]'),accountCategories:document.querySelectorAll('#settingsMenu [data-settings-category="account"]').length};
+}"""
+
+
+def settings_geometry_checks(page,check,prefix='Settings'):
+    g=page.evaluate(SETTINGS_GEOMETRY)
+    zoom=g['cssZoom']
+    def verify(name,ok,detail=None):check(prefix+' '+name,bool(ok),detail)
+    verify('dialog fits viewport',g['modal'] and g['modal']['right']<=g['width']+1 and g['modal']['bottom']<=g['height']+1,g['modal'])
+    verify('document reflows',not g['documentOverflow'])
+    verify('close remains visible and named',g['close'] and g['close']['w']>=24 and g['close']['h']>=24 and g['close']['x']>=0 and g['close']['right']<=g['width'] and g['close']['y']>=0 and g['close']['bottom']<=g['height'] and bool(g['closeName']),g['close'])
+    verify('only legitimate window action is focusable',len(g['controls'])==3 and sum(x['tag']=='BUTTON' for x in g['controls'])==1 and all(x['tag']=='BUTTON' or x['hidden']=='true' and x['tabIndex']<0 for x in g['controls']),g['controls'])
+    verify('search retains sidebar ownership',g['searchInSidebar'])
+    verify('account is a separate profile destination',g['accountCategories']==0)
+    verify('calendar launcher has no subpage chevron',not g['calendarChevron'])
+    if g['sidebar'] and g['sidebar']['w']:
+        s=g['sidebar'];q=g['searchBox'];p=g['profile']
+        verify('search occupies sidebar width',q and .75<=q['w']/s['w']<=1 and q['x']>=s['x']-1 and q['right']<=s['right']+1,{'sidebar':s,'search':q})
+        verify('profile sits between search and navigation',p and p['w']>0 and q and p['y']>=q['bottom']-1 and g['nav'] and g['nav'][0]['y']>=p['bottom']-1,{'profile':p,'search':q,'firstNav':g['nav'][:1]})
+        a=g['profileAvatar']
+        verify('profile avatar preserves circular optical size',a and 44<=a['w']/zoom<=60 and abs(a['w']-a['h'])<=1 and a['radius']>=a['w']/zoom/2,a)
+        verify('sidebar controls retain readable hit areas',bool(g['nav']) and all(r['h']>=32 and r['font']>=12 for r in g['nav']),g['nav'])
+        verify('sidebar icons retain consistent optical boxes',bool(g['navIcons']) and all(i and 24<=i['w']/zoom<=32 and abs(i['w']-i['h'])<=1 for i in g['navIcons']),g['navIcons'])
+        if g['width']>760 and g['cssZoom']==1:
+            verify('sidebar proportion matches measured anatomy',.26<=s['w']/g['modal']['w']<=.34,{'ratio':s['w']/g['modal']['w']})
+    if g['contentVisible']:
+        hit=44 if g['width']<=760 else 32
+        verify('history buttons preserve usable targets',len(g['historyButtons'])==2 and all(b and b['w']>=hit and b['h']>=hit for b in g['historyButtons']),g['historyButtons'])
+        verify('content has no horizontal overflow',g['content']['scroll']<=g['content']['client']+1,g['content'])
+        verify('every page has a category hero',g['hero'] and g['hero']['w']>0 and g['heroTitle'] and g['heroIcon'],{'page':g['panel'],'hero':g['hero']})
+        if g['hero'] and g['heroTitle'] and g['heroIcon']:
+            h,t,i=g['hero'],g['heroTitle'],g['heroIcon']
+            verify('hero icon and title are centered',abs((i['x']+i['w']/2)-(h['x']+h['w']/2))<=3 and abs((t['x']+t['w']/2)-(h['x']+h['w']/2))<=3,{'hero':h,'title':t,'icon':i})
+            verify('hero title is readable and restrained',20<=t['font']<=38,t)
+            verify('history stays above the hero',g['history'] and g['history']['bottom']<=h['y']+1,{'history':g['history'],'hero':h})
+        for index,group in enumerate(g['groups']):
+            rows=group['rows'];box=group['box']
+            verify(f'group {index} has continuous rows',bool(rows) and all(abs(rows[n]['box']['y']-rows[n-1]['box']['bottom'])<=2 for n in range(1,len(rows))),rows)
+            verify(f'group {index} rows share full width',bool(rows) and all(abs(r['box']['w']-box['w'])<=4 for r in rows),{'group':box,'rows':rows})
+            verify(f'group {index} icon text chevron contained',bool(rows) and all(r['contained'] and r['chevron']['w']>0 and r['icon']['right']<=r['text']['x'] for r in rows),rows)
+            verify(f'group {index} rows have readable geometry',bool(rows) and all(r['box']['h']>=44 and r['text']['font']>=12 for r in rows),rows)
+            if not g['long']:
+                # The reference leaves about 29 CSS px beyond its icon after
+                # normalization. Bound unused space, allowing necessary wrapping.
+                verify(f'group {index} retains compact row density',bool(rows) and all((r['box']['h']-max(r['text']['h'],r['icon']['h']))/zoom<=36 for r in rows),rows)
+            if rows and g['heroTitle'] and g['heroIcon']:
+                verify(f'group {index} title and icon scale follow reference',all(1.25<=g['heroTitle']['font']/r['title']['font']<=1.9 and 2<=g['heroIcon']['w']/r['icon']['w']<=3.2 for r in rows),{'heroTitle':g['heroTitle'],'heroIcon':g['heroIcon'],'rows':rows})
+        if len(g['groups'])>1:
+            verify('groups stack vertically',all(g['groups'][n]['box']['y']>=g['groups'][n-1]['box']['bottom'] for n in range(1,len(g['groups']))),g['groups'])
+        if g['groups'] and g['hero'] and g['width']>1000 and not g['long'] and g['cssZoom']==1:
+            gaps=[g['groups'][0]['box']['y']-g['hero']['bottom']]+[g['groups'][n]['box']['y']-g['groups'][n-1]['box']['bottom'] for n in range(1,len(g['groups']))]
+            verify('group spacing follows measured reference rhythm',all(8<=gap<=24 for gap in gaps),gaps)
+    return g
+
+
+def settings_visual_pages(page,check,observe=None,long=False):
+    before=page.evaluate(SNAPSHOT)
+    if long:
+        page.locator('#settingsProfileName').evaluate("e=>e.textContent='Pessoa Sintética com Nome de Exibição Deliberadamente Muito Longo para Conferência Visual'")
+        page.locator('#settingsMenu .settings-menu-item>span:not(.settings-menu-symbol)').evaluate_all("es=>es.forEach(e=>e.textContent+=' · identificação sintética extensa')")
+        name=page.locator('#settingsProfileName').evaluate("e=>{const r=e.getBoundingClientRect(),p=e.closest('button').getBoundingClientRect(),s=getComputedStyle(e);return {inside:r.right<=p.right,overflow:s.overflow,whiteSpace:s.whiteSpace,ellipsis:s.textOverflow}}")
+        check('Settings long profile name remains inside sidebar',name['inside'] and name['overflow']=='hidden' and name['whiteSpace']=='nowrap' and name['ellipsis']=='ellipsis',name)
+    check('Settings keeps seven primary categories',page.locator('#settingsMenu [data-settings-category]').count()==7)
+    g=settings_geometry_checks(page,check,'Settings list')
+    if observe:observe('categories',g)
+    for target in SETTINGS_PAGES:
+        page.evaluate('(id)=>settingsNavigate(id,{push:true,focus:true})',target)
+        page.wait_for_timeout(20)
+        check('Settings page is the requested destination '+target,page.evaluate('settingsState.active')==target)
+        if long:
+            page.evaluate("""() => {
+              const p=document.querySelector('[data-settings-panel]:not([hidden])');
+              for(const e of p.querySelectorAll('.settings-hero-title,.settings-hero-description,.settings-nav-card-title,.settings-nav-card-desc')){
+                if(!e.dataset.visualLong){e.textContent+=' · identificação sintética extensa para conferir quebra de linha e leitura';e.dataset.visualLong='true'}
+              }
+            }""")
+        g=settings_geometry_checks(page,check,'Settings '+target)
+        if observe:observe(target,g)
+        if target=='educational':
+            scroll=page.evaluate("""() => {
+              const c=document.getElementById('settingsContent'),s=document.querySelector('.settings-sidebar'),h=document.querySelector('.settings-page-nav');
+              const before={sidebar:s.getBoundingClientRect().y,history:h.getBoundingClientRect().y};
+              c.scrollTop=160;
+              const result={scroll:c.scrollTop,hasOverflow:c.scrollHeight>c.clientHeight,sidebar:s.getBoundingClientRect().y,history:h.getBoundingClientRect().y,before};
+              c.scrollTop=0;return result;
+            }""")
+            check('Settings content scroll preserves history and sidebar',scroll['hasOverflow'] and scroll['scroll']>0 and abs(scroll['sidebar']-scroll['before']['sidebar'])<=1 and abs(scroll['history']-scroll['before']['history'])<=1,scroll)
+    check('Settings page traversal preserves data and preferences',page.evaluate(SNAPSHOT)==before)
+
+
 def settings(page,c):
     navigate(page,'dashboard')
     page.locator('#headerConfigBtn').click()
     search=page.locator('#settingsSearch')
-    size=search.bounding_box()
-    c.check('Settings readable search width',size['width']>=min(240,page.viewport_size['width']-80),size)
+    size=search.evaluate("""e=>{
+      const style=getComputedStyle(e),context=document.createElement('canvas').getContext('2d');
+      context.font=style.fontWeight+' '+style.fontSize+' '+style.fontFamily;
+      const placeholder=context.measureText(e.placeholder).width,zoom=parseFloat(getComputedStyle(document.documentElement).zoom)||1;
+      return {width:e.getBoundingClientRect().width,placeholderWidth:placeholder,clearSpace:32,requiredWidth:(placeholder+32)*zoom};
+    }""")
+    # Reserve the actual placeholder plus room for the native clear affordance;
+    # sidebar ownership/proportion is checked independently below.
+    c.check('Settings readable search width',size['width']>=size['requiredWidth'],size)
+    settings_geometry_checks(page,c.check)
     search.fill('backup')
     choices=page.locator('#settingsSearchResults [data-settings-result]')
     c.check('Settings search matches real destination',choices.count()>0)
@@ -128,10 +257,29 @@ def settings(page,c):
         choices.first.focus();page.keyboard.press('Enter')
         c.check('Settings result opens correct page','Backup' in page.locator('#settingsPageTitle').inner_text() or 'Base de Dados' in page.locator('#settingsPageTitle').inner_text())
         c.check('Settings result transfers focus to content',page.evaluate("document.activeElement.id==='settingsContent'||document.getElementById('settingsContent').contains(document.activeElement)"))
+        settings_geometry_checks(page,c.check,'Settings search destination')
     page.keyboard.press('Escape')
     c.check('Settings Escape closes',not page.locator('#settingsOverlay').is_visible())
     page.wait_for_function("document.activeElement.id==='headerConfigBtn'")
     c.check('Settings focus returns to opener',page.locator('#headerConfigBtn').evaluate('(e)=>e===document.activeElement'))
+    before=page.evaluate(SNAPSHOT)
+    page.locator('#headerConfigBtn').click()
+    page.wait_for_function("document.activeElement.id==='settingsSearch'")
+    profile=page.locator('#settingsProfileBtn');profile.focus();page.keyboard.press('Space')
+    c.check('Settings profile opens by keyboard',page.evaluate("settingsState.active==='account'") and page.locator('#settingsProfileNameInput').is_visible())
+    c.check('Settings profile is named as local account',profile.get_attribute('aria-label').startswith('JP Wealth Account'))
+    page.locator('#settingsBackBtn').click()
+    c.check('Settings profile participates in back history',page.evaluate("settingsState.active==='general'"))
+    if page.evaluate('innerWidth')>760:
+        page.locator('#settingsForwardBtn').click()
+        c.check('Settings profile participates in forward history',page.evaluate("settingsState.active==='account'"))
+    else:
+        c.check('Settings mobile back restores category list',profile.is_visible())
+        profile.focus();page.keyboard.press('Enter')
+        c.check('Settings mobile profile reopens from list',page.evaluate("settingsState.active==='account'"))
+    settings_geometry_checks(page,c.check,'Settings account')
+    page.locator('#settingsCloseBtn').click()
+    c.check('Settings profile navigation preserves data and preferences',page.evaluate(SNAPSHOT)==before)
 
 
 def ledger_rows(page):
