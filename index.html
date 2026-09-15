@@ -123,35 +123,12 @@
     <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
          aria-hidden="true" hidden inert>
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
-        <button type="button" data-nav-item data-nav-child="forex-overview">
-          <span class="nav-sub-item-title">Visão Geral</span>
-          <span class="nav-sub-item-desc">Síntese do módulo</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="forex-preparation">
-          <span class="nav-sub-item-title">Preparação</span>
-          <span class="nav-sub-item-desc">Checklist Pré-Trade</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="forex-account">
-          <span class="nav-sub-item-title">Conta</span>
-          <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
-        </button>
+        <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Consolidado FX</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Painel, Motor e checklist pré-trade</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-reconciliation"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Contabilidade e Histórico</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-account"><span class="nav-sub-item-title">Contas</span><span class="nav-sub-item-desc">Cadastro e acompanhamento</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-operation">
-          <span class="nav-sub-item-title">Operação</span>
-          <span class="nav-sub-item-desc">Painel e Motor de Lote</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="forex-reconciliation">
-          <span class="nav-sub-item-title">Contabilidade</span>
-          <span class="nav-sub-item-desc">Contabilidade e Histórico</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="forex-consolidated">
-          <span class="nav-sub-item-title">Consolidado FX</span>
-          <span class="nav-sub-item-desc">Histórico e desempenho por conta</span>
-        </button>
-        <button type="button" data-nav-item data-nav-child="forex-planning">
-          <span class="nav-sub-item-title">Planejamento</span>
-          <span class="nav-sub-item-desc">Plano, realizado e histórico</span>
-        </button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
@@ -290,7 +267,7 @@
   <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-research"/></svg>
     <span class="n">02</span><span class="lbl">Research</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-overview" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-forex"/></svg>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-consolidated" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-forex"/></svg>
     <span class="n">03</span><span class="lbl">Forex</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-personal-finance"/></svg>
@@ -317,6 +294,7 @@
   <!-- ================= 01 EXECUTION BOARD ================= -->
   <section class="screen" id="fxconsolidated" aria-label="Consolidado FX"></section>
   <section class="screen" id="exec">
+    <header class="fx-operation-heading"><h1 data-route-focus>Operação</h1><button type="button" id="execChecklistBtn" aria-haspopup="dialog" aria-controls="forexChecklistDialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4M11 6h10M3 13l2 2 3-4M11 13h10M4 20h3m4 0h10"/></svg><span>Checklist pré-trade</span></button></header>
     <!-- WORKSPACES DO MÓDULO (segundo nível — contrato em
          docs/architecture/NAVIGATION-HIERARCHY.md).
 
@@ -334,9 +312,9 @@
          operacional é desmontado e nada disso é persistido (o estado do
          segundo nível é efêmero por contrato). O Painel Operacional é o
          #execWidgetGrid original — nenhum nó foi movido, nenhum ID mudou. -->
-    <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
+    <div class="exec-view" hidden inert id="execOverview" role="region" aria-labelledby="execOverviewTitle">
       <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
-      <div class="cp-workspace-heading"><span class="cp-kicker">FOREX · CONTEXTO OPERACIONAL</span><h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2><p>Prepare o período, confira os limites e acompanhe os registros.</p></div>
+      <div class="cp-workspace-heading"><span class="cp-kicker">FOREX · CONTEXTO OPERACIONAL</span><h2 id="execOverviewTitle" class="fx-overview-title">Contexto completo</h2><p>Prepare o período, confira os limites e acompanhe os registros.</p></div>
       <div id="forexV11Overview" class="fx-engine-workspace"></div>
       <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
       <div class="card fx-overview-tools">
@@ -971,7 +949,7 @@
             </div>
           </div>
           <div class="jp-hero-actions">
-            <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec" data-route="forex-overview">Abrir Forex</button>
+            <button type="button" class="jp-btn jp-btn-primary" data-dash-go="exec" data-route="forex-consolidated">Abrir Forex</button>
             <button type="button" class="jp-btn jp-btn-secondary" data-dash-scroll="governanca">Ver detalhes</button>
           </div>
         </div>

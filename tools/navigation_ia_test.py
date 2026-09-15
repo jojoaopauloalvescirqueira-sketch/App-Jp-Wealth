@@ -22,21 +22,20 @@ os.chdir(ROOT)
 
 CANONICAL = [
     ("dashboard", "dash", "dashboard", None),
-    ("forex-overview", "exec", "forex", "overview"),
+    ("forex-consolidated", "fxconsolidated", "forex", None),
     ("personal-finance", "finpes", "personal-finance", "overview"),
     ("research-forex", "research", "research", "calendar"),
     ("alladin", "alladin", "alladin", None),
 ]
 FOREX_CHILDREN = [
-    ("forex-overview", "exec", "overview"),
-    ("forex-preparation", "check", None),
-    ("forex-account", "contas", None),
-    ("forex-reserves", "fxreserves", None),
-    ("forex-operation", "exec", "panel"),
-    ("forex-reconciliation", "contab", None),
     ("forex-consolidated", "fxconsolidated", None),
     ("forex-planning", "fxplan", "overview"),
+    ("forex-operation", "exec", "panel"),
+    ("forex-reconciliation", "contab", None),
+    ("forex-account", "contas", None),
+    ("forex-reserves", "fxreserves", None),
 ]
+
 RESEARCH_CHILDREN = [
     ("research-forex", "research", "calendar"),
     ("research-stocks-br", "research", "stocks-br"),
@@ -51,7 +50,7 @@ LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
 PRIMARY = [
     ("01", "Dashboard", "dashboard", "dashboard"),
     ("02", "Research", "research-forex", "research"),
-    ("03", "Forex", "forex-overview", "forex"),
+    ("03", "Forex", "forex-consolidated", "forex"),
     ("04", "Finanças Pessoais", "personal-finance", "personal-finance"),
     ("05", "Alladin", "alladin", "alladin"),
 ]
@@ -143,10 +142,10 @@ def assert_registry(page):
       surface: JPWNavigation.resolve('check'),
       settings: JPWNavigation.resolve('tool-check')
     })""")
-    assert check_contract["surface"]["canonical"] == "forex-preparation", check_contract
-    assert check_contract["surface"]["child"] == "forex-preparation", check_contract
-    assert check_contract["surface"]["screen"] == "check", check_contract
-    assert check_contract["surface"]["action"] is None, check_contract
+    assert check_contract["surface"]["canonical"] == "forex-operation", check_contract
+    assert check_contract["surface"]["child"] == "forex-operation", check_contract
+    assert check_contract["surface"]["screen"] == "exec", check_contract
+    assert check_contract["surface"]["action"] == "checklist", check_contract
     assert check_contract["settings"]["action"] == "settings", check_contract
     assert check_contract["settings"]["leaf"] == "tool-check", check_contract
     assert check_contract["settings"]["primary"] is None, check_contract
@@ -289,8 +288,8 @@ def assert_canonical_navigation(page):
             assert page.evaluate("() => window.JPWResearch.ui.getView()") == local_view
 
     page.evaluate("() => window.JPWExec.ui.selectView('motor')")
-    page.click('#nav > .tab[data-route="forex-overview"]')
-    assert page.evaluate("() => window.JPWExec.ui.getView()") == "overview"
+    page.click('#nav > .tab[data-route="forex-consolidated"]')
+    assert page.evaluate("() => JPWNavigation.current().screen") == "fxconsolidated"
     page.evaluate("() => window.JPWFin.ui.selectView('cenarios')")
     page.click('#nav > .tab[data-route="personal-finance"]')
     assert page.evaluate("() => window.JPWFin.ui.getView()") == "overview"
@@ -333,9 +332,11 @@ def assert_forex_children_and_compatibility(page):
     # NAV2-H: `check` abre a superfície de Preparação, nunca Settings.
     assert page.evaluate("() => JPWNavigation.navigate('check')") is True
     check_state = active_state(page)
-    assert check_state["screen"] == "check" and check_state["primary"] == "forex", check_state
-    assert check_state["current"]["child"] == "forex-preparation", check_state
+    assert check_state["screen"] == "exec" and check_state["primary"] == "forex", check_state
+    assert check_state["current"]["child"] == "forex-operation", check_state
     assert not page.locator("#settingsOverlay").is_visible()
+    assert page.locator("#forexChecklistDialog").is_visible()
+    page.locator("#forexChecklistClose").click()
 
     # NAV3-D/G: aliases historicos pertencem a Research/Forex e nunca deixam
     # Exec/Forex falsamente ativos.
@@ -405,6 +406,7 @@ def assert_storage_and_alladin_isolation(page):
       JPWNavigation.navigateLocal('exec', 'motor');
       JPWNavigation.navigate('history');
       JPWNavigation.navigate('check');
+      document.getElementById('forexChecklistDialog').close();
       JPWNavigation.navigateLocal('research', 'nocoda');
       JPWNavigation.navigate('pivots');
       JPWNavigation.navigate('alladin');

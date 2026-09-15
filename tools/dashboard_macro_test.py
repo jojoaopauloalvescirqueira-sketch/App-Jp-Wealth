@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
 CARDS = [
-    ("forex", "forex-overview", "exec"),
+    ("forex", "forex-consolidated", "fxconsolidated"),
     ("personal-finance", "personal-finance", "finpes"),
     ("research", "research-forex", "research"),
     ("alladin", "alladin", "alladin"),
@@ -146,7 +146,7 @@ def assert_migracao_forex_fatia2(page):
         atalhosForexNoExec: q(OPERACIONAIS.map(k => `#execOverview [data-dash-go="${k}"]`).join(',')),
         atalhosForexNoDash: q(OPERACIONAIS.map(k => `#dash [data-dash-go="${k}"]`).join(',')),
         // O CTA legado do hero permanece; cockpit abre a operação em Forex.
-        ctaAbrirForexNoDash: q('#dash [data-dash-go="exec"][data-route="forex-overview"]'),
+        ctaAbrirForexNoDash: q('#dash [data-dash-go="exec"][data-route="forex-consolidated"]'),
       };
     }""")
     assert r["analiseNoDash"] == 0, f"Evolucao/Ritmo ainda no Dashboard: {r}"

@@ -168,7 +168,7 @@ try:
         page.evaluate('closeModal()')
         routes=page.eval_on_selector_all('#nav .tab[data-route]', 'els => els.map(e => e.dataset.route)')
         # A10 changes visual default order, preserving the five route/screen identities.
-        expected_screens={'dashboard':'dash','research-forex':'research','forex-overview':'exec','personal-finance':'finpes','alladin':'alladin'}
+        expected_screens={'dashboard':'dash','research-forex':'research','forex-consolidated':'fxconsolidated','personal-finance':'finpes','alladin':'alladin'}
         assert routes==list(expected_screens), routes
         for route in routes:
             ok=page.evaluate('''screen => {

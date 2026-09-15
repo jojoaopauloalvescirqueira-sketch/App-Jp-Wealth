@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = "src/js/40-app/01-navigation.js"
 # Independent, literal oracle, fixed before the production transformation.
 CASES = [
-    ("exec", "overview", "forex-overview", "forex", "forex-overview"),
+    ("exec", "overview", "forex-consolidated", "forex", "forex-consolidated"),
     ("exec", "panel", "forex-operation", "forex", "forex-operation"),
     ("exec", "motor", "forex-operation", "forex", "forex-operation"),
     ("exec", "history", "forex-reconciliation", "forex", "forex-reconciliation"),
@@ -63,6 +63,7 @@ function scheduleNavPill(){event('pill',{current:JPWNavigation.current()});}
 window.scrollTo=options=>event('scroll',{options});
 function maybeShowOnboardingNavReminder(screen){event('reminder',{screen});}
 function syncNavSubState(){event('sub',{current:JPWNavigation.current()});}
+function fxSetContextExpanded(expanded){event('context',{expanded});}
 function syncActiveScreen(){event('active',{current:JPWNavigation.current()});}
 function forbidden(name){__navTest.denied.push(name);throw new Error('Unexpected access: '+name);}
 Object.defineProperty(window,'S',{get(){return forbidden('S');},set(){forbidden('S write');}});
@@ -92,6 +93,8 @@ window.__exercise=(surface,view)=>{
 
 def plan_for(case):
     surface, view, canonical, primary, child = case
+    if surface == "exec" and view == "overview":
+        return dict(accepted=True,requested="exec:overview",source="local",canonical=canonical,primary=primary,child=child,screen="fxconsolidated",localView=None,action="context")
     return dict(accepted=True, requested=f"{surface}:{view}",
                 source="local" if canonical else "compatibility", canonical=canonical,
                 primary=primary, child=child, screen=surface,
@@ -100,9 +103,22 @@ def plan_for(case):
 
 def check_success(result, case):
     plan = plan_for(case)
-    current = {k: v for k, v in plan.items() if k != "accepted"}
+    current = {k: v for k, v in plan.items() if k not in ("accepted", "action")}
     events = result["events"]
     assert result["accepted"] is True, result
+    if case[:2] == ("exec", "overview"):
+        assert [e["kind"] for e in events] == ["resolve","apply","pill","scroll","reminder","sub","context","active"], events
+        assert events[1] == dict(kind="apply",plan=plan,target="exec",last=dict(accepted=False,reason="not-applied"))
+        assert events[2] == dict(kind="pill",current=current)
+        assert events[3] == dict(kind="scroll",options=dict(top=0,behavior="smooth"))
+        assert events[4] == dict(kind="reminder",screen="fxconsolidated")
+        assert events[5] == dict(kind="sub",current=current)
+        assert events[6] == dict(kind="context",expanded=True)
+        assert events[7] == dict(kind="active",current=current)
+        assert result["after"] == dict(current=current,screens=["fxconsolidated"],primary=["forex"],aria=["forex"])
+        assert result["reads"] == 1 and result["denied"] == []
+        assert result["lastAfter"] == dict(accepted=True,reason=None)
+        return
     assert [e["kind"] for e in events] == [
         "resolve", "apply", "resolve", "resolve", "select", "pill",
         "scroll", "reminder", "sub", "active"], events
@@ -150,7 +166,7 @@ def main():
             screens = "".join(f'<section class="screen{a}" id="{s}"><h1>{s}</h1></section>'
                               for s, a in [("dash", " active"), ("exec", ""), ("fxplan", ""),
                                            ("finpes", ""), ("research", ""), ("contab", ""),
-                                           ("alladin", ""), ("check", ""), ("contas", "")])
+                                           ("alladin", ""), ("check", ""), ("contas", ""), ("fxconsolidated", "")])
             page.set_content(f'<nav id="nav">{tabs}</nav><main id="appMain">{screens}</main>')
             page.add_script_tag(content=PRELUDE)
             page.add_script_tag(content=source)

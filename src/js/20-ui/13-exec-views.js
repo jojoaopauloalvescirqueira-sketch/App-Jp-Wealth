@@ -16,7 +16,6 @@
 // Chave de visão -> id do container. O Painel Operacional é o #execWidgetGrid
 // original: nenhum nó foi movido e nenhum id mudou na realocação.
 const EXEC_VIEWS = [
-  ['overview', 'execOverview'],
   ['panel', 'execWidgetGrid'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
@@ -33,7 +32,7 @@ const EXEC_VIEW_RENDERERS = {
   // muda quando uma operacao e finalizada noutra parte do app.
   history: () => { if (window.JPWHistoryUI && typeof window.JPWHistoryUI.render === 'function') window.JPWHistoryUI.render(); }
 };
-const EXEC_DEFAULT_VIEW = 'overview';
+const EXEC_DEFAULT_VIEW = 'panel';
 let execView = EXEC_DEFAULT_VIEW;
 // Marca de escolha explícita do usuário. Existe porque navegar para o módulo e
 // escolher a visão acontecem no mesmo gesto quando o clique parte da faixa: sem
@@ -60,6 +59,7 @@ function execSetView(view) {
 }
 
 function execSelectView(view) {
+  if(view==='overview') return window.JPWNavigation?.navigate('forex-overview')===true;
   // Compatibilidade de API: consumidores legados não recuperam ownership Exec.
   // O shim delega ao resolver canônico e não altera `execView`.
   const researchView={ecal:'calendar',nocoda:'nocoda',pivots:'pivots'}[view];
@@ -75,7 +75,7 @@ function execSelectView(view) {
 function execGetView() { return execView; }
 
 // Destino inicial do módulo: entrar no Execution Board vindo de outra tela abre
-// a Visão Geral. Observar a classe .active cobre TODOS os caminhos de entrada —
+// o Painel Operacional. Observar a classe .active cobre TODOS os caminhos de entrada —
 // aba, Ações Rápidas, CTA do Dashboard, chamada por string — sem embrulhar
 // navigateToScreen, que já carrega duas camadas de wrapper (10-dashboard-
 // immersive.js e 13-dashboard-layout.js) cuja ordem não deve crescer.
@@ -109,3 +109,52 @@ execWatchModuleEntry();
 // Superfície pública consumida pelo controlador da faixa compartilhada
 // (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.
 window.JPWExec = { ui: { selectView: execSelectView, getView: execGetView } };
+
+
+// Contexto expandido é somente apresentação. O nó completo e as preferências
+// dos widgets permanecem os mesmos; não há escrita nem cópia do estado.
+function fxSetContextExpanded(expanded){
+  const overview=document.getElementById('execOverview'),root=document.getElementById('fxconsolidated');
+  if(!overview||!root||!root.contains(overview)) return false;
+  overview.hidden=!expanded;overview.inert=!expanded;
+  root.classList.toggle('fx-context-expanded',!!expanded);
+  const button=document.getElementById('fxContextToggle');
+  button.setAttribute('aria-expanded',String(!!expanded));
+  button.textContent=expanded?'Recolher contexto':'Ver contexto completo';
+  return true;
+}
+
+// Um único checklist, movido para uma janela nativa. Os listeners/valores e a
+// gravação durante o preenchimento pertencem ao renderer original.
+let fxChecklistDialog=null,fxChecklistOpener=null;
+function fxCanOpenChecklist(){
+  return !document.getElementById('modalOverlay')?.classList.contains('show') &&
+    !document.querySelector('dialog[open]:not(#forexChecklistDialog)');
+}
+function fxOpenChecklist(opener=document.activeElement){
+  if(!fxCanOpenChecklist()) return false;
+  if(fxChecklistDialog?.open){document.getElementById('forexChecklistClose').focus();return true;}
+  const grid=document.getElementById('checkWidgetGrid');if(!grid)return false;
+  if(!fxChecklistDialog){
+    fxChecklistDialog=document.createElement('dialog');fxChecklistDialog.id='forexChecklistDialog';
+    fxChecklistDialog.className='fx-checklist-dialog';fxChecklistDialog.setAttribute('aria-labelledby','forexChecklistTitle');
+    fxChecklistDialog.innerHTML='<header class="fx-checklist-heading"><div><h2 id="forexChecklistTitle">Checklist pré-trade</h2><p>As respostas são gravadas durante o preenchimento. Fechar mantém as respostas.</p></div><button type="button" id="forexChecklistClose">Fechar</button></header><div id="forexChecklistBody"></div>';
+    document.body.append(fxChecklistDialog);
+    document.getElementById('forexChecklistClose').addEventListener('click',()=>fxChecklistDialog.close());
+    fxChecklistDialog.addEventListener('cancel',event=>{event.preventDefault();fxChecklistDialog.close();});
+    fxChecklistDialog.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
+    fxChecklistDialog.addEventListener('close',()=>{
+      document.getElementById('check').append(document.getElementById('checkWidgetGrid'));
+      if(typeof restoreSettingsAfterSubdialog==='function')restoreSettingsAfterSubdialog();
+      const target=fxChecklistOpener;fxChecklistOpener=null;
+      requestAnimationFrame(()=>{if(target?.isConnected&&!target.closest('[inert],[hidden]')&&target.getClientRects().length)target.focus({preventScroll:true});});
+    });
+  }
+  fxChecklistOpener=opener;
+  document.getElementById('forexChecklistBody').append(grid);
+  if(typeof settingsMarkSubdialogLauncher==='function')settingsMarkSubdialogLauncher(opener);
+  if(typeof suspendSettingsForSubdialog==='function')suspendSettingsForSubdialog();
+  fxChecklistDialog.showModal();document.getElementById('forexChecklistClose').focus();
+  return true;
+}
+document.getElementById('execChecklistBtn')?.addEventListener('click',event=>fxOpenChecklist(event.currentTarget));

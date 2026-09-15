@@ -14,15 +14,42 @@ escopo a abertura por hover. A lateral é padrão; o complemento
 CHG-NAVIGATION-LAYOUT-CHOICE-20260909 oferece a barra superior anterior no Editor. Não altera o resolver,
 as regras de domínio nem autoriza adoções futuras ou integração.
 
+## Forex por jornada — revisão local 2026-09-15
+
+[CHG/CTX](../work/CHG-FOREX-NAVIGATION-JOURNEY-20260915.md), sem aceite ou integração antecipados.
+Base Git b2f0e549 e base experimental cadastral 351 inputs são identificadas
+separadamente no contrato e nas evidências externas.
+
+O Consolidado conserva as quatro abas e as fontes MT5/Manual. `#fxOperationalContext`
+fica à direita, com Conta operacional/período/elegibilidade/fase/DD/risco provenientes
+do read model V11. O seletor Conta em análise não altera essa conta. O resumo tem
+motivos acessíveis; Ver contexto completo expande `#execOverview` e mantém o
+Consolidado abaixo. Em telas estreitas, o resumo precede a análise. Expansão é
+temporária; nenhum estado de rota ou preferência é persistido por esse gesto.
+
+`#execOverview` e seus widgets são movidos, sem clonagem, para o Consolidado.
+Painel, Motor e Histórico continuam em `#exec`; Histórico local preserva sua
+distinção da Contabilidade canônica em `#contab`. As chaves v6 de personalização
+permanecem as mesmas, inclusive o proprietário lógico dash dos widgets realocados.
+
+Operação oferece Checklist pré-trade com ícone e texto. O único `#checkWidgetGrid`
+é transportado para `#forexChecklistDialog`, um dialog modal nativo, e retorna
+ao host `#check` quando fechado. Os nós, listeners, respostas, pontuação e gravação
+durante o preenchimento permanecem originais. Fechar/Escape não desfazem respostas;
+o foco retorna ao acionador, preservando o formulário atrás da janela. Settings
+não monta uma segunda cópia: busca/atalho suspendem a Central e a retomam ao fechar.
+Não existe checklist por conta/trade, persistência nova nem nova regra financeira.
+
 ## Destinos preservados
 
 Há cinco primários. O default visual A10 é Dashboard, Research, Forex,
 Finanças Pessoais e Alladin; uma preferência válida do Editor pode permutá-los.
 A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
-`forex-overview`, `personal-finance`, `research-forex` e `alladin`.
+`forex-consolidated`, `personal-finance`, `research-forex` e `alladin`.
 
-- Forex nesta revisão mantém sete filhos: `forex-overview`, `forex-preparation`,
-  `forex-account`, `forex-reserves`, `forex-operation`, `forex-reconciliation`, `forex-planning`.
+- Forex tem seis filhos nesta ordem: `forex-consolidated`, `forex-planning`,
+  `forex-operation`, `forex-reconciliation`, `forex-account`, `forex-reserves`.
+  Consolidado FX é a entrada padrão; Conta passa a se chamar Contas.
 - Finanças Pessoais mantém Visão Geral, Orçamento Mensal, Dívidas & Crédito,
   Comparativo Mensal e Cenários, pela superfície `window.JPWFin.ui`.
 - Research mantém `research-forex`, `research-stocks-br`,
@@ -32,8 +59,10 @@ A sequência do registro público de rotas continua preservada. `JPWNavigation.r
   seus aliases e owner Research/Forex.
 - Alladin preserva suas abas internas e o próprio ciclo de renderização.
 
-Preparação operacional e a ação `tool-check` da Central continuam identidades
-distintas. Os aliases legados, defaults e a recusa atômica de destino inválido
+Preparação deixa de ser um destino. `check`/`forex-preparation` abrem Operação
+e a janela do checklist; `tool-check` mantém a entrada pela Central, suspensa
+enquanto essa mesma janela está aberta. `exec`/`forex-overview` e a API local
+Exec/overview abrem Consolidado com contexto completo expandido. Os aliases legados, defaults e a recusa atômica de destino inválido
 permanecem responsabilidade de `01-navigation.js`. Não há router novo, URL
 persistida ou restauração inédita de rota ao recarregar.
 

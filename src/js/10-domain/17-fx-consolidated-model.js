@@ -489,5 +489,5 @@
     out.coverage.lastReceiptId=snapshots[0]?.receiptId||null;
     return out;
   }
-  Object.assign(api,{emptyState,validateState,parseHTML,previewImport,applyImport,project});
+  Object.assign(api,{emptyState,validateState,validateReport:reportValidation,parseHTML,previewImport,applyImport,project});
 })(window);

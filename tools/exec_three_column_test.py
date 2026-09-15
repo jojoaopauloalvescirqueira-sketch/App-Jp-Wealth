@@ -100,6 +100,8 @@ def ir_para_o_painel(page):
     display na mao mediria uma geometria que o app nunca produz.
     """
     page.click('#dashMacro [data-dm-card="forex"] .dm-cta')
+    page.wait_for_selector("#fxconsolidated.active", state="attached")
+    assert page.evaluate("JPWNavigation.navigate('forex-operation')")
     page.wait_for_selector("#exec.active", state="attached")
     # A mesma porta que o submenu usa: JPWExec.ui.selectView. Os botoes de
     # sub-view vivem num menu recolhido e nao sao clicaveis de cara — o teste do

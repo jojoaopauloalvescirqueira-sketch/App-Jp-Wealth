@@ -116,7 +116,7 @@ function dmForexHTML(c){
     : dmNote('Nenhum fechamento registrado neste período.'));
   corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
   corpo += '</div>';
-  corpo += dmLinks(dmLink('Conta', 'forex-account')+dmLink('Preparação', 'forex-preparation')
+  corpo += dmLinks(dmLink('Contas', 'forex-account')+dmLink('Checklist pré-trade', 'check')
     +dmLink('Contabilidade', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
   return {html: corpo, tom};
 }
@@ -350,7 +350,7 @@ function dashMacroRender(){
   const research = dmSafe(dmResearchHTML);
   const alladin = dmSafe(dmAlladinHTML);
   const html =
-      dmCard('forex', 'Forex', forex.html, 'forex-overview', 'Abrir Forex', forex.tom)
+      dmCard('forex', 'Forex', forex.html, 'forex-consolidated', 'Abrir Forex', forex.tom)
     + dmCard('personal-finance', 'Finanças Pessoais', finpes.html, 'personal-finance', 'Abrir Finanças Pessoais', finpes.tom)
     + dmCard('research', 'Research', research.html, 'research-forex', 'Abrir Research', research.tom)
     + dmCard('alladin', 'Alladin', alladin.html, 'alladin', 'Abrir Alladin', alladin.tom);

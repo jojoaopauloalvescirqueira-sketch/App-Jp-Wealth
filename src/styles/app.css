@@ -7646,3 +7646,78 @@ html[data-shell="global-dashboard"] #headerActions{width:auto;flex-shrink:0;gap:
 @media(max-width:650px){#fxconsolidated .fxc-workspace{padding:16px 12px}#fxconsolidated .fxc-toolbar{align-items:start;flex-direction:column;gap:12px}#fxconsolidated .fxc-controls{gap:10px}#fxconsolidated .fxc-controls label{flex:1 1 125px}#fxconsolidated .fxc-controls label:first-child{flex-basis:100%;max-width:none}#fxconsolidated .fxc-summary{grid-template-columns:minmax(0,1fr);gap:20px}#fxconsolidated #fxcBars{grid-column:auto}#fxconsolidated .fxc-radar-empty{max-width:240px}#fxconsolidated .fxc-bars>div{gap:7px;grid-template-columns:1fr .8fr 1fr}#fxconsolidated .fxc-statistics,#fxconsolidated .fxc-distributions{grid-template-columns:minmax(0,1fr)}#fxconsolidated .fxc-chart-head dl{gap:17px;flex-wrap:wrap}#fxconsolidated .fxc-tabs button{padding:10px 12px}#fxconsolidated .fxc-chart>svg{height:200px}#fxconsolidated button{min-height:44px}#fxconsolidated .fxc-unavailable{min-height:170px;padding:18px}#fxconsolidated [role=tabpanel]{min-height:400px}#fxconsolidated #fxcImport{padding:14px}}
 
 #fxconsolidated #fxcIdentity .fxc-chart>svg{height:92px}#fxconsolidated #fxcIdentity .fxc-chart figcaption,#fxconsolidated #fxcIdentity .fxc-chart-dates,#fxconsolidated #fxcIdentity .fxc-chart details{display:none}#fxconsolidated .fxc-entity-details{border-top:1px solid var(--fxc-line);padding:12px 0}#fxconsolidated .fxc-chart-head .fxc-metric{max-width:290px}
+
+/* MT5 registration: explicit local draft; native dialog traps focus and makes
+   the underlying app inert without replacing existing modal protocols. */
+.fxc-registration{box-sizing:border-box;width:min(640px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;margin:auto;padding:28px;border:1px solid var(--line,#d5d9e0);border-radius:18px;background:var(--panel,#fff);color:var(--ink,#17212b);box-shadow:0 24px 80px #0003}
+.fxc-registration::backdrop{background:#18212b66}
+.fxc-registration header h2{margin:0 0 6px;font-size:1.4rem}
+.fxc-registration p{line-height:1.5}
+.fxc-registration-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fxc-registration label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fxc-registration input,.fxc-registration select{box-sizing:border-box;width:100%;min-width:0;min-height:42px}
+.fxc-registration .fxc-check{flex-direction:row;align-items:flex-start;margin:18px 0}
+.fxc-registration .fxc-check input{width:20px;min-height:20px;flex:none}
+.fxc-registration footer{display:flex;justify-content:flex-end;gap:12px;margin-top:20px}
+.fxc-registration footer button{min-height:42px}
+#fxcRegistrationStatus{font-weight:600}
+@media(max-width:540px){.fxc-registration{padding:20px}.fxc-registration-fields{grid-template-columns:1fr}}
+
+/* FOREX-NAV-JOURNEY-01: one analytical workspace beside the operational context. */
+#fxconsolidated.fx-journey.active{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,340px);align-items:start;gap:0}
+#fxconsolidated.fx-journey>.fxc-workspace{min-width:0}
+#fxOperationalContext{min-width:0;padding:24px;border-left:1px solid var(--line);background:var(--panel);color:var(--ink)}
+#fxOperationalContext .fx-context-heading h2{font-size:20px;line-height:1.25;margin:8px 0}
+#fxOperationalContext .fx-context-heading p{font-size:13px;line-height:1.5;color:var(--ink-dim);margin:0 0 22px}
+.fx-context-identity{display:grid;gap:14px;margin:0 0 18px}
+.fx-context-identity div{min-width:0}.fx-context-identity dt{font-size:12px;color:var(--ink-dim);margin-bottom:4px}.fx-context-identity dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.fx-context-eligibility{padding:14px 0;border-block:1px solid var(--line);display:grid;gap:5px;margin-bottom:16px}
+.fx-context-eligibility span{font-size:12px;color:var(--ink-dim)}.fx-context-eligibility strong{font-size:15px;overflow-wrap:anywhere}
+.fx-context-metrics{display:grid;gap:10px}.fx-context-metrics .fx-engine-metric{padding:13px;border-radius:10px;background:var(--panel-2)}
+.fx-context-metrics .fx-engine-metric h3{font-size:12px}.fx-context-metrics .fx-engine-metric strong{font-size:19px}
+#fxOperationalSummary>details{margin:16px 0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+#fxOperationalSummary>details summary{cursor:pointer;min-height:36px;display:flex;align-items:center}
+#fxOperationalSummary>details ul{padding-left:18px}
+#fxContextToggle{width:100%;min-height:44px}
+#fxconsolidated.fx-context-expanded.active{grid-template-columns:minmax(0,1fr)}
+#fxconsolidated.fx-context-expanded #fxOperationalContext{order:-1;border-left:0;border-bottom:1px solid var(--line)}
+#fxconsolidated.fx-context-expanded #fxOperationalSummary{display:grid;grid-template-columns:minmax(180px,1fr) minmax(160px,1fr) 2fr;gap:18px;align-items:start}
+#fxconsolidated.fx-context-expanded #fxOperationalSummary>details{grid-column:1/-1;margin-top:0}
+#fxconsolidated.fx-context-expanded .fx-context-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+#fxconsolidated.fx-context-expanded #fxContextToggle{width:auto;margin-bottom:24px}
+#fxOperationalContext #execOverview:not([hidden]){display:block;margin-top:12px;min-width:0}
+.fx-operation-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 20px}
+.fx-operation-heading h1{font-size:24px;margin:0}.fx-operation-heading button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 14px}
+.fx-operation-heading svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.fx-checklist-dialog{position:fixed;inset:0;box-sizing:border-box;width:min(960px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--ink);box-shadow:0 24px 80px #0003;overflow:auto}
+.fx-checklist-dialog::backdrop{background:#18212b66}
+.fx-checklist-heading{position:sticky;top:0;z-index:1;display:flex;align-items:start;justify-content:space-between;gap:20px;padding:24px;border-bottom:1px solid var(--line);background:var(--panel)}
+.fx-checklist-heading h2{font-size:22px;margin:0 0 6px}.fx-checklist-heading p{font-size:13px;line-height:1.5;margin:0;color:var(--ink-dim)}
+.fx-checklist-heading button{min-height:44px;flex:none}#forexChecklistBody{padding:24px}
+#forexChecklistDialog #checkWidgetGrid{display:grid;grid-template-columns:minmax(0,1fr);min-width:0}
+#forexChecklistDialog .card{min-width:0;max-width:100%}#forexChecklistDialog button[data-v]{min-width:44px;min-height:44px}
+@media(max-width:1100px){
+ #fxconsolidated.fx-journey.active{grid-template-columns:minmax(0,1fr)}
+ #fxOperationalContext{order:-1;border-left:0;border-bottom:1px solid var(--line)}
+ #fxOperationalSummary .fx-context-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #fxOperationalContext .fx-context-identity{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #fxconsolidated.fx-context-expanded #fxOperationalSummary{display:block}
+}
+@media(max-width:600px){
+ #fxOperationalContext{padding:18px 14px}#fxOperationalContext .fx-context-heading p{margin-bottom:14px}
+ #fxOperationalSummary .fx-context-metrics,#fxconsolidated.fx-context-expanded .fx-context-metrics{grid-template-columns:minmax(0,1fr)}
+ .fx-operation-heading{align-items:flex-start;flex-direction:column;gap:10px}
+ .fx-checklist-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);border-radius:14px}
+ .fx-checklist-heading{padding:16px;gap:10px}.fx-checklist-heading h2{font-size:19px}#forexChecklistBody{padding:12px}
+ #forexChecklistDialog .check-item{flex-wrap:wrap}
+}
+#fxOperationalContext .fx-context-heading{display:block;position:static;height:auto;min-height:0;padding:0;border:0;box-shadow:none;background:none;max-width:100%}
+#fxOperationalSummary .fx-context-identity dd{text-align:left}
+
+/* Os cabeçalhos locais não herdam a altura fixa do shell. */
+#forexChecklistDialog .fx-checklist-heading{padding:24px;height:auto;min-height:0;grid-area:auto;max-width:none;width:100%;box-sizing:border-box;box-shadow:none}
+#exec .fx-operation-heading{position:static;height:auto;min-height:0;grid-area:auto;padding:0;border:0;background:none;box-shadow:none;max-width:none}
+
+#forexChecklistClose,#execChecklistBtn{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;padding:10px 14px;cursor:pointer}
+
+@media(max-width:600px){#forexChecklistDialog .fx-checklist-heading{padding:16px}}

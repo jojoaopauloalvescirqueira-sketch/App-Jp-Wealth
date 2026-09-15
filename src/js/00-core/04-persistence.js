@@ -656,10 +656,26 @@ function fxConsolidatedLongitudinalSnapshot(documento){
   if(!model||typeof model.validateState!=='function'||!model.validateState(result).ok)return result;
   const known=new Set(result.accounts.map(account=>account.id));
   const add=(id,account)=>{
-    if(!id||known.has(id))return;
-    result.accounts.push({id,name:text(account&&account.nome),type:text(account&&account.tipo),
+    if(!id)return;
+    const identity={name:text(account&&account.nome),type:text(account&&account.tipo),
       login:text(account&&account.platformLogin),broker:text(account&&account.broker),
-      currency:null,server:null,orders:[],deals:[],positions:[],summaries:[]});
+      currency:text(account&&account.platformCurrency),server:text(account&&account.platformServer)};
+    if(known.has(id)){
+      const existing=result.accounts.find(item=>item.id===id);
+      const imported=['orders','deals','positions','summaries'].some(key=>existing[key].length>0)||
+        result.receipts.some(receipt=>receipt.accountId===id);
+      const key=value=>value.normalize('NFC').toLowerCase();
+      const incompatible=['login','broker','currency','server'].some(field=>
+        text(existing[field])&&identity[field]&&key(text(existing[field]))!==key(identity[field]));
+      // Only a minimal cadastral catalogue can acquire explicitly saved gaps.
+      // Never backfill a past imported report with current metadata or combine
+      // identifiers belonging to different accounts after a legacy inline edit.
+      if(!imported&&!incompatible)for(const field of Object.keys(identity)){
+        if(!text(existing[field])&&identity[field])existing[field]=identity[field];
+      }
+      return;
+    }
+    result.accounts.push({id,...identity,orders:[],deals:[],positions:[],summaries:[]});
     known.add(id);
   };
   if(Array.isArray(documento.accounts))documento.accounts.forEach(account=>{

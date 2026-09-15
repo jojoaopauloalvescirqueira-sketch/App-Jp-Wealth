@@ -324,7 +324,7 @@ def run(args):
                             page.evaluate('closeSettingsModal()');settle(page)
                             expected = order(page)
                             destinations = {'dashboard': 'dashboard', 'research': 'research-forex',
-                                            'forex': 'forex-overview', 'personal-finance': 'personal-finance', 'alladin': 'alladin'}
+                                            'forex': 'forex-consolidated', 'personal-finance': 'personal-finance', 'alladin': 'alladin'}
                             for module in expected:
                                 if width <= 900:
                                     page.locator('[data-shell-menu-toggle]').click()

@@ -118,14 +118,18 @@ def run_existing_settings(browser,url):
     assert page.locator('#settingsPageTitle').inner_text()=='Operação'
     page.locator('[data-settings-panel="operations"] [data-nav-to="tool-check"]').click()
     assert page.locator('#settingsPageTitle').inner_text()=='Checklist'
-    assert page.locator('[data-settings-panel="tool-check"] #checkWidgetGrid').is_visible()
+    assert page.locator('#forexChecklistDialog #checkWidgetGrid').is_visible()
     check_settings=page.evaluate("""()=>({
       screen:document.querySelector('.screen.active')?.id,
       primary:document.querySelector('#nav > .tab.active')?.dataset.primary,
       grids:document.querySelectorAll('#checkWidgetGrid').length,
-      parent:document.getElementById('checkWidgetGrid').closest('[data-settings-panel]')?.dataset.settingsPanel
+      parent:document.getElementById('checkWidgetGrid').closest('dialog')?.id
     })""")
-    assert check_settings=={'screen':operational,'primary':primary_before,'grids':1,'parent':'tool-check'}, check_settings
+    assert check_settings=={'screen':operational,'primary':primary_before,'grids':1,'parent':'forexChecklistDialog'}, check_settings
+
+    assert page.evaluate('settingsState.suspended && document.getElementById("settingsModal").inert')
+    page.locator('#forexChecklistClose').click()
+    page.wait_for_function('!settingsState.suspended')
 
     # Conhecimento -> Centro Educacional (rótulo novo; ID interno 'educational' preservado).
     page.locator('#settingsBackBtn').click(); page.locator('#settingsBackBtn').click()

@@ -34,7 +34,7 @@ def main():
                 except Exception as error: results.append({'name':name,'pass':False,'error':str(error)})
             def require(value):
                 assert value
-            test('new route follows Contabilidade',lambda:require(page.evaluate("NAV_FOREX_CHILDREN.map(x=>x.id).join(',').includes('forex-reconciliation,forex-consolidated,forex-planning')")))
+            test('Consolidado is the first Forex destination',lambda:require(page.evaluate("NAV_FOREX_CHILDREN.map(x=>x.id).join(',')==='forex-consolidated,forex-planning,forex-operation,forex-reconciliation,forex-account,forex-reserves'")))
             test('default resolves Mestre without operational switch or writes',lambda:require(page.evaluate("document.querySelector('#fxcAccount').value==='fixture-A' && S.forex.activeAccountId==='fixture-B' && JSON.stringify(S)===window.__fxBefore")))
             test('four accessible tabs',lambda:require(page.locator('#fxconsolidated [role=tab]').count()==4))
             page.locator('#fxcManual').click()

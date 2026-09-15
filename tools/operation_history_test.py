@@ -366,8 +366,7 @@ def run_search_keeps_the_input_alive(page):
           // porem `hidden` + `inert`, e focus() em elemento nao exibido e no-op.
           // Chamar so o renderizador mediria foco num container invisivel — o
           // teste passaria ou falharia por motivo alheio a propriedade.
-          navigateToScreen('exec');
-          JPWExec.ui.selectView('history');
+          JPWNavigation.navigateLocal('exec', 'history');
           const q0 = document.getElementById('histQuery');
           q0.focus();
           q0.value = 'op_'; q0.dispatchEvent(new Event('input', {bubbles:true}));
