@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tarefa atual — APPLE NOTES EXPERIENCE MATCH
 
 2026-09-14. Branch `codex/apple-notes-match-20260914`, base integrada `9ca32073e1fa032318b7e6e6eb50b5f693efe2d9`. Implementação local N2/A3 explicitamente autorizada; sem aceite ou integração. Objetivo, arquivos, invariantes, testes e rollback em [CHG/CTX](CHG-APPLE-NOTES-MATCH-20260914.md). Escopo: apresentação de Notas e preferências visuais; fonte financeira, dados, controles e outras entregas preservados. Evidências externas: `/Users/joaopauloalves/.codex/apple-notes-match/20260914/evidence/`.
@@ -202,6 +203,15 @@ publicação próprios. Nenhum novo lote de produto está autorizado. Evidência
 `codex/nav-ref-context`, checkpoint, stash e outras worktrees ficam preservados.
 Dívidas e âncoras globais continuam explícitas no registro e no estado atual.
 Todos os cabeçalhos e contratos abaixo são históricos, sem autoridade vigente.
+=======
+# Tarefa delimitada — fechamento de contexto após NAV-REF-01
+
+Contrato e rastreabilidade: [NAV-REF-01-CONTEXT-CLOSE](NAV-REF-01-CONTEXT-CLOSE.md), CHG/CTX N0-D/A2. A autorização vigente cobre somente os três cabeçalhos operacionais e esse registro, na branch `codex/nav-ref-context`, worktree `/Users/joaopauloalves/.codex/night-reviews/20260910/product`, base `e770e1b66a87e93f52f40eab83479d7a26be2cd4`. Criação da branch especificamente autorizada e executada; nenhum fetch/FF necessário, pois a main principal já estava limpa no merge.
+
+NAV-REF-01 está encerrado no [PR #11](https://github.com/jojoaopauloalvescirqueira-sketch/App-Jp-Wealth/pull/11), build `f4adcd1cc131c623`. Testes, aceite e auditoria anteriores são reaproveitados com sua origem no registro, sem novo teste de navegação. Este delta é apenas documental, local e sem staging/commit/integração; seu resultado ainda exige revisão e aceite. Sem novo lote de produto, reconstrução, publicação ou atualização de índices.
+
+**Todos os cabeçalhos e contratos abaixo são históricos**, preservados integralmente com seus limites e evidências. A autorização desta rodada não renova permissões de outras tarefas nem fecha AUD-05/P2, dívida estrutural V4 ou demais pendências. Checkpoint anterior permanece na branch `codex/nav-local-projection` e nas evidências referenciadas pelo registro.
+>>>>>>> codex/nav-ref-context
 
 ---
 
