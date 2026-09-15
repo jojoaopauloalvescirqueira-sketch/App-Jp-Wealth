@@ -135,12 +135,13 @@
           <span class="nav-sub-item-title">Conta</span>
           <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
         </button>
+        <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
         <button type="button" data-nav-item data-nav-child="forex-operation">
           <span class="nav-sub-item-title">Operação</span>
           <span class="nav-sub-item-desc">Painel e Motor de Lote</span>
         </button>
         <button type="button" data-nav-item data-nav-child="forex-reconciliation">
-          <span class="nav-sub-item-title">Apuração</span>
+          <span class="nav-sub-item-title">Contabilidade</span>
           <span class="nav-sub-item-desc">Contabilidade e Histórico</span>
         </button>
         <button type="button" data-nav-item data-nav-child="forex-planning">
@@ -161,7 +162,7 @@
           </button>
         </div>
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
-             data-nav-context="forex-reconciliation" role="group" aria-label="Apuração" hidden inert>
+             data-nav-context="forex-reconciliation" role="group" aria-label="Contabilidade" hidden inert>
           <button type="button" data-nav-item data-nav-route="forex-reconciliation">
             <span class="nav-sub-item-title">Contabilidade</span>
             <span class="nav-sub-item-desc">Ledger, retorno e drawdown</span>
@@ -331,6 +332,7 @@
     <div class="exec-view" id="execOverview" role="region" aria-labelledby="execOverviewTitle">
       <!-- Visão Geral reúne os componentes operacionais; preferências v6 mantêm sua identidade lógica. -->
       <div class="cp-workspace-heading"><span class="cp-kicker">FOREX · CONTEXTO OPERACIONAL</span><h2 id="execOverviewTitle" class="fx-overview-title">Visão Geral</h2><p>Prepare o período, confira os limites e acompanhe os registros.</p></div>
+      <div id="forexV11Overview" class="fx-engine-workspace"></div>
       <div id="fxOverviewWidgets" class="fx-overview-widgets"></div>
       <div class="card fx-overview-tools">
         <h3>Ferramentas de preparação</h3>
@@ -559,7 +561,7 @@
       </div>
       <div class="field" style="max-width:280px">
         <label>Exposição-alvo (regime normal)</label>
-        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Alavancagem desejada. Gênese 0,4x.</span>
+        <input type="number" step="0.01" id="mExpAlvo" value="0.4"><span class="note">Volume admissível depende dos parâmetros de admissão, ainda pendentes.</span>
       </div>
       <div class="jp-table-scroll"><table class="dtable" style="margin-top:8px">
         <thead><tr><th>Instrumento</th><th>Preço</th><th>Atualizado</th><th>Contr/Lote</th><th>Valor Lote</th><th>Lote Padrão</th><th>Lote Alta Vol</th><th>Teto/Op</th><th></th></tr></thead>
@@ -567,7 +569,7 @@
       </table></div>
     </div>
     <div class="card" data-widget-size="full">
-      <h2>Perfis de Risco <span class="art">motor legado V10.0 · Art. 10.3</span></h2>
+      <h2>Perfis de Risco <span class="art">fatores satélites pendentes · P-30</span></h2>
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Perfil</th><th>Fator</th><th>DDR-alvo</th><th>MDD ativo</th><th>Alav./ordem</th><th>Limite</th></tr></thead>
         <tbody id="profileBody"></tbody>
@@ -579,11 +581,12 @@
   <!-- ================= 02 PARÂMETROS ================= -->
   <section class="screen" id="params">
     <div class="jp-widget-grid" id="paramsWidgetGrid">
+    <div id="forexEnginePanel" class="card fx-engine-workspace"></div>
     <div class="card" data-layout-card="params-balance-cycle" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium full">
       <h2>Saldo e Ciclo <span class="art">leitura analítica</span></h2>
       <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
         <div class="metric"><div class="k">Saldo Inicial de Referência</div><div class="v sm" id="rpSaldoIni">—</div><div class="sub">base de cálculo do risco do ciclo</div></div>
-        <div class="metric"><div class="k">Saldo Atual da Conta Mestre</div><div class="v sm" id="rpSaldoAtu">—</div><div class="sub">sincronizado pela contabilidade/Configurações</div></div>
+        <div class="metric"><div class="k">Saldo Atual da Conta Mestre</div><div class="v sm" id="rpSaldoAtu">—</div><div class="sub">equity exige observação própria; book está na Contabilidade</div></div>
         <div class="metric"><div class="k">Início do Ciclo</div><div class="v sm" id="rpInicio">—</div><div class="sub">ciclo anual · Art. 3.4</div></div>
       </div>
     </div>
@@ -594,7 +597,7 @@
         <div class="metric"><div class="k">Alarme Operacional</div><div class="v sm" id="rpAlarm">—</div><div class="sub">alerta antes da guilhotina</div></div>
         <div class="metric"><div class="k">Alav. Ordem Gênese</div><div class="v sm" id="rpGenLev">—</div><div class="sub">gênese nasce controlada</div></div>
         <div class="metric"><div class="k">Risco Máx. Gênese</div><div class="v sm" id="rpGenRisk">—</div><div class="sub">Art. 8.6</div></div>
-        <div class="metric"><div class="k">Normalização V10</div><div class="v sm" id="rpFW">—</div><div class="sub">saldo × fator de perfil</div></div>
+        <div class="metric"><div class="k">Firewall de replicação</div><div class="v sm" id="rpFW">—</div><div class="sub">P-30 pendente; nenhum fator histórico</div></div>
         <div class="metric"><div class="k">VRM Normal</div><div class="v sm" id="rpVrmN">—</div><div class="sub">abaixo deste limite</div></div>
         <div class="metric"><div class="k">VRM Alta Vol</div><div class="v sm" id="rpVrmHV">—</div><div class="sub">acima deste limite</div></div>
         <div class="metric"><div class="k">Referência Mensal</div><div class="v sm" id="rpRefM">—</div><div class="sub">referência, não promessa</div></div>
@@ -602,7 +605,7 @@
       </div>
     </div>
     <div class="card" data-layout-card="params-matrix" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Matriz Quadrifásica Ativa <span class="art">perfil vigente aplicado sobre a matriz Base estatutária</span></h2>
+      <h2>Matriz V11 de Seis Fases <span class="art">valores da política central; homologação indicada no catálogo</span></h2>
       <div class="jp-table-scroll"><table class="dtable">
         <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
         <tbody id="matrixBody"></tbody>
@@ -637,7 +640,7 @@
         <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
         <tbody id="contasBody"></tbody>
       </table></div>
-      <p class="account-table-note">Correção, Normalização V10 e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
+      <p class="account-table-note">Correção, Firewall de replicação e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
     </div>
     <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
@@ -1023,6 +1026,7 @@
   </section>
 
   <!-- ================= 07 CONTABILIDADE ================= -->
+  <section class="screen" id="fxreserves"><div id="forexReservesPanel" class="card fx-engine-workspace"></div></section>
   <section class="screen" id="contab">
     <div class="jp-widget-grid" id="contabWidgetGrid">
     <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
@@ -1046,14 +1050,7 @@
         <div id="acctMetas"></div>
       </div>
     </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Real vs Projetado <span class="art">projeção diária composta na meta do perfil · linha pontilhada = hoje</span></h2>
-      <div id="rvpChart" style="width:100%"></div>
-      <details class="jp-p3">
-            <summary>Projeção diária · ideal vs real</summary>
-            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
-          </details>
-    </div>
+
     <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
       <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
       <div class="params-grid">
@@ -1071,7 +1068,7 @@
       <h2>Lançamentos <span class="art">mais recentes primeiro · inclui auditoria e simulação</span></h2>
       <div class="jp-table-scroll">
         <table class="dtable">
-          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>DD vs Inicial</th><th>Nota</th><th></th></tr></thead>
+          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>Queda do saldo book</th><th>Nota</th><th></th></tr></thead>
           <tbody id="ledgerBody"></tbody>
         </table>
       </div>
@@ -1082,6 +1079,14 @@
         </details>
         <button class="reset-btn acct-export-audit" id="exportAuditBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
       </div>
+    </div>
+    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+      <h2>Real vs Projetado <span class="art">série mensal do Planejamento · dados realizados preservados</span></h2>
+      <div id="rvpChart" style="width:100%"></div>
+      <details class="jp-p3">
+            <summary>Planejamento mensal · projetado e realizado</summary>
+            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+          </details>
     </div>
     <div id="acctPace" hidden aria-hidden="true"></div>
     </div>
@@ -1364,7 +1369,7 @@
         <div class="field decision"><label>Alarme Operacional (%) <span class="art">prudência</span></label><input type="number" step="0.01" id="pAlarm" value="13"><span class="note">Ex.: 13 grava 0,13 internamente.</span></div>
         <div class="field decision"><label>Alav. Ordem Gênese</label><input type="number" step="0.1" id="pGenLev" value="0.4"><span class="note">Gênese nasce em 0,4x.</span></div>
         <div class="field decision"><label>Risco Máx. Gênese (%) <span class="art">Art. 8.6</span></label><input type="number" step="0.01" id="pGenRisk" value="1"><span class="note">Ex.: 1 grava 0,01 internamente.</span></div>
-        <div class="field decision"><label>Normalização V10 (%) <span class="art">Art. 10.1</span></label><input type="number" step="0.01" id="pFW" value="100" disabled><span class="note">100% = sem multiplicador fixo; saldo × fator de perfil.</span></div>
+        <div class="field decision"><label>Firewall de replicação (%) <span class="art">Art. 10.1</span></label><input type="number" step="0.01" id="pFW" value="100" disabled><span class="note">100% = sem multiplicador fixo; P-30 pendente; nenhum fator histórico.</span></div>
         <div class="field"><label>VRM — limite Normal</label><input type="number" step="0.01" id="pVrmN" value="1.20"><span class="note">VRM &lt; 1,20 = normal.</span></div>
         <div class="field"><label>VRM — limite Alta Vol</label><input type="number" step="0.01" id="pVrmHV" value="1.50"><span class="note">VRM &gt; 1,50 = alta vol.</span></div>
         <div class="field"><label>Referência Mensal (%)</label><input type="number" step="0.01" id="pRefM" value="3.5"><span class="note">Referência, não promessa.</span></div>
@@ -1384,7 +1389,7 @@
       <div class="mc-disclosure-body" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.7">
         <p style="margin-bottom:10px">As fontes normativas vigentes são o <a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto JP Wealth V11.0</a> e o <a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico · JPW-ANNEX-T03</a>.</p>
         <p style="margin-bottom:10px">O Anexo permanece subordinado ao Estatuto, conforme o modo de autoridade indicado em cada item. Documento vigente e parâmetro canônico não equivalem a homologação.</p>
-        <p><b style="color:var(--ink)">Motor financeiro legado:</b> os cálculos e controles deste build ainda não foram adaptados à V11. A atualização dos documentos não homologa o software nem autoriza operação com parâmetros pendentes.</p>
+        <p><b style="color:var(--ink)">Motor Forex V11 em validação:</b> este candidate distingue fatos registrados de elegibilidade normativa. Os parâmetros pendentes e conflitos de fontes continuam explícitos. Implementação e documentos não representam homologação nem autorização de execução.</p>
       </div>
     </details>
     <div class="card" data-settings-category="backup" data-settings-search="backup exportar importar recuperar compatibilidade base">
@@ -1432,8 +1437,8 @@
      lacuna ser resolvida. -->
 <footer class="gd-footer" id="gdFooter" hidden>
   <div class="gd-footer-notes">
-    <p><sup>1</sup> Meta mensal e anual são referência estatística do perfil de risco ativo, calculada pelo motor de projeção — não constituem promessa de retorno.</p>
-    <p><sup>2</sup> O Estatuto V11.0 e o Anexo JPW-ANNEX-T03 são as referências vigentes. O motor financeiro legado ainda não foi adaptado; esta atualização documental não homologa seus cálculos nem autoriza operação.</p>
+    <p><sup>1</sup> As referências mensal e anual do catálogo são distintas. Projeções usam hipóteses explícitas e não constituem promessa de retorno.</p>
+    <p><sup>2</sup> O Estatuto V11.0 e o Anexo JPW-ANNEX-T03 são as referências vigentes. O motor Forex V11 mantém execução normativa bloqueada enquanto requisitos de homologação e parâmetros permanecerem pendentes.</p>
   </div>
   <div class="gd-footer-links">
     <span class="gd-footer-brand">JP Wealth © 2026</span>
@@ -1767,9 +1772,11 @@
 <div class="persistence-alert" id="persistenceAlert" role="alert" aria-live="assertive"></div>
 
 <div class="foot-note">
-  <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> V9.1 — o risco em $ usa o Contr/Lote de cada instrumento e converte a moeda de cotação (JPY/CHF/CAD); <code>US500</code> permanece apenas como referência/histórico mantido suspenso no motor legado, e <code>XAUUSD</code> segue bloqueado. Prejuízo realizado permanece no drawdown do ciclo até a operação ser arquivada e além (Art. 3.4§2); lucro de operação arquivada não amplia limites (Art. 4.3). Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
+  <p><b style="color:var(--ink-dim)">Instrumento de gestão, não oráculo.</b> O risco factual depende de execução, stop validado, contrato e conversão identificados. O drawdown usa SI, equity observada e fluxos documentados; resultado book não substitui equity. Restrições de instrumentos e lacunas normativas permanecem visíveis. Registrar um fato não autoriza a execução. Dados ficam salvos neste navegador, neste aparelho. <button class="reset-btn" id="resetBtn">Limpar dados salvos</button></p>
 </div>
 
+<script src="src/js/00-core/00-forex-policy.js"></script>
+<script src="src/js/10-domain/00-forex-engine.js"></script>
 <script src="src/js/00-core/01-risk-profiles.js"></script>
 <script src="src/js/00-core/02-platforms.js"></script>
 <script src="src/js/00-core/03-default-state.js"></script>
@@ -1777,6 +1784,7 @@
 <script src="src/js/00-core/05-helpers.js"></script>
 <script src="src/js/00-core/06-storage-fs.js"></script>
 <script src="src/js/10-domain/01-risk-instruments.js"></script>
+<script src="src/js/10-domain/00-forex-state.js"></script>
 <script src="src/js/10-domain/02-risk-calculations.js"></script>
 <script src="src/js/20-ui/01-header-readout.js"></script>
 <script src="src/js/20-ui/02-sidebar.js"></script>
@@ -1856,5 +1864,6 @@
   <p id="notificationPrivacy">Avisos ativos e mensagens desta sessão. Ler não resolve a condição. O histórico é local, temporário e não permanece após recarregar; não há alertas com o aplicativo fechado.</p>
 </dialog>
 <script src="src/js/40-app/18-notification-center.js"></script>
+<script src="src/js/20-ui/26-forex-engine-views.js"></script>
 </body>
 </html>

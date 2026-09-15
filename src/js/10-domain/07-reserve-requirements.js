@@ -1,45 +1,24 @@
-// ============ RESERVAS ESTATUTÁRIAS · FUNÇÃO PURA COMPARTILHADA (FCR/FEO) ============
-// Fonte normativa: Estatuto V10 — Art. 13.1 (FCR ≥ 15% do capital nominal da Conta
-// Mestre), Art. 13.2 (FEO ≥ 6 meses das despesas pessoais, operacionais e
-// administrativas elegíveis) e Art. 26.2 (os mínimos absolutos prevalecem sobre o
-// bloco macro de 15%).
-// Extraída de reserveCalc() (04-onboarding.js) por decisão do gestor de 2026-08-11:
-// o onboarding e o Planejamento FX consomem ESTA função — constante única, sem
-// snapshot como fonte permanente. A matemática é idêntica à original; o teste de
-// caracterização em tools/fx_planning_test.py compara campo a campo.
-// Entradas canônicas (responsabilidade do chamador):
-//   capital          → capital nominal da Conta Mestre (fonte: S.params.saldoIni)
-//   monthlyExpenses  → despesas mensais elegíveis (fonte: onboarding)
-//   fcrCurrent/feoCurrent → valores efetivamente constituídos, declarados
-function reserveRequirementsCalc({capital,fcrCurrent,monthlyExpenses,feoCurrent}){
-  const cap=Number.isFinite(+capital)?+capital:0;
-  const fcrCur=Number.isFinite(+fcrCurrent)?+fcrCurrent:0;
-  const monthly=Number.isFinite(+monthlyExpenses)?+monthlyExpenses:0;
-  const feoCur=Number.isFinite(+feoCurrent)?+feoCurrent:0;
-  const fcrReq=cap*0.15;
-  const feoReq=monthly*6;
-  const fcrCoverage=fcrReq>0?(fcrCur/fcrReq)*100:0;
-  const feoCoverage=feoReq>0?(feoCur/feoReq)*100:0;
-  const feoMonths=monthly>0?feoCur/monthly:0;
-  const fcrStatus=fcrCur>=fcrReq?'Regular':'Insuficiente';
-  const feoStatus=feoCur>=feoReq?'Regular':'Insuficiente';
-  const regularCount=(fcrStatus==='Regular'?1:0)+(feoStatus==='Regular'?1:0);
-  return {
-    capital:cap,
-    fcrReq,
-    fcrCur,
-    fcrStatus,
-    monthly,
-    feoReq,
-    feoCur,
-    feoStatus,
-    fcrCoverage,
-    feoCoverage,
-    feoMonths,
-    fcrDiff:fcrCur-fcrReq,
-    feoDiff:feoCur-feoReq,
-    generalStatus:regularCount===2?'Reservas regulares':(regularCount===1?'Reservas parcialmente insuficientes':'Reservas críticas'),
-    generalTone:regularCount===2?'var(--f1)':(regularCount===1?'var(--f2)':'var(--f4)'),
-    hasDeficit:(fcrCur<fcrReq)||(feoCur<feoReq)
-  };
+// Compatibility projection for onboarding/planning. Normative requirements are
+// calculated only by the versioned Forex engine. Legacy SI/monthly fields are
+// not a substitute for nominal Mestre capital or a documented six-month amount.
+function reserveRequirementsCalc(input={}){
+  const e=JPWForex.engine,n=v=>typeof v==='number'&&Number.isFinite(v)?v:null;
+  const fcr=e.computeFCRRequirement({capitalNominal:n(input.capitalNominal),si:n(input.si)});
+  const feo=e.computeFEORequirement({sixMonthExpenseAmount:n(input.sixMonthExpenseAmount),
+    determinationRecorded:input.determinationRecorded===true,expensesApproved:input.expensesApproved===true});
+  const fcrReq=fcr.status==='OK'?fcr.value:null,feoReq=feo.status==='OK'?feo.value:null;
+  const fcrCur=n(input.fcrCurrent),feoCur=n(input.feoCurrent),monthly=n(input.monthlyExpenses);
+  const coverage=(cur,req)=>cur!==null&&req>0?cur/req*100:null;
+  const difference=(cur,req)=>cur!==null&&req!==null?cur-req:null;
+  const status=(cur,req)=>cur===null||req===null?'Pendente':cur<req?'Insuficiente':'Constituído — verificar governança';
+  const fcrStatus=status(fcrCur,fcrReq),feoStatus=status(feoCur,feoReq);
+  const hasDeficit=(fcrReq!==null&&fcrCur!==null&&fcrCur<fcrReq)||(feoReq!==null&&feoCur!==null&&feoCur<feoReq);
+  return {capital:n(input.capitalNominal),masterCapital:n(input.capitalNominal),fcrReq,feoReq,fcrCur,feoCur,
+    fcrStatus,feoStatus,monthly,fcrCoverage:coverage(fcrCur,fcrReq),feoCoverage:coverage(feoCur,feoReq),
+    // Informational quotient is not the approved method of apuração.
+    feoMonths:monthly>0&&feoCur!==null?feoCur/monthly:null,
+    fcrDiff:difference(fcrCur,fcrReq),feoDiff:difference(feoCur,feoReq),hasDeficit,
+    generalStatus:hasDeficit?'Déficit registrado':fcrReq===null||feoReq===null?'Requisitos não calculáveis':'Constituição informada; elegibilidade depende de governança',
+    generalTone:hasDeficit?'var(--f4)':'var(--ink-dim)',status:'PENDING_GOVERNANCE',
+    requirements:{fcr,feo},findings:[...fcr.findings,...feo.findings]};
 }

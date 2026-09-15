@@ -1,7 +1,7 @@
 // ============ QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b) ============
 function onboardingEP(saldo, prKey){
   const pr=getActiveRiskProfile(prKey);
-  return {ep:saldo*(1-pr.mdd), obj:saldo*(1+pr.anual), pr};
+  return {ep:saldo*(1-pr.mdd), obj:Number.isFinite(pr.anual)?saldo*(1+pr.anual):null, pr};
 }
 function equityProtectorEducationHTML(){
   return `<div class="risk-note">
@@ -277,12 +277,18 @@ function openOnboardingModal(mode, initialStep){
   };
   // A matemática FCR/FEO vive em reserveRequirementsCalc() (10-domain/07) — fonte
   // única compartilhada com o Planejamento FX; não reimplementar aqui.
-  const reserveCalc=()=>reserveRequirementsCalc({
-    capital:reserveCapitalValue(),
-    fcrCurrent:numVal(reserveFcrCurrent),
-    monthlyExpenses:numVal(reserveMonthlyExpenses),
-    feoCurrent:numVal(reserveFeoCurrent)
-  });
+  const reserveNumber=v=>{const raw=String(v==null?'':v).trim().replace(',','.');if(!raw)return null;const n=Number(raw);return Number.isFinite(n)&&n>=0?n:null;};
+  const reserveCalc=()=>{
+    const model=JPWForex.state.read(),observed=model.reserves.observations;
+    return reserveRequirementsCalc({
+      capitalNominal:model.metrics.fcrRequirement.status==='OK'?model.metrics.fcrRequirement.base:null,
+      sixMonthExpenseAmount:observed.sixMonthExpenseAmount,
+      determinationRecorded:observed.determinationRecorded===true,
+      expensesApproved:observed.expensesApproved===true,
+      fcrCurrent:reserveNumber(reserveFcrCurrent),monthlyExpenses:reserveNumber(reserveMonthlyExpenses),
+      feoCurrent:reserveNumber(reserveFeoCurrent)
+    });
+  };
   const cashSegTotal=()=>['centralCashMainPct','centralCashAgilePct','centralCashLiquidityPct','centralCashExternalPct','centralCashOtherPct']
     .reduce((sum,k)=>sum+numVal({centralCashMainPct,centralCashAgilePct,centralCashLiquidityPct,centralCashExternalPct,centralCashOtherPct}[k]),0);
   const liquidityTooSlow=(kind,val)=> kind==='fcr' ? (val==='D+2'||val==='Acima de D+2'||val==='Não definido') : (val==='Acima de D+2'||val==='Não definido');
@@ -399,18 +405,18 @@ function openOnboardingModal(mode, initialStep){
         <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr)); margin-bottom:12px">
           <div class="metric"><div class="k">Cobertura FCR</div><div class="v sm" style="color:${fcrColor}">${pctText(r.fcrCoverage)}</div>${metricBar(r.fcrCoverage,fcrColor)}<div class="sub">Capacidade de recomposição após drawdown máximo.</div></div>
           <div class="metric"><div class="k">Cobertura FEO</div><div class="v sm" style="color:${feoColor}">${pctText(r.feoCoverage)}</div>${metricBar(r.feoCoverage,feoColor)}<div class="sub">Estabilidade financeira contra pressão operacional.</div></div>
-          <div class="metric"><div class="k">Meses cobertos pelo FEO</div><div class="v sm" style="color:${monthsColor}">${(r.feoMonths||0).toFixed(1).replace('.',',')} meses</div><div class="sub">Classificação: ${monthsClass}</div></div>
+          <div class="metric"><div class="k">Meses cobertos pelo FEO</div><div class="v sm" style="color:${monthsColor}">${(Number.isFinite(r.feoMonths)?r.feoMonths.toFixed(1).replace('.',','):'—')} meses</div><div class="sub">Classificação: ${monthsClass}</div></div>
         </div>
         <div class="params-grid" style="grid-template-columns:1fr 1fr; gap:12px">
           <div class="card" style="margin:0; padding:12px; box-shadow:none; background:var(--panel-2)">
             <h2 style="font-size:calc(13px * var(--fs-scale)); margin-bottom:8px">FCR — Exigido vs Constituído</h2>
             ${compareBars(r.fcrReq,r.fcrCur,fcrColor)}
-            <div style="font-size:calc(11px * var(--fs-scale)); color:${r.fcrDiff>=0?'var(--f1)':'var(--f4)'}; margin-top:8px; font-weight:700">${r.fcrDiff>=0?'Excedente':'Déficit'} do FCR: ${fmtMoney2(Math.abs(r.fcrDiff))}</div>
+            <div style="font-size:calc(11px * var(--fs-scale)); color:${r.fcrDiff>=0?'var(--f1)':'var(--f4)'}; margin-top:8px; font-weight:700">${r.fcrDiff>=0?'Excedente':'Déficit'} do FCR: ${fmtMoney2((Number.isFinite(r.fcrDiff)?Math.abs(r.fcrDiff):null))}</div>
           </div>
           <div class="card" style="margin:0; padding:12px; box-shadow:none; background:var(--panel-2)">
             <h2 style="font-size:calc(13px * var(--fs-scale)); margin-bottom:8px">FEO — Exigido vs Constituído</h2>
             ${compareBars(r.feoReq,r.feoCur,feoColor)}
-            <div style="font-size:calc(11px * var(--fs-scale)); color:${r.feoDiff>=0?'var(--f1)':'var(--f4)'}; margin-top:8px; font-weight:700">${r.feoDiff>=0?'Excedente':'Déficit'} do FEO: ${fmtMoney2(Math.abs(r.feoDiff))}</div>
+            <div style="font-size:calc(11px * var(--fs-scale)); color:${r.feoDiff>=0?'var(--f1)':'var(--f4)'}; margin-top:8px; font-weight:700">${r.feoDiff>=0?'Excedente':'Déficit'} do FEO: ${fmtMoney2((Number.isFinite(r.feoDiff)?Math.abs(r.feoDiff):null))}</div>
           </div>
         </div>
         <details style="margin-top:12px"><summary style="cursor:pointer; font-weight:700; color:var(--ink)">Por que o FCR existe?</summary><p style="font-size:calc(12px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6; margin-top:8px">O FCR é a reserva de reconstituição. Ele existe para recompor o capital operacional após atingimento do limite máximo de drawdown. Ele não deve ser usado para aumentar lote, sustentar tese perdedora ou financiar revenge trade.</p></details>
@@ -702,12 +708,12 @@ function openOnboardingModal(mode, initialStep){
             <h2 style="margin-bottom:10px; color:var(--f4)">🔒 Termo de Consentimento <span class="art" style="color:var(--f4)">obrigatório</span></h2>
             <div style="font-size:calc(12.5px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
               <p style="margin-bottom:8px"><b style="color:var(--ink)">JP Wealth Management System</b> · Estatuto Operacional e Gestão de Risco · <b style="color:var(--ink)">Estatuto V11.0 e Anexo JPW-ANNEX-T03</b> · documentos vigentes.</p>
-              <p style="margin-bottom:10px">Antes de confirmar, revise os dados preenchidos acima. Ao confirmar este formulário, o operador declara ciência do Estatuto V11.0 e do Anexo Paramétrico Canônico JPW-ANNEX-T03. O motor financeiro legado ainda não foi adaptado: este aceite registra a leitura dos documentos, não homologa o software nem autoriza operação com parâmetros pendentes.</p>
+              <p style="margin-bottom:10px">Antes de confirmar, revise os dados preenchidos acima. Ao confirmar este formulário, o operador declara ciência do Estatuto V11.0 e do Anexo Paramétrico Canônico JPW-ANNEX-T03. O motor Forex V11 permanece em validação: este aceite registra a leitura dos documentos, não homologa o software nem autoriza operação com parâmetros pendentes.</p>
               <button type="button" class="reset-btn" id="obEstatutoToggle" style="color:var(--f4); border-color:var(--f4); margin-bottom:10px">▸ Ler o Estatuto V11.0 e o Anexo Paramétrico Canônico</button>
               <div id="obEstatutoReader" style="display:none; max-height:340px; overflow-y:auto; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-bottom:12px; white-space:pre-wrap; font-size:calc(11.5px * var(--fs-scale)); line-height:1.55; color:var(--ink-dim)"></div>
               <label style="display:flex; gap:10px; align-items:flex-start; color:var(--ink); font-size:calc(12.5px * var(--fs-scale)); cursor:pointer">
                 <input type="checkbox" id="obConsent" style="margin-top:3px; width:auto" ${consentMatchesCurrentVersion?'checked':''}>
-                <span>Li o Estatuto JP Wealth V11.0 e o Anexo JPW-ANNEX-T03, concordo com suas diretrizes e estou ciente de que o motor financeiro ainda não foi adaptado.</span>
+                <span>Li o Estatuto JP Wealth V11.0 e o Anexo JPW-ANNEX-T03, concordo com suas diretrizes e estou ciente de que o motor Forex V11 não está homologado e mantém as pendências normativas explícitas.</span>
               </label>
               <div style="font-size:calc(10.5px * var(--fs-scale)); color:var(--f4); margin-top:6px; font-weight:600">⚠ Você deve aceitar para continuar.</div>
               <div class="modal-err" id="obConsentErr">O aceite do Termo de Consentimento é obrigatório para iniciar ou reiniciar o período.</div>
@@ -1311,7 +1317,7 @@ function openOnboardingModal(mode, initialStep){
     // destravamento das Fases 2-4 não podem vazar para o ciclo novo (senão o drawdown e a fase
     // vigente nascem contaminados sobre um saldo inicial novo). A QUARENTENA é PRESERVADA de
     // propósito: pelo Estatuto V10 ela não pode ser liberada unilateralmente pelo gestor, então
-    // reiniciar o período não pode virar atalho para burlar os 90 dias.
+    // reiniciar o período não libera a quarentena; P-24 permanece pendente.
     const tinhaEstadoDeCiclo = (S.cycleRealizado||0)!==0
       || (Array.isArray(S.phaseUnlocked) && S.phaseUnlocked.slice(1).some(Boolean))
       || (Array.isArray(S.phases) && S.phases.some(ph=>Array.isArray(ph.orders) && ph.orders.some(o=>o && o.status)));
@@ -1582,7 +1588,7 @@ function openOnboardingModal(mode, initialStep){
     const pr=getActiveRiskProfile(profSel);
     const {ep,obj}=onboardingEP(saldo, profSel);
     const ddMoney=saldo*pr.mdd;
-    const genesisRisk=saldo*(S.params.genRisk||0.01)*pr.pct;
+    const genesisRisk=null; // P-14/P-18 pendentes, sem fallback legado.
     wrap.innerHTML=`
       <div class="card" style="margin:0 0 16px; padding:16px 18px; box-shadow:none; border-color:var(--violet); background:var(--panel)">
         <h2 style="margin-bottom:12px">Impacto do Perfil Selecionado <span class="art">${esc(pr.name)}</span></h2>

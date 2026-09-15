@@ -541,13 +541,38 @@ def caso_retry_apos_cooldown(browser, url):
         context.close()
 
 
+# Three reviewed V11 uses of the word, confined to the portable bundle.
+# Mask only the word's exact span; keep every other byte under the same scan.
+USDBRL_BENIGN_AUTH_LINES = (
+    "// Forex V11: grade containers are records, never execution authorization.",
+    "      findings:[{code:'BUDGET_DECLARATION_NOT_AUTHORIZATION',message:'Teto interno declarado; não autoriza consumo nem comprova declaração anterior à execução externa.',source:'PDF p71 Art8.4 §§10–12'}]};",
+    "    // rollback set). No save, authorization, or guard of factual order creation.",
+)
+
+
+def usd_brl_static_credential_text(texto, nome):
+    if nome == "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html":
+        linhas = texto.splitlines(keepends=True)
+        for benigna in USDBRL_BENIGN_AUTH_LINES:
+            indices = [i for i, linha in enumerate(linhas)
+                       if linha.rstrip("\r\n") == benigna]
+            assert len(indices) <= 1, "uso benigno duplicado no portátil"
+            if indices:
+                i = indices[0]
+                inicio = benigna.lower().index("authorization")
+                linhas[i] = (linhas[i][:inicio] + " " * len("authorization")
+                             + linhas[i][inicio + len("authorization"):])
+        texto = "".join(linhas)
+    return texto.lower()
+
+
 def caso_seguranca(browser, url):
     """TESTE 16 — nenhuma credencial no bundle, no HTML ou no armazenamento."""
     suspeitos = ("api_key", "apikey", "api-key", "access_token",
                  "authorization", "bearer ", "x-api-key", "client_secret")
     for nome in ("index.html", "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html",
                  "src/js/10-domain/08-usd-brl-quote.js", "sw.js"):
-        texto = (ROOT / nome).read_text(encoding="utf-8").lower()
+        texto = usd_brl_static_credential_text((ROOT / nome).read_text(encoding="utf-8"), nome)
         for termo in suspeitos:
             assert termo not in texto, f"credencial suspeita '{termo}' em {nome}"
 

@@ -23,7 +23,7 @@ const SETTINGS_LEAVES={
   educational:{label:'Centro Educacional', group:'knowledge', desc:'Fundamentos, glossário e perguntas frequentes.', terms:['educacional','centro educacional','forex','pip','spread','glossário','perguntas frequentes']},
   statute:{label:'Estatuto Operacional', group:'method-governance', desc:'Estatuto V11.0 e Anexo Paramétrico Canônico vigentes.', terms:['estatuto','V11','anexo','diretrizes','artigos','pdf','governança']},
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
-  'tool-params':{label:'Parâmetros', group:'operations', desc:'Saldo e ciclo, constantes e a matriz quadrifásica ativa.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','quadrifásica','fases']},
+  'tool-params':{label:'Parâmetros', group:'operations', desc:'Motor Forex, observações da conta, política V11 e propostas locais.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','V11','seis fases','reservas','editor']},
   'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
   backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar','pasta padrão','pasta de armazenamento','sequência de exportação','backup confirmado','reautorizar pasta','alterações desde o backup']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
@@ -480,7 +480,7 @@ function buildSettingsContent(){
   createSettingsPanel('educational',educationPanel());
   createSettingsPanel('statute','<p class="settings-lead">Consulte o Estatuto V11.0 e o Anexo JPW-ANNEX-T03. O motor financeiro legado ainda não foi adaptado; esta referência documental não homologa seus cálculos.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
-  createSettingsPanel('tool-params','<p class="settings-lead">A tela de Parâmetros completa — leituras analíticas com os valores, unidades e persistência originais.</p><div data-settings-slot="tool-params"></div>');
+  createSettingsPanel('tool-params','<p class="settings-lead">Motor Forex versionado. Registros explícitos, parâmetros normativos e estados de elegibilidade são apresentados separadamente.</p><div data-settings-slot="tool-params"></div>');
   createSettingsPanel('tool-check','<p class="settings-lead">O Checklist Pré-Trade completo — mesma pontuação, mesmos critérios, mesma persistência.</p><div data-settings-slot="tool-check"></div>');
   createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
@@ -589,6 +589,7 @@ function settingsRenderCurrent(options={}){
   const modal=settingsEl('settingsModal');
   if(modal) modal.classList.toggle('settings-mobile-detail',!settingsState.mobileListVisible);
   activateSettingsCategory(id,{focus:options.focus});
+  if(id==='tool-params'&&window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
 }
 function settingsNavigate(id,options={}){
   if(settingsRedirectResearchLab(id)) return;
@@ -756,6 +757,7 @@ function closeSettingsModal(options={}){
   if(!settingsState.open||settingsState.suspended) return;
   if(typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();
   cancelSettingsProfileDraft();
+  if(window.JPWForex&&JPWForex.state)JPWForex.state.lockEditor();
   if(typeof mvpNotesCancelAppearance==='function')mvpNotesCancelAppearance();
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
   if(typeof researchSetCovered==='function') researchSetCovered(false);

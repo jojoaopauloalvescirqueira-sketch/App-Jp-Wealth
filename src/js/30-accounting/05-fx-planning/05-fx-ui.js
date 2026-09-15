@@ -15,13 +15,16 @@ let fxpHorizonWin=24;
 // Filtro do Histórico (1g): 'all' | 'actual' | 'forecast'. Recorte de leitura,
 // não de dado — o resumo anual segue calculado sobre o horizonte inteiro.
 let fxpHistFilter='all';
+let fxpScenarioId=null;
+let fxpSelectedMonth=null;
+let fxpLedgerPreview=null;
 
 const fxpPct=v=>Number.isFinite(v)?(v*100).toFixed(2).replace('.',',')+'%':'—';
 const fxpParseNum=v=>{ const n=parseFloat(String(v??'').trim().replace(',','.')); return Number.isFinite(n)?n:null; };
 const fxpParsePct=v=>{ const n=fxpParseNum(v); return n==null?null:n/100; };
 const fxpErrHTML=errors=>`<div class="fxp-err" role="alert">${errors.map(e=>esc(e)).join('<br>')}</div>`;
-const fxpBadge=(kind)=>kind==='REAL'
-  ?'<span class="fxp-badge fxp-badge-real">REAL</span>'
+const fxpBadge=(kind)=>(kind==='REAL'||kind==='ACTUAL')
+  ?'<span class="fxp-badge fxp-badge-real">'+kind+'</span>'
   :(kind==='PROJ'?'<span class="fxp-badge fxp-badge-proj">PREMISSA</span>':'<span class="fxp-badge">'+esc(kind)+'</span>');
 
 // Somente entradas recusadas são retidas durante esta sessão, fora de S e do
@@ -34,7 +37,9 @@ const FXP_DRAFT_FIELDS={
   actual:['fxpActMonth','fxpActType','fxpActValue','fxpActFx','fxpActNotes'],
   contribution:['fxpCMonth','fxpCSource','fxpCCurrency','fxpCAmount','fxpCRate'],
   deletion:['fxpDeleteConfirm'],
-  removal:[]
+  removal:[],
+  timeline:['fxpRowMonth','fxpRowRate','fxpRowPersonal','fxpRowProp','fxpRowNote','fxpRebaseOpening'],
+  ledgerImport:['fxpLedgerMonth','fxpLedgerAccount','fxpLedgerPeriod']
 };
 function fxpRememberDraft(root,group,errorId,res){
   const fields={};
@@ -253,12 +258,12 @@ function fxpOverviewHTML(live){
   <aside class="fxp-col-side">
     <section class="fxp-block">
       <div class="fxp-block-head"><h3>Reservas estatutárias</h3><span class="art">Art. 13</span></div>
-      ${fxpCovHTML('FCR · 13.1 — fundo de contingência',res.fcrCoverage,res.fcrStatus,
-        `constituído ${fmtMoney2(res.fcrCur)} · exigido ${fmtMoney2(res.fcrReq)}`+(res.fcrDiff<0?` · déficit ${fmtMoney2(-res.fcrDiff)}`:''))}
-      ${fxpCovHTML('FEO · 13.2 — fundo de estabilidade',res.feoCoverage,res.feoStatus,
-        `${res.feoMonths.toFixed(1).replace('.',',')} de 6,0 meses`+(res.feoDiff<0?` · déficit ${fmtMoney2(-res.feoDiff)}`:''))}
-      <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Hierarquia de capitalização (Art. 13.3): recompor FCR, depois constituir FEO. Este painel calcula e informa — nenhuma movimentação é executada.</p>
-      <button type="button" class="fxp-linkish" id="fxpGoOnboarding" style="margin-top:8px">Revisar no Formulário de Início</button>
+      ${fxpCovHTML('FCR · Contingência e Reconstituição',res.fcrCoverage,res.fcrStatus,
+        `constituído ${fxpMoneyOrPending(res.fcrCur)} · exigido ${fxpMoneyOrPending(res.fcrReq)}`+(res.fcrDiff<0?` · déficit ${fmtMoney2(-res.fcrDiff)}`:''))}
+      ${fxpCovHTML('FEO · Estabilidade Operacional',res.feoCoverage,res.feoStatus,
+        `constituído ${fxpMoneyOrPending(res.feoCur)} · apurado ${fxpMoneyOrPending(res.feoReq)}`+(res.feoDiff<0?` · déficit ${fmtMoney2(-res.feoDiff)}`:''))}
+      <p class="expl" style="font-size:var(--fs-xs);color:var(--ink-faint);margin:10px 0 0;line-height:1.55">Constituição quantitativa não confirma elegibilidade. Apuração, liquidez e governança permanecem verificações distintas.</p>
+      <button type="button" class="fxp-linkish" id="fxpGoOnboarding" style="margin-top:8px">Revisar Reservas</button>
       <div id="fxpReservesPanel">${fxpReservesHTML(res)}</div>
     </section>
 
@@ -279,15 +284,11 @@ function fxpOverviewHTML(live){
 }
 // Barra de cobertura normativa. O rótulo textual acompanha sempre — estado
 // normativo nunca é comunicado só pela cor da barra.
+function fxpMoneyOrPending(value){return Number.isFinite(value)?fmtMoney2(value):'não informado';}
 function fxpCovHTML(rotulo,cobertura,status,meta){
-  const reg=status==='Regular';
-  const cor=reg?'var(--f1)':'var(--f4)';
-  const larg=Math.max(0,Math.min(100,cobertura||0));
-  return `<div class="fxp-cov">
-    <div class="fxp-cov-top"><span class="fxp-cov-lbl">${esc(rotulo)}</span><span class="fxp-cov-val" style="color:${cor}">${fxpPct((cobertura||0)/100)}</span></div>
-    <div class="fxp-cov-bar"><div class="fxp-cov-fill" style="width:${larg.toFixed(1)}%;background:${cor}"></div></div>
-    <div class="fxp-cov-meta">${meta} · <span style="color:${cor}">${esc(status)}</span></div>
-  </div>`;
+  const known=Number.isFinite(cobertura),cor=status==='Insuficiente'?'var(--f4)':'var(--ink-dim)';
+  const larg=known?Math.max(0,Math.min(100,cobertura)):0;
+  return `<div class="fxp-cov"><div class="fxp-cov-top"><span class="fxp-cov-lbl">${esc(rotulo)}</span><span class="fxp-cov-val" style="color:${cor}">${known?fxpPct(cobertura/100):'não calculável'}</span></div>${known?`<div class="fxp-cov-bar"><div class="fxp-cov-fill" style="width:${larg.toFixed(1)}%;background:${cor}"></div></div>`:''}<div class="fxp-cov-meta">${meta} · ${esc(status)}</div></div>`;
 }
 // Janela de exibição do gráfico (1c). É recorte VISUAL da série já calculada:
 // não altera horizonte, baseline, projeção nem nada persistido.
@@ -302,24 +303,16 @@ function fxpHorizonHTML(plan){
 // 700px o CSS converte cada linha em rótulo→valor: antes, no mobile, a coluna de
 // valores nascia fora da tela e a tabela mostrava apenas os rótulos.
 function fxpReservesHTML(res){
-  const row=(k,v)=>`<tr class="fxp-reserve-row"><td style="color:var(--ink-dim)">${k}</td><td>${v}</td></tr>`;
-  return `
-  <details class="mc-disclosure fxp-disc fxp-reserves">
-  <summary><span class="t">Detalhes das reservas estatutárias</span><span class="chev">▾</span></summary>
-  <div class="mc-disclosure-body">
-  <div class="fxp-tablewrap"><table class="dtable" style="font-size:calc(11px * var(--fs-scale))"><tbody>
-    ${row('Capital nominal da Conta Mestre (fonte: parâmetros do período)',fmtMoney2(res.capital))}
-    ${row('FCR mínimo exigido — 15% (Art. 13.1)',fmtMoney2(res.fcrReq))}
-    ${row('FCR constituído (declarado no Formulário de Início)',fmtMoney2(res.fcrCur))}
-    ${row('Cobertura FCR',`<span style="color:${res.fcrStatus==='Regular'?'var(--f1)':'var(--f4)'}">${fxpPct(res.fcrCoverage/100)} · ${esc(res.fcrStatus)}${res.fcrDiff<0?' · déficit '+fmtMoney2(-res.fcrDiff):''}</span>`)}
-    ${row('Despesas mensais elegíveis (declaradas)',fmtMoney2(res.monthly))}
-    ${row('FEO mínimo exigido — 6 meses (Art. 13.2)',fmtMoney2(res.feoReq))}
-    ${row('FEO constituído (declarado)',fmtMoney2(res.feoCur))}
-    ${row('Cobertura FEO',`<span style="color:${res.feoStatus==='Regular'?'var(--f1)':'var(--f4)'}">${fxpPct(res.feoCoverage/100)} · ${res.feoMonths.toFixed(1).replace('.',',')} meses · ${esc(res.feoStatus)}${res.feoDiff<0?' · déficit '+fmtMoney2(-res.feoDiff):''}</span>`)}
-    ${row('Situação geral',`<span style="color:${res.generalTone}">${esc(res.generalStatus)}</span>`)}
-  </tbody></table></div>
-  <p class="expl" style="font-size:var(--fs-sm);color:var(--ink-faint);margin-top:6px">Hierarquia de capitalização (Art. 13.3): I — recompor FCR; II — constituir FEO; III — reservas estratégicas; IV — dividendos/realocação. Este painel calcula e informa; nenhuma movimentação é executada. Valores constituídos são revisados em ⚙ Configurações → Formulário de Início.</p>
-  </div></details>`;
+  const row=(k,v)=>`<tr class="fxp-reserve-row"><td>${k}</td><td>${v}</td></tr>`;
+  return `<details class="mc-disclosure fxp-disc fxp-reserves"><summary>Detalhes e governança das reservas</summary><div class="mc-disclosure-body"><div class="fxp-tablewrap"><table class="dtable"><tbody>
+    ${row('Capital nominal explícito da Conta Mestre',fxpMoneyOrPending(res.capital))}
+    ${row('FCR exigido pelo motor V11',fxpMoneyOrPending(res.fcrReq))}
+    ${row('FCR constituído',fxpMoneyOrPending(res.fcrCur))}
+    ${row('FEO apurado para seis meses de despesas reais',fxpMoneyOrPending(res.feoReq))}
+    ${row('FEO constituído',fxpMoneyOrPending(res.feoCur))}
+    ${row('Situação quantitativa',esc(res.generalStatus))}
+    ${row('Governança',esc(res.status||'PENDING_GOVERNANCE'))}
+    </tbody></table></div><ul>${(res.findings||[]).map(f=>`<li>${esc(f.message||f.code)}</li>`).join('')}</ul><p class="fxp-note">Valor calculado não resolve conflitos documentais nem concede autorização operacional. SI não substitui capital nominal; uma média mensal não substitui a apuração explícita de seis meses.</p></div></details>`;
 }
 
 // ---- Planejamento (premissas vigentes) --------------------------------------
@@ -368,7 +361,7 @@ function fxpPlanningHTML(live){
   </section>
   <div class="fxp-danger">
     <h4>Zona de perigo</h4>
-    <p class="fxp-note">Excluir o planejamento remove plano, fechamentos e ledger de aportes do Planejamento FX (o restante do terminal não é afetado). Digite <b>EXCLUIR</b> para habilitar.</p>
+    <p class="fxp-note">Excluir o plano ativo arquiva seu histórico completo no backup, incluindo fechamentos, revisões e aportes. O restante do terminal não é afetado. Digite <b>EXCLUIR</b> para habilitar.</p>
     <div class="fxp-danger-row">
       <input type="text" id="fxpDeleteConfirm" placeholder="EXCLUIR" aria-label="Digite EXCLUIR para confirmar">
       <button class="reset-btn" id="fxpDeleteBtn" style="color:var(--f4);border-color:var(--f4)">Excluir planejamento</button>
@@ -391,7 +384,7 @@ function fxpPlanningHTML(live){
     <section class="fxp-block">
       <div class="fxp-block-head"><h3>Revisões registradas</h3><span class="art">${plan.revisions.length}</span></div>
       ${plan.revisions.length?`<dl class="fxp-pairs">${plan.revisions.slice().reverse().map(rv=>
-        `<dt>${esc(String(rv.supersededAt||'').slice(0,10))}</dt><dd>${esc(rv.note||'revisão de premissas')}</dd>`).join('')}</dl>`
+        `<dt>${esc(String(rv.supersededAt||'').slice(0,10))}</dt><dd>${esc(rv.note||'revisão de premissas')} · ${rv.calculationSnapshot?'snapshot exato':'legado: reconstrução aproximada'}</dd>`).join('')}</dl>`
         :'<p class="fxp-note" style="margin:0">Nenhuma revisão desde o congelamento do baseline.</p>'}
     </section>
   </aside>
@@ -660,7 +653,9 @@ function fxpTableHTML(live){
   // Filtro do 1g: recorte de LEITURA sobre as linhas já calculadas. Nenhuma
   // série é recalculada e nada é escondido do resumo anual, que continua sobre
   // o horizonte inteiro — filtrar a auditoria mudaria o que ela audita.
-  const visiveis=ov.forecast.filter(r=>
+  const activeSeries=fxpScenarioId?(live.plan.scenarios||[]).find(s=>s.id===fxpScenarioId):null;
+  const shownSeries=activeSeries?window.JPWFx.engine.fxScenarioTimeline(live.plan,activeSeries):ov.forecast;
+  const visiveis=shownSeries.filter(r=>
     fxpHistFilter==='actual'?r.phase==='actual'
     :fxpHistFilter==='forecast'?r.phase!=='actual':true);
   const rows=visiveis.map(r=>{
@@ -669,25 +664,25 @@ function fxpTableHTML(live){
     const real=r.phase==='actual';
     return `<tr>
       <td class="hl">${r.month}</td>
-      <td>${real?fxpBadge('REAL'):fxpBadge('PROJ')}${real&&r.derivedField?`<span class="fxp-derived" title="entrada original: ${r.inputType==='usd'?'resultado USD':'taxa %'}">${r.inputType==='usd'?'$→%':'%→$'}</span>`:''}</td>
+      <td>${real?fxpBadge('ACTUAL'):fxpBadge(activeSeries?'SCENARIO':'PLAN')}${real&&r.derivedField?`<span class="fxp-derived" title="entrada original: ${r.inputType==='usd'?'resultado USD':'taxa %'}">${r.inputType==='usd'?'$→%':'%→$'}</span>`:''}</td>
       <td class="fxg-b">${b?fmtMoney2(b.open):'—'}</td><td class="fxg-b">${b?fxpPct(b.rate):'—'}</td><td class="fxg-b">${b?fmtMoney2(b.profit):'—'}</td><td class="fxg-b">${b?fmtMoney2(b.contributionUsd):'—'}</td><td class="fxg-b">${b?fmtMoney2(b.close):'—'}</td>
       <td class="fxg-v">${fmtMoney2(r.open)}</td><td class="fxg-v">${fxpPct(r.rate)}</td><td class="fxg-v">${fmtMoney2(r.profit)}</td><td class="fxg-v">${fmtMoney2(r.personalUsd)}</td><td class="fxg-v">${fmtMoney2(r.propUsd)}</td><td class="fxg-v">${fmtMoney2(r.close)}</td>
       <td class="fxg-d" style="color:${dev==null?'var(--ink-dim)':(dev>=0?'var(--f1)':'var(--f4)')}">${dev!=null?fmtMoney2(dev):'—'}</td>
       <td class="fxg-d" style="color:${dev==null?'var(--ink-dim)':(dev>=0?'var(--f1)':'var(--f4)')}">${(dev!=null&&b&&b.close!==0)?fxpPct(dev/b.close):'—'}</td>
     </tr>`;
   }).join('');
-  const annual=fxAnnualSummary(ov.forecast);
+  const annual=fxAnnualSummary(shownSeries);
   const annualFx=fxAnnualFxSummary(live.plan.contributions);
   const fxByYear={}; annualFx.forEach(a=>{fxByYear[a.year]=a;});
   const filtros=[['all','Todos'],['actual','Só realizados'],['forecast','Só projetados']];
   return `
   <div class="fxp-modes fxp-histfilter" role="group" aria-label="Filtro do histórico">${filtros.map(([k,l])=>
     `<button type="button" class="reset-btn fxp-mode${fxpHistFilter===k?' fxp-mode-on':''}" data-fxp-hist="${k}" aria-pressed="${fxpHistFilter===k}">${l}</button>`).join('')}
-    <span class="fxp-histcount">${visiveis.length} de ${ov.forecast.length} meses</span></div>
-  <p class="fxp-note" style="font-size:var(--fs-sm);color:var(--ink-dim)">BASELINE = premissas originais congeladas ${fxpBadge('PROJ')} · VIGENTE = realizado ${fxpBadge('REAL')} até o último fechamento e projeção com premissas atuais dali em diante. Meses realizados exibem a direção da derivação ($→% ou %→$).</p>
+    <span class="fxp-histcount">${visiveis.length} de ${shownSeries.length} meses</span></div>
+  <p class="fxp-note" style="font-size:var(--fs-sm);color:var(--ink-dim)">BASELINE = premissas originais congeladas ${fxpBadge('PROJ')} · ${activeSeries?'SCENARIO = ACTUAL até o último fechamento e hipótese independente dali em diante.':'VIGENTE = ACTUAL até o último fechamento e PLAN dali em diante.'} Meses realizados exibem a direção da derivação ($→% ou %→$).</p>
   <div class="fxp-tablewrap"><table class="dtable fxp-hist" style="font-size:calc(10.5px * var(--fs-scale))">
     <thead>
-      <tr><th rowspan="2">Mês</th><th rowspan="2">Fase</th><th colspan="5" class="fxg-b">BASELINE · plano original</th><th colspan="6" class="fxg-v">VIGENTE · realizado + projeção</th><th colspan="2" class="fxg-d">Desvio</th></tr>
+      <tr><th rowspan="2">Mês</th><th rowspan="2">Fase</th><th colspan="5" class="fxg-b">BASELINE · plano original</th><th colspan="6" class="fxg-v">${activeSeries?'SCENARIO · realizado + hipótese':'VIGENTE · realizado + PLAN'}</th><th colspan="2" class="fxg-d">Desvio</th></tr>
       <tr><th class="fxg-b">Inicial</th><th class="fxg-b">%</th><th class="fxg-b">Resultado</th><th class="fxg-b">Aportes</th><th class="fxg-b">Final</th><th class="fxg-v">Inicial</th><th class="fxg-v">%</th><th class="fxg-v">Resultado</th><th class="fxg-v">Ap. pessoal</th><th class="fxg-v">Ap. prop</th><th class="fxg-v">Final</th><th class="fxg-d">USD</th><th class="fxg-d">%</th></tr>
     </thead>
     <tbody>${rows}</tbody>
@@ -697,7 +692,8 @@ function fxpTableHTML(live){
     <thead><tr><th>Ano</th><th>Meses</th><th>Saldo inicial</th><th>Resultado</th><th>Rent. composta</th><th>Ap. pessoal</th><th>Ap. prop</th><th>Saldo final</th><th>BRL convertido</th><th>USD adquirido</th><th>Câmbio médio/ano</th></tr></thead>
     <tbody>${annual.map(a=>{
       const f=fxByYear[a.year];
-      return `<tr><td class="hl">${a.year}</td><td>${a.phases.actual?`${a.phases.actual} real${a.phases.forecast?` + ${a.phases.forecast} proj`:''}`:`${a.months} proj`}</td>
+      const months=[a.phases.actual?`${a.phases.actual} ACTUAL`:'',a.phases.forecast?`${a.phases.forecast} PLAN`:'',a.phases.scenario?`${a.phases.scenario} SCENARIO`:''].filter(Boolean).join(' + ');
+      return `<tr><td class="hl">${a.year}</td><td>${months}</td>
         <td>${fmtMoney2(a.open)}</td><td>${fmtMoney2(a.profitUsd)}</td><td>${fxpPct(a.composedReturn)}</td>
         <td>${fmtMoney2(a.personalUsd)}</td><td>${fmtMoney2(a.propUsd)}</td><td>${fmtMoney2(a.close)}</td>
         <td>${f?'R$ '+Math.round(f.brlInvested).toLocaleString('pt-BR'):'—'}</td><td>${f?fmtMoney2(f.usdAcquired):'—'}</td>
@@ -724,7 +720,7 @@ function fxpActivateOverview(root,live){
   if(ob) ob.addEventListener('click',()=>{
     // Guarda por typeof: no monólito reduzido o módulo de Configurações pode
     // não estar presente, e o botão não pode quebrar a tela.
-    if(typeof openSettingsModal==='function') openSettingsModal('general',ob);
+    if(window.JPWNavigation)window.JPWNavigation.navigate('forex-reserves');
   });
   const led=root.querySelector('#fxpGoLedger');
   if(led) led.addEventListener('click',()=>{ fxpView='actuals'; renderFxPlanning(); });
@@ -745,27 +741,78 @@ function fxpActivateOverview(root,live){
   window.JPWFx.charts.fxDrawReturnsChart(root.querySelector('#fxpReturnsChart'),live);
 }
 
+// ---- Versioned monthly editing, scenarios and explicit ledger import -------
+function fxpReferenceHTML(){
+  const refs=window.JPWFx.state.fxPlanningReferences();
+  if(!refs)return '<p class="fxp-note">Referências de planejamento indisponíveis.</p>';
+  const annual=Array.isArray(refs.annualRange)?refs.annualRange.map(fxpPct).join(' – '):'pendente';
+  return `<p class="fxp-note fxp-policy-reference">Referências distintas: ${fxpPct(refs.monthly)} ao mês · ${annual} ao ano. São referências de planejamento, não promessa. As premissas abaixo são explícitas; a referência anual não é calculada da mensal.</p>`;
+}
+function fxpTimelineEditorHTML(live){
+  const plan=live.plan,scenarios=plan.scenarios||[],scenario=scenarios.find(s=>s.id===fxpScenarioId);
+  if(fxpScenarioId&&!scenario)fxpScenarioId=null;
+  const rows=(scenario?window.JPWFx.engine.fxScenarioTimeline(plan,scenario):live.forecast).filter(r=>r.phase!=='actual');
+  const row=rows.find(r=>r.month===fxpSelectedMonth)||rows[0];
+  fxpSelectedMonth=row?row.month:null;
+  return `<section class="fxp-block fxp-timeline-editor"><div class="fxp-block-head"><h3>Planilha dinâmica</h3><span>${fxpBadge(scenario?'SCENARIO':'PLAN')}</span></div>${fxpReferenceHTML()}
+    <div class="fxp-scenario-tools"><label>Camada<select id="fxpScenarioSelect"><option value="">PLAN · vigente</option>${scenarios.map(s=>`<option value="${esc(s.id)}" ${s.id===fxpScenarioId?'selected':''}>SCENARIO · ${esc(s.name)}</option>`).join('')}</select></label><label>Novo cenário<input id="fxpScenarioName" placeholder="Nome da hipótese"></label><button type="button" id="fxpScenarioCreate">Criar cenário do plano</button>${scenario?'<button type="button" id="fxpScenarioArchive">Arquivar cenário</button>':''}</div>
+    <p class="fxp-note">Editar a linha N recalcula o fechamento dessa linha e as seguintes. Os meses anteriores e ACTUAL permanecem intactos.</p>
+    ${row?`<div class="params-grid"><label>Linha (mês)<select id="fxpRowMonth">${rows.map(r=>`<option value="${r.month}" ${r.month===fxpSelectedMonth?'selected':''}>${r.month} · ${fxpPct(r.rate)}</option>`).join('')}</select></label><label>Taxa planejada (% a.m.)<input id="fxpRowRate" type="number" step="0.01" value="${row.rate*100}"></label><label>Aporte pessoal USD<input id="fxpRowPersonal" type="number" min="0" step="0.01" value="${row.personalUsd}"></label><label>Aporte Prop USD<input id="fxpRowProp" type="number" min="0" step="0.01" value="${row.propUsd}"></label><label>Motivo<input id="fxpRowNote" type="text"></label></div><button type="button" id="fxpRowSave">Salvar linha e recalcular posteriores</button><details class="fxp-rebase"><summary>Rebase explícito a partir desta linha</summary><label>Novo saldo de abertura (USD)<input type="number" min="0" step="0.01" id="fxpRebaseOpening"></label><p>Aplica uma nova âncora somente à projeção selecionada. Não altera baseline nem fechamentos reais.</p><button type="button" id="fxpRebaseSave">Confirmar rebase da projeção</button></details>`:'<p>Todos os meses estão realizados; nenhum mês projetado pode ser editado.</p>'}<div id="fxpTimelineErr" role="status"></div></section>`;
+}
+function fxpBindTimeline(root,live){
+  const g=id=>root.querySelector('#'+id),error=res=>{g('fxpTimelineErr').innerHTML=fxpErrHTML(res.errors);};
+  g('fxpScenarioSelect').onchange=e=>{fxpScenarioId=e.target.value||null;renderFxPlanning();};
+  g('fxpScenarioCreate').onclick=()=>{const res=window.JPWFx.state.fxScenarioSave({name:g('fxpScenarioName').value});if(!res.ok){error(res);return;}fxpScenarioId=res.id;renderFxPlanning();};
+  if(g('fxpScenarioArchive'))g('fxpScenarioArchive').onclick=()=>{if(!confirm('Arquivar este cenário preservando sua história?'))return;const res=window.JPWFx.state.fxScenarioDelete(fxpScenarioId);if(!res.ok){error(res);return;}fxpScenarioId=null;renderFxPlanning();};
+  if(!g('fxpRowMonth'))return;
+  const plan=live.plan,scenario=(plan.scenarios||[]).find(s=>s.id===fxpScenarioId);
+  const rows=scenario?window.JPWFx.engine.fxScenarioTimeline(plan,scenario):live.forecast;
+  g('fxpRowMonth').onchange=()=>{fxpSelectedMonth=g('fxpRowMonth').value;const row=rows.find(r=>r.month===g('fxpRowMonth').value);g('fxpRowRate').value=row.rate*100;g('fxpRowPersonal').value=row.personalUsd;g('fxpRowProp').value=row.propUsd;g('fxpRebaseOpening').value='';};
+  const done=res=>{if(!res.ok){fxpRememberDraft(root,'timeline','fxpTimelineErr',res);return;}delete fxpRejectedDrafts.timeline;renderFxPlanning();};
+  g('fxpRowSave').onclick=()=>done(window.JPWFx.state.fxPlanReviseFromMonth(g('fxpRowMonth').value,{rate:fxpParsePct(g('fxpRowRate').value),personalUsd:fxpParseNum(g('fxpRowPersonal').value),propUsd:fxpParseNum(g('fxpRowProp').value)},g('fxpRowNote').value,fxpScenarioId));
+  g('fxpRebaseSave').onclick=()=>{if(!confirm('Aplicar o rebase somente à projeção a partir de '+g('fxpRowMonth').value+'?'))return;done(window.JPWFx.state.fxPlanRebase(g('fxpRowMonth').value,fxpParseNum(g('fxpRebaseOpening').value),g('fxpRowNote').value,fxpScenarioId));};
+}
+function fxpLedgerImportHTML(live){
+  const context=ledgerContext();
+  return `<section class="fxp-block fxp-ledger-import"><h3>Importar ACTUAL da Contabilidade</h3><p class="fxp-note">Confira conta, período e completude. A importação guarda os IDs e versões de origem; alterações posteriores na Contabilidade não sobrescrevem este fechamento.</p><div class="params-grid"><label>Mês<input type="month" id="fxpLedgerMonth" value="${live.nextOpenMonth||live.lastClosedMonth||''}"></label><label>Conta (identidade)<input id="fxpLedgerAccount" value="${esc(context.accountId||'')}"></label><label>Período (identidade)<input id="fxpLedgerPeriod" value="${esc(context.periodId||'')}"></label></div><label><input type="checkbox" id="fxpLedgerComplete"> Confirmo que os fechamentos deste mês estão completos para esta conta e período</label><button type="button" id="fxpLedgerPreviewBtn">Revisar origem</button><pre id="fxpLedgerPreview" aria-live="polite"></pre><label><input type="checkbox" id="fxpLedgerReplace"> Autorizar substituição explícita se já houver ACTUAL neste mês</label><button type="button" id="fxpLedgerImportBtn" disabled>Importar fechamento revisado</button><div id="fxpLedgerImportErr" role="status"></div></section>`;
+}
+function fxpBindLedgerImport(root){
+  const g=id=>root.querySelector('#'+id);
+  const options=()=>({accountId:g('fxpLedgerAccount').value.trim(),periodId:g('fxpLedgerPeriod').value.trim(),complete:g('fxpLedgerComplete').checked});
+  fxpLedgerPreview=null;
+  root.querySelectorAll('#fxpLedgerMonth,#fxpLedgerAccount,#fxpLedgerPeriod,#fxpLedgerComplete').forEach(el=>el.addEventListener('input',()=>{fxpLedgerPreview=null;g('fxpLedgerImportBtn').disabled=true;}));
+  g('fxpLedgerPreviewBtn').onclick=()=>{fxpLedgerPreview=window.JPWLedger.monthlyActual(g('fxpLedgerMonth').value,options());const p=fxpLedgerPreview;g('fxpLedgerPreview').textContent=p.status+' · '+p.source.rows.length+' fechamentos\n'+(p.issues.length?p.issues.join('\n'):'Abertura '+fmtMoney2(p.source.openingBalanceUsd)+' · resultado '+fmtMoney2(p.profitUsd)+' · fechamento '+fmtMoney2(p.source.closingBalanceUsd));g('fxpLedgerImportBtn').disabled=p.status!=='COMPLETE';};
+  g('fxpLedgerImportBtn').onclick=()=>{
+    const res=window.JPWFx.state.fxPlanImportLedgerActual(g('fxpLedgerMonth').value,{...options(),sourceVersion:fxpLedgerPreview&&fxpLedgerPreview.source.version,replace:g('fxpLedgerReplace').checked});
+    if(!res.ok){fxpRememberDraft(root,'ledgerImport','fxpLedgerImportErr',res);return;}delete fxpRejectedDrafts.ledgerImport;renderFxPlanning();
+  };
+}
+
 // ---- Render principal -------------------------------------------------------
 function renderFxPlanning(){
   const root=document.getElementById('fxPlanningRoot'); if(!root) return;
   fxpCaptureRejectedDrafts(root);
+  const issue=window.JPWFx.state.fxEnvelopeIssue();
+  if(issue){root.innerHTML=fxpErrHTML([issue]);return;}
   const live=window.JPWFx.state.fxOverviewLive();
   const card=document.getElementById('fxPlanningCard');
   if(card) card.dataset.fxpState=live?'active':'empty';
-  if(!live){ root.innerHTML=fxpCreateFormHTML(); fxpBindCreate(root); fxpRestoreRejectedDrafts(root); return; }
+  if(!live){ root.innerHTML=fxpReferenceHTML()+fxpCreateFormHTML(); fxpBindCreate(root); fxpRestoreRejectedDrafts(root); return; }
   const body=fxpView==='overview'?fxpOverviewHTML(live)
-    :fxpView==='planning'?fxpPlanningHTML(live)
+    :fxpView==='planning'?(fxpScenarioId?fxpTableHTML(live):fxpPlanningHTML(live))
     :fxpView==='actuals'?fxpActualsHTML(live)
     :fxpTableHTML(live);
   root.innerHTML=`
     <p class="fxp-note" style="margin-bottom:10px"><b>${esc(live.plan.name)}</b> · ${esc(live.plan.baseline.startMonth)} + ${live.plan.baseline.horizonMonths} meses ·
     ${live.lastClosedMonth?`fechado até <b>${live.lastClosedMonth}</b> · próximo aberto <b>${live.nextOpenMonth||'—'}</b>`:'nenhum mês fechado ainda'}</p>
-    <div class="fxp-section" role="region" id="fxpPanel-${fxpView}" aria-label="${esc(FXP_MODES.find(([key])=>key===fxpView)[1])}" tabindex="0">${body}</div>`;
+    <div class="fxp-section" role="region" id="fxpPanel-${fxpView}" aria-label="${esc(FXP_MODES.find(([key])=>key===fxpView)[1])}" tabindex="0">${(fxpView==='planning'||fxpView==='table')?fxpTimelineEditorHTML(live):''}${body}${fxpView==='actuals'?fxpLedgerImportHTML(live):''}</div>`;
   if(fxpView==='overview') fxpActivateOverview(root,live);
-  if(fxpView==='table')
+  if(fxpView==='table'||(fxpView==='planning'&&fxpScenarioId))
     root.querySelectorAll('[data-fxp-hist]').forEach(b=>b.addEventListener('click',()=>{ fxpHistFilter=b.dataset.fxpHist; renderFxPlanning(); }));
-  if(fxpView==='planning') fxpBindPlanning(root,live);
+  if(fxpView==='planning'&&!fxpScenarioId) fxpBindPlanning(root,live);
   if(fxpView==='actuals') fxpBindActuals(root,live);
+  if(fxpView==='planning'||fxpView==='table')fxpBindTimeline(root,live);
+  if(fxpView==='actuals')fxpBindLedgerImport(root);
   fxpRestoreRejectedDrafts(root);
 }
 // Superfície estritamente visual para o submenu hierárquico do shell. As

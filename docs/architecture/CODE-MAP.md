@@ -356,3 +356,7 @@ schema, autoridade de escrita ou alteração da cópia parcial A12.
 - `40-app/16-storage-governance.js` e `12-global-dashboard.js`: base ativa versus destino, freshness e estados de gravação.
 - `40-app/15-ff-news.js`: `ffNewsStatusText` é compartilhado pelo widget, modal/workspace em `17-economic-calendar.js` e resumo em `20-ui/25-dash-macro.js`. Nenhuma nova consulta econômica; erro não vira “zero eventos”.
 - `tools/backup_reliability_test.py`: dados sintéticos, contraprovas sobre a origem309 e round-trip real em contexto descartável. FULL do produto continua obrigatório e separado.
+
+## FOREX-V11-CENTRAL-01 — incremento local em revisão
+
+Registry puro em `src/js/00-core/00-forex-policy.js`; engine puro em `src/js/10-domain/00-forex-engine.js`; comandos explícitos em `src/js/10-domain/00-forex-state.js`; read-model e compatibilidade em `02-risk-calculations.js`; UI em `20-ui/26-forex-engine-views.js`. O escritor, epoch, locks e recuperação permanecem os existentes. O snapshot completo S inclui os agregados Forex/ledgerHistory e extensões de planejamento, enquanto a sessão do editor é somente RAM. Fatos, elegibilidade e dados históricos têm contratos distintos em [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md). Esta descrição não concede aceite ou homologação.

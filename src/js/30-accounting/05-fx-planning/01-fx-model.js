@@ -45,6 +45,7 @@ function fxAddMonths(month,n){
 }
 function fxYearOf(month){ return fxMonthKey(month)?month.slice(0,4):''; }
 
+function fxInputFinite(v){return (typeof v==='number'||typeof v==='string'&&v.trim()!=='')&&Number.isFinite(Number(v));}
 function fxNum(v,fallback=0){ return Number.isFinite(+v)?+v:fallback; }
 function fxId(prefix){ return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
 
@@ -115,9 +116,10 @@ function fxValidateAssumptions(a){
 function fxNormalizeActual(raw){
   const src=raw&&typeof raw==='object'?raw:{};
   const inputType=src.inputType==='usd'?'usd':'rate';
-  const rate=Number.isFinite(+src.returnRate)?+src.returnRate:null;
-  const usd=Number.isFinite(+src.profitUsd)?+src.profitUsd:null;
+  const rate=fxInputFinite(src.returnRate)?+src.returnRate:null;
+  const usd=fxInputFinite(src.profitUsd)?+src.profitUsd:null;
   return {
+    ...src,
     inputType,
     returnRate:inputType==='rate'?rate:null,   // só a entrada original persiste;
     profitUsd:inputType==='usd'?usd:null,      // o derivado é recalculado sempre
@@ -130,9 +132,9 @@ function fxNormalizeActual(raw){
 function fxValidateActualInput(rec){
   const errors=[];
   if(rec.inputType==='rate'){
-    if(!Number.isFinite(+rec.returnRate)||+rec.returnRate<=-1) errors.push('Rentabilidade realizada inválida (fração > −100%).');
+    if(!fxInputFinite(rec.returnRate)||+rec.returnRate<=-1) errors.push('Rentabilidade realizada inválida (fração > −100%).');
   } else if(rec.inputType==='usd'){
-    if(!Number.isFinite(+rec.profitUsd)) errors.push('Resultado realizado em USD inválido.');
+    if(!fxInputFinite(rec.profitUsd)) errors.push('Resultado realizado em USD inválido.');
   } else errors.push('Tipo de entrada do realizado deve ser taxa ou USD.');
   return errors;
 }
@@ -201,11 +203,11 @@ function fxCreatePlan({name,assumptions,now}){
 // revisions[] antes da troca — o baseline jamais é tocado (requisito adicional).
 function fxReviseAssumptions(plan,nextAssumptions,{now,note}={}){
   const ts=String(now||new Date().toISOString());
-  const prev={...plan.current};
+  const prev=structuredClone(plan.current);
   const structural={startMonth:plan.baseline.startMonth,
     horizonMonths:plan.baseline.horizonMonths,
     initialBalanceUsd:plan.baseline.initialBalanceUsd}; // estruturais não mudam pós-criação
-  const next={...fxNormalizeAssumptions({...nextAssumptions,...structural}),revisedAt:ts};
+  const next={...structuredClone(plan.current),...fxNormalizeAssumptions({...nextAssumptions,...structural}),revisedAt:ts};
   return {...plan, updatedAt:ts, current:next,
-    revisions:[...(plan.revisions||[]),{revisedAt:prev.revisedAt||plan.createdAt,supersededAt:ts,note:String(note||''),snapshot:prev}]};
+    revisions:[...(plan.revisions||[]),{revisedAt:prev.revisedAt||plan.createdAt,supersededAt:ts,note:String(note||''),snapshot:prev,calculationSnapshot:{actuals:structuredClone(plan.actuals||{}),contributions:structuredClone(plan.contributions||[]),rebases:structuredClone(plan.rebases||[])},reconstruction:'EXACT'}]};
 }

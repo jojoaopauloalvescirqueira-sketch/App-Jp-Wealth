@@ -1,17 +1,9 @@
-// ============ Configurações · quarentena reversível (SET 5a) ============
+// Quarantine remains a factual restriction. P-24 does not supply a release date.
 function renderConfigQuarantine(){
-  const el=$('configQuarantine'); if(!el) return;
+  const el=$('configQuarantine');if(!el)return;
   if(S.quarantine){
-    const ativa=quarantineActive();
-    el.innerHTML=`<p style="font-size:calc(13px * var(--fs-scale));color:var(--ink-dim);line-height:1.6;margin-bottom:12px">
-      Quarentena ${ativa?'<b style="color:var(--danger)">ativa</b>':'expirada'} — início ${esc(S.quarantine.inicio)}, fim ${esc(S.quarantine.fim)}.</p>
-      <button class="reset-btn" id="clearQuarantineBtn">Limpar quarentena / aviso</button>`;
-    $('clearQuarantineBtn').addEventListener('click',()=>{
-      if(confirm('Limpar o registro de quarentena? Use isto se o aviso surgiu de erro de preenchimento, não de um encerramento real.')){
-        S.quarantine=null; save(); render(); renderPhases(); renderConfigQuarantine();
-      }
-    });
-  } else {
-    el.innerHTML=`<p style="font-size:calc(13px * var(--fs-scale));color:var(--ink-dim);line-height:1.6">Nenhuma quarentena registrada. O aviso de guilhotina só aparece enquanto o drawdown real estiver ≥ ${fmtPct(activeMDDLimit())} — e some sozinho se corrigido. A quarentena de 90 dias só é gravada quando você a formaliza deliberadamente.</p>`;
+    el.innerHTML='<p>Quarentena registrada: '+esc(S.quarantine.inicio||'data não informada')+'. Prazo e liberação dependem da autoridade normativa; uma data antiga não autoriza retorno.</p><p>Correções do registro exigem preservar sua trilha. O registro de fatos continua disponível.</p>';
+  }else{
+    el.innerHTML='<p>Nenhuma quarentena registrada. Atingir DD_MAX produz a indicação de encerramento compulsório no motor. P-24 permanece pendente, sem prazo automático.</p>';
   }
 }

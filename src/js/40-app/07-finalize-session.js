@@ -567,7 +567,7 @@ function emptyJPWealthState(preservado){
   empty.operationHistory=structuredClone(DEFAULTS.operationHistory);
   empty.quarantine=null;
   empty.riskPinHash=null;
-  empty.phaseUnlocked=[true,false,false,false];
+  empty.phaseUnlocked=[];
   empty.period={nome:'',profile:'base'};
   empty.onboarding=structuredClone(DEFAULTS.onboarding);
   empty.onboarding.done=false;
@@ -575,9 +575,9 @@ function emptyJPWealthState(preservado){
   // o clone herda o reserveMasterCapital derivado de DEFAULTS.params.saldoIni, mas
   // este estado vazio acabou de zerar saldoIni — reconciliar com a MESMA fórmula
   // canônica, senão o reload (migrate) reescreve e o checkpoint acusa falso dirty.
-  empty.onboarding.reserveMasterCapital=String(empty.params.saldoIni||0);
+  empty.onboarding.reserveMasterCapital='';
   empty.perf=[];
-  empty.phases=empty.phases.map((phase,i)=>({...phase,orders:emptyOrders([5,4,3,2][i]||3)}));
+  empty.phases=forexNewOperationPhases();
   if(Array.isArray(empty.checklist)) empty.checklist=empty.checklist.map(group=>({...group,items:group.items.map(item=>({...item,v:0}))}));
   if(empty.mei){ empty.mei.history=[]; empty.mei.lastCalibrationAt=''; }
   // Notas do MVP são um backlog acumulado ao longo de todo o período de testes,

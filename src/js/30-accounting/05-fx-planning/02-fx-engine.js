@@ -87,15 +87,18 @@ function fxNextOpenMonth(plan){
 // Histórico realizado + projeção futura nascida do ÚLTIMO fechamento real, com as
 // premissas VIGENTES (plan.current). O baseline nunca participa deste cálculo —
 // preservação garantida por construção (requisito Baseline × Forecast × Realizado).
-function fxForecastTimeline(plan,{assumptions,asOf}={}){
+function fxForecastTimeline(plan,{assumptions,asOf,rebases}={}){
   const premises=assumptions||plan.current;
   const actual=fxActualTimeline(plan,{asOf});
   const start=fxMonthKey(plan.baseline.startMonth); if(!start) return [];
   const horizon=plan.baseline.horizonMonths;
   const rows=actual.slice();
+  const anchors=rebases||plan.rebases||[];
   let open=actual.length?actual[actual.length-1].close:Math.max(0,fxNum(plan.baseline.initialBalanceUsd));
   for(let t=actual.length;t<horizon;t++){
     const month=fxAddMonths(start,t);
+    const anchor=anchors.filter(a=>a.month===month).slice(-1)[0];
+    if(anchor&&fxInputFinite(anchor.openingBalanceUsd)&&+anchor.openingBalanceUsd>=0)open=+anchor.openingBalanceUsd;
     const rate=fxResolveRate(premises,month);
     const contrib=fxPlannedContribution(premises,month);
     const profit=open*rate;
@@ -113,6 +116,10 @@ function fxForecastTimeline(plan,{assumptions,asOf}={}){
 function fxForecastAtRevision(plan,revisionIndex){
   const rev=(plan.revisions||[])[revisionIndex];
   if(!rev) return null;
+  if(rev.calculationSnapshot){
+    const snap=rev.calculationSnapshot;
+    return fxForecastTimeline({...plan,actuals:snap.actuals,contributions:snap.contributions,rebases:snap.rebases||[]},{assumptions:rev.snapshot});
+  }
   return fxForecastTimeline(plan,{assumptions:rev.snapshot,asOf:rev.supersededAt});
 }
 
@@ -161,6 +168,7 @@ function fxAnnualSummary(rows){
     acc.close=r.close; acc.profitUsd+=r.profit; acc.personalUsd+=r.personalUsd;
     acc.propUsd+=r.propUsd; acc.contributionUsd+=r.contributionUsd;
     if(Number.isFinite(r.rate)) acc.growthFactor*=(1+r.rate);
+    if(r.phase==='scenario'&&acc.phases.scenario==null)acc.phases.scenario=0;
     acc.months++; if(acc.phases[r.phase]!=null) acc.phases[r.phase]++;
   });
   return order.map(y=>{
@@ -228,3 +236,11 @@ window.JPWFx={
     fxNextOpenMonth,fxContributionsByMonth,fxVarianceRows,fxCostBasis,
     fxAnnualSummary,fxAnnualFxSummary,fxOverview}
 };
+
+// Scenario uses live ACTUAL but its own future assumptions and explicit anchors.
+// Neither computing nor selecting this view writes the plan or actual records.
+function fxScenarioTimeline(plan,scenario){
+  return fxForecastTimeline(plan,{assumptions:scenario.assumptions,rebases:scenario.rebases||[]})
+    .map(r=>r.phase==='actual'?r:{...r,phase:'scenario'});
+}
+window.JPWFx.engine.fxScenarioTimeline=fxScenarioTimeline;

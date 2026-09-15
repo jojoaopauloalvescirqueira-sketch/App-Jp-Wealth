@@ -1,52 +1,9 @@
-// ============ QUESTIONÁRIOS DE TRANSIÇÃO DE FASE ============
-// Pesos psicológicos diferentes por fase — Art. 3.7 e doc. de tese quadrifásica.
-const TRANSITION_QUESTIONNAIRES = {
-  2:{
-    title:'Transição para Fase 2 — Desaceleração',
-    subtitle:'DD 4,01%–8,00% · Teto de alavancagem cai para 2,0x · Bloqueio de novos lotes agressivos',
-    questions:[
-      {id:'reconhecimento', type:'bool', label:'Você reconhece formalmente que houve erro de timing na tese da Fase 1?', mustBeYes:true},
-      {id:'suspensao', type:'bool', label:'O objetivo migra de lucro para busca de breakeven/lucro reduzido — você concorda em suspender novos lotes agressivos?', mustBeYes:true},
-      {id:'stopRecalc', type:'bool', label:'Você recalculou o Stop Estatístico (ATR×√N×F, Art. 9.5) para as condições atuais de volatilidade?', mustBeYes:true},
-      {id:'causa', type:'text', label:'Qual foi a causa da deterioração da tese?', placeholder:'estrutura invalidada / notícia inesperada / erro de leitura / outro'},
-    ]
-  },
-  3:{
-    title:'Transição para Fase 3 — Sobrevivência',
-    subtitle:'DD 8,01%–12,00% · Proibição absoluta de novas adições · Postura puramente passiva',
-    questions:[
-      {id:'tendenciaConfirmada', type:'bool', label:'A tendência adversa está confirmada pela estrutura de mercado — não é apenas ruído de curto prazo?', mustBeYes:true},
-      {id:'semNovosLotes', type:'bool', label:'Reconhece que, a partir daqui, a única ação permitida é REDUZIR exposição em movimentos corretivos — nunca ampliar?', mustBeYes:true},
-      {id:'motivoManutencao', type:'text', label:'Descreva objetivamente, sem viés emocional, por que ainda mantém a tese aberta em vez de encerrá-la agora.'},
-      {id:'vieses', type:'checklist', label:'Autoconsciência (não bloqueia a liberação) — marque o que estiver presente agora:',
-        options:['Recusa da perda planejada','Apego à tese','Teimosia','Esperança de recuperação sem base técnica']},
-    ]
-  },
-  4:{
-    title:'Transição para Fase 4 — O Abismo / Fuga',
-    subtitle:'DD 12,01%–15,00% · Suspensão integral de atividade discricionária · Freeze',
-    questions:[
-      {id:'info', type:'info', label:'Esta é a fase final antes do Encerramento Compulsório em 15,00% (Art. 3.10). A partir daqui, a atividade discricionária está suspensa — só resta gerenciar o encerramento residual.'},
-      {id:'relatorio', type:'bool', label:'Você já está mentalmente preparado para o Relatório de Incidente obrigatório caso o limite de 15% seja atingido (Art. 3.10 §3)?'},
-      {id:'confirmPhrase', type:'confirmText', label:'Digite exatamente a frase abaixo para confirmar que entende que não pode abrir novas posições, apenas gerenciar o encerramento residual:',
-        mustMatch:'ACEITO A SALVAGUARDA'},
-    ]
-  }
-};
-
-// Questionário de DOWNGRADE — simétrico ao de transição, mas com registro psicológico oposto:
-// o risco aqui não é desespero, é euforia silenciosa. Art. 4.3 (Ilusão do DDC) é o ancoradouro.
-const DOWNGRADE_QUESTIONNAIRE={
-  title:'Downgrade de Fase — reconhecer a melhora sem tratá-la como licença',
-  subtitle:'O drawdown caiu abaixo do mínimo da fase destravada. Isso não autoriza alavancagem maior (Art. 4.3 — Ilusão do DDC).',
-  questions:[
-    {id:'naoAutoriza', type:'bool', label:'Você reconhece que esta melhora NÃO autoriza aumento de lote ou alavancagem acima do que a fase de destino permite?', mustBeYes:true},
-    {id:'melhoraReal', type:'bool', label:'Essa melhora veio de redução de risco/lucro técnico real — não é uma recuperação parcial que ainda pode reverter a qualquer momento?', mustBeYes:true},
-    {id:'licao', type:'text', label:'O que você aprendeu com o ciclo que levou ao drawdown anterior, antes de tratar isso como resolvido?'},
-  ]
-};
-
+// Forex V11: grade containers are records, never execution authorization.
+// Public legacy entry points remain callable and do not move or duplicate facts.
+const TRANSITION_QUESTIONNAIRES=Object.freeze({});
+const DOWNGRADE_QUESTIONNAIRE=Object.freeze({});
 function closeModal(){
+  if(typeof operationDiscardReview==='function')operationDiscardReview();
   if(typeof window.__cleanupOnboardingModalUI === 'function'){
     try{ window.__cleanupOnboardingModalUI(); }catch(e){}
     window.__cleanupOnboardingModalUI=null;
@@ -58,437 +15,66 @@ function closeModal(){
   renderExecutionOnboardingWarning();
   renderConfigOnboarding();
 }
+
+function operationOrderIsLive(o){
+  return !!o && (o.status === 'Aberta' || o.status === 'Fechada' || o.status === 'Migrada' || o.status === 'Pendente');
+}
+
+function operationLiveOrders(){
+  const out = [];
+  (S.phases || []).forEach((ph, pi) => {
+    ((ph && ph.orders) || []).forEach((o, oi) => { if (operationOrderIsLive(o)) out.push({ o, pi, oi }); });
+  });
+  return out;
+}
+
+function operationResolveThesis(vivas){
+  const pares = [...new Set(vivas.map(x => String(x.o.par || '').trim().toUpperCase()).filter(Boolean))];
+  const tipos = [...new Set(vivas.map(x => String(x.o.tipo || '').trim().toUpperCase()).filter(Boolean))];
+  const findings=[];
+  if(pares.length>1)findings.push({code:'INSTRUMENT_CONFLICT',instruments:pares});
+  if(tipos.length>1)findings.push({code:'DIRECTION_CONFLICT',directions:tipos});
+  return {ok:true,instrument:pares.length===1?pares[0]:null,direction:tipos.length===1?tipos[0]:null,instruments:pares,directions:tipos,findings};
+}
+
 function activePhaseRangeLabel(idx){
-  const row=activeRiskMatrix()[idx];
-  return row ? `${fmtPct(row.ddmin)}–${fmtPct(row.ddmax)}` : '—';
+  const row=JPWForex.policy.phases?.[idx];
+  return row?`${row.ddMinPercent}%–${row.ddMaxPercent}%`:'Não apurado';
 }
-function transitionSubtitleFor(faseNum, fallback){
-  const range=activePhaseRangeLabel(faseNum-1);
-  if(faseNum===2) return `DD ${range} · Teto de alavancagem cai para 2,0x · Bloqueio de novos lotes agressivos`;
-  if(faseNum===3) return `DD ${range} · Proibição absoluta de novas adições · Postura puramente passiva`;
-  if(faseNum===4) return `DD ${range} · Suspensão integral de atividade discricionária · Freeze`;
-  return fallback;
-}
-function activeLimitQuestionText(txt){
-  return String(txt||'').replace(/15,00%|15%/g,fmtPct(activeMDDLimit()));
-}
-
-function openTransitionModal(faseNum){
-  const q=TRANSITION_QUESTIONNAIRES[faseNum];
-  if(!q) return;
-  const answers={};
-  const box=$('modalBox');
-  $('modalOverlay').classList.add('show');
-  let html=`<h3>🔒 ${q.title}</h3><div class="modal-sub">${transitionSubtitleFor(faseNum,q.subtitle)}</div>`;
-  q.questions.forEach(item=>{
-    const label=activeLimitQuestionText(item.label);
-    html+=`<div class="modal-q" data-qid="${item.id}">`;
-    if(item.type==='info'){
-      html+=`<div class="qinfo">${label}</div>`;
-    } else if(item.type==='bool'){
-      html+=`<div class="ql">${label}</div>
-        <div class="seg" data-qtype="bool">
-          <button type="button" data-val="sim">Sim</button>
-          <button type="button" data-val="nao">Não</button>
-        </div>
-        <div class="modal-err">Esta confirmação é obrigatória para prosseguir.</div>`;
-    } else if(item.type==='text'){
-      html+=`<div class="ql">${label}</div>
-        <textarea placeholder="${item.placeholder||''}"></textarea>
-        <div class="modal-err">Descreva antes de prosseguir — não deixe em branco.</div>`;
-    } else if(item.type==='confirmText'){
-      html+=`<div class="ql">${label}</div>
-        <input type="text" placeholder="${item.mustMatch}" autocomplete="off">
-        <div class="modal-err">O texto precisa ser exatamente igual: "${item.mustMatch}".</div>`;
-    } else if(item.type==='checklist'){
-      html+=`<div class="ql">${label}</div>`;
-      item.options.forEach((opt,oi)=>{
-        html+=`<label class="check-row"><input type="checkbox" data-opt="${oi}"> ${opt}</label>`;
-      });
-    }
-    html+=`</div>`;
-  });
-  html+=`<div class="modal-actions">
-    <button class="modal-btn cancel" id="modalCancel">Cancelar</button>
-    <button class="modal-btn confirm" id="modalConfirm">Confirmar e liberar Fase ${faseNum}</button>
-  </div>`;
-  box.innerHTML=html;
-  // bind seg (bool) toggles
-  box.querySelectorAll('[data-qtype="bool"] button').forEach(b=>{
-    b.addEventListener('click',()=>{
-      const seg=b.parentElement;
-      seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on');
-      seg.dataset.answer=b.dataset.val;
-      seg.parentElement.querySelector('.modal-err')?.classList.remove('show');
-    });
-  });
-  $('modalCancel').addEventListener('click', closeModal);
-  $('modalConfirm').addEventListener('click',()=>{
-    let ok=true;
-    const collected={};
-    q.questions.forEach(item=>{
-      const qEl=box.querySelector(`[data-qid="${item.id}"]`);
-      if(item.type==='bool'){
-        const seg=qEl.querySelector('.seg');
-        const ans=seg.dataset.answer;
-        if(item.mustBeYes && ans!=='sim'){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        else if(!ans){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        collected[item.id]=ans||'';
-      } else if(item.type==='text'){
-        const val=qEl.querySelector('textarea').value.trim();
-        if(val.length<3){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        collected[item.id]=val;
-      } else if(item.type==='confirmText'){
-        const val=qEl.querySelector('input[type=text]').value.trim();
-        if(val!==item.mustMatch){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        collected[item.id]=val;
-      } else if(item.type==='checklist'){
-        const checked=[...qEl.querySelectorAll('input[type=checkbox]:checked')].map(c=>item.options[+c.dataset.opt]);
-        collected[item.id]=checked;
-      }
-    });
-    if(!ok) return;
-    // libera a fase
-    S.phaseUnlocked[faseNum-1]=true;
-    // Carimbado com a operacao viva e a fase atingida: o Historico deriva
-    // maxGridPhaseReached SO dos eventos daquela operationId.
-    S.transitionLog.push(operationStampTransition(
-      {fase:faseNum, ts:new Date().toISOString(), resumo:collected}, faseNum-1));
-    // Destravamento CONFIRMADO pelo questionário: ato semântico, não digitação.
-    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-    save();
-    closeModal();
-    if(faseNum>=2) mirrorPhaseForward(faseNum-2);
-    render(); renderPhases();
-  });
-}
-
-// ---- Detecção de downgrade: DD caiu abaixo do mínimo de uma fase destravada e vazia ----
+function transitionSubtitleFor(faseNum){return 'A fase é apurada pelo motor V11; registrar fatos não exige questionário.';}
+function activeLimitQuestionText(txt){return String(txt||'');}
+function openTransitionModal(){alert('Registre os fatos livremente. A fase da conta e a elegibilidade são apuradas no motor V11; questionários não liberam ordens.');}
 function getMaxUnlockedIdx(){
-  let max=0;
-  S.phaseUnlocked.forEach((u,i)=>{ if(u) max=i; });
-  return max;
+  const phase=JPWForex.state.read().activeGridPhase;
+  const value=phase&&phase.status==='OK'?phase.value:null;
+  const number=typeof value==='number'?value:value?.number;
+  return Number.isInteger(number)?number-1:null;
 }
-function phaseVacated(pi){
-  return S.phases[pi].orders.every(o=>o.status!=='Aberta');
+function phaseVacated(pi){return !(S.phases[pi]?.orders||[]).some(o=>o.status==='Aberta'&&o.recordStatus!=='voided');}
+function checkDowngrade(){return null;}
+function openDowngradeModal(){openTransitionModal();}
+function mirrorPhaseForward(){return false;}
+function phaseFrozen(){return false;}
+function healSupersededPhases(){return false;}
+function phaseTetoRisco(){
+  const metric=JPWForex.state.read().metrics?.openRiskLimit;
+  return metric?.status==='OK'&&Number.isFinite(metric.value)?metric.value:null;
 }
-function checkDowngrade(fi){
-  const maxUnlocked=getMaxUnlockedIdx();
-  if(maxUnlocked<=fi) return null; // nada destravado acima do que a matemática justifica
-  for(let i=fi+1;i<=maxUnlocked;i++){
-    if(!phaseVacated(i)) return null; // ainda tem ordem viva lá — não sugere downgrade, só travaria posição aberta
-  }
-  return {fromIdx:maxUnlocked, toIdx:fi};
+function checkPhaseCap(){
+  const model=JPWForex.state.read();
+  return {excede:null,recordable:model.canRecord===true,status:model.executionEligibility?.status||'NOT_COMPUTABLE',findings:structuredClone(model.findings||[])};
 }
-function openDowngradeModal(fromIdx,toIdx){
-  const q=DOWNGRADE_QUESTIONNAIRE;
-  const box=$('modalBox');
-  $('modalOverlay').classList.add('show');
-  let html=`<h3>📉 ${q.title}</h3><div class="modal-sub">${q.subtitle} (de FASE ${fromIdx+1} para FASE ${toIdx+1})</div>`;
-  q.questions.forEach(item=>{
-    html+=`<div class="modal-q" data-qid="${item.id}">`;
-    if(item.type==='bool'){
-      html+=`<div class="ql">${item.label}</div>
-        <div class="seg" data-qtype="bool">
-          <button type="button" data-val="sim">Sim</button>
-          <button type="button" data-val="nao">Não</button>
-        </div>
-        <div class="modal-err">Esta confirmação é obrigatória para prosseguir.</div>`;
-    } else if(item.type==='text'){
-      html+=`<div class="ql">${item.label}</div>
-        <textarea placeholder=""></textarea>
-        <div class="modal-err">Descreva antes de prosseguir — não deixe em branco.</div>`;
-    }
-    html+=`</div>`;
-  });
-  html+=`<div class="modal-actions">
-    <button class="modal-btn cancel" id="modalCancel">Deixar para depois</button>
-    <button class="modal-btn confirm" id="modalConfirm">Confirmar downgrade</button>
-  </div>`;
-  box.innerHTML=html;
-  box.querySelectorAll('[data-qtype="bool"] button').forEach(b=>{
-    b.addEventListener('click',()=>{
-      const seg=b.parentElement;
-      seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on');
-      seg.dataset.answer=b.dataset.val;
-      seg.parentElement.querySelector('.modal-err')?.classList.remove('show');
-    });
-  });
-  $('modalCancel').addEventListener('click', closeModal);
-  $('modalConfirm').addEventListener('click',()=>{
-    let ok=true;
-    const collected={};
-    q.questions.forEach(item=>{
-      const qEl=box.querySelector(`[data-qid="${item.id}"]`);
-      if(item.type==='bool'){
-        const seg=qEl.querySelector('.seg');
-        const ans=seg.dataset.answer;
-        if(item.mustBeYes && ans!=='sim'){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        else if(!ans){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        collected[item.id]=ans||'';
-      } else if(item.type==='text'){
-        const val=qEl.querySelector('textarea').value.trim();
-        if(val.length<3){ ok=false; qEl.querySelector('.modal-err').classList.add('show'); }
-        collected[item.id]=val;
-      }
-    });
-    if(!ok) return;
-    for(let i=toIdx+1;i<=fromIdx;i++){ S.phaseUnlocked[i]=false; }
-    // Sem gridPhase de proposito: downgrade RETRAVA, nao atinge. O maximo
-    // anterior permanece — o que foi alcancado foi alcancado.
-    S.transitionLog.push(operationStampTransition(
-      {fase:`downgrade ${fromIdx+1}→${toIdx+1}`, ts:new Date().toISOString(), resumo:collected}));
-    save();
-    closeModal();
-    render(); renderPhases();
-  });
+function phaseCapBreachMessage(pi,check){return (check.findings||[]).map(f=>f.message||f.code).join(' · ');}
+function phaseSupportForRisk(){return null;}
+function stopLimitSummary(pi,oi,check){return {phase:pi,orderId:S.phases[pi]?.orders[oi]?.orderId||null,findings:check.findings||[]};}
+function auditStopLimit(){return {ok:false,error:'Registre o fato pelo comando de ordem para preservar a versão e o contexto.'};}
+function handleStopLimitBreach(){return JPWForex.state.read().findings;}
+function orderGateMsg(pi,oi){return operationValidateOrder(S.phases[pi]?.orders[oi]);}
+function orderComplianceFindings(){
+  const model=JPWForex.state.read(), thesis=operationResolveThesis(operationLiveOrders());
+  return [...(model.findings||[]),...(thesis.findings||[])];
 }
-
-// ---- Espelhamento Fase 1 -> Fase 2 (Art. 3.8): mesma tese, novo stop/objetivo obrigatório ----
-// ---- Espelhamento genérico: fase fromIdx -> fromIdx+1 (Art. 3.8) ----
-// Reaplicável a qualquer momento, não só no instante da transição — é o que permite
-// "curar" órfãos: ordens abertas numa fase já superada, que nunca deveriam existir ali.
-function mirrorPhaseForward(fromIdx){
-  const fFrom=S.phases[fromIdx], fTo=S.phases[fromIdx+1];
-  if(!fTo) return false;
-  let migrou=false;
-  fFrom.orders.forEach(o=>{
-    if(o.status!=='Aberta') return;
-    let slot=fTo.orders.find(x=>!x.status && !x.lote);
-    const mirrored={
-      id:(o.id||'').replace(/\s*\(F\d\)$/,'')+` (F${fromIdx+2})`, par:o.par, tipo:o.tipo, lote:o.lote,
-      entry:o.entry, sl:o.sl, tp:o.tp, // mantém valores antigos como placeholder — NUNCA zera o risco na transição
-      result:0, status:'Aberta', needsReview:true,
-    };
-    if(slot){ Object.assign(slot, mirrored); }
-    else { fTo.orders.push(mirrored); }
-    o.status='Migrada'; // sai do risco da fase de origem, fica visível como histórico
-    migrou=true;
-  });
-  return migrou;
-}
-// uma fase está CONGELADA (histórico puro, zero edição) quando a fase seguinte já foi destravada —
-// "superada", nas suas palavras. Não existe mais operação viva dividida entre duas grades.
-function phaseFrozen(pi){
-  return pi<3 && !!S.phaseUnlocked[pi+1];
-}
-// roda a cada render: se alguma fase congelada ainda tem ordem 'Aberta' (órfã, criada depois
-// da transição), arrasta pra frente automaticamente. Idempotente — sem órfãos, não faz nada.
-function healSupersededPhases(){
-  let mudou=false;
-  for(let pi=0;pi<3;pi++){
-    if(phaseFrozen(pi) && S.phases[pi].orders.some(o=>o.status==='Aberta')){
-      if(mirrorPhaseForward(pi)) mudou=true;
-    }
-  }
-  if(mudou) save();
-  return mudou;
-}
-
-// ---- Guarda de teto de risco — a transição de fase é OBRIGATÓRIA, não decorativa.
-// O teto agora é CONSOLIDADO (todas as grades + perdas realizadas): o orçamento de DD da
-// fase é um só, não um cofre novo por grade. Lucro não amplia orçamento (Cláusula de Integridade). ----
-function phaseTetoRisco(pi){
-  const row=activeRiskMatrix()[pi];
-  return row ? row.ddmax*S.params.saldoIni : 0;
-}
-function checkPhaseCap(pi, oi){
-  const o=S.phases[pi].orders[oi];
-  if(o.status!=='Aberta') return {excede:false};
-  const estaOrdem=orderRisk(o);
-  if(!(estaOrdem>0)) return {excede:false};
-  // Art. 8.6 — risco da Ordem Gênese ≤ genRisk (1%) do saldo inicial
-  if(pi===0 && oi===0 && estaOrdem > activeGenesisRiskLimit()*S.params.saldoIni){
-    return {excede:true, tipo:'genese', total:estaOrdem, teto:activeGenesisRiskLimit()*S.params.saldoIni};
-  }
-  // Art. 9.3 — defesa final na Fase 4 limitada a 1% do saldo por ordem (escalado pelo perfil — SET 11)
-  if(pi===3 && estaOrdem > 0.01*activeProfileFator()*S.params.saldoIni){
-    return {excede:true, tipo:'defesaF4', total:estaOrdem, teto:0.01*activeProfileFator()*S.params.saldoIni};
-  }
-  const total=totalRiscoAbertoExc(pi,oi)+estaOrdem+Math.max(0,-netOpAtual())+perdaCicloArq();
-  const teto=phaseTetoRisco(pi);
-  return {excede: total>teto, tipo:'fase', total, teto};
-}
-function phaseCapBreachMessage(pi, check){
-  if(check.tipo==='genese'){
-    return `O risco da Ordem Gênese seria ${fmtMoney(check.total)}, acima do limite de ${fmtMoney(check.teto)} — 1% do saldo inicial (Art. 8.6). A Gênese não pode concentrar risco prematuro; ela é 25% da capacidade da Fase 1, não a fase inteira.`;
-  }
-  if(check.tipo==='defesaF4'){
-    return `A defesa final da Fase 4 não pode exceder ${fmtMoney(check.teto)} — 1% do saldo (Art. 9.3). Esta ordem sozinha carregaria ${fmtMoney(check.total)} de risco. A Fase 4 existe para gerenciar o encerramento, não para ampliar exposição.`;
-  }
-  const ph=S.phases[pi];
-  if(pi>=3){
-    return `Isso levaria o risco consolidado da Operação Única (todas as grades + perdas realizadas) para ${fmtMoney(check.total)}, acima do teto de ${fmtMoney(check.teto)}. A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase para transicionar. A única ação permitida aqui é reduzir exposição (Art. 3.7), nunca ampliar.`;
-  }
-  const proximaFase=`FASE ${pi+2}`;
-  return `Isso levaria o risco consolidado da Operação Única (todas as grades + perdas realizadas) para ${fmtMoney(check.total)}, acima do teto da ${ph.faseNome} (${fmtMoney(check.teto)}). A estrutura precisa crescer na grade da ${proximaFase} — complete a transição de fase para continuar. Não é permitido exceder o teto sem o questionário formal.`;
-}
-function phaseSupportForRisk(total){
-  for(let i=0;i<S.matrix.length;i++){
-    if(total<=phaseTetoRisco(i)) return i;
-  }
-  return -1;
-}
-function stopLimitSummary(pi, oi, check){
-  const o=S.phases[pi].orders[oi];
-  const supported=check.tipo==='fase'?phaseSupportForRisk(check.total):-1;
-  const current=S.phases[pi];
-  let reason='Stop Técnico Quantitativo acima do limite da fase atual.';
-  if(check.tipo==='genese') reason='Stop gera risco acima do limite específico da Ordem Gênese.';
-  if(check.tipo==='defesaF4') reason='Stop gera risco acima do limite por defesa final da Fase 4.';
-  const supportText=supported>=0?S.phases[supported].faseNome:'nenhuma fase';
-  return {
-    supported,
-    inline:`${reason} Risco calculado: ${fmtMoney(check.total)}. Limite atual: ${fmtMoney(check.teto)}. Fase que suportaria: ${supportText}.`,
-    resumo:{
-      ordem:o.id||`linha ${oi+1}`,
-      par:o.par||'',
-      faseAtual:current.faseNome,
-      tipo:check.tipo,
-      stop:o.sl||0,
-      riscoCalculado:+(+check.total||0).toFixed(2),
-      limiteAtual:+(+check.teto||0).toFixed(2),
-      faseSuportada:supported>=0?S.phases[supported].faseNome:'',
-      limiteFaseSuportada:supported>=0?+phaseTetoRisco(supported).toFixed(2):0,
-    }
-  };
-}
-function auditStopLimit(kind, resumo, gridPhaseIdx){
-  // gridPhaseIdx so e passado quando a chamada REALMENTE destrava fase.
-  S.transitionLog.push(operationStampTransition(
-    {fase:kind, ts:localDateTimeISO(), resumo}, gridPhaseIdx));
-}
-function handleStopLimitBreach(pi, oi, check){
-  const o=S.phases[pi].orders[oi];
-  const info=stopLimitSummary(pi,oi,check);
-  o.stopPhaseWarning=info.inline;
-  if(check.tipo==='fase' && info.supported>pi){
-    const target=S.phases[info.supported].faseNome;
-    const phrase=`CONFIRMO ${target}`;
-    const ok=prompt(
-      `${info.inline}\n\n`+
-      `Para aceitar a mudança de fase, digite exatamente:\n${phrase}\n\n`+
-      `Sem essa confirmação, o Stop permanece registrado apenas como simulação/alerta de risco.`
-    );
-    if(ok===phrase){
-      for(let i=0;i<=info.supported;i++) S.phaseUnlocked[i]=true;
-      // Destravamento CONFIRMADO pela frase exigida ao operador.
-      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-      // Este e o UNICO caminho de stop que destrava fase; os demais so alertam.
-      auditStopLimit('stop quantitativo - mudança de fase', {...info.resumo, confirmado:true, confirmacao:phrase}, info.supported);
-      delete o.stopPhaseWarning;
-      save(); render(); renderPhases();
-      return true;
-    }
-    auditStopLimit('stop quantitativo acima da fase', {...info.resumo, confirmado:false});
-    alert('Stop mantido para simulação, com risco visível. A fase não foi alterada porque a confirmação formal não foi concluída.');
-    // A FASE NAO MUDOU, mas o STOP FICOU. A confirmacao recusada nao reverte
-    // o.sl — o valor permanece no modelo e e persistido pelo save() abaixo, e por
-    // definicao de check.excede a conta passa a operar acima do teto da fase.
-    // Esse pico e real e precisa ser observado: enquanto a captura morava dentro
-    // de save(), este caminho a recebia de graca; ao tirar a captura de la, ele
-    // ficou sendo o unico que compromete um valor sem observar a consequencia.
-    if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-    save(); render(); renderPhasesLite(pi); renderAuditLog();
-    return false;
-  }
-  const kind=info.supported<0?'stop quantitativo limite absoluto':'stop quantitativo regra específica';
-  auditStopLimit(kind, {...info.resumo, confirmado:false});
-  alert(info.supported<0
-    ? `${info.inline}\n\nNenhuma fase suporta este Stop. Ele viola o limite máximo absoluto e deve ser tratado como simulação de risco, não autorização operacional.`
-    : info.inline);
-  // Genese, defesa final da Fase 4 e limite absoluto: aqui nao ha sequer
-  // confirmacao a pedir — o alerta e informativo e o stop PERMANECE. Mesmo
-  // motivo do ramo acima: valor comprometido e persistido, logo a Fase da Conta
-  // resultante e afirmacao e nao estado transitorio.
-  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-  save(); render(); renderPhasesLite(pi); renderAuditLog();
-  return false;
-}
-// ---- Guardas de instrumento e tese (Art. 4.2/5.1, decreto de banimento, Teto/Op) ----
-// A numeracao anterior (3.5/3.6) nao existe na Norma Vigente: o Livro I vai de
-// 3.1 a 3.4. O regime esta no Art. 5.1 (Livro II — Operacao Unica Exclusiva) e a
-// definicao de Operacao como "conjunto de ordens no mesmo ativo e na mesma
-// direcao" esta no Art. 4.2 (Livro I).
-// retorna null se ok, ou a mensagem de bloqueio
-function orderGateMsg(pi, oi){
-  const o=S.phases[pi].orders[oi];
-  const ins=instFor(o.par);
-  if(ins && ins.banned && !ins.unlocked){
-    if(ins.name==='US500') return `🚫 ${ins.name} está SUSPENSO pelo Estatuto JP Wealth V10.0: ${ins.banReason} Pode aparecer apenas para referência/histórico; não opere sem deliberação formal.`;
-    return `🚫 ${ins.name} está BANIDO por decreto pessoal: ${ins.banReason} Se for uma exceção deliberada, desbloqueie primeiro no Motor de Lote.`;
-  }
-  if(ins && ins.teto>0 && o.lote>ins.teto){
-    return `🚫 Lote ${o.lote} acima do Teto/Op de ${ins.name} (${ins.teto}) — Regra 1 do Controle Objetivo de Risco. Ajuste o lote ou revise o teto no Motor de Lote.`;
-  }
-  // OPERAÇÃO ÚNICA EXCLUSIVA: uma tese por vez — mesmo instrumento, mesma direção.
-  //
-  // A referência vem de qualquer ordem que PERTENÇA à operação em curso, e não
-  // apenas das que estão `Aberta`. Fechar a última ordem NÃO finaliza a Operação
-  // Única: ela permanece em andamento até a Finalização formal, que é o ato que
-  // limpa as grades e zera activeOperation. Enquanto isso não acontece, as ordens
-  // que estão nas grades continuam sendo daquela operação.
-  //
-  // A versão anterior procurava referência só entre ordens `Aberta`. Com a Gênese
-  // já fechada e a operação ainda viva, ela não encontrava nada e liberava a
-  // abertura de outro instrumento e outra direção — a operação passava a conter
-  // duas teses. O estado resultante é um beco sem saída: a Finalização o bloqueia
-  // corretamente, mas numa ordem fechada `par`, `tipo` e `status` ficam todos
-  // desabilitados na grade, e as únicas saídas restantes destroem informação.
-  //
-  // operationOrderIsLive é a MESMA função que o domínio usa para montar a
-  // operação (operationLiveOrders). Duas definições de "pertence à operação" foi
-  // exatamente o que abriu o buraco; não se reintroduz uma cópia local aqui.
-  let ref=null;
-  outer:
-  for(let p2=0;p2<S.phases.length;p2++){
-    const os=S.phases[p2].orders;
-    for(let o2=0;o2<os.length;o2++){
-      if(p2===pi&&o2===oi) continue;
-      const q=os[o2];
-      if(operationOrderIsLive(q)&&q.par){ ref=q; break outer; }
-    }
-  }
-  if(ref){
-    const norm=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-    if(o.par && norm(o.par)!==norm(ref.par)){
-      return `🚫 Operação Única Exclusiva (Art. 5.1): a operação em andamento é em ${ref.par}. Não é permitido abrir ${o.par} enquanto ela não for formalmente finalizada — zeragem tática sem confirmação de encerramento não extingue a Operação (Art. 4.4).`;
-    }
-    if(o.tipo && ref.tipo && o.tipo!==ref.tipo){
-      return `🚫 Operação Única (Art. 4.2): a tese em andamento é ${ref.tipo} em ${ref.par}. Uma Operação é o conjunto de ordens no mesmo ativo e na mesma direção — finalize a operação antes de inverter.`;
-    }
-  }
-  return null;
-}
-
-
-const DIVERGENCE_THRESHOLD=1.20; // 20% acima do risco programado
-const DIVERGENCE_REASONS=[
-  'Slippage de execução (gap, liquidez, spread)',
-  'Erro de programação da ordem (SL mal calculado/registrado)',
-  'Rompimento de protocolo — stop foi movido/ignorado sem justificativa',
-  'Outro',
-];
-// ---- Fechamento definitivo de ordem — dupla confirmação, captura o RESULTADO no
-// mesmo ato.
-//
-// NOMENCLATURA: o campo `o.result` e o resultado da ordem, que pode ser positivo,
-// negativo ou zero. Nao e "Lucro Tecnico" — esse e conceito NORMATIVO do Art. 4.6
-// (resultado de liquidacao parcial de posicoes defensivas em movimento corretivo
-// favoravel, com usos restritos pelo Art. 9.2) e continua com o nome proprio na
-// metrica `compute().lucroTecnico`, que soma apenas os resultados POSITIVOS.
-// Chamar prejuizo de lucro era o defeito; renomear o conceito normativo seria
-// outro. Os identificadores internos nao mudaram.
-// Depois de confirmada, a linha trava por completo: só pode ser apagada, nunca mais editada. ----
-// Leitura ÚNICA do resultado de uma ordem. NaN significa AUSENTE ou INVÁLIDO —
-// nunca 0. Zero é resultado válido e é afirmação do operador: a ordem fechou no
-// zero a zero. O `parseFloat(x)||0` que existia aqui colapsava três estados
-// distintos num só — ausência, texto inválido e zero real —, e um resultado em
-// branco entrava silenciosamente em netOpAtual() como zero.
-//
-// Aceita vírgula decimal porque o operador digita em pt-BR.
+const DIVERGENCE_REASONS=['Slippage de execução (gap, liquidez, spread)','Erro de programação da ordem (SL mal calculado/registrado)','Rompimento de protocolo — stop foi movido/ignorado sem justificativa','Outro'];
 function orderParseResult(txt){
   const t=String(txt==null?'':txt).trim().replace(',','.');
   if(!t) return NaN;
@@ -512,9 +98,9 @@ function openCloseOrderModal(pi,oi){
   const projetado=orderRisk(o);
   box.innerHTML=`
     <h3>🔒 Confirmar Fechamento — ${esc(o.id)||'(sem ID)'} ${esc(o.par)}</h3>
-    <div class="modal-sub">Depois de confirmado, esta linha NÃO pode mais ser editada — só apagada. ${projetado>0?'Risco programado desta ordem: '+fmtMoney(projetado):''}</div>
+    <div class="modal-sub">Correções posteriores exigem motivo e preservam a versão anterior. A anulação mantém a ordem no histórico. ${projetado>0?'Risco programado desta ordem: '+fmtForexMoney(projetado,{currency:o.currency}):''}</div>
     <div class="modal-q" data-qid="resultado">
-      <div class="ql">Resultado da ordem ($) — negativo se foi prejuízo, <b>0</b> se fechou no zero a zero:</div>
+      <div class="ql">Resultado da ordem (${esc(o.currency||'moeda não capturada')}) — negativo se foi prejuízo, <b>0</b> se fechou no zero a zero:</div>
       <input type="text" inputmode="decimal" id="closeResultInput" placeholder="informe" value="${Number.isFinite(o.result)?esc(String(o.result)):''}">
       <div class="modal-err">Informe o resultado. Em branco não é zero — se a ordem fechou no zero a zero, digite <b>0</b>.</div>
     </div>
@@ -545,34 +131,21 @@ function openCloseOrderModal(pi,oi){
       falhou=true;
     }
     if(falhou) return;
-    o.status='Fechada';
-    o.result=resultVal;
-    // Carimbo de fechamento da ordem — capturado no ato, uma única vez.
-    if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Fechada',pi,oi);
-    save();
+    const saved=operationRecordOrder(pi,oi,{status:'Fechada',result:resultVal},{reason:'Fechamento confirmado pelo operador'});
+    if(!operationRecordFeedback(saved))return;
     closeModal();
     render(); renderPhases();
     checkDivergence(pi,oi);
   });
 }
 
-function checkDivergence(pi,oi){
-  const o=S.phases[pi].orders[oi];
-  if(o.status!=='Fechada') return;
-  const result=+o.result||0;
-  if(result>=0) return; // só audita prejuízo
-  const projetado=orderRisk(o);
-  if(projetado<=0) return;
-  const divergencia=Math.abs(result)/projetado;
-  if(divergencia<=DIVERGENCE_THRESHOLD) return;
-  if(o._divergenceCheckedFor===result) return; // já perguntado para este valor exato
-  openDivergenceModal(pi,oi,projetado,result,divergencia);
-}
+function checkDivergence(){return orderComplianceFindings();}
 function openDivergenceModal(pi,oi,projetado,result,divergencia){
   const box=$('modalBox');
+  const order=S.phases[pi]?.orders?.[oi];
   const pctTxt=((divergencia-1)*100).toFixed(0);
   let html=`<h3>⚠️ Divergência de fechamento</h3>
-    <div class="modal-sub">Prejuízo registrado ${fmtMoney(Math.abs(result))} — ${pctTxt}% acima do risco programado (${fmtMoney(projetado)}). Isso não bloqueia nada; é auditoria, não permissão.</div>
+    <div class="modal-sub">Prejuízo registrado ${fmtForexMoney(Math.abs(result),{currency:order?.currency})}. ${order?.currency?`${pctTxt}% acima do risco programado (${fmtForexMoney(projetado,{currency:order.currency})}).`:'Comparação com o risco indisponível sem unidade conciliada.'} Isso não bloqueia nada; é auditoria, não permissão.</div>
     <div class="modal-q" data-qid="motivo">
       <div class="ql">Qual foi a causa da divergência?</div>`;
   DIVERGENCE_REASONS.forEach((r,i)=>{
@@ -600,37 +173,50 @@ function openDivergenceModal(pi,oi,projetado,result,divergencia){
     if(!sel){ box.querySelector('[data-qid="motivo"] .modal-err').classList.add('show'); return; }
     const reasonText=DIVERGENCE_REASONS[+sel.value];
     const detalhe=box.querySelector('[data-qid="detalhe"] textarea')?.value.trim()||'';
-    const o=S.phases[pi].orders[oi];
-    o.divergenceReason=reasonText+(detalhe?(' — '+detalhe):'');
-    o._divergenceCheckedFor=result;
-    if(reasonText.startsWith('Rompimento')){
-      S.protocolBreaches=(S.protocolBreaches||0)+1;
-    }
-    save();
+    const cause=reasonText+(detalhe?(' — '+detalhe):'');
+    if(!operationRecordFeedback(operationRecordOrder(pi,oi,{divergenceReason:cause},{reason:'Causa de divergência: '+cause})))return;
     closeModal();
     render();
   });
 }
 
 
-// Constrói o corpo de UMA grade (meta + tabela + botão adicionar). frozen/qAct desabilitam edição.
+function phasePositiveResults(pi){
+  const closed=(S.phases[pi]?.orders||[]).filter(o=>o.status==='Fechada'&&o.recordStatus!=='voided');
+  if(!closed.length)return {present:false,text:'—'};
+  const first=closed[0];
+  const scoped=first.accountId&&first.periodId&&first.currency&&closed.every(o=>
+    o.accountId===first.accountId&&o.periodId===first.periodId&&o.currency===first.currency&&Number.isFinite(o.result));
+  return {present:true,text:scoped?fmtForexMoney(closed.reduce((sum,o)=>sum+Math.max(0,o.result),0),{currency:first.currency}):
+    'Não consolidado: conta, período ou moeda não conciliados'};
+}
+function phaseOpenRiskText(pi){
+  const open=(S.phases[pi]?.orders||[]).filter(o=>o.status==='Aberta'&&o.recordStatus!=='voided');
+  if(!open.length)return '—';
+  const first=open[0],risks=open.map(orderRisk);
+  const scoped=first.accountId&&first.periodId&&first.currency&&open.every(o=>
+    o.accountId===first.accountId&&o.periodId===first.periodId&&o.currency===first.currency)&&risks.every(Number.isFinite);
+  return scoped?fmtForexMoney(risks.reduce((sum,risk)=>sum+risk,0),{currency:first.currency}):'Não consolidado: contexto ou risco não apurado';
+}
+// Constrói o corpo de UMA grade (meta + tabela + botão adicionar).
 function phaseBodyHTML(pi, qAct){
-  const ph=S.phases[pi], isGen=pi===0, frozen=phaseFrozen(pi);
-  const activeRow=activeRiskMatrix()[pi] || S.matrix[pi];
-  const faixaDDLabel=`${fmtPct(activeRow.ddmin)}–${fmtPct(activeRow.ddmax)}`;
-  let rows='', lsum=0, rsum=0, ltsum=0;
+  const ph=S.phases[pi], isGen=pi===0, frozen=false;
+  const legacy=ph.policyVersion==='LEGACY_UNRESOLVED'||S.phases.length===4;
+  const faixaDDLabel=legacy?'LEGACY — faixa não reinterpretada':activePhaseRangeLabel(pi);
+  let rows='', lsum=0;
+  const positiveResults=phasePositiveResults(pi);
   ph.orders.forEach((o,oi)=>{
-    const slot = isGen&&oi===0?'GÊNESE':(isGen?'DEF '+oi:`DEF ${pi+1}.${oi+1}`);
+    const slot = o.role==='GENESIS'?'GÊNESE':o.role==='DEFENSE'?'DEFESA':(legacy?(isGen&&oi===0?'GÊNESE LEGACY':`SLOT LEGACY ${pi+1}.${oi+1}`):`ORDEM ${pi+1}.${oi+1}`);
     const rr = (o.entry>0&&o.sl>0&&o.tp>0)?(Math.abs(o.tp-o.entry)/Math.abs(o.entry-o.sl)):0;
-    const risco = o.status==='Aberta'?orderRisk(o):0;
+    const risco = o.status==='Aberta'&&o.recordStatus!=='voided'?orderRisk(o):0;
     const semStop = o.status==='Aberta' && o.lote>0 && !(o.sl>0);
     const isFechada = o.status==='Fechada';
     const isMigrada = o.status==='Migrada';
-    const readOnly = isMigrada || frozen || isFechada;
-    const dis = (readOnly||qAct)?'disabled':'';
-    const disStatus = (readOnly || (qAct && o.status!=='Aberta'))?'disabled':'';
+    const readOnly = o.recordStatus==='voided';
+    const dis = readOnly?'disabled':'';
+    const disStatus = readOnly?'disabled':'';
     const rowCls = (isMigrada||frozen||isFechada)?'row-migrada':(o.stopPhaseWarning?'stop-breach':(o.needsReview?'needs-review':''));
-    const slotLabel = isMigrada ? slot+' <span class="review-badge" style="color:var(--ink-faint);background:transparent">→ migrada</span>'
+    const slotLabel = o.recordStatus==='voided' ? slot+' <span class="review-badge">ANULADA · preservada</span>' : isMigrada ? slot+' <span class="review-badge" style="color:var(--ink-faint);background:transparent">→ migrada</span>'
                      : frozen ? slot+' <span class="review-badge" style="color:var(--ink-faint);background:transparent">🔒 histórico</span>'
                      : semStop ? slot+' <span class="review-badge" style="color:var(--danger);background:var(--f4-bg)">✋ SEM STOP</span>'
                      : o.stopPhaseWarning ? slot+' <span class="review-badge" style="color:var(--danger);background:var(--f4-bg)">⚠ stop acima da fase</span>'
@@ -639,46 +225,53 @@ function phaseBodyHTML(pi, qAct){
     rows+=`<tr class="${slot==='GÊNESE'?'slot-gen':''} ${rowCls}">
       <td>${slotLabel}${o.stopPhaseWarning?`<div class="stop-warning">${esc(o.stopPhaseWarning)}</div>`:''}</td>
       <td class="calc">${rr>0?rr.toFixed(2):'—'}</td>
-      <td class="calc ${risco>0?'neg':''}">${risco>0?fmtMoney(risco):(semStop?'<span style="color:var(--danger)">?!</span>':'—')}</td>
+      <td class="calc ${risco>0?'neg':''}">${Number.isFinite(risco)&&o.status==='Aberta'&&o.recordStatus!=='voided'?fmtForexMoney(risco,{currency:o.currency}):(semStop?'<span style="color:var(--danger)">?!</span>':'—')}</td>
+      <td><select data-p="${pi}" data-o="${oi}" data-f="role" aria-label="Papel da ordem ${esc(o.id||slot)}" ${dis}><option value="">Não declarado</option><option value="GENESIS" ${o.role==='GENESIS'?'selected':''}>Gênese</option><option value="DEFENSE" ${o.role==='DEFENSE'?'selected':''}>Defesa</option><option value="OTHER" ${o.role==='OTHER'?'selected':''}>Outro</option></select></td>
       <td><input data-p="${pi}" data-o="${oi}" data-f="id" value="${esc(o.id)}" placeholder="—" ${dis}></td>
       <td><select data-p="${pi}" data-o="${oi}" data-f="par" ${dis} style="text-align:center">
         <option value="" ${!o.par?'selected':''}>—</option>
-        ${S.instruments.filter(ins=>!(ins.banned&&!ins.unlocked)||ins.name===String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')).map(ins=>`<option ${String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===ins.name?'selected':''}>${esc(ins.name)}</option>`).join('')}
+        ${S.instruments.map(ins=>`<option ${String(o.par||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===ins.name?'selected':''}>${esc(ins.name)}</option>`).join('')}
       </select></td>
       <td><select data-p="${pi}" data-o="${oi}" data-f="tipo" ${dis}><option ${o.tipo==='BUY'?'selected':''}>BUY</option><option ${o.tipo==='SELL'?'selected':''}>SELL</option></select></td>
       <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="lote" value="${esc(o.lote||'')}" placeholder="0" ${dis}></td>
       <td><input type="number" step="0.00001" data-p="${pi}" data-o="${oi}" data-f="entry" value="${esc(o.entry||'')}" placeholder="0" ${dis}></td>
-      <td class="stop-col"><input type="number" step="0.00001" data-p="${pi}" data-o="${oi}" data-f="sl" value="${esc(o.sl||'')}" placeholder="0" ${dis} title="Stop Técnico Quantitativo: pode ser simulado livremente, mas risco acima da fase exige confirmação e auditoria."><span class="stop-note">Stop Técnico Quantitativo</span></td>
+      <td class="stop-col"><input type="number" step="0.00001" data-p="${pi}" data-o="${oi}" data-f="sl" value="${esc(o.sl||'')}" placeholder="0" ${dis} title="Stop informado como fato. Desconformidades não impedem o registro."><span class="stop-note">Stop Técnico Quantitativo</span></td>
       <td><input type="number" step="0.00001" data-p="${pi}" data-o="${oi}" data-f="tp" value="${esc(o.tp||'')}" placeholder="0" ${dis} ${o.needsReview?'style="border-color:var(--f2)"':''}></td>
       <td>
         <select data-p="${pi}" data-o="${oi}" data-f="status" ${disStatus}>
           <option value="" ${!o.status?'selected':''}>—</option>
+          <option value="Pendente" ${o.status==='Pendente'?'selected':''}>Pendente</option>
           <option value="Aberta" ${o.status==='Aberta'?'selected':''}>Aberta</option>
           <option value="Fechada" ${o.status==='Fechada'?'selected':''}>Fechada</option>
           ${isMigrada?'<option value="Migrada" selected>Migrada</option>':''}
         </select>
       </td>
-      <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="result" value="${esc(o.result||'')}" placeholder="0"
-            style="${isFechada?'':'opacity:.35'}" title="Resultado da ordem — só conta quando Fechada (Art. 9.2)" ${dis}></td>
-      <td>${(isMigrada||frozen||qAct)?'':`<button class="row-del" data-delorder="${pi}:${oi}" title="Remover linha">✕</button>`}</td>
+      <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="result" value="${esc(Number.isFinite(o.result)?o.result:'')}" placeholder="0"
+            style="${isFechada?'':'opacity:.35'}" title="Resultado da ordem — só conta quando Fechada (Art. 9.2)" ${dis}><small>${esc(o.currency||'moeda não capturada')}</small></td>
+      <td><input type="number" step="0.01" data-p="${pi}" data-o="${oi}" data-f="costs" aria-label="Custos da ordem ${esc(o.id||slot)}" value="${esc(Number.isFinite(o.costs)?o.costs:'')}" placeholder="ausente" ${dis}><small>${esc(o.currency||'moeda não capturada')}</small></td>
+      <td><select data-p="${pi}" data-o="${oi}" data-f="costBasis" aria-label="Base dos custos ${esc(o.id||slot)}" ${dis}><option value="">Não declarada</option><option value="SEPARATE_FROM_RESULT" ${o.costBasis==='SEPARATE_FROM_RESULT'?'selected':''}>Separados do resultado</option><option value="INCLUDED_IN_RESULT" ${o.costBasis==='INCLUDED_IN_RESULT'?'selected':''}>Incluídos no resultado</option></select></td>
+      <td><input type="checkbox" data-p="${pi}" data-o="${oi}" data-f="stopValidated" aria-label="Stop tecnicamente validado ${esc(o.id||slot)}" ${o.stopValidated===true?'checked':''} ${dis}></td>
+      <td><input type="checkbox" data-p="${pi}" data-o="${oi}" data-f="amplifiesExposure" aria-label="Pendente amplia exposição ${esc(o.id||slot)}" ${o.amplifiesExposure===true?'checked':''} ${dis}></td>
+      <td><input type="checkbox" data-p="${pi}" data-o="${oi}" data-f="pendingActive" aria-label="Pendente ativa ${esc(o.id||slot)}" ${o.pendingActive===true?'checked':''} ${dis}></td>
+      <td>${readOnly?'':`<button class="row-del" data-delorder="${pi}:${oi}" title="${operationOrderIsLive(o)?'Anular preservando o histórico':'Excluir rascunho'}">✕</button>`}${o.revisions?.length?`<button class="reset-btn" data-orderhistory="${pi}:${oi}" aria-label="Ver versões da ordem ${esc(o.id||o.orderId)}">v${o.recordVersion}</button>`:''}</td>
     </tr>`;
   });
-  ph.orders.forEach(o=>{ lsum+=(+o.lote||0); if(o.status==='Aberta')rsum+=orderRisk(o); if(o.status==='Fechada')ltsum+=Math.max(0,(+o.result||0)); });
+  ph.orders.forEach(o=>{ if(o.recordStatus==='voided')return; lsum+=(+o.lote||0); });
   return `
     <div class="phase-meta">
       <span>Faixa DD: <b>${faixaDDLabel}</b></span>
-      <span>Teto alav.: <b>${esc(ph.alavtxt)}</b></span>
-      <span>Teto risco: <b>${fmtMoney(phaseTetoRisco(pi))}</b></span>
-      ${ltsum>0?`<span style="color:var(--f1)">Lucro técnico realizado: <b>${fmtMoney(ltsum)}</b></span>`:''}
-      ${rsum>phaseTetoRisco(pi)?`<span style="color:var(--danger)">⚠ risco desta grade acima do teto — podar via LIFO</span>`:''}
+      <span>${legacy?'Descrição histórica: <b>'+esc(ph.alavtxt)+'</b>':'Elegibilidade apurada no motor central'}</span>
+
+      ${positiveResults.present?`<span>Resultados positivos registrados: <b>${esc(positiveResults.text)}</b></span>`:''}
+
       ${frozen?`<span style="color:var(--ink-faint)">🔒 Fase superada — somente histórico, sem edição</span>`:''}
     </div>
     <div style="overflow-x:auto">
     <table class="otable">
-      <thead><tr><th>Slot</th><th>R:R</th><th>Risco $</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Resultado $</th><th></th></tr></thead>
+      <thead><tr><th>Slot</th><th>R:R</th><th>Risco na moeda da ordem</th><th>Papel declarado</th><th>ID</th><th>Par</th><th>Tipo</th><th>Lote</th><th>Entrada</th><th>Stop Técnico Quantitativo</th><th>TP</th><th>Status</th><th>Resultado</th><th>Custos assinados</th><th>Base dos custos</th><th>Stop validado</th><th>Pendente amplia</th><th>Pendente ativa</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
-      <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${rsum>0?fmtMoney(rsum):'—'}</td><td colspan="3"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${ltsum>0?fmtMoney(ltsum):'—'}</td><td></td></tr></tfoot>
+      <tfoot><tr><td>Σ ${esc(ph.faseNome)}</td><td></td><td class="calc risk-sum">${esc(phaseOpenRiskText(pi))}</td><td colspan="4"></td><td class="lote-sum">${lsum.toFixed(2)}</td><td colspan="4"></td><td class="calc lucro-sum">${esc(positiveResults.text)}</td><td colspan="6"></td></tr></tfoot>
     </table>
     </div>
-    ${(frozen||qAct)?'':`<button class="reset-btn" data-addorder="${pi}" style="margin-top:10px; color:var(--violet); border-color:var(--violet)">+ Adicionar ordem à ${esc(ph.faseNome)}</button>`}`;
+    ${`<button class="reset-btn" data-addorder="${pi}" style="margin-top:10px; color:var(--violet); border-color:var(--violet)">+ Adicionar ordem à ${esc(ph.faseNome)}</button>`}`;
 }

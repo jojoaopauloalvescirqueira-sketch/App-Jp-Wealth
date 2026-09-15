@@ -28,10 +28,11 @@ function instrumentCatalog(options){
     .map(i => ({ id: instrumentId(i.name), name: i.name, banned: !!i.banned, unlocked: !!i.unlocked }));
 }
 function quoteToUSD(ccy){ // 1 unidade da moeda de cotação em USD
-  if(!ccy || ccy==='USD') return 1;
+  if(ccy==='USD') return 1;
+  if(!ccy)return null;
   const map={JPY:'USDJPY',CHF:'USDCHF',CAD:'USDCAD'};
   const ins=S.instruments.find(i=>i.name===map[ccy]);
-  return (ins && ins.preco>0) ? 1/ins.preco : 1;
+  return (ins && ins.preco>0) ? 1/ins.preco : null;
 }
 
 const ONBOARDING_STEPS=[
@@ -156,30 +157,39 @@ function maybeShowOnboardingNavReminder(screen){
   setTimeout(()=>{ if(el) el.style.boxShadow=''; },1800);
 }
 function usdPerBase(ins){ // valor USD de 1 unidade da moeda-base (para o nocional)
-  if(!ins) return 1;
+  if(!ins) return null;
   if(ins.name==='USDJPY'||ins.name==='USDCHF'||ins.name==='USDCAD') return 1; // base USD → nocional fixo
   if(ins.name==='AUDCAD'){
     const a=S.instruments.find(i=>i.name==='AUDUSD');
-    return (a && a.preco>0)?a.preco:1;
+    return (a && a.preco>0)?a.preco:null;
   }
   return ins.preco; // pares cotados em USD (e US500/XAUUSD, já em USD)
 }
-function orderRisk(o){ // risco programado da ordem em USD (entrada → stop)
-  if(!(o && o.lote>0 && o.entry>0 && o.sl>0)) return 0;
-  const ins=instFor(o.par);
-  const cpl=ins?ins.cpl:100000;
-  const q=ins?(QUOTE_CCY[ins.name]||'USD'):'USD';
-  return o.lote*cpl*Math.abs(o.entry-o.sl)*quoteToUSD(q);
+function orderAccountContext(o){
+  if(!o)return null;
+  const context=JPWForex.state.recordContext({accountId:o.accountId??null,periodId:o.periodId??null});
+  const account=context.accountInputs;
+  return account&&o.currency===account.currency?account:null;
 }
-function orderNotional(o){ // exposição nominal USD (independe de SL — ordem sem stop também pesa)
-  if(!(o && o.lote>0)) return 0;
-  const ins=instFor(o.par);
-  const cpl=ins?ins.cpl:100000;
-  return o.lote*cpl*(ins?usdPerBase(ins):1);
+function orderRisk(o){
+  const account=orderAccountContext(o);
+  if(!account)return null;
+  const inputs=JPWForex.orderInputs(o,account);
+  const result=JPWForex.engine.computeFinancialRisk(inputs);
+  return result.status==='OK'?result.value:null;
+}
+function orderNotional(o){
+  if(!o)return null;
+  const account=orderAccountContext(o);
+  if(!account)return null;
+  const inputs=JPWForex.orderInputs(o,account);
+  const result=JPWForex.engine.computeLeverage({si:account.si,equity:account.equity,
+    positions:[{volume:inputs.volume,contractSize:inputs.contractSize,conversionRate:inputs.notionalConversionRate}]});
+  return result.status==='OK'?result.grossNotional:null;
 }
 function netOpAtual(){ // resultado líquido fechado da OPERAÇÃO ATUAL (grades vivas) — Art. 9.2 + perdas
   let n=0;
-  S.phases.forEach(ph=>ph.orders.forEach(o=>{ if(o.status==='Fechada') n+=(+o.result||0); }));
+  S.phases.forEach(ph=>ph.orders.forEach(o=>{ if(o.status==='Fechada'&&o.recordStatus!=='voided'){if(!Number.isFinite(o.result)){n=NaN;return;}n+=o.result;} }));
   return n;
 }
 function perdaCicloArq(){ // perdas realizadas de operações já arquivadas: nunca somem do DD (Art. 3.4§2)
@@ -189,10 +199,10 @@ function totalRiscoAbertoExc(exclPi,exclOi){ // risco aberto CONSOLIDADO (todas 
   let r=0;
   S.phases.forEach((ph,pi)=>ph.orders.forEach((o,oi)=>{
     if(pi===exclPi&&oi===exclOi) return;
-    if(o.status==='Aberta') r+=orderRisk(o);
+    if(o.status==='Aberta'&&o.recordStatus!=='voided'){const risk=orderRisk(o);if(!Number.isFinite(risk)){r=NaN;return;}r+=risk;}
   }));
   return r;
 }
 function quarantineActive(){
-  return !!(S.quarantine && todayISO()<=S.quarantine.fim);
+  return !!(S.quarantine && !S.quarantine.releasedAt); // P-24 pending: time alone cannot authorize release.
 }

@@ -2,44 +2,33 @@
 // "Posso operar agora?" — derivado exclusivamente de compute() + estado salvo (S.onboarding).
 // Severidade: clear < caution < pending < reduce < blocked.
 function getOperationalClearance(c){
-  c = c || compute();
-  const ob=S.onboarding||{};
+  c=c||compute();
+  const model=c.forex, known=value=>typeof value==='number'&&Number.isFinite(value);
   const reasons=[];
-  let status='clear';
-  const RANK={clear:0,caution:1,pending:2,reduce:3,blocked:4};
-  const bump=(lvl)=>{ if(RANK[lvl]>RANK[status]) status=lvl; };
-  // BLOQUEIO — quarentena / guilhotina (Art. 3.10)
-  if(quarantineActive()){ bump('blocked'); reasons.push('Quarentena operacional ativa (Art. 3.10) — apenas encerramento de posições até '+(S.quarantine&&S.quarantine.fim||'—')+'.'); }
-  if(c.dd>=c.mddScaled){ bump('blocked'); reasons.push('DD '+fmtPct(c.dd)+' atingiu o MDD ativo de '+fmtPct(c.mddScaled)+' — guilhotina estatutária.'); }
-  else if(c.dd>=c.alarmScaled){ bump('reduce'); reasons.push('Alarme operacional: DD '+fmtPct(c.dd)+' ≥ '+fmtPct(c.alarmScaled)+' — redução imediata.'); }
-  // REDUZIR — violações de enquadramento da fase
-  if(c.excesso>0){ bump('reduce'); reasons.push('Risco aberto acima do teto da fase — podar '+fmtMoney(c.excesso)+' via LIFO.'); }
-  if(c.semStop>0){ bump('reduce'); reasons.push(c.semStop+' ordem(ns) aberta(s) sem stop — risco não mensurável, defina o SL.'); }
-  if(c.alavCar>c.tetoAlav){ bump('reduce'); reasons.push('Alavancagem carregada ('+fmtX(c.alavCar)+') acima do teto da fase ('+fmtX(c.tetoAlav)+').'); }
-  // PENDÊNCIAS — governança patrimonial / cadastro do período
-  if(!ob.done){ bump('pending'); reasons.push('Formulário de Início de Período pendente — complete o questionário.'); }
-  const fcrBad = ob.done && ob.reserveFcrStatus && ob.reserveFcrStatus!=='Regular';
-  const feoBad = ob.done && ob.reserveFeoStatus && ob.reserveFeoStatus!=='Regular';
-  if(fcrBad||feoBad){ bump('pending'); reasons.push('Reservas segregadas abaixo do mínimo estatutário ('+[fcrBad?'FCR':'',feoBad?'FEO':''].filter(Boolean).join(' e ')+') — Título 13.'); }
-  if(ob.done && ob.centralCashStatus==='Não.'){ bump('pending'); reasons.push('Caixa Central ausente — rastreabilidade patrimonial fragilizada (Título 27).'); }
-  // CAUTELA — atenção sem bloqueio estatutário
-  if(noExternalProtectionActive()){ bump('caution'); reasons.push('Proteção externa (Equity Protector) desativada — confirmação manual de risco obrigatória.'); }
-  if(ob.done && ob.centralCashStatus==='Em implantação.'){ bump('caution'); reasons.push('Caixa Central em implantação — conclua o livro-razão patrimonial.'); }
-  if(c.fi>0 && RANK[status]<RANK.reduce){ bump('caution'); reasons.push(c.fase.nome+' — opere dentro do teto reduzido da fase ('+fmtX(c.tetoAlav)+' · '+fmtMoney(c.tetoRisco)+').'); }
-  const MAP={
-    clear:{title:'Liberado para operar', subtitle:'Risco, reservas, caixa e proteção externa sem pendências críticas.', action:'Executar apenas setups válidos dentro da fase vigente.'},
-    caution:{title:'Operar com cautela', subtitle:'Há pontos de atenção ativos — nenhum bloqueio estatutário.', action:'Verificar drawdown, exposição e fase antes de qualquer registro.'},
-    pending:{title:'Corrigir pendências antes de operar', subtitle:'Governança patrimonial ou cadastro do período incompletos.', action:'Resolver as pendências listadas ou formalizar ciência no Formulário de Início.'},
-    reduce:{title:'Reduzir exposição', subtitle:'O risco atual viola o enquadramento da fase vigente.', action:'Reduzir exposição via LIFO (mais recentes primeiro) até reenquadrar a fase.'},
-    blocked:{title:'Operação bloqueada', subtitle:'Quarentena/guilhotina estatutária ativa. Apenas encerramento de posições permitido.', action:'Não abrir novas operações. Registrar o evento na auditoria.'}
-  };
-  const m=MAP[status];
-  return {status, title:m.title, subtitle:m.subtitle, reasons, action:m.action};
+  if(model.accountPhase.compulsoryClose)reasons.push('DD '+fmtPct(c.dd)+' atingiu '+fmtPct(c.mddScaled)+' — encerramento compulsório precede as fases.');
+  if(quarantineActive())reasons.push('Quarentena registrada. P-24 pendente: não presumir duração ou liberação por data antiga.');
+  if(c.semStop>0)reasons.push(c.semStop+' ordem(ns) sem stop validado — risco não calculável. O fato pode ser corrigido sem ocultar seu registro.');
+  if(known(c.alavCar)&&known(c.tetoAlav)&&c.alavCar>c.tetoAlav)reasons.push('Alavancagem '+fmtX(c.alavCar)+' acima do teto '+fmtX(c.tetoAlav)+' da fase da conta.');
+  reasons.push(model.executionEligibility.reason);
+  for(const item of model.findings||[])if(item.message&&!reasons.includes(item.message))reasons.push(item.message);
+  const ob=S.onboarding||{};
+  if(!ob.done)reasons.push('Formulário de Início de Período pendente. Preenchimento é cadastro, não autorização normativa.');
+  if(ob.done&&ob.centralCashStatus==='Não.')reasons.push('Caixa Central declarado ausente — rastreabilidade patrimonial pendente.');
+  if(ob.done&&ob.centralCashStatus==='Em implantação.')reasons.push('Caixa Central declarado em implantação.');
+  if(noExternalProtectionActive())reasons.push('Proteção externa declarada desativada — mantenha os alertas e o controle manual existentes.');
+  return {status:'blocked',title:'Execução normativa bloqueada',
+    subtitle:model.canRecord?'Registro e correção de fatos disponíveis; conformidade V11 não demonstrada.':'Registro indisponível para agregado incompatível; preserve a base.',
+    reasons,action:'Examinar as pendências no Motor Forex. Questionários e registros não homologam parâmetros nem autorizam exposição.',canRecord:model.canRecord};
 }
 function renderOperationalClearance(c){
   const card=$('mcClearanceCard'); if(!card) return;
   const r=getOperationalClearance(c);
-  const ob=S.onboarding||{};
+  const ob=S.onboarding||{}, model=c.forex, metrics=model.metrics;
+  const known=value=>typeof value==='number'&&Number.isFinite(value);
+  const money=value=>known(value)?fmtForexMoney(value,c.forex.account,0):'Não calculável';
+  const percent=value=>known(value)?fmtPct(value):'Não calculável';
+  const multiple=value=>known(value)?fmtX(value):'Não calculável';
+  const phaseColor=FCOLORS[c.fi]||'var(--ink-dim)';
   card.className='card mc-hero mc-status-'+r.status;
   const dot=$('mcClearanceDot');
   if(dot){ dot.style.background='var(--mc)'; dot.style.boxShadow='0 0 10px var(--mc)'; }
@@ -56,7 +45,7 @@ function renderOperationalClearance(c){
   // existia por estado — nenhuma regra nova, nenhum destino novo.
   const ACAO_CURTA={clear:'Executar dentro da fase', caution:'Revisar antes de operar',
                     pending:'Resolver pendências', reduce:'Reduzir exposição',
-                    blocked:'Registrar na auditoria'};
+                    blocked:'Examinar pendências'};
   const btnAcao=$('mcClearanceAction');
   if(btnAcao){ btnAcao.textContent=ACAO_CURTA[r.status]||'Ver detalhes'; btnAcao.title=r.action; }
   // N2 — Mission Metrics (status executivos)
@@ -77,6 +66,7 @@ function renderOperationalClearance(c){
     const f=cell.querySelector('[data-fact-fill]');
     if(f){
       f.style.width=(o.pct==null?0:Math.max(0,Math.min(100,o.pct)))+'%';
+      f.style.visibility=o.pct==null?'hidden':'';
       if(o.color) f.style.background=o.color;
     }
     const k=cell.querySelector('[data-fact-mark]');
@@ -88,56 +78,40 @@ function renderOperationalClearance(c){
   };
   const faseCell=$('mcFactFase');
   const segWrap=faseCell && faseCell.querySelector('[data-fact-seg-wrap]');
-  if(segWrap) Array.prototype.forEach.call(segWrap.children,(seg,i)=>{
-    seg.style.background = (i===c.fi) ? FCOLORS[c.fi] : '';
-  });
-  const faixa = c.mScaled ? fmtPct(c.mScaled[c.fi].ddmin)+'–'+fmtPct(c.mScaled[c.fi].ddmax) : '—';
-  // Concordância com "postura" (feminino), como o protótipo escreve
-  // ("postura ofensiva"). PHASE_OBJECTIVE guarda OFENSIVO/CAUTELA/DEFENSIVO/
-  // SALVAGUARDA — só a grafia muda, o dado é o mesmo.
-  const POSTURA_F={'OFENSIVO':'ofensiva','CAUTELA':'de cautela','DEFENSIVO':'defensiva','SALVAGUARDA':'de salvaguarda'};
-  const postura = (typeof PHASE_OBJECTIVE!=='undefined' && PHASE_OBJECTIVE[c.fi]) ? (POSTURA_F[PHASE_OBJECTIVE[c.fi].t]||PHASE_OBJECTIVE[c.fi].t.toLowerCase()) : '';
+  if(segWrap){
+    const count=JPWForex.policy.phases.length;
+    while(segWrap.children.length<count)segWrap.appendChild(document.createElement('i'));
+    while(segWrap.children.length>count)segWrap.lastElementChild.remove();
+    Array.prototype.forEach.call(segWrap.children,(seg,i)=>{seg.style.background=i===c.fi?phaseColor:'';});
+  }
+  const row=Number.isInteger(c.fi)&&c.mScaled?c.mScaled[c.fi]:null;
+  const faixa=row?percent(row.ddmin)+'–'+percent(row.ddmax):'não calculável';
+  const grid=model.activeGridPhase;
   cockpitFact('mcFactFase',{
     value:c.fase.nome,
-    meta:(postura?'postura '+postura+' · ':'')+'DD '+faixa+' · teto '+fmtX(c.tetoAlav),
-    pct:null, markPct:null, color:FCOLORS[c.fi], over:false });
-  const ddCeil=(c.mddScaled>0?c.mddScaled:0.15);
-  const ddOver=c.mddScaled>0 && c.dd>=c.mddScaled;
+    meta:'DD '+faixa+' · teto '+multiple(c.tetoAlav)+(grid.status==='OK'?' · grade F'+grid.value:' · grade não identificada'),
+    pct:null,markPct:null,color:phaseColor,over:false});
+  const ddOver=model.accountPhase.compulsoryClose===true;
   cockpitFact('mcFactDD',{
-    value:fmtPct(c.dd),
-    meta:(c.alarmScaled>0?'alarme em '+fmtPct(c.alarmScaled)+' · ':'')+'guilhotina '+fmtPct(ddCeil)+(ddOver?' · NO LIMITE':''),
-    pct:(c.dd/ddCeil)*100,
-    markPct:c.mScaled?(c.mScaled[c.fi].ddmax/ddCeil)*100:null,
-    color:ddOver?'var(--f4)':FCOLORS[c.fi], over:ddOver });
-  const temTeto=c.tetoRisco>0;
-  const riscoPct=temTeto?(c.riscoTotal/c.tetoRisco)*100:0;
-  const riscoOver=temTeto && c.riscoTotal>c.tetoRisco;
+    value:percent(c.dd),meta:'limite '+percent(c.mddScaled)+(ddOver?' · ENCERRAMENTO COMPULSÓRIO':''),
+    pct:known(c.dd)&&c.mddScaled>0?c.dd/c.mddScaled*100:null,
+    markPct:row&&c.mddScaled>0?row.ddmax/c.mddScaled*100:null,
+    color:ddOver?'var(--danger)':phaseColor,over:ddOver});
   cockpitFact('mcFactRisco',{
-    value:fmtMoney(c.riscoTotal),
-    meta:temTeto
-      ? Math.round(riscoPct)+'% do teto '+fmtMoney(c.tetoRisco)+' · margem '+fmtMoney(c.margemEstatutaria)+(riscoOver?' · ACIMA DO TETO':'')
-      : 'sem parâmetro de teto',
-    pct:riscoPct, markPct:null,
-    color:riscoOver?'var(--f3)':FCOLORS[c.fi], over:riscoOver });
-  const alavOver=c.alavCar>c.tetoAlav;
-  const alavPctTeto=c.tetoAlav>0?(c.alavCar/c.tetoAlav)*100:0;
+    value:money(c.riscoTotal),meta:'Aberto + pendentes ampliadoras · TRA P-17 pendente',
+    pct:null,markPct:null,color:known(c.riscoTotal)?phaseColor:'var(--ink-dim)',over:false});
+  const alavOver=known(c.alavCar)&&known(c.tetoAlav)&&c.alavCar>c.tetoAlav;
   cockpitFact('mcFactAlav',{
-    value:fmtX(c.alavCar),
-    meta:(c.tetoAlav>0?Math.round(alavPctTeto)+'% do teto '+fmtX(c.tetoAlav):'sem teto definido')+(alavOver?' · ACIMA DO TETO':''),
-    pct:(c.alavCar/4)*100, markPct:(c.tetoAlav/4)*100,
-    color:alavOver?'var(--f2)':FCOLORS[c.fi], over:alavOver });
-  // Reservas FCR/FEO — lidos do estado salvo no onboarding (fonte única)
-  if(!ob.done || !ob.reserveFcrStatus){
-    set('mcMiniReservas','—'); chip('mcMiniReservasChip','mc-st-muted','Pendente');
-  } else {
-    const fcrPct=ob.reserveFcrCoveragePct?Math.round(+ob.reserveFcrCoveragePct)+'%':'—';
-    const feoM=ob.reserveFeoMonthsCovered?(+ob.reserveFeoMonthsCovered).toFixed(1).replace('.',',')+'m':'—';
-    set('mcMiniReservas','FCR '+fcrPct+' · FEO '+feoM);
-    const fcrOk=ob.reserveFcrStatus==='Regular', feoOk=ob.reserveFeoStatus==='Regular';
-    if(fcrOk&&feoOk) chip('mcMiniReservasChip','mc-st-good','Regular');
-    else if(fcrOk||feoOk) chip('mcMiniReservasChip','mc-st-warn','Parcial');
-    else chip('mcMiniReservasChip','mc-st-bad','Crítico');
-  }
+    value:multiple(c.alavCar),meta:'Notional bruto / min(SI, equity) · teto '+multiple(c.tetoAlav)+(alavOver?' · ACIMA DO TETO':''),
+    pct:known(c.alavCar)?c.alavCar/4*100:null,markPct:known(c.tetoAlav)?c.tetoAlav/4*100:null,
+    color:alavOver?'var(--danger)':phaseColor,over:alavOver});
+  // Observed reserve amounts and recorded verification, never questionnaire clearance.
+  const fcr=metrics.fcrStatus,feo=metrics.feoStatus;
+  const fcrAmount=fcr.value&&known(fcr.value.constituted)?money(fcr.value.constituted):'não apurado';
+  const feoAmount=feo.value&&known(feo.value.constituted)?money(feo.value.constituted):'não apurado';
+  set('mcMiniReservas','FCR '+fcrAmount+' · FEO '+feoAmount);
+  if(fcr.status==='OK'&&feo.status==='OK')chip('mcMiniReservasChip','mc-st-muted','Verificação registrada');
+  else chip('mcMiniReservasChip','mc-st-warn','Pendências');
   // Caixa Central
   if(!ob.done || !ob.centralCashStatus){
     set('mcMiniCaixa','—'); chip('mcMiniCaixaChip','mc-st-muted','Pendente');
@@ -152,7 +126,7 @@ function renderOperationalClearance(c){
     set('mcMiniEP','—'); chip('mcMiniEPChip','mc-st-muted','Pendente');
   } else if(ob.epStatus==='Sim, vou utilizar.'){
     set('mcMiniEP', ob.epPlatform==='Outra.'?(ob.epPlatformOther||'Ativo'):(ob.epPlatform||'Ativo'));
-    chip('mcMiniEPChip','mc-st-good','Ativo');
+    chip('mcMiniEPChip','mc-st-muted','Declarado');
   } else if(ob.epStatus==='Não vou utilizar.'){
     set('mcMiniEP','Controle manual'); chip('mcMiniEPChip','mc-st-bad','Desativado');
   } else if(ob.epStatus==='Não se aplica a esta conta.'){
@@ -163,7 +137,7 @@ function renderOperationalClearance(c){
   // Pendências do Formulário de Início — governança/documentação, separada do bloqueio operacional.
   const onb=getOnboardingCompletionState();
   if(onb.complete){
-    set('dStatus','Formulário completo');
+    set('dStatus','Cadastro completo · execução BLOCKED');
     chip('mcMiniPendChip','mc-st-good','7/7');
   } else {
     const label=onb.critical?`${onb.critical} pendência crítica`:(onb.warning?`${onb.warning} atenção`:`${onb.pending} pendente(s)`);

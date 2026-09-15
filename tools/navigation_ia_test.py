@@ -31,6 +31,7 @@ FOREX_CHILDREN = [
     ("forex-overview", "exec", "overview"),
     ("forex-preparation", "check", None),
     ("forex-account", "contas", None),
+    ("forex-reserves", "fxreserves", None),
     ("forex-operation", "exec", "panel"),
     ("forex-reconciliation", "contab", None),
     ("forex-planning", "fxplan", "overview"),

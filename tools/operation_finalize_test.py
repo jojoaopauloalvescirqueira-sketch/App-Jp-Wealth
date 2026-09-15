@@ -19,6 +19,7 @@ import os
 import socket
 import threading
 
+import notes_launcher_test as launcher
 from playwright.sync_api import sync_playwright
 
 
@@ -41,19 +42,10 @@ def serve():
 
 
 def prepare_page(browser, url):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
-    context.add_init_script("window.__onbShown=true;")
-    page = context.new_page()
-    observed = {"pageerror": []}
-    page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
-    page.route(
-        "**/*",
-        lambda route: route.continue_()
-        if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
-    page.goto(url, wait_until="domcontentloaded")
-    page.wait_for_function("() => !!window.JPWOperation && typeof save === 'function'")
+    context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
+    page, observed = launcher.prepare(context, url)
+    page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
+    page.evaluate("() => {window.__setEquity=(equity=10000)=>{\n  S.forex=JPWForex.state.empty();S.forex.activeAccountId='synthetic-capture-account';\n  S.forex.accounts['synthetic-capture-account']={si:10000,equity,netCashflow:0,cashflowAdjustmentRecorded:true,\n    currency:'USD',source:'synthetic-capture-fixture',observedAt:'2026-09-14T12:00:00Z',periodId:'synthetic-period'};\n};}")
     return context, page, observed
 
 
@@ -61,7 +53,8 @@ def prepare_page(browser, url):
 # identidade e abertura conhecidas.
 SEMEAR = """
   window.__semear = (opts) => {
-    opts = opts || {};
+    opts = opts || {};operationDiscardReview();
+    __setEquity(10000);
     S.params.saldoIni = 10000;
     S.cycleRealizado = opts.ciclo === undefined ? 250 : opts.ciclo;
     S.operationHistory = {schemaVersion:1, records: opts.records || []};
@@ -136,8 +129,8 @@ def run_success_path(page):
     assert r["registros"] == 1, f"registros no historico: {r['registros']}"
     assert r["activeOperation"] is None, "activeOperation nao foi limpa"
     assert r["ordensVivas"] == 0, f"grade nao foi zerada: {r['ordensVivas']} ordens"
-    assert r["phaseUnlocked"] == [True, False, False, False], (
-        f"fases nao foram retravadas: {r['phaseUnlocked']}"
+    assert r["phaseUnlocked"] == [True, True, True, True, True, True], (
+        f"seis grades de registro nao foram criadas: {r['phaseUnlocked']}"
     )
     reg = r["registro"]
     assert reg["instrument"] == "EURUSD" and reg["direction"] == "BUY", f"tese perdida: {reg}"
@@ -165,6 +158,10 @@ def run_grid_phase_scoped_by_operation(page):
           const base = (id, extra) => {
             __semear(Object.assign({id}, extra||{}));
             S.transitionLog = [];
+            S.activeOperation.policySnapshot=JPWForex.policy.snapshot();
+            S.activeOperation.recordContext=JPWForex.state.recordContext();
+            const c=S.activeOperation.recordContext;
+            for(const {o} of operationLiveOrders())Object.assign(o,{accountId:c.accountId,periodId:c.periodId,currency:c.accountInputs.currency});
           };
           // 1. A chega a F3; B chega a F4. B nao pode contaminar A.
           base('op_A');
@@ -208,10 +205,10 @@ def run_grid_phase_scoped_by_operation(page):
         f"legado adotado recebeu fase {r['legado']!r} — sem delimitacao inequivoca "
         "o valor tem de ser null, nunca aproximado"
     )
-    assert r["soAlertas"] == 0, (
+    assert r["soAlertas"] is None, (
         f"eventos sem gridPhase entraram no calculo: {r['soAlertas']!r}"
     )
-    assert r["semVinculo"] == 0, (
+    assert r["semVinculo"] is None, (
         f"evento legado SEM operationId foi atribuido: {r['semVinculo']!r} — "
         "atribuicao por cronologia e exatamente a heuristica proibida"
     )
@@ -465,14 +462,17 @@ def run_identity_not_forged_in_finalize(page):
     estavel = page.evaluate(
         """() => {
           __semear({});
-          S.phases[1].orders[0].par = 'GBPUSD';        // conflito: vai falhar
-          const id1 = S.activeOperation.operationId;
-          JPWOperation.finalize({defenseCount:0});
-          const id2 = S.activeOperation.operationId;
-          JPWOperation.finalize({defenseCount:0});
-          return {id1, id2, id3: S.activeOperation.operationId};
+          const real=save;save=()=>false; // failure is persistence, never thesis compliance
+          try{
+            const id1 = S.activeOperation.operationId;
+            const a=JPWOperation.finalize({defenseCount:0});
+            const id2 = S.activeOperation.operationId;
+            const b=JPWOperation.finalize({defenseCount:0});
+            return {id1, id2, id3:S.activeOperation.operationId,a,b};
+          }finally{save=real;}
         }"""
     )
+    assert not estavel["a"]["ok"] and not estavel["b"]["ok"], estavel
     assert estavel["id1"] == estavel["id2"] == estavel["id3"], (
         f"a identidade mudou entre tentativas falhas: {estavel} — uma Operacao "
         "Unica nao pode trocar de id conforme o numero de tentativas"
@@ -602,10 +602,11 @@ def run_thesis_conflict_reported(page):
           return {res, registros:S.operationHistory.records.length};
         }"""
     )
-    assert r["res"]["ok"] is False and r["res"]["motivo"] == "instrument_conflict", (
-        f"conflito de instrumento resolvido em silencio: {r['res']}"
-    )
-    assert r["registros"] == 0, "registro criado apesar do conflito"
+    assert r["res"]["ok"] is True, r
+    record=r["res"]["record"]
+    assert record["instrument"] is None and record["instruments"]==["EURUSD","GBPUSD"], record
+    assert any(f["code"]=="INSTRUMENT_CONFLICT" for f in record["complianceFindings"]), record
+    assert r["registros"]==1, "fato divergente não foi preservado no histórico"
 
 
 # ---- Camada 2B — superficie de revisao ----
@@ -1419,7 +1420,7 @@ def run_review_shows_frozen_return_base(page):
           const rec = recs[recs.length-1] || null;
           return {previa, gravou: !!rec,
                   base: rec ? rec.referenceBalance : null,
-                  esperado: rec ? fmtMoney2(rec.referenceBalance) : null};
+                  esperado: rec ? fmtForexMoney(rec.referenceBalance,{currency:rec.currency}) : null};
         }"""
     )
     assert r["gravou"], "a finalizacao nao produziu registro"
@@ -1548,15 +1549,19 @@ def run_review_repaints_after_failed_attempt(page):
           jpWealthPersistenceBlocked = false;
           const depoisDaFalha = __revisao()['Base do retorno'];
           const aindaAberto = document.getElementById('modalOverlay').classList.contains('show');
-          document.getElementById('modalConfirm').click();   // segunda tentativa
+          const staleMessage=document.getElementById('finalFail').textContent;
+          closeModal();JPWOperation.openReview(); // changed facts require a fresh review
+          __digitar('#finalDefenses','0');__digitar('#finalConfirm','FECHADO');
+          document.getElementById('modalConfirm').click();   // explicit renewed consent
           const recs = S.operationHistory.records;
           const rec = recs[recs.length-1] || null;
-          return {antesDaFalha, depoisDaFalha, aindaAberto,
+          return {antesDaFalha, depoisDaFalha, aindaAberto,staleMessage,
                   gravou: !!rec, basePersistida: rec ? rec.referenceBalance : null,
-                  esperado: fmtMoney2(12500)};
+                  esperado: rec ? fmtForexMoney(rec.referenceBalance,{currency:rec.currency}) : null};
         }"""
     )
     assert r["aindaAberto"], "a falha fechou o modal"
+    assert "fatos mudaram" in r["staleMessage"].lower(), r
     assert r["antesDaFalha"] != r["depoisDaFalha"], (
         f"a revisao NAO foi repintada apos a falha: continuou {r['antesDaFalha']!r} "
         "enquanto o proximo snapshot usaria outro denominador"
@@ -1818,7 +1823,7 @@ def run_integrity_observed_when_captured(page):
     """Captura bem-sucedida: 'observed' com valor presente."""
     r = page.evaluate(
         """() => {
-          __semear({id:'op_int_obs'});
+          __semear({id:'op_int_obs'});__setEquity(9500);
           save();
           const probe = accountPhaseProbe();
           const res = JPWOperation.finalize({defenseCount:0});
@@ -1848,8 +1853,8 @@ def run_integrity_unobserved_when_never_captured(page):
     """
     r = page.evaluate(
         """() => {
-          const real = window.compute;
-          window.compute = () => null;   // precondicao ausente: nada a capturar
+          const real = JPWForex.state.read;
+          JPWForex.state.read = () => ({...real(),accountPhase:{status:'NOT_COMPUTABLE',value:null}});   // precondicao ausente: nada a capturar
           let out;
           try {
             __semear({id:'op_int_unobs', maxFase:null});
@@ -1863,7 +1868,7 @@ def run_integrity_unobserved_when_never_captured(page):
                    integridade: rec && rec.maxAccountPhaseIntegrity,
                    max: rec ? rec.maxAccountPhaseReached : null,
                    falha: rec ? rec.phaseCaptureFault : null};
-          } finally { window.compute = real; }
+          } finally { JPWForex.state.read = real; }
           return out;
         }"""
     )
@@ -1884,11 +1889,11 @@ def run_integrity_degraded_on_capture_failure(page):
     """Captura que LANCA: 'degraded', e a marca sobrevive ao sucesso posterior."""
     r = page.evaluate(
         """() => {
-          const real = window.compute;
+          const real = JPWForex.state.read;
           let out;
           try {
             __semear({id:'op_int_deg', maxFase:2});
-            window.compute = () => { throw new Error('falha sintetica de captura'); };
+            JPWForex.state.read = () => { throw new Error('falha sintetica de captura'); };
             const probe = accountPhaseProbe();
             // ATO CONFIRMADO, e nao save(): uma ordem tornando-se operacional.
             // save() generico deixou de capturar de proposito — ele roda a cada
@@ -1896,7 +1901,7 @@ def run_integrity_degraded_on_capture_failure(page):
             const o0 = S.phases[0].orders[0];
             operationOnOrderStatus(o0, 'Fechada', 0, 0);   // grava a marca
             const marca = S.activeOperation.phaseCaptureFault || null;
-            window.compute = real;                         // captura volta a funcionar
+            JPWForex.state.read = real;                         // captura volta a funcionar
             operationOnOrderStatus(o0, 'Fechada', 0, 0);
             const marcaDepois = S.activeOperation.phaseCaptureFault || null;
             const res = JPWOperation.finalize({defenseCount:0});
@@ -1906,7 +1911,7 @@ def run_integrity_degraded_on_capture_failure(page):
                    integridade: rec && rec.maxAccountPhaseIntegrity,
                    max: rec ? rec.maxAccountPhaseReached : null,
                    falha: rec ? rec.phaseCaptureFault : null};
-          } finally { window.compute = real; }
+          } finally { JPWForex.state.read = real; }
           return out;
         }"""
     )
@@ -1932,10 +1937,10 @@ def run_phase_absent_from_matrix_is_a_defect(page):
     """
     r = page.evaluate(
         """() => {
-          const real = window.compute;
+          const real = JPWForex.state.read;
           let out;
           try {
-            window.compute = () => ({fase:{nome:'FASE INEXISTENTE'}});
+            JPWForex.state.read = () => ({...real(),accountPhase:{status:'OK',value:99}});
             const probe = accountPhaseProbe();
             __semear({id:'op_int_semmatriz', maxFase:null});
             // Ato confirmado, nao save(): ver comentario em
@@ -1948,14 +1953,14 @@ def run_phase_absent_from_matrix_is_a_defect(page):
             out = {probe, marca, ok:res.ok,
                    integridade: rec && rec.maxAccountPhaseIntegrity,
                    max: rec ? rec.maxAccountPhaseReached : null};
-          } finally { window.compute = real; }
+          } finally { JPWForex.state.read = real; }
           return out;
         }"""
     )
     assert r["probe"]["ok"] is False, (
         f"fase ausente da matriz continuou passando por 'nao aplicavel': {r['probe']}"
     )
-    assert "FASE INEXISTENTE" in (r["probe"].get("erro") or ""), (
+    assert r["probe"].get("erro")=="Fase calculada fora da matriz V11.", (
         f"o motivo nao nomeia a fase inconsistente: {r['probe'].get('erro')!r}"
     )
     assert r["marca"], "a inconsistencia nao deixou marca na entidade"
@@ -1970,7 +1975,7 @@ def run_review_shows_the_three_states(page):
     """A revisao distingue os tres estados antes da confirmacao."""
     r = page.evaluate(
         """() => {
-          const real = window.compute;
+          const real = JPWForex.state.read;
           const bloco = () => {
             const b = document.querySelector('[data-qid="integridade"]');
             return b ? b.textContent : '';
@@ -1980,14 +1985,14 @@ def run_review_shows_the_three_states(page):
             __semear({id:'op_int_r1'}); save();
             JPWOperation.openReview(); out.observed = bloco(); closeModal();
 
-            window.compute = () => null;
+            JPWForex.state.read = () => ({...real(),accountPhase:{status:'NOT_COMPUTABLE',value:null}});
             __semear({id:'op_int_r2', maxFase:null}); save();
             JPWOperation.openReview(); out.unobserved = bloco(); closeModal();
-            window.compute = real;
+            JPWForex.state.read = real;
 
             __semear({id:'op_int_r3', maxFase:2, fault:true}); save();
             JPWOperation.openReview(); out.degraded = bloco(); closeModal();
-          } finally { window.compute = real; }
+          } finally { JPWForex.state.read = real; }
           return out;
         }"""
     )
@@ -2319,106 +2324,21 @@ def run_review_offers_no_retry_when_outcome_is_unknown(page):
 
 
 def run_typing_does_not_forge_account_phase(page):
-    """Digitacao transitoria NAO vira maximo historico; ato confirmado vira.
-
-    save() roda a cada TECLA nos campos numericos da grade. Enquanto a captura
-    da Fase da Conta morava dentro dele, digitar "1.09" passava por "1", cujo
-    risco eleva a Fase da Conta — e como a captura e monotonica, aquele pico
-    virava maximo OBSERVADO e nunca mais descia. O registro imutavel afirmava
-    uma fase que a conta jamais atingiu.
-
-    Percorre o caminho REAL: eventos `input` caractere a caractere no <input> da
-    grade, depois `change` comprometido, depois uma alteracao legitima.
-
-    A grade e montada com apenas a FASE 1 destravada de proposito: com a Fase 2
-    aberta, healSupersededPhases espelha a Genese adiante e marca a original como
-    `Migrada` — que nao conta risco. O teste mediria zero e passaria por vacuidade.
-    """
-    r = page.evaluate(
-        """() => {
-          window.__avisos = [];
-          window.alert = m => window.__avisos.push(String(m));
-          window.confirm = () => true;
-          window.prompt = () => null;
-
-          __semear({id:'op_typing', maxFase:0});
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
-          S.phaseUnlocked = [true,false,false,false];
-          S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.05,
-            entry:1.10, sl:1.09, tp:1.20, result:0, status:'Aberta',
-            openedAt:'2026-08-01T10:00:00.000Z'};
-          S.phases[0].orders[1] = {id:'D1', par:'EURUSD', tipo:'BUY', lote:0.05,
-            entry:1.11, sl:1.10, tp:1.21, result:-150, status:'Fechada',
-            openedAt:'2026-08-02T10:00:00.000Z', closedAt:'2026-08-03T10:00:00.000Z'};
-          S.activeOperation.maxAccountPhaseReached = 0;
-          save();
-          navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
-
-          const campo = (p,oi,f) => document.querySelector(
-            '#phaseContainer input[data-p="'+p+'"][data-o="'+oi+'"][data-f="'+f+'"]');
-          const max = () => S.activeOperation.maxAccountPhaseReached;
-          const fase = () => accountPhaseProbe().idx;
-
-          const inicial = {fase: fase(), max: max(), status: S.phases[0].orders[0].status};
-
-          const sl = campo(0,0,'sl');
-          if (!sl) return {erro:'campo sl nao encontrado na grade'};
-          const trilha = [];
-          for (const v of ['1','1.','1.0','1.09']) {
-            sl.value = v;
-            sl.dispatchEvent(new Event('input', {bubbles:true}));
-            trilha.push({digitado:v, faseTransitoria:fase(), max:max()});
-          }
-          sl.dispatchEvent(new Event('change', {bubbles:true}));
-          const aposCommit = {fase: fase(), max: max(), slNoModelo: S.phases[0].orders[0].sl};
-
-          const res = campo(0,1,'result');
-          if (!res) return {erro:'campo result nao encontrado na grade'};
-          res.value = '-500';
-          res.dispatchEvent(new Event('input', {bubbles:true}));
-          const aposDigitar = {fase: fase(), max: max()};
-          res.dispatchEvent(new Event('change', {bubbles:true}));
-          const aposConfirmar = {fase: fase(), max: max()};
-
-          return {inicial, trilha, aposCommit, aposDigitar, aposConfirmar};
-        }"""
-    )
-    assert not r.get("erro"), r.get("erro")
-    assert r["inicial"]["status"] == "Aberta", (
-        f"a ordem nao ficou Aberta apos renderizar: {r['inicial']} — se virou "
-        "Migrada, ela nao conta risco e o teste nao mede nada"
-    )
-    assert r["inicial"]["fase"] == 0 and r["inicial"]["max"] == 0, (
-        f"pre-condicao inesperada: {r['inicial']}"
-    )
-
-    transitorias = [p["faseTransitoria"] for p in r["trilha"]]
-    assert max(transitorias) > 0, (
-        f"nenhum passo intermediario elevou a fase: {r['trilha']} — sem isso o "
-        "teste nao exercita o defeito e passaria por vacuidade"
-    )
-    for passo in r["trilha"]:
-        assert passo["max"] == 0, (
-            f"digitar {passo['digitado']!r} elevou o maximo para {passo['max']} — "
-            "um estado intermediario de digitacao virou evidencia historica de "
-            "uma fase que a conta nunca atingiu"
-        )
-
-    assert r["aposCommit"]["slNoModelo"] == 1.09, f"valor final nao aplicado: {r['aposCommit']}"
-    assert r["aposCommit"]["fase"] == 0, f"fase apos commit: {r['aposCommit']['fase']}"
-    assert r["aposCommit"]["max"] == 0, (
-        f"o commit de um valor que MANTEM a fase elevou o maximo para {r['aposCommit']['max']}"
-    )
-
-    assert r["aposDigitar"]["max"] == 0, "digitar o resultado moveu o maximo antes da confirmacao"
-    assert r["aposConfirmar"]["fase"] == 1, (
-        f"a alteracao legitima nao elevou a fase: {r['aposConfirmar']}"
-    )
-    assert r["aposConfirmar"]["max"] == 1, (
-        f"alteracao CONFIRMADA que levou a conta a outra fase nao atualizou o "
-        f"maximo ({r['aposConfirmar']['max']}) — mover a captura para atos "
-        "confirmados nao pode significar deixar de capturar"
-    )
+    """DOM drafts do not change S or history; an equity observation is factual."""
+    r=page.evaluate("""() => {
+      __semear({id:'op_typing',maxFase:0});window.prompt=()=> 'Correção sintética';
+      S.activeOperation.recordContext=JPWForex.state.recordContext();
+      S.phases[0].orders[0].status='Aberta';renderPhases();
+      const field=document.querySelector('[data-p="0"][data-o="0"][data-f="sl"]');
+      const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY),trace=[];
+      for(const v of ['1','1.','1.0','1.09']){field.value=v;field.dispatchEvent(new Event('input',{bubbles:true}));trace.push({same:before===JSON.stringify(S),rawSame:raw===localStorage.getItem(LSKEY),max:S.activeOperation.maxAccountPhaseReached});}
+      field.dispatchEvent(new Event('change',{bubbles:true}));
+      const afterDraft=S.activeOperation.maxAccountPhaseReached;
+      __setEquity(9500);operationTouchAccountPhase();save();
+      return {trace,afterDraft,afterObservation:S.activeOperation.maxAccountPhaseReached,phase:accountPhaseProbe().idx};
+    }""")
+    assert all(x['same'] and x['rawSame'] and x['max']==0 for x in r['trace']),r
+    assert r['afterDraft']==0 and r['afterObservation']==1 and r['phase']==1,r
 
 
 def run_reviewed_record_equals_persisted_snapshot(page):
@@ -2437,6 +2357,7 @@ def run_reviewed_record_equals_persisted_snapshot(page):
     r = page.evaluate(
         """() => {
           __semear({id:'op_rev_eq', maxFase:null});
+          S.activeOperation.recordContext=JPWForex.state.recordContext();
           // Operacao ADOTADA de legado: sem captura previa e sem abertura.
           S.activeOperation.adoptedLegacyAt = '2026-08-01T00:00:00.000Z';
           S.activeOperation.openedAt = null;
@@ -2451,20 +2372,21 @@ def run_reviewed_record_equals_persisted_snapshot(page):
           // O CHECKPOINT ja observou: sem isto, revisao e registro empatariam
           // em null e a igualdade passaria sem haver captura alguma.
           const maxAposAbrir = S.activeOperation.maxAccountPhaseReached ?? null;
+          const maxPreview=operationFinalizeReview.op.maxAccountPhaseReached;
           // O record EXATO que a revisao esta mostrando, montado com a mesma
           // entrada que a confirmacao usara.
-          const revisado = operationBuildSnapshot(S.activeOperation, {defenseCount:3});
+          const revisado = operationBuildSnapshot(operationFinalizeReview.op, {defenseCount:3});
           const lido = __revisao();
           __digitar('#finalOpenedAt', '2026-07-15T08:30');
           __digitar('#finalDefenses', '3');
-          const revisadoComData = operationBuildSnapshot(S.activeOperation,
+          const revisadoComData = operationBuildSnapshot(operationFinalizeReview.op,
             {defenseCount:3, openedAtManual:'2026-07-15T08:30'});
           const lidoFinal = __revisao();
           __digitar('#finalConfirm', 'FECHADO');
           document.getElementById('modalConfirm').click();
           const recs = S.operationHistory.records;
           const rec = recs[recs.length-1] || null;
-          return {antesDeAbrir, maxAposAbrir, lido, lidoFinal,
+          return {antesDeAbrir, maxAposAbrir, maxPreview, lido, lidoFinal,
                   revisado: revisado.ok ? {
                     max: revisado.record.maxAccountPhaseReached,
                     integridade: revisado.record.maxAccountPhaseIntegrity,
@@ -2486,13 +2408,14 @@ def run_reviewed_record_equals_persisted_snapshot(page):
         "a fase da conta nao e determinavel no cenario; a captura nao teria efeito"
     )
     assert r["persistido"], "a finalizacao nao produziu registro"
-    assert r["maxAposAbrir"] == r["antesDeAbrir"]["fase"], (
+    assert r["maxAposAbrir"] is None, "Abrir revisão gravou captura em S"
+    assert r["maxPreview"] == r["antesDeAbrir"]["fase"], (
         f"o CHECKPOINT nao observou a Fase da Conta: {r['maxAposAbrir']!r} apos abrir "
         f"a revisao, com a fase corrente em {r['antesDeAbrir']['fase']!r}. Sem captura "
         "alguma, revisao e registro empatam em null e a igualdade abaixo passaria "
         "sem medir nada"
     )
-    assert r["persistido"]["max"] == r["maxAposAbrir"], (
+    assert r["persistido"]["max"] == r["maxPreview"], (
         f"o registro nao carregou a observacao do checkpoint: {r['persistido']['max']!r}"
     )
     assert r["persistido"]["integridade"] == "observed", (
@@ -2550,9 +2473,8 @@ def run_cancelling_the_review_fabricates_nothing(page):
     assert d["ordens"] == a["ordens"], "cancelar liberou grades"
     assert d["opId"] == a["opId"], "cancelar trocou a identidade da operacao"
     assert d["fases"] == a["fases"], "cancelar mexeu nas fases"
-    assert r["maxAposCancelar"] is not None, (
-        "a observacao do checkpoint foi desfeita pelo cancelamento — a fase daquele "
-        "instante existiu, e apagar a observacao seria destruir dado verdadeiro"
+    assert r["maxAposCancelar"] is None, (
+        "Cancelar preservou observação não confirmada da revisão no estado vivo"
     )
 
 
@@ -2560,7 +2482,7 @@ def main():
     server, url = serve()
     try:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
+            browser = playwright.chromium.launch(**launcher.launch_options())
             context, page, observed = prepare_page(browser, url)
             page.evaluate(SEMEAR)
             page.evaluate(FOTO_FINANCEIRA)

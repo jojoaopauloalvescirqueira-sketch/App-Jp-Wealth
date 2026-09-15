@@ -3,9 +3,10 @@
 
 Contrato: um backup é arquivo EXTERNO. Nenhuma string vinda dele pode ser
 interpretada como HTML, nem no momento da importação nem depois de persistida e
-recarregada. Metadata estrutural (rótulo/classe de fase, nome de instrumento) é
-catálogo fechado: o app nunca a escreve, então o valor do backup é descartado e
-reconstruído a partir de DEFAULTS. Dados do operador continuam intactos.
+recarregada. Metadata de apresentação de fase/ticker é canonicalizada. Grade sem
+versão atual recebe identificação LEGACY e preserva seus índices e ordens. A
+matriz importada permanece evidência; não governa o registry atual imutável.
+Dados do operador continuam intactos.
 
 Fixtures são sintéticas. O payload é inofensivo: apenas marca `window.__JPW_XSS__`.
 """
@@ -108,13 +109,24 @@ def abrir(browser, url, seed=None):
     return ctx, page
 
 
+def norma_runtime(page):
+    """Referência limpa da fonte ativa; não duplicar a tabela financeira no teste."""
+    return page.evaluate("""() => ({
+      registry: JPWForex.policy.snapshot(),
+      activeMatrix: activeRiskMatrix(),
+      immutable: Object.isFrozen(JPWForex.policy) && Object.isFrozen(JPWForex.policy.phases)
+        && JPWForex.policy.phases.every(Object.isFrozen),
+      projections: [0,2.5,7,11,15,19,22].map(dd => JPWForex.engine.resolveAccountPhase({ddPercent:dd}))
+    })""")
+
+
 def sondar(page):
     """Renderiza todas as superfícies afetadas e mede execução, DOM e estado.
 
     Os erros de render são DEVOLVIDOS, nunca engolidos: um render que estoura
     antes de escrever innerHTML não desenha o payload e produziria um PASS vazio.
     """
-    return page.evaluate("""() => {
+    sonda = page.evaluate("""() => {
       // Força o desenho das telas que consomem os campos auditados.
       const erros = {};
       const desenhar = (nome, fn) => { try{ fn(); }catch(e){ erros[nome]=String(e&&e.message||e); } };
@@ -150,11 +162,11 @@ def sondar(page):
           .filter(s => (s.textContent||'').includes('__JPW_XSS__')).length,
         htmlLen: html.length,
         fase0: S.phases[0] ? {title:S.phases[0].title, cls:S.phases[0].cls,
-                              faseNome:S.phases[0].faseNome, alavtxt:S.phases[0].alavtxt} : null,
+                              faseNome:S.phases[0].faseNome, alavtxt:S.phases[0].alavtxt,
+                              ddtxt:S.phases[0].ddtxt, policyVersion:S.phases[0].policyVersion??null} : null,
+        faseCount: S.phases.length,
         nomesInstrumentos: S.instruments.map(i => i.name),
-        // Compara com DEFAULTS na propria pagina: repetir a tabela normativa aqui
-        // criaria uma segunda fonte de verdade justamente do que se quer proteger.
-        matrizCanonica: JSON.stringify(S.matrix) === JSON.stringify(DEFAULTS.matrix),
+        // Matriz legada é evidência preservada, distinta do registry ativo.
         matrizAtual: S.matrix,
         tamResumoOnb: (document.getElementById('cfgOnbSummary')||{}).innerHTML ?
                       (document.getElementById('cfgOnbSummary').innerHTML||'').length : -1,
@@ -163,6 +175,8 @@ def sondar(page):
         tamFases: conteudo.fases.length,
         tamMotor: conteudo.motor.length,
       }; }""")
+    sonda['normaRuntime'] = norma_runtime(page)
+    return sonda
 
 
 def afirmar_seguro(sonda, rotulo):
@@ -181,21 +195,22 @@ def afirmar_seguro(sonda, rotulo):
     assert sonda['scriptsComPayload'] == 0, f'[{rotulo}] payload virou <script> no documento'
 
 
-def afirmar_canonico(sonda, rotulo):
+def afirmar_canonico(sonda, rotulo, norma_limpa):
     f0 = sonda['fase0']
     assert f0 is not None, f'[{rotulo}] fase 0 desapareceu'
-    assert f0['title'] == 'FASE 1 — O ATAQUE', f'[{rotulo}] title não foi canonicalizado: {f0["title"]!r}'
-    assert f0['faseNome'] == 'FASE 1', f'[{rotulo}] faseNome não foi canonicalizado'
+    assert f0['title'] == 'GRADE LEGADA 1', f'[{rotulo}] title LEGACY não foi canonicalizado: {f0["title"]!r}'
+    assert f0['faseNome'] == 'LEGACY 1', f'[{rotulo}] faseNome não foi canonicalizado'
     assert f0['cls'] == 'p1', f'[{rotulo}] cls não foi canonicalizado'
-    assert f0['alavtxt'] == '4,0x', f'[{rotulo}] alavtxt não foi canonicalizado'
+    assert f0['alavtxt'] == 'Histórico', f'[{rotulo}] alavtxt não foi canonicalizado'
+    assert f0['ddtxt'] == 'LEGACY_UNRESOLVED', f'[{rotulo}] DD histórico foi presumido'
+    assert f0['policyVersion'] is None and sonda['faseCount'] == 4, f'[{rotulo}] legado reinterpretado como seis fases atuais'
     for nome in sonda['nomesInstrumentos']:
         assert nome == '' or nome.isalnum() and nome.isupper() or nome.isdigit(), \
             f'[{rotulo}] nome de instrumento fora do formato de ticker: {nome!r}'
     assert '<' not in ''.join(sonda['nomesInstrumentos']), f'[{rotulo}] marcação sobreviveu em instruments[].name'
-    # A matriz e catalogo fechado: qualquer valor vindo de arquivo tem de ser
-    # descartado em favor da fonte oficial. Sem isto, um backup define os tetos.
-    assert sonda['matrizCanonica'], \
-        f'[{rotulo}] Matriz Quadrifásica do arquivo sobreviveu à importação: {sonda["matrizAtual"]!r}'
+    assert sonda['matrizAtual'] == estado_malicioso()['matrix'], f'[{rotulo}] evidência da matriz legada foi alterada'
+    assert sonda['normaRuntime']['immutable'], f'[{rotulo}] registry ativo deixou de ser imutável'
+    assert sonda['normaRuntime'] == norma_limpa, f'[{rotulo}] arquivo importado alterou a norma ou suas projeções ativas'
 
 
 def afirmar_mapa_de_liquidez_seguro(browser, url, rotulo):
@@ -244,11 +259,14 @@ def afirmar_mapa_de_liquidez_seguro(browser, url, rotulo):
 
 
 def suite_maliciosa(browser, url, rotulo):
+    ctx_limpo, page_limpa = abrir(browser, url)
+    norma_limpa = norma_runtime(page_limpa)
+    ctx_limpo.close()
     # --- 1) Estado adulterado JÁ PERSISTIDO (o caminho do stored XSS) ---------
     ctx, page = abrir(browser, url, seed=estado_malicioso())
     sonda = sondar(page)
     afirmar_seguro(sonda, f'{rotulo}/load')
-    afirmar_canonico(sonda, f'{rotulo}/load')
+    afirmar_canonico(sonda, f'{rotulo}/load', norma_limpa)
     assert sonda['ordensFase0'] == 1, f'[{rotulo}] ordem legítima da fase 0 foi perdida na canonicalização'
 
     # --- 2) Persistência: grava e RECARREGA (contrato central do stored XSS) --
@@ -257,7 +275,7 @@ def suite_maliciosa(browser, url, rotulo):
     page.wait_for_timeout(600)
     sonda = sondar(page)
     afirmar_seguro(sonda, f'{rotulo}/reload')
-    afirmar_canonico(sonda, f'{rotulo}/reload')
+    afirmar_canonico(sonda, f'{rotulo}/reload', norma_limpa)
     ctx.close()
 
     # --- 3) Caminho real de IMPORTAÇÃO: normalizeImportedState() -------------
@@ -267,11 +285,12 @@ def suite_maliciosa(browser, url, rotulo):
       S = imported; migrate();
       return { title:S.phases[0].title, cls:S.phases[0].cls,
                nomes:S.instruments.map(i=>i.name) }; }""", json.dumps(estado_malicioso()))
-    assert aplicado['title'] == 'FASE 1 — O ATAQUE', f'[{rotulo}] import não canonicalizou title'
+    assert aplicado['title'] == 'GRADE LEGADA 1', f'[{rotulo}] import não canonicalizou title LEGACY'
     assert aplicado['cls'] == 'p1', f'[{rotulo}] import não canonicalizou cls'
     assert not any('<' in n for n in aplicado['nomes']), f'[{rotulo}] import preservou marcação em name'
     sonda = sondar(page)
     afirmar_seguro(sonda, f'{rotulo}/import')
+    afirmar_canonico(sonda, f'{rotulo}/import', norma_limpa)
     ctx.close()
 
 
@@ -295,7 +314,7 @@ def suite_legitima(browser, url, rotulo):
     assert r['conta'] == 'Conta Sintética', f'[{rotulo}] conta do operador perdida'
     assert r['ledger'] == 1 and r['nota'] == 'fechamento sintético', f'[{rotulo}] ledger alterado'
     assert r['ordemId'] == 'X9' and r['ordemPar'] == 'GBPUSD', f'[{rotulo}] ordem do operador perdida'
-    assert r['title'] == 'FASE 1 — O ATAQUE' and r['faseNome'] == 'FASE 1', \
+    assert r['title'] == 'GRADE LEGADA 1' and r['faseNome'] == 'LEGACY 1', \
         f'[{rotulo}] metadata legítima deixou de ser coerente'
     assert 'EURUSD' in r['instrumentos'] and 'US500' in r['instrumentos'], \
         f'[{rotulo}] catálogo de instrumentos legítimo não sobreviveu'
@@ -324,8 +343,8 @@ def main():
             browser.close()
     finally:
         server.shutdown()
-    print('IMPORT XSS OK — backup adulterado não executa, não injeta DOM e não persiste '
-          'marcação; metadata estrutural volta ao catálogo oficial e a base legítima '
+    print('IMPORT XSS OK — backup adulterado não executa nem injeta DOM ativo; '
+          'metadata LEGACY é inerte, matriz histórica não altera registry/projeções e a base legítima '
           'atravessa intacta (modular e portátil).')
 
 

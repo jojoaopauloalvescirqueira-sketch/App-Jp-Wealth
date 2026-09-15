@@ -32,9 +32,11 @@ SEED = r"""
   S.phaseUnlocked = [true, false, false, false];
   S.phases.forEach((p, i) => { p.orders = emptyOrders([5, 4, 3, 2][i]); });
   S.activeOperation = {schemaVersion:1, operationId:'op_synthetic_copy',
+    recordContext:{accountId:'synthetic_live_account',periodId:'synthetic_live_period',accountInputs:{currency:'USD'}},
     openedAt:'2026-09-01T10:00:00.000Z', openedAtSource:'genesis_transition',
     maxAccountPhaseReached:0, privateNote:'SECRET_ACTIVE_NOTE'};
   S.phases[0].orders[0] = {id:'ENTRADA-1',par:'EURUSD',tipo:'BUY',lote:0.0123,
+    currency:'USD',accountId:'synthetic_live_account',periodId:'synthetic_live_period',
     entry:1.123456789,sl:1.10001,tp:1.23456789,result:0,status:'Aberta',
     openedAt:'2026-09-01T10:00:00.000Z',password:'SECRET_ORDER_PASSWORD',
     token:'SECRET_ORDER_TOKEN',brokerLogin:'SECRET_ORDER_LOGIN'};
@@ -46,6 +48,8 @@ SEED = r"""
   S.riskPinHash = 'SECRET_RISK_PIN_HASH';
   S.operationHistory = {schemaVersion:1,records:[{
     schemaVersion:1,operationId:'op_historical_copy',instrument:'GBPUSD',direction:'SELL',
+    // Explicit synthetic unit: a legacy record with no currency cannot imply USD.
+    accountId:'synthetic_history_account',periodId:'synthetic_history_period',currency:'USD',
     openedAt:'2026-08-01T10:00:00.000Z',openedAtSource:'manual_legacy',
     closedAt:'2026-08-05T15:00:00.000Z',closedAtSource:'formal_confirmation',
     finalizedAt:'2026-08-05T15:00:00.001Z',referenceBalance:10000,
@@ -131,7 +135,7 @@ def run():
             check('entry identity and facts',all(s in text for s in ['ABERTA — entrada registrada','op_synthetic_copy','ENTRADA-1','Direção: BUY','2026-09-01T10:00:00.000Z']))
             check('price and lot precision',all(s in text for s in ['Lote: 0,0123','Entrada: 1,123456789','Take profit: 1,23456789']))
             check('open default result not realized','Resultado registrado' not in text and 'Resultado fechado até agora' not in text)
-            check('current context identified',all(s in text for s in ['Contexto atual do cadastro','Conta MAM sintetica','Ciclo sintetico 2026','Saldo contábil atual (book, $): $10.240,25']))
+            check('current context identified',all(s in text for s in ['Contexto atual do cadastro','Conta MAM sintetica','Ciclo sintetico 2026','Saldo contábil atual (book, unidade ausente): 10.240,25 · unidade ausente']))
             check('no normative labels asserted',all(s not in text for s in ['Liberado para operar','Lucro Técnico:','Alavancagem:','Equity:','Fase da Conta:']))
             check('private fields excluded','SECRET_' not in text,text)
             print('OBSERVED_ENTRY_PAYLOAD ' + json.dumps(text,ensure_ascii=False),flush=True)
@@ -142,36 +146,50 @@ def run():
             check('keyboard focus retained',button.evaluate('(e)=>e===document.activeElement'))
 
             page.evaluate("""() => {
-              S.phases[0].orders[1]={id:'DEFESA-2',par:'EURUSD',tipo:'BUY',lote:0.01,entry:1.12,sl:1.11,tp:1.14,result:40,status:'Fechada'};
-              S.phases[1].orders[0]={id:'MIGRADA-3',par:'EURUSD',tipo:'BUY',lote:0.01,entry:1.11,sl:1.10,tp:1.15,result:99,status:'Migrada'};
+              S.phases[0].orders[1]={id:'DEFESA-2',par:'EURUSD',tipo:'BUY',lote:0.01,entry:1.12,sl:1.11,tp:1.14,result:40,status:'Fechada',currency:'USD'};
+              S.phases[1].orders[0]={id:'MIGRADA-3',par:'EURUSD',tipo:'BUY',lote:0.01,entry:1.11,sl:1.10,tp:1.15,result:99,status:'Migrada',currency:'USD'};
               render();
             }""")
             text = page.evaluate('operationCopyProjection(null)')
             check('multi order composition',all(s in text for s in ['EM ANDAMENTO','Ordens registradas nas grades: 3','Ordem F1/1','Ordem F1/2','Ordem F2/1']))
-            check('closed sum excludes migrated result','Resultado líquido das ordens fechadas ($): $40,00' in text and '$99,00' not in text)
+            check('closed sum excludes migrated result','Resultado líquido das ordens fechadas (USD): $40,00' in text and '$99,00' not in text)
             check('stable grid order',text.index('ENTRADA-1')<text.index('DEFESA-2')<text.index('MIGRADA-3'))
             page.evaluate("S.phases[0].orders[0].status='Fechada'; S.phases[0].orders[0].result=-10;")
             flat = page.evaluate('operationCopyProjection(null)')
             check('flat not formally finalized','SEM ORDENS ABERTAS — aguarda finalização formal' in flat and 'FINALIZADA' not in flat)
-            check('mixed results canonical','Resultado líquido das ordens fechadas ($): $30,00' in flat)
+            check('mixed results canonical','Resultado líquido das ordens fechadas (USD): $30,00' in flat)
+            page.evaluate("S.activeOperation.recordContext.accountInputs.currency='BRL'; S.phases[0].orders[0].currency='BRL'; S.phases[0].orders[1].currency='BRL';")
+            before_currency = page.evaluate('__copySnapshot()')
+            brl = page.evaluate('operationCopyProjection(null)')
+            check('live captured BRL labels and amounts',all(s in brl for s in ['Resultado registrado (BRL):','Resultado líquido das ordens fechadas (BRL):','R$']) and '(USD)' not in brl)
+            check('live unit projection read only',page.evaluate('__copySnapshot()')==before_currency)
+            page.evaluate("S.phases[0].orders[0].currency=null; S.phases[0].orders[1].currency=null;")
+            unknown = page.evaluate('operationCopyProjection(null)')
+            check('live missing order unit never borrows operation unit','Resultado registrado (unidade ausente):' in unknown and 'Resultado líquido indisponível' in unknown and '$' not in unknown)
+            page.evaluate("S.phases[0].orders[0].currency='USD'; S.phases[0].orders[1].currency='BRL';")
+            mixed = page.evaluate('operationCopyProjection(null)')
+            check('live mixed currencies no monetary sum','Resultado líquido indisponível' in mixed and 'Resultado registrado (USD):' in mixed and 'Resultado registrado (BRL):' in mixed)
+            page.evaluate("S.activeOperation.recordContext.accountInputs.currency='USD'; S.phases[0].orders[0].currency='USD'; S.phases[0].orders[1].currency='USD';")
             page.evaluate("S.phases[0].orders[1].par='GBPUSD';")
             check('conflicting thesis explicit','Tese divergente' in page.evaluate('operationCopyProjection(null)'))
             page.evaluate("S.phases[0].orders[1].par='EURUSD'; S.phases[0].orders[1].result=null;")
             check('unknown result no false aggregate','Resultado líquido indisponível' in page.evaluate('operationCopyProjection(null)'))
             page.evaluate("S.phases[0].orders[1].result='PENDING'; S.phases[0].orders[1].tp='PENDING';")
             pending = page.evaluate('operationCopyProjection(null)')
-            check('PENDING retained not zero','Take profit: PENDING' in pending and 'Resultado registrado ($): PENDING' in pending and 'Resultado líquido indisponível' in pending)
+            check('PENDING retained not zero','Take profit: PENDING' in pending and 'Resultado registrado (USD): PENDING' in pending and 'Resultado líquido indisponível' in pending)
             page.evaluate("S.phases[0].orders[0].sl=null; S.phases[0].orders[0].tp=0; S.phases[0].orders[0].openedAt=null;")
             first = page.evaluate('operationCopyOrderLines(S.phases[0].orders[0],"F1/1",false).join("\\n")')
             check('absence distinct explicit zero','Stop loss:' not in first and 'Take profit: 0' in first and 'Abertura registrada:' not in first)
 
             record_text = page.evaluate('operationCopyProjection(S.operationHistory.records[0])')
-            check('historical finalized evidence',all(s in record_text for s in ['FINALIZADA — registro histórico','op_historical_copy','Encerramento formal: 2026-08-05T15:00:00.000Z','Resultado líquido registrado ($): -$150,25','Defesas informadas: 0']))
-            check('historical absent final context explicit','Conta, perfil, período e métricas finais não foram capturados' in record_text)
+            check('historical finalized evidence',all(s in record_text for s in ['FINALIZADA — registro histórico','op_historical_copy','Encerramento formal: 2026-08-05T15:00:00.000Z','Resultado líquido registrado (USD): -$150,25','Defesas informadas: 0']))
+            check('historical captured context explicit',all(s in record_text for s in ['Conta ID: synthetic_history_account','Período ID: synthetic_history_period','Moeda: USD']))
+            legacy = page.evaluate("operationCopyProjection({...S.operationHistory.records[0],accountId:null,periodId:null,currency:null,recordContext:null,finalizationContext:null})")
+            check('historical legacy unit and context stay unknown',all(s in legacy for s in ['Conta ID: Não capturada','Período ID: Não capturado','unidade ausente']) and '$' not in legacy)
             check('historical secrets excluded','SECRET_' not in record_text)
             print('OBSERVED_HISTORY_PAYLOAD ' + json.dumps(record_text,ensure_ascii=False),flush=True)
             missing = page.evaluate("operationCopyProjection({...S.operationHistory.records[0],netResult:null,referenceBalance:null,defenseCount:null})")
-            check('historical absent amounts not zero',all(s not in missing for s in ['Resultado líquido registrado ($):','Base do retorno registrada ($):','Defesas informadas:']))
+            check('historical absent amounts not zero',all(s not in missing for s in ['Resultado líquido registrado (USD):','Base do retorno registrada (USD):','Defesas informadas:']))
             page.evaluate("S.params.saldoAtu=987654; S.period.nome='Outro ciclo'; S.accounts[0].nome='Outra conta'; S.phases[0].orders[0].entry=3.14;")
             check('history independent current account and grids',page.evaluate('operationCopyProjection(S.operationHistory.records[0])')==record_text)
             page.evaluate("JPWNavigation.navigateLocal('exec','history');")

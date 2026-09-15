@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
 EXPECTED_CHILDREN = ["forex-overview", "forex-preparation", "forex-account",
-                     "forex-operation", "forex-reconciliation", "forex-planning"]
-EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Operação", "Apuração", "Planejamento"]
+                     "forex-reserves", "forex-operation", "forex-reconciliation", "forex-planning"]
+EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Reservas", "Operação", "Contabilidade", "Planejamento"]
 EXPECTED_VIEWS = ["overview", "panel", "motor", "history"]
 EXPECTED_CONTEXT = {
     "forex-operation": ["panel", "motor"],
@@ -231,50 +231,52 @@ def run_panel_equivalence(page):
 
 
 def run_state_preservation(page):
-    """Alternar workspace nao desmonta o DOM nem reseta estado operacional.
+    """V11: DOM permanece; referência ATR é leitura; rascunho vive no editor.
 
-    Duas provas independentes, porque falham por motivos diferentes:
-
-    1. IDENTIDADE DE NO — marcadores em dataset, gravados sem disparar evento e
-       portanto sem tocar S. Se a troca de visao recriasse o DOM, sumiriam.
-    2. ESTADO REAL — um valor de ATR digitado pelo caminho normal da aplicacao,
-       que passa pelos binds e e commitado em S. Escrever `.value` direto NAO
-       serve para isto: sem evento o valor nunca chega a S e a primeira
-       repintura o zera, o que mediria o render e nao a troca de workspace.
-
-    O valor e sintetico e vive apenas no contexto efemero deste navegador.
+    O registro efetivo exige submit explícito em Parâmetros. Este caso apenas
+    digita, fecha e reabre: nenhuma alteração em S/localStorage/save é permitida.
+    A troca de formulário é autorizada pelo CHG, não habilita o proxy legado.
     """
-    page.evaluate(
-        """() => {
-          document.getElementById('execClearanceCard').dataset.probe = 'marcador';
-          document.getElementById('phaseContainer').dataset.probe = 'grades';
-          // O VRM fica sob disclosure; abrir e pre-requisito para digitar.
-          const host = document.getElementById('iAtr55').closest('details');
-          if (host) host.open = true;
-        }"""
-    )
-    page.fill("#iAtr55", "0.00777")
-    page.dispatch_event("#iAtr55", "change")
-    committed = page.evaluate("() => document.getElementById('iAtr55').value")
-    assert committed == "0.00777", f"pre-condicao falhou: ATR nao aceitou o valor ({committed})"
+    before = page.evaluate("""() => {
+      document.getElementById('execClearanceCard').dataset.probe='marcador';
+      document.getElementById('phaseContainer').dataset.probe='grades';
+      const reference=document.getElementById('iAtr55');
+      const host=reference.closest('details');if(host)host.open=true;
+      window.__submenuRefs=['execClearanceCard','phaseContainer','iAtr55'].map(id=>document.getElementById(id));
+      window.__submenuDraftSaves=0;window.__submenuSaveOriginal=save;
+      save=function(...args){__submenuDraftSaves++;return __submenuSaveOriginal.apply(this,args);};
+      return {state:JSON.stringify(S),storage:JSON.stringify({...localStorage}),
+        reference:reference.value,readOnly:reference.readOnly,disabled:reference.disabled};
+    }""")
+    assert before['readOnly'] and before['disabled'], 'ATR legado precisa continuar como referência'
+    assert page.evaluate("() => JPWNavigation.navigate('params')") is True
+    details=page.locator('#fxMarketFacts').locator('xpath=..')
+    if not details.evaluate('el=>el.open'):
+        details.locator(':scope > summary').click()
+    page.locator('#fxMarketFacts input[name="atrShort"]').fill('0.00777')
+    page.locator('#settingsCloseBtn').click()
 
-    page.evaluate("() => JPWNavigation.navigate('forex-overview')")
-    page.evaluate("() => JPWNavigation.navigate('pivots')")
-    page.evaluate("() => JPWNavigation.navigate('forex-operation')")
-
-    kept = page.evaluate(
-        """() => ({
-          card: document.getElementById('execClearanceCard').dataset.probe,
-          phases: document.getElementById('phaseContainer').dataset.probe,
-          atr: document.getElementById('iAtr55').value,
-          disclosure: document.getElementById('iAtr55').closest('details')?.open === true
-        })"""
-    )
-    assert kept["card"] == "marcador" and kept["phases"] == "grades", (
-        f"DOM do Painel Operacional foi recriado na troca de workspace: {kept}"
-    )
-    assert kept["atr"] == "0.00777", f"estado operacional perdido na troca de workspace: {kept}"
-    assert kept["disclosure"], "disclosure aberto pelo usuario foi fechado pela troca de workspace"
+    for route in ['forex-overview','pivots','forex-reserves','forex-operation'] * 2:
+        assert page.evaluate('(route)=>JPWNavigation.navigate(route)',route) is True
+    assert page.evaluate("() => JPWNavigation.navigate('params')") is True
+    assert page.locator('#fxMarketFacts input[name="atrShort"]').input_value()=='0.00777', 'rascunho ATR perdido ao navegar'
+    assert details.evaluate('el=>el.open'), 'disclosure do editor fechado ao navegar'
+    page.locator('#settingsCloseBtn').click()
+    kept=page.evaluate("""() => ({
+      card:document.getElementById('execClearanceCard').dataset.probe,
+      phases:document.getElementById('phaseContainer').dataset.probe,
+      reference:document.getElementById('iAtr55').value,
+      readOnly:document.getElementById('iAtr55').readOnly,
+      disabled:document.getElementById('iAtr55').disabled,
+      disclosure:document.getElementById('iAtr55').closest('details')?.open===true,
+      sameNodes:__submenuRefs.every(el=>el===document.getElementById(el.id)),
+      state:JSON.stringify(S),storage:JSON.stringify({...localStorage}),saves:__submenuDraftSaves
+    })""")
+    page.evaluate('() => {save=__submenuSaveOriginal;}')
+    assert kept['card']=='marcador' and kept['phases']=='grades' and kept['sameNodes'], kept
+    assert kept['reference']==before['reference'] and kept['readOnly'] and kept['disabled'], kept
+    assert kept['disclosure'], 'disclosure da referência fechado ao navegar'
+    assert kept['state']==before['state'] and kept['storage']==before['storage'] and kept['saves']==0, 'rascunho/navegação gravou estado'
 
 
 def run_focus_and_keyboard(page):
@@ -562,13 +564,23 @@ def run_motor_migration(page):
         "html[data-layout-editing] .screen.active [data-layout-card] > * os congelaria"
     )
 
-    # 2. Os controles respondem no lugar novo: os listeners ligados por id no
-    #    boot sobrevivem ao no ter mudado de pai.
-    page.fill("#mExpAlvo", "0.55")
-    page.dispatch_event("#mExpAlvo", "input")
-    assert page.evaluate("() => S.expAlvo") == 0.55, "o input de exposicao-alvo parou de gravar"
-    page.fill("#mExpAlvo", "0.4")
-    page.dispatch_event("#mExpAlvo", "input")
+    # 2. V11: o teto deixou de ser um editor de volume admissível. O proxy
+    #    preserva valor/nó e permanece desabilitado; navegar não grava expAlvo.
+    exposure=page.evaluate("""() => {
+      const el=document.getElementById('mExpAlvo');window.__submenuExposureNode=el;
+      return {value:el.value,disabled:el.disabled,expAlvo:S.expAlvo,
+        state:JSON.stringify(S),storage:JSON.stringify({...localStorage})};
+    }""")
+    assert exposure['disabled'], 'proxy de exposição não pode dimensionar admissão'
+    assert page.evaluate("() => JPWNavigation.navigate('forex-overview')") is True
+    assert page.evaluate("() => JPWNavigation.navigate('motor')") is True
+    exposure_after=page.evaluate("""() => {
+      const el=document.getElementById('mExpAlvo');
+      return {value:el.value,disabled:el.disabled,expAlvo:S.expAlvo,
+        state:JSON.stringify(S),storage:JSON.stringify({...localStorage}),sameNode:el===__submenuExposureNode};
+    }""")
+    assert exposure_after.pop('sameNode'), 'proxy de exposição foi recriado'
+    assert exposure_after==exposure, 'navegação alterou referência ou estado do Motor'
 
     # 3. Sumiu da Central, sem sobra em nenhuma das cinco estruturas.
     central = page.evaluate(

@@ -5,15 +5,15 @@
 // e em nenhum outro lugar; nenhum módulo deve navegar para 'dash' hardcoded nesses fluxos.
 const DEFAULT_START_ROUTE='dash';
 const DEFAULTS = {
-  params:{ saldoIni:10000, saldoAtu:10240, inicio:'2026-05-25',
-    mdd:0.15, alarm:0.13, genLev:0.4, genRisk:0.01, fw:1,
-    vrmN:1.20, vrmHV:1.50, refM:BASE_TARGET_MONTHLY, refA:BASE_TARGET_ANNUAL },
-  matrix:[
-    {nome:'FASE 1',ddmin:0,ddmax:0.04,alav:4.0},
-    {nome:'FASE 2',ddmin:0.0401,ddmax:0.08,alav:2.0},
-    {nome:'FASE 3',ddmin:0.0801,ddmax:0.12,alav:1.0},
-    {nome:'FASE 4',ddmin:0.1201,ddmax:0.15,alav:0.4},
-  ],
+  params:{saldoIni:10000,saldoAtu:10240,inicio:'2026-05-25',
+    mdd:JPWForex.policy.get('P-03').value/100,alarm:null,genLev:JPWForex.policy.get('P-15').value,genRisk:null,fw:null,
+    vrmN:JPWForex.policy.get('P-12a').value.normalBelow,vrmHV:JPWForex.policy.get('P-12a').value.highAbove,
+    refM:BASE_TARGET_MONTHLY,refA:null},
+  matrix:JPWForex.policy.phases.map(row=>({nome:'FASE '+row.id,ddmin:row.lower/100,
+    ddmax:(row.upper===undefined?JPWForex.policy.get(row.upperParameter).value:row.upper)/100,alav:row.maxLeverage})),
+  forex:{schemaVersion:1,policyVersion:JPWForex.policy.version,activeAccountId:null,accounts:{},market:null,
+    h4Closes:[],grid:null,reserves:null,proposals:[],auditLog:[],migration:{source:'NEW_EMPTY_STATE'}},
+  ledgerHistory:{schemaVersion:1,events:[]},
   atr55:0.00335, atr660:0.00426, expAlvo:0.4,
   // 'preco' = cotação de mercado do par. O nocional USD é derivado por usdPerBase():
   // pares de base USD (USDJPY/CHF/CAD) têm nocional fixo de $100k; AUDCAD usa AUDUSD.
@@ -39,12 +39,12 @@ const DEFAULTS = {
     {nome:'FTMO 100k',tipo:'SATÉLITE',broker:'FTMO',platform:'',platformLogin:'',investorPassword:'',perfil:'High Longevity Plus',sini:100000,satu:100000,perfilLocked:true},
   ],
   riskPinHash:null, // hash SHA-256 da senha de alteração de perfil (fricção, não criptografia militar)
-  phaseUnlocked:[true,false,false,false], // Fase 1 sempre liberada; 2/3/4 exigem questionário de transição
+  phaseUnlocked:[], // registro legado de checklist; não autoriza nem bloqueia CRUD
   transitionLog:[], // auditoria: {fase, ts, resumo}
   protocolBreaches:0, // contador de fechamentos marcados como rompimento de protocolo sem justificativa
   loteMaster:0.04,
   cycleRealizado:0, // resultado líquido acumulado de operações ARQUIVADAS no ciclo (perda mantém DD; lucro não amplia limites — Art. 4.3)
-  quarantine:null, // {inicio,fim} quando a guilhotina de 15% dispara (Art. 3.10 §2 — 90 dias)
+  quarantine:null, // Registro de restrição; prazo vigente P-24 não presumido.
   ledger:[], // fechamento diário: {data,resultado,saldo,nota}
   ledgerArchive:[], // períodos encerrados: snapshots do ledger antigo ao reiniciar período
   period:{nome:'',profile:'base'}, // período contábil: identificação + perfil de risco escolhido
@@ -86,19 +86,7 @@ const DEFAULTS = {
     consentAccepted:false, consentVersion:'', consentDocument:'', consentAcceptedAt:'', consentOperator:''}, // questionário de início de período (SET 5b)
   // grades por fase: cada ordem {id,par,tipo,lote,entry,sl,tp,result,status}
   // Gênese de exemplo com risco ≤ 1% do saldo inicial (Art. 8.6): 0.04 × 100k × 0.02432 = $97,28
-  phases:[
-    {title:'FASE 1 — O ATAQUE',cls:'p1',faseNome:'FASE 1',ddtxt:'0–4%',alavtxt:'4,0x',
-     orders:[
-       {id:'248.1',par:'GBPUSD',tipo:'BUY',lote:0.04,entry:1.35032,sl:1.32600,tp:1.38060,result:0,status:'Aberta'},
-       {id:'248.2',par:'GBPUSD',tipo:'BUY',lote:0.04,entry:1.34485,sl:1.31552,tp:1.35337,result:0,status:'Aberta'},
-       {id:'248.3',par:'GBPUSD',tipo:'BUY',lote:0.04,entry:1.34087,sl:1.31448,tp:1.34883,result:0,status:'Aberta'},
-       {id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''},
-       {id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''},
-     ]},
-    {title:'FASE 2 — DESACELERAÇÃO',cls:'p2',faseNome:'FASE 2',ddtxt:'4–8%',alavtxt:'2,0x',orders:emptyOrders(4)},
-    {title:'FASE 3 — SOBREVIVÊNCIA',cls:'p3',faseNome:'FASE 3',ddtxt:'8–12%',alavtxt:'1,0x',orders:emptyOrders(3)},
-    {title:'FASE 4 — O ABISMO',cls:'p4',faseNome:'FASE 4',ddtxt:'12–15%',alavtxt:'0,4x',orders:emptyOrders(2)},
-  ],
+  phases:forexNewOperationPhases(),
   perf:[
     {mes:'Jan',ret:0.012,dd:0.01},{mes:'Fev',ret:0.019,dd:0.008},{mes:'Mar',ret:0.031,dd:0.012},
     {mes:'Abr',ret:-0.021,dd:0.021},{mes:'Mai',ret:0.028,dd:0.015},{mes:'Jun',ret:0.015,dd:0.009},
@@ -301,4 +289,4 @@ const DEFAULTS = {
 // A reconciliação aqui, no nascimento do objeto, fecha o caminho fresco com a mesma
 // fórmula da migrate — uma fonte, uma grafia, idempotente por construção.
 DEFAULTS.onboarding.reserveMasterCapital=String(DEFAULTS.params.saldoIni||0);
-function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''}));}
+function emptyOrders(n){return Array.from({length:n},()=>({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:null,status:''}));}

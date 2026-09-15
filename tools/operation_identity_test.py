@@ -21,6 +21,7 @@ import os
 import socket
 import threading
 
+import notes_launcher_test as launcher
 from playwright.sync_api import sync_playwright
 
 
@@ -43,20 +44,10 @@ def serve():
 
 
 def prepare_page(browser, url):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
-    context.add_init_script("window.__onbShown=true;")
-    page = context.new_page()
-    observed = {"pageerror": []}
-    page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
-    # Rede externa neutralizada: o teste nao depende de feed nem de cotacao.
-    page.route(
-        "**/*",
-        lambda route: route.continue_()
-        if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
-    page.goto(url, wait_until="domcontentloaded")
-    page.wait_for_function("() => typeof save === 'function' && typeof migrate === 'function'")
+    context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
+    page, observed = launcher.prepare(context, url)
+    page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
+    page.evaluate("() => {window.__setEquity=(equity=10000)=>{\n  S.forex=JPWForex.state.empty();S.forex.activeAccountId='synthetic-capture-account';\n  S.forex.accounts['synthetic-capture-account']={si:10000,equity,netCashflow:0,cashflowAdjustmentRecorded:true,\n    currency:'USD',source:'synthetic-capture-fixture',observedAt:'2026-09-14T12:00:00Z',periodId:'synthetic-period'};\n};}")
     return context, page, observed
 
 
@@ -155,7 +146,7 @@ def run_existing_operation_unknowns(page):
     assert fatos["sourceInvalida"] is None, (
         f"proveniencia fora do vocabulario aceita: {fatos['sourceInvalida']!r}"
     )
-    assert fatos["maxTeto"] == 3, f"max acima do teto nao foi limitado a 3: {fatos['maxTeto']!r}"
+    assert fatos["maxTeto"] is None, f"fase impossível foi reinterpretada: {fatos['maxTeto']!r}"
 
 
 def run_unknown_is_never_zero(page):
@@ -180,11 +171,13 @@ def run_unknown_is_never_zero(page):
           // helper puro
           casos.helperNull = operationPhaseIdxOrNull(null);
           casos.helperZero = operationPhaseIdxOrNull(0);
+          __setEquity(10000);
           // captura: primeira observacao estabelece, mesmo sendo Fase 1
           S.params.saldoIni = 10000;
           S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
           S.activeOperation = {schemaVersion:1, operationId:'op_cap', openedAt:null,
-                               openedAtSource:null, maxAccountPhaseReached:null};
+                               openedAtSource:null, maxAccountPhaseReached:null,
+                               recordContext:JPWForex.state.recordContext()};
           // A captura NAO mora mais em save(): save() roda a cada tecla, e um
           // valor meio digitado nao pode virar evidencia historica. Aqui se
           // exercita a funcao de captura diretamente, que e o objeto deste teste
@@ -234,7 +227,7 @@ def run_genesis_birth(page):
           S.activeOperation = null;
           S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
           const genese = S.phases[0].orders[0];
-          genese.par = 'EURUSD'; genese.lote = 1; genese.entry = 1.1; genese.sl = 1.09;
+          genese.role='GENESIS';genese.par = 'EURUSD'; genese.lote = 1; genese.entry = 1.1; genese.sl = 1.09;
           genese.status = 'Aberta';
           operationOnOrderStatus(genese, 'Aberta', 0, 0);
           const op = S.activeOperation;
@@ -301,6 +294,8 @@ def run_phase_capture_monotonic(page):
     """
     fatos = page.evaluate(
         """() => {
+          __setEquity(10000);
+          S.activeOperation.recordContext=JPWForex.state.recordContext();
           const passos = [];
           const registrar = (rot) => passos.push({
             rot,
@@ -315,10 +310,12 @@ def run_phase_capture_monotonic(page):
           operationTouchAccountPhase(); save(); registrar('inicio');
           // Perda que eleva o drawdown e, com ele, a Fase da Conta.
           S.phases[0].orders[0].result = -900;
+          __setEquity(9100);
           operationTouchAccountPhase(); save(); registrar('apos perda');
           const pico = S.activeOperation.maxAccountPhaseReached;
           // Recuperacao: a fase VIGENTE cai, o maximo NAO pode cair junto.
           S.phases[0].orders[0].result = 0;
+          __setEquity(10000);
           operationTouchAccountPhase(); save(); registrar('apos recuperacao');
           return {passos, pico, maxFinal: S.activeOperation.maxAccountPhaseReached};
         }"""
@@ -373,13 +370,14 @@ def run_not_applicable_is_normal_flow(page):
         """() => {
           S.activeOperation = {schemaVersion:1, operationId:'x', openedAt:null,
                                openedAtSource:null, maxAccountPhaseReached:null};
+          const fxBefore=S.forex;S.forex=null;
           const bak = S.params;
           S.params = null;                    // base legada/malformada
           const probe = accountPhaseProbe();
           let ok = null, erro = null;
           try { operationTouchAccountPhase(); ok = save(); } catch(e) { erro = String(e); }
           const fault = S.activeOperation.phaseCaptureFault || null;
-          S.params = bak;
+          S.params = bak;S.forex=fxBefore;
           save();
           return {probeOk: probe.ok, probeIdx: probe.idx, ok, erro, fault};
         }"""
@@ -411,8 +409,8 @@ def run_capture_failure_is_observable(page):
           S.activeOperation = {schemaVersion:1, operationId:'falha', openedAt:null,
                                openedAtSource:null, maxAccountPhaseReached:0};
           // Defeito INESPERADO do mecanismo — nao ausencia de dado.
-          const bak = window.compute;
-          window.compute = () => { throw new Error('falha sintetica de reconciliacao'); };
+          const bak = JPWForex.state.read;
+          JPWForex.state.read = () => { throw new Error('falha sintetica de reconciliacao'); };
           // Condicao que ELEVARIA a fase se a captura estivesse sa.
           S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:-900,status:'Fechada'};
           const probe = accountPhaseProbe();
@@ -427,7 +425,7 @@ def run_capture_failure_is_observable(page):
             fault: op.phaseCaptureFault ? {temAt: !!op.phaseCaptureFault.at,
                                            razao: op.phaseCaptureFault.reason} : null
           };
-          window.compute = bak;
+          JPWForex.state.read = bak;
           // Sucesso posterior NAO apaga a evidencia da falha.
           operationTouchAccountPhase(); save();
           snapshot.faultPersisteAposSucesso = !!S.activeOperation.phaseCaptureFault;
@@ -471,6 +469,7 @@ def run_capture_failure_is_observable(page):
 # expressao como a funcao a invocar, e chamava __ordemNova sem argumentos.
 MONTA_FASE = """() => {
   window.__montaFase = (ciclo) => {
+    __setEquity(10000+ciclo);
     S.params.saldoIni = 10000;
     // Reconstroi as grades: um caso anterior desta suite pode ter deixado
     // S.phases vazio, e ali o forEach nao lanca — so devolve S.phases[0]
@@ -486,7 +485,7 @@ MONTA_FASE = """() => {
   // Ordem NOVA: sem carimbo algum, e o que o fail-safe exige para agir.
   window.__ordemNova = (pi,oi,par) => {
     const o = S.phases[pi].orders[oi];
-    o.id='X'; o.par=par||'EURUSD'; o.tipo='BUY'; o.lote=0.01;
+    o.id='X';o.role=pi===0&&oi===0?'GENESIS':'DEFENSE'; o.par=par||'EURUSD'; o.tipo='BUY'; o.lote=0.01;
     o.entry=1.10; o.sl=1.09; o.tp=1.20; o.result=0;
     // O status e aplicado ANTES da chamada, como o handler real faz:
     // operationOnOrderStatus so carimba datas e resolve a identidade — quem muda
@@ -495,6 +494,14 @@ MONTA_FASE = """() => {
     o.status='Aberta';
     delete o.openedAt; delete o.closedAt;
     return o;
+  };
+  // V11 captures identity and account context in the confirmed record command.
+  // Direct operationOnOrderStatus calls still test timestamps, but cannot invent
+  // an account for a legacy row that never recorded one.
+  window.__confirmNewOrder = (o,pi,oi) => {
+    const changes=structuredClone(o);S.phases[pi].orders[oi]=emptyOrders(1)[0];
+    const result=operationRecordOrder(pi,oi,changes,{reason:'Nascimento sintético confirmado'});
+    if(!result.ok)throw Error(JSON.stringify(result));
   };
 }
 """
@@ -507,7 +514,7 @@ def run_capture_lands_on_existing_entity(page):
           __montaFase(-900);                       // Fase da Conta = indice 2
           S.activeOperation = {schemaVersion:1, operationId:'op_norm',
             openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
-            maxAccountPhaseReached:null};
+            maxAccountPhaseReached:null,recordContext:JPWForex.state.recordContext()};
           const o = __ordemNova(0,0);
           o.openedAt = '2026-08-01T10:00:00.000Z';   // ja pertence: fail-safe nao age
           const faseDoAto = accountPhaseProbe().idx;
@@ -530,7 +537,7 @@ def run_capture_lands_on_newborn_entity(page):
           __montaFase(-900);                       // indice 2
           const o = __ordemNova(0,0);
           const faseDoAto = accountPhaseProbe().idx;
-          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          __confirmNewOrder(o,0,0);
           const op = S.activeOperation;
           return {faseDoAto, nasceu: !!op, fonte: op && op.openedAtSource,
                   max: op && op.maxAccountPhaseReached};
@@ -556,7 +563,7 @@ def run_orphan_is_discarded_without_receiving_the_capture(page):
           S.activeOperation = orfa;
           const o = __ordemNova(0,0, 'GBPUSD');    // tese NOVA, outro instrumento
           const faseDoAto = accountPhaseProbe().idx;
-          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          __confirmNewOrder(o,0,0);
           const nova = S.activeOperation;
           return {faseDoAto,
                   orfaMax: orfa.maxAccountPhaseReached,
@@ -591,26 +598,26 @@ def run_peak_at_birth_survives_later_recovery(page):
           __montaFase(-1600);                      // indice 3 — o PICO
           const o = __ordemNova(0,0);
           const faseNoNascimento = accountPhaseProbe().idx;
-          operationOnOrderStatus(o, 'Aberta', 0, 0);
+          __confirmNewOrder(o,0,0);
           const maxAposNascer = S.activeOperation.maxAccountPhaseReached;
           // A conta se recupera: a fase corrente cai.
-          S.cycleRealizado = -200;
+          S.cycleRealizado = -200;__setEquity(9800);
           const faseDepois = accountPhaseProbe().idx;
           // Novo ato confirmado, agora numa fase MENOR.
           const o2 = __ordemNova(0,1);
-          operationOnOrderStatus(o2, 'Aberta', 0, 1);
+          __confirmNewOrder(o2,0,1);
           return {faseNoNascimento, maxAposNascer, faseDepois,
                   maxFinal:S.activeOperation.maxAccountPhaseReached};
         }"""
     )
-    assert r["faseNoNascimento"] == 3 and r["faseDepois"] == 0, (
+    assert r["faseNoNascimento"] == 4 and r["faseDepois"] == 0, (
         f"a fixture nao produziu pico seguido de recuo: {r}"
     )
-    assert r["maxAposNascer"] == 3, (
+    assert r["maxAposNascer"] == 4, (
         f"o pico do nascimento nao foi capturado: {r['maxAposNascer']!r} — sem "
         "essa observacao nao ha o que a monotonicidade preserve depois"
     )
-    assert r["maxFinal"] == 3, (
+    assert r["maxFinal"] == 4, (
         f"o maximo regrediu para {r['maxFinal']!r} apos o recuo da conta"
     )
 
@@ -619,7 +626,7 @@ def main():
     server, url = serve()
     try:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
+            browser = playwright.chromium.launch(**launcher.launch_options())
             context, page, observed = prepare_page(browser, url)
             run_default_shape(page)
             run_legacy_adoption(page)

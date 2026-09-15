@@ -106,15 +106,9 @@ início (`fxNextOpenMonth`); editar mês fechado é auditado e preserva `closedA
 - O agregado viaja no backup normal (`jpwealth_v9_state`); o envelope não muda.
   Builds antigos preservam o agregado dormente — rollback por construção.
 
-## Reservas — fonte única
+## Reservas — fonte única na revisão V11
 
-`reserveRequirementsCalc()` (`src/js/10-domain/07-reserve-requirements.js`) é a
-extração pura da matemática do antigo `reserveCalc()` do onboarding (decisão 1
-de 2026-08-11): FCR = 15% × capital nominal da Conta Mestre; FEO = 6 × despesas
-elegíveis; campo a campo idêntica (caracterização em `fx_planning_test.py`).
-Consumidores: onboarding (delegação) e `fxReservePanelData()` com fontes
-canônicas — capital de `S.params.saldoIni`, despesas/constituídos declarados no
-onboarding. O painel calcula e informa; nunca movimenta capital.
+`reserveRequirementsCalc()` é um adapter de `JPWForex.engine`, compartilhado pelo onboarding e Planejamento. Recebe capitalNominal explícito e sixMonthExpenseAmount com determinationRecorded/expensesApproved. SI não fornece capital nominal, nem a despesa de um mês determina automaticamente o método de apuração. Requisitos ausentes permanecem null/PENDING, e montantes suficientes não comprovam governança ou homologação. O painel não movimenta capital. Ver [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md).
 
 ## Distinção deliberada de sistemas vizinhos
 
@@ -123,8 +117,7 @@ onboarding. O painel calcula e informa; nunca movimenta capital.
   consolidado do plano + aportes por origem + câmbio. **Separados no MVP por
   decisão do gestor**; nenhuma conciliação nesta fase — lançar o realizado em
   um não alimenta o outro.
-- **`acctPace`/projeção diária** cobrem o período anual de gestão pelo perfil;
-  o Planejamento FX é mensal e multianual por premissas do operador. Coexistem.
+- **Contabilidade** adapta a série mensal deste motor quando há plano explícito, sem criar uma projeção diária normativa por perfil.
 
 ## Módulos (clássicos, anexados ao fim do manifest)
 
@@ -199,3 +192,9 @@ mensal dedicado de aportes (dados presentes na tabela e no resumo anual);
 registro do card no sistema de personalização de layout; retiradas no
 realizado; conciliação com `mei.history`/`ledger`/`accounts[]`; qualquer
 pendência N3.
+
+## Revisão Forex V11: atos e proveniência
+
+A linha N permite revisão de taxa/aporte, preservando as linhas anteriores e o baseline. Rebase é âncora explícita com motivo. Cenários têm premissas/revisões próprias e seleção efêmera; não gravam PLAN ou ACTUAL. Revisões novas guardam calculationSnapshot para reprodução exata; as antigas continuam sem snapshot, com limitação declarada.
+
+Importar ACTUAL da Contabilidade exige prévia identificada por conta/período/IDs/versões, declaração de completude e reconciliação. Substituir ACTUAL existente exige confirmação expressa. Exclusão do plano ativo conserva archivedPlans. O envelope permanece schemaVersion1, com planningRevision2 nos novos atos e extensões opcionais actualHistory/scenarios/scenarioArchive/rebases. Ausência, zero, inválido e dados futuros não são equivalentes.
