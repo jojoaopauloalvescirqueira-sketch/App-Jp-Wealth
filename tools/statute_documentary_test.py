@@ -101,7 +101,9 @@ def reader_check(page):
     assert sha256(reader.encode('utf-8')) == READER_SHA256, 'leitor diverge da extração aprovada'
     assert [int(n) for n in re.findall(r'^--- PAGE (\d+) ---$', reader, re.M)] == list(range(1, 126))
     assert reader.endswith((ROOT / DOCUMENTS[1][0]).read_text(encoding='utf-8')), 'Anexo integral ausente'
-    assert 'motor financeiro legado ainda não foi adaptado' in page.locator('#modalBox').inner_text().lower()
+    text=page.locator('#modalBox').inner_text().lower()
+    assert 'motor forex v11 permanece em validação' in text
+    assert 'não homologa o software nem autoriza operação com parâmetros pendentes' in text
 
 
 def open_edit(page):

@@ -21,13 +21,13 @@ Finanças Pessoais e Alladin; uma preferência válida do Editor pode permutá-l
 A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
 `forex-overview`, `personal-finance`, `research-forex` e `alladin`.
 
-- Forex mantém seis filhos: `forex-overview`, `forex-preparation`,
-  `forex-account`, `forex-operation`, `forex-reconciliation`, `forex-planning`.
+- Forex nesta revisão mantém sete filhos: `forex-overview`, `forex-preparation`,
+  `forex-account`, `forex-reserves`, `forex-operation`, `forex-reconciliation`, `forex-planning`.
 - Finanças Pessoais mantém Visão Geral, Orçamento Mensal, Dívidas & Crédito,
   Comparativo Mensal e Cenários, pela superfície `window.JPWFin.ui`.
 - Research mantém `research-forex`, `research-stocks-br`,
   `research-stocks-global`, `research-reits`, `research-probability-lab` e `research-others`.
-- Os níveis locais de Operação, Apuração, Planejamento e Research/Forex
+- Os níveis locais de Operação, Contabilidade, Planejamento e Research/Forex
   continuam nas superfícies existentes. Calendário, NoCoda e Pivots mantêm
   seus aliases e owner Research/Forex.
 - Alladin preserva suas abas internas e o próprio ciclo de renderização.
@@ -187,7 +187,7 @@ intactos. Esta camada não lê, projeta nem regrava personalizações dos widget
 
 O shell usa `JPWNavigation.current()` e as superfícies `window.JPWExec.ui`,
 `window.JPWFx.ui`, `window.JPWFin.ui` e `window.JPWResearch.ui`. Operação usa
-`panel`/`motor`; Apuração combina `#contab` e `exec/history`; Planejamento usa
+`panel`/`motor`; Contabilidade (alias preservado `forex-reconciliation`) combina `#contab` e `exec/history`; Planejamento usa
 `overview`/`planning`/`actuals`/`table`. Seleção de aba Alladin é observada para
 a localização, sem leitura financeira ou alteração de seu renderizador.
 
@@ -337,3 +337,7 @@ não mudam. Na decisão A13-A, sair do Lab ou do módulo pausa e conserva a simu
 em memória; retornar mantém a pausa até `Continuar`. Sobreposições não descartam
 a instância nem retomam sua execução automaticamente. Reload não recupera o
 experimento transitório; ciclo de vida em [GALTON-BOARD](GALTON-BOARD.md).
+
+## Incremento Forex V11 em revisão
+
+`forex-reserves` usa `#fxreserves`; seus formulários conservam o rascunho em memória durante a navegação. A Visão Geral e a Central → Operação → Parâmetros leem `JPWForex.state.read()`. O novo painel não cria router, preferência de rota ou segunda fonte de calendário. Ver [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md).

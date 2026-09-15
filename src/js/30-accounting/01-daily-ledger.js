@@ -1,5 +1,5 @@
 // ============ 07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria ============
-function ledgerSorted(){ return [...S.ledger].sort((a,b)=>a.data<b.data?-1:1); }
+function ledgerSorted(){ return [...S.ledger].sort((a,b)=>a.data.localeCompare(b.data)); }
 function archiveCurrentLedgerForNewPeriod(nextPeriodMeta){
   const led=ledgerSorted();
   if(!led.length) return null;
@@ -49,17 +49,19 @@ function ledgerMutate(fn){
     error:'Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.'});
   };
   if(jpWealthPersistenceOutcomeIsUnknown()){hideStaleSavedTag();return unknown();}
-  let before;
-  try{before=structuredClone(S.ledger);}
+  let before,historyBefore;
+  try{before=structuredClone(S.ledger);historyBefore=S.ledgerHistory===undefined?undefined:structuredClone(S.ledgerHistory);}
   catch(e){return {ok:false,persistido:false,error:'Não foi possível preparar o fechamento. Nada foi aplicado.'};}
   const balance=S.params.saldoAtu;
   const log=S.dataGovernance&&S.dataGovernance.changeLog;
   const logBefore=Array.isArray(log)?log.slice():null;
   const restore=()=>{
     S.ledger=before;S.params.saldoAtu=balance;
+    if(historyBefore===undefined)delete S.ledgerHistory;else S.ledgerHistory=historyBefore;
     if(logBefore){log.splice(0,log.length,...logBefore);S.dataGovernance.changeLog=log;}
   };
-  try{fn();}
+  let result;
+  try{result=fn()||{};if(result.ok===false){restore();return {...result,persistido:false};}}
   catch(e){restore();hideStaleSavedTag();return {ok:false,persistido:false,error:'Não foi possível aplicar o fechamento. Nada foi gravado.'};}
   let written;
   try{written=save();}
@@ -69,7 +71,7 @@ function ledgerMutate(fn){
     return {ok:false,persistido:false,error:'Gravação recusada. O fechamento não foi alterado; resolva a falha antes de tentar novamente.'};
   }
   if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno indeterminado do fechamento diário');hideStaleSavedTag();return unknown();}
-  return {ok:true,persistido:true};
+  return {...result,ok:true,persistido:true};
 }
 let ledgerStatusTimer=null;
 function ledgerFeedback(message,ok){
@@ -78,50 +80,156 @@ function ledgerFeedback(message,ok){
   status.textContent=message;status.className='fx-status '+(ok?'ok':'err');
   if(ok)ledgerStatusTimer=setTimeout(()=>{status.textContent='';},2500);
 }
-function renderLedger(){
-  const dEl=$('ldDate'); if(dEl && !dEl.value) dEl.value=todayISO();
-  const tb=$('ledgerBody'); if(!tb) return;
-  const led=ledgerSorted();
-  tb.innerHTML=[...led].reverse().map(e=>{
-    const i=S.ledger.indexOf(e);
-    const dd=S.params.saldoIni>0?Math.max(0,(S.params.saldoIni-e.saldo)/S.params.saldoIni):0;
-    return `<tr>
-      <td class="hl">${esc(e.data)}</td>
-      <td class="${e.resultado>=0?'pos':'neg'}">${fmtMoney2(e.resultado)}</td>
-      <td>${fmtMoney2(e.saldo)}</td>
-      <td class="${dd>0?'neg':'muted'}">${dd>0?fmtPct(dd):'—'}</td>
-      <td class="muted">${esc(e.nota||'')}</td>
-      <td><button class="row-del" data-ldel="${i}" title="Remover lançamento">✕</button></td>
-    </tr>`;
-  }).join('');
-  tb.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',()=>{
-    // No UNKNOWN a tentativa fica em memória, mas a linha anterior continua no
-    // DOM. Recusar antes de consultar seu índice evita repetir o ato ou lançar.
-    if(jpWealthPersistenceOutcomeIsUnknown()){
-      hideStaleSavedTag();
-      ledgerFeedback('✗ Gravação indeterminada. Não repita a ação; confira a base salva antes de continuar.',false);
-      return;
-    }
-    const i=+b.dataset.ldel;
-    const entry=S.ledger[i];
-    if(!entry){ledgerFeedback('✗ Lançamento indisponível. Atualize a visão antes de continuar.',false);return;}
-    if(confirm('Remover o lançamento de '+entry.data+'?')){
-      const dataRemovida=entry.data;
-      const result=ledgerMutate(()=>{
-        S.ledger.splice(i,1); syncSaldoAtuFromLedger();
-        if(typeof dgLogChange==='function') dgLogChange('ledger','deleted',dataRemovida,'Fechamento diário removido ('+dataRemovida+')');
-      });
-      if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
-      ledgerFeedback('✓ fechamento removido',true);
-      renderLedger(); renderDash(); renderParams(); render();
-    }
-  }));
-  renderAcct();
-  renderAuditLog();
+// Ledger v2 is an explicit command projection over the compatible S.ledger list.
+// History preserves facts removed from that projection; reads never assign IDs.
+function ledgerContext(input){
+  const source=input||(window.JPWForex&&window.JPWForex.state&&window.JPWForex.state.recordContext?window.JPWForex.state.recordContext():{});
+  return {accountId:typeof source.accountId==='string'&&source.accountId?source.accountId:null,
+    periodId:typeof source.periodId==='string'&&source.periodId?source.periodId:null,
+    policyVersion:source.policyVersion||null};
 }
+function ledgerId(row,index){return row.id||'legacy:'+row.data+':'+index;}
+function ledgerRows(){return S.ledger.map((r,i)=>({...structuredClone(r),id:ledgerId(r,i),version:r.version||0,
+  provenance:r.accountId&&r.periodId?'IDENTIFIED':'LEGACY_UNRESOLVED'}));}
+function ledgerFind(id){return S.ledger.find((r,i)=>ledgerId(r,i)===id);}
+function ledgerValidDate(value){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(value)))return false;
+  const d=new Date(value+'T12:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===value;
+}
+function ledgerFinite(value){return (typeof value==='number'||typeof value==='string'&&value.trim()!=='')&&Number.isFinite(Number(value));}
+function ledgerEvent(type,before,after,reason){
+  if(S.ledgerHistory===undefined)S.ledgerHistory={schemaVersion:1,events:[]};
+  if(S.ledgerHistory.schemaVersion!==1||!Array.isArray(S.ledgerHistory.events))throw new Error('Histórico incompatível');
+  const event={id:'lde_'+crypto.randomUUID(),type,at:new Date().toISOString(),reason:String(reason||''),
+    before:before?structuredClone(before):null,after:after?structuredClone(after):null};
+  S.ledgerHistory.events.push(event);
+  if(typeof dgLogChange==='function')dgLogChange('ledger',type,(after||before).id||'',type+' · '+(after||before).data);
+  return event;
+}
+function ledgerRecord(input,{id=null,reason='',expectedVersion=null,allowBackdate=false,context,reconcileContext=false}={}){
+  return ledgerMutate(()=>{
+    const old=id?ledgerFind(id):null;
+    if(id&&!old)return {ok:false,error:'Lançamento não encontrado. Atualize a visão.'};
+    if(old&&expectedVersion!==null&&(old.version||0)!==expectedVersion)return {ok:false,error:'A versão foi alterada. Revise o lançamento antes de confirmar.'};
+    if(old&&!String(reason).trim())return {ok:false,error:'Informe o motivo da correção.'};
+    if(!ledgerValidDate(input.data)||!ledgerFinite(input.resultado))return {ok:false,error:'Informe data válida e resultado finito. Zero é válido.'};
+    if(S.ledger.some(r=>r!==old&&r.data===input.data))return {ok:false,error:'Já existe fechamento nesta data. Use a correção explícita da linha.'};
+    const later=S.ledger.filter(r=>r!==old&&r.data>input.data);
+    if(later.length&&!allowBackdate)return {ok:false,error:'Há fechamentos posteriores. Confirme que os saldos históricos serão preservados.'};
+    const previous=ledgerSorted().filter(r=>r!==old&&r.data<input.data).slice(-1)[0];
+    const opening=previous&&ledgerFinite(previous.saldo)?Number(previous.saldo):ledgerFinite(S.params.saldoIni)?Number(S.params.saldoIni):null;
+    const automatic=input.saldo===''||input.saldo==null;
+    if((automatic&&!ledgerFinite(opening))||(!automatic&&!ledgerFinite(input.saldo)))return {ok:false,error:'Saldo de referência ou fechamento inválido.'};
+    const saldo=automatic?opening+Number(input.resultado):Number(input.saldo);
+    const ctx=old&&!reconcileContext?{accountId:old.accountId||null,periodId:old.periodId||null,policyVersion:old.policyVersion||null}:ledgerContext(context);
+    if(reconcileContext&&(!ctx.accountId||!ctx.periodId))return {ok:false,error:'Vinculação exige conta e período identificados.'};
+    const after={...(old||{}),...ctx,id:old&&old.id||'ld_'+crypto.randomUUID(),version:(old&&old.version||0)+1,
+      data:input.data,resultado:Number(input.resultado),saldo,nota:String(input.nota||'').trim(),
+      referenceBalance:old?old.referenceBalance??null:ledgerFinite(S.params.saldoIni)?Number(S.params.saldoIni):null,
+      createdAt:old&&old.createdAt||null,updatedAt:new Date().toISOString(),
+      origin:old&&old.origin||'MANUAL',balanceInput:automatic?'DERIVED_FROM_PREVIOUS':'OBSERVED'};
+    if(!old)after.createdAt=after.updatedAt;
+    const before=old?structuredClone(old):null;
+    if(old)S.ledger[S.ledger.indexOf(old)]=after;else S.ledger.push(after);
+    ledgerEvent(old?'CORRECTED':'RECORDED',before,after,reason);
+    syncSaldoAtuFromLedger();return {ok:true,row:structuredClone(after)};
+  });
+}
+function ledgerCorrect(id,input,options={}){return ledgerRecord(input,{...options,id});}
+function ledgerVoid(id,{reason,expectedVersion=null}={}){
+  return ledgerMutate(()=>{
+    const row=ledgerFind(id);
+    if(!row)return {ok:false,error:'Lançamento não encontrado.'};
+    if(!String(reason||'').trim())return {ok:false,error:'Informe o motivo da anulação.'};
+    if(expectedVersion!==null&&(row.version||0)!==expectedVersion)return {ok:false,error:'A versão foi alterada. Atualize a visão.'};
+    ledgerEvent('VOIDED',row,null,reason);S.ledger.splice(S.ledger.indexOf(row),1);syncSaldoAtuFromLedger();return {ok:true};
+  });
+}
+// Completeness is declared for a specific preview, never inferred from weekdays.
+function ledgerMonthlyActual(month,context={}){
+  const ctx=ledgerContext(context), all=ledgerRows(), rows=all.filter(r=>r.data.slice(0,7)===month&&r.accountId===ctx.accountId&&r.periodId===ctx.periodId);
+  const issues=[];
+  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))issues.push('Mês inválido.');
+  if(!ctx.accountId||!ctx.periodId)issues.push('Selecione conta e período identificados. Legado sem origem não é vinculado automaticamente.');
+  if(all.some(r=>r.data.slice(0,7)===month&&(!r.accountId||!r.periodId)))issues.push('Existem fechamentos com origem não resolvida neste mês. Vincule-os explicitamente antes de confirmar completude.');
+  if(!rows.length)issues.push('Nenhum fechamento identificado neste mês.');
+  rows.sort((a,b)=>a.data.localeCompare(b.data));
+  const previous=all.filter(r=>r.data<month+'-01'&&r.accountId===ctx.accountId&&r.periodId===ctx.periodId).sort((a,b)=>a.data.localeCompare(b.data)).slice(-1)[0];
+  const opening=previous?previous.saldo:rows.length?rows[0].referenceBalance:null;
+  let expected=ledgerFinite(opening)?Number(opening):null;
+  rows.forEach(r=>{if(!ledgerFinite(r.resultado)||!ledgerFinite(r.saldo)||!ledgerFinite(expected)){issues.push('Fechamento incompleto.');return;}expected+=Number(r.resultado);if(Math.abs(expected-Number(r.saldo))>0.005)issues.push('Cadeia de saldos divergente em '+r.data+'. Corrija ou documente os fluxos antes de importar.');});
+  if(context.complete!==true)issues.push('Completude mensal ainda não confirmada pelo operador.');
+  const source={system:'JPW_DAILY_LEDGER',schemaVersion:1,accountId:ctx.accountId,periodId:ctx.periodId,month,
+    rows:rows.map(r=>({id:r.id,version:r.version,data:r.data,resultado:r.resultado,saldo:r.saldo,policyVersion:r.policyVersion||null})),
+    openingBalanceUsd:opening,closingBalanceUsd:rows.length?rows[rows.length-1].saldo:null,
+    complete:context.complete===true};
+  source.version=JSON.stringify(source);
+  return {status:issues.length?'PARTIAL':'COMPLETE',issues,source,profitUsd:rows.length&&rows.every(r=>ledgerFinite(r.resultado))?rows.reduce((sum,r)=>sum+Number(r.resultado),0):null};
+}
+const ledgerUI={filter:'',month:'',sort:'desc',selected:null,edit:null,draft:null};
+function ledgerRefreshConsumers(){renderLedger();if(typeof renderDash==='function')renderDash();if(typeof renderParams==='function')renderParams();if(typeof render==='function')render();}
+function ledgerMountTools(tb){
+  const card=tb.closest('[data-layout-card]');if(!card||card.querySelector('#ledgerTools'))return;
+  const tools=document.createElement('div');tools.id='ledgerTools';tools.className='ledger-tools';
+  tools.innerHTML='<label>Buscar <input type="search" id="ledgerFilter" placeholder="Data ou nota"></label><label>Mês <input type="month" id="ledgerMonth"></label><label>Ordem <select id="ledgerSort"><option value="desc">Mais recente primeiro</option><option value="asc">Mais antigo primeiro</option></select></label><span id="ledgerCount" aria-live="polite"></span>';
+  card.querySelector('.jp-table-scroll').before(tools);
+  [['ledgerFilter','filter'],['ledgerMonth','month'],['ledgerSort','sort']].forEach(([id,key])=>{
+    $(id).addEventListener('input',e=>{ledgerUI[key]=e.target.value;renderLedger();});
+  });
+  const editor=document.createElement('div');editor.id='ledgerInlineEditor';editor.className='ledger-inline-editor';editor.hidden=true;tools.after(editor);
+}
+function ledgerBeginEdit(id){
+  const row=ledgerFind(id);if(!row)return;
+  ledgerUI.edit={id,version:row.version||0};ledgerUI.draft={...row};
+  const el=$('ledgerInlineEditor');el.hidden=false;
+  el.innerHTML=`<h3>Corrigir fechamento de ${esc(row.data)}</h3><div class="params-grid">${[['data','Data','date'],['resultado','Resultado USD','number'],['saldo','Saldo USD','number'],['nota','Nota','text']].map(([key,label,type])=>`<label>${label}<input data-ledger-edit="${key}" type="${type}" ${type==='number'?'step="0.01"':''} value="${esc(String(row[key]??''))}"></label>`).join('')}<label>Motivo da correção<input id="ledgerEditReason" type="text"></label><label>Identidade da conta<input id="ledgerEditAccount" value="${esc(row.accountId||'')}"></label><label>Identidade do período<input id="ledgerEditPeriod" value="${esc(row.periodId||'')}"></label></div><label><input type="checkbox" id="ledgerEditLink"> Confirmo a vinculação explícita desta origem</label><p>Os saldos posteriores serão preservados. Revise a cadeia após uma correção.</p><button type="button" id="ledgerEditSave">Salvar correção</button><button type="button" id="ledgerEditCancel">Cancelar</button><p id="ledgerEditStatus" role="status"></p>`;
+  el.querySelectorAll('[data-ledger-edit]').forEach(input=>input.addEventListener('input',()=>{ledgerUI.draft[input.dataset.ledgerEdit]=input.value;}));
+  $('ledgerEditCancel').onclick=()=>{el.hidden=true;ledgerUI.edit=null;ledgerUI.draft=null;document.querySelector('[data-ledger-row="'+CSS.escape(id)+'"] [data-ledger-field]')?.focus();};
+  $('ledgerEditSave').onclick=()=>{
+    const res=ledgerCorrect(id,ledgerUI.draft,{reason:$('ledgerEditReason').value,expectedVersion:ledgerUI.edit.version,allowBackdate:true,reconcileContext:$('ledgerEditLink').checked,context:{accountId:$('ledgerEditAccount').value.trim(),periodId:$('ledgerEditPeriod').value.trim(),policyVersion:ledgerContext().policyVersion}});
+    if(!res.ok){$('ledgerEditStatus').textContent=res.error;return;}
+    el.hidden=true;ledgerUI.edit=null;ledgerUI.draft=null;ledgerFeedback('✓ correção registrada',true);ledgerRefreshConsumers();
+  };
+  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();$('ledgerEditCancel').click();}if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();$('ledgerEditSave').click();}};
+  el.querySelector('input').focus();
+}
+function renderLedger(){
+  const dEl=$('ldDate');if(dEl&&!dEl.value)dEl.value=todayISO();
+  const tb=$('ledgerBody');if(!tb)return;ledgerMountTools(tb);
+  const rows=ledgerRows().filter(r=>(!ledgerUI.month||r.data.startsWith(ledgerUI.month))&&(!ledgerUI.filter||(r.data+' '+(r.nota||'')).toLowerCase().includes(ledgerUI.filter.toLowerCase()))).sort((a,b)=>ledgerUI.sort==='asc'?a.data.localeCompare(b.data):b.data.localeCompare(a.data));
+  const selected=rows.find(r=>r.id===ledgerUI.selected)||rows[0];
+  if(selected)ledgerUI.selected=selected.id;
+  tb.innerHTML=rows.map(r=>{
+    const ref=ledgerFinite(r.referenceBalance)?r.referenceBalance:null;
+    const dd=ref>0?Math.max(0,(ref-r.saldo)/ref):null;
+    const cell=(key,text)=>`<td data-ledger-field="${key}" tabindex="${r.id===ledgerUI.selected&&key==='data'?'0':'-1'}">${text}</td>`;
+    return `<tr data-ledger-row="${esc(r.id)}" aria-selected="${r.id===ledgerUI.selected}">${cell('data',esc(r.data))}${cell('resultado',fmtMoney2(r.resultado))}${cell('saldo',fmtMoney2(r.saldo))}<td>${dd==null?'—':fmtPct(dd)}<span class="sr-only"> derivado</span></td>${cell('nota',esc(r.nota||''))}<td><button type="button" data-ledger-correct="${esc(r.id)}">Corrigir</button><button type="button" class="row-del" data-ldel="${S.ledger.findIndex(x=>ledgerId(x,S.ledger.indexOf(x))===r.id)}" data-ledger-void="${esc(r.id)}" title="Anular lançamento preservando auditoria">✕</button><small>${r.provenance==='LEGACY_UNRESOLVED'?'origem pendente':'v'+r.version}</small></td></tr>`;
+  }).join('');
+  if($('ledgerCount'))$('ledgerCount').textContent=rows.length+' de '+S.ledger.length+' lançamentos';
+  tb.querySelectorAll('[data-ledger-correct]').forEach(b=>b.onclick=()=>ledgerBeginEdit(b.dataset.ledgerCorrect));
+  tb.querySelectorAll('[data-ledger-void]').forEach(b=>b.onclick=()=>{
+    const row=ledgerFind(b.dataset.ledgerVoid);if(!row)return;
+    if(!confirm('Anular o lançamento de '+row.data+'? A auditoria preservará o original.'))return;
+    const reason=prompt('Motivo da anulação:');if(reason===null)return;
+    const res=ledgerVoid(b.dataset.ledgerVoid,{reason,expectedVersion:row.version||0});
+    if(!res.ok){ledgerFeedback('✗ '+res.error,false);return;}ledgerFeedback('✓ fechamento anulado',true);ledgerRefreshConsumers();
+  });
+  tb.querySelectorAll('[data-ledger-field]').forEach(cell=>{
+    const select=()=>{tb.querySelectorAll('[data-ledger-field]').forEach(c=>c.tabIndex=-1);cell.tabIndex=0;ledgerUI.selected=cell.closest('tr').dataset.ledgerRow;tb.querySelectorAll('tr').forEach(r=>r.setAttribute('aria-selected',String(r.dataset.ledgerRow===ledgerUI.selected)));};
+    cell.onclick=()=>{select();cell.focus();};cell.ondblclick=()=>ledgerBeginEdit(cell.closest('tr').dataset.ledgerRow);
+    cell.onkeydown=e=>{
+      if(e.key==='Enter'||e.key==='F2'){e.preventDefault();ledgerBeginEdit(cell.closest('tr').dataset.ledgerRow);return;}
+      const cells=[...tb.querySelectorAll('[data-ledger-field]')],i=cells.indexOf(cell),delta={ArrowLeft:-1,ArrowRight:1,ArrowUp:-4,ArrowDown:4}[e.key];
+      if(delta!==undefined){e.preventDefault();const next=cells[Math.max(0,Math.min(cells.length-1,i+delta))];next.click();}
+    };
+  });
+  renderAcct();renderAuditLog();
+}
+window.JPWLedger={rows:ledgerRows,record:ledgerRecord,correct:ledgerCorrect,void:ledgerVoid,monthlyActual:ledgerMonthlyActual,render:renderLedger};
 function renderAuditLog(){
   const box=$('auditLogBox'); if(!box) return;
   const items=[];
+  (S.ledgerHistory&&Array.isArray(S.ledgerHistory.events)?S.ledgerHistory.events:[]).slice().reverse().forEach(e=>items.push('<b>'+esc(e.type)+' · '+esc(e.at)+'</b> '+esc(e.reason)+'<details><summary>Antes / depois</summary><pre>'+esc(JSON.stringify({before:e.before,after:e.after},null,2))+'</pre></details>'));
   S.transitionLog.forEach(t=>{
     const quando=String(t.ts||'').replace('T',' ').slice(0,16);
     items.push(`<b style="color:var(--ink)">[${esc(quando)}]</b> ${esc(String(t.fase))} — ${esc(JSON.stringify(t.resumo))}`);
@@ -139,7 +247,7 @@ function exportAudit(){
     exportadoEm:new Date().toISOString(), versao:'V9.1',
     params:S.params, cycleRealizado:S.cycleRealizado, quarantine:S.quarantine,
     protocolBreaches:S.protocolBreaches, transitionLog:S.transitionLog,
-    ledger:ledgerSorted(), fases:S.phases, contas:contasSemSegredo,
+    ledger:ledgerSorted(), ledgerHistory:S.ledgerHistory||null, fases:S.phases, contas:contasSemSegredo,
   };
   const blob=new Blob([JSON.stringify(payload,(k,v)=>k==='investorPassword'?'':v,2)],{type:'application/json'});
   const a=document.createElement('a');

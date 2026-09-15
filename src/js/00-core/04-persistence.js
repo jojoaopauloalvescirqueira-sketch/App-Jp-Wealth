@@ -606,17 +606,13 @@ const PHASE_STRUCTURAL_KEYS=['title','cls','faseNome','ddtxt','alavtxt'];
 function canonicalizeStructuralMetadata(){
   if(Array.isArray(S.phases)){
     S.phases.forEach((ph,i)=>{
-      // Base legítima nunca tem uma quinta grade (o app não cria fase); se vier uma,
-      // ela herda a metadata da última fase conhecida em vez de manter string arbitrária.
-      const ref=DEFAULTS.phases[Math.min(i,DEFAULTS.phases.length-1)];
-      if(!ph || typeof ph!=='object'){
-        // Ordens vazias de propósito: a metadata é restaurada, mas nenhuma operação
-        // fictícia dos DEFAULTS entra numa base real.
-        S.phases[i]={...structuredClone(ref), orders:[]};
-        return;
-      }
-      PHASE_STRUCTURAL_KEYS.forEach(k=>{ ph[k]=ref[k]; });
-      if(!Array.isArray(ph.orders)) ph.orders=[];
+      if(!ph||typeof ph!=='object'||Array.isArray(ph))throw new Error('Grade Forex inválida; nenhuma reconstrução automática.');
+      if(!Array.isArray(ph.orders))throw new Error('Ordens Forex ausentes; preserve a base para recuperação.');
+      const current=ph.policyVersion===JPWForex.policy.version;
+      const ref=current?DEFAULTS.phases[i]:null;
+      // Labels are inert canonical presentation, not reconstruction of historical phase.
+      if(ref)PHASE_STRUCTURAL_KEYS.forEach(k=>{ph[k]=ref[k];});
+      else {ph.title='GRADE LEGADA '+(i+1);ph.cls='p1';ph.faseNome='LEGACY '+(i+1);ph.ddtxt='LEGACY_UNRESOLVED';ph.alavtxt='Histórico';}
     });
   }
   // Ticker é sempre alfanumérico maiúsculo — a mesma normalização que o app já aplica a
@@ -627,22 +623,9 @@ function canonicalizeStructuralMetadata(){
       if(ins && typeof ins==='object') ins.name=String(ins.name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
     });
   }
-  // Matriz Quadrifásica: catálogo fechado pela MESMA razão das fases acima — nenhuma tela
-  // do app escreve ddmin/ddmax/alav. O card em Parâmetros é somente-leitura (tbody vazio
-  // preenchido por render, sem input), enquanto pMDD/pAlarm/pGenRisk ao lado SÃO editáveis:
-  // a matriz é justamente o que a interface nega ao operador.
-  //
-  // A guarda adiante valida a FORMA (4 linhas, campos numéricos) e por isso deixava passar
-  // qualquer VALOR vindo de arquivo. Um backup com ddmax:0.99/alav:99 atravessava e passava
-  // a definir a fase vigente, o teto de risco e o teto de alavancagem — compute(),
-  // phaseTetoRisco() e o veredito de coerência leem daqui. O terminal exibiria "COERENTE"
-  // com exposição muito além do limite estatutário.
-  //
-  // Isto NÃO altera parâmetro normativo: reconstrói a matriz a partir da fonte oficial
-  // (DEFAULTS, que expressa o Estatuto) em vez de aceitar a do arquivo. Nenhum valor novo
-  // é introduzido e nenhum dado do operador é tocado — ordens, preços, tetos por
-  // instrumento, banimentos e saldos seguem intactos.
-  if(Array.isArray(S.matrix)) S.matrix=structuredClone(DEFAULTS.matrix);
+  // Imported/legacy matrices remain evidence. Current calculations never read S.matrix.
+  // No import may activate a policy: JPWForex.policy is immutable and code-owned.
+
 }
 // ---- Planejamento FX: guarda ESTRUTURAL do agregado no boot ----
 // migrate() roda em load() (06-boot.js) antes dos módulos 05-fx-planning/**
@@ -654,21 +637,11 @@ function canonicalizeStructuralMetadata(){
 // camada de acesso (05-fx-planning/03-fx-state.js), que só roda após a carga
 // completa e nunca grava a versão limpa de volta sem mutação explícita.
 function fxPlanningNormalizeState(){
-  if(!S.fxPlanning || typeof S.fxPlanning!=='object' || Array.isArray(S.fxPlanning))
-    S.fxPlanning=structuredClone(DEFAULTS.fxPlanning);
-  const fx=S.fxPlanning;
-  if(!Number.isFinite(+fx.schemaVersion) || +fx.schemaVersion<1) fx.schemaVersion=1;
-  if(fx.plan!==null && (typeof fx.plan!=='object' || Array.isArray(fx.plan))) fx.plan=null;
-  if(fx.plan && (!fx.plan.baseline || typeof fx.plan.baseline!=='object' || Array.isArray(fx.plan.baseline))) fx.plan=null; // sem baseline não há plano válido
-  if(fx.plan){
-    if(!fx.plan.current || typeof fx.plan.current!=='object' || Array.isArray(fx.plan.current)) fx.plan.current=structuredClone(fx.plan.baseline);
-    if(!fx.plan.actuals || typeof fx.plan.actuals!=='object' || Array.isArray(fx.plan.actuals)) fx.plan.actuals={};
-    if(!Array.isArray(fx.plan.contributions)) fx.plan.contributions=[];
-    if(!Array.isArray(fx.plan.revisions)) fx.plan.revisions=[];
-  }
-  if(!Array.isArray(fx.auditLog)) fx.auditLog=[];
-  if(fx.auditLog.length>400) fx.auditLog=fx.auditLog.slice(-400);
+  // Absence in an old document is supported. Existing data, including future
+  // versions and malformed records, is preserved for the domain to diagnose.
+  if(S.fxPlanning==null)S.fxPlanning=structuredClone(DEFAULTS.fxPlanning);
 }
+
 // Estudos NoCoda: guarda ESTRUTURAL de boot. Vive aqui, e não no módulo da
 // feature, porque migrate() roda dentro de load() antes de qualquer script
 // tardio existir — o mesmo motivo dos três normalizadores acima.
@@ -730,7 +703,7 @@ function operationRecordId(){ return 'op_'+Date.now().toString(36)+'_'+Math.rand
 // de backup adulterado e negativo devolvem null.
 function operationPhaseIdxOrNull(v){
   if(typeof v!=='number' || !Number.isFinite(v) || v<0) return null;
-  return Math.min(3, Math.floor(v));
+  return v<=5?Math.floor(v):null;
 }
 
 // Carimba um evento de transição com a identidade da operação VIVA no ato, e
@@ -760,7 +733,7 @@ function operationStampTransition(ev, gridPhaseIdx){
 // Sonda da Fase da Conta VIGENTE. Distingue TRÊS desfechos, e a distinção é o
 // ponto todo — antes, um `catch` mudo fundia os dois últimos:
 //
-//   {ok:true,  idx:0..3}  fase estabelecida
+//   {ok:true,  idx:0..5}  fase estabelecida
 //   {ok:true,  idx:null}  NÃO APLICÁVEL — estado insuficiente ou legado. É
 //                         fluxo normal, tratado por verificação explícita, e
 //                         nunca por exceção.
@@ -770,23 +743,17 @@ function operationStampTransition(ev, gridPhaseIdx){
 // As precondições são checadas ANTES de chamar compute() justamente para que o
 // try não vire muleta de fluxo normal: params ausente e matriz malformada são
 // estados legítimos de base legada, e o helper os trata sozinho.
-function accountPhaseProbe(){
-  if(typeof compute!=='function') return {ok:true, idx:null};
-  if(!S.params || typeof S.params!=='object') return {ok:true, idx:null};
-  if(!Array.isArray(S.matrix) || !S.matrix.length) return {ok:true, idx:null};
-  try{
-    const c=compute();
-    if(!c || !c.fase || typeof c.fase.nome!=='string') return {ok:true, idx:null};
-    const idx=S.matrix.findIndex(m=>m && m.nome===c.fase.nome);
-    // compute() TEVE sucesso e devolveu uma fase que nao existe na matriz
-    // normativa. Isso nao e "nao aplicavel" — e inconsistencia entre o calculo
-    // e a matriz. Devolver {ok:true, idx:null} aqui empacotava um defeito real
-    // junto de "ainda nao ha dados", e a lacuna sumia sem deixar marca.
-    if(idx<0) return {ok:false, erro:'fase computada ("'+String(c.fase.nome)+'") ausente de S.matrix'};
-    return {ok:true, idx};
-  }catch(e){
-    return {ok:false, erro:String((e && e.message) || e)};
-  }
+function accountPhaseProbe(context){
+  if(!globalThis.JPWForex||!JPWForex.state||!JPWForex.readModel)return {ok:true,idx:null};
+  try {
+    const result=JPWForex.state.read(context).accountPhase;
+    if(result.status==='OK'){
+      if(!Number.isInteger(result.value)||result.value<1||result.value>6)return {ok:false,erro:'Fase calculada fora da matriz V11.'};
+      return {ok:true,idx:result.value-1};
+    }
+    if(result.compulsoryClose)return {ok:true,idx:null};
+    return {ok:true,idx:null};
+  }catch(error){return {ok:false,erro:String(error.message||error)};}
 }
 
 // Compatibilidade de leitura para quem só quer o índice.
@@ -821,7 +788,7 @@ function currentAccountPhaseIdx(){ const p=accountPhaseProbe(); return p.ok?p.id
 function operationTouchAccountPhase(){
   const op=S.activeOperation;
   if(!op || typeof op!=='object' || Array.isArray(op)) return;
-  const probe=accountPhaseProbe();
+  const probe=accountPhaseProbe({accountId:op.recordContext&&op.recordContext.accountId,periodId:op.recordContext&&op.recordContext.periodId});
   if(!probe.ok){
     op.phaseCaptureFault={at:new Date().toISOString(), reason:probe.erro};
     if(typeof console!=='undefined' && console.error){
@@ -843,9 +810,8 @@ function operationTouchAccountPhase(){
 // fechamento — e nunca por render: timestamp recalculado a cada repintura não
 // seria evidência, seria ruído.
 //
-// A Gênese é identificada por POSIÇÃO (fase 1, linha 1), a mesma regra que
-// genesisOrder() já usa e que checkPhaseCap() aplica normativamente ao teto do
-// Art. 8.6. Não é taxonomia nova: é a que o app já executa.
+// Novos registros declaram o papel GENESIS explicitamente. A posição de
+// grades históricas é somente referência legada, nunca autorização V11.
 //
 // Carimba UMA vez. Reabrir uma ordem não reescreve a abertura original, e
 // fechar de novo não move o fechamento — proveniência não se sobrescreve.
@@ -881,7 +847,7 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   // cujas ordens podem nao ter carimbo nenhum: ali a ausencia de carimbo e
   // esperada e nao indica orfandade.
   if(S.activeOperation && !jaPertencia && !S.activeOperation.adoptedLegacyAt
-     && (statusDepois==='Aberta' || statusDepois==='Fechada')
+     && (['Aberta','Fechada','Pendente'].includes(statusDepois))
      && typeof operationLiveOrders==='function'){
     const outras=operationLiveOrders().filter(x=>x && x.o!==o).length;
     if(outras===0){
@@ -896,8 +862,8 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
       S.activeOperation=null;
     }
   }
-  if((statusDepois==='Aberta' || statusDepois==='Fechada') && !S.activeOperation){
-    const genese = statusDepois==='Aberta' && pi===0 && oi===0;
+  if((['Aberta','Fechada','Pendente'].includes(statusDepois)) && !S.activeOperation){
+    const genese = statusDepois==='Aberta' && o.role==='GENESIS';
     S.activeOperation={
       schemaVersion:1,
       operationId:operationRecordId(),
@@ -917,7 +883,7 @@ function operationOnOrderStatus(o, statusDepois, pi, oi){
   //
   // Aqui a captura opera sempre sobre a entidade que PERMANECE viva depois do
   // ato: a preexistente, ou a que acabou de nascer.
-  if(S.activeOperation && (statusDepois==='Aberta' || statusDepois==='Fechada')){
+  if(S.activeOperation && (['Aberta','Fechada','Pendente'].includes(statusDepois))){
     operationTouchAccountPhase();
   }
 }
@@ -1206,7 +1172,7 @@ function paramsNormalizeState(){
   if(typeof S.params.inicio!=='string') S.params.inicio=String(S.params.inicio==null?'':S.params.inicio);
 }
 function migrate(){ // garante chaves novas se schema evoluir
-  for(const k in DEFAULTS){ if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
+  for(const k in DEFAULTS){ if(k==='forex'||k==='ledgerHistory')continue; if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   paramsNormalizeState(); // antes de tudo: compute() e os tetos leem daqui
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo
   mvpNotesNormalizeState(); // legado sem mvpNotes já recebeu DEFAULTS.mvpNotes acima; aqui valida a forma
@@ -1259,20 +1225,8 @@ function migrate(){ // garante chaves novas se schema evoluir
       if(br) a.broker=br.name;
     });
   }
-  // matriz de fases: compute() e phaseTetoRisco() assumem 4 linhas com ddmin/ddmax/alav numéricos.
-  // O loop genérico acima só recria a matriz se ela estiver AUSENTE — um backup corrompido/truncado
-  // (ex.: matrix:[] ou linha sem ddmax) passaria e derrubaria o boot em m[2].ddmax. Restaura o que faltar.
-  if(!Array.isArray(S.matrix) || S.matrix.length!==DEFAULTS.matrix.length){
-    S.matrix=structuredClone(DEFAULTS.matrix);
-  } else {
-    S.matrix.forEach((row,i)=>{
-      const ref=DEFAULTS.matrix[i];
-      if(!row || typeof row!=='object'
-        || typeof row.ddmin!=='number' || typeof row.ddmax!=='number' || typeof row.alav!=='number'){
-        S.matrix[i]=structuredClone(ref);
-      } else if(typeof row.nome!=='string'){ row.nome=ref.nome; }
-    });
-  }
+  // A stored matrix is historical evidence; six-phase current limits come from the registry.
+  if(!Array.isArray(S.matrix))throw new Error('Matriz histórica malformada; recuperação necessária.');
   if(!('riskPinHash' in S)) S.riskPinHash=null;
   if(!Array.isArray(S.phaseUnlocked)) S.phaseUnlocked=[true,false,false,false];
   if(!Array.isArray(S.transitionLog)) S.transitionLog=[];
@@ -1283,10 +1237,7 @@ function migrate(){ // garante chaves novas se schema evoluir
   if(!Array.isArray(S.ledgerArchive)) S.ledgerArchive=[];
   if(!S.period || typeof S.period!=='object') S.period={nome:'',profile:'base'};
   S.period.profile=normalizeRiskProfileKey(S.period.profile||'base');
-  S.profiles=riskProfilesForState();
-  const activeProfile=getActiveRiskProfile(S.period.profile);
-  S.params.refM=activeProfile.mensal; S.params.refA=activeProfile.anual;
-  S.params.fw=1; // V10: remove multiplicador fixo; aplica saldo normalizado × fator de perfil
+  // Stored profiles/parameters preserve legacy provenance and do not supply current policy.
   if(S.theme!=='dark' && S.theme!=='light') S.theme='dark'; // Mission Control: escuro é a experiência principal; escolha salva do usuário é respeitada
   if(!S.acct || typeof S.acct!=='object') S.acct={diasSemana:4.5, mesesAno:10.5};
   if(typeof S.acct.diasSemana!=='number') S.acct.diasSemana=4.5;
@@ -1354,7 +1305,7 @@ function migrate(){ // garante chaves novas se schema evoluir
     // Período (S.params.saldoIni) é a fonte única. Reconcilia aqui para que backups/estados
     // legados com valor divergente nunca sobrevivam a um load — o campo persiste só por
     // compatibilidade de formato do backup, nunca é lido como fonte de verdade em runtime.
-    S.onboarding.reserveMasterCapital=String(S.params.saldoIni||0);
+    // Nominal master capital and SI are distinct; preserve the declared legacy field.
     S.onboarding.reserveFcrRequired=String(S.onboarding.reserveFcrRequired||'');
     S.onboarding.reserveFcrCurrent=String(S.onboarding.reserveFcrCurrent||'');
     S.onboarding.reserveFcrStatus=String(S.onboarding.reserveFcrStatus||'');
@@ -1409,18 +1360,9 @@ function migrate(){ // garante chaves novas se schema evoluir
       ||(Array.isArray(S.phases)&&S.phases.some(ph=>Array.isArray(ph.orders)&&ph.orders.some(o=>o&&o.status)));
     if(temAtividade) S.onboarding.done=true;
   }
-  // migração de ordens: versões anteriores usavam 'Active' ou inferiam status pela presença
-  // de lote/entry/sl. Agora o status é explícito (Aberta/Fechada) e passou a ser o único
-  // critério para contar risco — sem isso, ordens já preenchidas silenciosamente sumiriam do cálculo.
-  if(Array.isArray(S.phases)){
-    S.phases.forEach(ph=>{
-      if(!Array.isArray(ph.orders)) return;
-      ph.orders.forEach(o=>{
-        if(o.status==='Active') o.status='Aberta';
-        else if(!o.status && o.lote>0 && o.entry>0 && o.sl>0) o.status='Aberta'; // dado preenchido = presumir aberta
-      });
-    });
-  }
+  // Forex status is an explicit recorded fact. Loading cannot promote a filled
+  // draft or translate an ambiguous legacy status into a current open order.
+  // The read model flags unresolved legacy activity without dropping its risk.
 }
 let saveTimer;
 // ---- FALHA DE GRAVAÇÃO (A-001) ----------------------------------------------

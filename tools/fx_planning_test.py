@@ -20,6 +20,7 @@ import socket
 import threading
 
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,19 +48,15 @@ def assert_close(actual, expected, tolerance=1e-9, label="valor"):
 
 
 def prepare_page(browser, url, suppress_onboarding=True):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
+    context = browser.new_context(viewport={"width": 1440, "height": 900}, service_workers="block")
     if suppress_onboarding:
         context.add_init_script("window.__onbShown=true;")
     page = context.new_page()
     observed = {"pageerror": []}
     page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
-    page.route(
-        "**/api.frankfurter.dev/**",
-        lambda route: route.fulfill(
-            status=200, content_type="application/json", body='{"rates":{}}'
-        ),
-    )
+    install_bootstrap(context)
     page.goto(url)
+    wait_bootstrap(page)
     page.wait_for_function("() => window.JPWFx && typeof reserveRequirementsCalc === 'function'")
     return context, page, observed
 
@@ -337,51 +334,41 @@ def run_engine_cases(page):
 
 
 def run_reserve_cases(page):
-    ev = page.evaluate
-    # CASOS 14/15/16 + caracterizacao da extracao de reserveCalc(): a funcao
-    # compartilhada reproduz campo a campo a matematica original do onboarding
-    # (15% do capital nominal, 6x despesas, coberturas, status, tom e deficit).
-    scenarios = [
-        # (capital, fcrCur, despesas, feoCur)
-        (10000, 1500, 1000, 6000),   # exatamente nos minimos -> Regular/Regular
-        (10000, 1200, 1000, 4500),   # deficit duplo
-        (0, 0, 0, 0),                # bordas: divisoes por zero guardadas
-        (200000, 45000, 3500, 12000),# FCR folgado, FEO insuficiente
-    ]
-    for capital, fcr_cur, monthly, feo_cur in scenarios:
-        r = ev(
-            "(args) => reserveRequirementsCalc({capital: args[0], fcrCurrent: args[1],"
-            " monthlyExpenses: args[2], feoCurrent: args[3]})",
-            [capital, fcr_cur, monthly, feo_cur],
-        )
-        fcr_req = capital * 0.15
-        feo_req = monthly * 6
-        assert_close(r["fcrReq"], fcr_req, label=f"FCR exigido ({capital})")
-        assert_close(r["feoReq"], feo_req, label=f"FEO exigido ({monthly})")
-        assert_close(r["fcrCoverage"], (fcr_cur / fcr_req * 100) if fcr_req > 0 else 0,
-                     label="cobertura FCR")
-        assert_close(r["feoCoverage"], (feo_cur / feo_req * 100) if feo_req > 0 else 0,
-                     label="cobertura FEO")
-        assert_close(r["feoMonths"], (feo_cur / monthly) if monthly > 0 else 0,
-                     label="meses FEO")
-        assert_close(r["fcrDiff"], fcr_cur - fcr_req, label="diferenca FCR")
-        assert_close(r["feoDiff"], feo_cur - feo_req, label="diferenca FEO")
-        exp_fcr_status = "Regular" if fcr_cur >= fcr_req else "Insuficiente"
-        exp_feo_status = "Regular" if feo_cur >= feo_req else "Insuficiente"
-        assert r["fcrStatus"] == exp_fcr_status, f"status FCR {capital}"
-        assert r["feoStatus"] == exp_feo_status, f"status FEO {monthly}"
-        regular = (exp_fcr_status == "Regular") + (exp_feo_status == "Regular")
-        exp_general = {2: "Reservas regulares", 1: "Reservas parcialmente insuficientes",
-                       0: "Reservas críticas"}[regular]
-        exp_tone = {2: "var(--f1)", 1: "var(--f2)", 0: "var(--f4)"}[regular]
-        assert r["generalStatus"] == exp_general, f"status geral ({regular} regulares)"
-        assert r["generalTone"] == exp_tone, "tom geral preservado"
-        assert r["hasDeficit"] == (fcr_cur < fcr_req or feo_cur < feo_req), "flag de deficit"
+    # V10 characterization is retained verbatim in campaign evidence. V11 uses
+    # explicit nominal capital and a documented six-month amount; no SI or
+    # monthly*6 substitution, and quantitative coverage never says Regular.
+    for nominal, fcr_current, six_month, feo_current in [
+        (10000, 2200, 6000, 6000), (10000, 1800, 7300, 4500),
+        (200000, 45000, 21000, 12000),
+    ]:
+        r = page.evaluate("""x => reserveRequirementsCalc({capitalNominal:x[0],si:9000,
+            fcrCurrent:x[1],sixMonthExpenseAmount:x[2],feoCurrent:x[3],
+            determinationRecorded:true,expensesApproved:true})""",
+            [nominal, fcr_current, six_month, feo_current])
+        assert_close(r['fcrReq'], nominal * .22, label='FCR V11 sobre nominal')
+        assert_close(r['feoReq'], six_month, label='FEO explicitamente apurado')
+        assert_close(r['fcrCoverage'], fcr_current / (nominal * .22) * 100)
+        assert_close(r['feoCoverage'], feo_current / six_month * 100)
+        assert_close(r['fcrDiff'], fcr_current - nominal * .22)
+        assert_close(r['feoDiff'], feo_current - six_month)
+        assert r['status'] == 'PENDING_GOVERNANCE'
+        assert r['fcrStatus'] == ('Insuficiente' if fcr_current < nominal * .22 else 'Constituído — verificar governança')
+        assert r['feoStatus'] == ('Insuficiente' if feo_current < six_month else 'Constituído — verificar governança')
+        assert r['hasDeficit'] == (fcr_current < nominal * .22 or feo_current < six_month)
+    legacy = page.evaluate("() => reserveRequirementsCalc({capital:10000,monthlyExpenses:1000,fcrCurrent:1500,feoCurrent:6000})")
+    assert legacy['fcrReq'] is None and legacy['feoReq'] is None, 'legado não deve autorizar requisito V11'
+    assert legacy['fcrStatus'] == legacy['feoStatus'] == 'Pendente'
+    for flag in ['determinationRecorded','expensesApproved']:
+        r = page.evaluate("flag=>reserveRequirementsCalc({capitalNominal:10000,sixMonthExpenseAmount:6000,determinationRecorded:true,expensesApproved:true,[flag]:false})", flag)
+        assert r['feoReq'] is None and r['status'] == 'PENDING_GOVERNANCE'
+    absent = page.evaluate("() => reserveRequirementsCalc({})")
+    assert absent['fcrReq'] is None and absent['feoReq'] is None
+    assert absent['fcrCoverage'] is None and absent['feoCoverage'] is None
 
 
 def open_seeded(browser, url, seed_state_json):
     # Contexto novo com estado pre-semeado ANTES de qualquer script do app rodar.
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
+    context = browser.new_context(viewport={"width": 1440, "height": 900}, service_workers="block")
     context.add_init_script(
         "window.__onbShown=true;"
         f"try{{localStorage.setItem('jpwealth_v9_state', {json.dumps(seed_state_json)});}}catch(e){{}}"
@@ -389,13 +376,9 @@ def open_seeded(browser, url, seed_state_json):
     page = context.new_page()
     observed = {"pageerror": []}
     page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
-    page.route(
-        "**/api.frankfurter.dev/**",
-        lambda route: route.fulfill(
-            status=200, content_type="application/json", body='{"rates":{}}'
-        ),
-    )
+    install_bootstrap(context)
     page.goto(url)
+    wait_bootstrap(page)
     page.wait_for_function("() => window.JPWFx && window.JPWFx.state")
     return context, page, observed
 
@@ -479,16 +462,22 @@ def run_state_cases(browser, url):
     assert not obs2["pageerror"], f"pageerror na base legada: {obs2['pageerror']}"
     ctx2.close()
 
-    # Agregado corrompido (tipo inválido): guarda estrutural restaura a forma sem
-    # tocar no resto do estado e sem quebrar o boot.
+    # V11: agregado incompatível permanece intacto. A guarda recusa comandos
+    # sem transformar um documento desconhecido em plano vazio.
     corrupted = json.loads(raw_state)
     corrupted["fxPlanning"] = 5
     ctx3, page3, obs3 = open_seeded(browser, url, json.dumps(corrupted))
     corrupt_check = page3.evaluate(
-        """() => ({plan: S.fxPlanning.plan, schema: S.fxPlanning.schemaVersion,
-                   saldoIni: S.params.saldoIni})"""
+        """() => {
+          const before=JSON.stringify(S.fxPlanning),disk=localStorage.getItem('jpwealth_v9_state');
+          const result=JPWFx.state.fxScenarioSave({name:'recusado'});
+          return {aggregate:S.fxPlanning, unchanged:JSON.stringify(S.fxPlanning)===before,
+            diskUnchanged:localStorage.getItem('jpwealth_v9_state')===disk,
+            refused:result.ok===false, issue:JPWFx.state.fxEnvelopeIssue(), saldoIni:S.params.saldoIni};
+        }"""
     )
-    assert corrupt_check["plan"] is None and corrupt_check["schema"] == 1, "guarda estrutural não recuperou o agregado"
+    assert corrupt_check["aggregate"] == 5 and corrupt_check["unchanged"], "agregado incompatível foi reescrito"
+    assert corrupt_check["diskUnchanged"] and corrupt_check["refused"] and corrupt_check["issue"], "comando incompatível precisa recusar sem gravação"
     assert corrupt_check["saldoIni"] == corrupted["params"]["saldoIni"], "estado vizinho afetado pela recuperação"
     assert not obs3["pageerror"], f"pageerror com agregado corrompido: {obs3['pageerror']}"
     ctx3.close()
@@ -541,7 +530,7 @@ def run_ui_flow(browser, url):
     assert nav_contract["duplicateInternalNav"] == 0, "tabs equivalentes voltaram ao conteúdo"
     assert nav_contract["api"], "superfície visual JPWFx.ui ausente"
     assert nav_contract["routes"] == ["dashboard", "forex-overview", "personal-finance", "research-forex", "alladin"], nav_contract
-    assert nav_contract["children"] == ["forex-overview", "forex-preparation", "forex-account", "forex-operation", "forex-reconciliation", "forex-planning"], nav_contract
+    assert nav_contract["children"] == ["forex-overview", "forex-preparation", "forex-account", "forex-reserves", "forex-operation", "forex-reconciliation", "forex-planning"], nav_contract
     assert nav_contract["contextual"] == ["overview", "planning", "actuals", "table"], nav_contract
     assert nav_contract["resolved"]["accepted"] and nav_contract["resolved"]["source"] == "compatibility", nav_contract
     assert nav_contract["resolved"]["child"] == "forex-planning", nav_contract

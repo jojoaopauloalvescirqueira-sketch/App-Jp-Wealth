@@ -1,35 +1,26 @@
 // ============ MOTOR DA CONTABILIDADE (perfis V10 centralizados) ============
 function acctProfile(){ return getActiveRiskProfile(); }
+// Monthly projection belongs to JPWFx. No annual target is selected from the
+// policy range, and an absent plan is unavailable rather than a zero-return plan.
 function acctModel(){
-  const pr=acctProfile();
-  const saldoIni=S.params.saldoIni||0;
-  const diasSem=(S.acct&&S.acct.diasSemana)||4.5;
-  const mesesAno=(S.acct&&S.acct.mesesAno)||10.5;
-  const diasAno=diasSem*52*(mesesAno/12);                               // Q8
-  const target=pr.anual;                                               // E7 (pelo perfil)
-  const saldoFim=saldoIni*(1+target);                                  // E8
-  const metaDia = diasAno>0 ? Math.pow(1+target, 1/diasAno)-1 : 0;     // H12 = RATE(Q8,,-E6,E8)
-  const metaMes = mesesAno>0 ? Math.pow(1+target, 1/mesesAno)-1 : 0;   // I12 = RATE(O8,,-E6,E8)
-  return {pr, saldoIni, diasSem, mesesAno, diasAno, target, saldoFim, metaDia, metaMes};
+  const pr=acctProfile(),api=window.JPWFx;
+  const live=api&&api.state?api.state.fxOverviewLive():null;
+  const projected=live?live.forecast:[];
+  return {pr,saldoIni:S.params.saldoIni||0,diasSem:S.acct&&S.acct.diasSemana||4.5,
+    mesesAno:S.acct&&S.acct.mesesAno||10.5,diasAno:null,target:null,metaDia:null,metaMes:null,
+    saldoFim:projected.length?projected[projected.length-1].close:null,
+    available:!!live,source:'PLAN',live};
 }
-// série projetada dia-a-dia (só dias úteis seg–sex), compõe a meta diária até atingir o alvo
 function acctProjection(){
   const m=acctModel();
-  const start=new Date((S.params.inicio||todayISO())+'T00:00:00');
-  const rows=[]; let bal=m.saldoIni; const d=new Date(start); let idx=0, guard=0;
-  const hardStop=new Date(start); hardStop.setFullYear(hardStop.getFullYear()+1);
-  while(guard++<600){
-    const dow=d.getDay();
-    if(dow!==0 && dow!==6){
-      idx++;
-      const open=bal, res=bal*m.metaDia, close=bal+res;
-      rows.push({idx, date:new Date(d), iso:dateISO(d), open, res, close, cumPct:m.saldoIni>0?close/m.saldoIni-1:0});
-      bal=close;
-      if(close>=m.saldoFim || d>=hardStop) break;
-    }
-    d.setDate(d.getDate()+1);
-  }
-  return {m, start, rows};
+  const start=new Date((m.live?m.live.plan.baseline.startMonth+'-01':S.params.inicio||todayISO())+'T00:00:00');
+  const series=m.live?m.live.forecast:[];
+  const rows=series.map((r,i)=>{
+    const [year,month]=r.month.split('-').map(Number),date=new Date(year,month,0);
+    return {idx:i+1,date,iso:dateISO(date),open:r.open,res:r.profit,close:r.close,
+      cumPct:m.live.plan.baseline.initialBalanceUsd>0?r.close/m.live.plan.baseline.initialBalanceUsd-1:null};
+  });
+  return {m,start,rows};
 }
 function acctRealByDate(){ const map={}; ledgerSorted().forEach(e=>map[e.data]=e.saldo); return map; }
 function acctRealNow(){ const led=ledgerSorted(); return led.length?led[led.length-1].saldo:(S.params.saldoIni||0); }
@@ -60,61 +51,19 @@ function renderAcctSummary(m,p){
   </div>`;
 }
 function renderAcct(){
-  if(!$('acStart')) return;
-  const m=acctModel();
-  if(document.activeElement!==$('acStart')) $('acStart').value=S.params.inicio||todayISO();
-  $('acToday').value=todayISO();
-  if(document.activeElement!==$('acSaldoIni')) $('acSaldoIni').value=S.params.saldoIni;
-  if(document.activeElement!==$('acDiasSem')) $('acDiasSem').value=m.diasSem;
-  if(document.activeElement!==$('acMesesAno')) $('acMesesAno').value=m.mesesAno;
-  $('acTarget').value=(m.target*100).toFixed(1).replace('.',',')+'%  ·  '+m.pr.name;
-  $('acSaldoFim').value=fmtMoney2(m.saldoFim);
-  $('acDiasAno').value=m.diasAno.toFixed(2).replace('.',',')+' dias úteis/ano';
-  const p=acctPace();
-  $('acEnd').value=p.endDate;
-  renderAcctSummary(m,p);
-  // TRAVADOS assim que o período começa (onboarding.done): perfil, data de início, saldo
-  // inicial e programação. Mudar qualquer um no meio do período distorceria meta/MDD/DD
-  // já em curso. Única forma de mudar é "Visualizar / Editar Formulário de Início" (Configurações),
-  // que reabre o onboarding salvo sem reiniciar o ciclo operacional.
-  const locked = !!(S.onboarding && S.onboarding.done);
-  ['acStart','acSaldoIni','acDiasSem','acMesesAno'].forEach(id=>{ const el=$(id); if(el) el.disabled=locked; });
-  const bwrap=$('acctProfileBtns');
-  bwrap.innerHTML=acctProfiles().map(pr=>{
-    const on=pr.key===m.pr.key;
-    return `<button type="button" ${locked?'disabled':`data-prof="${pr.key}"`} style="flex:1;min-width:158px;text-align:left;padding:11px 14px;border-radius:10px;
-      cursor:${locked?'default':'pointer'}; opacity:${locked&&!on?'.5':'1'};
-      border:1.5px solid ${on?'var(--violet)':'var(--line)'};background:${on?'var(--indigo-deep)':'var(--panel)'}">
-      <div style="font-weight:800;font-size:calc(13px * var(--fs-scale));color:${on?'var(--violet)':'var(--ink)'}">${pr.name} · ${Math.round(pr.pct*100)}%${on&&locked?' 🔒':''}</div>
-      <div style="font-family:var(--mono);font-size:calc(10px * var(--fs-scale));color:var(--ink-dim);margin-top:3px">Anual ${(pr.anual*100).toFixed(0)}% · MDD ${(pr.mdd*100).toFixed(2).replace('.',',')}%${pr.lev!=null?' · '+fmtX(pr.lev)+'/ord':''}</div>
-    </button>`;
-  }).join('');
-  const lockNote=$('acctProfileLockNote');
-  if(locked){
-    lockNote.innerHTML='<p class="expl" style="font-size:calc(12px * var(--fs-scale));color:var(--ink-faint)">🔒 Perfil, data de início, saldo inicial e programação travados nesta área — use <b style="color:var(--ink-dim)">Visualizar / Editar Formulário de Início</b> em ⚙ Configurações para revisar ou ajustar os dados do período ativo.</p>';
-  } else {
-    lockNote.innerHTML='';
-    bwrap.querySelectorAll('[data-prof]').forEach(b=>b.addEventListener('click',()=>{
-      S.period=S.period||{}; S.period.profile=b.dataset.prof;
-      const pr=acctProfile(); S.params.refM=pr.mensal; S.params.refA=pr.anual;
-      save(); renderAcct(); renderDash(); renderParams(); render();
-    }));
-  }
-  $('acctMetas').innerHTML=`<div class="metrics" style="grid-template-columns:repeat(4,1fr)">
-    <div class="metric"><div class="k">Meta diária</div><div class="v sm">${(m.metaDia*100).toFixed(3).replace('.',',')}%</div></div>
-    <div class="metric"><div class="k">Meta mensal</div><div class="v sm">${(m.metaMes*100).toFixed(2).replace('.',',')}%</div></div>
-    <div class="metric"><div class="k">Saldo atual (real)</div><div class="v sm">${fmtMoney2(p.real)}</div></div>
-    <div class="metric"><div class="k">Resultado acumulado</div><div class="v sm" style="color:${p.real-m.saldoIni>=0?'var(--f1)':'var(--f4)'}">${fmtMoney2(p.real-m.saldoIni)} · ${(m.saldoIni>0?((p.real/m.saldoIni-1)*100):0).toFixed(2).replace('.',',')}%</div></div>
-  </div>`;
-  renderAcctPace(p);
-  renderAcctProj(p);
-  drawRvpChart2(p);
-  renderAcctSim();
-  const toggle=$('acctPeriodToggle'), detail=$('acctPeriodDetail');
-  if(toggle && detail){
-    detail.style.display=acctDetailOpen?'block':'none';
-    toggle.textContent=(acctDetailOpen?'▾':'▸')+' Ver / editar Período & Metas';
-  }
+  const box=$('acctPeriodSummary');if(!box)return;
+  const m=acctModel(),api=window.JPWFx,refs=api&&api.state&&api.state.fxPlanningReferences?api.state.fxPlanningReferences():null;
+  const percent=v=>Number.isFinite(v)?(v*100).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%':'indisponível';
+  box.innerHTML=`<div class="metrics"><div class="metric"><div class="k">Saldo inicial de referência (book)</div><div class="v sm">${fmtMoney2(m.saldoIni)}</div></div><div class="metric"><div class="k">Último saldo registrado (book)</div><div class="v sm">${fmtMoney2(acctRealNow())}</div></div><div class="metric"><div class="k">Referência mensal</div><div class="v sm">${refs?percent(refs.monthly):'indisponível'}</div></div><div class="metric"><div class="k">Referência anual distinta</div><div class="v sm">${refs&&Array.isArray(refs.annualRange)?refs.annualRange.map(percent).join(' – '):'indisponível'}</div></div></div><p class="fxp-note">Fechamentos são fatos contábeis. O saldo book não representa equity flutuante nem elegibilidade de execução.</p>`;
+  const detail=$('acctPeriodDetail'),toggle=$('acctPeriodToggle');if(detail)detail.style.display='none';if(toggle)toggle.hidden=true;
+  const chart=$('rvpChart');
+  if(chart)chart.innerHTML='<p class="fxp-note">'+(m.available?'Projeção mensal disponível no Planejamento FX, com as premissas explícitas do plano.':'Sem plano explícito: projeção indisponível. Crie um plano no Planejamento FX.')+'</p><button type="button" id="acctGoPlanning">Abrir Planejamento</button>';
+  if($('acctGoPlanning'))$('acctGoPlanning').onclick=()=>window.JPWNavigation.navigate('forex-planning');
+  const proj=$('acctProjWrap');if(proj)proj.innerHTML='';
+  const pace=$('dashCyclePace');if(pace)pace.innerHTML='<p class="fxp-note">Acompanhe ACTUAL × PLAN no Planejamento FX. As referências de retorno não determinam um ritmo obrigatório de execução.</p>';
+  const sim=$('acctSimWrap');
+  if(sim){if(Number.isFinite(m.pr.anual)&&Number.isFinite(m.pr.ddrTarget))renderAcctSim();else sim.innerHTML='<p class="fxp-note">Simulação patrimonial indisponível: perfil vigente sem premissas estatísticas homologadas. Use cenários explícitos em Planejamento.</p>';}
+  const th=$('ledgerBody')?.closest('table')?.querySelectorAll('thead th')[3];if(th)th.textContent='Queda book vs referência';
 }
 function renderAcctPace(p){
   const box=$('acctPace'); if(!box) return;

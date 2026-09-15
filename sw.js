@@ -12,6 +12,8 @@ const PRECACHE_URLS = [
   ...NORMATIVE_DOCUMENT_URLS,
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './assets/jp-wealth-logo.png',
+  './src/js/00-core/00-forex-policy.js', './src/js/10-domain/00-forex-engine.js',
+  './src/js/10-domain/00-forex-state.js', './src/js/20-ui/26-forex-engine-views.js',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
   './src/js/00-core/03-default-state.js', './src/js/00-core/04-persistence.js',
   './src/js/00-core/05-helpers.js', './src/js/00-core/06-storage-fs.js',

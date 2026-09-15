@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 import threading
 import traceback
+import notes_launcher_test as launcher
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
@@ -28,6 +29,7 @@ SEED = """() => {
   window.__onbShown=true; closeModal();
   window.__alerts=[]; window.alert=t=>window.__alerts.push(String(t));
   window.confirm=()=>true;
+  window.prompt=()=> 'Motivo sintético explícito';
   // Mantém os instrumentos da fixture econômica já concluída; o reset de
   // domínio não deve ressuscitar preços default anteriores ao bootstrap.
   const bootInstruments=structuredClone(S.instruments);
@@ -352,21 +354,26 @@ def main():
         assert json.loads(after['raw'])['atr55']==13
         second.close()
     def reserves(p,o):
-        p.evaluate("""() => {S.params.saldoIni=10000;S.params.saldoAtu=10000;
-          S.onboarding={...S.onboarding,done:true,reserveMasterCapital:'10000',reserveFcrCurrent:'1500',reserveFcrStatus:'Regular',reserveFcrCoveragePct:'100',reserveMonthlyExpenses:'100',reserveFeoCurrent:'600',reserveFeoStatus:'Regular',reserveFeoMonthsCovered:'6',centralCashStatus:'Sim.',epStatus:'Sim, vou utilizar.'};save();openSettingsModal('parameters');}""")
-        # Actual compute is observed; no expected financial clearance invented.
-        o['before']=p.evaluate("() => ({clearance:getOperationalClearance(),panel:fxReservePanelData()})")
-        if not p.locator('#pSaldoIni').is_visible():
-            p.evaluate("() => {settingsNavigate('parameters');}")
-        p.locator('#pSaldoIni').fill('20000')
-        o['after']=p.evaluate("() => ({clearance:getOperationalClearance(),panel:fxReservePanelData(),snapshot:S.onboarding.reserveFcrStatus,stored:JSON.parse(localStorage.getItem(LSKEY)).params.saldoIni})")
-        assert o['after']['stored']==20000
-        assert o['after']['panel']['fcrStatus']=='Insuficiente' and o['after']['snapshot']=='Regular'
-        assert not any('Reservas segregadas' in r for r in o['after']['clearance']['reasons'])
-        o['classification']='NEEDS_HUMAN_RULE — inconsistência caracterizada, sem aprovação normativa'
+        # V11 supersedes the earlier discrepancy characterization: explicit
+        # nominal Master capital determines FCR; legacy onboarding is retained
+        # as history and cannot certify constitution or release a cycle.
+        actual=p.evaluate("""() => {
+          const index=S.accounts.findIndex(a=>a.tipo==='MESTRE');
+          const a=JPWForex.state.recordAccountFacts({accountIndex:index,si:10000,equity:10000,capitalNominal:5000,
+            netCashflow:0,cashflowAdjustmentRecorded:true,currency:'USD',source:'synthetic',observedAt:'2026-09-14T12:00:00Z'}, {reason:'Apuração sintética'});
+          const b=JPWForex.state.recordReserves({capitalNominal:5000,fcrConstituted:1000,feoConstituted:600,
+            sixMonthExpenseAmount:600,fcrLiquidityDays:1,feoLiquidityDays:2,verificationRecorded:true,verifiedAt:'2026-09-14T12:00:00Z',expensesApproved:true,source:'synthetic',expensePeriod:'2026-09/2027-02',determinationReference:'synthetic-reference',determinationRecorded:true}, {reason:'Reservas sintéticas'});
+          const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY),model=JPWForex.state.read();
+          renderParams();const unchanged=before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY);
+          return {a,b,unchanged,required:model.metrics.fcrRequirement,status:model.metrics.fcrStatus,opening:model.reserves.openingStatus};
+        }""")
+        o.update(actual)
+        assert actual['a']['ok'] and actual['b']['ok'],actual
+        assert actual['required']['value']==1100 and actual['required']['baseType']=='MASTER_NOMINAL_CAPITAL',actual
+        assert actual['status']['status']=='BLOCKED' and actual['opening']=='BLOCKED' and actual['unchanged'],actual
     try:
         with sync_playwright() as pw:
-            browser=pw.chromium.launch(headless=True)
+            browser=pw.chromium.launch(**launcher.launch_options())
             for action in ['create','delete','revise','actual','edit','add','remove']:
                 case('fx-'+action+'-quota-retry-reload',rejection(action,'quota'))
             for mode in ['false','blocked','recovery']:
@@ -382,7 +389,7 @@ def main():
             case('daily-cancel',cancellation)
             case('fx-month-ui-quota',ui_actual)
             case('two-tabs-refusal',two_tabs)
-            case('reserves-characterization',reserves)
+            case('reserves-v11-nominal-capital-confirmation',reserves)
             case('fx-draft-navigation',rejected_draft_navigation)
             case('fx-unknown-after-recovery',unknown_after_recovery)
             case('fx-invalid-normal',invalid_and_normal)

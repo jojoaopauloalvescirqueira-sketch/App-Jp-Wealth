@@ -20,6 +20,7 @@ import os
 import socket
 import threading
 
+import notes_launcher_test as launcher
 from playwright.sync_api import sync_playwright
 
 
@@ -42,20 +43,9 @@ def serve():
 
 
 def prepare_page(browser, url):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
-    context.add_init_script("window.__onbShown=true;")
-    page = context.new_page()
-    observed = {"pageerror": []}
-    page.on("pageerror", lambda e: observed["pageerror"].append(str(e)))
-    page.on("dialog", lambda d: d.accept())      # confirmacoes do fluxo de abertura
-    page.route(
-        "**/*",
-        lambda route: route.continue_()
-        if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
-    page.goto(url, wait_until="domcontentloaded")
-    page.wait_for_function("() => typeof renderPhases === 'function' && !!S")
+    context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
+    page, observed = launcher.prepare(context, url)
+    page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
     return context, page, observed
 
 
@@ -74,7 +64,7 @@ PREPARAR = """
     // vivo (instrumentCatalog), entao e lido daqui em vez de fixado a mao.
     const ins = (S.instruments||[]).find(i => i && i.name === 'EURUSD');
     const teto = ins && +ins.teto > 0 ? +ins.teto : 0.01;
-    g.id='G1'; g.par='EURUSD'; g.tipo='BUY'; g.lote=teto; g.entry=1.1000; g.sl=1.0950; g.tp=1.1200;
+    g.id='G1'; g.role='GENESIS'; g.par='EURUSD'; g.tipo='BUY'; g.lote=teto; g.entry=1.1000; g.sl=1.0950; g.tp=1.1200;
     renderPhases();
   };
   window.__selectStatus = (pi,oi) =>
@@ -327,227 +317,49 @@ def run_reset_does_not_leak_identity(page):
 
 
 def run_unlock_by_own_genesis_is_stamped_with_real_identity(page):
-    """A Genese que destrava fase carimba o evento com a identidade REAL.
-
-    handleStopLimitBreach destrava a fase e carimba o evento via
-    operationStampTransition, que le S.activeOperation. Enquanto o nascimento
-    ficava DEPOIS dele, o destravamento provocado pela PROPRIA primeira ordem da
-    operacao era carimbado com operationId:null; operationResolveGridPhaseMax
-    descartava o evento orfao e devolvia 0, e o registro imutavel afirmava
-    "Fase maxima da Grade: FASE 1" para uma operacao que viveu inteira na FASE 2
-    — a fase que essa mesma ordem forcou.
-    """
-    r = page.evaluate(
-        """() => {
-          const avisos=[];
-          window.alert = m => avisos.push(String(m));
-          window.confirm = () => true;
-          __prepararGenese();
-          // Perda de ciclo arquivada: e ela que faz a Genese estourar o teto da
-          // FASE 1 pelo ramo 'fase' (e nao pelo limite proprio da Genese), que e
-          // a unica porta para o destravamento por stop quantitativo.
-          S.cycleRealizado = -360;
-          const g = S.phases[0].orders[0];
-          g.lote = 0.05; g.entry = 1.08; g.sl = 1.07;
-          save(); renderPhases();
-
-          // checkPhaseCap retorna cedo quando o status nao e 'Aberta'. Para
-          // PREVER o desfecho, aplica-se o status temporariamente e desfaz-se —
-          // o ato real acontece pelo <select>, logo abaixo.
-          g.status = 'Aberta';
-          const check = checkPhaseCap(0,0);
-          const suporte = phaseSupportForRisk(check.total);
-          g.status = '';
-          renderPhases();
-          // Responde a frase EXATA que o sistema exige.
-          window.prompt = () => 'CONFIRMO ' + S.phases[suporte].faseNome;
-
-          const sel = __selectStatus(0,0);
-          if (!sel) return {erro:'select de status nao encontrado'};
-          sel.value = 'Aberta';
-          sel.dispatchEvent(new Event('change', {bubbles:true}));
-
-          const op = S.activeOperation;
-          const eventos = (S.transitionLog||[]).map(e => ({
-            fase:e.fase, gridPhase:e.gridPhase, operationId:e.operationId}));
-          return {
-            check:{excede:check.excede, tipo:check.tipo, total:check.total}, suporte,
-            unlocked: S.phaseUnlocked.slice(),
-            opId: op && op.operationId,
-            eventos,
-            gridMax: op ? operationResolveGridPhaseMax(op) : null,
-            avisos
-          };
-        }"""
-    )
-    assert not r.get("erro"), r["erro"]
-    assert r["check"]["excede"] and r["check"]["tipo"] == "fase", (
-        f"a fixture nao levou ao ramo de destravamento por fase: {r['check']} — "
-        "sem isso o teste nao exercita o defeito"
-    )
-    assert r["suporte"] == 1, f"a fase que suporta deveria ser a 2 (indice 1): {r['suporte']}"
-    assert r["unlocked"] == [True, True, False, False], (
-        f"a FASE 2 nao foi destravada: {r['unlocked']} — a confirmacao nao passou"
-    )
-    assert r["opId"], "a operacao nao nasceu"
-    carimbados = [e for e in r["eventos"] if e.get("gridPhase") is not None]
-    assert carimbados, f"nenhum evento de destravamento foi registrado: {r['eventos']}"
-    for e in carimbados:
-        assert e["operationId"] == r["opId"], (
-            f"evento de destravamento carimbado com operationId {e['operationId']!r} "
-            f"em vez de {r['opId']!r} — o destravamento causado pela propria Genese "
-            "ficaria orfao e some do maximo da grade"
-        )
-    assert r["gridMax"] == 1, (
-        f"maxGridPhaseReached = {r['gridMax']} — a operacao viveu na FASE 2 desde a "
-        "sua primeira ordem, e o registro afirmaria FASE 1"
-    )
+    """V11: elevated risk creates a fact, never an inferred grid transition."""
+    r=page.evaluate("""() => {
+      __prepararGenese();S.cycleRealizado=-360;S.phases[0].orders[0].lote=999;renderPhases();
+      const before=JSON.stringify(S.phaseUnlocked),events=S.transitionLog.length;
+      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      return {status:S.phases[0].orders[0].status,op:S.activeOperation,unchanged:before===JSON.stringify(S.phaseUnlocked),events:events===S.transitionLog.length,max:operationResolveGridPhaseMax(S.activeOperation)};
+    }""")
+    assert r['status']=='Aberta' and r['op']['operationId'] and r['unchanged'] and r['events'] and r['max'] is None,r
 
 
 def run_manual_risk_refusal_creates_no_entity(page):
-    """Recusar a confirmacao manual de risco nao cria entidade nem efeito.
-
-    Essa confirmacao ficava DEPOIS de handleStopLimitBreach. Um "nao" do
-    operador ali reverteria uma abertura que ja tinha destravado fase e
-    carimbado evento — efeito colateral sobrevivendo a um ato recusado. Ela
-    passou a ser a ultima guarda REJEITADORA, antes do nascimento.
-    """
-    r = page.evaluate(
-        """() => {
-          window.alert = () => {};
-          window.prompt = () => null;
-          __prepararGenese();
-          S.cycleRealizado = -360;
-          // A confirmacao manual so e PEDIDA sem protecao externa ativa. Sem
-          // montar essa condicao, o caso nao existe e o teste passaria sem
-          // exercitar nada — foi assim que uma mutacao sobreviveu.
-          S.onboarding = S.onboarding || {};
-          const _onbAntes = {done:S.onboarding.done, ep:S.onboarding.epStatus};
-          S.onboarding.done = true;
-          S.onboarding.epStatus = 'Não vou utilizar.';
-          const g = S.phases[0].orders[0];
-          g.lote = 0.05; g.entry = 1.08; g.sl = 1.07;
-          save(); renderPhases();
-          const unlockedAntes = S.phaseUnlocked.slice();
-          const logAntes = (S.transitionLog||[]).length;
-          // O operador RECUSA a confirmacao manual de risco.
-          window.confirm = () => false;
-          const exigiu = shouldWarnManualRiskConfirmation();
-          const sel = __selectStatus(0,0);
-          sel.value = 'Aberta';
-          sel.dispatchEvent(new Event('change', {bubbles:true}));
-          const fora = {exigiu, status:S.phases[0].orders[0].status,
-                  op:S.activeOperation, unlockedAntes,
-                  unlockedDepois:S.phaseUnlocked.slice(),
-                  logAntes, logDepois:(S.transitionLog||[]).length};
-          // RESTAURA a configuracao de protecao: deixa-la alterada faria o caso
-          // seguinte herdar a confirmacao manual e falhar por contaminacao.
-          S.onboarding.done = _onbAntes.done;
-          S.onboarding.epStatus = _onbAntes.ep;
-          save();
-          return fora;
-        }"""
-    )
-    assert r["exigiu"], (
-        "a fixture nao produziu a condicao em que a confirmacao manual e pedida "
-        "(protecao externa inativa + risco). Sem ela o caso nao existe e o teste "
-        "passaria sem exercitar nada"
-    )
-    assert r["status"] != "Aberta", f"a ordem abriu apesar da recusa: {r['status']!r}"
-    assert r["op"] is None, (
-        f"a recusa criou entidade: {r['op']} — ordem recusada jamais cria operacao"
-    )
-    assert r["unlockedDepois"] == r["unlockedAntes"], (
-        f"a recusa deixou fase destravada: {r['unlockedAntes']} -> {r['unlockedDepois']} — "
-        "efeito colateral sobreviveu a um ato que nao aconteceu"
-    )
-    assert r["logDepois"] == r["logAntes"], "a recusa deixou evento no transitionLog"
+    """Execution confirmation cannot veto recording an already executed fact."""
+    r=page.evaluate("""() => {
+      __prepararGenese();S.onboarding.epStatus='Não vou utilizar.';
+      let confirmations=0;window.confirm=()=>{confirmations++;return false;};
+      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      return {confirmations,status:S.phases[0].orders[0].status,op:S.activeOperation};
+    }""")
+    assert r['confirmations']==0 and r['status']=='Aberta' and r['op']['operationId'],r
 
 
 def run_deleting_last_operational_order_abandons(page):
-    """Excluir a ULTIMA ordem operacional abandona a operacao — sem fingir fim.
-
-    A exclusao apaga a evidencia que constituia a Operacao Unica. Se a entidade
-    sobrevivesse, a guarda de nascimento (`!S.activeOperation`) falharia na
-    proxima Genese e a nova tese herdaria identidade, abertura e proveniencia.
-    Abandono NAO e finalizacao: nenhum registro, nenhuma consolidacao, nenhum
-    reset de fases.
-    """
-    r = page.evaluate(
-        """() => {
-          window.confirm = () => true;
-          window.alert = () => {};
-          __prepararGenese();
-          S.cycleRealizado = 777;
-          const sel = __selectStatus(0,0);
-          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
-          const opAntes = S.activeOperation && S.activeOperation.operationId;
-          const antes = {ciclo:S.cycleRealizado, regs:S.operationHistory.records.length,
-                         fases:S.phaseUnlocked.slice(), vivas:operationLiveOrders().length};
-          const btn = document.querySelector('[data-delorder="0:0"]');
-          if(!btn) return {erro:'botao de exclusao nao encontrado'};
-          btn.click();
-          const disco = __doDisco();
-          return {opAntes, antes,
-                  op: S.activeOperation,
-                  ciclo:S.cycleRealizado, regs:S.operationHistory.records.length,
-                  fases:S.phaseUnlocked.slice(), vivas:operationLiveOrders().length,
-                  opNoDisco: disco.activeOperation,
-                  regsNoDisco:(disco.operationHistory&&disco.operationHistory.records||[]).length};
-        }"""
-    )
-    assert not r.get("erro"), r["erro"]
-    assert r["opAntes"], "a operacao nao nasceu na abertura"
-    assert r["antes"]["vivas"] == 1, f"pre-condicao: {r['antes']}"
-    assert r["vivas"] == 0, f"a exclusao nao removeu a ordem: {r['vivas']}"
-    assert r["op"] is None, (
-        f"a entidade sobreviveu a exclusao da ultima ordem operacional: {r['op']} — "
-        "a proxima Genese herdaria identidade, abertura e proveniencia dela"
-    )
-    assert r["opNoDisco"] is None, "o abandono nao foi persistido"
-    assert r["regs"] == r["antes"]["regs"] == 0 and r["regsNoDisco"] == 0, (
-        f"o abandono inventou registro no Historico: {r['regs']}/{r['regsNoDisco']}"
-    )
-    assert r["ciclo"] == r["antes"]["ciclo"] == 777, (
-        f"o abandono consolidou em cycleRealizado: {r['antes']['ciclo']} -> {r['ciclo']}"
-    )
-    assert r["fases"] == r["antes"]["fases"], (
-        f"o abandono resetou fases: {r['antes']['fases']} -> {r['fases']}"
-    )
+    """Executed rows are voided by the real button, never physically deleted."""
+    r=page.evaluate("""() => {
+      __prepararGenese();window.prompt=()=> 'Duplicidade sintética';
+      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      const id=S.activeOperation.operationId,count=S.phases[0].orders.length;
+      document.querySelector('[data-delorder="0:0"]').click();
+      return {id,op:S.activeOperation,order:S.phases[0].orders[0],count,after:S.phases[0].orders.length,history:S.operationHistory.records.length,disk:__doDisco().phases[0].orders[0]};
+    }""")
+    assert r['op']['operationId']==r['id'] and r['count']==r['after'] and r['history']==0,r
+    assert r['order']['recordStatus']=='voided' and r['disk']['recordStatus']=='voided' and r['order']['revisions'][-1]['reason']=='Duplicidade sintética',r
 
 
 def run_deleting_one_of_many_keeps_the_operation(page):
-    """Sobrando ordem operacional, a operacao PERMANECE.
-
-    Controle indispensavel: sem ele a correcao poderia ser a heuristica global
-    "grade mexeu, dissolve", que mataria uma operacao viva.
-    """
-    r = page.evaluate(
-        """() => {
-          window.confirm = () => true; window.alert = () => {};
-          __prepararGenese();
-          const sel = __selectStatus(0,0);
-          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
-          const opAntes = S.activeOperation && S.activeOperation.operationId;
-          // Segunda ordem operacional, na mesma tese.
-          const d = S.phases[0].orders[1];
-          d.id='D1'; d.par='EURUSD'; d.tipo='BUY'; d.lote=0.01; d.entry=1.10; d.sl=1.095; d.tp=1.12;
-          d.status='Fechada'; d.result=-20; d.openedAt='2026-08-02T10:00:00.000Z';
-          d.closedAt='2026-08-03T10:00:00.000Z';
-          save(); renderPhases();
-          const btn = document.querySelector('[data-delorder="0:1"]');
-          if(!btn) return {erro:'botao de exclusao nao encontrado'};
-          btn.click();
-          return {opAntes, op:S.activeOperation && S.activeOperation.operationId,
-                  vivas:operationLiveOrders().length};
-        }"""
-    )
-    assert not r.get("erro"), r["erro"]
-    assert r["vivas"] == 1, f"esperava uma ordem operacional restante: {r['vivas']}"
-    assert r["op"] == r["opAntes"], (
-        f"a operacao foi dissolvida havendo ordem operacional restante: "
-        f"{r['opAntes']} -> {r['op']} — 'grade mexeu' nao pode dissolver a tese"
-    )
+    r=page.evaluate("""() => {
+      __prepararGenese();window.prompt=()=> 'Duplicidade de uma linha';
+      const s=__selectStatus(0,0);s.value='Aberta';s.dispatchEvent(new Event('change',{bubbles:true}));
+      operationRecordOrder(0,1,{id:'D1',par:'EURUSD',tipo:'BUY',lote:1,entry:1.1,sl:1.09,status:'Fechada',result:-20},{reason:'Fato confirmado'});
+      const id=S.activeOperation.operationId;renderPhases();document.querySelector('[data-delorder="0:1"]').click();
+      return {id,after:S.activeOperation.operationId,first:S.phases[0].orders[0],second:S.phases[0].orders[1],count:operationLiveOrders().length};
+    }""")
+    assert r['id']==r['after'] and r['count']==2 and r['first']['recordStatus']=='recorded' and r['second']['recordStatus']=='voided',r
 
 
 def run_new_thesis_never_inherits_orphan_identity(page):
@@ -572,7 +384,7 @@ def run_new_thesis_never_inherits_orphan_identity(page):
           const orfaViva = S.activeOperation && S.activeOperation.operationId;
           // Tese NOVA, outro instrumento.
           const g = S.phases[0].orders[0];
-          g.id='G2'; g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.275; g.tp=1.20;
+          g.id='G2';g.role='GENESIS'; g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.275; g.tp=1.20;
           renderPhases();
           const sel2 = __selectStatus(0,0);
           sel2.value='Aberta'; sel2.dispatchEvent(new Event('change',{bubbles:true}));
@@ -604,127 +416,25 @@ def run_new_thesis_never_inherits_orphan_identity(page):
 
 
 def run_status_reverted_withdraws_the_order(page):
-    """Devolver o Status a '—' retira a ordem do ciclo, e a tese seguinte e NOVA.
-
-    Esta porta esvazia a Operacao Unica sem passar pela finalizacao, pelo
-    reinicio de periodo nem pelo botao de exclusao. Antes, activeOperation
-    sobrevivia orfa E o carimbo openedAt ficava na linha: reabrir a MESMA linha
-    fazia `jaPertencia` valer true, o fail-safe ser pulado, e a tese nova herdar
-    identidade, abertura e proveniencia da anterior.
-    """
-    r = page.evaluate(
-        """() => {
-          window.alert = () => {};
-          window.confirm = () => true;
-          window.prompt = () => null;
-          __prepararGenese();
-          const sel = __selectStatus(0,0);
-          if (!sel) return {erro:'select ausente'};
-          sel.value = 'Aberta'; sel.dispatchEvent(new Event('change', {bubbles:true}));
-          const A = S.activeOperation;
-          const carimboA = S.phases[0].orders[0].openedAt;
-          const cicloAntes = S.cycleRealizado;
-          const registrosAntes = S.operationHistory.records.length;
-          const fasesAntes = S.phaseUnlocked.slice();
-
-          // RETIRADA: o operador devolve o Status para '—'.
-          const sel2 = __selectStatus(0,0);
-          sel2.value = ''; sel2.dispatchEvent(new Event('change', {bubbles:true}));
-          const aposRetirar = {
-            op: S.activeOperation,
-            status: S.phases[0].orders[0].status,
-            openedAt: S.phases[0].orders[0].openedAt,
-            closedAt: S.phases[0].orders[0].closedAt,
-            vivas: operationLiveOrders().length,
-            ciclo: S.cycleRealizado,
-            registros: S.operationHistory.records.length,
-            fases: S.phaseUnlocked.slice()
-          };
-
-          // Tese NOVA na MESMA linha.
-          const g = S.phases[0].orders[0];
-          g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.271; g.tp=1.20;
-          save(); renderPhases();
-          const sel3 = __selectStatus(0,0);
-          sel3.value = 'Aberta'; sel3.dispatchEvent(new Event('change', {bubbles:true}));
-          const B = S.activeOperation;
-          return {idA: A && A.operationId, aberturaA: A && A.openedAt, carimboA,
-                  aposRetirar,
-                  idB: B && B.operationId, aberturaB: B && B.openedAt,
-                  fonteB: B && B.openedAtSource,
-                  carimboB: S.phases[0].orders[0].openedAt,
-                  cicloAntes, registrosAntes, fasesAntes};
-        }"""
-    )
-    assert not r.get("erro"), r["erro"]
-    assert r["idA"] and r["carimboA"], f"a operacao A nao nasceu: {r}"
-    ap = r["aposRetirar"]
-    assert ap["status"] == "", f"o status nao foi devolvido a vazio: {ap['status']!r}"
-    assert ap["vivas"] == 0, f"ainda ha ordem operacional: {ap['vivas']}"
-    assert ap["openedAt"] is None and ap["closedAt"] is None, (
-        f"os carimbos da LINHA sobreviveram a retirada: {ap['openedAt']!r} / "
-        f"{ap['closedAt']!r} — sao eles que fazem o fail-safe ser pulado depois"
-    )
-    assert ap["op"] is None, (
-        f"a identidade sobreviveu a retirada da ultima ordem operacional: {ap['op']}"
-    )
-    assert ap["registros"] == r["registrosAntes"], "a retirada gravou Historico"
-    assert ap["ciclo"] == r["cicloAntes"], "a retirada mexeu em cycleRealizado"
-    assert ap["fases"] == r["fasesAntes"], "a retirada resetou fases"
-    assert r["idB"] and r["idB"] != r["idA"], (
-        f"a tese nova HERDOU a identidade anterior: {r['idB']!r} == {r['idA']!r}"
-    )
-    assert r["aberturaB"] and r["aberturaB"] != r["aberturaA"], (
-        f"a tese nova herdou a abertura da anterior: {r['aberturaB']!r}"
-    )
-    assert r["fonteB"] == "genesis_transition", f"proveniencia da nova: {r['fonteB']!r}"
-    assert r["carimboB"] and r["carimboB"] != r["carimboA"], (
-        f"o carimbo da linha nao foi refeito: {r['carimboB']!r}"
-    )
+    """Clearing a factual status is refused; original identity/evidence survive."""
+    r=page.evaluate("""() => {
+      __prepararGenese();window.prompt=()=> 'Tentativa de retirar fato';
+      let sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY);
+      sel=__selectStatus(0,0);sel.value='';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      return {stateSame:before===JSON.stringify(S),diskSame:raw===localStorage.getItem(LSKEY),status:S.phases[0].orders[0].status};
+    }""")
+    assert r['stateSame'] and r['diskSame'] and r['status']=='Aberta',r
 
 
 def run_withdrawing_one_order_keeps_the_operation(page):
-    """Retirar UMA linha, havendo outra ordem operacional, preserva a operacao."""
-    r = page.evaluate(
-        """() => {
-          window.alert = () => {}; window.confirm = () => true; window.prompt = () => null;
-          __prepararGenese();
-          const s1 = __selectStatus(0,0);
-          s1.value = 'Aberta'; s1.dispatchEvent(new Event('change', {bubbles:true}));
-          const idAntes = S.activeOperation && S.activeOperation.operationId;
-          const aberturaAntes = S.activeOperation && S.activeOperation.openedAt;
-          // Segunda ordem da MESMA tese, tambem operacional.
-          const d = S.phases[0].orders[1];
-          d.id='D1'; d.par='EURUSD'; d.tipo='BUY'; d.lote=0.01;
-          d.entry=1.1000; d.sl=1.0950; d.tp=1.1200;
-          save(); renderPhases();
-          const s2 = __selectStatus(0,1);
-          if (!s2) return {erro:'select da segunda linha ausente'};
-          s2.value = 'Aberta'; s2.dispatchEvent(new Event('change', {bubbles:true}));
-          const vivasAntes = operationLiveOrders().length;
-          // Retira SO a segunda.
-          const s3 = __selectStatus(0,1);
-          s3.value = ''; s3.dispatchEvent(new Event('change', {bubbles:true}));
-          return {idAntes, aberturaAntes, vivasAntes,
-                  vivasDepois: operationLiveOrders().length,
-                  idDepois: S.activeOperation && S.activeOperation.operationId,
-                  aberturaDepois: S.activeOperation && S.activeOperation.openedAt,
-                  carimboRetirada: S.phases[0].orders[1].openedAt,
-                  carimboMantida: S.phases[0].orders[0].openedAt};
-        }"""
-    )
-    assert not r.get("erro"), r["erro"]
-    assert r["vivasAntes"] == 2, f"o cenario nao criou duas ordens vivas: {r['vivasAntes']}"
-    assert r["vivasDepois"] == 1, f"a retirada nao removeu a linha: {r['vivasDepois']}"
-    assert r["carimboRetirada"] is None, (
-        f"o carimbo da linha retirada sobreviveu: {r['carimboRetirada']!r}"
-    )
-    assert r["carimboMantida"], "o carimbo da linha MANTIDA foi apagado indevidamente"
-    assert r["idDepois"] == r["idAntes"], (
-        f"a operacao perdeu a identidade ao retirar UMA linha: {r['idAntes']!r} -> "
-        f"{r['idDepois']!r} — retirar uma ordem nao encerra a tese"
-    )
-    assert r["aberturaDepois"] == r["aberturaAntes"], "a abertura da operacao mudou"
+    r=page.evaluate("""() => {
+      __prepararGenese();let s=__selectStatus(0,0);s.value='Aberta';s.dispatchEvent(new Event('change',{bubbles:true}));
+      operationRecordOrder(0,1,{id:'D1',par:'EURUSD',tipo:'BUY',lote:1,entry:1.1,sl:1.09,status:'Fechada',result:-20},{reason:'Fato confirmado'});
+      const before=JSON.stringify(S),a=operationRecordOrder(0,1,{status:''},{reason:'Retirada indevida'});
+      return {a,same:before===JSON.stringify(S),count:operationLiveOrders().length};
+    }""")
+    assert not r['a']['ok'] and r['same'] and r['count']==2,r
 
 
 # ---------------------------------------------------------------------------
@@ -743,6 +453,9 @@ PREPARAR_D = """() => {
   // cfg: {abertas:[[pi,oi]], fechadas:[[pi,oi,result]]}  result null = ausente
   window.__cenarioD = (cfg) => {
     S.params.saldoIni = 40000; S.cycleRealizado = 0;
+    // Esta fixture preserva a grade LEGACY de quatro fases. Em seis grades,
+    // Gênese/Defesa dependem de papel explícito, coberto no focal V11.
+    S.phases = S.phases.slice(0,4);
     S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
     S.phaseUnlocked = [true,false,false,false];
     S.operationHistory = {schemaVersion:1, records:[]};
@@ -763,6 +476,7 @@ PREPARAR_D = """() => {
       S.phases[pi].orders[oi] = o;
     });
     S.activeOperation = {schemaVersion:1, operationId:'op_d',
+      policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'},
       openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
       maxAccountPhaseReached:0};
     save();
@@ -813,7 +527,7 @@ def run_preflight_blocks_open_genesis(page):
     assert "Ordem Gênese" in r["texto"], (
         f"a mensagem nao identifica a Genese: {r['texto'][:200]!r}"
     )
-    assert "GÊNESE" in r["texto"], "a ordem impeditiva nao foi nomeada na lista"
+    assert "GÊNESE LEGACY" in r["texto"] and "ID A0" in r["texto"], "a ordem impeditiva nao foi nomeada na lista"
     assert r["intacto"], "o clique MUTOU o estado apesar do bloqueio"
     assert r["registros"] == 0, "o bloqueio gravou Historico"
 
@@ -833,7 +547,7 @@ def run_preflight_blocks_other_open_order(page):
     assert "Ordem Gênese" not in r["texto"], (
         "a mensagem culpou a Genese sendo outra a ordem aberta"
     )
-    assert "DEF 2" in r["texto"], f"a ordem impeditiva nao foi nomeada: {r['texto'][:200]!r}"
+    assert "SLOT LEGACY 1.3" in r["texto"] and "ID A0" in r["texto"], f"a ordem impeditiva nao foi nomeada: {r['texto'][:200]!r}"
     assert r["intacto"], "o clique mutou o estado"
 
 
@@ -850,7 +564,7 @@ def run_preflight_asks_for_the_single_missing_result(page):
     )
     assert r["superficie"] == "complementacao", f"superficie: {r['superficie']!r}"
     assert r["campos"] == 1, f"campos apresentados: {r['campos']} — so uma ordem falta"
-    assert "DEF 1" in r["texto"], f"a ordem incompleta nao foi identificada: {r['texto'][:200]!r}"
+    assert "SLOT LEGACY 1.2" in r["texto"] and "ID F1" in r["texto"], f"a ordem incompleta nao foi identificada: {r['texto'][:200]!r}"
     assert "GÊNESE" not in r["texto"], "pediu resultado de uma ordem que ja o tinha"
 
 
@@ -1074,7 +788,7 @@ def main():
     server, url = serve()
     try:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
+            browser = playwright.chromium.launch(**launcher.launch_options())
             context, page, observed = prepare_page(browser, url)
             page.evaluate(PREPARAR)
             run_genesis_birth_through_ui(page)

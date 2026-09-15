@@ -39,9 +39,9 @@ Na revisão integrada `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`, a navegação 
 **Registro histórico NAV-01/NAV-02/NAV-03:** os checkpoints abaixo preservam o estado e os gates daquela etapa. A expressão “candidato potencialmente publicável” pertence a esse histórico; não descreve uma pendência atual nem autoriza publicação.
 
 - **TARGET CANÔNICO:** Dashboard, Forex, Finanças Pessoais, Research e Alladin.
-- **CHECKPOINTS NAV-01/NAV-02:** Forex possui exatamente seis destinos — Visão Geral,
-  Preparação, Conta, Operação, Apuração e Planejamento — sobre as telas físicas
-  existentes e sem `section#forex`. Operação, Apuração e Planejamento exibem
+- **CHECKPOINTS NAV-01/NAV-02:** Forex possui sete destinos nesta revisão — Visão Geral,
+  Preparação, Conta, Reservas, Operação, Contabilidade e Planejamento — sobre as telas físicas
+  existentes e sem `section#forex`. Operação, Contabilidade e Planejamento exibem
   terceiro nível contextual.
 - **CANDIDATO NAV-03:** Research possui Forex, Ações, Stocks, REITs e Others.
   Forex reúne Calendário, NoCoda e Pivots; Ações abre Brasil/B3 e os demais
@@ -52,7 +52,7 @@ Na revisão integrada `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`, a navegação 
 
 - **Dashboard** — visão consolidada dos módulos, inclusive o resumo de Forex; a seção inferior **Sistema e atalhos** reúne somente **Status do Sistema** e **Ações rápidas**, com personalização aplicável e layout persistido separadamente do estado financeiro. O calendário operacional fica em **Forex → Visão Geral**, junto dos demais componentes operacionais realocados; a agenda completa permanece em **Research → Forex → Calendário**. O feed de notícias de alto impacto usa calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina). A distribuição dos componentes e suas fontes está no [mapa de contexto](docs/governance/CONTEXT-MAP.md).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
-- **Execução** — registro de ordens com fases, risco programado, classificação de stops e alavancagem do motor legado; a adequação ao V11 está pendente.
+- **Execução** — registro factual auditável separado da elegibilidade V11; motor central versionado com seis fases, risco/VRM e estados não calculáveis explícitos. A homologação normativa e as lacunas continuam pendentes (ver [contrato do motor](docs/architecture/FOREX-V11-ENGINE.md)).
 - **Research** — ownership visual de Calendário Econômico, Estudos NoCoda e Estudos dos Pivots sob Forex, sem duplicar telas ou domínio.
 - **Contabilidade** — ledger de fechamentos, retorno acumulado e drawdown; sem série demonstrativa: os indicadores permanecem vazios (`—`) até existir fechamento real.
 - **Planejamento FX** — planejamento patrimonial temporal para Forex: baseline congelado, rolling forecast e realizado, com ledger cambial e painel normativo de reservas (ver seção própria abaixo).
@@ -100,7 +100,7 @@ e ainda preservada pelo alias legado `fxplan`, o Planejamento FX é o
 motor de planejamento patrimonial temporal para Forex: separa **planejado**
 (premissas do operador),
 **realizado** (fechamentos mensais e ledger cambial de aportes) e **normativo**
-(FCR/FEO calculados pela função legada usada no onboarding, ainda divergente do V11). O baseline
+(FCR/FEO pelo adapter do motor central, com dados explicitamente registrados e conflitos normativos preservados). O baseline
 aprovado é congelado; o forecast vigente recalcula o futuro a partir do último
 fechamento real (rolling forecast) e as três séries são comparáveis. O custo
 médio do dólar usa média ponderada (`Σ BRL ÷ Σ USD`) e créditos USD-nativos não

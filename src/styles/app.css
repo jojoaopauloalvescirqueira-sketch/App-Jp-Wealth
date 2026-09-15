@@ -5464,7 +5464,7 @@ html[data-shell="global-dashboard"] .gd-news-card:has(#gdNewsList .gd-news-item-
 
 /* Evolução e ritmo: a razão 3:2 do protótipo, seguida de um único disclosure */
 html[data-shell="global-dashboard"] .gd-analysis-grid{
-  display:grid; grid-template-columns:minmax(0,3fr) minmax(300px,2fr);
+  display:grid; grid-template-columns:minmax(260px,2fr) minmax(0,3fr);
   gap:16px; margin-top:16px; align-items:stretch;
 }
 html[data-shell="global-dashboard"] .gd-analysis-grid > .card{margin:0;min-width:0}
@@ -5662,15 +5662,15 @@ html[data-shell="global-dashboard"] #contas .account-calc-detail dl{display:grid
 html[data-shell="global-dashboard"] #contas .account-calc-detail :is(dt,dd){margin:0}
 html[data-shell="global-dashboard"] #contas .account-calc-detail dd{font-family:var(--mono);font-weight:700;text-align:right}
 
-/* Contabilidade: quatro tiles, análise 3:2 e lançamentos em largura total */
+/* Contabilidade: entrada rápida à esquerda e ledger navegável à direita. */
 html[data-shell="global-dashboard"] #contabWidgetGrid{
-  display:grid; grid-template-columns:minmax(0,3fr) minmax(300px,2fr);
+  display:grid; grid-template-columns:minmax(260px,2fr) minmax(0,3fr);
   grid-auto-rows:auto; gap:16px; margin-top:0;
 }
 html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-period-goals"],
-html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-entries"]{grid-column:1/-1!important}
-html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-real-vs-projected"]{grid-column:1!important}
-html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-daily-close"]{grid-column:2!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-real-vs-projected"]{grid-column:1/-1!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-daily-close"]{grid-column:1!important}
+html[data-shell="global-dashboard"] #contabWidgetGrid > [data-layout-card="contab-entries"]{grid-column:2!important}
 html[data-shell="global-dashboard"] #contabWidgetGrid .acct-summary-card{
   padding:0; border:0; background:transparent; box-shadow:none;
 }
@@ -7594,3 +7594,28 @@ html[data-shell="global-dashboard"] #headerActions{width:auto;flex-shrink:0;gap:
   #mvpNotesDrawer[data-notes-layout="tablet"] .mvpn-head-list{padding-bottom:6px}
   #mvpNotesDrawer[data-notes-layout="tablet"][data-mobile-stage="editor"] .mvpn-head-list{display:none}
 }
+
+/* FOREX-V11-CENTRAL-01: shared engine projections and explicit fact forms. */
+.fx-engine-workspace{min-width:0;grid-column:1/-1;line-height:1.55}
+.fx-engine-workspace>header{margin-bottom:var(--space-6,24px)}
+.fx-engine-workspace details{margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:12px;min-width:0}
+.fx-engine-workspace summary{cursor:pointer;font-weight:650;min-height:36px}
+.fx-engine-status{padding:16px;background:var(--panel-2);border-left:3px solid var(--f2);border-radius:8px;margin:12px 0}
+.fx-engine-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px}
+.fx-engine-metric{padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;min-width:0}
+.fx-engine-metric h3{font-size:var(--text-sm,14px);color:var(--ink-dim);margin:0 0 10px}.fx-engine-metric strong{font-size:22px;overflow-wrap:anywhere;display:block}.fx-engine-metric small{display:block;color:var(--ink-dim)}
+.fx-engine-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0 24px}
+.fx-engine-form h3,.fx-engine-form>p,.fx-engine-actions,.fx-engine-response{grid-column:1/-1}
+.fx-engine-field{display:flex;flex-direction:column;gap:6px;font-size:14px;min-width:0}
+.fx-engine-field input,.fx-engine-field select{width:100%;min-width:0;min-height:42px}
+.fx-engine-check{display:flex;gap:10px;align-items:center}.fx-engine-check input{width:18px;height:18px;flex:none}
+.fx-engine-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.fx-engine-workspace button{min-height:40px;padding:8px 14px;white-space:normal}
+.fx-engine-workspace :focus-visible,.ledger-inline-editor :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.fx-engine-table-scroll{overflow:auto;max-height:540px}.fx-engine-table-scroll table{min-width:620px}.fx-engine-table-scroll pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;max-width:40rem}
+.fx-engine-response{margin:0;color:var(--ink);min-height:1.5em}.ledger-tools,.fxp-scenario-tools,.fxp-rebase,.fxp-ledger-import{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:12px 0}.ledger-tools label,.ledger-inline-editor label{display:grid;gap:4px;min-width:0}.ledger-inline-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px;border:1px solid var(--line);border-radius:10px}.ledger-inline-editor h3,.ledger-inline-editor [role=status]{grid-column:1/-1}#ledgerBody tr[aria-selected=true]{background:var(--panel-2)}
+
+@media(max-width:650px){.fx-engine-form,.ledger-inline-editor{grid-template-columns:minmax(0,1fr)}.fx-engine-workspace details{padding:12px}.fx-engine-metric strong{font-size:20px}}
+
+.ledger-inline-editor[hidden],.fx-engine-workspace [hidden]{display:none!important}
+.fx-engine-workspace button,.ledger-tools button,.ledger-inline-editor button,.fxp-timeline-editor button,.fxp-scenario-tools button{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--ink);font:inherit;padding:8px 12px;cursor:pointer;min-height:40px}
+.ledger-inline-editor input,.ledger-tools input,.fxp-timeline-editor input,.fxp-scenario-tools input,.fxp-timeline-editor select,.fxp-scenario-tools select{min-height:40px;max-width:100%;min-width:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit}

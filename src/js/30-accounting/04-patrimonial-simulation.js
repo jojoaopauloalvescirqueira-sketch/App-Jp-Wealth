@@ -112,6 +112,7 @@ function bindAcct(){
 
 function bindContab(){
   $('ldAddBtn').addEventListener('click',()=>{
+    if(jpWealthPersistenceOutcomeIsUnknown()){ledgerFeedback('Gravação indeterminada. Confira a base salva antes de continuar.',false);return;}
     const data=$('ldDate').value;
     const res=parseFloat($('ldResult').value);
     const stEl=$('ldStatus');
@@ -126,16 +127,11 @@ function bindContab(){
     if(isNaN(saldo)) saldo=(anterior?anterior.saldo:S.params.saldoIni)+res;
     const exist=S.ledger.find(e=>e.data===data);
     if(exist && !confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
-    const result=ledgerMutate(()=>{
-      if(exist){
-        exist.resultado=res; exist.saldo=saldo; exist.nota=$('ldNota').value.trim();
-        if(typeof dgLogChange==='function') dgLogChange('ledger','updated',data,'Fechamento diário atualizado ('+data+')');
-      } else {
-        S.ledger.push({data, resultado:res, saldo, nota:$('ldNota').value.trim()});
-        if(typeof dgLogChange==='function') dgLogChange('ledger','created',data,'Fechamento diário registrado ('+data+')');
-      }
-      syncSaldoAtuFromLedger();
-    });
+    const reason=exist?prompt('Motivo da correção do fechamento:'):'';
+    if(exist&&reason===null)return;
+    const result=exist
+      ?ledgerCorrect(ledgerId(exist,S.ledger.indexOf(exist)),{data,resultado:res,saldo,nota:$('ldNota').value},{reason,expectedVersion:exist.version||0,allowBackdate:true})
+      :ledgerRecord({data,resultado:res,saldo,nota:$('ldNota').value},{allowBackdate:true});
     if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';
     ledgerFeedback('✓ fechamento registrado',true);

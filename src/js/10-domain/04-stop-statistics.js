@@ -2,81 +2,31 @@
 // Tudo em PERCENTUAL (§9.2): ATR% = ATR55/preço × 100. Comparação AO VIVO: usa o preço
 // atual do ativo da Gênese (cotações do Motor de Lote), não a entrada.
 function genesisOrder(){
-  const g=S.phases[0].orders[0];
-  if(g && (g.par||g.sl>0)) return g;
-  for(const ph of S.phases){ const o=ph.orders.find(x=>x.status==='Aberta'&&x.par); if(o) return o; }
-  return g||null;
+  const explicit=(S.phases||[]).flatMap(ph=>ph.orders||[]).filter(o=>o.role==='GENESIS'&&o.recordStatus!=='voided');
+  // Several declared Gêneses are ambiguous; do not select a convenient one.
+  if(explicit.length)return explicit.length===1?explicit[0]:null;
+  if(S.phases?.length===4)return S.phases[0]?.orders?.[0]||null;
+  return null;
 }
-function atrPctCalc(price){ // ATR(55) H4 em % — valor manual prevalece; senão deriva do ATR absoluto ÷ preço ao vivo
-  if(S.atrPctManual>0) return S.atrPctManual;
-  const atr=+S.atr55||0;
-  return (price>0&&atr>0)? atr/price*100 : 0;
+function atrPctCalc(price){
+  const atr=S.forex?.market?.atrShort;
+  const result=JPWForex.engine.computeStopAtrMultiple({stopPercent:0,atr,currentPrice:price});
+  return result.status==='OK'?result.atrPercent:null;
 }
-function atrStrat(m){ // §9.2.1 — Sistema de Interpretação Estratificada do Múltiplo de ATR
-  if(!(m>0)) return null;
-  if(m<1)   return {t:'FRÁGIL', d:'altamente exposto ao ruído', c:'var(--f4)'};
-  if(m<2)   return {t:'LEVEMENTE FRÁGIL', d:'não recomendável p/ maturação longa', c:'var(--f3)'};
-  if(m<3.5) return {t:'MÍNIMO REALISTA', d:'não recomendável p/ maturação longa', c:'var(--f2)'};
-  if(m<5)   return {t:'NÍVEL NORMAL', d:'mínimo aceitável', c:'var(--f1)'};
-  if(m<7)   return {t:'CONSERVADOR', d:'longa duração — exige alvo proporcional', c:'var(--f1)'};
-  return {t:'ZONA SEGURA', d:'exige alvo proporcional', c:'var(--f1)'};
+function atrStrat(m){
+  const minimum=JPWForex.policy.get('P-20').value;
+  if(!Number.isFinite(m))return null;
+  return {t:m>=minimum?'MÍNIMO ATENDIDO':'ABAIXO DO MÍNIMO',d:'Diagnóstico técnico; não autoriza execução',c:m>=minimum?'var(--f1)':'var(--f3)'};
 }
-function riskIndicatorsHTML(active){
-  const gen=genesisOrder();
-  const ins=gen?instFor(gen.par):null;
-  const priceLive=(ins&&ins.preco>0)?ins.preco:0;
-  const F=S.stopF||1.8;
-  const atrPct=atrPctCalc(priceLive);
-  // Stop Técnico Quantitativo da Gênese em % AO VIVO: distância do preço atual até o SL mãe (§9 + pedido 3)
-  const stopPct=(priceLive>0&&gen&&gen.sl>0)? Math.abs(priceLive-gen.sl)/priceLive*100 : 0;
-  const mult=(atrPct>0&&stopPct>0)? stopPct/atrPct : 0;
-  const strat=atrStrat(mult);
-  const rz1=atrPct*Math.sqrt(30)*F;  // √30 ≈ 1 semana de candles H4 (§9.3)
-  const rz2=atrPct*Math.sqrt(55)*F;  // √55 ≈ 2 semanas (§9.3.1)
-  const pc=v=>v>0?v.toFixed(2).replace('.',',')+'%':'—';
-  const verd=(rz)=> stopPct<=0||rz<=0 ? {t:'—',c:'var(--ink-faint)',d:''}
-    : stopPct>=rz ? {t:'RESISTE',c:'var(--f1)',d:'stop ≥ mínimo estatístico'}
-    : {t:'ZONA DE RUÍDO',c:'var(--f3)',d:'abaixo do mínimo — consciência exigida (§9.5)'};
-  const v1=verd(rz1), v2=verd(rz2);
-  const chip=(k,v,sub,col)=>`<div class="metric"><div class="k">${k}</div><div class="v sm" style="${col?'color:'+col:''}">${v}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
-  return `<div class="card" style="margin-bottom:14px">
-    <h2>Stop Loss Mínimo · Validação Estatística <span class="art">§9 · ao vivo: ${gen&&gen.par?esc(gen.par)+' @ '+(priceLive||'—'):'defina a gênese'} · SL mãe ${gen&&gen.sl>0?gen.sl:'—'}</span></h2>
-    <!-- Fase 2C: o MÉTODO desce para disclosure, como no protótipo ("método ▾").
-         Os campos continuam editáveis e no mesmo lugar do DOM — só deixam de
-         disputar a leitura primária com os vereditos, que ficam à vista logo
-         abaixo. O card do Stop deixa de ocupar o dobro da altura da Grade. -->
-    <details class="jp-p3">
-      <summary>método</summary>
-    <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px">
-      <div class="field" style="margin-bottom:0; max-width:170px">
-        <label>ATR(55) H4 em % <span class="art">§9.2</span></label>
-        <input type="number" step="0.001" id="iAtrPct" value="${atrPct>0?+atrPct.toFixed(3):''}" placeholder="auto">
-        <span class="note note-live">${S.atrPctManual>0?'manual — apague p/ voltar ao automático':'auto: ATR55 ÷ preço ao vivo'}</span>
-      </div>
-      <div class="field" style="margin-bottom:0; max-width:250px">
-        <label>Fator F <span class="art">§9.3.2 · cauda estatística</span></label>
-        <select id="iStopF">
-          ${[1.25,1.5,1.8,2].includes(F)?'':`<option value="${F}" selected>${String(F).replace('.',',')} — personalizado</option>`}
-          <option value="1.25" ${F===1.25?'selected':''}>1,25 — V10 proposto · cobre menos cauda</option>
-          <option value="1.5" ${F===1.5?'selected':''}>1,50 — ~86,6% de confiança (1,5σ)</option>
-          <option value="1.8" ${F===1.8?'selected':''}>1,80 — padrão JP Wealth · ~90%+</option>
-          <option value="2" ${F===2?'selected':''}>2,00 — ~95,4% (2σ) · máx. conservador</option>
-        </select>
-        <span class="note">F maior → stop mínimo mais distante: resiste mais ao ruído natural, mas exige mais espaço e alvo proporcional. F menor → mínimo mais curto, maior chance de stop por respiração do ativo.</span>
-      </div>
-      <div class="field" style="margin-bottom:0; max-width:190px">
-        <label>Stop Técnico Quantitativo da Gênese <span class="art">ao vivo</span></label>
-        <input type="text" disabled value="${pc(stopPct)}">
-        <span class="note">|preço atual − SL mãe| ÷ preço</span>
-      </div>
-    </div>
-    </details>
-    <div class="risk-primary-indicators">
-      ${chip('Stop da Gênese · Múltiplo de ATR', `${pc(stopPct)} · ${mult>0?mult.toFixed(1).replace('.',',')+'x':'—'}`, strat?`<span style="color:${strat.c};font-weight:700">${strat.t}</span> · ${strat.d}`:'distância ao SL mãe ÷ ATR%')}
-      ${chip('Raiz-N · resistência estatística', `√30 ${pc(rz1)} · √55 ${pc(rz2)}`,
-        `1 sem <span style="color:${v1.c};font-weight:700">${v1.t}</span> · 2 sem <span style="color:${v2.c};font-weight:700">${v2.t}</span> · síntese <span style="color:${(stopPct>0&&atrPct>0)?(stopPct>=rz1?'var(--f1)':'var(--f3)'):'var(--ink-faint)'};font-weight:700">${(stopPct>0&&atrPct>0)?(stopPct>=rz2?'COERENTE 2 SEM':(stopPct>=rz1?'COERENTE 1 SEM':'VULNERÁVEL')):'—'}</span>`)}
-    </div>
-  </div>`;
+function riskIndicatorsHTML(){
+  const gen=genesisOrder(),ins=gen?instFor(gen.par):null,price=ins?.preco;
+  const atr=S.forex?.market?.atrShort;
+  const stopPercent=price>0&&gen?.sl>0?Math.abs(price-gen.sl)/price*100:null;
+  const multiple=JPWForex.engine.computeStopAtrMultiple({stopPercent,atr,currentPrice:price});
+  const minimum=JPWForex.engine.computeMinimumStop({atr});
+  const number=r=>r.status==='OK'?String(+r.value.toFixed(4)):r.status;
+  const strat=atrStrat(multiple.value);
+  return `<div class="card" style="margin-bottom:14px"><h2>Stop Loss · diagnóstico V11${gen&&!gen.role?' · referência posicional LEGACY':''}</h2><div class="risk-primary-indicators"><div class="metric"><div class="k">Distância do stop / ATR</div><div class="v sm">${esc(number(multiple))}</div><div class="sub">${strat?esc(strat.t):'Informe ATR H4 e preço com origem registrada.'}</div></div><div class="metric"><div class="k">Distância mínima em preço</div><div class="v sm">${esc(number(minimum))}</div><div class="sub">Parâmetros P-16 / P-20. Análise técnica continua necessária.</div></div></div><details class="jp-p3"><summary>Raiz-N e validação</summary><p>Fator F: ${esc(JPWForex.policy.get('P-21').status)}. Horizonte N: ${esc(JPWForex.policy.get('P-22').status)}. Não há fallback numérico ou veto por esse diagnóstico.</p></details></div>`;
 }
 // Classe CSS da fase: whitelist semântica, não escaping. Atributo `class` não deve
 // aceitar valor arbitrário nem escapado — só os identificadores do catálogo oficial.
@@ -85,375 +35,57 @@ function phaseCssClass(ph){
   return (ph && permitido.includes(ph.cls)) ? ph.cls : '';
 }
 function renderPhases(){
-  healSupersededPhases(); // corrige órfãos antes de desenhar qualquer coisa
-  const qAct=quarantineActive(); // Art. 3.10: quarentena trava edição, permite apenas fechar
-  const active=getMaxUnlockedIdx(); // grade ativa = fase mais avançada já liberada
-  const cont=$('phaseContainer');
-  let html=riskIndicatorsHTML(active);
-  if(noExternalProtectionActive()){
-    html+=`<div class="risk-note" style="margin:0 0 14px; color:var(--f4); border-color:var(--f4)">${noExternalProtectionWarning()}</div>`;
-  }
-  // AS QUATRO FASES, SEMPRE PRESENTES, na ordem F1 -> F4.
-  //
-  // Antes o painel mostrava SO a grade ativa; as anteriores ficavam atrás de um
-  // botão "Ver fases anteriores" e as POSTERIORES não eram desenhadas. O
-  // operador não conseguia ver a estrutura quadrifásica inteira.
-  //
-  // Isto é apresentação. Nada aqui altera phaseUnlocked, critério de
-  // desbloqueio, limite, cálculo ou migração: `active` continua vindo de
-  // getMaxUnlockedIdx(), e o botão MIGRAR segue preso à grade ativa com as
-  // mesmas guardas.
-  //
-  // A fase FUTURA é desenhada sem corpo editável de propósito. phaseBodyHTML
-  // calcula readOnly como isMigrada||frozen||isFechada, e phaseFrozen(pi) é
-  // `pi<3 && phaseUnlocked[pi+1]` — para uma fase ainda não liberada isso dá
-  // FALSO, ou seja, os campos viriam habilitados. Renderizar o corpo ali
-  // deixaria o operador lançar ordens numa fase que o Estatuto ainda não
-  // liberou: mudança de comportamento disfarçada de mudança visual.
-  for(let pi=0; pi<S.phases.length; pi++){
-    const p=S.phases[pi];
-    const badge=esc(String(p.faseNome||'').replace('FASE ','F'));
-    const titulo=esc(p.title||'');
-    if(pi<active){
-      html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px">
-        <div class="phase-head" data-toggle="${pi}">
-          <span class="badge">${badge}</span>
-          <span>${titulo}</span>
-          <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 histórico</span>
-          <span class="chev">▾</span>
-        </div>
-        <div class="phase-body">${phaseBodyHTML(pi, qAct)}</div>
-      </div>`;
-    } else if(pi===active){
-      html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px">
-        <div class="phase-head" style="cursor:default">
-          <span class="badge">${badge}</span>
-          <span>${titulo}</span>
-          <span class="here" style="margin-left:auto">◄ GRADE ATIVA</span>
-        </div>
-        <div class="phase-body">${phaseBodyHTML(pi, qAct)}</div>
-      </div>`;
-      // MIGRAR para a próxima fase — única forma de progredir (Art. 3.8),
-      // ancorado à grade ativa e com as guardas inalteradas.
-      if(active<3){
-        if(qAct){
-          html+=`<div class="phase-meta" style="padding:12px 4px 2px">⛔ Migração de fase suspensa durante a quarentena (Art. 3.10).</div>`;
-        } else {
-          html+=`<button class="unlock-phase-btn" data-migrate="${active}" style="margin-top:8px; width:100%">⏭ Migrar para ${esc(S.phases[active+1].faseNome)} — responder questionário de transição</button>`;
-        }
-      } else {
-        html+=`<div class="phase-meta" style="padding:12px 4px 2px">A Fase 4 é o limite absoluto ativo do perfil (${fmtPct(activeMDDLimit())}) — não há próxima fase. A única ação permitida é reduzir exposição (Art. 3.7).</div>`;
-      }
-    } else {
-      html+=`<div class="phase phase-locked" data-phase="${pi}" style="margin-top:10px; opacity:.6">
-        <div class="phase-head" style="cursor:default">
-          <span class="badge">${badge}</span>
-          <span>${titulo}</span>
-          <span style="margin-left:auto; font-size:calc(10px * var(--fs-scale)); color:var(--ink-faint)">🔒 não atingida</span>
-        </div>
-        <div class="phase-body"><div class="phase-meta" style="padding:10px 4px">Fase ainda não liberada. A progressão é sequencial e depende do questionário de transição da fase anterior (Art. 3.8).</div></div>
-      </div>`;
-    }
-  }
+  const cont=$('phaseContainer'); if(!cont)return;
+  const model=JPWForex.state.read(), findings=orderComplianceFindings();
+  const recordable=model.canRecord===true;
+  let html=riskIndicatorsHTML();
+  html+=`<div class="risk-note" role="status">${recordable?'Registro de fatos disponível.':'Registro indisponível: versão de dados incompatível.'} Elegibilidade de execução: <b>${esc(model.executionEligibility?.status||'NOT_COMPUTABLE')}</b>. ${findings.map(f=>esc(f.message||f.code)).join(' · ')}</div>`;
+  if(S.phases.length===4)html+='<div class="risk-note">LEGACY — quatro grades preservadas em suas posições originais; os fatos serão avaliados pelo motor atual sem atribuir uma norma passada.</div>';
+  (S.phases||[]).forEach((p,pi)=>{
+    const legacy=S.phases.length===4||p.policyVersion==='LEGACY_UNRESOLVED';
+    html+=`<div class="phase ${phaseCssClass(p)}" data-phase="${pi}" style="margin-top:10px"><div class="phase-head" style="cursor:default"><span class="badge">${legacy?'LEGACY · ':''}${esc(p.faseNome||('Grade '+(pi+1)))}</span><span>${esc(p.title||'')}</span><span class="here" style="margin-left:auto">${recordable?'REGISTRO DISPONÍVEL':'SOMENTE LEITURA'}</span></div><div class="phase-body">${phaseBodyHTML(pi,false)}</div></div>`;
+  });
   cont.innerHTML=html;
-  // bind toggles das fases de histórico
-  cont.querySelectorAll('.phase-head[data-toggle]').forEach(h=>h.addEventListener('click',e=>{
-    if(e.target.closest('input,select'))return;
-    h.parentElement.classList.toggle('collapsed');
+  cont.querySelectorAll('[data-addorder]').forEach(btn=>btn.addEventListener('click',()=>{
+    const pi=+btn.dataset.addorder;
+    if(!operationRecordFeedback(operationAddDraft(pi)))return;
+    renderPhases(); document.querySelector(`.phase[data-phase="${pi}"] tbody tr:last-child input[data-f="id"]`)?.focus();
   }));
-  // bind MIGRAR — sequencial (Art. 3.8), suspenso em quarentena
-  cont.querySelectorAll('[data-migrate]').forEach(btn=>{
-    btn.addEventListener('click',e=>{
-      e.stopPropagation();
-      const from=+btn.dataset.migrate, fn=from+2; // faseNum 1-based da próxima fase
-      if(quarantineActive()){ alert('⛔ Quarentena ativa até '+S.quarantine.fim+' — transições de fase suspensas (Art. 3.10).'); return; }
-      if(!S.phaseUnlocked[fn-2]){ alert('🚫 Transição sequencial obrigatória (Art. 3.8).'); return; }
-      openTransitionModal(fn);
-    });
-  });
-  // bind ATR% / Fator F do painel de Stop Estatístico (§9)
-  const ap=$('iAtrPct');
-  if(ap) ap.addEventListener('change',()=>{
-    S.atrPctManual=parseFloat(ap.value)||0; // vazio/0 = volta ao automático
-    save(); renderPhases();
-  });
-  const sfEl=$('iStopF');
-  if(sfEl) sfEl.addEventListener('change',()=>{
-    const v=parseFloat(sfEl.value);
-    S.stopF=(v>=1&&v<=2.5)?v:1.8;
-    save(); renderPhases();
-  });
-  // bind adicionar ordem (sem teto artificial — o risco/alavancagem já é fiscalizado pelo semáforo e LIFO)
-  cont.querySelectorAll('[data-addorder]').forEach(btn=>{
-    btn.addEventListener('click',e=>{
-      e.stopPropagation();
-      const pi=+btn.dataset.addorder;
-      S.phases[pi].orders.push({id:'',par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:''});
-      save(); renderPhases();
-      // foca no ID da nova linha
-      const rows=document.querySelectorAll(`.phase[data-phase="${pi}"] tbody tr`);
-      const last=rows[rows.length-1];
-      if(last){
-        last.classList.add('is-new-order');
-        last.querySelector('input[data-f="id"]')?.focus();
-      }
-    });
-  });
-  // bind remover ordem — sem fricção se vazia, confirma se tiver dado real
-  cont.querySelectorAll('[data-delorder]').forEach(btn=>{
-    btn.addEventListener('click',e=>{
-      e.stopPropagation();
-      const [pi,oi]=btn.dataset.delorder.split(':').map(Number);
-      const o=S.phases[pi].orders[oi];
-      const temDado = !!(o.id||o.par||o.lote||o.entry||o.sl||o.tp||o.status||o.result);
-      if(temDado && !confirm('Esta linha tem dados registrados. Remover mesmo assim?')) return;
-      const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
-      S.phases[pi].orders.splice(oi,1);
-      // ABANDONO ADMINISTRATIVO. Excluir a ULTIMA ordem operacional apaga a
-      // evidencia que constituia a Operacao Unica; a entidade nao pode
-      // sobreviver a isso. Se ela sobrevivesse, a guarda de nascimento
-      // (`!S.activeOperation`) falharia na proxima Genese e a nova tese herdaria
-      // identidade, abertura e proveniencia da anterior — medido: um registro
-      // GBPUSD gravado como aberto em outra data, com openedAtSource
-      // 'genesis_transition', sob o operationId da operacao anterior.
-      //
-      // Nao e finalizacao e nao finge ser: NENHUM registro no Historico, NENHUMA
-      // consolidacao em cycleRealizado, NENHUM reset de fases. E o mesmo
-      // tratamento do reinicio administrativo de periodo.
-      //
-      // A limpeza acontece no ATO EXPLICITO, e nao por heuristica de "grades
-      // vazias": uma operacao cujas ordens estao todas FECHADAS continua viva e
-      // suas linhas continuam na grade — e disso depende a exclusividade da tese.
-      if(eraOperacional && S.activeOperation && typeof operationLiveOrders==='function'
-         && operationLiveOrders().length===0){
-        if(typeof dgLogChange==='function'){
-          dgLogChange('operation','abandoned', S.activeOperation.operationId,
-            'Operação Única abandonada: última ordem operacional excluída pelo operador');
-        }
-        S.activeOperation=null;
-      }
-      save(); renderPhases();
-    });
-  });
-  // bind order inputs — texto/número: atualização leve (preserva foco). selects: reconstrução completa (evento discreto).
-  cont.querySelectorAll('input').forEach(inp=>{
-    inp.addEventListener('focus',()=>{
-      inp.dataset.prevval=inp.value; // snapshot para poder reverter se estourar o teto da fase
-    });
-    inp.addEventListener('input',()=>{
-      const pi=+inp.dataset.p, oi=+inp.dataset.o, f=inp.dataset.f;
-      // autofill/edição programática não dispara 'focus' — semeia o snapshot com o valor do modelo
-      if(inp.dataset.prevval===undefined) inp.dataset.prevval=String(S.phases[pi].orders[oi][f]??'');
-      let val=inp.value;
-      if(['lote','entry','sl','tp','result'].includes(f)) val=parseFloat(val)||0;
-      S.phases[pi].orders[oi][f]=val;
-      // NÃO há gancho de status aqui: este laço é querySelectorAll('input') e o
-      // campo Status é um <select>. A chamada que existia neste ponto era
-      // inalcançável — a Operação Única nunca nascia pelo grid. O gancho vive no
-      // laço de <select>, depois das guardas de abertura.
-      if((f==='sl'||f==='tp') && S.phases[pi].orders[oi].needsReview){
-        S.phases[pi].orders[oi].needsReview=false; // tocou no stop -> considera revisado
-      }
-      save(); render(); renderPhasesLite(pi);
-    });
-    inp.addEventListener('change',()=>{
-      const pi=+inp.dataset.p, oi=+inp.dataset.o, f=inp.dataset.f;
-      const o=S.phases[pi].orders[oi];
-      // Resultado informado e ato confirmado, e e o que mais move o drawdown.
-      if(f==='result'){
-        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-        save(); checkDivergence(pi,oi); return;
-      }
-      const revert=()=>{
-        const raw=inp.dataset.prevval??'';
-        const val=['lote','entry','sl','tp'].includes(f)?(parseFloat(raw)||0):raw;
-        S.phases[pi].orders[oi][f]=val;
-        inp.value=val||'';
-        save(); render(); renderPhasesLite(pi);
-      };
-      if(o.status==='Aberta'){
-        if(f==='sl' && !(o.sl>0)){
-          alert('🚫 Ordem aberta não pode ficar sem stop — o SL é obrigatório em toda ordem (Função de Auditoria / Estatuto). Feche a posição se a intenção era removê-la.');
-          revert(); return;
-        }
-        if(f==='par'||f==='lote'){
-          const msg=orderGateMsg(pi,oi);
-          if(msg){ alert(msg); revert(); return; }
-        }
-      }
-      if(f==='lote'||f==='entry'||f==='sl'){
-        const check=checkPhaseCap(pi,oi);
-        if(check.excede){
-          if(f==='sl'){
-            handleStopLimitBreach(pi,oi,check);
-            return;
-          }
-          alert('🚫 TETO DE RISCO — '+phaseCapBreachMessage(pi,check));
-          revert(); return;
-        } else if(f==='sl' && o.stopPhaseWarning){
-          delete o.stopPhaseWarning;
-          save(); render(); renderPhases();
-        }
-      }
-      if(f==='par'){ renderPhases(); } // par novo muda risco/nocional — redesenha
-      // EDICAO COMPROMETIDA: chegar aqui significa que o valor sobreviveu a
-      // todas as guardas e a todas as reversoes — os caminhos de recusa saem por
-      // `return` antes. So agora o estado e uma afirmacao do operador, e so agora
-      // a Fase da Conta pode virar evidencia historica.
-      if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-      save();
-    });
-  });
-  cont.querySelectorAll('select').forEach(sel=>{
-    sel.addEventListener('change',()=>{
-      const pi=+sel.dataset.p, oi=+sel.dataset.o, f=sel.dataset.f;
-      const o=S.phases[pi].orders[oi];
-      if(f==='status' && sel.value==='Aberta'){
-        const prevStatus=o.status;
-        o.status='Aberta'; // aplica temporariamente para as guardas considerarem esta ordem
-
-        // ---- GUARDAS PURAMENTE REJEITADORAS ----------------------------------
-        // Todas antes do nascimento: uma ordem RECUSADA jamais pode criar
-        // entidade. Nenhuma delas produz efeito colateral — só decidem se o ato
-        // acontece.
-        let msg=null;
-        if(!o.par) msg='🚫 Defina o PAR antes de marcar a ordem como Aberta — sem par o risco e o nocional ficam indefinidos.';
-        if(!msg && !(o.sl>0) && o.lote>0) msg='🚫 Não é permitido abrir ordem sem stop — registre o SL antes de marcar como Aberta (Função de Auditoria / Estatuto).';
-        if(!msg) msg=orderGateMsg(pi,oi);
-        if(msg){
-          o.status=prevStatus; // reverte
-          sel.value=prevStatus||'';
-          alert(msg);
-          return;
-        }
-        // Última rejeição possível. Ela ficava DEPOIS de handleStopLimitBreach,
-        // e foi trazida para cá porque um "não" do operador aqui reverteria uma
-        // abertura que já tinha destravado fase e carimbado evento — efeito
-        // colateral sobrevivendo a um ato recusado.
-        if(shouldWarnManualRiskConfirmation()){
-          const ok=confirm('Você está prestes a registrar uma operação sem Equity Protector ativo. Confirme que o risco, o drawdown e a exposição foram verificados manualmente.');
-          if(!ok){
-            o.status=prevStatus;
-            sel.value=prevStatus||'';
-            return;
-          }
-        }
-
-        // ---- ABERTURA ACEITA: A OPERAÇÃO NASCE AQUI --------------------------
-        // Depois da última guarda que pode rejeitar, e ANTES do primeiro efeito
-        // colateral que pertence à operação aceita.
-        //
-        // O nascimento vive neste laço de <select> — e não no de <input> — porque
-        // o campo Status é um <select>: o gancho que existia lá era código morto e
-        // a entidade jamais nascia pelo grid.
-        //
-        // A ORDEM IMPORTA. handleStopLimitBreach destrava fase e carimba o evento
-        // via operationStampTransition, que lê S.activeOperation. Com o nascimento
-        // depois dele, o destravamento provocado pela PRÓPRIA Gênese da operação
-        // era carimbado com operationId:null, operationResolveGridPhaseMax o
-        // descartava, e o registro imutável afirmava "Fase máxima da Grade: FASE 1"
-        // para uma operação que viveu inteira na FASE 2 — a fase que essa mesma
-        // ordem forçou. Não se reconstrói isso por cronologia: o vínculo tem de
-        // existir no instante do carimbo.
-        if(typeof operationOnOrderStatus==='function') operationOnOrderStatus(o,'Aberta',pi,oi);
-
-        // ---- EFEITOS COLATERAIS DA OPERAÇÃO ACEITA ---------------------------
-        // Já existe identidade viva: o evento de destravamento nasce vinculado.
-        const check=checkPhaseCap(pi,oi);
-        if(check.excede) handleStopLimitBreach(pi,oi,check);
-      } else if(f==='status' && sel.value==='Fechada'){
-        const prevStatus=o.status;
-        sel.value=prevStatus||''; // reverte visualmente até confirmar no modal
-        openCloseOrderModal(pi,oi);
-        return;
-      } else if(f==='status'){
-        // RETIRADA EXPLICITA da ordem do ciclo operacional. O unico valor que
-        // chega aqui pela interface e o vazio ('—'): 'Aberta' e 'Fechada' tem
-        // ramos proprios acima, e 'Migrada' so aparece na linha ja migrada,
-        // cujo <select> e readOnly.
-        const eraOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
-        o.status = sel.value;
-        const aindaOperacional = typeof operationOrderIsLive==='function' && operationOrderIsLive(o);
-        if(eraOperacional && !aindaOperacional){
-          // Os carimbos da LINHA saem junto. Eles sao a evidencia de que ela
-          // pertenceu a operacao; mante-los fazia `jaPertencia` continuar
-          // verdadeiro na reabertura, o fail-safe de orfandade ser pulado, e a
-          // tese seguinte herdar operationId, openedAt e openedAtSource da
-          // anterior — o mesmo desfecho da exclusao, por outra porta.
-          delete o.openedAt;
-          delete o.closedAt;
-          // Mesma semantica do abandono por exclusao da ultima linha: se esta
-          // era a ultima evidencia operacional, a entidade nao sobrevive.
-          // NENHUM registro no Historico, NENHUMA consolidacao em
-          // cycleRealizado, NENHUM reset de fases. Nao e finalizacao e nao
-          // finge ser.
-          //
-          // Se sobram outras ordens da operacao, ela PERMANECE: retirar uma
-          // linha nao encerra a tese.
-          if(S.activeOperation && typeof operationLiveOrders==='function'
-             && operationLiveOrders().length===0){
-            if(typeof dgLogChange==='function'){
-              dgLogChange('operation','abandoned', S.activeOperation.operationId,
-                'Operação Única abandonada: última ordem operacional devolvida a estado não operacional');
-            }
-            S.activeOperation=null;
-          }
-        }
-      } else if(f==='tipo'){
-        const prevTipo=o.tipo;
-        o.tipo=sel.value;
-        if(o.status==='Aberta'){
-          const msg=orderGateMsg(pi,oi);
-          if(msg){ o.tipo=prevTipo; sel.value=prevTipo; alert(msg); return; }
-        }
-      } else if(f==='par'){
-        const prevPar=o.par;
-        o.par=sel.value;
-        if(o.status==='Aberta'){
-          const msg=orderGateMsg(pi,oi);
-          if(msg){ o.par=prevPar; sel.value=prevPar||''; alert(msg); return; }
-          // TETO DE RISCO DA FASE: trocar o instrumento muda o risco em USD da
-          // ordem tanto quanto mudar o lote, porque orderRisk() depende de cpl e
-          // da conversão da moeda de cotação — de JPY para USD o fator chega a
-          // duas ordens de grandeza. O ramo de <input> já barrava lote/entry/sl
-          // com esta mesma guarda; a troca de par escapava dela e ultrapassava o
-          // teto consolidado da grade sem alerta, sem reversão e sem o
-          // questionário de transição.
-          //
-          // NENHUM PARÂMETRO NORMATIVO MUDA: aplica-se a checagem que já existe,
-          // com os mesmos limites, a um caminho que estava sem ela. É restauração
-          // de aderência ao Estatuto, não alteração dele.
-          const check=checkPhaseCap(pi,oi);
-          if(check.excede){
-            o.par=prevPar; sel.value=prevPar||'';
-            alert('🚫 TETO DE RISCO — '+phaseCapBreachMessage(pi,check));
-            save(); render(); renderPhases();
-            return;
-          }
-        }
-        // TROCA ACEITA. Sobreviveu a todas as guardas e sera persistida pelo
-        // save() terminal — os caminhos de recusa saem por `return` acima, com o
-        // par ja restaurado.
-        //
-        // Trocar o instrumento muda orderRisk() tanto quanto mudar o lote:
-        // depende de cpl e da conversao da moeda de cotacao. Logo muda o
-        // drawdown estatutario e PODE elevar a Fase da Conta. Medido nos
-        // defaults de fabrica: de USDJPY para EURUSD, com lote 0,05 e meio
-        // ponto de stop, o risco vai de 15,44 para 2.500 USD — de 0,04% para
-        // 6,25% do saldo, cruzando o teto de 4% da FASE 1.
-        //
-        // Enquanto a captura morava dentro de save(), esta saida a recebia. C
-        // repos a captura no laco de <input> e no ciclo de vida; o laco de
-        // <select> ficou sem nenhuma, e a conta podia subir de fase, recuar
-        // depois, e o registro imutavel afirmar um maximo inferior ao atingido.
-        if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
-      } else {
-        S.phases[pi].orders[oi][f]=sel.value;
-      }
-      save(); render();
-      renderPhases(); // status/tipo mudam estrutura visual da linha — rebuild completo é seguro aqui
-    });
-  });
+  cont.querySelectorAll('[data-delorder]').forEach(btn=>btn.addEventListener('click',()=>{
+    const [pi,oi]=btn.dataset.delorder.split(':').map(Number),o=S.phases[pi].orders[oi];
+    let reason='Excluir rascunho';
+    if(operationOrderIsLive(o)){
+      reason=prompt('Anular preserva a ordem, suas versões e o motivo no histórico. Informe o motivo da anulação:');
+      if(!reason?.trim())return;
+    }else if((o.id||o.par||o.lote)&&!confirm('Excluir este rascunho?'))return;
+    if(operationRecordFeedback(operationVoidOrder(pi,oi,reason))){render();renderPhases();}
+  }));
+  cont.querySelectorAll('[data-orderhistory]').forEach(btn=>btn.addEventListener('click',()=>{
+    const [pi,oi]=btn.dataset.orderhistory.split(':').map(Number),o=S.phases[pi].orders[oi];
+    $('modalOverlay').classList.add('show');
+    $('modalBox').innerHTML='<h3>Versões da ordem '+esc(o.id||o.orderId)+'</h3><p>'+esc(o.orderId)+'</p>'+(o.revisions||[]).map(r=>'<details class="modal-q"><summary>Versão '+r.version+' · '+esc(r.recordedAt)+' · '+esc(r.reason)+'</summary><div class="modal-sub">Contexto '+esc(r.context?.policyVersion||'LEGACY_UNRESOLVED')+'</div><pre style="white-space:pre-wrap">'+esc(JSON.stringify({antes:r.before,depois:r.after},null,2))+'</pre></details>').join('')+'<button class="modal-btn cancel" id="modalCancel">Fechar</button>';
+    $('modalCancel').addEventListener('click',closeModal);$('modalCancel').focus();
+  }));
+  // Typing is a DOM-only draft. Blur/change is the explicit recording act.
+  cont.querySelectorAll('input[data-f],select[data-f]').forEach(field=>field.addEventListener('change',()=>{
+    const pi=+field.dataset.p,oi=+field.dataset.o,f=field.dataset.f,o=S.phases[pi].orders[oi];
+    if(f==='status'&&field.value==='Fechada'){field.value=o.status||'';openCloseOrderModal(pi,oi);return;}
+    let value=field.type==='checkbox'?field.checked:field.value;
+    if(['lote','entry','sl','tp','result','costs'].includes(f)){
+      value=String(value).trim()===''?null:orderParseResult(value);
+      if(value!==null&&!Number.isFinite(value)){alert('Informe um número válido.');return;}
+    }
+    if(value===o[f])return;
+    let reason='Registro confirmado de '+f;
+    if(operationOrderIsLive(o)){
+      reason=prompt('Correção de fato registrado: informe o motivo. A versão anterior será preservada.');
+      if(!reason?.trim())return;
+    }
+    const outcome=operationRecordOrder(pi,oi,{[f]:value},{reason});
+    if(!operationRecordFeedback(outcome))return;
+    render();
+    if(field.tagName==='SELECT'||field.type==='checkbox')renderPhases();else renderPhasesLite(pi);
+  }));
 }
 // re-render só os campos calculados de uma fase (evita perder foco)
 function renderPhasesLite(pi){
@@ -462,61 +94,36 @@ function renderPhasesLite(pi){
   if(!phaseEl)return;
   const ph=S.phases[pi];
   const rows=phaseEl.querySelectorAll('tbody tr');
-  let lsum=0,rsum=0,ltsum=0;
+  let lsum=0;
   ph.orders.forEach((o,oi)=>{
     const rr=(o.entry>0&&o.sl>0&&o.tp>0)?(Math.abs(o.tp-o.entry)/Math.abs(o.entry-o.sl)):0;
-    const risco=o.status==='Aberta'?orderRisk(o):0;
+    const risco=o.status==='Aberta'&&o.recordStatus!=='voided'?orderRisk(o):0;
     const cells=rows[oi].querySelectorAll('.calc');
     if(cells[0])cells[0].textContent=rr>0?rr.toFixed(2):'—';
-    if(cells[1]){cells[1].textContent=risco>0?fmtMoney(risco):'—'; cells[1].className='calc '+(risco>0?'neg':'');}
-    lsum+=(+o.lote||0); rsum+=risco;
-    if(o.status==='Fechada') ltsum+=Math.max(0,(+o.result||0));
+    if(cells[1]){cells[1].textContent=Number.isFinite(risco)&&o.status==='Aberta'&&o.recordStatus!=='voided'?fmtForexMoney(risco,{currency:o.currency}):'—'; cells[1].className='calc '+(risco>0?'neg':'');}
+    if(o.recordStatus==='voided')return;
+    lsum+=(+o.lote||0);
   });
   const loteSum=phaseEl.querySelector('tfoot .lote-sum');
   const riskSum=phaseEl.querySelector('tfoot .risk-sum');
   const lucroSum=phaseEl.querySelector('tfoot .lucro-sum');
   if(loteSum) loteSum.textContent=lsum.toFixed(2);
-  if(riskSum) riskSum.textContent=rsum>0?fmtMoney(rsum):'—';
-  if(lucroSum) lucroSum.textContent=ltsum>0?fmtMoney(ltsum):'—';
+  if(riskSum) riskSum.textContent=phaseOpenRiskText(pi);
+  if(lucroSum) lucroSum.textContent=phasePositiveResults(pi).text;
 }
 
 // ---- Params screen ----
 function renderParams(){
-  const p=S.params;
-  const pr=getActiveRiskProfile();
-  const matrixActive=activeRiskMatrix();
-  const setTxt=(id,v)=>{ const el=$(id); if(el) el.textContent=v; };
-  setTxt('rpSaldoIni',fmtMoney2(p.saldoIni||0));
-  setTxt('rpSaldoAtu',fmtMoney2(p.saldoAtu||0));
-  setTxt('rpInicio',p.inicio||'—');
-  setTxt('rpMDD',fmtPct(activeMDDLimit()));
-  setTxt('rpAlarm',fmtPct(activeAlarmLimit()));
-  setTxt('rpGenLev',fmtX(pr.lev||p.genLev||0));
-  setTxt('rpGenRisk',fmtPct(activeGenesisRiskLimit()));
-  setTxt('rpFW',fmtPct(activeProfileFator()));
-  setTxt('rpVrmN',(p.vrmN||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}));
-  setTxt('rpVrmHV',(p.vrmHV||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}));
-  setTxt('rpRefM',pctView(p.refM));
-  setTxt('rpRefA',pctView(p.refA));
-  const map={pSaldoIni:'saldoIni',pSaldoAtu:'saldoAtu',pInicio:'inicio',pMDD:'mdd',pAlarm:'alarm',
-    pGenLev:'genLev',pGenRisk:'genRisk',pFW:'fw',pVrmN:'vrmN',pVrmHV:'vrmHV',pRefM:'refM',pRefA:'refA'};
-  const pctInputs=new Set(['pMDD','pAlarm','pGenRisk','pFW','pRefM','pRefA']);
-  for(const id in map){
-    const el=$(id); if(!el) continue;
-    const key=map[id];
-    el.value=pctInputs.has(id)?decimalToPercentInput(p[key]):p[key];
-  }
-  // matrix
-  const mb=$('matrixBody');
-  mb.innerHTML=matrixActive.map((m,i)=>`<tr>
-      <td class="hl">${esc(m.nome)}</td>
-      <td>${fmtPct(m.ddmin)}</td>
-      <td>${fmtPct(m.ddmax)}</td>
-      <td>${fmtPct(m.baseDdmin)}–${fmtPct(m.baseDdmax)}</td>
-      <td>${fmtX(m.alav)}</td>
-      <td>${esc(pr.name)} · ${Math.round(activeProfileFator()*100)}%</td>
-    </tr>`).join('');
-  $('iAtr55').value=S.atr55; $('iAtr660').value=S.atr660;
+  const state=JPWForex.state.read(),p=JPWForex.policy,context=JPWForex.state.recordContext(),facts=context.accountInputs;
+  const txt=(id,value)=>{const el=$(id);if(el)el.textContent=value;};
+  const pct=id=>{const item=p.get(id);return Number.isFinite(item.value)?item.value.toLocaleString('pt-BR')+'%':item.status;};
+  txt('rpSaldoIni',fmtMoney2(facts?.si));txt('rpSaldoAtu',fmtMoney2(facts?.equity));txt('rpInicio',facts?.periodId||'LEGACY / não observado');
+  txt('rpMDD',pct('P-03'));txt('rpAlarm','Sem parâmetro V11');txt('rpGenLev',fmtX(p.get('P-15').value));
+  txt('rpGenRisk',pct('P-14'));txt('rpFW',p.get('P-30').status);
+  txt('rpVrmN',String(p.get('P-12a').value.normalBelow));txt('rpVrmHV',String(p.get('P-12a').value.highAbove));
+  txt('rpRefM',fmtPct(p.planning.referenceMonthlyReturn));txt('rpRefA',p.planning.annualReferenceRange.map(fmtPct).join('–'));
+  const mb=$('matrixBody');if(mb)mb.innerHTML=p.phases.map(m=>`<tr><td class="hl">${esc(m.name)}</td><td>${m.lower}%</td><td>${m.upper??p.get(m.upperParameter).value}%</td><td>V11 · ${m.id}</td><td>${fmtX(m.maxLeverage)}</td><td>${esc(state.executionEligibility?.status||'BLOCKED')}</td></tr>`).join('');
+  for(const id of ['iAtr55','iAtr660']){const el=$(id);if(el){el.value=id==='iAtr55'?(S.forex?.market?.atrShort??''):(S.forex?.market?.atrLong??'');el.disabled=true;el.title='Registre a observação H4 com fonte em Parâmetros.';}}
 }
 
 // ---- Atualização automática de câmbio (Frankfurter, ECB, sem chave) ----
@@ -600,120 +207,42 @@ function localDateTimeISO(d=new Date()){
 function addDaysISO(days){ const d=new Date(); d.setDate(d.getDate()+days); return dateISO(d); }
 
 function renderMotor(){
-  $('mExpAlvo').value=S.expAlvo;
-  const mb=$('motorBody'); mb.innerHTML='';
-  S.instruments.forEach((ins,i)=>{
-    const valorLote=usdPerBase(ins)*ins.cpl; // nocional USD real (base USD = $100k fixo; AUDCAD via AUDUSD)
-    const exp=S.expAlvo*S.params.saldoIni; // Art. 3.4§2: sizing sempre sobre saldo inicial
-    const lotePad=valorLote>0?exp/valorLote:0;
-    const loteHV=lotePad*0.5;
-    const st=staleInfo(ins.updated);
-    const tr=document.createElement('tr');
-    tr.dataset.idx=i;
-
-    if(ins.banned && !ins.unlocked){
-      const blockLabel=ins.name==='US500'?'SUSPENSO':'BANIDO';
-      const unlockLabel=ins.name==='US500'?'Registrar deliberação':'Desbloquear (exceção)';
-      tr.className='row-banned';
-      tr.innerHTML=`
-        <td class="hl">${esc(ins.name)}</td>
-        <td>${esc(ins.preco)}</td>
-        <td colspan="2"><span class="ban-label">🔒 ${blockLabel}</span></td>
-        <td>${fmtMoney(valorLote)}</td>
-        <td>—</td><td>—</td><td>${(+ins.teto||0).toFixed(2)}</td>
-        <td><button class="unlock-btn" data-unlock="${i}">${unlockLabel}</button></td>
-      `;
-      mb.appendChild(tr);
-      return;
-    }
-
-    tr.innerHTML=`
-      <td class="hl">${esc(ins.name)}${ins.banned?' <span title="'+esc(ins.banReason)+'" style="cursor:help">⚠️</span>':''}</td>
-      <td class="editable"><input type="number" step="0.00001" data-f="preco" value="${esc(ins.preco)}"></td>
-      <td><span class="stale-pill ${st.cls}">${st.label}</span></td>
-      <td class="editable"><input type="number" step="1" data-f="cpl" value="${esc(ins.cpl)}"></td>
-      <td class="calc-valorlote">${fmtMoney(valorLote)}</td>
-      <td class="hl calc-lotepad">${lotePad.toFixed(2)}</td>
-      <td class="calc-lotehv">${loteHV.toFixed(2)}</td>
-      <td class="editable"><input type="number" step="0.01" data-f="teto" value="${esc(ins.teto)}"></td>
-      <td>${ins.banned?'<button class="unlock-btn" data-relock="'+i+'" style="color:var(--f1);border-color:var(--f1)">Travar</button>':''}</td>
-    `;
-    mb.appendChild(tr);
-  });
-
-  // bind price/cpl/teto edits
-  mb.querySelectorAll('input').forEach(inp=>{
-    inp.addEventListener('input',()=>{
-      const tr=inp.closest('tr'); const i=+tr.dataset.idx; const f=inp.dataset.f;
-      const val=parseFloat(inp.value)||0;
-      S.instruments[i][f]=val;
-      if(f==='preco') S.instruments[i].updated=todayISO(); // editar preço = confirmar que está atual
-      save();
-      recomputeMotorRow(i);
+  const exp=$('mExpAlvo');if(exp){exp.value='';exp.disabled=true;exp.title='Teto não dimensiona volume admissível.';}
+  const mb=$('motorBody');if(!mb)return;
+  const model=JPWForex.state.read();
+  mb.innerHTML=S.instruments.map((ins,i)=>{
+    const unit=usdPerBase(ins)*ins.cpl,st=staleInfo(ins.updated);
+    return `<tr data-idx="${i}"><td class="hl">${esc(ins.name)}</td><td><input type="number" step="0.00001" data-f="preco" value="${esc(ins.preco)}" aria-label="Preço ${esc(ins.name)}"></td><td><span class="stale-pill ${st.cls}">${esc(st.label)}</span></td><td><input type="number" step="1" data-f="cpl" value="${esc(ins.cpl)}" aria-label="Contrato ${esc(ins.name)}"></td><td class="calc-valorlote">${fmtMoney(unit)}</td><td class="calc-lotepad">${esc(model.metrics.admissionRisk.status)}</td><td class="calc-lotehv">${esc(model.executionEligibility.status)}</td><td>Limites: motor V11</td><td>${ins.banned?esc(ins.banReason||'Restrição registrada'):'P-14 / P-18 / P-17 pendentes'}</td></tr>`;
+  }).join('');
+  mb.querySelectorAll('input').forEach(input=>input.addEventListener('change',()=>{
+    const i=+input.closest('tr').dataset.idx,field=input.dataset.f,value=orderParseResult(input.value);
+    if(!(value>0)){alert('Informe um valor positivo.');return;}
+    const outcome=JPWForex.state.mutate('instrument-observation','Observação confirmada de '+field,['instruments'],()=>{
+      S.instruments[i][field]=value;if(field==='preco')S.instruments[i].updated=todayISO();
     });
-  });
-  // bind unlock/relock
-  mb.querySelectorAll('[data-unlock]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const i=+btn.dataset.unlock;
-      const ins=S.instruments[i];
-      const msg=ins.name==='US500'
-        ? `"${ins.name}" está suspenso pelo Estatuto JP Wealth V10.0: ${ins.banReason}\n\nSó registre liberação se houver deliberação formal.`
-        : `"${ins.name}" está bloqueado por decreto pessoal: ${ins.banReason}\n\nDesbloquear mesmo assim? Isso é uma exceção deliberada ao seu próprio Estatuto.`;
-      if(confirm(msg)){
-        ins.unlocked=true; save(); renderMotor();
-      }
-    });
-  });
-  mb.querySelectorAll('[data-relock]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const i=+btn.dataset.relock;
-      S.instruments[i].unlocked=false; save(); renderMotor();
-    });
-  });
-
-  const pb=$('profileBody');
-  pb.innerHTML=RISK_PROFILES.map(pr=>`<tr>
-      <td class="hl">${esc(pr.name)}</td>
-      <td>${pr.fator.toFixed(2)}</td>
-      <td>${fmtPct(pr.ddrTarget)}</td>
-      <td>${fmtPct(pr.scenarioDD15)}</td>
-      <td>${fmtX(pr.orderLeverage)}</td>
-      <td>${esc(pr.limit)}</td>
-    </tr>`).join('');
+    if(operationRecordFeedback(outcome)){recomputeMotorRow(i);render();}
+  }));
+  const pb=$('profileBody');if(pb)pb.innerHTML=`<tr><td colspan="6">${esc(JPWForex.engine.computeReplicationFirewall({}).status)} · P-30: fatores satélites sem homologação. Perfis legados permanecem como descrição histórica e não dimensionam lotes.</td></tr>`;
 }
-// recalcula só as células derivadas de uma linha (preserva foco)
 function recomputeMotorRow(i){
-  const tr=document.querySelector(`#motorBody tr[data-idx="${i}"]`);
-  if(!tr || tr.classList.contains('row-banned')) return;
-  const ins=S.instruments[i];
-  const valorLote=usdPerBase(ins)*ins.cpl; // nocional USD real
-  const exp=S.expAlvo*S.params.saldoIni; // Art. 3.4§2: sizing sempre sobre saldo inicial
-  const lotePad=valorLote>0?exp/valorLote:0;
-  const loteHV=lotePad*0.5;
-  tr.querySelector('.calc-valorlote').textContent=fmtMoney(valorLote);
-  tr.querySelector('.calc-lotepad').textContent=lotePad.toFixed(2);
-  tr.querySelector('.calc-lotehv').textContent=loteHV.toFixed(2);
-  const st=staleInfo(ins.updated);
-  const pill=tr.querySelector('.stale-pill');
-  pill.className='stale-pill '+st.cls; pill.textContent=st.label;
+  const tr=document.querySelector(`#motorBody tr[data-idx="${i}"]`),ins=S.instruments[i];if(!tr||!ins)return;
+  tr.querySelector('.calc-valorlote').textContent=fmtMoney(usdPerBase(ins)*ins.cpl);
+  const model=JPWForex.state.read();
+  tr.querySelector('.calc-lotepad').textContent=model.metrics.admissionRisk.status;tr.querySelector('.calc-lotehv').textContent=model.executionEligibility.status;
+  const st=staleInfo(ins.updated),pill=tr.querySelector('.stale-pill');pill.className='stale-pill '+st.cls;pill.textContent=st.label;
 }
-
 
 // ---- Contas screen ----
 function getMaster(){ return S.accounts.find(a=>a.tipo==='MESTRE')||S.accounts[0]; }
-function profileFactor(perfilName){
-  return riskProfileByAny(perfilName).fator;
-}
+function profileFactor(){return JPWForex.engine.computeReplicationFirewall({}).value;}
 function contaCalc(a){
   const master=getMaster();
-  const lucro=a.sini>0?(a.satu-a.sini)/a.sini:0;
-  const corr=(master&&master.sini>0)?a.sini/master.sini:0;
-  const fw=1; // V10: sem multiplicador fixo; Art. 10.1 usa normalização por saldo × fator de perfil
-  const pf=profileFactor(a.perfil);
-  const loteVs=corr*fw*pf;
-  return {lucro,corr,fw,pf,loteVs};
+  const lucro=a.sini>0&&Number.isFinite(a.satu)?(a.satu-a.sini)/a.sini:null;
+  const corr=master?.sini>0&&Number.isFinite(a.sini)?a.sini/master.sini:null;
+  const firewall=JPWForex.engine.computeReplicationFirewall({maxLossPercent:a.maxLossPercent,safetyMarginPercent:a.safetyMarginPercent});
+  return {lucro,corr,fw:firewall.value,pf:firewall.value,loteVs:firewall.value,firewall};
 }
+function accountFactorText(value){return Number.isFinite(value)?value.toFixed(3):'BLOCKED';}
 // ---- PIN de alteração de perfil (fricção deliberada, NÃO é criptografia real —
 //      qualquer um com DevTools pode editar o localStorage e contornar isso.
 //      O objetivo é impedir o clique impulsivo, não resistir a um invasor.) ----
@@ -796,7 +325,7 @@ function renderContas(){
       <td class="account-sini-read">${fmtMoney2(+a.sini||0)}</td>
       <td class="account-satu-read">${fmtMoney2(+a.satu||0)}</td>
       <td class="calc-lucro ${lucro>=0?'pos':'neg'}">${fmtPct(lucro)}</td>
-      <td class="calc-lotevs hl">${loteVs.toFixed(3)}×</td>
+      <td class="calc-lotevs hl">${accountFactorText(loteVs)}</td>
       <td><button type="button" class="account-chip account-cred ${cred.missing.length?'':'ok'}" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}" title="${esc(cred.detail)}">${esc(cred.label)}</button></td>
       <td><button class="row-del" title="Excluir conta" aria-label="Excluir ${esc(a.nome)}" data-del="${i}">✕</button></td>`;
     const detail=document.createElement('tr');
@@ -811,7 +340,7 @@ function renderContas(){
       <label class="field"><span>Plataforma</span><select data-f="platform">${platformOptions(a.platform)}</select></label>
       <label class="field"><span>Login da plataforma</span><input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma"></label>
       <div class="field account-password-field"><span class="account-editor-label">Senha do investidor / somente leitura</span><div class="investor-pass-row"><input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off"><button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button></div></div>
-      <details class="account-calc-detail"><summary>Memória de Lote vs Mestre</summary><dl><dt>Correção</dt><dd class="calc-corr">${corr.toFixed(3)}</dd><dt>Normalização V10</dt><dd class="calc-fw">${fw.toFixed(3)}</dd><dt>Fator de Perfil</dt><dd class="calc-pf">${pf.toFixed(3)}</dd><dt>Lote vs Mestre</dt><dd>${loteVs.toFixed(3)}×</dd></dl></details>
+      <details class="account-calc-detail"><summary>Memória de Lote vs Mestre</summary><dl><dt>Correção</dt><dd class="calc-corr">${Number.isFinite(corr)?corr.toFixed(3):'Não apurado'}</dd><dt>Firewall V11</dt><dd class="calc-fw">${accountFactorText(fw)}</dd><dt>Fator homologado</dt><dd class="calc-pf">${accountFactorText(pf)}</dd><dt>Lote vs Mestre</dt><dd>${accountFactorText(loteVs)}</dd></dl></details>
     </div></td>`;
     cb.append(summary,detail);
   });
@@ -906,7 +435,7 @@ function recomputeContasCalc(){
     const lc=tr.querySelector('.calc-lucro'); lc.textContent=fmtPct(lucro); lc.className='calc-lucro '+(lucro>=0?'pos':'neg');
     tr.querySelector('.account-sini-read').textContent=fmtMoney2(+a.sini||0);
     tr.querySelector('.account-satu-read').textContent=fmtMoney2(+a.satu||0);
-    tr.querySelector('.calc-lotevs').textContent=loteVs.toFixed(3)+'×';
+    tr.querySelector('.calc-lotevs').textContent=accountFactorText(loteVs);
   });
   renderAplicacao();
 }
@@ -915,7 +444,7 @@ function renderAplicacao(){
   const ab=$('aplicBody');
   ab.innerHTML=S.accounts.map(a=>{
     const {loteVs}=contaCalc(a);
-    return `<tr><td class="hl">${esc(a.nome)}</td><td>${loteVs.toFixed(3)}</td><td class="hl">${(S.loteMaster*loteVs).toFixed(3)}</td></tr>`;
+    return `<tr><td class="hl">${esc(a.nome)}</td><td>${accountFactorText(loteVs)}</td><td class="hl">${Number.isFinite(loteVs)?(S.loteMaster*loteVs).toFixed(3):'BLOCKED'}</td></tr>`;
   }).join('');
 }
 
@@ -963,7 +492,7 @@ function renderDash(){
   $('dRetAcum').textContent=led.length?(retAcum*100).toFixed(1)+'%':'—';
   $('dDDmax').textContent=led.length?(ddMax*100).toFixed(1)+'%':'—';
   $('dMar').textContent=led.length&&ddMax>0?(retAcum/ddMax).toFixed(2):'—';
-  $('dMeta').textContent=(S.params.refM*100).toFixed(1)+'%';
+  $('dMeta').textContent=JPWForex.policy.planning.referenceMonthlyReturn.toFixed(1)+'%';
   renderDashCharts();
 }
 

@@ -24,6 +24,40 @@ function histRecords(){
 }
 
 // ---- derivações puras sobre o snapshot (nunca sobre as grades) ----
+function histNumber(value){
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value !== 'string' || !/^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim())) return null;
+  const n = Number(value.trim());
+  return Number.isFinite(n) ? n : null;
+}
+function histCapturedContext(r){
+  // Only captured records participate. Conflicts stay unresolved; UI selection
+  // and today's account facts can never provide a historical monetary unit.
+  const contexts = [r, r && r.recordContext, r && r.finalizationContext].filter(x => x && typeof x === 'object');
+  const values = key => [...new Set(contexts.flatMap(x =>
+    [x[key], key === 'currency' && x.accountInputs && x.accountInputs.currency])
+    .filter(x => typeof x === 'string' && x.trim()).map(x => x.trim()))];
+  const currencies = values('currency'), accounts = values('accountId'), periods = values('periodId');
+  // An explicit null records known absence (notably a LEGACY consolidation).
+  // A later observation in either context must not fill that historical gap.
+  const unitAbsent = r && Object.prototype.hasOwnProperty.call(r, 'currency') && r.currency === null;
+  return {currency: !unitAbsent && currencies.length === 1 && /^[A-Z]{3}$/.test(currencies[0]) ? currencies[0] : null,
+    accountId: accounts.length === 1 ? accounts[0] : null,
+    periodId: periods.length === 1 ? periods[0] : null,
+    currencyConflict: currencies.length > 1, identityConflict: accounts.length > 1 || periods.length > 1};
+}
+function histMoney(value, context){
+  const n = histNumber(value);
+  if (n == null) return '—';
+  if (!context || !context.currency)
+    return n.toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2}) + ' · unidade ausente';
+  return fmtForexMoney(n, context);
+}
+function histPolicyLabel(r){
+  const snapshot = r && (r.policySnapshot || (r.recordContext && r.recordContext.policySnapshot));
+  const version = snapshot && (snapshot.policyVersion || snapshot.version);
+  return snapshot && (snapshot.statuteVersion === 'V11' || /^JPW-FOREX-V11-/.test(version || '')) ? 'V11' : 'LEGACY';
+}
 function histDurationMs(r){
   const a = Date.parse(r && r.openedAt), b = Date.parse(r && r.closedAt);
   return (Number.isFinite(a) && Number.isFinite(b) && b >= a) ? (b - a) : null;
@@ -37,24 +71,24 @@ function histFmtDuration(ms){
   return m + 'min';
 }
 function histReturnPct(r){
-  const base = +r.referenceBalance;
-  if (!Number.isFinite(base) || base <= 0) return null;
-  return (+r.netResult || 0) / base * 100;
+  const base = histNumber(r.referenceBalance), result = histNumber(r.netResult);
+  if (base == null || base <= 0 || result == null) return null;
+  return result / base * 100;
 }
 function histResultClass(r){
-  const n = +r.netResult || 0;
+  const n = histNumber(r.netResult);
+  if (n == null) return 'Não informado';
   return n > 0 ? 'Positiva' : (n < 0 ? 'Negativa' : 'Neutra');
 }
 function histFmtDate(iso){
   const t = Date.parse(iso);
   return Number.isFinite(t) ? new Date(t).toLocaleDateString('pt-BR') : '—';
 }
-function histPhaseName(idx){
+function histPhaseName(idx, record){
   // typeof, e nao coercao: `+null === 0` renderizaria 'Fase 1' para um maximo
   // que nunca foi observado — o registro diz null e a tela mentiria.
-  if (typeof idx !== 'number' || !Number.isFinite(idx)) return '—';
-  const f = (S.matrix || [])[+idx];
-  return (f && f.nome) ? f.nome : ('Fase ' + ((+idx) + 1));
+  if (!Number.isInteger(idx) || idx < 0) return '—';
+  return histPolicyLabel(record) + ' · Fase ' + (idx + 1);
 }
 
 // Mediana com n EXPLÍCITO. Desconhecido é excluído desta métrica e de mais
@@ -88,19 +122,29 @@ function histFilter(records){
 function histStats(records){
   const n = records.length;
   if (!n) return { n:0 };
-  const positivas = records.filter(r => (+r.netResult || 0) > 0).length;
-  const resultados = records.map(r => +r.netResult || 0);
+  const resultados = records.map(r => histNumber(r.netResult));
+  const conhecidos = resultados.filter(x => x != null);
+  const positivas = conhecidos.filter(x => x > 0).length;
+  const contexts = records.map(histCapturedContext);
+  const currencies = [...new Set(contexts.map(x => x.currency))];
+  const comparable = conhecidos.length === n && currencies.length === 1 && currencies[0] != null;
+  const monetaryReason = conhecidos.length !== n ? 'Há resultado não informado.'
+    : contexts.some(x => !x.currency) ? 'Unidade ausente ou conflitante no registro.'
+    : currencies.length !== 1 ? 'Moedas diferentes; sem conversão histórica registrada.' : '';
   const dur = histMedian(records.map(histDurationMs));
-  const def = histMedian(records.map(r => Number.isFinite(+r.defenseCount) ? +r.defenseCount : null));
+  const def = histMedian(records.map(r => histNumber(r.defenseCount)));
   return {
     n,
-    acumulado: resultados.reduce((s, x) => s + x, 0),
+    acumulado: comparable ? conhecidos.reduce((s, x) => s + x, 0) : null,
+    currency: comparable ? currencies[0] : null,
+    monetaryReason,
+    resultadosConhecidos: conhecidos.length,
     positivas,
-    taxaPositivas: positivas / n * 100,
+    taxaPositivas: conhecidos.length ? positivas / conhecidos.length * 100 : null,
     duracaoMediana: dur,
     defesasMedianas: def,
-    maior: Math.max(...resultados),
-    menor: Math.min(...resultados)
+    maior: comparable ? Math.max(...conhecidos) : null,
+    menor: comparable ? Math.min(...conhecidos) : null
   };
 }
 
@@ -112,14 +156,15 @@ function histCard(rotulo, valor, nota){
 }
 
 function histRenderDetail(r){
+  const context = histCapturedContext(r);
   const ordens = (r.ordersSnapshot || []).map(o =>
-    '<tr><td>' + esc(o.label || '(sem ID)') + '</td><td>' + esc('F' + o.phase) + '</td>' +
+    '<tr><td>' + esc(o.label || '(sem ID)') + '</td><td>' + esc(histPhaseName(Number.isInteger(o.phase) ? o.phase - 1 : null, r)) + '</td>' +
     '<td>' + esc(o.par || '—') + '</td><td>' + esc(o.tipo || '—') + '</td>' +
     '<td class="hist-num">' + esc(String(o.lote ?? '—')) + '</td>' +
     '<td class="hist-num">' + esc(String(o.entry ?? '—')) + '</td>' +
     '<td class="hist-num">' + esc(String(o.sl ?? '—')) + '</td>' +
     '<td class="hist-num">' + esc(String(o.tp ?? '—')) + '</td>' +
-    '<td class="hist-num">' + esc(fmtMoney2(+o.result || 0)) + '</td>' +
+    '<td class="hist-num">' + esc(histMoney(o.result, context)) + '</td>' +
     '<td>' + esc(o.status || '—') + '</td>' +
     '<td>' + esc(o.openedAt ? histFmtDate(o.openedAt) : '—') + '</td>' +
     '<td>' + esc(o.closedAt ? histFmtDate(o.closedAt) : '—') + '</td></tr>').join('');
@@ -132,20 +177,23 @@ function histRenderDetail(r){
   return '<div class="hist-detail" data-hist-detail="' + esc(r.operationId) + '">' +
     '<div class="hist-detail-grid">' +
     '<div><b>Operation ID</b><br><span class="hist-mono">' + esc(r.operationId) + '</span></div>' +
+    '<div><b>Conta capturada</b><br>' + esc(context.accountId || 'Não capturada') + '</div>' +
+    '<div><b>Período capturado</b><br>' + esc(context.periodId || 'Não capturado') + '</div>' +
+    '<div><b>Moeda capturada</b><br>' + esc(context.currency || (context.currencyConflict ? 'Conflitante · unidade ausente' : 'Unidade ausente')) + '</div>' +
     '<div><b>Instrumento</b><br>' + esc(r.instrument || '—') + '</div>' +
     '<div><b>Direção</b><br>' + esc(r.direction || '—') + '</div>' +
     '<div><b>Abertura</b><br>' + esc(r.openedAt ? histFmtDate(r.openedAt) : 'Desconhecida') +
       (r.openedAtSource ? ' <span class="hist-src">(' + esc(r.openedAtSource) + ')</span>' : '') + '</div>' +
     '<div><b>Encerramento</b><br>' + esc(histFmtDate(r.closedAt)) + '</div>' +
     '<div><b>Duração</b><br>' + esc(histFmtDuration(histDurationMs(r))) + '</div>' +
-    '<div><b>Fase máxima da Conta</b><br>' + esc(histPhaseName(r.maxAccountPhaseReached)) +
+    '<div><b>Fase máxima da Conta</b><br>' + esc(histPhaseName(r.maxAccountPhaseReached, r)) +
       (degradada ? ' <span class="hist-degradada" title="Houve falha de captura durante a operação: este é o maior valor conhecido, não necessariamente o máximo absoluto.">máximo conhecido / integridade degradada</span>'
        : naoObservada ? ' <span class="hist-degradada" title="A captura da Fase da Conta nunca se aplicou durante esta operação, e nenhuma falha foi registrada. Ausência de medição, não medição de ausência.">não observada</span>' : '') + '</div>' +
-    '<div><b>Fase máxima da Grade</b><br>' + esc(r.maxGridPhaseReached == null ? '—' : histPhaseName(r.maxGridPhaseReached)) + '</div>' +
+    '<div><b>Fase máxima da Grade</b><br>' + esc(histPhaseName(r.maxGridPhaseReached, r)) + '</div>' +
     '<div><b>Defesas</b><br>' + esc(String(r.defenseCount ?? '—')) +
       (r.defenseCountSource ? ' <span class="hist-src">(' + esc(r.defenseCountSource) + ')</span>' : '') + '</div>' +
-    '<div><b>Resultado líquido</b><br>' + esc(fmtMoney2(+r.netResult || 0)) + '</div>' +
-    '<div><b>Base do retorno</b><br>' + esc(r.referenceBalance == null ? '—' : fmtMoney2(r.referenceBalance)) +
+    '<div><b>Resultado líquido</b><br>' + esc(histMoney(r.netResult, context)) + '</div>' +
+    '<div><b>Base do retorno</b><br>' + esc(histMoney(r.referenceBalance, context)) +
       ' <span class="hist-src">(' + esc(r.referenceBalanceType || '—') + ')</span></div>' +
     '<div><b>Retorno</b><br>' + esc(ret == null ? '—' : ret.toFixed(2) + '%') + '</div>' +
     '</div>' +
@@ -170,17 +218,17 @@ function histStatsHTML(filtrados){
   const st = histStats(filtrados);
   if (!st.n) return '<p class="expl">Nenhuma operação atende aos filtros.</p>';
   return histCard('Operações finalizadas', String(st.n)) +
-    histCard('Resultado líquido acumulado', fmtMoney2(st.acumulado)) +
-    histCard('Taxa de operações positivas', st.taxaPositivas.toFixed(0) + '%',
-             st.positivas + ' de ' + st.n + ' registradas') +
+    histCard('Resultado líquido acumulado', histMoney(st.acumulado, st), st.monetaryReason) +
+    histCard('Taxa de operações positivas', st.taxaPositivas == null ? '—' : st.taxaPositivas.toFixed(0) + '%',
+             st.positivas + ' de ' + st.resultadosConhecidos + ' com resultado informado; ' + st.n + ' registradas') +
     histCard('Duração mediana',
              st.duracaoMediana.valor == null ? '—' : histFmtDuration(st.duracaoMediana.valor),
              'n = ' + st.duracaoMediana.n) +
     histCard('Defesas medianas',
              st.defesasMedianas.valor == null ? '—' : String(st.defesasMedianas.valor),
              'n = ' + st.defesasMedianas.n) +
-    histCard('Maior resultado', fmtMoney2(st.maior)) +
-    histCard('Menor resultado', fmtMoney2(st.menor));
+    histCard('Maior resultado', histMoney(st.maior, st), st.monetaryReason) +
+    histCard('Menor resultado', histMoney(st.menor, st), st.monetaryReason);
 }
 
 function histTableHTML(filtrados){
@@ -197,7 +245,7 @@ function histTableHTML(filtrados){
       '<td>' + esc(histFmtDate(r.closedAt)) + '</td>' +
       '<td>' + esc(histFmtDuration(histDurationMs(r))) + '</td>' +
       '<td class="hist-num">' + esc(String(r.defenseCount ?? '—')) + '</td>' +
-      '<td class="hist-num hist-' + esc(cls.toLowerCase()) + '">' + esc(fmtMoney2(+r.netResult || 0)) + '</td>' +
+      '<td class="hist-num hist-' + esc(cls.toLowerCase().replace(/\s+/g, '-')) + '">' + esc(histMoney(r.netResult, histCapturedContext(r))) + '</td>' +
       '<td class="hist-num">' + esc(ret == null ? '—' : ret.toFixed(2) + '%') + '</td>' +
       '</tr>' + (aberto ? '<tr class="hist-detail-row"><td colspan="9">' + histRenderDetail(r) + '</td></tr>' : '');
   }).join('');
@@ -280,7 +328,7 @@ function renderOperationHistory(){
       opcao('BUY', 'BUY', histState.direction) + opcao('SELL', 'SELL', histState.direction) + '</select></label>' +
     '<label>Resultado <select id="histResult">' + opcao('all', 'Todas', histState.result) +
       opcao('Positiva', 'Positivas', histState.result) + opcao('Negativa', 'Negativas', histState.result) +
-      opcao('Neutra', 'Neutras', histState.result) + '</select></label>' +
+      opcao('Neutra', 'Neutras', histState.result) + opcao('Não informado', 'Não informados', histState.result) + '</select></label>' +
     '<label>Buscar <input type="search" id="histQuery" value="' + esc(histState.query) +
       '" placeholder="id, instrumento ou ordem"></label>' +
     '</div>' +
@@ -320,12 +368,16 @@ function operationCopyNumber(value){
   return /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text) && Number.isFinite(Number(text))
     ? text.replace('.', ',') : '';
 }
-function operationCopyMoney(value){
+function operationCopyMoney(value, context){
   const text = operationCopyNumber(value);
   if (!text || text === 'PENDING') return text;
-  return fmtMoney2(Number(typeof value === 'string' ? value.trim() : value));
+  return histMoney(value, context);
 }
-function operationCopyOrderLines(o, position, historical){
+function operationCopyHistoricalMoney(value, context){
+  return operationCopyMoney(value, context);
+}
+function operationCopyOrderLines(o, position, historical, context){
+  const monetary = historical ? context : histCapturedContext(o);
   const lines = [];
   const row = (label, value) => { if (value !== '') lines.push(label + ': ' + value); };
   const label = operationCopyScalar(historical ? o.label : o.id);
@@ -339,15 +391,17 @@ function operationCopyOrderLines(o, position, historical){
   row('Take profit', operationCopyNumber(o.tp));
   // result é preenchimento de fechamento; zero na ordem aberta é default,
   // não resultado realizado. Não o promover a lucro/prejuízo nessa situação.
-  if (o.status === 'Fechada') row('Resultado registrado ($)', operationCopyMoney(o.result));
+  if (o.status === 'Fechada') row('Resultado registrado (' + (monetary && monetary.currency || 'unidade ausente') + ')',
+    operationCopyMoney(o.result, monetary));
   row('Abertura registrada', operationCopyScalar(o.openedAt));
   row('Fechamento registrado', operationCopyScalar(o.closedAt));
   return lines;
 }
 function operationCopyProjection(record){
   const historical = !!record;
+  const captured = historical ? histCapturedContext(record) : null;
   const orders = historical
-    ? (Array.isArray(record.ordersSnapshot) ? record.ordersSnapshot.map(o => ({o, position:'F' + o.phase + '/' + (o.gridIndex + 1)})) : [])
+    ? (Array.isArray(record.ordersSnapshot) ? record.ordersSnapshot.map(o => ({o, position:histPhaseName(Number.isInteger(o.phase) ? o.phase - 1 : null, record) + '/' + (o.gridIndex + 1)})) : [])
     : operationLiveOrders().map(({o, pi, oi}) => ({o, position:'F' + (pi + 1) + '/' + (oi + 1)}));
   if (!historical && !orders.length) return null;
   const op = historical ? record : (S.activeOperation || {});
@@ -367,7 +421,9 @@ function operationCopyProjection(record){
     if (thesis.ok) {
       row('Instrumento', operationCopyScalar(thesis.instrument));
       row('Direção', operationCopyScalar(thesis.direction));
-    } else lines.push('Tese divergente entre as ordens registradas; confira instrumento e direção.');
+    }
+    if (!thesis.ok || (thesis.findings || []).some(f => f.code === 'INSTRUMENT_CONFLICT' || f.code === 'DIRECTION_CONFLICT'))
+      lines.push('Tese divergente entre as ordens registradas; confira instrumento e direção.');
   }
   row('Abertura registrada', operationCopyScalar(op.openedAt));
   row('Origem da abertura', operationCopyScalar(op.openedAtSource));
@@ -376,14 +432,29 @@ function operationCopyProjection(record){
     row('Finalização registrada', operationCopyScalar(record.finalizedAt));
   }
   lines.push('Ordens registradas nas grades: ' + orders.length);
-  orders.forEach(({o, position}) => lines.push('', ...operationCopyOrderLines(o, position, historical)));
+  orders.forEach(({o, position}) => lines.push('', ...operationCopyOrderLines(o, position, historical, captured)));
   if (historical) {
     lines.push('', 'Resultado da operação finalizada');
-    row('Resultado líquido registrado ($)', operationCopyMoney(record.netResult));
-    row('Base do retorno registrada ($)', operationCopyMoney(record.referenceBalance));
+    const unit = captured.currency || 'unidade ausente';
+    row('Resultado líquido registrado (' + unit + ')', operationCopyHistoricalMoney(record.netResult, captured));
+    row('Base do retorno registrada (' + unit + ')', operationCopyHistoricalMoney(record.referenceBalance, captured));
     row('Defesas informadas', operationCopyNumber(record.defenseCount));
     row('Origem das defesas', operationCopyScalar(record.defenseCountSource));
-    lines.push('Conta, perfil, período e métricas finais não foram capturados neste registro.');
+    lines.push('', 'Contexto histórico capturado');
+    row('Conta ID', operationCopyScalar(captured.accountId) || 'Não capturada');
+    row('Período ID', operationCopyScalar(captured.periodId) || 'Não capturado');
+    row('Moeda', captured.currency || (captured.currencyConflict ? 'Conflitante — unidade ausente' : 'Unidade ausente'));
+    if (captured.identityConflict) lines.push('Identidades conflitantes nos contextos capturados.');
+    const snapshot = record.policySnapshot || record.recordContext && record.recordContext.policySnapshot;
+    row('Política capturada', operationCopyScalar(snapshot && (snapshot.policyVersion || snapshot.version)) || 'LEGACY_UNRESOLVED');
+    for (const [label, context] of [['Entrada', record.recordContext], ['Fechamento', record.finalizationContext]]) {
+      if (!context || typeof context !== 'object') continue;
+      row(label + ' · conta ID', operationCopyScalar(context.accountId));
+      row(label + ' · período ID', operationCopyScalar(context.periodId));
+      row(label + ' · observação', operationCopyScalar(context.observedAt));
+      row(label + ' · proveniência', operationCopyScalar(context.provenance));
+    }
+    lines.push('Equity final e DD não são inferidos dos contextos capturados.');
   } else {
     const closed = orders.filter(x => x.o.status === 'Fechada');
     if (closed.length) {
@@ -391,8 +462,11 @@ function operationCopyProjection(record){
       // O agregado existente aplica coerção a ausentes. Só consumi-lo quando
       // todos os resultados envolvidos são números informados, sem PENDING.
       const known = closed.every(({o}) => operationCopyNumber(o.result) && operationCopyNumber(o.result) !== 'PENDING');
-      if (known) row('Resultado líquido das ordens fechadas ($)', operationCopyMoney(netOpAtual()));
-      else lines.push('Resultado líquido indisponível: há resultado fechado não informado ou PENDING.');
+      const currencies = [...new Set(closed.map(({o}) => histCapturedContext(o).currency))];
+      const opCurrency = histCapturedContext(op).currency;
+      const comparable = currencies.length === 1 && currencies[0] && (!opCurrency || opCurrency === currencies[0]);
+      if (known && comparable) row('Resultado líquido das ordens fechadas (' + currencies[0] + ')', operationCopyMoney(netOpAtual(), {currency:currencies[0]}));
+      else lines.push('Resultado líquido indisponível: há resultado não informado, PENDING ou moeda ausente/conflitante.');
     }
     lines.push('', 'Contexto atual do cadastro — não é snapshot da entrada');
     const master = typeof getMaster === 'function' ? getMaster() : null;
@@ -404,7 +478,9 @@ function operationCopyProjection(record){
     }
     row('Período cadastrado', operationCopyScalar(S.period && S.period.nome));
     row('Início do período', operationCopyScalar(S.params && S.params.inicio));
-    row('Saldo contábil atual (book, $)', operationCopyMoney(S.params && S.params.saldoAtu));
+    // This legacy scalar has no currency provenance. Neither the operation nor
+    // the selected account establishes the unit of this independent book value.
+    row('Saldo contábil atual (book, unidade ausente)', operationCopyMoney(S.params && S.params.saldoAtu));
     lines.push('Equity flutuante e veredito normativo não compõem esta cópia.');
   }
   return lines.join('\n');

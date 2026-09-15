@@ -7,22 +7,34 @@
 // dgLogChange — o aviso de "alterações desde o último backup" passa a cobrir o
 // Planejamento FX. Nenhum segredo entra no log.
 
-function fxState(){
-  if(typeof fxPlanningNormalizeState==='function') fxPlanningNormalizeState();
-  return S.fxPlanning;
+function fxEnvelopeIssue(){
+  const fx=S.fxPlanning;
+  if(!fx||typeof fx!=='object'||Array.isArray(fx)||fx.schemaVersion!==1||!Array.isArray(fx.auditLog))return 'Planejamento incompatível: preserve o documento e confira a versão antes de editar.';
+  if(fx.archivedPlans!==undefined&&!Array.isArray(fx.archivedPlans))return 'Arquivo histórico de planos incompatível.';
+  const p=fx.plan;if(p===null)return '';
+  if(!p||typeof p!=='object'||Array.isArray(p)||!p.baseline||!p.current||!p.actuals||Array.isArray(p.actuals)||!Array.isArray(p.revisions)||!Array.isArray(p.contributions))return 'Estrutura do plano incompatível; nenhuma normalização automática será gravada.';
+  if(!fxInputFinite(p.current.defaultMonthlyReturn)||+p.current.defaultMonthlyReturn<=-1)return 'Premissa de rentabilidade ausente ou inválida; não será convertida em zero.';
+  if(p.planningRevision!==undefined&&p.planningRevision!==2)return 'Revisão do planejamento desconhecida; somente leitura.';
+  for(const key of ['scenarios','scenarioArchive','rebases','actualHistory'])if(p[key]!==undefined&&!Array.isArray(p[key]))return 'Histórico de planejamento incompatível: '+key+'.';
+  for(const rec of Object.values(p.actuals))if(!rec||fxValidateActualInput(rec).length)return 'Fechamento realizado incompleto; ausência não é resultado zero.';
+  return '';
 }
-function fxActivePlanRaw(){ return fxState().plan; }
+function fxState(){return S.fxPlanning;}
+function fxActivePlanRaw(){ return fxState()&&fxState().plan||null; }
 // Cópia normalizada para o motor puro (window.JPWFx.engine).
 function fxActivePlan(){
+  if(fxEnvelopeIssue())return null;
   const raw=fxActivePlanRaw(); if(!raw) return null;
   const baseline=fxNormalizeAssumptions(raw.baseline);
   return {
+    ...structuredClone(raw),
     id:String(raw.id||''), name:String(raw.name||'Planejamento FX'),
     createdAt:String(raw.createdAt||''), updatedAt:String(raw.updatedAt||''),
     baseline:{...baseline, frozenAt:String((raw.baseline&&raw.baseline.frozenAt)||'')},
     current:{...fxNormalizeAssumptions(raw.current||raw.baseline),
       revisedAt:String((raw.current&&raw.current.revisedAt)||'')},
     revisions:(raw.revisions||[]).map(r=>({
+      ...structuredClone(r),
       revisedAt:String((r&&r.revisedAt)||''), supersededAt:String((r&&r.supersededAt)||''),
       note:String((r&&r.note)||''), snapshot:fxNormalizeAssumptions(r&&r.snapshot)})),
     actuals:Object.fromEntries(Object.entries(raw.actuals||{})
@@ -42,6 +54,7 @@ function fxAudit(type,month,detail){
 // Confirma somente a mutação deste agregado e seu evento DG. O save global
 // continua responsável por concorrência, recuperação e gravação física.
 function fxMutateState(fn){
+  const issue=fxEnvelopeIssue();if(issue)return {ok:false,persistido:false,errors:[issue]};
   const unknown=()=>{
     hideStaleSavedTag();
     // Uma exceção posterior ao save pode suceder o aviso verde de recuperação.
@@ -73,6 +86,7 @@ function fxMutateState(fn){
   try{
     result=fn()||{};
     if(result.ok===false){restore();return {...result,persistido:false};}
+    if(S.fxPlanning.plan)S.fxPlanning.plan.planningRevision=2;
   }catch(e){
     restore();hideStaleSavedTag();
     return {ok:false,persistido:false,errors:['Não foi possível aplicar a alteração. Nada foi gravado.']};
@@ -100,6 +114,7 @@ function fxMutateState(fn){
 // MVP: um planejamento ativo por vez (seção 31 da especificação).
 function fxPlanCreate({name,assumptions}={}){
   return fxMutateState(()=>{
+    if(!assumptions||!fxInputFinite(assumptions.defaultMonthlyReturn))return {ok:false,errors:['Informe a rentabilidade planejada; zero é válido.']};
     const norm=fxNormalizeAssumptions(assumptions);
     const errors=fxValidateAssumptions(norm);
     if(errors.length) return {ok:false,errors};
@@ -110,13 +125,15 @@ function fxPlanCreate({name,assumptions}={}){
     return {ok:true,plan:fx.plan};
   });
 }
-// A exclusão apaga plano E trilha do plano; a confirmação explícita é
-// responsabilidade da interface (mesmo padrão dos fluxos destrutivos do app).
+// A remoção do plano ativo preserva um arquivo integral. A confirmação explícita
+// é responsabilidade da interface.
 function fxPlanDelete(){
   return fxMutateState(()=>{
     const fx=fxState();
     if(!fx.plan) return {ok:false,errors:['Nenhum planejamento ativo.']};
     const label=fx.plan.name;
+    if(fx.archivedPlans!==undefined&&!Array.isArray(fx.archivedPlans))return {ok:false,errors:['Arquivo de planos incompatível. Preserve o documento.']};
+    fx.archivedPlans=fx.archivedPlans||[];fx.archivedPlans.push({archivedAt:new Date().toISOString(),plan:structuredClone(fx.plan)});
     fx.plan=null;
     fxAudit('FX_PLAN_DELETED',null,label);
     return {ok:true};
@@ -160,8 +177,12 @@ function fxPlanRecordActual(month,input){
     if(errors.length) return {ok:false,errors};
     const raw=fxActivePlanRaw(), now=new Date().toISOString();
     const prev=(raw.actuals=raw.actuals||{})[key];
-    raw.actuals[key]={...(prev||{}), ...rec,
+    const source=input.source?structuredClone(input.source):{system:'MANUAL',...ledgerContext()};
+    const after={...(prev||{}), ...rec, source,version:(prev&&prev.version||0)+1,
       closedAt:(prev&&prev.closedAt)?prev.closedAt:now, updatedAt:now};
+    raw.actualHistory=raw.actualHistory||[];
+    raw.actualHistory.push({id:fxId('fxh'),month:key,at:now,before:prev?structuredClone(prev):null,after:structuredClone(after)});
+    raw.actuals[key]=after;
     raw.updatedAt=now;
     fxAudit(existing?'FX_MONTH_ACTUAL_EDITED':'FX_MONTH_ACTUAL_RECORDED',key,
       rec.inputType==='usd'?`resultado ${rec.profitUsd} USD`:`taxa ${rec.returnRate}`);
@@ -201,21 +222,105 @@ function fxOverviewLive(){
   const plan=fxActivePlan();
   return plan?{plan,...fxOverview(plan)}:null;
 }
-// Painel normativo: FCR/FEO SEMPRE pela função pura compartilhada (10-domain/07)
-// com as fontes canônicas — capital nominal da Conta Mestre em S.params.saldoIni
-// (mesma derivação de reserveMasterCapital) e despesas/constituídos declarados
-// no onboarding. Nenhuma segunda fonte, nenhuma constante duplicada.
+// FCR/FEO usam o adaptador compartilhado e a apuração explícita da conta ativa.
+// SI, onboarding e despesas mensais não suprem capital nominal ou seis meses.
 function fxReservePanelData(){
-  const ob=S.onboarding||{};
-  const parse=v=>parseFloat(String(v||'').replace(',','.'))||0;
-  return reserveRequirementsCalc({
-    capital:+(S.params&&S.params.saldoIni)||0,
-    fcrCurrent:parse(ob.reserveFcrCurrent),
-    monthlyExpenses:parse(ob.reserveMonthlyExpenses),
-    feoCurrent:parse(ob.reserveFeoCurrent)
-  });
+  const api=window.JPWForex&&window.JPWForex.state;
+  const view=api&&api.read?api.read():{},account=view.account||null;
+  const active=S.forex&&S.forex.activeAccountId;
+  const stored=S.forex&&S.forex.reserves;
+  const reserves=stored&&active&&stored.accountId===active?stored:{};
+  const number=v=>typeof v==='number'&&Number.isFinite(v)?v:null;
+  const accountCapital=account?number(account.capitalNominal):null,declared=number(reserves.capitalNominal);
+  const conflict=accountCapital!==null&&declared!==null&&accountCapital!==declared;
+  const result=reserveRequirementsCalc({capitalNominal:conflict?null:declared??accountCapital,
+    sixMonthExpenseAmount:number(reserves.sixMonthExpenseAmount),determinationRecorded:reserves.determinationRecorded===true,
+    expensesApproved:reserves.expensesApproved===true,fcrCurrent:number(reserves.fcrConstituted),feoCurrent:number(reserves.feoConstituted)});
+  if(conflict)result.findings.push({code:'NOMINAL_CAPITAL_DIVERGENCE',message:'Capital nominal da conta e da apuração divergem. Reconcilie os registros; nenhuma base foi escolhida automaticamente.'});
+  return result;
 }
 
 window.JPWFx.state={fxState,fxActivePlanRaw,fxActivePlan,fxPlanCreate,fxPlanDelete,
   fxPlanReviseAssumptions,fxPlanRecordActual,fxPlanAddContribution,
   fxPlanRemoveContribution,fxOverviewLive,fxReservePanelData};
+
+// Commands below extend v1 without rewriting its baseline, historical revisions,
+// or unknown fields. All writes still cross fxMutateState exactly once.
+function fxPlanningReferences(){
+  const p=window.JPWForex&&window.JPWForex.policy&&window.JPWForex.policy.planning;
+  return p?{monthly:p.referenceMonthlyReturn,annualRange:p.annualReferenceRange}:null;
+}
+function fxFutureMonth(raw,month){
+  const key=fxMonthKey(month),next=fxNextOpenMonth(fxActivePlan());
+  return !!(key&&next&&key>=next&&key>=raw.baseline.startMonth&&key<fxAddMonths(raw.baseline.startMonth,raw.baseline.horizonMonths));
+}
+function fxPlanReviseFromMonth(month,patch,note,scenarioId=null){
+  month=fxMonthKey(month);
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();if(!raw)return {ok:false,errors:['Nenhum plano ativo.']};
+    if(!fxFutureMonth(raw,month))return {ok:false,errors:['Edite uma linha projetada dentro do horizonte. ACTUAL exige correção de fechamento.']};
+    const scenario=scenarioId?(raw.scenarios||[]).find(s=>s.id===scenarioId):null;
+    if(scenarioId&&!scenario)return {ok:false,errors:['Cenário não encontrado.']};
+    if(!String(note||'').trim())return {ok:false,errors:['Informe o motivo da revisão.']};
+    for(const key of ['rate','personalUsd','propUsd'])if(Object.prototype.hasOwnProperty.call(patch,key)&&(!fxInputFinite(patch[key])||(key==='rate'?+patch[key]<=-1:+patch[key]<0)))return {ok:false,errors:['Valor inválido para '+key+'.']};
+    const before=scenario?scenario.assumptions:raw.current;
+    const next=structuredClone(before);next.monthOverrides={...(next.monthOverrides||{})};next.plannedContributions={...(next.plannedContributions||{})};
+    if(Object.prototype.hasOwnProperty.call(patch,'rate'))next.monthOverrides[month]=+patch.rate;
+    const previous=fxPlannedContribution(next,month);
+    next.plannedContributions[month]={personalUsd:patch.personalUsd===undefined?previous.personalUsd:+patch.personalUsd,propUsd:patch.propUsd===undefined?previous.propUsd:+patch.propUsd};
+    if(scenario){scenario.revisions=scenario.revisions||[];scenario.revisions.push({at:new Date().toISOString(),month,note,before:structuredClone(scenario.assumptions),rebases:structuredClone(scenario.rebases||[])});scenario.assumptions=next;scenario.version=(scenario.version||0)+1;}
+    else fxState().plan=fxReviseAssumptions(raw,next,{note});
+    fxAudit(scenario?'FX_SCENARIO_ROW_REVISED':'FX_PLAN_ROW_REVISED',month,note);return {ok:true};
+  });
+}
+function fxPlanRebase(month,openingBalanceUsd,note,scenarioId=null){
+  month=fxMonthKey(month);
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();if(!raw)return {ok:false,errors:['Nenhum plano ativo.']};
+    if(!fxFutureMonth(raw,month)||!fxInputFinite(openingBalanceUsd)||+openingBalanceUsd<0||!String(note||'').trim())return {ok:false,errors:['Rebase exige mês projetado, saldo não negativo e motivo explícito.']};
+    const scenario=scenarioId?(raw.scenarios||[]).find(s=>s.id===scenarioId):null;
+    if(scenarioId&&!scenario)return {ok:false,errors:['Cenário não encontrado.']};
+    let target=scenario;
+    if(scenario){scenario.revisions=scenario.revisions||[];scenario.revisions.push({at:new Date().toISOString(),month,note,before:structuredClone(scenario.assumptions),rebases:structuredClone(scenario.rebases||[])});scenario.version=(scenario.version||0)+1;}
+    if(!target){fxState().plan=fxReviseAssumptions(raw,raw.current,{note:'Rebase: '+note});target=fxActivePlanRaw();}
+    target.rebases=target.rebases||[];
+    target.rebases.push({id:fxId('fxr'),month,openingBalanceUsd:+openingBalanceUsd,note:String(note),at:new Date().toISOString()});
+    fxAudit(scenario?'FX_SCENARIO_REBASED':'FX_PLAN_REBASED',month,note);return {ok:true};
+  });
+}
+function fxScenarioSave({id=null,name}={}){
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw();if(!raw)return {ok:false,errors:['Nenhum plano ativo.']};
+    if(!String(name||'').trim())return {ok:false,errors:['Nome do cenário obrigatório.']};
+    raw.scenarios=raw.scenarios||[];
+    const existing=id?raw.scenarios.find(s=>s.id===id):null;
+    if(id&&!existing)return {ok:false,errors:['Cenário não encontrado.']};
+    if(existing){existing.name=String(name).trim();existing.version++;}
+    else {raw.scenarios.push({id:fxId('fxs'),name:String(name).trim(),version:1,createdAt:new Date().toISOString(),assumptions:structuredClone(raw.current),rebases:structuredClone(raw.rebases||[]),revisions:[]});}
+    const scenario=existing||raw.scenarios[raw.scenarios.length-1];fxAudit('FX_SCENARIO_SAVED',null,scenario.name);return {ok:true,id:scenario.id};
+  });
+}
+function fxScenarioDelete(id){
+  return fxMutateState(()=>{
+    const raw=fxActivePlanRaw(),item=raw&&(raw.scenarios||[]).find(s=>s.id===id);
+    if(!item)return {ok:false,errors:['Cenário não encontrado.']};
+    raw.scenarioArchive=raw.scenarioArchive||[];raw.scenarioArchive.push({...structuredClone(item),archivedAt:new Date().toISOString()});
+    raw.scenarios=raw.scenarios.filter(s=>s.id!==id);fxAudit('FX_SCENARIO_ARCHIVED',null,item.name);return {ok:true};
+  });
+}
+function fxPlanImportLedgerActual(month,options={}){
+  const api=window.JPWLedger;if(!api)return {ok:false,errors:['Contabilidade indisponível.']};
+  if(jpWealthPersistenceOutcomeIsUnknown())return {ok:false,errors:['Gravação indeterminada. Confira a base salva antes de continuar.']};
+  const preview=api.monthlyActual(month,options);
+  if(preview.status!=='COMPLETE')return {ok:false,errors:preview.issues};
+  if(!options.sourceVersion||options.sourceVersion!==preview.source.version)return {ok:false,errors:['A origem mudou ou a prévia não foi confirmada. Atualize antes de importar.']};
+  const plan=fxActivePlan();if(!plan)return {ok:false,errors:['Nenhum plano ativo.']};
+  const existing=plan.actuals[month];
+  if(existing&&options.replace!==true)return {ok:false,errors:['Já existe realizado. Confirme explicitamente a substituição após revisar a origem.']};
+  const row=fxForecastTimeline(plan).find(r=>r.month===month);
+  if(!row||Math.abs(row.open-preview.source.openingBalanceUsd)>0.005)return {ok:false,errors:['Saldo de abertura da Contabilidade difere do realizado/plano. Reconcilie a base antes de importar.']};
+  const contributions=fxContributionsByMonth(plan.contributions)[month];
+  if(contributions&&contributions.totalUsd!==0)return {ok:false,errors:['O mês tem aportes no planejamento. O ledger diário não discrimina fluxos; reconcilie antes de importar.']};
+  return fxPlanRecordActual(month,{inputType:'usd',profitUsd:preview.profitUsd,valuationFxRate:options.valuationFxRate||null,notes:options.notes||'Importação explícita da Contabilidade',source:preview.source});
+}
+Object.assign(window.JPWFx.state,{fxEnvelopeIssue,fxPlanningReferences,fxPlanReviseFromMonth,fxPlanRebase,fxScenarioSave,fxScenarioDelete,fxPlanImportLedgerActual});

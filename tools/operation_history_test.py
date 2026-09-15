@@ -18,6 +18,7 @@ import os
 import socket
 import threading
 
+import notes_launcher_test as launcher
 from playwright.sync_api import sync_playwright
 
 
@@ -40,20 +41,9 @@ def serve():
 
 
 def prepare_page(browser, url):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
-    context.add_init_script("window.__onbShown=true;")
-    page = context.new_page()
-    observed = {"pageerror": [], "console": []}
-    page.on("pageerror", lambda e: observed["pageerror"].append(str(e)))
-    page.on("console", lambda m: observed["console"].append(m.text) if m.type == "error" else None)
-    page.route(
-        "**/*",
-        lambda route: route.continue_()
-        if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
-    page.goto(url, wait_until="domcontentloaded")
-    page.wait_for_function("() => !!window.JPWHistoryUI && !!window.JPWExec")
+    context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
+    page, observed = launcher.prepare(context, url)
+    page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
     return context, page, observed
 
 
@@ -598,7 +588,7 @@ def main():
     server, url = serve()
     try:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
+            browser = playwright.chromium.launch(**launcher.launch_options())
             context, page, observed = prepare_page(browser, url)
             page.evaluate(SEMEAR)
             run_empty_state(page)

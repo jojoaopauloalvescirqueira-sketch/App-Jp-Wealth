@@ -97,7 +97,7 @@ function dmForexHTML(c){
   corpo += dmFacts(
       dmFact('Fase vigente', esc(c.fase && c.fase.nome ? c.fase.nome : '—'))
     + dmFact('Drawdown', fmtPct(c.dd), 'teto ' + fmtPct(c.mddScaled), ddPct, barTom)
-    + dmFact('Risco aberto', fmtMoney(c.riscoTotal), 'teto ' + fmtMoney(c.tetoRisco), riscoPct, barTom)
+    + dmFact('Risco aberto', fmtForexMoney(c.riscoTotal,c.forex.account,0), 'teto ' + fmtForexMoney(c.tetoRisco,c.forex.account,0), riscoPct, barTom)
     // Alavancagem carregada vs teto da fase: grandeza canônica de compute(),
     // inequívoca. Nenhum rótulo de Equity — ADR-0001 segue pendente.
     + dmFact('Alavancagem', fmtX(c.alavCar), 'teto ' + fmtX(c.tetoAlav), alavPct, barTom)
@@ -110,14 +110,14 @@ function dmForexHTML(c){
   corpo += '</div><div class="dm-record">';
   const led = ledgerSorted();
   const last = led.length ? led[led.length-1] : null;
-  corpo += dmSection('Apuração', last
+  corpo += dmSection('Contabilidade', last
     ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtMoney2(last.saldo)+'</b>')
       + dmRow('Resultado do dia', '<b>'+fmtMoney2(last.resultado)+'</b>')
     : dmNote('Nenhum fechamento registrado neste período.'));
   corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
   corpo += '</div>';
   corpo += dmLinks(dmLink('Conta', 'forex-account')+dmLink('Preparação', 'forex-preparation')
-    +dmLink('Apuração', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
+    +dmLink('Contabilidade', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));
   return {html: corpo, tom};
 }
 

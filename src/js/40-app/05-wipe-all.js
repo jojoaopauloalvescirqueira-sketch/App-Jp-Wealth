@@ -90,13 +90,14 @@ function bindConfig(){
   if(wb) wb.addEventListener('click', wipeAllData);
   const qc=$('quarantineConfirmBtn');
   if(qc) qc.addEventListener('click',()=>{
-    if(!confirm(`Formalizar o Encerramento Compulsório e iniciar a Quarentena de 90 dias (Art. 3.10)? Faça isto apenas se o drawdown de ${fmtPct(activeMDDLimit())} for real.`)) return;
-    const hoje=todayISO(), fim=addDaysISO(90);
-    S.quarantine={inicio:hoje,fim};
-    S.transitionLog.push({fase:'quarentena', ts:new Date().toISOString(), resumo:{motivo:'Encerramento compulsório formalizado', inicio:hoje, fim}});
-    // auditoria resumida da base (JPW-HJFGDE §11) — o transitionLog acima segue sendo o
-    // registro normativo; esta linha só alimenta "alterações desde o último backup".
-    if(typeof dgLogChange==='function') dgLogChange('quarantine','created','','Quarentena operacional formalizada ('+hoje+' → '+fim+')');
-    save(); render(); renderPhases(); renderConfigQuarantine();
+    if(!confirm('Registrar o evento de encerramento compulsório e a quarentena? O prazo P-24 permanece pendente; este ato não altera posições nem autoriza retorno.'))return;
+    const reason=prompt('Motivo e referência do evento real:');if(!reason)return;
+    const result=JPWForex.state.mutate('quarantine-record',reason,['quarantine','transitionLog'],()=>{
+      const timestamp=new Date().toISOString();
+      S.quarantine={inicio:todayISO(),fim:null,recordedAt:timestamp,reason,policyVersion:JPWForex.policy.version,previous:S.quarantine?structuredClone(S.quarantine):null};
+      S.transitionLog.push({fase:'quarentena',ts:timestamp,operationId:S.activeOperation&&S.activeOperation.operationId||null,resumo:{motivo:reason,prazo:'P-24_PENDING'}});
+    });
+    if(!result.ok){alert(result.error);return;}
+    render();renderPhases();renderConfigQuarantine();
   });
 }

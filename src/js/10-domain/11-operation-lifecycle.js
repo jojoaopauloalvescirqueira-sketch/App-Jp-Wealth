@@ -11,31 +11,159 @@
 // sobrevivia. Aqui a regra é a inversa: preservar primeiro, consolidar depois,
 // apagar por último — e apagar só dentro de um estado que já foi persistido.
 //
-// NADA de norma muda: netOpAtual() continua sendo a fórmula canônica do
-// resultado, cycleRealizado continua sendo "resultado líquido acumulado de
-// operações arquivadas no ciclo" e é incrementado exatamente UMA vez por
-// operação formalmente finalizada.
+// A política histórica acompanha cada fato; a elegibilidade atual não apaga
+// desconformidades. netOpAtual permanece a fonte única do resultado financeiro.
 
-const OPERATION_HISTORY_SCHEMA_VERSION = 1;
-const OPERATION_GRID_SIZES = [5, 4, 3, 2];
+const OPERATION_HISTORY_SCHEMA_VERSION = 2;
+
 
 // Guarda de reentrância NO DOMÍNIO, e não apenas na interface. Desabilitar o
 // botão protege contra o segundo clique; não protege contra uma segunda chamada
 // programática, e é a consolidação financeira que está em jogo.
 let operationFinalizeInFlight = false;
+var operationFinalizeReview=null;
+function operationDiscardReview(){operationFinalizeReview=null;}
+function operationRecordScope(op){
+  return {accountId:op?.recordContext?.accountId??null,periodId:op?.recordContext?.periodId??null};
+}
+function operationReviewSignature(){
+  return JSON.stringify({operation:S.activeOperation,phases:S.phases,cycle:S.cycleRealizado,
+    legacySI:S.params?.saldoIni,context:JPWForex.state.recordContext(operationRecordScope(S.activeOperation))});
+}
+function operationCaptureReview(op){
+  const copy=structuredClone(op),probe=accountPhaseProbe(operationRecordScope(op));
+  if(!probe.ok)copy.phaseCaptureFault={at:new Date().toISOString(),reason:probe.erro};
+  else if(probe.idx!=null){const old=operationPhaseIdxOrNull(copy.maxAccountPhaseReached);if(old===null||probe.idx>old)copy.maxAccountPhaseReached=probe.idx;}
+  return copy;
+}
+function operationMonetaryContext(op,orders){
+  const legacy=!op.policySnapshot||op.policySnapshot.policyVersion==='LEGACY_UNRESOLVED';
+  const facts=orders.map(x=>x.o).filter(o=>o.recordStatus!=='voided'&&o.status!=='Migrada');
+  const nonempty=value=>typeof value==='string'&&value.trim().length>0;
+  const currencies=new Set(facts.map(o=>o.currency).filter(nonempty));
+  const conflict={ok:false,motivo:'monetary_context_conflict',mensagem:'Não é possível consolidar resultados de contas, períodos ou moedas diferentes em um único total. Os fatos permanecem registrados para conciliação explícita.'};
+  if(currencies.size>1)return conflict;
+  if(legacy)return {ok:true};
+  const c=op.recordContext,accountId=c?.accountId,periodId=c?.periodId,currency=c?.accountInputs?.currency;
+  const missing={ok:false,motivo:'monetary_context_missing',mensagem:'Não é possível consolidar sem conta, período e moeda registrados na operação e em seus fatos. Os registros foram preservados; a conta selecionada não preenche vínculos históricos ausentes.'};
+  if(![accountId,periodId,currency].every(nonempty))return missing;
+  if(facts.some(o=>![o.accountId,o.periodId,o.currency].every(nonempty)))return missing;
+  if(facts.some(o=>o.accountId!==accountId||o.periodId!==periodId||o.currency!==currency))return conflict;
+  return {ok:true};
+}
+
 
 // Uma ordem "existe" para efeito de operação quando tem status operacional.
 // Linha em branco não conta — nem para snapshot, nem para ordersCount.
-function operationOrderIsLive(o){
-  return !!o && (o.status === 'Aberta' || o.status === 'Fechada' || o.status === 'Migrada');
-}
 
-function operationLiveOrders(){
-  const out = [];
-  (S.phases || []).forEach((ph, pi) => {
-    ((ph && ph.orders) || []).forEach((o, oi) => { if (operationOrderIsLive(o)) out.push({ o, pi, oi }); });
+
+
+
+// A record is a fact, independently of its execution eligibility. All mutations
+// use the document writer's refusal/UNKNOWN barriers; input and render are pure.
+function operationOrderBefore(o){
+  const copy=structuredClone(o); delete copy.revisions; return copy;
+}
+function operationValidateOrder(o){
+  if(!o||typeof o!=='object')return 'Ordem inválida.';
+  if(!['','Aberta','Fechada','Migrada','Pendente'].includes(o.status||''))return 'Status inválido.';
+  if(o.role!=null&&!['','GENESIS','DEFENSE','OTHER'].includes(o.role))return 'Papel da ordem inválido.';
+  if(!['BUY','SELL'].includes(o.tipo))return 'Direção inválida.';
+  for(const k of ['lote','entry','sl','tp']){
+    if(o[k]!=null&&(typeof o[k]!=='number'||!Number.isFinite(o[k])||o[k]<0))return 'Valor inválido: '+k+'.';
+  }
+  if(o.costs!=null&&(typeof o.costs!=='number'||!Number.isFinite(o.costs)))return 'Custos inválidos.';
+  if(o.stopValidated!=null&&typeof o.stopValidated!=='boolean')return 'Validação do stop inválida.';
+  if(o.result!=null&&(typeof o.result!=='number'||!Number.isFinite(o.result)))return 'Resultado inválido.';
+  if(operationOrderIsLive(o)&&!String(o.par||'').trim())return 'Informe o instrumento do fato registrado.';
+  if(o.status==='Fechada'&&o.recordStatus!=='voided'&&!Number.isFinite(o.result))return 'Informe o resultado; em branco não é zero.';
+  if(o.pendingActive!=null&&typeof o.pendingActive!=='boolean')return 'Ativação da pendente inválida.';
+  if(o.costBasis!=null&&!['','SEPARATE_FROM_RESULT','INCLUDED_IN_RESULT'].includes(o.costBasis))return 'Base de custos inválida.';
+  if(o.amplifiesExposure!=null&&typeof o.amplifiesExposure!=='boolean')return 'Indicador de exposição inválido.';
+  return null;
+}
+function operationRecordOrders(edits,{reason=''}={}){
+  if(!Array.isArray(edits)||!edits.length)return {ok:false,error:'Nenhuma alteração informada.'};
+  const allowed=['id','par','tipo','role','lote','entry','sl','tp','result','status','costs','stopValidated','amplifiesExposure','pendingActive','costBasis','recordStatus','divergenceChecked','divergenceReason','divergenceTs'];
+  const checked=[];
+  for(const edit of edits){
+    const {pi,oi,changes}=edit, old=S.phases?.[pi]?.orders?.[oi];
+    if(!old||!changes||Object.keys(changes).some(k=>!allowed.includes(k)))return {ok:false,error:'Destino ou campo da ordem inválido.'};
+    if(old.recordStatus==='voided')return {ok:false,error:'Uma ordem anulada permanece no histórico. Registre outra ordem para substituí-la.'};
+    if(operationOrderIsLive(old)&&changes.status==='')return {ok:false,error:'Fato executado não volta a rascunho. Use Anular com motivo.'};
+    if(changes.recordStatus&&changes.recordStatus!=='voided')return {ok:false,error:'Estado de registro inválido.'};
+    if(operationOrderIsLive(old)&&!String(reason||'').trim())return {ok:false,error:'Informe o motivo da correção.'};
+    const next={...structuredClone(old),...structuredClone(changes)};
+    const invalid=operationValidateOrder(next); if(invalid)return {ok:false,error:invalid};
+    if(JSON.stringify(operationOrderBefore(old))!==JSON.stringify(operationOrderBefore(next)))checked.push({...edit,next});
+  }
+  if(!checked.length)return {ok:true,persistido:false,unchanged:true};
+  return JPWForex.state.mutate('order-record',reason,['phases','activeOperation','transitionLog'],()=>{
+    for(const {pi,oi,next} of checked){
+      const old=S.phases[pi].orders[oi], before=operationOrderBefore(old);
+      // Match the identity layer's orphan criterion before borrowing context.
+      // A discarded entity cannot lend its account to the newborn operation.
+      const orphanContext=S.activeOperation&&!next.openedAt&&!next.closedAt&&!S.activeOperation.adoptedLegacyAt&&
+        ['Aberta','Fechada','Pendente'].includes(next.status)&&!operationLiveOrders().some(x=>x&&x.o!==old);
+      // An existing fact never borrows the account currently selected in the UI.
+      // Missing historical identity remains unresolved, including on correction.
+      const context=operationOrderIsLive(old)||next.status==='Migrada'?JPWForex.state.recordContext({accountId:old.accountId??null,periodId:old.periodId??null}):
+        !orphanContext&&S.activeOperation?.recordContext?JPWForex.state.recordContext(operationRecordScope(S.activeOperation)):JPWForex.state.recordContext();
+      next.orderId=old.orderId||'fxorder_'+crypto.randomUUID();
+      if(operationOrderIsLive(next)&&!operationOrderIsLive(old)&&next.status!=='Migrada'){
+        next.accountId=context.accountId;next.periodId=context.periodId;
+        next.currency=context.accountInputs?.currency??null;
+      }
+      next.policySnapshot=old.policySnapshot?structuredClone(old.policySnapshot):
+        (operationOrderIsLive(old)||next.status==='Migrada'?{policyVersion:'LEGACY_UNRESOLVED',source:'first-explicit-record',originalPhase:pi}:structuredClone(context.policySnapshot));
+      next.recordVersion=(Number.isInteger(old.recordVersion)?old.recordVersion:0)+1;
+      next.recordStatus=next.recordStatus==='voided'?'voided':(operationOrderIsLive(next)?'recorded':'draft');
+      const at=new Date().toISOString();
+      const ins=instFor(next.par);
+      next.calculationInputs={...structuredClone(JPWForex.orderInputs(next,context.accountInputs)),
+        accountId:context.accountId,periodId:context.periodId,currency:context.accountInputs?.currency??null,
+        recordedAt:at,provenance:'OBSERVED_AT_RECORDING',
+        instrumentInputs:ins?{name:ins.name,contractSize:ins.cpl,price:ins.preco}:null};
+      if(next.recordStatus==='voided'){next.voidedAt=at;next.voidReason=String(reason).trim();}
+      S.phases[pi].orders[oi]=next;
+      if(next.status==='Migrada'&&!S.activeOperation)S.activeOperation={schemaVersion:1,
+        operationId:operationRecordId(),openedAt:null,openedAtSource:null,maxAccountPhaseReached:null,
+        adoptedLegacyAt:at,policySnapshot:{policyVersion:'LEGACY_UNRESOLVED',source:'migrated-reference-record'}};
+      if(operationOrderIsLive(next)&&next.recordStatus!=='voided')operationOnOrderStatus(next,next.status,pi,oi);
+      if(S.activeOperation&&!S.activeOperation.policySnapshot)S.activeOperation.policySnapshot=
+        (S.activeOperation.adoptedLegacyAt||(operationOrderIsLive(old)&&!old.policySnapshot))?{policyVersion:'LEGACY_UNRESOLVED',source:'first-explicit-record'}:structuredClone(context.policySnapshot);
+      const budgetScope={accountId:context.accountId,periodId:context.periodId,currency:context.accountInputs?.currency??null,
+        operationId:S.activeOperation?.operationId??null};
+      if(S.activeOperation&&!S.activeOperation.recordContext&&S.activeOperation.policySnapshot.policyVersion!=='LEGACY_UNRESOLVED')
+        JPWForex.state.attachOperationBudget(S.forex,{...budgetScope,firstRecordedAt:at});
+      context.operationBudgetSnapshot=structuredClone(JPWForex.state.budgetSnapshot(budgetScope));
+      next.operationBudgetSnapshot=structuredClone(context.operationBudgetSnapshot);
+      if(operationOrderIsLive(next)&&!operationOrderIsLive(old))next.operationId=budgetScope.operationId;
+      if(S.activeOperation&&!S.activeOperation.recordContext)S.activeOperation.recordContext=structuredClone(context);
+      next.revisions=[...(Array.isArray(old.revisions)?structuredClone(old.revisions):[]),{
+        version:next.recordVersion,recordedAt:at,reason:String(reason).trim(),before,
+        after:operationOrderBefore(next),context:structuredClone(context)}];
+    }
+    if(typeof operationTouchAccountPhase==='function')operationTouchAccountPhase();
   });
-  return out;
+}
+function operationRecordOrder(pi,oi,changes,options){return operationRecordOrders([{pi,oi,changes}],options);}
+function operationAddDraft(pi){
+  if(!S.phases?.[pi]||!Array.isArray(S.phases[pi].orders))return {ok:false,error:'Grade inválida.'};
+  return JPWForex.state.mutate('order-draft-added','Adicionar rascunho à grade',['phases'],()=>{
+    S.phases[pi].orders.push({id:'',orderId:'fxorder_'+crypto.randomUUID(),par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:null,status:'',recordStatus:'draft',recordVersion:0,revisions:[]});
+  });
+}
+function operationVoidOrder(pi,oi,reason){
+  const order=S.phases?.[pi]?.orders?.[oi];
+  if(!order)return {ok:false,error:'Ordem inexistente.'};
+  if(!operationOrderIsLive(order))return JPWForex.state.mutate('order-draft-deleted',reason||'Excluir rascunho',['phases'],()=>{S.phases[pi].orders.splice(oi,1);});
+  if(!String(reason||'').trim())return {ok:false,error:'Informe o motivo da anulação.'};
+  return operationRecordOrder(pi,oi,{recordStatus:'voided'},{reason});
+}
+function operationRecordFeedback(result){
+  if(result.ok)return true;
+  alert(result.error||result.mensagem||'Registro não confirmado. Preserve a entrada para conferir ou tentar novamente.');return false;
 }
 
 // Pré-condições do encerramento (Art. 3.5§2 preservado).
@@ -43,7 +171,7 @@ function operationLiveOrders(){
 // que finalizar — e a ausência de operação não é erro, é ausência.
 function operationCanFinalize(){
   const vivas = operationLiveOrders();
-  const abertas = vivas.filter(x => x.o.status === 'Aberta');
+  const abertas = vivas.filter(x => (x.o.status === 'Aberta'||(x.o.status==='Pendente'&&x.o.pendingActive!==false)) && x.o.recordStatus !== 'voided');
   if (abertas.length) {
     return { ok:false, motivo:'open_position', abertas: abertas.length,
       mensagem:'A Operação não pode ser finalizada enquanto existir posição aberta vinculada à tese.' };
@@ -52,19 +180,15 @@ function operationCanFinalize(){
     return { ok:false, motivo:'no_operation',
       mensagem:'Não há operação registrada nas grades para finalizar.' };
   }
+  const incomplete=vivas.filter(x=>x.o.recordStatus!=='voided'&&x.o.status==='Fechada'&&!Number.isFinite(x.o.result));
+  if(incomplete.length)return {ok:false,motivo:'missing_result',mensagem:'Informe os resultados fechados; ausência não é zero.'};
   return { ok:true, ordens: vivas.length };
 }
 
 // Instrumento e direção vêm da operação, nunca de pergunta ao operador. Se as
 // ordens divergirem, o conflito é REPORTADO — escolher uma em silêncio criaria
 // memória histórica falsa.
-function operationResolveThesis(vivas){
-  const pares = [...new Set(vivas.map(x => String(x.o.par || '').trim().toUpperCase()).filter(Boolean))];
-  const tipos = [...new Set(vivas.map(x => String(x.o.tipo || '').trim().toUpperCase()).filter(Boolean))];
-  if (pares.length > 1) return { ok:false, motivo:'instrument_conflict', valores:pares };
-  if (tipos.length > 1) return { ok:false, motivo:'direction_conflict', valores:tipos };
-  return { ok:true, instrument: pares[0] || null, direction: tipos[0] || null };
-}
+
 
 // Fase da GRADE máxima, derivada dos eventos ESCOPADOS por operationId.
 //
@@ -88,14 +212,14 @@ function operationResolveThesis(vivas){
 function operationResolveGridPhaseMax(op){
   if (!op || typeof op !== 'object') return null;
   if (typeof op.operationId !== 'string' || !op.operationId) return null;
-  if (op.adoptedLegacyAt) return null;
-  let max = 0;
+  if (op.adoptedLegacyAt || !op.policySnapshot || op.policySnapshot.policyVersion==='LEGACY_UNRESOLVED') return null;
+  let max = null;
   (S.transitionLog || []).forEach(ev => {
     if (!ev || typeof ev !== 'object') return;
     if (ev.operationId !== op.operationId) return;
     const idx = (typeof ev.gridPhase === 'number' && Number.isFinite(ev.gridPhase)) ? ev.gridPhase : null;
-    if (idx === null) return;   // downgrade e alertas não carregam gridPhase
-    max = Math.max(max, Math.min(3, Math.floor(idx)));
+    if (!Number.isInteger(idx)||idx<0||idx>5) return;   // downgrade e alertas não carregam gridPhase
+    max = max===null?Math.min(5,Math.floor(idx)):Math.max(max,Math.min(5,Math.floor(idx)));
   });
   return max;
 }
@@ -117,6 +241,8 @@ function operationBuildSnapshot(op, entrada){
   const vivas = operationLiveOrders();
   const tese = operationResolveThesis(vivas);
   if (!tese.ok) return tese;
+  const monetary=operationMonetaryContext(op,vivas);
+  if(!monetary.ok)return monetary;
 
   // openedAt legado: informado pelo operador, com proveniência explícita.
   // Nunca Date.now() disfarçado de abertura histórica.
@@ -150,13 +276,23 @@ function operationBuildSnapshot(op, entrada){
       openedAt, closedAt, mensagem: OPERATION_MSG_CRONOLOGIA };
   }
 
-  const saldoIni = Number(S.params && S.params.saldoIni);
+  const legacy=!op.policySnapshot||op.policySnapshot.policyVersion==='LEGACY_UNRESOLVED';
+  const saldoIni=legacy?S.params?.saldoIni:op.recordContext?.accountInputs?.si;
   const record = {
     schemaVersion: OPERATION_HISTORY_SCHEMA_VERSION,
     operationId: op.operationId,
 
     instrument: tese.instrument,
     direction: tese.direction,
+    instruments: tese.instruments,
+    directions: tese.directions,
+    complianceFindings: structuredClone(tese.findings),
+    policySnapshot: structuredClone(op.policySnapshot||{policyVersion:'LEGACY_UNRESOLVED'}),
+    accountId:op.recordContext?.accountId??null,
+    periodId:op.recordContext?.periodId??null,
+    currency:legacy?null:op.recordContext?.accountInputs?.currency??null,
+    recordContext: structuredClone(op.recordContext||null),
+    finalizationContext: JPWForex.state.recordContext(operationRecordScope(op)),
 
     openedAt,
     openedAtSource,
@@ -167,9 +303,11 @@ function operationBuildSnapshot(op, entrada){
     // passada mudaria quando o saldo atual mudasse — o histórico deixaria de ser
     // histórico. O denominador precisa continuar auditável anos depois.
     referenceBalance: Number.isFinite(saldoIni) && saldoIni > 0 ? saldoIni : null,
-    referenceBalanceType: 'cycle_initial_balance',
+    referenceBalanceType: legacy?'cycle_initial_balance':'account_si_at_first_record',
+    referenceBalanceProvenance:legacy?'LEGACY_RECORDED_STATE':(Number.isFinite(saldoIni)?'CAPTURED_ACCOUNT_OBSERVATION':'NOT_OBSERVED'),
 
     netResult: netOpAtual(), // fórmula canônica única — nunca reimplementada aqui
+    resultConsolidation:legacy?'LEGACY_SCALAR':'CONTEXTUAL_HISTORY',
 
     defenseCount: defesas,
     // Não existe campo de papel na ordem; a taxonomia atual é POSICIONAL e
@@ -206,15 +344,11 @@ function operationBuildSnapshot(op, entrada){
     // Sem identidade estável de ordem no modelo atual: o campo `id` é texto
     // livre do operador e a identidade de facto é posicional. Registramos a
     // posição de origem E o texto, sem fingir que existe orderId.
-    ordersSnapshot: vivas.map(({ o, pi, oi }) => ({
-      phase: pi + 1,
-      gridIndex: oi,
-      label: typeof o.id === 'string' ? o.id : '',
-      par: o.par || '', tipo: o.tipo || '',
-      lote: +o.lote || 0, entry: +o.entry || 0, sl: +o.sl || 0, tp: +o.tp || 0,
-      result: +o.result || 0, status: o.status || '',
-      openedAt: (typeof o.openedAt === 'string' && o.openedAt) ? o.openedAt : null,
-      closedAt: (typeof o.closedAt === 'string' && o.closedAt) ? o.closedAt : null
+    ordersSnapshot: vivas.map(({o,pi,oi})=>({
+      ...structuredClone(o),orderId:o.orderId||(op.operationId+'_legacy_'+pi+'_'+oi),phase:pi+1,gridIndex:oi,label:typeof o.id==='string'?o.id:'',
+      policySnapshot:structuredClone(o.policySnapshot||{policyVersion:'LEGACY_UNRESOLVED'}),
+      openedAt:typeof o.openedAt==='string'?o.openedAt:null,
+      closedAt:typeof o.closedAt==='string'?o.closedAt:null
     })),
 
     finalizedAt: new Date().toISOString()
@@ -233,8 +367,11 @@ function operationValidateCandidate(candidato, anterior, record){
   const ids = (candidato.operationHistory.records || []).map(r => r && r.operationId);
   if (new Set(ids).size !== ids.length) return { ok:false, motivo:'duplicate_operation_id' };
 
-  const esperado = (+anterior.cycleRealizado || 0) + (+record.netResult || 0);
-  if (Math.abs((+candidato.cycleRealizado || 0) - esperado) > 1e-9) {
+  const legacy=!record.policySnapshot||record.policySnapshot.policyVersion==='LEGACY_UNRESOLVED';
+  if(!Number.isFinite(record.netResult))return {ok:false,motivo:'result_invalid'};
+  const esperado = legacy?(+anterior.cycleRealizado || 0)+record.netResult:anterior.cycleRealizado;
+  if (legacy?(!Number.isFinite(candidato.cycleRealizado)||Math.abs(candidato.cycleRealizado-esperado)>1e-9):
+      !Object.is(candidato.cycleRealizado,esperado)) {
     return { ok:false, motivo:'cycle_not_consolidated_once' };
   }
   if (candidato.activeOperation !== null) return { ok:false, motivo:'operation_not_cleared' };
@@ -336,11 +473,18 @@ function finalizeOperation(entrada){
     // criar o id neste ponto mutaria o estado de ENTRADA de uma transação que
     // ainda pode falhar, e a tentativa seguinte geraria outro id — a Operação
     // Única trocaria de identidade conforme o número de tentativas.
-    const op = S.activeOperation;
+    const liveOp = S.activeOperation;
+    let op=liveOp;
     if (!op || typeof op !== 'object') {
       return { ok:false, motivo:'no_identity',
         mensagem:'A operação não tem identidade registrada. Recarregue a página para que a normalização a estabeleça antes de finalizar.' };
     }
+
+    if(operationFinalizeReview){
+      if(operationFinalizeReview.operationId!==liveOp.operationId||operationFinalizeReview.signature!==operationReviewSignature())
+        return {ok:false,motivo:'review_stale',mensagem:'Os fatos mudaram depois da revisão. Feche e abra a revisão novamente antes de confirmar.'};
+      op=structuredClone(operationFinalizeReview.op);
+    }else op=operationCaptureReview(liveOp);
 
     // IDEMPOTÊNCIA: mesmo operationId já no histórico ⇒ nada acontece de novo.
     // Sem isto, um segundo disparo criaria segundo registro, somaria
@@ -361,7 +505,8 @@ function finalizeOperation(entrada){
     const anterior = S;
     const candidato = structuredClone(S);
     candidato.operationHistory.records.push(snap.record);
-    candidato.cycleRealizado = (+candidato.cycleRealizado || 0) + (+snap.record.netResult || 0);
+    if(snap.record.resultConsolidation==='LEGACY_SCALAR')
+      candidato.cycleRealizado = (+candidato.cycleRealizado || 0) + snap.record.netResult;
     candidato.transitionLog.push({
       fase: 'operação finalizada',
       ts: snap.record.closedAt,
@@ -369,7 +514,8 @@ function finalizeOperation(entrada){
       // operacao e nao pode ser confundido com o de outra na auditoria.
       operationId: snap.record.operationId,
       resumo: { operationId: snap.record.operationId, resultado: snap.record.netResult,
-                cicloAcumulado: candidato.cycleRealizado }
+                accountId:snap.record.accountId,periodId:snap.record.periodId,currency:snap.record.currency,
+                resultConsolidation:snap.record.resultConsolidation,cicloAcumulado:candidato.cycleRealizado,cicloUnidade:'LEGACY_UNRESOLVED' }
     });
     // Trilha de auditoria DENTRO do candidato, e não depois do save(). O
     // recordId e o operationId real — nao existe segunda identidade so para
@@ -379,8 +525,9 @@ function finalizeOperation(entrada){
       dgLogChange('operation', 'finalized', snap.record.operationId,
         'Operação Única finalizada e preservada no Histórico', candidato);
     }
-    candidato.phases.forEach((ph, pi) => { ph.orders = emptyOrders(OPERATION_GRID_SIZES[pi] || 3); });
-    candidato.phaseUnlocked = [true, false, false, false];
+    candidato.phases = JPWForex.state.newOperationPhases();
+    candidato.phaseUnlocked = [true, true, true, true, true, true];
+    if(candidato.forex)candidato.forex.grid=null;
     candidato.activeOperation = null;
 
     const val = operationValidateCandidate(candidato, anterior, snap.record);
@@ -480,8 +627,7 @@ function operationFmtPhase(idx){
   // máximo que nunca foi observado, e o operador confirmaria uma afirmação
   // falsa sobre o passado.
   if(typeof idx!=='number' || !Number.isFinite(idx)) return '—';
-  const f=(S.matrix||[])[+idx];
-  return (f && f.nome) ? f.nome : ('Fase '+((+idx)+1));
+  return 'FASE '+(idx+1);
 }
 
 function operationReviewRow(rotulo, valor){
@@ -507,8 +653,10 @@ function operationReviewHTML(r, defesas){
   const abertura=r.openedAt
     ? (new Date(r.openedAt).toLocaleString('pt-BR')+(r.openedAtSource==='manual_legacy'?' (informada manualmente)':''))
     : 'Desconhecida';
-  return operationReviewRow('Instrumento', r.instrument||'—')+
-    operationReviewRow('Direção', r.direction||'—')+
+  return operationReviewRow('Instrumento', r.instrument||(r.instruments||[]).join(' · ')||'—')+
+    operationReviewRow('Direção', r.direction||(r.directions||[]).join(' · ')||'—')+
+    operationReviewRow('Desconformidades da tese', (r.complianceFindings||[]).map(f=>f.code).join(' · ')||'Nenhuma divergência de instrumento/direção registrada')+
+    operationReviewRow('Norma histórica',r.policySnapshot?.policyVersion||r.policySnapshot?.version||'LEGACY_UNRESOLVED')+
     operationReviewRow('Abertura', abertura)+
     // closedAt é capturado no instante EFETIVO da confirmação. Exibir aqui um
     // horário de aparência definitiva e gravar outro quarenta segundos depois
@@ -517,12 +665,12 @@ function operationReviewHTML(r, defesas){
     operationReviewRow('Encerramento formal', 'Registrado no instante da confirmação')+
     operationReviewRow('Duração até agora', r.openedAt?operationFmtDuration(r.openedAt,r.closedAt):'—')+
     operationReviewRow('Ordens da operação', String(r.ordersSnapshot.length))+
-    operationReviewRow('Resultado líquido', fmtMoney2(r.netResult))+
+    operationReviewRow('Resultado líquido', fmtForexMoney(r.netResult,{currency:r.currency}))+
     // A base do retorno e CONGELADA no registro e deriva de um parametro manual
     // (saldo inicial do ciclo). Mostrar so a porcentagem escondia o denominador
     // que sera auditado anos depois — 250/10000 e 250/12500 sao aprovacoes
     // diferentes que produziam a mesma linha de leitura.
-    operationReviewRow('Base do retorno', r.referenceBalance==null?'—':fmtMoney2(r.referenceBalance))+
+    operationReviewRow('Base do retorno', r.referenceBalance==null?'—':fmtForexMoney(r.referenceBalance,{currency:r.currency}))+
     operationReviewRow('Retorno sobre a base do ciclo', retorno)+
     // AUSENTE e ZERO são estados distintos e ambos visíveis. "Não informado"
     // jamais é persistido: finalizeOperation recusa antes de chegar ao disco.
@@ -546,7 +694,9 @@ function operationReviewHTML(r, defesas){
 // `status==='Fechada'`. Exigir resultado de uma ordem 'Migrada' bloquearia a
 // finalização por um dado que aquela linha nunca teve motivo para ter.
 function operationOrderLabel(pi, oi, o){
-  const slot = (pi===0 && oi===0) ? 'GÊNESE' : (pi===0 ? 'DEF '+oi : 'DEF '+(pi+1)+'.'+(oi+1));
+  const legacy=S.phases.length===4||S.phases[pi]?.policyVersion==='LEGACY_UNRESOLVED';
+  const slot=o?.role==='GENESIS'?'GÊNESE':o?.role==='DEFENSE'?'DEFESA':
+    legacy?(pi===0&&oi===0?'GÊNESE LEGACY':`SLOT LEGACY ${pi+1}.${oi+1}`):`ORDEM ${pi+1}.${oi+1}`;
   const partes = [slot];
   if (o && o.par) partes.push(String(o.par));
   if (o && o.id) partes.push('ID '+String(o.id));
@@ -559,10 +709,10 @@ function operationPreflight(){
     return { estado:'no_operation',
       mensagem:'Não há operação registrada nas grades para finalizar.' };
   }
-  const abertas = vivas.filter(x => x.o.status === 'Aberta');
+  const abertas = vivas.filter(x => (x.o.status === 'Aberta'||(x.o.status==='Pendente'&&x.o.pendingActive!==false)) && x.o.recordStatus !== 'voided');
   if (abertas.length) return { estado:'blocked', abertas };
   const incompletas = vivas.filter(x =>
-    x.o.status === 'Fechada' &&
+    x.o.status === 'Fechada' && x.o.recordStatus !== 'voided' &&
     (typeof orderResultMissing === 'function' ? orderResultMissing(x.o) : !Number.isFinite(x.o.result)));
   if (incompletas.length) return { estado:'incomplete', incompletas };
   return { estado:'ready', ordens: vivas.length };
@@ -577,7 +727,8 @@ function openFinalizeBlockedModal(abertas){
   const lista = abertas.map(x =>
     '<li>'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</li>').join('');
   const umaSo = abertas.length === 1;
-  const genese = abertas.some(x => x.pi===0 && x.oi===0);
+  const genese = abertas.some(x => x.o.role==='GENESIS'||(!x.o.role&&
+    (S.phases.length===4||S.phases[x.pi]?.policyVersion==='LEGACY_UNRESOLVED')&&x.pi===0&&x.oi===0));
   box.innerHTML =
     '<h3>Finalizar Operação</h3>'+
     '<div class="modal-err show">🚫 Não é possível finalizar esta operação.</div>'+
@@ -604,7 +755,7 @@ function openFinalizeCompletionModal(incompletas){
   $('modalOverlay').classList.add('show');
   const linhas = incompletas.map((x, i) =>
     '<div class="modal-q" data-qid="ord'+i+'">'+
-      '<div class="ql">'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</div>'+
+      '<div class="ql">'+esc(operationOrderLabel(x.pi, x.oi, x.o))+' · '+esc(x.o.currency||'moeda não capturada')+'</div>'+
       '<input type="text" inputmode="decimal" data-compl="'+i+'" autocomplete="off" placeholder="informe">'+
       '<div class="modal-err">Informe um número. Ponto ou vírgula decimal; sem separador de milhar. Em branco não é zero — se fechou no zero a zero, digite <b>0</b>.</div>'+
     '</div>').join('');
@@ -638,8 +789,8 @@ function openFinalizeCompletionModal(incompletas){
     });
     if (algumInvalido) return;   // NADA foi aplicado
 
-    rascunho.forEach(({ x, v }) => { x.o.result = v; });
-    save();
+    const result=operationRecordOrders(rascunho.map(({x,v})=>({pi:x.pi,oi:x.oi,changes:{result:v}})),{reason:'Complementação confirmada do resultado antes da finalização'});
+    if(!operationRecordFeedback(result))return;
     closeModal();
     if (typeof render === 'function') render();
     if (typeof renderPhases === 'function') renderPhases();
@@ -694,7 +845,8 @@ function openFinalizeOperationModal(){
   // documentado da funcao, nao efeito do placeholder. O defeito e afirmar
   // qualquer coisa sobre uma entidade inexistente e prometer um registro que
   // jamais sera gravado.
-  const op=S.activeOperation;
+  const liveOp=S.activeOperation;
+  let op=liveOp;
   if(!op || typeof op!=='object'){
     box.innerHTML='<h3>Finalizar Operação Única</h3>'+
       '<div class="modal-sub">A operação não tem identidade registrada. Recarregue a página para que a normalização a estabeleça antes de finalizar.</div>'+
@@ -703,31 +855,16 @@ function openFinalizeOperationModal(){
     $('modalCancel').focus();
     return;
   }
-  // CHECKPOINT EXPLICITO. Pedir a finalizacao e um ato do operador, e e AQUI que
-  // a Fase da Conta e observada — uma vez so, antes de qualquer record existir.
-  // Dai em diante a revisao e a confirmacao leem o mesmo valor, e a confirmacao
-  // nao tem como alterar em silencio o que acabou de ser revisado.
-  //
-  // Cancelar nao desfaz esta observacao, e isso e correto: a fase daquele
-  // instante existiu de verdade. O que nao pode existir e revisao e registro
-  // divergindo.
-  if(typeof operationTouchAccountPhase==='function') operationTouchAccountPhase();
+  // Candidate-only observation: opening/cancelling the review cannot create
+  // historical evidence in S. Confirmation consumes precisely this candidate.
+  op=operationCaptureReview(liveOp);
+  operationFinalizeReview={operationId:liveOp.operationId,signature:operationReviewSignature(),op};
 
   // PRÉVIA: construída só para ser lida. buildSnapshot não muta estado algum.
   const previa=operationBuildSnapshot(op,{defenseCount:0});
-  if(!previa.ok && (previa.motivo==='instrument_conflict' || previa.motivo==='direction_conflict')){
-    const qual=previa.motivo==='instrument_conflict'?'instrumentos':'direções';
-    box.innerHTML='<h3>Finalizar Operação Única</h3>'+
-      '<div class="modal-sub">As ordens desta operação têm '+esc(qual)+' divergentes: <b>'+esc(previa.valores.join(' · '))+'</b>.<br>'+
-      'A finalização está bloqueada. O sistema não escolhe um valor por você — isso criaria memória histórica falsa.</div>'+
-      '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
-    $('modalCancel').addEventListener('click',closeModal);
-    $('modalCancel').focus();
-    return;
-  }
   if(!previa.ok){
     box.innerHTML='<h3>Finalizar Operação Única</h3>'+
-      '<div class="modal-sub">Não foi possível montar a revisão ('+esc(previa.motivo)+').</div>'+
+      '<div class="modal-sub">'+esc(previa.mensagem||('Não foi possível montar a revisão ('+previa.motivo+').'))+'</div>'+
       '<div class="modal-actions"><button class="modal-btn cancel" id="modalCancel">Fechar</button></div>';
     $('modalCancel').addEventListener('click',closeModal);
     $('modalCancel').focus();
@@ -740,14 +877,14 @@ function openFinalizeOperationModal(){
 
   box.innerHTML=
     '<h3>Finalizar Operação Única</h3>'+
-    '<div class="modal-sub">Encerra formalmente a tese, preserva a operação no Histórico, consolida o resultado no ciclo e libera as grades. '+
+    '<div class="modal-sub">Encerra formalmente a tese, preserva a operação e o resultado no Histórico e libera as grades. O ciclo escalar antigo permanece identificado como LEGACY. '+
     'Diferente de <b>fechar uma ordem</b>, que encerra apenas uma posição individual.</div>'+
     '<div id="finalReview"></div>'+
     (legada?('<div class="modal-q" data-qid="abertura"><div class="ql">Data/hora de abertura da operação — obrigatória, pois não foi registrada automaticamente:</div>'+
       '<input type="datetime-local" id="finalOpenedAt"><div class="modal-err">'+esc(OPERATION_MSG_ABERTURA_AUSENTE)+'</div></div>'):'')+
     '<div class="modal-q" data-qid="defesas"><div class="ql">Número de defesas realizadas (inteiro ≥ 0):</div>'+
     '<input type="text" inputmode="numeric" id="finalDefenses" autocomplete="off" placeholder="informe">'+
-    '<div class="modal-sub">O modelo de ordens não classifica defesa; a contagem é informada e fica registrada como tal.</div>'+
+    '<div class="modal-sub">A contagem consolidada é declarada pelo operador e preservada com essa proveniência, junto aos papéis das ordens.</div>'+
     '<div class="modal-err">Informe um inteiro maior ou igual a zero.</div></div>'+
     '<div class="modal-q" data-qid="confirmtxt"><div class="ql">Digite <b>FECHADO</b> para confirmar:</div>'+
     '<input type="text" id="finalConfirm" autocomplete="off"><div class="modal-err">Precisa digitar exatamente "FECHADO".</div></div>'+

@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// seis filhos e Research seis; owner semântico, filho, section física e visão
+// sete filhos e Research seis; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -8,8 +8,9 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-overview',label:'Visão Geral',primary:'forex',child:'forex-overview',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
   Object.freeze({id:'forex-preparation',label:'Preparação',primary:'forex',child:'forex-preparation',screen:'check',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-account',label:'Conta',primary:'forex',child:'forex-account',screen:'contas',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-reconciliation',label:'Apuração',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-reconciliation',label:'Contabilidade',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
 ]);
 
@@ -151,6 +152,7 @@ function navApply(plan,target){
   window.scrollTo({top:0,behavior:'smooth'});
   if(typeof maybeShowOnboardingNavReminder==='function') maybeShowOnboardingNavReminder(plan.screen);
   if(typeof syncNavSubState==='function') syncNavSubState();
+  if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
   return true;
 }
 
