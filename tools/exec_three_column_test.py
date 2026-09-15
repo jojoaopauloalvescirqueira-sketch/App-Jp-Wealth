@@ -1,23 +1,13 @@
 #!/usr/bin/env python3
-"""Bloco F: Clearance | Consolidado | Monitor dividem a linha, e o layout salvo sobrevive.
+"""Execution Board: faixas compactas, geometria responsiva e identidade do Editor.
 
-Duas metades, e a segunda e a que morde.
-
-A VISUAL: os tres cartoes ocupam a MESMA linha no desktop largo, reorganizam-se
-na faixa intermediaria e empilham no celular.
-
-A DESTRUTIVA: `exec-lifo-monitor` se dividiu em `exec-consolidado` e
-`exec-monitor`. Quem ja personalizou o Execution Board tem 4 ids gravados onde
-o validador passa a esperar 5, e dashLayoutValidateScreenWidgets reprova por
-TRES caminhos independentes — contagem, id desconhecido, obrigatorio ausente.
-Cada um devolve null para a TELA INTEIRA: sem migracao, uma mudanca visual
-apagaria silenciosamente toda a personalizacao gravada do operador.
-
-Este teste grava uma preferencia com a forma ANTIGA e exige que ela sobreviva
-com a intencao preservada, alem de exigir a linha de tres. Nao reimplementa o
-validador: grava, recarrega e le o que o app fez.
-
-Todas as fixtures sao SINTETICAS.
+A campanha substitui os tres cartoes altos por faixas de conta, risco e
+instrumentos. O nome historico do arquivo permanece porque o gate ja o chama.
+As preferencias antigas continuam cobertas: migracao do antigo monitor,
+ordem/tamanhos personalizados, nenhum widget perdido, nenhuma regravacao
+causada por navegar/renderizar. A geometria exige largura util e conteudo
+financeiro sem truncamento, nao apenas a existencia de classes CSS.
+Todas as fixtures sao sinteticas; requisicoes externas sao interceptadas.
 """
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -29,6 +19,7 @@ import sys
 import threading
 
 from playwright.sync_api import sync_playwright
+import notes_launcher_test as launcher
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,7 +57,7 @@ def serve():
 
 
 def abrir(browser, url, pref=None, largura=1440):
-    context = browser.new_context(viewport={"width": largura, "height": 1000})
+    context = browser.new_context(viewport={"width": largura, "height": 1000}, service_workers="block", reduced_motion="reduce")
     context.add_init_script("window.__onbShown=true;")
     if pref is not None:
         context.add_init_script(
@@ -121,7 +112,7 @@ LER_GEOMETRIA = """
     const el = g.querySelector(`[data-layout-card="${id}"]`);
     if (!el) return { id, ausente: true };
     const r = el.getBoundingClientRect();
-    return { id, topo: Math.round(r.top), esq: Math.round(r.left), larg: Math.round(r.width) };
+    return { id, topo: Math.round(r.top), fundo: Math.round(r.bottom), esq: Math.round(r.left), larg: Math.round(r.width), altura: Math.round(r.height), gridWidth: Math.round(g.getBoundingClientRect().width), minHeight:getComputedStyle(el).minHeight };
   });
 }
 """
@@ -170,78 +161,59 @@ def run_migracao_preserva_personalizacao(page, falhas):
         falhas.append(f"conjunto de cartoes mudou: {sorted(set(ids))}")
 
 
-def run_padrao_monta_a_linha_de_tres(page, falhas):
-    """Sem preferencia salva, o padrao novo poe os tres na primeira linha."""
+def run_faixas_compactas(page, falhas, largura):
+    """Conta, risco e instrumentos usam faixas com altura natural e leitura inteira."""
     cartoes = {c["id"]: c["size"] for c in page.evaluate(LER_CARTOES)}
-    esperado = {"exec-clearance": "medium", "exec-consolidado": "compact", "exec-monitor": "compact"}
+    # IDs e metadados do Editor sobrevivem; o CSS adapta a composicao visual.
+    esperado = {"exec-clearance": "full", "exec-consolidado": "full", "exec-monitor": "full"}
     for cid, size in esperado.items():
         if cartoes.get(cid) != size:
-            falhas.append(f"padrao: {cid} deveria nascer '{size}'; veio '{cartoes.get(cid)}'")
-
+            falhas.append(f"{largura}px: identidade/tamanho Editor mudou para {cid}: {cartoes.get(cid)}")
     geo = page.evaluate(LER_GEOMETRIA)
     if any(g.get("ausente") for g in geo):
-        falhas.append(f"cartao ausente na geometria: {geo}")
+        falhas.append(f"{largura}px: faixa ausente {geo}")
         return
-
-    topos = {g["topo"] for g in geo}
-    if len(topos) != 1:
-        falhas.append(
-            "a 1440px os tres cartoes deveriam dividir UMA linha; caíram em topos"
-            f" diferentes: {[(g['id'], g['topo']) for g in geo]}")
-
-    esqs = [g["esq"] for g in geo]
-    if len(set(esqs)) != 3 or esqs != sorted(esqs):
-        falhas.append(
-            f"os tres deveriam estar lado a lado, da esquerda para a direita: {esqs}")
-
-    clear = next(g for g in geo if g["id"] == "exec-clearance")
-    outros = [g for g in geo if g["id"] != "exec-clearance"]
-    if not all(clear["larg"] > o["larg"] for o in outros):
-        falhas.append(
-            "o Clearance ocupa 2 das 4 colunas e deveria ser mais largo que os"
-            f" outros dois: {[(g['id'], g['larg']) for g in geo]}")
-
-
-def run_faixa_intermediaria_reorganiza(page, falhas):
-    """A 1100px a linha se REORGANIZA, nao encolhe.
-
-    Dois cartoes de 1 coluna a essa largura cairiam para ~140px, que e a zona
-    em que dado financeiro trunca — o defeito ja documentado na faixa de
-    metricas. Entao o Clearance toma a largura inteira e o Consolidado e o
-    Monitor dividem a linha seguinte.
-    """
-    geo = {g["id"]: g for g in page.evaluate(LER_GEOMETRIA)}
-    if any(g.get("ausente") for g in geo.values()):
-        falhas.append(f"cartao ausente na faixa intermediaria: {geo}")
-        return
-    clear, cons, mon = geo["exec-clearance"], geo["exec-consolidado"], geo["exec-monitor"]
-    if clear["topo"] >= cons["topo"]:
-        falhas.append(
-            "a 1100px o Clearance deveria ficar SOZINHO na primeira linha;"
-            f" topos: clearance={clear['topo']} consolidado={cons['topo']}")
-    if cons["topo"] != mon["topo"]:
-        falhas.append(
-            "a 1100px o Consolidado e o Monitor deveriam dividir a MESMA linha;"
-            f" topos {cons['topo']} e {mon['topo']}")
-    if cons["esq"] >= mon["esq"]:
-        falhas.append(f"ordem invertida na faixa intermediaria: {cons['esq']} / {mon['esq']}")
-    if not (cons["larg"] > 200 and mon["larg"] > 200):
-        falhas.append(
-            "a reorganizacao existe justamente para os cartoes nao encolherem;"
-            f" larguras {cons['larg']} e {mon['larg']}")
+    for index, item in enumerate(geo):
+        if item['larg'] < item['gridWidth'] - 3:
+            falhas.append(f"{largura}px: {item['id']} nao ocupa a largura util: {item}")
+        if item['altura'] <= 0:
+            falhas.append(f"{largura}px: faixa invisivel {item}")
+        if index and item['topo'] < geo[index-1]['fundo'] - 2:
+            falhas.append(f"{largura}px: faixas se sobrepoem ou ainda dividem colunas altas: {geo}")
+        if abs(item['esq']-geo[0]['esq']) > 2:
+            falhas.append(f"{largura}px: margens desalinhadas {geo}")
+        if item['minHeight'] not in ('0px', 'auto'):
+            falhas.append(f"{largura}px: {item['id']} conserva altura minima artificial {item['minHeight']}")
+    metrics = page.evaluate("""() => [...document.querySelectorAll('.eb-metric > strong')].map(e=>{
+      const s=getComputedStyle(e),r=e.getBoundingClientRect();return {text:e.textContent,visible:r.width>0&&r.height>0,
+        overflow:s.overflow,textOverflow:s.textOverflow,font:parseFloat(s.fontSize),width:r.width,scroll:e.scrollWidth};})""")
+    # Closed diagnostic details are intentionally absent from layout.
+    visible=[m for m in metrics if m['visible']]
+    if len(visible)<10:
+        falhas.append(f"{largura}px: metricas de resumo ausentes/invisiveis: {len(visible)}")
+    for m in visible:
+        if m['textOverflow']=='ellipsis' or m['overflow']=='hidden' and m['scroll']>m['width']+2:
+            falhas.append(f"{largura}px: valor truncado {m}")
+        if not 16 <= m['font'] <= 24:
+            falhas.append(f"{largura}px: proporcao tipografica do valor fora da faixa: {m}")
+    if page.evaluate('document.documentElement.scrollWidth > innerWidth + 2'):
+        falhas.append(f"{largura}px: pagina possui overflow horizontal; tabelas devem rolar internamente")
 
 
-def run_empilha_no_celular(page, falhas):
-    geo = page.evaluate(LER_GEOMETRIA)
-    if any(g.get("ausente") for g in geo):
-        falhas.append(f"cartao ausente no celular: {geo}")
-        return
-    topos = [g["topo"] for g in geo]
-    if len(set(topos)) != 3:
-        falhas.append(f"a 480px os tres deveriam empilhar, um por linha: {topos}")
-    esqs = {g["esq"] for g in geo}
-    if len(esqs) != 1:
-        falhas.append(f"empilhados, deveriam alinhar na mesma margem: {esqs}")
+def run_navegacao_preserva_preferencia(page, falhas):
+    before=page.evaluate("key=>localStorage.getItem(key)", CHAVE)
+    ids_before=page.evaluate(LER_CARTOES)
+    ir_para_o_painel(page)
+    for _ in range(2):
+        page.evaluate("() => {render();renderPhases();JPWNavigation.navigate('dashboard');JPWNavigation.navigate('forex-operation');JPWExec.ui.selectView('panel');}")
+    after=page.evaluate("key=>localStorage.getItem(key)", CHAVE)
+    if before!=after:
+        falhas.append('Navegacao/re-render regravou a preferencia de layout')
+    if ids_before!=page.evaluate(LER_CARTOES):
+        falhas.append('Navegacao/re-render mudou a ordem ou os tamanhos do Editor')
+    ids=page.evaluate("() => ['execClearanceCard','execConsolidadoCard','execLifoMonitor','execPhaseGridsCard','executionBoardAccount','executionBoardRisk','executionBoardInstruments'].map(id=>[id,document.querySelectorAll('#'+id).length])")
+    if any(count!=1 for _,count in ids):
+        falhas.append(f'IDs duplicados ou ausentes depois da navegacao: {ids}')
 
 
 def main():
@@ -249,25 +221,26 @@ def main():
     falhas = []
     try:
         with sync_playwright() as pw:
-            navegador = pw.chromium.launch()
+            navegador = pw.chromium.launch(**launcher.launch_options())
 
             ctx, page = abrir(navegador, url, pref=PREF_ANTIGA)
             run_migracao_preserva_personalizacao(page, falhas)
+            run_navegacao_preserva_preferencia(page, falhas)
             ctx.close()
 
             ctx, page = abrir(navegador, url)
             ir_para_o_painel(page)
-            run_padrao_monta_a_linha_de_tres(page, falhas)
+            run_faixas_compactas(page, falhas, 1440)
             ctx.close()
 
             ctx, page = abrir(navegador, url, largura=1100)
             ir_para_o_painel(page)
-            run_faixa_intermediaria_reorganiza(page, falhas)
+            run_faixas_compactas(page, falhas, 1100)
             ctx.close()
 
             ctx, page = abrir(navegador, url, largura=480)
             ir_para_o_painel(page)
-            run_empilha_no_celular(page, falhas)
+            run_faixas_compactas(page, falhas, 480)
             ctx.close()
 
             navegador.close()
@@ -279,7 +252,7 @@ def main():
         for f in falhas:
             print("  - " + f)
         return 1
-    print("PASS  linha de tres no desktop, empilhada no celular, personalizacao gravada preservada")
+    print("PASS  faixas compactas responsivas, valores legiveis, IDs e personalizacao do Editor preservados")
     return 0
 
 

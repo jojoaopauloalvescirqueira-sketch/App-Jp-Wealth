@@ -67,6 +67,7 @@ function execSelectView(view) {
     return window.JPWNavigation.navigateLocal('research',researchView);
   }
   if (!EXEC_VIEWS.some(([key]) => key === view)) return false;
+  if(view!==execView&&execView==='panel'&&window.JPWForex?.executionBoardUI&&!JPWForex.executionBoardUI.guardNavigation({screen:'exec',localView:{view}},()=>execSelectView(view)))return false;
   execViewExplicit = true;
   execSetView(view);
   return true;

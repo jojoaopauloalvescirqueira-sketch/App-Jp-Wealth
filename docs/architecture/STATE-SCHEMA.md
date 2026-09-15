@@ -125,3 +125,7 @@ Perfil/foto (`jpwealth_local_profile_v1`), posição de Notas (`jpwealth_notes_l
 ## Agregado Forex da revisão local
 
 `S.forex` schemaVersion1 guarda accounts por ID, activeAccountId, market, h4Closes, grid, reserves, proposals, auditLog e migration explícita; `operationBudgets` é extensão opcional de declarações versionadas associadas a uma única operação. Ordens registradas capturam orderId, recordVersion, recordStatus, revisões e contexto de política; futuras observações não preenchem retroativamente o histórico ausente. `S.ledgerHistory` schemaVersion1 conserva eventos before/after, e as extensões opcionais do planejamento preservam envelope v1. Novas versões incompatíveis não são normalizadas como se fossem atuais. Contrato, comandos e limites em [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md). O estado efêmero do editor não pertence a S ou ao backup.
+
+## Extensões opcionais do Execution Board (2026-09-15)
+
+`forex.instrumentContexts` schema1 conserva observações por conta/período/instrumento/moeda, componentes preço/ATR55-660H4/contrato/conversões, revisão e anterior. `forex.dailyReferences` schema1 conserva lotes datados do provedor diário. Escrita somente por comandos de `00-forex-state.js`; ausência não cria valor em render. Ordens capturam `instrumentObservation`/`dailyReference` disponíveis, sem preencher contexto histórico ausente. Rascunhos do Board são Map em RAM, fora de S/backup. Schema futuro é opaco e impede nova escrita/importação incompatível. Contrato detalhado em [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md).

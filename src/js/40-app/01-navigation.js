@@ -144,6 +144,7 @@ function navApply(plan,target){
     const surface=navSurface(localView.surface);
     localView.view=surface.getView();
   }
+  if(window.JPWForex?.executionBoardUI&&!JPWForex.executionBoardUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-operation-draft'};return false;}
   if(navCurrent.primary==='research'&&plan.primary!=='research'&&typeof researchLeaveModule==='function') researchLeaveModule();
   document.querySelectorAll('#appMain > .screen').forEach(screen=>screen.classList.remove('active'));
   document.getElementById(plan.screen).classList.add('active');

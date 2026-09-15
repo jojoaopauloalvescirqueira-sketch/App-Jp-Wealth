@@ -7,6 +7,7 @@ import hashlib,json,threading,traceback
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import notes_launcher_test as fixture
+from browser_bootstrap_fixture import FX_URLS
 ROOT=Path(__file__).resolve().parents[1]
 
 def inputs():
@@ -24,6 +25,12 @@ def actual(page):
     return page.evaluate('({document:JSON.stringify(S),stored:localStorage.getItem(LSKEY)})')
 
 def journey(page,out,label):
+    # Preserve the full reload oracle: later quote observations are intentionally
+    # unavailable in this journey; their successful writer has its own focal.
+    for quote_url,pair in FX_URLS.items():
+        if pair!='USD/BRL':
+            page.context.route(quote_url,lambda route:route.fulfill(status=200,
+                content_type='application/json',body='{"status":"UNAVAILABLE_SYNTHETIC"}'))
     before=actual(page)
     for target in ['forex-overview','forex-reserves','forex-operation','forex-reconciliation','forex-planning','dashboard','forex-overview']*2:goto(page,target)
     assert actual(page)==before,'navigation changed operational state'
@@ -36,11 +43,15 @@ def journey(page,out,label):
     assert form.locator('[role=status]').inner_text()=='Registro confirmado.'
     model=page.evaluate('JPWForex.state.read()');assert model['account']['si']==10000 and model['metrics']['drawdown']['value']==3 and model['accountPhase']['value']==2,model
     assert model['executionEligibility']['status']=='BLOCKED'
-    page.locator('#forexEnginePanel summary',has_text='ATR, candle').click()
-    market=page.locator('#fxMarketFacts');fill(market,{'atrShort':2,'atrLong':1,'observedAt':'2026-09-14T12:00','source':'Synthetic H4 series','reason':'Synthetic volatility'})
-    market.get_by_role('button',name='Registrar ATRs',exact=True).click()
-    assert market.locator('[role=status]').inner_text()=='Registro confirmado.'
-    assert page.evaluate('JPWForex.state.read().metrics.vrm.value')==2
+    page.evaluate('closeSettingsModal()');goto(page,'forex-operation')
+    page.locator('#ebInstrumentSelect').select_option('EURUSD')
+    page.locator('[data-eb-observation]').click()
+    market=page.locator('#ebObservationForm');fill(market,{'atrShort':2,'atrLong':1,'observedAt':'2026-09-14T12:00','source':'Synthetic H4 series','reason':'Synthetic volatility'})
+    market.get_by_role('button',name='Salvar observação',exact=True).click()
+    assert not market.is_visible()
+    assert page.evaluate("""() => {const c=JPWForex.state.recordContext(),m=JPWForex.state.instrumentContext({...c,instrumentId:'EURUSD'}).value;
+      return JPWForex.engine.computeVRM({atrShort:m.atr.short,atrLong:m.atr.long}).value;}""")==2
+    assert page.evaluate('JPWForex.state.read().metrics.vrm.value') is None, 'no declared genesis: never assign ATR implicitly'
     page.evaluate('closeSettingsModal()');goto(page,'forex-reserves')
     form=page.locator('#fxReserveFacts');fill(form,{'capitalNominal':12000,'fcrConstituted':2600,'feoConstituted':3000,'sixMonthExpenseAmount':3000,'expensePeriod':'2026-03 to 2026-08','determinationReference':'Synthetic six-month approved expense ledger','fcrLiquidityDays':1,'feoLiquidityDays':2,'verifiedAt':'2026-09-14T12:00','source':'Synthetic reserve report','reason':'Synthetic reserve observation'})
     for key in ['determinationRecorded','expensesApproved','verificationRecorded']:form.locator('[name='+key+']').check()
@@ -80,6 +91,7 @@ def journey(page,out,label):
     # Existing command seeds the same factual operation the grade form identifies.
     result=page.evaluate("operationRecordOrder(0,0,{par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:0.01,entry:1.1,sl:1,tp:1.2,status:'Aberta',stopValidated:true,costs:0,costBasis:'SEPARATE_FROM_RESULT'},{reason:'Synthetic grade journey'})")
     assert result['ok'],result
+    assert page.evaluate('JPWForex.state.read().metrics.vrm.value')==2
     page.locator('#fxGridFacts').evaluate("form=>form.closest('details').open=true")
     grade=page.locator('#fxGridFacts');grade.locator('[name=phase]').select_option('2');grade.locator('[name=reason]').fill('Synthetic declared structure')
     grade.get_by_role('button',name='Registrar fase da grade',exact=True).click()

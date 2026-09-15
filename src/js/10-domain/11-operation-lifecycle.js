@@ -82,13 +82,15 @@ function operationValidateOrder(o){
   if(o.amplifiesExposure!=null&&typeof o.amplifiesExposure!=='boolean')return 'Indicador de exposição inválido.';
   return null;
 }
-function operationRecordOrders(edits,{reason=''}={}){
+function operationRecordOrders(edits,{reason='',accountId,periodId}={}){
   if(!Array.isArray(edits)||!edits.length)return {ok:false,error:'Nenhuma alteração informada.'};
   const allowed=['id','par','tipo','role','lote','entry','sl','tp','result','status','costs','stopValidated','amplifiesExposure','pendingActive','costBasis','recordStatus','divergenceChecked','divergenceReason','divergenceTs'];
   const checked=[];
   for(const edit of edits){
     const {pi,oi,changes}=edit, old=S.phases?.[pi]?.orders?.[oi];
     if(!old||!changes||Object.keys(changes).some(k=>!allowed.includes(k)))return {ok:false,error:'Destino ou campo da ordem inválido.'};
+    if(edit.expectedVersion!==undefined&&edit.expectedVersion!==(Number.isInteger(old.recordVersion)?old.recordVersion:0))return {ok:false,error:'A ordem mudou; confira a versão antes de salvar.'};
+    if(edit.orderId!==undefined&&edit.orderId!==(old.orderId||null))return {ok:false,error:'A identidade da ordem mudou; reabra o rascunho.'};
     if(old.recordStatus==='voided')return {ok:false,error:'Uma ordem anulada permanece no histórico. Registre outra ordem para substituí-la.'};
     if(operationOrderIsLive(old)&&changes.status==='')return {ok:false,error:'Fato executado não volta a rascunho. Use Anular com motivo.'};
     if(changes.recordStatus&&changes.recordStatus!=='voided')return {ok:false,error:'Estado de registro inválido.'};
@@ -98,7 +100,18 @@ function operationRecordOrders(edits,{reason=''}={}){
     if(JSON.stringify(operationOrderBefore(old))!==JSON.stringify(operationOrderBefore(next)))checked.push({...edit,next});
   }
   if(!checked.length)return {ok:true,persistido:false,unchanged:true};
-  return JPWForex.state.mutate('order-record',reason,['phases','activeOperation','transitionLog'],()=>{
+  return JPWForex.state.mutate('order-record',reason,['phases','activeOperation','transitionLog'],f=>{
+    // A new Board selection is confirmed together with the first fact. It never
+    // transfers an existing operation or writes a separate account selection.
+    if(accountId!==undefined||periodId!==undefined){
+      const matches=(S.accounts||[]).filter(a=>a&&a.forexAccountId===accountId),observed=f.accounts[accountId];
+      if(typeof accountId!=='string'||!accountId.trim()||typeof periodId!=='string'||!periodId.trim()||
+        matches.length!==1||!observed||observed.periodId!==periodId)throw new Error('Conta cadastrada ou período mudou; confira o contexto da operação.');
+      const existing=operationRecordScope(S.activeOperation);
+      if(S.activeOperation?.recordContext&&(existing.accountId!==accountId||existing.periodId!==periodId))
+        throw new Error('A operação pertence a outra conta/período; não pode ser transferida.');
+      f.activeAccountId=accountId;
+    }
     for(const {pi,oi,next} of checked){
       const old=S.phases[pi].orders[oi], before=operationOrderBefore(old);
       // Match the identity layer's orphan criterion before borrowing context.
@@ -120,10 +133,14 @@ function operationRecordOrders(edits,{reason=''}={}){
       next.recordStatus=next.recordStatus==='voided'?'voided':(operationOrderIsLive(next)?'recorded':'draft');
       const at=new Date().toISOString();
       const ins=instFor(next.par);
+      const observation=JPWForex.state.instrumentContext({accountId:context.accountId,periodId:context.periodId,instrumentId:next.par});
+      const dailyReference=JPWForex.state.dailyReference(next.par);
       next.calculationInputs={...structuredClone(JPWForex.orderInputs(next,context.accountInputs)),
         accountId:context.accountId,periodId:context.periodId,currency:context.accountInputs?.currency??null,
         recordedAt:at,provenance:'OBSERVED_AT_RECORDING',
-        instrumentInputs:ins?{name:ins.name,contractSize:ins.cpl,price:ins.preco}:null};
+        instrumentInputs:ins?{name:ins.name,contractSize:ins.cpl,price:ins.preco,provenance:'LEGACY_CATALOG_UNASSIGNED'}:null,
+        instrumentObservation:observation.status==='OK'?structuredClone(observation.value):null,
+        dailyReference:dailyReference.status==='OK'?structuredClone(dailyReference.value):null};
       if(next.recordStatus==='voided'){next.voidedAt=at;next.voidReason=String(reason).trim();}
       S.phases[pi].orders[oi]=next;
       if(next.status==='Migrada'&&!S.activeOperation)S.activeOperation={schemaVersion:1,
@@ -460,6 +477,7 @@ function operationPersistedHas(record){
 // ---- TRANSAÇÃO ----
 // ou toda a finalização acontece, ou nada acontece.
 function finalizeOperation(entrada){
+  if(globalThis.JPWForex?.executionBoardUI?.hasDrafts())return {ok:false,motivo:'unsaved_operation_draft',mensagem:'Resolva as linhas não salvas antes de finalizar a operação.'};
   if (operationFinalizeInFlight) return { ok:false, motivo:'in_flight' };
   operationFinalizeInFlight = true;
   try{
@@ -597,6 +615,7 @@ function finalizeOperation(entrada){
       return { ok:false, motivo:'persist_failed',
         mensagem:'A finalização foi cancelada: o estado não pôde ser gravado. Nada foi alterado.' };
     }
+    globalThis.JPWForex?.executionBoardUI?.discard();
     return { ok:true, record: snap.record };
   } finally {
     operationFinalizeInFlight = false;
@@ -803,6 +822,9 @@ function openFinalizeCompletionModal(incompletas){
 
 // PONTO DE ENTRADA do botão. Nunca chama finalizeOperation direto.
 function startFinalizeOperation(){
+  if(globalThis.JPWForex?.executionBoardUI?.hasDrafts()){
+    JPWForex.executionBoardUI.requestLeave(startFinalizeOperation,'Finalizar operação');return;
+  }
   const pre = operationPreflight();
   if (pre.estado === 'blocked')    return openFinalizeBlockedModal(pre.abertas);
   if (pre.estado === 'incomplete') return openFinalizeCompletionModal(pre.incompletas);

@@ -2339,6 +2339,16 @@ def run_typing_does_not_forge_account_phase(page):
     }""")
     assert all(x['same'] and x['rawSame'] and x['max']==0 for x in r['trace']),r
     assert r['afterDraft']==0 and r['afterObservation']==1 and r['phase']==1,r
+    # Each following case reseeds S; resolve this case's RAM draft explicitly.
+    # Cancellation must preserve the confirmed state and persisted document.
+    cleanup=page.evaluate("""() => {
+      const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY);
+      const hadDraft=JPWForex.executionBoardUI.hasDrafts();
+      JPWForex.executionBoardUI.cancelRow(0,0);
+      return {hadDraft,hasDraft:JPWForex.executionBoardUI.hasDrafts(),
+        stateSame:before===JSON.stringify(S),rawSame:raw===localStorage.getItem(LSKEY)};
+    }""")
+    assert cleanup=={'hadDraft':True,'hasDraft':False,'stateSame':True,'rawSame':True},cleanup
 
 
 def run_reviewed_record_equals_persisted_snapshot(page):

@@ -1,3 +1,9 @@
+# Em execução — Forex Execution Board (2026-09-15)
+
+Contrato [CHG/CTX](CHG-FOREX-EXECUTION-BOARD-20260915.md), N2/N3 autorizado. Branch codex/forex-execution-board-20260915, base integrada 594c86eb. Projeções factuais, contexto de conta/instrumento, cotações diárias e edição por linha. Implementação local em validação final. Identidade, gates, auditoria e recovery finais serão conferidos em ../evidence da worktree; aceite/integração pendentes. Main e demais campanhas preservadas.
+
+## Histórico anterior preservado
+
 # Em execução — Forex por jornada (2026-09-15)
 
 [CHG/CTX](CHG-FOREX-NAVIGATION-JOURNEY-20260915.md), N1/A2. Branch codex/forex-navigation-journey-20260915; base Git b2f0e549 + snapshot cadastral 351 reproduzido explicitamente. Candidate novo sem aceite/integração; históricos e origem congelada preservados.

@@ -16,7 +16,7 @@ import threading
 import traceback
 
 from playwright.sync_api import sync_playwright
-from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests, FX_URLS
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = [
@@ -95,6 +95,14 @@ def main():
         page.on('console', lambda message: record['console'].append({'type': message.type, 'text': message.text}))
         page.goto(url)
         wait_bootstrap(page)
+        # Roundtrip/reload assertions compare the entire Forex envelope. After
+        # nominal bootstrap, hold daily references unavailable so a legitimate
+        # new market observation cannot be mistaken for import/migration drift.
+        # The dedicated execution-market focal exercises successful refreshes.
+        for quote_url, pair in FX_URLS.items():
+            if pair != 'USD/BRL':
+                context.route(quote_url, lambda route: route.fulfill(status=200,
+                    content_type='application/json', body='{"status":"UNAVAILABLE_SYNTHETIC"}'))
         page.evaluate('() => {window.alert=()=>{};window.confirm=()=>true;closeModal();}')
         return context, page
 
@@ -254,14 +262,20 @@ def main():
     def grid_market(page, observations, *_):
         assert page.evaluate('__fxWrite()')['ok'] is True
         got = page.evaluate("""() => {
-          const market=__fxApi.recordMarket({atrShort:0,atrLong:1,source:'synthetic',observedAt:'2026-01-01T04:00:00Z'},{reason:'synthetic market'});
+          const legacy=__fxApi.recordMarket({atrShort:0,atrLong:1,source:'synthetic legacy',observedAt:'2026-01-01T04:00:00Z'},{reason:'synthetic legacy market'});
+          const legacyMarket=JSON.stringify(S.forex.market),legacyVrm=__fxApi.read().metrics.vrm.value;
+          const accountId=S.forex.activeAccountId,periodId=S.forex.accounts[accountId].periodId;
+          Object.assign(S.phases[0].orders[0],{role:'GENESIS',accountId,periodId,currency:'USD'});
+          const market=__fxApi.recordInstrumentContext({accountId,periodId,instrumentId:'EURUSD',expectedRevision:0,
+            componentChanges:{atr:{short:0,long:1,timeframe:'H4',unit:'PRICE',source:'synthetic',observedAt:'2026-01-01T04:00:00Z'}}},{reason:'synthetic scoped market'});
           const grid=__fxApi.recordGrid(2,{reason:'declared synthetic grid'});
           const before=JSON.stringify(S.forex);
           const invalid=__fxApi.recordGrid(7,{reason:'invalid'});
-          return {market,grid,invalid,unchanged:before===JSON.stringify(S.forex),model:__fxApi.read(),transitionLog:S.transitionLog};
+          return {market,legacy,legacyVrm,legacyUnchanged:legacyMarket===JSON.stringify(S.forex.market),grid,invalid,unchanged:before===JSON.stringify(S.forex),model:__fxApi.read(),transitionLog:S.transitionLog};
         }""")
         observations.update(got)
         assert got['market']['ok'] is True and got['grid']['ok'] is True and got['invalid']['ok'] is False
+        assert got['legacy']['ok'] is True and got['legacyVrm'] is None and got['legacyUnchanged'] is True
         assert got['unchanged'] is True and got['model']['activeGridPhase']['value'] == 2
         assert got['model']['accountPhase']['value'] == 3
         assert got['model']['metrics']['vrm']['value'] == 0
@@ -271,6 +285,12 @@ def main():
     def backup(page, observations, browser, record):
         assert page.evaluate("__fxApi.migrateLegacy({reason:'synthetic migration'})")['ok'] is True
         assert page.evaluate('__fxWrite()')['ok'] is True
+        assert page.evaluate("""() => {const accountId=S.forex.activeAccountId,periodId=S.forex.accounts[accountId].periodId;
+          return __fxApi.recordInstrumentContext({accountId,periodId,instrumentId:'EURUSD',expectedRevision:0,componentChanges:{
+            price:{value:1.25,source:'synthetic backup observation',observedAt:'2026-01-01T00:00:00Z'},
+            atr:{short:.012,long:.01,timeframe:'H4',unit:'PRICE',source:'synthetic backup H4',observedAt:'2026-01-01T00:00:00Z'}}},{reason:'synthetic scoped backup'});}""")['ok'] is True
+        assert page.evaluate("""() => __fxApi.recordDailyReferences({expectedRevision:__fxApi.dailyReferenceRevision(),expectedEpoch:jpWealthPersistenceEpoch(),quotes:{
+          EURUSD:{base:'EUR',quote:'USD',rate:1.1,referenceDate:'2026-01-01',fetchedAt:'2026-01-01T12:00:00Z',source:'Frankfurter',sourceKind:'DAILY_REFERENCE'}}})""")['ok'] is True
         assert page.evaluate("__fxApi.recordReserves({sixMonthExpenseAmount:600,determinationRecorded:true,expensesApproved:true,expensePeriod:'next six months',determinationReference:'synthetic determination',source:'synthetic source',fcrConstituted:2640,feoConstituted:600},{reason:'synthetic reserves'})")['ok'] is True
         expected = page.evaluate('structuredClone(S.forex)')
         account = expected['accounts'][expected['activeAccountId']]

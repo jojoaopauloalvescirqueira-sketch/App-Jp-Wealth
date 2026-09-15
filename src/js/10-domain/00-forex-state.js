@@ -14,19 +14,60 @@
     reserves:null,proposals:[],auditLog:[],migration:null});
   const raw=()=>S.forex;
   const object=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  const positive=value=>finite(value)&&value>0;
+  const instant=value=>!!text(value)&&Number.isFinite(Date.parse(value));
+  const instrumentKey=value=>text(value).toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const civilDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&
+    Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
+  const componentKeys=['price','contract','conversion','atr'];
+  function componentShape(key,value){
+    if(!object(value)||!text(value.source)||!instant(value.observedAt)||value.sourceKind!=='MANUAL')return false;
+    if(key==='price')return positive(value.value);
+    if(key==='contract')return positive(value.contractSize)&&
+      ['minimumVolume','volumeStep'].every(k=>value[k]===undefined||positive(value[k]));
+    if(key==='conversion')return positive(value.quoteToAccountRate)&&positive(value.baseToAccountRate);
+    return key==='atr'&&finite(value.short)&&value.short>=0&&positive(value.long)&&value.timeframe==='H4'&&value.unit==='PRICE';
+  }
+  function instrumentRecordShape(record){
+    const seen=new Set();let current=record,lastRevision=null;
+    while(current!=null){
+      if(!object(current)||seen.has(current)||!text(current.id)||!text(current.accountId)||!text(current.periodId)||
+        typeof current.currency!=='string'||!/^[A-Z]{3}$/.test(current.currency)||
+        !instrumentKey(current.instrumentId)||current.instrumentId!==instrumentKey(current.instrumentId)||
+        !Number.isInteger(current.revision)||current.revision<1||!instant(current.recordedAt)||
+        (lastRevision!==null&&current.revision!==lastRevision-1)||
+        (current!==record&&(current.id!==record.id||current.accountId!==record.accountId||current.periodId!==record.periodId||current.instrumentId!==record.instrumentId||current.currency!==record.currency))||
+        !componentKeys.some(k=>current[k]!==undefined)||!componentKeys.every(k=>current[k]===undefined||componentShape(k,current[k])))return false;
+      seen.add(current);lastRevision=current.revision;current=current.previous;
+    }
+    return lastRevision===1;
+  }
+  function instrumentContextsShape(value){
+    if(!object(value)||value.schemaVersion!==1||!Array.isArray(value.records)||!value.records.every(instrumentRecordShape))return false;
+    const scopes=value.records.map(r=>JSON.stringify([r.accountId,r.periodId,r.instrumentId]));
+    return new Set(scopes).size===scopes.length;
+  }
+  const dailyQuoteShape=(quote,key)=>object(quote)&&/^[A-Z]{3}$/.test(quote.base)&&/^[A-Z]{3}$/.test(quote.quote)&&
+    quote.base!==quote.quote&&quote.base+quote.quote===key&&positive(quote.rate)&&civilDate(quote.referenceDate)&&
+    instant(quote.fetchedAt)&&quote.referenceDate<=new Date(quote.fetchedAt).toISOString().slice(0,10)&&
+    quote.source==='Frankfurter'&&quote.sourceKind==='DAILY_REFERENCE';
+  const dailyReferencesShape=value=>object(value)&&value.schemaVersion===1&&Number.isInteger(value.revision)&&value.revision>=0&&
+    object(value.quotes)&&Object.entries(value.quotes).every(([key,q])=>dailyQuoteShape(q,key));
   const budgetShape=b=>object(b)&&b.schemaVersion===1&&text(b.id)&&text(b.accountId)&&text(b.periodId)&&text(b.currency)&&
     (b.operationId===null||!!text(b.operationId))&&Array.isArray(b.versions)&&b.versions.length>0&&
     b.versions.every((v,i)=>object(v)&&v.version===i+1&&finite(v.amount)&&v.amount>=0&&(i===0||v.amount<=b.versions[i-1].amount)&&text(v.source)&&text(v.declaredBy)&&
       Number.isFinite(Date.parse(v.declaredAt))&&Number.isFinite(Date.parse(v.recordedAt))&&object(v.policySnapshot))&&
     (b.association==null||object(b.association));
-  const supported=()=>raw()==null||(object(raw())&&raw().schemaVersion===1&&
-    raw().policyVersion===(fx.policy.policyVersion||fx.policy.version)&&
-    object(raw().accounts)&&Object.values(raw().accounts).every(object)&&
-    Array.isArray(raw().h4Closes)&&raw().h4Closes.every(object)&&
-    Array.isArray(raw().auditLog)&&raw().auditLog.every(object)&&
-    Array.isArray(raw().proposals)&&raw().proposals.every(object)&&
-    (raw().operationBudgets===undefined||(Array.isArray(raw().operationBudgets)&&raw().operationBudgets.every(budgetShape)))&&
-    ['market','grid','reserves','migration'].every(key=>raw()[key]==null||object(raw()[key])));
+  const supported=(value=raw())=>value==null||(object(value)&&value.schemaVersion===1&&
+    value.policyVersion===(fx.policy.policyVersion||fx.policy.version)&&
+    object(value.accounts)&&Object.values(value.accounts).every(object)&&
+    Array.isArray(value.h4Closes)&&value.h4Closes.every(object)&&
+    Array.isArray(value.auditLog)&&value.auditLog.every(object)&&
+    Array.isArray(value.proposals)&&value.proposals.every(object)&&
+    (value.operationBudgets===undefined||(Array.isArray(value.operationBudgets)&&value.operationBudgets.every(budgetShape)))&&
+    (value.instrumentContexts===undefined||instrumentContextsShape(value.instrumentContexts))&&
+    (value.dailyReferences===undefined||dailyReferencesShape(value.dailyReferences))&&
+    ['market','grid','reserves','migration'].every(key=>value[key]==null||object(value[key])));
   const unavailable=(code,message)=>({status:'NOT_COMPUTABLE',value:null,findings:[{code,message}]});
   function unavailableContext(code,message,requested){
     return {...unavailable(code,message),policyVersion:null,statuteVersion:null,parametricAnnexVersion:null,
@@ -49,14 +90,13 @@
       while(object(a)&&!seen.has(a)&&a.periodId!==target.periodId){seen.add(a);a=a.previous;}
       if(!object(a)||a.periodId!==target.periodId)return unavailableContext('CONTEXT_NOT_FOUND','A observação da conta/período solicitado não está disponível.',target);
     }
-    // Current market data is not a historical observation of an old period.
-    let market=f&&f.market||null;
-    if(explicit&&a){
-      const seen=new Set(),at=Date.parse(a.observedAt);
-      while(object(market)&&!seen.has(market)&&(!Number.isFinite(at)||!Number.isFinite(Date.parse(market.observedAt))||Date.parse(market.observedAt)>at)){
-        seen.add(market);market=market.previous;
-      }
-      if(!object(market)||!Number.isFinite(at)||!Number.isFinite(Date.parse(market.observedAt))||Date.parse(market.observedAt)>at)market=null;
+    // The old global ATR has no instrument identity. Keep it in the document,
+    // but never assign it to a selected account or instrument during a read.
+    let market=null;
+    if(explicit&&a&&text(target.instrumentId)){
+      const observation=instrumentContext(target).value;
+      if(observation&&observation.atr)market={...clone(observation.atr),atrShort:observation.atr.short,atrLong:observation.atr.long,
+        accountId:key,periodId:a.periodId,instrumentId:observation.instrumentId,observationId:observation.id,revision:observation.revision};
     }
     return {status:a?'OK':'NOT_COMPUTABLE',policyVersion:fx.policy.policyVersion||fx.policy.version,
       statuteVersion:fx.policy.statuteVersion,parametricAnnexVersion:fx.policy.parametricAnnexVersion,
@@ -92,6 +132,94 @@
     if(written===false){restore();return {ok:false,persistido:false,error:'Gravação recusada. O registro não foi confirmado; mantenha a entrada para tentar novamente.'};}
     if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno do registro Forex');return {ok:false,persistido:null,error:'Resultado de gravação desconhecido. Não repetir.'};}
     return {ok:true,persistido:true};
+  }
+  function instrumentContext(target){
+    if(!supported())return unavailable('INSTRUMENT_SCHEMA_UNSUPPORTED','Observações incompatíveis; preserve a base.');
+    if(!object(target)||!text(target.accountId)||!text(target.periodId)||!instrumentKey(target.instrumentId))
+      return unavailable('INSTRUMENT_SCOPE_MISSING','Identifique conta, período e instrumento; o cadastro global não preenche esse vínculo.');
+    if(target.asOf!==undefined&&!instant(target.asOf))return unavailable('INSTRUMENT_TIME_INVALID','Instante da consulta inválido.');
+    const key=instrumentKey(target.instrumentId),rows=(raw()?.instrumentContexts?.records||[]).filter(r=>
+      r.accountId===target.accountId&&r.periodId===target.periodId&&r.instrumentId===key);
+    if(rows.length!==1)return {...unavailable(rows.length?'INSTRUMENT_SCOPE_AMBIGUOUS':'INSTRUMENT_NOT_OBSERVED',
+      rows.length?'Há mais de uma observação para esse vínculo.':'Registre observações deste instrumento para a conta e período.'),revision:0};
+    let record=rows[0];
+    if(target.currency!==undefined&&target.currency!==record.currency)return unavailable('INSTRUMENT_CURRENCY_MISMATCH','A moeda da observação não corresponde à consulta.');
+    if(target.asOf!==undefined){
+      const at=Date.parse(target.asOf);
+      while(record&&(Date.parse(record.recordedAt)>at||componentKeys.some(k=>record[k]&&Date.parse(record[k].observedAt)>at)))record=record.previous;
+    }
+    if(!record)return {...unavailable('INSTRUMENT_HISTORY_MISSING','Não há observação capturada até esse instante.'),revision:0};
+    const value=clone(record);return {status:'OK',value,observation:clone(value),revision:value.revision,findings:[]};
+  }
+  function recordInstrumentContext(input,{reason='',expectedEpoch}={}){
+    if(!object(input)||!text(input.accountId)||!text(input.periodId)||!instrumentKey(input.instrumentId)||
+      !Number.isInteger(input.expectedRevision)||input.expectedRevision<0||!object(input.componentChanges)||
+      !Object.keys(input.componentChanges).length||Object.keys(input.componentChanges).some(k=>!componentKeys.includes(k)))
+      return {ok:false,persistido:false,error:'Identifique conta, período, instrumento, revisão e componentes da observação.'};
+    const changes=clone(input.componentChanges),key=instrumentKey(input.instrumentId);
+    for(const [name,component] of Object.entries(changes)){
+      if(object(component)&&component.sourceKind===undefined)component.sourceKind='MANUAL';
+      if(!componentShape(name,component)||Date.parse(component.observedAt)>Date.now())
+        return {ok:false,persistido:false,error:'Observação inválida de '+name+': informe valores, fonte e instante já ocorrido.'};
+      component.observedAt=new Date(component.observedAt).toISOString();
+    }
+    return mutate('instrument-context-observation',reason,[],f=>{
+      if(expectedEpoch!==undefined&&expectedEpoch!==jpWealthPersistenceEpoch())throw new Error('A base mudou; reabra o formulário.');
+      const accounts=(S.accounts||[]).filter(a=>a&&a.forexAccountId===input.accountId),account=f.accounts[input.accountId];
+      if(accounts.length!==1||!account||account.periodId!==input.periodId)throw new Error('Conta cadastrada ou período mudou; confira o vínculo antes de registrar.');
+      if(!(S.instruments||[]).some(ins=>instrumentKey(ins.name)===key))throw new Error('Instrumento não cadastrado.');
+      const envelope=f.instrumentContexts||{schemaVersion:1,records:[]};
+      const index=envelope.records.findIndex(r=>r.accountId===input.accountId&&r.periodId===input.periodId&&r.instrumentId===key);
+      const previous=index<0?null:envelope.records[index];
+      if((previous?.revision||0)!==input.expectedRevision)throw new Error('A observação mudou; confira a revisão antes de salvar.');
+      for(const [name,component] of Object.entries(changes))if(previous?.[name]&&Date.parse(component.observedAt)<Date.parse(previous[name].observedAt))
+        throw new Error('Observação anterior à vigente; não substituir silenciosamente '+name+'.');
+      const record={...(previous?clone(previous):{}),id:previous?.id||id('fxinstrument'),accountId:input.accountId,periodId:input.periodId,
+        instrumentId:key,currency:account.currency,revision:(previous?.revision||0)+1,...changes,recordedAt:now(),previous:previous?clone(previous):null};
+      if(index<0)envelope.records.push(record);else envelope.records[index]=record;
+      f.instrumentContexts=envelope;
+    });
+  }
+  function dailyReference(instrumentId){
+    if(!supported())return unavailable('REFERENCE_SCHEMA_UNSUPPORTED','Referências incompatíveis; preserve a base.');
+    const key=instrumentKey(instrumentId),quote=raw()?.dailyReferences?.quotes?.[key],revision=raw()?.dailyReferences?.revision||0;
+    if(!quote)return {...unavailable('DAILY_REFERENCE_MISSING','Referência diária ainda não disponível para este par.'),revision};
+    return {status:'OK',value:clone(quote),revision,findings:[]};
+  }
+  function dailyReferenceRevision(){return supported()?(raw()?.dailyReferences?.revision||0):null;}
+  function recordDailyReferences(input,{reason='Atualização das referências diárias FX'}={}){
+    if(!object(input)||!object(input.quotes)||!Object.keys(input.quotes).length||
+      !Number.isInteger(input.expectedRevision)||input.expectedRevision<0||input.expectedEpoch===undefined||
+      !Object.entries(input.quotes).every(([key,quote])=>dailyQuoteShape(quote,key)&&Date.parse(quote.fetchedAt)<=Date.now()))
+      return {ok:false,persistido:false,error:'Lote de referências diárias inválido ou sem revisão/geração.'};
+    const quotes=clone(input.quotes);
+    function inspectBatch(f){
+      if(input.expectedEpoch!==jpWealthPersistenceEpoch())throw new Error('A base mudou; descarte esta atualização anterior.');
+      const envelope=f?.dailyReferences||{schemaVersion:1,revision:0,quotes:{}};
+      if(envelope.revision!==input.expectedRevision)throw new Error('As referências foram atualizadas; confira antes de repetir.');
+      for(const [key,quote] of Object.entries(quotes)){
+        const previous=envelope.quotes[key];
+        if(previous&&(quote.referenceDate<previous.referenceDate||Date.parse(quote.fetchedAt)<Date.parse(previous.fetchedAt)))
+          throw new Error('Referência anterior à vigente para '+key+'.');
+      }
+      const fields=['base','quote','rate','referenceDate','source','sourceKind'];
+      return {envelope,unchanged:Object.entries(quotes).every(([key,quote])=>{
+        const previous=envelope.quotes[key];return previous&&fields.every(field=>previous[field]===quote[field]);
+      })};
+    }
+    // A repeated daily observation is not a new financial fact. Preserve its
+    // original confirmation timestamp, revision and audit trail byte-for-byte.
+    // Validate the same generation/revision and persistence barriers first.
+    if(!text(reason))return {ok:false,persistido:false,error:'Informe o motivo do registro.'};
+    if(!supported())return {ok:false,persistido:false,error:'Agregado Forex incompatível. Preserve a base e revise a versão.'};
+    if(jpWealthPersistenceOutcomeIsUnknown())return {ok:false,persistido:null,error:'Gravação indeterminada. Confira a base antes de repetir.'};
+    if(jpWealthPersistenceIsBlocked())return {ok:false,persistido:false,error:'A persistência está bloqueada; confira a base antes de atualizar.'};
+    try{if(inspectBatch(raw()).unchanged)return {ok:true,persistido:false,unchanged:true};}
+    catch(error){return {ok:false,persistido:false,error:error.message};}
+    return mutate('daily-reference-update',reason,[],f=>{
+      const {envelope}=inspectBatch(f);
+      f.dailyReferences={...envelope,revision:envelope.revision+1,quotes:{...envelope.quotes,...quotes}};
+    });
   }
   function migrateLegacy({reason}={}){
     if(raw()&&raw().migration)return {ok:true,persistido:false,alreadyMigrated:true};
@@ -341,6 +469,7 @@
   function activateProposal(){return {ok:false,persistido:false,status:'BLOCKED',error:'Ativação exige ato normativo e autoridade verificáveis. A sessão local não os comprova.'};}
   fx.state={empty,read:(target)=>target===undefined?fx.readModel():fx.readModel(target),recordContext,context:recordContext,mutate,migrateLegacy,
     recordAccountFacts,selectAccount,recordMarket,recordH4,recordGrid,recordReserves,
+    recordInstrumentContext,instrumentContext,recordDailyReferences,dailyReference,dailyReferenceRevision,
     recordOperationBudget,budgetSnapshot,attachOperationBudget,
     editorStatus,configureEditor,unlockEditor,lockEditor,clearEditor,proposeParameterChange,activateProposal,
     supported,unavailable,newOperationPhases:forexNewOperationPhases};

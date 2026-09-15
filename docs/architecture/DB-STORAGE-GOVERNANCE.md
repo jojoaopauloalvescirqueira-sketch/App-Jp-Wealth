@@ -210,3 +210,7 @@ A enumeração inclui **23 chaves/famílias localStorage identificadas**, um che
 ## FOREX-V11-CENTRAL-01 — incremento local em revisão
 
 Registry puro em `src/js/00-core/00-forex-policy.js`; engine puro em `src/js/10-domain/00-forex-engine.js`; comandos explícitos em `src/js/10-domain/00-forex-state.js`; read-model e compatibilidade em `02-risk-calculations.js`; UI em `20-ui/26-forex-engine-views.js`. O escritor, epoch, locks e recuperação permanecem os existentes. O snapshot completo S inclui os agregados Forex/ledgerHistory e extensões de planejamento, enquanto a sessão do editor é somente RAM. Fatos, elegibilidade e dados históricos têm contratos distintos em [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md). Esta descrição não concede aceite ou homologação.
+
+## Execution Board — observações e rascunhos
+
+As extensões opcionais schema1 `forex.instrumentContexts` e `forex.dailyReferences` pertencem ao documento principal. `mutate` conserva write-before-confirm, epoch e guardas de revisão. Recusa preserva rascunho RAM; UNKNOWN não permite retentativa cega. Cotações não sobrescrevem observações manuais. Backup inclui somente estado confirmado; não inclui rascunhos de linha nem bytes de relatório. Finalização limpa contexto operacional e conserva snapshots nos históricos pelo contrato já existente. Detalhes em [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md); nenhum novo banco, backend ou chave de segredo.

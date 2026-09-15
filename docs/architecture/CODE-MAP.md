@@ -361,3 +361,14 @@ schema, autoridade de escrita ou alteração da cópia parcial A12.
 ## FOREX-V11-CENTRAL-01 — incremento local em revisão
 
 Registry puro em `src/js/00-core/00-forex-policy.js`; engine puro em `src/js/10-domain/00-forex-engine.js`; comandos explícitos em `src/js/10-domain/00-forex-state.js`; read-model e compatibilidade em `02-risk-calculations.js`; UI em `20-ui/26-forex-engine-views.js`. O escritor, epoch, locks e recuperação permanecem os existentes. O snapshot completo S inclui os agregados Forex/ledgerHistory e extensões de planejamento, enquanto a sessão do editor é somente RAM. Fatos, elegibilidade e dados históricos têm contratos distintos em [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md). Esta descrição não concede aceite ou homologação.
+
+## Execution Board (2026-09-15)
+
+- `10-domain/18-execution-board-model.js`: projeção pura, escopo, custos, conversões e proveniência.
+- `10-domain/19-execution-market.js`: coordenação das referências diárias; grava pelos comandos do agregado Forex.
+- `20-ui/30-execution-board.js`: faixas, tabelas/rascunhos, salvamento por linha, observações e guardas de saída.
+- `00-forex-state.js`/`11-operation-lifecycle.js`: escritores/revisões existentes; snapshot por instrumento.
+- `02-risk-calculations.js`: compartilhamento de inputs vinculados; nenhuma nova fórmula na UI.
+- `04-stop-statistics.js`, render/navegação/Exec/layout/finalização: consumidores adaptados, IDs/preferências preservados.
+
+Contrato: [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md). Manifest/portable/precache gerados/validados pelos mecanismos oficiais.

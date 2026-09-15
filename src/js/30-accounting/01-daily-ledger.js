@@ -486,6 +486,7 @@ function normalizeImportedState(raw){
        (candidate[key]===null || typeof candidate[key]!=='object' || Array.isArray(candidate[key])))
       throw new Error('Backup com '+key+' inválido: esperava objeto.');
   }
+  if(candidate.forex!=null&&globalThis.JPWForex?.state&&!JPWForex.state.supported(candidate.forex))throw new Error('Backup com observações Forex incompatíveis. O estado atual foi preservado.');
   const current=S;
   let imported;
   try{

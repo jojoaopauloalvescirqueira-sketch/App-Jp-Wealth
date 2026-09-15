@@ -151,6 +151,7 @@ let sessionCrossTabChannel=null;
 if(!Number.isFinite(window.JP_WEALTH_SESSION_WIPE_EPOCH)) window.JP_WEALTH_SESSION_WIPE_EPOCH=0;
 
 function sessionResetAuxiliarySurfaces(){
+  if(window.JPWForex?.marketQuotes)window.JPWForex.marketQuotes.cancel();
   // Invalida controladores que ainda retêm preferências auxiliares em memória.
   // O epoch impede regravação mesmo se um hook visual falhar durante o wipe.
   window.JP_WEALTH_SESSION_WIPE_EPOCH+=1;
@@ -781,6 +782,9 @@ function renderSessionSafeChoice(){
   $('sessionExportNow').addEventListener('click',beginSessionExport);
 }
 function openFinalizeSessionFlow(){
+  if(window.JPWForex?.executionBoardUI?.hasDrafts()){
+    window.JPWForex.executionBoardUI.requestLeave(openFinalizeSessionFlow,'Finalizar sessão');return;
+  }
   // Guarda de entrada A-005: em modo de recuperação, Finalizar Sessão é interrompido
   // ANTES de qualquer modificação persistente. As confirmações normais deste fluxo não
   // valem como autorização para substituir ou apagar o banco problemático.
@@ -890,6 +894,7 @@ async function finalizeJPWealthSession(){
       const commit=sessionCommitFinalizedState(novoEstado);
       if(!commit.ok){ renderSessionCommitError(commit.erro); return; }
       S=novoEstado;
+      window.JPWForex?.executionBoardUI?.discard();
       const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true,preserveMain:true});
       concluiu=true;
       // Broadcast SÓ depois de o documento final estar durável e confirmado: nenhuma

@@ -111,3 +111,9 @@ A pasta escolhida é destino de exportação; a base ativa permanece no perfil/o
 Importar substitui os dados da base, preservando preferências locais deliberadamente excluídas. A porta recusa contêiner presente incompatível; ausência legítima em backup antigo segue o contrato legado. Em recusa de gravação, o estado anterior é preservado. Em desfecho desconhecido, pare novas gravações e examine a recuperação; não repita às cegas.
 
 Perfil/foto, layouts/navegação, posição do launcher, caches, permissões de pasta e rascunhos não salvos não acompanham a cópia financeira. Não prometa recuperação desses itens a partir do JSON de dados.
+
+## Recovery do Execution Board (2026-09-15)
+
+O checkpoint externo da campanha fica em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`: baseline.json, baseline-recovery.tar.gz, manifest/fingerprint/diff e relatório do candidate. Restaurar código somente nos caminhos próprios, por cópia seletiva verificada; não usar reset/stash ou tocar outras worktrees.
+
+Rascunhos de linhas/observações e lotes recusados de cotação existem somente em memória. Cancelar relê confirmação; recarga não promete recuperá-los. Backup guarda observações/referências confirmadas e snapshots históricos. UNKNOWN mantém recuperação existente contra retry cego. Nova geração/finalização invalida solicitações de cotações, e resposta tardia não recria dados. Consulte [Execution Board](../architecture/FOREX-EXECUTION-BOARD.md).
