@@ -136,7 +136,7 @@ function dashLayoutCardEl(screenId, widgetId) {
 function dashLayoutActiveScreenId() {
   const active = document.querySelector('.screen.active');
   if (!active) return null;
-  if (active.id === 'exec' && !document.getElementById('execOverview').hidden) return 'dash';
+  if (active.id === 'fxconsolidated' && !document.getElementById('execOverview').hidden) return 'dash';
   return JP_WIDGET_SCREENS[active.id] ? active.id : null; // 'config' não está no registro
 }
 function dashLayoutAllowedWidgetIds(screenId) {
@@ -810,8 +810,8 @@ function dashLayoutUpdateBarInfo() {
   const screenId = dashLayoutState.activeScreenId;
   const label = document.getElementById('dashLayoutBarLabel');
   if (label) {
-    const overview = screenId === 'dash' && document.querySelector('#exec.active');
-    label.textContent = 'Tela atual: ' + (overview ? 'Forex · Visão Geral' : screenId ? JP_WIDGET_SCREENS[screenId].label : '—');
+    const overview = screenId === 'dash' && document.querySelector('#fxconsolidated.active');
+    label.textContent = 'Tela atual: ' + (overview ? 'Forex · Contexto completo' : screenId ? JP_WIDGET_SCREENS[screenId].label : '—');
     label.classList.remove('dash-layout-bar-error');
   }
   const countEl = document.getElementById('dashLayoutBarCount');
@@ -851,7 +851,7 @@ function dashLayoutRecomputeDirty(screenId) {
 // intocados: vivem no próprio DOM de cada *WidgetGrid, que nunca é
 // destruído ao trocar de `.screen.active` (ver 01-navigation.js).
 function dashLayoutSetActiveScreen(screenId) {
-  if (!screenId) return;
+  // Recolher o contexto deixa a tela sem widgets editáveis, sem descartar o rascunho.
   dashLayoutClosePopover({ returnFocus: false });
   dashLayoutUndecorateScreen(dashLayoutState.activeScreenId);
   dashLayoutState.activeScreenId = screenId;
@@ -1001,8 +1001,8 @@ function dashLayoutFinish() {
 function dashLayoutRestoreDefaultConfirm() {
   const screenId = dashLayoutState.editing ? dashLayoutState.activeScreenId : dashLayoutActiveScreenId();
   if (!screenId) return;
-  const overview = screenId === 'dash' && document.querySelector('#exec.active');
-  const label = overview ? 'Forex · Visão Geral' : JP_WIDGET_SCREENS[screenId].label;
+  const overview = screenId === 'dash' && document.querySelector('#fxconsolidated.active');
+  const label = overview ? 'Forex · Contexto completo' : JP_WIDGET_SCREENS[screenId].label;
   if (!confirm('Restaurar o layout padrão de ' + label + '? Isso apaga só a preferência de posição e tamanho desta tela — nenhum dado financeiro é afetado.')) return;
   const finishImmediately = screenId === 'dash' && !dashLayoutState.editing;
   if (finishImmediately) dashLayoutEnterEdit();

@@ -20,7 +20,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-PRIMARY = ["dashboard", "forex-overview", "personal-finance", "research-forex", "alladin"]
+PRIMARY = ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin"]
 RESEARCH_CHILDREN = [
     ("research-forex", "Forex", "calendar"),
     ("research-stocks-br", "Ações", "stocks-br"),
@@ -30,7 +30,7 @@ RESEARCH_CHILDREN = [
     ("research-others", "Others", "others"),
 ]
 RESEARCH_FOREX_VIEWS = ["calendar", "nocoda", "pivots"]
-EXEC_VIEWS = ["overview", "panel", "motor", "history"]
+EXEC_VIEWS = ["panel", "motor", "history"]
 WORKSPACES = ["execEcal", "execNocoda", "execPivots"]
 
 
@@ -132,11 +132,12 @@ def assert_registry_and_dom(page):
         assert page.locator(f"#research > #{workspace}").count() == 1, workspace
         assert page.locator(f"#exec > #{workspace}").count() == 0, workspace
 
-    # Exec expõe somente as quatro views canônicas. Os aliases antigos podem
+    # Exec expõe somente as três views canônicas. Os aliases antigos podem
     # existir como shims, mas jamais mantêm Exec ativo ou criam estado paralelo.
     for view in EXEC_VIEWS:
         assert page.evaluate("view => JPWExec.ui.selectView(view)", view) is True
         assert page.evaluate("() => JPWExec.ui.getView()") == view
+    assert page.evaluate("() => JPWExec.ui.selectView('overview') && JPWNavigation.current().screen==='fxconsolidated' && !document.getElementById('execOverview').hidden")
     for legacy, research_view in (("ecal", "calendar"), ("nocoda", "nocoda"), ("pivots", "pivots")):
         assert page.evaluate("legacy => JPWExec.ui.selectView(legacy)", legacy) is True
         state = snapshot(page)
@@ -300,7 +301,7 @@ def assert_calendar_refresh_guidance(page):
     page.wait_for_function("() => !ffNewsInFlight")
     page.evaluate("() => { localStorage.removeItem(FF_NEWS_CACHE_KEY); JPWNavigation.navigate('ecal'); }")
     before = page.evaluate("JSON.stringify(S)")
-    expected = "Forex → Visão Geral"
+    expected = "Forex → Consolidado FX → Ver contexto completo"
     workspace = page.locator('#execEcal [data-ecal-role="empty"]')
     assert workspace.is_visible()
     assert expected in workspace.inner_text(), workspace.inner_text()

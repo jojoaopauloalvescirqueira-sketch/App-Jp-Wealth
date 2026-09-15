@@ -416,8 +416,8 @@ def drawer_closed(page, restore=False):
 def module_entry_keys(page, layout, evidence):
     # N3 remains in the topbar's module panel. Entering N2 from its trigger
     # must never pick a hidden N3 item simply because it is last in DOM order.
-    cases = [('forex-overview', 'exec', 'forex-overview', 'forex-planning'),
-             ('forex-operation', 'exec', 'forex-operation', 'forex-planning'),
+    cases = [('forex-overview', 'exec', 'forex-consolidated', 'forex-reserves'),
+             ('forex-operation', 'exec', 'forex-operation', 'forex-reserves'),
              ('research-forex', 'research', 'research-forex', 'research-others'),
              ('pivots', 'research', 'research-forex', 'research-others')]
     for route, module, current_child, last_child in cases:
@@ -437,7 +437,7 @@ def module_entry_keys(page, layout, evidence):
             actual = page.evaluate('JPWNavigation.current().canonical')
             assert actual == expected, (layout, route, key, expected, actual)
             if key == 'ArrowUp' and module == 'exec':
-                assert page.evaluate('JPWFx.ui.getView()') == 'overview'
+                assert page.evaluate('JPWNavigation.current().screen') == 'fxreserves'
             evidence.append({'layout': layout, 'from': route, 'key': key,
                              'focused_n2': expected, 'entered': actual, 'result': 'PASS'})
 
@@ -451,7 +451,7 @@ def run_navigation(browser, url, evidence):
             module_entry_keys(page, layout, evidence['module_entry_keys'])
             page.locator('#execNavTrigger').click()
             settle(page)
-            assert page.evaluate("JPWNavigation.current().canonical") == "forex-overview"
+            assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
             page.locator('[data-nav-child="forex-operation"]').click()
             settle(page)
             page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
@@ -509,7 +509,7 @@ def run_navigation(browser, url, evidence):
             drawer_open(page, layout)
             page.locator('#execNavTrigger').click()
             drawer_closed(page)
-            assert page.evaluate("JPWNavigation.current().canonical") == "forex-overview"
+            assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
             if layout == "sidebar":
                 drawer_open(page, layout)
             page.locator('[data-nav-child="forex-operation"]').click()

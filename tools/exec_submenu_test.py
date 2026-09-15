@@ -26,10 +26,9 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-overview", "forex-preparation", "forex-account",
-                     "forex-reserves", "forex-operation", "forex-reconciliation", "forex-consolidated", "forex-planning"]
-EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Reservas", "Operação", "Contabilidade", "Consolidado FX", "Planejamento"]
-EXPECTED_VIEWS = ["overview", "panel", "motor", "history"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-planning", "forex-operation", "forex-reconciliation", "forex-account", "forex-reserves"]
+EXPECTED_LABELS = ["Consolidado FX", "Planejamento", "Operação", "Contabilidade", "Contas", "Reservas"]
+EXPECTED_VIEWS = ["panel", "motor", "history"]
 EXPECTED_CONTEXT = {
     "forex-operation": ["panel", "motor"],
     "forex-reconciliation": ["forex-reconciliation", "history"],
@@ -37,7 +36,7 @@ EXPECTED_CONTEXT = {
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execOverview", "execWidgetGrid", "motorWidgetGrid", "execHistory"]
+EXPECTED_CONTAINERS = ["execWidgetGrid", "motorWidgetGrid", "execHistory"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -176,15 +175,15 @@ def run_initial_destination(page):
           nestedScreens: document.querySelectorAll('#exec .screen').length,
           visible: %s.filter(id => !document.getElementById(id).hidden),
           inert: %s.filter(id => document.getElementById(id).inert),
-          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-overview"]')
+          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-consolidated"]')
             ?.getAttribute('aria-current')
         })""" % (containers, containers)
     )
-    assert state["view"] == "overview", f"destino inicial nao e a Visao Geral: {state}"
-    assert state["screens"] == ["exec"], f"modulo ativo incorreto: {state['screens']}"
+    assert state["view"] == "panel", f"destino inicial nao e a Visao Geral: {state}"
+    assert state["screens"] == ["fxconsolidated"], f"modulo ativo incorreto: {state['screens']}"
     assert state["nestedScreens"] == 0, "workspace virou .screen aninhada — quebra .screen.active/closest"
-    assert state["visible"] == ["execOverview"], f"mais de um workspace visivel: {state['visible']}"
-    assert state["inert"] == [c for c in EXPECTED_CONTAINERS if c != "execOverview"], f"inert incorreto: {state['inert']}"
+    assert state["visible"] == ["execWidgetGrid"], f"mais de um workspace visivel: {state['visible']}"
+    assert state["inert"] == [c for c in EXPECTED_CONTAINERS if c != "execWidgetGrid"], f"inert incorreto: {state['inert']}"
     assert state["current"] == "page", "destino ativo sem aria-current"
 
 
@@ -289,7 +288,7 @@ def run_focus_and_keyboard(page):
     # inclusive nos workspaces novos.
     blocked = page.evaluate(
         """() => {
-          const probe = document.querySelector('#execOverview button, #motorWidgetGrid button');
+          const probe = document.querySelector('#motorWidgetGrid[hidden] input:not([disabled]), #motorWidgetGrid[hidden] button:not([disabled])');
           if (!probe) return {found: false, took: null};
           probe.focus();
           return {found: true, took: document.activeElement === probe, hidden: !!probe.closest('[hidden]')};
@@ -382,15 +381,15 @@ def run_module_switch(page):
 
     # Voltar ao Execution Board vindo de outro modulo reabre na Visao Geral.
     page.click("#execNavTrigger")
-    page.wait_for_function("() => window.JPWExec.ui.getView() === 'overview'")
+    page.wait_for_function("() => JPWNavigation.current().screen === 'fxconsolidated'")
     back = page.evaluate(
         """() => ({
           view: window.JPWExec.ui.getView(),
-          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-overview"]')
+          current: document.querySelector('#execNavSubmenu [data-nav-child="forex-consolidated"]')
             ?.getAttribute('aria-current')
         })"""
     )
-    assert back == {"view": "overview", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
+    assert back == {"view": "panel", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
 
 
 def run_economic_calendar(page):
@@ -652,7 +651,7 @@ def run_no_regression(page):
     """As cinco rotas globais ativam seus destinos físicos declarados."""
     routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
     # A10 changes only the default visual order; exact route/activation checks remain.
-    expected = {"dashboard": "dash", "research-forex": "research", "forex-overview": "exec",
+    expected = {"dashboard": "dash", "research-forex": "research", "forex-consolidated": "fxconsolidated",
                 "personal-finance": "finpes", "alladin": "alladin"}
     assert routes == list(expected), f"rotas globais mudaram: {routes}"
     for route, screen in expected.items():
@@ -698,7 +697,7 @@ def run_mobile(browser, url):
     assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None, (
         "selecao do modulo deixou a gaveta aberta"
     )
-    assert page.evaluate("() => exec.contains(document.activeElement)"), "selecao nao focou conteudo"
+    assert page.evaluate("() => fxconsolidated.contains(document.activeElement)"), "selecao nao focou conteudo"
     page.click("[data-shell-menu-toggle]")
     facts = page.evaluate(
         """() => ({

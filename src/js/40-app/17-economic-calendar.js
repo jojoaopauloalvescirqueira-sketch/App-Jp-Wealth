@@ -70,7 +70,7 @@ function ecalRenderRoot(root, filter){
   if(!data){
     range.textContent='';
     fresh.textContent='';
-    empty.textContent=status+' Use ↻ no Calendário Econômico em Forex → Visão Geral.';
+    empty.textContent=status+' Use ↻ no Calendário Econômico em Forex → Consolidado FX → Ver contexto completo.';
     empty.hidden=false;
     return;
   }

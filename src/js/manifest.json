@@ -38,7 +38,7 @@
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "4e1710a15ff238f180d677de556ceda491eff24c85a377736ea6f626acc821c9"
+      "sha256": "411f0059c9c6bc264b4edc490c5da25840023703e132f355e9076f12d5b9caa1"
     },
     {
       "order": 7,
@@ -128,7 +128,7 @@
       "order": 21,
       "path": "src/js/20-ui/08-input-bindings.js",
       "section": "INPUT BINDINGS",
-      "sha256": "1a1004a24ce11162fa81839e41f092bc6c0aa6cb8e4184b37d8e01002fae5371"
+      "sha256": "8cfa9a5624c8571bddce10cb9e137cb19848145880d67ede32069d8bfb4a3812"
     },
     {
       "order": 22,
@@ -164,7 +164,7 @@
       "order": 27,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "2ec45ec588159bf9e725dd2f3ac85ec6b406d1911950dede2041eb7e61808db5"
+      "sha256": "d4234be7780c5735988c101fe0e1d4b9b6481ea6d102eb8473dafeef6ddf9850"
     },
     {
       "order": 28,
@@ -248,7 +248,7 @@
       "order": 41,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "4acb6651c7626b01cbe7178e820a3c2d6a7f1eee5633b12cc6b2635c5697fe67"
+      "sha256": "eb82938055d750eb63c4887524eaa4ea2ddbce27f1ba2c1aeed07a5051116216"
     },
     {
       "order": 42,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "9bd09e4f81aca68f7f45ad9ea19716d28d097c30111ab7c3871f8e28e6867a60"
+      "sha256": "5018f6304dbaef7d596f595d9b8f6411dcfa650ed007a9361287a1bd3a731f09"
     },
     {
       "order": 46,
@@ -296,7 +296,7 @@
       "order": 49,
       "path": "src/js/40-app/17-economic-calendar.js",
       "section": "Calendario Economico semanal (dois pontos de entrada, dado do widget de noticias)",
-      "sha256": "5d1282d80f2b57407db26d1778d8b8b7bbfc90425d0e6a941975cea8b5c730a4"
+      "sha256": "8bb7d6f307613d07e3f987f0785073e8ee709ac50837372223b06182f0584618"
     },
     {
       "order": 50,
@@ -386,7 +386,7 @@
       "order": 64,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "b5cf74a9c5d251341cf2ca4257fb6f0f947ea7d746513ee37426f5c6d04ae298"
+      "sha256": "4bab20824b2a2bcd5ba34aa5d840a67b451ead41cb9ccfa287b8b5ed57d3de1c"
     },
     {
       "order": 65,
@@ -487,7 +487,7 @@
       "order": 81,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "8e4ce0428677eceeee5418ed53bead3055df6a64c023ba0d82b80019bb39803c"
+      "sha256": "23fb4ec52d9319741a46f9bd8c2b0adff89378e626975c8889d3bdcd54ae71d1"
     },
     {
       "order": 82,
@@ -499,19 +499,19 @@
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 83,
-      "sha256": "2baaf2686b4f9adc42413e2c3fa7cf6960e879a53ad14e5d9167acf308c89e9d"
+      "sha256": "dab4461bf8a95fa3bdd07ece10c10dc718bcb0767e28607c00f6d1ab0651aa1b"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 84,
-      "sha256": "c28e4b929c3f742235b7c6c8f7c02535ca7e9ba1acec1f7001eda520c04f11fd"
+      "sha256": "8d09e276552f8ab6360224bb8e1ea11878dd13743ae4a59688fcb5c111633fea"
     },
     {
       "path": "src/js/40-app/24-fx-consolidated-import.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 85,
-      "sha256": "b37007bda49e7ae950616ebfa4fe6b21ac576e957d87648546d6fd6d8faeacfd"
+      "sha256": "b330ae7f9d4e58ac2c6d243e7da0b06271640940ce4e575c1f3853861edc19f2"
     },
     {
       "path": "src/js/40-app/25-fx-consolidated-pdf.js",
@@ -523,7 +523,7 @@
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 87,
-      "sha256": "ad18399963c305c6e1aa7f95a8831cf15b0d63663dc9647f9a34497120a9bc9d"
+      "sha256": "920b37bfe8573980949979d3213f5980e637ee805e5e978796b21da7f0744f3f"
     }
   ],
   "runtimeAssets": [

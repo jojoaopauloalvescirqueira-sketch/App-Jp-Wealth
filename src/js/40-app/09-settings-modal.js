@@ -483,7 +483,8 @@ function buildSettingsContent(){
   createSettingsPanel('statute','<p class="settings-lead">Consulte o Estatuto V11.0 e o Anexo JPW-ANNEX-T03. O motor financeiro legado ainda não foi adaptado; esta referência documental não homologa seus cálculos.</p><p class="settings-links"><a href="docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf" target="_blank" rel="noopener">Estatuto V11.0 (PDF)</a><a href="docs/normative/ANEXO_PARAMETRICO_CANONICO.md" target="_blank" rel="noopener">Anexo Paramétrico Canônico</a></p><div data-settings-slot="statute"></div>');
   createSettingsPanel('parameters','<p class="settings-lead">Controles existentes, com os valores, unidades, validações e persistência originais.</p><section class="settings-safe-period" id="settingsPeriodSummary"><h4>Período Operacional</h4><p>Os dados do período são mantidos pelo questionário de início. Esta central não mostra valores pessoais ou credenciais.</p><button type="button" class="reset-btn" id="settingsReviewPeriodBtn">Revisar dados do período</button></section><div data-settings-slot="period"></div><div data-settings-slot="parameters"></div>');
   createSettingsPanel('tool-params','<p class="settings-lead">Motor Forex versionado. Registros explícitos, parâmetros normativos e estados de elegibilidade são apresentados separadamente.</p><div data-settings-slot="tool-params"></div>');
-  createSettingsPanel('tool-check','<p class="settings-lead">O Checklist Pré-Trade completo — mesma pontuação, mesmos critérios, mesma persistência.</p><div data-settings-slot="tool-check"></div>');
+  createSettingsPanel('tool-check','<p class="settings-lead">Respostas, pontuação e critérios do checklist pré-trade. As respostas são gravadas durante o preenchimento.</p><button type="button" id="settingsOpenChecklist" aria-haspopup="dialog" aria-controls="forexChecklistDialog">Abrir checklist pré-trade</button>');
+  settingsEl('settingsOpenChecklist')?.addEventListener('click',event=>fxOpenChecklist(event.currentTarget));
   createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
   createSettingsPanel('forex-consolidated',window.JPWFXConsolidated?.settingsMarkup?window.JPWFXConsolidated.settingsMarkup():'<p>Consolidado indisponível neste carregamento.</p>');
@@ -521,8 +522,7 @@ function moveSettingsSearchToSidebar(){
 // enquanto a central está aberta, e devolvido à <section> hospedeira ao
 // fechar — exatamente o contrato dos nós legados do #config.
 const SETTINGS_SCREEN_GRIDS={
-  'tool-params':{grid:'paramsWidgetGrid',host:'params'},
-  'tool-check':{grid:'checkWidgetGrid',host:'check'}
+  'tool-params':{grid:'paramsWidgetGrid',host:'params'}
 };
 function moveLegacySettingsNodes(){
   const host=settingsEl('config'); if(!host) return;
@@ -610,6 +610,7 @@ function settingsNavigate(id,options={}){
   settingsState.mobileListVisible=false;
   settingsRenderCurrent({focus:options.focus});
   if(options.reveal) settingsRevealElement(options.reveal);
+  if(settingsState.active==='tool-check') fxOpenChecklist(settingsEl('settingsOpenChecklist'));
 }
 function settingsNavigateTopLevel(id){
   settingsState.mobileListVisible=false;
@@ -644,6 +645,7 @@ function settingsNavigateToLeaf(leafId,options={}){
   settingsState.mobileListVisible=false;
   settingsRenderCurrent({focus:options.focus});
   if(options.reveal) settingsRevealElement(options.reveal);
+  if(settingsState.active==='tool-check') fxOpenChecklist(settingsEl('settingsOpenChecklist'));
 }
 
 function settingsSearchEntries(){
@@ -752,7 +754,7 @@ function openSettingsModal(category='general', opener){
   else settingsRenderCurrent({focus:false});
   window.__settingsModalDebug.opens++;
   requestAnimationFrame(()=>{
-    if(!settingsState.open) return;
+    if(!settingsState.open||settingsState.suspended) return;
     const search=settingsEl('settingsSearch');
     (search&&search.getClientRects().length?search:settingsEl('settingsContent')).focus({preventScroll:true});
   });

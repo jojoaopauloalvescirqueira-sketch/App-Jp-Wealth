@@ -1,18 +1,16 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// oito filhos e Research seis; owner semântico, filho, section física e visão
+// seis filhos e Research seis; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
 const NAV_FOREX_CHILDREN=Object.freeze([
-  Object.freeze({id:'forex-overview',label:'Visão Geral',primary:'forex',child:'forex-overview',screen:'exec',localView:Object.freeze({surface:'exec',view:'overview'}),aliases:Object.freeze(['exec'])}),
-  Object.freeze({id:'forex-preparation',label:'Preparação',primary:'forex',child:'forex-preparation',screen:'check',localView:null,aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-account',label:'Conta',primary:'forex',child:'forex-account',screen:'contas',localView:null,aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-consolidated',label:'Consolidado FX',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-reconciliation',label:'Contabilidade',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-consolidated',label:'Consolidado FX',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
+  Object.freeze({id:'forex-account',label:'Contas',primary:'forex',child:'forex-account',screen:'contas',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])})
 ]);
 
 const NAV_RESEARCH_CHILDREN=Object.freeze([
@@ -40,7 +38,11 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   fxplan:Object.freeze({canonical:'forex-planning',child:'forex-planning',screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
   motor:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'motor'})}),
   history:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
-  check:Object.freeze({canonical:'forex-preparation',child:'forex-preparation',screen:'check',primary:'forex'}),
+  // Nomes antigos preservam a intenção, sem destinos duplicados no menu.
+  exec:Object.freeze({canonical:'forex-consolidated',child:'forex-consolidated',screen:'fxconsolidated',primary:'forex',action:'context'}),
+  'forex-overview':Object.freeze({canonical:'forex-consolidated',child:'forex-consolidated',screen:'fxconsolidated',primary:'forex',action:'context'}),
+  check:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'checklist'}),
+  'forex-preparation':Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'checklist'}),
   'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
   ecal:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'calendar'})}),
   nocoda:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
@@ -103,6 +105,7 @@ function navSurface(surfaceId){
 function navCanApply(plan){
   if(!plan.accepted) return false;
   if(plan.action==='settings') return typeof openSettingsModal==='function';
+  if(plan.action==='checklist'&&(typeof fxCanOpenChecklist!=='function'||!fxCanOpenChecklist())) return false;
   if(!plan.screen||!document.getElementById(plan.screen)) return false;
   if(plan.primary&&!document.querySelector('#nav > .tab[data-primary="'+CSS.escape(plan.primary)+'"]')) return false;
   if(plan.localView){
@@ -153,8 +156,10 @@ function navApply(plan,target){
   window.scrollTo({top:0,behavior:'smooth'});
   if(typeof maybeShowOnboardingNavReminder==='function') maybeShowOnboardingNavReminder(plan.screen);
   if(typeof syncNavSubState==='function') syncNavSubState();
-  if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
   if(plan.screen==='fxconsolidated'&&window.JPWFXConsolidated?.render)window.JPWFXConsolidated.render();
+  if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
+  if(plan.action==='context') fxSetContextExpanded(true);
+  if(plan.action==='checklist') fxOpenChecklist(document.getElementById('execChecklistBtn'));
   return true;
 }
 
@@ -177,7 +182,7 @@ function navNavigate(target){
 function navLocalPlan(surfaceId,view,descriptor){
   let canonical=null;
   if(surfaceId==='exec'){
-    if(view==='overview') canonical='forex-overview';
+    if(view==='overview') return {accepted:true,requested:'exec:overview',source:'local',canonical:'forex-consolidated',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,action:'context'};
     else if(view==='panel'||view==='motor') canonical='forex-operation';
     else if(view==='history') canonical='forex-reconciliation';
   }else if(surfaceId==='fxplan'){

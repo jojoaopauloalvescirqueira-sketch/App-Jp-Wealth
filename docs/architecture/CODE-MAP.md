@@ -150,10 +150,10 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 38 | `src/js/40-app/09-settings-modal.js` | Central modal de Configurações |
 | 39 | `src/js/40-app/10-dashboard-immersive.js` | Dashboard imersivo |
 | 40 | `src/js/40-app/11-operational-shell.js` | Shell derivado do resolver: lateral contextual padrão, composição superior opcional no Editor, mesmos nós N1/N2/N3, diálogos mobile e foco |
-| 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado: contexto global, Status do Sistema e realocação dos componentes operacionais para Forex > Visão Geral |
+| 41 | `src/js/40-app/12-global-dashboard.js` | Shell compartilhado: contexto global, Status do Sistema e realocação dos componentes operacionais para Forex > Consolidado FX > Contexto completo |
 | 42 | `src/js/40-app/13-dashboard-layout.js` | Personalização compartilhada de telas |
 | 43 | `src/js/40-app/14-mvp-notes.js` | Notas: acesso flutuante móvel e pelas Configurações; posição em memória, tickets/dados e identificadores internos preservados |
-| 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget em Forex > Visão Geral, inicializados em separado; calendário e resumo Dashboard compartilham o pipeline |
+| 44 | `src/js/40-app/15-ff-news.js` | Notícias de alto impacto: **domínio** (cache, fetch, timers, `online`) + view do widget em Forex > Consolidado FX > Contexto completo, inicializados em separado; calendário e resumo Dashboard compartilham o pipeline |
 | 45 | `src/js/40-app/16-storage-governance.js` | UI da governança de armazenamento |
 | 46 | `src/js/40-app/17-economic-calendar.js` | Calendário econômico semanal: render parametrizado por raiz (`data-ecal-role`), servindo o overlay `#ecalOverlay` e o workspace `#execEcal` — duas instâncias visuais, um domínio |
 | 47 | `src/vendor/planck/planck-1.5.0.min.js` | Planck.js 1.5.0 vendorizado, MIT |
@@ -170,7 +170,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 58 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
 | 59 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
 | 60 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
-| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: quatro workspaces canônicos (Visão Geral, Painel Operacional, Motor de Lote, Histórico) e shims analíticos para Research |
+| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: três workspaces (Painel, Motor, Histórico), alias overview para o contexto no Consolidado e janela única do checklist |
 | 62 | `src/js/10-domain/09-nocoda-geometry.js` | NoCoda: geometria do canal — núcleo puro, sem DOM nem persistência |
 | 63 | `src/js/20-ui/14-nocoda-studies.js` | NoCoda: workspace de estudos (seletor, âncoras, resultados derivados) |
 | 64 | `src/js/10-domain/10-pivot-studies.js` | Pivots: derivação, validação, estatística descritiva e ordenação — núcleo puro |
@@ -229,8 +229,8 @@ são preferências distintas. Trocar composição não deve navegar, reinicializ
 módulos ou alterar preferências v6 dos widgets; contratos completos em
 `NAVIGATION-HIERARCHY.md`.
 
-No Execution Board restam `#execOverview`, `#execWidgetGrid`,
-`#motorWidgetGrid` e `#execHistory`. Research contém os mesmos nós
+No Execution Board restam `#execWidgetGrid`, `#motorWidgetGrid` e `#execHistory`.
+`#execOverview` passa ao contexto expandido do Consolidado, sem clonar seus widgets. Research contém os mesmos nós
 `#execEcal`, `#execNocoda` e `#execPivots`, sem clone ou rename, além dos empty
 states de Ações, Stocks, REITs e Others; todos são alternados por `hidden` +
 `inert`. NoCoda e Pivots são repintados a cada entrada e após `boot()` quando
@@ -266,9 +266,10 @@ persistência, backup, `staleInfo()` e conclusão do onboarding; não os recalcu
 Jornada representativa, reconstruída por leitura do código nesta revisão:
 
 1. **Dashboard → Abrir Forex:** `initDashMacro()` delega o clique a
-   `JPWNavigation.navigate('forex-overview')`.
-2. **Resolver → Visão Geral:** `01-navigation.js` resolve tela `exec`, superfície
-   `exec`, visão `overview`; `execSelectView()` usa os nós existentes.
+   `JPWNavigation.navigate('forex-consolidated')`.
+2. **Resolver → Consolidado:** `01-navigation.js` resolve `fxconsolidated`.
+   Ver contexto completo expande `#execOverview` com os mesmos nós e widgets;
+   aliases overview/exec abrem esse contexto diretamente.
 3. **Widget Forex → agenda:** `initFfNewsWidget()` liga `#gdNewsMoreBtn` a
    `JPWEcal.openMenu()`; o item Calendário Econômico abre `openEconomicCalendar()`.
 4. **Fonte compartilhada:** `ecalEvents()` lê `ffNewsReadCache()`;
@@ -337,7 +338,7 @@ declarar aceite humano, integração ou publicação. Fontes e responsabilidades
 |---|---|
 | `src/js/20-ui/20-finpes-comparison.js` | Curva de 12 meses, métrica/mês efêmeros e tabela completa compartilham uma leitura de `pfCompSeries`; lacunas, zeros e unidade monetária seguem o contrato PF. |
 | `src/js/20-ui/25-dash-macro.js` | Acesso de cada card junto ao título, com os mesmos destinos e read-models. |
-| `index.html` | `fxOverviewWidgets` precede as ferramentas de preparação em Forex > Visão Geral; IDs e ações existentes são mantidos. |
+| `index.html` | `fxOverviewWidgets` precede as ferramentas de preparação em Forex > Consolidado FX > Contexto completo; IDs e ações existentes são mantidos. |
 | `src/js/40-app/09-settings-modal.js` e `src/styles/app.css` | Busca responsiva; abrir resultado conserva a consulta, retira a lista de resultados e foca o conteúdo. A revelação respeita reduced-motion. |
 | `src/js/20-ui/24-alladin-views.js` | Busca efêmera oculta linhas somente após o envelope integral e as relações de estorno; preserva ordem, datas, valores e distinção entre busca sem resultados, vazio e indisponibilidade. |
 | `src/js/20-ui/07-chart-crosshair-tooltip.js` | `bindChartCrosshair()` acrescenta seletor nativo, setas/Home/End e toque com leitura textual; cada série usa a data do seu ponto mais próximo, sem alterar os dados fornecidos. |
