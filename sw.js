@@ -9,6 +9,12 @@ const NORMATIVE_DOCUMENT_URLS = [
   './docs/normative/ANEXO_PARAMETRICO_CANONICO.md'
 ].map(path => new URL(path, self.location.href).href);
 const PRECACHE_URLS = [
+  './src/vendor/pdfjs/pdf.worker.mjs',
+  './src/vendor/pdfjs/pdf.mjs',
+  './src/js/20-ui/28-fx-consolidated.js',
+  './src/js/40-app/25-fx-consolidated-pdf.js',
+  './src/js/40-app/24-fx-consolidated-import.js',
+  './src/js/10-domain/17-fx-consolidated-model.js',
   ...NORMATIVE_DOCUMENT_URLS,
   './', './index.html', './build-id.js', './src/styles/app.css', './src/js/manifest.json',
   './assets/jp-wealth-logo.png',

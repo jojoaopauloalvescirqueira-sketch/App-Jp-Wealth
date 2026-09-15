@@ -70,7 +70,7 @@ def run_existing_settings(browser,url):
     assert page.locator('#settingsPageTitle').inner_text()=='Geral'
     assert page.locator('[data-settings-panel="general"]').is_visible()
     assert page.locator('[data-settings-panel]:not([hidden])').count()==1
-    top_categories=['general','appearance-interface','method-governance','operations','knowledge','data-security','about']
+    top_categories=['general','forex-preferences','appearance-interface','method-governance','operations','knowledge','data-security','about']
     assert page.locator('#settingsMenu [data-settings-category]').count()==len(top_categories)
     assert page.locator('#settingsModal [data-settings-category="probability-lab"], #settingsModal [data-nav-to="galton-board"], #settingsModal [data-galton-root]').count()==0
     for cat in top_categories:
@@ -402,7 +402,7 @@ def run_profile_contract(browser,url):
     assert page.locator('#settingsProfileBtn').count()==1,'PROFILE CONTRACT: local identity launcher is required'
     assert 'JP Wealth Account' in page.locator('#settingsProfileBtn').inner_text()
     assert 'Seu perfil' in page.locator('#settingsProfileName').inner_text()
-    assert page.locator('#settingsMenu [data-settings-category]').count()==7
+    assert page.locator('#settingsMenu [data-settings-category]').count()==8
     assert page.locator('#settingsProfileBtn').get_attribute('aria-label').startswith('JP Wealth Account')
     open_profile(page,'Enter')
     assert page.locator('#settingsProfileStatus').get_attribute('role')=='status'

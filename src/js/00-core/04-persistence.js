@@ -642,6 +642,40 @@ function fxPlanningNormalizeState(){
   if(S.fxPlanning==null)S.fxPlanning=structuredClone(DEFAULTS.fxPlanning);
 }
 
+// Catálogo descritivo capturado SOMENTE no encerramento explícito. Não conserva
+// saldos/credenciais, não cria contas operacionais e não atribui identidade a
+// registros sem conta. Envelope desconhecido atravessa intacto, sem reparação.
+function fxConsolidatedLongitudinalSnapshot(documento){
+  const own=(value,key)=>Object.prototype.hasOwnProperty.call(value,key);
+  const text=value=>typeof value==='string'&&value.trim()?value.trim():null;
+  const source=own(documento,'fxConsolidated')?documento.fxConsolidated:DEFAULTS.fxConsolidated;
+  const result=structuredClone(source);
+  // Esta função roda no ato de finalizar, após a carga dos módulos. O boot
+  // não depende do modelo tardio; ausência/incompatibilidade conserva o opaco.
+  const model=window.JPWFXConsolidated;
+  if(!model||typeof model.validateState!=='function'||!model.validateState(result).ok)return result;
+  const known=new Set(result.accounts.map(account=>account.id));
+  const add=(id,account)=>{
+    if(!id||known.has(id))return;
+    result.accounts.push({id,name:text(account&&account.nome),type:text(account&&account.tipo),
+      login:text(account&&account.platformLogin),broker:text(account&&account.broker),
+      currency:null,server:null,orders:[],deals:[],positions:[],summaries:[]});
+    known.add(id);
+  };
+  if(Array.isArray(documento.accounts))documento.accounts.forEach(account=>{
+    if(account&&typeof account==='object')add(text(account.forexAccountId),account);
+  });
+  const history=documento.operationHistory;
+  const records=history&&history.schemaVersion===DEFAULTS.operationHistory.schemaVersion&&history.records;
+  if(Array.isArray(records))records.forEach(record=>{
+    if(!record||typeof record!=='object')return;
+    const ids=[record.accountId,record.recordContext&&record.recordContext.accountId,
+      record.finalizationContext&&record.finalizationContext.accountId].map(text).filter(Boolean);
+    if(new Set(ids).size===1)add(ids[0],null);
+  });
+  return result;
+}
+
 // Estudos NoCoda: guarda ESTRUTURAL de boot. Vive aqui, e não no módulo da
 // feature, porque migrate() roda dentro de load() antes de qualquer script
 // tardio existir — o mesmo motivo dos três normalizadores acima.
@@ -933,6 +967,11 @@ function operationNormalizeState(){
       };
     }
   }
+  // Uma versão futura é evidência opaca. Finalizar Sessão/backup não podem
+  // descartar seus campos ou recriar IDs por meio do normalizador deste build.
+  const historicalVersion=S.operationHistory&&S.operationHistory.schemaVersion;
+  if((typeof historicalVersion==='number'||typeof historicalVersion==='string'&&/^\d+$/.test(historicalVersion.trim()))&&
+      Number(historicalVersion)>DEFAULTS.operationHistory.schemaVersion) return;
   // operationHistory: envelope com lista append-only.
   if(!S.operationHistory || typeof S.operationHistory!=='object' || Array.isArray(S.operationHistory))
     S.operationHistory=structuredClone(DEFAULTS.operationHistory);

@@ -128,6 +128,30 @@ if positions != sorted(positions):
     ERRORS.append("ordem dos scripts diverge do manifest")
 validate_javascript(javascript_paths)
 
+assets = manifest.get("runtimeAssets", [])
+expected = {"src/vendor/pdfjs/pdf.mjs": "module", "src/vendor/pdfjs/pdf.worker.mjs": "worker",
+            "src/vendor/pdfjs/LICENSE.txt": "metadata", "src/vendor/pdfjs/PROVENANCE.json": "metadata"}
+if not isinstance(assets, list):
+    ERRORS.append("runtimeAssets deve ser lista")
+    assets = []
+paths = [item.get("path") for item in assets if isinstance(item, dict)]
+required = any(item.get("path") == "src/js/40-app/25-fx-consolidated-pdf.js" for item in manifest.get("files", []))
+if (required or assets) and (len(paths) != len(expected) or set(paths) != set(expected)):
+    ERRORS.append("recursos PDF incompletos, duplicados ou inesperados")
+for item in assets:
+    if not isinstance(item, dict) or item.get("path") not in expected:
+        ERRORS.append("recurso PDF nao permitido")
+        continue
+    relative = item["path"]
+    resource = ROOT / relative
+    if item.get("type") != expected[relative] or resource.is_symlink() or not resource.is_file() or resource.resolve() != ROOT.resolve() / relative:
+        ERRORS.append(f"recurso PDF invalido ou fora da raiz: {relative}")
+        continue
+    if hashlib.sha256(resource.read_bytes()).hexdigest() != item.get("sha256"):
+        ERRORS.append(f"hash de recurso PDF divergente: {relative}")
+    if any(script.get("path") == relative for script in manifest.get("files", [])):
+        ERRORS.append(f"ESM/worker nao pode ser script classico: {relative}")
+
 joined_javascript = "".join(path.read_text(encoding="utf-8") for path in javascript_paths)
 if "jpwealth_v9_state" not in joined_javascript:
     ERRORS.append("chave de persistencia principal nao localizada")
@@ -165,6 +189,10 @@ for item in manifest["files"]:
     relative = item.get("path", "") if isinstance(item, dict) else ""
     if relative and f"./{relative}" not in service_worker:
         ERRORS.append(f"service worker nao precacheia script do manifest: {relative}")
+for item in assets:
+    if isinstance(item, dict) and item.get("type") in ("module", "worker") and item.get("path") in expected:
+        if f'./{item["path"]}' not in service_worker:
+            ERRORS.append(f'service worker nao precacheia recurso PDF: {item["path"]}')
 for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-secondary.png"):
     if f"./{relative}" not in service_worker:
         ERRORS.append(f"service worker nao precacheia: {relative}")

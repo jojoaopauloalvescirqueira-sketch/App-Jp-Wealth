@@ -34,6 +34,7 @@ FOREX_CHILDREN = [
     ("forex-reserves", "fxreserves", None),
     ("forex-operation", "exec", "panel"),
     ("forex-reconciliation", "contab", None),
+    ("forex-consolidated", "fxconsolidated", None),
     ("forex-planning", "fxplan", "overview"),
 ]
 RESEARCH_CHILDREN = [

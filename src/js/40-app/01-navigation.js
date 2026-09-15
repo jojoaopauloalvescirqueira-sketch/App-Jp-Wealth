@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// sete filhos e Research seis; owner semântico, filho, section física e visão
+// oito filhos e Research seis; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -11,6 +11,7 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-reconciliation',label:'Contabilidade',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-consolidated',label:'Consolidado FX',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])})
 ]);
 
@@ -153,6 +154,7 @@ function navApply(plan,target){
   if(typeof maybeShowOnboardingNavReminder==='function') maybeShowOnboardingNavReminder(plan.screen);
   if(typeof syncNavSubState==='function') syncNavSubState();
   if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
+  if(plan.screen==='fxconsolidated'&&window.JPWFXConsolidated?.render)window.JPWFXConsolidated.render();
   return true;
 }
 

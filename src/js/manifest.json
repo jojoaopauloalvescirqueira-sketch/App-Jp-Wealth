@@ -32,13 +32,13 @@
       "order": 5,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "8bc3e164fe7c93eff19f7716a7e74f47c2fdfbfba724b2196cefc899ea4a6698"
+      "sha256": "be23fce0acff02a674a781126d7e0b07d5814c77adcbc23532c1826f5366ee10"
     },
     {
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "2760d3052ab4e03b81cdd9e6ec6352d74d56d78b64f78b3d065d91811b7ea43a"
+      "sha256": "4e1710a15ff238f180d677de556ceda491eff24c85a377736ea6f626acc821c9"
     },
     {
       "order": 7,
@@ -86,7 +86,7 @@
       "order": 14,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "7f1774543a66da17d2d494cd9dffaae8686352fb2142abce78d8e42f52dce0f8"
+      "sha256": "a7f8941e54264fb41b396f6d3922ee5db0c5bb067c729ba1354938f0fe166aea"
     },
     {
       "order": 15,
@@ -134,7 +134,7 @@
       "order": 22,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "dd9bc638cdb97fb9d71deb2265d5dc9ca75ec33a1fc188824906f22ac2c29cf4"
+      "sha256": "2d2d3bd1919c80bef8549cd2ac4262b8089af452d03fa66ec99eede672e9376e"
     },
     {
       "order": 23,
@@ -164,7 +164,7 @@
       "order": 27,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "6a6a70d04fbb98525c3d0924ff1ca449e04a215fc234c183d42fb070e5fe2afa"
+      "sha256": "2ec45ec588159bf9e725dd2f3ac85ec6b406d1911950dede2041eb7e61808db5"
     },
     {
       "order": 28,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "38aaed24bb588e678c78ae9a3ca24af3eb846581d57f9c26e89f45ac69a7b319"
+      "sha256": "2b3ad81212dd40b541bc2dcf9f071d2ba3c78c2996fcf8900fc45bcca070dc3e"
     },
     {
       "order": 39,
@@ -248,7 +248,7 @@
       "order": 41,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "be004cc3c80a1ceab437bc811510b915d944b8d19f04f4ae80b43f5b7509c36b"
+      "sha256": "4acb6651c7626b01cbe7178e820a3c2d6a7f1eee5633b12cc6b2635c5697fe67"
     },
     {
       "order": 42,
@@ -500,6 +500,52 @@
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 83,
       "sha256": "2baaf2686b4f9adc42413e2c3fa7cf6960e879a53ad14e5d9167acf308c89e9d"
+    },
+    {
+      "path": "src/js/10-domain/17-fx-consolidated-model.js",
+      "section": "CONSOLIDADO FX · local analytical history",
+      "order": 84,
+      "sha256": "c28e4b929c3f742235b7c6c8f7c02535ca7e9ba1acec1f7001eda520c04f11fd"
+    },
+    {
+      "path": "src/js/40-app/24-fx-consolidated-import.js",
+      "section": "CONSOLIDADO FX · local analytical history",
+      "order": 85,
+      "sha256": "b37007bda49e7ae950616ebfa4fe6b21ac576e957d87648546d6fd6d8faeacfd"
+    },
+    {
+      "path": "src/js/40-app/25-fx-consolidated-pdf.js",
+      "section": "CONSOLIDADO FX · local analytical history",
+      "order": 86,
+      "sha256": "d51fada3b24669e149dff5249e060b028eef56b41c953ece4239cac0147cf96e"
+    },
+    {
+      "path": "src/js/20-ui/28-fx-consolidated.js",
+      "section": "CONSOLIDADO FX · local analytical history",
+      "order": 87,
+      "sha256": "ad18399963c305c6e1aa7f95a8831cf15b0d63663dc9647f9a34497120a9bc9d"
+    }
+  ],
+  "runtimeAssets": [
+    {
+      "path": "src/vendor/pdfjs/pdf.mjs",
+      "sha256": "f80490490320511e5df18c580b9edd6b5db8058dceebaf6f161992e0a964b9e2",
+      "type": "module"
+    },
+    {
+      "path": "src/vendor/pdfjs/pdf.worker.mjs",
+      "sha256": "8ab0e5e30031b4a06ecfddd5ae9562f0227f830ee7ec9ed1a968b134243d2386",
+      "type": "worker"
+    },
+    {
+      "path": "src/vendor/pdfjs/LICENSE.txt",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "type": "metadata"
+    },
+    {
+      "path": "src/vendor/pdfjs/PROVENANCE.json",
+      "sha256": "f9e05a61d69eb99155f00499850751f5ec1e8f013c45a37b8b84bf7fd7cbae84",
+      "type": "metadata"
     }
   ]
 }

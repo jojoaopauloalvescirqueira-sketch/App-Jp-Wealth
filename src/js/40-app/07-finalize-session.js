@@ -154,6 +154,16 @@ function sessionResetAuxiliarySurfaces(){
   // Invalida controladores que ainda retêm preferências auxiliares em memória.
   // O epoch impede regravação mesmo se um hook visual falhar durante o wipe.
   window.JP_WEALTH_SESSION_WIPE_EPOCH+=1;
+  if(window.JPWFXConsolidated){
+    for(const hook of ['cancelImport','disposePDF','reset']){
+      try{
+        if(typeof JPWFXConsolidated[hook]==='function'){
+          const cleanup=JPWFXConsolidated[hook]();
+          if(cleanup&&typeof cleanup.catch==='function')cleanup.catch(()=>{});
+        }
+      }catch(error){}
+    }
+  }
   if(typeof handleGaltonSessionWipe==='function'){
     try{ handleGaltonSessionWipe({deferRemount:true}); }catch(error){}
   }
@@ -317,7 +327,7 @@ function sessionHandleRemoteFinalization(message){
     boot();
     window.__onbShown=false;
     initSessionCheckpoint();
-    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas.';
+    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais, as Notas e os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas.';
     showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
   }finally{
     if(bloqueou && !concluiu){
@@ -540,8 +550,15 @@ function sessionPreserveLongitudinal(opcoes){
   if(!documento || typeof documento!=='object' || Array.isArray(documento)){
     return { ok:false, erro:new Error('estado persistido ilegível') };
   }
-  if(documento.alladin===undefined) return { ok:true, valor:{}, raw:bruto };
-  return { ok:true, valor:{ alladin:documento.alladin }, raw:bruto };
+  // Fonte confirmada única. A história manual permanece no agregado canônico;
+  // importações e catálogo descritivo não ressuscitam S.accounts ou saldos.
+  try{
+    const valor={fxConsolidated:fxConsolidatedLongitudinalSnapshot(documento)};
+    for(const key of ['alladin','operationHistory']){
+      if(Object.prototype.hasOwnProperty.call(documento,key))valor[key]=documento[key];
+    }
+    return {ok:true,valor,raw:bruto};
+  }catch(error){return {ok:false,erro:error};}
 }
 function renderSessionPreservationError(error){
   sessionModal('<h3>Não foi possível finalizar a sessão</h3>'+
@@ -559,12 +576,16 @@ function emptyJPWealthState(preservado){
   empty.ledgerArchive=[];
   empty.transitionLog=[];
   empty.cycleRealizado=0;
-  // Explícito, ainda que o clone de DEFAULTS já traga os dois assim: a mesma
+  // Explícito, ainda que o clone de DEFAULTS já traga a operação nula: a mesma
   // disciplina defensiva das linhas vizinhas. Se um dia DEFAULTS deixar de
   // nascer com operação nula, a Finalização de Sessão continua limpando o
   // ciclo de vida em vez de entregar uma sessão nova com operação fantasma.
   empty.activeOperation=null;
   empty.operationHistory=structuredClone(DEFAULTS.operationHistory);
+  if(preservado&&Object.prototype.hasOwnProperty.call(preservado,'operationHistory'))
+    empty.operationHistory=structuredClone(preservado.operationHistory);
+  if(preservado&&Object.prototype.hasOwnProperty.call(preservado,'fxConsolidated'))
+    empty.fxConsolidated=structuredClone(preservado.fxConsolidated);
   empty.quarantine=null;
   empty.riskPinHash=null;
   empty.phaseUnlocked=[];
@@ -722,8 +743,8 @@ async function beginSessionExport(){
 function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
-    '<p class="modal-sub">A próxima ação encerrará a sessão e removerá deste navegador os dados operacionais da sessão: contas operacionais, ordens, fases, contabilidade, histórico operacional, configurações da sessão e dados de acesso.</p>'+
-    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="modal-sub">A próxima ação encerrará a sessão e removerá deste navegador os dados operacionais da sessão: contas operacionais, ordens em andamento, fases, contabilidade do período, configurações da sessão e dados de acesso.</p>'+
+    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais, os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas e as Notas — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -752,7 +773,7 @@ function renderSessionChanged(){
 }
 function renderSessionSafeChoice(){
   sessionModal('<h3>Finalizar sessão neste computador</h3>'+
-    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais, as Notas e os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Você possui uma cópia atual e acessível desta base de dados?</div></div>'+
     '<div class="modal-actions session-choice-actions"><button type="button" class="modal-btn confirm" id="sessionHasCopy">Sim, tenho uma cópia</button><button type="button" class="modal-btn cancel" id="sessionExportNow">Não tenho certeza — exportar agora</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
   sessionCancelBinding();
@@ -851,9 +872,21 @@ async function finalizeJPWealthSession(){
         renderSessionPreservationError(new Error('a geração da base mudou durante o fluxo'));
         return;
       }
+      // Um ato confirmado nesta mesma aba (por exemplo, importação que terminou
+      // enquanto a confirmação estava aberta) pode ser a revisão aceita acima.
+      // Preserve a revisão aceita, nunca a fotografia anterior àquele ato.
+      let longitudinal=sessionPreservedAlladin;
+      if(atualRaw!==sessionPreservedRaw){
+        const refreshed=sessionReadStable({ausenteAborta:false});
+        if(!refreshed.ok||refreshed.raw!==atualRaw||refreshed.epoch!==sessionPreservedEpoch){
+          renderSessionPreservationError(refreshed.erro||new Error('a revisão mudou durante a preservação'));
+          return;
+        }
+        longitudinal=refreshed.valor;
+      }
       blockJPWealthPersistence(); bloqueou=true;
       sessionResetAuxiliarySurfaces();
-      const novoEstado=emptyJPWealthState(sessionPreservedAlladin);
+      const novoEstado=emptyJPWealthState(longitudinal);
       const commit=sessionCommitFinalizedState(novoEstado);
       if(!commit.ok){ renderSessionCommitError(commit.erro); return; }
       S=novoEstado;
@@ -875,7 +908,7 @@ async function finalizeJPWealthSession(){
       if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
       window.__onbShown=false;
       initSessionCheckpoint();
-      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais e as Notas.';
+      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais, as Notas e os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas.';
       showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
     });
   }catch(error){
