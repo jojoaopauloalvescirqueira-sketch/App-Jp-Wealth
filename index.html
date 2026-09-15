@@ -374,7 +374,7 @@
          Visão Geral é o destino inicial do módulo. -->
     <div class="jp-widget-grid" id="execWidgetGrid" hidden>
       <!-- Execution Clearance — veredito e ação recomendada antes dos detalhes -->
-      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium large full">
+      <div class="card mc-exec-clearance" id="execClearanceCard" data-layout-card="exec-clearance" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="medium large full">
         <div class="mc-ec-copy">
           <div class="dh-kicker"><span class="dh-dot" aria-hidden="true"></span>Execution Clearance</div>
           <div class="mc-ec-title" id="ecTitle">—</div>
@@ -466,7 +466,7 @@
 
       <!-- CONSOLIDADO DA OPERACAO UNICA — o que a operacao E agora:
            uso do teto, lote, risco, margem, excesso, e o ato de finalizar. -->
-      <div class="lifo" id="execConsolidadoCard" data-layout-card="exec-consolidado" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+      <div class="lifo" id="execConsolidadoCard" data-layout-card="exec-consolidado" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="compact medium full">
         <div class="lifo-head">Consolidado da Operação Única</div>
         <div class="lifo-teto">
           <div class="lbl" style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); margin-bottom:5px">
@@ -510,7 +510,7 @@
       <!-- MONITOR LIFO — o que FAZER: veredito de coerencia e remedio.
            Separado do Consolidado no bloco F; estavam no mesmo cartao por
            acidente historico, nao por parentesco de leitura. -->
-      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="compact" data-widget-allowed-sizes="compact medium full">
+      <div class="lifo" id="execLifoMonitor" data-layout-card="exec-monitor" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="compact medium full">
         <div class="lifo-head">Monitor LIFO</div>
         <div class="lifo-sem" id="lifoSem">🟢 COERENTE — risco e alavancagem dentro da fase</div>
         <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
@@ -1852,5 +1852,8 @@
 <script src="src/js/40-app/24-fx-consolidated-import.js"></script>
 <script src="src/js/40-app/25-fx-consolidated-pdf.js"></script>
 <script src="src/js/20-ui/28-fx-consolidated.js"></script>
+<script src="src/js/10-domain/19-execution-market.js"></script>
+<script src="src/js/10-domain/18-execution-board-model.js"></script>
+<script src="src/js/20-ui/30-execution-board.js"></script>
 </body>
 </html>

@@ -15,7 +15,13 @@ import notes_launcher_test as launcher
 import forex_recording_test as recording
 
 def record_fixture(page):
+    page.evaluate("""() => {
+      const keys=[...document.querySelectorAll('[data-eb-row].eb-dirty')].map(e=>e.dataset.ebRow);
+      for(const k of keys)document.querySelector('[data-eb-cancel-row="'+k+'"]')?.click();
+      closeModal();
+    }""")
     recording.seed(page)
+    page.evaluate("() => {JPWExec.ui.selectView('panel');renderPhases();}")
 from playwright.sync_api import sync_playwright
 
 
@@ -65,12 +71,20 @@ def instrumenta_confirmacoes(page):
 
 
 def troca_par(page, destino):
+    before=launcher.snapshot(page)
     page.evaluate(
         """d => { const sel = document.querySelector('#phaseContainer select[data-f="par"]');
                   if (!sel) throw new Error('select de par nao encontrado na grade');
                   sel.value = d; sel.dispatchEvent(new Event('change', {bubbles:true})); }""",
         destino,
     )
+    launcher.unchanged(page,before,'Changing the instrument only updates the row draft')
+    page.evaluate("""() => {
+      const reason=document.querySelector('[data-eb-reason="0:0"]');
+      if(!reason)throw Error('Motivo da linha nao encontrado');
+      reason.value='Correção sintética justificada';reason.dispatchEvent(new Event('input',{bubbles:true}));
+      document.querySelector('[data-eb-save-row="0:0"]').click();
+    }""")
     page.wait_for_timeout(200)
 
 
@@ -108,7 +122,7 @@ def run_par_dentro_do_teto_passa(page):
 
 CENARIO_EXCLUSIVIDADE = """(opts) => {
   const teto = n => { const i = (S.instruments||[]).find(x => x.name === n); return i ? i.teto : 0.01; };
-  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
   // Genese EURUSD SELL — JA FECHADA. A operacao permanece viva.
   S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'SELL', lote:0.01,
     entry:1.10, sl:1.101, tp:1.00, result:250, status:'Fechada',
@@ -139,8 +153,13 @@ def abre_linha(page, oi):
           if (!sel) throw new Error('select de status nao encontrado para a linha '+oi);
           if (sel.disabled) return {desabilitado:true};
           sel.value = 'Aberta';
+          const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY);
           sel.dispatchEvent(new Event('change', {bubbles:true}));
-          return {desabilitado:false, valorNoSelect: sel.value};
+          if(before!==JSON.stringify(S)||raw!==localStorage.getItem(LSKEY))throw Error('Status gravou antes de Salvar linha');
+          const reason=document.querySelector('[data-eb-reason="0:'+oi+'"]');
+          reason.value='Abertura sintética confirmada';reason.dispatchEvent(new Event('input',{bubbles:true}));
+          document.querySelector('[data-eb-save-row="0:'+oi+'"]').click();
+          return {desabilitado:false,valorNoSelect:sel.value};
         }""", oi)
 
 
@@ -203,7 +222,7 @@ CENARIO_R1 = """() => {
   window.confirm = () => true;
   window.prompt = () => null;          // confirmacao formal RECUSADA
   S.params.saldoIni = 10000; S.cycleRealizado = 0;
-  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
   S.phaseUnlocked = [true,false,false,false];
   S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.05, entry:1.10,
     sl:1.09, tp:1.20, result:0, status:'Aberta', openedAt:'2026-08-01T10:00:00.000Z'};
@@ -214,7 +233,7 @@ CENARIO_R1 = """() => {
     openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
     maxAccountPhaseReached:0};
   save();
-  navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+  navigateToScreen('exec'); JPWExec.ui.selectView('panel'); renderPhases();
 }"""
 
 
@@ -251,7 +270,7 @@ MONTA_R4 = """(cfg) => {
   window.confirm = () => true;
   window.prompt = () => null;
   S.params.saldoIni = 40000; S.cycleRealizado = 0;
-  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
   S.phaseUnlocked = cfg.unlocked;
   S.phases[cfg.pi].orders[0] = {id:'G1', par:'USDJPY', tipo:'BUY', lote:0.05,
     entry:161.93, sl:161.43, tp:170, result:0, status:'Aberta',
@@ -260,7 +279,7 @@ MONTA_R4 = """(cfg) => {
     openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
     maxAccountPhaseReached:0};
   save();
-  navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+  navigateToScreen('exec'); JPWExec.ui.selectView('panel'); renderPhases();
 }"""
 
 
@@ -288,12 +307,15 @@ def run_rejected_pair_change_does_not_contaminate(page):
 # Operacao Unica e no registro imutavel do Historico — sem ninguem perceber.
 
 MONTA_FECHAMENTO = """() => {
+  const keys=[...document.querySelectorAll('[data-eb-row].eb-dirty')].map(e=>e.dataset.ebRow);
+  for(const k of keys)document.querySelector('[data-eb-cancel-row="'+k+'"]')?.click();
+  closeModal();
   window.__avisos = [];
   window.alert = m => window.__avisos.push(String(m));
   window.confirm = () => true;
   window.prompt = () => null;
   S.params.saldoIni = 40000; S.cycleRealizado = 0;
-  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+  S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
   S.phaseUnlocked = [true,false,false,false];
   S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.01,
     entry:1.10, sl:1.09, tp:1.20, status:'Aberta',
@@ -303,19 +325,17 @@ MONTA_FECHAMENTO = """() => {
     openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
     maxAccountPhaseReached:0};
   save();
-  navigateToScreen('exec'); JPWExec.ui.selectView('motor'); renderPhases();
+  navigateToScreen('exec'); JPWExec.ui.selectView('panel'); renderPhases();
 }"""
 
 
 def fecha_pela_ui(page, texto_resultado):
-    """Abre o modal real pelo <select> de status e tenta confirmar."""
+    """Abre o modal pelo botao Fechar ordem; confirma resultado no fluxo real."""
     return page.evaluate(
         """txt => {
-          const sel = document.querySelector(
-            '#phaseContainer select[data-p="0"][data-o="0"][data-f="status"]');
-          if (!sel) return {erro:'select de status ausente'};
-          sel.value = 'Fechada';
-          sel.dispatchEvent(new Event('change', {bubbles:true}));
+          const button=document.querySelector('[data-eb-close-row="0:0"]');
+          if(!button)return {erro:'botao Fechar ordem ausente'};
+          button.click();
           const inp = document.getElementById('closeResultInput');
           if (!inp) return {erro:'modal de fechamento nao abriu'};
           inp.value = txt;

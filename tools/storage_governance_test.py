@@ -43,6 +43,9 @@ def prepare_page(origem, url, mute_dialogs=True):
     ehBrowser = hasattr(origem, 'new_context')
     page = origem.new_page(viewport=VIEWPORT, service_workers='block') if ehBrowser else origem.new_page()
     install_bootstrap(page.context)
+    # Isolate the storage oracle from the independently tested daily-reference writer.
+    # No available quote -> no financial update/audit while testing a virgin document.
+    page.context.route("https://api.frankfurter.dev/v2/rate/**", lambda r: r.fulfill(status=200, content_type="application/json", body="{}"))
     observed = {'console': [], 'pageerror': []}
     page.on('console', lambda m: observed['console'].append((m.type, m.text)))
     page.on('pageerror', lambda e: observed['pageerror'].append(str(e)))

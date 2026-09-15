@@ -42,11 +42,11 @@ const DASH_LAYOUT_LABELS = {
   'operational-clearance': 'Operational Clearance', 'institutional-panel': 'Status do Sistema',
   'vrm': 'VRM · Regime de Volatilidade',
   'onboarding-alert': 'Alerta de onboarding', 'quick-actions': 'Ações Rápidas',
-  'exec-clearance': 'Execution Clearance',
+  'exec-clearance': 'Conta e proteção',
   'exec-metrics-banners': 'Métricas e avisos',
   'exec-vrm': 'VRM com ATR editável', 'exec-phase-grids': 'Grades da Operação Única',
-  'exec-consolidado': 'Consolidado da Operação Única',
-  'exec-monitor': 'Monitor LIFO',
+  'exec-consolidado': 'Exposição e alavancagem',
+  'exec-monitor': 'Instrumentos e dimensionamento',
   'contas-accounts-table': 'Parque de Contas',
   'contas-order-application': 'Aplicação de Ordem',
   'contab-period-goals': 'Período & Metas', 'contab-daily-close': 'Fechamento Diário',
@@ -89,9 +89,9 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // Bloco F: Clearance | Consolidado | Monitor dividem a PRIMEIRA linha.
     // A grade tem 4 colunas, entao 2+1+1 fecha a linha exata — o veredito
     // (Clearance) fica com o dobro dos dois cartoes que ele resume.
-    { id: 'exec-clearance', zone: 'main', size: 'medium', order: 0 },
-    { id: 'exec-consolidado', zone: 'main', size: 'compact', order: 1 },
-    { id: 'exec-monitor', zone: 'main', size: 'compact', order: 2 },
+    { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
+    { id: 'exec-consolidado', zone: 'main', size: 'full', order: 1 },
+    { id: 'exec-monitor', zone: 'main', size: 'full', order: 2 },
     { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 3 },
     { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 }
   ],

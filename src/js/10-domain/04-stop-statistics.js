@@ -35,6 +35,7 @@ function phaseCssClass(ph){
   return (ph && permitido.includes(ph.cls)) ? ph.cls : '';
 }
 function renderPhases(){
+  if(globalThis.JPWForex?.executionBoardUI){JPWForex.executionBoardUI.renderPhases();return;}
   const cont=$('phaseContainer'); if(!cont)return;
   const model=JPWForex.state.read(), findings=orderComplianceFindings();
   const recordable=model.canRecord===true;
@@ -89,6 +90,7 @@ function renderPhases(){
 }
 // re-render só os campos calculados de uma fase (evita perder foco)
 function renderPhasesLite(pi){
+  if(globalThis.JPWForex?.executionBoardUI){JPWForex.executionBoardUI.render();return;}
   // recalcula R:R e risco$ inline sem reconstruir inputs
   const phaseEl=document.querySelector(`.phase[data-phase="${pi}"]`);
   if(!phaseEl)return;
@@ -136,44 +138,11 @@ const FX_MAP = {
   USDCAD:{base:'USD',quote:'CAD'}, AUDCAD:{base:'AUD',quote:'CAD'},
 };
 let fxAutoFetchedThisSession=false;
-async function fetchOneRate(base,quote){
-  const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),6000); // nunca trava esperando para sempre
-  try{
-    const res=await fetch(`https://api.frankfurter.dev/v2/rate/${base}/${quote}`,{signal:ctrl.signal});
-    clearTimeout(timer);
-    if(!res.ok) throw new Error('http '+res.status);
-    const data=await res.json();
-    if(typeof data.rate!=='number' || !isFinite(data.rate)) throw new Error('resposta sem rate válido');
-    return data.rate;
-  }catch(e){ clearTimeout(timer); throw e; }
-}
 async function updateFxRates(){
-  const operationEpoch=jpWealthPersistenceEpoch();
-  const statusEl=$('fxFetchStatus');
-  const btn=$('fxUpdateBtn');
-  if(btn) btn.disabled=true;
-  if(statusEl){ statusEl.textContent='🔄 Atualizando cotações FX…'; statusEl.className='fx-status busy'; }
-  const names=Object.keys(FX_MAP);
-  const results=await Promise.allSettled(names.map(n=>fetchOneRate(FX_MAP[n].base,FX_MAP[n].quote)));
-  if(jpWealthPersistenceIsBlocked() || operationEpoch!==jpWealthPersistenceEpoch()) return;
-  let ok=0, fail=0;
-  results.forEach((r,i)=>{
-    const name=names[i];
-    const ins=S.instruments.find(x=>x.name===name);
-    if(!ins) return;
-    if(r.status==='fulfilled'){ ins.preco=r.value; ins.updated=todayISO(); ok++; }
-    else fail++;
-  });
-  if(ok>0) save();
-  renderMotor();
-  render(); renderPhases(); // preços novos mudam risco/nocional/ATR% e o stop vivo do §9
-  if(statusEl){
-    if(fail===0){ statusEl.textContent='✅ '+ok+'/'+names.length+' pares atualizados agora (taxa ECB via Frankfurter)'; statusEl.className='fx-status ok'; }
-    else if(ok===0){ statusEl.textContent='⚠️ Sem conexão ou serviço indisponível — mantendo últimos preços salvos'; statusEl.className='fx-status err'; }
-    else { statusEl.textContent='⚠️ '+ok+'/'+names.length+' atualizados, '+fail+' falharam — revise manualmente os que faltaram'; statusEl.className='fx-status warn'; }
+  if(!JPWForex.marketQuotes){
+    document.addEventListener('DOMContentLoaded',()=>updateFxRates(),{once:true});return;
   }
-  if(btn) btn.disabled=false;
+  return JPWForex.marketQuotes.update();
 }
 
 

@@ -65,6 +65,10 @@ def render_and_typing(page):
     page.locator('[data-p="0"][data-o="0"][data-f="id"]').fill('draft in DOM')
     launcher.unchanged(page,before,'typing does not save')
     page.locator('[data-p="0"][data-o="0"][data-f="id"]').blur()
+    launcher.unchanged(page,before,'blur preserves the unsaved row draft')
+    page.locator('[data-eb-detail="0:0"]').evaluate('details=>details.open=true')
+    page.locator('[data-eb-reason="0:0"]').fill('Correção sintética justificada')
+    page.locator('[data-eb-save-row="0:0"]').click()
     r=result(page,"return S.phases[0].orders[0];")
     assert r['id']=='draft in DOM' and r['revisions'][0]['before']['id']=='FATO',r
     assert r['policySnapshot']['policyVersion']=='LEGACY_UNRESOLVED',r
@@ -105,10 +109,12 @@ def planning_percent_display(page):
 def unsupported_schema_read_only(page):
     page.evaluate('() => {S.forex.schemaVersion=99;}')
     before=launcher.snapshot(page)
-    page.evaluate('() => renderPhases()')
-    text=page.locator('#phaseContainer').inner_text()
-    assert 'Registro indisponível: versão de dados incompatível.' in text
-    assert 'SOMENTE LEITURA' in text and 'REGISTRO DISPONÍVEL' not in text
+    page.evaluate('() => {render();renderPhases();}')
+    text=page.locator('#ebUnsupported').inner_text()
+    assert 'incompatível' in text and 'leitura' in text,text
+    assert page.locator('#phaseContainer [data-f]:enabled').count()==0
+    assert page.locator('#phaseContainer [data-eb-save-row]:enabled').count()==0
+    assert page.locator('#phaseContainer [data-addorder]:enabled').count()==0
     refused=result(page,"return operationAddDraft(0);")
     assert refused['ok'] is False and refused['persistido'] is False,refused
     launcher.unchanged(page,before,'unsupported schema render and record refusal preserve all data')
@@ -149,6 +155,60 @@ def unknown_barrier(page):
     """)
     assert not r['a']['ok'] and r['a']['persistido'] is None and not r['b']['ok'],r
     assert r['unknown'] and r['unchanged'] and r['noWrite'],r
+
+def execution_browser_unknown_quote_barrier(page):
+    assert_ok(result(page,"return operationRecordOrder(0,0,__fact(),{reason:'Fato anterior ao desfecho desconhecido'});"))
+    page.evaluate('() => renderPhases()')
+    page.locator('[data-p="0"][data-o="0"][data-f="id"]').fill('Rascunho com resultado desconhecido')
+    page.locator('[data-eb-detail="0:0"]').evaluate('details=>details.open=true')
+    page.locator('[data-eb-reason="0:0"]').fill('Correção sintética')
+    page.evaluate('() => {window.__realWriter=save;window.__realFetch=fetch;window.__quoteFetchCount=0;fetch=()=>{__quoteFetchCount++;throw Error("No financial network allowed");};save=()=>undefined;}')
+    page.locator('[data-eb-save-row="0:0"]').click()
+    page.evaluate('() => {save=__realWriter;}')
+    before=launcher.snapshot(page)
+    r=page.evaluate('async()=>({quote:await JPWForex.marketQuotes.update(),unknown:jpWealthPersistenceOutcomeIsUnknown(),calls:__quoteFetchCount})')
+    page.locator('[data-eb-save-row="0:0"]').click()
+    launcher.unchanged(page,before,'unknown row outcome blocks further writes and quote fetch')
+    assert r['unknown'] and not r['quote']['ok'] and r['calls']==0,r
+    assert 'desfecho desconhecido' in page.locator('#ebError-0-0').inner_text().lower(),page.locator('#ebError-0-0').inner_text()
+    assert page.locator('[data-p="0"][data-o="0"][data-f="id"]').input_value()=='Rascunho com resultado desconhecido',r
+    page.evaluate('() => {fetch=__realFetch;}')
+
+def execution_browser_quote_cancel_late_response(page):
+    r=page.evaluate("""async() => {
+      const original=fetch,before=JSON.stringify(S),writes=__notesLauncherWrites.length,release=[];
+      const response=url=>{const [base,quote]=url.split('/').slice(-2);return {ok:true,json:async()=>({base,quote,rate:1, date:'2026-09-14'})};};
+      let calls=0;fetch=url=>{calls++;return new Promise(resolve=>release.push(()=>resolve(response(url))));};
+      try{
+        const pending=JPWForex.marketQuotes.update(),cancelled=JPWForex.marketQuotes.cancel();
+        release.forEach(resolve=>resolve());await pending;await Promise.resolve();
+        const same=before===JSON.stringify(S)&&writes===__notesLauncherWrites.length,after=JPWForex.marketQuotes.get();
+        fetch=async url=>{calls++;return response(url);};
+        const updated=await JPWForex.marketQuotes.update();
+        return {same,cancelled,after,updated,calls,count:Object.keys(S.forex.dailyReferences?.quotes||{}).length};
+      }finally{fetch=original;}
+    }""")
+    assert r['same'] and r['cancelled']['status']=='CANCELLED' and not r['after']['busy'] and r['after']['pendingCount']==0,r
+    assert r['updated']['ok'] and r['count']==8 and r['calls']==16,r
+
+def execution_browser_atomic_account_scope(page):
+    r=result(page,"""
+      const observe=index=>JPWForex.state.recordAccountFacts({accountIndex:index,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic execution scope',observedAt:'2026-09-14T12:00:00Z'},{reason:'Contexto de conta sintético'});
+      const first=observe(0),a=JPWForex.state.recordContext();
+      S.accounts.push({nome:'Outra conta sintética',tipo:'SATELITE'});const second=observe(S.accounts.length-1),b=JPWForex.state.recordContext();
+      const start=__notesLauncherWrites.length;
+      const recorded=operationRecordOrders([{pi:0,oi:0,changes:__fact(),expectedVersion:0}],{reason:'Conta escolhida na confirmação do fato',accountId:a.accountId,periodId:a.periodId});
+      const documentWrites=__notesLauncherWrites.slice(start).filter(w=>w.area==='local'&&w.method==='setItem'&&w.key===LSKEY).length;
+      const saved=JSON.parse(localStorage.getItem(LSKEY)),before=JSON.stringify(S),writes=__notesLauncherWrites.length;
+      const transfer=operationRecordOrders([{pi:0,oi:0,changes:{id:'Tentativa de transferência'}}],{reason:'Destino divergente',accountId:b.accountId,periodId:b.periodId});
+      return {first,second,recorded,transfer,documentWrites,a,b,savedAccount:saved.forex.activeAccountId,
+        orderAccount:saved.phases[0].orders[0].accountId,operationAccount:saved.activeOperation.recordContext.accountId,
+        same:before===JSON.stringify(S)&&writes===__notesLauncherWrites.length};
+    """)
+    for key in ('first','second','recorded'):assert_ok(r[key])
+    assert r['a']['accountId']!=r['b']['accountId'] and r['documentWrites']==1,r
+    assert r['savedAccount']==r['orderAccount']==r['operationAccount']==r['a']['accountId'],r
+    assert not r['transfer']['ok'] and r['same'],r
 
 def context_and_extensions(page):
     r=result(page,"""
@@ -257,17 +317,21 @@ def account_period_scoped_finalization(page):
 def factual_input_versioning(page):
     r=result(page,"""
       const account=JPWForex.state.recordAccountFacts({accountIndex:0,si:10000,equity:10000,netCashflow:0,currency:'USD',source:'synthetic conversion',observedAt:'2026-09-14T12:00:00Z'},{reason:'Observação explícita'});
-      const ins=instFor('USDJPY');ins.preco=100;ins.cpl=100000;
+      const ins=instFor('USDJPY'),accountId=S.forex.activeAccountId,periodId=S.forex.accounts[accountId].periodId;
+      const observeInstrument=(price,contractSize,expectedRevision)=>JPWForex.state.recordInstrumentContext({accountId,periodId,instrumentId:'USDJPY',expectedRevision,
+        componentChanges:{price:{value:price,source:'synthetic recorded price',observedAt:'2026-09-14T12:00:00Z'},
+          contract:{contractSize,source:'synthetic instrument specification',observedAt:'2026-09-14T12:00:00Z'}}},{reason:'Observação explícita do instrumento'});
+      const initialInstrument=observeInstrument(100,100000,0);
       const birth=operationRecordOrder(0,0,__fact({par:'USDJPY',entry:110,sl:109,status:'Fechada',result:5}),{reason:'Fato e cotação observados'});
       const original=structuredClone(S.phases[0].orders[0]),context=structuredClone(S.activeOperation.recordContext);
-      ins.preco=200;ins.cpl=10000;
+      const revisedInstrument=observeInstrument(200,10000,1);
       const corrected=operationRecordOrder(0,0,{result:6},{reason:'Correção registrada em outro instante'});
       const revised=structuredClone(S.phases[0].orders[0]);ins.preco=400;ins.cpl=5000;
       renderPhases();const same=JSON.stringify(revised)===JSON.stringify(S.phases[0].orders[0]);
       const finalized=finalizeOperation({defenseCount:0,openedAtManual:'2026-01-01T00:00:00Z'});
-      return {account,birth,corrected,original,revised,context,same,finalized};
+      return {account,initialInstrument,revisedInstrument,birth,corrected,original,revised,context,same,finalized};
     """)
-    for key in ('account','birth','corrected','finalized'):assert_ok(r[key])
+    for key in ('account','initialInstrument','revisedInstrument','birth','corrected','finalized'):assert_ok(r[key])
     old=r['original']['calculationInputs'];new=r['revised']['calculationInputs'];h=r['finalized']['record']['ordersSnapshot'][0]
     assert r['same'] and old['conversionRate']==0.01 and old['contractSize']==100000,r
     assert new['conversionRate']==0.005 and new['contractSize']==10000,r
@@ -362,12 +426,14 @@ def roles_and_currency_labels(page):
       renderPhases();const mixed=phasePositiveResults(0).text;
       const roles=[operationOrderLabel(0,0,S.phases[0].orders[0]),operationOrderLabel(0,1,S.phases[0].orders[1])];
       S.phases[0].orders[0].currency='BRL';renderPhasesLite(0);
-      return {mixed,roles,total:document.querySelector('.phase[data-phase="0"] .lucro-sum').textContent,html:document.getElementById('phaseContainer').innerText};
+      // The Board now shows net results separately; preserve the positive-result
+      // legacy oracle in its domain helper instead of an obsolete UI cell.
+      return {mixed,roles,total:phasePositiveResults(0).text,html:document.getElementById('phaseContainer').innerText};
     """)
     assert r['roles'][0].startswith('DEFESA') and r['roles'][1].startswith('GÊNESE'),r
     assert r['mixed']=='Não consolidado: conta, período ou moeda não conciliados',r
-    assert 'R$' in r['total'] and '200,00' in r['total'] and 'Resultados positivos registrados' in r['html'],r
-    assert 'Lucro técnico realizado' not in r['html'] and 'Risco na moeda da ordem' in r['html'],r
+    assert 'R$' in r['total'] and '200,00' in r['total'] and 'Resultado líquido' in r['html'],r
+    assert 'Lucro técnico realizado' not in r['html'] and 'Risco confirmado' in r['html'],r
 
 def order_risk_keeps_recorded_currency(page):
     r=result(page,"""
@@ -376,7 +442,7 @@ def order_risk_keeps_recorded_currency(page):
       const birth=operationRecordOrder(0,0,__fact(),{reason:'Fato da conta BRL'}),before=orderRisk(S.phases[0].orders[0]);
       S.accounts.push({nome:'Synthetic USD B',tipo:'MESTRE'});const other=observe(S.accounts.length-1,'USD',1);
       const after=orderRisk(S.phases[0].orders[0]);renderPhases();
-      return {account,birth,other,before,after,text:document.querySelector('.phase[data-phase="0"] tbody tr .calc.neg').textContent};
+      return {account,birth,other,before,after,text:document.querySelector('[data-eb-row-risk="0:0"]').textContent};
     """)
     for key in ('account','birth','other'):assert_ok(r[key])
     assert abs(r['before']-5000)<0.001 and abs(r['after']-5000)<0.001,r
@@ -499,6 +565,29 @@ def prepare_review_observation(page):
     """)
     assert_ok(r['account']);assert_ok(r['order'])
 
+def execution_browser_finalize_unsaved_draft(page):
+    prepare_review_observation(page)
+    page.evaluate('() => renderPhases()')
+    page.locator('[data-p="0"][data-o="0"][data-f="id"]').fill('Não confirmado antes de finalizar')
+    before=launcher.snapshot(page)
+    direct=result(page,"return finalizeOperation({defenseCount:0});")
+    assert not direct['ok'] and direct['motivo']=='unsaved_operation_draft',direct
+    page.evaluate('() => startFinalizeOperation()')
+    assert page.locator('#executionBoardDialog').evaluate('dialog=>dialog.open')
+    page.locator('#ebLeaveStay').click()
+    launcher.unchanged(page,before,'staying with unsaved draft never finalizes or records')
+    assert page.locator('[data-p="0"][data-o="0"][data-f="id"]').input_value()=='Não confirmado antes de finalizar'
+    page.locator('[data-eb-cancel-row="0:0"]').click()
+    launcher.unchanged(page,before,'cancel row discards only the RAM draft')
+    assert not page.evaluate('JPWForex.executionBoardUI.hasDrafts()')
+    assert page.locator('[data-p="0"][data-o="0"][data-f="id"]').input_value()=='FATO'
+    page.evaluate('() => startFinalizeOperation()')
+    assert page.locator('#modalOverlay').evaluate('node=>node.classList.contains("show")')
+    page.locator('#modalCancel').click()
+    launcher.unchanged(page,before,'cancel finalization preserves history and confirmed orders')
+    r=result(page,'return {history:S.operationHistory.records.length,pre:operationCanFinalize(),eligibility:JPWForex.state.read().executionEligibility.status};')
+    assert r['history']==0 and r['pre']['ok'] and r['eligibility']=='BLOCKED',r
+
 def review_cancel_no_capture(page):
     prepare_review_observation(page)
     before=launcher.snapshot(page)
@@ -534,14 +623,15 @@ def stale_review_requires_new_review(page):
 
 
 CASES=[record_blocked,render_and_typing,version_and_void,draft_delete,malformed_refused,planning_percent_display,unsupported_schema_read_only,
-       close_zero_and_refusal,mutation_refusal_retry,unknown_barrier,context_and_extensions,
+       close_zero_and_refusal,mutation_refusal_retry,unknown_barrier,execution_browser_unknown_quote_barrier,
+       execution_browser_quote_cancel_late_response,execution_browser_atomic_account_scope,context_and_extensions,
        pending_and_costs,conflicted_finalization,legacy_finalization,captured_reference_balance,unknown_reference_never_backfilled,
        account_period_scoped_finalization,factual_input_versioning,unresolved_period_never_selected_fallback,
        account_observation_captures_peak,account_peak_refusal_retry,account_peak_unknown,v11_result_does_not_mix_legacy_cycle,
        migrated_reference_identity,roles_and_currency_labels,order_risk_keeps_recorded_currency,mixed_context_cannot_finalize_as_one_currency,legacy_explicit_mixed_currency_refused,
        orphan_context_does_not_bind_new_operation,
        first_record_attaches_budget,budget_attachment_refusal_retry,budget_attachment_unknown,later_budget_does_not_backfill_first_snapshot,
-       review_cancel_no_capture,reviewed_capture_is_confirmed,stale_review_requires_new_review]
+       execution_browser_finalize_unsaved_draft,review_cancel_no_capture,reviewed_capture_is_confirmed,stale_review_requires_new_review]
 
 def hashes(root):
     paths=[root/'index.html',root/'build-id.js',root/'src/styles/app.css',*sorted((root/'src/js').rglob('*.js'))]
@@ -563,8 +653,10 @@ def main():
             target='dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html' if args.portable else 'index.html'
             page,observed=launcher.prepare(context,f'http://127.0.0.1:{server.server_port}/{target}')
             row['build']=page.evaluate('JP_WEALTH_BUILD_ID');seed(page);test(page)
-            if test in (unknown_barrier,account_peak_unknown,budget_attachment_unknown,orphan_context_does_not_bind_new_operation):
+            if test in (unknown_barrier,execution_browser_unknown_quote_barrier,account_peak_unknown,budget_attachment_unknown,orphan_context_does_not_bind_new_operation):
                 expected=('[operação] identidade órfã descartada (sem ordens operacionais): synthetic-orphan-a' if test is orphan_context_does_not_bind_new_operation else '[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas: registro Forex')
+                if test is execution_browser_unknown_quote_barrier:
+                    expected='[persistência] DESFECHO INDETERMINADO — novas gravações bloqueadas: retorno do registro Forex'
                 assert observed=={'pageerror':[],'console':[expected]},observed
                 row['expected_console']=observed['console']
                 launcher.assert_fixture_requests(context)

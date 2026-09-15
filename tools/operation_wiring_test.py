@@ -8,8 +8,10 @@ standard passava 16/16 e varias campanhas de mutation testing nao acusaram —
 porque todos os testes chamavam operationOnOrderStatus() DIRETAMENTE.
 
 Teste de dominio prova que a regra esta certa. Nao prova que ela e chamada.
-Aqui nada e invocado a mao: o teste acha o controle real, dispara o evento real
-e verifica o estado e o disco.
+Os registros sob teste passam pelos controles reais e por Salvar linha.
+Fixtures podem preparar o estado; os atos de abertura/correcao verificam
+DOM -> rascunho -> confirmacao explicita -> estado -> disco.
+A mudanca de status isolada nao deve mais gravar automaticamente.
 
 Todas as fixtures sao SINTETICAS.
 """
@@ -52,20 +54,38 @@ def prepare_page(browser, url):
 # Prepara uma Genese pronta para abrir e REDESENHA a grade, para que os
 # listeners reais sejam religados aos nos reais.
 PREPARAR = """
+  window.__descartaDrafts = () => {
+    const keys=[...document.querySelectorAll('[data-eb-row].eb-dirty')].map(e=>e.dataset.ebRow);
+    for(const k of keys)document.querySelector('[data-eb-cancel-row="'+k+'"]')?.click();
+  };
+  window.__salvarLinha = (pi,oi,allowRefusal=false) => {
+    const reason=document.querySelector('[data-eb-reason="'+pi+':'+oi+'"]');
+    if(reason){reason.value='Correção sintética justificada';reason.dispatchEvent(new Event('input',{bubbles:true}));}
+    const button=document.querySelector('[data-eb-save-row="'+pi+':'+oi+'"]');
+    if(!button)throw Error('Salvar linha não encontrado');
+    button.click();
+    const error=document.getElementById('ebError-'+pi+'-'+oi)?.textContent.trim()||'';
+    if(error&&!allowRefusal)throw Error('Salvar linha '+pi+':'+oi+' recusado: '+error);
+    return {ok:!error,error};
+  };
   window.__prepararGenese = () => {
+    __descartaDrafts();
+    S.accounts=[{forexAccountId:'wiring_A',nome:'Mestre sintética wiring',tipo:'MESTRE',currency:'USD',sini:10000,satu:10000}];
+    S.forex=JPWForex.state.empty();S.forex.activeAccountId='wiring_A';
+    S.forex.accounts.wiring_A={si:10000,equity:10000,netCashflow:0,cashflowAdjustmentRecorded:true,currency:'USD',periodId:'wiring_P',source:'Synthetic wiring fixture',observedAt:'2026-09-15T12:00:00Z'};
     S.activeOperation = null;
     S.operationHistory = {schemaVersion:1, records:[]};
     S.params.saldoIni = 10000;
     S.phaseUnlocked = [true,false,false,false];
-    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
     const g = S.phases[0].orders[0];
     // Lote DENTRO do teto por operacao do instrumento: a fixture nao pode
     // depender de furar uma guarda normativa legitima. O teto vem do catalogo
     // vivo (instrumentCatalog), entao e lido daqui em vez de fixado a mao.
     const ins = (S.instruments||[]).find(i => i && i.name === 'EURUSD');
     const teto = ins && +ins.teto > 0 ? +ins.teto : 0.01;
-    g.id='G1'; g.role='GENESIS'; g.par='EURUSD'; g.tipo='BUY'; g.lote=teto; g.entry=1.1000; g.sl=1.0950; g.tp=1.1200;
-    renderPhases();
+    g.recordStatus='draft'; g.id='G1'; g.role='GENESIS'; g.par='EURUSD'; g.tipo='BUY'; g.lote=teto; g.entry=1.1000; g.sl=1.0950; g.tp=1.1200; g.costs=0; g.costBasis='SEPARATE_FROM_RESULT';
+    save();render();JPWNavigation.navigate('forex-operation');JPWExec.ui.selectView('panel');renderPhases();
   };
   window.__selectStatus = (pi,oi) =>
     document.querySelector('select[data-p="'+pi+'"][data-o="'+oi+'"][data-f="status"]');
@@ -83,9 +103,12 @@ def abrir_genese_pela_ui(page):
           const sel = __selectStatus(0,0);
           if (!sel) return {erro:'select de status nao encontrado'};
           const opcoes = [...sel.options].map(o => o.value);
+          const before=JSON.stringify({phases:S.phases,op:S.activeOperation}),raw=localStorage.getItem(LSKEY);
           sel.value = 'Aberta';
           sel.dispatchEvent(new Event('change', {bubbles:true}));
-          return {opcoes, status: S.phases[0].orders[0].status};
+          const draftIntact=before===JSON.stringify({phases:S.phases,op:S.activeOperation})&&raw===localStorage.getItem(LSKEY);
+          __salvarLinha(0,0);
+          return {opcoes,draftIntact,status:S.phases[0].orders[0].status};
         }"""
     )
 
@@ -102,6 +125,7 @@ def run_genesis_birth_through_ui(page):
 
     r = abrir_genese_pela_ui(page)
     assert "erro" not in r, r.get("erro")
+    assert r["draftIntact"], "trocar Status gravou antes de Salvar linha"
     assert r["status"] == "Aberta", f"a abertura foi recusada pelas guardas: {r}"
 
     estado = page.evaluate(
@@ -112,7 +136,7 @@ def run_genesis_birth_through_ui(page):
         })"""
     )
     assert estado["op"], (
-        "abrir a Genese pelo <select> real NAO criou a Operacao Unica — o gancho "
+        "salvar a Genese pelo <select> e botao reais NAO criou a Operacao Unica — o gancho "
         "esta em codigo morto, exatamente o defeito que este arquivo existe para pegar"
     )
     assert estado["op"]["openedAtSource"] == "genesis_transition", (
@@ -131,6 +155,23 @@ def run_genesis_birth_through_ui(page):
     )
 
 
+def run_draft_cancel_writes_nothing(page):
+    """Status, custo e geometria so mudam apos confirmacao da linha inteira."""
+    page.evaluate("() => __prepararGenese()")
+    r=page.evaluate("""() => {
+      const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY);
+      for(const [field,value] of [['status','Aberta'],['entry','1.15'],['costs','-12']]){
+        const control=document.querySelector('[data-p="0"][data-o="0"][data-f="'+field+'"]');
+        control.value=value;control.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+      const typed=before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY);
+      document.querySelector('[data-eb-cancel-row="0:0"]').click();
+      return {typed,canceled:before===JSON.stringify(S)&&raw===localStorage.getItem(LSKEY),
+        status:__selectStatus(0,0).value,hasDrafts:JPWForex.executionBoardUI.hasDrafts()};
+    }""")
+    assert r['typed'] and r['canceled'] and r['status']=='' and not r['hasDrafts'],r
+
+
 def run_identity_stable_across_renders(page):
     """Nova mudanca e novo render nao trocam identidade nem abertura."""
     antes = page.evaluate(
@@ -143,7 +184,7 @@ def run_identity_stable_across_renders(page):
           renderPhases();                       // religa listeners nos nos novos
           const sel = __selectStatus(0,0);
           sel.value = 'Aberta';                 // mesma mudanca de novo
-          sel.dispatchEvent(new Event('change', {bubbles:true}));
+          sel.dispatchEvent(new Event('change', {bubbles:true})); __salvarLinha(0,0);
           renderPhases(); render();
           return {id: S.activeOperation.operationId,
                   openedAt: S.activeOperation.openedAt,
@@ -164,14 +205,14 @@ def run_rejected_open_creates_nothing(page):
     r = page.evaluate(
         """() => {
           S.activeOperation = null;
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
           const g = S.phases[0].orders[0];
-          g.id='X'; g.lote=0.10; g.entry=1.10; g.sl=1.09;   // SEM par -> guarda recusa
+          g.recordStatus='draft';g.id='X'; g.par=''; g.role='GENESIS'; g.tipo='BUY'; g.lote=0.10; g.entry=1.10; g.sl=1.09;   // SEM par -> guarda recusa
           renderPhases();
           const sel = __selectStatus(0,0);
           sel.value = 'Aberta';
-          sel.dispatchEvent(new Event('change', {bubbles:true}));
-          return {status: S.phases[0].orders[0].status, op: S.activeOperation};
+          sel.dispatchEvent(new Event('change', {bubbles:true})); const refusal=__salvarLinha(0,0,true);
+          return {status:S.phases[0].orders[0].status,op:S.activeOperation,error:refusal.error};
         }"""
     )
     assert r["status"] != "Aberta", f"a guarda de par ausente nao recusou: {r['status']!r}"
@@ -187,25 +228,41 @@ def run_close_order_through_ui(page):
         """() => {
           __prepararGenese();
           const sel = __selectStatus(0,0);
-          sel.value = 'Aberta'; sel.dispatchEvent(new Event('change', {bubbles:true}));
+          sel.value = 'Aberta'; sel.dispatchEvent(new Event('change', {bubbles:true})); __salvarLinha(0,0);
           renderPhases();
+          const beforeClose=JSON.stringify(S),rawBeforeClose=localStorage.getItem(LSKEY);
           const sel2 = __selectStatus(0,0);
-          sel2.value = 'Fechada'; sel2.dispatchEvent(new Event('change', {bubbles:true}));
+          sel2.value='Fechada';sel2.dispatchEvent(new Event('change',{bubbles:true}));__salvarLinha(0,0,true);
+          const bypassRefused=beforeClose===JSON.stringify(S)&&rawBeforeClose===localStorage.getItem(LSKEY);
+          document.querySelector('[data-eb-cancel-row="0:0"]').click();
+          document.querySelector('[data-eb-close-row="0:0"]').click();
           const temModal = !!document.getElementById('closeConfirmInput');
           if (!temModal) return {erro:'modal de fechamento nao abriu'};
+          document.getElementById('closeResultInput').value = '';
+          document.getElementById('closeConfirmInput').value = 'FECHADO';
+          document.getElementById('modalConfirm').click();
+          const emptyRefused=beforeClose===JSON.stringify(S)&&rawBeforeClose===localStorage.getItem(LSKEY);
+          document.getElementById('closeResultInput').value = '250';
+          document.getElementById('closeConfirmInput').value = 'NAO';
+          document.getElementById('modalConfirm').click();
+          const wordRefused=beforeClose===JSON.stringify(S)&&rawBeforeClose===localStorage.getItem(LSKEY);
           document.getElementById('closeResultInput').value = '250';
           document.getElementById('closeConfirmInput').value = 'FECHADO';
           document.getElementById('modalConfirm').click();
           const o = S.phases[0].orders[0];
-          return {status:o.status, result:o.result, closedAt:o.closedAt, openedAt:o.openedAt};
+          return {bypassRefused,emptyRefused,wordRefused,status:o.status,result:o.result,closedAt:o.closedAt,openedAt:o.openedAt,accountId:o.accountId,periodId:o.periodId,costs:o.costs,costBasis:o.costBasis,disk:__doDisco().phases[0].orders[0]};
         }"""
     )
     assert "erro" not in r, r.get("erro")
+    assert r['bypassRefused'] and r['emptyRefused'] and r['wordRefused'], r
     assert r["status"] == "Fechada" and r["result"] == 250, f"fechamento nao aplicou: {r}"
     assert isinstance(r["closedAt"], str) and r["closedAt"], (
         "closedAt nao foi carimbado pelo fluxo REAL de fechamento"
     )
     assert isinstance(r["openedAt"], str), "o fechamento apagou o openedAt da ordem"
+    assert r["accountId"] == "wiring_A" and r["periodId"] == "wiring_P", r
+    assert r["costs"] == 0 and r["costBasis"] == "SEPARATE_FROM_RESULT", r
+    assert r["disk"]["status"] == "Fechada" and r["disk"]["result"] == 250, r
 
 
 def run_reset_does_not_leak_identity(page):
@@ -220,7 +277,7 @@ def run_reset_does_not_leak_identity(page):
         """() => {
           __prepararGenese();
           const sel = __selectStatus(0,0);
-          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
           S.activeOperation.maxAccountPhaseReached = 2;   // chegou a Fase 3
           save();
           return {id:S.activeOperation.operationId,
@@ -292,7 +349,7 @@ def run_reset_does_not_leak_identity(page):
         """() => {
           __prepararGenese();
           const sel = __selectStatus(0,0);
-          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
           return {id:S.activeOperation.operationId,
                   openedAt:S.activeOperation.openedAt,
                   maxFase:S.activeOperation.maxAccountPhaseReached,
@@ -321,7 +378,7 @@ def run_unlock_by_own_genesis_is_stamped_with_real_identity(page):
     r=page.evaluate("""() => {
       __prepararGenese();S.cycleRealizado=-360;S.phases[0].orders[0].lote=999;renderPhases();
       const before=JSON.stringify(S.phaseUnlocked),events=S.transitionLog.length;
-      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
       return {status:S.phases[0].orders[0].status,op:S.activeOperation,unchanged:before===JSON.stringify(S.phaseUnlocked),events:events===S.transitionLog.length,max:operationResolveGridPhaseMax(S.activeOperation)};
     }""")
     assert r['status']=='Aberta' and r['op']['operationId'] and r['unchanged'] and r['events'] and r['max'] is None,r
@@ -332,7 +389,7 @@ def run_manual_risk_refusal_creates_no_entity(page):
     r=page.evaluate("""() => {
       __prepararGenese();S.onboarding.epStatus='Não vou utilizar.';
       let confirmations=0;window.confirm=()=>{confirmations++;return false;};
-      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
       return {confirmations,status:S.phases[0].orders[0].status,op:S.activeOperation};
     }""")
     assert r['confirmations']==0 and r['status']=='Aberta' and r['op']['operationId'],r
@@ -342,7 +399,7 @@ def run_deleting_last_operational_order_abandons(page):
     """Executed rows are voided by the real button, never physically deleted."""
     r=page.evaluate("""() => {
       __prepararGenese();window.prompt=()=> 'Duplicidade sintética';
-      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      const sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
       const id=S.activeOperation.operationId,count=S.phases[0].orders.length;
       document.querySelector('[data-delorder="0:0"]').click();
       return {id,op:S.activeOperation,order:S.phases[0].orders[0],count,after:S.phases[0].orders.length,history:S.operationHistory.records.length,disk:__doDisco().phases[0].orders[0]};
@@ -354,7 +411,7 @@ def run_deleting_last_operational_order_abandons(page):
 def run_deleting_one_of_many_keeps_the_operation(page):
     r=page.evaluate("""() => {
       __prepararGenese();window.prompt=()=> 'Duplicidade de uma linha';
-      const s=__selectStatus(0,0);s.value='Aberta';s.dispatchEvent(new Event('change',{bubbles:true}));
+      const s=__selectStatus(0,0);s.value='Aberta';s.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
       operationRecordOrder(0,1,{id:'D1',par:'EURUSD',tipo:'BUY',lote:1,entry:1.1,sl:1.09,status:'Fechada',result:-20},{reason:'Fato confirmado'});
       const id=S.activeOperation.operationId;renderPhases();document.querySelector('[data-delorder="0:1"]').click();
       return {id,after:S.activeOperation.operationId,first:S.phases[0].orders[0],second:S.phases[0].orders[1],count:operationLiveOrders().length};
@@ -374,20 +431,20 @@ def run_new_thesis_never_inherits_orphan_identity(page):
           window.confirm = () => true; window.alert = () => {};
           __prepararGenese();
           const sel = __selectStatus(0,0);
-          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true}));
+          sel.value='Aberta'; sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
           const op1 = JSON.parse(JSON.stringify(S.activeOperation));
           // Orfandade FORCADA: apaga a ordem sem passar pelo ato de exclusao,
           // para exercitar o fail-safe e nao a correcao do handler.
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
           S.activeOperation = JSON.parse(JSON.stringify(op1));
           save();
           const orfaViva = S.activeOperation && S.activeOperation.operationId;
           // Tese NOVA, outro instrumento.
           const g = S.phases[0].orders[0];
-          g.id='G2';g.role='GENESIS'; g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.275; g.tp=1.20;
+          g.recordStatus='draft';g.id='G2';g.role='GENESIS'; g.par='GBPUSD'; g.tipo='SELL'; g.lote=0.01; g.entry=1.27; g.sl=1.275; g.tp=1.20;
           renderPhases();
           const sel2 = __selectStatus(0,0);
-          sel2.value='Aberta'; sel2.dispatchEvent(new Event('change',{bubbles:true}));
+          sel2.value='Aberta'; sel2.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
           const op2 = S.activeOperation;
           const log = ((S.dataGovernance||{}).changeLog||[])
             .filter(e => e && e.action==='orphan_discarded').map(e => e.recordId);
@@ -419,9 +476,9 @@ def run_status_reverted_withdraws_the_order(page):
     """Clearing a factual status is refused; original identity/evidence survive."""
     r=page.evaluate("""() => {
       __prepararGenese();window.prompt=()=> 'Tentativa de retirar fato';
-      let sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      let sel=__selectStatus(0,0);sel.value='Aberta';sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
       const before=JSON.stringify(S),raw=localStorage.getItem(LSKEY);
-      sel=__selectStatus(0,0);sel.value='';sel.dispatchEvent(new Event('change',{bubbles:true}));
+      sel=__selectStatus(0,0);sel.value='';sel.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0,true);
       return {stateSame:before===JSON.stringify(S),diskSame:raw===localStorage.getItem(LSKEY),status:S.phases[0].orders[0].status};
     }""")
     assert r['stateSame'] and r['diskSame'] and r['status']=='Aberta',r
@@ -429,7 +486,7 @@ def run_status_reverted_withdraws_the_order(page):
 
 def run_withdrawing_one_order_keeps_the_operation(page):
     r=page.evaluate("""() => {
-      __prepararGenese();let s=__selectStatus(0,0);s.value='Aberta';s.dispatchEvent(new Event('change',{bubbles:true}));
+      __prepararGenese();let s=__selectStatus(0,0);s.value='Aberta';s.dispatchEvent(new Event('change',{bubbles:true})); __salvarLinha(0,0);
       operationRecordOrder(0,1,{id:'D1',par:'EURUSD',tipo:'BUY',lote:1,entry:1.1,sl:1.09,status:'Fechada',result:-20},{reason:'Fato confirmado'});
       const before=JSON.stringify(S),a=operationRecordOrder(0,1,{status:''},{reason:'Retirada indevida'});
       return {a,same:before===JSON.stringify(S),count:operationLiveOrders().length};
@@ -452,11 +509,12 @@ PREPARAR_D = """() => {
   window.prompt = () => null;
   // cfg: {abertas:[[pi,oi]], fechadas:[[pi,oi,result]]}  result null = ausente
   window.__cenarioD = (cfg) => {
+    __descartaDrafts();
     S.params.saldoIni = 40000; S.cycleRealizado = 0;
     // Esta fixture preserva a grade LEGACY de quatro fases. Em seis grades,
     // Gênese/Defesa dependem de papel explícito, coberto no focal V11.
     S.phases = S.phases.slice(0,4);
-    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
+    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
     S.phaseUnlocked = [true,false,false,false];
     S.operationHistory = {schemaVersion:1, records:[]};
     const base = (id,par) => ({id, par:par||'EURUSD', tipo:'BUY', lote:0.01,
@@ -480,7 +538,7 @@ PREPARAR_D = """() => {
       openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
       maxAccountPhaseReached:0};
     save();
-    navigateToScreen('exec'); JPWExec.ui.selectView('motor');
+    navigateToScreen('exec'); JPWExec.ui.selectView('panel');
     render(); renderPhases();
   };
   window.__foto = () => JSON.stringify({
@@ -791,6 +849,7 @@ def main():
             browser = playwright.chromium.launch(**launcher.launch_options())
             context, page, observed = prepare_page(browser, url)
             page.evaluate(PREPARAR)
+            run_draft_cancel_writes_nothing(page)
             run_genesis_birth_through_ui(page)
             run_identity_stable_across_renders(page)
             run_rejected_open_creates_nothing(page)

@@ -301,6 +301,7 @@ function render(){
   // primeira pintura por conta própria assim que todos os scripts carregam.
   if(typeof renderSystemStatus==='function') renderSystemStatus();
   if(window.JPWDashMacro) window.JPWDashMacro.schedule();
+  if(window.JPWForex?.executionBoardUI)JPWForex.executionBoardUI.render();
   if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
   if(document.getElementById('fxconsolidated')?.classList.contains('active')&&window.JPWFXConsolidated?.render)window.JPWFXConsolidated.render();
 }

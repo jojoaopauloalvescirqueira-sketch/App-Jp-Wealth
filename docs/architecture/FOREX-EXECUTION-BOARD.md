@@ -1,0 +1,53 @@
+# Forex — Execution Board
+
+Campanha FOREX-EXECUTION-BOARD-01, base integrada `594c86ebf13661d0e5846a3b64a0288631fd938d`, branch `codex/forex-execution-board-20260915`. Contrato e limites em [CHG/CTX](../work/CHG-FOREX-EXECUTION-BOARD-20260915.md). Estado: revisão local, validação e aceite separados. Recibos de execução/fingerprint/recovery em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`.
+
+## Autoridade e responsabilidade
+
+Constituição → Estatuto V11 → Anexo nos elementos delegados → `JPWForex.policy`/`engine` → projeção → UI. Policy/engine e parâmetros não foram alterados. A planilha orienta a organização da informação; suas fórmulas divergentes e incompletas não são oráculo. Registrar fato continua distinto de autorizar execução.
+
+`10-domain/18-execution-board-model.js` é projeção sem escrita. `read` resolve a seleção e chama o modelo; `project` agrega fixtures/contexto explícito; `instrumentInputs` compartilha contratos/conversões com os leitores de risco; `closedNetResult` aplica o tratamento de custos declarado. `20-ui/30-execution-board.js` apresenta resultados e rascunhos RAM. Não contém fórmulas financeiras. `19-execution-market.js` coordena o provedor diário, usando os comandos de `00-forex-state.js`.
+
+## Identidade e escopo
+
+Uma operação ativa conserva conta e período, mesmo quando suas linhas ficam vazias. Sem operação, a única Mestre cadastrada é proposta; ausência ou ambiguidade exige seleção. A proposta só é confirmada ao registrar a primeira ordem, na mesma transação. Seleção analítica no Consolidado não transfere operação. Observação de SI/equity/moeda/período é explícita no Motor; saldo cadastral não supre equity. Responsáveis de onboarding são declarados da sessão, não cadastro por conta.
+
+Registros conciliados exigem conta, período, moeda, operação, instrumento e identidade suficientes. Ordens anuladas/rascunhos não viram posições. Ausência de identidade, papel, resultado ou custos não vira zero. Grades LEGACY conservam índices/nomes; não são migradas automaticamente para Gênese, Ataque, Intermédio, Defesa, Cuidado e Preparação.
+
+## Leituras financeiras
+
+Risco de stops é monetário positivo; resultado realizado tem sinal. Custos `INCLUDED_IN_RESULT` não são somados de novo; `SEPARATE_FROM_RESULT` exige valor assinado e soma uma vez. Compensada pelas defesas = risco aberto − líquido das ordens explicitamente DEFENSE; compensada da operação usa todos os encerramentos conciliados. Resultado negativo amplia a leitura econômica, ganho pode torná-la negativa. Isso não reduz RC normativo nem amplia orçamento.
+
+RC, alavancagem, DD, fases, capacidade prudencial e stops normativos vêm do motor. Alavancagem usa nocional bruto / min(SI,equity). DD22% é encerramento estatutário, não stop-out da corretora. As faixas de DD não são orçamento de stops. A capacidade prudencial restante não é margem da corretora ou admissão autorizada.
+
+Referências de lotes: fatores vigentes P-12b × min(SI,equity) / nocional de um lote na moeda da conta. Mostram precisão teórica, não volume arredondado para execução. Conversão usa caminhos identificados de moedas, observações manuais ou referências diárias datadas; preço legado mostrado não se torna conversão observada. Cada perna preserva origem e data. Contrato, conversão ou base ausentes impedem cálculo. Restrições de instrumentos permanecem.
+
+ATR55/660 em unidades de preço, H4, pertence ao instrumento/conta/período. VRM/stop mínimo/múltiplo usam esse contexto. A observação global anterior permanece legada e não alimenta automaticamente todos os pares. O formulário do Motor grava agora o instrumento selecionado. Raiz-N não recebe fator fixo da planilha.
+
+Resultado completo do período permanece indisponível: ledger diário não captura moeda e cobertura reconciliadas suficientes. Resultado desta operação é apresentado separadamente. Lucro Técnico, MOR, P14/P17/P18 e fator P21 permanecem ausentes conforme suas lacunas específicas. O pacote não encerra A12 parcial, OPEN-05/V11/FCR/FEO, AUD-05/P2 nem concede homologação financeira.
+
+## Escrita e rascunhos
+
+Input/change só alteram Map em RAM. Salvar linha valida campos e envia um único `operationRecordOrders` com versão/identidade esperadas e um motivo para toda a correção. Versão confirmada divergente recusa; cancelar relê a linha. Correção preserva revisão anterior. Fechamento continua via fluxo explícito de resultado/custos. Não há autosave por tecla.
+
+Render de cotações/métricas não reconstrói inputs da tabela. Navegação para outra área ou Motor oferece Salvar, Descartar ou Permanecer; checklist e Settings podem abrir mantendo o rascunho. Exclusão que mudaria índices resolve rascunhos antes. Finalizar Operação e Finalizar Sessão resolvem rascunhos antes dos fluxos; descarte definitivo só após commit confirmado. Não existe promessa de recuperação de RAM após recarga; beforeunload avisa quando possível.
+
+## Observações e referências diárias
+
+Extensões opcionais de `S.forex`, sem novo store nem normalização destrutiva: `instrumentContexts` e `dailyReferences`, ambas versionadas. Primeira ausência não implica criação em render. Comandos usam `mutate`/epoch/concorrência/confirmação existentes. Schema futuro não é convertido. Importação do backup rejeita versão incompatível antes de trocar a base.
+
+`recordInstrumentContext` vincula conta/período/instrumento/moeda e componentes preço, ATR, contrato e conversão; origem, instante, motivo e expectedRevision acompanham o ato. Campos vazios da UI não apagam componente confirmado. Revisões anteriores são preservadas. Snapshot de ordem inclui a observação disponível e referência diária no registro, sem afirmar admissão pré-execução.
+
+Frankfurter permanece referência diária, consultada localmente pelo provedor existente. Data da taxa e horário de consulta são distintos; taxa/par/data inválidos são rejeitados. Observações manuais têm precedência e não são sobrescritas. `S.instruments.preco` antigo não é atualizado como se fosse preço de execução. Não se obtêm equity ao vivo ou ATR automaticamente.
+
+O controlador coordena requisições, timeout, respostas parciais e cancelamento. Lote válido é gravado uma vez; repetição das mesmas taxas/datas/identidades não regrava nem altera audit ou fetchedAt confirmado. A hora da última consulta sem alteração é transitória. Recusa conserva prévia RAM e oferece repetição explícita da gravação; UNKNOWN impede nova tentativa cega. Epoch/revisão impedem respostas tardias após troca/finalização de reintroduzir dados. Cancelamento libera controladores; não confirma atualização.
+
+## Backup, finalização e recuperação
+
+Backup completo contém extensões confirmadas e snapshots de ordens. Rascunhos/arquivo original/segredos não são incluídos. Finalizar Sessão limpa observações operacionais e referências no agregado operacional, preservando históricos confirmados pelo contrato longitudinal existente. Snapshot do histórico mantém os dados efetivamente capturados; não completa passado com cadastro atual.
+
+Falha/quota/UNKNOWN seguem os escritores existentes: nenhuma mensagem de sucesso antecipada; não realizar retry cego. Usar cópia de recuperação e fluxo existente para desfecho desconhecido. Rollback de código só no delta desta worktree, com baseline externo e hashes; nenhuma autorização para reset/stash/limpeza de outras árvores.
+
+## Verificação
+
+Focais novos: `forex_execution_projection_test.py`, `forex_execution_market_test.py`, `forex_execution_board_test.py`. Regressões adaptadas somente quando a expectativa antiga era autosave/geometria ou ATR global; contraprovas de persistência/custos/identidade permanecem. FULL, browser, PWA e portátil seguem ferramentas existentes, sem mudar gates. O relatório externo informa resultados reais, falhas intermediárias e identidade exata; a existência deste documento não é evidência de PASS.

@@ -7721,3 +7721,73 @@ html[data-shell="global-dashboard"] #headerActions{width:auto;flex-shrink:0;gap:
 #forexChecklistClose,#execChecklistBtn{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;padding:10px 14px;cursor:pointer}
 
 @media(max-width:600px){#forexChecklistDialog .fx-checklist-heading{padding:16px}}
+
+/* Execution Board: scoped density; existing widget identities/preferences survive. */
+html[data-shell="global-dashboard"] #exec.active{max-width:none;width:100%;min-width:0}
+html[data-shell="global-dashboard"] #execWidgetGrid.execution-board{max-width:none;align-items:start;gap:16px;container-type:inline-size}
+#executionBoard{grid-column:1/-1;order:-1;display:flex;gap:20px;align-items:center;justify-content:space-between;padding:4px 0 2px}
+#executionBoard h2{font-size:24px;margin:3px 0 6px;letter-spacing:-.025em}
+.eb-eyebrow{font-size:10px!important;font-weight:700;letter-spacing:.12em;color:var(--ink-dim);margin:0 0 8px!important}
+.eb-heading-controls{display:flex;align-items:end;gap:14px;flex-wrap:wrap}
+.eb-heading-controls label,.eb-instrument-toolbar label{display:grid;gap:5px;font-size:11px;color:var(--ink-dim)}
+#ebAccountSelect{min-width:220px;max-width:320px}
+#ebOperationIdentity{font-size:12px;line-height:1.5;color:var(--ink-dim);margin:0;overflow-wrap:anywhere}
+#execWidgetGrid.execution-board>.eb-card{display:block!important;min-height:0!important;height:auto!important;align-self:start;min-width:0;max-width:100%;padding:20px!important;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:none}
+#execWidgetGrid.execution-board>.eb-legacy-metrics{display:none!important}
+.eb-legacy-host[hidden]{display:none!important}
+.eb-section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.eb-section-head h3{font-size:17px;line-height:1.3;margin:0;font-weight:650;letter-spacing:-.015em}
+.eb-context-line{font-size:12px;color:var(--ink-dim);line-height:1.6;overflow-wrap:anywhere;margin:8px 0 14px}
+.eb-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:12px 18px;margin:12px 0}
+.eb-metric{display:flex;flex-direction:column;gap:5px;min-width:0;align-items:start}
+.eb-metric>span{font-size:11px;color:var(--ink-dim);line-height:1.4}
+.eb-metric>strong{font-size:20px;line-height:1.35;font-weight:650;font-variant-numeric:tabular-nums;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere}
+.eb-metric>small{font-size:10px;color:var(--ink-dim);line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.eb-metric meter{width:100%;height:7px;accent-color:var(--violet)}
+.eb-phase-scale{display:flex;gap:3px;margin:14px 0 8px}
+.eb-phase-scale span{flex:1;padding:6px;background:var(--panel-2);border-top:3px solid var(--line);font-size:11px;text-align:center;min-width:0}
+.eb-phase-scale span:nth-child(1){border-color:var(--f1)}.eb-phase-scale span:nth-child(2){border-color:var(--f2)}.eb-phase-scale span:nth-child(3){border-color:var(--f2)}.eb-phase-scale span:nth-child(4){border-color:var(--f3)}.eb-phase-scale span:nth-child(5){border-color:var(--f3)}.eb-phase-scale span:nth-child(6){border-color:var(--f4)}
+.eb-phase-scale small{display:block;font-size:10px;margin-top:3px;color:var(--ink-dim)}
+.eb-findings{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;font-size:12px;line-height:1.6}
+.eb-findings summary{cursor:pointer;color:var(--ink);font-weight:600;padding:5px 0;min-height:30px}
+.eb-findings ul{margin:10px 0;padding-left:20px;columns:2;column-gap:28px}.eb-findings li{break-inside:avoid;margin-bottom:8px}
+.eb-economic{border-top:1px solid var(--line);padding-top:15px;margin-top:14px}.eb-economic>p:last-child{font-size:11px;line-height:1.5;color:var(--ink-dim)}
+.eb-instrument-toolbar{display:flex;align-items:end;gap:18px;flex-wrap:wrap}.eb-instrument-toolbar p{font-size:11px;line-height:1.5;color:var(--ink-dim)}
+#execWidgetGrid .eb-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+#execWidgetGrid .eb-actions button,#execWidgetGrid .eb-section-head button,#execWidgetGrid [data-addorder]{font-size:12px;min-height:36px;padding:7px 12px;white-space:normal}
+#execWidgetGrid :is(select,input){font:inherit;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;min-height:34px;padding:6px 8px;box-sizing:border-box}
+#execWidgetGrid input:focus,#execWidgetGrid select:focus,.eb-dialog input:focus{outline:2px solid var(--violet);outline-offset:1px}
+#execWidgetGrid .eb-table-scroll{max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;margin:10px 0 12px}
+#execWidgetGrid .eb-order-table{width:100%;min-width:1180px;table-layout:fixed;border-collapse:separate;border-spacing:0;font-family:var(--sans,system-ui);font-size:12px}
+#execWidgetGrid .eb-order-table th{font-size:11px;font-weight:600;text-align:left;padding:9px 6px;white-space:normal;line-height:1.4;background:var(--panel-2);border-bottom:1px solid var(--line)}
+#execWidgetGrid .eb-order-table th:first-child{width:110px}#execWidgetGrid .eb-order-table th:nth-child(2){width:118px}#execWidgetGrid .eb-order-table th:nth-child(4){width:120px}#execWidgetGrid .eb-order-table th:nth-child(10){width:130px}#execWidgetGrid .eb-order-table th:last-child{width:128px}
+#execWidgetGrid .eb-order-table td{padding:10px 6px;vertical-align:top;border-bottom:1px solid var(--line);background:var(--panel)}
+#execWidgetGrid .eb-order-table :is(input,select){width:100%;font-size:12px;text-align:left;padding:6px;min-width:0;max-width:none;height:34px}
+#execWidgetGrid .eb-order-table .eb-order-id,#execWidgetGrid .eb-order-table th:first-child{position:sticky;left:0;z-index:1;background:var(--panel)}
+#execWidgetGrid .eb-order-table td small{display:block;font-size:9px;line-height:1.4;color:var(--ink-dim);margin-top:5px;overflow-wrap:anywhere}
+#execWidgetGrid .eb-order-table .eb-number{text-align:right;font-variant-numeric:tabular-nums;white-space:normal;overflow-wrap:anywhere;font-size:12px}
+.eb-row-actions button{display:block;width:100%;min-height:32px;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font-size:11px;cursor:pointer}
+.eb-row-actions button:first-child{color:var(--violet);background:var(--panel-2);margin-bottom:5px}
+#execWidgetGrid .eb-order-table .eb-dirty td{background:var(--panel-2)}
+#execWidgetGrid .eb-detail-row>td{padding:0 8px 8px}.eb-detail-row summary{font-size:11px;color:var(--ink-dim);cursor:pointer;min-height:32px;padding:7px 0}
+.eb-order-details{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:12px;padding:8px 0}
+.eb-order-details label{display:grid;gap:5px;font-size:11px;color:var(--ink-dim)}
+.eb-order-details .eb-check{display:flex;align-items:center}.eb-order-details .eb-check input{width:18px!important;min-height:18px!important;height:18px!important;flex:none}
+.eb-reason{grid-column:1/-1}.eb-row-feedback{font-size:11px;color:var(--danger);line-height:1.5;margin:4px 0 0}
+#execWidgetGrid .eb-phase{border:1px solid var(--line);border-radius:8px;margin:12px 0;background:var(--panel);overflow:visible}
+.eb-phase>summary{display:flex;gap:12px;align-items:center;justify-content:space-between;cursor:pointer;min-height:44px;padding:10px 14px;background:var(--panel-2);font-size:13px;font-weight:600;border-radius:8px}
+.eb-phase>summary:before{content:'›';font-size:18px}.eb-phase[open]>summary:before{transform:rotate(90deg)}.eb-phase>summary>span:first-of-type{margin-right:auto}.eb-phase>summary>span:last-child{font-size:11px;color:var(--ink-dim)}
+#execWidgetGrid .eb-phase .phase-body{padding:10px 12px;overflow:visible}
+.eb-summary-table{width:100%;min-width:880px;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}.eb-summary-table caption{text-align:left;font-size:12px;font-weight:600;margin:6px 0 12px}.eb-summary-table :is(th,td){padding:10px 9px;border-bottom:1px solid var(--line);text-align:right}.eb-summary-table th:first-child,.eb-summary-table td:nth-child(2){text-align:left}.eb-summary-table thead{color:var(--ink-dim);background:var(--panel-2)}
+.eb-dialog{width:min(660px,calc(100vw - 32px));max-height:85dvh;padding:24px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 90px #0004;overflow:auto}
+.eb-dialog::backdrop{background:#1117}.eb-dialog h2{font-size:20px;margin:0 0 12px}.eb-dialog p{font-size:13px;line-height:1.6}.eb-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}
+.eb-dialog-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:20px}.eb-dialog button{min-height:38px;padding:9px 14px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12px;cursor:pointer}
+.eb-observation-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.eb-observation-fields label{display:grid;gap:6px;font-size:12px}.eb-observation-fields input{width:100%;min-width:0;padding:9px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:6px;font:inherit}
+@media(max-width:800px){#executionBoard{align-items:start;flex-direction:column}.eb-heading-controls{width:100%}#ebAccountSelect{max-width:100%;min-width:180px}.eb-findings ul{columns:1}.eb-phase-scale{flex-wrap:wrap}.eb-phase-scale span{flex-basis:26%}#execWidgetGrid.execution-board>.eb-card{padding:15px!important}.eb-metric>strong{font-size:18px}.eb-observation-fields{grid-template-columns:1fr}}
+@media(max-width:430px){.eb-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.eb-heading-controls{align-items:stretch;flex-direction:column}#ebAccountSelect{width:100%}.eb-section-head{align-items:start}.eb-section-head .eb-actions{width:100%}.eb-dialog{padding:18px}.eb-dialog-actions button{flex:1}}
+
+#ebChecklistHost #execChecklistBtn{display:inline-flex;align-items:center;gap:8px;min-height:40px;font-size:12px}
+#ebChecklistHost svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+html[data-shell="global-dashboard"] #execWidgetGrid.execution-board>[data-widget-size="full"]{grid-column:1/-1!important}
+#execWidgetGrid .eb-order-row>td:last-child,#execWidgetGrid .eb-order-table th:last-child{position:sticky;right:0;z-index:2;background:var(--panel);box-shadow:-5px 0 8px -8px var(--ink)}

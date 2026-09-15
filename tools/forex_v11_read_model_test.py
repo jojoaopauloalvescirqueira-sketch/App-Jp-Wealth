@@ -26,11 +26,20 @@ const fx=sandbox.JPWForex;fx.state={supported:()=>sandbox.isSupported,recordCont
  if(arguments.length&&(!target||!target.accountId||!target.periodId))return {accountId:null,periodId:null,accountInputs:null,marketInputs:null};
  const f=sandbox.S.forex,id=target?target.accountId:f.activeAccountId,a=f.accounts[id];
  const account=a&&(!target||a.periodId===target.periodId)?a:null;
- return {accountId:account?id:null,periodId:account?account.periodId:null,accountInputs:account,marketInputs:null};}};
+ return {accountId:account?id:null,periodId:account?account.periodId:null,accountInputs:account,marketInputs:null};},
+ instrumentContext:function(target){
+  const record=sandbox.S.forex.instrumentContexts.records.find(r=>target&&r.accountId===target.accountId&&r.periodId===target.periodId&&r.instrumentId===target.instrumentId&&(!target.currency||r.currency===target.currency));
+  return sandbox.isSupported&&record?{status:'OK',value:structuredClone(record),observation:structuredClone(record),revision:record.revision,findings:[]}:{status:'NOT_COMPUTABLE',value:null,findings:[]};},
+ dailyReference:()=>({status:'NOT_COMPUTABLE',value:null,findings:[]})};
 vm.runInContext(fs.readFileSync(files[2],'utf8'),sandbox,{filename:files[2]});
 vm.runInContext(fs.readFileSync(files[3],'utf8'),sandbox,{filename:files[3]});
 const rows=[];function test(name,fn){try{reset();fn();rows.push({name,result:'PASS'});}catch(error){rows.push({name,result:'PRODUCT_FAIL',error:String(error.stack||error)});}}
-function reset(){sandbox.isSupported=true;sandbox.S={instruments:[{name:'EURUSD',cpl:100000,preco:1}],accounts:[{forexAccountId:'A',tipo:'MESTRE'},{forexAccountId:'B',tipo:'MESTRE'}],phases:[{orders:[]}],forex:{schemaVersion:1,activeAccountId:'A',accounts:{A:{si:10000,equity:9700,netCashflow:0,currency:'USD',periodId:'A1',capitalNominal:12000,observedAt:'2026-09-14T12:00:00Z'}},h4Closes:[],market:null,reserves:null},activeOperation:null};}
+function instrumentObservation(accountId,periodId,currency,rate){return {id:'synthetic-'+accountId,accountId,periodId,currency,instrumentId:'EURUSD',revision:1,
+ price:{value:1,source:'synthetic manual',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'},
+ contract:{contractSize:100000,source:'synthetic contract',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'},
+ conversion:{quoteToAccountRate:rate,baseToAccountRate:rate,source:'synthetic conversion',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'}};}
+function reset(){sandbox.isSupported=true;sandbox.S={instruments:[{name:'EURUSD',cpl:100000,preco:1}],accounts:[{forexAccountId:'A',tipo:'MESTRE'},{forexAccountId:'B',tipo:'MESTRE'}],phases:[{orders:[]}],forex:{schemaVersion:1,activeAccountId:'A',accounts:{A:{si:10000,equity:9700,netCashflow:0,currency:'USD',periodId:'A1',capitalNominal:12000,observedAt:'2026-09-14T12:00:00Z'}},h4Closes:[],market:null,reserves:null,
+ instrumentContexts:{schemaVersion:1,records:[instrumentObservation('A','A1','USD',1),instrumentObservation('B','B1','BRL',5)]}},activeOperation:null};}
 const order=()=>({accountId:'A',periodId:'A1',currency:'USD',par:'EURUSD',tipo:'BUY',entry:1.1,sl:1,lote:.01,stopValidated:true,status:'Aberta',costs:0,costBasis:'SEPARATE_FROM_RESULT'});
 function read(){const before=JSON.stringify(sandbox.S),r=fx.readModel();assert.strictEqual(JSON.stringify(sandbox.S),before);return r;}
 function unknown(r){assert.notStrictEqual(r.status,'OK');assert.strictEqual(r.value,null);}
@@ -61,6 +70,19 @@ test('unknown nonempty order status does not disappear as no exposure',()=>{sand
 test('voided fact is not resurrected by status conflict handling',()=>{sandbox.S.phases[0].orders=[{...order(),status:'Aberta',recordStatus:'voided'}];const m=read();assert.strictEqual(m.orders.total,0);close(m.metrics.aggregateRisk.value,0);});
 test('money projection refuses unreconciled historical currency instead of selected USD',()=>{for(const delta of [{currency:'BRL'},{currency:null},{accountId:null},{periodId:'A0'}]){sandbox.S.phases[0].orders=[{...order(),status:'Fechada',result:100,...delta}];const c=moneyProjection();assert.strictEqual(c.netOp,null);assert.strictEqual(c.resultadoBrutoPositivoFactual,null);}});
 test('known closed zero remains factual zero in matching monetary context',()=>{sandbox.S.phases[0].orders=[{...order(),status:'Fechada',result:0}];assert.strictEqual(moneyProjection().netOp,0);});
+function scopedAtr(short=0,long=1){sandbox.S.forex.instrumentContexts.records[0].atr={short,long,timeframe:'H4',unit:'PRICE',source:'synthetic H4',sourceKind:'MANUAL',observedAt:'2026-09-14T12:00:00Z'};}
+test('global ATR remains unassigned even with one declared genesis instrument',()=>{sandbox.S.forex.market={atrShort:2,atrLong:1};sandbox.S.phases[0].orders=[{...order(),role:'GENESIS'}];unknown(read().metrics.vrm);});
+test('explicit genesis instrument scoped ATR preserves the zero VRM oracle',()=>{scopedAtr();sandbox.S.phases[0].orders=[{...order(),role:'GENESIS'}];close(read().metrics.vrm.value,0);});
+test('ATR for another account period or instrument never substitutes the genesis observation',()=>{
+ for(const changes of [{accountId:'C'},{periodId:'OLD'},{instrumentId:'GBPUSD'}]){reset();scopedAtr();Object.assign(sandbox.S.forex.instrumentContexts.records[0],changes);sandbox.S.phases[0].orders=[{...order(),role:'GENESIS'}];unknown(read().metrics.vrm);}
+});
+test('ambiguous or absent genesis cannot select one market observation silently',()=>{
+ scopedAtr();sandbox.S.phases[0].orders=[{...order(),role:'OTHER'}];unknown(read().metrics.vrm);
+ sandbox.S.phases[0].orders=[{...order(),role:'GENESIS'},{...order(),role:'GENESIS'}];unknown(read().metrics.vrm);
+});
+test('wrong ATR timeframe or unit remains not computable',()=>{
+ for(const changes of [{timeframe:'D1'},{unit:'PERCENT'}]){reset();scopedAtr();Object.assign(sandbox.S.forex.instrumentContexts.records[0].atr,changes);sandbox.S.phases[0].orders=[{...order(),role:'GENESIS'}];unknown(read().metrics.vrm);}
+});
 const failed=rows.filter(r=>r.result!=='PASS');console.log(JSON.stringify({checks:rows,counts:{total:rows.length,passed:rows.length-failed.length,failed:failed.length},result:failed.length?'PRODUCT_FAIL':'PASS'}));process.exitCode=failed.length?1:0;
 """
 

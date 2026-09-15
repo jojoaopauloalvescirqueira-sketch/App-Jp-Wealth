@@ -14,8 +14,9 @@
   }
   function orderInputs(order,account){
     const ins=instFor(order.par), rates=conversion(ins,account);
+    const observed=fx.executionBoard?.instrumentInputs(ins,account,{accountId:order.accountId||account?.accountId,periodId:order.periodId||account?.periodId});
     return {side:order.tipo,entryPrice:order.entry,stopPrice:order.sl,volume:order.lote,
-      contractSize:ins?ins.cpl:null,conversionRate:rates.quote,notionalConversionRate:rates.base,
+      contractSize:observed?observed.contractSize:(ins?ins.cpl:null),conversionRate:observed?observed.conversionRate:rates.quote,notionalConversionRate:observed?observed.notionalConversionRate:rates.base,
       stopValid:order.stopValidated===true,active:typeof order.pendingActive==='boolean'?order.pendingActive:null,
       kind:order.amplifiesExposure===true?'AMPLIFYING':order.amplifiesExposure===false?'REDUCING':null,
       exclusiveGroup:order.exclusiveGroup||null,exclusivityVerified:order.exclusivityVerified===true,
@@ -54,7 +55,11 @@
     const gridPhase=e.resolveActiveGridPhase({...grid,accountPhase:phaseNumber});
     const leverage=unresolvedFacts?unresolved():e.computeLeverage({si:account&&account.si,equity:account&&account.equity,
       positions:positions.map(p=>({volume:p.volume,contractSize:p.contractSize,conversionRate:p.notionalConversionRate}))});
-    const market=(target?context&&context.marketInputs:f&&f.market)||{},vrm=e.computeVRM(market),regime=e.resolveVRMRegime({vrm:value(vrm)});
+    const genesis=facts.filter(o=>o.role==='GENESIS'&&o.recordStatus!=='voided');
+    const marketContext=genesis.length===1&&account?fx.state.instrumentContext?.({accountId,periodId:account.periodId,instrumentId:genesis[0].par}):null;
+    const observedAtr=marketContext?.status==='OK'?marketContext.value?.atr:null;
+    const market=observedAtr?.timeframe==='H4'&&observedAtr?.unit==='PRICE'?{atrShort:observedAtr.short,atrLong:observedAtr.long}:{};
+    const vrm=e.computeVRM(market),regime=e.resolveVRMRegime({vrm:value(vrm)});
     const effective=e.computeEffectiveLeverageLimit({phase:phaseNumber,vrm:value(vrm),otherLimits:[]});
     const aggregate=unresolvedFacts?unresolved():e.computeOpenAggregatePhaseRisk({positions,pendingOrders:pending});
     const realizedResults=closed.map(o=>o.result);

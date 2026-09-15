@@ -62,13 +62,13 @@
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
       "order": 10,
-      "sha256": "10916a3fe3138811bc24e5c076e9c6d25619803be559847c56c09adb1d7a094b"
+      "sha256": "1819104bd215e18412b0ca2d625c909627d13c1f86e7de652a5199106ca423cd"
     },
     {
       "order": 11,
       "path": "src/js/10-domain/02-risk-calculations.js",
       "section": "CÁLCULOS",
-      "sha256": "4fdd7ce273b8a4672edfc06ce5f2d001867209af3b8c2598b9f3f0b630083e6f"
+      "sha256": "45931069b258186ec9fd9e453c975a09ec00eb15e8546b46193c81afdda15c76"
     },
     {
       "order": 12,
@@ -86,7 +86,7 @@
       "order": 14,
       "path": "src/js/20-ui/03-main-render.js",
       "section": "RENDER",
-      "sha256": "a7f8941e54264fb41b396f6d3922ee5db0c5bb067c729ba1354938f0fe166aea"
+      "sha256": "7c50b754390e7515df48fc96626d2391f0b7c4fcb96ac4110f82be984b92e077"
     },
     {
       "order": 15,
@@ -110,7 +110,7 @@
       "order": 18,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "c46834e6366fc467f43641579ab6ea9476d843f8a32c23ae84993e25f92450a8"
+      "sha256": "f28ee455d25c3a9ec34db1d7cea6238ada96c9bcd89608344b3e86223e1e8c3b"
     },
     {
       "order": 19,
@@ -134,7 +134,7 @@
       "order": 22,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "2d2d3bd1919c80bef8549cd2ac4262b8089af452d03fa66ec99eede672e9376e"
+      "sha256": "c663440dac6dc01cc64d54fde62f1f826ec60f90c3f02accfa2e26bd851ba565"
     },
     {
       "order": 23,
@@ -164,7 +164,7 @@
       "order": 27,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "d4234be7780c5735988c101fe0e1d4b9b6481ea6d102eb8473dafeef6ddf9850"
+      "sha256": "64858050cafbe11b91674558311b0d4967f9c3a6f7fe981402c3a1068c33b094"
     },
     {
       "order": 28,
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "2b3ad81212dd40b541bc2dcf9f071d2ba3c78c2996fcf8900fc45bcca070dc3e"
+      "sha256": "a01334ba45c83e1c12948863cf268c1b10615b1f2624f3405a3a481c70a3cd54"
     },
     {
       "order": 39,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "5018f6304dbaef7d596f595d9b8f6411dcfa650ed007a9361287a1bd3a731f09"
+      "sha256": "aa44421dbd3129f072b6148f9b6f4b6b00f448294b325f57bc24acc41284436e"
     },
     {
       "order": 46,
@@ -386,7 +386,7 @@
       "order": 64,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "4bab20824b2a2bcd5ba34aa5d840a67b451ead41cb9ccfa287b8b5ed57d3de1c"
+      "sha256": "2c0f276b2cdc85ae6e3be049674639e2bd1bc870db35d15e79ffe1cd72125c0f"
     },
     {
       "order": 65,
@@ -416,7 +416,7 @@
       "order": 69,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "cf8767a3b6c1352c62042a746dd013ad38aef830fcf49767bb903b0fe6634852"
+      "sha256": "9c49328e78e7c97f69b969934b5320c630b7523ef9a90661d53f827027fd28bc"
     },
     {
       "order": 70,
@@ -499,7 +499,7 @@
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 83,
-      "sha256": "dab4461bf8a95fa3bdd07ece10c10dc718bcb0767e28607c00f6d1ab0651aa1b"
+      "sha256": "d66ab3e349ca051a79eb7e6eb0d6a3a3fe737c580fe4c85566f3681a0a9178a5"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
@@ -524,6 +524,24 @@
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 87,
       "sha256": "920b37bfe8573980949979d3213f5980e637ee805e5e978796b21da7f0744f3f"
+    },
+    {
+      "path": "src/js/10-domain/19-execution-market.js",
+      "section": "Execution Board · scoped observations and factual presentation",
+      "order": 88,
+      "sha256": "c5511f91a328f671b7491098288f90a23d8f357d67ab47868c2b68f1769fd081"
+    },
+    {
+      "path": "src/js/10-domain/18-execution-board-model.js",
+      "section": "Execution Board · scoped observations and factual presentation",
+      "order": 89,
+      "sha256": "0c3388821258e039893b8d0f2fdccbca6886bad18b370b82135761344d81131a"
+    },
+    {
+      "path": "src/js/20-ui/30-execution-board.js",
+      "section": "Execution Board · scoped observations and factual presentation",
+      "order": 90,
+      "sha256": "4f7e6daefd882776454fb8acc9883ee8cee4f48addf99b63486de9b7429e644f"
     }
   ],
   "runtimeAssets": [

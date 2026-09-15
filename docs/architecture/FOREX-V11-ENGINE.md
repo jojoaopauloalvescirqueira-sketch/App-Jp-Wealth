@@ -71,3 +71,7 @@ A consolidação de uma operação V11 com conta/período/moeda ausentes ou conf
 
 ### Carregamento e status explícito de ordens
 A recarga não transforma rascunho preenchido em ordem aberta, nem converte `Active` legado em fato V11. A contraprova executou o `migrate()` completo com dados sintéticos e comprovou a promoção antiga; a revisão remove apenas essa inferência. Atividade legada sem status conciliado permanece intacta e produz `ORDER_STATUS_UNRESOLVED`/NOT_COMPUTABLE no agregado, nunca risco zero presumido. Rascunhos explicitamente identificados ficam fora da exposição. O focal inclui recarga real, além da contraprova isolada; evidências antes/depois são preservadas no diretório da campanha.
+
+## Execution Board — contexto por instrumento (2026-09-15)
+
+A evolução local em [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md) separa projeções factuais, rascunhos RAM e escrita por linha. `orderInputs` compartilha `executionBoard.instrumentInputs`: contratos/conversões por conta/período/instrumento, com origem. `readModel` usa ATR vinculado ao instrumento da Gênese única; ATR global é legado não distribuído. Policy/engine não mudam. Observações e referências diárias são comandos versionados, não cálculo na UI. Estado e validação exatos pertencem aos recibos externos da campanha; aceite/homologação permanecem separados.

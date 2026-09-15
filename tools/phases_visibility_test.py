@@ -54,7 +54,7 @@ LER_PAINEL = """
     const controles = corpo ? [...corpo.querySelectorAll('input,select,textarea,button')] : [];
     return {
       idx: +el.dataset.phase,
-      cracha: (el.querySelector('.badge')||{}).textContent || '',
+      cracha: (el.querySelector(':scope > summary')||{}).textContent || '',
       ativa: !!el.querySelector('.here'),
       controles: controles.length,
       habilitados: controles.filter(c => !c.disabled).length,
