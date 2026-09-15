@@ -13,6 +13,14 @@ jpwealth_v9_state
 - `instruments`: instrumentos, preços, contratos, tetos e bloqueios.
 - `profiles`: perfis de risco derivados da fonte central.
 - `accounts`: parque de contas e dados operacionais.
+- `fxConsolidated`: análise descritiva MT5, schema 1, com `accounts[]`
+  (identidades/vínculos, orders/deals/positions e summaries), `receipts[]`,
+  `revisions[]` e `defaultAccountId`. Não inclui arquivos originais, credenciais
+  ou cópia de operações manuais. Backup completo inclui o agregado; Finalizar
+  Sessão preserva a versão confirmada e identidades históricas mínimas, sem
+  reativar contas operacionais. Seleção analítica não altera a conta ativa.
+  Versões incompatíveis permanecem opacas. Contrato em
+  [FOREX-CONSOLIDATED.md](FOREX-CONSOLIDATED.md).
 - `phases`: grades e ordens da operação única.
 - `ledger`: fechamentos diários do período.
 - `ledgerArchive`: snapshots de períodos anteriores.
@@ -49,6 +57,10 @@ jpwealth_v9_state
   `unobserved`; `unknown` aparece em discussão como sinônimo informal, mas não é
   o valor gravado. Invariante de integridade: `openedAt <= closedAt` quando
   ambos existem; uma operação não pode terminar antes de começar.
+  O Consolidado Manual consulta esta mesma fonte, sem duplicá-la. Finalizar
+  Sessão preserva o histórico confirmado; a exclusão total explícita mantém
+  seu contrato. Campos capturados ausentes não são preenchidos pelo cadastro
+  atual. Versões futuras permanecem opacas para evitar normalização destrutiva.
 - `personalFinance`: Finanças Pessoais — domínio fechado (não cruza trading),
   schema v1 **congelado**: `{schemaVersion, moneyUnit:'BRL_CENTS', months{},
   recurringIncome[], debts[], creditLines[], scenarios[]}`. Montantes são

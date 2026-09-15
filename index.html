@@ -144,6 +144,10 @@
           <span class="nav-sub-item-title">Contabilidade</span>
           <span class="nav-sub-item-desc">Contabilidade e Histórico</span>
         </button>
+        <button type="button" data-nav-item data-nav-child="forex-consolidated">
+          <span class="nav-sub-item-title">Consolidado FX</span>
+          <span class="nav-sub-item-desc">Histórico e desempenho por conta</span>
+        </button>
         <button type="button" data-nav-item data-nav-child="forex-planning">
           <span class="nav-sub-item-title">Planejamento</span>
           <span class="nav-sub-item-desc">Plano, realizado e histórico</span>
@@ -311,6 +315,7 @@
     <button class="reset-btn" id="onbBannerBtn" style="color:var(--violet); border-color:var(--violet)">Continuar preenchimento</button>
   </div>
   <!-- ================= 01 EXECUTION BOARD ================= -->
+  <section class="screen" id="fxconsolidated" aria-label="Consolidado FX"></section>
   <section class="screen" id="exec">
     <!-- WORKSPACES DO MÓDULO (segundo nível — contrato em
          docs/architecture/NAVIGATION-HIERARCHY.md).
@@ -1865,5 +1870,9 @@
 </dialog>
 <script src="src/js/40-app/18-notification-center.js"></script>
 <script src="src/js/20-ui/26-forex-engine-views.js"></script>
+<script src="src/js/10-domain/17-fx-consolidated-model.js"></script>
+<script src="src/js/40-app/24-fx-consolidated-import.js"></script>
+<script src="src/js/40-app/25-fx-consolidated-pdf.js"></script>
+<script src="src/js/20-ui/28-fx-consolidated.js"></script>
 </body>
 </html>

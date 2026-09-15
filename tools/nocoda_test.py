@@ -17,6 +17,7 @@ import socket
 import threading
 
 from playwright.sync_api import sync_playwright
+from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,18 +59,14 @@ def assert_close(actual, expected, tolerance=TOL, label="valor"):
 
 
 def prepare_page(browser, url):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
+    context = browser.new_context(service_workers="block", viewport={"width": 1440, "height": 900})
     context.add_init_script("window.__onbShown=true;")
+    install_bootstrap(context)
     page = context.new_page()
     observed = {"pageerror": []}
     page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))
-    page.route(
-        "**/*",
-        lambda route: route.continue_()
-        if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
     page.goto(url)
+    wait_bootstrap(page)
     page.wait_for_function("() => window.JPWNocoda && window.JPWNocoda.geometry")
     return context, page, observed
 
@@ -454,6 +451,7 @@ def run_save_and_reload(page):
     primeiro_updated = salvo["updatedAt"]
 
     page.reload()
+    wait_bootstrap(page)
     page.wait_for_function("() => window.JPWNocoda && window.JPWNocodaUI")
     open_nocoda(page)
     recuperado = page.evaluate("id => S.nocoda.studies[id]", alvo)
@@ -544,6 +542,7 @@ def run_removed_instrument_keeps_study(page, alvo):
         alvo,
     )
     page.reload()
+    wait_bootstrap(page)
     page.wait_for_function("() => window.JPWNocoda && window.JPWNocodaUI")
     sobreviveu = page.evaluate("id => !!(S.nocoda.studies && S.nocoda.studies[id])", alvo)
     assert sobreviveu, "estudo foi destruido ao remover o instrumento da lista operacional"
@@ -561,17 +560,14 @@ def run_state_compat(browser, url, mutacao, rotulo):
     quebraria renderizadores por motivo alheio a esta feature, medindo a fixture
     em vez do produto. `mutacao` recebe o clone e simula a condicao desejada.
     """
-    context = browser.new_context(viewport={"width": 1280, "height": 860})
+    context = browser.new_context(service_workers="block", viewport={"width": 1280, "height": 860})
     context.add_init_script("window.__onbShown=true;")
+    install_bootstrap(context)
     page = context.new_page()
     erros = []
     page.on("pageerror", lambda e: erros.append(str(e)))
-    page.route(
-        "**/*",
-        lambda route: route.continue_() if "127.0.0.1" in route.request.url
-        else route.fulfill(status=200, content_type="application/json", body="{}"),
-    )
     page.goto(url)
+    wait_bootstrap(page)
     page.wait_for_function("() => typeof DEFAULTS === 'object'")
     page.evaluate(
         """mut => {
@@ -582,6 +578,7 @@ def run_state_compat(browser, url, mutacao, rotulo):
         mutacao,
     )
     page.reload()
+    wait_bootstrap(page)
     page.wait_for_function("() => window.JPWNocoda && typeof S === 'object'")
     forma = page.evaluate(
         """() => ({
@@ -597,6 +594,7 @@ def run_state_compat(browser, url, mutacao, rotulo):
     assert forma["quantos"] == 0, f"{rotulo}: default deveria ser vazio, veio {forma['quantos']}"
     assert forma["versao"] == 1, f"{rotulo}: schemaVersion incorreta — {forma['versao']}"
     assert not erros, f"{rotulo}: pageerror — {erros}"
+    assert_fixture_requests(context)
     context.close()
 
 
@@ -670,6 +668,7 @@ def main():
             run_subdivision_count(page)
             run_instrument_identity(page)
             assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
+            assert_fixture_requests(context)
             context.close()
 
             # Interface, persistencia e nao regressao, em contexto proprio para
@@ -688,6 +687,7 @@ def main():
             run_no_operational_mutation(page)
             run_removed_instrument_keeps_study(page, primeiro)
             assert not observed["pageerror"], f"pageerror no fluxo de UI: {observed['pageerror']}"
+            assert_fixture_requests(context)
             context.close()
 
             # Estado anterior a feature: a chave nem existe.

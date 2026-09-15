@@ -38,6 +38,7 @@ def arquivos_do_candidato():
     arquivos = {p for p in saida.decode('utf-8').split('\0') if p}
     manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
     arquivos.update(item['path'] for item in manifest['files'])
+    arquivos.update(item['path'] for item in manifest.get('runtimeAssets', []))
     arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
     return sorted(arquivos)
 

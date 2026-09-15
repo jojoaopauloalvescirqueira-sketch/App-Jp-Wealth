@@ -302,4 +302,5 @@ function render(){
   if(typeof renderSystemStatus==='function') renderSystemStatus();
   if(window.JPWDashMacro) window.JPWDashMacro.schedule();
   if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
+  if(document.getElementById('fxconsolidated')?.classList.contains('active')&&window.JPWFXConsolidated?.render)window.JPWFXConsolidated.render();
 }

@@ -1,0 +1,27 @@
+{
+  "name": "PDF.js",
+  "version": "6.3.289",
+  "license": "Apache-2.0",
+  "release": "https://github.com/mozilla/pdf.js/releases/tag/v6.3.289",
+  "tarball": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.3.289.tgz",
+  "integrity": "sha512-ZHjSVpDa3D6izMq8/04lvkhkATUmL9px6ChPaXc1k6nU2Mrhlg1/7F0bdUqCwUjw3NsPTfPZsMDUU6ZIcRaeQw==",
+  "tarballSha256": "06f25e887adc6489f04c9fcb14198c77e4e5623a59a0bba5c4cea5838a4f1241",
+  "files": [
+    {
+      "path": "src/vendor/pdfjs/pdf.mjs",
+      "sha256": "f80490490320511e5df18c580b9edd6b5db8058dceebaf6f161992e0a964b9e2",
+      "type": "module"
+    },
+    {
+      "path": "src/vendor/pdfjs/pdf.worker.mjs",
+      "sha256": "8ab0e5e30031b4a06ecfddd5ae9562f0227f830ee7ec9ed1a968b134243d2386",
+      "type": "worker"
+    },
+    {
+      "path": "src/vendor/pdfjs/LICENSE.txt",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "type": "metadata"
+    }
+  ],
+  "scope": "Text extraction only. No viewer, fonts, WASM, CDN, external resources or PDF JavaScript execution."
+}

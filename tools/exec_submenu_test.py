@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
 EXPECTED_CHILDREN = ["forex-overview", "forex-preparation", "forex-account",
-                     "forex-reserves", "forex-operation", "forex-reconciliation", "forex-planning"]
-EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Reservas", "Operação", "Contabilidade", "Planejamento"]
+                     "forex-reserves", "forex-operation", "forex-reconciliation", "forex-consolidated", "forex-planning"]
+EXPECTED_LABELS = ["Visão Geral", "Preparação", "Conta", "Reservas", "Operação", "Contabilidade", "Consolidado FX", "Planejamento"]
 EXPECTED_VIEWS = ["overview", "panel", "motor", "history"]
 EXPECTED_CONTEXT = {
     "forex-operation": ["panel", "motor"],

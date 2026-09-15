@@ -1,0 +1,5 @@
+{
+  "provenance": "Synthetic, independently hand-calculated. No owner export was used.",
+  "en": {"orders": 1, "deals": 8, "netProfit": 85, "tradeCount": 3, "grossProfit": 200, "grossLoss": -100, "commission": -13, "swap": -2, "balance": 1585, "drawdownAmount": 110, "growthPct": 11.744837758112103},
+  "pt": {"ticket": "123456789012345678", "netProfit": 1233.06, "volume": 0.1}
+}

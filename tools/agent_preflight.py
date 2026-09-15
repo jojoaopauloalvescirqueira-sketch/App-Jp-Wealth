@@ -171,6 +171,31 @@ def inspect_manifest(errors: list[str], facts: dict[str, object]) -> None:
         errors.append("ordem dos scripts diverge de src/js/manifest.json")
     facts["manifest_scripts"] = len(manifest.get("files", []))
 
+    assets = manifest.get("runtimeAssets", [])
+    expected = {"src/vendor/pdfjs/pdf.mjs": "module", "src/vendor/pdfjs/pdf.worker.mjs": "worker",
+                "src/vendor/pdfjs/LICENSE.txt": "metadata", "src/vendor/pdfjs/PROVENANCE.json": "metadata"}
+    if not isinstance(assets, list):
+        errors.append("runtimeAssets deve ser lista")
+        assets = []
+    paths = [item.get("path") for item in assets if isinstance(item, dict)]
+    required = any(item.get("path") == "src/js/40-app/25-fx-consolidated-pdf.js" for item in manifest.get("files", []))
+    if (required or assets) and (len(paths) != len(expected) or set(paths) != set(expected)):
+        errors.append("recursos PDF incompletos, duplicados ou inesperados")
+    for item in assets:
+        if not isinstance(item, dict) or item.get("path") not in expected:
+            errors.append("recurso PDF nao permitido")
+            continue
+        relative = item["path"]
+        resource = ROOT / relative
+        if item.get("type") != expected[relative] or resource.is_symlink() or not resource.is_file() or resource.resolve() != ROOT.resolve() / relative:
+            errors.append(f"recurso PDF invalido ou fora da raiz: {relative}")
+            continue
+        if hashlib.sha256(resource.read_bytes()).hexdigest() != item.get("sha256"):
+            errors.append(f"hash de recurso PDF divergente: {relative}")
+        if any(script.get("path") == relative for script in manifest.get("files", [])):
+            errors.append(f"ESM/worker nao pode ser script classico: {relative}")
+    facts["manifest_runtime_assets"] = len(assets)
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)

@@ -10,6 +10,7 @@ const SETTINGS_GROUPS=[
   {id:'appearance-interface', label:'Aparência e Interface', desc:'Tema, ícone, organização visual e editor.', icon:'appearance', children:['appearance','interface','editor']},
   {id:'method-governance', label:'Método e Governança', desc:'Estatuto operacional, parâmetros e calibração.', icon:'governance', children:['statute','parameters']},
   {id:'operations', label:'Operação', desc:'Parâmetros do ciclo e Checklist pré-trade.', icon:'operations', children:['tool-params','tool-check']},
+  {id:'forex-preferences', label:'Forex', desc:'Preferências de consulta do Consolidado FX.', icon:'operations', children:['forex-consolidated']},
   {id:'knowledge', label:'Conhecimento', desc:'Material educacional e referências do método.', icon:'knowledge', children:['educational']},
   {id:'data-security', label:'Dados e Segurança', desc:'Backup, recuperação, armazenamento e integridade.', icon:'data', children:['backup','storage']},
   {id:'about', label:'Sobre', icon:'about'}
@@ -25,6 +26,7 @@ const SETTINGS_LEAVES={
   parameters:{label:'Parâmetros e Calibração', group:'method-governance', desc:'Valores, limites, perfis e modelo estatístico.', terms:['parâmetros','calibração','mdd','drawdown','alavancagem','gênese','quarentena','mei']},
   'tool-params':{label:'Parâmetros', group:'operations', desc:'Motor Forex, observações da conta, política V11 e propostas locais.', terms:['parâmetros','saldo','ciclo','constantes','decisões','matriz','V11','seis fases','reservas','editor']},
   'tool-check':{label:'Checklist', group:'operations', desc:'Checklist pré-trade e pontuação do filtro.', terms:['checklist','pré-trade','pontuação','filtro','nocuda','setup']},
+  'forex-consolidated':{label:'Conta padrão do Consolidado',group:'forex-preferences',desc:'Seleção analítica independente da conta operacional.',terms:['forex','consolidado','MT5','conta padrão','mestre','histórico']},
   backup:{label:'Backup e Recuperação', group:'data-security', desc:'Exportar, importar e restaurar o estado completo.', terms:['backup','exportar','importar','recuperação','reset','limpar','pasta padrão','pasta de armazenamento','sequência de exportação','backup confirmado','reautorizar pasta','alterações desde o backup']},
   storage:{label:'Armazenamento Local', group:'data-security', desc:'Informações sobre os dados salvos neste navegador.', terms:['armazenamento','local','schema','integridade','offline']}
 };
@@ -484,6 +486,7 @@ function buildSettingsContent(){
   createSettingsPanel('tool-check','<p class="settings-lead">O Checklist Pré-Trade completo — mesma pontuação, mesmos critérios, mesma persistência.</p><div data-settings-slot="tool-check"></div>');
   createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
+  createSettingsPanel('forex-consolidated',window.JPWFXConsolidated?.settingsMarkup?window.JPWFXConsolidated.settingsMarkup():'<p>Consolidado indisponível neste carregamento.</p>');
   content.addEventListener('click',settingsContentClick,true);
   content.dataset.ready='true';
   bindSettingsProfileEditor();
@@ -552,6 +555,7 @@ function activateSettingsCategory(id,options={}){
   if(settingsRedirectResearchLab(id)) return;
   const exists=document.querySelector(`[data-settings-panel="${id}"]`);
   const targetId=exists?id:'general';
+  if(targetId==='forex-consolidated'&&window.JPWFXConsolidated?.bindSettings)window.JPWFXConsolidated.bindSettings();
   if(settingsState.active==='account'&&targetId!=='account') cancelSettingsProfileDraft();
   if(targetId==='account'&&settingsState.active!=='account') beginSettingsProfileDraft();
   if(settingsState.active==='editor'&&targetId!=='editor'&&typeof cancelNavOrderPreview==='function') cancelNavOrderPreview();

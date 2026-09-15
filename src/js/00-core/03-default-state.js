@@ -14,6 +14,9 @@ const DEFAULTS = {
   forex:{schemaVersion:1,policyVersion:JPWForex.policy.version,activeAccountId:null,accounts:{},market:null,
     h4Closes:[],grid:null,reserves:null,proposals:[],auditLog:[],migration:{source:'NEW_EMPTY_STATE'}},
   ledgerHistory:{schemaVersion:1,events:[]},
+  // Longitudinal, separado do histórico manual canônico em operationHistory.
+  // O modelo tardio valida este envelope; migrate só cria a chave quando ausente.
+  fxConsolidated:{schemaVersion:1,accounts:[],receipts:[],revisions:[],defaultAccountId:null},
   atr55:0.00335, atr660:0.00426, expAlvo:0.4,
   // 'preco' = cotação de mercado do par. O nocional USD é derivado por usdPerBase():
   // pares de base USD (USDJPY/CHF/CAD) têm nocional fixo de $100k; AUDCAD usa AUDUSD.

@@ -32,9 +32,34 @@ FINGERPRINT_FIXED_INPUTS = (
 )
 FINGERPRINT_TAIL_INPUTS = ('manifests/jp-wealth.webmanifest',)
 
+def runtime_assets():
+    """Only explicitly declared local PDF resources; never classic-script inputs."""
+    assets = manifest.get('runtimeAssets', [])
+    expected = {'src/vendor/pdfjs/pdf.mjs': 'module', 'src/vendor/pdfjs/pdf.worker.mjs': 'worker',
+                'src/vendor/pdfjs/LICENSE.txt': 'metadata', 'src/vendor/pdfjs/PROVENANCE.json': 'metadata'}
+    if not isinstance(assets, list):
+        raise SystemExit('ERRO: runtimeAssets deve ser lista')
+    paths = [item.get('path') for item in assets if isinstance(item, dict)]
+    required = any(item.get('path') == 'src/js/40-app/25-fx-consolidated-pdf.js' for item in manifest['files'])
+    if (required or assets) and (len(paths) != len(expected) or set(paths) != set(expected)):
+        raise SystemExit('ERRO: recursos PDF incompletos, duplicados ou inesperados')
+    for item in assets:
+        relative = item['path']
+        path = ROOT / relative
+        if item.get('type') != expected[relative] or path.is_symlink() or not path.is_file() or path.resolve() != ROOT.resolve() / relative:
+            raise SystemExit(f'ERRO: recurso PDF invalido ou fora da raiz: {relative}')
+        if hashlib.sha256(path.read_bytes()).hexdigest() != item.get('sha256'):
+            raise SystemExit(f'ERRO: hash de recurso PDF divergente: {relative}')
+        if any(script['path'] == relative for script in manifest['files']):
+            raise SystemExit(f'ERRO: ESM/worker nao pode ser script classico: {relative}')
+    return assets
+
+RUNTIME_ASSETS = runtime_assets()
+
 def build_id():
     files = [ROOT / rel for rel in FINGERPRINT_FIXED_INPUTS]
     files.extend(ROOT / item['path'] for item in manifest['files'])
+    files.extend(ROOT / item['path'] for item in RUNTIME_ASSETS)
     files.extend(ROOT / rel for rel in FINGERPRINT_TAIL_INPUTS)
     digest = hashlib.sha256()
     for path in files:
@@ -56,6 +81,11 @@ js = '\n'.join((ROOT / item['path']).read_text(encoding='utf-8').rstrip() for it
 
 html = re.sub(r'<link rel="stylesheet" href="src/styles/app\.css">', '<style>\n' + css + '\n</style>', index, count=1)
 portable_bootstrap = build_id_source + "window.JP_WEALTH_PORTABLE_BUILD = true;\n"
+# Base64 keeps ESM/worker bytes outside the classic script parser (and </script>).
+embedded_assets = {item['path']: base64.b64encode((ROOT / item['path']).read_bytes()).decode('ascii')
+                   for item in RUNTIME_ASSETS}
+if embedded_assets:
+    portable_bootstrap += 'window.JPW_RUNTIME_ASSETS = ' + json.dumps(embedded_assets, separators=(',', ':')) + ';\n'
 html = html.replace('<script src="build-id.js"></script>', '<script>\n' + portable_bootstrap + '</script>', 1)
 for item in manifest['files']:
     tag = f'<script src="{item["path"]}"></script>'
