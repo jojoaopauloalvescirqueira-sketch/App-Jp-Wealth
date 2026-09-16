@@ -1,3 +1,9 @@
+# Atualização focal — motor Forex integrado
+
+Fonte desta informação Forex: commit `01c08241ccb7bc229a05779a52f577ee55a69ae7`, build `9f236bf4a421a1bf`. O catálogo de Parâmetros alimenta o motor central; ver [FOREX-V11-ENGINE](../architecture/FOREX-V11-ENGINE.md) e [PROJECT-CONTEXT](PROJECT-CONTEXT.md). Não é homologação financeira: compatibilidade legada, dimensão operacional indisponível, A12 parcial, OPEN-05/V11/FCR/FEO e AUD-05/P2 permanecem. Esta atualização documental local não declara integração deste lote nem reconciliação global do contexto.
+
+## Fotografias históricas abaixo — não representam o estado atual global
+
 # Completion pass local — APPLE01, 2026-09-12
 
 last_verified: 2026-09-12
