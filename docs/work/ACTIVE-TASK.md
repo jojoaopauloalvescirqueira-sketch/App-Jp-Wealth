@@ -1,3 +1,9 @@
+# Em execução — galeria de avatares (2026-09-16)
+
+Contrato [CHG-PROFILE-GALLERY-20260916](CHG-PROFILE-GALLERY-20260916.md). Base `056c4690f41170e5deaa3a5037a949a2174b9203`, branch `codex/jp-wealth-profile-gallery-20260916`. Catálogo local de 19 retratos, com associação de nomes confirmada pelo proprietário, categorias, busca e escolha pelo rascunho existente. N1; schema/escritor/backup/limpeza preservados. Evidência externa `../evidence/`. Implementação local; nenhum aceite, commit ou publicação desta feature atribuído.
+
+## Histórico preservado
+
 # Em execução — identidade visual conjunta do cabeçalho e PWA (2026-09-15)
 
 Contrato [CHG-JP-WEALTH-BRAND-PWA-20260915](CHG-JP-WEALTH-BRAND-PWA-20260915.md). Branch `codex/jp-wealth-brand-pwa-20260915`, base integrada `e7a6e15f65168489b3fc28a4577825b62caa34d4`. O proprietário autorizou explicitamente a criação da branch/worktree e a implementação, incluindo o delta N3/A4 limitado a manifests, precache, fingerprint e validação do PWA. A entrega substitui a marca do cabeçalho e os ícones instaláveis por Vermelho/Preto; preserva a preferência `jpwealth_v9_icon_choice`, backup e Finalizar Sessão. Candidate, aceite humano, commit, push, merge e deploy permanecem gates separados.

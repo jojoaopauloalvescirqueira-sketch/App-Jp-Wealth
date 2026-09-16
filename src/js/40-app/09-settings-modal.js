@@ -16,7 +16,7 @@ const SETTINGS_GROUPS=[
   {id:'about', label:'Sobre', icon:'about'}
 ];
 const SETTINGS_LEAVES={
-  account:{label:'JP Wealth Account', group:null, desc:'Sua identidade local neste navegador.', terms:['perfil','conta local','nome de exibição','foto','avatar','JP Wealth Account']},
+  account:{label:'JP Wealth Account', group:null, desc:'Sua identidade local neste navegador.', terms:['perfil','conta local','nome de exibição','foto','avatar','galeria','JP Wealth Account']},
   about:{label:'Sobre', group:null, terms:['sobre','versão','build','offline','armazenamento','documentação','changelog']},
   appearance:{label:'Aparência', group:'appearance-interface', desc:'Tema e ícone do aplicativo.', terms:['tema','aparência','ícone','paleta','contraste']},
   interface:{label:'Interface', group:'appearance-interface', desc:'Tamanho do texto e instruções do sistema.', terms:['interface','fonte','tamanho','tipografia','sidebar','barra lateral','ajuda','instruções']},
@@ -215,6 +215,7 @@ function renderSettingsProfile(){
   const choose=settingsEl('settingsProfileChoosePhotoBtn');if(choose) choose.disabled=disabled;
   const remove=settingsEl('settingsProfileRemovePhotoBtn');if(remove) remove.disabled=disabled||(!state.draft.avatarDataUrl&&!state.busy);
   const cancel=settingsEl('settingsProfileCancelBtn');if(cancel) cancel.disabled=state.blocked==='unknown'||state.saving||(!settingsProfileDirty()&&!state.busy&&state.blocked!=='conflict');
+  renderSettingsProfileGallery();
   settingsProfileSetStatus(state.note,state.status);
 }
 function beginSettingsProfileDraft(){
@@ -226,12 +227,64 @@ function cancelSettingsProfileDraft(){
   if(settingsProfileState.blocked==='unknown'){renderSettingsProfile();return;}
   settingsProfileReload();
 }
+function settingsProfileGalleryPanel(){
+  const groups=[...new Set(SETTINGS_PROFILE_AVATARS.map(avatar=>avatar.group))];
+  return `<details id="settingsProfileGallery" class="settings-avatar-gallery">
+    <summary><span>Galeria do JP Wealth<small>19 retratos para escolher</small></span></summary>
+    <div class="settings-avatar-filters">
+      <label for="settingsProfileAvatarSearch">Buscar por nome<input id="settingsProfileAvatarSearch" type="search" placeholder="Buscar retrato" autocomplete="off" spellcheck="false"></label>
+      <label for="settingsProfileAvatarGroup">Grupo<select id="settingsProfileAvatarGroup"><option value="all">Todos os grupos</option>${groups.map(group=>`<option value="${settingsEsc(group)}">${settingsEsc(group)}</option>`).join('')}</select></label>
+    </div>
+    <p id="settingsProfileAvatarCount" class="settings-avatar-count" role="status" aria-live="polite"></p>
+    <div class="settings-avatar-results">
+      ${groups.map((group,index)=>`<section class="settings-avatar-group" data-avatar-group="${settingsEsc(group)}" aria-labelledby="settingsAvatarGroup${index}"><h5 id="settingsAvatarGroup${index}">${settingsEsc(group)}</h5><div class="settings-avatar-grid">${SETTINGS_PROFILE_AVATARS.filter(avatar=>avatar.group===group).map(avatar=>`<button type="button" class="settings-avatar-choice" data-profile-avatar="${settingsEsc(avatar.id)}" aria-label="Usar retrato de ${settingsEsc(avatar.name)}" aria-pressed="false"><span class="settings-avatar-picture"><img src="${avatar.avatarDataUrl}" alt="" width="72" height="72" loading="lazy" decoding="async" draggable="false"><span class="settings-avatar-check" aria-hidden="true">✓</span></span><span>${settingsEsc(avatar.name)}</span></button>`).join('')}</div></section>`).join('')}
+      <p id="settingsProfileAvatarEmpty" class="note" hidden>Nenhum retrato encontrado. Tente outro nome ou grupo.</p>
+    </div>
+    <p id="settingsProfileAvatarSelection" class="settings-avatar-selection" aria-live="polite"></p>
+  </details>`;
+}
+function renderSettingsProfileGallery(){
+  const gallery=settingsEl('settingsProfileGallery');if(!gallery) return;
+  const state=settingsProfileState;
+  const normalize=value=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const query=normalize(settingsEl('settingsProfileAvatarSearch').value.trim());
+  const group=settingsEl('settingsProfileAvatarGroup').value;
+  let count=0;
+  gallery.querySelectorAll('[data-profile-avatar]').forEach(button=>{
+    const avatar=SETTINGS_PROFILE_AVATARS.find(item=>item.id===button.dataset.profileAvatar);
+    const visible=(group==='all'||avatar.group===group)&&normalize(avatar.name).includes(query);
+    button.hidden=!visible;if(visible) count++;
+    button.disabled=!!state.blocked||state.saving;
+    button.setAttribute('aria-pressed',String(state.draft.avatarDataUrl===avatar.avatarDataUrl));
+  });
+  gallery.querySelectorAll('[data-avatar-group]').forEach(section=>{section.hidden=!section.querySelector('[data-profile-avatar]:not([hidden])');});
+  settingsEl('settingsProfileAvatarEmpty').hidden=count>0;
+  const counter=settingsEl('settingsProfileAvatarCount');
+  const result=`${count} ${count===1?'retrato disponível':'retratos disponíveis'}`;
+  if(counter.textContent!==result) counter.textContent=result;
+  const selected=SETTINGS_PROFILE_AVATARS.find(avatar=>avatar.avatarDataUrl===state.draft.avatarDataUrl);
+  const selection=settingsEl('settingsProfileAvatarSelection');
+  const label=selected?`Selecionado: ${selected.name}.`:'Escolha um retrato para ver a prévia no seu perfil.';
+  if(selection.textContent!==label) selection.textContent=label;
+}
+function selectSettingsProfileAvatar(id){
+  const state=settingsProfileState;
+  if(state.blocked||state.saving||state.epoch!==settingsProfileEpoch()) return;
+  const avatar=SETTINGS_PROFILE_AVATARS.find(item=>item.id===id);
+  if(!avatar||!settingsProfileAvatarValid(avatar.avatarDataUrl)) return;
+  // Invalida um upload anterior que ainda possa terminar depois da escolha.
+  settingsProfileCancelAsync();state.editing=true;
+  state.draft.avatarDataUrl=avatar.avatarDataUrl;
+  settingsProfileSetStatus(`Prévia de ${avatar.name}. Salve o perfil para confirmar a foto.`,'dirty');
+  renderSettingsProfile();
+}
 function settingsAccountPanel(){
   return `<form id="settingsProfileForm" class="settings-account-form" novalidate>
     <section class="settings-account-group" aria-label="Identidade local">
       <div class="settings-account-row"><label for="settingsProfileNameInput">Nome de exibição</label><input id="settingsProfileNameInput" type="text" autocomplete="off" spellcheck="false" aria-describedby="settingsProfileNameHelp"><p class="note" id="settingsProfileNameHelp">Até 120 caracteres. Deixe vazio para usar Seu perfil.</p></div>
       <div class="settings-account-row"><span>Foto do perfil</span><div class="settings-account-photo-actions"><input id="settingsProfilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><button type="button" class="reset-btn" id="settingsProfileChoosePhotoBtn">Escolher foto</button><button type="button" class="reset-btn" id="settingsProfileRemovePhotoBtn">Remover foto</button></div><p class="note">PNG, JPEG ou WebP estático. Até 5 MiB e 16 megapixels.</p></div>
     </section>
+    ${settingsProfileGalleryPanel()}
     <p class="settings-account-privacy">Seu nome e sua foto ficam somente neste navegador. A foto não é enviada a servidores. O backup financeiro não inclui este perfil; Finalizar sessão remove-o deste computador.</p>
     <p id="settingsProfileStatus" role="status" aria-live="polite" data-state="info"></p>
     <div class="settings-account-actions"><button type="button" class="reset-btn" id="settingsProfileCancelBtn">Cancelar</button><button type="submit" class="reset-btn settings-account-save" id="settingsProfileSaveBtn">Salvar perfil</button></div>
@@ -356,6 +409,16 @@ function bindSettingsProfileEditor(){
     settingsProfileSetStatus(settingsProfileNameValid(event.target.value)?'Prévia não salva. Salve o perfil para confirmar o nome.':'Use até 120 caracteres no nome, sem caracteres de controle.',settingsProfileNameValid(event.target.value)?'dirty':'error');renderSettingsProfile();
   });
   settingsEl('settingsProfileChoosePhotoBtn').addEventListener('click',()=>settingsEl('settingsProfilePhotoInput').click());
+  settingsEl('settingsProfileAvatarSearch').addEventListener('input',renderSettingsProfileGallery);
+  settingsEl('settingsProfileAvatarSearch').addEventListener('keydown',event=>{
+    // Buscar dentro do formulário não é uma confirmação do rascunho.
+    if(event.key==='Enter') event.preventDefault();
+  });
+  settingsEl('settingsProfileAvatarGroup').addEventListener('change',renderSettingsProfileGallery);
+  settingsEl('settingsProfileGallery').addEventListener('click',event=>{
+    const choice=event.target.closest('[data-profile-avatar]');
+    if(choice) selectSettingsProfileAvatar(choice.dataset.profileAvatar);
+  });
   settingsEl('settingsProfilePhotoInput').addEventListener('change',event=>{
     const file=event.target.files&&event.target.files[0];event.target.value='';selectSettingsProfilePhoto(file);
   });
