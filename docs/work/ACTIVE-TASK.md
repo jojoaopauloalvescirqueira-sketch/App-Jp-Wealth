@@ -45,6 +45,12 @@ Contrato vigente deste lote: [CHG/CTX](CHG-FX-ACCOUNT-REGISTRATION-20260915.md).
 
 ---
 
+# Tarefa local — FOREX-ENGINE-CONTEXT
+
+Branch `codex/forex-engine-context`, base `01c08241ccb7bc229a05779a52f577ee55a69ae7`. Atualização focal N3/A4 autorizada das instruções e contexto Forex; [CHG/CTX](CHG-FOREX-ENGINE-CONTEXT.md). Sem mudanças de produto ou integração.
+
+## Histórico anterior preservado
+
 # Tarefa atual — APPLE NOTES EXPERIENCE MATCH
 
 2026-09-14. Branch `codex/apple-notes-match-20260914`, base integrada `9ca32073e1fa032318b7e6e6eb50b5f693efe2d9`. Implementação local N2/A3 explicitamente autorizada; sem aceite ou integração. Objetivo, arquivos, invariantes, testes e rollback em [CHG/CTX](CHG-APPLE-NOTES-MATCH-20260914.md). Escopo: apresentação de Notas e preferências visuais; fonte financeira, dados, controles e outras entregas preservados. Evidências externas: `/Users/joaopauloalves/.codex/apple-notes-match/20260914/evidence/`.

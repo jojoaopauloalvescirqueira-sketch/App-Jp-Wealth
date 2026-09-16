@@ -1,6 +1,7 @@
 # Contexto canonico do projeto
 
-Atualizado em: 2026-09-09
+Revisão geral histórica: 2026-09-09
+Atualização focal Forex: base integrada `01c08241ccb7bc229a05779a52f577ee55a69ae7`, build `9f236bf4a421a1bf`. Somente os trechos Forex abaixo refletem essa revisão; as demais áreas conservam sua data e limites originais.
 Natureza: contexto estavel (M1). Mudancas frequentes pertencem a `CURRENT-STATE.md`.
 
 Base material desta reconciliação: `484228189cc3f5f4c297f29f88f2b2ed541a3afd`,
@@ -23,7 +24,7 @@ funcionalidade entregue, promessa de retorno ou autorização de implementação
 |---|---|---|
 | Dashboard | Sintetizar o sistema e dar acesso às áreas | Resumos de Forex, Finanças Pessoais, Research e Alladin; abaixo, Status do Sistema e Ações rápidas. Consome valores canônicos e não cria um domínio financeiro próprio. |
 | Research | Organizar estudos e análises para apoiar decisões de investimento | Calendário Econômico, Estudos NoCoda e Estudos dos Pivots. Ações, Stocks, REITs e Others têm placeholders explícitos. Estudos não geram ordens nem autorizam operação. |
-| Forex | Apoiar a operação em derivativos e a gestão de risco | Visão Geral, Preparação, Conta, Operação, Apuração e Planejamento, com onboarding, cálculo de risco, histórico e simulação estatística. Motor financeiro legado; adoção documental V11 não é homologação financeira. |
+| Forex | Apoiar a operação em derivativos e a gestão de risco | Motor central orientado por Parâmetros, registro factual separado da elegibilidade, Reservas e Contabilidade; compatibilidade legada e limites em FOREX-V11-ENGINE. Integração V11 não é homologação financeira. |
 | Finanças Pessoais | Apoiar o planejamento financeiro pessoal e familiar | Orçamento mensal, dívidas/crédito, comparação, cenários e síntese. Domínio fechado; não inclui inventário/patrimônio nem integração automática com trading. |
 | Alladin | Consolidar investimentos e registros patrimoniais | Cadastro, ledger, saldos de caixa e posições por quantidade, com criação e estorno de lançamentos. Consolidação parcial: não há valuation, cost basis, P&L/performance ou patrimônio completo; integrações Trading/PF/FX continuam pendentes. |
 
@@ -40,8 +41,7 @@ contratos compartilhados pertinentes, mesmo quando atravessam pastas ou módulos
 - Arquitetura: `docs/architecture/`.
 - Estado atual e divida conhecida: `docs/governance/CURRENT-STATE.md`.
 
-A adoção documental da V11 não adapta o motor legado quadrifásico. As diferenças
-financeiras e de fontes permanecem em `CURRENT-STATE.md`, sem migração automática.
+O motor central Forex já foi integrado na revisão focal acima. Seu catálogo de Parâmetros (`src/js/00-core/00-forex-policy.js`) alimenta o executor (`src/js/10-domain/00-forex-engine.js`); o estado/read-model e a UI consomem essa política sem definir regras concorrentes. Contrato: [FOREX-V11-ENGINE](../architecture/FOREX-V11-ENGINE.md). A política ativa permanece imutável; propostas não a ativam. Registro de fatos não autoriza operação; lacunas, conflitos FCR/FEO, dimensionamento indisponível e A12 parcial permanecem. Dados legados não são reinterpretados nem migrados silenciosamente.
 
 O codigo nao se torna normativo por estar em producao. Um teste nao torna correta uma regra que conflita com o Estatuto.
 
