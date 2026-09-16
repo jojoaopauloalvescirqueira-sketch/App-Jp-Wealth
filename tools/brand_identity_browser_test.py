@@ -16,7 +16,17 @@ import time
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
-CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+
+
+def chrome_binary() -> Path | None:
+    """Resolve Chrome local ou Chromium instalado pelo Playwright no CI."""
+    candidates = [
+        Path(os.environ.get("JP_WEALTH_CHROMIUM", "")),
+        Path("/usr/bin/chromium"),
+        Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
+    ]
+    candidates.extend(sorted(Path.home().glob(".cache/ms-playwright/chromium-*/chrome-linux/chrome"), reverse=True))
+    return next((path for path in candidates if path.is_file()), None)
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -88,15 +98,16 @@ def free_port() -> int:
 
 
 def main() -> None:
-    if not CHROME.is_file():
-        raise SystemExit("ENVIRONMENT_ERROR: Google Chrome indisponivel")
+    chrome_binary_path = chrome_binary()
+    if not chrome_binary_path:
+        raise SystemExit("ENVIRONMENT_ERROR: Chrome ou Chromium do Playwright indisponivel")
     os.chdir(ROOT)
     server = ThreadingHTTPServer(("127.0.0.1", 0), Quiet)
     server_port = int(server.server_address[1])
     threading.Thread(target=server.serve_forever, daemon=True).start()
     debug_port = free_port()
     with tempfile.TemporaryDirectory(prefix="jpw-brand-browser-") as profile:
-        chrome = subprocess.Popen([str(CHROME), "--headless=new", "--disable-gpu", "--no-first-run",
+        chrome = subprocess.Popen([str(chrome_binary_path), "--headless=new", "--disable-gpu", "--no-first-run",
                                    f"--remote-debugging-port={debug_port}", f"--user-data-dir={profile}",
                                    f"http://127.0.0.1:{server_port}/index.html"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
