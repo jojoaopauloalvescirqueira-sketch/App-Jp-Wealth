@@ -1,3 +1,20 @@
+# Em execução — identidade visual conjunta do cabeçalho e PWA (2026-09-15)
+
+Contrato [CHG-JP-WEALTH-BRAND-PWA-20260915](CHG-JP-WEALTH-BRAND-PWA-20260915.md). Branch `codex/jp-wealth-brand-pwa-20260915`, base integrada `e7a6e15f65168489b3fc28a4577825b62caa34d4`. O proprietário autorizou explicitamente a criação da branch/worktree e a implementação, incluindo o delta N3/A4 limitado a manifests, precache, fingerprint e validação do PWA. A entrega substitui a marca do cabeçalho e os ícones instaláveis por Vermelho/Preto; preserva a preferência `jpwealth_v9_icon_choice`, backup e Finalizar Sessão. Candidate, aceite humano, commit, push, merge e deploy permanecem gates separados.
+
+## Síntese verificável
+
+1. **Finalidade:** o JP Wealth é uma aplicação local-first para gestão financeira e risco; esta tarefa torna sua identidade consistente entre cabeçalho e instalação PWA sem tocar no domínio financeiro.
+2. **Responsabilidade:** `06-app-icons.js` controla a preferência auxiliar e os links de ícones; `index.html`, CSS, manifestos, worker, gerador e validador compõem a superfície visível e offline do PWA.
+3. **Comportamento:** a base mostra atualmente um wordmark legado fixo e uma escolha Claro/Escuro que só atualiza favicon/Apple icon e recarrega. Depois haverá uma seleção Vermelho/Preto com prévias de cabeçalho e PWA, aplicar/cancelar e atualização imediata.
+4. **Impacto:** a preferência local, Settings e o ciclo de cache PWA são consumidores diretos. Backup e Finalizar Sessão preservam seu contrato porque a chave e sua classificação não mudam.
+5. **Limites:** nenhum cálculo, schema, `DEFAULTS`, migração, dado real, segredo, rede externa ou política de ativação do worker pode mudar. `dist/` é sempre derivado.
+6. **Evidência:** validar fontes/assets, DOM, persistência, limpeza, manifests, precache, build reproduzível, offline/upgrade e diffs; revisar claro/escuro e desktop/celular em navegador real.
+
+O aviso de frescor do preflight refere-se a uma fotografia M1 anterior a 165 caminhos integrados depois de `fafb228`; não bloqueia este recorte, cuja base real e consumidores foram relidos em `e7a6e15`.
+
+## Histórico preservado
+
 # Em execução — Operação integrada por conta (2026-09-15)
 
 Contrato [CHG/CTX](CHG-FOREX-OPERATION-ACCOUNT-CONTEXT-20260915.md), N2/A3 e controles N3 de contexto financeiro. Branch `codex/forex-operation-account-context-20260915`, base Git `8b2ef27` mais os 16 caminhos reproduzidos do candidate de navegação aprovado. Objetivo: quatro subseções em Operação, períodos/ledger/operação independentes por conta e preservação longitudinal em Finalizar Sessão. Dados reais não serão examinados; main, candidate anterior, stash e demais worktrees permanecem preservados. Testes, candidate, aceite e integração são gates separados.

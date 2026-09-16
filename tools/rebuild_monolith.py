@@ -30,7 +30,11 @@ FINGERPRINT_FIXED_INPUTS = (
     'tools/rebuild_monolith.py',
     *(path for path, _mime, _name in NORMATIVE_DOCUMENTS),
 )
-FINGERPRINT_TAIL_INPUTS = ('manifests/jp-wealth.webmanifest',)
+FINGERPRINT_TAIL_INPUTS = (
+    'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
+    'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png',
+    'assets/pwa-icon-primary.png', 'assets/pwa-icon-secondary.png',
+)
 
 def runtime_assets():
     """Only explicitly declared local PDF resources; never classic-script inputs."""

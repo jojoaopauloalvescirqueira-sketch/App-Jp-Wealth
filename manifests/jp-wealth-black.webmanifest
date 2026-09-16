@@ -7,9 +7,9 @@
   "scope": "../",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#ffffff",
-  "theme_color": "#e50914",
+  "background_color": "#090909",
+  "theme_color": "#090909",
   "icons": [
-    { "src": "../assets/pwa-icon-primary.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any" }
+    { "src": "../assets/pwa-icon-secondary.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any" }
   ]
 }

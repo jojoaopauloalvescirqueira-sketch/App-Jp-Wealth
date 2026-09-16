@@ -97,7 +97,7 @@ o escopo global legado em framework ou bundler.
 
 - Chave principal: `jpwealth_v9_state`.
 - Preferências auxiliares usam outras chaves locais.
-- A preferência do ícone usa `jpwealth_v9_icon_choice` e não é misturada ao estado financeiro; `jpwealth_v9_icon_theme` é apenas uma chave legada removida pelos fluxos de limpeza.
+- A preferência da marca usa `jpwealth_v9_icon_choice` e não é misturada ao estado financeiro: `primary` seleciona Vermelho e `secondary` Preto para cabeçalho e próxima instalação PWA; `jpwealth_v9_icon_theme` é apenas uma chave legada removida pelos fluxos de limpeza.
 - O Galton Board usa exclusivamente `jpwealth_galton_preferences_v1` para preferências
   úteis. Bolas, fila, histograma, estatísticas e estado intermediário nunca são
   persistidos; recarregar ou reabrir começa com a placa vazia.
