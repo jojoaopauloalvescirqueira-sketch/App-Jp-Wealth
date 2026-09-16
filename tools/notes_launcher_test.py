@@ -198,7 +198,7 @@ def structure(page):
     assert page.locator('#mvpNotesLauncher #headerNotesBtn').count() == 1
     assert page.locator('#headerNotesBtn').count() == 1
     assert page.locator('#headerActions #headerNotesBtn').count() == 0
-    assert page.locator('#headerActions .header-action').count() == 3
+    assert page.locator('#headerActions .header-action').count() == 4
     expect(page.locator('#headerNotesBtn')).to_have_attribute('title', 'Notas')
     assert (page.locator('#headerNotesBtn').get_attribute('aria-label') or '').startswith('Abrir notas')
     assert page.locator('#headerNotesBtn svg[aria-hidden="true"]').count() == 1

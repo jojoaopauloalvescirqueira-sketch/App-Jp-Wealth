@@ -71,7 +71,7 @@ try:
         # NAV-01: o primeiro nível expõe exatamente cinco rotas semânticas.
         # Destinos físicos legados continuam na fachada, não como primários.
         assert facts['tabs']==5, facts
-        assert facts['headerActions']==3, facts
+        assert facts['headerActions']==4, facts
         assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count()==1
         assert page.locator('#headerActions #headerNotesBtn').count()==0
         assert facts['state'] is True, facts
