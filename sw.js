@@ -76,7 +76,7 @@ const PRECACHE_URLS = [
   './src/js/20-ui/16-operation-history.js',
   './manifests/jp-wealth.webmanifest', './manifests/jp-wealth-black.webmanifest',
   './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
-].flatMap(url=>(url.startsWith('./assets/pwa-icon-')||url.startsWith('./manifests/jp-wealth'))?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
+].flatMap(url=>(url.startsWith('./assets/pwa-icon-')||url.startsWith('./assets/jp-wealth-brand-')||url.startsWith('./manifests/jp-wealth'))?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
 
 self.addEventListener('install', event => {
   event.waitUntil((async()=>{

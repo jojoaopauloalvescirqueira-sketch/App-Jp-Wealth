@@ -331,7 +331,7 @@ def assert_marca_estando_no_dashboard(page):
 # ------------------------------------------------------------ RESPONSIVIDADE --
 
 SURFACE_GEOMETRY = """() => {
-  const $=s=>document.querySelector(s),style=e=>getComputedStyle(e);
+  const $=s=>document.querySelector(s),style=(e,pseudo)=>getComputedStyle(e,pseudo);
   const visible=e=>!!e&&!!e.getClientRects().length&&style(e).visibility!=='hidden';
   const box=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}};
   const ctx=document.createElement('canvas').getContext('2d',{willReadFrequently:true});
@@ -339,12 +339,17 @@ SURFACE_GEOMETRY = """() => {
   const background=e=>{for(let n=e;n;n=n.parentElement){const c=rgba(style(n).backgroundColor);if(c[3]===255)return c}return [255,255,255,255]};
   const border=(e,side)=>({width:parseFloat(style(e)['border'+side+'Width']),style:style(e)['border'+side+'Style'],color:rgba(style(e)['border'+side+'Color'])});
   const logo=$('.gd-logo'),header=$('body > header'),sidebar=$('#appSidebar');
+  // A trilha estrutural do shell desenha a divisória até o fim do documento;
+  // a barra interativa continua sem borda própria para não encerrar a linha
+  // na altura da viewport.
+  const rail=style(document.body,'::before');
+  const railBorder={width:parseFloat(rail.borderRightWidth),style:rail.borderRightStyle,color:rgba(rail.borderRightColor),display:rail.display};
   return {
     viewport:innerWidth,client:document.documentElement.clientWidth,overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
     zoom:parseFloat(style(document.documentElement).zoom)||1,theme:document.documentElement.dataset.theme,
-    navigation:document.documentElement.dataset.navigation,rail:document.documentElement.dataset.rail,
+    navigation:document.documentElement.dataset.navigation,rail:document.documentElement.dataset.rail,shell:document.documentElement.dataset.shell,
     grid:box($('#dashMacroGrid')),canvas:background($('#appMain')),panel:rgba(style(document.documentElement).getPropertyValue('--panel')),
-    header:box(header),headerBorder:border(header,'Bottom'),sidebar:visible(sidebar)?box(sidebar):null,sidebarBorder:visible(sidebar)?border(sidebar,'Right'):null,
+    header:box(header),headerBorder:border(header,'Bottom'),sidebar:visible(sidebar)?box(sidebar):null,sidebarBorder:visible(sidebar)?border(sidebar,'Right'):null,sidebarRailBorder:railBorder,
     logo:{...box(logo),naturalWidth:logo.naturalWidth,naturalHeight:logo.naturalHeight},brand:box($('#brandHomeBtn')),
     actions:[...header.querySelectorAll('.header-actions button,[data-shell-menu-toggle]')].filter(visible).map(e=>({id:e.id||e.getAttribute('aria-label'),...box(e)})),
     cards:[...document.querySelectorAll('#dashMacroGrid [data-dm-card]')].map(card=>({id:card.dataset.dmCard,...box(card),background:rgba(style(card).backgroundColor),border:['Top','Right','Bottom','Left'].map(s=>border(card,s)),
@@ -384,8 +389,15 @@ def assert_superficies_dashboard(page, rotulo):
     line = r['headerBorder']
     assert .5 <= line['width'] <= 1.5 and line['style']=='solid' and line['color'][3] > 0, f'[{rotulo}] divisória horizontal ausente: {line}'
     if r['sidebar'] and r['viewport'] > 900 and r['navigation']=='sidebar':
-        side = r['sidebarBorder']
+        # A fixture também cobre a composição antiga, onde a trilha não é
+        # montada. Quando presente, a linha estrutural é a referência visual;
+        # fora dela, a borda do aside continua sendo o contrato legado.
+        uses_structural_rail = r['shell']=='global-dashboard' and r['sidebarRailBorder']['width'] > 0
+        side = r['sidebarRailBorder'] if uses_structural_rail else r['sidebarBorder']
         assert side['width'] == line['width'] and side['style']==line['style'] and side['color']==line['color'], f'[{rotulo}] divisórias não são coerentes: {line}, {side}'
+        if uses_structural_rail:
+            assert r['sidebarBorder']['width'] == 0, f'[{rotulo}] barra interativa não deve duplicar a trilha: {r["sidebarBorder"]}'
+            assert side['display'] != 'none', f'[{rotulo}] trilha estrutural da barra lateral ausente: {side}'
         expected = 76 if r['rail']=='collapsed' else 252
         assert abs(r['sidebar']['w']/z-expected) <= 1, f'[{rotulo}] largura lateral alterada: {r["sidebar"]}'
     logo = r['logo']
