@@ -284,7 +284,8 @@ def assert_isolamento_de_falha(page):
       window.JPWDashMacro.render();
       const out = {
         total: document.querySelectorAll('#dashMacroGrid [data-dm-card]').length,
-        forexOk: !!document.querySelector("[data-dm-card='forex'] .dm-row"),
+        forexOk: !!document.querySelector("[data-dm-card='forex']") &&
+          /selecion|conta|período|indispon/i.test(document.querySelector("[data-dm-card='forex']").innerText),
         alladinDegradado: !!document.querySelector("[data-dm-card='alladin'] .dm-blocked"),
       };
       window.JPWAlladin = Object.assign({}, window.JPWAlladin, { compat: original });
@@ -490,9 +491,18 @@ def assert_atualizacao_agenda_e_foco(page):
     })""")
     assert r=={'foco':True,'xss':False,'imgs':0},r
     # Render geral também atualiza a macro, sem saída e reentrada.
-    page.evaluate("() => { S.ledger.push({data:'2026-01-02',saldo:12345,resultado:345}); render(); }")
+    page.evaluate("""() => {
+      S.accounts=[{forexAccountId:'MACRO_A',nome:'Mestre sintética',tipo:'MESTRE',platformCurrency:'USD'}];
+      S.forex=JPWForex.state.empty();
+      const p={periodId:'MACRO_P',accountId:'MACRO_A',startedAt:'2026-01-01',currency:'USD',si:12000,
+        openingBook:12000,source:'synthetic macro',revision:1,activeOperation:null,
+        phases:JPWForex.state.newOperationPhases(),ledger:[{accountId:'MACRO_A',periodId:'MACRO_P',currency:'USD',
+          data:'2026-01-02',saldo:12345,resultado:345}],ledgerEvents:[]};
+      S.forex.accountContexts={schemaVersion:1,revision:1,accounts:{MACRO_A:{accountId:'MACRO_A',
+        currentPeriodId:'MACRO_P',periods:{MACRO_P:p}}},archivedAccounts:{},legacy:null};render();
+    }""")
     page.wait_for_function("() => document.querySelector('[data-dm-card=forex]').textContent.includes('02/01/2026')")
-    page.evaluate("() => { S.ledger.pop(); render(); }")
+    page.evaluate("() => { S.forex.accountContexts.accounts.MACRO_A.periods.MACRO_P.ledger.pop(); render(); }")
 
 
 def assert_fuso_agenda(browser,url):
@@ -567,12 +577,13 @@ def assert_resumos_preenchidos(browser,url):
           const before=JSON.stringify(S);
           JPWDashMacro.render();
           const text=document.querySelector('[data-dm-card=forex]').textContent;
-          const valid=created.ok&&closed.ok&&text.includes(fmtMoney2(expected.realizedProfitUsd))&&text.includes(fmtMoney2(expected.deviationUsd));
+          const valid=created.ok&&closed.ok&&text.includes('Selecione a conta operacional')&&
+            !text.includes(fmtMoney2(expected.realizedProfitUsd))&&!text.includes(fmtMoney2(expected.deviationUsd));
           const stable=before===JSON.stringify(S);
           const old=S.fxPlanning.plan.current;delete S.fxPlanning.plan.current;
           const corrupt=JSON.stringify(S);
           JPWDashMacro.render();
-          const refused=document.querySelector('[data-dm-card=forex]').textContent.includes('Planejamento indisponível')&&corrupt===JSON.stringify(S);
+          const refused=document.querySelector('[data-dm-card=forex]').textContent.includes('Selecione a conta operacional')&&corrupt===JSON.stringify(S);
           S.fxPlanning.plan.current=old;
           return {valid,stable,refused};
         }""")

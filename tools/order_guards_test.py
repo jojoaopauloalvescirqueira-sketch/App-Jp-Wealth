@@ -19,9 +19,31 @@ def record_fixture(page):
       const keys=[...document.querySelectorAll('[data-eb-row].eb-dirty')].map(e=>e.dataset.ebRow);
       for(const k of keys)document.querySelector('[data-eb-cancel-row="'+k+'"]')?.click();
       closeModal();
+      if(Object.getOwnPropertyDescriptor(S,'phases')?.get){const old=S.phases;
+        delete S.phases;Object.defineProperty(S,'phases',{value:old,writable:true,enumerable:true,configurable:true});}
+      if(Object.getOwnPropertyDescriptor(S,'activeOperation')?.get){const old=S.activeOperation;
+        delete S.activeOperation;Object.defineProperty(S,'activeOperation',{value:old,writable:true,enumerable:true,configurable:true});}
     }""")
     recording.seed(page)
-    page.evaluate("() => {JPWExec.ui.selectView('panel');renderPhases();}")
+    page.evaluate("""() => {
+      // Bridge sintética para as provas antigas de guardas. Os getters expõem
+      // somente a fase da conta escolhida durante ESTE teste; o produto nunca
+      // copia contextos para S.phases/S.activeOperation ao navegar.
+      const prior=structuredClone(S.phases),priorOp=structuredClone(S.activeOperation);
+      S.accounts=[{forexAccountId:'GUARDS_M',nome:'Mestre de guardas',tipo:'MESTRE',platformCurrency:'USD'}];
+      if(save()!==true)throw Error('Fixture não persistida');
+      const r=JPWForex.state.recordAccountPeriod({accountId:'GUARDS_M',startedAt:'2026-09-01',currency:'USD',
+        si:10000,openingBook:10000,source:'Fixture de guardas',activateCurrentPeriod:true},{reason:'Fixture sintética'});
+      if(!r.ok)throw Error(r.error);
+      const ref=()=>{const id=JPWForex.state.operationalSelection().periodId;
+        return S.forex.accountContexts.accounts.GUARDS_M.periods[id];};
+      ref().phases=prior;ref().activeOperation=priorOp;
+      delete S.phases;Object.defineProperty(S,'phases',{configurable:true,get:()=>ref().phases,set:v=>{ref().phases=v;}});
+      delete S.activeOperation;Object.defineProperty(S,'activeOperation',{configurable:true,get:()=>ref().activeOperation,
+        set:v=>{if(v&&v.operationId&&!v.recordContext)v.recordContext={accountId:'GUARDS_M',
+          periodId:JPWForex.state.operationalSelection().periodId,accountInputs:{currency:'USD'}};ref().activeOperation=v;}});
+      save();JPWExec.ui.selectView('panel');JPWForex.executionBoardUI.render();
+    }""")
 from playwright.sync_api import sync_playwright
 
 
@@ -188,14 +210,33 @@ def run_exclusividade_permite_mesma_tese(page):
 
 def run_exclusividade_termina_na_finalizacao(page):
     record_fixture(page)
-    recording.conflicted_finalization(page)
+    page.evaluate("""() => {
+      const a=operationRecordOrder(0,0,__fact({status:'Fechada',result:50}),{reason:'Fechamento A'});
+      const b=operationRecordOrder(0,1,__fact({status:'Fechada',result:-20,par:'GBPUSD',tipo:'SELL'}),
+        {reason:'Fechamento divergente'});
+      if(!a.ok||!b.ok)throw Error(JSON.stringify({a,b}));
+      JPWOperation.openReview();
+    }""")
+    page.locator('#finalDefenses').fill('0')
+    page.locator('#finalConfirm').fill('FECHADO')
+    page.locator('#modalConfirm').click()
     r=page.evaluate("() => {const saved=operationRecordOrder(0,0,__fact({par:'USDJPY'}),{reason:'Nova operação'});return {saved,history:S.operationHistory.records.length,live:operationLiveOrders().length};}")
     assert r['saved']['ok'] and r['history']==1 and r['live']==1,r
 
 
 def run_estado_legado_conflitado_segue_bloqueado(page):
     record_fixture(page)
-    recording.conflicted_finalization(page)
+    r=page.evaluate("""() => {
+      S.phases=S.phases.slice(0,4);
+      const a=operationRecordOrder(0,0,__fact({status:'Fechada',result:50}),{reason:'Fato legado A'});
+      const b=operationRecordOrder(1,0,__fact({status:'Fechada',result:-20,par:'GBPUSD',tipo:'SELL'}),
+        {reason:'Fato legado divergente'});
+      JPWForex.executionBoardUI.render();
+      return {a,b,legacy:document.getElementById('phaseContainer').textContent.includes('LEGACY'),
+        findings:orderComplianceFindings()};
+    }""")
+    assert r['a']['ok'] and r['b']['ok'] and r['legacy'],r
+    assert any(f['code']=='INSTRUMENT_CONFLICT' for f in r['findings']),r
 
 
 def run_rascunho_nao_constitui_tese(page):
@@ -240,7 +281,7 @@ CENARIO_R1 = """() => {
 def run_committed_breach_is_observed(page):
     record_fixture(page)
     r=page.evaluate("() => {operationRecordOrder(0,0,__fact({lote:999}),{reason:'Fato excedente'});return {max:S.activeOperation.maxAccountPhaseReached,context:S.phases[0].orders[0].revisions[0].context,phase:JPWForex.state.read().accountPhase};}")
-    assert r['max'] is None and r['context']['accountInputs'] is None,r
+    assert r['max'] is None and r['context']['accountId']=='GUARDS_M' and r['context']['currency']=='USD',r
     assert r['phase']['status']!='OK',r
 
 
@@ -317,8 +358,8 @@ MONTA_FECHAMENTO = """() => {
   S.params.saldoIni = 40000; S.cycleRealizado = 0;
   S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]||3); });
   S.phaseUnlocked = [true,false,false,false];
-  S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', lote:0.01,
-    entry:1.10, sl:1.09, tp:1.20, status:'Aberta',
+  S.phases[0].orders[0] = {id:'G1', par:'EURUSD', tipo:'BUY', role:'GENESIS', lote:0.01,
+    entry:1.10, sl:1.09, tp:1.20, status:'Aberta',costs:0,costBasis:'INCLUDED_IN_RESULT',
     openedAt:'2026-08-01T10:00:00.000Z'};
   delete S.phases[0].orders[0].result;
   S.activeOperation = {schemaVersion:1, operationId:'op_fech',

@@ -200,7 +200,7 @@ def main() -> int:
                 page.wait_for_timeout(700)
                 r = page.evaluate("""() => ({ contas:S.accounts.length,
                     alladinDisco:(localStorage.getItem('%s')||'').indexOf('aldi_fx_petr4')!==-1 })""" % LSKEY)
-                if r["contas"] != 0 or not r["alladinDisco"]:
+                if r["contas"] == 0 or not r["alladinDisco"]:
                     falhas.append(f"SK: finalizacao em modo degraded nao funcionou — {r}")
                 r2 = page.evaluate("""async () => { await wipeAllData();
                     return { disco: localStorage.getItem('%s') }; }""" % LSKEY)

@@ -125,32 +125,27 @@
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
         <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Consolidado FX</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
         <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Painel, Motor e checklist pré-trade</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-reconciliation"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Contabilidade e Histórico</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-account"><span class="nav-sub-item-title">Contas</span><span class="nav-sub-item-desc">Cadastro e acompanhamento</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Painel, Contabilidade, Contas e Fator de Correção</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
              data-nav-context="forex-operation" role="group" aria-label="Operação" hidden inert>
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="panel">
-            <span class="nav-sub-item-title">Painel</span>
+            <span class="nav-sub-item-title">Painel Operacional</span>
             <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
           </button>
-          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
-            <span class="nav-sub-item-title">Motor</span>
-            <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
-          </button>
-        </div>
-        <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
-             data-nav-context="forex-reconciliation" role="group" aria-label="Contabilidade" hidden inert>
-          <button type="button" data-nav-item data-nav-route="forex-reconciliation">
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="accounting">
             <span class="nav-sub-item-title">Contabilidade</span>
-            <span class="nav-sub-item-desc">Ledger, retorno e drawdown</span>
+            <span class="nav-sub-item-desc">Fechamentos e histórico</span>
           </button>
-          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="history">
-            <span class="nav-sub-item-title">Histórico</span>
-            <span class="nav-sub-item-desc">Operações Únicas finalizadas</span>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="accounts">
+            <span class="nav-sub-item-title">Contas</span>
+            <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
+            <span class="nav-sub-item-title">Fator de Correção</span>
+            <span class="nav-sub-item-desc">Position sizing e perfis de risco</span>
           </button>
         </div>
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
@@ -294,7 +289,7 @@
   <!-- ================= 01 EXECUTION BOARD ================= -->
   <section class="screen" id="fxconsolidated" aria-label="Consolidado FX"></section>
   <section class="screen" id="exec">
-    <header class="fx-operation-heading"><h1 data-route-focus>Operação</h1><button type="button" id="execChecklistBtn" aria-haspopup="dialog" aria-controls="forexChecklistDialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4M11 6h10M3 13l2 2 3-4M11 13h10M4 20h3m4 0h10"/></svg><span>Checklist pré-trade</span></button></header>
+    <header class="fx-operation-heading"><h1 data-route-focus>Painel Operacional</h1><button type="button" id="execChecklistBtn" aria-haspopup="dialog" aria-controls="forexChecklistDialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4M11 6h10M3 13l2 2 3-4M11 13h10M4 20h3m4 0h10"/></svg><span>Checklist pré-trade</span></button></header>
     <!-- WORKSPACES DO MÓDULO (segundo nível — contrato em
          docs/architecture/NAVIGATION-HIERARCHY.md).
 
@@ -516,11 +511,140 @@
         <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
+  <div class="exec-view" id="contab" role="region" aria-label="Contabilidade Forex" hidden inert>
+    <button type="button" id="accountingHistoryToggle" aria-expanded="false" aria-controls="execHistory">Histórico de Operações Únicas</button>
     <!-- Histórico: consumidor SOMENTE LEITURA de S.operationHistory. O conteúdo é
          renderizado por 20-ui/16-operation-history.js a cada entrada, porque uma
          finalização feita no Painel Operacional muda a lista. Nenhum caminho
          deste workspace muta estado financeiro. -->
     <div class="exec-view" id="execHistory" role="region" aria-label="Histórico de Operações Únicas" hidden></div>
+    <div class="jp-widget-grid" id="contabWidgetGrid">
+    <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <h2 class="sr-only">Período &amp; Metas</h2>
+      <div id="acctPeriodSummary"></div>
+      <button class="acct-period-link" id="acctPeriodToggle">▸ Ver / editar Período &amp; Metas</button>
+      <div id="acctPeriodDetail" class="acct-period-detail" style="display:none">
+        <div id="acctProfileBtns" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px"></div>
+        <div id="acctProfileLockNote" style="margin-bottom:12px"></div>
+        <div class="params-grid">
+          <div class="field"><label>Data inicial do período <span class="art">Art. 3.4</span></label><input type="date" id="acStart"></div>
+          <div class="field"><label>Data atual <span class="art">hoje</span></label><input type="text" id="acToday" disabled></div>
+          <div class="field"><label>Data final projetada <span class="art">meta atingida</span></label><input type="text" id="acEnd" disabled></div>
+          <div class="field"><label>Saldo inicial ($)</label><input type="number" step="0.01" id="acSaldoIni"></div>
+          <div class="field"><label>Target anual <span class="art">pelo perfil</span></label><input type="text" id="acTarget" disabled></div>
+          <div class="field"><label>Saldo final desejado ($)</label><input type="text" id="acSaldoFim" disabled></div>
+          <div class="field"><label>Dias na semana <span class="art">programação</span></label><input type="number" step="0.5" id="acDiasSem"></div>
+          <div class="field"><label>Meses no ano <span class="art">programação</span></label><input type="number" step="0.5" id="acMesesAno"></div>
+          <div class="field"><label>Dias líquidos / ano</label><input type="text" id="acDiasAno" disabled></div>
+        </div>
+        <div id="acctMetas"></div>
+      </div>
+    </div>
+
+    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+      <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
+      <div class="params-grid">
+        <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
+        <div class="field"><label>Resultado do dia ($)</label><input type="number" step="0.01" id="ldResult" placeholder="0.00"><span class="note">Negativo se prejuízo. Zero é válido (dia neutro).</span></div>
+        <div class="field"><label>Saldo de fechamento ($)</label><input type="number" step="0.01" id="ldSaldo" placeholder="auto: anterior + resultado"><span class="note">Se vazio, calcula automaticamente. Atualiza o Saldo Mestre (book).</span></div>
+      </div>
+      <div class="field"><label>Nota (opcional)</label><input type="text" id="ldNota" placeholder="contexto do dia, eventos, decisões"></div>
+      <div style="display:flex; align-items:center; gap:12px">
+        <button class="unlock-phase-btn" id="ldAddBtn">Registrar fechamento do dia</button>
+        <span class="fx-status" id="ldStatus"></span>
+      </div>
+    </div>
+    <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+      <h2>Lançamentos <span class="art">mais recentes primeiro · inclui auditoria e simulação</span></h2>
+      <div class="jp-table-scroll">
+        <table class="dtable">
+          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>Queda do saldo book</th><th>Nota</th><th></th></tr></thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+      <div class="acct-entry-details">
+        <details class="jp-p3"><summary>Simulação patrimonial (MEI-JP)</summary><div id="acctSimWrap"></div></details>
+        <details class="jp-p3"><summary>Log de auditoria</summary>
+          <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
+        </details>
+        <button class="reset-btn acct-export-audit" id="exportAuditBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
+      </div>
+    </div>
+    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+      <h2>Real vs Projetado <span class="art">série mensal do Planejamento · dados realizados preservados</span></h2>
+      <div id="rvpChart" style="width:100%"></div>
+      <details class="jp-p3">
+            <summary>Planejamento mensal · projetado e realizado</summary>
+            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
+          </details>
+    </div>
+    <div id="acctPace" hidden aria-hidden="true"></div>
+    </div>
+  </div>
+
+    <!-- Contas permanece com os mesmos nós e renderizador. Apenas deixa de ser
+         destino N2: este workspace local de Operação preserva cadastro, foco e
+         listeners sem criar uma cópia ou migrar dados. -->
+    <div class="exec-view" id="contas" role="region" aria-label="Contas Forex" hidden inert>
+      <div class="jp-widget-grid" id="contasWidgetGrid">
+      <div class="card" id="accountPeriodCard">
+        <h2>Contexto da conta <span class="art">período, SI, saldo book e observações separados</span></h2>
+        <p id="accountContextIdentity" role="status"></p>
+        <div class="metrics" id="accountContextMetrics"></div>
+        <label>Consultar período <select id="accountPeriodSelect"></select></label>
+        <details class="jp-p3" id="accountPeriodFormDetails"><summary>Registrar ou conciliar período</summary>
+          <div class="params-grid">
+            <label>Início do período<input type="date" id="accountPeriodStart"></label>
+            <label>SI do período<input type="number" step="0.01" id="accountPeriodSI" placeholder="Indisponível se vazio"></label>
+            <label>Saldo inicial book<input type="number" step="0.01" id="accountPeriodBook" placeholder="Indisponível se vazio"></label>
+            <label>Moeda do cadastro<input type="text" id="accountPeriodCurrency" maxlength="3" placeholder="USD"></label>
+            <label>Fonte declarada<input type="text" id="accountPeriodSource" placeholder="Ex.: extrato local, declaração"></label>
+            <label>Observação histórica a conciliar<select id="accountObservedPeriod"></select></label>
+            <label><input type="checkbox" id="accountPeriodActivate" checked> Tornar período corrente desta conta</label>
+            <label>Motivo do registro<input type="text" id="accountPeriodReason"></label>
+          </div>
+          <button type="button" id="accountPeriodSave">Salvar período explicitamente</button>
+          <p id="accountPeriodFeedback" role="status"></p>
+        </details>
+        <p>Saldo inicial book não comprova equity. A observação de SI/equity com fonte continua distinta e é exigida para cálculos normativos.</p>
+      </div>
+      <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+        <h2 class="accounts-card-head">
+          <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
+          <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
+        </h2>
+          <details class="jp-p3">
+            <summary>governança</summary>
+            <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+          <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
+          <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
+          <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
+          <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
+          O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
+        </p>
+          </details>
+        <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
+        <div class="jp-table-scroll"><table class="dtable">
+          <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
+          <tbody id="contasBody"></tbody>
+        </table></div>
+        <p class="account-table-note">Correção, Firewall de replicação e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
+      </div>
+      <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+        <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
+        <div class="field" style="max-width:240px">
+          <label>Lote enviado pela mestre</label>
+          <input type="number" step="0.01" id="cLoteMaster" value="0.04">
+        </div>
+        <div class="jp-table-scroll">
+          <table class="dtable" style="margin-top:8px">
+            <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
+            <tbody id="aplicBody"></tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </div>
     <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
          #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
          nenhum dado tocado. A <section id="motor"> hospedeira foi removida
@@ -593,50 +717,6 @@
         <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
         <tbody id="matrixBody"></tbody>
       </table></div>
-    </div>
-    </div>
-  </section>
-
-  <!-- ================= 04 CONTAS ================= -->
-  <section class="screen" id="contas">
-    <div class="jp-widget-grid" id="contasWidgetGrid">
-    <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 class="accounts-card-head">
-        <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
-        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
-      </h2>
-        <!-- Fase 2C: a Nota de Governança deixa de ser card próprio e vira
-             "governança ▾" no cabeçalho do Parque de Contas, como no protótipo.
-             A prosa é a MESMA — e segue também sob o mecanismo [i]/jpw_expl. -->
-        <details class="jp-p3">
-          <summary>governança</summary>
-          <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
-        <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
-        <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
-        <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
-        <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
-        O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
-      </p>
-        </details>
-      <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
-      <div class="jp-table-scroll"><table class="dtable">
-        <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
-        <tbody id="contasBody"></tbody>
-      </table></div>
-      <p class="account-table-note">Correção, Firewall de replicação e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
-    </div>
-    <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
-      <div class="field" style="max-width:240px">
-        <label>Lote enviado pela mestre</label>
-        <input type="number" step="0.01" id="cLoteMaster" value="0.04">
-      </div>
-      <div class="jp-table-scroll">
-        <table class="dtable" style="margin-top:8px">
-          <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
-          <tbody id="aplicBody"></tbody>
-        </table>
-      </div>
     </div>
     </div>
   </section>
@@ -1010,70 +1090,6 @@
 
   <!-- ================= 07 CONTABILIDADE ================= -->
   <section class="screen" id="fxreserves"><div id="forexReservesPanel" class="card fx-engine-workspace"></div></section>
-  <section class="screen" id="contab">
-    <div class="jp-widget-grid" id="contabWidgetGrid">
-    <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 class="sr-only">Período &amp; Metas</h2>
-      <div id="acctPeriodSummary"></div>
-      <button class="acct-period-link" id="acctPeriodToggle">▸ Ver / editar Período &amp; Metas</button>
-      <div id="acctPeriodDetail" class="acct-period-detail" style="display:none">
-        <div id="acctProfileBtns" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px"></div>
-        <div id="acctProfileLockNote" style="margin-bottom:12px"></div>
-        <div class="params-grid">
-          <div class="field"><label>Data inicial do período <span class="art">Art. 3.4</span></label><input type="date" id="acStart"></div>
-          <div class="field"><label>Data atual <span class="art">hoje</span></label><input type="text" id="acToday" disabled></div>
-          <div class="field"><label>Data final projetada <span class="art">meta atingida</span></label><input type="text" id="acEnd" disabled></div>
-          <div class="field"><label>Saldo inicial ($)</label><input type="number" step="0.01" id="acSaldoIni"></div>
-          <div class="field"><label>Target anual <span class="art">pelo perfil</span></label><input type="text" id="acTarget" disabled></div>
-          <div class="field"><label>Saldo final desejado ($)</label><input type="text" id="acSaldoFim" disabled></div>
-          <div class="field"><label>Dias na semana <span class="art">programação</span></label><input type="number" step="0.5" id="acDiasSem"></div>
-          <div class="field"><label>Meses no ano <span class="art">programação</span></label><input type="number" step="0.5" id="acMesesAno"></div>
-          <div class="field"><label>Dias líquidos / ano</label><input type="text" id="acDiasAno" disabled></div>
-        </div>
-        <div id="acctMetas"></div>
-      </div>
-    </div>
-
-    <div class="card" data-layout-card="contab-daily-close" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Fechamento Diário <span class="art">Período Contábil · um registro por dia</span></h2>
-      <div class="params-grid">
-        <div class="field"><label>Data</label><input type="date" id="ldDate"></div>
-        <div class="field"><label>Resultado do dia ($)</label><input type="number" step="0.01" id="ldResult" placeholder="0.00"><span class="note">Negativo se prejuízo. Zero é válido (dia neutro).</span></div>
-        <div class="field"><label>Saldo de fechamento ($)</label><input type="number" step="0.01" id="ldSaldo" placeholder="auto: anterior + resultado"><span class="note">Se vazio, calcula automaticamente. Atualiza o Saldo Mestre (book).</span></div>
-      </div>
-      <div class="field"><label>Nota (opcional)</label><input type="text" id="ldNota" placeholder="contexto do dia, eventos, decisões"></div>
-      <div style="display:flex; align-items:center; gap:12px">
-        <button class="unlock-phase-btn" id="ldAddBtn">Registrar fechamento do dia</button>
-        <span class="fx-status" id="ldStatus"></span>
-      </div>
-    </div>
-    <div class="card" data-layout-card="contab-entries" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2>Lançamentos <span class="art">mais recentes primeiro · inclui auditoria e simulação</span></h2>
-      <div class="jp-table-scroll">
-        <table class="dtable">
-          <thead><tr><th>Data</th><th>Resultado</th><th>Saldo</th><th>Queda do saldo book</th><th>Nota</th><th></th></tr></thead>
-          <tbody id="ledgerBody"></tbody>
-        </table>
-      </div>
-      <div class="acct-entry-details">
-        <details class="jp-p3"><summary>Simulação patrimonial (MEI-JP)</summary><div id="acctSimWrap"></div></details>
-        <details class="jp-p3"><summary>Log de auditoria</summary>
-          <div id="auditLogBox" style="font-family:var(--mono); font-size:calc(11px * var(--fs-scale)); color:var(--ink-dim); line-height:1.8; max-height:320px; overflow-y:auto"></div>
-        </details>
-        <button class="reset-btn acct-export-audit" id="exportAuditBtn" style="color:var(--violet); border-color:var(--violet)"><span class="jp-legacy-glyph" aria-hidden="true">⬇</span><svg class="jp-icon" aria-hidden="true"><use href="#i-export"/></svg>Exportar auditoria completa (JSON)</button>
-      </div>
-    </div>
-    <div class="card" data-layout-card="contab-real-vs-projected" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Real vs Projetado <span class="art">série mensal do Planejamento · dados realizados preservados</span></h2>
-      <div id="rvpChart" style="width:100%"></div>
-      <details class="jp-p3">
-            <summary>Planejamento mensal · projetado e realizado</summary>
-            <div id="acctProjWrap" style="max-height:460px; overflow:auto"></div>
-          </details>
-    </div>
-    <div id="acctPace" hidden aria-hidden="true"></div>
-    </div>
-  </section>
 
   <!-- ================= 07B PLANEJAMENTO FX ================= -->
   <!-- Tela principal própria (decisão do gestor, 2026-08-11). O card não participa

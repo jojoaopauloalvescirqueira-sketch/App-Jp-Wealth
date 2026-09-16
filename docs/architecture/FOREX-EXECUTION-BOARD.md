@@ -10,7 +10,7 @@ Constituição → Estatuto V11 → Anexo nos elementos delegados → `JPWForex.
 
 ## Identidade e escopo
 
-Uma operação ativa conserva conta e período, mesmo quando suas linhas ficam vazias. Sem operação, a única Mestre cadastrada é proposta; ausência ou ambiguidade exige seleção. A proposta só é confirmada ao registrar a primeira ordem, na mesma transação. Seleção analítica no Consolidado não transfere operação. Observação de SI/equity/moeda/período é explícita no Motor; saldo cadastral não supre equity. Responsáveis de onboarding são declarados da sessão, não cadastro por conta.
+Cada conta cadastrada pode conservar uma operação ativa em seu próprio período. Sem seleção explícita, a única Mestre cadastrada é proposta; ausência ou ambiguidade exige seleção. A seleção operacional não é a seleção analítica do Consolidado. SI, saldo contábil e equity são observações distintas por conta/período, com fonte e instante; ausência não é zero. Responsáveis de onboarding são declarados da sessão, não cadastro por conta.
 
 Registros conciliados exigem conta, período, moeda, operação, instrumento e identidade suficientes. Ordens anuladas/rascunhos não viram posições. Ausência de identidade, papel, resultado ou custos não vira zero. Grades LEGACY conservam índices/nomes; não são migradas automaticamente para Gênese, Ataque, Intermédio, Defesa, Cuidado e Preparação.
 
@@ -44,7 +44,7 @@ O controlador coordena requisições, timeout, respostas parciais e cancelamento
 
 ## Backup, finalização e recuperação
 
-Backup completo contém extensões confirmadas e snapshots de ordens. Rascunhos/arquivo original/segredos não são incluídos. Finalizar Sessão limpa observações operacionais e referências no agregado operacional, preservando históricos confirmados pelo contrato longitudinal existente. Snapshot do histórico mantém os dados efetivamente capturados; não completa passado com cadastro atual.
+Backup completo contém contextos confirmados por conta, períodos, lançamentos, observações e snapshots de ordens. Rascunhos/arquivo original/segredos não são incluídos. Finalizar Sessão encerra processos temporários e desbloqueios, preservando contas, operações e históricos confirmados para retomada. Snapshot do histórico mantém os dados efetivamente capturados; não completa passado com cadastro atual.
 
 Falha/quota/UNKNOWN seguem os escritores existentes: nenhuma mensagem de sucesso antecipada; não realizar retry cego. Usar cópia de recuperação e fluxo existente para desfecho desconhecido. Rollback de código só no delta desta worktree, com baseline externo e hashes; nenhuma autorização para reset/stash/limpeza de outras árvores.
 

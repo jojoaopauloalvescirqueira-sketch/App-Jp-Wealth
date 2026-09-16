@@ -169,13 +169,14 @@
         technicalProfit:absent('Liquidação parcial corretiva e finalidade não demonstradas. Resultado positivo não é Lucro Técnico.'),
         freeNormativeMargin:absent('TRA P-17 pendente; largura de fase não é orçamento de risco.')};
     });
-    const drawdown=engineMetric(fx.engine.computeDrawdown(account||{})),book=input.accountRecord;
+    const drawdown=engineMetric(fx.engine.computeDrawdown(account||{})),book=input.accountRecord,
+      contextPeriod=input.contextPeriod||null;
     const accountPhase=normativeAccountScoped?engineMetric(normative.accountPhase):engineMetric(fx.engine.resolveAccountPhase({ddPercent:number(drawdown)}));
     const phaseLimit=accountPhase.status==='OK'?fx.policy.phases[accountPhase.value-1]?.maxLeverage:null;
     const equityFloor=scoped&&finite(si)&&si>0&&finite(account.netCashflow)&&(account.netCashflow===0||account.cashflowAdjustmentRecorded===true)?si*(1-fx.policy.get('P-03').value/100)+account.netCashflow:null;
     const result={selection:clone(input.selection||{}),scope,account,accountRecord:clone(book||null),operation:clone(input.operation||null),
-      capital:{si:metric(si,'ACCOUNT_CURRENCY',currency),equity:metric(account?.equity,'ACCOUNT_CURRENCY',currency),nominal:metric(account?.capitalNominal,'ACCOUNT_CURRENCY',currency),
-        book:metric(book?.currency===currency?book?.satu:null,'ACCOUNT_CURRENCY',currency,'Saldo cadastral; não é equity flutuante.'),
+      capital:{si:metric(finite(si)?si:contextPeriod?.si,'ACCOUNT_CURRENCY',currency),equity:metric(account?.equity,'ACCOUNT_CURRENCY',currency),nominal:metric(account?.capitalNominal,'ACCOUNT_CURRENCY',currency),
+        book:metric(book?.currency===currency?book?.satu:null,'ACCOUNT_CURRENCY',currency,'Saldo book deste período; não é equity flutuante.'),
         floating:absent('Equity e saldo book não têm observação simultânea conciliada.',undefined,currency),
         periodResult:absent('O fechamento diário não captura moeda e cobertura completa do período. Resultados das ordens encerradas desta operação são apresentados separadamente.',undefined,currency),drawdown,
         stopoutEquity:metric(equityFloor,'ACCOUNT_CURRENCY',currency,'Referência do encerramento estatutário por DD; não é stop-out da corretora.',{ddMaxPercent:fx.policy.get('P-03').value})},
@@ -203,36 +204,39 @@
       for(const child of Object.values(value))annotate(child,source);
     }
     annotate(result.capital,accountSource);
-    result.capital.book.source=result.capital.book.provenance={...baseSource,label:'Cadastro atual · instante do saldo não capturado',observedAt:null};
+    result.capital.book.source=result.capital.book.provenance={...baseSource,label:'Fechamento book deste período ou saldo inicial observado',observedAt:contextPeriod?.observedAt||null};
     result.capital.periodResult.source=result.capital.periodResult.provenance={...baseSource,label:'Fechamentos diários sem moeda/cobertura conciliadas',observedAt:null};
     annotate(result.risk,sources);annotate(result.economics,sources);annotate(result.phases,sources);annotate(result.rows,sources);
     for(const i of result.instruments){const source={...baseSource,instrumentId:i.id,label:'Referência deste instrumento',observedAt:null,price:i.price,contract:i.contract,conversion:i.conversion,atr:i.atr};annotate(i,source);}
     return result;
   }
   function read(options={}){
-    const source=S,op=source.activeOperation,allRows=(source.phases||[]).flatMap((p,pi)=>(p.orders||[]).map((o,oi)=>({pi,oi,order:clone(o)})));
+    const source=S,selected=fx.state.operationalSelection(),requested=text(options.accountId)||selected.accountId;
+    let accountId=requested;
+    const periodId=text(options.periodId)||(accountId===selected.accountId?selected.periodId:null),
+      workspace=accountId&&periodId?fx.state.accountContext({accountId,periodId}):null,
+      contextPeriod=workspace?.status==='OK'?workspace.value:null,
+      op=contextPeriod?.activeOperation||null,
+      phases=contextPeriod?.phases||fx.state.newOperationPhases(),
+      allRows=phases.flatMap((p,pi)=>(p.orders||[]).map((o,oi)=>({pi,oi,order:clone(o)})));
     const live=allRows.some(r=>factual(r.order));
-    const accounts=(source.accounts||[]).map((a,index)=>({index,id:text(a.forexAccountId)||null,name:a.nome||'Conta sem nome',type:a.tipo||null,currency:a.currency||null}));
-    const lock=!!op,findings=[];let accountId=null,periodId=null,reason='EXPLICIT_SELECTION',accountIndex=null;
-    if(lock){accountId=text(op.recordContext?.accountId)||null;periodId=text(op.recordContext?.periodId)||null;reason=accountId?'ACTIVE_OPERATION':'LEGACY_OPERATION_UNRESOLVED';
-      if(options.accountId&&options.accountId!==accountId)findings.push(issue('BOARD_ACCOUNT_LOCKED','A operação preserva sua conta; a seleção analítica não muda a identidade dos fatos.'));
-    }else if(text(options.accountId)){accountId=text(options.accountId);periodId=text(options.periodId)||null;}
-    else if(Number.isInteger(options.accountIndex)){accountIndex=options.accountIndex;accountId=accounts[accountIndex]?.id||null;}
-    else if(live)reason='LEGACY_FACTS_REQUIRE_REVIEW';
-    else {const masters=accounts.filter(a=>a.type==='MESTRE');if(masters.length===1){accountId=masters[0].id;accountIndex=masters[0].index;reason='MASTER_PROPOSED';}else reason=masters.length?'MASTER_AMBIGUOUS':'MASTER_MISSING';}
-    if(accountId&&!accounts.some(a=>a.id===accountId)&&!lock){accountId=null;reason='ACCOUNT_NOT_REGISTERED';}
-    if(!periodId&&accountId)periodId=source.forex?.accounts?.[accountId]?.periodId||null;
-    if(accountIndex===null&&accountId){const found=accounts.find(a=>a.id===accountId);accountIndex=found?.index??null;}
-    const scope={accountId,periodId,operationId:lock?op.operationId:null};
+    const accounts=(source.accounts||[]).filter(a=>text(a?.forexAccountId)).map(a=>({id:a.forexAccountId,name:a.nome||'Conta sem nome',type:a.tipo||null,currency:a.platformCurrency||null}));
+    const findings=[];let reason=selected.reason,accountIndex=null;
+    if(accountId&&!accounts.some(a=>a.id===accountId)){reason='ACCOUNT_NOT_REGISTERED';accountId=null;}
+    if(accountId)accountIndex=(source.accounts||[]).findIndex(a=>a?.forexAccountId===accountId);
+    if(!contextPeriod)findings.push(issue('BOARD_PERIOD_UNREGISTERED','Registre ou reconcilie um período em Contas antes de editar esta operação.'));
+    if(live&&!op)findings.push(issue('BOARD_OPERATION_ID_MISSING','Há fatos sem identidade de operação neste período; preserve-os para revisão.'));
+    const scope={accountId,periodId,operationId:op?.operationId||null};
     const context=accountId&&periodId?fx.state.recordContext({accountId,periodId}):null;
-    const account=context?.status==='OK'?context.accountInputs:null;scope.currency=account?.currency||null;
+    const account=context?.status==='OK'?context.accountInputs:null;scope.currency=account?.currency||contextPeriod?.currency||null;
     const record=accountIndex!==null?source.accounts[accountIndex]:null;
-    const safeRecord=record?{name:record.nome||'',type:record.tipo||'',currency:record.currency||null,satu:finite(record.satu)?record.satu:null,broker:record.broker||null,
+    const bookRows=contextPeriod?.ledger||[],lastBook=bookRows.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1)?.saldo??contextPeriod?.openingBook??null;
+    const safeRecord=record?{name:record.nome||'',type:record.tipo||'',currency:contextPeriod?.currency||null,satu:lastBook,broker:record.broker||null,
       platform:text(record.platform)||null,login:text(record.platformLogin)||null,platformLogin:text(record.platformLogin)||null}:null;
     const normative=account?fx.state.read({accountId,periodId}):null;
-    return project({scope,account,accountRecord:safeRecord,operation:op?{operationId:op.operationId,policySnapshot:clone(op.policySnapshot||null)}:null,
-      selection:{accountId,periodId,operationId:scope.operationId,accountIndex,reason,requiresSelection:!accountId,requiresObservation:!account,lockedToOperation:lock,accounts},
-      rows:allRows,phases:clone(source.phases||[]),instruments:resolveConversions((source.instruments||[]).map(i=>prepareInstrument(i,account,scope)),account),normative,findings,supported:fx.state.supported()});
+    return project({scope,account,contextPeriod,accountRecord:safeRecord,operation:op?{operationId:op.operationId,policySnapshot:clone(op.policySnapshot||null)}:null,
+      selection:{accountId,periodId,operationId:scope.operationId,accountIndex,reason,requiresSelection:!accountId,requiresObservation:!account,lockedToOperation:false,accounts},
+      rows:allRows,phases:clone(phases),instruments:resolveConversions((source.instruments||[]).map(i=>prepareInstrument(i,account,scope)),account),normative,findings,supported:fx.state.supported()});
   }
   fx.executionBoard=Object.freeze({read,project,closedNetResult,instrumentInputs});
 })(globalThis);

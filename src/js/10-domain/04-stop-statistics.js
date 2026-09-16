@@ -284,6 +284,8 @@ function renderContas(){
         </select>
       </div>`;
     const typeClass=a.tipo==='MESTRE'?'master':(a.tipo==='PRÓPRIA'?'own':'satellite');
+    const accountId=a.forexAccountId||null;
+    const periods=accountId?S.forex?.accountContexts?.accounts?.[accountId]?.periods||{}:{};
     const summary=document.createElement('tr');
     summary.className='account-summary-row'; summary.dataset.idx=i;
     summary.innerHTML=`
@@ -304,10 +306,12 @@ function renderContas(){
       <label class="field"><span>Tipo</span><select data-f="tipo"><option ${a.tipo==='MESTRE'?'selected':''}>MESTRE</option><option ${a.tipo==='PRÓPRIA'?'selected':''}>PRÓPRIA</option><option ${a.tipo==='SATÉLITE'?'selected':''}>SATÉLITE</option></select></label>
       <div class="field"><span class="account-editor-label">Broker</span>${brokerEditor}</div>
       <div class="field"><span class="account-editor-label">Perfil</span>${perfilCell}</div>
-      <label class="field"><span>Saldo inicial</span><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></label>
-      <label class="field"><span>Saldo atual</span><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></label>
+      <label class="field"><span>Referência cadastral inicial (legado)</span><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></label>
+      <label class="field"><span>Referência cadastral atual (legado)</span><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></label>
       <label class="field"><span>Plataforma</span><select data-f="platform">${platformOptions(a.platform)}</select></label>
       <label class="field"><span>Login da plataforma</span><input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma"></label>
+      <div class="field"><span>Identidade estável e moeda</span><strong>${esc(accountId||'Ainda não confirmada')} · ${esc(a.platformCurrency||'moeda não verificada')}</strong><button type="button" data-account-register="${i}">${accountId?'Completar cadastro':'Confirmar identificação'}</button></div>
+      <div class="field"><span>Períodos confirmados</span><strong>${Object.keys(periods).length}</strong><small>SI, saldo book e equity pertencem ao período; as referências legadas acima não os substituem.</small></div>
       <div class="field account-password-field"><span class="account-editor-label">Senha do investidor / somente leitura</span><div class="investor-pass-row"><input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off"><button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button></div></div>
       <details class="account-calc-detail"><summary>Memória de Lote vs Mestre</summary><dl><dt>Correção</dt><dd class="calc-corr">${Number.isFinite(corr)?corr.toFixed(3):'Não apurado'}</dd><dt>Firewall V11</dt><dd class="calc-fw">${accountFactorText(fw)}</dd><dt>Fator homologado</dt><dd class="calc-pf">${accountFactorText(pf)}</dd><dt>Lote vs Mestre</dt><dd>${accountFactorText(loteVs)}</dd></dl></details>
     </div></td>`;
@@ -319,6 +323,11 @@ function renderContas(){
     if(accountEditorsOpen.has(i)) accountEditorsOpen.delete(i); else accountEditorsOpen.add(i);
     renderContas();
     const next=document.querySelector(`#contasBody [data-account-toggle="${i}"]`); if(next) next.focus();
+  }));
+  cb.querySelectorAll('[data-account-register]').forEach(btn=>btn.addEventListener('click',()=>{
+    const account=S.accounts[+btn.dataset.accountRegister];if(!account)return;
+    JPWFXConsolidated.openAccountRegistration({accountId:account.forexAccountId||'live:'+(+btn.dataset.accountRegister),
+      trigger:btn,onSaved:()=>{renderContas();window.JPWForex?.executionBoardUI?.render?.();}});
   }));
 
   // bind edits
@@ -388,7 +397,15 @@ function renderContas(){
         alert('Mantenha ao menos uma conta MESTRE — ela é a referência de correção de lote das demais.');
         return;
       }
-      if(confirm(`Excluir a conta "${S.accounts[i].nome}"?`)){
+      if(S.accounts[i].forexAccountId){
+        if(!confirm(`Arquivar a conta "${S.accounts[i].nome}" preservando seus históricos?`))return;
+        const reason=prompt('Motivo do arquivamento da conta:');if(reason===null)return;
+        const result=JPWForex.state.archiveRegisteredAccount(S.accounts[i].forexAccountId,{reason,
+          expectedEpoch:jpWealthPersistenceEpoch()});
+        if(!result.ok){alert(result.error);return;}
+        accountEditorsOpen.clear();renderContas();window.JPWForex?.executionBoardUI?.render?.();return;
+      }
+      if(confirm(`Excluir a conta sem identidade histórica "${S.accounts[i].nome}"?`)){
         S.accounts.splice(i,1); accountEditorsOpen.clear(); save(); renderContas();
       }
     });
@@ -422,22 +439,30 @@ function renderAplicacao(){
 function renderDash(){
   const box=$('mqlMonthly'); if(!box) return;
   const MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const led=[...S.ledger].sort((a,b)=>a.data<b.data?-1:1);
+  const selection=JPWForex.state.operationalSelection(),context=JPWForex.state.accountContext(selection);
+  const opening=context.status==='OK'?context.value.openingBook:null;
+  const led=context.status==='OK'?[...context.value.ledger].sort((a,b)=>a.data.localeCompare(b.data)):[];
+  if(context.status!=='OK'||!(typeof opening==='number'&&Number.isFinite(opening)&&opening>0)){
+    box.innerHTML='<p class="muted">Selecione uma conta e registre o período com saldo inicial contábil para acompanhar a evolução.</p>';
+    for(const id of ['dRetAcum','dDDmax','dMar']){const node=$(id);if(node)node.textContent='—';}
+    const charts=$('dashCharts');if(charts)charts.innerHTML='<p class="muted">Série indisponível: conta, período ou saldo inicial contábil não confirmado.</p>';
+    return;
+  }
   const pivot={}; // {ano:{mes: retorno}}
   let retAcum=0, ddMax=0;
   if(led.length){
     const fimDoMes={}; // último saldo de cada YYYY-MM
     led.forEach(e=>{
       fimDoMes[e.data.slice(0,7)]=e.saldo;
-      ddMax=Math.max(ddMax, S.params.saldoIni>0?Math.max(0,(S.params.saldoIni-e.saldo)/S.params.saldoIni):0);
+      ddMax=Math.max(ddMax,Math.max(0,(opening-e.saldo)/opening));
     });
-    let prev=S.params.saldoIni;
+    let prev=opening;
     Object.keys(fimDoMes).sort().forEach(k=>{
       const [y,m]=k.split('-');
-      (pivot[y]=pivot[y]||{})[+m]=prev>0?fimDoMes[k]/prev-1:0;
+      (pivot[y]=pivot[y]||{})[+m]=prev>0?fimDoMes[k]/prev-1:null;
       prev=fimDoMes[k];
     });
-    retAcum=S.params.saldoIni>0?led[led.length-1].saldo/S.params.saldoIni-1:0;
+    retAcum=led[led.length-1].saldo/opening-1;
   }
   const anos=Object.keys(pivot).sort();
   const noEpBanner=noExternalProtectionActive()?`<div class="risk-note" style="margin:0 0 12px; color:var(--f4); border-color:var(--f4)">${noExternalProtectionWarning()}</div>`:'';

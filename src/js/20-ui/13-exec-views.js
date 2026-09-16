@@ -17,20 +17,20 @@
 // original: nenhum nó foi movido e nenhum id mudou na realocação.
 const EXEC_VIEWS = [
   ['panel', 'execWidgetGrid'],
+  ['accounting', 'contab'],
+  // Contas preserva o mesmo #contas e o mesmo renderer cadastral. Tornou-se
+  // apenas uma visão local entre Painel e Motor, sem cópia ou nova fonte de dados.
+  ['accounts', 'contas'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
   // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.
-  ['motor', 'motorWidgetGrid'],
-  // Historico: memoria institucional das Operacoes Unicas finalizadas. Consumidor
-  // somente leitura de S.operationHistory — nao recalcula fato historico algum a
-  // partir das grades vivas.
-  ['history', 'execHistory']
+  ['motor', 'motorWidgetGrid']
 ];
 // Workspaces cujo conteúdo depende de estado vivo são montados ao entrar.
 const EXEC_VIEW_RENDERERS = {
   // Repinta a cada entrada porque o conteudo depende de S.operationHistory, que
   // muda quando uma operacao e finalizada noutra parte do app.
-  history: () => { if (window.JPWHistoryUI && typeof window.JPWHistoryUI.render === 'function') window.JPWHistoryUI.render(); }
+  accounting: () => { if (typeof renderLedger === 'function') renderLedger(); }
 };
 const EXEC_DEFAULT_VIEW = 'panel';
 let execView = EXEC_DEFAULT_VIEW;
@@ -49,6 +49,15 @@ function execApplyView(view) {
   });
 }
 
+function execToggleHistory(open){
+  const el=document.getElementById('execHistory'),button=document.getElementById('accountingHistoryToggle');
+  if(!el||!button)return false;
+  el.hidden=!open;el.inert=!open;
+  button.setAttribute('aria-expanded',String(!!open));
+  if(open&&window.JPWHistoryUI?.render)window.JPWHistoryUI.render();
+  return true;
+}
+
 function execSetView(view) {
   execView = view;
   execApplyView(view);
@@ -60,6 +69,12 @@ function execSetView(view) {
 
 function execSelectView(view) {
   if(view==='overview') return window.JPWNavigation?.navigate('forex-overview')===true;
+  if(view==='history'){
+    if(!execSelectView('accounting'))return false;
+    execToggleHistory(true);
+    document.getElementById('accountingHistoryToggle')?.focus();
+    return true;
+  }
   // Compatibilidade de API: consumidores legados não recuperam ownership Exec.
   // O shim delega ao resolver canônico e não altera `execView`.
   const researchView={ecal:'calendar',nocoda:'nocoda',pivots:'pivots'}[view];
@@ -106,6 +121,10 @@ function execWatchModuleEntry() {
 
 execApplyView(execView);
 execWatchModuleEntry();
+document.getElementById('accountingHistoryToggle')?.addEventListener('click',()=>{
+  const button=document.getElementById('accountingHistoryToggle');
+  execToggleHistory(button?.getAttribute('aria-expanded')!=='true');
+});
 
 // Superfície pública consumida pelo controlador da faixa compartilhada
 // (40-app/11-operational-shell.js, NAV_SUBMENU_SURFACES). Só chaves de UI.

@@ -22,7 +22,8 @@ function operationOrderIsLive(o){
 
 function operationLiveOrders(){
   const out = [];
-  (S.phases || []).forEach((ph, pi) => {
+  const selected=JPWForex.state.operationalSelection(),ctx=JPWForex.state.accountContext(selected);
+  (ctx.status==='OK'?ctx.value.phases:[]).forEach((ph, pi) => {
     ((ph && ph.orders) || []).forEach((o, oi) => { if (operationOrderIsLive(o)) out.push({ o, pi, oi }); });
   });
   return out;
@@ -50,7 +51,8 @@ function getMaxUnlockedIdx(){
   const number=typeof value==='number'?value:value?.number;
   return Number.isInteger(number)?number-1:null;
 }
-function phaseVacated(pi){return !(S.phases[pi]?.orders||[]).some(o=>o.status==='Aberta'&&o.recordStatus!=='voided');}
+function phaseVacated(pi){const selected=JPWForex.state.operationalSelection(),ctx=JPWForex.state.accountContext(selected);
+  return !(ctx.value?.phases?.[pi]?.orders||[]).some(o=>o.status==='Aberta'&&o.recordStatus!=='voided');}
 function checkDowngrade(){return null;}
 function openDowngradeModal(){openTransitionModal();}
 function mirrorPhaseForward(){return false;}
@@ -92,13 +94,13 @@ function orderResultMissing(o){
 }
 
 function openCloseOrderModal(pi,oi){
-  const o=S.phases[pi].orders[oi];
+  const selected=JPWForex.state.operationalSelection(),ctx=JPWForex.state.accountContext(selected);
+  const o=ctx.value?.phases?.[pi]?.orders?.[oi];if(!o){alert('Ordem não encontrada nesta conta/período.');return;}
   const box=$('modalBox');
   $('modalOverlay').classList.add('show');
-  const projetado=orderRisk(o);
   box.innerHTML=`
     <h3>🔒 Confirmar Fechamento — ${esc(o.id)||'(sem ID)'} ${esc(o.par)}</h3>
-    <div class="modal-sub">Correções posteriores exigem motivo e preservam a versão anterior. A anulação mantém a ordem no histórico. ${projetado>0?'Risco programado desta ordem: '+fmtForexMoney(projetado,{currency:o.currency}):''}</div>
+    <div class="modal-sub">Correções posteriores exigem motivo e preservam a versão anterior. A anulação mantém a ordem no histórico desta conta e período.</div>
     <div class="modal-q" data-qid="resultado">
       <div class="ql">Resultado da ordem (${esc(o.currency||'moeda não capturada')}) — negativo se foi prejuízo, <b>0</b> se fechou no zero a zero:</div>
       <input type="text" inputmode="decimal" id="closeResultInput" placeholder="informe" value="${Number.isFinite(o.result)?esc(String(o.result)):''}">

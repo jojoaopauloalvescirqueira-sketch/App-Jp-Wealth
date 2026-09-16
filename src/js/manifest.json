@@ -56,25 +56,25 @@
       "order": 9,
       "path": "src/js/10-domain/01-risk-instruments.js",
       "section": "MOTOR DE RISCO POR INSTRUMENTO",
-      "sha256": "595d13d67aef45bdc7edf0edc8bd8dea82f55cc8ed90bca3f9774e2175c83995"
+      "sha256": "7f3992fd253e8b83dd6b63108add8b9c212f11a796654faffa87606a9db7663b"
     },
     {
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
       "order": 10,
-      "sha256": "1819104bd215e18412b0ca2d625c909627d13c1f86e7de652a5199106ca423cd"
+      "sha256": "6b442efa6f75d171c556d01b6929dba7cc2e15d6b0e550b4615b02befe90a325"
     },
     {
       "order": 11,
       "path": "src/js/10-domain/02-risk-calculations.js",
       "section": "CÁLCULOS",
-      "sha256": "45931069b258186ec9fd9e453c975a09ec00eb15e8546b46193c81afdda15c76"
+      "sha256": "6771360eee2df2b6c297a690cb5f69fb1acd9dabb79cd11bd28d43793c18159c"
     },
     {
       "order": 12,
       "path": "src/js/20-ui/01-header-readout.js",
       "section": "TOP BAR · LEITURA DE ESTADO",
-      "sha256": "ff6b99cfecae359060d0ff6e88cc4947fc8465430859edb2b904e8d1d7c91967"
+      "sha256": "8876b7a1b57928531aa19a2e5b61fbebb944a2e94e8d024800bc3f79758f902f"
     },
     {
       "order": 13,
@@ -104,13 +104,13 @@
       "order": 17,
       "path": "src/js/10-domain/03-phase-transitions.js",
       "section": "QUESTIONÁRIOS DE TRANSIÇÃO DE FASE",
-      "sha256": "c8a7251f6830b95488c3b609bcb331dd316a18b14ee2a91e669940eba285288f"
+      "sha256": "0109c2e754813b08293185f7b2fb32fccb15731c398bd13651794682709cc6dc"
     },
     {
       "order": 18,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "f28ee455d25c3a9ec34db1d7cea6238ada96c9bcd89608344b3e86223e1e8c3b"
+      "sha256": "ae38eaae2c69a95b267a12692019db530c0fd1898047333d68106190342d468f"
     },
     {
       "order": 19,
@@ -122,7 +122,7 @@
       "order": 20,
       "path": "src/js/20-ui/07-chart-crosshair-tooltip.js",
       "section": "GRÁFICOS · CROSSHAIR + TOOLTIP",
-      "sha256": "0fe0b97221c25b57799ffb4f1dfc80537c638e151053ae493edff9269f8ea6c4"
+      "sha256": "007aa37da1993837fc3be68cd1a2baf4280310ec4aebe8c8cd025b6006c7a1e3"
     },
     {
       "order": 21,
@@ -134,7 +134,7 @@
       "order": 22,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "c663440dac6dc01cc64d54fde62f1f826ec60f90c3f02accfa2e26bd851ba565"
+      "sha256": "aa5568643537816f6a2a599db0a58db9b817220a956de13aeb29e4a1996b1dba"
     },
     {
       "order": 23,
@@ -146,7 +146,7 @@
       "order": 24,
       "path": "src/js/30-accounting/02-accounting-engine.js",
       "section": "MOTOR DA CONTABILIDADE (perfis V10 centralizados)",
-      "sha256": "710db82a58f690e41653b7b54980d017bd3654a1697aedf6376c7b1bdd60f126"
+      "sha256": "5893b5a806f73ba62fb51fe9ab32a5fe9af4c105a69da70990246912930ea829"
     },
     {
       "order": 25,
@@ -158,13 +158,13 @@
       "order": 26,
       "path": "src/js/30-accounting/04-patrimonial-simulation.js",
       "section": "SIMULAÇÃO PATRIMONIAL POR PERFIL (projeção estatística, NÃO promessa de retorno)",
-      "sha256": "c3e11d472cbff8eec1681ba8196275120713218d0741f7326292dd98f2ef2c32"
+      "sha256": "c710bbac4511e6ac37315aa11eef86f34d15eaafd94f21a84b8305d48501232c"
     },
     {
       "order": 27,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "64858050cafbe11b91674558311b0d4967f9c3a6f7fe981402c3a1068c33b094"
+      "sha256": "b0770fb37e8b872f8ce7a4e32ca7ee61d65578205318c894372d511c74b72608"
     },
     {
       "order": 28,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/40-app/04-onboarding.js",
       "section": "QUESTIONÁRIO DE INÍCIO DE PERÍODO (SET 5b)",
-      "sha256": "3c86fa3f943ab0d1e6803a5f44d0927830dbbb82d77fcd29b7b5103a11a67797"
+      "sha256": "307d2186d0544c52b2d55fdd490854d523720bf03f30470a0f2dd4e9ad7f17a5"
     },
     {
       "order": 36,
@@ -230,13 +230,13 @@
       "order": 38,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "a01334ba45c83e1c12948863cf268c1b10615b1f2624f3405a3a481c70a3cd54"
+      "sha256": "02978a58431e9f0a466764e237e050071b27d464a935d793dbbf7c7c013b103e"
     },
     {
       "order": 39,
       "path": "src/js/40-app/06-boot.js",
       "section": "BOOT",
-      "sha256": "37729a259e4c341db4c6e2228cd771a18eae67b9e478b54dae88ff3042ebfb19"
+      "sha256": "10a7a6bbeb6146cd1aa81262ecb84883cefb8bf77e0cd9e38c138622e3b92c2f"
     },
     {
       "order": 40,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "aa44421dbd3129f072b6148f9b6f4b6b00f448294b325f57bc24acc41284436e"
+      "sha256": "2d13ded10bb2d3ba3b336b1dbcee99604b2b6d3761dc2d08ecaf994bf071441e"
     },
     {
       "order": 46,
@@ -386,7 +386,7 @@
       "order": 64,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "2c0f276b2cdc85ae6e3be049674639e2bd1bc870db35d15e79ffe1cd72125c0f"
+      "sha256": "ca092f4b9188c4bab320894386ea0f101c915d0cf9699ffb508859e6081aca74"
     },
     {
       "order": 65,
@@ -416,13 +416,13 @@
       "order": 69,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "9c49328e78e7c97f69b969934b5320c630b7523ef9a90661d53f827027fd28bc"
+      "sha256": "9cc79f31b9a1771af8598876ba0941a489147a03f72626f4d74b0a13804e1ee8"
     },
     {
       "order": 70,
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
-      "sha256": "4fff0183daa46e97453578851990ff04ca67692fe4ec6f6b9c5f1951f90a9e8c"
+      "sha256": "570101e415dae0325a61038a670ecd7aa064f26b2c0d97d6f158863a82f80768"
     },
     {
       "order": 71,
@@ -487,19 +487,19 @@
       "order": 81,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "23fb4ec52d9319741a46f9bd8c2b0adff89378e626975c8889d3bdcd54ae71d1"
+      "sha256": "8220ebd66bb75de85bd92975c5589a9ca6ae78e8b9a5164e7d82b50832fdcfca"
     },
     {
       "order": 82,
       "path": "src/js/40-app/18-notification-center.js",
       "section": "NOTIFICATIONS · central local de avisos e mensagens de sessao",
-      "sha256": "0c9beaac21e308653639fd151d5ca1d52c9b4a6e8183f97adb32ee36d57ac182"
+      "sha256": "49b4a61a6e81040072ff520f0c0ec8f3020bc717cc39e21059c11c54f5bc2e09"
     },
     {
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 83,
-      "sha256": "d66ab3e349ca051a79eb7e6eb0d6a3a3fe737c580fe4c85566f3681a0a9178a5"
+      "sha256": "1180e3bfd7005d4c16f7bba0e2ba1c84583cd41aaefeea97ce54f52a1180dcec"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
@@ -535,13 +535,13 @@
       "path": "src/js/10-domain/18-execution-board-model.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 89,
-      "sha256": "0c3388821258e039893b8d0f2fdccbca6886bad18b370b82135761344d81131a"
+      "sha256": "9cb4c4354cddba3c81fec65099b856461e1e57b3b311de8e9fa57348d21506b0"
     },
     {
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 90,
-      "sha256": "4f7e6daefd882776454fb8acc9883ee8cee4f48addf99b63486de9b7429e644f"
+      "sha256": "9c35c2d4d17f019270619c25709bc65dfde99a6d5006b4542909fe45403eba89"
     }
   ],
   "runtimeAssets": [

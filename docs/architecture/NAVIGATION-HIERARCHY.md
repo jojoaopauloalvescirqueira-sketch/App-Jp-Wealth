@@ -28,7 +28,7 @@ Consolidado abaixo. Em telas estreitas, o resumo precede a análise. Expansão �
 temporária; nenhum estado de rota ou preferência é persistido por esse gesto.
 
 `#execOverview` e seus widgets são movidos, sem clonagem, para o Consolidado.
-Painel, Motor e Histórico continuam em `#exec`; Histórico local preserva sua
+Painel, Contas, Motor e Histórico continuam em `#exec`; Histórico local preserva sua
 distinção da Contabilidade canônica em `#contab`. As chaves v6 de personalização
 permanecem as mesmas, inclusive o proprietário lógico dash dos widgets realocados.
 
@@ -47,9 +47,11 @@ Finanças Pessoais e Alladin; uma preferência válida do Editor pode permutá-l
 A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
 `forex-consolidated`, `personal-finance`, `research-forex` e `alladin`.
 
-- Forex tem seis filhos nesta ordem: `forex-consolidated`, `forex-planning`,
-  `forex-operation`, `forex-reconciliation`, `forex-account`, `forex-reserves`.
-  Consolidado FX é a entrada padrão; Conta passa a se chamar Contas.
+- Forex tem cinco filhos nesta ordem: `forex-consolidated`, `forex-planning`,
+  `forex-operation`, `forex-reconciliation`, `forex-reserves`. Consolidado FX é a
+  entrada padrão. Contas é uma visão local de Operação, entre Painel e Motor;
+  os aliases `contas` e `forex-account` permanecem compatíveis e levam a essa
+  mesma superfície, sem criar rota, store ou cadastro paralelos.
 - Finanças Pessoais mantém Visão Geral, Orçamento Mensal, Dívidas & Crédito,
   Comparativo Mensal e Cenários, pela superfície `window.JPWFin.ui`.
 - Research mantém `research-forex`, `research-stocks-br`,

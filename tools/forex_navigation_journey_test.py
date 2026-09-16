@@ -13,7 +13,7 @@ from notes_launcher_test import launch_options
 from dashboard_forex_relocation_test import PREF, IDS, MOVED, KEY, swap
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED=['forex-consolidated','forex-planning','forex-operation','forex-reconciliation','forex-account','forex-reserves']
+EXPECTED=['forex-consolidated','forex-planning','forex-operation','forex-reserves']
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,default=ROOT);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--entry-only',action='store_true');args=ap.parse_args()
@@ -31,9 +31,18 @@ def main():
             ctx.add_init_script('window.__onbShown=true;');ctx.add_init_script('localStorage.setItem('+json.dumps(KEY)+','+json.dumps(json.dumps(PREF,ensure_ascii=False))+');');install_bootstrap(ctx);page=ctx.new_page();page.set_default_timeout(5000)
             errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
             page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page);page.evaluate(SEED)
+            page.evaluate('''() => {
+              for(const [accountId,currency,si] of [['fx_A','USD',10000],['fx_B','EUR',5000]]){
+                const result=JPWForex.state.recordAccountPeriod({accountId,startedAt:'2026-09-01',currency,si,
+                  openingBook:si,source:'Fixture sintética de jornada',activateCurrentPeriod:true},
+                  {reason:'Fixture sintética de jornada'});
+                if(!result.ok)throw Error(result.error);
+              }
+              JPWForex.state.selectOperationalAccount('fx_B');__fcs.writes=0;
+            }''')
             page.evaluate('render();window.__journeyBefore=JSON.stringify(S);window.__journeyRaw=localStorage.getItem(LSKEY);window.__checkNode=document.querySelector("#checkWidgetGrid");window.__overviewNode=document.querySelector("#execOverview");')
             def go(target):require(page.evaluate('(t)=>JPWNavigation.navigate(t)',target));page.wait_for_timeout(60)
-            test('six destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
+            test('four destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
             page.locator('#execNavTrigger').click()
             test('Forex default is Consolidado',lambda:require(page.evaluate("JPWNavigation.current().canonical==='forex-consolidated'&&document.querySelector('#fxconsolidated').classList.contains('active')")))
             go('forex-overview')
@@ -41,7 +50,7 @@ def main():
             if not args.entry_only:
                 go('forex-consolidated')
                 if page.locator('#fxContextToggle').get_attribute('aria-expanded')=='true':page.locator('#fxContextToggle').click()
-                test('labels distinguish analytic and operational accounts',lambda:require(page.locator('label',has=page.locator('#fxcAccount')).inner_text().startswith('Conta em análise') and 'Outra sintética' in page.locator('#fxOperationalSummary').inner_text()))
+                test('labels distinguish analytic and operational accounts',lambda:require(page.locator('label',has=page.locator('#fxcAccount')).inner_text().startswith('Conta em análise') and 'Outra sintética' in page.locator('#fxOperationalSummary').inner_text(),str({'analytic':page.locator('label',has=page.locator('#fxcAccount')).inner_text(),'operational':page.locator('#fxOperationalSummary').inner_text()[:180]})))
                 test('analytic Mestre differs from operational B',lambda:require(page.evaluate("document.querySelector('#fxcAccount').value==='fx_A'&&S.forex.activeAccountId==='fx_B'")))
                 page.locator('#fxcManual').click();page.locator('#fxcFrom').fill('2026-01-01');page.locator('#fxcTab-history').click()
                 page.evaluate('window.__filterNode=document.querySelector("#fxcFrom");window.__layoutBefore=localStorage.getItem(`jpwealth.ui.widgetLayouts.v6`);')
@@ -58,8 +67,10 @@ def main():
                 test('context preserves pending file and registration warning without importing',lambda:require(page.evaluate("__importNode===document.querySelector('#fxcFile')&&__importNode.files.length===1&&document.querySelector('#fxcPreview').textContent===__importBefore&&__fcs.writes===0")))
                 page.locator('#fxcCancelImport').click()
                 go('forex-operation')
+                page.evaluate("execSetView('panel');JPWForex.executionBoardUI.render()")
+                page.evaluate('document.querySelector("#phaseContainer details[data-phase=\\"0\\"]").open=true')
                 # Existing order form remains mounted, even without a populated operation.
-                draft=page.locator('#exec input:not([type=hidden]):visible').first
+                draft=page.locator('#phaseContainer [data-p="0"][data-o="0"][data-f="id"]')
                 if draft.count():draft.fill('Synthetic draft')
                 page.evaluate('window.__opNodes=[...document.querySelectorAll("#exec input")];window.__opValues=__opNodes.map(e=>e.value);')
                 trigger=page.locator('#execChecklistBtn');trigger.focus();page.keyboard.press('Enter');page.locator('#forexChecklistDialog').wait_for(state='visible')
@@ -75,9 +86,18 @@ def main():
                 test('Settings suspended for the same checklist',lambda:require(page.evaluate("settingsState.open&&settingsState.suspended&&document.querySelector('#settingsModal').inert&&document.querySelector('#forexChecklistDialog #checkWidgetGrid')===__checkNode")))
                 page.locator('#forexChecklistClose').click();page.wait_for_timeout(100)
                 test('Settings resumes focus and answers',lambda:require(page.evaluate("settingsState.open&&!settingsState.suspended&&!document.querySelector('#settingsModal').inert&&document.activeElement.id==='settingsOpenChecklist'&&JSON.stringify(S.checklist)===__checkAnswers")))
-                page.evaluate('closeSettingsModal()');go('history')
-                test('Exec history distinct from canonical accounting',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='history'")))
-                go('forex-reconciliation');test('canonical accounting stays contab',lambda:require(page.evaluate("JPWNavigation.current().screen==='contab'")))
+                page.evaluate('closeSettingsModal()')
+                # The inline order draft must remain protected when the new Accounts
+                # workspace or Motor is requested. Choosing discard is explicit and
+                # lets the later history route remain a distinct accounting view.
+                test('operation draft blocks local Accounts',lambda:require(page.evaluate("!JPWNavigation.navigate('contas')&&JPWExec.ui.getView()==='panel'&&document.querySelector('#executionBoardDialog')?.open")))
+                page.locator('#ebLeaveStay').click()
+                test('operation draft blocks local Motor',lambda:require(page.evaluate("!JPWNavigation.navigateLocal('exec','motor')&&JPWExec.ui.getView()==='panel'&&document.querySelector('#executionBoardDialog')?.open")))
+                page.locator('#ebLeaveDiscard').click();page.wait_for_timeout(80)
+                test('explicit discard completes requested Motor navigation',lambda:require(page.evaluate("JPWExec.ui.getView()==='motor'&&!document.querySelector('#executionBoardDialog').open")))
+                go('history')
+                test('operation history remains reachable inside Accounting',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#execHistory').isConnected&&!document.querySelector('#execHistory').hidden")))
+                go('forex-reconciliation');test('canonical accounting opens inside Operation',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#contab').closest('#exec')")))
                 # Existing customized v6 preference: moved widgets retain identity/order.
                 go('forex-overview')
                 expected_order=[i for i in IDS if i in MOVED]

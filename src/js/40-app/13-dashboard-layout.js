@@ -137,6 +137,8 @@ function dashLayoutActiveScreenId() {
   const active = document.querySelector('.screen.active');
   if (!active) return null;
   if (active.id === 'fxconsolidated' && !document.getElementById('execOverview').hidden) return 'dash';
+  if (active.id === 'exec' && window.JPWExec?.ui?.getView?.() === 'accounts') return 'contas';
+  if (active.id === 'exec' && window.JPWExec?.ui?.getView?.() === 'accounting') return 'contab';
   return JP_WIDGET_SCREENS[active.id] ? active.id : null; // 'config' não está no registro
 }
 function dashLayoutAllowedWidgetIds(screenId) {
@@ -1235,7 +1237,7 @@ function dashLayoutOnCardPointerDown(event) {
   // alça e menu já têm caminhos próprios de arraste/opções.
   if (event.target.closest('button, a, input, select, textarea, [contenteditable="true"], .dash-layout-handle, .dash-layout-menu-btn, .jp-popover')) return;
   const screenEl = card.closest('.screen');
-  const screenId = card.closest('#fxOverviewWidgets') ? 'dash' : screenEl ? screenEl.id : null;
+  const screenId = card.closest('#fxOverviewWidgets') ? 'dash' : card.closest('#contas') ? 'contas' : screenEl ? screenEl.id : null;
   if (!screenId || !JP_WIDGET_SCREENS[screenId] || screenId !== dashLayoutActiveScreenId()) return;
   if (!dashLayoutIsMovable(card)) return;
   dashLayoutPress = {
@@ -1311,6 +1313,11 @@ function initDashboardLayout() {
     const active = dashLayoutActiveScreenId();
     if (dashLayoutState.editing && active !== dashLayoutState.activeScreenId) dashLayoutSetActiveScreen(active);
   }).observe(overview, { attributes: true, attributeFilter: ['hidden'] });
+  const accounts = document.getElementById('contas');
+  if (accounts) new MutationObserver(() => {
+    const active = dashLayoutActiveScreenId();
+    if (dashLayoutState.editing && active !== dashLayoutState.activeScreenId) dashLayoutSetActiveScreen(active);
+  }).observe(accounts, { attributes: true, attributeFilter: ['hidden'] });
 
   const customizeBtn = document.getElementById('dashLayoutCustomizeBtn');
   if (customizeBtn) customizeBtn.addEventListener('click', () => {

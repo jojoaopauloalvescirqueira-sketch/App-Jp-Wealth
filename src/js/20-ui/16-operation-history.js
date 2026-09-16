@@ -16,11 +16,39 @@
 // var, e não const/let: mesmo motivo documentado em 17-economic-calendar.js —
 // no monólito este arquivo pode ser alcançado por chamada de outro script antes
 // de avaliar, e o nome precisa existir como undefined em vez de estourar na TDZ.
-var histState = { instrument:'all', direction:'all', result:'all', query:'', selected:null };
+var histState = { instrument:'all', direction:'all', result:'all', query:'', selected:null,archiveScope:'' };
+
+function histScope(){
+  const [accountId,periodId]=String(histState.archiveScope||'').split('|');
+  const archived=S.forex?.accountContexts?.archivedAccounts?.[accountId];
+  const period=S.forex?.accountContexts?.accounts?.[accountId]?.periods?.[periodId];
+  return archived&&period?{accountId,periodId,archived:true}:JPWForex.state.operationalSelection();
+}
+function histArchivePicker(){
+  const envelope=S.forex?.accountContexts,archived=envelope?.archivedAccounts||{};
+  const items=Object.entries(archived).flatMap(([accountId,entry])=>
+    Object.keys(envelope.accounts?.[accountId]?.periods||{}).map(periodId=>({accountId,periodId,
+      name:entry.record?.nome||entry.record?.apelido||accountId})));
+  if(!items.length)return '';
+  return '<label>Consulta histórica <select id="histArchiveScope"><option value="">Conta operacional selecionada</option>'+
+    items.map(({accountId,periodId,name})=>'<option value="'+esc(accountId+'|'+periodId)+'"'+
+      (histState.archiveScope===accountId+'|'+periodId?' selected':'')+'>'+esc(name+' · '+periodId+' · arquivada')+'</option>').join('')+
+    '</select></label>';
+}
 
 function histRecords(){
   const h = S.operationHistory;
-  return (h && Array.isArray(h.records)) ? h.records : [];
+  const selection=histScope();
+  if(!selection.accountId||!selection.periodId)return [];
+  return (h && Array.isArray(h.records)) ? h.records.filter(r=>{
+    const captured=histCapturedContext(r);
+    return !captured.identityConflict&&captured.accountId===selection.accountId&&
+      captured.periodId===selection.periodId;
+  }) : [];
+}
+function histUnresolvedRecords(){
+  const records=S.operationHistory?.records||[];
+  return records.filter(r=>{const c=histCapturedContext(r);return !c.accountId||!c.periodId||c.identityConflict;});
 }
 
 // ---- derivações puras sobre o snapshot (nunca sobre as grades) ----
@@ -301,10 +329,17 @@ function renderOperationHistory(){
   const root = document.getElementById('execHistory');
   if (!root) return;
   const todos = histRecords();
+  const selection=histScope(),unresolved=histUnresolvedRecords(),archivePicker=histArchivePicker();
+  const legacy=unresolved.length?'<details class="card"><summary>Legado não conciliado · '+unresolved.length+
+    ' operação(ões)</summary><p>Sem conta/período comprovados; fora dos totais da conta selecionada.</p><ul>'+
+    unresolved.map(r=>'<li>'+esc(r.operationId||'ID ausente')+' · '+esc(r.closedAt||'Data ausente')+
+      ' · '+esc(r.instrument||'Instrumento ausente')+'</li>').join('')+'</ul></details>':'';
 
   if (!todos.length) {
-    root.innerHTML = '<div class="card"><h2>Histórico</h2>' +
-      '<p class="expl">Sem operações finalizadas.</p></div>';
+    root.innerHTML = '<div class="card"><h2>Histórico · '+esc(selection.accountId||'Conta não selecionada')+'</h2>' +
+      '<p class="expl">Sem operações finalizadas neste período da conta.</p>'+archivePicker+'</div>'+legacy;
+    const picker=document.getElementById('histArchiveScope');if(picker)picker.addEventListener('change',()=>{
+      histState.archiveScope=picker.value;renderOperationHistory();document.getElementById('histArchiveScope')?.focus();});
     return;
   }
 
@@ -317,11 +352,11 @@ function renderOperationHistory(){
     '<option value="' + esc(v) + '"' + (atual === v ? ' selected' : '') + '>' + esc(rot) + '</option>';
 
   root.innerHTML = '<div class="card">' +
-    '<h2>Histórico</h2>' +
+    '<h2>Histórico · '+esc(selection.accountId)+' · '+esc(selection.periodId)+'</h2>' +
     '<p class="expl">Memória institucional das Operações Únicas finalizadas. Registro histórico é evidência: ' +
     'os números descrevem o que foi observado e não projetam desempenho futuro.</p>' +
     '<div class="hist-stats" id="histStats">' + histStatsHTML(filtrados) + '</div>' +
-    '<div class="hist-filters">' +
+    '<div class="hist-filters">' +archivePicker+
     '<label>Instrumento <select id="histInstrument">' + opcao('all', 'Todos', histState.instrument) +
       instrumentos.map(i => opcao(i, i, histState.instrument)).join('') + '</select></label>' +
     '<label>Direção <select id="histDirection">' + opcao('all', 'Todas', histState.direction) +
@@ -332,7 +367,7 @@ function renderOperationHistory(){
     '<label>Buscar <input type="search" id="histQuery" value="' + esc(histState.query) +
       '" placeholder="id, instrumento ou ordem"></label>' +
     '</div>' +
-    '<div class="jp-table-scroll" id="histTabela">' + histTableHTML(filtrados) + '</div></div>';
+    '<div class="jp-table-scroll" id="histTabela">' + histTableHTML(filtrados) + '</div></div>'+legacy;
 
   // Filtros e seleção mudam APENAS estado de apresentação. Nenhum caminho deste
   // arquivo chama save(), muta S ou toca a memória institucional.
@@ -343,6 +378,8 @@ function renderOperationHistory(){
   liga('histInstrument', 'instrument');
   liga('histDirection', 'direction');
   liga('histResult', 'result');
+  const picker=document.getElementById('histArchiveScope');if(picker)picker.addEventListener('change',()=>{
+    histState.archiveScope=picker.value;renderOperationHistory();document.getElementById('histArchiveScope')?.focus();});
   const q = document.getElementById('histQuery');
   if (q) q.addEventListener('input', () => { histState.query = q.value; histRepaintResults(); });
   histBindRows(root);
@@ -404,7 +441,8 @@ function operationCopyProjection(record){
     ? (Array.isArray(record.ordersSnapshot) ? record.ordersSnapshot.map(o => ({o, position:histPhaseName(Number.isInteger(o.phase) ? o.phase - 1 : null, record) + '/' + (o.gridIndex + 1)})) : [])
     : operationLiveOrders().map(({o, pi, oi}) => ({o, position:'F' + (pi + 1) + '/' + (oi + 1)}));
   if (!historical && !orders.length) return null;
-  const op = historical ? record : (S.activeOperation || {});
+  const selected=JPWForex.state.operationalSelection(),context=JPWForex.state.accountContext(selected);
+  const op = historical ? record : (context.value?.activeOperation || {});
   const openCount = orders.filter(x => x.o.status === 'Aberta').length;
   const status = historical ? 'FINALIZADA — registro histórico'
     : !openCount ? 'SEM ORDENS ABERTAS — aguarda finalização formal'
@@ -469,18 +507,15 @@ function operationCopyProjection(record){
       else lines.push('Resultado líquido indisponível: há resultado não informado, PENDING ou moeda ausente/conflitante.');
     }
     lines.push('', 'Contexto atual do cadastro — não é snapshot da entrada');
-    const master = typeof getMaster === 'function' ? getMaster() : null;
-    if (master) row(master.tipo === 'MESTRE' ? 'Conta mestre cadastrada' : 'Conta cadastrada de referência', operationCopyScalar(master.nome));
-    const key = S.period && S.period.profile;
-    if (key === 'PENDING') row('Perfil cadastrado', 'PENDING');
-    else if (typeof key === 'string' && RISK_PROFILES.some(p => p.key === key || p.name === key)) {
-      row('Perfil cadastrado', operationCopyScalar(getActiveRiskProfile(key).name));
-    }
-    row('Período cadastrado', operationCopyScalar(S.period && S.period.nome));
-    row('Início do período', operationCopyScalar(S.params && S.params.inicio));
-    // This legacy scalar has no currency provenance. Neither the operation nor
-    // the selected account establishes the unit of this independent book value.
-    row('Saldo contábil atual (book, unidade ausente)', operationCopyMoney(S.params && S.params.saldoAtu));
+    const registered=(S.accounts||[]).find(a=>a?.forexAccountId===selected.accountId);
+    if(registered)row('Conta cadastrada',operationCopyScalar(registered.nome));
+    row('Conta ID',operationCopyScalar(selected.accountId));
+    row('Período ID',operationCopyScalar(selected.periodId));
+    row('Início do período',operationCopyScalar(context.value?.startedAt));
+    const last=context.value?.ledger?.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1);
+    if(last)row('Último saldo contábil observado ('+context.value.currency+')',operationCopyMoney(last.saldo,{currency:context.value.currency}));
+    else if(Number.isFinite(context.value?.openingBook))row('Saldo inicial contábil ('+context.value.currency+')',operationCopyMoney(context.value.openingBook,{currency:context.value.currency}));
+    else lines.push('Saldo contábil indisponível neste período.');
     lines.push('Equity flutuante e veredito normativo não compõem esta cópia.');
   }
   return lines.join('\n');

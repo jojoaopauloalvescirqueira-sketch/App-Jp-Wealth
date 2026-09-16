@@ -1,18 +1,9 @@
 #!/usr/bin/env python3
-"""Caracterizacao da Camada 1 — Fundacao da Operacao Unica.
+"""Operação por conta: identidade factual, revisão e continuidade sintéticas.
 
-Ate esta versao a Operacao Unica nao existia como entidade: era um conceito
-emergente do conteudo das grades. Este teste cobre o que a fundacao passou a
-garantir — identidade estavel, ciclo de vida explicito, carimbos por ordem e
-captura PROSPECTIVA e MONOTONICA da maior Fase da Conta atingida.
-
-A invariante mais importante aqui nao e "o campo existe": e que informacao
-DESCONHECIDA nunca vira zero, agora ou valor presumido. Um openedAt legado
-permanece null, e o maximo de fase so cresce a partir do que foi efetivamente
-observado.
-
-Todas as fixtures sao SINTETICAS. O teste nao importa backup real e nao toca
-credencial.
+O oráculo global anterior permanece em evidência externa desta campanha. Ele
+invocava operationOnOrderStatus sobre S.phases, caminho substituído pelo escritor
+contextual. Este teste verifica a identidade pela escrita e recarga reais.
 """
 
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -24,634 +15,138 @@ import threading
 import notes_launcher_test as launcher
 from playwright.sync_api import sync_playwright
 
-
-ROOT = Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-
 class QuietHandler(SimpleHTTPRequestHandler):
-    def log_message(self, *_args):
-        pass
-
+    def log_message(self,*_args):pass
 
 def serve():
     with socket.socket() as probe:
-        probe.bind(("127.0.0.1", 0))
-        port = probe.getsockname()[1]
-    server = ThreadingHTTPServer(("127.0.0.1", port), QuietHandler)
-    threading.Thread(target=server.serve_forever, daemon=True).start()
-    return server, f"http://127.0.0.1:{port}/index.html"
-
-
-def prepare_page(browser, url):
-    context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
-    page, observed = launcher.prepare(context, url)
-    page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
-    page.evaluate("() => {window.__setEquity=(equity=10000)=>{\n  S.forex=JPWForex.state.empty();S.forex.activeAccountId='synthetic-capture-account';\n  S.forex.accounts['synthetic-capture-account']={si:10000,equity,netCashflow:0,cashflowAdjustmentRecorded:true,\n    currency:'USD',source:'synthetic-capture-fixture',observedAt:'2026-09-14T12:00:00Z',periodId:'synthetic-period'};\n};}")
-    return context, page, observed
-
-
-def run_default_shape(page):
-    """Estado novo nasce sem operacao e com envelope de historico vazio."""
-    fatos = page.evaluate(
-        """() => ({
-          activeOperationDefault: DEFAULTS.activeOperation,
-          historyDefault: JSON.parse(JSON.stringify(DEFAULTS.operationHistory)),
-          temChaves: ('activeOperation' in DEFAULTS) && ('operationHistory' in DEFAULTS)
-        })"""
-    )
-    assert fatos["temChaves"], "DEFAULTS nao declara as chaves da fundacao"
-    assert fatos["activeOperationDefault"] is None, (
-        f"default de activeOperation deveria ser null (nenhuma operacao em curso), "
-        f"recebido {fatos['activeOperationDefault']!r} — objeto vazio seria operacao fantasma"
-    )
-    assert fatos["historyDefault"] == {"schemaVersion": 1, "records": []}, (
-        f"envelope do historico divergente: {fatos['historyDefault']}"
-    )
-
-
-def run_legacy_adoption(page):
-    """Operacao legada viva e ADOTADA: ganha identidade sem ganhar passado."""
-    fatos = page.evaluate(
-        """() => {
-          // Estado anterior a esta versao: grades com operacao em curso e
-          // nenhuma entidade. Exatamente o que existe hoje em campo.
-          S.activeOperation = null;
-          S.phases[0].orders[0] = {id:'G1',par:'EURUSD',tipo:'BUY',lote:1,entry:1.1,sl:1.09,tp:1.2,result:0,status:'Aberta'};
-          migrate();
-          const op = S.activeOperation;
-          return {
-            criada: !!op,
-            id: op && op.operationId,
-            openedAt: op && op.openedAt,
-            openedAtSource: op && op.openedAtSource,
-            maxFase: op && op.maxAccountPhaseReached,
-            adotada: !!(op && op.adoptedLegacyAt)
-          };
-        }"""
-    )
-    assert fatos["criada"], "operacao legada viva nao foi adotada — ficaria sem identidade para sempre"
-    assert isinstance(fatos["id"], str) and fatos["id"], f"identidade ausente: {fatos['id']!r}"
-    assert fatos["openedAt"] is None, (
-        f"openedAt legado deveria permanecer null, recebido {fatos['openedAt']!r} — "
-        "inventar a abertura falsificaria proveniencia"
-    )
-    assert fatos["openedAtSource"] is None, f"proveniencia inventada: {fatos['openedAtSource']!r}"
-    assert fatos["maxFase"] is None, (
-        f"maxAccountPhaseReached legado deveria ser null e nao 0: {fatos['maxFase']!r} — "
-        "desconhecido nao e Fase 1"
-    )
-    assert fatos["adotada"], "adocao nao foi marcada"
-
-
-def run_existing_operation_unknowns(page):
-    """Operacao JA existente com campos ausentes: desconhecido continua null.
-
-    Complementa a adocao de legado, que cria o objeto ja normalizado e por isso
-    nao exercita o ramo de reparo. Sem este caso, trocar `null` por `0` no
-    normalizador passaria despercebido — e `0` nao e ausencia, e' "Fase 1".
-    """
-    fatos = page.evaluate(
-        """() => {
-          S.activeOperation = {operationId:'op_preexistente'};   // sem os demais campos
-          migrate();
-          const a = S.activeOperation;
-          S.activeOperation = {operationId:'op_lixo', maxAccountPhaseReached:'abc', openedAt:42, openedAtSource:'inventada'};
-          migrate();
-          const b = S.activeOperation;
-          S.activeOperation = {operationId:'op_alto', maxAccountPhaseReached:99};
-          migrate();
-          const c = S.activeOperation;
-          return {
-            idPreservado: a.operationId === 'op_preexistente',
-            maxAusente: a.maxAccountPhaseReached,
-            openedAtAusente: a.openedAt,
-            sourceAusente: a.openedAtSource,
-            maxLixo: b.maxAccountPhaseReached,
-            openedAtLixo: b.openedAt,
-            sourceInvalida: b.openedAtSource,
-            maxTeto: c.maxAccountPhaseReached
-          };
-        }"""
-    )
-    assert fatos["idPreservado"], "identidade preexistente foi descartada"
-    assert fatos["maxAusente"] is None, (
-        f"max ausente virou {fatos['maxAusente']!r} — desconhecido nao e Fase 1"
-    )
-    assert fatos["maxLixo"] is None, f"max invalido virou {fatos['maxLixo']!r}"
-    assert fatos["openedAtAusente"] is None and fatos["openedAtLixo"] is None, (
-        "openedAt nao-string deveria virar null"
-    )
-    assert fatos["sourceAusente"] is None, f"proveniencia inventada: {fatos['sourceAusente']!r}"
-    assert fatos["sourceInvalida"] is None, (
-        f"proveniencia fora do vocabulario aceita: {fatos['sourceInvalida']!r}"
-    )
-    assert fatos["maxTeto"] is None, f"fase impossível foi reinterpretada: {fatos['maxTeto']!r}"
-
-
-def run_unknown_is_never_zero(page):
-    """DESCONHECIDO e FASE 1 sao estados diferentes, em toda a cadeia.
-
-    `+null === 0` e `Number.isFinite(0) === true`: qualquer guarda escrita com
-    coercao deixa um maximo NUNCA OBSERVADO virar "Fase 1 observada" — e o
-    registro do Historico e imutavel, entao a afirmacao falsa fica para sempre.
-    """
-    r = page.evaluate(
-        """() => {
-          const casos = {};
-          // normalizador
-          S.activeOperation = {operationId:'op_n', maxAccountPhaseReached:null};
-          migrate(); casos.normNull = S.activeOperation.maxAccountPhaseReached;
-          S.activeOperation = {operationId:'op_n'};                       // ausente
-          migrate(); casos.normAusente = S.activeOperation.maxAccountPhaseReached;
-          S.activeOperation = {operationId:'op_n', maxAccountPhaseReached:'0'};  // string
-          migrate(); casos.normString = S.activeOperation.maxAccountPhaseReached;
-          S.activeOperation = {operationId:'op_n', maxAccountPhaseReached:0};    // Fase 1 REAL
-          migrate(); casos.normZeroReal = S.activeOperation.maxAccountPhaseReached;
-          // helper puro
-          casos.helperNull = operationPhaseIdxOrNull(null);
-          casos.helperZero = operationPhaseIdxOrNull(0);
-          __setEquity(10000);
-          // captura: primeira observacao estabelece, mesmo sendo Fase 1
-          S.params.saldoIni = 10000;
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
-          S.activeOperation = {schemaVersion:1, operationId:'op_cap', openedAt:null,
-                               openedAtSource:null, maxAccountPhaseReached:null,
-                               recordContext:JPWForex.state.recordContext()};
-          // A captura NAO mora mais em save(): save() roda a cada tecla, e um
-          // valor meio digitado nao pode virar evidencia historica. Aqui se
-          // exercita a funcao de captura diretamente, que e o objeto deste teste
-          // de unidade; QUAIS atos a disparam e propriedade de fiacao, coberta
-          // por run_typing_does_not_forge_account_phase na suite de finalizacao.
-          operationTouchAccountPhase();
-          casos.aposPrimeiraCaptura = S.activeOperation.maxAccountPhaseReached;
-          // renderizadores
-          casos.fmtNull = operationFmtPhase(null);
-          casos.fmtZero = operationFmtPhase(0);
-          return casos;
-        }"""
-    )
-    assert r["normNull"] is None, f"null virou {r['normNull']!r} no normalizador"
-    assert r["normAusente"] is None, f"campo ausente virou {r['normAusente']!r}"
-    assert r["normString"] is None, f"string '0' virou {r['normString']!r} — backup adulterado"
-    assert r["normZeroReal"] == 0, f"Fase 1 REAL foi descartada: {r['normZeroReal']!r}"
-    assert r["helperNull"] is None and r["helperZero"] == 0, f"helper: {r}"
-    assert r["aposPrimeiraCaptura"] == 0, (
-        f"a primeira captura nao estabeleceu o valor: {r['aposPrimeiraCaptura']!r} — "
-        "desconhecido nao pode bloquear a observacao de Fase 1"
-    )
-    assert r["fmtNull"] == "—", f"desconhecido renderizado como {r['fmtNull']!r}"
-    assert r["fmtZero"] != "—", f"Fase 1 real renderizada como travessao: {r['fmtZero']!r}"
-
-
-def run_identity_stability(page):
-    """operationId nasce UMA vez e sobrevive a migrate() e save() repetidos."""
-    fatos = page.evaluate(
-        """() => {
-          const antes = S.activeOperation.operationId;
-          migrate(); save(); migrate(); save();
-          return {antes, depois: S.activeOperation.operationId};
-        }"""
-    )
-    assert fatos["antes"] == fatos["depois"], (
-        f"operationId mudou entre chamadas: {fatos['antes']} -> {fatos['depois']} — "
-        "identidade recalculavel nao e identidade"
-    )
-
-
-def run_genesis_birth(page):
-    """Abrir a Genese faz nascer a operacao com proveniencia automatica."""
-    fatos = page.evaluate(
-        """() => {
-          // Base limpa: nenhuma operacao, grades zeradas.
-          S.activeOperation = null;
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
-          const genese = S.phases[0].orders[0];
-          genese.role='GENESIS';genese.par = 'EURUSD'; genese.lote = 1; genese.entry = 1.1; genese.sl = 1.09;
-          genese.status = 'Aberta';
-          operationOnOrderStatus(genese, 'Aberta', 0, 0);
-          const op = S.activeOperation;
-          const primeiroOpenedAt = op.openedAt;
-          const primeiroId = op.operationId;
-          const ordemOpenedAt = genese.openedAt;
-          // SENTINELA, e nao comparacao de relogio. Duas chamadas no mesmo
-          // milissegundo produzem toISOString() identico, e a igualdade passaria
-          // mesmo com sobrescrita — foi exatamente assim que um defeito plantado
-          // sobreviveu ao teste. Marcando com um valor impossivel de ser gerado,
-          // qualquer reescrita fica visivel.
-          const SENT = '1970-01-01T00:00:00.000Z';
-          genese.openedAt = SENT;
-          op.openedAt = SENT;
-          operationOnOrderStatus(genese, 'Aberta', 0, 0);
-          return {
-            nasceu: !!op,
-            id: primeiroId,
-            openedAt: primeiroOpenedAt,
-            source: op.openedAtSource,
-            ordemOpenedAt,
-            openedAtEstavel: op.openedAt === SENT,
-            idEstavel: op.operationId === primeiroId,
-            ordemEstavel: genese.openedAt === SENT
-          };
-        }"""
-    )
-    assert fatos["nasceu"], "abrir a Genese nao criou a Operacao Unica"
-    assert fatos["source"] == "genesis_transition", (
-        f"proveniencia deveria ser genesis_transition, recebido {fatos['source']!r}"
-    )
-    assert isinstance(fatos["openedAt"], str) and fatos["openedAt"], "openedAt nao foi carimbado"
-    assert isinstance(fatos["ordemOpenedAt"], str), "openedAt da ordem nao foi carimbado"
-    assert fatos["openedAtEstavel"], "reabrir reescreveu o openedAt da operacao"
-    assert fatos["idEstavel"], "reabrir gerou identidade nova"
-    assert fatos["ordemEstavel"], "reabrir reescreveu o openedAt da ordem"
-
-
-def run_order_close_stamp(page):
-    """Fechar carimba closedAt uma vez; fechar de novo nao move o carimbo."""
-    fatos = page.evaluate(
-        """() => {
-          const o = S.phases[0].orders[0];
-          operationOnOrderStatus(o, 'Fechada', 0, 0);
-          const primeiro = o.closedAt;
-          operationOnOrderStatus(o, 'Fechada', 0, 0);
-          return {primeiro, segundo: o.closedAt, openedAtIntacto: !!o.openedAt};
-        }"""
-    )
-    assert isinstance(fatos["primeiro"], str) and fatos["primeiro"], "closedAt nao carimbado"
-    assert fatos["primeiro"] == fatos["segundo"], (
-        f"closedAt reescrito: {fatos['primeiro']} -> {fatos['segundo']}"
-    )
-    assert fatos["openedAtIntacto"], "fechar apagou o openedAt da ordem"
-
-
-def run_phase_capture_monotonic(page):
-    """maxAccountPhaseReached e capturado em ATO CONFIRMADO e NUNCA regride.
-
-    A captura saiu de save() de proposito: save() roda a cada tecla dos campos
-    numericos da grade, e um valor meio digitado nao pode virar evidencia
-    historica. Aqui a captura e invocada diretamente — QUAIS atos a disparam e
-    propriedade de fiacao, coberta em operation_finalize_test.py.
-    """
-    fatos = page.evaluate(
-        """() => {
-          __setEquity(10000);
-          S.activeOperation.recordContext=JPWForex.state.recordContext();
-          const passos = [];
-          const registrar = (rot) => passos.push({
-            rot,
-            faseAtual: currentAccountPhaseIdx(),
-            max: S.activeOperation.maxAccountPhaseReached
-          });
-          // Fase da Conta deriva do drawdown: risco aberto + perdas.
-          // Um prejuizo grande empurra a fase para cima.
-          S.params.saldoIni = 10000;
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
-          S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:0,status:'Fechada'};
-          operationTouchAccountPhase(); save(); registrar('inicio');
-          // Perda que eleva o drawdown e, com ele, a Fase da Conta.
-          S.phases[0].orders[0].result = -900;
-          __setEquity(9100);
-          operationTouchAccountPhase(); save(); registrar('apos perda');
-          const pico = S.activeOperation.maxAccountPhaseReached;
-          // Recuperacao: a fase VIGENTE cai, o maximo NAO pode cair junto.
-          S.phases[0].orders[0].result = 0;
-          __setEquity(10000);
-          operationTouchAccountPhase(); save(); registrar('apos recuperacao');
-          return {passos, pico, maxFinal: S.activeOperation.maxAccountPhaseReached};
-        }"""
-    )
-    passos = fatos["passos"]
-    subiu = passos[1]["max"] is not None and (
-        passos[0]["max"] is None or passos[1]["max"] >= passos[0]["max"]
-    )
-    assert subiu, f"maximo nao acompanhou a subida da fase: {passos}"
-    assert fatos["maxFinal"] == fatos["pico"], (
-        f"maximo REGREDIU quando a fase vigente caiu: pico {fatos['pico']} -> {fatos['maxFinal']} — "
-        "monotonicidade e o contrato deste campo"
-    )
-    assert passos[2]["faseAtual"] is not None, "fase vigente ficou indeterminada"
-
-
-def run_history_envelope(page):
-    """Envelope do historico resiste a forma invalida e a id duplicado."""
-    fatos = page.evaluate(
-        """() => {
-          S.operationHistory = 'lixo';
-          migrate();
-          const aposLixo = JSON.parse(JSON.stringify(S.operationHistory));
-          S.operationHistory.records = [
-            {operationId:'dup', schemaVersion:1},
-            {operationId:'dup', schemaVersion:1},
-            'nao e objeto'
-          ];
-          migrate();
-          const ids = S.operationHistory.records.map(r => r.operationId);
-          return {
-            aposLixo,
-            total: S.operationHistory.records.length,
-            unicos: new Set(ids).size,
-            temSnapshot: S.operationHistory.records.every(r => Array.isArray(r.ordersSnapshot))
-          };
-        }"""
-    )
-    assert fatos["aposLixo"] == {"schemaVersion": 1, "records": []}, (
-        f"envelope invalido nao foi reconstruido: {fatos['aposLixo']}"
-    )
-    assert fatos["total"] == 2, f"registro nao-objeto deveria ser descartado: {fatos['total']}"
-    assert fatos["unicos"] == 2, (
-        "id duplicado sobreviveu — a idempotencia da finalizacao ficaria ambigua"
-    )
-    assert fatos["temSnapshot"], "ordersSnapshot nao foi garantido como array"
-
-
-def run_not_applicable_is_normal_flow(page):
-    """Estado legado/insuficiente e NAO APLICAVEL — tratado sem excecao."""
-    fatos = page.evaluate(
-        """() => {
-          S.activeOperation = {schemaVersion:1, operationId:'x', openedAt:null,
-                               openedAtSource:null, maxAccountPhaseReached:null};
-          const fxBefore=S.forex;S.forex=null;
-          const bak = S.params;
-          S.params = null;                    // base legada/malformada
-          const probe = accountPhaseProbe();
-          let ok = null, erro = null;
-          try { operationTouchAccountPhase(); ok = save(); } catch(e) { erro = String(e); }
-          const fault = S.activeOperation.phaseCaptureFault || null;
-          S.params = bak;S.forex=fxBefore;
-          save();
-          return {probeOk: probe.ok, probeIdx: probe.idx, ok, erro, fault};
-        }"""
-    )
-    assert fatos["erro"] is None, f"save() lancou: {fatos['erro']}"
-    assert fatos["ok"] is True, f"save() deixou de gravar: {fatos['ok']!r}"
-    assert fatos["probeOk"] is True and fatos["probeIdx"] is None, (
-        f"estado insuficiente deveria ser NAO APLICAVEL (ok=true, idx=null), "
-        f"recebido ok={fatos['probeOk']} idx={fatos['probeIdx']!r}"
-    )
-    assert fatos["fault"] is None, (
-        "estado legado foi classificado como DEFEITO — nao aplicavel nao e falha, "
-        "e marcar tudo como falha tornaria a marca inutil"
-    )
-
-
-def run_capture_failure_is_observable(page):
-    """Falha do MECANISMO nao pode passar por sucesso silencioso.
-
-    Este e o endurecimento exigido: a fase sobe, a reconciliacao quebra, e o
-    sistema NAO pode preservar o valor antigo fingindo que capturou. save()
-    continua gravando — indisponibilidade global por causa de um campo derivado
-    seria troca pior —, mas a lacuna fica registrada na propria entidade.
-    """
-    fatos = page.evaluate(
-        """() => {
-          S.params.saldoIni = 10000;
-          S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
-          S.activeOperation = {schemaVersion:1, operationId:'falha', openedAt:null,
-                               openedAtSource:null, maxAccountPhaseReached:0};
-          // Defeito INESPERADO do mecanismo — nao ausencia de dado.
-          const bak = JPWForex.state.read;
-          JPWForex.state.read = () => { throw new Error('falha sintetica de reconciliacao'); };
-          // Condicao que ELEVARIA a fase se a captura estivesse sa.
-          S.phases[0].orders[0] = {id:'G',par:'EURUSD',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:-900,status:'Fechada'};
-          const probe = accountPhaseProbe();
-          let ok = null, erro = null;
-          try { operationTouchAccountPhase(); ok = save(); } catch(e) { erro = String(e); }
-          const op = S.activeOperation;
-          const snapshot = {
-            probeOk: probe.ok,
-            temRazao: typeof probe.erro === 'string' && probe.erro.length > 0,
-            ok, erro,
-            max: op.maxAccountPhaseReached,
-            fault: op.phaseCaptureFault ? {temAt: !!op.phaseCaptureFault.at,
-                                           razao: op.phaseCaptureFault.reason} : null
-          };
-          JPWForex.state.read = bak;
-          // Sucesso posterior NAO apaga a evidencia da falha.
-          operationTouchAccountPhase(); save();
-          snapshot.faultPersisteAposSucesso = !!S.activeOperation.phaseCaptureFault;
-          return snapshot;
-        }"""
-    )
-    assert fatos["erro"] is None, f"save() lancou: {fatos['erro']}"
-    assert fatos["ok"] is True, (
-        "save() parou de gravar por causa de um campo derivado — trocaria lacuna "
-        "de evidencia por perda de dado do operador"
-    )
-    assert fatos["probeOk"] is False and fatos["temRazao"], (
-        f"defeito do mecanismo foi classificado como ausencia de dado: {fatos}"
-    )
-    assert fatos["fault"] is not None, (
-        "a falha foi ENGOLIDA: o sistema persistiu declarando captura que nao houve"
-    )
-    assert fatos["fault"]["temAt"] and fatos["fault"]["razao"], (
-        f"marca de falha sem conteudo auditavel: {fatos['fault']}"
-    )
-    assert fatos["max"] == 0, (
-        f"o maximo foi alterado apesar da falha: {fatos['max']!r} — "
-        "capturar errado e pior que nao capturar"
-    )
-    assert fatos["faultPersisteAposSucesso"], (
-        "um save() bem-sucedido apagou a evidencia da falha anterior — o maximo "
-        "pode estar subestimado para sempre e a auditoria perderia o rastro"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Interacao C x A: a captura opera sobre a entidade que PERMANECE viva
-# ---------------------------------------------------------------------------
-# A captura da Fase da Conta rodava ANTES do fail-safe de orfandade. Quando o
-# fail-safe descartava uma orfa e uma tese nova nascia no mesmo ato, a captura
-# tinha ido para a entidade descartada e a recem-nascida saia sem observacao do
-# proprio instante em que nasceu. Nao e afirmacao falsa — e subestimacao
-# silenciosa do maximo, que a monotonicidade depois preserva errado.
-
-# Funcao EXPLICITA: com duas atribuicoes soltas o Playwright trata a ultima
-# expressao como a funcao a invocar, e chamava __ordemNova sem argumentos.
-MONTA_FASE = """() => {
-  window.__montaFase = (ciclo) => {
-    __setEquity(10000+ciclo);
-    S.params.saldoIni = 10000;
-    // Reconstroi as grades: um caso anterior desta suite pode ter deixado
-    // S.phases vazio, e ali o forEach nao lanca — so devolve S.phases[0]
-    // indefinido depois, no lugar errado.
-    if (!Array.isArray(S.phases) || S.phases.length !== 4) {
-      S.phases = structuredClone(DEFAULTS.phases);
-    }
-    S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
-    S.cycleRealizado = ciclo;
-    S.activeOperation = null;
-    S.operationHistory = {schemaVersion:1, records:[]};
-  };
-  // Ordem NOVA: sem carimbo algum, e o que o fail-safe exige para agir.
-  window.__ordemNova = (pi,oi,par) => {
-    const o = S.phases[pi].orders[oi];
-    o.id='X';o.role=pi===0&&oi===0?'GENESIS':'DEFENSE'; o.par=par||'EURUSD'; o.tipo='BUY'; o.lote=0.01;
-    o.entry=1.10; o.sl=1.09; o.tp=1.20; o.result=0;
-    // O status e aplicado ANTES da chamada, como o handler real faz:
-    // operationOnOrderStatus so carimba datas e resolve a identidade — quem muda
-    // o status e o chamador. Sem isto nenhuma ordem fica viva, o fail-safe de
-    // orfandade dispara no ato seguinte e a entidade e trocada por engano.
-    o.status='Aberta';
-    delete o.openedAt; delete o.closedAt;
-    return o;
-  };
-  // V11 captures identity and account context in the confirmed record command.
-  // Direct operationOnOrderStatus calls still test timestamps, but cannot invent
-  // an account for a legacy row that never recorded one.
-  window.__confirmNewOrder = (o,pi,oi) => {
-    const changes=structuredClone(o);S.phases[pi].orders[oi]=emptyOrders(1)[0];
-    const result=operationRecordOrder(pi,oi,changes,{reason:'Nascimento sintético confirmado'});
-    if(!result.ok)throw Error(JSON.stringify(result));
-  };
-}
-"""
-
-
-def run_capture_lands_on_existing_entity(page):
-    """(1) Entidade normal existente: a captura continua funcionando."""
-    r = page.evaluate(
-        """() => {
-          __montaFase(-900);                       // Fase da Conta = indice 2
-          S.activeOperation = {schemaVersion:1, operationId:'op_norm',
-            openedAt:'2026-08-01T10:00:00.000Z', openedAtSource:'genesis_transition',
-            maxAccountPhaseReached:null,recordContext:JPWForex.state.recordContext()};
-          const o = __ordemNova(0,0);
-          o.openedAt = '2026-08-01T10:00:00.000Z';   // ja pertence: fail-safe nao age
-          const faseDoAto = accountPhaseProbe().idx;
-          operationOnOrderStatus(o, 'Aberta', 0, 0);
-          return {faseDoAto, id:S.activeOperation.operationId,
-                  max:S.activeOperation.maxAccountPhaseReached};
-        }"""
-    )
-    assert r["faseDoAto"] == 2, f"fixture nao produziu fase definida: {r['faseDoAto']}"
-    assert r["id"] == "op_norm", f"a identidade existente foi trocada: {r['id']!r}"
-    assert r["max"] == 2, (
-        f"a entidade existente nao recebeu a captura do ato: {r['max']!r}"
-    )
-
-
-def run_capture_lands_on_newborn_entity(page):
-    """(2) Nenhuma entidade: nasce, e a fase DAQUELE ato e capturada nela."""
-    r = page.evaluate(
-        """() => {
-          __montaFase(-900);                       // indice 2
-          const o = __ordemNova(0,0);
-          const faseDoAto = accountPhaseProbe().idx;
-          __confirmNewOrder(o,0,0);
-          const op = S.activeOperation;
-          return {faseDoAto, nasceu: !!op, fonte: op && op.openedAtSource,
-                  max: op && op.maxAccountPhaseReached};
-        }"""
-    )
-    assert r["faseDoAto"] == 2, f"fixture: {r['faseDoAto']}"
-    assert r["nasceu"] and r["fonte"] == "genesis_transition", f"nascimento: {r}"
-    assert r["max"] == 2, (
-        f"a entidade RECEM-NASCIDA saiu com maximo {r['max']!r} — a fase do "
-        "proprio instante do nascimento nao foi observada"
-    )
-
-
-def run_orphan_is_discarded_without_receiving_the_capture(page):
-    """(3) Orfa + tese nova: a captura vai para a NOVA, nao para a descartada."""
-    r = page.evaluate(
-        """() => {
-          __montaFase(-900);                       // indice 2
-          // Orfa: identidade viva sem nenhuma ordem operacional por tras.
-          const orfa = {schemaVersion:1, operationId:'op_orfa',
-            openedAt:'2026-07-01T10:00:00.000Z', openedAtSource:'genesis_transition',
-            maxAccountPhaseReached:null};
-          S.activeOperation = orfa;
-          const o = __ordemNova(0,0, 'GBPUSD');    // tese NOVA, outro instrumento
-          const faseDoAto = accountPhaseProbe().idx;
-          __confirmNewOrder(o,0,0);
-          const nova = S.activeOperation;
-          return {faseDoAto,
-                  orfaMax: orfa.maxAccountPhaseReached,
-                  orfaId: orfa.operationId,
-                  novaId: nova && nova.operationId,
-                  novaMax: nova && nova.maxAccountPhaseReached,
-                  novaAbertura: nova && nova.openedAt,
-                  novaFonte: nova && nova.openedAtSource};
-        }"""
-    )
-    assert r["faseDoAto"] == 2, f"fixture: {r['faseDoAto']}"
-    assert r["novaId"] and r["novaId"] != r["orfaId"], (
-        f"a identidade orfa foi HERDADA pela tese nova: {r['novaId']!r}"
-    )
-    assert r["novaAbertura"] != "2026-07-01T10:00:00.000Z", (
-        "a abertura da operacao anterior foi transferida para a tese nova"
-    )
-    assert r["novaMax"] == 2, (
-        f"a entidade nova saiu com maximo {r['novaMax']!r} — a captura foi para a "
-        "entidade que seria descartada e o nascimento ficou sem observacao"
-    )
-    assert r["orfaMax"] is None, (
-        f"a orfa DESCARTADA recebeu a captura definitiva ({r['orfaMax']!r}); o "
-        "esforco de observacao foi gasto num objeto que deixou de existir"
-    )
-
-
-def run_peak_at_birth_survives_later_recovery(page):
-    """(4) Pico so no nascimento: o maximo o preserva depois do recuo."""
-    r = page.evaluate(
-        """() => {
-          __montaFase(-1600);                      // indice 3 — o PICO
-          const o = __ordemNova(0,0);
-          const faseNoNascimento = accountPhaseProbe().idx;
-          __confirmNewOrder(o,0,0);
-          const maxAposNascer = S.activeOperation.maxAccountPhaseReached;
-          // A conta se recupera: a fase corrente cai.
-          S.cycleRealizado = -200;__setEquity(9800);
-          const faseDepois = accountPhaseProbe().idx;
-          // Novo ato confirmado, agora numa fase MENOR.
-          const o2 = __ordemNova(0,1);
-          __confirmNewOrder(o2,0,1);
-          return {faseNoNascimento, maxAposNascer, faseDepois,
-                  maxFinal:S.activeOperation.maxAccountPhaseReached};
-        }"""
-    )
-    assert r["faseNoNascimento"] == 4 and r["faseDepois"] == 0, (
-        f"a fixture nao produziu pico seguido de recuo: {r}"
-    )
-    assert r["maxAposNascer"] == 4, (
-        f"o pico do nascimento nao foi capturado: {r['maxAposNascer']!r} — sem "
-        "essa observacao nao ha o que a monotonicidade preserve depois"
-    )
-    assert r["maxFinal"] == 4, (
-        f"o maximo regrediu para {r['maxFinal']!r} apos o recuo da conta"
-    )
-
+        probe.bind(('127.0.0.1',0));port=probe.getsockname()[1]
+    server=ThreadingHTTPServer(('127.0.0.1',port),QuietHandler)
+    threading.Thread(target=server.serve_forever,daemon=True).start()
+    return server,f'http://127.0.0.1:{port}/index.html'
 
 def main():
-    server, url = serve()
+    server,url=serve()
     try:
-        with sync_playwright() as playwright:
-            browser = playwright.chromium.launch(**launcher.launch_options())
-            context, page, observed = prepare_page(browser, url)
-            run_default_shape(page)
-            run_legacy_adoption(page)
-            run_existing_operation_unknowns(page)
-            run_unknown_is_never_zero(page)
-            run_identity_stability(page)
-            run_genesis_birth(page)
-            run_order_close_stamp(page)
-            run_phase_capture_monotonic(page)
-            run_history_envelope(page)
-            run_not_applicable_is_normal_flow(page)
-            run_capture_failure_is_observable(page)
-            # ---- interacao C x A: ordem da captura ----
-            page.evaluate(MONTA_FASE)
-            run_capture_lands_on_existing_entity(page)
-            run_capture_lands_on_newborn_entity(page)
-            run_orphan_is_discarded_without_receiving_the_capture(page)
-            run_peak_at_birth_survives_later_recovery(page)
-            assert not observed["pageerror"], f"pageerror: {observed['pageerror']}"
-            context.close()
-            browser.close()
-    finally:
-        server.shutdown()
-    print("OPERATION IDENTITY TEST PASS")
+        with sync_playwright() as pw:
+            browser=pw.chromium.launch(**launcher.launch_options())
+            context=browser.new_context(viewport={'width':1440,'height':900},service_workers='block')
+            page,observed=launcher.prepare(context,url)
+            assert page.evaluate('DEFAULTS.activeOperation===null'), 'Estado legado inicial criou operação fantasma'
+            periods=page.evaluate("""() => {
+              S=structuredClone(DEFAULTS);migrate();S.onboarding.done=true;
+              S.accounts=[{forexAccountId:'IDENT_A',nome:'Mestre A',tipo:'MESTRE',platformCurrency:'USD'},
+                {forexAccountId:'IDENT_B',nome:'Conta B',tipo:'PRÓPRIA',platformCurrency:'USD'}];
+              S.forex=JPWForex.state.empty();S.operationHistory={schemaVersion:1,records:[]};
+              if(save()!==true)throw Error('Fixture refused');
+              for(const [accountId,si] of [['IDENT_A',10000],['IDENT_B',5000]]){
+                const r=JPWForex.state.recordAccountPeriod({accountId,startedAt:'2026-09-01',currency:'USD',
+                  si,openingBook:si,source:'Fixture de identidade',activateCurrentPeriod:true},
+                  {reason:'Fixture sintética de identidade'});
+                if(!r.ok)throw Error(r.error);
+              }
+              navNavigate('forex-operation');execSetView('panel');JPWForex.executionBoardUI.render();
+              const a=S.forex.accountContexts.accounts;
+              return {a:a.IDENT_A.currentPeriodId,b:a.IDENT_B.currentPeriodId};
+            }""")
+            assert page.evaluate('JPWForex.state.operationalSelection().accountId')=='IDENT_A'
+            birth=page.evaluate("""() => {
+              const x=JPWForex.state,scope=x.operationalSelection();
+              const result=operationRecordOrder(0,0,{id:'A1',par:'EURUSD',tipo:'BUY',role:'GENESIS',
+                lote:.01,entry:1.1,sl:1.09,tp:1.2,status:'Aberta',result:null,
+                costs:0,costBasis:'INCLUDED_IN_RESULT',stopValidated:true},{reason:'Primeiro fato sintético'});
+              const p=x.accountContext(scope).value,o=p.phases[0].orders[0],disk=JSON.parse(localStorage.getItem(LSKEY));
+              return {result,operationId:p.activeOperation?.operationId,orderId:o.orderId,
+                linked:o.operationId===p.activeOperation?.operationId&&o.accountId==='IDENT_A'&&o.periodId===scope.periodId,
+                recorded:o.recordStatus,version:o.recordVersion,phase:p.activeOperation?.maxAccountPhaseReached??null,
+                openedAt:p.activeOperation?.openedAt,global:S.activeOperation,
+                persisted:disk.forex.accountContexts.accounts.IDENT_A.periods[scope.periodId].activeOperation?.operationId};
+            }""")
+            assert birth['result']['ok'] and birth['result']['persistido'] is True,birth
+            assert birth['operationId'] and birth['orderId'] and birth['linked'],birth
+            assert birth['recorded']=='recorded' and birth['version']==1,birth
+            assert birth['phase'] is None and birth['openedAt'] and birth['global'] is None,birth
+            assert birth['persisted']==birth['operationId'],birth
 
+            # A linha em edição não escreve. Salvar corrige a mesma identidade.
+            page.evaluate('JPWForex.executionBoardUI.render()')
+            page.evaluate('document.querySelector("#phaseContainer details[data-phase=\\"0\\"]").open=true')
+            before=launcher.snapshot(page)
+            page.evaluate('''() => {
+              const field=document.querySelector('#phaseContainer [data-p="0"][data-o="0"][data-f="par"]');
+              field.value='GBPUSD';field.dispatchEvent(new Event('change',{bubbles:true}));
+            }''')
+            launcher.unchanged(page,before,'Rascunho de instrumento não foi gravado')
+            page.evaluate('''() => {
+              const field=document.querySelector('#phaseContainer [data-eb-reason="0:0"]');
+              field.value='Correção sintética justificada';field.dispatchEvent(new Event('input',{bubbles:true}));
+              document.querySelector('#phaseContainer [data-eb-save-row="0:0"]').click();
+            }''')
+            corrected=page.evaluate("""() => {
+              const p=JPWForex.state.accountContext(JPWForex.state.operationalSelection()).value,o=p.phases[0].orders[0];
+              return {operationId:p.activeOperation.operationId,orderId:o.orderId,version:o.recordVersion,
+                par:o.par,before:o.revisions[1]?.before?.par,after:o.revisions[1]?.after?.par};
+            }""")
+            assert corrected=={'operationId':birth['operationId'],'orderId':birth['orderId'],
+              'version':2,'par':'GBPUSD','before':'EURUSD','after':'GBPUSD'},corrected
 
-if __name__ == "__main__":
-    main()
+            isolated=page.evaluate("""() => {
+              const x=JPWForex.state,a=x.accountContext({accountId:'IDENT_A',periodId:S.forex.accountContexts.accounts.IDENT_A.currentPeriodId}).value;
+              x.selectOperationalAccount('IDENT_B');const bScope=x.operationalSelection();
+              const r=operationRecordOrder(0,0,{id:'B1',par:'EURUSD',tipo:'BUY',role:'GENESIS',
+                lote:.01,entry:1.2,sl:1.1,tp:1.3,status:'Aberta',result:null,costs:0,
+                costBasis:'INCLUDED_IN_RESULT',stopValidated:true},{reason:'Fato sintético B'});
+              const b=x.accountContext(bScope).value;
+              return {result:r,aId:a.activeOperation.operationId,bId:b.activeOperation?.operationId,
+                aOrder:a.phases[0].orders[0].orderId,bOrder:b.phases[0].orders[0].orderId,
+                aAccount:a.phases[0].orders[0].accountId,bAccount:b.phases[0].orders[0].accountId};
+            }""")
+            assert isolated['result']['ok'] and isolated['aId']==birth['operationId'],isolated
+            assert isolated['bId'] and isolated['bId']!=isolated['aId'],isolated
+            assert [isolated['aAccount'],isolated['bAccount']]==['IDENT_A','IDENT_B'],isolated
+
+            revision=page.evaluate("""() => {
+              const x=JPWForex.state,scope=x.operationalSelection(),p=x.accountContext(scope);
+              const before=JSON.stringify(S.forex.accountContexts);
+              const bad=x.recordAccountOrders([{pi:0,oi:0,changes:{par:'USDJPY'}}],{
+                accountId:scope.accountId,periodId:scope.periodId,reason:'Revisão obsoleta',expectedRevision:p.revision-1});
+              return {bad,unchanged:before===JSON.stringify(S.forex.accountContexts)};
+            }""")
+            assert not revision['bad']['ok'] and revision['unchanged'],revision
+
+            legacy=page.evaluate("""() => {
+              const x=JPWForex.state;x.selectOperationalAccount('IDENT_A');
+              S.phases[0].orders[0]={id:'GLOBAL-LEGACY',par:'USDJPY',status:'Aberta'};
+              S.activeOperation={operationId:'GLOBAL-OP',openedAt:null};
+              const before=x.accountContext(x.operationalSelection()).value.activeOperation.operationId;
+              const preview=x.legacyAccountPreview();
+              const snap=x.confirmLegacyAccountSnapshot({reason:'Snapshot legado sem vínculo',expectedEpoch:jpWealthPersistenceEpoch()});
+              const after=x.accountContext(x.operationalSelection()).value.activeOperation.operationId;
+              return {before,after,snap,legacyId:S.forex.accountContexts.legacy?.id,
+                globalId:S.activeOperation.operationId,scope:preview.operationScope};
+            }""")
+            assert legacy['snap']['ok'] and legacy['legacyId'] and legacy['globalId']=='GLOBAL-OP',legacy
+            assert legacy['before']==legacy['after']==birth['operationId'],legacy
+            assert legacy['scope'] is None,legacy
+
+            page.reload(wait_until='domcontentloaded')
+            page.wait_for_timeout(250)
+            reload_state=page.evaluate("""() => {
+              const x=JPWForex.state,s=x.operationalSelection(),a=x.accountContext(s).value,
+                b=x.accountContext({accountId:'IDENT_B',periodId:S.forex.accountContexts.accounts.IDENT_B.currentPeriodId}).value;
+              return {selected:s.accountId,a:a.activeOperation?.operationId,b:b.activeOperation?.operationId,
+                legacy:S.forex.accountContexts.legacy?.id,global:S.activeOperation?.operationId,
+                phase:operationPhaseIdxOrNull(null),zero:operationPhaseIdxOrNull(0)};
+            }""")
+            assert reload_state['selected']=='IDENT_A' and reload_state['a']==birth['operationId'],reload_state
+            assert reload_state['b']==isolated['bId'] and reload_state['legacy']==legacy['legacyId'],reload_state
+            assert reload_state['global']=='GLOBAL-OP' and reload_state['phase'] is None and reload_state['zero']==0,reload_state
+            assert not observed['pageerror'],observed['pageerror']
+            context.close();browser.close()
+    finally:server.shutdown()
+    print('OPERATION IDENTITY TEST PASS — two accounts, factual birth, correction, legacy separation and reload')
+
+if __name__=='__main__':main()

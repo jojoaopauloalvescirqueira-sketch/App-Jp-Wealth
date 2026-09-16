@@ -21,22 +21,22 @@ import socket
 import threading
 
 from playwright.sync_api import sync_playwright
+from notes_launcher_test import launch_options
 
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-planning", "forex-operation", "forex-reconciliation", "forex-account", "forex-reserves"]
-EXPECTED_LABELS = ["Consolidado FX", "Planejamento", "Operação", "Contabilidade", "Contas", "Reservas"]
-EXPECTED_VIEWS = ["panel", "motor", "history"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-planning", "forex-operation", "forex-reserves"]
+EXPECTED_LABELS = ["Consolidado FX", "Planejamento", "Operação", "Reservas"]
+EXPECTED_VIEWS = ["panel", "accounting", "accounts", "motor"]
 EXPECTED_CONTEXT = {
-    "forex-operation": ["panel", "motor"],
-    "forex-reconciliation": ["forex-reconciliation", "history"],
+    "forex-operation": ["panel", "accounting", "accounts", "motor"],
     "forex-planning": ["overview", "planning", "actuals", "table"],
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execWidgetGrid", "motorWidgetGrid", "execHistory"]
+EXPECTED_CONTAINERS = ["execWidgetGrid", "contab", "contas", "motorWidgetGrid"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -316,7 +316,7 @@ def run_focus_and_keyboard(page):
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-reconciliation"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-reserves"
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0]
     page.keyboard.press("End")
@@ -730,7 +730,7 @@ def main():
     server, url = serve()
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            browser = p.chromium.launch(**launch_options())
             context, page, observed = prepare_page(browser, url)
             run_structure(page)
             run_displacement(page)

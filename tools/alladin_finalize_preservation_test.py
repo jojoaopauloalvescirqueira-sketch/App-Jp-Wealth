@@ -241,6 +241,7 @@ def main() -> int:
                 page.evaluate("(a) => { S.alladin = a; save(); }", FIXTURE)
                 if not igual(page.evaluate("() => JSON.stringify(S.alladin)"), FIXTURE):
                     falhas.append("C1/C2 pre-condicao: fixture nao sobreviveu ao save()")
+                trading_before = page.evaluate("() => JSON.stringify({accounts:S.accounts,ledger:S.ledger,phases:S.phases,params:S.params})")
                 entrada = finalizar_fluxo_real(page, falhas, "C1/C2/C5")
                 if entrada != "changed":
                     falhas.append(f"C1/C2/C5: esperado o caminho 'changed' (ha alteracoes pendentes), veio '{entrada}'")
@@ -250,14 +251,10 @@ def main() -> int:
                 if not igual(disco, FIXTURE):
                     falhas.append(f"C2 DISCO: agregado nao sobreviveu integralmente ({str(disco)[:60]})")
                 resto = page.evaluate("""() => ({
-                    contas: S.accounts.length, ledger: S.ledger.length,
-                    ordens: S.phases[0].orders.filter(o => o.id).length,
-                    onboarding: S.onboarding.done, saldo: S.params.saldoIni,
-                    historico: S.operationHistory.records.length, mei: S.mei.history.length })""")
-                if not (resto["contas"] == 0 and resto["ledger"] == 0 and resto["ordens"] == 0
-                        and resto["onboarding"] is False and resto["saldo"] == 0
-                        and resto["historico"] == 0 and resto["mei"] == 0):
-                    falhas.append(f"C5: a preservacao transformou a finalizacao em no-op: {resto}")
+                    trading:JSON.stringify({accounts:S.accounts,ledger:S.ledger,phases:S.phases,params:S.params}),
+                    riskPin:S.riskPinHash })""")
+                if resto["trading"] != trading_before or resto["riskPin"] is not None:
+                    falhas.append(f"C5: finalizacao alterou fatos confirmados ou conservou desbloqueio: {resto}")
                 if erros:
                     falhas.append(f"C1/C2/C5 pageerror: {erros}")
             executar(falhas, "C1/C2/C5", c1_c2_c5)

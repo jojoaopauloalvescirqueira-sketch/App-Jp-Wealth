@@ -25,13 +25,26 @@
   function readModel(target){
     const supported=fx.state.supported(), f=supported?S.forex:null;
     // Explicit historical scope never falls back to the selected account.
-    const context=supported?(target===undefined?fx.state.recordContext():fx.state.recordContext(target)):null;
+    const scope=target===undefined?fx.state.operationalSelection():target;
+    const context=supported?fx.state.recordContext(scope):null;
+    const workspace=supported?fx.state.accountContext(scope):null;
+    // A legacy active operation may be consulted only through its recorded
+    // exact account/period identity and only when no contextual operation
+    // exists. This is a read bridge, never an attribution or migration.
+    const legacyOp=f&&S.activeOperation,legacyIdentity=legacyOp?.recordContext;
+    const legacyScope=workspace?.status==='OK'&&!workspace.value.activeOperation&&
+      legacyIdentity?.accountId===scope?.accountId&&legacyIdentity?.periodId===scope?.periodId&&
+      legacyIdentity?.accountInputs?.currency===workspace.value.currency;
+    const phaseList=legacyScope?S.phases||[]:workspace?.status==='OK'?workspace.value.phases:[];
+    const scopedOperation=legacyScope?legacyOp:workspace?.status==='OK'?workspace.value.activeOperation:null;
     const account=context&&context.accountInputs||null;
-    const accountId=account?context.accountId:null;
+    // Identidade factual da seleção continua visível quando SI/equity ou
+    // observações ainda não permitem calcular elegibilidade normativa.
+    const accountId=workspace?.status==='OK'?scope.accountId:null;
     const accountRecord=accountId?(S.accounts||[]).find(a=>a.forexAccountId===accountId):null;
     const rawOrders=[];
     const unresolvedStatus=order=>order.recordStatus==='draft'||!['Aberta','Fechada','Pendente'].includes(order.status);
-    for(const phase of S.phases||[])for(const order of phase.orders||[]){
+    for(const phase of phaseList)for(const order of phase.orders||[]){
       if(!order||order.recordStatus==='voided'||order.status==='Migrada')continue;
       // A draft without operational status is recoverable input, not a fact.
       // Contradictory or unknown statuses remain visible until explicitly reconciled.
@@ -51,7 +64,8 @@
       ddPercent:value(dd),previousPhase:previous.phase,since:previous.since,
       confirmedH4Closes:(f&&Array.isArray(f.h4Closes)?f.h4Closes:[]).filter(c=>c.accountId===accountId&&c.periodId===account.periodId&&Number.isFinite(Date.parse(c.closedAt))&&Date.parse(c.closedAt)<=Date.parse(account.observedAt))}):rawPhase;
     const phaseNumber=value(phase);
-    const grid=f&&f.grid&&f.grid.operationId===(S.activeOperation&&S.activeOperation.operationId)?f.grid:null;
+    const grid=legacyScope&&f.grid?.operationId===scopedOperation?.operationId?f.grid:
+      workspace?.status==='OK'&&workspace.value.grid?.operationId===scopedOperation?.operationId?workspace.value.grid:null;
     const gridPhase=e.resolveActiveGridPhase({...grid,accountPhase:phaseNumber});
     const leverage=unresolvedFacts?unresolved():e.computeLeverage({si:account&&account.si,equity:account&&account.equity,
       positions:positions.map(p=>({volume:p.volume,contractSize:p.contractSize,conversionRate:p.notionalConversionRate}))});
@@ -71,8 +85,15 @@
     const admission={status:'BLOCKED',value:null,admissionBasis:'NO_PRE_EXECUTION_SNAPSHOT',
       findings:[{code:'ADMISSION_SNAPSHOT_MISSING',message:'Risco de admissão histórico não capturado antes da execução. O risco factual atual é apresentado separadamente.',severity:'BLOCKING'}]};
     const capacity=e.computePrudentialCapacity({si:account&&account.si,ddPercent:value(dd),committedRisk:value(committed)});
-    const reserveObservation=f&&f.reserves&&f.reserves.accountId===accountId?f.reserves:null;
-    const reserveMismatch=!!reserveObservation&&(!account||reserveObservation.periodId!==account.periodId||reserveObservation.currency!==account.currency);
+    // New periods own their apuração; the legacy global snapshot remains
+    // readable only when its recorded scope exactly matches this period.
+    const reserveObservation=workspace?.status==='OK'&&workspace.value.reserves?
+      workspace.value.reserves:f&&f.reserves&&f.reserves.accountId===accountId&&
+      f.reserves.periodId===scope.periodId?f.reserves:null;
+    // Missing SI/equity blocks normative reserve calculations, but it must
+    // not erase a correctly scoped factual constitution from the display.
+    const reserveMismatch=!!reserveObservation&&account&&
+      (reserveObservation.periodId!==account.periodId||reserveObservation.currency!==account.currency);
     const r=reserveObservation&&!reserveMismatch?reserveObservation:{};
     const nominalConflict=numeric(r.capitalNominal)&&account&&numeric(account.capitalNominal)&&r.capitalNominal!==account.capitalNominal;
     const fcr=nominalConflict?absent('FCR_NOMINAL_CONFLICT','Capital nominal divergente entre observação da conta e reservas. É necessária conciliação explícita dos fatos.'):
@@ -83,9 +104,9 @@
       verifiedAt:r.verifiedAt,verificationRecorded:r.verificationRecorded,fund:'FCR'});
     const feoStatus=reserveMismatch?absent('RESERVE_CONTEXT_UNRESOLVED','Reserva registrada em período/moeda diferente; não conciliada com a observação atual.'):e.computeReserveStatus({requirement:feo,constituted:r.feoConstituted,liquidityDays:r.feoLiquidityDays,
       verifiedAt:r.verifiedAt,verificationRecorded:r.verificationRecorded,fund:'FEO'});
-    const active=S.activeOperation,opScope=active&&active.recordContext;
-    const budgetScope={accountId,periodId:account&&account.periodId||null,
-      operationId:opScope&&opScope.accountId===accountId&&opScope.periodId===account?.periodId?active.operationId:null};
+    const active=scopedOperation,opScope=active&&active.recordContext;
+    const budgetScope={accountId,periodId:workspace?.status==='OK'?scope.periodId:null,
+      operationId:opScope&&opScope.accountId===accountId&&opScope.periodId===scope.periodId?active.operationId:null};
     const budget=typeof fx.state.budgetSnapshot==='function'?fx.state.budgetSnapshot(budgetScope):absent('OPERATION_BUDGET_NOT_RECORDED','Orçamento declarado da operação ainda não registrado.');
     const sizing=e.computeSizingTrace?e.computeSizingTrace({}):absent('SIZING_TRACE_PENDING','Dimensionamento normativo indisponível.');
     const metrics={operationBudget:budget,sizingTrace:sizing,drawdown:dd,leverage,vrm,regime,effectiveLeverageLimit:effective,

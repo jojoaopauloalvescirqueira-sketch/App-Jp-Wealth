@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// seis filhos e Research seis; owner semântico, filho, section física e visão
+// quatro filhos e Research seis; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -8,8 +8,6 @@ const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-consolidated',label:'Consolidado FX',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Operação',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-reconciliation',label:'Contabilidade',primary:'forex',child:'forex-reconciliation',screen:'contab',localView:null,aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-account',label:'Contas',primary:'forex',child:'forex-account',screen:'contas',localView:null,aliases:Object.freeze([])}),
   Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])})
 ]);
 
@@ -33,11 +31,13 @@ const NAV_CANONICAL_ROUTES=Object.freeze([
 // Destinos legados. Saber resolvê-los não os promove a rotas primárias: as três
 // ferramentas analíticas pertencem semanticamente a Research / Forex.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
-  contas:Object.freeze({canonical:'forex-account',child:'forex-account',screen:'contas',primary:'forex'}),
-  contab:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'contab',primary:'forex'}),
+  contas:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
+  'forex-account':Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
+  contab:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
+  'forex-reconciliation':Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounting'})}),
   fxplan:Object.freeze({canonical:'forex-planning',child:'forex-planning',screen:'fxplan',primary:'forex',localView:Object.freeze({surface:'fxplan',view:'@current'})}),
   motor:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'motor'})}),
-  history:Object.freeze({canonical:'forex-reconciliation',child:'forex-reconciliation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
+  history:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'history'})}),
   // Nomes antigos preservam a intenção, sem destinos duplicados no menu.
   exec:Object.freeze({canonical:'forex-consolidated',child:'forex-consolidated',screen:'fxconsolidated',primary:'forex',action:'context'}),
   'forex-overview':Object.freeze({canonical:'forex-consolidated',child:'forex-consolidated',screen:'fxconsolidated',primary:'forex',action:'context'}),
@@ -54,7 +54,7 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
 });
 
 const NAV_LOCAL_SURFACES=Object.freeze({
-  exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
+  exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','accounting','accounts','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
   fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
   research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['calendar','nocoda','pivots','stocks-br','stocks-global','reits','probability-lab','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui})
@@ -184,8 +184,8 @@ function navLocalPlan(surfaceId,view,descriptor){
   let canonical=null;
   if(surfaceId==='exec'){
     if(view==='overview') return {accepted:true,requested:'exec:overview',source:'local',canonical:'forex-consolidated',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,action:'context'};
-    else if(view==='panel'||view==='motor') canonical='forex-operation';
-    else if(view==='history') canonical='forex-reconciliation';
+    else if(view==='panel'||view==='accounts'||view==='motor') canonical='forex-operation';
+    else if(view==='history'||view==='accounting') canonical='forex-operation';
   }else if(surfaceId==='fxplan'){
     canonical='forex-planning';
   }else if(surfaceId==='finpes'){

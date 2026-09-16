@@ -6,7 +6,9 @@ function acctModel(){
   const pr=acctProfile(),api=window.JPWFx;
   const live=api&&api.state?api.state.fxOverviewLive():null;
   const projected=live?live.forecast:[];
-  return {pr,saldoIni:S.params.saldoIni||0,diasSem:S.acct&&S.acct.diasSemana||4.5,
+  const scope=window.JPWForex?.state?.operationalSelection?.()||{};
+  const period=scope.accountId&&scope.periodId?window.JPWForex.state.accountContext(scope):null;
+  return {pr,saldoIni:period?.status==='OK'?period.value.openingBook:null,diasSem:S.acct&&S.acct.diasSemana||4.5,
     mesesAno:S.acct&&S.acct.mesesAno||10.5,diasAno:null,target:null,metaDia:null,metaMes:null,
     saldoFim:projected.length?projected[projected.length-1].close:null,
     available:!!live,source:'PLAN',live};
@@ -23,7 +25,7 @@ function acctProjection(){
   return {m,start,rows};
 }
 function acctRealByDate(){ const map={}; ledgerSorted().forEach(e=>map[e.data]=e.saldo); return map; }
-function acctRealNow(){ const led=ledgerSorted(); return led.length?led[led.length-1].saldo:(S.params.saldoIni||0); }
+function acctRealNow(){ const led=ledgerSorted(); return led.length?led[led.length-1].saldo:acctModel().saldoIni; }
 function acctPace(){
   const proj=acctProjection(), m=proj.m, today=todayISO(), real=acctRealNow();
   let k7=null; // data projetada em que o saldo projetado alcança o saldo real (K7)
@@ -54,7 +56,11 @@ function renderAcct(){
   const box=$('acctPeriodSummary');if(!box)return;
   const m=acctModel(),api=window.JPWFx,refs=api&&api.state&&api.state.fxPlanningReferences?api.state.fxPlanningReferences():null;
   const percent=v=>Number.isFinite(v)?(v*100).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%':'indisponível';
-  box.innerHTML=`<div class="metrics"><div class="metric"><div class="k">Saldo inicial de referência (book)</div><div class="v sm">${fmtMoney2(m.saldoIni)}</div></div><div class="metric"><div class="k">Último saldo registrado (book)</div><div class="v sm">${fmtMoney2(acctRealNow())}</div></div><div class="metric"><div class="k">Referência mensal</div><div class="v sm">${refs?percent(refs.monthly):'indisponível'}</div></div><div class="metric"><div class="k">Referência anual distinta</div><div class="v sm">${refs&&Array.isArray(refs.annualRange)?refs.annualRange.map(percent).join(' – '):'indisponível'}</div></div></div><p class="fxp-note">Fechamentos são fatos contábeis. O saldo book não representa equity flutuante nem elegibilidade de execução.</p>`;
+  const money=v=>Number.isFinite(v)?fmtMoney2(v):'Indisponível';
+  const scope=window.JPWForex?.state?.operationalSelection?.()||{};
+  const period=scope.accountId&&scope.periodId?window.JPWForex.state.accountContext(scope):null;
+  const currency=period?.status==='OK'?period.value.currency:null;
+  box.innerHTML=`<p class="fxp-note">Conta ${esc(scope.accountId||'não selecionada')} · período ${esc(scope.periodId||'não registrado')} · moeda ${esc(currency||'não verificada')}</p><div class="metrics"><div class="metric"><div class="k">Saldo inicial book</div><div class="v sm">${money(m.saldoIni)}</div></div><div class="metric"><div class="k">Último saldo book</div><div class="v sm">${money(acctRealNow())}</div></div><div class="metric"><div class="k">Referência mensal do plano global</div><div class="v sm">${refs?percent(refs.monthly):'indisponível'}</div></div><div class="metric"><div class="k">Referência anual distinta</div><div class="v sm">${refs&&Array.isArray(refs.annualRange)?refs.annualRange.map(percent).join(' – '):'indisponível'}</div></div></div><p class="fxp-note">Fechamentos são fatos contábeis. Book, SI e equity são distintos. O plano global não atribui meta a esta conta.</p>`;
   const detail=$('acctPeriodDetail'),toggle=$('acctPeriodToggle');if(detail)detail.style.display='none';if(toggle)toggle.hidden=true;
   const chart=$('rvpChart');
   if(chart)chart.innerHTML='<p class="fxp-note">'+(m.available?'Projeção mensal disponível no Planejamento FX, com as premissas explícitas do plano.':'Sem plano explícito: projeção indisponível. Crie um plano no Planejamento FX.')+'</p><button type="button" id="acctGoPlanning">Abrir Planejamento</button>';
@@ -62,7 +68,7 @@ function renderAcct(){
   const proj=$('acctProjWrap');if(proj)proj.innerHTML='';
   const pace=$('dashCyclePace');if(pace)pace.innerHTML='<p class="fxp-note">Acompanhe ACTUAL × PLAN no Planejamento FX. As referências de retorno não determinam um ritmo obrigatório de execução.</p>';
   const sim=$('acctSimWrap');
-  if(sim){if(Number.isFinite(m.pr.anual)&&Number.isFinite(m.pr.ddrTarget))renderAcctSim();else sim.innerHTML='<p class="fxp-note">Simulação patrimonial indisponível: perfil vigente sem premissas estatísticas homologadas. Use cenários explícitos em Planejamento.</p>';}
+  if(sim)sim.innerHTML='<p class="fxp-note">Simulação por conta indisponível nesta transição: não existe premissa estatística homologada para atribuir o plano global a esta conta.</p>';
   const th=$('ledgerBody')?.closest('table')?.querySelectorAll('thead th')[3];if(th)th.textContent='Queda book vs referência';
 }
 function renderAcctPace(p){

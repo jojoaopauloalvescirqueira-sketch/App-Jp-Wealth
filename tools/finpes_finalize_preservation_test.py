@@ -88,6 +88,7 @@ def main():
                 FIXTURE,
             )
             antes = page.evaluate("() => JSON.stringify(S.personalFinance)")
+            trading_before = page.evaluate("() => JSON.stringify({accounts:S.accounts,ledger:S.ledger})")
             if json.loads(antes) != FIXTURE:
                 falhas.append("semeadura da fixture nao sobreviveu ao save() — pre-condicao quebrada")
 
@@ -125,13 +126,13 @@ def main():
             elif disco == "CORROMPIDO" or json.loads(disco) != FIXTURE:
                 falhas.append("personalFinance no DISCO difere da fixture apos Finalizar Sessao")
 
-            # e o resto da sessao foi de fato encerrado (a heranca nao pode
-            # ter transformado a finalizacao em no-op)
+            # Fatos Forex confirmados são preservados, mas desbloqueios locais
+            # são encerrados: a finalização continua sendo um ato de sessão.
             resto = page.evaluate("""() => ({
-                contas: S.accounts.length, ledger: S.ledger.length,
-                onboarding: S.onboarding.done })""")
-            if resto["contas"] != 0 or resto["ledger"] != 0 or resto["onboarding"] is not False:
-                falhas.append(f"a finalizacao nao encerrou a sessao de trading: {resto}")
+                trading:JSON.stringify({accounts:S.accounts,ledger:S.ledger}),
+                riskPin:S.riskPinHash })""")
+            if resto["trading"] != trading_before or resto["riskPin"] is not None:
+                falhas.append(f"a finalizacao alterou fatos confirmados ou conservou desbloqueio: {resto}")
 
             paginas_com_erro = [e for e in erros if e]
             if paginas_com_erro:
@@ -147,7 +148,7 @@ def main():
         for f in falhas:
             print("  - " + f)
         return 1
-    print("FINPES FINALIZE PRESERVATION TEST PASS — agregado integro em memoria e no disco; sessao de trading encerrada")
+    print("FINPES FINALIZE PRESERVATION TEST PASS — agregados confirmados inteiros; desbloqueio de sessão encerrado")
     return 0
 
 

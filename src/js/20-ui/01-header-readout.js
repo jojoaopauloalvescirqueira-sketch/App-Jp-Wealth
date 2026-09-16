@@ -7,7 +7,14 @@ function renderHeaderReadout(c){
   // getActiveRiskProfile() é o acessor canônico (lê S.period.profile e cai em 'base').
   try{ const pr=getActiveRiskProfile(); set('hdrProfile', (pr&&pr.name)||'—'); }
   catch(_){ set('hdrProfile','—'); }
-  set('hdrPeriod', p.inicio ? fmtDateEU(p.inicio) : '—');
+  // Operação tem período próprio por conta. O início global legado não pode
+  // aparecer como se pertencesse à conta operacional selecionada.
+  const inOperation=$('exec')?.classList.contains('active');
+  const selected=inOperation&&globalThis.JPWForex?.state?.operationalSelection?.();
+  const scoped=inOperation&&selected?.accountId&&selected?.periodId?
+    JPWForex.state.accountContext({accountId:selected.accountId,periodId:selected.periodId}):null;
+  const startedAt=inOperation?(scoped?.status==='OK'?scoped.value.startedAt:null):p.inicio;
+  set('hdrPeriod', startedAt ? fmtDateEU(startedAt) : '—');
   set('hdrEquity', fmtForexMoney(c&&c.forex&&c.forex.account?c.forex.account.equity:null,c&&c.forex&&c.forex.account,0));
   const ddEl=$('hdrDD');
   if(ddEl && c){

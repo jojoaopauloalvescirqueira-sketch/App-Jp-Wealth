@@ -133,7 +133,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 21 | `src/js/30-accounting/02-accounting-engine.js` | Motor da contabilidade |
 | 22 | `src/js/30-accounting/03-mei-jp.js` | Modelo estatístico MEI-JP |
 | 23 | `src/js/30-accounting/04-patrimonial-simulation.js` | Simulação patrimonial por perfil |
-| 24 | `src/js/40-app/01-navigation.js` | Resolver semântico: cinco primários, seis filhos Forex, seis filhos Research e compatibilidade física com owner/child/local view |
+| 24 | `src/js/40-app/01-navigation.js` | Resolver semântico: cinco primários, cinco filhos Forex, seis filhos Research e compatibilidade física com owner/child/local view |
 | 25 | `src/js/40-app/02-reset.js` | Reset administrativo |
 | 26 | `src/js/40-app/03-theme.js` | Tema claro/escuro |
 | 27 | `src/js/20-ui/09-contextual-help.js` | Ajuda de campo sob demanda |
@@ -170,7 +170,7 @@ Esses mapas não substituem os contratos de domínio nem a política de `AGENTS.
 | 58 | `src/js/30-accounting/05-fx-planning/03-fx-state.js` | Planejamento FX: estado e mutações auditadas |
 | 59 | `src/js/30-accounting/05-fx-planning/04-fx-charts.js` | Planejamento FX: gráficos SVG sobre o cromo CH |
 | 60 | `src/js/30-accounting/05-fx-planning/05-fx-ui.js` | Planejamento FX: interface em quatro modos |
-| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: três workspaces (Painel, Motor, Histórico), alias overview para o contexto no Consolidado e janela única do checklist |
+| 61 | `src/js/20-ui/13-exec-views.js` | Execution Board: Painel, Contas, Motor e Histórico; Contas é a mesma superfície cadastral local, overview abre o contexto no Consolidado e o checklist continua em janela única |
 | 62 | `src/js/10-domain/09-nocoda-geometry.js` | NoCoda: geometria do canal — núcleo puro, sem DOM nem persistência |
 | 63 | `src/js/20-ui/14-nocoda-studies.js` | NoCoda: workspace de estudos (seletor, âncoras, resultados derivados) |
 | 64 | `src/js/10-domain/10-pivot-studies.js` | Pivots: derivação, validação, estatística descritiva e ordenação — núcleo puro |
@@ -220,7 +220,7 @@ lateral, ele fica dentro de `#nav`, após o expansor ativo. Na composição
 superior, volta ao fluxo antes de `#gdContextRow`. Os contextos N3 de Forex e
 Research ficam em `#navLocalSlot` no modo lateral e retornam aos painéis de
 navegação correspondentes no superior. Alladin mantém suas abas no conteúdo.
-Forex tem seis filhos; Operação, Apuração e Planejamento conservam contextos
+Forex tem cinco filhos; Operação, Apuração e Planejamento conservam contextos
 locais. Os quatro modos de Planejamento reutilizam `window.JPWFx.ui`.
 
 `JPWNavigation.current()` e as superfícies de módulo determinam a localização
@@ -229,7 +229,9 @@ são preferências distintas. Trocar composição não deve navegar, reinicializ
 módulos ou alterar preferências v6 dos widgets; contratos completos em
 `NAVIGATION-HIERARCHY.md`.
 
-No Execution Board restam `#execWidgetGrid`, `#motorWidgetGrid` e `#execHistory`.
+No Execution Board ficam `#execWidgetGrid`, `#contas`, `#motorWidgetGrid` e
+`#execHistory`. `#contas` permanece uma única árvore DOM e alterna por
+`hidden`/`inert`, preservando os seus formulários, listeners e dados.
 `#execOverview` passa ao contexto expandido do Consolidado, sem clonar seus widgets. Research contém os mesmos nós
 `#execEcal`, `#execNocoda` e `#execPivots`, sem clone ou rename, além dos empty
 states de Ações, Stocks, REITs e Others; todos são alternados por `hidden` +

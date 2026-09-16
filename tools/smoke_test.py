@@ -88,7 +88,7 @@ try:
           supervisor: document.querySelector('#obSupervisor')?.value ?? null,
           supervisorPlaceholder: document.querySelector('#obSupervisor')?.getAttribute('placeholder') || ''
         })''')
-        assert 'Sem dados ainda — registre fechamentos diários na aba 07 Contabilidade.' in empty['monthly'], empty
+        assert 'Selecione uma conta e registre o período com saldo inicial contábil' in empty['monthly'], empty
         assert '2026' not in empty['monthly'], empty
         assert empty['ret']=='—' and empty['dd']=='—', empty
         assert empty['operator']=='' and empty['supervisor']=='', empty
@@ -123,7 +123,7 @@ try:
           supervisor: document.querySelector('#obSupervisor')?.value ?? null
         })''')
         assert after_reset['ledger']==0, after_reset
-        assert '2026' not in after_reset['monthly'] and 'Sem dados ainda — registre fechamentos diários na aba 07 Contabilidade.' in after_reset['monthly'], after_reset
+        assert '2026' not in after_reset['monthly'] and 'Selecione uma conta e registre o período com saldo inicial contábil' in after_reset['monthly'], after_reset
         assert after_reset['operator']=='' and after_reset['supervisor']=='', after_reset
         page.evaluate('''() => document.querySelector('#wipeAllBtn')?.click()''')
         page.wait_for_timeout(500)
@@ -134,11 +134,15 @@ try:
           supervisor: document.querySelector('#obSupervisor')?.value ?? null
         })''')
         assert after_wipe['ledger']==0, after_wipe
-        assert '2026' not in after_wipe['monthly'] and 'Sem dados ainda — registre fechamentos diários na aba 07 Contabilidade.' in after_wipe['monthly'], after_wipe
+        assert '2026' not in after_wipe['monthly'] and 'Selecione uma conta e registre o período com saldo inicial contábil' in after_wipe['monthly'], after_wipe
         assert after_wipe['operator']=='' and after_wipe['supervisor']=='', after_wipe
         real=page.evaluate('''() => {
-          S.params.saldoIni=10000;
-          S.ledger=[{data:'2026-01-31',saldo:10100}];
+          S.accounts=[{forexAccountId:'SMOKE_A',nome:'Mestre sintética',tipo:'MESTRE',platformCurrency:'USD'}];
+          S.forex=JPWForex.state.empty();
+          const period={periodId:'SMOKE_P',accountId:'SMOKE_A',startedAt:'2026-01-01',currency:'USD',si:10000,
+            openingBook:10000,source:'synthetic smoke',observedAt:'2026-01-01T00:00:00Z',revision:1,
+            activeOperation:null,phases:JPWForex.state.newOperationPhases(),ledger:[{accountId:'SMOKE_A',periodId:'SMOKE_P',currency:'USD',data:'2026-01-31',resultado:100,saldo:10100}],ledgerEvents:[]};
+          S.forex.accountContexts={schemaVersion:1,revision:1,accounts:{SMOKE_A:{accountId:'SMOKE_A',currentPeriodId:'SMOKE_P',periods:{SMOKE_P:period}}},archivedAccounts:{},legacy:null};
           renderDash();
           return {
             monthly: document.querySelector('#mqlMonthly')?.textContent || '',
@@ -154,14 +158,13 @@ try:
           closeModal();
           openOnboardingModal();
           return {
-            operator: document.querySelector('#obOperador')?.value ?? null,
-            supervisor: document.querySelector('#obSupervisor')?.value ?? null,
-            operatorPlaceholder: document.querySelector('#obOperador')?.getAttribute('placeholder') || '',
-            supervisorPlaceholder: document.querySelector('#obSupervisor')?.getAttribute('placeholder') || ''
+            operator: S.onboarding.operador,supervisor:S.onboarding.supervisor,
+            screen:JPWNavigation.current().screen,view:JPWExec.ui.getView(),
+            globalForm:!!document.querySelector('#obOperador')
           };
         }''')
         assert edit['operator']=='Operador Teste' and edit['supervisor']=='Supervisor Teste', edit
-        assert edit['operatorPlaceholder']=='Preencher nome' and edit['supervisorPlaceholder']=='Preencher nome', edit
+        assert edit['screen']=='exec' and edit['view']=='accounts' and not edit['globalForm'], edit
         page.evaluate('''() => { closeModal(); renderDash(); }''')
         page.evaluate('openAppIconPicker()')
         assert page.locator('[data-app-icon-option]').count()==2, 'biblioteca de ícones incompleta'
