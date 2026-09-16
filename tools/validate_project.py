@@ -159,11 +159,11 @@ if re.search(r'(?:src|href)="https?://', index, re.I):
     ERRORS.append("dependencia externa de CSS/JS encontrada no index")
 
 PWA_MANIFESTS = {
-    "primary": ("manifests/jp-wealth.webmanifest", "assets/pwa-icon-primary.png"),
-    "secondary": ("manifests/jp-wealth-black.webmanifest", "assets/pwa-icon-secondary.png"),
+    "primary": ("manifests/jp-wealth.webmanifest", [("assets/pwa-icon-primary-192.png", "192x192"), ("assets/pwa-icon-primary-512.png", "512x512")]),
+    "secondary": ("manifests/jp-wealth-black.webmanifest", [("assets/pwa-icon-secondary-192.png", "192x192"), ("assets/pwa-icon-secondary-512.png", "512x512")]),
 }
 manifest_identities: list[tuple[str | None, str | None, str | None]] = []
-for variant, (relative_manifest, expected_icon) in PWA_MANIFESTS.items():
+for variant, (relative_manifest, expected_icons) in PWA_MANIFESTS.items():
     webmanifest_path = ROOT / relative_manifest
     if not webmanifest_path.is_file():
         ERRORS.append(f"manifest PWA ausente: {relative_manifest}")
@@ -172,10 +172,9 @@ for variant, (relative_manifest, expected_icon) in PWA_MANIFESTS.items():
         pwa = json.loads(webmanifest_path.read_text(encoding="utf-8"))
         manifest_identities.append((pwa.get("id"), pwa.get("start_url"), pwa.get("scope")))
         icons = pwa.get("icons", [])
-        if len(icons) != 1:
-            ERRORS.append(f"manifesto PWA {variant} deveria declarar exatamente 1 icone, achou {len(icons)}")
-        elif icons[0].get("src") != "../" + expected_icon:
-            ERRORS.append(f"manifesto PWA {variant} aponta para icone incorreto: {icons[0].get('src')}")
+        actual_icons = [(str(icon.get("src", "")).removeprefix("../"), icon.get("sizes")) for icon in icons]
+        if actual_icons != expected_icons:
+            ERRORS.append(f"manifesto PWA {variant} aponta para icones incorretos: {actual_icons}")
         for icon in icons:
             icon_path = (webmanifest_path.parent / icon.get("src", "")).resolve()
             if not icon_path.is_file():
@@ -187,14 +186,14 @@ for variant, (relative_manifest, expected_icon) in PWA_MANIFESTS.items():
 if len(manifest_identities) == 2 and len(set(manifest_identities)) != 1:
     ERRORS.append("manifestos PWA divergem em id, start_url ou scope")
 
-for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-secondary.png"):
+for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-primary-192.png", "assets/pwa-icon-primary-512.png", "assets/pwa-icon-secondary.png", "assets/pwa-icon-secondary-192.png", "assets/pwa-icon-secondary-512.png"):
     if not (ROOT / relative).is_file():
         ERRORS.append(f"ativo PWA ausente: {relative}")
 
 if '<link rel="manifest"' not in index or "src/js/40-app/06-app-icons.js" not in index:
     ERRORS.append("integracao PWA/icones ausente no index")
 service_worker = (ROOT / "sw.js").read_text(encoding="utf-8") if (ROOT / "sw.js").is_file() else ""
-for relative_manifest, _expected_icon in PWA_MANIFESTS.values():
+for relative_manifest, _expected_icons in PWA_MANIFESTS.values():
     if f"./{relative_manifest}" not in service_worker:
         ERRORS.append(f"service worker nao precacheia: {relative_manifest}")
 for item in manifest["files"]:
@@ -205,7 +204,7 @@ for item in assets:
     if isinstance(item, dict) and item.get("type") in ("module", "worker") and item.get("path") in expected:
         if f'./{item["path"]}' not in service_worker:
             ERRORS.append(f'service worker nao precacheia recurso PDF: {item["path"]}')
-for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-secondary.png"):
+for relative in ("assets/pwa-icon-primary.png", "assets/pwa-icon-primary-192.png", "assets/pwa-icon-primary-512.png", "assets/pwa-icon-secondary.png", "assets/pwa-icon-secondary-192.png", "assets/pwa-icon-secondary-512.png"):
     if f"./{relative}" not in service_worker:
         ERRORS.append(f"service worker nao precacheia: {relative}")
 

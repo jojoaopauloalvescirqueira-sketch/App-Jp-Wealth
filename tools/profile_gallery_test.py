@@ -318,7 +318,7 @@ def portable_contract(browser, root, out):
             # branding/manifest resources as full-app standalone portability.
             failures = page.jpwealth_profile_observed['failed']
             allowed_paths = ('/assets/jp-wealth-logo.png', '/assets/jp-wealth-brand-red.png',
-                             '/assets/pwa-icon-primary.png', '/manifests/jp-wealth.webmanifest')
+                             '/assets/pwa-icon-primary-512.png', '/manifests/jp-wealth.webmanifest')
             unexpected = [entry for entry in failures if not any(path in entry[0] for path in allowed_paths)]
             assert not unexpected, unexpected
             assert_fixture_requests(context)

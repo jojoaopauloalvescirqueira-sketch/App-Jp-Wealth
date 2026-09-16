@@ -25,7 +25,8 @@ DOCUMENTOS = (
 BRAND_BUILD_INPUTS = (
     'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
     'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png',
-    'assets/pwa-icon-primary.png', 'assets/pwa-icon-secondary.png',
+    'assets/pwa-icon-primary.png', 'assets/pwa-icon-primary-192.png', 'assets/pwa-icon-primary-512.png',
+    'assets/pwa-icon-secondary.png', 'assets/pwa-icon-secondary-192.png', 'assets/pwa-icon-secondary-512.png',
 )
 
 LIXO = {
