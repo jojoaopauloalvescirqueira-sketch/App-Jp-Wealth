@@ -125,9 +125,8 @@
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
         <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Consolidado FX</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
         <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Painel, Motor e checklist pré-trade</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Painel, Contas, Motor e checklist pré-trade</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reconciliation"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Contabilidade e Histórico</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-account"><span class="nav-sub-item-title">Contas</span><span class="nav-sub-item-desc">Cadastro e acompanhamento</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
@@ -136,6 +135,10 @@
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="panel">
             <span class="nav-sub-item-title">Painel</span>
             <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
+          </button>
+          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="accounts">
+            <span class="nav-sub-item-title">Contas</span>
+            <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
           </button>
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
             <span class="nav-sub-item-title">Motor</span>
@@ -521,6 +524,48 @@
          finalização feita no Painel Operacional muda a lista. Nenhum caminho
          deste workspace muta estado financeiro. -->
     <div class="exec-view" id="execHistory" role="region" aria-label="Histórico de Operações Únicas" hidden></div>
+    <!-- Contas permanece com os mesmos nós e renderizador. Apenas deixa de ser
+         destino N2: este workspace local de Operação preserva cadastro, foco e
+         listeners sem criar uma cópia ou migrar dados. -->
+    <div class="exec-view" id="contas" role="region" aria-label="Contas Forex" hidden inert>
+      <div class="jp-widget-grid" id="contasWidgetGrid">
+      <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
+        <h2 class="accounts-card-head">
+          <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
+          <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
+        </h2>
+          <details class="jp-p3">
+            <summary>governança</summary>
+            <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
+          <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
+          <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
+          <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
+          <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
+          O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
+        </p>
+          </details>
+        <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
+        <div class="jp-table-scroll"><table class="dtable">
+          <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
+          <tbody id="contasBody"></tbody>
+        </table></div>
+        <p class="account-table-note">Correção, Firewall de replicação e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
+      </div>
+      <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
+        <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
+        <div class="field" style="max-width:240px">
+          <label>Lote enviado pela mestre</label>
+          <input type="number" step="0.01" id="cLoteMaster" value="0.04">
+        </div>
+        <div class="jp-table-scroll">
+          <table class="dtable" style="margin-top:8px">
+            <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
+            <tbody id="aplicBody"></tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </div>
     <!-- Motor de Lote: migrado de Configurações → Operação para cá. É o MESMO
          #motorWidgetGrid de sempre — nenhum nó recriado, nenhum id alterado,
          nenhum dado tocado. A <section id="motor"> hospedeira foi removida
@@ -593,50 +638,6 @@
         <thead><tr><th>Fase</th><th>DD Mín Ativo</th><th>DD Máx Ativo</th><th>Matriz Base</th><th>Alav. Máx</th><th>Perfil Ativo</th></tr></thead>
         <tbody id="matrixBody"></tbody>
       </table></div>
-    </div>
-    </div>
-  </section>
-
-  <!-- ================= 04 CONTAS ================= -->
-  <section class="screen" id="contas">
-    <div class="jp-widget-grid" id="contasWidgetGrid">
-    <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-      <h2 class="accounts-card-head">
-        <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
-        <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
-      </h2>
-        <!-- Fase 2C: a Nota de Governança deixa de ser card próprio e vira
-             "governança ▾" no cabeçalho do Parque de Contas, como no protótipo.
-             A prosa é a MESMA — e segue também sob o mecanismo [i]/jpw_expl. -->
-        <details class="jp-p3">
-          <summary>governança</summary>
-          <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
-        <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
-        <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
-        <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
-        <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
-        O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
-      </p>
-        </details>
-      <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
-      <div class="jp-table-scroll"><table class="dtable">
-        <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
-        <tbody id="contasBody"></tbody>
-      </table></div>
-      <p class="account-table-note">Correção, Firewall de replicação e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
-    </div>
-    <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
-      <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
-      <div class="field" style="max-width:240px">
-        <label>Lote enviado pela mestre</label>
-        <input type="number" step="0.01" id="cLoteMaster" value="0.04">
-      </div>
-      <div class="jp-table-scroll">
-        <table class="dtable" style="margin-top:8px">
-          <thead><tr><th>Conta</th><th>Lote vs Mestre</th><th>Lote Aplicado</th></tr></thead>
-          <tbody id="aplicBody"></tbody>
-        </table>
-      </div>
     </div>
     </div>
   </section>

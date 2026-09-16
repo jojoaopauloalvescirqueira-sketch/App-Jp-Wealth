@@ -164,7 +164,7 @@
       "order": 27,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "64858050cafbe11b91674558311b0d4967f9c3a6f7fe981402c3a1068c33b094"
+      "sha256": "1f1ba2b31cd57ec8bf9103088d0b0f94a296b154c837de16e257d81a4c9f35f6"
     },
     {
       "order": 28,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "aa44421dbd3129f072b6148f9b6f4b6b00f448294b325f57bc24acc41284436e"
+      "sha256": "b533eae8db306b2fc208ed2b0cbc0c7e7816753c5a2aaf5fa6db6a2eb9e810f0"
     },
     {
       "order": 46,
@@ -386,7 +386,7 @@
       "order": 64,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "2c0f276b2cdc85ae6e3be049674639e2bd1bc870db35d15e79ffe1cd72125c0f"
+      "sha256": "47ed6cdf3b0336074d1b99f9e408e11a12ab1ee21e3a535128642999d0223d72"
     },
     {
       "order": 65,

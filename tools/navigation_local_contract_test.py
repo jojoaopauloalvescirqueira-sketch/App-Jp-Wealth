@@ -20,6 +20,7 @@ SOURCE = "src/js/40-app/01-navigation.js"
 CASES = [
     ("exec", "overview", "forex-consolidated", "forex", "forex-consolidated"),
     ("exec", "panel", "forex-operation", "forex", "forex-operation"),
+    ("exec", "accounts", "forex-operation", "forex", "forex-operation"),
     ("exec", "motor", "forex-operation", "forex", "forex-operation"),
     ("exec", "history", "forex-reconciliation", "forex", "forex-reconciliation"),
     ("fxplan", "overview", "forex-planning", "forex", "forex-planning"),
@@ -235,7 +236,7 @@ def main():
                     else:
                         kinds = ["resolve", "apply"] + (["resolve"] if fault == "late-ui" else []) + ["active"]
                         assert [e["kind"] for e in result["events"]] == kinds
-                        assert result["events"][1]["plan"] == plan_for(CASES[3])
+                        assert result["events"][1]["plan"] == plan_for(CASES[4])
                         assert result["events"][1]["target"] == "exec"
                         assert result["events"][-1]["current"] == result["before"]["current"]
                         assert result["lastAfter"] == dict(accepted=False, reason="unavailable-target")
@@ -252,7 +253,7 @@ def main():
                     canonical="forex-reconciliation", requested="forex-reconciliation", source="canonical",
                     primary="forex", child="forex-reconciliation", screen="contab", localView=None)
                 result = p.evaluate("__exercise('exec','history')")
-                check_success(result, CASES[3])
+                check_success(result, CASES[4])
                 records.append(dict(name="canonical-contab/local-exec", result=result))
             finally:
                 p.close()
@@ -263,7 +264,7 @@ def main():
             try:
                 p.evaluate("__navTest.fault='false-return'")
                 result = p.evaluate("__exercise('exec','motor')")
-                check_success(result, CASES[2])  # navApply return differs from navLastResult.
+                check_success(result, CASES[3])  # navApply return differs from navLastResult.
                 records.append(dict(name="return-from-last-result", result=result))
             finally:
                 p.close()
@@ -277,7 +278,7 @@ def main():
                     result = p.evaluate("__exercise('exec','history')")
                     detected = False
                     try:
-                        check_success(result, CASES[3])
+                        check_success(result, CASES[4])
                     except AssertionError:
                         detected = True
                     records.append(dict(name=f"counterexample:{fault}", detected=detected, result=result))

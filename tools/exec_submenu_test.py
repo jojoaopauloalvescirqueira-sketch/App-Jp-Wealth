@@ -26,17 +26,17 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-planning", "forex-operation", "forex-reconciliation", "forex-account", "forex-reserves"]
-EXPECTED_LABELS = ["Consolidado FX", "Planejamento", "Operação", "Contabilidade", "Contas", "Reservas"]
-EXPECTED_VIEWS = ["panel", "motor", "history"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-planning", "forex-operation", "forex-reconciliation", "forex-reserves"]
+EXPECTED_LABELS = ["Consolidado FX", "Planejamento", "Operação", "Contabilidade", "Reservas"]
+EXPECTED_VIEWS = ["panel", "accounts", "motor", "history"]
 EXPECTED_CONTEXT = {
-    "forex-operation": ["panel", "motor"],
+    "forex-operation": ["panel", "accounts", "motor"],
     "forex-reconciliation": ["forex-reconciliation", "history"],
     "forex-planning": ["overview", "planning", "actuals", "table"],
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execWidgetGrid", "motorWidgetGrid", "execHistory"]
+EXPECTED_CONTAINERS = ["execWidgetGrid", "contas", "motorWidgetGrid", "execHistory"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.

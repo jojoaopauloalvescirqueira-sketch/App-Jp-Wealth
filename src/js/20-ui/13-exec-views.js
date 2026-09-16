@@ -17,6 +17,9 @@
 // original: nenhum nó foi movido e nenhum id mudou na realocação.
 const EXEC_VIEWS = [
   ['panel', 'execWidgetGrid'],
+  // Contas preserva o mesmo #contas e o mesmo renderer cadastral. Tornou-se
+  // apenas uma visão local entre Painel e Motor, sem cópia ou nova fonte de dados.
+  ['accounts', 'contas'],
   // Motor de Lote: o container e o proprio #motorWidgetGrid migrado de
   // Configuracoes, nao um wrapper novo. renderMotor() ja o desenha no boot e o
   // redesenha por mudanca de dado — nao ha render on-demand a fazer aqui.

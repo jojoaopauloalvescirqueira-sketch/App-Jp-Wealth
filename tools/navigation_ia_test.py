@@ -32,7 +32,6 @@ FOREX_CHILDREN = [
     ("forex-planning", "fxplan", "overview"),
     ("forex-operation", "exec", "panel"),
     ("forex-reconciliation", "contab", None),
-    ("forex-account", "contas", None),
     ("forex-reserves", "fxreserves", None),
 ]
 
@@ -353,11 +352,12 @@ def assert_compatibility_and_atomic_refusal(page):
     # N1-B/NAV2: fachada legada preservada e ligada ao filho canônico.
     page.evaluate("() => navigateToScreen('contas')")
     state = active_state(page)
-    assert state["activeScreens"] == ["contas"], state
+    assert state["activeScreens"] == ["exec"], state
     assert state["primary"] == "forex", state
-    assert state["current"]["child"] == "forex-account", state
+    assert state["current"]["child"] == "forex-operation", state
+    assert state["current"]["localView"] == {"surface": "exec", "view": "accounts"}, state
     assert "forex-account" not in [route["id"] for route in page.evaluate("() => JPWNavigation.routes()")]
-    assert "forex-account" in [route["id"] for route in page.evaluate("() => JPWNavigation.children('forex')")]
+    assert "forex-account" not in [route["id"] for route in page.evaluate("() => JPWNavigation.children('forex')")]
 
     # N1-C: a recusa é validada antes de qualquer efeito observável.
     assert page.evaluate("() => JPWNavigation.navigateLocal('finpes', 'cenarios')") is True
