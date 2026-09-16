@@ -26,7 +26,7 @@ control plane lê as fontes de engenharia em `AGENTS.md`, `CHANGE-PROCESS.md`,
 Se também alcançar regra financeira, acumula a rota M0 + M2 abaixo. Essa
 distinção não dispensa autorização nem permite reinterpretar o Estatuto.
 
-- Risco, fases, MDD, LIFO, lote: M0 + M2 + `docs/architecture/CODE-MAP.md`. A V11 e o Anexo Paramétrico fornecidos pelo proprietário são identificados em `docs/normative/README.md`; ler suas divergências antes de implementar. Os ADRs V10 são propostas históricas a reavaliar, não parâmetros vigentes.
+- Risco, fases, MDD, LIFO, lote: consultar primeiro `docs/architecture/FOREX-V11-ENGINE.md`, catálogo `src/js/00-core/00-forex-policy.js`, executor `src/js/10-domain/00-forex-engine.js` e integração `src/js/10-domain/00-forex-state.js`. Parâmetros alimenta o motor central Forex; consumidores não criam fórmulas ou valores normativos paralelos. Depois, M0 + M2 + `docs/architecture/CODE-MAP.md`. A V11 e o Anexo Paramétrico fornecidos pelo proprietário são identificados em `docs/normative/README.md`; ler suas divergências antes de implementar. Os ADRs V10 são propostas históricas a reavaliar, não parâmetros vigentes.
 - Persistencia/importacao/reset: `docs/architecture/STATE-SCHEMA.md`, `docs/architecture/DB-STORAGE-GOVERNANCE.md`, `docs/recovery/DATA-RECOVERY.md`.
 - PWA/cache: `docs/architecture/PWA-UPDATE-LIFECYCLE.md`, `sw.js`, manifest e teste de upgrade.
 - Interface: contratos DOM em `index.html`, CSS, script da tela e teste real no
