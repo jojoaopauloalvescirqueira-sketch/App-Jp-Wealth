@@ -910,24 +910,33 @@
      controlada para não estourar o banner em janela estreita. */
   .persistence-alert code{font-family:var(--mono); font-size:var(--fs-xs); color:var(--ink); word-break:break-all}
 
-  /* ============ PWA · ESCOLHA DE ÍCONE ============ */
+  /* ============ PWA · MARCA CONJUNTA ============ */
   .app-icon-config{border-top:1px solid var(--line); padding-top:16px}
-  .app-icon-summary{display:grid; grid-template-columns:76px minmax(0,1fr); gap:14px; align-items:center; max-width:640px}
-  .app-icon-summary img{width:76px; height:76px; object-fit:cover; border-radius:16px; border:1px solid var(--line); background:var(--panel-2)}
-  .app-icon-summary b{font-family:var(--mono); color:var(--ink); font-size:var(--fs-md)}
-  .app-icon-summary p{margin:4px 0; color:var(--ink-dim); font-size:var(--fs-sm); line-height:1.45}
+  .app-icon-summary{display:grid; grid-template-columns:minmax(180px,1fr) 96px minmax(220px,1.25fr); gap:14px; align-items:stretch; max-width:820px}
+  .brand-header-preview,.brand-pwa-preview{display:flex; flex-direction:column; gap:8px; border:1px solid var(--line); border-radius:var(--radius); padding:10px; min-width:0; background:var(--panel-2)}
+  .brand-header-preview>span,.brand-pwa-preview>span{font:700 var(--fs-xs)/1 var(--mono); color:var(--ink-faint); letter-spacing:.05em; text-transform:uppercase}
+  .brand-header-preview img{display:block; width:100%; height:38px; object-fit:contain; object-position:left center}
+  .brand-header-preview.black-preview{background:#f7f8fa; border-color:#d9dde3}
+  .brand-pwa-preview{align-items:center; justify-content:flex-start}
+  .brand-pwa-preview img{width:62px; height:62px; object-fit:cover; border-radius:14px; border:1px solid var(--line); background:var(--panel-2)}
+  .brand-choice-copy{align-self:center; min-width:0}
+  .brand-choice-copy b{font-family:var(--mono); color:var(--ink); font-size:var(--fs-md)}
+  .brand-choice-copy p{margin:4px 0; color:var(--ink-dim); font-size:var(--fs-sm); line-height:1.45}
   .app-icon-open-btn{margin-top:14px; color:var(--violet); border-color:var(--violet)}
   .app-icon-platform-note{display:block; max-width:680px; margin-top:10px}
   .app-icon-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:4px 0 18px; max-width:520px}
   .app-icon-option{min-width:0; border:1px solid var(--line); border-radius:var(--radius); padding:10px; background:var(--panel-2)}
   .app-icon-option.selected{border-color:var(--violet); box-shadow:inset 0 0 0 1px var(--violet); background:var(--accent-tint)}
-  .app-icon-choice{width:100%; min-height:44px; display:flex; flex-direction:column; align-items:stretch; gap:8px; border:0; padding:0; background:none; color:var(--ink); cursor:pointer; text-align:left}
-  .app-icon-choice img{display:block; width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; border:1px solid var(--line)}
+  .app-icon-choice{width:100%; min-height:44px; display:grid; grid-template-columns:minmax(0,1fr) 66px; align-items:stretch; gap:8px; border:0; padding:0; background:none; color:var(--ink); cursor:pointer; text-align:left}
+  .app-icon-choice .brand-header-preview{grid-column:1; padding:8px}
+  .app-icon-choice .brand-header-preview img{height:26px}
+  .app-icon-choice .brand-pwa-preview{grid-column:2; padding:8px; align-items:center}
+  .app-icon-choice .brand-pwa-preview img{width:42px; height:42px; border-radius:10px}
+  .app-icon-choice .brand-pwa-preview>span{font-size:9px}
   .app-icon-choice-copy{display:flex; flex-direction:column; gap:2px; min-width:0}
   .app-icon-choice-copy b{font-family:var(--mono); font-size:var(--fs-sm); color:var(--ink); overflow-wrap:anywhere}
   .app-icon-choice-copy small{font-size:var(--fs-xs); color:var(--ink-dim)}
   .app-icon-choice-copy em{font-size:var(--fs-xs); color:var(--violet); font-style:normal; font-weight:700; text-transform:uppercase; letter-spacing:.04em}
-  .app-icon-apply{width:100%; min-height:44px; margin-top:10px; padding:9px 8px; font-size:var(--fs-xs); line-height:1.25}
   .app-icon-ios-note{border:1px solid var(--f2); border-left:3px solid var(--f2); border-radius:var(--radius); background:var(--f2-bg); padding:12px 14px; color:var(--ink-dim); font-size:var(--fs-sm); line-height:1.5}
   .app-icon-ios-note b{color:var(--ink)}
   .app-icon-ios-note p{margin:4px 0 6px}
@@ -935,13 +944,10 @@
   .app-icon-ios-note li{padding:2px 0}
   @media(max-width:520px){
     .app-icon-grid{grid-template-columns:1fr; gap:8px}
-    .app-icon-option{display:grid; grid-template-columns:78px minmax(0,1fr); gap:10px; align-items:center}
-    .app-icon-choice{display:grid; grid-template-columns:78px minmax(0,1fr); align-items:center; gap:10px; grid-column:1/-1}
-    .app-icon-choice img{width:78px; height:78px; grid-row:1}
-    .app-icon-choice-copy{grid-column:2; grid-row:1}
-    .app-icon-apply{grid-column:1/-1; margin-top:0}
-    .app-icon-summary{grid-template-columns:64px minmax(0,1fr); gap:10px}
-    .app-icon-summary img{width:64px; height:64px; border-radius:13px}
+    .app-icon-summary{grid-template-columns:minmax(0,1fr) 82px; gap:10px}
+    .brand-choice-copy{grid-column:1/-1}
+    .brand-header-preview img{height:32px}
+    .brand-pwa-preview img{width:50px; height:50px; border-radius:12px}
   }
 
   @media(max-width:520px){
@@ -4014,20 +4020,12 @@
     --gd-gutter:32px;
   }
 
-  /* ---------- Logo real substitui o wordmark em CSS ----------
-     .gd-logo nasce display:none incondicional (harmless sem a flag); o
-     wordmark correspondente some só sob a flag, preservando o rollback. */
-  .gd-logo{display:none}
-  html[data-shell="global-dashboard"] .gd-logo{display:block; height:17px; width:auto; max-width:100%}
-  /* O PNG exportado só existe em tinta escura, desenhado para o fundo branco
-     do header claro do design. Sem tratamento, fica quase invisível sobre o
-     header escuro do tema dark deste app (que o design nunca previu). Um
-     filtro inverte a tinta para claro só no tema escuro — não altera o
-     arquivo de origem nem a aparência no tema claro, onde bate exato com
-     o export. */
-  html[data-theme="dark"][data-shell="global-dashboard"] .gd-logo{filter:invert(1) brightness(1.6)}
-  html[data-shell="global-dashboard"] .wordmark,
-  html[data-shell="global-dashboard"] .brand .tag{display:none}
+  /* A marca nova substitui o wordmark legado em qualquer composição do shell.
+     Preto recebe uma pequena placa clara somente no cabeçalho escuro, sem
+     depender do tema para escolher a versão da identidade. */
+  .gd-logo{display:block; height:19px; width:auto; max-width:100%; object-fit:contain}
+  .brand .wordmark,.brand .tag{display:none}
+  html[data-theme="dark"][data-brand-choice="secondary"] .gd-logo{background:#f7f8fa; border:1px solid #d9dde3; border-radius:5px; box-sizing:content-box; padding:3px 6px}
 
   /* ---------- Header em 2 linhas ----------
      Linha 1 (66px): marca + navegação centralizada + ações.
@@ -6360,22 +6358,34 @@ html[data-shell="global-dashboard"] #fxOverviewWidgets > :is(#onboardingIncomple
 /* CHG-CONTEXTUAL-SIDEBAR: somente shell, conteúdo dos módulos preservado. */
 html[data-navigation="sidebar"]{--shell-rail:252px}
 html[data-navigation="sidebar"][data-rail="collapsed"]{--shell-rail:76px}
+/* Shell divider: reference has a quiet 1px seam, not the dark mixed edge.
+   In high-contrast mode the existing semantic line remains fully visible. */
+html[data-navigation][data-shell="global-dashboard"]{--shell-divider:color-mix(in srgb,var(--jp-border) 55%,var(--jp-surface))}
+@media(prefers-contrast:more){html[data-navigation][data-shell="global-dashboard"]{--shell-divider:var(--jp-border)}}
 html[data-navigation="sidebar"][data-shell="global-dashboard"] body{
   grid-template-columns:var(--shell-rail) minmax(0,1fr);
   grid-template-rows:auto auto 1fr auto;
   grid-template-areas:"hdr hdr" "sidebar context" "sidebar main" "sidebar footer";
 }
+/* A grid rail paints the entire document height. The interactive aside can
+   stay viewport-sticky and independently scrollable without ending its seam
+   at the first viewport on long operation/accounting pages. */
+html[data-navigation="sidebar"][data-shell="global-dashboard"] body::before{
+  content:"";grid-area:sidebar;align-self:stretch;min-height:0;
+  background:var(--jp-surface);border-right:1px solid var(--shell-divider);
+  pointer-events:none;z-index:0;
+}
 html[data-navigation="sidebar"] body > header{grid-area:hdr;position:relative;top:auto;z-index:30}
 html[data-navigation="sidebar"] #gdTopbarNavSlot{display:none}
 html[data-navigation="sidebar"] .header-actions{margin-left:auto}
-html[data-navigation="sidebar"] #gdContextRow{grid-area:context;min-width:0}
+html[data-navigation="sidebar"] #gdContextRow{grid-area:context;min-width:0;border-bottom-color:var(--shell-divider)}
 html[data-navigation="sidebar"] #appMain{grid-area:main;min-width:0;width:100%;box-sizing:border-box}
 html[data-navigation="sidebar"] #gdFooter{grid-area:footer;grid-column:2;min-width:0}
 html[data-navigation="sidebar"] #appSidebar{
   grid-area:sidebar;position:sticky;top:0;align-self:start;box-sizing:border-box;
   height:calc(100dvh - 60px);overflow-y:auto;overscroll-behavior:contain;min-width:0;
   display:flex;flex-direction:column;padding:22px 14px;background:var(--jp-surface);
-  border-right:1px solid var(--jp-border);z-index:20;
+  border-right:0;z-index:20;
 }
 .sidebar-heading{display:flex;justify-content:space-between;align-items:center;min-height:28px;margin:0 10px 18px}
 .sidebar-caption,.sidebar-footer{font:500 10px var(--jp-font-ui);letter-spacing:.07em;color:var(--jp-ink-muted)}
@@ -6471,6 +6481,7 @@ html[data-navigation="sidebar"][data-nav-style="kinetic"] #navPillIndicator.is-r
 }
 @media(max-width:900px){
   html[data-navigation="sidebar"][data-shell="global-dashboard"] body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto;grid-template-areas:"hdr" "context" "main" "footer";}
+  html[data-navigation="sidebar"][data-shell="global-dashboard"] body::before{display:none}
   html[data-navigation="sidebar"] #gdFooter{grid-column:1}
   html[data-navigation="sidebar"] body > header{padding-inline:16px;gap:8px}
   html[data-navigation="sidebar"] .brand{width:auto;max-width:144px}
@@ -6479,6 +6490,7 @@ html[data-navigation="sidebar"][data-nav-style="kinetic"] #navPillIndicator.is-r
   html[data-navigation="sidebar"] #appSidebar{
     position:fixed;inset:0 auto 0 0;grid-area:auto;width:min(310px,calc(100vw - 40px));height:100dvh;
     z-index:8100;visibility:hidden;transform:translateX(-105%);box-shadow:8px 0 36px #0003;
+    border-right:1px solid var(--shell-divider,var(--jp-border));
   }
   html[data-navigation="sidebar"][data-shell-menu="open"] #appSidebar{visibility:visible;transform:none}
   html[data-navigation="sidebar"] #sidebarBackdrop{position:fixed;inset:0;background:#0008;z-index:8099}
@@ -6564,14 +6576,14 @@ html #mvpNotesDrawer{background:var(--panel)}
 @media(prefers-reduced-motion:reduce){html :is(button,.card,.modal-box){transition:none;animation:none}}
 
 /* APPLE01 · shell: explicit actions and original, semantic area symbols. */
-html[data-shell="global-dashboard"][data-navigation] body>header{height:auto;min-height:64px;background:var(--panel);border-bottom:1px solid color-mix(in srgb,var(--line) 85%,var(--ink));}
+html[data-shell="global-dashboard"][data-navigation] body>header{height:auto;min-height:64px;background:var(--panel);border-bottom:1px solid var(--shell-divider,var(--jp-border));}
 html[data-shell="global-dashboard"] .header-actions .header-action{width:auto;min-width:44px;min-height:44px;padding:var(--jp-space-2) var(--jp-space-2);gap:var(--jp-space-2);border-radius:9px;color:var(--ink-dim)}
 .header-action-label{font:500 var(--jp-fs-caption)/1.3 var(--sans)}
 html[data-shell="global-dashboard"] .header-action-finalize{border:1px solid var(--line);background:transparent}
 .nav-area-icon{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 html[data-navigation="sidebar"] #nav>.tab::before{display:none}
 html[data-navigation="sidebar"] #nav>.tab{border-left:0;border-radius:10px;padding:11px 13px}
-html[data-navigation="sidebar"] #appSidebar{background:var(--panel);border-right-color:color-mix(in srgb,var(--line) 85%,var(--ink))}
+html[data-navigation="sidebar"] #appSidebar{background:var(--panel)}
 html[data-navigation="sidebar"] #nav>.tab.active{background:var(--accent-tint);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--violet) 18%,transparent)}
 html[data-navigation="topbar"] .nav-area-icon{display:none}
 html .shell-page-header{color:var(--ink-dim)}

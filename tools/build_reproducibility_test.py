@@ -22,6 +22,11 @@ DOCUMENTOS = (
     'docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
     'docs/normative/ANEXO_PARAMETRICO_CANONICO.md',
 )
+BRAND_BUILD_INPUTS = (
+    'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
+    'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png',
+    'assets/pwa-icon-primary.png', 'assets/pwa-icon-secondary.png',
+)
 
 LIXO = {
     'icons/.DS_Store': b'\x00\x01Finder junk' + b'\xff' * 64,   # o caso real que quebrou
@@ -40,6 +45,7 @@ def arquivos_do_candidato():
     arquivos.update(item['path'] for item in manifest['files'])
     arquivos.update(item['path'] for item in manifest.get('runtimeAssets', []))
     arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
+    arquivos.update(BRAND_BUILD_INPUTS)
     return sorted(arquivos)
 
 def montar(destino: Path, arquivos):
@@ -120,12 +126,14 @@ def main():
             erro = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'], cwd=destino, capture_output=True, text=True)
             assert erro.returncode != 0 and 'input oficial do build ausente' in (erro.stdout + erro.stderr), relative
 
-        # ---- 5. o input declarado e ausente precisa falhar alto ----
-        (alterado / 'manifests/jp-wealth.webmanifest').unlink()
-        r = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'],
-                           cwd=alterado, capture_output=True, text=True)
-        assert r.returncode != 0, 'input oficial ausente deveria interromper o build'
-        assert 'input oficial do build ausente' in (r.stdout + r.stderr), (r.stdout + r.stderr)
+        # ---- 5. cada input da marca declarado e ausente precisa falhar alto ----
+        for relative in BRAND_BUILD_INPUTS:
+            montar(alterado, arquivos)
+            (alterado / relative).unlink()
+            r = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'],
+                               cwd=alterado, capture_output=True, text=True)
+            assert r.returncode != 0, f'input oficial ausente deveria interromper o build: {relative}'
+            assert 'input oficial do build ausente' in (r.stdout + r.stderr), (relative, r.stdout + r.stderr)
 
         canonico = a['build_id'].split("'")[1]
         print(f'BUILD REPRODUCIBILITY OK — Build ID canonico {canonico}; '

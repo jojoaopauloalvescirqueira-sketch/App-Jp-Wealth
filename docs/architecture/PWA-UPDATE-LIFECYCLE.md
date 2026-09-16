@@ -16,7 +16,7 @@ O registro usa `updateViaCache: 'none'`, para que as buscas do script e de seus 
 
 `index.html` contém um bootstrap inline mínimo que, no evento `load`, obtém o registro pronto e chama `registration.update()`. Ele fica no documento para que a própria navegação coerente entregue pelo cache antigo descubra a publicação, mesmo quando o script externo de registro também vem desse cache. `src/js/40-app/06-app-icons.js` chama `registration.update()` depois de registrar o worker, cobrindo a instalação corrente e carregamentos futuros. Essas chamadas somente descobrem o worker publicado: nenhuma delas força ativação, recarga ou troca de controller.
 
-`tools/rebuild_monolith.py` gera `build-id.js` a partir de hash reproduzível do HTML (sem a linha gerada), CSS, manifest JavaScript, worker, scripts, manifesto PWA, documentos normativos e próprio gerador declarados. Os ícones usam a versão explícita `ICON_CACHE_VERSION` de `sw.js`, que deve ser incrementada quando seus bytes mudarem. A página carrega o Build ID antes dos scripts do terminal e o worker usa `importScripts`. O identificador não pertence a `S` nem a qualquer backup.
+`tools/rebuild_monolith.py` gera `build-id.js` a partir de hash reproduzível do HTML (sem a linha gerada), CSS, manifest JavaScript, worker, scripts, os dois manifestos PWA, os quatro assets de marca, documentos normativos e próprio gerador declarados. Os ícones e manifestos usam a versão explícita `ICON_CACHE_VERSION` de `sw.js`, incrementada quando os bytes ou o mapeamento da marca mudam. A página carrega o Build ID antes dos scripts do terminal e o worker usa `importScripts`. O identificador não pertence a `S` nem a qualquer backup.
 
 ## Cache e offline
 
@@ -47,7 +47,7 @@ O teste muda o servidor de uma raiz antiga para uma nova, abre uma navegação d
 - A primeira atualização a partir de um worker publicado antes desta política ainda obedece ao código antigo já instalado; esse cliente deve ser fechado e reaberto para concluir a transição. A garantia de navegação coerente vale a partir do worker que contém esta política.
 - Uma publicação parcialmente distribuída pelo provedor ainda pode falhar o precache; nesse caso o worker anterior permanece ativo, que é o comportamento seguro.
 - A política não oferece atualização imediata por decisão: uma aba antiga só muda quando o usuário a fecha.
-- Alterar um ícone sem também incrementar `ICON_CACHE_VERSION` não muda o Build ID; esse pareamento manual deve ser preservado até que os ícones integrem o fingerprint oficial.
+- O navegador decide se atualiza metadados de uma instalação PWA já existente. A escolha em Configurações troca imediatamente cabeçalho, favicon, Apple touch icon e o manifesto oferecido para a próxima instalação; reinstalação pode ser necessária para ver o novo ícone instalado.
 
 
 ## Consulta normativa — adoção V11 (2026-09-08)

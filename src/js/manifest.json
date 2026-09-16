@@ -223,8 +223,8 @@
     {
       "order": 37,
       "path": "src/js/40-app/06-app-icons.js",
-      "section": "PWA · ESCOLHA DO ÍCONE (2 variantes fixas, sem biblioteca de temas)",
-      "sha256": "166dff22eed1b0d3976fb79ac6a3df5446a1b9d378ec9748d34608cbf9b01266"
+      "section": "PWA · MARCA CONJUNTA (Vermelho/Preto, cabeçalho e instalação)",
+      "sha256": "8264dd11d6b8337ee2121173553a30722c2b9216c39311f8c3920a18edddf3c9"
     },
     {
       "order": 38,
@@ -248,7 +248,7 @@
       "order": 41,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "eb82938055d750eb63c4887524eaa4ea2ddbce27f1ba2c1aeed07a5051116216"
+      "sha256": "c136dc433bf3ccf01d6b064744cde3442c4f30f28b6e6a54d0eae467efa0909e"
     },
     {
       "order": 42,

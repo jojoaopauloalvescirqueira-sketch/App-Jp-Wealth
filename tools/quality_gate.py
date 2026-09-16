@@ -28,6 +28,8 @@ STANDARD = FAST + (
     ("research-navigation", [sys.executable, "tools/research_navigation_test.py"]),
     ("smoke", [sys.executable, "tools/smoke_test.py"]),
     ("settings", [sys.executable, "tools/settings_modal_test.py"]),
+    ("brand-identity-contract", [sys.executable, "tools/brand_identity_contract_test.py"]),
+    ("brand-identity-browser", [sys.executable, "tools/brand_identity_browser_test.py"]),
     ("statute-documentary", [sys.executable, "tools/statute_documentary_test.py"]),
     ("galton-board", [sys.executable, "tools/galton_board_test.py"]),
     ("fx-planning", [sys.executable, "tools/fx_planning_test.py"]),
