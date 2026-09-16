@@ -1,3 +1,9 @@
+# Validado localmente — backup e retomada completos
+
+Contrato [CHG-COMPLETE-BACKUP-20260916](CHG-COMPLETE-BACKUP-20260916.md). Implementação N2 autorizada pelo proprietário para as nove categorias. Base 9c60d98; testes sintéticos e árvore isolada. Build `718d5af075e33e02`. FULL: 57 PASS; confiabilidade: 26 PASS; cenários adicionais de backup modular/portátil e smoke final aprovados. Cobertura e limites em [COMPLETE-BACKUP](../architecture/COMPLETE-BACKUP.md). Candidate local; commit, push, merge, deploy e aceite humano não atribuídos.
+
+## Histórico preservado
+
 # Em execução — galeria de avatares (2026-09-16)
 
 Contrato [CHG-PROFILE-GALLERY-20260916](CHG-PROFILE-GALLERY-20260916.md). Base `056c4690f41170e5deaa3a5037a949a2174b9203`, branch `codex/jp-wealth-profile-gallery-20260916`. Catálogo local de 19 retratos, com associação de nomes confirmada pelo proprietário, categorias, busca e escolha pelo rascunho existente. N1; schema/escritor/backup/limpeza preservados. Evidência externa `../evidence/`. Implementação local; nenhum aceite, commit ou publicação desta feature atribuído.

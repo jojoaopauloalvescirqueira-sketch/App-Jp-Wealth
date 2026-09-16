@@ -1655,6 +1655,7 @@ function hideStaleSavedTag(){
   if(stale){ clearTimeout(saveTimer); stale.classList.remove('show'); }
 }
 function save(){
+  if(S?.workspaceRecovery?.pending&&!jpwWorkspaceRestoring)return false;
   // Recuperação de carregamento (A-005) tem precedência sobre tudo: mesmo que algum
   // fluxo reabra o portão genérico (importFullBackupFile e openOnboardingModal chamam
   // resumeJPWealthPersistence), nada grava enquanto o operador não decidir.

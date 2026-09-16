@@ -168,7 +168,11 @@ N2 aprovado com secret store real.
 Integração futura com MetaTrader/corretora deverá manter credenciais exclusivamente
 em secret store/backend/VPS dedicados, fora do app e fora deste repositório.
 
-## Inventário focal de stores/chaves (2026-09-14)
+## Contrato de retomada ampliado (2026-09-16)
+
+O backup agora inclui perfil/foto e preferências pela allowlist `JPW_WORKSPACE_KEYS`, além de rascunhos para revisão. Finalizar Sessão conserva o documento completo e essas preferências. O snapshot e o protocolo de retomada estão em [COMPLETE-BACKUP](COMPLETE-BACKUP.md); este contrato substitui as exclusões de preferências e a limpeza na finalização registradas no inventário histórico abaixo. Caches, credenciais e capacidades de pasta permanecem excluídos.
+
+## Inventário histórico de stores/chaves (2026-09-14)
 
 `EPHEMERAL` designa runtime/cache/controle fora do backup, não garante volatilidade física; o epoch é durável. Associação local de pasta é classificada como AUXILIARY PREFERENCE com capacidade não portátil.
 

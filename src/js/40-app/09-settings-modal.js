@@ -58,7 +58,7 @@ window.__settingsModalDebug={opens:0,observerInstances:0,focusTrapActive:false};
 
 function settingsEl(id){ return document.getElementById(id); }
 
-// Preferência por navegador, fora de S, exportações, credenciais e schemas
+// Preferência por navegador, incluída no workspace do backup, fora dos schemas
 // financeiros. Uma escrita explícita contém nome e foto juntos; leitura é pura.
 const SETTINGS_PROFILE_KEY='jpwealth_local_profile_v1';
 const SETTINGS_PROFILE_MAX_FILE=5*1024*1024;
@@ -285,7 +285,7 @@ function settingsAccountPanel(){
       <div class="settings-account-row"><span>Foto do perfil</span><div class="settings-account-photo-actions"><input id="settingsProfilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><button type="button" class="reset-btn" id="settingsProfileChoosePhotoBtn">Escolher foto</button><button type="button" class="reset-btn" id="settingsProfileRemovePhotoBtn">Remover foto</button></div><p class="note">PNG, JPEG ou WebP estático. Até 5 MiB e 16 megapixels.</p></div>
     </section>
     ${settingsProfileGalleryPanel()}
-    <p class="settings-account-privacy">Seu nome e sua foto ficam somente neste navegador. A foto não é enviada a servidores. O backup financeiro não inclui este perfil; Finalizar sessão remove-o deste computador.</p>
+    <p class="settings-account-privacy">Seu nome e sua foto ficam neste navegador e são incluídos no backup completo. A foto não é enviada a servidores. Finalizar sessão mantém o perfil salvo.</p>
     <p id="settingsProfileStatus" role="status" aria-live="polite" data-state="info"></p>
     <div class="settings-account-actions"><button type="button" class="reset-btn" id="settingsProfileCancelBtn">Cancelar</button><button type="submit" class="reset-btn settings-account-save" id="settingsProfileSaveBtn">Salvar perfil</button></div>
   </form>`;
@@ -548,7 +548,7 @@ function buildSettingsContent(){
   createSettingsPanel('tool-params','<p class="settings-lead">Motor Forex versionado. Registros explícitos, parâmetros normativos e estados de elegibilidade são apresentados separadamente.</p><div data-settings-slot="tool-params"></div>');
   createSettingsPanel('tool-check','<p class="settings-lead">Respostas, pontuação e critérios do checklist pré-trade. As respostas são gravadas durante o preenchimento.</p><button type="button" id="settingsOpenChecklist" aria-haspopup="dialog" aria-controls="forexChecklistDialog">Abrir checklist pré-trade</button>');
   settingsEl('settingsOpenChecklist')?.addEventListener('click',event=>fxOpenChecklist(event.currentTarget));
-  createSettingsPanel('backup','<p class="settings-lead">Exportação, importação e recuperação usam as rotinas existentes, sem alteração de formato ou política de credenciais.</p><div data-settings-slot="backup"></div>');
+  createSettingsPanel('backup','<p class="settings-lead">O backup completo guarda seus dados, perfil com foto, preferências e rascunhos para revisão. Após importar, recarregue para aplicar toda a aparência. Senhas de investidor não são incluídas.</p><div data-settings-slot="backup"></div>');
   createSettingsPanel('storage',storagePanel());
   createSettingsPanel('forex-consolidated',window.JPWFXConsolidated?.settingsMarkup?window.JPWFXConsolidated.settingsMarkup():'<p>Consolidado indisponível neste carregamento.</p>');
   content.addEventListener('click',settingsContentClick,true);
@@ -879,3 +879,10 @@ function initSettingsModal(){
   initSettingsSubdialogObserver();
 }
 initSettingsModal();
+
+// Workspace backup captures only an actual unsaved profile, including its raster.
+jpwWorkspaceDraftProviders.set('profile',(reset=false)=>{
+  if(reset){settingsProfileCancelAsync();settingsProfileState.blocked=null;settingsProfileReload();return [];}
+  if(settingsProfileState.busy)throw new Error('Aguarde o processamento da foto antes de exportar.');
+  return settingsProfileDirty()?[{label:'Perfil — rascunho',text:JSON.stringify(settingsProfileState.draft)}]:[];
+});

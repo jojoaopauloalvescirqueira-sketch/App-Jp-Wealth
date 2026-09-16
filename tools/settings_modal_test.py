@@ -434,7 +434,7 @@ def run_profile_contract(browser,url):
     assert page.evaluate('window.__profileTestOps')==[],'Reload must not rewrite the profile'
     checkpoint=page.evaluate('JSON.stringify(S)')
     backup=page.evaluate("async () => JSON.parse(await dgBuildBackupBlob(1,'synthetic.json','2026-09-13T00:00:00Z').text())")
-    assert name not in json.dumps(backup,ensure_ascii=False),'Financial backup must exclude the profile'
+    assert json.loads(backup['workspace']['preferences'][PROFILE_KEY])['displayName']==name,'Complete backup must include the confirmed profile'
     assert name not in page.evaluate('JSON.stringify(S)')
     assert page.evaluate('JSON.stringify(S)')==checkpoint
     raw_before=profile_raw(page)

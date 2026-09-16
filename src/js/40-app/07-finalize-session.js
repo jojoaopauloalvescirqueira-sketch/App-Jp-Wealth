@@ -145,6 +145,7 @@ let sessionPreservedRaw=null;
 let sessionFinalizeBackStep='safe';
 let sessionFinalizeExportMeta=null;
 let sessionFinalizeExportFingerprint=null;
+let sessionPreservedWorkspaceFingerprint=null;
 let sessionFinalizeExportAcknowledged=false;
 let sessionNoticeTimer=null;
 let sessionCrossTabChannel=null;
@@ -206,7 +207,7 @@ function sessionStateFingerprint(){
   try{
     snapshot=JSON.parse(JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v));
   }catch(e){ return null; }
-  return JSON.stringify(sessionStableValue(snapshot));
+  try{return JSON.stringify(sessionStableValue({state:snapshot,workspace:jpwWorkspaceCapture()}));}catch(error){return null;}
 }
 function sessionCheckpointStorageGet(){
   try{ return sessionStorage.getItem(SESSION_CHECKPOINT_KEY); }catch(e){ return null; }
@@ -318,7 +319,7 @@ function sessionHandleRemoteFinalization(message){
     // continuações assíncronas iniciadas com o S antigo desistam ao conferir o epoch.
     blockJPWealthPersistence(); bloqueou=true;
     sessionResetAuxiliarySurfaces();
-    const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:false,preserveMain:true});
+    const report=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false,preserveMain:true});
     resumeJPWealthPersistence(); bloqueou=false;
     load();
     concluiu=true;
@@ -432,12 +433,14 @@ function sessionHandleRemoteBaseImport(message){
   }
   resumeJPWealthPersistence();
   load();
+  if(S?.workspaceRecovery?.pending&&!jpwWorkspaceResume())return;
+  jpwWorkspaceAdoptImport();
   window.__onbShown=true;
   closeModal();
   boot();
   window.__onbShown=false;
   if(typeof initSessionCheckpoint==='function') initSessionCheckpoint();
-  showSessionNotice('Outra aba importou um backup completo. Esta aba foi recarregada com a base importada — nada do estado anterior foi mantido em memória.');
+  showSessionNotice('Outra aba importou um backup completo. A base foi adotada. Recarregue para aplicar todas as preferências visuais.');
 }
 // Descarte EXPLÍCITO, nunca por omissão de tipo desconhecido: precisa deixar rastro
 // e ser testável. Um build antigo não participa do protocolo de geração, então a
@@ -554,7 +557,7 @@ function sessionPreserveLongitudinal(opcoes){
   // Fonte confirmada única. A história manual permanece no agregado canônico;
   // importações e catálogo descritivo não ressuscitam S.accounts ou saldos.
   try{
-    const valor={fxConsolidated:fxConsolidatedLongitudinalSnapshot(documento)};
+    const valor={document:structuredClone(documento),fxConsolidated:fxConsolidatedLongitudinalSnapshot(documento)};
     // A decisão atual preserva todo fato Forex confirmado. A cópia vem apenas
     // do documento durável; memória de outra aba jamais preenche lacunas.
     for(const key of ['accounts','forex','ledger','ledgerArchive','phases','activeOperation',
@@ -576,75 +579,21 @@ function renderSessionPreservationError(error){
 }
 // `preservado` chega PRONTO do chamador (ver sessionPreserveLongitudinal).
 function emptyJPWealthState(preservado){
-  const empty=structuredClone(DEFAULTS);
-  empty.params={...empty.params, saldoIni:0, saldoAtu:0, inicio:''};
-  empty.accounts=[];
-  empty.ledger=[];
-  empty.ledgerArchive=[];
-  empty.transitionLog=[];
-  empty.cycleRealizado=0;
-  // Explícito, ainda que o clone de DEFAULTS já traga a operação nula: a mesma
-  // disciplina defensiva das linhas vizinhas. Se um dia DEFAULTS deixar de
-  // nascer com operação nula, a Finalização de Sessão continua limpando o
-  // ciclo de vida em vez de entregar uma sessão nova com operação fantasma.
-  empty.activeOperation=null;
-  empty.operationHistory=structuredClone(DEFAULTS.operationHistory);
-  if(preservado&&Object.prototype.hasOwnProperty.call(preservado,'operationHistory'))
-    empty.operationHistory=structuredClone(preservado.operationHistory);
-  if(preservado&&Object.prototype.hasOwnProperty.call(preservado,'fxConsolidated'))
-    empty.fxConsolidated=structuredClone(preservado.fxConsolidated);
-  empty.quarantine=null;
+  const empty=structuredClone({...DEFAULTS,...preservado?.document});
+  if(!preservado?.document){
+    // Compatibility for an empty/legacy document; never invent example accounts.
+    Object.assign(empty,{accounts:[],ledger:[],ledgerArchive:[],transitionLog:[],cycleRealizado:0,
+      activeOperation:null,period:{nome:'',profile:'base'},perf:[],phases:forexNewOperationPhases()});
+    empty.params={...empty.params,saldoIni:0,saldoAtu:0,inicio:''};
+    empty.onboarding={...empty.onboarding,done:false,reserveMasterCapital:''};
+    empty.mvpNotes=structuredClone(S?.mvpNotes||DEFAULTS.mvpNotes);
+    empty.personalFinance=structuredClone(S?.personalFinance||DEFAULTS.personalFinance);
+    for(const key of Object.keys(preservado||{}))if(key!=='document')empty[key]=structuredClone(preservado[key]);
+  }
   empty.riskPinHash=null;
   empty.phaseUnlocked=[];
-  empty.period={nome:'',profile:'base'};
-  empty.onboarding=structuredClone(DEFAULTS.onboarding);
-  empty.onboarding.done=false;
-  // Terceiro caminho de nascimento do estado (além de DEFAULTS fresco e migrate):
-  // o clone herda o reserveMasterCapital derivado de DEFAULTS.params.saldoIni, mas
-  // este estado vazio acabou de zerar saldoIni — reconciliar com a MESMA fórmula
-  // canônica, senão o reload (migrate) reescreve e o checkpoint acusa falso dirty.
-  empty.onboarding.reserveMasterCapital='';
-  empty.perf=[];
-  empty.phases=forexNewOperationPhases();
-  if(Array.isArray(empty.checklist)) empty.checklist=empty.checklist.map(group=>({...group,items:group.items.map(item=>({...item,v:0}))}));
-  if(empty.mei){ empty.mei.history=[]; empty.mei.lastCalibrationAt=''; }
-  // Notas do MVP são um backlog acumulado ao longo de todo o período de testes,
-  // não um dado operacional da sessão — sobrevivem a Finalizar Sessão (ao contrário
-  // de ordens, ledger, onboarding etc., zerados acima). 'S' aqui ainda é o estado
-  // anterior à troca (a reatribuição só ocorre no retorno desta função).
-  empty.mvpNotes=(S&&S.mvpNotes)?structuredClone(S.mvpNotes):structuredClone(DEFAULTS.mvpNotes);
-  // Finanças Pessoais é memória LONGITUDINAL da vida financeira do operador,
-  // não dado operacional do período de trading que se encerra aqui. Mesma
-  // herança das notas — decisão humana registrada no congelamento do schema
-  // v1 (PF-01, Bloco D): Finalizar Sessão não apaga, não recria vazio e não
-  // modifica o agregado. Versões do app anteriores a esta linha zeravam o
-  // agregado neste fluxo — risco residual documentado no contrato.
-  empty.personalFinance=(S&&S.personalFinance)?structuredClone(S.personalFinance):structuredClone(DEFAULTS.personalFinance);
-  // Alladin é PATRIMÔNIO — memória longitudinal por definição: um imóvel, um
-  // instrumento cadastrado e uma conta de custódia não pertencem ao período de
-  // trading que se encerra aqui. Mesma doutrina das duas linhas acima, e o
-  // mesmo defeito que o agregado de Finanças Pessoais sofreu antes da correção
-  // do PF-01: até esta linha, Finalizar Sessão zerava o cadastro patrimonial.
-  //
-  // A cópia vem EXCLUSIVAMENTE do chamador. Esta função NÃO consulta S.alladin por
-  // conta própria: um fallback interno clonaria DEPOIS de clearJPWealthLocalData() já
-  // ter apagado o disco — exatamente a "recuperação após o início da destruição" que a
-  // atomicidade proíbe — e, pior, tornaria o parâmetro indetectável (chamar sem
-  // argumento continuaria preservando, mascarando qualquer defeito de fiação).
-  // Sem preservado, o estado sai vazio; a preservação é ato explícito do fluxo.
-  // Zona de Perigo continua apagando — lá a exclusão é o que o operador pediu.
-  const alladinPreservado = preservado ? preservado.alladin : undefined;
-  if(alladinPreservado!==undefined) empty.alladin=alladinPreservado;
-  // Finalizar Sessão encerra a interação e os segredos, sem apagar contextos,
-  // operações, contas ou legados confirmados. A exclusão integral é outro fluxo.
-  for(const key of ['accounts','forex','ledger','ledgerArchive','phases','activeOperation',
-    'transitionLog','cycleRealizado','period','params','onboarding']){
-    if(preservado&&Object.prototype.hasOwnProperty.call(preservado,key))
-      empty[key]=structuredClone(preservado[key]);
-  }
-  if(empty.forex){empty.forex.activeAccountId=null;}
-  empty.riskPinHash=null;
   if(empty.onboarding)empty.onboarding.investorPassword='';
+  if(Array.isArray(empty.accounts))empty.accounts.forEach(account=>{account.investorPassword='';});
   return empty;
 }
 // COMMIT DURÁVEL do estado finalizado (B1+B2, substitui persistNotesAfterSessionWipe).
@@ -751,6 +700,7 @@ async function beginSessionExport(){
     if(!meta) throw new Error('A exportação não foi confirmada. Verifique o aviso e o destino antes de tentar novamente. O encerramento não foi autorizado por esta tentativa.');
     if(!meta.filename) throw new Error('O navegador não retornou o nome do arquivo exportado.');
     if(jpWealthPersistenceOutcomeIsUnknown()) throw new Error('A gravação local tem resultado desconhecido. Preserve o arquivo e verifique a recuperação antes de encerrar.');
+    if(meta.workspaceFingerprint&&meta.workspaceFingerprint!==JSON.stringify(jpwWorkspaceCapture()))throw new Error('As preferências ou os rascunhos mudaram durante a exportação. Exporte uma nova cópia antes de encerrar.');
     sessionFinalizeExportMeta=meta;
     sessionFinalizeExportFingerprint=sessionStateFingerprint();
     sessionFinalizeExportAcknowledged=false;
@@ -825,6 +775,7 @@ function openFinalizeSessionFlow(){
   // do broadcast. Não existe degradação para "finaliza só nesta aba".
   const preservado=sessionReadStable({ausenteAborta:false});
   if(!preservado.ok){ renderSessionPreservationError(preservado.erro); return; }
+  try{sessionPreservedWorkspaceFingerprint=JSON.stringify(jpwWorkspaceCapture());}catch(error){sessionPreservedWorkspaceFingerprint=null;}
   sessionPreservedAlladin=preservado.valor;
   sessionPreservedEpoch=preservado.epoch;
   sessionPreservedRaw=(preservado.raw===undefined)?null:preservado.raw;
@@ -905,13 +856,20 @@ async function finalizeJPWealthSession(){
         longitudinal=refreshed.valor;
       }
       blockJPWealthPersistence(); bloqueou=true;
-      sessionResetAuxiliarySurfaces();
+      const workspace=jpwWorkspaceCapture();
+      const expectedWorkspace=sessionFinalizeExportMeta?.workspaceFingerprint||sessionPreservedWorkspaceFingerprint;
+      if(expectedWorkspace&&expectedWorkspace!==JSON.stringify(workspace)){
+        sessionExportError(new Error('As preferências ou os rascunhos mudaram. Exporte uma nova cópia antes de encerrar.'));return;
+      }
       const novoEstado=emptyJPWealthState(longitudinal);
+      novoEstado.workspaceRecovery={schemaVersion:1,pending:false,drafts:workspace.drafts};
       const commit=sessionCommitFinalizedState(novoEstado);
       if(!commit.ok){ renderSessionCommitError(commit.erro); return; }
       S=novoEstado;
+      sessionResetAuxiliarySurfaces();
+      jpwWorkspaceEdited.clear();
       window.JPWForex?.executionBoardUI?.discard();
-      const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:false,preserveMain:true});
+      const report=clearJPWealthLocalData({removeAuxiliary:false,removeCorrupted:false,preserveMain:true});
       concluiu=true;
       // Broadcast SÓ depois de o documento final estar durável e confirmado: nenhuma
       // outra aba recebe "finalized" antes de existir estado a adotar (contrato §9 do
@@ -925,6 +883,7 @@ async function finalizeJPWealthSession(){
       resetSessionFinalizeEphemeralState();
       closeModal();
       boot();
+      jpwWorkspaceRender();
       // §12: aplicação sem base válida volta para a tela inicial canônica.
       if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
       window.__onbShown=false;

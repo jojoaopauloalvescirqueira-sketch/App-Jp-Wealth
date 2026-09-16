@@ -357,7 +357,8 @@
     if(!state.busy)render();
   });
   root.addEventListener('beforeunload',event=>{if(hasDrafts()){event.preventDefault();event.returnValue='';}});
-  fx.executionBoardUI={render,renderPhases,hasDrafts,saveRow,cancelRow,requestLeave,guardNavigation,
+  fx.executionBoardUI={render,renderPhases,hasDrafts,
+    backupDrafts:()=>hasDrafts()?{rows:[...drafts.entries()],observation:observationDirty&&el('ebObservationForm')?Object.fromEntries(new FormData(el('ebObservationForm'))):null,instrumentId:instrumentChoice,selection:fx.state.operationalSelection()}:null,saveRow,cancelRow,requestLeave,guardNavigation,
     discard(){drafts.clear();expanded.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
     getSelection:()=>({accountId:fx.state.operationalSelection().accountId,instrumentId:instrumentChoice})};
   render();

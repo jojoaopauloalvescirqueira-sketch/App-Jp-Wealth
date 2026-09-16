@@ -7843,3 +7843,12 @@ html[data-shell="global-dashboard"] #execWidgetGrid.execution-board{max-width:no
 
 html[data-shell="global-dashboard"] #execWidgetGrid.execution-board>[data-widget-size="full"]{grid-column:1/-1!important}
 #execWidgetGrid .eb-order-row>td:last-child,#execWidgetGrid .eb-order-table th:last-child{position:sticky;right:0;z-index:2;background:var(--panel);box-shadow:-5px 0 8px -8px var(--ink)}
+
+/* Portable draft archive: content is text, never executed or auto-submitted. */
+#workspaceDraftsButton{position:fixed;bottom:12px;left:12px;z-index:1100;max-width:calc(100vw - 24px)}
+#workspaceDraftDialog{margin:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);width:min(640px,calc(100vw - 32px));max-height:80vh;overflow:auto;padding:24px;border-radius:16px}
+#workspaceDraftDialog label{display:block;margin:16px 0}
+#workspaceDraftDialog textarea{font:inherit;line-height:1.5;padding:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;display:block;width:100%;box-sizing:border-box;margin-top:8px}
+#workspaceRestoreWarning{padding:16px;background:#fff0d2;color:#462500;position:relative;z-index:99999}
+
+.workspace-draft-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}

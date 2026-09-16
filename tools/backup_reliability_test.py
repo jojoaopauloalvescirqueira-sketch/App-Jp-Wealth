@@ -508,8 +508,10 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
     case.check('secret excluded from serialized artifact', 'BR-SYNTHETIC-SECRET' not in body and payload.get('segredosIncluidos') is False)
     case.check('all populated domains exported semantically intact', all(payload['state'][key] == value for key, value in expected.items()))
     case.check('unknown top-level field preserved', payload['state'].get('syntheticBackupExtension') == {'preserved': 'BR-UNKNOWN-FIELD'})
-    case.check('auxiliary preferences neither exported nor modified', all(key not in payload['state'] for key in AUX)
-               and all(token not in body for token in ('BR-AUX-PROFILE', 'BR-AUX-WIDGET', 'BR-AUX-SOURCE'))
+    portable_aux={key:value for key,value in AUX.items() if key!='jpwealth.ui.ffNews.sourceUrl'}
+    case.check('portable preferences exported without mutating source', all(key not in payload['state'] for key in AUX)
+               and all(payload['workspace']['preferences'].get(key)==value for key,value in portable_aux.items())
+               and 'jpwealth.ui.ffNews.sourceUrl' not in payload['workspace']['preferences']
                and before['aux'] == after['aux'])
     case.observed.update(envelope_without_state={key: value for key, value in payload.items() if key != 'state'},
                         payload_sha256=digest(body), domain_hashes={key: digest(value) for key, value in expected.items()}, meta=meta)
@@ -519,7 +521,7 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
                    ('pivotstudies', 'pivots'), ('mvpnotes', 'notas')]
         case.check('metadata identifies actual included sections', all(any(alias in description for alias in group) for group in aliases), description)
         case.check('metadata identifies current build', page.evaluate('JP_WEALTH_BUILD_ID').lower() in description)
-        case.check('metadata explains deliberate profile and preference exclusions',
+        case.check('metadata identifies included profile and preferences',
                    ('perfil' in description or 'profile' in description) and ('prefer' in description or 'launcher' in description), description)
         return
     target = prepare(helper, browser, url)
@@ -541,7 +543,9 @@ def roundtrip(case, page, helper, browser, url, root, metadata_only=False):
         disk = json.loads(final['raw'])
         case.check('round-trip domains actually reached storage', all(disk[key] == value for key, value in expected.items()))
         case.check('unknown extension survives real import', disk.get('syntheticBackupExtension') == {'preserved': 'BR-UNKNOWN-FIELD'})
-        case.check('import preserves destination local preferences', all(final['aux'].get(key) == local_before.get(key) for key in AUX))
+        case.check('import restores portable preferences and preserves excluded destination settings',
+                   all(final['aux'].get(key)==value for key,value in portable_aux.items())
+                   and final['aux'].get('jpwealth.ui.ffNews.sourceUrl')==local_before.get('jpwealth.ui.ffNews.sourceUrl'))
         helper.assert_fixture_requests(target.context)
         case.check('round-trip has no pageerror', not target.jpwealth_observed['pageerror'], target.jpwealth_observed['pageerror'])
     finally:

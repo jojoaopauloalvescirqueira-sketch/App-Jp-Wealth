@@ -2632,3 +2632,12 @@ function initMvpNotes(){
   renderMvpNotesHeader();
 }
 initMvpNotes();
+
+jpwWorkspaceDraftProviders.set('notes',(reset=false)=>{
+  if(reset){mvpNotesCloseEditor();mvpNotesUI.folderNameDrafts={};mvpNotesReadAppearance();mvpNotesReadLauncherPosition();return [];}
+  const result=[];
+  if(mvpNotesAppearanceState.editing&&JSON.stringify(mvpNotesAppearanceState.draft)!==JSON.stringify(mvpNotesAppearanceState.confirmed))result.push({label:'Notas — aparência em edição',text:JSON.stringify(mvpNotesAppearanceState.draft)});
+  if(mvpNotesUI.draftDirty&&mvpNotesUI.draft)result.push({label:'Notas — rascunho não salvo',text:JSON.stringify({selectedId:mvpNotesUI.selectedId,...mvpNotesUI.draft})});
+  if(Object.keys(mvpNotesUI.folderNameDrafts).length)result.push({label:'Notas — pastas em edição',text:JSON.stringify(mvpNotesUI.folderNameDrafts)});
+  return result;
+});

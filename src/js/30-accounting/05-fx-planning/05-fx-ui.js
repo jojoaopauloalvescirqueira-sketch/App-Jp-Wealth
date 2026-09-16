@@ -823,3 +823,8 @@ window.JPWFx.ui={renderFxPlanning,selectView:fxpSelectView,getView:fxpGetView};
 // reservas podem ter mudado via Formulário de Início).
 renderFxPlanning();
 document.querySelectorAll('.tab[data-screen="fxplan"]').forEach(t=>t.addEventListener('click',()=>renderFxPlanning()));
+
+jpwWorkspaceDraftProviders.set('planning',(reset=false)=>{
+  if(reset){for(const key of Object.keys(fxpRejectedDrafts))delete fxpRejectedDrafts[key];return [];}
+  return Object.keys(fxpRejectedDrafts).length?[{label:'Planejamento — edições pendentes',text:JSON.stringify(fxpRejectedDrafts)}]:[];
+});
