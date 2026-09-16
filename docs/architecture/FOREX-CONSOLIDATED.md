@@ -2,7 +2,8 @@
 
 Base da implementação `01c08241ccb7bc229a05779a52f577ee55a69ae7`.
 Contratos: CHG-FOREX-CONSOLIDATED-20260914 e complemento PDF/build.
-Candidate local para validação/revisão; sem homologação financeira ou integração presumidas.
+O lote inicial foi integrado em `b2f0e54993ff79f7eaab62eba5b37510af43013c`.
+Revisão cadastral local N2: CHG-FX-ACCOUNT-REGISTRATION-20260915; ainda sem aceite ou integração. Sem homologação financeira.
 
 ## Responsabilidades e fontes
 
@@ -28,7 +29,9 @@ As fontes MT5 e Manual nunca são somadas automaticamente.
 Namespace interno `window.JPWFXConsolidated`: `emptyState`, `validateState`,
 `parseHTML`, `previewImport`, `applyImport`, `project`; `accounts`, `prepareImport`,
 `confirmImport`, `saveDefaultAccount`, `cancelImport`; `parsePDF`, `disposePDF`;
-`render`, `settingsMarkup`, `bindSettings`, `reset`.
+`render`, `settingsMarkup`, `bindSettings`, `reset`; `validateReport`,
+`inspectRegistration`, `beginRegistration`, `saveRegistration`,
+`cancelRegistration`, `openAccountRegistration`.
 
 ## Importação e identidade
 
@@ -44,6 +47,37 @@ anterior são conferidos; outras ausências de identidade são explicitadas.
 A confirmação humana não substitui o número ausente nem autentica o arquivo.
 Não há troca automática de destino. Mudança de vínculo incompatível é recusada;
 não há nesta revisão um assistente para transferir um histórico entre identidades.
+
+A leitura do arquivo pode ocorrer sem destino selecionado. `inspectRegistration`
+reutiliza a validação do modelo antes de oferecer qualquer ficha. Preparação e
+confirmação (sob lock) exigem cadastro **atual** em `S.accounts`, com login textual
+e plataforma MT5; não utilizam o preenchimento histórico do catálogo de consulta
+como prova de cadastro atual. Identificadores presentes de corretora/moeda/servidor
+precisam ser compatíveis com relatório e vínculo histórico. Metadados opcionais
+ausentes mantêm sua limitação; senha não participa dessa conferência.
+
+Estados distintos: outra conta correspondente (seleção explícita), cadastro
+incompleto (completar), documento desconhecido/divergente (nova ficha sem alterar
+a conta selecionada), histórico (recadastro) e ambiguidade (revisão dos cadastros).
+O formulário também é acessível por Adicionar Conta. Rascunho em memória e
+salvamento explícito pelo comando Forex existente, com lock, epoch e releitura;
+a confirmação cadastral não confirma importação. Após salvar, o documento é
+revalidado e uma confirmação própria da importação continua obrigatória.
+
+Nome/tipo e identificadores são cadastrais. `platformCurrency` e `platformServer`
+em `S.accounts[]` são metadados opcionais salvos pela ficha; não equivalem a
+observações financeiras em `S.forex.accounts`. Nenhum saldo, equity ou risco do
+relatório preenche o cadastro. Completar preserva campos existentes; novo cadastro
+e recadastro usam os defaults cadastrais legados sem ativar conta ou restaurar
+fatos operacionais. Recadastro histórico exige confirmação e reutiliza o ID.
+Duplicatas e vínculos históricos incompatíveis são recusados. Backup inclui esses
+campos pelo mecanismo existente, sem migração. Finalizar Sessão conserva o histórico
+mas encerra a ficha/prévia e retira os cadastros atuais: importar novamente exige
+recadastro explícito. A captura da finalização conserva metadados explicitamente
+cadastrados no catálogo mínimo; preenche apenas lacunas compatíveis de catálogos
+sem conteúdo importado. Não mistura identidades divergentes nem preenche moeda
+ou servidor ausentes de relatórios passados com o cadastro atual. Cancelar descarta o rascunho; recusa comprovada mantém a ficha
+para retry explícito; UNKNOWN impede repetir antes de conferir a base.
 
 Prévia não grava. Confirmação revalida conta/estado/epoch, usa `save()` existente
 e exige releitura; recusa comprovada reverte apenas o delta próprio. UNKNOWN
@@ -105,7 +139,8 @@ embutidos no documento; HTML é processado em template inerte por allowlist text
 
 Fixtures/gabaritos sintéticos: `tools/fixtures/mt5-consolidated/`. Testes focais:
 `fx_consolidated_model_test.py`, `fx_consolidated_storage_test.py`,
-`fx_consolidated_pdf_test.py`, `fx_consolidated_ui_test.py`. FULL existente e
+`fx_consolidated_pdf_test.py`, `fx_consolidated_ui_test.py`,
+`fx_account_registration_test.py` (cadastro, escrita e interface). FULL existente e
 revisão independente complementam, não substituem importação real/revisão humana.
 Relatórios, hashes, contraprovas, comparador e recovery ficam no diretório externo
 `/Users/joaopauloalves/.codex/forex-consolidated/20260914/evidence/`.

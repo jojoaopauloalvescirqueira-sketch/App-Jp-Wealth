@@ -38,7 +38,7 @@
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "4e1710a15ff238f180d677de556ceda491eff24c85a377736ea6f626acc821c9"
+      "sha256": "411f0059c9c6bc264b4edc490c5da25840023703e132f355e9076f12d5b9caa1"
     },
     {
       "order": 7,
@@ -128,7 +128,7 @@
       "order": 21,
       "path": "src/js/20-ui/08-input-bindings.js",
       "section": "INPUT BINDINGS",
-      "sha256": "1a1004a24ce11162fa81839e41f092bc6c0aa6cb8e4184b37d8e01002fae5371"
+      "sha256": "8cfa9a5624c8571bddce10cb9e137cb19848145880d67ede32069d8bfb4a3812"
     },
     {
       "order": 22,
@@ -505,13 +505,13 @@
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 84,
-      "sha256": "c28e4b929c3f742235b7c6c8f7c02535ca7e9ba1acec1f7001eda520c04f11fd"
+      "sha256": "8d09e276552f8ab6360224bb8e1ea11878dd13743ae4a59688fcb5c111633fea"
     },
     {
       "path": "src/js/40-app/24-fx-consolidated-import.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 85,
-      "sha256": "b37007bda49e7ae950616ebfa4fe6b21ac576e957d87648546d6fd6d8faeacfd"
+      "sha256": "b330ae7f9d4e58ac2c6d243e7da0b06271640940ce4e575c1f3853861edc19f2"
     },
     {
       "path": "src/js/40-app/25-fx-consolidated-pdf.js",
@@ -523,7 +523,7 @@
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 87,
-      "sha256": "ad18399963c305c6e1aa7f95a8831cf15b0d63663dc9647f9a34497120a9bc9d"
+      "sha256": "a055d13342d976711a7f835d12ac88c858c0371499d590258a312734076a69ad"
     }
   ],
   "runtimeAssets": [

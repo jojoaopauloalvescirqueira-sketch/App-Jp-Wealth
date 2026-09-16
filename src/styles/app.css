@@ -7646,3 +7646,19 @@ html[data-shell="global-dashboard"] #headerActions{width:auto;flex-shrink:0;gap:
 @media(max-width:650px){#fxconsolidated .fxc-workspace{padding:16px 12px}#fxconsolidated .fxc-toolbar{align-items:start;flex-direction:column;gap:12px}#fxconsolidated .fxc-controls{gap:10px}#fxconsolidated .fxc-controls label{flex:1 1 125px}#fxconsolidated .fxc-controls label:first-child{flex-basis:100%;max-width:none}#fxconsolidated .fxc-summary{grid-template-columns:minmax(0,1fr);gap:20px}#fxconsolidated #fxcBars{grid-column:auto}#fxconsolidated .fxc-radar-empty{max-width:240px}#fxconsolidated .fxc-bars>div{gap:7px;grid-template-columns:1fr .8fr 1fr}#fxconsolidated .fxc-statistics,#fxconsolidated .fxc-distributions{grid-template-columns:minmax(0,1fr)}#fxconsolidated .fxc-chart-head dl{gap:17px;flex-wrap:wrap}#fxconsolidated .fxc-tabs button{padding:10px 12px}#fxconsolidated .fxc-chart>svg{height:200px}#fxconsolidated button{min-height:44px}#fxconsolidated .fxc-unavailable{min-height:170px;padding:18px}#fxconsolidated [role=tabpanel]{min-height:400px}#fxconsolidated #fxcImport{padding:14px}}
 
 #fxconsolidated #fxcIdentity .fxc-chart>svg{height:92px}#fxconsolidated #fxcIdentity .fxc-chart figcaption,#fxconsolidated #fxcIdentity .fxc-chart-dates,#fxconsolidated #fxcIdentity .fxc-chart details{display:none}#fxconsolidated .fxc-entity-details{border-top:1px solid var(--fxc-line);padding:12px 0}#fxconsolidated .fxc-chart-head .fxc-metric{max-width:290px}
+
+/* MT5 registration: explicit local draft; native dialog traps focus and makes
+   the underlying app inert without replacing existing modal protocols. */
+.fxc-registration{box-sizing:border-box;width:min(640px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;margin:auto;padding:28px;border:1px solid var(--line,#d5d9e0);border-radius:18px;background:var(--panel,#fff);color:var(--ink,#17212b);box-shadow:0 24px 80px #0003}
+.fxc-registration::backdrop{background:#18212b66}
+.fxc-registration header h2{margin:0 0 6px;font-size:1.4rem}
+.fxc-registration p{line-height:1.5}
+.fxc-registration-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fxc-registration label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fxc-registration input,.fxc-registration select{box-sizing:border-box;width:100%;min-width:0;min-height:42px}
+.fxc-registration .fxc-check{flex-direction:row;align-items:flex-start;margin:18px 0}
+.fxc-registration .fxc-check input{width:20px;min-height:20px;flex:none}
+.fxc-registration footer{display:flex;justify-content:flex-end;gap:12px;margin-top:20px}
+.fxc-registration footer button{min-height:42px}
+#fxcRegistrationStatus{font-weight:600}
+@media(max-width:540px){.fxc-registration{padding:20px}.fxc-registration-fields{grid-template-columns:1fr}}

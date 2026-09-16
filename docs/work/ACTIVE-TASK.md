@@ -1,3 +1,9 @@
+# Em execução — cadastro obrigatório MT5 (2026-09-15)
+
+Contrato vigente deste lote: [CHG/CTX](CHG-FX-ACCOUNT-REGISTRATION-20260915.md). N2, candidate ainda não aceito nem integrado. Histórico anterior preservado abaixo.
+
+---
+
 # Tarefa atual — APPLE NOTES EXPERIENCE MATCH
 
 2026-09-14. Branch `codex/apple-notes-match-20260914`, base integrada `9ca32073e1fa032318b7e6e6eb50b5f693efe2d9`. Implementação local N2/A3 explicitamente autorizada; sem aceite ou integração. Objetivo, arquivos, invariantes, testes e rollback em [CHG/CTX](CHG-APPLE-NOTES-MATCH-20260914.md). Escopo: apresentação de Notas e preferências visuais; fonte financeira, dados, controles e outras entregas preservados. Evidências externas: `/Users/joaopauloalves/.codex/apple-notes-match/20260914/evidence/`.
