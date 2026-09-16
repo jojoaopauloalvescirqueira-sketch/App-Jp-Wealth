@@ -87,13 +87,7 @@ reescrita automática. Uma foto indisponível mostra o monograma sem apagar o
 conteúdo original; sua substituição ou remoção exige edição e salvamento.
 Campos desconhecidos de um envelope v1 compatível permanecem preservados.
 
-Reload e importação de base mantêm esse perfil. O backup financeiro não inclui
-essa preferência, e a Zona de Perigo preserva-a junto às preferências locais.
-**Finalizar sessão remove o perfil** pela allowlist auxiliar existente, descarta
-fotos/rascunhos em memória e invalida leituras de imagem pendentes, inclusive nas
-outras abas alcançadas pelo protocolo de sessão. Falha de remoção é reportada
-pelo aviso já existente; não deve ser tratada como exclusão confirmada. A próxima
-configuração do perfil exige novo carregamento após a finalização.
+O backup completo incorpora o nome e o JPEG do perfil, incluindo retratos da galeria. Importações novas restauram esse perfil; backups antigos sem `workspace` mantêm a preferência do destino. Finalizar Sessão preserva o perfil confirmado, cancela leitores pendentes e invalida o editor até recarregar. Rascunhos capturados ficam separados para revisão. A Zona de Perigo conserva preferências locais conforme seu contrato.
 
 Os saves utilizam o lock existente da sessão quando o navegador oferece Web
 Locks, além da comparação da preferência anterior e do epoch auxiliar. Sem Web
@@ -108,7 +102,7 @@ A pasta escolhida é destino de exportação; a base ativa permanece no perfil/o
 
 “Download iniciado” exige conferir o arquivo no navegador. Um arquivo entregue e um registro local recusado são resultados distintos: preserve o arquivo antes de repetir. Resultado desconhecido não prova ausência de arquivo e não libera Finalizar. Confirmação de backup é declaração explícita do operador, distinta da exportação; não se consolida após recusa comprovada.
 
-Importar substitui os dados da base, preservando preferências locais deliberadamente excluídas. A porta recusa contêiner presente incompatível; ausência legítima em backup antigo segue o contrato legado. Em recusa de gravação, o estado anterior é preservado. Em desfecho desconhecido, pare novas gravações e examine a recuperação; não repita às cegas.
+Importar substitui os dados da base e, quando o arquivo contém `workspace`, restaura também suas preferências. Recarregue após importar para aplicar todos os controladores visuais. Uma projeção interrompida exibe aviso e mantém um journal para tentar novamente na recarga; preserve o arquivo de origem. Backups antigos sem `workspace` preservam as preferências do destino. A porta recusa contêiner presente incompatível; ausência legítima em backup antigo segue o contrato legado. Em recusa de gravação, o estado anterior é preservado. Em desfecho desconhecido, pare novas gravações e examine a recuperação; não repita às cegas.
 
 Perfil/foto, layouts/navegação, posição do launcher, caches, permissões de pasta e rascunhos não salvos não acompanham a cópia financeira. Não prometa recuperação desses itens a partir do JSON de dados.
 
@@ -117,3 +111,5 @@ Perfil/foto, layouts/navegação, posição do launcher, caches, permissões de 
 O checkpoint externo da campanha fica em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`: baseline.json, baseline-recovery.tar.gz, manifest/fingerprint/diff e relatório do candidate. Restaurar código somente nos caminhos próprios, por cópia seletiva verificada; não usar reset/stash ou tocar outras worktrees.
 
 Rascunhos de linhas/observações e lotes recusados de cotação existem somente em memória. Cancelar relê confirmação; recarga não promete recuperá-los. Backup guarda observações/referências confirmadas e snapshots históricos. UNKNOWN mantém recuperação existente contra retry cego. Nova geração/finalização invalida solicitações de cotações, e resposta tardia não recria dados. Consulte [Execution Board](../architecture/FOREX-EXECUTION-BOARD.md).
+
+Cobertura das nove metas, formato, rascunhos e limites: [COMPLETE-BACKUP](../architecture/COMPLETE-BACKUP.md).

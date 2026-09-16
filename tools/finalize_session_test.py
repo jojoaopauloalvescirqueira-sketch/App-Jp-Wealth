@@ -371,6 +371,7 @@ def run_dist_suite(browser, url):
 
     click_id(page, 'finalizeSessionBtn')
     complete_export_step(page)
+    auxiliary_before = page.evaluate("()=>Object.fromEntries(JPW_WORKSPACE_KEYS.map(k=>[k,localStorage.getItem(k)]))")
     local_keys = page.evaluate("Object.keys(localStorage)")
     assert 'outra_aplicacao' in local_keys and 'jpwealth_v9_state_corrompido_teste' in local_keys
     finish_with_phrase(page, 'ENCERRAR SESSÃO ')
@@ -384,7 +385,7 @@ def run_dist_suite(browser, url):
     assert estado_pos_wipe.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") == 'raw'
     for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice', 'jpwealth_galton_preferences_v1', 'jpwealth_notes_launcher_position_v1'):
-        assert page.evaluate(f"localStorage.getItem('{key}')") is None, key
+        assert page.evaluate(f"localStorage.getItem('{key}')") == auxiliary_before[key], key
     checkpoint_ops=page.evaluate('window.__checkpointOps')
     assert ['remove','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
     assert ['set','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
@@ -537,12 +538,12 @@ def run_dist_suite(browser, url):
       };
     }''')
     assert galton_after == {
-        'keyAbsent': True,
+        'keyAbsent': False,
         'staleDestroyed': True,
         'staleWrite': False,
         'replaced': True,
         'currentActive': True,
-        'currentSpeed': 1,
+        'currentSpeed': 4,
     }, galton_after
     notes_launcher_after = page_b.evaluate('''async () => {
       mvpNotesUI.launcherPosition={x:0.65,y:0.55};
@@ -551,7 +552,7 @@ def run_dist_suite(browser, url):
         raw:localStorage.getItem('jpwealth_notes_launcher_position_v1')};
     }''')
     assert notes_launcher_after['epoch'] > notes_launcher_epoch, notes_launcher_after
-    assert notes_launcher_after['staleWrite'] is False and notes_launcher_after['raw'] is None, notes_launcher_after
+    assert notes_launcher_after['staleWrite'] is False and json.loads(notes_launcher_after['raw']) == {'schemaVersion':1,'x':0.35,'y':0.45}, notes_launcher_after
     assert page_b.evaluate("S.onboarding.operador") == 'Operador Aba B'
     close_checked(page_a)
     close_checked(page_b)
@@ -593,8 +594,8 @@ def run_galton_reset_order(browser, url):
         other:localStorage.getItem('other-app-galton-order'),
         saveAccepted:save(),ledger:S.ledger.length};
     }''')
-    assert after == {'absent': True, 'oldDestroyed': True, 'oldWrite': False,
-                     'replaced': True, 'active': True, 'speed': 1,
+    assert after == {'absent': False, 'oldDestroyed': True, 'oldWrite': False,
+                     'replaced': True, 'active': True, 'speed': 4,
                      'other': 'preserve', 'saveAccepted': True, 'ledger': 0}, after
     # Se o fluxo recusar entre invalidar o controlador e limpar auxiliares,
     # recriar a superfície não pode apagar ou substituir a preferência salva.
@@ -616,7 +617,7 @@ def run_galton_reset_order(browser, url):
 
 def run_mvp_notes_survival(browser, url):
     """Notas/pastas/larguras sobrevivem ao Finalizar e reload; posição auxiliar é
-    removida. A Zona de Perigo remove notas/pastas e preserva a preferência local."""
+    preservada. A Zona de Perigo remove notas/pastas e preserva a preferência local."""
     page = prepare_page(browser, url)
     page.locator('#headerNotesBtn').click()
     page.evaluate('''() => { window.prompt = () => 'Pasta que sobrevive'; }''')
@@ -679,12 +680,12 @@ def run_mvp_notes_survival(browser, url):
     assert page.evaluate('S.mvpNotes.folders.length') == 1, 'Finalizar Sessão não deveria apagar as pastas'
     assert page.evaluate('S.mvpNotes') == notes_before, 'Finalizar preserva notas, pastas e as três larguras'
     notice = page.locator('#sessionNotice').inner_text()
-    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") is None
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_notes_launcher_position_v1'))") == {'schemaVersion':1,'x':0.3,'y':0.4}
     assert page.evaluate('''async () => {
       await window.__releaseNotesLauncherWrite();
       return await window.__notesLauncherPendingWrite;
     }''') is False, 'escrita aguardando lock deve ser recusada pela geração encerrada'
-    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") is None, 'continuação antiga não recria posição removida'
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_notes_launcher_position_v1'))") == {'schemaVersion':1,'x':0.3,'y':0.4}, 'continuação antiga não recria posição removida'
     # Notice CURTO congelado no gate pre-write: confirma o resultado e nomeia os
     # tres sobreviventes; o detalhe (pastas, historico, preferencias) vive no
     # texto de consentimento, provado por CT-1.
@@ -703,8 +704,8 @@ def run_mvp_notes_survival(browser, url):
     assert page.evaluate('S.mvpNotes.items[0].ticket') == ticket_antes, \
         'o Trace ID deveria sobreviver a Finalizar Sessão e ao reload'
     assert page.evaluate('S.mvpNotes') == notes_before
-    assert page.evaluate("localStorage.getItem('jpwealth_notes_launcher_position_v1')") is None, 'reload não recria preferência removida'
-    assert page.evaluate('mvpNotesUI.launcherPosition') == {'x': 1, 'y': 1}
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_notes_launcher_position_v1'))") == {'schemaVersion':1,'x':0.3,'y':0.4}, 'reload não recria preferência removida'
+    assert page.evaluate('mvpNotesUI.launcherPosition') == {'x': 0.3, 'y': 0.4}
 
     assert page.evaluate('''async () => {
       mvpNotesUI.launcherPosition={x:0.25,y:0.75};
@@ -807,10 +808,11 @@ def run_profile_finalize_contract(browser,url):
     page.wait_for_function('window.__profileHeldReads.length>0')
     assert not page.locator('#settingsProfileSaveBtn').is_enabled()
     page.locator('#settingsCloseBtn').click()
+    original=profile_raw(page)
     finalize(page)
-    assert profile_raw(page) is None
+    assert profile_raw(page)==original
     release_profile_reader(page)
-    assert profile_raw(page) is None,'A late local image callback must not recreate a removed profile'
+    assert profile_raw(page)==original,'A late local image callback must not change the preserved profile'
     open_profile(page)
     assert page.locator('#settingsProfileNameInput').input_value()==''
     assert page.locator('#settingsProfileAvatar img').count()==0
@@ -832,16 +834,16 @@ def run_profile_finalize_contract(browser,url):
     b.wait_for_function('window.__profileHeldReads.length>0')
     finalize(a)
     b.wait_for_function("() => document.getElementById('sessionNotice')?.textContent.includes('outra aba')")
-    assert profile_raw(a) is None and b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY) is None
+    assert json.loads(profile_raw(a))['displayName']==expect_name and b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY)==profile_raw(a)
     release_profile_reader(b)
     open_profile(b)
     assert b.locator('#settingsProfileNameInput').input_value()==''
     assert b.locator('#settingsProfileAvatar img').count()==0
     assert not b.locator('#settingsProfileSaveBtn').is_enabled()
-    assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY) is None
+    assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY)==profile_raw(a)
     b.reload(wait_until='load');wait_bootstrap(b);b.evaluate('closeModal()');open_profile(b)
-    assert b.locator('#settingsProfileNameInput').input_value()==''
-    assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY) is None,'Reload cannot reseed a finalized profile'
+    assert b.locator('#settingsProfileNameInput').input_value()==expect_name
+    assert b.evaluate('(k)=>localStorage.getItem(k)',PROFILE_KEY)==profile_raw(a),'Reload preserves the confirmed profile'
     assert_fixture_requests(context)
     profile_close(context,a,allow_operational_change=True)
     print('PROFILE FINALIZE PASS — real second-tab event, pending callback and reload cannot resurrect identity',flush=True)
@@ -862,8 +864,8 @@ def run_profile_finalize_contract(browser,url):
     }""",PROFILE_KEY)
     finalize(page)
     notice=page.locator('#sessionNotice').inner_text()
-    assert 'algumas chaves auxiliares não puderam ser removidas' in notice and PROFILE_KEY in notice,notice
-    assert page.evaluate('window.__profileCleanupAttempts')>0
+    assert 'algumas chaves auxiliares não puderam ser removidas' not in notice,notice
+    assert page.evaluate('window.__profileCleanupAttempts')==0
     assert profile_raw(page)==original
     assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')).accounts.length")==1
     assert page.evaluate("localStorage.getItem('settings_profile_unrelated')")=='synthetic-preserved'

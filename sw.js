@@ -25,7 +25,7 @@ const PRECACHE_URLS = [
   './src/js/00-core/00-forex-policy.js', './src/js/10-domain/00-forex-engine.js',
   './src/js/10-domain/00-forex-state.js', './src/js/20-ui/26-forex-engine-views.js',
   './src/js/00-core/01-risk-profiles.js', './src/js/00-core/02-platforms.js',
-  './src/js/00-core/03-default-state.js', './src/js/00-core/04-persistence.js',
+  './src/js/00-core/03-default-state.js', './src/js/00-core/04-persistence.js', './src/js/00-core/07-workspace-backup.js',
   './src/js/00-core/05-helpers.js', './src/js/00-core/06-storage-fs.js',
   './src/js/10-domain/01-risk-instruments.js',
   './src/js/10-domain/02-risk-calculations.js', './src/js/20-ui/01-header-readout.js',

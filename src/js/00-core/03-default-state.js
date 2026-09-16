@@ -5,6 +5,7 @@
 // e em nenhum outro lugar; nenhum módulo deve navegar para 'dash' hardcoded nesses fluxos.
 const DEFAULT_START_ROUTE='dash';
 const DEFAULTS = {
+  workspaceRecovery:null, // Portable preferences restore journal and unconfirmed draft archive.
   params:{saldoIni:10000,saldoAtu:10240,inicio:'2026-05-25',
     mdd:JPWForex.policy.get('P-03').value/100,alarm:null,genLev:JPWForex.policy.get('P-15').value,genRisk:null,fw:null,
     vrmN:JPWForex.policy.get('P-12a').value.normalBelow,vrmHV:JPWForex.policy.get('P-12a').value.highAbove,

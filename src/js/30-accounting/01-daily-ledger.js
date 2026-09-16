@@ -325,10 +325,10 @@ function dgBackupCoverage(state){
   return {
     storage:'localStorage', key:LSKEY,
     sections:Object.keys(state).sort(),
-    excluded:['investorPassword','perfil e foto locais','layouts e navegação locais',
-      'posição do launcher de Notas','preferências do Laboratório','caches públicos',
+    includedWorkspace:['perfil e foto','preferências visuais','navegação e widgets','Notas e Laboratório','rascunhos para revisão'],
+    excluded:['investorPassword','caches públicos',
       'permissão/handle da pasta','controles de sessão entre abas','cópias brutas de recuperação',
-      'rascunhos ainda não salvos e simulação em memória'],
+      'simulação em execução e arquivos originais de importação'],
   };
 }
 function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
@@ -351,8 +351,11 @@ function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
     build:typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:null,
     cobertura:dgBackupCoverage(stateExport),
     state:stateExport,
+    workspace:jpwWorkspaceCapture(),
   };
-  return new Blob([JSON.stringify(payload,(key,value)=>key==='investorPassword'?'':value,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify(payload,(key,value)=>key==='investorPassword'?'':value,2)],{type:'application/json'});
+  blob.workspaceFingerprint=JSON.stringify(payload.workspace);
+  return blob;
 }
 // Download tradicional (fallback §15 e escolha excepcional §7). Padrão endurecido:
 // âncora no DOM e revogação adiada — revogar de forma síncrona após click() corta o
@@ -433,8 +436,9 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
     if(!supported || !configured){
       const seq=baseSeq+1;
       const filename=dgExportFileName(seq,new Date());
-      dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-      return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads'},quiet);
+      const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+      dgDownloadViaAnchor(filename,blob);
+      return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads',workspaceFingerprint:blob.workspaceFingerprint},quiet);
     }
     // Pasta configurada: resolver acesso. Enquanto o operador não resolver (ou optar por
     // Downloads explicitamente), NENHUM arquivo é gerado.
@@ -444,7 +448,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
         // nome progressivo com proteção física de colisão (§8.3): nunca sobrescrever;
         // em colisão a sequência avança até nome livre (teto de 1000 é rede de segurança)
         let seq=baseSeq+1, filename=dgExportFileName(seq,new Date());
-        let writeAttempted=false;
+        let writeAttempted=false,workspaceFingerprint=null;
         try{
           let guard=0;
           while(await dgFsFileExists(handle,filename)){
@@ -454,6 +458,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
           // nome definitivo (pós-colisão) → só AGORA o arquivo é montado, já se
           // autoidentificando com esta sequência e este nome
           const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+          workspaceFingerprint=blob.workspaceFingerprint;
           writeAttempted=true;
           await dgFsWriteFile(handle,filename,blob);
         }catch(e){
@@ -464,7 +469,7 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
           state='invalid';
           continue;
         }
-        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder'},quiet);
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'folder',workspaceFingerprint},quiet);
       }
       // prompt | denied | missing | invalid → decisão explícita do operador (§7).
       // O diálogo vive em 40-app/16-storage-governance.js; sem ele (geometria degenerada
@@ -478,8 +483,9 @@ async function dgExportFullBackupInner(quiet,estadoFonte){
       if(decision==='downloads'){
         const seq=baseSeq+1;
         const filename=dgExportFileName(seq,new Date());
-        dgDownloadViaAnchor(filename,dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte));
-        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception'},quiet);
+        const blob=dgBuildBackupBlob(seq,filename,exportadoEm,estadoFonte);
+      dgDownloadViaAnchor(filename,blob);
+        return dgFinishExport({filename,sequence:seq,exportedAt:exportadoEm,segredosIncluidos,destination:'downloads-exception',workspaceFingerprint:blob.workspaceFingerprint},quiet);
       }
       if(decision==='retry'){ ({state,handle}=await dgFsStatus()); continue; }
       return null; // cancelado — nada foi exportado e nada mudou
@@ -530,6 +536,12 @@ function normalizeImportedState(raw){
       throw new Error('Backup com '+key+' inválido: esperava objeto.');
   }
   if(candidate.forex!=null&&globalThis.JPWForex?.state&&!JPWForex.state.supported(candidate.forex))throw new Error('Backup com observações Forex incompatíveis. O estado atual foi preservado.');
+  const workspace=Object.prototype.hasOwnProperty.call(raw,'workspace')?jpwWorkspaceValidate(raw.workspace):null;
+  if(candidate.workspaceRecovery!=null){
+    const recovery=candidate.workspaceRecovery;
+    if(!jpwWorkspaceObject(recovery)||recovery.schemaVersion!==1||typeof recovery.pending!=='boolean')throw new Error('Registro de retomada inválido.');
+    jpwWorkspaceValidate(recovery.pending?recovery.snapshot:{schemaVersion:1,preferences:{},drafts:recovery.drafts});
+  }
   const current=S;
   let imported;
   try{
@@ -538,6 +550,7 @@ function normalizeImportedState(raw){
     // A restauração não recalcula um saldo global a partir da conta que a UI
     // estava mostrando. A identidade histórica do backup permanece intacta.
     imported=structuredClone(S);
+    if(workspace)imported.workspaceRecovery={schemaVersion:1,pending:true,snapshot:workspace};
   }finally{
     S=current;
   }
@@ -610,7 +623,10 @@ function importFullBackupFile(file){
     let gravou=false;
     try{
       const expected=JSON.stringify(S,(k,v)=>k==='investorPassword'?'':v);
-      const result=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();
+      let result;
+      jpwWorkspaceRestoring=true;
+      try{result=(typeof jpWealthResolveRecoveryAndSave==='function')?jpWealthResolveRecoveryAndSave():save();}
+      finally{jpwWorkspaceRestoring=false;}
       if(result===false && !jpWealthPersistenceOutcomeIsUnknown()){
         restoreRefusedImport();
       }else{
@@ -627,7 +643,7 @@ function importFullBackupFile(file){
     }catch(e){
       hideStaleSavedTag(); markJPWealthPersistenceOutcomeUnknown('Não foi possível determinar o resultado da importação.');
     }
-    if(gravou && typeof markSessionCheckpoint==='function') markSessionCheckpoint();
+    const workspaceComplete=gravou?jpwWorkspaceResume():false;
     // A base foi SUBSTITUÍDA — atravessa as abas pelo mesmo canal da Zona de
     // Perigo e da Finalização. Sem isto, outra aba mantinha o S anterior em
     // memória e a primeira gravação dela ressuscitava o documento antigo por
@@ -635,8 +651,8 @@ function importFullBackupFile(file){
     // difunde depois da gravação comprovada: avisar sobre uma base que não
     // chegou ao disco faria as outras abas recarregarem o estado errado.
     if(gravou && typeof sessionNotifyBaseImported==='function') sessionNotifyBaseImported(novaEpoch);
-    if(gravou) boot();
-    alert(gravou?'Backup importado com sucesso.':jpWealthPersistenceOutcomeIsUnknown()?'Importação com resultado desconhecido — novas gravações bloqueadas. Preserve o arquivo e verifique a recuperação; não repita às cegas.':'A gravação do backup foi recusada. O estado anterior foi preservado; verifique o armazenamento antes de tentar novamente.');
+    if(gravou && workspaceComplete){jpwWorkspaceAdoptImport();boot();jpwWorkspaceRender();markSessionCheckpoint();}
+    alert(gravou?(workspaceComplete?'Backup importado com sucesso. Recarregue para aplicar todas as preferências visuais.':'Base importada; restauração das preferências pendente. Confira o aviso e recarregue para concluir.'):jpWealthPersistenceOutcomeIsUnknown()?'Importação com resultado desconhecido — novas gravações bloqueadas. Preserve o arquivo e verifique a recuperação; não repita às cegas.':'A gravação do backup foi recusada. O estado anterior foi preservado; verifique o armazenamento antes de tentar novamente.');
     };
     if(typeof sessionAcquireWriteLock==='function'){ sessionAcquireWriteLock(aplicar); }
     else{ aplicar(); }

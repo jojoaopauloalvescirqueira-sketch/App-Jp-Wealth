@@ -341,8 +341,8 @@ def main() -> int:
                 if epoch is not None and ("aldi_" in epoch or "alda_" in epoch or "Sintetico" in epoch):
                     falhas.append(f"C6: a chave de geracao carrega conteudo patrimonial/PII: {epoch[:60]!r}")
                 sobreviventes = [k for k in ("jpw_rail", "jpw_fs", "jpwealth_v9_icon_choice") if k in depois]
-                if sobreviventes:
-                    falhas.append(f"C6: chave auxiliar nao foi removida pelo ciclo: {sobreviventes}")
+                if len(sobreviventes)!=3:
+                    falhas.append(f"C6: preferencia auxiliar perdida pelo ciclo: {sobreviventes}")
                 # Contaminacao: nenhuma chave alem da principal pode conter o agregado.
                 vazamento = page.evaluate("""() => Object.keys(localStorage)
                     .filter(k => k !== '%s')
