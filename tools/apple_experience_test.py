@@ -181,14 +181,11 @@ def run(a):
      c=b.new_context(viewport={'width':w,'height':1000},service_workers='block',reduced_motion='reduce');install_bootstrap(c);c.add_init_script('window.__onbShown=true');page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
      page.goto(f'http://127.0.0.1:{server.server_port}/index.html');wait_bootstrap(page);page.evaluate(SETUP,theme);page.evaluate(ALLADIN_SEED)
      prefix=f'{w}/{theme}'
-     for id,label in [('headerConfigBtn','Configurações'),('finalizeSessionBtn','Finalizar sessão')]:
-      check(prefix+' explicit global action '+id,label in page.locator('#'+id).inner_text())
+     for id,label in [('headerNotificationsBtn','Notificações'),('headerConfigBtn','Configurações'),('finalizeSessionBtn','Finalizar sessão')]:
       button=page.locator('#'+id)
-      visible=button.locator('.header-action-label').inner_text().strip()
-      check(prefix+' accessible name includes visible label '+id,visible.casefold() in (button.get_attribute('aria-label') or '').casefold())
-      fits=button.evaluate("""e=>{const b=e.getBoundingClientRect(),l=e.querySelector('.header-action-label'),r=l.getBoundingClientRect();return r.left>=b.left-1&&r.right<=b.right+1&&r.top>=b.top-1&&r.bottom<=b.bottom+1&&l.scrollWidth<=l.clientWidth+1}""")
-      check(prefix+' visible label fits action '+id,fits)
-     check(prefix+' notes leaves header',page.locator('#headerActions #headerNotesBtn').count()==0 and page.locator('#headerActions .header-action').count()==3)
+      check(prefix+' compact named action '+id,button.locator('.header-action-label').count()==0 and button.get_attribute('title')==label and label.casefold() in (button.get_attribute('aria-label') or '').casefold())
+      check(prefix+' icon and touch target '+id,button.evaluate("e=>{const r=e.getBoundingClientRect(),s=e.querySelector('svg[aria-hidden=\"true\"]')?.getBoundingClientRect();return !!s&&r.width===44&&r.height===44&&s.width>=16&&s.width<=18}"))
+     check(prefix+' notes leaves header',page.locator('#headerActions #headerNotesBtn').count()==0 and page.locator('#headerActions .header-action').count()==4)
      notes=page.locator('body > #mvpNotesLauncher #headerNotesBtn')
      check(prefix+' floating notes remains named',notes.count()==1 and notes.get_attribute('title')=='Notas' and (notes.get_attribute('aria-label') or '').startswith('Abrir notas'))
      check(prefix+' floating notes icon and touch target',notes.evaluate("e=>{const r=e.getBoundingClientRect();return !!e.querySelector('svg[aria-hidden=\"true\"]')&&r.width>=44&&r.height>=44}"))

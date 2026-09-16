@@ -206,6 +206,12 @@ function renderSettingsProfile(){
   const rowName=settingsEl('settingsProfileName');if(rowName) rowName.textContent=name;
   const row=settingsEl('settingsProfileBtn');if(row) row.setAttribute('aria-label','JP Wealth Account — '+name);
   renderSettingsProfileAvatar(settingsEl('settingsProfileAvatar'),state.confirmed);
+  renderSettingsProfileAvatar(settingsEl('headerProfileAvatar'),state.confirmed);
+  const headerProfile=settingsEl('headerProfileBtn');
+  if(headerProfile){
+    headerProfile.setAttribute('aria-label','Abrir configurações do perfil — '+name);
+    headerProfile.title='Abrir perfil — '+name;
+  }
   renderSettingsProfileAvatar(settingsEl('settingsAccountAvatar'),state.draft);
   const heading=settingsEl('settingsAccountHeading');if(heading) heading.textContent=state.draft.displayName.trim()||'Seu perfil';
   const input=settingsEl('settingsProfileNameInput');
@@ -864,6 +870,8 @@ function initSettingsModal(){
   settingsEl('settingsProfileBtn')?.addEventListener('click',()=>settingsNavigate('account',{push:true,focus:true}));
   window.addEventListener('storage',settingsProfileStorageChanged);
   gear.addEventListener('click',()=>openSettingsModal('general',gear));
+  const headerProfile=settingsEl('headerProfileBtn');
+  headerProfile?.addEventListener('click',()=>openSettingsModal('account',headerProfile));
   settingsEl('settingsCloseBtn').addEventListener('click',closeSettingsModal);
   settingsEl('settingsBackBtn').addEventListener('click',settingsGoBack);
   settingsEl('settingsForwardBtn').addEventListener('click',settingsGoForward);

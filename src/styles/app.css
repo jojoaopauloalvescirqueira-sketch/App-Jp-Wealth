@@ -7352,6 +7352,28 @@ html[data-shell="global-dashboard"] #headerActions{width:auto;flex-shrink:0;gap:
 }
 @media(prefers-reduced-motion:reduce){#notificationCenter{scroll-behavior:auto}}
 
+/* HEADER-PROFILE-01 — compact identity and session actions.
+   The 44 px target remains comfortable; the visible marks are intentionally quieter. */
+html[data-shell="global-dashboard"] #headerActions #headerNotificationsBtn,
+html[data-shell="global-dashboard"] #headerActions #headerConfigBtn,
+html[data-shell="global-dashboard"] #headerActions #headerProfileBtn,
+html[data-shell="global-dashboard"] #headerActions #finalizeSessionBtn{
+ width:44px;min-width:44px;max-width:44px;height:44px;min-height:44px;
+ flex:0 0 44px;padding:0;display:grid;place-items:center;align-self:center;justify-self:center;
+}
+html[data-shell="global-dashboard"] #headerActions #headerProfileBtn{border-radius:50%}
+.header-profile-avatar{display:grid;place-items:center;width:30px;height:30px;flex:none;overflow:hidden;border-radius:50%;background:var(--panel-2);color:var(--ink);font:600 11px/1 var(--sans);letter-spacing:0}
+.header-profile-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+#headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#headerProfileBtn,#finalizeSessionBtn):focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#finalizeSessionBtn) svg{
+ width:17px;height:17px;min-width:17px;max-width:17px;flex:0 0 17px;
+}
+html[data-shell="global-dashboard"] #headerActions #headerNotificationsBtn .notification-symbol{width:17px;height:17px;flex:0 0 17px}
+html[data-shell="global-dashboard"] #headerActions #notificationBadge{right:-8px;top:-8px;min-width:16px;height:16px;padding:0 3px;font-size:9px;border-width:2px}
+@media(max-width:600px){
+ html[data-shell="global-dashboard"] #headerActions{grid-template-columns:minmax(72px,1fr) repeat(4,44px);align-items:center;gap:4px}
+}
+
 /* APPLE-NOTES-MATCH-01 — local materials and presentation only.
    Column widths remain owned by the existing geometry controller. */
 #mvpNotesOverlay #mvpNotesDrawer{

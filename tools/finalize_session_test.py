@@ -254,7 +254,8 @@ def assert_header_actions(page):
     assert page.locator('#nav #finalizeSessionBtn').count() == 0
     assert page.locator('#nav button[data-screen="config"]').count() == 0
     assert page.locator('#headerActions').count() == 1
-    assert page.locator('#headerActions .header-action').count() == 3
+    assert page.locator('#headerActions .header-action').evaluate_all('els=>els.map(el=>el.id)') == [
+        'headerNotificationsBtn', 'headerConfigBtn', 'headerProfileBtn', 'finalizeSessionBtn']
     assert page.locator('#headerActions #headerNotesBtn').count() == 0
     assert page.locator('body > #mvpNotesLauncher #headerNotesBtn').count() == 1
     assert page.locator('#headerConfigBtn').get_attribute('title') == 'Configurações'
@@ -285,7 +286,7 @@ def assert_header_actions(page):
     click_id(page, 'sessionCancel')
     for width, height in ((1440,900),(1024,768),(768,900),(390,844),(320,700)):
         page.set_viewport_size({'width':width,'height':height})
-        for element_id in ('headerConfigBtn','headerNotesBtn','finalizeSessionBtn'):
+        for element_id in ('headerConfigBtn','headerNotesBtn','headerProfileBtn','finalizeSessionBtn'):
             button=page.locator('#'+element_id)
             assert button.is_visible(), (width,height,element_id)
             box=button.bounding_box()
