@@ -1,7 +1,7 @@
 importScripts('./build-id.js');
 const CACHE_PREFIX = 'jp-wealth-';
 const CACHE_NAME = `${CACHE_PREFIX}${JP_WEALTH_BUILD_ID}`;
-const ICON_CACHE_VERSION = '20260915-brand-r1';
+const ICON_CACHE_VERSION = '20260916-transparent-r1';
 // Os dois originais normativos pertencem ao mesmo build e ficam disponíveis
 // offline. Navegar para eles deve entregar o arquivo, nunca o app shell.
 const NORMATIVE_DOCUMENT_URLS = [
@@ -75,7 +75,8 @@ const PRECACHE_URLS = [
   './src/js/40-app/18-notification-center.js',
   './src/js/20-ui/16-operation-history.js',
   './manifests/jp-wealth.webmanifest', './manifests/jp-wealth-black.webmanifest',
-  './assets/pwa-icon-primary.png', './assets/pwa-icon-secondary.png'
+  './assets/pwa-icon-primary.png', './assets/pwa-icon-primary-192.png', './assets/pwa-icon-primary-512.png',
+  './assets/pwa-icon-secondary.png', './assets/pwa-icon-secondary-192.png', './assets/pwa-icon-secondary-512.png'
 ].flatMap(url=>(url.startsWith('./assets/pwa-icon-')||url.startsWith('./assets/jp-wealth-brand-')||url.startsWith('./manifests/jp-wealth'))?[url,`${url}?v=${ICON_CACHE_VERSION}`]:[url]);
 
 self.addEventListener('install', event => {

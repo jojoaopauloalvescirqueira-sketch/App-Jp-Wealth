@@ -3,10 +3,10 @@
 // Vermelho e secondary é Preto. Ela é auxiliar, nunca financeira, e coordena
 // cabeçalho, favicon, apple-touch-icon e o manifesto da PRÓXIMA instalação.
 const APP_ICON_STORAGE_KEY='jpwealth_v9_icon_choice';
-const APP_ICON_CACHE_VERSION='20260915-brand-r1';
+const APP_ICON_CACHE_VERSION='20260916-transparent-r1';
 const APP_ICONS={
-  primary:{ label:'Vermelho', short:'Marca vermelha', description:'Wordmark vermelho no cabeçalho e ícone vermelho para a próxima instalação.', src:'assets/pwa-icon-primary.png', wordmark:'assets/jp-wealth-brand-red.png', manifest:'manifests/jp-wealth.webmanifest' },
-  secondary:{ label:'Preto', short:'Marca preta', description:'Wordmark preto sobre placa clara no cabeçalho escuro e ícone preto para a próxima instalação.', src:'assets/pwa-icon-secondary.png', wordmark:'assets/jp-wealth-brand-black.png', manifest:'manifests/jp-wealth-black.webmanifest' }
+  primary:{ label:'Vermelho', short:'Marca vermelha', description:'Wordmark vermelho no cabeçalho e ícone vermelho para a próxima instalação.', src:'assets/pwa-icon-primary-512.png', wordmark:'assets/jp-wealth-brand-red.png', manifest:'manifests/jp-wealth.webmanifest' },
+  secondary:{ label:'Preto', short:'Marca preta', description:'Wordmark preto sobre placa clara no cabeçalho escuro e ícone preto para a próxima instalação.', src:'assets/pwa-icon-secondary-512.png', wordmark:'assets/jp-wealth-brand-black.png', manifest:'manifests/jp-wealth-black.webmanifest' }
 };
 
 function validAppIconChoice(value){ return Object.prototype.hasOwnProperty.call(APP_ICONS,value); }

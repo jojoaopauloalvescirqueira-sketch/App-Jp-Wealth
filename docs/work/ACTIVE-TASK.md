@@ -1,3 +1,9 @@
+# Candidate local — ícones PWA com transparência real
+
+Contrato [CHG-PWA-ICON-TRANSPARENCY-20260916](CHG-PWA-ICON-TRANSPARENCY-20260916.md). Base `b3a84e3`, branch `codex/pwa-icon-transparency-20260916`, build `a3c585de3fe49edb`. O fundo branco/cinza incorporado às matrizes RGB foi removido das variantes Vermelho e Preto; os manifestos oferecem PNGs RGBA de 192 e 512 px, com cache versionado e teste binário de transparência/halo. Focais e upgrade PWA passaram; FULL obteve 55 PASS e reproduziu na `main` duas incompatibilidades preexistentes do ambiente de testes. Nenhum dado, preferência, identidade PWA, escopo ou política conservadora do worker muda. Aceite humano, commit, push, merge e publicação permanecem gates separados.
+
+## Histórico preservado
+
 # Validado localmente — cabeçalho compacto e acesso ao perfil
 
 Contrato [CHG-HEADER-PROFILE-20260916](CHG-HEADER-PROFILE-20260916.md). Base `05e36f4`, branch `codex/header-profile-20260916`, build `49a549ba565ec826`. Notificações, Configurações e Finalizar usam somente ícones de 17 px em alvos de 44 × 44 px; avatar confirmado de 30 px abre Perfil. Testes focais, acessibilidade, responsividade e controles afetados aprovados. Asserções legadas de Notas e Notifications reproduzidas na main foram registradas como preexistentes. O proprietário autorizou explicitamente commit, push, merge, publicação e limpeza desta entrega em 2026-09-16; os recibos Git determinam o resultado de cada gate. Comparação externa em `../COMPARE.html`.

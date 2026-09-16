@@ -44,7 +44,7 @@ def main() -> None:
                 cancel = page.evaluate("openAppIconPicker(); document.querySelector('[data-app-icon-select=secondary]').click(); document.querySelector('#closeAppIconBtn').click(); currentAppIconChoice()")
                 assert cancel == "primary", cancel
                 after = page.evaluate("const url=location.href; applyAppIconChoice('secondary'); JSON.stringify({choice:currentAppIconChoice(),sameUrl:url===location.href,head:document.querySelector('[data-jp-brand-wordmark]').getAttribute('src'),favicon:document.querySelector('link[rel=icon]').getAttribute('href'),apple:document.querySelector('link[rel=apple-touch-icon]').getAttribute('href'),manifest:document.querySelector('link[rel=manifest]').getAttribute('href'),brand:document.documentElement.dataset.brandChoice,plate:getComputedStyle(document.querySelector('[data-jp-brand-wordmark]')).backgroundColor})")
-                for fragment in ('"choice":"secondary"', '"sameUrl":true', 'brand-black', 'pwa-icon-secondary', 'jp-wealth-black.webmanifest', '"brand":"secondary"'):
+                for fragment in ('"choice":"secondary"', '"sameUrl":true', 'brand-black', 'pwa-icon-secondary-512', 'jp-wealth-black.webmanifest', '"brand":"secondary"'):
                     assert fragment in after, after
                 assert '"plate":"rgb(247, 248, 250)"' in after, after
                 assert page.evaluate("localStorage.setItem('jpwealth_v9_icon_choice','invalid'); currentAppIconChoice()") == "primary"
