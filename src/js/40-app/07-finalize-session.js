@@ -318,7 +318,7 @@ function sessionHandleRemoteFinalization(message){
     // continuações assíncronas iniciadas com o S antigo desistam ao conferir o epoch.
     blockJPWealthPersistence(); bloqueou=true;
     sessionResetAuxiliarySurfaces();
-    const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true,preserveMain:true});
+    const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:false,preserveMain:true});
     resumeJPWealthPersistence(); bloqueou=false;
     load();
     concluiu=true;
@@ -328,7 +328,7 @@ function sessionHandleRemoteFinalization(message){
     boot();
     window.__onbShown=false;
     initSessionCheckpoint();
-    const aviso='Sessão finalizada em outra aba. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais, as Notas e os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas.';
+    const aviso='Sessão finalizada em outra aba. Operações, contas e períodos confirmados foram preservados; processos temporários e desbloqueios locais foram encerrados.';
     showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
   }finally{
     if(bloqueou && !concluiu){
@@ -555,6 +555,12 @@ function sessionPreserveLongitudinal(opcoes){
   // importações e catálogo descritivo não ressuscitam S.accounts ou saldos.
   try{
     const valor={fxConsolidated:fxConsolidatedLongitudinalSnapshot(documento)};
+    // A decisão atual preserva todo fato Forex confirmado. A cópia vem apenas
+    // do documento durável; memória de outra aba jamais preenche lacunas.
+    for(const key of ['accounts','forex','ledger','ledgerArchive','phases','activeOperation',
+      'transitionLog','cycleRealizado','period','params','onboarding']){
+      if(Object.prototype.hasOwnProperty.call(documento,key))valor[key]=documento[key];
+    }
     for(const key of ['alladin','operationHistory']){
       if(Object.prototype.hasOwnProperty.call(documento,key))valor[key]=documento[key];
     }
@@ -629,6 +635,16 @@ function emptyJPWealthState(preservado){
   // Zona de Perigo continua apagando — lá a exclusão é o que o operador pediu.
   const alladinPreservado = preservado ? preservado.alladin : undefined;
   if(alladinPreservado!==undefined) empty.alladin=alladinPreservado;
+  // Finalizar Sessão encerra a interação e os segredos, sem apagar contextos,
+  // operações, contas ou legados confirmados. A exclusão integral é outro fluxo.
+  for(const key of ['accounts','forex','ledger','ledgerArchive','phases','activeOperation',
+    'transitionLog','cycleRealizado','period','params','onboarding']){
+    if(preservado&&Object.prototype.hasOwnProperty.call(preservado,key))
+      empty[key]=structuredClone(preservado[key]);
+  }
+  if(empty.forex){empty.forex.activeAccountId=null;}
+  empty.riskPinHash=null;
+  if(empty.onboarding)empty.onboarding.investorPassword='';
   return empty;
 }
 // COMMIT DURÁVEL do estado finalizado (B1+B2, substitui persistNotesAfterSessionWipe).
@@ -744,8 +760,8 @@ async function beginSessionExport(){
 function renderSessionDeleteConfirmation(previousStep){
   sessionFinalizeBackStep=previousStep||'safe';
   sessionModal('<h3>Confirmar encerramento</h3>'+
-    '<p class="modal-sub">A próxima ação encerrará a sessão e removerá deste navegador os dados operacionais da sessão: contas operacionais, ordens em andamento, fases, contabilidade do período, configurações da sessão e dados de acesso.</p>'+
-    '<p class="session-warning">Continuam armazenados neste navegador, por desenho: o cadastro patrimonial do Alladin, as Finanças Pessoais, os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas e as Notas — incluindo pastas, histórico de concluídos e preferências do painel. Esses dados são memória de longo prazo e não fazem parte da sessão operacional. Para apagar tudo, inclusive esses dados, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="modal-sub">A próxima ação encerrará a interação nesta sessão: processos temporários, desbloqueios e dados de acesso serão removidos.</p>'+
+    '<p class="session-warning">Contas, períodos, lançamentos, observações, operações confirmadas e históricos Forex continuarão armazenados neste navegador para retomada. Alladin, Finanças Pessoais e Notas, incluindo pastas, também serão preservados. Para apagar a base, use o fluxo explícito da Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Tem certeza de que deseja prosseguir?</div></div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionBack">Voltar</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionProceed">Sim, prosseguir</button></div>');
   $('sessionBack').addEventListener('click',()=>sessionFinalizeBackStep==='export'?renderSessionExportConfirmation():renderSessionSafeChoice());
@@ -753,8 +769,8 @@ function renderSessionDeleteConfirmation(previousStep){
   $('sessionProceed').addEventListener('click',renderSessionPhraseConfirmation);
 }
 function renderSessionPhraseConfirmation(){
-  sessionModal('<h3>Confirmação irreversível</h3>'+
-    '<p class="modal-sub">Para encerrar a sessão e remover os dados operacionais deste navegador, escreva exatamente:</p>'+
+  sessionModal('<h3>Confirmar finalização da sessão</h3>'+
+    '<p class="modal-sub">Para encerrar esta interação e preservar os fatos confirmados, escreva exatamente:</p>'+
     '<div class="session-delete-phrase">ENCERRAR SESSÃO</div>'+
     '<label class="field session-phrase-field"><span>Frase de confirmação</span><input type="text" id="sessionDeletePhrase" value="" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionDeleteConfirm" disabled>Encerrar sessão</button></div>');
@@ -766,15 +782,15 @@ function renderSessionPhraseConfirmation(){
 }
 function renderSessionChanged(){
   sessionModal('<h3>Existem alterações posteriores ao último backup</h3>'+
-    '<p class="modal-sub">Esta sessão modificou a base do JP Wealth. Antes de remover os dados deste computador, exporte uma nova cópia atualizada.</p>'+
-    '<div class="session-warning">Não é possível avançar diretamente para a exclusão enquanto existir alteração posterior ao checkpoint.</div>'+
+    '<p class="modal-sub">Esta sessão modificou a base do JP Wealth. Antes de encerrá-la, exporte uma cópia atualizada para recuperação.</p>'+
+    '<div class="session-warning">Não é possível avançar diretamente enquanto existir alteração posterior ao checkpoint de backup.</div>'+
     '<div class="modal-actions"><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button><button type="button" class="modal-btn confirm" id="sessionExport">Exportar base atual</button></div>');
   sessionCancelBinding();
   $('sessionExport').addEventListener('click',beginSessionExport);
 }
 function renderSessionSafeChoice(){
   sessionModal('<h3>Finalizar sessão neste computador</h3>'+
-    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. Ao finalizar, os dados operacionais da sessão serão removidos deste navegador. Continuarão armazenados o cadastro patrimonial do Alladin, as Finanças Pessoais, as Notas e os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas. Para apagar tudo, use a Zona de Perigo na Central de Configurações.</p>'+
+    '<p class="modal-sub">Nenhuma alteração posterior ao último ponto seguro foi identificada. A finalização preservará contas, períodos, lançamentos e operações confirmadas neste navegador. Ela encerrará processos temporários e desbloqueios. Para apagar a base, use a Zona de Perigo na Central de Configurações.</p>'+
     '<div class="modal-q"><div class="ql">Você possui uma cópia atual e acessível desta base de dados?</div></div>'+
     '<div class="modal-actions session-choice-actions"><button type="button" class="modal-btn confirm" id="sessionHasCopy">Sim, tenho uma cópia</button><button type="button" class="modal-btn cancel" id="sessionExportNow">Não tenho certeza — exportar agora</button><button type="button" class="modal-btn cancel" id="sessionCancel">Cancelar</button></div>');
   sessionCancelBinding();
@@ -895,7 +911,7 @@ async function finalizeJPWealthSession(){
       if(!commit.ok){ renderSessionCommitError(commit.erro); return; }
       S=novoEstado;
       window.JPWForex?.executionBoardUI?.discard();
-      const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:true,preserveMain:true});
+      const report=clearJPWealthLocalData({removeAuxiliary:true,removeCorrupted:false,preserveMain:true});
       concluiu=true;
       // Broadcast SÓ depois de o documento final estar durável e confirmado: nenhuma
       // outra aba recebe "finalized" antes de existir estado a adotar (contrato §9 do
@@ -913,7 +929,7 @@ async function finalizeJPWealthSession(){
       if(typeof navigateToScreen==='function' && typeof DEFAULT_START_ROUTE!=='undefined') navigateToScreen(DEFAULT_START_ROUTE);
       window.__onbShown=false;
       initSessionCheckpoint();
-      const aviso='Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador. Permaneceram o cadastro patrimonial do Alladin, as Finanças Pessoais, as Notas e os históricos MT5 e Manual do Consolidado FX com seu catálogo de contas.';
+      const aviso='Sessão finalizada. Contas, períodos, lançamentos, observações, operações e históricos Forex confirmados foram preservados neste navegador. Alladin, Finanças Pessoais e Notas também foram preservados. Processos temporários, desbloqueios e dados de acesso foram encerrados.';
       showSessionNotice(report.ok?aviso:aviso+' Aviso: algumas chaves auxiliares não puderam ser removidas: '+report.failures.join(', ')+'.');
     });
   }catch(error){

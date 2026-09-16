@@ -276,9 +276,11 @@ def main():
         observations.update(got)
         assert got['market']['ok'] is True and got['grid']['ok'] is True and got['invalid']['ok'] is False
         assert got['legacy']['ok'] is True and got['legacyVrm'] is None and got['legacyUnchanged'] is True
-        assert got['unchanged'] is True and got['model']['activeGridPhase']['value'] == 2
+        # The unbound global operation is retained as LEGACY evidence, but
+        # cannot be attributed to an operational account/period by selection.
+        assert got['unchanged'] is True and got['model']['activeGridPhase']['value'] is None
         assert got['model']['accountPhase']['value'] == 3
-        assert got['model']['metrics']['vrm']['value'] == 0
+        assert got['model']['metrics']['vrm']['value'] is None
         assert got['model']['executionEligibility']['status'] == 'BLOCKED'
         assert len(got['transitionLog']) == 1
 

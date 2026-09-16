@@ -172,15 +172,15 @@ def run_consent_texts(browser, base_url):
     click_id(page, 'finalizeSessionBtn')
     page.wait_for_timeout(300)
     safe = modal_text(page)   # modal_text normaliza para minusculas
-    for termo in ('dados operacionais', 'alladin', 'finanças pessoais', 'notas', 'zona de perigo'):
+    for termo in ('preservará contas', 'operações confirmadas', 'zona de perigo'):
         assert termo in safe, f'CT-2: rota safe sem o termo {termo!r}'
     # CT-1: o consentimento (tela da acao) declara integralmente a retencao,
     # ANTES da frase digitada
     click_id(page, 'sessionHasCopy')
     page.wait_for_timeout(200)
     consent = modal_text(page)
-    for termo in ('encerrará a sessão', 'contas operacionais', 'cadastro patrimonial do alladin',
-                  'finanças pessoais', 'notas', 'memória de longo prazo', 'zona de perigo'):
+    for termo in ('encerrará a interação', 'contas', 'operações confirmadas',
+                  'alladin', 'finanças pessoais', 'notas', 'zona de perigo'):
         assert termo in consent, f'CT-1: consentimento sem o termo {termo!r}'
     # CT-3/CT-7: a tela da frase pede ENCERRAR SESSÃO (o CT-4 vive em
     # finish_with_phrase, executado pelos fluxos reais)
@@ -221,6 +221,7 @@ def finish_with_phrase(page, phrase='ENCERRAR SESSÃO'):
             timeout=15000)
 
 def assert_empty_after_finalize(page):
+    """Legacy call name; the approved session contract now retains confirmed facts."""
     page.wait_for_timeout(500)
     facts = page.evaluate('''() => ({
       notice: document.querySelector('#sessionNotice')?.textContent || '',
@@ -235,22 +236,19 @@ def assert_empty_after_finalize(page):
       sessionCheckpoint: sessionStorage.getItem('jpwealth_session_checkpoint_v1'),
       body: document.body.innerText
     })''')
-    assert 'Sessão finalizada. Os dados operacionais da sessão foram removidos deste navegador.' in facts['notice'], facts
+    assert 'Sessão finalizada. Contas, períodos, lançamentos' in facts['notice'], facts
     assert facts['modalOpen'] is False, facts
-    # Mesma correção da suíte dist: a chave NÃO fica ausente — persistNotesAfterSessionWipe()
-    # regrava POR DESENHO o estado vazio com as Notas do MVP preservadas (A-002/A-005).
-    # O conteúdo é validado estruturalmente: nada operacional, Notas presentes.
+    # O documento confirmado sobrevive no mesmo navegador; desbloqueios e
+    # processos temporários são encerrados pelo fluxo, sem exclusão da base.
     import json as _json
     estado = _json.loads(facts['localState']) if facts['localState'] else None
-    assert estado is not None, 'chave deve carregar o estado vazio com as Notas preservadas'
-    assert estado['ledger'] == [] and estado['accounts'] == [], facts['localState'][:200]
-    assert estado['onboarding']['done'] is False
+    assert estado is not None, 'chave deve carregar fatos confirmados e Notas preservadas'
+    assert estado['ledger'][0]['resultado'] == 100 and estado['accounts'][0]['nome'] == 'Conta Privada Teste', facts['localState'][:200]
+    assert estado['onboarding']['investorPassword'] == ''
+    assert estado.get('riskPinHash') is None
     assert estado.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
     assert facts['sessionCheckpoint'], facts
-    assert facts['accounts'] == 0 and facts['ledger'] == 0, facts
-    assert facts['operator'] == '' and facts['supervisor'] == '', facts
-    assert facts['phasesWithData'] is False and facts['performance'] == 0, facts
-    assert 'Operador Teste' not in facts['body'] and 'Conta Privada Teste' not in facts['body'], facts
+    assert facts['accounts'] == 1 and facts['ledger'] == 1, facts
 
 def assert_header_actions(page):
     assert page.locator('#nav #finalizeSessionBtn').count() == 0
@@ -377,17 +375,14 @@ def run_dist_suite(browser, url):
     assert 'outra_aplicacao' in local_keys and 'jpwealth_v9_state_corrompido_teste' in local_keys
     finish_with_phrase(page, 'ENCERRAR SESSÃO ')
     assert page.evaluate("localStorage.getItem('outra_aplicacao')") == 'preservar'
-    # A chave principal NÃO fica ausente após o Finalizar: persistNotesAfterSessionWipe()
-    # (A-002 + guarda A-005, 07-finalize-session.js) regrava POR DESENHO o estado vazio
-    # com as Notas do MVP preservadas — o aviso ao operador declara exatamente isso.
-    # A expectativa anterior (is None) contradizia o produto documentado e nunca havia
-    # executado: a suíte morria antes, no defeito do reserveMasterCapital.
+    # O commit de finalização conserva o documento confirmado, enquanto a
+    # geração anterior da interação é bloqueada para escrita.
     estado_pos_wipe = page.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state'))")
-    assert estado_pos_wipe is not None, 'chave deve carregar estado vazio + Notas preservadas'
-    assert estado_pos_wipe['ledger'] == [], estado_pos_wipe['ledger']
-    assert estado_pos_wipe['onboarding']['done'] is False
+    assert estado_pos_wipe is not None, 'chave deve carregar fatos confirmados + Notas preservadas'
+    assert estado_pos_wipe['ledger'][0]['resultado'] == 100, estado_pos_wipe['ledger']
+    assert estado_pos_wipe['accounts'][0]['nome'] == 'Conta Privada Teste'
     assert estado_pos_wipe.get('mvpNotes') is not None, 'Notas do MVP devem sobreviver ao Finalizar'
-    assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") is None
+    assert page.evaluate("localStorage.getItem('jpwealth_v9_state_corrompido_teste')") == 'raw'
     for key in ('jpw_rail', 'jpw_expl', 'jpw_fs', 'jpwealth_v9_icon_theme', 'jpwealth_v9_icon_choice', 'jpwealth_galton_preferences_v1', 'jpwealth_notes_launcher_position_v1'):
         assert page.evaluate(f"localStorage.getItem('{key}')") is None, key
     checkpoint_ops=page.evaluate('window.__checkpointOps')
@@ -395,7 +390,7 @@ def run_dist_suite(browser, url):
     assert ['set','jpwealth_session_checkpoint_v1'] in checkpoint_ops, checkpoint_ops
     assert_empty_after_finalize(page)
     assert page.evaluate("save()") is False
-    # save() bloqueado não altera nada: a chave segue com o estado vazio + Notas.
+    # save() bloqueado não altera nada: a chave segue com os fatos confirmados.
     assert page.evaluate("localStorage.getItem('jpwealth_v9_state')") is not None
     close_checked(page)
 
@@ -517,17 +512,16 @@ def run_dist_suite(browser, url):
     complete_export_step(page_a)
     finish_with_phrase(page_a)
     page_b.wait_for_timeout(500)
-    # Mesmo contrato das outras superfícies: a finalização (local ou vinda de outra aba)
-    # deixa a chave com o estado vazio + Notas preservadas — nunca ausente.
+    # A finalização remota adota o mesmo documento confirmado e preserva fatos.
     estado_b = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
-    assert estado_b is not None and estado_b['ledger'] == [] and estado_b.get('mvpNotes') is not None
-    assert page_b.evaluate("S.onboarding.operador") == ''
+    assert estado_b is not None and estado_b['accounts'][0]['nome'] == 'Conta Aba B' and estado_b.get('mvpNotes') is not None
+    assert page_b.evaluate("S.onboarding.operador") == 'Operador Aba B'
     # CONTRATO B3 (ALD-C3-PRE-PERSISTENCE): a aba remota ADOTA o documento final e
     # permanece UTILIZÁVEL — o save() dela grava o próprio documento adotado, e o
     # assert seguinte prova que nada da sessão antiga ressuscita no disco.
     assert page_b.evaluate("save()") is True
     estado_b2 = page_b.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')||'null')")
-    assert estado_b2 is not None and estado_b2['ledger'] == []
+    assert estado_b2 is not None and estado_b2['accounts'][0]['nome'] == 'Conta Aba B'
     galton_after = page_b.evaluate('''() => {
       const stale=window.__staleGaltonController;
       const current=document.querySelector('[data-galton-root]').__galtonController;
@@ -558,7 +552,7 @@ def run_dist_suite(browser, url):
     }''')
     assert notes_launcher_after['epoch'] > notes_launcher_epoch, notes_launcher_after
     assert notes_launcher_after['staleWrite'] is False and notes_launcher_after['raw'] is None, notes_launcher_after
-    assert 'Operador Aba B' not in page_b.locator('body').inner_text()
+    assert page_b.evaluate("S.onboarding.operador") == 'Operador Aba B'
     close_checked(page_a)
     close_checked(page_b)
 
@@ -871,7 +865,7 @@ def run_profile_finalize_contract(browser,url):
     assert 'algumas chaves auxiliares não puderam ser removidas' in notice and PROFILE_KEY in notice,notice
     assert page.evaluate('window.__profileCleanupAttempts')>0
     assert profile_raw(page)==original
-    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')).accounts.length")==0
+    assert page.evaluate("JSON.parse(localStorage.getItem('jpwealth_v9_state')).accounts.length")==1
     assert page.evaluate("localStorage.getItem('settings_profile_unrelated')")=='synthetic-preserved'
     profile_close(context,page,allow_operational_change=True)
     print('PROFILE FINALIZE PASS — removal refusal explicitly reported; operational protocol unchanged',flush=True)

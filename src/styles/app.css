@@ -7786,6 +7786,14 @@ html[data-shell="global-dashboard"] #execWidgetGrid.execution-board{max-width:no
 @media(max-width:800px){#executionBoard{align-items:start;flex-direction:column}.eb-heading-controls{width:100%}#ebAccountSelect{max-width:100%;min-width:180px}.eb-findings ul{columns:1}.eb-phase-scale{flex-wrap:wrap}.eb-phase-scale span{flex-basis:26%}#execWidgetGrid.execution-board>.eb-card{padding:15px!important}.eb-metric>strong{font-size:18px}.eb-observation-fields{grid-template-columns:1fr}}
 @media(max-width:430px){.eb-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.eb-heading-controls{align-items:stretch;flex-direction:column}#ebAccountSelect{width:100%}.eb-section-head{align-items:start}.eb-section-head .eb-actions{width:100%}.eb-dialog{padding:18px}.eb-dialog-actions button{flex:1}}
 
+/* Contexto de Contas: ficha de referência para as quatro áreas de Operação. */
+#contasWidgetGrid>#accountPeriodCard{grid-column:1/-1;min-width:0}
+#accountPeriodCard .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:15px 0}
+#accountPeriodCard .metric .v{overflow-wrap:anywhere;white-space:normal}
+#accountPeriodCard #accountPeriodFormDetails .params-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#accountPeriodCard :is(input,select){max-width:100%;min-width:0}
+@media(max-width:650px){#accountPeriodCard #accountPeriodFormDetails .params-grid{grid-template-columns:1fr}}
+
 #ebChecklistHost #execChecklistBtn{display:inline-flex;align-items:center;gap:8px;min-height:40px;font-size:12px}
 #ebChecklistHost svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
 

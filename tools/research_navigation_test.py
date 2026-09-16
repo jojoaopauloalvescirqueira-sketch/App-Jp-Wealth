@@ -30,7 +30,7 @@ RESEARCH_CHILDREN = [
     ("research-others", "Others", "others"),
 ]
 RESEARCH_FOREX_VIEWS = ["calendar", "nocoda", "pivots"]
-EXEC_VIEWS = ["panel", "motor", "history"]
+EXEC_VIEWS = ["panel", "accounting", "accounts", "motor"]
 WORKSPACES = ["execEcal", "execNocoda", "execPivots"]
 
 

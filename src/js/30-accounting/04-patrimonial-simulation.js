@@ -101,11 +101,9 @@ function renderAcctSim(){
   box.innerHTML=buildSimHTML(s)+meiLine;
 }
 function bindAcct(){
-  const b=(id,fn)=>{ const el=$(id); if(el) el.addEventListener('input',fn); };
-  b('acStart',()=>{ S.params.inicio=$('acStart').value; save(); renderAcct(); renderParams(); render(); });
-  b('acSaldoIni',()=>{ S.params.saldoIni=parseFloat($('acSaldoIni').value)||0; save(); renderAcct(); renderParams(); renderMotor(); renderPhases(); render(); });
-  b('acDiasSem',()=>{ S.acct.diasSemana=parseFloat($('acDiasSem').value)||4.5; save(); renderAcct(); });
-  b('acMesesAno',()=>{ S.acct.mesesAno=parseFloat($('acMesesAno').value)||10.5; save(); renderAcct(); });
+  // Período e SI passam pela ficha da conta, com identidade e confirmação.
+  // Campos legados continuam consultáveis, sem escritores globais concorrentes.
+  for(const id of ['acStart','acSaldoIni','acDiasSem','acMesesAno'])if($(id))$(id).disabled=true;
   const toggle=$('acctPeriodToggle');
   if(toggle) toggle.addEventListener('click',()=>{ acctDetailOpen=!acctDetailOpen; renderAcct(); });
 }
@@ -123,14 +121,15 @@ function bindContab(){
     const anterior=[...led].reverse().find(e=>e.data<data);
     const posteriores=led.filter(e=>e.data>data);
     if(posteriores.length && !confirm('Há '+posteriores.length+' fechamento(s) com data posterior a '+data+'. Os saldos deles NÃO serão recalculados automaticamente — a cadeia de saldo pode ficar inconsistente. Continuar mesmo assim?')) return;
-    let saldo=parseFloat($('ldSaldo').value);
-    if(isNaN(saldo)) saldo=(anterior?anterior.saldo:S.params.saldoIni)+res;
-    const exist=S.ledger.find(e=>e.data===data);
-    if(exist && !confirm('Já existe fechamento em '+data+'. Sobrescrever?')) return;
+    const enteredSaldo=$('ldSaldo').value.trim();
+    if(enteredSaldo!==''&&!Number.isFinite(Number(enteredSaldo))){ledgerFeedback('✗ saldo inválido',false);return;}
+    const saldo=enteredSaldo===''?null:Number(enteredSaldo);
+    const exist=led.find(e=>e.data===data);
+    if(exist && !confirm('Já existe fechamento em '+data+'. Corrigir esta linha com motivo?')) return;
     const reason=exist?prompt('Motivo da correção do fechamento:'):'';
     if(exist&&reason===null)return;
     const result=exist
-      ?ledgerCorrect(ledgerId(exist,S.ledger.indexOf(exist)),{data,resultado:res,saldo,nota:$('ldNota').value},{reason,expectedVersion:exist.version||0,allowBackdate:true})
+      ?ledgerCorrect(exist.id,{data,resultado:res,saldo,nota:$('ldNota').value},{reason,expectedVersion:exist.version||0,allowBackdate:true})
       :ledgerRecord({data,resultado:res,saldo,nota:$('ldNota').value},{allowBackdate:true});
     if(!result.ok){ledgerFeedback('✗ '+result.error,false);return;}
     $('ldResult').value=''; $('ldSaldo').value=''; $('ldNota').value='';

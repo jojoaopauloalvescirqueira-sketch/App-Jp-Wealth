@@ -38,6 +38,15 @@ def prepare_page(browser, url):
     context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
     page, observed = launcher.prepare(context, url)
     page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
+    page.evaluate("""() => {
+      S=structuredClone(DEFAULTS);migrate();S.onboarding.done=true;
+      S.accounts=[{forexAccountId:'PHASES_M',nome:'Mestre sintética',tipo:'MESTRE',platformCurrency:'USD'}];
+      S.forex=JPWForex.state.empty();if(save()!==true)throw Error('Fixture não persistida');
+      const r=JPWForex.state.recordAccountPeriod({accountId:'PHASES_M',startedAt:'2026-09-01',currency:'USD',
+        si:10000,openingBook:10000,source:'Fixture sintética',activateCurrentPeriod:true},{reason:'Fixture de fases'});
+      if(!r.ok)throw Error(r.error);
+      navNavigate('forex-operation');execSetView('panel');JPWForex.executionBoardUI.render();
+    }""")
     return context, page, observed["pageerror"]
 
 
@@ -46,7 +55,7 @@ def prepare_page(browser, url):
 LER_PAINEL = """
 () => {
   const antes = JSON.stringify({state:S,raw:localStorage.getItem(LSKEY),writes:__notesLauncherWrites.length});
-  renderPhases();
+  JPWForex.executionBoardUI.renderPhases();
   const depois = JSON.stringify({state:S,raw:localStorage.getItem(LSKEY),writes:__notesLauncherWrites.length});
   const cont = document.getElementById('phaseContainer');
   const cartoes = [...cont.querySelectorAll('.phase[data-phase]')].map(el => {
@@ -85,7 +94,7 @@ def montar(page, liberadas):
 def checar(page, liberadas, falhas):
     montar(page, liberadas)
     r=page.evaluate(LER_PAINEL)
-    expected=page.evaluate('S.phases.length')
+    expected=page.evaluate("JPWForex.state.accountContext(JPWForex.state.operationalSelection()).value.phases.length")
     if [c['idx'] for c in r['cartoes']]!=list(range(expected)):
         falhas.append(f"Containers fora de ordem: {r}")
     for card in r['cartoes']:
@@ -108,7 +117,7 @@ def main():
             contexto, page, erros = prepare_page(navegador, url)
             for liberadas in (1, 2, 3, 4):
                 checar(page, liberadas, falhas)
-            page.evaluate('() => {S.phases=S.phases.slice(0,4);S.quarantine={fim:"2099-01-01"};}')
+            page.evaluate('() => {const p=S.forex.accountContexts.accounts.PHASES_M.periods[JPWForex.state.operationalSelection().periodId];p.phases=p.phases.slice(0,4);S.quarantine={fim:"2099-01-01"};}')
             for liberadas in (1,2,3,4):
                 checar(page, liberadas, falhas)
             if erros:

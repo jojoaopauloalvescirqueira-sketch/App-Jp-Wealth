@@ -27,8 +27,10 @@ function operationRecordScope(op){
   return {accountId:op?.recordContext?.accountId??null,periodId:op?.recordContext?.periodId??null};
 }
 function operationReviewSignature(){
-  return JSON.stringify({operation:S.activeOperation,phases:S.phases,cycle:S.cycleRealizado,
-    legacySI:S.params?.saldoIni,context:JPWForex.state.recordContext(operationRecordScope(S.activeOperation))});
+  const selection=JPWForex.state.operationalSelection(),ctx=JPWForex.state.accountContext(selection);
+  return JSON.stringify({accountId:selection.accountId,periodId:selection.periodId,
+    revision:ctx.revision,operation:ctx.value?.activeOperation,phases:ctx.value?.phases,
+    context:selection.periodId?JPWForex.state.recordContext(selection):null});
 }
 function operationCaptureReview(op){
   const copy=structuredClone(op),probe=accountPhaseProbe(operationRecordScope(op));
@@ -83,100 +85,32 @@ function operationValidateOrder(o){
   return null;
 }
 function operationRecordOrders(edits,{reason='',accountId,periodId}={}){
-  if(!Array.isArray(edits)||!edits.length)return {ok:false,error:'Nenhuma alteração informada.'};
-  const allowed=['id','par','tipo','role','lote','entry','sl','tp','result','status','costs','stopValidated','amplifiesExposure','pendingActive','costBasis','recordStatus','divergenceChecked','divergenceReason','divergenceTs'];
-  const checked=[];
-  for(const edit of edits){
-    const {pi,oi,changes}=edit, old=S.phases?.[pi]?.orders?.[oi];
-    if(!old||!changes||Object.keys(changes).some(k=>!allowed.includes(k)))return {ok:false,error:'Destino ou campo da ordem inválido.'};
-    if(edit.expectedVersion!==undefined&&edit.expectedVersion!==(Number.isInteger(old.recordVersion)?old.recordVersion:0))return {ok:false,error:'A ordem mudou; confira a versão antes de salvar.'};
-    if(edit.orderId!==undefined&&edit.orderId!==(old.orderId||null))return {ok:false,error:'A identidade da ordem mudou; reabra o rascunho.'};
-    if(old.recordStatus==='voided')return {ok:false,error:'Uma ordem anulada permanece no histórico. Registre outra ordem para substituí-la.'};
-    if(operationOrderIsLive(old)&&changes.status==='')return {ok:false,error:'Fato executado não volta a rascunho. Use Anular com motivo.'};
-    if(changes.recordStatus&&changes.recordStatus!=='voided')return {ok:false,error:'Estado de registro inválido.'};
-    if(operationOrderIsLive(old)&&!String(reason||'').trim())return {ok:false,error:'Informe o motivo da correção.'};
-    const next={...structuredClone(old),...structuredClone(changes)};
-    const invalid=operationValidateOrder(next); if(invalid)return {ok:false,error:invalid};
-    if(JSON.stringify(operationOrderBefore(old))!==JSON.stringify(operationOrderBefore(next)))checked.push({...edit,next});
-  }
-  if(!checked.length)return {ok:true,persistido:false,unchanged:true};
-  return JPWForex.state.mutate('order-record',reason,['phases','activeOperation','transitionLog'],f=>{
-    // A new Board selection is confirmed together with the first fact. It never
-    // transfers an existing operation or writes a separate account selection.
-    if(accountId!==undefined||periodId!==undefined){
-      const matches=(S.accounts||[]).filter(a=>a&&a.forexAccountId===accountId),observed=f.accounts[accountId];
-      if(typeof accountId!=='string'||!accountId.trim()||typeof periodId!=='string'||!periodId.trim()||
-        matches.length!==1||!observed||observed.periodId!==periodId)throw new Error('Conta cadastrada ou período mudou; confira o contexto da operação.');
-      const existing=operationRecordScope(S.activeOperation);
-      if(S.activeOperation?.recordContext&&(existing.accountId!==accountId||existing.periodId!==periodId))
-        throw new Error('A operação pertence a outra conta/período; não pode ser transferida.');
-      f.activeAccountId=accountId;
-    }
-    for(const {pi,oi,next} of checked){
-      const old=S.phases[pi].orders[oi], before=operationOrderBefore(old);
-      // Match the identity layer's orphan criterion before borrowing context.
-      // A discarded entity cannot lend its account to the newborn operation.
-      const orphanContext=S.activeOperation&&!next.openedAt&&!next.closedAt&&!S.activeOperation.adoptedLegacyAt&&
-        ['Aberta','Fechada','Pendente'].includes(next.status)&&!operationLiveOrders().some(x=>x&&x.o!==old);
-      // An existing fact never borrows the account currently selected in the UI.
-      // Missing historical identity remains unresolved, including on correction.
-      const context=operationOrderIsLive(old)||next.status==='Migrada'?JPWForex.state.recordContext({accountId:old.accountId??null,periodId:old.periodId??null}):
-        !orphanContext&&S.activeOperation?.recordContext?JPWForex.state.recordContext(operationRecordScope(S.activeOperation)):JPWForex.state.recordContext();
-      next.orderId=old.orderId||'fxorder_'+crypto.randomUUID();
-      if(operationOrderIsLive(next)&&!operationOrderIsLive(old)&&next.status!=='Migrada'){
-        next.accountId=context.accountId;next.periodId=context.periodId;
-        next.currency=context.accountInputs?.currency??null;
-      }
-      next.policySnapshot=old.policySnapshot?structuredClone(old.policySnapshot):
-        (operationOrderIsLive(old)||next.status==='Migrada'?{policyVersion:'LEGACY_UNRESOLVED',source:'first-explicit-record',originalPhase:pi}:structuredClone(context.policySnapshot));
-      next.recordVersion=(Number.isInteger(old.recordVersion)?old.recordVersion:0)+1;
-      next.recordStatus=next.recordStatus==='voided'?'voided':(operationOrderIsLive(next)?'recorded':'draft');
-      const at=new Date().toISOString();
-      const ins=instFor(next.par);
-      const observation=JPWForex.state.instrumentContext({accountId:context.accountId,periodId:context.periodId,instrumentId:next.par});
-      const dailyReference=JPWForex.state.dailyReference(next.par);
-      next.calculationInputs={...structuredClone(JPWForex.orderInputs(next,context.accountInputs)),
-        accountId:context.accountId,periodId:context.periodId,currency:context.accountInputs?.currency??null,
-        recordedAt:at,provenance:'OBSERVED_AT_RECORDING',
-        instrumentInputs:ins?{name:ins.name,contractSize:ins.cpl,price:ins.preco,provenance:'LEGACY_CATALOG_UNASSIGNED'}:null,
-        instrumentObservation:observation.status==='OK'?structuredClone(observation.value):null,
-        dailyReference:dailyReference.status==='OK'?structuredClone(dailyReference.value):null};
-      if(next.recordStatus==='voided'){next.voidedAt=at;next.voidReason=String(reason).trim();}
-      S.phases[pi].orders[oi]=next;
-      if(next.status==='Migrada'&&!S.activeOperation)S.activeOperation={schemaVersion:1,
-        operationId:operationRecordId(),openedAt:null,openedAtSource:null,maxAccountPhaseReached:null,
-        adoptedLegacyAt:at,policySnapshot:{policyVersion:'LEGACY_UNRESOLVED',source:'migrated-reference-record'}};
-      if(operationOrderIsLive(next)&&next.recordStatus!=='voided')operationOnOrderStatus(next,next.status,pi,oi);
-      if(S.activeOperation&&!S.activeOperation.policySnapshot)S.activeOperation.policySnapshot=
-        (S.activeOperation.adoptedLegacyAt||(operationOrderIsLive(old)&&!old.policySnapshot))?{policyVersion:'LEGACY_UNRESOLVED',source:'first-explicit-record'}:structuredClone(context.policySnapshot);
-      const budgetScope={accountId:context.accountId,periodId:context.periodId,currency:context.accountInputs?.currency??null,
-        operationId:S.activeOperation?.operationId??null};
-      if(S.activeOperation&&!S.activeOperation.recordContext&&S.activeOperation.policySnapshot.policyVersion!=='LEGACY_UNRESOLVED')
-        JPWForex.state.attachOperationBudget(S.forex,{...budgetScope,firstRecordedAt:at});
-      context.operationBudgetSnapshot=structuredClone(JPWForex.state.budgetSnapshot(budgetScope));
-      next.operationBudgetSnapshot=structuredClone(context.operationBudgetSnapshot);
-      if(operationOrderIsLive(next)&&!operationOrderIsLive(old))next.operationId=budgetScope.operationId;
-      if(S.activeOperation&&!S.activeOperation.recordContext)S.activeOperation.recordContext=structuredClone(context);
-      next.revisions=[...(Array.isArray(old.revisions)?structuredClone(old.revisions):[]),{
-        version:next.recordVersion,recordedAt:at,reason:String(reason).trim(),before,
-        after:operationOrderBefore(next),context:structuredClone(context)}];
-    }
-    if(typeof operationTouchAccountPhase==='function')operationTouchAccountPhase();
-  });
+  const selected=JPWForex.state.operationalSelection();
+  const target={accountId:accountId||selected.accountId,periodId:periodId||selected.periodId};
+  if(target.accountId!==selected.accountId||target.periodId!==selected.periodId)
+    return {ok:false,persistido:false,error:'A conta/período da edição difere da seleção atual. Reabra as linhas.'};
+  const context=JPWForex.state.accountContext(target);
+  if(context.status!=='OK')return {ok:false,persistido:false,error:'Registre ou reconcilie o período em Contas antes de editar ordens.'};
+  const correcting=(edits||[]).some(e=>context.value.phases?.[e.pi]?.orders?.[e.oi]?.recordStatus==='recorded');
+  if(correcting&&!String(reason||'').trim())return {ok:false,persistido:false,error:'Correção de fato confirmado exige justificativa.'};
+  return JPWForex.state.recordAccountOrders(edits,{...target,reason:reason||'Registro factual de ordem',
+    expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:context.revision});
 }
 function operationRecordOrder(pi,oi,changes,options){return operationRecordOrders([{pi,oi,changes}],options);}
 function operationAddDraft(pi){
-  if(!S.phases?.[pi]||!Array.isArray(S.phases[pi].orders))return {ok:false,error:'Grade inválida.'};
-  return JPWForex.state.mutate('order-draft-added','Adicionar rascunho à grade',['phases'],()=>{
-    S.phases[pi].orders.push({id:'',orderId:'fxorder_'+crypto.randomUUID(),par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,result:null,status:'',recordStatus:'draft',recordVersion:0,revisions:[]});
-  });
+  const selected=JPWForex.state.operationalSelection(),context=JPWForex.state.accountContext(selected);
+  if(context.status!=='OK')return {ok:false,persistido:false,error:'Registre ou reconcilie o período desta conta antes de adicionar ordem.'};
+  return JPWForex.state.addAccountOrderDraft({...selected,pi},{expectedEpoch:jpWealthPersistenceEpoch()});
 }
 function operationVoidOrder(pi,oi,reason){
-  const order=S.phases?.[pi]?.orders?.[oi];
-  if(!order)return {ok:false,error:'Ordem inexistente.'};
-  if(!operationOrderIsLive(order))return JPWForex.state.mutate('order-draft-deleted',reason||'Excluir rascunho',['phases'],()=>{S.phases[pi].orders.splice(oi,1);});
-  if(!String(reason||'').trim())return {ok:false,error:'Informe o motivo da anulação.'};
-  return operationRecordOrder(pi,oi,{recordStatus:'voided'},{reason});
+  const selected=JPWForex.state.operationalSelection(),context=JPWForex.state.accountContext(selected);
+  const order=context.value?.phases?.[pi]?.orders?.[oi];
+  if(context.status!=='OK'||!order)return {ok:false,persistido:false,error:'Ordem inexistente nesta conta/período.'};
+  if(order.recordStatus==='draft'&&!operationOrderIsLive(order))
+    return JPWForex.state.deleteAccountOrderDraft({...selected,pi,oi},{reason:reason||'Excluir rascunho',
+      expectedEpoch:jpWealthPersistenceEpoch()});
+  if(!String(reason||'').trim())return {ok:false,persistido:false,error:'Informe o motivo da anulação.'};
+  return operationRecordOrder(pi,oi,{recordStatus:'voided'},{reason,...selected});
 }
 function operationRecordFeedback(result){
   if(result.ok)return true;
@@ -187,6 +121,9 @@ function operationRecordFeedback(result){
 // Posição aberta BLOQUEIA, sem bypass. Grade inteiramente vazia não oferece o
 // que finalizar — e a ausência de operação não é erro, é ausência.
 function operationCanFinalize(){
+  const selection=JPWForex.state.operationalSelection(),ctx=JPWForex.state.accountContext(selection);
+  if(ctx.status!=='OK'||!ctx.value.activeOperation)
+    return {ok:false,motivo:'no_identity',mensagem:'Selecione uma conta/período com operação registrada.'};
   const vivas = operationLiveOrders();
   const abertas = vivas.filter(x => (x.o.status === 'Aberta'||(x.o.status==='Pendente'&&x.o.pendingActive!==false)) && x.o.recordStatus !== 'voided');
   if (abertas.length) {
@@ -477,6 +414,32 @@ function operationPersistedHas(record){
 // ---- TRANSAÇÃO ----
 // ou toda a finalização acontece, ou nada acontece.
 function finalizeOperation(entrada){
+  return finalizeSelectedAccountOperation(entrada);
+}
+function finalizeSelectedAccountOperation(entrada){
+  if(globalThis.JPWForex?.executionBoardUI?.hasDrafts())
+    return {ok:false,motivo:'unsaved_operation_draft',mensagem:'Resolva as linhas não salvas antes de finalizar.'};
+  if(operationFinalizeInFlight)return {ok:false,motivo:'in_flight'};
+  operationFinalizeInFlight=true;
+  try{
+    const selection=JPWForex.state.operationalSelection(),ctx=JPWForex.state.accountContext(selection);
+    if(ctx.status!=='OK'||!ctx.value.activeOperation)return {ok:false,motivo:'no_identity',mensagem:'Operação da conta/período ausente.'};
+    const pre=operationCanFinalize();if(!pre.ok)return pre;
+    const liveOp=ctx.value.activeOperation;
+    if(!operationFinalizeReview||operationFinalizeReview.operationId!==liveOp.operationId||
+      operationFinalizeReview.signature!==operationReviewSignature())
+      return {ok:false,motivo:'review_stale',mensagem:'A seleção ou os fatos mudaram; reabra a revisão.'};
+    const snap=operationBuildSnapshot(structuredClone(operationFinalizeReview.op),entrada);
+    if(!snap.ok)return snap;
+    const result=JPWForex.state.finalizeAccountOperation(snap.record,{accountId:selection.accountId,
+      periodId:selection.periodId,expectedRevision:ctx.revision,expectedEpoch:jpWealthPersistenceEpoch()});
+    if(!result.ok)return {ok:false,motivo:result.persistido===null?'persist_outcome_unknown':'finalize_refused',
+      mensagem:result.error||'Finalização não confirmada.',bloqueado:result.persistido===null};
+    operationFinalizeReview=null;globalThis.JPWForex?.executionBoardUI?.discard();
+    return {ok:true,record:snap.record};
+  }finally{operationFinalizeInFlight=false;}
+}
+function finalizeOperationLegacyDisabled(entrada){
   if(globalThis.JPWForex?.executionBoardUI?.hasDrafts())return {ok:false,motivo:'unsaved_operation_draft',mensagem:'Resolva as linhas não salvas antes de finalizar a operação.'};
   if (operationFinalizeInFlight) return { ok:false, motivo:'in_flight' };
   operationFinalizeInFlight = true;
@@ -713,7 +676,8 @@ function operationReviewHTML(r, defesas){
 // `status==='Fechada'`. Exigir resultado de uma ordem 'Migrada' bloquearia a
 // finalização por um dado que aquela linha nunca teve motivo para ter.
 function operationOrderLabel(pi, oi, o){
-  const legacy=S.phases.length===4||S.phases[pi]?.policyVersion==='LEGACY_UNRESOLVED';
+  const phases=JPWForex.state.accountContext(JPWForex.state.operationalSelection()).value?.phases||[];
+  const legacy=phases.length===4||phases[pi]?.policyVersion==='LEGACY_UNRESOLVED';
   const slot=o?.role==='GENESIS'?'GÊNESE':o?.role==='DEFENSE'?'DEFESA':
     legacy?(pi===0&&oi===0?'GÊNESE LEGACY':`SLOT LEGACY ${pi+1}.${oi+1}`):`ORDEM ${pi+1}.${oi+1}`;
   const partes = [slot];
@@ -746,8 +710,9 @@ function openFinalizeBlockedModal(abertas){
   const lista = abertas.map(x =>
     '<li>'+esc(operationOrderLabel(x.pi, x.oi, x.o))+'</li>').join('');
   const umaSo = abertas.length === 1;
+  const phases=JPWForex.state.accountContext(JPWForex.state.operationalSelection()).value?.phases||[];
   const genese = abertas.some(x => x.o.role==='GENESIS'||(!x.o.role&&
-    (S.phases.length===4||S.phases[x.pi]?.policyVersion==='LEGACY_UNRESOLVED')&&x.pi===0&&x.oi===0));
+    (phases.length===4||phases[x.pi]?.policyVersion==='LEGACY_UNRESOLVED')&&x.pi===0&&x.oi===0));
   box.innerHTML =
     '<h3>Finalizar Operação</h3>'+
     '<div class="modal-err show">🚫 Não é possível finalizar esta operação.</div>'+
@@ -867,7 +832,7 @@ function openFinalizeOperationModal(){
   // documentado da funcao, nao efeito do placeholder. O defeito e afirmar
   // qualquer coisa sobre uma entidade inexistente e prometer um registro que
   // jamais sera gravado.
-  const liveOp=S.activeOperation;
+  const liveOp=JPWForex.state.accountContext(JPWForex.state.operationalSelection()).value?.activeOperation;
   let op=liveOp;
   if(!op || typeof op!=='object'){
     box.innerHTML='<h3>Finalizar Operação Única</h3>'+

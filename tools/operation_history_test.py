@@ -44,6 +44,15 @@ def prepare_page(browser, url):
     context = browser.new_context(viewport={"width":1440,"height":900}, service_workers="block", reduced_motion="reduce")
     page, observed = launcher.prepare(context, url)
     page.evaluate("() => {window.confirm=()=>true;window.prompt=()=> 'Correção sintética justificada';}")
+    page.evaluate("""() => {
+      S=structuredClone(DEFAULTS);migrate();S.onboarding.done=true;
+      S.accounts=[{forexAccountId:'HIST_M',nome:'Mestre histórica sintética',tipo:'MESTRE',platformCurrency:'USD'}];
+      S.forex=JPWForex.state.empty();if(save()!==true)throw Error('Fixture não persistida');
+      const r=JPWForex.state.recordAccountPeriod({accountId:'HIST_M',startedAt:'2026-01-01',currency:'USD',
+        si:10000,openingBook:10000,source:'Fixture sintética',activateCurrentPeriod:true},{reason:'Fixture de histórico'});
+      if(!r.ok)throw Error(r.error);
+      navNavigate('forex-operation');execSetView('accounting');execToggleHistory(true);
+    }""")
     return context, page, observed
 
 
@@ -80,6 +89,8 @@ SEMEAR = """
        phaseCaptureFault:{at:'2026-07-02T00:00:00.000Z', reason:'falha sintetica'},
        maxGridPhaseReached:2, ordersSnapshot:[], finalizedAt:'2026-07-03T10:00:00.000Z'}
     ]};
+    const scope=JPWForex.state.operationalSelection();
+    S.operationHistory.records.forEach(r=>{r.accountId=scope.accountId;r.periodId=scope.periodId;r.currency='USD';});
     S.params.saldoIni = 10000;
     S.phases.forEach((ph,i) => { ph.orders = emptyOrders([5,4,3,2][i]); });
     S.activeOperation = null;
@@ -91,6 +102,7 @@ SEMEAR = """
   };
   window.__fotoFin = () => JSON.stringify({
     ciclo: S.cycleRealizado, params: S.params, phases: S.phases,
+    contexts:S.forex.accountContexts,
     registros: S.operationHistory.records, activeOperation: S.activeOperation,
     logs: S.transitionLog.length, unlocked: S.phaseUnlocked
   });
@@ -543,7 +555,8 @@ def run_history_distinguishes_the_three_integrities(page):
         """() => {
           __semearHist();
           // Quarto registro: fase JAMAIS capturada, sem falha nenhuma.
-          S.operationHistory.records.push({
+          const scope=JPWForex.state.operationalSelection();
+          S.operationHistory.records.push({accountId:scope.accountId,periodId:scope.periodId,currency:'USD',
             schemaVersion:1, operationId:'op_ddd', instrument:'EURUSD', direction:'BUY',
             openedAt:'2026-07-20T10:00:00.000Z', openedAtSource:'genesis_transition',
             closedAt:'2026-07-22T10:00:00.000Z', closedAtSource:'formal_confirmation',

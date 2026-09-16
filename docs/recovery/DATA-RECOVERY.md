@@ -24,9 +24,9 @@ jpwealth_v9_state
 
 Não limpar dados de site, histórico de armazenamento ou perfil do navegador antes da exportação.
 
-Para encerrar o uso em computador de terceiros, utilize `Finalizar sessão`. A função exige confirmação progressiva, usa o backup completo existente quando necessário, preserva chaves de outras aplicações na mesma origem e remove as chaves locais do JP Wealth somente depois da frase final `APAGAR TUDO`.
+`Finalizar sessão` exige confirmação progressiva e frase `ENCERRAR SESSÃO`. Este fluxo preserva no navegador cadastros, períodos, lançamentos, observações e operações Forex confirmadas para retomada; encerra processos temporários, desbloqueios e dados de acesso. Para remover a base do computador, use o fluxo explícito da Zona de Perigo depois de exportar uma cópia de recuperação. Em computador de terceiros, Finalizar Sessão por si só não elimina os históricos preservados.
 
-Após a exclusão, a persistência fica bloqueada para a geração anterior da sessão. Atualizações assíncronas, importações iniciadas antes do encerramento e outras abas não podem recriar o estado antigo; uma nova sessão pode ser iniciada por novo carregamento, onboarding ou importação explícita. O service worker remove somente caches com prefixo `jp-wealth-`.
+Após a exclusão pela Zona de Perigo, a persistência fica bloqueada para a geração anterior da base. Atualizações assíncronas, importações iniciadas antes da exclusão e outras abas não podem recriar o estado antigo; uma nova base pode ser iniciada por novo carregamento, onboarding ou importação explícita. O service worker remove somente caches com prefixo `jp-wealth-`.
 
 As chaves da allowlist auxiliar são `jpw_rail`, `jpw_expl`, `jpw_fs`, `jpwealth_v9_icon_choice`, a chave legada `jpwealth_v9_icon_theme`, as preferências isoladas do laboratório em `jpwealth_galton_preferences_v1`, o perfil local em `jpwealth_local_profile_v1`, a posição do botão de Notas em `jpwealth_notes_launcher_position_v1` e o sinal temporário `jpwealth_session_wipe_signal_v1`; o checkpoint fica em `sessionStorage` como `jpwealth_session_checkpoint_v1`. A limpeza não usa `localStorage.clear()`.
 

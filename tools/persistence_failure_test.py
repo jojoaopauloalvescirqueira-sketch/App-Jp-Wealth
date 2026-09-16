@@ -123,7 +123,7 @@ def run_suite(browser, url, rotulo):
     assert page.evaluate('jpWealthPersistenceFailure.count') == 6, 'contagem interna deveria acumular'
     # o aplicativo continua utilizável: navegação e drawer de Notas respondem
     page.evaluate("navigateToScreen('contab')")
-    assert page.evaluate("document.getElementById('contab').classList.contains('active')")
+    assert page.evaluate("document.getElementById('exec').classList.contains('active') && !document.getElementById('contab').hidden && JPWExec.ui.getView()==='accounting'")
     page.evaluate("navigateToScreen('dash')")
     page.locator('#headerNotesBtn').click()
     assert page.locator('#mvpNotesOverlay').evaluate("el => el.classList.contains('show')")

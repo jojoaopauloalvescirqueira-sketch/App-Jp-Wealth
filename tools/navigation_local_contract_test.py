@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
+from notes_launcher_test import launch_options
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,8 +21,10 @@ SOURCE = "src/js/40-app/01-navigation.js"
 CASES = [
     ("exec", "overview", "forex-consolidated", "forex", "forex-consolidated"),
     ("exec", "panel", "forex-operation", "forex", "forex-operation"),
+    ("exec", "accounts", "forex-operation", "forex", "forex-operation"),
     ("exec", "motor", "forex-operation", "forex", "forex-operation"),
-    ("exec", "history", "forex-reconciliation", "forex", "forex-reconciliation"),
+    ("exec", "accounting", "forex-operation", "forex", "forex-operation"),
+    ("exec", "history", "forex-operation", "forex", "forex-operation"),
     ("fxplan", "overview", "forex-planning", "forex", "forex-planning"),
     ("fxplan", "planning", "forex-planning", "forex", "forex-planning"),
     ("fxplan", "actuals", "forex-planning", "forex", "forex-planning"),
@@ -147,7 +150,7 @@ def main():
     source = (args.source_root / SOURCE).read_text(encoding="utf-8")
     records, failures, blocked = [], [], []
     with sync_playwright() as pw:
-        browser = pw.chromium.launch()
+        browser = pw.chromium.launch(**launch_options())
         context = browser.new_context(service_workers="block")
 
         def abort(route):
@@ -235,7 +238,7 @@ def main():
                     else:
                         kinds = ["resolve", "apply"] + (["resolve"] if fault == "late-ui" else []) + ["active"]
                         assert [e["kind"] for e in result["events"]] == kinds
-                        assert result["events"][1]["plan"] == plan_for(CASES[3])
+                        assert result["events"][1]["plan"] == plan_for(CASES[5])
                         assert result["events"][1]["target"] == "exec"
                         assert result["events"][-1]["current"] == result["before"]["current"]
                         assert result["lastAfter"] == dict(accepted=False, reason="unavailable-target")
@@ -249,10 +252,11 @@ def main():
             try:
                 assert p.evaluate("JPWNavigation.navigate('forex-reconciliation')") is True
                 assert p.evaluate("JPWNavigation.current()") == dict(
-                    canonical="forex-reconciliation", requested="forex-reconciliation", source="canonical",
-                    primary="forex", child="forex-reconciliation", screen="contab", localView=None)
+                    canonical="forex-operation", requested="forex-reconciliation", source="compatibility",
+                    primary="forex", child="forex-operation", screen="exec",
+                    localView={"surface":"exec","view":"accounting"}), p.evaluate("JPWNavigation.current()")
                 result = p.evaluate("__exercise('exec','history')")
-                check_success(result, CASES[3])
+                check_success(result, CASES[5])
                 records.append(dict(name="canonical-contab/local-exec", result=result))
             finally:
                 p.close()
@@ -263,7 +267,7 @@ def main():
             try:
                 p.evaluate("__navTest.fault='false-return'")
                 result = p.evaluate("__exercise('exec','motor')")
-                check_success(result, CASES[2])  # navApply return differs from navLastResult.
+                check_success(result, CASES[3])  # navApply return differs from navLastResult.
                 records.append(dict(name="return-from-last-result", result=result))
             finally:
                 p.close()
@@ -277,7 +281,7 @@ def main():
                     result = p.evaluate("__exercise('exec','history')")
                     detected = False
                     try:
-                        check_success(result, CASES[3])
+                        check_success(result, CASES[5])
                     except AssertionError:
                         detected = True
                     records.append(dict(name=f"counterexample:{fault}", detected=detected, result=result))

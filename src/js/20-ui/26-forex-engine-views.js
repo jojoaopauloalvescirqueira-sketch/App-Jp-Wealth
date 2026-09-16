@@ -14,10 +14,11 @@
   const str=(form,name)=>form.elements.namedItem(name).value.trim();
   const checked=(form,name)=>form.elements.namedItem(name).checked;
   const timestamp=(form,name)=>{const v=str(form,name);return v?new Date(v).toISOString():null;};
+  const scopedForms=new Set(['fxOperationBudget','fxMarketFacts','fxH4Facts','fxGridFacts','fxReserveFacts']);
   let initialized=false,stateIdentity=null;
   function mount(){
     if(initialized)return;initialized=true;stateIdentity=S;
-    el('forexEnginePanel').innerHTML=`<header><span class="cp-kicker">REGISTRO E ELEGIBILIDADE</span><h2>Motor central Forex</h2><p>Registrar um fato não autoriza sua execução. Dados ausentes e parâmetros pendentes permanecem identificados.</p></header>
+    el('forexEnginePanel').innerHTML=`<header><span class="cp-kicker">REGISTRO E ELEGIBILIDADE</span><h2>Fator de Correção</h2><p>Referências e dimensionamento pela conta selecionada. O motor central V11 calcula elegibilidade; registrar um fato não autoriza sua execução.</p></header>
       <div id="fxEngineState" class="fx-engine-status"></div>
       <details open><summary>Conta de referência e equity</summary><p>O saldo contábil permanece no ledger. Registre aqui uma observação de equity flutuante, SI e moeda, com sua fonte.</p>
       <form id="fxAccountFacts" class="fx-engine-form">
@@ -52,30 +53,60 @@
       ${check('determinationRecorded','Apuração documentada')}${check('expensesApproved','Despesas elegíveis aprovadas')}
       ${field('fcrLiquidityDays','Liquidez FCR (dias)','number','min="0"')}${field('feoLiquidityDays','Liquidez FEO (dias)','number','min="0"')}${field('verifiedAt','Instante da verificação','datetime-local')}${check('verificationRecorded','Verificação de constituição e liquidez registrada')}${source()}${reason()}
       ${button('Registrar reservas')}${response()}<p>Valores na moeda da conta selecionada. Deixe em branco o que não foi apurado. Não usar SI como capital nominal nem uma taxa histórica como FEO.</p></form></details><details><summary>Trilha de reservas</summary><div id="fxReserveHistory"></div></details>`;
+    const accountFacts=el('fxAccountFacts')?.closest('details');
+    if(accountFacts&&el('accountPeriodCard'))el('accountPeriodCard').append(accountFacts);
     document.addEventListener('submit',submit);
     document.addEventListener('click',click);
+    document.addEventListener('input',event=>{const form=event.target.closest?.('form');
+      if(form&&scopedForms.has(form.id))form.dataset.fxTouched='true';});
+    document.addEventListener('change',event=>{const form=event.target.closest?.('form');
+      if(form&&scopedForms.has(form.id))form.dataset.fxTouched='true';});
     render();
   }
   function after(form,result){
     form.querySelector('.fx-engine-response').textContent=result.ok?(result.alreadyMigrated?'Migração já registrada.':result.persistido===false?'Concluído nesta sessão.':'Registro confirmado.'):(result.error||'Registro não confirmado.');
-    if(result.ok){if(typeof root.render==='function')root.render();else render();if(typeof root.JPWDashMacro==='object')root.JPWDashMacro.schedule();if(typeof renderPhases==='function')renderPhases();if(typeof renderContas==='function')renderContas();}
+    if(result.ok){form.dataset.fxTouched='';if(typeof root.render==='function')root.render();else render();if(typeof root.JPWDashMacro==='object')root.JPWDashMacro.schedule();if(typeof renderPhases==='function')renderPhases();if(typeof renderContas==='function')renderContas();}
   }
   async function submit(event){
-    const form=event.target;if(!form.id.startsWith('fx')||!el('forexEnginePanel').contains(form)&&!el('forexReservesPanel').contains(form))return;
+    const form=event.target;if(!form.id.startsWith('fx')||!el('forexEnginePanel').contains(form)&&
+      !el('forexReservesPanel').contains(form)&&!el('accountPeriodCard')?.contains(form))return;
     event.preventDefault();let result;
     try{
+      if(scopedForms.has(form.id)){
+        const scope=fx.state.operationalSelection();
+        if(form.dataset.fxScopeAccount!==String(scope.accountId||'')||
+          form.dataset.fxScopePeriod!==String(scope.periodId||'')){
+          after(form,{ok:false,error:'Conta ou período mudou durante o preenchimento. Preserve o rascunho e revise o destino antes de registrar.'});return;
+        }
+      }
       const reasonValue=form.elements.namedItem('reason')?str(form,'reason'):null;
       switch(form.id){
-        case 'fxAccountFacts':result=fx.state.recordAccountFacts({accountIndex:Number(str(form,'accountIndex')),si:nullable(form,'si'),equity:nullable(form,'equity'),currency:str(form,'currency'),usdToAccountRate:nullable(form,'usdToAccountRate'),capitalNominal:nullable(form,'capitalNominal'),netCashflow:nullable(form,'netCashflow'),cashflowAdjustmentRecorded:checked(form,'cashflowAdjustmentRecorded'),marginLevel:nullable(form,'marginLevel'),source:str(form,'source'),observedAt:timestamp(form,'observedAt'),newPeriod:checked(form,'newPeriod')},{reason:reasonValue});break;
-        case 'fxOperationBudget':{const model=fx.state.read(),scope=model.budgetScope,budget=model.metrics.operationBudget;
-          result=fx.state.recordOperationBudget({...scope,currency:model.account&&model.account.currency,budgetId:budget.declaration?.id,
+        case 'fxAccountFacts':{
+          const selected=fx.state.operationalSelection(),idx=Number(str(form,'accountIndex'));
+          if(!str(form,'accountIndex')||S.accounts[idx]?.forexAccountId!==selected.accountId){
+            result={ok:false,error:'A ficha da observação difere da conta operacional selecionada. Reabra o formulário.'};break;
+          }
+          result=fx.state.recordAccountFacts({accountIndex:idx,
+            periodId:checked(form,'newPeriod')?null:selected.periodId,
+            si:nullable(form,'si'),equity:nullable(form,'equity'),currency:str(form,'currency'),usdToAccountRate:nullable(form,'usdToAccountRate'),capitalNominal:nullable(form,'capitalNominal'),netCashflow:nullable(form,'netCashflow'),cashflowAdjustmentRecorded:checked(form,'cashflowAdjustmentRecorded'),marginLevel:nullable(form,'marginLevel'),source:str(form,'source'),observedAt:timestamp(form,'observedAt'),newPeriod:checked(form,'newPeriod')},{reason:reasonValue});break;
+        }
+        case 'fxOperationBudget':{const model=fx.state.read(),scope=model.budgetScope,budget=model.metrics.operationBudget,
+          period=fx.state.accountContext(scope);
+          result=fx.state.recordOperationBudget({...scope,currency:period.status==='OK'?period.value.currency:null,budgetId:budget.declaration?.id,
             amount:nullable(form,'amount'),declaredBy:str(form,'declaredBy'),declaredAt:timestamp(form,'declaredAt'),source:str(form,'source')},{reason:reasonValue});break;}
         case 'fxMarketFacts':{const scope=fx.state.read().budgetScope,instrumentId=str(form,'instrumentId'),previous=fx.state.instrumentContext({...scope,instrumentId});result=fx.state.recordInstrumentContext({...scope,instrumentId,expectedRevision:previous.revision||0,componentChanges:{atr:{short:nullable(form,'atrShort'),long:nullable(form,'atrLong'),timeframe:'H4',unit:'PRICE',observedAt:timestamp(form,'observedAt'),source:str(form,'source')}}},{reason:reasonValue});break;}
-        case 'fxH4Facts':result=fx.state.recordH4({ddPercent:nullable(form,'ddPercent'),closedAt:timestamp(form,'closedAt'),source:str(form,'source')},{reason:reasonValue});break;
-        case 'fxGridFacts':result=fx.state.recordGrid(Number(str(form,'phase')),{reason:reasonValue});break;
-        case 'fxReserveFacts':result=fx.state.recordReserves(Object.fromEntries([
+        case 'fxH4Facts':{const scope=fx.state.operationalSelection(),period=fx.state.accountContext(scope);
+          result=fx.state.recordH4({ddPercent:nullable(form,'ddPercent'),closedAt:timestamp(form,'closedAt'),source:str(form,'source')},
+            {reason:reasonValue,target:scope,expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:period.revision});break;}
+        case 'fxGridFacts':{const scope=fx.state.operationalSelection(),period=fx.state.accountContext(scope);
+          result=fx.state.recordGrid(Number(str(form,'phase')),
+            {reason:reasonValue,target:{...scope,operationId:period.value?.activeOperation?.operationId},
+              expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:period.revision});break;}
+        case 'fxReserveFacts':{const scope=fx.state.operationalSelection(),period=fx.state.accountContext(scope);
+          result=fx.state.recordReserves(Object.fromEntries([
           ...['capitalNominal','fcrConstituted','feoConstituted','sixMonthExpenseAmount','fcrLiquidityDays','feoLiquidityDays'].map(k=>[k,nullable(form,k)]),
-          ...['expensePeriod','determinationReference','source'].map(k=>[k,str(form,k)]),...['determinationRecorded','expensesApproved','verificationRecorded'].map(k=>[k,checked(form,k)]),['verifiedAt',timestamp(form,'verifiedAt')]]),{reason:reasonValue});break;
+          ...['expensePeriod','determinationReference','source'].map(k=>[k,str(form,k)]),...['determinationRecorded','expensesApproved','verificationRecorded'].map(k=>[k,checked(form,k)]),['verifiedAt',timestamp(form,'verifiedAt')]]),
+            {reason:reasonValue,target:scope,expectedEpoch:jpWealthPersistenceEpoch(),expectedRevision:period.revision});break;}
         case 'fxEditorConfigure':{const phrase=str(form,'phrase');form.elements.phrase.value='';result=await fx.state.configureEditor(phrase);break;}
         case 'fxEditorUnlock':{const phrase=str(form,'phrase');form.elements.phrase.value='';result=await fx.state.unlockEditor(phrase,str(form,'editor'));break;}
         case 'fxParameterProposal':result=fx.state.proposeParameterChange({id:str(form,'id'),value:nullable(form,'value'),source:str(form,'source'),reason:reasonValue});break;
@@ -94,7 +125,7 @@
     }
     if(b.hasAttribute('data-fx-load-account')){
       const a=fx.state.read().account,form=el('fxAccountFacts');if(!a)return;
-      const idx=(S.accounts||[]).findIndex(x=>x.forexAccountId===S.forex.activeAccountId);form.elements.accountIndex.value=String(idx);
+      const idx=(S.accounts||[]).findIndex(x=>x.forexAccountId===fx.state.operationalSelection().accountId);form.elements.accountIndex.value=String(idx);
       for(const key of ['si','equity','currency','usdToAccountRate','capitalNominal','netCashflow','marginLevel','source'])form.elements.namedItem(key).value=a[key]==null?'':String(a[key]);
       form.elements.cashflowAdjustmentRecorded.checked=a.cashflowAdjustmentRecorded===true;
       const date=new Date(a.observedAt);form.elements.observedAt.value=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16);
@@ -106,9 +137,17 @@
     if(!initialized)return;
     if(stateIdentity!==S){stateIdentity=S;document.querySelectorAll('#forexEnginePanel form,#forexReservesPanel form').forEach(f=>f.reset());fx.state.clearEditor();}
     const model=fx.state.read(),m=model.metrics;
+    const formScope=fx.state.operationalSelection();
+    for(const id of scopedForms){const form=el(id);if(form&&form.dataset.fxTouched!=='true'){
+      form.dataset.fxScopeAccount=String(formScope.accountId||'');
+      form.dataset.fxScopePeriod=String(formScope.periodId||'');
+    }}
     const select=el('fxAccountFacts').elements.accountIndex,selected=select.value;
     const options='<option value="">Selecione uma conta</option>'+(S.accounts||[]).map((a,i)=>`<option value="${i}">${safe(a.apelido||a.nome||a.broker||'Conta sem nome')} · ${safe(a.tipo)}</option>`).join('');
     if(select.innerHTML!==options){select.innerHTML=options;select.value=selected;}
+    const selectedId=fx.state.operationalSelection().accountId;
+    const selectedIndex=(S.accounts||[]).findIndex(row=>row?.forexAccountId===selectedId);
+    if(selectedIndex>=0&&document.activeElement!==select)select.value=String(selectedIndex);
     el('fxEngineState').innerHTML=`<strong>${safe(model.executionEligibility.status)}</strong> · ${safe(fx.policy.version)}<p>Elegibilidade e registro são independentes. Pendências não são convertidas em zero.</p>${model.canRecord&&(!S.forex||!S.forex.migration)?'<button type="button" data-fx-migrate>Adotar agregado V11 explicitamente, preservando legado</button>':''}`;
     el('fxPolicyIdentity').textContent=`${fx.policy.version} · ${fx.policy.statuteVersion} · ${fx.policy.parametricAnnexVersion} · vigência ${fx.policy.effectiveDate}`;
     el('fxRegistryRows').innerHTML=fx.policy.list().map(p=>`<tr><th>${safe(p.id)}<br>${safe(p.name||p.label)}</th><td>${safe(p.value===null?'PENDING':JSON.stringify(p.value))}<br>${safe(p.unit)}</td><td>${safe(p.technicalStatus||p.status)}<br>${safe(p.homologationStatus)}<br>${safe(p.operabilityStatus)}</td><td><details><summary>${safe(p.authorityMode)}</summary><pre>${safe(JSON.stringify(p,null,2))}</pre></details></td></tr>`).join('');
@@ -117,7 +156,10 @@
     const currency=model.account&&model.account.currency,unit=currency?' '+safe(currency):'';
     const reserveMetric=(label,r)=>{const v=r.value&&typeof r.value==='object'?r.value:null;const card=metric(label,{...r,value:v?v.constituted:null},unit);return v?card.replace('</article>','<p class="fx-reserve-detail">Requerido '+number(v.required)+unit+' · Déficit '+number(v.deficit)+unit+'</p></article>'):card;};
     el('fxReserveSummary').innerHTML=metric('FCR requerido',m.fcrRequirement,unit)+metric('FEO requerido',m.feoRequirement,unit)+reserveMetric('Constituição FCR',m.fcrStatus)+reserveMetric('Constituição FEO',m.feoStatus);
-    let r=S.forex&&S.forex.reserves,history=[];const seen=new Set();while(r&&!seen.has(r)){seen.add(r);history.push(`<li>${safe(r.recordedAt)} · FCR ${number(r.fcrConstituted)} · FEO ${number(r.feoConstituted)} · ${safe(r.source)}</li>`);r=r.previous;}
+    const selectedScope=fx.state.operationalSelection(),selectedPeriod=fx.state.accountContext(selectedScope);
+    let r=selectedPeriod.status==='OK'&&selectedPeriod.value.reserves||
+      (S.forex?.reserves?.accountId===selectedScope.accountId&&S.forex.reserves.periodId===selectedScope.periodId?S.forex.reserves:null);
+    const history=[],seen=new Set();while(r&&!seen.has(r)){seen.add(r);history.push(`<li>${safe(r.recordedAt)} · FCR ${number(r.fcrConstituted)} · FEO ${number(r.feoConstituted)} · ${safe(r.source)}</li>`);r=r.previous;}
     el('fxReserveHistory').innerHTML=history.length?'<ol>'+history.join('')+'</ol>':'<p>Nenhuma constituição registrada.</p>';
     const budget=m.operationBudget;
     el('fxBudgetContext').textContent=`Conta ${model.budgetScope.accountId||'não identificada'} · período ${model.budgetScope.periodId||'não identificado'} · ${model.account?.currency||'moeda não informada'} · ${model.budgetScope.operationId?'operação '+model.budgetScope.operationId:'próximo primeiro registro'}. Orçamento: ${number(budget.value)}. ${budget.status}`;

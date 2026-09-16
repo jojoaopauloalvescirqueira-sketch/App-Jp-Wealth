@@ -391,8 +391,8 @@ try:
         page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO')
         click_id(page, 'sessionDeleteConfirm')
         page.wait_for_timeout(500)
-        assert page.evaluate("S.params.saldoIni") == 0, 'dado operacional deveria ser zerado'
-        assert page.evaluate("S.onboarding.operador") == ''
+        assert page.evaluate("S.params.saldoIni") == 12345, 'referência financeira confirmada deveria sobreviver'
+        assert page.evaluate("S.onboarding.operador") == 'Operador Teste'
         assert len(notes_state(page)) == 1, 'Finalizar Sessão não deveria apagar notas'
         notice = page.locator('#sessionNotice').inner_text()
         assert 'Notas' in notice, notice

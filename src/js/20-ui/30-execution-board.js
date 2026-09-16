@@ -4,12 +4,15 @@
   'use strict';
   const fx=root.JPWForex;
   const drafts=new Map(), expanded=new Set(), openedPhases=new Set();
-  let accountChoice=null,instrumentChoice=null,tableSignature=null,leaving=false;
-  let epoch=jpWealthPersistenceEpoch(),dialog=null,dialogReturn=null,observationDirty=false;
+  let instrumentChoice=null,tableSignature=null,leaving=false;
+  let epoch=jpWealthPersistenceEpoch(),dialog=null,dialogReturn=null,observationDirty=false,periodFormAccount=null;
   const num=v=>typeof v==='number'&&Number.isFinite(v);
   const el=id=>document.getElementById(id);
   const key=(pi,oi)=>pi+':'+oi;
-  const current=(pi,oi)=>S.phases?.[pi]?.orders?.[oi];
+  const period=()=>fx.state.accountContext(fx.state.operationalSelection());
+  const current=(pi,oi)=>period().value?.phases?.[pi]?.orders?.[oi];
+  const draftKey=(pi,oi)=>{const s=fx.state.operationalSelection();
+    return [s.accountId||'',s.periodId||'',pi+':'+oi].join('|');};
   const signature=o=>JSON.stringify(o);
   const n=(v,d=2)=>num(v)?v.toLocaleString('pt-BR',{maximumFractionDigits:d}):'Não calculável';
   const label={id:'ID',par:'Instrumento',tipo:'Direção',role:'Papel',lote:'Lote',entry:'Entrada',sl:'Stop',tp:'Alvo',status:'Estado',result:'Resultado',costs:'Custos assinados',costBasis:'Tratamento dos custos',stopValidated:'Stop validado',amplifiesExposure:'Pendente amplia exposição',pendingActive:'Pendente ativa'};
@@ -17,12 +20,12 @@
   function syncEpoch(){
     const next=jpWealthPersistenceEpoch();
     if(next!==epoch&&!jpWealthPersistenceOutcomeIsUnknown()){
-      drafts.clear();expanded.clear();accountChoice=null;instrumentChoice=null;tableSignature=null;
+      drafts.clear();expanded.clear();instrumentChoice=null;tableSignature=null;
       observationDirty=false;if(dialog?.open)dialog.close();
     }
     epoch=next;
   }
-  function model(){syncEpoch();return fx.executionBoard.read(accountChoice?{accountId:accountChoice}:{});}
+  function model(){syncEpoch();return fx.executionBoard.read();}
   function format(m){
     if(!m||!num(m.value))return 'Não calculável';
     if(m.currency)return fmtForexMoney(m.value,{currency:m.currency},2);
@@ -55,8 +58,8 @@
     const grid=el('execWidgetGrid');if(!grid||el('executionBoard'))return;
     grid.classList.add('execution-board');
     const header=document.createElement('div');header.id='executionBoard';header.className='eb-heading';
-    header.innerHTML='<div><p class="eb-eyebrow">EXECUTION BOARD</p><h2>Operação</h2><p id="ebOperationIdentity"></p></div><div class="eb-heading-controls"><label>Conta operacional<select id="ebAccountSelect"></select></label><div id="ebChecklistHost"></div></div>';
-    grid.prepend(header);
+    header.innerHTML='<div><p class="eb-eyebrow">EXECUTION BOARD</p><h2>Painel Operacional</h2><p id="ebOperationIdentity"></p></div><div class="eb-heading-controls"><label>Conta operacional<select id="ebAccountSelect"></select></label><div id="ebChecklistHost"></div></div>';
+    el('exec').prepend(header);
     const checklist=el('execChecklistBtn');if(checklist)el('ebChecklistHost').append(checklist);
     const oldHeading=document.querySelector('#exec .fx-operation-heading');if(oldHeading)oldHeading.hidden=true;
     const regions=[['execClearanceCard','executionBoardAccount'],['execConsolidadoCard','executionBoardRisk'],['execLifoMonitor','executionBoardInstruments']];
@@ -74,12 +77,52 @@
     if(oldExtra){oldExtra.classList.add('eb-legacy-metrics');oldExtra.hidden=true;}
     const phaseCard=el('execPhaseGridsCard');if(phaseCard){phaseCard.classList.add('eb-card');const title=phaseCard.querySelector('h2');if(title)title.textContent='Fases e ordens';}
     el('ebAccountSelect').addEventListener('change',event=>{
-      if(S.activeOperation){render();return;}
-      const choice=event.target.value||null;
-      requestLeave(()=>{accountChoice=choice;render();},'Trocar a conta proposta');
-      if(drafts.size)event.target.value=model().selection.accountId||'';
+      const choice=event.target.value;
+      if(!choice){render();return;}
+      const previous=fx.state.operationalSelection().accountId;
+      requestLeave(()=>{const result=fx.state.selectOperationalAccount(choice);
+        if(!result.ok){alert(result.error);return;}
+        openedPhases.clear();expanded.clear();tableSignature=null;render();
+        if(typeof renderLedger==='function')renderLedger();if(typeof renderContas==='function')renderContas();
+        if(typeof renderMotor==='function')renderMotor();},'Trocar a conta operacional');
+      if(drafts.size)event.target.value=previous||'';
     });
     grid.addEventListener('click',onClick);
+    el('accountPeriodSelect')?.addEventListener('change',event=>{
+      const selected=fx.state.operationalSelection(),periodId=event.target.value;
+      if(!periodId)return;
+      requestLeave(()=>{const result=fx.state.selectOperationalPeriod(selected.accountId,periodId);
+        if(!result.ok){el('accountPeriodFeedback').textContent=result.error;return;}
+        tableSignature=null;render();if(typeof renderLedger==='function')renderLedger();},'Consultar outro período');
+    });
+    el('accountObservedPeriod')?.addEventListener('change',event=>{
+      const id=event.target.value,accountId=fx.state.operationalSelection().accountId;
+      let item=S.forex?.accounts?.[accountId],seen=new Set();
+      while(item&&!seen.has(item)&&item.periodId!==id){seen.add(item);item=item.previous;}
+      if(item?.periodId===id){el('accountPeriodSI').value=String(item.si);
+        el('accountPeriodCurrency').value=item.currency;
+        el('accountPeriodStart').value=item.observedAt.slice(0,10);
+        el('accountPeriodActivate').checked=false;}
+    });
+    el('accountPeriodSave')?.addEventListener('click',()=>{
+      const selected=fx.state.operationalSelection(),id=selected.accountId;
+      const registered=(S.accounts||[]).filter(a=>a?.forexAccountId===id);
+      if(registered.length!==1){el('accountPeriodFeedback').textContent='Confirme a identificação da conta no cadastro antes de registrar o período.';return;}
+      const amount=id=>{const raw=el(id).value.trim();return raw===''?null:Number(raw);};
+      const si=amount('accountPeriodSI'),openingBook=amount('accountPeriodBook');
+      if(si!==null&&(!num(si)||si<=0)||openingBook!==null&&!num(openingBook)){
+        el('accountPeriodFeedback').textContent='SI e saldo book devem ser números válidos ou ficar explicitamente indisponíveis.';return;}
+      const result=fx.state.recordAccountPeriod({accountId:id,startedAt:el('accountPeriodStart').value,
+        currency:el('accountPeriodCurrency').value.trim().toUpperCase(),si,openingBook,
+        source:el('accountPeriodSource').value.trim(),
+        observationPeriodId:el('accountObservedPeriod').value||null,
+        activateCurrentPeriod:el('accountPeriodActivate').checked},
+        {reason:el('accountPeriodReason').value.trim(),expectedEpoch:jpWealthPersistenceEpoch()});
+      el('accountPeriodFeedback').textContent=result.ok?'Período confirmado nesta conta; nenhuma operação antiga foi atribuída.':result.error;
+      if(result.ok){const currentId=S.forex?.accountContexts?.accounts?.[id]?.currentPeriodId;
+        if(el('accountPeriodActivate').checked&&currentId)fx.state.selectOperationalPeriod(id,currentId);
+        tableSignature=null;render();if(typeof renderLedger==='function')renderLedger();}
+    });
     el('phaseContainer').addEventListener('input',onInput);
     el('phaseContainer').addEventListener('change',onInput);
     el('phaseContainer').addEventListener('toggle',event=>{
@@ -87,17 +130,46 @@
       if(node.matches?.('details[data-eb-detail]'))node.open?expanded.add(node.dataset.ebDetail):expanded.delete(node.dataset.ebDetail);
     },true);
   }
+  function renderAccountContext(){
+    const selected=fx.state.operationalSelection(),id=selected.accountId,
+      registered=(S.accounts||[]).find(a=>a?.forexAccountId===id),
+      account=S.forex?.accountContexts?.accounts?.[id],ctx=period(),p=ctx.status==='OK'?ctx.value:null;
+    const identity=el('accountContextIdentity');if(!identity)return;
+    identity.textContent=registered?`${registered.nome||id} · ${registered.platform||'plataforma não verificada'} · ${registered.platformLogin||'login não verificado'} · ${registered.platformCurrency||'moeda não verificada'}`:
+      'Selecione e confirme o cadastro de uma conta. Contas históricas permanecem consultáveis no legado.';
+    const lastBook=p?.ledger?.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1)?.saldo??p?.openingBook??null;
+    let obs=S.forex?.accounts?.[id],seen=new Set();
+    while(obs&&!seen.has(obs)&&obs.periodId!==p?.periodId){seen.add(obs);obs=obs.previous;}
+    const equity=obs&&p&&obs.periodId===p.periodId?obs.equity:null;
+    const fmt=v=>num(v)?fmtForexMoney(v,{currency:p?.currency||registered?.platformCurrency||null}):'Indisponível';
+    updateHTML('accountContextMetrics',`<div class="metric"><div class="k">SI do período</div><div class="v sm">${esc(fmt(p?.si))}</div></div><div class="metric"><div class="k">Saldo inicial book</div><div class="v sm">${esc(fmt(p?.openingBook))}</div></div><div class="metric"><div class="k">Último saldo book</div><div class="v sm">${esc(fmt(lastBook))}</div></div><div class="metric"><div class="k">Equity observada</div><div class="v sm">${esc(fmt(equity))}</div></div><div class="metric"><div class="k">Operação em andamento</div><div class="v sm">${esc(p?.activeOperation?.operationId||'Nenhuma')}</div></div>`);
+    const periodSelect=el('accountPeriodSelect'),periodList=Object.values(account?.periods||{}).sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
+    if(document.activeElement!==periodSelect){periodSelect.innerHTML='<option value="">Sem período confirmado</option>'+periodList.map(x=>`<option value="${esc(x.periodId)}">${esc(x.startedAt)} · ${esc(x.periodId)} · ${esc(x.currency)}</option>`).join('');
+      periodSelect.value=selected.periodId||'';}
+    if(periodFormAccount!==id){periodFormAccount=id;el('accountPeriodCurrency').value=registered?.platformCurrency||'';
+      el('accountPeriodStart').value='';el('accountPeriodSI').value='';el('accountPeriodBook').value='';
+      el('accountPeriodSource').value='';el('accountPeriodReason').value='';}
+    const obsSelect=el('accountObservedPeriod');if(document.activeElement!==obsSelect){
+      let item=S.forex?.accounts?.[id],seenObs=new Set(),observed=[];
+      while(item&&!seenObs.has(item)){seenObs.add(item);if(!account?.periods?.[item.periodId])
+        observed.push(item);item=item.previous;}
+      const prior=obsSelect.value;
+      obsSelect.innerHTML='<option value="">Novo período sem vínculo observado</option>'+observed.map(x=>`<option value="${esc(x.periodId)}">${esc(x.periodId)} · SI ${esc(String(x.si))} ${esc(x.currency)}</option>`).join('');
+      obsSelect.value=observed.some(x=>x.periodId===prior)?prior:'';
+    }
+  }
   function render(){
     if(!fx.executionBoard||typeof S==='undefined'||!S)return;
-    prepareShell();const m=model();
+    prepareShell();const m=model();renderAccountContext();
     const select=el('ebAccountSelect');if(!select)return;
     const options=m.selection?.accounts||[];
     if(document.activeElement!==select){
       select.innerHTML='<option value="">Selecionar conta</option>'+options.map(a=>`<option value="${esc(a.accountId||a.forexAccountId||a.id)}">${esc(a.name||a.label||a.nome||a.accountId||a.id)}${(a.tipo||a.type)==='MESTRE'?' · Mestre':''}</option>`).join('');
       select.value=m.selection?.accountId||'';
     }
-    select.disabled=!!S.activeOperation;
-    el('ebOperationIdentity').textContent=S.activeOperation?`Operação ${S.activeOperation.operationId} · período ${m.scope?.periodId||'não identificado'} · ${m.scope?.currency||'moeda não identificada'}`:'Nova operação · a conta será confirmada ao salvar a primeira ordem.';
+    select.disabled=!options.length;
+    el('ebOperationIdentity').textContent=m.scope?.operationId?`Operação ${m.scope.operationId} · período ${m.scope.periodId||'não identificado'} · ${m.scope.currency||'moeda não identificada'}`:
+      `Conta ${m.selection?.accountId||'não selecionada'} · ${m.scope?.periodId?'nova operação neste período':'registre um período em Contas'}.`;
     const account=m.accountRecord||m.account||{},capital=m.capital||{},risk=m.risk||{},eco=m.economics||{};
     updateHTML('executionBoardAccount',`<div class="eb-section-head"><div><p class="eb-eyebrow">01 · CONTEXTO</p><h3>Conta e proteção</h3></div><button type="button" class="reset-btn" data-eb-account-facts>Registrar observação da conta</button></div><p class="eb-context-line">${esc([account.name||account.nome||m.selection?.accountId,account.platform||account.plataforma,account.login||account.accountNumber,m.scope?.currency].filter(Boolean).join(' · ')||m.selection?.reason||'Selecione uma conta cadastrada.')}</p><div class="eb-metrics">${metric('Saldo registrado',capital.book,{note:'Cadastro atual · saldo book; não é equity flutuante.'})}${metric('Equity observada',capital.equity)}${metric('SI do período',capital.si)}${metric('Resultado do período',capital.periodResult||capital.result,{note:'Base e período registrados.'})}${metric('Drawdown',capital.drawdown,{id:'drawdown',limit:22})}${metric('Encerramento estatutário',capital.stopoutEquity,{note:'Limite de DD em 22%; não é stop-out da corretora.'})}</div><div class="eb-phase-scale" aria-label="Faixas de drawdown da conta">${fx.policy.phases.map(p=>`<span>${esc(p.name)}<small>${esc(String(p.ddMinPercent??p.lower??''))}–${esc(String(p.ddMaxPercent??p.upper??22))}%</small></span>`).join('')}</div><p class="eb-context-line">Responsáveis declarados da sessão: ${esc([S.onboarding?.operador,S.onboarding?.supervisor].filter(Boolean).join(' · ')||'Não informados')}. Sem vínculo cadastral por conta.</p><p class="eb-context-line">Fase da conta: <strong>${esc(fx.policy.phases[(risk.accountPhase?.value||0)-1]?.name||(risk.accountPhase?.compulsoryClose?'Encerramento compulsório':'Não calculável'))}</strong> · Grade declarada: <strong>${esc(m.declaredGrid?.name||m.grid?.name||S.forex?.grid?.declaredPhase||'Não declarada')}</strong></p><details class="eb-findings"><summary>Execução normativa bloqueada · consultar motivos</summary><p>Registrar um fato não autoriza sua execução.</p><ul>${(m.findings||[]).map(f=>`<li>${esc(f.message||f.reason||f.code||String(f))}</li>`).join('')}</ul><button type="button" class="reset-btn" data-eb-motor>Revisar dados no Motor</button></details>`);
     updateHTML('executionBoardRisk',`<div class="eb-section-head"><div><p class="eb-eyebrow">02 · RISCO REGISTRADO</p><h3>Exposição e alavancagem</h3></div></div><div class="eb-metrics">${metric('Stops abertos',risk.open,{id:'open'})}${metric('Pendentes ampliadoras',risk.pending||risk.aggregate?.pendingRiskMetric)}${metric('Risco comprometido V11',risk.committed,{id:'committed'})}${metric('Nocional bruto',risk.grossNotional)}${metric('Alavancagem',risk.leverage,{limit:risk.leverageLimit?.value||risk.phaseLeverageLimit?.value,note:'Nocional bruto ÷ min(SI, equity).'})}${metric('Capacidade prudencial restante',risk.prudentialRemaining||risk.prudential,{note:'Não é margem livre da corretora nem autorização de admissão.'})}</div><div class="eb-economic"><p class="eb-eyebrow">LEITURAS ECONÔMICAS · SEM CRÉDITO NORMATIVO</p><div class="eb-metrics">${metric('Compensada pelas defesas',eco.compensatedDefenses,{id:'compensatedDefenses'})}${metric('Compensada da operação',eco.compensatedAll,{id:'compensatedAll'})}${metric('Resultado líquido realizado',eco.closedNetAll,{id:'closedNetAll'})}</div><p>Risco aberto menos resultado líquido assinado. Lucros positivos não aumentam o risco permitido.</p></div>`);
@@ -107,6 +179,8 @@
     let notice=el('ebUnsupported');if(!notice){notice=document.createElement('p');notice.id='ebUnsupported';notice.className='eb-row-feedback';el('executionBoard').append(notice);}
     notice.textContent=supported?'':'Versão do agregado Forex incompatível. Apenas leitura; preserve a base.';notice.hidden=supported;
     for(const button of el('execWidgetGrid').querySelectorAll('[data-addorder],[data-eb-save-row],[data-eb-observation],[data-eb-update-quotes],[data-eb-retry-quotes],[data-eb-account-facts]'))if(!supported)button.disabled=true;
+    if(el('exec')?.classList.contains('active')&&typeof renderHeaderReadout==='function')
+      renderHeaderReadout(compute());
   }
   function renderInstruments(m){
     const instruments=m.instruments||[];
@@ -116,7 +190,7 @@
     const select=el('ebInstrumentSelect');if(select)select.onchange=()=>{instrumentChoice=select.value;renderInstruments(model());};
   }
   function field(pi,oi,o,f,choices){
-    const readonly=o.recordStatus==='voided'||!fx.state.supported(),draft=drafts.get(key(pi,oi));
+    const readonly=o.recordStatus==='voided'||!fx.state.supported(),draft=drafts.get(draftKey(pi,oi));
     const value=draft&&Object.prototype.hasOwnProperty.call(draft.values,f)?draft.values[f]:o[f];
     const attrs=`data-p="${pi}" data-o="${oi}" data-f="${f}" aria-label="${esc(label[f])} · ordem ${pi+1}.${oi+1}" aria-describedby="ebError-${pi}-${oi}" ${readonly?'disabled':''}`;
     if(choices)return `<select ${attrs}>${choices.map(([v,t])=>`<option value="${esc(v)}" ${String(value??'')===v?'selected':''}>${esc(t)}</option>`).join('')}</select>`;
@@ -124,7 +198,7 @@
     return `<input ${attrs} type="text" ${numericFields.has(f)?'inputmode="decimal"':''} value="${esc(value??'')}" placeholder="${numericFields.has(f)?'—':'ID'}" autocomplete="off">`;
   }
   function rowHTML(pi,oi,o){
-    const k=key(pi,oi),draft=drafts.get(k),live=operationOrderIsLive(o),readonly=o.recordStatus==='voided'||!fx.state.supported();
+    const k=key(pi,oi),draft=drafts.get(draftKey(pi,oi)),live=operationOrderIsLive(o),readonly=o.recordStatus==='voided'||!fx.state.supported();
     const cell=(f,choices)=>`<td>${field(pi,oi,o,f,choices)}</td>`;
     const instruments=[['','Selecionar'],...(S.instruments||[]).map(i=>[i.name,i.name])];
     if(o.par&&!instruments.some(([x])=>x===o.par))instruments.push([o.par,o.par+' · não cadastrado']);
@@ -133,11 +207,12 @@
   function renderPhases(m){
     if(!fx.executionBoard)return;
     m=m||model();const container=el('phaseContainer');if(!container)return;
-    const next=JSON.stringify({supported:fx.state.supported(),phases:(S.phases||[]).map(p=>({name:p.faseNome,policy:p.policyVersion,orders:p.orders}))});
+    const phaseList=period().value?.phases||[];
+    const next=JSON.stringify({scope:fx.state.operationalSelection(),supported:fx.state.supported(),phases:phaseList.map(p=>({name:p.faseNome,policy:p.policyVersion,orders:p.orders}))});
     // Quote/account repaints update numbers only. Live input nodes and cursor stay mounted.
     if(next!==tableSignature||!container.querySelector('.eb-order-table')){
       const focus=document.activeElement,focusKey=focus?.dataset?.f?{p:focus.dataset.p,o:focus.dataset.o,f:focus.dataset.f,start:focus.selectionStart,end:focus.selectionEnd}:null;
-      container.innerHTML=`<p class="eb-context-line">${S.phases?.length===4?'Grades LEGACY preservadas; os quatro índices não correspondem às seis fases V11.':'Fase de registro da ordem e fase da conta são informações distintas.'} Totais usam somente registros confirmados.</p><div id="ebPhaseSummary" class="eb-table-scroll"></div>`+(S.phases||[]).map((p,pi)=>`<details class="phase eb-phase" data-phase="${pi}" ${openedPhases.has(pi)||(!tableSignature&&pi===0)?'open':''}><summary><span>${esc(S.phases.length===4?'LEGACY · '+(p.faseNome||pi+1):fx.policy.phases[pi]?.name||p.faseNome)}</span><span>${(p.orders||[]).length} linha(s)</span></summary><div class="phase-body"><div class="eb-table-scroll" tabindex="0" role="region" aria-label="Ordens da fase ${pi+1}"><table class="otable eb-order-table"><thead><tr>${['ID','Instrumento','Direção','Papel','Lote','Entrada','Stop','Alvo','Estado','Risco confirmado','Ações'].map(t=>'<th scope="col">'+t+'</th>').join('')}</tr></thead><tbody>${(p.orders||[]).map((o,oi)=>rowHTML(pi,oi,o)).join('')}</tbody></table></div><button type="button" class="reset-btn" data-addorder="${pi}">+ Adicionar ordem</button><div id="ebPhaseDiagnostics-${pi}"></div></div></details>`).join('');
+      container.innerHTML=`<p class="eb-context-line">${phaseList.length===4?'Grades LEGACY preservadas; os quatro índices não correspondem às seis fases V11.':'Fase de registro da ordem e fase da conta são informações distintas.'} Totais usam somente registros confirmados.</p><div id="ebPhaseSummary" class="eb-table-scroll"></div>`+phaseList.map((p,pi)=>`<details class="phase eb-phase" data-phase="${pi}" ${openedPhases.has(pi)||(!tableSignature&&pi===0)?'open':''}><summary><span>${esc(phaseList.length===4?'LEGACY · '+(p.faseNome||pi+1):fx.policy.phases[pi]?.name||p.faseNome)}</span><span>${(p.orders||[]).length} linha(s)</span></summary><div class="phase-body"><div class="eb-table-scroll" tabindex="0" role="region" aria-label="Ordens da fase ${pi+1}"><table class="otable eb-order-table"><thead><tr>${['ID','Instrumento','Direção','Papel','Lote','Entrada','Stop','Alvo','Estado','Risco confirmado','Ações'].map(t=>'<th scope="col">'+t+'</th>').join('')}</tr></thead><tbody>${(p.orders||[]).map((o,oi)=>rowHTML(pi,oi,o)).join('')}</tbody></table></div><button type="button" class="reset-btn" data-addorder="${pi}">+ Adicionar ordem</button><div id="ebPhaseDiagnostics-${pi}"></div></div></details>`).join('');
       tableSignature=next;
       if(focusKey){const target=container.querySelector(`[data-p="${focusKey.p}"][data-o="${focusKey.o}"][data-f="${focusKey.f}"]`);target?.focus();if(target?.setSelectionRange&&focusKey.start!=null)target.setSelectionRange(focusKey.start,focusKey.end);}
     }
@@ -149,7 +224,10 @@
     for(const phase of m.phases||[])for(const row of phase.rows||[]){const target=container.querySelector(`[data-eb-row-risk="${row.pi}:${row.oi}"]`);if(target)target.textContent=format(row.risk||row.openRisk);}
   }
   function getDraft(pi,oi){
-    syncEpoch();const k=key(pi,oi);if(!drafts.has(k)){const o=current(pi,oi);drafts.set(k,{before:signature(o),orderId:o?.orderId,version:o?.recordVersion,values:{},reason:'',error:''});}return drafts.get(k);
+    syncEpoch();const k=draftKey(pi,oi);if(!drafts.has(k)){const o=current(pi,oi),ctx=period();
+      drafts.set(k,{before:signature(o),orderId:o?.orderId,version:o?.recordVersion,
+        operationId:ctx.value?.activeOperation?.operationId||null,contextRevision:ctx.revision,
+        values:{},reason:'',error:''});}return drafts.get(k);
   }
   function onInput(event){
     const target=event.target;
@@ -167,9 +245,13 @@
     const field=fieldName?document.querySelector(`[data-p="${pi}"][data-o="${oi}"][data-f="${fieldName}"]`):document.querySelector(`[data-eb-reason="${key(pi,oi)}"]`);field?.setAttribute('aria-invalid','true');field?.focus();return false;
   }
   function saveRow(pi,oi,{allowClose=false}={}){
-    syncEpoch();const d=drafts.get(key(pi,oi));if(!d)return true;
+    syncEpoch();const dk=draftKey(pi,oi),d=drafts.get(dk);if(!d)return true;
     if(jpWealthPersistenceOutcomeIsUnknown())return rowError(pi,oi,'Gravação com desfecho desconhecido. Confira a recuperação antes de uma nova tentativa.');
     const old=current(pi,oi);if(!old||signature(old)!==d.before)return rowError(pi,oi,'A versão confirmada mudou. Cancele a linha para reler antes de editar.');
+    if(d.operationId&&period().value?.activeOperation?.operationId!==d.operationId)
+      return rowError(pi,oi,'A identidade da operação mudou. Reabra este rascunho antes de salvar.');
+    if(period().revision!==d.contextRevision)
+      return rowError(pi,oi,'O contexto da conta/período foi alterado. Reabra a linha antes de salvar.');
     const changes={};
     for(const [f,raw] of Object.entries(d.values)){
       const value=numericFields.has(f)?String(raw).trim()===''?null:orderParseResult(raw):raw;
@@ -179,17 +261,22 @@
     if(changes.status==='Fechada'&&old.status!=='Fechada'&&!allowClose){
       return rowError(pi,oi,'Use Fechar ordem nos detalhes para confirmar resultado e encerramento. As outras alterações continuam no rascunho.','status');
     }
-    if(!Object.keys(changes).length){drafts.delete(key(pi,oi));tableSignature=null;render();return true;}
+    if(!Object.keys(changes).length){drafts.delete(dk);tableSignature=null;render();return true;}
     if(operationOrderIsLive(old)&&!d.reason.trim())return rowError(pi,oi,'Informe um motivo para salvar a correção inteira.');
     const m=model(),scope=m.scope||{};
-    if(!S.activeOperation&&!operationOrderIsLive(old)&&(!m.selection?.accountId||!scope.periodId))return rowError(pi,oi,'Selecione uma conta cadastrada com observação de SI/equity e período antes de registrar.');
+    if(!m.selection?.accountId||!scope.periodId)return rowError(pi,oi,'Selecione uma conta cadastrada e registre seu período em Contas antes de gravar o fato.');
     const options={reason:d.reason.trim()||'Linha confirmada pelo operador'};
-    if(!S.activeOperation&&!operationOrderIsLive(old)){options.accountId=m.selection.accountId;options.periodId=scope.periodId;}
+    options.accountId=m.selection.accountId;options.periodId=scope.periodId;
     const result=operationRecordOrders([{pi,oi,changes,expectedVersion:d.version,orderId:d.orderId}],options);
     if(!result.ok)return rowError(pi,oi,result.error||result.mensagem||'Registro recusado. O rascunho foi preservado.');
-    drafts.delete(key(pi,oi));tableSignature=null;root.render();render();return true;
+    drafts.delete(dk);
+    const latest=period();for(const remaining of drafts.values()){
+      if(remaining.operationId===null)remaining.operationId=latest.value?.activeOperation?.operationId||null;
+      remaining.contextRevision=latest.revision;
+    }
+    tableSignature=null;root.render();render();return true;
   }
-  function cancelRow(pi,oi){drafts.delete(key(pi,oi));tableSignature=null;render();document.querySelector(`[data-p="${pi}"][data-o="${oi}"][data-f="id"]`)?.focus();return true;}
+  function cancelRow(pi,oi){drafts.delete(draftKey(pi,oi));tableSignature=null;render();document.querySelector(`[data-p="${pi}"][data-o="${oi}"][data-f="id"]`)?.focus();return true;}
   function ensureDialog(){
     if(dialog)return dialog;dialog=document.createElement('dialog');dialog.id='executionBoardDialog';dialog.className='eb-dialog';document.body.append(dialog);
     dialog.addEventListener('cancel',event=>{event.preventDefault();if(observationDirty&&!confirm('Descartar a observação não salva?'))return;observationDirty=false;dialog.close();});
@@ -204,7 +291,7 @@
     el('ebLeaveStay').onclick=()=>box.close();
     const proceed=()=>{box.close();leaving=true;try{callback();}finally{leaving=false;}};
     el('ebLeaveDiscard').onclick=()=>{drafts.clear();tableSignature=null;render();proceed();};
-    el('ebLeaveSave').onclick=()=>{box.close();for(const k of [...drafts.keys()]){const [pi,oi]=k.split(':').map(Number);if(!saveRow(pi,oi))return;}proceed();};
+    el('ebLeaveSave').onclick=()=>{box.close();for(const k of [...drafts.keys()]){const [pi,oi]=k.split('|').at(-1).split(':').map(Number);if(!saveRow(pi,oi))return;}proceed();};
     el('ebLeaveStay').focus();return false;
   }
   function guardNavigation(plan,resume){
@@ -244,7 +331,10 @@
     if(button.hasAttribute('data-eb-retry-quotes')){fx.marketQuotes.retry();return;}
     if(button.hasAttribute('data-eb-observation')){observationForm();return;}
     if(button.hasAttribute('data-eb-motor')){JPWNavigation.navigateLocal('exec','motor');return;}
-    if(button.hasAttribute('data-eb-account-facts')){requestLeave(()=>{JPWNavigation.navigateLocal('exec','motor');const form=el('fxAccountFacts');const idx=model().selection.accountIndex;if(form&&Number.isInteger(idx))form.elements.accountIndex.value=String(idx);form?.querySelector('[name=si]')?.focus();},'Registrar observação da conta');return;}
+    if(button.hasAttribute('data-eb-account-facts')){requestLeave(()=>{
+      JPWNavigation.navigateLocal('exec','accounts');const form=el('fxAccountFacts');
+      const idx=model().selection.accountIndex;if(form&&Number.isInteger(idx))form.elements.accountIndex.value=String(idx);
+      form?.querySelector('[name=si]')?.focus();},'Registrar observação da conta');return;}
     const parse=attr=>(button.getAttribute(attr)||'').split(':').map(Number);
     if(button.hasAttribute('data-eb-save-row')){saveRow(...parse('data-eb-save-row'));return;}
     if(button.hasAttribute('data-eb-cancel-row')){cancelRow(...parse('data-eb-cancel-row'));return;}
@@ -253,7 +343,7 @@
     if(button.hasAttribute('data-delorder')){
       const [pi,oi]=parse('data-delorder');requestLeave(()=>{const o=current(pi,oi);const reason=operationOrderIsLive(o)?prompt('Motivo da anulação. A ordem e suas versões serão preservadas:'):'Excluir rascunho';
       if(!reason?.trim())return;if(!operationOrderIsLive(o)&&!confirm('Excluir o rascunho desta linha?'))return;
-      if(operationRecordFeedback(operationVoidOrder(pi,oi,reason))){drafts.delete(key(pi,oi));tableSignature=null;root.render();render();}},'Revisar alterações antes de excluir ou anular');return;
+      if(operationRecordFeedback(operationVoidOrder(pi,oi,reason))){drafts.delete(draftKey(pi,oi));tableSignature=null;root.render();render();}},'Revisar alterações antes de excluir ou anular');return;
     }
     if(button.hasAttribute('data-eb-close-row')){
       const [pi,oi]=parse('data-eb-close-row');
@@ -269,6 +359,6 @@
   root.addEventListener('beforeunload',event=>{if(hasDrafts()){event.preventDefault();event.returnValue='';}});
   fx.executionBoardUI={render,renderPhases,hasDrafts,saveRow,cancelRow,requestLeave,guardNavigation,
     discard(){drafts.clear();expanded.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
-    getSelection:()=>({accountId:accountChoice,instrumentId:instrumentChoice})};
+    getSelection:()=>({accountId:fx.state.operationalSelection().accountId,instrumentId:instrumentChoice})};
   render();
 })(globalThis);

@@ -1,3 +1,9 @@
+# Em execução — Operação integrada por conta (2026-09-15)
+
+Contrato [CHG/CTX](CHG-FOREX-OPERATION-ACCOUNT-CONTEXT-20260915.md), N2/A3 e controles N3 de contexto financeiro. Branch `codex/forex-operation-account-context-20260915`, base Git `8b2ef27` mais os 16 caminhos reproduzidos do candidate de navegação aprovado. Objetivo: quatro subseções em Operação, períodos/ledger/operação independentes por conta e preservação longitudinal em Finalizar Sessão. Dados reais não serão examinados; main, candidate anterior, stash e demais worktrees permanecem preservados. Testes, candidate, aceite e integração são gates separados.
+
+## Histórico anterior preservado
+
 # Em execução — Forex Execution Board (2026-09-15)
 
 Contrato [CHG/CTX](CHG-FOREX-EXECUTION-BOARD-20260915.md), N2/N3 autorizado. Branch codex/forex-execution-board-20260915, base integrada 594c86eb. Projeções factuais, contexto de conta/instrumento, cotações diárias e edição por linha. Implementação local em validação final. Identidade, gates, auditoria e recovery finais serão conferidos em ../evidence da worktree; aceite/integração pendentes. Main e demais campanhas preservadas.

@@ -189,7 +189,18 @@ function orderNotional(o){
 }
 function netOpAtual(){ // resultado líquido fechado da OPERAÇÃO ATUAL (grades vivas) — Art. 9.2 + perdas
   let n=0;
-  S.phases.forEach(ph=>ph.orders.forEach(o=>{ if(o.status==='Fechada'&&o.recordStatus!=='voided'){if(!Number.isFinite(o.result)){n=NaN;return;}n+=o.result;} }));
+  const selection=JPWForex.state.operationalSelection();
+  const context=JPWForex.state.accountContext(selection);
+  if(context.status!=='OK')return NaN;
+  context.value.phases.forEach(ph=>ph.orders.forEach(o=>{
+    if(o.status==='Fechada'&&o.recordStatus!=='voided'){
+      if(o.accountId!==selection.accountId||o.periodId!==selection.periodId||
+        o.currency!==context.value.currency||!Number.isFinite(o.result)){n=NaN;return;}
+      const net=JPWForex.executionBoard?.closedNetResult(o);
+      if(net?.status!=='OK'||!Number.isFinite(net.value)){n=NaN;return;}
+      n+=net.value;
+    }
+  }));
   return n;
 }
 function perdaCicloArq(){ // perdas realizadas de operações já arquivadas: nunca somem do DD (Art. 3.4§2)

@@ -119,22 +119,28 @@ function bindChartCrosshair(svg, cfg){
 function renderDashCharts(){
   const box=$('dashCharts'); if(!box) return;
   const riskBox=$('dashRiskDetail');
-  const saldoIni=S.params.saldoIni||0;
+  const selection=JPWForex.state.operationalSelection(),context=JPWForex.state.accountContext(selection);
+  const saldoIni=context.status==='OK'?context.value.openingBook:null;
+  if(!(typeof saldoIni==='number'&&Number.isFinite(saldoIni)&&saldoIni>0)){
+    box.innerHTML='<p class="muted">Série indisponível: registre o saldo inicial contábil do período da conta selecionada.</p>';
+    if(riskBox)riskBox.innerHTML='';return;
+  }
   const led=ledgerSorted();
-  const proj=acctProjection(), m=proj.m;
-  const start=proj.start, today=todayISO();
+  const start=new Date(context.value.startedAt+'T00:00:00'),today=todayISO();
+  // O planejamento antigo é global e não possui vínculo inequívoco de conta.
+  // Nenhuma expectativa é desenhada sobre a série factual desta conta.
+  const projPts=[];
   const dOff=iso=>(new Date(iso+'T00:00:00')-start)/86400000;
-  const projLast=proj.rows.length?dOff(proj.rows[proj.rows.length-1].iso):1;
+  const projLast=1;
   const realLast=led.length?dOff(led[led.length-1].data):0;
   const span=Math.max(projLast, realLast, 1);
-  const projPts=proj.rows.map(r=>({x:dOff(r.iso), y:r.close})).filter(p=>p.x>=0&&p.x<=span);
   const realPts=(saldoIni>0?[{x:0,y:saldoIni}]:[]).concat(
-    led.map(e=>({x:dOff(e.data), y:+e.saldo||0})).filter(p=>p.x>=0&&p.x<=span));
+    led.map(e=>({x:dOff(e.data), y:e.saldo})).filter(p=>p.x>=0&&p.x<=span&&Number.isFinite(p.y)));
   // drawdown real (underwater): pico corrente desde o saldo inicial
   let peak=saldoIni; const ddPts=[{x:0,y:0}];
-  led.forEach(e=>{ const b=+e.saldo||0; if(b>peak)peak=b; const dd=peak>0?(b-peak)/peak:0; ddPts.push({x:dOff(e.data), y:dd}); });
+  led.forEach(e=>{ const b=e.saldo; if(!Number.isFinite(b))return;if(b>peak)peak=b; const dd=peak>0?(b-peak)/peak:0; ddPts.push({x:dOff(e.data), y:dd}); });
   // métricas
-  const balNow=led.length?(+led[led.length-1].saldo||0):saldoIni;
+  const balNow=led.length?led[led.length-1].saldo:saldoIni;
   const lucroAcum=balNow-saldoIni;
   const evolPct=saldoIni>0?lucroAcum/saldoIni:0;
   const ddAtual=ddPts.length?ddPts[ddPts.length-1].y:0;
@@ -143,7 +149,7 @@ function renderDashCharts(){
   const chartCfgs={};
   // ---- SVG 1: evolução patrimonial (real) vs expectativa (projeção)
   function svgMoney(){
-    const ys=[...projPts.map(p=>p.y),...realPts.map(p=>p.y),saldoIni,m.saldoFim].filter(v=>isFinite(v));
+    const ys=[...projPts.map(p=>p.y),...realPts.map(p=>p.y),saldoIni].filter(v=>Number.isFinite(v));
     let ymin=Math.min(...ys), ymax=Math.max(...ys);
     const pad=(ymax-ymin)*0.08||Math.max(1,ymax*0.02); ymin-=pad; ymax+=pad;
     const W=720,H=210,L=CH.L,R=CH.R,T=CH.T,B=CH.B;
@@ -223,13 +229,9 @@ function renderDashCharts(){
     </svg>`;
   }
   // ---- comparação mensal: expectativa (meta mensal do perfil) vs realizado
-  const fimDoMes={}; led.forEach(e=>{ fimDoMes[e.data.slice(0,7)]=+e.saldo||0; });
+  const fimDoMes={}; led.forEach(e=>{ fimDoMes[e.data.slice(0,7)]=e.saldo; });
   const keys=Object.keys(fimDoMes).sort(); let prev=saldoIni, mrows='';
-  keys.forEach(k=>{
-    const realRet=prev>0?fimDoMes[k]/prev-1:0, esperRet=m.metaMes, delta=realRet-esperRet;
-    mrows+=`<tr><td class="hl">${esc(k)}</td><td style="text-align:right">${(esperRet*100).toFixed(2).replace('.',',')}%</td><td style="text-align:right"><span class="${realRet>=0?'pos':'neg'}">${(realRet*100).toFixed(2).replace('.',',')}%</span></td><td style="text-align:right"><span class="${delta>=0?'pos':'neg'}">${(delta*100).toFixed(2).replace('.',',')}%</span></td></tr>`;
-    prev=fimDoMes[k];
-  });
+  // Metas do planejamento global não são comparáveis a um período desta conta.
   const table=mrows?`<table class="dtable" style="margin-top:14px;max-width:520px">
     <thead><tr><th>Mês</th><th class="num">Esperado</th><th class="num">Real</th><th class="num">Δ real−esper.</th></tr></thead>
     <tbody>${mrows}</tbody></table>`:'';

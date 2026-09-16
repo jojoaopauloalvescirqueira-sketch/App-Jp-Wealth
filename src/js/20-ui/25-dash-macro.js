@@ -85,6 +85,10 @@ function dmDate(value){
 // getOperationalClearance(c) — o mesmo padrão de renderOperationalClearance(c).
 // Nenhum rótulo de "Equity": ADR-0001 está pendente e esta mudança não decide norma.
 function dmForexHTML(c){
+  const selection=JPWForex.state.operationalSelection(),context=JPWForex.state.accountContext(selection);
+  if(context.status!=='OK')return {html:dmNote('Selecione a conta operacional e confirme seu período em Operação → Contas.'),tom:'warn'};
+  const registration=(S.accounts||[]).find(a=>a?.forexAccountId===selection.accountId);
+  const unit=context.value.currency;
   const cl = getOperationalClearance(c);
   const TOM = {clear:'ok', caution:'warn', pending:'warn', reduce:'bad', blocked:'bad'};
   const tom = TOM[cl.status] || null;
@@ -93,7 +97,8 @@ function dmForexHTML(c){
   const ddPct = c.mddScaled > 0 ? c.dd / c.mddScaled : null;
   const riscoPct = c.tetoRisco > 0 ? c.riscoTotal / c.tetoRisco : null;
   const alavPct = c.tetoAlav > 0 ? c.alavCar / c.tetoAlav : null;
-  let corpo = '<div class="dm-primary">'+dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
+  let corpo = '<div class="dm-primary">'+dmRow('Conta operacional',esc(registration?.nome||selection.accountId)+
+    ' · '+esc(unit)+' · '+esc(context.value.startedAt))+dmRow('Veredito', '<b class="dm-status dm-status-' + esc(cl.status) + '">' + esc(cl.title) + '</b>');
   corpo += dmFacts(
       dmFact('Fase vigente', esc(c.fase && c.fase.nome ? c.fase.nome : '—'))
     + dmFact('Drawdown', fmtPct(c.dd), 'teto ' + fmtPct(c.mddScaled), ddPct, barTom)
@@ -111,10 +116,10 @@ function dmForexHTML(c){
   const led = ledgerSorted();
   const last = led.length ? led[led.length-1] : null;
   corpo += dmSection('Contabilidade', last
-    ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtMoney2(last.saldo)+'</b>')
-      + dmRow('Resultado do dia', '<b>'+fmtMoney2(last.resultado)+'</b>')
+    ? dmRow('Último fechamento · '+dmDate(last.data), '<b>'+fmtForexMoney(last.saldo,{currency:unit})+'</b>')
+      + dmRow('Resultado do dia', '<b>'+fmtForexMoney(last.resultado,{currency:unit})+'</b>')
     : dmNote('Nenhum fechamento registrado neste período.'));
-  corpo += dmSection('Planejamento', dmSafe(dmPlanningHTML).html);
+  corpo += dmSection('Planejamento independente', dmNote('O plano atual é global; seus valores não compõem os totais desta conta.')+dmSafe(dmPlanningHTML).html);
   corpo += '</div>';
   corpo += dmLinks(dmLink('Contas', 'forex-account')+dmLink('Checklist pré-trade', 'check')
     +dmLink('Contabilidade', 'forex-reconciliation')+dmLink('Planejamento', 'forex-planning'));

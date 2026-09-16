@@ -83,10 +83,18 @@
           ...(!onboarding.complete?[onboardingCompletionText(onboarding)]:[])].join('\n'),'forex-overview');
     // The detailed completion model can disagree with the summary's done flag.
     // Preserve both producers in one card; never change their financial rules.
-    const orders=(S.phases||[]).flatMap(phase=>Array.isArray(phase.orders)?phase.orders:[]);
-    const review=orders.filter(o=>o && (o.needsReview || o.stopPhaseWarning));
-    if(review.length) add(next,'forex:order-review','forex','warning','Ordens aguardam revisão',
-      review.length+' ordem(ns) marcada(s) pelo mecanismo existente.','forex-operation');
+    const contexts=S.forex?.accountContexts?.accounts||{};
+    for(const [accountId,account] of Object.entries(contexts)){
+      const registration=(S.accounts||[]).find(a=>a?.forexAccountId===accountId);
+      for(const [periodId,period] of Object.entries(account.periods||{})){
+        const orders=(period.phases||[]).flatMap(phase=>Array.isArray(phase.orders)?phase.orders:[]);
+        const review=orders.filter(o=>o&&(o.needsReview||o.stopPhaseWarning));
+        if(review.length)add(next,'forex:order-review:'+accountId+':'+periodId,'forex','warning',
+          'Ordens aguardam revisão · '+(registration?.nome||accountId),
+          review.length+' ordem(ns) · período '+period.startedAt+' · '+period.currency+'.',
+          'forex-operation@'+accountId+'@'+periodId);
+      }
+    }
     if(S.protocolBreaches>0) add(next,'forex:protocol','forex','warning','Registros de quebra de protocolo',
       S.protocolBreaches+' registro(s) no ciclo. Este total não indica novos eventos nesta sessão.','forex-operation');
     if(typeof staleInfo==='function' && typeof daysStale==='function' && Array.isArray(S.instruments) && S.instruments.length){
@@ -278,6 +286,20 @@
   function go(item){
     close(false);
     const opener=el('headerNotificationsBtn'), target=item.go;
+    if(target?.startsWith('forex-operation@')){
+      const [,accountId,periodId]=target.split('@');
+      const navigateScoped=()=>{
+        const selected=window.JPWForex?.state?.selectOperationalAccount(accountId);
+        const period=selected?.ok?window.JPWForex.state.selectOperationalPeriod(accountId,periodId):null;
+        if(period?.ok){JPWNavigation.navigate('forex-operation');JPWNavigation.focusCurrentScreen();}
+        else {JPWNavigation.navigate('forex-operation');JPWNavigation.navigateLocal('exec','accounts');
+          JPWNavigation.focusCurrentScreen();}
+      };
+      if(window.JPWForex?.executionBoardUI?.hasDrafts())
+        window.JPWForex.executionBoardUI.requestLeave(navigateScoped,'Abrir notificação de outra conta');
+      else navigateScoped();
+      return;
+    }
     if(target==='backup'||target==='profile'){ openSettingsModal(target==='profile'?'account':'backup',opener); return; }
     if(target==='notes'){openMvpNotesDrawer(opener);return;}
     if(target==='calendar'){JPWEcal.open(opener);return;}
