@@ -1,3 +1,55 @@
+# Últimas alterações — integração autorizada
+
+Atalho do Safari, nome **Jp Wealth Built on Method** e ícones PWA sólidos.
+O proprietário pediu commit/push/merge e limpeza desta worktree em 2026-09-17,
+após o relatório local. Processo e limites em
+[CHG-INTEGRATION-20260917](CHG-INTEGRATION-20260917.md).
+Resultados originais e comparações são preservados; recibos Git/CI determinam
+os gates concluídos. Nenhum dado financeiro ou preferência foi migrado.
+
+## Histórico preservado
+
+# Ícones PWA sólidos — delta visual verificado, gate geral não aprovado
+
+Pedido de 2026-09-17: fundo opaco até as bordas e letras maiores no iPhone.
+Vermelho/Preto com a marca preservada; nome novo e launcher mantidos.
+Contrato: [CHG-PWA-SOLID-20260917](CHG-PWA-SOLID-20260917.md).
+Build `2f6b01f3daddaabe`; contrato PNG, marca isolada, build e upgrade/offline PASS.
+Standard: 36 PASS/10 PRODUCT_FAIL; resultados e reexecuções no CHG.
+Sem alteração de dados ou integração Git desta etapa.
+
+## Histórico preservado
+
+# Nome do produto — verificado localmente
+
+Pedido de 2026-09-17: **Jp Wealth Built on Method**.
+Mudança N0-V limitada à apresentação, metadados e portátil gerado.
+Contrato e evidências: [CHG-PRODUCT-NAME-20260917](CHG-PRODUCT-NAME-20260917.md).
+Dados, versões técnicas e identidade/origem do PWA preservados.
+Build `85531f89d1d01b68`; fast, marca, smoke e Configurações PASS.
+Nome conferido em desktop/mobile e claro/escuro.
+Ainda sem commit, push ou integração desta mudança.
+
+## Histórico preservado
+
+# Atalho local instalado — transferência para Safari pendente
+
+Pedido aprovado em 2026-09-17: criar `Abrir JP Wealth.command` dentro da pasta
+do software. Contrato, escopo N1, validação e recuperação em
+[CHG-LOCAL-LAUNCHER-20260917](CHG-LOCAL-LAUNCHER-20260917.md). Desenvolvimento na
+branch já existente, sem mudanças no runtime financeiro ou no armazenamento.
+Instalar o inicializador testado na pasta principal faz parte do pedido;
+commit, push e integração Git permanecem separados. Dados devem ser transferidos
+pelo backup completo existente, conservando arquivo e origem anteriores.
+
+Atalho/helper instalados com hashes idênticos aos testados; 6 testes focais e
+122 recursos HTTP aprovados. Inicialização instalada com `--no-open` verificada.
+Transferência de dados e teste visual aguardam disponibilidade do Safari;
+nenhum backup real foi manipulado. Gate standard: 41 PASS e 5 falhas de
+inicialização/sonda em suítes do app, detalhadas no CHG; não declarar gate verde.
+
+## Histórico preservado
+
 # Candidate local verificado — Ferramentas e Serviços / Nocuda Tool
 
 Contrato [CHG-NOCUDA-TOOLS-20260917](CHG-NOCUDA-TOOLS-20260917.md). Base f1d383f; branch codex/nocuda-tools-20260917; build f35e519e632f5b9a. Menu e calendário migrados; downloads Pine/MT5, transferência local e geração editável implementados. Parser77 e interface109 PASS; MT5 compilado0 erros/0 avisos. FULL original51 PASS/6 falhas; seis suítes passaram nas reexecuções corretivas/compatíveis, com logs originais preservados. Sidebar possui asserção preexistente reproduzida na base. Relatório externo ../evidence/RELATORIO.md e contrato [NOCUDA-TOOLS](../architecture/NOCUDA-TOOLS.md).

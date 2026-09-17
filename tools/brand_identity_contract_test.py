@@ -16,11 +16,11 @@ def require(condition: bool, message: str) -> None:
 
 
 def read_rgba_png(path: Path) -> tuple[int, int, bytes]:
-    """Decode the alpha contract without depending on Pillow in CI."""
+    """Decode RGB/RGBA 8-bit PNGs as RGBA without depending on Pillow in CI."""
     raw = path.read_bytes()
     require(raw.startswith(b"\x89PNG\r\n\x1a\n"), f"PNG invalido: {path.name}")
     position = 8
-    width = height = 0
+    width = height = channels = 0
     compressed = bytearray()
     while position < len(raw):
         length = struct.unpack(">I", raw[position:position + 4])[0]
@@ -29,13 +29,17 @@ def read_rgba_png(path: Path) -> tuple[int, int, bytes]:
         position += length + 12
         if kind == b"IHDR":
             width, height, depth, color_type, compression, filtering, interlace = struct.unpack(">IIBBBBB", payload)
-            require((depth, color_type, compression, filtering, interlace) == (8, 6, 0, 0, 0), f"PNG deve ser RGBA 8-bit: {path.name}")
+            require((depth, compression, filtering, interlace) == (8, 0, 0, 0) and color_type in (2, 6), f"PNG deve ser RGB ou RGBA 8-bit: {path.name}")
+            channels = 3 if color_type == 2 else 4
+        elif kind == b"tRNS":
+            raise AssertionError(f"transparencia por chave de cor nao permitida: {path.name}")
         elif kind == b"IDAT":
             compressed.extend(payload)
         elif kind == b"IEND":
             break
+    require(width > 0 and height > 0 and channels in (3, 4), f"cabecalho PNG ausente: {path.name}")
     scanlines = zlib.decompress(bytes(compressed))
-    stride = width * 4
+    stride = width * channels
     require(len(scanlines) == height * (stride + 1), f"dados PNG inesperados: {path.name}")
     decoded = bytearray(height * stride)
     previous = bytearray(stride)
@@ -45,9 +49,9 @@ def read_rgba_png(path: Path) -> tuple[int, int, bytes]:
         source = scanlines[offset + 1:offset + 1 + stride]
         target = bytearray(stride)
         for index, value in enumerate(source):
-            left = target[index - 4] if index >= 4 else 0
+            left = target[index - channels] if index >= channels else 0
             above = previous[index]
-            upper_left = previous[index - 4] if index >= 4 else 0
+            upper_left = previous[index - channels] if index >= channels else 0
             if filter_type == 0:
                 predictor = 0
             elif filter_type == 1:
@@ -65,23 +69,47 @@ def read_rgba_png(path: Path) -> tuple[int, int, bytes]:
             target[index] = (value + predictor) & 255
         decoded[row * stride:(row + 1) * stride] = target
         previous = target
+    if channels == 3:
+        rgba = bytearray(width * height * 4)
+        rgba[0::4] = decoded[0::3]
+        rgba[1::4] = decoded[1::3]
+        rgba[2::4] = decoded[2::3]
+        rgba[3::4] = b"\xff" * (width * height)
+        return width, height, bytes(rgba)
     return width, height, bytes(decoded)
 
 
-def require_transparent_icon(path: Path, expected_size: int) -> None:
+def require_solid_icon(path: Path, expected_size: int, variant: str) -> None:
     width, height, pixels = read_rgba_png(path)
     require((width, height) == (expected_size, expected_size), f"dimensao incorreta: {path.name}")
-    alpha = pixels[3::4]
-    corners = (alpha[0], alpha[width - 1], alpha[(height - 1) * width], alpha[-1])
-    require(corners == (0, 0, 0, 0), f"cantos devem ser transparentes: {path.name}")
-    require(alpha[(height // 2) * width + width // 2] == 255, f"centro deve ser opaco: {path.name}")
-    require(alpha.count(0) > width * height // 20, f"area transparente insuficiente: {path.name}")
-    pale_partial = 0
+    require(variant in ("primary", "secondary"), f"variante desconhecida: {variant}")
+    require(pixels[3::4] == b"\xff" * (width * height), f"todos os pixels devem ser opacos: {path.name}")
+    # A faixa inteira precisa chegar ao limite da imagem na cor da marca.
+    # O sistema operacional aplica sua propria mascara; o arquivo nao a embute.
+    border = (expected_size * 2 + 99) // 100
+    left, top, right, bottom = width, height, 0, 0
+    invalid_border = 0
     for offset in range(0, len(pixels), 4):
-        red, green, blue, opacity = pixels[offset:offset + 4]
-        if 0 < opacity < 255 and min(red, green, blue) > 220:
-            pale_partial += 1
-    require(pale_partial == 0, f"halo claro detectado na borda: {path.name}")
+        red, green, blue = pixels[offset:offset + 3]
+        position = offset // 4
+        x, y = position % width, position // width
+        if x < border or x >= width - border or y < border or y >= height - border:
+            solid = red >= 180 and green <= 40 and blue <= 40 if variant == "primary" else max(red, green, blue) <= 12
+            if not solid:
+                invalid_border += 1
+        # A tolerancia conserva antialias e pequenas variacoes do branco.
+        if min(red, green, blue) >= 220:
+            left, top = min(left, x), min(top, y)
+            right, bottom = max(right, x + 1), max(bottom, y + 1)
+    require(invalid_border == 0, f"borda deve ter fundo solido da marca: {path.name}")
+    require(right > left and bottom > top, f"letras brancas ausentes: {path.name}")
+    require(0.82 <= (right - left) / width <= 0.93, f"largura das letras deve ficar entre 82% e 93%: {path.name}")
+    require(0.35 <= (bottom - top) / height <= 0.43, f"altura das letras deve ficar entre 35% e 43%: {path.name}")
+    require(min(left, width - right) >= width * 0.03 and min(top, height - bottom) >= height * 0.03,
+            f"letras devem preservar margem minima de 3%: {path.name}")
+    require(abs((left + right) / 2 - width / 2) <= width * 0.02 and
+            abs((top + bottom) / 2 - height / 2) <= height * 0.02,
+            f"letras devem permanecer centralizadas: {path.name}")
 
 
 def main() -> None:
@@ -107,9 +135,9 @@ def main() -> None:
         raw = (ROOT / asset).read_bytes()
         require(raw.startswith(b"\x89PNG\r\n\x1a\n"), f"PNG invalido: {asset}")
     for variant in ("primary", "secondary"):
-        require_transparent_icon(ROOT / f"assets/pwa-icon-{variant}.png", 1254)
-        require_transparent_icon(ROOT / f"assets/pwa-icon-{variant}-192.png", 192)
-        require_transparent_icon(ROOT / f"assets/pwa-icon-{variant}-512.png", 512)
+        require_solid_icon(ROOT / f"assets/pwa-icon-{variant}.png", 1254, variant)
+        require_solid_icon(ROOT / f"assets/pwa-icon-{variant}-192.png", 192, variant)
+        require_solid_icon(ROOT / f"assets/pwa-icon-{variant}-512.png", 512, variant)
     require('data-jp-brand-wordmark' in index and 'jp-wealth-brand-red.png' in index, "wordmark inicial vermelho ausente")
     require("primary:{ label:'Vermelho'" in app and "secondary:{ label:'Preto'" in app, "mapeamento primary/secondary incorreto")
     require("jpwealth_v9_icon_choice" in app, "chave auxiliar legado deve permanecer")

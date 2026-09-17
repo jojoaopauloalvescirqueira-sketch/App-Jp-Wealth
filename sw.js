@@ -1,7 +1,7 @@
 importScripts('./build-id.js');
 const CACHE_PREFIX = 'jp-wealth-';
 const CACHE_NAME = `${CACHE_PREFIX}${JP_WEALTH_BUILD_ID}`;
-const ICON_CACHE_VERSION = '20260916-transparent-r1';
+const ICON_CACHE_VERSION = '20260917-solid-r1';
 // Os dois originais normativos pertencem ao mesmo build e ficam disponíveis
 // offline. Navegar para eles deve entregar o arquivo, nunca o app shell.
 const NORMATIVE_DOCUMENT_URLS = [
