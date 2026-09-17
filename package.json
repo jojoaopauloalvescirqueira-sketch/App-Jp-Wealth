@@ -2,7 +2,7 @@
   "name": "jp-wealth-risk-terminal",
   "version": "9.1.0-structured.1",
   "private": true,
-  "description": "JP Wealth Risk Terminal — structured repository preserving the V9.1 financial logic.",
+  "description": "Jp Wealth Built on Method — structured repository preserving the V9.1 financial logic.",
   "scripts": {
     "serve": "python3 tools/serve.py",
     "preflight": "python3 tools/agent_preflight.py --mode audit",

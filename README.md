@@ -1,4 +1,4 @@
-# JP Wealth Risk Terminal V9.1
+# Jp Wealth Built on Method
 
 Completion pass local em avaliação: Dashboard de orientação, bancadas NoCoda/Pivots, orçamento com resumo e registros, Laboratório com palco e análise, coleções Alladin e escrita focada. Rotas e dados preservados. Evidências e limites: [direção Apple→JP Wealth](docs/architecture/APPLE-EXPERIENCE-DIRECTION.md).
 Preserva módulos, contratos financeiros, preferências e a navegação superior
@@ -137,6 +137,19 @@ editado diretamente.
   uma Fase 2; não fazem parte do candidato atual.
 
 ## Início rápido
+
+No macOS, dê dois cliques em **Abrir JP Wealth.command**, na pasta do software.
+O atalho abre o Safari em `http://127.0.0.1:8765/index.html` e reutiliza o servidor
+da mesma pasta. Pode fechar a janela do Terminal após a abertura. Requer Python 3;
+não instala dependências nem inicia automaticamente no login. Uma porta ocupada
+por outro serviço gera aviso, sem mudar o endereço silenciosamente.
+
+Na primeira passagem de `file://` para esse endereço, exporte o **backup completo**
+no acesso anterior e importe-o em Configurações → Dados e Segurança → Backup e
+Recuperação. Preserve o JSON, recarregue e confira os dados e o perfil; as duas
+origens mantêm bases separadas. O atalho não copia nem apaga dados do navegador.
+
+Para desenvolvimento, continua disponível o servidor manual:
 
 ```bash
 python3 tools/agent_preflight.py --mode audit

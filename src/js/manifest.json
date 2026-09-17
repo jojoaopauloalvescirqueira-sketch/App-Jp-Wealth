@@ -1,5 +1,5 @@
 {
-  "project": "JP Wealth Risk Terminal",
+  "project": "Jp Wealth Built on Method",
   "version": "9.1",
   "execution_model": "classic-script-ordered-global-scope",
   "warning": "Do not reorder files without a full validation and browser smoke test.",
@@ -230,7 +230,7 @@
       "order": 38,
       "path": "src/js/40-app/06-app-icons.js",
       "section": "PWA · MARCA CONJUNTA (Vermelho/Preto, cabeçalho e instalação)",
-      "sha256": "68546cf860b5e6c5dff96a495edd59ffcf04add2f837298227ff67264369dd39"
+      "sha256": "96489867c564b446314c1c48c54813c4272b9487448bdbddc35f804812acf6f3"
     },
     {
       "order": 39,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "294f9ad613f9ca4656d67998b063fe9c0984d5905658cda0c11cb001d491acca"
+      "sha256": "fd667681d3b8cc833858741c7a50973661002116a67a559279cbb6a928d0e3d9"
     },
     {
       "order": 44,

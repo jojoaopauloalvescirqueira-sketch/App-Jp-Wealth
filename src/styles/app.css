@@ -918,7 +918,7 @@
   .brand-header-preview img{display:block; width:100%; height:38px; object-fit:contain; object-position:left center}
   .brand-header-preview.black-preview{background:#f7f8fa; border-color:#d9dde3}
   .brand-pwa-preview{align-items:center; justify-content:flex-start}
-  .brand-pwa-preview img{width:62px; height:62px; object-fit:cover; border-radius:14px; border:1px solid var(--line); background:var(--panel-2)}
+  .brand-pwa-preview img{width:62px; height:62px; object-fit:cover; border-radius:14px; border:0; background:var(--panel-2)}
   .brand-choice-copy{align-self:center; min-width:0}
   .brand-choice-copy b{font-family:var(--mono); color:var(--ink); font-size:var(--fs-md)}
   .brand-choice-copy p{margin:4px 0; color:var(--ink-dim); font-size:var(--fs-sm); line-height:1.45}

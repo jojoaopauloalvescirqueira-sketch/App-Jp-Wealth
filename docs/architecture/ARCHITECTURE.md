@@ -50,7 +50,7 @@ ownership visual em Research/Forex e uma única instância DOM cada.
 ### 6. PWA e identidade visual
 
 - `assets/pwa-icon-primary.png` e `assets/pwa-icon-secondary.png` são as duas
-  matrizes transparentes em alta resolução; os sufixos `-192` e `-512` são os
+  matrizes opacas em alta resolução, com fundo até as bordas; os sufixos `-192` e `-512` são os
   tamanhos instaláveis declarados nos manifestos. Essas seis imagens são as duas
   variantes locais de ícone.
 - `manifests/jp-wealth.webmanifest` descreve o PWA.
