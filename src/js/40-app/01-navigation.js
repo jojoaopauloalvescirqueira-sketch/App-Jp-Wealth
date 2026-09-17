@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
-// O contrato público global tem exatamente cinco rotas canônicas. Forex expõe
-// quatro filhos e Research seis; owner semântico, filho, section física e visão
+// O contrato público global tem seis rotas canônicas. Forex expõe
+// quatro filhos, Research seis e Ferramentas dois; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -12,7 +12,7 @@ const NAV_FOREX_CHILDREN=Object.freeze([
 ]);
 
 const NAV_RESEARCH_CHILDREN=Object.freeze([
-  Object.freeze({id:'research-forex',label:'Forex',primary:'research',child:'research-forex',screen:'research',localView:Object.freeze({surface:'research',view:'calendar'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'research-forex',label:'Forex',primary:'research',child:'research-forex',screen:'research',localView:Object.freeze({surface:'research',view:'nocoda'}),aliases:Object.freeze([])}),
   Object.freeze({id:'research-stocks-br',label:'Ações',primary:'research',child:'research-stocks-br',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-br'}),aliases:Object.freeze([])}),
   Object.freeze({id:'research-stocks-global',label:'Stocks',primary:'research',child:'research-stocks-global',screen:'research',localView:Object.freeze({surface:'research',view:'stocks-global'}),aliases:Object.freeze([])}),
   Object.freeze({id:'research-reits',label:'REITs',primary:'research',child:'research-reits',screen:'research',localView:Object.freeze({surface:'research',view:'reits'}),aliases:Object.freeze([])}),
@@ -20,16 +20,22 @@ const NAV_RESEARCH_CHILDREN=Object.freeze([
   Object.freeze({id:'research-others',label:'Others',primary:'research',child:'research-others',screen:'research',localView:Object.freeze({surface:'research',view:'others'}),aliases:Object.freeze([])})
 ]);
 
+const NAV_TOOLS_CHILDREN=Object.freeze([
+  Object.freeze({id:'tools-calendar',label:'Calendário Econômico',primary:'tools',child:'tools-calendar',screen:'tools',localView:Object.freeze({surface:'tools',view:'calendar'}),aliases:Object.freeze(['tools'])}),
+  Object.freeze({id:'tools-nocuda',label:'Nocuda Tool',primary:'tools',child:'tools-nocuda',screen:'tools',localView:Object.freeze({surface:'tools',view:'nocuda'}),aliases:Object.freeze([])})
+]);
+
 const NAV_CANONICAL_ROUTES=Object.freeze([
   Object.freeze({id:'dashboard',primary:'dashboard',screen:'dash',localView:null,aliases:Object.freeze(['dash'])}),
   NAV_FOREX_CHILDREN[0],
   Object.freeze({id:'personal-finance',primary:'personal-finance',screen:'finpes',localView:Object.freeze({surface:'finpes',view:'overview'}),aliases:Object.freeze(['finpes'])}),
   NAV_RESEARCH_CHILDREN[0],
-  Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])})
+  Object.freeze({id:'alladin',primary:'alladin',screen:'alladin',localView:null,aliases:Object.freeze([])}),
+  NAV_TOOLS_CHILDREN[0]
 ]);
 
 // Destinos legados. Saber resolvê-los não os promove a rotas primárias: as três
-// ferramentas analíticas pertencem semanticamente a Research / Forex.
+// estudos pertencem a Research / Forex; ecal pertence a Ferramentas.
 const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   contas:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
   'forex-account':Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'accounts'})}),
@@ -44,7 +50,7 @@ const NAV_COMPATIBILITY_TARGETS=Object.freeze({
   check:Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'checklist'}),
   'forex-preparation':Object.freeze({canonical:'forex-operation',child:'forex-operation',screen:'exec',primary:'forex',localView:Object.freeze({surface:'exec',view:'panel'}),action:'checklist'}),
   'tool-check':Object.freeze({action:'settings',leaf:'tool-check'}),
-  ecal:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'calendar'})}),
+  ecal:Object.freeze({canonical:'tools-calendar',child:'tools-calendar',screen:'tools',primary:'tools',localView:Object.freeze({surface:'tools',view:'calendar'})}),
   nocoda:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'nocoda'})}),
   pivots:Object.freeze({canonical:'research-forex',child:'research-forex',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'pivots'})}),
   'probability-lab':Object.freeze({canonical:'research-probability-lab',child:'research-probability-lab',screen:'research',primary:'research',localView:Object.freeze({surface:'research',view:'probability-lab'})}),
@@ -57,11 +63,12 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   exec:Object.freeze({screen:'exec',primary:'forex',views:Object.freeze(['overview','panel','accounting','accounts','motor','history']),resolve:()=>window.JPWExec&&window.JPWExec.ui}),
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
   fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
-  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['calendar','nocoda','pivots','stocks-br','stocks-global','reits','probability-lab','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui})
+  research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['nocoda','pivots','stocks-br','stocks-global','reits','probability-lab','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui}),
+  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','nocuda']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
-  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN,...NAV_RESEARCH_CHILDREN].map(route=>[route.id,route])));
+  [...NAV_CANONICAL_ROUTES,...NAV_FOREX_CHILDREN,...NAV_RESEARCH_CHILDREN,...NAV_TOOLS_CHILDREN].map(route=>[route.id,route])));
 const NAV_ROUTE_BY_ALIAS=Object.freeze(Object.fromEntries(NAV_CANONICAL_ROUTES.flatMap(route=>route.aliases.map(alias=>[alias,route]))));
 let navCurrent={canonical:'dashboard',requested:'dashboard',source:'canonical',primary:'dashboard',child:null,screen:'dash',localView:null};
 let navLastResult={accepted:true,reason:null};
@@ -191,19 +198,21 @@ function navLocalPlan(surfaceId,view,descriptor){
   }else if(surfaceId==='finpes'){
     if(view==='overview') canonical='personal-finance';
   }else if(surfaceId==='research'){
-    if(view==='calendar'||view==='nocoda'||view==='pivots') canonical='research-forex';
+    if(view==='nocoda'||view==='pivots') canonical='research-forex';
     else if(view==='stocks-br') canonical='research-stocks-br';
     else if(view==='stocks-global') canonical='research-stocks-global';
     else if(view==='reits') canonical='research-reits';
     else if(view==='probability-lab') canonical='research-probability-lab';
     else if(view==='others') canonical='research-others';
   }
-  const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-'))?canonical:null;
+  if(surfaceId==='tools') canonical=view==='calendar'?'tools-calendar':'tools-nocuda';
+  const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-')||canonical.startsWith('tools-'))?canonical:null;
   return {accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
     canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};
 }
 
 function navNavigateLocal(surfaceId,view){
+  if(surfaceId==='research'&&view==='calendar') return navNavigate('tools-calendar');
   const descriptor=NAV_LOCAL_SURFACES[surfaceId];
   const surface=navSurface(surfaceId);
   if(!descriptor||!descriptor.views.includes(view)||!surface||typeof surface.selectView!=='function') return false;
@@ -229,7 +238,7 @@ function navFocusCurrentScreen(){
 window.JPWNavigation=Object.freeze({
   routes:()=>NAV_CANONICAL_ROUTES.map(navPublicRoute),
   children:primary=>primary==='forex'?NAV_FOREX_CHILDREN.map(navPublicRoute):
-    (primary==='research'?NAV_RESEARCH_CHILDREN.map(navPublicRoute):[]),
+    (primary==='research'?NAV_RESEARCH_CHILDREN.map(navPublicRoute):primary==='tools'?NAV_TOOLS_CHILDREN.map(navPublicRoute):[]),
   resolve:target=>navPublicResolution(navResolve(target)),
   navigate:navNavigate,
   navigateLocal:navNavigateLocal,

@@ -119,7 +119,7 @@ def run_structure(page):
     assert contract["panelInsideSidebar"], "N2 fora da navegacao lateral unica"
     assert contract["localOutsideSidebar"], "N3 duplicado na lateral ou ausente na area de trabalho"
     assert contract["sharedShell"], "existe mais de uma faixa; o contrato preve uma so, compartilhada"
-    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu", "researchNavSubmenu"], contract["panelsInShell"]
+    assert contract["panelsInShell"] == ["execNavSubmenu", "finpesNavSubmenu", "researchNavSubmenu", "toolsNavSubmenu"], contract["panelsInShell"]
     assert contract["keys"] == EXPECTED_CHILDREN, f"ordem/chaves dos destinos: {contract['keys']}"
     assert contract["labels"] == EXPECTED_LABELS, f"rotulos ou ordem divergentes: {contract['labels']}"
     assert contract["contexts"] == EXPECTED_CONTEXT, f"terceiro nivel divergente: {contract['contexts']}"
@@ -393,7 +393,7 @@ def run_module_switch(page):
 
 
 def run_economic_calendar(page):
-    """Calendario Economico em Research: UM dominio, DUAS instancias visuais.
+    """Calendario Economico em Ferramentas: UM dominio, DUAS instancias visuais.
 
     O overlay #ecalOverlay e o workspace #execEcal leem o MESMO cache e usam a
     MESMA funcao de render, parametrizada por raiz. O que este teste protege e
@@ -418,17 +418,19 @@ def run_economic_calendar(page):
         }"""
     )
     assert page.evaluate("() => JPWNavigation.navigate('ecal')") is True
-    page.wait_for_function("() => window.JPWResearch.ui.getView() === 'calendar'")
-    page.click("#researchNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=research]').getAttribute('aria-expanded') === 'true'")
+    page.wait_for_function("() => window.JPWTools.ui.getView() === 'calendar'")
+    page.click("#toolsNavTrigger")
+    page.wait_for_function("() => document.querySelector('[data-nav-expand=tools]').getAttribute('aria-expanded') === 'true'")
     compat = page.evaluate(
         """() => ({primary:JPWNavigation.current().primary,
           child:JPWNavigation.current().child,
-          current:document.querySelectorAll('#researchNavSubmenu [data-nav-child="research-forex"][aria-current="page"]').length,
+          current:document.querySelectorAll('#toolsNavSubmenu [data-nav-child="tools-calendar"][aria-current="page"]').length,
           local:document.querySelectorAll('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="calendar"][aria-current="page"]').length,
+          localView:JPWNavigation.current().localView,
           execActive:document.getElementById('exec').classList.contains('active')})"""
     )
-    assert compat == {'primary':'research','child':'research-forex','current':1,'local':1,'execActive':False}, compat
+    assert compat == {'primary':'tools','child':'tools-calendar','current':1,'local':0,
+                      'localView':{'surface':'tools','view':'calendar'},'execActive':False}, compat
     page.keyboard.press("Escape")
 
     fatos = page.evaluate(
@@ -497,7 +499,7 @@ def run_economic_calendar(page):
         page.evaluate("() => JPWNavigation.navigate('forex-operation')")
         page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
         page.evaluate("() => JPWNavigation.navigate('ecal')")
-        page.wait_for_function("() => window.JPWResearch.ui.getView() === 'calendar'")
+        page.wait_for_function("() => window.JPWTools.ui.getView() === 'calendar'")
     page.click('#execEcal [data-ecal-cur="all"]')
     estavel = page.evaluate("() => document.querySelectorAll('#execEcal .ecal-item').length")
     assert estavel == 2, f"apos 3 idas e voltas o workspace divergiu: {estavel}"
@@ -648,11 +650,11 @@ def run_motor_migration(page):
 
 
 def run_no_regression(page):
-    """As cinco rotas globais ativam seus destinos físicos declarados."""
+    """As seis rotas globais ativam seus destinos físicos declarados."""
     routes = page.evaluate("() => [...document.querySelectorAll('#nav .tab[data-route]')].map(el => el.dataset.route)")
     # A10 changes only the default visual order; exact route/activation checks remain.
     expected = {"dashboard": "dash", "research-forex": "research", "forex-consolidated": "fxconsolidated",
-                "personal-finance": "finpes", "alladin": "alladin"}
+                "personal-finance": "finpes", "alladin": "alladin", "tools-calendar": "tools"}
     assert routes == list(expected), f"rotas globais mudaram: {routes}"
     for route, screen in expected.items():
         page.click(f'#nav .tab[data-route="{route}"]')

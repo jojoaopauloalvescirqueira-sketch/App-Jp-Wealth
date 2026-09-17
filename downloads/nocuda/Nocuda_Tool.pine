@@ -1,0 +1,514 @@
+//@version=6
+indicator("Nocuda Tool · 1.1", shorttitle = "Nocuda", overlay = true, max_lines_count = 400, max_labels_count = 400)
+
+// CANDIDATO: compilação e interação no TradingView ainda não verificadas.
+// Formato de intercâmbio NOCUDA v1 / geometria bars1. Apenas desenhos, sem ordens.
+// Malha linear com passo FIXO de 0.125. Não usa os preços futuros.
+// A e B pertencem ao nível +1 (linha 17); C pertence ao nível 0 (linha 9).
+// As posições horizontais são resolvidas em candles, não em horas corridas.
+// slot j: nível = -1 + j/8; número da linha = j+1 (a partir da principal).
+
+const string G_TRANSFER = "00 · Transferir desenho"
+const string G_ANCHORS = "01 · Pontos de controle"
+const string G_RANGE = "02 · Alcance da malha"
+const string G_GENERAL = "03 · Aparência geral"
+const string G_L1 = "04 · Linha 1 | principal · nível -1"
+const string G_L3 = "05 · Linha 3 | nível -0.75"
+const string G_L5 = "06 · Linha 5 | nível -0.5"
+const string G_L9 = "07 · Linha 9 | referência móvel · nível 0"
+const string G_L17 = "08 · Linha 17 | referência de direção · nível 1"
+const string G_INNER = "09 · Linhas intermediárias"
+const string G_OUTER = "10 · Projeções externas"
+const string G_LABELS = "11 · Numeração e rótulos"
+const float LEVEL_STEP = 0.125
+const int MAX_ANCHOR_AGE = 4999
+const bool PRECONFIGURED = false // NOCUDA_PRECONFIGURED
+
+// Desenhos por bar_index também consultam o histórico de time internamente.
+// Reserva explícita para a primeira execução ocorrer com o mercado aberto.
+max_bars_back(time, 5000)
+
+string modeInput = input.string("Manual", "Modo", options = ["Manual", "Importado"], group = G_TRANSFER, display = display.none) // NOCUDA_DEFAULT:modeInput
+string importText = input.text_area("", "Importar desenho · código NOCUDA", group = G_TRANSFER, tooltip = "Cole apenas NOCUDA|v=1|... completo, sem data dos Pine Logs. Depois selecione Importado. A malha importada não move os pontos nativos A/B/C.", display = display.none) // NOCUDA_DEFAULT:importText
+bool exportEnabled = input.bool(false, "Gerar código nos Pine Logs", group = G_TRANSFER, tooltip = "Script pessoal: emite uma vez por recálculo. Copie a mensagem NOCUDA integral e desative após copiar. Não escreve na área de transferência.", display = display.none) // NOCUDA_DEFAULT:exportEnabled
+string symbolIdentity = input.string("", "Símbolo canônico (vazio = ticker do gráfico)", group = G_TRANSFER, tooltip = "Mapeamento explícito. Só preencha se confirmou que o instrumento do gráfico corresponde ao símbolo do código (inclusive contrato e escala de preço). Não remove sufixos automaticamente.", display = display.none) // NOCUDA_DEFAULT:symbolIdentity
+bool confirmDifferentFeed = input.bool(false, "Confirmei instrumento e preços entre provedores diferentes", group = G_TRANSFER, tooltip = "Necessário se feed de origem e provedor atual diferem. Não dispensa conferência das âncoras nem dos intervalos de candles.", display = display.none) // NOCUDA_DEFAULT:confirmDifferentFeed
+string drawingId = input.string("CANAL-1", "Identificador do desenho", group = G_TRANSFER, tooltip = "1 a 64 caracteres: letras ASCII, números e . _ : / + -", display = display.none) // NOCUDA_DEFAULT:drawingId
+string generatedSeed = input.string("", "Referência da versão editável", group = G_TRANSFER, tooltip = "Preenchida apenas pelo JP Wealth para conferir o contexto antes de editar. Mantenha-a ao usar a versão gerada.", display = display.none) // NOCUDA_DEFAULT:generatedSeed
+
+float priceA = input.price(0.0, "A · Linha 17", inline = "anchorA", group = G_ANCHORS, confirm = not PRECONFIGURED, display = display.none) // NOCUDA_DEFAULT:priceA
+int timeA = input.time(0, "Data / hora", inline = "anchorA", group = G_ANCHORS, confirm = not PRECONFIGURED, tooltip = "Primeiro ponto da linha 17. A e B definem a direção. Use candles diferentes.", display = display.none) // NOCUDA_DEFAULT:timeA
+float priceB = input.price(0.0, "B · Linha 17", inline = "anchorB", group = G_ANCHORS, confirm = not PRECONFIGURED, display = display.none) // NOCUDA_DEFAULT:priceB
+int timeB = input.time(0, "Data / hora", inline = "anchorB", group = G_ANCHORS, confirm = not PRECONFIGURED, tooltip = "Segundo ponto da linha 17. Pode ficar antes ou depois de A.", display = display.none) // NOCUDA_DEFAULT:timeB
+float priceC = input.price(0.0, "C · Linha 9", inline = "anchorC", group = G_ANCHORS, confirm = not PRECONFIGURED, display = display.none) // NOCUDA_DEFAULT:priceC
+int timeC = input.time(0, "Data / hora", inline = "anchorC", group = G_ANCHORS, confirm = not PRECONFIGURED, tooltip = "Ponto da linha 9. Mova C para ajustar a largura. A linha 1 é projetada à mesma distância, do outro lado da linha 9.", display = display.none) // NOCUDA_DEFAULT:timeC
+
+bool showGrid = input.bool(true, "Exibir malha", group = G_RANGE, display = display.none) // NOCUDA_DEFAULT:showGrid
+int beforeSteps = input.int(8, "Espaçamentos antes da linha 1", minval = 0, maxval = 160, group = G_RANGE, tooltip = "Projeção no lado anterior à principal. Cada espaçamento continua valendo 0.125. O valor inicial 8 é uma preferência de exibição, não uma regra do método.", display = display.none) // NOCUDA_DEFAULT:beforeSteps
+int afterSteps = input.int(24, "Espaçamentos depois da linha 17", minval = 0, maxval = 160, group = G_RANGE, tooltip = "24 espaçamentos alcançam o nível 4 (MAX). A quantidade altera apenas o alcance; não altera a largura nem as divisões.", display = display.none) // NOCUDA_DEFAULT:afterSteps
+string extendInput = input.string("Direita", "Estender linhas", options = ["Nenhum", "Direita", "Esquerda", "Ambos"], group = G_RANGE, display = display.none) // NOCUDA_DEFAULT:extendInput
+
+color baseColor = input.color(#FF6347, "Cor", inline = "baseColor", group = G_GENERAL, display = display.none) // NOCUDA_DEFAULT:baseColor
+int baseTransparency = input.int(35, "Transparência", minval = 0, maxval = 100, inline = "baseColor", group = G_GENERAL, display = display.none) // NOCUDA_DEFAULT:baseTransparency
+int baseWidth = input.int(1, "Espessura", minval = 1, maxval = 5, inline = "baseStroke", group = G_GENERAL, display = display.none) // NOCUDA_DEFAULT:baseWidth
+string baseStyle = input.string("Pontilhada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "baseStroke", group = G_GENERAL, display = display.none) // NOCUDA_DEFAULT:baseStyle
+
+bool show1 = input.bool(true, "Exibir", inline = "on1", group = G_L1, display = display.none) // NOCUDA_DEFAULT:show1
+bool custom1 = input.bool(false, "Personalizar aparência", inline = "on1", group = G_L1, display = display.none) // NOCUDA_DEFAULT:custom1
+color color1 = input.color(#FF6347, "Cor", inline = "color1", group = G_L1, active = custom1, display = display.none) // NOCUDA_DEFAULT:color1
+int alpha1 = input.int(0, "Transparência", minval = 0, maxval = 100, inline = "color1", group = G_L1, active = custom1, display = display.none) // NOCUDA_DEFAULT:alpha1
+int width1 = input.int(2, "Espessura", minval = 1, maxval = 5, inline = "stroke1", group = G_L1, active = custom1, display = display.none) // NOCUDA_DEFAULT:width1
+string style1 = input.string("Contínua", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "stroke1", group = G_L1, active = custom1, display = display.none) // NOCUDA_DEFAULT:style1
+
+bool show3 = input.bool(true, "Exibir", inline = "on3", group = G_L3, display = display.none) // NOCUDA_DEFAULT:show3
+bool custom3 = input.bool(false, "Personalizar aparência", inline = "on3", group = G_L3, display = display.none) // NOCUDA_DEFAULT:custom3
+color color3 = input.color(#FF6347, "Cor", inline = "color3", group = G_L3, active = custom3, display = display.none) // NOCUDA_DEFAULT:color3
+int alpha3 = input.int(20, "Transparência", minval = 0, maxval = 100, inline = "color3", group = G_L3, active = custom3, display = display.none) // NOCUDA_DEFAULT:alpha3
+int width3 = input.int(1, "Espessura", minval = 1, maxval = 5, inline = "stroke3", group = G_L3, active = custom3, display = display.none) // NOCUDA_DEFAULT:width3
+string style3 = input.string("Tracejada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "stroke3", group = G_L3, active = custom3, display = display.none) // NOCUDA_DEFAULT:style3
+
+bool show5 = input.bool(true, "Exibir", inline = "on5", group = G_L5, display = display.none) // NOCUDA_DEFAULT:show5
+bool custom5 = input.bool(false, "Personalizar aparência", inline = "on5", group = G_L5, display = display.none) // NOCUDA_DEFAULT:custom5
+color color5 = input.color(#FF6347, "Cor", inline = "color5", group = G_L5, active = custom5, display = display.none) // NOCUDA_DEFAULT:color5
+int alpha5 = input.int(20, "Transparência", minval = 0, maxval = 100, inline = "color5", group = G_L5, active = custom5, display = display.none) // NOCUDA_DEFAULT:alpha5
+int width5 = input.int(1, "Espessura", minval = 1, maxval = 5, inline = "stroke5", group = G_L5, active = custom5, display = display.none) // NOCUDA_DEFAULT:width5
+string style5 = input.string("Tracejada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "stroke5", group = G_L5, active = custom5, display = display.none) // NOCUDA_DEFAULT:style5
+
+bool show9 = input.bool(true, "Exibir", inline = "on9", group = G_L9, display = display.none) // NOCUDA_DEFAULT:show9
+bool custom9 = input.bool(false, "Personalizar aparência", inline = "on9", group = G_L9, display = display.none) // NOCUDA_DEFAULT:custom9
+color color9 = input.color(#FF6347, "Cor", inline = "color9", group = G_L9, active = custom9, display = display.none) // NOCUDA_DEFAULT:color9
+int alpha9 = input.int(10, "Transparência", minval = 0, maxval = 100, inline = "color9", group = G_L9, active = custom9, display = display.none) // NOCUDA_DEFAULT:alpha9
+int width9 = input.int(2, "Espessura", minval = 1, maxval = 5, inline = "stroke9", group = G_L9, active = custom9, display = display.none) // NOCUDA_DEFAULT:width9
+string style9 = input.string("Tracejada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "stroke9", group = G_L9, active = custom9, display = display.none) // NOCUDA_DEFAULT:style9
+
+bool show17 = input.bool(true, "Exibir", inline = "on17", group = G_L17, display = display.none) // NOCUDA_DEFAULT:show17
+bool custom17 = input.bool(false, "Personalizar aparência", inline = "on17", group = G_L17, display = display.none) // NOCUDA_DEFAULT:custom17
+color color17 = input.color(#FF6347, "Cor", inline = "color17", group = G_L17, active = custom17, display = display.none) // NOCUDA_DEFAULT:color17
+int alpha17 = input.int(10, "Transparência", minval = 0, maxval = 100, inline = "color17", group = G_L17, active = custom17, display = display.none) // NOCUDA_DEFAULT:alpha17
+int width17 = input.int(2, "Espessura", minval = 1, maxval = 5, inline = "stroke17", group = G_L17, active = custom17, display = display.none) // NOCUDA_DEFAULT:width17
+string style17 = input.string("Tracejada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "stroke17", group = G_L17, active = custom17, display = display.none) // NOCUDA_DEFAULT:style17
+
+bool showInner = input.bool(true, "Exibir", inline = "onInner", group = G_INNER, display = display.none) // NOCUDA_DEFAULT:showInner
+bool customInner = input.bool(false, "Personalizar aparência", inline = "onInner", group = G_INNER, display = display.none) // NOCUDA_DEFAULT:customInner
+color colorInner = input.color(#FF6347, "Cor", inline = "colorInner", group = G_INNER, active = customInner, display = display.none) // NOCUDA_DEFAULT:colorInner
+int alphaInner = input.int(55, "Transparência", minval = 0, maxval = 100, inline = "colorInner", group = G_INNER, active = customInner, display = display.none) // NOCUDA_DEFAULT:alphaInner
+int widthInner = input.int(1, "Espessura", minval = 1, maxval = 5, inline = "strokeInner", group = G_INNER, active = customInner, display = display.none) // NOCUDA_DEFAULT:widthInner
+string styleInner = input.string("Pontilhada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "strokeInner", group = G_INNER, active = customInner, display = display.none) // NOCUDA_DEFAULT:styleInner
+
+bool showOuter = input.bool(true, "Exibir", inline = "onOuter", group = G_OUTER, display = display.none) // NOCUDA_DEFAULT:showOuter
+bool customOuter = input.bool(false, "Personalizar aparência", inline = "onOuter", group = G_OUTER, display = display.none) // NOCUDA_DEFAULT:customOuter
+color colorOuter = input.color(#FF6347, "Cor", inline = "colorOuter", group = G_OUTER, active = customOuter, display = display.none) // NOCUDA_DEFAULT:colorOuter
+int alphaOuter = input.int(65, "Transparência", minval = 0, maxval = 100, inline = "colorOuter", group = G_OUTER, active = customOuter, display = display.none) // NOCUDA_DEFAULT:alphaOuter
+int widthOuter = input.int(1, "Espessura", minval = 1, maxval = 5, inline = "strokeOuter", group = G_OUTER, active = customOuter, display = display.none) // NOCUDA_DEFAULT:widthOuter
+string styleOuter = input.string("Pontilhada", "Traço", options = ["Contínua", "Tracejada", "Pontilhada"], inline = "strokeOuter", group = G_OUTER, active = customOuter, display = display.none) // NOCUDA_DEFAULT:styleOuter
+
+string labelMode = input.string("Marcos", "Exibir rótulos", options = ["Nenhum", "Marcos", "Todas as linhas"], group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelMode
+bool showMax = input.bool(true, "Identificar nível 4 como MAX", group = G_LABELS, tooltip = "MAX permanece no nível 4, como na referência MT5. Não muda de lugar ao aumentar as projeções.", display = display.none) // NOCUDA_DEFAULT:showMax
+bool showLevel = input.bool(false, "Acrescentar nível do canal", inline = "labelExtras", group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:showLevel
+bool showPrice = input.bool(false, "Acrescentar preço", inline = "labelExtras", group = G_LABELS, tooltip = "O preço é o da linha na posição horizontal do rótulo, antes do deslocamento visual do texto.", display = display.none) // NOCUDA_DEFAULT:showPrice
+string labelPosition = input.string("Início", "Posição horizontal", options = ["Início", "Centro", "Fim", "Último candle"], group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelPosition
+int labelOffset = input.int(0, "Deslocamento horizontal (candles)", minval = -100, maxval = 100, group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelOffset
+string labelVertical = input.string("Acima", "Posição vertical", options = ["Acima", "Sobre a linha", "Abaixo"], group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelVertical
+float labelGap = input.float(1.875, "Distância do texto (% da largura 9–17)", minval = 0, maxval = 50, group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelGap
+int labelSize = input.int(12, "Tamanho do texto", minval = 8, maxval = 24, group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelSize
+bool labelUseLineColor = input.bool(true, "Usar a cor da linha no texto", group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelUseLineColor
+color labelColor = input.color(#FF6347, "Cor do texto", group = G_LABELS, active = not labelUseLineColor, display = display.none) // NOCUDA_DEFAULT:labelColor
+int labelTransparency = input.int(0, "Transparência do texto", minval = 0, maxval = 100, group = G_LABELS, display = display.none) // NOCUDA_DEFAULT:labelTransparency
+
+f_lineStyle(string selected) =>
+    switch selected
+        "Contínua" => line.style_solid
+        "Tracejada" => line.style_dashed
+        => line.style_dotted
+
+f_extension(string selected) =>
+    switch selected
+        "Direita" => extend.right
+        "Esquerda" => extend.left
+        "Ambos" => extend.both
+        => extend.none
+
+// Grupos: 0 intermediárias; 1 externas; 2..6 marcos 1,3,5,9,17.
+f_group(int slot) =>
+    switch slot
+        0 => 2
+        2 => 3
+        4 => 4
+        8 => 5
+        16 => 6
+        => slot < 0 or slot > 16 ? 1 : 0
+
+// Função pura: nível +1 passa por A/B; nível 0 passa por C.
+f_price(int x, float level, int xA, float pA, float slope, float distance) =>
+    pA + slope * (x - xA) + (level - 1.0) * distance
+
+var array<bool> visibility = array.from(showInner, showOuter, show1, show3, show5, show9, show17)
+var array<bool> custom = array.from(customInner, customOuter, custom1, custom3, custom5, custom9, custom17)
+var array<color> colors = array.from(colorInner, colorOuter, color1, color3, color5, color9, color17)
+var array<int> alphas = array.from(alphaInner, alphaOuter, alpha1, alpha3, alpha5, alpha9, alpha17)
+var array<int> widths = array.from(widthInner, widthOuter, width1, width3, width5, width9, width17)
+var array<string> styles = array.from(styleInner, styleOuter, style1, style3, style5, style9, style17)
+
+// Parser fechado: os tokens são dados. Nenhum código, URL ou pedido é executado.
+f_chars(string value, string alphabet) =>
+    bool valid = str.length(value) > 0
+    if valid
+        for i = 0 to str.length(value) - 1
+            if not str.contains(alphabet, str.substring(value, i, i + 1))
+                valid := false
+    valid
+
+f_identifier(string value) =>
+    str.length(value) <= 64 and f_chars(value, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._:/+-")
+
+// Gramática decimal canônica; rejeita +, expoente, espaços, NaN e zeros iniciais.
+f_numeric(string value, bool integerOnly) =>
+    int length = str.length(value)
+    int start = str.startswith(value, "-") ? 1 : 0
+    bool valid = length > start
+    int dots = 0
+    if valid
+        string first = str.substring(value, start, start + 1)
+        valid := f_chars(first, "0123456789")
+        if length > start + 1 and first == "0" and str.substring(value, start + 1, start + 2) != "."
+            valid := false
+        for i = start to length - 1
+            string ch = str.substring(value, i, i + 1)
+            if ch == "."
+                dots += 1
+                if integerOnly or i == start or i == length - 1 or dots > 1
+                    valid := false
+            else if not f_chars(ch, "0123456789")
+                valid := false
+    valid and not na(str.tonumber(value))
+
+f_bounded(string value, float lower, float upper, bool integerOnly) =>
+    f_numeric(value, integerOnly) and str.tonumber(value) >= lower and str.tonumber(value) <= upper
+
+f_anchorValid(string text) =>
+    array<string> parts = str.split(text, ",")
+    bool valid = array.size(parts) == 3
+    if valid
+        valid := f_bounded(array.get(parts, 0), 0, 4102444800000, true) and f_bounded(array.get(parts, 1), -1e12, 1e12, false) and f_bounded(array.get(parts, 2), -840, 840, true)
+    valid
+
+f_styleValid(string text) =>
+    array<string> parts = str.split(text, ",")
+    bool valid = array.size(parts) == 7
+    if valid
+        valid := f_bounded(array.get(parts, 0), 0, 1, true) and f_bounded(array.get(parts, 4), 0, 100, true) and f_bounded(array.get(parts, 5), 1, 5, true) and array.includes(array.from("S", "D", "P"), array.get(parts, 6))
+        for i = 1 to 3
+            valid := valid and f_bounded(array.get(parts, i), 0, 255, true)
+    valid
+
+f_labelsValid(string text) =>
+    array<string> parts = str.split(text, ",")
+    bool valid = array.size(parts) == 14
+    if valid
+        valid := array.includes(array.from("M", "A", "N"), array.get(parts, 0)) and f_bounded(array.get(parts, 1), 8, 24, true) and f_bounded(array.get(parts, 5), 0, 100, true) and array.includes(array.from("L", "C", "R", "T"), array.get(parts, 6)) and array.includes(array.from("U", "O", "D"), array.get(parts, 7)) and f_bounded(array.get(parts, 8), 0, 50, false) and f_bounded(array.get(parts, 9), -100, 100, true)
+        for i = 2 to 4
+            valid := valid and f_bounded(array.get(parts, i), 0, 255, true)
+        for i = 10 to 13
+            valid := valid and f_bounded(array.get(parts, i), 0, 1, true)
+    valid
+
+f_anchorNumber(string text, int index) =>
+    str.tonumber(array.get(str.split(text, ","), index))
+
+f_parse(string text) =>
+    map<string, string> fields = map.new<string, string>()
+    string error = ""
+    array<string> keys = str.split("v|geom|id|src|symbol|feed|tf|scale|a|b|c|d|ab|ac|step|before|after|ext|s1|s3|s5|s9|s17|si|sx|labels", "|")
+    if str.length(text) == 0 or str.length(text) > 16384
+        error := "Código vazio ou maior que 16 KiB."
+    else
+        array<string> tokens = str.split(text, "|")
+        if array.size(tokens) != 27 or array.get(tokens, 0) != "NOCUDA"
+            error := "Cabeçalho ou quantidade de campos inválidos. Cole apenas o código NOCUDA completo."
+        else
+            for i = 1 to 26
+                array<string> pair = str.split(array.get(tokens, i), "=")
+                if array.size(pair) != 2
+                    error := "Campo inválido; esperado chave=valor."
+                else
+                    string key = array.get(pair, 0)
+                    if not array.includes(keys, key) or map.contains(fields, key)
+                        error := "Chave desconhecida ou duplicada: " + key
+                    else
+                        map.put(fields, key, array.get(pair, 1))
+            if error == "" and map.size(fields) != 26
+                error := "Código incompleto."
+            if error == ""
+                if map.get(fields, "v") != "1" or map.get(fields, "geom") != "bars1" or map.get(fields, "scale") != "L" or map.get(fields, "step") != "0.125"
+                    error := "Versão, geometria, escala ou passo incompatível."
+                else if not array.includes(array.from("TV", "MT5", "JPW"), map.get(fields, "src"))
+                    error := "Origem inválida."
+                else if not f_identifier(map.get(fields, "id")) or not f_identifier(map.get(fields, "symbol")) or not f_identifier(map.get(fields, "feed"))
+                    error := "Identificador, símbolo ou provedor inválido."
+                else if not f_bounded(map.get(fields, "tf"), 1, 2592000, true)
+                    error := "Período inválido."
+                else if not f_anchorValid(map.get(fields, "a")) or not f_anchorValid(map.get(fields, "b")) or not f_anchorValid(map.get(fields, "c"))
+                    error := "Âncora inválida."
+                else if not f_bounded(map.get(fields, "ab"), -4999, 4999, true) or str.tonumber(map.get(fields, "ab")) == 0 or not f_bounded(map.get(fields, "ac"), -4999, 4999, true)
+                    error := "Intervalos de candles inválidos."
+                else if not f_bounded(map.get(fields, "d"), -1e12, 1e12, false) or math.abs(str.tonumber(map.get(fields, "d"))) <= 1e-12
+                    error := "Largura ausente ou degenerada."
+                else if not f_bounded(map.get(fields, "before"), 0, 160, true) or not f_bounded(map.get(fields, "after"), 0, 160, true) or not array.includes(array.from("N", "R", "L", "B"), map.get(fields, "ext"))
+                    error := "Alcance ou extensão inválidos."
+                if error == ""
+                    for key in array.from("s1", "s3", "s5", "s9", "s17", "si", "sx")
+                        if not f_styleValid(map.get(fields, key))
+                            error := "Aparência inválida: " + key
+                    if not f_labelsValid(map.get(fields, "labels"))
+                        error := "Rótulos inválidos."
+                if error == ""
+                    float tA = f_anchorNumber(map.get(fields, "a"), 0)
+                    float tB = f_anchorNumber(map.get(fields, "b"), 0)
+                    float tC = f_anchorNumber(map.get(fields, "c"), 0)
+                    float ab = str.tonumber(map.get(fields, "ab"))
+                    float ac = str.tonumber(map.get(fields, "ac"))
+                    float pA = f_anchorNumber(map.get(fields, "a"), 1)
+                    float pB = f_anchorNumber(map.get(fields, "b"), 1)
+                    float pC = f_anchorNumber(map.get(fields, "c"), 1)
+                    float d = str.tonumber(map.get(fields, "d"))
+                    float computed = pA + (pB - pA) * ac / ab - pC
+                    if tA == tB or math.sign(tB - tA) != math.sign(ab) or math.sign(tC - tA) != math.sign(ac) or math.sign(tC - tB) != math.sign(ac - ab)
+                        error := "Datas e direção dos intervalos de candles divergem."
+                    else if math.abs(computed - d) > math.max(1e-10, math.abs(d) * 1e-8)
+                        error := "Largura assinada incompatível com as três âncoras."
+    [fields, error]
+
+f_styleCode(string value) =>
+    value == "Contínua" ? "S" : value == "Tracejada" ? "D" : "P"
+f_styleName(string value) =>
+    value == "S" ? "Contínua" : value == "D" ? "Tracejada" : "Pontilhada"
+f_extCode(string value) =>
+    value == "Direita" ? "R" : value == "Esquerda" ? "L" : value == "Ambos" ? "B" : "N"
+f_extName(string value) =>
+    value == "R" ? "Direita" : value == "L" ? "Esquerda" : value == "B" ? "Ambos" : "Nenhum"
+f_decimal(float value) =>
+    str.tostring(value == 0 ? 0 : value, "0.################")
+f_rgb(color value) =>
+    str.tostring(int(color.r(value))) + "," + str.tostring(int(color.g(value))) + "," + str.tostring(int(color.b(value)))
+f_bit(bool value) =>
+    value ? "1" : "0"
+
+bool imported = modeInput == "Importado"
+var map<string, string> importedFields = map.new<string, string>()
+var string parseError = ""
+var bool hasSeed = generatedSeed != ""
+if barstate.isfirst and (imported or hasSeed)
+    [parsedFields, parsedError] = f_parse(imported ? importText : generatedSeed)
+    importedFields := parsedFields
+    parseError := parsedError
+bool parsed = (imported or hasSeed) and parseError == ""
+
+var int activeTimeA = imported and parsed ? int(f_anchorNumber(map.get(importedFields, "a"), 0)) : timeA
+var int activeTimeB = imported and parsed ? int(f_anchorNumber(map.get(importedFields, "b"), 0)) : timeB
+var int activeTimeC = imported and parsed ? int(f_anchorNumber(map.get(importedFields, "c"), 0)) : timeC
+var float activePriceA = imported and parsed ? f_anchorNumber(map.get(importedFields, "a"), 1) : priceA
+var float activePriceB = imported and parsed ? f_anchorNumber(map.get(importedFields, "b"), 1) : priceB
+var float activePriceC = imported and parsed ? f_anchorNumber(map.get(importedFields, "c"), 1) : priceC
+
+// Exatidão temporal: nunca encaixa um candle ausente no vizinho seguinte.
+var int indexA = na
+var int indexB = na
+var int indexC = na
+if time == activeTimeA
+    indexA := bar_index
+if time == activeTimeB
+    indexB := bar_index
+if time == activeTimeC
+    indexC := bar_index
+bool resolved = not na(indexA) and not na(indexB) and not na(indexC)
+float slope = resolved and indexA != indexB ? (activePriceB - activePriceA) / (indexB - indexA) : na
+float computedDistance = resolved and not na(slope) ? activePriceA + slope * (indexC - indexA) - activePriceC : na
+var string currentSymbol = symbolIdentity == "" ? syminfo.ticker : symbolIdentity
+var string currentFeed = syminfo.prefix == "" ? "UNKNOWN" : syminfo.prefix
+var bool sameSeedAnchors = parsed and hasSeed and activeTimeA == int(f_anchorNumber(map.get(importedFields, "a"), 0)) and activeTimeB == int(f_anchorNumber(map.get(importedFields, "b"), 0)) and activeTimeC == int(f_anchorNumber(map.get(importedFields, "c"), 0)) and activePriceA == f_anchorNumber(map.get(importedFields, "a"), 1) and activePriceB == f_anchorNumber(map.get(importedFields, "b"), 1) and activePriceC == f_anchorNumber(map.get(importedFields, "c"), 1)
+
+float distance = (imported or sameSeedAnchors) and parsed ? str.tonumber(map.get(importedFields, "d")) : computedDistance
+
+float chartSeconds = timeframe.isticks ? na : timeframe.in_seconds()
+string problem = ""
+if barstate.islast
+    if parseError != ""
+        problem := "Importação recusada: " + parseError
+    else if not chart.is_standard
+        problem := "Use candles convencionais. Gráficos sintéticos não são compatíveis."
+    else if na(chartSeconds) or chartSeconds < 1 or chartSeconds > 2592000 or timeframe.ismonthly
+        problem := "Período sem duração compatível. Use um período fixo até 30 dias."
+    else if not f_identifier(currentSymbol) or not f_identifier(currentFeed) or not f_identifier(drawingId)
+        problem := "Identificador, símbolo canônico ou provedor não cabe no formato de transferência."
+    else if (imported or hasSeed) and parsed and currentSymbol != map.get(importedFields, "symbol")
+        problem := "Símbolo incompatível. Confira o instrumento e informe seu símbolo canônico."
+    else if (imported or hasSeed) and parsed and chartSeconds != str.tonumber(map.get(importedFields, "tf"))
+        problem := "Período incompatível com a origem."
+    else if (imported or hasSeed) and parsed and (currentFeed == "UNKNOWN" or map.get(importedFields, "feed") == "UNKNOWN" or currentFeed != map.get(importedFields, "feed")) and not confirmDifferentFeed
+        problem := "Provedor diferente. Confira instrumento e escala de preços e confirme nas configurações."
+    else if not resolved
+        problem := "Uma âncora não coincide com a abertura de um candle carregado. Carregue histórico ou corrija o ponto; sem ajuste automático."
+    else if indexA == indexB
+        problem := "A e B precisam estar em candles diferentes."
+    else if math.min(indexA, math.min(indexB, indexC)) < bar_index - MAX_ANCHOR_AGE
+        problem := "Uma âncora ultrapassa 4.999 candles. Use um período compatível ou reposicione-a no modo Manual."
+    else if math.abs(distance) <= 1e-12
+        problem := "Canal sem largura. Afaste C da reta A/B."
+    else if math.abs(distance) > 1e12 or math.abs(activePriceA) > 1e12 or math.abs(activePriceB) > 1e12 or math.abs(activePriceC) > 1e12
+        problem := "Preços ou largura fora do limite do formato."
+    else if (imported or sameSeedAnchors) and parsed and (indexB - indexA != int(str.tonumber(map.get(importedFields, "ab"))) or indexC - indexA != int(str.tonumber(map.get(importedFields, "ac"))))
+        problem := "Calendário de candles incompatível: intervalos A/B/C diferem da origem."
+    else if (imported or sameSeedAnchors) and math.abs(computedDistance - distance) > math.max(1e-10, math.abs(distance) * 1e-8)
+        problem := "A largura no gráfico diverge da origem. Importação recusada."
+
+// Aparência importada é integral; o modo Manual mantém os controles editáveis.
+var int activeBefore = beforeSteps
+var int activeAfter = afterSteps
+var string activeExtension = extendInput
+var string activeLabelMode = labelMode
+var bool activeShowMax = showMax
+var bool activeShowLevel = showLevel
+var bool activeShowPrice = showPrice
+var string activeLabelPosition = labelPosition
+var int activeLabelOffset = labelOffset
+var string activeLabelVertical = labelVertical
+var float activeLabelGap = labelGap
+var int activeLabelSize = labelSize
+var bool activeLabelUseLineColor = labelUseLineColor
+var color activeLabelColor = labelColor
+var int activeLabelTransparency = labelTransparency
+if barstate.isfirst and imported and parsed
+    activeBefore := int(str.tonumber(map.get(importedFields, "before")))
+    activeAfter := int(str.tonumber(map.get(importedFields, "after")))
+    activeExtension := f_extName(map.get(importedFields, "ext"))
+    array<string> styleKeys = array.from("si", "sx", "s1", "s3", "s5", "s9", "s17")
+    for i = 0 to 6
+        array<string> parts = str.split(map.get(importedFields, array.get(styleKeys, i)), ",")
+        array.set(visibility, i, array.get(parts, 0) == "1")
+        array.set(custom, i, true)
+        array.set(colors, i, color.rgb(int(str.tonumber(array.get(parts, 1))), int(str.tonumber(array.get(parts, 2))), int(str.tonumber(array.get(parts, 3)))))
+        array.set(alphas, i, int(str.tonumber(array.get(parts, 4))))
+        array.set(widths, i, int(str.tonumber(array.get(parts, 5))))
+        array.set(styles, i, f_styleName(array.get(parts, 6)))
+    array<string> parts = str.split(map.get(importedFields, "labels"), ",")
+    activeLabelMode := array.get(parts, 0) == "M" ? "Marcos" : array.get(parts, 0) == "A" ? "Todas as linhas" : "Nenhum"
+    activeLabelSize := int(str.tonumber(array.get(parts, 1)))
+    activeLabelColor := color.rgb(int(str.tonumber(array.get(parts, 2))), int(str.tonumber(array.get(parts, 3))), int(str.tonumber(array.get(parts, 4))))
+    activeLabelTransparency := int(str.tonumber(array.get(parts, 5)))
+    activeLabelPosition := array.get(parts, 6) == "L" ? "Início" : array.get(parts, 6) == "C" ? "Centro" : array.get(parts, 6) == "R" ? "Fim" : "Último candle"
+    activeLabelVertical := array.get(parts, 7) == "U" ? "Acima" : array.get(parts, 7) == "D" ? "Abaixo" : "Sobre a linha"
+    activeLabelGap := str.tonumber(array.get(parts, 8))
+    activeLabelOffset := int(str.tonumber(array.get(parts, 9)))
+    activeShowLevel := array.get(parts, 10) == "1"
+    activeShowPrice := array.get(parts, 11) == "1"
+    activeShowMax := array.get(parts, 12) == "1"
+    activeLabelUseLineColor := array.get(parts, 13) == "1"
+
+// varip mantém o bloqueio também durante atualizações intrabar em tempo real.
+varip bool exportSent = false
+varip string exportProblem = ""
+if barstate.islast and exportEnabled and not exportSent and problem == ""
+    string code = ""
+    if imported
+        // Reexportação sem remapeamento: mantém inclusive os offsets históricos.
+        code := importText
+    else
+        code := "NOCUDA|v=1|geom=bars1|id=" + drawingId + "|src=TV|symbol=" + currentSymbol + "|feed=" + currentFeed + "|tf=" + str.tostring(int(chartSeconds)) + "|scale=L"
+        code += "|a=" + str.tostring(activeTimeA) + "," + f_decimal(activePriceA) + ",0|b=" + str.tostring(activeTimeB) + "," + f_decimal(activePriceB) + ",0|c=" + str.tostring(activeTimeC) + "," + f_decimal(activePriceC) + ",0"
+        code += "|d=" + f_decimal(distance) + "|ab=" + str.tostring(indexB - indexA) + "|ac=" + str.tostring(indexC - indexA) + "|step=0.125|before=" + str.tostring(activeBefore) + "|after=" + str.tostring(activeAfter) + "|ext=" + f_extCode(activeExtension)
+        array<string> exportKeys = array.from("si", "sx", "s1", "s3", "s5", "s9", "s17")
+        for i = 0 to 6
+            bool customized = array.get(custom, i)
+            color effectiveColor = customized ? array.get(colors, i) : baseColor
+            int effectiveAlpha = customized ? array.get(alphas, i) : baseTransparency
+            int effectiveWidth = customized ? array.get(widths, i) : baseWidth
+            string effectiveStyle = customized ? array.get(styles, i) : baseStyle
+            code += "|" + array.get(exportKeys, i) + "=" + f_bit(array.get(visibility, i)) + "," + f_rgb(effectiveColor) + "," + str.tostring(effectiveAlpha) + "," + str.tostring(effectiveWidth) + "," + f_styleCode(effectiveStyle)
+        string modeCode = activeLabelMode == "Marcos" ? "M" : activeLabelMode == "Todas as linhas" ? "A" : "N"
+        string positionCode = activeLabelPosition == "Início" ? "L" : activeLabelPosition == "Centro" ? "C" : activeLabelPosition == "Fim" ? "R" : "T"
+        string verticalCode = activeLabelVertical == "Acima" ? "U" : activeLabelVertical == "Abaixo" ? "D" : "O"
+        code += "|labels=" + modeCode + "," + str.tostring(activeLabelSize) + "," + f_rgb(activeLabelColor) + "," + str.tostring(activeLabelTransparency) + "," + positionCode + "," + verticalCode + "," + f_decimal(activeLabelGap) + "," + str.tostring(activeLabelOffset) + "," + f_bit(activeShowLevel) + "," + f_bit(activeShowPrice) + "," + f_bit(activeShowMax) + "," + f_bit(activeLabelUseLineColor)
+    [checked, checkError] = f_parse(code)
+    if checkError == ""
+        log.info(code)
+    else
+        exportProblem := "Exportação recusada: " + checkError
+    exportSent := true
+
+var array<line> gridLines = array.new<line>()
+var array<label> gridLabels = array.new<label>()
+var table notice = table.new(position.bottom_right, 1, 1)
+
+if barstate.islast
+    string noticeText = problem != "" ? problem : exportProblem != "" ? exportProblem : imported ? "Nocuda Tool · Importado. Âncoras conferidas; verifique as projeções no destino." : ""
+    table.cell(notice, 0, 0, showGrid ? noticeText : "", text_color = chart.fg_color, bgcolor = color.new(chart.bg_color, noticeText == "" or not showGrid ? 100 : 10), text_size = size.small)
+    if showGrid and problem == ""
+        int firstSlot = -activeBefore
+        int lastSlot = 16 + activeAfter
+        int total = lastSlot - firstSlot + 1
+        int leftX = math.min(indexA, indexB)
+        int rightX = math.max(indexA, indexB)
+        string lineExtension = f_extension(activeExtension)
+        int rawLabelX = switch activeLabelPosition
+            "Centro" => int(math.round((leftX + rightX) * 0.5))
+            "Fim" => rightX
+            "Último candle" => bar_index
+            => leftX
+        int labelX = math.max(math.max(0, bar_index - MAX_ANCHOR_AGE), math.min(bar_index + 500, rawLabelX + activeLabelOffset))
+        string textStyle = switch activeLabelPosition
+            "Início" => label.style_label_right
+            "Centro" => label.style_none
+            => label.style_label_left
+        float textShift = math.abs(distance) * activeLabelGap / 100.0
+        float verticalShift = activeLabelVertical == "Acima" ? textShift : activeLabelVertical == "Abaixo" ? -textShift : 0.0
+
+        // Cria uma vez; as atualizações seguintes reutilizam os objetos.
+        if array.size(gridLines) == 0
+            for i = 0 to total - 1
+                array.push(gridLines, line.new(leftX, activePriceA, rightX, activePriceB, xloc = xloc.bar_index))
+                array.push(gridLabels, label.new(leftX, activePriceA, "", xloc = xloc.bar_index, yloc = yloc.price, style = label.style_none))
+
+        for i = 0 to total - 1
+            int slot = firstSlot + i
+            float level = -1.0 + slot * LEVEL_STEP
+            int groupIndex = f_group(slot)
+            bool visible = array.get(visibility, groupIndex)
+            bool useCustom = array.get(custom, groupIndex)
+            color rawColor = useCustom ? array.get(colors, groupIndex) : baseColor
+            int transparency = useCustom ? array.get(alphas, groupIndex) : baseTransparency
+            color strokeColor = color.new(rawColor, transparency)
+            int strokeWidth = useCustom ? array.get(widths, groupIndex) : baseWidth
+            string strokeStyle = f_lineStyle(useCustom ? array.get(styles, groupIndex) : baseStyle)
+            float leftY = f_price(leftX, level, indexA, activePriceA, slope, distance)
+            float rightY = f_price(rightX, level, indexA, activePriceA, slope, distance)
+            line currentLine = array.get(gridLines, i)
+            line.set_xy1(currentLine, leftX, leftY)
+            line.set_xy2(currentLine, rightX, rightY)
+            line.set_extend(currentLine, lineExtension)
+            line.set_color(currentLine, visible ? strokeColor : na)
+            line.set_width(currentLine, strokeWidth)
+            line.set_style(currentLine, strokeStyle)
+
+            bool milestone = groupIndex >= 2
+            bool maxLevel = slot == 40 and activeShowMax
+            bool showText = visible and activeLabelMode != "Nenhum" and (activeLabelMode == "Todas as linhas" or milestone or maxLevel)
+            float priceAtLabel = f_price(labelX, level, indexA, activePriceA, slope, distance)
+            // Ordinal contínuo também nas projeções anteriores à linha 1.
+            string caption = maxLevel ? "MAX" : str.tostring(slot + 1)
+            if activeShowLevel
+                caption += " [" + str.tostring(level, "#.###") + "]"
+            if activeShowPrice
+                caption += " · " + str.tostring(priceAtLabel, format.mintick)
+            label currentLabel = array.get(gridLabels, i)
+            label.set_xy(currentLabel, labelX, priceAtLabel + verticalShift)
+            label.set_text(currentLabel, showText ? caption : "")
+            label.set_style(currentLabel, textStyle)
+            label.set_color(currentLabel, color.new(rawColor, 100))
+            label.set_textcolor(currentLabel, color.new(activeLabelUseLineColor ? rawColor : activeLabelColor, activeLabelTransparency))
+            label.set_size(currentLabel, activeLabelSize)
+            label.set_tooltip(currentLabel, "Nocuda Tool · Nível " + str.tostring(level, "#.###") + "\nPreço nesta posição: " + str.tostring(priceAtLabel, format.mintick) + "\nPasso proporcional fixo: 0.125")
+    else
+        while array.size(gridLines) > 0
+            line.delete(array.pop(gridLines))
+        while array.size(gridLabels) > 0
+            label.delete(array.pop(gridLabels))

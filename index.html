@@ -204,7 +204,7 @@
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Research">
         <button type="button" data-nav-item data-nav-child="research-forex">
           <span class="nav-sub-item-title">Forex</span>
-          <span class="nav-sub-item-desc">Calendário, NoCoda e Pivots</span>
+          <span class="nav-sub-item-desc">Estudos NoCoda e Pivots</span>
         </button>
         <button type="button" data-nav-item data-nav-child="research-stocks-br">
           <span class="nav-sub-item-title">Ações</span>
@@ -230,10 +230,6 @@
       <div class="nav-sub-contexts" aria-label="Opções do destino Research" hidden inert>
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
              data-nav-context="research-forex" role="group" aria-label="Research Forex" hidden inert>
-          <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="calendar">
-            <span class="nav-sub-item-title">Calendário</span>
-            <span class="nav-sub-item-desc">Eventos econômicos da semana</span>
-          </button>
           <button type="button" data-nav-item data-nav-local-surface="research" data-nav-local-view="nocoda">
             <span class="nav-sub-item-title">NoCoda</span>
             <span class="nav-sub-item-desc">Estudos de canal por instrumento</span>
@@ -244,6 +240,10 @@
           </button>
         </div>
       </div>
+    </nav>
+    <nav class="nav-sub-menu" id="toolsNavSubmenu" aria-labelledby="toolsNavTrigger" aria-hidden="true" hidden inert>
+      <button type="button" data-nav-item data-nav-child="tools-calendar"><span class="nav-sub-item-title">Calendário Econômico</span><span class="nav-sub-item-desc">Eventos da semana</span></button>
+      <button type="button" data-nav-item data-nav-child="tools-nocuda"><span class="nav-sub-item-title">Nocuda Tool</span><span class="nav-sub-item-desc">Downloads e parâmetros</span></button>
     </nav>
   </div>
 </div>
@@ -271,6 +271,8 @@
     <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-alladin"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
+  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16M8 3v4M16 10v4M10 17v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span class="n">06</span><span class="lbl">Ferramentas e Serviços</span></button>
+  <button type="button" class="nav-group-toggle" data-nav-expand="tools" aria-controls="toolsNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>
   <span class="sidebar-footer">JP Wealth</span>
@@ -1144,30 +1146,6 @@
   <!-- ================= 04 RESEARCH ================= -->
   <section class="screen" id="research">
     <h1 class="sr-only" data-route-focus>Research</h1>
-    <!-- Calendário Econômico: workspace canônico de Research/Forex. O overlay
-         global continua como segunda instância visual do mesmo domínio; ambos
-         leem o mesmo cache e usam o mesmo renderizador parametrizado por raiz.
-         Os nós internos permanecem sem id para não colidir com o overlay. -->
-    <div class="research-view" id="execEcal" data-research-view="calendar" role="region" aria-label="Calendário Econômico">
-      <div class="card ecal-ws">
-        <div class="ecal-ws-head">
-          <span class="cp-kicker">AGENDA · SEMANA CORRENTE</span><h2>Calendário Econômico</h2>
-          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span><p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
-        </div>
-        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
-          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
-          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
-          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
-          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
-          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
-        </div>
-        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
-        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
-        <p class="ecal-ws-foot">
-          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
-        </p>
-      </div>
-    </div>
     <!-- NoCoda e Pivots preservam os mesmos IDs e renderizadores. O conteúdo
          continua montado sob demanda a partir do estado vivo. -->
     <div class="research-view" id="execNocoda" data-research-view="nocoda" role="region" aria-label="Estudos NoCoda" hidden></div>
@@ -1187,6 +1165,50 @@
     </div>
     <div class="research-view" id="researchOthers" data-research-view="others" role="region" aria-label="Outras pesquisas" hidden>
       <div class="card"><h2>Others</h2><p class="expl">Área reservada para outras linhas de pesquisa. Nenhum conteúdo funcional está disponível neste ciclo.</p></div>
+    </div>
+  </section>
+
+  <section class="screen" id="tools" aria-label="Ferramentas e Serviços">
+    <div class="tools-view" id="execEcal" data-tools-view="calendar" role="region" aria-label="Calendário Econômico">
+      <div class="card ecal-ws">
+        <div class="ecal-ws-head">
+          <span class="cp-kicker">AGENDA · SEMANA CORRENTE</span><h2>Calendário Econômico</h2>
+          <span class="ecal-ws-fresh" data-ecal-role="freshness"></span><p class="ecal-sub" data-ecal-role="range" aria-live="polite"></p>
+        </div>
+        <div class="seg ecal-filters" data-ecal-role="filters" role="group" aria-label="Filtrar por moeda">
+          <button type="button" data-ecal-cur="all" class="on" aria-pressed="true">Todas</button>
+          <button type="button" data-ecal-cur="USD" aria-pressed="false">USD</button>
+          <button type="button" data-ecal-cur="EUR" aria-pressed="false">EUR</button>
+          <button type="button" data-ecal-cur="GBP" aria-pressed="false">GBP</button>
+          <button type="button" data-ecal-cur="JPY" aria-pressed="false">JPY</button>
+        </div>
+        <div class="ecal-body ecal-ws-body" data-ecal-role="body"></div>
+        <p class="ecal-empty" data-ecal-role="empty" hidden></p>
+        <p class="ecal-ws-foot">
+          <span>Consenso e Anterior vêm da fonte. A fonte atual não divulga valores realizados nem eventos além da semana corrente.</span>
+        </p>
+      </div>
+    </div>
+    <div class="tools-view nocuda-tool" id="nocudaTool" data-tools-view="nocuda" hidden inert>
+      <div class="nocuda-heading"><span class="cp-kicker">FERRAMENTAS E SERVIÇOS</span><h1 data-route-focus>Nocuda Tool</h1><p>Indicadores para TradingView e MetaTrader 5, com transferência dos parâmetros do canal.</p></div>
+      <div class="nocuda-downloads">
+        <article class="card nocuda-download"><div class="nocuda-platform nocuda-platform--tradingview" aria-hidden="true"><img src="assets/nocuda-tradingview.png" alt="" width="56" height="56"></div><div><span class="cp-kicker">PINE SCRIPT · V6</span><h2>TradingView</h2><p>Três pontos para ajustar o canal, marcos fixos e aparência personalizável.</p><p class="nocuda-release">v1.1 · código-fonte · compilação no editor pendente</p><div class="nocuda-actions"><a class="reset-btn" href="downloads/nocuda/Nocuda_Tool.pine" download="Nocuda_Tool.pine" data-nocuda-file="Nocuda_Tool.pine">Baixar indicador</a><a href="downloads/nocuda/TRADINGVIEW-LEIA-ME.md" download data-nocuda-file="TRADINGVIEW-LEIA-ME.md">Guia de instalação</a></div></div></article>
+        <article class="card nocuda-download"><div class="nocuda-platform nocuda-platform--metatrader" aria-hidden="true"><img src="assets/nocuda-metatrader.png" alt="" width="56" height="56"></div><div><span class="cp-kicker">METATRADER 5 · MQL5</span><h2>MetaTrader 5</h2><p>Canal manual com referências arrastáveis e exportação dos parâmetros para arquivo.</p><p class="nocuda-release" id="nocudaMt5Status">v1.0 · compilado · validação visual pendente</p><div class="nocuda-actions"><a class="reset-btn" href="downloads/nocuda/Nocuda_Tool.ex5" download="Nocuda_Tool.ex5" data-nocuda-file="Nocuda_Tool.ex5">Baixar indicador .ex5</a><a href="downloads/nocuda/Nocuda_Tool.mq5" download="Nocuda_Tool.mq5" data-nocuda-file="Nocuda_Tool.mq5">Código-fonte</a><a href="downloads/nocuda/MT5-LEIA-ME.md" download data-nocuda-file="MT5-LEIA-ME.md">Guia de instalação</a></div></div></article>
+      </div>
+      <section class="card nocuda-transfer" aria-labelledby="nocudaTransferTitle">
+        <div class="nocuda-section-head"><div><span class="cp-kicker">MT5 ↔ TRADINGVIEW</span><h2 id="nocudaTransferTitle">Transferir um desenho</h2><p>Cole o código exportado pelo indicador ou abra seu arquivo de parâmetros.</p></div><button type="button" class="reset-btn" id="nocudaExample">Ver exemplo fictício</button></div>
+        <label for="nocudaPayload">Parâmetros Nocuda</label><textarea id="nocudaPayload" data-session="nocuda" rows="4" spellcheck="false" autocomplete="off" maxlength="16384" placeholder="NOCUDA|v=1|geom=bars1|…" aria-describedby="nocudaTransferHelp nocudaStatus"></textarea>
+        <p class="nocuda-help" id="nocudaTransferHelp">No destino, cole em “Importar parâmetros” nas configurações da Nocuda Tool. O código não é colado diretamente sobre o gráfico.</p>
+        <div class="nocuda-actions"><button class="reset-btn nocuda-primary" type="button" id="nocudaValidate">Validar parâmetros</button><label class="reset-btn nocuda-file-label">Abrir arquivo .txt<input type="file" id="nocudaFile" accept=".txt,text/plain"></label><button class="reset-btn" type="button" id="nocudaClear">Limpar</button><button class="reset-btn" type="button" id="nocudaRestore" hidden>Restaurar último código válido</button></div>
+        <p id="nocudaStatus" role="status" aria-live="polite">O desenho fica apenas nesta página durante a sessão.</p>
+        <div id="nocudaResult" hidden>
+          <dl id="nocudaSummary" class="nocuda-summary"></dl><div class="nocuda-anchor-wrap"><table class="nocuda-anchors"><caption>Âncoras do desenho</caption><thead><tr><th>Ponto</th><th>Data e hora UTC</th><th>Preço</th><th>Fuso de origem</th></tr></thead><tbody id="nocudaAnchors"></tbody></table></div>
+          <div class="nocuda-preview"><svg id="nocudaPreview" viewBox="0 0 900 260" role="img" aria-label="Prévia geométrica do canal, sem cotações de mercado"></svg></div><p class="nocuda-help">Prévia geométrica, sem cotações. A plataforma de destino confere símbolo, período e distâncias entre as barras.</p>
+          <div class="nocuda-actions"><button class="reset-btn nocuda-primary" type="button" id="nocudaCopy">Copiar parâmetros</button><button class="reset-btn" type="button" id="nocudaSave">Baixar parâmetros .txt</button><button class="reset-btn" type="button" id="nocudaEditable">Gerar Pine editável</button></div>
+          <label for="nocudaCanonical">Código validado</label><textarea id="nocudaCanonical" data-session="nocuda" rows="3" readonly spellcheck="false"></textarea>
+        </div>
+      </section>
+      <section class="card nocuda-details"><h2>Um canal, marcos fixos</h2><p>O passo permanece em 0,125. Você ajusta a inclinação e a largura; todas as linhas acompanham o canal.</p><div class="nocuda-markers" aria-label="Marcos do canal"><span><b>1</b>−1 · principal</span><span><b>3</b>−0,75</span><span><b>5</b>−0,5</span><span><b>9</b>0 · referência</span><span><b>17</b>1 · referência</span><span><b>MAX</b>4</span></div><details><summary>Como manter a correspondência entre plataformas</summary><p>Use o mesmo instrumento, período e escala linear. Sessões e provedores diferentes podem ter barras diferentes. Uma importação incompatível é recusada para evitar deslocamentos silenciosos.</p><p>No TradingView, o modo importado reproduz os parâmetros. Para voltar a ajustar os três pontos, gere o Pine editável e abra esse código no Pine Editor. No MT5, confira o fuso histórico de cada âncora no guia antes de exportar.</p></details></section>
     </div>
   </section>
 
@@ -1875,5 +1897,7 @@
 <script src="src/js/10-domain/19-execution-market.js"></script>
 <script src="src/js/10-domain/18-execution-board-model.js"></script>
 <script src="src/js/20-ui/30-execution-board.js"></script>
+<script src="src/js/10-domain/16-nocuda-transfer.js"></script>
+<script src="src/js/20-ui/31-tools-services.js"></script>
 </body>
 </html>

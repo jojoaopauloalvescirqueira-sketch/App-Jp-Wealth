@@ -529,7 +529,7 @@ def run_ui_flow(browser, url):
     assert nav_contract["noPrimary"] and nav_contract["noSubmenu"], nav_contract
     assert nav_contract["duplicateInternalNav"] == 0, "tabs equivalentes voltaram ao conteúdo"
     assert nav_contract["api"], "superfície visual JPWFx.ui ausente"
-    assert nav_contract["routes"] == ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin"], nav_contract
+    assert nav_contract["routes"] == ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin", "tools-calendar"], nav_contract
     assert nav_contract["children"] == ["forex-consolidated", "forex-planning", "forex-operation", "forex-reserves"], nav_contract
     assert nav_contract["contextual"] == ["overview", "planning", "actuals", "table"], nav_contract
     assert nav_contract["resolved"]["accepted"] and nav_contract["resolved"]["source"] == "compatibility", nav_contract
@@ -592,6 +592,7 @@ def run_ui_flow(browser, url):
         ("personal-finance", "finpes", "personal-finance"),
         ("research-forex", "research", "research"),
         ("alladin", "alladin", "alladin"),
+        ("tools-calendar", "tools", "tools"),
     ]
     assert [(row["route"], row["active"][0], row["primary"]) for row in nav_state] == expected, nav_state
     assert all(row["accepted"] and len(row["active"]) == 1 for row in nav_state), nav_state

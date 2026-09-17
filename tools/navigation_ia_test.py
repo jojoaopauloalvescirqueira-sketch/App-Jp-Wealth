@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """NAV-01..NAV-03 — contrato da navegacao semantica.
 
-Prova que a API publica expoe somente as cinco rotas canonicas, enquanto a
+Prova que a API publica expoe somente as seis rotas canonicas, enquanto a
 fachada legada continua resolvendo destinos fisicos sem promovê-los ao contrato
 canônico. Navegação é UI pura: não grava storage, não salva estado financeiro e
 a navegacao nao le nem altera o dominio patrimonial do Alladin.
@@ -24,8 +24,9 @@ CANONICAL = [
     ("dashboard", "dash", "dashboard", None),
     ("forex-consolidated", "fxconsolidated", "forex", None),
     ("personal-finance", "finpes", "personal-finance", "overview"),
-    ("research-forex", "research", "research", "calendar"),
+    ("research-forex", "research", "research", "nocoda"),
     ("alladin", "alladin", "alladin", None),
+    ("tools-calendar", "tools", "tools", "calendar"),
 ]
 FOREX_CHILDREN = [
     ("forex-consolidated", "fxconsolidated", None),
@@ -35,7 +36,7 @@ FOREX_CHILDREN = [
 ]
 
 RESEARCH_CHILDREN = [
-    ("research-forex", "research", "calendar"),
+    ("research-forex", "research", "nocoda"),
     ("research-stocks-br", "research", "stocks-br"),
     ("research-stocks-global", "research", "stocks-global"),
     ("research-reits", "research", "reits"),
@@ -51,6 +52,7 @@ PRIMARY = [
     ("03", "Forex", "forex-consolidated", "forex"),
     ("04", "Finanças Pessoais", "personal-finance", "personal-finance"),
     ("05", "Alladin", "alladin", "alladin"),
+    ("06", "Ferramentas e Serviços", "tools-calendar", "tools"),
 ]
 
 
@@ -127,6 +129,9 @@ def assert_registry(page):
     assert [child["id"] for child in children] == [item[0] for item in FOREX_CHILDREN], children
     research = page.evaluate("() => window.JPWNavigation.children('research')")
     assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
+    tools = page.evaluate("() => window.JPWNavigation.children('tools')")
+    assert [(child["id"], child["localView"]["view"]) for child in tools] == [
+        ("tools-calendar", "calendar"), ("tools-nocuda", "nocuda")], tools
     assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []
     assert page.evaluate("() => window.JPWNavigation.children('inexistente')") == []
     resolved = page.evaluate("""targets => targets.map(target => ({
@@ -168,7 +173,7 @@ def assert_primary_dom(page):
     assert page.locator("#gdTopbarNavSlot #nav").count() == 0
     assert page.locator("#nav > .tab[aria-expanded]").count() == 0
     assert page.locator("#nav > [data-nav-expand]").evaluate_all(
-        "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes"]
+        "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes", "tools"]
     assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
     assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 3
     assert page.locator("#navLocalSlot [data-nav-context='forex-operation'] [data-nav-local-view]").evaluate_all(
@@ -286,6 +291,8 @@ def assert_canonical_navigation(page):
             assert page.evaluate("() => window.JPWFin.ui.getView()") == local_view
         if screen == "research":
             assert page.evaluate("() => window.JPWResearch.ui.getView()") == local_view
+        if screen == "tools":
+            assert page.evaluate("() => window.JPWTools.ui.getView()") == local_view
 
     page.evaluate("() => window.JPWExec.ui.selectView('motor')")
     page.click('#nav > .tab[data-route="forex-consolidated"]')
@@ -338,15 +345,16 @@ def assert_forex_children_and_compatibility(page):
     assert page.locator("#forexChecklistDialog").is_visible()
     page.locator("#forexChecklistClose").click()
 
-    # NAV3-D/G: aliases historicos pertencem a Research/Forex e nunca deixam
-    # Exec/Forex falsamente ativos.
+    # Calendário realocado para Ferramentas; estudos preservam Research/Forex.
     for target, view in (("ecal", "calendar"), ("nocoda", "nocoda"), ("pivots", "pivots")):
         assert page.evaluate("target => JPWNavigation.navigate(target)", target) is True
         state = active_state(page)
-        assert state["screen"] == "research" and state["primary"] == "research", (target, state)
-        assert state["current"]["canonical"] == "research-forex", (target, state)
-        assert state["current"]["child"] == "research-forex", (target, state)
-        assert state["current"]["localView"] == {"surface": "research", "view": view}, (target, state)
+        owner = "tools" if target == "ecal" else "research"
+        canonical = "tools-calendar" if target == "ecal" else "research-forex"
+        assert state["screen"] == owner and state["primary"] == owner, (target, state)
+        assert state["current"]["canonical"] == canonical, (target, state)
+        assert state["current"]["child"] == canonical, (target, state)
+        assert state["current"]["localView"] == {"surface": owner, "view": view}, (target, state)
 
 
 def assert_compatibility_and_atomic_refusal(page):
@@ -445,7 +453,7 @@ def assert_keyboard_and_mobile(browser, url, desktop_page):
         assert page.evaluate("() => appSidebar.contains(document.activeElement)")
         sizes = page.evaluate("""() => [...document.querySelectorAll('#nav > .tab[data-route]')]
           .map(el => el.getBoundingClientRect().height)""")
-        assert len(sizes) == 5 and min(sizes) >= 44, sizes
+        assert len(sizes) == 6 and min(sizes) >= 44, sizes
         page.click('#nav > .tab[data-route="alladin"]')
         state = active_state(page)
         assert state["screen"] == "alladin" and state["primary"] == "alladin", state

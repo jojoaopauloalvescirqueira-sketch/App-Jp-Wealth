@@ -21,8 +21,9 @@ from contextual_sidebar_test import LAYOUT_KEY, LAYOUT_RAW, UNKNOWN_KEY, UNKNOWN
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY = 'jpw_nav_order'
-DEFAULT = ['dashboard', 'research', 'forex', 'personal-finance', 'alladin']
+DEFAULT = ['dashboard', 'research', 'forex', 'personal-finance', 'alladin', 'tools']
 LEGACY = ['dashboard', 'forex', 'personal-finance', 'research', 'alladin']
+LEGACY_PROJECTED = LEGACY + ['tools']
 PROTECTED = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
              'jpw_nav': 'pill', 'jpw_rail': 'expanded', 'jpw_fs': '1', 'jpw_expl': 'off'}
 
@@ -180,16 +181,16 @@ def run(args):
                     const actual=[...document.querySelectorAll('#nav > .tab[data-primary]')].map(el=>el.dataset.primary);
                     if(JSON.stringify(actual)!==JSON.stringify(desired))throw new Error('Wrong preview '+desired);
                     const numbers=[...document.querySelectorAll('#nav > .tab[data-primary] .n')].map(el=>el.textContent);
-                    if(JSON.stringify(numbers)!==JSON.stringify(['01','02','03','04','05']))throw new Error('Wrong visible positions');
+                    if(JSON.stringify(numbers)!==JSON.stringify(['01','02','03','04','05','06']))throw new Error('Wrong visible positions');
                     document.getElementById('navOrderSave').click();
                     const raw=window.__a10Get('jpw_nav_order');
-                    if(raw===null&&JSON.stringify(desired)===JSON.stringify(['dashboard','research','forex','personal-finance','alladin'])){}
+                    if(raw===null&&JSON.stringify(desired)===JSON.stringify(['dashboard','research','forex','personal-finance','alladin','tools'])){}
                     else if(JSON.stringify(JSON.parse(raw))!==JSON.stringify(desired))throw new Error('Wrong saved order '+desired);
                     observed.push({desired,actual,stored:raw});
                   }
                   return observed;
                 }''', permutations)
-                assert len(examined) == 120
+                assert len(examined) == 720
                 assert page.evaluate('JSON.stringify(JPWNavigation.current())') == before
                 pristine(page)
                 saved = stored(page)
@@ -199,20 +200,22 @@ def run(args):
                 assert page.evaluate("window.__a10Writes.filter(x=>x.key==='jpw_nav_order').length") == 0, 'reload rewrote order'
                 finish(context, errors)
                 return {'permutations': examined}
-            check('default, 120 permutations through DOM controls, same current and reload', defaults_and_permutations)
+            check('default, 720 permutations through DOM controls, same current and reload', defaults_and_permutations)
 
             def cancel_restore_and_failure():
                 original = json.dumps(LEGACY, separators=(',', ':'))
                 context, page, errors = boot(browser, url, original)
+                assert order(page) == LEGACY_PROJECTED and stored(page) == original
+                assert page.evaluate("window.__a10Writes.filter(x=>x.key==='jpw_nav_order').length") == 0, 'legacy order rewritten during boot'
                 editor(page);move(page, keyboard=True)
-                assert order(page) != LEGACY and stored(page) == original
+                assert order(page) != LEGACY_PROJECTED and stored(page) == original
                 assert page.evaluate("document.activeElement.closest('[data-nav-order-id]').dataset.navOrderId") == 'dashboard'
                 page.locator('#navOrderCancel').click()
-                assert order(page) == LEGACY and stored(page) == original
+                assert order(page) == LEGACY_PROJECTED and stored(page) == original
                 page.locator('#navOrderReset').click()
                 assert order(page) == DEFAULT and stored(page) == original
                 page.keyboard.press('Escape');settle(page)
-                assert order(page) == LEGACY and stored(page) == original
+                assert order(page) == LEGACY_PROJECTED and stored(page) == original
                 editor(page);move(page)
                 draft = order(page)
                 page.evaluate("window.__a10Failure='refused'")
@@ -304,7 +307,7 @@ def run(args):
 
             def modes_and_routes():
                 details = []
-                desired = ['alladin', 'personal-finance', 'forex', 'research', 'dashboard']
+                desired = ['tools', 'alladin', 'personal-finance', 'forex', 'research', 'dashboard']
                 for width in [1440, 390]:
                     for mode in ['sidebar', 'topbar']:
                         for theme in ['light', 'dark']:
@@ -324,7 +327,8 @@ def run(args):
                             page.evaluate('closeSettingsModal()');settle(page)
                             expected = order(page)
                             destinations = {'dashboard': 'dashboard', 'research': 'research-forex',
-                                            'forex': 'forex-consolidated', 'personal-finance': 'personal-finance', 'alladin': 'alladin'}
+                                            'forex': 'forex-consolidated', 'personal-finance': 'personal-finance', 'alladin': 'alladin',
+                                            'tools': 'tools-calendar'}
                             for module in expected:
                                 if width <= 900:
                                     page.locator('[data-shell-menu-toggle]').click()

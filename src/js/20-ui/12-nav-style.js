@@ -198,7 +198,7 @@ function initNavLayoutChoice(){
 // Ordem visual dos mesmos primários: preferência por navegador, fora de S e
 // do envelope de widgets. A lista usa identidades, nunca rótulos ou rotas novas.
 const NAV_ORDER_KEY='jpw_nav_order';
-const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','forex','personal-finance','alladin']);
+const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','forex','personal-finance','alladin','tools']);
 const navOrderState={confirmed:[],draft:[],raw:null,editing:false,blocked:null,note:'',restoreRequested:false};
 function navOrderValid(value){
   return Array.isArray(value)&&value.length===NAV_ORDER_DEFAULT.length&&
@@ -212,6 +212,8 @@ function navOrderRead(){
   catch(e){return {raw:null,order:[...NAV_ORDER_DEFAULT],blocked:'read',note:'Não foi possível ler a ordem salva. O padrão é exibido sem alterar a preferência; recarregue para tentar a leitura novamente.'};}
   let order=null;
   if(raw!==null){try{order=JSON.parse(raw);}catch(e){}}
+  // Preserve an existing five-module order in memory; never rewrite on read.
+  if(Array.isArray(order)&&order.length===5&&new Set(order).size===5&&order.every(id=>NAV_ORDER_DEFAULT.includes(id)&&id!=='tools')) order=[...order,'tools'];
   const valid=navOrderValid(order);
   return {raw,order:valid?order:[...NAV_ORDER_DEFAULT],blocked:null,
     note:raw!==null&&!valid?'Ordem salva não reconhecida. O padrão é exibido; a preferência original permanece intacta até você salvar uma nova ordem.':''};

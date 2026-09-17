@@ -170,7 +170,7 @@
       "order": 28,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "b0770fb37e8b872f8ce7a4e32ca7ee61d65578205318c894372d511c74b72608"
+      "sha256": "c00687b9ef8447f6c3c8f54cf14b1c5e17d9acd1bd35ffbe9251bbdd01da948f"
     },
     {
       "order": 29,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "3f8ce6d3e9058fad623dd49b03df119b965d45cb92c5354f39a55bee5fead7fa"
+      "sha256": "b25298b0558380b3b8eea8da7e2fc3f400ff0571f8dffdb25e52d4d2142af8e6"
     },
     {
       "order": 36,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "bc8c7e67faccb4fb2e921c33cd478552c86f4f3442d79b725eda3f3b41ba2888"
+      "sha256": "32a04afe8c735b6a4e4195ca4d35e1643e82c0cf8bbfab57b3d037c95f15f0d6"
     },
     {
       "order": 46,
@@ -487,7 +487,7 @@
       "order": 81,
       "path": "src/js/20-ui/23-research-views.js",
       "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
-      "sha256": "04f3bfe03cb975946688653c7ed3cfa1edec9b1412a76243b382b552a1b197d1"
+      "sha256": "23332e1eb77e17375e303a709de2485e006549d805065010f5bfc1db84e2bc36"
     },
     {
       "order": 82,
@@ -554,6 +554,18 @@
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 92,
       "sha256": "e0a000aab217b7defca777598eb133895171b9abb464bceb6863de1a212045bf"
+    },
+    {
+      "path": "src/js/10-domain/16-nocuda-transfer.js",
+      "section": "Nocuda Tool · local drawing transfer",
+      "order": 93,
+      "sha256": "f70d4b16b25c63cd75eedf65a7e873455fcb43ec5186957a26a7302cc2c1a7cb"
+    },
+    {
+      "path": "src/js/20-ui/31-tools-services.js",
+      "section": "Nocuda Tool · local drawing transfer",
+      "order": 94,
+      "sha256": "8909d1ede87067a0a5c8c46167e74e273bcb533381003d8dd0a30c5dd2ef2dc3"
     }
   ],
   "runtimeAssets": [

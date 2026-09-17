@@ -1,5 +1,9 @@
 # Navegação hierárquica — contrato de implementação
 
+## Ferramentas e Serviços — 2026-09-17
+
+Sexto grupo primário (`tools`), com `tools-calendar` primeiro e `tools-nocuda` segundo. O calendário mantém o único `#execEcal`, renderer e cache existentes, agora sob `#tools`. Research/Forex abre Estudos NoCoda; Pivots permanece ao lado. A fachada legada `ecal` e `navigateLocal('research','calendar')` preserva a intenção e ativa Ferramentas. `JPWTools.ui` seleciona as duas visões locais. Todos os layouts usam os mesmos nós e controle de foco. Preferência antiga com cinco primários é projetada em memória, acrescentando tools no final, sem escrita no carregamento. A ferramenta e o intercâmbio são documentados em [NOCUDA-TOOLS](NOCUDA-TOOLS.md).
+
 Completion pass: Dashboard acrescenta âncoras de página para os quatro capítulos, sem novo destino no resolver. NoCoda e Pivots usam disclosure nativo para explicação técnica; o aviso de limite permanece visível. No celular, âncoras editáveis precedem a prévia. Laboratório conserva Executar/Continuar e ciclo A13; configurações conservam busca, pilha, Editor e slots.
 
 Complemento local APPLE01: cinco ícones originais acompanham os labels existentes
@@ -42,13 +46,13 @@ Não existe checklist por conta/trade, persistência nova nem nova regra finance
 
 ## Destinos preservados
 
-Há cinco primários. O default visual A10 é Dashboard, Research, Forex,
-Finanças Pessoais e Alladin; uma preferência válida do Editor pode permutá-los.
+Há seis primários. O default visual A10 é Dashboard, Research, Forex,
+Finanças Pessoais, Alladin e Ferramentas e Serviços; uma preferência válida do Editor pode permutá-los.
 A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
-`forex-consolidated`, `personal-finance`, `research-forex` e `alladin`.
+`forex-consolidated`, `personal-finance`, `research-forex`, `alladin` e `tools-calendar`.
 
-- Forex tem cinco filhos nesta ordem: `forex-consolidated`, `forex-planning`,
-  `forex-operation`, `forex-reconciliation`, `forex-reserves`. Consolidado FX é a
+- Forex tem quatro filhos nesta ordem: `forex-consolidated`, `forex-planning`,
+  `forex-operation`, `forex-reserves`. Consolidado FX é a
   entrada padrão. Contas é uma visão local de Operação, entre Painel e Motor;
   os aliases `contas` e `forex-account` permanecem compatíveis e levam a essa
   mesma superfície, sem criar rota, store ou cadastro paralelos.
@@ -57,8 +61,7 @@ A sequência do registro público de rotas continua preservada. `JPWNavigation.r
 - Research mantém `research-forex`, `research-stocks-br`,
   `research-stocks-global`, `research-reits`, `research-probability-lab` e `research-others`.
 - Os níveis locais de Operação, Contabilidade, Planejamento e Research/Forex
-  continuam nas superfícies existentes. Calendário, NoCoda e Pivots mantêm
-  seus aliases e owner Research/Forex.
+  continuam nas superfícies existentes. NoCoda e Pivots mantêm seus aliases e owner Research/Forex. Calendário pertence a Ferramentas e Serviços; `ecal` e a chamada legada research/calendar redirecionam para tools-calendar.
 - Alladin preserva suas abas internas e o próprio ciclo de renderização.
 
 Preparação deixa de ser um destino. `check`/`forex-preparation` abrem Operação
@@ -70,7 +73,7 @@ persistida ou restauração inédita de rota ao recarregar.
 
 ## Estrutura canônica da lateral padrão
 
-`#appSidebar` contém a única navegação global `#nav`. Os cinco botões reais
+`#appSidebar` contém a única navegação global `#nav`. Os seis botões reais
 continuam filhos diretos de `#nav`, preservando seletores e medições dos estilos.
 A seleção de módulo e a expansão de seus subdestinos são botões separados.
 Apenas o módulo ativo expõe um expansor; escolher um primário abre seus filhos,
@@ -342,10 +345,10 @@ contrato. Este documento não autoriza commit, integração ou publicação.
 Contrato [CHG-PRODUCT-IMPROVEMENTS-20260911](../work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).
 Em Aparência e Interface → Editor, Ordem dos módulos permite Subir/Descer,
 Salvar ordem, Cancelar e Restaurar ordem padrão. A chave `jpw_nav_order` contém
-apenas os cinco IDs primários, numa permutação completa. É preferência por
+apenas os seis IDs primários, numa permutação completa. É preferência por
 navegador fora de S, dos schemas financeiros e do envelope de widgets v6.
 Sem valor válido, o default é Dashboard → Research → Forex → Finanças Pessoais
-→ Alladin. Valor inválido permanece armazenado até decisão explícita.
+→ Alladin → Ferramentas e Serviços. Valor inválido permanece armazenado até decisão explícita.
 
 A edição oferece prévia não confirmada; salvar é explícito. Cancelar, sair do
 Editor ou fechar a Central desfaz a prévia conhecida. A restauração altera

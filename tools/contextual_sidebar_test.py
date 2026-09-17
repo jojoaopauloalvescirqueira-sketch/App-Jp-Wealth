@@ -24,7 +24,7 @@ LAYOUT_RAW = json.dumps(PREF, ensure_ascii=False, indent=1)
 ROUTES = ["dashboard", "forex-overview", "forex-preparation", "forex-account",
           "forex-operation", "forex-reconciliation", "forex-planning",
           "personal-finance", "research-forex", "research-stocks-br",
-          "research-stocks-global", "research-reits", "research-probability-lab", "research-others", "alladin"]
+          "research-stocks-global", "research-reits", "research-probability-lab", "research-others", "alladin", "tools-calendar", "tools-nocuda"]
 
 
 def settle(page):
@@ -228,7 +228,7 @@ def run_failures(browser, url, evidence):
     try:
         before = raw_storage(page)
         assert preference_ops(page) == []
-        for route in ["forex-overview", "personal-finance", "research-forex", "alladin", "dashboard"]:
+        for route in ["forex-overview", "personal-finance", "research-forex", "alladin", "tools-calendar", "tools-nocuda", "dashboard"]:
             go(page, route)
         page.reload(wait_until="load")
         page.wait_for_function("window.JPWNavigation && window.JPWAlladinUI")

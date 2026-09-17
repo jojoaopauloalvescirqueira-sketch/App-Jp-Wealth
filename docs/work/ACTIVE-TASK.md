@@ -1,3 +1,11 @@
+# Candidate local verificado — Ferramentas e Serviços / Nocuda Tool
+
+Contrato [CHG-NOCUDA-TOOLS-20260917](CHG-NOCUDA-TOOLS-20260917.md). Base f1d383f; branch codex/nocuda-tools-20260917; build f35e519e632f5b9a. Menu e calendário migrados; downloads Pine/MT5, transferência local e geração editável implementados. Parser77 e interface109 PASS; MT5 compilado0 erros/0 avisos. FULL original51 PASS/6 falhas; seis suítes passaram nas reexecuções corretivas/compatíveis, com logs originais preservados. Sidebar possui asserção preexistente reproduzida na base. Relatório externo ../evidence/RELATORIO.md e contrato [NOCUDA-TOOLS](../architecture/NOCUDA-TOOLS.md).
+
+Compilação/interação TradingView e execução visual MT5 permanecem pendentes, explicitadas na página e guias. Sem instalação, commit, push, merge ou publicação. Main conferida intacta. Dados sintéticos; backup/estado financeiro preservados.
+
+## Histórico preservado
+
 # Candidate local verificado — importação e Operação Forex
 
 Contrato [CHG-FOREX-IMPORT-OPERATION-20260916](CHG-FOREX-IMPORT-OPERATION-20260916.md), base `61120ec`, branch `codex/forex-import-operation-20260916`. Build `ef588ca7418679a4`: FULL 57/57 PASS; números HTML54, modelo52, preparação13 e operações104 verificações aprovadas, além de PDF modular/portátil e revisão do atalho de conta. Bases e contextos fictícios, escritores e política preservados. Testes legados têm falhas de baseline/harness registradas no relatório externo. Conferência e aceite humanos pendentes; sem commit, push, merge ou publicação.
