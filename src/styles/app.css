@@ -7100,13 +7100,13 @@ html[data-ui-version="tesla-inspired"] .cp-pv-library .field{margin:0}
  border:1px solid transparent;border-radius:20px;background:var(--set-search);color:var(--ink-dim);
 }
 #settingsOverlay .settings-search-icon{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
-#settingsOverlay #settingsSearch{
- display:block;min-width:0;width:100%;min-height:34px;height:auto;border:0;box-shadow:none;
- padding:4px 0;background:transparent;color:var(--ink);font:400 var(--set-nav-type)/1.35 var(--sans);
+#settingsOverlay #settingsSearch,
+#settingsOverlay #settingsSearch:is(:focus,:focus-visible){
+ display:block;min-width:0;width:100%;min-height:34px;height:auto;border:0!important;outline:0!important;box-shadow:none!important;
+ -webkit-appearance:none;appearance:none;border-radius:0;padding:4px 0;background:transparent;color:var(--ink);font:400 var(--set-nav-type)/1.35 var(--sans);
 }
 #settingsOverlay #settingsSearch::placeholder{color:var(--ink-dim);opacity:1}
 #settingsOverlay #settingsSidebarSearchSlot:focus-within{outline:2px solid var(--jp-action);outline-offset:2px}
-#settingsOverlay #settingsSearch:focus{outline:none;box-shadow:none}
 #settingsOverlay #settingsSearchResults{
  grid-column:1/-1;position:static;width:auto;max-width:100%;max-height:40dvh;overflow-y:auto;
  display:grid;gap:2px;margin:0 -6px;padding:0;background:transparent;border:0;box-shadow:none;
