@@ -517,25 +517,25 @@
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 86,
-      "sha256": "8d09e276552f8ab6360224bb8e1ea11878dd13743ae4a59688fcb5c111633fea"
+      "sha256": "b815e8c4cf16b08b9e5e1e727e411753bb72cb044bf06cd84f3eb677a4be3b7e"
     },
     {
       "path": "src/js/40-app/24-fx-consolidated-import.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 87,
-      "sha256": "b330ae7f9d4e58ac2c6d243e7da0b06271640940ce4e575c1f3853861edc19f2"
+      "sha256": "d0348ad7471246eb371446753bea64f62cb200149bf813f87b00d98f734a5d17"
     },
     {
       "path": "src/js/40-app/25-fx-consolidated-pdf.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 88,
-      "sha256": "d51fada3b24669e149dff5249e060b028eef56b41c953ece4239cac0147cf96e"
+      "sha256": "016236f4dc85ca4e101b143904a03f8754635871af07bb454ba898812dbef10f"
     },
     {
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 89,
-      "sha256": "920b37bfe8573980949979d3213f5980e637ee805e5e978796b21da7f0744f3f"
+      "sha256": "1110c0b0b159d4936ebbe910afd0b3c7b25c74545123682d11603f090383e393"
     },
     {
       "path": "src/js/10-domain/19-execution-market.js",
@@ -553,7 +553,7 @@
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 92,
-      "sha256": "078de745d241dd19ae658af2e87cc9b94507fafeb55361c45f6066906cefad17"
+      "sha256": "e0a000aab217b7defca777598eb133895171b9abb464bceb6863de1a212045bf"
     }
   ],
   "runtimeAssets": [

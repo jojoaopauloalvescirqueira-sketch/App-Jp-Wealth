@@ -44,10 +44,25 @@ O controlador coordena requisições, timeout, respostas parciais e cancelamento
 
 ## Backup, finalização e recuperação
 
-Backup completo contém contextos confirmados por conta, períodos, lançamentos, observações e snapshots de ordens. Rascunhos/arquivo original/segredos não são incluídos. Finalizar Sessão encerra processos temporários e desbloqueios, preservando contas, operações e históricos confirmados para retomada. Snapshot do histórico mantém os dados efetivamente capturados; não completa passado com cadastro atual.
+Backup completo contém contextos confirmados por conta, períodos, lançamentos, observações e snapshots de ordens. Arquivo original e segredos não são incluídos. O backup completo preserva rascunhos recuperáveis para revisão, sem lançá-los automaticamente. Finalizar Sessão encerra processos temporários e desbloqueios, preservando contas, operações e históricos confirmados para retomada. Snapshot do histórico mantém os dados efetivamente capturados; não completa passado com cadastro atual.
 
 Falha/quota/UNKNOWN seguem os escritores existentes: nenhuma mensagem de sucesso antecipada; não realizar retry cego. Usar cópia de recuperação e fluxo existente para desfecho desconhecido. Rollback de código só no delta desta worktree, com baseline externo e hashes; nenhuma autorização para reset/stash/limpeza de outras árvores.
 
 ## Verificação
 
 Focais novos: `forex_execution_projection_test.py`, `forex_execution_market_test.py`, `forex_execution_board_test.py`. Regressões adaptadas somente quando a expectativa antiga era autosave/geometria ou ATR global; contraprovas de persistência/custos/identidade permanecem. FULL, browser, PWA e portátil seguem ferramentas existentes, sem mudar gates. O relatório externo informa resultados reais, falhas intermediárias e identidade exata; a existência deste documento não é evidência de PASS.
+
+
+## Preparação e importação — 2026-09-16
+
+Contrato [CHG-FOREX-IMPORT-OPERATION-20260916](../work/CHG-FOREX-IMPORT-OPERATION-20260916.md), base `61120ec`. Os atalhos do painel abrem importação HTML/PDF, cadastro manual e preparação da conta/período. As seis fases permanecem descobertas mesmo sem contexto; nesse caso a tela oferece preparação, sem criar conta, período ou ordem em render. A grade LEGACY de quatro fases conserva sua identidade. Em telas até 767 px cada linha usa os mesmos campos/eventos em uma ficha vertical.
+
+`JPWFXConsolidatedUI.openAccountSetup` coordena confirmações separadas: cadastro, período, e observação financeira opcional. O relatório sugere identificação e exibe saldo/equity e referência documental. SI e saldo contábil de abertura permanecem vazios até declaração explícita. A data/hora e o fuso da equity exigem conferência. Seleção de período já existente não cria outro período; nenhum ticket importado vira ordem manual ou recebe fase automaticamente. Os comandos canônicos continuam responsáveis por invariantes financeiros e persistência; o controlador confere sessão, conta, agregado e leitura após gravação. Fechar preserva apenas etapas que já foram confirmadas.
+
+A importação HTML detecta convenção numérica pelos campos reconhecidos, independentemente do idioma. Formato ambíguo exige escolha decimal com ponto/vírgula; formatos incompatíveis são recusados. Datas dia/mês ou mês/dia exigem evidência inequívoca ou escolha explícita. Valores originais e interpretação aparecem nas mensagens de revisão, sem executar HTML importado.
+
+O leitor PDF usa os mesmos recursos PDF.js fixados localmente. Em `file://`, `src/vendor/pdfjs/runtime-assets.js`, gerado pelo comando oficial, carrega sob demanda os módulos incorporados; HTTP/PWA continuam usando os recursos locais originais. O portátil incorpora os recursos. Não há CDN ou OCR. PDFs textuais aceitam o resumo reconhecido e tabelas MT5 com colunas separadas e cabeçalhos reconhecíveis/repetidos em cada página. Identidades divergentes, transações ilegíveis e falta de cabeçalho são recusadas. Limites: 32 MiB de arquivo, 200 páginas, 250 mil itens e 12 MiB de texto, com timeout e cancelamento.
+
+O envelope público `mt5-summary-pdf-v1` permanece compatível; a indicação `PDF_TEXT_TABLES` distingue tabelas extraídas de um resumo sem tickets. A completude do histórico PDF não é presumida. Dados ausentes permanecem indisponíveis. Não se promete reconhecimento de PDFs digitalizados ou de qualquer layout de corretora.
+
+Verificações específicas: `fx_import_numbers_test.py`, `fx_pdf_local_test.py`, `fx_account_setup_test.py` e `fx_import_operation_test.py`. A última usa a interface real nas seis fases e confere recarga, conta distinta e backup completo em outra sessão descartável, com versões modular/portátil, arquivo/HTTP e larguras 390/768/1440. Resultados e capturas estão no relatório do candidate, separados de aceite e integração. O contrato atual de backup completo inclui rascunhos recuperáveis para revisão; nunca os lança automaticamente.

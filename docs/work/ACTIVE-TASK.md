@@ -1,3 +1,9 @@
+# Candidate local verificado — importação e Operação Forex
+
+Contrato [CHG-FOREX-IMPORT-OPERATION-20260916](CHG-FOREX-IMPORT-OPERATION-20260916.md), base `61120ec`, branch `codex/forex-import-operation-20260916`. Build `ef588ca7418679a4`: FULL 57/57 PASS; números HTML54, modelo52, preparação13 e operações104 verificações aprovadas, além de PDF modular/portátil e revisão do atalho de conta. Bases e contextos fictícios, escritores e política preservados. Testes legados têm falhas de baseline/harness registradas no relatório externo. Conferência e aceite humanos pendentes; sem commit, push, merge ou publicação.
+
+## Histórico preservado
+
 # Candidate local — ícones PWA com transparência real
 
 Contrato [CHG-PWA-ICON-TRANSPARENCY-20260916](CHG-PWA-ICON-TRANSPARENCY-20260916.md). Base `b3a84e3`, branch `codex/pwa-icon-transparency-20260916`, build `a3c585de3fe49edb`. O fundo branco/cinza incorporado às matrizes RGB foi removido das variantes Vermelho e Preto; os manifestos oferecem PNGs RGBA de 192 e 512 px, com cache versionado e teste binário de transparência/halo. Focais e upgrade PWA passaram; FULL obteve 55 PASS e reproduziu na `main` duas incompatibilidades preexistentes do ambiente de testes. Nenhum dado, preferência, identidade PWA, escopo ou política conservadora do worker muda. Aceite humano, commit, push, merge e publicação permanecem gates separados.

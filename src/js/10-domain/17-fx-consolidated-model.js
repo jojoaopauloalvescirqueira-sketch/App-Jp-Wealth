@@ -39,21 +39,64 @@
     if(total>BigInt(Number.MAX_SAFE_INTEGER)||total<BigInt(-Number.MAX_SAFE_INTEGER)) return null;
     return Number(total) / Math.pow(10,scale);
   }
-  function parseNumber(value,locale) {
-    let s = String(value || '').replace(/[\s\u00a0\u202f']/g,'').trim();
+  function numberText(value) {
+    let s = String(value ?? '').trim().replace(/\u2212/g,'-');
     if (!s || /^[-–—]$/.test(s)) return null;
     if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.slice(1,-1);
-    s = s.replace(/%$/,'');
-    if (locale === 'pt') s = s.replace(/\./g,'').replace(',','.');
-    else s = s.replace(/,/g,'');
+    s = s.replace(/%$/,'').trim();
+    // Whitespace/apostrophes may group thousands, but arbitrary gaps are not digits.
+    if (/[\s\u00a0\u202f']/.test(s)) {
+      if (!/^[+-]?[1-9]\d{0,2}(?:[\s\u00a0\u202f']\d{3})+(?:[.,]\d{1,8})?$/.test(s)) return '';
+      s = s.replace(/[\s\u00a0\u202f']/g,'');
+    }
+    return s;
+  }
+  function parseNumber(value,format) {
+    let s = numberText(value);
+    if (!s) return null;
+    const comma=format==='decimal-comma';
+    const valid=comma?/^[+-]?(?:\d+(?:,\d{1,8})?|[1-9]\d{0,2}(?:\.\d{3})+(?:,\d{1,8})?)$/:/^[+-]?(?:\d+(?:\.\d{1,8})?|[1-9]\d{0,2}(?:,\d{3})+(?:\.\d{1,8})?)$/;
+    if(!valid.test(s)) return null;
+    s=comma?s.replace(/\./g,'').replace(',','.'):s.replace(/,/g,'');
     if (!/^[+-]?\d+(?:\.\d{1,8})?$/.test(s)) return null;
     const n = Number(s);
     return finite(n) && Number.isSafeInteger(Math.round(n * Math.pow(10,(s.split('.')[1]||'').length))) ? n : null;
   }
-  function date(value) {
+  function parseReportNumbers(values,options={}) {
+    const result={values:[],format:null,issues:[]},requested=options.numberFormat||'auto';
+    if(!['auto','decimal-dot','decimal-comma'].includes(requested)) {
+      result.values=values.map(()=>null);result.issues.push(issue('number_format_invalid','Formato numérico não reconhecido.','error'));return result;
+    }
+    const candidates=values.map(value=>({value,dot:parseNumber(value,'decimal-dot'),comma:parseNumber(value,'decimal-comma')}));
+    const evidence=new Set(candidates.filter(c=>(c.dot===null)!==(c.comma===null)).map(c=>c.dot===null?'decimal-comma':'decimal-dot'));
+    result.format=requested!=='auto'?requested:evidence.size===1?[...evidence][0]:null;
+    if(requested==='auto'&&evidence.size>1) result.issues.push(issue('number_format_conflict','O arquivo mistura separadores numéricos incompatíveis. Confira os valores e o formato de exportação.','error'));
+    const ambiguous=[],invalid=[],review=[];
+    candidates.forEach(c=>{
+      let n=result.format==='decimal-dot'?c.dot:result.format==='decimal-comma'?c.comma:c.dot===c.comma?c.dot:null;
+      if(numberText(c.value)!==null) {
+        if(c.dot===null&&c.comma===null || result.format&&n===null) invalid.push(String(c.value).slice(0,80));
+        else if(n===null) ambiguous.push(c);
+        if(requested!=='auto'&&n!==null&&/[.,]/.test(String(c.value))) review.push({label:String(c.value).slice(0,80)+' → '+n,ambiguous:c.dot!==null&&c.comma!==null&&c.dot!==c.comma});
+      }
+      result.values.push(n);
+    });
+    if(invalid.length) result.issues.push(issue('number_invalid','Valores numéricos inválidos para o formato: '+[...new Set(invalid)].slice(0,3).join('; ')+'.','error'));
+    if(ambiguous.length) result.issues.push(issue('number_format_ambiguous','Confirme o separador decimal. Exemplos: '+ambiguous.slice(0,3).map(c=>String(c.value).slice(0,80)+' → '+c.dot+' (ponto) ou '+c.comma+' (vírgula)').join('; ')+'.','error'));
+    if(requested!=='auto') result.issues.push(issue('number_format_confirmed','Formato escolhido: decimal com '+(requested==='decimal-dot'?'ponto':'vírgula')+'. Revise: '+[...new Set(review.sort((a,b)=>Number(b.ambiguous)-Number(a.ambiguous)).map(c=>c.label))].slice(0,3).join('; ')+'.'));
+    return result;
+  }
+  function date(value,order) {
     const s = text(value);
     if (!s) return null;
-    const m = s.match(/^(\d{4})[.\/-](\d{2})[.\/-](\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2})(\.\d{1,3})?)?)?(Z|[+-]\d{2}:\d{2})?$/);
+    let m = s.match(/^(\d{4})[.\/-](\d{2})[.\/-](\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2})(\.\d{1,3})?)?)?(Z|[+-]\d{2}:\d{2})?$/);
+    if(!m) {
+      const local=s.match(/^(\d{2})[.\/-](\d{2})[.\/-](\d{4})((?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?)?(?:Z|[+-]\d{2}:\d{2})?)$/);
+      if(!local) return null;
+      const resolved=order||(+local[1]>12?'dmy':+local[2]>12?'mdy':local[1]===local[2]?'dmy':null);
+      if(!resolved) return null;
+      return date(local[3]+'-'+local[resolved==='dmy'?2:1]+'-'+local[resolved==='dmy'?1:2]+local[4]);
+    }
     if (!m) return null;
     const y=+m[1],mo=+m[2],d=+m[3],h=+(m[4]||0),mi=+(m[5]||0),se=+(m[6]||0);
     const probe = new Date(Date.UTC(y,mo-1,d));
@@ -159,14 +202,16 @@
     out.netResult=sum([out.profit,out.commission,out.fee,out.swap]);
     return out;
   }
-  function parseHTML(input) {
+  function parseHTML(input,options={}) {
     const report={format:'unknown',identity:{login:null,broker:null,currency:null,server:null},period:{from:null,to:null,declared:false,timezone:'unknown'},generatedAt:null,orders:[],deals:[],positions:[],summary:{},issues:[],coverage:{completeHistory:false,timezone:'unknown'}};
     if(typeof input!=='string'||input.length>MAX_TEXT) {report.issues.push(issue('html_size','Arquivo HTML ausente ou acima do limite local.','error'));return report;}
     const template=root.document.createElement('template');
     template.innerHTML=input; // Inert: never attached, and no URL-bearing node is copied.
     const dom=template.content;
     dom.querySelectorAll('script,style,iframe,object,embed,link,img,video,audio,source,svg,math,template').forEach(n=>n.remove());
-    const locale=/(?:lang\s*=\s*["']?pt\b)/i.test(input.slice(0,500))||/\b(?:negociações|negociacao|comissão|período)\b/i.test(dom.textContent)?'pt':'en';
+    const numbers=[],dates=[];
+    const numberCell=(target,field,value)=>{target[field]=null;numbers.push({target,field,value});};
+    const dateCell=(target,field,value)=>{target[field]=null;if(value) dates.push({target,field,value});};
     let section=null,headers=null,signature=false,rows=0;
     dom.querySelectorAll('tr').forEach(tr=>{
       if(++rows>MAX_ROWS) return;
@@ -186,18 +231,17 @@
           if(field==='orderTicket'&&section!=='deals') index=-1;
           const cell=index<0?null:cells[index];
           if(NUMBERS.has(field)) {
-            raw[field]=parseNumber(field==='volume'&&cell?cell.split('/')[0]:cell,locale);
-            if(cell&&raw[field]===null&&field!=='remainingVolume'&&!/^[-–—]$/.test(cell)) report.issues.push(issue('number_invalid','Valor numérico inválido na linha '+rows+' ('+field+').','error'));
+            numberCell(raw,field,field==='volume'&&cell?cell.split('/')[0].trim():cell);
           } else if(['time','openedAt','closedAt'].includes(field)) {
-            raw[field]=date(cell);
-            if(cell&&!raw[field]) report.issues.push(issue('date_invalid','Data inválida na linha '+rows+'.','error'));
+            dateCell(raw,field,cell);
           } else raw[field]=text(cell);
         });
-        if(!raw.ticket) {if(cells.some(c=>/\d{4}[.-]\d{2}[.-]\d{2}/.test(c))) report.issues.push(issue('ticket_missing','Linha transacional sem ticket.','error'));return;}
+        if(!raw.ticket) {if(cells.some(c=>/(?:\d{4}[.\/-]\d{2}[.\/-]\d{2}|\d{2}[.\/-]\d{2}[.\/-]\d{4})/.test(c))) report.issues.push(issue('ticket_missing','Linha transacional sem ticket.','error'));return;}
         const vi=headers.indexOf('volume'),volume=vi<0?null:cells[vi];
-        if(volume&&volume.includes('/')) raw.remainingVolume=parseNumber(volume.split('/')[1],locale);
+        if(volume&&volume.split('/').length>2) report.issues.push(issue('number_invalid','Volume dividido em mais de dois valores na linha '+rows+'.','error'));
+        if(volume&&volume.includes('/')) numberCell(raw,'remainingVolume',volume.split('/')[1].trim());
         if(['orders','working'].includes(section)) raw.orderScope=section==='working'?'active':'historical';
-        report[section==='working'?'orders':section].push(normalizedRow(raw));return;
+        report[section==='working'?'orders':section].push(raw);return;
       }
       for(let i=0;i<cells.length-1;i++) {
         const name=Object.keys(labels).find(k=>labels[k].includes(key(cells[i])));
@@ -213,14 +257,39 @@
           report.period.declared=true;
           if(/^(all history|todo o historico|historico completo|todo historico)$/i.test(key(value))) report.coverage.completeHistory=true;
           else {
-            const matches=value.match(/\d{4}[.\/-]\d{2}[.\/-]\d{2}(?:\s+\d{2}:\d{2}(?::\d{2})?)?/g)||[];
-            report.period.from=date(matches[0]);report.period.to=date(matches[1]);
+            const matches=value.match(/(?:\d{4}[.\/-]\d{2}[.\/-]\d{2}|\d{2}[.\/-]\d{2}[.\/-]\d{4})(?:[ T]\d{2}:\d{2}(?::\d{2})?)?/g)||[];
+            if(matches.length!==2) report.issues.push(issue('date_invalid','Período do relatório não reconhecido.','error'));
+            dateCell(report.period,'from',matches[0]);dateCell(report.period,'to',matches[1]);
           }
-        } else if(name==='generatedAt') report.generatedAt=date(value);
-        else report.summary[name]=parseNumber(value,locale);
+        } else if(name==='generatedAt') dateCell(report,'generatedAt',value);
+        else numberCell(report.summary,name,value);
         i++;
       }
     });
+    const parsedNumbers=parseReportNumbers(numbers.map(c=>c.value),options);
+    numbers.forEach((c,i)=>{c.target[c.field]=parsedNumbers.values[i];});
+    report.issues.push(...parsedNumbers.issues);
+    const requestedOrder=options.dateOrder||'auto',dateEvidence=new Set();
+    dates.forEach(c=>{
+      const m=c.value.match(/^(\d{2})[.\/-](\d{2})[.\/-]\d{4}/);
+      if(m&&+m[1]>12&&+m[2]<=12) dateEvidence.add('dmy');
+      if(m&&+m[2]>12&&+m[1]<=12) dateEvidence.add('mdy');
+    });
+    const dateOrder=requestedOrder==='auto'?(dateEvidence.size===1?[...dateEvidence][0]:null):requestedOrder;
+    if(!['auto','dmy','mdy'].includes(requestedOrder)) report.issues.push(issue('date_order_invalid','Ordem de datas não reconhecida.','error'));
+    if(requestedOrder==='auto'&&dateEvidence.size>1) report.issues.push(issue('date_order_conflict','O arquivo mistura datas dia/mês e mês/dia. Confira o formato de exportação.','error'));
+    const badDates=[],ambiguousDates=[];
+    dates.forEach(c=>{
+      c.target[c.field]=date(c.value,dateOrder);
+      if(c.target[c.field]===null) {
+        if(!dateOrder&&date(c.value,'dmy')&&date(c.value,'mdy')) ambiguousDates.push(c.value);
+        else badDates.push(c.value);
+      }
+    });
+    if(ambiguousDates.length) report.issues.push(issue('date_order_ambiguous','Confirme dia/mês ou mês/dia: '+[...new Set(ambiguousDates)].slice(0,3).join('; ')+'.','error'));
+    if(badDates.length) report.issues.push(issue('date_invalid','Datas inválidas: '+[...new Set(badDates)].slice(0,3).join('; ')+'.','error'));
+    if(['dmy','mdy'].includes(requestedOrder)) report.issues.push(issue('date_order_confirmed','Ordem escolhida: '+(requestedOrder==='dmy'?'dia/mês/ano':'mês/dia/ano')+'. Revise: '+dates.filter(c=>c.target[c.field]!==null).slice(0,3).map(c=>c.value+' → '+c.target[c.field]).join('; ')+'.'));
+    ['orders','deals','positions'].forEach(k=>{report[k]=report[k].map(normalizedRow);});
     if(rows>MAX_ROWS) report.issues.push(issue('row_limit','Relatório excede o limite de linhas.','error'));
     if(signature&&report.deals.length) report.format='mt5-classic-html-v1';
     else report.issues.push(issue('format_unknown','Não foi reconhecido um extrato MT5 detalhado com negociações.','error'));
@@ -489,5 +558,5 @@
     out.coverage.lastReceiptId=snapshots[0]?.receiptId||null;
     return out;
   }
-  Object.assign(api,{emptyState,validateState,validateReport:reportValidation,parseHTML,previewImport,applyImport,project});
+  Object.assign(api,{emptyState,validateState,validateReport:reportValidation,parseHTML,parseReportNumbers,previewImport,applyImport,project});
 })(window);

@@ -7874,3 +7874,54 @@ html[data-shell="global-dashboard"] #execWidgetGrid.execution-board>[data-widget
 #workspaceRestoreWarning{padding:16px;background:#fff0d2;color:#462500;position:relative;z-index:99999}
 
 .workspace-draft-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+
+/* Fases sempre acessíveis; preparação explícita sem criar fatos no render. */
+#executionBoard{display:block}
+.eb-heading-main{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.eb-entry-actions,#ebPhaseNav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}
+.eb-entry-actions button,#ebPhaseNav button,.eb-setup-prompt button,#execWidgetGrid [data-eb-setup]{min-height:44px;padding:9px 13px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;font-size:12px;cursor:pointer}
+.eb-entry-actions button:first-child,.eb-setup-prompt button{color:var(--violet);background:var(--panel-2)}
+#ebPhaseNav{padding:12px 0 16px;border-bottom:1px solid var(--line);margin-bottom:12px}
+#ebPhaseNav>span{font-size:12px;font-weight:650;margin-right:6px}
+#ebPhaseNav button{padding:7px 11px;background:var(--panel-2)}
+#executionBoard button:focus-visible,#execWidgetGrid [data-eb-setup]:focus-visible,.eb-phase>summary:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+.eb-setup-prompt{padding:18px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);margin-bottom:16px}
+.eb-setup-prompt h3{font-size:16px;margin:0 0 8px}.eb-setup-prompt p{font-size:13px;line-height:1.6;max-width:80ch;margin:0 0 14px;color:var(--ink-dim)}
+.eb-phase{scroll-margin-top:90px}
+@media(max-width:800px){.eb-heading-main{align-items:stretch;flex-direction:column;gap:14px}#ebPhaseNav>span{flex-basis:100%}.eb-entry-actions button{flex:1}}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-order-row{display:table-row}
+/* No celular a mesma linha vira formulário; dados e eventos são os mesmos. */
+@media(max-width:767px){
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table{min-width:0;width:100%;table-layout:auto;display:block}
+  #execWidgetGrid .eb-order-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  #execWidgetGrid .eb-order-table tbody{display:block}
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-order-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;border:1px solid var(--line);border-radius:10px 10px 0 0;padding:12px;margin-top:12px;background:var(--panel)}
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-order-row>td{display:block;min-width:0;width:auto;padding:0;border:0;position:static;box-shadow:none;text-align:left}
+  #execWidgetGrid .eb-order-row>td::before{content:attr(data-label);display:block;font-size:11px;color:var(--ink-dim);margin:0 0 5px}
+  #execWidgetGrid .eb-order-row>.eb-order-id,#execWidgetGrid .eb-order-row>.eb-row-actions{grid-column:1/-1}
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table :is(input,select){font-size:16px;min-height:44px;height:44px;padding:8px;width:100%}
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-order-row>.eb-row-actions{display:flex;flex-wrap:wrap;gap:8px}
+  #execWidgetGrid .eb-row-actions::before{flex-basis:100%;margin-bottom:0}
+  #execWidgetGrid .eb-row-actions button{flex:1;width:auto;min-height:44px;margin-bottom:0;font-size:12px}
+  #execWidgetGrid .eb-order-table .eb-detail-row{display:block;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:8px 12px;margin-bottom:18px}
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-detail-row>td{display:block;width:auto;padding:0;border:0}
+  #execWidgetGrid .eb-order-details{grid-template-columns:minmax(0,1fr);gap:14px}
+  #execWidgetGrid .eb-detail-row summary{min-height:44px;display:flex;align-items:center;line-height:1.5}
+  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-check input{width:22px!important;height:22px!important;min-height:22px!important}
+  #execWidgetGrid .eb-phase .phase-body{padding:8px}
+  #execWidgetGrid [data-addorder]{min-height:44px;width:100%}
+}
+
+/* A ficha de preparação reutiliza o cadastro e mantém cada etapa legível. */
+#fxcSetupDialog [hidden]{display:none!important}
+#fxcSetupDialog h3{font-size:16px;line-height:1.4;margin:0 0 12px}
+#fxcSetupDialog form,#fxcSetupDialog .fxc-setup-report{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+#fxcSetupDialog .fxc-registration-fields{margin-top:16px}
+#fxcSetupDialog .fxc-statistics{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+#fxcSetupDialog :is(button,input,select){min-height:44px}
+#fxcSetupDialog .fxc-check input{min-height:20px}
+#fxcSetupDialog button{font:inherit;font-size:13px;padding:9px 13px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--ink);cursor:pointer}
+#fxcSetupDialog :is(button,input,select):focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+#fxcSetupDialog footer{flex-wrap:wrap}
+#fxcSetupDialog #fxcSetupStatus{font-size:13px;overflow-wrap:anywhere}
+@media(max-width:540px){#fxcSetupDialog :is(input,select){font-size:16px}#fxcSetupDialog footer button{flex:1}}

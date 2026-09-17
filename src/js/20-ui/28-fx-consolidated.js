@@ -64,7 +64,7 @@
   function options(accounts,selected,automatic=false){return (automatic?'<option value="">Automático — conta Mestre</option>':'<option value="">Selecione uma conta</option>')+accounts.map(a=>`<option value="${safe(a.id)}" ${selected===a.id?'selected':''}>${safe(a.name||a.nome||a.id)}${a.login?' · '+safe(a.login):''}${a.archived?' · histórico':''}</option>`).join('');}
   function mount(){
     const root=el('fxconsolidated');if(!root||ui.mounted)return;
-    root.innerHTML=`<div class="fxc-workspace"><header class="fxc-toolbar"><div><h1>Consolidado FX</h1><p>Histórico e desempenho por conta</p></div><button type="button" id="fxcOpenImport">Importar / Atualizar relatório</button></header><div class="fxc-controls"><label>Conta em análise<select id="fxcAccount"></select></label><div class="fxc-segment" aria-label="Fonte dos dados"><button type="button" id="fxcMt5" aria-pressed="true">MT5</button><button type="button" id="fxcManual" aria-pressed="false">Manual</button></div><label>De<input type="date" id="fxcFrom"></label><label>Até<input type="date" id="fxcTo"></label><label>Filtrar registros<input type="search" id="fxcSearch" placeholder="Ticket, instrumento ou operação"></label><button type="button" id="fxcPreferences" aria-label="Configurar conta padrão do Consolidado">Conta padrão</button></div><p id="fxcStatus" role="status" aria-live="polite"></p><section id="fxcImport" hidden aria-label="Importar relatório MT5"><h2>Importar relatório MT5</h2><p>Escolha um HTML detalhado ou PDF de resumo. Processamento local; o arquivo original não será armazenado. Confira a conta selecionada antes de confirmar.</p><label>Arquivo do relatório<input id="fxcFile" type="file" accept=".html,.htm,.pdf"></label><div class="fxc-import-dates"><label>Início declarado, se ausente<input type="date" id="fxcImportFrom"></label><label>Fim declarado, se ausente<input type="date" id="fxcImportTo"></label></div><button type="button" id="fxcAnalyze">Analisar arquivo</button><button type="button" id="fxcCancelImport">Cancelar</button><div id="fxcPreview"></div></section><div class="fxc-summary"><section id="fxcIdentity"></section><section id="fxcRadar"></section><section id="fxcBars"></section></div><p id="fxcCoverage" class="fxc-provenance"></p><div class="fxc-tabs" role="tablist" aria-label="Visões do Consolidado">${tabs.map(([id,title],i)=>`<button type="button" role="tab" id="fxcTab-${id}" aria-controls="fxcPanel-${id}" aria-selected="${!i}" tabindex="${i?-1:0}" data-fxc-tab="${id}">${title}</button>`).join('')}</div>${tabs.map(([id])=>`<section role="tabpanel" id="fxcPanel-${id}" aria-labelledby="fxcTab-${id}" tabindex="0" ${id==='account'?'':'hidden'}></section>`).join('')}<p class="fxc-provenance">MT5 e Manual são bases separadas. Registrar ou importar fatos não autoriza operar. Contexto financeiro ausente continua indisponível.</p></div>`;
+    root.innerHTML=`<div class="fxc-workspace"><header class="fxc-toolbar"><div><h1>Consolidado FX</h1><p>Histórico e desempenho por conta</p></div><button type="button" id="fxcOpenImport">Importar / Atualizar relatório</button></header><div class="fxc-controls"><label>Conta em análise<select id="fxcAccount"></select></label><div class="fxc-segment" aria-label="Fonte dos dados"><button type="button" id="fxcMt5" aria-pressed="true">MT5</button><button type="button" id="fxcManual" aria-pressed="false">Manual</button></div><label>De<input type="date" id="fxcFrom"></label><label>Até<input type="date" id="fxcTo"></label><label>Filtrar registros<input type="search" id="fxcSearch" placeholder="Ticket, instrumento ou operação"></label><button type="button" id="fxcPreferences" aria-label="Configurar conta padrão do Consolidado">Conta padrão</button></div><p id="fxcStatus" role="status" aria-live="polite"></p><section id="fxcImport" hidden aria-label="Importar relatório MT5"><h2>Importar relatório MT5</h2><p>Escolha um relatório HTML ou PDF textual. Processamento local; o arquivo original não será armazenado. Confira a conta selecionada antes de confirmar.</p><label>Arquivo do relatório<input id="fxcFile" type="file" accept=".html,.htm,.pdf"></label><div class="fxc-import-dates"><label>Início declarado, se ausente<input type="date" id="fxcImportFrom"></label><label>Fim declarado, se ausente<input type="date" id="fxcImportTo"></label></div><div class="fxc-import-dates"><label>Separadores numéricos<select id="fxcNumberFormat"><option value="auto">Detectar pelo conteúdo</option><option value="decimal-dot">1,234.56 — ponto decimal</option><option value="decimal-comma">1.234,56 — vírgula decimal</option></select></label><label>Datas sem ano no início<select id="fxcDateOrder"><option value="auto">Detectar pelo conteúdo</option><option value="dmy">Dia / mês / ano</option><option value="mdy">Mês / dia / ano</option></select></label></div><p>Se houver ambiguidade, selecione o formato do documento e analise novamente. Confira os valores originais e interpretados na prévia.</p><button type="button" id="fxcAnalyze">Analisar arquivo</button><button type="button" id="fxcCancelImport">Cancelar</button><div id="fxcPreview"></div></section><section id="fxcImportResult" hidden aria-label="Próximo passo após importar"></section><div class="fxc-summary"><section id="fxcIdentity"></section><section id="fxcRadar"></section><section id="fxcBars"></section></div><p id="fxcCoverage" class="fxc-provenance"></p><div class="fxc-tabs" role="tablist" aria-label="Visões do Consolidado">${tabs.map(([id,title],i)=>`<button type="button" role="tab" id="fxcTab-${id}" aria-controls="fxcPanel-${id}" aria-selected="${!i}" tabindex="${i?-1:0}" data-fxc-tab="${id}">${title}</button>`).join('')}</div>${tabs.map(([id])=>`<section role="tabpanel" id="fxcPanel-${id}" aria-labelledby="fxcTab-${id}" tabindex="0" ${id==='account'?'':'hidden'}></section>`).join('')}<p class="fxc-provenance">MT5 e Manual são bases separadas. Registrar ou importar fatos não autoriza operar. Contexto financeiro ausente continua indisponível.</p></div>`;
     // Move a apresentação existente, nunca clona widgets ou o read model.
     const context=document.createElement('aside');context.id='fxOperationalContext';
     context.setAttribute('aria-labelledby','fxContextTitle');
@@ -82,11 +82,13 @@
     el('fxcMt5').onclick=()=>{ui.source='mt5';render();};el('fxcManual').onclick=()=>{ui.source='manual';cancel();render();};
     for(const [id,key] of [['fxcFrom','from'],['fxcTo','to'],['fxcSearch','search']])el(id).addEventListener('input',event=>{ui[key]=event.target.value;render();});
     el('fxcPreferences').onclick=()=>openSettingsModal('forex-consolidated',el('fxcPreferences'));
-    el('fxcOpenImport').onclick=()=>{ui.source='mt5';render();el('fxcImport').hidden=false;el('fxcFile').focus();};
+    el('fxcOpenImport').onclick=()=>openImport({returnFocus:el('fxcOpenImport')});
     el('fxcCancelImport').onclick=()=>{cancel();el('fxcImport').hidden=true;el('fxcOpenImport').focus();};
+    for(const id of ['fxcFile','fxcNumberFormat','fxcDateOrder','fxcImportFrom','fxcImportTo'])
+      el(id).addEventListener('change',()=>{cancel();notify('Arquivo ou leitura alterados. Analise novamente para conferir a nova prévia.');});
     el('fxcAnalyze').onclick=analyze;ui.mounted=true;
   }
-  function cancel(){closeRegistration();ui.token++;ui.preview=null;ui.document=null;ui.busy=false;FX.cancelImport?.();FX.disposePDF?.();if(el('fxcPreview'))el('fxcPreview').replaceChildren();if(el('fxcAnalyze'))el('fxcAnalyze').disabled=false;}
+  function cancel(){closeRegistration();closeSetup({force:true});ui.token++;ui.preview=null;ui.document=null;ui.busy=false;FX.cancelImport?.();FX.disposePDF?.();if(el('fxcPreview'))el('fxcPreview').replaceChildren();if(el('fxcImportResult')){el('fxcImportResult').replaceChildren();el('fxcImportResult').hidden=true;}if(el('fxcAnalyze'))el('fxcAnalyze').disabled=false;}
   async function analyze(){
     const file=el('fxcFile').files[0];if(!file)return notify('Escolha um arquivo para analisar.','error');
     cancel();const token=ui.token;ui.busy=true;el('fxcAnalyze').disabled=true;notify('Analisando localmente…');
@@ -94,9 +96,10 @@
       if(file.size>32*1024*1024)throw Error('Arquivo acima do limite de leitura local de 32 MiB. Exporte um período menor; nenhum dado foi importado.');
       const bytes=new Uint8Array(await file.arrayBuffer());if(token!==ui.token)return;
       const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('');
+      const parseOptions={numberFormat:el('fxcNumberFormat').value,dateOrder:el('fxcDateOrder').value};
       let report;
-      if(String.fromCharCode(...bytes.slice(0,5))==='%PDF-')report=await FX.parsePDF(bytes);
-      else{let encoding='utf-8';if(bytes[0]===255&&bytes[1]===254)encoding='utf-16le';else if(bytes[0]===254&&bytes[1]===255)encoding='utf-16be';let text=new TextDecoder(encoding).decode(bytes);if(encoding==='utf-8'&&/charset\s*=\s*["']?windows-1252/i.test(text.slice(0,4096)))text=new TextDecoder('windows-1252').decode(bytes);report=FX.parseHTML(text);}
+      if(String.fromCharCode(...bytes.slice(0,5))==='%PDF-')report=await FX.parsePDF(bytes,parseOptions);
+      else{let encoding='utf-8';if(bytes[0]===255&&bytes[1]===254)encoding='utf-16le';else if(bytes[0]===254&&bytes[1]===255)encoding='utf-16be';let text=new TextDecoder(encoding).decode(bytes);if(encoding==='utf-8'&&/charset\s*=\s*["']?windows-1252/i.test(text.slice(0,4096)))text=new TextDecoder('windows-1252').decode(bytes);report=FX.parseHTML(text,parseOptions);}
       if(token!==ui.token)return;
       const meta={fileName:file.name,fileHash:hash,importedAt:new Date().toISOString(),from:el('fxcImportFrom').value||null,to:el('fxcImportTo').value||null};
       if(meta.from||meta.to)report.period={...report.period,from:report.period?.from||meta.from,to:report.period?.to||meta.to,declared:true};
@@ -110,7 +113,12 @@
     ui.preview=null;
     const {report,meta}=ui.document;
     const status=FX.inspectRegistration(report,ui.accountId);
-    if(!status.ok){showRegistrationStatus(status);return;}
+    if(!status.ok){
+      if(status.status==='invalid'){
+        el('fxcPreview').innerHTML=`<h3>Revise a leitura do arquivo</h3><p>${safe(status.error)}</p><ul>${(report.issues||[]).map(i=>'<li>'+safe(i.message||i.code||i)+'</li>').join('')}</ul><p>Nenhum registro foi importado. Confira o formato numérico e a ordem das datas acima; depois analise novamente.</p>`;
+        notify('O documento contém campos que precisam de revisão.','error');
+      }else showRegistrationStatus(status);return;
+    }
     const preview=FX.prepareImport(report,ui.accountId,meta);
     if(!preview?.ok){notify(preview?.error?.message||preview?.error||'Não foi possível validar a importação.','error');return;}
       ui.preview=preview;const c=preview.counts||{};
@@ -169,11 +177,89 @@
     };
     registrationDialog.showModal();el('fxcr-name').focus();
   }
+  function openImport({accountId=null,returnFocus=document.activeElement}={}){
+    cancel();if(accountId)ui.accountId=accountId;
+    ui.source='mt5';window.JPWNavigation?.navigate('forex-consolidated');render();
+    el('fxcImport').hidden=false;el('fxcFile').focus();
+    el('fxcCancelImport').onclick=()=>{cancel();el('fxcImport').hidden=true;(returnFocus?.isConnected&&returnFocus.getClientRects().length?returnFocus:el('fxcOpenImport')).focus();};
+  }
+  let setupDialog=null,setupView=null;
+  function closeSetup({force=false}={}){
+    if(setupView?.saving&&!force)return;
+    FX.cancelAccountSetup?.();setupView=null;if(setupDialog?.open)setupDialog.close();
+  }
+  function accountReport(accountId){
+    const account=S.fxConsolidated?.accounts?.find(a=>a.id===accountId),snapshot=account?.summaries?.slice(-1)[0];
+    return snapshot?{format:snapshot.format,identity:{login:account.login,broker:account.broker,currency:account.currency,server:account.server},
+      period:snapshot.period,generatedAt:snapshot.generatedAt||null,summary:snapshot.values,orders:[],deals:[],positions:[],issues:[]}:null;
+  }
+  function openAccountSetup({accountId=null,report=null,returnFocus=document.activeElement}={}){
+    if(setupView?.saving)return;
+    const account=FX.accounts().find(a=>a.id===accountId);
+    if(!account||account.archived||account.id.startsWith('live:')){
+      openAccountRegistration({accountId:account?.id||null,report,trigger:returnFocus,
+        onSaved:result=>openAccountSetup({accountId:result.accountId,report,returnFocus})});return;
+    }
+    // Suggestions remain read-only until each step is explicitly confirmed.
+    report=report||accountReport(accountId);
+    const prepared=FX.beginAccountSetup(accountId,report);
+    if(!prepared.ok){alert(prepared.error);return;}
+    if(!setupDialog){
+      setupDialog=document.createElement('dialog');setupDialog.id='fxcSetupDialog';setupDialog.className='fxc-registration';
+      setupDialog.setAttribute('aria-labelledby','fxcSetupTitle');document.body.append(setupDialog);
+      setupDialog.addEventListener('cancel',event=>{event.preventDefault();closeSetup();});
+      setupDialog.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
+      setupDialog.addEventListener('close',()=>{const target=setupDialog._returnFocus;FX.cancelAccountSetup?.();setupView=null;if(target?.isConnected)target.focus();});
+    }
+    setupView={...prepared,saving:false};setupDialog._returnFocus=returnFocus;
+    const suggestions=prepared.suggestions;
+    const field=(id,label,type='text',value='',required=false)=>`<label>${label}<input id="${id}" type="${type}" ${type==='number'?'step="any"':''} value="${safe(value)}" ${required?'required':''}></label>`;
+    setupDialog.innerHTML=`<header><h2 id="fxcSetupTitle">Preparar conta e período</h2><p>${safe(account.name||account.id)} · ${safe(account.login||'')} · ${safe(account.currency||'Moeda a confirmar')}</p></header><p>Cadastro, importação, período e observação são confirmações separadas. Fechar esta ficha preserva as etapas já salvas.</p>${suggestions?`<section class="fxc-setup-report"><h3>Valores do relatório</h3><dl class="fxc-statistics"><div><dt>Saldo informado</dt><dd>${safe(number(suggestions.balance,account.currency||''))}</dd></div><div><dt>Equity informado</dt><dd>${safe(number(suggestions.equity,account.currency||''))}</dd></div><div><dt>Referência do documento</dt><dd>${safe(suggestions.date||'Data não informada')}</dd></div></dl><p>Saldo e equity são fotografias da conta. Nenhum deles preenche o SI ou o saldo de abertura. Confirme a data e o fuso da observação antes de registrar.</p></section>`:''}<form id="fxcSetupPeriodForm"><h3>1. Período operacional</h3><label>Período<select id="fxcs-period"><option value="">Registrar novo período</option>${prepared.periods.map(p=>`<option value="${safe(p.periodId)}" ${p.periodId===prepared.currentPeriodId?'selected':''}>${safe(p.startedAt)} · ${safe(p.currency)} · SI ${safe(number(p.si))}</option>`).join('')}</select></label><div id="fxcs-new-period" class="fxc-registration-fields">${field('fxcs-start','Início do período','date','',true)}${field('fxcs-currency','Moeda','text',account.currency||'',true)}${field('fxcs-si','SI confirmado (capital inicial) · vazio = indisponível','number')}${field('fxcs-book','Saldo contábil na abertura · vazio = indisponível','number')}${field('fxcs-period-source','Fonte do período e capital','text','Declaração manual',true)}${field('fxcs-period-reason','Motivo do registro','text','Preparação explícita da conta',true)}<label class="fxc-check"><input id="fxcs-active" type="checkbox" checked> Tornar este o período atual da conta</label></div><label class="fxc-check"><input id="fxcs-confirm-period" type="checkbox" required> Conferi a conta, o período, a moeda e o SI informado ou indisponível.</label><button type="submit" id="fxcs-save-period">Confirmar período</button></form><form id="fxcSetupObservationForm" hidden><h3>2. Observação financeira</h3><p id="fxcs-period-summary"></p><p>Opcional para preencher as ordens. Os cálculos que dependem de fatos ausentes continuam indisponíveis. Registrar esta observação torna a conta a referência financeira do motor.</p><div class="fxc-registration-fields">${field('fxcs-equity','Equity observado','number',suggestions?.equity??'',true)}${field('fxcs-observed','Data e hora da observação · fuso deste dispositivo','datetime-local','',true)}${field('fxcs-observation-source','Fonte da observação','text',suggestions?.source||'Declaração manual',true)}${field('fxcs-rate','Conversão: 1 USD na moeda da conta','number')}${field('fxcs-cashflow','Fluxo líquido desde o SI · vazio = desconhecido','number')}${field('fxcs-observation-reason','Motivo do registro','text','Observação financeira revisada',true)}</div><label class="fxc-check"><input id="fxcs-cashflow-confirm" type="checkbox"> Conferi a cobertura do fluxo líquido informado (depósitos menos retiradas).</label><label class="fxc-check"><input id="fxcs-confirm-observation" type="checkbox" required> Conferi equity, fonte, data/hora e unidade. O relatório não comprova valores atuais.</label><button type="submit" id="fxcs-save-observation">Salvar observação financeira</button></form><p id="fxcSetupStatus" role="status" aria-live="polite"></p><footer><button type="button" id="fxcs-close">Fechar</button><button type="button" id="fxcs-open-orders" hidden>Ir para fases e ordens</button></footer>`;
+    const updatePeriod=()=>{const existing=!!el('fxcs-period').value;el('fxcs-new-period').hidden=existing;el('fxcs-new-period').querySelectorAll('input').forEach(input=>input.disabled=existing);};
+    el('fxcs-period').onchange=()=>{updatePeriod();el('fxcs-confirm-period').checked=false;};updatePeriod();
+    const optional=id=>el(id).value.trim()===''?null:Number(el(id).value);
+    const run=async(buttonId,command,success)=>{
+      const view=setupView;if(!view||view.saving)return;view.saving=true;el(buttonId).disabled=true;el('fxcs-close').disabled=true;
+      el('fxcSetupStatus').textContent='Confirmando a gravação…';
+      try{const result=await command(view);if(setupView!==view)return;
+        if(!result.ok){view.unknown=result.persistido===null;el('fxcSetupStatus').textContent=result.error||'Etapa não confirmada.';return;}
+        success(result,view);if(typeof renderContas==='function')renderContas();
+      }catch(error){if(setupView===view)el('fxcSetupStatus').textContent='Etapa não confirmada. Confira a sessão antes de continuar.';}
+      finally{if(setupView===view){view.saving=false;el('fxcs-close').disabled=false;el(buttonId).disabled=!!view.unknown||view.completed===buttonId;}}
+    };
+    el('fxcSetupPeriodForm').onsubmit=event=>{event.preventDefault();run('fxcs-save-period',view=>FX.saveSetupPeriod(view.token,{periodId:el('fxcs-period').value||null,startedAt:el('fxcs-start').value,
+      currency:el('fxcs-currency').value.trim().toUpperCase(),si:optional('fxcs-si'),openingBook:optional('fxcs-book'),source:el('fxcs-period-source').value,
+      reason:el('fxcs-period-reason').value,activateCurrentPeriod:el('fxcs-active').checked,confirmPeriod:el('fxcs-confirm-period').checked}),(result,view)=>{
+        view.periodId=result.periodId;view.period=result.period;view.completed='fxcs-save-period';el('fxcSetupPeriodForm').hidden=true;el('fxcs-open-orders').hidden=false;
+        el('fxcs-period-summary').textContent='Período '+result.period.startedAt+' · '+result.period.currency+' · SI '+number(result.period.si)+'.';
+        const canObserve=typeof result.period.si==='number'&&result.period.si>0;
+        el('fxcSetupObservationForm').hidden=!canObserve;
+        el('fxcs-rate').closest('label').hidden=result.period.currency==='USD';el('fxcs-rate').required=result.period.currency!=='USD';
+        el('fxcSetupStatus').textContent=(result.persistido?'Período salvo. ':'Período selecionado. ')+(canObserve?'Revise a observação ou siga para as ordens.':'O SI permanece indisponível. As ordens já podem ser preenchidas; os cálculos dependentes do SI continuam bloqueados.');
+        (canObserve?el('fxcs-equity'):el('fxcs-open-orders')).focus();
+      });};
+    el('fxcSetupObservationForm').onsubmit=event=>{event.preventDefault();run('fxcs-save-observation',view=>{
+      const local=el('fxcs-observed').value,observedAt=local?new Date(local).toISOString():null;
+      return FX.saveSetupObservation(view.token,{equity:optional('fxcs-equity'),observedAt,source:el('fxcs-observation-source').value,
+        usdToAccountRate:optional('fxcs-rate'),netCashflow:optional('fxcs-cashflow'),cashflowAdjustmentRecorded:el('fxcs-cashflow-confirm').checked,
+        reason:el('fxcs-observation-reason').value,confirmObservation:el('fxcs-confirm-observation').checked});
+      },(result,view)=>{view.completed='fxcs-save-observation';el('fxcSetupObservationForm').hidden=true;el('fxcSetupStatus').textContent='Observação financeira salva. O motor mantém suas verificações de elegibilidade.';el('fxcs-open-orders').focus();});};
+    el('fxcs-close').onclick=closeSetup;
+    el('fxcs-open-orders').onclick=()=>{
+      const view=setupView;if(!view?.periodId||view.saving)return;
+      const selected=window.JPWForex.state.selectOperationalAccount(view.account.id);
+      const period=selected.ok&&window.JPWForex.state.selectOperationalPeriod(view.account.id,view.periodId);
+      if(!selected.ok||!period?.ok){el('fxcSetupStatus').textContent=selected.error||period?.error||'Período indisponível.';return;}
+      closeSetup();window.JPWNavigation?.navigate('forex-operation');window.JPWNavigation?.navigateLocal('exec','panel');
+      if(typeof renderPhases==='function')renderPhases();document.getElementById('execPhaseGridsCard')?.scrollIntoView({block:'start'});
+    };
+    setupDialog.showModal();el('fxcs-period').focus();
+  }
   async function confirmImport(){
     if(!ui.preview||ui.busy)return;if(!el('fxcConfirmIdentity').checked)return notify('Confirme a identidade antes da importação.','error');
     if(ui.preview.conflicts?.length&&!el('fxcAcceptRevision')?.checked)return notify('As divergências precisam de confirmação explícita.','error');
     ui.busy=true;const token=ui.token;const button=el('fxcConfirmImport');button.disabled=true;
-    try{const result=await FX.confirmImport(ui.preview,{confirmIdentity:true,acceptRevision:!!el('fxcAcceptRevision')?.checked});if(token!==ui.token)return;if(!result?.ok){notify(result?.error?.message||result?.error||'Gravação não confirmada. A prévia foi preservada.','error');return;}ui.accountId=result.accountId||result.receipt?.accountId||ui.preview.account?.id||ui.accountId;ui.preview=null;ui.document=null;el('fxcPreview').replaceChildren();el('fxcImport').hidden=true;notify(result.duplicate?'Relatório já existente; nenhum registro duplicado.':'Importação confirmada. Comprovante salvo na base local.');render();}
+    try{const result=await FX.confirmImport(ui.preview,{confirmIdentity:true,acceptRevision:!!el('fxcAcceptRevision')?.checked});if(token!==ui.token)return;if(!result?.ok){notify(result?.error?.message||result?.error||'Gravação não confirmada. A prévia foi preservada.','error');return;}ui.accountId=result.accountId||result.receipt?.accountId||ui.preview.account?.id||ui.accountId;const importedReport=ui.document?.report||ui.preview.report,importedAccountId=ui.accountId;ui.preview=null;ui.document=null;el('fxcPreview').replaceChildren();el('fxcImport').hidden=true;el('fxcImportResult').hidden=false;el('fxcImportResult').innerHTML='<h3>Relatório conferido</h3><p>O histórico está disponível no Consolidado. Prepare separadamente o período e os fatos financeiros da conta para preencher as ordens.</p><button type="button" id="fxcPrepareAccount">Preparar conta e período</button>';el('fxcPrepareAccount').onclick=()=>openAccountSetup({accountId:importedAccountId,report:importedReport,returnFocus:el('fxcPrepareAccount')});notify(result.duplicate?'Relatório já existente; nenhum registro duplicado.':'Importação confirmada. Comprovante salvo na base local.');render();}
     catch(error){if(token===ui.token)notify(error.message||String(error),'error');}
     finally{if(token===ui.token)ui.busy=false;if(button.isConnected)button.disabled=false;}
   }
@@ -197,7 +283,8 @@
     panels(model);notify(ui.message,ui.kind);
   }
   function settingsMarkup(){return `<div class="fxc-settings"><p>Escolha a conta aberta inicialmente no Consolidado FX. Esta preferência não altera a conta operacional.</p><label>Conta padrão<select id="fxcDefaultAccount"></select></label><button type="button" id="fxcSaveDefault">Salvar preferência</button><p id="fxcDefaultStatus" role="status" aria-live="polite"></p></div>`;}
-  function bindSettings(){const select=el('fxcDefaultAccount');if(!select)return;select.innerHTML=options(FX.accounts?.()||[],S.fxConsolidated?.defaultAccountId||'',true);const button=el('fxcSaveDefault');button.onclick=async()=>{button.disabled=true;try{const result=await FX.saveDefaultAccount(select.value||null);el('fxcDefaultStatus').textContent=result?.ok?'Preferência salva.':(result?.error?.message||result?.error||'Não foi possível confirmar a preferência.');if(result?.ok){ui.accountId=null;render();}}catch(error){el('fxcDefaultStatus').textContent='Preferência não confirmada: '+(error.message||String(error));}finally{button.disabled=false;}};}
+  function bindSettings(){const select=el('fxcDefaultAccount');if(!select)return;select.innerHTML=options(FX.accounts?.()||[],S.fxConsolidated?.defaultAccountId||'',true);const button=el('fxcSaveDefault');button.onclick=async()=>{button.disabled=true;try{const result=await FX.saveDefaultAccount(select.value||null);el('fxcDefaultStatus').textContent=result?.ok?'Preferência salva.':(result?.error?.message||result?.error||'Não foi possível confirmar a preferência.');if(result?.ok){cancel();ui.accountId=null;render();}}catch(error){el('fxcDefaultStatus').textContent='Preferência não confirmada: '+(error.message||String(error));}finally{button.disabled=false;}};}
   function reset(){cancel();ui.accountId=null;ui.source='mt5';ui.tab='account';ui.from='';ui.to='';ui.search='';ui.message='';for(const id of ['fxcFrom','fxcTo','fxcSearch','fxcFile'])if(el(id))el(id).value='';if(el('fxcImport'))el('fxcImport').hidden=true;render();}
-  Object.assign(FX,{render,settingsMarkup,bindSettings,openAccountRegistration,reset});
+  Object.assign(FX,{render,settingsMarkup,bindSettings,openAccountRegistration,openAccountSetup,openImport,reset});
+  window.JPWFXConsolidatedUI={openAccountSetup,openImport};
 })(window.JPWFXConsolidated=window.JPWFXConsolidated||{});

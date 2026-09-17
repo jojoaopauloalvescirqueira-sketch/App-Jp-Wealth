@@ -9,7 +9,7 @@
   const clone=value=>structuredClone(value);
   const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
   const fail=error=>({ok:false,persistido:false,error});
-  let pending=null, registration=null, generation=0, busy=false;
+  let pending=null, registration=null, setup=null, generation=0, busy=false;
 
   function descriptor(account,index){
     const id=text(account.forexAccountId)||'live:'+index;
@@ -96,7 +96,7 @@
     }
     return '';
   }
-  function cancelImport(){pending=null;registration=null;generation+=1;}
+  function cancelImport(){pending=null;registration=null;setup=null;generation+=1;}
   function unknown(reason){
     if(!jpWealthPersistenceOutcomeIsUnknown())markJPWealthPersistenceOutcomeUnknown(reason);
     hideStaleSavedTag();
@@ -281,6 +281,110 @@
     finally{busy=false;}
   }
 
+  // Preparation is intentionally separate from analytics import. Each confirmed
+  // step has one canonical write and its own durable acknowledgement.
+  function beginAccountSetup(accountId,report=null){
+    const issue=guard();if(issue)return fail(issue);
+    const account=accountSelected(accountId);
+    if(!account||account.archived||account.id.startsWith('live:'))return fail('Complete o cadastro da conta antes de preparar o período.');
+    if(report){const identified=inspectRegistration(report,accountId);if(!identified.ok)return identified;}
+    const accountPeriods=S.forex?.accountContexts?.accounts?.[accountId];
+    const periods=Object.values(accountPeriods?.periods||{}).map(p=>({periodId:p.periodId,startedAt:p.startedAt,currency:p.currency,si:p.si,openingBook:p.openingBook,source:p.source}));
+    const token=crypto.randomUUID();
+    const suggestions=report?{balance:typeof report.summary.balance==='number'?report.summary.balance:null,
+      equity:typeof report.summary.equity==='number'?report.summary.equity:null,
+      date:report.generatedAt||report.period.to||null,from:report.period.from||null,to:report.period.to||null,
+      source:'Relatório MT5 · '+report.format+' · '+(report.period.from||'?')+' → '+(report.period.to||'?')}:null;
+    setup={token,context:capture(account),forexFingerprint:JSON.stringify(S.forex),stage:'period',report:report?clone(report):null,periodId:null};
+    return {ok:true,persistido:false,token,account:cleanAccount(account),periods,currentPeriodId:accountPeriods?.currentPeriodId||null,suggestions};
+  }
+  function cancelAccountSetup(){setup=null;}
+  function setupIssue(attempt){
+    const issue=guard()||stale(attempt.context);if(issue)return issue;
+    if(attempt!==setup)return 'A preparação foi encerrada. Abra a ficha novamente.';
+    if(attempt.forexFingerprint!==JSON.stringify(S.forex))return 'O contexto Forex mudou. Reabra a preparação para revisar a versão atual.';
+    if(attempt.report){const status=inspectRegistration(attempt.report,attempt.context.account.id);if(!status.ok)return status.error;}
+    return '';
+  }
+  function confirmedSetupCommand(command,keys){
+    const before={},logBefore=clone(S.dataGovernance.changeLog);let rawBefore;
+    try{rawBefore=localStorage.getItem(LSKEY);for(const key of keys)before[key]=clone(S[key]);}
+    catch(error){return fail('Não foi possível preparar uma gravação íntegra. Nada foi alterado.');}
+    const result=command();
+    if(jpWealthPersistenceOutcomeIsUnknown()||result.persistido===null)return unknown('Preparação da conta: gravação indeterminada.');
+    if(!result.ok){hideStaleSavedTag();return result;}
+    try{
+      const actual=localStorage.getItem(LSKEY),expected=JSON.stringify(S,(key,value)=>key==='investorPassword'?'':value);
+      if(actual===expected)return result;
+      if(actual!==rawBefore)return unknown('Preparação da conta: releitura divergente.');
+      for(const key of keys)S[key]=before[key];S.dataGovernance.changeLog=logBefore;
+      jpWealthAdoptPersistedRaw(rawBefore);hideStaleSavedTag();
+      setPersistenceFailureState(new Error('Preparação da conta não gravada.'),'storage');
+      return fail('A gravação não foi efetivada. Os campos continuam disponíveis para revisão.');
+    }catch(error){return unknown('Preparação da conta: releitura indisponível.');}
+  }
+  async function saveSetupPeriod(token,input){
+    if(busy)return fail('Uma confirmação está em andamento.');
+    const attempt=setup;
+    if(!attempt||attempt.token!==token||attempt.stage!=='period')return fail('Reabra a preparação do período.');
+    if(!object(input)||input.confirmPeriod!==true)return fail('Confirme explicitamente a conta e o período.');
+    busy=true;
+    try{return await sessionAcquireWriteLock(()=>{
+      const issue=setupIssue(attempt);if(issue)return jpWealthPersistenceOutcomeIsUnknown()?unknown(issue):fail(issue);
+      const accountId=attempt.context.account.id;
+      let periodId=text(input.periodId),result={ok:true,persistido:false};
+      if(periodId){
+        if(!S.forex?.accountContexts?.accounts?.[accountId]?.periods?.[periodId])return fail('O período selecionado não pertence à conta.');
+      }else{
+        const oldIds=new Set(Object.keys(S.forex?.accountContexts?.accounts?.[accountId]?.periods||{}));
+        result=confirmedSetupCommand(()=>JPWForex.state.recordAccountPeriod({accountId,
+          startedAt:input.startedAt,currency:input.currency,si:input.si,openingBook:input.openingBook,
+          source:input.source,activateCurrentPeriod:input.activateCurrentPeriod===true},
+          {reason:input.reason,expectedEpoch:attempt.context.epoch}),['forex']);
+        if(!result.ok)return result;
+        periodId=Object.keys(S.forex.accountContexts.accounts[accountId].periods).find(id=>!oldIds.has(id));
+        if(!periodId)return unknown('Preparação da conta: período gravado sem identidade confirmável.');
+      }
+      attempt.stage='observation';attempt.periodId=periodId;
+      attempt.context=capture(accountSelected(accountId));attempt.forexFingerprint=JSON.stringify(S.forex);
+      return {...result,accountId,periodId,period:clone(S.forex.accountContexts.accounts[accountId].periods[periodId])};
+    });}catch(error){return jpWealthPersistenceOutcomeIsUnknown()?unknown('Preparação interrompida.'):fail('Preparação não confirmada. Confira a sessão.');}
+    finally{busy=false;}
+  }
+  async function saveSetupObservation(token,input){
+    if(busy)return fail('Uma confirmação está em andamento.');
+    const attempt=setup;
+    if(!attempt||attempt.token!==token||attempt.stage!=='observation')return fail('Selecione ou registre o período antes da observação.');
+    if(!object(input)||input.confirmObservation!==true)return fail('Confirme os valores, a fonte e o instante da observação.');
+    busy=true;
+    try{return await sessionAcquireWriteLock(()=>{
+      const issue=setupIssue(attempt);if(issue)return jpWealthPersistenceOutcomeIsUnknown()?unknown(issue):fail(issue);
+      const accountId=attempt.context.account.id,period=JPWForex.state.accountContext({accountId,periodId:attempt.periodId}).value;
+      if(!period||typeof period.si!=='number'||period.si<=0)return fail('Este período não possui SI confirmado. Registre um período com SI antes da observação financeira.');
+      const observed=Date.parse(input.observedAt);
+      if(!Number.isFinite(observed)||observed>Date.now()||String(input.observedAt).slice(0,10)<period.startedAt)
+        return fail('Informe o instante real da observação, dentro do período e sem data futura.');
+      const selected=accountSelected(accountId);
+      const result=confirmedSetupCommand(()=>JPWForex.state.recordAccountFacts({accountIndex:selected.liveIndex,
+        periodId:period.periodId,si:period.si,currency:period.currency,equity:input.equity,
+        usdToAccountRate:input.usdToAccountRate,netCashflow:input.netCashflow,
+        cashflowAdjustmentRecorded:input.cashflowAdjustmentRecorded===true,
+        observedAt:input.observedAt,source:input.source}, {reason:input.reason}),['forex','accounts','activeOperation']);
+      if(!result.ok){
+        // The canonical refusal rollback restores accounts from a clone. Keep
+        // this still-valid draft usable without accepting any changed facts.
+        const current=accountSelected(accountId);
+        if(result.persistido===false&&current&&JSON.stringify(current)===attempt.context.accountFingerprint&&
+          JSON.stringify(S.forex)===attempt.forexFingerprint)
+          attempt.context.accountObject=S.accounts[current.liveIndex];
+        return result;
+      }
+      attempt.stage='complete';attempt.context=capture(accountSelected(accountId));attempt.forexFingerprint=JSON.stringify(S.forex);
+      return {...result,accountId,periodId:period.periodId};
+    });}catch(error){return jpWealthPersistenceOutcomeIsUnknown()?unknown('Observação interrompida.'):fail('Observação não confirmada. Confira a sessão.');}
+    finally{busy=false;}
+  }
+
   function prepareImport(report,selectionId,meta={}){
     cancelImport();
     const issue=guard();if(issue)return fail(issue);
@@ -369,5 +473,5 @@
     }catch(error){return fail('Não foi possível confirmar a conta padrão. Confira a sessão e tente novamente.');}
     finally{busy=false;}
   }
-  Object.assign(api,{accounts,inspectRegistration,beginRegistration,saveRegistration,cancelRegistration,prepareImport,confirmImport,saveDefaultAccount,cancelImport});
+  Object.assign(api,{beginAccountSetup,cancelAccountSetup,saveSetupPeriod,saveSetupObservation,accounts,inspectRegistration,beginRegistration,saveRegistration,cancelRegistration,prepareImport,confirmImport,saveDefaultAccount,cancelImport});
 })(globalThis);
