@@ -541,7 +541,7 @@ def assert_fuso_agenda(browser,url):
 def assert_links_profundos(page):
     routes=[('finpes','mensal','finpes'),('finpes','dividas','finpes'),
             ('finpes','comparativo','finpes'),('finpes','cenarios','finpes'),
-            ('research','calendar','research'),('research','nocoda','research'),
+            ('research','calendar','tools'),('research','nocoda','research'),
             ('research','pivots','research'),('alladin','balances','alladin'),
             ('alladin','ledger','alladin'),('alladin','positions','alladin')]
     for surface,view,screen in routes:
@@ -551,10 +551,11 @@ def assert_links_profundos(page):
         if surface=='alladin':
             assert page.locator(f'[data-alladin-panel="{view}"]').is_visible()
         else:
-            actual=page.evaluate("s=>s==='finpes'?JPWFin.ui.getView():JPWResearch.ui.getView()",surface)
+            actual_surface="tools" if surface=="research" and view=="calendar" else surface
+            actual=page.evaluate("s=>s==='finpes'?JPWFin.ui.getView():s==='tools'?JPWTools.ui.getView():JPWResearch.ui.getView()",actual_surface)
             assert actual==view,(surface,view,actual)
             current=page.evaluate("() => JPWNavigation.current().localView")
-            assert current=={'surface':surface,'view':view}, current
+            assert current=={'surface':actual_surface,'view':view}, current
 
     page.evaluate("() => JPWNavigation.navigate('dashboard')")
 

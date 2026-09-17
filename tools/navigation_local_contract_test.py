@@ -34,7 +34,8 @@ CASES = [
     ("finpes", "dividas", None, "personal-finance", None),
     ("finpes", "comparativo", None, "personal-finance", None),
     ("finpes", "cenarios", None, "personal-finance", None),
-    ("research", "calendar", "research-forex", "research", "research-forex"),
+    ("tools", "calendar", "tools-calendar", "tools", "tools-calendar"),
+    ("tools", "nocuda", "tools-nocuda", "tools", "tools-nocuda"),
     ("research", "nocoda", "research-forex", "research", "research-forex"),
     ("research", "pivots", "research-forex", "research", "research-forex"),
     ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
@@ -52,7 +53,7 @@ function snapshot(){return {current:JPWNavigation.current(),
   screens:[...document.querySelectorAll('#appMain > .screen.active')].map(e=>e.id),
   primary:[...document.querySelectorAll('#nav > .tab.active')].map(e=>e.dataset.primary),
   aria:[...document.querySelectorAll('#nav > .tab[aria-current="page"]')].map(e=>e.dataset.primary)};}
-for(const [id,name] of Object.entries({exec:'JPWExec',finpes:'JPWFin',fxplan:'JPWFx',research:'JPWResearch'})){
+for(const [id,name] of Object.entries({exec:'JPWExec',finpes:'JPWFin',fxplan:'JPWFx',research:'JPWResearch',tools:'JPWTools'})){
   const ui={selectView(view){event('select',{surface:id,view,...snapshot()});},
     getView(){event('getView');return 'overview';}};
   window[name]={get ui(){
@@ -165,11 +166,11 @@ def main():
             page.on("console", lambda message: failures.append(f"console: {message.text}")
                     if message.type == "error" else None)
             tabs = "".join(f'<button class="tab" data-primary="{p}" data-route="{p}">{p}</button>'
-                           for p in ("dashboard", "forex", "personal-finance", "research", "alladin"))
+                           for p in ("dashboard", "forex", "personal-finance", "research", "alladin", "tools"))
             screens = "".join(f'<section class="screen{a}" id="{s}"><h1>{s}</h1></section>'
                               for s, a in [("dash", " active"), ("exec", ""), ("fxplan", ""),
                                            ("finpes", ""), ("research", ""), ("contab", ""),
-                                           ("alladin", ""), ("check", ""), ("contas", ""), ("fxconsolidated", "")])
+                                           ("alladin", ""), ("check", ""), ("contas", ""), ("fxconsolidated", ""), ("tools", "")])
             page.set_content(f'<nav id="nav">{tabs}</nav><main id="appMain">{screens}</main>')
             page.add_script_tag(content=PRELUDE)
             page.add_script_tag(content=source)
@@ -197,9 +198,28 @@ def main():
             run(f"{case[0]}:{case[1]} + repeat", valid)
         page.close()
 
+        def relocated_calendar_alias():
+            p = new_page()
+            try:
+                p.evaluate("JPWNavigation.navigateLocal('research','pivots')")
+                result = p.evaluate("__exercise('research','calendar')")
+                records.append(dict(name="research:calendar relocation", result=result))
+                assert result["accepted"] is True
+                expected = dict(canonical="tools-calendar", requested="tools-calendar", source="canonical",
+                                primary="tools", child="tools-calendar", screen="tools",
+                                localView=dict(surface="tools", view="calendar"))
+                assert result["after"] == dict(current=expected, screens=["tools"], primary=["tools"], aria=["tools"])
+                assert [e["kind"] for e in result["events"]] == [
+                    "apply", "resolve", "resolve", "select", "pill", "scroll", "reminder", "sub"]
+                assert result["reads"] == 2 and result["denied"] == []
+                assert result["lastAfter"] == dict(accepted=True, reason=None)
+            finally:
+                p.close()
+        run("legacy research:calendar redirects once to Tools without data access", relocated_calendar_alias)
+
         negatives = [("unknown", "overview"), ("alladin", "overview"), (None, "overview"),
                      ("exec", "unknown"), ("exec", None), ("exec", ""), ("exec", 0),
-                     ("exec", "@current"), ("finpes", "panel"), ("research", "overview")]
+                     ("exec", "@current"), ("finpes", "panel"), ("research", "overview"), ("tools", "pivots")]
         for surface, view in negatives:
             def negative(surface=surface, view=view):
                 p = new_page()
@@ -212,7 +232,7 @@ def main():
                     assert result["after"] == result["before"]
                     assert result["lastAfter"] == result["lastBefore"]
                     assert [e["kind"] for e in result["events"]] == (
-                        ["resolve"] if surface in ("exec", "finpes", "fxplan", "research") else [])
+                        ["resolve"] if surface in ("exec", "finpes", "fxplan", "research", "tools") else [])
                     assert not result["denied"]
                 finally:
                     p.close()

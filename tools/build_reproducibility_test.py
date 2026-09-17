@@ -22,9 +22,17 @@ DOCUMENTOS = (
     'docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
     'docs/normative/ANEXO_PARAMETRICO_CANONICO.md',
 )
+NOCUDA_BUILD_INPUTS = (
+    'downloads/nocuda/Nocuda_Tool.pine',
+    'downloads/nocuda/Nocuda_Tool.mq5',
+    'downloads/nocuda/Nocuda_Tool.ex5',
+    'downloads/nocuda/TRADINGVIEW-LEIA-ME.md',
+    'downloads/nocuda/MT5-LEIA-ME.md',
+)
 BRAND_BUILD_INPUTS = (
     'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
     'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png',
+    'assets/nocuda-tradingview.png', 'assets/nocuda-metatrader.png',
     'assets/pwa-icon-primary.png', 'assets/pwa-icon-primary-192.png', 'assets/pwa-icon-primary-512.png',
     'assets/pwa-icon-secondary.png', 'assets/pwa-icon-secondary-192.png', 'assets/pwa-icon-secondary-512.png',
 )
@@ -47,6 +55,7 @@ def arquivos_do_candidato():
     arquivos.update(item['path'] for item in manifest.get('runtimeAssets', []))
     arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
     arquivos.update(BRAND_BUILD_INPUTS)
+    arquivos.update(NOCUDA_BUILD_INPUTS)
     return sorted(arquivos)
 
 def montar(destino: Path, arquivos):
@@ -113,7 +122,7 @@ def main():
         # ---- 4. originais incorporados byte-idênticos e identificados pelo build ----
         html = a['monolito'].decode('utf-8')
         embedded = re.findall(r'href="data:([^" ]+);base64,([A-Za-z0-9+/=]+)" download="([^"]+)"', html)
-        for relative in DOCUMENTOS:
+        for relative in DOCUMENTOS + NOCUDA_BUILD_INPUTS:
             original = (limpo / relative).read_bytes()
             assert any(base64.b64decode(data) == original for _mime, data, _name in embedded), relative
             assert f'href="{relative}"' not in html, f'link externo ainda presente: {relative}'

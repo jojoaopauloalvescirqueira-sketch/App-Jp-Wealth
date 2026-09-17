@@ -8,7 +8,15 @@ const NORMATIVE_DOCUMENT_URLS = [
   './docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf',
   './docs/normative/ANEXO_PARAMETRICO_CANONICO.md'
 ].map(path => new URL(path, self.location.href).href);
+const NOCUDA_DOCUMENT_URLS = [
+  './downloads/nocuda/Nocuda_Tool.ex5',
+  './downloads/nocuda/Nocuda_Tool.pine', './downloads/nocuda/Nocuda_Tool.mq5',
+  './downloads/nocuda/TRADINGVIEW-LEIA-ME.md', './downloads/nocuda/MT5-LEIA-ME.md'
+].map(path => new URL(path, self.location.href).href);
 const PRECACHE_URLS = [
+  './assets/nocuda-tradingview.png', './assets/nocuda-metatrader.png',
+  ...NOCUDA_DOCUMENT_URLS,
+  './src/js/10-domain/16-nocuda-transfer.js', './src/js/20-ui/31-tools-services.js',
   './src/js/10-domain/19-execution-market.js',
   './src/js/10-domain/18-execution-board-model.js',
   './src/js/20-ui/30-execution-board.js',
@@ -95,7 +103,7 @@ self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
   const url=new URL(event.request.url);
   const documentURL = url.origin + url.pathname;
-  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)){
+  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)){
     event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(documentURL).then(cached=>cached||fetch(event.request))));
     return;
   }

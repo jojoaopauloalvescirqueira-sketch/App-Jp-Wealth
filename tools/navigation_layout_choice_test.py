@@ -166,7 +166,7 @@ def assert_structure(page, expected):
       };
     }""", expected)
     assert result["navParent"] == ("appSidebar" if expected == "sidebar" else "gdTopbarNavSlot"), result
-    assert result["primaryCount"] == 5 and result["duplicateIds"] == [], result
+    assert result["primaryCount"] == 6 and result["duplicateIds"] == [], result
     if expected == "sidebar":
         assert result["shellInSidebar"] and result["execParent"] == result["researchParent"] == "navLocalSlot", result
     else:
@@ -247,7 +247,7 @@ def run_preferences(browser, url, evidence):
             before = raw(page)
             state = page.evaluate("JSON.stringify(S)")
             for _ in range(2):
-                for route in ["forex-overview", "motor", "personal-finance", "pivots", "alladin", "dashboard"]:
+                for route in ["forex-overview", "motor", "personal-finance", "pivots", "alladin", "tools-calendar", "tools-nocuda", "dashboard"]:
                     go(page, route)
             assert page.evaluate("JSON.stringify(S)") == state
             assert raw(page) == before and ops(page) == [], ops(page)

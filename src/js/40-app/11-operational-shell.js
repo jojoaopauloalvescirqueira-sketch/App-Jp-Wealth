@@ -5,7 +5,8 @@ const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener
 const NAV_SUBMENU_SURFACES = {
   exec:()=>window.JPWExec&&window.JPWExec.ui,
   finpes:()=>window.JPWFin&&window.JPWFin.ui,
-  research:()=>window.JPWResearch&&window.JPWResearch.ui
+  research:()=>window.JPWResearch&&window.JPWResearch.ui,
+  tools:()=>window.JPWTools&&window.JPWTools.ui
 };
 function shellEl(sel){return document.querySelector(sel);}
 function shellMobile(){return window.matchMedia('(max-width:900px)').matches;}
@@ -112,7 +113,7 @@ function syncForexContext(){
 function syncNavSubState(){
   if(!window.JPWNavigation)return;
   const c=window.JPWNavigation.current();
-  const key=({forex:'exec','personal-finance':'finpes',research:'research'})[c.primary]||null;
+  const key=({forex:'exec','personal-finance':'finpes',research:'research',tools:'tools'})[c.primary]||null;
   if(key!==navSubUI.screen){navSubUI.collapsed=null;navSubUI.screen=key;}
   navSubUI.open=!!key&&navSubUI.collapsed!==key;
   const shell=document.getElementById('navSubShell');

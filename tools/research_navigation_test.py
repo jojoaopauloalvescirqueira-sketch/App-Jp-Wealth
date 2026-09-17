@@ -20,16 +20,16 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-PRIMARY = ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin"]
+PRIMARY = ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin", "tools-calendar"]
 RESEARCH_CHILDREN = [
-    ("research-forex", "Forex", "calendar"),
+    ("research-forex", "Forex", "nocoda"),
     ("research-stocks-br", "Ações", "stocks-br"),
     ("research-stocks-global", "Stocks", "stocks-global"),
     ("research-reits", "REITs", "reits"),
     ("research-probability-lab", "Laboratório de Probabilidade", "probability-lab"),
     ("research-others", "Others", "others"),
 ]
-RESEARCH_FOREX_VIEWS = ["calendar", "nocoda", "pivots"]
+RESEARCH_FOREX_VIEWS = ["nocoda", "pivots"]
 EXEC_VIEWS = ["panel", "accounting", "accounts", "motor"]
 WORKSPACES = ["execEcal", "execNocoda", "execPivots"]
 
@@ -129,7 +129,8 @@ def assert_registry_and_dom(page):
     assert page.locator("#appSidebar #nav #researchNavSubmenu").count() == 1
     for workspace in WORKSPACES:
         assert page.locator(f"#{workspace}").count() == 1, workspace
-        assert page.locator(f"#research > #{workspace}").count() == 1, workspace
+        owner = "tools" if workspace == "execEcal" else "research"
+        assert page.locator(f"#{owner} > #{workspace}").count() == 1, workspace
         assert page.locator(f"#exec > #{workspace}").count() == 0, workspace
 
     # Exec expõe somente as três views canônicas. Os aliases antigos podem
@@ -141,9 +142,12 @@ def assert_registry_and_dom(page):
     for legacy, research_view in (("ecal", "calendar"), ("nocoda", "nocoda"), ("pivots", "pivots")):
         assert page.evaluate("legacy => JPWExec.ui.selectView(legacy)", legacy) is True
         state = snapshot(page)
-        assert state["screen"] == "research" and state["primary"] == "research", state
-        assert state["current"]["child"] == "research-forex", state
-        assert state["researchView"] == research_view, state
+        owner = "tools" if legacy == "ecal" else "research"
+        canonical = "tools-calendar" if legacy == "ecal" else "research-forex"
+        assert state["screen"] == owner and state["primary"] == owner, state
+        assert state["current"]["child"] == canonical, state
+        actual_view = page.evaluate("JPWTools.ui.getView()") if legacy == "ecal" else state["researchView"]
+        assert actual_view == research_view, state
 
 
 def assert_routes_aliases_and_empty_states(page):
@@ -160,10 +164,12 @@ def assert_routes_aliases_and_empty_states(page):
     for alias, view in aliases:
         assert page.evaluate("alias => JPWNavigation.navigate(alias)", alias) is True
         state = snapshot(page)
-        assert state["screen"] == "research" and state["primary"] == "research", (alias, state)
-        assert state["current"]["canonical"] == "research-forex", state
-        assert state["current"]["child"] == "research-forex", state
-        assert state["current"]["localView"] == {"surface": "research", "view": view}, state
+        owner = "tools" if alias == "ecal" else "research"
+        canonical = "tools-calendar" if alias == "ecal" else "research-forex"
+        assert state["screen"] == owner and state["primary"] == owner, (alias, state)
+        assert state["current"]["canonical"] == canonical, state
+        assert state["current"]["child"] == canonical, state
+        assert state["current"]["localView"] == {"surface": owner, "view": view}, state
         assert not page.locator("#exec").evaluate("el => el.classList.contains('active')")
 
     empty_ids = ["researchStocksBr", "researchStocksGlobal", "researchReits", "researchOthers"]
@@ -222,9 +228,9 @@ def assert_shell_and_accessibility(page, viewport, theme):
     page.click("#researchNavTrigger")
     expander = '[data-nav-expand="research"]'
     page.wait_for_function("() => document.querySelector('[data-nav-expand=research]').getAttribute('aria-expanded') === 'true'")
-    page.wait_for_function("() => JPWResearch.ui.getView() === 'calendar'")
+    page.wait_for_function("() => JPWResearch.ui.getView() === 'nocoda'")
     assert page.locator('#researchNavSubmenu [data-nav-child="research-forex"]').get_attribute("aria-current") == "page"
-    assert page.locator('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="calendar"]').get_attribute("aria-current") == "page"
+    assert page.locator('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="nocoda"]').get_attribute("aria-current") == "page"
 
     if mobile:
         assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
@@ -239,7 +245,7 @@ def assert_shell_and_accessibility(page, viewport, theme):
     if mobile:
         page.click("[data-shell-menu-toggle]")
     page.click('#researchNavSubmenu [data-nav-child="research-forex"]')
-    assert page.evaluate("() => JPWResearch.ui.getView()") == "calendar"
+    assert page.evaluate("() => JPWResearch.ui.getView()") == "nocoda"
     assert not context.is_hidden()
     assert context.evaluate("el => el.inert") is False
     page.click('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="pivots"]')
@@ -274,11 +280,11 @@ def assert_shell_and_accessibility(page, viewport, theme):
 
     # N3 tem alcance proprio e continua disponivel com a lateral recolhida.
     assert context.is_visible()
-    context.locator('[data-nav-local-view="calendar"]').focus()
+    context.locator('[data-nav-local-view="nocoda"]').focus()
     page.keyboard.press("End")
     assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "pivots"
     page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "calendar"
+    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "nocoda"
 
     layout = page.evaluate("""mobile => ({
       activeScreens:[...document.querySelectorAll('#appMain > .screen.active')].map(el=>el.id),
@@ -347,8 +353,8 @@ def assert_lab_relocation(page):
     rows=[]
     for mode in ['sidebar','topbar']:
         for width in [1440,390]:
-            order=(['research','alladin','personal-finance','forex','dashboard'] if width==1440
-                   else ['alladin','forex','dashboard','personal-finance','research'])
+            order=(['research','alladin','personal-finance','forex','dashboard','tools'] if width==1440
+                   else ['alladin','forex','dashboard','personal-finance','research','tools'])
             page.evaluate('order=>applyNavOrder(order)',order)
             page.set_viewport_size({'width':width,'height':900 if width==1440 else 844})
             page.evaluate("mode=>mountNavigationLayout(mode)",mode)

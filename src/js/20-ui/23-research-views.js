@@ -4,7 +4,6 @@
 // efêmera: não toca S, storage, schema, backup ou persistência.
 
 const RESEARCH_VIEWS = [
-  ['calendar', 'execEcal'],
   ['nocoda', 'execNocoda'],
   ['pivots', 'execPivots'],
   ['stocks-br', 'researchStocksBr'],
@@ -15,9 +14,6 @@ const RESEARCH_VIEWS = [
 ];
 
 const RESEARCH_VIEW_RENDERERS = {
-  calendar: () => {
-    if(window.JPWEcalUI&&typeof window.JPWEcalUI.render==='function') window.JPWEcalUI.render();
-  },
   nocoda: () => {
     if(window.JPWNocodaUI&&typeof window.JPWNocodaUI.render==='function') window.JPWNocodaUI.render();
   },
@@ -31,7 +27,7 @@ const RESEARCH_VIEW_RENDERERS = {
   }
 };
 
-let researchView='calendar';
+let researchView='nocoda';
 
 function researchApplyView(view){
   RESEARCH_VIEWS.forEach(([key,id])=>{

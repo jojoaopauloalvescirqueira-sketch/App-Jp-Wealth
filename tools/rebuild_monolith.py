@@ -25,14 +25,22 @@ NORMATIVE_DOCUMENTS = (
     ('docs/normative/Estatuto_JP_WEALTH_UNIFICADO.pdf', 'application/pdf', 'Estatuto_JP_Wealth_V11.pdf'),
     ('docs/normative/ANEXO_PARAMETRICO_CANONICO.md', 'text/markdown;charset=utf-8', 'Anexo_Parametrico_Canonico.md'),
 )
+NOCUDA_DOCUMENTS = (
+    ('downloads/nocuda/Nocuda_Tool.ex5', 'application/octet-stream', 'Nocuda_Tool.ex5'),
+    ('downloads/nocuda/Nocuda_Tool.pine', 'text/plain;charset=utf-8', 'Nocuda_Tool.pine'),
+    ('downloads/nocuda/Nocuda_Tool.mq5', 'text/plain;charset=utf-8', 'Nocuda_Tool.mq5'),
+    ('downloads/nocuda/TRADINGVIEW-LEIA-ME.md', 'text/markdown;charset=utf-8', 'TRADINGVIEW-LEIA-ME.md'),
+    ('downloads/nocuda/MT5-LEIA-ME.md', 'text/markdown;charset=utf-8', 'MT5-LEIA-ME.md'),
+)
 FINGERPRINT_FIXED_INPUTS = (
     'index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js',
     'tools/rebuild_monolith.py',
-    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS),
+    *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS),
 )
 FINGERPRINT_TAIL_INPUTS = (
     'manifests/jp-wealth.webmanifest', 'manifests/jp-wealth-black.webmanifest',
     'assets/jp-wealth-brand-red.png', 'assets/jp-wealth-brand-black.png',
+    'assets/nocuda-tradingview.png', 'assets/nocuda-metatrader.png',
     'assets/pwa-icon-primary.png', 'assets/pwa-icon-primary-192.png', 'assets/pwa-icon-primary-512.png',
     'assets/pwa-icon-secondary.png', 'assets/pwa-icon-secondary-192.png', 'assets/pwa-icon-secondary-512.png',
 )
@@ -91,6 +99,11 @@ def build_id():
 
 current_build_id = build_id()
 build_id_source = f"// Gerado por tools/rebuild_monolith.py. Não editar manualmente.\nconst JP_WEALTH_BUILD_ID = '{current_build_id}';\n"
+# Browser-only Pine source for offline/file:// editable downloads. The same
+# official source is fingerprinted and embedded in the portable links below.
+pine_payload = base64.b64encode((ROOT / 'downloads/nocuda/Nocuda_Tool.pine').read_bytes()).decode('ascii')
+nocuda_payload = {name: {'mime': mime, 'base64': base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')} for relative, mime, name in NOCUDA_DOCUMENTS}
+build_id_source += 'if (typeof window !== "undefined") {window.JPW_NOCUDA_PINE = ' + json.dumps(pine_payload) + ';window.JPW_NOCUDA_FILES = ' + json.dumps(nocuda_payload, separators=(',', ':')) + ';}\n'
 build_id_path.write_text(build_id_source, encoding='utf-8')
 
 index = (ROOT / 'index.html').read_text(encoding='utf-8')
@@ -110,12 +123,17 @@ html = html.replace('\n</body>', '<script>\n' + js + '\n</script>\n</body>', 1)
 
 # O portátil precisa entregar os originais sem depender de pastas externas.
 # Base64 mantém os bytes e não introduz conteúdo normativo como HTML executável.
-for relative, mime, filename in NORMATIVE_DOCUMENTS:
+for relative, mime, filename in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS:
     encoded = base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')
     html = html.replace(
         f'href="{relative}"',
         f'href="data:{mime};base64,{encoded}" download="{filename}"',
     )
+
+for platform in ('tradingview', 'metatrader'):
+    relative = f'assets/nocuda-{platform}.png'
+    encoded = base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')
+    html = html.replace(f'src="{relative}"', f'src="data:image/png;base64,{encoded}"')
 
 out = ROOT / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html'
 out.parent.mkdir(parents=True, exist_ok=True)
