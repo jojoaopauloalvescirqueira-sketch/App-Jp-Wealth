@@ -51,16 +51,22 @@ Finanças Pessoais, Alladin e Ferramentas e Serviços; uma preferência válida 
 A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
 `forex-consolidated`, `personal-finance`, `research-forex`, `alladin` e `tools-calendar`.
 
-- Forex tem quatro filhos nesta ordem: `forex-consolidated`, `forex-planning`,
-  `forex-operation`, `forex-reserves`. Consolidado FX é a
-  entrada padrão. Contas é uma visão local de Operação, entre Painel e Motor;
-  os aliases `contas` e `forex-account` permanecem compatíveis e levam a essa
-  mesma superfície, sem criar rota, store ou cadastro paralelos.
+- Forex tem sete filhos nesta ordem: **Dashboard** (`forex-consolidated`),
+  **Execution Board** (`forex-operation`), **History** (`forex-history`),
+  **Contabilidade** (`forex-accounting`), **Management Accounts**
+  (`forex-management-accounts`), **Planejamento** (`forex-planning`) e
+  **Reservas** (`forex-reserves`). Dashboard mantém `#fxconsolidated` como
+  entrada padrão. Management Accounts oferece N3 Contas (`exec/accounts`) e
+  Fator de Correção (`exec/motor`) usando os mesmos cadastros/controladores.
+  Execution Board, History e Contabilidade são folhas N2 independentes.
+  Os aliases `contas`/`forex-account`, `motor`, `history` e
+  `contab`/`forex-reconciliation` preservam seus destinos e passam a indicar
+  o respectivo filho canônico. Não há novo store ou cadastro.
 - Finanças Pessoais mantém Visão Geral, Orçamento Mensal, Dívidas & Crédito,
   Comparativo Mensal e Cenários, pela superfície `window.JPWFin.ui`.
 - Research mantém `research-forex`, `research-stocks-br`,
   `research-stocks-global`, `research-reits`, `research-probability-lab` e `research-others`.
-- Os níveis locais de Operação, Contabilidade, Planejamento e Research/Forex
+- Os níveis locais de Management Accounts, Planejamento e Research/Forex
   continuam nas superfícies existentes. NoCoda e Pivots mantêm seus aliases e owner Research/Forex. Calendário pertence a Ferramentas e Serviços; `ecal` e a chamada legada research/calendar redirecionam para tools-calendar.
 - Alladin preserva suas abas internas e o próprio ciclo de renderização.
 
@@ -167,7 +173,7 @@ opacos cobrem transparência reduzida, alto contraste e ausência de
 Na Lateral em níveis, `#nav` e `#navSubShell` são montados no mesmo
 `#submenuNavStage`. O estado de exploração é efêmero e separado da rota: clicar
 em Research, Forex, Finanças Pessoais ou Ferramentas abre N2 sem chamar
-`JPWNavigation`; os grupos Forex de Research, Planejamento e Operação abrem N3.
+`JPWNavigation`; os grupos Forex de Research, Planejamento e Management Accounts abrem N3.
 Somente folhas chamam o resolver, e a gaveta/foco só fecham quando o retorno é
 aceito. Uma recusa do guard conserva o nível explorado e o trabalho atual.
 
@@ -254,14 +260,31 @@ intactos. Esta camada não lê, projeta nem regrava personalizações dos widget
 ## Navegação interna e fonte única
 
 O shell usa `JPWNavigation.current()` e as superfícies `window.JPWExec.ui`,
-`window.JPWFx.ui`, `window.JPWFin.ui` e `window.JPWResearch.ui`. Operação usa
-`panel`/`motor`; Contabilidade (alias preservado `forex-reconciliation`) combina `#contab` e `exec/history`; Planejamento usa
+`window.JPWFx.ui`, `window.JPWFin.ui` e `window.JPWResearch.ui`. Execution Board usa
+`exec/panel`; History usa `exec/history` com o mesmo `#execHistory`, filho direto
+de `#exec`, fora de Contabilidade. Contabilidade usa `exec/accounting` em
+`#contab`; Management Accounts usa `exec/accounts` e `exec/motor`. Planejamento usa
 `overview`/`planning`/`actuals`/`table`. Seleção de aba Alladin é observada para
 a localização, sem leitura financeira ou alteração de seu renderizador.
 
-N2/N3 são nós existentes realocados, sem tabs equivalentes duplicadas. Nenhum
-interior de módulo é redesenhado. A política de DOM, rascunhos e renderização
+N2/N3 são nós existentes realocados, sem tabs equivalentes duplicadas. A camada
+de navegação não redesenha o interior dos módulos. A política de DOM, rascunhos e renderização
 continua pertencendo a cada módulo; não se impõe uma política universal.
+
+## Execution Board e History — 2026-09-22
+
+Contrato [CHG-FOREX-EXECUTION-TABLE-20260922](../work/CHG-FOREX-EXECUTION-TABLE-20260922.md).
+`execApplyView` alterna também `#executionBoard`, que só fica disponível no
+workspace `panel`, junto ao `#execWidgetGrid` existente. Entrar em Contabilidade,
+History, Contas ou Fator de Correção oculta e aplica `inert` a ambos. Os nós não
+são desmontados e o guard de rascunho permanece antes da troca de destino.
+
+History chama o renderer existente `JPWHistoryUI.render()` a cada entrada. Lê
+somente snapshots de operações completas finalizadas em `S.operationHistory`;
+ordens fechadas de uma operação ainda ativa não se tornam operações finalizadas.
+O antigo disclosure dentro da Contabilidade deixa de existir. A fachada
+`execToggleHistory` permanece como encaminhamento ao destino independente.
+Navegação, exploração N3 e consulta do histórico não gravam estado financeiro.
 
 ## Workspaces dentro do módulo
 
@@ -347,7 +370,7 @@ scroll, sem persistir a abertura da gaveta nem a adaptação de viewport.
 
 ## Verificação mínima
 
-- Cinco primários, filhos, visões locais e aliases acessíveis; destino inválido
+- Seis primários, sete filhos Forex, visões locais e aliases acessíveis; destino inválido
   recusado sem mudança de estado ou storage.
 - Expansão e seleção separadas, ausência de hover obrigatório e de nav duplicada.
 - N2 lateral sem deslocamento vertical do conteúdo; N3 local sem duplicação.
@@ -367,8 +390,10 @@ As evidências focais estão em `tools/navigation_ia_test.py`,
 `tools/exec_submenu_test.py`, `tools/finpes_navigation_test.py`,
 `tools/research_navigation_test.py` e `tools/contextual_sidebar_test.py`.
 `tools/navigation_layout_choice_test.py` verifica escolha, transparência,
-recarga, erros, compatibilidade e alternância dos mesmos nós entre as três
-composições.
+recarga, erros, compatibilidade e alternância dos mesmos nós entre as quatro
+composições. `tools/forex_navigation_table_test.py` cobre os sete destinos,
+a identidade dos workspaces, History separado, os aliases e a recusa do guard
+nesses quatro layouts.
 `tools/dashboard_forex_relocation_test.py` mantém a regressão específica v6.
 Os gates existentes permanecem inalterados; execução e auditoria são
 registradas no candidate efetivamente testado, sem presumir aprovação pelo

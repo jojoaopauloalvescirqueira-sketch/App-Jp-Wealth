@@ -536,6 +536,7 @@ function normalizeImportedState(raw){
       throw new Error('Backup com '+key+' inválido: esperava objeto.');
   }
   if(candidate.forex!=null&&globalThis.JPWForex?.state&&!JPWForex.state.supported(candidate.forex))throw new Error('Backup com observações Forex incompatíveis. O estado atual foi preservado.');
+  if(globalThis.JPWForex?.state?.validateExecutionExtensions&&!JPWForex.state.validateExecutionExtensions(candidate))throw new Error('Backup com identidade ou diagnóstico de ordem incompatível. O estado atual foi preservado.');
   const workspace=Object.prototype.hasOwnProperty.call(raw,'workspace')?jpwWorkspaceValidate(raw.workspace):null;
   if(candidate.workspaceRecovery!=null){
     const recovery=candidate.workspaceRecovery;

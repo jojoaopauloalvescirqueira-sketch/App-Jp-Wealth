@@ -124,22 +124,17 @@
     <nav class="nav-sub-menu nav-sub-menu-contextual" id="execNavSubmenu" aria-labelledby="execNavTrigger"
          aria-hidden="true" hidden inert>
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
-        <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Consolidado FX</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Dashboard</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Execution Board</span><span class="nav-sub-item-desc">Preenchimento e acompanhamento das ordens</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-history"><span class="nav-sub-item-title">History</span><span class="nav-sub-item-desc">Operações completas finalizadas</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-accounting"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Fechamentos e apuração do período</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Management Accounts</span><span class="nav-sub-item-desc">Contas e Fator de Correção</span></button>
         <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Operação</span><span class="nav-sub-item-desc">Painel, Contabilidade, Contas e Fator de Correção</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
-             data-nav-context="forex-operation" role="group" aria-label="Operação" hidden inert>
-          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="panel">
-            <span class="nav-sub-item-title">Painel Operacional</span>
-            <span class="nav-sub-item-desc">Clearance, grades, ordens e LIFO</span>
-          </button>
-          <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="accounting">
-            <span class="nav-sub-item-title">Contabilidade</span>
-            <span class="nav-sub-item-desc">Fechamentos e histórico</span>
-          </button>
+             data-nav-context="forex-management-accounts" role="group" aria-label="Management Accounts" hidden inert>
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="accounts">
             <span class="nav-sub-item-title">Contas</span>
             <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
@@ -521,13 +516,10 @@
         <div class="lifo-sug" id="lifoSug">Nenhuma poda necessária — risco e alavancagem coerentes com a fase.</div>
       </div>
     </div>
+  <!-- History: somente operações completas finalizadas de S.operationHistory.
+       O mesmo renderer é chamado a cada entrada; não cria outro histórico. -->
+  <div class="exec-view" id="execHistory" role="region" aria-label="History — operações finalizadas" hidden inert></div>
   <div class="exec-view" id="contab" role="region" aria-label="Contabilidade Forex" hidden inert>
-    <button type="button" id="accountingHistoryToggle" aria-expanded="false" aria-controls="execHistory">Histórico de Operações Únicas</button>
-    <!-- Histórico: consumidor SOMENTE LEITURA de S.operationHistory. O conteúdo é
-         renderizado por 20-ui/16-operation-history.js a cada entrada, porque uma
-         finalização feita no Painel Operacional muda a lista. Nenhum caminho
-         deste workspace muta estado financeiro. -->
-    <div class="exec-view" id="execHistory" role="region" aria-label="Histórico de Operações Únicas" hidden></div>
     <div class="jp-widget-grid" id="contabWidgetGrid">
     <div class="card acct-summary-card" data-layout-card="contab-period-goals" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
       <h2 class="sr-only">Período &amp; Metas</h2>

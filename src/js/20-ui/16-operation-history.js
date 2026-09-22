@@ -137,7 +137,7 @@ function histFilter(records){
     if (histState.direction !== 'all' && String(r.direction || '') !== histState.direction) return false;
     if (histState.result !== 'all' && histResultClass(r) !== histState.result) return false;
     if (q) {
-      const alvo = [r.operationId, r.instrument, ...(r.ordersSnapshot || []).map(o => o.label)]
+      const alvo = [r.operationId, r.instrument, ...(r.ordersSnapshot || []).flatMap(o => [o.label,o.brokerHash])]
         .map(x => String(x || '').toUpperCase()).join(' ');
       if (!alvo.includes(q)) return false;
     }
@@ -186,7 +186,7 @@ function histCard(rotulo, valor, nota){
 function histRenderDetail(r){
   const context = histCapturedContext(r);
   const ordens = (r.ordersSnapshot || []).map(o =>
-    '<tr><td>' + esc(o.label || '(sem ID)') + '</td><td>' + esc(histPhaseName(Number.isInteger(o.phase) ? o.phase - 1 : null, r)) + '</td>' +
+    '<tr><td>' + esc(o.label || '(sem ID)') + '</td><td>' + esc(o.brokerHash || 'Não informado') + '</td><td>' + esc(histPhaseName(Number.isInteger(o.phase) ? o.phase - 1 : null, r)) + '</td>' +
     '<td>' + esc(o.par || '—') + '</td><td>' + esc(o.tipo || '—') + '</td>' +
     '<td class="hist-num">' + esc(String(o.lote ?? '—')) + '</td>' +
     '<td class="hist-num">' + esc(String(o.entry ?? '—')) + '</td>' +
@@ -226,11 +226,11 @@ function histRenderDetail(r){
     '<div><b>Retorno</b><br>' + esc(ret == null ? '—' : ret.toFixed(2) + '%') + '</div>' +
     '</div>' +
     '<div class="jp-table-scroll"><table class="hist-orders"><thead><tr>' +
-    '<th scope="col">ID</th><th scope="col">Fase</th><th scope="col">Instrumento</th>' +
+    '<th scope="col">ID interno</th><th scope="col">HASH da corretora</th><th scope="col">Fase</th><th scope="col">Instrumento</th>' +
     '<th scope="col">Direção</th><th scope="col">Lote</th><th scope="col">Entrada</th>' +
     '<th scope="col">SL</th><th scope="col">TP</th><th scope="col">Resultado</th>' +
     '<th scope="col">Status</th><th scope="col">Abertura</th><th scope="col">Fechamento</th>' +
-    '</tr></thead><tbody>' + (ordens || '<tr><td colspan="12">Sem ordens registradas.</td></tr>') +
+    '</tr></thead><tbody>' + (ordens || '<tr><td colspan="13">Sem ordens registradas.</td></tr>') +
     '</tbody></table></div>' +
     '<p class="hist-ro">Registro histórico — somente leitura.</p>' +
     '<button type="button" class="reset-btn" data-operation-copy="' + esc(r.operationId) + '">Copiar operação</button>' +
@@ -419,6 +419,7 @@ function operationCopyOrderLines(o, position, historical, context){
   const row = (label, value) => { if (value !== '') lines.push(label + ': ' + value); };
   const label = operationCopyScalar(historical ? o.label : o.id);
   lines.push('Ordem ' + position + (label ? ' — ' + label : ''));
+  row('HASH da corretora', operationCopyScalar(o.brokerHash));
   row('Instrumento', operationCopyScalar(o.par));
   row('Direção', operationCopyScalar(o.tipo));
   row('Status registrado', operationCopyScalar(o.status));

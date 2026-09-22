@@ -30,8 +30,11 @@ CANONICAL = [
 ]
 FOREX_CHILDREN = [
     ("forex-consolidated", "fxconsolidated", None),
-    ("forex-planning", "fxplan", "overview"),
     ("forex-operation", "exec", "panel"),
+    ("forex-history", "exec", "history"),
+    ("forex-accounting", "exec", "accounting"),
+    ("forex-management-accounts", "exec", "accounts"),
+    ("forex-planning", "fxplan", "overview"),
     ("forex-reserves", "fxreserves", None),
 ]
 
@@ -176,8 +179,8 @@ def assert_primary_dom(page):
         "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes", "tools"]
     assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
     assert page.locator("#navLocalSlot [data-nav-level='3']").count() == 3
-    assert page.locator("#navLocalSlot [data-nav-context='forex-operation'] [data-nav-local-view]").evaluate_all(
-        "els => els.map(el => el.dataset.navLocalView)") == ["panel", "accounting", "accounts", "motor"]
+    assert page.locator("#navLocalSlot [data-nav-context='forex-management-accounts'] [data-nav-local-view]").evaluate_all(
+        "els => els.map(el => el.dataset.navLocalView)") == ["accounts", "motor"]
     # ALD-05-S1: SUBSTITUICAO DE CONTRATO, nao remocao de cobertura.
     #
     # Ate aqui o contrato era "a section Alladin nao exibe conteudo economico" —
@@ -324,8 +327,8 @@ def assert_forex_children_and_compatibility(page):
     # NAV2-C/E/G: compatibilidade preserva owner e informa o filho canônico.
     page.evaluate("() => JPWFx.ui.selectView('table')")
     aliases = [
-        ("motor", "exec", "forex-operation", "motor"),
-        ("history", "exec", "forex-operation", "history"),
+        ("motor", "exec", "forex-management-accounts", "motor"),
+        ("history", "exec", "forex-history", "history"),
         ("fxplan", "fxplan", "forex-planning", "table"),
     ]
     for target, screen, child, view in aliases:
@@ -363,7 +366,7 @@ def assert_compatibility_and_atomic_refusal(page):
     state = active_state(page)
     assert state["activeScreens"] == ["exec"], state
     assert state["primary"] == "forex", state
-    assert state["current"]["child"] == "forex-operation", state
+    assert state["current"]["child"] == "forex-management-accounts", state
     assert state["current"]["localView"] == {"surface": "exec", "view": "accounts"}, state
     assert "forex-account" not in [route["id"] for route in page.evaluate("() => JPWNavigation.routes()")]
     assert "forex-account" not in [route["id"] for route in page.evaluate("() => JPWNavigation.children('forex')")]

@@ -27,16 +27,16 @@ from notes_launcher_test import launch_options
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-planning", "forex-operation", "forex-reserves"]
-EXPECTED_LABELS = ["Consolidado FX", "Planejamento", "Operação", "Reservas"]
-EXPECTED_VIEWS = ["panel", "accounting", "accounts", "motor"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-operation", "forex-history", "forex-accounting", "forex-management-accounts", "forex-planning", "forex-reserves"]
+EXPECTED_LABELS = ["Dashboard", "Execution Board", "History", "Contabilidade", "Management Accounts", "Planejamento", "Reservas"]
+EXPECTED_VIEWS = ["panel", "accounting", "history", "accounts", "motor"]
 EXPECTED_CONTEXT = {
-    "forex-operation": ["panel", "accounting", "accounts", "motor"],
+    "forex-management-accounts": ["accounts", "motor"],
     "forex-planning": ["overview", "planning", "actuals", "table"],
 }
 # Ids dos containers, na mesma ordem de EXPECTED_VIEWS. O Motor de Lote usa o
 # proprio #motorWidgetGrid migrado de Configuracoes — nao um container novo.
-EXPECTED_CONTAINERS = ["execWidgetGrid", "contab", "contas", "motorWidgetGrid"]
+EXPECTED_CONTAINERS = ["execWidgetGrid", "contab", "execHistory", "contas", "motorWidgetGrid"]
 # Os CINCO widgets do Painel Operacional. Comparados como CONJUNTO: a ordem em
 # runtime pertence ao motor de grade (13-dashboard-layout.js reparenteia no boot
 # conforme o padrao ou a preferencia gravada) e o operador pode reorganiza-la.
@@ -100,7 +100,7 @@ def run_structure(page):
           directTrigger: document.querySelector('#nav > #execNavTrigger') !== null,
           panelInsideSidebar: !!document.querySelector('#appSidebar #nav #execNavSubmenu'),
           localOutsideSidebar: !document.querySelector('#appSidebar [data-nav-level="3"]')
-            && !!document.querySelector('#navLocalSlot [data-nav-context="forex-operation"]'),
+            && !!document.querySelector('#navLocalSlot [data-nav-context="forex-management-accounts"]'),
           sharedShell: document.querySelectorAll('.nav-sub-shell').length === 1,
           panelsInShell: [...document.querySelectorAll('#navSubShell .nav-sub-menu')].map(el => el.id),
           keys: [...document.querySelectorAll('#execNavSubmenu [data-nav-child]')]
@@ -194,10 +194,10 @@ def run_panel_equivalence(page):
     hierarchy = page.evaluate("""() => ({
       child:JPWNavigation.current().child,
       level2:document.querySelector('[data-nav-child="forex-operation"]')?.getAttribute('aria-current'),
-      contextHidden:document.querySelector('[data-nav-context="forex-operation"]')?.hidden,
-      level3:document.querySelector('[data-nav-context="forex-operation"] [data-nav-local-view="panel"]')?.getAttribute('aria-current')
+      contextHidden:document.querySelector('[data-nav-context="forex-management-accounts"]')?.hidden,
+      boardVisible:!document.querySelector('#executionBoard').hidden
     })""")
-    assert hierarchy == {'child':'forex-operation','level2':'page','contextHidden':False,'level3':'page'}, hierarchy
+    assert hierarchy == {'child':'forex-operation','level2':'page','contextHidden':True,'boardVisible':True}, hierarchy
     facts = page.evaluate(
         """() => {
           const grid = document.getElementById('execWidgetGrid');
@@ -316,7 +316,7 @@ def run_focus_and_keyboard(page):
         "ArrowDown nao levou ao destino ativo"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-reserves"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-history"
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0]
     page.keyboard.press("End")
@@ -326,14 +326,18 @@ def run_focus_and_keyboard(page):
     page.keyboard.press("Escape")
     assert page.evaluate("() => document.activeElement.dataset.navExpand") == "exec", "Escape nao devolveu foco ao expansor"
     assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "false"
+    # Management Accounts possui N3; a Board é folha direta.
+    assert page.evaluate("JPWNavigation.navigate('forex-management-accounts')")
+    if page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "true":
+        page.click('[data-nav-expand="exec"]')
     # N3 continua funcional na area de trabalho, mesmo com N2 recolhido.
-    local = page.locator('#navLocalSlot [data-nav-context="forex-operation"]')
+    local = page.locator('#navLocalSlot [data-nav-context="forex-management-accounts"]')
     assert local.is_visible()
-    local.locator('[data-nav-local-view="panel"]').focus()
+    local.locator('[data-nav-local-view="accounts"]').focus()
     page.keyboard.press("End")
     assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "motor"
     page.keyboard.press("Home")
-    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "panel"
+    assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "accounts"
     page.keyboard.press("ArrowLeft")
     assert page.evaluate("() => document.activeElement.dataset.navLocalView") == "motor"
 
@@ -356,7 +360,7 @@ def run_expansion_without_navigation(page):
     assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "false", "segundo clique nao recolheu"
     after = page.evaluate("() => ({current:JPWNavigation.current(), view:JPWExec.ui.getView(), state:JSON.stringify(S), storage:Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])})")
     assert after == before, f"expansao alterou destino, dados ou preferencias: {before} -> {after}"
-    assert page.locator('#navLocalSlot [data-nav-context="forex-operation"]').is_visible()
+    assert page.locator('#navLocalSlot [data-nav-context="forex-management-accounts"]').is_visible()
     page.set_viewport_size({"width": 1440, "height": 900})
 
 
@@ -389,7 +393,7 @@ def run_module_switch(page):
             ?.getAttribute('aria-current')
         })"""
     )
-    assert back == {"view": "panel", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
+    assert back == {"view": "accounts", "current": "page"}, f"retorno ao modulo nao abriu a Visao Geral: {back}"
 
 
 def run_economic_calendar(page):
@@ -521,18 +525,18 @@ def run_economic_calendar(page):
 
 def run_motor_migration(page):
     """O Motor de Lote migrou de Configuracoes para ca — uma so implementacao."""
-    # 1. Alcançável pelo terceiro nível contextual de Operação.
+    # 1. Alcançável pelo terceiro nível contextual de Management Accounts.
     page.click("#execNavTrigger")
     page.wait_for_function("() => document.querySelector('[data-nav-expand=exec]').getAttribute('aria-expanded') === 'true'")
-    page.click('#execNavSubmenu [data-nav-child="forex-operation"]')
-    page.click('#navLocalSlot [data-nav-context="forex-operation"] [data-nav-local-view="motor"]')
+    page.click('#execNavSubmenu [data-nav-child="forex-management-accounts"]')
+    page.click('#navLocalSlot [data-nav-context="forex-management-accounts"] [data-nav-local-view="motor"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'motor'")
     hierarchy = page.evaluate("""() => ({
       child:JPWNavigation.current().child,
-      level2:document.querySelector('[data-nav-child="forex-operation"]')?.getAttribute('aria-current'),
-      level3:document.querySelector('[data-nav-context="forex-operation"] [data-nav-local-view="motor"]')?.getAttribute('aria-current')
+      level2:document.querySelector('[data-nav-child="forex-management-accounts"]')?.getAttribute('aria-current'),
+      level3:document.querySelector('[data-nav-context="forex-management-accounts"] [data-nav-local-view="motor"]')?.getAttribute('aria-current')
     })""")
-    assert hierarchy == {'child':'forex-operation','level2':'page','level3':'page'}, hierarchy
+    assert hierarchy == {'child':'forex-management-accounts','level2':'page','level3':'page'}, hierarchy
 
     estrutura = page.evaluate(
         """() => {
@@ -720,7 +724,7 @@ def run_mobile(browser, url):
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'panel'")
     assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
     assert page.evaluate("() => exec.contains(document.activeElement)"), "N2 nao focou conteudo"
-    assert page.locator('#navLocalSlot [data-nav-context="forex-operation"]').is_visible()
+    assert not page.locator('#navLocalSlot [data-nav-context="forex-management-accounts"]').is_visible()
     page.click("[data-shell-menu-toggle]")
     page.keyboard.press("Escape")
     assert page.evaluate("() => document.activeElement.matches('[data-shell-menu-toggle]')"), "Escape nao devolveu foco ao toggle"

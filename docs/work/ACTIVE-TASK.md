@@ -1,3 +1,19 @@
+# Tarefa ativa — Execution Board em formato de planilha
+
+Plano integral autorizado pelo proprietário nesta conversa. Contrato: [CHG-FOREX-EXECUTION-TABLE-20260922](CHG-FOREX-EXECUTION-TABLE-20260922.md).
+
+- Raiz: `/Users/joaopauloalves/.codex/forex-execution-board-table/20260922/product`.
+- Branch: `codex/forex-execution-board-table-20260922`.
+- Base: `a62258f1a1ca5b0e32ea9f36bb4106fba37e4414`, main/remoto conferidos, worktree inicialmente limpa.
+- Objetivo: sete destinos Forex, tabela por fase, leituras econômicas sobre saldo registrado, ID/HASH e Raiz-N diagnóstico explícito.
+- Risco máximo N3 financeiro, extensão aditiva N2 especificamente aprovada; política V11 e bloqueios preservados.
+- Estado: implementação concluída para revisão visual, build `247bf13458098290`. Validação e limitações registradas no CHG; aceite visual, commit/push/merge/publicação separados.
+- Evidências sintéticas: `/Users/joaopauloalves/.codex/forex-execution-board-table/20260922/evidence`.
+
+O histórico da tarefa anterior permanece em Git.
+
+## Contexto anterior preservado — fotografia, não tarefa vigente
+
 # Integração Git concluída — quarta navegação Lateral em níveis
 
 Implementação N2 autorizada em 2026-09-22 sobre a base oficial `22bc889`, na

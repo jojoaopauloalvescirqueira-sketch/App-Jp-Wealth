@@ -574,7 +574,7 @@ def run_navigation(browser, url, evidence):
             page.locator('#execNavTrigger').click()
             settle(page)
             assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
-            page.locator('[data-nav-child="forex-operation"]').click()
+            page.locator('[data-nav-child="forex-management-accounts"]').click()
             settle(page)
             page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
             settle(page)
@@ -722,14 +722,14 @@ def run_submenu(browser, url, evidence):
         page.locator('#railToggle').click();page.wait_for_timeout(300)
         assert raw(page)[SUBMENU_RAIL_KEY] == 'expanded'
         page.locator('#execNavTrigger').click()
-        page.locator('[data-nav-child="forex-operation"]').click()
+        page.locator('[data-nav-child="forex-management-accounts"]').click()
         assert page.get_attribute('html', 'data-submenu-level') == '3'
         blocked_before = page.evaluate('JPWNavigation.current()')
         assert page.evaluate("""() => {const ui=JPWForex.executionBoardUI;window.__submenuGuard=ui.guardNavigation;ui.guardNavigation=()=>false;return ui.guardNavigation!==window.__submenuGuard;}""")
         page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
         assert page.evaluate('JPWNavigation.current()') == blocked_before
         assert page.get_attribute('html', 'data-submenu-level') == '3'
-        page.evaluate("JPWForex.executionBoardUI.guardNavigation=window.__submenuGuard")
+        page.evaluate("() => {JPWForex.executionBoardUI.guardNavigation=window.__submenuGuard;}")
         page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()
         assert page.evaluate('JPWExec.ui.getView()') == 'motor'
         assert page.get_attribute('html', 'data-submenu-level') == '3'
@@ -803,7 +803,7 @@ def run_notes(browser, url, evidence):
         context, page, observed = boot(browser, url, layout)
         try:
             page.locator('#execNavTrigger').click()
-            page.locator('[data-nav-child="forex-operation"]').click()
+            page.locator('[data-nav-child="forex-management-accounts"]').click()
             if layout == 'submenu':
                 assert page.get_attribute('html', 'data-submenu-level') == '3'
                 page.locator('[data-nav-local-surface="exec"][data-nav-local-view="motor"]').click()

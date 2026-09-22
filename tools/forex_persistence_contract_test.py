@@ -18,6 +18,9 @@ from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 SOURCE_PATHS = [
+    'src/js/10-domain/00-forex-state.js',
+    'src/js/10-domain/19-execution-market.js',
+    'src/js/40-app/01-navigation.js',
     'src/js/30-accounting/01-daily-ledger.js',
     'src/js/30-accounting/04-patrimonial-simulation.js',
     'src/js/30-accounting/05-fx-planning/03-fx-state.js',
@@ -33,10 +36,23 @@ SEED = """() => {
   // Mantém os instrumentos da fixture econômica já concluída; o reset de
   // domínio não deve ressuscitar preços default anteriores ao bootstrap.
   const bootInstruments=structuredClone(S.instruments);
+  const bootDailyReferences=structuredClone(S.forex.dailyReferences);
   S=structuredClone(DEFAULTS); migrate(); S.instruments=bootInstruments;
+  // As referências já confirmadas também pertencem ao bootstrap. Apagá-las
+  // provocaria uma gravação legítima e alheia ao caso durante a recarga.
+  S.forex.dailyReferences=bootDailyReferences;
   S.onboarding.done=true;
   S.params.saldoIni=10000; S.params.saldoAtu=10000;
   S.ledger=[];
+  // Contabilidade é segregada por conta/período desde o baseline a62258f.
+  // Não semear o ledger global legado, que permanece fora dos totais atuais.
+  S.accounts=[{forexAccountId:'PERSIST-A',nome:'Mestre sintético',tipo:'MESTRE',platformCurrency:'USD'}];
+  const period=JPWForex.state.recordAccountPeriod({accountId:'PERSIST-A',startedAt:'2026-01-01',
+    currency:'USD',si:10000,openingBook:10000,source:'Fixture sintética de persistência',activateCurrentPeriod:true},
+    {reason:'Fixture sintética de persistência'});
+  if(!period.ok)throw new Error(period.error);
+  const selected=JPWForex.state.selectOperationalAccount('PERSIST-A');
+  if(!selected.ok)throw new Error(selected.error);
   S.fxPlanning.plan=fxCreatePlan({name:'Plano sintético', now:'2026-01-01T12:00:00Z', assumptions:{
     startMonth:'2026-01',horizonMonths:12,initialBalanceUsd:1000,
     defaultMonthlyReturn:0.01,projectedFxRate:5}});
@@ -45,8 +61,11 @@ SEED = """() => {
   S.dataGovernance.changeLog=Array.from({length:400},(_,i)=>({id:'dg-old-'+i,ts:'2025-01-01T00:00:00Z',entity:'synthetic',action:'historical',recordId:'',label:''}));
   if(save()!==true) throw new Error('seed não gravou');
   window.__saveReal=save;
-  window.__snap=()=>({fx:JSON.stringify(S.fxPlanning),ledger:JSON.stringify(S.ledger),
-    saldo:S.params.saldoAtu,log:JSON.stringify(S.dataGovernance.changeLog),raw:localStorage.getItem(LSKEY),
+  window.__period=(state=S)=>{const a=state.forex.accountContexts.accounts['PERSIST-A'];return a.periods[a.currentPeriodId];};
+  window.__snap=()=>({fx:JSON.stringify(S.fxPlanning),ledger:JSON.stringify(__period().ledger),
+    legacyLedger:JSON.stringify(S.ledger),
+    accountState:JSON.stringify(S.forex.accountContexts),
+    saldo:__period().ledger.at(-1)?.saldo??__period().openingBook,log:JSON.stringify(S.dataGovernance.changeLog),raw:localStorage.getItem(LSKEY),
     unknown:jpWealthPersistenceOutcomeIsUnknown(),recovered:document.getElementById('persistenceAlert')?.classList.contains('is-recovered'),saved:document.getElementById('savedTag').classList.contains('show')});
   window.__act=(name)=>{
     const api=JPWFx.state;
@@ -95,6 +114,13 @@ class Quiet(SimpleHTTPRequestHandler):
         pass
 
 
+class Server(ThreadingHTTPServer):
+    # The app loads many local scripts at once. The default queue of five can
+    # reset those requests on macOS before the browser reaches the fixture.
+    request_queue_size = 128
+    daemon_threads = True
+
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1])
@@ -103,7 +129,7 @@ def main():
     args=ap.parse_args(); root=args.root.resolve()
     test_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     artifact={'root':str(root),'test_sha256':test_sha256,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in SOURCE_PATHS},'cases':[]}
-    server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(root)))
+    server=Server(('127.0.0.1',0),partial(Quiet,directory=str(root)))
     threading.Thread(target=server.serve_forever,daemon=True).start()
     url=f'http://127.0.0.1:{server.server_port}/index.html'
     def case(name, callback):
@@ -134,11 +160,11 @@ def main():
             except Exception as e:result={'exception':str(e)}
             after=p.evaluate('__snap()');o.update(result=result,after=after)
             assert result.get('ok') is False,result
-            for key in ['fx','ledger','saldo','log','raw']:assert after[key]==before[key],key
+            for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert after[key]==before[key],key
             p.evaluate('__restoreFailure()')
             # Another real, unrelated input path cannot include the refused act.
             p.evaluate("() => {S.atr55=7;if(save()!==true)throw new Error('save independente');}")
-            unrelated=p.evaluate("() => ({fx:JSON.stringify(JSON.parse(localStorage.getItem(LSKEY)).fxPlanning),ledger:JSON.stringify(JSON.parse(localStorage.getItem(LSKEY)).ledger)})")
+            unrelated=p.evaluate("() => {const stored=JSON.parse(localStorage.getItem(LSKEY));return {fx:JSON.stringify(stored.fxPlanning),ledger:JSON.stringify(__period(stored).ledger)};}")
             assert unrelated['fx']==before['fx'] and unrelated['ledger']==before['ledger'],unrelated
             retry=p.evaluate('__act',action);o['retry']=retry;assert retry['ok'] is True,retry
             committed=p.evaluate('__snap()');o['committed']=committed
@@ -177,12 +203,12 @@ def main():
         def run(p,o):
             p.evaluate("() => {JPWNavigation.navigate('forex-reconciliation');}")
             if delete or update:
-                p.evaluate("() => {S.ledger=[{data:'2026-01-02',resultado:5,saldo:10005,nota:'anterior'}];syncSaldoAtuFromLedger();save();renderLedger();}")
+                p.evaluate("() => {const r=ledgerRecord({data:'2026-01-02',resultado:5,saldo:null,nota:'anterior'});if(!r.ok)throw Error(r.error);renderLedger();}")
             before=p.evaluate('__snap()');o['before']=before
             if not delete:
                 p.locator('#ldDate').fill('2026-01-02');p.locator('#ldResult').fill('-100');p.locator('#ldNota').fill('rascunho sintético')
             p.evaluate('__installFailure',mode)
-            p.locator('[data-ldel]' if delete else '#ldAddBtn').click()
+            p.locator('[data-ledger-void]' if delete else '#ldAddBtn').click()
             after=p.evaluate('__snap()');o['after']=after;o['status']=p.locator('#ldStatus').inner_text()
             assert '✓' not in o['status'] and o['status'],o
             if mode in ('throw-before','throw-after','undefined'):
@@ -190,24 +216,24 @@ def main():
                 assert after['ledger']!=before['ledger']
                 if mode=='throw-after':assert after['raw']!=before['raw']
                 else:assert after['raw']==before['raw']
-                calls=p.evaluate('__saveCalls');p.locator('[data-ldel]' if delete else '#ldAddBtn').click()
+                calls=p.evaluate('__saveCalls');p.locator('[data-ledger-void]' if delete else '#ldAddBtn').click()
                 assert p.evaluate('__saveCalls')==calls
                 p.evaluate('__restoreFailure()');assert p.evaluate('save()') is False
             else:
-                for key in ['fx','ledger','saldo','log','raw']:assert after[key]==before[key],key
+                for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert after[key]==before[key],key
                 if not delete:assert p.locator('#ldResult').input_value()=='-100' and p.locator('#ldNota').input_value()=='rascunho sintético'
                 p.evaluate('__restoreFailure()')
                 p.evaluate("() => {S.atr55=7;save();}")
-                assert p.evaluate("JSON.stringify(JSON.parse(localStorage.getItem(LSKEY)).ledger)")==before['ledger']
-                p.locator('[data-ldel]' if delete else '#ldAddBtn').click()
+                assert p.evaluate("JSON.stringify(__period(JSON.parse(localStorage.getItem(LSKEY))).ledger)")==before['ledger']
+                p.locator('[data-ledger-void]' if delete else '#ldAddBtn').click()
                 committed=p.evaluate('__snap()');o['committed']=committed
                 assert len(json.loads(committed['ledger']))==(0 if delete else 1)
                 assert committed['saldo']==(10000 if delete else 9900)
                 assert len(json.loads(committed['log']))==400
-                assert json.loads(committed['log'])[-2]['id']=='dg-old-399'
+                assert json.loads(committed['log'])[-2]==json.loads(before['log'])[-1]
                 if not delete:assert p.locator('#ldResult').input_value()==''
                 p.reload();wait_bootstrap(p)
-                assert p.evaluate('JSON.stringify(S.ledger)')==committed['ledger']
+                assert p.evaluate('JSON.stringify(JPWForex.state.accountLedger(JPWForex.state.operationalSelection()).value)')==committed['ledger']
         return run
     def ui_actual(p,o):
         p.evaluate("() => {JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
@@ -239,7 +265,7 @@ def main():
         invalid=p.evaluate("() => [JPWFx.state.fxPlanRecordActual('2026-03',{inputType:'usd',profitUsd:1}),JPWFx.state.fxPlanAddContribution({month:'invalid',source:'personal',originalCurrency:'USD',originalAmount:25})]")
         after=p.evaluate('__snap()');o.update(invalid=invalid,before=before,after=after)
         assert all(r['ok'] is False for r in invalid)
-        for key in ['fx','ledger','saldo','log','raw']:assert before[key]==after[key]
+        for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert before[key]==after[key]
         result=p.evaluate("() => JPWFx.state.fxPlanRecordActual('2026-01',{inputType:'usd',profitUsd:0,notes:'zero explícito'})")
         assert result['ok'] is True
         assert p.evaluate('S.fxPlanning.plan.actuals["2026-01"].profitUsd')==0
@@ -251,13 +277,13 @@ def main():
         except Exception as e:result={'exception':str(e)}
         after=p.evaluate('__snap()');o.update(result=result,before=before,after=after)
         assert result.get('ok') is False and result.get('persistido') is False,result
-        for key in ['fx','ledger','saldo','log','raw']:assert after[key]==before[key],key
+        for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert after[key]==before[key],key
     def preserve_other_mutation(p,o):
         before=p.evaluate('__snap()')
         p.evaluate("() => {save=()=>{S.atr55=27;return false;};}")
         result=p.evaluate("__act('actual')");after=p.evaluate('__snap()');o.update(result=result,after=after)
         assert result.get('ok') is False and p.evaluate('S.atr55')==27,result
-        for key in ['fx','ledger','saldo','log','raw']:assert after[key]==before[key],key
+        for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert after[key]==before[key],key
     def mobile_feedback(p,o):
         p.set_viewport_size({'width':390,'height':844})
         p.evaluate("() => {JPWNavigation.navigate('forex-planning');JPWFx.ui.selectView('actuals');}")
@@ -335,10 +361,10 @@ def main():
         o.update(before=before,after=after)
         for key in ['fx','log','raw']:assert after[key]==before[key],key
     def cancellation(p,o):
-        p.evaluate("() => {S.ledger=[{data:'2026-01-02',resultado:5,saldo:10005,nota:'anterior'}];syncSaldoAtuFromLedger();save();JPWNavigation.navigate('forex-reconciliation');renderLedger();window.confirm=()=>false;}")
+        p.evaluate("() => {const r=ledgerRecord({data:'2026-01-02',resultado:5,saldo:null,nota:'anterior'});if(!r.ok)throw Error(r.error);JPWNavigation.navigate('forex-reconciliation');renderLedger();window.confirm=()=>false;}")
         before=p.evaluate('__snap()');p.locator('#ldDate').fill('2026-01-02');p.locator('#ldResult').fill('12');p.locator('#ldAddBtn').click()
-        p.locator('[data-ldel]').click();after=p.evaluate('__snap()');o.update(before=before,after=after)
-        for key in ['fx','ledger','saldo','log','raw']:assert after[key]==before[key]
+        p.locator('[data-ledger-void]').click();after=p.evaluate('__snap()');o.update(before=before,after=after)
+        for key in ['fx','ledger','legacyLedger','accountState','saldo','log','raw']:assert after[key]==before[key]
         p.locator('#ldDate').fill('2026-01-01');p.locator('#ldAddBtn').click()
         assert p.evaluate('__snap().ledger')==before['ledger'],'cancelar backdate alterou ledger'
     def two_tabs(p,o):

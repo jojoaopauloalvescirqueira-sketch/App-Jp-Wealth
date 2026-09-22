@@ -61,10 +61,10 @@ def save_row(page,reason='Fato sintético'):
         value:document.querySelector('#phaseContainer [data-p="0"][data-o="0"][data-f="status"]')?.value};
     }''',reason)
 def fill_birth(page):
-    for key,value in [('id','A-1'),('par','EURUSD'),('tipo','BUY'),('role','GENESIS'),
+    for key,value in [('id','A-1'),('brokerHash','SYNTHETIC-WIRE-A1'),('par','EURUSD'),('tipo','BUY'),('role','GENESIS'),
         ('lote','0.01'),('entry','1.1'),('sl','1.09'),('tp','1.2'),('costs','0'),
         ('costBasis','INCLUDED_IN_RESULT')]:
-        field(page,key,value,'input' if key in ('id','lote','entry','sl','tp','costs') else 'change')
+        field(page,key,value,'input' if key in ('id','brokerHash','lote','entry','sl','tp','costs') else 'change')
     page.evaluate('''() => {
       const n=document.querySelector('#phaseContainer [data-p="0"][data-o="0"][data-f="stopValidated"]');
       n.checked=true;n.dispatchEvent(new Event('change',{bubbles:true}));

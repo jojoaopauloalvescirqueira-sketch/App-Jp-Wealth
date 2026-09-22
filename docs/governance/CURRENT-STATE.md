@@ -1,3 +1,30 @@
+# Execution Board tabular — implementação local para revisão visual
+
+Em 2026-09-22, o plano integral do proprietário autorizou reorganizar Forex e
+entregar preenchimento tabular por fase, HASH textual por ordem e cenários Raiz-N
+declarados. Base `a62258f1a1ca5b0e32ea9f36bb4106fba37e4414`, branch isolada
+`codex/forex-execution-board-table-20260922`. O contrato está em
+[CHG-FOREX-EXECUTION-TABLE-20260922](../work/CHG-FOREX-EXECUTION-TABLE-20260922.md).
+
+As leituras operacionais usam saldo contábil atual; RC, limites, fases e
+alavancagem normativa permanecem separados. Hard Stop mantém 22%. Nenhuma norma
+ou parâmetro P21 é ativado pelos cenários Raiz-N. Os schemas atuais permanecem,
+com extensões opcionais validadas no Backup Completo. Os quatro layouts usam a
+mesma hierarquia atualizada, com History independente. Contratos reconciliados:
+[Board](../architecture/FOREX-EXECUTION-BOARD.md),
+[estado](../architecture/STATE-SCHEMA.md) e
+[navegação](../architecture/NAVIGATION-HIERARCHY.md).
+
+Focais, revisão independente e fingerprint do build `247bf13458098290` estão
+registrados na pasta externa `~/.codex/forex-execution-board-table/20260922/evidence/`.
+O CHG registra os 54 checks da rodada full e a aprovação dos três restantes
+em reexecução após reparar o ponteiro Git afetado pela mudança externa de pasta;
+não declara uma rodada full 57/57. Limitações de três oráculos legados também
+estão identificadas. Candidate concluído para revisão visual, sem integração
+ou publicação. Esta tarefa não editou main nem outras worktrees.
+
+## Histórico anterior preservado
+
 # Lateral em níveis integrada à `main`
 
 Base Git `22bc889c7f0ece4b8b9a7d1b1ddda57d638a34da`, branch isolada

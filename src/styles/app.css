@@ -8193,28 +8193,6 @@ html[data-shell="global-dashboard"] #execWidgetGrid.execution-board>[data-widget
 .eb-phase{scroll-margin-top:90px}
 @media(max-width:800px){.eb-heading-main{align-items:stretch;flex-direction:column;gap:14px}#ebPhaseNav>span{flex-basis:100%}.eb-entry-actions button{flex:1}}
 html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-order-row{display:table-row}
-/* No celular a mesma linha vira formulário; dados e eventos são os mesmos. */
-@media(max-width:767px){
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table{min-width:0;width:100%;table-layout:auto;display:block}
-  #execWidgetGrid .eb-order-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-  #execWidgetGrid .eb-order-table tbody{display:block}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-order-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;border:1px solid var(--line);border-radius:10px 10px 0 0;padding:12px;margin-top:12px;background:var(--panel)}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-order-row>td{display:block;min-width:0;width:auto;padding:0;border:0;position:static;box-shadow:none;text-align:left}
-  #execWidgetGrid .eb-order-row>td::before{content:attr(data-label);display:block;font-size:11px;color:var(--ink-dim);margin:0 0 5px}
-  #execWidgetGrid .eb-order-row>.eb-order-id,#execWidgetGrid .eb-order-row>.eb-row-actions{grid-column:1/-1}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table :is(input,select){font-size:16px;min-height:44px;height:44px;padding:8px;width:100%}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-order-row>.eb-row-actions{display:flex;flex-wrap:wrap;gap:8px}
-  #execWidgetGrid .eb-row-actions::before{flex-basis:100%;margin-bottom:0}
-  #execWidgetGrid .eb-row-actions button{flex:1;width:auto;min-height:44px;margin-bottom:0;font-size:12px}
-  #execWidgetGrid .eb-order-table .eb-detail-row{display:block;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:8px 12px;margin-bottom:18px}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-detail-row>td{display:block;width:auto;padding:0;border:0}
-  #execWidgetGrid .eb-order-details{grid-template-columns:minmax(0,1fr);gap:14px}
-  #execWidgetGrid .eb-detail-row summary{min-height:44px;display:flex;align-items:center;line-height:1.5}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table .eb-check input{width:22px!important;height:22px!important;min-height:22px!important}
-  #execWidgetGrid .eb-phase .phase-body{padding:8px}
-  #execWidgetGrid [data-addorder]{min-height:44px;width:100%}
-}
-
 /* A ficha de preparação reutiliza o cadastro e mantém cada etapa legível. */
 #fxcSetupDialog [hidden]{display:none!important}
 #fxcSetupDialog h3{font-size:16px;line-height:1.4;margin:0 0 12px}
@@ -8248,3 +8226,70 @@ html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-or
 .nocuda-anchor-wrap{overflow:auto;margin:20px 0;border:1px solid var(--line);border-radius:10px}.nocuda-anchors{width:100%;border-collapse:collapse;text-align:left;font-size:12px;white-space:nowrap}.nocuda-anchors caption{text-align:left;padding:14px;font-weight:650}.nocuda-anchors th,.nocuda-anchors td{padding:10px 14px;border-top:1px solid var(--line)}.nocuda-anchors th{font-size:11px;color:var(--ink-faint);font-weight:500}.nocuda-tool button:disabled{opacity:.5;cursor:not-allowed}.nocuda-tool [hidden]{display:none!important}
 
 #nocudaTool .nocuda-primary:not(:disabled){background:var(--violet);border-color:var(--violet);color:white}#nocudaTool .nocuda-primary:not(:disabled):hover{filter:brightness(1.08)}
+
+/* Execution Board tabular: shared nodes, explicit inputs and calculated cells. */
+#execWidgetGrid.execution-board>.eb-card{grid-column:1/-1!important;padding:16px!important;border-radius:8px}
+#execWidgetGrid.execution-board{gap:12px!important}
+#execWidgetGrid .eb-capital-strip,#execWidgetGrid .eb-operational-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:12px 0}
+#execWidgetGrid :is(.eb-capital-strip,.eb-operational-strip)>.eb-metric{padding:8px 14px;border-left:1px solid var(--line)}
+#execWidgetGrid :is(.eb-capital-strip,.eb-operational-strip)>.eb-metric:first-child{border-left:0;padding-left:0}
+#execWidgetGrid .eb-capital-strip .eb-metric>strong{font-size:17px}
+#execWidgetGrid .eb-operational-strip .eb-metric>strong{font-size:21px}
+.eb-confirmed{font-size:11px;color:var(--ink-dim)}
+#execWidgetGrid .eb-section-head{margin-bottom:4px}
+#execWidgetGrid .eb-context-line{margin:8px 0}
+#execWidgetGrid .eb-phase .phase-body{padding:12px 0 0}
+#execWidgetGrid .eb-table-scroll:has(.eb-order-table){max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:4px;scroll-padding:90px 145px 28px 145px}
+#execWidgetGrid .eb-order-table{width:2701px;min-width:2701px;table-layout:fixed;font-size:12px}
+#execWidgetGrid .eb-order-table th{width:auto!important;position:sticky;top:31px;z-index:3;background:var(--panel-2);border-right:1px solid var(--line);font-size:11px;vertical-align:middle;text-align:center;padding:7px 6px;height:44px}
+#execWidgetGrid .eb-order-table .eb-column-groups th{top:0;left:auto;right:auto;z-index:4;height:31px;padding:6px 10px;text-align:left;letter-spacing:.03em;box-shadow:none;background:var(--panel);color:var(--ink-dim)}
+#execWidgetGrid .eb-order-table td{padding:5px 4px;border-right:1px solid var(--line);vertical-align:middle}
+#execWidgetGrid .eb-order-table :is(input,select){border-radius:3px;min-height:36px;height:36px;padding:5px;background:var(--panel);font-size:12px}
+#execWidgetGrid .eb-order-table input[inputmode="decimal"]{text-align:right;font-variant-numeric:tabular-nums}
+#execWidgetGrid .eb-order-table .eb-calculated{background:var(--panel-2);text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink)}
+#execWidgetGrid .eb-order-table .eb-dirty .eb-calculated{box-shadow:inset 0 -2px 0 var(--violet)}
+#execWidgetGrid .eb-order-table .eb-order-id,#execWidgetGrid .eb-order-table thead tr:last-child th:first-child{position:sticky;left:0;background:var(--panel);z-index:2}
+#execWidgetGrid .eb-order-table thead tr:last-child th:first-child{z-index:5;background:var(--panel-2)}
+#execWidgetGrid .eb-order-table .eb-order-row>td:nth-child(2),#execWidgetGrid .eb-order-table thead tr:last-child th:nth-child(2){position:sticky;left:124px;z-index:2;background:var(--panel);box-shadow:5px 0 8px -8px var(--ink)}
+#execWidgetGrid .eb-order-table thead tr:last-child th:nth-child(2){z-index:5;background:var(--panel-2)}
+#execWidgetGrid .eb-order-table thead tr:last-child th:last-child{z-index:5;background:var(--panel-2)}
+#execWidgetGrid .eb-order-table .eb-check-cell input{width:18px;height:18px;min-height:18px;display:block;margin:auto;accent-color:var(--violet)}
+#execWidgetGrid .eb-order-table .eb-detail-row>td{padding:0;border-right:0}
+#execWidgetGrid .eb-detail-content{position:sticky;left:0;width:min(820px,calc(100vw - 380px));padding:2px 10px 6px;box-sizing:border-box}
+#execWidgetGrid .eb-row-feedback:empty{display:none}
+#execWidgetGrid .eb-order-details{grid-template-columns:1fr 1fr}
+#execWidgetGrid .eb-reason{grid-column:1/-1}
+#execWidgetGrid .eb-table-help{font-size:12px;line-height:1.6;margin:12px 0;color:var(--ink-dim)}
+#execWidgetGrid .eb-table-help summary{font-weight:600;cursor:pointer;color:var(--ink);padding:6px 0}
+#execWidgetGrid .eb-table-help p{max-width:100ch}
+#execWidgetGrid .eb-reference-table{width:100%;min-width:750px;border-collapse:collapse;table-layout:fixed;font-variant-numeric:tabular-nums;font-size:12px}
+#execWidgetGrid .eb-reference-table :is(th,td){padding:10px 12px;text-align:right;border:1px solid var(--line)}
+#execWidgetGrid .eb-reference-table th{background:var(--panel-2);font-size:11px;font-weight:600}
+.eb-diagnostic-inputs{width:100%;border-collapse:collapse;margin:18px 0}
+.eb-diagnostic-inputs :is(th,td){padding:8px;border:1px solid var(--line);text-align:left;font-size:12px}
+.eb-diagnostic-inputs input{box-sizing:border-box;width:100%;min-width:0;min-height:40px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);padding:7px;border-radius:4px;font:inherit}
+@media(max-width:900px){
+  #execWidgetGrid :is(.eb-capital-strip,.eb-operational-strip){grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0}
+  #execWidgetGrid :is(.eb-capital-strip,.eb-operational-strip)>.eb-metric:nth-child(odd){border-left:0;padding-left:0}
+  #execWidgetGrid .eb-detail-content{width:min(820px,calc(100vw - 80px))}
+}
+@media(max-width:767px){
+  #execWidgetGrid.execution-board>.eb-card{padding:10px!important}
+  #execWidgetGrid .eb-table-scroll:has(.eb-order-table){max-height:70dvh;scroll-padding-left:130px;scroll-padding-right:12px}
+  #execWidgetGrid .eb-order-table .eb-order-row>td:nth-child(2),#execWidgetGrid .eb-order-table thead tr:last-child th:nth-child(2){position:static;box-shadow:none}
+  #execWidgetGrid .eb-order-table thead tr:last-child th:nth-child(2){position:sticky;left:auto;z-index:3}
+  #execWidgetGrid .eb-order-table .eb-order-row>td:last-child{position:static;box-shadow:none}
+  #execWidgetGrid .eb-order-table thead tr:last-child th:last-child{right:auto;z-index:3;box-shadow:none}
+  #execWidgetGrid .eb-order-table :is(input,select){font-size:16px;height:44px;min-height:44px}
+  #execWidgetGrid .eb-order-table .eb-check-cell input{width:22px;min-height:22px;height:22px}
+  #execWidgetGrid .eb-order-table .eb-row-actions button{min-height:44px}
+  #execWidgetGrid .eb-detail-content{width:calc(100vw - 70px)}
+  #execWidgetGrid .eb-order-details{grid-template-columns:1fr}
+  #execWidgetGrid .eb-operational-strip .eb-metric>strong{font-size:18px}
+}
+
+.eb-reference-table small{display:block;color:var(--ink-dim);font-size:11px;line-height:1.5;margin-top:4px}
+
+#executionBoard #ebAccountSelect{font:inherit;font-size:13px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:42px;width:100%}
+#executionBoard #ebAccountSelect:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+@media(max-width:767px){#executionBoard #ebAccountSelect{font-size:16px;min-height:44px;max-width:100%}}

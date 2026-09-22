@@ -14,7 +14,7 @@
       "path": "src/js/10-domain/00-forex-engine.js",
       "section": "FOREX V11 · pure versioned engine",
       "order": 2,
-      "sha256": "2d45c5ca7c5cc370ddf17f8b1471dbf8cafcb03532b3a016a44c7ad52d9dbfb6"
+      "sha256": "754206ed07b9c7b30964bceb6438e5670582bdf06db807a53322ee56cb78e00a"
     },
     {
       "order": 3,
@@ -68,7 +68,7 @@
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
       "order": 11,
-      "sha256": "6b442efa6f75d171c556d01b6929dba7cc2e15d6b0e550b4615b02befe90a325"
+      "sha256": "087bcfb9828903cc95b6a6b0ec3284f704ae9d33ef509dee54a91ede9e0764f1"
     },
     {
       "order": 12,
@@ -140,7 +140,7 @@
       "order": 23,
       "path": "src/js/30-accounting/01-daily-ledger.js",
       "section": "07 CONTABILIDADE — fechamento diário, Real vs Projetado, log de auditoria",
-      "sha256": "2eb6d2eec13d00c148d63121b200316698325610842ec5d887e764170a9b49c2"
+      "sha256": "2eb3ac5e84027ede21d71bc9782860ffad685c992a62b1a09b43db17f52d2b27"
     },
     {
       "order": 24,
@@ -170,7 +170,7 @@
       "order": 28,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "01d61c2c47658ca77d0939cecba4b5bc033ecada1c997322ea7ee2c7ed19e7f4"
+      "sha256": "429fad524dd12d8981ae7fcc15a0da09cef27f47e3b213ebf6c5da56b40b5acd"
     },
     {
       "order": 29,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "253f8123c8a4d887692207b6ea49db4decd6a5879352198519dae3b6c6ff0a7c"
+      "sha256": "4a3761a89dc0b0eb9e631a544fb0928528343fcc8e6513937a3c5cf14112ca1d"
     },
     {
       "order": 46,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "ca092f4b9188c4bab320894386ea0f101c915d0cf9699ffb508859e6081aca74"
+      "sha256": "aef166abb3d02b0161555da2de4c8486dba6ce92eeccbeea3046c2fe5b156168"
     },
     {
       "order": 67,
@@ -428,13 +428,13 @@
       "order": 71,
       "path": "src/js/10-domain/11-operation-lifecycle.js",
       "section": "Operacao Unica: finalizacao transacional e snapshot historico",
-      "sha256": "9cc79f31b9a1771af8598876ba0941a489147a03f72626f4d74b0a13804e1ee8"
+      "sha256": "dd127015a76a1161c5fc262b3731f6fad795597194c0ed17b02fbd95f52c0f66"
     },
     {
       "order": 72,
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
-      "sha256": "570101e415dae0325a61038a670ecd7aa064f26b2c0d97d6f158863a82f80768"
+      "sha256": "c812bb160df5e9b415318c8f5f0b1da398a6a217c5adead6de68ba6fe3f40aec"
     },
     {
       "order": 73,
@@ -547,13 +547,13 @@
       "path": "src/js/10-domain/18-execution-board-model.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 91,
-      "sha256": "9cb4c4354cddba3c81fec65099b856461e1e57b3b311de8e9fa57348d21506b0"
+      "sha256": "7e4339e9d554d15a937e78cc1d6a31fe25d7f4385a0bb8f792f0f2729bd03f1f"
     },
     {
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 92,
-      "sha256": "e0a000aab217b7defca777598eb133895171b9abb464bceb6863de1a212045bf"
+      "sha256": "4b4d44bc3ee030ee622b233ab1dd9cf401a59496b2d5ffa80ba1eec0d559e982"
     },
     {
       "path": "src/js/10-domain/16-nocuda-transfer.js",

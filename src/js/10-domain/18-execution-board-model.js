@@ -12,6 +12,10 @@
   const knownStatus=o=>o.recordStatus!=='draft'&&['Aberta','Fechada','Pendente'].includes(o.status);
   const issue=(code,message)=>({code,message});
   const percent=(m,si)=>Object.assign(m,{percent:finite(m.value)&&finite(si)&&si>0?m.value/si*100:null,percentBasis:'SI'});
+  const bookPercent=(m,balance)=>{
+    const ratio=finite(m.value)&&finite(balance)&&balance>0?m.value/balance*100:null;
+    return Object.assign(clone(m),{percent:finite(ratio)?ratio:null,percentBasis:'BOOK_BALANCE',baseValue:finite(balance)?balance:null});
+  };
   function engineMetric(result,currency){
     if(!result)return absent('Resultado normativo não disponível.',undefined,currency);
     return Object.assign(clone(result),{currency:currency||null,reason:result.findings?.map(f=>f.message||f.code).join(' · ')||null});
@@ -31,7 +35,8 @@
       {value:finite(ins.preco)?ins.preco:null,source:'Cadastro legado do instrumento',referenceDate:ins.updated||null,kind:'LEGACY_REFERENCE'};
     const contract=observation?.contract||{contractSize:finite(ins.cpl)?ins.cpl:null,source:'Cadastro do instrumento',observedAt:null};
     const conversion=observation?.conversion||null;
-    return {id:instrumentId,name:ins.name,banned:!!ins.banned,unlocked:!!ins.unlocked,restriction:ins.banReason||null,price,contract:clone(contract),conversion:clone(conversion),atr:clone(observation?.atr||null),observation:clone(observation),dailyReference:clone(daily)};
+    const diagnostics=fx.state.executionDiagnostics?.({...scope,instrumentId});
+    return {id:instrumentId,name:ins.name,banned:!!ins.banned,unlocked:!!ins.unlocked,restriction:ins.banReason||null,price,contract:clone(contract),conversion:clone(conversion),atr:clone(observation?.atr||null),observation:clone(observation),dailyReference:clone(daily),diagnostics:diagnostics?.status==='OK'?clone(diagnostics.value):null};
   }
   function resolveConversions(instruments,account){
     const graph=new Map(),currencies=new Set(['USD','BRL','EUR','GBP','JPY','CHF','CAD','AUD','NZD']);
@@ -71,19 +76,40 @@
         selection:{quote:q.selection,base:b.selection},legs:{quote:q.legs,base:b.legs},alternatives:{quote:q.alternatives,base:b.alternatives},reasons:[q.reason,b.reason].filter(Boolean)}};
     });
   }
-  function referenceInstrument(ins,account,currency){
+  function referenceInstrument(ins,account,currency,scope){
     const size=ins.contract?.contractSize,rate=ins.conversion?.baseToAccountRate;
     const base=finite(account?.si)&&account.si>0&&finite(account?.equity)&&account.equity>0?Math.min(account.si,account.equity):null;
     const unit=finite(size)&&size>0&&finite(rate)&&rate>0?size*rate:null;
     const factors=fx.policy.get('P-12b').value;
     const ref=f=>metric(base!==null&&unit!==null?base*f/unit:null,'LOTS',null,'Referência nocional teórica; não é lote autorizado.',{base,multiple:f,lotMinimumEvaluated:false,executionEligibility:'BLOCKED'});
     const atr=ins.atr,vrm=atr?.timeframe==='H4'&&atr.unit==='PRICE'?fx.engine.computeVRM({atrShort:atr.short,atrLong:atr.long}):null;
+    const d=ins.diagnostics,diagnostics=d&&d.accountId===scope.accountId&&d.periodId===scope.periodId&&d.instrumentId===ins.id?d:null;
+    const rootN=Object.fromEntries(['oneWeek','twoWeeks'].map(horizon=>[horizon,engineMetric(fx.engine.computeRootNDiagnostic({
+      atr:atr?.timeframe==='H4'&&atr.unit==='PRICE'?atr.short:null,n:diagnostics?.[horizon]?.n,f:diagnostics?.[horizon]?.f}))]));
     return {...clone(ins),notionalPerLot:metric(unit,'ACCOUNT_CURRENCY',currency,unit===null?'Contrato ou conversão não disponível.':null),normal:ref(factors.normal),restrictive:ref(factors.transition),
       vrm:vrm?engineMetric(vrm):absent('ATR 55/660 H4 não vinculado a este instrumento.','RATIO'),
       regime:vrm?engineMetric(fx.engine.resolveVRMRegime({vrm:number(vrm)})):absent('Regime sem ATRs identificados.','REGIME'),
       minimumStop:atr?.timeframe==='H4'&&atr.unit==='PRICE'?engineMetric(fx.engine.computeMinimumStop({atr:atr.short})):absent('ATR 55 H4 ausente.','PRICE'),
-      rootN:absent('Fator F P-21 pendente; N depende de declaração do horizonte. Diagnóstico sem veto.','PERCENT'),
+      rootN,diagnostics:clone(diagnostics),
       operable:!ins.banned||ins.unlocked===true};
+  }
+  function orderGeometry(order,instrument){
+    const o=order||{},entry=finite(o.entry)&&o.entry>0?o.entry:null;
+    if(instrument?.id!==root.instrumentId(o.par))instrument=null;
+    const distance=value=>metric(entry!==null&&finite(value)&&value>0?Math.abs(entry-value):null,'PRICE',null,'Informe entrada e preço positivos.');
+    const stopDistance=distance(o.sl),targetDistance=distance(o.tp);
+    const ratio=m=>metric(entry!==null&&finite(m.value)?m.value/entry*100:null,'PERCENT',null,'Percentual da entrada desta linha.');
+    const stopPercent=ratio(stopDistance),targetPercent=ratio(targetDistance);
+    const atr=instrument?.atr;
+    const rootN=Object.fromEntries(['oneWeek','twoWeeks'].map(horizon=>{
+      const m=clone(instrument?.rootN?.[horizon]||engineMetric(fx.engine.computeRootNDiagnostic({})));
+      const ratio=entry!==null&&finite(m.value)?m.value/entry*100:null;
+      return [horizon,Object.assign(m,{percent:finite(ratio)?ratio:null,percentBasis:'ENTRY_PRICE',baseValue:entry})];
+    }));
+    return {geometry:{stopDistance,stopPercent,targetDistance,targetPercent,
+      rewardRisk:metric(finite(stopDistance.value)&&stopDistance.value>0&&finite(targetDistance.value)?targetDistance.value/stopDistance.value:null,'RATIO',null,'Distância do alvo ÷ distância do stop; entrada igual ao stop não define a razão.')},
+      atrMultiple:engineMetric(fx.engine.computeStopAtrMultiple({stopPercent:stopPercent.value,
+        atr:atr?.timeframe==='H4'&&atr.unit==='PRICE'?atr.short:null,currentPrice:entry})),rootN};
   }
   function instrumentInputs(ins,account,scope={}){
     const instruments=(typeof S==='object'&&Array.isArray(S.instruments)?S.instruments:ins?[ins]:[]).map(i=>prepareInstrument(i,account,scope));
@@ -94,7 +120,8 @@
   }
   function project(input){
     const scope=clone(input.scope||{}), account=clone(input.account||null),currency=account?.currency||scope.currency||null,si=account?.si;
-    const findings=clone(input.findings||[]),catalog=(input.instruments||[]).map(i=>referenceInstrument(i,account,currency));
+    const book=input.accountRecord,bookBalance=book?.currency===currency&&finite(book?.satu)?book.satu:null;
+    const findings=clone(input.findings||[]),catalog=(input.instruments||[]).map(i=>referenceInstrument(i,account,currency,scope));
     const catalogById=new Map(catalog.map(i=>[i.id,i]));
     const rows=(input.rows||[]).map(r=>({...clone(r),order:clone(r.order||r.o||{})}));
     const unresolved=[],ignored=[],matching=[];
@@ -112,7 +139,9 @@
       identities.set(o.orderId,row);matching.push(row);
     }
     for(let i=matching.length-1;i>=0;i--)if(matching[i].duplicate){const row=matching.splice(i,1)[0];row.reason='Identificador de ordem repetido.';unresolved.push(row);}
-    const scoped=!!account&&text(scope.accountId)&&text(scope.periodId)&&account.periodId===scope.periodId&&(!input.operation||!!text(scope.operationId));
+    const period=input.contextPeriod,identifiedPeriod=account?.periodId===scope.periodId||
+      period?.accountId===scope.accountId&&period?.periodId===scope.periodId&&period?.currency===currency;
+    const scoped=!!text(currency)&&text(scope.accountId)&&text(scope.periodId)&&identifiedPeriod&&(!input.operation||!!text(scope.operationId));
     const complete=!!scoped&&!unresolved.length;
     if(unresolved.length)findings.push(issue('BOARD_UNRESOLVED_FACTS','Existem fatos não conciliados; totais completos não presumem a qual conta pertencem.'));
     function enrich(row){
@@ -122,13 +151,18 @@
         active:o.pendingActive,kind:o.amplifiesExposure===true?'AMPLIFYING':o.amplifiesExposure===false?'REDUCING':null,
         exclusiveGroup:o.exclusiveGroup,exclusivityVerified:o.exclusivityVerified,exclusivityEvidence:o.exclusivityEvidence};
       const risk=o.status==='Aberta'?engineMetric(fx.engine.computeFinancialRisk(prepared),currency):absent('A ordem não está aberta.',undefined,currency);
-      const notional=o.status==='Aberta'?fx.engine.computeLeverage({si:account?.si,equity:account?.equity,positions:[{volume:prepared.volume,contractSize:prepared.contractSize,conversionRate:prepared.notionalConversionRate}]}):null;
-      const stopPercent=finite(ins?.price?.value)&&ins.price.value>0&&finite(o.sl)&&o.sl>0?Math.abs(ins.price.value-o.sl)/ins.price.value*100:null;
-      return {...row,instrumentId:root.instrumentId(o.par),inputs:prepared,risk:percent(risk,si),notional:metric(notional?.status==='OK'?notional.grossNotional:null,'ACCOUNT_CURRENCY',currency),
-        netResult:closedNetResult(o),atrMultiple:engineMetric(fx.engine.computeStopAtrMultiple({stopPercent,
-          atr:ins?.atr?.timeframe==='H4'&&ins.atr.unit==='PRICE'?ins.atr.short:null,currentPrice:ins?.price?.value}))};
+      const notional=o.status==='Aberta'?fx.engine.computeGrossNotional({positions:[{volume:prepared.volume,contractSize:prepared.contractSize,conversionRate:prepared.notionalConversionRate}]}):null;
+      return {...row,instrumentId:root.instrumentId(o.par),inputs:prepared,risk:percent(risk,si),operationalRisk:bookPercent(risk,bookBalance),notional:metric(number(notional),'ACCOUNT_CURRENCY',currency),
+        netResult:closedNetResult(o),...orderGeometry(o,ins)};
     }
     const enriched=matching.map(enrich);
+    function operational(openRisk,compensated,grossNotional){
+      const gross=clone(grossNotional);delete gross.percent;delete gross.percentBasis;
+      return {balance:metric(bookBalance,'ACCOUNT_CURRENCY',currency,'Último saldo contábil confirmado desta conta/período; na ausência de fechamentos, saldo inicial book.'),
+        exposure:bookPercent(openRisk,bookBalance),compensated:bookPercent(compensated,bookBalance),grossNotional:gross,
+        leverage:metric(finite(bookBalance)&&bookBalance>0&&finite(grossNotional.value)?grossNotional.value/bookBalance:null,'MULTIPLE',null,
+          'Nocional bruto ÷ saldo contábil atual positivo; leitura operacional separada do limite normativo.',{baseValue:bookBalance,basis:'BOOK_BALANCE'})};
+    }
     function totals(list,isComplete){
       const open=list.filter(r=>r.order.status==='Aberta'),closed=list.filter(r=>r.order.status==='Fechada'),pending=list.filter(r=>r.order.status==='Pendente');
       const defenses=closed.filter(r=>r.order.role==='DEFENSE'),unknownRoles=closed.some(r=>!['GENESIS','DEFENSE','OTHER'].includes(r.order.role));
@@ -138,12 +172,14 @@
       const netDefenses=m(unknownRoles?null:sum(defenses.map(r=>number(r.netResult))),unknownRoles?'Há ordens encerradas sem papel declarado.':'Somente ordens encerradas explicitamente declaradas como defesa.');
       const costs=m(sum(list.map(r=>['SEPARATE_FROM_RESULT','INCLUDED_IN_RESULT'].includes(r.order.costBasis)?r.order.costs:null)), 'Custos assinados registrados; demonstrativo separado, sem nova dedução dos resultados líquidos.');
       const comp=net=>m(finite(openRisk.value)&&finite(net.value)?openRisk.value-net.value:null,'Demonstrativo econômico; não reduz risco comprometido nem amplia limites.');
-      const leverage=isComplete?fx.engine.computeLeverage({si:account?.si,equity:account?.equity,positions:open.map(r=>({volume:r.inputs.volume,contractSize:r.inputs.contractSize,conversionRate:r.inputs.notionalConversionRate}))}):null;
+      const positions=open.map(r=>({volume:r.inputs.volume,contractSize:r.inputs.contractSize,conversionRate:r.inputs.notionalConversionRate}));
+      const leverage=isComplete?fx.engine.computeLeverage({si:account?.si,equity:account?.equity,positions}):null;
+      const grossNotional=m(isComplete?number(fx.engine.computeGrossNotional({positions})):null);
       const aggregate=isComplete?fx.engine.computeOpenAggregatePhaseRisk({positions:open.map(r=>r.inputs),pendingOrders:pending.map(r=>r.inputs)}):null;
       const ids=new Set(open.map(r=>r.instrumentId));
       const pendingRisk=isComplete?fx.engine.computeOpenAggregatePhaseRisk({positions:[],pendingOrders:pending.map(r=>r.inputs)}):null;
       return {open:openRisk,aggregate:engineMetric(aggregate,currency),pending:engineMetric(pendingRisk,currency),costs,closedNetAll:netAll,closedNetDefenses:netDefenses,compensatedAll:comp(netAll),compensatedDefenses:comp(netDefenses),
-        leverage:engineMetric(leverage),grossNotional:m(leverage?.status==='OK'?leverage.grossNotional:null),
+        leverage:engineMetric(leverage),grossNotional,operational:operational(openRisk,comp(netDefenses),grossNotional),
         lots:metric(ids.size<=1&&isComplete?sum(open.map(r=>r.order.lote)):null,'LOTS',null,ids.size>1?'Volumes de instrumentos distintos não são somados.':null),
         counts:{open:open.length,closed:closed.length,pending:pending.length,defenses:defenses.length},complete:isComplete};
     }
@@ -169,7 +205,7 @@
         technicalProfit:absent('Liquidação parcial corretiva e finalidade não demonstradas. Resultado positivo não é Lucro Técnico.'),
         freeNormativeMargin:absent('TRA P-17 pendente; largura de fase não é orçamento de risco.')};
     });
-    const drawdown=engineMetric(fx.engine.computeDrawdown(account||{})),book=input.accountRecord,
+    const drawdown=engineMetric(fx.engine.computeDrawdown(account||{})),
       contextPeriod=input.contextPeriod||null;
     const accountPhase=normativeAccountScoped?engineMetric(normative.accountPhase):engineMetric(fx.engine.resolveAccountPhase({ddPercent:number(drawdown)}));
     const phaseLimit=accountPhase.status==='OK'?fx.policy.phases[accountPhase.value-1]?.maxLeverage:null;
@@ -188,8 +224,10 @@
         activeGridPhase:normativeScoped?engineMetric(normative.activeGridPhase):unavailableNorm(),
         operationBudget:normativeScoped?engineMetric(normative.metrics?.operationBudget,currency):unavailableNorm(),
         sizingTrace:clone(normative?.metrics?.sizingTrace||fx.engine.computeSizingTrace())},
-      economics:{closedNetAll:total.closedNetAll,closedNetDefenses:total.closedNetDefenses,compensatedAll:total.compensatedAll,compensatedDefenses:total.compensatedDefenses},
-      phases,rows:enriched,instruments:catalog,unresolved,ignored,findings:[...findings,...clone(normative?.findings||[])],complete,normativeScopeComplete:!!normativeScoped,
+      economics:{closedNetAll:total.closedNetAll,closedNetDefenses:total.closedNetDefenses,compensatedAll:total.compensatedAll,compensatedDefenses:total.compensatedDefenses},operational:total.operational,
+      phases,rows:enriched,displayRows:rows.map(row=>enriched.find(r=>r.pi===row.pi&&r.oi===row.oi)||{...row,...orderGeometry(row.order,catalogById.get(root.instrumentId(row.order.par))),
+        operationalRisk:bookPercent(absent('Linha ainda não conciliada como posição aberta.',undefined,currency),bookBalance)}),
+      instruments:catalog,unresolved,ignored,findings:[...findings,...clone(normative?.findings||[])],complete,normativeScopeComplete:!!normativeScoped,
       canRecord:input.supported!==false,executionEligibility:clone(normative?.executionEligibility||{status:'BLOCKED',canExecuteNormatively:false,canRecord:input.supported!==false})};
     const baseSource={accountId:scope.accountId||null,periodId:scope.periodId||null,operationId:scope.operationId||null};
     const accountSource={...baseSource,label:'Observação da conta',source:account?.source||'Fonte da observação não identificada',observedAt:account?.observedAt||null};
@@ -204,9 +242,10 @@
       for(const child of Object.values(value))annotate(child,source);
     }
     annotate(result.capital,accountSource);
-    result.capital.book.source=result.capital.book.provenance={...baseSource,label:'Fechamento book deste período ou saldo inicial observado',observedAt:contextPeriod?.observedAt||null};
+    result.capital.book.source=result.capital.book.provenance={...baseSource,label:'Fechamento book deste período ou saldo inicial observado',observedAt:null,...clone(book?.bookSource||{})};
     result.capital.periodResult.source=result.capital.periodResult.provenance={...baseSource,label:'Fechamentos diários sem moeda/cobertura conciliadas',observedAt:null};
-    annotate(result.risk,sources);annotate(result.economics,sources);annotate(result.phases,sources);annotate(result.rows,sources);
+    annotate(result.risk,sources);annotate(result.economics,sources);annotate(result.operational,sources);annotate(result.phases,sources);annotate(result.rows,sources);annotate(result.displayRows,sources);
+    result.operational.balance.source=result.operational.balance.provenance=clone(result.capital.book.source);
     for(const i of result.instruments){const source={...baseSource,instrumentId:i.id,label:'Referência deste instrumento',observedAt:null,price:i.price,contract:i.contract,conversion:i.conversion,atr:i.atr};annotate(i,source);}
     return result;
   }
@@ -230,13 +269,15 @@
     const context=accountId&&periodId?fx.state.recordContext({accountId,periodId}):null;
     const account=context?.status==='OK'?context.accountInputs:null;scope.currency=account?.currency||contextPeriod?.currency||null;
     const record=accountIndex!==null?source.accounts[accountIndex]:null;
-    const bookRows=contextPeriod?.ledger||[],lastBook=bookRows.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1)?.saldo??contextPeriod?.openingBook??null;
+    const bookRows=contextPeriod?.ledger||[],lastBookRow=bookRows.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1),lastBook=lastBookRow?.saldo??contextPeriod?.openingBook??null;
     const safeRecord=record?{name:record.nome||'',type:record.tipo||'',currency:contextPeriod?.currency||null,satu:lastBook,broker:record.broker||null,
-      platform:text(record.platform)||null,login:text(record.platformLogin)||null,platformLogin:text(record.platformLogin)||null}:null;
+      platform:text(record.platform)||null,login:text(record.platformLogin)||null,platformLogin:text(record.platformLogin)||null,
+      bookSource:lastBookRow?{label:'Último fechamento contábil confirmado',referenceDate:lastBookRow.data,recordedAt:lastBookRow.updatedAt||lastBookRow.createdAt||null,ledgerId:lastBookRow.id||null}:
+        {label:'Saldo inicial contábil do período',observedAt:contextPeriod?.observedAt||null,referenceDate:contextPeriod?.startedAt||null}}:null;
     const normative=account?fx.state.read({accountId,periodId}):null;
     return project({scope,account,contextPeriod,accountRecord:safeRecord,operation:op?{operationId:op.operationId,policySnapshot:clone(op.policySnapshot||null)}:null,
       selection:{accountId,periodId,operationId:scope.operationId,accountIndex,reason,requiresSelection:!accountId,requiresObservation:!account,lockedToOperation:false,accounts},
-      rows:allRows,phases:clone(phases),instruments:resolveConversions((source.instruments||[]).map(i=>prepareInstrument(i,account,scope)),account),normative,findings,supported:fx.state.supported()});
+      rows:allRows,phases:clone(phases),instruments:resolveConversions((source.instruments||[]).map(i=>prepareInstrument(i,account,scope)),account||{currency:contextPeriod?.currency||null}),normative,findings,supported:fx.state.supported()});
   }
-  fx.executionBoard=Object.freeze({read,project,closedNetResult,instrumentInputs});
+  fx.executionBoard=Object.freeze({read,project,closedNetResult,instrumentInputs,previewOrder:orderGeometry});
 })(globalThis);

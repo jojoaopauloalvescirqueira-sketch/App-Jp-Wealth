@@ -13,7 +13,7 @@ from notes_launcher_test import launch_options
 from dashboard_forex_relocation_test import PREF, IDS, MOVED, KEY, swap
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED=['forex-consolidated','forex-planning','forex-operation','forex-reserves']
+EXPECTED=["forex-consolidated", "forex-operation", "forex-history", "forex-accounting", "forex-management-accounts", "forex-planning", "forex-reserves"]
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,default=ROOT);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--entry-only',action='store_true');args=ap.parse_args()
@@ -42,7 +42,7 @@ def main():
             }''')
             page.evaluate('render();window.__journeyBefore=JSON.stringify(S);window.__journeyRaw=localStorage.getItem(LSKEY);window.__checkNode=document.querySelector("#checkWidgetGrid");window.__overviewNode=document.querySelector("#execOverview");')
             def go(target):require(page.evaluate('(t)=>JPWNavigation.navigate(t)',target));page.wait_for_timeout(60)
-            test('four destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
+            test('seven destinations ordered',lambda:require(page.evaluate("JPWNavigation.children('forex').map(x=>x.id)")==EXPECTED))
             page.locator('#execNavTrigger').click()
             test('Forex default is Consolidado',lambda:require(page.evaluate("JPWNavigation.current().canonical==='forex-consolidated'&&document.querySelector('#fxconsolidated').classList.contains('active')")))
             go('forex-overview')
@@ -84,9 +84,14 @@ def main():
                 test('legacy checklist opens Operation without duplicate nodes',lambda:require(page.evaluate("JPWNavigation.current().canonical==='forex-operation'&&document.querySelectorAll('#forexChecklistDialog').length===1&&document.querySelectorAll('#checkWidgetGrid').length===1&&JSON.stringify(S.checklist)===__checkAnswers")))
                 page.locator('#headerConfigBtn').click();page.locator('#settingsSearch').fill('checklist');page.locator('[data-settings-result]').first.click();page.locator('#forexChecklistDialog').wait_for(state='visible')
                 test('Settings suspended for the same checklist',lambda:require(page.evaluate("settingsState.open&&settingsState.suspended&&document.querySelector('#settingsModal').inert&&document.querySelector('#forexChecklistDialog #checkWidgetGrid')===__checkNode")))
-                page.locator('#forexChecklistClose').click();page.wait_for_timeout(100)
+                page.locator('#forexChecklistClose').click()
+                # Native dialog.close queues its close event; the Settings state
+                # and focus are restored in that event and a subsequent frame.
+                # Wait for the same contract below, not a fixed scheduling delay.
+                page.wait_for_function("settingsState.open&&!settingsState.suspended&&!document.querySelector('#settingsModal').inert&&document.activeElement.id==='settingsOpenChecklist'")
                 test('Settings resumes focus and answers',lambda:require(page.evaluate("settingsState.open&&!settingsState.suspended&&!document.querySelector('#settingsModal').inert&&document.activeElement.id==='settingsOpenChecklist'&&JSON.stringify(S.checklist)===__checkAnswers")))
                 page.evaluate('closeSettingsModal()')
+                page.wait_for_function("!settingsState.open&&!document.querySelector('#settingsOverlay').classList.contains('show')")
                 # The inline order draft must remain protected when the new Accounts
                 # workspace or Motor is requested. Choosing discard is explicit and
                 # lets the later history route remain a distinct accounting view.
@@ -96,8 +101,8 @@ def main():
                 page.locator('#ebLeaveDiscard').click();page.wait_for_timeout(80)
                 test('explicit discard completes requested Motor navigation',lambda:require(page.evaluate("JPWExec.ui.getView()==='motor'&&!document.querySelector('#executionBoardDialog').open")))
                 go('history')
-                test('operation history remains reachable inside Accounting',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#execHistory').isConnected&&!document.querySelector('#execHistory').hidden")))
-                go('forex-reconciliation');test('canonical accounting opens inside Operation',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#contab').closest('#exec')")))
+                test('operation history has independent workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='history'&&document.querySelector('#execHistory').parentElement.id==='exec'&&document.querySelector('#contab').hidden&&document.querySelector('#executionBoard').hidden&&!document.querySelector('#execHistory').hidden")))
+                go('forex-reconciliation');test('canonical accounting opens its own workspace',lambda:require(page.evaluate("JPWNavigation.current().screen==='exec'&&JPWExec.ui.getView()==='accounting'&&document.querySelector('#contab').closest('#exec')")))
                 # Existing customized v6 preference: moved widgets retain identity/order.
                 go('forex-overview')
                 expected_order=[i for i in IDS if i in MOVED]

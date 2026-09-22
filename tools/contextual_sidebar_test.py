@@ -344,13 +344,12 @@ def run_lifecycle(browser, url, evidence, baseline_url):
           return ids.filter((id,index)=>ids.indexOf(id)!==index)}""") == []
         assert page.locator("#gdDashMain > [data-layout-card]").count() == 2
         assert page.locator("#fxOverviewWidgets > [data-layout-card]").count() == 4
-        expected_contexts = {"forex-operation": "forex-operation", "motor": "forex-operation",
-                             "forex-reconciliation": "forex-reconciliation", "forex-planning": "forex-planning",
+        expected_contexts = {"motor": "forex-management-accounts", "forex-planning": "forex-planning",
                              "pivots": "research-forex"}
-        for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Visão Geral"]),
-                             ("forex-operation", ["Forex", "Operação", "Painel"]),
-                             ("forex-reconciliation", ["Forex", "Apuração"]), ("forex-planning", ["Forex", "Planejamento"]),
-                             ("motor", ["Forex", "Operação", "Motor"]), ("research-stocks-br", ["Research", "Ações"]),
+        for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Dashboard"]),
+                             ("forex-operation", ["Forex", "Execution Board"]),
+                             ("forex-reconciliation", ["Forex", "Contabilidade"]), ("forex-planning", ["Forex", "Planejamento"]),
+                             ("motor", ["Forex", "Management Accounts", "Fator de Correção"]), ("research-stocks-br", ["Research", "Ações"]),
                              ("pivots", ["Research", "Forex", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:
             go(page, route)
             location = page.locator("#shellLocation").inner_text()

@@ -21,10 +21,10 @@ SOURCE = "src/js/40-app/01-navigation.js"
 CASES = [
     ("exec", "overview", "forex-consolidated", "forex", "forex-consolidated"),
     ("exec", "panel", "forex-operation", "forex", "forex-operation"),
-    ("exec", "accounts", "forex-operation", "forex", "forex-operation"),
-    ("exec", "motor", "forex-operation", "forex", "forex-operation"),
-    ("exec", "accounting", "forex-operation", "forex", "forex-operation"),
-    ("exec", "history", "forex-operation", "forex", "forex-operation"),
+    ("exec", "accounts", "forex-management-accounts", "forex", "forex-management-accounts"),
+    ("exec", "motor", "forex-management-accounts", "forex", "forex-management-accounts"),
+    ("exec", "accounting", "forex-accounting", "forex", "forex-accounting"),
+    ("exec", "history", "forex-history", "forex", "forex-history"),
     ("fxplan", "overview", "forex-planning", "forex", "forex-planning"),
     ("fxplan", "planning", "forex-planning", "forex", "forex-planning"),
     ("fxplan", "actuals", "forex-planning", "forex", "forex-planning"),
@@ -272,8 +272,8 @@ def main():
             try:
                 assert p.evaluate("JPWNavigation.navigate('forex-reconciliation')") is True
                 assert p.evaluate("JPWNavigation.current()") == dict(
-                    canonical="forex-operation", requested="forex-reconciliation", source="compatibility",
-                    primary="forex", child="forex-operation", screen="exec",
+                    canonical="forex-accounting", requested="forex-reconciliation", source="compatibility",
+                    primary="forex", child="forex-accounting", screen="exec",
                     localView={"surface":"exec","view":"accounting"}), p.evaluate("JPWNavigation.current()")
                 result = p.evaluate("__exercise('exec','history')")
                 check_success(result, CASES[5])
