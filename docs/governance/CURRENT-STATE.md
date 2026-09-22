@@ -1,3 +1,20 @@
+# Candidate local implementado — Lateral em níveis
+
+Base Git `22bc889c7f0ece4b8b9a7d1b1ddda57d638a34da`, branch isolada
+`codex/submenu-sidebar-navigation-20260922`. O delta autorizado acrescenta uma
+quarta composição visual e a preferência auxiliar `jpw_nav_submenu_rail` ao
+workspace do Backup Completo; não altera domínio financeiro, rotas ou schema de
+`S`. A exploração da lateral permanece em RAM e só um destino final aceito chama
+`JPWNavigation`. O build `e606146a740126cb` passou nos focais de navegação,
+preferências, ordem, Settings, Notas, Backup Completo, estrutura, portátil e
+PWA. O gate completo não ficou verde neste host: suas duas melhores rodadas
+tiveram 55/57 PASS, com boots HTTP parciais variáveis; todos os casos falhos
+passaram isoladamente sem mudança de código. Não há commit, push, merge,
+publicação ou aceite visual desta entrega.
+Contrato: [CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922](../work/CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922.md).
+
+## Histórico preservado
+
 # Liquid Glass integrado ao `main`
 
 Integração autorizada pelo proprietário e executada em 2026-09-22. Base Git

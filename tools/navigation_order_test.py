@@ -309,7 +309,7 @@ def run(args):
                 details = []
                 desired = ['tools', 'alladin', 'personal-finance', 'forex', 'research', 'dashboard']
                 for width in [1440, 390]:
-                    for mode in ['sidebar', 'topbar']:
+                    for mode in ['sidebar', 'topbar', 'submenu']:
                         for theme in ['light', 'dark']:
                             context, page, errors = boot(browser, url, json.dumps(desired), width, mode, theme)
                             editor(page)
@@ -332,7 +332,20 @@ def run(args):
                             for module in expected:
                                 if width <= 900:
                                     page.locator('[data-shell-menu-toggle]').click()
+                                if mode == 'submenu':
+                                    while page.get_attribute('html', 'data-submenu-level') != '1':
+                                        page.locator('#submenuNavBack').click()
                                 page.locator(f'#nav > [data-primary="{module}"]').click()
+                                if mode == 'submenu' and module not in {'dashboard', 'alladin'}:
+                                    if module == 'research':
+                                        page.locator('[data-nav-child="research-forex"]').click()
+                                        page.locator('[data-nav-context="research-forex"] [data-nav-local-view="nocoda"]').click()
+                                    elif module == 'forex':
+                                        page.locator('[data-nav-child="forex-consolidated"]').click()
+                                    elif module == 'personal-finance':
+                                        page.locator('[data-nav-sub-view="overview"]').click()
+                                    else:
+                                        page.locator('[data-nav-child="tools-calendar"]').click()
                                 assert page.evaluate('JPWNavigation.current().primary') == module
                                 assert page.evaluate('JPWNavigation.current().canonical') == destinations[module]
                                 assert page.locator('#nav > .tab.active').get_attribute('data-primary') == module
@@ -341,7 +354,7 @@ def run(args):
                             details.append({'width': width, 'mode': mode, 'theme': theme, 'order': expected})
                             finish(context, errors)
                 return details
-            check('side/topbar/mobile, themes, touch, focus, overflow and real navigation targets', modes_and_routes)
+            check('side/topbar/submenu/mobile, themes, touch, focus, overflow and real navigation targets', modes_and_routes)
             browser.close()
     except Exception:
         report['exception'] = traceback.format_exc()

@@ -39,7 +39,7 @@ def main():
                 const before=sessionStateFingerprint();
                 const preferences={
                     jpwealth_local_profile_v1:JSON.stringify({schemaVersion:1,displayName:'Synthetic gallery',avatarDataUrl:SETTINGS_PROFILE_AVATARS[0].avatarDataUrl}),
-                    jpw_fs:'2',jpw_expl:'off',jpw_rail:'collapsed',jpw_nav:'pill',jpw_nav_layout:'glass',jpw_nav_glass_tint:'60',
+                    jpw_fs:'2',jpw_expl:'off',jpw_rail:'collapsed',jpw_nav_submenu_rail:'expanded',jpw_nav:'pill',jpw_nav_layout:'submenu',jpw_nav_glass_tint:'60',
                     jpw_nav_order:JSON.stringify({schemaVersion:1,order:['alladin','forex','personal-finance','research','dashboard']}),
                     jpwealth_v9_icon_choice:'secondary',jpwealth_v9_icon_theme:'dark',
                     'jpwealth.ui.widgetLayouts.v6':JSON.stringify(dashLayoutNormalizeV6(null)),
@@ -113,6 +113,10 @@ def main():
                 d2=page();d2.evaluate("localStorage.setItem('jpw_nav_glass_tint','88')");restore(d2,old_workspace)
                 assert d2.evaluate("localStorage.getItem('jpw_nav_glass_tint')")=='88'
                 print('PASS schema v1 workspace without glass tint preserves destination preference',flush=True)
+                old_submenu=json.loads(json.dumps(payload));old_submenu['workspace']['preferences'].pop('jpw_nav_submenu_rail',None)
+                d3=page();d3.evaluate("localStorage.setItem('jpw_nav_submenu_rail','collapsed')");restore(d3,old_submenu)
+                assert d3.evaluate("localStorage.getItem('jpw_nav_submenu_rail')")=='collapsed'
+                print('PASS schema v1 workspace without submenu rail preserves destination preference',flush=True)
                 # A custom uploaded-photo raster is self-contained as well.
                 custom=a.evaluate("""async()=>{
                   const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;
@@ -150,7 +154,7 @@ def main():
                 assert 'Exporte uma nova cópia' in h.locator('#modalBox').inner_text()
                 assert h.evaluate('jpWealthPersistenceIsBlocked()') is False
                 print('PASS preferences changed during export / before finalization are refused',flush=True)
-                for change in ['future','unknown-key','bad-image','bad-drafts','nested-pollution','bad-glass-tint']:
+                for change in ['future','unknown-key','bad-image','bad-drafts','nested-pollution','bad-glass-tint','bad-submenu-rail']:
                     bad=json.loads(json.dumps(payload))
                     if change=='future':bad['workspace']['schemaVersion']=2
                     if change=='unknown-key':bad['workspace']['preferences']['foreign_app']='x'
@@ -158,6 +162,7 @@ def main():
                     if change=='bad-drafts':bad['workspace']['drafts']=[{'label':'x','text':{}}]
                     if change=='nested-pollution':bad['workspace']['preferences']['jpwealth_galton_preferences_v1']='{"__proto__":{"x":1}}'
                     if change=='bad-glass-tint':bad['workspace']['preferences']['jpw_nav_glass_tint']='101'
+                    if change=='bad-submenu-rail':bad['workspace']['preferences']['jpw_nav_submenu_rail']='wide'
                     outcome=d.evaluate('''bad=>{const before=JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));try{normalizeImportedState(bad);return false;}catch(e){return before===JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));}}''',bad)
                     assert outcome,change
                 print('PASS invalid workspace rejected before mutation',flush=True)

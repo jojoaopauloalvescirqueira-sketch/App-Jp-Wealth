@@ -254,6 +254,13 @@
 
 <aside id="appSidebar" aria-label="Navegação do JP Wealth">
   <div class="sidebar-heading"><span class="sidebar-caption">Áreas de trabalho</span><button type="button" id="sidebarClose" aria-label="Fechar menu de telas">×</button></div>
+  <div class="submenu-level-heading" id="submenuLevelHeading" hidden>
+    <button type="button" id="submenuNavBack" class="submenu-back" aria-label="Voltar para os módulos" hidden>
+      <span aria-hidden="true">‹</span><span class="submenu-back-label">Voltar</span>
+    </button>
+    <strong id="submenuLevelTitle">Navegação</strong>
+  </div>
+  <div class="submenu-nav-stage" id="submenuNavStage" hidden></div>
 <nav id="nav" aria-label="Módulos">
   <!-- Indicador decorativo dos estilos pill/kinetic. O estado acessível
        permanece nos botões; o brilho legado fica inativo neste shell. -->
@@ -1279,7 +1286,7 @@
     <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior liquid glass vidro transparência tonalizado layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
       <div class="nav-order-editor" id="navOrderEditor">
         <h3>Ordem dos módulos</h3>
-        <p class="note note-live">Use Subir e Descer para pré-visualizar. A ordem vale para o menu lateral, a barra superior e o Liquid Glass, incluindo o celular. Sua tela atual e a página inicial não mudam.</p>
+        <p class="note note-live">Use Subir e Descer para pré-visualizar. A ordem vale para o menu lateral, a barra superior, o Liquid Glass e a lateral em níveis, incluindo o celular. Sua tela atual e a página inicial não mudam.</p>
         <ol id="navOrderList" aria-label="Ordem dos módulos principais"></ol>
         <div class="nav-order-actions">
           <button type="button" class="reset-btn" id="navOrderSave">Salvar ordem</button>
@@ -1294,8 +1301,9 @@
           <button type="button" data-nav-layout="sidebar" aria-pressed="true">Menu lateral (padrão)</button>
           <button type="button" data-nav-layout="topbar" aria-pressed="false">Barra superior (anterior)</button>
           <button type="button" data-nav-layout="glass" aria-pressed="false">Liquid Glass</button>
+          <button type="button" data-nav-layout="submenu" aria-pressed="false">Lateral em níveis</button>
         </div>
-        <span class="note note-live">A escolha fica salva neste navegador. Você pode alternar a qualquer momento.</span>
+        <span class="note note-live">A escolha fica salva neste navegador. Na lateral em níveis, grupos podem ser explorados antes de abrir uma página.</span>
         <span class="note note-live" id="navLayoutStatus" role="status" aria-live="polite"></span>
       </div>
       <div class="field" id="navStyleField" style="max-width:560px; margin-top:18px">

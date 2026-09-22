@@ -115,9 +115,9 @@ em Forex; este incremento não altera essa projeção.
 
 ## Alternativa de apresentação no Editor
 
-`#navLayoutSeg` oferece Menu lateral (padrão), Barra superior (anterior) e
-Liquid Glass. A chave aditiva `jpw_nav_layout` aceita apenas `sidebar`, `topbar`
-ou `glass`, fora de S e dos schemas financeiros, mas incluída no bloco workspace
+`#navLayoutSeg` oferece Menu lateral (padrão), Barra superior (anterior),
+Liquid Glass e Lateral em níveis. A chave aditiva `jpw_nav_layout` aceita apenas
+`sidebar`, `topbar`, `glass` ou `submenu`, fora de S e dos schemas financeiros, mas incluída no bloco workspace
 do Backup Completo. Ausência, valor inválido ou leitura indisponível
 exibem lateral sem gravar, normalizar ou remover a preferência; erro/valor
 inválido são informados no Editor. Somente a escolha explícita grava essa chave. Leitura/gravação e controles
@@ -163,6 +163,22 @@ padrão visual 60. `input` produz prévia; `change` grava e confirma por releitu
 Valor ausente/inválido e leitura indisponível usam 60 sem escrever. Fallbacks
 opacos cobrem transparência reduzida, alto contraste e ausência de
 `backdrop-filter`; movimento reduzido remove transições.
+
+Na Lateral em níveis, `#nav` e `#navSubShell` são montados no mesmo
+`#submenuNavStage`. O estado de exploração é efêmero e separado da rota: clicar
+em Research, Forex, Finanças Pessoais ou Ferramentas abre N2 sem chamar
+`JPWNavigation`; os grupos Forex de Research, Planejamento e Operação abrem N3.
+Somente folhas chamam o resolver, e a gaveta/foco só fecham quando o retorno é
+aceito. Uma recusa do guard conserva o nível explorado e o trabalho atual.
+
+Em desktop, a lateral reserva 288 px ou 72 px. A preferência independente
+`jpw_nav_submenu_rail` aceita `expanded`/`collapsed`; ausência, valor inválido ou
+leitura indisponível exibem `expanded` sem escrever. O rail recolhido pode abrir
+temporariamente para explorar um grupo, sem gravação. Até 900 CSS px, a mesma
+lateral vira gaveta modal com backdrop, isolamento de conteúdo, trap de foco e
+Safe Areas. Voltar sobe um nível; fechar e reabrir a gaveta na sessão conserva a
+exploração. O acabamento próprio desabilita temporariamente o seletor de estilo,
+preservando `jpw_nav`.
 
 ## A marca como acesso ao Dashboard
 

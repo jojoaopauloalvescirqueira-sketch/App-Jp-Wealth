@@ -253,7 +253,13 @@ window.JPWNavigation=Object.freeze({
 // duas divergiriam na primeira mudanca de rota. Enter e Espaco vem de graca
 // porque o elemento e um <button>.
 document.querySelectorAll('#nav > .tab[data-route], .brand-home[data-route]').forEach(control=>
-  control.addEventListener('click',()=>navigateToScreen(control)));
+  control.addEventListener('click',()=>{
+    // A lateral em níveis separa exploração de navegação: grupos são entregues
+    // ao shell antes de qualquer resolução de rota. Folhas e os outros três
+    // layouts continuam atravessando exatamente a fachada existente.
+    if(typeof shellHandlePrimaryIntent==='function'&&shellHandlePrimaryIntent(control))return;
+    navigateToScreen(control);
+  }));
 navSelectPrimary('dashboard');
 const fxUpdateButton=document.getElementById('fxUpdateBtn');
 if(fxUpdateButton) fxUpdateButton.addEventListener('click',()=>updateFxRates());

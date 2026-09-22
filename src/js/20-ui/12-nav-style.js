@@ -82,11 +82,12 @@ function scheduleNavPill(){
 }
 function renderNavStyleSeg(){
   const v=navStyleValue();
-  const glass=document.documentElement.getAttribute('data-navigation')==='glass';
+  const layout=document.documentElement.getAttribute('data-navigation');
+  const ownsAppearance=layout==='glass'||layout==='submenu';
   document.querySelectorAll('#navStyleSeg button').forEach(b=>{
     b.classList.toggle('on', b.dataset.navVal===v);
-    b.disabled=glass;
-    b.setAttribute('aria-disabled',String(glass));
+    b.disabled=ownsAppearance;
+    b.setAttribute('aria-disabled',String(ownsAppearance));
     // Marca de "padrão do sistema". É decorativa: quem carrega a informação em
     // texto é a legenda abaixo, para leitor de tela e para quem não distingue
     // a marca visual.
@@ -104,10 +105,12 @@ function renderNavStyleSeg(){
       : `Padrão do sistema: ${nome} — é o que aparece para quem abre o aplicativo pela primeira vez. A sua escolha atual é outra e vale só neste navegador.`;
   }
   const availability=document.getElementById('navStyleAvailabilityNote');
-  if(availability)availability.textContent=glass
+  if(availability)availability.textContent=layout==='glass'
     ? 'O Liquid Glass possui acabamento próprio. Sua escolha de estilo continua salva e volta a ser aplicada ao retornar ao menu lateral ou à barra superior.'
-    : '';
-  document.getElementById('navStyleField')?.classList.toggle('is-disabled',glass);
+    : layout==='submenu'
+      ? 'A Lateral em níveis possui acabamento próprio. Sua escolha de estilo continua salva e volta a ser aplicada ao retornar ao menu lateral ou à barra superior.'
+      : '';
+  document.getElementById('navStyleField')?.classList.toggle('is-disabled',ownsAppearance);
 }
 function bindNavStyleSeg(){
   document.querySelectorAll('#navStyleSeg button').forEach(b=>{if(b.dataset.navBound)return;b.dataset.navBound='true';b.addEventListener('click',()=>{
@@ -155,7 +158,7 @@ window.addEventListener('resize', scheduleNavPill);
 // tela ativa e recolher/expandir o rail, que alteram a largura das abas.
 new MutationObserver(scheduleNavPill).observe(document.documentElement, {
   attributes:true,
-  attributeFilter:['data-shell','data-active-screen','data-nav-style','data-rail','data-ui-version'],
+  attributeFilter:['data-shell','data-active-screen','data-nav-style','data-rail','data-submenu-rail','data-ui-version'],
 });
 // Sinal decisivo para a primeira medição: a GEOMETRIA da barra. No boot as abas
 // podem mudar de tamanho enquanto o shell monta os slots contextuais, e
@@ -178,7 +181,7 @@ setTimeout(positionNavPill, 300);
 // Composição por navegador. A persistência pertence aos controles de
 // apresentação; o shell recebe apenas a escolha validada para montar o DOM.
 const NAV_LAYOUT_KEY='jpw_nav_layout';
-const NAV_LAYOUTS=['sidebar','topbar','glass'];
+const NAV_LAYOUTS=['sidebar','topbar','glass','submenu'];
 const NAV_GLASS_TINT_KEY='jpw_nav_glass_tint';
 const NAV_GLASS_TINT_DEFAULT=60;
 const navGlassTintState={confirmed:NAV_GLASS_TINT_DEFAULT,raw:null,note:'',initialized:false};
@@ -266,7 +269,7 @@ function initNavLayoutChoice(){
     try{localStorage.setItem(NAV_LAYOUT_KEY,value);}
     catch(e){if(status)status.textContent='Não foi possível salvar a escolha. A interface anterior foi mantida.';return;}
     mountNavigationLayout(value);
-    const label={sidebar:'Menu lateral',topbar:'Barra superior',glass:'Liquid Glass'}[value];
+    const label={sidebar:'Menu lateral',topbar:'Barra superior',glass:'Liquid Glass',submenu:'Lateral em níveis'}[value];
     if(status)status.textContent=label+' salvo neste navegador.';
   });
 }

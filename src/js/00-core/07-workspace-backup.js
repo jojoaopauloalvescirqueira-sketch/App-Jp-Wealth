@@ -1,7 +1,7 @@
 // Portable workspace: confirmed data stays in S; drafts never execute domain commands.
 const JPW_WORKSPACE_KEYS=Object.freeze([
   'jpwealth_local_profile_v1','jpwealth_v9_icon_choice','jpwealth_v9_icon_theme',
-  'jpw_fs','jpw_expl','jpw_rail','jpw_nav','jpw_nav_layout','jpw_nav_order','jpw_nav_glass_tint',
+  'jpw_fs','jpw_expl','jpw_rail','jpw_nav_submenu_rail','jpw_nav','jpw_nav_layout','jpw_nav_order','jpw_nav_glass_tint',
   'jpwealth.ui.widgetLayouts.v6','jpwealth.ui.widgetLayouts.v5','jpwealth.ui.widgetLayouts.v4',
   'jpwealth.ui.widgetLayouts.v3','jpwealth.ui.widgetLayout.v2',
   'jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_galton_preferences_v1'
@@ -46,6 +46,7 @@ function jpwWorkspaceValidate(value){
     if(!JPW_WORKSPACE_KEYS.includes(key)||!(raw===null||typeof raw==='string')||(raw&&raw.length>2000000))throw new Error('Preferência de retomada inválida.');
     if(raw===null)continue;
     if(key==='jpw_nav_glass_tint'&&!/^(?:0|[1-9]\d?|100)$/.test(raw))throw new Error('Transparência do Liquid Glass inválida.');
+    if(key==='jpw_nav_submenu_rail'&&!['expanded','collapsed'].includes(raw))throw new Error('Largura da lateral em níveis inválida.');
     if(key==='jpwealth_local_profile_v1'){
       const profile=JSON.parse(raw);
       if(!jpwWorkspaceObject(profile)||profile.schemaVersion!==1||typeof profile.displayName!=='string'||[...profile.displayName].length>120||/[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/.test(profile.displayName))throw new Error('Perfil no backup inválido.');
