@@ -17,7 +17,8 @@ function relocateGlobalDashboardShell() {
   if (document.documentElement.dataset.shell !== 'global-dashboard') return;
 
   // Navegação: respeitar a composição escolhida, usando o mesmo #nav.
-  const nav = gdEl('nav'), navSlot = gdEl(document.documentElement.dataset.navigation === 'topbar' ? 'gdTopbarNavSlot' : 'appSidebar');
+  const horizontal = ['topbar','glass'].includes(document.documentElement.dataset.navigation);
+  const nav = gdEl('nav'), navSlot = gdEl(horizontal ? 'gdTopbarNavSlot' : 'appSidebar');
   if (nav && navSlot && nav.parentElement !== navSlot) navSlot.append(nav);
 
   // Leituras de contexto (Perfil/Período/Equity/DD + salvo/relógio/fase):

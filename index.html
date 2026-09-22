@@ -71,7 +71,7 @@
        anuncie o nome da marca duas vezes. -->
   <button type="button" class="brand brand-home" id="brandHomeBtn" data-route="dashboard"
           title="Ir para o Dashboard" aria-label="Ir para o Dashboard">
-    <img class="gd-logo" data-jp-brand-wordmark src="assets/jp-wealth-brand-red.png" alt="" width="172" height="19">
+    <img class="gd-logo" data-jp-brand-wordmark src="assets/jp-wealth-brand-red.png?v=20260917-solid-r1" alt="" width="172" height="19">
     <span class="wordmark" aria-hidden="true">
       <span class="wm-jp">JP</span><span class="wm-orbit"><i></i></span><span class="wm-wealth">WEALTH</span>
     </span>
@@ -96,7 +96,7 @@
   </div>
   <div class="header-actions" id="headerActions" aria-label="Ações do aplicativo">
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
-    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas">Menu</button>
+    <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas"><span class="shell-menu-glyph" aria-hidden="true"><i></i><i></i></span><span class="shell-menu-label">Menu</span></button>
     <button type="button" class="header-action notification-trigger" id="headerNotificationsBtn" title="Notificações" aria-label="Notificações" aria-controls="notificationCenter" aria-haspopup="dialog" aria-expanded="false">
       <span class="notification-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4M12 1v1"/></svg><span id="notificationBadge" aria-hidden="true" hidden></span></span>
     </button>
@@ -1276,10 +1276,10 @@
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
-    <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
+    <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior liquid glass vidro transparência tonalizado layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
       <div class="nav-order-editor" id="navOrderEditor">
         <h3>Ordem dos módulos</h3>
-        <p class="note note-live">Use Subir e Descer para pré-visualizar. A ordem vale para os menus lateral e superior, incluindo o celular. Sua tela atual e a página inicial não mudam.</p>
+        <p class="note note-live">Use Subir e Descer para pré-visualizar. A ordem vale para o menu lateral, a barra superior e o Liquid Glass, incluindo o celular. Sua tela atual e a página inicial não mudam.</p>
         <ol id="navOrderList" aria-label="Ordem dos módulos principais"></ol>
         <div class="nav-order-actions">
           <button type="button" class="reset-btn" id="navOrderSave">Salvar ordem</button>
@@ -1293,11 +1293,12 @@
         <div class="seg" id="navLayoutSeg" role="group" aria-labelledby="navLayoutLabel">
           <button type="button" data-nav-layout="sidebar" aria-pressed="true">Menu lateral (padrão)</button>
           <button type="button" data-nav-layout="topbar" aria-pressed="false">Barra superior (anterior)</button>
+          <button type="button" data-nav-layout="glass" aria-pressed="false">Liquid Glass</button>
         </div>
         <span class="note note-live">A escolha fica salva neste navegador. Você pode alternar a qualquer momento.</span>
         <span class="note note-live" id="navLayoutStatus" role="status" aria-live="polite"></span>
       </div>
-      <div class="field" style="max-width:560px; margin-top:18px">
+      <div class="field" id="navStyleField" style="max-width:560px; margin-top:18px">
         <label>Estilo da Navegação</label>
         <div class="seg" id="navStyleSeg" style="width:fit-content">
           <button type="button" data-nav-val="kinetic">KineticNav</button>
@@ -1309,8 +1310,16 @@
              ficar escondido atrás de um ícone. A classe existe para isso — ver o
              comentário em 09-contextual-help.js. Preenchida por renderNavStyleSeg(). -->
         <span class="note note-live" id="navStyleDefaultNote"></span>
+        <span class="note note-live" id="navStyleAvailabilityNote" role="status" aria-live="polite"></span>
         <span class="note note-live" id="navStyleStatus" role="status" aria-live="polite"></span>
-        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Os estilos acompanham o layout escolhido e respeitam redução de movimento. A preferência vale neste navegador e não entra no backup.</span>
+        <span class="note"><b>KineticNav</b>: destaque arredondado com movimento e resposta ao ponteiro. <b>Floating Pill Nav</b>: destaque arredondado sem resposta ao ponteiro. <b>Clássica</b>: seleção por borda e fundo discreto. Estes estilos são usados no menu lateral e na barra superior e respeitam redução de movimento. As preferências de navegação deste editor acompanham o Backup Completo.</span>
+      </div>
+      <div class="field nav-glass-settings" id="navGlassSettings" style="max-width:560px; margin-top:18px">
+        <div class="nav-glass-setting-head"><label for="navGlassTint">Transparência do Liquid Glass</label><output id="navGlassTintValue" for="navGlassTint">60%</output></div>
+        <input type="range" id="navGlassTint" min="0" max="100" step="1" value="60" aria-describedby="navGlassTintScale navGlassTintStatus">
+        <div class="nav-glass-scale" id="navGlassTintScale" aria-hidden="true"><span>Ultraclaro</span><span>Tonalizado</span></div>
+        <span class="note note-live">A prévia acompanha o controle. O valor só é salvo quando o ajuste é confirmado.</span>
+        <span class="note note-live" id="navGlassTintStatus" role="status" aria-live="polite"></span>
       </div>
     </div>
     <!-- Organização das telas — personalização de posição/tamanho dos widgets

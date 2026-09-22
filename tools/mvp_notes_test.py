@@ -3,7 +3,7 @@
 Sessão, Zona de Perigo, backup/importação real e migração de estado legado."""
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-import json, os, re, socket, tempfile, threading
+import json, os, re, tempfile, threading
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
@@ -13,12 +13,14 @@ os.chdir(ROOT)
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *_): pass
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size = 128
+    daemon_threads = True
+
 def serve():
-    with socket.socket() as s:
-        s.bind(('127.0.0.1', 0)); port = s.getsockname()[1]
-    server = ThreadingHTTPServer(('127.0.0.1', port), Quiet)
+    server = BrowserFixtureServer(('127.0.0.1', 0), Quiet)
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    return server, f'http://127.0.0.1:{port}/'
+    return server, f'http://127.0.0.1:{server.server_port}/'
 
 def click_id(page, element_id):
     locator = page.locator('#' + element_id)

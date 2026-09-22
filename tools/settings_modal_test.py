@@ -2,7 +2,7 @@
 """Caracterização da Central de Configurações sem alterar dados operacionais."""
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-import argparse, base64, hashlib, json, os, socket, struct, threading, zlib
+import argparse, base64, hashlib, json, os, struct, threading, zlib
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright, expect
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
@@ -10,10 +10,12 @@ from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_
 ROOT=Path(__file__).resolve().parents[1]
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*_): pass
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size=128
+    daemon_threads=True
 def serve():
-    with socket.socket() as s: s.bind(('127.0.0.1',0)); port=s.getsockname()[1]
-    server=ThreadingHTTPServer(('127.0.0.1',port),Quiet); threading.Thread(target=server.serve_forever,daemon=True).start()
-    return server,f'http://127.0.0.1:{port}/index.html'
+    server=BrowserFixtureServer(('127.0.0.1',0),Quiet); threading.Thread(target=server.serve_forever,daemon=True).start()
+    return server,f'http://127.0.0.1:{server.server_port}/index.html'
 def assert_no_errors(observed):
     errors=[x for x in observed['console'] if x[0]=='error']
     assert not errors and not observed['pageerror'], {'console':errors,'pageerror':observed['pageerror'],'failed':observed['failed']}

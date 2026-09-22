@@ -33,9 +33,14 @@ class Quiet(SimpleHTTPRequestHandler):
         pass
 
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size = 128
+    daemon_threads = True
+
+
 def serve(root):
-    server = ThreadingHTTPServer(("127.0.0.1", 0),
-                                 functools.partial(Quiet, directory=str(root)))
+    server = BrowserFixtureServer(("127.0.0.1", 0),
+                                  functools.partial(Quiet, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     return server, f"http://127.0.0.1:{server.server_port}/index.html"
 

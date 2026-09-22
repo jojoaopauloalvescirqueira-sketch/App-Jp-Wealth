@@ -14,6 +14,10 @@ class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *_args: object) -> None:
         pass
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size = 128
+    daemon_threads = True
+
     def handle(self) -> None:
         try:
             super().handle()
@@ -24,7 +28,7 @@ class Quiet(SimpleHTTPRequestHandler):
 
 def main() -> None:
     os.chdir(ROOT)
-    server = ThreadingHTTPServer(("127.0.0.1", 0), Quiet)
+    server = BrowserFixtureServer(("127.0.0.1", 0), Quiet)
     server_port = int(server.server_address[1])
     threading.Thread(target=server.serve_forever, daemon=True).start()
     try:

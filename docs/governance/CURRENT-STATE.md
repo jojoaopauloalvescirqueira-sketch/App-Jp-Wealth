@@ -1,3 +1,19 @@
+# Candidate local verificado — Liquid Glass
+
+Fotografia operacional congelada em 2026-09-22. Base Git
+`4ba8d61af363f3130518b0dcbf3e6d2ae876bf77`, branch
+`codex/liquid-glass-navigation-20260921`, worktree isolada em
+`/Users/joaopauloalves/.codex/liquid-glass-navigation/20260921/product`.
+O delta autorizado adiciona uma terceira composição visual e a preferência
+auxiliar `jpw_nav_glass_tint` ao workspace do Backup Completo; não altera domínio
+financeiro, rotas ou schema de `S`. O build `6739a2a96e21d863` passou no gate
+completo com 57/57 verificações e na matriz focal de 140 casos visuais. O
+candidate aguarda revisão visual manual; nenhum commit, push, merge, publicação
+ou aceite humano é declarado.
+Contrato: [CHG-LIQUID-GLASS-NAVIGATION-20260921](../work/CHG-LIQUID-GLASS-NAVIGATION-20260921.md).
+
+## Histórico preservado
+
 # Atualização focal — motor Forex integrado
 
 Fonte desta informação Forex: commit `01c08241ccb7bc229a05779a52f577ee55a69ae7`, build `9f236bf4a421a1bf`. O catálogo de Parâmetros alimenta o motor central; ver [FOREX-V11-ENGINE](../architecture/FOREX-V11-ENGINE.md) e [PROJECT-CONTEXT](PROJECT-CONTEXT.md). Não é homologação financeira: compatibilidade legada, dimensão operacional indisponível, A12 parcial, OPEN-05/V11/FCR/FEO e AUD-05/P2 permanecem. Esta atualização documental local não declara integração deste lote nem reconciliação global do contexto.
