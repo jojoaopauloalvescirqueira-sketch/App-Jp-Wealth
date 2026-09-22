@@ -1,4 +1,4 @@
-# Candidate local implementado — Lateral em níveis
+# Lateral em níveis integrada à `main`
 
 Base Git `22bc889c7f0ece4b8b9a7d1b1ddda57d638a34da`, branch isolada
 `codex/submenu-sidebar-navigation-20260922`. O delta autorizado acrescenta uma
@@ -9,8 +9,10 @@ workspace do Backup Completo; não altera domínio financeiro, rotas ou schema d
 preferências, ordem, Settings, Notas, Backup Completo, estrutura, portátil e
 PWA. O gate completo não ficou verde neste host: suas duas melhores rodadas
 tiveram 55/57 PASS, com boots HTTP parciais variáveis; todos os casos falhos
-passaram isoladamente sem mudança de código. Não há commit, push, merge,
-publicação ou aceite visual desta entrega.
+passaram isoladamente sem mudança de código. O candidate está no commit
+`805c4be`, publicado na branch `codex/submenu-sidebar-navigation-20260922` e
+integrado à `main` pelo merge commit `3ccea2a`; branch e `main` foram publicadas
+no remoto. Publicação do produto e aceite visual continuam gates separados.
 Contrato: [CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922](../work/CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922.md).
 
 ## Histórico preservado

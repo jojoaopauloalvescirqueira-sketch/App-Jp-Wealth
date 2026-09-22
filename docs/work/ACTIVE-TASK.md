@@ -1,4 +1,4 @@
-# Candidate local — quarta navegação Lateral em níveis
+# Integração Git concluída — quarta navegação Lateral em níveis
 
 Implementação N2 autorizada em 2026-09-22 sobre a base oficial `22bc889`, na
 worktree `codex/submenu-sidebar-navigation-20260922`. O contrato adiciona a
@@ -11,8 +11,10 @@ O candidate de produto `e606146a740126cb` passou nos focais de navegação,
 preferências, ordem, Settings, Notas, Backup Completo, estrutura, portátil e
 PWA. O gate completo permaneceu instável por boot HTTP parcial: 55/57 checks
 passaram nas duas melhores rodadas, e os casos restantes passaram isoladamente.
-Nenhuma asserção foi reduzida. Commit, push, merge, publicação e aceite visual
-ainda não foram declarados.
+Nenhuma asserção foi reduzida. O candidate foi registrado no commit `805c4be`,
+publicado na branch `codex/submenu-sidebar-navigation-20260922` e integrado à
+`main` pelo merge commit `3ccea2a`. Branch e `main` foram publicadas no remoto.
+Publicação do produto e aceite visual continuam separados.
 
 ## Histórico preservado
 

@@ -15,6 +15,14 @@
 - **Branch/worktree:** `codex/submenu-sidebar-navigation-20260922` em
   `/Users/joaopauloalves/.codex/submenu-sidebar-navigation/20260922/product`.
 
+## Recibo de integração Git
+
+- Candidate: commit `805c4be`.
+- Branch publicada: `origin/codex/submenu-sidebar-navigation-20260922`.
+- Integração: merge commit `3ccea2a` na `main`.
+- `main` publicada no remoto em 2026-09-22.
+- Publicação do produto e aceite visual permanecem etapas separadas.
+
 ## Escopo e invariantes
 
 1. `jpw_nav_layout` passa a aceitar `sidebar`, `topbar`, `glass` e `submenu`.
