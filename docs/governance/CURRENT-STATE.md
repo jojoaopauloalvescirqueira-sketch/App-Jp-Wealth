@@ -1,15 +1,15 @@
-# Candidate local verificado — Liquid Glass
+# Liquid Glass integrado ao `main`
 
-Fotografia operacional congelada em 2026-09-22. Base Git
-`4ba8d61af363f3130518b0dcbf3e6d2ae876bf77`, branch
-`codex/liquid-glass-navigation-20260921`, worktree isolada em
-`/Users/joaopauloalves/.codex/liquid-glass-navigation/20260921/product`.
+Integração autorizada pelo proprietário e executada em 2026-09-22. Base Git
+`4ba8d61af363f3130518b0dcbf3e6d2ae876bf77`; candidate publicado no commit
+`41db961` da branch `codex/liquid-glass-navigation-20260921` e integrado ao
+`main` pelo merge commit `9290192`.
 O delta autorizado adiciona uma terceira composição visual e a preferência
 auxiliar `jpw_nav_glass_tint` ao workspace do Backup Completo; não altera domínio
 financeiro, rotas ou schema de `S`. O build `6739a2a96e21d863` passou no gate
-completo com 57/57 verificações e na matriz focal de 140 casos visuais. O
-candidate aguarda revisão visual manual; nenhum commit, push, merge, publicação
-ou aceite humano é declarado.
+completo com 57/57 verificações e na matriz focal de 140 casos visuais. Commit,
+push da branch e merge foram concluídos; aceite visual e publicação de produto
+continuam gates separados.
 Contrato: [CHG-LIQUID-GLASS-NAVIGATION-20260921](../work/CHG-LIQUID-GLASS-NAVIGATION-20260921.md).
 
 ## Histórico preservado

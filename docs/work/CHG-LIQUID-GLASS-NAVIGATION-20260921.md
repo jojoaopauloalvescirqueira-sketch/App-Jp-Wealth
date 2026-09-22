@@ -89,5 +89,9 @@ rota ativa não corresponde à expectativa Classic antiga e o cenário lifecycle
 retorna os mesmos estados bloqueados no base e neste candidate. O teste e o
 comportamento foram preservados, sem flexibilização de asserções.
 
-O candidate está pronto para revisão visual manual. Esta fotografia não declara
-commit, push, merge, publicação nem aceite humano.
+## Integração autorizada
+
+O proprietário autorizou commit, push e merge em 2026-09-22. O conteúdo
+congelado foi publicado como `41db961` na branch
+`codex/liquid-glass-navigation-20260921` e integrado ao `main` pelo merge commit
+`9290192`. A integração não equivale a aceite visual nem a publicação do produto.
