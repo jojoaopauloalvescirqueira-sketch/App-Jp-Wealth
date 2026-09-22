@@ -7,7 +7,7 @@ Plano integral autorizado pelo proprietário nesta conversa. Contrato: [CHG-FORE
 - Base: `a62258f1a1ca5b0e32ea9f36bb4106fba37e4414`, main/remoto conferidos, worktree inicialmente limpa.
 - Objetivo: sete destinos Forex, tabela por fase, leituras econômicas sobre saldo registrado, ID/HASH e Raiz-N diagnóstico explícito.
 - Risco máximo N3 financeiro, extensão aditiva N2 especificamente aprovada; política V11 e bloqueios preservados.
-- Estado: implementação concluída para revisão visual, build `247bf13458098290`. Validação e limitações registradas no CHG; aceite visual, commit/push/merge/publicação separados.
+- Estado: implementação concluída para revisão visual, build `247bf13458098290`. Validação e limitações registradas no CHG. Candidate `346e701` commitado e publicado na branch após autorização posterior de commit, merge e push; a integração final é conferida no Git. Publicação do aplicativo e homologação financeira permanecem separadas.
 - Evidências sintéticas: `/Users/joaopauloalves/.codex/forex-execution-board-table/20260922/evidence`.
 
 O histórico da tarefa anterior permanece em Git.

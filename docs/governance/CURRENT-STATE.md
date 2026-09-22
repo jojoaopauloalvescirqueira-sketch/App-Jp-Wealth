@@ -20,8 +20,10 @@ registrados na pasta externa `~/.codex/forex-execution-board-table/20260922/evid
 O CHG registra os 54 checks da rodada full e a aprovação dos três restantes
 em reexecução após reparar o ponteiro Git afetado pela mudança externa de pasta;
 não declara uma rodada full 57/57. Limitações de três oráculos legados também
-estão identificadas. Candidate concluído para revisão visual, sem integração
-ou publicação. Esta tarefa não editou main nem outras worktrees.
+estão identificadas. Candidate `346e701` concluído e publicado na branch
+após autorização posterior de commit, merge e push; a integração final é
+conferida pelas referências Git. Publicação do aplicativo continua separada.
+A pasta principal e suas alterações documentais preexistentes foram preservadas.
 
 ## Histórico anterior preservado
 

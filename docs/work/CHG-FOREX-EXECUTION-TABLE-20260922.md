@@ -99,3 +99,7 @@ Limitações herdadas fora do delta: a suite antiga `forex_execution_board_test`
 ## Fechamento técnico e entrega
 
 Candidate local concluído para revisão visual, build `247bf13458098290`. A revisão documental final corrigiu a descrição do snapshot: N/F é capturado ao registrar/corrigir a ordem e a finalização conserva a última versão confirmada. Testes numéricos, identidade, persistência, navegação, tabela, Backup Completo e PWA possuem recibos; os três oráculos legados mencionados acima permanecem classificados, sem alegação de aprovação. Fingerprint final externo em `evidence/candidate-inputs.json`; consolidação em `evidence/final-validation.json`. Aprovação visual, integração Git e publicação continuam separadas. A main manteve HEAD `a62258f`; alterações documentais e mudança de pasta observadas nela durante o trabalho são externas a esta implementação e foram preservadas.
+
+## Integração Git autorizada posteriormente
+
+Em solicitação posterior, o proprietário autorizou expressamente commit, merge e push desta entrega. O candidate foi registrado em `346e701` e publicado na branch `codex/forex-execution-board-table-20260922`. Essa autorização posterior substitui apenas a proibição de ações Git da fase inicial; publicação do aplicativo e homologação financeira permanecem fora do escopo. O estado final da integração é verificado pelas referências Git, sem incorporar as alterações documentais preexistentes da pasta principal.
