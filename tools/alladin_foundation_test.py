@@ -32,7 +32,6 @@ dizia PASS com dois casos cegos.
 import io
 import json
 import os
-import socket
 import subprocess
 import sys
 import tarfile
@@ -73,15 +72,28 @@ class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *_args):
         pass
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size = 128
+    daemon_threads = True
+
+
+def extract_data_archive(tf, directory):
+    """Python 3.9 equivalent of extractall(filter="data") for git archives."""
+    root = Path(directory).resolve()
+    for member in tf.getmembers():
+        destination = (root / member.name).resolve()
+        if destination != root and root not in destination.parents:
+            raise AssertionError(f"archive member escapes destination: {member.name}")
+        if member.issym() or member.islnk() or not (member.isdir() or member.isfile()):
+            raise AssertionError(f"unsupported archive member: {member.name}")
+    tf.extractall(directory)
+
 
 def serve(directory=None):
-    with socket.socket() as probe:
-        probe.bind(("127.0.0.1", 0))
-        port = probe.getsockname()[1]
     handler = partial(QuietHandler, directory=str(directory)) if directory else QuietHandler
-    server = ThreadingHTTPServer(("127.0.0.1", port), handler)
+    server = BrowserFixtureServer(("127.0.0.1", 0), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    return server, f"http://127.0.0.1:{port}/index.html"
+    return server, f"http://127.0.0.1:{server.server_port}/index.html"
 
 
 def boot(browser, url, pronto, mutacao_js=None):
@@ -286,7 +298,7 @@ def main() -> int:
                 tar_bytes = subprocess.run(["git", "archive", OLD_BUILD_SHA], cwd=ROOT,
                                            capture_output=True, check=True).stdout
                 with tarfile.open(fileobj=io.BytesIO(tar_bytes)) as tf:
-                    tf.extractall(tmp, filter="data")
+                    extract_data_archive(tf, tmp)
                 old_server, old_url = serve(directory=tmp)
                 try:
                     fixture = ("{schemaVersion:2, reportingCurrency:'BRL',"
@@ -523,7 +535,7 @@ def main() -> int:
                 tar = subprocess.run(["git", "archive", C1_BUILD_SHA], cwd=ROOT,
                                      capture_output=True, check=True).stdout
                 with tarfile.open(fileobj=io.BytesIO(tar)) as tf:
-                    tf.extractall(tmp, filter="data")
+                    extract_data_archive(tf, tmp)
                 srv, c1url = serve(directory=tmp)
                 try:
                     ctx, page, erros = boot(browser, c1url, PRONTO_NOVO, f"S.alladin = {FIXTURE_B};")

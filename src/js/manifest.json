@@ -44,7 +44,7 @@
       "path": "src/js/00-core/07-workspace-backup.js",
       "section": "Portable workspace backup",
       "order": 7,
-      "sha256": "249f2077cde383dba72c12801374189ebe0385888404c463245e405919efb987"
+      "sha256": "c7df7c6f4bc03ca77ec7f09caedcb3d1124e63d6426dd8dcedc475de87d9245d"
     },
     {
       "order": 8,
@@ -212,7 +212,7 @@
       "order": 35,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "b25298b0558380b3b8eea8da7e2fc3f400ff0571f8dffdb25e52d4d2142af8e6"
+      "sha256": "81fbff5142c6e7fef56f133fd7daa0989083e46d3e496ce2170881ce69de46bc"
     },
     {
       "order": 36,
@@ -272,13 +272,13 @@
       "order": 45,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "32a04afe8c735b6a4e4195ca4d35e1643e82c0cf8bbfab57b3d037c95f15f0d6"
+      "sha256": "2e8427752787bd6f66dd50890864662ea86e1620d1cec985fb742da5d0f0fc53"
     },
     {
       "order": 46,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "bfb80c3035ecc762ee98ecc1c620f5dc1e54c69f81f46a578b87b5fdf079e691"
+      "sha256": "2050a0b6ae1da3b8af34a17e49f9e48abdad52f1b12aa07a84e130aecfcf1a46"
     },
     {
       "order": 47,

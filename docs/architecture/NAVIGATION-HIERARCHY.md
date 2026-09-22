@@ -115,9 +115,10 @@ em Forex; este incremento não altera essa projeção.
 
 ## Alternativa de apresentação no Editor
 
-`#navLayoutSeg` oferece Menu lateral (padrão) e Barra superior (anterior).
-A chave aditiva `jpw_nav_layout` aceita apenas `sidebar` ou `topbar`, fora de S,
-schemas e backups financeiros. Ausência, valor inválido ou leitura indisponível
+`#navLayoutSeg` oferece Menu lateral (padrão), Barra superior (anterior) e
+Liquid Glass. A chave aditiva `jpw_nav_layout` aceita apenas `sidebar`, `topbar`
+ou `glass`, fora de S e dos schemas financeiros, mas incluída no bloco workspace
+do Backup Completo. Ausência, valor inválido ou leitura indisponível
 exibem lateral sem gravar, normalizar ou remover a preferência; erro/valor
 inválido são informados no Editor. Somente a escolha explícita grava essa chave. Leitura/gravação e controles
 pertencem a `20-ui/12-nav-style.js`; o controlador do shell apenas monta a
@@ -145,6 +146,23 @@ navegação ou renderizadores de domínio. O isolamento da Central e de Notas in
 recipiente N2 reparenteável e restaura o estado de foco/inert conforme a
 composição vigente. A troca de apresentação não altera as telas ou a
 realocação Dashboard→Forex.
+
+No Liquid Glass, o mesmo header forma uma cápsula centralizada de até 1180 px.
+Marca, seis módulos e ações globais permanecem nós únicos. Em largura desktop,
+o `#navSubShell` é o segundo painel de vidro e o body reserva espaço para que a
+faixa Forex e o conteúdo não sejam cobertos. Abaixo de 1180 px, o mesmo botão
+de menu passa para a primeira linha da cápsula e abre uma expansão vertical
+não modal: não há backdrop, bloqueio de rolagem, `inert` no conteúdo ou trap de
+Tab. Escape, clique fora e escolha de destino final fecham a expansão; escolher
+um módulo com filhos conserva o painel aberto até a seleção do destino.
+
+O acabamento Glass ignora temporariamente `jpw_nav`; o Editor desabilita o
+controle Kinetic/Pill/Clássico e explica que a escolha continua salva. A chave
+`jpw_nav_glass_tint` guarda uma string inteira canônica entre `0` e `100`, com
+padrão visual 60. `input` produz prévia; `change` grava e confirma por releitura.
+Valor ausente/inválido e leitura indisponível usam 60 sem escrever. Fallbacks
+opacos cobrem transparência reduzida, alto contraste e ausência de
+`backdrop-filter`; movimento reduzido remove transições.
 
 ## A marca como acesso ao Dashboard
 
@@ -332,8 +350,9 @@ scroll, sem persistir a abertura da gaveta nem a adaptação de viewport.
 As evidências focais estão em `tools/navigation_ia_test.py`,
 `tools/exec_submenu_test.py`, `tools/finpes_navigation_test.py`,
 `tools/research_navigation_test.py` e `tools/contextual_sidebar_test.py`.
-`tools/navigation_layout_choice_test.py` verifica a escolha, recarga, erros,
-compatibilidade e alternância dos mesmos nós entre as duas composições.
+`tools/navigation_layout_choice_test.py` verifica escolha, transparência,
+recarga, erros, compatibilidade e alternância dos mesmos nós entre as três
+composições.
 `tools/dashboard_forex_relocation_test.py` mantém a regressão específica v6.
 Os gates existentes permanecem inalterados; execução e auditoria são
 registradas no candidate efetivamente testado, sem presumir aprovação pelo

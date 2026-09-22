@@ -1,3 +1,18 @@
+# Candidate congelado — terceira navegação Liquid Glass
+
+Implementação N2 autorizada em 2026-09-21 sobre a base oficial `4ba8d61`, na
+worktree isolada `codex/liquid-glass-navigation-20260921`. O contrato inclui a
+terceira composição, transparência `jpw_nav_glass_tint`, round-trip do Backup
+Completo schemaVersion 1, fallbacks de acessibilidade e verificação desktop/
+compacta. Lateral continua padrão; lateral e superior permanecem preservadas.
+Contrato e limites: [CHG-LIQUID-GLASS-NAVIGATION-20260921](CHG-LIQUID-GLASS-NAVIGATION-20260921.md).
+O candidate `6739a2a96e21d863` foi validado em 2026-09-22: focal de navegação e
+backup aprovados, matriz visual com 140 casos, validação estrutural aprovada e
+gate completo com 57/57 PASS. Aguarda revisão visual manual. Commit, push, merge,
+publicação e aceite continuam gates separados e não foram executados.
+
+## Histórico preservado
+
 # Últimas alterações — integração autorizada
 
 Atalho do Safari, nome **Jp Wealth Built on Method** e ícones PWA sólidos.

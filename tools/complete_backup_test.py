@@ -5,15 +5,20 @@ from pathlib import Path
 from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap,wait_bootstrap
+from dashboard_macro_test import launch_browser
 ROOT=Path(__file__).resolve().parents[1]
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*args):pass
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size=128
+    daemon_threads=True
+
 def main():
-    server=ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Quiet,directory=str(ROOT)))
+    server=BrowserFixtureServer(('127.0.0.1',0),functools.partial(Quiet,directory=str(ROOT)))
     threading.Thread(target=server.serve_forever,daemon=True).start()
     with sync_playwright() as p:
-        browser=p.chromium.launch()
+        browser=launch_browser(p)
         def page(path='index.html'):
             ctx=browser.new_context();install_bootstrap(ctx);q=ctx.new_page();q.errors=[];q.alerts=[]
             q.on('pageerror',lambda e:q.errors.append(str(e)))
@@ -34,7 +39,7 @@ def main():
                 const before=sessionStateFingerprint();
                 const preferences={
                     jpwealth_local_profile_v1:JSON.stringify({schemaVersion:1,displayName:'Synthetic gallery',avatarDataUrl:SETTINGS_PROFILE_AVATARS[0].avatarDataUrl}),
-                    jpw_fs:'2',jpw_expl:'off',jpw_rail:'collapsed',jpw_nav:'pill',jpw_nav_layout:'topbar',
+                    jpw_fs:'2',jpw_expl:'off',jpw_rail:'collapsed',jpw_nav:'pill',jpw_nav_layout:'glass',jpw_nav_glass_tint:'60',
                     jpw_nav_order:JSON.stringify({schemaVersion:1,order:['alladin','forex','personal-finance','research','dashboard']}),
                     jpwealth_v9_icon_choice:'secondary',jpwealth_v9_icon_theme:'dark',
                     'jpwealth.ui.widgetLayouts.v6':JSON.stringify(dashLayoutNormalizeV6(null)),
@@ -104,6 +109,10 @@ def main():
                 d=page();d.evaluate("localStorage.setItem('jpw_fs','1')");restore(d,legacy)
                 assert d.evaluate("localStorage.getItem('jpw_fs')")=='1'
                 print('PASS legacy backup preserves destination preferences',flush=True)
+                old_workspace=json.loads(json.dumps(payload));old_workspace['workspace']['preferences'].pop('jpw_nav_glass_tint',None)
+                d2=page();d2.evaluate("localStorage.setItem('jpw_nav_glass_tint','88')");restore(d2,old_workspace)
+                assert d2.evaluate("localStorage.getItem('jpw_nav_glass_tint')")=='88'
+                print('PASS schema v1 workspace without glass tint preserves destination preference',flush=True)
                 # A custom uploaded-photo raster is self-contained as well.
                 custom=a.evaluate("""async()=>{
                   const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;
@@ -141,14 +150,15 @@ def main():
                 assert 'Exporte uma nova cópia' in h.locator('#modalBox').inner_text()
                 assert h.evaluate('jpWealthPersistenceIsBlocked()') is False
                 print('PASS preferences changed during export / before finalization are refused',flush=True)
-                for change in ['future','unknown-key','bad-image','bad-drafts','nested-pollution']:
+                for change in ['future','unknown-key','bad-image','bad-drafts','nested-pollution','bad-glass-tint']:
                     bad=json.loads(json.dumps(payload))
                     if change=='future':bad['workspace']['schemaVersion']=2
                     if change=='unknown-key':bad['workspace']['preferences']['foreign_app']='x'
                     if change=='bad-image':bad['workspace']['preferences']['jpwealth_local_profile_v1']=json.dumps(dict(schemaVersion=1,displayName='x',avatarDataUrl='data:image/jpeg;base64,YWJj'))
                     if change=='bad-drafts':bad['workspace']['drafts']=[{'label':'x','text':{}}]
                     if change=='nested-pollution':bad['workspace']['preferences']['jpwealth_galton_preferences_v1']='{"__proto__":{"x":1}}'
-                    outcome=d.evaluate('''bad=>{const before=localStorage.getItem(LSKEY);try{normalizeImportedState(bad);return false;}catch(e){return before===localStorage.getItem(LSKEY);}}''',bad)
+                    if change=='bad-glass-tint':bad['workspace']['preferences']['jpw_nav_glass_tint']='101'
+                    outcome=d.evaluate('''bad=>{const before=JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));try{normalizeImportedState(bad);return false;}catch(e){return before===JSON.stringify(Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));}}''',bad)
                     assert outcome,change
                 print('PASS invalid workspace rejected before mutation',flush=True)
         browser.close()

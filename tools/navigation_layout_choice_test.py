@@ -23,24 +23,28 @@ from contextual_sidebar_test import LAYOUT_KEY, LAYOUT_RAW, UNKNOWN_KEY, UNKNOWN
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "tools/.artifacts/navigation-layout-choice"
 KEY = "jpw_nav_layout"
+TINT_KEY = "jpw_nav_glass_tint"
 PORTABLE = "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html"
-PROTECTED = [KEY, "jpw_nav", "jpw_rail", LAYOUT_KEY, UNKNOWN_KEY]
+PROTECTED = [KEY, TINT_KEY, "jpw_nav", "jpw_rail", LAYOUT_KEY, UNKNOWN_KEY]
 SOURCES = ["index.html", "src/styles/app.css", "src/js/20-ui/12-nav-style.js",
            "src/js/40-app/11-operational-shell.js", "src/js/40-app/12-global-dashboard.js",
            "src/js/40-app/09-settings-modal.js", "src/js/40-app/14-mvp-notes.js",
            "src/js/manifest.json", "build-id.js",
-           PORTABLE, "tools/navigation_layout_choice_test.py"]
+           PORTABLE, "tools/navigation_layout_choice_test.py", "tools/dashboard_forex_relocation_test.py"]
 
 
 def settle(page):
     page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
 
 
-def boot(browser, url, preference=None, width=1440, style="classic", rail="expanded", read_failure=False):
+def boot(browser, url, preference=None, width=1440, style="classic", rail="expanded", read_failure=False,
+         tint=None, tint_read_failure=False):
     seed = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
             "jpw_nav": style, "jpw_rail": rail}
     if preference is not None:
         seed[KEY] = preference
+    if tint is not None:
+        seed[TINT_KEY] = tint
     context = browser.new_context(viewport={"width": width, "height": 1000 if width > 900 else 844},
                                   service_workers="block")
     context.add_init_script("""(() => {
@@ -52,13 +56,17 @@ def boot(browser, url, preference=None, width=1440, style="classic", rail="expan
       window.__onbShown=true;
       window.__nlOps=[];
       window.__nlReadFailure=""" + json.dumps(read_failure) + """;
+      window.__nlTintReadFailure=""" + json.dumps(tint_read_failure) + """;
       window.__nlWriteFailure=false;
+      window.__nlTintWriteFailure=false;
       const get=Storage.prototype.getItem,set=Storage.prototype.setItem;
       const remove=Storage.prototype.removeItem,clear=Storage.prototype.clear;
       window.__nlRaw=()=>Object.fromEntries(Object.keys(localStorage).sort().map(k=>[k,get.call(localStorage,k)]));
       Storage.prototype.getItem=function(k){
         if(this===localStorage && String(k)==='jpw_nav_layout' && window.__nlReadFailure)
           throw new DOMException('Synthetic unavailable read','SecurityError');
+        if(this===localStorage && String(k)==='jpw_nav_glass_tint' && window.__nlTintReadFailure)
+          throw new DOMException('Synthetic unavailable tint read','SecurityError');
         return get.call(this,k);
       };
       Storage.prototype.setItem=function(k,v){
@@ -66,6 +74,8 @@ def boot(browser, url, preference=None, width=1440, style="classic", rail="expan
           window.__nlOps.push(['set',String(k),String(v),document.documentElement?.dataset.navigation]);
           if(String(k)==='jpw_nav_layout' && window.__nlWriteFailure)
             throw new DOMException('Synthetic unavailable write','QuotaExceededError');
+          if(String(k)==='jpw_nav_glass_tint' && window.__nlTintWriteFailure)
+            throw new DOMException('Synthetic unavailable tint write','QuotaExceededError');
         }
         return set.call(this,k,v);
       };
@@ -155,6 +165,7 @@ def assert_structure(page, expected):
       return {
         navParent:n.parentElement.id,
         shellAtBody:s.parentElement===document.body,
+        shellInHeader:s.parentElement===document.querySelector('body > header'),
         shellBeforeContext:!!(s.compareDocumentPosition(host('gdContextRow'))&Node.DOCUMENT_POSITION_FOLLOWING),
         shellInSidebar:!!s.closest('#appSidebar'),
         execParent:host('execNavContexts').parentElement.id,
@@ -169,8 +180,12 @@ def assert_structure(page, expected):
     assert result["primaryCount"] == 6 and result["duplicateIds"] == [], result
     if expected == "sidebar":
         assert result["shellInSidebar"] and result["execParent"] == result["researchParent"] == "navLocalSlot", result
-    else:
+    elif expected == "topbar":
         assert result["shellAtBody"] and result["shellBeforeContext"], result
+        assert result["execParent"] == "execNavSubmenu" and result["researchParent"] == "researchNavSubmenu", result
+        assert not page.locator('[data-nav-expand]').evaluate_all("els=>els.some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')")
+    else:
+        assert result["shellInHeader"], result
         assert result["execParent"] == "execNavSubmenu" and result["researchParent"] == "researchNavSubmenu", result
         assert not page.locator('[data-nav-expand]').evaluate_all("els=>els.some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')")
     assert result["dash"] == ["institutional-panel", "quick-actions"], result
@@ -229,6 +244,10 @@ def choose(page, expected):
     page.evaluate("window.__nlOps=[]")
     page.locator(f'#navLayoutSeg [data-nav-layout="{expected}"]').click()
     settle(page)
+    # The shared segmented control intentionally cross-fades its selected
+    # surface. Assert the final visible state after that real CSS transition,
+    # rather than sampling the previous and next colors mid-interpolation.
+    page.wait_for_timeout(180)
     assert ops(page) == [["set", KEY, expected, previous]], ops(page)
     assert raw(page)[KEY] == expected
     assert_structure(page, expected)
@@ -237,12 +256,12 @@ def choose(page, expected):
 
 
 def run_preferences(browser, url, evidence):
-    cases = [None, "sidebar", "topbar", "", "TOPBAR", " topbar ", "future-layout", '{"mode":"topbar"}']
+    cases = [None, "sidebar", "topbar", "glass", "", "TOPBAR", " topbar ", "future-layout", '{"mode":"topbar"}']
     evidence["preferences"] = []
     for preference in cases:
         context, page, observed = boot(browser, url, preference, style="kinetic", rail="collapsed")
         try:
-            expected = preference if preference in {"sidebar", "topbar"} else "sidebar"
+            expected = preference if preference in {"sidebar", "topbar", "glass"} else "sidebar"
             assert_structure(page, expected)
             before = raw(page)
             state = page.evaluate("JSON.stringify(S)")
@@ -277,7 +296,9 @@ def run_failures(browser, url, evidence):
         clean(observed)
     finally:
         finish_context(context)
-    for initial, target in [("sidebar", "topbar"), ("topbar", "sidebar")]:
+    for initial, target in [("sidebar", "topbar"), ("topbar", "sidebar"),
+                            ("sidebar", "glass"), ("glass", "topbar"),
+                            ("topbar", "glass"), ("glass", "sidebar")]:
         context, page, observed = boot(browser, url, initial)
         try:
             editor(page)
@@ -304,7 +325,73 @@ def run_failures(browser, url, evidence):
             clean(observed)
         finally:
             finish_context(context)
-    evidence["failures"] = "PASS: denied read preserves bytes; denied writes in either direction keep the prior presentation and announce in Editor"
+    evidence["failures"] = "PASS: denied read preserves bytes; denied writes among all three layouts keep the prior presentation and announce in Editor"
+
+
+def run_tint(browser, url, evidence):
+    cases = [(None, 60), ("0", 0), ("60", 60), ("100", 100),
+             ("-1", 60), ("101", 60), ("60.0", 60), ("invalid", 60)]
+    evidence["tint"] = []
+    for stored, expected in cases:
+        context, page, observed = boot(browser, url, "glass", tint=stored)
+        try:
+            before = raw(page)
+            editor(page)
+            actual = page.evaluate("""() => ({
+              value:Number(navGlassTint.value),output:navGlassTintValue.value,
+              alpha:getComputedStyle(document.documentElement).getPropertyValue('--nav-glass-alpha').trim(),
+              styleDisabled:[...navStyleSeg.querySelectorAll('button')].every(b=>b.disabled),
+              tintDisabled:navGlassTint.disabled,status:navGlassTintStatus.textContent.trim()
+            })""")
+            assert actual["value"] == expected and actual["output"] == f"{expected}%", (stored, actual)
+            assert actual["styleDisabled"] and not actual["tintDisabled"], actual
+            if stored is not None and stored not in {"0", "60", "100"}:
+                assert actual["status"] and before[TINT_KEY] == stored, (stored, actual, before)
+            page.reload(wait_until="load");ready(page)
+            assert int(page.locator('#navGlassTint').input_value()) == expected
+            assert raw(page) == before and ops(page) == [], (stored, ops(page))
+            clean(observed)
+            evidence["tint"].append({"stored": stored, "presented": expected, "result": "PASS"})
+        finally:
+            finish_context(context)
+
+    context, page, observed = boot(browser, url, "glass", tint="60")
+    try:
+        editor(page);page.evaluate("window.__nlOps=[]")
+        page.locator('#navGlassTint').evaluate("""el=>{el.value='0';el.dispatchEvent(new Event('input',{bubbles:true}));}""")
+        assert raw(page)[TINT_KEY] == "60" and page.locator('#navGlassTintValue').evaluate("e=>e.value") == "0%"
+        page.locator('#navGlassTint').evaluate("el=>el.dispatchEvent(new Event('change',{bubbles:true}))")
+        assert raw(page)[TINT_KEY] == "0" and ops(page) == [["set", TINT_KEY, "0", "glass"]], ops(page)
+        page.evaluate("window.__nlOps=[];window.__nlTintWriteFailure=true")
+        page.locator('#navGlassTint').evaluate("""el=>{el.value='100';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));}""")
+        assert raw(page)[TINT_KEY] == "0"
+        assert page.locator('#navGlassTint').input_value() == "0"
+        assert page.locator('#navGlassTintStatus').inner_text().strip()
+        page.reload(wait_until="load");ready(page)
+        assert page.locator('#navGlassTint').input_value() == "0"
+        cdp = context.new_cdp_session(page)
+        cdp.send('Emulation.setEmulatedMedia', {'media': 'screen', 'features': [
+            {'name': 'prefers-reduced-transparency', 'value': 'reduce'},
+            {'name': 'prefers-reduced-motion', 'value': 'reduce'},
+            {'name': 'prefers-contrast', 'value': 'more'}]})
+        settle(page)
+        accessible = page.evaluate("""() => {const h=getComputedStyle(document.querySelector('body>header')),n=getComputedStyle(document.querySelector('#nav>.tab'));return {backdrop:h.backdropFilter||h.webkitBackdropFilter,background:h.backgroundColor,transition:n.transitionDuration}}""")
+        assert accessible['backdrop'] == 'none', accessible
+        assert accessible['transition'].split(',')[0].strip() in {'0s', '0ms'}, accessible
+        clean(observed)
+    finally:
+        finish_context(context)
+
+    context, page, observed = boot(browser, url, "glass", tint="75", tint_read_failure=True)
+    try:
+        editor(page)
+        assert page.locator('#navGlassTint').input_value() == "60"
+        assert "ler" in page.locator('#navGlassTintStatus').inner_text().lower()
+        assert raw(page)[TINT_KEY] == "75" and ops(page) == []
+        clean(observed)
+    finally:
+        finish_context(context)
+    evidence["tint_persistence"] = "PASS: 0/60/100, absent/invalid/read failure, preview-only input, confirmed change, denied write rollback and reload"
 
 
 def current_snapshot(page):
@@ -363,7 +450,7 @@ def run_lifecycle(browser, url, evidence):
             }""")
             prior_bindings = bindings(page)
             guard_content_calls(page)
-            for target in ["topbar", "sidebar"] * 3:
+            for target in ["topbar", "glass", "sidebar"] * 3:
                 choose(page, target)
                 assert current_snapshot(page) == before, (route, target, "content/context changed during layout switch")
                 assert page.evaluate("window.__nlForbiddenCalls") == [], page.evaluate("window.__nlForbiddenCalls")
@@ -376,17 +463,17 @@ def run_lifecycle(browser, url, evidence):
             assert current_snapshot(page) == before
             assert page.locator("#railToggle").evaluate("e=>e.parentElement.id==='appSidebar'")
             assert not page.locator("#nav").evaluate("e=>e.inert")
-        # Save the secondary choice and reload; no second explicit write occurs.
+        # Save the third choice and reload; no second explicit write occurs.
         editor(page)
-        choose(page, "topbar")
+        choose(page, "glass")
         page.locator("#settingsCloseBtn").click()
         storage_before = raw(page)
         page.reload(wait_until="load")
         ready(page)
-        assert_structure(page, "topbar")
+        assert_structure(page, "glass")
         assert raw(page) == storage_before and ops(page) == []
         clean(observed)
-        evidence["lifecycle"] = "PASS: 18 switches, original DOM/listeners, route/views/drafts/financial reads unchanged, Settings isolation and explicit choice reload"
+        evidence["lifecycle"] = "PASS: 27 switches, original DOM/listeners, route/views/drafts/financial reads unchanged, Settings isolation and explicit glass reload"
     finally:
         finish_context(context)
 
@@ -413,6 +500,26 @@ def drawer_closed(page, restore=False):
         assert page.locator('[data-shell-menu-toggle]').evaluate("e=>e===document.activeElement")
 
 
+def glass_panel_open(page):
+    page.locator('[data-shell-menu-toggle]').click()
+    page.wait_for_function("document.documentElement.dataset.shellMenu==='open'")
+    settle(page)
+    header = page.locator('body > header')
+    assert header.is_visible() and header.get_attribute('role') is None
+    assert page.locator('#nav').is_visible() and not page.locator('#nav').evaluate('e=>e.inert')
+    assert not page.locator('#appMain').evaluate('e=>e.inert')
+    assert page.evaluate("document.body.style.overflow") != "hidden"
+    assert page.locator('#sidebarBackdrop').is_hidden()
+    assert header.evaluate("e=>e.contains(document.activeElement)")
+    return header
+
+
+def glass_panel_closed(page, restore=False):
+    drawer_closed(page, restore=restore)
+    assert page.locator('#nav').is_hidden()
+    assert page.locator('#nav').evaluate('e=>e.inert')
+
+
 def module_entry_keys(page, layout, evidence):
     # N3 remains in the topbar's module panel. Entering N2 from its trigger
     # must never pick a hidden N3 item simply because it is last in DOM order.
@@ -421,7 +528,7 @@ def module_entry_keys(page, layout, evidence):
              ('research-forex', 'research', 'research-forex', 'research-others'),
              ('pivots', 'research', 'research-forex', 'research-others')]
     for route, module, current_child, last_child in cases:
-        trigger = (f'#{module}NavTrigger' if layout == 'topbar'
+        trigger = (f'#{module}NavTrigger' if layout in {'topbar', 'glass'}
                    else f'[data-nav-expand="{module}"]')
         for key, expected in [('ArrowUp', last_child), ('ArrowDown', current_child)]:
             go(page, route)
@@ -444,7 +551,7 @@ def module_entry_keys(page, layout, evidence):
 
 def run_navigation(browser, url, evidence):
     evidence['module_entry_keys'] = []
-    for layout in ["sidebar", "topbar"]:
+    for layout in ["sidebar", "topbar", "glass"]:
         context, page, observed = boot(browser, url, layout)
         try:
             before = raw(page)
@@ -466,7 +573,7 @@ def run_navigation(browser, url, evidence):
             settle(page)
             page.locator('[data-nav-sub-view="cenarios"]').click()
             assert page.evaluate("JPWFin.ui.getView()") == "cenarios"
-            if layout == "topbar":
+            if layout in {"topbar", "glass"}:
                 page.locator('#finpesNavTrigger').focus()
                 page.keyboard.press('ArrowDown')
             else:
@@ -492,31 +599,48 @@ def run_navigation(browser, url, evidence):
         context, page, observed = boot(browser, url, layout, width=390)
         try:
             before = raw(page)
-            drawer = drawer_open(page, layout)
-            for key in ['Tab'] * 14 + ['Shift+Tab'] * 14:
-                page.keyboard.press(key)
-                assert drawer.evaluate("e=>e.contains(document.activeElement)"), "mobile focus escaped"
-            page.keyboard.press('Escape')
-            drawer_closed(page, restore=True)
-            drawer_open(page, layout)
-            page.locator('#sidebarClose').click()
-            drawer_closed(page, restore=True)
-            drawer_open(page, layout)
-            # The topbar drawer spans the viewport width; click BELOW it.
-            # The same visible backdrop point is outside the lateral drawer.
-            page.locator('#sidebarBackdrop').click(position={"x": 385, "y": 800})
-            drawer_closed(page, restore=True)
-            drawer_open(page, layout)
-            page.locator('#execNavTrigger').click()
-            drawer_closed(page)
-            assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
-            if layout == "sidebar":
+            if layout == 'glass':
+                glass_panel_open(page)
+                page.keyboard.press('Escape')
+                glass_panel_closed(page, restore=True)
+                glass_panel_open(page)
+                page.locator('#appMain').click(position={"x": 12, "y": 140})
+                glass_panel_closed(page, restore=True)
+                glass_panel_open(page)
+                page.locator('#execNavTrigger').click()
+                settle(page)
+                assert page.evaluate("document.documentElement.dataset.shellMenu==='open'")
+                assert page.locator('#execNavSubmenu').is_visible()
+                assert page.locator('body > header').evaluate("e=>e.contains(document.activeElement)")
+                assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
+                page.locator('[data-nav-child="forex-operation"]').click()
+                glass_panel_closed(page)
+            else:
+                drawer = drawer_open(page, layout)
+                for key in ['Tab'] * 14 + ['Shift+Tab'] * 14:
+                    page.keyboard.press(key)
+                    assert drawer.evaluate("e=>e.contains(document.activeElement)"), "mobile focus escaped"
+                page.keyboard.press('Escape')
+                drawer_closed(page, restore=True)
                 drawer_open(page, layout)
-            page.locator('[data-nav-child="forex-operation"]').click()
-            drawer_closed(page)
+                page.locator('#sidebarClose').click()
+                drawer_closed(page, restore=True)
+                drawer_open(page, layout)
+                # The topbar drawer spans the viewport width; click BELOW it.
+                # The same visible backdrop point is outside the lateral drawer.
+                page.locator('#sidebarBackdrop').click(position={"x": 385, "y": 800})
+                drawer_closed(page, restore=True)
+                drawer_open(page, layout)
+                page.locator('#execNavTrigger').click()
+                drawer_closed(page)
+                assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
+                if layout == "sidebar":
+                    drawer_open(page, layout)
+                page.locator('[data-nav-child="forex-operation"]').click()
+                drawer_closed(page)
             assert page.evaluate("JPWExec.ui.getView()") == "panel"
             assert page.locator('#exec').evaluate("e=>e.contains(document.activeElement)")
-            drawer_open(page, layout)
+            (glass_panel_open(page) if layout == 'glass' else drawer_open(page, layout))
             page.set_viewport_size({"width": 1440, "height": 1000})
             drawer_closed(page)
             assert_structure(page, layout)
@@ -524,11 +648,11 @@ def run_navigation(browser, url, evidence):
             clean(observed)
         finally:
             finish_context(context)
-    evidence["navigation"] = "PASS: physical N1/N2/N3, Home/End/arrows/Enter, mobile trap/Escape/backdrop/close, child focus and resize in both compositions"
+    evidence["navigation"] = "PASS: physical N1/N2/N3, Home/End/arrows/Enter, modal drawers preserved, non-modal glass Escape/outside/final-destination close, focus and resize in all three compositions"
 
 
 def run_notes(browser, url, evidence):
-    for layout in ['sidebar', 'topbar']:
+    for layout in ['sidebar', 'topbar', 'glass']:
         context, page, observed = boot(browser, url, layout)
         try:
             page.locator('#execNavTrigger').click()
@@ -561,54 +685,61 @@ def run_notes(browser, url, evidence):
             clean(observed)
         finally:
             finish_context(context)
-    evidence['notes'] = 'PASS: Tickets isolates both navigation layouts through five desktop/mobile resizes; close restores working navigation'
+    evidence['notes'] = 'PASS: Tickets isolates all three navigation layouts through five desktop/mobile resizes; close restores working navigation'
 
 
 def run_visual(browser, url, evidence, capture, artifacts):
     evidence["visual_matrix"] = []
     evidence["screenshots"] = []
     builds = set()
-    for layout in ["sidebar", "topbar"]:
+    for layout in ["sidebar", "topbar", "glass"]:
         for rail in ["expanded", "collapsed"]:
             context, page, observed = boot(browser, url, layout, rail=rail)
             try:
                 builds.add(page.evaluate("JP_WEALTH_BUILD_ID"))
-                for style in ["classic", "pill", "kinetic"]:
+                for style in (["classic", "pill", "kinetic"] if layout != "glass" else ["native"]):
                     editor(page)
-                    page.locator(f'#navStyleSeg [data-nav-val="{style}"]').click()
+                    if layout != 'glass':
+                        page.locator(f'#navStyleSeg [data-nav-val="{style}"]').click()
+                    else:
+                        assert page.locator('#navStyleSeg button').evaluate_all('els=>els.every(e=>e.disabled)')
+                        assert not page.locator('#navGlassTint').is_disabled()
                     for editor_theme in ['light', 'dark']:
                         page.evaluate('t=>document.documentElement.dataset.theme=t', editor_theme)
                         settle(page)
                         assert_layout_selection_visual(page, layout)
-                        if capture and rail == 'expanded' and style == 'classic':
+                        if capture and rail == 'expanded' and style in {'classic', 'native'}:
                             name = f'{layout}-editor-1440-{editor_theme}.png'
                             page.screenshot(path=str(artifacts / name), full_page=True)
                             evidence['screenshots'].append(name)
                     page.locator('#settingsCloseBtn').click()
                     settle(page)
                     assert mode(page) == layout and raw(page)["jpw_rail"] == rail
-                    for width in [1440, 1024, 390, 320]:
+                    for width in [1440, 1280, 1024, 390, 320]:
                         page.set_viewport_size({"width": width, "height": 1000 if width > 900 else 844})
                         for theme in ["light", "dark"]:
                             page.evaluate("t=>document.documentElement.dataset.theme=t", theme)
                             go(page, 'forex-overview')
                             assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+1"), (layout, rail, style, width, theme, "overflow")
                             assert_document_flow(page, (layout, rail, style, width, theme, 'forex-overview'))
-                            if width > 900:
+                            wide = width >= 1180 if layout == 'glass' else width > 900
+                            if wide:
                                 assert page.locator('#nav > .tab.active').is_visible()
-                                if style != "classic":
+                                if layout != 'glass' and style != "classic":
                                     page.wait_for_function("() => {const e=document.getElementById('navPillIndicator');return e.getBoundingClientRect().width>0&&e.style.transform.includes('translate')}")
                                     assert page.locator('#navPillIndicator').is_visible()
                                 if layout == "sidebar":
                                     assert page.evaluate("appSidebar.getBoundingClientRect().right<=appMain.getBoundingClientRect().left+1")
+                                if layout == 'glass':
+                                    assert page.evaluate("""() => {const h=document.querySelector('body>header').getBoundingClientRect(),m=appMain.getBoundingClientRect();return h.left>=0&&h.right<=innerWidth&&m.top>=h.bottom-1}""")
                             else:
-                                drawer_open(page, layout)
+                                (glass_panel_open(page) if layout == 'glass' else drawer_open(page, layout))
                                 assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+1")
-                                targets = page.locator('#nav > .tab,#sidebarClose').evaluate_all("els=>els.filter(e=>e.getClientRects().length).map(e=>({id:e.id,w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height}))")
+                                targets = page.locator('#nav > .tab,#sidebarClose,[data-shell-menu-toggle]').evaluate_all("els=>els.filter(e=>e.getClientRects().length).map(e=>({id:e.id,w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height}))")
                                 assert targets and all(t['w'] >= 44 and t['h'] >= 44 for t in targets), targets
                                 page.keyboard.press('Escape')
-                                drawer_closed(page, restore=True)
-                            if capture and rail == "expanded" and style == "classic" and width in [1440, 390]:
+                                (glass_panel_closed(page, restore=True) if layout == 'glass' else drawer_closed(page, restore=True))
+                            if capture and rail == "expanded" and style in {'classic', 'native'} and width in [1440, 390]:
                                 for route, label in [('dashboard', 'dashboard'), ('forex-overview', 'forex')]:
                                     go(page, route)
                                     assert_document_flow(page, (layout, rail, style, width, theme, route))
@@ -623,27 +754,28 @@ def run_visual(browser, url, evidence, capture, artifacts):
                 finish_context(context)
     assert len(builds) == 1, builds
     evidence['browser_build'] = next(iter(builds))
-    evidence['visual_limit'] = '1440/1024/390/320 CSS px; no claim of real browser zoom, screen reader session or exhaustive WCAG audit'
+    evidence['visual_limit'] = '1440/1280/1024/390/320 CSS px; responsive 1024 is also the 200% zoom-equivalent geometry of a 2048px viewport; no claim of screen reader session or exhaustive WCAG audit'
 
 
 def run_portable(browser, url, evidence):
     portable_url = url.rsplit('/', 1)[0] + '/' + PORTABLE
-    context, page, observed = boot(browser, portable_url, "topbar")
+    context, page, observed = boot(browser, portable_url, "glass", tint="60")
     try:
         build = page.evaluate('JP_WEALTH_BUILD_ID')
         assert build in (ROOT / 'build-id.js').read_text(), 'portable build differs from modular candidate'
-        assert_structure(page, 'topbar')
+        assert_structure(page, 'glass')
         go(page, 'forex-operation')
         editor(page)
         before = current_snapshot(page)
         choose(page, 'sidebar')
         choose(page, 'topbar')
+        choose(page, 'glass')
         assert current_snapshot(page) == before
         page.locator('#settingsCloseBtn').click()
         stored = raw(page)
         page.reload(wait_until='load')
         ready(page)
-        assert_structure(page, 'topbar')
+        assert_structure(page, 'glass')
         assert raw(page) == stored and ops(page) == []
         clean(observed)
         evidence['portable'] = {'result': 'PASS', 'build': build,
@@ -658,7 +790,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--artifacts', type=Path, default=ARTIFACTS)
     parser.add_argument('--capture', action='store_true')
-    parser.add_argument('--only', choices=['preferences', 'failures', 'lifecycle', 'navigation', 'notes', 'visual', 'portable'])
+    parser.add_argument('--only', choices=['preferences', 'failures', 'tint', 'lifecycle', 'navigation', 'notes', 'visual', 'portable'])
     args = parser.parse_args()
     args.artifacts.mkdir(parents=True, exist_ok=True)
     hashes = {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in SOURCES}
@@ -673,6 +805,7 @@ def main():
             try:
                 runs = {'preferences': lambda: run_preferences(browser, url, evidence),
                         'failures': lambda: run_failures(browser, url, evidence),
+                        'tint': lambda: run_tint(browser, url, evidence),
                         'lifecycle': lambda: run_lifecycle(browser, url, evidence),
                         'navigation': lambda: run_navigation(browser, url, evidence),
                         'notes': lambda: run_notes(browser, url, evidence),

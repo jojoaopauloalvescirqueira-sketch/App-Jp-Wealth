@@ -1,9 +1,9 @@
 // ============ ESTILO DA NAVEGAÇÃO (KineticNav | Floating Pill Nav | Clássica) ============
 // Preferência de APRESENTAÇÃO, no mesmo contrato de jpw_rail, jpw_fs e jpw_expl:
 // vive em localStorage (é por navegador, não por base), aplica-se como atributo
-// em <html> e é exposta como segmentado na Central. Deliberadamente FORA de S —
-// nada aqui entra no backup, no schema ou na migração, e por isso trocar de
-// estilo não tem como afetar dado operacional.
+// em <html> e é exposta como segmentado na Central. Fica FORA de S, mas integra
+// o bloco opcional workspace do Backup Completo; trocar o estilo não altera
+// dado operacional.
 //
 // Os dois primeiros nomes são os que os autores deram aos componentes de
 // referência; a terceira é a barra própria do aplicativo, sem autor externo.
@@ -82,8 +82,11 @@ function scheduleNavPill(){
 }
 function renderNavStyleSeg(){
   const v=navStyleValue();
+  const glass=document.documentElement.getAttribute('data-navigation')==='glass';
   document.querySelectorAll('#navStyleSeg button').forEach(b=>{
     b.classList.toggle('on', b.dataset.navVal===v);
+    b.disabled=glass;
+    b.setAttribute('aria-disabled',String(glass));
     // Marca de "padrão do sistema". É decorativa: quem carrega a informação em
     // texto é a legenda abaixo, para leitor de tela e para quem não distingue
     // a marca visual.
@@ -100,6 +103,11 @@ function renderNavStyleSeg(){
       ? `Padrão do sistema: ${nome} — é o que você está usando, e o que aparece para quem abre o aplicativo pela primeira vez.`
       : `Padrão do sistema: ${nome} — é o que aparece para quem abre o aplicativo pela primeira vez. A sua escolha atual é outra e vale só neste navegador.`;
   }
+  const availability=document.getElementById('navStyleAvailabilityNote');
+  if(availability)availability.textContent=glass
+    ? 'O Liquid Glass possui acabamento próprio. Sua escolha de estilo continua salva e volta a ser aplicada ao retornar ao menu lateral ou à barra superior.'
+    : '';
+  document.getElementById('navStyleField')?.classList.toggle('is-disabled',glass);
 }
 function bindNavStyleSeg(){
   document.querySelectorAll('#navStyleSeg button').forEach(b=>{if(b.dataset.navBound)return;b.dataset.navBound='true';b.addEventListener('click',()=>{
@@ -170,14 +178,81 @@ setTimeout(positionNavPill, 300);
 // Composição por navegador. A persistência pertence aos controles de
 // apresentação; o shell recebe apenas a escolha validada para montar o DOM.
 const NAV_LAYOUT_KEY='jpw_nav_layout';
-const NAV_LAYOUTS=['sidebar','topbar'];
+const NAV_LAYOUTS=['sidebar','topbar','glass'];
+const NAV_GLASS_TINT_KEY='jpw_nav_glass_tint';
+const NAV_GLASS_TINT_DEFAULT=60;
+const navGlassTintState={confirmed:NAV_GLASS_TINT_DEFAULT,raw:null,note:'',initialized:false};
+function navGlassTintParse(raw){
+  if(typeof raw!=='string'||!/^(?:0|[1-9]\d?|100)$/.test(raw))return null;
+  const value=Number(raw);return Number.isInteger(value)&&value>=0&&value<=100?value:null;
+}
+function applyNavGlassTint(value){
+  const tint=Math.max(0,Math.min(100,Number(value)||0)),ratio=tint/100;
+  const root=document.documentElement.style;
+  root.setProperty('--nav-glass-tint',String(ratio));
+  root.setProperty('--nav-glass-alpha',(0.24+(ratio*.72)).toFixed(3));
+  root.setProperty('--nav-glass-blur',(32-(ratio*18)).toFixed(2)+'px');
+  root.setProperty('--nav-glass-saturation',(1.34-(ratio*.22)).toFixed(3));
+  root.setProperty('--nav-glass-reflection',(0.52-(ratio*.30)).toFixed(3));
+  root.setProperty('--nav-glass-contrast',(1.04+(ratio*.10)).toFixed(3));
+}
+function renderNavGlassTint(message){
+  const input=document.getElementById('navGlassTint'),output=document.getElementById('navGlassTintValue');
+  const glass=document.documentElement.getAttribute('data-navigation')==='glass';
+  if(input){input.value=String(navGlassTintState.confirmed);input.disabled=!glass;input.setAttribute('aria-disabled',String(!glass));}
+  if(output)output.value=navGlassTintState.confirmed+'%';
+  document.getElementById('navGlassSettings')?.classList.toggle('is-disabled',!glass);
+  const status=document.getElementById('navGlassTintStatus');if(status)status.textContent=message===undefined?navGlassTintState.note:message;
+  applyNavGlassTint(navGlassTintState.confirmed);
+}
+function navGlassTintAdoptRaw(raw,note){
+  const parsed=navGlassTintParse(raw);
+  navGlassTintState.raw=raw;
+  navGlassTintState.confirmed=parsed===null?NAV_GLASS_TINT_DEFAULT:parsed;
+  navGlassTintState.note=note||(raw!==null&&parsed===null?'Valor salvo inválido. O padrão de 60% é exibido sem alterar a preferência armazenada.':'');
+  renderNavGlassTint();
+}
+function initNavGlassTint(){
+  if(navGlassTintState.initialized)return;
+  navGlassTintState.initialized=true;
+  let raw=null,note='';
+  try{raw=localStorage.getItem(NAV_GLASS_TINT_KEY);}
+  catch(e){note='Não foi possível ler a transparência salva. O padrão de 60% é exibido sem alterar o armazenamento.';}
+  navGlassTintAdoptRaw(raw,note);
+  const input=document.getElementById('navGlassTint');if(!input)return;
+  input.addEventListener('input',()=>{
+    const value=navGlassTintParse(String(input.value));if(value===null)return;
+    applyNavGlassTint(value);
+    const output=document.getElementById('navGlassTintValue');if(output)output.value=value+'%';
+    const status=document.getElementById('navGlassTintStatus');if(status)status.textContent='Prévia em '+value+'%. Solte o controle para salvar.';
+  });
+  input.addEventListener('change',()=>{
+    const value=navGlassTintParse(String(input.value));if(value===null){renderNavGlassTint('Ajuste inválido. O último valor confirmado foi restaurado.');return;}
+    let before;
+    try{before=localStorage.getItem(NAV_GLASS_TINT_KEY);}
+    catch(e){renderNavGlassTint('Não foi possível conferir o armazenamento. O último valor confirmado foi restaurado.');return;}
+    if(before!==navGlassTintState.raw){
+      navGlassTintAdoptRaw(before,'A transparência mudou em outra ação ou aba. A preferência atual foi recarregada; ajuste novamente para salvar.');return;
+    }
+    const payload=String(value);let actual;
+    try{localStorage.setItem(NAV_GLASS_TINT_KEY,payload);}catch(e){}
+    try{actual=localStorage.getItem(NAV_GLASS_TINT_KEY);}
+    catch(e){renderNavGlassTint('Não foi possível confirmar a gravação. O último valor confirmado foi restaurado; recarregue antes de tentar novamente.');return;}
+    if(actual!==payload){renderNavGlassTint('Não foi possível salvar a transparência. O último valor confirmado foi restaurado.');return;}
+    navGlassTintState.raw=payload;navGlassTintState.confirmed=value;navGlassTintState.note='';
+    renderNavGlassTint('Transparência salva em '+value+'% neste navegador.');
+  });
+}
 function renderNavLayoutChoice(){
   document.querySelectorAll('#navLayoutSeg [data-nav-layout]').forEach(btn=>{
     const on=btn.dataset.navLayout===document.documentElement.getAttribute('data-navigation');
     btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on));
   });
+  renderNavStyleSeg();
+  renderNavGlassTint();
 }
 function initNavLayoutChoice(){
+  initNavGlassTint();
   let value=null,message='';
   try{value=localStorage.getItem(NAV_LAYOUT_KEY);
     if(value!==null&&!NAV_LAYOUTS.includes(value))message='Preferência não reconhecida. Menu lateral exibido; a escolha salva foi preservada.';
@@ -191,12 +266,14 @@ function initNavLayoutChoice(){
     try{localStorage.setItem(NAV_LAYOUT_KEY,value);}
     catch(e){if(status)status.textContent='Não foi possível salvar a escolha. A interface anterior foi mantida.';return;}
     mountNavigationLayout(value);
-    if(status)status.textContent=(value==='sidebar'?'Menu lateral':'Barra superior')+' salvo neste navegador.';
+    const label={sidebar:'Menu lateral',topbar:'Barra superior',glass:'Liquid Glass'}[value];
+    if(status)status.textContent=label+' salvo neste navegador.';
   });
 }
 
 // Ordem visual dos mesmos primários: preferência por navegador, fora de S e
-// do envelope de widgets. A lista usa identidades, nunca rótulos ou rotas novas.
+// do envelope de widgets, incluída no workspace do Backup Completo. A lista usa
+// identidades, nunca rótulos ou rotas novas.
 const NAV_ORDER_KEY='jpw_nav_order';
 const NAV_ORDER_DEFAULT=Object.freeze(['dashboard','research','forex','personal-finance','alladin','tools']);
 const navOrderState={confirmed:[],draft:[],raw:null,editing:false,blocked:null,note:'',restoreRequested:false};

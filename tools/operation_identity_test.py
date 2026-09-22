@@ -9,7 +9,6 @@ contextual. Este teste verifica a identidade pela escrita e recarga reais.
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import os
-import socket
 import threading
 
 import notes_launcher_test as launcher
@@ -21,12 +20,14 @@ os.chdir(ROOT)
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self,*_args):pass
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size=128
+    daemon_threads=True
+
 def serve():
-    with socket.socket() as probe:
-        probe.bind(('127.0.0.1',0));port=probe.getsockname()[1]
-    server=ThreadingHTTPServer(('127.0.0.1',port),QuietHandler)
+    server=BrowserFixtureServer(('127.0.0.1',0),QuietHandler)
     threading.Thread(target=server.serve_forever,daemon=True).start()
-    return server,f'http://127.0.0.1:{port}/index.html'
+    return server,f'http://127.0.0.1:{server.server_port}/index.html'
 
 def main():
     server,url=serve()

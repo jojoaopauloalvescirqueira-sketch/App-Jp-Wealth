@@ -34,7 +34,6 @@ from pathlib import Path
 import io
 import json
 import os
-import socket
 import subprocess
 import sys
 import tarfile
@@ -61,20 +60,20 @@ class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *_args):
         pass
 
+class BrowserFixtureServer(ThreadingHTTPServer):
+    request_queue_size = 128
+    daemon_threads = True
 
 def serve(directory=None):
-    with socket.socket() as probe:
-        probe.bind(("127.0.0.1", 0))
-        port = probe.getsockname()[1]
     if directory is None:
-        server = ThreadingHTTPServer(("127.0.0.1", port), QuietHandler)
+        server = BrowserFixtureServer(("127.0.0.1", 0), QuietHandler)
     else:
         class Rooted(QuietHandler):
             def __init__(self, *a, **kw):
                 super().__init__(*a, directory=str(directory), **kw)
-        server = ThreadingHTTPServer(("127.0.0.1", port), Rooted)
+        server = BrowserFixtureServer(("127.0.0.1", 0), Rooted)
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    return server, f"http://127.0.0.1:{port}/index.html"
+    return server, f"http://127.0.0.1:{server.server_port}/index.html"
 
 
 PRONTO = "() => typeof S === 'object' && typeof save === 'function'"
