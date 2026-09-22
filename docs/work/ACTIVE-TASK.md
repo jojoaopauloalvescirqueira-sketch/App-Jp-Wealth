@@ -1,3 +1,21 @@
+# Candidate local — quarta navegação Lateral em níveis
+
+Implementação N2 autorizada em 2026-09-22 sobre a base oficial `22bc889`, na
+worktree `codex/submenu-sidebar-navigation-20260922`. O contrato adiciona a
+composição `submenu`, exploração N1/N2/N3 separada da página ativa, rail próprio
+`jpw_nav_submenu_rail` e round-trip no Backup Completo schemaVersion 1. Menu
+lateral continua padrão; lateral, superior e Liquid Glass permanecem
+preservados. Contrato e limites:
+[CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922](CHG-SUBMENU-SIDEBAR-NAVIGATION-20260922.md).
+O candidate de produto `e606146a740126cb` passou nos focais de navegação,
+preferências, ordem, Settings, Notas, Backup Completo, estrutura, portátil e
+PWA. O gate completo permaneceu instável por boot HTTP parcial: 55/57 checks
+passaram nas duas melhores rodadas, e os casos restantes passaram isoladamente.
+Nenhuma asserção foi reduzida. Commit, push, merge, publicação e aceite visual
+ainda não foram declarados.
+
+## Histórico preservado
+
 # Integração concluída — terceira navegação Liquid Glass
 
 Implementação N2 autorizada em 2026-09-21 sobre a base oficial `4ba8d61`, na

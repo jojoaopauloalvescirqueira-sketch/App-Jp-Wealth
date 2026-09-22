@@ -9,7 +9,7 @@ Contrato implementado por CHG-COMPLETE-BACKUP-20260916. O envelope continua `jpw
 | 3 | Notas, pastas, NoCoda, Pivots e metadados | agregados completos em `state` |
 | 4 | Tema | `state.theme` |
 | 5 | Nome e imagem de perfil, própria ou da galeria | `workspace.preferences.jpwealth_local_profile_v1`; JPEG incorporado, sem depender do arquivo original |
-| 6 | Layouts de widgets, ordem/estilo/posição da navegação, transparência Liquid Glass, fonte, ajuda e marca | `workspace.preferences`, allowlist `JPW_WORKSPACE_KEYS`; `jpw_nav_glass_tint` aceita somente string inteira `0..100` |
+| 6 | Layouts de widgets, ordem/estilo/posição da navegação, largura independente da Lateral em níveis, transparência Liquid Glass, fonte, ajuda e marca | `workspace.preferences`, allowlist `JPW_WORKSPACE_KEYS`; `jpw_nav_submenu_rail` aceita `expanded`/`collapsed` e `jpw_nav_glass_tint` aceita somente string inteira `0..100` |
 | 7 | Aparência e posição do botão de Notas | chaves próprias em `workspace.preferences` |
 | 8 | Preferências e configuração do Laboratório Galton | `workspace.preferences.jpwealth_galton_preferences_v1` |
 | 9 | Edições pendentes de Notas/pastas, perfil, aparência, planejamento e Board; campos editados ainda presentes nos formulários | `workspace.drafts`, material para revisão, sem executar comandos financeiros |
@@ -18,7 +18,7 @@ Contrato implementado por CHG-COMPLETE-BACKUP-20260916. O envelope continua `jpw
 
 ## Importação e confirmação
 
-A validação ocorre antes da primeira escrita: schema conhecido, allowlist de preferências, `jpw_nav_glass_tint` canônico entre `0` e `100`, limites de tamanho/profundidade, nomes sem controles e JPEG de até 256 × 256 pixels/200 KiB. Workspace até 4 milhões de caracteres JSON, no máximo 500 rascunhos de até 1 milhão de caracteres cada; exceder limites recusa, sem truncar. Backup workspace v1 antigo sem a chave permanece válido e conserva a preferência do destino.
+A validação ocorre antes da primeira escrita: schema conhecido, allowlist de preferências, `jpw_nav_glass_tint` canônico entre `0` e `100`, `jpw_nav_submenu_rail` restrito a `expanded`/`collapsed`, limites de tamanho/profundidade, nomes sem controles e JPEG de até 256 × 256 pixels/200 KiB. Workspace até 4 milhões de caracteres JSON, no máximo 500 rascunhos de até 1 milhão de caracteres cada; exceder limites recusa, sem truncar. Backup workspace v1 antigo sem uma dessas chaves permanece válido e conserva a preferência correspondente do destino.
 
 O documento importado recebe `state.workspaceRecovery = {schemaVersion:1,pending:true,snapshot}`. A importação utiliza o protocolo existente de lock, epoch e read-back do documento. Depois projeta as preferências, confirma as strings por releitura e grava `{schemaVersion:1,pending:false,drafts}`. O journal fica junto dos dados confirmados, sem chave paralela nova. Uma falha de projeção mantém a restauração pendente, exibe aviso e bloqueia gravações ordinárias; a recarga tenta concluir. Preserve sempre o arquivo de origem em caso de erro. Resultado de armazenamento desconhecido não equivale a sucesso.
 

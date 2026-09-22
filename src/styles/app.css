@@ -7785,6 +7785,147 @@ html[data-navigation="glass"] #navSubShell .nav-sub-menu button.is-current{box-s
   html[data-navigation="glass"] body>header>#navSubShell{background:var(--panel)}
 }
 
+/* CHG-SUBMENU-SIDEBAR: quarta composição, isolada dos três layouts existentes. */
+html[data-navigation="submenu"]{--submenu-rail:288px}
+html[data-navigation="submenu"][data-submenu-rail="collapsed"]:not([data-submenu-temporary="true"]){--submenu-rail:72px}
+html[data-navigation="submenu"][data-shell="global-dashboard"] body{
+  grid-template-columns:var(--submenu-rail) minmax(0,1fr);
+  grid-template-rows:auto auto 1fr auto;
+  grid-template-areas:"hdr hdr" "sidebar context" "sidebar main" "sidebar footer";
+  transition:grid-template-columns 240ms var(--jp-ease);
+}
+html[data-navigation="submenu"][data-shell="global-dashboard"] body::before{
+  content:"";grid-area:sidebar;align-self:stretch;min-height:0;background:var(--jp-surface);
+  border-right:1px solid var(--shell-divider);pointer-events:none;z-index:0;
+}
+html[data-navigation="submenu"] body>header{grid-area:hdr;position:relative;top:auto;z-index:30}
+html[data-navigation="submenu"] #gdTopbarNavSlot{display:none}
+html[data-navigation="submenu"] .header-actions{margin-left:auto}
+html[data-navigation="submenu"] #gdContextRow{grid-area:context;min-width:0;border-bottom-color:var(--shell-divider)}
+html[data-navigation="submenu"] #appMain{grid-area:main;min-width:0;width:100%;box-sizing:border-box}
+html[data-navigation="submenu"] #gdFooter{grid-area:footer;grid-column:2;min-width:0}
+html[data-navigation="submenu"] #appSidebar{
+  grid-area:sidebar;position:sticky;top:0;align-self:start;box-sizing:border-box;width:100%;min-width:0;
+  height:calc(100dvh - 60px);display:flex;flex-direction:column;padding:20px 14px 16px;
+  overflow:hidden;background:var(--jp-surface);border-right:0;z-index:20;
+}
+html[data-navigation="submenu"] #appSidebar>.sidebar-heading{display:none}
+html[data-navigation="submenu"] .submenu-level-heading{
+  display:flex;align-items:center;gap:10px;min-height:48px;padding:0 8px 12px;border-bottom:1px solid var(--jp-border);
+  color:var(--jp-ink);font:650 18px/1.3 var(--jp-font-ui);flex:none;
+}
+html[data-navigation="submenu"] .submenu-level-heading[hidden]{display:none}
+html[data-navigation="submenu"] .submenu-level-heading strong{min-width:0;overflow-wrap:anywhere}
+html[data-navigation="submenu"] .submenu-back{
+  display:inline-flex;align-items:center;gap:5px;min-width:44px;min-height:44px;padding:6px 8px;border:0;border-radius:9px;
+  background:transparent;color:var(--jp-action);font:600 13px/1.2 var(--jp-font-ui);cursor:pointer;
+}
+html[data-navigation="submenu"] .submenu-back[hidden]{display:none}
+html[data-navigation="submenu"] .submenu-back>span[aria-hidden]{font-size:25px;font-weight:400;line-height:1}
+html[data-navigation="submenu"] .submenu-nav-stage{position:relative;display:block;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:12px 0 8px}
+html[data-navigation="submenu"] .submenu-nav-stage[hidden]{display:none}
+html[data-navigation="submenu"] #submenuNavStage>#nav,
+html[data-navigation="submenu"] #submenuNavStage>#navSubShell{width:100%;box-sizing:border-box}
+html[data-navigation="submenu"] #submenuNavStage>#nav{
+  position:static;inset:auto;display:flex;flex-direction:column;gap:4px;height:auto;margin:0;padding:0;
+  overflow:visible;background:transparent;border:0;box-shadow:none;isolation:auto;
+  animation:submenu-slide-forward 240ms var(--jp-ease);
+}
+html[data-navigation="submenu"] #submenuNavStage>#nav[hidden]{display:none}
+html[data-navigation="submenu"] #nav>.tab{
+  position:relative;display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;min-width:0;min-height:48px;
+  padding:11px 36px 11px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--jp-ink-muted);
+  font:560 15px/1.35 var(--jp-font-ui);text-align:left;text-transform:none;letter-spacing:0;white-space:normal;cursor:pointer;
+}
+html[data-navigation="submenu"] #nav>.tab .n{display:none}
+html[data-navigation="submenu"] #nav>.tab .nav-area-icon{display:block;width:20px;height:20px;flex:0 0 20px;margin:0}
+html[data-navigation="submenu"] #nav>.tab .lbl{display:inline;min-width:0;overflow-wrap:anywhere}
+html[data-navigation="submenu"] #nav>.tab[data-nav-surface]::after{
+  content:"›";position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:22px;font-weight:400;color:currentColor;
+}
+html[data-navigation="submenu"] #nav>.tab:hover,
+html[data-navigation="submenu"] #nav>.tab[aria-expanded="true"]{background:var(--accent-tint);color:var(--jp-ink)}
+html[data-navigation="submenu"] #nav>.tab.active{color:var(--jp-action);font-weight:680;background:var(--accent-tint);box-shadow:inset 3px 0 0 var(--jp-action)}
+html[data-navigation="submenu"] :is(#navPillIndicator,#navPillSpecular,.nav-group-toggle){display:none!important}
+html[data-navigation="submenu"] #submenuNavStage>#navSubShell{
+  display:block;position:static;inset:auto;margin:0;padding:0;background:transparent;border:0;box-shadow:none;overflow:visible;
+  animation:submenu-slide-forward 240ms var(--jp-ease);
+}
+html[data-navigation="submenu"][data-submenu-direction="back"] #submenuNavStage>:is(#nav,#navSubShell){animation-name:submenu-slide-back}
+html[data-navigation="submenu"] #submenuNavStage>#navSubShell[hidden]{display:none}
+html[data-navigation="submenu"] #navSubShell .nav-sub-clip{opacity:1;transform:none;overflow:visible}
+html[data-navigation="submenu"] #navSubShell .nav-sub-menu{display:block;width:100%;margin:0;padding:0}
+html[data-navigation="submenu"] #navSubShell .nav-sub-menu[hidden],
+html[data-navigation="submenu"] #navSubShell [hidden]{display:none!important}
+html[data-navigation="submenu"] #navSubShell :is(.nav-sub-level-primary,.nav-sub-level-context){display:flex;flex-direction:column;gap:4px}
+html[data-navigation="submenu"] #navSubShell .nav-sub-contexts{margin:0;padding:0;border:0}
+html[data-navigation="submenu"] #navSubShell button{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;width:100%;min-height:48px;
+  padding:9px 36px 9px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--jp-ink-muted);
+  font:500 14px/1.35 var(--jp-font-ui);text-align:left;cursor:pointer;
+}
+html[data-navigation="submenu"] #navSubShell button[aria-haspopup="true"]::after{
+  content:"›";position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:22px;font-weight:400;color:currentColor;
+}
+html[data-navigation="submenu"] #navSubShell button:hover{background:var(--accent-tint);color:var(--jp-ink)}
+html[data-navigation="submenu"] #navSubShell button.is-current{color:var(--jp-action);font-weight:650;background:var(--accent-tint);box-shadow:inset 3px 0 0 var(--jp-action)}
+html[data-navigation="submenu"] #navSubShell .nav-sub-item-title{font:inherit;color:inherit}
+html[data-navigation="submenu"] #navSubShell .nav-sub-item-desc{display:block;color:var(--jp-ink-muted);font:400 11px/1.35 var(--jp-font-ui);overflow-wrap:anywhere}
+html[data-navigation="submenu"] :is(#nav>.tab,#navSubShell button,.submenu-back,#railToggle):focus-visible{outline:2px solid var(--jp-action);outline-offset:2px;z-index:2}
+html[data-navigation="submenu"] #railToggle{
+  display:flex;align-items:center;gap:12px;width:100%;min-height:44px;margin-top:10px;padding:10px 12px;box-sizing:border-box;
+  border:1px solid var(--jp-border);border-radius:9px;background:transparent;color:var(--jp-ink-muted);font:600 12px var(--jp-font-ui);cursor:pointer;flex:none;
+}
+html[data-navigation="submenu"] #railToggle:hover{background:var(--accent-tint)}
+html[data-navigation="submenu"] .sidebar-footer{display:block;margin:12px 10px 0;flex:none}
+html[data-navigation="submenu"] #navLocalSlot{display:none}
+html[data-navigation="submenu"] .shell-page-header{margin:0 0 24px;padding:0 0 16px;border-bottom:1px solid var(--jp-border)}
+html[data-navigation="submenu"] .shell-location{margin:0;color:var(--jp-ink);font:500 13px/1.6 var(--jp-font-ui);overflow-wrap:anywhere}
+@keyframes submenu-slide-forward{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes submenu-slide-back{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+
+@media(min-width:901px){
+  html[data-navigation="submenu"][data-submenu-rail="collapsed"]:not([data-submenu-temporary="true"]) #appSidebar{padding-inline:10px}
+  html[data-navigation="submenu"][data-submenu-rail="collapsed"]:not([data-submenu-temporary="true"]) :is(.submenu-level-heading,.sidebar-footer,#nav .lbl,#nav>.tab[data-nav-surface]::after,#railToggle .lbl){display:none}
+  html[data-navigation="submenu"][data-submenu-rail="collapsed"]:not([data-submenu-temporary="true"]) .submenu-nav-stage{padding-top:4px}
+  html[data-navigation="submenu"][data-submenu-rail="collapsed"]:not([data-submenu-temporary="true"]) #nav>.tab{justify-content:center;padding:12px 8px}
+  html[data-navigation="submenu"][data-submenu-rail="collapsed"]:not([data-submenu-temporary="true"]) #railToggle{justify-content:center;padding:6px;font-size:24px}
+}
+@media(max-width:900px){
+  html[data-navigation="submenu"][data-shell="global-dashboard"] body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto;grid-template-areas:"hdr" "context" "main" "footer";transition:none}
+  html[data-navigation="submenu"][data-shell="global-dashboard"] body::before{display:none}
+  html[data-navigation="submenu"] #gdFooter{grid-column:1}
+  html[data-navigation="submenu"] body>header{padding-inline:16px;gap:8px}
+  html[data-navigation="submenu"] .brand{width:auto;max-width:144px}
+  html[data-navigation="submenu"] .gd-logo{max-width:100%;height:auto}
+  html[data-navigation="submenu"] .header-actions{width:auto;gap:8px}
+  html[data-navigation="submenu"] .shell-menu-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1px solid var(--jp-border);border-radius:999px;background:transparent;color:var(--jp-ink);font:600 13px var(--jp-font-ui)}
+  html[data-navigation="submenu"] #appSidebar{
+    position:fixed;inset:0 auto 0 0;grid-area:auto;width:min(320px,calc(100vw - 24px));height:100dvh;
+    padding:max(12px,env(safe-area-inset-top)) 14px max(12px,env(safe-area-inset-bottom));z-index:8100;
+    visibility:hidden;transform:translateX(-105%);transition:transform 240ms var(--jp-ease),visibility 0s linear 240ms;
+    box-shadow:8px 0 36px #0004;border-right:1px solid var(--shell-divider,var(--jp-border));
+  }
+  html[data-navigation="submenu"][data-shell-menu="open"] #appSidebar{visibility:visible;transform:none;transition-delay:0s}
+  html[data-navigation="submenu"] #appSidebar>.sidebar-heading{display:flex;min-height:48px;margin:0 0 4px;justify-content:flex-end}
+  html[data-navigation="submenu"] #appSidebar>.sidebar-heading .sidebar-caption{display:none}
+  html[data-navigation="submenu"] #sidebarClose{display:block;min-width:44px;min-height:44px;background:transparent;border:1px solid var(--jp-border);border-radius:9px;color:var(--jp-ink);font-size:22px}
+  html[data-navigation="submenu"] #sidebarBackdrop{position:fixed;inset:0;background:#0009;z-index:8099}
+  html[data-navigation="submenu"] #sidebarBackdrop[hidden]{display:none}
+  html[data-navigation="submenu"] #railToggle{display:none}
+  html[data-navigation="submenu"] .submenu-nav-stage{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+  html[data-navigation="submenu"] #nav>.tab,
+  html[data-navigation="submenu"] #navSubShell button{min-height:48px}
+  html[data-navigation="submenu"] #appMain{padding-top:20px}
+}
+@media(max-width:420px){#navLayoutSeg{display:grid;grid-template-columns:minmax(0,1fr);width:100%}}
+@media(min-width:421px){#navLayoutSeg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:min(100%,560px)}}
+@media(prefers-contrast:more){html[data-navigation="submenu"] #appSidebar{border-color:var(--jp-ink)}html[data-navigation="submenu"] :is(#nav>.tab.active,#navSubShell button.is-current){outline:1px solid currentColor;outline-offset:-1px}}
+@media(prefers-reduced-motion:reduce){
+  html[data-navigation="submenu"][data-shell="global-dashboard"] body,
+  html[data-navigation="submenu"] :is(#appSidebar,#nav,#navSubShell){transition:none!important;animation:none!important}
+}
+
 /* The appearance form inherits Settings materials and only affects its Notes card. */
 #mvpNotesSettingsCard #mvpNotesAppearanceFields{min-width:0;margin:20px 0 0;padding:16px 0 0;border:0;border-top:1px solid var(--line)}
 #mvpNotesSettingsCard #mvpNotesAppearanceFields legend{padding:0 8px 0 0;font:600 15px/1.4 var(--sans);color:var(--ink)}

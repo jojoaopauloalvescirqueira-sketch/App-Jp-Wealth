@@ -210,18 +210,19 @@ compartilhada foi autorizada em 2026-08-11; contrato completo em
 
 ## Navegação compartilhada e contexto local
 
-A lateral contextual é o padrão; o Editor oferece a composição superior
-opcional (`jpw_nav_layout=sidebar|topbar`). O mesmo `#nav` vive em `#appSidebar`
-ou `#gdTopbarNavSlot`. Os cinco acionadores primários continuam filhos diretos
-de `#nav`; não há router, IDs ou listeners duplicados para a alternativa.
+A lateral contextual é o padrão; o Editor oferece as composições `sidebar`,
+`topbar`, `glass` e `submenu`. O mesmo `#nav` vive em `#appSidebar`,
+`#gdTopbarNavSlot` ou `#submenuNavStage`. Os seis acionadores primários continuam
+filhos diretos de `#nav`; não há router, IDs ou listeners duplicados.
 
 Forex, Finanças Pessoais e Research compartilham um único `#navSubShell`. Na
 lateral, ele fica dentro de `#nav`, após o expansor ativo. Na composição
 superior, volta ao fluxo antes de `#gdContextRow`. Os contextos N3 de Forex e
 Research ficam em `#navLocalSlot` no modo lateral e retornam aos painéis de
-navegação correspondentes no superior. Alladin mantém suas abas no conteúdo.
-Forex tem cinco filhos; Operação, Apuração e Planejamento conservam contextos
-locais. Os quatro modos de Planejamento reutilizam `window.JPWFx.ui`.
+navegação correspondentes no superior, Glass e Lateral em níveis. Nesta última,
+o shell mantém apenas o nível explorado em RAM. Alladin mantém suas abas no conteúdo.
+Forex tem quatro filhos; Operação e Planejamento conservam contextos locais. Os
+quatro modos de Planejamento reutilizam `window.JPWFx.ui`.
 
 `JPWNavigation.current()` e as superfícies de módulo determinam a localização
 exibida. `jpw_nav` (estilo), `jpw_rail` (compactação) e a escolha de composição
