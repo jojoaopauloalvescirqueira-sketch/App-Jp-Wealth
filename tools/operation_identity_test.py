@@ -56,7 +56,7 @@ def main():
             assert page.evaluate('JPWForex.state.operationalSelection().accountId')=='IDENT_A'
             birth=page.evaluate("""() => {
               const x=JPWForex.state,scope=x.operationalSelection();
-              const result=operationRecordOrder(0,0,{id:'A1',par:'EURUSD',tipo:'BUY',role:'GENESIS',
+              const result=operationRecordOrder(0,0,{id:'A1',brokerHash:'SYNTHETIC-IDENT-A1',par:'EURUSD',tipo:'BUY',role:'GENESIS',
                 lote:.01,entry:1.1,sl:1.09,tp:1.2,status:'Aberta',result:null,
                 costs:0,costBasis:'INCLUDED_IN_RESULT',stopValidated:true},{reason:'Primeiro fato sintético'});
               const p=x.accountContext(scope).value,o=p.phases[0].orders[0],disk=JSON.parse(localStorage.getItem(LSKEY));
@@ -97,7 +97,7 @@ def main():
             isolated=page.evaluate("""() => {
               const x=JPWForex.state,a=x.accountContext({accountId:'IDENT_A',periodId:S.forex.accountContexts.accounts.IDENT_A.currentPeriodId}).value;
               x.selectOperationalAccount('IDENT_B');const bScope=x.operationalSelection();
-              const r=operationRecordOrder(0,0,{id:'B1',par:'EURUSD',tipo:'BUY',role:'GENESIS',
+              const r=operationRecordOrder(0,0,{id:'B1',brokerHash:'SYNTHETIC-IDENT-B1',par:'EURUSD',tipo:'BUY',role:'GENESIS',
                 lote:.01,entry:1.2,sl:1.1,tp:1.3,status:'Aberta',result:null,costs:0,
                 costBasis:'INCLUDED_IN_RESULT',stopValidated:true},{reason:'Fato sintético B'});
               const b=x.accountContext(bScope).value;

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Execution Board fixed factual oracles: pure Node VM, synthetic state only.
 
-Authority: CHG-FOREX-EXECUTION-BOARD-20260915. Fixed examples: open 100,
+Authority: CHG-FOREX-EXECUTION-BOARD-20260915 and CHG-FOREX-EXECUTION-TABLE-20260922.
+Fixed examples: open 100,
 separate 100-10=90, included 90=90, compensated 100-(-20)=120 and 100-150=-50.
 No normative policy, finalization, or admission behavior is amended by this test.
 """
@@ -71,28 +72,37 @@ test('reference uses minimum of SI/equity and never rounds up',()=>{const x=fixt
 for(const edit of [i=>i.conversion.baseToAccountRate=null,i=>i.contract.contractSize=null])test('missing instrument denominator prevents sizing reference',()=>{const x=fixture();edit(x.instruments[0]);missing(project(x).instruments[0].normal);});
 test('restriction remains visible with only theoretical reference',()=>{const x=fixture();x.instruments[0].banned=true;assert.strictEqual(project(x).instruments[0].operable,false);});
 test('ATR belongs to each instrument; global other data cannot fill absence',()=>{const x=fixture();x.instruments[0].atr=null;x.market={atrShort:1,atrLong:1};missing(project(x).instruments[0].vrm);});
-test('VRM boundary and root N pending remain documented',()=>{const i=project(fixture()).instruments[0];near(i.vrm.value,1.2);assert.strictEqual(i.regime.value,'TRANSITION');missing(i.rootN);missing(project(fixture()).phases[0].technicalProfit);});
+test('VRM boundary and root N pending remain documented',()=>{const i=project(fixture()).instruments[0];near(i.vrm.value,1.2);assert.strictEqual(i.regime.value,'TRANSITION');missing(i.rootN.oneWeek);missing(i.rootN.twoWeeks);missing(project(fixture()).phases[0].technicalProfit);});
 test('DD and statutory equity threshold are distinct from book balance',()=>{const x=fixture();x.account.equity=9700;const m=project(x);near(m.capital.drawdown.value,3);near(m.capital.stopoutEquity.value,7800);near(m.capital.book.value,10100);missing(m.capital.floating);});
 test('documented cashflow moves raw equity threshold, not SI',()=>{const x=fixture();x.account.netCashflow=1000;x.account.cashflowAdjustmentRecorded=true;near(project(x).capital.stopoutEquity.value,8800);x.account.cashflowAdjustmentRecorded=false;missing(project(x).capital.stopoutEquity);});
 test('wrong currency book is unavailable rather than recast to account unit',()=>{const x=fixture();x.accountRecord.currency='EUR';missing(project(x).capital.book);});
 
+// Read-adapter fixtures follow accountContexts introduced before this candidate.
+// The former legacy-global stub lacked operationalSelection/accountContext.
 function installState(orders=[]){
+ const phases=fx.policy.phases.map((p,i)=>({orders:i?[]:orders,policyVersion:fx.policy.version}));
+ box.contexts={A:{P:{accountId:'A',periodId:'P',currency:'USD',si:10000,openingBook:10000,ledger:[],revision:1,
+  activeOperation:orders.length?{operationId:'OP'}:null,phases:structuredClone(phases)}}};
  box.S={accounts:[{forexAccountId:'A',nome:'Synthetic Master',tipo:'MESTRE',currency:'USD',satu:10000}],forex:{activeAccountId:'B',accounts:{A:{periodId:'P',currency:'USD',si:10000,equity:10000,netCashflow:0,usdToAccountRate:1}}},
-  activeOperation:null,phases:fx.policy.phases.map((p,i)=>({orders:i?[]:orders,policyVersion:fx.policy.version})),instruments:[{name:'EURUSD',preco:1.25,cpl:100000}]};
+  activeOperation:null,phases,instruments:[{name:'EURUSD',preco:1.25,cpl:100000}]};
  fx.state={supported:()=>true,recordContext:q=>{const a=box.S.forex.accounts[q.accountId];return a&&a.periodId===q.periodId?{status:'OK',accountInputs:structuredClone(a)}:{status:'NOT_COMPUTABLE',accountInputs:null};},
-  read:q=>({accountId:q.accountId,account:box.S.forex.accounts[q.accountId],metrics:{},findings:[]}),instrumentContext:()=>({status:'NOT_COMPUTABLE',value:null}),dailyReference:()=>({status:'NOT_COMPUTABLE',value:null})};
+  operationalSelection:()=>{const masters=box.S.accounts.filter(a=>a.tipo==='MESTRE'),accountId=masters.length===1?masters[0].forexAccountId:null;
+   return {accountId,periodId:accountId?Object.keys(box.contexts[accountId]||{})[0]||null:null,reason:accountId?'UNIQUE_MASTER':'SELECTION_REQUIRED'};},
+  accountContext:q=>{const value=box.contexts[q.accountId]?.[q.periodId];return {status:value?'OK':'NOT_COMPUTABLE',value:value?structuredClone(value):null};},
+  newOperationPhases:()=>fx.policy.phases.map(p=>({orders:[],policyVersion:fx.policy.version})),
+  read:q=>({accountId:q.accountId,account:box.S.forex.accounts[q.accountId],metrics:{},findings:[]}),instrumentContext:()=>({status:'NOT_COMPUTABLE',value:null}),dailyReference:()=>({status:'NOT_COMPUTABLE',value:null}),executionDiagnostics:()=>({status:'NOT_COMPUTABLE',value:null})};
  fx.orderInputs=()=>({conversionRate:1,notionalConversionRate:1.25});
 }
 function read(){const before=JSON.stringify(box.S),m=b.read();assert.strictEqual(JSON.stringify(box.S),before);return m;}
-test('single Master is proposed without writing active account',()=>{installState();const m=read();assert.strictEqual(m.selection.reason,'MASTER_PROPOSED');assert.strictEqual(m.selection.accountId,'A');assert.strictEqual(box.S.forex.activeAccountId,'B');});
+test('single Master is proposed without writing active account',()=>{installState();const m=read();assert.strictEqual(m.selection.reason,'UNIQUE_MASTER');assert.strictEqual(m.selection.accountId,'A');assert.strictEqual(box.S.forex.activeAccountId,'B');});
 test('absent or ambiguous Master has no silent first-account fallback',()=>{installState();box.S.accounts[0].tipo='PRÓPRIA';assert.strictEqual(read().selection.accountId,null);box.S.accounts[0].tipo='MESTRE';box.S.accounts.push({forexAccountId:'B',tipo:'MESTRE'});assert.strictEqual(read().selection.accountId,null);});
-test('live legacy facts prevent automatic Master suggestion',()=>{installState([order('a',{accountId:null})]);assert.strictEqual(read().selection.accountId,null);assert.strictEqual(read().selection.reason,'LEGACY_FACTS_REQUIRE_REVIEW');});
-test('active operation locks identity independently of analytical choice',()=>{installState([order('a')]);box.S.activeOperation={operationId:'OP',recordContext:{accountId:'A',periodId:'P'}};const m=b.read({accountId:'B'});assert.strictEqual(m.selection.accountId,'A');assert.strictEqual(m.selection.lockedToOperation,true);near(m.risk.open.value,100);});
-test('active legacy operation never borrows current account',()=>{installState([order('a')]);box.S.activeOperation={operationId:'OP',policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'}};missing(read().risk.open);assert.strictEqual(read().selection.accountId,null);});
+test('unassigned contextual facts remain unresolved in selected period',()=>{installState([order('a',{accountId:null})]);const m=read();assert.strictEqual(m.selection.accountId,'A');assert.strictEqual(m.unresolved.length,1);missing(m.risk.open);});
+test('explicit different account never borrows active operation from Master',()=>{installState([order('a')]);box.S.accounts.push({forexAccountId:'B',tipo:'PROPRIA'});const m=b.read({accountId:'B',periodId:'Q'});assert.strictEqual(m.selection.accountId,'B');assert.strictEqual(m.selection.lockedToOperation,false);assert.strictEqual(m.scope.operationId,null);missing(m.risk.open);});
+test('legacy global orders are not attributed to an empty contextual period',()=>{installState();box.S.phases[0].orders=[order('legacy')];box.S.activeOperation={operationId:'LEGACY',policySnapshot:{policyVersion:'LEGACY_UNRESOLVED'}};const m=read();near(m.risk.open.value,0);assert.strictEqual(m.scope.operationId,null);assert.strictEqual(m.rows.length,0);});
 test('manual price wins over daily reference; quote access never writes',()=>{installState();fx.state.instrumentContext=()=>({status:'OK',value:{price:{value:1.3,source:'Manual',observedAt:'2026-09-15T12:00:00Z'}}});fx.state.dailyReference=()=>({status:'OK',value:{rate:1.2,source:'Frankfurter',referenceDate:'2026-09-14'}});const m=read().instruments[0];near(m.price.value,1.3);assert.strictEqual(m.price.kind,'MANUAL');near(m.notionalPerLot.value,130000);});
 test('daily quote has source date and is not realtime',()=>{installState();fx.state.dailyReference=()=>({status:'OK',value:{rate:1.2,source:'Frankfurter',referenceDate:'2026-09-14'}});const m=read().instruments[0];assert.strictEqual(m.price.kind,'DAILY_REFERENCE');assert.strictEqual(m.price.referenceDate,'2026-09-14');});
-test('empty active operation retains its account and period',()=>{installState();box.S.activeOperation={operationId:'OP',recordContext:{accountId:'A',periodId:'P'}};const m=b.read({accountId:'B'});assert.strictEqual(m.selection.accountId,'A');assert.strictEqual(m.selection.lockedToOperation,true);assert.strictEqual(m.scope.operationId,'OP');});
-test('empty unresolved operation never proposes Master',()=>{installState();box.S.activeOperation={operationId:'LEGACY'};const m=read();assert.strictEqual(m.selection.accountId,null);assert.strictEqual(m.selection.reason,'LEGACY_OPERATION_UNRESOLVED');missing(m.risk.open);});
+test('empty contextual operation retains its explicit identity',()=>{installState();box.contexts.A.P.activeOperation={operationId:'OP'};const m=b.read({accountId:'A',periodId:'P'});assert.strictEqual(m.scope.operationId,'OP');assert.strictEqual(m.selection.lockedToOperation,false);});
+test('explicit unregistered account never falls back to Master',()=>{installState();const m=b.read({accountId:'UNKNOWN',periodId:'P'});assert.strictEqual(m.selection.accountId,null);assert.strictEqual(m.selection.reason,'ACCOUNT_NOT_REGISTERED');missing(m.risk.open);});
 test('drawdown has percent unit and never currency',()=>{const x=fixture();x.account.equity=9700;const m=project(x).capital.drawdown;assert.strictEqual(m.unit,'DD_PERCENT');assert.strictEqual(m.currency,null);near(m.value,3);});
 test('pending-only subtotal remains computable if unrelated open stop missing',()=>{const x=fixture([order('a',{sl:null}),order('p',{status:'Pendente',pendingActive:true,amplifiesExposure:true})]);const m=project(x);missing(m.risk.open);near(m.risk.pending.value,100);near(m.phases[0].metrics.pending.value,100);});
 test('reported costs never charge included result again',()=>{const m=project(fixture([order('a',{costs:-2}),order('c',{status:'Fechada',costs:-10,costBasis:'INCLUDED_IN_RESULT',result:90})]));near(m.risk.costs.value,-12);near(m.economics.closedNetAll.value,90);near(m.economics.compensatedAll.value,10);near(m.phases[0].metrics.costs.value,-12);});
@@ -107,7 +117,7 @@ test('cross conversion uses exact dated daily legs',()=>{installState();box.S.in
 test('cross conversion never borrows missing daily leg from legacy price',()=>{installState();box.S.instruments=[{name:'AUDCAD',preco:9,cpl:100000},{name:'USDCAD',preco:1.35,cpl:100000}];fx.state.dailyReference=id=>id==='AUDCAD'?{status:'OK',value:{rate:.9,source:'Synthetic daily',referenceDate:'2026-09-14'}}:{status:'NOT_COMPUTABLE',value:null};const i=read().instruments[0];assert.strictEqual(i.conversion.quoteToAccountRate,null);missing(i.normal);});
 test('manual pair observation wins over daily in cross conversion',()=>{installState();box.S.instruments=[{name:'AUDCAD',cpl:100000},{name:'USDCAD',cpl:100000}];fx.state.instrumentContext=q=>q.instrumentId==='AUDCAD'?{status:'OK',value:{price:{value:1.08,source:'Manual cross',observedAt:'2026-09-15T12:00:00Z'}}}:{status:'NOT_COMPUTABLE',value:null};fx.state.dailyReference=id=>({status:'OK',value:{rate:id==='AUDCAD'?.9:1.35,source:'Synthetic daily',referenceDate:'2026-09-14'}});const i=read().instruments[0];near(i.conversion.baseToAccountRate,.8);assert.strictEqual(i.conversion.legs.base[0].kind,'MANUAL');});
 test('instrument input helper matches Board without readModel recursion',()=>{installState();fx.orderInputs=()=>{throw Error('forbidden recursion');};fx.state.dailyReference=()=>({status:'OK',value:{rate:1.2,source:'Synthetic daily',referenceDate:'2026-09-14'}});const scope={accountId:'A',periodId:'P'},input=b.instrumentInputs(box.S.instruments[0],box.S.forex.accounts.A,scope),i=read().instruments[0];near(input.contractSize,100000);near(input.conversionRate,1);near(input.notionalConversionRate,1.2);near(input.notionalConversionRate,i.conversion.baseToAccountRate);assert.strictEqual(input.provenance.accountId,'A');});
-test('operation without identifier cannot imply known empty exposure',()=>{installState();box.S.activeOperation={recordContext:{accountId:'A',periodId:'P'}};const m=read();missing(m.risk.open);assert.strictEqual(m.selection.lockedToOperation,true);});
+test('contextual operation without identifier cannot imply known empty exposure',()=>{installState();box.contexts.A.P.activeOperation={recordContext:{accountId:'A',periodId:'P'}};const m=read();missing(m.risk.open);assert.strictEqual(m.selection.lockedToOperation,false);});
 test('non-H4 ATR cannot silently calculate stop ATR ratio',()=>{const x=fixture([order('a')]);x.instruments[0].atr.timeframe='D1';missing(project(x).rows[0].atrMultiple);});
 test('foreign operation in same account buffers cannot borrow account RC as operation RC',()=>{
  const x=fixture([order('a'),order('b',{operationId:'OTHER'})]);
@@ -156,6 +166,115 @@ test('derived base notional uses dedicated USD-account leg and preserves both ti
  const i=read().instruments.find(x=>x.id==='GBPUSD');near(i.conversion.baseToAccountRate,1.35);near(i.notionalPerLot.value,135000);
  assert.strictEqual(i.conversion.legs.base[0].referenceDate,'2026-09-14');assert.strictEqual(i.conversion.legs.base.at(-1).observedAt,'2026-09-12T12:00:00Z');
  near(i.conversion.alternatives.base[0].value,1.2);
+});
+// Approved table readings use book balance; the normative SI/equity path stays distinct.
+function tableFixture(){
+ const x=fixture([order('open',{entry:1.1,sl:1.07,lote:.2}),
+  order('def',{status:'Fechada',role:'DEFENSE',result:220,costs:-20}),
+  order('other',{status:'Fechada',role:'OTHER',result:500}),
+  order('pending',{status:'Pendente',pendingActive:true,amplifiesExposure:true})]);
+ x.account.equity=9000;x.accountRecord.satu=12000;x.instruments[0].conversion.baseToAccountRate=1.2;
+ return x;
+}
+test('approved table oracle: 600 and defense200 over book12000; normative bases unchanged',()=>{
+ const m=project(tableFixture());near(m.operational.exposure.value,600);near(m.operational.exposure.percent,5);
+ near(m.operational.compensated.value,400);near(m.operational.compensated.percent,10/3);
+ near(m.operational.grossNotional.value,24000);near(m.operational.leverage.value,2);
+ near(m.risk.leverage.value,24000/9000);near(m.risk.open.percent,6);
+ near(m.risk.aggregate.value,700);near(m.risk.committed.value,225);near(m.risk.prudentialRemaining.value,1975);
+ assert.strictEqual(m.operational.exposure.percentBasis,'BOOK_BALANCE');assert.strictEqual(m.risk.open.percentBasis,'SI');
+ near(m.rows[0].operationalRisk.percent,5);near(m.phases[0].metrics.operational.exposure.percent,5);
+ assert.strictEqual(m.executionEligibility.status,'BLOCKED');
+});
+test('gross account notional remains computable without SI or equity',()=>{
+ const x=tableFixture();x.account.equity=null;x.account.si=null;const m=project(x);
+ near(m.operational.grossNotional.value,24000);near(m.operational.leverage.value,2);
+ near(m.operational.exposure.percent,5);missing(m.risk.leverage);assert.strictEqual(m.risk.open.percent,null);
+});
+for(const balance of [null,undefined,0,-100,'12000',NaN])test('invalid book never borrows SI/equity '+String(balance),()=>{
+ const x=tableFixture();x.accountRecord.satu=balance;const m=project(x);
+ near(m.operational.exposure.value,600);near(m.operational.compensated.value,400);near(m.operational.grossNotional.value,24000);
+ assert.strictEqual(m.operational.exposure.percent,null);assert.strictEqual(m.operational.compensated.percent,null);missing(m.operational.leverage);
+ near(m.risk.leverage.value,24000/9000);
+});
+test('book in another currency cannot become percentage denominator',()=>{
+ const x=tableFixture();x.accountRecord.currency='EUR';const m=project(x);missing(m.operational.balance);missing(m.operational.leverage);assert.strictEqual(m.operational.exposure.percent,null);
+});
+test('compensated defense loss increases exposure and excess gain remains signed',()=>{
+ for(const [net,want] of [[-200,800],[800,-200]]){const x=tableFixture();x.rows[1].order.result=net;x.rows[1].order.costs=0;const m=project(x);near(m.operational.compensated.value,want);near(m.operational.compensated.percent,want/120);}
+});
+test('unclassified closed role keeps defense compensation unresolved',()=>{const x=tableFixture();x.rows[2].order.role='';const m=project(x);missing(m.operational.compensated);near(m.operational.exposure.value,600);});
+test('unknown stop preserves notional but never fabricates zero exposure',()=>{const x=tableFixture();x.rows[0].order.stopValidated=false;const m=project(x);missing(m.operational.exposure);missing(m.operational.compensated);near(m.operational.leverage.value,2);});
+test('missing conversion taints notional but leaves quote-currency risk known',()=>{const x=tableFixture();x.instruments[0].conversion.baseToAccountRate=null;const m=project(x);missing(m.operational.grossNotional);missing(m.operational.leverage);near(m.operational.exposure.value,600);});
+test('gross notional is summed across mixed instruments without netting directions',()=>{
+ const x=tableFixture();x.rows=[{pi:0,oi:0,order:order('a',{lote:.1})},{pi:1,oi:0,order:order('b',{par:'GBPUSD',tipo:'SELL',sl:1.2,lote:.1})}];
+ x.instruments.push({...x.instruments[0],id:'GBPUSD',name:'GBPUSD',conversion:{baseToAccountRate:1.5,quoteToAccountRate:1}});
+ const m=project(x);near(m.operational.grossNotional.value,27000);near(m.operational.leverage.value,2.25);
+});
+test('ATR multiple and geometry use entry rather than current quote',()=>{
+ const x=fixture([order('a',{entry:1.1,sl:1.08,tp:1.16})]);x.instruments[0].price.value=1.15;x.instruments[0].atr.short=.005;
+ const r=project(x).rows[0];near(r.atrMultiple.value,4);near(r.geometry.stopDistance.value,.02);near(r.geometry.stopPercent.value,.02/1.1*100);
+ near(r.geometry.targetDistance.value,.06);near(r.geometry.targetPercent.value,.06/1.1*100);near(r.geometry.rewardRisk.value,3);
+ x.instruments[0].price.value=null;near(project(x).rows[0].atrMultiple.value,4);
+});
+test('zero stop distance is zero ATR multiple but undefined reward risk',()=>{
+ const x=fixture([order('a',{entry:1.1,sl:1.1,tp:1.2})]);const r=project(x).rows[0];near(r.geometry.stopDistance.value,0);near(r.atrMultiple.value,0);missing(r.geometry.rewardRisk);
+});
+test('geometry absent input never coerces into zero',()=>{for(const field of ['entry','sl']){const x=fixture([order('a',{[field]:null})]);const r=project(x).rows[0];missing(r.geometry.stopDistance);missing(r.atrMultiple);}});
+function addDiagnostic(x){x.instruments[0].atr.short=.002;x.instruments[0].diagnostics={accountId:'A',periodId:'P',instrumentId:'EURUSD',oneWeek:{n:25,f:1.5},twoWeeks:{n:100,f:2},revision:1};return x;}
+test('root N approved oracle per horizon and entry; policy remains pending',()=>{
+ const x=addDiagnostic(fixture([order('a',{entry:1.2})])),before=JSON.stringify(fx.policy.snapshot()),m=project(x);
+ near(m.instruments[0].rootN.oneWeek.value,.015);near(m.rows[0].rootN.oneWeek.percent,1.25);
+ near(m.instruments[0].rootN.twoWeeks.value,.04);near(m.rows[0].rootN.twoWeeks.percent,10/3);
+ assert.strictEqual(m.rows[0].rootN.oneWeek.diagnosticOnly,true);assert.strictEqual(m.rows[0].rootN.oneWeek.calculationMode,'USER_DIAGNOSTIC');
+ assert.strictEqual(m.rows[0].rootN.oneWeek.percentBasis,'ENTRY_PRICE');assert.strictEqual(m.rows[0].rootN.oneWeek.n,25);
+ assert.strictEqual(fx.policy.get('P-21').value,null);assert.strictEqual(JSON.stringify(fx.policy.snapshot()),before);
+});
+test('root N horizons are independently absent without fallback',()=>{
+ const x=addDiagnostic(fixture([order('a',{entry:1.2})]));delete x.instruments[0].diagnostics.oneWeek;const m=project(x);
+ missing(m.rows[0].rootN.oneWeek);near(m.rows[0].rootN.twoWeeks.value,.04);
+});
+for(const pair of [{n:0,f:1.5},{n:-1,f:1.5},{n:1.5,f:1.5},{n:'25',f:1.5},{n:25,f:0},{n:25,f:-1},{n:25,f:Infinity},{n:25},{f:1.5}])test('invalid explicit root N input '+JSON.stringify(pair),()=>{
+ const x=addDiagnostic(fixture([order('a')]));x.instruments[0].diagnostics.oneWeek=pair;missing(project(x).rows[0].rootN.oneWeek);
+});
+test('root N missing ATR or entry preserves unit-specific availability',()=>{
+ const x=addDiagnostic(fixture([order('a',{entry:null})]));let m=project(x);near(m.rows[0].rootN.oneWeek.value,.015);assert.strictEqual(m.rows[0].rootN.oneWeek.percent,null);
+ x.instruments[0].atr=null;m=project(x);missing(m.instruments[0].rootN.oneWeek);missing(m.rows[0].rootN.oneWeek);
+});
+test('diagnostic from another account period or instrument is never borrowed',()=>{
+ for(const field of ['accountId','periodId','instrumentId']){const x=addDiagnostic(fixture([order('a')]));x.instruments[0].diagnostics[field]='OTHER';missing(project(x).rows[0].rootN.oneWeek);}
+});
+test('pure RAM preview exposes only diagnostics and leaves confirmed totals unchanged',()=>{
+ const x=addDiagnostic(fixture([order('a',{entry:1.2,sl:1.18})])),m=project(x),before=JSON.stringify(m),o={...m.rows[0].order,entry:1.1,sl:1.09};
+ const preview=b.previewOrder(o,m.instruments[0]);near(preview.atrMultiple.value,5);near(preview.rootN.oneWeek.percent,.015/1.1*100);
+ assert.deepStrictEqual(Object.keys(preview).sort(),['atrMultiple','geometry','rootN']);assert.strictEqual(JSON.stringify(m),before);
+});
+test('draft display geometry is available without entry in confirmed exposure',()=>{
+ const x=addDiagnostic(fixture([order('d',{entry:1.2,sl:1.18,status:'',recordStatus:'draft'})])),m=project(x);
+ assert.strictEqual(m.rows.length,0);near(m.operational.exposure.value,0);near(m.displayRows[0].geometry.stopDistance.value,.02);missing(m.displayRows[0].operationalRisk);
+});
+test('book source uses current period ledger and not global account balance',()=>{
+ installState();box.S.accounts[0].satu=999999;box.contexts.A.P.ledger=[{id:'l2',data:'2026-09-20',saldo:12000,updatedAt:'2026-09-20T12:00:00Z'},{id:'l1',data:'2026-09-19',saldo:11000}];
+ const m=read();near(m.operational.balance.value,12000);assert.strictEqual(m.operational.balance.source.referenceDate,'2026-09-20');assert.strictEqual(m.operational.balance.source.ledgerId,'l2');
+});
+test('registered period balance and quotes allow factual reading before equity observation',()=>{
+ installState([order('a')]);delete box.S.forex.accounts.A;
+ fx.state.dailyReference=()=>({status:'OK',value:{rate:1.25,source:'Synthetic daily',referenceDate:'2026-09-14'}});
+ const m=read();near(m.operational.grossNotional.value,1250);near(m.operational.leverage.value,.125);
+ near(m.operational.exposure.value,100);near(m.operational.exposure.percent,1);
+ missing(m.risk.leverage);missing(m.capital.equity);missing(m.risk.committed);assert.strictEqual(m.executionEligibility.status,'BLOCKED');
+});
+test('preview cannot borrow ATR or root N from another instrument',()=>{
+ const m=project(addDiagnostic(fixture([order('a')]))),preview=b.previewOrder({...m.rows[0].order,par:'GBPUSD'},m.instruments[0]);
+ missing(preview.atrMultiple);missing(preview.rootN.oneWeek);near(preview.geometry.stopDistance.value,.1);
+});
+test('operational denominator overflow stays unavailable instead of nonfinite percentage',()=>{
+ const x=tableFixture();x.accountRecord.satu=Number.MIN_VALUE;const m=project(x);missing(m.operational.leverage);assert.strictEqual(m.operational.exposure.percent,null);
+});
+test('diagnostics lookup uses exact selected account period instrument without writes',()=>{
+ installState([order('a',{entry:1.2})]);let asked;fx.state.executionDiagnostics=q=>{asked=q;return {status:'OK',value:{...q,oneWeek:{n:25,f:1.5},twoWeeks:null,revision:1}};};
+ fx.state.instrumentContext=()=>({status:'OK',value:{atr:{short:.002,long:.004,timeframe:'H4',unit:'PRICE'}}});
+ const m=read();near(m.rows[0].rootN.oneWeek.value,.015);assert.deepStrictEqual(plain(asked),{accountId:'A',periodId:'P',operationId:'OP',currency:'USD',instrumentId:'EURUSD'});
 });
 const failed=checks.filter(x=>x.result!=='PASS');console.log(JSON.stringify({checks,counts:{total:checks.length,passed:checks.length-failed.length,failed:failed.length},result:failed.length?'PRODUCT_FAIL':'PASS'}));process.exitCode=failed.length?1:0;
 """

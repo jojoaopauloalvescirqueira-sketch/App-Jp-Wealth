@@ -3,10 +3,10 @@
 const shellUI = { open:false, opener:null, inerted:[], overflow:'' };
 const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener:null };
 const submenuUI = { level:1, surface:null, context:null, openers:[], temporary:false, direction:'forward' };
-const SUBMENU_CONTEXTS=new Set(['forex-operation','forex-planning','research-forex']);
+const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','forex-planning','research-forex']);
 const SUBMENU_TITLES=Object.freeze({
   exec:'Forex',finpes:'Finanças Pessoais',research:'Research',tools:'Ferramentas e Serviços',
-  'forex-operation':'Operação','forex-planning':'Planejamento','research-forex':'Forex'
+  'forex-management-accounts':'Management Accounts','forex-planning':'Planejamento','research-forex':'Forex'
 });
 const NAV_SUBMENU_SURFACES = {
   exec:()=>window.JPWExec&&window.JPWExec.ui,

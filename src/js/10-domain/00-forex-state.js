@@ -21,6 +21,39 @@
   const civilDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&
     Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
   const componentKeys=['price','contract','conversion','atr'];
+  const identityShape=o=>object(o)&&(o.brokerHash==null||typeof o.brokerHash==='string')&&
+    (o.identityContractVersion===undefined||o.identityContractVersion===1)&&
+    (o.identityContractVersion!==1||o.recordStatus==='voided'||!['Pendente','Aberta','Fechada'].includes(o.status)||
+      !!text(o.id)&&(o.status==='Pendente'||!!text(o.brokerHash)));
+  function orderExtensionsShape(order){
+    if(!identityShape(order))return false;
+    const diagnostic=order.calculationInputs?.executionDiagnostics;
+    if(diagnostic!=null&&(!diagnosticRecordShape(diagnostic)||diagnostic.accountId!==order.accountId||
+      diagnostic.periodId!==order.periodId||diagnostic.instrumentId!==instrumentKey(order.par)))return false;
+    return !Array.isArray(order.revisions)||order.revisions.every(r=>object(r)&&
+      (r.before===undefined||orderExtensionsShape(r.before))&&(r.after===undefined||orderExtensionsShape(r.after)));
+  }
+  const horizonShape=v=>v===null||object(v)&&Number.isSafeInteger(v.n)&&v.n>0&&positive(v.f);
+  function diagnosticRecordShape(record){
+    const seen=new Set();let current=record,lastRevision=null;
+    while(current!=null){
+      if(!object(current)||seen.has(current)||!text(current.id)||!text(current.accountId)||!text(current.periodId)||
+        !instrumentKey(current.instrumentId)||current.instrumentId!==instrumentKey(current.instrumentId)||
+        !Number.isSafeInteger(current.revision)||current.revision<1||!instant(current.declaredAt)||
+        !instant(current.recordedAt)||!text(current.declaredBy)||
+        !['oneWeek','twoWeeks'].some(k=>Object.prototype.hasOwnProperty.call(current,k))||
+        !['oneWeek','twoWeeks'].every(k=>current[k]===undefined||horizonShape(current[k]))||
+        (lastRevision!==null&&current.revision!==lastRevision-1)||
+        (current!==record&&['id','accountId','periodId','instrumentId'].some(k=>current[k]!==record[k])))return false;
+      seen.add(current);lastRevision=current.revision;current=current.previous;
+    }
+    return lastRevision===1;
+  }
+  function diagnosticsShape(value){
+    if(!object(value)||value.schemaVersion!==1||!Array.isArray(value.records)||!value.records.every(diagnosticRecordShape))return false;
+    const scopes=value.records.map(r=>JSON.stringify([r.accountId,r.periodId,r.instrumentId]));
+    return new Set(scopes).size===scopes.length;
+  }
   function componentShape(key,value){
     if(!object(value)||!text(value.source)||!instant(value.observedAt)||value.sourceKind!=='MANUAL')return false;
     if(key==='price')return positive(value.value);
@@ -63,7 +96,7 @@
     /^[A-Z]{3}$/.test(p.currency)&&civilDate(p.startedAt)&&
     (p.si===null||positive(p.si))&&(p.openingBook===null||finite(p.openingBook))&&
     Array.isArray(p.phases)&&p.phases.every(ph=>object(ph)&&Array.isArray(ph.orders)&&ph.orders.every(o=>
-      object(o)&&(!text(o.accountId)||o.accountId===p.accountId)&&
+      orderExtensionsShape(o)&&(!text(o.accountId)||o.accountId===p.accountId)&&
       (!text(o.periodId)||o.periodId===p.periodId)&&(!text(o.currency)||o.currency===p.currency)&&
       (o.recordStatus!=='recorded'||o.accountId===p.accountId&&o.periodId===p.periodId&&
         o.currency===p.currency&&text(o.operationId))))&&
@@ -99,6 +132,7 @@
     Array.isArray(value.proposals)&&value.proposals.every(object)&&
     (value.operationBudgets===undefined||(Array.isArray(value.operationBudgets)&&value.operationBudgets.every(budgetShape)))&&
     (value.instrumentContexts===undefined||instrumentContextsShape(value.instrumentContexts))&&
+    (value.executionDiagnostics===undefined||diagnosticsShape(value.executionDiagnostics))&&
     (value.dailyReferences===undefined||dailyReferencesShape(value.dailyReferences))&&
     (value.accountContexts===undefined||accountContextsShape(value.accountContexts))&&
     ['market','grid','reserves','migration'].every(key=>value[key]==null||object(value[key])));
@@ -143,7 +177,8 @@
   function mutate(action,reason,keys,fn){
     if(!text(reason))return {ok:false,persistido:false,error:'Informe o motivo do registro.'};
     if(!supported())return {ok:false,persistido:false,error:'Agregado Forex incompatível. Preserve a base e revise a versão.'};
-    if(jpWealthPersistenceOutcomeIsUnknown())return {ok:false,persistido:null,error:'Gravação indeterminada. Confira a base antes de repetir.'};
+    const clearConfirmation=()=>{if(typeof hideStaleSavedTag==='function')hideStaleSavedTag();};
+    if(jpWealthPersistenceOutcomeIsUnknown()){clearConfirmation();return {ok:false,persistido:null,error:'Gravação indeterminada. Confira a base antes de repetir.'};}
     const fields=[...new Set(['forex',...keys])]; const before={};
     for(const key of fields)before[key]={exists:Object.prototype.hasOwnProperty.call(S,key),value:clone(S[key])};
     const log=S.dataGovernance&&S.dataGovernance.changeLog;
@@ -162,9 +197,9 @@
     }catch(error){restore();return {ok:false,persistido:false,error:error.message};}
     let written;
     try{written=save();}
-    catch(error){markJPWealthPersistenceOutcomeUnknown('registro Forex');return {ok:false,persistido:null,error:'Gravação indeterminada. Não repita antes de conferir a base.'};}
-    if(written===false){restore();return {ok:false,persistido:false,error:'Gravação recusada. O registro não foi confirmado; mantenha a entrada para tentar novamente.'};}
-    if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno do registro Forex');return {ok:false,persistido:null,error:'Resultado de gravação desconhecido. Não repetir.'};}
+    catch(error){markJPWealthPersistenceOutcomeUnknown('registro Forex');clearConfirmation();return {ok:false,persistido:null,error:'Gravação indeterminada. Não repita antes de conferir a base.'};}
+    if(written===false){restore();clearConfirmation();return {ok:false,persistido:false,error:'Gravação recusada. O registro não foi confirmado; mantenha a entrada para tentar novamente.'};}
+    if(written!==true){markJPWealthPersistenceOutcomeUnknown('retorno do registro Forex');clearConfirmation();return {ok:false,persistido:null,error:'Resultado de gravação desconhecido. Não repetir.'};}
     return {ok:true,persistido:true};
   }
   // Contexto operacional versionado. Seleção é estado efêmero; nenhum dado de
@@ -376,10 +411,19 @@
           edit.expectedVersion!==undefined&&edit.expectedVersion!==(old.recordVersion||0))
           throw new Error('A identidade ou versão da ordem mudou; revise antes de salvar.');
         if(old.recordStatus==='voided')throw new Error('Ordem anulada não pode ser reaberta.');
-        const allowed=['id','par','tipo','role','lote','entry','sl','tp','result','status','costs','stopValidated',
+        const allowed=['id','brokerHash','par','tipo','role','lote','entry','sl','tp','result','status','costs','stopValidated',
           'amplifiesExposure','pendingActive','costBasis','recordStatus','divergenceChecked','divergenceReason','divergenceTs'];
         if(!object(edit.changes)||Object.keys(edit.changes).some(k=>!allowed.includes(k)))throw new Error('Campo de ordem inválido.');
         const next={...clone(old),...clone(edit.changes)};
+        // An existing factual record remains legacy; an empty draft becoming a
+        // new fact adopts the identity contract, including pending -> open.
+        if(old.identityContractVersion===1||(!['Pendente','Aberta','Fechada','Migrada'].includes(old.status)&&old.recordStatus!=='recorded'))
+          next.identityContractVersion=1;
+        if(next.brokerHash!=null&&typeof next.brokerHash!=='string')throw new Error('HASH da corretora deve ser texto.');
+        if(next.identityContractVersion===1&&next.recordStatus!=='voided'&&['Pendente','Aberta','Fechada'].includes(next.status)){
+          if(!text(next.id))throw new Error('Informe o ID interno da nova ordem.');
+          if(next.status!=='Pendente'&&!text(next.brokerHash))throw new Error('Informe o HASH da corretora da nova ordem aberta ou fechada.');
+        }
         if(old.recordStatus==='recorded'&&!text(reason))throw new Error('Correção de fato exige motivo.');
         if(old.recordStatus==='recorded'&&next.status==='')throw new Error('Fato confirmado não volta a rascunho; use anulação explícita.');
         if(next.recordStatus==='voided'&&!text(reason))throw new Error('Anulação exige motivo.');
@@ -415,6 +459,8 @@
             instrumentObservation:observation.status==='OK'?clone(observation.value):null,
             dailyReference:daily.status==='OK'?clone(daily.value):null,
             provenance:'RECORDED_FACT_WITHOUT_EXECUTION_CLEARANCE'};
+          const diagnostic=executionDiagnostics({accountId,periodId,instrumentId:next.par});
+          next.calculationInputs.executionDiagnostics=diagnostic.status==='OK'?clone(diagnostic.value):null;
         }
         if(next.recordStatus==='voided'){next.voidedAt=at;next.voidReason=text(reason);}
         const after=clone(next);delete after.revisions;
@@ -496,7 +542,7 @@
       if(!registeredAccount(target?.accountId))throw new Error('Conta não cadastrada.');
       const e=contextEnvelope(f),p=e.accounts[target.accountId]?.periods?.[target.periodId];
       if(!p||!Array.isArray(p.phases?.[target.pi]?.orders))throw new Error('Conta, período ou fase inválidos.');
-      p.phases[target.pi].orders.push({id:'',orderId:id('fxorder'),par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,
+      p.phases[target.pi].orders.push({id:'',identityContractVersion:1,orderId:id('fxorder'),par:'',tipo:'BUY',lote:0,entry:0,sl:0,tp:0,
         result:null,status:'',recordStatus:'draft',recordVersion:0,revisions:[]});
       p.revision++;e.revision++;f.accountContexts=e;
     });
@@ -509,6 +555,48 @@
         throw new Error('Somente rascunho sem fato pode ser excluído.');
       rows.splice(target.oi,1);p.revision++;e.revision++;f.accountContexts=e;
     });
+  }
+  // Declared diagnostic assumptions are not market observations or policy.
+  function executionDiagnostics(target){
+    if(!supported())return {...unavailable('EXECUTION_DIAGNOSTICS_UNSUPPORTED','Diagnósticos incompatíveis; preserve a base.'),revision:0};
+    if(!object(target)||!text(target.accountId)||!text(target.periodId)||!instrumentKey(target.instrumentId))
+      return {...unavailable('EXECUTION_DIAGNOSTICS_SCOPE_MISSING','Identifique conta, período e instrumento.'),revision:0};
+    const key=instrumentKey(target.instrumentId),rows=(raw()?.executionDiagnostics?.records||[]).filter(r=>
+      r.accountId===target.accountId&&r.periodId===target.periodId&&r.instrumentId===key);
+    if(rows.length!==1)return {...unavailable('EXECUTION_DIAGNOSTICS_MISSING','Declare N e F para cada horizonte.'),revision:0};
+    return {status:'OK',value:clone(rows[0]),revision:rows[0].revision,findings:[]};
+  }
+  function recordExecutionDiagnostics(input,{reason='',expectedEpoch}={}){
+    const horizons=['oneWeek','twoWeeks'];
+    if(!object(input)||!text(input.accountId)||!text(input.periodId)||!instrumentKey(input.instrumentId)||
+      !Number.isSafeInteger(input.expectedRevision)||input.expectedRevision<0||!text(input.declaredBy)||
+      !instant(input.declaredAt)||Date.parse(input.declaredAt)>Date.now()||
+      !horizons.some(k=>Object.prototype.hasOwnProperty.call(input,k))||
+      !horizons.every(k=>!Object.prototype.hasOwnProperty.call(input,k)||horizonShape(input[k])))
+      return {ok:false,persistido:false,error:'Informe contexto, revisão, autoria, instante e N inteiro positivo/F positivo para cada horizonte declarado.'};
+    return mutate('execution-diagnostics-declared',reason,[],f=>{
+      if(expectedEpoch!==undefined&&expectedEpoch!==jpWealthPersistenceEpoch())throw new Error('A base mudou; reabra os diagnósticos.');
+      const p=contextEnvelope(f).accounts[input.accountId]?.periods?.[input.periodId],key=instrumentKey(input.instrumentId);
+      if(!registeredAccount(input.accountId)||!p)throw new Error('Conta ou período dos diagnósticos não está disponível.');
+      if(!(S.instruments||[]).some(i=>instrumentKey(i.name)===key))throw new Error('Instrumento não cadastrado.');
+      const envelope=f.executionDiagnostics||{schemaVersion:1,records:[]};
+      const index=envelope.records.findIndex(r=>r.accountId===input.accountId&&r.periodId===input.periodId&&r.instrumentId===key);
+      const previous=index<0?null:envelope.records[index];
+      if((previous?.revision||0)!==input.expectedRevision)throw new Error('Os diagnósticos mudaram; revise antes de salvar.');
+      if(previous&&Date.parse(input.declaredAt)<Date.parse(previous.declaredAt))throw new Error('A declaração é anterior à vigente.');
+      const changes={};for(const k of horizons)if(Object.prototype.hasOwnProperty.call(input,k))changes[k]=clone(input[k]);
+      const record={...(previous?clone(previous):{}),id:previous?.id||id('fxdiagnostic'),accountId:input.accountId,
+        periodId:input.periodId,instrumentId:key,...changes,revision:(previous?.revision||0)+1,
+        declaredBy:text(input.declaredBy),declaredAt:new Date(input.declaredAt).toISOString(),recordedAt:now(),previous:previous?clone(previous):null};
+      if(index<0)envelope.records.push(record);else envelope.records[index]=record;
+      f.executionDiagnostics=envelope;
+    });
+  }
+  function validateExecutionExtensions(document){
+    const orders=phases=>!Array.isArray(phases)||phases.every(p=>!Array.isArray(p?.orders)||p.orders.every(orderExtensionsShape));
+    if(!orders(document?.phases))return false;
+    const records=document?.operationHistory?.records;
+    return !Array.isArray(records)||records.every(r=>!Array.isArray(r?.ordersSnapshot)||r.ordersSnapshot.every(orderExtensionsShape));
   }
   function instrumentContext(target){
     if(!supported())return unavailable('INSTRUMENT_SCHEMA_UNSUPPORTED','Observações incompatíveis; preserve a base.');
@@ -902,6 +990,7 @@
     accountLedger,recordAccountLedger,recordAccountOrders,finalizeAccountOperation,addAccountOrderDraft,deleteAccountOrderDraft,
     recordAccountFacts,selectAccount,recordMarket,recordH4,recordGrid,recordReserves,
     recordInstrumentContext,instrumentContext,recordDailyReferences,dailyReference,dailyReferenceRevision,
+    executionDiagnostics,recordExecutionDiagnostics,validateExecutionExtensions,
     recordOperationBudget,budgetSnapshot,attachOperationBudget,
     editorStatus,configureEditor,unlockEditor,lockEditor,clearEditor,proposeParameterChange,activateProposal,
     supported,unavailable,newOperationPhases:forexNewOperationPhases};

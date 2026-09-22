@@ -68,6 +68,7 @@ function operationOrderBefore(o){
 }
 function operationValidateOrder(o){
   if(!o||typeof o!=='object')return 'Ordem inválida.';
+  if(o.brokerHash!=null&&typeof o.brokerHash!=='string')return 'HASH da corretora deve ser texto.';
   if(!['','Aberta','Fechada','Migrada','Pendente'].includes(o.status||''))return 'Status inválido.';
   if(o.role!=null&&!['','GENESIS','DEFENSE','OTHER'].includes(o.role))return 'Papel da ordem inválido.';
   if(!['BUY','SELL'].includes(o.tipo))return 'Direção inválida.';

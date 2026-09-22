@@ -26,6 +26,10 @@ def record_fixture(page):
     }""")
     recording.seed(page)
     page.evaluate("""() => {
+      // Novos fatos contextuais têm o HASH explícito; os registros legados
+      // construídos diretamente pelos casos abaixo permanecem sem migração.
+      const legacyFact=window.__fact;
+      window.__fact=(patch={})=>legacyFact({brokerHash:'SYNTHETIC-GUARDS-HASH',...patch});
       // Bridge sintética para as provas antigas de guardas. Os getters expõem
       // somente a fase da conta escolhida durante ESTE teste; o produto nunca
       // copia contextos para S.phases/S.activeOperation ao navegar.

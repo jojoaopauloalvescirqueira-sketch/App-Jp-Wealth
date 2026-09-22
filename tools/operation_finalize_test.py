@@ -33,7 +33,7 @@ SEED='''(kind) => {
   }
   const add=(accountId,status,result,costs=0,costBasis='INCLUDED_IN_RESULT')=>{
     x.selectOperationalAccount(accountId);const scope=x.operationalSelection();
-    const r=x.recordAccountOrders([{pi:0,oi:0,changes:{id:accountId+'-1',par:'EURUSD',tipo:'BUY',
+    const r=x.recordAccountOrders([{pi:0,oi:0,changes:{id:accountId+'-1',brokerHash:'SYNTHETIC-'+accountId+'-HASH',par:'EURUSD',tipo:'BUY',
       role:'GENESIS',lote:.01,entry:1.1,sl:1.09,tp:1.2,status,result,costs,costBasis,
       stopValidated:true}}],{...scope,reason:'Fato sintético'});
     if(!r.ok)throw Error(r.error);return scope;

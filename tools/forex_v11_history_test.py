@@ -56,6 +56,17 @@ CASES = r"""() => {
     recordContext:{...brl.recordContext,accountInputs:{currency:'BRL',equity:9876,password:'SECRET_SYNTHETIC'}}});
     const copy=operationCopyProjection(r);assert(!copy.includes('SECRET_SYNTHETIC')&&!copy.includes('9876')&&!copy.includes('DD:'),copy);});
   test('all projections preserve raw state',()=>{assert(JSON.stringify(S)===before,'state mutated');});
+  test('opaque broker HASH survives detail copy and exact search',()=>{
+    const hash='0009007199254740993123456789-XyZ';
+    const r=record({ordersSnapshot:[{label:'INTERNAL-1',brokerHash:hash,phase:1,status:'Fechada',result:0}]});
+    assert(histRenderDetail(r).includes(hash)&&operationCopyProjection(r).includes(hash),'HASH missing');
+    histState.query=hash;assert(histFilter([r]).length===1,'HASH cannot be found');histState.query='';
+  });
+  test('legacy missing broker HASH stays absent and is never inferred',()=>{
+    const r=record();const prior=JSON.stringify(r);const html=histRenderDetail(r),copy=operationCopyProjection(r);
+    assert(html.includes('Não informado')&&!copy.includes('HASH da corretora:'),'legacy HASH inferred');
+    assert(JSON.stringify(r)===prior,'history rewritten');
+  });
   return results;
 }"""
 
@@ -101,7 +112,8 @@ def main():
     ap.add_argument('--browser',action='store_true')
     args=ap.parse_args()
     script="""const fs=require('fs'),vm=require('vm');
-const ctx={window:{},S:{matrix:[{nome:'CURRENT'}, {nome:'CURRENT MUTABLE PHASE'}]},Intl,Date,Number,JSON};
+const ctx={window:{},S:{matrix:[{nome:'CURRENT'}, {nome:'CURRENT MUTABLE PHASE'}]},Intl,Date,Number,JSON,
+  JPWForex:{state:{operationalSelection:()=>({accountId:null,periodId:null}),accountContext:()=>({status:'NOT_COMPUTABLE',value:null})}}};
 ctx.window=ctx;vm.createContext(ctx);
 let helper=fs.readFileSync(process.argv[1],'utf8');
 vm.runInContext(helper.slice(0,helper.indexOf('const fmtPct=')),ctx);

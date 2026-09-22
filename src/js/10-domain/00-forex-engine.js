@@ -55,13 +55,21 @@
     if(!nonnegative(p.volume)||!positive(p.contractSize)||!positive(p.conversionRate))return invalid('Volume/contrato/conversão inválidos.','ACCOUNT_CURRENCY');
     return ok(Math.abs(p.volume*p.contractSize*p.conversionRate),'ACCOUNT_CURRENCY');
   }
+  function computeGrossNotional(input){
+    const x=input||{},unit='ACCOUNT_CURRENCY';
+    if(!Array.isArray(x.positions))return absent(['positions'],unit);
+    let gross=0;
+    for(const p of x.positions){const n=positionNotional(p);if(n.status!=='OK')return n;gross+=n.value;}
+    return ok(gross,unit);
+  }
   function computeLeverage(input){
     const x=input||{},unit='MULTIPLE';
     const error=requireNumbers(x,['si','equity'],unit);if(error)return error;
     if(!positive(x.si)||!positive(x.equity))return invalid('A base min(SI, Equity) deve ser positiva.',unit);
     if(!Array.isArray(x.positions))return absent(['positions'],unit);
-    let gross=0;
-    for(const p of x.positions){const n=positionNotional(p);if(n.status!=='OK')return result(n.status,null,unit,n.findings);gross+=n.value;}
+    const notional=computeGrossNotional(x);
+    if(notional.status!=='OK')return result(notional.status,null,unit,notional.findings);
+    const gross=notional.value;
     const base=Math.min(x.si,x.equity);
     return ok(gross/base,unit,[],{grossNotional:gross,base});
   }
@@ -204,6 +212,15 @@
     const atrPercent=x.atr/x.currentPrice*100,multiple=x.stopPercent/atrPercent;
     return ok(multiple,'ATR_MULTIPLE',parameterWarnings(['P-20']),{atrPercent,minimumMultiple:param('P-20'),meetsMinimum:multiple>=param('P-20'),technicalAnalysisStillRequired:true});
   }
+  function computeRootNDiagnostic(input){
+    const x=input||{},unit='PRICE',error=requireNumbers(x,['atr','n','f'],unit);
+    const extra={diagnosticOnly:true,calculationMode:'USER_DIAGNOSTIC',normativeParameterActivated:false,
+      n:finite(x.n)?x.n:null,f:finite(x.f)?x.f:null,timeframe:'H4'};
+    if(error)return Object.assign(error,extra);
+    if(!nonnegative(x.atr)||!Number.isSafeInteger(x.n)||x.n<=0||!positive(x.f))
+      return Object.assign(invalid('ATR deve ser não negativo; N deve ser inteiro positivo de candles H4 e F deve ser positivo.',unit),extra);
+    return Object.assign(ok(x.atr*Math.sqrt(x.n)*x.f,unit,[],{atr:x.atr}),extra);
+  }
   function computeFCRRequirement(input){
     const x=input||{},error=requireNumbers(x,['capitalNominal'],'ACCOUNT_CURRENCY',positive);if(error)return error;
     const conflicts=[finding('FCR_BASE_CONFLICT','PDF usa capital nominal da Mestre; Anexo usa SI. Cálculo segue o PDF adotado; conflito documental permanece aberto.','PDF p86 Art13.2 §1 / Anexo K01')];
@@ -284,7 +301,7 @@
       return ok(rows,'PLANNING_TIMELINE',[],{mode:x.mode,source:'JPWFx',referenceMonthlyReturn:policy.planning.referenceMonthlyReturn,annualReferenceRange:policy.planning.annualReferenceRange});
     }catch(error){return result('NOT_COMPUTABLE',null,'PLANNING_TIMELINE',[finding('PLANNING_ADAPTER_FAILED','A projeção existente não pôde ser calculada.','docs/architecture/FX-PLANNING.md','BLOCKING')]);}
   }
-  return Object.freeze({computeDrawdown,computeLeverage,resolveAccountPhase,resolvePhaseReturnWithHysteresis,resolveActiveGridPhase,computeVRM,resolveVRMRegime,computeEffectiveLeverageLimit,computeFinancialRisk,computeAdmissionRisk,computeCommittedOperationRisk,computeOpenAggregatePhaseRisk,computePrudentialCapacity,computeMinimumStop,computeStopAtrMultiple,computeFCRRequirement,computeFEORequirement,computeReserveStatus,computeReplicationFirewall,computeSizingTrace,computePlanningProjection});
+  return Object.freeze({computeDrawdown,computeGrossNotional,computeLeverage,resolveAccountPhase,resolvePhaseReturnWithHysteresis,resolveActiveGridPhase,computeVRM,resolveVRMRegime,computeEffectiveLeverageLimit,computeFinancialRisk,computeAdmissionRisk,computeCommittedOperationRisk,computeOpenAggregatePhaseRisk,computePrudentialCapacity,computeMinimumStop,computeStopAtrMultiple,computeRootNDiagnostic,computeFCRRequirement,computeFEORequirement,computeReserveStatus,computeReplicationFirewall,computeSizingTrace,computePlanningProjection});
   }
   ns.createEngine=createEngine;
   ns.engine=createEngine(ns.policy);

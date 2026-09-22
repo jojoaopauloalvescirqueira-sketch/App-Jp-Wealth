@@ -4,7 +4,7 @@ Campanha FOREX-EXECUTION-BOARD-01, base integrada `594c86ebf13661d0e5846a3b64a02
 
 ## Autoridade e responsabilidade
 
-Constituição → Estatuto V11 → Anexo nos elementos delegados → `JPWForex.policy`/`engine` → projeção → UI. Policy/engine e parâmetros não foram alterados. A planilha orienta a organização da informação; suas fórmulas divergentes e incompletas não são oráculo. Registrar fato continua distinto de autorizar execução.
+Constituição → Estatuto V11 → Anexo nos elementos delegados → `JPWForex.policy`/`engine` → projeção → UI. Parâmetros normativos permanecem inalterados; as projeções operacionais aprovadas abaixo ampliam o domínio sem substituir a avaliação normativa. A planilha orienta a organização da informação; suas fórmulas divergentes e incompletas não são oráculo. Registrar fato continua distinto de autorizar execução.
 
 `10-domain/18-execution-board-model.js` é projeção sem escrita. `read` resolve a seleção e chama o modelo; `project` agrega fixtures/contexto explícito; `instrumentInputs` compartilha contratos/conversões com os leitores de risco; `closedNetResult` aplica o tratamento de custos declarado. `20-ui/30-execution-board.js` apresenta resultados e rascunhos RAM. Não contém fórmulas financeiras. `19-execution-market.js` coordena o provedor diário, usando os comandos de `00-forex-state.js`.
 
@@ -18,7 +18,7 @@ Registros conciliados exigem conta, período, moeda, operação, instrumento e i
 
 Risco de stops é monetário positivo; resultado realizado tem sinal. Custos `INCLUDED_IN_RESULT` não são somados de novo; `SEPARATE_FROM_RESULT` exige valor assinado e soma uma vez. Compensada pelas defesas = risco aberto − líquido das ordens explicitamente DEFENSE; compensada da operação usa todos os encerramentos conciliados. Resultado negativo amplia a leitura econômica, ganho pode torná-la negativa. Isso não reduz RC normativo nem amplia orçamento.
 
-RC, alavancagem, DD, fases, capacidade prudencial e stops normativos vêm do motor. Alavancagem usa nocional bruto / min(SI,equity). DD22% é encerramento estatutário, não stop-out da corretora. As faixas de DD não são orçamento de stops. A capacidade prudencial restante não é margem da corretora ou admissão autorizada.
+RC, alavancagem normativa, DD, fases, capacidade prudencial e stops normativos vêm do motor. A alavancagem normativa usa nocional bruto / min(SI,equity). DD22% é encerramento estatutário, não stop-out da corretora. As faixas de DD não são orçamento de stops. A capacidade prudencial restante não é margem da corretora ou admissão autorizada.
 
 Referências de lotes: fatores vigentes P-12b × min(SI,equity) / nocional de um lote na moeda da conta. Mostram precisão teórica, não volume arredondado para execução. Conversão usa caminhos identificados de moedas, observações manuais ou referências diárias datadas; preço legado mostrado não se torna conversão observada. Cada perna preserva origem e data. Contrato, conversão ou base ausentes impedem cálculo. Restrições de instrumentos permanecem.
 
@@ -66,3 +66,34 @@ O leitor PDF usa os mesmos recursos PDF.js fixados localmente. Em `file://`, `sr
 O envelope público `mt5-summary-pdf-v1` permanece compatível; a indicação `PDF_TEXT_TABLES` distingue tabelas extraídas de um resumo sem tickets. A completude do histórico PDF não é presumida. Dados ausentes permanecem indisponíveis. Não se promete reconhecimento de PDFs digitalizados ou de qualquer layout de corretora.
 
 Verificações específicas: `fx_import_numbers_test.py`, `fx_pdf_local_test.py`, `fx_account_setup_test.py` e `fx_import_operation_test.py`. A última usa a interface real nas seis fases e confere recarga, conta distinta e backup completo em outra sessão descartável, com versões modular/portátil, arquivo/HTTP e larguras 390/768/1440. Resultados e capturas estão no relatório do candidate, separados de aceite e integração. O contrato atual de backup completo inclui rascunhos recuperáveis para revisão; nunca os lança automaticamente.
+
+
+## Contrato tabular — 2026-09-22
+
+Candidate isolado baseado em `a62258f`, autorizado pelo plano integral; contrato [CHG-FOREX-EXECUTION-TABLE-20260922](../work/CHG-FOREX-EXECUTION-TABLE-20260922.md). Esta seção atualiza apresentação, identidade e projeções; a fotografia de 2026-09-15 acima permanece histórica.
+
+Forex apresenta Dashboard, Execution Board, History, Contabilidade, Management Accounts, Planejamento e Reservas. History hospeda exclusivamente operações completas finalizadas. Management Accounts reúne Contas e Fator de Correção. Os quatro layouts usam os mesmos destinos/controladores e guardas de rascunhos.
+
+A Board apresenta contexto da conta/período, resumo operacional e tabelas por fase. Grupos de colunas distinguem identidade, geometria, cálculo, exposição, resultado e gravação. ID e HASH fixos no desktop; no celular somente ID permanece fixo. A tabela rola horizontalmente, sem conversão para cartões. Edição e diagnóstico recebem orientação na interface. Cabeçalhos, valores calculados e campos editáveis têm apresentação distinta.
+
+| Leitura operacional | Base e regra |
+|---|---|
+| Hard Stop | SI × 0,78 + movimentações líquidas conciliadas; piso de equity, não controle remoto da corretora |
+| Total Exposure | Risco positivo até o stop das ordens abertas, com direção e stop favorável respeitados; percentual sobre saldo contábil atual |
+| Compensed Exposure | Risco aberto menos resultado líquido realizado exclusivamente DEFENSE; perdas ampliam, ganhos reduzem; custos uma vez |
+| Alavancagem utilizada | Nocional bruto das posições abertas na moeda da conta / saldo contábil atual, sem compensar BUY/SELL |
+| ATR Multiple | abs(entrada − stop) / ATR55 H4, sem usar preço atual |
+| VRM | ATR55 H4 / ATR660 H4, razão em × |
+| Raiz-N declarado | ATR55 H4 × √N × F; percentual divide a distância pela entrada |
+
+Pendentes são apresentados separadamente e permanecem no risco comprometido normativo aplicável. RC, limites e alavancagem normativa não são substituídos pelas projeções sobre saldo. Conversão do risco usa moeda de cotação; nocional distingue moeda-base. Dados ausentes geram leitura indisponível e motivo, nunca zero artificial.
+
+`executionBoard.previewOrder` é puro: atualiza somente geometria, ATR e Raiz-N da linha em RAM. Células alteradas são identificadas como não salvas; exposição e totais confirmados só mudam após writer aceito. `displayRows` inclui rascunhos para geometria; `rows` conserva somente fatos registrados para agregação.
+
+`brokerHash` é texto opaco, sem conversão numérica nem unicidade global. Novas ordens abertas/fechadas exigem ID manual e HASH. Pendentes exigem ID e recebem o marcador `identityContractVersion:1`, que exige HASH ao abrir. Ordens legadas sem marcador continuam consultáveis, complementáveis e fecháveis; IDs técnicos não mudam. Importação MT5 não presume que ticket corresponde ao HASH.
+
+`S.forex.executionDiagnostics` é opcional, schema1, por conta/período/instrumento; N inteiro positivo H4 e F positivo são declarados independentemente para uma e duas semanas. Não há defaults. O comando `recordExecutionDiagnostics` valida revisão/epoch e grava com origem declarada, data e motivo; falha conserva rascunho, desfecho desconhecido segue recuperação existente. Campo omitido preserva horizonte; `null` remove explicitamente. Esses cenários não modificam P21, stop ou autorização de execução.
+
+Backup Completo valida a extensão e HASH antes de escrever, aceita ausência em backups antigos e preserva revisão/declaração. `calculationInputs.executionDiagnostics` captura o cenário disponível em cada registro ou correção factual da ordem. Finalizar a operação preserva a última versão confirmada de cada ordem; não consulta o cenário atual para completar ou recalcular o passado. Todos os schemas existentes permanecem nas versões atuais.
+
+Focais adicionais: `forex_execution_identity_test.py`, `forex_execution_table_test.py` e `forex_navigation_table_test.py`, além de projeção, motor, histórico, persistência e gate completo. Somente fixtures sintéticas; recibos externos registram build, hashes e limitações reais. Implementação local não equivale a integração, publicação ou aceite visual.
