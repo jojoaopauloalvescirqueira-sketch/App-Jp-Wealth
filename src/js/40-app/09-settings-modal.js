@@ -836,7 +836,8 @@ function closeSettingsModal(options={}){
   if(typeof mvpNotesCancelAppearance==='function')mvpNotesCancelAppearance();
   settingsState.open=false; settingsEl('settingsOverlay').classList.remove('show'); settingsEl('settingsOverlay').setAttribute('aria-hidden','true'); settingsSetAppInert(false); restoreLegacySettingsNodes();
   if(typeof researchSetCovered==='function') researchSetCovered(false);
-  const opener=settingsState.opener; settingsState.opener=null; if(options.restoreFocus!==false&&opener&&document.contains(opener)) requestAnimationFrame(()=>opener.focus());
+  const opener=settingsState.opener; settingsState.opener=null;
+  if(options.restoreFocus!==false) shellRestoreHeaderFocus(opener);
 }
 function settingsMarkSubdialogLauncher(element){ settingsState.subdialogLauncher=element; }
 function suspendSettingsForSubdialog(){

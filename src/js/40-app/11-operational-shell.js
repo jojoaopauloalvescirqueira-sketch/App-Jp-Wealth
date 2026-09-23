@@ -23,6 +23,31 @@ function shellHorizontal(){return shellTopbar()||shellGlass();}
 function shellCompact(){return shellGlass()?window.matchMedia('(max-width:1179px)').matches:shellMobile();}
 function shellMenuRoot(){return shellGlass()?document.querySelector('body > header'):document.getElementById(shellTopbar()?'nav':'appSidebar');}
 function shellModalOpen(){return !!document.querySelector('#settingsOverlay.show,#mvpNotesOverlay.show');}
+// Retorno das superfícies do cabeçalho: não selecionar nós ocultos pela cápsula
+// nem disputar um novo diálogo/acionador que já assumiu o foco.
+function shellFocusAvailable(element){
+  if(!element?.isConnected || element===document.body ||
+    element.matches(':disabled,[aria-disabled="true"]') ||
+    element.closest('[hidden],[inert],[aria-hidden="true"]') || !element.getClientRects().length)return false;
+  const style=getComputedStyle(element),rect=element.getBoundingClientRect();
+  return rect.width>0 && rect.height>0 && style.visibility!=='hidden' && style.visibility!=='collapse';
+}
+function shellRestoreHeaderFocus(opener,isCurrent=()=>true){
+  const activeAtRequest=document.activeElement;
+  requestAnimationFrame(()=>{
+    if(!isCurrent() || document.querySelector('#modalOverlay.show,#settingsOverlay.show,#mvpNotesOverlay.show,dialog[open]') ||
+      (shellUI.open && shellCompact() && !shellGlass()))return;
+    let target=shellFocusAvailable(opener)?opener:null;
+    if(!target && ['headerConfigBtn','headerProfileBtn','headerNotificationsBtn','finalizeSessionBtn'].includes(opener?.id)){
+      const toggle=shellEl('[data-shell-menu-toggle]');
+      target=shellCompact() && shellFocusAvailable(toggle)?toggle:document.getElementById('brandHomeBtn');
+    }
+    if(!shellFocusAvailable(target))return;
+    const active=document.activeElement;
+    if(active!==activeAtRequest && active!==opener && active!==target && shellFocusAvailable(active))return;
+    target.focus({preventScroll:true});
+  });
+}
 function mountNavigationLayout(value){
   if(!NAV_LAYOUTS.includes(value))return;
   const previous=document.documentElement.getAttribute('data-navigation');

@@ -1,0 +1,299 @@
+{
+  "inventory_version": 1,
+  "project": "Lucide",
+  "repository": "https://github.com/lucide-icons/lucide",
+  "commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+  "commit_url": "https://github.com/lucide-icons/lucide/commit/f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+  "commit_committer_date": "2026-09-22T11:49:09Z",
+  "version_policy": "Pinned upstream commit; no release or installed package version asserted.",
+  "retrieved_at_utc": "2026-09-23T15:39:34+00:00",
+  "license": {
+    "local_file": "LICENSE",
+    "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/LICENSE",
+    "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+    "bytes": 3208,
+    "preserved_byte_for_byte": true,
+    "notices": [
+      "ISC: Copyright (c) 2026 Lucide Icons and Contributors",
+      "MIT for listed Feather derivatives: Copyright (c) 2013-present Cole Bemis"
+    ]
+  },
+  "scope": "Eleven statically vendored SVGs for the authorized header/navigation controls only.",
+  "runtime": {
+    "external_requests_required": false,
+    "package_installed": false,
+    "javascript_dependency": false,
+    "raw_svg_files_requested": false,
+    "integration": "Dedicated symbols in the existing index.html sprite, local fragment <use>; official generator carries them and license notice to portable HTML."
+  },
+  "presentation_adaptation": {
+    "source_view_box": "0 0 24 24",
+    "source_stroke_width": 2,
+    "css_stroke_width": 1.75,
+    "render_size_css_px": 20,
+    "stroke_color": "currentColor",
+    "path_geometry_modified": false,
+    "note": "CSS presentation adaptation only. Keep symbol stroke inherited from each shell SVG, do not fix it at 2 inside a symbol."
+  },
+  "excluded": {
+    "apple_assets": "No Apple asset, SF Symbol or font file distributed. System font stack only.",
+    "brand_and_avatar": "Existing mark and avatar unchanged.",
+    "controller_owned_indicators": "Existing two-line CSS menu glyph, rail glyph, disclosure arrows and state transformations are not Lucide and remain unchanged.",
+    "internal_modules": "No SVG replacement in Execution Board, checklist or other internal-module controls."
+  },
+  "security_review": {
+    "result": "PASS",
+    "method": "Parse all raw SVGs; strict element/attribute allowlists; reject external URLs, event attributes, scripts, foreignObject, entities, non-SVG namespaces and control characters.",
+    "icons_checked": 11,
+    "upstream_individual_license_headers_present": false,
+    "license_coverage": "Full original repository LICENSE retained without edits; per-icon ISC/MIT applicability indexed below."
+  },
+  "icons": [
+    {
+      "name": "bell",
+      "function": "Notificações",
+      "consumer_selector": "#headerNotificationsBtn",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-bell",
+      "local_file": "icons/bell.svg",
+      "upstream_path": "icons/bell.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/bell.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "394889e9631fe3a9a63be9a479a95b451b708e432d895978d21d9130b5ee5dbe",
+      "vendored_sha256": "394889e9631fe3a9a63be9a479a95b451b708e432d895978d21d9130b5ee5dbe",
+      "source_git_blob_sha1": "0345ca35bc8cead87cf05857545e24de031e7779",
+      "bytes": 393,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "settings",
+      "function": "Configurações",
+      "consumer_selector": "#headerConfigBtn",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-settings",
+      "local_file": "icons/settings.svg",
+      "upstream_path": "icons/settings.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/settings.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b",
+      "vendored_sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b",
+      "source_git_blob_sha1": "4c6263af909841a3911f41a385021778eacba736",
+      "bytes": 586,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "log-out",
+      "function": "Finalizar sessão",
+      "consumer_selector": "#finalizeSessionBtn",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-log-out",
+      "local_file": "icons/log-out.svg",
+      "upstream_path": "icons/log-out.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/log-out.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "f24b5b45c05a3acc346af8095408f6ba197ff58ea1641a4f2cb25a9702d2c0ac",
+      "vendored_sha256": "f24b5b45c05a3acc346af8095408f6ba197ff58ea1641a4f2cb25a9702d2c0ac",
+      "source_git_blob_sha1": "fe772e6692db987dd1a1c4f6670e8c2d49b20b94",
+      "bytes": 317,
+      "licenses": [
+        "ISC",
+        "MIT"
+      ],
+      "feather_derived_in_upstream_license": true,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "layout-dashboard",
+      "function": "Dashboard",
+      "consumer_selector": "#nav > button[data-primary=\"dashboard\"]",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-layout-dashboard",
+      "local_file": "icons/layout-dashboard.svg",
+      "upstream_path": "icons/layout-dashboard.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/layout-dashboard.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "281ab865b4c04dab32a04023473e448f58be6a7ad90769450ac3349d79dc4aed",
+      "vendored_sha256": "281ab865b4c04dab32a04023473e448f58be6a7ad90769450ac3349d79dc4aed",
+      "source_git_blob_sha1": "8d6065453975433d10ea8b87d38b6ce8bf360dea",
+      "bytes": 416,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "search",
+      "function": "Research",
+      "consumer_selector": "#researchNavTrigger",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-search",
+      "local_file": "icons/search.svg",
+      "upstream_path": "icons/search.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/search.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "283d371c2e433817bb9c0c8310caa6c77fa4177c0f4f1168d9c83b97af7389dc",
+      "vendored_sha256": "283d371c2e433817bb9c0c8310caa6c77fa4177c0f4f1168d9c83b97af7389dc",
+      "source_git_blob_sha1": "03e442a5440cff92c219fe3a3c1f2b0788d30701",
+      "bytes": 275,
+      "licenses": [
+        "ISC",
+        "MIT"
+      ],
+      "feather_derived_in_upstream_license": true,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "chart-no-axes-combined",
+      "function": "Forex",
+      "consumer_selector": "#execNavTrigger",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-chart-no-axes-combined",
+      "local_file": "icons/chart-no-axes-combined.svg",
+      "upstream_path": "icons/chart-no-axes-combined.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/chart-no-axes-combined.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "2f8a708c357488cfde7428d9b055b9bb4a99c08dc71e9296da03ecc19291c4ab",
+      "vendored_sha256": "2f8a708c357488cfde7428d9b055b9bb4a99c08dc71e9296da03ecc19291c4ab",
+      "source_git_blob_sha1": "ca3fabf753c5a9c55a2094c8214b7e40c212bfc7",
+      "bytes": 432,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "house",
+      "function": "Finanças Pessoais",
+      "consumer_selector": "#finpesNavTrigger",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-house",
+      "local_file": "icons/house.svg",
+      "upstream_path": "icons/house.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/house.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "28216c479005731ef5e382e7d8627eda2b129b019eb1f3d9de9f5915576d448e",
+      "vendored_sha256": "28216c479005731ef5e382e7d8627eda2b129b019eb1f3d9de9f5915576d448e",
+      "source_git_blob_sha1": "10e4097e290fdb2f1f919b264bf4e3095348de7c",
+      "bytes": 383,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "briefcase-business",
+      "function": "Alladin",
+      "consumer_selector": "#nav > button[data-primary=\"alladin\"]",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-briefcase-business",
+      "local_file": "icons/briefcase-business.svg",
+      "upstream_path": "icons/briefcase-business.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/briefcase-business.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "98388a2bf7b9d102d77772d125d26f59ea3bed0d8573a5fc8907003099ae9a54",
+      "vendored_sha256": "98388a2bf7b9d102d77772d125d26f59ea3bed0d8573a5fc8907003099ae9a54",
+      "source_git_blob_sha1": "5bd2828a88c06e511943a5bc612b12560c192bd4",
+      "bytes": 388,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "sliders-horizontal",
+      "function": "Ferramentas e Serviços",
+      "consumer_selector": "#toolsNavTrigger",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-sliders-horizontal",
+      "local_file": "icons/sliders-horizontal.svg",
+      "upstream_path": "icons/sliders-horizontal.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/sliders-horizontal.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "e43a00e5eb684e6cbb61083bed2528d7a3fa5f265693eb2b5f314cd432aa65f4",
+      "vendored_sha256": "e43a00e5eb684e6cbb61083bed2528d7a3fa5f265693eb2b5f314cd432aa65f4",
+      "source_git_blob_sha1": "819f80c1f0cc7fade2088fb776030e348657a486",
+      "bytes": 422,
+      "licenses": [
+        "ISC"
+      ],
+      "feather_derived_in_upstream_license": false,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "x",
+      "function": "Fechar navegação lateral",
+      "consumer_selector": "#sidebarClose",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-x",
+      "local_file": "icons/x.svg",
+      "upstream_path": "icons/x.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/x.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117",
+      "vendored_sha256": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117",
+      "source_git_blob_sha1": "e31794349d3eecea1b3ae8e974b68bb8f4becda7",
+      "bytes": 260,
+      "licenses": [
+        "ISC",
+        "MIT"
+      ],
+      "feather_derived_in_upstream_license": true,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    },
+    {
+      "name": "chevron-left",
+      "function": "Voltar um nível de navegação",
+      "consumer_selector": "#submenuNavBack",
+      "consumer_status": "verified in static index.html and portable HTML: one matching shell consumer, original geometry and complete license metadata; runtime/visual acceptance not assessed",
+      "symbol_id": "shell-icon-chevron-left",
+      "local_file": "icons/chevron-left.svg",
+      "upstream_path": "icons/chevron-left.svg",
+      "upstream_url": "https://raw.githubusercontent.com/lucide-icons/lucide/f06ac67e33d645c40b8ce19a0419c85c5d7dd751/icons/chevron-left.svg",
+      "upstream_commit": "f06ac67e33d645c40b8ce19a0419c85c5d7dd751",
+      "source_sha256": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+      "vendored_sha256": "83b0681aa38bf55e9d52a1e4b4cced624abe1fe7678ecafda133a574f1161d93",
+      "source_git_blob_sha1": "056d5abc06e44940302c8b2a1912a382ea26b36d",
+      "bytes": 238,
+      "licenses": [
+        "ISC",
+        "MIT"
+      ],
+      "feather_derived_in_upstream_license": true,
+      "upstream_file_license_header": false,
+      "license_notice_location": "LICENSE (unaltered, includes ISC and MIT); duplicated inline with the shell sprite",
+      "geometry_modified": false
+    }
+  ]
+}

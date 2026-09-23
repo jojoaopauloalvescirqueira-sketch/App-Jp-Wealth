@@ -21,6 +21,14 @@ from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_
 
 ROOT = Path(__file__).resolve().parents[1]
 NOW = datetime(2026, 9, 14, 12, 0, tzinfo=timezone.utc)
+REVIEW_CONTEXTS = [
+    {'account_id': 'SYN_NOTIFY_A', 'period_id': 'SYN_NOTIFY_A_SEP', 'name': 'SYN Conta A',
+     'currency': 'USD', 'flag': 'needsReview',
+     'notification_id': 'forex:order-review:SYN_NOTIFY_A:SYN_NOTIFY_A_SEP'},
+    {'account_id': 'SYN_NOTIFY_B', 'period_id': 'SYN_NOTIFY_B_SEP', 'name': 'SYN Conta B',
+     'currency': 'EUR', 'flag': 'stopPhaseWarning',
+     'notification_id': 'forex:order-review:SYN_NOTIFY_B:SYN_NOTIFY_B_SEP'},
+]
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -103,12 +111,37 @@ def seed_calendar(page, minutes=16, title='SYN Calendário', age_minutes=0):
     }""", {'minutes': minutes, 'title': title, 'age': age_minutes})
 
 
+def seed_review_contexts(page):
+    # STATE-SCHEMA: accountContexts is canonical; S.phases remains immutable legacy.
+    # Consumer fixtures are installed before read-only instrumentation, not by
+    # changing a financial writer or automatically associating legacy orders.
+    page.evaluate("""contexts => {
+      const envelope=S.forex.accountContexts ||
+        (S.forex.accountContexts={schemaVersion:1,revision:1,accounts:{},archivedAccounts:{},legacy:null});
+      for(const c of contexts){
+        S.accounts.push({forexAccountId:c.account_id,nome:c.name,tipo:'PRÓPRIA',
+          platform:'MT5',platformCurrency:c.currency});
+        const makePeriod=periodId=>({accountId:c.account_id,periodId,startedAt:'2026-09-14',
+          currency:c.currency,si:10000,openingBook:10000,source:'synthetic notification fixture',
+          observedAt:'2026-09-14T12:00:00.000Z',createdAt:'2026-09-14T12:00:00.000Z',
+          activeOperation:null,phases:forexNewOperationPhases(),ledger:[],ledgerEvents:[],revision:1});
+        const period=makePeriod(c.period_id);
+        period.phases[0].orders=[{id:'SYN_SHARED_MANUAL_ID',orderId:'SYN_ORDER_'+c.account_id,
+          brokerHash:'000_SYN_'+c.account_id,accountId:c.account_id,periodId:c.period_id,
+          currency:c.currency,par:'EURUSD',lote:0.01,entry:1.1,sl:1.09,tp:1.12,
+          tipo:'BUY',dir:'Compra',role:'GENESIS',status:'Aberta',result:0,[c.flag]:true}];
+        const clean=makePeriod(c.period_id+'_CLEAN');
+        envelope.accounts[c.account_id]={accountId:c.account_id,currentPeriodId:c.period_id,
+          periods:{[c.period_id]:period,[clean.periodId]:clean},archived:false};
+      }
+    }""", REVIEW_CONTEXTS)
+
+
 def seed_areas(page):
+    seed_review_contexts(page)
     page.evaluate("""() => {
       S.onboarding={...S.onboarding,done:true};
       S.quarantine={...(S.quarantine||{}),inicio:'2026-09-14',fim:'2026-12-14'};
-      S.phases[0].orders.push({id:'SYN_ORDER_REVIEW',par:'EURUSD',lote:0.01,entry:1.1,sl:1.09,
-        tp:1.12,dir:'Compra',status:'Aberta',result:0,needsReview:true});
       S.dataGovernance.backup.lastConfirmedAt='2020-01-01T00:00:00Z';
       S.personalFinance.months['2026-08']={createdAt:'2026-08-01T00:00:00Z',incomes:[],
         expenses:[{id:'SYN_PENDING',name:'SYN despesa',status:'PENDENTE',targetAmount:null,
@@ -142,7 +175,14 @@ def all_areas_and_readonly(page, _dialogs):
         assert rows(page).count() > 0, {'missing_area': area}
         assert expected_sources[area] in ids(page), {'area': area, 'actual': ids(page)}
         if area == 'forex':
-            assert 'forex:order-review' in ids(page), 'Review flags in actual S.phases[].orders were omitted'
+            reviews = [item for item in ids(page) if item.startswith('forex:order-review')]
+            assert set(reviews) == {c['notification_id'] for c in REVIEW_CONTEXTS}, reviews
+            assert len(reviews) == 2, 'Contextual review causes were merged or clean periods generated alerts'
+            for c in REVIEW_CONTEXTS:
+                row = rows(page).filter(has=page.locator('[data-notification-go="'+c['notification_id']+'"]'))
+                expect(row.locator('h3')).to_have_text('Ordens aguardam revisão · '+c['name'])
+                expect(row.locator('.notification-body')).to_have_text(
+                    '1 ordem(ns) · período 2026-09-14 · '+c['currency']+'.')
         if area == 'alladin':
             assert rows(page).count() == 1, 'Future schema and its consequent read refusal are one underlying condition'
         for _ in range(3):
@@ -161,7 +201,26 @@ def all_areas_and_readonly(page, _dialogs):
         page.locator('#headerNotificationsBtn').click()
     unchanged(page, before)
     assert requests == [], requests
-    return {'initial_items': len(initial), 'areas': 6, 'extra_requests': len(requests)}
+    return {'initial_items': len(initial), 'areas': 6, 'extra_requests': len(requests),
+            'contextual_reviews': [c['notification_id'] for c in REVIEW_CONTEXTS],
+            'clean_periods_excluded': True, 'both_review_flags': True}
+
+
+def contextual_review_navigation(page, _dialogs):
+    seed_review_contexts(page)
+    before = page.evaluate('JSON.stringify(S)')
+    destinations = []
+    for c in REVIEW_CONTEXTS:
+        refresh(page)
+        open_center(page, 'forex')
+        page.locator('[data-notification-go="'+c['notification_id']+'"]').click()
+        assert page.evaluate('JPWNavigation.current().child') == 'forex-operation'
+        selected = page.evaluate('JPWForex.state.operationalSelection()')
+        assert selected['accountId'] == c['account_id'], selected
+        assert selected['periodId'] == c['period_id'], selected
+        assert page.evaluate('JSON.stringify(S)') == before, 'Following a contextual alert changed confirmed data'
+        destinations.append({'accountId': selected['accountId'], 'periodId': selected['periodId']})
+    return {'contextual_destinations': destinations, 'confirmed_state_preserved': True}
 
 
 def resolution_and_navigation(page, _dialogs):
@@ -378,18 +437,57 @@ def lifecycle_cleanup(page, _dialogs):
     assert rows(page).filter(has_text='SYN antes da substituição').count() == 0
     page.locator('#notificationClose').click()
     page.evaluate("alert('SYN antes da finalização')")
-    page.evaluate("""() => {
+    open_center(page)
+    assert rows(page).filter(has_text='SYN antes da finalização').count() == 1
+    old_event_ids = page.locator('#notificationList [data-kind="event"]').evaluate_all(
+        'els=>els.map(el=>el.dataset.notificationId)')
+    page.locator('#notificationClose').click()
+    before = page.evaluate("""() => {
       S.onboarding.done=true;
+      S.onboarding.investorPassword='SYN_NOTIFICATION_SECRET';
+      S.riskPinHash='a'.repeat(64);S.phaseUnlocked=[0];
+      S.notificationContractSentinel={version:1,confirmed:['SYN fact',{currency:'USD',amount:'123.45'}]};
       if(save()!==true)throw Error('Fixture could not persist before finalization');
       sessionEpochCurrent();markSessionCheckpoint();
+      window.__notificationStateBeforeFinalize=S;
+      return {document:JSON.parse(localStorage.getItem(LSKEY)),
+        cleanupEpoch:window.JP_WEALTH_SESSION_WIPE_EPOCH,
+        drafts:jpwWorkspaceCapture().drafts};
     }""")
+    assert before['document']['onboarding']['done'] is True
+    assert before['document']['onboarding'].get('investorPassword', '') == ''
+    assert before['drafts'] == [], 'This lifecycle fixture must not silently discard an unrelated draft'
     page.locator('#finalizeSessionBtn').click()
     page.evaluate('async()=>{await finalizeJPWealthSession();}')
     refresh(page)
     open_center(page)
     assert rows(page).filter(has_text='SYN antes da finalização').count() == 0
-    assert page.evaluate('S.onboarding.done') is False, 'Finalization did not actually replace the operational state'
-    return {'state_replacement_cleanup': True, 'real_finalization_cleanup': True}
+    assert not set(ids(page)).intersection(old_event_ids), 'A previous generation event survived finalization'
+    after = page.evaluate("""() => ({replaced:S!==window.__notificationStateBeforeFinalize,
+      document:JSON.parse(localStorage.getItem(LSKEY)),state:structuredClone(S),
+      cleanupEpoch:window.JP_WEALTH_SESSION_WIPE_EPOCH,
+      oldReferenceUntouched:window.__notificationStateBeforeFinalize.onboarding.investorPassword==='SYN_NOTIFICATION_SECRET'
+        && window.__notificationStateBeforeFinalize.riskPinHash==='a'.repeat(64)
+        && JSON.stringify(window.__notificationStateBeforeFinalize.phaseUnlocked)==='[0]'})""")
+    assert after['replaced'] and after['oldReferenceUntouched'], 'Finalization did not replace S independently'
+    assert after['cleanupEpoch'] == before['cleanupEpoch'] + 1, 'Session cleanup did not run exactly once'
+    # COMPLETE-BACKUP: preserve durable facts, including unknown fields; clear only
+    # the declared transient authorization/secrets and capture recoverable drafts.
+    # This expected document is independent of the product's final-state builder.
+    expected = json.loads(json.dumps(before['document']))
+    expected['riskPinHash'] = None
+    expected['phaseUnlocked'] = []
+    expected['onboarding']['investorPassword'] = ''
+    for account in expected.get('accounts', []):
+        account['investorPassword'] = ''
+    expected['workspaceRecovery'] = {'schemaVersion': 1, 'pending': False, 'drafts': []}
+    for target in ['document', 'state']:
+        changed = [key for key in set(expected) | set(after[target]) if expected.get(key) != after[target].get(key)]
+        assert after[target] == expected, {'target': target, 'unexpected_changed_keys': sorted(changed)}
+    assert after['document']['onboarding']['done'] is True and after['state']['onboarding']['done'] is True
+    return {'state_replacement_cleanup': True, 'real_finalization_cleanup': True,
+            'durable_document_preserved': True, 'unknown_sentinel_preserved': True,
+            'transient_cleanup_exact': True, 'prior_generation_events_removed': len(old_event_ids)}
 
 
 def keyboard_and_geometry(page, _dialogs):
@@ -452,6 +550,7 @@ def main():
             if not args.baseline:
                 cases += [
                     ('all-areas-filter-dedupe-readonly', all_areas_and_readonly, None, 'light'),
+                    ('contextual-review-navigation', contextual_review_navigation, None, 'light'),
                     ('resolution-navigation', resolution_and_navigation, None, 'light'),
                     ('calendar-time-threshold-rollover', calendar_lifecycle, None, 'light'),
                     ('calendar-cache-xss', calendar_cache_and_xss, None, 'light'),

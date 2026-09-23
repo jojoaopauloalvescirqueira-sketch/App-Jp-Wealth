@@ -1,3 +1,9 @@
+# Candidate local — Cabeçalho e navegação com Lucide
+
+Autorização de implementação delimitada em 2026-09-23. Contrato: [CHG-HEADER-NAVIGATION-LUCIDE-20260923](CHG-HEADER-NAVIGATION-LUCIDE-20260923.md). Base `b0cd4b61dc3fdd63f0fcf8bc1255455e6c59624e`, branch `codex/header-navigation-lucide-20260923`, worktree `~/.codex/header-navigation-lucide/20260923/product`. N1/A2; somente apresentação do shell e SVGs licenciados. Sem delta de onboarding, módulos internos ou Git/publicação. Estado: candidate visual entregue para revisão, build `da24235203f5d84a`; validação limitada pelos achados registrados no CHG (standard 45 PASS / 1 PRODUCT_FAIL, não reproduzido em duas execuções isoladas). Não aceito nem integrado. Evidências externas em `../evidence/`.
+
+## Histórico anterior preservado
+
 # Tarefa ativa — Execution Board em formato de planilha
 
 Plano integral autorizado pelo proprietário nesta conversa. Contrato: [CHG-FOREX-EXECUTION-TABLE-20260922](CHG-FOREX-EXECUTION-TABLE-20260922.md).
@@ -828,3 +834,17 @@ Para as sessões sintéticas, a descoberta local identificou Codex CLI autentica
 e não localizou cliente Claude. Ausência de Claude será NOT_RUN, não uma declaração
 de compatibilidade. Canários de sandbox ficam isolados; não se generaliza um
 bloqueio de escrita para restrição de leitura ou para todas as ferramentas.
+
+
+## 2026-09-23 — novo recorte autorizado: retorno de foco
+
+CHG-HEADER-FOCUS-20260923.md é o contrato desta derivação integral do candidate da24235203f5d84a. Somente apresentação/foco do cabeçalho, teste focal e derivados oficiais. N1/A2; implementação e validação pendentes. Sem integração ou aceite humano. Recibos anteriores preservados na origem; evidências desta rodada em ../evidence.
+
+Implementação focal concluída no build 9fddae01567a5d80: quatro controladores de apresentação/foco, uma adição de seletor na regra existente de foco do cabeçalho, teste de regressão novo e derivados oficiais. A origem da24235203f5d84a permanece intacta. Estado pré-freeze: conferência final de focais/standard/auditoria em andamento; resultados definitivos exclusivamente em ../evidence/DELIVERY.md. Pendências históricas, testes legados divergentes, aceite humano e integração não são encerrados por este registro. Nenhum delta de onboarding, Alladin interno ou Execution Board incorporado.
+
+
+## 2026-09-23 — fechamento focal de cabeçalho/navegação
+
+Derivado integral 9fddae01567a5d80, branch codex/header-navigation-closure-20260923. Autoridade e fronteira: CHG-HEADER-CLOSURE-20260923.md. Notificações prioritárias; diagnóstico limitado Forex/Finpes. Produto financeiro e evidências anteriores preservados. Resultados ficam em ../evidence/DELIVERY.md; sem promoção nem aceite humano.
+
+Checkpoint desta derivação: correção de fixture/oráculos de Notificações, 17 PASS em execução única; runtime9fdd intacto. Observações suplementares Forex/Finpes sem reprodução da causa histórica. Fechamento externo conserva a pendência canônica; nenhuma liberação ou alteração financeira.

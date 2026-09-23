@@ -236,7 +236,7 @@
       "order": 39,
       "path": "src/js/40-app/07-finalize-session.js",
       "section": "FINALIZAR SESSÃO — privacidade local em computador de terceiros",
-      "sha256": "bbdd44de68e04f0c4a59d5b525473f8425ca5b37e700ab5ceb017f77cfd4ee84"
+      "sha256": "3161748314289f47c7f49199f6d559380396663756a273ca5de60759a0e31f03"
     },
     {
       "order": 40,
@@ -260,7 +260,7 @@
       "order": 43,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "fd667681d3b8cc833858741c7a50973661002116a67a559279cbb6a928d0e3d9"
+      "sha256": "6c70fb88559b416d84947ec59e20b982e38137cb666bee65a477f223dc30952a"
     },
     {
       "order": 44,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "4a3761a89dc0b0eb9e631a544fb0928528343fcc8e6513937a3c5cf14112ca1d"
+      "sha256": "24e183a5cf1e7f485fc56a36a373136b68a3a67d5ad801351e4100ed8b678af1"
     },
     {
       "order": 46,
@@ -505,7 +505,7 @@
       "order": 84,
       "path": "src/js/40-app/18-notification-center.js",
       "section": "NOTIFICATIONS · central local de avisos e mensagens de sessao",
-      "sha256": "49b4a61a6e81040072ff520f0c0ec8f3020bc717cc39e21059c11c54f5bc2e09"
+      "sha256": "0df6cdb6b380bb4816e29b1d7db87b7ee22aac79eae96b9207aeb9200ac262cb"
     },
     {
       "path": "src/js/20-ui/26-forex-engine-views.js",

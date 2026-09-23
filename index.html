@@ -27,12 +27,58 @@
 </head>
 <body>
 <!-- ============ SPRITE DE ÍCONES · SISTEMA JP WEALTH ============
-     Desenho próprio, traço 1.6px, viewBox 24, currentColor. Sem biblioteca
-     externa e sem dependência de rede. O sprite é inerte: não é focável,
+     SVGs legados: origem anterior não verificada. Símbolos shell-icon-*:
+     Lucide, fonte/licença em src/vendor/lucide. Sem dependência de rede.
+     O sprite é inerte: não é focável,
      não é lido por leitor de tela e não ocupa caixa (.jp-icon-sprite).
      Sem data-ui-version no <html> nenhum <use> é exibido — svg.jp-icon
      permanece display:none e os glifos legados voltam a aparecer. -->
-<svg class="jp-icon-sprite" aria-hidden="true" focusable="false"><defs>
+<svg class="jp-icon-sprite" aria-hidden="true" focusable="false">
+<metadata id="shell-lucide-license">ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The following Lucide icons are derived from the Feather project:
+
+airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+
+The MIT License (MIT) (for the icons listed above)
+
+Copyright (c) 2013-present Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</metadata>
+<defs>
   <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
   <symbol id="i-session" viewBox="0 0 24 24"><path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"/><path d="m14 8 4 4-4 4"/><path d="M18 12H9"/></symbol>
@@ -60,7 +106,46 @@
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 20.6v-6"/><path d="M8 4.2h8l-1.2 5 2.4 2.2v1.2H6.8v-1.2L9.2 9.2Z"/></symbol>
   <symbol id="i-notes" viewBox="0 0 24 24"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M8 3v18M3 7h4M3 12h4M3 17h4M11 8h6M11 12h6M11 16h4"/></symbol>
-<symbol id="i-area-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol><symbol id="i-area-research" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M7 11h7M10.5 7.5v7"/></symbol><symbol id="i-area-forex" viewBox="0 0 24 24"><path d="M4 3v18h17M8 15l4-5 4 3 5-7"/></symbol><symbol id="i-area-personal-finance" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8"/></symbol><symbol id="i-area-alladin" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V4h8v4M3 13h18M10 13v3h4v-3"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></symbol></defs></svg>
+<symbol id="i-area-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol><symbol id="i-area-research" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M7 11h7M10.5 7.5v7"/></symbol><symbol id="i-area-forex" viewBox="0 0 24 24"><path d="M4 3v18h17M8 15l4-5 4 3 5-7"/></symbol><symbol id="i-area-personal-finance" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8"/></symbol><symbol id="i-area-alladin" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V4h8v4M3 13h18M10 13v3h4v-3"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></symbol>
+  <!-- Lucide shell-only symbols; retain legacy symbols for other consumers. -->
+  <symbol id="shell-icon-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></symbol>
+  <symbol id="shell-icon-briefcase-business" viewBox="0 0 24 24"><path d="M12 12h.01" />
+  <path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+  <path d="M22 13a18.15 18.15 0 0 1-20 0" />
+  <rect width="20" height="14" x="2" y="6" rx="2" /></symbol>
+  <symbol id="shell-icon-chart-no-axes-combined" viewBox="0 0 24 24"><path d="M12 16v5" />
+  <path d="M16 14.639V21" />
+  <path d="M20 10.656V21" />
+  <path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15" />
+  <path d="M4 18.463V21" />
+  <path d="M8 14.656V21" /></symbol>
+  <symbol id="shell-icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></symbol>
+  <symbol id="shell-icon-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol>
+  <symbol id="shell-icon-layout-dashboard" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1" />
+  <rect width="7" height="5" x="14" y="3" rx="1" />
+  <rect width="7" height="9" x="14" y="12" rx="1" />
+  <rect width="7" height="5" x="3" y="16" rx="1" /></symbol>
+  <symbol id="shell-icon-log-out" viewBox="0 0 24 24"><path d="m16 17 5-5-5-5" />
+  <path d="M21 12H9" />
+  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /></symbol>
+  <symbol id="shell-icon-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" /></symbol>
+  <symbol id="shell-icon-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+  <circle cx="12" cy="12" r="3" /></symbol>
+  <symbol id="shell-icon-sliders-horizontal" viewBox="0 0 24 24"><path d="M10 5H3" />
+  <path d="M12 19H3" />
+  <path d="M14 3v4" />
+  <path d="M16 17v4" />
+  <path d="M21 12h-9" />
+  <path d="M21 19h-5" />
+  <path d="M21 5h-7" />
+  <path d="M8 10v4" />
+  <path d="M8 12H3" /></symbol>
+  <symbol id="shell-icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></symbol>
+</defs></svg>
 <header>
   <!-- A marca e o caminho de volta ao Dashboard: o gesto que todo usuario de
        aplicacao web espera do canto superior esquerdo. E um <button> de verdade —
@@ -98,21 +183,18 @@
     <!-- Em telas estreitas, abre a mesma navegação em uma gaveta modal. -->
     <button type="button" class="shell-menu-btn" data-shell-menu-toggle aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menu de telas"><span class="shell-menu-glyph" aria-hidden="true"><i></i><i></i></span><span class="shell-menu-label">Menu</span></button>
     <button type="button" class="header-action notification-trigger" id="headerNotificationsBtn" title="Notificações" aria-label="Notificações" aria-controls="notificationCenter" aria-haspopup="dialog" aria-expanded="false">
-      <span class="notification-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4M12 1v1"/></svg><span id="notificationBadge" aria-hidden="true" hidden></span></span>
+      <span class="notification-symbol"><svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-bell"/></svg><span id="notificationBadge" aria-hidden="true" hidden></span></span>
     </button>
     <button type="button" class="header-action" id="headerConfigBtn" title="Configurações" aria-label="Abrir configurações">
       <!-- Engrenagem identifica as configurações existentes. -->
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="3.2"></circle>
-        <path d="M19.4 15a1.8 1.8 0 0 0 .3 2l.1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1A1.8 1.8 0 1 1 4.9 17l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1A1.8 1.8 0 1 1 7.4 4.7l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .8 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1 .1Z"></path>
-      </svg>
+      <svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-settings"/></svg>
     </button>
     <button type="button" class="header-action header-action-profile" id="headerProfileBtn" title="Abrir meu perfil" aria-label="Abrir configurações do perfil" aria-haspopup="dialog" aria-controls="settingsModal">
       <span id="headerProfileAvatar" class="header-profile-avatar" aria-hidden="true">JP</span>
     </button>
     <button type="button" class="header-action header-action-finalize" id="finalizeSessionBtn" title="Finalizar sessão" aria-label="Finalizar sessão neste computador">
       <!-- O nome acessível preserva a identificação da ação sem ampliar o botão. -->
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4v16h6M9 12h12m-4-4 4 4-4 4"/></svg>
+      <svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-log-out"/></svg>
     </button>
   </div>
 </header>
@@ -248,10 +330,10 @@
 <div class="gd-context-row" id="gdContextRow" aria-label="Contexto operacional Forex" hidden inert></div>
 
 <aside id="appSidebar" aria-label="Navegação do JP Wealth">
-  <div class="sidebar-heading"><span class="sidebar-caption">Áreas de trabalho</span><button type="button" id="sidebarClose" aria-label="Fechar menu de telas">×</button></div>
+  <div class="sidebar-heading"><span class="sidebar-caption">Áreas de trabalho</span><button type="button" id="sidebarClose" aria-label="Fechar menu de telas"><svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-x"/></svg></button></div>
   <div class="submenu-level-heading" id="submenuLevelHeading" hidden>
     <button type="button" id="submenuNavBack" class="submenu-back" aria-label="Voltar para os módulos" hidden>
-      <span aria-hidden="true">‹</span><span class="submenu-back-label">Voltar</span>
+      <span aria-hidden="true"><svg class="shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chevron-left"/></svg></span><span class="submenu-back-label">Voltar</span>
     </button>
     <strong id="submenuLevelTitle">Navegação</strong>
   </div>
@@ -261,18 +343,18 @@
        permanece nos botões; o brilho legado fica inativo neste shell. -->
   <span class="nav-pill-indicator" id="navPillIndicator" aria-hidden="true"></span>
   <span class="nav-pill-specular" id="navPillSpecular" aria-hidden="true"></span>
-  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-dashboard"/></svg><span class="n">01</span><span class="lbl">Dashboard</span></button>
-  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-research"/></svg>
+  <button class="tab active" data-route="dashboard" data-primary="dashboard" title="Dashboard" aria-current="page"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-layout-dashboard"/></svg><span class="n">01</span><span class="lbl">Dashboard</span></button>
+  <button class="tab nav-sub-trigger" id="researchNavTrigger" data-route="research-forex" data-primary="research" data-nav-surface="research" title="Research"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-search"/></svg>
     <span class="n">02</span><span class="lbl">Research</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="research" aria-controls="researchNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-consolidated" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-forex"/></svg>
+  <button class="tab nav-sub-trigger" id="execNavTrigger" data-route="forex-consolidated" data-primary="forex" data-nav-surface="exec" title="Forex"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-chart-no-axes-combined"/></svg>
     <span class="n">03</span><span class="lbl">Forex</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="exec" aria-controls="execNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-personal-finance"/></svg>
+  <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-house"/></svg>
     <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-alladin"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
-  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16M8 3v4M16 10v4M10 17v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span class="n">06</span><span class="lbl">Ferramentas e Serviços</span></button>
+  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
+  <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-sliders-horizontal"/></svg><span class="n">06</span><span class="lbl">Ferramentas e Serviços</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="tools" aria-controls="toolsNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   </nav>
   <button type="button" class="rail-toggle" id="railToggle" aria-label="Recolher barra lateral" title="Recolher barra lateral">‹ <span class="lbl">Recolher</span></button>

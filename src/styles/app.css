@@ -8293,3 +8293,105 @@ html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-or
 #executionBoard #ebAccountSelect{font:inherit;font-size:13px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:42px;width:100%}
 #executionBoard #ebAccountSelect:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
 @media(max-width:767px){#executionBoard #ebAccountSelect{font-size:16px;min-height:44px;max-width:100%}}
+
+/* CHG-HEADER-NAVIGATION-LUCIDE-20260923 · presentation-only shell slice.
+   Local tokens cannot reach module contents. Existing layout, visibility,
+   animation and event contracts remain authoritative. Lucide paths are pinned
+   in src/vendor/lucide; none of the shared legacy symbols is replaced. */
+html[data-shell="global-dashboard"] :is(body>header,#appSidebar,#nav,#navSubShell,#navLocalSlot){
+  --shell-action:#0068d6;
+  --shell-selection:#8a1620;
+  --shell-selection-bg:#f9eaec;
+  --shell-label:#182333;
+  --shell-secondary:#526071;
+  --shell-hover:#f2f4f7;
+}
+html[data-theme="dark"][data-shell="global-dashboard"] :is(body>header,#appSidebar,#nav,#navSubShell,#navLocalSlot){
+  --shell-action:#409cff;
+  --shell-selection:#ff8795;
+  --shell-selection-bg:#3b232d;
+  --shell-label:#f2f5fa;
+  --shell-secondary:#c0cad8;
+  --shell-hover:#202c3b;
+}
+/* A 20 px canvas fits the actual Lucide geometry; no legacy 26 px optical fix. */
+html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#finalizeSessionBtn) svg.shell-lucide,
+html[data-shell="global-dashboard"] :is(#headerActions,#nav,#sidebarClose,#submenuNavBack) .shell-lucide{
+  width:20px;height:20px;min-width:20px;max-width:20px;flex:0 0 20px;
+  fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+}
+html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#headerProfileBtn,#finalizeSessionBtn){
+  width:44px;min-width:44px;height:44px;min-height:44px;padding:0;
+  border:1px solid transparent;border-radius:9px;background:transparent;
+  color:var(--shell-secondary);align-items:center;justify-content:center;
+}
+html[data-shell="global-dashboard"] #headerActions #headerProfileBtn{border-radius:50%}
+html[data-shell="global-dashboard"] #headerActions #headerNotificationsBtn .notification-symbol{
+  width:20px;height:20px;flex:0 0 20px;
+}
+html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#headerProfileBtn,#finalizeSessionBtn):hover{
+  background:var(--shell-hover);color:var(--shell-action);
+}
+html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#headerProfileBtn,#finalizeSessionBtn)[aria-expanded="true"]{
+  background:var(--shell-hover);color:var(--shell-action);border-color:var(--shell-action);
+}
+html[data-shell="global-dashboard"] #sidebarClose .shell-lucide{display:block;margin:auto}
+html[data-shell="global-dashboard"] #submenuNavBack>span[aria-hidden]{display:inline-flex;align-items:center;font-size:inherit;line-height:1}
+html[data-shell="global-dashboard"] #appSidebar :is(#submenuNavBack,#railToggle){color:var(--shell-action)}
+html[data-shell="global-dashboard"] #nav>.tab{color:var(--shell-secondary)}
+html[data-shell="global-dashboard"] #nav>.tab:hover{color:var(--shell-label)}
+html[data-shell="global-dashboard"] #navSubShell .nav-sub-item-title{color:inherit}
+html[data-shell="global-dashboard"] #navSubShell .nav-sub-item-desc{color:var(--shell-secondary)}
+html[data-shell="global-dashboard"] :is(#navSubShell,#navLocalSlot) button{color:var(--shell-secondary)}
+html[data-shell="global-dashboard"] :is(#navSubShell,#navLocalSlot) button:hover{color:var(--shell-label)}
+html[data-shell="global-dashboard"] #nav>.tab.active,
+html[data-shell="global-dashboard"] :is(#navSubShell,#navLocalSlot) button.is-current{
+  color:var(--shell-selection);background:var(--shell-selection-bg);font-weight:650;
+}
+html[data-shell="global-dashboard"] #navPillIndicator{background:var(--shell-selection-bg)}
+/* Sidebars keep their own widths, rail and level controllers. */
+html[data-shell="global-dashboard"]:is([data-navigation="sidebar"],[data-navigation="submenu"]) #nav>.tab{
+  min-height:48px;gap:12px;border-radius:8px;font-size:15px;line-height:1.4;
+}
+html[data-shell="global-dashboard"]:is([data-navigation="sidebar"],[data-navigation="submenu"]) #nav>.tab.active,
+html[data-shell="global-dashboard"]:is([data-navigation="sidebar"],[data-navigation="submenu"]) #navSubShell button.is-current{
+  box-shadow:inset 3px 0 0 var(--shell-selection);border-left-color:var(--shell-selection);
+}
+html[data-shell="global-dashboard"]:is([data-navigation="sidebar"],[data-navigation="submenu"]) #navSubShell button{
+  min-height:44px;font-size:14px;line-height:1.4;
+}
+html[data-shell="global-dashboard"]:is([data-navigation="sidebar"],[data-navigation="submenu"]) .sidebar-caption{
+  font-size:11px;line-height:1.4;color:var(--shell-secondary);letter-spacing:.04em;
+}
+html[data-shell="global-dashboard"][data-navigation="sidebar"] .nav-group-toggle{
+  min-height:48px;color:var(--shell-secondary);
+}
+html[data-shell="global-dashboard"][data-navigation="sidebar"] .nav-group-toggle[aria-expanded="true"]{color:var(--shell-selection)}
+html[data-shell="global-dashboard"][data-navigation="submenu"] #submenuLevelTitle{font-size:18px;line-height:1.35;color:var(--shell-label)}
+/* Horizontal styles retain their indicators and deliberate text-only modules. */
+html[data-shell="global-dashboard"][data-navigation="topbar"] #nav>.tab.active{border-color:var(--shell-selection)}
+html[data-shell="global-dashboard"][data-navigation="topbar"] :is(#navSubShell,#navLocalSlot) button.is-current{border-color:var(--shell-selection)}
+html[data-shell="global-dashboard"][data-navigation="glass"] #nav>.tab:is(.active,[aria-expanded="true"]){
+  color:var(--shell-selection);background:var(--shell-selection-bg);border-color:var(--shell-selection);
+}
+html[data-shell="global-dashboard"][data-navigation="glass"] #navSubShell button.is-current{box-shadow:inset 0 0 0 1px var(--shell-selection)}
+/* Focus is an action affordance, distinct from the current destination. */
+html[data-shell="global-dashboard"] #headerActions :is(#headerNotificationsBtn,#headerConfigBtn,#headerProfileBtn,#finalizeSessionBtn):focus-visible,
+html[data-shell="global-dashboard"] :is(#headerActions,#nav,#navSubShell,#navLocalSlot) button:focus-visible,
+html[data-shell="global-dashboard"] :is(#brandHomeBtn,#sidebarClose,#submenuNavBack,#railToggle):focus-visible{
+  outline:2px solid var(--shell-action,var(--blue));outline-offset:2px;
+}
+@media(min-width:901px){
+  html[data-shell="global-dashboard"]:not([data-navigation="glass"]) #headerActions{gap:4px}
+}
+@media(max-width:900px){
+  html[data-shell="global-dashboard"]:is([data-navigation="sidebar"],[data-navigation="submenu"]) #navSubShell button{min-height:48px}
+}
+@media(prefers-contrast:more){
+  html[data-shell="global-dashboard"] #nav>.tab.active,
+  html[data-shell="global-dashboard"] :is(#navSubShell,#navLocalSlot) button.is-current{outline:1px solid currentColor;outline-offset:-1px}
+}
+@media(forced-colors:active){
+  html[data-shell="global-dashboard"] #nav>.tab.active,
+  html[data-shell="global-dashboard"] :is(#navSubShell,#navLocalSlot) button.is-current{border-color:Highlight;outline:1px solid Highlight;outline-offset:-1px}
+}

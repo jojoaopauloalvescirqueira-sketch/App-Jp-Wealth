@@ -9,6 +9,7 @@
   const rank={critical:0,warning:1,info:2};
   const live=new Map(), history=[], seen=new Map();
   let stateRef=S, serial=0, scheduled=false, rendering=false, paused=false, lastView='', returnFocus=true;
+  let focusOpener=null;
   const text=value=>typeof value==='string'?value:'';
   const visible=node=>!!node && !node.hidden && node.getClientRects().length>0;
   const modelArea=node=>{
@@ -278,6 +279,7 @@
   function open(){
     const dialog=el('notificationCenter');
     if(!dialog || dialog.open) return;
+    focusOpener=el('headerNotificationsBtn');
     refresh(); dialog.showModal();lastView='';paint();
     el('headerNotificationsBtn').setAttribute('aria-expanded','true');
     el('notificationClose').focus();
@@ -337,8 +339,8 @@
   el('headerNotificationsBtn')?.addEventListener('click',open);
   el('notificationClose')?.addEventListener('click',()=>close());
   el('notificationCenter')?.addEventListener('close',()=>{
-    el('headerNotificationsBtn').setAttribute('aria-expanded','false');lastView='';
-    if(returnFocus)el('headerNotificationsBtn').focus({preventScroll:true});
+    el('headerNotificationsBtn')?.setAttribute('aria-expanded','false');lastView='';
+    if(returnFocus)shellRestoreHeaderFocus(focusOpener);
     returnFocus=true;
   });
   el('notificationCenter')?.addEventListener('keydown',event=>{

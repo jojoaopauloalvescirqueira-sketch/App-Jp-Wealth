@@ -640,15 +640,41 @@ function resetSessionFinalizeEphemeralState(){
   sessionFinalizeExportFingerprint=null;
   sessionFinalizeExportAcknowledged=false;
 }
+const sessionFocusUI={opener:null,revision:0,bound:false};
+function sessionDismissFocus(event){
+  const overlay=$('modalOverlay'),cancel=$('sessionCancel');
+  if(!overlay.classList.contains('show') || !cancel)return;
+  const dismiss=event.type==='keydown'?event.key==='Escape':
+    event.target===overlay || cancel.contains(event.target);
+  if(!dismiss)return;
+  const revision=sessionFocusUI.revision;
+  shellRestoreHeaderFocus(sessionFocusUI.opener,()=>revision===sessionFocusUI.revision);
+}
 function sessionModal(html){
-  const box=$('modalBox');
-  $('modalOverlay').classList.add('show');
+  const box=$('modalBox'),overlay=$('modalOverlay');
+  if(!overlay.classList.contains('show') || !box.querySelector('#sessionCancel')){
+    const active=document.activeElement;
+    sessionFocusUI.opener=active && active!==document.body && !box.contains(active)?active:$('finalizeSessionBtn');
+  }
+  sessionFocusUI.revision++;
+  if(!sessionFocusUI.bound){
+    // Somente dispensas de apresentação. O fechamento da transação confirmada
+    // continua dono de seu destino; não se observa todo closeModal indiscriminadamente.
+    overlay.addEventListener('click',sessionDismissFocus,true);
+    // Escape já fecha o overlay pelo handler global, mesmo se Tab saiu dele.
+    document.addEventListener('keydown',sessionDismissFocus,true);
+    sessionFocusUI.bound=true;
+  }
+  overlay.classList.add('show');
   box.classList.remove('onboarding-modal');
   box.innerHTML=html;
 }
 function sessionCancelBinding(){
   const b=$('sessionCancel');
-  if(b) b.addEventListener('click',()=>{ resetSessionFinalizeEphemeralState(); closeModal(); });
+  if(b){
+    b.addEventListener('click',()=>{ resetSessionFinalizeEphemeralState(); closeModal(); });
+    if(!document.querySelector('#mvpNotesOverlay.show,dialog[open]'))b.focus({preventScroll:true});
+  }
 }
 function sessionFormatExportDate(iso){
   try{ return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'medium'}).format(new Date(iso)); }
