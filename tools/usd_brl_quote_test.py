@@ -53,7 +53,7 @@ def assert_close(actual, expected, tolerance=1e-6, label="valor"):
 
 def open_page(browser, url, handler=None, calls=None):
     """Pagina nova com o provedor interceptado ANTES do primeiro load."""
-    context = browser.new_context()
+    context = browser.new_context(service_workers="block")
     page = context.new_page()
 
     def route(route_obj, _request):
