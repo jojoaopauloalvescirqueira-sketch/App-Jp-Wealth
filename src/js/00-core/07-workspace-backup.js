@@ -1,7 +1,7 @@
 // Portable workspace: confirmed data stays in S; drafts never execute domain commands.
 const JPW_WORKSPACE_KEYS=Object.freeze([
   'jpwealth_local_profile_v1','jpwealth_v9_icon_choice','jpwealth_v9_icon_theme',
-  'jpw_fs','jpw_expl','jpw_rail','jpw_nav_submenu_rail','jpw_nav','jpw_nav_layout','jpw_nav_order','jpw_nav_glass_tint',
+  'jpw_module_availability_v1','jpw_fs','jpw_expl','jpw_rail','jpw_nav_submenu_rail','jpw_nav','jpw_nav_layout','jpw_nav_order','jpw_nav_glass_tint',
   'jpwealth.ui.widgetLayouts.v6','jpwealth.ui.widgetLayouts.v5','jpwealth.ui.widgetLayouts.v4',
   'jpwealth.ui.widgetLayouts.v3','jpwealth.ui.widgetLayout.v2',
   'jpwealth_notes_launcher_position_v1','jpwealth_notes_appearance_v1','jpwealth_galton_preferences_v1'
@@ -45,6 +45,7 @@ function jpwWorkspaceValidate(value){
   for(const [key,raw] of Object.entries(value.preferences)){
     if(!JPW_WORKSPACE_KEYS.includes(key)||!(raw===null||typeof raw==='string')||(raw&&raw.length>2000000))throw new Error('Preferência de retomada inválida.');
     if(raw===null)continue;
+    if(key==='jpw_module_availability_v1')window.JPWModuleAvailability.validate(raw);
     if(key==='jpw_nav_glass_tint'&&!/^(?:0|[1-9]\d?|100)$/.test(raw))throw new Error('Transparência do Liquid Glass inválida.');
     if(key==='jpw_nav_submenu_rail'&&!['expanded','collapsed'].includes(raw))throw new Error('Largura da lateral em níveis inválida.');
     if(key==='jpwealth_local_profile_v1'){
@@ -83,11 +84,19 @@ function jpwWorkspaceDrafts(){
   if(execution)drafts.push({label:'Operação — edição não confirmada',text:JSON.stringify(execution)});
   return drafts.filter((item,index,all)=>all.findIndex(other=>other.label===item.label&&other.text===item.text)===index);
 }
-function jpwWorkspaceCapture(){
+function jpwWorkspaceCapture(options={}){
   if(S?.workspaceRecovery?.pending)return jpwWorkspaceValidate(S.workspaceRecovery.snapshot);
   const preferences={};
   for(const key of JPW_WORKSPACE_KEYS)preferences[key]=localStorage.getItem(key);
-  return jpwWorkspaceValidate({schemaVersion:1,preferences,drafts:jpwWorkspaceDrafts()});
+  const drafts=jpwWorkspaceDrafts();
+  const key=window.JPWModuleAvailability.KEY,raw=preferences[key];
+  if(!window.JPWModuleAvailability.inspect(raw).valid){
+    if(!options.recoverAvailability)throw new Error('Disponibilidade de módulos inválida. Use o Backup Completo para exportar uma cópia de recuperação, com confirmação.');
+    if(!confirm('A preferência de disponibilidade está inválida ou é de outra versão. Exportar recuperação? Todos os dados financeiros serão incluídos. O texto original desta preferência ficará nos rascunhos recuperáveis e não será aplicado automaticamente. Na importação, a disponibilidade do destino será preservada. O armazenamento atual não será alterado.'))throw new Error('Exportação de recuperação cancelada.');
+    delete preferences[key];
+    for(let at=0;at<Math.max(raw.length,1);at+=900000)drafts.push({label:'Configuração de disponibilidade inválida — não aplicada (parte '+(1+at/900000)+')',text:raw.slice(at,at+900000)});
+  }
+  return jpwWorkspaceValidate({schemaVersion:1,preferences,drafts});
 }
 function jpwWorkspaceAdoptImport(){
   jpwWorkspaceEdited.clear();
@@ -128,7 +137,7 @@ function jpwWorkspaceResume(){
     };
     if(document.body)show();else document.addEventListener('DOMContentLoaded',show,{once:true});
     return false;
-  }finally{jpwWorkspaceRestoring=false;}
+  }finally{jpwWorkspaceRestoring=false;window.JPWModuleAvailability.reload('restore-projection');}
 }
 function jpwWorkspaceCaptureField(event){
   const el=event.target;

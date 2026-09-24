@@ -89,7 +89,9 @@ def launch_browser(playwright):
 
 def boot(browser, url, viewport=None):
     context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900})
+    # Fixture de navegação completa, sem mudar o default do aplicativo.
     context.add_init_script("""
+      localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));
       window.__onbShown = true;
       window.__navStorageOps = [];
       for (const method of ['setItem', 'removeItem', 'clear']) {

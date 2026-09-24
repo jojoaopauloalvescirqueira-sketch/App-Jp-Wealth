@@ -32,7 +32,9 @@ def settle(page):
 
 
 def boot(browser, url, preferences=None, width=1440, read_failure=False):
-    seed = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW}
+    # O contrato destes cenários é a navegação dos seis módulos explicitamente ativos.
+    seed = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
+            "jpw_module_availability_v1": json.dumps({"schemaVersion": 1, "modules": {"alladin": "active"}})}
     seed.update(preferences or {})
     context = browser.new_context(viewport={"width": width, "height": 1000},
                                   service_workers="block")

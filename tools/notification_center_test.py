@@ -321,6 +321,8 @@ def native_events_and_exclusions(page, dialogs):
 
 
 def event_area_provenance(page, dialogs):
+    # Esta fixture examina mensagens com Alladin explicitamente disponível.
+    page.evaluate("JPWModuleAvailability.setState('alladin','active')")
     page.evaluate("JPWNavigation.navigate('personal-finance')")
     page.evaluate("fbAtoUI({ok:false,erro:'SYN recusa em Finanças Pessoais'})")
     assert dialogs[-1]['type'] == 'alert' and 'SYN recusa em Finanças Pessoais' in dialogs[-1]['message']

@@ -294,3 +294,7 @@ referidas na tarefa ativa, identificadas por SHA/fingerprint. Este arquivo não
 transporta PASS de testes locais/CI de entregas anteriores. Testes das instruções,
 full do produto, auditoria e aceite humano têm alcances distintos. Nenhuma
 publicação é autorizada por este checkpoint.
+
+
+## Candidate isolado — disponibilidade de módulos, 2026-09-24
+Base ad5c23e; CHG-MODULE-AVAILABILITY-20260924 A3/N2 em codex/module-availability-20260924. [Decisão de produto](../decisions/2026-09-24-alladin-congelado.md) e [contrato](../architecture/MODULE-AVAILABILITY.md). Implementação em validação, sem integração/aceite; resultados finais somente no recibo externo desta entrega. Nenhum recibo histórico foi reclassificado.

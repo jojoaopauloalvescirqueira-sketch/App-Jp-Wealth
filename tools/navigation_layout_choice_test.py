@@ -39,9 +39,12 @@ def settle(page):
 
 
 def boot(browser, url, preference=None, width=1440, style="classic", rail="expanded", read_failure=False,
-         tint=None, tint_read_failure=False, submenu_rail=None, submenu_rail_read_failure=False):
+         tint=None, tint_read_failure=False, submenu_rail=None, submenu_rail_read_failure=False, alladin_active=False):
     seed = {LAYOUT_KEY: LAYOUT_RAW, UNKNOWN_KEY: UNKNOWN_RAW,
             "jpw_nav": style, "jpw_rail": rail}
+    # Opt-in da fixture; consumidores do helper mantêm o default congelado.
+    if alladin_active:
+        seed["jpw_module_availability_v1"] = json.dumps({"schemaVersion": 1, "modules": {"alladin": "active"}})
     if preference is not None:
         seed[KEY] = preference
     if tint is not None:
@@ -273,7 +276,7 @@ def run_preferences(browser, url, evidence):
     cases = [None, "sidebar", "topbar", "glass", "submenu", "", "TOPBAR", " topbar ", "future-layout", '{"mode":"topbar"}']
     evidence["preferences"] = []
     for preference in cases:
-        context, page, observed = boot(browser, url, preference, style="kinetic", rail="collapsed")
+        context, page, observed = boot(browser, url, preference, style="kinetic", rail="collapsed", alladin_active=True)
         try:
             expected = preference if preference in {"sidebar", "topbar", "glass", "submenu"} else "sidebar"
             assert_structure(page, expected)
@@ -297,7 +300,7 @@ def run_preferences(browser, url, evidence):
 
 
 def run_failures(browser, url, evidence):
-    context, page, observed = boot(browser, url, "topbar", read_failure=True)
+    context, page, observed = boot(browser, url, "topbar", read_failure=True, alladin_active=True)
     try:
         before = raw(page)
         assert_structure(page, "sidebar")
@@ -314,7 +317,7 @@ def run_failures(browser, url, evidence):
                             ("sidebar", "glass"), ("glass", "topbar"),
                             ("topbar", "glass"), ("glass", "submenu"),
                             ("submenu", "sidebar")]:
-        context, page, observed = boot(browser, url, initial)
+        context, page, observed = boot(browser, url, initial, alladin_active=True)
         try:
             editor(page)
             before = raw(page)
@@ -348,7 +351,7 @@ def run_tint(browser, url, evidence):
              ("-1", 60), ("101", 60), ("60.0", 60), ("invalid", 60)]
     evidence["tint"] = []
     for stored, expected in cases:
-        context, page, observed = boot(browser, url, "glass", tint=stored)
+        context, page, observed = boot(browser, url, "glass", tint=stored, alladin_active=True)
         try:
             before = raw(page)
             editor(page)
@@ -370,7 +373,7 @@ def run_tint(browser, url, evidence):
         finally:
             finish_context(context)
 
-    context, page, observed = boot(browser, url, "glass", tint="60")
+    context, page, observed = boot(browser, url, "glass", tint="60", alladin_active=True)
     try:
         editor(page);page.evaluate("window.__nlOps=[]")
         page.locator('#navGlassTint').evaluate("""el=>{el.value='0';el.dispatchEvent(new Event('input',{bubbles:true}));}""")
@@ -397,7 +400,7 @@ def run_tint(browser, url, evidence):
     finally:
         finish_context(context)
 
-    context, page, observed = boot(browser, url, "glass", tint="75", tint_read_failure=True)
+    context, page, observed = boot(browser, url, "glass", tint="75", tint_read_failure=True, alladin_active=True)
     try:
         editor(page)
         assert page.locator('#navGlassTint').input_value() == "60"
@@ -445,7 +448,7 @@ def guard_content_calls(page):
 
 
 def run_lifecycle(browser, url, evidence):
-    context, page, observed = boot(browser, url)
+    context, page, observed = boot(browser, url, alladin_active=True)
     try:
         # Existing controls create unsaved technical drafts. No save is invoked.
         go(page, "nocoda")
@@ -567,7 +570,7 @@ def module_entry_keys(page, layout, evidence):
 def run_navigation(browser, url, evidence):
     evidence['module_entry_keys'] = []
     for layout in ["sidebar", "topbar", "glass"]:
-        context, page, observed = boot(browser, url, layout)
+        context, page, observed = boot(browser, url, layout, alladin_active=True)
         try:
             before = raw(page)
             module_entry_keys(page, layout, evidence['module_entry_keys'])
@@ -611,7 +614,7 @@ def run_navigation(browser, url, evidence):
             clean(observed)
         finally:
             finish_context(context)
-        context, page, observed = boot(browser, url, layout, width=390)
+        context, page, observed = boot(browser, url, layout, width=390, alladin_active=True)
         try:
             before = raw(page)
             if layout == 'glass':
@@ -671,7 +674,7 @@ def run_submenu(browser, url, evidence):
                   ('invalid', 'expanded')]
     evidence['submenu_rail'] = []
     for stored, expected in rail_cases:
-        context, page, observed = boot(browser, url, 'submenu', submenu_rail=stored)
+        context, page, observed = boot(browser, url, 'submenu', submenu_rail=stored, alladin_active=True)
         try:
             before = raw(page)
             assert page.get_attribute('html', 'data-submenu-rail') == expected
@@ -685,7 +688,7 @@ def run_submenu(browser, url, evidence):
             finish_context(context)
 
     context, page, observed = boot(browser, url, 'submenu', submenu_rail='expanded',
-                                   submenu_rail_read_failure=True)
+                                   submenu_rail_read_failure=True, alladin_active=True)
     try:
         assert page.get_attribute('html', 'data-submenu-rail') == 'expanded'
         assert raw(page)[SUBMENU_RAIL_KEY] == 'expanded' and ops(page) == []
@@ -693,7 +696,7 @@ def run_submenu(browser, url, evidence):
     finally:
         finish_context(context)
 
-    context, page, observed = boot(browser, url, 'submenu', submenu_rail='collapsed')
+    context, page, observed = boot(browser, url, 'submenu', submenu_rail='collapsed', alladin_active=True)
     try:
         page.wait_for_timeout(300)
         collapsed_width = page.locator('#appSidebar').evaluate('e=>e.getBoundingClientRect().width')
@@ -742,7 +745,7 @@ def run_submenu(browser, url, evidence):
     finally:
         finish_context(context)
 
-    context, page, observed = boot(browser, url, 'submenu', submenu_rail='expanded')
+    context, page, observed = boot(browser, url, 'submenu', submenu_rail='expanded', alladin_active=True)
     try:
         for width in [1440, 1280, 1024, 900, 768, 390, 320]:
             page.set_viewport_size({'width': width, 'height': 1000 if width > 900 else 844})
@@ -773,7 +776,7 @@ def run_submenu(browser, url, evidence):
     finally:
         finish_context(context)
 
-    context, page, observed = boot(browser, url, 'submenu', width=390, submenu_rail='collapsed')
+    context, page, observed = boot(browser, url, 'submenu', width=390, submenu_rail='collapsed', alladin_active=True)
     try:
         page.locator('[data-shell-menu-toggle]').click()
         page.wait_for_function("document.documentElement.dataset.shellMenu==='open'")
@@ -800,7 +803,7 @@ def run_submenu(browser, url, evidence):
 
 def run_notes(browser, url, evidence):
     for layout in ['sidebar', 'topbar', 'glass', 'submenu']:
-        context, page, observed = boot(browser, url, layout)
+        context, page, observed = boot(browser, url, layout, alladin_active=True)
         try:
             page.locator('#execNavTrigger').click()
             page.locator('[data-nav-child="forex-management-accounts"]').click()
@@ -852,7 +855,7 @@ def run_visual(browser, url, evidence, capture, artifacts):
     builds = set()
     for layout in ["sidebar", "topbar", "glass"]:
         for rail in ["expanded", "collapsed"]:
-            context, page, observed = boot(browser, url, layout, rail=rail)
+            context, page, observed = boot(browser, url, layout, rail=rail, alladin_active=True)
             try:
                 builds.add(page.evaluate("JP_WEALTH_BUILD_ID"))
                 for style in (["classic", "pill", "kinetic"] if layout != "glass" else ["native"]):
@@ -917,7 +920,7 @@ def run_visual(browser, url, evidence, capture, artifacts):
 
 def run_portable(browser, url, evidence):
     portable_url = url.rsplit('/', 1)[0] + '/' + PORTABLE
-    context, page, observed = boot(browser, portable_url, "glass", tint="60")
+    context, page, observed = boot(browser, portable_url, "glass", tint="60", alladin_active=True)
     try:
         build = page.evaluate('JP_WEALTH_BUILD_ID')
         assert build in (ROOT / 'build-id.js').read_text(), 'portable build differs from modular candidate'

@@ -351,7 +351,7 @@ function dgBuildBackupBlob(seq, filename, exportadoEm, estadoFonte){
     build:typeof JP_WEALTH_BUILD_ID==='string'?JP_WEALTH_BUILD_ID:null,
     cobertura:dgBackupCoverage(stateExport),
     state:stateExport,
-    workspace:jpwWorkspaceCapture(),
+    workspace:jpwWorkspaceCapture({recoverAvailability:true}),
   };
   const blob=new Blob([JSON.stringify(payload,(key,value)=>key==='investorPassword'?'':value,2)],{type:'application/json'});
   blob.workspaceFingerprint=JSON.stringify(payload.workspace);
@@ -578,7 +578,21 @@ function importFullBackupFile(file){
       alert('Backup inválido: '+(e&&e.message?e.message:'não foi possível ler o JSON.')+'\n\nNada foi alterado: o estado atual e as proteções de gravação permanecem exatamente como estavam.');
       return;
     }
-    if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?')) return;
+    const availabilityKey=window.JPWModuleAvailability.KEY;
+    const availabilityPreferences=imported.workspaceRecovery?.snapshot?.preferences;
+    const changesAvailability=!!availabilityPreferences&&Object.prototype.hasOwnProperty.call(availabilityPreferences,availabilityKey);
+    let availabilityBefore,availabilityMessage='';
+    if(changesAvailability){
+      try{availabilityBefore=localStorage.getItem(availabilityKey);}
+      catch(error){alert('Não foi possível conferir a disponibilidade atual. Nada foi importado.');return;}
+      const previousAvailability=window.JPWModuleAvailability.inspect(availabilityBefore);
+      const nextAvailability=window.JPWModuleAvailability.inspect(availabilityPreferences[availabilityKey]);
+      const names={research:'Research',forex:'Forex','personal-finance':'Finanças Pessoais',alladin:'Alladin'};
+      const label=value=>value==='frozen'?'Congelado':'Ativo';
+      const changes=Object.keys(names).filter(id=>!previousAvailability.valid||previousAvailability.states[id]!==nextAvailability.states[id]);
+      availabilityMessage=changes.length?'\n\nDisponibilidade após restaurar:\n'+changes.map(id=>names[id]+': '+(previousAvailability.valid?label(previousAvailability.states[id]):'configuração incompatível')+' → '+label(nextAvailability.states[id])).join('\n')+'\nIsso pode descongelar acessos. Não autoriza desenvolvimento.':'';
+    }
+    if(!confirm('Importar backup completo e sobrescrever o estado atual deste navegador?'+availabilityMessage)) return;
     if(requestEpoch!==jpWealthPersistenceEpoch()) return;
     // ALD-C3-PRE-PERSISTENCE: a substituição da base inteira roda dentro do writer
     // lock cross-tab (mesma serialização da finalização e do wipe). O corpo nunca
@@ -589,6 +603,10 @@ function importFullBackupFile(file){
     if(jpWealthPersistenceOutcomeIsUnknown()){
       alert('A importação não pode substituir uma base com desfecho de gravação desconhecido. Verifique a recuperação antes de continuar.');
       return;
+    }
+    if(changesAvailability){
+      try{if(localStorage.getItem(availabilityKey)!==availabilityBefore){alert('A disponibilidade mudou desde a confirmação. Nada foi importado; selecione o backup novamente para revisar os efeitos.');return;}}
+      catch(error){alert('Disponibilidade não confirmável. Nada foi importado.');return;}
     }
     const previous=S, wasBlocked=jpWealthPersistenceIsBlocked();
     const previousRecovery={...jpWealthLoadRecovery};

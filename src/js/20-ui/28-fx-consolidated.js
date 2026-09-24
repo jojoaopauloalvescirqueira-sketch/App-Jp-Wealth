@@ -1,6 +1,7 @@
 // Consolidado FX: presentation-only selection, descriptive projections and explicit imports.
 (function(FX){
   'use strict';
+  const available=()=>!window.JPWModuleAvailability||window.JPWModuleAvailability.canAccess('forex');
   const ui={accountId:null,source:'mt5',tab:'account',chart:'growth',from:'',to:'',search:'',preview:null,document:null,busy:false,token:0,message:'',kind:'info',mounted:false};
   const tabs=[['account','Conta'],['history','Histórico de negociação'],['statistics','Estatística'],['risks','Riscos']];
   const el=id=>document.getElementById(id);
@@ -172,6 +173,7 @@
     else if(!event.shiftKey&&(active===last||!dialog.contains(active))){event.preventDefault();first.focus();}
   }
   function openAccountRegistration({report=null,accountId=null,trigger=document.activeElement,returnFocus=trigger,onSaved=null}={}){
+    if(!available())return false;
     if(registrationView?.saving)return;
     if(registrationDialog?.open){registrationDialog.focus();return;}
     const prepared=FX.beginRegistration(report,accountId);
@@ -232,7 +234,7 @@
     el('fxcRegistrationCancel').onclick=requestRegistrationClose;el('fxcwClose').onclick=requestRegistrationClose;
     el('fxcwKeep').onclick=requestRegistrationClose;el('fxcwDiscardConfirm').onclick=closeRegistration;
     el('fxcRegistrationForm').onsubmit=async event=>{
-      event.preventDefault();if(registrationView!==view||view.saving||view.saved||view.unknown||view.confirmingClose)return;
+      event.preventDefault();if(!available())return;if(registrationView!==view||view.saving||view.saved||view.unknown||view.confirmingClose)return;
       if(view.step<4){el('fxcwNext').click();return;}
       for(let step=1;step<5;step++){
         if(![...registrationDialog.querySelectorAll(`[data-fxcw-step="${step}"] input,[data-fxcw-step="${step}"] select`)].every(input=>input.checkValidity())){showStep(step);validateStep(step);return;}
@@ -258,6 +260,7 @@
     view.initial=JSON.stringify(registrationValues());showStep(0,false);registrationDialog.showModal();registrationDialog.querySelector('[data-fxcw-step="0"] h3').focus();
   }
   function openImport({accountId=null,returnFocus=document.activeElement}={}){
+    if(!available())return false;
     const started=FX.beginImportReview();if(!started.ok){alert(started.error);return;}
     cancel();if(accountId)ui.accountId=accountId;
     ui.source='mt5';window.JPWNavigation?.navigate('forex-consolidated');render();
@@ -283,6 +286,7 @@
       period:snapshot.period,generatedAt:snapshot.generatedAt||null,summary:snapshot.values,orders:[],deals:[],positions:[],issues:[]}:null;
   }
   function openAccountSetup({accountId=null,report=null,returnFocus=document.activeElement}={}){
+    if(!available())return false;
     if(setupView?.saving)return;
     if(setupDialog?.open){setupDialog.focus();return;}
     const account=FX.accounts().find(a=>a.id===accountId);
@@ -309,7 +313,7 @@
     el('fxcs-period').onchange=()=>{updatePeriod();el('fxcs-confirm-period').checked=false;};updatePeriod();
     const optional=id=>el(id).value.trim()===''?null:Number(el(id).value);
     const run=async(buttonId,command,success)=>{
-      const view=setupView;if(!view||view.saving)return;view.saving=true;el(buttonId).disabled=true;el('fxcs-close').disabled=true;
+      const view=setupView;if(!available()||!view||view.saving)return;view.saving=true;el(buttonId).disabled=true;el('fxcs-close').disabled=true;
       el('fxcSetupStatus').textContent='Confirmando a gravação…';
       try{const result=await command(view);if(setupView!==view)return;
         if(!result.ok){view.unknown=result.persistido===null;el('fxcSetupStatus').textContent=result.error||'Etapa não confirmada.';return;}
@@ -345,6 +349,7 @@
     setupView.initial=setupValues();setupDialog.showModal();el('fxcs-period').focus();
   }
   async function confirmImport(){
+    if(!available())return false;
     if(!ui.preview||ui.busy)return;if(!el('fxcConfirmIdentity').checked)return notify('Confirme a identidade antes da importação.','error');
     if(ui.preview.conflicts?.length&&!el('fxcAcceptRevision')?.checked)return notify('As divergências precisam de confirmação explícita.','error');
     ui.busy=true;const token=ui.token;const button=el('fxcConfirmImport');button.disabled=true;
@@ -375,5 +380,10 @@
   function bindSettings(){const select=el('fxcDefaultAccount');if(!select)return;select.innerHTML=options(FX.accounts?.()||[],S.fxConsolidated?.defaultAccountId||'',true);const button=el('fxcSaveDefault');button.onclick=async()=>{button.disabled=true;try{const result=await FX.saveDefaultAccount(select.value||null);el('fxcDefaultStatus').textContent=result?.ok?'Preferência salva.':(result?.error?.message||result?.error||'Não foi possível confirmar a preferência.');if(result?.ok){cancel();ui.accountId=null;render();}}catch(error){el('fxcDefaultStatus').textContent='Preferência não confirmada: '+(error.message||String(error));}finally{button.disabled=false;}};}
   function reset(){cancel();ui.accountId=null;ui.source='mt5';ui.tab='account';ui.from='';ui.to='';ui.search='';ui.message='';for(const id of ['fxcFrom','fxcTo','fxcSearch','fxcFile'])if(el(id))el(id).value='';if(el('fxcImport'))el('fxcImport').hidden=true;render();}
   Object.assign(FX,{render,settingsMarkup,bindSettings,openAccountRegistration,openAccountSetup,openImport,reset});
-  window.JPWFXConsolidatedUI={openAccountRegistration,openAccountSetup,openImport};
+  window.JPWFXConsolidatedUI={openAccountRegistration,openAccountSetup,openImport,
+    resetWork:()=>{closeRegistration();closeSetup({force:true});},
+    workState:()=>({pending:!!(ui.busy||ui.preview||registrationView||setupView),
+      inflight:!!(ui.busy||registrationView?.saving||setupView?.saving),
+      registration:registrationView?{saving:!!registrationView.saving,unknown:!!registrationView.unknown,saved:!!registrationView.saved}:null,
+      setup:setupView?{saving:!!setupView.saving,unknown:!!setupView.unknown,completed:setupView.completed||null}:null})};
 })(window.JPWFXConsolidated=window.JPWFXConsolidated||{});

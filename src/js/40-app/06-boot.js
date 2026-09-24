@@ -43,12 +43,13 @@ function boot(){
   // cotações ao vivo sempre que o programa abre (SET 4 do lote) — alimenta grade, ATR% e stop vivo
   if(!fxAutoFetchedThisSession){ fxAutoFetchedThisSession=true; updateFxRates(); }
   // questionário de início de período: primeiro a aparecer num painel recém-iniciado (SET 5b)
-  if(!(S.onboarding&&S.onboarding.done) &&
+  if(window.JPWModuleAvailability?.canAccess('forex')!==false && !(S.onboarding&&S.onboarding.done) &&
     !Object.keys(S.forex?.accountContexts?.accounts||{}).length && !window.__onbShown){
     window.__onbShown=true;
     const bootEpoch=jpWealthPersistenceEpoch();
     setTimeout(()=>{
-      if(jpWealthPersistenceIsBlocked() || bootEpoch!==jpWealthPersistenceEpoch()) return;
+      if(jpWealthPersistenceIsBlocked() || bootEpoch!==jpWealthPersistenceEpoch() ||
+        window.JPWModuleAvailability?.canAccess('forex')===false) return;
       openOnboardingModal();
     }, 350);
   }

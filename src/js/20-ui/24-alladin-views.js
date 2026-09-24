@@ -411,10 +411,12 @@ function alladinApplyView(view){
   });
 }
 function alladinRender(){
+  if(!alladinAvailable()) return false;
   alladinRenderBanner();
   alladinApplyView(alladinView);
 }
 function alladinSelectView(view){
+  if(!alladinAvailable()) return false;
   if(!ALLADIN_RENDERERS[view]) return;
   alladinView=view;              // efêmero: nunca persiste
   alladinRender();
@@ -422,7 +424,8 @@ function alladinSelectView(view){
 function initAlladinViews(){
   const section=document.getElementById('alladin');
   const tabs=document.getElementById('alladinTabs');
-  if(!section||!tabs) return;
+  if(!section||!tabs||tabs.dataset.alladinBound==='true') return;
+  tabs.dataset.alladinBound='true';
   // Delegação: UM listener para as quatro tabs — trocar view jamais acumula nós
   // nem listeners (as tabelas são substituídas por innerHTML no mesmo container).
   tabs.addEventListener('click',e=>{
@@ -436,7 +439,11 @@ function initAlladinViews(){
   }).observe(section,{attributes:true,attributeFilter:['class']});
   alladinRender();
 }
-window.JPWAlladinUI=Object.freeze({render:alladinRender,selectView:alladinSelectView});
+function alladinAvailable(){return !window.JPWModuleAvailability||window.JPWModuleAvailability.canAccess('alladin');}
+window.JPWAlladinUI=Object.freeze({render:alladinRender,selectView:alladinSelectView,
+  resetWork:()=>{alladinForm={estado:'IDLE',tipo:null,modo:null,alvoId:null,recordId:null,foco:null,avisos:[],snapshot:null};document.getElementById('alladinModalOverlay')?.classList.remove('show');},
+  workState:()=>({state:alladinForm.estado,type:alladinForm.tipo,recordId:alladinForm.recordId,
+    pending:alladinForm.estado!=='IDLE',continuation:['SUBMITTING','COMMITTED_WARNING'].includes(alladinForm.estado)})});
 initAlladinViews();
 
 // ============ ALLADIN · MANUTENÇÃO CADASTRAL (C3-S2-A + C3-S2-B · N1) ========
@@ -460,7 +467,7 @@ let alladinForm={estado:'IDLE', tipo:null, modo:null, alvoId:null, recordId:null
 
 function alladinFocusables(){
   const box=document.getElementById('alladinModalBox');
-  return box?[...box.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')]:[];
+  return box?[...box.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[inert],[hidden]')):[];
 }
 function alladinModalAberto(){
   const ov=document.getElementById('alladinModalOverlay');
@@ -496,6 +503,11 @@ function alladinModalClose(){
   let alvo=(typeof foco==='string')?document.querySelector(foco):foco;
   const disponivel=el=>el && el.isConnected && !el.disabled &&
     !el.closest('[hidden],[inert]') && el.getClientRects().length && getComputedStyle(el).visibility!=='hidden';
+  if(!alladinAvailable()){
+    const next=document.querySelector('#moduleAvailabilitySuspended [data-module-manage]')||document.getElementById('headerConfigBtn');
+    if(disponivel(next))next.focus({preventScroll:true});
+    return;
+  }
   // O estorno concluído remove sua própria ação. Retornar a um controle vivo
   // da lista; se a escrita estiver bloqueada, usar o título do contexto atual.
   if(!disponivel(alvo) && typeof foco==='string' && foco.startsWith('button[data-ald-tx-')){
@@ -510,11 +522,13 @@ function alladinModalClose(){
 // Escape/backdrop: cancelam SOMENTE fora dos estados protegidos. Em
 // COMMITTED_WARNING e SUBMITTING a saída silenciosa é proibida por contrato.
 function alladinModalDismiss(){
+  if(!alladinAvailable()) return;
   if(alladinForm.estado==='COMMITTED_WARNING'||alladinForm.estado==='SUBMITTING') return;
   alladinModalClose();
 }
 
 function alladinWriteBloqueado(){
+  if(!alladinAvailable()) return 'MODULE_FROZEN';
   try{ return JPWAlladin.writeBlockReason(); }catch(e){ return 'ALD_INDISPONIVEL'; }
 }
 function alladinCampo(id,rotulo,valor,extra){
@@ -842,6 +856,7 @@ const ALLADIN_FORM_META={
   asset:       { lista:()=>JPWAlladin.leitura.assets(),       campoId:'assetId',       html:(r)=>alladinFormAssetHTML(r) },
 };
 function alladinAbrirForm(tipo,modo,alvoId){
+  if(!alladinAvailable()) return false;
   const meta=ALLADIN_FORM_META[tipo];
   if(!meta) return;
   alladinForm.estado='EDITING'; alladinForm.tipo=tipo; alladinForm.modo=modo; alladinForm.alvoId=alvoId||null;
@@ -884,6 +899,7 @@ function alladinTextoDeRecusa(codigo){
   return 'O cadastro foi recusado: '+codigo+'. Nada foi gravado.';
 }
 function alladinSubmit(){
+  if(!alladinAvailable()) return false;
   if(alladinForm.estado!=='EDITING') return;      // SUBMITTING/COMMITTED: nunca resubmete
   // ALD-05 S2: o modal de lançamento reusa a MESMA máquina de estados e os
   // mesmos atos 'salvar'/'cancelar' — só o leitor/ator muda de rota aqui.
@@ -974,6 +990,7 @@ function alladinResolverWarning(acao){
 
 // ---- recordStatus ×4 (ação separada, com confirmação explícita) -------------
 function alladinConfirmarStatus(tipo,id,novo){
+  if(!alladinAvailable()) return false;
   alladinForm.estado='CONFIRM_STATUS'; alladinForm.tipo=tipo; alladinForm.alvoId=id; alladinForm.modo=novo;
   const verbo=(novo==='INACTIVE')?'Inativar':'Reativar';
   alladinModalOpen('<h3 id="alladinModalTitle">'+verbo+' '+esc(ALLADIN_TIPO_LABEL[tipo]||tipo)+'</h3>'+
@@ -982,6 +999,7 @@ function alladinConfirmarStatus(tipo,id,novo){
     '<button type="button" class="modal-btn confirm" data-ald-act="status-confirmado">'+verbo+'</button></div>');
 }
 function alladinExecutarStatus(){
+  if(!alladinAvailable()) return false;
   if(alladinForm.estado!=='CONFIRM_STATUS') return;
   const {tipo,alvoId,modo}=alladinForm;
   const r=JPWAlladin.cadastro.setRecordStatus(tipo,alvoId,modo);
@@ -1217,6 +1235,7 @@ function alladinTxLerFormulario(){
   return { dados:d };
 }
 function alladinTxSubmit(){
+  if(!alladinAvailable()) return false;
   if(alladinForm.estado!=='EDITING') return;
   const lido=alladinTxLerFormulario();
   if(lido.erro){ alladinErroInline(lido.erro); return; }
@@ -1293,6 +1312,7 @@ function alladinTxReverseAbrir(originalId){
     '<button type="button" class="modal-btn confirm" data-ald-act="salvar">Estornar</button></div>');
 }
 function alladinTxReverseSubmit(){
+  if(!alladinAvailable()) return false;
   if(alladinForm.estado!=='EDITING') return;
   const v=(id)=>{ const el=document.getElementById(id); return el?el.value:''; };
   const effectiveAt=v('alladinTxRevData').trim();
@@ -1319,9 +1339,11 @@ function initAlladinCrud(){
   const ov=document.getElementById('alladinModalOverlay');
   const box=document.getElementById('alladinModalBox');
   const section=document.getElementById('alladin');
-  if(!ov||!box||!section) return;
+  if(!ov||!box||!section||box.dataset.alladinCrudBound==='true') return;
+  box.dataset.alladinCrudBound='true';
   // Delegação: UM listener por superfície — nenhum bind por abertura.
   section.addEventListener('click',e=>{
+    if(!alladinAvailable()) return;
     const txn=e.target.closest('button[data-ald-tx-new]');
     if(txn && !txn.disabled){ alladinTxAbrirForm(); return; }
     const rev=e.target.closest('button[data-ald-tx-reverse]');
@@ -1337,6 +1359,7 @@ function initAlladinCrud(){
     const b=e.target.closest('button[data-ald-act]');
     if(!b) return;
     const act=b.dataset.aldAct;
+    if(!alladinAvailable()&&!(alladinForm.estado==='COMMITTED_WARNING'&&['manter','inativar-novo'].includes(act))) return;
     if(act==='cancelar') alladinModalDismiss();
     else if(act==='salvar') alladinSubmit();
     else if(act==='manter') alladinResolverWarning('manter');
@@ -1362,9 +1385,10 @@ function initAlladinCrud(){
     }
   });
   // Total cadastral de participação, ao vivo (owners/shareBp — jamais valor).
-  box.addEventListener('input',e=>{ if(e.target.matches('[data-ald-owner-pct]')) alladinOwnersAtualizarTotal(); });
+  box.addEventListener('input',e=>{ if(alladinAvailable()&&e.target.matches('[data-ald-owner-pct]')) alladinOwnersAtualizarTotal(); });
   // Família CRYPTO revela o campo Rede: a chave `network` tem fonte única.
   box.addEventListener('change',e=>{
+    if(!alladinAvailable()) return;
     // ALD-05 S2: trocar o TIPO re-renderiza só o bloco de campos específicos —
     // os campos comuns (valor, data, nota) vivem fora dele e o rascunho
     // sobrevive. Trocar a CONTA atualiza a moeda derivada exibida.

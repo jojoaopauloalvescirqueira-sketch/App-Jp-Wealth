@@ -1058,3 +1058,7 @@ e performance · `ALD-07` Data Quality e Audit Trail canônico.
 - `symbolHistory` permanece cadastral e independente do ledger.
 - `owners/shareBp` é cadastral: registra **título**, não valor. Nenhum valor
   proporcional é computado enquanto não houver valuation.
+
+
+## Disponibilidade — candidate 2026-09-24
+Disponibilidade padrão frozen. Leitores/readmodels, código e dados permanecem. Apresentação e novos fluxos respeitam política central; formulário pendente impede congelamento local. Confirmações iniciadas permanecem resolvíveis. Sem alteração no domínio financeiro. Contrato: [MODULE-AVAILABILITY](MODULE-AVAILABILITY.md). Decisão canônica: [Alladin congelado](../decisions/2026-09-24-alladin-congelado.md). Candidate isolado, ainda em validação.

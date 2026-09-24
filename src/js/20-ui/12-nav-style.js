@@ -62,7 +62,7 @@ function positionNavPill(){
     if(spec) spec.classList.remove('is-ready');
     return;
   }
-  if(!active){
+  if(!active||active.closest('[hidden],[inert]')){
     pill.style.opacity='0';
     if(spec) spec.style.opacity='0';
     return;
@@ -135,7 +135,7 @@ function bindNavMagnetics(){
   const nav=document.getElementById('nav');
   if(!nav) return;
   const fino=window.matchMedia('(hover:hover) and (pointer:fine)');
-  const alvoValido=el=>el && el.classList && el.classList.contains('tab');
+  const alvoValido=el=>el && el.classList && el.classList.contains('tab') && !el.closest('[hidden],[inert]');
   nav.addEventListener('mouseover', e=>{
     if(navStyleValue()!=='kinetic' || !fino.matches) return;
     const alvo=e.target.closest && e.target.closest('.tab');
@@ -314,7 +314,7 @@ function applyNavOrder(order){
     if(expander)nav.append(expander);
   });
   if(typeof syncNavSubState==='function')syncNavSubState();
-  if(focused&&nav.contains(focused)&&document.activeElement!==focused)focused.focus({preventScroll:true});
+  if(focused&&nav.contains(focused)&&!focused.closest('[hidden],[inert]')&&document.activeElement!==focused)focused.focus({preventScroll:true});
   scheduleNavPill();
 }
 function renderNavOrderEditor(message){
@@ -326,6 +326,11 @@ function renderNavOrderEditor(message){
     const label=document.querySelector('#nav > .tab[data-primary="'+id+'"] .lbl')?.textContent.trim()||id;
     const row=document.createElement('li');row.dataset.navOrderId=id;
     const text=document.createElement('span');text.textContent=label;row.append(text);
+    if(window.JPWModuleAvailability?.canAccess(id)===false){
+      const badge=document.createElement('small');badge.className='module-availability-badge';badge.textContent='Congelado';
+      badge.title='Fora da navegação; sua posição é preservada. Gerencie a disponibilidade no Editor.';
+      text.append(' ',badge);
+    }
     [['up','Subir'],['down','Descer']].forEach(([direction,verb])=>{
       const button=document.createElement('button');button.type='button';button.className='reset-btn';button.dataset.navOrderMove=direction;
       button.textContent=direction==='up'?'↑':'↓';button.setAttribute('aria-label',verb+' '+label);

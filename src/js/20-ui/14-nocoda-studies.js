@@ -73,6 +73,7 @@ function ncAnchorFieldsHTML(index) {
 }
 
 function renderNocodaStudies() {
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('research')) return false;
   const root = document.getElementById('execNocoda');
   if (!root) return;
   const catalog = (typeof instrumentCatalog === 'function') ? instrumentCatalog() : [];
@@ -251,6 +252,7 @@ function ncShowErrors(errors) {
 }
 
 function ncSaveStudy() {
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('research')) return false;
   const geometry = window.JPWNocoda && window.JPWNocoda.geometry;
   if (!geometry || !ncSelectedId) return;
   const validation = geometry.validate(ncDraft);
@@ -314,4 +316,6 @@ function ncSaveStudy() {
 }
 
 // Superfície pública consumida pelo controlador de views do Execution Board.
-window.JPWNocodaUI = { render: renderNocodaStudies };
+window.JPWNocodaUI = { render: renderNocodaStudies, hasDrafts:()=>ncDirty,
+  backupDraft:()=>ncDirty?{instrumentId:ncSelectedId,draft:structuredClone(ncDraft)}:null,
+  resetDraft:()=>{ncDirty=false;ncDraft=null;ncSelectedId=null;} };

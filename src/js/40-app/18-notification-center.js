@@ -232,6 +232,19 @@
   function button(label,attr,id){
     const b=document.createElement('button'); b.type='button'; b.textContent=label; b.dataset[attr]=id; return b;
   }
+  function targetModule(target){
+    if(target?.startsWith('forex-operation@'))return 'forex';
+    if(['pf','pf-monthly','pf-debts'].includes(target))return 'personal-finance';
+    if(target?.startsWith('area:')){
+      const area=target.slice(5);
+      return ({pf:'personal-finance',forex:'forex',research:'research',alladin:'alladin'})[area]||null;
+    }
+    return window.JPWNavigation?.resolve(target)?.primary||null;
+  }
+  function frozenTarget(target){
+    const primary=targetModule(target);
+    return primary&&window.JPWModuleAvailability?.canAccess(primary)===false?primary:null;
+  }
   function paint(){
     const trigger=el('headerNotificationsBtn'), badge=el('notificationBadge'), list=el('notificationList');
     if(!trigger || !badge || !list) return;
@@ -243,7 +256,7 @@
       el('notificationSummary').textContent=count?'Você tem '+count+' notificação(ões) não lida(s).':'Todas as notificações foram lidas.';
       if(!el('notificationCenter').open) return;
       const area=el('notificationArea').value, shown=all.filter(item=>area==='all'||item.area===area||item.contextArea===area);
-      const view=JSON.stringify(shown.map(item=>[item.id,item.title,item.body,unread(item),item.at]));
+      const view=JSON.stringify(shown.map(item=>[item.id,item.title,item.body,unread(item),item.at,frozenTarget(item.go)]));
       if(view===lastView) return; lastView=view;
       const focus=document.activeElement, focusId=focus?.closest('[data-notification-id]')?.dataset.notificationId;
       const focusAction=focus?.dataset.notificationGo!==undefined?'notificationGo':'notificationRead';
@@ -258,7 +271,7 @@
         const title=document.createElement('h3');title.textContent=item.title;
         const body=document.createElement('p');body.className='notification-body';body.textContent=item.body;
         const actions=document.createElement('div');actions.className='notification-actions';
-        if(item.go) actions.append(button('Ver detalhes','notificationGo',item.id));
+        if(item.go) actions.append(button(frozenTarget(item.go)?'Módulo congelado':'Ver detalhes','notificationGo',item.id));
         actions.append(button(unread(item)?'Marcar como lida':'Lida','notificationRead',item.id));
         li.append(meta,title,body,actions);fragment.append(li);
       }
@@ -286,16 +299,23 @@
   }
   function close(restore=true){const d=el('notificationCenter');if(d?.open){returnFocus=restore;d.close();}}
   function go(item){
-    close(false);
     const opener=el('headerNotificationsBtn'), target=item.go;
+    const frozen=frozenTarget(target);
+    // Antes de fechar o painel ou selecionar conta/período. Uma notificação
+    // continua legível mesmo quando seu destino operacional está congelado.
+    if(frozen){window.JPWModuleAvailabilityUI?.deny(frozen,document.activeElement);return false;}
+    close(false);
     if(target?.startsWith('forex-operation@')){
       const [,accountId,periodId]=target.split('@');
       const navigateScoped=()=>{
+        // A confirmação de saída pode permanecer aberta enquanto outra aba
+        // congela o módulo. O callback não herda uma autorização antiga.
+        const nowFrozen=frozenTarget(target);
+        if(nowFrozen){window.JPWModuleAvailabilityUI?.deny(nowFrozen,opener);return;}
         const selected=window.JPWForex?.state?.selectOperationalAccount(accountId);
         const period=selected?.ok?window.JPWForex.state.selectOperationalPeriod(accountId,periodId):null;
-        if(period?.ok){JPWNavigation.navigate('forex-operation');JPWNavigation.focusCurrentScreen();}
-        else {JPWNavigation.navigate('forex-operation');JPWNavigation.navigateLocal('exec','accounts');
-          JPWNavigation.focusCurrentScreen();}
+        const accepted=period?.ok?JPWNavigation.navigate('forex-operation'):JPWNavigation.navigateLocal('exec','accounts');
+        if(accepted)JPWNavigation.focusCurrentScreen();
       };
       if(window.JPWForex?.executionBoardUI?.hasDrafts())
         window.JPWForex.executionBoardUI.requestLeave(navigateScoped,'Abrir notificação de outra conta');
@@ -306,19 +326,18 @@
     if(target==='notes'){openMvpNotesDrawer(opener);return;}
     if(target==='calendar'){JPWEcal.open(opener);return;}
     if(target==='pf'||target==='pf-monthly'||target==='pf-debts'){
-      JPWNavigation.navigate('finpes');
-      if(target!=='pf') JPWNavigation.navigateLocal('finpes',target==='pf-monthly'?'mensal':'dividas');
-      JPWNavigation.focusCurrentScreen();
+      const accepted=target==='pf'?JPWNavigation.navigate('finpes'):
+        JPWNavigation.navigateLocal('finpes',target==='pf-monthly'?'mensal':'dividas');
+      if(accepted)JPWNavigation.focusCurrentScreen();
       return;
     }
     if(target?.startsWith('area:')){
       const area=target.slice(5);
       if(area==='system')openSettingsModal('general',opener);
-      else {JPWNavigation.navigate(area==='pf'?'finpes':area==='notes'?'dash':area);JPWNavigation.focusCurrentScreen();}
+      else if(JPWNavigation.navigate(area==='pf'?'finpes':area==='notes'?'dash':area))JPWNavigation.focusCurrentScreen();
       return;
     }
-    JPWNavigation.navigate(target);
-    JPWNavigation.focusCurrentScreen();
+    if(JPWNavigation.navigate(target))JPWNavigation.focusCurrentScreen();
   }
   window.JPWNotifications=Object.freeze({open,close,refresh});
   // Bridges are installed once and keep original behavior even if the optional
@@ -359,8 +378,7 @@
     const id=mark?.dataset.notificationRead||action?.dataset.notificationGo;
     if(!id)return;
     const item=live.get(id)||history.find(row=>row.id===id);if(!item)return;
-    seen.set(item.id,item.revision);
-    if(action)go(item);
+    if(!action||go(item)!==false)seen.set(item.id,item.revision);
     paint();
   });
   el('notificationReadAll')?.addEventListener('click',()=>{entries().forEach(item=>seen.set(item.id,item.revision));paint();});

@@ -42,3 +42,7 @@ O backup é de dados e preferências, não uma cópia executável do navegador: 
 O clone integral de `state` inclui ambiente real/demo, atribuição revisionada de perfil e referências documentais dos períodos/operações. Ausência em backup antigo é válida; não dispara cadastro, novo período ou preenchimento retroativo. Extensões incompatíveis são recusadas antes da escrita. IDs, vínculos e campos desconhecidos compatíveis permanecem preservados.
 
 Rascunhos visíveis capturados pelo workspace continuam material para revisão, nunca confirmação automática de conta/período. Etapas ainda em RAM não equivalem a cadastro salvo. A avaliação de rollback lê o backup novo na versão anterior e executa sua gravação com fixture sintética, comparando essas extensões; o recibo do candidate informa o resultado real.
+
+
+## Disponibilidade — candidate 2026-09-24
+A preferência jpw_module_availability_v1 participa de workspace v1: ausência preserva destino, null retorna aos defaults; inválidos recusados. Consentimento informa mudanças de disponibilidade. Exportação de recuperação explicitamente consentida preserva raw inválido em drafts sem aplicação automática; dados financeiros completos. Contrato: [MODULE-AVAILABILITY](MODULE-AVAILABILITY.md). Decisão canônica: [Alladin congelado](../decisions/2026-09-24-alladin-congelado.md). Candidate isolado, ainda em validação.

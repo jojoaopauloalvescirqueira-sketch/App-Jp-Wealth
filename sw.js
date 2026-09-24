@@ -14,6 +14,9 @@ const NOCUDA_DOCUMENT_URLS = [
   './downloads/nocuda/TRADINGVIEW-LEIA-ME.md', './downloads/nocuda/MT5-LEIA-ME.md'
 ].map(path => new URL(path, self.location.href).href);
 const PRECACHE_URLS = [
+  './src/js/20-ui/32-module-availability.js',
+  './src/js/20-ui/33-module-work.js',
+  './src/js/00-core/08-module-availability.js',
   './assets/nocuda-tradingview.png', './assets/nocuda-metatrader.png',
   ...NOCUDA_DOCUMENT_URLS,
   './src/js/10-domain/16-nocuda-transfer.js', './src/js/20-ui/31-tools-services.js',

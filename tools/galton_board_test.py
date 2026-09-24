@@ -50,6 +50,8 @@ def prepare_page(browser, url):
         service_workers="block",
     )
     context.add_init_script("window.__onbShown=true;")
+    # Continuidade entre módulos: Alladin explicitamente ativo nesta fixture.
+    context.add_init_script("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
     install_bootstrap(context)
     page = context.new_page()
     observed = {"console": [], "pageerror": [], "failed": []}

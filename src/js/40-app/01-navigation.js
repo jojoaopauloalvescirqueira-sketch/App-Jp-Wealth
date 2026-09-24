@@ -138,6 +138,14 @@ function navSelectPrimary(primary){
 }
 
 function navApply(plan,target){
+  // Disponibilidade é anterior à montagem e às guardas que possam abrir um
+  // diálogo ou alterar contexto. O catálogo continua resolvendo a mesma rota.
+  if(plan.accepted&&plan.primary&&window.JPWModuleAvailability?.canAccess(plan.primary)===false){
+    navLastResult={accepted:false,reason:'module-frozen'};
+    const opener=typeof target==='string'?document.activeElement:target;
+    window.JPWModuleAvailabilityUI?.deny(plan.primary,opener);
+    return false;
+  }
   if(!navCanApply(plan)){
     navLastResult={accepted:false,reason:plan.accepted?'unavailable-target':plan.reason};
     return false;
@@ -169,7 +177,7 @@ function navApply(plan,target){
   if(typeof maybeShowOnboardingNavReminder==='function') maybeShowOnboardingNavReminder(plan.screen);
   if(typeof syncNavSubState==='function') syncNavSubState();
   if(plan.screen==='fxconsolidated'&&window.JPWFXConsolidated?.render)window.JPWFXConsolidated.render();
-  if(window.JPWForex&&JPWForex.ui)JPWForex.ui.render();
+  if(window.JPWForex&&JPWForex.ui&&window.JPWModuleAvailability?.canAccess('forex')!==false)JPWForex.ui.render();
   if(plan.action==='context') fxSetContextExpanded(true);
   if(plan.action==='checklist') fxOpenChecklist(document.getElementById('execChecklistBtn'));
   return true;
@@ -225,7 +233,7 @@ function navNavigateLocal(surfaceId,view){
   const plan=navLocalPlan(surfaceId,view,descriptor);
   navLastResult={accepted:false,reason:'not-applied'};
   navApply(plan,surfaceId);
-  if(typeof syncActiveScreen==='function') syncActiveScreen();
+  if(navLastResult.accepted&&typeof syncActiveScreen==='function') syncActiveScreen();
   return navLastResult.accepted===true;
 }
 

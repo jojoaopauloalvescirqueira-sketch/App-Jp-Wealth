@@ -9,6 +9,7 @@ function fsHorizonLabel(h){ return h===null ? 'HOJE' : pfMonthLabel(h); }
 const FS_KIND_LABELS = { PESSIMISTA:'Pessimista', BASE:'Base', OTIMISTA:'Otimista', LIVRE:'Livre' };
 
 function finpesScenariosRender(){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const root = document.getElementById('finpesScenariosRoot');
   if(!root) return;
   const bloqueado = (typeof pfWriteBlockReason==='function') ? pfWriteBlockReason() : null;
@@ -154,6 +155,7 @@ function fsReadScenarioForm(box, marcar){
   return { name, kind: $('fsKind').value, horizon };
 }
 function fsOpenScenarioModal(scenarioId){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const sc = scenarioId ? pfFindScenario(S.personalFinance, scenarioId) : null;
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
   box.innerHTML = `<h3>${sc?'Editar cenário':'Novo cenário'}</h3>${fsScenarioFormHTML(sc)}
@@ -161,8 +163,10 @@ function fsOpenScenarioModal(scenarioId){
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
     </div>`;
+  window.JPWModuleWork?.claimModal('personal-finance', $('modalOverlay'));
   $('modalCancel').addEventListener('click', closeModal);   // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
+    if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
     let falhou=false;
     const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou=true; };
@@ -177,6 +181,7 @@ function fsOpenScenarioModal(scenarioId){
 
 // ---- modal "Criar a partir de mês" — cópia deliberada e atômica ------------
 function fsOpenFromMonthModal(){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
   box.innerHTML = `<h3>Criar cenário a partir de um mês registrado</h3>
     <p class="risk-note">Cópia deliberada da composição PLANEJADA (projetado/previsto, sem canceladas). O mês precisa estar registrado e completo no planejado. Depois da cópia, cenário e mês são independentes.</p>
@@ -188,8 +193,10 @@ function fsOpenFromMonthModal(){
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
     </div>`;
+  window.JPWModuleWork?.claimModal('personal-finance', $('modalOverlay'));
   $('modalCancel').addEventListener('click', closeModal);   // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
+    if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
     let falhou=false;
     const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou=true; };

@@ -11,7 +11,7 @@
   const money=(value,currency)=>typeof value==='number'&&Number.isFinite(value)?fmtForexMoney(value,{currency:currency||null}):'Indisponível';
   function status(message,error=false){const node=el('fxAccountsStatus');if(node){node.textContent=message;node.dataset.kind=error?'error':'info';}}
   function examination(){return {accountId:examinedAccountId,periodId:examinedPeriodId};}
-  function hasDrafts(){return dirty||el('fxAccountFacts')?.dataset.fxTouched==='true';}
+  function hasDrafts(){return saving||dirty||el('fxAccountFacts')?.dataset.fxTouched==='true';}
   function resetForms(){
     for(const id of ['accountPeriodStart','accountPeriodSI','accountPeriodBook','accountPeriodSource','accountPeriodReason'])if(el(id))el(id).value='';
     if(el('accountObservedPeriod'))el('accountObservedPeriod').value='';
@@ -183,6 +183,6 @@
       examinedAccountId=null;examinedPeriodId=null;formScope='';renderContas();fx.executionBoardUI?.render?.();status('Cadastro arquivado. Identidade, períodos e históricos foram preservados.');
     });
   }
-  fx.accountsUI=Object.freeze({mount,render,examination,examine,useContext,requestLeave,guardNavigation,hasDrafts});
+  fx.accountsUI=Object.freeze({mount,render,examination,examine,useContext,requestLeave,guardNavigation,hasDrafts,resetWork:resetForms});
   mount();
 })(globalThis);

@@ -50,7 +50,9 @@ try:
         assert 'Irreversível' in html or 'irreversível' in html
         assert 'apaga TODOS os dados (ordens' not in html, 'a promessa absoluta antiga deveria ter sido removida'
         storage_polyfill='<script>(()=>{const store={};Object.defineProperty(window,"localStorage",{configurable:true,value:{getItem:k=>Object.prototype.hasOwnProperty.call(store,k)?store[k]:null,setItem:(k,v)=>store[k]=String(v),removeItem:k=>delete store[k],clear:()=>Object.keys(store).forEach(k=>delete store[k]),key:i=>Object.keys(store)[i]??null,get length(){return Object.keys(store).length}}});})();</script>' 
-        html=html.replace('<head>','<head>'+storage_polyfill,1)
+        # This full-route fixture opts into Alladin; frozen default is tested separately.
+        active_fixture="<script>localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));</script>"
+        html=html.replace('<head>','<head>'+storage_polyfill+active_fixture,1)
         page.set_content(html, wait_until='load')
         wait_bootstrap(page)
         page.wait_for_timeout(500)

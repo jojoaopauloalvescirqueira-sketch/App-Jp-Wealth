@@ -144,6 +144,7 @@ function fxCanOpenChecklist(){
     !document.querySelector('dialog[open]:not(#forexChecklistDialog)');
 }
 function fxOpenChecklist(opener=document.activeElement){
+  if(window.JPWModuleAvailability?.canAccess('forex')===false){window.JPWModuleAvailabilityUI?.deny('forex',opener);return false;}
   if(!fxCanOpenChecklist()) return false;
   if(fxChecklistDialog?.open){document.getElementById('forexChecklistClose').focus();return true;}
   const grid=document.getElementById('checkWidgetGrid');if(!grid)return false;

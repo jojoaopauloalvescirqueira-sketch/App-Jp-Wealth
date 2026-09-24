@@ -435,3 +435,7 @@ experimento transitório; ciclo de vida em [GALTON-BOARD](GALTON-BOARD.md).
 ## Incremento Forex V11 em revisão
 
 `forex-reserves` usa `#fxreserves`; seus formulários conservam o rascunho em memória durante a navegação. A Visão Geral e a Central → Operação → Parâmetros leem `JPWForex.state.read()`. O novo painel não cria router, preferência de rota ou segunda fonte de calendário. Ver [FOREX-V11-ENGINE](FOREX-V11-ENGINE.md).
+
+
+## Disponibilidade — candidate 2026-09-24
+A disponibilidade operacional passa pela fonte única JPWModuleAvailability antes de navegação e exploração. A ordem conserva os seis IDs; módulos frozen não aparecem na projeção. IDs/aliases e quatro layouts preservados. Contrato: [MODULE-AVAILABILITY](MODULE-AVAILABILITY.md). Decisão canônica: [Alladin congelado](../decisions/2026-09-24-alladin-congelado.md). Candidate isolado, ainda em validação.

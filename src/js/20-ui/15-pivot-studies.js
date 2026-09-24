@@ -50,6 +50,7 @@ function pvStudyById(id) { return pvStudies().find(st => st.id === id) || null; 
 // A confirmação pertence às quatro mutações deste agregado. Uma recusa
 // comprovada restaura apenas estudos; uma exceção de save não prova não escrita.
 function pvMutateStudies(change) {
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('research')) return false;
   function failed(unknown) {
     hideStaleSavedTag();
     if (unknown) {
@@ -192,6 +193,7 @@ function pvStudyEmFoco(acao) {
 // ---- render --------------------------------------------------------------
 
 function renderPivotStudies() {
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('research')) return false;
   const root = document.getElementById('execPivots');
   if (!root) return;
   const math = pvMath();
@@ -804,4 +806,6 @@ function pvBind(root) {
 }
 
 // Superfície pública consumida pelo controlador de views do Execution Board.
-window.JPWPivotsUI = { render: renderPivotStudies };
+window.JPWPivotsUI = { render: renderPivotStudies, hasDrafts:()=>pvDirty||pvNewStudyOpen,
+  backupDraft:()=>pvDirty||pvNewStudyOpen?{instrumentId:pvInstrumentId,studyId:pvStudyId,editingId:pvEditingId,draft:structuredClone(pvDraft),newStudy:pvNewStudyOpen?structuredClone(pvNewStudyDraft):null}:null,
+  resetDraft:()=>{pvCloseForm();pvNewStudyOpen=false;pvNewStudyDraft={periodStart:'',periodEnd:''};} };

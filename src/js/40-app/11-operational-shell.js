@@ -91,7 +91,7 @@ function navSubEls(screen){
   const allItems=[...new Set([...(panel?panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]'):[]),
     ...(local?local.querySelectorAll('[data-nav-item]'):[])])];
   return {screen:key,trigger,panel,shell:document.getElementById('navSubShell'),allItems,
-    items:allItems.filter(i=>!i.closest('[hidden]'))};
+    items:allItems.filter(i=>!i.closest('[hidden],[inert]'))};
 }
 function navSubRouteIsCurrent(item,current){
   if(!item.dataset.navRoute||!window.JPWNavigation)return false;
@@ -166,14 +166,22 @@ function submenuResetExploration(){
 function submenuPrimaryForSurface(surface){
   return ({exec:'forex',finpes:'personal-finance',research:'research',tools:'tools'})[surface]||null;
 }
+function shellModuleAvailable(primary){
+  return !primary||window.JPWModuleAvailability?.canAccess(primary)!==false;
+}
+function shellRequireModule(primary,opener){
+  if(shellModuleAvailable(primary))return true;
+  window.JPWModuleAvailabilityUI?.deny(primary,opener);return false;
+}
 function submenuVisibleItems(){
-  if(submenuUI.level===1)return [...document.querySelectorAll('#nav > .tab')];
+  const available=item=>!item.closest('[hidden],[inert]')&&shellModuleAvailable(item.dataset.primary);
+  if(submenuUI.level===1)return [...document.querySelectorAll('#nav > .tab')].filter(available);
   const panel=document.getElementById(submenuUI.surface+'NavSubmenu');
   if(!panel)return [];
   const group=submenuUI.level===3
     ?panel.querySelector('[data-nav-context="'+CSS.escape(submenuUI.context)+'"]')
     :(panel.querySelector('.nav-sub-level-primary')||panel);
-  return group?[...group.querySelectorAll(':scope > [data-nav-item],:scope > [data-nav-sub-view]')]:[];
+  return group?[...group.querySelectorAll(':scope > [data-nav-item],:scope > [data-nav-sub-view]')].filter(available):[];
 }
 function submenuMarkCurrent(){
   if(!window.JPWNavigation)return;
@@ -194,6 +202,9 @@ function syncSubmenuRailPresentation(){
 }
 function syncSubmenuPresentation(){
   if(!shellSubmenu())return;
+  // Uma aba pode congelar o grupo explorado sem mudar a página ativa. Recolher
+  // apenas a exploração não abandona formulário nem chama render de domínio.
+  if(submenuUI.level>1&&!shellModuleAvailable(submenuPrimaryForSurface(submenuUI.surface)))submenuResetExploration();
   const root=document.documentElement,nav=document.getElementById('nav'),shell=document.getElementById('navSubShell');
   const title=document.getElementById('submenuLevelTitle'),back=document.getElementById('submenuNavBack');
   root.setAttribute('data-submenu-level',String(submenuUI.level));
@@ -238,6 +249,7 @@ function syncSubmenuPresentation(){
 }
 function submenuOpenSurface(control,options){
   const surface=control&&control.dataset.navSurface;if(!surface)return false;
+  if(!shellRequireModule(submenuPrimaryForSurface(surface),control))return false;
   submenuUI.level=2;submenuUI.surface=surface;submenuUI.context=null;submenuUI.openers=[control];submenuUI.direction='forward';
   if(document.documentElement.getAttribute('data-submenu-rail')==='collapsed'&&!shellMobile())submenuUI.temporary=true;
   syncSubmenuPresentation();
@@ -246,6 +258,7 @@ function submenuOpenSurface(control,options){
 }
 function submenuOpenContext(item,options){
   const context=item&&item.dataset.navChild;if(!SUBMENU_CONTEXTS.has(context))return false;
+  if(!shellRequireModule(submenuPrimaryForSurface(submenuUI.surface),item))return false;
   submenuUI.level=3;submenuUI.context=context;submenuUI.openers[1]=item;submenuUI.direction='forward';syncSubmenuPresentation();
   if(options?.focus){const target=submenuVisibleItems()[0];if(target)target.focus();}
   return true;
@@ -257,7 +270,7 @@ function submenuBack(options){
   if(submenuUI.level===3){submenuUI.level=2;submenuUI.context=null;submenuUI.openers.length=1;}
   else{submenuResetExploration();}
   syncSubmenuPresentation();
-  if(options?.restoreFocus&&opener?.isConnected)opener.focus();
+  if(options?.restoreFocus&&opener?.isConnected&&!opener.closest('[hidden],[inert]'))opener.focus();
   return true;
 }
 function submenuRailPreferenceChanged(next){
@@ -276,7 +289,7 @@ function syncNavSubState(){
     return;
   }
   const c=window.JPWNavigation.current();
-  const key=({forex:'exec','personal-finance':'finpes',research:'research',tools:'tools'})[c.primary]||null;
+  const key=shellModuleAvailable(c.primary)?({forex:'exec','personal-finance':'finpes',research:'research',tools:'tools'})[c.primary]||null:null;
   if(key!==navSubUI.screen){navSubUI.collapsed=null;navSubUI.screen=key;}
   navSubUI.open=!!key&&navSubUI.collapsed!==key;
   const shell=document.getElementById('navSubShell');
@@ -304,12 +317,13 @@ function syncNavSubState(){
   if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
 function openNavSub(screen,options){
+  if(!shellRequireModule(submenuPrimaryForSurface(screen),navSubEls(screen).trigger))return;
   if(screen!==navSubUI.screen)return;
   navSubUI.collapsed=null;syncNavSubState();
   const {trigger,panel}=navSubEls(screen);navSubUI.opener=trigger;
   if(options&&options.focus&&panel){
     const level=panel.querySelector('.nav-sub-level-primary')||panel;
-    const items=[...level.querySelectorAll('[data-nav-item],[data-nav-sub-view]')];
+    const items=[...level.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(item=>!item.closest('[hidden],[inert]'));
     const target=options.focus==='last'?items[items.length-1]:level.querySelector('[aria-current="page"]')||items[0];
     if(target){items.forEach(i=>i.tabIndex=i===target?0:-1);target.focus();}
   }
@@ -335,7 +349,7 @@ function shellFocusCurrentScreen(){
 }
 function selectNavSubItem(item){
   if(!item||!window.JPWNavigation)return false;
-  if(shellSubmenu()&&submenuUI.level===2&&submenuOpenContext(item,{focus:true}))return true;
+  if(shellSubmenu()&&submenuUI.level===2&&SUBMENU_CONTEXTS.has(item.dataset.navChild))return submenuOpenContext(item,{focus:true});
   let accepted=false;
   if(item.dataset.navChild)accepted=window.JPWNavigation.navigate(item.dataset.navChild);
   else if(item.dataset.navRoute)accepted=window.JPWNavigation.navigate(item.dataset.navRoute);
@@ -381,7 +395,8 @@ function openShellMenu(opener){
     document.getElementById('sidebarBackdrop').hidden=true;
     shellUI.inerted=[];shellUI.overflow=document.body.style.overflow;
     syncShellViewport();
-    const active=document.querySelector('#nav > .tab.active');(active||shellEl('[data-shell-menu-toggle]')).focus();
+    const active=[...document.querySelectorAll('#nav > .tab')].filter(item=>!item.closest('[hidden],[inert]'));
+    (active.find(item=>item.classList.contains('active'))||active[0]||shellEl('[data-shell-menu-toggle]')).focus();
     return;
   }
   document.getElementById('sidebarBackdrop').hidden=false;
@@ -394,7 +409,7 @@ function openShellMenu(opener){
   syncShellViewport();
   const active=shellSubmenu()&&submenuUI.level>1
     ?document.getElementById('submenuNavBack')
-    :document.querySelector('#nav > .tab.active');
+    :[...document.querySelectorAll('#nav > .tab')].find(item=>item.classList.contains('active')&&!item.closest('[hidden],[inert]'));
   (active||document.getElementById('sidebarClose')).focus();
 }
 function closeShellMenu(options){
@@ -409,7 +424,7 @@ function closeShellMenu(options){
 }
 function shellMoveFocus(event){
   const group=event.target.closest('[data-nav-context],.nav-sub-level-primary,.nav-sub-menu');if(!group)return;
-  const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(i=>!i.closest('[hidden]'));
+  const items=[...group.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(i=>!i.closest('[hidden],[inert]'));
   if(!items.length)return;
   let index=items.indexOf(document.activeElement);
   if(event.key==='Home')index=0;else if(event.key==='End')index=items.length-1;
@@ -448,6 +463,7 @@ function initOperationalShell(){
     const item=event.target.closest('[data-nav-item],[data-nav-sub-view]');
     if(item){selectNavSubItem(item);return;}
     if(event.target.closest('#nav > .tab')){
+      if(!shellModuleAvailable(event.target.closest('#nav > .tab').dataset.primary))return;
       if(shellSubmenu()&&event.target.closest('#nav > .tab').dataset.navSurface)return;
       navSubUI.collapsed=null;
       syncNavSubState();
@@ -480,9 +496,10 @@ function initOperationalShell(){
     const expander=event.target.closest(shellHorizontal()?'.nav-sub-trigger':'[data-nav-expand]');
     if(expander&&['ArrowDown','ArrowUp'].includes(event.key)){
       event.preventDefault();
+      const key=expander.dataset.navExpand||expander.id.replace('NavTrigger','');
+      if(!shellRequireModule(submenuPrimaryForSurface(key),expander))return;
       // Em mobile superior o N2 fica no fluxo, fora da gaveta.
       if(shellTopbar()&&shellUI.open)closeShellMenu({restoreFocus:false});
-      const key=expander.dataset.navExpand||expander.id.replace('NavTrigger','');
       if(shellHorizontal()&&key!==navSubUI.screen)expander.click();
       openNavSub(key,{focus:event.key==='ArrowUp'?'last':true});return;
     }

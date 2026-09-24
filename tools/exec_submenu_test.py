@@ -67,6 +67,8 @@ def serve():
 def prepare_page(browser, url, viewport=None):
     context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900})
     context.add_init_script("window.__onbShown=true;")
+    # A passagem pelos seis módulos exige a fixture Alladin ativa.
+    context.add_init_script("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
     page = context.new_page()
     observed = {"pageerror": [], "console": []}
     page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))

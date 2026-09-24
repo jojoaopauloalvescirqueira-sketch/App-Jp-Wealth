@@ -8444,3 +8444,26 @@ html[data-theme="dark"] #forexAccountsWorkspace{--shell-selection:#ff8795;--shel
 .fxcw-step-name{font:inherit}.fxcw-progress-label{display:none}
 .fxc-account-wizard :is(.fxcw-review button,#fxcwBack,#fxcRegistrationCancel,#fxcwKeep,#fxcwDiscardConfirm){border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--ink);padding:8px 12px;font:inherit;cursor:pointer}
 @media(max-width:600px){.fxcw-steps{padding-bottom:8px;border-bottom:0}.fxcw-steps .fxcw-step-name{display:none}.fxcw-progress-label{display:block;flex:none;margin:0!important;padding:0 16px 12px;font-size:13px;font-weight:600;line-height:1.4;border-bottom:1px solid var(--line)}}
+
+/* CHG-MODULE-AVAILABILITY: hide presentation without deleting ordered nodes. */
+#nav [data-module-frozen="true"], [data-nav-expand][data-module-frozen="true"]{display:none!important}
+.module-availability-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
+.module-availability-row h3{margin:0 0 6px}.module-availability-row p{margin:0;color:var(--ink-dim);line-height:1.5;max-width:64ch}
+#moduleAvailabilityCard .module-availability-row>button{flex-shrink:0;min-height:44px}.module-availability-card>button{margin-top:16px}
+.module-availability-row[data-state="frozen"] h3::after{content:'Congelado';margin-left:10px;font-size:.75em;font-weight:500;color:var(--ink-dim)}
+.module-availability-warning{padding:12px;border:1px solid var(--line);border-radius:10px;line-height:1.5}
+.module-availability-dialog{max-width:min(560px,calc(100vw - 32px));padding:24px;background:var(--panel,#fff);color:var(--ink,#20242c);border:1px solid var(--line);border-radius:16px}
+.module-availability-dialog::backdrop{background:rgba(0,0,0,.4)}.module-availability-dialog p{line-height:1.6}
+.module-availability-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.module-availability-actions button{min-height:44px}
+.module-availability-suspended{position:fixed;z-index:900;bottom:12px;left:12px;right:12px;padding:16px;background:var(--panel,#fff);color:var(--ink,#20242c);border:2px solid var(--line);border-radius:12px;box-shadow:0 4px 24px #0003;display:flex;gap:16px;align-items:center}
+.module-availability-suspended[hidden]{display:none}.module-availability-suspended button{flex-shrink:0;min-height:44px}
+@media(max-width:600px){.module-availability-row{align-items:flex-start;flex-direction:column;gap:10px}.module-availability-suspended{flex-direction:column;align-items:flex-start}.module-availability-row[data-state="frozen"] h3::after{display:block;margin:6px 0 0}}
+
+/* The availability editor must remain above the fixed Glass capsule (z=300). */
+html[data-navigation="glass"] #settingsOverlay:has([data-settings-panel="editor"]:not([hidden])){z-index:400}
+.module-work-notice{padding:14px;margin:0 0 16px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:10px}
+.module-work-notice p{margin:0 0 10px;line-height:1.5}.module-work-notice button{min-height:44px;margin:4px 8px 4px 0;padding:8px 12px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.module-work-notice button:focus-visible{outline:2px solid var(--blue,#006cdb);outline-offset:2px}
+
+/* Administration owns focus while it covers suspended work. */
+body:has(#settingsOverlay.show) #moduleAvailabilitySuspended{display:none}

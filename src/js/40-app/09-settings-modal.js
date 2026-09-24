@@ -719,7 +719,7 @@ function settingsNavigateToLeaf(leafId,options={}){
 
 function settingsSearchEntries(){
   const core=Object.entries(SETTINGS_LEAVES).flatMap(([id,leaf])=>[...leaf.terms,leaf.label].map(term=>({title:term,category:id})));
-  const controls=[['Tema visual','appearance','#themeSeg'],['Marca do JP Wealth','appearance','#appIconConfig'],['Marca PWA','appearance','#appIconConfig'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['Estilo da navegação','editor','#navStyleSeg'],['Barra em pílula','editor','#navStyleSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
+  const controls=[['Módulos e disponibilidade','editor','#moduleAvailabilityCard'],['Congelar Alladin','editor','#moduleAvailabilityCard'],['Descongelar módulo','editor','#moduleAvailabilityCard'],['Tema visual','appearance','#themeSeg'],['Marca do JP Wealth','appearance','#appIconConfig'],['Marca PWA','appearance','#appIconConfig'],['Ícone do app','appearance','#appIconConfig'],['Escala da fonte','interface','#fsSeg'],['Sidebar','interface','#settingsRailSlot'],['Ajuda contextual','interface','#explSeg'],['Estilo da navegação','editor','#navStyleSeg'],['Barra em pílula','editor','#navStyleSeg'],['MDD máximo','parameters','#pMDD'],['Ordem Gênese','parameters','#pGenLev'],['Período operacional','parameters','#settingsPeriodSummary'],['Exportar base completa','backup','#exportFullBackupBtn'],['Importar backup','backup','#importFullBackupBtn'],
     // Governança de armazenamento (JPW-HJFGDE) — cartão único, vários termos de entrada.
     ['Armazenamento da Base','backup','#dgStorageCard'],['Pasta padrão de exportação','backup','#dgStorageCard'],
     ['Confirmar backup','backup','#dgStorageCard'],['Reautorizar pasta','backup','#dgStorageCard'],
@@ -786,7 +786,7 @@ function settingsRevealElement(selector){
 // ordem do documento); os <header> internos de modais/drawers vêm todos depois.
 let settingsInertSnapshot=null;
 function settingsInertTargets(){
-  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note'),document.querySelector('#mvpNotesLauncher')].filter(Boolean);
+  return [document.querySelector('header'),document.querySelector('#nav'),document.querySelector('#navSubShell'),document.querySelector('#appMain'),document.querySelector('.foot-note'),document.querySelector('#mvpNotesLauncher'),document.querySelector('#moduleAvailabilitySuspended')].filter(Boolean);
 }
 function settingsSetAppInert(on){
   if(on){

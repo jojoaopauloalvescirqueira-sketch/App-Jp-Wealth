@@ -66,8 +66,11 @@ def launch_browser(playwright):
     return playwright.chromium.launch(**options)
 
 
-def boot(browser, url, viewport=None, *, service_workers="allow", prepare_context=None):
+def boot(browser, url, viewport=None, *, service_workers="allow", prepare_context=None, alladin_active=False):
     context = browser.new_context(viewport=viewport or {"width": 1440, "height": 900}, service_workers=service_workers)
+    # Apenas cenários que entram no Alladin solicitam a fixture ativa.
+    if alladin_active:
+        context.add_init_script("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
     if prepare_context is not None:
         prepare_context(context)
     context.add_init_script("window.__onbShown = true;")
@@ -566,7 +569,7 @@ def assert_links_profundos(page):
 def assert_resumos_preenchidos(browser,url):
     from alladin_ui_tx_reverse_test import SEMEAR
     from finpes_comparison_test import seed_completo
-    ctx,page,observed=boot(browser,url,service_workers="block")
+    ctx,page,observed=boot(browser,url,service_workers="block",alladin_active=True)
     try:
         # Relógio do DOMÍNIO fixo: meses corrente/anterior e fixtures correspondem.
         page.evaluate("() => { window.__dmMonth=pfCurrentMonthKey; pfCurrentMonthKey=()=> '2026-08'; }")
@@ -626,7 +629,7 @@ def main():
     try:
         with sync_playwright() as playwright:
             browser = launch_browser(playwright)
-            context, page, observed = boot(browser, url, service_workers="block")
+            context, page, observed = boot(browser, url, service_workers="block", alladin_active=True)
             try:
                 assert_estrutura_e_isolamento_do_layout(page)
                 assert_migracao_forex_fatia2(page)

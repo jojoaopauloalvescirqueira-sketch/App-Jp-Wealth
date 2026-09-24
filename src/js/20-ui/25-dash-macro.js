@@ -52,7 +52,16 @@ const DM_AREAS = {
   research: ['03', 'Estudos e agenda'],
   alladin: ['04', 'Contas e patrimônio']
 };
+function dmRoutePrimary(route){
+  return window.JPWNavigation?.resolve(route)?.primary||null;
+}
+function dmFrozenRoute(route){
+  const primary=dmRoutePrimary(route);
+  return primary&&window.JPWModuleAvailability?.canAccess(primary)===false?primary:null;
+}
 function dmLink(label, route, surface, view){
+  const frozen=dmFrozenRoute(route);
+  if(frozen)return '<button type="button" class="dm-link" data-module-manage="'+esc(frozen)+'">'+esc(label)+' · congelado</button>';
   return '<button type="button" class="dm-link" data-dm-route="'+esc(route)+'"'
     +(surface?' data-dm-surface="'+esc(surface)+'" data-dm-view="'+esc(view)+'"':'')
     +'>'+esc(label)+'</button>';
@@ -61,9 +70,10 @@ function dmLinks(html){ return '<nav class="dm-links" aria-label="Detalhes da á
 function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label)+'</h4>'+html+'</div>'; }
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
+  const frozen=dmFrozenRoute(rota);
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
     + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+id+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
-    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+'</button></header>'
+    + '<button type="button" class="dm-cta" '+(frozen?'data-module-manage="'+esc(frozen)+'"':'data-dm-route="'+esc(rota)+'"')+'>'+(frozen?'Congelado · Gerenciar':esc(ctaLabel))+'</button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '</article>';
 }
@@ -361,10 +371,14 @@ function dashMacroRender(){
     + dmCard('alladin', 'Alladin', alladin.html, 'alladin', 'Abrir Alladin', alladin.tom);
   if(root.innerHTML!==html){
     const active=root.contains(document.activeElement)?document.activeElement:null;
-    const key=active?{route:active.dataset.dmRoute,surface:active.dataset.dmSurface,view:active.dataset.dmView}:null;
+    const key=active?{route:active.dataset.dmRoute,surface:active.dataset.dmSurface,view:active.dataset.dmView,
+      manage:active.dataset.moduleManage,text:active.textContent,primary:active.dataset.moduleManage||dmRoutePrimary(active.dataset.dmRoute)}:null;
     root.innerHTML=html;
     if(key){
-      const target=[...root.querySelectorAll('[data-dm-route]')].find(b=>b.dataset.dmRoute===key.route&&b.dataset.dmSurface===key.surface&&b.dataset.dmView===key.view);
+      const target=[...root.querySelectorAll('[data-dm-route],[data-module-manage]')].find(b=>
+        key.route?b.dataset.dmRoute===key.route&&b.dataset.dmSurface===key.surface&&b.dataset.dmView===key.view:
+          b.dataset.moduleManage===key.manage&&b.textContent===key.text)
+        ||(key.primary?root.querySelector('[data-dm-card="'+CSS.escape(key.primary)+'"] .dm-cta'):null);
       if(target) target.focus({preventScroll:true});
     }
   }
@@ -383,6 +397,8 @@ function initDashMacro(){
   root.addEventListener('click', e => {
     const btn = e.target.closest('button[data-dm-route]');
     if(btn && window.JPWNavigation){
+      const frozen=dmFrozenRoute(btn.dataset.dmRoute);
+      if(frozen){window.JPWModuleAvailabilityUI?.deny(frozen,btn);return;}
       const surfaceId=btn.dataset.dmSurface, view=btn.dataset.dmView;
       const local=surfaceId==='finpes'||surfaceId==='research';
       const result=local

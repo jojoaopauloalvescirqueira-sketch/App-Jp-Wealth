@@ -69,7 +69,8 @@ def abrir(browser, url):
     ctx = browser.new_context(viewport={"width": 1440, "height": 950},
                               service_workers="block")   # QA-D1
     CONTEXTOS.append(ctx)
-    ctx.add_init_script("window.__onbShown=true;")
+    # Fixture operacional explícita: o default congelado é coberto pelo focal de disponibilidade.
+    ctx.add_init_script("window.__onbShown=true;localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
     page = ctx.new_page()
     erros = []
     page.on("pageerror", lambda e: erros.append(str(e)))

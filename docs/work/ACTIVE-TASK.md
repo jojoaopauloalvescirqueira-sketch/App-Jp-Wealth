@@ -852,3 +852,7 @@ Checkpoint desta derivação: correção de fixture/oráculos de Notificações,
 
 ## 2026-09-23 — Contas e Período
 CHG-FOREX-CONTAS-PERIODO-20260923 aprovado explicitamente pelo proprietário; N2/A3, branch codex/forex-contas-periodo-20260923, baseline 7f2d6b6. Cadastro/período/contexto e perfil documental; sem normas, cálculos, control plane ou operações Git. Critérios, testes, arquivos e rollback no CHG.
+
+
+## 2026-09-24 — Disponibilidade reversível de módulos
+CHG-MODULE-AVAILABILITY-20260924 aprovado A3/N2. Branch codex/module-availability-20260924, base ad5c23e; implementação isolada concluída, validação e auditoria em andamento. Alladin congelado por decisão humana; sem Git/publicação, regras financeiras ou infraestrutura. Contrato e critérios no CHG; evidências ../evidence.

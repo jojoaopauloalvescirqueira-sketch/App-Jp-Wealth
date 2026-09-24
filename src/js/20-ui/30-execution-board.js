@@ -201,6 +201,7 @@
     const field=fieldName?document.querySelector(`[data-p="${pi}"][data-o="${oi}"][data-f="${fieldName}"]`):document.querySelector(`[data-eb-reason="${key(pi,oi)}"]`);field?.setAttribute('aria-invalid','true');field?.focus();return false;
   }
   function saveRow(pi,oi,{allowClose=false}={}){
+    if(root.JPWModuleAvailability&&!root.JPWModuleAvailability.canAccess('forex'))return false;
     syncEpoch();const dk=draftKey(pi,oi),d=drafts.get(dk);if(!d)return true;
     if(jpWealthPersistenceOutcomeIsUnknown())return rowError(pi,oi,'Gravação com desfecho desconhecido. Confira a recuperação antes de uma nova tentativa.');
     const old=current(pi,oi);if(!old||signature(old)!==d.before)return rowError(pi,oi,'A versão confirmada mudou. Cancele a linha para reler antes de editar.');

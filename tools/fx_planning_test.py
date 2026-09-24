@@ -51,6 +51,8 @@ def prepare_page(browser, url, suppress_onboarding=True):
     context = browser.new_context(viewport={"width": 1440, "height": 900}, service_workers="block")
     if suppress_onboarding:
         context.add_init_script("window.__onbShown=true;")
+    # Continuidade entre módulos: Alladin explicitamente ativo nesta fixture.
+    context.add_init_script("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{alladin:'active'}}));")
     page = context.new_page()
     observed = {"pageerror": []}
     page.on("pageerror", lambda error: observed["pageerror"].append(str(error)))

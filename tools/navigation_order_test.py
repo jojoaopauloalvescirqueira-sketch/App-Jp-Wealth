@@ -39,7 +39,9 @@ def checkpoint(page):
 def boot(browser, url, raw=None, width=1440, mode='sidebar', theme='dark', read_failure=False):
     context = browser.new_context(viewport={'width': width, 'height': 1000 if width > 900 else 844},
                                   service_workers='block', has_touch=width <= 900)
-    seed = {**PROTECTED, 'jpw_nav_layout': mode}
+    # A permutação operacional dos seis módulos usa Alladin explicitamente ativo.
+    seed = {**PROTECTED, 'jpw_nav_layout': mode,
+            'jpw_module_availability_v1': json.dumps({'schemaVersion': 1, 'modules': {'alladin': 'active'}})}
     if raw is not None:
         seed[KEY] = raw
     context.add_init_script('''(() => {

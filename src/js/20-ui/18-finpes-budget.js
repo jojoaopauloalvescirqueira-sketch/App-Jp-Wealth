@@ -23,6 +23,7 @@ function fbGoTo(key){
 
 // ---- render raiz ------------------------------------------------------------
 function finpesBudgetRender(){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const root = document.getElementById('finpesBudgetRoot');
   if(!root) return;
   const key = fbCurrentKey();
@@ -241,6 +242,7 @@ function fbPendingBannerHTML(key){
 // persistida), disparado apenas na navegação DELIBERADA ao mês corrente
 // (entrada no workspace ou botão Hoje) — nunca por rerender.
 function fbMaybePendingPrompt(){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   if(fbPendingPromptShown) return;
   if(fbCurrentKey() !== pfCurrentMonthKey()) return;
   const pend = pfPendingBefore(pfCurrentMonthKey());
@@ -258,6 +260,7 @@ function fbMaybePendingPrompt(){
       <button class="modal-btn" id="fbPendReview">Revisar mês anterior</button>
       <button class="modal-btn confirm" id="fbPendContinue">Continuar para o mês atual</button>
     </div>`;
+  window.JPWModuleWork?.claimModal('personal-finance', $('modalOverlay'));
   $('fbPendContinue').addEventListener('click', ()=>{ closeModal(); });
   $('fbPendReview').addEventListener('click', ()=>{
     closeModal();
@@ -438,6 +441,7 @@ function fbBind(root, key){
 
 // ---- modal de recorrência (formulário ATÔMICO: aplica só no confirmar) ------
 function fbOpenRecurrenceModal(key, incomeId){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const rec = pfFindIncome(S.personalFinance, key, incomeId);
   if(!rec) return;
   const regra = rec.ruleId ? (S.personalFinance.recurringIncome||[]).find(r=>r.id===rec.ruleId) : null;
@@ -484,7 +488,7 @@ function fbOpenRecurrenceModal(key, incomeId){
     const alvo=document.querySelector('[data-fi-cfg="'+CSS.escape(incomeId)+'"]')||origem;
     if(alvo && alvo.isConnected && !alvo.closest('[hidden],[inert]') && alvo.getClientRects().length) alvo.focus();
   }
-  function focaveis(){ return [...dialog.querySelectorAll('input:not([disabled]),button:not([disabled])')]; }
+  function focaveis(){ return [...dialog.querySelectorAll('input:not([disabled]),button:not([disabled])')].filter(node=>!node.closest('[inert],[hidden]')); }
   overlay.addEventListener('click',e=>{
     if(e.target===overlay){ e.stopImmediatePropagation(); fechar(); }
   },{capture:true,signal:eventos.signal});
@@ -496,13 +500,15 @@ function fbOpenRecurrenceModal(key, incomeId){
     else if(!e.shiftKey && document.activeElement===ultimo){ e.preventDefault(); primeiro.focus(); }
   },{signal:eventos.signal});
   document.addEventListener('focusin',e=>{
-    if(dialog.isConnected && overlay.classList.contains('show') && !dialog.contains(e.target)) focaveis()[0].focus();
+    if(dialog.isConnected && overlay.classList.contains('show') && !window.JPWModuleWork?.isSuspended('personal-finance') && !dialog.contains(e.target)) focaveis()[0].focus();
   },{signal:eventos.signal});
   observar.observe(box,{childList:true});
   observar.observe(overlay,{attributes:true,attributeFilter:['class']});
   $('fbRecOn').focus();
+  window.JPWModuleWork?.claimModal('personal-finance', $('modalOverlay'));
   $('modalCancel').addEventListener('click', ()=>fechar()); // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
+    if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
     const ligar = $('fbRecOn').checked;
     let cfg = { recorrente: ligar };
     let primeiroErro = null;

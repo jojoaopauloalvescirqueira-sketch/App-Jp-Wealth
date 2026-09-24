@@ -353,7 +353,7 @@ SOFTWARE.
   <button class="tab nav-sub-trigger" id="finpesNavTrigger" data-route="personal-finance" data-primary="personal-finance" data-nav-surface="finpes" title="Finanças Pessoais"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-house"/></svg>
     <span class="n">04</span><span class="lbl">Finanças Pessoais</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="finpes" aria-controls="finpesNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
-  <button class="tab" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
+  <button class="tab" hidden data-module-frozen="true" data-route="alladin" data-primary="alladin" title="Alladin"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-briefcase-business"/></svg><span class="n">05</span><span class="lbl">Alladin</span></button>
   <button class="tab nav-sub-trigger" id="toolsNavTrigger" data-route="tools-calendar" data-primary="tools" data-nav-surface="tools" title="Ferramentas e Serviços"><svg class="nav-area-icon shell-lucide" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#shell-icon-sliders-horizontal"/></svg><span class="n">06</span><span class="lbl">Ferramentas e Serviços</span></button>
   <button type="button" class="nav-group-toggle" data-nav-expand="tools" aria-controls="toolsNavSubmenu" aria-expanded="false" aria-label="Expandir destinos" hidden>⌄</button>
   </nav>
@@ -362,6 +362,7 @@ SOFTWARE.
 </aside>
 <div id="sidebarBackdrop" hidden></div>
 
+<aside id="moduleAvailabilitySuspended" class="module-availability-suspended" role="status" hidden><span></span><button type="button" class="reset-btn" data-module-manage="alladin">Gerenciar disponibilidade</button></aside>
 <main id="appMain">
   <div id="shellPageHeader" class="shell-page-header">
     <p id="shellLocation" class="shell-location" aria-label="Localização atual">Dashboard</p>
@@ -1342,6 +1343,15 @@ SOFTWARE.
         <span class="note">Em "Sempre visíveis", todo texto explicativo do painel abre de uma vez — inclusive o que está atrás dos ícones <b>i</b>. Útil para revisar o sistema inteiro ou usar a busca do navegador, que não enxerga texto recolhido.</span>
       </div>
     </div>
+    <div class="card module-availability-card" id="moduleAvailabilityCard" tabindex="-1" data-settings-category="editor" data-settings-search="módulos disponibilidade congelar descongelar Alladin Research Forex Finanças Pessoais">
+      <h2>Módulos e disponibilidade</h2>
+      <p class="note note-live">Disponibilidade é diferente da ordem do menu. Congelar preserva código, dados e histórico. Dashboard, Ferramentas e Serviços, Configurações, Notas e Backup continuam disponíveis.</p>
+      <div id="moduleAvailabilityList"></div>
+      <p class="module-availability-warning" id="moduleAvailabilityIssue" role="alert" hidden></p>
+      <button type="button" class="reset-btn" id="moduleAvailabilityReload">Reler configuração</button>
+      <p class="note note-live" id="moduleAvailabilityStatus" role="status" aria-live="polite"></p>
+      <p class="note note-live">Preferência local deste navegador/perfil e endereço do aplicativo. Não há sincronização automática entre portas, navegadores ou computadores. Descongelar não autoriza desenvolver novas funcionalidades.</p>
+    </div>
     <div class="card" data-settings-category="editor" data-settings-search="navegação lateral superior liquid glass vidro transparência tonalizado layout barra abas estilo pílula flutuante segmentado clássica destaque deslizante">
       <div class="nav-order-editor" id="navOrderEditor">
         <h3>Ordem dos módulos</h3>
@@ -1879,6 +1889,7 @@ SOFTWARE.
 <script src="src/js/00-core/02-platforms.js"></script>
 <script src="src/js/00-core/03-default-state.js"></script>
 <script src="src/js/00-core/04-persistence.js"></script>
+<script src="src/js/00-core/08-module-availability.js"></script>
 <script src="src/js/00-core/07-workspace-backup.js"></script>
 <script src="src/js/00-core/05-helpers.js"></script>
 <script src="src/js/00-core/06-storage-fs.js"></script>
@@ -1975,5 +1986,7 @@ SOFTWARE.
 <script src="src/js/10-domain/16-nocuda-transfer.js"></script>
 <script src="src/js/20-ui/31-tools-services.js"></script>
 <script src="src/js/20-ui/31-forex-accounts.js"></script>
+<script src="src/js/20-ui/33-module-work.js"></script>
+<script src="src/js/20-ui/32-module-availability.js"></script>
 </body>
 </html>

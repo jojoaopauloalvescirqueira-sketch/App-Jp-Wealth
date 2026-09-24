@@ -22,6 +22,7 @@ const PF_DEBT_TYPE_LABELS = {
 };
 
 function finpesDebtsRender(){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const root = document.getElementById('finpesDebtsRoot');
   if(!root) return;
   const key = fdCurrentKey();
@@ -206,6 +207,7 @@ function fdBind(root, key, bloqueado){
 
 // ---- modal do CONTRATO (formulário atômico: rascunho local, aplica no confirmar)
 function fdOpenDebtModal(debtId){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const d = debtId ? pfFindDebt(S.personalFinance, debtId) : null;
   const money = v => (v===null||v===undefined) ? '' : (v/100).toFixed(2).replace('.',',');
   const box=$('modalBox'); $('modalOverlay').classList.add('show');
@@ -238,8 +240,10 @@ function fdOpenDebtModal(debtId){
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
     </div>`;
+  window.JPWModuleWork?.claimModal('personal-finance', $('modalOverlay'));
   $('modalCancel').addEventListener('click', closeModal);   // cancelar = zero mutação
   $('modalConfirm').addEventListener('click', ()=>{
+    if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
     let falhou=false;
     const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou=true; };
@@ -266,6 +270,7 @@ function fdOpenDebtModal(debtId){
 
 // ---- modal da OBSERVAÇÃO da competência ------------------------------------
 function fdOpenSnapshotModal(key, debtId){
+  if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
   const d = pfFindDebt(S.personalFinance, debtId);
   if(!d) return;
   const snap = pfDebtSnapshotIn(key, debtId);
@@ -285,8 +290,10 @@ function fdOpenSnapshotModal(key, debtId){
       <button class="modal-btn" id="modalCancel">Cancelar</button>
       <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
     </div>`;
+  window.JPWModuleWork?.claimModal('personal-finance', $('modalOverlay'));
   $('modalCancel').addEventListener('click', closeModal);
   $('modalConfirm').addEventListener('click', ()=>{
+    if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('personal-finance')) return false;
     box.querySelectorAll('.modal-err').forEach(e=>e.classList.remove('show'));
     let falhou=false;
     const marcar = qid => { box.querySelector(`[data-qid="${qid}"] .modal-err`).classList.add('show'); falhou=true; };
