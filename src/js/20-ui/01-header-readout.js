@@ -4,13 +4,15 @@ function renderHeaderReadout(c){
   if(!c)c=compute(); // Navigation refresh uses the same read-only central projection.
   const set=(id,txt)=>{ const e=$(id); if(e) e.textContent=txt; };
   const p=(S&&S.params)||{};
-  // getActiveRiskProfile() é o acessor canônico (lê S.period.profile e cai em 'base').
-  try{ const pr=getActiveRiskProfile(); set('hdrProfile', (pr&&pr.name)||'—'); }
-  catch(_){ set('hdrProfile','—'); }
-  // Operação tem período próprio por conta. O início global legado não pode
-  // aparecer como se pertencesse à conta operacional selecionada.
+  // A seleção Forex fornece referência documental do período, sem modificar
+  // o perfil global usado nas simulações legadas nem congelar o motor vigente.
   const inOperation=$('exec')?.classList.contains('active');
-  const selected=inOperation&&globalThis.JPWForex?.state?.operationalSelection?.();
+  const inForex=inOperation||globalThis.JPWNavigation?.current?.().primary==='forex';
+  const selected=inForex&&globalThis.JPWForex?.state?.operationalSelection?.();
+  try{
+    const pr=inForex?JPWForex.state.accountProfileContext?.(selected)?.period:getActiveRiskProfile();
+    set('hdrProfile',pr?.name||(inForex?'Não informado':'—'));
+  }catch(_){set('hdrProfile','—');}
   const scoped=inOperation&&selected?.accountId&&selected?.periodId?
     JPWForex.state.accountContext({accountId:selected.accountId,periodId:selected.periodId}):null;
   const startedAt=inOperation?(scoped?.status==='OK'?scoped.value.startedAt:null):p.inicio;

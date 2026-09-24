@@ -144,3 +144,20 @@ Ordens recebem opcionalmente `brokerHash` textual e `identityContractVersion:1`.
 `S.forex.executionDiagnostics` é extensão opcional `{schemaVersion:1, records:[]}`. Cada registro vincula `accountId`, `periodId`, `instrumentId`, `revision`, `declaredAt`, `declaredBy`, `oneWeek` e `twoWeeks`; horizontes aceitam `{n,f}` ou `null`. N é inteiro positivo em candles H4; F é positivo. Revisões anteriores permanecem em `previous`. Ausência não cria valores padrão no estado. O motivo do ato acompanha o auditLog. Writers seguem confirmação, epoch e revisão do agregado. Esses dados são cenários declarados, separados de observações ATR/mercado e de P21.
 
 Validação do Backup Completo inclui a extensão e o HASH em ordens/revisões/histórico antes da escrita; backup antigo sem extensão permanece válido. `calculationInputs.executionDiagnostics` captura os parâmetros disponíveis em cada registro ou correção factual da ordem. A finalização conserva a última versão confirmada no snapshot; uma nova declaração de N/F não reescreve ordens já registradas ou histórico. Rascunhos do formulário ficam em RAM e podem ser incluídos como material recuperável, sem confirmar fatos financeiros. Contrato em [FOREX-EXECUTION-BOARD](FOREX-EXECUTION-BOARD.md).
+
+
+## Extensões documentais de conta/perfil (CHG-FOREX-CONTAS-PERIODO-20260923)
+
+Extensões opcionais, sem migração em massa nem alteração das versões existentes:
+- `S.accounts[].accountEnvironment`: `real`, `demo`, vazio/unknown ou ausente; declaração cadastral sem inferência.
+- `S.accounts[].riskProfileAssignment`: schemaVersion 1, accountId, profileKey, revision, assignedAt, source, declaredBy, reason e previous. Chaves conhecidas: base/longevity/high_longevity/high_longevity_plus. Revisão encadeada; valores financeiros não são copiados.
+- `accountContexts.accounts[id].periods[periodId].riskProfileSnapshot`: captura documental só em criação explícita de primeiro período ou período posterior. Referências de conta, período, perfil, atribuição, data e política; status DOCUMENTARY_ONLY. Conciliação histórica e auto-período de observação não completam perfil.
+- `recordContext.riskProfileSnapshot`: cópia do período na operação. Histórico não consulta cadastro atual para preencher lacunas.
+
+Escolha deliberada muda atribuição cadastral; reload, sessão, mês, consulta e edição de metadados não ativam o novo perfil no período existente. O motor mantém a política corrente, independente da captura documental. Nomes antigos em `perfil` são evidência legada quando não há atribuição confirmada. A leitura não infere Base.
+
+Importação valida extensões antes da primeira escrita, preserva unknown fields compatíveis e aceita documentos antigos sem elas. Credenciais continuam excluídas por política existente.
+
+`accountContexts.archivedAccounts[id].previous` preserva arquivamentos anteriores ao recadastrar e arquivar novamente a mesma identidade. Recadastro conserva metadados e períodos, sem copiar saldos ou credenciais. A lista de arquivados exclui identidades com cadastro ativo, sem remover seus registros históricos.
+
+A seleção de consulta e a seleção operacional são RAM. Confirmar cadastro/período conserva o par operacional anterior, inclusive ausência explícita de período. Arquivar a conta operacional, após validação de ausência de operação em andamento, deixa a seleção explicitamente vazia nessa sessão; outra conta não é ativada pelo gesto. A recarga conserva o comportamento legado de resolução inicial.

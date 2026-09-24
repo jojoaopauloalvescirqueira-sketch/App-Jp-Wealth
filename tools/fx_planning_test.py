@@ -530,7 +530,7 @@ def run_ui_flow(browser, url):
     assert nav_contract["duplicateInternalNav"] == 0, "tabs equivalentes voltaram ao conteúdo"
     assert nav_contract["api"], "superfície visual JPWFx.ui ausente"
     assert nav_contract["routes"] == ["dashboard", "forex-consolidated", "personal-finance", "research-forex", "alladin", "tools-calendar"], nav_contract
-    assert nav_contract["children"] == ["forex-consolidated", "forex-operation", "forex-history", "forex-accounting", "forex-management-accounts", "forex-planning", "forex-reserves"], nav_contract
+    assert nav_contract["children"] == ["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-planning", "forex-reserves"], nav_contract
     assert nav_contract["contextual"] == ["overview", "planning", "actuals", "table"], nav_contract
     assert nav_contract["resolved"]["accepted"] and nav_contract["resolved"]["source"] == "compatibility", nav_contract
     assert nav_contract["resolved"]["child"] == "forex-planning", nav_contract

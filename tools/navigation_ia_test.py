@@ -30,10 +30,10 @@ CANONICAL = [
 ]
 FOREX_CHILDREN = [
     ("forex-consolidated", "fxconsolidated", None),
+    ("forex-management-accounts", "exec", "accounts"),
     ("forex-operation", "exec", "panel"),
     ("forex-history", "exec", "history"),
     ("forex-accounting", "exec", "accounting"),
-    ("forex-management-accounts", "exec", "accounts"),
     ("forex-planning", "fxplan", "overview"),
     ("forex-reserves", "fxreserves", None),
 ]
@@ -130,6 +130,7 @@ def assert_registry(page):
     assert not any(legacy in [route["id"] for route in routes] for legacy in LEGACY), flat
     children = page.evaluate("() => window.JPWNavigation.children('forex')")
     assert [child["id"] for child in children] == [item[0] for item in FOREX_CHILDREN], children
+    assert children[1]["label"] == "Contas e Período", children[1]
     research = page.evaluate("() => window.JPWNavigation.children('research')")
     assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
     tools = page.evaluate("() => window.JPWNavigation.children('tools')")

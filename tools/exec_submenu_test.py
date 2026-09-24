@@ -27,8 +27,8 @@ from notes_launcher_test import launch_options
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
-EXPECTED_CHILDREN = ["forex-consolidated", "forex-operation", "forex-history", "forex-accounting", "forex-management-accounts", "forex-planning", "forex-reserves"]
-EXPECTED_LABELS = ["Dashboard", "Execution Board", "History", "Contabilidade", "Management Accounts", "Planejamento", "Reservas"]
+EXPECTED_CHILDREN = ["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-planning", "forex-reserves"]
+EXPECTED_LABELS = ["Dashboard", "Contas e Período", "Execution Board", "History", "Contabilidade", "Planejamento", "Reservas"]
 EXPECTED_VIEWS = ["panel", "accounting", "history", "accounts", "motor"]
 EXPECTED_CONTEXT = {
     "forex-management-accounts": ["accounts", "motor"],

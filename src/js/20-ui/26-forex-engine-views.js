@@ -20,7 +20,7 @@
     if(initialized)return;initialized=true;stateIdentity=S;
     el('forexEnginePanel').innerHTML=`<header><span class="cp-kicker">REGISTRO E ELEGIBILIDADE</span><h2>Fator de Correção</h2><p>Referências e dimensionamento pela conta selecionada. O motor central V11 calcula elegibilidade; registrar um fato não autoriza sua execução.</p></header>
       <div id="fxEngineState" class="fx-engine-status"></div>
-      <details open><summary>Conta de referência e equity</summary><p>O saldo contábil permanece no ledger. Registre aqui uma observação de equity flutuante, SI e moeda, com sua fonte.</p>
+      <details><summary>Observação financeira da conta examinada</summary><p>Registre o equity e sua fonte no período consultado. SI e moeda vêm desse período; o saldo contábil permanece no ledger. Registrar a observação não troca a conta operacional.</p>
       <form id="fxAccountFacts" class="fx-engine-form">
         <label class="fx-engine-field">Conta cadastrada<select name="accountIndex" required></select></label>
         ${field('si','SI fixo do período','number','required min="0.000001"')}${field('equity','Equity flutuante observado','number','required')}
@@ -31,7 +31,7 @@
         ${check('cashflowAdjustmentRecorded','Ajuste de aportes/retiradas documentado')}
         ${field('marginLevel','Nível de margem informado (%)','number','min="0"')}
         ${field('observedAt','Instante da observação','datetime-local','required')}${source()}${reason()}
-        ${check('newPeriod','Registrar novo período — necessário para mudar SI ou moeda')}
+
         <div class="fx-engine-actions">${button('Registrar observação')}<button type="button" data-fx-load-account>Carregar observação atual</button><button type="button" data-fx-route="forex-account">Abrir cadastro de contas</button></div>${response()}
       </form></details>
       <details><summary>ATR, candle H4 e grade registrada</summary>
@@ -58,9 +58,9 @@
     document.addEventListener('submit',submit);
     document.addEventListener('click',click);
     document.addEventListener('input',event=>{const form=event.target.closest?.('form');
-      if(form&&scopedForms.has(form.id))form.dataset.fxTouched='true';});
+      if(form&&(scopedForms.has(form.id)||form.id==='fxAccountFacts'))form.dataset.fxTouched='true';});
     document.addEventListener('change',event=>{const form=event.target.closest?.('form');
-      if(form&&scopedForms.has(form.id))form.dataset.fxTouched='true';});
+      if(form&&(scopedForms.has(form.id)||form.id==='fxAccountFacts'))form.dataset.fxTouched='true';});
     render();
   }
   function after(form,result){
@@ -82,13 +82,15 @@
       const reasonValue=form.elements.namedItem('reason')?str(form,'reason'):null;
       switch(form.id){
         case 'fxAccountFacts':{
-          const selected=fx.state.operationalSelection(),idx=Number(str(form,'accountIndex'));
-          if(!str(form,'accountIndex')||S.accounts[idx]?.forexAccountId!==selected.accountId){
-            result={ok:false,error:'A ficha da observação difere da conta operacional selecionada. Reabra o formulário.'};break;
+          const selected=fx.accountsUI?.examination()||fx.state.operationalSelection(),idx=Number(str(form,'accountIndex'));
+          if(!str(form,'accountIndex')||S.accounts[idx]?.forexAccountId!==selected.accountId||!selected.periodId||
+            form.dataset.fxScopeAccount!==String(selected.accountId)||form.dataset.fxScopePeriod!==String(selected.periodId)||
+            form.dataset.fxEpoch!==String(jpWealthPersistenceEpoch())||form.dataset.fxFactsFingerprint!==JSON.stringify(S.forex)){
+            result={ok:false,error:'A conta, o período ou os dados mudaram durante o preenchimento. Preserve o rascunho e revise a observação.'};break;
           }
           result=fx.state.recordAccountFacts({accountIndex:idx,
-            periodId:checked(form,'newPeriod')?null:selected.periodId,
-            si:nullable(form,'si'),equity:nullable(form,'equity'),currency:str(form,'currency'),usdToAccountRate:nullable(form,'usdToAccountRate'),capitalNominal:nullable(form,'capitalNominal'),netCashflow:nullable(form,'netCashflow'),cashflowAdjustmentRecorded:checked(form,'cashflowAdjustmentRecorded'),marginLevel:nullable(form,'marginLevel'),source:str(form,'source'),observedAt:timestamp(form,'observedAt'),newPeriod:checked(form,'newPeriod')},{reason:reasonValue});break;
+            periodId:selected.periodId,
+            si:nullable(form,'si'),equity:nullable(form,'equity'),currency:str(form,'currency'),usdToAccountRate:nullable(form,'usdToAccountRate'),capitalNominal:nullable(form,'capitalNominal'),netCashflow:nullable(form,'netCashflow'),cashflowAdjustmentRecorded:checked(form,'cashflowAdjustmentRecorded'),marginLevel:nullable(form,'marginLevel'),source:str(form,'source'),observedAt:timestamp(form,'observedAt'),newPeriod:false},{reason:reasonValue,preserveSelection:true,expectedEpoch:Number(form.dataset.fxEpoch),expectedRevision:Number(form.dataset.fxPeriodRevision)});break;
         }
         case 'fxOperationBudget':{const model=fx.state.read(),scope=model.budgetScope,budget=model.metrics.operationBudget,
           period=fx.state.accountContext(scope);
@@ -124,12 +126,16 @@
       if(reasonText){const result=fx.state.migrateLegacy({reason:reasonText});el('fxEngineState').textContent=result.ok?'Migração registrada; histórico preservado.':result.error;render();}return;
     }
     if(b.hasAttribute('data-fx-load-account')){
-      const a=fx.state.read().account,form=el('fxAccountFacts');if(!a)return;
-      const idx=(S.accounts||[]).findIndex(x=>x.forexAccountId===fx.state.operationalSelection().accountId);form.elements.accountIndex.value=String(idx);
+      const scope=fx.accountsUI?.examination()||fx.state.operationalSelection(),form=el('fxAccountFacts');
+      let a=S.forex?.accounts?.[scope.accountId],seen=new Set();
+      while(a&&!seen.has(a)&&a.periodId!==scope.periodId){seen.add(a);a=a.previous;}
+      if(!a||a.periodId!==scope.periodId){after(form,{ok:false,error:'Não há observação registrada neste período.'});return;}
+      if(form.dataset.fxTouched==='true'&&!confirm('Substituir o preenchimento não salvo pela observação registrada?'))return;
+      const idx=(S.accounts||[]).findIndex(x=>x.forexAccountId===scope.accountId);form.elements.accountIndex.value=String(idx);
       for(const key of ['si','equity','currency','usdToAccountRate','capitalNominal','netCashflow','marginLevel','source'])form.elements.namedItem(key).value=a[key]==null?'':String(a[key]);
       form.elements.cashflowAdjustmentRecorded.checked=a.cashflowAdjustmentRecorded===true;
       const date=new Date(a.observedAt);form.elements.observedAt.value=new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16);
-      form.elements.newPeriod.checked=false;
+      form.dataset.fxTouched='true';form.dataset.fxEpoch=String(jpWealthPersistenceEpoch());form.dataset.fxFactsFingerprint=JSON.stringify(S.forex);form.dataset.fxPeriodRevision=String(fx.state.accountContext(scope).revision||0);
     }
   }
   const metric=(name,result,suffix='')=>`<article class="fx-engine-metric"><h3>${safe(name)}</h3><strong>${typeof result.value==='number'?number(result.value)+suffix:safe(typeof result.value==='string'?result.value:result.value===null?'Não calculável':result.status)}</strong><small>${safe(result.status)}</small>${result.findings.length?`<p>${safe(result.findings[0].message)}</p>`:''}</article>`;
@@ -142,12 +148,18 @@
       form.dataset.fxScopeAccount=String(formScope.accountId||'');
       form.dataset.fxScopePeriod=String(formScope.periodId||'');
     }}
-    const select=el('fxAccountFacts').elements.accountIndex,selected=select.value;
-    const options='<option value="">Selecione uma conta</option>'+(S.accounts||[]).map((a,i)=>`<option value="${i}">${safe(a.apelido||a.nome||a.broker||'Conta sem nome')} · ${safe(a.tipo)}</option>`).join('');
-    if(select.innerHTML!==options){select.innerHTML=options;select.value=selected;}
-    const selectedId=fx.state.operationalSelection().accountId;
-    const selectedIndex=(S.accounts||[]).findIndex(row=>row?.forexAccountId===selectedId);
-    if(selectedIndex>=0&&document.activeElement!==select)select.value=String(selectedIndex);
+    const factForm=el('fxAccountFacts'),factScope=fx.accountsUI?.examination()||fx.state.operationalSelection();
+    const selectedIndex=(S.accounts||[]).findIndex(row=>row.forexAccountId===factScope.accountId);
+    const factPeriod=factScope.accountId&&factScope.periodId?fx.state.accountContext(factScope).value:null;
+    const select=factForm.elements.accountIndex;
+    if(factForm.dataset.fxTouched!=='true'){
+      select.innerHTML=selectedIndex>=0?`<option value="${selectedIndex}">${safe(S.accounts[selectedIndex].nome||factScope.accountId)}</option>`:'<option value="">Confirme uma conta</option>';
+      factForm.dataset.fxScopeAccount=String(factScope.accountId||'');factForm.dataset.fxScopePeriod=String(factScope.periodId||'');
+      factForm.dataset.fxEpoch=String(jpWealthPersistenceEpoch());factForm.dataset.fxFactsFingerprint=JSON.stringify(S.forex);factForm.dataset.fxPeriodRevision=String(factPeriod?.revision||0);
+      factForm.elements.si.value=factPeriod?.si??'';factForm.elements.currency.value=factPeriod?.currency||'';
+    }
+    select.disabled=true;factForm.elements.si.readOnly=true;factForm.elements.currency.disabled=true;
+    factForm.querySelector('button[type="submit"]').disabled=!factPeriod||typeof factPeriod.si!=='number'||factPeriod.si<=0;
     el('fxEngineState').innerHTML=`<strong>${safe(model.executionEligibility.status)}</strong> · ${safe(fx.policy.version)}<p>Elegibilidade e registro são independentes. Pendências não são convertidas em zero.</p>${model.canRecord&&(!S.forex||!S.forex.migration)?'<button type="button" data-fx-migrate>Adotar agregado V11 explicitamente, preservando legado</button>':''}`;
     el('fxPolicyIdentity').textContent=`${fx.policy.version} · ${fx.policy.statuteVersion} · ${fx.policy.parametricAnnexVersion} · vigência ${fx.policy.effectiveDate}`;
     el('fxRegistryRows').innerHTML=fx.policy.list().map(p=>`<tr><th>${safe(p.id)}<br>${safe(p.name||p.label)}</th><td>${safe(p.value===null?'PENDING':JSON.stringify(p.value))}<br>${safe(p.unit)}</td><td>${safe(p.technicalStatus||p.status)}<br>${safe(p.homologationStatus)}<br>${safe(p.operabilityStatus)}</td><td><details><summary>${safe(p.authorityMode)}</summary><pre>${safe(JSON.stringify(p,null,2))}</pre></details></td></tr>`).join('');

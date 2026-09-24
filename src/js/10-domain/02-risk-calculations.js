@@ -130,6 +130,7 @@
     const unique=[...new Map(findings.map(item=>[item.code+'|'+item.message,item])).values()];
     const totalReserves=numeric(r.fcrConstituted)&&numeric(r.feoConstituted)?r.fcrConstituted+r.feoConstituted:null;
     return {policySnapshot:fx.policy.snapshot(),budgetScope,accountId,account:account?structuredClone(account):null,
+      accountProfile:fx.state.accountProfileContext(scope),
       accountPhase:phase,rawAccountPhase:rawPhase,activeGridPhase:gridPhase,
       executionEligibility:{status:'BLOCKED',canExecuteNormatively:false,canRecord:supported,
         reason:'P-14/P-17/P-18 e requisitos de homologação não satisfeitos.'},canRecord:supported,

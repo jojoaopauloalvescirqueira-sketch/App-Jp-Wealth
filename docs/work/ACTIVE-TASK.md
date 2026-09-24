@@ -848,3 +848,7 @@ Implementação focal concluída no build 9fddae01567a5d80: quatro controladores
 Derivado integral 9fddae01567a5d80, branch codex/header-navigation-closure-20260923. Autoridade e fronteira: CHG-HEADER-CLOSURE-20260923.md. Notificações prioritárias; diagnóstico limitado Forex/Finpes. Produto financeiro e evidências anteriores preservados. Resultados ficam em ../evidence/DELIVERY.md; sem promoção nem aceite humano.
 
 Checkpoint desta derivação: correção de fixture/oráculos de Notificações, 17 PASS em execução única; runtime9fdd intacto. Observações suplementares Forex/Finpes sem reprodução da causa histórica. Fechamento externo conserva a pendência canônica; nenhuma liberação ou alteração financeira.
+
+
+## 2026-09-23 — Contas e Período
+CHG-FOREX-CONTAS-PERIODO-20260923 aprovado explicitamente pelo proprietário; N2/A3, branch codex/forex-contas-periodo-20260923, baseline 7f2d6b6. Cadastro/período/contexto e perfil documental; sem normas, cálculos, control plane ou operações Git. Critérios, testes, arquivos e rollback no CHG.

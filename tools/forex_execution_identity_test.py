@@ -237,7 +237,7 @@ def browser_roundtrip():
     finally:server.shutdown();server.server_close()
 
 def main():
-    files=['src/js/00-core/00-forex-policy.js','src/js/10-domain/00-forex-state.js']
+    files=['src/js/00-core/00-forex-policy.js','src/js/00-core/01-risk-profiles.js','src/js/10-domain/00-forex-state.js']
     run=subprocess.run([NODE,'-e',PROBE,*[str(ROOT/f) for f in files]],text=True,capture_output=True)
     if run.returncode:
         print(run.stderr);return 1

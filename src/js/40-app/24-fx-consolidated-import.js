@@ -17,6 +17,8 @@
     return {id,name:text(account.nome),type:text(account.tipo),login:text(account.platformLogin),
       broker:text(account.broker),currency:text(account.platformCurrency)||text(facts&&facts.currency),
       server:text(account.platformServer),platform:text(account.platform),
+      accountEnvironment:text(account.accountEnvironment),profile:text(account.perfil),profileLocked:account.perfilLocked===true,
+      riskProfileAssignment:account.riskProfileAssignment?clone(account.riskProfileAssignment):null,
       liveIndex:index,archived:false};
   }
   function catalogDescriptor(account){
@@ -49,6 +51,12 @@
         }
       }
       rows.push(row);used.add(row.id);
+    });
+    const archived=S.forex?.accountContexts?.archivedAccounts;
+    if(object(archived))Object.entries(archived).forEach(([id,tombstone])=>{
+      if(!used.has(id)&&object(tombstone?.record)){
+        rows.push({...descriptor({...tombstone.record,forexAccountId:id},null),archived:true});used.add(id);
+      }
     });
     historical.forEach(account=>{
       if(!used.has(account.id)){rows.push(catalogDescriptor(account));used.add(account.id);}
@@ -160,7 +168,7 @@
   const liveAccounts=()=>Array.isArray(S.accounts)?S.accounts.map((a,i)=>object(a)?descriptor(a,i):null).filter(Boolean):[];
   const conflict=(a,b)=>identityFields.some(key=>text(a[key])&&text(b[key])&&identityText(a[key])!==identityText(b[key]));
   const sameIdentity=(a,b)=>!!text(a.login)&&identityText(a.login)===identityText(b.login)&&!conflict(a,b);
-  const registryStamp=()=>JSON.stringify(liveAccounts());
+  const registryStamp=()=>JSON.stringify({live:liveAccounts(),archived:S.forex?.accountContexts?.archivedAccounts||null});
   function inspectRegistration(report,selectionId){
     const errors=api.validateReport(report);
     if(errors.length)return {...fail('Documento recusado: '+errors.join(', ')),status:'invalid',matches:[]};
@@ -186,7 +194,18 @@
     if(historical.length===1||archived)return {...base,status:'historical',accountId:historical[0]?.id||archived.id,error:'Conta apenas histórica. Recadastre-a explicitamente em Contas antes de importar.'};
     return {...base,status:'unregistered',error:'Não há conta correspondente cadastrada em Forex → Contas.'};
   }
+  function establishRegistryEpoch(){
+    // Only an explicit cadastro/preparation gesture establishes an absent generation.
+    // Reuse the canonical confirmed sentinel; unreadable/invalid/existing generations are never replaced.
+    if(jpWealthPersistenceOutcomeIsUnknown()||jpWealthLoadRecoveryActive()||jpWealthPersistenceIsBlocked())return;
+    if(baseEpoch()===null&&typeof sessionEpochCurrent==='function')sessionEpochCurrent();
+  }
+  function beginImportReview(){
+    establishRegistryEpoch();
+    const issue=guard();return issue?fail(issue):{ok:true,persistido:false};
+  }
   function beginRegistration(report=null,selectionId=null){
+    establishRegistryEpoch();
     const issue=guard();if(issue)return fail(issue);
     let mode='create',selected=null,identity={};
     if(report){
@@ -210,16 +229,19 @@
     const draft={name:selected?.name||'',type:selected?.type||'SATÉLITE',
       platform:selected?.platform||(report?'MetaTrader 5':''),login:selected?.login||text(identity.login)||'',
       broker:selected?.broker||text(identity.broker)||'',currency:selected?.currency||text(identity.currency)||'',
-      server:selected?.server||text(identity.server)||''};
+      server:selected?.server||text(identity.server)||'',
+      accountEnvironment:selected?.accountEnvironment||'',
+      profileKey:selected?.riskProfileAssignment&&root.JPWForex.state.validProfileAssignment(selected.riskProfileAssignment,selected.id)?selected.riskProfileAssignment.profileKey:'',
+      profileReason:''};
     const token=crypto.randomUUID();
     registration={token,mode,selected:clone(selected),report:report?clone(report):null,context:capture(null),stamp:registryStamp()};
-    return {ok:true,persistido:false,token,mode,draft,accountId:selected?.id||null};
+    return {ok:true,persistido:false,token,mode,draft,accountId:selected?.id||null,legacyProfile:selected?.profile||null};
   }
   function cancelRegistration(){registration=null;}
   function registrationInput(input,attempt){
     if(!object(input))return fail('Revise a ficha de cadastro.');
     const next={};
-    for(const key of ['name','type','platform','login','broker','currency','server']){
+    for(const key of ['name','type','platform','login','broker','currency','server','accountEnvironment','profileKey','profileReason']){
       if(input[key]!=null&&typeof input[key]!=='string')return fail('Campo inválido: '+key);
       next[key]=text(input[key])||'';
       if(next[key].length>160||/[\u0000-\u001f\u007f]/.test(next[key]))return fail('Campo inválido ou muito longo: '+key);
@@ -229,6 +251,13 @@
     if(next.currency&&!/^[A-Z]{3}$/.test(next.currency))return fail('Use o código de moeda com três letras maiúsculas, ou deixe sem informação.');
     if(attempt.report&&(!mt5(next)||!sameIdentity(next,attempt.report.identity)))return fail('Os identificadores da ficha precisam corresponder ao documento MT5.');
     const old=attempt.selected;
+    if(!['','unknown','real','demo'].includes(next.accountEnvironment))return fail('Escolha Real, Demo ou Não informado.');
+    const profileKnown=key=>typeof riskProfilesForState==='function'&&riskProfilesForState().some(p=>p.key===key);
+    if(next.profileKey&&!profileKnown(next.profileKey))return fail('Selecione um perfil cadastral válido.');
+    if(attempt.mode!=='complete'&&!next.profileKey)return fail('Escolha explicitamente o perfil da nova conta.');
+    if(old?.riskProfileAssignment&&!root.JPWForex.state.validProfileAssignment(old.riskProfileAssignment,old.id))return fail('A atribuição de perfil existente é incompatível. Preserve o cadastro para revisão.');
+    if(old?.riskProfileAssignment&&!next.profileKey)return fail('O perfil confirmado não pode ser apagado por este formulário.');
+    if(old?.riskProfileAssignment&&next.profileKey!==old.riskProfileAssignment.profileKey&&!next.profileReason)return fail('Informe o motivo da alteração de perfil; ela terá vigência somente no próximo período.');
     if(old&&(identityFields.some(key=>text(old[key])&&!text(next[key]))||conflict(old,next)||(old.platform&&platformNorm(normalizePlatformName(old.platform))!==platformNorm(next.platform))))return fail('Um identificador existente diverge. Esta ficha completa lacunas; não substitui vínculos.');
     const live=liveAccounts();
     if(live.some(a=>a.id!==old?.id&&(!a.platform||platformNorm(normalizePlatformName(a.platform))===platformNorm(next.platform))&&sameIdentity(a,next)))return fail('Já existe cadastro correspondente. Selecione-o; não será criada uma duplicata.');
@@ -246,7 +275,13 @@
     if(attempt.mode==='reregister'&&options.confirmHistorical!==true)return fail('Confirme a reutilização da identidade e do histórico.');
     busy=true;
     try{
-      return await sessionAcquireWriteLock(()=>{
+      const oldKey=attempt.selected?.riskProfileAssignment?.profileKey||riskProfileByAny(attempt.selected?.profile).key;
+      if(attempt.selected?.profileLocked&&checked.next.profileKey&&checked.next.profileKey!==oldKey){
+        if(typeof requestPinUnlock!=='function'||!await requestPinUnlock(attempt.context.epoch))return fail('Alteração de perfil não desbloqueada. O cadastro foi preservado.');
+        try{if(!S.riskPinHash||JSON.parse(localStorage.getItem(LSKEY)||'null')?.riskPinHash!==S.riskPinHash)return fail('A confirmação de desbloqueio não foi gravada. Revise antes de alterar o perfil.');}
+        catch(error){return fail('Não foi possível confirmar o desbloqueio. O cadastro foi preservado.');}
+      }
+      return await sessionAcquireWriteLock(()=>root.JPWForex.state.withPreservedOperationalContext(()=>{
         const issue=guard()||stale(attempt.context);
         if(issue)return jpWealthPersistenceOutcomeIsUnknown()?unknown(issue):fail(issue);
         if(registration!==attempt||attempt.stamp!==registryStamp())return fail('O cadastro mudou ou a ficha foi cancelada. Reabra a ficha para revisar a versão atual.');
@@ -257,9 +292,24 @@
         const result=JPWForex.state.mutate('account-registration','Cadastro explícito de conta: '+attempt.mode,['accounts'],()=>{
           let account;
           if(attempt.mode==='complete')account=S.accounts[attempt.selected.liveIndex];
-          else{account={investorPassword:'',perfil:'',perfilLocked:false,sini:0,satu:0};S.accounts.push(account);}
+          else{
+            account={investorPassword:'',perfil:'',perfilLocked:false,sini:0,satu:0};
+            // Restore only cadastral identity/profile; captured financial facts stay in their original periods.
+            if(attempt.mode==='reregister'&&attempt.selected?.riskProfileAssignment){
+              account.riskProfileAssignment=clone(attempt.selected.riskProfileAssignment);
+              account.perfil=attempt.selected.profile||'';account.perfilLocked=attempt.selected.profileLocked;
+            }
+            S.accounts.push(account);
+          }
           Object.assign(account,{forexAccountId:accountId,nome:values.name,tipo:values.type,platform:values.platform,
             platformLogin:values.login,broker:values.broker,platformCurrency:values.currency,platformServer:values.server});
+          if(values.accountEnvironment)account.accountEnvironment=values.accountEnvironment;
+          else delete account.accountEnvironment;
+          if(values.profileKey){
+            account.riskProfileAssignment=root.JPWForex.state.createRiskProfileAssignment(account,values.profileKey,{
+              source:'Cadastro de conta',declaredBy:'Usuário',reason:values.profileReason||(attempt.mode==='complete'?'Atribuição explícita no cadastro':'Cadastro explícito de nova conta')});
+            account.perfil=riskProfileByAny(values.profileKey).name;account.perfilLocked=true;
+          }
         });
         if(jpWealthPersistenceOutcomeIsUnknown()||result.persistido===null)return unknown('Cadastro de conta: resultado indeterminado.');
         if(!result.ok){hideStaleSavedTag();return result;}
@@ -276,7 +326,7 @@
         }catch(error){return unknown('Cadastro de conta: releitura indisponível.');}
         registration=null;pending=null;
         return {ok:true,persistido:true,accountId,mode:attempt.mode};
-      });
+      }));
     }catch(error){return jpWealthPersistenceOutcomeIsUnknown()?unknown('Cadastro interrompido.'):fail('Cadastro não confirmado. Confira a sessão.');}
     finally{busy=false;}
   }
@@ -284,6 +334,7 @@
   // Preparation is intentionally separate from analytics import. Each confirmed
   // step has one canonical write and its own durable acknowledgement.
   function beginAccountSetup(accountId,report=null){
+    establishRegistryEpoch();
     const issue=guard();if(issue)return fail(issue);
     const account=accountSelected(accountId);
     if(!account||account.archived||account.id.startsWith('live:'))return fail('Complete o cadastro da conta antes de preparar o período.');
@@ -307,6 +358,7 @@
     return '';
   }
   function confirmedSetupCommand(command,keys){
+    return root.JPWForex.state.withPreservedOperationalContext(()=>{
     const before={},logBefore=clone(S.dataGovernance.changeLog);let rawBefore;
     try{rawBefore=localStorage.getItem(LSKEY);for(const key of keys)before[key]=clone(S[key]);}
     catch(error){return fail('Não foi possível preparar uma gravação íntegra. Nada foi alterado.');}
@@ -321,7 +373,7 @@
       jpWealthAdoptPersistedRaw(rawBefore);hideStaleSavedTag();
       setPersistenceFailureState(new Error('Preparação da conta não gravada.'),'storage');
       return fail('A gravação não foi efetivada. Os campos continuam disponíveis para revisão.');
-    }catch(error){return unknown('Preparação da conta: releitura indisponível.');}
+    }catch(error){return unknown('Preparação da conta: releitura indisponível.');}    });
   }
   async function saveSetupPeriod(token,input){
     if(busy)return fail('Uma confirmação está em andamento.');
@@ -339,7 +391,7 @@
         const oldIds=new Set(Object.keys(S.forex?.accountContexts?.accounts?.[accountId]?.periods||{}));
         result=confirmedSetupCommand(()=>JPWForex.state.recordAccountPeriod({accountId,
           startedAt:input.startedAt,currency:input.currency,si:input.si,openingBook:input.openingBook,
-          source:input.source,activateCurrentPeriod:input.activateCurrentPeriod===true},
+          source:input.source,activateCurrentPeriod:input.activateCurrentPeriod===true,observationPeriodId:input.observationPeriodId},
           {reason:input.reason,expectedEpoch:attempt.context.epoch}),['forex']);
         if(!result.ok)return result;
         periodId=Object.keys(S.forex.accountContexts.accounts[accountId].periods).find(id=>!oldIds.has(id));
@@ -369,7 +421,7 @@
         periodId:period.periodId,si:period.si,currency:period.currency,equity:input.equity,
         usdToAccountRate:input.usdToAccountRate,netCashflow:input.netCashflow,
         cashflowAdjustmentRecorded:input.cashflowAdjustmentRecorded===true,
-        observedAt:input.observedAt,source:input.source}, {reason:input.reason}),['forex','accounts','activeOperation']);
+        observedAt:input.observedAt,source:input.source}, {reason:input.reason,preserveSelection:true}),['forex','accounts','activeOperation']);
       if(!result.ok){
         // The canonical refusal rollback restores accounts from a clone. Keep
         // this still-valid draft usable without accepting any changed facts.
@@ -473,5 +525,5 @@
     }catch(error){return fail('Não foi possível confirmar a conta padrão. Confira a sessão e tente novamente.');}
     finally{busy=false;}
   }
-  Object.assign(api,{beginAccountSetup,cancelAccountSetup,saveSetupPeriod,saveSetupObservation,accounts,inspectRegistration,beginRegistration,saveRegistration,cancelRegistration,prepareImport,confirmImport,saveDefaultAccount,cancelImport});
+  Object.assign(api,{beginImportReview,beginAccountSetup,cancelAccountSetup,saveSetupPeriod,saveSetupObservation,accounts,inspectRegistration,beginRegistration,saveRegistration,cancelRegistration,prepareImport,confirmImport,saveDefaultAccount,cancelImport});
 })(globalThis);

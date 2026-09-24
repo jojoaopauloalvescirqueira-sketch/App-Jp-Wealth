@@ -240,191 +240,21 @@ async function requestPinUnlock(operationEpoch=jpWealthPersistenceEpoch()){
   if(h!==S.riskPinHash){ alert('Senha incorreta. Perfil permanece travado.'); return false; }
   return true;
 }
-const accountEditorsOpen=new Set();
-function accountCredentialState(a){
-  const missing=[!a.platform?'plataforma':null,!a.platformLogin?'login':null,!a.investorPassword?'senha do investidor':null].filter(Boolean);
-  return {
-    missing,
-    label:missing.length?missing.length+' pendente'+(missing.length>1?'s':''):'completas',
-    detail:missing.length?'Falta preencher: '+missing.join(', '):normalizePlatformName(a.platform)+' · Login '+a.platformLogin+' · senha cadastrada'
-  };
-}
-function updateAccountCredentialMeta(row,a){
-  const i=+row.dataset.idx;
-  const summary=document.querySelector(`#contasBody .account-summary-row[data-idx="${i}"]`);
-  const chip=summary&&summary.querySelector('.account-cred');
-  const state=accountCredentialState(a);
-  if(chip){
-    chip.textContent=state.label;
-    chip.title=state.detail;
-    chip.classList.toggle('ok',!state.missing.length);
-  }
+// Cadastro e edição possuem uma única fronteira validada no workspace de contas.
+// Este quadro conserva somente a memória de correção/replicação existente.
+function renderContasMemory(){
+  const cb=$('contasBody');
+  if(cb)cb.innerHTML=(S.accounts||[]).map(a=>{
+    const {corr,fw,pf,loteVs}=contaCalc(a);
+    return `<tr><th scope="row">${esc(a.nome||'Conta sem nome')}</th><td>${Number.isFinite(corr)?corr.toFixed(3):'Não apurado'}</td><td>${accountFactorText(fw)}</td><td>${accountFactorText(pf)}</td><td class="hl">${accountFactorText(loteVs)}</td></tr>`;
+  }).join('')||'<tr><td colspan="5">Nenhuma conta cadastrada.</td></tr>';
+  renderAplicacao();
 }
 function renderContas(){
-  const cb=$('contasBody'); cb.innerHTML='';
-  S.accounts.forEach((a,i)=>{
-    const {lucro,corr,fw,pf,loteVs}=contaCalc(a);
-    const cred=accountCredentialState(a), open=accountEditorsOpen.has(i);
-    const perfilCell = a.perfilLocked
-      ? `<div style="display:flex; align-items:center; gap:6px">
-           <span class="hl">🔒 ${esc(a.perfil)}</span>
-           <button class="unlock-btn" data-perfilkey="${i}" title="Exige senha">alterar</button>
-         </div>`
-      : `<select data-f="perfil">
-           <option value="" ${!a.perfil?'selected':''} disabled>escolher…</option>
-           ${RISK_PROFILES.map(p=>`<option value="${esc(p.name)}" ${a.perfil&&riskProfileByAny(a.perfil).key===p.key?'selected':''}>${esc(p.name)}</option>`).join('')}
-         </select>`;
-    const brokerAtual=brokerFor(a.broker);
-    const brokerEditor=`<div class="broker-field">
-        ${brokerMiniHTML(a.broker)}
-        <select data-f="broker">
-          ${!brokerAtual&&a.broker?`<option value="${esc(a.broker)}" selected>${esc(a.broker)} · a preencher</option>`:''}
-          <option value="" ${!a.broker?'selected':''}>a preencher</option>
-          ${BROKER_PARTNERS.map(b=>`<option value="${esc(b.name)}" ${brokerAtual&&brokerAtual.key===b.key?'selected':''}>${esc(b.name)}</option>`).join('')}
-        </select>
-      </div>`;
-    const typeClass=a.tipo==='MESTRE'?'master':(a.tipo==='PRÓPRIA'?'own':'satellite');
-    const accountId=a.forexAccountId||null;
-    const periods=accountId?S.forex?.accountContexts?.accounts?.[accountId]?.periods||{}:{};
-    const summary=document.createElement('tr');
-    summary.className='account-summary-row'; summary.dataset.idx=i;
-    summary.innerHTML=`
-      <td class="account-name-cell"><button type="button" class="account-editor-toggle" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}">${esc(a.nome||'Conta sem nome')}<span aria-hidden="true">${open?'▾':'▸'}</span></button></td>
-      <td><span class="account-type ${typeClass}">${esc(a.tipo)}</span></td>
-      <td class="account-broker-read">${esc(brokerAtual?brokerAtual.name:(a.broker||'a preencher'))}</td>
-      <td class="account-profile-read">${a.perfilLocked?'🔒 ':''}${esc(a.perfil||'a preencher')}</td>
-      <td class="account-sini-read">${fmtMoney2(+a.sini||0)}</td>
-      <td class="account-satu-read">${fmtMoney2(+a.satu||0)}</td>
-      <td class="calc-lucro ${lucro>=0?'pos':'neg'}">${fmtPct(lucro)}</td>
-      <td class="calc-lotevs hl">${accountFactorText(loteVs)}</td>
-      <td><button type="button" class="account-chip account-cred ${cred.missing.length?'':'ok'}" data-account-toggle="${i}" aria-expanded="${open}" aria-controls="account-detail-${i}" title="${esc(cred.detail)}">${esc(cred.label)}</button></td>
-      <td><button class="row-del" title="Excluir conta" aria-label="Excluir ${esc(a.nome)}" data-del="${i}">✕</button></td>`;
-    const detail=document.createElement('tr');
-    detail.className='account-detail-row'; detail.dataset.idx=i; detail.id='account-detail-'+i; detail.hidden=!open;
-    detail.innerHTML=`<td colspan="10"><div class="account-editor-grid">
-      <label class="field"><span>Nome da conta</span><input data-f="nome" value="${esc(a.nome)}" placeholder="Nome da conta"></label>
-      <label class="field"><span>Tipo</span><select data-f="tipo"><option ${a.tipo==='MESTRE'?'selected':''}>MESTRE</option><option ${a.tipo==='PRÓPRIA'?'selected':''}>PRÓPRIA</option><option ${a.tipo==='SATÉLITE'?'selected':''}>SATÉLITE</option></select></label>
-      <div class="field"><span class="account-editor-label">Broker</span>${brokerEditor}</div>
-      <div class="field"><span class="account-editor-label">Perfil</span>${perfilCell}</div>
-      <label class="field"><span>Referência cadastral inicial (legado)</span><input type="number" step="0.01" data-f="sini" value="${esc(a.sini)}"></label>
-      <label class="field"><span>Referência cadastral atual (legado)</span><input type="number" step="0.01" data-f="satu" value="${esc(a.satu)}"></label>
-      <label class="field"><span>Plataforma</span><select data-f="platform">${platformOptions(a.platform)}</select></label>
-      <label class="field"><span>Login da plataforma</span><input data-f="platformLogin" value="${esc(a.platformLogin)}" placeholder="Login da plataforma"></label>
-      <div class="field"><span>Identidade estável e moeda</span><strong>${esc(accountId||'Ainda não confirmada')} · ${esc(a.platformCurrency||'moeda não verificada')}</strong><button type="button" data-account-register="${i}">${accountId?'Completar cadastro':'Confirmar identificação'}</button></div>
-      <div class="field"><span>Períodos confirmados</span><strong>${Object.keys(periods).length}</strong><small>SI, saldo book e equity pertencem ao período; as referências legadas acima não os substituem.</small></div>
-      <div class="field account-password-field"><span class="account-editor-label">Senha do investidor / somente leitura</span><div class="investor-pass-row"><input type="password" data-f="investorPassword" value="${esc(a.investorPassword)}" placeholder="Válida só nesta sessão — não é armazenada" autocomplete="off"><button type="button" class="pass-toggle" data-pass-toggle="${i}" aria-pressed="false">revelar</button></div></div>
-      <details class="account-calc-detail"><summary>Memória de Lote vs Mestre</summary><dl><dt>Correção</dt><dd class="calc-corr">${Number.isFinite(corr)?corr.toFixed(3):'Não apurado'}</dd><dt>Firewall V11</dt><dd class="calc-fw">${accountFactorText(fw)}</dd><dt>Fator homologado</dt><dd class="calc-pf">${accountFactorText(pf)}</dd><dt>Lote vs Mestre</dt><dd>${accountFactorText(loteVs)}</dd></dl></details>
-    </div></td>`;
-    cb.append(summary,detail);
-  });
-
-  cb.querySelectorAll('[data-account-toggle]').forEach(btn=>btn.addEventListener('click',()=>{
-    const i=+btn.dataset.accountToggle;
-    if(accountEditorsOpen.has(i)) accountEditorsOpen.delete(i); else accountEditorsOpen.add(i);
-    renderContas();
-    const next=document.querySelector(`#contasBody [data-account-toggle="${i}"]`); if(next) next.focus();
-  }));
-  cb.querySelectorAll('[data-account-register]').forEach(btn=>btn.addEventListener('click',()=>{
-    const account=S.accounts[+btn.dataset.accountRegister];if(!account)return;
-    JPWFXConsolidated.openAccountRegistration({accountId:account.forexAccountId||'live:'+(+btn.dataset.accountRegister),
-      trigger:btn,onSaved:()=>{renderContas();window.JPWForex?.executionBoardUI?.render?.();}});
-  }));
-
-  // bind edits
-  cb.querySelectorAll('input,select').forEach(inp=>{
-    const evt = inp.tagName==='SELECT' ? 'change' : 'input';
-    inp.addEventListener(evt,()=>{
-      const tr=inp.closest('tr'); const i=+tr.dataset.idx; const f=inp.dataset.f;
-      let val=inp.value;
-      if(f==='sini'||f==='satu') val=parseFloat(val)||0;
-      if(f==='perfil') val=normalizeRiskProfileName(val);
-      if(f==='platform') val=normalizePlatformName(val);
-      S.accounts[i][f]=val;
-      if(f==='tipo'){
-        inp.style.borderColor = val==='MESTRE'?'var(--violet)':(val==='SATÉLITE'?'var(--f3)':'var(--f1)');
-        save(); renderContas(); return;
-      }
-      if(f==='perfil' && val){
-        // primeira escolha trava sozinha — "só possa ser escolhido uma vez"
-        S.accounts[i].perfilLocked=true;
-        save(); renderContas(); return;
-      }
-      if(f==='broker'){
-        const br=brokerFor(val);
-        if(br) S.accounts[i].broker=br.name;
-        save(); renderContas(); return;
-      }
-      if(f==='platform'){
-        save(); renderContas(); return;
-      }
-      save();
-      if(f==='nome'){
-        const label=document.querySelector(`#contasBody .account-summary-row[data-idx="${i}"] .account-editor-toggle`);
-        if(label && label.firstChild) label.firstChild.nodeValue=val||'Conta sem nome';
-      }
-      if(f==='platformLogin'||f==='investorPassword') updateAccountCredentialMeta(tr,S.accounts[i]);
-      recomputeContasCalc();
-    });
-  });
-  // revelar/ocultar senha do investidor apenas por ação explícita
-  cb.querySelectorAll('[data-pass-toggle]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const row=btn.closest('tr');
-      const input=row&&row.querySelector('input[data-f="investorPassword"]');
-      if(!input) return;
-      const show=input.type==='password';
-      input.type=show?'text':'password';
-      btn.textContent=show?'ocultar':'revelar';
-      btn.setAttribute('aria-pressed', show?'true':'false');
-    });
-  });
-  // bind "alterar" (exige senha) nas contas travadas
-  cb.querySelectorAll('[data-perfilkey]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const i=+btn.dataset.perfilkey;
-      const operationEpoch=jpWealthPersistenceEpoch();
-      const ok = await requestPinUnlock(operationEpoch);
-      if(ok && !jpWealthPersistenceIsBlocked() && operationEpoch===jpWealthPersistenceEpoch()){
-        S.accounts[i].perfilLocked=false; save(); renderContas();
-      }
-    });
-  });
-  // bind delete
-  cb.querySelectorAll('.row-del').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const i=+btn.dataset.del;
-      if(S.accounts[i].tipo==='MESTRE' && S.accounts.filter(a=>a.tipo==='MESTRE').length===1){
-        alert('Mantenha ao menos uma conta MESTRE — ela é a referência de correção de lote das demais.');
-        return;
-      }
-      if(S.accounts[i].forexAccountId){
-        if(!confirm(`Arquivar a conta "${S.accounts[i].nome}" preservando seus históricos?`))return;
-        const reason=prompt('Motivo do arquivamento da conta:');if(reason===null)return;
-        const result=JPWForex.state.archiveRegisteredAccount(S.accounts[i].forexAccountId,{reason,
-          expectedEpoch:jpWealthPersistenceEpoch()});
-        if(!result.ok){alert(result.error);return;}
-        accountEditorsOpen.clear();renderContas();window.JPWForex?.executionBoardUI?.render?.();return;
-      }
-      if(confirm(`Excluir a conta sem identidade histórica "${S.accounts[i].nome}"?`)){
-        S.accounts.splice(i,1); accountEditorsOpen.clear(); save(); renderContas();
-      }
-    });
-  });
-
-  renderAplicacao();
+  renderContasMemory();
+  window.JPWForex?.accountsUI?.render?.();
 }
-// recalcula só as células derivadas, sem reconstruir inputs (preserva foco/cursor)
-function recomputeContasCalc(){
-  document.querySelectorAll('#contasBody .account-summary-row').forEach(tr=>{
-    const i=+tr.dataset.idx; const a=S.accounts[i];
-    const {lucro,loteVs}=contaCalc(a);
-    const lc=tr.querySelector('.calc-lucro'); lc.textContent=fmtPct(lucro); lc.className='calc-lucro '+(lucro>=0?'pos':'neg');
-    tr.querySelector('.account-sini-read').textContent=fmtMoney2(+a.sini||0);
-    tr.querySelector('.account-satu-read').textContent=fmtMoney2(+a.satu||0);
-    tr.querySelector('.calc-lotevs').textContent=accountFactorText(loteVs);
-  });
-  renderAplicacao();
-}
+function recomputeContasCalc(){renderContas();}
 function renderAplicacao(){
   $('cLoteMaster').value=S.loteMaster;
   const ab=$('aplicBody');

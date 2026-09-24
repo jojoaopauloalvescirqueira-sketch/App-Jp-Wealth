@@ -20,7 +20,7 @@
       "order": 3,
       "path": "src/js/00-core/01-risk-profiles.js",
       "section": "PERFIS DE RISCO V10.0 (fonte única)",
-      "sha256": "84686a1d4096eb58085904fa0812d05cb9c8c5f369e17fc75a0767dd536e5a19"
+      "sha256": "dbac835cead6b9f9d3807c7d02a7f45773e9c35466771480701efee5725de70e"
     },
     {
       "order": 4,
@@ -38,7 +38,7 @@
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "9882266635121aa9fe71bb1d91c640da6a24cebbf3057b38eb63b59682961a56"
+      "sha256": "151ed5e8c3b90af422a0d178561afc882539ae9a5ad0af4eeb37f408aa255149"
     },
     {
       "path": "src/js/00-core/07-workspace-backup.js",
@@ -68,19 +68,19 @@
       "path": "src/js/10-domain/00-forex-state.js",
       "section": "FOREX V11 · explicit facts and audit commands",
       "order": 11,
-      "sha256": "087bcfb9828903cc95b6a6b0ec3284f704ae9d33ef509dee54a91ede9e0764f1"
+      "sha256": "e834f82cba85def0c5667a2dcf0ca7cadbfaaa87dbefc5583ad717c655707502"
     },
     {
       "order": 12,
       "path": "src/js/10-domain/02-risk-calculations.js",
       "section": "CÁLCULOS",
-      "sha256": "6771360eee2df2b6c297a690cb5f69fb1acd9dabb79cd11bd28d43793c18159c"
+      "sha256": "78b106e981fc83950758a3323b222c2e390d23549c15ddb02223c05126ff9703"
     },
     {
       "order": 13,
       "path": "src/js/20-ui/01-header-readout.js",
       "section": "TOP BAR · LEITURA DE ESTADO",
-      "sha256": "8876b7a1b57928531aa19a2e5b61fbebb944a2e94e8d024800bc3f79758f902f"
+      "sha256": "94f44b6c97a421cd84a0485c47bd8363911a04937a1ca3d6293cf4ea2ed0291a"
     },
     {
       "order": 14,
@@ -116,7 +116,7 @@
       "order": 19,
       "path": "src/js/10-domain/04-stop-statistics.js",
       "section": "STOP ESTATÍSTICO §9 — Múltiplo de ATR estratificado + Raiz-N por horizonte",
-      "sha256": "ae38eaae2c69a95b267a12692019db530c0fd1898047333d68106190342d468f"
+      "sha256": "ff5c62741adeb0ed3145287df6e6b0a7e69ed96a23d1e01202f48062c442034f"
     },
     {
       "order": 20,
@@ -134,7 +134,7 @@
       "order": 22,
       "path": "src/js/20-ui/08-input-bindings.js",
       "section": "INPUT BINDINGS",
-      "sha256": "8cfa9a5624c8571bddce10cb9e137cb19848145880d67ede32069d8bfb4a3812"
+      "sha256": "bb0eeb381249145171d7e20f4c7eb0e99c3260323b7968b41b32bc3a35d131aa"
     },
     {
       "order": 23,
@@ -170,7 +170,7 @@
       "order": 28,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "429fad524dd12d8981ae7fcc15a0da09cef27f47e3b213ebf6c5da56b40b5acd"
+      "sha256": "13564ad503404e9b9c2dd3c253569ce823abf01a423961f11e07b85416713cfa"
     },
     {
       "order": 29,
@@ -272,7 +272,7 @@
       "order": 45,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "24e183a5cf1e7f485fc56a36a373136b68a3a67d5ad801351e4100ed8b678af1"
+      "sha256": "5dde2a887e92e457e5c90591d958fe5c292f26e6c914ca21af4f0a1940317abf"
     },
     {
       "order": 46,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/20-ui/13-exec-views.js",
       "section": "EXECUTION BOARD · workspaces do modulo (N1)",
-      "sha256": "aef166abb3d02b0161555da2de4c8486dba6ce92eeccbeea3046c2fe5b156168"
+      "sha256": "3d9fea2aed4551cdb79175a4a95ef69a28101ab77cc0ef60e7b19198e43e81cb"
     },
     {
       "order": 67,
@@ -511,7 +511,7 @@
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 85,
-      "sha256": "1180e3bfd7005d4c16f7bba0e2ba1c84583cd41aaefeea97ce54f52a1180dcec"
+      "sha256": "5e4e1c500e48d384969475fea937943b39197c06880b2dc0b0145ae084e96f02"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
@@ -523,7 +523,7 @@
       "path": "src/js/40-app/24-fx-consolidated-import.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 87,
-      "sha256": "d0348ad7471246eb371446753bea64f62cb200149bf813f87b00d98f734a5d17"
+      "sha256": "2bc7338943e6fa628a4217d7a4db83cb7d13df8b86b78cea7948716bc901532c"
     },
     {
       "path": "src/js/40-app/25-fx-consolidated-pdf.js",
@@ -535,7 +535,7 @@
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 89,
-      "sha256": "1110c0b0b159d4936ebbe910afd0b3c7b25c74545123682d11603f090383e393"
+      "sha256": "815bbf602d17ec7a2637d2078bc7196dae2adf95e9c78fda3d398e79d1756fd0"
     },
     {
       "path": "src/js/10-domain/19-execution-market.js",
@@ -553,7 +553,7 @@
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 92,
-      "sha256": "4b4d44bc3ee030ee622b233ab1dd9cf401a59496b2d5ffa80ba1eec0d559e982"
+      "sha256": "7a16dc77e7762eb689812f98aa9f5276091c185b6b8fc52a3460bd88a50125db"
     },
     {
       "path": "src/js/10-domain/16-nocuda-transfer.js",
@@ -566,6 +566,12 @@
       "section": "Nocuda Tool · local drawing transfer",
       "order": 94,
       "sha256": "8909d1ede87067a0a5c8c46167e74e273bcb533381003d8dd0a30c5dd2ef2dc3"
+    },
+    {
+      "path": "src/js/20-ui/31-forex-accounts.js",
+      "section": "Contas e Período · gestão contextual de contas CFDs",
+      "order": 95,
+      "sha256": "b6f366b557046af2aaa3b9ab6b84055fc40ea929eadeb9fd9f0136938cc8ec2d"
     }
   ],
   "runtimeAssets": [

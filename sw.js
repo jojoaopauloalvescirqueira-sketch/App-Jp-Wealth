@@ -20,6 +20,7 @@ const PRECACHE_URLS = [
   './src/js/10-domain/19-execution-market.js',
   './src/js/10-domain/18-execution-board-model.js',
   './src/js/20-ui/30-execution-board.js',
+  './src/js/20-ui/31-forex-accounts.js',
   './src/vendor/pdfjs/pdf.worker.mjs',
   './src/vendor/pdfjs/pdf.mjs',
   './src/js/20-ui/28-fx-consolidated.js',

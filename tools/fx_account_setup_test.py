@@ -28,9 +28,10 @@ CASES={
   const r=await __period(p);__assert(!r.ok&&__same(before,__snap()),'Cancelled setup wrote');return r;
  }""",
  'confirmed-period-observation-and-backup':r"""async()=>{
-  const p=__setup(),a=await __period(p);__assert(a.ok&&a.persistido&&a.period.si===10000&&a.period.openingBook===null,'Period facts corrupted');
+  const p=__setup(),selectedBefore=JPWForex.state.operationalSelection(),financialBefore=S.forex.activeAccountId,a=await __period(p);__assert(a.ok&&a.persistido&&a.period.si===10000&&a.period.openingBook===null,'Period facts corrupted');
   __assert(!S.forex.accounts.fx_A&&a.period.phases.length===6,'Period inferred equity or missing phases');
   const b=await __observation(p);__assert(b.ok&&b.persistido,'Observation failed: '+JSON.stringify(b));
+  __assert(__same(selectedBefore,JPWForex.state.operationalSelection())&&S.forex.activeAccountId===financialBefore,'Preparing observation switched operational context');
   __assert(S.forex.accounts.fx_A.periodId===a.periodId&&S.forex.accounts.fx_A.equity===12200.25&&S.forex.accounts.fx_A.si===10000,'Observation context differs');
   const count=__fcs.writes,repeated=await __observation(p);__assert(!repeated.ok&&__fcs.writes===count,'Repeated confirmation duplicated');
   const backup=JSON.parse(await dgBuildBackupBlob(1,'synthetic.json','2026-01-31T12:00:00Z').text()),restored=normalizeImportedState(backup);
@@ -90,7 +91,11 @@ def main():
    page=context.new_page();page.on('pageerror',lambda e:record['pageerrors'].append(str(e)));page.goto(url);wait_bootstrap(page);page.evaluate(SEED);page.evaluate(SETUP)
    record['observations']=page.evaluate(source) if source else callback(page,context)
    assert_fixture_requests(context);assert not record['pageerrors'],record['pageerrors'];record['status']='PASS'
-  except Exception as e:record.update(status='PRODUCT_FAIL' if isinstance(e,AssertionError) or 'PRODUCT_ASSERTION:' in str(e) else 'TEST_HARNESS_FAIL',error=str(e),trace=traceback.format_exc())
+  except Exception as e:
+   record.update(status='PRODUCT_FAIL' if isinstance(e,AssertionError) or 'PRODUCT_ASSERTION:' in str(e) else 'TEST_HARNESS_FAIL',error=str(e),trace=traceback.format_exc())
+   if context and context.pages:
+    try:record['setup_status']=context.pages[0].locator('#fxcSetupStatus').text_content(timeout=1000)
+    except Exception:pass
   finally:
    if context:context.close()
    report['cases'].append(record);print(name,record['status'],record.get('error','')[:200],flush=True)
@@ -111,7 +116,7 @@ def main():
   page.reload();wait_bootstrap(page);assert page.evaluate('S.forex.accounts.fx_A.equity===12200.25&&Object.values(S.forex.accountContexts.accounts.fx_A.periods)[0].phases.length===6')
   return {'initialCapitalIndependent':True,'mobile':True,'reload':True,'phases':6}
  def manual(page,context):
-  page.evaluate('JPWFXConsolidatedUI.openAccountSetup()');page.locator('#fxcr-name').fill('Conta fictícia nova');page.locator('#fxcr-platform').select_option('MetaTrader 5');page.locator('#fxcr-login').fill('40004');page.locator('#fxcr-currency').fill('USD');page.locator('#fxcRegistrationSave').click()
+  page.evaluate('JPWFXConsolidatedUI.openAccountSetup()');page.locator('#fxcwNext').click();page.locator('#fxcr-name').fill('Conta fictícia nova');page.locator('#fxcr-login').fill('40004');page.locator('#fxcwNext').click();page.locator('#fxcr-platform').select_option('MetaTrader 5');page.locator('#fxcr-currency').fill('USD');page.locator('#fxcwNext').click();page.locator('#fxcr-profileKey').select_option('base');page.locator('#fxcwNext').click();page.locator('#fxcRegistrationSave').click()
   page.locator('#fxcSetupDialog').wait_for(state='visible');assert page.evaluate('S.accounts.length===4&&S.fxConsolidated.receipts.length===0')
   page.keyboard.press('Escape');assert page.evaluate('S.accounts.length===4&&Object.keys(S.forex.accountContexts?.accounts||{}).length===0')
   return {'registrationPreserved':True,'periodNotCreatedOnCancel':True}
@@ -143,6 +148,19 @@ def main():
   raw=other.evaluate("()=>{S.accounts[0].nome='Synthetic second tab';if(save()!==true)throw Error('Fixture failed');return localStorage.getItem(LSKEY)}")
   result=page.evaluate('__period(__pendingSetup)');assert not result['ok'];assert page.evaluate('localStorage.getItem(LSKEY)')==raw
   return result
+ def dirty_setup(page,context):
+  page.evaluate("JPWFXConsolidatedUI.openAccountSetup({accountId:'fx_A'})")
+  before=page.evaluate('__snap()');page.locator('#fxcs-start').fill('2026-01-01');page.locator('#fxcs-si').fill('10000')
+  page.evaluate('window.confirm=()=>false');page.keyboard.press('Escape')
+  assert page.locator('#fxcSetupDialog').is_visible() and page.locator('#fxcs-si').input_value()=='10000' and page.evaluate('__snap()')==before
+  page.evaluate('window.confirm=()=>true');page.locator('#fxcs-close').click();assert not page.locator('#fxcSetupDialog').is_visible() and page.evaluate('__snap()')==before
+  page.evaluate("JPWFXConsolidatedUI.openAccountSetup({accountId:'fx_A'})")
+  page.locator('#fxcs-start').fill('2026-01-01');page.locator('#fxcs-si').fill('10000');page.locator('#fxcs-confirm-period').check();page.locator('#fxcs-save-period').click();page.locator('#fxcSetupObservationForm').wait_for(state='visible')
+  saved=page.evaluate('__snap()');page.locator('#fxcs-equity').fill('12300');page.evaluate('window.confirm=()=>false');page.locator('#fxcs-open-orders').click()
+  assert page.locator('#fxcSetupDialog').is_visible() and page.locator('#fxcs-equity').input_value()=='12300' and page.evaluate('__snap()')==saved
+  page.keyboard.press('Escape');assert page.locator('#fxcSetupDialog').is_visible()
+  page.evaluate('window.confirm=()=>true');page.locator('#fxcs-close').click();assert not page.locator('#fxcSetupDialog').is_visible() and page.evaluate('__snap()')==saved
+  return {'periodDraftGuard':True,'observationDraftGuard':True,'confirmedPeriodPreserved':True,'contextNotSelectedOnRefusal':True}
  def reset_draft(page,context):
   page.evaluate("JPWFXConsolidatedUI.openAccountSetup({accountId:'fx_A'})")
   before=page.evaluate('__snap()');page.evaluate('JPWFXConsolidated.reset()')
@@ -152,7 +170,7 @@ def main():
   with sync_playwright() as p:
    browser=p.chromium.launch(**launch_options())
    for name,source in CASES.items():run(browser,name,source=source)
-   run(browser,'ui-reviewed-period-observation-responsive-reload',callback=ui);run(browser,'ui-manual-registration-separate-period',callback=manual);run(browser,'ui-format-review-import-prepare-duplicate',callback=import_ui);run(browser,'cross-tab-preparation-refused',callback=cross_tab);run(browser,'ui-session-reset-closes-setup-draft',callback=reset_draft);browser.close()
+   run(browser,'ui-reviewed-period-observation-responsive-reload',callback=ui);run(browser,'ui-manual-registration-separate-period',callback=manual);run(browser,'ui-format-review-import-prepare-duplicate',callback=import_ui);run(browser,'cross-tab-preparation-refused',callback=cross_tab);run(browser,'ui-session-reset-closes-setup-draft',callback=reset_draft);run(browser,'ui-setup-dirty-cancel-escape-and-use-context',callback=dirty_setup);browser.close()
  finally:
   server.shutdown();server.server_close();report['after']=hashes();report['sourcesUnchanged']=report['before']==report['after'];report['result']='PASS' if report['cases'] and all(r['status']=='PASS' for r in report['cases']) and report['sourcesUnchanged'] else 'PRODUCT_FAIL'
   args.out.parent.mkdir(parents=True,exist_ok=True);args.out.write_text(json.dumps(report,ensure_ascii=False,indent=2));print(report['result'])

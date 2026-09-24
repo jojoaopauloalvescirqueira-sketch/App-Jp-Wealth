@@ -349,7 +349,7 @@ def run_lifecycle(browser, url, evidence, baseline_url):
         for route, words in [("dashboard", ["Dashboard"]), ("forex-overview", ["Forex", "Dashboard"]),
                              ("forex-operation", ["Forex", "Execution Board"]),
                              ("forex-reconciliation", ["Forex", "Contabilidade"]), ("forex-planning", ["Forex", "Planejamento"]),
-                             ("motor", ["Forex", "Management Accounts", "Fator de Correção"]), ("research-stocks-br", ["Research", "Ações"]),
+                             ("motor", ["Forex", "Contas e Período", "Fator de Correção"]), ("research-stocks-br", ["Research", "Ações"]),
                              ("pivots", ["Research", "Forex", "Pivots"]), ("personal-finance", ["Finanças Pessoais", "Visão Geral"])]:
             go(page, route)
             location = page.locator("#shellLocation").inner_text()

@@ -35,3 +35,10 @@ O backup é de dados e preferências, não uma cópia executável do navegador: 
 ## Verificação
 
 `tools/complete_backup_test.py`: round-trip real Blob/FileReader em contextos Chromium isolados, modular e portátil, preferências/foto, recarga, rascunhos, preservação integral na finalização, backup legado, formato inválido, interrupção/quota e recuperação. Testes financeiros e de persistência existentes continuam necessários; relatório FULL e evidências locais são registrados no CHG. Nenhum dado real do usuário é necessário para os testes.
+
+
+## Contas e Período — extensão opcional (2026-09-23)
+
+O clone integral de `state` inclui ambiente real/demo, atribuição revisionada de perfil e referências documentais dos períodos/operações. Ausência em backup antigo é válida; não dispara cadastro, novo período ou preenchimento retroativo. Extensões incompatíveis são recusadas antes da escrita. IDs, vínculos e campos desconhecidos compatíveis permanecem preservados.
+
+Rascunhos visíveis capturados pelo workspace continuam material para revisão, nunca confirmação automática de conta/período. Etapas ainda em RAM não equivalem a cadastro salvo. A avaliação de rollback lê o backup novo na versão anterior e executa sua gravação com fixture sintética, comparando essas extensões; o recibo do candidate informa o resultado real.

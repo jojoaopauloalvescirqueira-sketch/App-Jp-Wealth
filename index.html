@@ -207,18 +207,18 @@ SOFTWARE.
          aria-hidden="true" hidden inert>
       <div class="nav-sub-level nav-sub-level-primary" data-nav-level="2" aria-label="Destinos de Forex">
         <button type="button" data-nav-item data-nav-child="forex-consolidated"><span class="nav-sub-item-title">Dashboard</span><span class="nav-sub-item-desc">Análise e contexto operacional</span></button>
+        <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Contas e Período</span><span class="nav-sub-item-desc">Cadastro, períodos e contexto operacional</span></button>
         <button type="button" data-nav-item data-nav-child="forex-operation"><span class="nav-sub-item-title">Execution Board</span><span class="nav-sub-item-desc">Preenchimento e acompanhamento das ordens</span></button>
         <button type="button" data-nav-item data-nav-child="forex-history"><span class="nav-sub-item-title">History</span><span class="nav-sub-item-desc">Operações completas finalizadas</span></button>
         <button type="button" data-nav-item data-nav-child="forex-accounting"><span class="nav-sub-item-title">Contabilidade</span><span class="nav-sub-item-desc">Fechamentos e apuração do período</span></button>
-        <button type="button" data-nav-item data-nav-child="forex-management-accounts"><span class="nav-sub-item-title">Management Accounts</span><span class="nav-sub-item-desc">Contas e Fator de Correção</span></button>
         <button type="button" data-nav-item data-nav-child="forex-planning"><span class="nav-sub-item-title">Planejamento</span><span class="nav-sub-item-desc">Plano, realizado e histórico</span></button>
         <button type="button" data-nav-item data-nav-child="forex-reserves"><span class="nav-sub-item-title">Reservas</span><span class="nav-sub-item-desc">FCR, FEO e governança</span></button>
       </div>
       <div class="nav-sub-contexts" aria-label="Opções do destino Forex">
         <div class="nav-sub-level nav-sub-level-context" data-nav-level="3"
-             data-nav-context="forex-management-accounts" role="group" aria-label="Management Accounts" hidden inert>
+             data-nav-context="forex-management-accounts" role="group" aria-label="Contas e Período" hidden inert>
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="accounts">
-            <span class="nav-sub-item-title">Contas</span>
+            <span class="nav-sub-item-title">Contas e períodos</span>
             <span class="nav-sub-item-desc">Cadastro e acompanhamento</span>
           </button>
           <button type="button" data-nav-item data-nav-local-surface="exec" data-nav-local-view="motor">
@@ -666,9 +666,7 @@ SOFTWARE.
     </div>
   </div>
 
-    <!-- Contas permanece com os mesmos nós e renderizador. Apenas deixa de ser
-         destino N2: este workspace local de Operação preserva cadastro, foco e
-         listeners sem criar uma cópia ou migrar dados. -->
+    <!-- Gestão única de contas CFDs e períodos, preservando os hosts e IDs canônicos. -->
     <div class="exec-view" id="contas" role="region" aria-label="Contas Forex" hidden inert>
       <div class="jp-widget-grid" id="contasWidgetGrid">
       <div class="card" id="accountPeriodCard">
@@ -693,26 +691,13 @@ SOFTWARE.
         <p>Saldo inicial book não comprova equity. A observação de SI/equity com fonte continua distinta e é exigida para cálculos normativos.</p>
       </div>
       <div class="card" data-layout-card="contas-accounts-table" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="full" data-widget-allowed-sizes="full">
-        <h2 class="accounts-card-head">
-          <span>Parque de Contas <span class="art">leitura compacta · edição nos detalhes</span></span>
-          <button class="reset-btn" id="addAccountBtn" style="color:var(--violet); border-color:var(--violet)">+ Adicionar Conta</button>
-        </h2>
-          <details class="jp-p3">
-            <summary>governança</summary>
-            <p class="expl" style="font-size:calc(13px * var(--fs-scale)); color:var(--ink-dim); line-height:1.6">
-          <b style="color:var(--f3)">Fórmula V10: saldo normalizado × fator de perfil.</b>
-          <b style="color:var(--ink)">Normalização por saldo (Art. 10.1)</b> substitui o multiplicador fixo antigo.
-          <b style="color:var(--ink)">Fator de Correção</b> ajusta o <b style="color:var(--ink)">lote</b> pela diferença de saldo entre contas.
-          <b style="color:var(--ink)">Fator de Perfil</b> escala a exposição conforme o perfil de risco escolhido para aquela conta (Regulamento de Alocação — Motor de Lote).
-          O lote aplicado segue <b style="color:var(--ink)">Lote_satélite = Lote_mestre × (saldo_satélite ÷ saldo_mestre) × fator de perfil</b>.
-        </p>
-          </details>
-        <p class="account-security-note"><strong>Use apenas senha do investidor/somente leitura.</strong> Nunca armazene senha master neste sistema.</p>
+        <h2 class="accounts-card-head">Memória de Correção e replicação</h2>
+        <p class="account-table-note">Referências legadas preservadas. Fatores de perfil P-30 permanecem pendentes; cadastrar uma conta não autoriza replicação.</p>
         <div class="jp-table-scroll"><table class="dtable">
-          <thead><tr><th>Conta</th><th>Tipo</th><th>Broker</th><th>Perfil</th><th>Saldo Ini</th><th>Saldo Atual</th><th>Lucro%</th><th>Lote vs Mestre</th><th>Credenciais</th><th></th></tr></thead>
+          <thead><tr><th>Conta</th><th>Correção</th><th>Firewall V11</th><th>Fator homologado</th><th>Lote vs Mestre</th></tr></thead>
           <tbody id="contasBody"></tbody>
         </table></div>
-        <p class="account-table-note">Correção, Firewall de replicação e Fator de Perfil permanecem disponíveis no editor expansível de cada conta.</p>
+        <p class="account-table-note">Memória de Correção, Firewall V11 e dimensionamento continuam submetidos às regras vigentes.</p>
       </div>
       <div class="card" data-layout-card="contas-order-application" data-layout-movable="false" data-layout-allowed-zones="main" data-widget-size="medium" data-widget-allowed-sizes="medium full">
         <h2>Aplicação de Ordem <span class="art">lote da mestre → satélites</span></h2>
@@ -1989,5 +1974,6 @@ SOFTWARE.
 <script src="src/js/20-ui/30-execution-board.js"></script>
 <script src="src/js/10-domain/16-nocuda-transfer.js"></script>
 <script src="src/js/20-ui/31-tools-services.js"></script>
+<script src="src/js/20-ui/31-forex-accounts.js"></script>
 </body>
 </html>

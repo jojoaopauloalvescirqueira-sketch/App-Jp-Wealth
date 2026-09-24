@@ -20,6 +20,27 @@
   const instrumentKey=value=>text(value).toUpperCase().replace(/[^A-Z0-9]/g,'');
   const civilDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&
     Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
+  // Reuse early validators so restored local state and imports share one contract.
+  const profileKeys=jpwAccountProfileKeys,profileText=jpwAccountProfileText;
+  const validProfileAssignment=jpwValidAccountProfileAssignment;
+  const validProfileSnapshot=jpwValidAccountProfileSnapshot;
+  const validateAccountProfileExtensions=jpwValidateAccountProfileExtensions;
+  function createRiskProfileAssignment(account,profileKey,{source='',declaredBy='',reason=''}={}){
+    if(!object(account)||!text(account.forexAccountId)||!profileKeys.includes(profileKey)||
+      ![source,declaredBy,reason].every(profileText)||!validProfileAssignment(account.riskProfileAssignment,account.forexAccountId))
+      throw new Error('Revise a identidade, o perfil e a origem da atribuição.');
+    const previous=account.riskProfileAssignment||null;
+    if(previous?.profileKey===profileKey)return clone(previous);
+    return {schemaVersion:1,accountId:account.forexAccountId,profileKey,revision:(previous?.revision||0)+1,
+      assignedAt:now(),source:text(source),declaredBy:text(declaredBy),reason:text(reason),previous:previous?clone(previous):null};
+  }
+  function capturePeriodProfile(account,periodId){
+    const a=account?.riskProfileAssignment;
+    if(!a||!validProfileAssignment(a,account.forexAccountId))return null;
+    return {schemaVersion:1,accountId:account.forexAccountId,periodId,profileKey:a.profileKey,
+      profileName:riskProfileByAny(a.profileKey).name,assignmentRevision:a.revision,assignedAt:a.assignedAt,
+      capturedAt:now(),source:a.source,declaredBy:a.declaredBy,policyVersion:fx.policy.version,status:'DOCUMENTARY_ONLY'};
+  }
   const componentKeys=['price','contract','conversion','atr'];
   const identityShape=o=>object(o)&&(o.brokerHash==null||typeof o.brokerHash==='string')&&
     (o.identityContractVersion===undefined||o.identityContractVersion===1)&&
@@ -95,6 +116,7 @@
   const contextPeriodShape=p=>object(p)&&text(p.periodId)&&text(p.accountId)&&
     /^[A-Z]{3}$/.test(p.currency)&&civilDate(p.startedAt)&&
     (p.si===null||positive(p.si))&&(p.openingBook===null||finite(p.openingBook))&&
+    validProfileSnapshot(p.riskProfileSnapshot,p.accountId,p.periodId)&&
     Array.isArray(p.phases)&&p.phases.every(ph=>object(ph)&&Array.isArray(ph.orders)&&ph.orders.every(o=>
       orderExtensionsShape(o)&&(!text(o.accountId)||o.accountId===p.accountId)&&
       (!text(o.periodId)||o.periodId===p.periodId)&&(!text(o.currency)||o.currency===p.currency)&&
@@ -104,7 +126,8 @@
       r.periodId===p.periodId&&r.currency===p.currency&&civilDate(r.data)&&finite(r.resultado)&&finite(r.saldo))&&
     (p.activeOperation===null||object(p.activeOperation)&&text(p.activeOperation.operationId)&&
       p.activeOperation.recordContext?.accountId===p.accountId&&
-      p.activeOperation.recordContext?.periodId===p.periodId)&&
+      p.activeOperation.recordContext?.periodId===p.periodId&&
+      validProfileSnapshot(p.activeOperation.recordContext?.riskProfileSnapshot,p.accountId,p.periodId))&&
     (p.grid===undefined||p.grid===null||object(p.grid)&&text(p.grid.operationId)&&
       Number.isInteger(p.grid.declaredPhase)&&p.grid.declaredPhase>=1&&p.grid.declaredPhase<=6)&&
     (p.reserves===undefined||p.reserves===null||object(p.reserves)&&p.reserves.accountId===p.accountId&&
@@ -172,11 +195,12 @@
       periodId:a&&a.periodId||null,observedAt:a&&a.observedAt||null,
       provenance:a?'RECORDED':'LEGACY_UNRESOLVED',
       accountInputs:a?clone(a):null,marketInputs:market?clone(market):null,
+      riskProfileSnapshot:clone(contextEnvelope(f).accounts[key]?.periods[a?.periodId]?.riskProfileSnapshot||null),
       policySnapshot:fx.policy.snapshot()};
   }
   function mutate(action,reason,keys,fn){
     if(!text(reason))return {ok:false,persistido:false,error:'Informe o motivo do registro.'};
-    if(!supported())return {ok:false,persistido:false,error:'Agregado Forex incompatível. Preserve a base e revise a versão.'};
+    if(!supported()||!validateAccountProfileExtensions(S))return {ok:false,persistido:false,error:'Agregado Forex ou metadados de perfil incompatíveis. Preserve a base e revise a versão.'};
     const clearConfirmation=()=>{if(typeof hideStaleSavedTag==='function')hideStaleSavedTag();};
     if(jpWealthPersistenceOutcomeIsUnknown()){clearConfirmation();return {ok:false,persistido:null,error:'Gravação indeterminada. Confira a base antes de repetir.'};}
     const fields=[...new Set(['forex',...keys])]; const before={};
@@ -204,7 +228,7 @@
   }
   // Contexto operacional versionado. Seleção é estado efêmero; nenhum dado de
   // uma conta é copiado para S.phases, S.ledger ou S.activeOperation ao navegar.
-  let operationalAccountId=null,operationalPeriodId=null;
+  let operationalAccountId=null,operationalPeriodId=null,operationalHold=null;
   const contextEnvelope=f=>f?.accountContexts||{schemaVersion:1,revision:0,accounts:{},archivedAccounts:{},legacy:null};
   function registeredAccount(accountId){
     const matches=(S.accounts||[]).filter(a=>a&&a.forexAccountId===accountId);
@@ -215,44 +239,103 @@
     return masters.length===1?masters[0].forexAccountId:null;
   }
   function operationalSelection(){
+    if(operationalHold&&operationalHold.epoch!==jpWealthPersistenceEpoch())operationalHold=null;
     const explicit=operationalAccountId&&registeredAccount(operationalAccountId)?operationalAccountId:null;
     const accountId=explicit||defaultOperationalAccount();
     const a=accountId?contextEnvelope(raw()).accounts[accountId]:null;
     const periodId=operationalPeriodId&&a?.periods?.[operationalPeriodId]?operationalPeriodId:a?.currentPeriodId||null;
-    return {accountId,periodId,reason:explicit?'EXPLICIT':accountId?'UNIQUE_MASTER':'SELECTION_REQUIRED',
-      requiresSelection:!accountId,accounts:(S.accounts||[]).filter(x=>text(x?.forexAccountId)).map(x=>({accountId:x.forexAccountId,
+    const selected=operationalHold?operationalHold.selection:{accountId,periodId,reason:explicit?'EXPLICIT':accountId?'UNIQUE_MASTER':'SELECTION_REQUIRED',requiresSelection:!accountId};
+    return {...selected,accounts:(S.accounts||[]).filter(x=>text(x?.forexAccountId)).map(x=>({accountId:x.forexAccountId,
         name:x.nome||x.forexAccountId,type:x.tipo||null,currency:x.platformCurrency||null}))};
+  }
+  function withPreservedOperationalContext(command){
+    // Preserve the effective pair, including an absent period, while a cadastro or
+    // preparation write creates new defaults. Only an explicit selection activates it.
+    if(typeof command!=='function')throw new TypeError('Informe uma confirmação síncrona.');
+    const before=operationalSelection(),previous=operationalHold;
+    const selection={accountId:before.accountId,periodId:before.periodId,reason:before.reason,requiresSelection:before.requiresSelection};
+    operationalHold={epoch:jpWealthPersistenceEpoch(),selection};
+    try{
+      const result=command();
+      if(result&&typeof result.then==='function')throw new TypeError('A confirmação deve permanecer síncrona dentro do bloqueio de escrita.');
+      // Unknown writes may leave RAM changed. Retain the previous effective pair
+      // at the new epoch rather than silently activating the new fallback.
+      if(jpWealthPersistenceOutcomeIsUnknown()||result?.persistido===null)operationalHold={epoch:jpWealthPersistenceEpoch(),selection};
+      else if(!result?.ok)operationalHold=previous;
+      return result;
+    }catch(error){operationalHold={epoch:jpWealthPersistenceEpoch(),selection};throw error;}
   }
   function selectOperationalAccount(accountId){
     if(!registeredAccount(accountId))return {ok:false,error:'Selecione uma conta atualmente cadastrada em Contas.'};
-    operationalAccountId=accountId;operationalPeriodId=null;return {ok:true,selection:operationalSelection()};
+    operationalHold=null;operationalAccountId=accountId;operationalPeriodId=null;return {ok:true,selection:operationalSelection()};
+  }
+  function selectOperationalContext(accountId,periodId){
+    // Validate both identities before changing either variable. Selection never writes.
+    if(!supported()||!registeredAccount(accountId)||!text(periodId)||
+      !contextEnvelope(raw()).accounts[accountId]?.periods?.[periodId])
+      return {ok:false,error:'Selecione uma conta cadastrada e um período confirmado pertencente a ela.'};
+    operationalHold=null;operationalAccountId=accountId;operationalPeriodId=periodId;
+    return {ok:true,selection:operationalSelection()};
+  }
+  function accountProfileContext(target){
+    const accountId=text(target?.accountId),periodId=text(target?.periodId)||null;
+    const account=registeredAccount(accountId),p=contextEnvelope(raw()).accounts[accountId]?.periods?.[periodId];
+    const missing=(code,message)=>({status:'NOT_COMPUTABLE',accountId:accountId||null,periodId,
+      current:null,next:null,period:null,hasPendingChange:false,legacyName:null,findings:[{code,message}]});
+    if(!supported()||!account)return missing('PROFILE_ACCOUNT_UNAVAILABLE','Conta ausente, ambígua ou incompatível.');
+    if(periodId&&!p)return missing('PROFILE_PERIOD_UNAVAILABLE','O período não pertence à conta consultada.');
+    const assignment=account.riskProfileAssignment;
+    if(!validProfileAssignment(assignment,accountId))return missing('PROFILE_ASSIGNMENT_INVALID','A atribuição de perfil exige revisão.');
+    const describe=(key,revision,provenance)=>({key,name:riskProfileByAny(key).name,revision,provenance,
+      status:'DOCUMENTARY_ONLY',policyStatus:riskProfileByAny(key).status,replicationAllowed:false});
+    const current=assignment?describe(assignment.profileKey,assignment.revision,'ACCOUNT_ASSIGNMENT'):null;
+    const snapshot=p?.riskProfileSnapshot;
+    const period=snapshot?{...describe(snapshot.profileKey,snapshot.assignmentRevision,'PERIOD_SNAPSHOT'),
+      name:snapshot.profileName,snapshot:clone(snapshot)}:null;
+    const hasPendingChange=!!current&&!!p&&(!period||period.key!==current.key||period.revision!==current.revision);
+    return {status:periodId?(period?'OK':'NOT_COMPUTABLE'):(current?'OK':'NOT_COMPUTABLE'),accountId,periodId,
+      current,next:current?clone(current):null,period,hasPendingChange,
+      legacyName:!assignment&&text(account.perfil)||null,
+      findings:periodId&&!period?[{code:'PERIOD_PROFILE_NOT_CAPTURED',message:'Perfil do período não capturado; o cadastro atual não preenche o passado.'}]:
+        !current?[{code:'ACCOUNT_PROFILE_UNCONFIRMED',message:'Confirme explicitamente o perfil cadastral; nenhum perfil foi presumido.'}]:[]};
   }
   function archiveRegisteredAccount(accountId,{reason='',expectedEpoch}={}){
-    return mutate('registered-account-archived',reason,['accounts'],f=>{
+    const selected=operationalSelection();
+    const result=withPreservedOperationalContext(()=>mutate('registered-account-archived',reason,['accounts'],f=>{
       if(expectedEpoch!==undefined&&expectedEpoch!==jpWealthPersistenceEpoch())throw new Error('A base mudou; revise a conta antes de arquivar.');
       const index=(S.accounts||[]).findIndex(a=>a?.forexAccountId===accountId);
       if(index<0||!registeredAccount(accountId))throw new Error('Conta não cadastrada ou identidade ambígua.');
       const e=f.accountContexts||{schemaVersion:1,revision:0,accounts:{},archivedAccounts:{},legacy:null};
       if(Object.values(e.accounts?.[accountId]?.periods||{}).some(p=>p?.activeOperation))
         throw new Error('Finalize a operação em andamento desta conta antes de arquivar o cadastro.');
-      if(e.archivedAccounts?.[accountId])throw new Error('Conta já arquivada.');
       e.archivedAccounts=e.archivedAccounts||{};
       const archived=clone(S.accounts[index]);archived.investorPassword='';
-      e.archivedAccounts[accountId]={record:archived,archivedAt:now(),reason:text(reason)};
+      const previous=e.archivedAccounts[accountId]?clone(e.archivedAccounts[accountId]):null;
+      e.archivedAccounts[accountId]={record:archived,archivedAt:now(),reason:text(reason),...(previous?{previous}:{})};
       S.accounts.splice(index,1);e.revision++;f.accountContexts=e;
-    });
+    }));
+    if(result.ok&&result.persistido===true&&selected.accountId===accountId){
+      // Archiving the selected account is not an instruction to activate another.
+      // Keep the unselected state in RAM; boot retains its established fallback.
+      operationalAccountId=null;operationalPeriodId=null;
+      operationalHold={epoch:jpWealthPersistenceEpoch(),selection:{accountId:null,periodId:null,
+        reason:'SELECTION_REQUIRED',requiresSelection:true}};
+    }
+    return result;
   }
   function selectOperationalPeriod(accountId,periodId){
     if(operationalSelection().accountId!==accountId||!contextEnvelope(raw()).accounts[accountId]?.periods?.[periodId])
       return {ok:false,error:'Selecione um período confirmado da conta operacional.'};
-    operationalPeriodId=periodId;return {ok:true,selection:operationalSelection()};
+    operationalHold=null;operationalPeriodId=periodId;return {ok:true,selection:operationalSelection()};
   }
   function accountContext(target){
     if(!supported())return {...unavailable('ACCOUNT_CONTEXT_UNSUPPORTED','Contextos de conta incompatíveis; preserve a base.'),value:null};
     if(!object(target)||!text(target.accountId))return {...unavailable('ACCOUNT_ID_MISSING','Identifique a conta cadastrada.'),value:null};
     const a=contextEnvelope(raw()).accounts[target.accountId];
     if(!a)return {...unavailable('ACCOUNT_CONTEXT_MISSING','Registre ou reconcilie explicitamente o período desta conta.'),value:null};
-    const periodId=text(target.periodId)||a.currentPeriodId;
+    // An explicit null/empty period is an unselected context, not permission to
+    // consume a newly prepared currentPeriodId. Only legacy omission falls back.
+    const periodId=Object.prototype.hasOwnProperty.call(target,'periodId')?text(target.periodId):a.currentPeriodId;
     if(!periodId||!a.periods[periodId])return {...unavailable('ACCOUNT_PERIOD_MISSING','Selecione um período confirmado desta conta.'),value:null};
     return {status:'OK',value:clone(a.periods[periodId]),account:clone(a),revision:a.periods[periodId].revision,
       envelopeRevision:contextEnvelope(raw()).revision,findings:[]};
@@ -287,7 +370,13 @@
         if(a.periods[found.periodId])throw new Error('Este período observado já foi conciliado.');
         periodId=found.periodId;
       }
+      const priorPeriods=Object.values(a.periods);
+      const isFollowingPeriod=!text(input.observationPeriodId)&&priorPeriods.every(p=>input.startedAt>p.startedAt);
       a.periods[periodId]=newContextPeriod({...input,periodId,observedAt:now()});
+      // Historical reconciliation and automatically created observation periods do not inherit today's profile.
+      if(isFollowingPeriod){const snapshot=capturePeriodProfile(account,periodId);
+        if(snapshot)a.periods[periodId].riskProfileSnapshot=snapshot;}
+
       if(!a.currentPeriodId||input.activateCurrentPeriod===true)a.currentPeriodId=periodId;
       e.accounts[input.accountId]=a;e.revision++;f.accountContexts=e;
     });
@@ -440,7 +529,7 @@
         if(live&&!p.activeOperation){p.activeOperation={schemaVersion:1,operationId:id('fxop'),openedAt:now(),
           recordContext:context.status==='OK'?clone(context):{accountId,periodId,
             accountInputs:{accountId,periodId,currency:p.currency,si:p.si},status:'NOT_COMPUTABLE',
-            provenance:'PERIOD_FACTS_ONLY',findings:clone(context.findings||[])},
+            provenance:'PERIOD_FACTS_ONLY',riskProfileSnapshot:clone(p.riskProfileSnapshot||null),findings:clone(context.findings||[])},
           policySnapshot:fx.policy.snapshot(),status:'IN_PROGRESS'};
           firstFactOfNewOperation=true;}
         if(live&&p.activeOperation?.recordContext?.accountId!==accountId||live&&p.activeOperation?.recordContext?.periodId!==periodId)
@@ -594,7 +683,7 @@
   }
   function validateExecutionExtensions(document){
     const orders=phases=>!Array.isArray(phases)||phases.every(p=>!Array.isArray(p?.orders)||p.orders.every(orderExtensionsShape));
-    if(!orders(document?.phases))return false;
+    if(!validateAccountProfileExtensions(document)||!orders(document?.phases))return false;
     const records=document?.operationHistory?.records;
     return !Array.isArray(records)||records.every(r=>!Array.isArray(r?.ordersSnapshot)||r.ordersSnapshot.every(orderExtensionsShape));
   }
@@ -712,7 +801,7 @@
         S.activeOperation.policySnapshot={policyVersion:'LEGACY_UNRESOLVED',source:'explicit-migration'};
     });
   }
-  function recordAccountFacts(input,{reason}={}){
+  function recordAccountFacts(input,{reason,preserveSelection=false,expectedEpoch,expectedRevision}={}){
     if(!input||!Number.isInteger(input.accountIndex)||!S.accounts[input.accountIndex])
       return {ok:false,persistido:false,error:'Selecione explicitamente uma conta existente.'};
     if(!finite(input.si)||input.si<=0||!finite(input.equity)||!text(input.source)||
@@ -723,7 +812,10 @@
     if(input.capitalNominal!=null&&(!finite(input.capitalNominal)||input.capitalNominal<0))return {ok:false,persistido:false,error:'Capital nominal inválido.'};
     if(input.marginLevel!=null&&(!finite(input.marginLevel)||input.marginLevel<0))return {ok:false,persistido:false,error:'Nível de margem inválido.'};
     return mutate('account-observation',reason,['accounts','activeOperation'],f=>{
+      if(expectedEpoch!==undefined&&expectedEpoch!==jpWealthPersistenceEpoch())throw new Error('A base mudou; revise a observação antes de salvar.');
       const account=S.accounts[input.accountIndex];
+      if(expectedRevision!==undefined&&contextEnvelope(f).accounts[account.forexAccountId]?.periods?.[input.periodId]?.revision!==expectedRevision)
+        throw new Error('O período mudou; reabra a observação para revisar a versão atual.');
       if(!account.forexAccountId)account.forexAccountId=id('fxaccount');
       const key=account.forexAccountId, previous=f.accounts[key]||null;
       const requestedNewPeriod=input.newPeriod===true;
@@ -748,7 +840,7 @@
         observedAt:new Date(input.observedAt).toISOString(),
         periodId:previous&&!newPeriod?previous.periodId:selected?.periodId||id('fxperiod'),
         recordedAt:now(),previous:previous?clone(previous):null};
-      f.accounts[key]=fact;f.activeAccountId=key;
+      f.accounts[key]=fact;if(!preserveSelection)f.activeAccountId=key;
       if(!a.periods[fact.periodId]){
         a.periods[fact.periodId]=newContextPeriod({accountId:key,periodId:fact.periodId,
           startedAt:fact.observedAt.slice(0,10),currency:fact.currency,si:fact.si,openingBook:null,
@@ -985,7 +1077,8 @@
   }
   function activateProposal(){return {ok:false,persistido:false,status:'BLOCKED',error:'Ativação exige ato normativo e autoridade verificáveis. A sessão local não os comprova.'};}
   fx.state={empty,read:(target)=>target===undefined?fx.readModel():fx.readModel(target),recordContext,context:recordContext,mutate,migrateLegacy,
-    operationalSelection,selectOperationalAccount,selectOperationalPeriod,archiveRegisteredAccount,
+    operationalSelection,selectOperationalAccount,selectOperationalPeriod,selectOperationalContext,withPreservedOperationalContext,archiveRegisteredAccount,
+    accountProfileContext,createRiskProfileAssignment,validProfileAssignment,validProfileSnapshot,validateAccountProfileExtensions,
     accountContext,recordAccountPeriod,legacyAccountPreview,confirmLegacyAccountSnapshot,
     accountLedger,recordAccountLedger,recordAccountOrders,finalizeAccountOperation,addAccountOrderDraft,deleteAccountOrderDraft,
     recordAccountFacts,selectAccount,recordMarket,recordH4,recordGrid,recordReserves,

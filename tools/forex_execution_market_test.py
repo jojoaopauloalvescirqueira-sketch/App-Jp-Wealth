@@ -15,6 +15,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 INPUTS = [
     'src/js/00-core/00-forex-policy.js',
+    'src/js/00-core/01-risk-profiles.js',
     'src/js/10-domain/00-forex-engine.js',
     'src/js/10-domain/00-forex-state.js',
     'src/js/10-domain/19-execution-market.js',

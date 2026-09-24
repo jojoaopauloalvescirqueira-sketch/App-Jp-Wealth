@@ -6,7 +6,7 @@ const submenuUI = { level:1, surface:null, context:null, openers:[], temporary:f
 const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','forex-planning','research-forex']);
 const SUBMENU_TITLES=Object.freeze({
   exec:'Forex',finpes:'Finanças Pessoais',research:'Research',tools:'Ferramentas e Serviços',
-  'forex-management-accounts':'Management Accounts','forex-planning':'Planejamento','research-forex':'Forex'
+  'forex-management-accounts':'Contas e Período','forex-planning':'Planejamento','research-forex':'Forex'
 });
 const NAV_SUBMENU_SURFACES = {
   exec:()=>window.JPWExec&&window.JPWExec.ui,

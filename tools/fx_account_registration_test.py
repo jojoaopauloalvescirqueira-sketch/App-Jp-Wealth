@@ -11,16 +11,64 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
-from fx_consolidated_storage_test import SEED, Quiet, finalize
+from fx_consolidated_storage_test import SEED, Quiet
 from notes_launcher_test import launch_options
+# Finalization changed before this CHG (baseline 7f2d6b6): confirmed account and
+# period data are retained, while the session and unconfirmed draft are ended.
+# Keep this local oracle aligned with that baseline without changing its runtime.
+def finalize(page):
+    page.locator('#finalizeSessionBtn').click()
+    page.locator('#sessionHasCopy').click()
+    warning=page.locator('#modalBox').inner_text().lower()
+    assert 'contas, períodos' in warning and 'preservados' in warning
+    page.locator('#sessionProceed').click()
+    page.locator('#sessionDeletePhrase').fill('ENCERRAR SESSÃO')
+    page.locator('#sessionDeleteConfirm').click()
+    page.wait_for_function("document.getElementById('sessionNotice').textContent.includes('Sessão finalizada')")
+
 ROOT=Path(__file__).resolve().parents[1]
 SOURCES=['src/js/00-core/04-persistence.js','src/js/10-domain/17-fx-consolidated-model.js','src/js/40-app/24-fx-consolidated-import.js',
          'src/js/20-ui/28-fx-consolidated.js','src/js/20-ui/08-input-bindings.js','src/styles/app.css']
 SETUP=r"""() => {
   window.__begin=(report=__report(),id='fx_A')=>__fcs.api.beginRegistration(report,id);
-  window.__saveReg=(p,extra={},options={})=>__fcs.api.saveRegistration(p.token,{...p.draft,name:p.draft.name||'Nova sintética',...extra},options);
+  window.__saveReg=(p,extra={},options={})=>__fcs.api.saveRegistration(p.token,{...p.draft,name:p.draft.name||'Nova sintética',profileKey:p.mode==='complete'?p.draft.profileKey:'base',...extra},options);
 }"""
 CASES={
+'new-profile-required-valid-and-environment':r"""async()=>{
+ const p=__begin(__report('40004'),null),before=__snap();
+ for(const extra of [{profileKey:''},{profileKey:'aggressive'},{accountEnvironment:'production'}]){
+  const r=await __saveReg(p,extra);__assert(!r.ok&&__same(before,__snap()),'Invalid metadata wrote');
+ }
+ const r=await __saveReg(p,{profileKey:'longevity',accountEnvironment:'demo'});
+ __assert(r.ok&&__fcs.writes===1,'Profile and registration must share one confirmed write');
+ const a=S.accounts.find(a=>a.forexAccountId===r.accountId);
+ __assert(a.riskProfileAssignment.profileKey==='longevity'&&a.riskProfileAssignment.revision===1&&a.accountEnvironment==='demo'&&a.perfilLocked,'Assignment missing');
+ __assert(S.forex.activeAccountId===before.forex.activeAccountId&&!S.forex.accountContexts?.accounts?.[a.forexAccountId],'Registration selected context or created period');
+ const repeated=await __saveReg(p);__assert(!repeated.ok&&__fcs.writes===1,'Repeat created duplicate');return {r,repeated};
+}""",
+'confirmed-profile-cannot-clear-and-change-needs-reason':r"""async()=>{
+ const r=await __saveReg(__begin(__report('40004'),null));__assert(r.ok,'Fixture registration');
+ const p=__begin(null,r.accountId),before=__snap();
+ for(const extra of [{profileKey:''},{profileKey:'longevity',profileReason:''}]){
+  const result=await __saveReg(p,extra);__assert(!result.ok&&__same(before,__snap()),'Profile removed or changed without reason');
+ }
+ const original=requestPinUnlock;requestPinUnlock=async()=>false;
+ const denied=await __saveReg(p,{profileKey:'longevity',profileReason:'Deliberate future period'});requestPinUnlock=original;
+ __assert(!denied.ok&&__same(before,__snap()),'Locked profile bypassed deliberate unlock');return denied;
+}""",
+'archive-reregister-without-report-preserves-profile-chain':r"""async()=>{
+ const created=await __saveReg(__begin(__report('40004'),null),{profileKey:'longevity',accountEnvironment:'demo'});__assert(created.ok,'Create failed');
+ const id=created.accountId,assignment=structuredClone(S.accounts.find(a=>a.forexAccountId===id).riskProfileAssignment);
+ let archived=JPWForex.state.archiveRegisteredAccount(id,{reason:'Synthetic archive'});__assert(archived.ok,'Archive failed');
+ const tombstone=structuredClone(S.forex.accountContexts.archivedAccounts[id]);
+ const p=__begin(null,id);__assert(p.ok&&p.mode==='reregister'&&p.draft.accountEnvironment==='demo'&&p.draft.profileKey==='longevity','Archived registration inaccessible or metadata lost');
+ const r=await __saveReg(p,{profileKey:p.draft.profileKey},{confirmHistorical:true});__assert(r.ok&&r.accountId===id,'Recadastro did not reuse identity');
+ const live=S.accounts.find(a=>a.forexAccountId===id);
+ __assert(__same(live.riskProfileAssignment,assignment)&&live.accountEnvironment==='demo'&&live.sini===0&&live.satu===0&&!live.investorPassword,'Recadastro lost profile revision or restored financial/access data');
+ __assert(__same(S.forex.accountContexts.archivedAccounts[id],tombstone)&&S.fxConsolidated.receipts.length===0,'Archive history or import changed');
+ archived=JPWForex.state.archiveRegisteredAccount(id,{reason:'Synthetic rearchive'});__assert(archived.ok&&__same(S.forex.accountContexts.archivedAccounts[id].previous,tombstone),'Repeated archive lost earlier tombstone');
+ return {id,profileRevision:assignment.revision,archiveChainRetained:true};
+}""",
 'required-missing-current-login':r"""async()=>{
   S.accounts[0].platformLogin='';const before=__snap(),result=__prepare();
   __assert(!result.ok,'Missing current login allowed preparation');__assert(__same(before,__snap()),'Preparation wrote');return result;
@@ -177,6 +225,23 @@ CASES={
 }"""
 }
 
+def wizard_identity(page):
+    page.locator('#fxcwNext').click()
+    page.locator('[data-fxcw-step="1"]').wait_for(state='visible')
+
+
+def wizard_review(page, metadata=None):
+    page.locator('#fxcwNext').click()
+    for field, value in (metadata or {}).items():
+        control=page.locator('#fxcr-'+field)
+        if control.evaluate('e=>e.tagName')=='SELECT':control.select_option(value)
+        else:control.fill(value)
+    page.locator('#fxcwNext').click()
+    page.locator('#fxcr-profileKey').select_option('base')
+    page.locator('#fxcwNext').click()
+    page.locator('[data-fxcw-step="4"]').wait_for(state='visible')
+
+
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,default=ROOT);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--case',default='');args=ap.parse_args()
     if args.out.exists():ap.error('Choose a new evidence path')
@@ -204,14 +269,14 @@ def main():
         page.evaluate("S.accounts.forEach(a=>a.tipo='PRÓPRIA');navNavigate('forex-consolidated')");page.locator('#fxcAccount').select_option('');assert page.locator('#fxcAccount').input_value()=='';before=page.evaluate('__snap()')
         page.locator('#fxcOpenImport').click();page.locator('#fxcFile').set_input_files(str(root/'tools/fixtures/mt5-consolidated/classic-en.html'));page.locator('#fxcAnalyze').click();page.locator('#fxcRegister').wait_for()
         assert page.evaluate('__snap()')==before
-        page.locator('#fxcRegister').click();page.locator('#fxcr-name').fill('Cadastro pelo documento');page.keyboard.press('Escape')
+        page.locator('#fxcRegister').click();wizard_identity(page);page.locator('#fxcr-name').fill('Cadastro pelo documento');page.keyboard.press('Escape');page.locator('#fxcwDiscardConfirm').click()
         assert not page.locator('#fxcRegistrationDialog').is_visible();assert page.locator('#fxcRegister').evaluate('el=>document.activeElement===el')
         assert page.evaluate('__snap()')==before
-        page.locator('#fxcRegister').click();page.locator('#fxcr-name').fill('Cadastro pelo documento')
+        page.locator('#fxcRegister').click();wizard_identity(page);page.locator('#fxcr-name').fill('Cadastro pelo documento')
         for width,theme in [(390,'light'),(390,'dark'),(1440,'dark'),(1440,'light')]:
             page.set_viewport_size({'width':width,'height':844});page.evaluate('(t)=>document.documentElement.dataset.theme=t',theme)
             assert page.locator('#fxcRegistrationDialog').evaluate('el=>el.scrollWidth<=el.clientWidth+2&&el.getBoundingClientRect().left>=0')
-        page.locator('#fxcRegistrationSave').click();page.locator('#fxcConfirmImport').wait_for()
+        wizard_review(page);page.locator('#fxcRegistrationSave').click();page.locator('#fxcConfirmImport').wait_for()
         saved=page.evaluate('__snap()');assert len(saved['accounts'])==4 and not saved['fx']['receipts'] and saved['forex']['activeAccountId']=='fx_B'
         assert not page.locator('#fxcConfirmIdentity').is_checked()
         page.locator('#fxcConfirmIdentity').check();page.locator('#fxcConfirmImport').click();page.wait_for_function('S.fxConsolidated.receipts.length===1')
@@ -220,14 +285,14 @@ def main():
         return {'registered':registered,'savedBeforeImport':True,'reloaded':True,'cancelFocus':True,'themesAndMobile':True}
     def ui_accounts(page,context):
         page.evaluate("navNavigate('forex-account');renderContas()");before=page.evaluate('__snap()')
-        page.locator('#addAccountBtn').click();page.locator('#fxcr-name').fill('Ficha cancelada')
+        page.locator('#fxAccountsCreate').click();wizard_identity(page);page.locator('#fxcr-name').fill('Ficha cancelada')
         page.keyboard.press('Tab');assert page.locator('#fxcr-type').evaluate('el=>el===document.activeElement')
-        page.locator('#fxcRegistrationCancel').click();assert page.evaluate('__snap()')==before
-        assert page.locator('#addAccountBtn').evaluate('el=>el===document.activeElement')
+        page.locator('#fxcRegistrationCancel').click();page.locator('#fxcwDiscardConfirm').click();assert page.evaluate('__snap()')==before
+        assert page.locator('#fxAccountsCreate').evaluate('el=>el===document.activeElement')
         return {'cancelNoWrite':True,'keyboard':True}
     def ui_quota(page,context):
-        page.evaluate("navNavigate('forex-account');renderContas()");page.locator('#addAccountBtn').click()
-        page.locator('#fxcr-name').fill('Rascunho preservado');page.locator('#fxcr-platform').select_option('MetaTrader 5');page.locator('#fxcr-login').fill('40004');page.evaluate("__fcs.mode='quota'")
+        page.evaluate("navNavigate('forex-account');renderContas()");page.locator('#fxAccountsCreate').click();wizard_identity(page)
+        page.locator('#fxcr-name').fill('Rascunho preservado');page.locator('#fxcr-login').fill('40004');wizard_review(page,{'platform':'MetaTrader 5'});page.evaluate("__fcs.mode='quota'")
         before=page.evaluate('__snap()');page.locator('#fxcRegistrationSave').click();page.wait_for_function("document.getElementById('fxcRegistrationStatus').textContent.includes('recusada')")
         assert page.locator('#fxcr-name').input_value()=='Rascunho preservado' and page.evaluate('S.accounts.length===3')
         assert page.evaluate('__snap().raw')==before['raw']
@@ -243,27 +308,28 @@ def main():
         page.evaluate("S.accounts=[];navNavigate('forex-consolidated')")
         before=page.evaluate('__snap()');assert page.locator('#fxcAccount').input_value()==''
         page.locator('#fxcOpenImport').click();page.locator('#fxcFile').set_input_files(str(root/'tools/fixtures/mt5-consolidated/classic-en.html'))
-        page.locator('#fxcAnalyze').click();page.locator('#fxcRegister').wait_for();page.locator('#fxcRegister').click()
+        page.locator('#fxcAnalyze').click();page.locator('#fxcRegister').wait_for();page.locator('#fxcRegister').click();wizard_identity(page)
         assert page.locator('#fxcr-login').input_value()=='900001'
         page.locator('#fxcRegistrationCancel').click();assert page.evaluate('__snap()')==before
         return {'identifiedWithoutAccount':True,'noWrite':True}
     def metadata_finalize(page,context):
         account=page.evaluate("""async()=>{const report=__report('40004');report.identity.server='Synthetic-Demo';const draft=__begin(report,null);const result=await __saveReg(draft);__assert(result.ok,'Registration failed');markSessionCheckpoint();return result.accountId;}""")
         finalize(page);page.reload();wait_bootstrap(page)
-        item=page.evaluate('(id)=>S.fxConsolidated.accounts.find(a=>a.id===id)',account)
-        assert item['server']=='Synthetic-Demo' and item['currency']=='USD',item
-        assert page.evaluate('S.accounts.length===0&&S.fxConsolidated.receipts.length===0')
-        return {'catalog':item,'currentAccountsCleared':True,'noImport':True}
+        item=page.evaluate('(id)=>S.accounts.find(a=>a.forexAccountId===id)',account)
+        assert item['platformServer']=='Synthetic-Demo' and item['platformCurrency']=='USD',item
+        assert item['riskProfileAssignment']['profileKey']=='base' and item['investorPassword']==''
+        assert page.evaluate('S.accounts.length===4&&S.fxConsolidated.receipts.length===0&&!S.riskPinHash')
+        return {'registration':item,'confirmedAccountsPreserved':True,'sessionUnlockCleared':True,'noImport':True}
     def remote_finalize(page,context):
         page.evaluate("async()=>{await __import();markSessionCheckpoint();navNavigate('forex-account');renderContas();}")
-        page.locator('#addAccountBtn').click();page.locator('#fxcr-name').fill('Rascunho não confirmado')
+        page.locator('#fxAccountsCreate').click();wizard_identity(page);page.locator('#fxcr-name').fill('Rascunho não confirmado')
         other=context.new_page();other.goto(url);wait_bootstrap(other);other.evaluate('()=>{window.__onbShown=true;closeModal();markSessionCheckpoint();}')
         finalize(other)
-        page.wait_for_function("S.accounts.length===0&&!document.getElementById('fxcRegistrationDialog').open")
+        page.wait_for_function("S.accounts.length===3&&!document.getElementById('fxcRegistrationDialog').open")
         assert page.evaluate('S.fxConsolidated.receipts.length===1&&S.operationHistory.records.length===1')
         page.reload();wait_bootstrap(page)
-        assert page.evaluate('S.accounts.length===0&&S.fxConsolidated.receipts.length===1')
-        return {'draftClosed':True,'historyRetained':True,'registrationRequiredAfterReload':True}
+        assert page.evaluate('S.accounts.length===3&&S.fxConsolidated.receipts.length===1&&!S.riskPinHash')
+        return {'draftClosed':True,'historyRetained':True,'confirmedRegistrationRetainedAfterReload':True}
     try:
         with sync_playwright() as p:
             browser=p.chromium.launch(**launch_options())

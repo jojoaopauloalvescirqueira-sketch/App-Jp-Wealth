@@ -12,10 +12,10 @@ from notes_launcher_test import launch_options
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 
 ROOT = Path(__file__).resolve().parents[1]
-CHILDREN = ['forex-consolidated', 'forex-operation', 'forex-history',
-            'forex-accounting', 'forex-management-accounts', 'forex-planning', 'forex-reserves']
-LABELS = ['Dashboard', 'Execution Board', 'History', 'Contabilidade',
-          'Management Accounts', 'Planejamento', 'Reservas']
+CHILDREN = ['forex-consolidated', 'forex-management-accounts', 'forex-operation', 'forex-history',
+            'forex-accounting', 'forex-planning', 'forex-reserves']
+LABELS = ['Dashboard', 'Contas e Período', 'Execution Board', 'History',
+          'Contabilidade', 'Planejamento', 'Reservas']
 VIEWS = [('forex-operation', 'panel', 'executionBoard'),
          ('forex-history', 'history', 'execHistory'),
          ('forex-accounting', 'accounting', 'contab'),

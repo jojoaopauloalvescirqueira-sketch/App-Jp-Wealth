@@ -155,3 +155,12 @@ proprietário: sua homologação permanece NÃO VERIFICADA. Outros navegadores,
 leitor de tela e fidelidade visual humana ao MQL5 não são aprovação automática.
 A12 parcial, OPEN-05/V11/FCR/FEO, AUD-05/P2 e demais dívidas anteriores continuam
 separadas. Esta documentação não concede aceite ou permissão de publicação.
+
+
+## Contas e Período — candidate 2026-09-23
+
+CHG-FOREX-CONTAS-PERIODO-20260923 centraliza gestão no destino interno preservado `forex-management-accounts`, rotulado Contas e Período. `S.accounts` continua fonte cadastral; `S.fxConsolidated.accounts` é identidade/histórico importado, não catálogo concorrente. O wizard de cinco etapas usa `beginRegistration/saveRegistration`, agora com ambiente real/demo opcional e perfil explícito nos novos cadastros. Editar lacunas e nome preserva vínculos históricos; troca de identidade conhecida é recusada. Perfil confirmado e cadastro são salvos juntos. Alteração deliberada exige motivo, preserva a fricção local de perfil e vale apenas em período posterior confirmado.
+
+Preparação e observação continuam em `beginAccountSetup/saveSetupPeriod/saveSetupObservation`, com confirmação por etapa, recusa e UNKNOWN distintos. Reabrir usa a mesma conta. Consulta não seleciona operacionalmente: `JPWForex.accountsUI.useContext` passa pelas guardas antes de aplicar o par. Importação usa as mesmas APIs, nenhum ticket é transformado em ordem manual. O candidate anterior de onboarding não foi integrado nem copiado.
+
+O gesto explícito de iniciar cadastro/preparação estabelece somente uma geração de sessão ausente usando `sessionEpochCurrent()` e sua releitura canônica. Consulta não inicializa geração. Valor vazio, leitura indisponível, UNKNOWN, recuperação ou sessão bloqueada continuam recusados; geração existente não é rotacionada. Isso não reinicia o aplicativo nem altera dados financeiros.

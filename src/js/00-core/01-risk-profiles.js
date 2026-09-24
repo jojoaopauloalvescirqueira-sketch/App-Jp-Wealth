@@ -32,6 +32,8 @@ function riskProfileOperationalLabel(p){return riskProfileByAny(p).desc;}
 function riskProfileUXSummary(p){return riskProfileByAny(p).desc;}
 function riskProfileIconText(p){return ({base:'B',longevity:'L',high_longevity:'HL',high_longevity_plus:'H+'})[riskProfileByAny(p).key]||'?';}
 function getActiveRiskProfile(profileKey){return riskProfileForAcct(profileKey??(S.period&&S.period.profile)??'base');}
+// Explicit documentary reader; legacy/global consumers keep their existing contract.
+function getAccountRiskProfileContext(target){return globalThis.JPWForex?.state?.accountProfileContext(target)??null;}
 function activeProfileFator(){return getActiveRiskProfile().fator;}
 function activeRiskMatrix(){return JPWForex.policy.phases.map(row=>({nome:'FASE '+row.id,
   title:row.name,ddmin:row.lower/100,ddmax:(row.upper===undefined?JPWForex.policy.get(row.upperParameter).value:row.upper)/100,
@@ -43,3 +45,54 @@ function forexNewOperationPhases(){return JPWForex.policy.phases.map(row=>({
   title:'FASE '+row.id+' — '+row.name.toUpperCase(),cls:'p'+row.id,faseNome:'FASE '+row.id,
   ddtxt:(row.id===1?'0':'>'+row.lower)+'–'+(row.upper===undefined?JPWForex.policy.get(row.upperParameter).value:row.upper)+'%',
   alavtxt:row.maxLeverage+'x',policyVersion:JPWForex.policy.version,orders:emptyOrders(1)}));}
+
+const jpwAccountProfileObject=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+const jpwAccountProfileString=value=>typeof value==='string'?value.trim():'';
+const jpwAccountProfileInstant=value=>!!jpwAccountProfileString(value)&&Number.isFinite(Date.parse(value));
+// Documentary account metadata is validated before load/migrate as well as import.
+// Pure shape validation only; this never assigns policy or writes state.
+const jpwAccountProfileKeys=RISK_PROFILES.map(profile=>profile.key);
+const jpwAccountProfileText=value=>typeof value==='string'&&!!value.trim()&&value.length<=500&&!/[\u0000-\u001f\u007f]/.test(value);
+function jpwValidAccountProfileAssignment(value,accountId){
+  if(value==null)return true; // Older documents have no assignment.
+  const seen=new Set();let current=value,lastRevision=null;
+  while(current!=null){
+    if(!jpwAccountProfileObject(current)||seen.has(current)||current.schemaVersion!==1||!jpwAccountProfileString(current.accountId)||
+      (accountId&&current.accountId!==accountId)||current.accountId!==value.accountId||
+      !jpwAccountProfileKeys.includes(current.profileKey)||!Number.isSafeInteger(current.revision)||current.revision<1||
+      !jpwAccountProfileInstant(current.assignedAt)||!['source','declaredBy','reason'].every(k=>jpwAccountProfileText(current[k]))||
+      (lastRevision!==null&&current.revision!==lastRevision-1))return false;
+    seen.add(current);lastRevision=current.revision;current=current.previous;
+  }
+  return lastRevision===1;
+}
+function jpwValidAccountProfileSnapshot(value,accountId,periodId){
+  return value==null||jpwAccountProfileObject(value)&&value.schemaVersion===1&&value.status==='DOCUMENTARY_ONLY'&&
+    jpwAccountProfileString(value.accountId)&&jpwAccountProfileString(value.periodId)&&(!accountId||value.accountId===accountId)&&(!periodId||value.periodId===periodId)&&
+    jpwAccountProfileKeys.includes(value.profileKey)&&jpwAccountProfileText(value.profileName)&&
+    Number.isSafeInteger(value.assignmentRevision)&&value.assignmentRevision>0&&
+    jpwAccountProfileInstant(value.assignedAt)&&jpwAccountProfileInstant(value.capturedAt)&&jpwAccountProfileText(value.source)&&jpwAccountProfileText(value.declaredBy)&&jpwAccountProfileString(value.policyVersion);
+}
+function jpwValidateAccountProfileExtensions(document){
+  const accounts=rows=>!Array.isArray(rows)||rows.every(a=>jpwAccountProfileObject(a)&&
+    (a.accountEnvironment==null||['','unknown','real','demo'].includes(a.accountEnvironment))&&
+    jpwValidAccountProfileAssignment(a.riskProfileAssignment,a.forexAccountId)&&
+    (a.riskProfileAssignment==null||a.riskProfileAssignment.accountId===a.forexAccountId));
+  const context=c=>c==null||jpwValidAccountProfileSnapshot(c.riskProfileSnapshot,c.accountId,c.periodId);
+  if(!accounts(document?.accounts)||!context(document?.activeOperation?.recordContext))return false;
+  const envelope=document?.forex?.accountContexts;
+  if(jpwAccountProfileObject(envelope)){
+    for(const [accountId,archive] of Object.entries(envelope.archivedAccounts||{})){
+      const seen=new Set();let entry=archive;
+      while(entry!=null){
+        if(!jpwAccountProfileObject(entry)||seen.has(entry)||!accounts([entry.record])||entry.record.forexAccountId!==accountId)return false;
+        seen.add(entry);entry=entry.previous;
+      }
+    }
+    for(const a of Object.values(envelope.accounts||{}))for(const p of Object.values(a?.periods||{})){
+      if(!jpwValidAccountProfileSnapshot(p?.riskProfileSnapshot,p?.accountId,p?.periodId)||!context(p?.activeOperation?.recordContext))return false;
+    }
+  }
+  return !Array.isArray(document?.operationHistory?.records)||document.operationHistory.records.every(r=>
+    context(r?.recordContext)&&context(r?.finalizationContext)&&context(r?.entryContext)&&context(r?.operationSnapshot?.recordContext));
+}

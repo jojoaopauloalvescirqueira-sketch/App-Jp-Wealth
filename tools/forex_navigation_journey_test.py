@@ -13,7 +13,7 @@ from notes_launcher_test import launch_options
 from dashboard_forex_relocation_test import PREF, IDS, MOVED, KEY, swap
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED=["forex-consolidated", "forex-operation", "forex-history", "forex-accounting", "forex-management-accounts", "forex-planning", "forex-reserves"]
+EXPECTED=["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-planning", "forex-reserves"]
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,default=ROOT);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--entry-only',action='store_true');args=ap.parse_args()

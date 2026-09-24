@@ -97,3 +97,14 @@ Pendentes são apresentados separadamente e permanecem no risco comprometido nor
 Backup Completo valida a extensão e HASH antes de escrever, aceita ausência em backups antigos e preserva revisão/declaração. `calculationInputs.executionDiagnostics` captura o cenário disponível em cada registro ou correção factual da ordem. Finalizar a operação preserva a última versão confirmada de cada ordem; não consulta o cenário atual para completar ou recalcular o passado. Todos os schemas existentes permanecem nas versões atuais.
 
 Focais adicionais: `forex_execution_identity_test.py`, `forex_execution_table_test.py` e `forex_navigation_table_test.py`, além de projeção, motor, histórico, persistência e gate completo. Somente fixtures sintéticas; recibos externos registram build, hashes e limitações reais. Implementação local não equivale a integração, publicação ou aceite visual.
+
+
+## Gestão centralizada — candidate 2026-09-23
+
+Ordem Forex: Dashboard → Contas e Período → Execution Board → History → Contabilidade → Planejamento → Reservas. Os quatro layouts reutilizam nós/rotas; aliases `contas`, `forex-account` e `motor` permanecem. A preferência de ordem dos seis módulos N1 não é regravada.
+
+A Board mostra conta/período/operação e informações operacionais, com `Gerenciar em Contas e Período`; não possui cadastro nem seletor mutante de conta. A nova página separa conta examinada em RAM de `operationalSelection`. `selectOperationalContext` valida cadastro único e par conta/período antes de mudar ambas seleções, sem persistência. Rascunhos são resolvidos antes de trocar contexto ou navegar. Respostas tardias conferem escopo, geração e tentativa. Recarregar conserva o fallback anterior Mestre única/período atual, não promete última seleção persistida.
+
+`accountProfileContext` diferencia perfil cadastral atual, destino próximo período e referência capturada no período consultado. Ausência histórica não usa perfil atual nem Base. O cabeçalho Forex e Board leem contexto; simulações globais continuam globais. Perfis não substituem risco efetivo: a política V11 atual continua avaliando observações e ordens; P30 permanece PENDING e replicação bloqueada. Nenhuma fórmula foi alterada.
+
+`Contas e Período` reutiliza a conciliação histórica e observações da conta examinada; registrar observação ali não seleciona a conta na Board. Memória de Correção, Firewall e aplicação de lote continuam no domínio existente, sem inputs cadastrais diretos por tecla. Períodos são atuais/anteriores/pendentes; não foi criado encerramento formal.

@@ -139,54 +139,143 @@
     notify(status.error,'error');
   }
   let registrationDialog=null,registrationView=null;
+  function restoreAccountFocus(target){
+    const fallback=el('fxAccountsCreate');
+    if(typeof shellRestoreHeaderFocus==='function')shellRestoreHeaderFocus(target?.isConnected?target:fallback);
+    else if(target?.isConnected&&!target.closest('[hidden],[inert]')&&target.getClientRects().length)target.focus();
+  }
   function closeRegistration(){
     FX.cancelRegistration?.();registrationView=null;
     if(registrationDialog?.open)registrationDialog.close();
   }
-  function openAccountRegistration({report=null,accountId=null,trigger=document.activeElement,onSaved=null}={}){
+  function registrationValues(){return Object.fromEntries(new FormData(el('fxcRegistrationForm')));}
+  function requestRegistrationClose(){
+    const view=registrationView;if(!view||view.saving)return;
+    if(view.confirmingClose){
+      view.confirmingClose=false;el('fxcwDiscard').hidden=true;el('fxcwWork').inert=false;el('fxcwFooter').inert=false;
+      el('fxcRegistrationCancel').focus();return;
+    }
+    if(!view.saved&&(view.unknown||JSON.stringify(registrationValues())!==view.initial)){
+      view.confirmingClose=true;el('fxcwDiscard').hidden=false;el('fxcwWork').inert=true;el('fxcwFooter').inert=true;
+      el('fxcwDiscardText').textContent=view.unknown?'O resultado da gravação está indeterminado. Fechar esta ficha não desfaz uma eventual gravação; confira a base antes de tentar cadastrar novamente.':'Há preenchimento não confirmado. Fechar descarta somente esta ficha; contas e etapas já confirmadas permanecem salvas.';
+      el('fxcwKeep').focus();return;
+    }
+    closeRegistration();
+  }
+  function trapAccountDialogTab(event,dialog){
+    if(event.key!=='Tab')return;
+    const targets=[...dialog.querySelectorAll('button,input,select,textarea,a[href],[tabindex]')].filter(node=>
+      node.tabIndex>=0&&!node.disabled&&!node.closest('[hidden],[inert]')&&node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden');
+    const first=targets[0],last=targets.at(-1),active=document.activeElement;
+    if(!first){event.preventDefault();dialog.focus();return;}
+    if(event.shiftKey&&(active===first||!targets.includes(active))){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&(active===last||!dialog.contains(active))){event.preventDefault();first.focus();}
+  }
+  function openAccountRegistration({report=null,accountId=null,trigger=document.activeElement,returnFocus=trigger,onSaved=null}={}){
     if(registrationView?.saving)return;
+    if(registrationDialog?.open){registrationDialog.focus();return;}
     const prepared=FX.beginRegistration(report,accountId);
     if(!prepared.ok){if(report)notify(prepared.error,'error');else alert(prepared.error);return;}
     if(!registrationDialog){
       registrationDialog=document.createElement('dialog');registrationDialog.id='fxcRegistrationDialog';
-      registrationDialog.className='fxc-registration';registrationDialog.setAttribute('aria-labelledby','fxcRegistrationTitle');
+      registrationDialog.className='fxc-registration fxc-account-wizard';registrationDialog.setAttribute('aria-labelledby','fxcRegistrationTitle');
       document.body.append(registrationDialog);
-      registrationDialog.addEventListener('cancel',event=>{event.preventDefault();if(!registrationView?.saving)closeRegistration();});
-      registrationDialog.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
-      registrationDialog.addEventListener('close',()=>{const target=registrationDialog._returnFocus;registrationView=null;FX.cancelRegistration?.();if(target?.isConnected)target.focus();});
+      registrationDialog.addEventListener('cancel',event=>{event.preventDefault();requestRegistrationClose();});
+      registrationDialog.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();trapAccountDialogTab(event,registrationDialog);});
+      registrationDialog.addEventListener('close',()=>{if(registrationDialog.open)return;const target=registrationDialog._returnFocus;registrationView=null;FX.cancelRegistration?.();restoreAccountFocus(target);});
     }
-    const draft=prepared.draft,mode=prepared.mode;
-    const title=mode==='complete'?'Completar cadastro':mode==='reregister'?'Recadastrar conta':'Cadastrar conta';
-    registrationView={...prepared,saving:false,onSaved};registrationDialog._returnFocus=trigger;
-    const field=(key,label,required=false)=>`<label>${label}<input id="fxcr-${key}" name="${key}" value="${safe(draft[key])}" maxlength="160" ${required?'required':''} autocomplete="off"></label>`;
-    registrationDialog.innerHTML=`<form id="fxcRegistrationForm"><header><h2 id="fxcRegistrationTitle">${title}</h2><p>Forex → Contas · cadastro local</p></header><p>Confira os identificadores. Esta ficha não registra saldo, equity ou parâmetros financeiros e não altera a conta operacional.</p><div class="fxc-registration-fields">${field('name','Nome de exibição',true)}<label>Tipo<select name="type" id="fxcr-type">${['MESTRE','PRÓPRIA','SATÉLITE'].map(t=>`<option ${draft.type===t?'selected':''}>${t}</option>`).join('')}</select></label><label>Plataforma<select name="platform" id="fxcr-platform" required>${platformOptions(draft.platform)}</select></label>${field('login','Número / login da conta',true)}${field('broker','Corretora')}${field('server','Servidor (se informado)')}${field('currency','Moeda do cadastro (se informada)')}</div><p>Identificadores sugeridos pelo documento precisam de revisão. Senhas não são necessárias. Metadados ausentes permanecem não verificados.</p>${mode==='reregister'?'<label class="fxc-check"><input id="fxcr-history" type="checkbox" required> Confirmo reutilizar esta identidade e preservar seu histórico, sem restaurar saldos operacionais.</label>':''}<p id="fxcRegistrationStatus" role="status" aria-live="polite"></p><footer><button type="button" id="fxcRegistrationCancel">Cancelar</button><button type="submit" id="fxcRegistrationSave">Salvar cadastro</button></footer></form>`;
-    el('fxcRegistrationCancel').onclick=closeRegistration;
+    const draft=prepared.draft,mode=prepared.mode,creating=mode!=='complete';
+    const title=mode==='complete'?'Atualizar cadastro de conta de CFDs':mode==='reregister'?'Recadastrar conta de CFDs':'Cadastro de Nova Conta de CFDs';
+    const profileContext=prepared.accountId?window.JPWForex?.state?.accountProfileContext?.({accountId:prepared.accountId,periodId:S.forex?.accountContexts?.accounts?.[prepared.accountId]?.currentPeriodId||null}):null;
+    const steps=['Apresentação','Identificação','Metadados','Perfil de risco','Revisão'];
+    registrationView={...prepared,saving:false,onSaved,step:0,saved:false};registrationDialog._returnFocus=returnFocus;
+    const field=(key,label,required=false)=>`<label>${label}${required?' *':''}<input id="fxcr-${key}" name="${key}" value="${safe(draft[key])}" maxlength="160" ${required?'required':''} autocomplete="off"></label>`;
+    registrationDialog.innerHTML=`<form id="fxcRegistrationForm" novalidate>
+      <header class="fxcw-header"><div><p class="fxcw-eyebrow">FOREX · CONTAS E PERÍODO</p><h2 id="fxcRegistrationTitle">${title}</h2></div><button type="button" id="fxcwClose" class="fxcw-close" aria-label="Fechar cadastro">×</button></header>
+      <ol class="fxcw-steps" aria-label="Etapas do cadastro">${steps.map((label,i)=>`<li data-fxcw-progress="${i}" aria-label="${i+1}. ${label}"><span aria-hidden="true">${i+1}</span><b class="fxcw-step-name">${label}</b></li>`).join('')}</ol><p id="fxcwProgressLabel" class="fxcw-progress-label"></p>
+      <div id="fxcwWork" class="fxcw-body">
+        <section data-fxcw-step="0"><h3 tabindex="-1">Uma conta, seus períodos e suas operações</h3><p>Cadastre uma conta de CFDs que você já utiliza. Ela terá uma identidade única no JP Wealth, com períodos e operações vinculados a ela.</p><p>Você vai conferir identificação, plataforma e perfil de risco. Depois de cadastrar, poderá preparar um período com moeda, capital inicial e referências financeiras próprias.</p><p class="fxcw-notice">Este cadastro não abre conta na corretora nem autoriza operar. Não são necessárias senhas, tokens ou credenciais.</p></section>
+        <section data-fxcw-step="1" hidden inert><h3 tabindex="-1">Identificação da conta</h3><p>Use um nome reconhecível e o identificador fornecido pela plataforma. O número é preservado como texto, inclusive zeros iniciais.</p><div class="fxc-registration-fields">${field('name','Nome de identificação',true)}<label>Tipo da conta *<select name="type" id="fxcr-type">${['MESTRE','PRÓPRIA','SATÉLITE'].map(t=>`<option ${draft.type===t?'selected':''}>${t}</option>`).join('')}</select></label>${field('login','Número / login da conta',true)}</div></section>
+        <section data-fxcw-step="2" hidden inert><h3 tabindex="-1">Metadados operacionais</h3><p>Identificadores conhecidos não podem ser substituídos por esta ficha. Corretora, servidor e moeda ausentes permanecem pendentes.</p><div class="fxc-registration-fields"><label>Plataforma *<select name="platform" id="fxcr-platform" required>${platformOptions(draft.platform)}</select></label>${field('broker','Corretora (opcional)')}${field('server','Servidor (se informado)')}${field('currency','Moeda-base · código de 3 letras (opcional)')}<label>Ambiente (opcional)<select id="fxcr-accountEnvironment" name="accountEnvironment">${[['','Não informado'],['real','Real'],['demo','Demo'],['unknown','Desconhecido declarado']].map(([key,label])=>`<option value="${key}" ${draft.accountEnvironment===key?'selected':''}>${label}</option>`).join('')}</select></label></div></section>
+        <section data-fxcw-step="3" hidden inert><h3 tabindex="-1">Perfil de risco declarado</h3><p>O perfil pertence a esta conta. Sua atribuição valerá para um período criado explicitamente depois da confirmação; períodos existentes e históricos conservam suas referências.</p>${profileContext?`<p class="fxcw-notice">Perfil documental do período atual: ${safe(profileContext.period?.name||'Não definido nesse período')}. Perfil cadastral para próximo período: ${safe(profileContext.next?.name||'Ainda não declarado')}.</p>`:''}${prepared.legacyProfile&&!draft.profileKey?`<p class="fxcw-notice">Registro legado: ${safe(prepared.legacyProfile)}. Ainda não há atribuição versionada; nenhuma referência histórica será preenchida por este cadastro.</p>`:''}<label>Perfil${creating?' *':''}<select id="fxcr-profileKey" name="profileKey" ${creating?'required':''}><option value="">${creating?'Escolha o perfil':'Manter sem atribuição versionada'}</option>${riskProfilesForState().map(p=>`<option value="${safe(p.key)}" ${draft.profileKey===p.key?'selected':''}>${safe(p.name)}</option>`).join('')}</select></label><p id="fxcwProfileHelp" class="fxcw-notice"></p>${field('profileReason','Motivo da alteração de perfil (quando alterado)')}<p>Perfil cadastral e risco efetivo são leituras distintas. O motor continua verificando as regras vigentes; fatores P-30 pendentes não são liberados.</p></section>
+        <section data-fxcw-step="4" hidden inert><h3 tabindex="-1">Revise antes de confirmar</h3><dl id="fxcwReview" class="fxcw-review"></dl><p class="fxcw-notice">Esta confirmação salva somente o cadastro e o perfil declarado. Período, SI, saldo e equity terão suas próprias confirmações. A conta operacional não será trocada.</p>${mode==='reregister'?'<label class="fxc-check"><input id="fxcr-history" name="confirmHistorical" type="checkbox" required> Confirmo reutilizar esta identidade e preservar seu histórico, sem restaurar saldos operacionais.</label>':''}</section>
+        <section id="fxcwSuccess" hidden><h3 tabindex="-1">Conta cadastrada</h3><p id="fxcwSuccessText"></p><p>O cadastro não constitui autorização para operar. Prepare ou selecione um período para utilizar esta conta na Execution Board.</p><button type="button" id="fxcwPrepare">Preparar ou selecionar período</button></section>
+      </div>
+      <p id="fxcRegistrationStatus" class="fxcw-status" role="status" aria-live="polite"></p>
+      <div id="fxcwDiscard" class="fxcw-discard" hidden role="group" aria-labelledby="fxcwDiscardTitle"><h3 id="fxcwDiscardTitle">Fechar esta ficha?</h3><p id="fxcwDiscardText"></p><button type="button" id="fxcwKeep">Continuar preenchendo</button><button type="button" id="fxcwDiscardConfirm">Descartar ficha e fechar</button></div>
+      <footer id="fxcwFooter"><button type="button" id="fxcRegistrationCancel">Cancelar</button><span class="fxcw-footer-spacer"></span><button type="button" id="fxcwBack" hidden>Voltar</button><button type="button" id="fxcwNext">Continuar</button><button type="submit" id="fxcRegistrationSave" hidden>${creating?'Cadastrar conta':'Salvar alterações'}</button></footer>
+    </form>`;
+    const view=registrationView;
+    const profileHelp=()=>{const key=el('fxcr-profileKey').value;el('fxcwProfileHelp').textContent=key?riskProfileByAny(key).desc:'Escolha explícita, sem perfil automático. Períodos antigos sem referência continuarão identificados como pendentes.';};
+    el('fxcr-profileKey').onchange=profileHelp;profileHelp();
+    el('fxcr-currency').addEventListener('input',event=>{event.target.value=event.target.value.toUpperCase();});
+    function validateStep(step){
+      const section=registrationDialog.querySelector(`[data-fxcw-step="${step}"]`);
+      if(!section)return true;
+      const currency=el('fxcr-currency');currency.setCustomValidity(currency.value&&!/^[A-Z]{3}$/.test(currency.value)?'Use o código de moeda com três letras maiúsculas.':'');
+      const reason=el('fxcr-profileReason');reason.required=!!draft.profileKey&&el('fxcr-profileKey').value!==draft.profileKey;
+      for(const input of section.querySelectorAll('input,select'))if(!input.checkValidity()){input.reportValidity();return false;}
+      return true;
+    }
+    function showStep(step,focus=true){
+      view.step=step;el('fxcRegistrationStatus').textContent='';el('fxcwProgressLabel').textContent='Etapa '+(step+1)+' de 5 · '+steps[step];
+      registrationDialog.querySelectorAll('[data-fxcw-step]').forEach(section=>{const active=Number(section.dataset.fxcwStep)===step;section.hidden=!active;section.inert=!active;});
+      registrationDialog.querySelectorAll('[data-fxcw-progress]').forEach(item=>{if(Number(item.dataset.fxcwProgress)===step)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');});
+      el('fxcwBack').hidden=step===0;el('fxcwNext').hidden=step===4;el('fxcRegistrationSave').hidden=step!==4;
+      if(step===4){const v=registrationValues();el('fxcwReview').innerHTML=[['Identificação',v.name+' · '+v.login,1],['Tipo',v.type,1],['Plataforma',v.platform,2],['Corretora',v.broker||'Pendente',2],['Servidor',v.server||'Não informado',2],['Moeda',v.currency||'Pendente · confirmar na preparação do período',2],['Ambiente',({'real':'Real','demo':'Demo','unknown':'Desconhecido declarado'})[v.accountEnvironment]||'Não informado',2],['Perfil para próximo período',v.profileKey?riskProfileByAny(v.profileKey).name:'Pendente · sem atribuição versionada',3]].map(([label,value,target])=>`<div><dt>${label}</dt><dd>${safe(value)}</dd><button type="button" data-fxcw-edit="${target}" aria-label="Editar ${label.toLowerCase()}">Editar</button></div>`).join('');}
+      el('fxcwWork').scrollTop=0;
+      if(focus)registrationDialog.querySelector(`[data-fxcw-step="${step}"] h3`).focus({preventScroll:true});
+    }
+    el('fxcwNext').onclick=()=>{if(validateStep(view.step))showStep(view.step+1);};
+    el('fxcwBack').onclick=()=>showStep(Math.max(0,view.step-1));
+    el('fxcwReview').onclick=event=>{const button=event.target.closest('[data-fxcw-edit]');if(button)showStep(Number(button.dataset.fxcwEdit));};
+    el('fxcRegistrationCancel').onclick=requestRegistrationClose;el('fxcwClose').onclick=requestRegistrationClose;
+    el('fxcwKeep').onclick=requestRegistrationClose;el('fxcwDiscardConfirm').onclick=closeRegistration;
     el('fxcRegistrationForm').onsubmit=async event=>{
-      event.preventDefault();const view=registrationView;if(!view||view.saving)return;
-      const input=Object.fromEntries(new FormData(event.currentTarget));
-      view.saving=true;el('fxcRegistrationSave').disabled=true;el('fxcRegistrationCancel').disabled=true;
+      event.preventDefault();if(registrationView!==view||view.saving||view.saved||view.unknown||view.confirmingClose)return;
+      if(view.step<4){el('fxcwNext').click();return;}
+      for(let step=1;step<5;step++){
+        if(![...registrationDialog.querySelectorAll(`[data-fxcw-step="${step}"] input,[data-fxcw-step="${step}"] select`)].every(input=>input.checkValidity())){showStep(step);validateStep(step);return;}
+      }
+      const input=registrationValues();view.saving=true;
+      registrationDialog.querySelectorAll('button').forEach(button=>button.disabled=true);
       el('fxcRegistrationStatus').textContent='Confirmando cadastro…';
       try{
         const result=await FX.saveRegistration(view.token,input,{confirmHistorical:el('fxcr-history')?.checked===true});
         if(registrationView!==view)return;
         if(!result.ok){el('fxcRegistrationStatus').textContent=result.error||'Cadastro não confirmado.';view.unknown=result.persistido===null;return;}
-        const callback=view.onSaved;closeRegistration();renderContas();
-        if(callback)callback(result);
+        view.saved=true;view.result=result;
+        if(typeof renderContas==='function')renderContas();
+        if(view.onSaved){const callback=view.onSaved;closeRegistration();callback(result);return;}
+        registrationDialog.querySelectorAll('[data-fxcw-step]').forEach(section=>{section.hidden=true;section.inert=true;});
+        el('fxcwSuccess').hidden=false;el('fxcwSuccessText').textContent='Cadastro confirmado. A preparação do período é uma etapa separada; a conta operacional foi preservada.';
+        el('fxcRegistrationStatus').textContent='Gravação confirmada.';el('fxcwBack').hidden=true;el('fxcwNext').hidden=true;el('fxcRegistrationSave').hidden=true;
+        el('fxcRegistrationCancel').textContent='Fechar';el('fxcwSuccess').querySelector('h3').focus();
       }catch(error){if(registrationView===view)el('fxcRegistrationStatus').textContent='Cadastro não confirmado. Confira a sessão.';}
-      finally{if(registrationView===view){view.saving=false;el('fxcRegistrationCancel').disabled=false;el('fxcRegistrationSave').disabled=!!view.unknown;}}
+      finally{if(registrationView===view){view.saving=false;registrationDialog.querySelectorAll('button').forEach(button=>button.disabled=false);el('fxcRegistrationSave').disabled=!!view.unknown||view.saved;}}
     };
-    registrationDialog.showModal();el('fxcr-name').focus();
+    el('fxcwPrepare').onclick=()=>{if(!view.saved||!view.result)return;const id=view.result.accountId;closeRegistration();openAccountSetup({accountId:id,returnFocus});};
+    view.initial=JSON.stringify(registrationValues());showStep(0,false);registrationDialog.showModal();registrationDialog.querySelector('[data-fxcw-step="0"] h3').focus();
   }
   function openImport({accountId=null,returnFocus=document.activeElement}={}){
+    const started=FX.beginImportReview();if(!started.ok){alert(started.error);return;}
     cancel();if(accountId)ui.accountId=accountId;
     ui.source='mt5';window.JPWNavigation?.navigate('forex-consolidated');render();
     el('fxcImport').hidden=false;el('fxcFile').focus();
     el('fxcCancelImport').onclick=()=>{cancel();el('fxcImport').hidden=true;(returnFocus?.isConnected&&returnFocus.getClientRects().length?returnFocus:el('fxcOpenImport')).focus();};
   }
   let setupDialog=null,setupView=null;
+  function setupValues(){
+    return JSON.stringify([...setupDialog.querySelectorAll('form:not([hidden]) input,form:not([hidden]) select')].filter(input=>!input.disabled).map(input=>[input.id,input.type==='checkbox'?input.checked:input.value]));
+  }
+  function confirmSetupDiscard(){
+    if(!setupView)return true;
+    if(!setupView.unknown&&setupValues()===setupView.initial)return true;
+    return confirm(setupView.unknown?'O resultado da gravação está indeterminado. Fechar não desfaz uma eventual gravação; confira a base antes de repetir. Deseja fechar?':'Há preenchimento não confirmado. Descartar somente este preenchimento e fechar? As etapas já salvas serão preservadas.');
+  }
   function closeSetup({force=false}={}){
-    if(setupView?.saving&&!force)return;
-    FX.cancelAccountSetup?.();setupView=null;if(setupDialog?.open)setupDialog.close();
+    if(!force&&(setupView?.saving||!confirmSetupDiscard()))return false;
+    FX.cancelAccountSetup?.();setupView=null;if(setupDialog?.open)setupDialog.close();return true;
   }
   function accountReport(accountId){
     const account=S.fxConsolidated?.accounts?.find(a=>a.id===accountId),snapshot=account?.summaries?.slice(-1)[0];
@@ -195,6 +284,7 @@
   }
   function openAccountSetup({accountId=null,report=null,returnFocus=document.activeElement}={}){
     if(setupView?.saving)return;
+    if(setupDialog?.open){setupDialog.focus();return;}
     const account=FX.accounts().find(a=>a.id===accountId);
     if(!account||account.archived||account.id.startsWith('live:')){
       openAccountRegistration({accountId:account?.id||null,report,trigger:returnFocus,
@@ -208,13 +298,13 @@
       setupDialog=document.createElement('dialog');setupDialog.id='fxcSetupDialog';setupDialog.className='fxc-registration';
       setupDialog.setAttribute('aria-labelledby','fxcSetupTitle');document.body.append(setupDialog);
       setupDialog.addEventListener('cancel',event=>{event.preventDefault();closeSetup();});
-      setupDialog.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
-      setupDialog.addEventListener('close',()=>{const target=setupDialog._returnFocus;FX.cancelAccountSetup?.();setupView=null;if(target?.isConnected)target.focus();});
+      setupDialog.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();trapAccountDialogTab(event,setupDialog);});
+      setupDialog.addEventListener('close',()=>{if(setupDialog.open)return;const target=setupDialog._returnFocus;FX.cancelAccountSetup?.();setupView=null;restoreAccountFocus(target);});
     }
     setupView={...prepared,saving:false};setupDialog._returnFocus=returnFocus;
     const suggestions=prepared.suggestions;
     const field=(id,label,type='text',value='',required=false)=>`<label>${label}<input id="${id}" type="${type}" ${type==='number'?'step="any"':''} value="${safe(value)}" ${required?'required':''}></label>`;
-    setupDialog.innerHTML=`<header><h2 id="fxcSetupTitle">Preparar conta e período</h2><p>${safe(account.name||account.id)} · ${safe(account.login||'')} · ${safe(account.currency||'Moeda a confirmar')}</p></header><p>Cadastro, importação, período e observação são confirmações separadas. Fechar esta ficha preserva as etapas já salvas.</p>${suggestions?`<section class="fxc-setup-report"><h3>Valores do relatório</h3><dl class="fxc-statistics"><div><dt>Saldo informado</dt><dd>${safe(number(suggestions.balance,account.currency||''))}</dd></div><div><dt>Equity informado</dt><dd>${safe(number(suggestions.equity,account.currency||''))}</dd></div><div><dt>Referência do documento</dt><dd>${safe(suggestions.date||'Data não informada')}</dd></div></dl><p>Saldo e equity são fotografias da conta. Nenhum deles preenche o SI ou o saldo de abertura. Confirme a data e o fuso da observação antes de registrar.</p></section>`:''}<form id="fxcSetupPeriodForm"><h3>1. Período operacional</h3><label>Período<select id="fxcs-period"><option value="">Registrar novo período</option>${prepared.periods.map(p=>`<option value="${safe(p.periodId)}" ${p.periodId===prepared.currentPeriodId?'selected':''}>${safe(p.startedAt)} · ${safe(p.currency)} · SI ${safe(number(p.si))}</option>`).join('')}</select></label><div id="fxcs-new-period" class="fxc-registration-fields">${field('fxcs-start','Início do período','date','',true)}${field('fxcs-currency','Moeda','text',account.currency||'',true)}${field('fxcs-si','SI confirmado (capital inicial) · vazio = indisponível','number')}${field('fxcs-book','Saldo contábil na abertura · vazio = indisponível','number')}${field('fxcs-period-source','Fonte do período e capital','text','Declaração manual',true)}${field('fxcs-period-reason','Motivo do registro','text','Preparação explícita da conta',true)}<label class="fxc-check"><input id="fxcs-active" type="checkbox" checked> Tornar este o período atual da conta</label></div><label class="fxc-check"><input id="fxcs-confirm-period" type="checkbox" required> Conferi a conta, o período, a moeda e o SI informado ou indisponível.</label><button type="submit" id="fxcs-save-period">Confirmar período</button></form><form id="fxcSetupObservationForm" hidden><h3>2. Observação financeira</h3><p id="fxcs-period-summary"></p><p>Opcional para preencher as ordens. Os cálculos que dependem de fatos ausentes continuam indisponíveis. Registrar esta observação torna a conta a referência financeira do motor.</p><div class="fxc-registration-fields">${field('fxcs-equity','Equity observado','number',suggestions?.equity??'',true)}${field('fxcs-observed','Data e hora da observação · fuso deste dispositivo','datetime-local','',true)}${field('fxcs-observation-source','Fonte da observação','text',suggestions?.source||'Declaração manual',true)}${field('fxcs-rate','Conversão: 1 USD na moeda da conta','number')}${field('fxcs-cashflow','Fluxo líquido desde o SI · vazio = desconhecido','number')}${field('fxcs-observation-reason','Motivo do registro','text','Observação financeira revisada',true)}</div><label class="fxc-check"><input id="fxcs-cashflow-confirm" type="checkbox"> Conferi a cobertura do fluxo líquido informado (depósitos menos retiradas).</label><label class="fxc-check"><input id="fxcs-confirm-observation" type="checkbox" required> Conferi equity, fonte, data/hora e unidade. O relatório não comprova valores atuais.</label><button type="submit" id="fxcs-save-observation">Salvar observação financeira</button></form><p id="fxcSetupStatus" role="status" aria-live="polite"></p><footer><button type="button" id="fxcs-close">Fechar</button><button type="button" id="fxcs-open-orders" hidden>Ir para fases e ordens</button></footer>`;
+    setupDialog.innerHTML=`<header><h2 id="fxcSetupTitle">Preparar conta e período</h2><p>${safe(account.name||account.id)} · ${safe(account.login||'')} · ${safe(account.currency||'Moeda a confirmar')}</p></header><p>Cadastro, importação, período e observação são confirmações separadas. Fechar esta ficha preserva as etapas já salvas.</p>${suggestions?`<section class="fxc-setup-report"><h3>Valores do relatório</h3><dl class="fxc-statistics"><div><dt>Saldo informado</dt><dd>${safe(number(suggestions.balance,account.currency||''))}</dd></div><div><dt>Equity informado</dt><dd>${safe(number(suggestions.equity,account.currency||''))}</dd></div><div><dt>Referência do documento</dt><dd>${safe(suggestions.date||'Data não informada')}</dd></div></dl><p>Saldo e equity são fotografias da conta. Nenhum deles preenche o SI ou o saldo de abertura. Confirme a data e o fuso da observação antes de registrar.</p></section>`:''}<form id="fxcSetupPeriodForm"><h3>1. Período operacional</h3><label>Período<select id="fxcs-period"><option value="">Registrar novo período</option>${prepared.periods.map(p=>`<option value="${safe(p.periodId)}" ${p.periodId===prepared.currentPeriodId?'selected':''}>${safe(p.startedAt)} · ${safe(p.currency)} · SI ${safe(number(p.si))}</option>`).join('')}</select></label><div id="fxcs-new-period" class="fxc-registration-fields">${field('fxcs-start','Início do período','date','',true)}${field('fxcs-currency','Moeda','text',account.currency||'',true)}${field('fxcs-si','SI confirmado (capital inicial) · vazio = indisponível','number')}${field('fxcs-book','Saldo contábil na abertura · vazio = indisponível','number')}${field('fxcs-period-source','Fonte do período e capital','text','Declaração manual',true)}${field('fxcs-period-reason','Motivo do registro','text','Preparação explícita da conta',true)}<label class="fxc-check"><input id="fxcs-active" type="checkbox" checked> Tornar este o período atual da conta</label></div><label class="fxc-check"><input id="fxcs-confirm-period" type="checkbox" required> Conferi a conta, o período, a moeda e o SI informado ou indisponível.</label><button type="submit" id="fxcs-save-period">Confirmar período</button></form><form id="fxcSetupObservationForm" hidden><h3>2. Observação financeira</h3><p id="fxcs-period-summary"></p><p>Opcional para preencher as ordens. Os cálculos que dependem de fatos ausentes continuam indisponíveis. Registrar esta observação atualiza os fatos desta conta, sem trocar o contexto operacional em uso.</p><div class="fxc-registration-fields">${field('fxcs-equity','Equity observado','number',suggestions?.equity??'',true)}${field('fxcs-observed','Data e hora da observação · fuso deste dispositivo','datetime-local','',true)}${field('fxcs-observation-source','Fonte da observação','text',suggestions?.source||'Declaração manual',true)}${field('fxcs-rate','Conversão: 1 USD na moeda da conta','number')}${field('fxcs-cashflow','Fluxo líquido desde o SI · vazio = desconhecido','number')}${field('fxcs-observation-reason','Motivo do registro','text','Observação financeira revisada',true)}</div><label class="fxc-check"><input id="fxcs-cashflow-confirm" type="checkbox"> Conferi a cobertura do fluxo líquido informado (depósitos menos retiradas).</label><label class="fxc-check"><input id="fxcs-confirm-observation" type="checkbox" required> Conferi equity, fonte, data/hora e unidade. O relatório não comprova valores atuais.</label><button type="submit" id="fxcs-save-observation">Salvar observação financeira</button></form><p id="fxcSetupStatus" role="status" aria-live="polite"></p><footer><button type="button" id="fxcs-close">Fechar</button><button type="button" id="fxcs-open-orders" hidden>Ir para fases e ordens</button></footer>`;
     const updatePeriod=()=>{const existing=!!el('fxcs-period').value;el('fxcs-new-period').hidden=existing;el('fxcs-new-period').querySelectorAll('input').forEach(input=>input.disabled=existing);};
     el('fxcs-period').onchange=()=>{updatePeriod();el('fxcs-confirm-period').checked=false;};updatePeriod();
     const optional=id=>el(id).value.trim()===''?null:Number(el(id).value);
@@ -223,13 +313,14 @@
       el('fxcSetupStatus').textContent='Confirmando a gravação…';
       try{const result=await command(view);if(setupView!==view)return;
         if(!result.ok){view.unknown=result.persistido===null;el('fxcSetupStatus').textContent=result.error||'Etapa não confirmada.';return;}
-        success(result,view);if(typeof renderContas==='function')renderContas();
+        success(result,view);view.initial=setupValues();if(typeof renderContas==='function')renderContas();
       }catch(error){if(setupView===view)el('fxcSetupStatus').textContent='Etapa não confirmada. Confira a sessão antes de continuar.';}
       finally{if(setupView===view){view.saving=false;el('fxcs-close').disabled=false;el(buttonId).disabled=!!view.unknown||view.completed===buttonId;}}
     };
     el('fxcSetupPeriodForm').onsubmit=event=>{event.preventDefault();run('fxcs-save-period',view=>FX.saveSetupPeriod(view.token,{periodId:el('fxcs-period').value||null,startedAt:el('fxcs-start').value,
       currency:el('fxcs-currency').value.trim().toUpperCase(),si:optional('fxcs-si'),openingBook:optional('fxcs-book'),source:el('fxcs-period-source').value,
       reason:el('fxcs-period-reason').value,activateCurrentPeriod:el('fxcs-active').checked,confirmPeriod:el('fxcs-confirm-period').checked}),(result,view)=>{
+        window.JPWForex?.accountsUI?.examine?.(result.accountId,result.periodId);
         view.periodId=result.periodId;view.period=result.period;view.completed='fxcs-save-period';el('fxcSetupPeriodForm').hidden=true;el('fxcs-open-orders').hidden=false;
         el('fxcs-period-summary').textContent='Período '+result.period.startedAt+' · '+result.period.currency+' · SI '+number(result.period.si)+'.';
         const canObserve=typeof result.period.si==='number'&&result.period.si>0;
@@ -246,14 +337,12 @@
       },(result,view)=>{view.completed='fxcs-save-observation';el('fxcSetupObservationForm').hidden=true;el('fxcSetupStatus').textContent='Observação financeira salva. O motor mantém suas verificações de elegibilidade.';el('fxcs-open-orders').focus();});};
     el('fxcs-close').onclick=closeSetup;
     el('fxcs-open-orders').onclick=()=>{
-      const view=setupView;if(!view?.periodId||view.saving)return;
-      const selected=window.JPWForex.state.selectOperationalAccount(view.account.id);
-      const period=selected.ok&&window.JPWForex.state.selectOperationalPeriod(view.account.id,view.periodId);
-      if(!selected.ok||!period?.ok){el('fxcSetupStatus').textContent=selected.error||period?.error||'Período indisponível.';return;}
-      closeSetup();window.JPWNavigation?.navigate('forex-operation');window.JPWNavigation?.navigateLocal('exec','panel');
-      if(typeof renderPhases==='function')renderPhases();document.getElementById('execPhaseGridsCard')?.scrollIntoView({block:'start'});
+      const view=setupView;if(!view?.periodId||view.saving||!confirmSetupDiscard())return;
+      const use=window.JPWForex?.accountsUI?.useContext;
+      if(typeof use!=='function'){el('fxcSetupStatus').textContent='Abra Contas e Período para selecionar o contexto confirmado.';return;}
+      use(view.account.id,view.periodId,{onAccepted:()=>{if(setupView===view)closeSetup({force:true});}});
     };
-    setupDialog.showModal();el('fxcs-period').focus();
+    setupView.initial=setupValues();setupDialog.showModal();el('fxcs-period').focus();
   }
   async function confirmImport(){
     if(!ui.preview||ui.busy)return;if(!el('fxcConfirmIdentity').checked)return notify('Confirme a identidade antes da importação.','error');
@@ -286,5 +375,5 @@
   function bindSettings(){const select=el('fxcDefaultAccount');if(!select)return;select.innerHTML=options(FX.accounts?.()||[],S.fxConsolidated?.defaultAccountId||'',true);const button=el('fxcSaveDefault');button.onclick=async()=>{button.disabled=true;try{const result=await FX.saveDefaultAccount(select.value||null);el('fxcDefaultStatus').textContent=result?.ok?'Preferência salva.':(result?.error?.message||result?.error||'Não foi possível confirmar a preferência.');if(result?.ok){cancel();ui.accountId=null;render();}}catch(error){el('fxcDefaultStatus').textContent='Preferência não confirmada: '+(error.message||String(error));}finally{button.disabled=false;}};}
   function reset(){cancel();ui.accountId=null;ui.source='mt5';ui.tab='account';ui.from='';ui.to='';ui.search='';ui.message='';for(const id of ['fxcFrom','fxcTo','fxcSearch','fxcFile'])if(el(id))el(id).value='';if(el('fxcImport'))el('fxcImport').hidden=true;render();}
   Object.assign(FX,{render,settingsMarkup,bindSettings,openAccountRegistration,openAccountSetup,openImport,reset});
-  window.JPWFXConsolidatedUI={openAccountSetup,openImport};
+  window.JPWFXConsolidatedUI={openAccountRegistration,openAccountSetup,openImport};
 })(window.JPWFXConsolidated=window.JPWFXConsolidated||{});

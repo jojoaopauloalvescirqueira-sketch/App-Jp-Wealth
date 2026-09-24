@@ -7,7 +7,7 @@ function bindParams(){
   }
   $('mExpAlvo').addEventListener('input',e=>{S.expAlvo=parseFloat(e.target.value)||0;save();renderMotor();});
   $('cLoteMaster').addEventListener('input',e=>{S.loteMaster=parseFloat(e.target.value)||0;save();renderAplicacao();});
-  $('addAccountBtn').addEventListener('click',()=>{
+  $('addAccountBtn')?.addEventListener('click',()=>{
     JPWFXConsolidated.openAccountRegistration({trigger:$('addAccountBtn')});
   });
 }

@@ -6,10 +6,10 @@
 
 const NAV_FOREX_CHILDREN=Object.freeze([
   Object.freeze({id:'forex-consolidated',label:'Dashboard',primary:'forex',child:'forex-consolidated',screen:'fxconsolidated',localView:null,aliases:Object.freeze([])}),
+  Object.freeze({id:'forex-management-accounts',label:'Contas e Período',primary:'forex',child:'forex-management-accounts',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounts'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-operation',label:'Execution Board',primary:'forex',child:'forex-operation',screen:'exec',localView:Object.freeze({surface:'exec',view:'panel'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-history',label:'History',primary:'forex',child:'forex-history',screen:'exec',localView:Object.freeze({surface:'exec',view:'history'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-accounting',label:'Contabilidade',primary:'forex',child:'forex-accounting',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounting'}),aliases:Object.freeze([])}),
-  Object.freeze({id:'forex-management-accounts',label:'Management Accounts',primary:'forex',child:'forex-management-accounts',screen:'exec',localView:Object.freeze({surface:'exec',view:'accounts'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-planning',label:'Planejamento',primary:'forex',child:'forex-planning',screen:'fxplan',localView:Object.freeze({surface:'fxplan',view:'overview'}),aliases:Object.freeze([])}),
   Object.freeze({id:'forex-reserves',label:'Reservas',primary:'forex',child:'forex-reserves',screen:'fxreserves',localView:null,aliases:Object.freeze([])})
 ]);
@@ -155,6 +155,7 @@ function navApply(plan,target){
     localView.view=surface.getView();
   }
   if(window.JPWForex?.executionBoardUI&&!JPWForex.executionBoardUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-operation-draft'};return false;}
+  if(window.JPWForex?.accountsUI?.guardNavigation&&!JPWForex.accountsUI.guardNavigation({...plan,localView},()=>navApply(plan,target))){navLastResult={accepted:false,reason:'unsaved-account-draft'};return false;}
   if(navCurrent.primary==='research'&&plan.primary!=='research'&&typeof researchLeaveModule==='function') researchLeaveModule();
   document.querySelectorAll('#appMain > .screen').forEach(screen=>screen.classList.remove('active'));
   document.getElementById(plan.screen).classList.add('active');

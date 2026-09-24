@@ -1227,6 +1227,9 @@ function paramsNormalizeState(){
   if(typeof S.params.inicio!=='string') S.params.inicio=String(S.params.inicio==null?'':S.params.inicio);
 }
 function migrate(){ // garante chaves novas se schema evoluir
+  // Optional documentary metadata is validated before normalization, never inferred from global profiles.
+  if(!jpwValidateAccountProfileExtensions(S))
+    throw new Error('Metadados de conta ou perfil incompatíveis; preserve a base para revisão.');
   for(const k in DEFAULTS){ if(k==='forex'||k==='ledgerHistory')continue; if(!(k in S)) S[k]=structuredClone(DEFAULTS[k]); }
   paramsNormalizeState(); // antes de tudo: compute() e os tetos leem daqui
   canonicalizeStructuralMetadata(); // antes de tudo que lê ins.name/fase abaixo

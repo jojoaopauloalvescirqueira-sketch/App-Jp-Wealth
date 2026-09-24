@@ -30,6 +30,7 @@ const EXEC_VIEWS = [
 // Workspaces cujo conteúdo depende de estado vivo são montados ao entrar.
 const EXEC_VIEW_RENDERERS = {
   // Ledger e histórico têm fontes vivas; consultar não altera os fatos.
+  accounts: () => { window.JPWForex?.accountsUI?.render(); },
   accounting: () => { if (typeof renderLedger === 'function') renderLedger(); },
   history: () => { if (window.JPWHistoryUI?.render) window.JPWHistoryUI.render(); }
 };
@@ -77,6 +78,7 @@ function execSelectView(view) {
   }
   if (!EXEC_VIEWS.some(([key]) => key === view)) return false;
   if(view!==execView&&execView==='panel'&&window.JPWForex?.executionBoardUI&&!JPWForex.executionBoardUI.guardNavigation({screen:'exec',localView:{view}},()=>execSelectView(view)))return false;
+  if(view!==execView&&execView==='accounts'&&window.JPWForex?.accountsUI?.guardNavigation&&!JPWForex.accountsUI.guardNavigation({screen:'exec',localView:{view}},()=>execSelectView(view)))return false;
   execViewExplicit = true;
   execSetView(view);
   return true;

@@ -5,7 +5,7 @@
   const fx=root.JPWForex;
   const drafts=new Map(), expanded=new Set(), openedPhases=new Set();
   let instrumentChoice=null,tableSignature=null,leaving=false;
-  let epoch=jpWealthPersistenceEpoch(),dialog=null,dialogReturn=null,observationDirty=false,periodFormAccount=null;
+  let epoch=jpWealthPersistenceEpoch(),dialog=null,dialogReturn=null,observationDirty=false;
   const num=v=>typeof v==='number'&&Number.isFinite(v);
   const el=id=>document.getElementById(id);
   const key=(pi,oi)=>pi+':'+oi;
@@ -61,7 +61,7 @@
     const grid=el('execWidgetGrid');if(!grid||el('executionBoard'))return;
     grid.classList.add('execution-board');
     const header=document.createElement('div');header.id='executionBoard';header.className='eb-heading';
-    header.innerHTML='<div class="eb-heading-main"><div><p class="eb-eyebrow">FOREX · EXECUTION BOARD</p><h2>Execution Board</h2><p id="ebOperationIdentity"></p></div><div class="eb-heading-controls"><label>Conta operacional<select id="ebAccountSelect"></select></label><div id="ebChecklistHost"></div></div></div><div class="eb-entry-actions" aria-label="Preparar conta e operações"><button type="button" data-eb-import>Importar HTML/PDF</button><button type="button" data-eb-manual>Preencher manualmente</button><button type="button" data-eb-setup>Conta e período</button></div><nav id="ebPhaseNav" aria-label="Ir para a fase da ordem"></nav>';
+    header.innerHTML='<div class="eb-heading-main"><div><p class="eb-eyebrow">FOREX · EXECUTION BOARD</p><h2>Execution Board</h2><p id="ebOperationIdentity"></p></div><div class="eb-heading-controls"><div id="ebChecklistHost"></div></div></div><nav id="ebPhaseNav" aria-label="Ir para a fase da ordem"></nav>';
     header.addEventListener('click',onClick);
     el('exec').prepend(header);
     const checklist=el('execChecklistBtn');if(checklist)el('ebChecklistHost').append(checklist);
@@ -80,53 +80,7 @@
     const oldExtra=grid.querySelector('[data-layout-card="exec-metrics-banners"]');
     if(oldExtra){oldExtra.classList.add('eb-legacy-metrics');oldExtra.hidden=true;}
     const phaseCard=el('execPhaseGridsCard');if(phaseCard){phaseCard.classList.add('eb-card');const title=phaseCard.querySelector('h2');if(title)title.textContent='Fases e ordens';}
-    el('ebAccountSelect').addEventListener('change',event=>{
-      const choice=event.target.value;
-      if(!choice){render();return;}
-      const previous=fx.state.operationalSelection().accountId;
-      requestLeave(()=>{const result=fx.state.selectOperationalAccount(choice);
-        if(!result.ok){alert(result.error);return;}
-        openedPhases.clear();expanded.clear();tableSignature=null;render();
-        if(typeof renderLedger==='function')renderLedger();if(typeof renderContas==='function')renderContas();
-        if(typeof renderMotor==='function')renderMotor();},'Trocar a conta operacional');
-      if(drafts.size)event.target.value=previous||'';
-    });
     grid.addEventListener('click',onClick);
-    el('accountPeriodSelect')?.addEventListener('change',event=>{
-      const selected=fx.state.operationalSelection(),periodId=event.target.value;
-      if(!periodId)return;
-      requestLeave(()=>{const result=fx.state.selectOperationalPeriod(selected.accountId,periodId);
-        if(!result.ok){el('accountPeriodFeedback').textContent=result.error;return;}
-        tableSignature=null;render();if(typeof renderLedger==='function')renderLedger();},'Consultar outro período');
-    });
-    el('accountObservedPeriod')?.addEventListener('change',event=>{
-      const id=event.target.value,accountId=fx.state.operationalSelection().accountId;
-      let item=S.forex?.accounts?.[accountId],seen=new Set();
-      while(item&&!seen.has(item)&&item.periodId!==id){seen.add(item);item=item.previous;}
-      if(item?.periodId===id){el('accountPeriodSI').value=String(item.si);
-        el('accountPeriodCurrency').value=item.currency;
-        el('accountPeriodStart').value=item.observedAt.slice(0,10);
-        el('accountPeriodActivate').checked=false;}
-    });
-    el('accountPeriodSave')?.addEventListener('click',()=>{
-      const selected=fx.state.operationalSelection(),id=selected.accountId;
-      const registered=(S.accounts||[]).filter(a=>a?.forexAccountId===id);
-      if(registered.length!==1){el('accountPeriodFeedback').textContent='Confirme a identificação da conta no cadastro antes de registrar o período.';return;}
-      const amount=id=>{const raw=el(id).value.trim();return raw===''?null:Number(raw);};
-      const si=amount('accountPeriodSI'),openingBook=amount('accountPeriodBook');
-      if(si!==null&&(!num(si)||si<=0)||openingBook!==null&&!num(openingBook)){
-        el('accountPeriodFeedback').textContent='SI e saldo book devem ser números válidos ou ficar explicitamente indisponíveis.';return;}
-      const result=fx.state.recordAccountPeriod({accountId:id,startedAt:el('accountPeriodStart').value,
-        currency:el('accountPeriodCurrency').value.trim().toUpperCase(),si,openingBook,
-        source:el('accountPeriodSource').value.trim(),
-        observationPeriodId:el('accountObservedPeriod').value||null,
-        activateCurrentPeriod:el('accountPeriodActivate').checked},
-        {reason:el('accountPeriodReason').value.trim(),expectedEpoch:jpWealthPersistenceEpoch()});
-      el('accountPeriodFeedback').textContent=result.ok?'Período confirmado nesta conta; nenhuma operação antiga foi atribuída.':result.error;
-      if(result.ok){const currentId=S.forex?.accountContexts?.accounts?.[id]?.currentPeriodId;
-        if(el('accountPeriodActivate').checked&&currentId)fx.state.selectOperationalPeriod(id,currentId);
-        tableSignature=null;render();if(typeof renderLedger==='function')renderLedger();}
-    });
     el('phaseContainer').addEventListener('input',onInput);
     el('phaseContainer').addEventListener('change',onInput);
     el('phaseContainer').addEventListener('toggle',event=>{
@@ -134,56 +88,23 @@
       if(node.matches?.('details[data-eb-detail]'))node.open?expanded.add(node.dataset.ebDetail):expanded.delete(node.dataset.ebDetail);
     },true);
   }
-  function renderAccountContext(){
-    const selected=fx.state.operationalSelection(),id=selected.accountId,
-      registered=(S.accounts||[]).find(a=>a?.forexAccountId===id),
-      account=S.forex?.accountContexts?.accounts?.[id],ctx=period(),p=ctx.status==='OK'?ctx.value:null;
-    const identity=el('accountContextIdentity');if(!identity)return;
-    identity.textContent=registered?`${registered.nome||id} · ${registered.platform||'plataforma não verificada'} · ${registered.platformLogin||'login não verificado'} · ${registered.platformCurrency||'moeda não verificada'}`:
-      'Selecione e confirme o cadastro de uma conta. Contas históricas permanecem consultáveis no legado.';
-    const lastBook=p?.ledger?.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1)?.saldo??p?.openingBook??null;
-    let obs=S.forex?.accounts?.[id],seen=new Set();
-    while(obs&&!seen.has(obs)&&obs.periodId!==p?.periodId){seen.add(obs);obs=obs.previous;}
-    const equity=obs&&p&&obs.periodId===p.periodId?obs.equity:null;
-    const fmt=v=>num(v)?fmtForexMoney(v,{currency:p?.currency||registered?.platformCurrency||null}):'Indisponível';
-    updateHTML('accountContextMetrics',`<div class="metric"><div class="k">SI do período</div><div class="v sm">${esc(fmt(p?.si))}</div></div><div class="metric"><div class="k">Saldo inicial book</div><div class="v sm">${esc(fmt(p?.openingBook))}</div></div><div class="metric"><div class="k">Último saldo book</div><div class="v sm">${esc(fmt(lastBook))}</div></div><div class="metric"><div class="k">Equity observada</div><div class="v sm">${esc(fmt(equity))}</div></div><div class="metric"><div class="k">Operação em andamento</div><div class="v sm">${esc(p?.activeOperation?.operationId||'Nenhuma')}</div></div>`);
-    const periodSelect=el('accountPeriodSelect'),periodList=Object.values(account?.periods||{}).sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
-    if(document.activeElement!==periodSelect){periodSelect.innerHTML='<option value="">Sem período confirmado</option>'+periodList.map(x=>`<option value="${esc(x.periodId)}">${esc(x.startedAt)} · ${esc(x.periodId)} · ${esc(x.currency)}</option>`).join('');
-      periodSelect.value=selected.periodId||'';}
-    if(periodFormAccount!==id){periodFormAccount=id;el('accountPeriodCurrency').value=registered?.platformCurrency||'';
-      el('accountPeriodStart').value='';el('accountPeriodSI').value='';el('accountPeriodBook').value='';
-      el('accountPeriodSource').value='';el('accountPeriodReason').value='';}
-    const obsSelect=el('accountObservedPeriod');if(document.activeElement!==obsSelect){
-      let item=S.forex?.accounts?.[id],seenObs=new Set(),observed=[];
-      while(item&&!seenObs.has(item)){seenObs.add(item);if(!account?.periods?.[item.periodId])
-        observed.push(item);item=item.previous;}
-      const prior=obsSelect.value;
-      obsSelect.innerHTML='<option value="">Novo período sem vínculo observado</option>'+observed.map(x=>`<option value="${esc(x.periodId)}">${esc(x.periodId)} · SI ${esc(String(x.si))} ${esc(x.currency)}</option>`).join('');
-      obsSelect.value=observed.some(x=>x.periodId===prior)?prior:'';
-    }
-  }
   function render(){
     if(!fx.executionBoard||typeof S==='undefined'||!S)return;
-    prepareShell();const m=model();renderAccountContext();
-    const select=el('ebAccountSelect');if(!select)return;
-    const options=m.selection?.accounts||[];
-    if(document.activeElement!==select){
-      select.innerHTML='<option value="">Selecionar conta</option>'+options.map(a=>`<option value="${esc(a.accountId||a.forexAccountId||a.id)}">${esc(a.name||a.label||a.nome||a.accountId||a.id)}${(a.tipo||a.type)==='MESTRE'?' · Mestre':''}</option>`).join('');
-      select.value=m.selection?.accountId||'';
-    }
-    select.disabled=!options.length;
+    prepareShell();const m=model();
     el('ebOperationIdentity').textContent=m.scope?.operationId?`Operação em andamento · ${m.scope.currency||'moeda não identificada'}`:
-      (m.scope?.periodId?'Nova operação neste período.':'Selecione uma conta e registre seu período.');
+      (m.scope?.periodId?'Nova operação neste período.':'Escolha o contexto em Contas e Período.');
     el('ebOperationIdentity').title=[m.scope?.operationId&&'Operação: '+m.scope.operationId,m.scope?.periodId&&'Período: '+m.scope.periodId].filter(Boolean).join(' · ');
+    const profile=fx.state.accountProfileContext?.(fx.state.operationalSelection());
+    const profileName=profile?.period?.name||'Perfil do período não informado';
     const account=m.accountRecord||m.account||{},capital=m.capital||{},risk=m.risk||{},op=m.operational||{};
-    updateHTML('executionBoardAccount',`<div class="eb-section-head"><div><p class="eb-eyebrow">CONTA E PERÍODO</p><h3>${esc(account.name||m.selection?.accountId||'Selecione uma conta')}</h3></div><button type="button" class="reset-btn" data-eb-account-facts>Atualizar dados da conta</button></div><div class="eb-capital-strip">${metric('Saldo inicial do período',capital.si)}${metric('Saldo atual registrado',capital.book)}${metric('Equity observada',capital.equity)}${metric('Drawdown',capital.drawdown)}</div><p class="eb-context-line">${esc([account.platform,account.login,m.scope?.currency].filter(Boolean).join(' · '))} · Fase da conta: ${esc(fx.policy.phases[(risk.accountPhase?.value||0)-1]?.name||(risk.accountPhase?.compulsoryClose?'Encerramento compulsório':'Não calculável'))}</p>`);
+    updateHTML('executionBoardAccount',`<div class="eb-section-head"><div><p class="eb-eyebrow">CONTA E PERÍODO</p><h3>${esc(account.name||m.selection?.accountId||'Selecione uma conta')}</h3></div><button type="button" class="reset-btn" data-eb-manage>Gerenciar em Contas e Período</button></div><div class="eb-capital-strip">${metric('Saldo inicial do período',capital.si)}${metric('Saldo atual registrado',capital.book)}${metric('Equity observada',capital.equity)}${metric('Drawdown',capital.drawdown)}</div><p class="eb-context-line">${esc([account.platform,account.login,m.scope?.currency].filter(Boolean).join(' · '))} · Período: ${esc(m.scope?.periodId||'Pendente')} · ${esc(profileName)} · Fase da conta: ${esc(fx.policy.phases[(risk.accountPhase?.value||0)-1]?.name||(risk.accountPhase?.compulsoryClose?'Encerramento compulsório':'Não calculável'))}</p>`);
     updateHTML('executionBoardRisk',`<div class="eb-section-head"><div><p class="eb-eyebrow">RESUMO OPERACIONAL</p><h3>Exposição da conta</h3></div><span class="eb-confirmed">Registros confirmados</span></div><div class="eb-operational-strip">${metric('Hard Stop · Equity Protector',capital.stopoutEquity,{id:'hardStop',note:'Piso de equity: SI × 78% + movimentações conciliadas. Limite de 22%; não aciona a corretora.'})}${metric('Total Exposure · Exposição total',op.exposure,{id:'totalExposure',note:'Risco até o stop das ordens abertas. Percentual sobre o saldo atual registrado.'})}${metric('Compensed Exposure · Compensada',op.compensated,{id:'compensedExposure',note:'Exposição total menos resultado líquido realizado das defesas. Perdas aumentam a exposição.'})}${metric('Alavancagem utilizada',op.leverage,{id:'usedLeverage',note:'Nocional bruto das posições abertas ÷ saldo atual registrado.'})}</div><details class="eb-findings"><summary>Ver bases de cálculo e proteções</summary><p>O resumo usa o saldo contábil registrado deste período. Atualize a Contabilidade quando houver novos lançamentos; saldo e equity são informações diferentes.</p><div class="eb-metrics">${metric('Nocional bruto',op.grossNotional)}${metric('Pendentes ampliadoras',risk.pending)}${metric('Alavancagem normativa',risk.leverage,{note:'Base normativa: menor valor entre saldo inicial e equity.'})}${metric('Risco comprometido',risk.committed)}${metric('Capacidade prudencial',risk.prudentialRemaining)}</div><p>A compensação econômica não amplia os limites normativos. Registrar fatos não autoriza execução.</p><ul>${(m.findings||[]).map(f=>`<li>${esc(f.message||f.reason||f.code||String(f))}</li>`).join('')}</ul><button type="button" class="reset-btn" data-eb-motor>Revisar Fator de Correção e parâmetros</button></details>`);
     renderInstruments(m);
     renderPhases(m);
     const supported=fx.state.supported();
     let notice=el('ebUnsupported');if(!notice){notice=document.createElement('p');notice.id='ebUnsupported';notice.className='eb-row-feedback';el('executionBoard').append(notice);}
     notice.textContent=supported?'':'Versão do agregado Forex incompatível. Apenas leitura; preserve a base.';notice.hidden=supported;
-    for(const button of el('execWidgetGrid').querySelectorAll('[data-addorder],[data-eb-save-row],[data-eb-observation],[data-eb-diagnostics],[data-eb-update-quotes],[data-eb-retry-quotes],[data-eb-account-facts]'))if(!supported)button.disabled=true;
+    for(const button of el('execWidgetGrid').querySelectorAll('[data-addorder],[data-eb-save-row],[data-eb-observation],[data-eb-diagnostics],[data-eb-update-quotes],[data-eb-retry-quotes],[data-eb-manage]'))if(!supported)button.disabled=true;
     if(el('exec')?.classList.contains('active')&&typeof renderHeaderReadout==='function')
       renderHeaderReadout(compute());
   }
@@ -236,7 +157,7 @@
     if(!phaseList.length){
       const emptyKey=JSON.stringify({scope:fx.state.operationalSelection(),supported:fx.state.supported(),empty:true});
       if(tableSignature!==emptyKey){
-        container.innerHTML=`<div class="eb-setup-prompt"><h3>Prepare a conta para registrar suas ordens</h3><p>Escolha uma conta e confirme seu período, moeda e capital inicial (SI). Você pode importar um relatório ou preencher os dados manualmente. O saldo do relatório não substitui o SI.</p><button type="button" data-eb-setup>Preparar conta e período</button></div>`+phaseNames.map((name,pi)=>`<details class="phase eb-phase" data-phase="${pi}" id="ebPhase-${pi}" ${openedPhases.has(pi)?'open':''}><summary><span>${esc(name)}</span><span>Aguardando contexto</span></summary><div class="phase-body"><p class="eb-context-line">Nesta fase você poderá registrar instrumento, direção, lote, entrada, stop, alvo, estado, custos e resultado. Confirme a conta e o período para começar.</p><button type="button" data-eb-setup>Preparar conta e período</button></div></details>`).join('');
+        container.innerHTML=`<div class="eb-setup-prompt"><h3>Prepare a conta para registrar suas ordens</h3><p>Escolha uma conta e confirme seu período, moeda e capital inicial (SI). Você pode importar um relatório ou preencher os dados manualmente. O saldo do relatório não substitui o SI.</p><button type="button" data-eb-manage>Gerenciar em Contas e Período</button></div>`+phaseNames.map((name,pi)=>`<details class="phase eb-phase" data-phase="${pi}" id="ebPhase-${pi}" ${openedPhases.has(pi)?'open':''}><summary><span>${esc(name)}</span><span>Aguardando contexto</span></summary><div class="phase-body"><p class="eb-context-line">Nesta fase você poderá registrar instrumento, direção, lote, entrada, stop, alvo, estado, custos e resultado. Confirme a conta e o período para começar.</p><button type="button" data-eb-manage>Gerenciar em Contas e Período</button></div></details>`).join('');
         tableSignature=emptyKey;
       }
       return;
@@ -393,18 +314,17 @@
       const pi=Number(button.dataset.ebPhaseJump),phase=el('ebPhase-'+pi);
       if(phase){phase.open=true;openedPhases.add(pi);phase.scrollIntoView({block:'start'});phase.querySelector('summary')?.focus({preventScroll:true});}return;
     }
-    if(button.hasAttribute('data-eb-import')){requestLeave(()=>root.JPWFXConsolidatedUI.openImport({accountId:fx.state.operationalSelection().accountId,returnFocus:button}),'Importar relatório da conta');return;}
-    if(button.hasAttribute('data-eb-manual')){requestLeave(()=>root.JPWFXConsolidatedUI.openAccountSetup({returnFocus:button}),'Preencher conta manualmente');return;}
-    if(button.hasAttribute('data-eb-setup')){requestLeave(()=>root.JPWFXConsolidatedUI.openAccountSetup({accountId:fx.state.operationalSelection().accountId,returnFocus:button}),'Preparar conta e período');return;}
     if(button.hasAttribute('data-eb-update-quotes')){updateFxRates();return;}
     if(button.hasAttribute('data-eb-retry-quotes')){fx.marketQuotes.retry();return;}
     if(button.hasAttribute('data-eb-observation')){observationForm();return;}
     if(button.hasAttribute('data-eb-diagnostics')){diagnosticForm();return;}
     if(button.hasAttribute('data-eb-motor')){JPWNavigation.navigateLocal('exec','motor');return;}
-    if(button.hasAttribute('data-eb-account-facts')){requestLeave(()=>{
-      JPWNavigation.navigateLocal('exec','accounts');const form=el('fxAccountFacts');
-      const idx=model().selection.accountIndex;if(form&&Number.isInteger(idx))form.elements.accountIndex.value=String(idx);
-      form?.querySelector('[name=si]')?.focus();},'Registrar observação da conta');return;}
+    if(button.hasAttribute('data-eb-manage')){
+      requestLeave(()=>{
+        const selected=fx.state.operationalSelection();
+        if(JPWNavigation.navigate('forex-management-accounts'))fx.accountsUI?.examine(selected.accountId,selected.periodId);
+      },'Gerenciar conta e período');return;
+    }
     const parse=attr=>(button.getAttribute(attr)||'').split(':').map(Number);
     if(button.hasAttribute('data-eb-save-row')){saveRow(...parse('data-eb-save-row'));return;}
     if(button.hasAttribute('data-eb-cancel-row')){cancelRow(...parse('data-eb-cancel-row'));return;}

@@ -37,6 +37,17 @@ SEED = r"""() => {
   S.phases=JPWForex.state.newOperationPhases();S.activeOperation=null;
   S.operationHistory={schemaVersion:2,records:[]};S.transitionLog=[];
   S.personalFinance.syntheticUnrelated={value:'preserve'};S.dataGovernance.changeLog=[];
+  // Observations do not create a workspace. Reconcile each declared synthetic
+  // period explicitly and select the exact pair before exercising row editing.
+  for(const [accountId,periodId,si,book] of [['eb_A','period_A',10000,9700],['eb_B','period_B',5000,4500]]){
+    const result=JPWForex.state.recordAccountPeriod({accountId,observationPeriodId:periodId,startedAt:'2026-09-01',
+      currency:'USD',si,openingBook:book,source:'Synthetic declared period',activateCurrentPeriod:true},
+      {reason:'Synthetic workspace setup'});
+    if(!result.ok)throw Error('Synthetic period refused: '+JSON.stringify(result));
+  }
+  const selected=JPWForex.state.selectOperationalContext('eb_A','period_A');
+  if(!selected.ok)throw Error('Synthetic exact context refused: '+JSON.stringify(selected));
+  window.__ebPeriod=()=>S.forex.accountContexts.accounts.eb_A.periods.period_A;
   if(save()!==true)throw Error('Synthetic fixture persistence refused');
   sessionEpochCurrent();markSessionCheckpoint();
   const originalSave=save,nativeSet=Storage.prototype.setItem,nativeGet=Storage.prototype.getItem;
@@ -47,7 +58,8 @@ SEED = r"""() => {
   };
   save=function(){__eb.calls++;if(__eb.mode==='false'){S.personalFinance.syntheticUnrelated.value='legitimate other flow';return false;}
     if(__eb.mode==='unknown')return undefined;return originalSave();};
-  window.__ebSnapshot=()=>({phases:structuredClone(S.phases),operation:structuredClone(S.activeOperation),
+  window.__ebSnapshot=()=>({phases:structuredClone(__ebPeriod().phases),operation:structuredClone(__ebPeriod().activeOperation),
+    legacyPhases:structuredClone(S.phases),legacyOperation:structuredClone(S.activeOperation),
     forex:structuredClone(S.forex),history:structuredClone(S.operationHistory),log:structuredClone(S.dataGovernance.changeLog),
     raw:nativeGet.call(localStorage,LSKEY),calls:__eb.calls,writes:__eb.writes,
     unknown:jpWealthPersistenceOutcomeIsUnknown(),unrelated:structuredClone(S.personalFinance.syntheticUnrelated)});
@@ -78,7 +90,7 @@ def reveal(locator):
 
 
 def fill_row(page, pi=0, oi=0, **overrides):
-    values = dict(id="EB-SYNTHETIC", par="EURUSD", tipo="BUY", role="GENESIS", lote="0.01", entry="1.10",
+    values = dict(id="EB-SYNTHETIC", brokerHash="0000000000000000000001", par="EURUSD", tipo="BUY", role="GENESIS", lote="0.01", entry="1.10",
                   sl="1.00", tp="1.20", status="Aberta", costs="0", costBasis="SEPARATE_FROM_RESULT", stopValidated=True)
     values.update(overrides)
     for key, value in values.items():
@@ -116,7 +128,7 @@ def snapshot(page):
 
 
 def equal_financial(before, after):
-    for key in ("phases", "operation", "forex", "history", "log", "raw"):
+    for key in ("phases", "operation", "legacyPhases", "legacyOperation", "forex", "history", "log", "raw"):
         assert before[key] == after[key], f"Unexpected change in {key}"
 
 
@@ -148,7 +160,7 @@ def draft_commit_cancel(page, obs):
     assert order["status"] == "Aberta" and order["accountId"] == "eb_A" and order["periodId"] == "period_A"
     assert after["calls"] - before["calls"] == 1
     assert len(order["revisions"]) == 1 and order["recordVersion"] == 1
-    assert json.loads(after["raw"])["phases"][0]["orders"][0] == order
+    assert json.loads(after["raw"])["forex"]["accountContexts"]["accounts"]["eb_A"]["periods"]["period_A"]["phases"][0]["orders"][0] == order
     assert not page.evaluate("JPWForex.executionBoardUI.hasDrafts()")
     saved = snapshot(page)
     field(page, "entry").fill("1.12");field(page, "entry").press("Tab")
@@ -181,7 +193,7 @@ def refusal(mode):
             assert refused["unrelated"]["value"] == "legitimate other flow"
         page.evaluate("__eb.mode='normal';S.personalFinance.syntheticUnrelated.afterRefusal=true;if(save()!==true)throw Error('Independent save failed')")
         independent = snapshot(page)
-        assert json.loads(independent["raw"])["phases"] == before["phases"], "Unrelated save incorporated refused order"
+        assert json.loads(independent["raw"])["forex"]["accountContexts"]["accounts"]["eb_A"]["periods"]["period_A"]["phases"] == before["phases"], "Unrelated save incorporated refused order"
         save_row(page)
         committed = snapshot(page)
         order = committed["phases"][0]["orders"][0]
@@ -190,7 +202,7 @@ def refusal(mode):
         assert committed["calls"] == independent["calls"] + 1
         expected = committed["phases"]
         page.reload();wait_bootstrap(page);settle(page)
-        assert page.evaluate("S.phases") == expected, "Reload altered confirmed orders"
+        assert page.evaluate("S.forex.accountContexts.accounts.eb_A.periods.period_A.phases") == expected, "Reload altered confirmed orders"
         obs.update(before=before, refused=refused, independent=independent, committed=committed, reload=True)
     return run
 
@@ -246,10 +258,10 @@ def close_order(page, obs):
 
 def metrics_and_identity(page, obs):
     result = page.evaluate("""() => {
-      const a=operationRecordOrder(0,0,{id:'EB-OPEN',par:'EURUSD',tipo:'BUY',role:'GENESIS',
+      const a=operationRecordOrder(0,0,{id:'EB-OPEN',brokerHash:'0000000000000000000002',par:'EURUSD',tipo:'BUY',role:'GENESIS',
         lote:.05,entry:1.1,sl:1,status:'Aberta',stopValidated:true,costs:0,costBasis:'SEPARATE_FROM_RESULT'},
         {reason:'Synthetic current open fact'});
-      const b=operationRecordOrder(1,0,{id:'EB-CLOSED',par:'EURUSD',tipo:'BUY',role:'DEFENSE',
+      const b=operationRecordOrder(1,0,{id:'EB-CLOSED',brokerHash:'0000000000000000000003',par:'EURUSD',tipo:'BUY',role:'DEFENSE',
         lote:.01,entry:1.1,sl:1,status:'Fechada',result:200,costs:0,costBasis:'INCLUDED_IN_RESULT'},
         {reason:'Synthetic closed defense'});
       render();renderPhases();return {a,b,model:JPWForex.executionBoard.read()};
@@ -265,7 +277,7 @@ def metrics_and_identity(page, obs):
     page.evaluate("S.forex.activeAccountId='eb_B';render();JPWForex.executionBoardUI.render()")
     identity = page.locator("#executionBoardAccount").inner_text()
     assert "Mestre sintética EB" in identity and "Conta B sintética EB" not in identity, identity
-    assert page.evaluate("S.activeOperation.recordContext.accountId") == "eb_A"
+    assert page.evaluate("S.forex.accountContexts.accounts.eb_A.periods.period_A.activeOperation.recordContext.accountId") == "eb_A"
     after = snapshot(page)
     assert after["phases"] == before["phases"] and after["raw"] == before["raw"]
     assert after["calls"] == before["calls"]
@@ -275,7 +287,8 @@ def metrics_and_identity(page, obs):
 def proposed_master(page, obs):
     page.evaluate("S.forex.activeAccountId='eb_B';render();JPWForex.executionBoardUI.render()")
     before = snapshot(page)
-    assert page.locator("#ebAccountSelect").input_value() == "eb_A"
+    assert page.evaluate("JPWForex.state.operationalSelection().accountId") == "eb_A"
+    assert page.locator("#ebAccountSelect").count() == 0
     assert page.evaluate("S.forex.activeAccountId") == "eb_B", "Master proposal silently switched account"
     assert_pristine(page, before)
     fill_row(page);save_row(page)
@@ -380,10 +393,10 @@ def phase_geometry(page, obs, directory):
         assert view["icon"] and 12 <= view["icon"]["width"] <= 28 and 12 <= view["icon"]["height"] <= 28, "Checklist icon lost its dimensions: " + str(view)
         assert view["board"]["height"] <= (140 if view["width"] == 1440 else 240), "Board heading regained excess whitespace: " + str(view)
     assert_pristine(page, before)
-    page.evaluate("window.__six=structuredClone(S.phases);S.phases=structuredClone(S.phases.slice(0,4));S.phases.forEach((p,i)=>{p.policyVersion='LEGACY_UNRESOLVED';p.title='LEGACY '+i});window.__legacy=JSON.stringify(S.phases);renderPhases();JPWForex.executionBoardUI.render()")
+    page.evaluate("window.__six=structuredClone(__ebPeriod().phases);__ebPeriod().phases=structuredClone(__ebPeriod().phases.slice(0,4));__ebPeriod().phases.forEach((p,i)=>{p.policyVersion='LEGACY_UNRESOLVED';p.title='LEGACY '+i});window.__legacy=JSON.stringify(__ebPeriod().phases);renderPhases();JPWForex.executionBoardUI.render()")
     assert page.locator("#phaseContainer .phase[data-phase]").count() == 4
     assert "LEGACY" in page.locator("#phaseContainer").inner_text()
-    assert page.evaluate("JSON.stringify(S.phases)===__legacy"), "Rendering reinterpreted legacy grades"
+    assert page.evaluate("JSON.stringify(__ebPeriod().phases)===__legacy"), "Rendering reinterpreted legacy grades"
     obs.update(measured=measured, legacyPreserved=True)
 
 
