@@ -32,13 +32,13 @@
       "order": 5,
       "path": "src/js/00-core/03-default-state.js",
       "section": "ESTADO INICIAL (espelha a planilha)",
-      "sha256": "7b8a18771226c7df3748e6a9959113aeeefb25daa2b570ed802a2067d9748a5a"
+      "sha256": "4f7381a9f9fbf29c077120aab14564bb28867f1bb490ff1b50ba79ec0d0d9593"
     },
     {
       "order": 6,
       "path": "src/js/00-core/04-persistence.js",
       "section": "PERSISTÊNCIA (localStorage)",
-      "sha256": "151ed5e8c3b90af422a0d178561afc882539ae9a5ad0af4eeb37f408aa255149"
+      "sha256": "b3a038d8e55bae94a3294dbcf718537e8f6d1f0a4e44f91da970b69aba624411"
     },
     {
       "path": "src/js/00-core/08-module-availability.js",
@@ -188,7 +188,7 @@
       "order": 31,
       "path": "src/js/40-app/03-theme.js",
       "section": "TEMA claro/escuro (SET 4)",
-      "sha256": "301c8e98846a37a1a7e517efb267b1be2450361e437e689cf7a3abcd3582b33d"
+      "sha256": "3f3c899c9abf56d819e81b664cf11f5aee969e9936d82ae49ac2f125f3fcc2b3"
     },
     {
       "order": 32,

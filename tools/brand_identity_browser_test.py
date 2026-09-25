@@ -50,7 +50,12 @@ def main() -> None:
                 after = page.evaluate("const url=location.href; applyAppIconChoice('secondary'); JSON.stringify({choice:currentAppIconChoice(),sameUrl:url===location.href,head:document.querySelector('[data-jp-brand-wordmark]').getAttribute('src'),favicon:document.querySelector('link[rel=icon]').getAttribute('href'),apple:document.querySelector('link[rel=apple-touch-icon]').getAttribute('href'),manifest:document.querySelector('link[rel=manifest]').getAttribute('href'),brand:document.documentElement.dataset.brandChoice,plate:getComputedStyle(document.querySelector('[data-jp-brand-wordmark]')).backgroundColor})")
                 for fragment in ('"choice":"secondary"', '"sameUrl":true', 'brand-black', 'pwa-icon-secondary-512', 'jp-wealth-black.webmanifest', '"brand":"secondary"'):
                     assert fragment in after, after
-                assert '"plate":"rgb(247, 248, 250)"' in after, after
+                # The protective light plate belongs to the dark theme only.
+                # A new profile now opens in Light, where the secondary mark
+                # sits directly on the light header; keep both visual oracles.
+                assert '"plate":"rgba(0, 0, 0, 0)"' in after, after
+                dark_plate = page.evaluate("S.theme='dark'; applyTheme(); getComputedStyle(document.querySelector('[data-jp-brand-wordmark]')).backgroundColor")
+                assert dark_plate == 'rgb(247, 248, 250)', dark_plate
                 assert page.evaluate("localStorage.setItem('jpwealth_v9_icon_choice','invalid'); currentAppIconChoice()") == "primary"
             finally:
                 browser.close()

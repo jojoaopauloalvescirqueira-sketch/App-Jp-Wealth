@@ -52,7 +52,7 @@ const DEFAULTS = {
   ledger:[], // fechamento diário: {data,resultado,saldo,nota}
   ledgerArchive:[], // períodos encerrados: snapshots do ledger antigo ao reiniciar período
   period:{nome:'',profile:'base'}, // período contábil: identificação + perfil de risco escolhido
-  theme:'dark', // aparência: 'dark' (padrão Mission Control) | 'light' (SET 4)
+  theme:'light', // aparência padrão clara; 'dark' permanece escolha explícita
   acct:{diasSemana:4.5, mesesAno:10.5}, // programação da contabilidade → dias líquidos/ano
   // MEI-JP: somente parâmetros e observações históricas persistem. Resultados de Monte Carlo
   // são sempre recalculados, evitando salvar trajetórias pesadas no navegador.

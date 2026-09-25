@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar" data-experience="completion">
+<html lang="pt-BR" data-theme="light" data-ui-version="tesla-inspired" data-shell="global-dashboard" data-custom-layout="enabled" data-navigation="sidebar" data-experience="completion">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Jp Wealth Built on Method">
 <title>Jp Wealth Built on Method</title>
+<script>
+// Aplica uma escolha Escuro salva antes do CSS pintar o documento. A leitura é
+// somente visual: load() continua responsável por validar e proteger a base.
+(function(){
+  try{
+    const raw=localStorage.getItem('jpwealth_v9_state');
+    if(!raw)return;
+    const saved=JSON.parse(raw);
+    if(saved&&typeof saved==='object'&&!Array.isArray(saved)&&saved.theme==='dark')
+      document.documentElement.dataset.theme='dark';
+  }catch(e){
+    // Base ilegível ou armazenamento indisponível: load() sinaliza recuperação.
+  }
+})();
+</script>
 <link rel="stylesheet" href="src/styles/app.css">
 <script src="build-id.js"></script>
 <script>

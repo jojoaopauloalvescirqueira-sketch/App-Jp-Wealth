@@ -1296,7 +1296,8 @@ function migrate(){ // garante chaves novas se schema evoluir
   if(!S.period || typeof S.period!=='object') S.period={nome:'',profile:'base'};
   S.period.profile=normalizeRiskProfileKey(S.period.profile||'base');
   // Stored profiles/parameters preserve legacy provenance and do not supply current policy.
-  if(S.theme!=='dark' && S.theme!=='light') S.theme='dark'; // Mission Control: escuro é a experiência principal; escolha salva do usuário é respeitada
+  if(S.theme!=='dark' && S.theme!=='light')
+    throw new Error('Preferência de tema inválida; a base original foi preservada para recuperação.');
   if(!S.acct || typeof S.acct!=='object') S.acct={diasSemana:4.5, mesesAno:10.5};
   if(typeof S.acct.diasSemana!=='number') S.acct.diasSemana=4.5;
   if(typeof S.acct.mesesAno!=='number') S.acct.mesesAno=10.5;

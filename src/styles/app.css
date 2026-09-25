@@ -76,7 +76,7 @@
     --fs-scale:1;
     --fs-xs:9.5px; --fs-sm:11px; --fs-md:12.5px; --fs-lg:15px; --fs-xl:22px;
   }
-  /* Tema escuro (padrão) — Terminal: fundo PRETO, painéis quase-pretos, texto
+  /* Tema escuro (opcional) — Terminal: fundo PRETO, painéis quase-pretos, texto
      branco, acento saturado nos números, verde/vermelho brilhantes no sinal.
      Paleta amostrada das referências de terminal institucional enviadas. */
   :root[data-theme="dark"]{

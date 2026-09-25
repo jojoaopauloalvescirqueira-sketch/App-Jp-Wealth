@@ -1,3 +1,21 @@
+# Tarefa ativa — Tema claro como padrão de abertura
+
+Implementação local autorizada em 2026-09-24, N2/A3, branch isolada
+`codex/theme-light-default-20260924`, base
+`1b358c203c24ee09aa33e282b4e0de0be6e7e061`. Contrato:
+[CHG-THEME-LIGHT-DEFAULT-20260924](CHG-THEME-LIGHT-DEFAULT-20260924.md).
+Escopo: tema padrão, primeira pintura e normalização de `S.theme`, preservando
+as preferências válidas e o controle Claro/Escuro. Dados financeiros, contas,
+períodos, disponibilidade, cache e ordem de scripts permanecem intactos.
+Escopo inicial: somente candidate local. Em 2026-09-25, após receber o
+resultado vermelho, o usuário solicitou commit, merge e push; o CHG registra
+essa decisão posterior sem converter as falhas do gate em aprovação.
+Build `c33be8f2504d337d`. Implementação completa; validação técnica bloqueada:
+o full final registrou 50 PASS / 7 PRODUCT_FAIL, detalhados no CHG, enquanto
+os focais de tema, backup e Settings passaram. Nenhum aceite foi registrado.
+
+## Histórico anterior preservado
+
 # Candidate local — Cabeçalho e navegação com Lucide
 
 Autorização de implementação delimitada em 2026-09-23. Contrato: [CHG-HEADER-NAVIGATION-LUCIDE-20260923](CHG-HEADER-NAVIGATION-LUCIDE-20260923.md). Base `b0cd4b61dc3fdd63f0fcf8bc1255455e6c59624e`, branch `codex/header-navigation-lucide-20260923`, worktree `~/.codex/header-navigation-lucide/20260923/product`. N1/A2; somente apresentação do shell e SVGs licenciados. Sem delta de onboarding, módulos internos ou Git/publicação. Estado: candidate visual entregue para revisão, build `da24235203f5d84a`; validação limitada pelos achados registrados no CHG (standard 45 PASS / 1 PRODUCT_FAIL, não reproduzido em duas execuções isoladas). Não aceito nem integrado. Evidências externas em `../evidence/`.
