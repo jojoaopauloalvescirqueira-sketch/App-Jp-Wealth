@@ -62,8 +62,9 @@ Status: somente apos B-D e gates verdes.
 
 - zero conflito normativo sem ADR;
 - zero N2/N3 sem teste focado e autorizacao;
-- tier standard verde em toda integracao;
+- tier standard verde em toda integracao como meta; qualquer uso formal da excecao abaixo fica fora do indicador de gates verdes;
 - full sem `PRODUCT_FAIL` antes de release;
+- excecoes `HISTORICAL_UNRESOLVED_FAILURE` contabilizadas separadamente, com recibo e gate bruto ainda vermelhos (por exemplo, `45 PASS / 1 PRODUCT_FAIL`; disposicao de auditoria: `AUDIT_PASS_WITH_DEBT`); nunca somar a falha aos PASS ou registrar standard/full verde;
 - nenhuma credencial real rastreada;
 - funcao nova critica coberta por casos normal, limite, adverso e estado antigo;
 - `CURRENT-STATE.md` e handoff atualizados a cada entrega material.

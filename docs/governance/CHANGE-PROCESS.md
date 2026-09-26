@@ -22,6 +22,18 @@ A3 no mínimo; a exigência local de **A4 para N3 permanece**. O rótulo A4 não
 autoriza Git/publicação nem amplia o escopo recebido. O candidate de instruções
 não pode autorizar seu próprio executor.
 
+Exclusivamente para `CHG-HARNESS-HISTORICAL-UNRESOLVED-FAILURE-20260925`, a
+autorização humana explícita A3 cobre edição reversível isolada, testes do control
+plane e auditoria, conforme Harness §28. Isso não reclassifica o risco N3 nem
+dispensa A4 para outro N3 ou ação futura irreversível/de produção.
+
+A presença física da política §19.1 no Harness externo e o `status: approved`
+desse CHG não a tornam vigente. Antes de aplicar `REASSESS_EXISTING_EVIDENCE`,
+o auditor deve conferir o registro de ativação: versão/hash final da fonte,
+fingerprint, parecer independente N3 e Human Acceptance do mesmo candidate de control plane,
+integração autorizada das referências e ativação explícita da fonte externa.
+Sem esse registro, a exceção fica bloqueada; recibo `PRODUCT_FAIL` segue falho.
+
 N3 financeiro mantém decisão normativa citável, exemplos calculados e testes de
 caracterização. N3 de control plane exige matriz antes/depois, testes estruturais,
 carregamento/comportamento observável e auditoria independente focal; o full do
@@ -77,7 +89,7 @@ Responder:
 
 ## 7. Promover
 
-Editar, testar, revisar, commitar, enviar, integrar e publicar sao gates independentes. Nenhuma autorizacao e transitiva. Nao criar commit com gate aplicavel falhando, salvo commit explicitamente solicitado para preservar um baseline vermelho e identificado como tal.
+Editar, testar, revisar, commitar, enviar, integrar e publicar sao gates independentes. Nenhuma autorizacao e transitiva. Nao criar commit com gate aplicavel falhando, salvo commit explicitamente solicitado para preservar um baseline vermelho e identificado como tal, ou a excecao formal e integral do Harness §19.1 ja vigente por registro de ativacao, apos `AUDIT_PASS_WITH_DEBT`, aceite humano e autorizacao especifica de commit. Um gate bruto com `PRODUCT_FAIL` continua falho e nao pode ser contado como verde. A politica `HISTORICAL_UNRESOLVED_FAILURE` satisfaz somente o gate de auditoria quando o finding estruturado e o parecer independente a reconhecerem; a promocao ainda depende dos demais gates, das protecoes tecnicas e de autorizacoes separadas. Executor, checklist ou validador nao podem autopromover o candidate.
 
 Modelo de commit, quando autorizado:
 
