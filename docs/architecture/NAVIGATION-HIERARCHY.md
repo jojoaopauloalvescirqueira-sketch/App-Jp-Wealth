@@ -1,5 +1,15 @@
 # Navegação hierárquica — contrato de implementação
 
+## Complemento local — Alavancagem Atual, 2026-09-26
+
+`Ferramentas e Serviços` passa a ter três filhos, na ordem `tools-calendar`,
+`tools-nocuda` e `tools-leverage`. O terceiro seleciona a visão local `leverage`
+em `#tools`, sem estado financeiro, novo primário, novo router ou URL profunda.
+`JPWTools.ui` alterna as três visões com os mesmos nós e controle de foco nos
+quatro layouts. A página do indicador MT5 é apenas guia e distribuição; o
+cálculo acontece exclusivamente no terminal. A entrada e seus artefatos fazem
+parte de [CHG-JPW-ALAVANCAGEM-ATUAL-20260926](../work/CHG-JPW-ALAVANCAGEM-ATUAL-20260926.md).
+
 ## Ferramentas e Serviços — 2026-09-17
 
 Sexto grupo primário (`tools`), com `tools-calendar` primeiro e `tools-nocuda` segundo. O calendário mantém o único `#execEcal`, renderer e cache existentes, agora sob `#tools`. Research/Forex abre Estudos NoCoda; Pivots permanece ao lado. A fachada legada `ecal` e `navigateLocal('research','calendar')` preserva a intenção e ativa Ferramentas. `JPWTools.ui` seleciona as duas visões locais. Todos os layouts usam os mesmos nós e controle de foco. Preferência antiga com cinco primários é projetada em memória, acrescentando tools no final, sem escrita no carregamento. A ferramenta e o intercâmbio são documentados em [NOCUDA-TOOLS](NOCUDA-TOOLS.md).
@@ -49,7 +59,7 @@ Não existe checklist por conta/trade, persistência nova nem nova regra finance
 Há seis primários. O default visual A10 é Dashboard, Research, Forex,
 Finanças Pessoais, Alladin e Ferramentas e Serviços; uma preferência válida do Editor pode permutá-los.
 A sequência do registro público de rotas continua preservada. `JPWNavigation.routes()` mantém seus IDs `dashboard`,
-`forex-consolidated`, `personal-finance`, `research-forex`, `alladin` e `tools-calendar`.
+`forex-consolidated`, `personal-finance`, `research-forex`, `alladin` e `tools-calendar`; o novo filho `tools-leverage` integra o catálogo de Ferramentas sem alterar os seis primários.
 
 - Forex tem sete filhos nesta ordem: **Dashboard** (`forex-consolidated`),
   **Execution Board** (`forex-operation`), **History** (`forex-history`),

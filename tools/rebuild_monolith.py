@@ -4,8 +4,15 @@ import base64
 import hashlib
 import json
 import re
+from build_leverage_package import build as build_leverage_package
 
 ROOT = Path(__file__).resolve().parents[1]
+# The manifest is the single authority for version, declared sources, states,
+# package paths and hashes. Generate archives before fingerprinting their bytes.
+leverage_manifest = build_leverage_package(ROOT)
+leverage_downloads = {
+    kind: item for kind, item in leverage_manifest['downloads'].items() if item['available']
+}
 manifest = json.loads((ROOT / 'src/js/manifest.json').read_text(encoding='utf-8'))
 build_id_path = ROOT / 'build-id.js'
 
@@ -34,7 +41,10 @@ NOCUDA_DOCUMENTS = (
 )
 FINGERPRINT_FIXED_INPUTS = (
     'index.html', 'src/styles/app.css', 'src/js/manifest.json', 'sw.js',
-    'tools/rebuild_monolith.py',
+    'tools/rebuild_monolith.py', 'tools/build_leverage_package.py',
+    'downloads/jpw-alavancagem-atual/manifest.json',
+    *leverage_manifest['sourceFiles'],
+    *(item['path'] for item in leverage_downloads.values()),
     *(path for path, _mime, _name in NORMATIVE_DOCUMENTS + NOCUDA_DOCUMENTS),
 )
 FINGERPRINT_TAIL_INPUTS = (
@@ -104,6 +114,12 @@ build_id_source = f"// Gerado por tools/rebuild_monolith.py. Não editar manualm
 pine_payload = base64.b64encode((ROOT / 'downloads/nocuda/Nocuda_Tool.pine').read_bytes()).decode('ascii')
 nocuda_payload = {name: {'mime': mime, 'base64': base64.b64encode((ROOT / relative).read_bytes()).decode('ascii')} for relative, mime, name in NOCUDA_DOCUMENTS}
 build_id_source += 'if (typeof window !== "undefined") {window.JPW_NOCUDA_PINE = ' + json.dumps(pine_payload) + ';window.JPW_NOCUDA_FILES = ' + json.dumps(nocuda_payload, separators=(',', ':')) + ';}\n'
+leverage_payload = {
+    kind: {'mime': 'application/zip', 'base64': base64.b64encode((ROOT / item['path']).read_bytes()).decode('ascii')}
+    for kind, item in leverage_downloads.items()
+}
+leverage_json = json.dumps(leverage_manifest, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
+build_id_source += 'if (typeof window !== "undefined") {window.JPW_LEVERAGE_MANIFEST = ' + leverage_json + ';window.JPW_LEVERAGE_FILES = ' + json.dumps(leverage_payload, separators=(',', ':')) + ';}\n'
 build_id_path.write_text(build_id_source, encoding='utf-8')
 
 index = (ROOT / 'index.html').read_text(encoding='utf-8')

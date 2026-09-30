@@ -1,6 +1,6 @@
 // ============ NAVEGAÇÃO SEMÂNTICA (NAV-01 · N1) ============
 // O contrato público global tem seis rotas canônicas. Forex expõe
-// sete filhos, Research seis e Ferramentas dois; owner semântico, filho, section física e visão
+// sete filhos, Research seis e Ferramentas três; owner semântico, filho, section física e visão
 // local são dimensões separadas. Navegação é estado efêmero de UI; este módulo
 // não persiste preferência, tela ou visão local.
 
@@ -25,7 +25,8 @@ const NAV_RESEARCH_CHILDREN=Object.freeze([
 
 const NAV_TOOLS_CHILDREN=Object.freeze([
   Object.freeze({id:'tools-calendar',label:'Calendário Econômico',primary:'tools',child:'tools-calendar',screen:'tools',localView:Object.freeze({surface:'tools',view:'calendar'}),aliases:Object.freeze(['tools'])}),
-  Object.freeze({id:'tools-nocuda',label:'Nocuda Tool',primary:'tools',child:'tools-nocuda',screen:'tools',localView:Object.freeze({surface:'tools',view:'nocuda'}),aliases:Object.freeze([])})
+  Object.freeze({id:'tools-nocuda',label:'Nocuda Tool',primary:'tools',child:'tools-nocuda',screen:'tools',localView:Object.freeze({surface:'tools',view:'nocuda'}),aliases:Object.freeze([])}),
+  Object.freeze({id:'tools-leverage',label:'Alavancagem Atual — MT5',primary:'tools',child:'tools-leverage',screen:'tools',localView:Object.freeze({surface:'tools',view:'leverage'}),aliases:Object.freeze([])})
 ]);
 
 const NAV_CANONICAL_ROUTES=Object.freeze([
@@ -67,7 +68,7 @@ const NAV_LOCAL_SURFACES=Object.freeze({
   finpes:Object.freeze({screen:'finpes',primary:'personal-finance',views:Object.freeze(['overview','mensal','dividas','comparativo','cenarios']),resolve:()=>window.JPWFin&&window.JPWFin.ui}),
   fxplan:Object.freeze({screen:'fxplan',primary:'forex',views:Object.freeze(['overview','planning','actuals','table']),resolve:()=>window.JPWFx&&window.JPWFx.ui}),
   research:Object.freeze({screen:'research',primary:'research',views:Object.freeze(['nocoda','pivots','stocks-br','stocks-global','reits','probability-lab','others']),resolve:()=>window.JPWResearch&&window.JPWResearch.ui}),
-  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','nocuda']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
+  tools:Object.freeze({screen:'tools',primary:'tools',views:Object.freeze(['calendar','nocuda','leverage']),resolve:()=>window.JPWTools&&window.JPWTools.ui})
 });
 
 const NAV_ROUTE_BY_ID=Object.freeze(Object.fromEntries(
@@ -219,7 +220,7 @@ function navLocalPlan(surfaceId,view,descriptor){
     else if(view==='probability-lab') canonical='research-probability-lab';
     else if(view==='others') canonical='research-others';
   }
-  if(surfaceId==='tools') canonical=view==='calendar'?'tools-calendar':'tools-nocuda';
+  if(surfaceId==='tools') canonical=({calendar:'tools-calendar',nocuda:'tools-nocuda',leverage:'tools-leverage'})[view]||null;
   const child=canonical&&(canonical.startsWith('forex-')||canonical.startsWith('research-')||canonical.startsWith('tools-'))?canonical:null;
   return {accepted:true,requested:surfaceId+':'+view,source:canonical?'local':'compatibility',
     canonical,primary:descriptor.primary,child,screen:descriptor.screen,localView:{surface:surfaceId,view}};

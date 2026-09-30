@@ -44,7 +44,7 @@ try:
         context,page,errors=boot(browser,target)
         baseline=state(page)
         check(mode+' routes',page.evaluate("JPWNavigation.navigate('tools-nocuda')"))
-        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-nocuda'])
+        check(mode+' children',page.evaluate("JPWNavigation.children('tools').map(x=>x.id)")==['tools-calendar','tools-nocuda','tools-leverage'])
         page.click('#nocudaExample');wire=page.locator('#nocudaCanonical').input_value()
         check(mode+' preview49',page.locator('#nocudaPreview line').count()==49)
         check(mode+' anchors3',page.locator('#nocudaAnchors tr').count()==3)

@@ -13,12 +13,15 @@ const NOCUDA_DOCUMENT_URLS = [
   './downloads/nocuda/Nocuda_Tool.pine', './downloads/nocuda/Nocuda_Tool.mq5',
   './downloads/nocuda/TRADINGVIEW-LEIA-ME.md', './downloads/nocuda/MT5-LEIA-ME.md'
 ].map(path => new URL(path, self.location.href).href);
+const LEVERAGE_ROOT_URL = new URL('./downloads/jpw-alavancagem-atual/', self.location.href).href;
+const LEVERAGE_MANIFEST_URL = new URL('./downloads/jpw-alavancagem-atual/manifest.json', self.location.href).href;
 const PRECACHE_URLS = [
   './src/js/20-ui/32-module-availability.js',
   './src/js/20-ui/33-module-work.js',
   './src/js/00-core/08-module-availability.js',
   './assets/nocuda-tradingview.png', './assets/nocuda-metatrader.png',
   ...NOCUDA_DOCUMENT_URLS,
+  LEVERAGE_MANIFEST_URL,
   './src/js/10-domain/16-nocuda-transfer.js', './src/js/20-ui/31-tools-services.js',
   './src/js/10-domain/19-execution-market.js',
   './src/js/10-domain/18-execution-board-model.js',
@@ -94,7 +97,33 @@ const PRECACHE_URLS = [
 self.addEventListener('install', event => {
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE_NAME);
-    try { await cache.addAll(PRECACHE_URLS); }
+    try {
+      await cache.addAll(PRECACHE_URLS);
+      const manifestResponse=await cache.match(LEVERAGE_MANIFEST_URL);
+      if(!manifestResponse)throw new Error('Manifesto JPW Alavancagem Atual ausente');
+      const manifest=await manifestResponse.json();
+      if(manifest.schemaVersion!==1||!manifest.downloads||!manifest.downloads.source?.available)
+        throw new Error('Manifesto JPW Alavancagem Atual invalido');
+      const downloads=Object.values(manifest.downloads).filter(item=>item&&item.available).map(item=>{
+        if(typeof item.path!=='string'||!item.path.startsWith('downloads/jpw-alavancagem-atual/')||item.path.includes('..'))
+          throw new Error('Caminho de download JPW Alavancagem Atual invalido');
+        const url=new URL(item.path,self.location.href);
+        if(!url.href.startsWith(LEVERAGE_ROOT_URL)||!url.pathname.endsWith('.zip')||url.search||url.hash)
+          throw new Error('URL de download JPW Alavancagem Atual invalida');
+        if(!Number.isSafeInteger(item.bytes)||item.bytes<=0||typeof item.sha256!=='string'||!/^[a-f0-9]{64}$/.test(item.sha256))
+          throw new Error('Integridade de download JPW Alavancagem Atual invalida');
+        return {url:url.href,bytes:item.bytes,sha256:item.sha256};
+      });
+      await cache.addAll(downloads.map(item=>item.url));
+      for(const item of downloads){
+        const cached=await cache.match(item.url);
+        if(!cached)throw new Error('Download JPW Alavancagem Atual ausente do cache');
+        const bytes=await cached.arrayBuffer();
+        const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),value=>value.toString(16).padStart(2,'0')).join('');
+        if(bytes.byteLength!==item.bytes||digest!==item.sha256)
+          throw new Error('Download JPW Alavancagem Atual diferente do manifesto');
+      }
+    }
     catch(error){ await caches.delete(CACHE_NAME); throw error; }
   })());
 });
@@ -107,7 +136,7 @@ self.addEventListener('fetch', event => {
   if(event.request.method !== 'GET') return;
   const url=new URL(event.request.url);
   const documentURL = url.origin + url.pathname;
-  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)){
+  if(NORMATIVE_DOCUMENT_URLS.includes(documentURL)||NOCUDA_DOCUMENT_URLS.includes(documentURL)||documentURL===LEVERAGE_MANIFEST_URL||documentURL.startsWith(LEVERAGE_ROOT_URL)){
     event.respondWith(caches.open(CACHE_NAME).then(cache=>cache.match(documentURL).then(cached=>cached||fetch(event.request))));
     return;
   }

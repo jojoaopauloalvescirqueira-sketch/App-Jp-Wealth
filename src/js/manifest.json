@@ -176,7 +176,7 @@
       "order": 29,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "65a38779f10a246925ac9680388fce2171a6e7211ffa2683327f2d55eb5857f1"
+      "sha256": "8609466f3cdd50e01e937e7a56fcd5b53798b19a931d8390c22d7f2b6e8dee49"
     },
     {
       "order": 30,
@@ -571,7 +571,7 @@
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
       "order": 95,
-      "sha256": "8909d1ede87067a0a5c8c46167e74e273bcb533381003d8dd0a30c5dd2ef2dc3"
+      "sha256": "36d50a52c9dbe1419d21fcfe603a6d61b701b2b86b758645b396b71c4ed57186"
     },
     {
       "path": "src/js/20-ui/31-forex-accounts.js",

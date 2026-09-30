@@ -13,7 +13,7 @@ arquivos rastreados pelo Git e de qualquer input oficial já declarado no manife
 é tocada.
 """
 from pathlib import Path
-import base64, json, os, re, shutil, subprocess, sys, tempfile
+import base64, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -36,6 +36,8 @@ BRAND_BUILD_INPUTS = (
     'assets/pwa-icon-primary.png', 'assets/pwa-icon-primary-192.png', 'assets/pwa-icon-primary-512.png',
     'assets/pwa-icon-secondary.png', 'assets/pwa-icon-secondary-192.png', 'assets/pwa-icon-secondary-512.png',
 )
+LEVERAGE_MANIFEST = 'downloads/jpw-alavancagem-atual/manifest.json'
+LEVERAGE_BUILDER = 'tools/build_leverage_package.py'
 
 LIXO = {
     'icons/.DS_Store': b'\x00\x01Finder junk' + b'\xff' * 64,   # o caso real que quebrou
@@ -56,6 +58,10 @@ def arquivos_do_candidato():
     arquivos.update(DOCUMENTOS)  # inputs normativos novos, inclusive antes do primeiro commit
     arquivos.update(BRAND_BUILD_INPUTS)
     arquivos.update(NOCUDA_BUILD_INPUTS)
+    leverage = json.loads((ROOT / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))
+    arquivos.update((LEVERAGE_MANIFEST, LEVERAGE_BUILDER))
+    arquivos.update(leverage['sourceFiles'])
+    arquivos.update(item['path'] for item in leverage['downloads'].values() if item['available'])
     return sorted(arquivos)
 
 def montar(destino: Path, arquivos):
@@ -80,10 +86,13 @@ def rebuild(destino: Path):
         raise AssertionError(f'rebuild falhou em {destino.name}: {r.stdout}{r.stderr}')
 
 def fatos(destino: Path):
+    leverage = json.loads((destino / LEVERAGE_MANIFEST).read_text(encoding='utf-8'))
     return {
         'build_id': (destino / 'build-id.js').read_text(encoding='utf-8').strip(),
         'monolito': (destino / 'dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html').read_bytes(),
         'manifest': (destino / 'src/js/manifest.json').read_bytes(),
+        'leverage_manifest': (destino / LEVERAGE_MANIFEST).read_bytes(),
+        'leverage_source': (destino / leverage['downloads']['source']['path']).read_bytes(),
     }
 
 def main():
@@ -108,6 +117,8 @@ def main():
             f"LIXO ALTEROU O BUILD ID\n  limpo: {a['build_id']}\n  sujo : {b['build_id']}")
         assert a['monolito'] == b['monolito'], 'lixo alterou o monólito portátil'
         assert a['manifest'] == b['manifest'], 'lixo alterou os hashes do manifest'
+        assert a['leverage_manifest'] == b['leverage_manifest'], 'lixo alterou o manifesto de alavancagem'
+        assert a['leverage_source'] == b['leverage_source'], 'lixo alterou o ZIP de fontes de alavancagem'
 
         # ---- 3. contraprova: mudar um INPUT OFICIAL deve mudar o Build ID ----
         montar(alterado, arquivos)
@@ -135,6 +146,21 @@ def main():
             alvo_doc.unlink()
             erro = subprocess.run([sys.executable, 'tools/rebuild_monolith.py'], cwd=destino, capture_output=True, text=True)
             assert erro.returncode != 0 and 'input oficial do build ausente' in (erro.stdout + erro.stderr), relative
+
+        # The exact delivered ZIP bytes are present in the portable bootstrap.
+        leverage = json.loads(a['leverage_manifest'])
+        for item in leverage['downloads'].values():
+            if not item['available']:
+                continue
+            original = (limpo / item['path']).read_bytes()
+            assert len(original) == item['bytes'], item['path']
+            assert base64.b64encode(original).decode('ascii') in html, item['path']
+            assert hashlib.sha256(original).hexdigest() == item['sha256'], item['path']
+        first_source = leverage['sourceFiles'][0]
+        montar(alterado, arquivos)
+        (alterado / first_source).write_bytes((alterado / first_source).read_bytes() + b'\n')
+        rebuild(alterado)
+        assert fatos(alterado)['build_id'] != a['build_id'], 'fingerprint cego ao pacote de fontes'
 
         # ---- 5. cada input da marca declarado e ausente precisa falhar alto ----
         for relative in BRAND_BUILD_INPUTS:

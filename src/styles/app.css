@@ -8227,6 +8227,64 @@ html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-order-table tr.eb-or
 
 #nocudaTool .nocuda-primary:not(:disabled){background:var(--violet);border-color:var(--violet);color:white}#nocudaTool .nocuda-primary:not(:disabled):hover{filter:brightness(1.08)}
 
+/* JPW Alavancagem Atual — guia e distribuição local do indicador MT5. */
+.leverage-tool{max-width:1240px;margin:0 auto;padding:8px 0 32px;color:var(--ink)}
+.leverage-heading{padding:16px 0 20px}
+html[data-shell="global-dashboard"] #jpwLeveragePage>.leverage-heading{display:block;position:static;height:auto;min-height:0;padding:16px 0 20px;border:0;background:transparent;gap:0}
+.leverage-heading h1{font-size:clamp(28px,3vw,38px);letter-spacing:-1.2px;margin:7px 0 10px;font-weight:650}
+.leverage-heading p{max-width:75ch;color:var(--ink-dim);line-height:1.6;margin:0;font-size:14px}
+.leverage-page-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.leverage-page-nav a{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;font-size:13px;color:var(--ink-dim);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:8px 12px;background:var(--panel)}
+.leverage-page-nav a:hover,.leverage-page-nav a:focus-visible{color:var(--violet);border-color:var(--violet)}
+.leverage-tool .card{padding:26px;border-radius:18px;border:1px solid var(--line);background:var(--panel);box-shadow:none;margin:0 0 18px;scroll-margin-top:110px}
+.leverage-tool h2{font-size:21px;letter-spacing:-.5px;margin:6px 0 12px;font-weight:650}
+.leverage-tool h3{font-size:16px;margin:0 0 8px;font-weight:650}
+.leverage-tool p,.leverage-tool li{font-size:14px;line-height:1.65;color:var(--ink-dim)}
+.leverage-tool p{margin:9px 0 13px}
+.leverage-tool ol,.leverage-tool ul{padding-left:22px;margin:12px 0}
+.leverage-tool li+li{margin-top:7px}
+.leverage-tool code{font-size:.9em;color:var(--ink);overflow-wrap:anywhere}
+.leverage-download-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.leverage-package{min-width:0;border:1px solid var(--line);background:var(--panel-2);border-radius:12px;padding:20px}
+.leverage-package .reset-btn{min-height:40px;margin:4px 0 0;padding:9px 13px;border-radius:9px;font-size:13px;color:var(--ink)}
+.leverage-package .reset-btn:not(:disabled){cursor:pointer}
+.leverage-package .reset-btn:disabled{opacity:.6;cursor:not-allowed}
+.leverage-package-state{font-weight:600;color:var(--ink)!important;overflow-wrap:anywhere}
+.leverage-hash{font-size:11px!important;overflow-wrap:anywhere}
+#jpwLeverageDownloadStatus{font-size:12px;color:var(--ink-dim);margin:10px 0 18px}
+#jpwLeverageDownloadStatus[data-state="error"]{color:var(--danger)}
+.leverage-validation{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;border-top:1px solid var(--line);padding-top:18px;margin:0}
+.leverage-validation>div{min-width:0}.leverage-validation dt{font-size:11px;color:var(--ink-faint);margin-bottom:5px}
+.leverage-validation dd{font-size:13px;line-height:1.5;color:var(--ink);margin:0;overflow-wrap:anywhere}
+.leverage-example{background:var(--panel-2);border-left:3px solid var(--violet);padding:15px 18px;margin:18px 0;border-radius:0 9px 9px 0}
+.leverage-example strong{font-size:12px;color:var(--ink)}.leverage-example p{margin:7px 0 0}
+.leverage-tool :is(a,button,summary):focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+.leverage-tool [hidden]{display:none!important}
+.leverage-glossary,.leverage-cockpit-map{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;margin:18px 0}
+.leverage-glossary>div,.leverage-cockpit-map>div,.leverage-help-list>div{min-width:0;border-top:1px solid var(--line);padding:14px 0}
+.leverage-tool :is(.leverage-glossary,.leverage-cockpit-map,.leverage-help-list,.leverage-quality) dt{font-size:14px;font-weight:650;line-height:1.5;color:var(--ink);margin:0 0 5px}
+.leverage-tool :is(.leverage-glossary,.leverage-cockpit-map,.leverage-help-list,.leverage-quality) dd{margin:0;color:var(--ink-dim);font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+.leverage-tool .leverage-result{padding-top:14px;border-top:1px solid var(--line);margin:18px 0 0}
+.leverage-result strong,.leverage-callout strong{color:var(--ink)}
+.leverage-callout{padding:14px 16px;background:var(--panel-2);border-left:3px solid var(--violet);border-radius:0 8px 8px 0}
+.leverage-file-table-wrap{margin:18px 0;max-width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.leverage-file-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:13px;line-height:1.6;text-align:left}
+.leverage-file-table caption{text-align:left;padding:14px;font-weight:600;color:var(--ink-dim)}
+.leverage-file-table :is(th,td){padding:12px 14px;border-top:1px solid var(--line);text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+.leverage-file-table thead th{color:var(--ink-dim);font-weight:600;background:var(--panel-2)}
+.leverage-file-table tbody th{font-weight:500}.leverage-file-table th:first-child{width:55%}
+.leverage-file-table code{font-size:12px}
+.leverage-tool kbd{font:inherit;font-size:.9em;white-space:nowrap;border:1px solid var(--line);border-radius:4px;background:var(--panel-2);padding:1px 5px;color:var(--ink)}
+.leverage-quality{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}
+.leverage-quality>div{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--panel-2)}
+.leverage-details{margin-top:18px;border-top:1px solid var(--line)}
+.leverage-details summary{min-height:44px;display:list-item;box-sizing:border-box;padding:12px 0;font-size:14px;font-weight:600;line-height:1.6;cursor:pointer;color:var(--ink)}
+.leverage-interpret{margin-top:20px;scroll-margin-top:110px}
+.leverage-help-list{margin:18px 0 0}
+.leverage-tool :is(.leverage-step,.leverage-interpret){scroll-margin-top:110px}
+@media(max-width:900px){.leverage-quality{grid-template-columns:1fr}}
+@media(max-width:700px){.leverage-download-grid{grid-template-columns:1fr}.leverage-validation{grid-template-columns:1fr}.leverage-tool .card{padding:20px;border-radius:14px}.leverage-package{padding:16px}.leverage-heading{padding-top:8px}:is(.leverage-glossary,.leverage-cockpit-map){grid-template-columns:1fr}.leverage-file-table :is(th,td){padding:10px 8px}.leverage-file-table caption{padding:12px 10px}}
+
 /* Execution Board tabular: shared nodes, explicit inputs and calculated cells. */
 #execWidgetGrid.execution-board>.eb-card{grid-column:1/-1!important;padding:16px!important;border-radius:8px}
 #execWidgetGrid.execution-board{gap:12px!important}

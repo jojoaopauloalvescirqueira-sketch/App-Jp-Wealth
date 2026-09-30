@@ -4,7 +4,7 @@
   const el=id=>document.getElementById(id);
   let view='calendar',valid=null,lastCanonical=null,revision=0;
   function selectView(next){
-    if(!['calendar','nocuda'].includes(next))return;
+    if(!['calendar','nocuda','leverage'].includes(next))return;
     view=next;
     document.querySelectorAll('#tools [data-tools-view]').forEach(node=>{
       node.hidden=node.dataset.toolsView!==next;node.inert=node.hidden;
@@ -88,5 +88,72 @@
   // Local-file links are not downloadable in every browser. Use the exact
   // build-pinned bytes already embedded by the official generator.
   if(location.protocol==='file:')document.querySelectorAll('[data-nocuda-file]').forEach(link=>{const data=window.JPW_NOCUDA_FILES&&window.JPW_NOCUDA_FILES[link.dataset.nocudaFile];if(data)link.href='data:'+data.mime+';base64,'+data.base64;});
+  function initLeverageDownloads(){
+    // Public release metadata and embedded bytes are generated from the same
+    // manifest by the official build. The page never reads account data.
+    const manifest=window.JPW_LEVERAGE_MANIFEST;
+    const files=window.JPW_LEVERAGE_FILES||{};
+    const meta=name=>document.querySelector('[data-jpw-leverage-meta="'+name+'"]');
+    const set=(name,value)=>{meta(name).textContent=value;};
+    const notice=(message,error)=>{const node=el('jpwLeverageDownloadStatus');node.textContent=message;node.dataset.state=error?'error':'ok';};
+    const validEntry=entry=>entry&&entry.available===true&&
+      typeof entry.path==='string'&&/^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path)&&
+      entry.filename===entry.path.split('/').pop()&&/^[a-f0-9]{64}$/.test(entry.sha256)&&
+      Number.isSafeInteger(entry.bytes)&&entry.bytes>0;
+    const validManifest=manifest&&manifest.schemaVersion===1&&
+      typeof manifest.version==='string'&&/^[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.version)&&
+      manifest.downloads&&manifest.validation;
+    if(!validManifest){
+      set('source-status','Metadados de distribuição indisponíveis nesta cópia.');
+      set('compiled-status','Metadados de distribuição indisponíveis nesta cópia.');
+      notice('Não foi possível confirmar os arquivos desta versão.',true);
+      return;
+    }
+    set('version',manifest.version);
+    set('coverage',typeof manifest.coverage==='string'&&manifest.coverage?manifest.coverage:'Cobertura não informada.');
+    for(const stage of ['mathematics','compilation','terminal']){
+      const item=manifest.validation[stage];
+      const state=item&&item.status==='passed'?'Executada':item&&item.status==='pending'?'Pendente':'Não informada';
+      const detail=item&&typeof item.detail==='string'&&item.detail?item.detail:'';
+      set(stage,state+(detail?' · '+detail:''));
+    }
+    for(const kind of ['source','compiled']){
+      const entry=manifest.downloads[kind],button=document.querySelector('[data-jpw-leverage-download="'+kind+'"]');
+      const ready=validEntry(entry)&&
+        (location.protocol!=='file:'||!!(files[kind]&&typeof files[kind].base64==='string'));
+      button.disabled=!ready;
+      set(kind+'-sha',ready?entry.sha256:'—');
+      if(ready) set(kind+'-status','Disponível · '+entry.filename+' · '+entry.bytes.toLocaleString('pt-BR')+' bytes');
+      else if(entry&&entry.available===false&&typeof entry.reason==='string'&&entry.reason)
+        set(kind+'-status','Indisponível · '+entry.reason);
+      else set(kind+'-status','Arquivo indisponível ou sem integridade confirmada nesta cópia.');
+      button.addEventListener('click',async()=>{
+        if(!ready||button.disabled)return;
+        button.disabled=true;notice('Verificando o arquivo antes do download…');
+        try{
+          let bytes;
+          if(location.protocol==='file:'){
+            const encoded=files[kind];
+            if(!encoded||encoded.mime!=='application/zip')throw new Error('Arquivo incorporado ausente.');
+            bytes=Uint8Array.from(atob(encoded.base64),c=>c.charCodeAt(0));
+          }else{
+            const response=await fetch(entry.path);
+            if(!response.ok)throw new Error('Arquivo não encontrado neste endereço.');
+            bytes=new Uint8Array(await response.arrayBuffer());
+          }
+          if(bytes.length!==entry.bytes)throw new Error('Tamanho do pacote diferente do manifesto.');
+          if(!crypto.subtle)throw new Error('Verificação criptográfica indisponível neste navegador.');
+          const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
+          if(digest!==entry.sha256)throw new Error('Hash do pacote diferente do manifesto.');
+          const url=URL.createObjectURL(new Blob([bytes],{type:'application/zip'}));
+          const link=document.createElement('a');link.href=url;link.download=entry.filename;document.body.append(link);link.click();link.remove();
+          setTimeout(()=>URL.revokeObjectURL(url),30000);
+          notice('Arquivo '+entry.filename+' verificado e preparado para download.');
+        }catch(error){notice('Download não iniciado: '+error.message,true);}
+        finally{button.disabled=false;}
+      });
+    }
+  }
+  initLeverageDownloads();
   window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view}),generateEditable});selectView(view);
 })();

@@ -1,3 +1,73 @@
+# Revisão ativa — JPW Cockpit 1.8.0
+
+Implementação local autorizada em 2026-09-29, derivada do r11/1.7.0 congelado (77/77 hashes, build `a5c2908d9fbb832a`, fingerprint `2395a737dc1b441b8b03594d4b71fddc0cadb539c93748688bcfdae2375b9934`). Contratos distintos: [CHG de interface N2/A3](CHG-JPW-COCKPIT-UI-20260929.md) e [CHG do guia local N3/A4](CHG-JPW-COCKPIT-AI-GUIDE-20260929.md). O delta de produto foi congelado primeiro em 81 arquivos, fingerprint `892ede1761848bfd51140c1a57543dc041a4311126705539eb522acdebb957df`; depois foi acrescentado o guia subordinado para IAs. Cinco metricas padrao, cockpit sob demanda e preferencias somente visuais por grafico; registros financeiros e formulas preservados. Focais do host e da pagina passaram, mas compilacao, interacao e ciclo de template no MT5 isolado seguem NOT_RUN. O r11 segue BLOCKED: full 50 PASS / 7 PRODUCT_FAIL, focal da pagina falho e MT5 nativo NOT_RUN. Sem conta real, terminal operacional, commit, push, merge ou publicacao.
+
+## Histórico preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.7.0
+
+Implementação local N3/A4 autorizada em 2026-09-29, derivada do candidate congelado r10/1.6.0: build `2ff5bb108d9b8af1`, fingerprint `f1e86778bbebf2e38240ab58ec3201a48b99c987d4c485fa6d1c71d07765eeb9`, 72/72 hashes conferidos. Contrato: [CHG-JPW-ALAVANCAGEM-F-NONTOUCH-20260929](CHG-JPW-ALAVANCAGEM-F-NONTOUCH-20260929.md). Objetivo: F diagnostico 1,5 padrao ou 1,8 selecionavel por conta/simbolo, duas distancias Raiz N e referencia browniana ideal de primeiro nao toque em Details. P-21 canonico permanece `PENDING`; calendario projetado permanece Estimated. r10 continua BLOCKED, com full 55 PASS / 2 PRODUCT_FAIL e MT5 nativo NOT_RUN como historico. Sem conta real, instalacao operacional, commit, push, merge ou publicacao.
+
+## Histórico preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.6.0
+
+Implementação local N3/A4 autorizada em 2026-09-29, derivada do candidate congelado r9/1.5.0, cujo fingerprint é `9deb86863c0f7d358dbcb7dd667b118d6db1ab71bfdd21322b89ab80898f66e9` e cujos 63/63 arquivos conferem com worktree e snapshot. Contrato: [CHG-JPW-ALAVANCAGEM-HORIZONS-20260929](CHG-JPW-ALAVANCAGEM-HORIZONS-20260929.md). Escalas temporais automáticas 1W/2W por símbolo, calendário recorrente marcado Estimated sem cobertura datada aprovada, F pendente e EA observador local sem negociação. r9 permanece BLOCKED; seus quatro PRODUCT_FAIL e MT5 nativo NOT_RUN não viram aprovação. Sem conta real, instalação operacional, commit, push, merge ou publicação.
+
+## Histórico preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.5.0
+
+Implementação local N3/A4 autorizada em 2026-09-29, derivada do r8/1.4.0 (51/51 hashes conferidos). Contrato: [CHG-JPW-ALAVANCAGEM-AUTO-UI-20260929](CHG-JPW-ALAVANCAGEM-AUTO-UI-20260929.md). Raiz N corrente com N/F por instrumento, quatro linhas e Details centralizado, cenários antigos preservados. r8 continua BLOCKED; resultados novos serão registrados separadamente. Sem conta real, sessão operacional ou Git/publicação.
+
+## Histórico preservado
+
+# Revisão ativa — JPW Alavancagem Atual 1.4.0, Raiz N no indicador
+
+Implementação local N3/A4 autorizada em 2026-09-28 sobre o candidate r7/v1.3.0 preservado (45/45 hashes, build `1ad26bf632734503`, fingerprint `456a5f807314ef70c54109fda1873e86d6aa0ba8c2e90a5a255338a37f3a81d2`). Contrato: [CHG-JPW-ALAVANCAGEM-RAIZ-N-20260928](CHG-JPW-ALAVANCAGEM-RAIZ-N-20260928.md). O diagnóstico Raiz N usará cenário declarado e persistente por conta/instrumento e quinta linha compacta, com detalhes e confirmação no próprio indicador. Preservar as métricas e registros existentes. O r7 permanece AUDIT_FAIL/BLOCKED, full 53 PASS / 4 PRODUCT_FAIL e validação nativa NOT_RUN; esta revisão não herda aprovação. Sem conta real pelo agente, instalação operacional, commit, push, merge ou publicação.
+
+## Histórico anterior preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.3.0, distância ao SL da referência Gênese
+
+Implementação local N3/A4 autorizada em 2026-09-28, derivada do r6/v1.2.1 congelado (39/39 hashes, fingerprint `637cfb1c57ac9a5e5a73a40a556f5b3bea69f2095de8b3dab85636b95daf0ae0`). Contrato: [CHG-JPW-ALAVANCAGEM-GENESE-SL-20260928](CHG-JPW-ALAVANCAGEM-GENESE-SL-20260928.md). A distância até o SL vigente usará a posição selecionada/inferida e registro local de referência separado do MDD. As três métricas existentes permanecem independentes. O r6 registrou AUDIT_FAIL, full 52 PASS / 5 PRODUCT_FAIL e validação nativa NOT_RUN; a nova revisão não herda aprovação. Sem conta real pelo agente, instalação operacional ou Git/publicação.
+
+## Histórico anterior preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.2.1, consulta sob demanda do MDD observado
+
+Implementação local N3/A4 autorizada em 2026-09-28, derivada do r5/v1.2.0 preservado (36/36 hashes, fingerprint `40ee992acceb153caaca133bcd37b0e9529c5380c6192fe0ac4a3ed643877917`). Contrato: [CHG-JPW-ALAVANCAGEM-CONSULTA-MDD-20260928](CHG-JPW-ALAVANCAGEM-CONSULTA-MDD-20260928.md). Acrescentar script de consulta apenas leitura ao máximo observado gravado para a instalação/conta atuais, sem alterar fórmulas, painel ou formato do registro. Novo candidate, validação e auditoria serão relatados separadamente. Sem leitura de conta real pelo agente, instalação operacional, aceite humano ou Git/publicação.
+
+## Histórico anterior preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.2.0, métricas sobre saldo
+
+Implementação local N3/A4 autorizada em 2026-09-28 para acrescentar flutuante/saldo, DD/saldo e máximo observado persistido no MT5, sem mudar a alavancagem informativa existente. Contrato: [CHG-JPW-ALAVANCAGEM-METRICAS-MDD-20260928](CHG-JPW-ALAVANCAGEM-METRICAS-MDD-20260928.md). Base recuperável: candidate r4/v1.1.2, fingerprint `d8d1f98a45ce8051de4b36dab1426a46134696d76594d21a51ed3b6355d7d37a`, 32/32 hashes conferidos. Focais de painel/pacote/página/estrutura PASS; full 54 PASS / 3 PRODUCT_FAIL, preservado; compilação e execução nativas 1.2.0 NOT_RUN. O derivado permanece fonte e página para revisão, sem prontidão operacional. O registro observado é separado do DD normativo do Estatuto V11 e não alimenta os gates financeiros do aplicativo. Sem leitura de conta real pelo agente, instalação operacional ou Git/publicação.
+
+## Histórico anterior preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.1.2, legenda em inglês
+
+Refinamento visual autorizado em 2026-09-28, N1/A2. Contrato: [CHG-JPW-ALAVANCAGEM-LABEL-EN-20260928](CHG-JPW-ALAVANCAGEM-LABEL-EN-20260928.md). Derivado do candidate r3 preservado. Reduz o padrão da fonte para 8 e apresenta `JPW: Leverage` com estado em inglês na linha do gráfico. Cálculos, adaptadores, perfil USC e scripts ficam intactos. Build `70d9444f960966d9`; ZIP de fontes v1.1.2 gerado e focais passaram. Standard: 44 PASS / 2 PRODUCT_FAIL, preservado sem reclassificação. Compilação 1.1.2 e inspeção no MT5 pendentes; sem instalação operacional ou ações Git. Recibos e riscos no CHG.
+
+## Histórico anterior preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.1.1, painel compacto
+
+Melhoria visual localizada autorizada em 2026-09-27, N1/A2. Contrato: [CHG-JPW-ALAVANCAGEM-PAINEL-COMPACTO-20260928](CHG-JPW-ALAVANCAGEM-PAINEL-COMPACTO-20260928.md). A worktree e branch abaixo continuam; r2, ZIP e evidências 1.1.0 preservados. O indicador passa a mostrar uma linha pequena junto ao cabeçalho nativo do gráfico, mantendo estado legível e detalhes em tooltip. Fórmula, leitura da conta, scripts de teste e perfil USC ficam intactos. Esta revisão gera candidate 1.1.1 para revisão, sem instalação, operação Git ou publicação.
+
+## Histórico anterior preservado
+
+# Revisão anterior — JPW Alavancagem Atual 1.1.0
+
+Implementação autorizada em 2026-09-27, N3/A4. Contrato: [CHG-JPW-ALAVANCAGEM-USC-20260927](CHG-JPW-ALAVANCAGEM-USC-20260927.md). Preservar r1 e seus recibos. Sem Git/publicação, dados reais ou instalação operacional. USC verificado por instrumento, estimativas explícitas, painel cinza e guia de instalação. Validação nativa da nova versão não herda o PASS manual do r1. Derivado de trabalho `jpw-alavancagem-atual-20260927-r2`; identidade e resultados finais em `/private/tmp/jpw-leverage-v110-evidence`. Fontes não equivalem a prontidão operacional; compilação e execução nativas desta revisão continuam pendentes até recibos correspondentes.
+
+# Tarefa ativa — JPW Alavancagem Atual
+
+Implementacao local autorizada em 2026-09-26 pelo pedido "PLEASE IMPLEMENT THIS PLAN", N3 financeiro, branch isolada `codex/jpw-alavancagem-atual-20260926`, base `f5145b25e86af6b4ccbfef847cba0d84d74e7c8a`. Contrato: [CHG-JPW-ALAVANCAGEM-ATUAL-20260926](CHG-JPW-ALAVANCAGEM-ATUAL-20260926.md). Objetivo: indicador MT5 informativo de nocional bruto de posicoes abertas sobre equity atual e pagina de guia/download em Ferramentas e Servicos. O calculo fica exclusivamente no MT5; nenhuma regra normativa, dado financeiro, backup ou credencial do JP Wealth sera alterado. O numero sobre equity nao substitui o denominador do Art. 4.5 do Estatuto V11. Fontes, compilacao, execucao nativa, pagina, downloads, gate e auditoria serao relatados separadamente. Sem commit, push, merge, instalacao operacional ou publicacao.
+
+## Historico anterior preservado
+
 # Tarefa ativa — Tema claro como padrão de abertura
 
 Implementação local autorizada em 2026-09-24, N2/A3, branch isolada
@@ -874,3 +944,10 @@ CHG-FOREX-CONTAS-PERIODO-20260923 aprovado explicitamente pelo proprietário; N2
 
 ## 2026-09-24 — Disponibilidade reversível de módulos
 CHG-MODULE-AVAILABILITY-20260924 aprovado A3/N2. Branch codex/module-availability-20260924, base ad5c23e; implementação isolada concluída, validação e auditoria em andamento. Alladin congelado por decisão humana; sem Git/publicação, regras financeiras ou infraestrutura. Contrato e critérios no CHG; evidências ../evidence.
+# Revisão ativa — JPW Cockpit 1.9.0, risco dos stops
+
+Implementação local autorizada em 2026-09-29 pelo pedido `PLEASE IMPLEMENT THIS PLAN`, na mesma worktree/branch da v1.8.0/r14. Base r14: 83/83 hashes conferidos, fingerprint `37c3da2485d100601039dfd36a364c1c28dbf0e2212ac6878538201a7b0dd977`; os 42 caminhos sujos são o candidate anterior preservado. [Brief](BRIEF-JPW-COCKPIT-STOP-RISK-20260929.md), [CHG de produto N3/A4](CHG-JPW-COCKPIT-STOP-RISK-20260929.md) e [CHG do guia local N3/A4](CHG-JPW-COCKPIT-STOP-RISK-AI-GUIDE-20260929.md). Primeiro congelar produto; só então alterar o guia local para IAs e regenerar o ZIP. O full r14 `49 PASS / 8 PRODUCT_FAIL` e MT5 nativo `NOT_RUN` seguem históricos, sem reclassificação. Nenhum commit, push, merge, publicação, instalação operacional, negociação ou conta real está autorizado.
+
+
+## JPW Cockpit 1.10.0 — execução local 2026-09-29
+Plano humano autorizado. Base r15 93/93 preservada. Contratos CHG-JPW-COCKPIT-RELIABILITY-{PRODUCT,UI,CONTROL}-20260929. Objetivo: confiabilidade, eventos essenciais e UX; cálculos e registros financeiros preservados. Implementação local concluída; evidências de saída e pareceres independentes em `outputs/jpw-cockpit-v1100-20260929/`. O relatório final e os recibos brutos desse diretório governam o resultado da validação, sem herdar aprovação do r15. Compilação/execução nativa, teclado/DPI/template: NOT_RUN; prontidão operacional BLOCKED. Sem aceite humano, commit, push, merge, publicação, negociação ou instalação operacional.

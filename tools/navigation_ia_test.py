@@ -137,7 +137,8 @@ def assert_registry(page):
     assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
     tools = page.evaluate("() => window.JPWNavigation.children('tools')")
     assert [(child["id"], child["localView"]["view"]) for child in tools] == [
-        ("tools-calendar", "calendar"), ("tools-nocuda", "nocuda")], tools
+        ("tools-calendar", "calendar"), ("tools-nocuda", "nocuda"),
+        ("tools-leverage", "leverage")], tools
     assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []
     assert page.evaluate("() => window.JPWNavigation.children('inexistente')") == []
     resolved = page.evaluate("""targets => targets.map(target => ({

@@ -36,6 +36,7 @@ CASES = [
     ("finpes", "cenarios", None, "personal-finance", None),
     ("tools", "calendar", "tools-calendar", "tools", "tools-calendar"),
     ("tools", "nocuda", "tools-nocuda", "tools", "tools-nocuda"),
+    ("tools", "leverage", "tools-leverage", "tools", "tools-leverage"),
     ("research", "nocoda", "research-forex", "research", "research-forex"),
     ("research", "pivots", "research-forex", "research", "research-forex"),
     ("research", "stocks-br", "research-stocks-br", "research", "research-stocks-br"),
