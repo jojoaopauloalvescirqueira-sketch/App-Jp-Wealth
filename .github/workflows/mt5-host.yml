@@ -32,6 +32,8 @@ jobs:
           sudo apt-get install --yes g++ libsqlite3-dev libssl-dev
           python -m pip install --requirement requirements-dev.txt
           python -m playwright install --with-deps chromium
+      - name: Build source archive declared by the manifest
+        run: python tools/build_leverage_package.py
       - name: Run MT5 host and distribution checks
         run: python tools/leverage_suite.py --scope all --artifact tools/.artifacts/mt5-host.json
       - name: Preserve receipt and per-test logs

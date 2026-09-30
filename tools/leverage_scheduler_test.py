@@ -443,11 +443,12 @@ def presence_recovery_replay(compiler: str, source: str) -> int:
 
 PRESENCE_HELPER_SHIM = r'''
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <map>
 #include <string>
 using string=std::string;
-using ulong=unsigned long long;
+#define ulong std::uint64_t
 enum JPWObserverPresenceState {JPW_OBSERVER_WAITING=1,JPW_OBSERVER_PUBLISHED=2,
                                JPW_OBSERVER_FAILED=3};
 std::map<string,double> variables;
