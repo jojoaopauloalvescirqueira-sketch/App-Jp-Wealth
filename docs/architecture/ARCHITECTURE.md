@@ -68,9 +68,9 @@ ownership visual em Research/Forex e uma única instância DOM cada.
 - `src/vendor/planck/planck-1.5.0.min.js` é o build UMD oficial vendorizado do motor
   Planck.js, versão 1.5.0, licença MIT e SHA-256
   `69c6675a04121ec4042921b7d3d298058617d3211c243d8ea4d940a58af99974`.
-- `src/js/20-ui/23-research-views.js` oferece o caminho
-  `Research > Laboratório de Probabilidade > Galton Board` e apenas coordena a
-  montagem/pausa do controller. Na decisão A13-A, navegar ou cobrir o laboratório
+- `src/js/40-app/09-settings-modal.js` oferece o caminho
+  `Configurações > Conhecimento > Laboratório de Probabilidade` e coordena a
+  montagem/pausa do controller único. `23-research-views.js` preserva somente aliases legados. Na decisão A13-A, navegar ou cobrir o laboratório
   conserva a mesma simulação em memória, pausada até `Continuar`; não persiste
   bolas/resultados. Reset e finalização conservam seus contratos de limpeza.
 - O mundo usa unidades normalizadas e passo fixo de `1/120 s`, separado do render.
@@ -169,3 +169,9 @@ real deve ocorrer gradualmente, com testes de caracterização por domínio e se
 misturar refatoração com mudança normativa. O Galton Board é uma feature N1/N2
 delimitada e não resolve nem altera as dez pendências N3 registradas em
 `CURRENT-STATE.md`.
+
+## Candidate de leitura normativa e clareza — 2026-10-01
+
+`34-normative-reader.js` é UI documental de sessão, sem escritor de conta ou consentimento. Usa o PDF.js local, worker dedicado e bytes do V11 verificados. `tools/rebuild_monolith.py` produz `src/vendor/normative/statute-payload.js` a partir do PDF canônico, junto do portátil. O precache inclui a fonte original e o payload. [Contrato do leitor](NORMATIVE-READER.md).
+
+Dashboard filtra disponibilidade antes dos read-models; Forex conserva comandos/modelos financeiros e melhora somente a apresentação. O laboratório fica em Configurações, independente da disponibilidade de Research. As descrições anteriores de sua localização registram checkpoints históricos. [Forex](FOREX-EXPERIENCE.md), [navegação](NAVIGATION-HIERARCHY.md).

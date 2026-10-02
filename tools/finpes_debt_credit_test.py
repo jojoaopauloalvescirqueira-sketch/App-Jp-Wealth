@@ -6,7 +6,8 @@ passado; dado antigo jamais vira fato atual. Cada caso acusa pela PROPRIEDADE.
 Fixtures 100% sinteticas. Numero certo pelo motivo errado e falha.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

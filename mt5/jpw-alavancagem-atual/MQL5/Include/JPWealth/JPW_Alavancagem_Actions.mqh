@@ -1,13 +1,16 @@
 #ifndef JPW_ALAVANCAGEM_ACTIONS_MQH
 #define JPW_ALAVANCAGEM_ACTIONS_MQH
 // Indicator runtime component; included after its instance state.
+#include <JPWealth/JPW_UI_Focus.mqh>
 
 void JPWCockpitLoadPrefs()
   {
    JPWCockpitDefault(g_cockpit_prefs,(int)InpCorner);
    g_cockpit_pref_invalid=false; g_cockpit_pref_notice="";
    const string object=(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)>=0 ?
-                        JPW_COCKPIT_PREF_OBJECT : JPW_COCKPIT_PREF_LEGACY_OBJECT);
+                        JPW_COCKPIT_PREF_OBJECT :
+                        (ObjectFind(0,JPW_COCKPIT_PREF_V2_OBJECT)>=0 ?
+                         JPW_COCKPIT_PREF_V2_OBJECT : JPW_COCKPIT_PREF_LEGACY_OBJECT));
    if(ObjectFind(0,object)<0) return;
    JPWCockpitPrefs stored;
    if(ObjectGetInteger(0,object,OBJPROP_TYPE)!=OBJ_LABEL)
@@ -29,7 +32,7 @@ bool JPWCockpitOwnedSuffix(const string suffix)
   {
    if(suffix=="HUD_BG" || suffix=="RAIZ_DETAILS_BUTTON") return(true);
    if(StringLen(suffix)==1 && StringGetCharacter(suffix,0)>='0' &&
-      StringGetCharacter(suffix,0)<='5') return(true);
+      StringGetCharacter(suffix,0)<='6') return(true);
    return(StringFind(suffix,"RAIZ_UI_")==0 && StringLen(suffix)>8);
   }
 
@@ -212,6 +215,7 @@ void JPWLiveApply()
 
 void JPWRaizSaveVisibleFields()
   {
+   JPWSignalSaveDraft();
    if(!g_raiz_panel_built) return;
    for(int i=0;i<21;i++)
      {
@@ -353,6 +357,7 @@ bool JPWRaizNativeATR(const datetime decision,double &atr,datetime &bar_open,
 
 void JPWRaizSwitchTab(const int tab)
   {
+   if(g_raiz_tab==JPW_SIGNAL_ROUTE && tab!=JPW_SIGNAL_ROUTE) JPWSignalClear();
    if(g_raiz_tab==JPW_ROUTE_SETTINGS && tab!=JPW_ROUTE_SETTINGS)
      {
       g_cockpit_draft=g_cockpit_prefs;
@@ -608,11 +613,20 @@ void JPWRaizRecordComparison()
                    ". Cenário inicial preservado.");
   }
 
+bool g_jpw_focus_suspended=false;
+
 void JPWOpenCockpit(const int metric=-1)
   {
    // Opening/navigation uses the accepted snapshot. Explicit Refresh schedules
    // a coordinator cycle; no account financial collection occurs here.
    if(!g_account_known || g_sample_context=="") { g_refresh_requested=true; return; }
+   const bool resume=g_jpw_focus_suspended && g_raiz_draft_account_known &&
+                     g_raiz_draft_symbol==_Symbol && JPWAccountsEqual(g_raiz_draft_account,g_account);
+   if(!JPWUIAcquire(g_panel_prefix)) return;
+   if(resume)
+     { g_jpw_focus_suspended=false; g_raiz_details_open=true;
+       JPWRenderRaizDetails(); ChartRedraw(0); return; }
+   g_jpw_focus_suspended=false;
    g_raiz_draft_account=g_account; g_raiz_draft_account_known=true;
    g_raiz_draft_symbol=_Symbol;
    JPWRaizPopulateFields(); JPWLivePopulateFields(); JPWFactorPopulateDraft();
@@ -628,11 +642,24 @@ void JPWOpenCockpit(const int metric=-1)
 
 void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
+   if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=JPWUIOwner()) return;
+   if(id==CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT && sparam!=g_panel_prefix)
+     {
+      if(g_raiz_details_open)
+        {
+         JPWRaizSaveVisibleFields();
+         g_jpw_focus_suspended=true;
+         g_raiz_details_open=false;
+         JPWRaizPanelDestroy(); JPWRenderHUD(); ChartRedraw(0);
+        }
+      return;
+     }
+   if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && !JPWUIOwns(g_panel_prefix)) return;
    JPWAccount event_account;
    if(g_account_known && (!JPWReadAccount(event_account) ||
       !JPWAccountsEqual(g_account,event_account) ||
       (g_cockpit_snapshot.symbol!="" && g_cockpit_snapshot.symbol!=_Symbol)))
-     { JPWInvalidateIdentityPresentation(); g_refresh_requested=true;
+     { JPWSignalInvalidate("conta ou símbolo mudou."); JPWInvalidateIdentityPresentation(); g_refresh_requested=true;
        JPWRenderCurrentDisplay(); return; }
 
    if(id==CHARTEVENT_CHART_CHANGE)
@@ -666,17 +693,24 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
      {
       g_cockpit_draft=g_cockpit_prefs;
       g_cockpit_reset_requested=false;
-      g_raiz_details_open=false; g_raiz_draft_account_known=false;
+      JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
       g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD(); ChartRedraw(0); return;
      }
    if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=JPW_ROUTE_OVERVIEW)
      {
       if(!JPWDetailsContextCurrent()) return;
       // Chart-level keys only; editing pages retain their own input behavior.
+      if(g_raiz_tab==JPW_ROUTE_STOPS && !g_stops_show_pending &&
+         (lparam==38 || lparam==40))
+        {
+         const int maximum=MathMax(0,g_positions_total_rows-g_positions_visible_rows);
+         g_positions_scroll=JPWPanelClamp(g_positions_scroll+(lparam==38 ? -1 : 1),0,maximum);
+         JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return;
+        }
       if((lparam==37 || lparam==39))
         { g_cockpit_page+=(lparam==37 ? -1 : 1);
           JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
-      if((g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) && lparam>=49 && lparam<=54)
+      if((g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) && lparam>=49 && lparam<=55)
         { g_cockpit_selected=(int)(lparam-49); JPWRaizSwitchTab(JPW_ROUTE_METRIC); return; }
      }
    if(id!=CHARTEVENT_OBJECT_CLICK) return;
@@ -695,7 +729,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       if(g_raiz_details_open)
         {
          g_cockpit_draft=g_cockpit_prefs; g_cockpit_reset_requested=false;
-         g_raiz_details_open=false; g_raiz_draft_account_known=false;
+         JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
          g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD();
         }
       else JPWOpenCockpit();
@@ -703,6 +737,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
      }
    if(!g_raiz_details_open) return;
    if(!JPWDetailsContextCurrent()) return;
+   if(JPWSignalHandleClick(sparam)) return;
    for(int i=0;i<100;i++)
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(i)))
         { ObjectSetInteger(0,sparam,OBJPROP_STATE,false); break; }
@@ -716,20 +751,65 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
      { g_cockpit_draft=g_cockpit_prefs; g_cockpit_reset_requested=false;
        JPWRaizSwitchTab(JPW_ROUTE_SETTINGS); return; }
    for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++)
-      if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_CARD_FIRST+i)))
+      if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_CARD_FIRST+i)) ||
+         sparam==JPWRaizUI("CARD_BG_"+IntegerToString(i)) ||
+         sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_VALUE") ||
+         sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_QUALITY") ||
+         sparam==JPWRaizUI("CARD_"+IntegerToString(i)+"_REASON"))
         { g_cockpit_selected=i; JPWRaizSwitchTab(JPW_ROUTE_METRIC); return; }
    if(g_raiz_tab==JPW_ROUTE_STOPS)
       for(int i=0;i<g_stop_button_count;i++)
-         if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_STOP_ROW_FIRST+i)))
-           { g_stop_selected_row=g_stop_button_row[i];
+        {
+         bool row_click=(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_STOP_ROW_FIRST+i)));
+         if(!g_stops_show_pending)
+            for(int c=0;c<6;c++)
+               if(sparam==JPWRaizUI("POSITION_CELL_"+IntegerToString(i)+"_"+IntegerToString(c))) row_click=true;
+         if(row_click)
+           {
+            if(!g_stops_show_pending)
+              {
+               const int found=JPWPositionsViewFind(g_position_button_ticket[i],g_position_button_identifier[i]);
+               if(found<0 || !JPWPositionsViewCurrent(g_sample_context,GetTickCount64()))
+                 { g_refresh_requested=true; JPWRaizPanelDestroy(); JPWRenderRaizDetails(); return; }
+               g_position_detail_ticket=g_position_views[found].ticket;
+               g_position_detail_identifier=g_position_views[found].identifier;
+               g_position_detail_open=true;
+               JPWRaizSwitchTab(JPW_ROUTE_STOP_ROW); return;
+              }
+            g_position_detail_open=false; g_stop_selected_row=g_stop_button_row[i];
              g_stop_selected_role=g_stop_button_role[i];
-             JPWRaizSwitchTab(JPW_ROUTE_STOP_ROW); return; }
+             JPWRaizSwitchTab(JPW_ROUTE_STOP_ROW); return;
+           }
+        }
+   if(sparam==JPWActionObject(JPW_ACTION_POSITIONS_UP) ||
+      sparam==JPWActionObject(JPW_ACTION_POSITIONS_DOWN))
+     {
+      if(g_raiz_tab!=JPW_ROUTE_STOPS || g_stops_show_pending) return;
+      const int maximum=MathMax(0,g_positions_total_rows-g_positions_visible_rows);
+      g_positions_scroll=JPWPanelClamp(g_positions_scroll+
+         (sparam==JPWActionObject(JPW_ACTION_POSITIONS_UP) ? -1 : 1),0,maximum);
+      JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return;
+     }
    if(sparam==JPWActionObject(JPW_ACTION_PRIMARY))
      {
       if(g_raiz_tab==JPW_ROUTE_METRIC) JPWRaizSwitchTab(JPW_ROUTE_OVERVIEW);
       else if(g_raiz_tab==JPW_ROUTE_PROVENANCE) JPWRaizSwitchTab(JPW_ROUTE_SYSTEM);
-      else if(g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW)
-        { g_stops_show_pending=false; JPWRaizSwitchTab(JPW_ROUTE_STOPS); }
+      else if(g_raiz_tab==JPW_ROUTE_STOP_ROW)
+        {
+         if(g_position_detail_open)
+           { const int found=JPWPositionsViewFind(g_position_detail_ticket,g_position_detail_identifier);
+             if(found>=0) JPWSignalOpen(JPW_SIGNAL_POSITION,g_position_detail_ticket,g_position_detail_identifier);
+             else { g_refresh_requested=true; JPWRaizSwitchTab(JPW_ROUTE_STOPS); } }
+         else if(g_stop_selected_row>=0 && g_stop_selected_row<ArraySize(g_stop_table_rows))
+           { JPWStopRiskRow row=g_stop_table_rows[g_stop_selected_row];
+             JPWSignalOpen(row.kind==JPW_STOP_RISK_PENDING ? JPW_SIGNAL_PENDING : JPW_SIGNAL_POSITION,
+                           (ulong)row.ticket,row.kind==JPW_STOP_RISK_PENDING ? 0 : row.identifier); }
+         else JPWSignalOpen();
+        }
+      else if(g_raiz_tab==JPW_ROUTE_STOPS)
+        { if(g_stops_show_pending) g_stops_show_pending=false;
+          else g_positions_operation_only=!g_positions_operation_only;
+          g_positions_scroll=0; JPWRaizSwitchTab(JPW_ROUTE_STOPS); }
       else if(g_raiz_tab==JPW_ROUTE_RAIZN) JPWRaizSwitchTab(JPW_ROUTE_FACTOR);
       else if(g_raiz_tab==JPW_ROUTE_SYSTEM)
         { g_record_read_requested=true; JPWRaizSwitchTab(JPW_ROUTE_PROVENANCE); }
@@ -739,7 +819,8 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
      }
    if(sparam==JPWActionObject(JPW_ACTION_SECONDARY))
      {
-      if(g_raiz_tab==JPW_ROUTE_METRIC) JPWRaizSwitchTab(JPW_ROUTE_PROVENANCE);
+      if(g_raiz_tab==JPW_ROUTE_OVERVIEW) JPWSignalOpen();
+      else if(g_raiz_tab==JPW_ROUTE_METRIC) JPWRaizSwitchTab(JPW_ROUTE_PROVENANCE);
       else if(g_raiz_tab==JPW_ROUTE_PROVENANCE)
         { g_record_read_requested=true; g_refresh_requested=true; JPWRaizSwitchTab(g_raiz_tab); }
       else if(g_raiz_tab==JPW_ROUTE_SYSTEM)
@@ -784,9 +865,10 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       if(sparam==JPWRaizUI("BUTTON_"+IntegerToString(JPW_ACTION_VISIBILITY_FIRST+i)) && g_raiz_tab==JPW_ROUTE_SETTINGS)
         { g_cockpit_draft.visible_mask^=(1<<i);
           JPWRenderHUD(); JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
-   if(sparam==JPWActionObject(JPW_ACTION_CLOSE))
+   if(sparam==JPWActionObject(JPW_ACTION_CLOSE) ||
+      sparam==JPWActionObject(JPW_ACTION_HEADER_CLOSE))
      { g_cockpit_draft=g_cockpit_prefs; g_cockpit_reset_requested=false;
-       g_raiz_details_open=false; g_raiz_draft_account_known=false;
+       JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
        g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); JPWRenderHUD(); ChartRedraw(0); return; }
    if(sparam==JPWActionObject(JPW_ACTION_PREVIOUS) || sparam==JPWActionObject(JPW_ACTION_NEXT))
      { g_cockpit_page+=(sparam==JPWActionObject(JPW_ACTION_PREVIOUS) ? -1 : 1);
@@ -831,7 +913,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       { JPWRaizRecordComparison(); return; }
    if(sparam==JPWActionObject(JPW_ACTION_LEGACY_CANCEL))
      {
-      g_raiz_details_open=false; g_raiz_draft_account_known=false;
+      JPWSignalClear(); g_raiz_details_open=false; JPWUIRelease(g_panel_prefix); g_raiz_draft_account_known=false;
       g_raiz_draft_expected_id=""; JPWRaizPanelDestroy(); ChartRedraw(0);
      }
   }

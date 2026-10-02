@@ -21,6 +21,8 @@ void OnStart()
       Check(fy>=dialog.y && fy+control<=dialog.y+dialog.height,"footer reachable");
       Check(MathAbs(2*dialog.x+dialog.width-widths[w])<=1 &&
             MathAbs(2*dialog.y+dialog.height-heights[h])<=1,"dialog centered");
+      const int reserved=JPWPanelHUDReservedWidth(widths[w],text,6,90);
+      Check(reserved>=90 && reserved<=widths[w]-16,"HUD reserved width inside chart");
       for(int corner=0;corner<4;corner++)
         {
          JPWPanelRect hud;
@@ -32,5 +34,7 @@ void OnStart()
       int rows=JPWPanelPageRows(ch,2*line+control);
       if(rows>0) Check(JPWPanelPageCount(17,rows)*rows>=17,"all fields reachable via pages");
      }
+   Check(JPWPanelHUDReservedWidth(1440,24,6,90)>
+         JPWPanelHUDReservedWidth(1440,12,6,90),"HUD width follows measured DPI");
    Print("JPW_Alavancagem_Panel_Tests ",failures==0 ? "PASS: " : "FAIL: ",asserts," asserts; ",failures," failures");
   }

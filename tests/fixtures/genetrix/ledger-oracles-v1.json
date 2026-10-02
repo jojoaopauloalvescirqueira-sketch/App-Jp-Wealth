@@ -1,0 +1,229 @@
+{
+  "schema": "jpw-genetrix-independent-oracles/v1",
+  "state": "DESIGNED/NOT_RUN",
+  "source": "Human approved plan + independent Decimal arithmetic; synthetic amounts, no real account",
+  "formula": "C=R+U; percent=100C/B; explicitly zero fields only in fixtures",
+  "cases": [
+    {
+      "id": "LED-AC01",
+      "name": "abertura com custos",
+      "realized_posted": "-2.20",
+      "floating_remaining": "49.50",
+      "balance": "997.80",
+      "compensated": "47.30",
+      "percent_exact": "4.740428943676087392262978553",
+      "percent_display": "4.74",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC02",
+      "name": "parcial",
+      "realized_posted": "16.72",
+      "floating_remaining": "29.70",
+      "balance": "1016.72",
+      "compensated": "46.42",
+      "percent_exact": "4.565662129199779683688724526",
+      "percent_display": "4.57",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC03",
+      "name": "genese fechada defesas abertas",
+      "realized_posted": "44.00",
+      "floating_remaining": "-12.40",
+      "balance": "1044.00",
+      "compensated": "31.60",
+      "percent_exact": "3.026819923371647509578544061",
+      "percent_display": "3.03",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC03B",
+      "name": "nova entrada no mesmo ciclo",
+      "realized_posted": "43.45",
+      "floating_remaining": "-7.40",
+      "balance": "1043.45",
+      "compensated": "36.05",
+      "percent_exact": "3.454885236475154535435334707",
+      "percent_display": "3.45",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC04",
+      "name": "zero posicoes com pendentes",
+      "realized_posted": "40",
+      "floating_remaining": "0",
+      "balance": "1040",
+      "compensated": "40",
+      "percent_exact": "3.846153846153846153846153846",
+      "percent_display": "3.85",
+      "expected_state": "open_pending"
+    },
+    {
+      "id": "LED-AC04B",
+      "name": "pendente executa mesmo ciclo",
+      "realized_posted": "38.90",
+      "floating_remaining": "8",
+      "balance": "1038.90",
+      "compensated": "46.90",
+      "percent_exact": "4.514390220425449995187217249",
+      "percent_display": "4.51",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC05",
+      "name": "preco zero custo nao zero",
+      "realized_posted": "-0.55",
+      "floating_remaining": "0",
+      "balance": "999.45",
+      "compensated": "-0.55",
+      "percent_exact": "-0.05503026664665566061333733553",
+      "percent_display": "-0.06",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC06",
+      "name": "custo de conta nao atribuido",
+      "realized_posted": "16.72",
+      "floating_remaining": "29.70",
+      "balance": "1013.72",
+      "compensated": "46.42",
+      "percent_exact": "4.579173736337450183482618475",
+      "percent_display": "4.58",
+      "expected_state": "partial"
+    },
+    {
+      "id": "LED-AC06B",
+      "name": "vinculo tardio comprovado",
+      "realized_posted": "13.72",
+      "floating_remaining": "29.70",
+      "balance": "1013.72",
+      "compensated": "43.42",
+      "percent_exact": "4.283234029120467190151126544",
+      "percent_display": "4.28",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC07",
+      "name": "rollover sem duplicacao",
+      "realized_posted": "-3.70",
+      "floating_remaining": "40",
+      "balance": "996.30",
+      "compensated": "36.30",
+      "percent_exact": "3.643480879253236976814212587",
+      "percent_display": "3.64",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC07B",
+      "name": "nova cobranca rollover",
+      "realized_posted": "-5.90",
+      "floating_remaining": "40",
+      "balance": "994.10",
+      "compensated": "34.10",
+      "percent_exact": "3.430238406598933708882406197",
+      "percent_display": "3.43",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC08",
+      "name": "mudanca ticket mesmo identifier",
+      "realized_posted": "16.72",
+      "floating_remaining": "29.70",
+      "balance": "1016.72",
+      "compensated": "46.42",
+      "percent_exact": "4.565662129199779683688724526",
+      "percent_display": "4.57",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC09",
+      "name": "correcao de comissao",
+      "realized_posted": "16.32",
+      "floating_remaining": "29.70",
+      "balance": "1016.32",
+      "compensated": "46.02",
+      "percent_exact": "4.528101385390428211586901763",
+      "percent_display": "4.53",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC10",
+      "name": "recuperacao encerrada",
+      "realized_posted": "45.10",
+      "floating_remaining": "0",
+      "balance": "1045.10",
+      "compensated": "45.10",
+      "percent_exact": "4.315376518993397760979810544",
+      "percent_display": "4.32",
+      "expected_state": "closed"
+    },
+    {
+      "id": "LED-AC11",
+      "name": "deal cancelado ajuste vinculado",
+      "realized_posted": "19",
+      "floating_remaining": "0",
+      "balance": "1019",
+      "compensated": "19",
+      "percent_exact": "1.864573110893032384690873405",
+      "percent_display": "1.86",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC12",
+      "name": "USC",
+      "realized_posted": "-220",
+      "floating_remaining": "4950",
+      "balance": "99780",
+      "compensated": "4730",
+      "percent_exact": "4.740428943676087392262978553",
+      "percent_display": "4.74",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC13A",
+      "name": "grupo A isolado",
+      "realized_posted": "10",
+      "floating_remaining": "-15",
+      "balance": "1030",
+      "compensated": "-5",
+      "percent_exact": "-0.4854368932038834951456310680",
+      "percent_display": "-0.49",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC13B",
+      "name": "grupo B isolado",
+      "realized_posted": "20",
+      "floating_remaining": "7",
+      "balance": "1030",
+      "compensated": "27",
+      "percent_exact": "2.621359223300970873786407767",
+      "percent_display": "2.62",
+      "expected_state": "complete"
+    },
+    {
+      "id": "LED-AC14",
+      "name": "aberturas empatadas",
+      "realized_posted": "-1.10",
+      "floating_remaining": "0",
+      "balance": "998.90",
+      "compensated": "-1.10",
+      "percent_exact": "-0.1101211332465712283511863049",
+      "percent_display": "-0.11",
+      "expected_state": "genesis_ambiguous"
+    }
+  ],
+  "required_non_numeric": [
+    "replay idempotent",
+    "DEAL_UPDATE revises once",
+    "DEAL_DELETE confirmed vs absence from incomplete selection",
+    "late costs original cycle",
+    "genesis closed no promotion",
+    "pending-to-position transition no premature close",
+    "netting N/A",
+    "same identifier other account isolation",
+    "balance<=0 percent N/A",
+    "all zero confirmed vs missing"
+  ]
+}

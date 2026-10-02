@@ -9,7 +9,6 @@ const RESEARCH_VIEWS = [
   ['stocks-br', 'researchStocksBr'],
   ['stocks-global', 'researchStocksGlobal'],
   ['reits', 'researchReits'],
-  ['probability-lab', 'researchProbabilityLab'],
   ['others', 'researchOthers']
 ];
 
@@ -19,11 +18,6 @@ const RESEARCH_VIEW_RENDERERS = {
   },
   pivots: () => {
     if(window.JPWPivotsUI&&typeof window.JPWPivotsUI.render==='function') window.JPWPivotsUI.render();
-  },
-  'probability-lab': () => {
-    const slot=document.getElementById('researchGaltonSlot');
-    if(slot&&!slot.querySelector('[data-galton-root]')) slot.innerHTML=typeof galtonBoardPanelHTML==='function'?galtonBoardPanelHTML():'<p class="settings-empty" role="alert">O laboratório de probabilidade não pôde ser carregado.</p>';
-    researchSetCovered(typeof settingsIsOpen==='function'&&settingsIsOpen());
   }
 };
 
@@ -40,29 +34,17 @@ function researchApplyView(view){
 }
 
 function researchSelectView(view){
+  // Aliases antigos do laboratório abrem a folha independente de Research.
+  if(view==='probability-lab'||view==='galton-board'){
+    return window.JPWNavigation?window.JPWNavigation.navigate('probability-lab'):false;
+  }
   if(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('research')) return false;
   if(!RESEARCH_VIEWS.some(([key])=>key===view)) return false;
-  if(researchView==='probability-lab'&&view!=='probability-lab'&&typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({resume:false});
   researchView=view;
   researchApplyView(view);
   const render=RESEARCH_VIEW_RENDERERS[view];
   if(typeof render==='function') render();
   return true;
-}
-
-// Navegação e sobreposições preservam o experimento somente em memória.
-// O retorno reativa a superfície, mas a execução exige Continuar explicitamente.
-function researchLeaveModule(){
-  if(typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({resume:false});
-}
-function researchSetCovered(covered){
-  const root=document.querySelector('#researchGaltonSlot [data-galton-root]');
-  if(!root) return;
-  covered=Boolean(covered||(window.JPWModuleAvailability&&!window.JPWModuleAvailability.canAccess('research'))||root.closest('[inert]')||document.querySelector('#settingsOverlay.show,#modalOverlay.show,#mvpNotesOverlay.show'));
-  const visible=researchView==='probability-lab'&&document.getElementById('research')?.classList.contains('active');
-  if(!covered&&visible){
-    if(typeof activateGaltonBoard==='function') activateGaltonBoard();
-  }else if(root.__galtonController?.active&&typeof deactivateGaltonBoard==='function') deactivateGaltonBoard({resume:false});
 }
 
 function researchGetView(){return researchView;}

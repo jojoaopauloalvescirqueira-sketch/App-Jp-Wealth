@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 import contextlib
 import os
 import socket
@@ -176,13 +177,19 @@ try:
         expected_screens={'dashboard':'dash','research-forex':'research','forex-consolidated':'fxconsolidated','personal-finance':'finpes','alladin':'alladin','tools-calendar':'tools'}
         assert routes==list(expected_screens), routes
         for route in routes:
-            ok=page.evaluate('''screen => {
-              const b=document.querySelector(`#nav .tab[data-route="${screen}"]`);
-              if(!b) return false;
-              b.click();
-              return document.getElementById(%s[screen])?.classList.contains('active') || false;
-            }''' % repr(expected_screens), route)
-            assert ok, f'rota não ativou: {route}'
+            parent=page.locator(f'#nav .tab[data-route="{route}"]')
+            before=page.evaluate('JPWNavigation.current()')
+            parent.click()
+            if parent.get_attribute('data-nav-surface'):
+                assert page.evaluate('JPWNavigation.current()')==before, f'pai disclosure navegou: {route}'
+                selector=('#finpesNavSubmenu [data-nav-sub-view="overview"]' if route=='personal-finance'
+                          else f'#nav [data-nav-child="{route}"]')
+                leaf=page.locator(selector)
+                leaf.wait_for(state='visible')
+                leaf.click()
+            active=page.eval_on_selector_all('.screen.active', 'els=>els.map(e=>e.id)')
+            assert active==[expected_screens[route]], f'rota não ativou uma única tela: {route}: {active}'
+            assert page.evaluate('JPWNavigation.current().canonical')==route, f'rota incorreta: {route}'
         page.locator('#headerConfigBtn').focus()
         page.locator('#headerConfigBtn').press('Enter')
         assert page.locator('#settingsOverlay').evaluate("el => el.classList.contains('show')")

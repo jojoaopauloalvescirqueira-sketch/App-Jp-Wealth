@@ -32,7 +32,11 @@ using string=std::string; using ushort=unsigned short;using ulong=unsigned long;
 constexpr int CORNER_LEFT_LOWER=1,CORNER_RIGHT_UPPER=2,CORNER_RIGHT_LOWER=3;
 constexpr int TERMINAL_KEYSTATE_SHIFT=1;
 int TerminalInfoInteger(int){return 0;}
-constexpr int CHARTEVENT_CHART_CHANGE=1, CHARTEVENT_OBJECT_ENDEDIT=2, CHARTEVENT_KEYDOWN=3,CHARTEVENT_OBJECT_CLICK=4;
+constexpr int CHARTEVENT_CHART_CHANGE=1, CHARTEVENT_OBJECT_ENDEDIT=2, CHARTEVENT_KEYDOWN=3,CHARTEVENT_OBJECT_CLICK=4,CHARTEVENT_CLICK=5,CHARTEVENT_CUSTOM=1000;
+ulong mock_focus_clock=1000;
+ulong GetTickCount64(){return mock_focus_clock;}
+long MathAbs(long value){return std::abs(value);}
+constexpr int OBJPROP_TOOLTIP=10;
 constexpr int OBJPROP_TEXT=1,OBJPROP_STATE=2,JPW_RAIZN_VALID=1,JPW_RAIZN_ABSENT=0;
 constexpr int OBJPROP_CORNER=3,OBJPROP_XDISTANCE=4,OBJPROP_YDISTANCE=5,OBJPROP_FONTSIZE=6;
 constexpr int OBJPROP_SELECTABLE=7,OBJPROP_HIDDEN=8,OBJPROP_TYPE=9,OBJ_LABEL=1,CORNER_LEFT_UPPER=0,InpCorner=0;
@@ -53,6 +57,29 @@ double StringToDouble(const string&s){try{return std::stod(s);}catch(...){return
 bool MathIsValidNumber(double x){return std::isfinite(x);}
 string DoubleToString(double v,int digits){std::ostringstream o; if(digits<0)o<<std::scientific<<std::setprecision(-digits)<<v; else o<<std::fixed<<std::setprecision(digits)<<v;return o.str();}
 struct JPWAccount {long id=0;long login=42;string server="synthetic";string currency="USD";};
+constexpr int JPW_SIGNAL_ROUTE=16,JPW_SIGNAL_POSITION=1,JPW_SIGNAL_PENDING=2,JPW_STOP_RISK_PENDING=2;
+struct JPWStopRiskRow {int kind=1;long ticket=0,identifier=0;};
+std::vector<JPWStopRiskRow> g_stop_table_rows;
+struct JPWPositionView {ulong ticket=0;long identifier=0;};
+struct JPWPositionsView {bool catalog_valid=false;string context_key;long sample_id=0;
+ ulong accepted_monotonic_ms=0,valid_until_monotonic_ms=0;};
+std::vector<JPWPositionView> g_position_views;JPWPositionsView g_positions_view;
+bool g_positions_operation_only=false,g_position_detail_open=false;
+int g_positions_scroll=0,g_positions_visible_rows=0,g_positions_total_rows=0;
+ulong g_position_detail_ticket=0,g_position_button_ticket[16];
+long g_position_detail_identifier=0,g_position_button_identifier[16];
+bool JPWPositionsViewCurrent(const string context,const ulong now);
+int JPWPositionsViewFind(const ulong ticket,const long identifier);
+template<class A,class B>A MathMax(A a,B b){return a>b?a:(A)b;}
+template<class T> int ArraySize(const std::vector<T>& rows){return (int)rows.size();}
+int signal_opened=0,signal_cleared=0;long signal_ticket=0;
+void JPWSignalClear(){signal_cleared++;}
+void JPWSignalSaveDraft(){}
+// New cycle event is exercised by the actual helper in jpw_genetrix_ui_test.
+bool JPWGenetrixHandleCycleEvent(int,long,const string&){return false;}
+void JPWSignalInvalidate(const string&){}
+bool JPWSignalHandleClick(const string&){return false;}
+void JPWSignalOpen(int kind=0,ulong ticket=0,long identifier=0);
 struct Config {long generation=0;int n=0;double f=0.;string n_reason,f_reason;};
 struct FactorPreference {long generation=0;double factor=0.;};
 struct Scenario {string scenario_id;};
@@ -66,6 +93,9 @@ bool g_export_preview_requested=false,g_export_requested=false;
 int g_diagnostic_pending=0;constexpr int JPW_DIAG_SETTINGS_APPLIED=8;
 void JPWQueueDiagnostic(int code){g_diagnostic_pending|=(1<<code);}
 void JPWFocusStep(bool){}
+bool g_jpw_focus_suspended=false;
+std::vector<string> owner_events;
+bool EventChartCustom(int,int,long,double,const string&owner){owner_events.push_back(owner);return true;}
 bool g_account_known=true,g_raiz_draft_account_known=false,g_raiz_details_open=false,g_raiz_panel_built=false;
 int g_raiz_tab=4,g_raiz_page=0,g_raiz_pages=5,g_raiz_store_state=JPW_RAIZN_ABSENT,g_live_config_state=JPW_RAIZN_VALID;
 int g_cockpit_selected=0,g_cockpit_page=0,g_cockpit_template_recheck=0;
@@ -127,6 +157,7 @@ void JPWRaizBindTicket(){bind++;}
 void JPWRaizRecordComparison(){compare++;}
 '''
 MAIN = r'''
+void JPWSignalOpen(int,ulong ticket,long){signal_opened++;signal_ticket=ticket;JPWRaizSwitchTab(JPW_SIGNAL_ROUTE);}
 int checks=0,failures=0;
 void check(bool c,const string&m){checks++;if(!c){failures++;std::cerr<<"FAIL "<<m<<'\n';}}
 void click(const string&s){OnChartEvent(CHARTEVENT_OBJECT_CLICK,0,0.,s);}
@@ -181,8 +212,8 @@ int main(){
  OnChartEvent(CHARTEVENT_KEYDOWN,27,0.,"");check(!g_raiz_details_open&&apply==1&&factor_apply==1,"Escape is non-writing cancel");
  current_account.id=10;accept_current();flip_after_mdd=false;
  objects.erase(JPW_COCKPIT_PREF_OBJECT);JPWCockpitLoadPrefs();
- check(g_cockpit_prefs.visible_mask==63&&g_cockpit_prefs.density==0&&!g_cockpit_pref_invalid,
-       "absent chart preference defaults to all six rows");
+ check(g_cockpit_prefs.visible_mask==127&&g_cockpit_prefs.density==0&&!g_cockpit_pref_invalid,
+       "absent chart preference defaults to all seven rows (six legacy bits preserved)");
  click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");
  check(g_raiz_details_open&&g_raiz_tab==7,"launcher opens cockpit overview");
  click(g_panel_prefix+"2");
@@ -194,19 +225,19 @@ int main(){
  click(JPWRaizUI("BUTTON_43"));
  check(g_raiz_tab==13&&g_record_read_requested&&mdd_reads==0,"System requests records only on demand");
  click(JPWRaizUI("BUTTON_44"));
- check(g_raiz_tab==10&&g_cockpit_draft.visible_mask==63,"customize starts from saved preference");
+ check(g_raiz_tab==10&&g_cockpit_draft.visible_mask==127,"customize starts from saved preference");
  const int before_hud=hud_renders;
  click(JPWRaizUI("BUTTON_62"));click(JPWRaizUI("BUTTON_30"));click(JPWRaizUI("BUTTON_31"));
- check(g_cockpit_draft.visible_mask==59&&g_cockpit_draft.corner==CORNER_RIGHT_UPPER&&g_cockpit_draft.density==1,
+ check(g_cockpit_draft.visible_mask==123&&g_cockpit_draft.corner==CORNER_RIGHT_UPPER&&g_cockpit_draft.density==1,
        "visibility, corner and density are previewed in draft");
- check(g_cockpit_prefs.visible_mask==63&&objects.count(JPW_COCKPIT_PREF_OBJECT)==0&&hud_renders>before_hud,
+ check(g_cockpit_prefs.visible_mask==127&&objects.count(JPW_COCKPIT_PREF_OBJECT)==0&&hud_renders>before_hud,
        "preview neither writes chart object nor changes committed preference");
  click(JPWRaizUI("BUTTON_28"));
- check(g_raiz_tab==7&&g_cockpit_prefs.visible_mask==63&&g_cockpit_draft.visible_mask==63,
+ check(g_raiz_tab==7&&g_cockpit_prefs.visible_mask==127&&g_cockpit_draft.visible_mask==127,
        "Cancel discards visual draft");
  click(JPWRaizUI("BUTTON_44"));
- for(int i=60;i<=65;i++)click(JPWRaizUI("BUTTON_"+std::to_string(i)));
- check(g_cockpit_draft.visible_mask==0&&g_cockpit_prefs.visible_mask==63,
+ for(int i=60;i<=66;i++)click(JPWRaizUI("BUTTON_"+std::to_string(i)));
+ check(g_cockpit_draft.visible_mask==0&&g_cockpit_prefs.visible_mask==127,
        "all-hidden is a preview until Apply; launcher remains a separate control");
  click(JPWRaizUI("BUTTON_27"));
  JPWCockpitPrefs saved;
@@ -215,7 +246,7 @@ int main(){
        "Apply stores only visual settings in the chart object");
  click(JPWRaizUI("BUTTON_37"));
  objects[JPW_COCKPIT_PREF_OBJECT]="corrupt";JPWCockpitLoadPrefs();
- check(g_cockpit_pref_invalid&&g_cockpit_prefs.visible_mask==63&&
+ check(g_cockpit_pref_invalid&&g_cockpit_prefs.visible_mask==127&&
        objects[JPW_COCKPIT_PREF_OBJECT]=="corrupt",
        "corrupt object warns, preserves bytes and uses temporary default");
  click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");click(JPWRaizUI("BUTTON_44"));
@@ -223,11 +254,11 @@ int main(){
  check(g_cockpit_pref_invalid&&objects[JPW_COCKPIT_PREF_OBJECT]=="corrupt",
        "Apply refuses silent overwrite of corrupt preference");
  click(JPWRaizUI("BUTTON_29"));
- check(g_cockpit_reset_requested&&g_cockpit_draft.visible_mask==63,
+ check(g_cockpit_reset_requested&&g_cockpit_draft.visible_mask==127,
        "Restaurar prepares an explicit replacement draft");
  click(JPWRaizUI("BUTTON_27"));
  check(!g_cockpit_pref_invalid&&JPWCockpitDecode(objects[JPW_COCKPIT_PREF_OBJECT],saved)&&
-       saved.visible_mask==63,"Apply after explicit reset replaces corrupt object");
+       saved.visible_mask==127,"Apply after explicit reset replaces corrupt object");
  click(JPWRaizUI("BUTTON_44"));
  const string unchanged=objects[JPW_COCKPIT_PREF_OBJECT];
  current_account.id=11;click(JPWRaizUI("BUTTON_27"));
@@ -253,6 +284,111 @@ int main(){
        "number keys do not hijack legacy F edit page");
  OnChartEvent(CHARTEVENT_KEYDOWN,27,0.,"");
  check(!g_raiz_details_open,"Escape remains a non-writing cockpit close");
+ // The exact production wrapper now scopes keys to the last clicked owner.
+ // Keep the pre-existing action/persistence assertions above unchanged.
+ click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");click(JPWRaizUI("BUTTON_44"));
+ const string coexist_pref=objects[JPW_COCKPIT_PREF_OBJECT];
+ const int coexist_writes=apply+legacy_apply+factor_apply;
+ g_focus_action=JPW_ACTION_APPLY;objects[JPWActionObject(JPW_ACTION_APPLY)]="Apply";
+ click("JPWNC_UI_EDIT_DATE");
+ OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
+ OnChartEvent(CHARTEVENT_KEYDOWN,9,0.,"");
+ OnChartEvent(CHARTEVENT_KEYDOWN,27,0.,"");
+ check(g_raiz_details_open&&g_raiz_tab==JPW_ROUTE_SETTINGS&&
+       objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref&&
+       apply+legacy_apply+factor_apply==coexist_writes,
+       "NoCuda editor cannot activate Apply, Tab or Escape in an open cockpit");
+ objects[JPWRaizUI("EDIT_17")]="typed draft";
+ OnChartEvent(CHARTEVENT_OBJECT_ENDEDIT,0,0.,JPWRaizUI("EDIT_17"));
+ check(g_raiz_fields[17]=="typed draft","late owned ENDEDIT preserves the user's field data");
+ OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
+ check(objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref&&
+       apply+legacy_apply+factor_apply==coexist_writes,
+       "late owned ENDEDIT does not regain shortcuts after a foreign click");
+ click(JPWRaizUI("EDIT_17"));
+ OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
+ check(g_editing_field&&objects[JPW_COCKPIT_PREF_OBJECT]==coexist_pref,
+       "an owned editor keeps its native typing guard");
+ OnChartEvent(CHARTEVENT_OBJECT_ENDEDIT,0,0.,JPWRaizUI("EDIT_17"));
+ check(!g_editing_field&&g_raiz_fields[17]=="typed draft",
+       "owned ENDEDIT still ends editing and captures the field");
+ OnChartEvent(CHARTEVENT_KEYDOWN,27,0.,"");
+ check(!g_raiz_details_open,"owned Escape closes after editing ends");
+ click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");
+ OnChartEvent(CHARTEVENT_OBJECT_CLICK,10,20.,g_panel_prefix+"HUD_BG");
+ OnChartEvent(CHARTEVENT_CLICK,10,20.,"");
+ OnChartEvent(CHARTEVENT_KEYDOWN,51,0.,"");
+ check(g_cockpit_selected==2,"matching OBJECT_CLICK then CLICK preserves cockpit shortcut focus");
+ OnChartEvent(CHARTEVENT_CLICK,80,90.,"");
+ OnChartEvent(CHARTEVENT_OBJECT_CLICK,80,90.,g_panel_prefix+"HUD_BG");
+ OnChartEvent(CHARTEVENT_KEYDOWN,53,0.,"");
+ check(g_cockpit_selected==4,"CLICK then own OBJECT_CLICK preserves cockpit shortcut focus");
+ OnChartEvent(CHARTEVENT_OBJECT_CLICK,80,90.,"JPWNC_UI_EDIT_DATE");
+ OnChartEvent(CHARTEVENT_CLICK,80,90.,"");
+ OnChartEvent(CHARTEVENT_KEYDOWN,54,0.,"");
+ check(g_cockpit_selected==4,"foreign click pair cannot change the selected cockpit metric");
+ accept_current();JPWOpenCockpit();
+ click(JPWActionObject(JPW_ACTION_SECONDARY));
+ check(signal_opened==1&&g_raiz_tab==JPW_SIGNAL_ROUTE,"overview launches message catalogue without financial refresh");
+ const int cleared=signal_cleared;click(JPWActionObject(JPW_ACTION_CLOSE));
+ check(!g_raiz_details_open&&signal_cleared>cleared,"close discards transient message requests");
+ JPWOpenCockpit();g_stop_selected_row=0;g_stop_table_rows.push_back({JPW_STOP_RISK_PENDING,777,0});
+ JPWRaizSwitchTab(JPW_ROUTE_STOP_ROW);click(JPWActionObject(JPW_ACTION_PRIMARY));
+ check(signal_opened==2&&signal_ticket==777&&g_raiz_tab==JPW_SIGNAL_ROUTE,"Stops detail forwards only item identity to the new current catalogue");
+ accept_current();JPWOpenCockpit();JPWRaizSwitchTab(JPW_ROUTE_STOPS);
+ g_positions_view.catalog_valid=true;g_positions_view.context_key=g_sample_context;g_positions_view.sample_id=1;
+ g_positions_view.accepted_monotonic_ms=mock_focus_clock;g_positions_view.valid_until_monotonic_ms=mock_focus_clock+30000;
+ g_position_views={{111,11},{444,44}};g_stop_button_count=1;
+ g_position_button_ticket[0]=444;g_position_button_identifier[0]=44;
+ click(JPWRaizUI("POSITION_CELL_0_1"));
+ check(g_position_detail_open&&g_position_detail_ticket==444&&g_position_detail_identifier==44&&g_raiz_tab==JPW_ROUTE_STOP_ROW,
+       "ticket cell routes to exact accepted identity rather than old row index");
+ g_position_views.erase(g_position_views.begin());
+ click(JPWActionObject(JPW_ACTION_PRIMARY));
+ check(signal_ticket==444&&g_raiz_tab==JPW_SIGNAL_ROUTE,"position detail forwards current identity after array reordering");
+ JPWRaizSwitchTab(JPW_ROUTE_STOPS);g_stops_show_pending=false;g_position_detail_open=false;
+ g_stop_button_count=1;g_position_views.clear();click(JPWActionObject(JPW_ACTION_STOP_ROW_FIRST));
+ check(!g_position_detail_open&&g_raiz_tab==JPW_ROUTE_STOPS,"closed position cannot bind to a successor on old cell click");
+ g_position_views={{444,44}};mock_focus_clock=g_positions_view.valid_until_monotonic_ms+1;
+ click(JPWActionObject(JPW_ACTION_STOP_ROW_FIRST));
+ check(!g_position_detail_open&&g_raiz_tab==JPW_ROUTE_STOPS,"expired accepted catalogue cannot open active detail before next timer");
+ g_positions_view.accepted_monotonic_ms=mock_focus_clock;g_positions_view.valid_until_monotonic_ms=mock_focus_clock+30000;
+ g_positions_total_rows=30;g_positions_visible_rows=10;g_positions_scroll=18;g_cockpit_page=3;
+ for(int i=0;i<4;i++)click(JPWActionObject(JPW_ACTION_POSITIONS_DOWN));
+ check(g_positions_scroll==20&&g_cockpit_page==3,"within-tab down scroll clamps without changing cockpit page");
+ click(JPWActionObject(JPW_ACTION_POSITIONS_UP));
+ check(g_positions_scroll==19,"up control scrolls one row");
+ OnChartEvent(CHARTEVENT_KEYDOWN,38,0.,"");
+ check(g_positions_scroll==18,"owned Up key scrolls current table");
+ g_editing_field=true;OnChartEvent(CHARTEVENT_KEYDOWN,40,0.,"");
+ check(g_positions_scroll==18,"table keys do not capture editing input");g_editing_field=false;
+ g_positions_operation_only=false;click(JPWActionObject(JPW_ACTION_PRIMARY));
+ check(g_positions_operation_only&&g_positions_scroll==0,"operation scope toggles presentation and resets only scroll");
+ const int refresh_count=refreshes,write_count=apply;
+ click(JPWActionObject(JPW_ACTION_HEADER_CLOSE));
+ check(!g_raiz_details_open&&refreshes==refresh_count&&apply==write_count,
+       "unique header close works without collection or persistence");
+ JPWOpenCockpit();JPWRaizSwitchTab(JPW_ROUTE_FACTOR);click(JPWActionObject(JPW_ACTION_HEADER_CLOSE));
+ check(!g_raiz_details_open,"header close works on legacy factor route");
+ // Real shared-focus helper transfers ownership while keeping transient drafts.
+ accept_current();JPWOpenCockpit();JPWRaizSwitchTab(JPW_ROUTE_SETTINGS);
+ g_cockpit_draft.visible_mask=17;g_cockpit_draft.density=1;
+ objects[JPWRaizUI("EDIT_17")]="draft kept across owner change";g_raiz_panel_built=true;
+ const int focus_refreshes=refreshes,focus_writes=apply+legacy_apply+factor_apply;
+ check(JPWUIAcquire("NOCUDA_TEST_")&&JPWUIOwns("NOCUDA_TEST_"),"real chart-local owner transfers to NoCuda");
+ OnChartEvent(CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT,0,0.,"NOCUDA_TEST_");
+ check(!g_raiz_details_open&&g_jpw_focus_suspended&&g_cockpit_draft.visible_mask==17&&
+       g_raiz_fields[17]=="draft kept across owner change","focus transfer hides Cockpit and preserves its unsaved fields and visual draft");
+ OnChartEvent(CHARTEVENT_KEYDOWN,13,0.,"");
+ check(apply+legacy_apply+factor_apply==focus_writes&&refreshes==focus_refreshes,"foreign owner never applies or collects from Cockpit keys");
+ JPWOpenCockpit();
+ check(g_raiz_details_open&&!g_jpw_focus_suspended&&JPWUIOwns(g_panel_prefix)&&g_raiz_tab==JPW_ROUTE_SETTINGS&&
+       g_cockpit_draft.visible_mask==17&&g_raiz_fields[17]=="draft kept across owner change","same-context reopen resumes suspended draft without repopulation");
+ OnChartEvent(CHARTEVENT_CUSTOM+JPW_UI_OWNER_EVENT,0,0.,"NOCUDA_TEST_");
+ check(g_raiz_details_open&&!g_jpw_focus_suspended&&JPWUIOwns(g_panel_prefix)&&g_cockpit_draft.visible_mask==17,
+       "queued stale ownership event cannot hide the currently reacquired Cockpit or discard its draft");
+ JPWUIRelease("NOCUDA_TEST_");check(JPWUIOwns(g_panel_prefix),"stale module cannot release another component's ownership");
+ check(!owner_events.empty()&&owner_events.back()==g_panel_prefix,"acquisition emits owner evidence for the other chart module");
  std::cout<<"HOST_DETAILS_EVENT: "<<checks-failures<<" PASS / "<<failures<<" FAIL\n";
  return failures?1:0;
 }
@@ -261,7 +397,8 @@ int main(){
 def main():
     source=expanded_source(IND);store=STORE.read_text()
     cockpit=expanded_source(COCKPIT).replace('string part[];', 'std::vector<string> part;')
-    sigs=['bool JPWDetailsContextCurrent()', 'void JPWCockpitLoadPrefs()',
+    sigs=['bool JPWCockpitAcceptChartEvent(const int id,const long &lparam,\n                                const double &dparam,const string &object_name)',
+          'bool JPWDetailsContextCurrent()', 'void JPWCockpitLoadPrefs()',
           'bool JPWCockpitSavePrefs(JPWCockpitPrefs &candidate)',
           'void JPWRaizSaveVisibleFields()', 'void JPWRaizSwitchTab(const int tab)',
           'void JPWLivePopulateFields()', 'void JPWFactorPopulateDraft()',
@@ -271,13 +408,17 @@ def main():
           'void JPWOpenCockpit(const int metric=-1)',
           'void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)',
           'void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)']
-    bodies=['bool JPWRaizNDouble(const string raw,double &value) {'+body_of(store,'bool JPWRaizNDouble(')+'}']
+    positions=(COCKPIT.parent/'JPW_Alavancagem_Positions.mqh').read_text()
+    bodies=['bool JPWPositionsViewCurrent(const string context,const ulong now){'+body_of(positions,'bool JPWPositionsViewCurrent(')+'}',
+            'int JPWPositionsViewFind(const ulong ticket,const long identifier){'+body_of(positions,'int JPWPositionsViewFind(')+'}']
+    bodies += ['bool JPWRaizNDouble(const string raw,double &value) {'+body_of(store,'bool JPWRaizNDouble(')+'}']
     bodies += [signature+'{'+body_of(source,signature).replace('g_raiz_feedback="F "+',
               'g_raiz_feedback=string("F ")+')+'}' for signature in sigs]
     print(json.dumps({'kind':'HOST_SYNTHETIC_NOT_MT5','source_sha256':hashlib.sha256(IND.read_bytes()).hexdigest()},indent=2),flush=True)
     with tempfile.TemporaryDirectory(prefix='jpw-details-') as folder:
         cpp=Path(folder)/'details.cpp';exe=Path(folder)/'details'
-        cpp.write_text(SHIM.replace('struct JPWAccount',cockpit+'\nstruct JPWAccount',1)+'\n'.join(bodies)+MAIN)
+        focus=(COCKPIT.parent/'JPW_UI_Focus.mqh').read_text()
+        cpp.write_text(SHIM.replace('struct JPWAccount',cockpit+'\nstruct JPWAccount',1)+focus+'\n'.join(bodies)+MAIN)
         compiler=shutil.which('clang++') or shutil.which('g++')
         if not compiler: raise SystemExit('ENVIRONMENT_ERROR: no host C++ compiler')
         for cmd in [[compiler,'-std=c++17','-Wall','-Wextra',str(cpp),'-o',str(exe)],[str(exe)]]:

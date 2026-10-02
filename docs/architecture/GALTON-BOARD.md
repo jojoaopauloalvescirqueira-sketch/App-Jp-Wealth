@@ -3,7 +3,7 @@
 ## Objetivo e fronteira
 
 O Galton Board e um simulador educacional de fisica e probabilidade, acessado em
-`Research > Laboratorio de Probabilidade > Galton Board`. Ele pertence a camada
+`Configurações > Conhecimento > Laboratório de Probabilidade > Galton Board`. Ele pertence a camada
 de aplicacao e nao ao dominio financeiro. O laboratorio nao le nem escreve `S`,
 `DEFAULTS`, contas, ordens, ledger, perfis, credenciais, APIs ou qualquer regra
 normativa do JP Wealth.
@@ -12,10 +12,11 @@ O resultado mostra como uma distribuicao empirica pode emergir de colisoes reais
 uma placa de pinos. Ele **nao e um modelo de retorno de Forex, uma previsao de mercado
 ou uma promessa de desempenho**.
 
-Na revisão A13, Research é o owner canônico; `research-probability-lab` é filho
-próprio, separado de Forex e Others. Others continua placeholder neutro.
-O contrato histórico NAV-03 manteve o jogo em Configurações; esta realocação
-autorizada o sucede sem criar outro jogo ou estado.
+Na revisão local 2026-10-01, a folha educacional de Configurações é o owner
+canônico, conforme [CHG-JPW-NAVIGATION-AVAILABILITY-20261001](../work/CHG-JPW-NAVIGATION-AVAILABILITY-20261001.md).
+A localização A13 em Research é histórica. Os aliases `research-probability-lab`,
+`probability-lab` e `galton-board` abrem a mesma folha, inclusive com Research
+congelado. Não há segunda cópia do jogo.
 
 ## Dependencia e carregamento
 
@@ -47,12 +48,12 @@ para ES Modules, framework ou bundler.
 As fronteiras sao unidirecionais: configuracao/PRNG/estatistica nao dependem de DOM;
 fisica nao conhece o modal de Configuracoes; renderer apenas projeta snapshots; e o
 controller e o unico orquestrador da interface. A integracao em
-`23-research-views.js` monta ou ativa o mesmo controller, sem física nem
-estatística própria. Configurações conserva somente compatibilidade programática
-e pausa/retorno enquanto o diálogo recobre o laboratório.
+`09-settings-modal.js` monta ou ativa o mesmo controller, sem física nem
+estatística própria. O overlay da Central e o inert do fundo são o host normal;
+subdiálogos, Notas e outros diálogos cobrem o laboratório e pausam seu ciclo.
 
 ```text
-DOM de Research     -> controller -> fisica (Planck)
+DOM de Configurações -> controller -> fisica (Planck)
                            |             |
                            |             +-> snapshot agregado
                            +-> renderer <-+
@@ -246,7 +247,7 @@ O controller possui estados explicitos de montagem, execucao, pausa e descarte.
 
 - entrar no painel monta ou reativa uma unica instancia, sem retomar automaticamente
   uma simulação pausada pela navegação;
-- sair do Laboratório, trocar subdestino/módulo ou cobri-lo com Configurações pausa
+- sair do Laboratório, fechar a Central, trocar folha ou cobri-lo com outro diálogo pausa
   o loop e desconecta o `ResizeObserver`, preservando controller e mundo em memória;
 - retornar dessas transições mantém a pausa até o comando explícito `Continuar`;
 - `document.hidden` pausa a acumulacao de tempo e evita catch-up ao retornar;
@@ -311,7 +312,7 @@ para:
   reproducibilidade no mesmo runtime;
 - persistencia: round-trip, reload vazio, extensoes desconhecidas, JSON corrompido,
   falha de leitura/escrita, isolamento de `S` e Finalizar Sessao;
-- integracao: navegacao Research/Laboratório, comandos, pausa/retomada/reset, lifecycle sem loop
+- integracao: navegacao Configurações/Conhecimento/Laboratório e aliases, comandos, pausa/retomada/reset, lifecycle sem loop
   duplicado, teclado e alternativa ao Canvas;
 - PWA: manifest, precache, build portatil e upgrade offline;
 - navegador real: desktop, `390 x 844`, claro/escuro e reduced motion;
@@ -340,25 +341,22 @@ Ficam deliberadamente fora da Fase 1:
 - promessa de determinismo entre plataformas.
 
 
-## Lifecycle da realocação A13
+## Lifecycle da realocação — revisão local 2026-10-01
 
-`#researchGaltonSlot` recebe uma única `galtonBoardPanelHTML()` sob demanda.
-Na decisão A13-A, trocar subdestino ou sair de Research pausa e reutiliza o controller:
+`#settingsGaltonSlot` recebe uma única `galtonBoardPanelHTML()` sob demanda.
+Sair, fechar a Central, trocar de folha ou cobrir o Lab pausa e reutiliza o controller:
 bolas, fila, histograma, resultados, parâmetros e lote preparado permanecem em memória.
-Ao voltar, `Continuar` é necessário para retomar; nenhum tempo oculto é acumulado.
-Configurações, Notas, modal global e gaveta móvel sobre o Lab também pausam sem perda;
-fechar a sobreposição reativa a superfície, mantendo a execução pausada. O observer
-existente de subdiálogos observa também inert de appMain; não há observer novo. Chamadas antigas para abrir o Lab encaminham
-a Research e não deixam o foco preso ao diálogo fechado.
+Ao voltar, Continuar é necessário para retomar; nenhum tempo oculto é acumulado.
+Notas, modal global, calendário e diálogo nativo sobre o Lab pausam sem perda.
+O observer existente de subdiálogos coordena cobertura e inert do modal, sem criar
+outra instância. AppMain inert e o overlay da própria Central não significam cobertura.
 
-Os cinco módulos de configuração, PRNG, estatística, física e renderer permanecem
-byte-idênticos à V4; somente o controller recebe o ajuste delimitado de pausa.
-Wipe/finalização destroem a instância anterior, inclusive quando Research está
-inativo, e mantêm seus contratos existentes. Reset limpa corpos, fila e agregados
-pelo caminho existente. Não há persistência de simulação após reload/fechamento.
-O teste de mobile passa a
-examinar a superfície de Research; os oráculos de física, parâmetros, binomial,
-reset, instância e preferência permanecem. Históricos de validação no modal de
-Configurações descrevem a localização antiga, não o candidate A13. A V4 anterior
-destruía ao sair de Research; seus testes de lifecycle não demonstram a nova
-continuidade. As novas evidências do complemento identificam a revisão examinada.
+Os cinco módulos de configuração, PRNG, estatística, física e renderer e o controller
+permanecem byte-idênticos nesta revisão; a integração muda apenas de owner. Wipe e
+finalização destroem a instância anterior mesmo com a Central fechada, mantendo epoch
+e proteção contra escrita da geração antiga. Reset mantém seu caminho. Não há
+persistência de simulação após reload/fechamento de sessão.
+
+Os focais examinam o host de Configurações e os aliases; oráculos de física,
+parâmetros, binomial, reset, identidade e preferência permanecem. Evidências antigas
+em Research continuam históricas e não validam automaticamente esta revisão.

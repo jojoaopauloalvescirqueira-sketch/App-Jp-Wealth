@@ -107,7 +107,7 @@ def main():
         for layout in ['sidebar','topbar','glass','submenu']:
           # Public setting followed by its controller, same existing nodes.
           page.evaluate("l=>{localStorage.setItem('jpw_nav_layout',l);mountNavigationLayout(l);}",layout)
-          assert page.evaluate("JPWNavigation.children('forex').slice(0,3).map(x=>x.label)")==['Dashboard','Contas e Período','Execution Board']
+          assert page.evaluate("JPWNavigation.children('forex').slice(0,3).map(x=>x.label)")==['Visão geral','Contas e Períodos','Operação']
           for alias in ['contas','forex-account','forex-management-accounts']:
             assert page.evaluate('(a)=>JPWNavigation.navigate(a)',alias)
             assert page.locator('#forexAccountsWorkspace').is_visible()

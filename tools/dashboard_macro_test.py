@@ -89,7 +89,7 @@ def boot(browser, url, viewport=None, *, service_workers="allow", prepare_contex
     page.goto(url, wait_until="load")
     page.wait_for_function(
         "() => window.JPWDashMacro && window.JPWNavigation "
-        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === 4"
+        "&& document.querySelectorAll('#dashMacroGrid [data-dm-card]').length === "+str(4 if alladin_active else 3)
     )
     return context, page, observed
 
@@ -374,7 +374,8 @@ def assert_superficies_dashboard(page, rotulo):
     def inside(child, parent):
         return child['x'] >= parent['x']-1 and child['right'] <= parent['right']+1 and child['y'] >= parent['y']-1 and child['bottom'] <= parent['bottom']+1
     assert r['overflow'] <= 1, f'[{rotulo}] overflow horizontal da página: {r["overflow"]}'
-    assert len(r['cards']) == 4, f'[{rotulo}] quatro painéis obrigatórios'
+    expected=page.evaluate("['forex','personal-finance','research','alladin'].filter(id=>JPWModuleAvailability.canAccess(id))")
+    assert [card['id'] for card in r['cards']] == expected, f'[{rotulo}] painéis divergem da disponibilidade: {r["cards"]}, {expected}'
     previous = None
     for card in r['cards']:
         assert card['w'] >= r['grid']['w']*.98 and abs(card['x']-r['grid']['x']) <= 1, f'[{rotulo}] painel não ocupa a grade: {card}'
@@ -467,6 +468,10 @@ def assert_responsividade(browser, url):
                 toggle = page.locator('[data-shell-menu-toggle]')
                 toggle.click()
                 drawer = page.locator('#nav' if navigation=='topbar' else '#appSidebar')
+                if navigation == 'sidebar':
+                    # Wait for the approved 180 ms drawer transition, rather
+                    # than measuring an intermediate translated frame.
+                    drawer.evaluate("e=>Promise.all(e.getAnimations().map(a=>a.finished))")
                 drawer_box = drawer.bounding_box()
                 assert drawer.get_attribute('aria-modal') == 'true' and drawer_box and drawer_box['x'] >= -1 and drawer_box['x']+drawer_box['width'] <= width+1, f'[{rotulo}] gaveta não cabe na viewport'
                 page.keyboard.press('Escape')
@@ -624,6 +629,62 @@ def assert_resumos_preenchidos(browser,url):
         ctx.close()
 
 
+def assert_frozen_projection(browser,url):
+    context,page,observed=boot(browser,url,service_workers="block")
+    try:
+        page.locator('#dmTools').evaluate('el=>el.open=true')
+        assert page.locator('[data-dm-card="alladin"],.cp-panorama-index [href="#dm-title-alladin"]').count()==0
+        for module in ['forex','personal-finance','research','alladin']:
+            page.evaluate("id=>JPWModuleAvailability.setState(id,'frozen')",module)
+            page.evaluate("JPWNavigation.navigate('dashboard')")
+            result=page.evaluate("""module=>{
+              const names=['dmForexHTML','dmFinpesHTML','dmResearchHTML','dmAlladinHTML'];
+              const originals=names.map(name=>window[name]),calls=Object.fromEntries(names.map(name=>[name,0]));
+              const govOriginal=getOnboardingCompletionState;let govCalls=0;
+              names.forEach(name=>window[name]=(...args)=>{calls[name]++;return originals[names.indexOf(name)](...args);});
+              getOnboardingCompletionState=(...args)=>{govCalls++;return govOriginal(...args);};
+              const state=JSON.stringify(S),storage=JSON.stringify({...localStorage});
+              try{
+                JPWDashMacro.render();renderSystemStatus();
+                return {calls,govCalls,stateStable:JSON.stringify(S)===state,storageStable:JSON.stringify({...localStorage})===storage,
+                  cards:[...document.querySelectorAll('[data-dm-card]')].map(el=>el.dataset.dmCard),
+                  links:[...document.querySelectorAll('.cp-panorama-index a')].map(el=>el.hash),
+                  governanceHidden:document.getElementById('jpwSsGov').hidden,
+                  governanceVisible:!!document.getElementById('jpwSsGov').getClientRects().length,
+                  accountingVisible:!!document.querySelector('#gdFooter [data-dash-go="contab"]').getClientRects().length,
+                  accountingHidden:document.querySelector('#gdFooter [data-dash-go="contab"]').hidden,
+                  health:['jpwSsPersist','jpwSsBackup','jpwSsQuotes'].every(id=>!document.getElementById(id).hidden)};
+              }finally{names.forEach((name,index)=>window[name]=originals[index]);getOnboardingCompletionState=govOriginal;}
+            }""",module)
+            reader={'forex':'dmForexHTML','personal-finance':'dmFinpesHTML','research':'dmResearchHTML','alladin':'dmAlladinHTML'}[module]
+            assert result['calls'][reader]==0,result
+            assert module not in result['cards'] and '#dm-title-'+module not in result['links'],result
+            assert result['stateStable'] and result['storageStable'] and result['health'],result
+            assert result['governanceHidden'] and result['accountingHidden'] and result['govCalls']==0,result
+            assert not result['governanceVisible'] and not result['accountingVisible'],result
+        assert page.locator('#dashMacroGrid [role="status"]').is_visible()
+        assert page.locator('.cp-panorama-index').is_hidden()
+        # Reativar é uma projeção, não uma entrada no módulo nem uma ação financeira.
+        page.evaluate("JPWModuleAvailability.setState('forex','active')")
+        assert page.locator('[data-dm-card="forex"]').count()==1
+        assert page.locator('#jpwSsGov').is_visible()
+        assert page.locator('#gdFooter [data-dash-go="contab"]').is_visible()
+        page.locator('.cp-panorama-index a').focus()
+        page.evaluate("JPWModuleAvailability.setState('forex','frozen')")
+        assert page.evaluate("document.activeElement.id")=='dashMacroTitle'
+        assert page.evaluate("JPWNavigation.current().primary")=='dashboard'
+        remote=context.new_page()
+        remote.goto(url.rsplit('/',1)[0]+'/build-id.js')
+        remote.evaluate("localStorage.setItem('jpw_module_availability_v1',JSON.stringify({schemaVersion:1,modules:{forex:'active','personal-finance':'frozen',research:'frozen',alladin:'frozen'}}))")
+        page.wait_for_function("JPWModuleAvailability.canAccess('forex')&&document.querySelector('[data-dm-card=\"forex\"]')")
+        assert page.locator('.cp-panorama-index a').count()==1
+        assert page.locator('#jpwSsGov').is_visible()
+        assert page.locator('#gdFooter [data-dash-go="contab"]').is_visible()
+        assert not observed['pageerror'] and not observed['console'],observed
+    finally:
+        context.close()
+
+
 def main():
     server, url = serve()
     try:
@@ -655,6 +716,7 @@ def main():
                 assert not observed["console"], observed
             finally:
                 context.close()
+            assert_frozen_projection(browser,url)
             assert_responsividade(browser, url)
             assert_resumos_preenchidos(browser,url)
             assert_fuso_agenda(browser,url)

@@ -4,7 +4,8 @@ Unlock flags and quarantine do not disable recording. Rendering preserves all
 state and storage; the old guarded visual contract was explicitly superseded.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

@@ -1,7 +1,7 @@
 #property copyright "JP Wealth"
 #include <JPWealth/JPW_Alavancagem_Version.mqh>
 #property version JPW_PRODUCT_MQL_VERSION
-#property description "Observador local de execucoes e risco informativo; nao envia, altera ou fecha ordens."
+#property description "JPW GENETRIX · Observador local de execucoes e risco informativo; nao envia, altera ou fecha ordens."
 
 #include <JPWealth/JPW_Alavancagem_RaizN_Observer.mqh>
 #include <JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh>

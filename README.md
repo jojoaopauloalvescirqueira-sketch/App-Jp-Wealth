@@ -50,6 +50,10 @@ Na revisão integrada `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`, a navegação 
 
 ### Capacidades funcionais
 
+Candidate local de navegação, leitura normativa e clareza Forex: o Dashboard omite módulos congelados antes de consultar seus dados; Research apresenta Forex, Ações, Stocks e REITs. Forex usa Visão geral, Contas e Períodos, Operação, Histórico, Contabilidade, Planejamento e Reservas. Consultar outra conta não troca o contexto operacional; Aplicar continua explícito. Ordens têm tabela compacta e detalhes editáveis, com auditoria completa separada e somente de leitura.
+
+Ferramentas e Serviços → **Estrutura Normativa JP Wealth** abre o Estatuto V11 original com verificação de tamanho/SHA-256, páginas, busca, texto selecionável e download. Ler não registra aceite. O PDF.js e o documento são locais; o gerador inclui os bytes canônicos no portátil e no suporte a `file://`. Contratos: [leitor](docs/architecture/NORMATIVE-READER.md), [Forex](docs/architecture/FOREX-EXPERIENCE.md) e [navegação](docs/architecture/NAVIGATION-HIERARCHY.md).
+
 - **Dashboard** — visão consolidada dos módulos, inclusive o resumo de Forex; a seção inferior **Sistema e atalhos** reúne somente **Status do Sistema** e **Ações rápidas**, com personalização aplicável e layout persistido separadamente do estado financeiro. O calendário operacional fica em **Forex → Visão Geral**, junto dos demais componentes operacionais realocados; a agenda completa permanece em **Research → Forex → Calendário**. O feed de notícias de alto impacto usa calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina). A distribuição dos componentes e suas fontes está no [mapa de contexto](docs/governance/CONTEXT-MAP.md).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
 - **Execução** — registro factual auditável separado da elegibilidade V11; motor central versionado com seis fases, risco/VRM e estados não calculáveis explícitos. A homologação normativa e as lacunas continuam pendentes (ver [contrato do motor](docs/architecture/FOREX-V11-ENGINE.md)).
@@ -81,7 +85,7 @@ operacionais** do usuário.
 
 ### Laboratório de Probabilidade — Galton Board
 
-Em `Research → Laboratório de Probabilidade → Galton Board`, uma placa física
+Em `Configurações → Conhecimento → Laboratório de Probabilidade`, uma placa física
 2D permite observar como um histograma empírico emerge de colisões reais. O motor
 Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,
 seed determinística, pinos triangulares, `linhas + 1` compartimentos, controles de
@@ -248,8 +252,7 @@ e contexto final não capturado ficam fora da projeção, sem preenchimento fict
 Lucro Técnico, alavancagem, DD/fase e risco/clearance permanecem pendentes nos
 conflitos registrados; saldo book não é equity flutuante, base de retorno não é
 saldo final, e cadastro atual não preenche histórico ausente.
-Research possui destino próprio para o Laboratório de Probabilidade, cujo jogo
-atual é Galton Board. Ao trocar subdestino/módulo ou cobrir o Lab com Configurações,
+Naquela revisão histórica, Research possuía destino para o Laboratório de Probabilidade. A localização atual é Configurações → Conhecimento. Ao sair da folha ou cobrir o Lab com um subdiálogo,
 a mesma simulação fica pausada em memória; voltar exige **Continuar**. Recarregar
 não recupera a simulação, somente as preferências persistidas. Contrato e limites em
 [CHG-PRODUCT-IMPROVEMENTS-20260911](docs/work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).

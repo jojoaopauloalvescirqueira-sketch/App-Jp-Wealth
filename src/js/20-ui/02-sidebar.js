@@ -40,6 +40,7 @@ function applyRailState(){
   renderRailToggle();
   if(typeof syncSubmenuRailPresentation==='function')syncSubmenuRailPresentation();
   if(typeof scheduleNavPill==='function')scheduleNavPill();
+  if(typeof sidebarControllerReady!=='undefined'&&sidebarControllerReady&&shellSidebar())sidebarCancelExploration({immediate:true});
 }
 
 function saveSubmenuRail(next){

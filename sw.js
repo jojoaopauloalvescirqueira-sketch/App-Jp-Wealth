@@ -29,6 +29,8 @@ const PRECACHE_URLS = [
   './src/js/20-ui/31-forex-accounts.js',
   './src/vendor/pdfjs/pdf.worker.mjs',
   './src/vendor/pdfjs/pdf.mjs',
+  './src/js/20-ui/34-normative-reader.js',
+  './src/vendor/normative/statute-payload.js',
   './src/js/20-ui/28-fx-consolidated.js',
   './src/js/40-app/25-fx-consolidated-pdf.js',
   './src/js/40-app/24-fx-consolidated-import.js',

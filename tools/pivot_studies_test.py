@@ -11,7 +11,8 @@ Todas as fixtures sao SINTETICAS. O teste nao cria ordem, nao fecha mes, nao
 importa backup real e nao toca credencial.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os
 import socket

@@ -25,7 +25,8 @@ ou toca o original.
 
 Datas FIXAS (2026-01/02); nenhum caso depende de data corrente.
 """
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

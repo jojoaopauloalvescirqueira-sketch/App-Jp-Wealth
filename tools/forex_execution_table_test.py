@@ -123,6 +123,7 @@ def run(page, artifacts, results, skip_matrix=False):
 
     saved=persisted(page);summary=page.locator('#executionBoardRisk').inner_text()
     set_field(page,'sl','1.192')
+    page.locator('[data-eb-row="0:0"] .eb-row-calculations').evaluate('e=>e.open=true')
     assert page.locator('[data-eb-row="0:0"] [data-eb-calc="atrMultiple"]').inner_text()=='4×'
     assert 'não salva' in page.locator('[data-eb-preview="0:0"]').inner_text()
     assert persisted(page)==saved and page.locator('#executionBoardRisk').inner_text()==summary
@@ -186,12 +187,15 @@ def run(page, artifacts, results, skip_matrix=False):
     # Real key events preserve focus order and do not implicitly commit a draft.
     before=persisted(page)
     field(page,'id').focus()
-    for key in ['brokerHash','par','tipo','role']:
+    for key in ['par','tipo','role']:
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.dataset.f')==key
         assert page.evaluate("document.activeElement.matches(':focus-visible')&&!document.activeElement.closest('[hidden],[inert]')")
     page.keyboard.press('Shift+Tab')
     assert page.evaluate('document.activeElement.dataset.f')=='tipo'
+    page.locator('[data-eb-open-detail="0:0"]').click()
+    page.keyboard.press('Tab')
+    assert page.evaluate("document.activeElement.dataset.f==='brokerHash'&&document.activeElement.matches(':focus-visible')")
     field(page,'sl').focus();page.keyboard.press('ControlOrMeta+A');page.keyboard.type('1.169');page.keyboard.press('Tab')
     assert field(page,'sl').input_value()=='1.169' and persisted(page)==before
     details=page.locator('[data-eb-detail="0:0"]')
@@ -232,8 +236,8 @@ def run(page, artifacts, results, skip_matrix=False):
         results.append('NOT_RUN: viewport matrix omitted explicitly; prior matrix receipt is separate')
         return
 
-    # Each viewport retains a real table, with internal horizontal scrolling.
-    # Position is checked after a horizontal movement, not inferred from CSS alone.
+    # Compact desktop table and mobile cards use the same controls. The full
+    # confirmed audit remains a read-only table with contained horizontal scroll.
     page.evaluate("() => {for(let n=0;n<7;n++){const r=operationAddDraft(0);if(!r.ok)throw Error(r.error);}render();renderPhases();}")
     if page.locator('#dgBannerClose').is_visible():page.locator('#dgBannerClose').click()
     before=persisted(page)
@@ -245,22 +249,27 @@ def run(page, artifacts, results, skip_matrix=False):
             assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'), (width,theme,'document overflow')
             geometry=table(page).evaluate('''e=>{
               const row=e.querySelector('.eb-order-row'),head=e.querySelector('thead tr:last-child th');
-              e.scrollTop=0;e.scrollLeft=350;
-              const headTop=head.getBoundingClientRect().top;e.scrollTop=110;
-              return {vertical:e.scrollTop>0,headerMovement:Math.abs(head.getBoundingClientRect().top-headTop),overflow:e.scrollWidth>e.clientWidth,kind:getComputedStyle(row).display,
+              return {overflow:e.scrollWidth>e.clientWidth,kind:getComputedStyle(row).display,
                 cells:[...row.children].map(c=>getComputedStyle(c).display),
+                columns:e.querySelectorAll('thead th').length,headerDisplay:getComputedStyle(e.querySelector('thead')).display,
                 head:getComputedStyle(head).position,id:getComputedStyle(row.firstElementChild).position,
-                second:getComputedStyle(row.children[1]).position,
-                edge:Math.abs(row.firstElementChild.getBoundingClientRect().left-e.getBoundingClientRect().left)};
+                second:getComputedStyle(row.children[1]).position};
             }''')
-            assert geometry['overflow'] and geometry['kind']=='table-row', (width,theme,geometry)
-            assert set(geometry['cells'])=={'table-cell'}, (width,theme,geometry)
-            assert geometry['vertical'] and geometry['headerMovement']<3 and geometry['head']=='sticky' and geometry['id']=='sticky' and geometry['edge']<3, (width,theme,geometry)
-            if width<=767:assert geometry['second']=='static', (width,theme,geometry)
+            assert not geometry['overflow'] and geometry['columns']==7, (width,theme,geometry)
+            assert geometry['id']=='static' and geometry['second']=='static', (width,theme,geometry)
+            if width>767:
+                assert geometry['kind']=='table-row' and set(geometry['cells'])=={'table-cell'} and geometry['head']=='sticky', (width,theme,geometry)
+            else:
+                assert geometry['kind']=='grid' and set(geometry['cells'])<={'block','flex'} and geometry['headerDisplay']=='none', (width,theme,geometry)
+            audit=page.locator('.eb-full-audit');audit.evaluate('e=>e.open=true')
+            assert audit.locator('thead th').count()==25 and audit.locator('input,select').count()==0
+            assert HASH in audit.inner_text()
+            assert audit.locator('.eb-table-scroll').evaluate('e=>{e.scrollLeft=350;return e.scrollWidth>e.clientWidth&&e.scrollLeft>0}')
+            audit.evaluate('e=>e.open=false')
             page.locator('#ebPhase-0').scroll_into_view_if_needed();settle(page)
             page.screenshot(path=str(artifacts/f'table-{width}-{theme}.png'))
     assert persisted(page)==before, 'Resize/theme/scroll changed confirmed financial state'
-    results.append('PASS: 1440/1280/1024/900/768/390/320, two themes, table cells, contained overflow and actual sticky headers/ID')
+    results.append('PASS: 1440/1280/1024/900/768/390/320, two themes, compact table/mobile cards, unique controls and complete read-only audit with contained scrolling')
 
 def native_zoom(pw, url, artifacts, results):
     profile=Path(tempfile.mkdtemp(prefix='execution-native-200-',dir=artifacts))
@@ -280,8 +289,10 @@ def native_zoom(pw, url, artifacts, results):
         assert abs(ratio['outer']/ratio['inner']-2)<.01 and ratio['css']=='1', ('Native 200% not established',ratio)
         page.locator('#ebPhase-0').evaluate('e=>e.open=true')
         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
-        assert table(page).evaluate("e=>e.scrollWidth>e.clientWidth&&getComputedStyle(e.querySelector('.eb-order-row')).display==='table-row'")
+        assert table(page).evaluate("e=>e.scrollWidth<=e.clientWidth+1&&getComputedStyle(e.querySelector('.eb-order-row')).display===(innerWidth<=767?'grid':'table-row')")
         field(page,'id').focus();page.keyboard.press('Tab')
+        assert page.evaluate("document.activeElement.dataset.f==='par'&&document.activeElement.matches(':focus-visible')")
+        page.locator('[data-eb-open-detail="0:0"]').click();page.keyboard.press('Tab')
         assert page.evaluate("document.activeElement.dataset.f==='brokerHash'&&document.activeElement.matches(':focus-visible')")
         page.locator('#ebPhase-0').scroll_into_view_if_needed();settle(page)
         cdp=context.new_cdp_session(page)
@@ -290,7 +301,7 @@ def native_zoom(pw, url, artifacts, results):
         (artifacts/'board-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':False,'captureBeyondViewport':False})['data']))
         assert not errors,errors
         assert_fixture_requests(context)
-        results.append('PASS: native browser 200% zoom (outer/inner=2; CSS zoom=1), table/overflow/focus and dedicated screenshots')
+        results.append('PASS: native browser 200% zoom (outer/inner=2; CSS zoom=1), compact table/cards without overflow, focus and dedicated screenshots')
     finally:
         context.close()
 

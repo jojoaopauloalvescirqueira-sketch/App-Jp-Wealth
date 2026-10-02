@@ -10,7 +10,8 @@ financeiro sem truncamento, nao apenas a existencia de classes CSS.
 Todas as fixtures sao sinteticas; requisicoes externas sao interceptadas.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

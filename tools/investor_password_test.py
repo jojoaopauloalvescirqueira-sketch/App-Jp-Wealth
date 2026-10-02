@@ -6,7 +6,8 @@ localStorage (save), nem no checkpoint de sessão, nem no backup exportado, nem
 sobrevivendo de estados antigos via migrate(). Em memória funciona durante a
 sessão; some no reload. O valor sintético de teste nunca aparece nos relatórios.
 """
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json, os, socket, threading
 from playwright.sync_api import sync_playwright

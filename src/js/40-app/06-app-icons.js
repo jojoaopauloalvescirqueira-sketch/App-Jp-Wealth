@@ -14,7 +14,10 @@ function currentAppIconChoice(){
   try{ const saved=localStorage.getItem(APP_ICON_STORAGE_KEY); if(validAppIconChoice(saved)) return saved; }catch(e){}
   return 'primary';
 }
-function withIconCacheBust(path){ return `${path}?v=${APP_ICON_CACHE_VERSION}`; }
+function withIconCacheBust(path){
+  const local=window.JP_WEALTH_PORTABLE_BUILD===true && window.JPW_PORTABLE_IMAGES?.[path];
+  return typeof local==='string' && local.startsWith('data:image/png;base64,') ? local : `${path}?v=${APP_ICON_CACHE_VERSION}`;
+}
 function applyAppIconChoice(choiceKey, options={}){
   const key=validAppIconChoice(choiceKey)?choiceKey:'primary';
   const icon=APP_ICONS[key];
