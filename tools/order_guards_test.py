@@ -5,7 +5,8 @@ CHG-FOREX-V11-CENTRAL-20260914; original sources remain in external evidence.
 Results still distinguish absent, invalid and explicit zero, through real UI.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os
 import socket

@@ -39,6 +39,7 @@ constexpr long ACCOUNT_MARGIN_MODE_RETAIL_NETTING=0;
 '''
 
 MAIN = r'''
+constexpr int ORDER_TYPE_BUY_LIMIT=2;
 int checks=0,failures=0;
 void check(bool ok,const char* reason){checks++;if(!ok){failures++;std::cerr<<"FAIL "<<reason<<'\n';}}
 int main(){
@@ -98,6 +99,68 @@ int main(){
  rows[1].valid=0;rows[1].sl=0;rows[1].reason="synthetic missing SL";
  check(!JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason),
        "one unavailable position refuses a falsely complete total");
+ // Metamorphic checks use production bodies with deliberately different
+ // magnitudes, account units and inventory composition. They do not mirror
+ // the implementation formula in the test harness.
+ for(double equity : {100.0,10000.0,500000.0})
+  for(double gross : {0.0,60.0,25000.0}){
+   double original=-1,cent=-1;
+   const bool both=JPWLeverage(gross,equity,original)==JPW_OK&&
+                   JPWLeverage(gross*100.0,equity*100.0,cent)==JPW_OK;
+   check(both&&std::abs(original-cent)<1e-12,
+         "joint USC scaling preserves leverage, including confirmed zero");
+  }
+ for(double profit : {-250.0,-0.25,0.0,325.0}){
+   double original=-1,cent=-1;
+   check(JPWFloatingPercent(10000.0,profit,original)&&
+         JPWFloatingPercent(1000000.0,profit*100.0,cent)&&
+         std::abs(original-cent)<1e-12,
+         "joint USC scaling preserves signed floating percentage");
+  }
+ double dd_at_9900=0,dd_at_9700=0,dd_at_9500=0,dd_at_11000=-1;
+ check(JPWBalanceDDPercent(10000,9900,dd_at_9900)&&
+       JPWBalanceDDPercent(10000,9700,dd_at_9700)&&
+       JPWBalanceDDPercent(10000,9500,dd_at_9500)&&
+       JPWBalanceDDPercent(10000,11000,dd_at_11000)&&
+       dd_at_9900<dd_at_9700&&dd_at_9700<dd_at_9500&&dd_at_11000==0,
+       "deeper equity deficit raises DD while equity above balance remains zero");
+ rows[1].valid=1;rows[1].sl=90;rows[1].reason="";
+ rows.push_back(rows[0]);rows[2].kind=JPW_STOP_RISK_PENDING;rows[2].identifier=0;
+ rows[2].order_type=ORDER_TYPE_BUY_LIMIT;
+ rows[2].ticket=3;rows[2].opened_msc=3000;rows[2].risk_money=25;
+ risk.row_count=3;
+ check(JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason)&&
+       total==225&&open==200&&pending==25&&pct==2.25,
+       "complete operation includes each independent pending reserve");
+ rows[2].risk_money=0;
+ check(JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason)&&
+       total==200&&pending==0,
+       "protective zero-risk pending cannot invent additional loss");
+ risk.balance=20000;
+ check(JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason)&&
+       total==200&&pct==1,
+       "balance changes informative percentage without changing nominal risk");
+ risk.balance=1000000;rows[0].risk_money=10000;rows[1].risk_money=10000;
+ check(JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason)&&
+       total==20000&&pct==2,
+       "USC money and balance scale together without a second currency conversion");
+ risk.row_count=2;
+ check(!JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason),
+       "inventory count mismatch refuses a partial published total");
+ risk.row_count=3;risk.margin_mode=ACCOUNT_MARGIN_MODE_RETAIL_NETTING;
+ check(!JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason),
+       "netting position cannot masquerade as per-order hedging risk");
+ risk.margin_mode=ACCOUNT_MARGIN_MODE_RETAIL_HEDGING;
+ rows[2].symbol="OTHER.EXACT";rows[2].valid=0;rows[2].reason="missing SL";
+ check(JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason)&&
+       total==20000&&pending==0,
+       "a different instrument with unavailable SL stays outside this operation");
+ rows[2].kind=99;
+ check(!JPWStopRiskAggregate(risk,rows,"SYNTH.EXACT",1,total,pct,open,pending,extra,reason),
+       "structurally corrupt inventory is refused even outside the operation");
+ double signed_loss=99;
+ check(!JPWStopRiskLossFromProfit(std::numeric_limits<double>::infinity(),signed_loss),
+       "invalid native profit cannot become a monetary stop risk");
  check(JPWTechnicalHealthEvaluate(false,true,true,0,false,true,false)==JPW_HEALTH_UNAVAILABLE,
        "technical health cannot be normal without a valid context");
  check(JPWTechnicalHealthEvaluate(true,true,true,0,false,true,false)==JPW_HEALTH_NORMAL,
@@ -169,10 +232,15 @@ def presentation_runtime(source: str, samples: str) -> str:
         declarations.append(("JPW_VIEW_QUALITY " + name + "=JPW_VIEW_CURRENT;" if name.endswith("_quality") else "string " + name + ';'))
     context = "\n".join(declarations) + r'''
 JPWCockpitSnapshot g_cockpit_snapshot;
-JPWMetricSample g_metric_samples[6];long g_collection_sequence=0;
+JPWMetricSample g_metric_samples[JPW_COCKPIT_METRIC_COUNT];long g_collection_sequence=0;
 string _Symbol="SYNTHETIC";int draws=0;
 ulong host_now=1000;ulong GetTickCount64(){return host_now;}
 void JPWRenderHUD(){draws++;}void JPWRenderRaizDetails(){}void ChartRedraw(int){}
+// This legacy replay keeps the new ledger projection at a component boundary.
+// jpw_genetrix_ui_test executes its actual helper/collector/selector separately;
+// none of the six original metric evidence or expiry assertions is changed.
+void JPWGenetrixPresentMetric(){g_cockpit_snapshot.metric[6].title="Flutuante compensado";
+ g_cockpit_snapshot.metric[6].value="N/A";g_cockpit_snapshot.metric[6].quality=JPW_VIEW_NA;}
 '''
     return samples + cockpit + context + "\n".join(functions)
 

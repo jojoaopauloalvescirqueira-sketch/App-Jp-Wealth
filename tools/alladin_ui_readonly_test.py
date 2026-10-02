@@ -25,7 +25,8 @@ se exibido; a apresentacao S1 nao o exibe, entao a varredura proibe % sem
 excecao ativa. Se o S2 exibir ownership, marcar a celula com
 data-ald-ownership e ajustar a varredura AQUI, nunca afrouxar globalmente.
 """
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

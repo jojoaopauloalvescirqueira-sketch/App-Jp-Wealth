@@ -13,7 +13,8 @@ sinteticos em propriedades de DOM, feitas sem disparar eventos, justamente
 para provar identidade de no sem alterar o estado financeiro persistido.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os
@@ -28,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 
 EXPECTED_CHILDREN = ["forex-consolidated", "forex-management-accounts", "forex-operation", "forex-history", "forex-accounting", "forex-planning", "forex-reserves"]
-EXPECTED_LABELS = ["Dashboard", "Contas e Período", "Execution Board", "History", "Contabilidade", "Planejamento", "Reservas"]
+EXPECTED_LABELS = ["Visão geral", "Contas e Períodos", "Operação", "Histórico", "Contabilidade", "Planejamento", "Reservas"]
 EXPECTED_VIEWS = ["panel", "accounting", "history", "accounts", "motor"]
 EXPECTED_CONTEXT = {
     "forex-management-accounts": ["accounts", "motor"],
@@ -91,8 +92,9 @@ def prepare_page(browser, url, viewport=None):
 
 
 def open_exec_submenu(page):
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=exec]').getAttribute('aria-expanded') === 'true'")
+    if page.get_attribute('#execNavTrigger', 'aria-expanded') != 'true':
+        page.click("#execNavTrigger")
+    page.wait_for_function("() => document.querySelector('#execNavTrigger').getAttribute('aria-expanded') === 'true'")
 
 
 def run_structure(page):
@@ -114,7 +116,7 @@ def run_structure(page):
               [...group.querySelectorAll('[data-nav-item]')].map(item =>
                 item.dataset.navLocalView || item.dataset.navRoute)])),
           closedHeight: navSubShell.getBoundingClientRect().height,
-          expanded: [...document.querySelectorAll('[data-nav-expand][aria-expanded="true"]')].length
+          expanded: [...document.querySelectorAll('#nav > .tab[data-nav-surface][aria-expanded="true"]')].length
         })"""
     )
     assert contract["directTrigger"], "acionador deixou de ser filho direto de #nav (quebra Classic/Pill/Kinetic)"
@@ -132,7 +134,7 @@ def run_structure(page):
 def run_displacement(page):
     """N2 ocupa a lateral sem sobrepor nem deslocar verticalmente o conteudo."""
     open_exec_submenu(page)
-    page.click('[data-nav-expand="exec"]')
+    page.click('#execNavTrigger')
     page.wait_for_timeout(420)
     before = page.evaluate(
         """() => ({
@@ -140,7 +142,7 @@ def run_displacement(page):
           main: appMain.getBoundingClientRect().top
         })"""
     )
-    page.click('[data-nav-expand="exec"]')
+    page.click('#execNavTrigger')
     page.wait_for_timeout(420)
     after = page.evaluate(
         """() => ({
@@ -149,7 +151,7 @@ def run_displacement(page):
           shellHeight: navSubShell.getBoundingClientRect().height,
           shellRight: navSubShell.getBoundingClientRect().right,
           mainLeft: appMain.getBoundingClientRect().left,
-          insertedAfterExpander: navSubShell.previousElementSibling?.dataset.navExpand === 'exec',
+          insertedAfterExpander: ['exec'].includes(navSubShell.previousElementSibling?.dataset.navExpand || navSubShell.previousElementSibling?.dataset.navSurface),
           docWidth: document.documentElement.scrollWidth,
           winWidth: window.innerWidth
         })"""
@@ -169,6 +171,9 @@ def run_initial_destination(page):
     # varreduras abaixo repetiam os ids a mao: quem acrescentasse um destino e
     # atualizasse so a constante teria um teste verde sem cobrir o container
     # novo. Injetar a constante fecha essa divergencia na origem.
+    # Parent disclosure leaves the route unchanged; choose the default leaf.
+    open_exec_submenu(page)
+    page.click('#execNavSubmenu [data-nav-child="forex-consolidated"]')
     containers = json.dumps(EXPECTED_CONTAINERS)
     state = page.evaluate(
         """() => ({
@@ -312,26 +317,26 @@ def run_focus_and_keyboard(page):
     assert other["hidden"] and other["inert"], f"painel inativo sem hidden/inert: {other}"
     assert len(other["attempts"]) == 5 and not any(other["attempts"]), f"painel do outro modulo aceitou foco: {other}"
 
-    page.focus('[data-nav-expand="exec"]')
-    page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-operation", (
-        "ArrowDown nao levou ao destino ativo"
+    page.focus('#execNavTrigger')
+    page.keyboard.press("ArrowRight")
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-consolidated", (
+        "ArrowRight nao levou ao primeiro filho N2"
     )
     page.keyboard.press("ArrowDown")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-history"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "forex-management-accounts"
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0]
     page.keyboard.press("End")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[-1]
-    page.keyboard.press("ArrowRight")
+    page.keyboard.press("ArrowDown")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == EXPECTED_CHILDREN[0], "setas nao circulam"
     page.keyboard.press("Escape")
-    assert page.evaluate("() => document.activeElement.dataset.navExpand") == "exec", "Escape nao devolveu foco ao expansor"
-    assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "false"
+    assert page.evaluate("() => document.activeElement.dataset.navSurface") == "exec", "Escape nao devolveu foco ao expansor"
+    assert page.get_attribute('#execNavTrigger', "aria-expanded") == "false"
     # Management Accounts possui N3; a Board é folha direta.
     assert page.evaluate("JPWNavigation.navigate('forex-management-accounts')")
-    if page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "true":
-        page.click('[data-nav-expand="exec"]')
+    if page.get_attribute('#execNavTrigger', "aria-expanded") == "true":
+        page.click('#execNavTrigger')
     # N3 continua funcional na area de trabalho, mesmo com N2 recolhido.
     local = page.locator('#navLocalSlot [data-nav-context="forex-management-accounts"]')
     assert local.is_visible()
@@ -345,21 +350,25 @@ def run_focus_and_keyboard(page):
 
 
 def run_expansion_without_navigation(page):
-    """Hover inerte; expandir/recolher nao navega nem descarta a visao local."""
+    """Hover explora; clique fixa/recolhe sem navegar nem descartar N3."""
     before = page.evaluate("() => ({current:JPWNavigation.current(), view:JPWExec.ui.getView(), state:JSON.stringify(S), storage:Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])})")
+    # The previous scenario explicitly collapsed this parent. Hover is
+    # suppressed until a physical leave, as required by the sidebar contract.
+    page.mouse.move(900, 700)
+    page.wait_for_timeout(350)
     page.hover("#execNavTrigger")
     page.wait_for_timeout(600)
-    assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "false", "hover abriu o grupo"
-    page.click('[data-nav-expand="exec"]')
-    assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "true"
+    assert page.get_attribute('#execNavTrigger', "aria-expanded") == "true", "hover nao explorou o grupo"
+    page.click('#execNavTrigger')
+    assert page.get_attribute('#execNavTrigger', "aria-expanded") == "true"
     page.hover("#appMain")
     page.wait_for_timeout(600)
-    assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "true", "pointerleave fechou o grupo"
+    assert page.get_attribute('#execNavTrigger', "aria-expanded") == "true", "pointerleave fechou o grupo"
     page.set_viewport_size({"width": 1280, "height": 860})
     page.wait_for_timeout(120)
-    assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "true", "resize desktop fechou o grupo"
-    page.click('[data-nav-expand="exec"]')
-    assert page.get_attribute('[data-nav-expand="exec"]', "aria-expanded") == "false", "segundo clique nao recolheu"
+    assert page.get_attribute('#execNavTrigger', "aria-expanded") == "true", "resize desktop fechou o grupo"
+    page.click('#execNavTrigger')
+    assert page.get_attribute('#execNavTrigger', "aria-expanded") == "false", "segundo clique nao recolheu"
     after = page.evaluate("() => ({current:JPWNavigation.current(), view:JPWExec.ui.getView(), state:JSON.stringify(S), storage:Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])})")
     assert after == before, f"expansao alterou destino, dados ou preferencias: {before} -> {after}"
     assert page.locator('#navLocalSlot [data-nav-context="forex-management-accounts"]').is_visible()
@@ -368,14 +377,14 @@ def run_expansion_without_navigation(page):
 
 def run_module_switch(page):
     """Trocar de modulo fecha o anterior: nunca dois acionadores expandidos."""
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=exec]').getAttribute('aria-expanded') === 'true'")
+    open_exec_submenu(page)
+    page.wait_for_function("() => document.querySelector('#execNavTrigger').getAttribute('aria-expanded') === 'true'")
     page.click("#finpesNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=finpes]').getAttribute('aria-expanded') === 'true'")
+    page.wait_for_function("() => document.querySelector('#finpesNavTrigger').getAttribute('aria-expanded') === 'true'")
     state = page.evaluate(
         """() => ({
-          expanded: [...document.querySelectorAll('[data-nav-expand]')]
-            .filter(el => el.getAttribute('aria-expanded') === 'true').map(el => el.dataset.navExpand),
+          expanded: [...document.querySelectorAll('#nav > .tab[data-nav-surface]')]
+            .filter(el => el.getAttribute('aria-expanded') === 'true').map(el => el.dataset.navSurface),
           mounted: [...document.querySelectorAll('#navSubShell .nav-sub-menu')]
             .filter(el => !el.hidden).map(el => el.id),
           screens: [...document.querySelectorAll('.screen.active')].map(el => el.id)
@@ -383,10 +392,13 @@ def run_module_switch(page):
     )
     assert state["expanded"] == ["finpes"], f"dois acionadores expandidos: {state['expanded']}"
     assert state["mounted"] == ["finpesNavSubmenu"], f"painel do modulo anterior segue montado: {state['mounted']}"
-    assert state["screens"] == ["finpes"], state["screens"]
+    assert state["screens"] == ["exec"], "explorar outro modulo mudou a tela"
+    page.click('#finpesNavSubmenu [data-nav-sub-view="overview"]')
+    assert page.evaluate("JPWNavigation.current().screen") == "finpes"
 
-    # Voltar ao Execution Board vindo de outro modulo reabre na Visao Geral.
-    page.click("#execNavTrigger")
+    # The parent only opens N2; the explicit default leaf enters the module.
+    open_exec_submenu(page)
+    page.click('#execNavSubmenu [data-nav-child="forex-consolidated"]')
     page.wait_for_function("() => JPWNavigation.current().screen === 'fxconsolidated'")
     back = page.evaluate(
         """() => ({
@@ -425,8 +437,9 @@ def run_economic_calendar(page):
     )
     assert page.evaluate("() => JPWNavigation.navigate('ecal')") is True
     page.wait_for_function("() => window.JPWTools.ui.getView() === 'calendar'")
-    page.click("#toolsNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=tools]').getAttribute('aria-expanded') === 'true'")
+    if page.get_attribute("#toolsNavTrigger", "aria-expanded") != "true":
+        page.click("#toolsNavTrigger")
+    page.wait_for_function("() => document.querySelector('#toolsNavTrigger').getAttribute('aria-expanded') === 'true'")
     compat = page.evaluate(
         """() => ({primary:JPWNavigation.current().primary,
           child:JPWNavigation.current().child,
@@ -528,8 +541,8 @@ def run_economic_calendar(page):
 def run_motor_migration(page):
     """O Motor de Lote migrou de Configuracoes para ca — uma so implementacao."""
     # 1. Alcançável pelo terceiro nível contextual de Management Accounts.
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=exec]').getAttribute('aria-expanded') === 'true'")
+    open_exec_submenu(page)
+    page.wait_for_function("() => document.querySelector('#execNavTrigger').getAttribute('aria-expanded') === 'true'")
     page.click('#execNavSubmenu [data-nav-child="forex-management-accounts"]')
     page.click('#navLocalSlot [data-nav-context="forex-management-accounts"] [data-nav-local-view="motor"]')
     page.wait_for_function("() => window.JPWExec.ui.getView() === 'motor'")
@@ -663,16 +676,25 @@ def run_no_regression(page):
                 "personal-finance": "finpes", "alladin": "alladin", "tools-calendar": "tools"}
     assert routes == list(expected), f"rotas globais mudaram: {routes}"
     for route, screen in expected.items():
-        page.click(f'#nav .tab[data-route="{route}"]')
-        active = page.evaluate("() => document.querySelector('.screen.active')?.id")
-        assert active == screen, f"rota {route} nao ativou {screen} (ativa: {active})"
+        parent=page.locator(f'#nav .tab[data-route="{route}"]')
+        before=page.evaluate('JPWNavigation.current()')
+        parent.click()
+        if parent.get_attribute('data-nav-surface'):
+            assert page.evaluate('JPWNavigation.current()')==before, f'pai disclosure navegou: {route}'
+            leaf=('#finpesNavSubmenu [data-nav-sub-view="overview"]' if route=='personal-finance'
+                  else f'#navSubShell [data-nav-child="{route}"]')
+            page.locator(leaf).click()
+        active=page.eval_on_selector_all('.screen.active','els=>els.map(e=>e.id)')
+        assert active == [screen], f"rota {route} nao ativou uma unica tela {screen} (ativas: {active})"
+        assert page.evaluate('JPWNavigation.current().canonical')==route
     # Fecha a faixa deixada aberta pelo ultimo clique em acionador.
     page.keyboard.press("Escape")
 
 
 def run_themes(page):
     """Lateral e texto legiveis nos dois temas, com tokens que acompanham o tema."""
-    page.click("#execNavTrigger")
+    open_exec_submenu(page)
+    page.click('#execNavSubmenu [data-nav-child="forex-consolidated"]')
     page.wait_for_timeout(420)
     themes = []
     for theme in ("dark", "light"):
@@ -699,12 +721,13 @@ def run_mobile(browser, url):
     page.click("[data-shell-menu-toggle]")
     assert page.get_attribute("#appSidebar", "role") == "dialog"
     assert page.get_attribute("#appSidebar", "aria-modal") == "true"
-    page.click("#execNavTrigger")
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=exec]').getAttribute('aria-expanded') === 'true'")
+    open_exec_submenu(page)
+    page.wait_for_function("() => document.querySelector('#execNavTrigger').getAttribute('aria-expanded') === 'true'")
     page.wait_for_timeout(420)
-    assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None, (
-        "selecao do modulo deixou a gaveta aberta"
-    )
+    assert page.evaluate("() => document.documentElement.dataset.shellMenu") == "open", "pai fechou a gaveta"
+    assert page.evaluate("JPWNavigation.current().canonical") == "dashboard", "pai navegou"
+    page.click('#execNavSubmenu [data-nav-child="forex-consolidated"]')
+    assert page.evaluate("() => document.documentElement.dataset.shellMenu") is None
     assert page.evaluate("() => fxconsolidated.contains(document.activeElement)"), "selecao nao focou conteudo"
     page.click("[data-shell-menu-toggle]")
     facts = page.evaluate(

@@ -86,13 +86,13 @@
       "order": 14,
       "path": "src/js/20-ui/01-header-readout.js",
       "section": "TOP BAR · LEITURA DE ESTADO",
-      "sha256": "94f44b6c97a421cd84a0485c47bd8363911a04937a1ca3d6293cf4ea2ed0291a"
+      "sha256": "8081c4b4a644cfc8728de519c3c8aaec6ae19dbe7feb0b94918f7dbc17ad8e20"
     },
     {
       "order": 15,
       "path": "src/js/20-ui/02-sidebar.js",
       "section": "SIDEBAR · COLAPSO",
-      "sha256": "1389e3fd943ff1b324425fd83cfd11edba8a819dba03147f12bf445f18e44508"
+      "sha256": "e3483db32bdcf6f99f24daf572ea8e20846d143401c5e8bb6baa331d3bce6879"
     },
     {
       "order": 16,
@@ -176,7 +176,7 @@
       "order": 29,
       "path": "src/js/40-app/01-navigation.js",
       "section": "NAV",
-      "sha256": "8609466f3cdd50e01e937e7a56fcd5b53798b19a931d8390c22d7f2b6e8dee49"
+      "sha256": "4a5b9e53bf362e21142414ec5236eea043c6728711a4fc4b42447617d1f13115"
     },
     {
       "order": 30,
@@ -218,7 +218,7 @@
       "order": 36,
       "path": "src/js/20-ui/12-nav-style.js",
       "section": "Estilo da navegacao: pilula flutuante ou classica (preferencia local)",
-      "sha256": "12625aafbdfd2a4841cc627e81123d3d55ac92ce5c358f572622f5627048981b"
+      "sha256": "a9246599db0b0e95ae02071fa2eaca1903e6513c3367d527997c4289caa3bd17"
     },
     {
       "order": 37,
@@ -236,7 +236,7 @@
       "order": 39,
       "path": "src/js/40-app/06-app-icons.js",
       "section": "PWA · MARCA CONJUNTA (Vermelho/Preto, cabeçalho e instalação)",
-      "sha256": "96489867c564b446314c1c48c54813c4272b9487448bdbddc35f804812acf6f3"
+      "sha256": "40e5ada4a6887eea186bb4bbfaf3003973b81b9af6901a8bcfc67c2e3285fba3"
     },
     {
       "order": 40,
@@ -266,7 +266,7 @@
       "order": 44,
       "path": "src/js/40-app/09-settings-modal.js",
       "section": "CENTRAL DE CONFIGURAÇÕES · MODAL DEDICADO",
-      "sha256": "6b64e34c57195ef13e55bf8b7578ab867b80fd136bc86d0312bc131063d41ee1"
+      "sha256": "1d4842692d58b16524ab210208447601bc75aab91b802be6ba21203f5f03775e"
     },
     {
       "order": 45,
@@ -278,19 +278,19 @@
       "order": 46,
       "path": "src/js/40-app/11-operational-shell.js",
       "section": "SHELL OPERACIONAL · gaveta mobile e faixa compartilhada dos niveis contextuais (N1)",
-      "sha256": "25dc9cf12312158f3e330371e5829ae1d39e47c28c1ad3e8a110ec3be0785f97"
+      "sha256": "794830288014f7d5487ef55e9c072e2dc67db73749bd1080c923e6e885c7d067"
     },
     {
       "order": 47,
       "path": "src/js/40-app/12-global-dashboard.js",
       "section": "GLOBAL DASHBOARD · shell compartilhado, fidelidade ao Claude Design (N1)",
-      "sha256": "975f71941169530128b0ff9e157b993f1a9ea47d2d68b5d344b265131739cf04"
+      "sha256": "658e693366d5f993db9ed5715ff786a8f7442b900508d867597027912e0cdd73"
     },
     {
       "order": 48,
       "path": "src/js/40-app/13-dashboard-layout.js",
       "section": "MOTOR COMPARTILHADO DE PERSONALIZAÇÃO DE TELAS · sessão global de edição, 7 telas, zonas, tamanhos, persistência v3 (N1)",
-      "sha256": "2d13ded10bb2d3ba3b336b1dbcee99604b2b6d3761dc2d08ecaf994bf071441e"
+      "sha256": "f359218db68466d10e72f812295641ec56693ee619deed1954445ccbe50653e0"
     },
     {
       "order": 49,
@@ -398,7 +398,7 @@
       "order": 66,
       "path": "src/js/30-accounting/05-fx-planning/05-fx-ui.js",
       "section": "PLANEJAMENTO FX · INTERFACE",
-      "sha256": "9b45041f62f963b1dbca416de63ed75b94ca0b8c7a4510e01e74b75a4fc60132"
+      "sha256": "97f51dcd19b93440fb64ece7b6075a3aec9e5b956123bc9f1eab9371f8c324c9"
     },
     {
       "order": 67,
@@ -440,7 +440,7 @@
       "order": 73,
       "path": "src/js/20-ui/16-operation-history.js",
       "section": "Historico de Operacoes Unicas: workspace somente leitura",
-      "sha256": "c812bb160df5e9b415318c8f5f0b1da398a6a217c5adead6de68ba6fe3f40aec"
+      "sha256": "9ac12d98368ed062b319373becaa0559d020852138af74130c53fba1eb5995bb"
     },
     {
       "order": 74,
@@ -493,7 +493,7 @@
       "order": 82,
       "path": "src/js/20-ui/23-research-views.js",
       "section": "RESEARCH · workspaces do modulo e ownership analitico (NAV-03)",
-      "sha256": "c26dee4d2bf27f0649e5a053cc56ee43a6b2bd4108c8988039ac3ccf30a37b53"
+      "sha256": "4a0b9f3a59e815576dc1335609c88a817c6b9f12823a0060e24eb745f0ecc721"
     },
     {
       "order": 83,
@@ -505,7 +505,7 @@
       "order": 84,
       "path": "src/js/20-ui/25-dash-macro.js",
       "section": "DASHBOARD · Visao Executiva Macro (DASH-MACRO-01): panorama transversal dos modulos globais",
-      "sha256": "3db93de3e41a56e2d1179e5a4770d6c43cf8476007a6cc8aaeb9c8d3f0adc63a"
+      "sha256": "254a33e2f5b928c55819c74bf78b65a54237f4aaf571f576afb1d1a4e93b9366"
     },
     {
       "order": 85,
@@ -517,7 +517,7 @@
       "path": "src/js/20-ui/26-forex-engine-views.js",
       "section": "FOREX V11 · engine overview reserves and factual forms",
       "order": 86,
-      "sha256": "5e4e1c500e48d384969475fea937943b39197c06880b2dc0b0145ae084e96f02"
+      "sha256": "5270d3eeb37ae5d3fa27868871737835720c1492f83df7a6b1999a3a0908f150"
     },
     {
       "path": "src/js/10-domain/17-fx-consolidated-model.js",
@@ -541,7 +541,7 @@
       "path": "src/js/20-ui/28-fx-consolidated.js",
       "section": "CONSOLIDADO FX · local analytical history",
       "order": 90,
-      "sha256": "ae86da829200f36af559e6705ced311d8686e0b412ab539e621823c169333e39"
+      "sha256": "be2fd52766819b4fa790b7a0e5b4684136fb34eeb712e8b536871aecfdb2650c"
     },
     {
       "path": "src/js/10-domain/19-execution-market.js",
@@ -559,7 +559,7 @@
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 93,
-      "sha256": "df9746d7ec9ec00dc10f61cb3fa24a39085b38f2f0a48691ae570eade011408c"
+      "sha256": "deb2856416e41b0addb6b63d2bd56ed4fff5d2d10cfa0c76363367d43199b118"
     },
     {
       "path": "src/js/10-domain/16-nocuda-transfer.js",
@@ -571,25 +571,31 @@
       "path": "src/js/20-ui/31-tools-services.js",
       "section": "Nocuda Tool · local drawing transfer",
       "order": 95,
-      "sha256": "36d50a52c9dbe1419d21fcfe603a6d61b701b2b86b758645b396b71c4ed57186"
+      "sha256": "fd7fb04092fc05c78e5c2c3a1e4d9a51e3472b12d57a2b0df2ff0590d9f82845"
+    },
+    {
+      "path": "src/js/20-ui/34-normative-reader.js",
+      "section": "Estrutura Normativa · local PDF reader",
+      "order": 96,
+      "sha256": "beaf00bb9f531496914d7147fd619bb6448cb761df6a6c6bc44a47f3dd3d3f8d"
     },
     {
       "path": "src/js/20-ui/31-forex-accounts.js",
       "section": "Contas e Período · gestão contextual de contas CFDs",
-      "order": 96,
-      "sha256": "e4075a32125b568251e982049dfd39ad740144b9cb81a0c0dc935a8977f1014e"
+      "order": 97,
+      "sha256": "1552c1802d125097147f0e25c2cfb8cde2b510744650f54ba26313893c956e87"
     },
     {
       "path": "src/js/20-ui/33-module-work.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 97,
+      "order": 98,
       "sha256": "3106ee8020fc6f9920b1260926d525da5495a8a3a5d884ba9a0f27fe000aa4fc"
     },
     {
       "path": "src/js/20-ui/32-module-availability.js",
       "section": "Module availability · presentation and preserved work",
-      "order": 98,
-      "sha256": "809419739839d141cfdcc8c6a8742bf8261120093a059a345ccad2994d04c8fb"
+      "order": 99,
+      "sha256": "c8bf4d2169885378efdc1f0ba9a03571f8cd8bd8c4b5c4da948d3b10c71ed261"
     }
   ],
   "runtimeAssets": [

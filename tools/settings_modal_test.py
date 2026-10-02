@@ -75,6 +75,8 @@ def run_existing_settings(browser,url):
     top_categories=['general','forex-preferences','appearance-interface','method-governance','operations','knowledge','data-security','about']
     assert page.locator('#settingsMenu [data-settings-category]').count()==len(top_categories)
     assert page.locator('#settingsModal [data-settings-category="probability-lab"], #settingsModal [data-nav-to="galton-board"], #settingsModal [data-galton-root]').count()==0
+    assert page.locator('[data-settings-panel="knowledge"] [data-nav-to="probability-lab"]').count()==1
+    assert page.locator('[data-settings-panel="probability-lab"]').count()==1
     for cat in top_categories:
       assert page.locator(f'#settingsMenu [data-settings-category="{cat}"]').count()==1
 

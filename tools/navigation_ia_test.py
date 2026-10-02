@@ -7,7 +7,8 @@ canônico. Navegação é UI pura: não grava storage, não salva estado finance
 a navegacao nao le nem altera o dominio patrimonial do Alladin.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os
@@ -43,8 +44,6 @@ RESEARCH_CHILDREN = [
     ("research-stocks-br", "research", "stocks-br"),
     ("research-stocks-global", "research", "stocks-global"),
     ("research-reits", "research", "reits"),
-    ("research-probability-lab", "research", "probability-lab"),
-    ("research-others", "research", "others"),
 ]
 LEGACY = ["dash", "exec", "contas", "contab", "fxplan", "finpes",
           "motor", "history", "check", "tool-check", "ecal", "nocoda",
@@ -132,13 +131,13 @@ def assert_registry(page):
     assert not any(legacy in [route["id"] for route in routes] for legacy in LEGACY), flat
     children = page.evaluate("() => window.JPWNavigation.children('forex')")
     assert [child["id"] for child in children] == [item[0] for item in FOREX_CHILDREN], children
-    assert children[1]["label"] == "Contas e Período", children[1]
+    assert children[1]["label"] == "Contas e Períodos", children[1]
     research = page.evaluate("() => window.JPWNavigation.children('research')")
     assert [child["id"] for child in research] == [item[0] for item in RESEARCH_CHILDREN], research
     tools = page.evaluate("() => window.JPWNavigation.children('tools')")
     assert [(child["id"], child["localView"]["view"]) for child in tools] == [
         ("tools-calendar", "calendar"), ("tools-nocuda", "nocuda"),
-        ("tools-leverage", "leverage")], tools
+        ("tools-leverage", "leverage"), ("tools-normative", "normative")], tools
     assert page.evaluate("() => window.JPWNavigation.children('dashboard')") == []
     assert page.evaluate("() => window.JPWNavigation.children('inexistente')") == []
     resolved = page.evaluate("""targets => targets.map(target => ({
@@ -178,7 +177,10 @@ def assert_primary_dom(page):
     assert page.locator("section#alladin").count() == 1
     assert page.locator("#appSidebar #nav").count() == 1
     assert page.locator("#gdTopbarNavSlot #nav").count() == 0
-    assert page.locator("#nav > .tab[aria-expanded]").count() == 0
+    # Approved sidebar parents now own disclosure; legacy expanders stay unique
+    # for compatibility but do not expose a duplicate interactive control.
+    assert page.locator("#nav > .tab[aria-expanded]").count() == 4
+    assert not any(page.locator('[data-nav-expand]').evaluate_all('els=>els.map(e=>e.getClientRects().length>0)'))
     assert page.locator("#nav > [data-nav-expand]").evaluate_all(
         "els => els.map(el=>el.dataset.navExpand)") == ["research", "exec", "finpes", "tools"]
     assert page.locator("#appSidebar [data-nav-level='3']").count() == 0
@@ -290,7 +292,15 @@ def assert_canonical_navigation(page):
         assert accepted is True, route
         state = active_state(page)
         assert state["activeScreens"] == [screen], (route, state)
-        assert state["primary"] == primary and state["ariaCurrent"] == primary, (route, state)
+        assert state["primary"] == primary, (route, state)
+        if primary in {'forex','personal-finance','research','tools'}:
+            assert state['ariaCurrent'] is None, 'disclosure parent impersonates current leaf'
+            selector = (f'#navSubShell [data-nav-child="{state["current"]["child"]}"]'
+                        if state['current']['child'] else
+                        f'#finpesNavSubmenu [data-nav-sub-view="{local_view}"]')
+            assert page.locator(selector).get_attribute('aria-current') == 'page', (route, state)
+        else:
+            assert state['ariaCurrent'] == primary, (route, state)
         assert state["current"]["canonical"] == route, (route, state)
         if screen == "exec":
             assert page.evaluate("() => window.JPWExec.ui.getView()") == local_view
@@ -303,9 +313,12 @@ def assert_canonical_navigation(page):
 
     page.evaluate("() => window.JPWExec.ui.selectView('motor')")
     page.click('#nav > .tab[data-route="forex-consolidated"]')
+    page.locator('#execNavTrigger').press('ArrowRight')
+    page.click('#execNavSubmenu [data-nav-child="forex-consolidated"]')
     assert page.evaluate("() => JPWNavigation.current().screen") == "fxconsolidated"
     page.evaluate("() => window.JPWFin.ui.selectView('cenarios')")
     page.click('#nav > .tab[data-route="personal-finance"]')
+    page.click('#finpesNavSubmenu [data-nav-sub-view="overview"]')
     assert page.evaluate("() => window.JPWFin.ui.getView()") == "overview"
 
 
@@ -447,8 +460,12 @@ def assert_storage_and_alladin_isolation(page):
 
 def assert_keyboard_and_mobile(browser, url, desktop_page):
     research = desktop_page.locator('#nav > .tab[data-route="research-forex"]')
+    before = active_state(desktop_page)
     research.focus()
     research.press("Enter")
+    assert active_state(desktop_page)["screen"] == before["screen"], "parent activation navigated"
+    research.press("ArrowRight")
+    desktop_page.locator('#researchNavSubmenu [data-nav-child="research-forex"]').press("Enter")
     assert active_state(desktop_page)["screen"] == "research"
 
     context, page, observed = boot(browser, url, {"width": 390, "height": 844})

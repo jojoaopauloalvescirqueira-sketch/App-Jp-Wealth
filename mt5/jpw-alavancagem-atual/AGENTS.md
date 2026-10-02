@@ -1,3 +1,7 @@
+# Revisão candidata 1.18.0 — Histórico Pessoal
+
+Escopo adicional em `JPW_PersonalHistory_*`: Observer como produtor único, SQLite próprio, Cockpit como consumidor, avisos locais SL==0/60s e recordes observados. Contrato específico em [GENETRIX_PERSONAL_HISTORY.md](GENETRIX_PERSONAL_HISTORY.md). Os módulos PersonalHistory e o Observer não negociam, homologam parâmetros ou certificam cumprimento do Estatuto. O Supervisor separado herdado de 1.17.0 mantém seu contrato próprio de demo explicitamente armada; esta entrega não o arma. Os guias históricos abaixo são preservados; a preferência atual é V3 de sete métricas, com seis abas incluindo Histórico Pessoal. Fonte 1.18.0 é candidato, compilação/EX5/MT5 `NOT_RUN`.
+
 # JPW Alavancagem Atual — guia local para IAs e revisores
 
 Este arquivo acompanha o ZIP de **fontes** da versão 1.10.1. Ele descreve o

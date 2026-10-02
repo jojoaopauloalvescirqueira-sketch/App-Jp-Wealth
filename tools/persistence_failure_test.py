@@ -5,7 +5,8 @@ Protege o contrato: save() nunca falha em silêncio. Cobre o caminho saudável, 
 primeira falha, falhas repetidas (sem spam nem duplicação), a recuperação e o
 acesso ao backup a partir do aviso — nas versões modular e portátil.
 """
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os, socket, threading
 from playwright.sync_api import sync_playwright

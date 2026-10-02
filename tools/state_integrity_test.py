@@ -20,7 +20,8 @@ correcao: fica registrado em CURRENT-STATE.md em vez de virar codigo por palpite
 Todas as fixtures sao SINTETICAS. Nenhuma credencial real e usada.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os
 import socket

@@ -12,7 +12,8 @@ sem duracao sai da mediana de duracao e continua contando no total de operacoes.
 Todas as fixtures sao SINTETICAS.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os
 import socket

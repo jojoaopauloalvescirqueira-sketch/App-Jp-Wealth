@@ -10,7 +10,8 @@ Dados do operador continuam intactos.
 
 Fixtures são sintéticas. O payload é inofensivo: apenas marca `window.__JPW_XSS__`.
 """
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json, os, socket, threading
 from playwright.sync_api import sync_playwright

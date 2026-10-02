@@ -5,7 +5,8 @@ O oráculo anterior, que dependia de S.phases/S.activeOperation globais, está
 arquivado em evidência externa. Esta suíte exercita o caminho atual do produto.
 Todas as identidades e valores são sintéticos.
 """
-from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os,socket,threading
 import notes_launcher_test as launcher

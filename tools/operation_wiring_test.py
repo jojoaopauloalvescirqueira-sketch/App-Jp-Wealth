@@ -5,7 +5,8 @@ O oráculo anterior baseado em S.phases global está preservado como evidência
 externa. A suíte atual exercita os controles reais da operação por conta.
 Todas as fixtures são sintéticas.
 """
-from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os,socket,threading
 import notes_launcher_test as launcher

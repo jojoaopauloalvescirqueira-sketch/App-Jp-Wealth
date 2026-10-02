@@ -33,3 +33,12 @@ Descongelar explicitamente reverte a disponibilidade. Rollback de código para b
 ## Evidência e consumidores
 
 Focais module_availability_core_test, module_availability_test, module_availability_work_test, module_availability_backup_test; suites internas Alladin com fixture active explicitamente isolada; suites de preservação com defaults. Full, PWA e auditoria permanecem obrigatórios; resultados exatos no DELIVERY.md do diretório externo /Users/joaopauloalves/.codex/module-availability/20260924/evidence. Nenhuma classificação anterior é reescrita.
+
+
+## Projeção do Dashboard — revisão local 2026-10-01
+
+[CHG-JPW-NAVIGATION-AVAILABILITY-20261001](../work/CHG-JPW-NAVIGATION-AVAILABILITY-20261001.md), N1/A2. O Dashboard filtra a lista pela mesma `JPWModuleAvailability` antes de chamar os readers. Módulo congelado não produz cartão, fato, link, âncora, leitura ou contribuição financeira nessa superfície; não há substituição por zero ou cartão administrativo. Reativar restaura a projeção por leitura, sem abrir o módulo nem executar ação pendente. O índice usa a mesma lista e o foco de uma âncora/ação removida retorna ao título do panorama.
+
+A linha Governança do período e o Log de Auditoria contábil pertencem a Forex: desaparecem se Forex está congelado; o Dashboard não chama `getOnboardingCompletionState()` nessa condição. Persistência, backup e saúde das cotações de referência continuam compartilhados, inclusive quando todos os módulos estão congelados. `renderSystemStatus()` e a projeção macro são atualizados após alterações explícitas ou eventos storage.
+
+Laboratório de Probabilidade é folha educacional de Configurações → Conhecimento e não depende da disponibilidade de Research. A remoção visível de Others preserva o resolver interno e seus dados. Nenhum default, chave, formato, gate ou regra de congelamento é alterado por esta revisão. Os resultados de validação pertencem ao candidate testado; não são aprovação de desenvolvimento ou publicação.

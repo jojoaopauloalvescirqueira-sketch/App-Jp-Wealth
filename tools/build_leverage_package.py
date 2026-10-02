@@ -75,8 +75,22 @@ def download_record(relative: str, content: bytes) -> dict:
     }
 
 
+NOCUDA_LOGO = PRODUCT + "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp"
+# Every embedded resource is explicitly approved; arbitrary images cannot ship.
+GENETRIX_LOGOS = frozenset(PRODUCT + "MQL5/Images/JPWealth/JPW_Genetrix_Logo_" +
+    theme + "_" + str(scale) + ".bmp" for theme in ("Light", "Dark")
+    for scale in (100, 125, 150, 200))
+EMBEDDED_RESOURCES = GENETRIX_LOGOS | {NOCUDA_LOGO}
+
+
+def runtime_source(relative: str) -> bool:
+    """MQL code and the single explicitly declared embedded product resource."""
+    canonical = relative if relative.startswith(PRODUCT) else PRODUCT + relative
+    return PurePosixPath(relative).suffix in (".mq5", ".mqh") or canonical in EMBEDDED_RESOURCES
+
+
 def stamp_source_build(root: Path, sources: list[str], product_version: str) -> str:
-    """Bind the runtime build to declared MQL bytes, with only its own ID masked.
+    """Bind the runtime build to declared MQL and embedded-resource bytes, with only its own ID masked.
 
     Financial/schema versions are not generated. The complete final header is
     subsequently covered by mqlSourceFingerprint and the native compiler receipt.
@@ -86,7 +100,7 @@ def stamp_source_build(root: Path, sources: list[str], product_version: str) -> 
     inputs = []
     version_content = b""
     for relative in sorted(sources):
-        if PurePosixPath(relative).suffix not in (".mq5", ".mqh"):
+        if not runtime_source(relative):
             continue
         content = checked_file(root, relative, PRODUCT).read_bytes()
         if relative == VERSION_HEADER:
@@ -163,7 +177,7 @@ def build(root: Path = ROOT) -> dict:
         raise ValueError("Estados de validacao incompletos")
     # Validate all declared paths/types before updating even the generated ID.
     for relative in sources:
-        if PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh"):
+        if PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh") and relative not in EMBEDDED_RESOURCES:
             raise ValueError(f"Tipo de fonte inesperado: {relative}")
         source = checked_file(root, relative, PRODUCT)
         if source.suffix in (".mq5", ".mqh"):
@@ -171,6 +185,14 @@ def build(root: Path = ROOT) -> dict:
             # MQL resolves quoted includes relative to the including source.
             # The dependency must itself be explicitly mapped in the manifest;
             # neither a missing file nor an undeclared local file can ship.
+            for resource in re.findall(r'^\s*#resource\s*"([^"\r\n]+)"', source_text, re.MULTILINE):
+                normalized = re.sub(r"/+", "/", resource.replace("\\", "/"))
+                if not normalized.startswith("/Images/") or ".." in PurePosixPath(normalized).parts:
+                    raise ValueError(f"Recurso local inesperado: {resource}")
+                dependency = PRODUCT + "MQL5" + normalized
+                if dependency not in EMBEDDED_RESOURCES or dependency not in sources:
+                    raise ValueError(f"Recurso local ausente do manifesto: {resource}")
+                checked_file(root, dependency, PRODUCT)
             for include in re.findall(r'^\s*#include\s*"([^"\r\n]+)"', source_text, re.MULTILINE):
                 dependency = PurePosixPath(relative).parent.as_posix() + "/" + include.replace("\\", "/")
                 if dependency not in sources:
@@ -183,16 +205,16 @@ def build(root: Path = ROOT) -> dict:
     manifest["runtimeBuildId"] = stamp_source_build(root, sources, manifest["version"])
     members = []
     for relative in sources:
-        if PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh"):
+        if PurePosixPath(relative).suffix not in (".md", ".mq5", ".mqh") and relative not in EMBEDDED_RESOURCES:
             raise ValueError(f"Tipo de fonte inesperado: {relative}")
         source = checked_file(root, relative, PRODUCT)
         members.append((relative.removeprefix(PRODUCT), source.read_bytes()))
     manifest["sourceHashes"] = {name: hashlib.sha256(content).hexdigest() for name, content in sorted(members)}
-    mql_hashes = {name: value for name, value in manifest["sourceHashes"].items() if name.endswith((".mq5", ".mqh"))}
+    mql_hashes = {name: value for name, value in manifest["sourceHashes"].items() if runtime_source(name)}
     source_fingerprint = hashlib.sha256(json.dumps(mql_hashes, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     manifest["mqlSourceFingerprint"] = source_fingerprint
     version = manifest["version"]
-    source_path = OUTPUT + f"JPW_Alavancagem_Atual_Fontes_v{version}.zip"
+    source_path = OUTPUT + f"JPW_Genetrix_Fontes_v{version}.zip"
     source_zip = make_archive(members)
     downloads = {"source": download_record(source_path, source_zip)}
 

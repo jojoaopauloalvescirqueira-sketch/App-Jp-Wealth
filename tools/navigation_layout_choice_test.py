@@ -479,7 +479,7 @@ def run_lifecycle(browser, url, evidence):
             page.locator("#settingsCloseBtn").click()
             settle(page)
             assert current_snapshot(page) == before
-            assert page.locator("#railToggle").evaluate("e=>e.parentElement.id==='appSidebar'")
+            assert page.locator("#railToggle").evaluate("e=>e.parentElement.classList.contains('sidebar-heading')")
             assert not page.locator("#nav").evaluate("e=>e.inert")
         # Save the third choice and reload; no second explicit write occurs.
         editor(page)
@@ -502,6 +502,10 @@ def drawer_open(page, layout):
     settle(page)
     selector = "#appSidebar" if layout == "sidebar" else "#nav"
     drawer = page.locator(selector)
+    if layout == "sidebar":
+        # Observe the actual drawer transitions, including cancellation, then paint.
+        drawer.evaluate("async e=>{await Promise.allSettled(e.getAnimations().map(a=>a.finished));}")
+        settle(page)
     assert drawer.is_visible() and drawer.get_attribute("role") == "dialog"
     assert drawer.get_attribute("aria-modal") == "true"
     assert drawer.evaluate("e=>e.contains(document.activeElement)")
@@ -543,9 +547,26 @@ def module_entry_keys(page, layout, evidence):
     # must never pick a hidden N3 item simply because it is last in DOM order.
     cases = [('forex-overview', 'exec', 'forex-consolidated', 'forex-reserves'),
              ('forex-operation', 'exec', 'forex-operation', 'forex-reserves'),
-             ('research-forex', 'research', 'research-forex', 'research-others'),
-             ('pivots', 'research', 'research-forex', 'research-others')]
+             ('research-forex', 'research', 'research-forex', 'research-reits'),
+             ('pivots', 'research', 'research-forex', 'research-reits')]
     for route, module, current_child, last_child in cases:
+        if layout == 'sidebar':
+            # Approved N1 arrows move between parents; Right enters the inline
+            # N2. Selection remains an explicit leaf action through the resolver.
+            go(page, route)
+            before = page.evaluate('JPWNavigation.current()')
+            page.locator(f'#{module}NavTrigger').focus()
+            page.keyboard.press('ArrowRight')
+            first = 'forex-consolidated' if module == 'exec' else 'research-forex'
+            assert page.evaluate('document.activeElement.dataset.navChild') == first
+            assert page.evaluate('JPWNavigation.current()') == before
+            page.keyboard.press('End')
+            assert page.evaluate('document.activeElement.dataset.navChild') == last_child
+            page.keyboard.press('Enter');settle(page)
+            assert page.evaluate('JPWNavigation.current().canonical') == last_child
+            evidence.append({'layout': layout, 'from': route, 'key': 'ArrowRight/End',
+                             'focused_n2': last_child, 'entered': last_child, 'result': 'PASS'})
+            continue
         trigger = (f'#{module}NavTrigger' if layout in {'topbar', 'glass'}
                    else f'[data-nav-expand="{module}"]')
         for key, expected in [('ArrowUp', last_child), ('ArrowDown', current_child)]:
@@ -576,6 +597,11 @@ def run_navigation(browser, url, evidence):
             module_entry_keys(page, layout, evidence['module_entry_keys'])
             page.locator('#execNavTrigger').click()
             settle(page)
+            if layout == 'sidebar':
+                # The parent is a disclosure, not the module's default route.
+                page.locator('#execNavTrigger').press('ArrowRight')
+                page.locator('[data-nav-child="forex-consolidated"]').click()
+                settle(page)
             assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
             page.locator('[data-nav-child="forex-management-accounts"]').click()
             settle(page)
@@ -584,6 +610,9 @@ def run_navigation(browser, url, evidence):
             assert page.evaluate("JPWExec.ui.getView()") == "motor"
             page.locator('#researchNavTrigger').click()
             settle(page)
+            if layout == 'sidebar':
+                page.locator('[data-nav-child="research-forex"]').click()
+                settle(page)
             page.locator('[data-nav-local-surface="research"][data-nav-local-view="nocoda"]').click()
             settle(page)
             assert page.evaluate("JPWResearch.ui.getView()") == "nocoda"
@@ -595,8 +624,8 @@ def run_navigation(browser, url, evidence):
                 page.locator('#finpesNavTrigger').focus()
                 page.keyboard.press('ArrowDown')
             else:
-                page.locator('[data-nav-expand="finpes"]').focus()
-                page.keyboard.press('ArrowDown')
+                page.locator('#finpesNavTrigger').focus()
+                page.keyboard.press('ArrowRight')
             settle(page)
             assert page.locator('#finpesNavSubmenu').evaluate("e=>e.contains(document.activeElement)")
             page.keyboard.press('Home')
@@ -650,6 +679,10 @@ def run_navigation(browser, url, evidence):
                 drawer_closed(page, restore=True)
                 drawer_open(page, layout)
                 page.locator('#execNavTrigger').click()
+                if layout == 'sidebar':
+                    assert page.get_attribute('html', 'data-shell-menu') == 'open'
+                    assert page.evaluate('JPWNavigation.current().canonical') == 'dashboard'
+                    page.locator('[data-nav-child="forex-consolidated"]').click()
                 drawer_closed(page)
                 assert page.evaluate("JPWNavigation.current().canonical") == "forex-consolidated"
                 if layout == "sidebar":
@@ -839,6 +872,8 @@ def run_notes(browser, url, evidence):
                 assert 'Ferramentas e Serviços' in location and 'Calendário Econômico' in location, location
             else:
                 page.locator('#finpesNavTrigger').click()
+                if layout == 'sidebar':
+                    page.locator('[data-nav-sub-view="overview"]').click()
             settle(page)
             assert page.evaluate('JPWNavigation.current().primary') == ('tools' if layout == 'submenu' else 'personal-finance')
             assert raw(page) == before, 'opening/resizing/closing Tickets rewrote browser preferences'
@@ -886,10 +921,11 @@ def run_visual(browser, url, evidence, capture, artifacts):
                             wide = width >= 1180 if layout == 'glass' else width > 900
                             if wide:
                                 assert page.locator('#nav > .tab.active').is_visible()
-                                if layout != 'glass' and style != "classic":
+                                if layout == 'topbar' and style != "classic":
                                     page.wait_for_function("() => {const e=document.getElementById('navPillIndicator');return e.getBoundingClientRect().width>0&&e.style.transform.includes('translate')}")
                                     assert page.locator('#navPillIndicator').is_visible()
                                 if layout == "sidebar":
+                                    assert page.locator('#navPillIndicator').is_hidden(), 'sidebar selection must stay fixed'
                                     assert page.evaluate("appSidebar.getBoundingClientRect().right<=appMain.getBoundingClientRect().left+1")
                                 if layout == 'glass':
                                     assert page.evaluate("""() => {const h=document.querySelector('body>header').getBoundingClientRect(),m=appMain.getBoundingClientRect();return h.left>=0&&h.right<=innerWidth&&m.top>=h.bottom-1}""")
