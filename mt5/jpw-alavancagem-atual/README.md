@@ -1,16 +1,52 @@
-# JPW Alavancagem Atual — fontes MT5 v1.10.1
+# JPW GENETRIX — fontes MT5 v1.18.0
+
+**Da origem da operação à leitura do risco.**
+
+## Candidato 1.18.0: Histórico Pessoal
+
+Observador com ocorrências sem SL, reavisos locais de 60 segundos e máximos Current/Estimated acompanhados de fotografia, por conta/instalação. Consulta, exportação CSV e backup JSON no Cockpit. Veja [GENETRIX_PERSONAL_HISTORY.md](GENETRIX_PERSONAL_HISTORY.md). Candidato isolado; validação nativa e aceite operacional `NOT_RUN`, sem EX5. O Histórico Pessoal não negocia nem arma o supervisor.
+
+## Base preservada 1.17.0: Supervisor e flutuante compensado
+
+A nova revisão isolada acrescenta Accountant não negociador, ledger próprio,7ªmétrica e Supervisor separado com negociação exclusivamente demo hedging explicitamente armada. O indicador e o Observer continuam observadores. O manual [GENETRIX_7X_LEDGER.md](GENETRIX_7X_LEDGER.md) descreve cálculo, limitações e armamento; compilação/MT5/demo são `NOT_RUN`, sem EX5. PreferênciasV3 preservamV1/V2 e all-hidden.
+
+As descrições abaixo dos componentes anteriores continuam registradas; a restrição de não negociar aplica-se ao indicador/Observer, sem conceder capacidade ao novo Supervisor fora do ensaio autorizado.
+
+## Componentes anteriores
+
+O JPW GENETRIX é um conjunto de ferramentas locais para MetaTrader 5, desenvolvido para organizar a leitura das operações e tornar seus dados de exposição e risco mais claros e rastreáveis, seguindo a estrutura de desenvolvimento do JP Wealth.
+
+Seus componentes reúnem alavancagem atual, resultado flutuante, distância ao stop da referência, Raiz N diagnóstica de uma e duas semanas, risco informativo dos stops e consulta do máximo de drawdown observado. O cockpit permite examinar posições e pendentes e preparar mensagens para conferência e compartilhamento manual.
+
+O módulo NoCuda acompanha estudos geométricos e incorpora o trabalho com canais de Fibonacci. Na versão atual, as medidas do Fibonacci importado permanecem indisponíveis até comprovação da correspondência nativa.
+
+O Genetrix combina indicadores, um EA observador e scripts auxiliares. A atuação desses componentes anteriores é informativa e local; não executa negociações nem envia mensagens aos grupos. O site distribui arquivos e orientação, sem receber dados da conta.
+
+Implementação em fontes, compilação, execução no MT5 e aceite operacional são estados separados. O programa não certifica automaticamente a conformidade de uma operação com o Estatuto ou com o Método NoCuda.
+
+## Leituras e componentes
 
 Indicador informativo de **nocional bruto das posições abertas ÷ equity**,
 **flutuante ÷ saldo**, distância do mercado ao SL vigente de uma posição de
 referência selecionada ou inferida e duas **distâncias Raiz N diagnósticas**,
 de 1 e 2 semanas, para o símbolo exato do gráfico, e **risco informativo dos
-stops**. As seis leituras aparecem por padrão num bloco compacto; cada linha
+stops**. As seis leituras anteriores e a nova leitura de compensado aparecem por padrão num bloco compacto; cada linha
 abre seu cartão no **Cockpit**.
 Drawdown sobre saldo e seu máximo observado continuam calculados e ficam no
 Cockpit sob demanda. Ocultar uma leitura do gráfico não interrompe seu cálculo
 nem o registro do máximo observado.
 O cálculo e a leitura da conta acontecem no MetaTrader 5. O site fornece o
 pacote e este guia; não recebe dados da conta, resultados ou registros locais.
+O pacote também inclui **JPW NoCuda Channels**, um segundo indicador para
+acompanhar um canal de Fibonacci desenhado por você e consultar seus metadados.
+O desenho manual por fechamentos permanece como modo legado. Ele pode ficar no
+mesmo gráfico que o Cockpit, mas tem botão, desenho e registro próprios. O
+desenho funciona sem o EA observador; o EA continua necessário para a linha
+Stop risk do Cockpit.
+O Cockpit também permite **Preparar mensagem** sobre uma posição aberta ou
+ordem pendente escolhida pelo usuário. O catálogo é lido diretamente do MT5,
+sem depender do EA. A mensagem permanece numa prévia local até uma ação
+explícita de preparação para cópia manual ou exportação TXT; não há envio.
 
 A alavancagem exibida não é a alavancagem contratada com a corretora, a margem
 usada ou o risco até o stop. O DD sobre saldo e seu máximo observado não são o
@@ -31,7 +67,8 @@ Estatuto. Sem amostra recente e íntegra do EA observador, mostra `N/A`.
 - **MetaEditor:** editor fornecido com o MT5; transforma o fonte em um programa
   executável pelo terminal. Compilar não executa o programa.
 - **Indicador:** permanece anexado ao gráfico e atualiza sua apresentação.
-  `JPW_Alavancagem_Atual` apenas informa; não envia ordens.
+  `JPW_Alavancagem_Atual` informa as métricas do Cockpit;
+  `JPW_NoCuda_Channels` desenha e mede o canal. Nenhum dos dois envia ordens.
 - **Script:** executa uma tarefa e termina. Há scripts de testes de cálculo,
   métricas e registro local, testes de perfil técnico e verificação das
   unidades dos contratos em contas USC. O script de consulta mostra, sob
@@ -53,8 +90,40 @@ Este pacote contém **fontes**. Confira no site a versão, o SHA-256 e os estado
 separados de teste matemático, compilação e execução no MT5. Um download
 compilado só é oferecido quando existem `.ex5` reais; compilação não equivale
 à validação da leitura da corretora. Resultados das versões anteriores não
-validam automaticamente os fontes da versão 1.10.1. Não há `.ex5` desta revisão
+validam automaticamente os fontes da versão 1.18.0. Não há `.ex5` desta revisão
 para distribuição sem compilação nativa comprovada dos fontes exatos.
+**1.18.0 identifica o pacote e a identidade de execução do Cockpit/observador
+recompilados desta fonte.** O cabeçalho compartilhado usa MQL `1.180`;
+o componente NoCuda desta revisão declara `1.30`. Confira também o
+fingerprint do pacote; o número da versão não comprova qual EX5
+está instalado no terminal.
+
+A revisão 1.16.1 adota a identidade pública **JPW GENETRIX**, com a logo vermelha do site nos cabeçalhos. Os nomes dos arquivos e das pastas permanecem iguais para preservar a instalação e os registros. No gráfico, o botão **Genetrix** abre o Cockpit; em Ctrl+I, os indicadores se identificam pela nova marca. No Navegador do MT5, procure os nomes técnicos `JPW_Alavancagem_Atual` e `JPW_NoCuda_Channels`. A logo está incorporada nos fontes/recursos; sua apresentação em MT5 e DPI depende da validação nativa dos bytes desta revisão, ainda **NOT_RUN**.
+
+A revisão 1.16.0 acrescentou o modo **Fibonacci acompanhado** do NoCuda: captura
+os parâmetros originais sem ajustar os preços ao Close, mantém uma sequência
+congelada de barras e registra revisões por alterações manuais estáveis da
+origem. O painel maior separa Canal, Agora, Projeção, Registro e Aparência.
+O resolvedor futuro passa a admitir H1 e H4, com conferência independente da
+grade de cada período. Estudos manuais e formatos financeiros são preservados.
+**A equivalência entre o Fibonacci nativo e o resolvedor importado ainda é
+UNVERIFIED_NATIVE. Medidas, projeções e comparações quantitativas dessa
+importação ficam N/A até a validação nativa; não são anunciadas como prontas.**
+
+A revisão 1.15.0 acrescenta a tabela unificada de posições com ticket, volume e
+contribuição nocional/equity, além de fechamento exclusivo no cabeçalho. Essa
+coluna preserva o núcleo financeiro 1.9.0 e não modifica registros locais.
+
+A revisão 1.14.0 acrescenta a preparação local de mensagens por posição ou
+pendente, com conferência da operação e prévia congelada. A apresentação
+NoCuda/Cockpit da 1.13.0 permanece preservada.
+A versão do cálculo financeiro continua **1.9.0**; as fórmulas, estados de
+qualidade e formatos dos registros locais são preservados. Compilação,
+interação e restauração por template desta revisão seguem **NOT_RUN** até
+existir evidência dos mesmos fontes num MT5 isolado. Seleção e cópia manual
+por **Ctrl+C** no campo de texto também estão **NOT_RUN**: não há confirmação
+de funcionamento do clipboard no Windows nem no MT5 em macOS/Wine. Essa
+pendência bloqueia a prontidão operacional do novo fluxo.
 
 No Windows, clique com o botão direito no ZIP e escolha **Extrair tudo**.
 Trabalhe na pasta extraída, não na visualização interna do ZIP.
@@ -73,6 +142,32 @@ Trabalhe na pasta extraída, não na visualização interna do ZIP.
 | Arquivo no pacote de fontes | Pasta dentro da pasta de dados do MT5 |
 |---|---|
 | `JPW_Alavancagem_Atual.mq5` | `MQL5/Indicators/JPWealth/` |
+| `JPW_NoCuda_Channels.mq5` | `MQL5/Indicators/JPWealth/` |
+| `JPW_NoCuda_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Projection_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Projection.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Store.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Terminal.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Render.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_UI.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Fibo_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Fibo_Terminal.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Fibo_Store.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Fibo_Sync.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Fibo_Controller.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Fibo_UI.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_UI_Focus.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_NoCuda_Logo.bmp` | `MQL5/Images/JPWealth/` (recurso de imagem usado na compilação) |
+| `JPW_Genetrix_Brand.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Genetrix_Logo_Light_100.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Light_125.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Light_150.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Light_200.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Dark_100.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Dark_125.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Dark_150.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo_Dark_200.bmp` | `MQL5/Images/JPWealth/` (logo incorporada na compilação) |
+| `JPW_Genetrix_Logo.provenance.md` | Documentação no ZIP; não precisa ser copiada para MQL5 |
 | `JPW_Alavancagem_Core.mqh` | `MQL5/Include/JPWealth/` |
 | `JPW_Alavancagem_MDD.mqh` | `MQL5/Include/JPWealth/` |
 | `JPW_Alavancagem_Terminal.mqh` | `MQL5/Include/JPWealth/` |
@@ -100,6 +195,14 @@ Trabalhe na pasta extraída, não na visualização interna do ZIP.
 | `JPW_Alavancagem_Samples.mqh` | `MQL5/Include/JPWealth/` |
 | `JPW_Alavancagem_Store_Result.mqh` | `MQL5/Include/JPWealth/` |
 | `JPW_Alavancagem_Version.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_SignalCopy_Types.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_SignalCopy_Core.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_SignalCopy_Terminal.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_SignalCopy_Controller.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_SignalCopy_UI.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_SignalCopy_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_Alavancagem_Positions.mqh` | `MQL5/Include/JPWealth/` |
+| `JPW_Alavancagem_Positions_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_Diagnostics_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_Observer.mq5` | `MQL5/Experts/JPWealth/` (necessário para Stop risk; opcional para as outras leituras) |
 | `JPW_Alavancagem_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
@@ -118,6 +221,11 @@ Trabalhe na pasta extraída, não na visualização interna do ZIP.
 | `JPW_Alavancagem_Observer_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_Panel_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
 | `JPW_Alavancagem_StopRisk_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_NoCuda_Core_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_NoCuda_Store_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_NoCuda_Projection_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_NoCuda_Fibo_Tests.mq5` | `MQL5/Scripts/JPWealth/` |
+| `JPW_NoCuda_Fibo_Lab.mq5` | `MQL5/Scripts/JPWealth/` (laboratório isolado) |
 
 **Não substitua a pasta MQL5 inteira.** Se um arquivo JPWealth do mesmo nome já
 existir, preserve uma cópia antes de atualizar somente esse arquivo. Não
@@ -158,9 +266,19 @@ intacto o restante do conteúdo do MT5.
    `JPW_Alavancagem_Observer_Tests.mq5` e
    `JPW_Alavancagem_Panel_Tests.mq5` e
    `JPW_Alavancagem_StopRisk_Tests.mq5` e
-   `JPW_Alavancagem_Diagnostics_Tests.mq5`, na pasta Scripts/JPWealth.
+   `JPW_Alavancagem_Diagnostics_Tests.mq5` e
+   `JPW_SignalCopy_Tests.mq5`, na pasta Scripts/JPWealth.
    Compile também `MQL5/Experts/JPWealth/JPW_Alavancagem_Observer.mq5`
    se for usar a captura opcional de execuções. Compilar não anexa o EA.
+6. Para desenhar canais, abra também
+   `MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5` e pressione **F7**.
+   Compile `JPW_NoCuda_Core_Tests.mq5`, `JPW_NoCuda_Store_Tests.mq5` e
+   `JPW_NoCuda_Projection_Tests.mq5` e `JPW_NoCuda_Fibo_Tests.mq5` da pasta
+   Scripts/JPWealth para os testes sintéticos. `JPW_NoCuda_Fibo_Lab.mq5`
+   pertence ao protocolo de laboratório isolado; seu resultado não habilita
+   automaticamente medidas nem comprova paridade completa. Copie também
+   `JPW_NoCuda_Logo.bmp` e os oito `JPW_Genetrix_Logo_*.bmp` para `MQL5/Images/JPWealth/` antes de compilar;
+   o recurso é incorporado ao executável.
 
 Os arquivos `.mqh` são carregados como includes. **Não os compile separadamente.**
 “Include não encontrado” exige conferir os arquivos em
@@ -217,6 +335,19 @@ usa apenas diretórios e identidades sintéticos para verificar a trilha técnic
 coalescência, resumo, corrupção e exportação. Seu PASS não comprova interação nativa da UI
 em outros ambientes nem a saúde da conta operacional.
 
+Para o desenho, execute ainda `JPW_NoCuda_Core_Tests`,
+`JPW_NoCuda_Store_Tests`, `JPW_NoCuda_Projection_Tests` e
+`JPW_NoCuda_Fibo_Tests` da mesma pasta de scripts. Confira o resultado de
+**cada** teste em Experts. Eles usam âncoras e arquivos sintéticos; um PASS
+não comprova seleção por clique, projeção diária, desenho em diferentes
+timeframes nem restauração por template no MT5 desta versão.
+
+Execute também `JPW_SignalCopy_Tests` no ambiente isolado. Ele usa dados
+sintéticos para conferir catálogo, agrupamento, métricas obrigatórias,
+projeção de uma pendente e invalidação da prévia. Seu PASS não comprova o
+clipboard, a interação dos controles ou a leitura da corretora; essas
+verificações exigem recibos nativos separados da versão exata.
+
 ## 6. Verifique as unidades de uma conta USC
 
 Para USD ou outra moeda fiduciária suportada, prossiga ao passo 7. Para
@@ -270,7 +401,7 @@ explícita. Sem confirmação completa, não há total parcial.
 3. Leia `JPW: Leverage`, `Floating P/L`, `Genesis SL`,
    `Raiz N diag. 1W`, `Raiz N diag. 2W` e `Stop risk`, cada qual com seu estado e F explícito quando aplicável. As duas
    distâncias usam o **símbolo exato deste gráfico**. Clique numa linha para
-   abrir seu cartão no **Cockpit**, ou use o botão **Cockpit** para abrir o
+   abrir seu cartão no **Cockpit**, ou use o botão **Genetrix** para abrir o
    resumo. Nele você pode escolher F=1,5 ou F=1,8 e ver DD/saldo, máximo
    observado, razões, horários, N, probabilidade teórica de não toque e
    proveniência; o máximo também pode ser consultado pelo script separado.
@@ -324,7 +455,7 @@ ainda não consistente, não interprete o número anterior como leitura atual.
 Nos percentuais, zero verdadeiro aparece como `0,00%`; um valor não nulo abaixo
 de 0,01% recebe a indicação `<0,01%`, com sinal positivo no flutuante positivo.
 
-**Resultado esperado:** seis linhas pequenas e cinzas por padrão, com estado
+**Resultado esperado:** sete linhas pequenas e cinzas por padrão, com estado
 por métrica, sem encobrir o cabeçalho do instrumento. O **Cockpit** abre uma
 janela temporária para consulta e configuração; nenhuma de suas páginas ocupa
 o gráfico permanentemente.
@@ -537,11 +668,21 @@ histórico incompleto não significa captura concluída.
 
 ### Abra o Cockpit para se aprofundar
 
-O botão **Cockpit** abre uma janela **centralizada e temporária**. A primeira
-visão reúne seis cartões: Leverage, Floating P/L, Genesis SL, as duas
-distâncias Raiz N e Stop risk. Cada cartão mostra valor, `Current`, `Estimated` ou
+O botão **Genetrix** abre uma janela **centralizada e temporária**. A primeira
+visão reúne sete cartões: Leverage, Floating P/L, Genesis SL, as duas
+distâncias Raiz N, Stop risk e Floating comp.. Cada cartão mostra valor, `Current`, `Estimated` ou
 `N/A` e um motivo curto. Clique num cartão, ou na respectiva linha do gráfico,
 para examinar fórmula, insumos, origem, horário, limites e motivo do estado.
+Nesta revisão, a janela solicita até 1040 × 760 px e permanece centralizada
+dentro da área disponível do gráfico. Cabeçalho, cartões e rodapé têm superfícies
+distintas para orientar a leitura; em gráfico menor, a paginação e o botão
+Fechar continuam acessíveis. A fonte do Cockpit segue independente da fonte
+pequena do gráfico.
+Na apresentação 1.13.0, o valor recebe destaque dentro de seu cartão; o estado
+fica separado da explicação curta. A aba ativa e o controle em foco têm
+destaque próprio, e ações como Aplicar e Atualizar são diferenciadas da
+navegação. O tema acompanha o contraste do gráfico, inclusive nas opções
+legadas. Isso não muda o significado de `Current`, `Estimated` ou `N/A`.
 As abas **Visão geral**, **Stops**, **Raiz N**, **Sistema** e **Ajustes** separam
 o resumo das explicações. Estado dos dados mostra qualidade da cotação, ATR,
 calendário e registros locais. Os estados descrevem a leitura daquela
@@ -557,19 +698,123 @@ mostrados sem inventar máximo zero. O lock de leitura é liberado antes de
 desenhar a janela. Se a conta ou o símbolo mudar, a amostra anterior não deve
 ser apresentada como atual.
 
-Em **Stops**, a mensagem de amostra ausente ou inválida aparece antes da
-tabela. Quando há linhas consultáveis, posições e pendentes usam páginas
-compactas; selecione uma linha para ver o detalhe completo, sem cortar valor
-nominal ou percentual. A orientação “Amplie para ler a tabela” não deve
-substituir uma página que cabe na janela. Se a fonte antiga ainda impedir a
-leitura, confira a versão do EX5 anexado e, como contorno temporário, reduza
-`InpCockpitFontSize` em **Ctrl+I → JPW_Alavancagem_Atual → Entradas**.
+Em **Stops → Posições**, consulte as posições numa tabela única: papel,
+**ticket da posição no MT5**, volume remanescente, contribuição de **Leverage**,
+risco nominal e percentual sobre balance. **Conta** mostra todos os instrumentos
+e direções, agrupados; **Operação** filtra somente o símbolo exato e a direção
+atribuídos ao risco dos stops. A lista tem rolagem na mesma aba quando não couber
+inteira. Isso não amplia o total de Stop risk para posições de outra tese.
+
+Ticket, volume e alavancagem vêm da leitura direta do indicador, sem depender
+do EA nem de SL válido. Cada contribuição é **nocional bruto da posição ÷
+equity da mesma leitura**, com as conversões e a escala contratual já verificadas;
+a soma antes do arredondamento confere com Leverage da conta inteira.
+Buy e Sell não se compensam. Netting mostra a posição agregada. Em USC, equity e
+nocionais são normalizados na mesma unidade; preços não recebem fator 100.
+A contribuição não é margem usada, alavancagem contratada ou risco até o stop.
+
+Os valores de risco continuam exigindo amostra coerente do observador e
+correspondência com a posição atual. Sem essa evidência, somente os campos de
+risco ficam `N/A`. Um risco antigo consultável conserva **LAST · NOT ACTIVE**
+e seu horário; ele não é misturado com uma alavancagem atual sem identificação.
+Pendentes permanecem em seção separada e não entram na contribuição de
+alavancagem das posições executadas. A hipótese após execução pertence ao
+Signal Copy.
+
+Use **×** no cabeçalho, **Fechar** no rodapé ou **Esc** para sair da janela.
+Navegar, rolar ou fechar não muda ordens, cálculos ou registros financeiros.
+A restauração, a rolagem e os cliques desta revisão precisam de verificação
+nativa dos mesmos bytes; sem ela, permanecem **NOT_RUN**.
 
 Em **F 1,5/1,8**, selecione uma opção; só **Aplicar** salva essa preferência e
 **Cancelar** mantém o F anterior. **N/F legado** e os cenários antigos seguem
 em área própria e não governam os horizontes 1W/2W. Fechar, navegar ou
 redimensionar o Cockpit não altera posições, ordens, stops nem os registros
 financeiros.
+
+### Prepare uma mensagem local de posição ou pendente
+
+Abra **Cockpit → Preparar mensagem**. Esta consulta lê posições e ordens
+pendentes diretamente do terminal; funciona independentemente do EA
+observador. Ela não muda a sexta linha Stop risk, que continua exigindo a
+amostra financeira do EA. Não é um novo sinal nem uma autorização de entrada.
+
+1. Escolha **Posições** ou **Pendentes** e depois **um item** do catálogo.
+   Confira instrumento exato, direção, ticket, horário, volume remanescente,
+   entrada, SL e TP. Stop-limit não suportado ou leitura inconsistente
+   impedem a preparação.
+2. Confira o grupo da operação: somente o **mesmo símbolo exato e direção**.
+   O terminal não comprova a tese. Exclua manualmente itens que não pertençam
+   à operação e confirme a composição; em netting, a posição é **agregada**,
+   sem decomposição auditável em ordens originais.
+3. Confira os papéis propostos por antiguidade e ajuste-os quando necessário.
+   **Gênese, Defesa 1, Defesa 2…** são rótulos transitórios desta mensagem,
+   conferidos pelo usuário; não certificam a tese nem mudam a referência
+   Gênese ou seus arquivos. Empates ou papéis ambíguos exigem conferência.
+4. Gere a **prévia**. SL, alavancagem da conta, Raiz N 1W/2W e flutuante/saldo
+   precisam ter leituras válidas. Uma leitura completa **Estimated** pode
+   integrar a mensagem com seu estado e horário explícitos; `N/A` em uma
+   dessas métricas bloqueia a preparação. **TP é opcional** e sua ausência
+   aparece como **Sem TP**, nunca como zero inventado.
+5. Leia a mensagem inteira antes de preparar a cópia manual ou escolher
+   **TXT local**. Ela contém dados financeiros: confira o conteúdo e o
+   destino escolhido por você antes de compartilhar fora do terminal.
+
+A prévia usa uma **amostra congelada**, com identidade e horários. Navegar,
+paginar, redimensionar e receber ticks não reescrevem seu texto. Antes de uma
+nova preparação ou exportação, o fluxo revalida a leitura, incluindo TP;
+mudança de conta, símbolo, composição, volume ou SL/TP invalida a prévia e
+exige nova coleta e conferência. Fechar descarta esse estado transitório;
+nenhuma atribuição de papel é gravada nos registros financeiros existentes.
+
+A mensagem separa **entrada → SL** de **mercado atual → SL** em percentual:
+as duas bases não são intercambiáveis. São distâncias de preço, não perda
+nominal, garantia de execução ou substituto do Stop risk. A captura usa o
+horário UTC observado no computador; horários de cotação, barra ATR e abertura
+são identificados como horário do servidor quando essa é sua origem.
+
+**Pendente é uma hipótese separada.** A alavancagem atual da conta exclui
+pendentes. A projeção considera a execução de **somente a pendente escolhida,
+no volume ainda pendente**, mantendo equity e cotações da amostra constantes.
+Em hedging, acrescenta exposição bruta; em netting, considera a compensação
+ou reversão da posição agregada. Não presume execução simultânea de outras
+pendentes e não antecipa custos, lucro futuro ou equity na execução.
+
+Raiz N 1W/2W usa o **símbolo exato do item escolhido**, com sua própria
+cotação, ATR, calendário e preferência F. Escolher outro instrumento não
+reutiliza os valores Raiz N do gráfico hospedeiro. A alavancagem atual e o
+flutuante continuam sendo leituras da **conta inteira**, e os estados de cada
+métrica ficam preservados.
+
+Na conferência, use **alterar** para informar o papel: **0 = Gênese**,
+**1 = Defesa 1**, **2 = Defesa 2**, e assim por diante. Aplicar confirma só
+a mensagem; Cancelar preserva o papel anterior. **Estado** abre o motivo
+completo e, após exportar, o caminho do TXT mesmo em janela compacta.
+
+Antes de gerar a prévia, o fluxo renova a leitura apenas se a composição e
+o contexto continuarem iguais; assim a conferência não exige uma corrida.
+Preparar ou exportar exige revalidação em até **30 segundos da leitura da
+prévia**. Se esse prazo passar, volte à conferência e gere outra prévia; os
+preços do texto anterior não são renovados durante sua leitura ou seleção.
+
+**Cópia manual:** a ferramenta prepara texto para seleção no campo; o usuário
+seleciona e usa **Ctrl+C**. O indicador não escreve diretamente no clipboard,
+não usa DLL e não informa **“Copiado”**, pois não confirma o conteúdo da área
+de transferência. No macOS/Wine, não se presume equivalência com Command+C.
+A interação nativa de seleção e Ctrl+C desta revisão está **NOT_RUN** e
+permanece um bloqueio até prova em MT5 isolado.
+
+**TXT local:** é uma alternativa acionada explicitamente, sem janela de
+seleção de arquivo. Após a gravação confirmada, o painel informa a pasta e o
+caminho exatos dentro de **MQL5/Files/JPWealth/SignalCopy/**. Para encontrá-lo,
+abra **Arquivo → Abrir pasta de dados → MQL5 → Files → JPWealth → SignalCopy**.
+O nome do arquivo não inclui login, conta ou ticket. O conteúdo não é
+registrado em logs de diagnóstico, enviado ao site ou publicado
+automaticamente; permanece no arquivo local criado por sua ação.
+
+**Resultado esperado:** uma mensagem consultável e conferida de um item
+selecionado, com origem, estados e limites; a preparação não abre, modifica
+ou cancela ordens, posições ou stops.
 
 ### Confira a saúde e a proveniência em Sistema
 
@@ -610,11 +855,11 @@ a identificar este produto; registros anteriores não são reescritos.
 
 ### Personalize apenas o que aparece no gráfico
 
-Em **Cockpit → Ajustes**, escolha separadamente quais das seis métricas
+Em **Cockpit → Ajustes**, escolha separadamente quais das sete métricas
 aparecem no bloco do gráfico, o canto e a densidade compacta ou normal. A
 prévia reage aos cliques; **Aplicar** confirma, **Cancelar** descarta o rascunho
-e **Restaurar padrão** volta às seis métricas visíveis. Mesmo com todas
-ocultas, o botão **Cockpit** continua acessível. A cor e o tamanho da fonte
+e **Restaurar padrão** volta às sete métricas visíveis. Mesmo com todas
+ocultas, o botão **Genetrix** continua acessível. A cor e o tamanho da fonte
 continuam nas **Entradas** do indicador.
 
 Essa escolha pertence ao **gráfico atual**, em configuração visual versionada
@@ -648,7 +893,7 @@ esse recibo, não a considere uma capacidade comprovada.
 
 O script **somente lê** o registro desta instalação e da conta atual. Ele não
 recalcula DD, não grava o registro ou perfil, não envia ordens e não altera as
-seis linhas do indicador. O **Cockpit** mostra DD/saldo atual ou estimado e o
+sete linhas do indicador. O **Cockpit** mostra DD/saldo atual ou estimado e o
 registro MDD quando legível; a caixa do script também mostra o maior valor **observado e registrado** em amostras atuais
 válidas. O registro guarda a amostra vencedora, não uma série temporal. A
 consulta não recupera períodos em que o indicador esteve desligado e não
@@ -662,7 +907,7 @@ apaga necessariamente o arquivo de log do MT5.
 
 ### Aparência, atualização e remoção
 
-O padrão é **cinza #767676**, fonte 8 e seis leituras no bloco com fundo de
+O padrão é **cinza #767676**, fonte 8 e sete leituras no bloco com fundo de
 contraste, colocado abaixo do nome nativo do instrumento. O bloco mede as
 linhas conforme o espaço e a escala disponíveis; num gráfico estreito mantém
 nome, valor e estado completos, ou apenas o acesso ao cockpit se não couberem. Use **Cockpit → Ajustes** para
@@ -670,6 +915,11 @@ escolher visibilidade, canto e densidade. Para cor e fonte, use **Ctrl+I →
 JPW_Alavancagem_Atual → Propriedades → Entradas**. Gráficos e templates
 antigos podem conservar entradas anteriores; **Reset / Redefinir** recupera
 os padrões dessas Entradas, não apaga os registros financeiros locais.
+
+A largura do bloco depende do tamanho do gráfico, da fonte e da preferência
+visual, não do número que acabou de atualizar. Se uma leitura excepcionalmente
+longa não couber, a linha oferece acesso ao Cockpit sem cortar o valor;
+redimensionar o gráfico pode mudar a geometria normalmente.
 
 Para atualizar: remova o indicador do gráfico, preserve uma cópia identificada
 da versão anterior e substitua somente os arquivos desta ferramenta. Compile
@@ -687,6 +937,177 @@ que explica responsabilidades, atualização e auditoria do indicador. **Não
 copie esse arquivo para a pasta MQL5**: ele acompanha os fontes e não é um
 programa do MT5, uma autorização operacional ou substituto dos controles do
 projeto.
+
+## JPW NoCuda Channels — continue desenhando com o Fibonacci
+
+`JPW_NoCuda_Channels` é um **segundo indicador**. Anexe-o em **Navegador →
+Indicadores → JPWealth**, junto ao Cockpit ou sozinho. O botão **NoCuda** abre
+as áreas **Canal · Agora · Projeção · Registro · Aparência**. O desenho não
+precisa do EA observador e não usa posições, saldo ou a referência Gênese.
+
+**Limite desta entrega:** importar e salvar os parâmetros não demonstra que o
+resolvedor reproduz todos os detalhes geométricos do MT5. O estado
+**UNVERIFIED_NATIVE** mantém as medidas do canal importado em **N/A**,
+inclusive linhas próximas, distância e projeção diária. O laboratório deve
+comparar os mesmos bytes e o canal nativo antes de liberar essas leituras.
+Nenhum sucesso sintético ou captura antiga remove esse bloqueio.
+
+### Caminho principal: Fibonacci acompanhado
+
+1. **Desenhe no MT5 como já faz.** Use o Canal de Fibonacci nativo do símbolo
+   exato do gráfico, com seus três pontos, níveis, descrições e raios.
+   Se quiser a malha habitual, configure os 65 níveis de −4 a +4, passo 0,125.
+   O indicador lê a configuração existente; não desloca pontos nem reescreve
+   os níveis do objeto.
+2. **Abra NoCuda e selecione o canal de origem.** Confira nome, símbolo,
+   período de referência, três horários/preços e lista de níveis antes da
+   primeira confirmação. A importação não aplica o ajuste ao Close do modo
+   manual e não trata rótulos como números geométricos.
+3. **Confirme o acompanhamento.** A primeira captura válida é gravada como
+   revisão. Depois, ajustes manuais estáveis da origem podem criar novos
+   checkpoints. Durante o arraste há prévia; movimento incompleto, conflito
+   de geração ou falha de gravação não substituem a última revisão íntegra.
+   Ticks, zoom, rolagem e navegação não criam revisões.
+4. **Edite a origem no período de referência.** A visualização em outro
+   período não redefine o estudo. Se o objeto for editado nesse outro
+   período, a sincronização é suspensa: volte ao período de referência para
+   conferir o ajuste. Não se atribui silenciosamente outro sentido às âncoras.
+5. **Conserve ou remova a origem conscientemente.** Ocultar ou excluir o
+   Fibonacci original não apaga a última captura íntegra já salva. Ao perder
+   a origem, o estudo deixa de acompanhá-la; um rascunho incompleto não vira
+   versão final. Renomear, duplicar ou recriar um objeto exige conferir o
+   vínculo, pois um nome coincidente não prova que seja a mesma origem.
+
+O objetivo é preservar preços nos mesmos instantes ao trocar o período da
+tela, usando a sequência de barras congelada no período de referência.
+Lacunas podem produzir segmentos com inclinação visual diferente; isso não
+é uma autorização para mover os preços confirmados. Uma alteração do
+histórico recebe aviso, sem reescrever âncoras ou revisões. **A prova dessa
+preservação no MT5 permanece pendente.** Raios e descrições originais são
+registrados; não autorizam inventar candles futuros.
+
+### Nível, rótulo e linhas próximas
+
+O **nível numérico** e a **descrição visível** são campos distintos. Ambos são
+preservados como vieram do Fibonacci. Na convenção informada pelo proprietário:
+
+| Descrição da linha | Nível geométrico |
+|---|---|
+| 1 | −1 |
+| 3 | −0,75 |
+| 5 | −0,50 |
+| 9 | 0 |
+| 17 | +1 |
+
+Essa correspondência não limita o canal às linhas 1–17. Todos os níveis
+importados permanecem consultáveis, inclusive as projeções até −4/+4 e suas
+descrições originais. Nomes repetidos ou vazios não tornam duas linhas iguais:
+a seleção também identifica índice e nível.
+
+**Agora** concentra a leitura na linha mais próxima e nas adjacentes acima e
+abaixo da cotação, quando a geometria estiver validada. A cotação usada, seu
+horário e qualidade devem aparecer junto da leitura; não se deduz o preço
+pelo local do cursor. A consulta de outra linha é manual. Contatos com a linha
+são **observações declaradas pelo usuário**, sem confirmação automática de
+suporte/resistência, eficácia ou terceiro contato independente. No estado
+UNVERIFIED_NATIVE, uma anotação manual não valida a geometria nem libera
+valores calculados.
+
+### Janela, aparência e consulta do registro
+
+A janela inicial usa aproximadamente **90% da área do gráfico**. Em
+**Aparência**, os modos **Compacta**, **Ampla** e **Maximizada** reorganizam o
+espaço; também é possível mover pelo cabeçalho e redimensionar pelo canto
+inferior. O conteúdo usa fonte própria, padrão **11**, configurável de 9 a 24.
+Cabeçalho, abas, cartões e ações de fechamento ficam separados; o estado do
+estudo e os motivos de N/A não são confundidos com seus valores.
+
+Campos em edição e rascunhos devem sobreviver às atualizações e ao
+redimensionamento. Preferências visuais ficam num objeto do próprio gráfico;
+não alteram fórmulas nem revisões. O ciclo **personalizar → salvar template →
+reabrir** só poderá ser anunciado como funcional após prova no MT5 isolado.
+O teclado e os cliques do Cockpit fora da interação NoCuda permanecem sob seu
+próprio controle. Fonte, DPI, arraste da janela e coexistência estão sujeitos
+à verificação nativa desta revisão.
+
+**Registro** separa a origem, as capturas confirmadas e as observações manuais.
+Restaurar uma versão anterior cria uma **nova revisão** e pausa o acompanhamento;
+não apaga versões nem move silenciosamente a cabeça para trás.
+Os estudos importados usam banco próprio em
+`MQL5/Files/JPWealth/NoCuda/Fibonacci/`, separado dos estudos manuais e de todos
+os registros financeiros. Uma revisão confirmada não é sobrescrita. Duas
+instâncias com gerações distintas recebem conflito; arquivo corrompido ou
+incompatível não autoriza reinicialização silenciosa.
+
+### Modo manual legado: A → B → C
+
+Os estudos anteriores continuam disponíveis, sem conversão automática para
+Fibonacci. Neste modo, H1 é a fonte inicial; M15, H4 ou D1 exigem seleção
+explícita. **Novo canal** inicia A → B → C e recolhe o painel durante a
+marcação. Cada clique horizontal seleciona uma barra encerrada: a âncora usa
+seu **Close**, colocado no horário de abertura; a altura do clique não define
+o preço. Arrastar também ajusta ao Close e mantém o rascunho sem gravar.
+
+A/B pertencem ao nível 0; C determina a largura assinada até o nível 1; o meio
+é 0,5. Depois de C, confira as âncoras e preencha a justificativa antes de
+**Confirmar versão**. **Editar versão** cria rascunho; **Cancelar rascunho**
+restaura a revisão anterior. Somente a confirmação explícita grava esse modo.
+C não constitui automaticamente terceiro contato independente. O modo manual
+mantém sua malha de 65 níveis e suas revisões sem reinterpretar os números.
+A antiga `Nocuda_Tool.mq5` também permanece sem migração automática.
+
+### Projeção diária: onde a linha estará no dia escolhido
+
+Uma linha NoCuda é uma **referência geométrica inclinada** usada na análise de
+suporte e resistência. A consulta mostra onde essa referência estará **se o
+canal for mantido**; não prevê a cotação. A faixa pertence à linha e não tem
+interpretação probabilística.
+
+No modo manual, abra **Medidas**, escolha a linha e use **Consultar dia** com
+uma data **AAAA.MM.DD**. No modo Fibonacci, a área **Projeção** conserva o
+bloqueio quantitativo enquanto a geometria estiver UNVERIFIED_NATIVE.
+Todos os horários abaixo são do **servidor do MT5**:
+
+| Leitura | O que representa |
+|---|---|
+| Início · 00h | Preço geométrico da linha à meia-noite. |
+| Meio do dia · 12h | Preço geométrico da linha ao meio-dia. |
+| Fim · 24h | Preço geométrico à meia-noite do dia seguinte. |
+| Média dos extremos | `(preço de 00h + preço de 24h) ÷ 2`; não é média das cotações nem integral temporal. |
+| Faixa do dia | Menor e maior preço da linha entre início e fim. |
+
+**12h e média dos extremos podem diferir** quando existem lacunas ou sessões
+parciais. Usa-se a coordenada fracionária entre aberturas da fonte, com
+precisão plena antes da formatação. Para histórico, é necessária cobertura
+real e coerente dos instantes; falta, divergência ou ausência do delimitador
+produz **N/A**. USC não aplica fator 100 a preços ou distâncias.
+
+O resolvedor futuro aceita **H1 e H4**, até **30 dias civis** adiante. Cada
+período é confrontado com suas próprias aberturas reais nos últimos **14 dias
+civis encerrados**. H1 usa horas cheias; H4 usa **00/04/08/12/16/20** do
+servidor com sobreposição de sessão. Não se divide uma contagem H1 por quatro.
+Qualquer incompatibilidade da grade recusa o futuro. Até **sete dias extras**
+servem apenas para encontrar o delimitador de 24h. Outros períodos mantêm
+consulta histórica, sem projeção futura automática.
+
+Toda saída futura é **Estimated**: sessões semanais não confirmam feriados ou
+mudanças futuras de horário de verão. Dia sem sessão fica **Sem sessão**, sem
+faixa; pontos de um dia parcial fora da sessão são identificados. Uma nova
+consulta pode mudar se a grade disponível mudar: o valor anterior não era um
+preço futuro confirmado. A consulta identifica instante, fonte e qualidade;
+cotação recente não valida geometria projetada. Consultas e marcas não criam
+revisões do canal nem mudam o calendário da Raiz N.
+
+O comando legado **Mostrar referências** só apresenta 00/12/24 quando a
+conversão tempo/preço ↔ pixels for coerente e legível. Caso contrário, mantém
+a tabela e explica a ausência das marcas. Medições em pips exigem tamanho
+explicitamente configurado para o símbolo exato.
+
+Este indicador não detecta canais automaticamente, envia sinais, define stop,
+lote ou entrada, nem negocia. A publicação destes fontes não prova paridade
+Fibonacci, restauração por template ou execução nativa. Compilação, interação,
+medidas importadas e visualização dos mesmos bytes permanecem **NOT_RUN** até
+os recibos de uma instalação MT5 isolada. Não é distribuído EX5 desta revisão.
 
 ## Entenda a fórmula e a cobertura
 
@@ -759,7 +1180,9 @@ lista manualmente se quiser restaurar a organização anterior.
 | Probabilidade de não toque ausente | O Cockpit só mostra o cálculo teórico para F válido. Não use a porcentagem como probabilidade de um SL existente ou como validação observada da corretora. N/F legado não altera 1W/2W. |
 | Observador sem captura | Confira se o EA opcional está realmente anexado, a conta/instalação e Experts. Histórico tardio só pode gerar Reconstructed quando completo; falha de evento, ATR ou banco não é captura concluída. |
 | Linhas encavaladas ou Cockpit antigo | Confira a versão dos fontes compilados e do EX5 anexado. O ZIP de fontes não instala EX5. Recompile a revisão identificada e anexe novamente em MT5 isolado; uma captura de tela não prova os bytes instalados. |
-| Preferência visual inválida | Confira Cockpit → Ajustes. O aviso trata da apresentação do gráfico; não redefine os registros financeiros. Mesmo sem linhas visíveis, o botão Cockpit deve permanecer acessível. |
+| Preferência visual inválida | Confira Cockpit → Ajustes. O aviso trata da apresentação do gráfico; não redefine os registros financeiros. Mesmo sem linhas visíveis, o botão Genetrix deve permanecer acessível. |
+| NoCuda: Projeção diária N/A | Confira a data, fonte H1/H4 para futuro, limite de 30 dias, cobertura histórica e grade semanal. Em Fibonacci importado, UNVERIFIED_NATIVE mantém medidas N/A até a prova nativa. O motivo identifica o dado faltante; nenhuma barra futura é inventada. |
+| NoCuda: referências não aparecem | Leia a tabela no menu. Datas fora da área, conversão imprecisa ou marcas sobrepostas impedem só a apresentação das referências. |
 | Script “removed” | É normal após terminar; confira PASS/FAIL ou confirmação USC em Experts. |
 | Verifique os contratos USC | Execute o script de verificação para todos os instrumentos necessários; não force escala no perfil. |
 | Estimated, sem conexão, contexto ou dados recentes | Na alavancagem, a dica mostra o motivo e a cotação mais antiga no horário do servidor. Nas linhas sobre saldo, a dica mostra o horário UTC observado pelo indicador no relógio do computador e eventual crédito não confirmado. Não é leitura atual; N/A se faltarem dados necessários. |
@@ -769,6 +1192,9 @@ lista manualmente se quiser restaurar a organização anterior.
 | Registro do máximo não atualizado | Uma amostra Estimated, inconsistente, menor ou igual ao máximo não o altera. Lock ocupado ou gravação recusada adia a persistência; confira o diagnóstico. |
 | Cor ou fonte antiga | Propriedades → Entradas → Reset / Redefinir; templates podem conservar Entradas anteriores. Canto, densidade e visibilidade ficam em Cockpit → Ajustes. |
 | Consulta sem máximo exibido | Confira a conta e a pasta de dados desta instalação. O script distingue ausência, lock ocupado, registro inválido/incompatível e conta indisponível; não trata ausência como zero. |
+| Preparar mensagem bloqueado | Confira o motivo do catálogo ou da prévia: SL, alavancagem, Raiz N 1W/2W e flutuante devem ser válidos. TP ausente é permitido e aparece como Sem TP. O EA não é necessário para esse catálogo. |
+| A prévia da mensagem foi invalidada | Releia o catálogo e confira novamente a composição. Mudança de conta, símbolo, volume, SL ou TP não conserva o texto anterior como leitura atual. |
+| Ctrl+C não copia a mensagem | Não há confirmação nativa desta interação nesta revisão. Use a ação explícita TXT local e o caminho informado pelo painel; confira a seleção/cópia em MT5 isolado antes de depender do clipboard. |
 
 ### Ambiente de teste isolado
 

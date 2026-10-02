@@ -139,19 +139,24 @@ def assert_style_presentation(page, style):
     page.wait_for_timeout(400)
     actual = page.get_attribute("html", "data-nav-style")
     indicator = page.locator("#navPillIndicator")
-    if actual == "classic":
-        assert indicator.evaluate("el=>getComputedStyle(el).display") == "none"
-        assert page.locator("#nav > .tab.active").evaluate("el=>parseFloat(getComputedStyle(el).borderLeftWidth)>0")
-        return
-    assert indicator.is_visible(), (style, "missing selected-page indicator")
-    initial = indicator.evaluate("el=>el.style.transform")
+    # The approved sidebar owns one fixed blue selection treatment for all
+    # stored styles. Classic/Pill/Kinetic retain their distinct other layouts.
+    assert indicator.evaluate("el=>getComputedStyle(el).display") == "none"
+    active=page.locator('#nav > .tab.active')
+    assert active.is_visible()
+    initial=active.evaluate("e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.color,s.boxShadow]}")
+    assert initial[0] not in ['transparent','rgba(0, 0, 0, 0)'], ('missing fixed selection',initial)
+    before=page.evaluate('JPWNavigation.current()')
     page.locator("#finpesNavTrigger").hover()
     settle(page)
-    hovered = indicator.evaluate("el=>el.style.transform")
-    assert (hovered != initial) == (actual == "kinetic"), (actual, initial, hovered)
+    hovered=active.evaluate("e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.color,s.boxShadow]}")
+    # CHG-JPW-SIDEBAR-20261001: sidebar selection stays at the active route.
+    # Kinetic remains a stored preference and retains magnetism in other layouts.
+    assert hovered == initial, (actual, initial, hovered)
+    assert page.evaluate('JPWNavigation.current()') == before
     page.locator("#shellLocation").hover()
     settle(page)
-    assert indicator.evaluate("el=>el.style.transform") == initial
+    assert active.evaluate("e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.color,s.boxShadow]}") == initial
 
 
 def run_preferences(browser, url, evidence):
@@ -415,6 +420,9 @@ def run_drawer(browser, url, evidence):
         assert_drawer_closed(page, restore=True)
         drawer_open(page)
         page.locator("#execNavTrigger").click()
+        assert page.get_attribute("html", "data-shell-menu") == "open", "parent disclosure closed drawer"
+        assert page.evaluate("JPWNavigation.current().canonical") == "dashboard", "parent disclosure navigated"
+        page.locator('#execNavSubmenu [data-nav-child="forex-consolidated"]').click()
         assert_drawer_closed(page)
         assert "Forex" in page.locator("#shellLocation").inner_text()
         assert page.evaluate("!appSidebar.contains(document.activeElement) && document.activeElement!==document.body"), "selection did not focus content"

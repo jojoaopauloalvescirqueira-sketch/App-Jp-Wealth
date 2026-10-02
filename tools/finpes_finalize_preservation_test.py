@@ -13,7 +13,8 @@ Sessao NAO e sinonimo de wipe, e os dois contratos se provam separados.
 Fixture: tools/fixtures/personal_finance_v1.json (100% sintetica).
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

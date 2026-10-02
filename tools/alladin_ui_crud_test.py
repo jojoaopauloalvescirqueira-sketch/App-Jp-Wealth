@@ -28,7 +28,8 @@ Contratos provados (gate C3-S2-A + S2A-1..S2A-12):
 
 Zero mudanca no dominio: a UI so chama JPWAlladin.cadastro/setRecordStatus.
 """
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

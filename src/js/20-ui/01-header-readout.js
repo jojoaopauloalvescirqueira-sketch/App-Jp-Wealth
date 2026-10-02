@@ -13,9 +13,9 @@ function renderHeaderReadout(c){
     const pr=inForex?JPWForex.state.accountProfileContext?.(selected)?.period:getActiveRiskProfile();
     set('hdrProfile',pr?.name||(inForex?'Não informado':'—'));
   }catch(_){set('hdrProfile','—');}
-  const scoped=inOperation&&selected?.accountId&&selected?.periodId?
+  const scoped=inForex&&selected?.accountId&&selected?.periodId?
     JPWForex.state.accountContext({accountId:selected.accountId,periodId:selected.periodId}):null;
-  const startedAt=inOperation?(scoped?.status==='OK'?scoped.value.startedAt:null):p.inicio;
+  const startedAt=inForex?(scoped?.status==='OK'?scoped.value.startedAt:null):p.inicio;
   set('hdrPeriod', startedAt ? fmtDateEU(startedAt) : '—');
   set('hdrEquity', fmtForexMoney(c&&c.forex&&c.forex.account?c.forex.account.equity:null,c&&c.forex&&c.forex.account,0));
   const ddEl=$('hdrDD');

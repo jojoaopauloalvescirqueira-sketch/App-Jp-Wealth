@@ -1,7 +1,7 @@
 #property copyright "JP Wealth"
 #property version   "1.10"
 #property script_show_inputs
-#property description "Confirma a escala contratual USC por simbolo sem enviar ordens."
+#property description "JPW GENETRIX · Confirma a escala contratual USC por simbolo sem enviar ordens."
 
 #include <JPWealth/JPW_Alavancagem_Terminal.mqh>
 #include <JPWealth/JPW_Alavancagem_Profile.mqh>

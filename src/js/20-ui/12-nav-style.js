@@ -137,7 +137,7 @@ function bindNavMagnetics(){
   const fino=window.matchMedia('(hover:hover) and (pointer:fine)');
   const alvoValido=el=>el && el.classList && el.classList.contains('tab') && !el.closest('[hidden],[inert]');
   nav.addEventListener('mouseover', e=>{
-    if(navStyleValue()!=='kinetic' || !fino.matches) return;
+    if(navStyleValue()!=='kinetic' || !fino.matches || document.documentElement.getAttribute('data-navigation')==='sidebar') return;
     const alvo=e.target.closest && e.target.closest('.tab');
     if(!alvoValido(alvo)) return;
     const pill=document.getElementById('navPillIndicator');

@@ -1,11 +1,11 @@
 #property copyright "JP Wealth"
-#property version   "1.101"
-#property description "JPW Cockpit: alavancagem, flutuante, Genesis SL, Raiz N e risco dos stops."
+#include <JPWealth/JPW_Alavancagem_Version.mqh>
+#property version JPW_PRODUCT_MQL_VERSION
+#property description "JPW GENETRIX · Cockpit: alavancagem, flutuante global/compensado, Genesis SL, Raiz N e risco dos stops."
 #property indicator_chart_window
 #property indicator_buffers 0
 #property indicator_plots 0
 
-#include <JPWealth/JPW_Alavancagem_Version.mqh>
 #include <JPWealth/JPW_Alavancagem_Diagnostics.mqh>
 #include <JPWealth/JPW_Alavancagem_Terminal.mqh>
 #include <JPWealth/JPW_Alavancagem_Profile.mqh>
@@ -21,6 +21,7 @@
 #include <JPWealth/JPW_Alavancagem_StopRisk_Store.mqh>
 #include <JPWealth/JPW_Alavancagem_Panel.mqh>
 #include <JPWealth/JPW_Alavancagem_Cockpit.mqh> // See package AGENTS.md for invariants and review.
+#include <JPWealth/JPW_Alavancagem_Positions.mqh> // Accepted same-reading account contribution, no persistence.
 
 input int InpUpdateSeconds=1; // Cadência solicitada; frescor limita o ciclo completo a no máximo 30 s.
 input int InpMaxQuoteAgeSeconds=30;
@@ -79,6 +80,7 @@ JPW_VIEW_QUALITY g_genesis_quality=JPW_VIEW_NA;
 JPW_VIEW_QUALITY g_raiz_quality=JPW_VIEW_NA;
 JPW_VIEW_QUALITY g_scale2_quality=JPW_VIEW_NA;
 JPW_VIEW_QUALITY g_stop_quality=JPW_VIEW_NA;
+JPW_VIEW_QUALITY g_compensated_quality=JPW_VIEW_NA;
 string g_floating_value="N/A",g_floating_reason="Aguardando leitura da conta";
 string g_genesis_value="N/A",g_genesis_reason="Aguardando referência";
 string g_raiz_value="N/A",g_scale2_value="N/A";
@@ -88,6 +90,14 @@ string g_stop_value="N/A",g_stop_reason="Aguardando EA observador";
 string g_stop_detail="Nenhuma amostra atual e coerente de risco dos stops.";
 JPWObserverPresenceState g_stop_observer_presence=JPW_OBSERVER_CONTEXT_UNAVAILABLE;
 bool g_stops_show_pending=false;
+bool g_positions_operation_only=false;
+int g_positions_scroll=0,g_positions_visible_rows=0,g_positions_total_rows=0;
+bool g_position_detail_open=false;
+ulong g_position_detail_ticket=0;
+long g_position_detail_identifier=0;
+int g_position_button_row[16];
+ulong g_position_button_ticket[16];
+long g_position_button_identifier[16];
 JPWStopRiskSample g_stop_sample,g_stop_last_sample;
 JPWStopRiskRow g_stop_rows[],g_stop_last_rows[];
 bool g_stop_ready=false,g_stop_last_ready=false,g_stop_scope_valid=false;
@@ -138,6 +148,8 @@ int g_raiz_page=0,g_raiz_pages=1;
 JPWPanelRect g_details_rect;
 int g_details_pad=6,g_details_line=18,g_details_control=24,g_details_font=10;
 color g_details_text=C'60,60,60',g_details_surface=clrWhite;
+color g_details_chrome=C'239,242,246',g_details_card=C'247,248,250';
+color g_details_border=C'207,211,217';
 JPWRaizNConfig g_live_config;
 JPW_RAIZN_STATE g_live_config_state=JPW_RAIZN_ABSENT;
 string g_live_key="",g_live_reason="";
@@ -186,14 +198,71 @@ void JPWRenderCockpit();
 void JPWRaizPanelDestroy();
 void JPWCollectStopRisk();
 void JPWDetailsReadStopRisk();
+bool JPWCoordinatorBudgetRemaining();
 void JPWRenderStopsTable(const int x,const int body_y,const int inner,
                          const int body_height,const int footer_y);
 
 // Account metrics are independent of the notional conversion and its routes.
 // B/E/P/C are read in account units, then account identity, B and C are
+#include <JPWealth/JPW_Genetrix_UI.mqh>
+#include <JPWealth/JPW_PersonalHistory_UI.mqh>
 #include <JPWealth/JPW_Alavancagem_Coordinator.mqh>
+#include <JPWealth/JPW_SignalCopy_Controller.mqh>
 #include <JPWealth/JPW_Alavancagem_Presentation.mqh>
+#include <JPWealth/JPW_SignalCopy_UI.mqh>
 #include <JPWealth/JPW_Alavancagem_Actions.mqh>
+
+bool JPWGenetrixHandleCycleEvent(const int id,const long key,const string object_name)
+  {
+   if(!g_raiz_details_open || !JPWUIOwns(g_panel_prefix) || !JPWDetailsContextCurrent()) return(false);
+   JPWAccount event_account;
+   if(!JPWReadAccount(event_account) || !JPWAccountsEqual(g_account,event_account) ||
+      g_cockpit_snapshot.symbol!=_Symbol)
+     {
+      JPWInvalidateIdentityPresentation(); g_refresh_requested=true;
+      JPWRenderCurrentDisplay(); return(true);
+     }
+   string target=object_name;
+   if(id==CHARTEVENT_KEYDOWN && key==13 && !g_editing_field &&
+      ((g_focus_action>=JPW_ACTION_LEDGER_CYCLE_FIRST &&
+        g_focus_action<JPW_ACTION_LEDGER_CYCLE_FIRST+g_genetrix_cycle_button_count) ||
+       (g_cockpit_selected==6 && g_raiz_tab==JPW_ROUTE_METRIC && g_focus_action==JPW_ACTION_SECONDARY) ||
+       (g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES &&
+        (g_focus_action==JPW_ACTION_PRIMARY || g_focus_action==JPW_ACTION_SECONDARY))))
+      target=JPWActionObject(g_focus_action);
+   else if(id!=CHARTEVENT_OBJECT_CLICK) return(false);
+   if(g_raiz_tab==JPW_ROUTE_METRIC && g_cockpit_selected==6 &&
+      target==JPWActionObject(JPW_ACTION_SECONDARY))
+     {
+      if(ObjectFind(0,target)<0) return(true);
+      ObjectSetInteger(0,target,OBJPROP_STATE,false);
+      JPWRaizSwitchTab(JPW_ROUTE_LEDGER_CYCLES); return(true);
+     }
+   if(g_raiz_tab!=JPW_ROUTE_LEDGER_CYCLES) return(false);
+   for(int j=0;j<g_genetrix_cycle_button_count;j++)
+      if(target==JPWActionObject(JPW_ACTION_LEDGER_CYCLE_FIRST+j))
+        {
+         if(ObjectFind(0,target)<0) return(true);
+         ObjectSetInteger(0,target,OBJPROP_STATE,false);
+         const int selected=JPWGenetrixFindCycle(g_genetrix_cycles,g_genetrix_cycle_button_id[j]);
+         if(JPWGenetrixSelectCycle(selected))
+           { g_cockpit_selected=6; JPWBuildPresentation(g_panel_value,g_panel_status);
+             JPWRaizSwitchTab(JPW_ROUTE_METRIC); }
+         else
+           { g_genetrix_ledger_reason="Ciclo não disponível nesta leitura; atualize o ledger";
+             JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); }
+         return(true);
+        }
+   if(target==JPWActionObject(JPW_ACTION_PRIMARY) || target==JPWActionObject(JPW_ACTION_SECONDARY))
+     {
+      if(ObjectFind(0,target)<0) return(true);
+      ObjectSetInteger(0,target,OBJPROP_STATE,false);
+      g_cockpit_selected=6;
+      JPWRaizSwitchTab(target==JPWActionObject(JPW_ACTION_PRIMARY) ? JPW_ROUTE_METRIC : JPW_ROUTE_OVERVIEW);
+      return(true);
+     }
+   return(false);
+  }
 
 int OnInit()
   {
@@ -208,7 +277,9 @@ int OnInit()
    // Keep the chart preference and remove only our RAIZ_UI_* controls.
    JPWRaizPanelDestroy();
    JPWCockpitLoadPrefs();
+   JPWSignalClear();
    g_cockpit_template_recheck=(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)<0 &&
+                               ObjectFind(0,JPW_COCKPIT_PREF_V2_OBJECT)<0 &&
                                ObjectFind(0,JPW_COCKPIT_PREF_LEGACY_OBJECT)<0 ? 5 : 0);
    g_cockpit_draft=g_cockpit_prefs;
    g_raiz_atr_handle=iATR(_Symbol,PERIOD_H4,55);
@@ -217,7 +288,7 @@ int OnInit()
    JPWHorizonResetTickEvidence();
    JPWRaizNClearScenario(g_raiz_scenario);
    JPWRaizNClearBinding(g_raiz_binding);
-   IndicatorSetString(INDICATOR_SHORTNAME,"JPW Cockpit "+JPW_PRODUCT_VERSION);
+   IndicatorSetString(INDICATOR_SHORTNAME,JPW_PRODUCT_NAME+" · Cockpit "+JPW_PRODUCT_VERSION);
    JPWResetData(); JPWRender("Aguardando dados");
    // Stop risk has a separate freshness contract: even when other readings
    // are requested hourly, check its EA lease and live composition <=5 s.
@@ -236,6 +307,7 @@ void OnTimer()
    if(g_cockpit_template_recheck>0 && !g_raiz_details_open)
      {
       if(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)>=0 ||
+         ObjectFind(0,JPW_COCKPIT_PREF_V2_OBJECT)>=0 ||
          ObjectFind(0,JPW_COCKPIT_PREF_LEGACY_OBJECT)>=0)
         { JPWCockpitLoadPrefs(); g_cockpit_draft=g_cockpit_prefs;
           g_cockpit_template_recheck=0; }
@@ -259,6 +331,7 @@ void OnTimer()
       JPWMonitorStopRisk(); JPWRefreshRequestedRecords();
       JPWConfirmAcceptedContext(); JPWRenderCurrentDisplay();
      }
+   if(JPWCoordinatorBudgetRemaining()) JPWSignalProcessRequests(cycle_started);
    if(JPWCoordinatorBudgetRemaining()) JPWFlushDiagnostics();
    else JPWQueueDiagnostic(JPW_DIAG_BUDGET_DEFERRED);
    g_last_cycle_duration_ms=GetTickCount64()-cycle_started;
@@ -268,11 +341,19 @@ int OnCalculate(const int rates_total,const int prev_calculated,const int begin,
   { return(rates_total); }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
-  { JPWHandleChartEvent(id,lparam,dparam,sparam); }
+  {
+   // Another indicator's focused editor must not activate Cockpit shortcuts.
+   // All non-key events retain the existing identity/field/event handling.
+   if(!JPWCockpitAcceptChartEvent(id,lparam,dparam,sparam)) return;
+   if(JPWGenetrixHandleCycleEvent(id,lparam,sparam)) return;
+   JPWHandleChartEvent(id,lparam,dparam,sparam);
+  }
 
 void OnDeinit(const int reason)
   {
    EventKillTimer();
+   JPWUIRelease(g_panel_prefix);
+   JPWSignalClear();
    // Prioritize a durable notice of abandoned diagnostics; never silently drop
    // a pending old-context failure behind a SESSION_END in a bounded FIFO.
    string prior_context="";

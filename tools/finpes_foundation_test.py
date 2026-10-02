@@ -11,7 +11,8 @@ leis da fundacao, na fronteira exata que o contrato congelou:
 Todas as fixtures sao SINTETICAS.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

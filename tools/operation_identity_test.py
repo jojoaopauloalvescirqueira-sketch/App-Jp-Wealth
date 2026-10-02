@@ -74,7 +74,7 @@ def main():
 
             # A linha em edição não escreve. Salvar corrige a mesma identidade.
             page.evaluate('JPWForex.executionBoardUI.render()')
-            page.evaluate('document.querySelector("#phaseContainer details[data-phase=\\"0\\"]").open=true')
+            assert page.locator('#phaseContainer .eb-phase-row[data-phase="0"]').count()==1
             before=launcher.snapshot(page)
             page.evaluate('''() => {
               const field=document.querySelector('#phaseContainer [data-p="0"][data-o="0"][data-f="par"]');

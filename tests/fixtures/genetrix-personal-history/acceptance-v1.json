@@ -1,0 +1,171 @@
+{
+  "schema": "jpw-personal-history-acceptance/v1",
+  "frozen_before_implementation": true,
+  "classification": "DESIGNED/NOT_RUN",
+  "repeat_seconds": 60,
+  "scope": "all_open_positions_and_entry_pending_orders_no_magic_filter",
+  "channels": "local_MT5_popup_and_sound",
+  "history": "forward_only_per_account_per_installation",
+  "cases": [
+    {
+      "id": "HIS-AC01",
+      "name": "Primeira ausência",
+      "input": "conta A conectada, leitura completa; posição manual P1 com SL=0",
+      "expected": "um episódio ativo e aviso inicial; sem filtro Magic",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC02",
+      "name": "SL presente",
+      "input": "posição P1 SL=1.05 e leitura válida",
+      "expected": "nenhum episódio nem alerta falso",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC03",
+      "name": "Prazo",
+      "input": "primeiro aviso t=1000; checagens1001,1059,1060,1061",
+      "expected": "reaviso só em1060; próximo1120; relógio monotônico durante sessão",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC04",
+      "name": "Stop colocado",
+      "input": "episódio ativo; SL positivo antes do reaviso",
+      "expected": "RESOLVED_SL_PRESENT; reaviso suprimido",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC05",
+      "name": "Stop retirado",
+      "input": "episódio resolvido; SL volta a0",
+      "expected": "novo episódio e novo aviso; anterior preservado",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC06",
+      "name": "Desaparecimento",
+      "input": "episódio ativo; inventário completo não contém sujeito",
+      "expected": "encerrar NO_LONGER_PRESENT; motivo específico só com evidência",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC07",
+      "name": "Pendentes",
+      "input": "pendente stop-limit sem SL; execução parcial cria posição sem SL",
+      "expected": "episódios distintos ordem/posição; vínculo comprovado registrado; pendente remanescente preservada",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC08",
+      "name": "Desconexão",
+      "input": "episódio ativo; terminal offline; reconecta com SL presente",
+      "expected": "lacuna; nenhum fato novo durante ausência; resolve após revalidação",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC09",
+      "name": "Reinício",
+      "input": "episódio persistido aviso1000; reiniciar1030 ou1120",
+      "expected": "recarregar prazo; nenhuma rajada; no máximo um reaviso devido após revalidação",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC10",
+      "name": "Identidade",
+      "input": "POSITION_IDENTIFIER constante; ticket muda e volume altera",
+      "expected": "mesmo episódio ativo; ticket/volume atualizados sem duplicação",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC11",
+      "name": "Concorrência",
+      "input": "dois escritores da mesma conta/instalação",
+      "expected": "um titular; segundo sem gravação/aviso duplicado; takeover verificável",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC12",
+      "name": "Máximo",
+      "input": "gross1400/equity200; menor, empate e aumento sem arredondar",
+      "expected": "máximo7; empate conserva primeira foto; valor maior atualiza; Estimated separado",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC13",
+      "name": "Queda da equity",
+      "input": "gross1400 fixo; equity200→175",
+      "expected": "máximo7→8 e nova foto; sem entrada adicional",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC14",
+      "name": "Dados inválidos",
+      "input": "equity0/negativa; conversão ausente; inventário parcial; SL ilegível",
+      "expected": "sem pico falso, sem NO_SL por erro; zero só em vazio válido",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC15",
+      "name": "Contas",
+      "input": "mesmo ticket e identifier em A/B, servidor/moeda/instalação diferentes",
+      "expected": "isolamento; evento antigo não muda contexto; consulta não troca conta operacional",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC16",
+      "name": "Captura instável",
+      "input": "conta/equity/composição muda entre leituras",
+      "expected": "captura rejeitada; máximo e fotografia nunca desencontrados",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC17",
+      "name": "Armazenamento",
+      "input": "BUSY, CORRUPT, schema futuro, falha/disco cheio",
+      "expected": "anterior preservado; erro explícito; sem falso sucesso nem reset",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC18",
+      "name": "Interrupção no aviso",
+      "input": "crash entre intenção persistida, chamada e resultado",
+      "expected": "entrega incerta auditável; não inventar exibido/ouvido; recuperar sem rajada",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC19",
+      "name": "Backup",
+      "input": "CSV/JSON com ticket>2^53 e símbolos hostis; reabrir/reconstruir isolado",
+      "expected": "IDs como texto; integridade/seq/contexto conferidos; CSV seguro; corrupção recusada; sem exclusão automática",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    },
+    {
+      "id": "HIS-AC20",
+      "name": "Interface",
+      "input": "Cockpit fechado/aberto; outro contexto histórico; preferências existentes",
+      "expected": "monitoramento independente; leitura paginada/detalhes/cobertura; estado histórico visível; sem trading",
+      "critical_failure": "violação de critério obrigatório demonstrada bloqueia aprovação",
+      "attempts_required": 3
+    }
+  ]
+}

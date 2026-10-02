@@ -70,6 +70,8 @@ function execSetView(view) {
 
 function execSelectView(view) {
   if(view==='overview') return window.JPWNavigation?.navigate('forex-overview')===true;
+  // Old callers share the Board tool; they never mount the obsolete editor.
+  if(view==='motor') return window.JPWNavigation?.navigate('motor')===true;
   // Compatibilidade de API: consumidores legados não recuperam ownership Exec.
   // O shim delega ao resolver canônico e não altera `execView`.
   const researchView={ecal:'calendar',nocoda:'nocoda',pivots:'pivots'}[view];

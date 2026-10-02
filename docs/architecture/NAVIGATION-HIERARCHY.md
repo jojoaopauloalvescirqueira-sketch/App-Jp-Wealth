@@ -449,3 +449,26 @@ experimento transitório; ciclo de vida em [GALTON-BOARD](GALTON-BOARD.md).
 
 ## Disponibilidade — candidate 2026-09-24
 A disponibilidade operacional passa pela fonte única JPWModuleAvailability antes de navegação e exploração. A ordem conserva os seis IDs; módulos frozen não aparecem na projeção. IDs/aliases e quatro layouts preservados. Contrato: [MODULE-AVAILABILITY](MODULE-AVAILABILITY.md). Decisão canônica: [Alladin congelado](../decisions/2026-09-24-alladin-congelado.md). Candidate isolado, ainda em validação.
+
+## Lateral padrão — candidate 2026-10-01
+
+Este complemento descreve o delta aprovado em [CHG-JPW-SIDEBAR-20261001](../work/CHG-JPW-SIDEBAR-20261001.md). Os contratos históricos acima permanecem evidência das revisões anteriores; nesta revisão, somente `sidebar` passa a oferecer exploração por hover e clique. Topbar, Glass e Submenu conservam sua dinâmica.
+
+A rota de `JPWNavigation.current()` determina a seleção, a localização e o contexto N3. O estado transitório `sidebarUI` determina apenas grupo fixado, prévia, overlay, foco e temporizadores. Abrir Research durante uma página Forex não atualiza o domínio, não chama o guard e não substitui seus controles locais. Pais com filhos abrem/fixam/recolhem; destinos finais continuam passando uma vez pela fachada e pelos guards existentes. Recusa conserva exploração e rascunho; aceitação estabelece o grupo da nova rota.
+
+No desktop: 252 px expandida, 76 px recolhida e overlay de 252 px sem reflow. Hover com ponteiro fino aguarda 400 ms; saída aguarda 300 ms. Clique novamente no grupo fixado recolhe e suspende o hover até saída/retorno. Apenas o controle explícito de largura escreve a preferência de rail. A preferência de estilo e a ordem personalizada permanecem; magnetismo e indicador móvel são desativados somente nesta lateral.
+
+Tab percorre controles visíveis. Direita abre o primeiro filho; Esquerda retorna ao pai. Setas verticais/Home/End percorrem a lista lateral visível quando o foco está no N1, incluindo os filhos abertos; dentro do N2, percorrem o submenu atual. Escape encerra a prévia e restaura o grupo fixado; retorna ao pai somente se o foco estava no submenu. Em mobile até 900 px, clique substitui hover, com gaveta modal e contenção/retorno de foco existentes. Modais suspendem a apresentação e temporizadores. O único `railToggle` permanece no cabeçalho da lateral, exceto quando emprestado por Configurações; a devolução considera o layout vigente.
+
+A altura útil acompanha o cabeçalho global; apenas destinos rolam. Níveis longos quebram em linhas, seleção azul fixa e hover cinza têm estados distintos, e transições de 180 ms respeitam movimento reduzido. Não existem chaves persistidas novas ou efeitos financeiros desse estado. Focal de interação: `tools/navigation_sidebar_hover_test.py`; resultados, capturas, fingerprint e limites pertencem ao recibo externo do candidate, sem herdar aprovação histórica.
+
+
+## Navegação e disponibilidade — revisão local 2026-10-01
+
+[CHG-JPW-NAVIGATION-AVAILABILITY-20261001](../work/CHG-JPW-NAVIGATION-AVAILABILITY-20261001.md) sucede, neste candidate, a localização A13 descrita acima. Os seis primários e sete IDs Forex permanecem. Seus títulos visíveis são Visão geral, Contas e Períodos, Operação, Histórico, Contabilidade, Planejamento e Reservas. Research enumera apenas Forex, Ações, Stocks e REITs. Others não é exposto em menu ou Dashboard, mas `research-others` e a visão interna `others` continuam resolvidos sem novo destino visível nem exclusão de dados.
+
+Laboratório de Probabilidade passa a Configurações → Conhecimento → Laboratório de Probabilidade, com Galton Board no mesmo controller e preferências isoladas. `probability-lab`, `galton-board`, `research-probability-lab` e `navigateLocal('research','probability-lab')` abrem essa folha; nenhum desses aliases é guardado por disponibilidade de Research. A navegação de fundo permanece corrente ao abrir a Central. Fechar a Central mantém a navegação de fundo e pausa o experimento pelo lifecycle normal. `focusCurrentScreen()` respeita o modal aberto. Saída, troca de folha e subdiálogo pausam a mesma instância; voltar exige Continuar.
+
+Ferramentas e Serviços acrescenta `tools-normative`, visão local `tools/normative`, título Estrutura Normativa JP Wealth. Os aliases `normative` e `estrutura-normativa` selecionam o mesmo owner. A seleção é efêmera e não acrescenta router ou persistência de navegação. A saída aceita de Tools chama `JPWNormativeReader.leave()` depois dos guards existentes.
+
+Cartões, fatos, leituras de domínio e âncoras do Dashboard usam uma única projeção ativa. Forex congelado também oculta sua Governança do período e Log de Auditoria; saúde global da base, backup e cotações permanece. Nenhuma preferência de ordem, histórico de validação, dado financeiro ou gate é reescrito.

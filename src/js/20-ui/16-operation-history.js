@@ -24,15 +24,20 @@ function histScope(){
   const period=S.forex?.accountContexts?.accounts?.[accountId]?.periods?.[periodId];
   return archived&&period?{accountId,periodId,archived:true}:JPWForex.state.operationalSelection();
 }
+function histScopeLabel(scope){
+  const account=(S.accounts||[]).find(a=>a.forexAccountId===scope.accountId)||S.forex?.accountContexts?.archivedAccounts?.[scope.accountId]?.record;
+  const period=S.forex?.accountContexts?.accounts?.[scope.accountId]?.periods?.[scope.periodId];
+  return [account?.nome||scope.accountId||'Conta não selecionada',period?.startedAt||'Período não identificado'].join(' · ');
+}
 function histArchivePicker(){
   const envelope=S.forex?.accountContexts,archived=envelope?.archivedAccounts||{};
   const items=Object.entries(archived).flatMap(([accountId,entry])=>
     Object.keys(envelope.accounts?.[accountId]?.periods||{}).map(periodId=>({accountId,periodId,
-      name:entry.record?.nome||entry.record?.apelido||accountId})));
+      name:entry.record?.nome||entry.record?.apelido||accountId,startedAt:envelope.accounts[accountId].periods[periodId].startedAt})));
   if(!items.length)return '';
   return '<label>Consulta histórica <select id="histArchiveScope"><option value="">Conta operacional selecionada</option>'+
-    items.map(({accountId,periodId,name})=>'<option value="'+esc(accountId+'|'+periodId)+'"'+
-      (histState.archiveScope===accountId+'|'+periodId?' selected':'')+'>'+esc(name+' · '+periodId+' · arquivada')+'</option>').join('')+
+    items.map(({accountId,periodId,name,startedAt})=>'<option value="'+esc(accountId+'|'+periodId)+'"'+
+      (histState.archiveScope===accountId+'|'+periodId?' selected':'')+'>'+esc(name+' · '+(startedAt||'Data pendente')+' · arquivada')+'</option>').join('')+
     '</select></label>';
 }
 
@@ -336,8 +341,12 @@ function renderOperationHistory(){
       ' · '+esc(r.instrument||'Instrumento ausente')+'</li>').join('')+'</ul></details>':'';
 
   if (!todos.length) {
-    root.innerHTML = '<div class="card"><h2>Histórico · '+esc(selection.accountId||'Conta não selecionada')+'</h2>' +
-      '<p class="expl">Sem operações finalizadas neste período da conta.</p>'+archivePicker+'</div>'+legacy;
+    const hasContext=!!selection.accountId&&!!selection.periodId;
+    root.innerHTML = '<div class="card"><h2>Histórico · '+esc(histScopeLabel(selection))+'</h2>' +
+      '<p id="histEmptyMessage" class="hist-empty-message">'+(hasContext?'Sem operações finalizadas neste período da conta.':'Selecione uma conta e um período para consultar suas operações finalizadas.')+'</p>'+
+      '<p class="hist-empty-message">O histórico reúne operações finalizadas do JP Wealth. Ordens em andamento continuam na Operação.</p>'+
+      '<div class="eb-actions"><button type="button" data-hist-route="forex-operation">Ver Operação</button><button type="button" data-hist-route="forex-management-accounts">Escolher conta e período</button></div>'+archivePicker+'</div>'+legacy;
+    root.querySelectorAll('[data-hist-route]').forEach(button=>{button.onclick=()=>JPWNavigation.navigate(button.dataset.histRoute);});
     const picker=document.getElementById('histArchiveScope');if(picker)picker.addEventListener('change',()=>{
       histState.archiveScope=picker.value;renderOperationHistory();document.getElementById('histArchiveScope')?.focus();});
     return;
@@ -352,7 +361,7 @@ function renderOperationHistory(){
     '<option value="' + esc(v) + '"' + (atual === v ? ' selected' : '') + '>' + esc(rot) + '</option>';
 
   root.innerHTML = '<div class="card">' +
-    '<h2>Histórico · '+esc(selection.accountId)+' · '+esc(selection.periodId)+'</h2>' +
+    '<h2>Histórico · '+esc(histScopeLabel(selection))+'</h2>' +
     '<p class="expl">Memória institucional das Operações Únicas finalizadas. Registro histórico é evidência: ' +
     'os números descrevem o que foi observado e não projetam desempenho futuro.</p>' +
     '<div class="hist-stats" id="histStats">' + histStatsHTML(filtrados) + '</div>' +

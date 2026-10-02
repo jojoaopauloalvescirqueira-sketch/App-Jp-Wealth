@@ -34,6 +34,7 @@ function relocateGlobalDashboardShell() {
   // Rodapé global — só existe (visualmente) sob esta flag.
   const footer = gdEl('gdFooter');
   if (footer) footer.hidden = false;
+  syncDashboardAvailability();
 
   // Forex reúne aviso, cockpit, VRM e agenda; Dashboard mantém sistema e atalhos.
   // Os mesmos nós são movidos, nunca clonados, para preservar IDs e listeners.
@@ -84,8 +85,21 @@ function gdSsRow(id, state, label, meta) {
   const mt = row.querySelector('[data-jpwss-meta]'); if (mt) mt.textContent = meta || '';
 }
 
+// Saúde da base, backup e cotações é compartilhada. Governança do período
+// e atalhos contábeis pertencem a Forex e seguem sua disponibilidade.
+function syncDashboardAvailability(){
+  const forexAvailable=window.JPWModuleAvailability?.canAccess('forex')!==false;
+  const governance=gdEl('jpwSsGov'); if(governance) governance.hidden=!forexAvailable;
+  document.querySelectorAll('#gdFooter [data-dash-go]').forEach(button=>{
+    const primary=window.JPWNavigation?.resolve(button.dataset.dashGo)?.primary;
+    button.hidden=!!primary&&window.JPWModuleAvailability?.canAccess(primary)===false;
+  });
+  return forexAvailable;
+}
+
 function renderSystemStatus() {
   if (document.documentElement.dataset.shell !== 'global-dashboard') return;
+  const forexAvailable=syncDashboardAvailability();
   if (!gdEl('jpwSsPersist')) return; // componente fora do DOM: nada a fazer
 
   // 1 · PERSISTÊNCIA — o risco nº 1 do projeto é perda silenciosa de dados,
@@ -119,7 +133,7 @@ function renderSystemStatus() {
   // 4 · GOVERNANÇA — reusa a MESMA severidade do banner de onboarding, para
   // que as duas superfícies nunca discordem sobre o estado do período.
   const btn = gdEl('jpwSsGovBtn');
-  if (typeof getOnboardingCompletionState === 'function') {
+  if (forexAvailable && typeof getOnboardingCompletionState === 'function') {
     const gov = getOnboardingCompletionState();
     const estado = gov.severity === 'complete' ? 'ok' : (gov.severity === 'critical' ? 'bad' : 'warn');
     gdSsRow('jpwSsGov', estado, 'Governança do período', gov.completed + '/' + gov.total + ' seções');
@@ -130,7 +144,7 @@ function renderSystemStatus() {
 // "Revisar ›" reusa o MESMO destino do banner de onboarding
 // (openFirstIncompleteOnboarding) — nenhum fluxo novo de navegação.
 document.addEventListener('click', event => {
-  if (!event.target.closest('#jpwSsGovBtn')) return;
+  if (!event.target.closest('#jpwSsGovBtn')||window.JPWModuleAvailability?.canAccess('forex')===false) return;
   if (typeof openFirstIncompleteOnboarding === 'function') openFirstIncompleteOnboarding();
 });
 

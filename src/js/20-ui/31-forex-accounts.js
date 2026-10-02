@@ -77,6 +77,21 @@
     workspace.innerHTML='<header class="fx-accounts-heading"><div><p class="eb-eyebrow">FOREX · CADASTRO E CONTEXTO</p><h1>Contas e Período</h1><p>Organize suas contas de CFDs e seus períodos. Consultar uma conta não muda a operação em andamento.</p></div><div class="fx-accounts-actions"><button type="button" id="fxAccountsImport">Importar HTML/PDF</button><button type="button" id="fxAccountsCreate" class="fx-accounts-primary">Cadastrar nova conta</button></div></header><p id="fxAccountsOperational" class="fx-accounts-operational"></p><p id="fxAccountsStatus" role="status" aria-live="polite"></p><section aria-labelledby="fxAccountsListTitle" class="card fx-accounts-list"><h2 id="fxAccountsListTitle">Contas cadastradas</h2><div class="jp-table-scroll" tabindex="0" aria-label="Contas cadastradas, tabela com rolagem horizontal"><table class="dtable"><thead><tr><th>Conta e identificação</th><th>Corretora / plataforma</th><th>Moeda</th><th>Perfil cadastral</th><th>Preparação</th><th>Contexto em uso</th><th>Ação</th></tr></thead><tbody id="fxAccountsRows"></tbody></table></div><p id="fxAccountsEmpty" hidden>Nenhuma conta cadastrada. Cadastre a conta que você já utiliza na corretora e prepare seu primeiro período.</p></section><section id="fxAccountDetails" class="fx-account-details" aria-labelledby="fxAccountDetailTitle" hidden><div class="card"><div class="fx-accounts-detail-head"><div><p class="eb-eyebrow">CONTA EM CONSULTA</p><h2 id="fxAccountDetailTitle" tabindex="-1"></h2><p id="fxAccountMetadata"></p></div><div class="fx-accounts-actions"><button type="button" id="fxAccountsEdit">Atualizar cadastro e perfil</button><button type="button" id="fxAccountsPrepare">Preparar período</button><button type="button" id="fxAccountsArchive">Arquivar cadastro</button></div></div><dl id="fxAccountProfiles" class="fx-accounts-profiles"></dl><p class="fx-accounts-help">O perfil cadastral será declarado no próximo período criado explicitamente. O período consultado conserva sua referência; regras e proteções vigentes continuam sendo aplicadas.</p><button type="button" id="fxAccountsUse" class="fx-accounts-primary">Usar conta e período e abrir Execution Board</button><p id="fxAccountsUseHelp" class="fx-accounts-help"></p></div><div id="fxAccountPeriodHost"></div></section><details id="fxAccountsArchives" class="card"><summary>Contas arquivadas</summary><div id="fxAccountsArchivedRows"></div></details><p class="fx-accounts-help">Cadastro, período e observações são confirmações distintas. Nenhum deles equivale a autorização para operar. <button type="button" id="fxAccountsMotor" class="fx-accounts-link">Abrir Fator de Correção</button></p>';
     el('contas').prepend(workspace);
     if(el('accountPeriodCard'))el('fxAccountPeriodHost').append(el('accountPeriodCard'));
+    // Period review precedes explicit application; move the same controls.
+    const apply=document.createElement('div');apply.className='fx-account-apply';
+    apply.append(el('fxAccountsUse'),el('fxAccountsUseHelp'));
+    el('accountPeriodSelect')?.closest('label')?.after(apply);
+    el('fxAccountsUse').textContent='Aplicar contexto e abrir Operação';
+    el('fxAccountsMotor').textContent='Ver dimensionamento';
+    // Preserve layout identities and renderer hosts while making secondary
+    // replication references an explicit consultation.
+    for(const key of ['contas-accounts-table','contas-order-application']){
+      const card=el('contasWidgetGrid')?.querySelector(`[data-layout-card="${key}"]`);
+      if(!card)continue;const disclosure=document.createElement('details'),summary=document.createElement('summary');
+      summary.textContent=card.querySelector('h2')?.textContent||'Referências de replicação';disclosure.append(summary);
+      while(card.firstChild)disclosure.append(card.firstChild);card.append(disclosure);
+      disclosure.querySelector('h2')?.classList.add('sr-only');
+    }
     const details=el('accountPeriodFormDetails');if(details?.querySelector('summary'))details.querySelector('summary').textContent='Conciliar uma observação histórica sem período';
     if(el('accountPeriodSave'))el('accountPeriodSave').textContent='Confirmar conciliação do período';
     el('fxAccountsImport').onclick=()=>requestLeave(()=>root.JPWFXConsolidatedUI.openImport({accountId:find(examinedAccountId)?.account.forexAccountId||null,returnFocus:el('fxAccountsImport')}));
@@ -116,7 +131,8 @@
     if(!find(examinedAccountId)){examinedAccountId=find(selection.accountId)?.id||records().map(idOf)[0]||null;examinedPeriodId=S.forex?.accountContexts?.accounts?.[examinedAccountId]?.currentPeriodId||null;formScope='';}
     if(examinedPeriodId&&!periods(examinedAccountId)[examinedPeriodId])examinedPeriodId=null;
     const operational=find(selection.accountId);
-    el('fxAccountsOperational').textContent=operational?'Em uso na Board: '+(operational.account.nome||operational.id)+' · '+(selection.periodId||'período pendente'):'Nenhuma conta operacional selecionada.';
+    const operationalPeriod=periods(selection.accountId)[selection.periodId];
+    el('fxAccountsOperational').textContent=operational?'Contexto operacional em uso: '+(operational.account.nome||operational.id)+' · '+(operationalPeriod?.startedAt||'período pendente')+' · '+(operationalPeriod?.currency||'moeda pendente'):'Nenhuma conta operacional selecionada.';
     el('fxAccountsEmpty').hidden=!readable||records().length>0;
     for(const id of ['fxAccountsCreate','fxAccountsImport','fxAccountsEdit','fxAccountsPrepare'])el(id).disabled=!readable;
     if(!readable){el('fxAccountsRows').replaceChildren();el('fxAccountDetails').hidden=true;return;}
@@ -134,7 +150,7 @@
       const accountProfile=profile.current?profileLabel(profile.current):profile.legacyName?profile.legacyName+' · legado sem atribuição registrada':'Não informado';
       el('fxAccountProfiles').innerHTML=`<div><dt>Perfil cadastral / próximo período</dt><dd>${safe(accountProfile)}</dd></div><div><dt>Perfil do período atual</dt><dd>${safe(current?currentProfile?.period?profileLabel(currentProfile.period):'Sem captura histórica':'Período pendente')}</dd></div><div><dt>Perfil do período consultado</dt><dd>${safe(p?profile.period?profileLabel(profile.period):'Sem captura histórica':'Período pendente')}</dd></div>`;
       const use=el('fxAccountsUse');use.disabled=!account.forexAccountId||!p;use.setAttribute('aria-describedby','fxAccountsUseHelp');
-      el('fxAccountsUseHelp').textContent=!account.forexAccountId?'Confirme a identidade cadastral antes de preparar um período.':!p?'Selecione ou prepare um período. Informações financeiras ausentes continuam indicadas como pendentes.':selection.accountId===examinedAccountId&&selection.periodId===examinedPeriodId?'Este é o contexto operacional em uso.':'Consultar esta conta não altera a conta operacional. Use o botão acima para aplicar a escolha.';
+      el('fxAccountsUseHelp').textContent=!account.forexAccountId?'Confirme a identidade cadastral antes de preparar um período.':!p?'Selecione ou prepare um período. Informações financeiras ausentes continuam indicadas como pendentes.':(selection.accountId===examinedAccountId&&selection.periodId===examinedPeriodId?'Este é o contexto operacional em uso. ':'A consulta preserva o contexto operacional atual. ')+`Aplicação explícita: ${account.nome||examinedAccountId} · ${p.startedAt} · ${p.currency}.`;
       el('fxAccountsArchive').disabled=!account.forexAccountId;
       renderPeriod(account,p);
     }
@@ -142,12 +158,13 @@
     el('fxAccountsArchivedRows').innerHTML=Object.entries(archived).filter(([id])=>!records().some(a=>a.forexAccountId===id)).map(([id,item])=>`<p><strong>${safe(item.record?.nome||id)}</strong> · ${safe(item.archivedAt||'Data indisponível')} · ${safe(item.reason||'Sem motivo informado')} <button type="button" data-fx-reregister="${safe(id)}">Recadastrar preservando identidade</button></p>`).join('')||'<p>Nenhuma conta arquivada.</p>';
   }
   function renderPeriod(account,p){
-    el('accountContextIdentity').textContent=account.forexAccountId||'Identidade estável ainda não confirmada';
+    el('accountContextIdentity').textContent=(p?'Período em consulta: '+p.startedAt+' · '+p.currency:'Selecione ou prepare um período.')+' Cadastro, período e observação são salvos por confirmações separadas.';
+    el('accountContextIdentity').title=account.forexAccountId||'Identidade estável ainda não confirmada';
     const obs=observation(examinedAccountId,p?.periodId),lastBook=p?.ledger?.slice().sort((a,b)=>a.data.localeCompare(b.data)).at(-1)?.saldo??p?.openingBook??null;
     const entries=[['SI confirmado',money(p?.si,p?.currency)],['Saldo book de abertura',money(p?.openingBook,p?.currency)],['Último saldo book',money(lastBook,p?.currency)],['Equity observada',money(obs?.equity,p?.currency)],['Operação neste período',p?.activeOperation?.operationId||'Nenhuma']];
     el('accountContextMetrics').innerHTML=entries.map(([label,value])=>`<div class="metric"><div class="k">${safe(label)}</div><div class="v sm">${safe(value)}</div></div>`).join('');
     const list=Object.values(periods(examinedAccountId)).sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
-    el('accountPeriodSelect').innerHTML='<option value="">Sem período selecionado</option>'+list.map(item=>`<option value="${safe(item.periodId)}">${safe(item.startedAt)} · ${safe(item.currency)} · ${item.activeOperation?'operação em andamento':item.periodId===S.forex.accountContexts.accounts[examinedAccountId].currentPeriodId?'atual':'histórico'} · ${safe(item.periodId)}</option>`).join('');el('accountPeriodSelect').value=examinedPeriodId||'';
+    el('accountPeriodSelect').innerHTML='<option value="">Sem período selecionado</option>'+list.map(item=>`<option value="${safe(item.periodId)}">${safe(item.startedAt)} · ${safe(item.currency)} · ${item.activeOperation?'operação em andamento':item.periodId===S.forex.accountContexts.accounts[examinedAccountId].currentPeriodId?'atual':'histórico'}</option>`).join('');el('accountPeriodSelect').value=examinedPeriodId||'';
     const scope=examinedAccountId+'|'+(examinedPeriodId||'');
     if(scope!==formScope){resetForms();formScope=scope;el('accountPeriodCurrency').value=account.platformCurrency||'';el('accountPeriodFeedback').textContent='';}
     const seen=new Set(),unmatched=[];let item=S.forex?.accounts?.[examinedAccountId];

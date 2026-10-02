@@ -8,7 +8,8 @@ O File System Access API real (showDirectoryPicker) exige gesto + diálogo nativ
 automatizável — o acesso à pasta é coberto por mocks de dgFsStatus/dgFsFileExists/
 dgFsWriteFile (a lógica de orquestração é o que se testa) e por checklist manual
 (docs/architecture/DB-STORAGE-GOVERNANCE.md)."""
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os, socket, threading
 from playwright.sync_api import sync_playwright

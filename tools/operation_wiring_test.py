@@ -5,7 +5,8 @@ O oráculo anterior baseado em S.phases global está preservado como evidência
 externa. A suíte atual exercita os controles reais da operação por conta.
 Todas as fixtures são sintéticas.
 """
-from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import os,socket,threading
 import notes_launcher_test as launcher
@@ -31,7 +32,12 @@ SEED='''() => {
       source:'Fixture sintética',activateCurrentPeriod:true},{reason:'Fixture sintética'});
     if(!p.ok)throw Error(p.error);
   }
-  x.selectOperationalAccount('WIRE_A');const scope=x.operationalSelection(),p=x.accountContext(scope).value;
+  x.selectOperationalAccount('WIRE_A');const scope=x.operationalSelection();
+  // Prepare index 0 through the existing Add command in this disposable fixture.
+  // accountContext().value is a copy; anonymous zero slots are not actual drafts.
+  S.forex.accountContexts.accounts[scope.accountId].periods[scope.periodId].phases[0].orders=[];
+  const added=x.addAccountOrderDraft({...scope,pi:0});if(!added.ok)throw Error(added.error);
+  const p=S.forex.accountContexts.accounts[scope.accountId].periods[scope.periodId];
   Object.assign(p.phases[0].orders[0],{id:'A-1',par:'EURUSD',tipo:'BUY',role:'GENESIS',lote:.01,
     entry:1.1,sl:1.09,tp:1.2,costs:0,costBasis:'INCLUDED_IN_RESULT',stopValidated:true});
   if(save()!==true)throw Error('Draft fixture refused');

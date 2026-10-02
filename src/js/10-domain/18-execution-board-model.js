@@ -78,15 +78,31 @@
   }
   function referenceInstrument(ins,account,currency,scope){
     const size=ins.contract?.contractSize,rate=ins.conversion?.baseToAccountRate;
-    const base=finite(account?.si)&&account.si>0&&finite(account?.equity)&&account.equity>0?Math.min(account.si,account.equity):null;
-    const unit=finite(size)&&size>0&&finite(rate)&&rate>0?size*rate:null;
+    const initialBase=finite(account?.si)&&account.si>0?account.si:null;
+    const currentBase=initialBase!==null&&finite(account?.equity)&&account.equity>0?Math.min(initialBase,account.equity):null;
+    const product=finite(size)&&size>0&&finite(rate)&&rate>0?size*rate:null;
+    const unit=finite(product)&&product>0?product:null;
     const factors=fx.policy.get('P-12b').value;
-    const ref=f=>metric(base!==null&&unit!==null?base*f/unit:null,'LOTS',null,'Referência nocional teórica; não é lote autorizado.',{base,multiple:f,lotMinimumEvaluated:false,executionEligibility:'BLOCKED'});
+    const ref=(f,base,baseKind,calculationMode)=>metric(base!==null&&unit!==null?base*f/unit:null,'LOTS',null,
+      unit===null?'Contrato ou conversão nocional não disponível.':base===null?
+        (baseKind==='SI'?'SI positivo não disponível.':'SI e equity positivos não disponíveis.'):
+        (baseKind==='SI'?'Referência inicial teórica sobre SI; não é lote autorizado.':'Teto corrente teórico por regime sobre min(SI, equity); não é lote autorizado.'),
+      {base,baseValue:base,baseKind,multiple:f,calculationMode,theoreticalOnly:true,lotMinimumEvaluated:false,executionEligibility:'BLOCKED',
+        source:{instrumentId:ins.id,label:baseKind==='SI'?'Referência inicial sobre SI':'Teto corrente por regime',
+          account:{accountId:scope.accountId||null,periodId:scope.periodId||null,currency:currency||null,
+            source:account?.source||'Fonte da observação não identificada',observedAt:account?.observedAt||null},
+          contract:clone(ins.contract||null),conversion:clone(ins.conversion||null),
+          parameter:{id:'P-12b',value:f,hostNorm:fx.policy.get('P-12b').hostNorm,policyVersion:fx.policy.version}}});
+    const initialNormal=ref(factors.normal,initialBase,'SI','THEORETICAL_INITIAL_REFERENCE');
+    const initialRestrictive=ref(factors.transition,initialBase,'SI','THEORETICAL_INITIAL_REFERENCE');
+    const currentNormal=ref(factors.normal,currentBase,'MIN_SI_EQUITY','THEORETICAL_CURRENT_CAP');
+    const currentRestrictive=ref(factors.transition,currentBase,'MIN_SI_EQUITY','THEORETICAL_CURRENT_CAP');
     const atr=ins.atr,vrm=atr?.timeframe==='H4'&&atr.unit==='PRICE'?fx.engine.computeVRM({atrShort:atr.short,atrLong:atr.long}):null;
     const d=ins.diagnostics,diagnostics=d&&d.accountId===scope.accountId&&d.periodId===scope.periodId&&d.instrumentId===ins.id?d:null;
     const rootN=Object.fromEntries(['oneWeek','twoWeeks'].map(horizon=>[horizon,engineMetric(fx.engine.computeRootNDiagnostic({
       atr:atr?.timeframe==='H4'&&atr.unit==='PRICE'?atr.short:null,n:diagnostics?.[horizon]?.n,f:diagnostics?.[horizon]?.f}))]));
-    return {...clone(ins),notionalPerLot:metric(unit,'ACCOUNT_CURRENCY',currency,unit===null?'Contrato ou conversão não disponível.':null),normal:ref(factors.normal),restrictive:ref(factors.transition),
+    return {...clone(ins),notionalPerLot:metric(unit,'ACCOUNT_CURRENCY',currency,unit===null?'Contrato ou conversão não disponível.':null),
+      initialNormal,initialRestrictive,currentNormal,currentRestrictive,normal:currentNormal,restrictive:currentRestrictive,
       vrm:vrm?engineMetric(vrm):absent('ATR 55/660 H4 não vinculado a este instrumento.','RATIO'),
       regime:vrm?engineMetric(fx.engine.resolveVRMRegime({vrm:number(vrm)})):absent('Regime sem ATRs identificados.','REGIME'),
       minimumStop:atr?.timeframe==='H4'&&atr.unit==='PRICE'?engineMetric(fx.engine.computeMinimumStop({atr:atr.short})):absent('ATR 55 H4 ausente.','PRICE'),

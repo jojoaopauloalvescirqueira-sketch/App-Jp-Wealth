@@ -375,3 +375,7 @@ Registry puro em `src/js/00-core/00-forex-policy.js`; engine puro em `src/js/10-
 - `04-stop-statistics.js`, render/navegação/Exec/layout/finalização: consumidores adaptados, IDs/preferências preservados.
 
 Contrato: [FOREX-EXECUTION-BOARD.md](FOREX-EXECUTION-BOARD.md). Manifest/portable/precache gerados/validados pelos mecanismos oficiais.
+
+## Atualização focal — 2026-10-01
+
+A listagem histórica acima não define a navegação atual. `09-settings-modal.js` agora hospeda a instância única do Laboratório em Conhecimento; `23-research-views.js` conserva os aliases, sem folha concorrente. Research tem quatro destinos visíveis; Others resolve apenas links antigos. Dashboard filtra módulos congelados antes da leitura. `34-normative-reader.js`, carregado após `31-tools-services.js`, cuida do documento original V11 com recursos locais e nenhum escritor financeiro. `30-execution-board.js` oferece os mesmos comandos em tabela compacta/detalhes e a auditoria completa readonly. Contratos: [navegação](NAVIGATION-HIERARCHY.md), [leitor](NORMATIVE-READER.md), [Forex](FOREX-EXPERIENCE.md).

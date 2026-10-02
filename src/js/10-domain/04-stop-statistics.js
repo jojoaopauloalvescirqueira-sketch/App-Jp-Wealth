@@ -176,30 +176,16 @@ function localDateTimeISO(d=new Date()){
 function addDaysISO(days){ const d=new Date(); d.setDate(d.getDate()+days); return dateISO(d); }
 
 function renderMotor(){
-  const exp=$('mExpAlvo');if(exp){exp.value='';exp.disabled=true;exp.title='Teto não dimensiona volume admissível.';}
-  const mb=$('motorBody');if(!mb)return;
-  const model=JPWForex.state.read();
-  mb.innerHTML=S.instruments.map((ins,i)=>{
-    const unit=usdPerBase(ins)*ins.cpl,st=staleInfo(ins.updated);
-    return `<tr data-idx="${i}"><td class="hl">${esc(ins.name)}</td><td><input type="number" step="0.00001" data-f="preco" value="${esc(ins.preco)}" aria-label="Preço ${esc(ins.name)}"></td><td><span class="stale-pill ${st.cls}">${esc(st.label)}</span></td><td><input type="number" step="1" data-f="cpl" value="${esc(ins.cpl)}" aria-label="Contrato ${esc(ins.name)}"></td><td class="calc-valorlote">${fmtMoney(unit)}</td><td class="calc-lotepad">${esc(model.metrics.admissionRisk.status)}</td><td class="calc-lotehv">${esc(model.executionEligibility.status)}</td><td>Limites: motor V11</td><td>${ins.banned?esc(ins.banReason||'Restrição registrada'):'P-14 / P-18 / P-17 pendentes'}</td></tr>`;
-  }).join('');
-  mb.querySelectorAll('input').forEach(input=>input.addEventListener('change',()=>{
-    const i=+input.closest('tr').dataset.idx,field=input.dataset.f,value=orderParseResult(input.value);
-    if(!(value>0)){alert('Informe um valor positivo.');return;}
-    const outcome=JPWForex.state.mutate('instrument-observation','Observação confirmada de '+field,['instruments'],()=>{
-      S.instruments[i][field]=value;if(field==='preco')S.instruments[i].updated=todayISO();
-    });
-    if(operationRecordFeedback(outcome)){recomputeMotorRow(i);render();}
-  }));
-  const pb=$('profileBody');if(pb)pb.innerHTML=`<tr><td colspan="6">${esc(JPWForex.engine.computeReplicationFirewall({}).status)} · P-30: fatores satélites sem homologação. Perfis legados permanecem como descrição histórica e não dimensionam lotes.</td></tr>`;
+  // Compatibility host only. Instrument observations are explicitly recorded
+  // by the Execution Board; this retired editor must never mutate the catalog.
+  const exp=$('mExpAlvo');if(exp){exp.value='';exp.disabled=true;exp.title='Referências disponíveis em Operação; não dimensionam volume admissível.';}
+  const mb=$('motorBody');if(mb){
+    mb.innerHTML='<tr><td colspan="9">Motor de Lote integrado ao Execution Board. <button type="button" data-motor-forward>Abrir em Operação</button></td></tr>';
+    mb.querySelector('[data-motor-forward]').addEventListener('click',()=>JPWNavigation.navigate('motor'));
+  }
+  const pb=$('profileBody');if(pb)pb.innerHTML='<tr><td colspan="6">P-30: fatores satélites sem homologação. Perfis legados permanecem históricos e não dimensionam lotes.</td></tr>';
 }
-function recomputeMotorRow(i){
-  const tr=document.querySelector(`#motorBody tr[data-idx="${i}"]`),ins=S.instruments[i];if(!tr||!ins)return;
-  tr.querySelector('.calc-valorlote').textContent=fmtMoney(usdPerBase(ins)*ins.cpl);
-  const model=JPWForex.state.read();
-  tr.querySelector('.calc-lotepad').textContent=model.metrics.admissionRisk.status;tr.querySelector('.calc-lotehv').textContent=model.executionEligibility.status;
-  const st=staleInfo(ins.updated),pill=tr.querySelector('.stale-pill');pill.className='stale-pill '+st.cls;pill.textContent=st.label;
-}
+function recomputeMotorRow(){renderMotor();}
 
 // ---- Contas screen ----
 function getMaster(){ return S.accounts.find(a=>a.tipo==='MESTRE')||S.accounts[0]; }

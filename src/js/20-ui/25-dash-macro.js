@@ -61,7 +61,7 @@ function dmFrozenRoute(route){
 }
 function dmLink(label, route, surface, view){
   const frozen=dmFrozenRoute(route);
-  if(frozen)return '<button type="button" class="dm-link" data-module-manage="'+esc(frozen)+'">'+esc(label)+' · congelado</button>';
+  if(frozen)return '';
   return '<button type="button" class="dm-link" data-dm-route="'+esc(route)+'"'
     +(surface?' data-dm-surface="'+esc(surface)+'" data-dm-view="'+esc(view)+'"':'')
     +'>'+esc(label)+'</button>';
@@ -70,10 +70,10 @@ function dmLinks(html){ return '<nav class="dm-links" aria-label="Detalhes da á
 function dmSection(label, html){ return '<div class="dm-section"><h4>'+esc(label)+'</h4>'+html+'</div>'; }
 function dmCard(id, titulo, corpoHTML, rota, ctaLabel, tom){
   const meta=DM_AREAS[id];
-  const frozen=dmFrozenRoute(rota);
+  if(dmFrozenRoute(rota)) return '';
   return '<article class="dm-card'+(tom?' dm-'+tom:'')+'" data-dm-card="'+esc(id)+'" aria-labelledby="dm-title-'+id+'">'
     + '<header class="dm-card-head"><div><svg class="cp-area-mark" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-area-'+id+'"/></svg><span class="dm-eyebrow">'+esc(meta[1])+'</span><h3 class="dm-title" id="dm-title-'+id+'">'+esc(titulo)+'</h3></div>'
-    + '<button type="button" class="dm-cta" '+(frozen?'data-module-manage="'+esc(frozen)+'"':'data-dm-route="'+esc(rota)+'"')+'>'+(frozen?'Congelado · Gerenciar':esc(ctaLabel))+'</button></header>'
+    + '<button type="button" class="dm-cta" data-dm-route="'+esc(rota)+'">'+esc(ctaLabel)+'</button></header>'
     + '<div class="dm-body">'+corpoHTML+'</div>'
     + '</article>';
 }
@@ -282,7 +282,7 @@ function dmResearchHTML(){
   corpo += '</div><div class="dm-record">';
   corpo += dmSection('Outras pesquisas', '<div class="dm-research-areas">'
     +dmLink('Ações · B3','research-stocks-br')+dmLink('Stocks','research-stocks-global')
-    +dmLink('REITs','research-reits')+dmLink('Others','research-others')
+    +dmLink('REITs','research-reits')
     +'</div>'+dmNote('Áreas em preparação · sem conteúdo publicado.'));
   corpo += '</div>';
   corpo += dmLinks(dmLink('Calendário','research-forex','research','calendar')
@@ -357,34 +357,42 @@ function dmSafe(fn, fallbackTom){
   try { return fn(); }
   catch(e){ return {html: dmErro(e && e.message), tom: fallbackTom || 'warn'}; }
 }
+// A projeção é filtrada ANTES de executar qualquer reader de domínio.
+// Disponibilidade não cria zero fictício nem soma dados de módulos congelados.
+const DM_MODULES=[
+  {id:'forex',label:'Forex',route:'forex-consolidated',cta:'Abrir Forex',read:()=>dmForexHTML(compute())},
+  {id:'personal-finance',label:'Finanças Pessoais',route:'personal-finance',cta:'Abrir Finanças Pessoais',read:()=>dmFinpesHTML()},
+  {id:'research',label:'Research',route:'research-forex',cta:'Abrir Research',read:()=>dmResearchHTML()},
+  {id:'alladin',label:'Alladin',route:'alladin',cta:'Abrir Alladin',read:()=>dmAlladinHTML()}
+];
 function dashMacroRender(){
-  const root = document.getElementById('dashMacroGrid');
-  if(!root) return;
-  const forex = dmSafe(() => dmForexHTML(compute()));
-  const finpes = dmSafe(dmFinpesHTML);
-  const research = dmSafe(dmResearchHTML);
-  const alladin = dmSafe(dmAlladinHTML);
-  const html =
-      dmCard('forex', 'Forex', forex.html, 'forex-consolidated', 'Abrir Forex', forex.tom)
-    + dmCard('personal-finance', 'Finanças Pessoais', finpes.html, 'personal-finance', 'Abrir Finanças Pessoais', finpes.tom)
-    + dmCard('research', 'Research', research.html, 'research-forex', 'Abrir Research', research.tom)
-    + dmCard('alladin', 'Alladin', alladin.html, 'alladin', 'Abrir Alladin', alladin.tom);
-  if(root.innerHTML!==html){
-    const active=root.contains(document.activeElement)?document.activeElement:null;
-    const key=active?{route:active.dataset.dmRoute,surface:active.dataset.dmSurface,view:active.dataset.dmView,
-      manage:active.dataset.moduleManage,text:active.textContent,primary:active.dataset.moduleManage||dmRoutePrimary(active.dataset.dmRoute)}:null;
-    root.innerHTML=html;
-    if(key){
-      const target=[...root.querySelectorAll('[data-dm-route],[data-module-manage]')].find(b=>
-        key.route?b.dataset.dmRoute===key.route&&b.dataset.dmSurface===key.surface&&b.dataset.dmView===key.view:
-          b.dataset.moduleManage===key.manage&&b.textContent===key.text)
-        ||(key.primary?root.querySelector('[data-dm-card="'+CSS.escape(key.primary)+'"] .dm-cta'):null);
-      if(target) target.focus({preventScroll:true});
-    }
+  const root=document.getElementById('dashMacroGrid'); if(!root) return;
+  const index=document.querySelector('#dashMacro .cp-panorama-index');
+  const active=document.activeElement;
+  const key=root.contains(active)?{route:active.dataset.dmRoute,surface:active.dataset.dmSurface,view:active.dataset.dmView}:null;
+  const indexHref=index?.contains(active)?active.getAttribute('href'):null;
+  const modules=DM_MODULES.filter(module=>window.JPWModuleAvailability?.canAccess(module.id)!==false);
+  const html=modules.map(module=>{
+    const result=dmSafe(module.read);
+    return dmCard(module.id,module.label,result.html,module.route,module.cta,result.tom);
+  }).join('')||'<p class="dm-note" role="status">Nenhum módulo disponível no panorama. Consulte a disponibilidade em Configurações.</p>';
+  if(root.innerHTML!==html) root.innerHTML=html;
+  if(index){
+    const links=modules.map(module=>'<a href="#dm-title-'+module.id+'">'+esc(DM_AREAS[module.id][1])+'</a>').join('');
+    if(index.innerHTML!==links) index.innerHTML=links;
+    index.hidden=modules.length===0;
+  }
+  // O destino removido não pode deixar foco no body ou em uma âncora órfã.
+  if((key||indexHref)&&(!active.isConnected||active.closest('[hidden]'))){
+    const target=key?[...root.querySelectorAll('[data-dm-route]')].find(button=>
+      button.dataset.dmRoute===key.route&&button.dataset.dmSurface===key.surface&&button.dataset.dmView===key.view):
+      [...(index?.querySelectorAll('a')||[])].find(link=>link.getAttribute('href')===indexHref);
+    const fallback=document.getElementById('dashMacroTitle')||root;
+    if(!fallback.hasAttribute('tabindex'))fallback.tabIndex=-1;
+    (target||fallback).focus({preventScroll:true});
   }
   const date=document.getElementById('dmToday');
   if(date) date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
-
 }
 
 function initDashMacro(){

@@ -50,6 +50,12 @@ Na revisão integrada `8d6b156da6b22f3119471ca2a2c7f1a3524554b1`, a navegação 
 
 ### Capacidades funcionais
 
+Candidate local de navegação, leitura normativa e clareza Forex: o Dashboard omite módulos congelados antes de consultar seus dados; Research apresenta Forex, Ações, Stocks e REITs. Forex usa Visão geral, Contas e Períodos, Operação, Histórico, Contabilidade, Planejamento e Reservas. Consultar outra conta não troca o contexto operacional; Aplicar continua explícito. Ordens têm tabela compacta e detalhes editáveis, com auditoria completa separada e somente de leitura.
+
+O candidate local **Operação como Execution Board** substitui a tabela compacta por uma grade contínua com campos e diagnósticos em colunas, além de Matriz, Raiz N e Motor no mesmo contexto. Prévia não salva fica separada do risco confirmado. O Motor distingue referência sobre SI de teto corrente sobre min(SI,equity), sem autorizar ou preencher lotes. Contrato, focais e limitações: [Execution Board](docs/architecture/FOREX-EXECUTION-BOARD.md#operação-como-planilha--candidate-2026-10-01); executar `python3 tools/forex_execution_workbook_test.py --out /tmp/jpw-execution-workbook-check --native-zoom` e `python3 tools/forex_lot_references_test.py` junto das regressões e gates existentes.
+
+Ferramentas e Serviços → **Estrutura Normativa JP Wealth** abre o Estatuto V11 original com verificação de tamanho/SHA-256, páginas, busca, texto selecionável e download. Ler não registra aceite. O PDF.js e o documento são locais; o gerador inclui os bytes canônicos no portátil e no suporte a `file://`. Contratos: [leitor](docs/architecture/NORMATIVE-READER.md), [Forex](docs/architecture/FOREX-EXPERIENCE.md) e [navegação](docs/architecture/NAVIGATION-HIERARCHY.md).
+
 - **Dashboard** — visão consolidada dos módulos, inclusive o resumo de Forex; a seção inferior **Sistema e atalhos** reúne somente **Status do Sistema** e **Ações rápidas**, com personalização aplicável e layout persistido separadamente do estado financeiro. O calendário operacional fica em **Forex → Visão Geral**, junto dos demais componentes operacionais realocados; a agenda completa permanece em **Research → Forex → Calendário**. O feed de notícias de alto impacto usa calendário econômico público via `infra/ff-news-feed` (dados servidos com CORS por repositório auxiliar; nenhum dado do operador sai da máquina). A distribuição dos componentes e suas fontes está no [mapa de contexto](docs/governance/CONTEXT-MAP.md).
 - **Contas** — cadastro e acompanhamento de contas com credenciais de leitura; a senha de investidor vive **apenas em memória de sessão**, nunca em `localStorage`, checkpoint ou backup.
 - **Execução** — registro factual auditável separado da elegibilidade V11; motor central versionado com seis fases, risco/VRM e estados não calculáveis explícitos. A homologação normativa e as lacunas continuam pendentes (ver [contrato do motor](docs/architecture/FOREX-V11-ENGINE.md)).
@@ -81,7 +87,7 @@ operacionais** do usuário.
 
 ### Laboratório de Probabilidade — Galton Board
 
-Em `Research → Laboratório de Probabilidade → Galton Board`, uma placa física
+Em `Configurações → Conhecimento → Laboratório de Probabilidade`, uma placa física
 2D permite observar como um histograma empírico emerge de colisões reais. O motor
 Planck.js 1.5.0 está vendorizado localmente; a simulação usa passo fixo de `1/120 s`,
 seed determinística, pinos triangulares, `linhas + 1` compartimentos, controles de
@@ -248,8 +254,7 @@ e contexto final não capturado ficam fora da projeção, sem preenchimento fict
 Lucro Técnico, alavancagem, DD/fase e risco/clearance permanecem pendentes nos
 conflitos registrados; saldo book não é equity flutuante, base de retorno não é
 saldo final, e cadastro atual não preenche histórico ausente.
-Research possui destino próprio para o Laboratório de Probabilidade, cujo jogo
-atual é Galton Board. Ao trocar subdestino/módulo ou cobrir o Lab com Configurações,
+Naquela revisão histórica, Research possuía destino para o Laboratório de Probabilidade. A localização atual é Configurações → Conhecimento. Ao sair da folha ou cobrir o Lab com um subdiálogo,
 a mesma simulação fica pausada em memória; voltar exige **Continuar**. Recarregar
 não recupera a simulação, somente as preferências persistidas. Contrato e limites em
 [CHG-PRODUCT-IMPROVEMENTS-20260911](docs/work/CHG-PRODUCT-IMPROVEMENTS-20260911.md).
@@ -284,3 +289,9 @@ Configurações → Dados e Segurança → Backup e Recuperação explica a base
 ### Comunicação in-app reconciliada
 
 O sino reúne as condições existentes dos módulos sem substituir seus avisos ou bloqueios. Backup usa o mesmo estado canônico do Dashboard/Configurações, inclusive data inválida e UNKNOWN. Leitura/histórico da central são transitórios; ler um item não resolve sua causa. Notas mantém posição auxiliar persistente e janela própria. [Contrato da central](docs/architecture/NOTIFICATION-CENTER.md).
+
+## Integração autorizada de 2026-10-02
+
+O site e o Execution Board mais recentes foram combinados com os fontes **JPW GENETRIX 1.18.0**, incluindo os módulos 1.17.0 e Histórico Pessoal. A distribuição permanece somente de fontes; compilação, EX5 e execução nativa seguem `NOT_RUN`. O Supervisor separado permanece `OBSERVE` por padrão e tem execução restrita a demonstração hedging explicitamente armada; esta integração não o instala nem o arma.
+
+Os achados financeiros de fronteira DD/fase da auditoria de 2026-10-02 permanecem abertos. Commit, merge e push preservam o trabalho autorizado, sem significar aprovação financeira, aceite operacional ou publicação. Recibo e reversão: [integração](docs/work/INTEGRATION-20261002.md).

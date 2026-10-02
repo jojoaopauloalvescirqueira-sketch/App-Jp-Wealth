@@ -17,7 +17,8 @@ normativo de backup existente e usado como esta — nenhum backup paralelo.
 Fixture: tools/fixtures/personal_finance_v1.json (100% sintetica).
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

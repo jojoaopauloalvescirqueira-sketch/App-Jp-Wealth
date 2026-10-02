@@ -8,7 +8,7 @@ are supporting evidence, never the pass criterion. No live economic API is used.
 import argparse
 from functools import partial
 import hashlib
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
 import json
 from pathlib import Path
 import threading
@@ -17,6 +17,7 @@ import traceback
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap, assert_fixture_requests
 from notes_launcher_test import launch_options, settle
+from forex_execution_table_test import Server
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,6 +49,16 @@ SEED = r"""() => {
   const selected=JPWForex.state.selectOperationalContext('eb_A','period_A');
   if(!selected.ok)throw Error('Synthetic exact context refused: '+JSON.stringify(selected));
   window.__ebPeriod=()=>S.forex.accountContexts.accounts.eb_A.periods.period_A;
+  // Approved synthetic presentation preparation: anonymous zero allocations
+  // are omitted by the UI. Keep numeric inputs unchanged and create explicit
+  // version-zero drafts through the existing writer before counting task writes.
+  __ebPeriod().phases.forEach(p=>{
+    if(p.orders.length!==1||p.orders[0].id||p.orders[0].par||p.orders[0].orderId||p.orders[0].recordStatus||p.orders[0].status||
+       p.orders[0].lote!==0||p.orders[0].entry!==0||p.orders[0].sl!==0||p.orders[0].tp!==0||p.orders[0].result!==null)
+      throw Error('Synthetic setup expected anonymous zero slot');
+    p.orders=[];
+  });
+  for(let pi=0;pi<6;pi++){const draft=operationAddDraft(pi);if(!draft.ok)throw Error(JSON.stringify(draft));}
   if(save()!==true)throw Error('Synthetic fixture persistence refused');
   sessionEpochCurrent();markSessionCheckpoint();
   const originalSave=save,nativeSet=Storage.prototype.setItem,nativeGet=Storage.prototype.getItem;
@@ -368,7 +379,8 @@ def navigation(choice):
 
 
 def phase_geometry(page, obs, directory):
-    assert page.locator("#phaseContainer .phase[data-phase]").count() == 6
+    assert page.locator("#phaseContainer .eb-phase-row[data-phase]").count() == 6
+    assert page.locator("#phaseContainer details[data-phase]").count() == 0
     before = snapshot(page)
     measured = []
     for width, theme in [(1440, "light"), (1440, "dark"), (768, "light"), (720, "light"), (390, "light"), (390, "dark")]:
@@ -394,7 +406,7 @@ def phase_geometry(page, obs, directory):
         assert view["board"]["height"] <= (140 if view["width"] == 1440 else 240), "Board heading regained excess whitespace: " + str(view)
     assert_pristine(page, before)
     page.evaluate("window.__six=structuredClone(__ebPeriod().phases);__ebPeriod().phases=structuredClone(__ebPeriod().phases.slice(0,4));__ebPeriod().phases.forEach((p,i)=>{p.policyVersion='LEGACY_UNRESOLVED';p.title='LEGACY '+i});window.__legacy=JSON.stringify(__ebPeriod().phases);renderPhases();JPWForex.executionBoardUI.render()")
-    assert page.locator("#phaseContainer .phase[data-phase]").count() == 4
+    assert page.locator("#phaseContainer .eb-phase-row[data-phase]").count() == 4
     assert "LEGACY" in page.locator("#phaseContainer").inner_text()
     assert page.evaluate("JSON.stringify(__ebPeriod().phases)===__legacy"), "Rendering reinterpreted legacy grades"
     obs.update(measured=measured, legacyPreserved=True)
@@ -409,7 +421,9 @@ def main():
     ap.add_argument("--portable", action="store_true")
     args = ap.parse_args();root = args.root.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
-    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(Quiet, directory=str(root)))
+    # Approved disposable transport setup: the existing asset Server accepts
+    # the browser's bootstrap burst. Network fixtures and all oracles stay fixed.
+    server = Server(("127.0.0.1", 0), partial(Quiet, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     target = "dist/JP_Wealth_Risk_Terminal_V9.1_PORTABLE.html" if args.portable else "index.html"
     report = {"suite": "forex-execution-board", "root": str(root), "target": target,

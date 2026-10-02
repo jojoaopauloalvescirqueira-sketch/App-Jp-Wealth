@@ -6,7 +6,8 @@ inválido ou migração que lança) NUNCA é sobrescrito automaticamente. O app 
 base provisória, bloqueia gravações, preserva cópia bruta e exige decisão explícita
 (download / importação validada / base vazia) — nas versões modular e portátil.
 """
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json, os, socket, tempfile, threading
 from playwright.sync_api import sync_playwright

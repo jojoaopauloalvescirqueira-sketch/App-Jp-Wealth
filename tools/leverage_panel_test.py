@@ -7,6 +7,7 @@ chart rendering, template persistence or clicks in MetaTrader.
 
 from pathlib import Path
 from leverage_source import expanded_source
+import json
 import re
 
 
@@ -116,18 +117,22 @@ def check_account_identity_guard(source: str, render: str) -> None:
 
 
 def check_narrow_chart(hud: str) -> None:
-    require('const int available=chart_width-16-2*pad;' in hud and
+    require('JPWPanelHUDReservedWidth(chart_width,font_height,pad,button_width)' in hud and
+            'const int available=width-2*pad;' in hud and
             'TextGetSize(shown[i],measured,text_height)' in hud,
-            'available width must be measured against actual chart bounds')
-    require('compact_title[i]+": "+metric.value+" · "+JPWCockpitQualityText(metric.quality)' in hud and
+            'content must be measured against reserved HUD geometry')
+    require('compact_title[i]+": "+metric.value+" · "+JPWGenetrixMetricQuality(i,metric.quality)' in hud and
             'observer_missing ? "Risk: N/A · Check Observer"' in hud and
-            'active=-1; break;' in hud and 'if(summary)' in hud,
-            'overflow must shorten the title first, then use one complete summary')
-    require('if(active==0)' in hud and 'Open Cockpit' in hud,
+            'shown[i]=compact_title[i]+": Cockpit";' in hud and
+            'const bool summary=(visible>0 &&' in hud and 'if(summary)' in hud and
+            'active=-1' not in hud and 'max_text' not in hud,
+            'overflow must keep geometry stable, preserve a named Cockpit route and never cut a value')
+    require('if(visible==0)' in hud and 'Open Cockpit' in hud,
             'all-hidden configuration must retain a visible cockpit launcher')
-    require('const int header_safe=((int)text_height*3+10>44 ? (int)text_height*3+10 : 44);' in hud and
+    require('const int font_height=(int)text_height;' in hud and
+            'const int header_safe=(font_height*3+10>44 ? font_height*3+10 : 44);' in hud and
             'const int inset_y=(!lower && InpOffsetY<header_safe ? header_safe : InpOffsetY);' in hud,
-            'upper HUD must start below the native instrument heading')
+            'upper HUD must use stable text height below the native instrument heading')
     require('JPWPanelHUD(' in hud and 'const int height=active*row_height+button_height+3*pad;' in hud,
             'all four corners must fit the complete block including its button')
 
@@ -148,8 +153,9 @@ def check_six_labels_and_lifecycle(source: str, render: str) -> None:
     require('g_dd_line' not in hud and 'JPWMDDObserve' not in hud,
             'DD/MDD must remain off HUD and independent from visibility')
     require('TextGetSize("Mg",measured,text_height)' in hud and
-            'const int row_height=(int)text_height+gap;' in hud,
-            'HUD spacing must use measured text height')
+            'const int font_height=(int)text_height;' in hud and
+            'const int row_height=font_height+gap;' in hud,
+            'HUD spacing must retain the initial measured text height across value measurements')
     require('OBJPROP_CORNER,CORNER_LEFT_UPPER' in hud and
             'OBJPROP_ANCHOR,ANCHOR_LEFT_UPPER' in hud and
             'OBJ_RECTANGLE_LABEL' in hud and 'OBJPROP_BGCOLOR,surface' in hud,
@@ -220,7 +226,8 @@ def check_live_sample_invalidation(source: str) -> None:
 def check_cockpit_navigation(source: str) -> None:
     cockpit = body_of(source, 'void JPWRenderCockpit()')
     event = body_of(source, 'void JPWHandleChartEvent(')
-    require('JPWPanelCockpit(chart_width,chart_height,760,620,g_details_rect)' in cockpit and
+    size = re.search(r'JPWPanelCockpit\(chart_width,chart_height,(\d+),(\d+),g_details_rect\)', cockpit)
+    require(size is not None and int(size[1]) >= 1000 and int(size[2]) >= 700 and
             'if(g_details_rect.height<min_structure || inner<110)' in cockpit and
             'JPWRaizCreateButton(37,"×"' in cockpit and
             'Amplie o gráfico para ver o cockpit' in cockpit,
@@ -229,18 +236,30 @@ def check_cockpit_navigation(source: str) -> None:
             'g_raiz_tab==11 || g_raiz_tab==14 ? "Stops"' in cockpit and
             'g_raiz_tab==12 ? "Raiz N"' in cockpit and
             'g_raiz_tab==10 ? "Ajustes"' in cockpit and
-            'JPWRaizCreateButton(40+i' in cockpit,
-            'cockpit must expose Visão geral, Stops, Raiz N, Sistema and Ajustes')
+            'JPWRaizCreateButton(tab_actions[i]' in cockpit and
+            'const string tabs[6]' in cockpit and 'Histórico Pessoal' in cockpit and
+            'const int tab_actions[6]={40,41,42' in cockpit and '43,44,120' in cockpit,
+            'cockpit must retain all five existing tabs and add Histórico Pessoal with stable actions')
     require('if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=7)' in event and
             'if(!JPWDetailsContextCurrent()) return;' in event and
             'lparam==37 || lparam==39' in event and
-            'lparam>=49 && lparam<=54' in event,
+            'lparam>=49 && lparam<=55' in event,
             'keyboard navigation must be scoped to current-account cockpit pages')
+    require(all(token in event for token in ('"CARD_BG_"+IntegerToString(i)',
+            '"CARD_"+IntegerToString(i)+"_VALUE"',
+            '"CARD_"+IntegerToString(i)+"_QUALITY"',
+            '"CARD_"+IntegerToString(i)+"_REASON"')),
+            'clicking a card body, value, quality or reason must open its metric detail')
 
 
 def check_defaults_and_status_source(source: str) -> None:
-    require(re.search(r'#property version\s+"1\.101"', source) and '#define JPW_PRODUCT_MQL_VERSION "1.101"' in source, "MQL version must match central 1.101 metadata")
-    require('"JPW Cockpit "+JPW_PRODUCT_VERSION' in source and '#define JPW_PRODUCT_VERSION "1.10.1"' in source, "short name must identify central 1.10.1 metadata")
+    manifest_version = json.loads((ROOT / "downloads/jpw-alavancagem-atual/manifest.json").read_text())['version']
+    require(re.search(r'#property version\s+JPW_PRODUCT_MQL_VERSION\b', source) and
+            re.search(r'#define JPW_PRODUCT_MQL_VERSION "[0-9]+\.[0-9]+"', source),
+            "MQL property must use central version metadata")
+    require('JPW_PRODUCT_NAME+" · Cockpit "+JPW_PRODUCT_VERSION' in source and
+            f'#define JPW_PRODUCT_VERSION "{manifest_version}"' in source,
+            "short name and central version must match the package manifest")
     require("input int InpFontSize=8;" in source and "input int InpOffsetX=16;" in source and
             "input int InpOffsetY=40;" in source,
             "compact default size or placement changed")

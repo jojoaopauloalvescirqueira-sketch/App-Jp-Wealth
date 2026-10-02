@@ -85,11 +85,44 @@ def ready(page):
     page.wait_for_function("typeof S==='object' && !!S && typeof render==='function' && typeof $==='function' && !!JPWForex?.executionBoardUI")
     settle(page)
 
-def table(page): return page.locator('#ebPhase-0 .eb-table-scroll:has(.eb-order-table)')
+def table(page): return page.locator('#ebOrderScroll')
+
+def select_tool(page, name):
+    page.locator(f'[data-eb-tool="{name}"]').click()
+    settle(page)
+
+def prepare_drafts(page):
+    """Synthetic layout setup authorized separately from the financial fixtures.
+
+    The product keeps preallocated anonymous slots but omits them from the UI.
+    Remove only those zero-value slots in this disposable scenario, then create
+    explicit version-zero drafts with the actual Add buttons. Existing numeric
+    expectations and all canonical network fixtures remain unchanged.
+    """
+    if not page.locator('#ebOrderScroll').count():
+        return 'Archived layout: anonymous slots remain visible'
+    assert page.locator('.eb-order-row').count()==0, 'Anonymous initial slots must not appear as recorded orders'
+    page.evaluate("""() => {
+      const scope=JPWForex.state.operationalSelection();
+      const phases=S.forex.accountContexts.accounts[scope.accountId].periods[scope.periodId].phases;
+      const anonymous=o=>!o.id&&!o.par&&!o.brokerHash&&!o.orderId&&!o.recordStatus&&!o.status&&
+        o.lote===0&&o.entry===0&&o.sl===0&&o.tp===0&&o.result===null;
+      if(!phases.every(p=>p.orders.length===1&&anonymous(p.orders[0])))
+        throw Error('Synthetic setup expected only untouched anonymous zero slots');
+      phases.forEach(p=>{p.orders=[]});
+      if(save()!==true)throw Error('Synthetic empty layout setup could not be persisted');
+      renderPhases();
+    }""")
+    for pi in range(6):
+        page.locator(f'[data-addorder="{pi}"]').click()
+        settle(page)
+        assert page.locator(f'[data-eb-row="{pi}:0"]').is_visible(), (pi, 'Explicit UI-created draft is unavailable')
+    return 'Synthetic layout setup: anonymous zero slots removed; six explicit UI-created drafts; financial values unchanged'
 
 def run(page, artifacts, results, skip_matrix=False):
     scope=page.evaluate(SEED);settle(page)
     assert page.locator('#executionBoard').is_visible()
+    results.append(prepare_drafts(page))
     before=persisted(page)
     summary=page.locator('#executionBoardRisk').inner_text()
     values=dict(id='INTERNAL-001',par='EURUSD',tipo='BUY',role='GENESIS',lote='0.2',entry='1.2',sl='1.17',tp='1.26',
@@ -141,6 +174,7 @@ def run(page, artifacts, results, skip_matrix=False):
     assert page.evaluate("JPWNavigation.navigate('forex-operation')")
     results.append('PASS: entry-stop ATR preview without persistence/totals, cancel, real draft guard and independent History')
 
+    select_tool(page,'rootn')
     page.locator('#ebInstrumentSelect').select_option('EURUSD')
     page.locator('[data-eb-diagnostics]').click()
     for key in ['oneWeekN','oneWeekF','twoWeeksN','twoWeeksF']:
@@ -170,6 +204,7 @@ def run(page, artifacts, results, skip_matrix=False):
     assert order(page)['brokerHash']==HASH
     assert page.evaluate("JPWForex.state.executionDiagnostics({...JPWForex.state.operationalSelection(),instrumentId:'EURUSD'}).value.oneWeek.n")==25
     assert page.evaluate("JPWForex.state.executionDiagnostics({...JPWForex.state.operationalSelection(),instrumentId:'EURUSD'}).value.twoWeeks===null")
+    select_tool(page,'rootn')
     page.locator('#ebInstrumentSelect').select_option('EURUSD')
     page.locator('[data-eb-diagnostics]').click()
     assert page.locator('#ebDiagnosticForm [name="oneWeekF"]').input_value()=='1.5'
@@ -186,12 +221,15 @@ def run(page, artifacts, results, skip_matrix=False):
     # Real key events preserve focus order and do not implicitly commit a draft.
     before=persisted(page)
     field(page,'id').focus()
-    for key in ['brokerHash','par','tipo','role']:
+    for key in ['par','tipo','role']:
         page.keyboard.press('Tab')
         assert page.evaluate('document.activeElement.dataset.f')==key
         assert page.evaluate("document.activeElement.matches(':focus-visible')&&!document.activeElement.closest('[hidden],[inert]')")
     page.keyboard.press('Shift+Tab')
     assert page.evaluate('document.activeElement.dataset.f')=='tipo'
+    page.locator('[data-eb-open-detail="0:0"]').click()
+    page.keyboard.press('Tab')
+    assert page.evaluate("document.activeElement.dataset.f==='brokerHash'&&document.activeElement.matches(':focus-visible')")
     field(page,'sl').focus();page.keyboard.press('ControlOrMeta+A');page.keyboard.type('1.169');page.keyboard.press('Tab')
     assert field(page,'sl').input_value()=='1.169' and persisted(page)==before
     details=page.locator('[data-eb-detail="0:0"]')
@@ -232,35 +270,41 @@ def run(page, artifacts, results, skip_matrix=False):
         results.append('NOT_RUN: viewport matrix omitted explicitly; prior matrix receipt is separate')
         return
 
-    # Each viewport retains a real table, with internal horizontal scrolling.
-    # Position is checked after a horizontal movement, not inferred from CSS alone.
+    # The continuous workbook and mobile list use the same controls. The full
+    # confirmed audit remains a read-only table with contained horizontal scroll.
     page.evaluate("() => {for(let n=0;n<7;n++){const r=operationAddDraft(0);if(!r.ok)throw Error(r.error);}render();renderPhases();}")
     if page.locator('#dgBannerClose').is_visible():page.locator('#dgBannerClose').click()
     before=persisted(page)
     for width in [1440,1280,1024,900,768,390,320]:
         page.set_viewport_size({'width':width,'height':1000 if width>900 else 844})
         for theme in ['light','dark']:
-            page.evaluate("t=>{document.documentElement.dataset.theme=t;document.getElementById('ebPhase-0').open=true;}",theme)
+            page.evaluate("t=>{document.documentElement.dataset.theme=t;}",theme)
             settle(page)
             assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'), (width,theme,'document overflow')
             geometry=table(page).evaluate('''e=>{
               const row=e.querySelector('.eb-order-row'),head=e.querySelector('thead tr:last-child th');
-              e.scrollTop=0;e.scrollLeft=350;
-              const headTop=head.getBoundingClientRect().top;e.scrollTop=110;
-              return {vertical:e.scrollTop>0,headerMovement:Math.abs(head.getBoundingClientRect().top-headTop),overflow:e.scrollWidth>e.clientWidth,kind:getComputedStyle(row).display,
+              return {overflow:e.scrollWidth>e.clientWidth,kind:getComputedStyle(row).display,
                 cells:[...row.children].map(c=>getComputedStyle(c).display),
+                width:e.clientWidth,columns:e.querySelectorAll('tr.eb-column-labels th').length,headerDisplay:getComputedStyle(e.querySelector('thead')).display,
                 head:getComputedStyle(head).position,id:getComputedStyle(row.firstElementChild).position,
-                second:getComputedStyle(row.children[1]).position,
-                edge:Math.abs(row.firstElementChild.getBoundingClientRect().left-e.getBoundingClientRect().left)};
+                second:getComputedStyle(row.children[1]).position};
             }''')
-            assert geometry['overflow'] and geometry['kind']=='table-row', (width,theme,geometry)
-            assert set(geometry['cells'])=={'table-cell'}, (width,theme,geometry)
-            assert geometry['vertical'] and geometry['headerMovement']<3 and geometry['head']=='sticky' and geometry['id']=='sticky' and geometry['edge']<3, (width,theme,geometry)
-            if width<=767:assert geometry['second']=='static', (width,theme,geometry)
+            assert geometry['columns']==20, (width,theme,geometry)
+            if geometry['width']>=768:
+                assert geometry['overflow'] and geometry['id']=='sticky' and geometry['second']=='sticky', (width,theme,geometry)
+                assert geometry['kind']=='table-row' and set(geometry['cells'])=={'table-cell'} and geometry['head']=='sticky', (width,theme,geometry)
+            else:
+                assert not geometry['overflow'] and geometry['id']=='static' and geometry['second']=='static', (width,theme,geometry)
+                assert geometry['kind']=='grid' and set(geometry['cells'])<={'block','flex'} and geometry['headerDisplay']=='none', (width,theme,geometry)
+            audit=page.locator('.eb-full-audit');audit.evaluate('e=>e.open=true')
+            assert audit.locator('thead th').count()==25 and audit.locator('input,select').count()==0
+            assert HASH in audit.inner_text()
+            assert audit.locator('.eb-table-scroll').evaluate('e=>{e.scrollLeft=350;return e.scrollWidth>e.clientWidth&&e.scrollLeft>0}')
+            audit.evaluate('e=>e.open=false')
             page.locator('#ebPhase-0').scroll_into_view_if_needed();settle(page)
             page.screenshot(path=str(artifacts/f'table-{width}-{theme}.png'))
     assert persisted(page)==before, 'Resize/theme/scroll changed confirmed financial state'
-    results.append('PASS: 1440/1280/1024/900/768/390/320, two themes, table cells, contained overflow and actual sticky headers/ID')
+    results.append('PASS: 1440/1280/1024/900/768/390/320, two themes, continuous workbook/mobile list, unique controls and complete read-only audit with contained scrolling')
 
 def native_zoom(pw, url, artifacts, results):
     profile=Path(tempfile.mkdtemp(prefix='execution-native-200-',dir=artifacts))
@@ -273,15 +317,16 @@ def native_zoom(pw, url, artifacts, results):
         context.add_init_script('window.__onbShown=true;');install_bootstrap(context)
         page=context.pages[0] if context.pages else context.new_page();page.on('pageerror',lambda error:errors.append(str(error)))
         page.bring_to_front()
-        page.goto(url);ready(page);page.evaluate(SEED);settle(page)
+        page.goto(url);ready(page);page.evaluate(SEED);settle(page);prepare_drafts(page)
         page.wait_for_function("document.visibilityState==='visible'")
         assert page.locator('#executionBoard').is_visible()
         ratio=page.evaluate('({outer:outerWidth,inner:innerWidth,css:getComputedStyle(document.documentElement).zoom})')
         assert abs(ratio['outer']/ratio['inner']-2)<.01 and ratio['css']=='1', ('Native 200% not established',ratio)
-        page.locator('#ebPhase-0').evaluate('e=>e.open=true')
         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
-        assert table(page).evaluate("e=>e.scrollWidth>e.clientWidth&&getComputedStyle(e.querySelector('.eb-order-row')).display==='table-row'")
+        assert table(page).evaluate("e=>e.clientWidth<768&&e.scrollWidth<=e.clientWidth+1&&getComputedStyle(e.querySelector('.eb-order-row')).display==='grid'")
         field(page,'id').focus();page.keyboard.press('Tab')
+        assert page.evaluate("document.activeElement.dataset.f==='par'&&document.activeElement.matches(':focus-visible')")
+        page.locator('[data-eb-open-detail="0:0"]').click();page.keyboard.press('Tab')
         assert page.evaluate("document.activeElement.dataset.f==='brokerHash'&&document.activeElement.matches(':focus-visible')")
         page.locator('#ebPhase-0').scroll_into_view_if_needed();settle(page)
         cdp=context.new_cdp_session(page)
@@ -290,7 +335,7 @@ def native_zoom(pw, url, artifacts, results):
         (artifacts/'board-native-200.png').write_bytes(base64.b64decode(cdp.send('Page.captureScreenshot',{'format':'png','fromSurface':False,'captureBeyondViewport':False})['data']))
         assert not errors,errors
         assert_fixture_requests(context)
-        results.append('PASS: native browser 200% zoom (outer/inner=2; CSS zoom=1), table/overflow/focus and dedicated screenshots')
+        results.append('PASS: native browser 200% zoom (outer/inner=2; CSS zoom=1), compact table/cards without overflow, focus and dedicated screenshots')
     finally:
         context.close()
 

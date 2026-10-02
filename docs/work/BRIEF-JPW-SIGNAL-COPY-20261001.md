@@ -1,0 +1,13 @@
+# Brief — JPW Signal Copy 1.14.0
+
+O JPW Cockpit observa e explica parametros de conta, sem negociar. Este delta prepara uma mensagem local por posicao/pendente selecionada, para conferencia e colagem manual. N3/A4 autorizado pelo plano vigente; sem commit, publicacao, instalacao operacional ou envio a grupos.
+
+Base verificada: 1.13.0, 59/59 fontes e fingerprint 3c3a961a4c40d9eee33d02acd86761a65eee1a1c1e7cac56bdfba6e243c06410. 87 mudancas anteriores preservadas; snapshot integral de 581 arquivos em outputs/jpw-signal-copy-v1140-20261001. O gate anterior teve 57 PASS/0 PRODUCT_FAIL; pagina focal historica PRODUCT_FAIL preservada, native NOT_RUN. A aprovacao de fonte nao implica EX5 instalado.
+
+Antes: tabela Stops depende do EA e nao coleta TP; Raiz N ligada ao simbolo do grafico. Depois: coletor separado somente leitura, com TP/digest completo, papeis de mensagem transitorios, metricas do simbolo selecionado, preview congelada e revalidada. Nucleo novo reutiliza nocional/equity, percentuais e Raiz N atuais. Cenarios hipoteticos mantem equity/cotacoes fixos, apenas volume corrente da pendente escolhida; hedging bruto, netting assinado. Dados completos Estimated permitidos; SL, alavancagem, Raiz N 1W/2W e flutuante obrigatorios. Sem TP e estado explicito.
+
+Fontes lidas: AGENTS raiz/local; README; CONTEXT-MAP; QUALITY-GATES; normativa README; nucleos Core/Genesis/RaizN e adaptador StopRisk; skills preflight/change-control/design/post-change-audit. Harness canônico localizado em 2 - TRABALHO/5C - SOFTWARE/A0 - HARNESS - JP Wealth MASTER SPECIFICATION.md, SHA256 b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95, §§12–14/19/31.4. Formula informativa mantida conforme guia local; nao reinterpretar alavancagem estatutaria sobre SI. A regra da nova simulacao deriva exclusivamente da aprovacao humana deste plano.
+
+Consumidores: indicador/controller → coletor/metrics → bundle tipado → formatter → UI/arquivo por clique. Registros MDD/Genesis/USC/RaizN e diagnosticos financeiros nao sao escritos. Sem DLL, rede, trading, novo calendario ou cenario historico. Redraw reusa bundle e nao coleta nem salva. Raiz N selecionada tem handle/cache/F/contexto proprios.
+
+Teste: sinteticos do mesmo codigo, fluxo de falhas/revalidacao, posicao vs pendente, TP alterado, volume parcial, grupos, netting, USC e simbolo diverso; focais pacote/pagina/UI, suite MT5 existente sem modificar o juiz, full bruto e auditoria independente. Windows/Wine Ctrl+C, compilacao e MT5 isolado ficam NOT_RUN se ambiente ausente, nunca aprovados por TXT ou shim. Rollback restaura somente delta e preserva registros e exports locais do usuario.
