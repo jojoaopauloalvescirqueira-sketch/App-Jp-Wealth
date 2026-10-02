@@ -90,10 +90,10 @@ Este pacote contém **fontes**. Confira no site a versão, o SHA-256 e os estado
 separados de teste matemático, compilação e execução no MT5. Um download
 compilado só é oferecido quando existem `.ex5` reais; compilação não equivale
 à validação da leitura da corretora. Resultados das versões anteriores não
-validam automaticamente os fontes da versão 1.16.1. Não há `.ex5` desta revisão
+validam automaticamente os fontes da versão 1.18.0. Não há `.ex5` desta revisão
 para distribuição sem compilação nativa comprovada dos fontes exatos.
-**1.16.1 identifica o pacote e a identidade de execução do Cockpit/observador
-recompilados desta fonte.** O cabeçalho compartilhado usa MQL `1.170`;
+**1.18.0 identifica o pacote e a identidade de execução do Cockpit/observador
+recompilados desta fonte.** O cabeçalho compartilhado usa MQL `1.180`;
 o componente NoCuda desta revisão declara `1.30`. Confira também o
 fingerprint do pacote; o número da versão não comprova qual EX5
 está instalado no terminal.
@@ -455,7 +455,7 @@ ainda não consistente, não interprete o número anterior como leitura atual.
 Nos percentuais, zero verdadeiro aparece como `0,00%`; um valor não nulo abaixo
 de 0,01% recebe a indicação `<0,01%`, com sinal positivo no flutuante positivo.
 
-**Resultado esperado:** seis linhas pequenas e cinzas por padrão, com estado
+**Resultado esperado:** sete linhas pequenas e cinzas por padrão, com estado
 por métrica, sem encobrir o cabeçalho do instrumento. O **Cockpit** abre uma
 janela temporária para consulta e configuração; nenhuma de suas páginas ocupa
 o gráfico permanentemente.
@@ -669,8 +669,8 @@ histórico incompleto não significa captura concluída.
 ### Abra o Cockpit para se aprofundar
 
 O botão **Genetrix** abre uma janela **centralizada e temporária**. A primeira
-visão reúne seis cartões: Leverage, Floating P/L, Genesis SL, as duas
-distâncias Raiz N e Stop risk. Cada cartão mostra valor, `Current`, `Estimated` ou
+visão reúne sete cartões: Leverage, Floating P/L, Genesis SL, as duas
+distâncias Raiz N, Stop risk e Floating comp.. Cada cartão mostra valor, `Current`, `Estimated` ou
 `N/A` e um motivo curto. Clique num cartão, ou na respectiva linha do gráfico,
 para examinar fórmula, insumos, origem, horário, limites e motivo do estado.
 Nesta revisão, a janela solicita até 1040 × 760 px e permanece centralizada
@@ -855,10 +855,10 @@ a identificar este produto; registros anteriores não são reescritos.
 
 ### Personalize apenas o que aparece no gráfico
 
-Em **Cockpit → Ajustes**, escolha separadamente quais das seis métricas
+Em **Cockpit → Ajustes**, escolha separadamente quais das sete métricas
 aparecem no bloco do gráfico, o canto e a densidade compacta ou normal. A
 prévia reage aos cliques; **Aplicar** confirma, **Cancelar** descarta o rascunho
-e **Restaurar padrão** volta às seis métricas visíveis. Mesmo com todas
+e **Restaurar padrão** volta às sete métricas visíveis. Mesmo com todas
 ocultas, o botão **Genetrix** continua acessível. A cor e o tamanho da fonte
 continuam nas **Entradas** do indicador.
 
@@ -893,7 +893,7 @@ esse recibo, não a considere uma capacidade comprovada.
 
 O script **somente lê** o registro desta instalação e da conta atual. Ele não
 recalcula DD, não grava o registro ou perfil, não envia ordens e não altera as
-seis linhas do indicador. O **Cockpit** mostra DD/saldo atual ou estimado e o
+sete linhas do indicador. O **Cockpit** mostra DD/saldo atual ou estimado e o
 registro MDD quando legível; a caixa do script também mostra o maior valor **observado e registrado** em amostras atuais
 válidas. O registro guarda a amostra vencedora, não uma série temporal. A
 consulta não recupera períodos em que o indicador esteve desligado e não
@@ -907,7 +907,7 @@ apaga necessariamente o arquivo de log do MT5.
 
 ### Aparência, atualização e remoção
 
-O padrão é **cinza #767676**, fonte 8 e seis leituras no bloco com fundo de
+O padrão é **cinza #767676**, fonte 8 e sete leituras no bloco com fundo de
 contraste, colocado abaixo do nome nativo do instrumento. O bloco mede as
 linhas conforme o espaço e a escala disponíveis; num gráfico estreito mantém
 nome, valor e estado completos, ou apenas o acesso ao cockpit se não couberem. Use **Cockpit → Ajustes** para

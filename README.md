@@ -289,3 +289,9 @@ Configurações → Dados e Segurança → Backup e Recuperação explica a base
 ### Comunicação in-app reconciliada
 
 O sino reúne as condições existentes dos módulos sem substituir seus avisos ou bloqueios. Backup usa o mesmo estado canônico do Dashboard/Configurações, inclusive data inválida e UNKNOWN. Leitura/histórico da central são transitórios; ler um item não resolve sua causa. Notas mantém posição auxiliar persistente e janela própria. [Contrato da central](docs/architecture/NOTIFICATION-CENTER.md).
+
+## Integração autorizada de 2026-10-02
+
+O site e o Execution Board mais recentes foram combinados com os fontes **JPW GENETRIX 1.18.0**, incluindo os módulos 1.17.0 e Histórico Pessoal. A distribuição permanece somente de fontes; compilação, EX5 e execução nativa seguem `NOT_RUN`. O Supervisor separado permanece `OBSERVE` por padrão e tem execução restrita a demonstração hedging explicitamente armada; esta integração não o instala nem o arma.
+
+Os achados financeiros de fronteira DD/fase da auditoria de 2026-10-02 permanecem abertos. Commit, merge e push preservam o trabalho autorizado, sem significar aprovação financeira, aceite operacional ou publicação. Recibo e reversão: [integração](docs/work/INTEGRATION-20261002.md).

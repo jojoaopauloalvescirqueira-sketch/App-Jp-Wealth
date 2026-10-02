@@ -136,8 +136,8 @@
       "available": true,
       "path": "downloads/jpw-alavancagem-atual/JPW_Genetrix_Fontes_v1.18.0.zip",
       "filename": "JPW_Genetrix_Fontes_v1.18.0.zip",
-      "sha256": "51b5f08a503666adc9fdcea19136a27391729d1f473cc7f1bde7796ad5834530",
-      "bytes": 525573
+      "sha256": "757559a7d821bcad9a907d5906ac0917f05ead4468060e969ab92204dca2f1f2",
+      "bytes": 525589
     },
     "compiled": {
       "available": false,
@@ -256,7 +256,7 @@
     "MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5": "dbd66b2edbe26d8ef32569c3ceeadcf6ad7a346e00466a0572c4f76e6f8c4429",
     "MQL5/Scripts/JPWealth/JPW_PersonalHistory_Tests.mq5": "14e7d328605b511110bee8ed3a6050d048ea9316194a6c088a3c5d1edee057ff",
     "MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5": "61f32dfaf39d997e937d6a5a18ec2b07dddcf2199f590baed1db6920cf575da4",
-    "README.md": "64fdead76549855becaebf235d5e717e3ae6089c4e61d883076bdfd188b75637"
+    "README.md": "2fccfa16bb05e6d8ae2297157cc074d275d7d616cced1777d1cf19b2a1b0c709"
   },
   "mqlSourceFingerprint": "fa9df97f6584c2af058ec9cb58ae07e85c13513a834cd56ea79bfbde32f008b5",
   "runtimeBuildId": "9dcb657fa99bbf27a36c564c98dba7eaa622525f21ebbb823d0faa08f5395b9d",
@@ -268,6 +268,8 @@
     "classification": "CANDIDATE",
     "native": "NOT_RUN",
     "execution": "OBSERVE_ONLY",
-    "siteIntegration": "NOT_RUN"
+    "siteIntegration": "LOCAL_SOURCE_INTEGRATED_NATIVE_NOT_RUN",
+    "executionScope": "Histórico Pessoal, Cockpit, Observador e Accountant",
+    "supervisor": "DEMO_EXPLICIT_ARM_ONLY_DEFAULT_OBSERVE"
   }
 }
