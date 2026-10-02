@@ -48,6 +48,7 @@ template<class T> int ArrayResize(std::vector<T>&a,int n){a.resize(n);return n;}
 string IntegerToString(long x){return std::to_string(x);}
 string StringSubstr(const string&s,int p,int n){return s.substr(p,n);}
 template<typename... A> void Print(A...args){}
+void JPWPersonalControllerDetach(const string&){}
 ulong now_ms=1000;long now_utc=1000;
 ulong GetTickCount64(){return now_ms;}long TimeGMT(){return now_utc;}
 long ChartID(){return 42;}

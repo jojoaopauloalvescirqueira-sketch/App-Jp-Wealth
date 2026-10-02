@@ -1,8 +1,12 @@
-# JPW GENETRIX — fontes MT5 v1.17.0
+# JPW GENETRIX — fontes MT5 v1.18.0
 
 **Da origem da operação à leitura do risco.**
 
-## Candidato1.17.0: Supervisor e flutuante compensado
+## Candidato 1.18.0: Histórico Pessoal
+
+Observador com ocorrências sem SL, reavisos locais de 60 segundos e máximos Current/Estimated acompanhados de fotografia, por conta/instalação. Consulta, exportação CSV e backup JSON no Cockpit. Veja [GENETRIX_PERSONAL_HISTORY.md](GENETRIX_PERSONAL_HISTORY.md). Candidato isolado; validação nativa e aceite operacional `NOT_RUN`, sem EX5. O Histórico Pessoal não negocia nem arma o supervisor.
+
+## Base preservada 1.17.0: Supervisor e flutuante compensado
 
 A nova revisão isolada acrescenta Accountant não negociador, ledger próprio,7ªmétrica e Supervisor separado com negociação exclusivamente demo hedging explicitamente armada. O indicador e o Observer continuam observadores. O manual [GENETRIX_7X_LEDGER.md](GENETRIX_7X_LEDGER.md) descreve cálculo, limitações e armamento; compilação/MT5/demo são `NOT_RUN`, sem EX5. PreferênciasV3 preservamV1/V2 e all-hidden.
 

@@ -172,6 +172,8 @@ void JPWGenetrixCollectLedger()
 void JPWRefreshRequestedRecords()
   {
    if(!JPWCoordinatorBudgetRemaining()) return;
+   JPWPersonalCollectUI();
+   if(!JPWCoordinatorBudgetRemaining()) return;
    if(g_export_requested)
      {
       g_export_requested=false;
@@ -541,6 +543,7 @@ void JPWDetailsReadStopRisk()
 
 void JPWInvalidateIdentityPresentation()
   {
+   JPWPersonalInvalidateContext();
    JPWGenetrixInvalidate("Identidade alterada; ledger anterior descartado");
    g_compensated_quality=JPW_VIEW_NA;
    JPWPositionsInvalidate("Contexto alterado; catálogo anterior descartado");

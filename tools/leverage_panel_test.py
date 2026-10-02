@@ -236,8 +236,10 @@ def check_cockpit_navigation(source: str) -> None:
             'g_raiz_tab==11 || g_raiz_tab==14 ? "Stops"' in cockpit and
             'g_raiz_tab==12 ? "Raiz N"' in cockpit and
             'g_raiz_tab==10 ? "Ajustes"' in cockpit and
-            'JPWRaizCreateButton(40+i' in cockpit,
-            'cockpit must expose Visão geral, Stops, Raiz N, Sistema and Ajustes')
+            'JPWRaizCreateButton(tab_actions[i]' in cockpit and
+            'const string tabs[6]' in cockpit and 'Histórico Pessoal' in cockpit and
+            'const int tab_actions[6]={40,41,42' in cockpit and '43,44,120' in cockpit,
+            'cockpit must retain all five existing tabs and add Histórico Pessoal with stable actions')
     require('if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=7)' in event and
             'if(!JPWDetailsContextCurrent()) return;' in event and
             'lparam==37 || lparam==39' in event and

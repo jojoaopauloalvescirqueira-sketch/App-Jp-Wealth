@@ -1043,6 +1043,121 @@ void JPWRenderStopsTable(const int x,const int body_y,const int inner,
                       "Última amostra, não ativa. Motivo atual: "+inactive_reason);
   }
 
+string JPWPersonalSectionName()
+  {
+   if(g_personal_category=="SUMMARY") return("Resumo e cobertura");
+   if(g_personal_category=="EPISODE") return("Ocorrências sem SL");
+   if(g_personal_category=="ALERT") return("Solicitações de aviso");
+   if(g_personal_category=="PEAK") return("Recordes de alavancagem");
+   if(g_personal_category=="SESSION") return("Sessões de monitoramento");
+   if(g_personal_category=="EVENT") return("Detecção e desfechos");
+   return("Interrupções e recuperação");
+  }
+string JPWPersonalRowCaption(JPWPersonalRow &row)
+  {
+   string caption="#"+IntegerToString(row.sequence)+" · "+TimeToString((datetime)row.wall,TIME_DATE|TIME_SECONDS)+" UTC";
+   JPWPersonalEpisode episode; JPWPersonalPeak peak;
+   if(row.category=="EPISODE" && JPWPersonalDecodeEpisode(row.payload,episode))
+      caption+=" · "+episode.subject.symbol+" · "+(episode.subject.kind==JPW_PERSONAL_POSITION ? "posição " : "pendente ")+episode.subject.ticket+
+         " · "+(episode.state==JPW_PERSONAL_ACTIVE ? "sem SL" : episode.resolution);
+   else if(row.category=="PEAK" && JPWPersonalDecodePeak(row.payload,peak))
+      caption+=" · "+(peak.quality==1 ? "Current " : "Estimated ")+DoubleToString(peak.leverage,8)+"x";
+   else { int cut=StringFind(row.payload,"|"); caption+=" · "+(cut>=0 ? StringSubstr(row.payload,0,cut) : row.category); }
+   return(caption);
+  }
+void JPWPersonalDetailLines(const int width,string &lines[])
+  {
+   JPWPersonalRow row=g_personal_detail;
+   JPWDetailsWrap(JPWPersonalRowCaption(row),width,lines);
+   JPWDetailsWrap("Conta registrada: "+g_personal_scope+" · sequência "+IntegerToString(row.sequence)+" · SHA-256 "+row.digest,width,lines);
+   JPWPersonalEpisode episode; JPWPersonalPeak peak;
+   if(row.category=="EPISODE" && JPWPersonalDecodeEpisode(row.payload,episode))
+     {
+      JPWDetailsWrap("Identidade "+episode.subject.id+" · ticket observado "+episode.subject.ticket+" · "+
+         (episode.subject.side==1 ? "Compra" : "Venda")+" · volume "+JPWPersonalNum(episode.subject.volume)+
+         " · SL "+(episode.subject.sl_readable ? JPWPersonalNum(episode.subject.sl) : "indisponível")+" · TP "+JPWPersonalNum(episode.subject.tp),width,lines);
+      JPWDetailsWrap("Primeira observação: "+TimeToString((datetime)episode.first_wall,TIME_DATE|TIME_SECONDS)+" UTC · última: "+
+         TimeToString((datetime)episode.last_wall,TIME_DATE|TIME_SECONDS)+" UTC · solicitações: "+IntegerToString(episode.requested_count),width,lines);
+      JPWDetailsWrap("Último aviso solicitado: "+IntegerToString(episode.last_requested_wall)+" UTC epoch · próximo prazo: "+
+         IntegerToString(episode.next_wall)+" · vínculo demonstrado: "+(episode.subject.link_id=="" ? "indisponível" : episode.subject.link_id),width,lines);
+      JPWDetailsWrap("Resolução: "+(episode.resolution=="" ? "episódio ativo" : episode.resolution)+". Sem SL registrado na corretora não certifica infração nem avalia stop virtual.",width,lines);
+     }
+   else if(row.category=="PEAK" && JPWPersonalDecodePeak(row.payload,peak))
+     {
+      JPWDetailsWrap("Fotografia íntegra do recorde observado · "+(peak.quality==1 ? "Current" : "Estimated")+
+         " · início/fim da captura "+IntegerToString(peak.started_msc)+" / "+IntegerToString(peak.finished_msc)+" ms",width,lines);
+      JPWDetailsWrap(peak.snapshot,width,lines);
+     }
+   else
+     {
+      const int split=StringFind(row.payload,"|"); string decoded="";
+      if(split>=0 && JPWPersonalUnhex(StringSubstr(row.payload,split+1),decoded))
+         JPWDetailsWrap(StringSubstr(row.payload,0,split)+" · "+decoded,width,lines);
+      else JPWDetailsWrap(row.payload,width,lines);
+      JPWDetailsWrap("Uma chamada de Alert/PlaySound não comprova que o operador viu ou ouviu o aviso. Estágios ausentes têm entrega incerta.",width,lines);
+     }
+  }
+void JPWPersonalRenderBody(const int x,const int body_y,const int inner,const int body_height,const int footer_y)
+  {
+   g_personal_button_count=0;
+   const int half=(inner-g_details_pad)/2;
+   if(body_height<2*g_details_control+g_details_line)
+     { JPWRaizCreateLabel("PH_SMALL","Amplie o gráfico para consultar o histórico",x,body_y); return; }
+   JPWRaizCreateButton(JPW_ACTION_HISTORY_ACCOUNT,"Conta "+IntegerToString(g_personal_account_index+1)+"/"+
+      IntegerToString(ArraySize(g_personal_accounts))+" · próxima",x,body_y,half);
+   JPWRaizCreateButton(JPW_ACTION_HISTORY_REFRESH,"Atualizar consulta",x+half+g_details_pad,body_y,half);
+   int y=body_y+g_details_control+g_details_pad;
+   const int room=body_height-g_details_control-g_details_pad;
+   string lines[];
+   JPWDetailsWrap(JPWPersonalScopeLabel()+" · "+StringSubstr(g_personal_scope,0,12)+"…",inner,lines);
+   if(g_personal_scope==g_personal_operating_key) JPWDetailsWrap(g_personal_live_notice,inner,lines);
+   if(!g_personal_available) JPWDetailsWrap("Consulta indisponível: "+g_personal_reason,inner,lines);
+   else if(g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT)
+     {
+      JPWDetailsWrap("Exportação da conta selecionada, sem trocar a conta ativa. CSV para consulta; JSON versionado para backup integral, com sequência e integridade.",inner,lines);
+      JPWDetailsWrap("Destino local: MQL5/Files/JPWealth/Genetrix/PersonalHistory. O arquivo contém dados financeiros; guarde uma cópia fora do terminal. Nenhuma restauração automática será feita.",inner,lines);
+      JPWDetailsWrap(g_personal_export_result,inner,lines);
+     }
+   else if(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL && g_personal_detail_seq>0) JPWPersonalDetailLines(inner,lines);
+   else if(g_personal_category=="SUMMARY")
+     {
+      JPWDetailsWrap("Maior alavancagem observada desde "+TimeToString((datetime)g_personal_summary.started_wall,TIME_DATE|TIME_SECONDS)+" UTC",inner,lines);
+      JPWDetailsWrap("Current: "+JPWPersonalPeakLabel(g_personal_summary.current),inner,lines);
+      JPWDetailsWrap("Estimated (separado): "+JPWPersonalPeakLabel(g_personal_summary.estimated),inner,lines);
+      JPWDetailsWrap("Nocional bruto aberto / equity. Pendentes ficam na fotografia e não entram na alavancagem utilizada.",inner,lines);
+      JPWDetailsWrap("Últimos registros: "+IntegerToString(g_personal_summary.active_episodes)+" episódios ativos / "+
+         IntegerToString(g_personal_summary.total_episodes)+" episódios registrados · interrupções conhecidas: "+
+         IntegerToString(g_personal_summary.gaps)+" · sequência: "+IntegerToString(g_personal_summary.sequence),inner,lines);
+      JPWDetailsWrap("Cobertura começa na ativação deste componente; não reconstrói períodos antigos e pode perder picos entre observações. Registro não prova fase, conformidade ou estado psicológico.",inner,lines);
+     }
+   else JPWDetailsWrap(JPWPersonalSectionName()+" · registros em ordem decrescente; cada linha abre o detalhe.",inner,lines);
+   const bool list=(g_personal_available && g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY && g_personal_category!="SUMMARY");
+   int rows=MathMax(1,room/g_details_line);
+   if(list)
+     {
+      const int heading=MathMin(ArraySize(lines),MathMax(1,rows/2));
+      for(int i=0;i<heading;i++) JPWRaizCreateLabel("PH_HEAD_"+IntegerToString(i),lines[i],x,y+i*g_details_line);
+      y+=heading*g_details_line+g_details_pad;
+      const int capacity=MathMax(0,(body_y+body_height-y)/(g_details_control+g_details_pad));
+      for(int i=0;i<capacity && i<ArraySize(g_personal_rows) && i<8;i++)
+        {
+         g_personal_button_seq[i]=g_personal_rows[i].sequence; g_personal_button_count++;
+         JPWRaizCreateButton(JPW_ACTION_HISTORY_ROW_FIRST+i,JPWPersonalRowCaption(g_personal_rows[i]),x,
+            y+i*(g_details_control+g_details_pad),inner);
+        }
+      // The next cursor must follow the LAST VISIBLE row, never skip hidden records.
+      JPWRaizCreateLabel("PAGE",JPWPersonalSectionName()+" · página "+IntegerToString(g_personal_cursor_page+1),x,footer_y-g_details_line);
+     }
+   else
+     {
+      const int pages=JPWPanelPageCount(ArraySize(lines),rows);
+      g_cockpit_page=JPWPanelClamp(g_cockpit_page,0,pages-1);
+      for(int i=0;i<rows && i<60 && g_cockpit_page*rows+i<ArraySize(lines);i++)
+         JPWRaizCreateLabel("PH_TEXT_"+IntegerToString(i),lines[g_cockpit_page*rows+i],x,y+i*g_details_line);
+      JPWRaizCreateLabel("PAGE","Página "+IntegerToString(g_cockpit_page+1)+"/"+IntegerToString(pages),x,footer_y-g_details_line);
+     }
+  }
+
 void JPWRenderCockpit()
   {
    g_stop_button_count=0;
@@ -1104,38 +1219,43 @@ void JPWRenderCockpit()
    // presentation objects only; all metric values still come from the snapshot.
    JPWRaizCreateSurface("HEADER",left+1,top+1,g_details_rect.width-2,
                          g_details_line+g_details_pad-2,g_details_chrome);
-   const string section=(g_raiz_tab==JPW_SIGNAL_ROUTE ? "Preparar mensagem" :
+   const string section=((g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY || g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT) ? "Histórico Pessoal" :
+      (g_raiz_tab==JPW_SIGNAL_ROUTE ? "Preparar mensagem" :
       (g_raiz_tab==JPW_ROUTE_OVERVIEW ? "Visão geral" :
       (g_raiz_tab==JPW_ROUTE_METRIC ? g_cockpit_snapshot.metric[g_cockpit_selected].title :
       (g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES ? "Ciclos contábeis" :
       (g_raiz_tab==JPW_ROUTE_PROVENANCE ? "Estado dos dados" :
       (g_raiz_tab==JPW_ROUTE_SETTINGS ? "Ajustes" :
       (g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW ? "Stops" :
-      (g_raiz_tab==JPW_ROUTE_RAIZN ? "Raiz N" : "Sistema"))))))));
+      (g_raiz_tab==JPW_ROUTE_RAIZN ? "Raiz N" : "Sistema")))))))));
    JPWGenetrixHeader(JPWRaizUI("BRAND_LOGO"),JPWRaizUI("TITLE"),
       x,top+g_details_pad,inner-g_details_control-g_details_pad,g_details_line,
       g_details_font+2,g_details_text,JPWPanelDarkBackground(chart_background),_Symbol+" · "+section,4);
    const int nav_y=top+g_details_pad+g_details_line;
-   const string tabs[5]={"Visão geral","Stops","Raiz N","Sistema","Ajustes"};
-   const string short_tabs[5]={"Geral","Stops","Raiz N","Sistema","Ajustes"};
-   const bool stacked=(inner<370);
-   const int nav_columns=(stacked ? 3 : 5);
+   const string tabs[6]={"Visão geral","Stops","Raiz N","Sistema","Ajustes","Histórico Pessoal"};
+   const string short_tabs[6]={"Geral","Stops","Raiz N","Sistema","Ajustes","Histórico"};
+   const int tab_actions[6]={JPW_ACTION_TAB_FIRST,JPW_ACTION_TAB_STOPS,JPW_ACTION_TAB_RAIZN,
+      JPW_ACTION_TAB_SYSTEM,JPW_ACTION_TAB_SETTINGS,JPW_ACTION_TAB_HISTORY};
+   const bool stacked=(inner<600);
+   const int nav_columns=(stacked ? 3 : 6);
    const int nav_width=(inner-(nav_columns-1)*g_details_pad)/nav_columns;
-   for(int i=0;i<5;i++)
+   for(int i=0;i<6;i++)
      {
-      const int col=(stacked ? i%3 : i),row=(stacked ? i/3 : 0);
-      const int width=(stacked && row==1 ? (inner-g_details_pad)/2 : nav_width);
-      const int nav_x=x+(stacked && row==1 ? col*(width+g_details_pad) : col*(nav_width+g_details_pad));
-      JPWRaizCreateButton(JPW_ACTION_TAB_FIRST+i,(nav_width<82 ? short_tabs[i] : tabs[i]),
+      const int col=i%nav_columns,row=i/nav_columns;
+      const int width=nav_width,nav_x=x+col*(nav_width+g_details_pad);
+      JPWRaizCreateButton(tab_actions[i],(nav_width<100 ? short_tabs[i] : tabs[i]),
                           nav_x,nav_y+row*(g_details_control+g_details_pad),width);
       const bool active=(i==0 ? (g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) :
          (i==1 ? (g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW) :
          (i==2 ? g_raiz_tab==JPW_ROUTE_RAIZN :
          (i==3 ? (g_raiz_tab==JPW_ROUTE_SYSTEM || g_raiz_tab==JPW_ROUTE_PROVENANCE ||
-                   g_raiz_tab==JPW_ROUTE_EXPORT) : g_raiz_tab==JPW_ROUTE_SETTINGS))));
+                   g_raiz_tab==JPW_ROUTE_EXPORT) :
+         (i==4 ? g_raiz_tab==JPW_ROUTE_SETTINGS :
+         (g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY || g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL ||
+          g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT))))));
       if(active)
         {
-         const string tab_button=JPWActionObject(JPW_ACTION_TAB_FIRST+i);
+         const string tab_button=JPWActionObject(tab_actions[i]);
          ObjectSetInteger(0,tab_button,OBJPROP_BGCOLOR,JPWPanelSelectedSurface(chart_background));
          ObjectSetInteger(0,tab_button,OBJPROP_COLOR,JPWPanelAccentColor(chart_background));
          const int tab_y=nav_y+row*(g_details_control+g_details_pad);
@@ -1154,7 +1274,7 @@ void JPWRenderCockpit()
                        top+g_details_pad,close_size);
    const int body_y=nav_y+(stacked ? 2 : 1)*(g_details_control+g_details_pad);
    const int footer_y=top+g_details_rect.height-g_details_pad-g_details_control;
-   const int reserved=(g_raiz_tab==JPW_ROUTE_SETTINGS || (g_raiz_tab==JPW_ROUTE_OVERVIEW && g_cockpit_pref_invalid) ?
+   const int reserved=(g_raiz_tab==JPW_ROUTE_SETTINGS || (g_raiz_tab==JPW_ROUTE_OVERVIEW && (g_cockpit_pref_invalid || g_personal_live_count>0 || g_personal_live_state==3)) ?
                        2*g_details_line : g_details_line);
    const int body_height=footer_y-g_details_pad-body_y-reserved;
    const int footer_button=(inner-2*g_details_pad)/3;
@@ -1225,9 +1345,15 @@ void JPWRenderCockpit()
         }
       JPWRaizCreateLabel("PAGE","Cartões "+IntegerToString(g_cockpit_page+1)+"/"+
                           IntegerToString(pages),x,footer_y-g_details_line);
+      if(!g_cockpit_pref_invalid && (g_personal_live_count>0 || g_personal_live_state==3))
+         JPWRaizCreateLabel("PH_NOTICE",JPWFitText(g_personal_live_notice,inner,g_details_font),x,footer_y-2*g_details_line);
       if(g_cockpit_pref_invalid)
          JPWRaizCreateLabel("FEEDBACK","Preferência visual inválida · abra Ajustes",
                             x,footer_y-2*g_details_line);
+     }
+   else if(g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY || g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL || g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT)
+     {
+      JPWPersonalRenderBody(x,body_y,inner,body_height,footer_y);
      }
    else if(g_raiz_tab==JPW_ROUTE_STOPS)
      {
@@ -1568,6 +1694,12 @@ void JPWRenderCockpit()
         { first_action="Visão geral"; second_action=(g_cockpit_selected==6 ? "Selecionar ciclo" : "Proveniência"); }
       else if(g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES)
         { first_action="Compensado"; second_action="Visão geral"; }
+      else if(g_raiz_tab==JPW_ROUTE_PERSONAL_HISTORY)
+        { first_action="Próxima seção"; second_action="Exportar…"; }
+      else if(g_raiz_tab==JPW_ROUTE_PERSONAL_DETAIL)
+        { first_action="Voltar"; second_action="Atualizar"; }
+      else if(g_raiz_tab==JPW_ROUTE_PERSONAL_EXPORT)
+        { first_action="Salvar CSV"; second_action="Backup JSON"; }
       else if(g_raiz_tab==JPW_ROUTE_PROVENANCE)
         { first_action="Sistema"; second_action="Atualizar"; }
       else if(g_raiz_tab==JPW_ROUTE_STOP_ROW)

@@ -198,12 +198,14 @@ void JPWRenderCockpit();
 void JPWRaizPanelDestroy();
 void JPWCollectStopRisk();
 void JPWDetailsReadStopRisk();
+bool JPWCoordinatorBudgetRemaining();
 void JPWRenderStopsTable(const int x,const int body_y,const int inner,
                          const int body_height,const int footer_y);
 
 // Account metrics are independent of the notional conversion and its routes.
 // B/E/P/C are read in account units, then account identity, B and C are
 #include <JPWealth/JPW_Genetrix_UI.mqh>
+#include <JPWealth/JPW_PersonalHistory_UI.mqh>
 #include <JPWealth/JPW_Alavancagem_Coordinator.mqh>
 #include <JPWealth/JPW_SignalCopy_Controller.mqh>
 #include <JPWealth/JPW_Alavancagem_Presentation.mqh>

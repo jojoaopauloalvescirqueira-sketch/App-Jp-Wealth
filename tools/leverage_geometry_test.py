@@ -245,6 +245,7 @@ string IntegerToString(long x){return std::to_string(x);}
 int g_details_control=24,g_details_line=18,g_details_pad=5,g_details_font=11,g_cockpit_page=0;
 color g_details_card=0xffffff,g_details_chrome=0xf4eee9;
 bool g_cockpit_pref_invalid=false;string g_cockpit_pref_notice;
+int g_personal_live_count=0,g_personal_live_state=-1;string g_personal_live_notice;
 JPWCockpitSnapshot g_cockpit_snapshot;
 constexpr int OBJPROP_TOOLTIP=1,OBJPROP_ZORDER=2;
 struct Drawn{int x,y,width,height;string type;};std::vector<Drawn> drawn;

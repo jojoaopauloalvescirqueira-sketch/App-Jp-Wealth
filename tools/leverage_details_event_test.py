@@ -79,6 +79,9 @@ void JPWSignalSaveDraft(){}
 bool JPWGenetrixHandleCycleEvent(int,long,const string&){return false;}
 void JPWSignalInvalidate(const string&){}
 bool JPWSignalHandleClick(const string&){return false;}
+void JPWPersonalRequestRead(){}
+void JPWPersonalHistoryMove(int){}
+bool JPWPersonalHandleClick(const string&){return false;}
 void JPWSignalOpen(int kind=0,ulong ticket=0,long identifier=0);
 struct Config {long generation=0;int n=0;double f=0.;string n_reason,f_reason;};
 struct FactorPreference {long generation=0;double factor=0.;};

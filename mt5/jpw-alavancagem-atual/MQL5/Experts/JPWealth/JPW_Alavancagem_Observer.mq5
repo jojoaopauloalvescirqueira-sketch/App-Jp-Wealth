@@ -7,6 +7,7 @@
 #include <JPWealth/JPW_Alavancagem_RaizN_Horizon.mqh>
 #include <JPWealth/JPW_Alavancagem_StopRisk_Store.mqh>
 #include <JPWealth/JPW_Alavancagem_Diagnostics.mqh>
+#include <JPWealth/JPW_PersonalHistory_Controller.mqh>
 
 // Uma instancia em qualquer grafico observa os negocios da conta inteira.
 // Nenhuma funcao de negociacao e chamada. Eventos apenas entram na fila;
@@ -762,6 +763,7 @@ int OnInit()
      { Print("JPW observer: timer indisponivel");
        DatabaseClose(g_db); g_db=INVALID_HANDLE; return(INIT_FAILED); }
    JPWStopRiskPresenceRefresh();
+   JPWPersonalControllerAttach(g_account_key,g_risk_publisher_token);
    Print("JPW observer: observacao local habilitada; nenhuma funcao de negociacao e usada");
    return(INIT_SUCCEEDED);
   }
@@ -769,6 +771,7 @@ int OnInit()
 void OnDeinit(const int reason)
   {
    EventKillTimer();
+   JPWPersonalControllerDetach("EA desativado; motivo técnico "+IntegerToString(reason));
    JPWStopRiskPresenceRelease();
    JPWStopRiskReleaseSessionLease();
    string risk_reason="";
@@ -813,6 +816,7 @@ void OnTradeTransaction(const MqlTradeTransaction &trans,
                         const MqlTradeResult &result)
   {
    g_risk_dirty=true;
+   JPWPersonalControllerMarkDirty(); // Signal only; capture, IO and channels run on timer.
    if(trans.type==TRADE_TRANSACTION_DEAL_ADD && trans.deal>0)
       JPWObserverQueue(trans.deal,(long)TimeGMT(),GetTickCount64(),
                        TerminalInfoInteger(TERMINAL_CONNECTED)!=0);
@@ -832,6 +836,7 @@ void JPWObserverTimerCycle(const ulong started)
       if(g_risk_account_key!="" && g_risk_publisher_token!="" &&
          !JPWStopRiskDeactivate(g_risk_account_key,g_risk_publisher_token,risk_reason))
          JPWObserverDiagnosticFor(g_risk_account_key,JPW_DIAG_WRITE_FAILED);
+      JPWPersonalControllerDetach("Conta alterada; eventos antigos não são reatribuídos");
       g_risk_account_key=key;
       g_risk_publisher_token="";
       if(key!="") JPWStopRiskPublisherToken(key,ChartID(),
@@ -841,6 +846,7 @@ void JPWObserverTimerCycle(const ulong started)
       g_risk_was_active=false;
       g_observer_last_risk_state=-1;
       JPWStopRiskPresenceRefresh();
+      if(key!="") JPWPersonalControllerAttach(key,g_risk_publisher_token);
       // Nunca atribuir um evento antigo a uma conta recem-selecionada.
       ArrayResize(g_pending,0);
       if(g_db!=INVALID_HANDLE) DatabaseClose(g_db);
@@ -868,6 +874,10 @@ void JPWObserverTimerCycle(const ulong started)
       g_next_risk_sample_ms=risk_now+5000;
       JPWStopRiskObserve();
      }
+   if(GetTickCount64()-started>=500) { JPWPersonalControllerDeferred(); return; }
+   // StopRisk keeps its first priority; history gets a bounded, resumable slice
+   // before RaizN reconstruction, including when that independent database fails.
+   JPWPersonalControllerTick(started);
    if(GetTickCount64()-started>=500) return;
    if(g_db==INVALID_HANDLE)
      {
@@ -916,5 +926,6 @@ void OnTimer()
    JPWDiagTimingRecord(g_observer_timing,(long)elapsed,deferred);
    // Individual terminal/database calls cannot be preempted. The budget
    // prevents starting another work item and records any actual overrun.
-   if(elapsed>=500) JPWObserverDiagnostic(JPW_DIAG_BUDGET_DEFERRED);
+   if(elapsed>=500)
+     { JPWObserverDiagnostic(JPW_DIAG_BUDGET_DEFERRED); JPWPersonalControllerDeferred(); }
   }
