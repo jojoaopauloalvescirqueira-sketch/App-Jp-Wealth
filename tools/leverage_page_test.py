@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""JPW Alavancagem Atual: navegação e pacote público, sem dados de conta."""
+"""JPW GENETRIX: navegação e pacote público, sem dados de conta."""
 
 from hashlib import sha256
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
 from io import BytesIO
 import json
+import base64
+import re
 import os
 from pathlib import Path
 import threading
@@ -13,6 +15,7 @@ from zipfile import ZipFile
 
 from playwright.sync_api import sync_playwright
 from browser_bootstrap_fixture import install_bootstrap, wait_bootstrap
+from browser_fixture_server import BrowserFixtureServer
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +28,17 @@ EXPECTED = {
     'README.md',
     'AGENTS.md',
     'MQL5/Indicators/JPWealth/JPW_Alavancagem_Atual.mq5',
+    'MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5',
+    'MQL5/Include/JPWealth/JPW_NoCuda_Core.mqh',
+    'MQL5/Include/JPWealth/JPW_NoCuda_Projection_Core.mqh',
+    'MQL5/Include/JPWealth/JPW_NoCuda_Projection.mqh',
+    'MQL5/Include/JPWealth/JPW_NoCuda_Store.mqh',
+    'MQL5/Include/JPWealth/JPW_NoCuda_Terminal.mqh',
+    'MQL5/Include/JPWealth/JPW_NoCuda_Render.mqh',
+    'MQL5/Include/JPWealth/JPW_NoCuda_UI.mqh',
+    'MQL5/Scripts/JPWealth/JPW_NoCuda_Core_Tests.mq5',
+    'MQL5/Scripts/JPWealth/JPW_NoCuda_Store_Tests.mq5',
+    'MQL5/Scripts/JPWealth/JPW_NoCuda_Projection_Tests.mq5',
     'MQL5/Include/JPWealth/JPW_Alavancagem_Core.mqh',
     'MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh',
     'MQL5/Include/JPWealth/JPW_Alavancagem_Terminal.mqh',
@@ -63,6 +77,37 @@ EXPECTED = {
 
 EXPECTED.update("MQL5/Include/JPWealth/JPW_Alavancagem_" + name + ".mqh" for name in ['Actions', 'Coordinator', 'Diagnostics', 'Diagnostics_Core', 'Presentation', 'Samples', 'Store_Result', 'Version'])
 EXPECTED.add("MQL5/Scripts/JPWealth/JPW_Alavancagem_Diagnostics_Tests.mq5")
+
+
+EXPECTED.update("MQL5/Include/JPWealth/JPW_SignalCopy_" + name + ".mqh" for name in ("Types", "Core", "Terminal", "Controller", "UI"))
+EXPECTED.add("MQL5/Scripts/JPWealth/JPW_SignalCopy_Tests.mq5")
+EXPECTED.add("MQL5/Include/JPWealth/JPW_Alavancagem_Positions.mqh")
+EXPECTED.add("MQL5/Scripts/JPWealth/JPW_Alavancagem_Positions_Tests.mq5")
+
+
+FIBO_MEMBERS = {
+    *("MQL5/Include/JPWealth/JPW_NoCuda_Fibo_" + name + ".mqh"
+      for name in ("Core", "Terminal", "Store", "Sync", "Controller", "UI")),
+    "MQL5/Include/JPWealth/JPW_UI_Focus.mqh",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Tests.mq5",
+    "MQL5/Scripts/JPWealth/JPW_NoCuda_Fibo_Lab.mq5",
+    "MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
+    "MQL5/Include/JPWealth/JPW_Genetrix_Brand.mqh",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo.provenance.md",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_100.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_125.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_150.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Light_200.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_100.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_125.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_150.bmp",
+    "MQL5/Images/JPWealth/JPW_Genetrix_Logo_Dark_200.bmp",
+
+}
+EXPECTED.update(FIBO_MEMBERS)
+EXPECTED.add("MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh")
+EXPECTED.add("MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5")
+assert len(EXPECTED) == 87
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -111,23 +156,28 @@ def route_and_inspect(page):
     assert page.locator('#nocudaTool').is_hidden()
     assert page.locator('#execEcal').is_hidden()
     assert page.locator('#toolsNavSubmenu [data-nav-child="tools-leverage"]').get_attribute('aria-current') == 'page'
-    assert page.locator('#jpwLeveragePage h1').inner_text() == 'JPW Alavancagem Atual'
-    assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').inner_text()
-    assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeverageOverview').inner_text()
-    assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeverageOverview').inner_text()
-    assert MANIFEST['version'] == '1.10.1'
-    for phrase in ('Cockpit 1.10.1', 'seis métricas', 'Stop risk',
+    assert page.locator('#jpwLeveragePage h1').text_content() == 'JPW GENETRIX'
+    assert page.evaluate("JPWNavigation.children('tools').find(r=>r.id==='tools-leverage').label") == 'JPW GENETRIX — MT5'
+    assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
+    assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeveragePage').text_content()
+    assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeveragePage').text_content()
+    assert MANIFEST['version'] == '1.16.1'
+    assert MANIFEST['productName'] == 'JPW GENETRIX'
+    assert 'Da origem da operação' in page.locator('#jpwLeverageOverview').text_content()
+    assert 'medidas do Fibonacci importado permanecem indisponíveis' in page.locator('#jpwGenetrixDefinition').text_content()
+    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 87
+    for phrase in ('NoCuda Channels', 'seis métricas', 'Stop risk',
                    'saldo atual é informativo', 'Saldo Inicial de Referência',
                    'P-21 canônico permanece PENDING'):
         assert phrase in MANIFEST['coverage']
-    assert page.locator('[data-jpw-leverage-meta="version"]').inner_text() == MANIFEST['version']
-    assert MANIFEST['validation']['mathematics']['detail'] in page.locator('[data-jpw-leverage-meta="mathematics"]').inner_text()
-    assert MANIFEST['validation']['compilation']['detail'] in page.locator('[data-jpw-leverage-meta="compilation"]').inner_text()
-    assert MANIFEST['validation']['terminal']['detail'] in page.locator('[data-jpw-leverage-meta="terminal"]').inner_text()
+    assert set(page.locator('[data-jpw-leverage-meta="version"]').all_text_contents()) == {MANIFEST['version']}
+    assert all(MANIFEST['validation']['mathematics']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="mathematics"]').all_text_contents())
+    assert all(MANIFEST['validation']['compilation']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="compilation"]').all_text_contents())
+    assert all(MANIFEST['validation']['terminal']['detail'] in value for value in page.locator('[data-jpw-leverage-meta="terminal"]').all_text_contents())
     assert page.locator('[data-jpw-leverage-download="source"]').is_enabled()
-    assert page.locator('[data-jpw-leverage-meta="source-sha"]').inner_text() == SOURCE['sha256']
+    assert set(page.locator('[data-jpw-leverage-meta="source-sha"]').all_text_contents()) == {SOURCE['sha256']}
     assert page.locator('[data-jpw-leverage-download="compiled"]').is_disabled()
-    assert MANIFEST['downloads']['compiled']['reason'] in page.locator('[data-jpw-leverage-meta="compiled-status"]').inner_text()
+    assert all(MANIFEST['downloads']['compiled']['reason'] in value for value in page.locator('[data-jpw-leverage-meta="compiled-status"]').all_text_contents())
     assert page.evaluate("JPWNavigation.navigateLocal('tools','leverage')")
     assert page.evaluate("JPWNavigation.current().canonical") == 'tools-leverage'
 
@@ -137,16 +187,65 @@ def verify_guide(page):
     assert steps.count() == 7
     assert steps.evaluate_all("nodes=>nodes.map(n=>n.dataset.leverageStep)") == list('1234567')
     for step in steps.all():
+        area = step.evaluate("n=>n.closest('[data-genetrix-panel]').dataset.genetrixPanel")
+        open_area(page, area)
         assert step.is_visible()
-        assert step.locator('.leverage-result').is_visible()
+        assert step.locator('h2').is_visible()
+        assert any(node.is_visible() for node in step.locator(':scope > p, :scope > ol, :scope > .leverage-editor-flow').all()), step.get_attribute('data-leverage-step')
         assert step.evaluate("n=>!n.closest('details')"), 'Essential steps must stay exposed'
     assert page.locator('.leverage-glossary dt').all_text_contents() == [
         'MetaTrader 5 (MT5)', 'MetaEditor', 'Indicador', 'Script',
         'Expert Advisor (EA)', 'Arquivos .mq5, .mqh e .ex5']
-    assert 'Não substitua a pasta MQL5 inteira.' in page.locator('#jpwLeverageInstall').inner_text()
+    assert 'documentação oficial MQL5 da MetaQuotes' in \
+        page.locator('.leverage-official-ref').text_content()
+    assert page.locator('.leverage-official-ref a').count() == 0
+    assert page.locator('.leverage-editor-flow>div').count() == 3
+    assert 'Compilar com F7' in page.locator('.leverage-editor-flow').text_content()
+    assert page.locator('.leverage-folder-map strong').all_text_contents() == [
+        'Indicators', 'Include', 'Scripts', 'Experts', 'Images']
+    open_area(page, 'install')
+    assert page.locator('.leverage-package--source [data-jpw-leverage-download="source"]').is_enabled()
+    assert page.locator('.leverage-package--compiled [data-jpw-leverage-download="compiled"]').is_disabled()
+    open_area(page, 'validation')
+    validation = page.locator('[data-genetrix-panel="validation"]')
+    assert validation.locator('[data-jpw-leverage-meta="version"]').text_content() == MANIFEST['version']
+    assert SOURCE['filename'] in validation.locator('[data-jpw-leverage-meta="source-status"]').text_content()
+    assert MANIFEST['downloads']['compiled']['reason'] in validation.locator('[data-jpw-leverage-meta="compiled-status"]').text_content()
+    validation_hash = validation.locator('.genetrix-validation-integrity > summary')
+    validation_hash.focus(); page.keyboard.press('Enter')
+    assert validation_hash.evaluate('n=>n.parentElement.open')
+    assert validation.locator('[data-jpw-leverage-meta="source-sha"]').text_content() == SOURCE['sha256']
+    page.keyboard.press('Enter')
+    assert not validation_hash.evaluate('n=>n.parentElement.open')
+    release = page.locator('.leverage-release-details summary')
+    release.focus()
+    page.keyboard.press('Enter')
+    assert release.evaluate('n=>n.parentElement.open')
+    assert MANIFEST['coverage'] in page.locator('.leverage-release-details').text_content()
+    page.keyboard.press('Enter')
+    assert not release.evaluate('n=>n.parentElement.open')
+    open_area(page, 'install')
+    integrity = page.locator('.leverage-package--source .leverage-package-integrity summary')
+    integrity.click()
+    assert SOURCE['sha256'] in page.locator('.leverage-package--source .leverage-package-integrity').text_content()
+    integrity.click()
+    assert 'Não substitua a pasta MQL5 inteira.' in page.locator('#jpwLeverageInstall').text_content()
+    reveal_target(page, 'jpwLeverageInstall')
+    page.locator('.leverage-file-table').evaluate("n=>{let a=n.parentElement;while(a){if(a.tagName==='DETAILS')a.open=true;a=a.parentElement;}}")
     rows = page.locator('.leverage-file-table tbody tr')
     expected_destinations = {
         'JPW_Alavancagem_Atual.mq5': 'MQL5/Indicators/JPWealth/',
+        'JPW_NoCuda_Channels.mq5': 'MQL5/Indicators/JPWealth/',
+        'JPW_NoCuda_Core.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_Projection_Core.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_Projection.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_Store.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_Terminal.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_Render.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_UI.mqh': 'MQL5/Include/JPWealth/',
+        'JPW_NoCuda_Core_Tests.mq5': 'MQL5/Scripts/JPWealth/',
+        'JPW_NoCuda_Store_Tests.mq5': 'MQL5/Scripts/JPWealth/',
+        'JPW_NoCuda_Projection_Tests.mq5': 'MQL5/Scripts/JPWealth/',
         'JPW_Alavancagem_Core.mqh': 'MQL5/Include/JPWealth/',
         'JPW_Alavancagem_MDD.mqh': 'MQL5/Include/JPWealth/',
         'JPW_Alavancagem_Terminal.mqh': 'MQL5/Include/JPWealth/',
@@ -187,29 +286,46 @@ def verify_guide(page):
     expected_destinations.update({"JPW_Alavancagem_" + name + ".mqh": "MQL5/Include/JPWealth/"
                                   for name in ['Actions', 'Coordinator', 'Diagnostics', 'Diagnostics_Core', 'Presentation', 'Samples', 'Store_Result', 'Version']})
     expected_destinations["JPW_Alavancagem_Diagnostics_Tests.mq5"] = "MQL5/Scripts/JPWealth/"
-    assert {row.locator('th').inner_text(): row.locator('td').inner_text()
+    expected_destinations.update({"JPW_SignalCopy_"+name+".mqh":"MQL5/Include/JPWealth/" for name in ("Types", "Core", "Terminal", "Controller", "UI")})
+    expected_destinations["JPW_SignalCopy_Tests.mq5"]="MQL5/Scripts/JPWealth/"
+    expected_destinations["JPW_Alavancagem_Positions.mqh"]="MQL5/Include/JPWealth/"
+    expected_destinations["JPW_Alavancagem_Positions_Tests.mq5"]="MQL5/Scripts/JPWealth/"
+    expected_destinations.update({"JPW_NoCuda_Fibo_" + name + ".mqh": "MQL5/Include/JPWealth/"
+                                  for name in ("Core", "Terminal", "Store", "Sync", "Controller", "UI")})
+    expected_destinations["JPW_UI_Focus.mqh"] = "MQL5/Include/JPWealth/"
+    expected_destinations["JPW_NoCuda_Fibo_Tests.mq5"] = "MQL5/Scripts/JPWealth/"
+    expected_destinations["JPW_NoCuda_Fibo_Lab.mq5"] = "MQL5/Scripts/JPWealth/ · laboratório isolado"
+    expected_destinations["JPW_NoCuda_Logo.bmp"] = "MQL5/Images/JPWealth/ · recurso incorporado na compilação"
+    expected_destinations["JPW_Genetrix_Brand.mqh"] = "MQL5/Include/JPWealth/"
+    expected_destinations.update({"JPW_Genetrix_Logo_"+theme+"_"+str(scale)+".bmp": "MQL5/Images/JPWealth/ · recurso incorporado na compilação" for theme in ("Light", "Dark") for scale in (100,125,150,200)})
+    assert {row.locator('th').text_content(): row.locator('td').text_content()
             for row in rows.all()} == expected_destinations
-    assert 'não são compilados separadamente' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_Consultar_MDD.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_RaizN_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_RaizN_Store_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_RaizN_Config_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_RaizN_Live_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_RaizN_Horizon_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_RaizN_Factor_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_Observer_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_Observer.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_Panel_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'JPW_Alavancagem_StopRisk_Tests.mq5' in page.locator('#jpwLeverageCompile').inner_text()
-    assert 'Allow Algo Trading / Permitir negociação algorítmica desmarcado' in page.locator('#jpwLeverageTests').inner_text()
-    assert 'Experts' in page.locator('#jpwLeverageTests').inner_text()
-    assert 'Não comprova a leitura dos contratos' in page.locator('#jpwLeverageTests').inner_text()
-    assert '10.000 USC = US$ 100' in page.locator('#jpwLeverageUSC').inner_text()
-    assert 'último equity informado pelo terminal' in page.locator('#jpwLeverageUse').inner_text()
-    assert 'horário do servidor' in page.locator('#jpwLeverageUse').inner_text()
-    assert page.locator('.leverage-quality dt').all_text_contents() == [
+    assert 'não são compilados separadamente' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_Consultar_MDD.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_RaizN_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_RaizN_Store_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_RaizN_Config_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_RaizN_Live_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_RaizN_Horizon_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_RaizN_Factor_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_Observer_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_Observer.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_Panel_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_Alavancagem_StopRisk_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_NoCuda_Channels.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_NoCuda_Core_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_NoCuda_Store_Tests' in page.locator('#jpwLeverageTests').text_content()
+    assert 'JPW_NoCuda_Projection_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    assert 'JPW_NoCuda_Projection_Tests' in page.locator('#jpwLeverageTests').text_content()
+    assert 'Allow Algo Trading / Permitir negociação algorítmica desmarcado' in page.locator('#jpwLeverageTests').text_content()
+    assert 'Experts' in page.locator('#jpwLeverageTests').text_content()
+    assert 'Não comprova a leitura dos contratos' in page.locator('#jpwLeverageTests').text_content()
+    assert '10.000 USC = US$ 100' in page.locator('#jpwLeverageUSC').text_content()
+    assert 'último equity informado pelo terminal' in page.locator('#jpwLeverageUse').text_content()
+    assert 'horário do servidor' in page.locator('#jpwLeverageUse').text_content()
+    assert page.locator('#jpwLeverageUse .leverage-quality dt').all_text_contents() == [
         'Current', 'Estimated', 'N/A']
-    guide = page.locator('#jpwLeverageUse').inner_text()
+    guide = page.locator('#jpwLeverageUse').text_content()
     assert 'JPW: Leverage 2,75x · Current' in guide
     assert 'JPW: Leverage ≈2,75x · Estimated' in guide
     assert 'Floating P/L: +1,25%' in guide
@@ -223,8 +339,8 @@ def verify_guide(page):
     assert 'DD / saldo: 3,00%' in guide and 'não é uma linha adicional' in guide
     assert 'seis linhas pequenas e cinzas' in guide
     assert 'O Cockpit separa resumo, Stops, Raiz N' in guide
-    cockpit = page.locator('#jpwLeverageCockpit').inner_text()
-    assert page.locator('.leverage-page-nav a[href="#jpwLeverageCockpit"]').count() == 1
+    cockpit = page.locator('#jpwLeverageCockpit').text_content()
+    assert page.locator('#jpwLeverageCockpit').count() == 1
     for phrase in ('seis cartões', 'Estado dos dados', 'última captura registrada',
                    'LAST · NOT ACTIVE',
                    'não comprova que o EA está ativo agora', 'Cockpit → Ajustes',
@@ -232,10 +348,78 @@ def verify_guide(page):
                    'teste nativo isolado', 'Ocultar não desliga'):
         assert phrase in cockpit, phrase
     assert 'O indicador não salva nem sobrescreve modelos por conta própria' in cockpit
+    for phrase in ('1.13.0', '1040 × 760 px', 'aba ativa', 'controle em foco',
+                   'preserva as fórmulas e os registros locais'):
+        assert phrase in cockpit, phrase
     assert page.locator('#jpwLeverageCockpit .leverage-cockpit-map dt').all_text_contents() == [
         'Visão geral', 'Stops', 'Raiz N', 'Sistema', 'Ajustes']
-    stops = page.locator('#jpwLeverageStopRisk').inner_text()
-    assert page.locator('.leverage-page-nav a[href="#jpwLeverageStopRisk"]').count() == 1
+    cockpit_guide = page.locator('#jpwLeverageCockpit').text_content()
+    for phrase in ('tabela única', 'ticket completo', 'volume', 'Leverage individual', 'nocional bruto', 'equity', 'Operação', 'Conta', 'rolagem', 'Fechar', 'Esc', 'NOT_RUN'):
+        assert phrase in cockpit_guide, phrase
+    reveal_target(page, 'jpwLeverageSignalCopy')
+    signal = page.locator('#jpwLeverageSignalCopy')
+    assert signal.is_visible()
+    assert page.locator('#jpwLeverageSignalCopy').count() == 1
+    for phrase in ('Preparar mensagem', 'SL', 'TP', 'Raiz N', 'Estimated', 'Ctrl+C',
+                   'NOT_RUN', 'MQL5/Files/JPWealth/SignalCopy/', 'não envia',
+                   'pendente', 'conta', 'símbolo'):
+        assert phrase in signal.text_content(), phrase
+    assert 'JPW_SignalCopy_Tests.mq5' in page.locator('#jpwLeverageCompile').text_content()
+    reveal_target(page, 'jpwLeverageNoCuda')
+    channels = page.locator('#jpwLeverageNoCuda')
+    assert channels.is_visible()
+    assert page.locator('#jpwLeverageNoCuda').count() == 1
+    for phrase in ('1.16.1', 'JPW_NoCuda_Channels', 'não precisa do EA observador',
+                   'Canal de Fibonacci do próprio MT5', '65 níveis', '−4 a +4', '0,125',
+                   'não desloca as âncoras', 'ajustes no período de referência',
+                   'suspende a sincronização', 'última captura íntegra salva',
+                   'Tick, zoom, rolagem e consulta não criam revisões',
+                   '90% do gráfico', 'Compacta · Ampla · Maximizada',
+                   'padrão 11', '9 a 24', 'UNVERIFIED_NATIVE', 'N/A', 'NOT_RUN',
+                   'sem EX5 ou prontidão operacional comprovada',
+                   'referência geométrica inclinada', 'se o canal for mantido',
+                   'não prevê onde estará a cotação', '12h e média dos extremos podem diferir',
+                   'AAAA.MM.DD', 'Data do servidor', 'Linha selecionada', 'Consultar dia'):
+        assert phrase in channels.text_content(), phrase
+    assert channels.locator('.leverage-daily-readings dt').all_text_contents() == [
+        'Início · 00h', 'Meio do dia · 12h', 'Fim · 24h',
+        'Média dos extremos', 'Faixa do dia']
+    assert channels.locator('.leverage-cockpit-map dt').all_text_contents() == [
+        'Canal', 'Agora', 'Projeção', 'Registro', 'Aparência']
+    primary = channels.locator('details.genetrix-resource-detail > summary')
+    primary.click()
+    assert primary.evaluate('n=>n.parentElement.open')
+    # Each disclosure remains reachable by keyboard and tests its own contract.
+    disclosures = [
+        ('Por que a linha 5', ('descrição visível', 'nível numérico',
+          '1 → −1; 3 → −0,75; 5 → −0,50; 9 → 0; 17 → +1',
+          'não limita o canal', 'correções posteriores no histórico', 'validação nativa pendente')),
+        ('Quero continuar usando', ('modo manual legado', 'A → B → C', 'recolhe o painel',
+          'barra encerrada', 'Close', 'Arrastar', 'não grava automaticamente',
+          'C não é automaticamente um terceiro contato', 'Confirmar versão', 'Cancelar rascunho')),
+        ('H1 e H4:', ('30 dias civis', '14 dias civis encerrados',
+          'sete dias adicionais', 'Sem sessão', 'sem faixa', 'Estimated',
+          '00/04/08/12/16/20', 'Não se divide uma contagem H1 por quatro',
+          'Falta, barra extra', 'Cotação recente não valida calendário',
+          'nada altera o calendário da Raiz N', 'feriados', 'horário de verão')),
+        ('Arquivos adicionais', ('JPW_NoCuda_Fibo_Tests.mq5', 'JPW_NoCuda_Fibo_Lab.mq5',
+          'JPW_NoCuda_Logo.bmp', 'MQL5/Images/JPWealth/', 'sem autoaprovação da geometria')),
+    ]
+    for title, phrases in disclosures:
+        summary = channels.locator('details summary').filter(has_text=title)
+        assert summary.count() == 1
+        summary.focus()
+        page.keyboard.press('Enter')
+        assert summary.evaluate('n=>n.parentElement.open')
+        detail = summary.locator('..').text_content()
+        for phrase in phrases:
+            assert phrase in detail, phrase
+        page.keyboard.press('Enter')
+        assert not summary.evaluate('n=>n.parentElement.open')
+    assert 'Nocuda_Tool.mq5' in channels.text_content()
+    assert 'não recebe migração automática' in channels.text_content()
+    stops = page.locator('#jpwLeverageStopRisk').text_content()
+    assert page.locator('#jpwLeverageStopRisk').count() == 1
     for phrase in ('Saldo Inicial de Referência', 'saldo atual', 'OrderCalcProfit',
                    'max(0, −lucro hipotético)', 'reserva separada', 'Cockpit → Stops',
                    'execução → SL', 'mercado → SL', 'N/A protege contra total parcial',
@@ -243,10 +427,10 @@ def verify_guide(page):
                    'Check Observer'):
         assert phrase in stops, phrase
     assert 'publicação pendente ou falha' in stops
-    help_text = page.locator('#jpwLeverageHelp').inner_text()
+    help_text = page.locator('#jpwLeverageHelp').text_content()
     assert 'Amplie para ler a tabela' in help_text
     assert 'InpCockpitFontSize' in help_text
-    viewer = page.locator('#jpwLeverageMDDViewer').inner_text()
+    viewer = page.locator('#jpwLeverageMDDViewer').text_content()
     assert 'JPW_Alavancagem_Consultar_MDD' in viewer
     assert 'Navegador → Scripts → JPWealth' in viewer
     assert 'Algo Trading desmarcado' in viewer
@@ -257,12 +441,12 @@ def verify_guide(page):
     assert 'Ausência de registro não significa máximo zero' in viewer
     assert 'MDD pico-a-vale' in viewer
     assert 'Experts' in viewer and 'arquivos locais de log' in viewer
-    assert page.locator('.leverage-page-nav a[href="#jpwLeverageMDDViewer"]').count() == 1
-    genesis = page.locator('#jpwLeverageGenesis').inner_text()
+    assert page.locator('#jpwLeverageMDDViewer').count() == 1
+    genesis = page.locator('#jpwLeverageGenesis').text_content()
     assert 'InpGenesisTicket=0' in genesis and 'Bid − SL' in genesis and 'SL − Ask' in genesis
     assert 'inferência' in genesis and 'não confirma execução' in genesis
-    assert page.locator('.leverage-page-nav a[href="#jpwLeverageGenesis"]').count() == 1
-    raiz = page.locator('#jpwLeverageRaizN').inner_text()
+    assert page.locator('#jpwLeverageGenesis').count() == 1
+    raiz = page.locator('#jpwLeverageRaizN').text_content()
     assert 'Raiz N diag. 1W: ≈3,29% · F1,5 · Estimated' in raiz
     assert 'Raiz N diag. 2W: ≈4,65% · F1,5 · Estimated' in raiz
     assert 'F 1,5/1,8' in raiz and 'Aplicar' in raiz and 'Cancelar' in raiz
@@ -286,17 +470,19 @@ def verify_guide(page):
     assert 'não envia ordens nem altera stops' in raiz
     assert 'Reconstructed' in raiz and 'preço da decisão humana' in raiz
     # Legacy scenarios are supplementary content in the new advanced disclosure.
-    advanced = page.locator('#jpwLeverageRaizN details summary')
+    reveal_target(page, 'jpwLeverageRaizN')
+    page.locator('#jpwLeverageRaizN details.genetrix-resource-detail > summary').click()
+    advanced = page.locator('#jpwLeverageRaizN details summary').filter(has_text='Cenários declarados')
     advanced.focus()
     page.keyboard.press('Enter')
     assert advanced.evaluate("n=>n.parentElement.open")
-    advanced_text = page.locator('#jpwLeverageRaizN details').inner_text()
+    advanced_text = advanced.locator('..').text_content()
     assert 'retrospectiva' in advanced_text and 'ticket' in advanced_text
     assert 'sem migração ou reescrita' in advanced_text
     page.keyboard.press('Enter')
     assert not advanced.evaluate("n=>n.parentElement.open")
     assert 'não escolhe stop' in raiz
-    assert page.locator('.leverage-page-nav a[href="#jpwLeverageRaizN"]').count() == 1
+    assert page.locator('#jpwLeverageRaizN').count() == 1
     how = page.locator('#jpwLeverageHow').text_content()
     assert '100 × P / B' in how and '100 × max(0, B − E) / B' in how
     assert 'Crédito da conta é contexto' in how
@@ -304,22 +490,92 @@ def verify_guide(page):
     assert 'Não é um MDD pico-a-vale' in how
     assert 'relógio do computador' in how
     assert 'O site não lê nem distribui o arquivo' in how
-    assert 'fonte 8' in page.locator('#jpwLeverageUse .leverage-details').text_content()
+    assert 'fonte 8' in page.locator('#jpwLeverageUse').text_content()
     # The essential path stays in ordinary document flow; only extra explanations collapse.
+    reveal_target(page, 'jpwLeverageUSC')
     summary = page.locator('#jpwLeverageUSC summary')
     summary.focus()
     page.keyboard.press('Enter')
     assert summary.evaluate("n=>n.parentElement.open")
-    assert summary.evaluate('n=>n===document.activeElement')
-    assert 'MQL5/Files/JPWealth/Alavancagem/' in page.locator('#jpwLeverageUSC details').inner_text()
+    page.evaluate("window.dispatchEvent(new PopStateEvent('popstate'));window.dispatchEvent(new HashChangeEvent('hashchange'))")
+    page.evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+    assert summary.evaluate('n=>n===document.activeElement'), 'Duplicate history events must not steal disclosure focus'
+    assert 'MQL5/Files/JPWealth/Alavancagem/' in page.locator('#jpwLeverageUSC details').text_content()
     page.keyboard.press('Enter')
     assert not summary.evaluate("n=>n.parentElement.open")
-    first = page.locator('.leverage-page-nav a').first
-    first.focus()
-    page.keyboard.press('Tab')
-    assert page.evaluate("document.activeElement.getAttribute('href')") == '#jpwLeverageDownloads'
-    page.keyboard.press('Enter')
-    assert page.url.endswith('#jpwLeverageDownloads')
+    open_area(page, 'overview')
+
+
+
+def open_area(page, area):
+    page.locator('[data-genetrix-tab="' + area + '"]').click()
+    page.locator('[data-genetrix-panel="' + area + '"]').wait_for(state='visible')
+    assert page.locator('[data-genetrix-panel]:visible').count() == 1
+    for node in page.locator('[data-genetrix-panel]').all():
+        assert node.evaluate('n=>n.hidden===n.inert')
+
+
+def reveal_target(page, target):
+    page.evaluate("id=>location.hash=id", target)
+    page.locator('#' + target).wait_for(state='visible')
+    page.wait_for_function("id=>document.activeElement.id===id", arg=target)
+    page.evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+
+
+def verify_navigation_contract(page):
+    # Exercise real controls/controller; no direct changes to application state.
+    state_before = page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})')
+    assert page.locator('[data-genetrix-tab]').all_text_contents() == ['Visão geral', 'Instalar', 'Recursos', 'Validação', 'Ajuda']
+    page.evaluate("history.replaceState(null,'',location.pathname)")
+    # Original URL has no fragment: Back must restore overview instead of Install.
+    page.locator('[data-genetrix-tab="install"]').click()
+    page.go_back()
+    page.wait_for_function("JPWTools.genetrix.getView()==='overview'")
+    assert not page.evaluate('location.hash')
+    page.locator('[data-genetrix-tab="overview"]').focus()
+    for key, area in [('ArrowRight','install'),('End','help'),('Home','overview'),('ArrowLeft','help'),('ArrowRight','overview')]:
+        page.keyboard.press(key)
+        assert page.locator('[data-genetrix-tab="'+area+'"]').get_attribute('aria-selected') == 'true'
+        assert page.evaluate('document.activeElement.dataset.genetrixTab') == area
+        assert page.locator('[data-genetrix-panel]:visible').count() == 1
+    page.locator('[data-genetrix-open="install"]').first.click()
+    assert page.locator('[data-genetrix-panel="install"]').is_visible()
+    open_area(page, 'overview')
+    page.locator('[data-genetrix-open="resources"]').first.click()
+    assert page.locator('[data-genetrix-panel="resources"]').is_visible()
+    legacy = ['jpwLeverageOverview','jpwGenetrixDefinition','jpwLeverageDownloads','jpwLeverageInstall','jpwLeverageCompile','jpwLeverageTests','jpwLeverageUSC','jpwLeverageUse','jpwLeverageCockpit','jpwLeverageSignalCopy','jpwLeverageNoCuda','jpwLeverageStopRisk','jpwLeverageGenesis','jpwLeverageRaizN','jpwLeverageMDDViewer','jpwLeverageHow','jpwLeverageHelp']
+    for target in legacy:
+        reveal_target(page,target)
+        assert page.evaluate("id=>{let n=document.getElementById(id);for(;n;n=n.parentElement){if(n.tagName==='DETAILS'&&!n.open)return false;}return true;}",target)
+        assert page.evaluate("JPWNavigation.current().canonical") == 'tools-leverage'
+    open_area(page,'overview'); open_area(page,'install')
+    page.go_back()
+    page.wait_for_function("JPWTools.genetrix.getView()==='overview'")
+    page.go_forward()
+    page.wait_for_function("JPWTools.genetrix.getView()==='install'")
+    assert page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})') == state_before
+    reveal_target(page,'jpwLeverageNoCuda')
+    page.reload();wait_bootstrap(page)
+    page.wait_for_function("document.activeElement.id==='jpwLeverageNoCuda'")
+    assert page.locator('#jpwLeverageNoCuda').is_visible()
+    state_after_reload = page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})')
+    before_unknown = page.evaluate("JSON.stringify({view:JPWTools.genetrix.getView(),route:JPWNavigation.current().canonical})")
+    for fragment in ('#unknown-genetrix','#jpwLeverageNoCuda%20','#%3Cscript%3E','#jpwLeverageNoCuda[onclick]'):
+        page.evaluate('hash=>location.hash=hash',fragment)
+        page.wait_for_timeout(60)
+        assert page.evaluate("JSON.stringify({view:JPWTools.genetrix.getView(),route:JPWNavigation.current().canonical})") == before_unknown
+    assert page.evaluate('JSON.stringify({s:S,store:Object.fromEntries(Object.entries(localStorage))})') == state_after_reload
+    illustration = page.locator('#jpwLeveragePage').text_content()
+    assert 'Prévia ilustrativa · dados fictícios' in illustration
+    # The Genetrix wordmark must be the original red asset, including offline/portable.
+    image = page.locator('[data-genetrix-brand]')
+    assert image.count() == 1
+    encoded = image.get_attribute('src')
+    assert encoded.startswith('data:image/png;base64,')
+    assert base64.b64decode(encoded.split(',',1)[1]) == (ROOT/'assets/jp-wealth-brand-red.png').read_bytes()
+    assert image.evaluate('n=>n.complete&&n.naturalWidth>0')
+    print('PASS five tabs, keyboard,17legacy IDs,history,unknown hashes,original logo andno writes',flush=True)
+    open_area(page,'overview')
 
 
 def verify_guide_geometry(page, layout):
@@ -328,31 +584,37 @@ def verify_guide_geometry(page, layout):
         page.set_viewport_size({'width': width, 'height': 900})
         for theme in ('light', 'dark'):
             page.evaluate("theme=>document.documentElement.dataset.theme=theme", theme)
-            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), (layout, width, theme)
-            assert page.locator('[data-leverage-step]').count() == 7
-            bad = page.locator('#jpwLeveragePage :is(.leverage-page-nav a,summary)').evaluate_all("""nodes=>nodes.filter(n=>{
-              const r=n.getBoundingClientRect(); return r.height<43 || r.width<43;
-            }).map(n=>n.textContent)""")
-            assert not bad, (layout, width, theme, bad)
-            assert page.locator('.leverage-file-table').evaluate("n=>n.scrollWidth<=n.clientWidth+1"), (layout, width, theme)
-            for step in page.locator('[data-leverage-step]').all():
-                assert step.is_visible()
-                assert step.evaluate("n=>n.scrollWidth<=n.clientWidth+1"), (layout, width, theme)
-            if EVIDENCE_DIR is not None and layout == 'sidebar':
-                EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-                for section in ('Overview', 'Downloads', 'Install', 'Use'):
-                    page.locator('#jpwLeverage' + section).screenshot(
-                        path=str(EVIDENCE_DIR / f'guide-{section.lower()}-{width}-{theme}.png'))
-                metrics = page.locator('#jpwLeveragePage [data-leverage-step]').evaluate_all("""nodes=>nodes.map(n=>({
-                    step:n.dataset.leverageStep,width:n.getBoundingClientRect().width,
-                    height:n.getBoundingClientRect().height,clientWidth:n.clientWidth,scrollWidth:n.scrollWidth
-                }))""")
-                (EVIDENCE_DIR / f'geometry-{width}-{theme}.json').write_text(
-                    json.dumps({'layout': layout, 'width': width, 'theme': theme,
-                                'package_sha256': SOURCE['sha256'], 'steps': metrics}, indent=2))
-            print('PASS guide geometry', layout, width, theme, flush=True)
+            page.locator('#jpwLeveragePage details').evaluate_all('nodes=>nodes.forEach(n=>n.open=false)')
+            for area in ('overview', 'install', 'resources', 'validation', 'help'):
+                open_area(page, area)
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), (layout, width, theme, area)
+                assert page.locator('[data-leverage-step]').count() == 7
+                bad = page.locator('#jpwLeveragePage :is(button,a,summary)').evaluate_all("""nodes=>nodes.filter(n=>{
+                  const r=n.getBoundingClientRect(); return r.width>0&&r.height>0&&(r.height<44||r.width<44);
+                }).map(n=>({text:n.textContent,width:n.offsetWidth,height:n.offsetHeight}))""")
+                assert not bad, (layout, width, theme, area, bad)
+                assert not page.locator('[data-genetrix-panel]:visible').evaluate("n=>n.scrollWidth>n.clientWidth+1"), (layout, width, theme, area)
+                assert page.locator('#jpwLeveragePage :is(.genetrix-resource-facts dd,.genetrix-evidence-flow p,.leverage-validation dd,.genetrix-limit,.genetrix-scope-note)').evaluate_all("nodes=>nodes.every(n=>parseFloat(getComputedStyle(n).fontSize)>=16)"), (layout,width,theme,'body16px')
+                if EVIDENCE_DIR is not None and layout == 'sidebar':
+                    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+                    page.locator('#jpwLeveragePage').screenshot(path=str(EVIDENCE_DIR / f'{area}-{width}-{theme}.png'))
+            open_area(page, 'install')
+            page.locator('.leverage-file-table').evaluate("n=>{let a=n.parentElement;while(a){if(a.tagName==='DETAILS')a.open=true;a=a.parentElement;}}")
+            assert page.locator('.leverage-file-table').evaluate("n=>n.scrollWidth<=n.clientWidth+1"), (layout,width,theme)
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
+            print('PASS five-area geometry', layout, width, theme, flush=True)
     page.evaluate("theme=>document.documentElement.dataset.theme=theme", original_theme)
     page.set_viewport_size({'width': 1440, 'height': 900})
+    page.evaluate("document.documentElement.style.zoom='2'")
+    for area in ('overview','install','resources','validation','help'):
+        open_area(page,area)
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), (layout,area,'200%')
+        assert not page.locator('[data-genetrix-panel]:visible').evaluate('n=>n.scrollWidth>n.clientWidth+1'), (layout,area,'200%')
+        if EVIDENCE_DIR is not None and layout=='sidebar':
+            page.locator('#jpwLeveragePage').screenshot(path=str(EVIDENCE_DIR/f'{area}-zoom200.png'))
+    page.evaluate("document.documentElement.style.zoom=''")
+    open_area(page, 'overview')
+    print('PASS200percent reflow',layout,flush=True)
 
 
 def verify_archive(raw):
@@ -360,7 +622,7 @@ def verify_archive(raw):
     assert sha256(raw).hexdigest() == SOURCE['sha256']
     with ZipFile(BytesIO(raw)) as bundle:
         names = set(bundle.namelist())
-        assert EXPECTED <= names, names
+        assert EXPECTED == names, names
         assert names == {Path(path).relative_to('mt5/jpw-alavancagem-atual').as_posix()
                          for path in MANIFEST['sourceFiles']}, names
         for name in names:
@@ -368,19 +630,22 @@ def verify_archive(raw):
 
 
 def download_from_page(page):
+    open_area(page, 'install')
     with page.expect_download() as pending:
         page.locator('[data-jpw-leverage-download="source"]').click()
     artifact = pending.value
     assert artifact.suggested_filename == SOURCE['filename']
     raw = Path(artifact.path()).read_bytes()
     verify_archive(raw)
-    assert 'verificado' in page.locator('#jpwLeverageDownloadStatus').inner_text()
+    assert 'verificado' in page.locator('#jpwLeverageDownloadStatus').text_content()
 
 
 def main():
     assert SOURCE['available'] is True and ARCHIVE.is_file(), 'source package not built'
     verify_archive(ARCHIVE.read_bytes())
-    server = ThreadingHTTPServer(('127.0.0.1', 0), Quiet)
+    # Same static bytes/assertions; existing bounded transport avoids dropped
+    # bootstrap scripts under concurrent local loads. No retry or fallback.
+    server = BrowserFixtureServer(('127.0.0.1', 0), Quiet)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f'http://127.0.0.1:{server.server_port}'
     targets = [
@@ -408,14 +673,23 @@ def main():
                     assert not errors, errors
                     print('PASS', name, 'route, metadata, bytes and extraction', flush=True)
                     if name == 'HTTP':
+                        verify_navigation_contract(page)
                         count = []
                         page.on('download', lambda artifact: count.append(artifact.suggested_filename))
                         page.route('**/' + SOURCE['path'], lambda route: route.fulfill(status=404, body='missing'))
+                        open_area(page, 'install')
                         page.locator('[data-jpw-leverage-download="source"]').click()
                         page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').dataset.state==='error'")
-                        assert 'não encontrado' in page.locator('#jpwLeverageDownloadStatus').inner_text()
+                        assert 'não encontrado' in page.locator('#jpwLeverageDownloadStatus').text_content()
                         assert not count
                         print('PASS HTTP missing package fails closed', flush=True)
+                        page.unroute('**/' + SOURCE['path'])
+                        tampered = bytearray(ARCHIVE.read_bytes()); tampered[-1] ^= 1
+                        page.route('**/' + SOURCE['path'], lambda route: route.fulfill(status=200,body=bytes(tampered),content_type='application/zip'))
+                        page.locator('[data-jpw-leverage-download="source"]').click()
+                        page.wait_for_function("document.getElementById('jpwLeverageDownloadStatus').textContent.includes('Hash do pacote diferente')")
+                        assert not count
+                        print('PASS HTTP equal-size tampered ZIP refused by SHA-256',flush=True)
                 finally:
                     context.close()
             for layout in ('sidebar', 'topbar', 'glass', 'submenu'):
@@ -442,8 +716,8 @@ def main():
             try:
                 page.locator('[data-shell-menu-toggle]').click()
                 page.locator('#toolsNavTrigger').click()
-                assert page.evaluate('JPWNavigation.current().canonical') == 'tools-calendar'
-                page.locator('[data-shell-menu-toggle]').click()
+                assert page.evaluate('JPWNavigation.current().canonical') == 'dashboard'
+                assert page.get_attribute('html', 'data-shell-menu') == 'open'
                 page.locator('#toolsNavSubmenu [data-nav-child="tools-leverage"]').click()
                 route_and_inspect(page)
                 assert page.locator('#sidebarBackdrop').is_hidden()

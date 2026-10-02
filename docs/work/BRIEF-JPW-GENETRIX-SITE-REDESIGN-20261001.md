@@ -1,0 +1,13 @@
+# Brief — JPW GENETRIX / página MT5
+
+O JP Wealth organiza leitura financeira e ferramentas locais; a tarefa melhora entendimento e instalação do Genetrix, sem normatizar operações. A seção atual tem 15 atalhos, 16 seções expostas e 85 linhas de arquivo; informações técnicas competem com o começo da instalação. Depois terá Visão geral, Instalar, Recursos, Validação e Ajuda, com prévia sintética, fluxo de instalação exposto e detalhes secundários recolhidos.
+
+Responsabilidade: index.html contém somente apresentação; app.css organiza a seção; 31-tools-services.js administra UI efêmera e download conferido. JPWNavigation.navigate/navigateLocal permanece fachada externa; o controlador local reconhece somente destinos conhecidos dentro da seção. Todos os IDs históricos ficam preservados. Fontes de metadados: manifesto existente, bytes verificados e payload de build; nenhum dado de conta é recebido.
+
+Consumidores: rota tools-leverage nos quatro layouts, links por hash, teclado/foco, download HTTP/file/portátil/PWA, gerador oficial e focais. Proibições: MT5/ZIP/manifesto de distribuição, cálculos, S/persistência, normas, AGENTS/Harness, gates/CI, service worker, Obsidian e Git/publicação. Tabela pode recolher arquivos completos, jamais passos essenciais ou motivos de bloqueio.
+
+Aplicação X1: ADAPTAR hierarquia/divulgação progressiva à web; ADOTAR foco, contraste, reflow, nomes explícitos e privacidade; NÃO APLICÁVEL ativos proprietários Apple, biblioteca nova ou mudança de norma. Referência externa aprovada: Apple HIG Layout. Fonte X1 v1.0 sha fcc11d3eab563f3464e84e5b8886ddb9ee4784cff75530702f07776d19e0dff7, §§1–8,11,14–17; Harness relocalizado original sha b5680c22e44cf3f4a5cd3aa5deeb96f8b65c7908f14543e8c5d7f0c2f4e17b95 §§12–19,28–30,36. AGENTS/contexto/workflow/gates lidos; SOURCE REVISION UNKNOWN herdado permanece explícito, não é dispensado como aprovação.
+
+Base conferida: 1.16.1/r4,630/630 arquivos; fingerprint e569127c8ac120055d4d538a04b714af3f57bbb01f40e3d408c0e97368623daa; HEAD deffc5061fe2eff3d83b6f6e742fa105ac9c5b06; branch codex/jpw-cockpit-ui-20260930;135 alterações herdadas preservadas. Backup/índice/diff em outputs/jpw-genetrix-site-redesign-20261001. Fonte MT5 tem aprovação host de marca, nativo NOT_RUN; não inferir runtime.
+
+Prova: testes de tarefas/estados e todos IDs, five tabs/teclado/hash/reload/back, ausência de escrita, geometria e capturas320/390/1440 claro/escuro/quatro layouts/200%; integridade/transporte de downloads e87membros. Focais+suíteMT5host+fullbruto+auditoria independente do freeze; evidências brutas anteriores preservadas. Rollback restaura somente delta desta tarefa a partir do snapshot, sem reset da worktree com alterações herdadas.

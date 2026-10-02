@@ -4,7 +4,8 @@ Unlock flags and quarantine do not disable recording. Rendering preserves all
 state and storage; the old guarded visual contract was explicitly superseded.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os
@@ -58,12 +59,12 @@ LER_PAINEL = """
   JPWForex.executionBoardUI.renderPhases();
   const depois = JSON.stringify({state:S,raw:localStorage.getItem(LSKEY),writes:__notesLauncherWrites.length});
   const cont = document.getElementById('phaseContainer');
-  const cartoes = [...cont.querySelectorAll('.phase[data-phase]')].map(el => {
-    const corpo = el.querySelector('.phase-body');
+  const cartoes = [...cont.querySelectorAll('.eb-phase-row[data-phase]')].map(el => {
+    const corpo = el.closest('tbody');
     const controles = corpo ? [...corpo.querySelectorAll('input,select,textarea,button')] : [];
     return {
       idx: +el.dataset.phase,
-      cracha: (el.querySelector(':scope > summary')||{}).textContent || '',
+      cracha: (el.querySelector('.eb-phase-label strong')||{}).textContent || '',
       ativa: !!el.querySelector('.here'),
       controles: controles.length,
       habilitados: controles.filter(c => !c.disabled).length,

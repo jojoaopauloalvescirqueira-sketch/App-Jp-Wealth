@@ -234,6 +234,16 @@ double g_numeric_values[6]={},g_stop_total_money=0;
 bool g_numeric_valid[6]={};long g_source_times[6]={};int g_stop_quality=0;
 struct StopSample{long observed_utc=0,observed_mono_ms=0;}g_stop_sample;
 JPWMetricSample g_metric_samples[6];string g_sample_context;
+// Existing scheduler replay treats the new inventory module as an explicit
+// component boundary. jpw_positions_core_test executes its real implementation.
+string g_position_math_reason;
+int positions_catalogue_requests=0,position_publications=0,position_monitors=0;
+std::vector<int> position_publish_order;
+void JPWPositionsCollectCatalogOnly(){
+ if(now_ms>=g_cycle_started_ms&&now_ms-g_cycle_started_ms<500)positions_catalogue_requests++;}
+void JPWPositionsMonitorInventory(){position_monitors++;}
+bool JPWPositionsPublish(JPWMetricSample&,const string&){
+ position_publications++;position_publish_order=accepted_metrics;return true;}
 int g_metric_last_quality[6]={};
 int g_leverage_quality=1,g_floating_quality=1,g_genesis_quality=1,g_raiz_quality=1,g_scale2_quality=1;
 constexpr int JPW_VIEW_NA=0,JPW_VIEW_ESTIMATED=2;
@@ -275,6 +285,8 @@ int main(){
  check(genesis_calls==0&&raiz_calls==0&&stop_calls==0&&g_genesis_due&&g_raiz_due&&g_refresh_requested,
        "global 500ms exhaustion starts no optional collector and preserves deferred requests");
  check(accepted_metrics==std::vector<int>({0,1}),"deferred metrics do not receive invented collection identities");
+ check(position_publications==1&&position_publish_order==std::vector<int>({0})&&positions_catalogue_requests==0,
+       "position publication occurs after metric zero acceptance without opening a collector after budget exhaustion");
  accepted_metrics.clear();g_refresh_requested=false;now_ms=2000;g_cycle_started_ms=2000;genesis_duration=500;
  JPWAcceptCollection("2.50x","accepted");
  check(genesis_calls==1&&raiz_calls==0&&stop_calls==0&&!g_genesis_due&&g_raiz_due,

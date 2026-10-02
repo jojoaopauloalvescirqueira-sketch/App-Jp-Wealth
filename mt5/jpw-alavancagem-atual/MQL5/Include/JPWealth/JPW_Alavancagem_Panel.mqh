@@ -16,7 +16,27 @@ bool JPWPanelDarkBackground(const color background)
    return(299*red+587*green+114*blue<140000);
   }
 color JPWPanelSurface(const color background)
-  { return(JPWPanelDarkBackground(background) ? C'38,38,38' : C'255,255,255'); }
+  { return(JPWPanelDarkBackground(background) ? C'28,31,37' : C'255,255,255'); }
+// The HUD retains white on a light chart so the configurable default gray
+// still has 4.5:1 contrast. The large window uses the shared NoCuda theme.
+color JPWPanelWindowSurface(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'28,31,37' : C'247,249,252'); }
+color JPWPanelChromeSurface(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'39,45,54' : C'233,238,244'); }
+color JPWPanelCardSurface(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'34,39,47' : C'255,255,255'); }
+color JPWPanelBorderColor(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'102,110,122' : C'185,193,204'); }
+color JPWPanelInk(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'232,234,238' : C'39,45,53'); }
+color JPWPanelMutedText(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'177,182,188' : C'96,103,112'); }
+color JPWPanelAccentColor(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'151,185,217' : C'48,79,112'); }
+color JPWPanelSelectedSurface(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'49,59,71' : C'221,232,244'); }
+color JPWPanelPrimaryInk(const color background)
+  { return(JPWPanelDarkBackground(background) ? C'28,31,37' : C'255,255,255'); }
 int JPWPanelBrightness(const color value)
   {
    const int packed=(int)value;
@@ -26,8 +46,8 @@ color JPWPanelTextColor(const color background,const color light_theme_text)
   {
    if(!JPWPanelDarkBackground(background)) return(light_theme_text);
    // Respect an Entradas color if it remains distinct from the HUD surface.
-   if(JPWPanelBrightness(light_theme_text)-38>=105) return(light_theme_text);
-   return(C'213,213,213');
+   if(JPWPanelBrightness(light_theme_text)-37>=105) return(light_theme_text);
+   return(JPWPanelInk(background));
   }
 
 bool JPWPanelHUD(const int chart_width,const int chart_height,
@@ -44,6 +64,23 @@ bool JPWPanelHUD(const int chart_width,const int chart_height,
    rect.x=JPWPanelClamp(right ? chart_width-inset_x-rect.width : inset_x,0,chart_width-rect.width);
    rect.y=JPWPanelClamp(lower ? chart_height-inset_y-rect.height : inset_y,0,chart_height-rect.height);
    return(true);
+  }
+
+// Reserve a HUD width from stable presentation inputs. Live prices, quality
+// labels and money values must never resize the corner panel on each timer.
+int JPWPanelHUDReservedWidth(const int chart_width,const int measured_text_height,
+                             const int padding,const int button_width)
+  {
+   if(chart_width<80 || measured_text_height<1 || padding<0 || button_width<1) return(0);
+   const int available=chart_width-16;
+   long target=(long)measured_text_height*25+2*padding;
+   const long chart_budget=(long)chart_width*45/100;
+   if(target>chart_budget) target=chart_budget;
+   const int minimum=button_width+2*padding;
+   // A clipped container must never leave the Cockpit button outside it.
+   if(available<minimum) return(0);
+   if(target<minimum) target=minimum;
+   return((int)(target<available ? target : available));
   }
 
 bool JPWPanelCockpit(const int chart_width,const int chart_height,
@@ -96,6 +133,36 @@ int JPWPanelPageRows(const int available,const int row_height)
   { return(row_height>0 && available>=row_height ? available/row_height : 0); }
 int JPWPanelPageCount(const int total,const int rows)
   { return(rows>0 && total>0 ? (total+rows-1)/rows : 1); }
+
+// A position table scrolls within its own viewport; it never changes cockpit
+// pages. Compact measured rows avoid one oversized card per position.
+struct JPWPositionsLayout
+  {
+   int summary_height;
+   int header_height;
+   int row_height;
+   int table_offset;
+   int visible_rows;
+   bool columns;
+  };
+void JPWPanelPositionsLayout(const int body_height,const int text_height,
+                             const bool columns,JPWPositionsLayout &layout)
+  {
+   layout.summary_height=0; layout.header_height=0; layout.row_height=0;
+   layout.table_offset=0; layout.visible_rows=0; layout.columns=columns;
+   if(body_height<=0 || text_height<=0) return;
+   const int gap=(text_height/12>2 ? text_height/12 : 2);
+   layout.summary_height=text_height+gap;
+   layout.header_height=(columns ? text_height+gap : 0);
+   layout.row_height=(columns ? text_height+gap : 4*(text_height+gap));
+   layout.table_offset=layout.summary_height+layout.header_height+gap;
+   if(layout.table_offset+layout.row_height>body_height)
+     {
+      layout.summary_height=0; layout.header_height=0; layout.table_offset=0;
+     }
+   if(layout.row_height<=body_height-layout.table_offset)
+      layout.visible_rows=JPWPanelClamp((body_height-layout.table_offset)/layout.row_height,1,16);
+  }
 
 // The Stops table gives a complete row and its detail action precedence over
 // optional summary lines. A large measured font must not hide every position.

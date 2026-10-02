@@ -12,7 +12,8 @@ resolve quando o teste manda. Não há sleep arbitrário nem espera probabilíst
 etapa é destravada pelo estado do coordenador e por `__fxDone`. As respostas
 contêm identidade/data válidas; referências diárias não alteram preços manuais.
 """
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json, os, socket, threading
 from playwright.sync_api import sync_playwright

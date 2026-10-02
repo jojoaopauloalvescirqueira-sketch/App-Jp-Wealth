@@ -91,8 +91,8 @@ const JP_WIDGET_DEFAULTS = dashLayoutDeepFreeze({
     // (Clearance) fica com o dobro dos dois cartoes que ele resume.
     { id: 'exec-clearance', zone: 'main', size: 'full', order: 0 },
     { id: 'exec-consolidado', zone: 'main', size: 'full', order: 1 },
-    { id: 'exec-monitor', zone: 'main', size: 'full', order: 2 },
-    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 3 },
+    { id: 'exec-phase-grids', zone: 'main', size: 'full', order: 2 },
+    { id: 'exec-monitor', zone: 'main', size: 'full', order: 3 },
     { id: 'exec-metrics-banners', zone: 'main', size: 'full', order: 4 }
   ],
   contas: [

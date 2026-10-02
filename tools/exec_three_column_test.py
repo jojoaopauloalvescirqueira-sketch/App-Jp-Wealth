@@ -10,7 +10,8 @@ financeiro sem truncamento, nao apenas a existencia de classes CSS.
 Todas as fixtures sao sinteticas; requisicoes externas sao interceptadas.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os
@@ -127,19 +128,16 @@ def run_migracao_preserva_personalizacao(page, falhas):
         falhas.append(f"os dois cartoes novos nao chegaram ao DOM: {ids}")
         return
 
-    # A personalizacao era: o cartao dividido vinha ANTES do Clearance. Se a
-    # migracao falhasse, o validador devolveria null e a tela cairia no PADRAO,
-    # onde o Clearance e o primeiro. Esta e a assercao que separa as duas coisas.
-    if ids.index("exec-consolidado") >= ids.index("exec-clearance"):
-        falhas.append(
-            "a personalizacao gravada foi perdida: o cartao dividido estava ANTES"
-            f" do Clearance e voltou para depois — ordem efetiva {ids}."
-            " Isto e o layout padrao, nao o do operador")
-
-    # O Monitor nasce imediatamente depois do Consolidado, nao em lugar aleatorio.
-    if ids.index("exec-monitor") != ids.index("exec-consolidado") + 1:
-        falhas.append(
-            f"o Monitor nao nasceu logo apos o Consolidado: {ids}")
+    # The approved Execution Board reading order is fixed in this surface.
+    # Existing editor preference bytes and sizes must survive unchanged below.
+    reading=[x for x in ids if x != "exec-metrics-banners"]
+    expected_order=["exec-clearance", "exec-consolidado", "exec-monitor", "exec-phase-grids"]
+    if reading != expected_order:
+        falhas.append(f"fluxo contexto/resumo/ferramentas/grade divergente: {reading}")
+    stored=page.evaluate("key=>JSON.parse(localStorage.getItem(key))", CHAVE)
+    old=stored.get("screens", {}).get("exec", {}).get("widgets", [])
+    if not old or old[0].get("id") not in ("exec-lifo-monitor", "exec-consolidado"):
+        falhas.append(f"preferencia antiga descartada: {stored}")
 
     # O TAMANHO e coagido de proposito, nao herdado. O cartao antigo declarava
     # data-widget-allowed-sizes="full": `full` era o UNICO valor possivel, ou

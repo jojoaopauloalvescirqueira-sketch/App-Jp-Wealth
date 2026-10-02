@@ -3,6 +3,14 @@
 const shellUI = { open:false, opener:null, inerted:[], overflow:'' };
 const navSubUI = { open:false, pinned:false, screen:null, collapsed:null, opener:null };
 const submenuUI = { level:1, surface:null, context:null, openers:[], temporary:false, direction:'forward' };
+// var permite que o bootstrap do bundle portátil consulte a prontidão sem TDZ.
+var sidebarControllerReady=false;
+// Disclosure da lateral é apresentação transitória. A rota continua sendo a
+// única fonte da seleção; nenhum hover passa pelo resolver ou pelo domínio.
+const sidebarUI = { route:null, pinned:null, preview:null, overlay:false, overlayPinned:false,
+  suppressed:null, target:null, pointer:null, paintedAt:null, mobile:null, pointerDown:false,
+  hoverTimer:null, leaveTimer:null, closeTimer:null };
+const SIDEBAR_TIMING=Object.freeze({open:400,leave:300,motion:180});
 const SUBMENU_CONTEXTS=new Set(['forex-management-accounts','forex-planning','research-forex']);
 const SUBMENU_TITLES=Object.freeze({
   exec:'Forex',finpes:'Finanças Pessoais',research:'Research',tools:'Ferramentas e Serviços',
@@ -23,6 +31,273 @@ function shellHorizontal(){return shellTopbar()||shellGlass();}
 function shellCompact(){return shellGlass()?window.matchMedia('(max-width:1179px)').matches:shellMobile();}
 function shellMenuRoot(){return shellGlass()?document.querySelector('body > header'):document.getElementById(shellTopbar()?'nav':'appSidebar');}
 function shellModalOpen(){return !!document.querySelector('#settingsOverlay.show,#mvpNotesOverlay.show');}
+function shellSidebar(){return document.documentElement.getAttribute('data-navigation')==='sidebar';}
+function sidebarBlocked(){
+  return !!document.querySelector('#settingsOverlay.show,#mvpNotesOverlay.show,#modalOverlay.show,#alladinModalOverlay.show,#ecalOverlay.show,dialog[open]');
+}
+function sidebarCollapsed(){return !shellMobile()&&document.documentElement.getAttribute('data-rail')==='collapsed';}
+function sidebarPrimary(surface){return document.querySelector('#nav > [data-nav-surface="'+surface+'"]');}
+function sidebarSurfaceForRoute(current){
+  return shellModuleAvailable(current.primary)?({forex:'exec','personal-finance':'finpes',research:'research',tools:'tools'})[current.primary]||null:null;
+}
+function sidebarClearTimers(){
+  clearTimeout(sidebarUI.hoverTimer);clearTimeout(sidebarUI.leaveTimer);clearTimeout(sidebarUI.closeTimer);
+  sidebarUI.hoverTimer=null;sidebarUI.leaveTimer=null;sidebarUI.closeTimer=null;sidebarUI.target=null;
+}
+function sidebarMoveRailToOwner(){
+  const rail=document.getElementById('railToggle');
+  if(!rail||rail.closest('#settingsRailSlot'))return;
+  const owner=shellSidebar()?document.querySelector('.sidebar-heading'):document.getElementById('appSidebar');
+  if(rail.parentElement!==owner){
+    if(shellSidebar())owner.append(rail);
+    else owner.insertBefore(rail,owner.querySelector('.sidebar-footer'));
+  }
+}
+function sidebarMeasure(){
+  if(!shellSidebar())return;
+  const aside=document.getElementById('appSidebar'),header=document.querySelector('body > header');
+  if(!aside||!header)return;
+  // O header pode quebrar em linhas e sair do viewport durante a rolagem.
+  const top=Math.max(0,Math.min(innerHeight,header.getBoundingClientRect().bottom));
+  const height=Math.max(0,innerHeight-top);
+  aside.style.setProperty('--sidebar-available-height',height+'px');
+  aside.style.setProperty('--sidebar-overlay-top',top+'px');
+  aside.style.setProperty('--sidebar-overlay-height',height+'px');
+}
+function sidebarMarkCurrent(){
+  const current=window.JPWNavigation.current(),active=sidebarSurfaceForRoute(current);
+  document.querySelectorAll('#navSubShell [data-nav-item],#navSubShell [data-nav-sub-view],#navLocalSlot [data-nav-item]').forEach(item=>{
+    const panel=item.closest('.nav-sub-menu'),host=item.closest('.nav-sub-contexts');
+    const owner=(panel?.id.replace('NavSubmenu','')||host?.id.replace('NavContexts',''));
+    const on=owner===active&&(item.dataset.navChild?item.dataset.navChild===current.child:
+      item.dataset.navRoute?navSubRouteIsCurrent(item,current):
+      item.dataset.navLocalView?!!current.localView&&item.dataset.navLocalSurface===current.localView.surface&&item.dataset.navLocalView===current.localView.view:
+      item.dataset.navSubView===navSubSurface(active)?.getView());
+    item.classList.toggle('is-current',on);
+    if(on)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');
+    item.tabIndex=0; // disclosure navigation: todos os destinos visíveis recebem Tab.
+  });
+  document.querySelectorAll('#nav > .tab').forEach(tab=>{
+    if(tab.dataset.navSurface)tab.removeAttribute('aria-current');
+    tab.tabIndex=0;
+  });
+}
+function sidebarPaint(options={}){
+  if(!shellSidebar())return;
+  const root=document.documentElement,shell=document.getElementById('navSubShell');
+  const surface=sidebarUI.preview||sidebarUI.pinned;
+  const visible=!!surface&&!sidebarBlocked()&&(!sidebarCollapsed()||sidebarUI.overlay);
+  const previous=navSubUI.open?navSubUI.screen:null;
+  clearTimeout(sidebarUI.closeTimer);sidebarUI.closeTimer=null;
+  root.removeAttribute('data-sidebar-closing');
+  if(sidebarUI.overlay&&sidebarCollapsed()&&!sidebarBlocked())root.setAttribute('data-sidebar-overlay','true');
+  else root.removeAttribute('data-sidebar-overlay');
+  if(visible)root.setAttribute('data-sidebar-group',surface);else root.removeAttribute('data-sidebar-group');
+  navSubUI.screen=visible?surface:null;navSubUI.open=visible;
+  document.querySelectorAll('[data-nav-expand]').forEach(btn=>{btn.hidden=true;btn.setAttribute('aria-expanded','false');});
+  document.querySelectorAll('#nav > .tab').forEach(tab=>{
+    const group=tab.dataset.navSurface,opened=visible&&group===surface;
+    tab.classList.toggle('sidebar-group-open',opened);
+    if(group){tab.setAttribute('aria-expanded',String(opened));tab.setAttribute('aria-controls',group+'NavSubmenu');}
+    else{tab.removeAttribute('aria-expanded');tab.removeAttribute('aria-controls');}
+    tab.removeAttribute('aria-haspopup');
+  });
+  const motion=matchMedia('(prefers-reduced-motion:reduce)').matches?0:SIDEBAR_TIMING.motion;
+  const closing=previous&&!visible&&!options.immediate&&motion>0&&!sidebarBlocked();
+  document.querySelectorAll('.nav-sub-menu').forEach(panel=>{
+    const on=visible&&panel.id===surface+'NavSubmenu';
+    const fading=closing&&panel.id===previous+'NavSubmenu';
+    panel.hidden=!(on||fading);panel.inert=!on;panel.setAttribute('aria-hidden',String(!on));
+  });
+  if(visible){
+    const parent=sidebarPrimary(surface);
+    if(parent&&parent.nextElementSibling!==shell)parent.after(shell);
+  }
+  shell.hidden=!(visible||closing);shell.inert=!visible;shell.classList.toggle('is-open',visible);
+  if(visible)root.setAttribute('data-nav-sub','open');else root.removeAttribute('data-nav-sub');
+  if(closing){
+    root.setAttribute('data-sidebar-closing','true');
+    sidebarUI.closeTimer=setTimeout(()=>{
+      root.removeAttribute('data-sidebar-closing');shell.hidden=true;
+      document.querySelectorAll('.nav-sub-menu').forEach(panel=>{panel.hidden=true;});
+      sidebarUI.closeTimer=null;
+    },motion);
+  }
+  // A assinatura de seleção e o N3 não são atualizados pelo grupo explorado.
+  sidebarMarkCurrent();sidebarMoveRailToOwner();sidebarMeasure();
+  sidebarUI.paintedAt=sidebarUI.pointer&&{...sidebarUI.pointer};
+}
+function sidebarSyncRoute(){
+  const current=window.JPWNavigation.current();
+  const stamp=JSON.stringify([current.canonical,current.primary,current.child,current.localView]);
+  if(sidebarUI.route!==stamp){
+    sidebarClearTimers();sidebarUI.route=stamp;sidebarUI.pinned=sidebarSurfaceForRoute(current);
+    sidebarUI.preview=null;sidebarUI.overlay=false;sidebarUI.overlayPinned=false;sidebarUI.suppressed=null;
+  }
+  syncNavSubContexts(sidebarSurfaceForRoute(current));
+  sidebarPaint({immediate:true});syncShellLocation();syncForexContext();syncShellViewport();
+}
+function sidebarCancelExploration(options={}){
+  sidebarClearTimers();sidebarUI.preview=null;sidebarUI.overlay=false;sidebarUI.overlayPinned=false;
+  if(options.clearPin)sidebarUI.pinned=null;
+  if(shellSidebar())sidebarPaint({immediate:!!options.immediate});
+  else{
+    document.documentElement.removeAttribute('data-sidebar-overlay');
+    document.documentElement.removeAttribute('data-sidebar-group');
+    document.documentElement.removeAttribute('data-sidebar-closing');
+    document.querySelectorAll('#nav > .tab').forEach(tab=>tab.classList.remove('sidebar-group-open'));
+  }
+}
+function sidebarFocusInPanel(){return !!document.activeElement?.closest('#navSubShell');}
+function sidebarEndPreview(){
+  if(sidebarFocusInPanel()||sidebarBlocked())return;
+  sidebarUI.preview=null;
+  if(!sidebarUI.overlayPinned){sidebarUI.overlay=false;}
+  sidebarPaint();
+}
+function sidebarScheduleLeave(){
+  clearTimeout(sidebarUI.hoverTimer);sidebarUI.hoverTimer=null;sidebarUI.target=null;
+  clearTimeout(sidebarUI.leaveTimer);
+  sidebarUI.leaveTimer=setTimeout(sidebarEndPreview,SIDEBAR_TIMING.leave);
+}
+function sidebarOpenSurface(surface,options={}){
+  if(!shellSidebar()||sidebarBlocked()||!Object.prototype.hasOwnProperty.call(NAV_SUBMENU_SURFACES,surface)||!shellModuleAvailable(submenuPrimaryForSurface(surface)))return false;
+  sidebarClearTimers();sidebarUI.suppressed=null;
+  if(options.pin){sidebarUI.pinned=surface;sidebarUI.preview=null;}
+  else sidebarUI.preview=surface;
+  if(sidebarCollapsed()){sidebarUI.overlay=true;sidebarUI.overlayPinned=!!options.pin;}
+  sidebarPaint();
+  if(options.focus){
+    const panel=document.getElementById(surface+'NavSubmenu');
+    const items=[...panel.querySelectorAll('[data-nav-item],[data-nav-sub-view]')].filter(shellFocusAvailable);
+    (options.focus==='last'?items[items.length-1]:items[0])?.focus();
+  }
+  return true;
+}
+function sidebarToggleSurface(control){
+  const surface=control.dataset.navSurface;
+  if(!shellRequireModule(control.dataset.primary,control))return true;
+  if(sidebarUI.pinned===surface&&!sidebarUI.preview&&navSubUI.open){
+    sidebarUI.suppressed=surface;sidebarCancelExploration({clearPin:true});
+  }else sidebarOpenSurface(surface,{pin:true});
+  return true;
+}
+function sidebarHandleKey(event){
+  if(!shellSidebar()||sidebarBlocked())return false;
+  const primary=event.target.closest('#nav > .tab'),item=event.target.closest('#navSubShell [data-nav-item],#navSubShell [data-nav-sub-view]');
+  const local=event.target.closest('#navLocalSlot');
+  if(event.key==='Escape'&&!shellMobile()&&(sidebarUI.overlay||sidebarUI.preview||navSubUI.open)){
+    const parent=sidebarPrimary(navSubUI.screen),inPanel=!!item;
+    const restorePin=!!sidebarUI.preview||sidebarUI.overlay;
+    event.preventDefault();sidebarUI.suppressed=sidebarUI.preview||sidebarUI.pinned;
+    // Focar antes de ocultar evita foco perdido no corpo da página.
+    if(inPanel&&parent)parent.focus({preventScroll:true});
+    sidebarCancelExploration({clearPin:!restorePin});return true;
+  }
+  if(primary?.dataset.navSurface&&event.key==='ArrowRight'){
+    event.preventDefault();sidebarOpenSurface(primary.dataset.navSurface,{pin:true,focus:true});return true;
+  }
+  if(item&&event.key==='ArrowLeft'){
+    event.preventDefault();sidebarPrimary(navSubUI.screen)?.focus({preventScroll:true});return true;
+  }
+  if(!(primary||item||local)||!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return false;
+  const region=local||item?.closest('.nav-sub-menu')||document.getElementById('nav');
+  const items=[...region.querySelectorAll('.tab,[data-nav-item],[data-nav-sub-view]')].filter(shellFocusAvailable);
+  if(!items.length)return false;
+  let index=items.indexOf(document.activeElement);
+  if(event.key==='Home')index=0;else if(event.key==='End')index=items.length-1;
+  else index=(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;
+  event.preventDefault();items[index].focus();return true;
+}
+function initSidebarExploration(){
+  const aside=document.getElementById('appSidebar'),nav=document.getElementById('nav');
+  sidebarControllerReady=true;
+  sidebarUI.mobile=shellMobile();
+  nav.addEventListener('pointermove',event=>{
+    if(!shellSidebar()||shellMobile()||sidebarBlocked()||event.pointerType==='touch'||!matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+    const point={x:event.clientX,y:event.clientY},last=sidebarUI.pointer;sidebarUI.pointer=point;
+    if(last&&point.x===last.x&&point.y===last.y)return;
+    // Reflow abaixo do cursor não é uma nova intenção. Só movimento real
+    // suficiente depois da abertura habilita exploração de outro grupo.
+    if(sidebarUI.paintedAt&&Math.hypot(point.x-sidebarUI.paintedAt.x,point.y-sidebarUI.paintedAt.y)<4)return;
+    clearTimeout(sidebarUI.leaveTimer);
+    const parent=event.target.closest('#nav > .tab');
+    if(!parent){clearTimeout(sidebarUI.hoverTimer);sidebarUI.target=null;return;}
+    const surface=parent.dataset.navSurface||null;
+    if(sidebarUI.suppressed&&sidebarUI.suppressed!==surface)sidebarUI.suppressed=null;
+    if(sidebarUI.suppressed===surface&&surface)return;
+    if(!shellModuleAvailable(parent.dataset.primary)||sidebarFocusInPanel())return;
+    if(sidebarUI.target===parent)return;
+    clearTimeout(sidebarUI.hoverTimer);sidebarUI.target=parent;
+    sidebarUI.hoverTimer=setTimeout(()=>{
+      sidebarUI.hoverTimer=null;
+      if(!shellSidebar()||shellMobile()||sidebarBlocked()||!parent.matches(':hover')||sidebarUI.target!==parent||sidebarFocusInPanel())return;
+      sidebarUI.target=null;
+      if(surface)sidebarOpenSurface(surface);
+      else if(sidebarCollapsed()){sidebarUI.preview=null;sidebarUI.overlay=true;sidebarPaint();}
+      else sidebarEndPreview();
+    },SIDEBAR_TIMING.open);
+  });
+  nav.addEventListener('pointerleave',()=>{
+    if(!shellSidebar()||sidebarBlocked())return;
+    sidebarUI.suppressed=null;sidebarScheduleLeave();
+  });
+  aside.addEventListener('pointerenter',()=>{if(shellSidebar())clearTimeout(sidebarUI.leaveTimer);});
+  aside.addEventListener('pointerleave',()=>{
+    if(shellSidebar()&&!sidebarBlocked()){
+      sidebarUI.suppressed=null;sidebarUI.pointer=null;sidebarUI.paintedAt=null;
+      sidebarScheduleLeave();
+    }
+  });
+  aside.addEventListener('focusin',()=>{
+    if(!shellSidebar()||sidebarBlocked())return;
+    clearTimeout(sidebarUI.leaveTimer);
+    // Foco produzido pelo pointerdown não pode mover o alvo antes do click.
+    if(sidebarCollapsed()&&!sidebarUI.overlay&&!sidebarUI.pointerDown){sidebarUI.overlay=true;sidebarPaint();}
+  });
+  aside.addEventListener('focusout',()=>{
+    setTimeout(()=>{
+      if(!shellSidebar()||aside.contains(document.activeElement)||sidebarBlocked())return;
+      if(sidebarUI.overlay)sidebarCancelExploration();else sidebarEndPreview();
+    },0);
+  });
+  document.addEventListener('pointerdown',event=>{
+    sidebarUI.pointerDown=aside.contains(event.target);
+    if(shellSidebar()&&!sidebarBlocked()&&sidebarUI.overlay&&!aside.contains(event.target))sidebarCancelExploration({immediate:true});
+  });
+  document.addEventListener('pointerup',()=>setTimeout(()=>{sidebarUI.pointerDown=false;},0));
+  document.addEventListener('pointercancel',()=>{sidebarUI.pointerDown=false;});
+  let lastBlocked=false;
+  const observeModal=()=>{
+    const blocked=sidebarBlocked();
+    if(blocked===lastBlocked)return;lastBlocked=blocked;
+    // Uma confirmação pode recusar a navegação. Suspender a apresentação sem
+    // destruir sua seleção; uma rota aceita já invalida o contexto anterior.
+    sidebarClearTimers();
+    if(shellSidebar()){sidebarPaint({immediate:true});sidebarMoveRailToOwner();sidebarMeasure();}
+  };
+  const observer=new MutationObserver(observeModal);
+  const modalSelector='#settingsOverlay,#mvpNotesOverlay,#modalOverlay,#alladinModalOverlay,#ecalOverlay,dialog';
+  const observedModals=new WeakSet();
+  const attachModals=host=>{
+    const nodes=[...(host.matches?.(modalSelector)?[host]:[]),...host.querySelectorAll(modalSelector)];
+    nodes.forEach(el=>{
+      if(observedModals.has(el))return;observedModals.add(el);
+      observer.observe(el,{attributes:true,attributeFilter:['class','open']});
+    });
+    observeModal();
+  };
+  // O parser e os guards podem acrescentar dialogs depois da inicialização.
+  // Observar apenas filhos diretos do body evita monitorar árvores financeiras.
+  new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{
+    if(node.nodeType===Node.ELEMENT_NODE)attachModals(node);
+  }))).observe(document.body,{childList:true});
+  attachModals(document);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>attachModals(document),{once:true});
+  const header=document.querySelector('body > header');
+  if(header&&typeof ResizeObserver==='function')new ResizeObserver(sidebarMeasure).observe(header);
+  window.addEventListener('scroll',sidebarMeasure,{passive:true});
+}
 // Retorno das superfícies do cabeçalho: não selecionar nós ocultos pela cápsula
 // nem disputar um novo diálogo/acionador que já assumiu o foco.
 function shellFocusAvailable(element){
@@ -51,8 +326,10 @@ function shellRestoreHeaderFocus(opener,isCurrent=()=>true){
 function mountNavigationLayout(value){
   if(!NAV_LAYOUTS.includes(value))return;
   const previous=document.documentElement.getAttribute('data-navigation');
+  sidebarCancelExploration({immediate:true});
   closeShellMenu({restoreFocus:false});
   document.documentElement.setAttribute('data-navigation',value);
+  if(value!=='sidebar')sidebarCancelExploration({immediate:true});
   const topbar=shellTopbar(),glass=shellGlass(),submenu=shellSubmenu(),horizontal=topbar||glass,nav=document.getElementById('nav');
   const stage=document.getElementById('submenuNavStage'),levelHeading=document.getElementById('submenuLevelHeading');
   if(submenu){
@@ -80,6 +357,7 @@ function mountNavigationLayout(value){
   const toggle=shellEl('[data-shell-menu-toggle]'),actions=document.getElementById('headerActions'),brand=document.getElementById('brandHomeBtn');
   if(glass)brand.after(toggle);else actions.prepend(toggle);
   if(typeof renderRailToggle==='function')renderRailToggle();
+  sidebarMoveRailToOwner();
   renderNavLayoutChoice();syncNavSubState();syncShellViewport();
 }
 function navSubSurface(screen){const f=NAV_SUBMENU_SURFACES[screen||navSubUI.screen];return f?f():null;}
@@ -278,11 +556,13 @@ function submenuRailPreferenceChanged(next){
   syncSubmenuPresentation();
 }
 function shellHandlePrimaryIntent(control){
+  if(shellSidebar()&&control?.dataset?.navSurface)return sidebarToggleSurface(control);
   if(!shellSubmenu()||!control?.dataset?.navSurface)return false;
   submenuOpenSurface(control,{focus:true});return true;
 }
 function syncNavSubState(){
   if(!window.JPWNavigation)return;
+  if(shellSidebar()){sidebarSyncRoute();return;}
   if(shellSubmenu()){
     syncSubmenuPresentation();
     if(typeof scheduleNavPill==='function')scheduleNavPill();
@@ -317,6 +597,7 @@ function syncNavSubState(){
   if(typeof scheduleNavPill==='function')scheduleNavPill();
 }
 function openNavSub(screen,options){
+  if(shellSidebar()){sidebarOpenSurface(screen,{pin:true,focus:options?.focus});return;}
   if(!shellRequireModule(submenuPrimaryForSurface(screen),navSubEls(screen).trigger))return;
   if(screen!==navSubUI.screen)return;
   navSubUI.collapsed=null;syncNavSubState();
@@ -329,6 +610,12 @@ function openNavSub(screen,options){
   }
 }
 function closeNavSub(options){
+  if(shellSidebar()){
+    const parent=sidebarPrimary(navSubUI.screen);
+    if(options?.restoreFocus&&parent)parent.focus({preventScroll:true});
+    sidebarUI.suppressed=sidebarUI.preview||sidebarUI.pinned;
+    sidebarCancelExploration({clearPin:true});return;
+  }
   const {trigger}=navSubEls();navSubUI.collapsed=navSubUI.screen;syncNavSubState();
   if(options&&options.restoreFocus&&trigger){
     const target=shellHorizontal()&&shellCompact()&&!shellUI.open?shellEl('[data-shell-menu-toggle]'):trigger;
@@ -451,6 +738,7 @@ function initOperationalShell(){
   });
   initNavLayoutChoice();
   if(typeof initNavOrderChoice==='function')initNavOrderChoice();
+  initSidebarExploration();
   const alladinTabs=document.getElementById('alladinTabs');
   if(alladinTabs)new MutationObserver(syncShellLocation).observe(alladinTabs,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
   document.addEventListener('click',event=>{
@@ -464,7 +752,7 @@ function initOperationalShell(){
     if(item){selectNavSubItem(item);return;}
     if(event.target.closest('#nav > .tab')){
       if(!shellModuleAvailable(event.target.closest('#nav > .tab').dataset.primary))return;
-      if(shellSubmenu()&&event.target.closest('#nav > .tab').dataset.navSurface)return;
+      if((shellSubmenu()||shellSidebar())&&event.target.closest('#nav > .tab').dataset.navSurface)return;
       navSubUI.collapsed=null;
       syncNavSubState();
       if(shellUI.open&&shellGlass()&&navSubUI.screen)return;
@@ -476,6 +764,8 @@ function initOperationalShell(){
     if(shellUI.open&&shellGlass()&&!event.target.closest('body > header'))closeShellMenu();
   });
   document.addEventListener('keydown',event=>{
+    if(shellSidebar()&&sidebarBlocked())return;
+    if(sidebarHandleKey(event))return;
     if(shellSubmenu()){
       const primary=event.target.closest('#nav > .tab');
       const item=event.target.closest('#navSubShell [data-nav-item],#navSubShell [data-nav-sub-view]');
@@ -506,7 +796,14 @@ function initOperationalShell(){
     if(event.key==='Escape'&&navSubUI.open&&event.target.closest('#navSubShell')){event.preventDefault();closeNavSub({restoreFocus:true});return;}
     shellMoveFocus(event);
   });
-  window.addEventListener('resize',()=>{if(shellUI.open&&!shellCompact())closeShellMenu({restoreFocus:false});syncShellViewport();});
+  window.addEventListener('resize',()=>{
+    if(shellSidebar()){
+      const mobile=shellMobile();
+      if(sidebarUI.mobile!==mobile){sidebarCancelExploration({immediate:true});sidebarUI.mobile=mobile;}
+      sidebarMeasure();
+    }
+    if(shellUI.open&&!shellCompact())closeShellMenu({restoreFocus:false});syncShellViewport();
+  });
   syncNavSubState();syncShellViewport();
 }
 initOperationalShell();

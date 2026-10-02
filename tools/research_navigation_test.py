@@ -6,7 +6,8 @@ acessibilidade em navegador real. Usa somente estado sintético e bloqueia rede
 externa com respostas inertes para que erro de ambiente não pareça erro do app.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os
@@ -26,8 +27,6 @@ RESEARCH_CHILDREN = [
     ("research-stocks-br", "Ações", "stocks-br"),
     ("research-stocks-global", "Stocks", "stocks-global"),
     ("research-reits", "REITs", "reits"),
-    ("research-probability-lab", "Laboratório de Probabilidade", "probability-lab"),
-    ("research-others", "Others", "others"),
 ]
 RESEARCH_FOREX_VIEWS = ["nocoda", "pivots"]
 EXEC_VIEWS = ["panel", "accounting", "accounts", "motor"]
@@ -137,7 +136,9 @@ def assert_registry_and_dom(page):
     # existir como shims, mas jamais mantêm Exec ativo ou criam estado paralelo.
     for view in EXEC_VIEWS:
         assert page.evaluate("view => JPWExec.ui.selectView(view)", view) is True
-        assert page.evaluate("() => JPWExec.ui.getView()") == view
+        assert page.evaluate("() => JPWExec.ui.getView()") == ("panel" if view == "motor" else view)
+        if view == "motor":
+            assert page.evaluate("() => JPWNavigation.current().child === 'forex-operation' && !document.getElementById('ebToolMotor').hidden && document.getElementById('motorWidgetGrid').hidden")
     assert page.evaluate("() => JPWExec.ui.selectView('overview') && JPWNavigation.current().screen==='fxconsolidated' && !document.getElementById('execOverview').hidden")
     for legacy, research_view in (("ecal", "calendar"), ("nocoda", "nocoda"), ("pivots", "pivots")):
         assert page.evaluate("legacy => JPWExec.ui.selectView(legacy)", legacy) is True
@@ -156,7 +157,8 @@ def assert_routes_aliases_and_empty_states(page):
         assert page.evaluate("route => JPWNavigation.navigate(route)", route) is True
         state = snapshot(page)
         assert state["screen"] == "research" and state["primary"] == "research", (route, state)
-        assert state["primaryAria"] == "research", (route, state)
+        assert state["primaryAria"] is None, 'disclosure parent impersonates selected destination'
+        assert page.locator(f'#researchNavSubmenu [data-nav-child="{route}"]').get_attribute('aria-current') == 'page', (route,state)
         assert state["current"]["canonical"] == route and state["current"]["child"] == route, state
         assert state["researchView"] == view, (route, state)
 
@@ -181,8 +183,11 @@ def assert_routes_aliases_and_empty_states(page):
         assert root.locator("input, form, table, canvas, [data-layout-card], .metric").count() == 0
     assert "Brasil" in page.locator("#researchStocksBr").inner_text()
     assert "B3" in page.locator("#researchStocksBr").inner_text()
-    assert page.locator("#researchProbabilityLab #galtonBoardRoot").count() == 1
+    assert page.locator("#researchProbabilityLab").count() == 0
     assert page.locator("#settingsModal [data-galton-root]").count() == 0
+    assert page.locator('[data-nav-child="research-others"], [data-dm-route="research-others"]').count() == 0
+    assert page.evaluate("JPWNavigation.navigate('research-others')") is True
+    assert page.evaluate("JPWResearch.ui.getView()") == "others"
 
 
 def assert_atomic_and_storage(page):
@@ -225,9 +230,12 @@ def assert_shell_and_accessibility(page, viewport, theme):
     mobile = viewport["width"] <= 900
     if mobile:
         page.click("[data-shell-menu-toggle]")
-    page.click("#researchNavTrigger")
-    expander = '[data-nav-expand="research"]'
-    page.wait_for_function("() => document.querySelector('[data-nav-expand=research]').getAttribute('aria-expanded') === 'true'")
+    if page.get_attribute("#researchNavTrigger", "aria-expanded") != "true":
+        page.click("#researchNavTrigger")
+    expander = "#researchNavTrigger"
+    # Only a leaf selects the Research default in the approved sidebar.
+    page.click('#researchNavSubmenu [data-nav-child="research-forex"]')
+    page.wait_for_function("() => document.querySelector('#researchNavTrigger').getAttribute('aria-expanded') === 'true'")
     page.wait_for_function("() => JPWResearch.ui.getView() === 'nocoda'")
     assert page.locator('#researchNavSubmenu [data-nav-child="research-forex"]').get_attribute("aria-current") == "page"
     assert page.locator('#navLocalSlot [data-nav-local-surface="research"][data-nav-local-view="nocoda"]').get_attribute("aria-current") == "page"
@@ -254,10 +262,10 @@ def assert_shell_and_accessibility(page, viewport, theme):
     if mobile:
         page.click("[data-shell-menu-toggle]")
     page.focus(expander)
-    page.keyboard.press("ArrowDown")
+    page.keyboard.press("ArrowRight")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
     page.keyboard.press("End")
-    assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-others"
+    assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-reits"
     page.keyboard.press("Home")
     assert page.evaluate("() => document.activeElement.dataset.navChild") == "research-forex"
     # Medir enquanto N2 esta aberto: alvos ocultos nao tornariam a prova util.
@@ -267,7 +275,7 @@ def assert_shell_and_accessibility(page, viewport, theme):
     assert all(item["width"] >= 44 and item["height"] >= 44 for item in targets), targets
     page.keyboard.press("Escape")
     focus = page.evaluate("""() => ({
-      expander:document.activeElement.dataset.navExpand,
+      expander:document.activeElement.dataset.navSurface,
       toggle:document.activeElement.matches('[data-shell-menu-toggle]'),
       insideHiddenSubmenu:!!document.activeElement.closest?.('#researchNavSubmenu')
     })""")
@@ -343,7 +351,7 @@ def assert_calendar_refresh_guidance(page):
 
 
 def assert_lab_relocation(page):
-    # A13: a preferência antiga, inclusive extensões, permanece byte-idêntica.
+    # Folha independente de Research; preferências antigas ficam byte-idênticas.
     old_pref=json.loads((ROOT/'data/samples/galton-preferences-v1.json').read_text())
     old_pref['a13SyntheticExtension']={'preserve':True}
     raw=json.dumps(old_pref,separators=(',',':'))
@@ -351,39 +359,28 @@ def assert_lab_relocation(page):
     page.evaluate("raw=>localStorage.setItem('jpwealth_galton_preferences_v1',raw)",raw)
     before=page.evaluate("JSON.stringify(S)")
     rows=[]
-    for mode in ['sidebar','topbar']:
+    for mode in ['sidebar','topbar','glass','submenu']:
         for width in [1440,390]:
-            order=(['research','alladin','personal-finance','forex','dashboard','tools'] if width==1440
-                   else ['alladin','forex','dashboard','personal-finance','research','tools'])
-            page.evaluate('order=>applyNavOrder(order)',order)
             page.set_viewport_size({'width':width,'height':900 if width==1440 else 844})
             page.evaluate("mode=>mountNavigationLayout(mode)",mode)
-            page.evaluate("JPWNavigation.navigate('research-forex')")
-            if width<=900 and mode=='sidebar':
-                page.locator('[data-shell-menu-toggle]').click()
-            target=page.locator('[data-nav-child="research-probability-lab"]')
+            page.evaluate("openSettingsModal('knowledge')")
+            target=page.locator('[data-settings-panel="knowledge"] [data-nav-to="probability-lab"]')
             target.focus();target.press('Enter')
+            page.wait_for_function("document.querySelector('#settingsGaltonSlot [data-galton-root]')?.__galtonController?.active")
             row=page.evaluate("""() => ({
-              primary:JPWNavigation.current().primary,child:JPWNavigation.current().child,
-              view:JPWResearch.ui.getView(),roots:document.querySelectorAll('[data-galton-root]').length,
-              inResearch:!!document.querySelector('#researchGaltonSlot [data-galton-root]'),
-              inSettings:!!document.querySelector('#settingsModal [data-galton-root]'),
+              primary:JPWNavigation.current().primary,roots:document.querySelectorAll('[data-galton-root]').length,
+              inSettings:!!document.querySelector('#settingsGaltonSlot [data-galton-root]'),
               active:!!document.querySelector('[data-galton-root]')?.__galtonController?.active,
-              focusInResearch:document.getElementById('research').contains(document.activeElement),
-              title:document.getElementById('shellLocation').textContent,
-              order:[...document.querySelectorAll('#nav > .tab[data-primary]')].map(el=>el.dataset.primary),
-              forexVisible:!!document.getElementById('gdContextRow').getClientRects().length,
+              focusInSettings:document.getElementById('settingsModal').contains(document.activeElement),
+              title:document.getElementById('settingsPageTitle').textContent,
               overflow:document.documentElement.scrollWidth-innerWidth
             })""")
-            print('A13_MODE_OBSERVATION '+json.dumps({'mode':mode,'width':width,**row},ensure_ascii=False),flush=True)
-            assert row['primary']=='research' and row['child']=='research-probability-lab' and row['view']=='probability-lab',row
-            assert row['roots']==1 and row['inResearch'] and not row['inSettings'] and row['active'] and row['focusInResearch'],row
-            assert 'Laboratório de Probabilidade' in row['title'] and row['overflow']<=1,row
-            assert row['order']==order and not row['forexVisible'],row
+            assert row['primary']=='dashboard' and row['roots']==1 and row['inSettings'] and row['active'] and row['focusInSettings'],row
+            assert row['title']=='Laboratório de Probabilidade' and row['overflow']<=1,row
             rows.append({'mode':mode,'width':width,**row})
             left=page.evaluate("""() => {
               const c=document.querySelector('[data-galton-root]').__galtonController;
-              JPWNavigation.navigate('dashboard');
+              closeSettingsModal();
               return {same:document.querySelector('[data-galton-root]').__galtonController===c,
                 active:c.active,destroyed:c.destroyed,manualPaused:c.manualPaused,
                 running:c.snapshot().running,raf:c.raf,observerActive:c.resizeObserverActive};
@@ -391,28 +388,32 @@ def assert_lab_relocation(page):
             assert left=={'same':True,'active':False,'destroyed':False,'manualPaused':True,
                           'running':False,'raf':0,'observerActive':False},left
             assert page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")==raw
-
     page.set_viewport_size({'width':1440,'height':900})
     page.evaluate("mountNavigationLayout('sidebar')")
-    for alias in ['probability-lab','galton-board']:
-        assert page.evaluate("id=>JPWNavigation.navigate(id)",alias) is True
-        assert page.evaluate("JPWNavigation.current().child")=='research-probability-lab'
-    # As entradas antigas redirecionam; não deixam um laboratório oculto no modal.
-    for entry in ["activateSettingsCategory('galton-board')", "openSettingsModal('probability-lab')",
-                  "settingsNavigate('galton-board')", "settingsNavigateToLeaf('galton-board')"]:
-        page.evaluate("JPWNavigation.navigate('dashboard');openSettingsModal('general')")
-        assert page.locator('#settingsOverlay').is_visible()
+    page.evaluate("JPWModuleAvailability.setState('research','frozen')")
+    for entry in ["JPWNavigation.navigate('probability-lab')", "JPWNavigation.navigate('galton-board')",
+                  "JPWNavigation.navigate('research-probability-lab')", "JPWNavigation.navigateLocal('research','probability-lab')",
+                  "JPWResearch.ui.selectView('probability-lab')", "activateSettingsCategory('galton-board')",
+                  "openSettingsModal('probability-lab')", "settingsNavigate('galton-board')", "settingsNavigateToLeaf('galton-board')"]:
         page.evaluate(entry)
         page.evaluate("() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))")
-        assert page.locator('#settingsOverlay').is_hidden(),entry
-        assert page.evaluate("JPWNavigation.current().child")=='research-probability-lab',entry
-        assert page.evaluate("document.getElementById('research').contains(document.activeElement)"),entry
-        assert page.locator('#settingsModal [data-settings-panel="galton-board"], #settingsMenu [data-settings-category="probability-lab"]').count()==0
+        assert page.locator('#settingsOverlay').is_visible(),entry
+        assert page.evaluate("settingsState.active")=='probability-lab',entry
+        assert page.evaluate("document.getElementById('settingsModal').contains(document.activeElement)"),entry
+        assert page.evaluate("JPWNavigation.current().primary")=='dashboard',entry
+        assert page.locator('#settingsModal [data-galton-root]').count()==1
+        assert page.locator('#settingsMenu [data-settings-category="probability-lab"]').count()==0
+        assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController.snapshot().running") is False
+        page.evaluate("closeSettingsModal()")
+    page.evaluate("JPWModuleAvailability.setState('research','active');JPWNavigation.navigate('research-forex');openSettingsModal('probability-lab')")
+    page.evaluate("window.__independentLab=document.querySelector('[data-galton-root]').__galtonController;JPWModuleAvailability.setState('research','frozen')")
+    assert page.locator('#settingsOverlay').is_visible()
+    assert page.evaluate("JPWNavigation.current().primary")=='dashboard'
+    assert page.evaluate("document.querySelector('[data-galton-root]').__galtonController===window.__independentLab&&__independentLab.active")
+    page.evaluate("closeSettingsModal();JPWModuleAvailability.setState('research','active')")
     assert page.evaluate("localStorage.getItem('jpwealth_galton_preferences_v1')")==raw
     assert page.evaluate("JSON.stringify(S)")==before
-    page.evaluate("JPWNavigation.navigate('dashboard')")
-    page.evaluate('applyNavOrder(NAV_ORDER_DEFAULT)')
-    print('A13_RESEARCH_RELOCATION '+json.dumps(rows,ensure_ascii=False),flush=True)
+    print('SETTINGS_LAB_RELOCATION '+json.dumps(rows,ensure_ascii=False),flush=True)
 
 
 def run():

@@ -490,6 +490,7 @@ void JPWDetailsReadStopRisk()
 
 void JPWInvalidateIdentityPresentation()
   {
+   JPWPositionsInvalidate("Contexto alterado; catálogo anterior descartado");
    g_stop_observer_presence=JPW_OBSERVER_CONTEXT_UNAVAILABLE;
    for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++) JPWSampleInvalidate(g_metric_samples[i],JPW_SAMPLE_CONTEXT_CHANGED);
    JPWQueueDiagnostic(JPW_DIAG_CONTEXT_CHANGED);
@@ -551,8 +552,29 @@ void JPWInvalidateIdentityPresentation()
    g_scale2_tooltip=g_raiz_tooltip;
   }
 
+void JPWPositionsMonitorInventory()
+  {
+   if(!g_positions_view.catalog_valid || !JPWCoordinatorBudgetRemaining()) return;
+   if(g_positions_view.accepted_monotonic_ms>=g_cycle_started_ms) return; // Just revalidated this cycle.
+   if(!JPWPositionsViewCurrent(g_sample_context,GetTickCount64()))
+     { JPWPositionsInvalidate("Catálogo vencido; aguardando atualização");
+       g_refresh_requested=true; return; }
+   JPWPositionView observed[];
+   JPWAccount current;
+   string reason="";
+   if(!JPWReadAccount(current) || !JPWAccountsEqual(current,g_account) ||
+      !JPWPositionsReadMetadata(observed,g_cycle_started_ms,reason) ||
+      !JPWPositionsMetadataEqual(g_position_views,observed) ||
+      !JPWReadAccount(current) || !JPWAccountsEqual(current,g_account))
+     {
+      JPWPositionsInvalidate("Posições, volume ou SL/TP alterados; aguardando nova leitura");
+      g_refresh_requested=true;
+     }
+  }
+
 void JPWMonitorStopRisk()
   {
+   JPWPositionsMonitorInventory();
    if(!JPWCoordinatorBudgetRemaining()) return;
    JPWAccount visible_account;
    const bool identity_current=(!g_account_known ||
@@ -596,6 +618,7 @@ void JPWExpireTimedMetrics()
   {
    const ulong now_ms=GetTickCount64();
    if(!JPWFullReadingExpired(now_ms,g_last_full_refresh_ms)) return;
+   JPWPositionsInvalidate("Catálogo vencido; aguardando nova leitura completa");
    const string when=(g_last_full_refresh_utc>0 ?
       TimeToString((datetime)g_last_full_refresh_utc,TIME_DATE|TIME_SECONDS)+
       " UTC (computador)" : "horário indisponível");
@@ -622,8 +645,39 @@ void JPWExpireTimedMetrics()
    g_scale2_short="RN2W: N/A"; g_scale2_tooltip=reason;
   }
 
+void JPWPositionsCollectCatalogOnly()
+  {
+   // Financial availability is independent from inventory. This fallback is
+   // timer-only and never called by drawing, clicks, or record navigation.
+   if(g_positions_catalog_attempted || !g_account_known || g_sample_context=="" ||
+      !JPWCoordinatorBudgetRemaining()) return;
+   g_positions_catalog_attempted=true;
+   JPWAccount first_account,last_account;
+   JPWPosition first[],last[];
+   JPWPositionView first_metadata[],last_metadata[];
+   string reason="";
+   const bool connected=(bool)TerminalInfoInteger(TERMINAL_CONNECTED);
+   ResetLastError(); const long margin_mode=AccountInfoInteger(ACCOUNT_MARGIN_MODE);
+   if(GetLastError()!=0 || !JPWReadAccount(first_account) ||
+      !JPWAccountsEqual(first_account,g_account) || !JPWReadSnapshot(first) ||
+      (ArraySize(first)==0 && !connected) ||
+      !JPWPositionsReadMetadata(first_metadata,g_cycle_started_ms,reason) ||
+      !JPWReadSnapshot(last) ||
+      !JPWPositionsReadMetadata(last_metadata,g_cycle_started_ms,reason) ||
+      !JPWReadAccount(last_account) || !JPWAccountsEqual(first_account,last_account) ||
+      !JPWPositionsEqual(first,last) || !JPWPositionsMetadataEqual(first_metadata,last_metadata) ||
+      !JPWPositionsMatchSnapshot(last_metadata,last) ||
+      connected!=(bool)TerminalInfoInteger(TERMINAL_CONNECTED) ||
+      !JPWCoordinatorBudgetRemaining()) return;
+   ResetLastError(); const long last_margin_mode=AccountInfoInteger(ACCOUNT_MARGIN_MODE);
+   if(GetLastError()!=0 || last_margin_mode!=margin_mode ||
+      !JPWCoordinatorBudgetRemaining()) return;
+   JPWPositionsStageCatalog(last_metadata,last,g_sample_context,margin_mode,g_diagnostic_context);
+  }
+
 void JPWAcceptCollection(const string value,const string state="")
   {
+   JPWPositionsCollectCatalogOnly();
    // Resolve the fourth line after the established account/leverage collectors.
    // It shares their 500 ms window and cannot delay or invalidate their result.
    const bool collect_genesis=g_genesis_due && JPWCoordinatorBudgetRemaining();
@@ -657,7 +711,10 @@ void JPWAcceptCollection(const string value,const string state="")
    g_leverage_reason=(shown_state=="" ? "Aguardando leitura" : shown_state);
    // Independent observer read: leverage conversion failure does not hide a
    // coherent Stop risk sample, and a changed account cannot display old data.
-   JPWAcceptMetric(0); JPWAcceptMetric(1);
+   JPWAcceptMetric(0);
+   JPWPositionsPublish(g_metric_samples[0],
+      (g_position_math_reason!="" ? g_position_math_reason : g_leverage_reason));
+   JPWAcceptMetric(1);
    if(collect_genesis) JPWAcceptMetric(2);
    if(accepted_raiz) { JPWAcceptMetric(3); JPWAcceptMetric(4); }
    if(g_genesis_due || g_raiz_due)
@@ -801,6 +858,35 @@ bool JPWSameSpecification(JPWInstrument &a,JPWInstrument &b)
           a.underlying_verified==b.underlying_verified);
   }
 
+bool JPWPositionsBudgetBreakdown(JPWPosition &positions[],JPWInstrument &instruments[],
+   JPWQuote &quotes[],const string target,const long now_ms,const int max_age_sec,
+   const bool clock_valid,const bool connected,double &scales[],JPWRoute &routes[],
+   const double expected_gross,const ulong started,double &amounts[])
+  {
+   ArrayResize(amounts,0);
+   const int count=ArraySize(positions);
+   if(count!=ArraySize(instruments) || count!=ArraySize(scales)) return(false);
+   double candidate[]; JPWRoute frozen_routes[];
+   if(ArrayResize(candidate,count)!=count ||
+      ArrayResize(frozen_routes,ArraySize(routes))!=ArraySize(routes)) return(false);
+   for(int i=0;i<ArraySize(routes);i++) frozen_routes[i]=routes[i];
+   double complete=0.0;
+   for(int i=0;i<count;i++)
+     {
+      const ulong now=GetTickCount64();
+      if(now<started || now-started>=250) return(false);
+      double gross=0.0;
+      if(JPWPositionsOneGross(positions[i],instruments[i],quotes,target,now_ms,max_age_sec,
+         clock_valid,connected,scales[i],frozen_routes,gross)!=JPW_OK) return(false);
+      candidate[i]=gross; complete+=gross;
+     }
+   const ulong finished=GetTickCount64();
+   if(finished<started || finished-started>=250 ||
+      !JPWPositionsNear(complete,expected_gross) || ArrayResize(amounts,count)!=count) return(false);
+   for(int i=0;i<count;i++) amounts[i]=candidate[i];
+   return(true);
+  }
+
 JPW_RESULT JPWCollectReading(JPWPosition &positions[],JPWAccount &account,
                             const string currency,const bool usc,const long now_ms,
                             const ulong started,const bool clock_valid,const bool connected,
@@ -811,6 +897,8 @@ JPW_RESULT JPWCollectReading(JPWPosition &positions[],JPWAccount &account,
    double scales[];
    JPWProfileEntry profile[];
    gross=0.0; estimated=true; oldest=0; g_used_unsynchronized=false;
+   ArrayResize(g_position_candidate_gross,0);
+   g_position_math_reason="Contribuições ainda não confirmadas";
    const int count=ArraySize(positions);
    if(ArrayResize(instruments,count)!=count || ArrayResize(scales,count)!=count) return(JPW_CALC_ERROR);
    if(usc && !JPWProfileLoad(account,profile)) return(JPW_UNVERIFIED_UNITS);
@@ -873,6 +961,17 @@ JPW_RESULT JPWCollectReading(JPWPosition &positions[],JPWAccount &account,
            { estimated=true; g_used_unsynchronized=true; }
         }
      }
+   // Expose the existing pure core on the same frozen inputs. Failure of this
+   // optional breakdown does not reinterpret or invalidate account leverage.
+   if(JPWWithinBudget(started))
+     {
+      const bool breakdown=JPWPositionsBudgetBreakdown(positions,instruments,quotes,
+         currency,now_ms,InpMaxQuoteAgeSeconds,clock_valid,connected,scales,g_routes,
+         gross,started,g_position_candidate_gross);
+      g_position_math_reason=(breakdown ? "" :
+         "Contribuições indisponíveis ou adiadas; alavancagem da conta preservada");
+     }
+   else g_position_math_reason="Contribuições adiadas pelo orçamento do ciclo";
    return(JPW_OK);
   }
 
@@ -1551,6 +1650,8 @@ void JPWDetailsReadObserver()
 
 void JPWRefresh()
   {
+   JPWPositionsInvalidate("Aguardando catálogo coerente deste ciclo");
+   g_positions_catalog_attempted=false;
    for(int i=0;i<5;i++) { g_numeric_valid[i]=false; g_source_times[i]=0; }
    g_last_full_refresh_ms=GetTickCount64();
    g_last_full_refresh_utc=TimeGMT();
@@ -1612,7 +1713,11 @@ void JPWRefresh()
      {
       if(!JPWWithinBudget(started)) { JPWAcceptCollection("Atualizando","Confirmando a composição da conta"); return; }
       JPWPosition before[],after[];
+      JPWPositionView metadata_before[],metadata_after[];
       JPWAccount later;
+      string metadata_reason="";
+      ResetLastError(); const long margin_mode=AccountInfoInteger(ACCOUNT_MARGIN_MODE);
+      const bool margin_known=(GetLastError()==0);
       if(!JPWReadSnapshot(before)) { JPWAcceptCollection("N/D","Indisponível — posições não confirmadas"); return; }
       // No-position cache while disconnected is not proof that an account is empty.
       if(ArraySize(before)==0 && !connected) { JPWAcceptCollection("N/D","Indisponível — confirme as posições com conexão"); return; }
@@ -1631,10 +1736,26 @@ void JPWRefresh()
          JPWAcceptCollection("Atualizando","Identidade ou composição alterada durante a leitura"); return;
         }
       if(!JPWWithinBudget(started)) { JPWAcceptCollection("Atualizando","Confirmando a composição da conta"); return; }
+      // Optional inventory reads follow the original financial validation, so
+      // absent SL/TP or a metadata deadline never invalidates account leverage.
+      g_positions_catalog_attempted=true;
+      const bool metadata_known=JPWPositionsReadMetadata(metadata_before,started,metadata_reason) &&
+                                JPWPositionsMatchSnapshot(metadata_before,before);
+      const bool metadata_after_known=metadata_known &&
+         JPWPositionsReadMetadata(metadata_after,started,metadata_reason) &&
+         JPWPositionsMatchSnapshot(metadata_after,after);
+      ResetLastError(); const long after_margin_mode=AccountInfoInteger(ACCOUNT_MARGIN_MODE);
+      const bool metadata_stable=metadata_after_known &&
+         JPWPositionsMetadataEqual(metadata_before,metadata_after) && margin_known &&
+         GetLastError()==0 && margin_mode==after_margin_mode;
+      if(metadata_stable)
+         JPWPositionsStageCatalog(metadata_after,before,g_sample_context,margin_mode,g_diagnostic_context);
       if(status!=JPW_OK) { JPWAcceptCollection("N/D","Indisponível — "+JPWErrorText(status)); return; }
       double leverage=0.0;
       status=JPWLeverage(gross,equity,leverage);
       if(status!=JPW_OK) { JPWAcceptCollection("N/D","Indisponível — "+JPWErrorText(status)); return; }
+      if(!JPWPositionsStageLeverage(equity,leverage,g_position_candidate_gross))
+         g_position_math_reason="Contribuições indisponíveis ou não reconciliadas";
       if(ArraySize(before)==0)
         {
          // A fresh connection with an empty cache is not yet a current reading.

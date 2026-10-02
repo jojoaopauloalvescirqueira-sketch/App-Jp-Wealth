@@ -1,5 +1,7 @@
 # Forex — Execution Board
 
+**Contrato atual do candidate local de 2026-10-01:** [Operação como planilha](#operação-como-planilha--candidate-2026-10-01). As seções datadas abaixo preservam contratos e evidências históricos; não descrevem uma aprovação da revisão atual.
+
 Campanha FOREX-EXECUTION-BOARD-01, base integrada `594c86ebf13661d0e5846a3b64a0288631fd938d`, branch `codex/forex-execution-board-20260915`. Contrato e limites em [CHG/CTX](../work/CHG-FOREX-EXECUTION-BOARD-20260915.md). Estado: revisão local, validação e aceite separados. Recibos de execução/fingerprint/recovery em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`.
 
 ## Autoridade e responsabilidade
@@ -104,6 +106,22 @@ Focais adicionais: `forex_execution_identity_test.py`, `forex_execution_table_te
 Ordem Forex: Dashboard → Contas e Período → Execution Board → History → Contabilidade → Planejamento → Reservas. Os quatro layouts reutilizam nós/rotas; aliases `contas`, `forex-account` e `motor` permanecem. A preferência de ordem dos seis módulos N1 não é regravada.
 
 A Board mostra conta/período/operação e informações operacionais, com `Gerenciar em Contas e Período`; não possui cadastro nem seletor mutante de conta. A nova página separa conta examinada em RAM de `operationalSelection`. `selectOperationalContext` valida cadastro único e par conta/período antes de mudar ambas seleções, sem persistência. Rascunhos são resolvidos antes de trocar contexto ou navegar. Respostas tardias conferem escopo, geração e tentativa. Recarregar conserva o fallback anterior Mestre única/período atual, não promete última seleção persistida.
+
+## Operação como planilha — candidate 2026-10-01
+
+Contratos separados: [interface N1/A2](../work/CHG-JPW-EXECUTION-WORKBOOK-20261001.md) e [referências do Motor N3/A4](../work/CHG-JPW-LOT-REFERENCES-20261001.md). A aprovação do plano permite este delta local; não homologa parâmetros nem autoriza execução, integração ou publicação. O snapshot externo preserva as 182 alterações anteriores. Estatuto, Anexo, motor normativo, schemas, escritores e pacote MT5 não são alterados.
+
+A sequência padrão é contexto operacional → resumo confirmado → ferramentas → ordens. Esta superfície adota esse fluxo visual e de teclado; o objeto salvo de personalização do Editor, seus IDs e tamanhos permanecem íntegros, sem migrar ou regravar a ordem antiga. A tabela contínua possui colunas próprias para identificação, instrumento, direção, papel, lote, entrada, SL, TP, oito diagnósticos, risco nominal, risco percentual, estado e ações. Fases são separadores de linhas; vazio oferece Adicionar ordem. Apenas ID e instrumento ficam fixos horizontalmente. A grade contém sua própria rolagem; abaixo de 768 px de área útil, as mesmas linhas, inputs e comandos são apresentadas em lista. HASH, custos, resultado, motivos e versões continuam nos detalhes da mesma ordem. Não há formulário concorrente nem linha artificial preenchida.
+
+Matriz, Raiz N e Motor ocupam abas de uma superfície única. A Matriz diferencia fase da conta e fase factual da ordem; grades LEGACY não são convertidas. Raiz N conserva ATR55 H4 e N/F declarados por horizonte, sem defaults, e calcula o percentual da linha sobre a entrada. ATR660 continua reservado ao VRM. Nenhuma observação vem automaticamente do Excel, vault ou MT5.
+
+O Motor apresenta quatro métricas, com fator, fonte, unidade, base e memória: `initialNormal`/`initialRestrictive` usam Fator × SI ÷ nocional por lote; `currentNormal`/`currentRestrictive` usam Fator × min(SI,equity) ÷ nocional por lote. Os aliases anteriores `normal`/`restrictive` conservam o resultado corrente. SI positivo permite a referência inicial mesmo sem equity; nesse caso o teto corrente permanece indisponível. Contrato ou conversão ausentes impedem o cálculo. USC conserva numerador e base na mesma moeda. Não há arredondamento de execução, preenchimento de ordem ou lote autorizado; P-14/P-17/P-18 e demais lacunas permanecem explícitas.
+
+O alias `motor`, chamadas antigas de seleção e seus atalhos abrem `forex-operation`/`panel` e `executionBoardUI.openTool('motor')`, após os guards atuais. O host antigo conserva IDs de compatibilidade, permanece oculto e não edita o catálogo global. Explorar ferramentas não grava preferência financeira.
+
+Digitar modifica somente o rascunho RAM e recalcula geometria/ATR/Raiz N pelo núcleo existente. Risco e totais continuam na versão confirmada até writer aceito. Salvar, cancelar, corrigir, fechar e anular reutilizam os comandos anteriores. Redesenhar e rolar não materializam dados; mudança de contexto ou versão conflitante recusa gravação. Rascunhos, foco e campos não são perdidos ao trocar de ferramenta.
+
+Novos focais: `forex_execution_workbook_test.py` (tarefas e responsividade reais em navegador sintético) e `forex_lot_references_test.py` (modelo produtivo e duas bases). Expectativas antigas de apresentação podem acompanhar o contrato; números, fixtures, gates, classificações, clocks e writers permanecem. Recibos de execução, capturas, fingerprint e rollback ficam no relatório externo do candidate. Testes locais não equivalem a aceite humano ou homologação normativa.
 
 `accountProfileContext` diferencia perfil cadastral atual, destino próximo período e referência capturada no período consultado. Ausência histórica não usa perfil atual nem Base. O cabeçalho Forex e Board leem contexto; simulações globais continuam globais. Perfis não substituem risco efetivo: a política V11 atual continua avaliando observações e ordens; P30 permanece PENDING e replicação bloqueada. Nenhuma fórmula foi alterada.
 

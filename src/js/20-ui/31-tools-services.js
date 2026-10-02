@@ -4,12 +4,14 @@
   const el=id=>document.getElementById(id);
   let view='calendar',valid=null,lastCanonical=null,revision=0;
   function selectView(next){
-    if(!['calendar','nocuda','leverage'].includes(next))return;
+    if(!['calendar','nocuda','leverage','normative'].includes(next))return;
+    if(view==='normative'&&next!=='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.leave();
     view=next;
     document.querySelectorAll('#tools [data-tools-view]').forEach(node=>{
       node.hidden=node.dataset.toolsView!==next;node.inert=node.hidden;
     });
     if(next==='calendar'&&window.JPWEcalUI)window.JPWEcalUI.render();
+    if(next==='normative'&&window.JPWNormativeReader)window.JPWNormativeReader.enter();
   }
   function status(message,bad){el('nocudaStatus').textContent=message;el('nocudaStatus').dataset.state=bad?'error':'ok';}
   function invalidate(){revision++;valid=null;['nocudaCopy','nocudaSave','nocudaEditable'].forEach(id=>el(id).disabled=true);el('nocudaRestore').hidden=!lastCanonical;}
@@ -93,8 +95,8 @@
     // manifest by the official build. The page never reads account data.
     const manifest=window.JPW_LEVERAGE_MANIFEST;
     const files=window.JPW_LEVERAGE_FILES||{};
-    const meta=name=>document.querySelector('[data-jpw-leverage-meta="'+name+'"]');
-    const set=(name,value)=>{meta(name).textContent=value;};
+    const set=(name,value)=>document.querySelectorAll('[data-jpw-leverage-meta="'+name+'"]')
+      .forEach(node=>{node.textContent=value;});
     const notice=(message,error)=>{const node=el('jpwLeverageDownloadStatus');node.textContent=message;node.dataset.state=error?'error':'ok';};
     const validEntry=entry=>entry&&entry.available===true&&
       typeof entry.path==='string'&&/^downloads\/jpw-alavancagem-atual\/[A-Za-z0-9._-]+\.zip$/.test(entry.path)&&
@@ -104,12 +106,18 @@
       typeof manifest.version==='string'&&/^[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.version)&&
       manifest.downloads&&manifest.validation;
     if(!validManifest){
+      set('source-availability','Fontes não confirmadas');
+      set('native-summary','Validação nativa não informada');
       set('source-status','Metadados de distribuição indisponíveis nesta cópia.');
       set('compiled-status','Metadados de distribuição indisponíveis nesta cópia.');
       notice('Não foi possível confirmar os arquivos desta versão.',true);
       return;
     }
     set('version',manifest.version);
+    set('source-availability',validEntry(manifest.downloads.source)?'Fontes disponíveis':'Fontes indisponíveis');
+    const nativeStages=['compilation','terminal'].map(stage=>manifest.validation[stage]?.status);
+    set('native-summary',nativeStages.every(state=>state==='passed')?'Evidências nativas registradas':
+      nativeStages.some(state=>state==='pending')?'Validação nativa pendente':'Validação nativa não informada');
     set('coverage',typeof manifest.coverage==='string'&&manifest.coverage?manifest.coverage:'Cobertura não informada.');
     for(const stage of ['mathematics','compilation','terminal']){
       const item=manifest.validation[stage];
@@ -154,6 +162,124 @@
       });
     }
   }
+  function initGenetrixUI(){
+    const region=el('jpwLeveragePage');
+    const areas=['overview','install','resources','validation','help'];
+    const panels=new Map(areas.map(area=>[area,region.querySelector('[data-genetrix-panel="'+area+'"]')]));
+    const tabs=new Map(areas.map(area=>[area,region.querySelector('[data-genetrix-tab="'+area+'"]')]));
+    // Exact DOM identities form the allowlist. A URL fragment never becomes
+    // a selector, HTML, an external route or a persistent preference.
+    const targets=new Map([region,...region.querySelectorAll('[id]')].map(node=>[node.id,node]));
+    let active='overview',hashFrame=null,lastResolvedHash=null;
+    const complete=areas.every(area=>panels.get(area)&&tabs.get(area));
+    function select(area){
+      if(!complete||!panels.has(area))return false;
+      active=area;
+      areas.forEach(key=>{
+        const selected=key===area,panel=panels.get(key),tab=tabs.get(key);
+        panel.hidden=!selected;panel.inert=!selected;
+        tab.setAttribute('aria-selected',String(selected));
+        tab.tabIndex=selected?0:-1;
+      });
+      return true;
+    }
+    function ensureRoute(){
+      const nav=window.JPWNavigation;
+      if(!nav||typeof nav.navigate!=='function')return false;
+      return nav.current().canonical==='tools-leverage'||nav.navigate('tools-leverage');
+    }
+    function findTarget(hash){
+      if(typeof hash!=='string'||!/^#[A-Za-z][A-Za-z0-9_-]{0,95}$/.test(hash))return null;
+      return targets.get(hash.slice(1))||null;
+    }
+    function reveal(target,{record=false,focus=true,scroll=true}={}){
+      if(!complete||!target||!ensureRoute())return false;
+      const parent=target.closest('[data-genetrix-panel]');
+      const area=parent?parent.dataset.genetrixPanel:target.dataset.genetrixTab||'overview';
+      if(!select(area))return false;
+      for(let node=target;node&&node!==region;node=node.parentElement){
+        if(node.tagName==='DETAILS')node.open=true;
+      }
+      if(record&&location.hash!=='#'+target.id)history.pushState(null,'','#'+target.id);
+      if(focus){
+        const focusTarget=target.hasAttribute('data-genetrix-panel')?
+          target.querySelector('[data-genetrix-panel-focus],h2,h1')||target:target;
+        if(!focusTarget.hasAttribute('tabindex')&&!focusTarget.matches('a[href],button,input,select,textarea,summary'))focusTarget.tabIndex=-1;
+        focusTarget.focus({preventScroll:true});
+      }
+      if(scroll)target.scrollIntoView({block:'start',behavior:'instant'});
+      return true;
+    }
+    function open(area){
+      const panel=panels.get(area);
+      if(!panel)return false;
+      return reveal(panel,{record:true});
+    }
+    function fromHash(){
+      const target=findTarget(location.hash);
+      const inGenetrix=window.JPWNavigation?.current().canonical==='tools-leverage';
+      if(target){
+        const area=target.closest('[data-genetrix-panel]')?.dataset.genetrixPanel||'overview';
+        // popstate and hashchange may describe the same transition. Resolving
+        // it twice must not steal focus from a control the user just opened.
+        if(lastResolvedHash===location.hash&&inGenetrix&&active===area)return;
+        if(reveal(target))lastResolvedHash=location.hash;
+      }
+      // Back can return to the original unfragmented Genetrix overview.
+      // An empty fragment elsewhere must never activate Tools on its own.
+      else if(!location.hash&&inGenetrix){
+        if(lastResolvedHash!==''||active!=='overview')reveal(panels.get('overview'));
+        lastResolvedHash='';
+      }else lastResolvedHash=null;
+    }
+    function scheduleHash(){
+      if(hashFrame!==null)cancelAnimationFrame(hashFrame);
+      hashFrame=requestAnimationFrame(()=>{hashFrame=null;fromHash();});
+    }
+    if(complete){
+      select(active);
+      region.addEventListener('click',event=>{
+        if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+        const tab=event.target.closest('[data-genetrix-tab]');
+        if(tab&&region.contains(tab)){
+          const area=tab.dataset.genetrixTab;
+          if(select(area)){
+            event.preventDefault();
+            const hash='#'+panels.get(area).id;
+            if(location.hash!==hash)history.pushState(null,'',hash);
+          }
+          return;
+        }
+        const action=event.target.closest('[data-genetrix-open]');
+        if(action&&region.contains(action)&&panels.has(action.dataset.genetrixOpen)){
+          event.preventDefault();open(action.dataset.genetrixOpen);return;
+        }
+        const link=event.target.closest('a[href^="#"]');
+        const target=link&&region.contains(link)?findTarget(link.getAttribute('href')):null;
+        if(target){event.preventDefault();reveal(target,{record:true});}
+      });
+      region.addEventListener('keydown',event=>{
+        const tab=event.target.closest('[data-genetrix-tab]');
+        if(!tab||!region.contains(tab)||event.altKey||event.ctrlKey||event.metaKey)return;
+        const index=areas.indexOf(tab.dataset.genetrixTab);
+        const next=event.key==='Home'?0:event.key==='End'?areas.length-1:
+          ['ArrowRight','ArrowDown'].includes(event.key)?(index+1)%areas.length:
+          ['ArrowLeft','ArrowUp'].includes(event.key)?(index+areas.length-1)%areas.length:null;
+        if(next===null)return;
+        event.preventDefault();
+        tabs.get(areas[next]).click();tabs.get(areas[next]).focus({preventScroll:true});
+        tabs.get(areas[next]).scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
+      });
+      window.addEventListener('hashchange',scheduleHash);
+      window.addEventListener('popstate',scheduleHash);
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fromHash,{once:true});
+      else scheduleHash();
+    }
+    return Object.freeze({getView:()=>active,open});
+  }
   initLeverageDownloads();
-  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view}),generateEditable});selectView(view);
+  // Publish the existing Tools facade before resolving an initial deep link.
+  // JPWNavigation needs that facade to reveal its outer Tools view.
+  const genetrix=initGenetrixUI();
+  window.JPWTools=Object.freeze({ui:Object.freeze({selectView,getView:()=>view}),generateEditable,genetrix});selectView(view);
 })();

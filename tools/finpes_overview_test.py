@@ -10,7 +10,8 @@ Fixtures sinteticas com valores DESACOPLADOS (projetado != recebido,
 previsto != executado) — soma errada nao passa por coincidencia.
 """
 
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os

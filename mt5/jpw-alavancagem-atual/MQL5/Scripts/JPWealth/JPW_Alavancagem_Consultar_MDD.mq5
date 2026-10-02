@@ -1,6 +1,9 @@
 #property copyright "JP Wealth"
 #property version   "1.21"
 
+#property description "JPW GENETRIX · Consulta sob demanda do máximo DD/saldo observado."
+
+#include <JPWealth/JPW_Alavancagem_Version.mqh>
 #include <JPWealth/JPW_Alavancagem_MDD.mqh>
 
 bool JPWMDDCurrentAccount(JPWAccount &account)
@@ -73,5 +76,5 @@ void OnStart()
       state=JPWMDDConfirmAccount(before,after,state,record);
    if(state==JPW_MDD_ACCOUNT_UNAVAILABLE)
       message=JPWMDDViewText(state,record);
-   MessageBox(message,"MDD observado sobre saldo",MB_OK);
+   MessageBox(message,JPW_PRODUCT_NAME+" · MDD observado sobre saldo",MB_OK);
   }

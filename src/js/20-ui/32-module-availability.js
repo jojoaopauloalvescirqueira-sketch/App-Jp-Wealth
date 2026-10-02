@@ -103,7 +103,9 @@
     if(typeof syncNavSubState==='function')syncNavSubState();
     if(typeof renderNavOrderEditor==='function')renderNavOrderEditor();
     if(typeof scheduleNavPill==='function')scheduleNavPill();
-    window.JPWDashMacro?.render();window.JPWNotifications?.refresh();render();
+    window.JPWDashMacro?.render();
+    if(typeof renderSystemStatus==='function')renderSystemStatus();
+    window.JPWNotifications?.refresh();render();
     if(focused?.closest('[data-module-frozen="true"]')){
       const home=document.querySelector('#nav > [data-primary="dashboard"]');
       if(home?.getClientRects().length)home.focus({preventScroll:true});else window.JPWNavigation?.focusCurrentScreen();

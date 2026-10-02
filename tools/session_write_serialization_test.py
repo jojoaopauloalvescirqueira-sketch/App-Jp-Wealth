@@ -21,7 +21,8 @@ Prova as decisoes DP-1/2/3 e os blockers B1-B4 do Implementation Gate:
 F/G (preserva/apaga) vivem em alladin_finalize_preservation_test.py C1-C17;
 L (mixed-build) vive em session_epoch_protocol_test.py E6/E15 — nao duplicados.
 """
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from browser_fixture_server import BrowserFixtureServer as ThreadingHTTPServer
 from pathlib import Path
 import json
 import os
