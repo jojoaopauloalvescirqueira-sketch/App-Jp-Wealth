@@ -232,10 +232,15 @@ def presentation_runtime(source: str, samples: str) -> str:
         declarations.append(("JPW_VIEW_QUALITY " + name + "=JPW_VIEW_CURRENT;" if name.endswith("_quality") else "string " + name + ';'))
     context = "\n".join(declarations) + r'''
 JPWCockpitSnapshot g_cockpit_snapshot;
-JPWMetricSample g_metric_samples[6];long g_collection_sequence=0;
+JPWMetricSample g_metric_samples[JPW_COCKPIT_METRIC_COUNT];long g_collection_sequence=0;
 string _Symbol="SYNTHETIC";int draws=0;
 ulong host_now=1000;ulong GetTickCount64(){return host_now;}
 void JPWRenderHUD(){draws++;}void JPWRenderRaizDetails(){}void ChartRedraw(int){}
+// This legacy replay keeps the new ledger projection at a component boundary.
+// jpw_genetrix_ui_test executes its actual helper/collector/selector separately;
+// none of the six original metric evidence or expiry assertions is changed.
+void JPWGenetrixPresentMetric(){g_cockpit_snapshot.metric[6].title="Flutuante compensado";
+ g_cockpit_snapshot.metric[6].value="N/A";g_cockpit_snapshot.metric[6].quality=JPW_VIEW_NA;}
 '''
     return samples + cockpit + context + "\n".join(functions)
 

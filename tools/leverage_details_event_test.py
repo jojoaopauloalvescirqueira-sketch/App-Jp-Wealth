@@ -75,6 +75,8 @@ template<class T> int ArraySize(const std::vector<T>& rows){return (int)rows.siz
 int signal_opened=0,signal_cleared=0;long signal_ticket=0;
 void JPWSignalClear(){signal_cleared++;}
 void JPWSignalSaveDraft(){}
+// New cycle event is exercised by the actual helper in jpw_genetrix_ui_test.
+bool JPWGenetrixHandleCycleEvent(int,long,const string&){return false;}
 void JPWSignalInvalidate(const string&){}
 bool JPWSignalHandleClick(const string&){return false;}
 void JPWSignalOpen(int kind=0,ulong ticket=0,long identifier=0);
@@ -210,8 +212,8 @@ int main(){
  OnChartEvent(CHARTEVENT_KEYDOWN,27,0.,"");check(!g_raiz_details_open&&apply==1&&factor_apply==1,"Escape is non-writing cancel");
  current_account.id=10;accept_current();flip_after_mdd=false;
  objects.erase(JPW_COCKPIT_PREF_OBJECT);JPWCockpitLoadPrefs();
- check(g_cockpit_prefs.visible_mask==63&&g_cockpit_prefs.density==0&&!g_cockpit_pref_invalid,
-       "absent chart preference defaults to all six rows");
+ check(g_cockpit_prefs.visible_mask==127&&g_cockpit_prefs.density==0&&!g_cockpit_pref_invalid,
+       "absent chart preference defaults to all seven rows (six legacy bits preserved)");
  click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");
  check(g_raiz_details_open&&g_raiz_tab==7,"launcher opens cockpit overview");
  click(g_panel_prefix+"2");
@@ -223,19 +225,19 @@ int main(){
  click(JPWRaizUI("BUTTON_43"));
  check(g_raiz_tab==13&&g_record_read_requested&&mdd_reads==0,"System requests records only on demand");
  click(JPWRaizUI("BUTTON_44"));
- check(g_raiz_tab==10&&g_cockpit_draft.visible_mask==63,"customize starts from saved preference");
+ check(g_raiz_tab==10&&g_cockpit_draft.visible_mask==127,"customize starts from saved preference");
  const int before_hud=hud_renders;
  click(JPWRaizUI("BUTTON_62"));click(JPWRaizUI("BUTTON_30"));click(JPWRaizUI("BUTTON_31"));
- check(g_cockpit_draft.visible_mask==59&&g_cockpit_draft.corner==CORNER_RIGHT_UPPER&&g_cockpit_draft.density==1,
+ check(g_cockpit_draft.visible_mask==123&&g_cockpit_draft.corner==CORNER_RIGHT_UPPER&&g_cockpit_draft.density==1,
        "visibility, corner and density are previewed in draft");
- check(g_cockpit_prefs.visible_mask==63&&objects.count(JPW_COCKPIT_PREF_OBJECT)==0&&hud_renders>before_hud,
+ check(g_cockpit_prefs.visible_mask==127&&objects.count(JPW_COCKPIT_PREF_OBJECT)==0&&hud_renders>before_hud,
        "preview neither writes chart object nor changes committed preference");
  click(JPWRaizUI("BUTTON_28"));
- check(g_raiz_tab==7&&g_cockpit_prefs.visible_mask==63&&g_cockpit_draft.visible_mask==63,
+ check(g_raiz_tab==7&&g_cockpit_prefs.visible_mask==127&&g_cockpit_draft.visible_mask==127,
        "Cancel discards visual draft");
  click(JPWRaizUI("BUTTON_44"));
- for(int i=60;i<=65;i++)click(JPWRaizUI("BUTTON_"+std::to_string(i)));
- check(g_cockpit_draft.visible_mask==0&&g_cockpit_prefs.visible_mask==63,
+ for(int i=60;i<=66;i++)click(JPWRaizUI("BUTTON_"+std::to_string(i)));
+ check(g_cockpit_draft.visible_mask==0&&g_cockpit_prefs.visible_mask==127,
        "all-hidden is a preview until Apply; launcher remains a separate control");
  click(JPWRaizUI("BUTTON_27"));
  JPWCockpitPrefs saved;
@@ -244,7 +246,7 @@ int main(){
        "Apply stores only visual settings in the chart object");
  click(JPWRaizUI("BUTTON_37"));
  objects[JPW_COCKPIT_PREF_OBJECT]="corrupt";JPWCockpitLoadPrefs();
- check(g_cockpit_pref_invalid&&g_cockpit_prefs.visible_mask==63&&
+ check(g_cockpit_pref_invalid&&g_cockpit_prefs.visible_mask==127&&
        objects[JPW_COCKPIT_PREF_OBJECT]=="corrupt",
        "corrupt object warns, preserves bytes and uses temporary default");
  click(g_panel_prefix+"RAIZ_DETAILS_BUTTON");click(JPWRaizUI("BUTTON_44"));
@@ -252,11 +254,11 @@ int main(){
  check(g_cockpit_pref_invalid&&objects[JPW_COCKPIT_PREF_OBJECT]=="corrupt",
        "Apply refuses silent overwrite of corrupt preference");
  click(JPWRaizUI("BUTTON_29"));
- check(g_cockpit_reset_requested&&g_cockpit_draft.visible_mask==63,
+ check(g_cockpit_reset_requested&&g_cockpit_draft.visible_mask==127,
        "Restaurar prepares an explicit replacement draft");
  click(JPWRaizUI("BUTTON_27"));
  check(!g_cockpit_pref_invalid&&JPWCockpitDecode(objects[JPW_COCKPIT_PREF_OBJECT],saved)&&
-       saved.visible_mask==63,"Apply after explicit reset replaces corrupt object");
+       saved.visible_mask==127,"Apply after explicit reset replaces corrupt object");
  click(JPWRaizUI("BUTTON_44"));
  const string unchanged=objects[JPW_COCKPIT_PREF_OBJECT];
  current_account.id=11;click(JPWRaizUI("BUTTON_27"));

@@ -91,6 +91,7 @@ void JPWBuildPresentation(const string leverage_value,const string leverage_deta
                  g_scale2_tooltip,g_scale2_quality);
    JPWViewMetric(5,"Stop risk",g_stop_value,g_stop_reason,
                  g_stop_detail,g_stop_quality);
+   JPWGenetrixPresentMetric();
   }
 
 void JPWClearPanel()
@@ -135,7 +136,7 @@ void JPWRenderHUD()
    const int available=width-2*pad;
    if(width<button_width+2*pad || available<30) { JPWClearPanel(); return; }
    string shown[JPW_COCKPIT_METRIC_COUNT];
-   string compact_title[JPW_COCKPIT_METRIC_COUNT]={"Lev","P/L","SL","RN1W","RN2W","Risk"};
+   string compact_title[JPW_COCKPIT_METRIC_COUNT]={"Lev","P/L","SL","RN1W","RN2W","Risk","Comp"};
    int visible=0;
    for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++)
       if(JPWCockpitVisible(prefs,i)) visible++;
@@ -158,10 +159,10 @@ void JPWRenderHUD()
          g_stop_observer_presence==JPW_OBSERVER_NOT_CONFIRMED);
       shown[i]=(observer_missing ? "Stop risk: N/A · Check Observer" :
          (i==0 ? "JPW: " : "")+metric.title+" "+metric.value+
-         " · "+JPWCockpitQualityText(metric.quality));
+         " · "+JPWGenetrixMetricQuality(i,metric.quality));
       if(!TextGetSize(shown[i],measured,text_height) || (int)measured>available)
          shown[i]=(observer_missing ? "Risk: N/A · Check Observer" :
-            compact_title[i]+": "+metric.value+" · "+JPWCockpitQualityText(metric.quality));
+            compact_title[i]+": "+metric.value+" · "+JPWGenetrixMetricQuality(i,metric.quality));
       if(!TextGetSize(shown[i],measured,text_height) || (int)measured>available)
          shown[i]=compact_title[i]+": Cockpit";
      }
@@ -175,7 +176,7 @@ void JPWRenderHUD()
                          g_stop_observer_presence==JPW_OBSERVER_NOT_CONFIRMED ?
                          "Risk: N/A · Check Observer" :
                          compact_title[i]+": "+g_cockpit_snapshot.metric[i].value+
-                         " · "+JPWCockpitQualityText(g_cockpit_snapshot.metric[i].quality));
+                         " · "+JPWGenetrixMetricQuality(i,g_cockpit_snapshot.metric[i].quality));
              g_hud_summary_source=i; break; }
       if(!TextGetSize(shown[0],measured,text_height) || (int)measured>available)
          { shown[0]="JPW · Cockpit"; g_hud_summary_source=-1; }
@@ -1106,10 +1107,11 @@ void JPWRenderCockpit()
    const string section=(g_raiz_tab==JPW_SIGNAL_ROUTE ? "Preparar mensagem" :
       (g_raiz_tab==JPW_ROUTE_OVERVIEW ? "Visão geral" :
       (g_raiz_tab==JPW_ROUTE_METRIC ? g_cockpit_snapshot.metric[g_cockpit_selected].title :
+      (g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES ? "Ciclos contábeis" :
       (g_raiz_tab==JPW_ROUTE_PROVENANCE ? "Estado dos dados" :
       (g_raiz_tab==JPW_ROUTE_SETTINGS ? "Ajustes" :
       (g_raiz_tab==JPW_ROUTE_STOPS || g_raiz_tab==JPW_ROUTE_STOP_ROW ? "Stops" :
-      (g_raiz_tab==JPW_ROUTE_RAIZN ? "Raiz N" : "Sistema")))))));
+      (g_raiz_tab==JPW_ROUTE_RAIZN ? "Raiz N" : "Sistema"))))))));
    JPWGenetrixHeader(JPWRaizUI("BRAND_LOGO"),JPWRaizUI("TITLE"),
       x,top+g_details_pad,inner-g_details_control-g_details_pad,g_details_line,
       g_details_font+2,g_details_text,JPWPanelDarkBackground(chart_background),_Symbol+" · "+section,4);
@@ -1145,7 +1147,7 @@ void JPWRenderCockpit()
         }
      }
    ObjectSetString(0,JPWActionObject(JPW_ACTION_TAB_FIRST),OBJPROP_TOOLTIP,
-                   "Teclas 1–6: cartões; setas: páginas; Esc: fechar.");
+                   "Teclas 1–7: cartões; setas: páginas; Esc: fechar.");
    const int close_size=(g_details_control>24 ? g_details_control : 24);
    // The close button stays visible even when content has to paginate.
    JPWRaizCreateButton(JPW_ACTION_HEADER_CLOSE,"×",left+g_details_rect.width-g_details_pad-close_size,
@@ -1214,7 +1216,7 @@ void JPWRenderCockpit()
                               card_inner,g_details_line,g_details_chrome);
          // Keep the existing CARD_BG / QUALITY click routes in precedence.
          ObjectSetInteger(0,JPWRaizUI(suffix+"_STATE_BG"),OBJPROP_ZORDER,1);
-         JPWRaizCreateLabel(suffix+"_QUALITY",JPWCockpitQualityText(metric.quality),
+         JPWRaizCreateLabel(suffix+"_QUALITY",JPWGenetrixMetricQuality(i,metric.quality),
                               cx+card_inset+g_details_pad/2,state_y);
          JPWRaizCreateLabel(suffix+"_REASON",JPWFitText(metric.reason,card_inner,g_details_font),
                               cx+card_inset,value_y+2*g_details_line);
@@ -1231,9 +1233,43 @@ void JPWRenderCockpit()
      {
       JPWRenderStopsTable(x,body_y,inner,body_height,footer_y);
      }
+   else if(g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES)
+     {
+      g_genetrix_cycle_button_count=0;
+      const int stride=g_details_control+2*g_details_line+g_details_pad;
+      const int rows=JPWPanelClamp(body_height/stride,1,16);
+      const int total=(g_genetrix_ledger_available ? ArraySize(g_genetrix_cycles) : 0);
+      const int pages=JPWPanelPageCount(total,rows);
+      g_cockpit_page=JPWPanelClamp(g_cockpit_page,0,pages-1);
+      if(total==0)
+         JPWRaizCreateLabel("LEDGER_EMPTY",JPWFitText("Ciclos indisponíveis · "+g_genetrix_ledger_reason,inner,g_details_font),x,body_y);
+      for(int j=0;j<rows && g_cockpit_page*rows+j<total;j++)
+        {
+         const int i=g_cockpit_page*rows+j;
+         JPWLedgerCycle cycle=g_genetrix_cycles[i];
+         const int y=body_y+j*stride;
+         g_genetrix_cycle_button_id[j]=cycle.cycle_id;
+         g_genetrix_cycle_button_count=j+1;
+         const string caption=(cycle.cycle_id==g_genetrix_selected_cycle ? "✓ " : "")+
+            JPWGenetrixCycleScope(cycle)+" · "+(cycle.started_msc>0 ?
+            TimeToString((datetime)(cycle.started_msc/1000),TIME_DATE|TIME_MINUTES) : "origem sem horário");
+         JPWRaizCreateButton(JPW_ACTION_LEDGER_CYCLE_FIRST+j,caption,x,y,inner);
+         if(body_height>=stride)
+           {
+            JPWRaizCreateLabel("LEDGER_STATE_"+IntegerToString(j),JPWFitText(JPWGenetrixCycleState(cycle)+" · "+
+               JPWGenetrixCycleQuality(g_genetrix_view,cycle,GetTickCount64()),inner,g_details_font),x,y+g_details_control);
+            JPWRaizCreateLabel("LEDGER_SCOPE_"+IntegerToString(j),JPWFitText("Gênese "+
+               JPWGenetrixGenesisLabel(cycle)+" · "+
+               IntegerToString(cycle.open_positions)+" posições / "+IntegerToString(cycle.pending_orders)+
+               " pendentes",inner,g_details_font),x,y+g_details_control+g_details_line);
+           }
+        }
+      JPWRaizCreateLabel("PAGE","Ciclos "+IntegerToString(g_cockpit_page+1)+"/"+IntegerToString(pages)+
+         " · seleção visual",x,footer_y-g_details_line);
+     }
    else if(g_raiz_tab==JPW_ROUTE_SETTINGS)
      {
-      string names[JPW_COCKPIT_METRIC_COUNT]={"Leverage","Floating P/L","Genesis SL","Raiz N 1W","Raiz N 2W","Stop risk"};
+      string names[JPW_COCKPIT_METRIC_COUNT]={"Leverage","Floating P/L","Genesis SL","Raiz N 1W","Raiz N 2W","Stop risk","Flutuante compensado"};
       const int row_height=g_details_control+g_details_pad;
       const int total=JPW_COCKPIT_METRIC_COUNT+2;
       const int rows=(body_height/row_height>0 ? body_height/row_height : 1);
@@ -1266,7 +1302,7 @@ void JPWRenderCockpit()
         {
          const int i=g_cockpit_selected;
          JPWCockpitMetric metric=g_cockpit_snapshot.metric[i];
-         JPWDetailsWrap(metric.title+": "+metric.value+" · "+JPWCockpitQualityText(metric.quality),inner,lines);
+         JPWDetailsWrap(metric.title+": "+metric.value+" · "+JPWGenetrixMetricQuality(i,metric.quality),inner,lines);
          JPWDetailsWrap("Estado: "+metric.reason,inner,lines);
          JPWDetailsWrap("Amostra "+IntegerToString(metric.sample.id)+" · "+metric.sample.source+
             " · unidade "+metric.sample.unit+" · código "+IntegerToString((int)metric.sample.reason_code)+
@@ -1276,7 +1312,8 @@ void JPWRenderCockpit()
            "100 × lucro flutuante / saldo.","Distância da cotação Bid (compra) ou Ask (venda) ao SL local da referência; percentual do preço.",
            "100 × ATR(55,H4) × √N(1W) × F / preço médio do mesmo tick.",
            "100 × ATR(55,H4) × √N(2W) × F / preço médio do mesmo tick.",
-           "Soma do risco de posições abertas (execução até SL, piso zero) e reservas de pendentes ampliadoras atribuídas. Percentual informativo sobre balance atual."};
+           "Soma do risco de posições abertas (execução até SL, piso zero) e reservas de pendentes ampliadoras atribuídas. Percentual informativo sobre balance atual.",
+           "NET realizado desde a origem inferida + flutuante NET remanescente, incluindo custos atribuíveis sem duplicação. 100 × compensado / saldo da amostra."};
          JPWDetailsWrap("Fórmula: "+formulas[i],inner,lines);
          JPWDetailsWrap("Insumos, origem e horário: "+metric.detail,inner,lines);
          if(i==3 || i==4)
@@ -1285,6 +1322,61 @@ void JPWRenderCockpit()
             JPWDetailsWrap("Limite: SL local sem confirmação de execução; referência inferida não certifica a Gênese.",inner,lines);
          if(i==5)
             JPWDetailsWrap("Limite: não é Risco Comprometido, limite de fase ou perda máxima garantida. Custos, perdas realizadas, gaps e slippage ficam fora.",inner,lines);
+         if(i==6)
+           {
+            const int selected=JPWGenetrixSelectedIndex();
+            if(selected>=0 && g_genetrix_ledger_available)
+              {
+               JPWLedgerCycle cycle=g_genetrix_cycles[selected];
+               const string currency=g_genetrix_view.currency;
+               const bool known=cycle.amount_valid;
+               const bool partial=(cycle.partial || !cycle.history_complete || !cycle.costs_complete ||
+                  !g_genetrix_view.history_complete || !g_genetrix_view.costs_complete);
+               JPWDetailsWrap("Escopo: "+JPWGenetrixCycleScope(cycle)+" · "+JPWGenetrixCycleState(cycle)+
+                  ". Seleção apenas visual; nenhuma conta operacional é trocada.",inner,lines);
+               JPWDetailsWrap("Origem contábil "+JPWGenetrixGenesisLabel(cycle)+
+                  "; não certifica tese, flag GÊNESE ou dupla confirmação. O ciclo subsiste com pendentes mesmo sem posições.",inner,lines);
+               JPWDetailsWrap((partial ? "Subtotal conhecido · PARCIAL: " : "Snapshot datado: ")+
+                  (known ? JPWGenetrixMoney(cycle.compensated,currency) : "N/A")+
+                  "; percentual "+(known && cycle.percent_valid ? JPWGenetrixSignedNumber(cycle.percent)+"%" : "N/A")+
+                  " sobre saldo da amostra "+JPWGenetrixMoney(g_genetrix_view.balance,currency)+
+                  ", observada "+TimeToString((datetime)g_genetrix_view.observed_utc,TIME_DATE|TIME_SECONDS)+
+                  " UTC. Histórico não é flutuante atual nem saldo no encerramento.",inner,lines);
+               JPWDetailsWrap("Componentes "+(partial ? "CONHECIDOS · PARCIAIS" : "da leitura")+
+                  ": realizado preço "+(known ? JPWGenetrixMoney(cycle.realized_price,currency) : "N/A")+
+                  "; swap realizado "+(known ? JPWGenetrixMoney(cycle.realized_swap,currency) : "N/A")+
+                  "; comissões "+(known ? JPWGenetrixMoney(cycle.commissions,currency) : "N/A")+
+                  "; taxas "+(known ? JPWGenetrixMoney(cycle.fees,currency) : "N/A")+".",inner,lines);
+               JPWDetailsWrap("Remanescente: preço "+(known ? JPWGenetrixMoney(cycle.unrealized_price,currency) : "N/A")+
+                  "; swap "+(known ? JPWGenetrixMoney(cycle.unrealized_swap,currency) : "N/A")+
+                  ". Valores projetados do ledger; a UI não soma parcelas nem presume custos ausentes iguais a zero.",inner,lines);
+               JPWDetailsWrap("Histórico: "+(cycle.history_complete ? "completo declarado" : "incompleto")+
+                  "; custos: "+(cycle.costs_complete ? "completos declarados" : "incompletos")+
+                  "; "+IntegerToString(cycle.open_positions)+" posições / "+IntegerToString(cycle.pending_orders)+
+                  " pendentes. "+cycle.reason,inner,lines);
+               string member_ids[];
+               const bool members_known=JPWGenetrixMemberIdentifiers(cycle,member_ids);
+               JPWDetailsWrap("Membros da geração "+IntegerToString(g_genetrix_view.generation)+
+                  ", observada "+TimeToString((datetime)g_genetrix_view.observed_utc,TIME_DATE|TIME_SECONDS)+
+                  " UTC. Identificadores observados das posições, incluindo encerradas; não são tickets atuais.",inner,lines);
+               if(!members_known)
+                  JPWDetailsWrap("Membros indisponíveis nesta publicação; ausência da lista não comprova zero membros.",inner,lines);
+               else if(ArraySize(member_ids)==0)
+                  JPWDetailsWrap("Ciclo provisório antes da primeira execução; nenhum identificador de posição atribuído nesta geração.",inner,lines);
+               else
+                 {
+                  JPWDetailsWrap("Lista observada: "+IntegerToString(ArraySize(member_ids))+
+                     " identificadores. Cobertura histórica "+(cycle.history_complete ?
+                     "completa declarada; não verificada automaticamente." :
+                     "incompleta; a lista não comprova todos os membros desde a origem."),inner,lines);
+                  for(int member=0;member<ArraySize(member_ids);member++)
+                     JPWDetailsWrap("Membro "+IntegerToString(member+1)+
+                        ": POSITION_IDENTIFIER "+member_ids[member],inner,lines);
+                 }
+              }
+            JPWDetailsWrap(JPWGenetrixLedgerHealth(),inner,lines);
+            JPWDetailsWrap("Limite: métrica contábil, distinta do Floating P/L global. Resultado positivo não abate perdas/custos negativos no RC nem financia ampliação de risco.",inner,lines);
+           }
         }
       else if(g_raiz_tab==JPW_ROUTE_STOP_ROW)
         {
@@ -1380,6 +1472,8 @@ void JPWRenderCockpit()
         }
       else if(g_raiz_tab==JPW_ROUTE_SYSTEM)
         {
+         JPWDetailsWrap(JPWGenetrixLedgerHealth(),inner,lines);
+         JPWDetailsWrap(JPWGenetrixRiskSummary(),inner,lines);
          JPWDetailsWrap(JPW_PRODUCT_NAME+" "+JPW_PRODUCT_VERSION+" · cálculo "+JPW_CALCULATION_VERSION+
                          " · build "+JPW_BUILD_ID,inner,lines);
          JPWDetailsWrap(JPW_PRODUCT_TAGLINE,inner,lines);
@@ -1471,7 +1565,9 @@ void JPWRenderCockpit()
      {
       string first_action="Stops",second_action="Preparar mensagem";
       if(g_raiz_tab==JPW_ROUTE_METRIC)
-        { first_action="Visão geral"; second_action="Proveniência"; }
+        { first_action="Visão geral"; second_action=(g_cockpit_selected==6 ? "Selecionar ciclo" : "Proveniência"); }
+      else if(g_raiz_tab==JPW_ROUTE_LEDGER_CYCLES)
+        { first_action="Compensado"; second_action="Visão geral"; }
       else if(g_raiz_tab==JPW_ROUTE_PROVENANCE)
         { first_action="Sistema"; second_action="Atualizar"; }
       else if(g_raiz_tab==JPW_ROUTE_STOP_ROW)

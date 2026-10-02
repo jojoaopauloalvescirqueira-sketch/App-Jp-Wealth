@@ -37,6 +37,9 @@ long MathAbs(long n){return std::abs(n);}
 int StringFind(const string& s,const string& part){const size_t p=s.find(part);return p==string::npos?-1:static_cast<int>(p);}
 int calls=0,key_calls=0,edit_commits=0,applies=0;
 bool editing=false;string edit_draft="original";
+// New cycle handling is a separate component boundary for this legacy focus
+// replay; jpw_genetrix_ui_test executes its production selector/event logic.
+bool JPWGenetrixHandleCycleEvent(const int,const long,const string&){return false;}
 void JPWHandleChartEvent(const int id,const long& key,const double&,const string& name){
  calls++;
  if(id==CHARTEVENT_OBJECT_CLICK)editing=name=="JPW_TEST_RAIZ_UI_EDIT_17";

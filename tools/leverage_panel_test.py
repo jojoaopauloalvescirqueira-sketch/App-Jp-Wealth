@@ -121,7 +121,7 @@ def check_narrow_chart(hud: str) -> None:
             'const int available=width-2*pad;' in hud and
             'TextGetSize(shown[i],measured,text_height)' in hud,
             'content must be measured against reserved HUD geometry')
-    require('compact_title[i]+": "+metric.value+" · "+JPWCockpitQualityText(metric.quality)' in hud and
+    require('compact_title[i]+": "+metric.value+" · "+JPWGenetrixMetricQuality(i,metric.quality)' in hud and
             'observer_missing ? "Risk: N/A · Check Observer"' in hud and
             'shown[i]=compact_title[i]+": Cockpit";' in hud and
             'const bool summary=(visible>0 &&' in hud and 'if(summary)' in hud and
@@ -241,7 +241,7 @@ def check_cockpit_navigation(source: str) -> None:
     require('if(id==CHARTEVENT_KEYDOWN && g_raiz_details_open && g_raiz_tab>=7)' in event and
             'if(!JPWDetailsContextCurrent()) return;' in event and
             'lparam==37 || lparam==39' in event and
-            'lparam>=49 && lparam<=54' in event,
+            'lparam>=49 && lparam<=55' in event,
             'keyboard navigation must be scoped to current-account cockpit pages')
     require(all(token in event for token in ('"CARD_BG_"+IntegerToString(i)',
             '"CARD_"+IntegerToString(i)+"_VALUE"',

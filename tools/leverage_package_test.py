@@ -12,15 +12,15 @@ from build_leverage_package import ROOT, MANIFEST_PATH, COMPILED_ARTIFACT, VERSI
 
 def main() -> None:
     template = json.loads((ROOT / MANIFEST_PATH).read_text(encoding="utf-8"))
-    assert template["version"] == "1.16.1"
+    assert template["version"] == "1.17.0"
     version_source = (ROOT / VERSION_HEADER).read_text(encoding="utf-8")
-    assert '#define JPW_PRODUCT_VERSION "1.16.1"' in version_source
-    assert '#define JPW_PRODUCT_MQL_VERSION "1.161"' in version_source
+    assert '#define JPW_PRODUCT_VERSION "1.17.0"' in version_source
+    assert '#define JPW_PRODUCT_MQL_VERSION "1.170"' in version_source
     assert '#define JPW_CALCULATION_VERSION "1.9.0"' in version_source
     nocuda_source = (ROOT / "mt5/jpw-alavancagem-atual/MQL5/Indicators/JPWealth/JPW_NoCuda_Channels.mq5").read_text(encoding="utf-8")
     assert '#property version   "1.30"' in nocuda_source
     readme = (ROOT / "mt5/jpw-alavancagem-atual/README.md").read_text(encoding="utf-8")
-    for phrase in ('fontes MT5 v1.16.1', 'MQL `1.161`', 'declara `1.30`',
+    for phrase in ('fontes MT5 v1.17.0', 'MQL `1.170`', 'declara `1.30`',
                    'cálculo financeiro continua **1.9.0**', 'NOT_RUN'):
         assert phrase in readme, phrase
     assert "mt5/jpw-alavancagem-atual/MQL5/Include/JPWealth/JPW_Alavancagem_MDD.mqh" in template["sourceFiles"]
@@ -88,7 +88,7 @@ def main() -> None:
         "mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_NoCuda_Logo.bmp",
     }
     nocuda |= fibo
-    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 87
+    assert len(template["sourceFiles"]) == len(set(template["sourceFiles"])) == 100
     assert nocuda <= set(template["sourceFiles"])
     brands = {"mt5/jpw-alavancagem-atual/MQL5/Images/JPWealth/JPW_Genetrix_Logo_" +
               theme + "_" + str(scale) + ".bmp" for theme in ("Light", "Dark")
@@ -98,7 +98,7 @@ def main() -> None:
     assert template["productName"] == "JPW GENETRIX"
     assert '#define JPW_PRODUCT_NAME "JPW GENETRIX"' in version_source
     assert '#define JPW_PRODUCT_TAGLINE "Da origem da operação à leitura do risco."' in version_source
-    for phrase in ("1.16.1", "UNVERIFIED_NATIVE", "H1/H4", "N/A", "NOT_RUN"):
+    for phrase in ("1.17.0", "UNVERIFIED_NATIVE", "H1/H4", "N/A", "NOT_RUN"):
         assert phrase in template["coverage"], phrase
     for phrase in ("Fibonacci acompanhado", "UNVERIFIED_NATIVE", "| 5 | −0,50 |", "H1 e H4", "não prevê"):
         assert phrase in readme, phrase
@@ -130,7 +130,7 @@ def main() -> None:
         assert first["runtimeBuildId"].encode() in payloads[version_member]
         source = first["downloads"]["source"]
         assert source["available"] and not first["downloads"]["compiled"]["available"]
-        assert source["filename"] == "JPW_Genetrix_Fontes_v1.16.1.zip"
+        assert source["filename"] == "JPW_Genetrix_Fontes_v1.17.0.zip"
         content = (root / source["path"]).read_bytes()
         assert len(content) == source["bytes"]
         assert hashlib.sha256(content).hexdigest() == source["sha256"]
@@ -203,7 +203,7 @@ def main() -> None:
         assert build(root) == first
 
         bad_version = (root / VERSION_HEADER).read_bytes()
-        (root / VERSION_HEADER).write_bytes(bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.16.1"', b'#define JPW_PRODUCT_VERSION "1.9.0"'))
+        (root / VERSION_HEADER).write_bytes(bad_version.replace(b'#define JPW_PRODUCT_VERSION "1.17.0"', b'#define JPW_PRODUCT_VERSION "1.9.0"'))
         try:
             build(root)
         except ValueError as error:

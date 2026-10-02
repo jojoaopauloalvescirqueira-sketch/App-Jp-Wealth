@@ -66,9 +66,13 @@ long g_collection_sequence=0,g_last_full_refresh_utc=2000;
 bool g_account_known=true,g_genesis_due=false,g_raiz_due=false,g_refresh_requested=false;
 bool g_genesis_refresh_connected=true,g_genesis_refresh_clock_valid=true;
 long g_genesis_refresh_now_ms=1000000;ulong g_genesis_refresh_started=10000;
-int g_leverage_quality=1,g_floating_quality=0,g_genesis_quality=0,g_raiz_quality=0,g_scale2_quality=0,g_stop_quality=0;
-double g_numeric_values[6]={};bool g_numeric_valid[6]={};long g_source_times[6]={};
-JPWMetricSample g_metric_samples[6];int g_metric_last_quality[6]={};
+int g_leverage_quality=1,g_floating_quality=0,g_genesis_quality=0,g_raiz_quality=0,g_scale2_quality=0,g_stop_quality=0,g_compensated_quality=0;
+double g_numeric_values[7]={};bool g_numeric_valid[7]={};long g_source_times[7]={};
+JPWMetricSample g_metric_samples[7];int g_metric_last_quality[7]={};
+// Ledger is an explicit separate component boundary for this inventory replay;
+// its production projection/collection is tested in jpw_genetrix_ui_test.
+bool g_genetrix_ledger_available=false;
+struct HostLedgerSample{long observed_mono_ms=0;}g_genetrix_view;
 string g_panel_value,g_panel_status,g_leverage_reason;
 string g_floating_value,g_floating_reason,g_floating_line,g_floating_short,g_floating_tooltip;
 string g_dd_line,g_dd_short,g_dd_tooltip,g_genesis_value,g_genesis_reason,g_genesis_line,g_genesis_short,g_genesis_tooltip;

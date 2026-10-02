@@ -1,8 +1,14 @@
-# JPW GENETRIX — fontes MT5 v1.16.1
+# JPW GENETRIX — fontes MT5 v1.17.0
 
 **Da origem da operação à leitura do risco.**
 
-## O que é hoje
+## Candidato1.17.0: Supervisor e flutuante compensado
+
+A nova revisão isolada acrescenta Accountant não negociador, ledger próprio,7ªmétrica e Supervisor separado com negociação exclusivamente demo hedging explicitamente armada. O indicador e o Observer continuam observadores. O manual [GENETRIX_7X_LEDGER.md](GENETRIX_7X_LEDGER.md) descreve cálculo, limitações e armamento; compilação/MT5/demo são `NOT_RUN`, sem EX5. PreferênciasV3 preservamV1/V2 e all-hidden.
+
+As descrições abaixo dos componentes anteriores continuam registradas; a restrição de não negociar aplica-se ao indicador/Observer, sem conceder capacidade ao novo Supervisor fora do ensaio autorizado.
+
+## Componentes anteriores
 
 O JPW GENETRIX é um conjunto de ferramentas locais para MetaTrader 5, desenvolvido para organizar a leitura das operações e tornar seus dados de exposição e risco mais claros e rastreáveis, seguindo a estrutura de desenvolvimento do JP Wealth.
 
@@ -10,7 +16,7 @@ Seus componentes reúnem alavancagem atual, resultado flutuante, distância ao s
 
 O módulo NoCuda acompanha estudos geométricos e incorpora o trabalho com canais de Fibonacci. Na versão atual, as medidas do Fibonacci importado permanecem indisponíveis até comprovação da correspondência nativa.
 
-O Genetrix combina indicadores, um EA observador e scripts auxiliares. Sua atuação atual é informativa e local; não executa negociações nem envia mensagens aos grupos. O site distribui arquivos e orientação, sem receber dados da conta.
+O Genetrix combina indicadores, um EA observador e scripts auxiliares. A atuação desses componentes anteriores é informativa e local; não executa negociações nem envia mensagens aos grupos. O site distribui arquivos e orientação, sem receber dados da conta.
 
 Implementação em fontes, compilação, execução no MT5 e aceite operacional são estados separados. O programa não certifica automaticamente a conformidade de uma operação com o Estatuto ou com o Método NoCuda.
 
@@ -20,7 +26,7 @@ Indicador informativo de **nocional bruto das posições abertas ÷ equity**,
 **flutuante ÷ saldo**, distância do mercado ao SL vigente de uma posição de
 referência selecionada ou inferida e duas **distâncias Raiz N diagnósticas**,
 de 1 e 2 semanas, para o símbolo exato do gráfico, e **risco informativo dos
-stops**. As seis leituras aparecem por padrão num bloco compacto; cada linha
+stops**. As seis leituras anteriores e a nova leitura de compensado aparecem por padrão num bloco compacto; cada linha
 abre seu cartão no **Cockpit**.
 Drawdown sobre saldo e seu máximo observado continuam calculados e ficam no
 Cockpit sob demanda. Ocultar uma leitura do gráfico não interrompe seu cálculo
@@ -83,7 +89,7 @@ compilado só é oferecido quando existem `.ex5` reais; compilação não equiva
 validam automaticamente os fontes da versão 1.16.1. Não há `.ex5` desta revisão
 para distribuição sem compilação nativa comprovada dos fontes exatos.
 **1.16.1 identifica o pacote e a identidade de execução do Cockpit/observador
-recompilados desta fonte.** O cabeçalho compartilhado usa MQL `1.161`;
+recompilados desta fonte.** O cabeçalho compartilhado usa MQL `1.170`;
 o componente NoCuda desta revisão declara `1.30`. Confira também o
 fingerprint do pacote; o número da versão não comprova qual EX5
 está instalado no terminal.

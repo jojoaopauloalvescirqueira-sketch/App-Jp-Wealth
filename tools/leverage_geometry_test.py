@@ -254,6 +254,7 @@ bool JPWCreateProtectedValue(const string&,const string&,int x,int y,int w,int=0
 bool JPWRaizCreateSurface(const string&,int x,int y,int w,int h,color){drawn.push_back({x,y,w,h,"surface"});return true;}
 string JPWFitText(const string&s,int,int){return s;}
 string JPWCockpitQualityText(int){return "Current";}
+string JPWGenetrixMetricQuality(int,int quality){return JPWCockpitQualityText(quality);}
 string JPWRaizUI(const string&s){return s;}
 bool ObjectSetString(int,const string&,int,const string&){return true;}
 bool ObjectSetInteger(int,const string&,int,long){return true;}
@@ -290,7 +291,7 @@ int main(){
        std::cerr<<"FAIL Stops no-row summary geometry\n";return 1;}
    }
  }
- // The enlarged desktop cockpit must show all six overview cards at the
+ // The enlarged desktop cockpit must show all seven overview cards (including the original six) at the
  // default measured font; larger text may paginate but never overlap chrome.
  JPWPanelRect desktop;
  if(!JPWPanelCockpit(1440,900,__COCKPIT_WIDTH__,__COCKPIT_HEIGHT__,desktop))return 1;
@@ -311,7 +312,7 @@ int main(){
      if(item.type.rfind("button5",0)==0)cards++;
      if(item.y<body_y||item.y+item.height>footer_y||item.x<x||item.x+item.width>x+inner){
        std::cerr<<"FAIL enlarged overview content crossed body/footer at text="<<measured<<"\n";return 1;}}
-   if((measured==16&&cards!=6)||(measured==32&&cards<1)){
+   if((measured==16&&cards!=7)||(measured==32&&cards<1)){
      std::cerr<<"FAIL enlarged cockpit overview card capacity at text="<<measured<<"\n";return 1;}
  }
  // A 636 px chart still gives the enlarged renderer a 620 px cockpit. The
@@ -421,15 +422,17 @@ bool ObjectSetString(int,const string&name,int property,const string&value){obje
 string IntegerToString(int value){return std::to_string(value);}
 template<class A,class B>A MathMax(A a,B b){return a>b?a:(A)b;}
 template<class A,class B>A MathMin(A a,B b){return a<b?a:(A)b;}
-constexpr int JPW_COCKPIT_METRIC_COUNT=6,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1;
+constexpr int JPW_COCKPIT_METRIC_COUNT=7,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1;
 enum JPW_VIEW_QUALITY{JPW_VIEW_NA=0,JPW_VIEW_CURRENT=1,JPW_VIEW_ESTIMATED=2};
 struct JPWCockpitPrefs{int visible_mask,corner,density;};
 struct JPWCockpitMetric{string title,value,reason;JPW_VIEW_QUALITY quality;};
-struct JPWCockpitSnapshot{JPWCockpitMetric metric[6];};
+struct JPWCockpitSnapshot{JPWCockpitMetric metric[7];};
 bool JPWCockpitVisible(JPWCockpitPrefs&prefs,int index){return (prefs.visible_mask&(1<<index))!=0;}
 string JPWCockpitQualityText(JPW_VIEW_QUALITY quality){
  return quality==JPW_VIEW_CURRENT?"Current":quality==JPW_VIEW_ESTIMATED?"Estimated":"N/A";
 }
+// New seventh-metric boundary is verified in jpw_genetrix_ui_test; legacy HUD fixtures keep their original six rows.
+string JPWGenetrixMetricQuality(int,JPW_VIEW_QUALITY quality){return JPWCockpitQualityText(quality);}
 string g_panel_prefix="JPW_TEST_";
 int InpFontSize=8,InpOffsetX=16,InpOffsetY=40,InpFontColor=0x767676;
 JPWCockpitPrefs g_cockpit_prefs={63,0,0},g_cockpit_draft={63,0,0};
@@ -553,8 +556,8 @@ def capture_overview(destination: Path) -> int:
     cockpit = (MQL / "Include/JPWealth/JPW_Alavancagem_Cockpit.mqh").read_text()
     enums = cockpit[cockpit.index("enum JPW_COCKPIT_ROUTE"):cockpit.index("string JPWCockpitCornerName")]
     shim = HUD_SHIM.replace(
-        "JPW_COCKPIT_METRIC_COUNT=6,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1",
-        "JPW_COCKPIT_METRIC_COUNT=6,JPW_OBSERVER_NOT_CONFIRMED=1",
+        "JPW_COCKPIT_METRIC_COUNT=7,JPW_ROUTE_SETTINGS=10,JPW_OBSERVER_NOT_CONFIRMED=1",
+        "JPW_COCKPIT_METRIC_COUNT=7,JPW_OBSERVER_NOT_CONFIRMED=1",
     ).replace("return 0xffffff;", "return capture_background;")
     shim = shim.replace(
         "bool ObjectCreate(int,const string&name,int,int,int,int){objects[name]=Object{};return true;}",

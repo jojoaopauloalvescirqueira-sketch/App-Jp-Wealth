@@ -96,11 +96,12 @@ void JPWAcceptMetric(const int metric)
   {
    const int quality=(metric==0 ? (int)g_leverage_quality :
       (metric==1 ? (int)g_floating_quality : (metric==2 ? (int)g_genesis_quality :
-      (metric==3 ? (int)g_raiz_quality : (metric==4 ? (int)g_scale2_quality : (int)g_stop_quality)))));
-   const string units=(metric==0 ? "ratio" : (metric==5 ? "account_currency" : "percent"));
+      (metric==3 ? (int)g_raiz_quality : (metric==4 ? (int)g_scale2_quality :
+      (metric==5 ? (int)g_stop_quality : (int)g_compensated_quality))))));
+   const string units=(metric==0 ? "ratio" : (metric==5 ? "account_currency" : (metric==6 ? "ledger_census" : "percent")));
    const string source=(metric==0 ? "positions+quotes+equity" :
       (metric==1 ? "account_profit/balance" : (metric==2 ? "genesis+bid/ask+sl" :
-      (metric==5 ? "observer_stop_risk_generation" : "same_tick+iATR55_H4+calendar+F"))));
+      (metric==5 ? "observer_stop_risk_generation" : (metric==6 ? "genetrix_ledger_read_model" : "same_tick+iATR55_H4+calendar+F")))));
    const bool accepted=JPWSampleAccept(g_metric_samples[metric],g_collection_sequence,g_sample_context,
       g_numeric_values[metric],g_numeric_valid[metric] && quality!=JPW_VIEW_NA,
       units,quality,(quality==JPW_VIEW_CURRENT ? JPW_SAMPLE_CONFIRMED :
@@ -115,6 +116,56 @@ void JPWAcceptMetric(const int metric)
       const ulong source_deadline=(ulong)g_stop_sample.observed_mono_ms+30000;
       if(source_deadline<g_metric_samples[metric].valid_until_monotonic_ms)
          g_metric_samples[metric].valid_until_monotonic_ms=source_deadline;
+     }
+   if(metric==6 && g_genetrix_ledger_available && g_genetrix_view.observed_mono_ms>0)
+     {
+      const ulong deadline=(ulong)g_genetrix_view.observed_mono_ms+30000;
+      if(deadline<g_metric_samples[metric].valid_until_monotonic_ms)
+         g_metric_samples[metric].valid_until_monotonic_ms=deadline;
+     }
+  }
+
+void JPWGenetrixCollectLedger()
+  {
+   if(!JPWCoordinatorBudgetRemaining()) return;
+   JPWLedgerCycle cycles[];
+   JPWLedgerView view;
+   string reason="";
+   if(!g_account_known || g_diagnostic_context=="" ||
+      !JPWLedgerBridgeRefresh(cycles,view,reason) || view.account_key!=g_diagnostic_context)
+     {
+      JPWGenetrixInvalidate(reason=="" ? "Ledger indisponível ou de outro contexto" : reason,false);
+      g_compensated_quality=JPW_VIEW_NA;
+     }
+   else if(ArrayResize(g_genetrix_cycles,ArraySize(cycles))!=ArraySize(cycles) ||
+           (ArraySize(cycles)>0 && ArrayCopy(g_genetrix_cycles,cycles)!=ArraySize(cycles)))
+     {
+      JPWGenetrixInvalidate("Não foi possível aceitar o catálogo integral de ciclos",false);
+      g_compensated_quality=JPW_VIEW_NA;
+     }
+   else
+     {
+      const string prior=g_genetrix_selected_cycle;
+      g_genetrix_view=view;
+      g_genetrix_ledger_available=true;
+      g_genetrix_ledger_reason=reason;
+      if(prior!="" && JPWGenetrixSelectedIndex()<0) g_genetrix_selected_cycle="";
+      else if(prior=="" && ArraySize(cycles)==1) JPWGenetrixSelectCycle(0);
+      g_compensated_quality=(JPWGenetrixRecent(view,GetTickCount64()) ? JPW_VIEW_CURRENT : JPW_VIEW_NA);
+     }
+   // STATE envelope describes the accepted census. Selecting another cycle
+   // projects that census without borrowing the old cycle's numeric sample.
+   g_numeric_valid[6]=false;
+   g_source_times[6]=(g_genetrix_ledger_available ? g_genetrix_view.observed_utc*1000 : 0);
+   JPWAcceptMetric(6);
+   if(JPWCoordinatorBudgetRemaining())
+     {
+      JPWRiskView risk;
+      string risk_reason="";
+      g_genetrix_risk_available=JPWRiskReadView(g_account,risk,risk_reason);
+      g_genetrix_risk_reason=risk_reason;
+      if(g_genetrix_risk_available) g_genetrix_risk_view=risk;
+      else ZeroMemory(g_genetrix_risk_view);
      }
   }
 
@@ -490,6 +541,8 @@ void JPWDetailsReadStopRisk()
 
 void JPWInvalidateIdentityPresentation()
   {
+   JPWGenetrixInvalidate("Identidade alterada; ledger anterior descartado");
+   g_compensated_quality=JPW_VIEW_NA;
    JPWPositionsInvalidate("Contexto alterado; catálogo anterior descartado");
    g_stop_observer_presence=JPW_OBSERVER_CONTEXT_UNAVAILABLE;
    for(int i=0;i<JPW_COCKPIT_METRIC_COUNT;i++) JPWSampleInvalidate(g_metric_samples[i],JPW_SAMPLE_CONTEXT_CHANGED);
@@ -607,6 +660,9 @@ void JPWMonitorStopRisk()
    g_numeric_valid[5]=(g_stop_quality==JPW_VIEW_CURRENT);
    g_source_times[5]=g_stop_ready ? g_stop_sample.observed_utc*1000 : 0;
    JPWAcceptMetric(5);
+   // New read models use only the remaining window, after the original Stop
+   // risk publication. They cannot displace its collector or start a new one.
+   if(identity_current && g_account_known && g_diagnostic_context!="") JPWGenetrixCollectLedger();
   }
 
 bool JPWFullReadingExpired(const ulong now_ms,const ulong last_ms)

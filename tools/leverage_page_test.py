@@ -107,7 +107,13 @@ FIBO_MEMBERS = {
 EXPECTED.update(FIBO_MEMBERS)
 EXPECTED.add("MQL5/Include/JPWealth/JPW_Alavancagem_RaizN_Factor.mqh")
 EXPECTED.add("MQL5/Scripts/JPWealth/JPW_Alavancagem_RaizN_Factor_Tests.mq5")
-assert len(EXPECTED) == 87
+# Explicit additions approved for isolated1.17.0, original87members retained.
+EXPECTED.update("MQL5/Include/JPWealth/JPW_Genetrix_"+name+".mqh" for name in
+ ("Risk_Core","Risk_Terminal","Risk_Store","Ledger_Core","Ledger_Store","Ledger_Terminal","Ledger_Bridge","UI"))
+EXPECTED.update("MQL5/Experts/JPWealth/JPW_Genetrix_"+name+".mq5" for name in ("Supervisor","Accountant"))
+EXPECTED.update("MQL5/Scripts/JPWealth/JPW_Genetrix_"+name+"_Tests.mq5" for name in ("Risk","Ledger"))
+EXPECTED.add("GENETRIX_7X_LEDGER.md")
+assert len(EXPECTED) == 100
 
 
 class Quiet(SimpleHTTPRequestHandler):
@@ -161,11 +167,11 @@ def route_and_inspect(page):
     assert 'Exemplo ilustrativo — não representa sua conta.' in page.locator('#jpwLeverageHow').text_content()
     assert 'não recebe posições, equity, credenciais ou resultados' in page.locator('#jpwLeveragePage').text_content()
     assert 'nem lê ou distribui os registros locais' in page.locator('#jpwLeveragePage').text_content()
-    assert MANIFEST['version'] == '1.16.1'
+    assert MANIFEST['version'] == '1.17.0'
     assert MANIFEST['productName'] == 'JPW GENETRIX'
     assert 'Da origem da operação' in page.locator('#jpwLeverageOverview').text_content()
     assert 'medidas do Fibonacci importado permanecem indisponíveis' in page.locator('#jpwGenetrixDefinition').text_content()
-    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 87
+    assert len(MANIFEST['sourceFiles']) == len(set(MANIFEST['sourceFiles'])) == 100
     for phrase in ('NoCuda Channels', 'seis métricas', 'Stop risk',
                    'saldo atual é informativo', 'Saldo Inicial de Referência',
                    'P-21 canônico permanece PENDING'):

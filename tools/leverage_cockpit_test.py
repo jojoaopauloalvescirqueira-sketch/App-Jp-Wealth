@@ -78,13 +78,13 @@ int main() {
         JPWCockpitCornerName(CORNER_RIGHT_UPPER)=="Superior direito", "corner labels agree with enum geometry");
   JPWCockpitPrefs defaults;
   JPWCockpitDefault(defaults);
-  check(defaults.visible_mask==63 && defaults.corner==0 && defaults.density==0,
-        "absent object defaults to six visible compact rows");
+  check(defaults.visible_mask==127 && defaults.corner==0 && defaults.density==0,
+        "absent object defaults to seven visible compact rows (original six preserved)");
   check(JPWCockpitQualityText(JPW_VIEW_CURRENT)=="Current" &&
         JPWCockpitQualityText(JPW_VIEW_ESTIMATED)=="Estimated" &&
         JPWCockpitQualityText(JPW_VIEW_NA)=="N/A",
         "typed quality labels stay distinct");
-  for(int mask=0;mask<=63;mask++) for(int corner=0;corner<4;corner++)
+  for(int mask=0;mask<=127;mask++) for(int corner=0;corner<4;corner++)
     for(int density=0;density<2;density++) {
       JPWCockpitPrefs initial={mask,corner,density};
       string encoded=JPWCockpitEncode(initial);
@@ -92,17 +92,17 @@ int main() {
       check(!encoded.empty() && JPWCockpitDecode(encoded,restored) &&
             restored.visible_mask==mask && restored.corner==corner &&
             restored.density==density,"valid preference roundtrip");
-      for(int metric=0;metric<6;metric++)
+      for(int metric=0;metric<7;metric++)
         check(JPWCockpitVisible(restored,metric)==((mask & (1<<metric))!=0),
-              "six visibility bits are independent");
-      check(!JPWCockpitVisible(restored,-1) && !JPWCockpitVisible(restored,6),
+              "seven visibility bits are independent");
+      check(!JPWCockpitVisible(restored,-1) && !JPWCockpitVisible(restored,7),
             "out-of-range metric never leaks a row");
     }
   JPWCockpitPrefs none={0,3,1};
   check(!JPWCockpitEncode(none).empty() &&
         !JPWCockpitVisible(none,0) && !JPWCockpitVisible(none,4),
         "all-hidden remains valid so the indicator can retain its launcher");
-  JPWCockpitPrefs invalid={64,0,0};
+  JPWCockpitPrefs invalid={128,0,0};
   check(JPWCockpitEncode(invalid).empty(),"unknown visibility bit refused");
   invalid={63,4,0};
   check(JPWCockpitEncode(invalid).empty(),"unknown corner refused");
@@ -128,9 +128,9 @@ int main() {
   JPWCockpitPrefs old={31,2,1};
   string old_packet=StringFormat("JPWCOCKPIT|1|%d|%d|%d|%d",old.visible_mask,
                                  old.corner,old.density,JPWCockpitChecksumVersion(old,1));
-  check(JPWCockpitDecode(old_packet,target) && target.visible_mask==63 &&
+  check(JPWCockpitDecode(old_packet,target) && target.visible_mask==127 &&
         target.corner==2 && target.density==1,
-        "valid V1 five-row preference adds sixth row without changing layout");
+        "valid V1 preserves five bits and adds sixth and seventh rows without changing layout");
   old.visible_mask=0;
   old_packet=StringFormat("JPWCOCKPIT|1|%d|%d|%d|%d",old.visible_mask,
                           old.corner,old.density,JPWCockpitChecksumVersion(old,1));

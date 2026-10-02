@@ -225,15 +225,21 @@ bool JPWAccountsEqual(JPWAccount&,JPWAccount&){return true;}
 void JPWInvalidateIdentityPresentation(){}
 void JPWAcceptMetric(int metric){accepted_metrics.push_back(metric);}
 void JPWCollectStopRisk(){stop_calls++;}
+// New read-model collection is a separate component boundary in this legacy
+// scheduler replay. Its real implementation and metric-6 acceptance run in
+// jpw_genetrix_ui_test; original collector/order/budget assertions stay intact.
+void JPWGenetrixCollectLedger(){}
 void JPWStopRiskUnavailable(const string&){}
 void JPWDetailsReadStopRisk(){}
 void JPWStopRiskRefreshRowView(){}
 void JPWRaizSaveVisibleFields(){}
 void JPWRaizPanelDestroy(){}
-double g_numeric_values[6]={},g_stop_total_money=0;
-bool g_numeric_valid[6]={};long g_source_times[6]={};int g_stop_quality=0;
+double g_numeric_values[7]={},g_stop_total_money=0;
+bool g_numeric_valid[7]={};long g_source_times[7]={};int g_stop_quality=0,g_compensated_quality=0;
 struct StopSample{long observed_utc=0,observed_mono_ms=0;}g_stop_sample;
-JPWMetricSample g_metric_samples[6];string g_sample_context;
+struct LedgerSample{long observed_mono_ms=0;}g_genetrix_view;
+bool g_genetrix_ledger_available=false;
+JPWMetricSample g_metric_samples[7];string g_sample_context;
 // Existing scheduler replay treats the new inventory module as an explicit
 // component boundary. jpw_positions_core_test executes its real implementation.
 string g_position_math_reason;
@@ -244,7 +250,7 @@ void JPWPositionsCollectCatalogOnly(){
 void JPWPositionsMonitorInventory(){position_monitors++;}
 bool JPWPositionsPublish(JPWMetricSample&,const string&){
  position_publications++;position_publish_order=accepted_metrics;return true;}
-int g_metric_last_quality[6]={};
+int g_metric_last_quality[7]={};
 int g_leverage_quality=1,g_floating_quality=1,g_genesis_quality=1,g_raiz_quality=1,g_scale2_quality=1;
 constexpr int JPW_VIEW_NA=0,JPW_VIEW_ESTIMATED=2;
 void JPWRefreshRequestedRecords(){record_calls++;}

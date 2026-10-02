@@ -8,7 +8,9 @@ void JPWCockpitLoadPrefs()
    JPWCockpitDefault(g_cockpit_prefs,(int)InpCorner);
    g_cockpit_pref_invalid=false; g_cockpit_pref_notice="";
    const string object=(ObjectFind(0,JPW_COCKPIT_PREF_OBJECT)>=0 ?
-                        JPW_COCKPIT_PREF_OBJECT : JPW_COCKPIT_PREF_LEGACY_OBJECT);
+                        JPW_COCKPIT_PREF_OBJECT :
+                        (ObjectFind(0,JPW_COCKPIT_PREF_V2_OBJECT)>=0 ?
+                         JPW_COCKPIT_PREF_V2_OBJECT : JPW_COCKPIT_PREF_LEGACY_OBJECT));
    if(ObjectFind(0,object)<0) return;
    JPWCockpitPrefs stored;
    if(ObjectGetInteger(0,object,OBJPROP_TYPE)!=OBJ_LABEL)
@@ -30,7 +32,7 @@ bool JPWCockpitOwnedSuffix(const string suffix)
   {
    if(suffix=="HUD_BG" || suffix=="RAIZ_DETAILS_BUTTON") return(true);
    if(StringLen(suffix)==1 && StringGetCharacter(suffix,0)>='0' &&
-      StringGetCharacter(suffix,0)<='5') return(true);
+      StringGetCharacter(suffix,0)<='6') return(true);
    return(StringFind(suffix,"RAIZ_UI_")==0 && StringLen(suffix)>8);
   }
 
@@ -708,7 +710,7 @@ void JPWHandleChartEvent(const int id,const long &lparam,const double &dparam,co
       if((lparam==37 || lparam==39))
         { g_cockpit_page+=(lparam==37 ? -1 : 1);
           JPWRaizPanelDestroy(); JPWRenderRaizDetails(); ChartRedraw(0); return; }
-      if((g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) && lparam>=49 && lparam<=54)
+      if((g_raiz_tab==JPW_ROUTE_OVERVIEW || g_raiz_tab==JPW_ROUTE_METRIC) && lparam>=49 && lparam<=55)
         { g_cockpit_selected=(int)(lparam-49); JPWRaizSwitchTab(JPW_ROUTE_METRIC); return; }
      }
    if(id!=CHARTEVENT_OBJECT_CLICK) return;

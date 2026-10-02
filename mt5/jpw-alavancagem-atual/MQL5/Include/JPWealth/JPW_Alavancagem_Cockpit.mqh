@@ -5,11 +5,12 @@
 
 // Presentation only. This chart/template preference contains no account or
 // financial data and never changes collection, calculations, or MDD writes.
-#define JPW_COCKPIT_PREF_OBJECT "JPW_COCKPIT_PREF_V2"
+#define JPW_COCKPIT_PREF_OBJECT "JPW_COCKPIT_PREF_V3"
+#define JPW_COCKPIT_PREF_V2_OBJECT "JPW_COCKPIT_PREF_V2"
 #define JPW_COCKPIT_PREF_LEGACY_OBJECT "JPW_COCKPIT_PREF_V1"
-#define JPW_COCKPIT_PREF_VERSION 2
-#define JPW_COCKPIT_ALL_VISIBLE 63
-#define JPW_COCKPIT_METRIC_COUNT 6
+#define JPW_COCKPIT_PREF_VERSION 3
+#define JPW_COCKPIT_ALL_VISIBLE 127
+#define JPW_COCKPIT_METRIC_COUNT 7
 
 enum JPW_VIEW_QUALITY
   {
@@ -20,7 +21,7 @@ enum JPW_VIEW_QUALITY
 
 struct JPWCockpitPrefs
   {
-   int visible_mask; // Leverage, P/L, SL, 1W, 2W, stop risk.
+   int visible_mask; // Leverage, P/L, SL, 1W, 2W, stop risk, compensated.
    int corner;       // ENUM_BASE_CORNER as an integer, 0..3.
    int density;      // 0 compact, 1 normal.
   };
@@ -43,7 +44,7 @@ struct JPWCockpitSnapshot
    JPWCockpitMetric metric[JPW_COCKPIT_METRIC_COUNT];
   };
 
-// Stable route/action names; persisted preference still uses its V2 contract.
+// Stable route/action names; V3 adds one visual bit, never a cycle/account ID.
 enum JPW_COCKPIT_ROUTE
   {
    JPW_ROUTE_SCENARIOS=0, JPW_ROUTE_DECLARE=1, JPW_ROUTE_JUSTIFY=2,
@@ -51,7 +52,7 @@ enum JPW_COCKPIT_ROUTE
    JPW_ROUTE_FACTOR=6, JPW_ROUTE_OVERVIEW=7, JPW_ROUTE_METRIC=8,
    JPW_ROUTE_PROVENANCE=9, JPW_ROUTE_SETTINGS=10, JPW_ROUTE_STOPS=11,
    JPW_ROUTE_RAIZN=12, JPW_ROUTE_SYSTEM=13, JPW_ROUTE_STOP_ROW=14,
-   JPW_ROUTE_EXPORT=15
+   JPW_ROUTE_EXPORT=15, JPW_ROUTE_LEDGER_CYCLES=16
   };
 enum JPW_COCKPIT_ACTION
   {
@@ -70,7 +71,8 @@ enum JPW_COCKPIT_ACTION
    JPW_ACTION_HEADER_CLOSE=45, JPW_ACTION_POSITIONS_SCOPE=46,
    JPW_ACTION_POSITIONS_UP=47, JPW_ACTION_POSITIONS_DOWN=48,
    JPW_ACTION_CARD_FIRST=50, JPW_ACTION_VISIBILITY_FIRST=60,
-   JPW_ACTION_STOP_ROW_FIRST=80, JPW_ACTION_EXPORT=96
+   JPW_ACTION_STOP_ROW_FIRST=80, JPW_ACTION_EXPORT=96,
+   JPW_ACTION_LEDGER_CYCLE_FIRST=100
   };
 string JPWCockpitCornerName(const int corner)
   {
@@ -144,16 +146,17 @@ bool JPWCockpitDecode(const string encoded,JPWCockpitPrefs &prefs)
       !JPWCockpitParseUnsigned(part[3],corner) ||
       !JPWCockpitParseUnsigned(part[4],density) ||
       !JPWCockpitParseUnsigned(part[5],checksum) ||
-      (version!=1 && version!=JPW_COCKPIT_PREF_VERSION)) return(false);
+      (version!=1 && version!=2 && version!=JPW_COCKPIT_PREF_VERSION)) return(false);
    JPWCockpitPrefs candidate;
    candidate.visible_mask=mask; candidate.corner=corner; candidate.density=density;
-   // A V1 all-hidden preference remains all-hidden. Every other V1 chart
-   // gains the new row by default while retaining its original five bits.
-   if(version==1)
+   // Check the OLD checksum before adding bits. Preserve every old bit,
+   // corner and density, including a deliberately all-hidden template.
+   if(version==1 || version==2)
      {
-      if(mask<0 || mask>31 || corner<0 || corner>3 || density<0 || density>1 ||
-         JPWCockpitChecksumVersion(candidate,1)!=checksum) return(false);
-      candidate.visible_mask=(mask==0 ? 0 : mask|32);
+      const int maximum=(version==1 ? 31 : 63);
+      if(mask<0 || mask>maximum || corner<0 || corner>3 || density<0 || density>1 ||
+         JPWCockpitChecksumVersion(candidate,version)!=checksum) return(false);
+      candidate.visible_mask=(mask==0 ? 0 : mask|(version==1 ? 96 : 64));
      }
    if(!JPWCockpitValid(candidate) ||
       (version==JPW_COCKPIT_PREF_VERSION && JPWCockpitChecksum(candidate)!=checksum))

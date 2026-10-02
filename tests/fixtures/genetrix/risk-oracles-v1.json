@@ -1,0 +1,154 @@
+{
+  "schema": "jpw-genetrix-independent-oracles/v1",
+  "state": "DESIGNED/NOT_RUN",
+  "threshold": "7.0",
+  "no_epsilon_or_hysteresis": "Compare non-rounded ratio strictly >7; costs/equity must be recaptured",
+  "cases": [
+    {
+      "id": "RIS-AC01",
+      "equity": "1000",
+      "gross": "6999",
+      "expected_action": "NONE"
+    },
+    {
+      "id": "RIS-AC02",
+      "equity": "1000",
+      "gross": "7000",
+      "expected_action": "NONE"
+    },
+    {
+      "id": "RIS-AC03",
+      "equity": "1000",
+      "gross": "7000.01",
+      "expected_action": "CLOSE_NEWEST_WHOLE"
+    },
+    {
+      "id": "RIS-AC04",
+      "equity": "1000",
+      "gross": "7000.0000001",
+      "expected_action": "CLOSE_NEWEST_WHOLE",
+      "display": "7.00x"
+    },
+    {
+      "id": "RIS-AC05",
+      "equity": "900",
+      "gross": "6500",
+      "positions_oldest_first": [
+        {
+          "ticket": 10,
+          "notional": "2000"
+        },
+        {
+          "ticket": 20,
+          "notional": "2500"
+        },
+        {
+          "ticket": 30,
+          "notional": "2000"
+        }
+      ],
+      "expected_ticket": 30,
+      "after_confirmed_no_cost_fixture": {
+        "gross": "4500",
+        "equity": "900",
+        "leverage": "5"
+      }
+    },
+    {
+      "id": "RIS-AC06",
+      "equity": "1000",
+      "gross": "6000",
+      "pending_oldest_first": [
+        {
+          "ticket": 100,
+          "notional": "500"
+        },
+        {
+          "ticket": 200,
+          "notional": "800"
+        }
+      ],
+      "budget": "1000",
+      "expected_cancel_tickets": [
+        200
+      ],
+      "remaining_projected": "6500"
+    },
+    {
+      "id": "RIS-AC07",
+      "equity": "900",
+      "gross": "6500",
+      "pending_oldest_first": [
+        {
+          "ticket": 100,
+          "notional": "100"
+        },
+        {
+          "ticket": 200,
+          "notional": "200"
+        }
+      ],
+      "budget": "0",
+      "expected_cancel_tickets": [
+        200,
+        100
+      ],
+      "then_close": 30
+    },
+    {
+      "id": "RIS-AC08",
+      "event": "CANCEL_REFUSED",
+      "expected": "Do not resend refused pending; mark incomplete; allow LIFO position reduction if current>7"
+    },
+    {
+      "id": "RIS-AC09",
+      "event": "CLOSE_REFUSED",
+      "expected": "Pause; never skip to older position"
+    },
+    {
+      "id": "RIS-AC10",
+      "event": "UNKNOWN_REQUEST",
+      "expected": "No further requests until objective reconciliation"
+    },
+    {
+      "id": "RIS-AC11",
+      "event": "DONE_PARTIAL",
+      "expected": "Keep original whole-close intention; finish reconciled residual before another position"
+    },
+    {
+      "id": "RIS-AC12",
+      "event": "NETTING_OR_FIFO",
+      "expected": "Cannot arm; zero trade requests"
+    },
+    {
+      "id": "RIS-AC13",
+      "event": "REAL_ACCOUNT_OR_OBSERVE_MODE",
+      "expected": "Zero trade requests"
+    },
+    {
+      "id": "RIS-AC14",
+      "event": "ACCOUNT_CHANGE_OR_RESTART",
+      "expected": "Disarm; old request/view cannot become current for new account"
+    },
+    {
+      "id": "RIS-AC15",
+      "event": "PENDING_FILL_DURING_CANCEL",
+      "expected": "Reconcile linked deal and resulting position; no success claim for cancellation"
+    },
+    {
+      "id": "RIS-AC16",
+      "event": "TWO_LOCAL_INSTANCES",
+      "expected": "At most one publisher/executor; losing instance never sends"
+    },
+    {
+      "id": "RIS-AC17",
+      "event": "MISSING_CONTRACT_PRICE_ROUTE_EQUITY",
+      "expected": "N/A separate from known excess; zero trade requests"
+    },
+    {
+      "id": "RIS-AC18",
+      "event": "TIME_TIE",
+      "expected": "Opening time desc then identifier desc; convention not finer time evidence"
+    }
+  ]
+}
