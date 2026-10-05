@@ -54,12 +54,13 @@ def tool(page, name):
 def assert_action_labels(page, row='0:0'):
     for selector in [f'[data-eb-save-row="{row}"]', f'[data-eb-cancel-row="{row}"]', f'[data-eb-open-detail="{row}"]']:
         measured = page.locator(selector).evaluate("""e=>{
-          const range=document.createRange();range.selectNodeContents(e);
+          const range=document.createRange();range.selectNodeContents(e.querySelector('[aria-hidden="true"]')||e);
           const text=range.getBoundingClientRect(),button=e.getBoundingClientRect();
-          return {label:e.textContent.trim(),whiteSpace:getComputedStyle(e).whiteSpace,
+          return {label:e.textContent.trim(),icon:!!e.querySelector('[aria-hidden="true"]'),accessible:e.getAttribute('aria-label'),whiteSpace:getComputedStyle(e).whiteSpace,
             width:e.clientWidth,scroll:e.scrollWidth,lines:range.getClientRects().length,
             textLeft:text.left-button.left,textRight:button.right-text.right};
         }""")
+        assert not measured['icon'] or measured['accessible'], ('Icon-only action needs an accessible name', measured)
         assert measured['whiteSpace'] == 'nowrap' and measured['lines'] == 1, ('Mobile action label must stay intact', measured)
         assert measured['scroll'] <= measured['width']+1 and measured['textLeft'] >= -1 and measured['textRight'] >= -1, ('Mobile action label overflows its target', measured)
 
@@ -97,7 +98,9 @@ def empty_phase_add(page, out, observed):
     page.set_viewport_size({'width':320, 'height':844})
     settle(page)
     assert page.locator('.eb-order-row').count() == 0, 'Anonymous preallocations must not look like operations'
-    assert page.locator('.eb-empty-phase').count() == 6
+    assert page.locator('.eb-empty-phase').count() == 0, 'Empty phases must not reserve another table row'
+    assert page.locator('.eb-phase-row').count() == 6
+    assert page.locator('.eb-phase-row').evaluate_all("rows=>rows.every(e=>/0 ordens/.test(e.textContent))"), 'Each empty phase keeps a visible count and Add action'
     placeholder = order(page)
     before = persisted(page)
     for pi in range(6):
@@ -105,7 +108,7 @@ def empty_phase_add(page, out, observed):
         button.scroll_into_view_if_needed()
         settle(page)
         box = button.bounding_box()
-        assert box and box['height'] >= 44 and box['width'] >= 44, (pi, box)
+        assert box and box['height'] >= 48 and box['width'] >= 48, (pi, box)
         assert button.evaluate("e=>{const r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2))}"), (pi, 'Phase Add button is overlapped')
     assert persisted(page) == before, 'Viewing the empty phases wrote financial facts'
     page.locator('[data-addorder="0"]').click()
@@ -365,11 +368,16 @@ def layouts(page, out, observed):
             assert page.locator('.eb-order-row').count() == 13
             for pi in range(6):
                 assert page.locator(f'[data-eb-row="{pi}:0"]').is_visible()
+            # CHG-JPW-OPERATION-PROPORTIONS-TEST-20261005: explicit compact mouse
+            # contract; narrow/coarse input remains comfortable, not globally weakened.
+            compact = box['width'] >= 768 and not page.evaluate("matchMedia('(pointer:coarse)').matches")
+            minimum_font, minimum_target = (14, 36) if compact else (16, 48)
             for key in ['id', 'par', 'tipo', 'role', 'lote', 'entry', 'sl', 'tp', 'status']:
-                assert field(page, key).evaluate('e=>parseFloat(getComputedStyle(e).fontSize)>=16'), (width, theme, key)
+                size = field(page, key).evaluate('e=>parseFloat(getComputedStyle(e).fontSize)')
+                assert size >= minimum_font-.1, (width, theme, key, size, minimum_font)
             for selector in ['[data-eb-save-row="0:0"]', '[data-eb-cancel-row="0:0"]', '[data-eb-open-detail="0:0"]']:
                 target = page.locator(selector).bounding_box()
-                assert target and target['height'] >= 44 and target['width'] >= 44, (width, theme, selector, target)
+                assert target and target['height'] >= minimum_target-.1 and target['width'] >= minimum_target-.1, (width, theme, selector, target)
             page.locator('#ebOrderScroll').scroll_into_view_if_needed()
             settle(page)
             page.screenshot(path=str(out/f'workbook-{width}-{theme}.png'))

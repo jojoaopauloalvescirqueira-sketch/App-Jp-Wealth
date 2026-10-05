@@ -1,3 +1,15 @@
+# Tarefa ativa local — Operação com proporções de planilha
+
+Candidate local de 2026-10-05, base a47ebee, branch codex/operation-proportions-20261005.
+
+Contratos: [produto](CHG-JPW-OPERATION-PROPORTIONS-20261005.md), [testes](CHG-JPW-OPERATION-PROPORTIONS-TEST-20261005.md), [brief](BRIEF-JPW-OPERATION-PROPORTIONS-20261005.md).
+
+Autorização: implementação do plano pelo proprietário; sem commit, push, merge ou publicação. Invariantes financeiros, dados e MT5 preservados. Resultados históricos permanecem no Git e no snapshot; esta tarefa não os reclassifica.
+
+---
+
+## Fotografia anterior preservada — histórica, não autoridade desta tarefa
+
 # Tarefa ativa — navegação, Estatuto e clareza Forex
 
 Implementação N1/A2 do plano completo aprovado pelo proprietário. Três CHGs NAVIGATION-AVAILABILITY, NORMATIVE-READER e FOREX-CLARITY de 20261001; brief BRIEF-JPW-SITE-CLARITY-20261001.

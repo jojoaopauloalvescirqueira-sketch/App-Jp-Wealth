@@ -559,7 +559,7 @@
       "path": "src/js/20-ui/30-execution-board.js",
       "section": "Execution Board · scoped observations and factual presentation",
       "order": 93,
-      "sha256": "2ed4c9e3861a5d0c39539c65d1121ea23e4a6630297e299cd3e4aca9fd6ccb42"
+      "sha256": "c5ffa6b545aeee6b7c7eb10f82bd54082bb8b3a2e31864371a4ec3ae104cd289"
     },
     {
       "path": "src/js/10-domain/16-nocuda-transfer.js",

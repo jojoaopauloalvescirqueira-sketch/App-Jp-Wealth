@@ -3,7 +3,7 @@
 (function(root){
   'use strict';
   const fx=root.JPWForex;
-  const drafts=new Map(), expanded=new Set();
+  const drafts=new Map(), expanded=new Set(), expandedPhases=new Set();
   let instrumentChoice=null,tableSignature=null,leaving=false,toolChoice='matrix';
   let epoch=jpWealthPersistenceEpoch(),dialog=null,dialogReturn=null,observationDirty=false;
   const num=v=>typeof v==='number'&&Number.isFinite(v);
@@ -27,7 +27,46 @@
   const columnWidths=[124,160,112,94,108,86,100,100,100,94,84,94,84,88,90,105,105,130,95,120,110,158,86,112,126];
   const workbookCalcs=[calcColumns[4],...calcColumns.slice(0,4),...calcColumns.slice(5)];
   const workbookColumns=['ID interno','Instrumento','Direção','Papel','Lote','Entrada','Stop Loss','Take Profit',...workbookCalcs.map(x=>x[1]),'Risco confirmado','Risco % saldo','Estado','Ações'];
-  const workbookWidths=[124,112,90,104,90,104,104,104,86,96,82,96,82,96,104,104,130,98,112,188];
+  // One width contract feeds the colgroup, table and frozen-column offsets.
+  // Font preferences scale these minima together; long values may grow a column.
+  const workbookWidths=[144,144,96,140,96,112,112,112,104,112,96,112,96,112,112,112,144,112,120,224];
+  const scaledWidth=width=>`calc(${width}px * var(--fs-scale, 1))`;
+  const workbookStyle=()=>`--eb-workbook-width:${scaledWidth(workbookWidths.reduce((a,b)=>a+b,0))};--eb-id-width:${scaledWidth(workbookWidths[0])};--eb-instrument-width:${scaledWidth(workbookWidths[1])};--eb-sticky-width:${scaledWidth(workbookWidths[0]+workbookWidths[1])}`;
+  const measuredWidths=new WeakMap();
+  let measureFrame=0,measureCanvas=null;
+  function sizeWorkbookColumns(){
+    measureFrame=0;
+    const table=el('ebOrderScroll')?.querySelector('.eb-workbook-table');if(!table)return;
+    const scroll=table.parentElement,scale=parseFloat(getComputedStyle(scroll).getPropertyValue('--fs-scale'))||1;
+    const widths=measuredWidths.get(table)||workbookWidths.slice();
+    if(!measureCanvas)measureCanvas=document.createElement('canvas');
+    const context=measureCanvas.getContext('2d');if(!context)return;
+    // This reads displayed strings only. Grow columns to show complete values;
+    // do not shrink/recreate editors while typing or repainting a quote.
+    for(const row of table.querySelectorAll('.eb-order-row'))for(const cell of row.cells){
+      const index=cell.cellIndex,control=cell.querySelector('input,select'),value=cell.querySelector('[data-eb-calc]');
+      if(!control&&!value)continue;
+      const node=control||value,style=getComputedStyle(node),cellStyle=getComputedStyle(cell);
+      const text=control?(control.tagName==='SELECT'?control.selectedOptions[0]?.textContent||'':control.value):value.textContent;
+      context.font=style.font||`${style.fontSize} ${style.fontFamily}`;
+      const padding=(parseFloat(cellStyle.paddingLeft)||0)+(parseFloat(cellStyle.paddingRight)||0)+2;
+      const inputSpace=control?(parseFloat(style.paddingLeft)||0)+(parseFloat(style.paddingRight)||0)+4+(control.tagName==='SELECT'?22:0):0;
+      widths[index]=Math.max(widths[index],Math.ceil((context.measureText(text||'').width+padding+inputSpace)/scale));
+    }
+    measuredWidths.set(table,widths);
+    [...table.querySelectorAll('col')].forEach((col,index)=>{col.style.width=scaledWidth(widths[index]);});
+    scroll.style.setProperty('--eb-workbook-width',scaledWidth(widths.reduce((a,b)=>a+b,0)));
+    scroll.style.setProperty('--eb-id-width',scaledWidth(widths[0]));
+    scroll.style.setProperty('--eb-instrument-width',scaledWidth(widths[1]));
+    scroll.style.setProperty('--eb-sticky-width',scaledWidth(widths[0]+widths[1]));
+    // Long identifiers must not let frozen columns cover the editable region.
+    // Decide after measurement in one place; grow-only widths prevent a loop
+    // when the list switches to its larger font. The controls stay mounted.
+    const available=scroll.clientWidth;
+    if(available>0)el('execPhaseGridsCard')?.classList.toggle('eb-narrow',
+      available<768||available-(widths[0]+widths[1])*scale<320);
+  }
+  function queueWorkbookSizing(){if(!measureFrame)measureFrame=root.requestAnimationFrame(sizeWorkbookColumns);}
   function visibleOrders(phase,pi){
     return (phase.orders||[]).map((order,oi)=>({order,oi})).filter(({order:o,oi})=>
       drafts.has(draftKey(pi,oi))||!!o.recordStatus||!!o.orderId||
@@ -38,7 +77,7 @@
   function syncEpoch(){
     const next=jpWealthPersistenceEpoch();
     if(next!==epoch&&!jpWealthPersistenceOutcomeIsUnknown()){
-      drafts.clear();expanded.clear();instrumentChoice=null;tableSignature=null;
+      drafts.clear();expanded.clear();expandedPhases.clear();instrumentChoice=null;tableSignature=null;
       observationDirty=false;if(dialog?.open)dialog.close();
     }
     epoch=next;
@@ -103,17 +142,21 @@
     for(const id of ['execClearanceCard','execConsolidadoCard','execLifoMonitor','execPhaseGridsCard']){
       const card=el(id);if(card)grid.append(card);
     }
-    if(typeof ResizeObserver==='function'&&phaseCard){
-      new ResizeObserver(entries=>{const width=entries[0]?.contentRect?.width;
-        if(num(width))phaseCard.style.setProperty('--eb-detail-width',Math.max(0,width)+'px');
-      }).observe(phaseCard);
+    const sizeWorkbook=width=>{
+      if(!phaseCard||!num(width)||width<=0)return;
+      phaseCard.style.setProperty('--eb-detail-width',width+'px');
+      queueWorkbookSizing();
+    };
+    if(phaseCard){
+      sizeWorkbook(phaseCard.clientWidth-parseFloat(getComputedStyle(phaseCard).paddingLeft)-parseFloat(getComputedStyle(phaseCard).paddingRight));
+      if(typeof ResizeObserver==='function')new ResizeObserver(entries=>sizeWorkbook(entries[0]?.contentRect?.width)).observe(phaseCard);
     }
     grid.addEventListener('click',onClick);
     el('phaseContainer').addEventListener('input',onInput);
     el('phaseContainer').addEventListener('change',onInput);
     el('phaseContainer').addEventListener('toggle',event=>{
       const node=event.target;
-      if(node.matches?.('details[data-eb-detail]'))node.open?expanded.add(node.dataset.ebDetail):expanded.delete(node.dataset.ebDetail);
+      if(node.matches?.('details[data-eb-detail]'))syncDetail(node);
     },true);
   }
   function render(){
@@ -185,27 +228,45 @@
     const readonly=o.recordStatus==='voided'||!fx.state.supported(),draft=drafts.get(draftKey(pi,oi));
     const value=draft&&Object.prototype.hasOwnProperty.call(draft.values,f)?draft.values[f]:o[f];
     const attrs=`data-p="${pi}" data-o="${oi}" data-f="${f}" aria-label="${esc(label[f])} · ordem ${pi+1}.${oi+1}" aria-describedby="ebError-${pi}-${oi}" ${readonly?'disabled':''}`;
-    if(choices)return `<select ${attrs}>${choices.map(([v,t])=>`<option value="${esc(v)}" ${String(value??'')===v?'selected':''}>${esc(t)}</option>`).join('')}</select>`;
+    if(choices)return `<select ${attrs} title="${esc(choices.find(([v])=>String(value??'')===v)?.[1]||'')}">${choices.map(([v,t])=>`<option value="${esc(v)}" ${String(value??'')===v?'selected':''}>${esc(t)}</option>`).join('')}</select>`;
     if(['stopValidated','amplifiesExposure','pendingActive'].includes(f))return `<input type="checkbox" ${attrs} ${value===true?'checked':''}>`;
     return `<input ${attrs} type="text" ${numericFields.has(f)?'inputmode="decimal"':''} value="${esc(value??'')}" placeholder="${numericFields.has(f)?'—':f==='brokerHash'?'Referência da corretora':'ID interno'}" autocomplete="off">`;
   }
   function rowHTML(pi,oi,o){
     const k=key(pi,oi),draft=drafts.get(draftKey(pi,oi)),live=operationOrderIsLive(o),readonly=o.recordStatus==='voided'||!fx.state.supported();
+    const open=expanded.has(k)||!!draft?.error,status=draft?'Não salvo':o.recordStatus==='voided'?'Anulada':!fx.state.supported()?'Somente leitura':'';
     const entry=(f,choices)=>`<label class="eb-compact-field"><span>${esc(label[f])}</span>${field(pi,oi,o,f,choices)}</label>`;
     const instruments=[['','Selecionar'],...(S.instruments||[]).map(i=>[i.name,i.name])];
     if(o.par&&!instruments.some(([x])=>x===o.par))instruments.push([o.par,o.par+' · não cadastrado']);
     return `<tr class="eb-order-row ${draft?'eb-dirty':''}" data-eb-row="${k}">
-      <td class="eb-order-id" data-label="Ordem">${field(pi,oi,o,'id')}<small data-eb-preview="${k}">${draft?'Prévia · não salva':esc(o.recordStatus==='voided'?'Anulada':!fx.state.supported()?'Somente leitura':o.recordStatus==='draft'||!o.status?'Rascunho':'Confirmada')}</small></td>
+      <td class="eb-order-id" data-label="Ordem">${field(pi,oi,o,'id')}<small class="eb-draft-status" data-eb-preview="${k}" ${status?'':'hidden'}>${esc(status)}</small></td>
       <td class="eb-order-instrument" data-label="Instrumento">${field(pi,oi,o,'par',instruments)}</td>
       <td data-label="Direção">${field(pi,oi,o,'tipo',[['BUY','Compra'],['SELL','Venda']])}</td>
       <td data-label="Papel">${field(pi,oi,o,'role',[['','Não declarado'],['GENESIS','Gênese'],['DEFENSE','Defesa'],['OTHER','Outro']])}</td>
       ${['lote','entry','sl','tp'].map(f=>`<td data-label="${esc(label[f])}">${field(pi,oi,o,f)}</td>`).join('')}
-      ${workbookCalcs.map(([f,t],index)=>`<td class="eb-number eb-calculated" data-label="${esc(t)}"><span data-eb-calc="${f}">—</span>${index===0?`<small data-eb-diagnostic-state="${k}">${draft?'Prévia não salva':'Versão salva'}</small>`:''}</td>`).join('')}
-      <td class="eb-number eb-calculated eb-confirmed-risk" data-label="Risco confirmado"><span data-eb-row-risk="${k}" data-eb-calc="riskValue">—</span><small data-eb-risk-state="${k}">${draft?'Versão salva · anterior à edição':'Versão salva'}</small></td>
-      <td class="eb-number eb-calculated eb-confirmed-risk" data-label="Risco % saldo"><span data-eb-calc="riskPercent">—</span><small>Saldo registrado</small></td>
+      ${workbookCalcs.map(([f,t])=>`<td class="eb-number eb-calculated" data-label="${esc(t)}"><span data-eb-calc="${f}">—</span></td>`).join('')}
+      <td class="eb-number eb-calculated eb-confirmed-risk" data-label="Risco confirmado · versão salva"><span data-eb-row-risk="${k}" data-eb-calc="riskValue">—</span></td>
+      <td class="eb-number eb-calculated eb-confirmed-risk" data-label="Risco % saldo · versão salva"><span data-eb-calc="riskPercent">—</span></td>
       <td data-label="Estado">${field(pi,oi,o,'status',[['','Rascunho'],['Pendente','Pendente'],['Aberta','Aberta'],['Fechada','Fechada'],...(o.status==='Migrada'?[['Migrada','Migrada']]:[])])}</td>
-      <td class="eb-row-actions" data-label="Ações"><button type="button" data-eb-save-row="${k}" ${readonly?'disabled':''}>Salvar linha</button><button type="button" data-eb-cancel-row="${k}" ${readonly?'disabled':''}>Cancelar</button><button type="button" data-eb-open-detail="${k}" aria-controls="ebDetail-${pi}-${oi}">Detalhes</button></td></tr>
-      <tr class="eb-detail-row"><td colspan="20"><div class="eb-detail-content"><details id="ebDetail-${pi}-${oi}" data-eb-detail="${k}" ${expanded.has(k)||draft?.error?'open':''}><summary>HASH, resultado, custos e rastreabilidade${draft?' · alterações não salvas':''}</summary><div class="eb-order-details">${entry('brokerHash')}${entry('result')}${entry('costs')}${entry('costBasis',[['','Não declarado'],['SEPARATE_FROM_RESULT','Separados'],['INCLUDED_IN_RESULT','Já incluídos']])}${['stopValidated','amplifiesExposure','pendingActive'].map(f=>`<label class="eb-check">${field(pi,oi,o,f)}${esc(label[f])}</label>`).join('')}<label class="eb-reason">${live?'Motivo da correção (obrigatório ao salvar)':'Observação do registro (opcional)'}<input type="text" data-eb-reason="${k}" value="${esc(draft?.reason||'')}" ${readonly?'disabled':''}></label></div><p class="eb-context-line" title="${esc([o.accountId,o.periodId,o.orderId].filter(Boolean).join(' · '))}">${esc(contextLabel(o))} · ${esc(o.currency||'moeda não capturada')} · versão ${esc(o.recordVersion??0)} · referência técnica ${esc(o.orderId||'a gerar')}</p><div class="eb-actions">${!readonly?`<button type="button" class="reset-btn" data-eb-close-row="${k}">Fechar ordem</button><button type="button" class="reset-btn" data-delorder="${k}">${live?'Anular com motivo':'Excluir rascunho'}</button>`:''}${o.revisions?.length?`<button type="button" class="reset-btn" data-orderhistory="${k}">Ver ${o.revisions.length} versão(ões)</button>`:''}</div></details><p id="ebError-${pi}-${oi}" class="eb-row-feedback" role="status">${esc(draft?.error||'')}</p></div></td></tr>`;
+      <td class="eb-row-actions" data-label="Ações"><div class="eb-row-action-controls"><button type="button" data-eb-save-row="${k}" aria-label="Salvar linha · ordem ${pi+1}.${oi+1}" ${readonly||!draft?'disabled':''}>Salvar</button><button type="button" data-eb-cancel-row="${k}" aria-label="Cancelar edição · ordem ${pi+1}.${oi+1}" ${readonly||!draft?'disabled':''}>Cancelar</button><button type="button" class="eb-detail-toggle" data-eb-open-detail="${k}" aria-label="${open?'Ocultar':'Ver'} detalhes da ordem ${pi+1}.${oi+1}" title="${open?'Ocultar':'Ver'} detalhes da ordem" aria-expanded="${open}" aria-controls="ebDetail-${pi}-${oi}"><span aria-hidden="true">${open?'▴':'▾'}</span></button></div></td></tr>
+      <tr class="eb-detail-row" ${open?'':'hidden'}><td colspan="20"><div class="eb-detail-content"><details id="ebDetail-${pi}-${oi}" data-eb-detail="${k}" ${open?'open':''}><summary hidden>HASH, resultado, custos e rastreabilidade</summary><h4>Detalhes da ordem ${esc(o.id||`${pi+1}.${oi+1}`)}</h4><div class="eb-order-details">${entry('brokerHash')}${entry('result')}${entry('costs')}${entry('costBasis',[['','Não declarado'],['SEPARATE_FROM_RESULT','Separados'],['INCLUDED_IN_RESULT','Já incluídos']])}${['stopValidated','amplifiesExposure','pendingActive'].map(f=>`<label class="eb-check">${field(pi,oi,o,f)}${esc(label[f])}</label>`).join('')}<label class="eb-reason">${live?'Motivo da correção (obrigatório ao salvar)':'Observação do registro (opcional)'}<input type="text" data-eb-reason="${k}" aria-describedby="ebError-${pi}-${oi}" value="${esc(draft?.reason||'')}" ${readonly?'disabled':''}></label></div><p class="eb-context-line" title="${esc([o.accountId,o.periodId,o.orderId].filter(Boolean).join(' · '))}">${esc(contextLabel(o))} · ${esc(o.currency||'moeda não capturada')} · versão ${esc(o.recordVersion??0)} · referência técnica ${esc(o.orderId||'a gerar')}</p><div class="eb-actions">${!readonly?`<button type="button" class="reset-btn" data-eb-close-row="${k}">Fechar ordem</button><button type="button" class="reset-btn" data-delorder="${k}">${live?'Anular com motivo':'Excluir rascunho'}</button>`:''}${o.revisions?.length?`<button type="button" class="reset-btn" data-orderhistory="${k}">Ver ${o.revisions.length} versão(ões)</button>`:''}</div></details><p id="ebError-${pi}-${oi}" class="eb-row-feedback" role="status" ${draft?.error?'':'hidden'}>${esc(draft?.error||'')}</p></div></td></tr>`;
+  }
+  function syncDetail(detail){
+    const k=detail.dataset.ebDetail,[pi,oi]=k.split(':').map(Number),open=detail.open;
+    open?expanded.add(k):expanded.delete(k);
+    const row=detail.closest('.eb-detail-row'),button=document.querySelector(`[data-eb-open-detail="${k}"]`);
+    if(!open&&row?.contains(document.activeElement))button?.focus({preventScroll:true});
+    if(row)row.hidden=!open;
+    if(button){
+      button.setAttribute('aria-expanded',String(open));
+      button.setAttribute('aria-label',`${open?'Ocultar':'Ver'} detalhes da ordem ${pi+1}.${oi+1}`);
+      button.title=`${open?'Ocultar':'Ver'} detalhes da ordem`;
+      button.querySelector('span').textContent=open?'▴':'▾';
+    }
+  }
+  function setDetail(pi,oi,open){
+    const detail=el(`ebDetail-${pi}-${oi}`);if(!detail)return;
+    detail.open=open;syncDetail(detail);
   }
   // Full audit is read-only confirmed data from the same projection. Inputs
   // exist only once, in the compact table and its detail, on every viewport.
@@ -236,9 +297,13 @@
       const value=cells[cell.dataset.ebCalc];cell.textContent=num(value?.value)?format(value):'—';
       cell.title=num(value?.value)?(draft&&!cell.dataset.ebCalc.startsWith('risk')?'Prévia não salva':'Registro confirmado'):reason(value);
     }
-    const badge=node.querySelector('[data-eb-preview]');if(draft&&badge)badge.textContent='Prévia · não salva';
-    const diagnosticState=node.querySelector('[data-eb-diagnostic-state]');if(diagnosticState)diagnosticState.textContent=draft?'Prévia não salva':'Versão salva';
-    const riskState=node.querySelector('[data-eb-risk-state]');if(riskState)riskState.textContent=draft?'Versão salva · anterior à edição':'Versão salva';
+    const saved=current(pi,oi),readonly=saved?.recordStatus==='voided'||!fx.state.supported();
+    const status=draft?'Não salvo':saved?.recordStatus==='voided'?'Anulada':readonly?'Somente leitura':'';
+    const badge=node.querySelector('[data-eb-preview]');if(badge){badge.textContent=status;badge.hidden=!status;}
+    node.classList.toggle('eb-dirty',!!draft);
+    for(const button of node.querySelectorAll('[data-eb-save-row],[data-eb-cancel-row]'))button.disabled=readonly||!draft;
+    const feedback=el(`ebError-${pi}-${oi}`);if(feedback){feedback.textContent=draft?.error||'';feedback.hidden=!draft?.error;}
+    queueWorkbookSizing();
   }
   function renderPhases(m){
     if(!fx.executionBoard)return;
@@ -254,7 +319,7 @@
     if(next!==tableSignature||firstTable){
       const focus=document.activeElement,focusKey=focus?.dataset?.f?{p:focus.dataset.p,o:focus.dataset.o,f:focus.dataset.f,start:focus.selectionStart,end:focus.selectionEnd}:null;
       const scroll=el('ebOrderScroll'),scrollPosition=scroll?{left:scroll.scrollLeft,top:scroll.scrollTop}:null;
-      container.innerHTML=`${!hasContext?'<div class="eb-setup-prompt"><h3>Prepare a conta para registrar suas ordens</h3><p>Confirme conta, período, moeda e capital inicial (SI). O saldo do relatório não substitui o SI.</p><button type="button" data-eb-manage>Gerenciar em Contas e Período</button></div>':''}<p class="eb-context-line">${recordedPhases.length===4?'Grades LEGACY preservadas; os quatro índices não correspondem às seis fases V11.':'Fase de registro da ordem e fase da conta são informações distintas.'} Totais e risco usam a versão salva.</p><details class="eb-table-help"><summary>Como preencher a grade</summary><p>Tab e Shift+Tab percorrem os campos. Diagnósticos recalculam a prévia em memória; risco e totais conservam a versão salva. Informe ID e HASH para novas ordens executadas; pendentes podem aguardar o HASH. Salvar linha confirma explicitamente os fatos. Enter nos campos não salva.</p><p>Distâncias SL/TP são unidades de preço. SL %, TP % e Raiz N % usam a entrada da linha. Custos separados são assinados: despesas negativas e créditos positivos. Correções exigem motivo; o encerramento usa Fechar ordem nos detalhes.</p></details><div id="ebOrderScroll" class="eb-table-scroll eb-workbook-scroll" tabindex="0" role="region" aria-label="Execution Board · ordens de todas as fases"><table class="otable eb-order-table eb-workbook-table"><colgroup>${workbookWidths.map((width,index)=>`<col class="eb-column-${index}" style="width:${width}px">`).join('')}</colgroup><thead><tr class="eb-column-groups"><th colspan="4" scope="colgroup">Identificação</th><th colspan="4" scope="colgroup">Execução</th><th colspan="8" scope="colgroup">Diagnósticos · prévia ao editar</th><th colspan="2" scope="colgroup">Risco · versão salva</th><th colspan="2" scope="colgroup">Acompanhamento</th></tr><tr class="eb-column-labels">${workbookColumns.map(t=>'<th scope="col">'+esc(t)+'</th>').join('')}</tr></thead>${phaseList.map((p,pi)=>`<tbody class="eb-phase-group"><tr class="eb-phase-row" data-phase="${pi}" id="ebPhase-${pi}" tabindex="-1"><th colspan="20" scope="rowgroup"><div class="eb-phase-anchor"><div class="eb-phase-label"><strong>${esc(phaseNames[pi])}</strong><span>${visibleOrders(p,pi).length} linha(s)${!hasContext?' · aguardando contexto':''}</span>${hasContext?`<button type="button" class="reset-btn" data-addorder="${pi}">+ Adicionar ordem nesta fase</button>`:''}</div><div id="ebPhaseDiagnostics-${pi}" class="eb-phase-diagnostics"></div></div></th></tr>${visibleOrders(p,pi).length?visibleOrders(p,pi).map(({order:o,oi})=>rowHTML(pi,oi,o)).join(''):`<tr class="eb-empty-phase"><td colspan="20"><span>${hasContext?'Nenhuma ordem registrada.':'Confirme a conta e o período para registrar ordens.'}</span></td></tr>`}</tbody>`).join('')}</table></div><div id="ebAuditHost"></div><details class="eb-phase-consolidation"><summary>Consolidação por fase · registros confirmados</summary><div id="ebPhaseSummary" class="eb-table-scroll"></div></details>`;
+      container.innerHTML=`${!hasContext?'<div class="eb-setup-prompt"><h3>Prepare a conta para registrar suas ordens</h3><p>Confirme conta, período, moeda e capital inicial (SI). O saldo do relatório não substitui o SI.</p><button type="button" data-eb-manage>Gerenciar em Contas e Período</button></div>':''}<p class="eb-context-line">${recordedPhases.length===4?'Grades LEGACY preservadas; os quatro índices não correspondem às seis fases V11.':'Fase de registro da ordem e fase da conta são informações distintas.'} Totais e risco usam a versão salva.</p><details class="eb-table-help"><summary>Como preencher a grade</summary><p>Tab e Shift+Tab percorrem os campos. Diagnósticos recalculam a prévia em memória; risco e totais conservam a versão salva. Informe ID e HASH para novas ordens executadas; pendentes podem aguardar o HASH. Salvar linha confirma explicitamente os fatos. Enter nos campos não salva.</p><p>Distâncias SL/TP são unidades de preço. SL %, TP % e Raiz N % usam a entrada da linha. Custos separados são assinados: despesas negativas e créditos positivos. Correções exigem motivo; o encerramento usa Fechar ordem nos detalhes.</p></details><div id="ebOrderScroll" class="eb-table-scroll eb-workbook-scroll" style="${workbookStyle()}" tabindex="0" role="region" aria-label="Execution Board · ordens de todas as fases"><table class="otable eb-order-table eb-workbook-table"><colgroup>${workbookWidths.map((width,index)=>`<col class="eb-column-${index}" style="width:${scaledWidth(width)}">`).join('')}</colgroup><thead><tr class="eb-column-groups"><th colspan="4" scope="colgroup">Identificação</th><th colspan="4" scope="colgroup">Execução</th><th colspan="8" scope="colgroup">Diagnósticos · prévia ao editar</th><th colspan="2" scope="colgroup">Risco · versão salva</th><th colspan="2" scope="colgroup">Acompanhamento</th></tr><tr class="eb-column-labels">${workbookColumns.map(t=>'<th scope="col">'+esc(t)+'</th>').join('')}</tr></thead>${phaseList.map((p,pi)=>`<tbody class="eb-phase-group"><tr class="eb-phase-row" data-phase="${pi}" id="ebPhase-${pi}" tabindex="-1"><th colspan="20" scope="rowgroup"><div class="eb-phase-anchor"><div class="eb-phase-label"><strong>${esc(phaseNames[pi])}</strong><span>${visibleOrders(p,pi).length} ${visibleOrders(p,pi).length===1?'ordem':'ordens'}${!hasContext?' · aguardando contexto':''}</span>${hasContext?`<button type="button" class="reset-btn" data-eb-phase-diagnostics="${pi}" aria-expanded="${expandedPhases.has(pi)}" aria-controls="ebPhaseDiagnostics-${pi}" aria-label="Diagnósticos da fase ${esc(phaseNames[pi])}">Diagnósticos</button><button type="button" class="reset-btn" data-addorder="${pi}" aria-label="Adicionar ordem na fase ${esc(phaseNames[pi])}">+ Ordem</button>`:''}</div><div id="ebPhaseDiagnostics-${pi}" class="eb-phase-diagnostics" ${expandedPhases.has(pi)?'':'hidden'}></div></div></th></tr>${visibleOrders(p,pi).map(({order:o,oi})=>rowHTML(pi,oi,o)).join('')}</tbody>`).join('')}</table></div><div id="ebAuditHost"></div><details class="eb-phase-consolidation"><summary>Consolidação por fase · registros confirmados</summary><div id="ebPhaseSummary" class="eb-table-scroll"></div></details>`;
       tableSignature=next;
       if(scrollPosition){el('ebOrderScroll').scrollLeft=scrollPosition.left;el('ebOrderScroll').scrollTop=scrollPosition.top;}
       if(focusKey){const target=container.querySelector(`[data-p="${focusKey.p}"][data-o="${focusKey.o}"][data-f="${focusKey.f}"]`);target?.focus();if(target?.setSelectionRange&&focusKey.start!=null)target.setSelectionRange(focusKey.start,focusKey.end);}
@@ -263,7 +328,7 @@
     updateHTML('ebPhaseSummary','<table class="eb-summary-table"><caption>Consolidação por fase · moeda da conta</caption><thead><tr><th>Fase</th><th>Volumes por instrumento</th><th>Nocional</th><th>Risco aberto</th><th>Pendentes</th><th>Resultado líquido</th><th>Custos</th><th>Compensada · defesas</th></tr></thead><tbody>'+(m.phases||[]).map(p=>{const v=p.metrics||{};return `<tr><th>${esc(p.name||p.id)}</th><td>${esc(p.volumeText||(p.instruments||[]).map(i=>[i.name||i.instrumentId,format(i.metrics?.lots)].join(' ')).join(' · ')||'—')}</td><td>${esc(format(v.operational?.grossNotional))}</td><td>${esc(format(v.operational?.exposure))}</td><td>${esc(format(v.pending||v.pendingRisk))}</td><td>${esc(format(v.closedNetAll||v.realized))}</td><td>${esc(format(v.costs))}</td><td>${esc(format(v.operational?.compensated))}</td></tr>`;}).join('')+'</tbody></table>');
     for(const phase of m.phases||[]){
       const instruments=(phase.instruments||[]).map(i=>m.instruments.find(x=>x.id===i.id)).filter(Boolean);
-      updateHTML('ebPhaseDiagnostics-'+phase.index,`<details class="eb-findings"><summary>Bases e diagnósticos desta fase</summary><div class="eb-metrics">${metric('Lucro Técnico',phase.technicalProfit)}${metric('Margem normativa',phase.freeNormativeMargin)}${instruments.map(i=>metric('VRM · '+i.name,i.vrm)+metric('Stop mínimo · '+i.name,i.minimumStop)).join('')}</div><p>Dados por instrumento; sem VRM médio artificial. Compensação econômica não é reposição normativa de margem.</p></details>`);
+      updateHTML('ebPhaseDiagnostics-'+phase.index,`<div class="eb-metrics">${metric('Lucro Técnico',phase.technicalProfit)}${metric('Margem normativa',phase.freeNormativeMargin)}${instruments.map(i=>metric('VRM · '+i.name,i.vrm)+metric('Stop mínimo · '+i.name,i.minimumStop)).join('')}</div><p>Dados por instrumento; sem VRM médio artificial. Compensação econômica não é reposição normativa de margem.</p>`);
     }
     for(const [pi,p] of phaseList.entries())for(const [oi] of (p.orders||[]).entries())updateRowCalculations(m,pi,oi);
   }
@@ -275,18 +340,21 @@
   }
   function onInput(event){
     const target=event.target;
-    if(target.matches('[data-eb-reason]')){const [pi,oi]=target.dataset.ebReason.split(':').map(Number);getDraft(pi,oi).reason=target.value;return;}
+    if(target.matches('[data-eb-reason]')){
+      const [pi,oi]=target.dataset.ebReason.split(':').map(Number),draft=getDraft(pi,oi);
+      draft.reason=target.value;draft.error='';target.removeAttribute('aria-invalid');
+      updateRowCalculations(model(),pi,oi);return;
+    }
     if(!target.matches('[data-f]'))return;
     const pi=+target.dataset.p,oi=+target.dataset.o,f=target.dataset.f,d=getDraft(pi,oi);
     d.values[f]=target.type==='checkbox'?target.checked:target.value;d.error='';target.removeAttribute('aria-invalid');
+    if(target.tagName==='SELECT')target.title=target.selectedOptions[0]?.textContent||'';
     updateRowCalculations(model(),pi,oi);
-    el('phaseContainer').querySelector(`[data-eb-row="${key(pi,oi)}"]`)?.classList.add('eb-dirty');
-    const feedback=el(`ebError-${pi}-${oi}`);if(feedback)feedback.textContent='Alterações não salvas.';
   }
   function rowError(pi,oi,text,fieldName){
     const d=getDraft(pi,oi);d.error=text;expanded.add(key(pi,oi));
-    const details=document.querySelector(`[data-eb-detail="${key(pi,oi)}"]`);if(details)details.open=true;
-    const feedback=el(`ebError-${pi}-${oi}`);if(feedback)feedback.textContent=text;
+    setDetail(pi,oi,true);
+    const feedback=el(`ebError-${pi}-${oi}`);if(feedback){feedback.textContent=text;feedback.hidden=false;}
     const field=fieldName?document.querySelector(`[data-p="${pi}"][data-o="${oi}"][data-f="${fieldName}"]`):document.querySelector(`[data-eb-reason="${key(pi,oi)}"]`);field?.setAttribute('aria-invalid','true');field?.focus();return false;
   }
   function saveRow(pi,oi,{allowClose=false}={}){
@@ -307,7 +375,7 @@
     if(changes.status==='Fechada'&&old.status!=='Fechada'&&!allowClose){
       return rowError(pi,oi,'Use Fechar ordem nos detalhes para confirmar resultado e encerramento. As outras alterações continuam no rascunho.','status');
     }
-    if(!Object.keys(changes).length){drafts.delete(dk);tableSignature=null;render();return true;}
+    if(!Object.keys(changes).length){drafts.delete(dk);tableSignature=null;render();focusRow(pi,oi);return true;}
     if(operationOrderIsLive(old)&&!d.reason.trim())return rowError(pi,oi,'Informe um motivo para salvar a correção inteira.');
     const m=model(),scope=m.scope||{};
     if(!m.selection?.accountId||!scope.periodId)return rowError(pi,oi,'Selecione uma conta cadastrada e registre seu período em Contas antes de gravar o fato.');
@@ -325,9 +393,16 @@
       if(remaining.operationId===null)remaining.operationId=latest.value?.activeOperation?.operationId||null;
       remaining.contextRevision=latest.revision;
     }
-    tableSignature=null;root.render();render();document.querySelector(`[data-eb-save-row="${key(pi,oi)}"]`)?.focus({preventScroll:true});return true;
+    tableSignature=null;root.render();render();focusRow(pi,oi);return true;
   }
-  function cancelRow(pi,oi){drafts.delete(draftKey(pi,oi));tableSignature=null;render();document.querySelector(`[data-p="${pi}"][data-o="${oi}"][data-f="id"]`)?.focus();return true;}
+  function focusRow(pi,oi){
+    const row=document.querySelector(`[data-eb-row="${key(pi,oi)}"]`);
+    // List actions follow the fields vertically: native focus must reveal the ID.
+    // The desktop table keeps its current scroll position after the explicit act.
+    const list=row&&getComputedStyle(row).display==='grid';
+    (row?.querySelector('[data-f="id"]:not(:disabled)')||row?.querySelector('[data-eb-open-detail]'))?.focus({preventScroll:!list});
+  }
+  function cancelRow(pi,oi){drafts.delete(draftKey(pi,oi));tableSignature=null;render();focusRow(pi,oi);return true;}
   function ensureDialog(){
     if(dialog)return dialog;dialog=document.createElement('dialog');dialog.id='executionBoardDialog';dialog.className='eb-dialog';document.body.append(dialog);
     dialog.addEventListener('cancel',event=>{event.preventDefault();if(observationDirty&&!confirm('Descartar os dados não salvos?'))return;observationDirty=false;dialog.close();});
@@ -405,11 +480,19 @@
       if(phase){const scroll=el('ebOrderScroll');if(scroll)scroll.scrollTop=Math.max(0,phase.offsetTop-90);phase.scrollIntoView({block:'nearest',inline:'nearest'});phase.focus({preventScroll:true});}return;
     }
     if(button.hasAttribute('data-eb-tool')){openTool(button.dataset.ebTool);return;}
+    if(button.hasAttribute('data-eb-phase-diagnostics')){
+      const pi=Number(button.dataset.ebPhaseDiagnostics),panel=el('ebPhaseDiagnostics-'+pi);if(!panel)return;
+      const open=panel.hidden;panel.hidden=!open;button.setAttribute('aria-expanded',String(open));
+      open?expandedPhases.add(pi):expandedPhases.delete(pi);return;
+    }
     if(button.hasAttribute('data-eb-update-quotes')){updateFxRates();return;}
     if(button.hasAttribute('data-eb-retry-quotes')){fx.marketQuotes.retry();return;}
     if(button.hasAttribute('data-eb-observation')){observationForm();return;}
     if(button.hasAttribute('data-eb-diagnostics')){diagnosticForm();return;}
-    if(button.hasAttribute('data-eb-open-detail')){const [pi,oi]=(button.dataset.ebOpenDetail||'').split(':').map(Number),detail=el(`ebDetail-${pi}-${oi}`);if(detail){detail.open=true;expanded.add(key(pi,oi));detail.querySelector('summary')?.focus({preventScroll:true});}return;}
+    if(button.hasAttribute('data-eb-open-detail')){
+      const [pi,oi]=(button.dataset.ebOpenDetail||'').split(':').map(Number),detail=el(`ebDetail-${pi}-${oi}`);
+      if(detail)setDetail(pi,oi,!detail.open);return;
+    }
     if(button.hasAttribute('data-eb-parameters')){JPWNavigation.navigate('params');return;}
     if(button.hasAttribute('data-eb-motor')){openTool('motor');return;}
     if(button.hasAttribute('data-eb-manage')){
@@ -442,7 +525,7 @@
   root.addEventListener('beforeunload',event=>{if(hasDrafts()){event.preventDefault();event.returnValue='';}});
   fx.executionBoardUI={render,renderPhases,hasDrafts,openTool,
     backupDrafts:()=>hasDrafts()?{rows:[...drafts.entries()],observation:observationDirty&&el('ebObservationForm')?Object.fromEntries(new FormData(el('ebObservationForm'))):null,diagnostics:observationDirty&&el('ebDiagnosticForm')?Object.fromEntries(new FormData(el('ebDiagnosticForm'))):null,instrumentId:instrumentChoice,selection:fx.state.operationalSelection()}:null,saveRow,cancelRow,requestLeave,guardNavigation,
-    discard(){drafts.clear();expanded.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
+    discard(){drafts.clear();expanded.clear();expandedPhases.clear();observationDirty=false;tableSignature=null;if(dialog?.open)dialog.close();},
     getSelection:()=>({accountId:fx.state.operationalSelection().accountId,instrumentId:instrumentChoice})};
   render();
 })(globalThis);

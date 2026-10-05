@@ -1,6 +1,6 @@
 # Forex — Execution Board
 
-**Contrato atual do candidate local de 2026-10-01:** [Operação como planilha](#operação-como-planilha--candidate-2026-10-01). As seções datadas abaixo preservam contratos e evidências históricos; não descrevem uma aprovação da revisão atual.
+**Contrato atual do candidate local de 2026-10-05:** [Proporções de planilha](#proporções-de-planilha--candidate-2026-10-05), sobre [Operação como planilha](#operação-como-planilha--candidate-2026-10-01). As seções datadas abaixo preservam contratos e evidências históricos; não descrevem uma aprovação da revisão atual.
 
 Campanha FOREX-EXECUTION-BOARD-01, base integrada `594c86ebf13661d0e5846a3b64a0288631fd938d`, branch `codex/forex-execution-board-20260915`. Contrato e limites em [CHG/CTX](../work/CHG-FOREX-EXECUTION-BOARD-20260915.md). Estado: revisão local, validação e aceite separados. Recibos de execução/fingerprint/recovery em `/Users/joaopauloalves/.codex/forex-execution-board/20260915/evidence/`.
 
@@ -126,3 +126,14 @@ Novos focais: `forex_execution_workbook_test.py` (tarefas e responsividade reais
 `accountProfileContext` diferencia perfil cadastral atual, destino próximo período e referência capturada no período consultado. Ausência histórica não usa perfil atual nem Base. O cabeçalho Forex e Board leem contexto; simulações globais continuam globais. Perfis não substituem risco efetivo: a política V11 atual continua avaliando observações e ordens; P30 permanece PENDING e replicação bloqueada. Nenhuma fórmula foi alterada.
 
 `Contas e Período` reutiliza a conciliação histórica e observações da conta examinada; registrar observação ali não seleciona a conta na Board. Memória de Correção, Firewall e aplicação de lote continuam no domínio existente, sem inputs cadastrais diretos por tecla. Períodos são atuais/anteriores/pendentes; não foi criado encerramento formal.
+
+
+## Proporções de planilha — candidate 2026-10-05
+
+Implementação delimitada pelo [CHG de produto](../work/CHG-JPW-OPERATION-PROPORTIONS-20261005.md); expectativas de apresentação no [contrato de testes separado](../work/CHG-JPW-OPERATION-PROPORTIONS-TEST-20261005.md). Base a47ebee preservada; resultado local sujeito à revisão, gates e aceite humano.
+
+A grade mantém vinte colunas, ID/Instrumento fixos e rolagem própria. Desktop com ponteiro fino adota 14 px e alvos de 36 px na preferência padrão; toque e lista por largura útil inferior a 768 px usam 16 px e 48 px. A preferência de fonte escala texto, controles e colunas; zoom não é neutralizado. Se ID/Instrumento longos deixarem menos de 320 px úteis para os demais campos, a grade usa a mesma lista responsiva, preservando os controles e os valores; cancelamento explícito recalcula as larguras. Cabeçalhos e linhas crescem quando o conteúdo exige. Não há persistência nova de densidade.
+
+Fases mostram nome, quantidade, Diagnósticos e + Ordem em uma faixa; fases vazias não criam outra linha. Detalhe fechado não reserva espaço. Campos de HASH, custos, resultado e justificativa continuam montados uma vez, no detalhe da própria ordem, aberto automaticamente quando uma validação requer o campo. Salvar e Cancelar dependem de edição e dos bloqueios existentes. Ações preservam nomes acessíveis e foco útil depois de salvar/cancelar. Rascunhos RAM e comandos do domínio permanecem os mesmos.
+
+Um estado Não salvo por ordem evita duplicação de mensagens; cabeçalhos distinguem diagnósticos de prévia e risco confirmado. Não arredondar ou ocultar valores para obter o layout. Funções financeiras, registros, schemas e MT5 não mudam. O focal `tools/forex_execution_proportions_test.py` complementa o workbook; oráculos financeiros antigos permanecem e falhas anteriores são reportadas sem reclassificação. Recibos, medidas, capturas, fingerprint e rollback são externos ao produto.

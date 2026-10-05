@@ -5554,11 +5554,11 @@ html[data-shell="global-dashboard"] #execPhaseGridsCard .phase{margin-bottom:8px
 html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-head{min-height:42px;padding:8px 14px}
 html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-body{padding:8px 12px 12px}
 html[data-shell="global-dashboard"] #execPhaseGridsCard .phase-meta{padding:6px 4px 10px;font-size:10.5px}
-html[data-shell="global-dashboard"] #execPhaseGridsCard .otable th{padding:4px 7px;font-size:9.5px}
-html[data-shell="global-dashboard"] #execPhaseGridsCard .otable td{padding:5px 7px}
-html[data-shell="global-dashboard"] #execPhaseGridsCard .otable :is(input,select){height:32px;min-height:32px;padding:4px 7px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable:not(.eb-workbook-table) th{padding:4px 7px;font-size:9.5px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable:not(.eb-workbook-table) td{padding:5px 7px}
+html[data-shell="global-dashboard"] #execPhaseGridsCard .otable:not(.eb-workbook-table) :is(input,select){height:32px;min-height:32px;padding:4px 7px}
 html[data-shell="global-dashboard"] #execPhaseGridsCard .stop-note{display:none}
-html[data-shell="global-dashboard"] #execPhaseGridsCard [data-addorder]{min-height:34px;margin-top:8px!important}
+html[data-shell="global-dashboard"] #execPhaseGridsCard [data-addorder]:not(.eb-workbook-table [data-addorder]){min-height:34px;margin-top:8px!important}
 html[data-shell="global-dashboard"] #execPhaseGridsCard tbody tr:nth-child(n+4):not(.is-new-order):has(input[data-f="id"]:placeholder-shown):has(select[data-f="par"] option[value=""]:checked):has(input[data-f="lote"]:placeholder-shown):has(input[data-f="entry"]:placeholder-shown):has(input[data-f="sl"]:placeholder-shown):has(input[data-f="tp"]:placeholder-shown):has(select[data-f="status"] option[value=""]:checked):not(:focus-within){display:none}
 html[data-shell="global-dashboard"] #phaseContainer > [data-migrate]{width:auto!important;min-height:34px}
 html[data-shell="global-dashboard"] .exec-secondary-details{padding:0!important;overflow:hidden;align-self:start!important}
@@ -8936,7 +8936,7 @@ html[data-theme="dark"] #execWidgetGrid.execution-workbook{--eb-head:#203b4e;--e
 #execWidgetGrid.execution-workbook>#execClearanceCard{order:0}
 #execWidgetGrid.execution-workbook>#execConsolidadoCard{order:1}
 #execWidgetGrid.execution-workbook>#execLifoMonitor{order:2}
-#execWidgetGrid.execution-workbook>#execPhaseGridsCard{order:3}
+#execWidgetGrid.execution-workbook>#execPhaseGridsCard{order:3;container-type:inline-size;container-name:eb-orders}
 #execWidgetGrid.execution-workbook>.eb-card{border-radius:6px;padding:12px 14px!important;overflow:visible;min-width:0}
 #execWidgetGrid.execution-workbook :is(.eb-section-head,.eb-context-line){margin:5px 0}
 #execWidgetGrid.execution-workbook .eb-eyebrow{margin:0 0 4px}
@@ -8976,46 +8976,96 @@ html[data-theme="dark"] #execWidgetGrid.execution-workbook{--eb-head:#203b4e;--e
 #execWidgetGrid.execution-workbook #ebPhaseNav button{min-height:44px;font-size:12px;border-radius:4px;color:var(--ink);background:var(--panel)}
 #execWidgetGrid.execution-workbook .eb-table-help{margin:5px 0 8px}
 #execWidgetGrid.execution-workbook .eb-table-help summary{min-height:44px;box-sizing:border-box;padding:11px 0}
-#execWidgetGrid.execution-workbook .eb-workbook-scroll{width:100%;max-width:100%;max-height:70dvh;min-width:0;overflow:auto;overscroll-behavior:contain;border:1px solid var(--eb-rule);border-radius:4px;scroll-padding:90px 12px 12px 245px;margin:8px 0 12px}
-#execWidgetGrid.execution-workbook .eb-workbook-table{width:2106px;min-width:2106px;table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:13px;font-family:var(--sans,system-ui)}
-#execWidgetGrid.execution-workbook .eb-workbook-table thead th{position:sticky;top:32px;height:48px;box-sizing:border-box;padding:8px 5px;z-index:4;font-size:12px;font-weight:600;text-align:center;background:var(--eb-head);color:#fff;border-bottom:1px solid #fff5;border-right:1px solid #fff3;line-height:1.3;overflow-wrap:anywhere}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-groups th{top:0;height:32px;padding:6px 10px;background:var(--eb-calc);color:var(--ink);font-size:12px;text-align:left;letter-spacing:0;border-color:var(--eb-rule);z-index:5;left:auto;right:auto}
+/* The worksheet owns its density. JS supplies scaled column widths and sticky offsets
+   from one column definition; the preference scale never changes financial values. */
+#execWidgetGrid.execution-workbook .eb-workbook-scroll{
+  --eb-body-size:calc(14px * var(--fs-scale,1));
+  --eb-header-size:calc(13px * var(--fs-scale,1));
+  --eb-meta-size:calc(12px * var(--fs-scale,1));
+  --eb-control-size:calc(36px * var(--fs-scale,1));
+  --eb-icon-size:calc(16px * var(--fs-scale,1));
+  --eb-group-height:calc(28px * var(--fs-scale,1));
+  --eb-label-height:calc(40px * var(--fs-scale,1));
+  width:100%;max-width:100%;max-height:70dvh;min-width:0;overflow:auto;
+  overscroll-behavior:contain;border:1px solid var(--eb-rule);border-radius:4px;
+  scroll-padding:calc(var(--eb-group-height) + var(--eb-label-height) + 8px) 12px 12px calc(var(--eb-sticky-width,288px) + 8px);
+  margin:8px 0 12px;
+}
+#execWidgetGrid.execution-workbook .eb-workbook-table{width:var(--eb-workbook-width,2412px);min-width:var(--eb-workbook-width,2412px);table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:var(--eb-body-size);font-family:var(--sans,system-ui)}
+#execWidgetGrid.execution-workbook .eb-workbook-table thead th{position:sticky;top:var(--eb-group-height);height:var(--eb-label-height);box-sizing:border-box;padding:5px 8px;z-index:4;font-size:var(--eb-header-size);font-weight:600;text-align:center;text-transform:none;letter-spacing:0;background:var(--eb-head);color:#fff;border-bottom:1px solid #fff5;border-right:1px solid #fff3;line-height:1.25;overflow-wrap:normal;word-break:normal;white-space:normal}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-groups th{top:0;height:var(--eb-group-height);padding:4px 8px;background:var(--eb-calc);color:var(--ink);font-size:var(--eb-header-size);text-align:left;letter-spacing:0;border-color:var(--eb-rule);z-index:5;left:auto;right:auto}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-groups th:first-child{left:0;z-index:8}
-#execWidgetGrid.execution-workbook .eb-workbook-table tbody td{display:table-cell;vertical-align:middle;padding:5px;border-bottom:1px solid var(--eb-rule);border-right:1px solid var(--eb-rule);background:var(--panel);overflow-wrap:anywhere;white-space:normal}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row{display:table-row;border-radius:0}
+#execWidgetGrid.execution-workbook .eb-workbook-table tbody td{display:table-cell;vertical-align:middle;padding:6px 8px;border-bottom:1px solid var(--eb-rule);border-right:1px solid var(--eb-rule);background:var(--panel);overflow-wrap:normal;white-space:normal;line-height:1.35}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row{display:table-row;height:calc(48px * var(--fs-scale,1));border-radius:0}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:before{display:none}
-#execWidgetGrid.execution-workbook .eb-workbook-table :is(input,select){box-sizing:border-box;width:100%;max-width:100%;min-width:0;min-height:44px;height:44px;padding:6px 5px;border:1px solid var(--eb-rule);border-radius:3px;background:var(--eb-input);color:var(--ink);font-size:13px;line-height:1.4}
+#execWidgetGrid.execution-workbook .eb-workbook-table :is(input,select,textarea){box-sizing:border-box;width:100%;max-width:100%;min-width:0;min-height:var(--eb-control-size);height:var(--eb-control-size);padding:5px 6px;border:1px solid var(--eb-rule);border-radius:3px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:var(--eb-body-size);line-height:1.35;text-overflow:clip}
+#execWidgetGrid.execution-workbook .eb-workbook-table textarea{height:auto;min-height:calc(var(--eb-control-size) * 2);resize:vertical}
+#execWidgetGrid.execution-workbook .eb-workbook-table :is(input,select,textarea):not(:disabled):hover{border-color:var(--ink-dim)}
+#execWidgetGrid.execution-workbook .eb-workbook-table :is(input,select,textarea):focus-visible{outline:2px solid var(--eb-accent);outline-offset:1px;border-color:var(--eb-accent)}
+#execWidgetGrid.execution-workbook .eb-workbook-table button{min-height:var(--eb-control-size);font-size:var(--eb-body-size);text-transform:none;letter-spacing:0}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-check{min-height:var(--eb-control-size)}
 #execWidgetGrid.execution-workbook .eb-workbook-table input[inputmode="decimal"]{text-align:right;font-variant-numeric:tabular-nums}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:first-child,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:first-child{position:sticky;left:0;z-index:3;background:var(--panel);box-shadow:none}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:nth-child(2),#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:nth-child(2){position:sticky;left:124px;z-index:3;background:var(--panel);box-shadow:5px 0 8px -8px var(--ink)}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:nth-child(2),#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:nth-child(2){position:sticky;left:var(--eb-id-width,144px);z-index:3;background:var(--panel);box-shadow:5px 0 8px -8px var(--ink)}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:nth-child(-n+2){z-index:7;background:var(--eb-head);color:#fff}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:last-child,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:last-child{position:static;right:auto;box-shadow:none}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:last-child{position:sticky;top:32px;z-index:4}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-calculated{background:var(--eb-calc);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-size:13px}
-#execWidgetGrid.execution-workbook .eb-workbook-table td small{font-size:11px;line-height:1.4;display:block;color:var(--ink-dim);margin-top:4px}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-column-labels>th:last-child{position:sticky;top:var(--eb-group-height);z-index:4;background:var(--eb-head);color:#fff}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-calculated{background:var(--eb-calc);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-size:var(--eb-body-size);white-space:nowrap;overflow:visible;text-overflow:clip}
+#execWidgetGrid.execution-workbook .eb-workbook-table td small{font-size:var(--eb-meta-size);font-weight:400;line-height:1.4;display:block;color:var(--ink-dim);margin-top:4px;white-space:normal;overflow-wrap:anywhere}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-dirty td{background:var(--panel)}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-dirty .eb-calculated{background:var(--eb-calc);box-shadow:inset 0 -2px 0 var(--eb-accent)}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-dirty .eb-confirmed-risk{box-shadow:none}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions{position:static;white-space:normal}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions button{display:inline-block;width:auto;min-width:68px;min-height:44px;padding:7px 8px;margin:2px;font-size:12px;border-radius:3px;color:var(--ink);background:var(--panel);vertical-align:top}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions button:first-child{color:var(--eb-accent);border-color:var(--eb-accent);margin-bottom:2px}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-phase-row>th{position:static;top:auto;left:auto;right:auto;height:auto;min-height:0;z-index:auto;font-size:13px;font-weight:400;background:var(--eb-calc);text-align:left;padding:0;border-bottom:1px solid var(--eb-rule)}
-#execWidgetGrid.execution-workbook .eb-phase-anchor{position:sticky;left:0;width:var(--eb-detail-width,900px);max-width:100%;box-sizing:border-box;padding:6px 10px}
-#execWidgetGrid.execution-workbook .eb-phase-label{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:44px}
-#execWidgetGrid.execution-workbook .eb-phase-label strong{font-size:14px}
-#execWidgetGrid.execution-workbook .eb-phase-label>span{font-size:12px;color:var(--ink-dim)}
-#execWidgetGrid.execution-workbook .eb-phase-label>button{margin-left:auto;min-height:44px;border-radius:3px;padding:7px 10px}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-draft-status{color:var(--eb-accent)}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions{position:static;white-space:nowrap}
+#execWidgetGrid.execution-workbook .eb-row-action-controls{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}
+#execWidgetGrid.execution-workbook .eb-workbook-table :is(.eb-row-actions button,.eb-phase-label>button){box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:var(--eb-control-size);min-height:var(--eb-control-size);padding:5px 8px;margin:0;border:1px solid var(--eb-rule);border-radius:3px;color:var(--ink);background:var(--panel);font-family:inherit;font-size:var(--eb-body-size);line-height:1.35;white-space:nowrap;cursor:pointer}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions button:first-child:not(:disabled){color:var(--eb-accent);border-color:var(--eb-accent);background:var(--panel)}
+#execWidgetGrid.execution-workbook .eb-workbook-table :is(.eb-row-actions button,.eb-phase-label>button):disabled{opacity:.5;cursor:default}
+#execWidgetGrid.execution-workbook .eb-workbook-table :is(.eb-row-actions button,.eb-phase-label>button):not(:disabled):hover{border-color:var(--eb-accent);background:var(--eb-calc)}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions .eb-detail-toggle{flex:0 0 var(--eb-control-size);width:var(--eb-control-size);padding:0;font-size:var(--eb-icon-size)}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-phase-row>th{position:static;top:auto;left:auto;right:auto;height:auto;min-height:0;z-index:auto;font-size:var(--eb-header-size);font-weight:400;text-transform:none;letter-spacing:0;background:var(--eb-calc);text-align:left;padding:0;border-bottom:1px solid var(--eb-rule)}
+#execWidgetGrid.execution-workbook .eb-phase-anchor{position:sticky;left:0;width:var(--eb-detail-width,900px);max-width:100%;box-sizing:border-box;padding:0 8px}
+#execWidgetGrid.execution-workbook .eb-phase-label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:calc(48px * var(--fs-scale,1));padding:6px 0;box-sizing:border-box}
+#execWidgetGrid.execution-workbook .eb-phase-label strong{font-size:var(--eb-body-size);font-weight:600}
+#execWidgetGrid.execution-workbook .eb-phase-label>span{font-size:var(--eb-meta-size);color:var(--ink-dim)}
+#execWidgetGrid.execution-workbook .eb-phase-label>[data-eb-phase-diagnostics]{margin-left:auto}
+#execWidgetGrid.execution-workbook .eb-phase-diagnostics{padding:6px 0 12px;font-size:var(--eb-meta-size);white-space:normal;overflow-wrap:anywhere}
 #execWidgetGrid.execution-workbook .eb-phase-diagnostics:empty{display:none}
-#execWidgetGrid.execution-workbook .eb-phase-diagnostics .eb-findings{border:0;padding:0;margin:0;font-size:12px}
-#execWidgetGrid.execution-workbook .eb-phase-diagnostics summary{min-height:44px;padding:11px 0;box-sizing:border-box;font-size:12px}
-#execWidgetGrid.execution-workbook .eb-empty-phase td{height:44px;padding:0!important}
-#execWidgetGrid.execution-workbook .eb-empty-phase span{display:block;position:sticky;left:0;width:var(--eb-detail-width,900px);box-sizing:border-box;padding:10px;font-size:12px;color:var(--ink-dim)}
+#execWidgetGrid.execution-workbook .eb-phase-diagnostics .eb-findings{border:0;padding:0;margin:0;font-size:inherit}
+#execWidgetGrid.execution-workbook .eb-phase-diagnostics p{margin:6px 0;line-height:1.5}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-row>td{padding:0;border-right:0}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content{position:sticky;left:0;width:var(--eb-detail-width,900px);max-width:100%;padding:0 10px 5px;box-sizing:border-box}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content summary{min-height:44px;box-sizing:border-box;padding:11px 0;color:var(--ink);font-size:12px}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-details{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content{position:sticky;left:0;width:var(--eb-detail-width,900px);max-width:100%;padding:12px;box-sizing:border-box;white-space:normal}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content h4{font-size:var(--eb-header-size);margin:0 0 8px;line-height:1.4}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-details{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-details label{font-size:var(--eb-meta-size)}
 #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-details input[type="checkbox"]{width:22px!important;height:22px!important;min-height:22px!important;background:var(--panel)}
-#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content p{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content p{font-size:var(--eb-meta-size);line-height:1.5;overflow-wrap:anywhere}
+@media(pointer:coarse){
+  #execWidgetGrid.execution-workbook .eb-workbook-scroll{--eb-body-size:calc(16px * var(--fs-scale,1));--eb-header-size:calc(14px * var(--fs-scale,1));--eb-meta-size:calc(13px * var(--fs-scale,1));--eb-control-size:calc(48px * var(--fs-scale,1));--eb-icon-size:calc(18px * var(--fs-scale,1))}
+}
+/* Narrowness is measured on the actual worksheet viewport, not the browser.
+   The same mounted form controls are rearranged, never duplicated. */
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-scroll{--eb-body-size:calc(16px * var(--fs-scale,1));--eb-header-size:calc(14px * var(--fs-scale,1));--eb-meta-size:calc(13px * var(--fs-scale,1));--eb-control-size:calc(48px * var(--fs-scale,1));--eb-icon-size:calc(18px * var(--fs-scale,1));overflow:visible;max-height:none;border:0;scroll-padding:0}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table,#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table tbody{display:block;width:100%;min-width:0;max-width:100%}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table :is(colgroup,thead){display:none}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-order-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));height:auto;width:100%;border:1px solid var(--eb-rule);border-radius:4px;margin-top:8px;box-sizing:border-box}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-order-row>td{display:block;position:static;left:auto;right:auto;width:auto;min-width:0;padding:8px;border-right:0;box-shadow:none;font-size:var(--eb-body-size)}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-order-row>td:before{content:attr(data-label);display:block;font-size:var(--eb-header-size);font-weight:600;text-align:left;color:var(--ink);margin-bottom:6px;line-height:1.4;white-space:normal}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-order-row>td:last-child{grid-column:1/-1}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-row-action-controls{flex-wrap:wrap;gap:8px}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-row-actions button:not(.eb-detail-toggle){flex:1 1 80px}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-phase-row,#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-phase-row>th{display:block;width:100%;box-sizing:border-box}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-phase-row{margin-top:12px;border:1px solid var(--eb-rule);border-radius:4px}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-phase-anchor{position:static;width:100%;max-width:100%;padding:8px;box-sizing:border-box}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-phase-label{gap:8px;align-items:center}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-phase-label>span{margin-right:auto}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-phase-label>[data-eb-phase-diagnostics]{margin-left:0}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-detail-row,#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-detail-row>td{display:block;width:100%;box-sizing:border-box}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-detail-content{position:static;width:100%;max-width:100%;border:1px solid var(--eb-rule);border-top:0;border-radius:0 0 4px 4px;padding:12px}
+#execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-order-details{grid-template-columns:1fr}
+@container eb-orders (max-width:480px){
+  #execWidgetGrid.execution-workbook .eb-narrow .eb-workbook-table .eb-order-row{grid-template-columns:minmax(0,1fr)}
+}
 @container eb-board (max-width:767px){
   #execWidgetGrid.execution-workbook>.eb-card{padding:10px!important}
   #execWidgetGrid.execution-workbook :is(.eb-capital-strip,.eb-operational-strip){grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
@@ -9031,23 +9081,6 @@ html[data-theme="dark"] #execWidgetGrid.execution-workbook{--eb-head:#203b4e;--e
   #execWidgetGrid.execution-workbook .eb-tool-table :is(th,td){display:block;width:auto!important;border:0;padding:7px;min-width:0}
   #execWidgetGrid.execution-workbook .eb-tool-table tbody th{grid-column:1/-1}
   #execWidgetGrid.execution-workbook .eb-tool-table td:before{content:attr(data-label);display:block;font-size:11px;font-weight:600;color:var(--ink-dim);margin-bottom:4px}
-  #execWidgetGrid.execution-workbook .eb-workbook-scroll{overflow:visible;max-height:none;border:0;scroll-padding:0}
-  #execWidgetGrid.execution-workbook .eb-workbook-table,#execWidgetGrid.execution-workbook .eb-workbook-table tbody{display:block;width:100%;min-width:0;max-width:100%}
-  #execWidgetGrid.execution-workbook .eb-workbook-table colgroup,#execWidgetGrid.execution-workbook .eb-workbook-table thead{display:none}
-  html[data-shell="global-dashboard"] #execPhaseGridsCard .eb-workbook-table tr.eb-order-row,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;border:1px solid var(--eb-rule);border-radius:4px 4px 0 0;margin-top:8px;box-sizing:border-box}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td{display:block;position:static!important;left:auto;right:auto;width:auto!important;min-width:0;padding:8px;border-right:0;box-shadow:none!important;font-size:13px}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:before{content:attr(data-label);display:block;font-size:12px;font-weight:600;text-align:left;color:var(--ink);margin-bottom:6px;line-height:1.4}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:last-child{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-row>td:last-child:before{width:100%}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-row-actions button{flex:1 1 110px;min-width:110px;margin:0;white-space:nowrap;overflow-wrap:normal;word-break:normal}
-  #execWidgetGrid.execution-workbook .eb-workbook-table :is(input,select){font-size:16px;min-height:44px;height:44px}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-phase-row,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-phase-row>th,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-empty-phase,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-empty-phase>td{display:block;width:100%;box-sizing:border-box}
-  #execWidgetGrid.execution-workbook .eb-phase-row{margin-top:12px;border:1px solid var(--eb-rule);border-radius:4px}
-  #execWidgetGrid.execution-workbook .eb-phase-anchor,#execWidgetGrid.execution-workbook .eb-empty-phase span{position:static;width:100%;max-width:100%;padding:8px;box-sizing:border-box}
-  #execWidgetGrid.execution-workbook .eb-phase-label>button{margin-left:0;flex-basis:100%}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-row,#execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-row>td{display:block;width:100%;box-sizing:border-box}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-detail-content{position:static;width:100%;max-width:100%;border:1px solid var(--eb-rule);border-top:0;border-radius:0 0 4px 4px;padding:0 10px 5px}
-  #execWidgetGrid.execution-workbook .eb-workbook-table .eb-order-details{grid-template-columns:1fr}
   #execWidgetGrid.execution-workbook #ebPhaseNav>span{flex-basis:100%}
 }
 @media(forced-colors:active){#execWidgetGrid.execution-workbook .eb-workbook-table .eb-calculated,#execWidgetGrid.execution-workbook .eb-tool-tabs button[aria-selected="true"]{border:1px solid CanvasText}}
@@ -9108,7 +9141,7 @@ html[data-theme="dark"] #execWidgetGrid.execution-workbook{--eb-head:#203b4e;--e
 /* Independent audit: default next action first; real targets beat legacy density. */
 #fxconsolidated{font-size:16px}
 #fxconsolidated .fx-next-action p,#execHistory .hist-empty-message{font-size:16px;line-height:1.6}
-html[data-shell="global-dashboard"] :is(#fxconsolidated,#exec,#fxplan,#fxreserves) :is(button,select,textarea,input:not([type=checkbox]):not([type=radio])){min-height:44px!important;min-width:44px!important;font-size:16px!important;line-height:1.35}
+html[data-shell="global-dashboard"] :is(#fxconsolidated,#exec,#fxplan,#fxreserves) :is(button,select,textarea,input:not([type=checkbox]):not([type=radio])):not(.eb-workbook-scroll *){min-height:44px!important;min-width:44px!important;font-size:16px!important;line-height:1.35}
 html[data-shell="global-dashboard"] :is(#fxconsolidated,#exec,#fxplan,#fxreserves) summary{min-height:44px;box-sizing:border-box}
 html[data-shell="global-dashboard"] :is(#fxconsolidated,#exec,#fxplan,#fxreserves) label:has(input:is([type=checkbox],[type=radio])){min-height:44px;display:flex;flex-direction:row;align-items:center;gap:8px;line-height:1.5;font-size:16px}
 html[data-shell="global-dashboard"] :is(#fxconsolidated,#exec,#fxplan,#fxreserves) input:is([type=checkbox],[type=radio]){height:22px;min-height:22px;width:22px;min-width:22px;flex:0 0 22px}
